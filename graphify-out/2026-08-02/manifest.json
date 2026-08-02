@@ -480,8 +480,8 @@
     "semantic_hash": ""
   },
   "src/app/PlotController.cpp": {
-    "mtime": 1785652396.1518862,
-    "ast_hash": "7fd738fabe0ef413975155a6f2ba8c03",
+    "mtime": 1785652321.4171145,
+    "ast_hash": "7c9dd6111035436b74e6dc6d6326b1be",
     "semantic_hash": ""
   },
   "src/app/PresetController.cpp": {

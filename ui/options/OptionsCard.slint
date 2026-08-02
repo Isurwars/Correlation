@@ -24,6 +24,7 @@ import { RingsOptionsCard } from "RingsOptionsCard.slint";
 import { SmoothingOptionsCard } from "SmoothingOptionsCard.slint";
 import { AdvancedOptionsCard } from "AdvancedOptionsCard.slint";
 import { AnalysesSelectionCard } from "AnalysesSelectionCard.slint";
+import { ComparisonOverlayCard } from "ComparisonOverlayCard.slint";
 import { ExportSettingsCard } from "../preview/ExportSettingsCard.slint";
 import {
     AtomCount,
@@ -31,6 +32,7 @@ import {
     AnalysisOptions,
     AppErrors,
     CalculatorGroup,
+    ComparisonCurveData,
 } from "../Types.slint";
 
 export component OptionsCard inherits FilledCard {
@@ -110,6 +112,14 @@ export component OptionsCard inherits FilledCard {
     in property <string> export_line_width_error: "";
 
     in-out property <int> active_tab: 0;
+
+    // Comparison Overlay
+    in property <[ComparisonCurveData]> comparison_curves: [];
+    in property <bool> show_difference: false;
+    callback pin_current_run();
+    callback import_comparison_file();
+    callback remove_comparison_curve(int);
+    callback toggle_difference_plot(bool);
 
     // Preset management
     in property <[MenuItem]> preset_items: [];
@@ -305,7 +315,19 @@ export component OptionsCard inherits FilledCard {
                     height: root.active_tab == 1 ? self.preferred-height : 0px;
                 }
 
-                // Plot Tab Options (Publication Export Settings)
+                // Plot Tab Options (Comparison Overlay & Publication Export Settings)
+                comparison_overlay := ComparisonOverlayCard {
+                    visible: root.active_tab == 2;
+                    height: root.active_tab == 2 ? self.preferred-height : 0px;
+                    enabled: root.file_loaded;
+                    comparison_curves: root.comparison_curves;
+                    show_difference: root.show_difference;
+                    pin_current_run => { root.pin_current_run(); }
+                    import_comparison_file => { root.import_comparison_file(); }
+                    remove_comparison_curve(id) => { root.remove_comparison_curve(id); }
+                    toggle_difference_plot(show) => { root.toggle_difference_plot(show); }
+                }
+
                 export_settings := ExportSettingsCard {
                     visible: root.active_tab == 2;
                     height: root.active_tab == 2 ? self.preferred-height : 0px;

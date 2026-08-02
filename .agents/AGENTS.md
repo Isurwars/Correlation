@@ -56,6 +56,7 @@
 - **Release Packaging:** Activate [release-packaging](file:///home/isurwars/Projects/Correlation/.agents/skills/release-packaging/SKILL.md) for building Linux release artifacts (AppImage, DEB, RPM).
 - **Verification & Build:** Run project validation using CMake/CTest targets before declaring features complete. Invoke [test-and-tea-loop](file:///home/isurwars/Projects/Correlation/.agents/skills/test-and-tea-loop/SKILL.md) for automated build-diagnose-fix cycles.
 - **Runtime Safety:** Use [sanitizer-validator](file:///home/isurwars/Projects/Correlation/.agents/skills/sanitizer-validator/SKILL.md) to instrument builds with ASan/TSan/UBSan when investigating memory or concurrency bugs.
+- **Always-Grind Interrogation:** Activate [always-grind-interrogation](file:///home/isurwars/Projects/Correlation/.agents/skills/always-grind-interrogation/SKILL.md) for mandatory senior-developer technical extraction and architectural gap detection on all user orders and plans.
 - **Graph Sync:** After modifying source files, invoke [graphify-maintenance](file:///home/isurwars/Projects/Correlation/.agents/skills/graphify-maintenance/SKILL.md) to regenerate dependency graphs.
 
 ## 7. Verification & Quality Gates

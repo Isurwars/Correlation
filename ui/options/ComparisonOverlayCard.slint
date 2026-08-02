@@ -16,6 +16,7 @@ import { ComparisonCurveData } from "../Types.slint";
 // ComparisonOverlayCard Component
 // ============================================================================
 export component ComparisonOverlayCard inherits FilledCard {
+    in property <bool> enabled: true;
     in property <[ComparisonCurveData]> comparison_curves: [];
     in property <bool> show_difference: false;
 
@@ -33,25 +34,18 @@ export component ComparisonOverlayCard inherits FilledCard {
             color: MaterialPalette.on_surface;
         }
 
-        Horizontal {
-            spacing: MaterialStyleMetrics.spacing_8;
+        FilledButton {
             height: MaterialStyleMetrics.size_40;
+            text: "Pin Current Run";
+            icon: Icons.pin;
+            clicked => { root.pin_current_run(); }
+        }
 
-            FilledButton {
-                horizontal-stretch: 1;
-                height: 100%;
-                text: "Pin Current Run";
-                icon: Icons.pin;
-                clicked => { root.pin_current_run(); }
-            }
-
-            FilledButton {
-                horizontal-stretch: 1;
-                height: 100%;
-                text: "Import File...";
-                icon: Icons.edit;
-                clicked => { root.import_comparison_file(); }
-            }
+        FilledButton {
+            height: MaterialStyleMetrics.size_40;
+            text: "Import File...";
+            icon: Icons.edit;
+            clicked => { root.import_comparison_file(); }
         }
 
         // Difference Plot Toggle

@@ -88,8 +88,12 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
   });
 
   // Handle curve visibility toggle from PreviewCard checklist
-  window_.on_toggle_curve_visibility([this](int id, bool visible) {
-    plot_controller_->handleToggleCurveVisibility(id, visible);
+  window_.on_toggle_curve_visibility([this](int curve_id, bool visible) {
+    plot_controller_->handleToggleCurveVisibility(curve_id, visible);
+  });
+
+  window_.on_toggle_all_curves([this](bool visible) {
+    plot_controller_->handleToggleAllCurves(visible);
   });
 
   // Handle mouse move on preview plot
@@ -105,6 +109,11 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
 
   // Handle clear pinned runs request
   window_.on_clear_pinned_runs([this]() { plot_controller_->handleClearPinnedRuns(); });
+
+  // Handle difference plot toggle
+  window_.on_toggle_difference_plot([this](bool show) {
+    plot_controller_->handleToggleDifferencePlot(show);
+  });
 
   // Handle preset load, save, delete requests
   window_.on_load_preset([this](int index) {

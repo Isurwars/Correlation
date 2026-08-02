@@ -97,10 +97,16 @@ public:
 
   /**
    * @brief Handles toggling curve visibility from the Slint preview checklist.
-   * @param[in] id Curve identifier index.
+   * @param[in] curve_id Curve identifier index.
    * @param[in] visible Target visibility state.
    */
-  void handleToggleCurveVisibility(int id, bool visible);
+  void handleToggleCurveVisibility(int curve_id, bool visible);
+
+  /**
+   * @brief Handles bulk toggling all curves visible or hidden.
+   * @param[in] visible Target visibility state for all curves.
+   */
+  void handleToggleAllCurves(bool visible);
 
   /**
    * @brief Handles toggling overlaid absolute difference curve Y_diff rendering.
@@ -120,6 +126,7 @@ private:
     correlation::plotters::PlotConfig config;
     correlation::plotters::HoverInfo hover;
     std::map<std::string, real_t> ashcroft_weights;
+    std::map<std::string, bool> curve_visibility;
   };
 
   std::atomic<bool> is_rendering_{false};
@@ -137,6 +144,7 @@ private:
   std::vector<PinnedRun> pinned_runs_;
 
   std::map<std::string, bool> curve_visibility_map_;
+  std::vector<std::string> current_toggle_keys_;
   bool show_difference_curve_{false};
 
   float last_mouse_x_ = -1.0F;
@@ -164,6 +172,7 @@ private:
                       const correlation::plotters::HoverInfo &hover) const;
   void executePlotRender(RenderTaskData data);
   void updateTableData(const correlation::analysis::Histogram *hist);
+  void updateCurveToggleItems(const correlation::analysis::Histogram *hist);
   void executeSavePlot(const std::string &filepath, const correlation::analysis::Histogram *hist,
                        const std::string &name);
 };

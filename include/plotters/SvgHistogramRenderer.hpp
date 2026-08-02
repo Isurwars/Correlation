@@ -34,6 +34,7 @@ struct SvgHistogramRenderer {
   const PlotConfig *config = nullptr;
   const HoverInfo *hover = nullptr;
   const std::map<std::string, real_t> *weights = nullptr;
+  const std::map<std::string, bool> *curve_visibility = nullptr;
 
   std::string title;
   std::string x_label;
@@ -55,8 +56,10 @@ struct SvgHistogramRenderer {
   std::ostringstream svg;
 
   SvgHistogramRenderer(const correlation::analysis::Histogram &histogram, const PlotConfig &cfg, const HoverInfo &hov,
-                       const std::map<std::string, real_t> &component_weights)
-      : hist(&histogram), config(&cfg), hover(&hov), weights(&component_weights), xs(&histogram.bins) {
+                       const std::map<std::string, real_t> &component_weights,
+                       const std::map<std::string, bool> &visibility = {})
+      : hist(&histogram), config(&cfg), hover(&hov), weights(&component_weights), curve_visibility(&visibility),
+        xs(&histogram.bins) {
     initializeLayoutAndLabels();
     filterPartials();
   }
@@ -90,10 +93,32 @@ struct SvgHistogramRenderer {
     py1 = kH - kBot;
   }
 
+  [[nodiscard]] bool isCurveVisible(const std::string &key) const {
+    if (curve_visibility == nullptr) {
+      return true;
+    }
+    auto iterator = curve_visibility->find(key);
+    return (iterator != curve_visibility->end()) ? iterator->second : true;
+  }
+
+  [[nodiscard]] real_t calculateScore(const std::string &key, const std::vector<real_t> &value) const {
+    if (weights != nullptr && !weights->empty()) {
+      auto wit = weights->find(key);
+      if (wit != weights->end()) {
+        return wit->second;
+      }
+    }
+    real_t score = static_cast<real_t>(0.0);
+    for (real_t val : value) {
+      score += std::abs(val);
+    }
+    return score;
+  }
+
   void filterPartials() {
     const auto &raw_partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
     auto total_it = raw_partials.find("Total");
-    if (total_it != raw_partials.end()) {
+    if (total_it != raw_partials.end() && isCurveVisible("Total")) {
       partials["Total"] = total_it->second;
     }
 
@@ -102,23 +127,14 @@ struct SvgHistogramRenderer {
       if (key == "Total" || key.starts_with("Frequency_")) {
         continue;
       }
-      real_t score = static_cast<real_t>(0.0);
-      if (weights != nullptr && !weights->empty()) {
-        auto wit = weights->find(key);
-        if (wit != weights->end()) {
-          score = wit->second;
-        }
-      } else {
-        for (real_t val : value) {
-          score += std::abs(val);
-        }
+      if (!isCurveVisible(key)) {
+        continue;
       }
-      candidates.emplace_back(key, score);
+      candidates.emplace_back(key, calculateScore(key, value));
     }
 
-    std::ranges::sort(candidates, [](const auto &lhs, const auto &rhs) { return lhs.second > rhs.second; });
-
-    std::size_t limit = std::min(candidates.size(), std::size_t(10));
+    bool has_custom_vis = curve_visibility != nullptr && !curve_visibility->empty();
+    std::size_t limit = has_custom_vis ? candidates.size() : std::min(candidates.size(), std::size_t(10));
     for (std::size_t i = 0; i < limit; ++i) {
       const std::string &key = candidates.at(i).first;
       auto iter = raw_partials.find(key);
@@ -539,9 +555,9 @@ struct SvgHistogramRenderer {
  * @brief Renders a `Histogram` as a self-contained SVG string.
  */
 inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &hist, const PlotConfig &config = {},
-                                        const HoverInfo &hover = {},
-                                        const std::map<std::string, real_t> &weights = {}) {
-  detail::SvgHistogramRenderer renderer(hist, config, hover, weights);
+                                        const HoverInfo &hover = {}, const std::map<std::string, real_t> &weights = {},
+                                        const std::map<std::string, bool> &curve_visibility = {}) {
+  detail::SvgHistogramRenderer renderer(hist, config, hover, weights, curve_visibility);
   if (renderer.hasNoData()) {
     return renderer.renderNoData();
   }

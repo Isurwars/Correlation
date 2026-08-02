@@ -55,6 +55,7 @@ export component PreviewCard inherits FilledCard {
 
     callback plot_selected(int);
     callback toggle_curve_visibility(int, bool);
+    callback toggle_all_curves(bool);
     callback save_plot();
     callback write_files();
     callback pin_run();
@@ -146,50 +147,8 @@ export component PreviewCard inherits FilledCard {
             }
         }
 
-        // Curve Visibility Checklist
-        if root.curve_toggle_items.length > 0: Rectangle {
-            background: MaterialPalette.surface_container_low;
-            border-radius: MaterialStyleMetrics.border_radius_2;
-            height: 36px;
-
-            ScrollView {
-                viewport-width: root.curve_toggle_items.length * 120px;
-                viewport-height: 28px;
-
-                HorizontalLayout {
-                    padding: 4px;
-                    spacing: 8px;
-                    alignment: start;
-                    for item in root.curve_toggle_items: TouchArea {
-                        width: 110px;
-                        height: 28px;
-                        clicked => { root.toggle_curve_visibility(item.id, !item.visible); }
-
-                        HorizontalLayout {
-                            spacing: 4px;
-                            alignment: center;
-
-                            Rectangle {
-                                width: 12px;
-                                height: 12px;
-                                border-radius: 6px;
-                                background: item.visible ? MaterialPalette.primary : MaterialPalette.outline;
-                            }
-
-                            MaterialText {
-                                text: item.label;
-                                style: MaterialTypography.label_medium;
-                                color: item.visible ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
-                                overflow: elide;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         // BODY: Tab Content Switcher
-        if root.active_tab == 0: Vertical {
+        if root.active_tab == 0: HorizontalLayout {
             vertical-stretch: 1;
             spacing: MaterialStyleMetrics.spacing_8;
 
@@ -249,6 +208,116 @@ export component PreviewCard inherits FilledCard {
                         height: 100%;
                         source: root.preview_plot;
                         image-fit: contain;
+                    }
+                }
+            }
+
+            // Curve Visibility Sidebar (Vertical Checklist to the right of the plot)
+            if root.curve_toggle_items.length > 0: Rectangle {
+                width: 180px;
+                background: MaterialPalette.surface_container_low;
+                border-radius: MaterialStyleMetrics.border_radius_2;
+
+                VerticalLayout {
+                    padding: 8px;
+                    spacing: 6px;
+
+                    HorizontalLayout {
+                        spacing: 4px;
+                        alignment: center;
+
+                        MaterialText {
+                            horizontal-stretch: 1;
+                            text: "Curves (" + root.curve_toggle_items.length + ")";
+                            style: MaterialTypography.label_large;
+                            color: MaterialPalette.on_surface;
+                            vertical-alignment: center;
+                        }
+
+                        TouchArea {
+                            width: 24px;
+                            height: 20px;
+                            mouse-cursor: pointer;
+                            clicked => { root.toggle_all_curves(true); }
+
+                            MaterialText {
+                                text: "All";
+                                style: MaterialTypography.label_small;
+                                color: MaterialPalette.primary;
+                                horizontal-alignment: center;
+                                vertical-alignment: center;
+                            }
+                        }
+
+                        MaterialText {
+                            text: "/";
+                            style: MaterialTypography.label_small;
+                            color: MaterialPalette.outline;
+                            vertical-alignment: center;
+                        }
+
+                        TouchArea {
+                            width: 32px;
+                            height: 20px;
+                            mouse-cursor: pointer;
+                            clicked => { root.toggle_all_curves(false); }
+
+                            MaterialText {
+                                text: "None";
+                                style: MaterialTypography.label_small;
+                                color: MaterialPalette.primary;
+                                horizontal-alignment: center;
+                                vertical-alignment: center;
+                            }
+                        }
+                    }
+
+                    ScrollView {
+                        vertical-stretch: 1;
+                        viewport-height: root.curve_toggle_items.length * 30px;
+
+                        VerticalLayout {
+                            spacing: 2px;
+                            alignment: start;
+                            for item in root.curve_toggle_items: item_touch := TouchArea {
+                                height: 28px;
+                                mouse-cursor: pointer;
+                                clicked => { root.toggle_curve_visibility(item.id, !item.visible); }
+
+                                Rectangle {
+                                    background: item_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+                                    border-radius: MaterialStyleMetrics.border_radius_2;
+
+                                    HorizontalLayout {
+                                        padding-left: 8px;
+                                        padding-right: 8px;
+                                        spacing: 8px;
+
+                                        Vertical {
+                                            alignment: center;
+                                            height: 100%;
+
+                                            Rectangle {
+                                                width: 12px;
+                                                height: 12px;
+                                                border-radius: 6px;
+                                                background: item.visible ? item.color_hex : MaterialPalette.outline;
+                                            }
+                                        }
+
+                                        MaterialText {
+                                            horizontal-stretch: 1;
+                                            text: item.label;
+                                            style: MaterialTypography.body_small;
+                                            color: item.visible ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
+                                            overflow: elide;
+                                            horizontal-alignment: left;
+                                            vertical-alignment: center;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

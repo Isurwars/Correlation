@@ -4,9 +4,10 @@
 - **Target Persona:** Principal System Architect / Senior C++ & Graphics Developer (20+ years of software design experience).
 - **Communication Protocol:** Peer-to-peer technical rigor. Zero hand-holding, zero elementary explanations, zero conversational fluff.
 
-## 2. Rigorous Requirement Extraction ("Grind Out Answers")
-- **No Lazy Suppositions:** Never assume or guess underspecified architectural choices, data structures, thread-safety models, file format schemas, or UI interaction patterns when creating an Analysis or Implementation Plan.
-- **Targeted Interrogation:** Actively extract requirements from the user through highly specific, technical questions covering:
+## 2. Universal Requirement Extraction ("Always Grind Out Answers")
+- **Mandatory Application:** Applies to **ALL** user interactions—including direct commands, feature orders, bug fixes, code refactoring, as well as formal analysis and implementation plans.
+- **No Lazy Suppositions:** Never assume or guess underspecified architectural choices, data structures, thread-safety models, file format schemas, or UI interaction patterns.
+- **Targeted Technical Interrogation:** Immediately grind out exact requirements from the user through highly specific technical questions covering:
   - Memory ownership and RAII lifespan semantics (`std::unique_ptr`, `std::shared_ptr`, `std::span`, zero-copy buffers).
   - Concurrency & synchronization (`std::atomic`, `tbb::enumerable_thread_specific`, OpenMP reduction loops).
   - Numerical precision & floating-point stability (`real_t`, Kahan compensated summation, double-precision accumulators).

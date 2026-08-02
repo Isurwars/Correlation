@@ -43,6 +43,16 @@ template <typename T> T safe_parse(const slint::SharedString &str, T default_val
     return default_value;
   }
 }
+
+slint::Color parseHexColor(const std::string &hex) {
+  if (hex.size() == 7 && hex[0] == '#') {
+    auto red = static_cast<uint8_t>(std::stoul(hex.substr(1, 2), nullptr, 16));
+    auto green = static_cast<uint8_t>(std::stoul(hex.substr(3, 2), nullptr, 16));
+    auto blue = static_cast<uint8_t>(std::stoul(hex.substr(5, 2), nullptr, 16));
+    return slint::Color::from_rgb_uint8(red, green, blue);
+  }
+  return slint::Color::from_rgb_uint8(128, 128, 128);
+}
 } // namespace
 
 PlotController::PlotController(::AppWindow &window, AppBackend &backend) : window_(window), backend_(backend) {
@@ -63,9 +73,7 @@ void PlotController::handlePlotResized(PlotSize size) {
   last_plot_height_ = size.height;
   int current_idx = window_.get_selected_plot_index();
   if (current_idx >= 0) {
-    slint::invoke_from_event_loop([this, current_idx] {
-      requestPlotUpdate(current_idx, true);
-    });
+    slint::invoke_from_event_loop([this, current_idx] { requestPlotUpdate(current_idx, true); });
   }
 }
 
@@ -228,6 +236,7 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
   }
 
   updateTableData(hist);
+  updateCurveToggleItems(hist);
 
   if (immediate) {
     needs_redraw_ = true;
@@ -263,12 +272,14 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
   data.config = config;
   data.hover = hover;
   data.ashcroft_weights = backend_.getAshcroftWeights();
+  data.curve_visibility = curve_visibility_map_;
 
   data.comparison_hists.push_back({.label = "Current", .hist = &data.active_hist});
   for (const auto &pinned_run : pinned_runs_) {
     auto hist_it = pinned_run.histograms.find(name);
     if (hist_it != pinned_run.histograms.end()) {
-      data.comparison_hists.push_back({.label = pinned_run.label, .hist = &hist_it->second});
+      bool vis = curve_visibility_map_.contains(pinned_run.label) ? curve_visibility_map_[pinned_run.label] : true;
+      data.comparison_hists.push_back({.label = pinned_run.label, .hist = &hist_it->second, .style = {.visible = vis}});
     }
   }
 
@@ -333,6 +344,78 @@ void PlotController::updateTableData(const correlation::analysis::Histogram *his
   window_.set_table_rows(slint_rows);
 }
 
+void PlotController::updateCurveToggleItems(const correlation::analysis::Histogram *hist) {
+  auto toggle_model = std::make_shared<slint::VectorModel<CurveToggleItem>>();
+  current_toggle_keys_.clear();
+
+  const auto &partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
+
+  int curve_id = 0;
+  if (partials.contains("Total")) {
+    bool vis = curve_visibility_map_.contains("Total") ? curve_visibility_map_["Total"] : true;
+    curve_visibility_map_["Total"] = vis;
+    current_toggle_keys_.push_back("Total");
+    toggle_model->push_back(CurveToggleItem{
+        .id = curve_id++,
+        .label = slint::SharedString("Total"),
+        .color_hex = parseHexColor("#E69F00"),
+        .visible = vis,
+        .is_partial = false,
+        .is_pinned = false,
+    });
+  }
+
+  auto ashcroft_weights = backend_.getAshcroftWeights();
+  std::vector<std::pair<std::string, real_t>> weighted_partials;
+  for (const auto &pair : partials) {
+    if (pair.first == "Total") {
+      continue;
+    }
+    real_t weight = ashcroft_weights.contains(pair.first) ? ashcroft_weights.at(pair.first) : static_cast<real_t>(0.5);
+    weighted_partials.emplace_back(pair.first, weight);
+  }
+  std::sort(weighted_partials.begin(), weighted_partials.end(),
+            [](const auto &lhs, const auto &rhs) { return lhs.second > rhs.second; });
+
+  std::size_t rank = 0;
+  for (const auto &[p_key, weight] : weighted_partials) {
+    bool default_vis = (rank < 7);
+    bool vis = curve_visibility_map_.contains(p_key) ? curve_visibility_map_[p_key] : default_vis;
+    curve_visibility_map_[p_key] = vis;
+    std::string color_hex =
+        correlation::plotters::detail::color(curve_id, correlation::plotters::PlotConfig::Palette::OkabeIto);
+    current_toggle_keys_.push_back(p_key);
+    toggle_model->push_back(CurveToggleItem{
+        .id = curve_id++,
+        .label = slint::SharedString(p_key),
+        .color_hex = parseHexColor(color_hex),
+        .visible = vis,
+        .is_partial = true,
+        .is_pinned = false,
+    });
+    rank++;
+  }
+
+  for (std::size_t i = 0; i < pinned_runs_.size(); ++i) {
+    std::string pin_label = pinned_runs_[i].label;
+    bool vis = curve_visibility_map_.contains(pin_label) ? curve_visibility_map_[pin_label] : true;
+    curve_visibility_map_[pin_label] = vis;
+    std::string color_hex =
+        correlation::plotters::detail::color(curve_id, correlation::plotters::PlotConfig::Palette::OkabeIto);
+    current_toggle_keys_.push_back(pin_label);
+    toggle_model->push_back(CurveToggleItem{
+        .id = curve_id++,
+        .label = slint::SharedString(pin_label),
+        .color_hex = parseHexColor(color_hex),
+        .visible = vis,
+        .is_partial = false,
+        .is_pinned = true,
+    });
+  }
+
+  window_.set_curve_toggle_items(toggle_model);
+}
+
 bool PlotController::isPlotCacheHit(int index, const correlation::plotters::PlotConfig &config,
                                     const correlation::plotters::HoverInfo &hover) const {
   return (index == last_rendered_index_ && pinned_runs_.size() == last_pinned_runs_count_ &&
@@ -353,8 +436,8 @@ void PlotController::executePlotRender(RenderTaskData data) {
     data.config.show_difference_curve = show_difference_curve_;
     std::string svg;
     if (data.comparison_hists.size() <= 1) {
-      svg =
-          correlation::plotters::renderHistogramAsSvg(data.active_hist, data.config, data.hover, data.ashcroft_weights);
+      svg = correlation::plotters::renderHistogramAsSvg(data.active_hist, data.config, data.hover,
+                                                        data.ashcroft_weights, data.curve_visibility);
     } else {
       std::string key = "Total";
       const auto &partials =
@@ -534,9 +617,23 @@ void PlotController::handleClearPinnedRuns() {
   });
 }
 
-void PlotController::handleToggleCurveVisibility(int id, bool visible) {
-  (void)id;
-  (void)visible;
+void PlotController::handleToggleCurveVisibility(int curve_id, bool visible) {
+  if (curve_id >= 0 && curve_id < static_cast<int>(current_toggle_keys_.size())) {
+    const std::string &key = current_toggle_keys_[curve_id];
+    curve_visibility_map_[key] = visible;
+  }
+  slint::invoke_from_event_loop([this]() {
+    int current_idx = window_.get_selected_plot_index();
+    if (current_idx >= 0) {
+      requestPlotUpdate(current_idx, true);
+    }
+  });
+}
+
+void PlotController::handleToggleAllCurves(bool visible) {
+  for (const auto &key : current_toggle_keys_) {
+    curve_visibility_map_[key] = visible;
+  }
   slint::invoke_from_event_loop([this]() {
     int current_idx = window_.get_selected_plot_index();
     if (current_idx >= 0) {

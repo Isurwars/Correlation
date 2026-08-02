@@ -206,19 +206,24 @@ export component AppWindow inherits Window {
     in property <string> relaxation_time: "";
     in property <string> deborah_number: "";
 
-    // ============================================================================
+    in property <[ComparisonCurveData]> comparison_curves: [];
+    in property <bool> show_difference: false;
+
     // Callbacks (Bound to AppController.cpp)
-    // ============================================================================
     callback browse_file();
     callback run_analysis();
     callback cancel_analysis();
     callback write_files();
     callback select_plot(int);
     callback toggle_curve_visibility(int, bool);
+    callback toggle_all_curves(bool);
     callback toggle_calculator(string, bool);
     callback save_plot();
     callback pin_run();
     callback clear_pinned_runs();
+    callback import_comparison_file();
+    callback remove_comparison_curve(int);
+    callback toggle_difference_plot(bool);
     callback validate_inputs();
     callback mouse_move(length, length, bool, length, length);
     callback plot_resized(length, length);
@@ -460,6 +465,13 @@ export component AppWindow inherits Window {
                 export_font_scale_error: root.export_font_scale_error;
                 export_line_width_error: root.export_line_width_error;
 
+                comparison_curves: root.comparison_curves;
+                show_difference: root.show_difference;
+                pin_current_run => { root.pin_run(); }
+                import_comparison_file => { root.import_comparison_file(); }
+                remove_comparison_curve(id) => { root.remove_comparison_curve(id); }
+                toggle_difference_plot(show) => { root.toggle_difference_plot(show); }
+
                 load_preset(idx) => { root.load_preset(idx); }
                 save_preset(name) => { root.save_preset(name); }
                 delete_preset(idx) => { root.delete_preset(idx); }
@@ -496,6 +508,9 @@ export component AppWindow inherits Window {
                         }
                         toggle_curve_visibility(id, vis) => {
                             root.toggle_curve_visibility(id, vis);
+                        }
+                        toggle_all_curves(vis) => {
+                            root.toggle_all_curves(vis);
                         }
                         save_plot => {
                             root.save_plot();
