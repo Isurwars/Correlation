@@ -480,8 +480,8 @@
     "semantic_hash": ""
   },
   "src/app/PlotController.cpp": {
-    "mtime": 1785731694.0302734,
-    "ast_hash": "e86d255d6b53ea3858b28e746456b977",
+    "mtime": 1785732282.5262961,
+    "ast_hash": "c0f24eb3e3439a7d105a845cd8094a87",
     "semantic_hash": ""
   },
   "src/app/PresetController.cpp": {
@@ -1720,8 +1720,8 @@
     "semantic_hash": ""
   },
   "include/plotters/PlotTypes.hpp": {
-    "mtime": 1785731639.108219,
-    "ast_hash": "1ec05687773075273f759b595c24b36e",
+    "mtime": 1785733869.3403254,
+    "ast_hash": "3ebf560e6f85633ad73009da8d23fc25",
     "semantic_hash": ""
   },
   "include/plotters/SvgComparisonRenderer.hpp": {
@@ -1730,8 +1730,8 @@
     "semantic_hash": ""
   },
   "include/plotters/SvgHistogramRenderer.hpp": {
-    "mtime": 1785731675.5255914,
-    "ast_hash": "c3dd7455be71bcbd83347a6a8aa1770f",
+    "mtime": 1785732288.4551966,
+    "ast_hash": "151cfd44e4d37e116aaca7da5ec94e7e",
     "semantic_hash": ""
   },
   "tests/unit/math/Matrix3Tests.cpp": {

@@ -17,6 +17,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <format>
+#include <span>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -127,10 +128,10 @@ enum class TextAnchor : std::uint8_t {
  * @brief Custom rendering style for individual comparison curves.
  */
 struct CurveStyle {
-  std::string color_hex;      ///< Custom hex color string (e.g. "#E63946"). Empty uses default palette.
-  float stroke_width = 2.0f;  ///< Stroke line thickness in px.
-  int dash_style = 0;         ///< Dash pattern style (0: Solid, 1: Dashed, 2: Dotted).
-  bool visible = true;        ///< Visibility toggle flag.
+  std::string color_hex;     ///< Custom hex color string (e.g. "#E63946"). Empty uses default palette.
+  float stroke_width = 2.0F; ///< Stroke line thickness in px.
+  int dash_style = 0;        ///< Dash pattern style (0: Solid, 1: Dashed, 2: Dotted).
+  bool visible = true;       ///< Visibility toggle flag.
 };
 
 /**
@@ -146,29 +147,30 @@ struct LabeledHistogram {
 /**
  * @brief Samples a 1D dataset y(x) at point x using linear interpolation with boundary clamping to [x_min, x_max].
  */
-inline real_t sampleHistogramClamped(const std::vector<real_t> &x_bins, const std::vector<real_t> &y_vals, real_t x) {
+inline real_t sampleHistogramClamped(const std::vector<real_t> &x_bins, const std::vector<real_t> &y_vals,
+                                     real_t x_val) {
   if (x_bins.empty() || y_vals.empty()) {
     return static_cast<real_t>(0.0);
   }
-  if (x <= x_bins.front()) {
+  if (x_val <= x_bins.front()) {
     return y_vals.front();
   }
-  if (x >= x_bins.back()) {
+  if (x_val >= x_bins.back()) {
     return y_vals.back();
   }
-  auto it = std::lower_bound(x_bins.begin(), x_bins.end(), x);
-  std::size_t idx = std::distance(x_bins.begin(), it);
+  auto it_idx = std::lower_bound(x_bins.begin(), x_bins.end(), x_val);
+  std::size_t idx = std::distance(x_bins.begin(), it_idx);
   if (idx == 0) {
     return y_vals[0];
   }
-  real_t x0 = x_bins[idx - 1];
-  real_t x1 = x_bins[idx];
-  real_t y0 = y_vals[idx - 1];
-  real_t y1 = y_vals[idx];
-  if (std::abs(x1 - x0) < static_cast<real_t>(1e-12)) {
-    return y0;
+  real_t x_0 = x_bins[idx - 1];
+  real_t x_1 = x_bins[idx];
+  real_t y_0 = y_vals[idx - 1];
+  real_t y_1 = y_vals[idx];
+  if (std::abs(x_1 - x_0) < static_cast<real_t>(1e-12)) {
+    return y_0;
   }
-  return y0 + (x - x0) / (x1 - x0) * (y1 - y0);
+  return y_0 + (x_val - x_0) / (x_1 - x_0) * (y_1 - y_0);
 }
 
 /**
@@ -225,84 +227,90 @@ struct ColorStop {
   uint8_t r, g, b;
 };
 
-inline std::string interpolateColorStops(float t, std::span<const ColorStop> stops) {
+inline std::string interpolateColorStops(float position, std::span<const ColorStop> stops) {
   if (stops.empty()) {
     return "#000000";
   }
-  if (t <= stops.front().t) {
-    return std::format("#{:02X}{:02X}{:02X}", stops.front().r, stops.front().g, stops.front().b);
+  if (position <= stops.front().t) {
+    return std::format("#{:02X}{:02X}{:02X}", static_cast<unsigned int>(stops.front().r),
+                       static_cast<unsigned int>(stops.front().g), static_cast<unsigned int>(stops.front().b));
   }
-  if (t >= stops.back().t) {
-    return std::format("#{:02X}{:02X}{:02X}", stops.back().r, stops.back().g, stops.back().b);
+  if (position >= stops.back().t) {
+    return std::format("#{:02X}{:02X}{:02X}", static_cast<unsigned int>(stops.back().r),
+                       static_cast<unsigned int>(stops.back().g), static_cast<unsigned int>(stops.back().b));
   }
   for (std::size_t i = 0; i < stops.size() - 1; ++i) {
-    if (t >= stops[i].t && t <= stops[i + 1].t) {
-      float factor = (t - stops[i].t) / (stops[i + 1].t - stops[i].t);
-      auto r = static_cast<uint8_t>(std::round(stops[i].r + factor * (stops[i + 1].r - stops[i].r)));
-      auto g = static_cast<uint8_t>(std::round(stops[i].g + factor * (stops[i + 1].g - stops[i].g)));
-      auto b = static_cast<uint8_t>(std::round(stops[i].b + factor * (stops[i + 1].b - stops[i].b)));
-      return std::format("#{:02X}{:02X}{:02X}", r, g, b);
+    if (position >= stops[i].t && position <= stops[i + 1].t) {
+      float factor = (position - stops[i].t) / (stops[i + 1].t - stops[i].t);
+      auto red = static_cast<unsigned int>(
+          std::round(std::lerp(static_cast<float>(stops[i].r), static_cast<float>(stops[i + 1].r), factor)));
+      auto green = static_cast<unsigned int>(
+          std::round(std::lerp(static_cast<float>(stops[i].g), static_cast<float>(stops[i + 1].g), factor)));
+      auto blue = static_cast<unsigned int>(
+          std::round(std::lerp(static_cast<float>(stops[i].b), static_cast<float>(stops[i + 1].b), factor)));
+      return std::format("#{:02X}{:02X}{:02X}", red, green, blue);
     }
   }
-  return std::format("#{:02X}{:02X}{:02X}", stops.back().r, stops.back().g, stops.back().b);
+  return std::format("#{:02X}{:02X}{:02X}", static_cast<unsigned int>(stops.back().r),
+                     static_cast<unsigned int>(stops.back().g), static_cast<unsigned int>(stops.back().b));
 }
 
-inline std::string sampleContinuousColormap(float t, PlotConfig::Palette pal) {
+inline std::string sampleContinuousColormap(float position, PlotConfig::Palette pal) {
   switch (pal) {
   case PlotConfig::Palette::Magma: {
-    constexpr std::array<ColorStop, 5> kMagmaStops = {{{0.00f, 0, 0, 4},
-                                                        {0.25f, 81, 18, 124},
-                                                        {0.50f, 183, 55, 121},
-                                                        {0.75f, 252, 137, 97},
-                                                        {1.00f, 252, 253, 191}}};
-    return interpolateColorStops(t, kMagmaStops);
+    constexpr std::array<ColorStop, 5> kMagmaStops = {{{.t = 0.00F, .r = 0, .g = 0, .b = 4},
+                                                       {.t = 0.25F, .r = 81, .g = 18, .b = 124},
+                                                       {.t = 0.50F, .r = 183, .g = 55, .b = 121},
+                                                       {.t = 0.75F, .r = 252, .g = 137, .b = 97},
+                                                       {.t = 1.00F, .r = 252, .g = 253, .b = 191}}};
+    return interpolateColorStops(position, kMagmaStops);
   }
   case PlotConfig::Palette::Heatmap: {
-    constexpr std::array<ColorStop, 4> kHeatmapStops = {{{0.00f, 0, 0, 0},
-                                                          {0.33f, 255, 0, 0},
-                                                          {0.66f, 255, 255, 0},
-                                                          {1.00f, 255, 255, 255}}};
-    return interpolateColorStops(t, kHeatmapStops);
+    constexpr std::array<ColorStop, 4> kHeatmapStops = {{{.t = 0.00F, .r = 0, .g = 0, .b = 0},
+                                                         {.t = 0.33F, .r = 255, .g = 0, .b = 0},
+                                                         {.t = 0.66F, .r = 255, .g = 255, .b = 0},
+                                                         {.t = 1.00F, .r = 255, .g = 255, .b = 255}}};
+    return interpolateColorStops(position, kHeatmapStops);
   }
   case PlotConfig::Palette::Rainbow: {
-    constexpr std::array<ColorStop, 5> kRainbowStops = {{{0.00f, 0, 0, 255},
-                                                          {0.25f, 0, 255, 255},
-                                                          {0.50f, 0, 255, 0},
-                                                          {0.75f, 255, 255, 0},
-                                                          {1.00f, 255, 0, 0}}};
-    return interpolateColorStops(t, kRainbowStops);
+    constexpr std::array<ColorStop, 5> kRainbowStops = {{{.t = 0.00F, .r = 0, .g = 0, .b = 255},
+                                                         {.t = 0.25F, .r = 0, .g = 255, .b = 255},
+                                                         {.t = 0.50F, .r = 0, .g = 255, .b = 0},
+                                                         {.t = 0.75F, .r = 255, .g = 255, .b = 0},
+                                                         {.t = 1.00F, .r = 255, .g = 0, .b = 0}}};
+    return interpolateColorStops(position, kRainbowStops);
   }
   case PlotConfig::Palette::Turbo: {
-    constexpr std::array<ColorStop, 5> kTurboStops = {{{0.00f, 48, 18, 59},
-                                                        {0.25f, 26, 228, 182},
-                                                        {0.50f, 162, 252, 60},
-                                                        {0.75f, 251, 128, 34},
-                                                        {1.00f, 122, 4, 3}}};
-    return interpolateColorStops(t, kTurboStops);
+    constexpr std::array<ColorStop, 5> kTurboStops = {{{.t = 0.00F, .r = 48, .g = 18, .b = 59},
+                                                       {.t = 0.25F, .r = 26, .g = 228, .b = 182},
+                                                       {.t = 0.50F, .r = 162, .g = 252, .b = 60},
+                                                       {.t = 0.75F, .r = 251, .g = 128, .b = 34},
+                                                       {.t = 1.00F, .r = 122, .g = 4, .b = 3}}};
+    return interpolateColorStops(position, kTurboStops);
   }
   case PlotConfig::Palette::Plasma: {
-    constexpr std::array<ColorStop, 5> kPlasmaStops = {{{0.00f, 13, 8, 135},
-                                                         {0.25f, 106, 0, 168},
-                                                         {0.50f, 177, 42, 144},
-                                                         {0.75f, 225, 100, 98},
-                                                         {1.00f, 252, 166, 54}}};
-    return interpolateColorStops(t, kPlasmaStops);
+    constexpr std::array<ColorStop, 5> kPlasmaStops = {{{.t = 0.00F, .r = 13, .g = 8, .b = 135},
+                                                        {.t = 0.25F, .r = 106, .g = 0, .b = 168},
+                                                        {.t = 0.50F, .r = 177, .g = 42, .b = 144},
+                                                        {.t = 0.75F, .r = 225, .g = 100, .b = 98},
+                                                        {.t = 1.00F, .r = 252, .g = 166, .b = 54}}};
+    return interpolateColorStops(position, kPlasmaStops);
   }
   case PlotConfig::Palette::Inferno: {
-    constexpr std::array<ColorStop, 5> kInfernoStops = {{{0.00f, 0, 0, 4},
-                                                          {0.25f, 87, 9, 107},
-                                                          {0.50f, 187, 55, 84},
-                                                          {0.75f, 249, 142, 9},
-                                                          {1.00f, 252, 255, 164}}};
-    return interpolateColorStops(t, kInfernoStops);
+    constexpr std::array<ColorStop, 5> kInfernoStops = {{{.t = 0.00F, .r = 0, .g = 0, .b = 4},
+                                                         {.t = 0.25F, .r = 87, .g = 9, .b = 107},
+                                                         {.t = 0.50F, .r = 187, .g = 55, .b = 84},
+                                                         {.t = 0.75F, .r = 249, .g = 142, .b = 9},
+                                                         {.t = 1.00F, .r = 252, .g = 255, .b = 164}}};
+    return interpolateColorStops(position, kInfernoStops);
   }
   case PlotConfig::Palette::Cividis: {
-    constexpr std::array<ColorStop, 5> kCividisStops = {{{0.00f, 0, 32, 81},
-                                                         {0.25f, 58, 71, 108},
-                                                         {0.50f, 107, 112, 116},
-                                                         {0.75f, 161, 156, 114},
-                                                         {1.00f, 254, 254, 98}}};
-    return interpolateColorStops(t, kCividisStops);
+    constexpr std::array<ColorStop, 5> kCividisStops = {{{.t = 0.00F, .r = 0, .g = 32, .b = 81},
+                                                         {.t = 0.25F, .r = 58, .g = 71, .b = 108},
+                                                         {.t = 0.50F, .r = 107, .g = 112, .b = 116},
+                                                         {.t = 0.75F, .r = 161, .g = 156, .b = 114},
+                                                         {.t = 1.00F, .r = 254, .g = 254, .b = 98}}};
+    return interpolateColorStops(position, kCividisStops);
   }
   default:
     return "#000000";
@@ -325,8 +333,8 @@ inline std::string color(std::size_t index, std::size_t total_count, PlotConfig:
   case PlotConfig::Palette::OkabeIto:
     return std::string(kColors.at(index % kColors.size()));
   default: {
-    float t = (total_count <= 1) ? 0.5f : static_cast<float>(index) / static_cast<float>(total_count - 1);
-    return sampleContinuousColormap(t, pal);
+    float position = (total_count <= 1) ? 0.5F : static_cast<float>(index) / static_cast<float>(total_count - 1);
+    return sampleContinuousColormap(position, pal);
   }
   }
 }
@@ -334,9 +342,7 @@ inline std::string color(std::size_t index, std::size_t total_count, PlotConfig:
 /**
  * @brief Legacy overload retrieving color with default count.
  */
-inline std::string color(std::size_t index, PlotConfig::Palette pal) {
-  return color(index, 8, pal);
-}
+inline std::string color(std::size_t index, PlotConfig::Palette pal) { return color(index, 8, pal); }
 
 /**
  * @brief Maps a value from data space to SVG coordinate space.

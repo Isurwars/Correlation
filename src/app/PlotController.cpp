@@ -388,19 +388,15 @@ void PlotController::updateCurveToggleItems(const correlation::analysis::Histogr
   const auto &partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
   correlation::plotters::PlotConfig active_config = buildPlotConfigFromUI();
 
-  auto ashcroft_weights = backend_.getAshcroftWeights();
-  std::vector<std::pair<std::string, real_t>> weighted_partials;
+  std::vector<std::string> sorted_partial_keys;
   for (const auto &pair : partials) {
-    if (pair.first == "Total") {
-      continue;
+    if (pair.first != "Total") {
+      sorted_partial_keys.push_back(pair.first);
     }
-    real_t weight = ashcroft_weights.contains(pair.first) ? ashcroft_weights.at(pair.first) : static_cast<real_t>(0.5);
-    weighted_partials.emplace_back(pair.first, weight);
   }
-  std::sort(weighted_partials.begin(), weighted_partials.end(),
-            [](const auto &lhs, const auto &rhs) { return lhs.second > rhs.second; });
+  std::sort(sorted_partial_keys.begin(), sorted_partial_keys.end());
 
-  std::size_t total_curves = (partials.contains("Total") ? 1 : 0) + weighted_partials.size() + pinned_runs_.size();
+  std::size_t total_curves = (partials.contains("Total") ? 1 : 0) + sorted_partial_keys.size() + pinned_runs_.size();
 
   int curve_id = 0;
   std::size_t color_idx = 0;
@@ -428,7 +424,7 @@ void PlotController::updateCurveToggleItems(const correlation::analysis::Histogr
   }
 
   std::size_t rank = 0;
-  for (const auto &[p_key, weight] : weighted_partials) {
+  for (const auto &p_key : sorted_partial_keys) {
     bool default_vis = (rank < 7);
     bool vis = curve_visibility_map_.contains(p_key) ? curve_visibility_map_[p_key] : default_vis;
     curve_visibility_map_[p_key] = vis;
@@ -480,6 +476,9 @@ bool PlotController::isPlotCacheHit(int index, const correlation::plotters::Plot
 }
 
 void PlotController::executePlotRender(RenderTaskData data) {
+  if (render_thread_.joinable()) {
+    render_thread_.join();
+  }
   render_thread_ = std::thread([this, data = std::move(data)]() mutable {
     data.config.show_difference_curve = show_difference_curve_;
     std::string svg;

@@ -136,6 +136,9 @@ struct SvgHistogramRenderer {
       candidates.emplace_back(key, calculateScore(key, value));
     }
 
+    std::sort(candidates.begin(), candidates.end(),
+              [](const auto &lhs, const auto &rhs) { return lhs.first < rhs.first; });
+
     bool has_custom_vis = curve_visibility != nullptr && !curve_visibility->empty();
     std::size_t limit = has_custom_vis ? candidates.size() : std::min(candidates.size(), std::size_t(10));
     for (std::size_t i = 0; i < limit; ++i) {
@@ -207,9 +210,9 @@ struct SvgHistogramRenderer {
 
   [[nodiscard]] std::string getColorForKey(const std::string &key, std::size_t color_idx) const {
     if (custom_colors != nullptr) {
-      auto it = custom_colors->find(key);
-      if (it != custom_colors->end() && !it->second.empty()) {
-        return it->second;
+      auto itx = custom_colors->find(key);
+      if (itx != custom_colors->end() && !itx->second.empty()) {
+        return itx->second;
       }
     }
     return color(color_idx, partials.size(), config->palette);

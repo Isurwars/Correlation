@@ -304,5 +304,10 @@
   "302": "hipGetDeviceCount",
   "303": "PlotController::PlotController",
   "304": "CliParser.hpp",
-  "307": "VDOSParams"
+  "305": "TEST_F",
+  "306": "LocalEntropyParams",
+  "307": "VDOSParams",
+  "308": "CSVWriter.cpp",
+  "309": "BinningConfig",
+  "310": "pdf_destroy"
 }
