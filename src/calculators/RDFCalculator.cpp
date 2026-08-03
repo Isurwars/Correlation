@@ -245,7 +245,7 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
   G_r.x_unit = "Å";
   G_r.y_unit = "Å⁻²";
   G_r.description = "Radial Distribution Function";
-  G_r.file_suffix = "_G";
+  G_r.file_suffix = "_G_reduced";
 
   J_r.x_label = "r";
   J_r.title = "J(r) — Reduced Pair Distribution";

@@ -1918,5 +1918,10 @@
     "mtime": 1785731583.036188,
     "ast_hash": "51eadbad6cc598064e60c9f4f4a15763",
     "semantic_hash": ""
+  },
+  "CHANGELOG.md": {
+    "mtime": 1785777967.2005906,
+    "ast_hash": "1a65f7f6182c90de572ac443e0c18503",
+    "semantic_hash": ""
   }
 }

@@ -60,7 +60,7 @@ protected:
     // Clean up all generated files.
     std::vector<std::string> const files_to_remove = {"test_si_g.csv",
                                                       "test_si_J.csv",
-                                                      "test_si_G.csv",
+                                                      "test_si_G_reduced.csv",
                                                       "test_si_PAD.csv",
                                                       "test_si_DAD.csv",
                                                       "test_si_RD.csv",
@@ -69,7 +69,7 @@ protected:
                                                       "test_si_CN.csv",
                                                       "test_si_g_smoothed.csv",
                                                       "test_si_J_smoothed.csv",
-                                                      "test_si_G_smoothed.csv",
+                                                      "test_si_G_reduced_smoothed.csv",
                                                       "test_si_PAD_smoothed.csv",
                                                       "test_si.h5",
                                                       "test_vacf.h5",
@@ -83,7 +83,7 @@ protected:
                                                       "test_vacf_vdos_VDOS.csv",
                                                       "test_si_g.parquet",
                                                       "test_si_J.parquet",
-                                                      "test_si_G.parquet",
+                                                      "test_si_G_reduced.parquet",
                                                       "test_si_PAD.parquet",
                                                       "test_si_summary.txt",
                                                       "test_vacf_new_summary.txt",
@@ -161,7 +161,7 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   // Assert: Part 3 - Check that all expected files were created
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_g.csv"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_J.csv"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_G.csv"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_G_reduced.csv"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD.csv"));
 }
 
@@ -395,7 +395,7 @@ TEST_F(FileWriterTests, WritesParquetFiles) {
   // Assert
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_g.parquet"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_J.parquet"));
-  EXPECT_FALSE(fileExistsAndIsNotEmpty("test_si_G_reduced.parquet"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_G_reduced.parquet"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD.parquet"));
   EXPECT_FALSE(fileExistsAndIsNotEmpty("test_si_S.parquet"));
 }

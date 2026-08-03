@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.8.5] - 2026-08-03
+
+### Fixed
+- **Reduced PDF Export Filename Suffix**: Updated reduced Pair Distribution Function $G(r)$ file export suffix from `_G` to `_G_reduced` to prevent Windows case-insensitive path collisions with $g(r)$ (`_g`) on NTFS/FAT filesystems (`_g.csv` vs `_G_reduced.csv` / `_g.parquet` vs `_G_reduced.parquet`).
+
+### Added & Refactored
+- **UI & Visualization Updates**: Implemented UI-driven curve visibility toggling, PNG plotter support, and consolidated plotter controller logic.
+- **GPU Acceleration**: Implemented SYCL-accelerated bond angle and XRD calculators with corresponding GPU wrappers and unit tests.
+- **Build & CI Automation**: Updated TBB library binary filtering during wheel repair and refactored wheel build workflows for per-architecture matrix configurations.
+
 ## [3.8.0] - 2026-07-29
 
 ### Added
