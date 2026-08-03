@@ -28,7 +28,7 @@ graph TD
     D --> D1["Completed: Modular Readers & Fuzz Testing"]:::completed
     D --> D2["Planned: ORCA, GPAW, ABINIT, DFTB+"]:::planned
 
-    E --> E1["Completed: cibuildwheel PyPI Pipeline & repair_wheel.py"]:::completed
+    E --> E1["Planned (4.0.0): cibuildwheel PyPI Pipeline & repair_wheel.py"]:::planned
     E --> E2["Planned: Zero-Copy ASE & Pymatgen Python Interop"]:::planned
 
     F --> F1["Completed: Redesigned Slint GUI, Native PDF & Noto Vector Font"]:::completed
@@ -125,8 +125,8 @@ We aim to support the most widely used material simulation software packages by 
 
 Python bindings make `Correlation` scriptable. In the lead-up to 4.0.0, focus centers on seamless interoperability with the materials science Python ecosystem.
 
-### 4.1 PyPI Automated Release Pipelines (Delivered in 3.6.0 & 3.7.0)
-* **Status:** Delivered.
+### 4.1 PyPI Automated Release Pipelines (Deferred to 4.0.0)
+* **Status:** Deferred to 4.0.0.
 * **Implementation:** GitHub Actions workflow utilizing `cibuildwheel` and `repair_wheel.py` to distribute pre-compiled binary wheels with vendored oneTBB dependencies across Linux, macOS, and Windows.
 
 ### 4.2 Materials Science Library Integrations (Planned for 3.8.0)
@@ -178,11 +178,11 @@ To prevent floating-point drift, cancellations, and rounding accumulation in lar
 
 | Milestone / Version | Target Date | Focus Area | Key Deliverables |
 | :--- | :--- | :--- | :--- |
-| **v3.6.0** | **Completed (Jul 2026)** | **UI Refactoring & PyPI** | • Slint `TabItem` & `OptionsCard` components<br>• Vector Greek font glyph rendering<br>• Automated PyPI wheel CI/CD |
+| **v3.6.0** | **Completed (Jul 2026)** | **UI Refactoring & Core** | • Slint `TabItem` & `OptionsCard` components<br>• Vector Greek font glyph rendering |
 | **v3.7.0** | **Completed (Jul 2026)** | **Multi-Vendor GPU & Precision** | • SYCL/oneAPI & CUDA/HIP GPU acceleration<br>• Configurable `real_t` single-precision path<br>• `MLIPCalculator` interface & SIMD vectorization |
 | **v3.8.0** | **Q4 2026** | **ML Potentials & Readers** | • Native C++ SOAP descriptors<br>• MACE, CHGNet, GAP trajectory parsers<br>• ORCA, GPAW, ABINIT, and DFTB+ readers<br>• Zero-copy ASE & Pymatgen Python bindings |
 | **v3.9.0** | **Q1 2027** | **GUI Comparison & Precision** | • Slint GUI multi-curve overlay & difference plots<br>• Structural-Electronic property correlation<br>• Double-precision MSD accumulation & Kahan XRD summation |
-| **v4.0.0** | **Q2 2027** | **WASM Web App & GPU Binning** | • Client-side WASM web application (GitHub Pages)<br>• GPU-accelerated RDF binning & XRD<br>• Real-time IPC trajectory streaming<br>• Stable 4.0.0 API freeze |
+| **v4.0.0** | **Q2 2027** | **WASM Web App, GPU & PyPI** | • Client-side WASM web application (GitHub Pages)<br>• GPU-accelerated RDF binning & XRD<br>• Automated PyPI wheel CI/CD pipeline<br>• Real-time IPC trajectory streaming<br>• Stable 4.0.0 API freeze |
 
 ---
 
