@@ -89,7 +89,14 @@ export component ExportSettingsCard inherits FilledCard {
     property <[MenuItem]> palette_items: [
         { text: "Okabe-Ito (Colorblind)", enabled: true },
         { text: "Grayscale (B&W)", enabled: true },
-        { text: "Viridis", enabled: true }
+        { text: "Viridis", enabled: true },
+        { text: "Magma (Continuous)", enabled: true },
+        { text: "Heatmap (Continuous)", enabled: true },
+        { text: "Rainbow (Continuous)", enabled: true },
+        { text: "Turbo (Continuous)", enabled: true },
+        { text: "Plasma (Continuous)", enabled: true },
+        { text: "Inferno (Continuous)", enabled: true },
+        { text: "Cividis (Continuous)", enabled: true }
     ];
 
     Vertical {
@@ -105,7 +112,8 @@ export component ExportSettingsCard inherits FilledCard {
             padding: MaterialStyleMetrics.spacing_4;
             spacing: MaterialStyleMetrics.spacing_12;
 
-            size_area := TouchArea {
+            Rectangle {
+                size_area := TouchArea {}
                 DropDownMenu {
                     width: 100%;
                     label: "Preset Size";
@@ -115,7 +123,8 @@ export component ExportSettingsCard inherits FilledCard {
                 }
             }
 
-            palette_area := TouchArea {
+            Rectangle {
+                palette_area := TouchArea {}
                 DropDownMenu {
                     width: 100%;
                     label: "Color Palette";

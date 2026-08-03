@@ -51,7 +51,14 @@ struct PlotConfig {
   enum class Palette : std::uint8_t {
     OkabeIto,  ///< Colorblind-safe palette
     Grayscale, ///< B&W printing friendly
-    Viridis    ///< Perceptually uniform
+    Viridis,   ///< Perceptually uniform
+    Magma,     ///< Sequential dark to bright purple/yellow
+    Heatmap,   ///< Hot thermal gradient (Black-Red-Yellow-White)
+    Rainbow,   ///< Standard Jet/HSV rainbow gradient
+    Turbo,     ///< Google Turbo perceptually smooth rainbow
+    Plasma,    ///< Sequential purple to yellow/orange
+    Inferno,   ///< Sequential dark to bright yellow
+    Cividis    ///< Colorblind-optimized perceptually uniform
   };
   Palette palette = Palette::OkabeIto;
 
@@ -213,21 +220,122 @@ constexpr std::array<std::string_view, 5> kGrayscale = {"#000000", "#404040", "#
 /// Viridis perceptually uniform palette.
 constexpr std::array<std::string_view, 5> kViridis = {"#440154", "#3B528B", "#21908C", "#5DC863", "#FDE725"};
 
+struct ColorStop {
+  float t;
+  uint8_t r, g, b;
+};
+
+inline std::string interpolateColorStops(float t, std::span<const ColorStop> stops) {
+  if (stops.empty()) {
+    return "#000000";
+  }
+  if (t <= stops.front().t) {
+    return std::format("#{:02X}{:02X}{:02X}", stops.front().r, stops.front().g, stops.front().b);
+  }
+  if (t >= stops.back().t) {
+    return std::format("#{:02X}{:02X}{:02X}", stops.back().r, stops.back().g, stops.back().b);
+  }
+  for (std::size_t i = 0; i < stops.size() - 1; ++i) {
+    if (t >= stops[i].t && t <= stops[i + 1].t) {
+      float factor = (t - stops[i].t) / (stops[i + 1].t - stops[i].t);
+      auto r = static_cast<uint8_t>(std::round(stops[i].r + factor * (stops[i + 1].r - stops[i].r)));
+      auto g = static_cast<uint8_t>(std::round(stops[i].g + factor * (stops[i + 1].g - stops[i].g)));
+      auto b = static_cast<uint8_t>(std::round(stops[i].b + factor * (stops[i + 1].b - stops[i].b)));
+      return std::format("#{:02X}{:02X}{:02X}", r, g, b);
+    }
+  }
+  return std::format("#{:02X}{:02X}{:02X}", stops.back().r, stops.back().g, stops.back().b);
+}
+
+inline std::string sampleContinuousColormap(float t, PlotConfig::Palette pal) {
+  switch (pal) {
+  case PlotConfig::Palette::Magma: {
+    constexpr std::array<ColorStop, 5> kMagmaStops = {{{0.00f, 0, 0, 4},
+                                                        {0.25f, 81, 18, 124},
+                                                        {0.50f, 183, 55, 121},
+                                                        {0.75f, 252, 137, 97},
+                                                        {1.00f, 252, 253, 191}}};
+    return interpolateColorStops(t, kMagmaStops);
+  }
+  case PlotConfig::Palette::Heatmap: {
+    constexpr std::array<ColorStop, 4> kHeatmapStops = {{{0.00f, 0, 0, 0},
+                                                          {0.33f, 255, 0, 0},
+                                                          {0.66f, 255, 255, 0},
+                                                          {1.00f, 255, 255, 255}}};
+    return interpolateColorStops(t, kHeatmapStops);
+  }
+  case PlotConfig::Palette::Rainbow: {
+    constexpr std::array<ColorStop, 5> kRainbowStops = {{{0.00f, 0, 0, 255},
+                                                          {0.25f, 0, 255, 255},
+                                                          {0.50f, 0, 255, 0},
+                                                          {0.75f, 255, 255, 0},
+                                                          {1.00f, 255, 0, 0}}};
+    return interpolateColorStops(t, kRainbowStops);
+  }
+  case PlotConfig::Palette::Turbo: {
+    constexpr std::array<ColorStop, 5> kTurboStops = {{{0.00f, 48, 18, 59},
+                                                        {0.25f, 26, 228, 182},
+                                                        {0.50f, 162, 252, 60},
+                                                        {0.75f, 251, 128, 34},
+                                                        {1.00f, 122, 4, 3}}};
+    return interpolateColorStops(t, kTurboStops);
+  }
+  case PlotConfig::Palette::Plasma: {
+    constexpr std::array<ColorStop, 5> kPlasmaStops = {{{0.00f, 13, 8, 135},
+                                                         {0.25f, 106, 0, 168},
+                                                         {0.50f, 177, 42, 144},
+                                                         {0.75f, 225, 100, 98},
+                                                         {1.00f, 252, 166, 54}}};
+    return interpolateColorStops(t, kPlasmaStops);
+  }
+  case PlotConfig::Palette::Inferno: {
+    constexpr std::array<ColorStop, 5> kInfernoStops = {{{0.00f, 0, 0, 4},
+                                                          {0.25f, 87, 9, 107},
+                                                          {0.50f, 187, 55, 84},
+                                                          {0.75f, 249, 142, 9},
+                                                          {1.00f, 252, 255, 164}}};
+    return interpolateColorStops(t, kInfernoStops);
+  }
+  case PlotConfig::Palette::Cividis: {
+    constexpr std::array<ColorStop, 5> kCividisStops = {{{0.00f, 0, 32, 81},
+                                                         {0.25f, 58, 71, 108},
+                                                         {0.50f, 107, 112, 116},
+                                                         {0.75f, 161, 156, 114},
+                                                         {1.00f, 254, 254, 98}}};
+    return interpolateColorStops(t, kCividisStops);
+  }
+  default:
+    return "#000000";
+  }
+}
+
 /**
  * @brief Retrieves a color from the selected palette.
- * @param index Index.
+ * @param index Index of curve.
+ * @param total_count Total count of curves for rank interpolation.
  * @param pal Selected palette.
  * @return Hex color string.
  */
-inline std::string color(std::size_t index, PlotConfig::Palette pal) {
+inline std::string color(std::size_t index, std::size_t total_count, PlotConfig::Palette pal) {
   switch (pal) {
   case PlotConfig::Palette::Grayscale:
     return std::string(kGrayscale.at(index % kGrayscale.size()));
   case PlotConfig::Palette::Viridis:
     return std::string(kViridis.at(index % kViridis.size()));
-  default:
+  case PlotConfig::Palette::OkabeIto:
     return std::string(kColors.at(index % kColors.size()));
+  default: {
+    float t = (total_count <= 1) ? 0.5f : static_cast<float>(index) / static_cast<float>(total_count - 1);
+    return sampleContinuousColormap(t, pal);
   }
+  }
+}
+
+/**
+ * @brief Legacy overload retrieving color with default count.
+ */
+inline std::string color(std::size_t index, PlotConfig::Palette pal) {
+  return color(index, 8, pal);
 }
 
 /**

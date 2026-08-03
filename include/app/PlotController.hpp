@@ -114,6 +114,13 @@ public:
    */
   void handleToggleDifferencePlot(bool show_difference);
 
+  /**
+   * @brief Handles setting a custom color for a curve.
+   * @param[in] curve_id Curve identifier index.
+   * @param[in] color_hex Custom hex color string.
+   */
+  void handleSetCurveColor(int curve_id, const slint::SharedString &color_hex);
+
 private:
   ::AppWindow &window_;
   AppBackend &backend_;
@@ -144,6 +151,7 @@ private:
   std::vector<PinnedRun> pinned_runs_;
 
   std::map<std::string, bool> curve_visibility_map_;
+  std::map<std::string, std::string> custom_curve_colors_;
   std::vector<std::string> current_toggle_keys_;
   bool show_difference_curve_{false};
 

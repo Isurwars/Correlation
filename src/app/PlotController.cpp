@@ -105,12 +105,37 @@ correlation::plotters::PlotConfig PlotController::buildPlotConfigFromUI() {
   }
 
   int palette_val = window_.get_export_config().palette;
-  if (palette_val == 1) {
+  switch (palette_val) {
+  case 1:
     config.palette = correlation::plotters::PlotConfig::Palette::Grayscale;
-  } else if (palette_val == 2) {
+    break;
+  case 2:
     config.palette = correlation::plotters::PlotConfig::Palette::Viridis;
-  } else {
+    break;
+  case 3:
+    config.palette = correlation::plotters::PlotConfig::Palette::Magma;
+    break;
+  case 4:
+    config.palette = correlation::plotters::PlotConfig::Palette::Heatmap;
+    break;
+  case 5:
+    config.palette = correlation::plotters::PlotConfig::Palette::Rainbow;
+    break;
+  case 6:
+    config.palette = correlation::plotters::PlotConfig::Palette::Turbo;
+    break;
+  case 7:
+    config.palette = correlation::plotters::PlotConfig::Palette::Plasma;
+    break;
+  case 8:
+    config.palette = correlation::plotters::PlotConfig::Palette::Inferno;
+    break;
+  case 9:
+    config.palette = correlation::plotters::PlotConfig::Palette::Cividis;
+    break;
+  default:
     config.palette = correlation::plotters::PlotConfig::Palette::OkabeIto;
+    break;
   }
 
   config.font_scale = safe_parse(window_.get_export_config().font_scale, 1.0F);
@@ -344,26 +369,24 @@ void PlotController::updateTableData(const correlation::analysis::Histogram *his
   window_.set_table_rows(slint_rows);
 }
 
+void PlotController::handleSetCurveColor(int curve_id, const slint::SharedString &color_hex) {
+  if (curve_id < 0 || curve_id >= static_cast<int>(current_toggle_keys_.size())) {
+    return;
+  }
+  const std::string &key = current_toggle_keys_[curve_id];
+  custom_curve_colors_[key] = std::string(color_hex.data());
+  int current_idx = window_.get_selected_plot_index();
+  if (current_idx >= 0) {
+    requestPlotUpdate(current_idx, true);
+  }
+}
+
 void PlotController::updateCurveToggleItems(const correlation::analysis::Histogram *hist) {
   auto toggle_model = std::make_shared<slint::VectorModel<CurveToggleItem>>();
   current_toggle_keys_.clear();
 
   const auto &partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
-
-  int curve_id = 0;
-  if (partials.contains("Total")) {
-    bool vis = curve_visibility_map_.contains("Total") ? curve_visibility_map_["Total"] : true;
-    curve_visibility_map_["Total"] = vis;
-    current_toggle_keys_.push_back("Total");
-    toggle_model->push_back(CurveToggleItem{
-        .id = curve_id++,
-        .label = slint::SharedString("Total"),
-        .color_hex = parseHexColor("#E69F00"),
-        .visible = vis,
-        .is_partial = false,
-        .is_pinned = false,
-    });
-  }
+  correlation::plotters::PlotConfig active_config = buildPlotConfigFromUI();
 
   auto ashcroft_weights = backend_.getAshcroftWeights();
   std::vector<std::pair<std::string, real_t>> weighted_partials;
@@ -377,13 +400,39 @@ void PlotController::updateCurveToggleItems(const correlation::analysis::Histogr
   std::sort(weighted_partials.begin(), weighted_partials.end(),
             [](const auto &lhs, const auto &rhs) { return lhs.second > rhs.second; });
 
+  std::size_t total_curves = (partials.contains("Total") ? 1 : 0) + weighted_partials.size() + pinned_runs_.size();
+
+  int curve_id = 0;
+  std::size_t color_idx = 0;
+
+  auto get_hex_for_key = [&](const std::string &key) -> std::string {
+    if (custom_curve_colors_.contains(key) && !custom_curve_colors_[key].empty()) {
+      return custom_curve_colors_[key];
+    }
+    return correlation::plotters::detail::color(color_idx++, total_curves, active_config.palette);
+  };
+
+  if (partials.contains("Total")) {
+    bool vis = curve_visibility_map_.contains("Total") ? curve_visibility_map_["Total"] : true;
+    curve_visibility_map_["Total"] = vis;
+    current_toggle_keys_.push_back("Total");
+    std::string color_hex = get_hex_for_key("Total");
+    toggle_model->push_back(CurveToggleItem{
+        .id = curve_id++,
+        .label = slint::SharedString("Total"),
+        .color_hex = parseHexColor(color_hex),
+        .visible = vis,
+        .is_partial = false,
+        .is_pinned = false,
+    });
+  }
+
   std::size_t rank = 0;
   for (const auto &[p_key, weight] : weighted_partials) {
     bool default_vis = (rank < 7);
     bool vis = curve_visibility_map_.contains(p_key) ? curve_visibility_map_[p_key] : default_vis;
     curve_visibility_map_[p_key] = vis;
-    std::string color_hex =
-        correlation::plotters::detail::color(curve_id, correlation::plotters::PlotConfig::Palette::OkabeIto);
+    std::string color_hex = get_hex_for_key(p_key);
     current_toggle_keys_.push_back(p_key);
     toggle_model->push_back(CurveToggleItem{
         .id = curve_id++,
@@ -400,8 +449,7 @@ void PlotController::updateCurveToggleItems(const correlation::analysis::Histogr
     std::string pin_label = pinned_runs_[i].label;
     bool vis = curve_visibility_map_.contains(pin_label) ? curve_visibility_map_[pin_label] : true;
     curve_visibility_map_[pin_label] = vis;
-    std::string color_hex =
-        correlation::plotters::detail::color(curve_id, correlation::plotters::PlotConfig::Palette::OkabeIto);
+    std::string color_hex = get_hex_for_key(pin_label);
     current_toggle_keys_.push_back(pin_label);
     toggle_model->push_back(CurveToggleItem{
         .id = curve_id++,
@@ -437,7 +485,7 @@ void PlotController::executePlotRender(RenderTaskData data) {
     std::string svg;
     if (data.comparison_hists.size() <= 1) {
       svg = correlation::plotters::renderHistogramAsSvg(data.active_hist, data.config, data.hover,
-                                                        data.ashcroft_weights, data.curve_visibility);
+                                                        data.ashcroft_weights, data.curve_visibility, custom_curve_colors_);
     } else {
       std::string key = "Total";
       const auto &partials =

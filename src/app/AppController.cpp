@@ -96,6 +96,10 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
     plot_controller_->handleToggleAllCurves(visible);
   });
 
+  window_.on_set_curve_color([this](int curve_id, const slint::SharedString &color_hex) {
+    plot_controller_->handleSetCurveColor(curve_id, color_hex);
+  });
+
   // Handle mouse move on preview plot
   window_.on_mouse_move([this](float mouse_x, float mouse_y, bool hover, float width, float height) {
     plot_controller_->handleMouseMove(mouse_x, mouse_y, hover, width, height);

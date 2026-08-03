@@ -50,8 +50,8 @@
     "semantic_hash": ""
   },
   "include/app/PlotController.hpp": {
-    "mtime": 1785652153.9808567,
-    "ast_hash": "05b5f8cfefd6ce01b8cb872abc4aba63",
+    "mtime": 1785731645.5531077,
+    "ast_hash": "8957fc42f888a995b54d2b6a4db10d9a",
     "semantic_hash": ""
   },
   "include/app/PresetController.hpp": {
@@ -465,8 +465,8 @@
     "semantic_hash": ""
   },
   "src/app/AppController.cpp": {
-    "mtime": 1785652158.6677802,
-    "ast_hash": "158251ee6adc1bde108dd5c68f7ed502",
+    "mtime": 1785731698.7971914,
+    "ast_hash": "f31ed52752d96821c8f078b8df1335c1",
     "semantic_hash": ""
   },
   "src/app/FileIOHandler.cpp": {
@@ -480,8 +480,8 @@
     "semantic_hash": ""
   },
   "src/app/PlotController.cpp": {
-    "mtime": 1785652396.1518862,
-    "ast_hash": "7fd738fabe0ef413975155a6f2ba8c03",
+    "mtime": 1785731694.0302734,
+    "ast_hash": "e86d255d6b53ea3858b28e746456b977",
     "semantic_hash": ""
   },
   "src/app/PresetController.cpp": {
@@ -1195,8 +1195,8 @@
     "semantic_hash": "d4bdccb3d0944d2f42d20a4d4e2a031b"
   },
   "tests/unit/plotters/SvgPlotterTests.cpp": {
-    "mtime": 1784868334.8612852,
-    "ast_hash": "3e32f8d60ead846da9114a420078134f",
+    "mtime": 1785731751.3912895,
+    "ast_hash": "933afbce47dc40c10b4df291100c5bf8",
     "semantic_hash": ""
   },
   "tests/unit/readers/ArcReaderTests.cpp": {
@@ -1720,8 +1720,8 @@
     "semantic_hash": ""
   },
   "include/plotters/PlotTypes.hpp": {
-    "mtime": 1785610081.9290376,
-    "ast_hash": "73f4fe58a7099243f0b6820014cb2adf",
+    "mtime": 1785731639.108219,
+    "ast_hash": "1ec05687773075273f759b595c24b36e",
     "semantic_hash": ""
   },
   "include/plotters/SvgComparisonRenderer.hpp": {
@@ -1730,8 +1730,8 @@
     "semantic_hash": ""
   },
   "include/plotters/SvgHistogramRenderer.hpp": {
-    "mtime": 1785652201.623078,
-    "ast_hash": "d7daf1f9c89f1be0a96f8f810b3cbb5b",
+    "mtime": 1785731675.5255914,
+    "ast_hash": "c3dd7455be71bcbd83347a6a8aa1770f",
     "semantic_hash": ""
   },
   "tests/unit/math/Matrix3Tests.cpp": {
@@ -1915,8 +1915,8 @@
     "semantic_hash": ""
   },
   ".agents/skills/always-grind-interrogation/SKILL.md": {
-    "mtime": 1785623671.658415,
-    "ast_hash": "5d5ece66863bea17fbd3157fe565a039",
+    "mtime": 1785731583.036188,
+    "ast_hash": "51eadbad6cc598064e60c9f4f4a15763",
     "semantic_hash": ""
   }
 }

@@ -217,6 +217,7 @@ export component AppWindow inherits Window {
     callback select_plot(int);
     callback toggle_curve_visibility(int, bool);
     callback toggle_all_curves(bool);
+    callback set_curve_color(int, string);
     callback toggle_calculator(string, bool);
     callback save_plot();
     callback pin_run();
@@ -229,6 +230,7 @@ export component AppWindow inherits Window {
     callback plot_resized(length, length);
 
     // Presets callbacks
+    callback export_config_changed();
     callback load_preset(int);
     callback save_preset(string);
     callback delete_preset(int);
@@ -511,6 +513,9 @@ export component AppWindow inherits Window {
                         }
                         toggle_all_curves(vis) => {
                             root.toggle_all_curves(vis);
+                        }
+                        set_curve_color(id, col) => {
+                            root.set_curve_color(id, col);
                         }
                         save_plot => {
                             root.save_plot();

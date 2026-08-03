@@ -169,12 +169,32 @@ TEST(SvgPlotterTests, RendersShadedCurveCorrectly) {
   config.use_native_text = true;
 
   std::string svg = renderHistogramAsSvg(hist, config);
-  std::cout << "--- GENERATED SVG ---\n" << svg << "\n---------------------\n";
   EXPECT_FALSE(svg.empty());
 
   // Verify that linearGradient and polygon elements are in the SVG output
   EXPECT_NE(svg.find("<linearGradient id=\"area-grad-0\""), std::string::npos);
   EXPECT_NE(svg.find("<polygon fill=\"url(#area-grad-0)\""), std::string::npos);
+}
+
+TEST(SvgPlotterTests, RendersContinuousColormapsAndCustomColors) {
+  Histogram hist;
+  hist.title = "Colormap Test";
+  hist.bins = {1.0, 2.0, 3.0};
+  hist.partials["Total"] = {1.0, 2.0, 1.5};
+  hist.partials["O-O"] = {0.5, 0.8, 1.0};
+
+  // Test Magma continuous palette
+  PlotConfig magma_config;
+  magma_config.palette = PlotConfig::Palette::Magma;
+  std::string magma_svg = renderHistogramAsSvg(hist, magma_config);
+  EXPECT_FALSE(magma_svg.empty());
+  EXPECT_NE(magma_svg.find("stroke=\"#"), std::string::npos);
+
+  // Test custom curve color override
+  PlotConfig custom_config;
+  std::map<std::string, std::string> custom_colors = {{"Total", "#FF00FF"}};
+  std::string custom_svg = renderHistogramAsSvg(hist, custom_config, {}, {}, {}, custom_colors);
+  EXPECT_NE(custom_svg.find("stroke=\"#FF00FF\""), std::string::npos);
 }
 
 } // namespace correlation::testing

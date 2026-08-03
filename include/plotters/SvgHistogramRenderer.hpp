@@ -50,6 +50,8 @@ struct SvgHistogramRenderer {
   std::map<std::string, std::vector<real_t>> partials;
   const std::vector<real_t> *xs = nullptr;
 
+  const std::map<std::string, std::string> *custom_colors = nullptr;
+
   detail::NiceScale xScale;
   detail::NiceScale yScale;
 
@@ -57,9 +59,10 @@ struct SvgHistogramRenderer {
 
   SvgHistogramRenderer(const correlation::analysis::Histogram &histogram, const PlotConfig &cfg, const HoverInfo &hov,
                        const std::map<std::string, real_t> &component_weights,
-                       const std::map<std::string, bool> &visibility = {})
+                       const std::map<std::string, bool> &visibility = {},
+                       const std::map<std::string, std::string> &colors = {})
       : hist(&histogram), config(&cfg), hover(&hov), weights(&component_weights), curve_visibility(&visibility),
-        xs(&histogram.bins) {
+        custom_colors(&colors), xs(&histogram.bins) {
     initializeLayoutAndLabels();
     filterPartials();
   }
@@ -202,6 +205,16 @@ struct SvgHistogramRenderer {
         8);
   }
 
+  [[nodiscard]] std::string getColorForKey(const std::string &key, std::size_t color_idx) const {
+    if (custom_colors != nullptr) {
+      auto it = custom_colors->find(key);
+      if (it != custom_colors->end() && !it->second.empty()) {
+        return it->second;
+      }
+    }
+    return color(color_idx, partials.size(), config->palette);
+  }
+
   void writeHeader() {
     svg << std::format("<svg width='{:.0f}' height='{:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {} {}\" "
                        "shape-rendering=\"geometricPrecision\" text-rendering=\"geometricPrecision\">\n",
@@ -213,7 +226,7 @@ struct SvgHistogramRenderer {
 
     std::size_t color_idx = 0;
     for (const auto &[key, value] : partials) {
-      std::string col = color(color_idx, config->palette);
+      std::string col = getColorForKey(key, color_idx);
       std::string grad_id = std::format("area-grad-{}", color_idx);
       svg << std::format("    <linearGradient id=\"{}\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n"
                          "      <stop offset=\"0%\" stop-color=\"{}\" stop-opacity=\"0.35\"/>\n"
@@ -320,7 +333,7 @@ struct SvgHistogramRenderer {
     }
     std::size_t color_idx = 0;
     for (const auto &[key, value] : partials) {
-      const std::string col = color(color_idx++, config->palette);
+      const std::string col = getColorForKey(key, color_idx++);
       svg << std::format(
           R"(  <polyline fill="none" stroke="{}" stroke-width="{:.1f}" stroke-linejoin="round" points=")", col,
           config->line_width);
@@ -342,7 +355,7 @@ struct SvgHistogramRenderer {
     }
     std::size_t marker_ci = 0;
     for (const auto &[key, value] : partials) {
-      const std::string col = color(marker_ci++, config->palette);
+      const std::string col = getColorForKey(key, marker_ci++);
       std::size_t num_points = std::min(xs->size(), value.size());
       for (std::size_t point_idx = 0; point_idx < num_points; ++point_idx) {
         real_t screen_x = mapValue(xs->at(point_idx), xScale.min, xScale.max, px0, px1);
@@ -518,7 +531,7 @@ struct SvgHistogramRenderer {
     real_t snapped_sy_data = static_cast<real_t>(-1.0);
     for (const auto &[key, value] : partials) {
       if (idx < value.size()) {
-        const std::string col = color(color_idx++, config->palette);
+        const std::string col = getColorForKey(key, color_idx++);
         real_t y_val = value.at(idx);
         real_t sy_data = mapValue(y_val, yScale.min, yScale.max, py1, py0);
 
@@ -556,8 +569,9 @@ struct SvgHistogramRenderer {
  */
 inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &hist, const PlotConfig &config = {},
                                         const HoverInfo &hover = {}, const std::map<std::string, real_t> &weights = {},
-                                        const std::map<std::string, bool> &curve_visibility = {}) {
-  detail::SvgHistogramRenderer renderer(hist, config, hover, weights, curve_visibility);
+                                        const std::map<std::string, bool> &curve_visibility = {},
+                                        const std::map<std::string, std::string> &custom_colors = {}) {
+  detail::SvgHistogramRenderer renderer(hist, config, hover, weights, curve_visibility, custom_colors);
   if (renderer.hasNoData()) {
     return renderer.renderNoData();
   }

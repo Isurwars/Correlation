@@ -52,10 +52,30 @@ export component PreviewCard inherits FilledCard {
     in property <[TableRow]> table_rows: [];
 
     property <int> active_tab: 0;
+    property <int> active_color_picker_id: -1;
+
+    private property <[color]> swatch_colors: [
+        #e69f00, #56b4e9, #009e73, #f0e442,
+        #0072b2, #d55e00, #cc79a7, #000000,
+        #e76f51, #f4a261, #e9c46a, #2a9d8f,
+        #457b9d, #1d3557, #6a0572, #ab1344,
+        #ff4d6d, #70e000, #3a86ff, #8338ec,
+        #ff006e, #fb5607, #ffbe0b, #ffffff
+    ];
+
+    private property <[string]> swatch_hexes: [
+        "#E69F00", "#56B4E9", "#009E73", "#F0E442",
+        "#0072B2", "#D55E00", "#CC79A7", "#000000",
+        "#E76F51", "#F4A261", "#E9C46A", "#2A9D8F",
+        "#457B9D", "#1D3557", "#6A0572", "#AB1344",
+        "#FF4D6D", "#70E000", "#3A86FF", "#8338EC",
+        "#FF006E", "#FB5607", "#FFBE0B", "#FFFFFF"
+    ];
 
     callback plot_selected(int);
     callback toggle_curve_visibility(int, bool);
     callback toggle_all_curves(bool);
+    callback set_curve_color(int, string);
     callback save_plot();
     callback write_files();
     callback pin_run();
@@ -297,11 +317,20 @@ export component PreviewCard inherits FilledCard {
                                             alignment: center;
                                             height: 100%;
 
-                                            Rectangle {
-                                                width: 12px;
-                                                height: 12px;
-                                                border-radius: 6px;
-                                                background: item.visible ? item.color_hex : MaterialPalette.outline;
+                                            color_dot_touch := TouchArea {
+                                                width: 18px;
+                                                height: 18px;
+                                                mouse-cursor: pointer;
+                                                clicked => { root.active_color_picker_id = (root.active_color_picker_id == item.id) ? -1 : item.id; }
+
+                                                Rectangle {
+                                                    width: 12px;
+                                                    height: 12px;
+                                                    border-radius: 6px;
+                                                    background: item.visible ? item.color_hex : MaterialPalette.outline;
+                                                    border-width: color_dot_touch.has-hover ? 2px : 0px;
+                                                    border-color: MaterialPalette.primary;
+                                                }
                                             }
                                         }
 
@@ -313,6 +342,67 @@ export component PreviewCard inherits FilledCard {
                                             overflow: elide;
                                             horizontal-alignment: left;
                                             vertical-alignment: center;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if root.active_color_picker_id >= 0: Rectangle {
+                        background: MaterialPalette.surface_container_high;
+                        border-radius: MaterialStyleMetrics.border_radius_2;
+                        border-width: 1px;
+                        border-color: MaterialPalette.outline;
+
+                        VerticalLayout {
+                            padding: 8px;
+                            spacing: 6px;
+
+                            HorizontalLayout {
+                                alignment: center;
+                                MaterialText {
+                                    horizontal-stretch: 1;
+                                    text: "Color Palette";
+                                    style: MaterialTypography.label_medium;
+                                    color: MaterialPalette.on_surface;
+                                    vertical-alignment: center;
+                                }
+                                TouchArea {
+                                    width: 20px;
+                                    height: 20px;
+                                    mouse-cursor: pointer;
+                                    clicked => { root.active_color_picker_id = -1; }
+                                    MaterialText {
+                                        text: "✕";
+                                        style: MaterialTypography.label_small;
+                                        color: MaterialPalette.on_surface_variant;
+                                        horizontal-alignment: center;
+                                        vertical-alignment: center;
+                                    }
+                                }
+                            }
+
+                            VerticalLayout {
+                                spacing: 4px;
+                                for r_idx in 6: HorizontalLayout {
+                                    spacing: 4px;
+                                    alignment: center;
+                                    for c_idx in 4: swatch_touch := TouchArea {
+                                        width: 28px;
+                                        height: 24px;
+                                        mouse-cursor: pointer;
+                                        clicked => {
+                                            root.set_curve_color(root.active_color_picker_id, root.swatch_hexes[r_idx * 4 + c_idx]);
+                                            root.active_color_picker_id = -1;
+                                        }
+                                        Rectangle {
+                                            width: 20px;
+                                            height: 20px;
+                                            border-radius: 10px;
+                                            background: root.swatch_colors[r_idx * 4 + c_idx];
+                                            border-width: swatch_touch.has-hover ? 2px : 1px;
+                                            border-color: swatch_touch.has-hover ? MaterialPalette.primary : MaterialPalette.outline;
                                         }
                                     }
                                 }
