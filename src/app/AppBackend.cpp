@@ -177,7 +177,7 @@ std::map<std::string, real_t> AppBackend::getAshcroftWeights() const {
 
 std::string AppBackend::load_file(const std::string &path) {
   std::string display_path = path;
-  std::replace(display_path.begin(), display_path.end(), '\\', '/');
+  std::ranges::replace(display_path, '\\', '/');
   correlation::readers::FileType const type = correlation::readers::determineFileType(path);
 
   // Determine whether to load as a trajectory by checking the reader's
@@ -206,12 +206,6 @@ std::string AppBackend::load_file(const std::string &path) {
 
   options_.input_file = path;
   options_.output_file_base = path;
-
-  // Return info from the first frame
-  size_t atom_count = 0;
-  if (trajectory_->getFrameCount() > 0) {
-    atom_count = trajectory_->firstFrame().atomCount();
-  }
 
   std::string msg = "File loaded: " + display_path;
   return msg;

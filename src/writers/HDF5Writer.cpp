@@ -36,15 +36,15 @@ void writeHistogramToGroup(HighFive::File &file, const std::string &name,
   HighFive::Group group = file.createGroup(group_name);
 
   // Metadata matching CSV header standard
-  std::string bin_unit = hist.x_unit.empty() ? "arbitrary units" : hist.x_unit;
-  std::string data_unit = hist.y_unit.empty() ? "arbitrary units" : hist.y_unit;
-  std::string description = hist.description.empty() ? "Data export" : hist.description;
-  std::string dim_label = hist.x_label.empty() ? "x" : hist.x_label;
+  const std::string bin_unit = hist.x_unit.empty() ? "arbitrary units" : hist.x_unit;
+  const std::string data_unit = hist.y_unit.empty() ? "arbitrary units" : hist.y_unit;
+  const std::string description = hist.description.empty() ? "Data export" : hist.description;
+  const std::string dim_label = hist.x_label.empty() ? "x" : hist.x_label;
 
   group.createAttribute<std::string>("description", HighFive::DataSpace::From(description)).write(description);
 
   // 1. Write Coordinate / Bin Dataset
-  std::vector<float> bin_data(hist.bins.begin(), hist.bins.end());
+  const std::vector<float> bin_data(hist.bins.begin(), hist.bins.end());
   HighFive::DataSet bin_dataset = group.createDataSet(dim_label, bin_data);
   bin_dataset.createAttribute<std::string>("units", HighFive::DataSpace::From(bin_unit)).write(bin_unit);
   bin_dataset.createAttribute<std::string>("label", HighFive::DataSpace::From(dim_label)).write(dim_label);
@@ -60,7 +60,7 @@ void writeHistogramToGroup(HighFive::File &file, const std::string &name,
 
   for (const auto &key : raw_keys) {
     const auto &values = hist.partials.at(key);
-    std::vector<float> float_values(values.begin(), values.end());
+    const std::vector<float> float_values(values.begin(), values.end());
 
     HighFive::DataSet dataset = group.createDataSet(key, float_values);
     dataset.createAttribute<std::string>("units", HighFive::DataSpace::From(data_unit)).write(data_unit);
@@ -77,8 +77,8 @@ void writeHistogramToGroup(HighFive::File &file, const std::string &name,
 
   for (const auto &key : smoothed_keys) {
     const auto &values = hist.smoothed_partials.at(key);
-    std::vector<float> float_values(values.begin(), values.end());
-    std::string smoothed_name = key + "_smoothed";
+    const std::vector<float> float_values(values.begin(), values.end());
+    const std::string smoothed_name = key + "_smoothed";
 
     HighFive::DataSet dataset = group.createDataSet(smoothed_name, float_values);
     dataset.createAttribute<std::string>("units", HighFive::DataSpace::From(data_unit)).write(data_unit);

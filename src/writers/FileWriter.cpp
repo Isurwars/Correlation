@@ -44,7 +44,7 @@ void FileWriter::writeSummaryFile(const std::string &base_path) const {
   if (df_ == nullptr) {
     return;
   }
-  std::string summary_filename = base_path + "_summary.txt";
+  const std::string summary_filename = base_path + "_summary.txt";
   std::ofstream summary_file(summary_filename);
   if (summary_file.is_open()) {
     summary_file << "Correlation Analysis Summary\n";
@@ -52,10 +52,10 @@ void FileWriter::writeSummaryFile(const std::string &base_path) const {
     summary_file << "Calculated Dynamic Properties:\n";
     summary_file << "------------------------------\n";
 
-    real_t d_msd = df_->getDiffusionCoefficientMSD();
-    real_t d_vacf = df_->getDiffusionCoefficientVACF();
-    real_t tau = df_->getRelaxationTime();
-    real_t deb = df_->getDeborahNumber();
+    const real_t d_msd = df_->getDiffusionCoefficientMSD();
+    const real_t d_vacf = df_->getDiffusionCoefficientVACF();
+    const real_t tau = df_->getRelaxationTime();
+    const real_t deb = df_->getDeborahNumber();
 
     summary_file << "Self-diffusion coefficient (from MSD): ";
     if (d_msd > 0.0) {

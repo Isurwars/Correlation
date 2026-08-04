@@ -460,8 +460,8 @@
     "semantic_hash": ""
   },
   "src/app/AppBackend.cpp": {
-    "mtime": 1785044239.733611,
-    "ast_hash": "45087de9439df7c6c3d27c101bdca1c3",
+    "mtime": 1785881520.9299335,
+    "ast_hash": "c276d95bebaea5e3e406342b220461bc",
     "semantic_hash": ""
   },
   "src/app/AppController.cpp": {
@@ -840,18 +840,18 @@
     "semantic_hash": ""
   },
   "src/writers/CSVWriter.cpp": {
-    "mtime": 1784868326.1072536,
-    "ast_hash": "71aff9c1fb352ea3eea80d407a07394a",
+    "mtime": 1785881528.1268556,
+    "ast_hash": "9398ad9e65c2fd7fceddd360e3c3ef95",
     "semantic_hash": ""
   },
   "src/writers/FileWriter.cpp": {
-    "mtime": 1784868326.1081579,
-    "ast_hash": "48a2da367c56f462c41e374617d27936",
-    "semantic_hash": "48a2da367c56f462c41e374617d27936"
+    "mtime": 1785881531.5257819,
+    "ast_hash": "988e66266a010a525ff3b86aff5dfb87",
+    "semantic_hash": ""
   },
   "src/writers/HDF5Writer.cpp": {
-    "mtime": 1785435227.1169627,
-    "ast_hash": "e664e283927f17c13136ec6f4db4b7d5",
+    "mtime": 1785881535.8177204,
+    "ast_hash": "e927aec2ec0427ba469023d8af10f8e3",
     "semantic_hash": ""
   },
   "src/writers/WriterFactory.cpp": {
@@ -1315,8 +1315,8 @@
     "semantic_hash": ""
   },
   ".github/workflows/release.yml": {
-    "mtime": 1785879239.5855696,
-    "ast_hash": "e849788b09e3f2d81115cb29c6999dc7",
+    "mtime": 1785880300.901111,
+    "ast_hash": "ee0ae0607698a86d2af510b45e04e2c1",
     "semantic_hash": ""
   },
   "CMakeLists.txt": {

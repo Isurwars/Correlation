@@ -31,7 +31,7 @@ void CSVWriter::writeAllCSVs(const std::string &base_path, const correlation::an
         continue;
       }
 
-      std::string filename = base_path + hist.file_suffix + ".csv";
+      const std::string filename = base_path + hist.file_suffix + ".csv";
       writeHistogramToCSV(filename, hist);
 
     } catch (const std::exception &e) {
@@ -66,10 +66,10 @@ void CSVWriter::writeHistogramToCSV(const std::string &filename, const correlati
   std::ranges::sort(smoothed_keys);
 
   // Get metadata if available
-  std::string bin_unit = hist.x_unit.empty() ? "arbitrary units" : hist.x_unit;
-  std::string data_unit = hist.y_unit.empty() ? "arbitrary units" : hist.y_unit;
-  std::string description = hist.description.empty() ? "Data export" : hist.description;
-  std::string dim_label = hist.x_label.empty() ? "x" : hist.x_label;
+  const std::string bin_unit = hist.x_unit.empty() ? "arbitrary units" : hist.x_unit;
+  const std::string data_unit = hist.y_unit.empty() ? "arbitrary units" : hist.y_unit;
+  const std::string description = hist.description.empty() ? "Data export" : hist.description;
+  const std::string dim_label = hist.x_label.empty() ? "x" : hist.x_label;
 
   // --- Write Header ---
   // Line 1: Long Name

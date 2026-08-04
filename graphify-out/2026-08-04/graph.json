@@ -635,8 +635,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_hpp_atomic",
-      "community": 9,
-      "community_name": "vector",
+      "community": 61,
+      "community_name": "TEST_F",
       "norm_label": "atomic"
     },
     {
@@ -965,8 +965,8 @@
       "source_location": "L288",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_calculatepad",
-      "community": 28,
-      "community_name": "TEST_F",
+      "community": 59,
+      "community_name": "SvgComparisonRenderer",
       "norm_label": "calculatepad"
     },
     {
@@ -1867,8 +1867,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_app_appbackend",
-      "community": 9,
-      "community_name": "vector",
+      "community": 61,
+      "community_name": "TEST_F",
       "norm_label": "appbackend.hpp"
     },
     {
@@ -2560,8 +2560,8 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "include_app_appbackend_appbackend",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 10,
+      "community_name": "AppBackend",
       "norm_label": "appbackend"
     },
     {
@@ -2681,8 +2681,8 @@
       "source_location": "L218",
       "_origin": "ast",
       "id": "include_app_appbackend_appbackend_getremovedframecount",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 10,
+      "community_name": "AppBackend",
       "norm_label": "getremovedframecount"
     },
     {
@@ -2692,8 +2692,8 @@
       "source_location": "L224",
       "_origin": "ast",
       "id": "include_app_appbackend_appbackend_gettimestep",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 10,
+      "community_name": "AppBackend",
       "norm_label": "gettimestep"
     },
     {
@@ -2725,8 +2725,8 @@
       "source_location": "L246",
       "_origin": "ast",
       "id": "include_app_appbackend_appbackend_getbondcutoff",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 10,
+      "community_name": "AppBackend",
       "norm_label": "getbondcutoff"
     },
     {
@@ -2736,8 +2736,8 @@
       "source_location": "L252",
       "_origin": "ast",
       "id": "include_app_appbackend_appbackend_setbondcutoffs",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 10,
+      "community_name": "AppBackend",
       "norm_label": "setbondcutoffs"
     },
     {
@@ -2780,8 +2780,8 @@
       "source_location": "L289",
       "_origin": "ast",
       "id": "include_app_appbackend_appbackend_getdistributionfunctions",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 10,
+      "community_name": "AppBackend",
       "norm_label": ".getdistributionfunctions()"
     },
     {
@@ -2791,8 +2791,8 @@
       "source_location": "L298",
       "_origin": "ast",
       "id": "include_app_appbackend_appbackend_setprogresscallback",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 10,
+      "community_name": "AppBackend",
       "norm_label": ".setprogresscallback()"
     },
     {
@@ -2802,8 +2802,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_app_appbackend_hpp_function",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 10,
+      "community_name": "AppBackend",
       "norm_label": "function"
     },
     {
@@ -2813,8 +2813,8 @@
       "source_location": "L305",
       "_origin": "ast",
       "id": "include_app_appbackend_appbackend_cancel_analysis",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 10,
+      "community_name": "AppBackend",
       "norm_label": ".cancel_analysis()"
     },
     {
@@ -2824,8 +2824,8 @@
       "source_location": "L310",
       "_origin": "ast",
       "id": "include_app_appbackend_appbackend_is_cancelled",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 10,
+      "community_name": "AppBackend",
       "norm_label": ".is_cancelled()"
     },
     {
@@ -2835,8 +2835,8 @@
       "source_location": "L322",
       "_origin": "ast",
       "id": "include_app_appbackend_appbackend_analysis_thread_func",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 10,
+      "community_name": "AppBackend",
       "norm_label": "analysis_thread_func"
     },
     {
@@ -2846,8 +2846,8 @@
       "source_location": "L324",
       "_origin": "ast",
       "id": "include_app_appbackend_appbackend_validateoptions",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 10,
+      "community_name": "AppBackend",
       "norm_label": "validateoptions"
     },
     {
@@ -2857,8 +2857,8 @@
       "source_location": "L325",
       "_origin": "ast",
       "id": "include_app_appbackend_appbackend_setuptrajectorysettings",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 20,
+      "community_name": "AppBackend.cpp",
       "norm_label": "setuptrajectorysettings"
     },
     {
@@ -2868,8 +2868,8 @@
       "source_location": "L326",
       "_origin": "ast",
       "id": "include_app_appbackend_appbackend_runtrajectorycalculators",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 20,
+      "community_name": "AppBackend.cpp",
       "norm_label": "runtrajectorycalculators"
     },
     {
@@ -2879,8 +2879,8 @@
       "source_location": "L327",
       "_origin": "ast",
       "id": "include_app_appbackend_appbackend_calculatedynamicproperties",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 20,
+      "community_name": "AppBackend.cpp",
       "norm_label": "calculatedynamicproperties"
     },
     {
@@ -2890,8 +2890,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_app_appbackend_hpp_unique_ptr",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 10,
+      "community_name": "AppBackend",
       "norm_label": "unique_ptr"
     },
     {
@@ -2901,8 +2901,8 @@
       "source_location": "L330",
       "_origin": "ast",
       "id": "include_app_appbackend_appbackend_trajectory",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 10,
+      "community_name": "AppBackend",
       "norm_label": "trajectory_"
     },
     {
@@ -2923,8 +2923,8 @@
       "source_location": "L331",
       "_origin": "ast",
       "id": "include_app_appbackend_appbackend_trajectory_analyzer",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 10,
+      "community_name": "AppBackend",
       "norm_label": "trajectory_analyzer_"
     },
     {
@@ -2934,8 +2934,8 @@
       "source_location": "L332",
       "_origin": "ast",
       "id": "include_app_appbackend_appbackend_df",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 10,
+      "community_name": "AppBackend",
       "norm_label": "df_"
     },
     {
@@ -2945,8 +2945,8 @@
       "source_location": "L335",
       "_origin": "ast",
       "id": "include_app_appbackend_appbackend_progress_callback",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 20,
+      "community_name": "AppBackend.cpp",
       "norm_label": "progress_callback_"
     },
     {
@@ -2956,8 +2956,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_app_appbackend_hpp_atomic",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 10,
+      "community_name": "AppBackend",
       "norm_label": "atomic"
     },
     {
@@ -2967,8 +2967,8 @@
       "source_location": "L336",
       "_origin": "ast",
       "id": "include_app_appbackend_appbackend_cancel_flag",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 10,
+      "community_name": "AppBackend",
       "norm_label": "cancel_flag_"
     },
     {
@@ -5090,8 +5090,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_calculatorfactory",
-      "community": 23,
-      "community_name": "AnalysisSettings",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "calculatorfactory.hpp"
     },
     {
@@ -5794,8 +5794,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_gpuanglecalculator",
-      "community": 73,
-      "community_name": "Constants.hpp",
+      "community": 108,
+      "community_name": "NiceScale",
       "norm_label": "gpuanglecalculator.hpp"
     },
     {
@@ -5805,8 +5805,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "include_calculators_gpuanglecalculator_compute_angles_gpu",
-      "community": 73,
-      "community_name": "Constants.hpp",
+      "community": 108,
+      "community_name": "NiceScale",
       "norm_label": "compute_angles_gpu()"
     },
     {
@@ -5816,8 +5816,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_calculators_gpuanglecalculator_hpp_angletensor",
-      "community": 73,
-      "community_name": "Constants.hpp",
+      "community": 108,
+      "community_name": "NiceScale",
       "norm_label": "angletensor"
     },
     {
@@ -7719,8 +7719,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_vdoscalculator",
-      "community": 307,
-      "community_name": "VDOSParams",
+      "community": 23,
+      "community_name": "AnalysisSettings",
       "norm_label": "vdoscalculator.hpp"
     },
     {
@@ -8258,8 +8258,8 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "include_calculators_xrdcalculator_xrdcalculator_calculate",
-      "community": 295,
-      "community_name": "XRDTests",
+      "community": 114,
+      "community_name": "XRDCalculator::calculate",
       "norm_label": "calculate"
     },
     {
@@ -8544,7 +8544,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_cli_cliparser",
-      "community": 61,
+      "community": 137,
       "community_name": "TEST_F",
       "norm_label": "cliparser.hpp"
     },
@@ -9303,8 +9303,8 @@
       "source_location": "L201",
       "_origin": "ast",
       "id": "include_core_cell_cell_setenergy",
-      "community": 30,
-      "community_name": "TEST_F",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": ".setenergy()"
     },
     {
@@ -9314,8 +9314,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_core_cell_hpp_real_t",
-      "community": 30,
-      "community_name": "TEST_F",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "real_t"
     },
     {
@@ -9325,8 +9325,8 @@
       "source_location": "L207",
       "_origin": "ast",
       "id": "include_core_cell_cell_getenergy",
-      "community": 30,
-      "community_name": "TEST_F",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": ".getenergy()"
     },
     {
@@ -9369,8 +9369,8 @@
       "source_location": "L229",
       "_origin": "ast",
       "id": "include_core_cell_cell_lattice_vectors",
-      "community": 30,
-      "community_name": "TEST_F",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "lattice_vectors_"
     },
     {
@@ -9402,8 +9402,8 @@
       "source_location": "L232",
       "_origin": "ast",
       "id": "include_core_cell_cell_volume",
-      "community": 30,
-      "community_name": "TEST_F",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "volume_"
     },
     {
@@ -9435,8 +9435,8 @@
       "source_location": "L234",
       "_origin": "ast",
       "id": "include_core_cell_cell_atoms",
-      "community": 104,
-      "community_name": "DatasetWriteQuery",
+      "community": 30,
+      "community_name": "TEST_F",
       "norm_label": "atoms_"
     },
     {
@@ -9446,8 +9446,8 @@
       "source_location": "L235",
       "_origin": "ast",
       "id": "include_core_cell_cell_elements",
-      "community": 85,
-      "community_name": "CNCalculator",
+      "community": 30,
+      "community_name": "TEST_F",
       "norm_label": "elements_"
     },
     {
@@ -9523,8 +9523,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "include_core_gpuportability_hipgetdevicecount",
-      "community": 146,
-      "community_name": "ArcReader.cpp",
+      "community": 279,
+      "community_name": "MockReader",
       "norm_label": "hipgetdevicecount()"
     },
     {
@@ -10106,8 +10106,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "include_core_trajectory_trajectory_getframe",
-      "community": 85,
-      "community_name": "CNCalculator",
+      "community": 30,
+      "community_name": "TEST_F",
       "norm_label": "getframe"
     },
     {
@@ -10876,8 +10876,8 @@
       "source_location": "L446",
       "_origin": "ast",
       "id": "include_math_linearalgebra_dot",
-      "community": 116,
-      "community_name": "TEST_F",
+      "community": 8,
+      "community_name": "LinearAlgebra.hpp",
       "norm_label": "dot()"
     },
     {
@@ -10887,8 +10887,8 @@
       "source_location": "L458",
       "_origin": "ast",
       "id": "include_math_linearalgebra_cross",
-      "community": 116,
-      "community_name": "TEST_F",
+      "community": 8,
+      "community_name": "LinearAlgebra.hpp",
       "norm_label": "cross()"
     },
     {
@@ -10898,8 +10898,8 @@
       "source_location": "L486",
       "_origin": "ast",
       "id": "include_math_linearalgebra_norm_sq",
-      "community": 43,
-      "community_name": "SvgHistogramRenderer",
+      "community": 8,
+      "community_name": "LinearAlgebra.hpp",
       "norm_label": "norm_sq()"
     },
     {
@@ -12735,8 +12735,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_mlip_mlipinterface",
-      "community": 157,
-      "community_name": "HyperuniformityCalculatorTests.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "mlipinterface.hpp"
     },
     {
@@ -12878,8 +12878,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_physics_physicaldata",
-      "community": 53,
-      "community_name": "TEST_F",
+      "community": 49,
+      "community_name": "VaspParser",
       "norm_label": "physicaldata.hpp"
     },
     {
@@ -12889,8 +12889,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "include_physics_physicaldata_elementdata",
-      "community": 53,
-      "community_name": "TEST_F",
+      "community": 49,
+      "community_name": "VaspParser",
       "norm_label": "elementdata"
     },
     {
@@ -12900,8 +12900,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "string_view",
-      "community": 53,
-      "community_name": "TEST_F",
+      "community": 49,
+      "community_name": "VaspParser",
       "norm_label": "string_view"
     },
     {
@@ -12911,8 +12911,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "include_physics_physicaldata_elementdata_symbol",
-      "community": 53,
-      "community_name": "TEST_F",
+      "community": 49,
+      "community_name": "VaspParser",
       "norm_label": "symbol"
     },
     {
@@ -12922,8 +12922,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_physics_physicaldata_hpp_real_t",
-      "community": 53,
-      "community_name": "TEST_F",
+      "community": 49,
+      "community_name": "VaspParser",
       "norm_label": "real_t"
     },
     {
@@ -12933,8 +12933,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "include_physics_physicaldata_elementdata_radius",
-      "community": 53,
-      "community_name": "TEST_F",
+      "community": 49,
+      "community_name": "VaspParser",
       "norm_label": "radius"
     },
     {
@@ -12944,8 +12944,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "include_physics_physicaldata_elementdata_mass",
-      "community": 53,
-      "community_name": "TEST_F",
+      "community": 49,
+      "community_name": "VaspParser",
       "norm_label": "mass"
     },
     {
@@ -12955,8 +12955,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "include_physics_physicaldata_elementdata_form_factors",
-      "community": 53,
-      "community_name": "TEST_F",
+      "community": 49,
+      "community_name": "VaspParser",
       "norm_label": "form_factors"
     },
     {
@@ -12966,8 +12966,8 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "include_physics_physicaldata_getcovalentradius",
-      "community": 53,
-      "community_name": "TEST_F",
+      "community": 49,
+      "community_name": "VaspParser",
       "norm_label": "getcovalentradius()"
     },
     {
@@ -12977,8 +12977,8 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "include_physics_physicaldata_getatomicmass",
-      "community": 53,
-      "community_name": "TEST_F",
+      "community": 49,
+      "community_name": "VaspParser",
       "norm_label": "getatomicmass()"
     },
     {
@@ -12988,8 +12988,8 @@
       "source_location": "L499",
       "_origin": "ast",
       "id": "include_physics_physicaldata_find",
-      "community": 53,
-      "community_name": "TEST_F",
+      "community": 49,
+      "community_name": "VaspParser",
       "norm_label": "find()"
     },
     {
@@ -13472,8 +13472,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "pdf_doc",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "pdf_doc"
     },
     {
@@ -13758,8 +13758,8 @@
       "source_location": "L175",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfhistogramrenderer_pdfhistogramrenderer",
-      "community": 68,
-      "community_name": "PlotConfig",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": ".pdfhistogramrenderer()"
     },
     {
@@ -13879,8 +13879,8 @@
       "source_location": "L406",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "pdfcomparisonrenderer"
     },
     {
@@ -13890,8 +13890,8 @@
       "source_location": "L407",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_datasets",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "datasets"
     },
     {
@@ -13901,8 +13901,8 @@
       "source_location": "L408",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_query_key",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "query_key"
     },
     {
@@ -13912,8 +13912,8 @@
       "source_location": "L409",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_config",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "config"
     },
     {
@@ -13923,8 +13923,8 @@
       "source_location": "L410",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_pdf",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "pdf"
     },
     {
@@ -13934,8 +13934,8 @@
       "source_location": "L411",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_page",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "page"
     },
     {
@@ -13945,8 +13945,8 @@
       "source_location": "L413",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_canvas_width",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "canvas_width"
     },
     {
@@ -13956,8 +13956,8 @@
       "source_location": "L414",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_canvas_height",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "canvas_height"
     },
     {
@@ -13967,8 +13967,8 @@
       "source_location": "L415",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_px0",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "px0"
     },
     {
@@ -13978,8 +13978,8 @@
       "source_location": "L416",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_px1",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "px1"
     },
     {
@@ -13989,8 +13989,8 @@
       "source_location": "L417",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_py0",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "py0"
     },
     {
@@ -14000,8 +14000,8 @@
       "source_location": "L418",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_py1",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "py1"
     },
     {
@@ -14011,8 +14011,8 @@
       "source_location": "L420",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_bg_col",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "bg_col"
     },
     {
@@ -14022,8 +14022,8 @@
       "source_location": "L421",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_axis_col",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "axis_col"
     },
     {
@@ -14033,8 +14033,8 @@
       "source_location": "L422",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_grid_col",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "grid_col"
     },
     {
@@ -14044,8 +14044,8 @@
       "source_location": "L423",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_text_col",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "text_col"
     },
     {
@@ -14055,8 +14055,8 @@
       "source_location": "L425",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_raw_x_min",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "raw_x_min"
     },
     {
@@ -14066,8 +14066,8 @@
       "source_location": "L426",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_raw_x_max",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "raw_x_max"
     },
     {
@@ -14077,8 +14077,8 @@
       "source_location": "L427",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_raw_y_min",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "raw_y_min"
     },
     {
@@ -14088,8 +14088,8 @@
       "source_location": "L428",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_raw_y_max",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "raw_y_max"
     },
     {
@@ -14099,8 +14099,8 @@
       "source_location": "L430",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_xscale",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "xscale"
     },
     {
@@ -14110,8 +14110,8 @@
       "source_location": "L431",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_yscale",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "yscale"
     },
     {
@@ -14121,8 +14121,8 @@
       "source_location": "L432",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_legend_items",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": "legend_items"
     },
     {
@@ -14132,8 +14132,8 @@
       "source_location": "L434",
       "_origin": "ast",
       "id": "include_plotters_pdfplotter_pdfcomparisonrenderer_pdfcomparisonrenderer",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 28,
+      "community_name": "TEST_F",
       "norm_label": ".pdfcomparisonrenderer()"
     },
     {
@@ -14572,8 +14572,8 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "include_plotters_plottypes_hoverinfo",
-      "community": 300,
-      "community_name": "HoverInfo",
+      "community": 160,
+      "community_name": "CalculatorFactory",
       "norm_label": "hoverinfo"
     },
     {
@@ -14583,8 +14583,8 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "include_plotters_plottypes_hoverinfo_active",
-      "community": 300,
-      "community_name": "HoverInfo",
+      "community": 160,
+      "community_name": "CalculatorFactory",
       "norm_label": "active"
     },
     {
@@ -14594,8 +14594,8 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "include_plotters_plottypes_hoverinfo_mouse_x",
-      "community": 300,
-      "community_name": "HoverInfo",
+      "community": 160,
+      "community_name": "CalculatorFactory",
       "norm_label": "mouse_x"
     },
     {
@@ -14605,8 +14605,8 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "include_plotters_plottypes_hoverinfo_mouse_y",
-      "community": 300,
-      "community_name": "HoverInfo",
+      "community": 160,
+      "community_name": "CalculatorFactory",
       "norm_label": "mouse_y"
     },
     {
@@ -14616,8 +14616,8 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "include_plotters_plottypes_hoverinfo_widget_width",
-      "community": 300,
-      "community_name": "HoverInfo",
+      "community": 160,
+      "community_name": "CalculatorFactory",
       "norm_label": "widget_width"
     },
     {
@@ -14627,8 +14627,8 @@
       "source_location": "L114",
       "_origin": "ast",
       "id": "include_plotters_plottypes_hoverinfo_widget_height",
-      "community": 300,
-      "community_name": "HoverInfo",
+      "community": 160,
+      "community_name": "CalculatorFactory",
       "norm_label": "widget_height"
     },
     {
@@ -14638,8 +14638,8 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "include_plotters_plottypes_curvestyle",
-      "community": 252,
-      "community_name": "LammpsDumpReader::readTrajectory",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "curvestyle"
     },
     {
@@ -14649,8 +14649,8 @@
       "source_location": "L131",
       "_origin": "ast",
       "id": "include_plotters_plottypes_curvestyle_color_hex",
-      "community": 252,
-      "community_name": "LammpsDumpReader::readTrajectory",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "color_hex"
     },
     {
@@ -14660,8 +14660,8 @@
       "source_location": "L132",
       "_origin": "ast",
       "id": "include_plotters_plottypes_curvestyle_stroke_width",
-      "community": 252,
-      "community_name": "LammpsDumpReader::readTrajectory",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "stroke_width"
     },
     {
@@ -14671,8 +14671,8 @@
       "source_location": "L133",
       "_origin": "ast",
       "id": "include_plotters_plottypes_curvestyle_dash_style",
-      "community": 252,
-      "community_name": "LammpsDumpReader::readTrajectory",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "dash_style"
     },
     {
@@ -14682,8 +14682,8 @@
       "source_location": "L134",
       "_origin": "ast",
       "id": "include_plotters_plottypes_curvestyle_visible",
-      "community": 252,
-      "community_name": "LammpsDumpReader::readTrajectory",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "visible"
     },
     {
@@ -14693,8 +14693,8 @@
       "source_location": "L140",
       "_origin": "ast",
       "id": "include_plotters_plottypes_labeledhistogram",
-      "community": 252,
-      "community_name": "LammpsDumpReader::readTrajectory",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "labeledhistogram"
     },
     {
@@ -14704,8 +14704,8 @@
       "source_location": "L141",
       "_origin": "ast",
       "id": "include_plotters_plottypes_labeledhistogram_label",
-      "community": 252,
-      "community_name": "LammpsDumpReader::readTrajectory",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "label"
     },
     {
@@ -14715,8 +14715,8 @@
       "source_location": "L142",
       "_origin": "ast",
       "id": "include_plotters_plottypes_labeledhistogram_hist",
-      "community": 252,
-      "community_name": "LammpsDumpReader::readTrajectory",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "hist"
     },
     {
@@ -14726,8 +14726,8 @@
       "source_location": "L143",
       "_origin": "ast",
       "id": "include_plotters_plottypes_labeledhistogram_style",
-      "community": 252,
-      "community_name": "LammpsDumpReader::readTrajectory",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "style"
     },
     {
@@ -14737,8 +14737,8 @@
       "source_location": "L144",
       "_origin": "ast",
       "id": "include_plotters_plottypes_labeledhistogram_is_difference",
-      "community": 252,
-      "community_name": "LammpsDumpReader::readTrajectory",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "is_difference"
     },
     {
@@ -14792,8 +14792,8 @@
       "source_location": "L225",
       "_origin": "ast",
       "id": "include_plotters_plottypes_colorstop",
-      "community": 9,
-      "community_name": "vector",
+      "community": 137,
+      "community_name": "TEST_F",
       "norm_label": "colorstop"
     },
     {
@@ -14803,8 +14803,8 @@
       "source_location": "L226",
       "_origin": "ast",
       "id": "include_plotters_plottypes_colorstop_t",
-      "community": 9,
-      "community_name": "vector",
+      "community": 137,
+      "community_name": "TEST_F",
       "norm_label": "t"
     },
     {
@@ -14814,8 +14814,8 @@
       "source_location": "L227",
       "_origin": "ast",
       "id": "include_plotters_plottypes_colorstop_r",
-      "community": 9,
-      "community_name": "vector",
+      "community": 137,
+      "community_name": "TEST_F",
       "norm_label": "r"
     },
     {
@@ -14825,8 +14825,8 @@
       "source_location": "L227",
       "_origin": "ast",
       "id": "include_plotters_plottypes_colorstop_g",
-      "community": 9,
-      "community_name": "vector",
+      "community": 137,
+      "community_name": "TEST_F",
       "norm_label": "g"
     },
     {
@@ -14836,8 +14836,8 @@
       "source_location": "L227",
       "_origin": "ast",
       "id": "include_plotters_plottypes_colorstop_b",
-      "community": 9,
-      "community_name": "vector",
+      "community": 137,
+      "community_name": "TEST_F",
       "norm_label": "b"
     },
     {
@@ -14847,8 +14847,8 @@
       "source_location": "L230",
       "_origin": "ast",
       "id": "include_plotters_plottypes_interpolatecolorstops",
-      "community": 9,
-      "community_name": "vector",
+      "community": 137,
+      "community_name": "TEST_F",
       "norm_label": "interpolatecolorstops()"
     },
     {
@@ -14858,8 +14858,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_plotters_plottypes_hpp_span",
-      "community": 9,
-      "community_name": "vector",
+      "community": 137,
+      "community_name": "TEST_F",
       "norm_label": "span"
     },
     {
@@ -16431,7 +16431,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_readers_cp2kreader",
-      "community": 297,
+      "community": 89,
       "community_name": "CP2KReader",
       "norm_label": "cp2kreader.hpp"
     },
@@ -16442,7 +16442,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "include_readers_cp2kreader_cp2kreader",
-      "community": 297,
+      "community": 89,
       "community_name": "CP2KReader",
       "norm_label": "cp2kreader"
     },
@@ -16453,7 +16453,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "include_readers_cp2kreader_cp2kreader_getname",
-      "community": 297,
+      "community": 89,
       "community_name": "CP2KReader",
       "norm_label": ".getname()"
     },
@@ -16464,7 +16464,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_readers_cp2kreader_hpp_string",
-      "community": 297,
+      "community": 89,
       "community_name": "CP2KReader",
       "norm_label": "string"
     },
@@ -16475,7 +16475,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "include_readers_cp2kreader_cp2kreader_getextensions",
-      "community": 297,
+      "community": 89,
       "community_name": "CP2KReader",
       "norm_label": ".getextensions()"
     },
@@ -16486,7 +16486,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_readers_cp2kreader_hpp_vector",
-      "community": 297,
+      "community": 89,
       "community_name": "CP2KReader",
       "norm_label": "vector"
     },
@@ -16497,7 +16497,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "include_readers_cp2kreader_cp2kreader_istrajectory",
-      "community": 297,
+      "community": 89,
       "community_name": "CP2KReader",
       "norm_label": ".istrajectory()"
     },
@@ -16519,8 +16519,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "include_readers_cp2kreader_cp2kreader_readtrajectory",
-      "community": 297,
-      "community_name": "CP2KReader",
+      "community": 36,
+      "community_name": "fuzz_utils.hpp",
       "norm_label": "readtrajectory"
     },
     {
@@ -16871,8 +16871,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "include_readers_cellreader_cellreader_readstructure",
-      "community": 36,
-      "community_name": "fuzz_utils.hpp",
+      "community": 64,
+      "community_name": "TEST",
       "norm_label": "readstructure"
     },
     {
@@ -17564,8 +17564,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_readers_qereader",
-      "community": 149,
-      "community_name": "readTrajectory",
+      "community": 82,
+      "community_name": "QEReader",
       "norm_label": "qereader.hpp"
     },
     {
@@ -17575,8 +17575,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "include_readers_qereader_qereader",
-      "community": 149,
-      "community_name": "readTrajectory",
+      "community": 82,
+      "community_name": "QEReader",
       "norm_label": "qereader"
     },
     {
@@ -17586,8 +17586,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "include_readers_qereader_qereader_getname",
-      "community": 149,
-      "community_name": "readTrajectory",
+      "community": 82,
+      "community_name": "QEReader",
       "norm_label": ".getname()"
     },
     {
@@ -17597,8 +17597,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_readers_qereader_hpp_string",
-      "community": 149,
-      "community_name": "readTrajectory",
+      "community": 82,
+      "community_name": "QEReader",
       "norm_label": "string"
     },
     {
@@ -17608,8 +17608,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "include_readers_qereader_qereader_getextensions",
-      "community": 149,
-      "community_name": "readTrajectory",
+      "community": 82,
+      "community_name": "QEReader",
       "norm_label": ".getextensions()"
     },
     {
@@ -17619,8 +17619,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_readers_qereader_hpp_vector",
-      "community": 149,
-      "community_name": "readTrajectory",
+      "community": 82,
+      "community_name": "QEReader",
       "norm_label": "vector"
     },
     {
@@ -17630,8 +17630,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "include_readers_qereader_qereader_istrajectory",
-      "community": 149,
-      "community_name": "readTrajectory",
+      "community": 82,
+      "community_name": "QEReader",
       "norm_label": ".istrajectory()"
     },
     {
@@ -18103,8 +18103,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "include_readers_xyzreader_xyzreader_parsecommentline",
-      "community": 30,
-      "community_name": "TEST_F",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "parsecommentline"
     },
     {
@@ -18323,8 +18323,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "include_writers_arrowwriter_arrowwriter_writehistogramtoparquet",
-      "community": 102,
-      "community_name": "SteinhardtCalculator",
+      "community": 35,
+      "community_name": "XdatcarHeader",
       "norm_label": "writehistogramtoparquet"
     },
     {
@@ -18499,8 +18499,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "include_writers_csvwriter_csvwriter_writehistogramtocsv",
-      "community": 141,
-      "community_name": "CSVWriter",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "writehistogramtocsv"
     },
     {
@@ -19708,8 +19708,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "src_app_appbackend_appbackend_getatomcounts",
-      "community": 20,
-      "community_name": "AppBackend.cpp",
+      "community": 30,
+      "community_name": "TEST_F",
       "norm_label": "appbackend::getatomcounts()"
     },
     {
@@ -19939,8 +19939,8 @@
       "source_location": "L395",
       "_origin": "ast",
       "id": "src_app_appbackend_appbackend_run_analysis",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 20,
+      "community_name": "AppBackend.cpp",
       "norm_label": "appbackend::run_analysis()"
     },
     {
@@ -20060,8 +20060,8 @@
       "source_location": "L211",
       "_origin": "ast",
       "id": "src_app_appcontroller_appcontroller_handleoptionstoui",
-      "community": 113,
-      "community_name": "GPUSQCalculator",
+      "community": 199,
+      "community_name": "PlotSize",
       "norm_label": "appcontroller::handleoptionstoui()"
     },
     {
@@ -20632,8 +20632,8 @@
       "source_location": "L463",
       "_origin": "ast",
       "id": "src_app_plotcontroller_plotcontroller_isplotcachehit",
-      "community": 300,
-      "community_name": "HoverInfo",
+      "community": 160,
+      "community_name": "CalculatorFactory",
       "norm_label": "plotcontroller::isplotcachehit()"
     },
     {
@@ -21556,8 +21556,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_bindings_wasm_bindings",
-      "community": 41,
-      "community_name": "Histogram Metadata",
+      "community": 118,
+      "community_name": "XRDCalculator",
       "norm_label": "wasm_bindings.cpp"
     },
     {
@@ -21567,8 +21567,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "src_bindings_wasm_bindings_readfrombuffer",
-      "community": 41,
-      "community_name": "Histogram Metadata",
+      "community": 118,
+      "community_name": "XRDCalculator",
       "norm_label": "readfrombuffer()"
     },
     {
@@ -21578,8 +21578,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_bindings_wasm_bindings_cpp_string",
-      "community": 41,
-      "community_name": "Histogram Metadata",
+      "community": 118,
+      "community_name": "XRDCalculator",
       "norm_label": "string"
     },
     {
@@ -21589,8 +21589,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "src_bindings_wasm_bindings_getbinsjs",
-      "community": 41,
-      "community_name": "Histogram Metadata",
+      "community": 118,
+      "community_name": "XRDCalculator",
       "norm_label": "getbinsjs()"
     },
     {
@@ -21600,8 +21600,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "val",
-      "community": 41,
-      "community_name": "Histogram Metadata",
+      "community": 118,
+      "community_name": "XRDCalculator",
       "norm_label": "val"
     },
     {
@@ -21611,8 +21611,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "src_bindings_wasm_bindings_getpartialjs",
-      "community": 41,
-      "community_name": "Histogram Metadata",
+      "community": 118,
+      "community_name": "XRDCalculator",
       "norm_label": "getpartialjs()"
     },
     {
@@ -21622,8 +21622,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "src_bindings_wasm_bindings_getpartialkeysjs",
-      "community": 41,
-      "community_name": "Histogram Metadata",
+      "community": 118,
+      "community_name": "XRDCalculator",
       "norm_label": "getpartialkeysjs()"
     },
     {
@@ -21633,8 +21633,8 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "src_bindings_wasm_bindings_emscripten_bindings",
-      "community": 41,
-      "community_name": "Histogram Metadata",
+      "community": 118,
+      "community_name": "XRDCalculator",
       "norm_label": "emscripten_bindings()"
     },
     {
@@ -21644,8 +21644,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "correlation_wasm",
-      "community": 41,
-      "community_name": "Histogram Metadata",
+      "community": 118,
+      "community_name": "XRDCalculator",
       "norm_label": "correlation_wasm"
     },
     {
@@ -22436,8 +22436,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_calculators_dadcalculator",
-      "community": 166,
-      "community_name": "HistogramConfigs",
+      "community": 41,
+      "community_name": "Histogram Metadata",
       "norm_label": "dadcalculator.cpp"
     },
     {
@@ -22678,8 +22678,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "src_calculators_dadcalculator_initializehistogram",
-      "community": 166,
-      "community_name": "HistogramConfigs",
+      "community": 41,
+      "community_name": "Histogram Metadata",
       "norm_label": "initializehistogram()"
     },
     {
@@ -22689,8 +22689,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "src_calculators_dadcalculator_processdihedralangles",
-      "community": 166,
-      "community_name": "HistogramConfigs",
+      "community": 41,
+      "community_name": "Histogram Metadata",
       "norm_label": "processdihedralangles()"
     },
     {
@@ -22700,8 +22700,8 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "src_calculators_dadcalculator_normalizeandscale",
-      "community": 166,
-      "community_name": "HistogramConfigs",
+      "community": 41,
+      "community_name": "Histogram Metadata",
       "norm_label": "normalizeandscale()"
     },
     {
@@ -22711,8 +22711,8 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "src_calculators_dadcalculator_dadcalculator_calculateframe",
-      "community": 166,
-      "community_name": "HistogramConfigs",
+      "community": 41,
+      "community_name": "Histogram Metadata",
       "norm_label": "dadcalculator::calculateframe()"
     },
     {
@@ -22722,8 +22722,8 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "src_calculators_dadcalculator_dadcalculator_calculate",
-      "community": 166,
-      "community_name": "HistogramConfigs",
+      "community": 41,
+      "community_name": "Histogram Metadata",
       "norm_label": "dadcalculator::calculate()"
     },
     {
@@ -23437,8 +23437,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "src_calculators_gpudistancecalculator_gpubond",
-      "community": 110,
-      "community_name": "StructureFactorCalculator.cpp",
+      "community": 149,
+      "community_name": "readTrajectory",
       "norm_label": "gpubond"
     },
     {
@@ -23448,8 +23448,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "src_calculators_gpudistancecalculator_gpubond_from",
-      "community": 110,
-      "community_name": "StructureFactorCalculator.cpp",
+      "community": 149,
+      "community_name": "readTrajectory",
       "norm_label": "from"
     },
     {
@@ -23459,8 +23459,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "src_calculators_gpudistancecalculator_gpubond_to",
-      "community": 110,
-      "community_name": "StructureFactorCalculator.cpp",
+      "community": 149,
+      "community_name": "readTrajectory",
       "norm_label": "to"
     },
     {
@@ -23470,8 +23470,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "src_calculators_gpudistancecalculator_gpubond_distance",
-      "community": 110,
-      "community_name": "StructureFactorCalculator.cpp",
+      "community": 149,
+      "community_name": "readTrajectory",
       "norm_label": "distance"
     },
     {
@@ -23481,8 +23481,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "src_calculators_gpudistancecalculator_gpubond_r_x",
-      "community": 110,
-      "community_name": "StructureFactorCalculator.cpp",
+      "community": 149,
+      "community_name": "readTrajectory",
       "norm_label": "r_x"
     },
     {
@@ -23492,8 +23492,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "src_calculators_gpudistancecalculator_gpubond_r_y",
-      "community": 110,
-      "community_name": "StructureFactorCalculator.cpp",
+      "community": 149,
+      "community_name": "readTrajectory",
       "norm_label": "r_y"
     },
     {
@@ -23503,8 +23503,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "src_calculators_gpudistancecalculator_gpubond_r_z",
-      "community": 110,
-      "community_name": "StructureFactorCalculator.cpp",
+      "community": 149,
+      "community_name": "readTrajectory",
       "norm_label": "r_z"
     },
     {
@@ -23899,8 +23899,8 @@
       "source_location": "L263",
       "_origin": "ast",
       "id": "src_calculators_gpudistancecalculator_has_gpu_device",
-      "community": 146,
-      "community_name": "ArcReader.cpp",
+      "community": 279,
+      "community_name": "MockReader",
       "norm_label": "has_gpu_device()"
     },
     {
@@ -24152,8 +24152,8 @@
       "source_location": "L186",
       "_origin": "ast",
       "id": "src_calculators_gpusqcalculator_gpusqcalculator_gpusqcalculator",
-      "community": 146,
-      "community_name": "ArcReader.cpp",
+      "community": 279,
+      "community_name": "MockReader",
       "norm_label": "gpusqcalculator::gpusqcalculator()"
     },
     {
@@ -24504,8 +24504,8 @@
       "source_location": "L273",
       "_origin": "ast",
       "id": "src_calculators_gpusteinhardtcalculator_gpusteinhardtcalculator_gpusteinhardtcalculator",
-      "community": 146,
-      "community_name": "ArcReader.cpp",
+      "community": 279,
+      "community_name": "MockReader",
       "norm_label": "gpusteinhardtcalculator::gpusteinhardtcalculator()"
     },
     {
@@ -24515,8 +24515,8 @@
       "source_location": "L279",
       "_origin": "ast",
       "id": "src_calculators_gpusteinhardtcalculator_gpusteinhardtcalculator_calculateframe",
-      "community": 256,
-      "community_name": "GPUSteinhardtCalculator.cu",
+      "community": 146,
+      "community_name": "ArcReader.cpp",
       "norm_label": "gpusteinhardtcalculator::calculateframe()"
     },
     {
@@ -26209,8 +26209,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_reciprocalvector",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 84,
+      "community_name": "QETrajectoryParser",
       "norm_label": "reciprocalvector"
     },
     {
@@ -26231,8 +26231,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_reciprocalvector_x",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 84,
+      "community_name": "QETrajectoryParser",
       "norm_label": "x"
     },
     {
@@ -26242,8 +26242,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_reciprocalvector_y",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 84,
+      "community_name": "QETrajectoryParser",
       "norm_label": "y"
     },
     {
@@ -26253,8 +26253,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_reciprocalvector_z",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 84,
+      "community_name": "QETrajectoryParser",
       "norm_label": "z"
     },
     {
@@ -26264,8 +26264,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_reciprocalbasis",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 84,
+      "community_name": "QETrajectoryParser",
       "norm_label": "reciprocalbasis"
     },
     {
@@ -26275,8 +26275,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_reciprocalbasis_b1",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 84,
+      "community_name": "QETrajectoryParser",
       "norm_label": "b1"
     },
     {
@@ -26286,8 +26286,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_reciprocalbasis_b2",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 84,
+      "community_name": "QETrajectoryParser",
       "norm_label": "b2"
     },
     {
@@ -26297,8 +26297,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_reciprocalbasis_b3",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 84,
+      "community_name": "QETrajectoryParser",
       "norm_label": "b3"
     },
     {
@@ -26308,8 +26308,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_reciprocalbasis_hmax",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 84,
+      "community_name": "QETrajectoryParser",
       "norm_label": "hmax"
     },
     {
@@ -26319,8 +26319,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_reciprocalbasis_kmax",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 84,
+      "community_name": "QETrajectoryParser",
       "norm_label": "kmax"
     },
     {
@@ -26330,8 +26330,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_reciprocalbasis_lmax",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 84,
+      "community_name": "QETrajectoryParser",
       "norm_label": "lmax"
     },
     {
@@ -26396,8 +26396,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_typeblock",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 66,
+      "community_name": "progress_callback",
       "norm_label": "typeblock"
     },
     {
@@ -26407,8 +26407,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_cpp_string",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 66,
+      "community_name": "progress_callback",
       "norm_label": "string"
     },
     {
@@ -26418,8 +26418,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_typeblock_symbol",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 66,
+      "community_name": "progress_callback",
       "norm_label": "symbol"
     },
     {
@@ -26429,8 +26429,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_typeblock_offset",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 66,
+      "community_name": "progress_callback",
       "norm_label": "offset"
     },
     {
@@ -26440,8 +26440,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_typeblock_count",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 66,
+      "community_name": "progress_callback",
       "norm_label": "count"
     },
     {
@@ -26451,8 +26451,8 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_partialinfo",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 66,
+      "community_name": "progress_callback",
       "norm_label": "partialinfo"
     },
     {
@@ -26462,8 +26462,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_partialinfo_key",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 66,
+      "community_name": "progress_callback",
       "norm_label": "key"
     },
     {
@@ -26473,8 +26473,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_partialinfo_typea_idx",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 66,
+      "community_name": "progress_callback",
       "norm_label": "typea_idx"
     },
     {
@@ -26484,8 +26484,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_partialinfo_typeb_idx",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 66,
+      "community_name": "progress_callback",
       "norm_label": "typeb_idx"
     },
     {
@@ -26495,8 +26495,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_partialinfo_n_a",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 66,
+      "community_name": "progress_callback",
       "norm_label": "n_a"
     },
     {
@@ -26506,8 +26506,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_partialinfo_n_b",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 66,
+      "community_name": "progress_callback",
       "norm_label": "n_b"
     },
     {
@@ -26517,8 +26517,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_partialinfo_is_identical",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 66,
+      "community_name": "progress_callback",
       "norm_label": "is_identical"
     },
     {
@@ -26528,8 +26528,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_partialinfo_weight",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 66,
+      "community_name": "progress_callback",
       "norm_label": "weight"
     },
     {
@@ -26583,8 +26583,8 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_phasearrays",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 256,
+      "community_name": "GPUSteinhardtCalculator.cu",
       "norm_label": "phasearrays"
     },
     {
@@ -26605,8 +26605,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_phasearrays_cos",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 256,
+      "community_name": "GPUSteinhardtCalculator.cu",
       "norm_label": "cos"
     },
     {
@@ -26616,8 +26616,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_phasearrays_sin",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 256,
+      "community_name": "GPUSteinhardtCalculator.cu",
       "norm_label": "sin"
     },
     {
@@ -26627,8 +26627,8 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_precomputedphases",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 183,
+      "community_name": "FileWriter::write",
       "norm_label": "precomputedphases"
     },
     {
@@ -26638,8 +26638,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_precomputedphases_e1_cos",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 183,
+      "community_name": "FileWriter::write",
       "norm_label": "e1_cos"
     },
     {
@@ -26649,8 +26649,8 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_precomputedphases_e1_sin",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 183,
+      "community_name": "FileWriter::write",
       "norm_label": "e1_sin"
     },
     {
@@ -26660,8 +26660,8 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_precomputedphases_e2_cos",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 183,
+      "community_name": "FileWriter::write",
       "norm_label": "e2_cos"
     },
     {
@@ -26671,8 +26671,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_precomputedphases_e2_sin",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 183,
+      "community_name": "FileWriter::write",
       "norm_label": "e2_sin"
     },
     {
@@ -26682,8 +26682,8 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_precomputedphases_e3_cos",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 183,
+      "community_name": "FileWriter::write",
       "norm_label": "e3_cos"
     },
     {
@@ -26693,8 +26693,8 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_precomputedphases_e3_sin",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 183,
+      "community_name": "FileWriter::write",
       "norm_label": "e3_sin"
     },
     {
@@ -26704,8 +26704,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_threadaccumulators",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 197,
+      "community_name": "XdatcarReaderTests",
       "norm_label": "threadaccumulators"
     },
     {
@@ -26715,8 +26715,8 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_threadaccumulators_total_sum",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 197,
+      "community_name": "XdatcarReaderTests",
       "norm_label": "total_sum"
     },
     {
@@ -26726,8 +26726,8 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_threadaccumulators_total_count",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 197,
+      "community_name": "XdatcarReaderTests",
       "norm_label": "total_count"
     },
     {
@@ -26737,8 +26737,8 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_threadaccumulators_partial_sums",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 197,
+      "community_name": "XdatcarReaderTests",
       "norm_label": "partial_sums"
     },
     {
@@ -26748,8 +26748,8 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_threadaccumulators_partial_counts",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 197,
+      "community_name": "XdatcarReaderTests",
       "norm_label": "partial_counts"
     },
     {
@@ -26759,8 +26759,8 @@
       "source_location": "L86",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_threadaccumulators_c_total_sum",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 197,
+      "community_name": "XdatcarReaderTests",
       "norm_label": "c_total_sum"
     },
     {
@@ -26770,8 +26770,8 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_threadaccumulators_c_partial_sums",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 197,
+      "community_name": "XdatcarReaderTests",
       "norm_label": "c_partial_sums"
     },
     {
@@ -26847,8 +26847,8 @@
       "source_location": "L181",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_buildpartialsinfo",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 66,
+      "community_name": "progress_callback",
       "norm_label": "buildpartialsinfo()"
     },
     {
@@ -26858,8 +26858,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_cpp_map",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 66,
+      "community_name": "progress_callback",
       "norm_label": "map"
     },
     {
@@ -26869,8 +26869,8 @@
       "source_location": "L210",
       "_origin": "ast",
       "id": "src_calculators_structurefactorcalculator_precomputephases",
-      "community": 120,
-      "community_name": "LammpsFrameParser",
+      "community": 256,
+      "community_name": "GPUSteinhardtCalculator.cu",
       "norm_label": "precomputephases()"
     },
     {
@@ -27012,8 +27012,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_calculators_vdoscalculator",
-      "community": 307,
-      "community_name": "VDOSParams",
+      "community": 31,
+      "community_name": "Trajectory",
       "norm_label": "vdoscalculator.cpp"
     },
     {
@@ -27023,8 +27023,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "src_calculators_vdoscalculator_vdoscalculator_calculatetrajectory",
-      "community": 307,
-      "community_name": "VDOSParams",
+      "community": 31,
+      "community_name": "Trajectory",
       "norm_label": "vdoscalculator::calculatetrajectory()"
     },
     {
@@ -27056,8 +27056,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_calculators_voronoicalculator",
-      "community": 73,
-      "community_name": "Constants.hpp",
+      "community": 293,
+      "community_name": "HDF5Writer.cpp",
       "norm_label": "voronoicalculator.cpp"
     },
     {
@@ -27122,8 +27122,8 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "src_calculators_voronoicalculator_voronoicalculator_computevoronoicells",
-      "community": 73,
-      "community_name": "Constants.hpp",
+      "community": 293,
+      "community_name": "HDF5Writer.cpp",
       "norm_label": "voronoicalculator::computevoronoicells()"
     },
     {
@@ -27133,8 +27133,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "celldata",
-      "community": 73,
-      "community_name": "Constants.hpp",
+      "community": 293,
+      "community_name": "HDF5Writer.cpp",
       "norm_label": "celldata"
     },
     {
@@ -28134,8 +28134,8 @@
       "source_location": "L128",
       "_origin": "ast",
       "id": "src_core_trajectory_trajectory_precomputebondcutoffs",
-      "community": 85,
-      "community_name": "CNCalculator",
+      "community": 30,
+      "community_name": "TEST_F",
       "norm_label": "trajectory::precomputebondcutoffs()"
     },
     {
@@ -28167,8 +28167,8 @@
       "source_location": "L259",
       "_origin": "ast",
       "id": "src_core_trajectory_trajectory_validateframe",
-      "community": 85,
-      "community_name": "CNCalculator",
+      "community": 30,
+      "community_name": "TEST_F",
       "norm_label": "trajectory::validateframe()"
     },
     {
@@ -28398,8 +28398,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "src_plotters_pngplotter_renderhistogramaspng",
-      "community": 252,
-      "community_name": "LammpsDumpReader::readTrajectory",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "renderhistogramaspng()"
     },
     {
@@ -28409,8 +28409,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_plotters_pngplotter_cpp_string",
-      "community": 252,
-      "community_name": "LammpsDumpReader::readTrajectory",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "string"
     },
     {
@@ -28420,8 +28420,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_plotters_pngplotter_cpp_map",
-      "community": 252,
-      "community_name": "LammpsDumpReader::readTrajectory",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "map"
     },
     {
@@ -28431,8 +28431,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_plotters_pngplotter_cpp_real_t",
-      "community": 252,
-      "community_name": "LammpsDumpReader::readTrajectory",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "real_t"
     },
     {
@@ -28442,8 +28442,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "src_plotters_pngplotter_rendercomparisonpng",
-      "community": 252,
-      "community_name": "LammpsDumpReader::readTrajectory",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "rendercomparisonpng()"
     },
     {
@@ -28453,8 +28453,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_plotters_pngplotter_cpp_vector",
-      "community": 252,
-      "community_name": "LammpsDumpReader::readTrajectory",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "vector"
     },
     {
@@ -28552,8 +28552,8 @@
       "source_location": "L212",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_ttf_be16",
-      "community": 296,
-      "community_name": "XdatcarParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "ttf_be16()"
     },
     {
@@ -28563,8 +28563,8 @@
       "source_location": "L217",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_ttf_be32",
-      "community": 296,
-      "community_name": "XdatcarParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "ttf_be32()"
     },
     {
@@ -28574,8 +28574,8 @@
       "source_location": "L223",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_ttf_bes16",
-      "community": 296,
-      "community_name": "XdatcarParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "ttf_bes16()"
     },
     {
@@ -28585,8 +28585,8 @@
       "source_location": "L230",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_ttf_find_table",
-      "community": 296,
-      "community_name": "XdatcarParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "ttf_find_table()"
     },
     {
@@ -28596,8 +28596,8 @@
       "source_location": "L258",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_ttf_cmap_subtable_lookup",
-      "community": 296,
-      "community_name": "XdatcarParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "ttf_cmap_subtable_lookup()"
     },
     {
@@ -28607,8 +28607,8 @@
       "source_location": "L310",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_ttf_find_cmap_subtable",
-      "community": 296,
-      "community_name": "XdatcarParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "ttf_find_cmap_subtable()"
     },
     {
@@ -28618,8 +28618,8 @@
       "source_location": "L362",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_ttf_hmtx_advance",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "ttf_hmtx_advance()"
     },
     {
@@ -28629,8 +28629,8 @@
       "source_location": "L381",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_ttf_extract_name",
-      "community": 296,
-      "community_name": "XdatcarParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "ttf_extract_name()"
     },
     {
@@ -28684,8 +28684,8 @@
       "source_location": "L663",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_flexarray_size",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "flexarray_size()"
     },
     {
@@ -28706,8 +28706,8 @@
       "source_location": "L699",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_flexarray_append",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "flexarray_append()"
     },
     {
@@ -28728,8 +28728,8 @@
       "source_location": "L727",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_dstr_data",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "dstr_data()"
     },
     {
@@ -28739,8 +28739,8 @@
       "source_location": "L732",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_dstr_len",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "dstr_len()"
     },
     {
@@ -28750,8 +28750,8 @@
       "source_location": "L737",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_dstr_ensure",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "dstr_ensure()"
     },
     {
@@ -28783,8 +28783,8 @@
       "source_location": "L791",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_dstr_printf",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "dstr_printf()"
     },
     {
@@ -28794,8 +28794,8 @@
       "source_location": "L817",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_dstr_append_data",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "dstr_append_data()"
     },
     {
@@ -28805,8 +28805,8 @@
       "source_location": "L828",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_dstr_append",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "dstr_append()"
     },
     {
@@ -28816,8 +28816,8 @@
       "source_location": "L833",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_dstr_free",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "dstr_free()"
     },
     {
@@ -28827,8 +28827,8 @@
       "source_location": "L848",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_set_err",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_set_err()"
     },
     {
@@ -28882,8 +28882,8 @@
       "source_location": "L903",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_append_object",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_append_object()"
     },
     {
@@ -28904,8 +28904,8 @@
       "source_location": "L953",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_object",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_object()"
     },
     {
@@ -28992,8 +28992,8 @@
       "source_location": "L1101",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_find_first_object",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_find_first_object()"
     },
     {
@@ -29014,8 +29014,8 @@
       "source_location": "L1117",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_set_font",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_set_font()"
     },
     {
@@ -29025,8 +29025,8 @@
       "source_location": "L1160",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_set_font_ttf",
-      "community": 296,
-      "community_name": "XdatcarParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_set_font_ttf()"
     },
     {
@@ -29036,8 +29036,8 @@
       "source_location": "L1173",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_set_font_ttf_file",
-      "community": 296,
-      "community_name": "XdatcarParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_set_font_ttf_file()"
     },
     {
@@ -29069,8 +29069,8 @@
       "source_location": "L1524",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_get_page",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_get_page()"
     },
     {
@@ -29267,8 +29267,8 @@
       "source_location": "L2465",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_save",
-      "community": 40,
-      "community_name": "PDF Comparison Renderer",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_save()"
     },
     {
@@ -29278,8 +29278,8 @@
       "source_location": "L2487",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_stream",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_stream()"
     },
     {
@@ -29300,8 +29300,8 @@
       "source_location": "L2555",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_link",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_link()"
     },
     {
@@ -29311,8 +29311,8 @@
       "source_location": "L2589",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_utf8_to_utf32",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "utf8_to_utf32()"
     },
     {
@@ -29322,8 +29322,8 @@
       "source_location": "L2629",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_utf8_to_pdfencoding",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "utf8_to_pdfencoding()"
     },
     {
@@ -29333,8 +29333,8 @@
       "source_location": "L2740",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_text_spacing",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_text_spacing()"
     },
     {
@@ -29344,8 +29344,8 @@
       "source_location": "L2832",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_text",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_text()"
     },
     {
@@ -29366,8 +29366,8 @@
       "source_location": "L3093",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_text_point_width",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_text_point_width()"
     },
     {
@@ -29377,8 +29377,8 @@
       "source_location": "L3125",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_ttf_text_point_width",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_ttf_text_point_width()"
     },
     {
@@ -29388,8 +29388,8 @@
       "source_location": "L3161",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_text_width_for_font",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_text_width_for_font()"
     },
     {
@@ -29399,8 +29399,8 @@
       "source_location": "L3171",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_find_font_widths",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "find_font_widths()"
     },
     {
@@ -29410,8 +29410,8 @@
       "source_location": "L3202",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_get_font_text_width",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_get_font_text_width()"
     },
     {
@@ -29421,8 +29421,8 @@
       "source_location": "L3225",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_find_word_break",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "find_word_break()"
     },
     {
@@ -29432,8 +29432,8 @@
       "source_location": "L3245",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_text_wrap",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_text_wrap()"
     },
     {
@@ -29454,8 +29454,8 @@
       "source_location": "L3388",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_cubic_bezier",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_cubic_bezier()"
     },
     {
@@ -29476,8 +29476,8 @@
       "source_location": "L3423",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_custom_path",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_custom_path()"
     },
     {
@@ -29487,8 +29487,8 @@
       "source_location": "L3482",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_ellipse",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_ellipse()"
     },
     {
@@ -29509,8 +29509,8 @@
       "source_location": "L3539",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_rectangle",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_rectangle()"
     },
     {
@@ -29520,8 +29520,8 @@
       "source_location": "L3557",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_filled_rectangle",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_filled_rectangle()"
     },
     {
@@ -29531,8 +29531,8 @@
       "source_location": "L3582",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_polygon",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_polygon()"
     },
     {
@@ -29542,8 +29542,8 @@
       "source_location": "L3603",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_filled_polygon",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_filled_polygon()"
     },
     {
@@ -29553,8 +29553,8 @@
       "source_location": "L3660",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_find_128_encoding",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "find_128_encoding()"
     },
     {
@@ -29564,8 +29564,8 @@
       "source_location": "L3669",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_barcode_128a_ch",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_barcode_128a_ch()"
     },
     {
@@ -29575,8 +29575,8 @@
       "source_location": "L3688",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_barcode_128a",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_barcode_128a()"
     },
     {
@@ -29619,8 +29619,8 @@
       "source_location": "L3904",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_barcode_eanupc_calc_dims",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_barcode_eanupc_calc_dims()"
     },
     {
@@ -29630,8 +29630,8 @@
       "source_location": "L3938",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_barcode_eanupc_ch",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_barcode_eanupc_ch()"
     },
     {
@@ -29641,8 +29641,8 @@
       "source_location": "L3988",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_barcode_eanupc_aux",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_barcode_eanupc_aux()"
     },
     {
@@ -29652,8 +29652,8 @@
       "source_location": "L4013",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_barcode_ean13",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_barcode_ean13()"
     },
     {
@@ -29663,8 +29663,8 @@
       "source_location": "L4134",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_barcode_upca",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_barcode_upca()"
     },
     {
@@ -29674,8 +29674,8 @@
       "source_location": "L4253",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_barcode_ean8",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_barcode_ean8()"
     },
     {
@@ -29685,8 +29685,8 @@
       "source_location": "L4365",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_barcode_upce",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_barcode_upce()"
     },
     {
@@ -29696,8 +29696,8 @@
       "source_location": "L4488",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_barcode",
-      "community": 84,
-      "community_name": "QETrajectoryParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_barcode()"
     },
     {
@@ -29707,8 +29707,8 @@
       "source_location": "L4518",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_raw_grayscale8",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_raw_grayscale8()"
     },
     {
@@ -29718,8 +29718,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "pdf_object",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_object"
     },
     {
@@ -29729,8 +29729,8 @@
       "source_location": "L4561",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_raw_rgb24",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_raw_rgb24()"
     },
     {
@@ -29751,8 +29751,8 @@
       "source_location": "L4648",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_raw_jpeg_data",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_raw_jpeg_data()"
     },
     {
@@ -29773,8 +29773,8 @@
       "source_location": "L4718",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_image",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_image()"
     },
     {
@@ -29872,8 +29872,8 @@
       "source_location": "L5020",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_png_data",
-      "community": 49,
-      "community_name": "VaspParser",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_png_data()"
     },
     {
@@ -32402,8 +32402,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "src_readers_readerfactory_readerfactory_registerreader",
-      "community": 275,
-      "community_name": "TEST",
+      "community": 158,
+      "community_name": "VoronoiCalculator::populateHistogram",
       "norm_label": "readerfactory::registerreader()"
     },
     {
@@ -32413,8 +32413,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_readerfactory_cpp_unique_ptr",
-      "community": 275,
-      "community_name": "TEST",
+      "community": 158,
+      "community_name": "VoronoiCalculator::populateHistogram",
       "norm_label": "unique_ptr"
     },
     {
@@ -32842,8 +32842,8 @@
       "source_location": "L145",
       "_origin": "ast",
       "id": "src_readers_xyzreader_xyzreader_parsexyzframe",
-      "community": 30,
-      "community_name": "TEST_F",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "xyzreader::parsexyzframe()"
     },
     {
@@ -32952,8 +32952,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_readers_xdatcarreader",
-      "community": 197,
-      "community_name": "XdatcarReaderTests",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "xdatcarreader.cpp"
     },
     {
@@ -32963,8 +32963,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "src_readers_xdatcarreader_findlineend",
-      "community": 197,
-      "community_name": "XdatcarReaderTests",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "findlineend()"
     },
     {
@@ -32974,8 +32974,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "src_readers_xdatcarreader_skiplineending",
-      "community": 197,
-      "community_name": "XdatcarReaderTests",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "skiplineending()"
     },
     {
@@ -32985,8 +32985,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "src_readers_xdatcarreader_extractline",
-      "community": 197,
-      "community_name": "XdatcarReaderTests",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "extractline()"
     },
     {
@@ -32996,8 +32996,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_xdatcarreader_cpp_string",
-      "community": 197,
-      "community_name": "XdatcarReaderTests",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "string"
     },
     {
@@ -33095,8 +33095,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "src_readers_xdatcarreader_xdatcarparser",
-      "community": 294,
-      "community_name": "precomputePhases",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "xdatcarparser"
     },
     {
@@ -33106,8 +33106,8 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "src_readers_xdatcarreader_xdatcarparser_data",
-      "community": 294,
-      "community_name": "precomputePhases",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "data"
     },
     {
@@ -33117,8 +33117,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "src_readers_xdatcarreader_xdatcarparser_total_size",
-      "community": 294,
-      "community_name": "precomputePhases",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "total_size"
     },
     {
@@ -33128,8 +33128,8 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "src_readers_xdatcarreader_xdatcarparser_offset",
-      "community": 294,
-      "community_name": "precomputePhases",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "offset"
     },
     {
@@ -33139,8 +33139,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "src_readers_xdatcarreader_xdatcarparser_lineend",
-      "community": 294,
-      "community_name": "precomputePhases",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "lineend"
     },
     {
@@ -33150,8 +33150,8 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "src_readers_xdatcarreader_xdatcarparser_xdatcarparser",
-      "community": 294,
-      "community_name": "precomputePhases",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": ".xdatcarparser()"
     },
     {
@@ -33161,8 +33161,8 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "src_readers_xdatcarreader_xdatcarparser_nextline",
-      "community": 197,
-      "community_name": "XdatcarReaderTests",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": ".nextline()"
     },
     {
@@ -33194,8 +33194,8 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "src_readers_xdatcarreader_xdatcarparser_findframeoffsets",
-      "community": 197,
-      "community_name": "XdatcarReaderTests",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": ".findframeoffsets()"
     },
     {
@@ -33205,8 +33205,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_xdatcarreader_cpp_function",
-      "community": 197,
-      "community_name": "XdatcarReaderTests",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "function"
     },
     {
@@ -33238,8 +33238,8 @@
       "source_location": "L228",
       "_origin": "ast",
       "id": "src_readers_xdatcarreader_parsexdatcarframe",
-      "community": 197,
-      "community_name": "XdatcarReaderTests",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "parsexdatcarframe()"
     },
     {
@@ -33249,8 +33249,8 @@
       "source_location": "L277",
       "_origin": "ast",
       "id": "src_readers_xdatcarreader_xdatcarreader_readstructure",
-      "community": 197,
-      "community_name": "XdatcarReaderTests",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "xdatcarreader::readstructure()"
     },
     {
@@ -33260,8 +33260,8 @@
       "source_location": "L290",
       "_origin": "ast",
       "id": "src_readers_xdatcarreader_xdatcarreader_readtrajectory",
-      "community": 197,
-      "community_name": "XdatcarReaderTests",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "xdatcarreader::readtrajectory()"
     },
     {
@@ -33524,8 +33524,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_writers_hdf5writer",
-      "community": 9,
-      "community_name": "vector",
+      "community": 252,
+      "community_name": "LammpsDumpReader::readTrajectory",
       "norm_label": "hdf5writer.cpp"
     },
     {
@@ -33535,8 +33535,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "src_writers_hdf5writer_writehistogramtogroup",
-      "community": 9,
-      "community_name": "vector",
+      "community": 252,
+      "community_name": "LammpsDumpReader::readTrajectory",
       "norm_label": "writehistogramtogroup()"
     },
     {
@@ -33546,8 +33546,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_writers_hdf5writer_cpp_file",
-      "community": 9,
-      "community_name": "vector",
+      "community": 252,
+      "community_name": "LammpsDumpReader::readTrajectory",
       "norm_label": "file"
     },
     {
@@ -33557,8 +33557,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_writers_hdf5writer_cpp_string",
-      "community": 9,
-      "community_name": "vector",
+      "community": 252,
+      "community_name": "LammpsDumpReader::readTrajectory",
       "norm_label": "string"
     },
     {
@@ -33568,8 +33568,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "src_writers_hdf5writer_hdf5writer_writehdf",
-      "community": 9,
-      "community_name": "vector",
+      "community": 252,
+      "community_name": "LammpsDumpReader::readTrajectory",
       "norm_label": "hdf5writer::writehdf()"
     },
     {
@@ -34118,8 +34118,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_precisiontesthelper",
-      "community": 73,
-      "community_name": "Constants.hpp",
+      "community": 281,
+      "community_name": "GromacsReaderTests",
       "norm_label": "precisiontesthelper.hpp"
     },
     {
@@ -34129,8 +34129,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "tests_precisiontesthelper_isrealeq",
-      "community": 73,
-      "community_name": "Constants.hpp",
+      "community": 281,
+      "community_name": "GromacsReaderTests",
       "norm_label": "isrealeq()"
     },
     {
@@ -34140,8 +34140,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_precisiontesthelper_hpp_real_t",
-      "community": 73,
-      "community_name": "Constants.hpp",
+      "community": 281,
+      "community_name": "GromacsReaderTests",
       "norm_label": "real_t"
     },
     {
@@ -34151,8 +34151,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_functional_analysis_dynamicsanalyzertests",
-      "community": 52,
-      "community_name": "TEST",
+      "community": 49,
+      "community_name": "VaspParser",
       "norm_label": "dynamicsanalyzertests.cpp"
     },
     {
@@ -35768,8 +35768,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_fuzz_fuzz_onetep_dat",
-      "community": 36,
-      "community_name": "fuzz_utils.hpp",
+      "community": 70,
+      "community_name": "TEST",
       "norm_label": "fuzz_onetep_dat.cpp"
     },
     {
@@ -35779,8 +35779,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_fuzz_fuzz_onetep_dat_llvmfuzzertestoneinput",
-      "community": 36,
-      "community_name": "fuzz_utils.hpp",
+      "community": 70,
+      "community_name": "TEST",
       "norm_label": "llvmfuzzertestoneinput()"
     },
     {
@@ -36065,8 +36065,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "tests_unit_app_appbackendtests_appbackendtests",
-      "community": 10,
-      "community_name": "AppBackend",
+      "community": 282,
+      "community_name": "HyperuniformityParams",
       "norm_label": "appbackendtests"
     },
     {
@@ -36076,8 +36076,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_app_appbackendtests_cpp_testing_test",
-      "community": 10,
-      "community_name": "AppBackend",
+      "community": 282,
+      "community_name": "HyperuniformityParams",
       "norm_label": "testing::test"
     },
     {
@@ -38199,8 +38199,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_calculators_mlipcalculatortests",
-      "community": 157,
-      "community_name": "HyperuniformityCalculatorTests.cpp",
+      "community": 30,
+      "community_name": "TEST_F",
       "norm_label": "mlipcalculatortests.cpp"
     },
     {
@@ -38210,8 +38210,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "tests_unit_calculators_mlipcalculatortests_mockorbv3model",
-      "community": 104,
-      "community_name": "DatasetWriteQuery",
+      "community": 30,
+      "community_name": "TEST_F",
       "norm_label": "mockorbv3model"
     },
     {
@@ -38221,8 +38221,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "mlip_mlipinterface",
-      "community": 104,
-      "community_name": "DatasetWriteQuery",
+      "community": 30,
+      "community_name": "TEST_F",
       "norm_label": "mlip::mlipinterface"
     },
     {
@@ -38232,8 +38232,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "tests_unit_calculators_mlipcalculatortests_mockorbv3model_getmodelname",
-      "community": 104,
-      "community_name": "DatasetWriteQuery",
+      "community": 30,
+      "community_name": "TEST_F",
       "norm_label": ".getmodelname()"
     },
     {
@@ -38243,8 +38243,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_calculators_mlipcalculatortests_cpp_string",
-      "community": 104,
-      "community_name": "DatasetWriteQuery",
+      "community": 30,
+      "community_name": "TEST_F",
       "norm_label": "string"
     },
     {
@@ -38254,8 +38254,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "tests_unit_calculators_mlipcalculatortests_mockorbv3model_evaluate",
-      "community": 104,
-      "community_name": "DatasetWriteQuery",
+      "community": 30,
+      "community_name": "TEST_F",
       "norm_label": ".evaluate()"
     },
     {
@@ -38551,8 +38551,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_calculators_padtests",
-      "community": 59,
-      "community_name": "SvgComparisonRenderer",
+      "community": 73,
+      "community_name": "Constants.hpp",
       "norm_label": "padtests.cpp"
     },
     {
@@ -39266,8 +39266,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "tests_unit_calculators_ringcelltests_vecnorm",
-      "community": 28,
-      "community_name": "TEST_F",
+      "community": 59,
+      "community_name": "SvgComparisonRenderer",
       "norm_label": "vecnorm()"
     },
     {
@@ -39277,8 +39277,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_calculators_ringcelltests_cpp_real_t",
-      "community": 28,
-      "community_name": "TEST_F",
+      "community": 59,
+      "community_name": "SvgComparisonRenderer",
       "norm_label": "real_t"
     },
     {
@@ -39288,8 +39288,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_calculators_ringcelltests_cpp_vector3",
-      "community": 28,
-      "community_name": "TEST_F",
+      "community": 59,
+      "community_name": "SvgComparisonRenderer",
       "norm_label": "vector3"
     },
     {
@@ -39299,8 +39299,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "tests_unit_calculators_ringcelltests_ringcelltests",
-      "community": 28,
-      "community_name": "TEST_F",
+      "community": 59,
+      "community_name": "SvgComparisonRenderer",
       "norm_label": "ringcelltests"
     },
     {
@@ -39310,8 +39310,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "testing_testwithparam_size_t",
-      "community": 28,
-      "community_name": "TEST_F",
+      "community": 59,
+      "community_name": "SvgComparisonRenderer",
       "norm_label": "testing::testwithparam<size_t>"
     },
     {
@@ -39321,8 +39321,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "tests_unit_calculators_ringcelltests_ringcelltests_radius",
-      "community": 28,
-      "community_name": "TEST_F",
+      "community": 59,
+      "community_name": "SvgComparisonRenderer",
       "norm_label": "radius_"
     },
     {
@@ -39332,8 +39332,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "tests_unit_calculators_ringcelltests_ringcelltests_box_size",
-      "community": 28,
-      "community_name": "TEST_F",
+      "community": 59,
+      "community_name": "SvgComparisonRenderer",
       "norm_label": "box_size_"
     },
     {
@@ -39343,8 +39343,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "tests_unit_calculators_ringcelltests_ringcelltests_boxsize",
-      "community": 28,
-      "community_name": "TEST_F",
+      "community": 59,
+      "community_name": "SvgComparisonRenderer",
       "norm_label": ".boxsize()"
     },
     {
@@ -39354,8 +39354,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "tests_unit_calculators_ringcelltests_ringcelltests_createring",
-      "community": 28,
-      "community_name": "TEST_F",
+      "community": 59,
+      "community_name": "SvgComparisonRenderer",
       "norm_label": ".createring()"
     },
     {
@@ -39365,8 +39365,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "tests_unit_calculators_ringcelltests_test_p",
-      "community": 28,
-      "community_name": "TEST_F",
+      "community": 59,
+      "community_name": "SvgComparisonRenderer",
       "norm_label": "test_p()"
     },
     {
@@ -39376,8 +39376,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "geometryandbonddistances",
-      "community": 28,
-      "community_name": "TEST_F",
+      "community": 59,
+      "community_name": "SvgComparisonRenderer",
       "norm_label": "geometryandbonddistances"
     },
     {
@@ -39387,8 +39387,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "motiffinderringdetection",
-      "community": 28,
-      "community_name": "TEST_F",
+      "community": 59,
+      "community_name": "SvgComparisonRenderer",
       "norm_label": "motiffinderringdetection"
     },
     {
@@ -39398,8 +39398,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "bondangledistribution",
-      "community": 28,
-      "community_name": "TEST_F",
+      "community": 59,
+      "community_name": "SvgComparisonRenderer",
       "norm_label": "bondangledistribution"
     },
     {
@@ -39409,8 +39409,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "planarangledistributionrunscleanly",
-      "community": 28,
-      "community_name": "TEST_F",
+      "community": 59,
+      "community_name": "SvgComparisonRenderer",
       "norm_label": "planarangledistributionrunscleanly"
     },
     {
@@ -39420,8 +39420,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "radialpairdistances",
-      "community": 28,
-      "community_name": "TEST_F",
+      "community": 59,
+      "community_name": "SvgComparisonRenderer",
       "norm_label": "radialpairdistances"
     },
     {
@@ -39486,8 +39486,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_calculators_syclcalculatortests",
-      "community": 73,
-      "community_name": "Constants.hpp",
+      "community": 108,
+      "community_name": "NiceScale",
       "norm_label": "syclcalculatortests.cpp"
     },
     {
@@ -39640,8 +39640,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_calculators_steinhardtcalculatortests",
-      "community": 131,
-      "community_name": "TEST_F",
+      "community": 73,
+      "community_name": "Constants.hpp",
       "norm_label": "steinhardtcalculatortests.cpp"
     },
     {
@@ -40113,8 +40113,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_calculators_voronoicalculatortests",
-      "community": 73,
-      "community_name": "Constants.hpp",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "voronoicalculatortests.cpp"
     },
     {
@@ -40124,8 +40124,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "tests_unit_calculators_voronoicalculatortests_voronoicalculatortests",
-      "community": 30,
-      "community_name": "TEST_F",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "voronoicalculatortests"
     },
     {
@@ -40135,8 +40135,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_calculators_voronoicalculatortests_cpp_testing_test",
-      "community": 30,
-      "community_name": "TEST_F",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "testing::test"
     },
     {
@@ -40146,8 +40146,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "tests_unit_calculators_voronoicalculatortests_voronoicalculatortests_getpeakvalue",
-      "community": 30,
-      "community_name": "TEST_F",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": ".getpeakvalue()"
     },
     {
@@ -40157,8 +40157,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_calculators_voronoicalculatortests_cpp_real_t",
-      "community": 30,
-      "community_name": "TEST_F",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "real_t"
     },
     {
@@ -40168,8 +40168,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "tests_unit_calculators_voronoicalculatortests_test_f",
-      "community": 30,
-      "community_name": "TEST_F",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "test_f()"
     },
     {
@@ -40179,8 +40179,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_calculators_voronoicalculatortests_cpp_simplecubic",
-      "community": 30,
-      "community_name": "TEST_F",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "simplecubic"
     },
     {
@@ -40190,8 +40190,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_calculators_voronoicalculatortests_cpp_bodycenteredcubic",
-      "community": 30,
-      "community_name": "TEST_F",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "bodycenteredcubic"
     },
     {
@@ -40201,8 +40201,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_calculators_voronoicalculatortests_cpp_facecenteredcubic",
-      "community": 30,
-      "community_name": "TEST_F",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "facecenteredcubic"
     },
     {
@@ -40212,8 +40212,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "hexagonalclosepacked",
-      "community": 30,
-      "community_name": "TEST_F",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "hexagonalclosepacked"
     },
     {
@@ -40223,8 +40223,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_calculators_xrdtests",
-      "community": 129,
-      "community_name": "XRDCalculator",
+      "community": 73,
+      "community_name": "Constants.hpp",
       "norm_label": "xrdtests.cpp"
     },
     {
@@ -41620,8 +41620,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "tests_unit_core_celltests_celltests",
-      "community": 30,
-      "community_name": "TEST_F",
+      "community": 73,
+      "community_name": "Constants.hpp",
       "norm_label": "celltests"
     },
     {
@@ -41631,8 +41631,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_core_celltests_cpp_testing_test",
-      "community": 30,
-      "community_name": "TEST_F",
+      "community": 73,
+      "community_name": "Constants.hpp",
       "norm_label": "testing::test"
     },
     {
@@ -41642,8 +41642,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_unit_core_celltests_celltests_orthogonal_cell",
-      "community": 30,
-      "community_name": "TEST_F",
+      "community": 73,
+      "community_name": "Constants.hpp",
       "norm_label": "orthogonal_cell_"
     },
     {
@@ -41939,8 +41939,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_core_mappedfiletests",
-      "community": 273,
-      "community_name": "MLIPOutput",
+      "community": 148,
+      "community_name": "wasm_bindings.cpp",
       "norm_label": "unit/core/mappedfiletests.cpp"
     },
     {
@@ -41950,8 +41950,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "tests_unit_core_mappedfiletests_mappedfiletests",
-      "community": 183,
-      "community_name": "FileWriter::write",
+      "community": 148,
+      "community_name": "wasm_bindings.cpp",
       "norm_label": "mappedfiletests"
     },
     {
@@ -41961,8 +41961,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_core_mappedfiletests_cpp_testing_test",
-      "community": 183,
-      "community_name": "FileWriter::write",
+      "community": 148,
+      "community_name": "wasm_bindings.cpp",
       "norm_label": "testing::test"
     },
     {
@@ -41972,8 +41972,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_core_mappedfiletests_cpp_string",
-      "community": 183,
-      "community_name": "FileWriter::write",
+      "community": 148,
+      "community_name": "wasm_bindings.cpp",
       "norm_label": "string"
     },
     {
@@ -41983,8 +41983,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "tests_unit_core_mappedfiletests_mappedfiletests_test_dir",
-      "community": 183,
-      "community_name": "FileWriter::write",
+      "community": 148,
+      "community_name": "wasm_bindings.cpp",
       "norm_label": "test_dir_"
     },
     {
@@ -41994,8 +41994,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_unit_core_mappedfiletests_mappedfiletests_valid_file_path",
-      "community": 183,
-      "community_name": "FileWriter::write",
+      "community": 148,
+      "community_name": "wasm_bindings.cpp",
       "norm_label": "valid_file_path_"
     },
     {
@@ -42005,8 +42005,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "tests_unit_core_mappedfiletests_mappedfiletests_file_content",
-      "community": 183,
-      "community_name": "FileWriter::write",
+      "community": 148,
+      "community_name": "wasm_bindings.cpp",
       "norm_label": "file_content_"
     },
     {
@@ -42016,8 +42016,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "tests_unit_core_mappedfiletests_mappedfiletests_setup",
-      "community": 183,
-      "community_name": "FileWriter::write",
+      "community": 148,
+      "community_name": "wasm_bindings.cpp",
       "norm_label": ".setup()"
     },
     {
@@ -42027,8 +42027,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "tests_unit_core_mappedfiletests_mappedfiletests_teardown",
-      "community": 183,
-      "community_name": "FileWriter::write",
+      "community": 148,
+      "community_name": "wasm_bindings.cpp",
       "norm_label": ".teardown()"
     },
     {
@@ -43765,8 +43765,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_physics_physicaldatatests",
-      "community": 53,
-      "community_name": "TEST_F",
+      "community": 49,
+      "community_name": "VaspParser",
       "norm_label": "physicaldatatests.cpp"
     },
     {
@@ -43776,8 +43776,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "tests_unit_physics_physicaldatatests_test",
-      "community": 53,
-      "community_name": "TEST_F",
+      "community": 49,
+      "community_name": "VaspParser",
       "norm_label": "test()"
     },
     {
@@ -43787,8 +43787,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "physicaldatatests",
-      "community": 53,
-      "community_name": "TEST_F",
+      "community": 49,
+      "community_name": "VaspParser",
       "norm_label": "physicaldatatests"
     },
     {
@@ -43798,8 +43798,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "getcovalentradiuscorrectly",
-      "community": 53,
-      "community_name": "TEST_F",
+      "community": 49,
+      "community_name": "VaspParser",
       "norm_label": "getcovalentradiuscorrectly"
     },
     {
@@ -43809,8 +43809,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "getatomicmasscorrectly",
-      "community": 53,
-      "community_name": "TEST_F",
+      "community": 49,
+      "community_name": "VaspParser",
       "norm_label": "getatomicmasscorrectly"
     },
     {
@@ -43820,8 +43820,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "getatomicformfactorscorrectly",
-      "community": 53,
-      "community_name": "TEST_F",
+      "community": 49,
+      "community_name": "VaspParser",
       "norm_label": "getatomicformfactorscorrectly"
     },
     {
@@ -44722,8 +44722,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "tests_unit_readers_filereadertests_filereadertests",
-      "community": 281,
-      "community_name": "GromacsReaderTests",
+      "community": 121,
+      "community_name": "DihedralCalculatorTests",
       "norm_label": "filereadertests"
     },
     {
@@ -44733,8 +44733,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_readers_filereadertests_cpp_testing_test",
-      "community": 281,
-      "community_name": "GromacsReaderTests",
+      "community": 121,
+      "community_name": "DihedralCalculatorTests",
       "norm_label": "testing::test"
     },
     {
@@ -44744,8 +44744,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_readers_filereadertests_cpp_string",
-      "community": 281,
-      "community_name": "GromacsReaderTests",
+      "community": 121,
+      "community_name": "DihedralCalculatorTests",
       "norm_label": "string"
     },
     {
@@ -44755,8 +44755,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "tests_unit_readers_filereadertests_filereadertests_data_dir",
-      "community": 281,
-      "community_name": "GromacsReaderTests",
+      "community": 121,
+      "community_name": "DihedralCalculatorTests",
       "norm_label": "data_dir_"
     },
     {
@@ -44766,8 +44766,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "tests_unit_readers_filereadertests_filereadertests_gettestdatadir",
-      "community": 281,
-      "community_name": "GromacsReaderTests",
+      "community": 121,
+      "community_name": "DihedralCalculatorTests",
       "norm_label": ".gettestdatadir()"
     },
     {
@@ -44777,8 +44777,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "tests_unit_readers_filereadertests_filereadertests_setup",
-      "community": 281,
-      "community_name": "GromacsReaderTests",
+      "community": 121,
+      "community_name": "DihedralCalculatorTests",
       "norm_label": ".setup()"
     },
     {
@@ -45635,8 +45635,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "tests_unit_readers_readerfactorytests_mockreader",
-      "community": 279,
-      "community_name": "MockReader",
+      "community": 275,
+      "community_name": "TEST",
       "norm_label": "mockreader"
     },
     {
@@ -45646,8 +45646,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_unit_readers_readerfactorytests_mockreader_getname",
-      "community": 279,
-      "community_name": "MockReader",
+      "community": 275,
+      "community_name": "TEST",
       "norm_label": ".getname()"
     },
     {
@@ -45657,8 +45657,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_readers_readerfactorytests_cpp_string",
-      "community": 279,
-      "community_name": "MockReader",
+      "community": 275,
+      "community_name": "TEST",
       "norm_label": "string"
     },
     {
@@ -45668,8 +45668,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "tests_unit_readers_readerfactorytests_mockreader_getextensions",
-      "community": 279,
-      "community_name": "MockReader",
+      "community": 275,
+      "community_name": "TEST",
       "norm_label": ".getextensions()"
     },
     {
@@ -45679,8 +45679,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_readers_readerfactorytests_cpp_vector",
-      "community": 279,
-      "community_name": "MockReader",
+      "community": 275,
+      "community_name": "TEST",
       "norm_label": "vector"
     },
     {
@@ -45690,8 +45690,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "tests_unit_readers_readerfactorytests_mockreader_istrajectory",
-      "community": 279,
-      "community_name": "MockReader",
+      "community": 275,
+      "community_name": "TEST",
       "norm_label": ".istrajectory()"
     },
     {
@@ -45701,8 +45701,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "tests_unit_readers_readerfactorytests_mockreader_readstructure",
-      "community": 279,
-      "community_name": "MockReader",
+      "community": 275,
+      "community_name": "TEST",
       "norm_label": ".readstructure()"
     },
     {
@@ -45712,8 +45712,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "tests_unit_readers_readerfactorytests_mockreader_readtrajectory",
-      "community": 279,
-      "community_name": "MockReader",
+      "community": 275,
+      "community_name": "TEST",
       "norm_label": ".readtrajectory()"
     },
     {
@@ -47686,61 +47686,6 @@
       "norm_label": "3. prohibited actions"
     },
     {
-      "label": "picky-interrogation-protocol.md",
-      "file_type": "document",
-      "source_file": ".agents/rules/picky-interrogation-protocol.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_rules_picky_interrogation_protocol",
-      "community": 282,
-      "community_name": "HyperuniformityParams",
-      "norm_label": "picky-interrogation-protocol.md"
-    },
-    {
-      "label": "Picky Interrogation & Senior Architect Interaction Protocol",
-      "file_type": "document",
-      "source_file": ".agents/rules/picky-interrogation-protocol.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_rules_picky_interrogation_protocol_picky_interrogation_senior_architect_interaction_protocol",
-      "community": 282,
-      "community_name": "HyperuniformityParams",
-      "norm_label": "picky interrogation & senior architect interaction protocol"
-    },
-    {
-      "label": "1. Audience & Seniority Level",
-      "file_type": "document",
-      "source_file": ".agents/rules/picky-interrogation-protocol.md",
-      "source_location": "L3",
-      "_origin": "ast",
-      "id": "agents_rules_picky_interrogation_protocol_1_audience_seniority_level",
-      "community": 282,
-      "community_name": "HyperuniformityParams",
-      "norm_label": "1. audience & seniority level"
-    },
-    {
-      "label": "2. Universal Requirement Extraction (\"Always Grind Out Answers\")",
-      "file_type": "document",
-      "source_file": ".agents/rules/picky-interrogation-protocol.md",
-      "source_location": "L7",
-      "_origin": "ast",
-      "id": "agents_rules_picky_interrogation_protocol_2_universal_requirement_extraction_always_grind_out_answers",
-      "community": 282,
-      "community_name": "HyperuniformityParams",
-      "norm_label": "2. universal requirement extraction (\"always grind out answers\")"
-    },
-    {
-      "label": "3. Proactive Architectural Audit & Recommendations",
-      "file_type": "document",
-      "source_file": ".agents/rules/picky-interrogation-protocol.md",
-      "source_location": "L17",
-      "_origin": "ast",
-      "id": "agents_rules_picky_interrogation_protocol_3_proactive_architectural_audit_recommendations",
-      "community": 282,
-      "community_name": "HyperuniformityParams",
-      "norm_label": "3. proactive architectural audit & recommendations"
-    },
-    {
       "label": "slint-standards.md",
       "file_type": "document",
       "source_file": ".agents/rules/slint-standards.md",
@@ -47942,7 +47887,7 @@
       "label": "2. Step-by-Step Interrogation & Brainstorming Workflow",
       "file_type": "document",
       "source_file": ".agents/skills/always-grind-interrogation/SKILL.md",
-      "source_location": "L40",
+      "source_location": "L47",
       "_origin": "ast",
       "id": "agents_skills_always_grind_interrogation_skill_2_step_by_step_interrogation_brainstorming_workflow",
       "community": 260,
@@ -47953,7 +47898,7 @@
       "label": "1\ufe0f\u20e3 Context Audit (Mandatory First Step)",
       "file_type": "document",
       "source_file": ".agents/skills/always-grind-interrogation/SKILL.md",
-      "source_location": "L42",
+      "source_location": "L49",
       "_origin": "ast",
       "id": "agents_skills_always_grind_interrogation_skill_1_context_audit_mandatory_first_step",
       "community": 260,
@@ -47961,21 +47906,21 @@
       "norm_label": "1\ufe0f\u20e3 context audit (mandatory first step)"
     },
     {
-      "label": "2\ufe0f\u20e3 Structured Option Grinding (One Question / Topic at a Time)",
+      "label": "2\ufe0f\u20e3 Structured Option Grinding (One Question at a Time)",
       "file_type": "document",
       "source_file": ".agents/skills/always-grind-interrogation/SKILL.md",
-      "source_location": "L50",
+      "source_location": "L57",
       "_origin": "ast",
-      "id": "agents_skills_always_grind_interrogation_skill_2_structured_option_grinding_one_question_topic_at_a_time",
+      "id": "agents_skills_always_grind_interrogation_skill_2_structured_option_grinding_one_question_at_a_time",
       "community": 260,
       "community_name": "ClusterCalculator",
-      "norm_label": "2\ufe0f\u20e3 structured option grinding (one question / topic at a time)"
+      "norm_label": "2\ufe0f\u20e3 structured option grinding (one question at a time)"
     },
     {
       "label": "3\ufe0f\u20e3 Understanding Lock (Hard Gate)",
       "file_type": "document",
       "source_file": ".agents/skills/always-grind-interrogation/SKILL.md",
-      "source_location": "L61",
+      "source_location": "L68",
       "_origin": "ast",
       "id": "agents_skills_always_grind_interrogation_skill_3_understanding_lock_hard_gate",
       "community": 260,
@@ -47986,7 +47931,7 @@
       "label": "Understanding Summary",
       "file_type": "document",
       "source_file": ".agents/skills/always-grind-interrogation/SKILL.md",
-      "source_location": "L64",
+      "source_location": "L71",
       "_origin": "ast",
       "id": "agents_skills_always_grind_interrogation_skill_understanding_summary",
       "community": 260,
@@ -47997,7 +47942,7 @@
       "label": "Assumptions & Open Questions",
       "file_type": "document",
       "source_file": ".agents/skills/always-grind-interrogation/SKILL.md",
-      "source_location": "L71",
+      "source_location": "L78",
       "_origin": "ast",
       "id": "agents_skills_always_grind_interrogation_skill_assumptions_open_questions",
       "community": 260,
@@ -48008,7 +47953,7 @@
       "label": "Hard Gate Confirmation Prompt:",
       "file_type": "document",
       "source_file": ".agents/skills/always-grind-interrogation/SKILL.md",
-      "source_location": "L74",
+      "source_location": "L81",
       "_origin": "ast",
       "id": "agents_skills_always_grind_interrogation_skill_hard_gate_confirmation_prompt",
       "community": 260,
@@ -48019,7 +47964,7 @@
       "label": "4\ufe0f\u20e3 Decision Log (Mandatory Artifact Tracking)",
       "file_type": "document",
       "source_file": ".agents/skills/always-grind-interrogation/SKILL.md",
-      "source_location": "L81",
+      "source_location": "L88",
       "_origin": "ast",
       "id": "agents_skills_always_grind_interrogation_skill_4_decision_log_mandatory_artifact_tracking",
       "community": 260,
@@ -48030,7 +47975,7 @@
       "label": "5\ufe0f\u20e3 Implementation Handoff & Exit Criteria",
       "file_type": "document",
       "source_file": ".agents/skills/always-grind-interrogation/SKILL.md",
-      "source_location": "L89",
+      "source_location": "L96",
       "_origin": "ast",
       "id": "agents_skills_always_grind_interrogation_skill_5_implementation_handoff_exit_criteria",
       "community": 260,
@@ -49281,37 +49226,136 @@
       "norm_label": "slint component architect & ux guidelines"
     },
     {
-      "label": "Core Directives",
+      "label": "1. Syntax, Property Scoping & Decomposition",
       "file_type": "document",
       "source_file": ".agents/skills/slint-component-architect/SKILL.md",
       "source_location": "L10",
       "_origin": "ast",
-      "id": "agents_skills_slint_component_architect_skill_core_directives",
+      "id": "agents_skills_slint_component_architect_skill_1_syntax_property_scoping_decomposition",
       "community": 267,
       "community_name": "MappedFileTests",
-      "norm_label": "core directives"
+      "norm_label": "1. syntax, property scoping & decomposition"
     },
     {
-      "label": "Component Pattern Example",
+      "label": "Declarative Property Scope",
+      "file_type": "document",
+      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "agents_skills_slint_component_architect_skill_declarative_property_scope",
+      "community": 267,
+      "community_name": "MappedFileTests",
+      "norm_label": "declarative property scope"
+    },
+    {
+      "label": "Component Decomposition Rules",
       "file_type": "document",
       "source_file": ".agents/skills/slint-component-architect/SKILL.md",
       "source_location": "L18",
       "_origin": "ast",
-      "id": "agents_skills_slint_component_architect_skill_component_pattern_example",
+      "id": "agents_skills_slint_component_architect_skill_component_decomposition_rules",
       "community": 267,
       "community_name": "MappedFileTests",
-      "norm_label": "component pattern example"
+      "norm_label": "component decomposition rules"
     },
     {
-      "label": "Data Visualization Guidelines",
+      "label": "2. Design Tokens & Material 3 Styling (`ui/material/`)",
       "file_type": "document",
       "source_file": ".agents/skills/slint-component-architect/SKILL.md",
-      "source_location": "L56",
+      "source_location": "L25",
       "_origin": "ast",
-      "id": "agents_skills_slint_component_architect_skill_data_visualization_guidelines",
+      "id": "agents_skills_slint_component_architect_skill_2_design_tokens_material_3_styling_ui_material",
       "community": 267,
       "community_name": "MappedFileTests",
-      "norm_label": "data visualization guidelines"
+      "norm_label": "2. design tokens & material 3 styling (`ui/material/`)"
+    },
+    {
+      "label": "A. Material Palette (`MaterialPalette`)",
+      "file_type": "document",
+      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
+      "source_location": "L27",
+      "_origin": "ast",
+      "id": "agents_skills_slint_component_architect_skill_a_material_palette_materialpalette",
+      "community": 267,
+      "community_name": "MappedFileTests",
+      "norm_label": "a. material palette (`materialpalette`)"
+    },
+    {
+      "label": "B. Material Style Metrics (`MaterialStyleMetrics`)",
+      "file_type": "document",
+      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
+      "source_location": "L41",
+      "_origin": "ast",
+      "id": "agents_skills_slint_component_architect_skill_b_material_style_metrics_materialstylemetrics",
+      "community": 267,
+      "community_name": "MappedFileTests",
+      "norm_label": "b. material style metrics (`materialstylemetrics`)"
+    },
+    {
+      "label": "C. Material Typography & Dark/Light Themes",
+      "file_type": "document",
+      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
+      "source_location": "L48",
+      "_origin": "ast",
+      "id": "agents_skills_slint_component_architect_skill_c_material_typography_dark_light_themes",
+      "community": 267,
+      "community_name": "MappedFileTests",
+      "norm_label": "c. material typography & dark/light themes"
+    },
+    {
+      "label": "3. Layout Structure & Container Rules",
+      "file_type": "document",
+      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
+      "source_location": "L54",
+      "_origin": "ast",
+      "id": "agents_skills_slint_component_architect_skill_3_layout_structure_container_rules",
+      "community": 267,
+      "community_name": "MappedFileTests",
+      "norm_label": "3. layout structure & container rules"
+    },
+    {
+      "label": "4. Reusable Material Component Library",
+      "file_type": "document",
+      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
+      "source_location": "L62",
+      "_origin": "ast",
+      "id": "agents_skills_slint_component_architect_skill_4_reusable_material_component_library",
+      "community": 267,
+      "community_name": "MappedFileTests",
+      "norm_label": "4. reusable material component library"
+    },
+    {
+      "label": "A. Buttons & Cards",
+      "file_type": "document",
+      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
+      "source_location": "L64",
+      "_origin": "ast",
+      "id": "agents_skills_slint_component_architect_skill_a_buttons_cards",
+      "community": 267,
+      "community_name": "MappedFileTests",
+      "norm_label": "a. buttons & cards"
+    },
+    {
+      "label": "B. Interactive Feedback & Accessibility Annotations",
+      "file_type": "document",
+      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
+      "source_location": "L79",
+      "_origin": "ast",
+      "id": "agents_skills_slint_component_architect_skill_b_interactive_feedback_accessibility_annotations",
+      "community": 267,
+      "community_name": "MappedFileTests",
+      "norm_label": "b. interactive feedback & accessibility annotations"
+    },
+    {
+      "label": "5. Data Visualization Guidelines",
+      "file_type": "document",
+      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
+      "source_location": "L86",
+      "_origin": "ast",
+      "id": "agents_skills_slint_component_architect_skill_5_data_visualization_guidelines",
+      "community": 267,
+      "community_name": "MappedFileTests",
+      "norm_label": "5. data visualization guidelines"
     },
     {
       "label": "slint-cpp-integration/SKILL.md",
@@ -49554,270 +49598,6 @@
       "community": 271,
       "community_name": "Slint Live Preview & Verification Loop",
       "norm_label": "3. responsive layout testing"
-    },
-    {
-      "label": "slint-material-design-system/SKILL.md",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_skills_slint_material_design_system_skill",
-      "community": 66,
-      "community_name": "progress_callback",
-      "norm_label": "slint-material-design-system/skill.md"
-    },
-    {
-      "label": "Slint Material Design System Protocol",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L6",
-      "_origin": "ast",
-      "id": "agents_skills_slint_material_design_system_skill_slint_material_design_system_protocol",
-      "community": 66,
-      "community_name": "progress_callback",
-      "norm_label": "slint material design system protocol"
-    },
-    {
-      "label": "1. Design Tokens & Styling Metrics",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L10",
-      "_origin": "ast",
-      "id": "agents_skills_slint_material_design_system_skill_1_design_tokens_styling_metrics",
-      "community": 66,
-      "community_name": "progress_callback",
-      "norm_label": "1. design tokens & styling metrics"
-    },
-    {
-      "label": "A. Material Palette (`MaterialPalette`)",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L12",
-      "_origin": "ast",
-      "id": "agents_skills_slint_material_design_system_skill_a_material_palette_materialpalette",
-      "community": 66,
-      "community_name": "progress_callback",
-      "norm_label": "a. material palette (`materialpalette`)"
-    },
-    {
-      "label": "B. Material Style Metrics (`MaterialStyleMetrics`)",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L26",
-      "_origin": "ast",
-      "id": "agents_skills_slint_material_design_system_skill_b_material_style_metrics_materialstylemetrics",
-      "community": 66,
-      "community_name": "progress_callback",
-      "norm_label": "b. material style metrics (`materialstylemetrics`)"
-    },
-    {
-      "label": "C. Material Typography (`MaterialTypography`)",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L42",
-      "_origin": "ast",
-      "id": "agents_skills_slint_material_design_system_skill_c_material_typography_materialtypography",
-      "community": 66,
-      "community_name": "progress_callback",
-      "norm_label": "c. material typography (`materialtypography`)"
-    },
-    {
-      "label": "2. Material Component Library Usage",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L59",
-      "_origin": "ast",
-      "id": "agents_skills_slint_material_design_system_skill_2_material_component_library_usage",
-      "community": 66,
-      "community_name": "progress_callback",
-      "norm_label": "2. material component library usage"
-    },
-    {
-      "label": "A. Buttons (`FilledButton`, `IconButton`)",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L61",
-      "_origin": "ast",
-      "id": "agents_skills_slint_material_design_system_skill_a_buttons_filledbutton_iconbutton",
-      "community": 66,
-      "community_name": "progress_callback",
-      "norm_label": "a. buttons (`filledbutton`, `iconbutton`)"
-    },
-    {
-      "label": "B. Cards & Containers (`FilledCard`, `Elevation`)",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L77",
-      "_origin": "ast",
-      "id": "agents_skills_slint_material_design_system_skill_b_cards_containers_filledcard_elevation",
-      "community": 66,
-      "community_name": "progress_callback",
-      "norm_label": "b. cards & containers (`filledcard`, `elevation`)"
-    },
-    {
-      "label": "C. Text Inputs & Form Validation (`TextField`)",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L92",
-      "_origin": "ast",
-      "id": "agents_skills_slint_material_design_system_skill_c_text_inputs_form_validation_textfield",
-      "community": 66,
-      "community_name": "progress_callback",
-      "norm_label": "c. text inputs & form validation (`textfield`)"
-    },
-    {
-      "label": "D. Dropdown Menus (`DropDownMenu`)",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L107",
-      "_origin": "ast",
-      "id": "agents_skills_slint_material_design_system_skill_d_dropdown_menus_dropdownmenu",
-      "community": 66,
-      "community_name": "progress_callback",
-      "norm_label": "d. dropdown menus (`dropdownmenu`)"
-    },
-    {
-      "label": "E. Interactive State Layers (`StateLayer`, `TouchArea`)",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L121",
-      "_origin": "ast",
-      "id": "agents_skills_slint_material_design_system_skill_e_interactive_state_layers_statelayer_toucharea",
-      "community": 66,
-      "community_name": "progress_callback",
-      "norm_label": "e. interactive state layers (`statelayer`, `toucharea`)"
-    },
-    {
-      "label": "3. Dark/Light Theme Switching",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L142",
-      "_origin": "ast",
-      "id": "agents_skills_slint_material_design_system_skill_3_dark_light_theme_switching",
-      "community": 66,
-      "community_name": "progress_callback",
-      "norm_label": "3. dark/light theme switching"
-    },
-    {
-      "label": "4. Design Guidelines for Scientific Desktop UIs",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L163",
-      "_origin": "ast",
-      "id": "agents_skills_slint_material_design_system_skill_4_design_guidelines_for_scientific_desktop_uis",
-      "community": 66,
-      "community_name": "progress_callback",
-      "norm_label": "4. design guidelines for scientific desktop uis"
-    },
-    {
-      "label": "slint-ui-development/SKILL.md",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-ui-development/SKILL.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_skills_slint_ui_development_skill",
-      "community": 118,
-      "community_name": "XRDCalculator",
-      "norm_label": "slint-ui-development/skill.md"
-    },
-    {
-      "label": "Slint UI Declarative Development Protocol",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-ui-development/SKILL.md",
-      "source_location": "L6",
-      "_origin": "ast",
-      "id": "agents_skills_slint_ui_development_skill_slint_ui_declarative_development_protocol",
-      "community": 118,
-      "community_name": "XRDCalculator",
-      "norm_label": "slint ui declarative development protocol"
-    },
-    {
-      "label": "1. Syntax & Declaration Rules",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-ui-development/SKILL.md",
-      "source_location": "L10",
-      "_origin": "ast",
-      "id": "agents_skills_slint_ui_development_skill_1_syntax_declaration_rules",
-      "community": 118,
-      "community_name": "XRDCalculator",
-      "norm_label": "1. syntax & declaration rules"
-    },
-    {
-      "label": "Component Declaration",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-ui-development/SKILL.md",
-      "source_location": "L12",
-      "_origin": "ast",
-      "id": "agents_skills_slint_ui_development_skill_component_declaration",
-      "community": 118,
-      "community_name": "XRDCalculator",
-      "norm_label": "component declaration"
-    },
-    {
-      "label": "Property Scope Guidelines",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-ui-development/SKILL.md",
-      "source_location": "L28",
-      "_origin": "ast",
-      "id": "agents_skills_slint_ui_development_skill_property_scope_guidelines",
-      "community": 118,
-      "community_name": "XRDCalculator",
-      "norm_label": "property scope guidelines"
-    },
-    {
-      "label": "2. Layout Structure & Container Rules",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-ui-development/SKILL.md",
-      "source_location": "L36",
-      "_origin": "ast",
-      "id": "agents_skills_slint_ui_development_skill_2_layout_structure_container_rules",
-      "community": 118,
-      "community_name": "XRDCalculator",
-      "norm_label": "2. layout structure & container rules"
-    },
-    {
-      "label": "Recommended Layout Hierarchies",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-ui-development/SKILL.md",
-      "source_location": "L38",
-      "_origin": "ast",
-      "id": "agents_skills_slint_ui_development_skill_recommended_layout_hierarchies",
-      "community": 118,
-      "community_name": "XRDCalculator",
-      "norm_label": "recommended layout hierarchies"
-    },
-    {
-      "label": "3. Styling & Material Design Integration",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-ui-development/SKILL.md",
-      "source_location": "L67",
-      "_origin": "ast",
-      "id": "agents_skills_slint_ui_development_skill_3_styling_material_design_integration",
-      "community": 118,
-      "community_name": "XRDCalculator",
-      "norm_label": "3. styling & material design integration"
-    },
-    {
-      "label": "4. Component Decomposition Guidelines",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-ui-development/SKILL.md",
-      "source_location": "L81",
-      "_origin": "ast",
-      "id": "agents_skills_slint_ui_development_skill_4_component_decomposition_guidelines",
-      "community": 118,
-      "community_name": "XRDCalculator",
-      "norm_label": "4. component decomposition guidelines"
-    },
-    {
-      "label": "5. Live Iteration & Preview Workflow",
-      "file_type": "document",
-      "source_file": ".agents/skills/slint-ui-development/SKILL.md",
-      "source_location": "L89",
-      "_origin": "ast",
-      "id": "agents_skills_slint_ui_development_skill_5_live_iteration_preview_workflow",
-      "community": 118,
-      "community_name": "XRDCalculator",
-      "norm_label": "5. live iteration & preview workflow"
     },
     {
       "label": "test-and-tea-loop/SKILL.md",
@@ -144937,50 +144717,6 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": ".agents/rules/picky-interrogation-protocol.md",
-      "source_location": "L1",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_rules_picky_interrogation_protocol",
-      "target": "agents_rules_picky_interrogation_protocol_picky_interrogation_senior_architect_interaction_protocol",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/rules/picky-interrogation-protocol.md",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_rules_picky_interrogation_protocol_picky_interrogation_senior_architect_interaction_protocol",
-      "target": "agents_rules_picky_interrogation_protocol_1_audience_seniority_level",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/rules/picky-interrogation-protocol.md",
-      "source_location": "L7",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_rules_picky_interrogation_protocol_picky_interrogation_senior_architect_interaction_protocol",
-      "target": "agents_rules_picky_interrogation_protocol_2_universal_requirement_extraction_always_grind_out_answers",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/rules/picky-interrogation-protocol.md",
-      "source_location": "L17",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_rules_picky_interrogation_protocol_picky_interrogation_senior_architect_interaction_protocol",
-      "target": "agents_rules_picky_interrogation_protocol_3_proactive_architectural_audit_recommendations",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": ".agents/rules/slint-standards.md",
       "source_location": "L1",
       "weight": 1.0,
@@ -145136,7 +144872,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": ".agents/skills/always-grind-interrogation/SKILL.md",
-      "source_location": "L40",
+      "source_location": "L47",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_skills_always_grind_interrogation_skill_always_grind_interrogation_brainstorming_protocol",
@@ -145158,7 +144894,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": ".agents/skills/always-grind-interrogation/SKILL.md",
-      "source_location": "L42",
+      "source_location": "L49",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_skills_always_grind_interrogation_skill_2_step_by_step_interrogation_brainstorming_workflow",
@@ -145169,18 +144905,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": ".agents/skills/always-grind-interrogation/SKILL.md",
-      "source_location": "L50",
+      "source_location": "L57",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_skills_always_grind_interrogation_skill_2_step_by_step_interrogation_brainstorming_workflow",
-      "target": "agents_skills_always_grind_interrogation_skill_2_structured_option_grinding_one_question_topic_at_a_time",
+      "target": "agents_skills_always_grind_interrogation_skill_2_structured_option_grinding_one_question_at_a_time",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": ".agents/skills/always-grind-interrogation/SKILL.md",
-      "source_location": "L61",
+      "source_location": "L68",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_skills_always_grind_interrogation_skill_2_step_by_step_interrogation_brainstorming_workflow",
@@ -145191,7 +144927,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": ".agents/skills/always-grind-interrogation/SKILL.md",
-      "source_location": "L81",
+      "source_location": "L88",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_skills_always_grind_interrogation_skill_2_step_by_step_interrogation_brainstorming_workflow",
@@ -145202,7 +144938,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": ".agents/skills/always-grind-interrogation/SKILL.md",
-      "source_location": "L89",
+      "source_location": "L96",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_skills_always_grind_interrogation_skill_2_step_by_step_interrogation_brainstorming_workflow",
@@ -145213,7 +144949,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": ".agents/skills/always-grind-interrogation/SKILL.md",
-      "source_location": "L71",
+      "source_location": "L78",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_skills_always_grind_interrogation_skill_3_understanding_lock_hard_gate",
@@ -145224,7 +144960,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": ".agents/skills/always-grind-interrogation/SKILL.md",
-      "source_location": "L74",
+      "source_location": "L81",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_skills_always_grind_interrogation_skill_3_understanding_lock_hard_gate",
@@ -145235,7 +144971,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": ".agents/skills/always-grind-interrogation/SKILL.md",
-      "source_location": "L64",
+      "source_location": "L71",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_skills_always_grind_interrogation_skill_3_understanding_lock_hard_gate",
@@ -146324,33 +146060,132 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": ".agents/skills/slint-component-architect/SKILL.md",
-      "source_location": "L18",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_component_architect_skill_slint_component_architect_ux_guidelines",
-      "target": "agents_skills_slint_component_architect_skill_component_pattern_example",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
       "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_skills_slint_component_architect_skill_slint_component_architect_ux_guidelines",
-      "target": "agents_skills_slint_component_architect_skill_core_directives",
+      "target": "agents_skills_slint_component_architect_skill_1_syntax_property_scoping_decomposition",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": ".agents/skills/slint-component-architect/SKILL.md",
-      "source_location": "L56",
+      "source_location": "L25",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_skills_slint_component_architect_skill_slint_component_architect_ux_guidelines",
-      "target": "agents_skills_slint_component_architect_skill_data_visualization_guidelines",
+      "target": "agents_skills_slint_component_architect_skill_2_design_tokens_material_3_styling_ui_material",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
+      "source_location": "L54",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_skills_slint_component_architect_skill_slint_component_architect_ux_guidelines",
+      "target": "agents_skills_slint_component_architect_skill_3_layout_structure_container_rules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
+      "source_location": "L62",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_skills_slint_component_architect_skill_slint_component_architect_ux_guidelines",
+      "target": "agents_skills_slint_component_architect_skill_4_reusable_material_component_library",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
+      "source_location": "L86",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_skills_slint_component_architect_skill_slint_component_architect_ux_guidelines",
+      "target": "agents_skills_slint_component_architect_skill_5_data_visualization_guidelines",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_skills_slint_component_architect_skill_1_syntax_property_scoping_decomposition",
+      "target": "agents_skills_slint_component_architect_skill_component_decomposition_rules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_skills_slint_component_architect_skill_1_syntax_property_scoping_decomposition",
+      "target": "agents_skills_slint_component_architect_skill_declarative_property_scope",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_skills_slint_component_architect_skill_2_design_tokens_material_3_styling_ui_material",
+      "target": "agents_skills_slint_component_architect_skill_a_material_palette_materialpalette",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
+      "source_location": "L41",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_skills_slint_component_architect_skill_2_design_tokens_material_3_styling_ui_material",
+      "target": "agents_skills_slint_component_architect_skill_b_material_style_metrics_materialstylemetrics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
+      "source_location": "L48",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_skills_slint_component_architect_skill_2_design_tokens_material_3_styling_ui_material",
+      "target": "agents_skills_slint_component_architect_skill_c_material_typography_dark_light_themes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
+      "source_location": "L64",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_skills_slint_component_architect_skill_4_reusable_material_component_library",
+      "target": "agents_skills_slint_component_architect_skill_a_buttons_cards",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/skills/slint-component-architect/SKILL.md",
+      "source_location": "L79",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_skills_slint_component_architect_skill_4_reusable_material_component_library",
+      "target": "agents_skills_slint_component_architect_skill_b_interactive_feedback_accessibility_annotations",
       "confidence_score": 1.0
     },
     {
@@ -146571,248 +146406,6 @@
       "_origin": "ast",
       "source": "agents_skills_slint_live_preview_loop_skill_2_preview_workflows",
       "target": "agents_skills_slint_live_preview_loop_skill_primary_slint_viewer_hot_reload",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L6",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_material_design_system_skill",
-      "target": "agents_skills_slint_material_design_system_skill_slint_material_design_system_protocol",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L10",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_material_design_system_skill_slint_material_design_system_protocol",
-      "target": "agents_skills_slint_material_design_system_skill_1_design_tokens_styling_metrics",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L59",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_material_design_system_skill_slint_material_design_system_protocol",
-      "target": "agents_skills_slint_material_design_system_skill_2_material_component_library_usage",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L142",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_material_design_system_skill_slint_material_design_system_protocol",
-      "target": "agents_skills_slint_material_design_system_skill_3_dark_light_theme_switching",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L163",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_material_design_system_skill_slint_material_design_system_protocol",
-      "target": "agents_skills_slint_material_design_system_skill_4_design_guidelines_for_scientific_desktop_uis",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L12",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_material_design_system_skill_1_design_tokens_styling_metrics",
-      "target": "agents_skills_slint_material_design_system_skill_a_material_palette_materialpalette",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L26",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_material_design_system_skill_1_design_tokens_styling_metrics",
-      "target": "agents_skills_slint_material_design_system_skill_b_material_style_metrics_materialstylemetrics",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L42",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_material_design_system_skill_1_design_tokens_styling_metrics",
-      "target": "agents_skills_slint_material_design_system_skill_c_material_typography_materialtypography",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L61",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_material_design_system_skill_2_material_component_library_usage",
-      "target": "agents_skills_slint_material_design_system_skill_a_buttons_filledbutton_iconbutton",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L77",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_material_design_system_skill_2_material_component_library_usage",
-      "target": "agents_skills_slint_material_design_system_skill_b_cards_containers_filledcard_elevation",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L92",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_material_design_system_skill_2_material_component_library_usage",
-      "target": "agents_skills_slint_material_design_system_skill_c_text_inputs_form_validation_textfield",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L107",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_material_design_system_skill_2_material_component_library_usage",
-      "target": "agents_skills_slint_material_design_system_skill_d_dropdown_menus_dropdownmenu",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-material-design-system/SKILL.md",
-      "source_location": "L121",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_material_design_system_skill_2_material_component_library_usage",
-      "target": "agents_skills_slint_material_design_system_skill_e_interactive_state_layers_statelayer_toucharea",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-ui-development/SKILL.md",
-      "source_location": "L6",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_ui_development_skill",
-      "target": "agents_skills_slint_ui_development_skill_slint_ui_declarative_development_protocol",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-ui-development/SKILL.md",
-      "source_location": "L10",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_ui_development_skill_slint_ui_declarative_development_protocol",
-      "target": "agents_skills_slint_ui_development_skill_1_syntax_declaration_rules",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-ui-development/SKILL.md",
-      "source_location": "L36",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_ui_development_skill_slint_ui_declarative_development_protocol",
-      "target": "agents_skills_slint_ui_development_skill_2_layout_structure_container_rules",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-ui-development/SKILL.md",
-      "source_location": "L67",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_ui_development_skill_slint_ui_declarative_development_protocol",
-      "target": "agents_skills_slint_ui_development_skill_3_styling_material_design_integration",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-ui-development/SKILL.md",
-      "source_location": "L81",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_ui_development_skill_slint_ui_declarative_development_protocol",
-      "target": "agents_skills_slint_ui_development_skill_4_component_decomposition_guidelines",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-ui-development/SKILL.md",
-      "source_location": "L89",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_ui_development_skill_slint_ui_declarative_development_protocol",
-      "target": "agents_skills_slint_ui_development_skill_5_live_iteration_preview_workflow",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-ui-development/SKILL.md",
-      "source_location": "L12",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_ui_development_skill_1_syntax_declaration_rules",
-      "target": "agents_skills_slint_ui_development_skill_component_declaration",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-ui-development/SKILL.md",
-      "source_location": "L28",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_ui_development_skill_1_syntax_declaration_rules",
-      "target": "agents_skills_slint_ui_development_skill_property_scope_guidelines",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": ".agents/skills/slint-ui-development/SKILL.md",
-      "source_location": "L38",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "agents_skills_slint_ui_development_skill_2_layout_structure_container_rules",
-      "target": "agents_skills_slint_ui_development_skill_recommended_layout_hierarchies",
       "confidence_score": 1.0
     },
     {
@@ -147854,5 +147447,5 @@
       "confidence_score": 1.0
     }
   ],
-  "built_at_commit": "e09faf87f53d81ad68771a0ef7082a94e46d369c"
+  "built_at_commit": "8b54e0bd0024515e7da692b1794f176a913f89c6"
 }

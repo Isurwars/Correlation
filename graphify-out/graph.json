@@ -635,8 +635,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_hpp_atomic",
-      "community": 61,
-      "community_name": "TEST_F",
+      "community": 290,
+      "community_name": "parseArgs",
       "norm_label": "atomic"
     },
     {
@@ -1867,8 +1867,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_app_appbackend",
-      "community": 61,
-      "community_name": "TEST_F",
+      "community": 290,
+      "community_name": "parseArgs",
       "norm_label": "appbackend.hpp"
     },
     {
@@ -6102,8 +6102,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_gpuxrdcalculator",
-      "community": 73,
-      "community_name": "Constants.hpp",
+      "community": 108,
+      "community_name": "NiceScale",
       "norm_label": "gpuxrdcalculator.hpp"
     },
     {
@@ -6113,8 +6113,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "include_calculators_gpuxrdcalculator_compute_xrd_gpu",
-      "community": 73,
-      "community_name": "Constants.hpp",
+      "community": 108,
+      "community_name": "NiceScale",
       "norm_label": "compute_xrd_gpu()"
     },
     {
@@ -8544,8 +8544,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_cli_cliparser",
-      "community": 137,
-      "community_name": "TEST_F",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "cliparser.hpp"
     },
     {
@@ -14792,8 +14792,8 @@
       "source_location": "L225",
       "_origin": "ast",
       "id": "include_plotters_plottypes_colorstop",
-      "community": 137,
-      "community_name": "TEST_F",
+      "community": 281,
+      "community_name": "GromacsReaderTests",
       "norm_label": "colorstop"
     },
     {
@@ -14803,8 +14803,8 @@
       "source_location": "L226",
       "_origin": "ast",
       "id": "include_plotters_plottypes_colorstop_t",
-      "community": 137,
-      "community_name": "TEST_F",
+      "community": 281,
+      "community_name": "GromacsReaderTests",
       "norm_label": "t"
     },
     {
@@ -14814,8 +14814,8 @@
       "source_location": "L227",
       "_origin": "ast",
       "id": "include_plotters_plottypes_colorstop_r",
-      "community": 137,
-      "community_name": "TEST_F",
+      "community": 281,
+      "community_name": "GromacsReaderTests",
       "norm_label": "r"
     },
     {
@@ -14825,8 +14825,8 @@
       "source_location": "L227",
       "_origin": "ast",
       "id": "include_plotters_plottypes_colorstop_g",
-      "community": 137,
-      "community_name": "TEST_F",
+      "community": 281,
+      "community_name": "GromacsReaderTests",
       "norm_label": "g"
     },
     {
@@ -14836,8 +14836,8 @@
       "source_location": "L227",
       "_origin": "ast",
       "id": "include_plotters_plottypes_colorstop_b",
-      "community": 137,
-      "community_name": "TEST_F",
+      "community": 281,
+      "community_name": "GromacsReaderTests",
       "norm_label": "b"
     },
     {
@@ -14847,8 +14847,8 @@
       "source_location": "L230",
       "_origin": "ast",
       "id": "include_plotters_plottypes_interpolatecolorstops",
-      "community": 137,
-      "community_name": "TEST_F",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "interpolatecolorstops()"
     },
     {
@@ -14858,8 +14858,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_plotters_plottypes_hpp_span",
-      "community": 137,
-      "community_name": "TEST_F",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "span"
     },
     {
@@ -18499,8 +18499,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "include_writers_csvwriter_csvwriter_writehistogramtocsv",
-      "community": 9,
-      "community_name": "vector",
+      "community": 294,
+      "community_name": "CSVWriter::writeAllCSVs",
       "norm_label": "writehistogramtocsv"
     },
     {
@@ -19892,7 +19892,7 @@
       "label": "AppBackend::validateOptions()",
       "file_type": "code",
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L220",
+      "source_location": "L214",
       "_origin": "ast",
       "id": "src_app_appbackend_appbackend_validateoptions",
       "community": 20,
@@ -19903,7 +19903,7 @@
       "label": "AppBackend::setupTrajectorySettings()",
       "file_type": "code",
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L284",
+      "source_location": "L278",
       "_origin": "ast",
       "id": "src_app_appbackend_appbackend_setuptrajectorysettings",
       "community": 20,
@@ -19914,7 +19914,7 @@
       "label": "AppBackend::runTrajectoryCalculators()",
       "file_type": "code",
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L303",
+      "source_location": "L297",
       "_origin": "ast",
       "id": "src_app_appbackend_appbackend_runtrajectorycalculators",
       "community": 31,
@@ -19925,7 +19925,7 @@
       "label": "AppBackend::calculateDynamicProperties()",
       "file_type": "code",
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L342",
+      "source_location": "L336",
       "_origin": "ast",
       "id": "src_app_appbackend_appbackend_calculatedynamicproperties",
       "community": 20,
@@ -19936,7 +19936,7 @@
       "label": "AppBackend::run_analysis()",
       "file_type": "code",
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L395",
+      "source_location": "L389",
       "_origin": "ast",
       "id": "src_app_appbackend_appbackend_run_analysis",
       "community": 20,
@@ -19947,7 +19947,7 @@
       "label": "AppBackend::write_files()",
       "file_type": "code",
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L487",
+      "source_location": "L481",
       "_origin": "ast",
       "id": "src_app_appbackend_appbackend_write_files",
       "community": 20,
@@ -19958,7 +19958,7 @@
       "label": "AppBackend::analysis_thread_func()",
       "file_type": "code",
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L508",
+      "source_location": "L502",
       "_origin": "ast",
       "id": "src_app_appbackend_appbackend_analysis_thread_func",
       "community": 20,
@@ -33436,8 +33436,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "src_writers_csvwriter_csvwriter_writeallcsvs",
-      "community": 9,
-      "community_name": "vector",
+      "community": 294,
+      "community_name": "CSVWriter::writeAllCSVs",
       "norm_label": "csvwriter::writeallcsvs()"
     },
     {
@@ -33447,8 +33447,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_writers_csvwriter_cpp_string",
-      "community": 9,
-      "community_name": "vector",
+      "community": 294,
+      "community_name": "CSVWriter::writeAllCSVs",
       "norm_label": "string"
     },
     {
@@ -33458,8 +33458,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "src_writers_csvwriter_csvwriter_writehistogramtocsv",
-      "community": 9,
-      "community_name": "vector",
+      "community": 294,
+      "community_name": "CSVWriter::writeAllCSVs",
       "norm_label": "csvwriter::writehistogramtocsv()"
     },
     {
@@ -34118,8 +34118,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_precisiontesthelper",
-      "community": 281,
-      "community_name": "GromacsReaderTests",
+      "community": 73,
+      "community_name": "Constants.hpp",
       "norm_label": "precisiontesthelper.hpp"
     },
     {
@@ -34129,8 +34129,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "tests_precisiontesthelper_isrealeq",
-      "community": 281,
-      "community_name": "GromacsReaderTests",
+      "community": 73,
+      "community_name": "Constants.hpp",
       "norm_label": "isrealeq()"
     },
     {
@@ -34140,8 +34140,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_precisiontesthelper_hpp_real_t",
-      "community": 281,
-      "community_name": "GromacsReaderTests",
+      "community": 73,
+      "community_name": "Constants.hpp",
       "norm_label": "real_t"
     },
     {
@@ -34701,8 +34701,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_functional_app_slintsvgintegrationtests",
-      "community": 137,
-      "community_name": "TEST_F",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "slintsvgintegrationtests.cpp"
     },
     {
@@ -39046,8 +39046,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "smoothing",
-      "community": 61,
-      "community_name": "TEST_F",
+      "community": 290,
+      "community_name": "parseArgs",
       "norm_label": "smoothing"
     },
     {
@@ -43380,8 +43380,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_math_smoothingtests",
-      "community": 61,
-      "community_name": "TEST_F",
+      "community": 290,
+      "community_name": "parseArgs",
       "norm_label": "smoothingtests.cpp"
     },
     {
@@ -51756,7 +51756,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L303",
+      "source_location": "L297",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -53498,7 +53498,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L309",
+      "source_location": "L303",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_appbackend_appbackend_runtrajectorycalculators",
@@ -61516,7 +61516,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L411",
+      "source_location": "L405",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_appbackend_appbackend_run_analysis",
@@ -61528,7 +61528,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L469",
+      "source_location": "L463",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_appbackend_appbackend_run_analysis",
@@ -61540,7 +61540,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L472",
+      "source_location": "L466",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_appbackend_appbackend_run_analysis",
@@ -61612,7 +61612,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L418",
+      "source_location": "L412",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_appbackend_appbackend_run_analysis",
@@ -98882,7 +98882,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L497",
+      "source_location": "L491",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_appbackend_appbackend_write_files",
@@ -100563,7 +100563,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L508",
+      "source_location": "L502",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_appbackend",
@@ -100585,7 +100585,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L342",
+      "source_location": "L336",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_appbackend",
@@ -100728,7 +100728,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L395",
+      "source_location": "L389",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_appbackend",
@@ -100739,7 +100739,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L303",
+      "source_location": "L297",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_appbackend",
@@ -100761,7 +100761,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L284",
+      "source_location": "L278",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_appbackend",
@@ -100772,7 +100772,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L220",
+      "source_location": "L214",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_appbackend",
@@ -100783,7 +100783,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L487",
+      "source_location": "L481",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_appbackend",
@@ -100879,7 +100879,7 @@
       "context": "return_type",
       "confidence": "EXTRACTED",
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L395",
+      "source_location": "L389",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_appbackend_appbackend_run_analysis",
@@ -100890,7 +100890,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L220",
+      "source_location": "L214",
       "weight": 1.0,
       "context": "return_type",
       "_origin": "ast",
@@ -100903,7 +100903,7 @@
       "context": "return_type",
       "confidence": "EXTRACTED",
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L487",
+      "source_location": "L481",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_appbackend_appbackend_write_files",
@@ -101024,7 +101024,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/AppBackend.cpp",
-      "source_location": "L404",
+      "source_location": "L398",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_appbackend_appbackend_run_analysis",
@@ -147447,5 +147447,5 @@
       "confidence_score": 1.0
     }
   ],
-  "built_at_commit": "8b54e0bd0024515e7da692b1794f176a913f89c6"
+  "built_at_commit": "f96b4e6ba35dca4bf3555aaeeea8c733d43b98d5"
 }
