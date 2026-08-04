@@ -302,6 +302,17 @@ target_compile_definitions(correlation-cli PRIVATE _USE_MATH_DEFINES)
 target_link_libraries(correlation-cli PRIVATE correlation_simd_options)
 bundle_windows_dlls(correlation-cli)
 install(TARGETS correlation-cli RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT correlation)
+if (NOT WIN32)
+    if(APPLE)
+        set_target_properties(correlation-cli PROPERTIES
+            INSTALL_RPATH "@loader_path/../${CMAKE_INSTALL_LIBDIR}"
+        )
+    else()
+        set_target_properties(correlation-cli PROPERTIES
+            INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
+        )
+    endif()
+endif()
 if(BUILD_WITH_CUDA)
     set_target_properties(correlation-cli PROPERTIES CUDA_STANDARD 20)
 endif()

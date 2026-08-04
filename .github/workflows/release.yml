@@ -103,6 +103,7 @@ jobs:
         run: |
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
             -DCMAKE_INSTALL_PREFIX=/usr \
+            -DCMAKE_INSTALL_LIBDIR=lib \
             -DCMAKE_C_COMPILER_LAUNCHER=sccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
             -DBUILD_WITH_HDF5=ON \
@@ -135,7 +136,17 @@ jobs:
           curl -L -o linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
           chmod +x linuxdeploy
           DESTDIR=$PWD/AppDir cmake --install build --prefix /usr
+          if [ -d AppDir/usr/lib/x86_64-linux-gnu ]; then
+            mkdir -p AppDir/usr/lib
+            cp -rn AppDir/usr/lib/x86_64-linux-gnu/* AppDir/usr/lib/ || true
+          fi
+          if [ -d AppDir/usr/lib64 ]; then
+            mkdir -p AppDir/usr/lib
+            cp -rn AppDir/usr/lib64/* AppDir/usr/lib/ || true
+          fi
+          export LD_LIBRARY_PATH="$PWD/AppDir/usr/lib:$PWD/AppDir/usr/lib/x86_64-linux-gnu:$PWD/AppDir/usr/lib64:$PWD/build/src:$PWD/build/_deps/arrow-build/cpp/src/arrow:$PWD/build/_deps/arrow-build/cpp/src/parquet:${LD_LIBRARY_PATH}"
           ./linuxdeploy --appdir AppDir \
+            --library-dir AppDir/usr/lib \
             --desktop-file AppDir/usr/share/applications/correlation.desktop \
             --icon-file AppDir/usr/share/icons/hicolor/512x512/apps/correlation.png \
             --output appimage

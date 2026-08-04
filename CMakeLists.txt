@@ -175,18 +175,20 @@ endif()
 # Install setup for Linux shared libraries
 # -----------------------------------------------------------
 if (NOT WIN32)
-    # Ensure correlation finds shared libraries in <prefix>/lib
-    if(BUILD_GUI)
-        if(APPLE)
-            set_target_properties(correlation PROPERTIES
-                INSTALL_RPATH "@loader_path/../${CMAKE_INSTALL_LIBDIR}"
-            )
-        else()
-            set_target_properties(correlation PROPERTIES
-                INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
-            )
+    # Ensure correlation and correlation-cli find shared libraries in <prefix>/lib
+    foreach(_target IN ITEMS correlation correlation-cli)
+        if(TARGET ${_target})
+            if(APPLE)
+                set_target_properties(${_target} PROPERTIES
+                    INSTALL_RPATH "@loader_path/../${CMAKE_INSTALL_LIBDIR}"
+                )
+            else()
+                set_target_properties(${_target} PROPERTIES
+                    INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
+                )
+            endif()
         endif()
-    endif()
+    endforeach()
     # If Arrow/Parquet were built from source, install them
     if (TARGET arrow_shared AND TARGET parquet_shared AND NOT Arrow_FOUND)
         get_target_property(is_arrow_alias arrow_shared ALIASED_TARGET)

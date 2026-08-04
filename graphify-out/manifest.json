@@ -1315,13 +1315,13 @@
     "semantic_hash": ""
   },
   ".github/workflows/release.yml": {
-    "mtime": 1785878306.8856869,
-    "ast_hash": "b93f322f3ea007fac60e611e454d6690",
+    "mtime": 1785879239.5855696,
+    "ast_hash": "e849788b09e3f2d81115cb29c6999dc7",
     "semantic_hash": ""
   },
   "CMakeLists.txt": {
-    "mtime": 1785875882.025785,
-    "ast_hash": "b86598514d9826e490957b241dec7fba",
+    "mtime": 1785879234.4116578,
+    "ast_hash": "b5d7f8d3f88659ea1e14a5c463fd7e3f",
     "semantic_hash": ""
   },
   "README.md": {
@@ -1355,8 +1355,8 @@
     "semantic_hash": "fa5794c577c54fcf0888468db60e0c22"
   },
   "src/CMakeLists.txt": {
-    "mtime": 1785868370.733462,
-    "ast_hash": "aadf1f47b7137e5438b906e05feeeb2f",
+    "mtime": 1785879244.9924774,
+    "ast_hash": "af28b97603604da434b130272e7d7a68",
     "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
