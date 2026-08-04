@@ -1,5 +1,5 @@
 # {% set name = "correlation" %}
-# {% set version = "3.8.5" %}
+# {% set version = "3.8.6" %}
 
 package:
   name: "{{ name|lower }}"
