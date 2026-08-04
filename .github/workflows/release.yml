@@ -102,6 +102,7 @@ jobs:
       - name: Configure CMake
         run: |
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
+            -DCMAKE_INSTALL_PREFIX=/usr \
             -DCMAKE_C_COMPILER_LAUNCHER=sccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
             -DBUILD_WITH_HDF5=ON \
@@ -133,8 +134,8 @@ jobs:
           chmod +x linuxdeploy
           DESTDIR=$PWD/AppDir cmake --install build
           ./linuxdeploy --appimage-extract-and-run --appdir AppDir \
-            --desktop-file packaging/correlation.desktop \
-            --icon-file Images/Logo.png \
+            --desktop-file AppDir/usr/share/applications/correlation.desktop \
+            --icon-file AppDir/usr/share/icons/hicolor/512x512/apps/correlation.png \
             --output appimage
           mv Correlation*.AppImage build/
 
