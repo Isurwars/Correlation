@@ -1,58 +1,90 @@
 ---
 name: slint-component-architect
-description: Guides creation of modular Slint UI components, design tokens, responsive layouts, and modern aesthetics.
+description: Guides creation of modular Slint UI components, Material Design 3 design tokens, responsive layouts, property scoping, and modern visual aesthetics.
 ---
 
 # Slint Component Architect & UX Guidelines
 
-This skill provides standards for constructing high-density, accessible, and responsive visual interfaces using the Slint GUI toolkit.
+This skill provides comprehensive standards for constructing modular, accessible, Material 3 styled visual interfaces using the Slint GUI toolkit for the Correlation application.
 
-## Core Directives
+## 1. Syntax, Property Scoping & Decomposition
 
-1. **Design Token Centralization:** Define global UI design tokens (palette, spacing, typography, motion curves) in a unified global component or struct.
-2. **Modular Widget Encapsulation:** Decompose complex UIs into clean, single-responsibility components with explicit `in`, `out`, and `in-out` properties and explicit `callback` declarations.
-3. **Adaptive Auto-Layout:** Use `VerticalBox`, `HorizontalBox`, and `GridBox` wrappers with `spacing` and `padding` parameters to guarantee responsive window resizing.
-4. **Interactive States & Micro-animations:** Animate property changes (e.g., hover scaling, background tint shifts, active button presses) using `animate` directives with custom easing functions.
-5. **Accessibility Annotations:** Guarantee every interactive element declares standard `accessible-role` and descriptive `accessible-label` properties.
+### Declarative Property Scope
+- **`in property`**: Read-only properties driven by external callers or C++ controllers.
+- **`out property`**: Read-only internal state exposed for external inspection.
+- **`in-out property`**: Bi-directional reactive state.
+- **`private property`**: Internal component state encapsulation.
 
-## Component Pattern Example
+### Component Decomposition Rules
+- **Single Responsibility**: Each card or dialog gets its own `.slint` file inside logical subdirectories (`ui/options/`, `ui/preview/`, `ui/run/`).
+- **File Length Limit**: Keep individual `.slint` files under **300 lines**. Split complex components into child components.
+- **Root Entry Point**: `ui/AppWindow.slint` serves strictly as the main window host importing and positioning sub-cards.
+
+---
+
+## 2. Design Tokens & Material 3 Styling (`ui/material/`)
+
+### A. Material Palette (`MaterialPalette`)
+Always import and use tokenized color definitions from `MaterialPalette`. Never hardcode raw hex values (`#1a202c`, `#000`) in `.slint` components.
 
 ```slint
-export global Theme {
-    in-out property <color> background-dark: #0f172a;
-    in-out property <color> surface-card: #1e293b;
-    in-out property <color> accent-primary: #38bdf8;
-    in-out property <color> text-primary: #f8fafc;
-    in-out property <length> border-radius: 8px;
-}
+import { MaterialPalette } from "material/material.slint";
 
-export component ActionButton inherits Rectangle {
-    in property <string> text: "Submit";
-    in property <bool> enabled: true;
-    callback clicked();
+// Recommended token pairings:
+// Background/Surface: MaterialPalette.background, MaterialPalette.surface, MaterialPalette.surface_container
+// Content/Text:       MaterialPalette.on_surface, MaterialPalette.on_surface_variant
+// Primary Actions:    MaterialPalette.primary, MaterialPalette.on_primary
+// Errors/Validation:  MaterialPalette.error, MaterialPalette.on_error
+// Run State:          MaterialPalette.run, MaterialPalette.on_run
+```
 
-    background: touch-area.has-hover ? Theme.accent-primary.darker(0.15) : Theme.accent-primary;
-    border-radius: Theme.border-radius;
-    animate background { duration: 150ms; easing: ease-in-out; }
+### B. Material Style Metrics (`MaterialStyleMetrics`)
+Use standard metric tokens for spacing, padding, component heights, and corner radii:
 
-    HorizontalBox {
-        alignment: center;
-        Text {
-            text: root.text;
-            color: Theme.text-primary;
-            font-weight: 600;
-        }
-    }
+- **Spacing Tokens:** `spacing_2` (2px), `spacing_4` (4px), `spacing_8` (8px), `spacing_12` (12px), `spacing_16` (16px), `spacing_24` (24px)
+- **Size Metrics:** `size_40` (40px compact target), `size_56` (56px standard target)
+- **Border Radii:** `border_radius_1` (4px), `border_radius_2` (8px), `border_radius_3` (12px)
 
-    touch-area := TouchArea {
-        enabled: root.enabled;
-        clicked => { root.clicked(); }
-        accessible-role: button;
-        accessible-label: root.text;
-    }
+### C. Material Typography & Dark/Light Themes
+- **Typography Styles:** `display_large`, `headline_medium`, `title_medium`, `body_large`, `body_small`, `label_large`.
+- **ColorScheme Binding:** Bind theme switching globally to `Palette.color-scheme` (`ColorScheme.dark` / `ColorScheme.light`).
+
+---
+
+## 3. Layout Structure & Container Rules
+
+- **`VerticalBox` / `HorizontalBox`**: Primary structural containers for sequential alignment. Use `spacing` and `padding` tokens rather than manual pixel offsets.
+- **`GridBox`**: Matrix layouts for form fields, parameter grids, and options cards.
+- **`ScrollView`**: Wrap dynamic or height-constrained panels to handle overflowing UI elements cleanly.
+
+---
+
+## 4. Reusable Material Component Library
+
+### A. Buttons & Cards
+Use standard `FilledButton`, `IconButton`, `FilledCard`, and `Elevation` primitives:
+
+```slint
+import { FilledButton, FilledCard, Icons, MaterialPalette } from "material/material.slint";
+
+FilledButton {
+    text: "Run Analysis";
+    icon: Icons.play_arrow;
+    background: MaterialPalette.run;
+    text_color: MaterialPalette.on_run;
+    clicked => { root.run_analysis(); }
 }
 ```
 
-## Data Visualization Guidelines
+### B. Interactive Feedback & Accessibility Annotations
+- **Accessibility:** Guarantee every interactive widget declares standard `accessible-role` (e.g., `button`, `checkbox`, `slider`, `text-input`) and descriptive `accessible-label` properties.
+- **State Layers:** Provide visual hover and touch feedback on custom clickable areas using `StateLayer` and `TouchArea`.
+- **Micro-Animations:** Animate property transitions using `animate` directives with `150ms`–`250ms` durations and easing curves.
+
+---
+
+## 5. Data Visualization Guidelines
+
 - **Plotting Canvas Elements:** Use custom `Path` or `Image` elements to stream rendered data charts (e.g. Pair Distribution Functions g(r) or Radial Distribution Profiles).
 - **Control Panels:** Group analysis parameters (cutoff radius, bin width, particle filters) in collapsable card widgets with active state indicators.
+

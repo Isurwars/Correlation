@@ -146,7 +146,6 @@ jobs:
           fi
           export LD_LIBRARY_PATH="$PWD/AppDir/usr/lib:$PWD/AppDir/usr/lib/x86_64-linux-gnu:$PWD/AppDir/usr/lib64:$PWD/build/src:$PWD/build/_deps/arrow-build/cpp/src/arrow:$PWD/build/_deps/arrow-build/cpp/src/parquet:${LD_LIBRARY_PATH}"
           ./linuxdeploy --appdir AppDir \
-            --library-dir AppDir/usr/lib \
             --desktop-file AppDir/usr/share/applications/correlation.desktop \
             --icon-file AppDir/usr/share/icons/hicolor/512x512/apps/correlation.png \
             --output appimage

@@ -39,7 +39,7 @@
 - Use `// ...` placeholders extensively. Never print untouched structural logic or boilerplate code blocks.
 - Prefer tables for multi-variable comparisons. Bold the primary technical anchor word in every bullet point.
 - Use strict **[File:Line] -> [Error Type] -> [Fix Action]** format for diagnostics.
-- **See rule:** [picky-interrogation-protocol](file:///home/isurwars/Projects/Correlation/.agents/rules/picky-interrogation-protocol.md) for senior developer interaction, picky requirement extraction, and architectural recommendations.
+- **See skill:** [always-grind-interrogation](file:///home/isurwars/Projects/Correlation/.agents/skills/always-grind-interrogation/SKILL.md) for senior developer interaction, picky requirement extraction, and architectural recommendations.
 - See [caveman-communication](file:///home/isurwars/Projects/Correlation/.agents/skills/caveman-communication/SKILL.md) for the full token economy protocol.
 
 ## 6. Delegation & Skill Invocation
@@ -48,7 +48,7 @@
 - **Error Diagnosis:** Activate [cpp-error-diagnosis](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-error-diagnosis/SKILL.md) for structured compiler, linker, and sanitizer error parsing.
 - **Git Commit Generation:** Activate [git-commit-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/git-commit-standards/SKILL.md) for Conventional Commits formatting and scope mapping.
 - **Python Bindings:** Activate [pybind11-interop-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/pybind11-interop-standards/SKILL.md) for zero-copy NumPy buffers (`py::array_t`) and GIL releases (`py::gil_scoped_release`).
-- **Slint UI & UX Design:** Activate [slint-component-architect](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-component-architect/SKILL.md) for modular components and design tokens, [slint-material-design-system](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-material-design-system/SKILL.md) for Material 3 palettes, components, and typography, [slint-ui-development](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-ui-development/SKILL.md) for declarative `.slint` layouts, and [slint-live-preview-loop](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-live-preview-loop/SKILL.md) for hot reloading.
+- **Slint UI & UX Design:** Activate [slint-component-architect](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-component-architect/SKILL.md) for modular components, Material 3 design tokens, and declarative layouts, and [slint-live-preview-loop](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-live-preview-loop/SKILL.md) for hot reloading.
 - **Slint C++ Interop:** Activate [slint-cpp-integration](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-cpp-integration/SKILL.md) for C++ controller integration, thread-safe `slint::invoke_from_event_loop()`, dynamic vector models, and plot/image rendering.
 - **C++ Concurrency & Safety:** Activate [cpp-concurrency-patterns](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-concurrency-patterns/SKILL.md) for OpenMP/TBB loop safety, `std::scoped_lock`, and cache line alignment (`alignas(64)`).
 - **Memory Profiling:** Activate [cpp-memory-profiler](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-memory-profiler/SKILL.md) for Heaptrack and Valgrind Memcheck memory leak analysis.

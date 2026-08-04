@@ -1315,13 +1315,13 @@
     "semantic_hash": ""
   },
   ".github/workflows/release.yml": {
-    "mtime": 1785810284.7893233,
-    "ast_hash": "ed2d775999183403e46578276ea5b020",
+    "mtime": 1785879239.5855696,
+    "ast_hash": "e849788b09e3f2d81115cb29c6999dc7",
     "semantic_hash": ""
   },
   "CMakeLists.txt": {
-    "mtime": 1785815319.0647511,
-    "ast_hash": "a7e5f9e301249e587294ee16551a2bdc",
+    "mtime": 1785879234.4116578,
+    "ast_hash": "b5d7f8d3f88659ea1e14a5c463fd7e3f",
     "semantic_hash": ""
   },
   "README.md": {
@@ -1355,8 +1355,8 @@
     "semantic_hash": "fa5794c577c54fcf0888468db60e0c22"
   },
   "src/CMakeLists.txt": {
-    "mtime": 1785868370.733462,
-    "ast_hash": "aadf1f47b7137e5438b906e05feeeb2f",
+    "mtime": 1785879244.9924774,
+    "ast_hash": "af28b97603604da434b130272e7d7a68",
     "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
@@ -1395,9 +1395,9 @@
     "semantic_hash": "350a43346db3a91dd4866a606d6d4f24"
   },
   "Images/Logo.png": {
-    "mtime": 1775774268.1369584,
-    "ast_hash": "7e6e8b0b14ea6a0a52d5e1b478b7332e",
-    "semantic_hash": "7e6e8b0b14ea6a0a52d5e1b478b7332e"
+    "mtime": 1785875879.8098207,
+    "ast_hash": "358df0b7527d1912a89cb1609f47a6a0",
+    "semantic_hash": ""
   },
   "Images/Test3_g.png": {
     "mtime": 1775774268.1374094,
@@ -1930,8 +1930,8 @@
     "semantic_hash": ""
   },
   "src/app/SettingsManager.cpp": {
-    "mtime": 1785871697.854108,
-    "ast_hash": "8cc74b50611681574658b2397605bc67",
+    "mtime": 1785871736.6991801,
+    "ast_hash": "998ae9b53eb4a7350439d7bbb6805d9d",
     "semantic_hash": ""
   },
   "tests/unit/app/SettingsManagerTests.cpp": {

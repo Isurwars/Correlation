@@ -1525,8 +1525,8 @@
     "semantic_hash": "d33dd3a82cfd7f01825b5c82a23dee17"
   },
   ".agents/AGENTS.md": {
-    "mtime": 1785623682.8262157,
-    "ast_hash": "32d8d8a5e0f366426a365ec9d03d1307",
+    "mtime": 1785880105.6882696,
+    "ast_hash": "285d68e05c271cb6e4daefd29e7c861e",
     "semantic_hash": ""
   },
   ".agents/rules/caveman-navigation.md": {
@@ -1765,18 +1765,13 @@
     "semantic_hash": ""
   },
   ".agents/skills/slint-component-architect/SKILL.md": {
-    "mtime": 1785044239.708435,
-    "ast_hash": "3e9dc2cd35262adf21040d4598598021",
+    "mtime": 1785880084.9666057,
+    "ast_hash": "5de03f977d6a3b6024114aa3308986fd",
     "semantic_hash": ""
   },
   ".agents/skills/slint-live-preview-loop/SKILL.md": {
     "mtime": 1785127145.4867458,
     "ast_hash": "c1520a8f7b79ec43526b7da5c957a63d",
-    "semantic_hash": ""
-  },
-  ".agents/skills/slint-ui-development/SKILL.md": {
-    "mtime": 1785044305.0499697,
-    "ast_hash": "bfa631f1d762a28e2c539044b5e7e3cb",
     "semantic_hash": ""
   },
   ".agents/rules/git-workflow.md": {
@@ -1785,8 +1780,8 @@
     "semantic_hash": ""
   },
   ".agents/rules/slint-standards.md": {
-    "mtime": 1785116531.4719293,
-    "ast_hash": "e544e993544fd81d69f6d1e42fa618ca",
+    "mtime": 1785880097.9903944,
+    "ast_hash": "769ea9f2b8c80430a06c830e15a88a58",
     "semantic_hash": ""
   },
   ".agents/rules/testing-standards.md": {
@@ -1812,11 +1807,6 @@
   ".agents/skills/slint-cpp-integration/SKILL.md": {
     "mtime": 1785116635.8114178,
     "ast_hash": "aafc76a2e9da7b7bba24df68735ec1c3",
-    "semantic_hash": ""
-  },
-  ".agents/skills/slint-material-design-system/SKILL.md": {
-    "mtime": 1785127856.744398,
-    "ast_hash": "cbe599d8397635f8ef98d9c45c9a459e",
     "semantic_hash": ""
   },
   ".agents/skills/changelog-generator/SKILL.md": {
@@ -1904,14 +1894,9 @@
     "ast_hash": "99742668a293b11b8a789a977a1fe0e0",
     "semantic_hash": ""
   },
-  ".agents/rules/picky-interrogation-protocol.md": {
-    "mtime": 1785809965.5490966,
-    "ast_hash": "6d168032ff39541f809b5ce55c70f6b4",
-    "semantic_hash": ""
-  },
   ".agents/skills/always-grind-interrogation/SKILL.md": {
-    "mtime": 1785731583.036188,
-    "ast_hash": "51eadbad6cc598064e60c9f4f4a15763",
+    "mtime": 1785880090.1705213,
+    "ast_hash": "ea715ab6379b1903ce6e235f45c6a199",
     "semantic_hash": ""
   },
   "recipe/build.sh": {

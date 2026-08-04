@@ -38,7 +38,7 @@
 - **Verification:** Code changes must compile cleanly and pass `correlation_gui_tests`.
 
 ## References
-- **See skill:** [slint-component-architect](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-component-architect/SKILL.md) for modular component patterns and widget design guidelines.
+- **See skill:** [slint-component-architect](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-component-architect/SKILL.md) for modular component patterns, Material Design 3 tokens, and widget styling guidelines.
 - **See skill:** [slint-cpp-integration](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-cpp-integration/SKILL.md) for C++20 backend binding, async thread safety, and data model patterns.
 - **See skill:** [slint-live-preview-loop](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-live-preview-loop/SKILL.md) for live preview and hot-reload workflows.
-- **See skill:** [slint-ui-development](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-ui-development/SKILL.md) for declarative `.slint` layout design and property bindings.
+
