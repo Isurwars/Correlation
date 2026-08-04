@@ -265,7 +265,7 @@ endif()
 if (NOT WIN32 AND BUILD_GUI)
     # 1. Install the Icon (adjust path if you use a different icon directory)
     install(FILES "${PROJECT_SOURCE_DIR}/Images/Logo.png"
-            DESTINATION share/icons/hicolor/scalable/apps
+            DESTINATION share/icons/hicolor/512x512/apps
             RENAME correlation.png
             COMPONENT correlation)
 

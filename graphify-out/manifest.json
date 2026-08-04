@@ -1320,8 +1320,8 @@
     "semantic_hash": ""
   },
   "CMakeLists.txt": {
-    "mtime": 1785815319.0647511,
-    "ast_hash": "a7e5f9e301249e587294ee16551a2bdc",
+    "mtime": 1785875882.025785,
+    "ast_hash": "b86598514d9826e490957b241dec7fba",
     "semantic_hash": ""
   },
   "README.md": {
@@ -1395,9 +1395,9 @@
     "semantic_hash": "350a43346db3a91dd4866a606d6d4f24"
   },
   "Images/Logo.png": {
-    "mtime": 1775774268.1369584,
-    "ast_hash": "7e6e8b0b14ea6a0a52d5e1b478b7332e",
-    "semantic_hash": "7e6e8b0b14ea6a0a52d5e1b478b7332e"
+    "mtime": 1785875879.8098207,
+    "ast_hash": "358df0b7527d1912a89cb1609f47a6a0",
+    "semantic_hash": ""
   },
   "Images/Test3_g.png": {
     "mtime": 1775774268.1374094,
@@ -1930,8 +1930,8 @@
     "semantic_hash": ""
   },
   "src/app/SettingsManager.cpp": {
-    "mtime": 1785871697.854108,
-    "ast_hash": "8cc74b50611681574658b2397605bc67",
+    "mtime": 1785871736.6991801,
+    "ast_hash": "998ae9b53eb4a7350439d7bbb6805d9d",
     "semantic_hash": ""
   },
   "tests/unit/app/SettingsManagerTests.cpp": {

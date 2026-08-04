@@ -1930,8 +1930,8 @@
     "semantic_hash": ""
   },
   "src/app/SettingsManager.cpp": {
-    "mtime": 1785871661.2717927,
-    "ast_hash": "e5334638a45676aca558f9e24a76d84a",
+    "mtime": 1785871697.854108,
+    "ast_hash": "8cc74b50611681574658b2397605bc67",
     "semantic_hash": ""
   },
   "tests/unit/app/SettingsManagerTests.cpp": {

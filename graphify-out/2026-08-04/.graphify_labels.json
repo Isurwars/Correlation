@@ -296,8 +296,15 @@
   "294": "precomputePhases",
   "295": "XRDTests",
   "296": "XdatcarParser",
+  "297": "CP2KReader",
+  "298": "TEST",
   "299": "SIMDNormalization.hpp",
+  "300": "HoverInfo",
   "301": "CarReader.cpp",
+  "302": "TrajectoryAnalyzer::TrajectoryAnalyzer",
+  "303": "PlotController::requestPlotUpdate",
+  "304": "PlotController::PlotController",
+  "305": "PlotSize",
   "307": "VDOSParams",
   "308": "BinningConfig"
 }
