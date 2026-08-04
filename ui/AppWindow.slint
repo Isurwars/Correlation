@@ -38,6 +38,7 @@ import { AnalysesSelectionCard } from "options/AnalysesSelectionCard.slint";
 import { OptionsCard } from "options/OptionsCard.slint";
 import { PreviewCard } from "preview/PreviewCard.slint";
 import { AppToolTips } from "AppToolTips.slint";
+import { SplitterHandle } from "SplitterHandle.slint";
 
 export {
     AtomCount,
@@ -209,7 +210,12 @@ export component AppWindow inherits Window {
     in property <[ComparisonCurveData]> comparison_curves: [];
     in property <bool> show_difference: false;
 
+    // Resizable layout geometry properties
+    in-out property <length> left_col_width: 260px;
+    in-out property <length> middle_col_width: 260px;
+
     // Callbacks (Bound to AppController.cpp)
+    callback layout_geometry_changed(length, length);
     callback browse_file();
     callback run_analysis();
     callback cancel_analysis();
@@ -384,13 +390,15 @@ export component AppWindow inherits Window {
         }
 
         Horizontal {
-            spacing: MaterialStyleMetrics.spacing_8;
+            spacing: 2px;
+            padding-left: 4px;
+            padding-right: 4px;
             vertical-stretch: 1;
 
             // 1. Left column: Operations & CLI command
             Vertical {
                 padding: 0;
-                width: 260px;
+                width: root.left_col_width;
                 horizontal-stretch: 0;
                 spacing: MaterialStyleMetrics.spacing_8;
 
@@ -428,9 +436,16 @@ export component AppWindow inherits Window {
                 }
             }
 
+            SplitterHandle {
+                moved(delta) => {
+                    root.left_col_width = Math.min(450px, Math.max(200px, root.left_col_width + delta));
+                    root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
+                }
+            }
+
             // 2. Middle column: Options Tabbed Card (Common, Advanced, Plot, Analyses)
             options_card := OptionsCard {
-                width: 260px;
+                width: root.middle_col_width;
                 horizontal-stretch: 0;
                 enabled: root.file_loaded;
                 file_loaded: root.file_loaded;
@@ -477,6 +492,13 @@ export component AppWindow inherits Window {
                 load_preset(idx) => { root.load_preset(idx); }
                 save_preset(name) => { root.save_preset(name); }
                 delete_preset(idx) => { root.delete_preset(idx); }
+            }
+
+            SplitterHandle {
+                moved(delta) => {
+                    root.middle_col_width = Math.min(450px, Math.max(200px, root.middle_col_width + delta));
+                    root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
+                }
             }
 
             // 3. Right column: Visual Preview Card (stretches to fill remaining space)

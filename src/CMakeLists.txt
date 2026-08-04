@@ -209,6 +209,7 @@ if(BUILD_GUI)
         app/PlotController.cpp
         app/PresetController.cpp
         app/PresetManager.cpp
+        app/SettingsManager.cpp
     )
 
     if (WIN32)

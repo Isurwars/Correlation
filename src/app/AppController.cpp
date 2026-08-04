@@ -142,13 +142,43 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
     });
   });
 
-  // Initial load of preset list
+  // Handle layout geometry changed callback from UI
+  window_.on_layout_geometry_changed([this](float left_w, float mid_w) {
+    settings_.left_col_width = left_w;
+    settings_.middle_col_width = mid_w;
+    saveSettings();
+  });
+
+  // Initial load of settings and preset list
+  loadSettings();
   preset_controller_->refreshPresetList();
 }
 
 AppController::~AppController() {
+  saveSettings();
   // Quit Native File Dialog
   NFD_Quit();
+}
+
+void AppController::loadSettings() {
+  settings_ = SettingsManager::load();
+  window_.set_left_col_width(settings_.left_col_width);
+  window_.set_middle_col_width(settings_.middle_col_width);
+  if (settings_.window_width > 0 && settings_.window_height > 0) {
+    window_.window().set_size(slint::PhysicalSize({settings_.window_width, settings_.window_height}));
+  }
+}
+
+void AppController::saveSettings() const {
+  AppSettings settings = settings_;
+  settings.left_col_width = window_.get_left_col_width();
+  settings.middle_col_width = window_.get_middle_col_width();
+  const auto phys_size = window_.window().size();
+  if (phys_size.width > 0 && phys_size.height > 0) {
+    settings.window_width = phys_size.width;
+    settings.window_height = phys_size.height;
+  }
+  SettingsManager::save(settings);
 }
 
 // Safe conversion helper

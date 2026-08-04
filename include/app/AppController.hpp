@@ -17,6 +17,8 @@
 class AppControllerTests;
 class AppWindow;
 
+#include "app/SettingsManager.hpp"
+
 namespace correlation::app {
 
 class AnalysisRunner;
@@ -49,6 +51,16 @@ public:
    * @brief Destructor. Ensures analysis threads are joined before destruction.
    */
   ~AppController();
+
+  /**
+   * @brief Loads application layout settings and applies window/column geometry.
+   */
+  void loadSettings();
+
+  /**
+   * @brief Saves current layout settings and window geometry to disk.
+   */
+  void saveSettings() const;
 
   /**
    * @brief Retrieves the current user-selected options from the UI.
@@ -103,5 +115,6 @@ private:
   std::unique_ptr<InputValidator> input_validator_;
   std::unique_ptr<PlotController> plot_controller_;
   std::unique_ptr<PresetController> preset_controller_;
+  AppSettings settings_;
 };
 } // namespace correlation::app

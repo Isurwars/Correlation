@@ -8,7 +8,7 @@ export component AppHeader inherits Rectangle {
     in property <string> title_text: "Correlation";
     in property <string> status_text: "";
     in property <bool> file_loaded: false;
-    height: 36px;
+    height: 40px;
     background: MaterialPalette.surface_container;
 
     HorizontalLayout {
@@ -17,14 +17,25 @@ export component AppHeader inherits Rectangle {
         spacing: 8px;
         alignment: space-between;
 
-        Text {
-            text: root.title_text;
-            font-size: MaterialTypography.title_medium.font_size;
-            font-weight: MaterialTypography.title_medium.font_weight;
-            color: MaterialPalette.on_surface;
-            vertical-alignment: center;
-            accessible-role: text;
-            accessible-label: "Application Title";
+        HorizontalLayout {
+            spacing: 10px;
+
+            Image {
+                source: @image-url("../../Images/Logo.png");
+                height: 24px;
+                width: 24px;
+                image-fit: contain;
+            }
+
+            Text {
+                text: root.title_text;
+                font-size: MaterialTypography.title_medium.font_size;
+                font-weight: MaterialTypography.title_medium.font_weight;
+                color: MaterialPalette.on_surface;
+                vertical-alignment: center;
+                accessible-role: text;
+                accessible-label: "Application Title";
+            }
         }
 
         if root.status_text != "": Text {

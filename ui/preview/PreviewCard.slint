@@ -181,19 +181,110 @@ export component PreviewCard inherits FilledCard {
                 clip: self.width > 1px && self.height > 1px;
                 visible: self.width > 0.1px && self.height > 0.1px;
 
-                // Empty State when no analysis has been run yet
+                // Empty State when no analysis has been run yet — Branded Hero View
                 if !root.analysis_done: Vertical {
-                    padding: MaterialStyleMetrics.spacing_8;
-                    spacing: MaterialStyleMetrics.spacing_8;
+                    padding: MaterialStyleMetrics.spacing_16;
+                    spacing: MaterialStyleMetrics.spacing_16;
                     alignment: center;
 
-                    MaterialText {
-                        text: "Load a trajectory and click Run Analysis to view results here.";
-                        color: MaterialPalette.on_surface_variant;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
-                        wrap: word-wrap;
-                        style: MaterialTypography.title_medium;
+                    HorizontalLayout {
+                        alignment: center;
+
+                        Image {
+                            source: @image-url("../../Images/Banner.png");
+                            height: 120px;
+                            width: 380px;
+                            image-fit: contain;
+                            horizontal-alignment: center;
+                        }
+                    }
+
+                    Vertical {
+                        spacing: MaterialStyleMetrics.spacing_8;
+                        alignment: center;
+
+                        MaterialText {
+                            text: "Liquid & Amorphous Structural Analysis";
+                            color: MaterialPalette.on_surface;
+                            horizontal-alignment: center;
+                            style: MaterialTypography.title_large;
+                        }
+
+                        MaterialText {
+                            text: "Load a structure or trajectory file from the Operations panel to generate pair distribution, scattering, and angular structure functions.";
+                            color: MaterialPalette.on_surface_variant;
+                            horizontal-alignment: center;
+                            wrap: word-wrap;
+                            style: MaterialTypography.body_medium;
+                        }
+                    }
+
+                    HorizontalLayout {
+                        spacing: 8px;
+                        alignment: center;
+
+                        Rectangle {
+                            height: 28px;
+                            border-radius: 14px;
+                            background: MaterialPalette.surface_container_high;
+
+                            HorizontalLayout {
+                                padding-left: 12px;
+                                padding-right: 12px;
+                                Text {
+                                    text: "1. Load File";
+                                    font-size: MaterialTypography.label_medium.font_size;
+                                    color: MaterialPalette.primary;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+
+                        Text {
+                            text: "➔";
+                            color: MaterialPalette.outline;
+                            vertical-alignment: center;
+                        }
+
+                        Rectangle {
+                            height: 28px;
+                            border-radius: 14px;
+                            background: MaterialPalette.surface_container_high;
+
+                            HorizontalLayout {
+                                padding-left: 12px;
+                                padding-right: 12px;
+                                Text {
+                                    text: "2. Configure Options";
+                                    font-size: MaterialTypography.label_medium.font_size;
+                                    color: MaterialPalette.on_surface_variant;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+
+                        Text {
+                            text: "➔";
+                            color: MaterialPalette.outline;
+                            vertical-alignment: center;
+                        }
+
+                        Rectangle {
+                            height: 28px;
+                            border-radius: 14px;
+                            background: MaterialPalette.surface_container_high;
+
+                            HorizontalLayout {
+                                padding-left: 12px;
+                                padding-right: 12px;
+                                Text {
+                                    text: "3. Run & View Results";
+                                    font-size: MaterialTypography.label_medium.font_size;
+                                    color: MaterialPalette.on_surface_variant;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
                     }
                 }
 
