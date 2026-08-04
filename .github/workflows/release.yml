@@ -129,11 +129,13 @@ jobs:
           cpack
 
       - name: Build AppImage
+        env:
+          APPIMAGE_EXTRACT_AND_RUN: "1"
         run: |
           curl -L -o linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
           chmod +x linuxdeploy
-          DESTDIR=$PWD/AppDir cmake --install build
-          ./linuxdeploy --appimage-extract-and-run --appdir AppDir \
+          DESTDIR=$PWD/AppDir cmake --install build --prefix /usr
+          ./linuxdeploy --appdir AppDir \
             --desktop-file AppDir/usr/share/applications/correlation.desktop \
             --icon-file AppDir/usr/share/icons/hicolor/512x512/apps/correlation.png \
             --output appimage
