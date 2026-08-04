@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.8.6] - 2026-08-04
+
+### Added & Refactored
+- **Application Settings Persistence**: Implemented `SettingsManager` for JSON-backed user settings persistence across sessions, integrated into `AppController`, complete with unit test coverage (`SettingsManagerTests`).
+- **UI Hero View & Interactive Splitter**: Redesigned preview card empty state with branded hero view (`PreviewCard.slint`), added interactive pane splitter handle (`SplitterHandle.slint`), and updated application window layout (`AppHeader.slint`, `AppWindow.slint`).
+
+### Build & Packaging
+- **Packaging Support**: Added Arch Linux `PKGBUILD` template and Conda recipe configurations (`meta.yaml`, `bld.bat`, `build.sh`) alongside GitHub release workflow automation.
+- **Workflow & Versioning**: Removed obsolete wheel test workflow (`test-wheels.yml`) and updated version numbers to 3.8.6 across CMake and packaging metadata.
+
 ## [3.8.5] - 2026-08-03
 
 ### Fixed
