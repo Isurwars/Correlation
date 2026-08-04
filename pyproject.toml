@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "correlation-analysis"
-version = "3.8.5"
+dynamic = ["version"]
 description = "High-performance structural analysis for atomistic simulations"
 readme = "README.md"
 license = {text = "AGPL-3.0-only"}
@@ -26,6 +26,10 @@ Documentation = "https://isurwars.github.io/Correlation"
 Repository = "https://github.com/Isurwars/Correlation"
 
 [tool.scikit-build]
+metadata.version.provider = "scikit_build_core.metadata.regex"
+metadata.version.input = "CMakeLists.txt"
+metadata.version.regex = 'project\(Correlation\s+VERSION\s+(?P<version>[0-9.]+)'
+
 cmake.args = [
     "-DBUILD_PYTHON_BINDINGS=ON",
     "-DBUILD_TESTING=OFF",

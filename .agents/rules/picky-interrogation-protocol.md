@@ -12,7 +12,7 @@
   - Concurrency & synchronization (`std::atomic`, `tbb::enumerable_thread_specific`, OpenMP reduction loops).
   - Numerical precision & floating-point stability (`real_t`, Kahan compensated summation, double-precision accumulators).
   - UI state management & event loop dispatching (Slint properties, `slint::VectorModel`, thread-safe event loop dispatch).
-- **Format:** Present questions as crisp, technical options highlighting exact trade-offs (e.g., latency, cache locality, memory overhead, API ergonomics).
+- **Format & Single-Question Constraint:** ALWAYS ask exactly ONE question at a time. Never dump multiple questions simultaneously. Present the single question with crisp, technical options highlighting exact trade-offs (e.g., latency, cache locality, memory overhead, API ergonomics).
 
 ## 3. Proactive Architectural Audit & Recommendations
 - **Blind-Spot Identification:** Proactively identify performance bottlenecks, cache-line bouncing, memory allocations in critical loops, missing error handling, and unhandled edge cases.

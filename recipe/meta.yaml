@@ -1,0 +1,57 @@
+# {% set name = "correlation" %}
+# {% set version = "3.8.5" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://github.com/Isurwars/Correlation/archive/refs/tags/v{{ version }}.tar.gz"
+  sha256: "0000000000000000000000000000000000000000000000000000000000000000"
+
+build:
+  number: 0
+  run_exports:
+    - "{{ pin_subpackage(name, max_pin='x.x') }}"
+
+requirements:
+  build:
+    - "{{ compiler('c') }}"
+    - "{{ compiler('cxx') }}"
+    - cmake >=3.24
+    - ninja
+    - pkg-config
+  host:
+    - python
+    - pybind11 >=2.10
+    - tbb-devel
+    - hdf5
+    - fftw
+  run:
+    - python
+    - tbb
+    - hdf5
+    - fftw
+    - "{{ pin_compatible('numpy') }}"
+
+test:
+  imports:
+    - correlation
+  commands:
+    - correlation-cli --version
+
+about:
+  home: https://github.com/Isurwars/Correlation
+  license: AGPL-3.0-only
+  license_file: LICENSE
+  summary: "High-performance liquid and amorphous solid structural analysis tool"
+  description: |
+    Correlation is a high-performance C++23 engine with Python bindings for calculating
+    Pair Distribution Functions (PDF), Radial Distribution Functions (RDF), Structure Factors S(Q),
+    Common Neighbor Analysis (CNA), and dynamic correlation properties.
+  doc_url: https://github.com/Isurwars/Correlation
+  dev_url: https://github.com/Isurwars/Correlation
+
+extra:
+  recipe-maintainers:
+    - isurwars

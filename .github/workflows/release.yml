@@ -127,6 +127,17 @@ jobs:
           cd build
           cpack
 
+      - name: Build AppImage
+        run: |
+          curl -L -o linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          chmod +x linuxdeploy
+          DESTDIR=$PWD/AppDir cmake --install build
+          ./linuxdeploy --appimage-extract-and-run --appdir AppDir \
+            --desktop-file packaging/correlation.desktop \
+            --icon-file Images/Logo.png \
+            --output appimage
+          mv Correlation*.AppImage build/
+
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v3
         with:
@@ -134,6 +145,7 @@ jobs:
             build/correlation-*-Linux.deb
             build/correlation-*-Linux.rpm
             build/correlation-*-Linux.tar.gz
+            build/Correlation*.AppImage
 
   build-windows:
     name: Build Windows
@@ -314,7 +326,7 @@ jobs:
     name: Publish to AUR
     runs-on: ubuntu-latest
     needs: [build-linux, build-windows, build-macos]
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: false # Disabled in 3.x - Deferred to Roadmap 4.0 (previously: startsWith(github.ref, 'refs/tags/v'))
     env:
       VERSION: ${{ github.ref_name }}
     steps:
@@ -385,97 +397,3 @@ jobs:
           git diff --cached --quiet || git commit -m "Release v${{ env.VERSION }}"
           git push
 
-  build-wheels:
-    name: Build wheels on ${{ matrix.os }} (${{ matrix.cibw_archs }})
-    if: false # Disabled in 3.x - Deferred to Roadmap 4.0
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: ubuntu-latest
-            cibw_archs: "x86_64"
-          - os: ubuntu-24.04-arm
-            cibw_archs: "aarch64"
-          - os: windows-latest
-            cibw_archs: "AMD64"
-          - os: macos-latest
-            cibw_archs: "x86_64 arm64 universal2"
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install cibuildwheel
-        run: python -m pip install cibuildwheel==2.21.3
-
-      - name: Cache cibuildwheel
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/cibuildwheel
-          key: cibw-${{ runner.os }}-${{ matrix.cibw_archs }}-${{ hashFiles('pyproject.toml') }}
-          restore-keys: cibw-${{ runner.os }}-${{ matrix.cibw_archs }}-
-
-      - name: Build wheels
-        run: python -m cibuildwheel --output-dir wheelhouse
-        env:
-          CIBW_CACHE_DIR: "~/.cache/cibuildwheel"
-          CIBW_ARCHS: ${{ matrix.cibw_archs }}
-          # macOS: Fixes LLVM libc++ __enable_if_t resolution and enables std::format / std::to_chars
-          CIBW_ENVIRONMENT_MACOS: >
-            MACOSX_DEPLOYMENT_TARGET="13.3"
-            CXXFLAGS="-std=c++23"
-            CFLAGS="-std=c23"
-
-      - name: Upload wheel artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
-          path: ./wheelhouse/*.whl
-
-  build-sdist:
-    name: Build source distribution
-    if: false # Disabled in 3.x - Deferred to Roadmap 4.0
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Build sdist
-        run: pipx run build --sdist
-
-      - name: Upload sdist artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: cibw-sdist
-          path: dist/*.tar.gz
-
-  publish-pypi:
-    name: Publish to PyPI
-    needs: [build-wheels, build-sdist]
-    runs-on: ubuntu-latest
-    if: false # Disabled in 3.x - Deferred to Roadmap 4.0 (previously: startsWith(github.ref, 'refs/tags/v'))
-    environment:
-      name: pypi
-      url: https://pypi.org/p/correlation-analysis
-    permissions:
-      id-token: write # Crucial for Trusted Publishing (OIDC)
-    steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: dist
-          merge-multiple: true
-
-      - name: Publish package distributions to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1

@@ -28,7 +28,7 @@ graph TD
     D --> D1["Completed: Modular Readers & Fuzz Testing"]:::completed
     D --> D2["Planned: ORCA, GPAW, ABINIT, DFTB+"]:::planned
 
-    E --> E1["Planned (4.0.0): cibuildwheel PyPI Pipeline & repair_wheel.py"]:::planned
+    E --> E1["Completed: Conda-Forge Recipe & Feedstock Integration"]:::completed
     E --> E2["Planned: Zero-Copy ASE & Pymatgen Python Interop"]:::planned
 
     F --> F1["Completed: Redesigned Slint GUI, Native PDF & Noto Vector Font"]:::completed
@@ -125,9 +125,9 @@ We aim to support the most widely used material simulation software packages by 
 
 Python bindings make `Correlation` scriptable. In the lead-up to 4.0.0, focus centers on seamless interoperability with the materials science Python ecosystem.
 
-### 4.1 PyPI Automated Release Pipelines (Deferred to 4.0.0)
-* **Status:** Deferred to 4.0.0.
-* **Implementation:** GitHub Actions workflow utilizing `cibuildwheel` and `repair_wheel.py` to distribute pre-compiled binary wheels with vendored oneTBB dependencies across Linux, macOS, and Windows.
+### 4.1 Conda-Forge Package Distribution
+* **Status:** Completed.
+* **Implementation:** Source-controlled `recipe/meta.yaml`, `build.sh`, and `bld.bat` for automated cross-platform packaging on `conda-forge` across Linux, macOS, and Windows. PyPI wheel builds have been permanently deprecated.
 
 ### 4.2 Materials Science Library Integrations (Planned for 3.8.0)
 * **ASE Interoperability:** Provide fast zero-copy conversion between C++ `Cell`/`Trajectory` buffers and `ase.Atoms` objects.

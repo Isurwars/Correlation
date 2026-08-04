@@ -21,6 +21,18 @@ configure_file(
     "${PROJECT_SOURCE_DIR}/packaging/resource.rc"
     @ONLY
 )
+configure_file(
+    "${PROJECT_SOURCE_DIR}/packaging/PKGBUILD.in"
+    "${PROJECT_SOURCE_DIR}/packaging/PKGBUILD"
+    @ONLY
+)
+configure_file(
+    "${PROJECT_SOURCE_DIR}/recipe/meta.yaml.in"
+    "${PROJECT_SOURCE_DIR}/recipe/meta.yaml"
+    @ONLY
+)
+
+add_compile_definitions(CORRELATION_VERSION_STRING="${PROJECT_VERSION}")
 
 # -----------------------------------------------------------
 # Build Options

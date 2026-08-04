@@ -80,7 +80,7 @@ Compatible with structure and trajectory files from:
 ## Installation
 
 > [!TIP]
-> **Pre-compiled Packages**: Pre-built packages for **Ubuntu/Debian** (`.deb`), **Arch Linux** (via **AUR**), **macOS** (`.dmg`), and **Windows** (installer) are provided directly in the GitHub [Releases](https://github.com/Isurwars/Correlation/releases) section.
+> **Pre-compiled Packages**: Pre-built packages for **Linux** (**AppImage**, **Debian/Ubuntu** `.deb`, **Fedora/RHEL** `.rpm`), **macOS** (`.dmg`), and **Windows** (`.exe` installer) are provided directly in the GitHub [Releases](https://github.com/Isurwars/Correlation/releases) section.
 
 ### Prerequisites
 * **Compiler**: Modern C++ compiler with C++23 support (GCC 13+, Clang 16+, MSVC 2022+)
@@ -251,7 +251,15 @@ Run calculations headlessly using `correlation-cli` without requiring any graphi
 Integrate `Correlation` directly into Python data-science workflows (e.g., Jupyter Notebooks):
 
 #### Installation
-Build and install the Python library from the repository root:
+
+Via **Conda-Forge** (recommended):
+```bash
+conda install -c conda-forge correlation
+# Or using pixi:
+pixi add correlation
+```
+
+Or build and install locally from source:
 ```bash
 pip install .
 ```
