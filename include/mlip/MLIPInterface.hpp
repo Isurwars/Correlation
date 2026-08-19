@@ -25,6 +25,8 @@ struct MLIPOutput {
   std::vector<real_t> per_atom_energy;                    /**< Site-resolved per-atom energy. */
   std::vector<correlation::math::Vector3<real_t>> forces; /**< Atomic forces acting on each atom. */
   correlation::math::Matrix3<real_t> stress;              /**< Virial stress tensor. */
+  std::vector<std::vector<real_t>> ldos;                  /**< Local Density of States [N_atoms x N_bins]. */
+  size_t ldos_bins{0};                                    /**< Number of energy bins in LDOS spectrum. */
 };
 
 /**

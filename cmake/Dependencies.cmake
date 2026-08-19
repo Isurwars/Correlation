@@ -529,6 +529,18 @@ if(TARGET voro++)
   endif()
 endif()
 
+# 12. LibTorch (Optional)
+option(CORRELATION_ENABLE_LIBTORCH "Build with LibTorch support for GNN inference" OFF)
+if(CORRELATION_ENABLE_LIBTORCH)
+  find_package(Torch QUIET)
+  if(Torch_FOUND)
+    message(STATUS "Found Torch: ${Torch_DIR}")
+    add_compile_definitions(CORRELATION_HAS_LIBTORCH=1)
+  else()
+    message(WARNING "CORRELATION_ENABLE_LIBTORCH is ON, but Torch was not found. Please set Torch_DIR.")
+  endif()
+endif()
+
 # Restore original BUILD_TESTING cache state
 if(BUILD_TESTING_EXISTS)
   set(BUILD_TESTING "${ORIG_BUILD_TESTING}" CACHE ${ORIG_BUILD_TESTING_TYPE} "${ORIG_BUILD_TESTING_HELP}" FORCE)

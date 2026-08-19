@@ -56,6 +56,7 @@ add_executable(correlation_unit_tests
     unit/calculators/ChiralityCalculatorTests.cpp
     unit/calculators/HyperuniformityCalculatorTests.cpp
     unit/calculators/MLIPCalculatorTests.cpp
+    unit/mlip/PeriodicGraphBuilderTests.cpp
     unit/calculators/GPUSteinhardtCalculatorTests.cpp
     unit/calculators/GPUDistanceCalculatorTests.cpp
     unit/calculators/GPUSQCalculatorTests.cpp
@@ -94,12 +95,13 @@ target_link_libraries(correlation_unit_tests PRIVATE
     readers_obj
     writers_obj
     calculators_obj
+    mlip_obj
     cli_parser_obj
     GTest::gtest
     GTest::gmock
     GTest::gtest_main
 )
-add_dependencies(correlation_unit_tests readers_obj writers_obj calculators_obj)
+add_dependencies(correlation_unit_tests readers_obj writers_obj calculators_obj mlip_obj)
 # (Definitions and discovery are configured at the end of the file in a loop)
 
 #-----------------------------------------------------------

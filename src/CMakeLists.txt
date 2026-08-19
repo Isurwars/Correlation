@@ -136,6 +136,22 @@ if(BUILD_WITH_ARROW)
     target_link_libraries(writers_obj PRIVATE arrow_shared parquet_shared)
 endif()
 
+# MLIP as an OBJECT library
+set(MLIP_SOURCES
+    mlip/PeriodicGraphBuilder.cpp
+    mlip/TorchGNNModel.cpp
+)
+
+add_library(mlip_obj OBJECT ${MLIP_SOURCES})
+target_include_directories(mlip_obj PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+)
+target_link_libraries(mlip_obj PRIVATE TBB::tbb correlation_simd_options)
+if(CORRELATION_ENABLE_LIBTORCH AND Torch_FOUND)
+    target_link_libraries(mlip_obj PRIVATE "${TORCH_LIBRARIES}")
+    target_include_directories(mlip_obj PRIVATE ${TORCH_INCLUDE_DIRS})
+endif()
+
 # Add sources to library
 add_library(correlation_lib STATIC
     core/Cell.cpp
@@ -154,10 +170,14 @@ add_library(correlation_lib STATIC
     $<TARGET_OBJECTS:readers_obj>
     $<TARGET_OBJECTS:calculators_obj>
     $<TARGET_OBJECTS:writers_obj>
+    $<TARGET_OBJECTS:mlip_obj>
     $<$<OR:$<BOOL:${BUILD_WITH_CUDA}>,$<BOOL:${BUILD_WITH_HIP}>>:$<TARGET_OBJECTS:gpu_calculators_obj>>
 )
 
-target_link_libraries(correlation_lib PRIVATE readers_obj calculators_obj writers_obj)
+target_link_libraries(correlation_lib PRIVATE readers_obj calculators_obj writers_obj mlip_obj)
+if(CORRELATION_ENABLE_LIBTORCH AND Torch_FOUND)
+    target_link_libraries(correlation_lib PRIVATE "${TORCH_LIBRARIES}")
+endif()
 if(BUILD_WITH_CUDA OR BUILD_WITH_HIP)
     target_link_libraries(correlation_lib PRIVATE gpu_calculators_obj)
 endif()
