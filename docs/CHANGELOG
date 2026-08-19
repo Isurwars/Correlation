@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.8.7] - 2026-08-19
+
+### Packaging & AUR
+- **AUR Package Integration**: Reimplemented and re-enabled Arch User Repository (AUR) publishing workflow and packaging pipeline for automated tagged releases.
+
+### Added & Refactored
+- **MLIP Graph Builder & TorchGNN Inference**: Implemented `PeriodicGraphBuilder` and `TorchGNNModel` inference interface with LibTorch integration for machine learning interatomic potentials.
+- **Const-Correctness**: Added `const` qualifiers across `FileWriter` interfaces.
+
 ## [3.8.6] - 2026-08-04
 
 ### Added & Refactored
