@@ -490,9 +490,9 @@ TEST_F(PADTests, FullNormalizationCheck) {
 
   // Custom bond cutoffs to avoid O-O bonds (distance ~1.63) which would create
   // extra angles
-  auto cutoffs = trajectory_.getBondCutoffsSQ();
+  auto cutoffs = trajectory_.getBondCutoffs();
   int const id_O = cell_.findElement("O")->id.value;
-  cutoffs[id_O][id_O] = 1.44;
+  cutoffs[id_O][id_O].max_sq = 1.44;
 
   DistributionFunctions dists(cell_, 1.5, cutoffs);
   dists.calculatePAD(1.0);

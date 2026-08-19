@@ -42,7 +42,7 @@ TEST_F(LocalEntropyCalculatorTests, SimpleCubic) {
       }
     }
   }
-  StructureAnalyzer const analyzer_sc(cell_sc, 6.5, {{6.5 * 6.5}}, false);
+  StructureAnalyzer const analyzer_sc(cell_sc, 6.5, {{{0.36, 6.5 * 6.5}}}, false);
   auto hist_sc = correlation::calculators::LocalEntropyCalculator::calculate(cell_sc, &analyzer_sc,
                                                                              {
                                                                                  .cutoff = 6.0,
@@ -68,7 +68,7 @@ TEST_F(LocalEntropyCalculatorTests, BodyCenteredCubic) {
       }
     }
   }
-  StructureAnalyzer const analyzer_bcc(cell_bcc, 6.5, {{6.5 * 6.5}}, false);
+  StructureAnalyzer const analyzer_bcc(cell_bcc, 6.5, {{{0.36, 6.5 * 6.5}}}, false);
   auto hist_bcc = correlation::calculators::LocalEntropyCalculator::calculate(cell_bcc, &analyzer_bcc,
                                                                               {
                                                                                   .cutoff = 6.0,
@@ -100,7 +100,7 @@ TEST_F(LocalEntropyCalculatorTests, FaceCenteredCubic) {
       }
     }
   }
-  StructureAnalyzer const analyzer_fcc(cell_fcc, 6.5, {{6.5 * 6.5}}, false);
+  StructureAnalyzer const analyzer_fcc(cell_fcc, 6.5, {{{0.36, 6.5 * 6.5}}}, false);
   auto hist_fcc = correlation::calculators::LocalEntropyCalculator::calculate(cell_fcc, &analyzer_fcc,
                                                                               {
                                                                                   .cutoff = 6.0,
@@ -122,7 +122,7 @@ TEST_F(LocalEntropyCalculatorTests, Random) {
     cell_rand.addAtom("Ar",
                       {static_cast<real_t>(dis(gen)), static_cast<real_t>(dis(gen)), static_cast<real_t>(dis(gen))});
   }
-  StructureAnalyzer const analyzer_rand(cell_rand, 6.5, {{6.5 * 6.5}}, false);
+  StructureAnalyzer const analyzer_rand(cell_rand, 6.5, {{{0.36, 6.5 * 6.5}}}, false);
   auto hist_rand = correlation::calculators::LocalEntropyCalculator::calculate(cell_rand, &analyzer_rand,
                                                                                {
                                                                                    .cutoff = 6.0,

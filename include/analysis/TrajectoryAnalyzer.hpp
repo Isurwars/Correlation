@@ -15,7 +15,6 @@
 
 #include <functional>
 #include <memory>
-#include <vector>
 
 namespace correlation::analysis {
 
@@ -33,7 +32,7 @@ public:
   /** @name Constructors */
   ///@{
   TrajectoryAnalyzer(correlation::core::Trajectory &trajectory, real_t neighbor_cutoff,
-                     const std::vector<std::vector<real_t>> &bond_cutoffs, StartFrame start_frame = {0},
+                     const BondCutoffMatrix &bond_cutoffs, StartFrame start_frame = {0},
                      EndFrame end_frame = {static_cast<size_t>(-1)}, bool ignore_periodic_self_interactions = true,
                      const std::function<void(float, const std::string &)> &progress_callback = nullptr);
 
@@ -57,21 +56,21 @@ public:
   [[nodiscard]] real_t getTimeStep() const { return time_step_; }
   /** @return The global neighbor cutoff radius. */
   [[nodiscard]] real_t getNeighborCutoff() const { return neighbor_cutoff_; }
-  /** @return The bond cutoffs used for topological analysis. */
-  [[nodiscard]] const std::vector<std::vector<real_t>> &getBondCutoffsSQ() const { return bond_cutoffs_; }
+  /** @return The bond cutoff matrix used for topological analysis. */
+  [[nodiscard]] const BondCutoffMatrix &getBondCutoffs() const { return bond_cutoffs_; }
   /** @return True if periodic self-interactions are being ignored. */
   [[nodiscard]] bool getIgnorePeriodicSelfInteractions() const { return ignore_periodic_self_interactions_; }
 
   ///@}
 
 private:
-  correlation::core::Trajectory *trajectory_;     ///< Pointer to the source trajectory.
-  size_t start_frame_;                            ///< Analysis window start.
-  size_t effective_end_;                          ///< Analysis window end (exclusive).
-  real_t time_step_;                              ///< Time step between frames.
-  real_t neighbor_cutoff_;                        ///< Neighbor search radius.
-  std::vector<std::vector<real_t>> bond_cutoffs_; ///< Squared bond cutoffs per pair.
-  bool ignore_periodic_self_interactions_;        ///< Interaction guard flag.
+  correlation::core::Trajectory *trajectory_; ///< Pointer to the source trajectory.
+  size_t start_frame_;                        ///< Analysis window start.
+  size_t effective_end_;                      ///< Analysis window end (exclusive).
+  real_t time_step_;                          ///< Time step between frames.
+  real_t neighbor_cutoff_;                    ///< Neighbor search radius.
+  BondCutoffMatrix bond_cutoffs_;             ///< Squared bond cutoff ranges per pair.
+  bool ignore_periodic_self_interactions_;    ///< Interaction guard flag.
 };
 
 } // namespace correlation::analysis

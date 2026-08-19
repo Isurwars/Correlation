@@ -483,8 +483,9 @@ void PlotController::executePlotRender(RenderTaskData data) {
     data.config.show_difference_curve = show_difference_curve_;
     std::string svg;
     if (data.comparison_hists.size() <= 1) {
-      svg = correlation::plotters::renderHistogramAsSvg(data.active_hist, data.config, data.hover,
-                                                        data.ashcroft_weights, data.curve_visibility, custom_curve_colors_);
+      svg =
+          correlation::plotters::renderHistogramAsSvg(data.active_hist, data.config, data.hover, data.ashcroft_weights,
+                                                      data.curve_visibility, custom_curve_colors_);
     } else {
       std::string key = "Total";
       const auto &partials =

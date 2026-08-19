@@ -33,7 +33,48 @@ using namespace correlation::analysis;
 using namespace correlation::core;
 using namespace correlation::math;
 
+namespace {
+BondCutoffMatrix parse_bond_cutoff_matrix(const py::object &bond_cutoffs_obj) {
+  BondCutoffMatrix cutoffs;
+  if (bond_cutoffs_obj.is_none()) {
+    return cutoffs;
+  }
+  if (py::isinstance<py::list>(bond_cutoffs_obj)) {
+    py::list list_2d = bond_cutoffs_obj.cast<py::list>();
+    cutoffs.resize(list_2d.size());
+    for (size_t i = 0; i < list_2d.size(); ++i) {
+      py::list row = list_2d[i].cast<py::list>();
+      cutoffs[i].resize(row.size());
+      for (size_t j = 0; j < row.size(); ++j) {
+        if (py::isinstance<BondCutoffRange>(row[j])) {
+          cutoffs[i][j] = row[j].cast<BondCutoffRange>();
+        } else if (py::isinstance<py::tuple>(row[j]) || py::isinstance<py::list>(row[j])) {
+          auto pair = row[j].cast<std::pair<real_t, real_t>>();
+          cutoffs[i][j] = BondCutoffRange{.min_sq = pair.first, .max_sq = pair.second};
+        } else {
+          real_t max_val = row[j].cast<real_t>();
+          cutoffs[i][j] = BondCutoffRange{.min_sq = static_cast<real_t>(0.36), .max_sq = max_val};
+        }
+      }
+    }
+  }
+  return cutoffs;
+}
+} // namespace
+
 void init_analysis(py::module_ &mod) {
+
+  // ------------------------------------------------------------------
+  // BondCutoffRange
+  // ------------------------------------------------------------------
+  py::class_<BondCutoffRange>(mod, "BondCutoffRange", "Squared minimum and maximum bond distance cutoff bounds.")
+      .def(py::init<>())
+      .def(py::init<real_t, real_t>(), py::arg("min_sq"), py::arg("max_sq"))
+      .def_readwrite("min_sq", &BondCutoffRange::min_sq)
+      .def_readwrite("max_sq", &BondCutoffRange::max_sq)
+      .def("__repr__", [](const BondCutoffRange &range) {
+        return "<BondCutoffRange min_sq=" + std::to_string(range.min_sq) + " max_sq=" + std::to_string(range.max_sq) + ">";
+      });
 
   // ------------------------------------------------------------------
   // AnalysisSettings
@@ -69,12 +110,15 @@ void init_analysis(py::module_ &mod) {
       .def_readwrite("smoothing_sigma", &AnalysisSettings::smoothing_sigma,
                      "Gaussian smoothing standard deviation. Default 0.1.")
       .def_readwrite("smoothing_kernel", &AnalysisSettings::smoothing_kernel,
-                     "Kernel type for smoothing (KernelType enum). Default Gaussian.")
-      // Local Entropy (LEF)
+                     "Kernel used for smoothing (KernelType enum). Default KernelType.Gaussian.")
+      // Local Entropy
       .def_readwrite("lef_cutoff", &AnalysisSettings::lef_cutoff,
                      "Cutoff radius for local entropy integration (Å). Default 5.0.")
       .def_readwrite("lef_sigma", &AnalysisSettings::lef_sigma,
-                     "Gaussian standard deviation for local entropy smoothing (Å). Default 0.2.")
+                     "Gaussian sigma for local entropy smoothing (Å). Default 0.2.")
+      // Hyperuniformity
+      .def_readwrite("hyperuniformity_samples", &AnalysisSettings::hyperuniformity_samples,
+                     "Number of random sampling points for hyperuniformity. Default 10000.")
       .def(
           "is_active", [](const AnalysisSettings &settings, const std::string &idx) { return settings.isActive(idx); },
           py::arg("idx"), "Return True if the given calculator index is enabled.");
@@ -82,19 +126,12 @@ void init_analysis(py::module_ &mod) {
   // ------------------------------------------------------------------
   // Histogram
   // ------------------------------------------------------------------
-  py::class_<Histogram>(mod, "Histogram",
-                        "Container for a single calculated distribution function.\n\n"
-                        "Holds the x-axis bins, all partial distributions, and optional\n"
-                        "smoothed variants.")
-      .def(py::init<>())
-      .def_readwrite("bins", &Histogram::bins, "X-axis values (radii, angles, q-values, etc.).")
-      .def_readwrite("title", &Histogram::title, "Descriptive plot title.")
-      .def_readwrite("x_label", &Histogram::x_label, "X-axis label string.")
-      .def_readwrite("y_label", &Histogram::y_label, "Y-axis label string.")
-      .def_readwrite("x_unit", &Histogram::x_unit, "Physical unit for the x-axis (e.g. 'Å').")
-      .def_readwrite("y_unit", &Histogram::y_unit, "Physical unit for the y-axis.")
-      .def_readwrite("description", &Histogram::description, "Internal description of what this histogram represents.")
-      .def_readwrite("file_suffix", &Histogram::file_suffix, "Default suffix used when saving this histogram to disk.")
+  py::class_<Histogram>(mod, "Histogram", "Container for a single calculated distribution function.")
+      .def_readonly("title", &Histogram::title, "Descriptive title.")
+      .def_readonly("x_label", &Histogram::x_label, "X-axis label.")
+      .def_readonly("y_label", &Histogram::y_label, "Y-axis label.")
+      .def_readonly("x_unit", &Histogram::x_unit, "X-axis physical unit (e.g. 'Å').")
+      .def_readwrite("bins", &Histogram::bins, "List of bin center coordinates.")
       .def_readwrite("partials", &Histogram::partials, "Dict mapping partial key (e.g. 'Si-O') to y-values.")
       .def_readwrite("smoothed_partials", &Histogram::smoothed_partials,
                      "Dict mapping partial key to smoothed y-values.")
@@ -113,11 +150,7 @@ void init_analysis(py::module_ &mod) {
             }
             return py::array_t<real_t>(static_cast<py::ssize_t>(iter->second.size()), iter->second.data());
           },
-          py::arg("key"),
-          "Return a specific partial distribution as a NumPy array.\n\n"
-          "Parameters\n----------\n"
-          "key : str\n"
-          "    Partial key (e.g. 'Si-O' or 'Total').")
+          py::arg("key"), "Return a specific partial distribution as a NumPy array.")
       .def(
           "get_smoothed_partial_numpy",
           [](const Histogram &hist, const std::string &key) -> py::array_t<real_t> {
@@ -137,16 +170,21 @@ void init_analysis(py::module_ &mod) {
                                 "for a single simulation cell (frame).\n\n"
                                 "The tensors are indexed by element type: distances[e1][e2][pair_idx],\n"
                                 "angles[center][e1][e2][angle_idx], dihedrals[e1][e2][e3][e4][idx].")
-      .def(py::init<Cell &, real_t, const std::vector<std::vector<real_t>> &, bool>(), py::arg("cell"),
-           py::arg("cutoff"), py::arg("bond_cutoffs_sq"), py::arg("ignore_periodic_self_interactions") = true,
+      .def(py::init([](Cell &cell, real_t cutoff, const py::object &bond_cutoffs_obj,
+                       bool ignore_periodic_self_interactions) {
+             BondCutoffMatrix cutoffs = parse_bond_cutoff_matrix(bond_cutoffs_obj);
+             return std::make_unique<StructureAnalyzer>(cell, cutoff, cutoffs, ignore_periodic_self_interactions);
+           }),
+           py::arg("cell"), py::arg("cutoff"), py::arg("bond_cutoffs_sq"),
+           py::arg("ignore_periodic_self_interactions") = true,
            "Construct and immediately compute all pair data.\n\n"
            "Parameters\n----------\n"
            "cell : Cell\n"
            "    The periodic simulation cell.\n"
            "cutoff : float\n"
            "    Neighbor search cutoff radius (Å).\n"
-           "bond_cutoffs_sq : list[list[float]]\n"
-           "    Per-element-pair squared bond cutoffs.\n"
+           "bond_cutoffs_sq : list[list[BondCutoffRange]] | list[list[tuple]] | list[list[float]]\n"
+           "    Per-element-pair bond cutoffs.\n"
            "ignore_periodic_self_interactions : bool\n"
            "    If True, atoms do not interact with their own periodic images.")
       .def("distances", &StructureAnalyzer::distances, py::return_value_policy::reference_internal,
@@ -162,13 +200,13 @@ void init_analysis(py::module_ &mod) {
   py::class_<TrajectoryAnalyzer>(mod, "TrajectoryAnalyzer",
                                  "Orchestrates structural analysis across multiple frames of a trajectory.\n\n"
                                  "Provides per-frame StructureAnalyzer factories and trajectory metadata.")
-      .def(py::init([](Trajectory &trajectory, real_t neighbor_cutoff,
-                       const std::vector<std::vector<real_t>> &bond_cutoffs, size_t start_frame, long long end_frame,
-                       bool ignore_periodic_self_interactions,
+      .def(py::init([](Trajectory &trajectory, real_t neighbor_cutoff, const py::object &bond_cutoffs_obj,
+                       size_t start_frame, long long end_frame, bool ignore_periodic_self_interactions,
                        const std::function<void(float, const std::string &)> &progress_callback) {
-             return std::make_unique<TrajectoryAnalyzer>(
-                 trajectory, neighbor_cutoff, bond_cutoffs, StartFrame{start_frame},
-                 EndFrame{static_cast<size_t>(end_frame)}, ignore_periodic_self_interactions, progress_callback);
+             BondCutoffMatrix cutoffs = parse_bond_cutoff_matrix(bond_cutoffs_obj);
+             return std::make_unique<TrajectoryAnalyzer>(trajectory, neighbor_cutoff, cutoffs, StartFrame{start_frame},
+                                                         EndFrame{static_cast<size_t>(end_frame)},
+                                                         ignore_periodic_self_interactions, progress_callback);
            }),
            py::arg("trajectory"), py::arg("neighbor_cutoff"), py::arg("bond_cutoffs"), py::arg("start_frame") = 0,
            py::arg("end_frame") = -1LL, py::arg("ignore_periodic_self_interactions") = true,
@@ -179,7 +217,7 @@ void init_analysis(py::module_ &mod) {
            "    The trajectory to analyze.\n"
            "neighbor_cutoff : float\n"
            "    Global neighbor search cutoff radius (Å).\n"
-           "bond_cutoffs : list[list[float]]\n"
+           "bond_cutoffs : list[list[BondCutoffRange]] | list[list[tuple]] | list[list[float]]\n"
            "    Per-element-pair bond cutoffs (Å).\n"
            "start_frame : int, optional\n"
            "    Index of the first frame to analyze. Default 0.\n"
@@ -212,16 +250,19 @@ void init_analysis(py::module_ &mod) {
                                     "   The DistributionFunctions holds an internal reference to the Cell\n"
                                     "   passed at construction. The Cell (and owning Trajectory) must remain\n"
                                     "   alive for the lifetime of this object.")
-      .def(py::init<Cell &, real_t, const std::vector<std::vector<real_t>> &>(), py::arg("cell"),
-           py::arg("cutoff") = 0.0, py::arg("bond_cutoffs") = std::vector<std::vector<real_t>>{},
+      .def(py::init([](Cell &cell, real_t cutoff, const py::object &bond_cutoffs_obj) {
+             BondCutoffMatrix cutoffs = parse_bond_cutoff_matrix(bond_cutoffs_obj);
+             return std::make_unique<DistributionFunctions>(cell, cutoff, cutoffs);
+           }),
+           py::arg("cell"), py::arg("cutoff") = 0.0, py::arg("bond_cutoffs") = py::none(),
            "Construct a DistributionFunctions for a single Cell.\n\n"
            "Parameters\n----------\n"
            "cell : Cell\n"
            "    The simulation cell to analyze.\n"
            "cutoff : float, optional\n"
            "    Neighbor search cutoff (Å). 0 uses a heuristic. Default 0.0.\n"
-           "bond_cutoffs : list[list[float]], optional\n"
-           "    Per-element-pair bond cutoffs. Default is empty (auto).")
+           "bond_cutoffs : list[list[BondCutoffRange]] | list[list[tuple]] | list[list[float]], optional\n"
+           "    Per-element-pair bond cutoffs. Default is None (auto).")
 
       // Accessors
       .def(

@@ -9,6 +9,7 @@
 #pragma once
 
 #include "BaseCalculator.hpp"
+#include "analysis/AnalysisTypes.hpp"
 #include "analysis/DistributionFunctions.hpp"
 #include "core/Cell.hpp"
 #include "core/NeighborGraph.hpp"
@@ -42,14 +43,15 @@ public:
    *
    * @param cell The periodic cell container.
    * @param cutoff_sq Squared cutoff radius for neighbor search.
-   * @param bond_cutoffs_sq Squared bond cutoffs per element pair.
+   * @param bond_cutoffs Matrix of minimum and maximum squared bond cutoffs per element pair.
    * @param ignore_periodic_self_interactions Flag to prevent self-images.
    * @param out_distances Tensor to be populated with pairwise distances.
    * @param out_graph Graph object to be populated with adjacency data.
    */
   static void compute(const correlation::core::Cell &cell, real_t cutoff_sq,
-                      const std::vector<std::vector<real_t>> &bond_cutoffs_sq, bool ignore_periodic_self_interactions,
-                      DistanceTensor &out_distances, correlation::core::NeighborGraph &out_graph);
+                      const correlation::analysis::BondCutoffMatrix &bond_cutoffs,
+                      bool ignore_periodic_self_interactions, DistanceTensor &out_distances,
+                      correlation::core::NeighborGraph &out_graph);
 };
 
 } // namespace correlation::calculators

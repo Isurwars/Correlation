@@ -75,7 +75,7 @@ TEST_F(RDFTests, MoveAssignmentWorks) {
       .r_bin_width = 0.1,
   });
 
-  DistributionFunctions dfDest(cell_, 0.0, std::vector<std::vector<real_t>>{});
+  DistributionFunctions dfDest(cell_);
   dfDest = std::move(dfSource);
 
   EXPECT_NO_THROW(dfDest.getHistogram("g_r"));

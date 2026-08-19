@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "analysis/AnalysisTypes.hpp"
 #include "core/Cell.hpp"
 
 #include <functional>
@@ -103,18 +104,18 @@ public:
   [[nodiscard]] real_t getTimeStep() const { return time_step_; }
 
   /**
-   * @brief Sets the time step between frames.
-   * @param time_step The new time step value.
+   * @brief Sets the simulation time step.
+   * @param step Time step in femtoseconds.
    */
-  void setTimeStep(real_t time_step) { time_step_ = time_step; }
+  void setTimeStep(real_t step) { time_step_ = step; }
 
   /**
-   * @brief Gets a linear bond cutoff distance for two given element types.
+   * @brief Gets the bond cutoff range for two given element types.
    * @param type1 ID of the first element type.
    * @param type2 ID of the second element type.
-   * @return The linear bond cutoff distance.
+   * @return Const reference to the BondCutoffRange.
    */
-  [[nodiscard]] real_t getBondCutoff(size_t type1, size_t type2) const;
+  [[nodiscard]] const correlation::analysis::BondCutoffRange &getBondCutoffRange(size_t type1, size_t type2) const;
 
   /**
    * @brief Gets a squared bond cutoff distance for two given element types.
@@ -125,10 +126,34 @@ public:
   [[nodiscard]] real_t getBondCutoffSQ(size_t type1, size_t type2) const;
 
   /**
-   * @brief Sets the squared bond cutoffs for neighbor searching.
-   * @param cutoffs Matrix of squared distance cutoffs [type1][type2].
+   * @brief Gets a squared minimum bond cutoff distance for two given element types.
+   * @param type1 ID of the first element type.
+   * @param type2 ID of the second element type.
+   * @return The squared minimum bond cutoff distance.
    */
-  void setBondCutoffsSQ(const std::vector<std::vector<real_t>> &cutoffs) { bond_cutoffs_sq_ = cutoffs; }
+  [[nodiscard]] real_t getMinBondCutoffSQ(size_t type1, size_t type2) const;
+
+  /**
+   * @brief Gets the maximum bond cutoff distance for two given element types.
+   * @param type1 ID of the first element type.
+   * @param type2 ID of the second element type.
+   * @return The bond cutoff distance.
+   */
+  [[nodiscard]] real_t getBondCutoff(size_t type1, size_t type2) const;
+
+  /**
+   * @brief Gets the minimum bond cutoff distance for two given element types.
+   * @param type1 ID of the first element type.
+   * @param type2 ID of the second element type.
+   * @return The minimum bond cutoff distance.
+   */
+  [[nodiscard]] real_t getMinBondCutoff(size_t type1, size_t type2) const;
+
+  /**
+   * @brief Sets the bond cutoff matrix for neighbor searching.
+   * @param cutoffs Matrix of bond cutoff ranges [type1][type2].
+   */
+  void setBondCutoffs(const correlation::analysis::BondCutoffMatrix &cutoffs) { bond_cutoffs_ = cutoffs; }
 
   /**
    * @brief Removes consecutive duplicated frames from the trajectory.
@@ -151,13 +176,17 @@ public:
    */
   void calculateVelocities();
 
-  // Removed getVelocities(), use frames[i].atoms()[j].velocity() instead
+  /**
+   * @brief Gets the matrix of bond cutoff ranges for element pairs.
+   * @return The bond cutoff matrix.
+   */
+  [[nodiscard]] const correlation::analysis::BondCutoffMatrix &getBondCutoffs() const { return bond_cutoffs_; }
 
   /**
-   * @brief Gets the matrix of squared bond cutoffs for element pairs.
-   * @return The squared bond cutoff matrix.
+   * @brief Backward-compatible alias returning the bond cutoff matrix.
+   * @return The bond cutoff matrix.
    */
-  [[nodiscard]] const std::vector<std::vector<real_t>> &getBondCutoffsSQ() const { return bond_cutoffs_sq_; }
+  [[nodiscard]] const correlation::analysis::BondCutoffMatrix &getBondCutoffsSQ() const { return bond_cutoffs_; }
 
   /**
    * @brief Returns the number of frames removed during deduplication.
@@ -168,8 +197,6 @@ public:
   ///@}
 
 private:
-  /** @name Private Methods */
-  ///@{
   /**
    * @brief Internal helper to validate that a new frame matches the trajectory
    * topology.
@@ -179,16 +206,13 @@ private:
   void validateFrame(const Cell &new_frame) const;
   void ensureMaterialized() const;
 
-  ///@}
-
   mutable std::unique_ptr<std::mutex> init_mutex_{std::make_unique<std::mutex>()};
 
   mutable std::vector<Cell> frames_; ///< Collection of simulation snapshots.
   mutable std::optional<Cell> first_frame_;
-  mutable std::vector<std::vector<real_t>> bond_cutoffs_sq_; ///< Cached squared bond cutoffs.
-  // velocities_ removed
-  real_t time_step_;               ///< Time between snapshots.
-  size_t removed_frames_count_{0}; ///< Counter for deduplicated frames.
+  mutable correlation::analysis::BondCutoffMatrix bond_cutoffs_; ///< Cached bond cutoff ranges.
+  real_t time_step_;                                            ///< Time between snapshots.
+  size_t removed_frames_count_{0};                              ///< Counter for deduplicated frames.
 
   std::shared_ptr<MappedFile> mapped_file_;
   std::vector<size_t> frame_offsets_;

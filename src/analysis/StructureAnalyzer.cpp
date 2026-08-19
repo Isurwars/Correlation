@@ -21,14 +21,27 @@
 namespace correlation::analysis {
 
 StructureAnalyzer::StructureAnalyzer(const correlation::core::Cell &cell, real_t cutoff,
-                                     const std::vector<std::vector<real_t>> &bond_cutoffs_sq,
+                                     const BondCutoffMatrix &bond_cutoffs,
                                      bool ignore_periodic_self_interactions)
     // Use the member initializer list for all members for correctness and
     // efficiency.
-    : cell_(cell), cutoff_sq_(cutoff * cutoff), bond_cutoffs_sq_(bond_cutoffs_sq),
+    : cell_(cell), cutoff_sq_(cutoff * cutoff), bond_cutoffs_(bond_cutoffs),
       ignore_periodic_self_interactions_(ignore_periodic_self_interactions) {
   if (cutoff <= 0) {
     throw std::invalid_argument("Cutoff distance must be positive.");
+  }
+
+  // Validate bond cutoff ranges
+  for (size_t i = 0; i < bond_cutoffs_.size(); ++i) {
+    for (size_t j = 0; j < bond_cutoffs_[i].size(); ++j) {
+      const auto &range = bond_cutoffs_[i][j];
+      if (range.min_sq < 0.0) {
+        throw std::invalid_argument("Minimum bond cutoff squared must be non-negative.");
+      }
+      if (range.max_sq > 0.0 && range.max_sq < range.min_sq) {
+        throw std::invalid_argument("Maximum bond cutoff squared cannot be less than minimum bond cutoff squared.");
+      }
+    }
   }
 
   // Ensure cutoff covers the largest bond distance
@@ -40,10 +53,10 @@ StructureAnalyzer::StructureAnalyzer(const correlation::core::Cell &cell, real_t
         for (size_t i = range.begin(); i != range.end(); ++i) {
           for (size_t j = i; j < elements.size(); ++j) {
             // Find element indices in the cutoff matrix
-            // Assuming bond_cutoffs_sq indices match element indices in frame
+            // Assuming bond_cutoffs indices match element indices in frame
             // This assumption holds if trajectory validation works.
-            if (i < bond_cutoffs_sq.size() && j < bond_cutoffs_sq[i].size()) {
-              init = std::max(init, static_cast<real_t>(std::sqrt(bond_cutoffs_sq[i][j])));
+            if (i < bond_cutoffs_.size() && j < bond_cutoffs_[i].size()) {
+              init = std::max(init, static_cast<real_t>(std::sqrt(bond_cutoffs_[i][j].max_sq)));
             }
           }
         }
@@ -76,8 +89,9 @@ StructureAnalyzer::StructureAnalyzer(const correlation::core::Cell &cell, real_t
 
   // The constructor orchestrates the computation by delegating to dedicated
   // calculators
-  correlation::calculators::DistanceCalculator::compute(
-      cell_, cutoff_sq_, bond_cutoffs_sq_, ignore_periodic_self_interactions_, distance_tensor_, neighbor_graph_);
+  correlation::calculators::DistanceCalculator::compute(cell_, cutoff_sq_, bond_cutoffs_,
+                                                        ignore_periodic_self_interactions_, distance_tensor_,
+                                                        neighbor_graph_);
 
   tbb::task_group task_group;
   task_group.run([&]() { correlation::calculators::AngleCalculator::compute(cell_, neighbor_graph_, angle_tensor_); });

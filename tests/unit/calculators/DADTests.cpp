@@ -34,7 +34,7 @@ protected:
 TEST_F(DADTests, BasicCalculation) {
   // Cutoff must be > 1.0 to find the bonds (dist is 1.0 each)
   real_t const r_cut = 1.5;
-  std::vector<std::vector<real_t>> const bond_cutoffs(1, std::vector<real_t>(1, r_cut * r_cut));
+  BondCutoffMatrix const bond_cutoffs(1, std::vector<BondCutoffRange>(1, BondCutoffRange{0.36, r_cut * r_cut}));
   StructureAnalyzer const analyzer(cell_, r_cut, bond_cutoffs, true);
 
   real_t const bin_width = 10.0;
@@ -74,7 +74,7 @@ TEST_F(DADTests, IcosahedronAnglesDAD) {
   }
 
   real_t const r_cut = 2.5;
-  std::vector<std::vector<real_t>> const bond_cutoffs(1, std::vector<real_t>(1, r_cut * r_cut));
+  BondCutoffMatrix const bond_cutoffs(1, std::vector<BondCutoffRange>(1, BondCutoffRange{0.36, r_cut * r_cut}));
   StructureAnalyzer const analyzer(cell_iso, r_cut, bond_cutoffs, true);
 
   real_t const bin_width = 1.0;

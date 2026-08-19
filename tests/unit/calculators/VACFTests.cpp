@@ -28,7 +28,7 @@ TEST_F(VACFTests, CalculateVACF_and_VDOS) {
   trajectory.addFrame(cell); // Static
   trajectory.calculateVelocities();
 
-  DistributionFunctions dists(cell, 0.0, {{0.0}});
+  DistributionFunctions dists(cell);
 
   dists.calculateVACF(trajectory, correlation::analysis::MaxFrames{1});
   EXPECT_NO_THROW(dists.getHistogram("VACF"));
@@ -80,7 +80,7 @@ TEST_F(VACFTests, CalculateVACF_WithFrameRange) {
   correlation::core::Cell base_cell({10, 10, 10, 90, 90, 90});
   base_cell.addAtom("Ar", {0, 0, 0});
   base_cell.addAtom("Ar", {0, 0, 0});
-  DistributionFunctions dists(base_cell, 0.0, {{0.0}});
+  DistributionFunctions dists(base_cell);
 
   // Restrict VACF to frames 2 through 7 (5 frames total)
   dists.calculateVACF(tRange, correlation::analysis::MaxFrames{3}, correlation::analysis::StartFrame{2},
@@ -130,7 +130,7 @@ TEST_F(VACFTests, CalculateVACF_GasLike) {
   correlation::core::Cell base_cell({10, 10, 10, 90, 90, 90});
   base_cell.addAtom("Ar", {0, 0, 0});
   base_cell.addAtom("Ar", {0, 0, 0});
-  DistributionFunctions dists(base_cell, 0.0, {{0.0}});
+  DistributionFunctions dists(base_cell);
 
   dists.calculateVACF(tGas, correlation::analysis::MaxFrames{4}); // Calculate up to 4 lags
   EXPECT_NO_THROW(dists.getHistogram("Normalized VACF"));
@@ -163,7 +163,7 @@ TEST_F(VACFTests, ComputeDiffusionCoefficientVACF_and_RelaxationTime) {
 TEST_F(VACFTests, DistributionFunctionsDynamicProperties) {
   correlation::core::Cell cell({10, 10, 10, 90, 90, 90});
   cell.addAtom("Ar", {0.0, 0.0, 0.0});
-  DistributionFunctions dists(cell, 0.0, {{0.0}});
+  DistributionFunctions dists(cell);
 
   // Verify initial state is 0.0
   EXPECT_DOUBLE_EQ(dists.getDiffusionCoefficientMSD(), 0.0);
@@ -217,7 +217,7 @@ TEST_F(VACFTests, DynamicsAnalyzerNonPhysicalInputs) {
 TEST_F(VACFTests, DistributionFunctionsNonPhysicalOptions) {
   correlation::core::Cell cell({10, 10, 10, 90, 90, 90});
   cell.addAtom("Ar", {0.0, 0.0, 0.0});
-  DistributionFunctions dists(cell, 0.0, {{0.0}});
+  DistributionFunctions dists(cell);
 
   // calculateRDF guards
   EXPECT_THROW(dists.calculateRDF({

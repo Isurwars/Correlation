@@ -82,7 +82,7 @@ TEST_F(RDTests, CelluloseRingDistribution) {
   }
 
   traj.precomputeBondCutoffs();
-  auto cutoffs = traj.getBondCutoffsSQ();
+  auto cutoffs = traj.getBondCutoffs();
 
   // Custom bond cutoff: The covalent radius of O is 0.73, sum is 1.46.
   // The default bond factor is 1.2, making the cutoff 1.752.
@@ -100,9 +100,9 @@ TEST_F(RDTests, CelluloseRingDistribution) {
   }
 
   if (o_idx != -1) {
-    cutoffs[o_idx][o_idx] = 1.45 * 1.45;
+    cutoffs[o_idx][o_idx].max_sq = 1.45 * 1.45;
   }
-  traj.setBondCutoffsSQ(cutoffs);
+  traj.setBondCutoffs(cutoffs);
 
   correlation::core::Cell frame = traj.getFrames()[0];
   StructureAnalyzer analyzer(frame, 3.0, traj.getBondCutoffsSQ(), true);

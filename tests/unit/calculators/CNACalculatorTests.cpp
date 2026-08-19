@@ -35,7 +35,7 @@ TEST(CNACalculatorTests, SingleIsolatedAtomReturnsEmptyHistogram) {
   cell.addAtom("Ar", {50.0, 50.0, 50.0});
 
   // cutoff is tiny: no neighbors found
-  analysis::StructureAnalyzer const analyzer(cell, 0.5, {{0.25}}, true);
+  analysis::StructureAnalyzer const analyzer(cell, 0.5, {{{0.0, 0.25}}}, true);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
   EXPECT_TRUE(hist.bins.empty());
@@ -57,7 +57,7 @@ TEST(CNACalculatorTests, HistogramDimensionsAreConsistent) {
   cell.addAtom("Al", {0.0, 2.0, 2.0});
 
   real_t const cutoff = 3.0;
-  analysis::StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
+  analysis::StructureAnalyzer const analyzer(cell, cutoff, {{{0.36, cutoff * cutoff}}}, false);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
   ASSERT_FALSE(hist.bins.empty());
@@ -77,7 +77,7 @@ TEST(CNACalculatorTests, TotalPartialSumsToOne) {
   cell.addAtom("Cu", {0.0, 2.0, 2.0});
 
   real_t const cutoff = 3.0;
-  analysis::StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
+  analysis::StructureAnalyzer const analyzer(cell, cutoff, {{{0.36, cutoff * cutoff}}}, false);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
   ASSERT_TRUE(hist.partials.contains("Total"));
@@ -93,7 +93,7 @@ TEST(CNACalculatorTests, HistogramMetadataIsPopulated) {
   cell.addAtom("Cu", {2.0, 2.0, 0.0});
 
   real_t const cutoff = 3.0;
-  analysis::StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
+  analysis::StructureAnalyzer const analyzer(cell, cutoff, {{{0.36, cutoff * cutoff}}}, false);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
   EXPECT_EQ(hist.title, "Common Neighbor Analysis");
@@ -116,7 +116,7 @@ TEST(CNACalculatorTests, FCC_Supercell_ProducesNonEmptyResult) {
 
   // 1st NN distance = a/sqrt(2) ≈ 2.83; cutoff between 1st and 2nd NN
   real_t const cutoff = 3.2;
-  analysis::StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
+  analysis::StructureAnalyzer const analyzer(cell, cutoff, {{{0.36, cutoff * cutoff}}}, false);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
   // Should produce non-empty results
@@ -141,7 +141,7 @@ TEST(CNACalculatorTests, BCC_Supercell_ProducesOutput) {
 
   // Include both 1st NN (a*sqrt(3)/2 ≈ 2.598) and 2nd NN (a = 3.0)
   real_t const cutoff = 3.1;
-  analysis::StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
+  analysis::StructureAnalyzer const analyzer(cell, cutoff, {{{0.36, cutoff * cutoff}}}, false);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
   ASSERT_FALSE(hist.bins.empty()) << "BCC supercell should produce CNA output.";
@@ -168,7 +168,7 @@ TEST(CNACalculatorTests, TwoAtomsNoCommonNeighbors) {
   cell.addAtom("Ar", {12.0, 10.0, 10.0}); // 2 Å apart
 
   real_t const cutoff = 3.0;
-  analysis::StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, true);
+  analysis::StructureAnalyzer const analyzer(cell, cutoff, {{{0.36, cutoff * cutoff}}}, true);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
   // Two atoms that are neighbors but share no common neighbors ⟹ classified as "1000"
@@ -202,7 +202,7 @@ TEST(CNACalculatorTests, DeterministicResults) {
   }
 
   real_t const cutoff = 3.2;
-  analysis::StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
+  analysis::StructureAnalyzer const analyzer(cell, cutoff, {{{0.36, cutoff * cutoff}}}, false);
 
   auto hist1 = CNACalculator::calculate(cell, &analyzer);
   auto hist2 = CNACalculator::calculate(cell, &analyzer);
@@ -235,7 +235,7 @@ TEST(CNACalculatorTests, TinyPeriodicCell_DoesNotCrash) {
   cell.addAtom("Cu", {0.0, vec_a / 2, vec_a / 2});
 
   real_t const cutoff = 3.2;
-  analysis::StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
+  analysis::StructureAnalyzer const analyzer(cell, cutoff, {{{0.36, cutoff * cutoff}}}, false);
 
   ASSERT_NO_THROW({
     auto hist = CNACalculator::calculate(cell, &analyzer);

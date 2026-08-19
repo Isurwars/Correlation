@@ -27,7 +27,12 @@ void VDOSCalculator::calculateTrajectory(correlation::analysis::DistributionFunc
   if (!all.contains("VACF")) {
     return; // VACF must be computed first
   }
-  dists.addHistogram("VDOS", calculate(dists.getHistogram("VACF")));
+  const auto &vacf_hist = dists.getHistogram("VACF");
+  auto it_total = vacf_hist.partials.find("Total");
+  if (it_total == vacf_hist.partials.end() || it_total->second.size() < 2) {
+    return; // VACF data is too short for VDOS calculation (e.g. single-frame calculation)
+  }
+  dists.addHistogram("VDOS", calculate(vacf_hist));
 }
 
 correlation::analysis::Histogram VDOSCalculator::calculate(const correlation::analysis::Histogram &vacf_hist,

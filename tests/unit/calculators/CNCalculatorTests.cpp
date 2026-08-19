@@ -28,13 +28,13 @@ TEST(CNCalculatorTests, CalculatesCorrectCoordinationNumbers) {
 
   // Define cutoffs
   real_t const neighbor_cutoff = 1.5;
-  std::vector<std::vector<real_t>> const bond_cutoffs_sq = {
-      {2.25, 2.25}, // C-C, C-H
-      {2.25, 2.25}  // H-C, H-H
+  BondCutoffMatrix const bond_cutoffs = {
+      {{0.36, 2.25}, {0.36, 2.25}}, // C-C, C-H
+      {{0.36, 2.25}, {0.36, 2.25}}  // H-C, H-H
   };
 
   // Build StructureAnalyzer to compute neighbor list
-  StructureAnalyzer const analyzer(cell, neighbor_cutoff, bond_cutoffs_sq, true);
+  StructureAnalyzer const analyzer(cell, neighbor_cutoff, bond_cutoffs, true);
 
   // Act
   auto hist = CNCalculator::calculate(cell, &analyzer);
@@ -62,9 +62,9 @@ TEST(CNCalculatorTests, IsolatedAtomHasZeroCoordination) {
   cell.addAtom("Ar", {10.0, 10.0, 10.0});
 
   real_t const neighbor_cutoff = 3.0;
-  std::vector<std::vector<real_t>> const bond_cutoffs_sq = {{9.0}};
+  BondCutoffMatrix const bond_cutoffs = {{{0.36, 9.0}}};
 
-  StructureAnalyzer const analyzer(cell, neighbor_cutoff, bond_cutoffs_sq, true);
+  StructureAnalyzer const analyzer(cell, neighbor_cutoff, bond_cutoffs, true);
   auto hist = CNCalculator::calculate(cell, &analyzer);
 
   // With no neighbors, the CN calculator doesn't create an "Ar-Ar" key at all
@@ -86,10 +86,10 @@ TEST(CNCalculatorTests, HighCoordinationFCC) {
   // FCC nearest-neighbor distance = a/sqrt(2) ≈ 0.707
   // Use cutoff slightly above that
   real_t const neighbor_cutoff = 0.75;
-  std::vector<std::vector<real_t>> const bond_cutoffs_sq = {{0.75 * 0.75}};
+  BondCutoffMatrix const bond_cutoffs = {{{0.36, 0.75 * 0.75}}};
 
   // Need to consider periodic images (ignore_periodic_self_interactions = false)
-  StructureAnalyzer const analyzer(cell, neighbor_cutoff, bond_cutoffs_sq, false);
+  StructureAnalyzer const analyzer(cell, neighbor_cutoff, bond_cutoffs, false);
   auto hist = CNCalculator::calculate(cell, &analyzer);
 
   // In FCC, each atom should have CN=12

@@ -79,10 +79,11 @@ public:
   void setBondCutoffs();
 
   /**
-   * @brief Parses and retrieves the user-modified bond cutoffs from the UI.
-   * @return A nested vector representing the bond cutoff matrix.
+   * @brief Parses and retrieves the user-modified bond cutoff matrix from the UI.
+   * @return A BondCutoffMatrix representing both min and max squared cutoffs.
    */
-  std::vector<std::vector<real_t>> getBondCutoffs();
+  correlation::analysis::BondCutoffMatrix getBondCutoffs();
+
   /**
    * @brief Populates the UI calculator groups from CalculatorFactory.
    */

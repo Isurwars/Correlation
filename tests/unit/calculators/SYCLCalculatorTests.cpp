@@ -37,9 +37,9 @@ TEST(SYCLCalculatorTests, ComputesDistancesViaSYCLFallback) {
   correlation::calculators::DistanceTensor out_distances(num_elements, std::vector<std::vector<real_t>>(num_elements));
   correlation::core::NeighborGraph out_graph(2);
   real_t const cutoff_sq = 4.0;
-  std::vector<std::vector<real_t>> const bond_cutoffs_sq = {{2.25, 2.25}, {2.25, 2.25}};
+  correlation::analysis::BondCutoffMatrix const bond_cutoffs = {{{0.36, 2.25}, {0.36, 2.25}}, {{0.36, 2.25}, {0.36, 2.25}}};
 
-  correlation::calculators::sycl_gpu::compute_distances_sycl(cell, cutoff_sq, bond_cutoffs_sq, false, out_distances,
+  correlation::calculators::sycl_gpu::compute_distances_sycl(cell, cutoff_sq, bond_cutoffs, false, out_distances,
                                                              out_graph);
 
   EXPECT_FALSE(out_distances.empty());

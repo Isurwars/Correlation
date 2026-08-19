@@ -400,6 +400,14 @@ TEST_F(StructureAnalyzerTests, ThrowsOnInvalidCutoff) {
 
   EXPECT_THROW(StructureAnalyzer(cell, 0.0, trajectory().getBondCutoffsSQ()), std::invalid_argument);
   EXPECT_THROW(StructureAnalyzer(cell, -1.0, trajectory().getBondCutoffsSQ()), std::invalid_argument);
+
+  // Inverted range: max_sq (1.0) < min_sq (4.0)
+  BondCutoffMatrix inverted_cutoffs = {{{4.0, 1.0}}};
+  EXPECT_THROW(StructureAnalyzer(cell, 5.0, inverted_cutoffs), std::invalid_argument);
+
+  // Negative min_sq
+  BondCutoffMatrix negative_cutoffs = {{{-0.5, 4.0}}};
+  EXPECT_THROW(StructureAnalyzer(cell, 5.0, negative_cutoffs), std::invalid_argument);
 }
 
 TEST_F(StructureAnalyzerTests, HandlesEmptyCellGracefully) {

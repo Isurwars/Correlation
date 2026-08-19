@@ -61,7 +61,7 @@ TEST_F(SteinhardtCalculatorTests, SimpleCubic) {
   cell.addAtom("Ar", {0.5, 0.5, 0.5});
 
   // ignore_periodic_self_interactions = false
-  StructureAnalyzer const analyzer(cell, 1.1, {{1.1 * 1.1}}, false);
+  StructureAnalyzer const analyzer(cell, 1.1, {{{0.36, 1.1 * 1.1}}}, false);
   auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
   checkOutputs(hists, 0.764, 0.354, 0.013);
@@ -70,7 +70,7 @@ TEST_F(SteinhardtCalculatorTests, SimpleCubic) {
 TEST_F(SteinhardtCalculatorTests, BCC) {
   auto cell = correlation::testing::crystals::createBCCCell(1.0, "Ar", 1, 1, 1);
 
-  StructureAnalyzer const analyzer(cell, 1.1, {{1.1 * 1.1}},
+  StructureAnalyzer const analyzer(cell, 1.1, {{{0.36, 1.1 * 1.1}}},
                                    false); // dist = sqrt(0.75) ~ 0.866 and 1.0
   auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
@@ -80,7 +80,7 @@ TEST_F(SteinhardtCalculatorTests, BCC) {
 TEST_F(SteinhardtCalculatorTests, FCC) {
   auto cell = correlation::testing::crystals::createFCCCell(1.0, "Ar", 1, 1, 1);
 
-  StructureAnalyzer const analyzer(cell, 0.8, {{0.8 * 0.8}},
+  StructureAnalyzer const analyzer(cell, 0.8, {{{0.36, 0.8 * 0.8}}},
                                    false); // dist = sqrt(0.5) ~ 0.707
   auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
@@ -94,7 +94,7 @@ TEST_F(SteinhardtCalculatorTests, Icosahedral) {
   // Edge length is ~1.05. Using cutoff 1.02 ensures surface atoms only see
   // center. Thus they will have 1 neighbor, Ql=1.0, and be excluded from
   // histogram!
-  StructureAnalyzer const analyzer(cell, 1.02, {{1.02 * 1.02}}, true);
+  StructureAnalyzer const analyzer(cell, 1.02, {{{0.36, 1.02 * 1.02}}}, true);
   auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
   checkOutputs(hists, 0.000, 0.663,
@@ -107,7 +107,7 @@ TEST_F(SteinhardtCalculatorTests, HandlesAcosNumericalNoiseSafely) {
   cell.addAtom("Ar", {5.0, 5.0, 6.000000000000001});
   cell.addAtom("Ar", {5.0, 5.0, 4.0});
 
-  StructureAnalyzer const analyzer(cell, 1.1, {{1.1 * 1.1}}, false);
+  StructureAnalyzer const analyzer(cell, 1.1, {{{0.36, 1.1 * 1.1}}}, false);
   ASSERT_NO_THROW({
     auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
     EXPECT_FALSE(hists.empty());
@@ -119,7 +119,7 @@ TEST_F(SteinhardtCalculatorTests, EmptySystemOrNoNeighborsFillsPartialsWithZeros
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {5.0, 5.0, 5.0});
 
-  StructureAnalyzer const analyzer(cell, 1.1, {{1.1 * 1.1}}, false);
+  StructureAnalyzer const analyzer(cell, 1.1, {{{0.36, 1.1 * 1.1}}}, false);
   auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
   EXPECT_FALSE(hists.empty());

@@ -24,13 +24,13 @@ TEST(TrajectoryAnalyzerTests, BasicUsage) {
   trajectory.addFrame(cell);
 
   real_t const neighbor_cutoff = 2.0;
-  std::vector<std::vector<real_t>> const bond_cutoffs = {{1.1}}; // Assuming H-H is index 0-0, simplified
+  BondCutoffMatrix const bond_cutoffs = {{{0.36, 1.1}}}; // Assuming H-H is index 0-0, simplified
 
   TrajectoryAnalyzer const analyzer(trajectory, neighbor_cutoff, bond_cutoffs);
 
   EXPECT_EQ(analyzer.getNumFrames(), 2);
   EXPECT_EQ(analyzer.getNeighborCutoff(), neighbor_cutoff);
-  EXPECT_NEAR(analyzer.getBondCutoffsSQ()[0][0], 1.1, 1e-4);
+  EXPECT_NEAR(analyzer.getBondCutoffs()[0][0].max_sq, 1.1, 1e-4);
 
   // Verify that StructureAnalyzers can be created dynamically
   for (size_t i = 0; i < analyzer.getNumFrames(); ++i) {
@@ -54,7 +54,7 @@ TEST(TrajectoryAnalyzerTests, StartAndEndFrameLimits) {
   trajectory.addFrame(cell); // 4 frames total
 
   real_t const neighbor_cutoff = 2.0;
-  std::vector<std::vector<real_t>> const bond_cutoffs = {{1.1}};
+  BondCutoffMatrix const bond_cutoffs = {{{0.36, 1.1}}};
 
   // Case 1: Analyze frames from index 1 to 3 (exclusive, so frames 1 and 2, getNumFrames() = 2)
   {
@@ -90,7 +90,7 @@ TEST(TrajectoryAnalyzerTests, ProgressCallbackIsCalled) {
   trajectory.addFrame(cell);
 
   real_t const neighbor_cutoff = 2.0;
-  std::vector<std::vector<real_t>> const bond_cutoffs = {{1.1}};
+  BondCutoffMatrix const bond_cutoffs = {{{0.36, 1.1}}};
 
   bool callback_called = false;
   float progress_val = 0.0F;
@@ -119,7 +119,7 @@ TEST(TrajectoryAnalyzerTests, CreateAnalyzerOutOfBoundsReturnsNullptr) {
   trajectory.addFrame(cell); // 1 frame total
 
   real_t const neighbor_cutoff = 2.0;
-  std::vector<std::vector<real_t>> const bond_cutoffs = {{1.1}};
+  BondCutoffMatrix const bond_cutoffs = {{{0.36, 1.1}}};
 
   TrajectoryAnalyzer const analyzer(trajectory, neighbor_cutoff, bond_cutoffs);
 

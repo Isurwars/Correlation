@@ -106,24 +106,14 @@ real_t AppBackend::getRecommendedTimeStep() const {
   return AppDefaults::TIME_STEP;
 }
 
-std::vector<std::vector<real_t>> AppBackend::getRecommendedBondCutoffs() const {
+correlation::analysis::BondCutoffMatrix AppBackend::getRecommendedBondCutoffs() const {
   if (!trajectory_ || trajectory_->getFrameCount() == 0) {
     return {};
   }
 
   // Precompute on the trajectory (which updates its internal cache)
   trajectory_->precomputeBondCutoffs();
-
-  const correlation::core::Cell &current_cell = trajectory_->firstFrame();
-  const size_t num_elements = current_cell.elements().size();
-  std::vector<std::vector<real_t>> cutoffs(num_elements, std::vector<real_t>(num_elements));
-  for (size_t i = 0; i < num_elements; ++i) {
-    for (size_t j = 0; j < num_elements; ++j) {
-      // getBondCutoff uses indices.
-      cutoffs[i][j] = trajectory_->getBondCutoff(i, j);
-    }
-  }
-  return cutoffs;
+  return trajectory_->getBondCutoffs();
 }
 
 real_t AppBackend::getBondCutoff(size_t type1, size_t type2) const {
@@ -133,24 +123,18 @@ real_t AppBackend::getBondCutoff(size_t type1, size_t type2) const {
   return trajectory_->getBondCutoff(type1, type2);
 }
 
-void AppBackend::setBondCutoffs(const std::vector<std::vector<real_t>> &cutoffs) {
+real_t AppBackend::getMinBondCutoff(size_t type1, size_t type2) const {
+  if (!trajectory_) {
+    return 0.60;
+  }
+  return trajectory_->getMinBondCutoff(type1, type2);
+}
+
+void AppBackend::setBondCutoffs(const correlation::analysis::BondCutoffMatrix &cutoffs) {
   if (!trajectory_) {
     return;
   }
-
-  // Calculate squared cutoffs
-  if (trajectory_->getFrameCount() == 0) {
-    return;
-  }
-  const size_t num_elements = trajectory_->firstFrame().elements().size();
-  std::vector<std::vector<real_t>> cutoffs_sq(num_elements, std::vector<real_t>(num_elements));
-  for (size_t i = 0; i < num_elements; ++i) {
-    for (size_t j = 0; j < num_elements; ++j) {
-      cutoffs_sq[i][j] = cutoffs[i][j] * cutoffs[i][j];
-    }
-  }
-
-  trajectory_->setBondCutoffsSQ(cutoffs_sq);
+  trajectory_->setBondCutoffs(cutoffs);
 }
 
 std::vector<std::string> AppBackend::getAvailableHistogramNames() const {
@@ -277,10 +261,10 @@ std::string AppBackend::validateOptions() const {
 
 void AppBackend::setupTrajectorySettings(size_t &start_f) {
   // Apply custom bond cutoffs if they were set in options
-  if (!options_.bond_cutoffs_sq.empty()) {
-    trajectory_->setBondCutoffsSQ(options_.bond_cutoffs_sq);
+  if (!options_.bond_cutoffs.empty()) {
+    trajectory_->setBondCutoffs(options_.bond_cutoffs);
   } else {
-    if (trajectory_->getBondCutoffsSQ().empty()) {
+    if (trajectory_->getBondCutoffs().empty()) {
       trajectory_->precomputeBondCutoffs();
     }
   }
@@ -318,17 +302,9 @@ void AppBackend::runTrajectoryCalculators(const correlation::analysis::AnalysisS
   }
 
   for (const auto &calc : factory_calcs) {
-    if (!calc->isTrajectoryCalculator()) {
-      continue;
-    }
-    if (!settings.isActive(calc->getName()) && !settings.isActive(calc->getShortName())) {
-      continue;
-    }
-
-    try {
+    if (calc->isTrajectoryCalculator() &&
+        (settings.isActive(calc->getName()) || settings.isActive(calc->getShortName()))) {
       calc->calculateTrajectory(*df_, *trajectory_, settings);
-    } catch (const std::exception &e) {
-      std::cerr << calc->getName() << " calculation failed: " << e.what() << '\n';
     }
   }
 }
@@ -406,7 +382,7 @@ std::string AppBackend::run_analysis() {
 
     // Determine which cutoffs to use: explicit overrides or precomputed defaults.
     const auto &active_cutoffs =
-        !options_.bond_cutoffs_sq.empty() ? options_.bond_cutoffs_sq : trajectory_->getBondCutoffsSQ();
+        !options_.bond_cutoffs.empty() ? options_.bond_cutoffs : trajectory_->getBondCutoffs();
 
     if (progress_callback_) {
       progress_callback_(0.0F, "Starting analysis...");

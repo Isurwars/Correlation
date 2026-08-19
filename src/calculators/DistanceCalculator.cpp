@@ -127,7 +127,7 @@ struct ThreadLocalDistances {
    */
   void computeDistances(size_t atom_idx, const std::vector<correlation::core::Atom> &atoms,
                         const SoACoordinates &coords, real_t cutoff_sq,
-                        const std::vector<std::vector<real_t>> &bond_cutoffs_sq);
+                        const correlation::analysis::BondCutoffMatrix &bond_cutoffs);
 };
 
 void ThreadLocalDistances::collectCandidates(size_t atom_idx, const SoACoordinates &coords,
@@ -221,7 +221,7 @@ void ThreadLocalDistances::collectCandidatesFromBin(size_t atom_idx, const corre
 
 void ThreadLocalDistances::computeDistances(size_t atom_idx, const std::vector<correlation::core::Atom> &atoms,
                                             const SoACoordinates &coords, real_t cutoff_sq,
-                                            const std::vector<std::vector<real_t>> &bond_cutoffs_sq) {
+                                            const correlation::analysis::BondCutoffMatrix &bond_cutoffs) {
 
   size_t const c_count = candidate_count;
   if (c_count > 0) {
@@ -254,13 +254,16 @@ void ThreadLocalDistances::computeDistances(size_t atom_idx, const std::vector<c
         distance_tensor_local[type_B][type_A].push_back(dist);
       }
 
+      real_t min_bond_dist_sq = static_cast<real_t>(0.36);
       real_t max_bond_dist_sq = 0.0;
-      if (static_cast<size_t>(type_A) < bond_cutoffs_sq.size() &&
-          static_cast<size_t>(type_B) < bond_cutoffs_sq[type_A].size()) {
-        max_bond_dist_sq = bond_cutoffs_sq[type_A][type_B];
+      if (static_cast<size_t>(type_A) < bond_cutoffs.size() &&
+          static_cast<size_t>(type_B) < bond_cutoffs[type_A].size()) {
+        const auto &range = bond_cutoffs[type_A][type_B];
+        min_bond_dist_sq = range.min_sq;
+        max_bond_dist_sq = range.max_sq;
       }
 
-      if (d_sq <= max_bond_dist_sq) {
+      if (d_sq >= min_bond_dist_sq && d_sq <= max_bond_dist_sq) {
         // Recover displacement vector coordinates precisely to minimize rounding/cancellation errors
         real_t const disp_x = soa_x[k] - coords.x[j_idx];
         real_t const disp_y = soa_y[k] - coords.y[j_idx];
@@ -274,14 +277,16 @@ void ThreadLocalDistances::computeDistances(size_t atom_idx, const std::vector<c
         real_t const precise_dist = std::sqrt(r_x * r_x + r_y * r_y + r_z * r_z);
 
         correlation::math::Vector3<real_t> r_ij = {r_x, r_y, r_z};
-        bonds.push_back({
+
+        bonds.push_back(ThreadLocalBond{
             .from = atom_idx,
             .to = j_idx,
             .distance = precise_dist,
             .r_ij = r_ij,
         });
+
         if (atom_idx != j_idx) {
-          bonds.push_back({
+          bonds.push_back(ThreadLocalBond{
               .from = j_idx,
               .to = atom_idx,
               .distance = precise_dist,
@@ -295,7 +300,7 @@ void ThreadLocalDistances::computeDistances(size_t atom_idx, const std::vector<c
 } // namespace
 
 void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cutoff_sq,
-                                 const std::vector<std::vector<real_t>> &bond_cutoffs_sq,
+                                 const correlation::analysis::BondCutoffMatrix &bond_cutoffs,
                                  bool ignore_periodic_self_interactions, DistanceTensor &out_distances,
                                  correlation::core::NeighborGraph &out_graph) {
 
@@ -305,7 +310,14 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cut
 
 #if defined(CORRELATION_USE_CUDA) || defined(CORRELATION_USE_HIP)
   if (gpu::has_gpu_device()) {
-    gpu::compute_distances_gpu(cell, cutoff_sq, bond_cutoffs_sq, ignore_periodic_self_interactions, out_distances,
+    std::vector<std::vector<real_t>> max_cutoffs_sq(bond_cutoffs.size());
+    for (size_t i = 0; i < bond_cutoffs.size(); ++i) {
+      max_cutoffs_sq[i].resize(bond_cutoffs[i].size());
+      for (size_t j = 0; j < bond_cutoffs[i].size(); ++j) {
+        max_cutoffs_sq[i][j] = bond_cutoffs[i][j].max_sq;
+      }
+    }
+    gpu::compute_distances_gpu(cell, cutoff_sq, max_cutoffs_sq, ignore_periodic_self_interactions, out_distances,
                                out_graph);
     return;
   }
@@ -412,7 +424,7 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cut
     for (size_t i = range.begin(); i != range.end(); ++i) {
       local_results.collectCandidates(i, coords, atom_bin, cell_list, lattice, grid_config,
                                       ignore_periodic_self_interactions);
-      local_results.computeDistances(i, atoms, coords, cutoff_sq, bond_cutoffs_sq);
+      local_results.computeDistances(i, atoms, coords, cutoff_sq, bond_cutoffs);
     }
   });
 

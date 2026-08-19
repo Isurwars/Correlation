@@ -135,7 +135,7 @@ public:
    * @param bond_cutoffs Optional bond cutoffs for neighbor calculations.
    */
   explicit DistributionFunctions(const correlation::core::Cell &cell, real_t cutoff = 0.0,
-                                 const std::vector<std::vector<real_t>> &bond_cutoffs = {});
+                                 const BondCutoffMatrix &bond_cutoffs = {});
 
   /**
    * @brief Move constructor.
@@ -383,7 +383,7 @@ public:
 private:
   static std::unique_ptr<DistributionFunctions>
   processSingleFrame(correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer, size_t frame_idx,
-                     const AnalysisSettings &settings, const std::vector<std::vector<real_t>> &bond_cutoffs);
+                     const AnalysisSettings &settings, const BondCutoffMatrix &bond_cutoffs);
 
   static void normalizeHistograms(DistributionFunctions &dist_funcs);
 
@@ -418,7 +418,7 @@ private:
   const StructureAnalyzer *neighbors_ref_{nullptr};    ///< Pointer to external neighbor info.
   std::unique_ptr<StructureAnalyzer> neighbors_owned_; ///< Owned neighbor info.
   real_t current_cutoff_{-1.0};                        ///< Last cutoff used for neighbor searching.
-  std::vector<std::vector<real_t>> bond_cutoffs_sq_;   ///< Cached squared bond cutoffs.
+  BondCutoffMatrix bond_cutoffs_;                      ///< Cached squared bond cutoff ranges.
 
   std::map<std::string, Histogram> histograms_;    ///< Storage for all analysis results.
   std::map<std::string, real_t> ashcroft_weights_; ///< Scalar weights for S(Q) calculations.

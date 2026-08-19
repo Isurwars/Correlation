@@ -170,7 +170,7 @@ TEST_F(TrajectoryTests, CalculateVelocitiesHandlesPBC) {
 
 TEST_F(TrajectoryTests, SetBondCutoffsManuallyWorks) {
   Trajectory traj;
-  traj.setBondCutoffsSQ({{2.25, 4.0}, {4.0, 6.25}});
+  traj.setBondCutoffs({{{0.36, 2.25}, {0.36, 4.0}}, {{0.36, 4.0}, {0.36, 6.25}}});
   EXPECT_DOUBLE_EQ(traj.getBondCutoffSQ(0, 0), 2.25);
 }
 

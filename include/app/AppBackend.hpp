@@ -99,8 +99,8 @@ struct ProgramOptions {
 
   int material_type = 0; ///< Material type (0: Amorphous, 1: Liquid, 2: Crystalline).
 
-  /** @brief Bond cutoffs for S(Q) calculations. */
-  std::vector<std::vector<real_t>> bond_cutoffs_sq;
+  /** @brief Bond cutoff ranges for neighbor & topological calculations. */
+  correlation::analysis::BondCutoffMatrix bond_cutoffs;
 };
 
 /**
@@ -178,6 +178,7 @@ public:
    * 2. Initializes the TrajectoryAnalyzer.
    * 3. Computes the mean Distribution Functions (RDF, ADF, etc.).
    * 4. Calculates VACF and VDOS if applicable.
+   * 5. Smooths results if requested.
    *
    * @return A string containing an error message if the analysis failed, or an
    * empty string if successful.
@@ -231,11 +232,10 @@ public:
   [[nodiscard]] real_t getRecommendedTimeStep() const;
 
   /**
-   * @brief Calculates recommended bond cutoffs based on the first pair density
-   * minimum.
-   * @return A matrix of cutoffs where entry [i][j] is the cutoff for pair i-j.
+   * @brief Calculates recommended bond cutoffs (min and max).
+   * @return A matrix of cutoff ranges where entry [i][j] contains min and max cutoffs for pair i-j.
    */
-  [[nodiscard]] std::vector<std::vector<real_t>> getRecommendedBondCutoffs() const;
+  [[nodiscard]] correlation::analysis::BondCutoffMatrix getRecommendedBondCutoffs() const;
 
   /**
    * @brief Gets the bond cutoff for a specific pair of element types.
@@ -246,10 +246,18 @@ public:
   [[nodiscard]] real_t getBondCutoff(size_t type1, size_t type2) const;
 
   /**
+   * @brief Gets the minimum bond cutoff for a specific pair of element types.
+   * @param type1 Index of the first element type.
+   * @param type2 Index of the second element type.
+   * @return The minimum cutoff distance.
+   */
+  [[nodiscard]] real_t getMinBondCutoff(size_t type1, size_t type2) const;
+
+  /**
    * @brief Sets the bond cutoffs to be used in analysis.
    * @param cutoffs Matrix of cutoffs.
    */
-  void setBondCutoffs(const std::vector<std::vector<real_t>> &cutoffs);
+  void setBondCutoffs(const correlation::analysis::BondCutoffMatrix &cutoffs);
 
   /**
    * @brief Returns the names of all histograms available from the last

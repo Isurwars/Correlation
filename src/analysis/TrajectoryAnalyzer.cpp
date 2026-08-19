@@ -12,7 +12,7 @@
 namespace correlation::analysis {
 
 TrajectoryAnalyzer::TrajectoryAnalyzer(correlation::core::Trajectory &trajectory, real_t neighbor_cutoff,
-                                       const std::vector<std::vector<real_t>> &bond_cutoffs, StartFrame start_frame,
+                                       const BondCutoffMatrix &bond_cutoffs, StartFrame start_frame,
                                        EndFrame end_frame, bool ignore_periodic_self_interactions,
                                        const std::function<void(float, const std::string &)> &progress_callback)
     : trajectory_(&trajectory), time_step_(trajectory.getTimeStep()), neighbor_cutoff_(neighbor_cutoff),
@@ -36,7 +36,8 @@ std::unique_ptr<StructureAnalyzer> TrajectoryAnalyzer::createAnalyzer(size_t fra
   if (frame_idx >= trajectory_->getFrameCount()) {
     return nullptr;
   }
-  return std::make_unique<StructureAnalyzer>(trajectory_->getFrame(frame_idx), neighbor_cutoff_, bond_cutoffs_,
+  const auto &cutoffs = !bond_cutoffs_.empty() ? bond_cutoffs_ : trajectory_->getBondCutoffs();
+  return std::make_unique<StructureAnalyzer>(trajectory_->getFrame(frame_idx), neighbor_cutoff_, cutoffs,
                                              ignore_periodic_self_interactions_);
 }
 

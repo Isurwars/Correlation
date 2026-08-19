@@ -88,13 +88,10 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
   });
 
   // Handle curve visibility toggle from PreviewCard checklist
-  window_.on_toggle_curve_visibility([this](int curve_id, bool visible) {
-    plot_controller_->handleToggleCurveVisibility(curve_id, visible);
-  });
+  window_.on_toggle_curve_visibility(
+      [this](int curve_id, bool visible) { plot_controller_->handleToggleCurveVisibility(curve_id, visible); });
 
-  window_.on_toggle_all_curves([this](bool visible) {
-    plot_controller_->handleToggleAllCurves(visible);
-  });
+  window_.on_toggle_all_curves([this](bool visible) { plot_controller_->handleToggleAllCurves(visible); });
 
   window_.on_set_curve_color([this](int curve_id, const slint::SharedString &color_hex) {
     plot_controller_->handleSetCurveColor(curve_id, color_hex);
@@ -115,9 +112,7 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
   window_.on_clear_pinned_runs([this]() { plot_controller_->handleClearPinnedRuns(); });
 
   // Handle difference plot toggle
-  window_.on_toggle_difference_plot([this](bool show) {
-    plot_controller_->handleToggleDifferencePlot(show);
-  });
+  window_.on_toggle_difference_plot([this](bool show) { plot_controller_->handleToggleDifferencePlot(show); });
 
   // Handle preset load, save, delete requests
   window_.on_load_preset([this](int index) {
@@ -440,14 +435,7 @@ ProgramOptions AppController::handleOptionsfromUI() {
   opt.time_step = safe_parse(window_.get_analysis_options().time_step, opt.time_step);
 
   // Handle Bond Cutoffs
-  auto cutoffs = getBondCutoffs();
-  const size_t num_elements = cutoffs.size();
-  opt.bond_cutoffs_sq.resize(num_elements, std::vector<real_t>(num_elements));
-  for (size_t i = 0; i < num_elements; ++i) {
-    for (size_t j = 0; j < num_elements; ++j) {
-      opt.bond_cutoffs_sq[i][j] = cutoffs[i][j] * cutoffs[i][j];
-    }
-  }
+  opt.bond_cutoffs = getBondCutoffs();
 
   return opt;
 };
@@ -459,24 +447,34 @@ void AppController::setBondCutoffs() {
 
   for (size_t i = 0; i < elements.size(); ++i) {
     for (size_t j = i; j < elements.size(); ++j) {
+      real_t min_d = 0.60;
+      real_t max_d = 0.0;
+      if (i < recommended.size() && j < recommended[i].size()) {
+        min_d = std::sqrt(recommended[i][j].min_sq);
+        max_d = std::sqrt(recommended[i][j].max_sq);
+      }
       slint_cutoffs->push_back({
           .element1 = slint::SharedString(elements[i].symbol),
           .element2 = slint::SharedString(elements[j].symbol),
-          .distance = slint::SharedString(std::format("{:.2f}", recommended[i][j])),
+          .min_distance = slint::SharedString(std::format("{:.2f}", min_d)),
+          .max_distance = slint::SharedString(std::format("{:.2f}", max_d)),
       });
     }
   }
   window_.set_bond_cutoffs(slint_cutoffs);
 }
 
-std::vector<std::vector<real_t>> AppController::getBondCutoffs() {
+correlation::analysis::BondCutoffMatrix AppController::getBondCutoffs() {
   auto slint_cutoffs = window_.get_bond_cutoffs();
   if (backend_.cell() == nullptr) {
     return {};
   }
   auto elements = backend_.cell()->elements();
   const size_t num_elements = elements.size();
-  std::vector<std::vector<real_t>> cutoffs(num_elements, std::vector<real_t>(num_elements, 0.0));
+  correlation::analysis::BondCutoffMatrix cutoffs(
+      num_elements,
+      std::vector<correlation::analysis::BondCutoffRange>(
+          num_elements, correlation::analysis::BondCutoffRange{static_cast<real_t>(0.36), static_cast<real_t>(0.0)}));
 
   for (size_t k = 0; k < slint_cutoffs->row_count(); ++k) {
     auto maybe_item = slint_cutoffs->row_data(k);
@@ -486,7 +484,18 @@ std::vector<std::vector<real_t>> AppController::getBondCutoffs() {
     const auto &item = maybe_item.value();
     const std::string symbol1 = item.element1.data();
     const std::string symbol2 = item.element2.data();
-    const real_t dist = static_cast<real_t>(std::stod(item.distance.data()));
+    real_t min_dist = 0.60;
+    real_t max_dist = 0.0;
+    try {
+      min_dist = static_cast<real_t>(std::stod(item.min_distance.data()));
+    } catch (...) {
+      min_dist = 0.60;
+    }
+    try {
+      max_dist = static_cast<real_t>(std::stod(item.max_distance.data()));
+    } catch (...) {
+      max_dist = 0.0;
+    }
 
     int idx1 = -1;
     int idx2 = -1;
@@ -500,8 +509,12 @@ std::vector<std::vector<real_t>> AppController::getBondCutoffs() {
     }
 
     if (idx1 != -1 && idx2 != -1) {
-      cutoffs[idx1][idx2] = dist;
-      cutoffs[idx2][idx1] = dist;
+      correlation::analysis::BondCutoffRange range{
+          .min_sq = min_dist * min_dist,
+          .max_sq = max_dist * max_dist,
+      };
+      cutoffs[idx1][idx2] = range;
+      cutoffs[idx2][idx1] = range;
     }
   }
   return cutoffs;

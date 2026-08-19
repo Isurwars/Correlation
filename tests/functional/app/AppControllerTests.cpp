@@ -81,17 +81,20 @@ TEST_F(AppControllerTests, HandlesBondCutoffsCorrectly) {
   cutoffs->push_back({
       .element1 = "Pd",
       .element2 = "Pd",
-      .distance = "2.80",
+      .min_distance = "0.60",
+      .max_distance = "2.80",
   });
   cutoffs->push_back({
       .element1 = "Pd",
       .element2 = "Si",
-      .distance = "3.10",
+      .min_distance = "0.70",
+      .max_distance = "3.10",
   });
   cutoffs->push_back({
       .element1 = "Si",
       .element2 = "Si",
-      .distance = "2.50",
+      .min_distance = "0.65",
+      .max_distance = "2.50",
   });
   window->set_bond_cutoffs(cutoffs);
 
@@ -99,14 +102,19 @@ TEST_F(AppControllerTests, HandlesBondCutoffsCorrectly) {
   auto opts = callHandleOptionsfromUI(controller);
 
   // Assert: verify that the flat cutoffs are mapped to symmetric 2D matrix
-  ASSERT_EQ(opts.bond_cutoffs_sq.size(), 2);
-  ASSERT_EQ(opts.bond_cutoffs_sq[0].size(), 2);
-  ASSERT_EQ(opts.bond_cutoffs_sq[1].size(), 2);
+  ASSERT_EQ(opts.bond_cutoffs.size(), 2);
+  ASSERT_EQ(opts.bond_cutoffs[0].size(), 2);
+  ASSERT_EQ(opts.bond_cutoffs[1].size(), 2);
 
-  EXPECT_NEAR(opts.bond_cutoffs_sq[0][0], 2.50 * 2.50, 1e-5); // Si-Si
-  EXPECT_NEAR(opts.bond_cutoffs_sq[0][1], 3.10 * 3.10, 1e-5); // Si-Pd
-  EXPECT_NEAR(opts.bond_cutoffs_sq[1][0], 3.10 * 3.10, 1e-5); // Pd-Si
-  EXPECT_NEAR(opts.bond_cutoffs_sq[1][1], 2.80 * 2.80, 1e-5); // Pd-Pd
+  EXPECT_NEAR(opts.bond_cutoffs[0][0].max_sq, 2.50 * 2.50, 1e-5); // Si-Si
+  EXPECT_NEAR(opts.bond_cutoffs[0][1].max_sq, 3.10 * 3.10, 1e-5); // Si-Pd
+  EXPECT_NEAR(opts.bond_cutoffs[1][0].max_sq, 3.10 * 3.10, 1e-5); // Pd-Si
+  EXPECT_NEAR(opts.bond_cutoffs[1][1].max_sq, 2.80 * 2.80, 1e-5); // Pd-Pd
+
+  EXPECT_NEAR(opts.bond_cutoffs[0][0].min_sq, 0.65 * 0.65, 1e-5); // Si-Si
+  EXPECT_NEAR(opts.bond_cutoffs[0][1].min_sq, 0.70 * 0.70, 1e-5); // Si-Pd
+  EXPECT_NEAR(opts.bond_cutoffs[1][0].min_sq, 0.70 * 0.70, 1e-5); // Pd-Si
+  EXPECT_NEAR(opts.bond_cutoffs[1][1].min_sq, 0.60 * 0.60, 1e-5); // Pd-Pd
 }
 
 TEST_F(AppControllerTests, SynchronizesOptionsToAndFromUI) {
@@ -196,6 +204,7 @@ TEST_F(AppControllerTests, PopulatesRecommendedBondCutoffs) {
     auto item = cutoffs->row_data(i).value();
     std::string el1 = item.element1.data();
     std::string el2 = item.element2.data();
+    EXPECT_EQ(item.min_distance.data(), std::string("0.60"));
     if (el1 == "Pd" && el2 == "Pd") {
       found_pd_pd = true;
     }
@@ -298,9 +307,7 @@ TEST_F(AppControllerTests, GuiLaunchAndEventLoopSmokeTest) {
   correlation::app::AppController controller(*window, backend);
 
   slint::Timer quit_timer;
-  quit_timer.start(slint::TimerMode::SingleShot, std::chrono::milliseconds(50), []() {
-    slint::quit_event_loop();
-  });
+  quit_timer.start(slint::TimerMode::SingleShot, std::chrono::milliseconds(50), []() { slint::quit_event_loop(); });
 
   EXPECT_NO_THROW(window->run());
 }

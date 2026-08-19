@@ -27,8 +27,8 @@
 namespace correlation::analysis {
 
 DistributionFunctions::DistributionFunctions(const correlation::core::Cell &cell, real_t cutoff,
-                                             const std::vector<std::vector<real_t>> &bond_cutoffs)
-    : cell_(cell), neighbors_owned_(nullptr), current_cutoff_(0.0), bond_cutoffs_sq_(bond_cutoffs) {
+                                             const BondCutoffMatrix &bond_cutoffs)
+    : cell_(cell), neighbors_owned_(nullptr), current_cutoff_(0.0), bond_cutoffs_(bond_cutoffs) {
   if (cutoff > 0.0) {
     if (bond_cutoffs.empty()) {
       throw std::invalid_argument("Bond cutoffs must be provided if cutoff > 0.0");
@@ -42,7 +42,7 @@ DistributionFunctions::DistributionFunctions(const correlation::core::Cell &cell
 DistributionFunctions::DistributionFunctions(DistributionFunctions &&other) noexcept
     : cell_(std::move(other.cell_)), neighbors_ref_(other.neighbors_ref_),
       neighbors_owned_(std::move(other.neighbors_owned_)), current_cutoff_(other.current_cutoff_),
-      bond_cutoffs_sq_(std::move(other.bond_cutoffs_sq_)), histograms_(std::move(other.histograms_)),
+      bond_cutoffs_(std::move(other.bond_cutoffs_)), histograms_(std::move(other.histograms_)),
       ashcroft_weights_(std::move(other.ashcroft_weights_)),
       diffusion_coefficient_msd_(other.diffusion_coefficient_msd_),
       diffusion_coefficient_vacf_(other.diffusion_coefficient_vacf_), relaxation_time_(other.relaxation_time_),
@@ -63,7 +63,7 @@ DistributionFunctions &DistributionFunctions::operator=(DistributionFunctions &&
     neighbors_ref_ = other.neighbors_ref_;
     neighbors_owned_ = std::move(other.neighbors_owned_);
     current_cutoff_ = other.current_cutoff_;
-    bond_cutoffs_sq_ = std::move(other.bond_cutoffs_sq_);
+    bond_cutoffs_ = std::move(other.bond_cutoffs_);
     histograms_ = std::move(other.histograms_);
     ashcroft_weights_ = std::move(other.ashcroft_weights_);
     diffusion_coefficient_msd_ = other.diffusion_coefficient_msd_;
@@ -116,7 +116,7 @@ void DistributionFunctions::ensureNeighborsComputed(real_t r_max) {
   }
 
   if (neighbors_owned_ == nullptr || r_max > current_cutoff_) {
-    neighbors_owned_ = std::make_unique<StructureAnalyzer>(cell_, r_max, bond_cutoffs_sq_, true);
+    neighbors_owned_ = std::make_unique<StructureAnalyzer>(cell_, r_max, bond_cutoffs_, true);
     current_cutoff_ = r_max;
   }
 }
@@ -393,7 +393,7 @@ void DistributionFunctions::scale(real_t factor) {
 std::unique_ptr<DistributionFunctions>
 DistributionFunctions::processSingleFrame(correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
                                           size_t frame_idx, const AnalysisSettings &settings,
-                                          const std::vector<std::vector<real_t>> &bond_cutoffs) {
+                                          const BondCutoffMatrix &bond_cutoffs) {
   if (frame_idx >= trajectory.getFrameCount()) {
     return nullptr;
   }
@@ -459,7 +459,7 @@ DistributionFunctions::computeMean(correlation::core::Trajectory &trajectory, co
   std::vector<std::unique_ptr<DistributionFunctions>> results(num_frames);
 
   // Retrieve bond cutoffs from the analyzer.
-  auto bond_cutoffs = analyzer.getBondCutoffsSQ();
+  const auto &bond_cutoffs = analyzer.getBondCutoffs();
 
   std::mutex callback_mutex;
   std::atomic<size_t> completed_frames{0};

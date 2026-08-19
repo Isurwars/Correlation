@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "analysis/AnalysisTypes.hpp"
 #include "core/Cell.hpp"
 #include "core/NeighborGraph.hpp"
 
@@ -36,7 +37,7 @@ public:
   /** @name Constructors */
   ///@{
   explicit StructureAnalyzer(const correlation::core::Cell &cell, real_t cutoff,
-                             const std::vector<std::vector<real_t>> &bond_cutoffs_sq,
+                             const BondCutoffMatrix &bond_cutoffs,
                              bool ignore_periodic_self_interactions = true);
 
   ///@}
@@ -73,9 +74,9 @@ public:
   ///@}
 
 private:
-  correlation::core::Cell cell_;                     ///< Reference to the current periodic cell.
-  real_t cutoff_sq_;                                 ///< Squared cutoff for efficiency.
-  std::vector<std::vector<real_t>> bond_cutoffs_sq_; ///< Internal squared bond cutoffs.
+  correlation::core::Cell cell_;           ///< Reference to the current periodic cell.
+  real_t cutoff_sq_;                       ///< Squared cutoff for efficiency.
+  BondCutoffMatrix bond_cutoffs_;          ///< Internal bond cutoffs matrix.
 
   bool ignore_periodic_self_interactions_; ///< Interaction guard.
 

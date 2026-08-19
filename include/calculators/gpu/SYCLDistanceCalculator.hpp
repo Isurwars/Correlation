@@ -19,7 +19,7 @@ namespace correlation::calculators::sycl_gpu {
  * @brief Performs multi-vendor SYCL GPU-accelerated pairwise distance computations.
  */
 void compute_distances_sycl(const correlation::core::Cell &cell, real_t cutoff_sq,
-                            const std::vector<std::vector<real_t>> &bond_cutoffs_sq,
+                            const correlation::analysis::BondCutoffMatrix &bond_cutoffs,
                             bool ignore_periodic_self_interactions, DistanceTensor &out_distances,
                             correlation::core::NeighborGraph &out_graph);
 

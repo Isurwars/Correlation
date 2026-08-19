@@ -96,19 +96,31 @@ void Trajectory::ensureMaterialized() const {
   }
 }
 
-real_t Trajectory::getBondCutoffSQ(size_t type1, size_t type2) const {
-  if (bond_cutoffs_sq_.empty()) {
+const correlation::analysis::BondCutoffRange &Trajectory::getBondCutoffRange(size_t type1, size_t type2) const {
+  static const correlation::analysis::BondCutoffRange default_range{static_cast<real_t>(0.36),
+                                                                    static_cast<real_t>(0.0)};
+  if (bond_cutoffs_.empty()) {
     precomputeBondCutoffs();
   }
 
-  if (type1 >= bond_cutoffs_sq_.size() || type2 >= bond_cutoffs_sq_.size()) {
-    return 0.0;
+  if (type1 >= bond_cutoffs_.size() || type2 >= bond_cutoffs_.size()) {
+    return default_range;
   }
 
-  return bond_cutoffs_sq_[type1][type2];
+  return bond_cutoffs_[type1][type2];
+}
+
+real_t Trajectory::getBondCutoffSQ(size_t type1, size_t type2) const { return getBondCutoffRange(type1, type2).max_sq; }
+
+real_t Trajectory::getMinBondCutoffSQ(size_t type1, size_t type2) const {
+  return getBondCutoffRange(type1, type2).min_sq;
 }
 
 real_t Trajectory::getBondCutoff(size_t type1, size_t type2) const { return std::sqrt(getBondCutoffSQ(type1, type2)); }
+
+real_t Trajectory::getMinBondCutoff(size_t type1, size_t type2) const {
+  return std::sqrt(getMinBondCutoffSQ(type1, type2));
+}
 
 void Trajectory::addFrame(const Cell &frame) {
   ensureMaterialized();
@@ -133,11 +145,11 @@ void Trajectory::precomputeBondCutoffs() const {
   Cell const first_frame = getFrame(0);
   const auto &elements = first_frame.elements();
   const size_t num_elements = elements.size();
-  bond_cutoffs_sq_.resize(num_elements, std::vector<real_t>(num_elements));
+  bond_cutoffs_.resize(num_elements, std::vector<correlation::analysis::BondCutoffRange>(num_elements));
 
   auto safeGetRadius = [](const std::string &symbol) -> real_t {
     try {
-      return static_cast<real_t>(physics::getCovalentRadius(symbol));
+      return physics::getCovalentRadius(symbol);
     } catch (const std::out_of_range &) {
       return static_cast<real_t>(1.5); // Default covalent radius for unknown elements
     }
@@ -149,8 +161,11 @@ void Trajectory::precomputeBondCutoffs() const {
       const real_t radius_B = safeGetRadius(elements[j].symbol);
       const real_t max_bond_dist = (radius_A + radius_B) * static_cast<real_t>(1.3);
       const real_t max_bond_dist_sq = max_bond_dist * max_bond_dist;
-      bond_cutoffs_sq_[i][j] = max_bond_dist_sq;
-      bond_cutoffs_sq_[j][i] = max_bond_dist_sq;
+      bond_cutoffs_[i][j] = correlation::analysis::BondCutoffRange{
+          .min_sq = static_cast<real_t>(0.36),
+          .max_sq = max_bond_dist_sq,
+      };
+      bond_cutoffs_[j][i] = bond_cutoffs_[i][j];
     }
   }
 }

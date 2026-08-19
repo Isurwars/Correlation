@@ -33,9 +33,9 @@ TEST(GPUSteinhardtCalculatorTests, FallbackOrGPUExecution) {
   cell.addAtom("Si", {0.0, 0.0, 0.0});
   cell.addAtom("Si", {1.5, 1.5, 1.5});
 
-  correlation::analysis::StructureAnalyzer const analyzer(cell, 3.0, {{9.0}}, false);
+  correlation::analysis::StructureAnalyzer const analyzer(cell, 3.0, {{{0.36, 9.0}}}, false);
 
-  correlation::analysis::DistributionFunctions dists(cell, 3.0, {{9.0}});
+  correlation::analysis::DistributionFunctions dists(cell, 3.0, {{{0.36, 9.0}}});
   correlation::analysis::AnalysisSettings settings;
 
   GPUSteinhardtCalculator gpu_calc;
@@ -54,8 +54,8 @@ TEST(GPUSteinhardtCalculatorTests, FloatPrecisionEvaluation) {
   cell.addAtom("Fe", {2.0, 0.0, 0.0});
   cell.addAtom("Fe", {0.0, 2.0, 0.0});
 
-  correlation::analysis::StructureAnalyzer const analyzer(cell, 3.0, {{9.0}}, false);
-  correlation::analysis::DistributionFunctions dists(cell, 3.0, {{9.0}});
+  correlation::analysis::StructureAnalyzer const analyzer(cell, 3.0, {{{0.36, 9.0}}}, false);
+  correlation::analysis::DistributionFunctions dists(cell, 3.0, {{{0.36, 9.0}}});
   correlation::analysis::AnalysisSettings settings;
 
   GPUSteinhardtCalculator gpu_calc;
@@ -74,8 +74,8 @@ TEST(GPUSteinhardtCalculatorTests, DoublePrecisionEvaluation) {
   cell.addAtom("Al", {0.0, 2.5, 0.0});
   cell.addAtom("Al", {0.0, 0.0, 2.5});
 
-  correlation::analysis::StructureAnalyzer const analyzer(cell, 3.5, {{12.0}}, false);
-  correlation::analysis::DistributionFunctions dists(cell, 3.5, {{12.0}});
+  correlation::analysis::StructureAnalyzer const analyzer(cell, 3.5, {{{0.36, 12.0}}}, false);
+  correlation::analysis::DistributionFunctions dists(cell, 3.5, {{{0.36, 12.0}}});
   correlation::analysis::AnalysisSettings settings;
 
   GPUSteinhardtCalculator gpu_calc;
