@@ -60,9 +60,9 @@ TEST(PeriodicGraphBuilderTests, SimpleCubicFirstNeighborShell) {
     EXPECT_EQ(graph.edge_index_flat[static_cast<size_t>(0 * 6) + edge], 0);
     EXPECT_EQ(graph.edge_index_flat[static_cast<size_t>(1 * 6) + edge], 0);
 
-    const real_t s_x = graph.edge_shifts_flat[edge * static_cast<size_t>(3 + 0)];
-    const real_t s_y = graph.edge_shifts_flat[edge * static_cast<size_t>(3 + 1)];
-    const real_t s_z = graph.edge_shifts_flat[edge * static_cast<size_t>(3 + 2)];
+    const real_t s_x = graph.edge_shifts_flat[edge * 3 + 0];
+    const real_t s_y = graph.edge_shifts_flat[edge * 3 + 1];
+    const real_t s_z = graph.edge_shifts_flat[edge * 3 + 2];
     const real_t shift_norm_sq = s_x * s_x + s_y * s_y + s_z * s_z;
     EXPECT_NEAR(shift_norm_sq, static_cast<real_t>(1.0), 1e-5);
   }
