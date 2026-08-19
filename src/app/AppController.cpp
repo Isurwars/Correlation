@@ -447,7 +447,7 @@ void AppController::setBondCutoffs() {
 
   for (size_t i = 0; i < elements.size(); ++i) {
     for (size_t j = i; j < elements.size(); ++j) {
-      real_t min_d = 0.60;
+      real_t min_d = 0.0;
       real_t max_d = 0.0;
       if (i < recommended.size() && j < recommended[i].size()) {
         min_d = std::sqrt(recommended[i][j].min_sq);
@@ -474,7 +474,7 @@ correlation::analysis::BondCutoffMatrix AppController::getBondCutoffs() {
   correlation::analysis::BondCutoffMatrix cutoffs(
       num_elements,
       std::vector<correlation::analysis::BondCutoffRange>(
-          num_elements, correlation::analysis::BondCutoffRange{static_cast<real_t>(0.36), static_cast<real_t>(0.0)}));
+          num_elements, correlation::analysis::BondCutoffRange{static_cast<real_t>(0.0), static_cast<real_t>(0.0)}));
 
   for (size_t k = 0; k < slint_cutoffs->row_count(); ++k) {
     auto maybe_item = slint_cutoffs->row_data(k);
@@ -484,12 +484,12 @@ correlation::analysis::BondCutoffMatrix AppController::getBondCutoffs() {
     const auto &item = maybe_item.value();
     const std::string symbol1 = item.element1.data();
     const std::string symbol2 = item.element2.data();
-    real_t min_dist = 0.60;
+    real_t min_dist = 0.0;
     real_t max_dist = 0.0;
     try {
       min_dist = static_cast<real_t>(std::stod(item.min_distance.data()));
     } catch (...) {
-      min_dist = 0.60;
+      min_dist = 0.0;
     }
     try {
       max_dist = static_cast<real_t>(std::stod(item.max_distance.data()));

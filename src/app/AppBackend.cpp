@@ -125,7 +125,7 @@ real_t AppBackend::getBondCutoff(size_t type1, size_t type2) const {
 
 real_t AppBackend::getMinBondCutoff(size_t type1, size_t type2) const {
   if (!trajectory_) {
-    return 0.60;
+    return 0.0;
   }
   return trajectory_->getMinBondCutoff(type1, type2);
 }
@@ -381,8 +381,7 @@ std::string AppBackend::run_analysis() {
     setupTrajectorySettings(start_f);
 
     // Determine which cutoffs to use: explicit overrides or precomputed defaults.
-    const auto &active_cutoffs =
-        !options_.bond_cutoffs.empty() ? options_.bond_cutoffs : trajectory_->getBondCutoffs();
+    const auto &active_cutoffs = !options_.bond_cutoffs.empty() ? options_.bond_cutoffs : trajectory_->getBondCutoffs();
 
     if (progress_callback_) {
       progress_callback_(0.0F, "Starting analysis...");

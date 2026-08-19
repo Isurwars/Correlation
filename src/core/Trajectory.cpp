@@ -97,8 +97,7 @@ void Trajectory::ensureMaterialized() const {
 }
 
 const correlation::analysis::BondCutoffRange &Trajectory::getBondCutoffRange(size_t type1, size_t type2) const {
-  static const correlation::analysis::BondCutoffRange default_range{static_cast<real_t>(0.36),
-                                                                    static_cast<real_t>(0.0)};
+  static const correlation::analysis::BondCutoffRange default_range{static_cast<real_t>(0.0), static_cast<real_t>(0.0)};
   if (bond_cutoffs_.empty()) {
     precomputeBondCutoffs();
   }
@@ -159,10 +158,13 @@ void Trajectory::precomputeBondCutoffs() const {
     const real_t radius_A = safeGetRadius(elements[i].symbol);
     for (size_t j = i; j < num_elements; ++j) {
       const real_t radius_B = safeGetRadius(elements[j].symbol);
-      const real_t max_bond_dist = (radius_A + radius_B) * static_cast<real_t>(1.3);
+      const real_t sum_radii = radius_A + radius_B;
+      const real_t min_bond_dist = sum_radii * static_cast<real_t>(0.6);
+      const real_t min_bond_dist_sq = min_bond_dist * min_bond_dist;
+      const real_t max_bond_dist = sum_radii * static_cast<real_t>(1.3);
       const real_t max_bond_dist_sq = max_bond_dist * max_bond_dist;
       bond_cutoffs_[i][j] = correlation::analysis::BondCutoffRange{
-          .min_sq = static_cast<real_t>(0.36),
+          .min_sq = min_bond_dist_sq,
           .max_sq = max_bond_dist_sq,
       };
       bond_cutoffs_[j][i] = bond_cutoffs_[i][j];

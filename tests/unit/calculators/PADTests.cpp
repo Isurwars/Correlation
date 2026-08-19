@@ -95,19 +95,19 @@ TEST_F(PADTests_AngleReproduction, CalculatePAD) {
 TEST_F(PADTests_AngleReproduction, MissingAnglesWhenCutoffIsTooSmall) {
   // A-B-C angle.
   // B is at (5,5,5)
-  // A is at (4,5,5) -> dist 1.0
-  // C is at (5,6,5) -> dist 1.0
+  // A is at (3.4,5,5) -> dist 1.6
+  // C is at (5,6.6,5) -> dist 1.6
   // Angle should be 90 degrees.
 
-  cell_.addAtom("O", {4.0, 5.0, 5.0});
+  cell_.addAtom("O", {3.4, 5.0, 5.0});
   cell_.addAtom("Si", {5.0, 5.0, 5.0});
-  cell_.addAtom("O", {5.0, 6.0, 5.0});
+  cell_.addAtom("O", {5.0, 6.6, 5.0});
   updateTrajectory();
 
   // Bond cutoff for Si-O is likely around 1.6 * 1.2 = 1.92 or similar.
-  // Distance is 1.0.
+  // Distance is 1.6.
   {
-    StructureAnalyzer const analyzer(cell_, 1.1, trajectory_.getBondCutoffsSQ());
+    StructureAnalyzer const analyzer(cell_, 1.8, trajectory_.getBondCutoffsSQ());
     const auto &angles = analyzer.angles();
     bool found = false;
     for (const auto &t_1 : angles) {
@@ -127,11 +127,11 @@ TEST_F(PADTests_AngleReproduction, MissingAnglesWhenCutoffIsTooSmall) {
 
 TEST_F(PADTests_AngleReproduction, PBCAngleDetection) {
   cell_.addAtom("Si", {0.5, 0.5, 0.5});
-  cell_.addAtom("O", {9.6, 0.5, 0.5});
-  cell_.addAtom("O", {0.5, 9.6, 0.5});
+  cell_.addAtom("O", {8.9, 0.5, 0.5});
+  cell_.addAtom("O", {0.5, 8.9, 0.5});
   updateTrajectory();
 
-  StructureAnalyzer const analyzer(cell_, 1.2, trajectory_.getBondCutoffsSQ());
+  StructureAnalyzer const analyzer(cell_, 1.8, trajectory_.getBondCutoffsSQ());
 
   bool found = false;
   const auto &angles = analyzer.angles();
@@ -297,27 +297,23 @@ TEST_F(PADTests, NullNeighborsThrows) {
 // 2. Geometry Verification
 TEST_F(PADTests, LinearGeometry180) {
   // A-B-C line
-  cell_.addAtom("O", {9.0, 10.0, 10.0});
+  cell_.addAtom("O", {8.4, 10.0, 10.0});
   cell_.addAtom("Si", {10.0, 10.0, 10.0});
-  cell_.addAtom("O", {11.0, 10.0, 10.0});
+  cell_.addAtom("O", {11.6, 10.0, 10.0});
   updateTrajectory();
 
   int const id_O = cell_.findElement("O")->id.value;
   int const id_Si = cell_.findElement("Si")->id.value;
 
-  // O(0.73) + Si(1.11) = 1.84 * 1.3 = 2.392.
-  // EXPECT_GT(cutoff, 1.1) << "Bond cutoff must be larger than bond
-  // distance 1.0";
-
   // Verify StructureAnalyzer finds neighbors
-  StructureAnalyzer const analyzer(cell_, 1.5, trajectory_.getBondCutoffsSQ());
+  StructureAnalyzer const analyzer(cell_, 2.0, trajectory_.getBondCutoffsSQ());
   const auto &neighborGraph = analyzer.neighborGraph();
   // Si is atom index 1 (0-based)
   ASSERT_GT(neighborGraph.nodeCount(), 1);
   EXPECT_EQ(neighborGraph.getNeighbors(1).size(), 2) << "Si should have 2 neighbors (O atoms)";
 
-  // Bond length 1.0. Cutoff needs to be > 1.0
-  DistributionFunctions dists(cell_, 1.5, trajectory_.getBondCutoffsSQ());
+  // Bond length 1.6. Cutoff needs to be > 1.6
+  DistributionFunctions dists(cell_, 2.0, trajectory_.getBondCutoffsSQ());
   // Fine binning for accuracy
   dists.calculatePAD(0.001);
 
@@ -352,12 +348,12 @@ TEST_F(PADTests, LinearGeometry180) {
 }
 
 TEST_F(PADTests, RightAngle90) {
-  cell_.addAtom("O", {10.0, 9.0, 10.0});
+  cell_.addAtom("O", {10.0, 8.4, 10.0});
   cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
-  cell_.addAtom("O", {11.0, 10.0, 10.0});
+  cell_.addAtom("O", {11.6, 10.0, 10.0});
   updateTrajectory();
 
-  DistributionFunctions dists(cell_, 1.5, trajectory_.getBondCutoffsSQ());
+  DistributionFunctions dists(cell_, 2.0, trajectory_.getBondCutoffsSQ());
   dists.calculatePAD(0.001);
 
   const auto &hist = dists.getHistogram("BAD");
@@ -380,14 +376,14 @@ TEST_F(PADTests, RightAngle90) {
 
 TEST_F(PADTests, EquilateralTriangle60) {
   // Si at (0,0,0)
-  // O at (1,0,0)
-  // O at (0.5, sqrt(3)/2, 0)
+  // O at (1.6,0,0)
+  // O at (0.8, 1.6*sqrt(3)/2, 0)
   cell_.addAtom("Si", {10.0, 10.0, 10.0});
-  cell_.addAtom("O", {11.0, 10.0, 10.0});
-  cell_.addAtom("O", {10.5, 10.0 + std::numbers::sqrt3 / 2.0, 10.0});
+  cell_.addAtom("O", {11.6, 10.0, 10.0});
+  cell_.addAtom("O", {10.0 + 1.6 * 0.5, 10.0 + 1.6 * std::numbers::sqrt3 / 2.0, 10.0});
   updateTrajectory();
 
-  DistributionFunctions dists(cell_, 1.5, trajectory_.getBondCutoffsSQ());
+  DistributionFunctions dists(cell_, 2.0, trajectory_.getBondCutoffsSQ());
   dists.calculatePAD(1.0);
 
   const auto &hist = dists.getHistogram("BAD");
@@ -412,11 +408,11 @@ TEST_F(PADTests, TetrahedralAngle) {
   // For simplicity, just check one angle 109.47
   real_t const base_coord = static_cast<real_t>(10.0);
   cell_.addAtom("Si", {base_coord, base_coord, base_coord});
-  // Vector 1: (1,1,1) normalized
-  // Vector 2: (1,-1,-1) normalized
+  // Vector 1: (1,1,1) normalized * 1.6
+  // Vector 2: (1,-1,-1) normalized * 1.6
   // Dot product = (1-1-1)/3 = -1/3. acos(-1/3) = 109.47 deg
 
-  real_t const lattice_constant = static_cast<real_t>(std::numbers::inv_sqrt3);
+  real_t const lattice_constant = static_cast<real_t>(1.6 * std::numbers::inv_sqrt3);
 
   cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord + lattice_constant, base_coord + lattice_constant,
                                                         base_coord + lattice_constant));
@@ -424,8 +420,8 @@ TEST_F(PADTests, TetrahedralAngle) {
                                                         base_coord - lattice_constant));
   updateTrajectory();
 
-  DistributionFunctions dists(cell_, 1.5,
-                              trajectory_.getBondCutoffsSQ()); // Distance is 1.0
+  DistributionFunctions dists(cell_, 2.0,
+                              trajectory_.getBondCutoffsSQ()); // Distance is 1.6
   dists.calculatePAD(0.001);                                   // Hyperfine bins
 
   const auto &hist = dists.getHistogram("BAD");
@@ -447,11 +443,11 @@ TEST_F(PADTests, TetrahedralAngle) {
 // 3. Symmetry & Multi-Species
 TEST_F(PADTests, SymmetryAndSorting) {
   cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
-  cell_.addAtom("O", {11.0, 10.0, 10.0});
-  cell_.addAtom("N", {10.0, 11.0, 10.0}); // 90 degrees
+  cell_.addAtom("O", {11.6, 10.0, 10.0});
+  cell_.addAtom("N", {10.0, 11.6, 10.0}); // 90 degrees
   updateTrajectory();
 
-  DistributionFunctions dists(cell_, 1.5, trajectory_.getBondCutoffsSQ());
+  DistributionFunctions dists(cell_, 2.0, trajectory_.getBondCutoffsSQ());
   dists.calculatePAD(1.0);
 
   const auto &hist = dists.getHistogram("BAD");
@@ -475,7 +471,7 @@ TEST_F(PADTests, FullNormalizationCheck) {
   // All 6 angles are 109.47
   real_t const base_coord = static_cast<real_t>(10.0);
   cell_.addAtom("Si", {base_coord, base_coord, base_coord});
-  real_t const lattice_constant = static_cast<real_t>(std::numbers::inv_sqrt3);
+  real_t const lattice_constant = static_cast<real_t>(1.6 * std::numbers::inv_sqrt3);
 
   // Tetrahedral vertices
   cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord + lattice_constant, base_coord + lattice_constant,
@@ -488,13 +484,13 @@ TEST_F(PADTests, FullNormalizationCheck) {
                                                         base_coord + lattice_constant));
   updateTrajectory();
 
-  // Custom bond cutoffs to avoid O-O bonds (distance ~1.63) which would create
+  // Custom bond cutoffs to avoid O-O bonds (distance ~2.61) which would create
   // extra angles
   auto cutoffs = trajectory_.getBondCutoffs();
   int const id_O = cell_.findElement("O")->id.value;
-  cutoffs[id_O][id_O].max_sq = 1.44;
+  cutoffs[id_O][id_O].max_sq = 2.0;
 
-  DistributionFunctions dists(cell_, 1.5, cutoffs);
+  DistributionFunctions dists(cell_, 2.0, cutoffs);
   dists.calculatePAD(1.0);
 
   const auto &hist = dists.getHistogram("BAD");

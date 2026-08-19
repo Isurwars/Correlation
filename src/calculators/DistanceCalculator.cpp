@@ -254,7 +254,7 @@ void ThreadLocalDistances::computeDistances(size_t atom_idx, const std::vector<c
         distance_tensor_local[type_B][type_A].push_back(dist);
       }
 
-      real_t min_bond_dist_sq = static_cast<real_t>(0.36);
+      real_t min_bond_dist_sq = 0.0;
       real_t max_bond_dist_sq = 0.0;
       if (static_cast<size_t>(type_A) < bond_cutoffs.size() &&
           static_cast<size_t>(type_B) < bond_cutoffs[type_A].size()) {

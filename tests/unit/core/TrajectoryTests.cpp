@@ -6,6 +6,7 @@
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 #include "math/LinearAlgebra.hpp"
+#include "physics/PhysicalData.hpp"
 #include "readers/FileReader.hpp"
 
 #include <filesystem>
@@ -179,7 +180,13 @@ TEST_F(TrajectoryTests, PrecomputeBondCutoffsCalculatesCorrectly) {
   frame.addAtom("H", {0, 0, 0});
   Trajectory const traj({frame}, 1.0);
   traj.precomputeBondCutoffs();
-  EXPECT_GT(traj.getBondCutoffSQ(0, 0), 0.0);
+  real_t const r_h = correlation::physics::getCovalentRadius("H");
+  real_t const expected_min = (r_h + r_h) * static_cast<real_t>(0.6);
+  real_t const expected_max = (r_h + r_h) * static_cast<real_t>(1.3);
+  EXPECT_NEAR(traj.getMinBondCutoff(0, 0), expected_min, 1e-5);
+  EXPECT_NEAR(traj.getBondCutoff(0, 0), expected_max, 1e-5);
+  EXPECT_NEAR(traj.getMinBondCutoffSQ(0, 0), expected_min * expected_min, 1e-5);
+  EXPECT_NEAR(traj.getBondCutoffSQ(0, 0), expected_max * expected_max, 1e-5);
 }
 
 TEST_F(TrajectoryTests, CalculateVelocitiesDoesNotCrashOnEmptyTrajectory) {
