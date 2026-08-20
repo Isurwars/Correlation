@@ -144,6 +144,9 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
     saveSettings();
   });
 
+  // Handle reset bond cutoffs request from UI
+  window_.on_reset_bond_cutoffs([this]() { setBondCutoffs(); });
+
   // Initial load of settings and preset list
   loadSettings();
   preset_controller_->refreshPresetList();

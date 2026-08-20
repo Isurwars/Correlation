@@ -241,6 +241,7 @@ export component AppWindow inherits Window {
     callback save_preset(string);
     callback delete_preset(int);
     callback material_type_changed(int);
+    callback reset_bond_cutoffs();
 
     // ============================================================================
     // Core Layout Logic
@@ -460,6 +461,9 @@ export component AppWindow inherits Window {
                 has_rings_active: root.has_rings_active;
                 bond_cutoffs <=> root.bond_cutoffs;
                 atom_counts: root.atom_counts;
+                reset_bond_cutoffs => {
+                    root.reset_bond_cutoffs();
+                }
                 analysis_options <=> root.analysis_options;
                 app_errors: root.app_errors;
                 num_frames: root.num_frames;

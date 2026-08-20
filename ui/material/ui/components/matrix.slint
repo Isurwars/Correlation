@@ -10,49 +10,195 @@ import { MaterialPalette } from "../styling/material_palette.slint";
 import { MaterialTypography } from "../styling/material_typography.slint";
 import { AtomCount } from "../../../Types.slint";
 
-component MatrixCell {
+component OffDiagonalCell {
     in-out property <string> text;
     in property <bool> enabled: true;
-    in property <bool> read_only: false;
-    in property <bool> is_diagonal: false;
+    in property <bool> is_upper: true; // true = Max (j > i), false = Min (i > j)
+    in property <bool> has_error: false;
     callback edited(string);
 
     property <bool> has_focus: input.has_focus;
 
-    width: 60px;
-    height: 32px;
+    width: 76px;
+    height: 48px;
 
     container := Rectangle {
         width: 100%;
         height: 100%;
-        background: root.read_only ? MaterialPalette.surface_container_low :
-            root.is_diagonal ? MaterialPalette.secondary_container.with_alpha(50%) :
-            MaterialPalette.surface_container_highest;
+        background: root.has_error ? MaterialPalette.error_container.with_alpha(40%) :
+            root.is_upper ? MaterialPalette.primary_container.with_alpha(40%) :
+            MaterialPalette.surface_container_low;
         border-radius: MaterialStyleMetrics.border_radius_4;
-        border-width: root.has_focus ? 2px : 1px;
-        border-color: root.has_focus ? MaterialPalette.primary :
-            root.read_only ? MaterialPalette.outline_variant.with_alpha(30%) :
-            root.is_diagonal ? MaterialPalette.secondary :
-            MaterialPalette.outline_variant;
+        border-width: (root.has_focus || root.has_error) ? 2px : 1px;
+        border-color: root.has_error ? MaterialPalette.error :
+            root.has_focus ? (root.is_upper ? MaterialPalette.primary : MaterialPalette.tertiary) :
+            root.is_upper ? MaterialPalette.primary.with_alpha(40%) :
+            MaterialPalette.outline_variant.with_alpha(50%);
 
-        input := TextInput {
-            x: 4px;
-            width: parent.width - 8px;
-            height: parent.height - 4px;
-            font_size: MaterialTypography.body_medium.font_size;
-            font_weight: root.is_diagonal ? MaterialTypography.medium : MaterialTypography.regular;
-            vertical-alignment: center;
-            horizontal-alignment: center;
-            single-line: true;
-            color: root.read_only ? MaterialPalette.on_surface.with_alpha(50%) :
-                root.enabled ? MaterialPalette.on_surface :
-                MaterialPalette.on_surface.with_alpha(38%);
-            text <=> root.text;
-            enabled: root.enabled;
-            read-only: root.read_only;
+        VerticalLayout {
+            padding_left: 4px;
+            padding_right: 4px;
+            padding_top: 2px;
+            padding_bottom: 2px;
+            spacing: 0px;
 
-            edited => {
-                root.edited(self.text);
+            // Micro-badge header
+            HorizontalLayout {
+                height: 12px;
+                alignment: start;
+                MaterialText {
+                    text: root.is_upper ? "▲ Max" : "▼ Min";
+                    style: MaterialTypography.label_small;
+                    color: root.has_error ? MaterialPalette.error :
+                        root.is_upper ? MaterialPalette.primary : MaterialPalette.tertiary;
+                    font_size: 9px;
+                    font_weight: MaterialTypography.semibold;
+                }
+            }
+
+            // Numeric input
+            input := TextInput {
+                width: parent.width;
+                height: 28px;
+                font_size: MaterialTypography.body_medium.font_size;
+                font_weight: MaterialTypography.medium;
+                vertical-alignment: center;
+                horizontal-alignment: center;
+                single-line: true;
+                color: root.has_error ? MaterialPalette.error :
+                    root.enabled ? MaterialPalette.on_surface :
+                    MaterialPalette.on_surface.with_alpha(38%);
+                text <=> root.text;
+                enabled: root.enabled;
+
+                edited => {
+                    root.edited(self.text);
+                }
+            }
+        }
+    }
+}
+
+component DiagonalCell {
+    in-out property <string> max_text;
+    in-out property <string> min_text;
+    in property <bool> enabled: true;
+    in property <bool> has_error: false;
+    callback max_edited(string);
+    callback min_edited(string);
+
+    property <bool> max_focused: max_input.has_focus;
+    property <bool> min_focused: min_input.has_focus;
+
+    width: 76px;
+    height: 48px;
+
+    container := Rectangle {
+        width: 100%;
+        height: 100%;
+        background: root.has_error ? MaterialPalette.error_container.with_alpha(40%) :
+            MaterialPalette.surface_container_high;
+        border-radius: MaterialStyleMetrics.border_radius_4;
+        border-width: (root.max_focused || root.min_focused || root.has_error) ? 2px : 1px;
+        border-color: root.has_error ? MaterialPalette.error :
+            root.max_focused ? MaterialPalette.primary :
+            root.min_focused ? MaterialPalette.tertiary :
+            MaterialPalette.outline_variant.with_alpha(60%);
+
+        VerticalLayout {
+            spacing: 0px;
+            padding: 1px;
+
+            // Top half: Max cutoff (darker tone)
+            Rectangle {
+                height: 22px;
+                background: MaterialPalette.primary_container.with_alpha(40%);
+                border-top-left-radius: 3px;
+                border-top-right-radius: 3px;
+
+                HorizontalLayout {
+                    padding_left: 4px;
+                    padding_right: 4px;
+                    spacing: 2px;
+                    alignment: center;
+
+                    MaterialText {
+                        text: "▲";
+                        style: MaterialTypography.label_small;
+                        color: MaterialPalette.primary;
+                        font_size: 9px;
+                        font_weight: MaterialTypography.semibold;
+                        vertical-alignment: center;
+                    }
+
+                    max_input := TextInput {
+                        width: parent.width - 12px;
+                        height: 20px;
+                        font_size: 11px;
+                        font_weight: MaterialTypography.medium;
+                        vertical-alignment: center;
+                        horizontal-alignment: center;
+                        single-line: true;
+                        color: root.has_error ? MaterialPalette.error :
+                            root.enabled ? MaterialPalette.on_surface :
+                            MaterialPalette.on_surface.with_alpha(38%);
+                        text <=> root.max_text;
+                        enabled: root.enabled;
+
+                        edited => {
+                            root.max_edited(self.text);
+                        }
+                    }
+                }
+            }
+
+            // Divider
+            Rectangle {
+                height: 1px;
+                background: MaterialPalette.outline_variant.with_alpha(60%);
+            }
+
+            // Bottom half: Min cutoff (clearer tone)
+            Rectangle {
+                height: 22px;
+                background: MaterialPalette.surface_container_low;
+                border-bottom-left-radius: 3px;
+                border-bottom-right-radius: 3px;
+
+                HorizontalLayout {
+                    padding_left: 4px;
+                    padding_right: 4px;
+                    spacing: 2px;
+                    alignment: center;
+
+                    MaterialText {
+                        text: "▼";
+                        style: MaterialTypography.label_small;
+                        color: MaterialPalette.tertiary;
+                        font_size: 9px;
+                        font_weight: MaterialTypography.semibold;
+                        vertical-alignment: center;
+                    }
+
+                    min_input := TextInput {
+                        width: parent.width - 12px;
+                        height: 20px;
+                        font_size: 11px;
+                        font_weight: MaterialTypography.medium;
+                        vertical-alignment: center;
+                        horizontal-alignment: center;
+                        single-line: true;
+                        color: root.has_error ? MaterialPalette.error :
+                            root.enabled ? MaterialPalette.on_surface :
+                            MaterialPalette.on_surface.with_alpha(38%);
+                        text <=> root.min_text;
+                        enabled: root.enabled;
+
+                        edited => {
+                            root.min_edited(self.text);
+                        }
+                    }
+                }
             }
         }
     }
@@ -64,13 +210,19 @@ export component Matrix {
 
     // Callbacks to read and write cell data (reading must be pure/side-effect free)
     pure callback cell_value(int, int) -> string;
+    pure callback diagonal_max_value(int) -> string;
+    pure callback diagonal_min_value(int) -> string;
+    pure callback cell_has_error(int, int) -> bool;
+
     callback cell_edited(int, int, string);
+    callback diagonal_max_edited(int, string);
+    callback diagonal_min_edited(int, string);
 
     // Styling properties
-    in property <length> cell_width: 60px;
-    in property <length> cell_height: 32px;
+    in property <length> cell_width: 76px;
+    in property <length> cell_height: 48px;
     in property <length> header_height: 24px;
-    in property <length> header_width: 32px;
+    in property <length> header_width: 36px;
 
     preferred-height: matrix_layout.preferred-height + 12px;
     height: self.preferred-height;
@@ -125,17 +277,33 @@ export component Matrix {
                     }
                 }
 
-                for col[j] in root.headers: MatrixCell {
-                    property <bool> is_diag: i == j;
-                    property <bool> is_lower: i > j;
+                for col[j] in root.headers: Rectangle {
+                    width: root.cell_width;
+                    height: root.cell_height;
 
-                    text: root.cell_value(i, j);
-                    enabled: root.enabled;
-                    read_only: is_lower;
-                    is_diagonal: is_diag;
+                    if (i == j): DiagonalCell {
+                        max_text: root.diagonal_max_value(i);
+                        min_text: root.diagonal_min_value(i);
+                        enabled: root.enabled;
+                        has_error: root.cell_has_error(i, j);
 
-                    edited(val) => {
-                        root.cell_edited(i, j, val);
+                        max_edited(val) => {
+                            root.diagonal_max_edited(i, val);
+                        }
+                        min_edited(val) => {
+                            root.diagonal_min_edited(i, val);
+                        }
+                    }
+
+                    if (i != j): OffDiagonalCell {
+                        text: root.cell_value(i, j);
+                        enabled: root.enabled;
+                        is_upper: j > i;
+                        has_error: root.cell_has_error(i, j);
+
+                        edited(val) => {
+                            root.cell_edited(i, j, val);
+                        }
                     }
                 }
             }

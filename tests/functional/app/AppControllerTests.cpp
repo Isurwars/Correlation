@@ -226,6 +226,45 @@ TEST_F(AppControllerTests, PopulatesRecommendedBondCutoffs) {
   EXPECT_TRUE(found_si_si);
 }
 
+TEST_F(AppControllerTests, ResetsBondCutoffsToDefaultsWhenInvoked) {
+  auto window = AppWindow::create();
+  correlation::app::AppBackend backend;
+
+  std::string file_path = "../../examples/a-PdSi/a-PdSi.car";
+  if (!std::filesystem::exists(file_path)) {
+    file_path = "../examples/a-PdSi/a-PdSi.car";
+  }
+  if (!std::filesystem::exists(file_path)) {
+    file_path = "examples/a-PdSi/a-PdSi.car";
+  }
+  backend.load_file(file_path);
+
+  correlation::app::AppController controller(*window, backend);
+
+  // Set modified/custom cutoffs
+  auto cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
+  cutoffs->push_back({.element1 = "Pd", .element2 = "Pd", .min_distance = "9.99", .max_distance = "9.99"});
+  cutoffs->push_back({.element1 = "Pd", .element2 = "Si", .min_distance = "9.99", .max_distance = "9.99"});
+  cutoffs->push_back({.element1 = "Si", .element2 = "Si", .min_distance = "9.99", .max_distance = "9.99"});
+  window->set_bond_cutoffs(cutoffs);
+
+  // Invoke reset callback
+  window->invoke_reset_bond_cutoffs();
+
+  // Verify recommended defaults were restored
+  auto restored = window->get_bond_cutoffs();
+  ASSERT_EQ(restored->row_count(), 3);
+  for (size_t i = 0; i < restored->row_count(); ++i) {
+    auto item = restored->row_data(i).value();
+    std::string el1 = item.element1.data();
+    std::string el2 = item.element2.data();
+    if (el1 == "Pd" && el2 == "Pd") {
+      EXPECT_EQ(item.min_distance.data(), std::string("1.44"));
+      EXPECT_EQ(item.max_distance.data(), std::string("3.12"));
+    }
+  }
+}
+
 TEST_F(AppControllerTests, UpdatesActiveGroupFlagsWhenCalculatorsToggled) {
   auto window = AppWindow::create();
   correlation::app::AppBackend backend;

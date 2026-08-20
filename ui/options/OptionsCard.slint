@@ -46,6 +46,7 @@ export component OptionsCard inherits FilledCard {
     in property <[CalculatorGroup]> calculator_groups: [];
     in property <int> total_calculator_count: 0;
     callback toggle_calculator(string, bool);
+    callback reset_bond_cutoffs();
 
     in-out property <int> material_type: 0;
     in-out property <[BondCutoff]> bond_cutoffs: [];
@@ -248,6 +249,9 @@ export component OptionsCard inherits FilledCard {
                     file_loaded: root.file_loaded;
                     bond_cutoffs <=> root.bond_cutoffs;
                     atom_counts: root.atom_counts;
+                    reset_bond_cutoffs => {
+                        root.reset_bond_cutoffs();
+                    }
                     visible: root.active_tab == 0;
                     height: root.active_tab == 0 ? self.preferred-height : 0px;
                 }

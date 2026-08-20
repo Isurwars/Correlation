@@ -256,6 +256,16 @@ std::string AppBackend::validateOptions() const {
   if (options_.lef_sigma <= 0.0) {
     return "Error: lef_sigma must be strictly positive.";
   }
+  for (const auto &row : options_.bond_cutoffs) {
+    for (const auto &range : row) {
+      if (range.min_sq < 0.0 || range.max_sq < 0.0) {
+        return "Error: Bond cutoff bounds cannot be negative.";
+      }
+      if (range.min_sq > range.max_sq) {
+        return "Error: Minimum bond cutoff cannot be greater than maximum bond cutoff.";
+      }
+    }
+  }
   return "";
 }
 

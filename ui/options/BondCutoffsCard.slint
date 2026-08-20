@@ -18,7 +18,7 @@ export component BondCutoffsCard inherits FilledCard {
     in property <bool> file_loaded;
     in property <[AtomCount]> atom_counts;
     in-out property <[BondCutoff]> bond_cutoffs;
-    property <int> active_cutoff_tab: 0; // 0 = Max, 1 = Min
+    callback reset_bond_cutoffs();
 
     pure function get_flat_index(i: int, j: int, N: int) -> int {
         let r = min(i, j);
@@ -39,6 +39,16 @@ export component BondCutoffsCard inherits FilledCard {
                      (r == 13) ? 91 : 
                      (r == 14) ? 105 : 120;
         return r * N - r_term + c;
+    }
+
+    pure function pair_has_error(r: int, c: int) -> bool {
+        let idx = root.get_flat_index(min(r, c), max(r, c), root.atom_counts.length);
+        if (idx < root.bond_cutoffs.length) {
+            let min_val = root.bond_cutoffs[idx].min_distance.to-float();
+            let max_val = root.bond_cutoffs[idx].max_distance.to-float();
+            return min_val >= max_val || min_val < 0.0 || max_val <= 0.0;
+        }
+        return false;
     }
 
     Vertical {
@@ -67,37 +77,138 @@ export component BondCutoffsCard inherits FilledCard {
             }
 
             if (root.file_loaded): HorizontalLayout {
+                alignment: space-between;
                 spacing: 8px;
-                TabItem {
-                    text: "Max Cutoff";
-                    active: root.active_cutoff_tab == 0;
-                    clicked => { root.active_cutoff_tab = 0; }
+
+                // Legend
+                HorizontalLayout {
+                    spacing: 12px;
+                    alignment: start;
+
+                    // Upper / Max badge
+                    HorizontalLayout {
+                        spacing: 4px;
+                        alignment: center;
+                        Rectangle {
+                            width: 10px;
+                            height: 10px;
+                            border-radius: 2px;
+                            background: MaterialPalette.primary;
+                        }
+                        MaterialText {
+                            text: "▲ Upper: Max (Å)";
+                            style: MaterialTypography.label_small;
+                            font_size: 11px;
+                            color: MaterialPalette.on_surface_variant;
+                        }
+                    }
+
+                    // Lower / Min badge
+                    HorizontalLayout {
+                        spacing: 4px;
+                        alignment: center;
+                        Rectangle {
+                            width: 10px;
+                            height: 10px;
+                            border-radius: 2px;
+                            background: MaterialPalette.tertiary;
+                        }
+                        MaterialText {
+                            text: "▼ Lower: Min (Å)";
+                            style: MaterialTypography.label_small;
+                            font_size: 11px;
+                            color: MaterialPalette.on_surface_variant;
+                        }
+                    }
                 }
-                TabItem {
-                    text: "Min Cutoff";
-                    active: root.active_cutoff_tab == 1;
-                    clicked => { root.active_cutoff_tab = 1; }
+
+                // Reset Defaults action
+                TouchArea {
+                    width: reset_text.preferred-width + 12px;
+                    height: 22px;
+                    clicked => {
+                        root.reset_bond_cutoffs();
+                    }
+
+                    Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        background: parent.has-hover ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_low;
+                        border-radius: 4px;
+                        border-width: 1px;
+                        border-color: MaterialPalette.outline_variant.with_alpha(50%);
+
+                        reset_text := MaterialText {
+                            text: "Reset Defaults";
+                            style: MaterialTypography.label_small;
+                            font_size: 10px;
+                            font_weight: MaterialTypography.medium;
+                            color: MaterialPalette.primary;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
                 }
             }
 
             if (root.file_loaded): Matrix {
                 headers: root.atom_counts;
                 enabled: root.file_loaded;
+
                 cell_value(r, c) => {
-                    let idx = root.get_flat_index(r, c, root.atom_counts.length);
+                    let r_idx = min(r, c);
+                    let c_idx = max(r, c);
+                    let idx = root.get_flat_index(r_idx, c_idx, root.atom_counts.length);
                     if (idx < root.bond_cutoffs.length) {
-                        return (root.active_cutoff_tab == 0) ? root.bond_cutoffs[idx].max_distance : root.bond_cutoffs[idx].min_distance;
+                        return (c > r) ? root.bond_cutoffs[idx].max_distance : root.bond_cutoffs[idx].min_distance;
                     }
                     return "";
                 }
-                cell_edited(r, c, val) => {
-                    let idx = root.get_flat_index(r, c, root.atom_counts.length);
+
+                diagonal_max_value(i) => {
+                    let idx = root.get_flat_index(i, i, root.atom_counts.length);
                     if (idx < root.bond_cutoffs.length) {
-                        if (root.active_cutoff_tab == 0) {
+                        return root.bond_cutoffs[idx].max_distance;
+                    }
+                    return "";
+                }
+
+                diagonal_min_value(i) => {
+                    let idx = root.get_flat_index(i, i, root.atom_counts.length);
+                    if (idx < root.bond_cutoffs.length) {
+                        return root.bond_cutoffs[idx].min_distance;
+                    }
+                    return "";
+                }
+
+                cell_has_error(r, c) => {
+                    return root.pair_has_error(r, c);
+                }
+
+                cell_edited(r, c, val) => {
+                    let r_idx = min(r, c);
+                    let c_idx = max(r, c);
+                    let idx = root.get_flat_index(r_idx, c_idx, root.atom_counts.length);
+                    if (idx < root.bond_cutoffs.length) {
+                        if (c > r) {
                             root.bond_cutoffs[idx].max_distance = val;
                         } else {
                             root.bond_cutoffs[idx].min_distance = val;
                         }
+                    }
+                }
+
+                diagonal_max_edited(i, val) => {
+                    let idx = root.get_flat_index(i, i, root.atom_counts.length);
+                    if (idx < root.bond_cutoffs.length) {
+                        root.bond_cutoffs[idx].max_distance = val;
+                    }
+                }
+
+                diagonal_min_edited(i, val) => {
+                    let idx = root.get_flat_index(i, i, root.atom_counts.length);
+                    if (idx < root.bond_cutoffs.length) {
+                        root.bond_cutoffs[idx].min_distance = val;
                     }
                 }
             }
