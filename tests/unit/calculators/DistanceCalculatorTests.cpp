@@ -11,7 +11,6 @@ namespace correlation::testing {
 using namespace correlation::calculators;
 using namespace correlation::core;
 using correlation::analysis::BondCutoffMatrix;
-using correlation::analysis::BondCutoffRange;
 
 TEST(DistanceCalculatorTests, ComputesPairwiseDistancesAndNeighborGraph) {
   // Construct a cubic cell of size 10.0
@@ -126,10 +125,7 @@ TEST(DistanceCalculatorTests, AtomsOutsideCutoff) {
 
   // Cutoff = 2.0, so this pair should NOT be found
   real_t const cutoff_sq = 4.0;
-  BondCutoffMatrix const bond_cutoffs = {
-      {{0.36, 4.0}, {0.36, 4.0}},
-      {{0.36, 4.0}, {0.36, 4.0}}
-  };
+  BondCutoffMatrix const bond_cutoffs = {{{0.36, 4.0}, {0.36, 4.0}}, {{0.36, 4.0}, {0.36, 4.0}}};
 
   size_t const num_elements = cell.elements().size();
   DistanceTensor out_distances(num_elements, std::vector<std::vector<real_t>>(num_elements));
@@ -158,42 +154,63 @@ TEST(DistanceCalculatorTests, ThrowsOnInvalidCutoff) {
                std::invalid_argument);
 }
 
-TEST(DistanceCalculatorTests, EnforcesMinimumBondCutoff) {
+TEST(DistanceCalculatorTests, ThrowsWhenMinBondCutoffExceedsMax) {
   Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
   cell.addAtom("Si", {0.0, 0.0, 0.0});
-  cell.addAtom("Si", {0.4, 0.0, 0.0}); // Distance = 0.4 Å (below default min 0.6 Å)
-  cell.addAtom("Si", {1.5, 0.0, 0.0}); // Distance = 1.5 Å (within [0.6, 2.0] Å)
 
-  real_t const cutoff_sq = 9.0;
+  // min_sq (4.0) > max_sq (2.25)
+  BondCutoffMatrix const invalid_cutoffs = {{{4.0, 2.25}}};
+  size_t const num_elements = cell.elements().size();
+  DistanceTensor out_distances(num_elements, std::vector<std::vector<real_t>>(num_elements));
+  NeighborGraph out_graph(1);
 
-  // 1. Test with default min cutoff (0.60 Å -> 0.36 Å²)
-  {
-    BondCutoffMatrix const bond_cutoffs = {{{0.36, 4.0}}}; // min = 0.6 Å, max = 2.0 Å
-    size_t const num_elements = cell.elements().size();
-    DistanceTensor out_distances(num_elements, std::vector<std::vector<real_t>>(num_elements));
-    NeighborGraph out_graph(3);
+  EXPECT_THROW(DistanceCalculator::compute(cell, 9.0, invalid_cutoffs, true, out_distances, out_graph),
+               std::invalid_argument);
+}
 
-    DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_distances, out_graph);
+TEST(DistanceCalculatorTests, ThrowsWhenCutoffBoundsAreNegative) {
+  Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
+  cell.addAtom("Si", {0.0, 0.0, 0.0});
 
-    // Atom 0 and 1 are 0.4 Å apart: in distance tensor, but NOT in neighbor graph (0.4 < 0.6)
-    EXPECT_FALSE(out_graph.areConnected(AtomIndex{0}, AtomIndex{1}));
-    // Atom 0 and 2 are 1.5 Å apart: in neighbor graph (1.5 in [0.6, 2.0])
-    EXPECT_TRUE(out_graph.areConnected(AtomIndex{0}, AtomIndex{2}));
-  }
+  size_t const num_elements = cell.elements().size();
+  DistanceTensor out_distances(num_elements, std::vector<std::vector<real_t>>(num_elements));
+  NeighborGraph out_graph(1);
 
-  // 2. Test with custom explicit min cutoff (0.30 Å -> 0.09 Å²)
-  {
-    BondCutoffMatrix const custom_cutoffs = {{{0.09, 4.0}}};
-    size_t const num_elements = cell.elements().size();
-    DistanceTensor out_distances(num_elements, std::vector<std::vector<real_t>>(num_elements));
-    NeighborGraph out_graph(3);
+  BondCutoffMatrix const neg_min = {{{-0.5, 4.0}}};
+  EXPECT_THROW(DistanceCalculator::compute(cell, 9.0, neg_min, true, out_distances, out_graph), std::invalid_argument);
 
-    DistanceCalculator::compute(cell, cutoff_sq, custom_cutoffs, true, out_distances, out_graph);
+  BondCutoffMatrix const neg_max = {{{0.5, -4.0}}};
+  EXPECT_THROW(DistanceCalculator::compute(cell, 9.0, neg_max, true, out_distances, out_graph), std::invalid_argument);
+}
 
-    // Atom 0 and 1 (0.4 Å) is now within [0.3, 2.0]
-    EXPECT_TRUE(out_graph.areConnected(AtomIndex{0}, AtomIndex{1}));
-    EXPECT_TRUE(out_graph.areConnected(AtomIndex{0}, AtomIndex{2}));
-  }
+TEST(DistanceCalculatorTests, EnforcesMinimumAndMaximumBondCutoffs) {
+  Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
+  cell.addAtom("Si", {0.0, 0.0, 0.0});
+  cell.addAtom("Si", {0.4, 0.0, 0.0}); // Distance = 0.4 Å (below min 0.8 Å)
+  cell.addAtom("Si", {1.5, 0.0, 0.0}); // Distance = 1.5 Å (within [0.8, 2.0] Å)
+  cell.addAtom("Si", {2.5, 0.0, 0.0}); // Distance = 2.5 Å (above max 2.0 Å, below global cutoff 3.0 Å)
+
+  real_t const cutoff_sq = 9.0; // Global search cutoff = 3.0 Å
+
+  // Bond cutoff window: [0.8 Å, 2.0 Å] -> [0.64 Å², 4.00 Å²]
+  BondCutoffMatrix const bond_cutoffs = {{{0.64, 4.00}}};
+  size_t const num_elements = cell.elements().size();
+  DistanceTensor out_distances(num_elements, std::vector<std::vector<real_t>>(num_elements));
+  NeighborGraph out_graph(4);
+
+  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_distances, out_graph);
+
+  // All 3 pairs are within global cutoff 3.0 Å, so they appear in distance tensor
+  EXPECT_GE(out_distances[0][0].size(), 3);
+
+  // Atom 0 (0.0) -> Atom 1 (0.4 Å): excluded from bonds (0.4 < 0.8 min cutoff)
+  EXPECT_FALSE(out_graph.areConnected(AtomIndex{0}, AtomIndex{1}));
+
+  // Atom 0 (0.0) -> Atom 2 (1.5 Å): connected as bond (0.8 <= 1.5 <= 2.0)
+  EXPECT_TRUE(out_graph.areConnected(AtomIndex{0}, AtomIndex{2}));
+
+  // Atom 0 (0.0) -> Atom 3 (2.5 Å): excluded from bonds (2.5 > 2.0 max cutoff)
+  EXPECT_FALSE(out_graph.areConnected(AtomIndex{0}, AtomIndex{3}));
 }
 
 } // namespace correlation::testing

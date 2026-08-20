@@ -297,18 +297,33 @@ void ThreadLocalDistances::computeDistances(size_t atom_idx, const std::vector<c
     }
   }
 }
-} // namespace
-
-void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cutoff_sq,
-                                 const correlation::analysis::BondCutoffMatrix &bond_cutoffs,
-                                 bool ignore_periodic_self_interactions, DistanceTensor &out_distances,
-                                 correlation::core::NeighborGraph &out_graph) {
-
+/**
+ * @brief Validates input parameters for distance computation.
+ */
+void validateInputs(real_t cutoff_sq, const correlation::analysis::BondCutoffMatrix &bond_cutoffs) {
   if (cutoff_sq <= 0.0) {
     throw std::invalid_argument("Cutoff squared must be strictly positive.");
   }
 
+  for (const auto &row : bond_cutoffs) {
+    for (const auto &range : row) {
+      if (range.min_sq < 0.0 || range.max_sq < 0.0) {
+        throw std::invalid_argument("Bond cutoff bounds cannot be negative.");
+      }
+      if (range.min_sq > range.max_sq) {
+        throw std::invalid_argument("Minimum bond cutoff cannot be greater than maximum bond cutoff.");
+      }
+    }
+  }
+}
+
 #if defined(CORRELATION_USE_CUDA) || defined(CORRELATION_USE_HIP)
+/**
+ * @brief Dispatches calculation to GPU if a compatible device is present.
+ */
+bool tryComputeGpu(const correlation::core::Cell &cell, real_t cutoff_sq,
+                   const correlation::analysis::BondCutoffMatrix &bond_cutoffs, bool ignore_periodic_self_interactions,
+                   DistanceTensor &out_distances, correlation::core::NeighborGraph &out_graph) {
   if (gpu::has_gpu_device()) {
     std::vector<std::vector<real_t>> max_cutoffs_sq(bond_cutoffs.size());
     for (size_t i = 0; i < bond_cutoffs.size(); ++i) {
@@ -319,82 +334,42 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cut
     }
     gpu::compute_distances_gpu(cell, cutoff_sq, max_cutoffs_sq, ignore_periodic_self_interactions, out_distances,
                                out_graph);
-    return;
+    return true;
   }
+  return false;
+}
 #endif
 
-  const auto &atoms = cell.atoms();
-  const size_t atom_count = atoms.size();
-  const size_t num_elements = cell.elements().size();
+/**
+ * @brief Computes search grid dimensions and cutoff parameters.
+ */
+SearchGridConfig buildSearchGridConfig(const correlation::core::Cell &cell, real_t cutoff_sq,
+                                       bool &ignore_periodic_self_interactions) {
   const auto &lattice = cell.latticeVectors();
+  const math::Vector3<real_t> lattice_a = lattice[0];
+  const math::Vector3<real_t> lattice_b = lattice[1];
+  const math::Vector3<real_t> lattice_c = lattice[2];
 
-  // New Cell-List logic
-  math::Vector3<real_t> lattice_a = lattice[0];
-  math::Vector3<real_t> lattice_b = lattice[1];
-  math::Vector3<real_t> lattice_c = lattice[2];
+  const real_t vol = cell.volume();
+  const real_t width_x = vol / correlation::math::norm(correlation::math::cross(lattice_b, lattice_c));
+  const real_t width_y = vol / correlation::math::norm(correlation::math::cross(lattice_a, lattice_c));
+  const real_t width_z = vol / correlation::math::norm(correlation::math::cross(lattice_a, lattice_b));
 
-  real_t vol = cell.volume();
-  real_t width_x = vol / correlation::math::norm(correlation::math::cross(lattice_b, lattice_c));
-  real_t width_y = vol / correlation::math::norm(correlation::math::cross(lattice_a, lattice_c));
-  real_t width_z = vol / correlation::math::norm(correlation::math::cross(lattice_a, lattice_b));
+  const real_t cutoff = std::sqrt(cutoff_sq);
 
-  real_t cutoff = std::sqrt(cutoff_sq);
+  const int K_x = std::max(1, static_cast<int>(std::floor(width_x / cutoff)));
+  const int K_y = std::max(1, static_cast<int>(std::floor(width_y / cutoff)));
+  const int K_z = std::max(1, static_cast<int>(std::floor(width_z / cutoff)));
 
-  int K_x = std::max(1, static_cast<int>(std::floor(width_x / cutoff)));
-  int K_y = std::max(1, static_cast<int>(std::floor(width_y / cutoff)));
-  int K_z = std::max(1, static_cast<int>(std::floor(width_z / cutoff)));
-
-  int max_dx = (K_x == 1) ? static_cast<int>(std::ceil(cutoff / width_x)) : 1;
-  int max_dy = (K_y == 1) ? static_cast<int>(std::ceil(cutoff / width_y)) : 1;
-  int max_dz = (K_z == 1) ? static_cast<int>(std::ceil(cutoff / width_z)) : 1;
+  const int max_dx = (K_x == 1) ? static_cast<int>(std::ceil(cutoff / width_x)) : 1;
+  const int max_dy = (K_y == 1) ? static_cast<int>(std::ceil(cutoff / width_y)) : 1;
+  const int max_dz = (K_z == 1) ? static_cast<int>(std::ceil(cutoff / width_z)) : 1;
 
   if (max_dx + max_dy + max_dz > 8) {
     ignore_periodic_self_interactions = false;
   }
 
-  auto num_bins = static_cast<size_t>(K_x) * static_cast<size_t>(K_y) * static_cast<size_t>(K_z);
-  std::vector<size_t> bin_counts(num_bins, 0);
-  std::vector<int> atom_bin(atom_count);
-
-  std::vector<real_t> wrapped_x(atom_count);
-  std::vector<real_t> wrapped_y(atom_count);
-  std::vector<real_t> wrapped_z(atom_count);
-
-  for (size_t i = 0; i < atom_count; ++i) {
-    correlation::math::Vector3<real_t> frac = cell.inverseLatticeVectors() * atoms[i].position();
-    real_t f_x = frac.x() - std::floor(frac.x());
-    real_t f_y = frac.y() - std::floor(frac.y());
-    real_t f_z = frac.z() - std::floor(frac.z());
-
-    // Use std::fma for extremely precise coordinate mapping
-    wrapped_x[i] = std::fma(f_z, lattice[2].x(), std::fma(f_y, lattice[1].x(), f_x * lattice[0].x()));
-    wrapped_y[i] = std::fma(f_z, lattice[2].y(), std::fma(f_y, lattice[1].y(), f_x * lattice[0].y()));
-    wrapped_z[i] = std::fma(f_z, lattice[2].z(), std::fma(f_y, lattice[1].z(), f_x * lattice[0].z()));
-
-    int c_x = std::clamp(static_cast<int>(std::floor(f_x * static_cast<real_t>(K_x))), 0, K_x - 1);
-    int c_y = std::clamp(static_cast<int>(std::floor(f_y * static_cast<real_t>(K_y))), 0, K_y - 1);
-    int c_z = std::clamp(static_cast<int>(std::floor(f_z * static_cast<real_t>(K_z))), 0, K_z - 1);
-
-    int bin_idx = c_x * (K_y * K_z) + c_y * K_z + c_z;
-    atom_bin[i] = bin_idx;
-    bin_counts[bin_idx]++;
-  }
-
-  // Build prefix-sum offsets for flat cell list
-  std::vector<size_t> bin_offsets(num_bins + 1, 0);
-  for (size_t bin_idx = 0; bin_idx < num_bins; ++bin_idx) {
-    bin_offsets[bin_idx + 1] = bin_offsets[bin_idx] + bin_counts[bin_idx];
-  }
-
-  // Populate flat bin indices
-  std::vector<size_t> bin_indices(atom_count);
-  std::vector<size_t> insertion_cursors = bin_offsets;
-  for (size_t i = 0; i < atom_count; ++i) {
-    int bin_idx = atom_bin[i];
-    bin_indices[insertion_cursors[bin_idx]++] = i;
-  }
-
-  SearchGridConfig grid_config{
+  return SearchGridConfig{
       .K_x = K_x,
       .K_y = K_y,
       .K_z = K_z,
@@ -402,33 +377,103 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cut
       .max_dy = max_dy,
       .max_dz = max_dz,
   };
+}
 
-  SoACoordinates coords{
-      .x = wrapped_x.data(),
-      .y = wrapped_y.data(),
-      .z = wrapped_z.data(),
+/**
+ * @struct WrappedPositions
+ * @brief Holds wrapped Cartesian coordinates and cell-bin metadata.
+ */
+struct WrappedPositions {
+  std::vector<real_t> wrapped_x;
+  std::vector<real_t> wrapped_y;
+  std::vector<real_t> wrapped_z;
+  std::vector<int> atom_bin;
+  std::vector<size_t> bin_counts;
+};
+
+/**
+ * @brief Computes wrapped coordinates and bin distributions for cell atoms.
+ */
+WrappedPositions buildWrappedPositionsAndBins(const correlation::core::Cell &cell,
+                                              const SearchGridConfig &grid_config) {
+  const auto &atoms = cell.atoms();
+  const size_t atom_count = atoms.size();
+  const auto &lattice = cell.latticeVectors();
+  const auto num_bins = static_cast<size_t>(grid_config.K_x) * static_cast<size_t>(grid_config.K_y) *
+                        static_cast<size_t>(grid_config.K_z);
+
+  WrappedPositions pos{
+      .wrapped_x = std::vector<real_t>(atom_count),
+      .wrapped_y = std::vector<real_t>(atom_count),
+      .wrapped_z = std::vector<real_t>(atom_count),
+      .atom_bin = std::vector<int>(atom_count),
+      .bin_counts = std::vector<size_t>(num_bins, 0),
   };
 
-  FlatCellList cell_list{
-      .offsets = bin_offsets.data(),
-      .indices = bin_indices.data(),
+  for (size_t i = 0; i < atom_count; ++i) {
+    const correlation::math::Vector3<real_t> frac = cell.inverseLatticeVectors() * atoms[i].position();
+    const real_t f_x = frac.x() - std::floor(frac.x());
+    const real_t f_y = frac.y() - std::floor(frac.y());
+    const real_t f_z = frac.z() - std::floor(frac.z());
+
+    pos.wrapped_x[i] = std::fma(f_z, lattice[2].x(), std::fma(f_y, lattice[1].x(), f_x * lattice[0].x()));
+    pos.wrapped_y[i] = std::fma(f_z, lattice[2].y(), std::fma(f_y, lattice[1].y(), f_x * lattice[0].y()));
+    pos.wrapped_z[i] = std::fma(f_z, lattice[2].z(), std::fma(f_y, lattice[1].z(), f_x * lattice[0].z()));
+
+    const int c_x =
+        std::clamp(static_cast<int>(std::floor(f_x * static_cast<real_t>(grid_config.K_x))), 0, grid_config.K_x - 1);
+    const int c_y =
+        std::clamp(static_cast<int>(std::floor(f_y * static_cast<real_t>(grid_config.K_y))), 0, grid_config.K_y - 1);
+    const int c_z =
+        std::clamp(static_cast<int>(std::floor(f_z * static_cast<real_t>(grid_config.K_z))), 0, grid_config.K_z - 1);
+
+    const int bin_idx = c_x * (grid_config.K_y * grid_config.K_z) + c_y * grid_config.K_z + c_z;
+    pos.atom_bin[i] = bin_idx;
+    pos.bin_counts[bin_idx]++;
+  }
+
+  return pos;
+}
+
+/**
+ * @struct FlatCellListData
+ * @brief Storage for flat cell list index offsets and flattened indices.
+ */
+struct FlatCellListData {
+  std::vector<size_t> bin_offsets;
+  std::vector<size_t> bin_indices;
+};
+
+/**
+ * @brief Constructs flattened cell list prefix sum and index buffer.
+ */
+FlatCellListData buildFlatCellList(const std::vector<size_t> &bin_counts, const std::vector<int> &atom_bin,
+                                   size_t atom_count) {
+  const size_t num_bins = bin_counts.size();
+  std::vector<size_t> bin_offsets(num_bins + 1, 0);
+  for (size_t bin_idx = 0; bin_idx < num_bins; ++bin_idx) {
+    bin_offsets[bin_idx + 1] = bin_offsets[bin_idx] + bin_counts[bin_idx];
+  }
+
+  std::vector<size_t> bin_indices(atom_count);
+  std::vector<size_t> insertion_cursors = bin_offsets;
+  for (size_t i = 0; i < atom_count; ++i) {
+    const int bin_idx = atom_bin[i];
+    bin_indices[insertion_cursors[bin_idx]++] = i;
+  }
+
+  return {
+      .bin_offsets = std::move(bin_offsets),
+      .bin_indices = std::move(bin_indices),
   };
+}
 
-  tbb::enumerable_thread_specific<ThreadLocalDistances> ets(ThreadLocalConfig{
-      .num_elements = num_elements,
-      .atom_count = atom_count,
-  });
-
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, atom_count), [&](const tbb::blocked_range<size_t> &range) {
-    ThreadLocalDistances &local_results = ets.local();
-    for (size_t i = range.begin(); i != range.end(); ++i) {
-      local_results.collectCandidates(i, coords, atom_bin, cell_list, lattice, grid_config,
-                                      ignore_periodic_self_interactions);
-      local_results.computeDistances(i, atoms, coords, cutoff_sq, bond_cutoffs);
-    }
-  });
-
-  for (auto &local_results : ets) {
+/**
+ * @brief Merges thread-local distance calculations into output containers.
+ */
+void mergeThreadResults(const tbb::enumerable_thread_specific<ThreadLocalDistances> &ets, size_t num_elements,
+                        DistanceTensor &out_distances, correlation::core::NeighborGraph &out_graph) {
+  for (const auto &local_results : ets) {
     for (size_t i = 0; i < num_elements; ++i) {
       for (size_t j_idx = 0; j_idx < num_elements; ++j_idx) {
         out_distances[i][j_idx].insert(out_distances[i][j_idx].end(),
@@ -445,6 +490,57 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cut
       });
     }
   }
+}
+
+} // namespace
+
+void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cutoff_sq,
+                                 const correlation::analysis::BondCutoffMatrix &bond_cutoffs,
+                                 bool ignore_periodic_self_interactions, DistanceTensor &out_distances,
+                                 correlation::core::NeighborGraph &out_graph) {
+  validateInputs(cutoff_sq, bond_cutoffs);
+
+#if defined(CORRELATION_USE_CUDA) || defined(CORRELATION_USE_HIP)
+  if (tryComputeGpu(cell, cutoff_sq, bond_cutoffs, ignore_periodic_self_interactions, out_distances, out_graph)) {
+    return;
+  }
+#endif
+
+  const auto &atoms = cell.atoms();
+  const size_t atom_count = atoms.size();
+  const size_t num_elements = cell.elements().size();
+  const auto &lattice = cell.latticeVectors();
+
+  const SearchGridConfig grid_config = buildSearchGridConfig(cell, cutoff_sq, ignore_periodic_self_interactions);
+  const WrappedPositions wrapped = buildWrappedPositionsAndBins(cell, grid_config);
+  const FlatCellListData cell_list_data = buildFlatCellList(wrapped.bin_counts, wrapped.atom_bin, atom_count);
+
+  const SoACoordinates coords{
+      .x = wrapped.wrapped_x.data(),
+      .y = wrapped.wrapped_y.data(),
+      .z = wrapped.wrapped_z.data(),
+  };
+
+  const FlatCellList cell_list{
+      .offsets = cell_list_data.bin_offsets.data(),
+      .indices = cell_list_data.bin_indices.data(),
+  };
+
+  tbb::enumerable_thread_specific<ThreadLocalDistances> ets(ThreadLocalConfig{
+      .num_elements = num_elements,
+      .atom_count = atom_count,
+  });
+
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, atom_count), [&](const tbb::blocked_range<size_t> &range) {
+    ThreadLocalDistances &local_results = ets.local();
+    for (size_t i = range.begin(); i != range.end(); ++i) {
+      local_results.collectCandidates(i, coords, wrapped.atom_bin, cell_list, lattice, grid_config,
+                                      ignore_periodic_self_interactions);
+      local_results.computeDistances(i, atoms, coords, cutoff_sq, bond_cutoffs);
+    }
+  });
+
+  mergeThreadResults(ets, num_elements, out_distances, out_graph);
 }
 
 } // namespace correlation::calculators

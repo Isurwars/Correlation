@@ -53,7 +53,13 @@ BondCutoffMatrix parse_bond_cutoff_matrix(const py::object &bond_cutoffs_obj) {
           cutoffs[i][j] = BondCutoffRange{.min_sq = pair.first, .max_sq = pair.second};
         } else {
           real_t max_val = row[j].cast<real_t>();
-          cutoffs[i][j] = BondCutoffRange{.min_sq = static_cast<real_t>(0.36), .max_sq = max_val};
+          cutoffs[i][j] = BondCutoffRange{.min_sq = static_cast<real_t>(0.0), .max_sq = max_val};
+        }
+        if (cutoffs[i][j].min_sq < 0.0 || cutoffs[i][j].max_sq < 0.0) {
+          throw py::value_error("Bond cutoff bounds cannot be negative.");
+        }
+        if (cutoffs[i][j].min_sq > cutoffs[i][j].max_sq) {
+          throw py::value_error("Minimum bond cutoff cannot be greater than maximum bond cutoff.");
         }
       }
     }
@@ -69,11 +75,21 @@ void init_analysis(py::module_ &mod) {
   // ------------------------------------------------------------------
   py::class_<BondCutoffRange>(mod, "BondCutoffRange", "Squared minimum and maximum bond distance cutoff bounds.")
       .def(py::init<>())
-      .def(py::init<real_t, real_t>(), py::arg("min_sq"), py::arg("max_sq"))
+      .def(py::init([](real_t min_sq, real_t max_sq) {
+             if (min_sq < 0.0 || max_sq < 0.0) {
+               throw py::value_error("Bond cutoff bounds cannot be negative.");
+             }
+             if (min_sq > max_sq) {
+               throw py::value_error("Minimum bond cutoff cannot be greater than maximum bond cutoff.");
+             }
+             return BondCutoffRange{min_sq, max_sq};
+           }),
+           py::arg("min_sq"), py::arg("max_sq"))
       .def_readwrite("min_sq", &BondCutoffRange::min_sq)
       .def_readwrite("max_sq", &BondCutoffRange::max_sq)
       .def("__repr__", [](const BondCutoffRange &range) {
-        return "<BondCutoffRange min_sq=" + std::to_string(range.min_sq) + " max_sq=" + std::to_string(range.max_sq) + ">";
+        return "<BondCutoffRange min_sq=" + std::to_string(range.min_sq) + " max_sq=" + std::to_string(range.max_sq) +
+               ">";
       });
 
   // ------------------------------------------------------------------

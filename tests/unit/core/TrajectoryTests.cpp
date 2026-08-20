@@ -171,22 +171,50 @@ TEST_F(TrajectoryTests, CalculateVelocitiesHandlesPBC) {
 
 TEST_F(TrajectoryTests, SetBondCutoffsManuallyWorks) {
   Trajectory traj;
-  traj.setBondCutoffs({{{0.36, 2.25}, {0.36, 4.0}}, {{0.36, 4.0}, {0.36, 6.25}}});
-  EXPECT_DOUBLE_EQ(traj.getBondCutoffSQ(0, 0), 2.25);
+  traj.setBondCutoffs({{{0.36, 2.25}, {0.49, 4.0}}, {{0.49, 4.0}, {0.64, 6.25}}});
+  EXPECT_NEAR(traj.getMinBondCutoffSQ(0, 0), 0.36, 1e-5);
+  EXPECT_NEAR(traj.getBondCutoffSQ(0, 0), 2.25, 1e-5);
+  EXPECT_NEAR(traj.getMinBondCutoff(0, 0), 0.6, 1e-5);
+  EXPECT_NEAR(traj.getBondCutoff(0, 0), 1.5, 1e-5);
+  EXPECT_NEAR(traj.getMinBondCutoffSQ(1, 1), 0.64, 1e-5);
+  EXPECT_NEAR(traj.getBondCutoffSQ(1, 1), 6.25, 1e-5);
+}
+
+TEST_F(TrajectoryTests, SetBondCutoffsThrowsWhenMinGreaterThanMax) {
+  Trajectory traj;
+  // min_sq (4.0) > max_sq (2.25)
+  EXPECT_THROW(traj.setBondCutoffs({{{4.0, 2.25}}}), std::invalid_argument);
+}
+
+TEST_F(TrajectoryTests, SetBondCutoffsThrowsWhenBoundsNegative) {
+  Trajectory traj;
+  EXPECT_THROW(traj.setBondCutoffs({{{-0.1, 2.25}}}), std::invalid_argument);
+  EXPECT_THROW(traj.setBondCutoffs({{{0.1, -2.25}}}), std::invalid_argument);
 }
 
 TEST_F(TrajectoryTests, PrecomputeBondCutoffsCalculatesCorrectly) {
   Cell frame({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
   frame.addAtom("H", {0, 0, 0});
+  frame.addAtom("O", {1.0, 0, 0});
   Trajectory const traj({frame}, 1.0);
   traj.precomputeBondCutoffs();
+
   real_t const r_h = correlation::physics::getCovalentRadius("H");
-  real_t const expected_min = (r_h + r_h) * static_cast<real_t>(0.6);
-  real_t const expected_max = (r_h + r_h) * static_cast<real_t>(1.3);
-  EXPECT_NEAR(traj.getMinBondCutoff(0, 0), expected_min, 1e-5);
-  EXPECT_NEAR(traj.getBondCutoff(0, 0), expected_max, 1e-5);
-  EXPECT_NEAR(traj.getMinBondCutoffSQ(0, 0), expected_min * expected_min, 1e-5);
-  EXPECT_NEAR(traj.getBondCutoffSQ(0, 0), expected_max * expected_max, 1e-5);
+  real_t const r_o = correlation::physics::getCovalentRadius("O");
+
+  // H-H pair
+  real_t const expected_hh_min = (r_h + r_h) * static_cast<real_t>(0.6);
+  real_t const expected_hh_max = (r_h + r_h) * static_cast<real_t>(1.3);
+  EXPECT_NEAR(traj.getMinBondCutoff(0, 0), expected_hh_min, 1e-5);
+  EXPECT_NEAR(traj.getBondCutoff(0, 0), expected_hh_max, 1e-5);
+  EXPECT_LT(traj.getMinBondCutoff(0, 0), traj.getBondCutoff(0, 0));
+
+  // H-O pair
+  real_t const expected_ho_min = (r_h + r_o) * static_cast<real_t>(0.6);
+  real_t const expected_ho_max = (r_h + r_o) * static_cast<real_t>(1.3);
+  EXPECT_NEAR(traj.getMinBondCutoff(0, 1), expected_ho_min, 1e-5);
+  EXPECT_NEAR(traj.getBondCutoff(0, 1), expected_ho_max, 1e-5);
+  EXPECT_LT(traj.getMinBondCutoff(0, 1), traj.getBondCutoff(0, 1));
 }
 
 TEST_F(TrajectoryTests, CalculateVelocitiesDoesNotCrashOnEmptyTrajectory) {

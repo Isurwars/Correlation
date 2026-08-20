@@ -204,15 +204,20 @@ TEST_F(AppControllerTests, PopulatesRecommendedBondCutoffs) {
     auto item = cutoffs->row_data(i).value();
     std::string el1 = item.element1.data();
     std::string el2 = item.element2.data();
-    EXPECT_EQ(item.min_distance.data(), std::string("0.60"));
     if (el1 == "Pd" && el2 == "Pd") {
       found_pd_pd = true;
+      EXPECT_EQ(item.min_distance.data(), std::string("1.44"));
+      EXPECT_EQ(item.max_distance.data(), std::string("3.12"));
     }
     if ((el1 == "Pd" && el2 == "Si") || (el1 == "Si" && el2 == "Pd")) {
       found_pd_si = true;
+      EXPECT_EQ(item.min_distance.data(), std::string("1.42"));
+      EXPECT_EQ(item.max_distance.data(), std::string("3.07"));
     }
     if (el1 == "Si" && el2 == "Si") {
       found_si_si = true;
+      EXPECT_EQ(item.min_distance.data(), std::string("1.39"));
+      EXPECT_EQ(item.max_distance.data(), std::string("3.02"));
     }
   }
 

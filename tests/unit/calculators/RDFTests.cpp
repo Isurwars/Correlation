@@ -371,8 +371,8 @@ TEST_F(RDFTests, VerifyAshcroftWeightsAreCorrect) {
 }
 
 TEST_F(RDFTests, FCC_Copper_RDF) {
-  real_t const a = 3.615;
-  auto cell = correlation::testing::crystals::createFCCCell(a, "Cu", 2, 2, 2);
+  real_t const lat_a = 3.615;
+  auto cell = correlation::testing::crystals::createFCCCell(lat_a, "Cu", 2, 2, 2);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 5.0, trajectory_.getBondCutoffsSQ());
@@ -394,13 +394,13 @@ TEST_F(RDFTests, FCC_Copper_RDF) {
       }
     }
   }
-  EXPECT_NEAR(peak_r1, a / std::numbers::sqrt2, 0.02);
+  EXPECT_NEAR(peak_r1, lat_a / std::numbers::sqrt2, 0.02);
   EXPECT_GT(max_val1, 1.0);
 }
 
 TEST_F(RDFTests, BCC_Iron_RDF) {
-  real_t const a = 2.866;
-  auto cell = correlation::testing::crystals::createBCCCell(a, "Fe", 3, 3, 3);
+  real_t const lat_a = 2.866;
+  auto cell = correlation::testing::crystals::createBCCCell(lat_a, "Fe", 3, 3, 3);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 4.5, trajectory_.getBondCutoffsSQ());
@@ -422,13 +422,13 @@ TEST_F(RDFTests, BCC_Iron_RDF) {
       }
     }
   }
-  EXPECT_NEAR(peak_r1, a * std::sqrt(3.0) / 2.0, 0.02);
+  EXPECT_NEAR(peak_r1, lat_a * std::sqrt(3.0) / 2.0, 0.02);
   EXPECT_GT(max_val1, 1.0);
 }
 
 TEST_F(RDFTests, Diamond_Silicon_RDF) {
-  real_t const a = 5.431;
-  auto cell = correlation::testing::crystals::createDiamondCell(a, "Si", 2, 2, 2);
+  real_t const lat_a = 5.431;
+  auto cell = correlation::testing::crystals::createDiamondCell(lat_a, "Si", 2, 2, 2);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 5.0, trajectory_.getBondCutoffsSQ());
@@ -450,13 +450,13 @@ TEST_F(RDFTests, Diamond_Silicon_RDF) {
       }
     }
   }
-  EXPECT_NEAR(peak_r1, a * std::sqrt(3.0) / 4.0, 0.02);
+  EXPECT_NEAR(peak_r1, lat_a * std::sqrt(3.0) / 4.0, 0.02);
   EXPECT_GT(max_val1, 1.0);
 }
 
 TEST_F(RDFTests, NaCl_RockSalt_RDF) {
-  real_t const a = 5.64;
-  auto cell = correlation::testing::crystals::createNaClCell(a, "Na", "Cl", 2, 2, 2);
+  real_t const lat_a = 5.64;
+  auto cell = correlation::testing::crystals::createNaClCell(lat_a, "Na", "Cl", 2, 2, 2);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 5.0, trajectory_.getBondCutoffsSQ());
@@ -479,7 +479,7 @@ TEST_F(RDFTests, NaCl_RockSalt_RDF) {
       }
     }
   }
-  EXPECT_NEAR(peak_nacl, a / 2.0, 0.02);
+  EXPECT_NEAR(peak_nacl, lat_a / 2.0, 0.02);
   EXPECT_GT(max_nacl, 1.0);
 
   real_t max_nana = 0;
@@ -492,7 +492,7 @@ TEST_F(RDFTests, NaCl_RockSalt_RDF) {
       }
     }
   }
-  EXPECT_NEAR(peak_nana, a / std::numbers::sqrt2, 0.02);
+  EXPECT_NEAR(peak_nana, lat_a / std::numbers::sqrt2, 0.02);
   EXPECT_GT(max_nana, 1.0);
 }
 } // namespace correlation::analysis

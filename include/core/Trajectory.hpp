@@ -152,8 +152,9 @@ public:
   /**
    * @brief Sets the bond cutoff matrix for neighbor searching.
    * @param cutoffs Matrix of bond cutoff ranges [type1][type2].
+   * @throws std::invalid_argument If any cutoff bound is negative or min_sq > max_sq.
    */
-  void setBondCutoffs(const correlation::analysis::BondCutoffMatrix &cutoffs) { bond_cutoffs_ = cutoffs; }
+  void setBondCutoffs(const correlation::analysis::BondCutoffMatrix &cutoffs);
 
   /**
    * @brief Removes consecutive duplicated frames from the trajectory.
@@ -211,8 +212,8 @@ private:
   mutable std::vector<Cell> frames_; ///< Collection of simulation snapshots.
   mutable std::optional<Cell> first_frame_;
   mutable correlation::analysis::BondCutoffMatrix bond_cutoffs_; ///< Cached bond cutoff ranges.
-  real_t time_step_;                                            ///< Time between snapshots.
-  size_t removed_frames_count_{0};                              ///< Counter for deduplicated frames.
+  real_t time_step_;                                             ///< Time between snapshots.
+  size_t removed_frames_count_{0};                               ///< Counter for deduplicated frames.
 
   std::shared_ptr<MappedFile> mapped_file_;
   std::vector<size_t> frame_offsets_;

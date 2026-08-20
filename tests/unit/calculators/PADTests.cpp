@@ -577,4 +577,95 @@ TEST_F(PADTests, IcosahedronAnglesPAD) {
   EXPECT_TRUE(found_116) << "Should find PAD peak near 116.57 degrees";
   EXPECT_TRUE(found_180) << "Should find PAD peak near 180.00 degrees";
 }
+
+TEST_F(PADTests, BondDistanceBelowMinCutoffProducesNoAngles) {
+  // Center Si at (10, 10, 10), O at (10.5, 10, 10) [dist 0.5 Å], O at (10, 11.5, 10) [dist 1.5 Å]
+  cell_.addAtom("Si", {10.0, 10.0, 10.0});
+  cell_.addAtom("O", {10.5, 10.0, 10.0}); // dist = 0.5 Å
+  cell_.addAtom("O", {10.0, 11.5, 10.0}); // dist = 1.5 Å
+  updateTrajectory();
+
+  int const id_si = cell_.findElement("Si")->id.value;
+  int const id_o = cell_.findElement("O")->id.value;
+
+  // Cutoff range for Si-O: [1.0 Å, 2.0 Å] -> min_sq = 1.0, max_sq = 4.0; O-O and Si-Si = 0
+  BondCutoffMatrix cutoffs(2, std::vector<BondCutoffRange>(2, BondCutoffRange{0.0, 0.0}));
+  cutoffs[id_si][id_o] = BondCutoffRange{1.0, 4.0};
+  cutoffs[id_o][id_si] = BondCutoffRange{1.0, 4.0};
+  StructureAnalyzer const analyzer(cell_, 2.0, cutoffs);
+
+  // Since bond 1 (0.5 Å) < min_cutoff (1.0 Å), Si-O bond is not formed -> 0 angles
+  const auto &angles = analyzer.angles();
+  size_t total_angles = 0;
+  for (const auto &t_1 : angles) {
+    for (const auto &t_2 : t_1) {
+      for (const auto &t_3 : t_2) {
+        total_angles += t_3.size();
+      }
+    }
+  }
+  EXPECT_EQ(total_angles, 0);
+}
+
+TEST_F(PADTests, BondDistanceAboveMaxCutoffProducesNoAngles) {
+  // Center Si at (10, 10, 10), O at (11.5, 10, 10) [dist 1.5 Å], O at (10, 12.5, 10) [dist 2.5 Å]
+  cell_.addAtom("Si", {10.0, 10.0, 10.0});
+  cell_.addAtom("O", {11.5, 10.0, 10.0}); // dist = 1.5 Å
+  cell_.addAtom("O", {10.0, 12.5, 10.0}); // dist = 2.5 Å
+  updateTrajectory();
+
+  int const id_si = cell_.findElement("Si")->id.value;
+  int const id_o = cell_.findElement("O")->id.value;
+
+  // Cutoff range for Si-O: [1.0 Å, 2.0 Å] -> min_sq = 1.0, max_sq = 4.0; O-O and Si-Si = 0
+  BondCutoffMatrix cutoffs(2, std::vector<BondCutoffRange>(2, BondCutoffRange{0.0, 0.0}));
+  cutoffs[id_si][id_o] = BondCutoffRange{1.0, 4.0};
+  cutoffs[id_o][id_si] = BondCutoffRange{1.0, 4.0};
+  StructureAnalyzer const analyzer(cell_, 3.0, cutoffs);
+
+  // Since bond 2 (2.5 Å) > max_cutoff (2.0 Å), second Si-O bond is not formed -> 0 angles
+  const auto &angles = analyzer.angles();
+  size_t total_angles = 0;
+  for (const auto &t_1 : angles) {
+    for (const auto &t_2 : t_1) {
+      for (const auto &t_3 : t_2) {
+        total_angles += t_3.size();
+      }
+    }
+  }
+  EXPECT_EQ(total_angles, 0);
+}
+
+TEST_F(PADTests, BondDistanceWithinCutoffRangeProducesAngle) {
+  // Center Si at (10, 10, 10), O at (11.5, 10, 10) [dist 1.5 Å], O at (10, 11.5, 10) [dist 1.5 Å]
+  cell_.addAtom("Si", {10.0, 10.0, 10.0});
+  cell_.addAtom("O", {11.5, 10.0, 10.0}); // dist = 1.5 Å
+  cell_.addAtom("O", {10.0, 11.5, 10.0}); // dist = 1.5 Å
+  updateTrajectory();
+
+  int const id_si = cell_.findElement("Si")->id.value;
+  int const id_o = cell_.findElement("O")->id.value;
+
+  // Cutoff range for Si-O: [1.0 Å, 2.0 Å] -> min_sq = 1.0, max_sq = 4.0; O-O and Si-Si = 0
+  BondCutoffMatrix cutoffs(2, std::vector<BondCutoffRange>(2, BondCutoffRange{0.0, 0.0}));
+  cutoffs[id_si][id_o] = BondCutoffRange{1.0, 4.0};
+  cutoffs[id_o][id_si] = BondCutoffRange{1.0, 4.0};
+  StructureAnalyzer const analyzer(cell_, 2.0, cutoffs);
+
+  // Both bonds are within [1.0, 2.0], forming a 90 degree angle
+  const auto &angles = analyzer.angles();
+  bool found_90 = false;
+  for (const auto &t_1 : angles) {
+    for (const auto &t_2 : t_1) {
+      for (const auto &t_3 : t_2) {
+        for (real_t const angle : t_3) {
+          if (std::abs(angle * 180.0 / correlation::math::pi - 90.0) < 1.0) {
+            found_90 = true;
+          }
+        }
+      }
+    }
+  }
+  EXPECT_TRUE(found_90);
+}
 } // namespace correlation::analysis

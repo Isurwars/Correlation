@@ -121,6 +121,20 @@ real_t Trajectory::getMinBondCutoff(size_t type1, size_t type2) const {
   return std::sqrt(getMinBondCutoffSQ(type1, type2));
 }
 
+void Trajectory::setBondCutoffs(const correlation::analysis::BondCutoffMatrix &cutoffs) {
+  for (const auto &row : cutoffs) {
+    for (const auto &range : row) {
+      if (range.min_sq < 0.0 || range.max_sq < 0.0) {
+        throw std::invalid_argument("Bond cutoff bounds cannot be negative.");
+      }
+      if (range.min_sq > range.max_sq) {
+        throw std::invalid_argument("Minimum bond cutoff cannot be greater than maximum bond cutoff.");
+      }
+    }
+  }
+  bond_cutoffs_ = cutoffs;
+}
+
 void Trajectory::addFrame(const Cell &frame) {
   ensureMaterialized();
   mapped_file_.reset();
