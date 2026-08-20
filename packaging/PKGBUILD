@@ -1,6 +1,6 @@
 # Maintainer: Isaías Rodríguez <isurwars@gmail.com>
 pkgname=correlation
-pkgver=3.8.7
+pkgver=3.8.8
 pkgrel=1
 pkgdesc="Analysis tool for liquid and amorphous solid structures"
 arch=('x86_64')

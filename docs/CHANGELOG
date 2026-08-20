@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.8.8] - 2026-08-20
+
+### Added & Refactored
+- **Pair-Specific Bond Cutoff Matrix & Dynamic Radii**: Replaced scalar bond cutoffs with element-pair `BondCutoffMatrix` supporting dual min and max range constraints across `Trajectory`, distance calculators, and Python bindings, including dynamic cutoff computation based on covalent radii.
+- **Matrix Input UI Redesign**: Redesigned UI matrix input components (`BondCutoffsCard.slint`, `matrix.slint`) with dual min/max cutoff controls and inline error validation.
+- **Cell-Grid Spatial Partitioning**: Implemented `SubcellGrid` spatial partitioning for local neighbor distance queries, optimizing `LocalEntropyCalculator` neighbor searches.
+- **Distance Calculation & Inline Histogramming**: Added optional inline histogramming to bypass explicit distance tensor allocations, specialized small-cell candidate gathering mode (`CandidateGatherMode`), and streamlined candidate filtering with scratch buffers.
+- **Lazy Tensor Evaluation & Ring Validation**: Implemented thread-safe lazy evaluation for angle and dihedral tensors in `StructureAnalyzer` and enforced minimum ring size validation ($\ge 3$) in `AppBackend` and `MotifFinder`.
+- **Angular Distribution Resolution**: Reduced default angular bin widths and applied scale-dependent Gaussian smoothing for angular distributions (PAD, DAD, BAD).
+
+### Testing & Verification
+- **Distance & Spatial Partitioning Tests**: Added unit tests covering FCC, BCC, periodic boundary conditions in large cells, and triclinic cell subcell partitioning.
+
 ## [3.8.7] - 2026-08-19
 
 ### Packaging & AUR
