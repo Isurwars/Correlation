@@ -82,6 +82,12 @@ public:
    */
   [[nodiscard]] const correlation::core::NeighborGraph &neighborGraph() const { return neighbor_graph_; }
 
+  /**
+   * @brief Returns true if periodic self-interactions are ignored.
+   * @return True if periodic self-interactions are ignored.
+   */
+  [[nodiscard]] bool getIgnorePeriodicSelfInteractions() const { return ignore_periodic_self_interactions_; }
+
   ///@}
 
 private:

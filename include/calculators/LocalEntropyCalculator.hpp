@@ -47,13 +47,13 @@ public:
    * @brief Computes the Local Entropic Fingerprint for all atoms in the cell.
    *
    * @param cell The periodic cell.
-   * @param neighbors Structural analyzer containing the neighbor graph.
+   * @param neighbors Optional structural analyzer (for backwards compatibility).
    * @param params Integration cutoff and Gaussian smoothing parameters.
    * @return A histogram of local entropy values.
    */
   static correlation::analysis::Histogram calculate(const correlation::core::Cell &cell,
-                                                    const correlation::analysis::StructureAnalyzer *neighbors,
-                                                    LocalEntropyParams params);
+                                                    const correlation::analysis::StructureAnalyzer *neighbors = nullptr,
+                                                    LocalEntropyParams params = {});
 };
 
 } // namespace correlation::calculators

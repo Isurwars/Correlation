@@ -7,13 +7,15 @@
  */
 
 #include "calculators/LocalEntropyCalculator.hpp"
+#include "analysis/StructureAnalyzer.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/Constants.hpp"
+#include "math/LinearAlgebra.hpp"
 #include "math/Precision.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <map>
-#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -27,13 +29,178 @@ namespace {
 // Static registration of the calculator in the factory
 const bool registered = CalculatorFactory::registerTypeSafe<LocalEntropyCalculator>("LocalEntropyCalculator");
 
-real_t computeSingleAtomEntropy(size_t atom_idx, const correlation::core::Cell &cell,
-                                const correlation::analysis::StructureAnalyzer *neighbors,
+struct SearchGridConfig {
+  int K_x = 1;
+  int K_y = 1;
+  int K_z = 1;
+  int max_dx = 1;
+  int max_dy = 1;
+  int max_dz = 1;
+};
+
+[[nodiscard]] inline real_t wrapUnit(real_t val) noexcept {
+  real_t const res = std::fmod(val, static_cast<real_t>(1.0));
+  return (res < 0.0) ? res + static_cast<real_t>(1.0) : res;
+}
+
+[[nodiscard]] inline correlation::math::Vector3<real_t>
+wrapFractional(const correlation::math::Vector3<real_t> &frac) noexcept {
+  return {wrapUnit(frac.x()), wrapUnit(frac.y()), wrapUnit(frac.z())};
+}
+
+struct PeriodicShift {
+  int wrap = 0;
+  int shift = 0;
+};
+
+[[nodiscard]] inline PeriodicShift computePeriodicShift(int index, int grid_k) noexcept {
+  int const shift = (index >= 0) ? (index / grid_k) : ((index - grid_k + 1) / grid_k);
+  int const wrap = index - shift * grid_k;
+  return {.wrap = wrap, .shift = shift};
+}
+
+/**
+ * @brief Spatial cell-grid structure for dedicated geometric neighbor distance queries.
+ */
+struct MetricNeighborGrid {
+  SearchGridConfig grid;
+  std::vector<int> atom_bin;
+  std::vector<size_t> bin_offsets;
+  std::vector<size_t> bin_indices;
+  std::vector<correlation::math::Vector3<real_t>> wrapped_positions;
+
+  struct QueryContext {
+    size_t atom_idx = 0;
+    correlation::math::Vector3<real_t> pos_i;
+    real_t cutoff_sq = 0.0;
+    bool ignore_self_periodic = false;
+  };
+
+  void build(const correlation::core::Cell &cell, real_t cutoff) {
+    const size_t num_atoms = cell.atomCount();
+    atom_bin.resize(num_atoms);
+    wrapped_positions.resize(num_atoms);
+    if (num_atoms == 0 || cutoff <= 0.0) {
+      return;
+    }
+
+    const auto &lattice = cell.latticeVectors();
+    const auto &inv_lattice = cell.inverseLatticeVectors();
+
+    real_t const vol = cell.volume();
+    const correlation::math::Vector3<real_t> v_a = {lattice(0, 0), lattice(0, 1), lattice(0, 2)};
+    const correlation::math::Vector3<real_t> v_b = {lattice(1, 0), lattice(1, 1), lattice(1, 2)};
+    const correlation::math::Vector3<real_t> v_c = {lattice(2, 0), lattice(2, 1), lattice(2, 2)};
+
+    const correlation::math::Vector3<real_t> cross_bc = correlation::math::cross(v_b, v_c);
+    const correlation::math::Vector3<real_t> cross_ca = correlation::math::cross(v_c, v_a);
+    const correlation::math::Vector3<real_t> cross_ab = correlation::math::cross(v_a, v_b);
+
+    real_t const h_x = vol / correlation::math::norm(cross_bc);
+    real_t const h_y = vol / correlation::math::norm(cross_ca);
+    real_t const h_z = vol / correlation::math::norm(cross_ab);
+
+    grid.K_x = std::max(1, static_cast<int>(std::floor(h_x / cutoff)));
+    grid.K_y = std::max(1, static_cast<int>(std::floor(h_y / cutoff)));
+    grid.K_z = std::max(1, static_cast<int>(std::floor(h_z / cutoff)));
+
+    grid.max_dx = static_cast<int>(std::ceil(cutoff / (h_x / static_cast<real_t>(grid.K_x))));
+    grid.max_dy = static_cast<int>(std::ceil(cutoff / (h_y / static_cast<real_t>(grid.K_y))));
+    grid.max_dz = static_cast<int>(std::ceil(cutoff / (h_z / static_cast<real_t>(grid.K_z))));
+
+    const size_t total_bins =
+        static_cast<size_t>(grid.K_x) * static_cast<size_t>(grid.K_y) * static_cast<size_t>(grid.K_z);
+    std::vector<size_t> bin_counts(total_bins, 0);
+
+    const auto &atoms = cell.atoms();
+    for (size_t i = 0; i < num_atoms; ++i) {
+      correlation::math::Vector3<real_t> const frac = wrapFractional(inv_lattice * atoms[i].position());
+      wrapped_positions[i] = lattice * frac;
+
+      int const b_x = std::clamp(static_cast<int>(frac.x() * static_cast<real_t>(grid.K_x)), 0, grid.K_x - 1);
+      int const b_y = std::clamp(static_cast<int>(frac.y() * static_cast<real_t>(grid.K_y)), 0, grid.K_y - 1);
+      int const b_z = std::clamp(static_cast<int>(frac.z() * static_cast<real_t>(grid.K_z)), 0, grid.K_z - 1);
+
+      int const bin_idx = b_x * (grid.K_y * grid.K_z) + b_y * grid.K_z + b_z;
+      atom_bin[i] = bin_idx;
+      bin_counts[bin_idx]++;
+    }
+
+    bin_offsets.resize(total_bins + 1, 0);
+    for (size_t b_idx = 0; b_idx < total_bins; ++b_idx) {
+      bin_offsets[b_idx + 1] = bin_offsets[b_idx] + bin_counts[b_idx];
+    }
+
+    bin_indices.resize(num_atoms);
+    std::vector<size_t> current_offsets = bin_offsets;
+    for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
+      int const bin_idx = atom_bin[atom_idx];
+      bin_indices[current_offsets[bin_idx]++] = atom_idx;
+    }
+  }
+
+  void scanBinDistances(const QueryContext &ctx, int bin_idx, const correlation::math::Vector3<real_t> &disp,
+                        bool zero_disp, std::vector<real_t> &distances_out) const {
+    size_t const start = bin_offsets[bin_idx];
+    size_t const end = bin_offsets[bin_idx + 1];
+
+    for (size_t idx = start; idx < end; ++idx) {
+      size_t const j_atom = bin_indices[idx];
+      if (ctx.atom_idx == j_atom && (zero_disp || ctx.ignore_self_periodic)) {
+        continue;
+      }
+
+      correlation::math::Vector3<real_t> const wrapped_pos_j = wrapped_positions[j_atom] + disp;
+      correlation::math::Vector3<real_t> const r_vec = wrapped_pos_j - ctx.pos_i;
+      real_t const d_sq = r_vec.x() * r_vec.x() + r_vec.y() * r_vec.y() + r_vec.z() * r_vec.z();
+
+      if (d_sq <= ctx.cutoff_sq && d_sq > static_cast<real_t>(1e-12)) {
+        distances_out.push_back(std::sqrt(d_sq));
+      }
+    }
+  }
+
+  void queryDistances(size_t atom_idx, const correlation::core::Cell &cell, real_t cutoff,
+                      std::vector<real_t> &distances_out, bool ignore_self_periodic) const {
+    distances_out.clear();
+    const auto &lattice = cell.latticeVectors();
+    QueryContext const ctx = {
+        .atom_idx = atom_idx,
+        .pos_i = wrapped_positions[atom_idx],
+        .cutoff_sq = cutoff * cutoff,
+        .ignore_self_periodic = ignore_self_periodic,
+    };
+
+    int const center_x = atom_bin[atom_idx] / (grid.K_y * grid.K_z);
+    int const center_y = (atom_bin[atom_idx] / grid.K_z) % grid.K_y;
+    int const center_z = atom_bin[atom_idx] % grid.K_z;
+
+    for (int dx = -grid.max_dx; dx <= grid.max_dx; ++dx) {
+      auto const [wrap_x, shift_x] = computePeriodicShift(center_x + dx, grid.K_x);
+
+      for (int dy = -grid.max_dy; dy <= grid.max_dy; ++dy) {
+        auto const [wrap_y, shift_y] = computePeriodicShift(center_y + dy, grid.K_y);
+
+        for (int dz = -grid.max_dz; dz <= grid.max_dz; ++dz) {
+          auto const [wrap_z, shift_z] = computePeriodicShift(center_z + dz, grid.K_z);
+
+          int const n_bin = wrap_x * (grid.K_y * grid.K_z) + wrap_y * grid.K_z + wrap_z;
+          correlation::math::Vector3<real_t> const disp =
+              lattice * correlation::math::Vector3<real_t>(static_cast<real_t>(shift_x), static_cast<real_t>(shift_y),
+                                                           static_cast<real_t>(shift_z));
+          bool const zero_disp = (shift_x == 0 && shift_y == 0 && shift_z == 0);
+
+          scanBinDistances(ctx, n_bin, disp, zero_disp, distances_out);
+        }
+      }
+    }
+  }
+};
+
+real_t computeSingleAtomEntropy(const std::vector<real_t> &atom_distances, const correlation::core::Cell &cell,
                                 const LocalEntropyParams &params) {
   real_t const cutoff = params.cutoff;
   real_t const sigma = params.sigma;
-  const auto &neighbor_graph = neighbors->neighborGraph();
-  const auto &atom_neighbors = neighbor_graph.getNeighbors(atom_idx);
 
   real_t const vol = cell.volume();
   if (vol <= 0.0) {
@@ -51,6 +218,8 @@ real_t computeSingleAtomEntropy(size_t atom_idx, const correlation::core::Cell &
   real_t const gaussian_prefactor =
       static_cast<real_t>(1.0) / (sigma * std::sqrt(static_cast<real_t>(2.0) * correlation::math::pi));
 
+  const real_t two_sigma_sq = static_cast<real_t>(2.0) * sigma * sigma;
+
   for (size_t step = 1; step <= num_steps; ++step) {
     real_t const r_val = static_cast<real_t>(step) * dr_val;
     if (r_val > cutoff) {
@@ -58,16 +227,12 @@ real_t computeSingleAtomEntropy(size_t atom_idx, const correlation::core::Cell &
     }
 
     real_t g_val = 0.0;
-    for (const auto &neighbor : atom_neighbors) {
-      real_t const r_ij = neighbor.distance;
-      if (r_ij == 0.0) {
-        continue;
-      }
+    for (const real_t r_ij : atom_distances) {
       // Gaussian kernel with periodic boundary corrections at r=0
       real_t const diff = r_val - r_ij;
       real_t const sum_r = r_val + r_ij;
-      real_t const term1 = static_cast<real_t>(std::exp(-(diff * diff) / (2.0 * sigma * sigma)));
-      real_t const term2 = static_cast<real_t>(std::exp(-(sum_r * sum_r) / (2.0 * sigma * sigma)));
+      auto const term1 = static_cast<real_t>(std::exp(-(diff * diff) / two_sigma_sq));
+      auto const term2 = static_cast<real_t>(std::exp(-(sum_r * sum_r) / two_sigma_sq));
       g_val += term1 + term2;
     }
 
@@ -166,18 +331,30 @@ correlation::analysis::Histogram
 LocalEntropyCalculator::calculate(const correlation::core::Cell &cell,
                                   const correlation::analysis::StructureAnalyzer *neighbors,
                                   LocalEntropyParams params) {
-  if (neighbors == nullptr) {
-    throw std::logic_error("Cannot calculate Local Entropy. Neighbor list has not been computed.");
-  }
-
   const auto &atoms = cell.atoms();
   size_t const num_atoms = atoms.size();
+  if (num_atoms == 0) {
+    return {};
+  }
+
+  bool const ignore_self_periodic = (neighbors != nullptr) ? neighbors->getIgnorePeriodicSelfInteractions() : false;
+
+  MetricNeighborGrid grid;
+  grid.build(cell, params.cutoff);
+
+  struct ThreadLocalScratch {
+    std::vector<real_t> distances;
+  };
+
+  tbb::enumerable_thread_specific<ThreadLocalScratch> thread_scratch;
 
   // Compute local entropy for all atoms
   std::vector<real_t> entropies(num_atoms, 0.0);
   tbb::parallel_for(tbb::blocked_range<size_t>(0, num_atoms), [&](const tbb::blocked_range<size_t> &range) {
+    auto &scratch = thread_scratch.local();
     for (size_t i = range.begin(); i != range.end(); ++i) {
-      entropies[i] = computeSingleAtomEntropy(i, cell, neighbors, params);
+      grid.queryDistances(i, cell, params.cutoff, scratch.distances, ignore_self_periodic);
+      entropies[i] = computeSingleAtomEntropy(scratch.distances, cell, params);
     }
   });
 

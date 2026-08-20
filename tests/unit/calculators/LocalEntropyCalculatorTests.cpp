@@ -107,7 +107,7 @@ TEST_F(LocalEntropyCalculatorTests, FaceCenteredCubic) {
                                                                                   .sigma = 0.2,
                                                                               });
   real_t const entropy_fcc = getPeakEntropy(hist_fcc);
-  EXPECT_NEAR(entropy_fcc, -8.95, 1e-4);
+  EXPECT_NEAR(entropy_fcc, -10.85, 1e-4);
 }
 
 TEST_F(LocalEntropyCalculatorTests, Random) {
@@ -130,6 +130,34 @@ TEST_F(LocalEntropyCalculatorTests, Random) {
                                                                                });
   real_t const entropy_rand = getPeakEntropy(hist_rand);
   EXPECT_NEAR(entropy_rand, -2.05, correlation::is_single_precision ? 0.6 : 1e-4);
+}
+
+TEST_F(LocalEntropyCalculatorTests, WorksWithDefaultBondCutoffsOrNullptr) {
+  // Verify that LocalEntropyCalculator correctly queries metric neighbors
+  // even when StructureAnalyzer has narrow chemical bond cutoffs (e.g. 2.5 A).
+  correlation::core::Cell cell_sc({12.0, 12.0, 12.0, 90.0, 90.0, 90.0});
+  for (int i = 0; i < 3; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      for (int k = 0; k < 3; ++k) {
+        cell_sc.addAtom("Ar",
+                        {static_cast<real_t>(i * 4.0), static_cast<real_t>(j * 4.0), static_cast<real_t>(k * 4.0)});
+      }
+    }
+  }
+
+  // Narrow chemical bond cutoff of 2.5 A (far smaller than 6.0 A cutoff)
+  StructureAnalyzer const analyzer_narrow(cell_sc, 2.5, {{{0.36, 2.5 * 2.5}}}, false);
+  auto hist_with_narrow_analyzer = correlation::calculators::LocalEntropyCalculator::calculate(
+      cell_sc, &analyzer_narrow, {.cutoff = 6.0, .sigma = 0.2});
+
+  auto hist_with_nullptr =
+      correlation::calculators::LocalEntropyCalculator::calculate(cell_sc, nullptr, {.cutoff = 6.0, .sigma = 0.2});
+
+  real_t const entropy_narrow = getPeakEntropy(hist_with_narrow_analyzer);
+  real_t const entropy_null = getPeakEntropy(hist_with_nullptr);
+
+  EXPECT_NEAR(entropy_narrow, -6.15, 1e-4);
+  EXPECT_NEAR(entropy_null, -6.15, 1e-4);
 }
 
 } // namespace
