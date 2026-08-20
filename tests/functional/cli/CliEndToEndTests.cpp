@@ -296,7 +296,8 @@ TEST_F(CliEndToEndTests, DisableRadialAndScatteringGroups) {
 
   std::string const input = dataDir() + "Si.poscar";
   // Run with radial and scattering groups disabled
-  int const run_cli_status = runCli(input + " --quiet -o " + out_base + " --disable-groups radial,scattering");
+  int const run_cli_status =
+      runCli(input + " --quiet -o " + out_base + " --disable-groups radial,scattering --r-max 10 --r-bin 0.1");
 
   EXPECT_EQ(run_cli_status, 0);
 
