@@ -73,6 +73,23 @@ TEST_F(AppBackendTests, SetOptionsModifiesState) {
   EXPECT_EQ(new_opts.max_frame, 20);
 }
 
+TEST_F(AppBackendTests, ValidateOptionsRejectsInvalidMaxRingSize) {
+  correlation::app::AppBackend backend;
+  std::string const data_dir = getTestDataDir();
+  std::string const filepath = data_dir + "xyz/clean.xyz";
+  backend.load_file(filepath);
+
+  correlation::app::ProgramOptions opts = backend.options();
+
+  opts.max_ring_size = 2;
+  backend.setOptions(opts);
+  EXPECT_EQ(backend.run_analysis(), "Error: max_ring_size must be an integer >= 3.");
+
+  opts.max_ring_size = 0;
+  backend.setOptions(opts);
+  EXPECT_EQ(backend.run_analysis(), "Error: max_ring_size must be an integer >= 3.");
+}
+
 TEST_F(AppBackendTests, LoadInvalidFileThrowsException) {
   // Arrange
   correlation::app::AppBackend backend;

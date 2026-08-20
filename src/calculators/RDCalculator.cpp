@@ -1,6 +1,6 @@
 /**
  * @file RDCalculator.cpp
- * @brief Implementation of the reduced distribution function calculator.
+ * @brief Implementation of the ring distribution calculator.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -41,7 +41,7 @@ correlation::analysis::Histogram RDCalculator::calculate(const correlation::core
   f_motif.title = "Ring Distribution";
   f_motif.y_label = "Frequency";
   f_motif.x_unit = "atoms";
-  f_motif.y_unit = "counts";
+  f_motif.y_unit = "fraction";
   f_motif.description = "Ring Distribution";
   f_motif.file_suffix = "_RD";
 

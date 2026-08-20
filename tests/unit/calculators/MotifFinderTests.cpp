@@ -118,4 +118,54 @@ TEST_F(MotifFinderTests, MaxRingSizeExcludesLargerRings) {
   EXPECT_EQ(rings.count(4), 0); // Should be excluded by max_size
 }
 
+TEST_F(MotifFinderTests, ExtractCyclesExtractsExactTopology) {
+  // Setup a graph containing one 3-ring (0-1-2) and one 4-ring (3-4-5-6)
+  graph = correlation::core::NeighborGraph(7);
+
+  // 3-ring: 0-1-2
+  graph.addDirectedEdge(0, 1, 1.0, {1.0, 0.0, 0.0});
+  graph.addDirectedEdge(1, 0, 1.0, {-1.0, 0.0, 0.0});
+  graph.addDirectedEdge(1, 2, 1.0, {0.0, 1.0, 0.0});
+  graph.addDirectedEdge(2, 1, 1.0, {0.0, -1.0, 0.0});
+  graph.addDirectedEdge(2, 0, 1.0, {-1.0, -1.0, 0.0});
+  graph.addDirectedEdge(0, 2, 1.0, {1.0, 1.0, 0.0});
+
+  // 4-ring: 3-4-5-6
+  graph.addDirectedEdge(3, 4, 1.0, {1.0, 0.0, 0.0});
+  graph.addDirectedEdge(4, 3, 1.0, {-1.0, 0.0, 0.0});
+  graph.addDirectedEdge(4, 5, 1.0, {0.0, 1.0, 0.0});
+  graph.addDirectedEdge(5, 4, 1.0, {0.0, -1.0, 0.0});
+  graph.addDirectedEdge(5, 6, 1.0, {-1.0, 0.0, 0.0});
+  graph.addDirectedEdge(6, 5, 1.0, {1.0, 0.0, 0.0});
+  graph.addDirectedEdge(6, 3, 1.0, {0.0, -1.0, 0.0});
+  graph.addDirectedEdge(3, 6, 1.0, {0.0, 1.0, 0.0});
+
+  auto cycles_3 = MotifFinder::extractCycles(graph, 3);
+  ASSERT_EQ(cycles_3.size(), 1);
+  EXPECT_EQ(cycles_3[0].size(), 3);
+
+  auto cycles_4 = MotifFinder::extractCycles(graph, 4);
+  ASSERT_EQ(cycles_4.size(), 1);
+  EXPECT_EQ(cycles_4[0].size(), 4);
+
+  auto cycles_5 = MotifFinder::extractCycles(graph, 5);
+  EXPECT_TRUE(cycles_5.empty());
+}
+
+TEST_F(MotifFinderTests, MaxSizeLessThanThreeReturnsEmpty) {
+  graph = correlation::core::NeighborGraph(3);
+  graph.addDirectedEdge(0, 1, 1.0, {1.0, 0.0, 0.0});
+  graph.addDirectedEdge(1, 0, 1.0, {-1.0, 0.0, 0.0});
+  graph.addDirectedEdge(1, 2, 1.0, {0.0, 1.0, 0.0});
+  graph.addDirectedEdge(2, 1, 1.0, {0.0, -1.0, 0.0});
+  graph.addDirectedEdge(2, 0, 1.0, {-1.0, -1.0, 0.0});
+  graph.addDirectedEdge(0, 2, 1.0, {1.0, 1.0, 0.0});
+
+  auto rings = MotifFinder::findRings(graph, 2);
+  EXPECT_TRUE(rings.empty());
+
+  auto cycles = MotifFinder::extractCycles(graph, 2);
+  EXPECT_TRUE(cycles.empty());
+}
+
 } // namespace correlation::calculators

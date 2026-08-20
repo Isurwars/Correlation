@@ -562,10 +562,17 @@ TEST_F(CliParserTests, RIntMaxMustBePositive) {
   EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
 }
 
-TEST_F(CliParserTests, MaxRingSizeMustBePositive) {
-  ArgBuilder args{"correlation-cli", "input.poscar", "--max-ring-size", "0"};
-  correlation::cli::CliOptions opts;
-  EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+TEST_F(CliParserTests, MaxRingSizeMustBeAtLeastThree) {
+  {
+    ArgBuilder args{"correlation-cli", "input.poscar", "--max-ring-size", "0"};
+    correlation::cli::CliOptions opts;
+    EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+  }
+  {
+    ArgBuilder args{"correlation-cli", "input.poscar", "--max-ring-size", "2"};
+    correlation::cli::CliOptions opts;
+    EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+  }
 }
 
 TEST_F(CliParserTests, MaxFrameCannotBeLessThanMinusOne) {

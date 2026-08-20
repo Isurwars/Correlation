@@ -195,68 +195,86 @@ std::string AppBackend::load_file(const std::string &path) {
   return msg;
 }
 
-std::string AppBackend::validateOptions() const {
-  if (options_.r_max <= 0.0) {
+namespace {
+
+[[nodiscard]] std::string validateHistogramOptions(const ProgramOptions &options) {
+  if (options.r_max <= 0.0) {
     return "Error: r_max must be strictly positive.";
   }
-  if (options_.r_bin_width <= 0.0) {
+  if (options.r_bin_width <= 0.0) {
     return "Error: r_bin_width must be strictly positive.";
   }
-  if (options_.r_bin_width >= options_.r_max) {
+  if (options.r_bin_width >= options.r_max) {
     return "Error: r_bin_width must be strictly less than r_max.";
   }
-  if (options_.q_max <= 0.0) {
+  if (options.q_max <= 0.0) {
     return "Error: q_max must be strictly positive.";
   }
-  if (options_.q_bin_width <= 0.0) {
+  if (options.q_bin_width <= 0.0) {
     return "Error: q_bin_width must be strictly positive.";
   }
-  if (options_.q_bin_width >= options_.q_max) {
+  if (options.q_bin_width >= options.q_max) {
     return "Error: q_bin_width must be strictly less than q_max.";
   }
-  if (options_.angle_bin_width <= 0.0) {
-    return "Error: angle_bin_width must be strictly positive.";
-  }
-  if (options_.angle_bin_width > 180.0) {
-    return "Error: angle_bin_width must be at most 180.0 degrees.";
-  }
-  if (options_.dihedral_bin_width <= 0.0) {
-    return "Error: dihedral_bin_width must be strictly positive.";
-  }
-  if (options_.dihedral_bin_width > 360.0) {
-    return "Error: dihedral_bin_width must be at most 360.0 degrees.";
-  }
-  if (options_.time_step <= 0.0) {
-    return "Error: time_step must be strictly positive.";
-  }
-  if (options_.r_int_max <= 0.0) {
+  if (options.r_int_max <= 0.0) {
     return "Error: r_int_max must be strictly positive.";
   }
-  if (options_.max_ring_size <= 0) {
-    return "Error: max_ring_size must be strictly positive.";
+  return "";
+}
+
+[[nodiscard]] std::string validateAngularOptions(const ProgramOptions &options) {
+  if (options.angle_bin_width <= 0.0) {
+    return "Error: angle_bin_width must be strictly positive.";
   }
-  if (options_.hyper_samples == 0) {
+  if (options.angle_bin_width > 180.0) {
+    return "Error: angle_bin_width must be at most 180.0 degrees.";
+  }
+  if (options.dihedral_bin_width <= 0.0) {
+    return "Error: dihedral_bin_width must be strictly positive.";
+  }
+  if (options.dihedral_bin_width > 360.0) {
+    return "Error: dihedral_bin_width must be at most 360.0 degrees.";
+  }
+  return "";
+}
+
+[[nodiscard]] std::string validateSimulationOptions(const ProgramOptions &options) {
+  if (options.time_step <= 0.0) {
+    return "Error: time_step must be strictly positive.";
+  }
+  if (options.max_ring_size < 3) {
+    return "Error: max_ring_size must be an integer >= 3.";
+  }
+  if (options.hyper_samples == 0) {
     return "Error: hyper_samples must be strictly positive.";
   }
-  if (options_.max_frame < -1) {
+  if (options.max_frame < -1) {
     return "Error: max_frame cannot be less than -1.";
   }
-  if (options_.max_frame >= 0 && options_.min_frame > options_.max_frame) {
+  if (options.max_frame >= 0 && options.min_frame > options.max_frame) {
     return "Error: min_frame cannot be greater than max_frame.";
   }
-  if (options_.smoothing && options_.smoothing_sigma <= 0.0) {
+  return "";
+}
+
+[[nodiscard]] std::string validateSmoothingOptions(const ProgramOptions &options) {
+  if (options.smoothing && options.smoothing_sigma <= 0.0) {
     return "Error: smoothing_sigma must be strictly positive when smoothing is enabled.";
   }
-  if (options_.smoothing_sigma < 0.0) {
+  if (options.smoothing_sigma < 0.0) {
     return "Error: smoothing_sigma cannot be negative.";
   }
-  if (options_.lef_cutoff <= 0.0) {
+  if (options.lef_cutoff <= 0.0) {
     return "Error: lef_cutoff must be strictly positive.";
   }
-  if (options_.lef_sigma <= 0.0) {
+  if (options.lef_sigma <= 0.0) {
     return "Error: lef_sigma must be strictly positive.";
   }
-  for (const auto &row : options_.bond_cutoffs) {
+  return "";
+}
+
+[[nodiscard]] std::string validateBondCutoffOptions(const correlation::analysis::BondCutoffMatrix &cutoffs) {
+  for (const auto &row : cutoffs) {
     for (const auto &range : row) {
       if (range.min_sq < 0.0 || range.max_sq < 0.0) {
         return "Error: Bond cutoff bounds cannot be negative.";
@@ -267,6 +285,24 @@ std::string AppBackend::validateOptions() const {
     }
   }
   return "";
+}
+
+} // namespace
+
+std::string AppBackend::validateOptions() const {
+  if (std::string const err = validateHistogramOptions(options_); !err.empty()) {
+    return err;
+  }
+  if (std::string const err = validateAngularOptions(options_); !err.empty()) {
+    return err;
+  }
+  if (std::string const err = validateSimulationOptions(options_); !err.empty()) {
+    return err;
+  }
+  if (std::string const err = validateSmoothingOptions(options_); !err.empty()) {
+    return err;
+  }
+  return validateBondCutoffOptions(options_.bond_cutoffs);
 }
 
 void AppBackend::setupTrajectorySettings(size_t &start_f) {

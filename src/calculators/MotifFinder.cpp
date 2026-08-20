@@ -39,6 +39,7 @@ struct BFSScratch {
   // King-ring check state (reused inside isKingRing)
   std::vector<int> dist_king;
   std::vector<size_t> q_king;
+  std::vector<size_t> visited_king;
 
   // Output accumulated by this thread
   std::vector<std::vector<correlation::core::AtomID>> local_cycles;
@@ -47,6 +48,7 @@ struct BFSScratch {
     q.reserve(n);
     q_king.reserve(n);
     visited.reserve(n);
+    visited_king.reserve(n);
     cross_edges.reserve(1024);
   }
 
@@ -78,6 +80,7 @@ void get_paths(BFSScratch::PathEndpoints endpoints, const std::vector<std::vecto
   };
 
   std::vector<StackFrame> stack;
+  stack.reserve(parents.empty() ? 16 : std::min<size_t>(parents.size(), 32));
   stack.push_back({
       .node = endpoints.start,
       .parent_idx = 0,
@@ -113,8 +116,8 @@ void get_paths(BFSScratch::PathEndpoints endpoints, const std::vector<std::vecto
 }
 
 // ---------------------------------------------------------------------------
-// King-ring check.  Uses dist_king / q_king from the caller-supplied scratch
-// so no heap allocations occur here (unchanged algorithm, scalar state only).
+// King-ring check.  Uses dist_king / q_king / visited_king from the caller-supplied
+// scratch so no heap allocations occur here (unchanged algorithm, scalar state only).
 // ---------------------------------------------------------------------------
 void runKingBFS(const correlation::core::NeighborGraph &graph, BFSScratch::KingBFSSettings settings,
                 std::vector<int> &dist_king, std::vector<size_t> &q_king, std::vector<size_t> &visited_nodes) {
@@ -146,14 +149,11 @@ void runKingBFS(const correlation::core::NeighborGraph &graph, BFSScratch::KingB
 }
 
 bool isKingRing(const correlation::core::NeighborGraph &graph, const std::vector<correlation::core::AtomID> &cycle,
-                std::vector<int> &dist_king, std::vector<size_t> &q_king) {
+                std::vector<int> &dist_king, std::vector<size_t> &q_king, std::vector<size_t> &visited_king) {
   size_t const size = cycle.size();
   if (size < 3) {
     return false;
   }
-
-  std::vector<size_t> visited_nodes;
-  visited_nodes.reserve(size * 10);
 
   for (size_t i = 0; i < size; ++i) {
     size_t const start_node = cycle[i];
@@ -163,7 +163,7 @@ bool isKingRing(const correlation::core::NeighborGraph &graph, const std::vector
                    .start_node = start_node,
                    .max_check_dist = static_cast<int>(size / 2),
                },
-               dist_king, q_king, visited_nodes);
+               dist_king, q_king, visited_king);
 
     bool is_king = true;
     for (size_t j = 0; j < size; ++j) {
@@ -179,7 +179,7 @@ bool isKingRing(const correlation::core::NeighborGraph &graph, const std::vector
       }
     }
 
-    for (size_t const visited_node : visited_nodes) {
+    for (size_t const visited_node : visited_king) {
       dist_king[visited_node] = -1;
     }
 
@@ -310,7 +310,7 @@ void processCrossEdge(const correlation::core::NeighborGraph &graph, const std::
         std::reverse(cycle.begin() + 1, cycle.end());
       }
 
-      if (isKingRing(graph, cycle, bsc.dist_king, bsc.q_king)) {
+      if (isKingRing(graph, cycle, bsc.dist_king, bsc.q_king, bsc.visited_king)) {
         bsc.local_cycles.push_back(std::move(cycle));
       }
     }

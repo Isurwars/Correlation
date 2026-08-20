@@ -149,8 +149,8 @@ bool validateOptions(const CliOptions &opts) {
     std::cerr << "Error: --r-int-max must be strictly positive.\n";
     return false;
   }
-  if (opts.max_ring_size <= 0) {
-    std::cerr << "Error: --max-ring-size must be strictly positive.\n";
+  if (opts.max_ring_size < 3) {
+    std::cerr << "Error: --max-ring-size must be at least 3.\n";
     return false;
   }
   if (opts.max_frame < -1) {
