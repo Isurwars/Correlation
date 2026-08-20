@@ -17,8 +17,17 @@
 #include <windows.h>
 #else
 #include <fcntl.h>
+#include <spawn.h>
 #include <sys/wait.h>
 #include <unistd.h>
+
+#ifdef __APPLE__
+#include <crt_externs.h>
+#define environ (*_NSGetEnviron())
+#else
+extern char **environ;
+#endif
+
 #endif
 
 namespace {
@@ -49,6 +58,21 @@ std::string getTestDataDir() {
   return "../../tests/data/vasp/";
 }
 
+#ifndef _WIN32
+// Helper to tokenize arguments before spawning
+std::vector<std::string> tokenizeArgs(const std::string &args) {
+  std::vector<std::string> tokens;
+  tokens.emplace_back(CLI_BIN);
+
+  std::istringstream iss(args);
+  std::string token;
+  while (iss >> token) {
+    tokens.push_back(token);
+  }
+  return tokens;
+}
+#endif
+
 // Run a shell command and return its exit code.
 int runCli(const std::string &args) {
 #ifdef _WIN32
@@ -57,8 +81,11 @@ int runCli(const std::string &args) {
   STARTUPINFOA si = {sizeof(STARTUPINFOA)};
   PROCESS_INFORMATION pi = {};
 
-  si.dwFlags = STARTF_USESTDHANDLES;
-  si.hStdError = nullptr;
+  si.dwFlags = STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW;
+  si.wShowWindow = SW_HIDE;
+  si.hStdInput = INVALID_HANDLE_VALUE;
+  si.hStdOutput = INVALID_HANDLE_VALUE;
+  si.hStdError = INVALID_HANDLE_VALUE;
 
   if (CreateProcessA(nullptr, cmd.data(), nullptr, nullptr, FALSE, CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi) == 0) {
     return -1;
@@ -72,43 +99,32 @@ int runCli(const std::string &args) {
   CloseHandle(pi.hThread);
   return static_cast<int>(exitCode);
 
-#else // POSIX (Linux / macOS)
-  pid_t const pid = fork();
-  if (pid == 0) {
-    // Child Process: Redirect stderr to /dev/null safely without shell invocation
-    int const dev_null = open("/dev/null", O_WRONLY, 0);
-    if (dev_null != -1) {
-      dup2(dev_null, STDERR_FILENO);
-      close(dev_null);
-    }
+#else // POSIX (Linux / macOS) — use posix_spawn to avoid multithread fork/malloc deadlock
+  auto tokens = tokenizeArgs(args);
+  std::vector<char *> argv;
+  argv.reserve(tokens.size() + 1);
+  for (auto &tokenRef : tokens) {
+    argv.push_back(tokenRef.data());
+  }
+  argv.push_back(nullptr);
 
-    std::vector<std::string> tokens;
-    tokens.emplace_back(CLI_BIN);
+  posix_spawn_file_actions_t actions;
+  posix_spawn_file_actions_init(&actions);
+  posix_spawn_file_actions_addopen(&actions, STDIN_FILENO, "/dev/null", O_RDONLY, 0);
+  posix_spawn_file_actions_addopen(&actions, STDOUT_FILENO, "/dev/null", O_WRONLY, 0);
+  posix_spawn_file_actions_addopen(&actions, STDERR_FILENO, "/dev/null", O_WRONLY, 0);
 
-    std::istringstream iss(args);
-    std::string token;
-    while (iss >> token) {
-      tokens.push_back(token);
-    }
+  pid_t pid = 0;
+  int const spawn_err = posix_spawn(&pid, std::string(CLI_BIN).c_str(), &actions, nullptr, argv.data(), environ);
+  posix_spawn_file_actions_destroy(&actions);
 
-    std::vector<char *> argv;
-    argv.reserve(tokens.size() + 1);
-    for (auto &tokenRef : tokens) {
-      argv.push_back(tokenRef.data());
-    }
-    argv.push_back(nullptr);
-
-    execv(std::string(CLI_BIN).c_str(), argv.data());
-    _exit(127); // Exit child if execv fails
+  if (spawn_err != 0) {
+    return -1;
   }
 
-  if (pid > 0) {
-    int status = 0;
-    waitpid(pid, &status, 0);
-    return WIFEXITED(status) ? WEXITSTATUS(status) : -1;
-  }
-
-  return -1;
+  int status = 0;
+  waitpid(pid, &status, 0);
+  return WIFEXITED(status) ? WEXITSTATUS(status) : -1;
 #endif
 }
 
@@ -158,51 +174,37 @@ std::string runCliCapture(const std::string &args) {
   CloseHandle(pi.hThread);
   return result;
 
-#else // POSIX (Linux / macOS)
+#else // POSIX (Linux / macOS) — use posix_spawn
   std::array<int, 2> pipefd{};
   if (pipe(pipefd.data()) == -1) {
     return "";
   }
 
-  pid_t const pid = fork();
-  if (pid == -1) {
+  auto tokens = tokenizeArgs(args);
+  std::vector<char *> argv;
+  argv.reserve(tokens.size() + 1);
+  for (auto &tokenRef : tokens) {
+    argv.push_back(tokenRef.data());
+  }
+  argv.push_back(nullptr);
+
+  posix_spawn_file_actions_t actions;
+  posix_spawn_file_actions_init(&actions);
+  posix_spawn_file_actions_addopen(&actions, STDIN_FILENO, "/dev/null", O_RDONLY, 0);
+  posix_spawn_file_actions_adddup2(&actions, pipefd[1], STDOUT_FILENO);
+  posix_spawn_file_actions_addclose(&actions, pipefd[0]);
+  posix_spawn_file_actions_addclose(&actions, pipefd[1]);
+  posix_spawn_file_actions_addopen(&actions, STDERR_FILENO, "/dev/null", O_WRONLY, 0);
+
+  pid_t pid = 0;
+  int const spawn_err = posix_spawn(&pid, std::string(CLI_BIN).c_str(), &actions, nullptr, argv.data(), environ);
+  posix_spawn_file_actions_destroy(&actions);
+  close(pipefd[1]); // Close write end in parent
+
+  if (spawn_err != 0) {
     close(pipefd[0]);
-    close(pipefd[1]);
     return "";
   }
-
-  if (pid == 0) {
-    dup2(pipefd[1], STDOUT_FILENO);
-    close(pipefd[0]);
-    close(pipefd[1]);
-
-    int const dev_null = open("/dev/null", O_WRONLY, 0);
-    if (dev_null != -1) {
-      dup2(dev_null, STDERR_FILENO);
-      close(dev_null);
-    }
-
-    std::vector<std::string> tokens;
-    tokens.emplace_back(CLI_BIN);
-
-    std::istringstream iss(args);
-    std::string token;
-    while (iss >> token) {
-      tokens.push_back(token);
-    }
-
-    std::vector<char *> argv;
-    argv.reserve(tokens.size() + 1);
-    for (auto &tokenRef : tokens) {
-      argv.push_back(tokenRef.data());
-    }
-    argv.push_back(nullptr);
-
-    execv(std::string(CLI_BIN).c_str(), argv.data());
-    _exit(127);
-  }
-
-  close(pipefd[1]);
 
   std::string result;
   std::array<char, 512> buffer{};
@@ -244,6 +246,9 @@ TEST_F(CliEndToEndTests, NoArgsReturnsNonZero) { EXPECT_NE(runCli(""), 0); }
 
 TEST_F(CliEndToEndTests, UnknownOptionReturnsNonZero) { EXPECT_NE(runCli("--this-does-not-exist"), 0); }
 
+constexpr std::string_view FAST_TEST_ARGS =
+    " --quiet --r-max 5.0 --r-bin 0.25 --hyper-samples 10 --max-ring-size 4 --no-smoothing";
+
 // ===== File loading tests =====
 
 TEST_F(CliEndToEndTests, NonexistentFileReturnsNonZero) { EXPECT_NE(runCli("nonexistent_file_xyz.poscar --quiet"), 0); }
@@ -255,7 +260,7 @@ TEST_F(CliEndToEndTests, ValidFileRunsSuccessfully) {
   std::string const out_base = (tmp_dir / "result").string();
 
   std::string const input = dataDir() + "Si.poscar";
-  int const run_cli_status = runCli(input + " --quiet -o " + out_base + " --r-max 10 --r-bin 0.1");
+  int const run_cli_status = runCli(input + " -o " + out_base + std::string(FAST_TEST_ARGS));
 
   // Clean up
   std::filesystem::remove_all(tmp_dir);
@@ -274,7 +279,7 @@ TEST_F(CliEndToEndTests, DefaultExecutesAllCalculators) {
 
   std::string const input = dataDir() + "Si.poscar";
   // Run with no disable-groups flags -> should default to running all groups
-  int const run_cli_status = runCli(input + " --quiet -o " + out_base + " --r-max 10 --r-bin 0.1");
+  int const run_cli_status = runCli(input + " -o " + out_base + std::string(FAST_TEST_ARGS));
 
   EXPECT_EQ(run_cli_status, 0);
 
@@ -297,7 +302,7 @@ TEST_F(CliEndToEndTests, DisableRadialAndScatteringGroups) {
   std::string const input = dataDir() + "Si.poscar";
   // Run with radial and scattering groups disabled
   int const run_cli_status =
-      runCli(input + " --quiet -o " + out_base + " --disable-groups radial,scattering --r-max 10 --r-bin 0.1");
+      runCli(input + " -o " + out_base + " --disable-groups radial,scattering" + std::string(FAST_TEST_ARGS));
 
   EXPECT_EQ(run_cli_status, 0);
 
@@ -320,7 +325,7 @@ TEST_F(CliEndToEndTests, DisableStructuralGroup) {
   std::string const input = dataDir() + "Si.poscar";
   // Run disabling structural group
   int const run_cli_status =
-      runCli(input + " --quiet -o " + out_base + " --disable-groups structural --r-max 10 --r-bin 0.1");
+      runCli(input + " -o " + out_base + " --disable-groups structural" + std::string(FAST_TEST_ARGS));
 
   EXPECT_EQ(run_cli_status, 0);
 
