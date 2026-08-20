@@ -285,13 +285,13 @@ public:
    * @brief Calculates the Plane Angle Distribution (PAD).
    * @param bin_width Width of angular bins in degrees.
    */
-  void calculatePAD(real_t bin_width = 1.0);
+  void calculatePAD(real_t bin_width = 0.25);
 
   /**
    * @brief Calculates the Dihedral Angle Distribution (DAD).
    * @param bin_width Width of angular bins in degrees.
    */
-  void calculateDAD(real_t bin_width = 1.0);
+  void calculateDAD(real_t bin_width = 0.25);
 
   /**
    * @brief Calculates the Velocity Autocorrelation Function (VACF).

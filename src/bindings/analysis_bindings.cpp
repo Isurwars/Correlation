@@ -322,12 +322,12 @@ void init_analysis(py::module_ &mod) {
           "Parameters\n----------\n"
           "r_max : float\n    Maximum radius (Å). Default 20.0.\n"
           "bin_width : float\n    Histogram bin width (Å). Default 0.05.")
-      .def("calculate_pad", &DistributionFunctions::calculatePAD, py::arg("bin_width") = 1.0,
+      .def("calculate_pad", &DistributionFunctions::calculatePAD, py::arg("bin_width") = 0.25,
            "Calculate the Plane Angle Distribution (PAD).\n\n"
-           "bin_width : float\n    Angular bin width (°). Default 1.0.")
-      .def("calculate_dad", &DistributionFunctions::calculateDAD, py::arg("bin_width") = 1.0,
+           "bin_width : float\n    Angular bin width (°). Default 0.25.")
+      .def("calculate_dad", &DistributionFunctions::calculateDAD, py::arg("bin_width") = 0.25,
            "Calculate the Dihedral Angle Distribution (DAD).\n\n"
-           "bin_width : float\n    Angular bin width (°). Default 1.0.")
+           "bin_width : float\n    Angular bin width (°). Default 0.25.")
       .def(
           "calculate_vacf",
           [](DistributionFunctions &dists, const Trajectory &traj, int max_correlation_frames, size_t start_frame,

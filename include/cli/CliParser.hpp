@@ -30,8 +30,8 @@ struct CliOptions {
   real_t r_bin_width = 0.02;       ///< Bin width for radial distributions (Å).
   real_t q_max = 20.0;             ///< Maximum momentum transfer for S(Q) (Å^-1).
   real_t q_bin_width = 0.02;       ///< Bin width for S(Q) (Å^-1).
-  real_t angle_bin_width = 1.0;    ///< Bin width for bond angle distributions (degrees).
-  real_t dihedral_bin_width = 1.0; ///< Bin width for dihedral distributions (degrees).
+  real_t angle_bin_width = 0.25;    ///< Bin width for bond angle distributions (degrees).
+  real_t dihedral_bin_width = 0.25; ///< Bin width for dihedral distributions (degrees).
   bool has_dihedral_bin = false;   ///< Flag indicating if dihedral bin width was explicitly passed.
   int min_frame = 0;               ///< Starting frame index for trajectory processing.
   int max_frame = -1;              ///< Ending frame index for trajectory processing (-1 for all).

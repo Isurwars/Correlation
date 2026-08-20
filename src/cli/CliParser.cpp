@@ -89,10 +89,10 @@ void applyMaterialDefaults(const CLI::App &app, CliOptions &opts) {
       opts.q_bin_width = 0.05;
     }
     if (app.count("--angle-bin") == 0U) {
-      opts.angle_bin_width = 2.0;
+      opts.angle_bin_width = 0.5;
     }
     if ((app.count("--dihedral-bin") == 0U) && (app.count("--angle-bin") == 0U)) {
-      opts.dihedral_bin_width = 2.0;
+      opts.dihedral_bin_width = 0.5;
     }
     if (app.count("--smoothing-sigma") == 0U) {
       opts.smoothing_sigma = 0.15;

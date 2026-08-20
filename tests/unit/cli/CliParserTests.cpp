@@ -48,8 +48,8 @@ TEST_F(CliParserTests, DefaultsWithInputFileOnly) {
   EXPECT_THAT(opts.r_bin_width, correlation::testing::IsRealEq(0.02));
   EXPECT_THAT(opts.q_max, correlation::testing::IsRealEq(20.0));
   EXPECT_THAT(opts.q_bin_width, correlation::testing::IsRealEq(0.02));
-  EXPECT_THAT(opts.angle_bin_width, correlation::testing::IsRealEq(1.0));
-  EXPECT_THAT(opts.dihedral_bin_width, correlation::testing::IsRealEq(1.0));
+  EXPECT_THAT(opts.angle_bin_width, correlation::testing::IsRealEq(0.25));
+  EXPECT_THAT(opts.dihedral_bin_width, correlation::testing::IsRealEq(0.25));
   EXPECT_FALSE(opts.has_dihedral_bin);
   EXPECT_EQ(opts.min_frame, 0);
   EXPECT_EQ(opts.max_frame, -1);
@@ -613,8 +613,8 @@ TEST_F(CliParserTests, LiquidMaterialDefaults) {
   EXPECT_EQ(opts.material_type, 1);
   EXPECT_THAT(opts.r_bin_width, correlation::testing::IsRealEq(0.05));
   EXPECT_THAT(opts.q_bin_width, correlation::testing::IsRealEq(0.05));
-  EXPECT_THAT(opts.angle_bin_width, correlation::testing::IsRealEq(2.0));
-  EXPECT_THAT(opts.dihedral_bin_width, correlation::testing::IsRealEq(2.0));
+  EXPECT_THAT(opts.angle_bin_width, correlation::testing::IsRealEq(0.5));
+  EXPECT_THAT(opts.dihedral_bin_width, correlation::testing::IsRealEq(0.5));
   EXPECT_THAT(opts.smoothing_sigma, correlation::testing::IsRealEq(0.15));
 }
 

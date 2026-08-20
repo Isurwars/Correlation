@@ -213,7 +213,17 @@ void DistributionFunctions::smooth(const std::string &name, real_t sigma, correl
   if (bin_dx <= 0.0) {
     return;
   }
-  const real_t min_sigma = std::max(bin_dx, sigma);
+
+  real_t effective_sigma = sigma;
+  if (name == "BAD" || name == "DAD" || name == "PAD") {
+    // Angular distributions operate on [0, 180] or [0, 360] degrees instead of [0, 20] Angstroms.
+    // Domain ratio between angular space (~180 deg) and spatial r_max (~20 Å) is ~9.0x.
+    // Scale sigma proportionally so that angular smoothing spans an enhanced smoothing window (~15x spatial sigma, e.g.
+    // 0.1 -> 1.5 deg).
+    constexpr auto angular_domain_scale = static_cast<real_t>(15.0);
+    effective_sigma = sigma * angular_domain_scale;
+  }
+  const real_t min_sigma = std::max(bin_dx, effective_sigma);
 
   // Flatten partials into a read-only list so we can access them safely from
   // parallel tasks (std::map is not thread-safe for concurrent reads + writes).

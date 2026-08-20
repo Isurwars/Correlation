@@ -28,10 +28,10 @@ struct AppDefaults {
   static constexpr real_t Q_MAX = 20.0;          ///< Default max q for S(Q) (Angstrom^-1).
   static constexpr real_t Q_BIN_WIDTH = 0.02;    ///< Default bin width for S(Q) (Angstrom^-1).
   static constexpr real_t R_INT_MAX = 10.0;      ///< Default max radius for integration (Angstrom).
-  static constexpr real_t ANGLE_BIN_WIDTH = 1.0; ///< Default bin width for ADF (Degrees).
-  static constexpr real_t SMOOTHING_SIGMA = 0.1; ///< Default Gaussian smoothing sigma.
-  static constexpr real_t LEF_CUTOFF = 5.0;      ///< Default cutoff for local entropy.
-  static constexpr real_t LEF_SIGMA = 0.2;       ///< Default Gaussian sigma for local entropy.
+  static constexpr real_t ANGLE_BIN_WIDTH = 0.25; ///< Default bin width for ADF (Degrees).
+  static constexpr real_t SMOOTHING_SIGMA = 0.1;  ///< Default Gaussian smoothing sigma.
+  static constexpr real_t LEF_CUTOFF = 5.0;       ///< Default cutoff for local entropy.
+  static constexpr real_t LEF_SIGMA = 0.2;        ///< Default Gaussian sigma for local entropy.
 
   // Crystalline Defaults (1 order of magnitude smaller)
   static constexpr real_t R_BIN_WIDTH_CRYSTAL = 0.002;
@@ -42,7 +42,7 @@ struct AppDefaults {
   // Liquid Defaults (broad/diffuse features)
   static constexpr real_t R_BIN_WIDTH_LIQUID = 0.05;
   static constexpr real_t Q_BIN_WIDTH_LIQUID = 0.05;
-  static constexpr real_t ANGLE_BIN_WIDTH_LIQUID = 2.0;
+  static constexpr real_t ANGLE_BIN_WIDTH_LIQUID = 0.5;
   static constexpr real_t SMOOTHING_SIGMA_LIQUID = 0.15;
 
   /** @brief Default smoothing kernel. */
