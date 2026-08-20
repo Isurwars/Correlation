@@ -247,7 +247,7 @@ TEST_F(CliEndToEndTests, NoArgsReturnsNonZero) { EXPECT_NE(runCli(""), 0); }
 TEST_F(CliEndToEndTests, UnknownOptionReturnsNonZero) { EXPECT_NE(runCli("--this-does-not-exist"), 0); }
 
 constexpr std::string_view FAST_TEST_ARGS =
-    " --quiet --r-max 5.0 --r-bin 0.25 --hyper-samples 10 --max-ring-size 4 --no-smoothing";
+    " --quiet --r-max 5.0 --r-bin 0.25 --hyper-samples 10 --max-ring-size 4 --no-smoothing --no-hdf5 --no-parquet";
 
 // ===== File loading tests =====
 
@@ -300,9 +300,10 @@ TEST_F(CliEndToEndTests, DisableRadialAndScatteringGroups) {
   std::string const out_base = (tmp_dir / "result").string();
 
   std::string const input = dataDir() + "Si.poscar";
-  // Run with radial and scattering groups disabled
+  // Run with radial and scattering groups disabled (also disable heavy unused groups)
   int const run_cli_status =
-      runCli(input + " -o " + out_base + " --disable-groups radial,scattering" + std::string(FAST_TEST_ARGS));
+      runCli(input + " -o " + out_base + " --disable-groups radial,scattering,spatial,dynamic,advanced" +
+             std::string(FAST_TEST_ARGS));
 
   EXPECT_EQ(run_cli_status, 0);
 
@@ -323,9 +324,10 @@ TEST_F(CliEndToEndTests, DisableStructuralGroup) {
   std::string const out_base = (tmp_dir / "result").string();
 
   std::string const input = dataDir() + "Si.poscar";
-  // Run disabling structural group
+  // Run disabling structural group (also disable heavy unused groups)
   int const run_cli_status =
-      runCli(input + " -o " + out_base + " --disable-groups structural" + std::string(FAST_TEST_ARGS));
+      runCli(input + " -o " + out_base + " --disable-groups structural,spatial,dynamic,advanced" +
+             std::string(FAST_TEST_ARGS));
 
   EXPECT_EQ(run_cli_status, 0);
 
