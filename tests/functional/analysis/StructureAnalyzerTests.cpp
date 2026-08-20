@@ -77,21 +77,21 @@ TEST_F(StructureAnalyzerTests, DistancesTensorIsCorrect) {
   cell.addAtom("Ar", {3.0, 0.0, 0.0});
   updateTrajectory(cell);
 
-  // Act: Calculate distances
+  // Act: Calculate raw histograms
   // Cutoff 5.0 covers the 3.0 distance
   StructureAnalyzer const analyzer(cell, 5.0, trajectory().getBondCutoffsSQ());
-  const auto &distances = analyzer.distances();
+  const auto &histograms = analyzer.rawHistograms();
 
   // Assert Same Species
   int const id_Ar = cell.findElement("Ar")->id.value;
   ASSERT_EQ(id_Ar, 0);
 
-  // StructureAnalyzer stores unique pairs for same-species (i < j logic)
-  // So for 2 Ar atoms, we expect 1 distance in [Ar][Ar]
-  ASSERT_GT(distances.size(), 0);
-  const auto &ar_ar_dists = distances[id_Ar][id_Ar];
-  EXPECT_EQ(ar_ar_dists.size(), 1);
-  EXPECT_NEAR(ar_ar_dists[0], 3.0, 1e-6);
+  // StructureAnalyzer stores raw histogram counts for same-species
+  // For 2 Ar atoms at 3.0 Å (bin = 3.0 / 0.02 = 150), expect count 1 in [Ar][Ar]
+  ASSERT_GT(histograms.size(), 0);
+  const auto &ar_ar_hist = histograms[id_Ar][id_Ar];
+  ASSERT_GT(ar_ar_hist.size(), 150);
+  EXPECT_EQ(ar_ar_hist[150], 1.0);
 
   // Arrange Mixed Species
   correlation::core::Cell mixed_cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
@@ -100,20 +100,20 @@ TEST_F(StructureAnalyzerTests, DistancesTensorIsCorrect) {
   updateTrajectory(mixed_cell);
 
   StructureAnalyzer const mixed_analyzer(mixed_cell, 5.0, trajectory().getBondCutoffsSQ());
-  const auto &mixed_distances = mixed_analyzer.distances();
+  const auto &mixed_histograms = mixed_analyzer.rawHistograms();
 
   int const id_Ar_m = mixed_cell.findElement("Ar")->id.value;
   int const id_Xe_m = mixed_cell.findElement("Xe")->id.value;
 
   // StructureAnalyzer stores symmetric pairs for different species
-  // So we expect 1 in [Ar][Xe] and 1 in [Xe][Ar]
-  const auto &ar_xe_dists = mixed_distances[id_Ar_m][id_Xe_m];
-  const auto &xe_ar_dists = mixed_distances[id_Xe_m][id_Ar_m];
+  // Distance 4.0 Å (bin = 4.0 / 0.02 = 200)
+  const auto &ar_xe_hist = mixed_histograms[id_Ar_m][id_Xe_m];
+  const auto &xe_ar_hist = mixed_histograms[id_Xe_m][id_Ar_m];
 
-  EXPECT_EQ(ar_xe_dists.size(), 1);
-  EXPECT_EQ(xe_ar_dists.size(), 1);
-  EXPECT_NEAR(ar_xe_dists[0], 4.0, 1e-6);
-  EXPECT_NEAR(xe_ar_dists[0], 4.0, 1e-6);
+  ASSERT_GT(ar_xe_hist.size(), 200);
+  ASSERT_GT(xe_ar_hist.size(), 200);
+  EXPECT_EQ(ar_xe_hist[200], 1.0);
+  EXPECT_EQ(xe_ar_hist[200], 1.0);
 }
 
 TEST_F(StructureAnalyzerTests, CalculatesCorrectAnglesForWater) {
@@ -415,7 +415,7 @@ TEST_F(StructureAnalyzerTests, HandlesEmptyCellGracefully) {
   updateTrajectory(empty_cell);
 
   StructureAnalyzer const analyzer(empty_cell, 3.0, trajectory().getBondCutoffsSQ());
-  EXPECT_TRUE(analyzer.distances().empty());
+  EXPECT_TRUE(analyzer.rawHistograms().empty());
   EXPECT_TRUE(analyzer.angles().empty());
   EXPECT_TRUE(analyzer.dihedrals().empty());
   EXPECT_EQ(analyzer.neighborGraph().nodeCount(), 0);

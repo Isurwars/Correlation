@@ -31,8 +31,8 @@ namespace correlation::analysis {
  */
 class StructureAnalyzer {
 public:
-  /** @brief Tensor for storing pair distances [element1][element2][pair_index]. */
-  using DistanceTensor = std::vector<std::vector<std::vector<real_t>>>;
+  /** @brief Tensor for storing raw distance histogram bins [element1][element2][bin_index]. */
+  using RawHistogramTensor = std::vector<std::vector<std::vector<real_t>>>;
   /** @brief Tensor for storing bond angles [center][outer1][outer2][angle_index]. */
   using AngleTensor = std::vector<std::vector<std::vector<std::vector<real_t>>>>;
   /** @brief Tensor for storing dihedrals [e1][e2][e3][e4][dihedral_index]. */
@@ -40,8 +40,8 @@ public:
 
   /** @name Constructors & Destructors */
   ///@{
-  explicit StructureAnalyzer(const correlation::core::Cell &cell, real_t cutoff, const BondCutoffMatrix &bond_cutoffs,
-                             bool ignore_periodic_self_interactions = true);
+  explicit StructureAnalyzer(const correlation::core::Cell &cell, real_t cutoff, BondCutoffMatrix bond_cutoffs,
+                             bool ignore_periodic_self_interactions = true, real_t r_bin_width = 0.02);
 
   ~StructureAnalyzer() = default;
   StructureAnalyzer(const StructureAnalyzer &) = delete;
@@ -54,10 +54,10 @@ public:
   /** @name Accessors */
   ///@{
   /**
-   * @brief Gets a multi-dimensional tensor containing pair distances.
-   * @return The distance tensor `[element1][element2][pair_index]`.
+   * @brief Gets a multi-dimensional tensor containing raw distance histogram bins.
+   * @return The raw histogram tensor `[element1][element2][bin_index]`.
    */
-  [[nodiscard]] const DistanceTensor &distances() const { return distance_tensor_; }
+  [[nodiscard]] const RawHistogramTensor &rawHistograms() const { return raw_histograms_; }
 
   /**
    * @brief Gets a multi-dimensional tensor containing bond angles.
@@ -101,7 +101,7 @@ private:
   bool ignore_periodic_self_interactions_; ///< Interaction guard.
 
   correlation::core::NeighborGraph neighbor_graph_; ///< Graph of topological bonds.
-  DistanceTensor distance_tensor_;                  ///< Pairwise distance storage.
+  RawHistogramTensor raw_histograms_;               ///< Raw distance histogram storage.
   mutable AngleTensor angle_tensor_;                ///< Bond angle storage (lazy).
   mutable DihedralTensor dihedral_tensor_;          ///< Dihedral angle storage (lazy).
 

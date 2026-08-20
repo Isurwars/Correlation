@@ -8,10 +8,12 @@
 
 #include "calculators/RDFCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
+#include "calculators/DistanceCalculator.hpp"
 #include "math/Constants.hpp"
 #include "math/Precision.hpp"
 #include "math/SIMDUtils.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <limits>
 #include <stdexcept>
@@ -44,10 +46,23 @@ struct RDFSettings {
   size_t num_bins;
 };
 
-void accumulateRawCounts(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors,
-                         RDFSettings settings, correlation::analysis::Histogram &H_r) {
+void accumulateRawCounts(const correlation::core::Cell &cell,
+                         const correlation::analysis::StructureAnalyzer * /*neighbors*/, RDFSettings settings,
+                         correlation::analysis::Histogram &H_r) {
   const auto &elements = cell.elements();
   const size_t num_elements = elements.size();
+
+  RawHistogramTensor standalone_histograms;
+  correlation::core::NeighborGraph dummy_graph;
+
+  real_t const cutoff_sq = settings.r_max * settings.r_max;
+  correlation::analysis::BondCutoffMatrix const empty_bonds;
+  DistanceCalculationConfig const hist_config{
+      .r_max = settings.r_max,
+      .r_bin_width = settings.r_bin_width,
+      .num_bins = settings.num_bins,
+  };
+  DistanceCalculator::compute(cell, cutoff_sq, empty_bonds, true, dummy_graph, &standalone_histograms, hist_config);
 
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = i; j < num_elements; ++j) {
@@ -55,20 +70,14 @@ void accumulateRawCounts(const correlation::core::Cell &cell, const correlation:
       auto &partial_hist = H_r.partials[key];
       partial_hist.assign(settings.num_bins, 0.0);
 
-      // First Pass: Accumulate the raw distance counts H(r) into histogram
-      // bins. Distances are pre-computed in
-      // `StructureAnalyzer::distance_tensor_`.
-      for (const auto &dist : neighbors->distances()[i][j]) {
-        if (dist < settings.r_max) {
-          auto const bin = static_cast<size_t>(dist / settings.r_bin_width);
-          if (bin < settings.num_bins) {
-            partial_hist[bin] += 1.0;
-          }
-        }
+      if (i < standalone_histograms.size() && j < standalone_histograms[i].size()) {
+        const auto &src_bins = standalone_histograms[i][j];
+        size_t const copy_count = std::min(settings.num_bins, src_bins.size());
+        std::copy_n(src_bins.begin(), copy_count, partial_hist.begin());
       }
 
       // For self-pairs (A-A), each pair is counted once in the upper triangular
-      // DistanceTensor. We multiply by 2 to account for both A_1 -> A_2 and A_2
+      // raw_histograms. We multiply by 2 to account for both A_1 -> A_2 and A_2
       // -> A_1 interactions.
       if (i == j) {
         correlation::math::scale_bins(partial_hist.data(), static_cast<real_t>(2.0), settings.num_bins);
@@ -117,7 +126,7 @@ void normalizeDistributions(const correlation::core::Cell &cell, const std::map<
       const real_t inv_Nj_dr = static_cast<real_t>(1.0) / (N_j * settings.bin_width);
       const real_t pi4_rho_j = correlation::math::four_pi * rho_j;
 
-      correlation::math::RDFNormalizationParams<real_t> params{
+      correlation::math::RDFNormalizationParams<real_t> const params{
           .hist_data = H_ij.data(),
           .radial_bins = g_r.bins.data(),
           .g_norm = g_norm_constant,
@@ -198,8 +207,6 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
     throw std::logic_error("Cell volume must be positive, got: " + std::to_string(volume));
   }
 
-  const auto &elements = cell.elements();
-  const size_t num_elements = elements.size();
   const auto num_atoms = static_cast<real_t>(cell.atomCount());
   if (num_atoms == 0.0) {
     return {};
@@ -211,7 +218,7 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
   }
 
   const auto num_bins = static_cast<size_t>(std::floor(r_max / r_bin_width));
-  const real_t Vol = static_cast<real_t>(cell.volume());
+  const auto Vol = static_cast<real_t>(cell.volume());
   const real_t d_r = r_bin_width;
   const real_t rho_0 = num_atoms / Vol;
 

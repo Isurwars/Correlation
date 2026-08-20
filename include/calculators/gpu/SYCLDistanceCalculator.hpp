@@ -20,7 +20,7 @@ namespace correlation::calculators::sycl_gpu {
  */
 void compute_distances_sycl(const correlation::core::Cell &cell, real_t cutoff_sq,
                             const correlation::analysis::BondCutoffMatrix &bond_cutoffs,
-                            bool ignore_periodic_self_interactions, DistanceTensor &out_distances,
-                            correlation::core::NeighborGraph &out_graph);
+                            bool ignore_periodic_self_interactions, correlation::core::NeighborGraph &out_graph,
+                            RawHistogramTensor *out_histograms = nullptr, DistanceCalculationConfig hist_config = {});
 
 } // namespace correlation::calculators::sycl_gpu

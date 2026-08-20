@@ -34,16 +34,22 @@ TEST(SYCLCalculatorTests, ComputesDistancesViaSYCLFallback) {
   cell.addAtom("Si", {1.0, 0.0, 0.0});
 
   size_t const num_elements = cell.elements().size();
-  correlation::calculators::DistanceTensor out_distances(num_elements, std::vector<std::vector<real_t>>(num_elements));
+  correlation::calculators::RawHistogramTensor out_histograms;
   correlation::core::NeighborGraph out_graph(2);
   real_t const cutoff_sq = 4.0;
-  correlation::analysis::BondCutoffMatrix const bond_cutoffs = {{{0.36, 2.25}, {0.36, 2.25}}, {{0.36, 2.25}, {0.36, 2.25}}};
+  correlation::analysis::BondCutoffMatrix const bond_cutoffs = {{{0.36, 2.25}, {0.36, 2.25}},
+                                                                {{0.36, 2.25}, {0.36, 2.25}}};
+  correlation::calculators::DistanceCalculationConfig const hist_config{
+      .r_max = 2.0,
+      .r_bin_width = 0.02,
+      .num_bins = 100,
+  };
 
-  correlation::calculators::sycl_gpu::compute_distances_sycl(cell, cutoff_sq, bond_cutoffs, false, out_distances,
-                                                             out_graph);
+  correlation::calculators::sycl_gpu::compute_distances_sycl(cell, cutoff_sq, bond_cutoffs, false, out_graph,
+                                                             &out_histograms, hist_config);
 
-  EXPECT_FALSE(out_distances.empty());
-  EXPECT_EQ(out_distances.size(), num_elements);
+  EXPECT_FALSE(out_histograms.empty());
+  EXPECT_EQ(out_histograms.size(), num_elements);
 }
 
 TEST(SYCLCalculatorTests, ComputesDistancesGPUWrapper) {
@@ -52,15 +58,21 @@ TEST(SYCLCalculatorTests, ComputesDistancesGPUWrapper) {
   cell.addAtom("Si", {1.0, 0.0, 0.0});
 
   size_t const num_elements = cell.elements().size();
-  correlation::calculators::DistanceTensor out_distances(num_elements, std::vector<std::vector<real_t>>(num_elements));
+  correlation::calculators::RawHistogramTensor out_histograms(
+      num_elements, std::vector<std::vector<real_t>>(num_elements, std::vector<real_t>(100, 0.0)));
   correlation::core::NeighborGraph out_graph(2);
   real_t const cutoff_sq = 4.0;
   std::vector<std::vector<real_t>> const bond_cutoffs_sq = {{2.25, 2.25}, {2.25, 2.25}};
+  correlation::calculators::DistanceCalculationConfig const hist_config{
+      .r_max = 2.0,
+      .r_bin_width = 0.02,
+      .num_bins = 100,
+  };
 
-  correlation::calculators::gpu::compute_distances_gpu(cell, cutoff_sq, bond_cutoffs_sq, false, out_distances,
-                                                       out_graph);
+  correlation::calculators::gpu::compute_distances_gpu(cell, cutoff_sq, bond_cutoffs_sq, false, &out_histograms,
+                                                       hist_config, out_graph);
 
-  EXPECT_FALSE(out_distances.empty());
+  EXPECT_FALSE(out_histograms.empty());
 }
 
 TEST(SYCLCalculatorTests, ComputesSQViaSYCLFallback) {

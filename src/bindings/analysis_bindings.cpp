@@ -203,8 +203,8 @@ void init_analysis(py::module_ &mod) {
            "    Per-element-pair bond cutoffs.\n"
            "ignore_periodic_self_interactions : bool\n"
            "    If True, atoms do not interact with their own periodic images.")
-      .def("distances", &StructureAnalyzer::distances, py::return_value_policy::reference_internal,
-           "3D tensor of pairwise distances [e1][e2][pair_idx].")
+      .def("raw_histograms", &StructureAnalyzer::rawHistograms, py::return_value_policy::reference_internal,
+           "3D tensor of raw distance histogram bins [e1][e2][bin_idx].")
       .def("angles", &StructureAnalyzer::angles, py::return_value_policy::reference_internal,
            "4D tensor of bond angles [center_e][e1][e2][angle_idx].")
       .def("dihedrals", &StructureAnalyzer::dihedrals, py::return_value_policy::reference_internal,

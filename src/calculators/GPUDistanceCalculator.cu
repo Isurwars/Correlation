@@ -233,14 +233,22 @@ std::vector<T> flatten_bond_cutoffs(const std::vector<std::vector<T>> &bond_cuto
 
 template <typename T>
 void unpack_gpu_results(const std::vector<GPUDistance<T>> &host_distances, const std::vector<GPUBond<T>> &host_bonds,
-                        const std::vector<int> &element_ids, DistanceTensor &out_distances,
-                        correlation::core::NeighborGraph &out_graph) {
-  for (const auto &dist : host_distances) {
-    const int type_A = element_ids[dist.from];
-    const int type_B = element_ids[dist.to];
-    out_distances[type_A][type_B].push_back(static_cast<real_t>(dist.distance));
-    if (dist.from != dist.to && type_A != type_B) {
-      out_distances[type_B][type_A].push_back(static_cast<real_t>(dist.distance));
+                        const std::vector<int> &element_ids, RawHistogramTensor *out_histograms,
+                        DistanceCalculationConfig hist_config, correlation::core::NeighborGraph &out_graph) {
+  if (out_histograms != nullptr && hist_config.r_bin_width > 0.0 && hist_config.num_bins > 0) {
+    for (const auto &dist : host_distances) {
+      const int type_A = element_ids[dist.from];
+      const int type_B = element_ids[dist.to];
+      real_t const dst = static_cast<real_t>(dist.distance);
+      if (dst < hist_config.r_max) {
+        size_t const bin = static_cast<size_t>(dst / hist_config.r_bin_width);
+        if (bin < hist_config.num_bins) {
+          (*out_histograms)[type_A][type_B][bin] += 1.0;
+          if (dist.from != dist.to && type_A != type_B) {
+            (*out_histograms)[type_B][type_A][bin] += 1.0;
+          }
+        }
+      }
     }
   }
 
@@ -269,7 +277,8 @@ bool has_gpu_device() {
 template <typename T>
 void compute_distances_gpu(const correlation::core::Cell &cell, T cutoff_sq,
                            const std::vector<std::vector<T>> &bond_cutoffs_sq, bool ignore_periodic_self_interactions,
-                           DistanceTensor &out_distances, correlation::core::NeighborGraph &out_graph) {
+                           RawHistogramTensor *out_histograms, DistanceCalculationConfig hist_config,
+                           correlation::core::NeighborGraph &out_graph) {
   const auto &atoms = cell.atoms();
   const size_t atom_count = atoms.size();
   if (atom_count == 0) {
@@ -444,17 +453,19 @@ void compute_distances_gpu(const correlation::core::Cell &cell, T cutoff_sq,
     hipFree(d_bonds);
   }
 
-  unpack_gpu_results(host_distances, host_bonds, element_ids, out_distances, out_graph);
+  unpack_gpu_results(host_distances, host_bonds, element_ids, out_histograms, hist_config, out_graph);
 }
 
 template void compute_distances_gpu<float>(const correlation::core::Cell &cell, float cutoff_sq,
                                            const std::vector<std::vector<float>> &bond_cutoffs_sq,
-                                           bool ignore_periodic_self_interactions, DistanceTensor &out_distances,
+                                           bool ignore_periodic_self_interactions, RawHistogramTensor *out_histograms,
+                                           DistanceCalculationConfig hist_config,
                                            correlation::core::NeighborGraph &out_graph);
 
 template void compute_distances_gpu<double>(const correlation::core::Cell &cell, double cutoff_sq,
                                             const std::vector<std::vector<double>> &bond_cutoffs_sq,
-                                            bool ignore_periodic_self_interactions, DistanceTensor &out_distances,
+                                            bool ignore_periodic_self_interactions, RawHistogramTensor *out_histograms,
+                                            DistanceCalculationConfig hist_config,
                                             correlation::core::NeighborGraph &out_graph);
 
 } // namespace correlation::calculators::gpu
