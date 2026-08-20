@@ -4,6 +4,7 @@
 #include "core/NeighborGraph.hpp"
 
 #include <gtest/gtest.h>
+#include <numbers>
 #include <vector>
 
 namespace correlation::testing {
@@ -279,6 +280,48 @@ TEST(DistanceCalculatorTests, LargeTriclinicCellSubcellPartitioning) {
   // Atom 0 <-> Atom 3 (1.5 Å across PBC) should be connected
   EXPECT_TRUE(out_graph.areConnected(AtomIndex{0}, AtomIndex{3}));
   EXPECT_TRUE(out_graph.areConnected(AtomIndex{3}, AtomIndex{0}));
+}
+
+TEST(DistanceCalculatorTests, SmallCrystalCellMultiImageExpansion) {
+  // 1-atom cubic crystal unit cell: a = 3.6 Å
+  Cell cell({3.6, 0.0, 0.0}, {0.0, 3.6, 0.0}, {0.0, 0.0, 3.6});
+  cell.addAtom("Cu", {0.0, 0.0, 0.0});
+
+  real_t const r_max = 10.0;
+  real_t const cutoff_sq = r_max * r_max;
+  real_t const bin_width = 0.02;
+  const auto num_bins = static_cast<size_t>(std::ceil(r_max / bin_width));
+
+  // No bonds needed, only distance histogramming
+  BondCutoffMatrix const empty_bonds = {{{.min_sq = 0.0, .max_sq = 0.0}}};
+  RawHistogramTensor out_histograms;
+  NeighborGraph out_graph(1);
+  DistanceCalculationConfig const config{
+      .r_max = r_max,
+      .r_bin_width = bin_width,
+      .num_bins = num_bins,
+  };
+
+  DistanceCalculator::compute(cell, cutoff_sq, empty_bonds, false, out_graph, &out_histograms, config);
+
+  ASSERT_EQ(out_histograms.size(), 1);
+  ASSERT_EQ(out_histograms[0].size(), 1);
+
+  // Shell 1: 6 neighbors at 3.6 Å (bin index 3.6 / 0.02 = 180, raw upper-triangle count = 3.0)
+  auto const bin_shell1 = static_cast<size_t>(3.6 / bin_width);
+  EXPECT_EQ(out_histograms[0][0][bin_shell1], 3.0);
+
+  // Shell 2: 12 neighbors at 3.6 * sqrt(2) ≈ 5.09117 Å (raw upper-triangle count = 6.0)
+  auto const bin_shell2 = static_cast<size_t>((3.6 * std::numbers::sqrt2) / bin_width);
+  EXPECT_EQ(out_histograms[0][0][bin_shell2], 6.0);
+
+  // Shell 3: 8 neighbors at 3.6 * sqrt(3) ≈ 6.23538 Å (raw upper-triangle count = 4.0)
+  auto const bin_shell3 = static_cast<size_t>((3.6 * std::numbers::sqrt3) / bin_width);
+  EXPECT_EQ(out_histograms[0][0][bin_shell3], 4.0);
+
+  // Shell 4: 6 neighbors at 7.2 Å (raw upper-triangle count = 3.0)
+  auto const bin_shell4 = static_cast<size_t>(7.2 / bin_width);
+  EXPECT_EQ(out_histograms[0][0][bin_shell4], 3.0);
 }
 
 } // namespace correlation::testing
