@@ -13,6 +13,10 @@
 #include "core/Cell.hpp"
 #include "core/NeighborGraph.hpp"
 
+#include <atomic>
+#include <mutex>
+#include <vector>
+
 namespace correlation::analysis {
 
 /**
@@ -23,7 +27,7 @@ namespace correlation::analysis {
  * This class efficiently finds all atom pairs within a cutoff radius and all
  * unique bond angles, storing the results in multi-dimensional vectors
  * (tensors) suitable for calculating partial distribution functions.
- * The distance and angle calculation loops are parallelized with OpenMP.
+ * Angle and Dihedral tensors are computed lazily on first access.
  */
 class StructureAnalyzer {
 public:
@@ -34,11 +38,16 @@ public:
   /** @brief Tensor for storing dihedrals [e1][e2][e3][e4][dihedral_index]. */
   using DihedralTensor = std::vector<std::vector<std::vector<std::vector<std::vector<real_t>>>>>;
 
-  /** @name Constructors */
+  /** @name Constructors & Destructors */
   ///@{
-  explicit StructureAnalyzer(const correlation::core::Cell &cell, real_t cutoff,
-                             const BondCutoffMatrix &bond_cutoffs,
+  explicit StructureAnalyzer(const correlation::core::Cell &cell, real_t cutoff, const BondCutoffMatrix &bond_cutoffs,
                              bool ignore_periodic_self_interactions = true);
+
+  ~StructureAnalyzer() = default;
+  StructureAnalyzer(const StructureAnalyzer &) = delete;
+  StructureAnalyzer &operator=(const StructureAnalyzer &) = delete;
+  StructureAnalyzer(StructureAnalyzer &&other) noexcept;
+  StructureAnalyzer &operator=(StructureAnalyzer &&other) noexcept;
 
   ///@}
 
@@ -52,17 +61,19 @@ public:
 
   /**
    * @brief Gets a multi-dimensional tensor containing bond angles.
+   *        Computed lazily on first access in a thread-safe manner.
    * @return The angle tensor
    * `[center_element][outer_element1][outer_element2][angle_index]`.
    */
-  [[nodiscard]] const AngleTensor &angles() const { return angle_tensor_; }
+  [[nodiscard]] const AngleTensor &angles() const;
 
   /**
    * @brief Gets a multi-dimensional tensor containing dihedral angles.
+   *        Computed lazily on first access in a thread-safe manner.
    * @return The dihedral tensor
    * `[element1][element2][element3][element4][dihedral_index]`.
    */
-  [[nodiscard]] const DihedralTensor &dihedrals() const { return dihedral_tensor_; }
+  [[nodiscard]] const DihedralTensor &dihedrals() const;
 
   /**
    * @brief Gets the corresponding neighbor graph capturing topological
@@ -74,16 +85,23 @@ public:
   ///@}
 
 private:
-  correlation::core::Cell cell_;           ///< Reference to the current periodic cell.
-  real_t cutoff_sq_;                       ///< Squared cutoff for efficiency.
-  BondCutoffMatrix bond_cutoffs_;          ///< Internal bond cutoffs matrix.
+  void ensureAnglesComputed() const;
+  void ensureDihedralsComputed() const;
+
+  correlation::core::Cell cell_;  ///< Reference to the current periodic cell.
+  real_t cutoff_sq_;              ///< Squared cutoff for efficiency.
+  BondCutoffMatrix bond_cutoffs_; ///< Internal bond cutoffs matrix.
 
   bool ignore_periodic_self_interactions_; ///< Interaction guard.
 
   correlation::core::NeighborGraph neighbor_graph_; ///< Graph of topological bonds.
   DistanceTensor distance_tensor_;                  ///< Pairwise distance storage.
-  AngleTensor angle_tensor_;                        ///< Bond angle storage.
-  DihedralTensor dihedral_tensor_;                  ///< Dihedral angle storage.
+  mutable AngleTensor angle_tensor_;                ///< Bond angle storage (lazy).
+  mutable DihedralTensor dihedral_tensor_;          ///< Dihedral angle storage (lazy).
+
+  mutable std::mutex compute_mutex_;                    ///< Mutex guarding lazy computation.
+  mutable std::atomic<bool> angles_computed_{false};    ///< Flag indicating if angles are computed.
+  mutable std::atomic<bool> dihedrals_computed_{false}; ///< Flag indicating if dihedrals are computed.
 };
 
 } // namespace correlation::analysis
