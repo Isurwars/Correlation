@@ -315,6 +315,10 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
     total_G[k] = correlation::math::four_pi * rho_0 * r_k * (total_g[k] - static_cast<real_t>(1.0));
   }
 
+  correlation::analysis::Histogram g_r_unweighted = g_r;
+  g_r_unweighted.title = "g(r) — Unweighted Radial Distribution Function";
+  g_r_unweighted.file_suffix = "_g_unweighted";
+
   weightPartials(cell, ashcroft_weights,
                  {
                      .rho_0 = rho_0,
@@ -323,6 +327,8 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
                  g_r, G_r);
 
   std::map<std::string, correlation::analysis::Histogram> results;
+  results["H_r"] = std::move(H_r);
+  results["g_r_unweighted"] = std::move(g_r_unweighted);
   results["J_r"] = std::move(J_r);
   results["g_r"] = std::move(g_r);
   results["G_r"] = std::move(G_r);

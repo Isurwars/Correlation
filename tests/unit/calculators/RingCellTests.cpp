@@ -92,8 +92,8 @@ TEST_P(RingCellTests, MotifFinderRingDetection) {
   EXPECT_EQ(rings[numAtoms], 1) << "Ring of size " << numAtoms << " should detect exactly 1 ring motif.";
 }
 
-// 3. Verify Bond Angle Distribution (BAD) internal angles
-TEST_P(RingCellTests, BondAngleDistribution) {
+// 3. Verify Plane Angle Distribution (PAD) internal angles
+TEST_P(RingCellTests, PlaneAngleDistribution) {
   size_t const numAtoms = GetParam();
   auto const cell = createRing(numAtoms);
 
@@ -111,8 +111,8 @@ TEST_P(RingCellTests, BondAngleDistribution) {
   real_t const expected_angle_deg =
       static_cast<real_t>(180.0) * static_cast<real_t>(numAtoms - 2) / static_cast<real_t>(numAtoms);
 
-  if (dists.getAllHistograms().contains("BAD")) {
-    const auto &hist = dists.getHistogram("BAD");
+  if (dists.getAllHistograms().contains("PAD")) {
+    const auto &hist = dists.getHistogram("PAD");
     if (hist.partials.contains("C-C-C")) {
       const auto &ccc = hist.partials.at("C-C-C");
       auto max_it = std::ranges::max_element(ccc);
@@ -120,7 +120,7 @@ TEST_P(RingCellTests, BondAngleDistribution) {
         auto const idx = static_cast<size_t>(std::distance(ccc.begin(), max_it));
         real_t const measured_angle = hist.bins[idx];
         EXPECT_NEAR(measured_angle, expected_angle_deg, 2.0)
-            << "BAD peak for " << numAtoms << "-ring should be around " << expected_angle_deg << " degrees.";
+            << "PAD peak for " << numAtoms << "-ring should be around " << expected_angle_deg << " degrees.";
       }
     }
   }

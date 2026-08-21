@@ -15,7 +15,7 @@ namespace correlation::calculators {
 
 /**
  * @class PADCalculator
- * @brief Computes the Bond Angle Distribution (BAD/PAD).
+ * @brief Computes the Plane-Angle Distribution (PAD).
  */
 class PADCalculator : public BaseCalculator {
 public:
@@ -35,12 +35,12 @@ public:
    *
    * @param cell The periodic cell.
    * @param neighbors Structural analyzer containing the neighbor graph.
-   * @param bin_width Angular resolution (radians).
-   * @return A histogram representing the PAD distribution.
+   * @param bin_width Angular resolution (degrees).
+   * @return A map of histograms containing normalized "PAD" and raw "PAD_raw".
    */
-  static correlation::analysis::Histogram calculate(const correlation::core::Cell &cell,
-                                                    const correlation::analysis::StructureAnalyzer *neighbors,
-                                                    real_t bin_width);
+  static std::map<std::string, correlation::analysis::Histogram>
+  calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors,
+            real_t bin_width);
 };
 
 } // namespace correlation::calculators

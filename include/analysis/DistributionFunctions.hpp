@@ -381,9 +381,10 @@ public:
   ///@}
 
 private:
-  static std::unique_ptr<DistributionFunctions>
-  processSingleFrame(correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer, size_t frame_idx,
-                     const AnalysisSettings &settings, const BondCutoffMatrix &bond_cutoffs);
+  static std::unique_ptr<DistributionFunctions> processSingleFrame(correlation::core::Trajectory &trajectory,
+                                                                   const TrajectoryAnalyzer &analyzer, size_t frame_idx,
+                                                                   const AnalysisSettings &settings,
+                                                                   const BondCutoffMatrix &bond_cutoffs);
 
   static void normalizeHistograms(DistributionFunctions &dist_funcs);
 

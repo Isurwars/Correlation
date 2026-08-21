@@ -1,6 +1,6 @@
 /**
  * @file SYCLAngleCalculator.cpp
- * @brief Multi-vendor SYCL/oneAPI accelerated 3-body bond angle calculator implementation.
+ * @brief Multi-vendor SYCL/oneAPI accelerated 3-body plane angle calculator implementation.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -36,12 +36,12 @@ correlation::analysis::Histogram compute_angles_sycl(const correlation::core::Ce
   compute_angle_tensor_sycl(cell, graph, angles);
 
   correlation::analysis::Histogram hist;
-  hist.title = "Bond Angle Distribution";
+  hist.title = "Plane-Angle Distribution";
   hist.x_label = "Angle";
   hist.y_label = "P(θ)";
   hist.x_unit = "deg";
   hist.y_unit = "a.u.";
-  hist.file_suffix = "_BAD";
+  hist.file_suffix = "_PAD";
 
   size_t const num_bins = static_cast<size_t>((params.max_angle_deg - params.min_angle_deg) / params.bin_width_deg) + 1;
   hist.bins.reserve(num_bins);

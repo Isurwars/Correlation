@@ -160,9 +160,10 @@ void PlotController::populatePlotList() {
   last_rendered_index_ = -1;
   auto names = backend_.getAvailableHistogramNames();
 
-  std::map<std::string, int> priority = {{"g_r", 0},  {"G_r", 1},   {"J_r", 2},   {"S_q", 10},      {"XRD", 11},
-                                         {"BAD", 20}, {"PAD", 21},  {"DAD", 22},  {"CN", 23},       {"RD", 24},
-                                         {"MSD", 30}, {"VACF", 31}, {"VDOS", 32}, {"sigma2_N", 40}, {"chi_H", 41}};
+  std::map<std::string, int> priority = {
+      {"g_r", 0},  {"g_r_unweighted", 1}, {"H_r", 2},      {"G_r", 3},   {"J_r", 4},       {"S_q", 10},
+      {"XRD", 11}, {"PAD", 20},           {"PAD_raw", 21}, {"DAD", 22},  {"DAD_raw", 23},  {"CN", 24},
+      {"RD", 25},  {"MSD", 30},           {"VACF", 31},    {"VDOS", 32}, {"sigma2_N", 40}, {"chi_H", 41}};
 
   std::ranges::sort(names, [&](const std::string &lhs, const std::string &rhs) {
     int prio_a = priority.contains(lhs) ? priority.at(lhs) : 100;

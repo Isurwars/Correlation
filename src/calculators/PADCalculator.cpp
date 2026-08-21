@@ -48,17 +48,20 @@ void populateTripletHistogram(const std::vector<real_t> &angles, PADSettings set
 
 void PADCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                    const correlation::analysis::AnalysisSettings &settings) const {
-  dists.addHistogram("BAD", calculate(dists.cell(), dists.neighbors(), settings.angle_bin_width));
+  auto results = calculate(dists.cell(), dists.neighbors(), settings.angle_bin_width);
+  for (auto &[name, hist] : results) {
+    dists.addHistogram(name, std::move(hist));
+  }
 }
 
-correlation::analysis::Histogram PADCalculator::calculate(const correlation::core::Cell &cell,
-                                                          const correlation::analysis::StructureAnalyzer *neighbors,
-                                                          real_t bin_width) {
+std::map<std::string, correlation::analysis::Histogram>
+PADCalculator::calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors,
+                         real_t bin_width) {
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive");
   }
   if (neighbors == nullptr) {
-    throw std::logic_error("Cannot calculate BAD/PAD. Neighbor list has not been computed.");
+    throw std::logic_error("Cannot calculate PAD. Neighbor list has not been computed.");
   }
 
   const real_t theta_cut = 180.0;
@@ -71,24 +74,37 @@ correlation::analysis::Histogram PADCalculator::calculate(const correlation::cor
 
   const auto num_bins = static_cast<size_t>((theta_cut / bin_width) + 1);
 
+  correlation::analysis::Histogram f_theta_raw;
+  f_theta_raw.x_label = "θ";
+  f_theta_raw.title = "PAD (Raw Counts)";
+  f_theta_raw.y_label = "Counts";
+  f_theta_raw.x_unit = "°";
+  f_theta_raw.y_unit = "counts";
+  f_theta_raw.description = "Plane-Angle Distribution";
+  f_theta_raw.file_suffix = "_PAD_raw";
+  f_theta_raw.bins.resize(num_bins);
+
   correlation::analysis::Histogram f_theta;
   f_theta.x_label = "θ";
   f_theta.title = "Plane-Angle Distribution";
   f_theta.y_label = "P(θ)";
   f_theta.x_unit = "°";
   f_theta.y_unit = "°⁻¹";
-  f_theta.description = "Bond Angle Distribution";
+  f_theta.description = "Plane-Angle Distribution";
   f_theta.file_suffix = "_PAD";
   f_theta.bins.resize(num_bins);
+
   for (size_t i = 0; i < num_bins; ++i) {
-    f_theta.bins[i] = (static_cast<real_t>(i) + static_cast<real_t>(0.5)) * bin_width;
+    const real_t bin_val = (static_cast<real_t>(i) + static_cast<real_t>(0.5)) * bin_width;
+    f_theta_raw.bins[i] = bin_val;
+    f_theta.bins[i] = bin_val;
   }
 
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = 0; j < num_elements; ++j) {
       for (size_t k = j; k < num_elements; ++k) {
         std::string const key = elements[j].symbol + "-" + elements[i].symbol + "-" + elements[k].symbol;
-        auto &partial_hist = f_theta.partials[key];
+        auto &partial_hist = f_theta_raw.partials[key];
         partial_hist.assign(num_bins, 0.0);
 
         populateTripletHistogram(neighbors->angles()[j][i][k],
@@ -102,30 +118,34 @@ correlation::analysis::Histogram PADCalculator::calculate(const correlation::cor
     }
   }
 
-  auto &total_f = f_theta.partials["Total"];
-  total_f.assign(num_bins, 0.0);
+  auto &total_raw = f_theta_raw.partials["Total"];
+  total_raw.assign(num_bins, 0.0);
   real_t total_counts = 0;
 
-  for (const auto &[key, partial] : f_theta.partials) {
+  for (const auto &[key, partial] : f_theta_raw.partials) {
     if (key != "Total") {
       for (size_t i = 0; i < num_bins; ++i) {
-        total_f[i] += partial[i];
+        total_raw[i] += partial[i];
         total_counts += partial[i];
       }
     }
   }
 
-  if (total_counts < 1) {
-    return f_theta;
-  }
+  f_theta.partials = f_theta_raw.partials;
 
-  const real_t normalization_factor = static_cast<real_t>(1.0 / (total_counts * bin_width));
-  for (auto &[key, partial] : f_theta.partials) {
-    for (auto &val : partial) {
-      val *= normalization_factor;
+  if (total_counts >= 1) {
+    const real_t normalization_factor = static_cast<real_t>(1.0 / (total_counts * bin_width));
+    for (auto &[key, partial] : f_theta.partials) {
+      for (auto &val : partial) {
+        val *= normalization_factor;
+      }
     }
   }
-  return f_theta;
+
+  std::map<std::string, correlation::analysis::Histogram> results;
+  results["PAD"] = std::move(f_theta);
+  results["PAD_raw"] = std::move(f_theta_raw);
+  return results;
 }
 
 } // namespace correlation::calculators

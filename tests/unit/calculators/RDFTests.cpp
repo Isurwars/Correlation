@@ -108,8 +108,10 @@ TEST_F(RDFTests, AccessorsWork) {
 
   // getAllHistograms()
   const auto &allHists = dists.getAllHistograms();
-  EXPECT_EQ(allHists.size(), 3);
+  EXPECT_EQ(allHists.size(), 5);
   EXPECT_TRUE(allHists.count("g_r"));
+  EXPECT_TRUE(allHists.count("g_r_unweighted"));
+  EXPECT_TRUE(allHists.count("H_r"));
   EXPECT_TRUE(allHists.count("J_r"));
   EXPECT_TRUE(allHists.count("G_r"));
 }
@@ -494,5 +496,35 @@ TEST_F(RDFTests, NaCl_RockSalt_RDF) {
   }
   EXPECT_NEAR(peak_nana, lat_a / std::numbers::sqrt2, 0.02);
   EXPECT_GT(max_nana, 1.0);
+}
+
+TEST_F(RDFTests, VerifyRawAndUnweightedHistograms) {
+  updateTrajectory();
+  DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+  dists.calculateRDF({
+      .r_max = 5.0,
+      .r_bin_width = 0.1,
+  });
+
+  ASSERT_TRUE(dists.getAllHistograms().contains("H_r"));
+  ASSERT_TRUE(dists.getAllHistograms().contains("g_r_unweighted"));
+
+  const auto &h_r = dists.getHistogram("H_r");
+  EXPECT_EQ(h_r.y_unit, "counts");
+  EXPECT_EQ(h_r.title, "H(r) — Distance Histogram");
+  ASSERT_TRUE(h_r.partials.contains("Ar-Ar"));
+
+  // Check that the 1 pair at distance 1.5 is in bin 1.55 (index 15 with r_bin_width 0.1)
+  // Distance 1.5 -> bin index 15: [1.5, 1.6)
+  real_t raw_counts_sum = 0;
+  for (real_t val : h_r.partials.at("Ar-Ar")) {
+    raw_counts_sum += val;
+  }
+  // 2 self/inter counts for 1 pair of Ar-Ar
+  EXPECT_GT(raw_counts_sum, 0.0);
+
+  const auto &g_unw = dists.getHistogram("g_r_unweighted");
+  EXPECT_EQ(g_unw.title, "g(r) — Unweighted Radial Distribution Function");
+  ASSERT_TRUE(g_unw.partials.contains("Ar-Ar"));
 }
 } // namespace correlation::analysis

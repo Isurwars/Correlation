@@ -37,12 +37,12 @@ public:
    *
    * @param cell The periodic cell.
    * @param neighbors Structural analyzer containing the neighbor graph.
-   * @param bin_width Angular resolution (radians).
-   * @return A histogram representing the DAD distribution.
+   * @param bin_width Angular resolution (degrees).
+   * @return A map of histograms containing normalized "DAD" and raw "DAD_raw".
    */
-  static correlation::analysis::Histogram calculate(const correlation::core::Cell &cell,
-                                                    const correlation::analysis::StructureAnalyzer *neighbors,
-                                                    real_t bin_width);
+  static std::map<std::string, correlation::analysis::Histogram>
+  calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors,
+            real_t bin_width);
 };
 
 } // namespace correlation::calculators

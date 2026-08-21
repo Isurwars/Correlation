@@ -81,7 +81,9 @@ TEST_F(PADTests_AngleReproduction, CalculatePAD) {
   DistributionFunctions dists(water, 2.0, trajectory_.getBondCutoffsSQ());
 
   dists.calculatePAD(0.001);
-  const auto &hist = dists.getHistogram("BAD");
+  const auto &hist = dists.getHistogram("PAD");
+  const auto &hist_alias = dists.getHistogram("BAD");
+  EXPECT_EQ(hist.bins.size(), hist_alias.bins.size());
   const auto &hoh = hist.partials.at("H-O-H");
 
   auto max_it = std::max_element(hoh.begin(), hoh.end());
@@ -279,8 +281,8 @@ TEST_F(PADTests, SingleAtomNoAngles) {
   // Might have partials created but empty, or just no "BAD" if logic
   // handles it. Actually implementation might create partials if atoms exist
   // but no angles found. Let's check total counts.
-  if (static_cast<unsigned int>(dists.getAllHistograms().contains("BAD")) != 0U) {
-    const auto &hist = dists.getHistogram("BAD");
+  if (static_cast<unsigned int>(dists.getAllHistograms().contains("PAD")) != 0U) {
+    const auto &hist = dists.getHistogram("PAD");
     if (!hist.partials.empty()) {
       if (static_cast<unsigned int>(hist.partials.contains("Total")) != 0U) {
         EXPECT_DOUBLE_EQ(sumHistogram(hist.partials.at("Total")), 0.0);
@@ -317,7 +319,7 @@ TEST_F(PADTests, LinearGeometry180) {
   // Fine binning for accuracy
   dists.calculatePAD(0.001);
 
-  const auto &hist = dists.getHistogram("BAD");
+  const auto &hist = dists.getHistogram("PAD");
   // Should have O-Si-O peak at 180
   ASSERT_EQ(hist.partials.count("O-Si-O"), 1);
   const auto &partial = hist.partials.at("O-Si-O");
@@ -356,7 +358,7 @@ TEST_F(PADTests, RightAngle90) {
   DistributionFunctions dists(cell_, 2.0, trajectory_.getBondCutoffsSQ());
   dists.calculatePAD(0.001);
 
-  const auto &hist = dists.getHistogram("BAD");
+  const auto &hist = dists.getHistogram("PAD");
   ASSERT_EQ(hist.partials.count("O-Si-O"), 1);
 
   // Find peak
@@ -386,7 +388,7 @@ TEST_F(PADTests, EquilateralTriangle60) {
   DistributionFunctions dists(cell_, 2.0, trajectory_.getBondCutoffsSQ());
   dists.calculatePAD(1.0);
 
-  const auto &hist = dists.getHistogram("BAD");
+  const auto &hist = dists.getHistogram("PAD");
   // Should have O-Si-O
   const auto &partial = hist.partials.at("O-Si-O");
 
@@ -424,7 +426,7 @@ TEST_F(PADTests, TetrahedralAngle) {
                               trajectory_.getBondCutoffsSQ()); // Distance is 1.6
   dists.calculatePAD(0.001);                                   // Hyperfine bins
 
-  const auto &hist = dists.getHistogram("BAD");
+  const auto &hist = dists.getHistogram("PAD");
   const auto &partial = hist.partials.at("O-Si-O");
 
   // Expected ~109.471
@@ -450,7 +452,7 @@ TEST_F(PADTests, SymmetryAndSorting) {
   DistributionFunctions dists(cell_, 2.0, trajectory_.getBondCutoffsSQ());
   dists.calculatePAD(1.0);
 
-  const auto &hist = dists.getHistogram("BAD");
+  const auto &hist = dists.getHistogram("PAD");
 
   // Check if we have O-Si-N or N-Si-O
   bool found = false;
@@ -493,7 +495,7 @@ TEST_F(PADTests, FullNormalizationCheck) {
   DistributionFunctions dists(cell_, 2.0, cutoffs);
   dists.calculatePAD(1.0);
 
-  const auto &hist = dists.getHistogram("BAD");
+  const auto &hist = dists.getHistogram("PAD");
 
   double sum_partial = 0;
   double sum_total = 0;
@@ -535,7 +537,7 @@ TEST_F(PADTests, IcosahedronAnglesPAD) {
   DistributionFunctions dists(cell_, 2.5, trajectory_.getBondCutoffsSQ());
   dists.calculatePAD(0.01);
 
-  const auto &hist = dists.getHistogram("BAD");
+  const auto &hist = dists.getHistogram("PAD");
   ASSERT_EQ(hist.partials.count("Si-Si-Si"), 1);
   const auto &partial = hist.partials.at("Si-Si-Si");
 
@@ -667,5 +669,23 @@ TEST_F(PADTests, BondDistanceWithinCutoffRangeProducesAngle) {
     }
   }
   EXPECT_TRUE(found_90);
+}
+
+TEST_F(PADTests, VerifyPADRawHistogram) {
+  // Linear O-Si-O -> 1 angle of 180 degrees
+  cell_.addAtom("O", {8.4, 10.0, 10.0});
+  cell_.addAtom("Si", {10.0, 10.0, 10.0});
+  cell_.addAtom("O", {11.6, 10.0, 10.0});
+  updateTrajectory();
+
+  DistributionFunctions dists(cell_, 2.0, trajectory_.getBondCutoffsSQ());
+  dists.calculatePAD(1.0);
+
+  ASSERT_TRUE(dists.getAllHistograms().contains("PAD_raw"));
+  const auto &raw_hist = dists.getHistogram("PAD_raw");
+  EXPECT_EQ(raw_hist.y_unit, "counts");
+  ASSERT_TRUE(raw_hist.partials.contains("O-Si-O"));
+  EXPECT_DOUBLE_EQ(sumHistogram(raw_hist.partials.at("O-Si-O")), 1.0);
+  EXPECT_DOUBLE_EQ(sumHistogram(raw_hist.partials.at("Total")), 1.0);
 }
 } // namespace correlation::analysis

@@ -124,12 +124,15 @@ void normalizeAndScale(NormalizeParams const &params) {
 
 void DADCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                    const correlation::analysis::AnalysisSettings &settings) const {
-  dists.addHistogram("DAD", calculate(dists.cell(), dists.neighbors(), settings.dihedral_bin_width));
+  auto results = calculate(dists.cell(), dists.neighbors(), settings.dihedral_bin_width);
+  for (auto &[name, hist] : results) {
+    dists.addHistogram(name, std::move(hist));
+  }
 }
 
-correlation::analysis::Histogram DADCalculator::calculate(const correlation::core::Cell &cell,
-                                                          const correlation::analysis::StructureAnalyzer *neighbors,
-                                                          real_t bin_width) {
+std::map<std::string, correlation::analysis::Histogram>
+DADCalculator::calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors,
+                         real_t bin_width) {
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive");
   }
@@ -149,6 +152,16 @@ correlation::analysis::Histogram DADCalculator::calculate(const correlation::cor
   }
 
   const auto num_bins = static_cast<size_t>((theta_range / bin_width) + 1);
+  correlation::analysis::Histogram f_dihedral_raw = initializeHistogram({
+      .num_bins = num_bins,
+      .theta_min = theta_min,
+      .bin_width = bin_width,
+  });
+  f_dihedral_raw.title = "DAD (Raw Counts)";
+  f_dihedral_raw.y_label = "Counts";
+  f_dihedral_raw.y_unit = "counts";
+  f_dihedral_raw.file_suffix = "_DAD_raw";
+
   correlation::analysis::Histogram f_dihedral = initializeHistogram({
       .num_bins = num_bins,
       .theta_min = theta_min,
@@ -168,7 +181,7 @@ correlation::analysis::Histogram DADCalculator::calculate(const correlation::cor
           std::string const key = elements[idx_a].symbol + "-" + elements[idx_b].symbol + "-" + elements[idx_c].symbol +
                                   "-" + elements[idx_d].symbol;
 
-          auto &partial_hist = f_dihedral.partials[key];
+          auto &partial_hist = f_dihedral_raw.partials[key];
           if (partial_hist.empty()) {
             partial_hist.assign(num_bins, 0.0);
           }
@@ -186,13 +199,29 @@ correlation::analysis::Histogram DADCalculator::calculate(const correlation::cor
     }
   }
 
+  auto &total_raw = f_dihedral_raw.partials["Total"];
+  total_raw.assign(num_bins, static_cast<real_t>(0.0));
+  for (const auto &[key, partial] : f_dihedral_raw.partials) {
+    if (key != "Total") {
+      for (size_t idx = 0; idx < num_bins; ++idx) {
+        total_raw[idx] += partial[idx];
+      }
+    }
+  }
+
+  f_dihedral.partials = f_dihedral_raw.partials;
+
   normalizeAndScale({
       .partials = &f_dihedral.partials,
       .total_f = &f_dihedral.partials["Total"],
       .num_bins = num_bins,
       .bin_width = bin_width,
   });
-  return f_dihedral;
+
+  std::map<std::string, correlation::analysis::Histogram> results;
+  results["DAD"] = std::move(f_dihedral);
+  results["DAD_raw"] = std::move(f_dihedral_raw);
+  return results;
 }
 
 } // namespace correlation::calculators

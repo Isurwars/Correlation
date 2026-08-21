@@ -22,10 +22,10 @@ using AngleTensor = std::vector<std::vector<std::vector<std::vector<real_t>>>>;
 
 /**
  * @class AngleCalculator
- * @brief Computes all unique 3-body bond angles in the simulation cell.
+ * @brief Computes all unique 3-body plane angles in the simulation cell.
  *
  * This calculator iterates over every central atom and finds all unique
- * combinations of its neighbors. It calculates the bond angle formed by the
+ * combinations of its neighbors. It calculates the plane angle formed by the
  * triad (Neighbor1 - Central_Atom - Neighbor2) taking into account
  * periodic boundary conditions.
  *
@@ -36,9 +36,9 @@ using AngleTensor = std::vector<std::vector<std::vector<std::vector<real_t>>>>;
 class AngleCalculator : public BaseCalculator {
 public:
   [[nodiscard]] std::string getName() const override { return "Angle"; }
-  [[nodiscard]] std::string getShortName() const override { return "BAD"; }
+  [[nodiscard]] std::string getShortName() const override { return "PAD"; }
   [[nodiscard]] std::string getGroup() const override { return "Structural"; }
-  [[nodiscard]] std::string getDescription() const override { return "Computes the Bond Angle Distribution (BAD)."; }
+  [[nodiscard]] std::string getDescription() const override { return "Computes the Plane-Angle Distribution (PAD)."; }
 
   [[nodiscard]] bool isFrameCalculator() const override { return true; }
   [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }

@@ -103,6 +103,9 @@ const StructureAnalyzer *DistributionFunctions::neighbors() const {
 const Histogram &DistributionFunctions::getHistogram(const std::string &name) const {
   std::lock_guard<std::mutex> lock(histogram_mutex_);
   auto iter = histograms_.find(name);
+  if (iter == histograms_.end() && name == "BAD") {
+    iter = histograms_.find("PAD");
+  }
   if (iter == histograms_.end()) {
     throw std::out_of_range("Histogram '" + name + "' not found.");
   }
@@ -215,7 +218,7 @@ void DistributionFunctions::smooth(const std::string &name, real_t sigma, correl
   }
 
   real_t effective_sigma = sigma;
-  if (name == "BAD" || name == "DAD" || name == "PAD") {
+  if (name == "BAD" || name == "PAD" || name == "PAD_raw" || name == "DAD" || name == "DAD_raw") {
     // Angular distributions operate on [0, 180] or [0, 360] degrees instead of [0, 20] Angstroms.
     // Domain ratio between angular space (~180 deg) and spatial r_max (~20 Å) is ~9.0x.
     // Scale sigma proportionally so that angular smoothing spans an enhanced smoothing window (~15x spatial sigma, e.g.
@@ -291,14 +294,20 @@ void DistributionFunctions::calculatePAD(real_t bin_width) {
   if (bin_width <= 0.0) {
     throw std::invalid_argument("bin_width must be strictly positive");
   }
-  histograms_["BAD"] = correlation::calculators::PADCalculator::calculate(cell_, neighbors(), bin_width);
+  auto results = correlation::calculators::PADCalculator::calculate(cell_, neighbors(), bin_width);
+  for (auto &[name, hist] : results) {
+    histograms_[name] = std::move(hist);
+  }
 }
 
 void DistributionFunctions::calculateDAD(real_t bin_width) {
   if (bin_width <= 0.0) {
     throw std::invalid_argument("bin_width must be strictly positive");
   }
-  histograms_["DAD"] = correlation::calculators::DADCalculator::calculate(cell_, neighbors(), bin_width);
+  auto results = correlation::calculators::DADCalculator::calculate(cell_, neighbors(), bin_width);
+  for (auto &[name, hist] : results) {
+    histograms_[name] = std::move(hist);
+  }
 }
 
 void DistributionFunctions::calculateVACF(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames,

@@ -38,7 +38,12 @@ TEST_F(DADTests, BasicCalculation) {
   StructureAnalyzer const analyzer(cell_, r_cut, bond_cutoffs, true);
 
   real_t const bin_width = 10.0;
-  Histogram f_dihedral = correlation::calculators::DADCalculator::calculate(cell_, &analyzer, bin_width);
+  auto results = correlation::calculators::DADCalculator::calculate(cell_, &analyzer, bin_width);
+  ASSERT_TRUE(results.contains("DAD"));
+  ASSERT_TRUE(results.contains("DAD_raw"));
+
+  Histogram f_dihedral = std::move(results["DAD"]);
+  Histogram f_dihedral_raw = std::move(results["DAD_raw"]);
 
   // We only expect one type of dihedral for C-C-C-C.
   ASSERT_FALSE(f_dihedral.partials.empty());
@@ -56,6 +61,14 @@ TEST_F(DADTests, BasicCalculation) {
   }
   // Because it is normalized: sum * bin_width = 1.0
   EXPECT_NEAR(sum * bin_width, 1.0, 1e-5);
+
+  EXPECT_EQ(f_dihedral_raw.y_unit, "counts");
+  ASSERT_TRUE(f_dihedral_raw.partials.contains("C-C-C-C"));
+  real_t raw_sum = 0.0;
+  for (auto val : f_dihedral_raw.partials["C-C-C-C"]) {
+    raw_sum += val;
+  }
+  EXPECT_GT(raw_sum, 0.0);
 }
 
 TEST_F(DADTests, IcosahedronAnglesDAD) {
@@ -78,7 +91,9 @@ TEST_F(DADTests, IcosahedronAnglesDAD) {
   StructureAnalyzer const analyzer(cell_iso, r_cut, bond_cutoffs, true);
 
   real_t const bin_width = 1.0;
-  Histogram f_dihedral = correlation::calculators::DADCalculator::calculate(cell_iso, &analyzer, bin_width);
+  auto results = correlation::calculators::DADCalculator::calculate(cell_iso, &analyzer, bin_width);
+  ASSERT_TRUE(results.contains("DAD"));
+  Histogram f_dihedral = std::move(results["DAD"]);
 
   ASSERT_FALSE(f_dihedral.partials.empty());
   auto &partial = f_dihedral.partials["Si-Si-Si-Si"];
@@ -100,7 +115,7 @@ TEST_F(DADTests, IcosahedronAnglesDAD) {
         }
       }
     }
-    EXPECT_TRUE(found) << "Should find DAD peak near " << target << " degrees";
+    EXPECT_TRUE(found) << "Target dihedral angle: " << target << " was not found!";
   }
 }
 

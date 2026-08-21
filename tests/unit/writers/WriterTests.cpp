@@ -148,7 +148,7 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
 
   // Assert: Part 2 - Validate content of the calculated BAD histogram.
 
-  const auto &pad_hist = dists.getHistogram("BAD");
+  const auto &pad_hist = dists.getHistogram("PAD");
   const auto &pad_bins = pad_hist.bins;
   const auto &si_si_si_pad = pad_hist.partials.at("Si-Si-Si");
 
@@ -194,7 +194,7 @@ TEST_F(FileWriterTests, WritesHDF5File) {
   // Verify content using HighFive
   HighFive::File file("test_si.h5", HighFive::File::ReadOnly);
   EXPECT_TRUE(file.exist("g_r"));
-  EXPECT_TRUE(file.exist("BAD"));
+  EXPECT_TRUE(file.exist("PAD"));
 
   HighFive::Group g_group = file.getGroup("g_r");
   // The old "data" dataset should not exist anymore
