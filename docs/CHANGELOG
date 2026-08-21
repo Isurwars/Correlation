@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.8.9] - 2026-08-20
+
+### Added & Refactored
+- **Unnormalized & Unweighted Distributions**:
+  - Expose raw pair distance histogram `H_r` (counts vs. $r$) and unweighted partial radial distribution function `g_r_unweighted` ($g_{ij}(r) \to 1$, prior to Ashcroft-Langreth weight multiplication) in `RDFCalculator` and `DistributionFunctions`.
+  - Expose unnormalized triplet count histogram `PAD_raw` ($N(\theta)$ counts) alongside normalized `PAD` ($P(\theta)$ probability density) in `PADCalculator`.
+  - Expose unnormalized dihedral quartet count histogram `DAD_raw` ($N(\phi)$ counts) alongside normalized `DAD` ($P(\phi)$ probability density) in `DADCalculator`.
+- **Nomenclature Refactor (BAD → PAD)**:
+  - Purged "Bond-Angle Distribution" / "BAD" terminology in favor of "Plane-Angle Distribution" / "PAD" across calculators, GPU kernels, UI components, tests, and documentation.
+  - Maintained `BAD` strictly as a backward-compatible query alias in `DistributionFunctions::getHistogram` and `DistributionFunctions::smooth`.
+  - Updated UI header to "Plane Angle" and refined tooltip physics descriptions in `BondAngleOptionsCard.slint`.
+  - Added new distribution keys to `PlotController` ordering priority map for Slint GUI visualization.
+
+### Testing & Verification
+- **Distribution Tests**: Added unit test coverage for `H_r`, `g_r_unweighted`, `PAD_raw`, `DAD_raw`, and the `BAD` fallback alias in `RDFTests`, `PADTests`, `DADTests`, `WriterTests`, and `RingCellTests`.
+
 ## [3.8.8] - 2026-08-20
 
 ### Added & Refactored
