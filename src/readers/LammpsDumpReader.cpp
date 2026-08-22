@@ -185,9 +185,16 @@ struct LammpsFrameParser {
         continue;
       }
 
-      real_t frac_x = static_cast<real_t>(std::stod(fields[layout.col_x]));
-      real_t frac_y = static_cast<real_t>(std::stod(fields[layout.col_y]));
-      real_t frac_z = static_cast<real_t>(std::stod(fields[layout.col_z]));
+      real_t frac_x = 0.0;
+      real_t frac_y = 0.0;
+      real_t frac_z = 0.0;
+      try {
+        frac_x = static_cast<real_t>(std::stod(fields[layout.col_x]));
+        frac_y = static_cast<real_t>(std::stod(fields[layout.col_y]));
+        frac_z = static_cast<real_t>(std::stod(fields[layout.col_z]));
+      } catch (...) {
+        continue;
+      }
 
       // Determine element symbol.
       std::string element_symbol;
@@ -203,9 +210,7 @@ struct LammpsFrameParser {
       // Convert scaled (fractional) coordinates to Cartesian if needed.
       correlation::math::Vector3<real_t> pos;
       if (layout.scaled_coords) {
-        pos = {frac_x * lattice_vector[0][0] + frac_y * lattice_vector[1][0] + frac_z * lattice_vector[2][0],
-               frac_x * lattice_vector[0][1] + frac_y * lattice_vector[1][1] + frac_z * lattice_vector[2][1],
-               frac_x * lattice_vector[0][2] + frac_y * lattice_vector[1][2] + frac_z * lattice_vector[2][2]};
+        pos = lattice_vector * correlation::math::Vector3<real_t>{frac_x, frac_y, frac_z};
       } else {
         pos = {frac_x, frac_y, frac_z};
       }

@@ -527,4 +527,34 @@ TEST_F(RDFTests, VerifyRawAndUnweightedHistograms) {
   EXPECT_EQ(g_unw.title, "g(r) — Unweighted Radial Distribution Function");
   ASSERT_TRUE(g_unw.partials.contains("Ar-Ar"));
 }
+
+TEST_F(RDFTests, AddAccumulatesWithMismatchedPartialSizes) {
+  updateTrajectory();
+  DistributionFunctions df1(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+  DistributionFunctions df2(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+
+  Histogram h_1;
+  h_1.bins = {0.1, 0.2, 0.3};
+  h_1.partials["Ar-Ar"] = {1.0, 2.0, 3.0};
+  h_1.compute_count = 1;
+
+  Histogram h_2;
+  h_2.bins = {0.1, 0.2, 0.3};
+  h_2.partials["Ar-Ar"] = {10.0, 20.0}; // Shorter partial size
+  h_2.compute_count = 1;
+
+  df1.addHistogram("test_hist", std::move(h_1));
+  df2.addHistogram("test_hist", std::move(h_2));
+
+  // Should safely accumulate min(3, 2) = 2 elements without throwing or reading out-of-bounds
+  EXPECT_NO_THROW(df1.add(df2));
+
+  const auto &res = df1.getHistogram("test_hist");
+  EXPECT_EQ(res.compute_count, 2);
+  ASSERT_EQ(res.partials.at("Ar-Ar").size(), 3);
+  EXPECT_DOUBLE_EQ(res.partials.at("Ar-Ar")[0], 11.0);
+  EXPECT_DOUBLE_EQ(res.partials.at("Ar-Ar")[1], 22.0);
+  EXPECT_DOUBLE_EQ(res.partials.at("Ar-Ar")[2], 3.0);
+}
+
 } // namespace correlation::analysis

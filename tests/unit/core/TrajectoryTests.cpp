@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "core/Cell.hpp"
+#include "core/MappedFile.hpp"
 #include "core/Trajectory.hpp"
 #include "math/LinearAlgebra.hpp"
 #include "physics/PhysicalData.hpp"
@@ -12,6 +13,7 @@
 #include <filesystem>
 #include <fstream>
 #include <gtest/gtest.h>
+#include <thread>
 #include <vector>
 
 namespace correlation::testing {
@@ -372,6 +374,43 @@ TEST_F(TrajectoryTests, RemoveDuplicatedFramesAlternating) {
   // No consecutive duplicates, so nothing removed
   EXPECT_EQ(traj.getFrameCount(), 4);
   EXPECT_EQ(traj.getRemovedFrameCount(), 0);
+}
+
+TEST_F(TrajectoryTests, FirstFrameConcurrentThreadSafe) {
+  std::string const test_file = "test_data/lazy_traj.xyz";
+  std::ofstream out(test_file);
+  out << "1\ncomment\nH 1.0 2.0 3.0\n";
+  out << "1\ncomment\nH 4.0 5.0 6.0\n";
+  out.close();
+
+  auto mapped = std::make_shared<MappedFile>(test_file);
+  std::vector<size_t> offsets = {0, 24, 48};
+  auto parser = [](const char *data, size_t size) {
+    (void)data;
+    (void)size;
+    Cell cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+    cell.addAtom("H", {1.0, 2.0, 3.0});
+    return cell;
+  };
+
+  Trajectory const traj(mapped, offsets, parser, 1.0);
+
+  constexpr int num_threads = 16;
+  std::vector<std::thread> workers;
+  workers.reserve(num_threads);
+
+  for (int i = 0; i < num_threads; ++i) {
+    workers.emplace_back([&traj]() {
+      for (int iter = 0; iter < 100; ++iter) {
+        const Cell &frame = traj.firstFrame();
+        EXPECT_EQ(frame.atomCount(), 1);
+      }
+    });
+  }
+
+  for (auto &worker : workers) {
+    worker.join();
+  }
 }
 
 } // namespace correlation::testing

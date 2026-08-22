@@ -379,7 +379,8 @@ void DistributionFunctions::add(const DistributionFunctions &other) {
         this_hist.partials[key] = other_partial;
       } else {
         auto &this_partial = this_hist.partials[key];
-        for (size_t i = 0; i < this_partial.size(); ++i) {
+        const size_t count = std::min(this_partial.size(), other_partial.size());
+        for (size_t i = 0; i < count; ++i) {
           this_partial[i] += other_partial[i];
         }
       }

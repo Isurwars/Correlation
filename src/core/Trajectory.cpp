@@ -72,6 +72,10 @@ const Cell &Trajectory::firstFrame() const {
   if (!frames_.empty()) {
     return frames_[0];
   }
+  std::scoped_lock const lock(*init_mutex_);
+  if (!frames_.empty()) {
+    return frames_[0];
+  }
   if (!first_frame_) {
     if (getFrameCount() == 0) {
       throw std::runtime_error("Trajectory::firstFrame: trajectory is empty");

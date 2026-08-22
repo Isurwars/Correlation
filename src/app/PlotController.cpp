@@ -497,32 +497,12 @@ void PlotController::executePlotRender(RenderTaskData data) {
       svg = correlation::plotters::renderComparisonSvg(data.comparison_hists, key, data.config, data.hover);
     }
 
-    static std::atomic<uint64_t> file_counter{0};
-    auto temp_dir = std::filesystem::temp_directory_path();
-    auto temp_path = temp_dir / ("correlation_preview_" + std::to_string(file_counter++) + ".svg");
+    slint::invoke_from_event_loop([this, svg = std::move(svg)]() {
+      const auto *svg_bytes = std::bit_cast<const uint8_t *>(svg.data());
+      auto img =
+          slint::private_api::load_image_from_embedded_data(std::span<const uint8_t>(svg_bytes, svg.size()), "svg");
 
-    std::string final_temp_path;
-    std::ofstream out(temp_path);
-    if (out) {
-      out << svg;
-      out.close();
-      final_temp_path = temp_path.string();
-    }
-
-    slint::invoke_from_event_loop([this, final_temp_path, svg]() {
-      if (!final_temp_path.empty()) {
-        auto img = slint::Image::load_from_path(slint::SharedString(final_temp_path));
-        window_.set_preview_plot(img);
-
-        std::error_code error_code;
-        std::filesystem::remove(final_temp_path, error_code);
-      } else {
-        const auto *svg_bytes = std::bit_cast<const uint8_t *>(svg.data());
-        auto img =
-            slint::private_api::load_image_from_embedded_data(std::span<const uint8_t>(svg_bytes, svg.size()), "svg");
-
-        window_.set_preview_plot(img);
-      }
+      window_.set_preview_plot(img);
 
       is_rendering_ = false;
 
