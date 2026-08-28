@@ -246,7 +246,7 @@ if(BUILD_GUI)
     target_link_libraries(correlation PRIVATE correlation_simd_options)
 
     if (WIN32)
-        list(APPEND CORRELATION_LIBS Imm32 Comctl32 dwrite propsys opengl32 dwmapi uxtheme wininet)
+        list(APPEND CORRELATION_LIBS Imm32 Comctl32 dwrite propsys opengl32 dwmapi uxtheme wininet Shell32)
     endif()
 
     target_link_libraries(correlation PRIVATE ${CORRELATION_LIBS})

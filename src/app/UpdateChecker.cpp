@@ -22,16 +22,35 @@
 #include <vector>
 
 #ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
 #define NOMINMAX
-#include <shellapi.h>
+#endif
+// clang-format off
 #include <windows.h>
+#include <shellapi.h>
 #include <wininet.h>
+// clang-format on
+
+#ifdef _MSC_VER
+#pragma comment(lib, "wininet.lib")
+#pragma comment(lib, "shell32.lib")
+#endif
 #else
 #include <fcntl.h>
 #include <spawn.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+
+#ifdef __APPLE__
+#include <crt_externs.h>
+#define environ (*_NSGetEnviron())
+#else
+extern char **environ;
+#endif
 #endif
 
 namespace correlation::app {

@@ -103,6 +103,9 @@ target_link_libraries(correlation_unit_tests PRIVATE
     GTest::gmock
     GTest::gtest_main
 )
+if(WIN32)
+    target_link_libraries(correlation_unit_tests PRIVATE wininet Shell32)
+endif()
 add_dependencies(correlation_unit_tests readers_obj writers_obj calculators_obj mlip_obj)
 # (Definitions and discovery are configured at the end of the file in a loop)
 
