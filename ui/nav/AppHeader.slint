@@ -6,6 +6,7 @@ import { MaterialPalette, MaterialTypography } from "../material/material.slint"
 
 export component AppHeader inherits Rectangle {
     in property <string> title_text: "Correlation";
+    in property <string> version_text: "v3.9.0";
     in property <string> status_text: "";
     in property <bool> file_loaded: false;
     height: 40px;
@@ -18,7 +19,7 @@ export component AppHeader inherits Rectangle {
         alignment: space-between;
 
         HorizontalLayout {
-            spacing: 10px;
+            spacing: 8px;
 
             Image {
                 source: @image-url("../../Images/Logo.png");
@@ -35,6 +36,29 @@ export component AppHeader inherits Rectangle {
                 vertical-alignment: center;
                 accessible-role: text;
                 accessible-label: "Application Title";
+            }
+
+            if root.version_text != "": Rectangle {
+                background: MaterialPalette.surface_container_highest;
+                border-radius: 4px;
+                height: 18px;
+                y: (parent.height - self.height) / 2;
+
+                HorizontalLayout {
+                    padding-left: 6px;
+                    padding-right: 6px;
+                    alignment: center;
+
+                    Text {
+                        text: root.version_text;
+                        font-size: MaterialTypography.label_small.font_size;
+                        font-weight: MaterialTypography.label_small.font_weight;
+                        color: MaterialPalette.on_surface_variant;
+                        vertical-alignment: center;
+                        accessible-role: text;
+                        accessible-label: "Application Version";
+                    }
+                }
             }
         }
 

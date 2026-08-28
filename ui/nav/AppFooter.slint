@@ -8,8 +8,22 @@ export component AppFooter inherits Rectangle {
     in property <string> status_text: "";
     in property <float> progress: 0.0;
     in property <bool> analysis_running: false;
+    in property <bool> update_available: false;
+    in property <string> update_version: "";
+    in property <string> update_url: "https://github.com/Isurwars/Correlation/releases";
+    callback open_url(string);
+
     height: 24px;
     background: MaterialPalette.surface_container_lowest;
+
+    property <bool> blink_state: true;
+    blink_timer := Timer {
+        interval: 800ms;
+        running: root.update_available;
+        triggered() => {
+            root.blink_state = !root.blink_state;
+        }
+    }
 
     HorizontalLayout {
         padding-left: 12px;
@@ -23,6 +37,49 @@ export component AppFooter inherits Rectangle {
             vertical-alignment: center;
             accessible-role: text;
             accessible-label: "Footer Status";
+        }
+
+        if root.update_available: Rectangle {
+            background: update_touch.has_hover ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+            border-radius: 4px;
+            height: 20px;
+            y: (parent.height - self.height) / 2;
+            animate background { duration: 150ms; }
+
+            update_touch := TouchArea {
+                mouse-cursor: pointer;
+                clicked => {
+                    root.open_url(root.update_url);
+                }
+            }
+
+            HorizontalLayout {
+                padding-left: 8px;
+                padding-right: 8px;
+                spacing: 6px;
+                alignment: center;
+
+                Rectangle {
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 3px;
+                    background: MaterialPalette.primary;
+                    opacity: root.blink_state ? 1.0 : 0.3;
+                    y: (parent.height - self.height) / 2;
+                    animate opacity { duration: 400ms; easing: ease-in-out; }
+                }
+
+                Text {
+                    text: "New version " + root.update_version + " available — Click to download";
+                    font-size: MaterialTypography.label_small.font_size;
+                    font-weight: MaterialTypography.label_small.font_weight;
+                    color: update_touch.has_hover ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+                    vertical-alignment: center;
+                    accessible-role: text;
+                    accessible-label: "New Version Notification";
+                    animate color { duration: 150ms; }
+                }
+            }
         }
     }
 }

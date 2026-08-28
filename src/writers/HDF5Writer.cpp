@@ -25,7 +25,8 @@ namespace {
 const bool registered = WriterFactory::registerTypeSafe<HDF5Writer>("HDF5Writer");
 
 void writeHistogramToGroup(HighFive::File &file, const std::string &name,
-                           const correlation::analysis::Histogram &hist) {
+                           const correlation::analysis::Histogram &hist,
+                           const correlation::analysis::Histogram *raw_companion = nullptr) {
   // Sanitize group name
   std::string group_name = name;
   std::ranges::replace(group_name, '(', '_');
@@ -50,7 +51,30 @@ void writeHistogramToGroup(HighFive::File &file, const std::string &name,
   bin_dataset.createAttribute<std::string>("label", HighFive::DataSpace::From(dim_label)).write(dim_label);
   bin_dataset.createAttribute<std::string>("description", HighFive::DataSpace::From(description)).write(description);
 
-  // 2. Write Raw Partial Datasets
+  // 2. Write Raw Companion Datasets (non-normalized counts)
+  if (raw_companion != nullptr) {
+    std::vector<std::string> companion_keys;
+    companion_keys.reserve(raw_companion->partials.size());
+    for (const auto &[key, value] : raw_companion->partials) {
+      companion_keys.push_back(key);
+    }
+    std::ranges::sort(companion_keys);
+
+    const std::string companion_unit =
+        raw_companion->y_unit.empty() ? "counts" : raw_companion->y_unit;
+
+    for (const auto &key : companion_keys) {
+      const auto &values = raw_companion->partials.at(key);
+      const std::vector<float> float_values(values.begin(), values.end());
+      const std::string ds_name = key + "_raw";
+
+      HighFive::DataSet dataset = group.createDataSet(ds_name, float_values);
+      dataset.createAttribute<std::string>("units", HighFive::DataSpace::From(companion_unit)).write(companion_unit);
+      dataset.createAttribute<std::string>("label", HighFive::DataSpace::From(ds_name)).write(ds_name);
+    }
+  }
+
+  // 3. Write Normalized Partial Datasets
   std::vector<std::string> raw_keys;
   raw_keys.reserve(hist.partials.size());
   for (const auto &[key, value] : hist.partials) {
@@ -67,7 +91,7 @@ void writeHistogramToGroup(HighFive::File &file, const std::string &name,
     dataset.createAttribute<std::string>("label", HighFive::DataSpace::From(key)).write(key);
   }
 
-  // 3. Write Smoothed Partial Datasets
+  // 4. Write Smoothed Partial Datasets
   std::vector<std::string> smoothed_keys;
   smoothed_keys.reserve(hist.smoothed_partials.size());
   for (const auto &[key, value] : hist.smoothed_partials) {
@@ -96,7 +120,16 @@ void HDF5Writer::writeHDF(const std::string &filename, const correlation::analys
       if (hist.partials.empty() || hist.bins.empty()) {
         continue;
       }
-      writeHistogramToGroup(file, name, hist);
+
+      // For normalized PAD/DAD, inject raw companion partials.
+      const correlation::analysis::Histogram *raw_companion = nullptr;
+      const std::string raw_key = name + "_raw";
+      const auto &all_histograms = dists.getAllHistograms();
+      if ((name == "PAD" || name == "DAD") && all_histograms.contains(raw_key)) {
+        raw_companion = &all_histograms.at(raw_key);
+      }
+
+      writeHistogramToGroup(file, name, hist, raw_companion);
     }
   } catch (const HighFive::Exception &err) {
     throw std::runtime_error("HDF5 Error: " + std::string(err.what()));

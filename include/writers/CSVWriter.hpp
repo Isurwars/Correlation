@@ -57,8 +57,12 @@ private:
    * and it's smoothed histograms to a single CSV file.
    * @param filename The full path of the file to write.
    * @param hist The Histogram data structure to write.
+   * @param raw_companion Optional pointer to a raw-count companion histogram
+   *        (e.g. PAD_raw for PAD). When non-null, its partials are prepended
+   *        as `{key}_raw` columns before the normalized data.
    */
-  static void writeHistogramToCSV(const std::string &filename, const correlation::analysis::Histogram &hist);
+  static void writeHistogramToCSV(const std::string &filename, const correlation::analysis::Histogram &hist,
+                                  const correlation::analysis::Histogram *raw_companion = nullptr);
 };
 
 } // namespace correlation::writers

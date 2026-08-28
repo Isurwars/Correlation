@@ -62,7 +62,9 @@ protected:
                                                       "test_si_J.csv",
                                                       "test_si_G_reduced.csv",
                                                       "test_si_PAD.csv",
+                                                      "test_si_PAD_raw.csv",
                                                       "test_si_DAD.csv",
+                                                      "test_si_DAD_raw.csv",
                                                       "test_si_RD.csv",
                                                       "test_si_S.csv",
                                                       "test_si_XRD.csv",
@@ -85,6 +87,9 @@ protected:
                                                       "test_si_J.parquet",
                                                       "test_si_G_reduced.parquet",
                                                       "test_si_PAD.parquet",
+                                                      "test_si_PAD_raw.parquet",
+                                                      "test_si_DAD.parquet",
+                                                      "test_si_DAD_raw.parquet",
                                                       "test_si_summary.txt",
                                                       "test_vacf_new_summary.txt",
                                                       "test_vacf_vdos_summary.txt"};
@@ -119,11 +124,13 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   // Act
   const real_t rdf_bin = 0.05;
   const real_t pad_bin = 1.0;
+  const real_t dad_bin = 1.0;
   dists.calculateRDF({
       .r_max = 20.0,
       .r_bin_width = rdf_bin,
   });
   dists.calculatePAD(pad_bin);
+  dists.calculateDAD(dad_bin);
   dists.smoothAll(0.1);
 
   correlation::writers::FileWriter const writer(dists);
@@ -163,6 +170,111 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_J.csv"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_G_reduced.csv"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD.csv"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD_raw.csv"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_DAD.csv"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_DAD_raw.csv"));
+}
+
+TEST_F(FileWriterTests, PADCsvContainsRawAndNormalizedAndSmoothedColumns) {
+  // Arrange: single-element silicon crystal
+  std::string const path = getDataDir() + "si_crystal.car";
+  correlation::readers::FileType const type = correlation::readers::determineFileType(path);
+  correlation::core::Cell const si_cell = correlation::readers::readStructure(path, type);
+  correlation::core::Trajectory trajectory;
+  trajectory.addFrame(si_cell);
+  trajectory.precomputeBondCutoffs();
+
+  correlation::analysis::DistributionFunctions dists(si_cell, 5.0, trajectory.getBondCutoffsSQ());
+  dists.calculatePAD(2.0);
+  dists.smoothAll(0.1);
+
+  correlation::writers::FileWriter const writer(dists);
+  writer.write("test_si", true, false, false, true);
+
+  // Act: read the PAD CSV header (line 1)
+  std::ifstream pad_file("test_si_PAD.csv");
+  ASSERT_TRUE(pad_file.good());
+  std::string header_line;
+  std::getline(pad_file, header_line);
+
+  // Assert: header must contain raw companion columns, normalized, and smoothed
+  EXPECT_NE(header_line.find("Si-Si-Si_raw"), std::string::npos)
+      << "PAD CSV header missing raw companion column 'Si-Si-Si_raw'";
+  EXPECT_NE(header_line.find("Total_raw"), std::string::npos)
+      << "PAD CSV header missing raw companion column 'Total_raw'";
+  EXPECT_NE(header_line.find("Si-Si-Si_smoothed"), std::string::npos)
+      << "PAD CSV header missing smoothed column 'Si-Si-Si_smoothed'";
+  // Verify the raw columns appear before the normalized columns
+  auto raw_pos = header_line.find("Si-Si-Si_raw");
+  auto norm_pos = header_line.find(",Si-Si-Si,");
+  EXPECT_LT(raw_pos, norm_pos)
+      << "Raw companion columns should appear before normalized columns";
+}
+
+TEST_F(FileWriterTests, PADRawCsvContainsRawCountsAndSmoothed) {
+  // Arrange
+  std::string const path = getDataDir() + "si_crystal.car";
+  correlation::readers::FileType const type = correlation::readers::determineFileType(path);
+  correlation::core::Cell const si_cell = correlation::readers::readStructure(path, type);
+  correlation::core::Trajectory trajectory;
+  trajectory.addFrame(si_cell);
+  trajectory.precomputeBondCutoffs();
+
+  correlation::analysis::DistributionFunctions dists(si_cell, 5.0, trajectory.getBondCutoffsSQ());
+  dists.calculatePAD(2.0);
+  dists.smoothAll(0.1);
+
+  correlation::writers::FileWriter const writer(dists);
+  writer.write("test_si", true, false, false, true);
+
+  // Assert: PAD_raw CSV exists and has smoothed columns
+  std::ifstream raw_file("test_si_PAD_raw.csv");
+  ASSERT_TRUE(raw_file.good());
+  std::string header_line;
+  std::getline(raw_file, header_line);
+
+  // Raw file should have raw counts and smoothed raw counts
+  EXPECT_NE(header_line.find("Si-Si-Si"), std::string::npos)
+      << "PAD_raw CSV header missing raw partial 'Si-Si-Si'";
+  EXPECT_NE(header_line.find("Si-Si-Si_smoothed"), std::string::npos)
+      << "PAD_raw CSV header missing smoothed column 'Si-Si-Si_smoothed'";
+  EXPECT_NE(header_line.find("Total"), std::string::npos)
+      << "PAD_raw CSV header missing 'Total' partial";
+
+  // Units row should show 'counts'
+  std::string units_line;
+  std::getline(raw_file, units_line);
+  EXPECT_NE(units_line.find("counts"), std::string::npos)
+      << "PAD_raw CSV units row should contain 'counts'";
+}
+
+TEST_F(FileWriterTests, DADCsvAndRawCsvAreCreated) {
+  // Arrange
+  std::string const path = getDataDir() + "si_crystal.car";
+  correlation::readers::FileType const type = correlation::readers::determineFileType(path);
+  correlation::core::Cell const si_cell = correlation::readers::readStructure(path, type);
+  correlation::core::Trajectory trajectory;
+  trajectory.addFrame(si_cell);
+  trajectory.precomputeBondCutoffs();
+
+  correlation::analysis::DistributionFunctions dists(si_cell, 5.0, trajectory.getBondCutoffsSQ());
+  dists.calculateDAD(2.0);
+  dists.smoothAll(0.1);
+
+  correlation::writers::FileWriter const writer(dists);
+  writer.write("test_si", true, false, false, true);
+
+  // Both normalized and raw DAD CSVs must exist
+  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_DAD.csv"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_DAD_raw.csv"));
+
+  // Verify DAD.csv header contains raw companion columns
+  std::ifstream dad_file("test_si_DAD.csv");
+  ASSERT_TRUE(dad_file.good());
+  std::string header_line;
+  std::getline(dad_file, header_line);
+  EXPECT_NE(header_line.find("_raw"), std::string::npos)
+      << "DAD CSV header should contain raw companion columns with '_raw' suffix";
 }
 
 #ifdef CORRELATION_USE_HDF5

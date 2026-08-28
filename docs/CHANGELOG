@@ -1,6 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.9.0] - 2026-08-28
+
+### Added
+- **Consolidated Raw Counts in PAD/DAD Output**: Normalized PAD and DAD output files (`_PAD.csv`, `_DAD.csv`, `_PAD.parquet`, `_DAD.parquet`, and HDF5 groups `PAD`/`DAD`) now include non-normalized raw count partials (suffixed `_raw`) alongside normalized partials and smoothed partials. Column/dataset ordering: `{partial}_raw` → `{partial}` → `{partial}_smoothed`.
+- **Standalone Raw Count Files**: Raw count files (`_PAD_raw.csv`, `_DAD_raw.csv`, `_PAD_raw.parquet`, `_DAD_raw.parquet`, and HDF5 groups `PAD_raw`/`DAD_raw`) continue to be emitted with raw counts and their kernel-smoothed variants.
+- **Asynchronous GitHub Update Checker**: Integrated `UpdateChecker` running in a detached background thread on startup to query GitHub's latest release API. When a newer version is detected, an interactive pill with a pulsing notification dot appears in the footer (`AppFooter.slint`). Hovering changes the cursor to pointer and clicking opens the release download page in the user's default browser.
+- **Header Version Badge**: Added Material 3 version tag badge in `AppHeader.slint` dynamically populated by `CORRELATION_VERSION_STRING`.
+
+### Changed
+- **CSVWriter**: `writeHistogramToCSV` accepts an optional raw companion histogram pointer; `writeAllCSVs` resolves the companion for `PAD`/`DAD` histogram names.
+- **HDF5Writer**: `writeHistogramToGroup` accepts an optional raw companion; `writeHDF` resolves the companion for `PAD`/`DAD`.
+- **ArrowWriter**: `writeHistogramToParquet` accepts an optional raw companion; `writeAllParquet` resolves the companion for `PAD`/`DAD`.
+
+### Testing & Verification
+- **Writer Tests**: Added `PADCsvContainsRawAndNormalizedAndSmoothedColumns`, `PADRawCsvContainsRawCountsAndSmoothed`, and `DADCsvAndRawCsvAreCreated` tests. Extended `CalculatesAndWritesSiliconDistributions` to verify `_PAD_raw.csv`, `_DAD.csv`, and `_DAD_raw.csv` file creation.
+- **Update Checker Tests**: Added unit tests in `UpdateCheckerTests.cpp` covering semantic version comparison, GitHub release JSON parsing, missing field handling, and browser URL launching.
+
 ## [3.8.9] - 2026-08-20
 
 ### Added & Refactored

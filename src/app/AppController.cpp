@@ -19,6 +19,7 @@
 #include "app/InputValidator.hpp"
 #include "app/PlotController.hpp"
 #include "app/PresetController.hpp"
+#include "app/UpdateChecker.hpp"
 #include "calculators/CalculatorFactory.hpp"
 
 #include <algorithm>
@@ -56,6 +57,9 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
 #else
   window_.set_parquet_available(false);
 #endif
+
+  // Set application version string for UI display
+  window_.set_app_version(slint::SharedString(std::string("v") + CORRELATION_VERSION_STRING));
 
   analysis_runner_ = std::make_unique<AnalysisRunner>(window_, backend_, *this);
   file_io_handler_ = std::make_unique<FileIOHandler>(window_, backend_, *this);
@@ -147,9 +151,17 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
   // Handle reset bond cutoffs request from UI
   window_.on_reset_bond_cutoffs([this]() { setBondCutoffs(); });
 
+  // Handle open external URL (e.g. download update from browser)
+  window_.on_open_url([](const slint::SharedString &url) {
+    UpdateChecker::openUrlInBrowser(std::string(url.data()));
+  });
+
   // Initial load of settings and preset list
   loadSettings();
   preset_controller_->refreshPresetList();
+
+  // Asynchronously check for GitHub releases in the background without interrupting the user
+  UpdateChecker::checkForUpdatesAsync(window_, CORRELATION_VERSION_STRING);
 }
 
 AppController::~AppController() {

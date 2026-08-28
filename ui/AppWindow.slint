@@ -77,6 +77,15 @@ export component AppWindow inherits Window {
     /// Status of the file dialog timer
     in property <bool> timer_running: false;
 
+    /// Application version string
+    in-out property <string> app_version: "v3.9.0";
+
+    /// GitHub Update Check status
+    in-out property <bool> update_available: false;
+    in-out property <string> update_version: "";
+    in-out property <string> update_url: "https://github.com/Isurwars/Correlation/releases";
+    callback open_url(string);
+
     /// File status and metadata
     in property <bool> file_loaded: false;
     in property <int> num_frames: 0;
@@ -386,6 +395,7 @@ export component AppWindow inherits Window {
 
         AppHeader {
             title_text: "Correlation";
+            version_text: root.app_version;
             status_text: root.file_loaded ? root.file_status_text : "";
             file_loaded: root.file_loaded;
         }
@@ -572,6 +582,12 @@ export component AppWindow inherits Window {
                 root.file_loaded ? root.file_status_text : "Ready";
             progress: root.progress;
             analysis_running: root.analysis_running;
+            update_available: root.update_available;
+            update_version: root.update_version;
+            update_url: root.update_url;
+            open_url(url) => {
+                root.open_url(url);
+            }
         }
     }
 

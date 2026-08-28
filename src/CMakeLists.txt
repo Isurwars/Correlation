@@ -230,6 +230,7 @@ if(BUILD_GUI)
         app/PresetController.cpp
         app/PresetManager.cpp
         app/SettingsManager.cpp
+        app/UpdateChecker.cpp
     )
 
     if (WIN32)
@@ -245,7 +246,7 @@ if(BUILD_GUI)
     target_link_libraries(correlation PRIVATE correlation_simd_options)
 
     if (WIN32)
-        list(APPEND CORRELATION_LIBS Imm32 Comctl32 dwrite propsys opengl32 dwmapi uxtheme)
+        list(APPEND CORRELATION_LIBS Imm32 Comctl32 dwrite propsys opengl32 dwmapi uxtheme wininet)
     endif()
 
     target_link_libraries(correlation PRIVATE ${CORRELATION_LIBS})

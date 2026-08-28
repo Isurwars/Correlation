@@ -84,10 +84,12 @@ add_executable(correlation_unit_tests
     unit/app/AppBackendTests.cpp
     unit/app/PresetManagerTests.cpp
     unit/app/SettingsManagerTests.cpp
+    unit/app/UpdateCheckerTests.cpp
     unit/cli/CliParserTests.cpp
     ../src/app/AppBackend.cpp
     ../src/app/PresetManager.cpp
     ../src/app/SettingsManager.cpp
+    ../src/app/UpdateChecker.cpp
 )
 
 target_link_libraries(correlation_unit_tests PRIVATE
@@ -167,6 +169,7 @@ if(BUILD_GUI)
         ../src/app/PresetController.cpp
         ../src/app/PresetManager.cpp
         ../src/app/SettingsManager.cpp
+        ../src/app/UpdateChecker.cpp
     )
 
     target_link_libraries(correlation_gui_tests PRIVATE
