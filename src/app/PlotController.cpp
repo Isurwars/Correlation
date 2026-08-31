@@ -498,11 +498,25 @@ void PlotController::executePlotRender(RenderTaskData data) {
     }
 
     slint::invoke_from_event_loop([this, svg = std::move(svg)]() {
-      const auto *svg_bytes = std::bit_cast<const uint8_t *>(svg.data());
-      auto img =
-          slint::private_api::load_image_from_embedded_data(std::span<const uint8_t>(svg_bytes, svg.size()), "svg");
+      static std::atomic<uint64_t> file_counter{0};
+      auto temp_dir = std::filesystem::temp_directory_path();
+      auto temp_path = temp_dir / ("correlation_preview_" + std::to_string(file_counter++) + ".svg");
 
-      window_.set_preview_plot(img);
+      std::ofstream out(temp_path);
+      if (out) {
+        out << svg;
+        out.close();
+        auto img = slint::Image::load_from_path(slint::SharedString(temp_path.string()));
+        window_.set_preview_plot(img);
+
+        std::error_code error_code;
+        std::filesystem::remove(temp_path, error_code);
+      } else {
+        const auto *svg_bytes = std::bit_cast<const uint8_t *>(svg.data());
+        auto img =
+            slint::private_api::load_image_from_embedded_data(std::span<const uint8_t>(svg_bytes, svg.size()), "svg");
+        window_.set_preview_plot(img);
+      }
 
       is_rendering_ = false;
 

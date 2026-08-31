@@ -386,19 +386,70 @@ export component AppWindow inherits Window {
     preferred-width: 1180px;
     preferred-height: 795px;
 
+    forward_focus: main_focus;
+
     // ============================================================================
     // Main UI structure
     // ============================================================================
-    VerticalLayout {
-        padding: 0;
-        spacing: 0;
-
-        AppHeader {
-            title_text: "Correlation";
-            version_text: root.app_version;
-            status_text: root.file_loaded ? root.file_status_text : "";
-            file_loaded: root.file_loaded;
+    main_focus := FocusScope {
+        key-pressed(event) => {
+            if (event.modifiers.control && (event.text == "o" || event.text == "O")) {
+                root.browse_file();
+                return accept;
+            }
+            if (event.modifiers.control && (event.text == "r" || event.text == "R")) {
+                if (root.file_loaded && !root.has_validation_errors && !root.analysis_running) {
+                    root.run_analysis();
+                }
+                return accept;
+            }
+            if (event.text == Key.Escape) {
+                if (root.analysis_running) {
+                    root.cancel_analysis();
+                }
+                return accept;
+            }
+            if (event.modifiers.control && event.modifiers.shift && (event.text == "s" || event.text == "S")) {
+                if (root.selected_plot_index >= 0) {
+                    root.save_plot();
+                }
+                return accept;
+            }
+            if (event.modifiers.control && (event.text == "s" || event.text == "S")) {
+                if (root.analysis_done) {
+                    root.write_files();
+                }
+                return accept;
+            }
+            if (event.modifiers.control && (event.text == "d" || event.text == "D")) {
+                Palette.color-scheme = Palette.color-scheme == ColorScheme.dark ? ColorScheme.light : ColorScheme.dark;
+                return accept;
+            }
+            if (event.modifiers.control && event.text == "]") {
+                if (root.plot_items.length > 0) {
+                    root.select_plot(Math.min(root.selected_plot_index + 1, root.plot_items.length - 1));
+                }
+                return accept;
+            }
+            if (event.modifiers.control && event.text == "[") {
+                if (root.plot_items.length > 0) {
+                    root.select_plot(Math.max(root.selected_plot_index - 1, 0));
+                }
+                return accept;
+            }
+            return reject;
         }
+
+        VerticalLayout {
+            padding: 0;
+            spacing: 0;
+
+            AppHeader {
+                title_text: "Correlation";
+                version_text: root.app_version;
+                status_text: root.file_loaded ? root.file_status_text : "";
+                file_loaded: root.file_loaded;
+            }
 
         Horizontal {
             spacing: 2px;
@@ -589,6 +640,7 @@ export component AppWindow inherits Window {
                 root.open_url(url);
             }
         }
+    }
     }
 
     AppToolTips {

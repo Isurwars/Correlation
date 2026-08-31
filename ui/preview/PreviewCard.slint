@@ -314,6 +314,10 @@ export component PreviewCard inherits FilledCard {
                         root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
                     }
 
+                    changed mouse-y => {
+                        root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
+                    }
+
                     Image {
                         width: 100%;
                         height: 100%;
