@@ -38,21 +38,21 @@ export component TrajectoryOptionsCard inherits FilledCard {
         end_frame_area.has-hover ? "Last frame to include in the analysis.\n\n📏 Tip: Use 'End' to include all remaining frames.\n\n🔬 Physics: Selecting a subset of frames can speed up analysis during parameter exploration. Once you find good settings, use the full range for publication-quality results." : "";
 
     out property <length> hovered_x:
-        time_step_area.has-hover ? time_step_area.absolute-position.x :
-        start_frame_area.has-hover ? start_frame_area.absolute-position.x :
-        end_frame_area.has-hover ? end_frame_area.absolute-position.x : 0px;
+        time_step_area.has-hover ? tf_time.absolute-position.x :
+        start_frame_area.has-hover ? tf_start.absolute-position.x :
+        end_frame_area.has-hover ? tf_end.absolute-position.x : 0px;
     out property <length> hovered_y:
-        time_step_area.has-hover ? time_step_area.absolute-position.y :
-        start_frame_area.has-hover ? start_frame_area.absolute-position.y :
-        end_frame_area.has-hover ? end_frame_area.absolute-position.y : 0px;
+        time_step_area.has-hover ? tf_time.absolute-position.y :
+        start_frame_area.has-hover ? tf_start.absolute-position.y :
+        end_frame_area.has-hover ? tf_end.absolute-position.y : 0px;
     out property <length> hovered_width:
-        time_step_area.has-hover ? time_step_area.width :
-        start_frame_area.has-hover ? start_frame_area.width :
-        end_frame_area.has-hover ? end_frame_area.width : 0px;
+        time_step_area.has-hover ? tf_time.width :
+        start_frame_area.has-hover ? tf_start.width :
+        end_frame_area.has-hover ? tf_end.width : 0px;
     out property <length> hovered_height:
-        time_step_area.has-hover ? time_step_area.height :
-        start_frame_area.has-hover ? start_frame_area.height :
-        end_frame_area.has-hover ? end_frame_area.height : 0px;
+        time_step_area.has-hover ? tf_time.height :
+        start_frame_area.has-hover ? tf_start.height :
+        end_frame_area.has-hover ? tf_end.height : 0px;
 
     Vertical {
         spacing: MaterialStyleMetrics.spacing_12;
@@ -68,57 +68,47 @@ export component TrajectoryOptionsCard inherits FilledCard {
         time_step_area := TouchArea {
             accessible-role: text-input;
             accessible-label: "Time Step in femtoseconds";
-            Horizontal {
-                TextField {
-                    label: "Time Step (fs)";
-                    horizontal-stretch: 1;
-                    vertical-stretch: 0;
-                    text <=> root.time_step;
-                    enabled: root.file_loaded && root.num_frames > 1;
-                    has_error: root.time_step_error != "";
-                    supporting_text: root.time_step_error;
-                }
+            tf_time := TextField {
+                width: 100%;
+                label: "Time Step (fs)";
+                horizontal-stretch: 1;
+                vertical-stretch: 0;
+                text <=> root.time_step;
+                enabled: root.file_loaded && root.num_frames > 1;
+                has_error: root.time_step_error != "";
+                supporting_text: root.time_step_error;
             }
         }
 
         // Frame Range inputs
-        Vertical {
-            spacing: MaterialStyleMetrics.spacing_4;
-            MaterialText {
-                text: "Frame Range (Total: " + root.num_frames + ")";
-                style: MaterialTypography.body_small;
-                color: MaterialPalette.on_surface_variant;
+        Horizontal {
+            spacing: MaterialStyleMetrics.spacing_8;
+
+            start_frame_area := TouchArea {
+                accessible-role: text-input;
+                accessible-label: "Start Frame";
+                horizontal-stretch: 1;
+                tf_start := TextField {
+                    width: 100%;
+                    enabled: root.file_loaded && root.num_frames > 1;
+                    label: "Start Frame";
+                    text <=> root.min_frame;
+                    has_error: root.min_frame_error != "";
+                    supporting_text: root.min_frame_error;
+                }
             }
 
-            Horizontal {
-                spacing: MaterialStyleMetrics.spacing_8;
-
-                start_frame_area := TouchArea {
-                    accessible-role: text-input;
-                    accessible-label: "Start Frame";
-                    horizontal-stretch: 1;
-                    TextField {
-                        enabled: root.file_loaded && root.num_frames > 1;
-                        width: 100%;
-                        label: "Start Frame";
-                        text <=> root.min_frame;
-                        has_error: root.min_frame_error != "";
-                        supporting_text: root.min_frame_error;
-                    }
-                }
-
-                end_frame_area := TouchArea {
-                    accessible-role: text-input;
-                    accessible-label: "End Frame";
-                    horizontal-stretch: 1;
-                    TextField {
-                        enabled: root.file_loaded && root.num_frames > 1;
-                        width: 100%;
-                        label: "End Frame";
-                        text <=> root.max_frame;
-                        has_error: root.max_frame_error != "";
-                        supporting_text: root.max_frame_error;
-                    }
+            end_frame_area := TouchArea {
+                accessible-role: text-input;
+                accessible-label: "End Frame";
+                horizontal-stretch: 1;
+                tf_end := TextField {
+                    width: 100%;
+                    enabled: root.file_loaded && root.num_frames > 1;
+                    label: "End Frame";
+                    text <=> root.max_frame;
+                    has_error: root.max_frame_error != "";
+                    supporting_text: root.max_frame_error;
                 }
             }
         }
