@@ -5,12 +5,15 @@ Run from the build directory after building the correlation_py target:
     cmake --build . --target correlation_py -j$(nproc)
     python test.py
 """
+import importlib
+import os
+import sys
+
 try:
     import correlation
 except ImportError:
-    import _correlation as correlation
-import sys
-import os
+    correlation = importlib.import_module("_correlation")
+
 
 # Force UTF-8 stdout on Windows (cp1252 can't encode box-drawing chars)
 if sys.stdout.encoding and sys.stdout.encoding.lower() not in ("utf-8", "utf8"):

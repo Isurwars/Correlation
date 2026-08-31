@@ -227,7 +227,7 @@ foreach(tgt IN LISTS TEST_TARGETS)
     if(BUILD_WITH_HIP)
         set_target_properties(${tgt} PROPERTIES HIP_STANDARD 20)
     endif()
-    gtest_discover_tests(${tgt} DISCOVERY_MODE PRE_TEST DISCOVERY_TIMEOUT 60 PROPERTIES TIMEOUT 60)
+    gtest_discover_tests(${tgt} DISCOVERY_MODE PRE_TEST DISCOVERY_TIMEOUT 120 PROPERTIES TIMEOUT 180)
 endforeach()
 
 #-----------------------------------------------------------

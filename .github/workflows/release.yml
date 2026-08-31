@@ -67,7 +67,7 @@ jobs:
       SCCACHE_IDLE_TIMEOUT: "0"
       SCCACHE_RETRY_ATTEMPTS: "5"
       SCCACHE_RETRY_DELAY: "2"
-      RUSTC_WRAPPER: sccache
+      RUSTC_WRAPPER: "sccache"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -96,8 +96,8 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-          key: cargo-linux-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: cargo-linux-
+          key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: cargo-${{ runner.os }}-
 
       - name: Configure CMake
         run: |
@@ -169,7 +169,7 @@ jobs:
       SCCACHE_IDLE_TIMEOUT: "0"
       SCCACHE_RETRY_ATTEMPTS: "5"
       SCCACHE_RETRY_DELAY: "2"
-      RUSTC_WRAPPER: sccache
+      RUSTC_WRAPPER: "sccache"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -196,8 +196,8 @@ jobs:
           path: |
             ~\.cargo\registry
             ~\.cargo\git
-          key: cargo-windows-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: cargo-windows-
+          key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: cargo-${{ runner.os }}-
 
       - name: Setup MSVC
         uses: TheMrMilchmann/setup-msvc-dev@v4
@@ -254,7 +254,7 @@ jobs:
       SCCACHE_IDLE_TIMEOUT: "0"
       SCCACHE_RETRY_ATTEMPTS: "5"
       SCCACHE_RETRY_DELAY: "2"
-      RUSTC_WRAPPER: sccache
+      RUSTC_WRAPPER: "sccache"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -281,8 +281,8 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-          key: cargo-macos-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: cargo-macos-
+          key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: cargo-${{ runner.os }}-
 
       - name: Configure CMake
         run: |

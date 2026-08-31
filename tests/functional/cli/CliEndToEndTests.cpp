@@ -245,7 +245,8 @@ TEST_F(CliEndToEndTests, NoArgsReturnsNonZero) { EXPECT_NE(runCli(""), 0); }
 TEST_F(CliEndToEndTests, UnknownOptionReturnsNonZero) { EXPECT_NE(runCli("--this-does-not-exist"), 0); }
 
 constexpr std::string_view FAST_TEST_ARGS =
-    " --quiet --r-max 5.0 --r-bin 0.25 --hyper-samples 10 --max-ring-size 4 --no-smoothing --no-hdf5 --no-parquet";
+    " --quiet --r-max 5.0 --r-bin 0.25 --q-max 5.0 --q-bin 0.5 --hyper-samples 10 --max-ring-size 4 --no-smoothing "
+    "--no-hdf5 --no-parquet";
 
 // ===== File loading tests =====
 
