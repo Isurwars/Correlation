@@ -7,6 +7,7 @@
  */
 
 #include "calculators/GPUDistanceCalculator.hpp"
+#include "core/DeviceBuffer.hpp"
 #include "core/GPUPortability.hpp"
 #include "math/LinearAlgebra.hpp"
 
@@ -349,109 +350,84 @@ void compute_distances_gpu(const correlation::core::Cell &cell, T cutoff_sq,
 
   std::vector<T> h_bond_cutoffs_sq = flatten_bond_cutoffs(bond_cutoffs_sq, num_elements);
 
-  T *d_wrapped_x = nullptr;
-  T *d_wrapped_y = nullptr;
-  T *d_wrapped_z = nullptr;
-  int *d_element_ids = nullptr;
-  int *d_atom_bin = nullptr;
-  unsigned long long *d_bin_offsets = nullptr;
-  unsigned long long *d_bin_indices = nullptr;
-  T *d_bond_cutoffs_sq = nullptr;
-  unsigned long long *d_distance_counter = nullptr;
-  unsigned long long *d_bond_counter = nullptr;
+  // --- RAII device allocations (exception-safe) ---
+  using correlation::core::gpu::DeviceBuffer;
 
-  hipMalloc(&d_wrapped_x, atom_count * sizeof(T));
-  hipMalloc(&d_wrapped_y, atom_count * sizeof(T));
-  hipMalloc(&d_wrapped_z, atom_count * sizeof(T));
-  hipMalloc(&d_element_ids, atom_count * sizeof(int));
-  hipMalloc(&d_atom_bin, atom_count * sizeof(int));
-  hipMalloc(&d_bin_offsets, (num_bins + 1) * sizeof(unsigned long long));
-  hipMalloc(&d_bin_indices, atom_count * sizeof(unsigned long long));
-  hipMalloc(&d_bond_cutoffs_sq, num_elements * num_elements * sizeof(T));
-  hipMalloc(&d_distance_counter, sizeof(unsigned long long));
-  hipMalloc(&d_bond_counter, sizeof(unsigned long long));
+  DeviceBuffer<T> d_wrapped_x(atom_count);
+  DeviceBuffer<T> d_wrapped_y(atom_count);
+  DeviceBuffer<T> d_wrapped_z(atom_count);
+  DeviceBuffer<int> d_element_ids(atom_count);
+  DeviceBuffer<int> d_atom_bin(atom_count);
+  DeviceBuffer<unsigned long long> d_bin_offsets(num_bins + 1);
+  DeviceBuffer<unsigned long long> d_bin_indices(atom_count);
+  DeviceBuffer<T> d_bond_cutoffs_sq(num_elements * num_elements);
+  DeviceBuffer<unsigned long long> d_distance_counter(1);
+  DeviceBuffer<unsigned long long> d_bond_counter(1);
 
-  hipMemcpy(d_wrapped_x, wrapped_x.data(), atom_count * sizeof(T), hipMemcpyHostToDevice);
-  hipMemcpy(d_wrapped_y, wrapped_y.data(), atom_count * sizeof(T), hipMemcpyHostToDevice);
-  hipMemcpy(d_wrapped_z, wrapped_z.data(), atom_count * sizeof(T), hipMemcpyHostToDevice);
-  hipMemcpy(d_element_ids, element_ids.data(), atom_count * sizeof(int), hipMemcpyHostToDevice);
-  hipMemcpy(d_atom_bin, atom_bin.data(), atom_count * sizeof(int), hipMemcpyHostToDevice);
-  hipMemcpy(d_bin_offsets, bin_offsets.data(), (num_bins + 1) * sizeof(unsigned long long), hipMemcpyHostToDevice);
-  hipMemcpy(d_bin_indices, bin_indices.data(), atom_count * sizeof(unsigned long long), hipMemcpyHostToDevice);
-  hipMemcpy(d_bond_cutoffs_sq, h_bond_cutoffs_sq.data(), num_elements * num_elements * sizeof(T),
-            hipMemcpyHostToDevice);
+  d_wrapped_x.copyFromHost(wrapped_x.data(), atom_count);
+  d_wrapped_y.copyFromHost(wrapped_y.data(), atom_count);
+  d_wrapped_z.copyFromHost(wrapped_z.data(), atom_count);
+  d_element_ids.copyFromHost(element_ids.data(), atom_count);
+  d_atom_bin.copyFromHost(atom_bin.data(), atom_count);
+  d_bin_offsets.copyFromHost(bin_offsets.data(), num_bins + 1);
+  d_bin_indices.copyFromHost(bin_indices.data(), atom_count);
+  d_bond_cutoffs_sq.copyFromHost(h_bond_cutoffs_sq.data(), num_elements * num_elements);
 
-  unsigned long long zero_val = 0;
-  hipMemcpy(d_distance_counter, &zero_val, sizeof(unsigned long long), hipMemcpyHostToDevice);
-  hipMemcpy(d_bond_counter, &zero_val, sizeof(unsigned long long), hipMemcpyHostToDevice);
+  unsigned long long const zero_val = 0;
+  d_distance_counter.setScalar(zero_val);
+  d_bond_counter.setScalar(zero_val);
 
   GPULattice<T> gpu_lattice{
       static_cast<T>(lattice[0].x()), static_cast<T>(lattice[0].y()), static_cast<T>(lattice[0].z()),
       static_cast<T>(lattice[1].x()), static_cast<T>(lattice[1].y()), static_cast<T>(lattice[1].z()),
       static_cast<T>(lattice[2].x()), static_cast<T>(lattice[2].y()), static_cast<T>(lattice[2].z())};
   GPUSearchGrid gpu_grid{K_x, K_y, K_z, max_dx, max_dy, max_dz};
-  GPUAtomData<T> gpu_atoms{d_wrapped_x, d_wrapped_y, d_wrapped_z, d_element_ids, d_atom_bin};
-  GPUBinData gpu_bins{d_bin_offsets, d_bin_indices};
+  GPUAtomData<T> gpu_atoms{d_wrapped_x.get(), d_wrapped_y.get(), d_wrapped_z.get(), d_element_ids.get(),
+                           d_atom_bin.get()};
+  GPUBinData gpu_bins{d_bin_offsets.get(), d_bin_indices.get()};
 
   int block_size = 256;
   int grid_size = (static_cast<int>(atom_count) + block_size - 1) / block_size;
 
+  // Pass 1: Count distances and bonds
   hipLaunchKernelGGL((distance_kernel<false, T>), grid_size, block_size, 0, 0, gpu_atoms, gpu_bins, gpu_lattice,
-                     gpu_grid, cutoff_sq, d_bond_cutoffs_sq, static_cast<int>(num_elements),
-                     ignore_periodic_self_interactions, static_cast<int>(atom_count), d_distance_counter,
-                     d_bond_counter, nullptr, nullptr);
-  hipDeviceSynchronize();
+                     gpu_grid, cutoff_sq, d_bond_cutoffs_sq.get(), static_cast<int>(num_elements),
+                     ignore_periodic_self_interactions, static_cast<int>(atom_count), d_distance_counter.get(),
+                     d_bond_counter.get(), nullptr, nullptr);
+  correlation::core::gpu::hipCheck(hipDeviceSynchronize());
 
   unsigned long long h_distance_count = 0;
   unsigned long long h_bond_count = 0;
-  hipMemcpy(&h_distance_count, d_distance_counter, sizeof(unsigned long long), hipMemcpyDeviceToHost);
-  hipMemcpy(&h_bond_count, d_bond_counter, sizeof(unsigned long long), hipMemcpyDeviceToHost);
+  d_distance_counter.copyToHost(&h_distance_count, 1);
+  d_bond_counter.copyToHost(&h_bond_count, 1);
 
-  GPUDistance<T> *d_distances = nullptr;
-  GPUBond<T> *d_bonds = nullptr;
+  // Allocate exact-size output buffers
+  DeviceBuffer<GPUDistance<T>> d_distances(h_distance_count);
+  DeviceBuffer<GPUBond<T>> d_bonds(h_bond_count);
 
-  if (h_distance_count > 0) {
-    hipMalloc(&d_distances, h_distance_count * sizeof(GPUDistance<T>));
-  }
-  if (h_bond_count > 0) {
-    hipMalloc(&d_bonds, h_bond_count * sizeof(GPUBond<T>));
-  }
+  // Reset counters for pass 2
+  d_distance_counter.setScalar(zero_val);
+  d_bond_counter.setScalar(zero_val);
 
-  hipMemcpy(d_distance_counter, &zero_val, sizeof(unsigned long long), hipMemcpyHostToDevice);
-  hipMemcpy(d_bond_counter, &zero_val, sizeof(unsigned long long), hipMemcpyHostToDevice);
-
+  // Pass 2: Write distances and bonds
   hipLaunchKernelGGL((distance_kernel<true, T>), grid_size, block_size, 0, 0, gpu_atoms, gpu_bins, gpu_lattice,
-                     gpu_grid, cutoff_sq, d_bond_cutoffs_sq, static_cast<int>(num_elements),
-                     ignore_periodic_self_interactions, static_cast<int>(atom_count), d_distance_counter,
-                     d_bond_counter, d_distances, d_bonds);
-  hipDeviceSynchronize();
+                     gpu_grid, cutoff_sq, d_bond_cutoffs_sq.get(), static_cast<int>(num_elements),
+                     ignore_periodic_self_interactions, static_cast<int>(atom_count), d_distance_counter.get(),
+                     d_bond_counter.get(), d_distances.get(), d_bonds.get());
+  correlation::core::gpu::hipCheck(hipDeviceSynchronize());
 
+  // Copy results back to host
   std::vector<GPUDistance<T>> host_distances(h_distance_count);
   std::vector<GPUBond<T>> host_bonds(h_bond_count);
 
   if (h_distance_count > 0) {
-    hipMemcpy(host_distances.data(), d_distances, h_distance_count * sizeof(GPUDistance<T>), hipMemcpyDeviceToHost);
+    d_distances.copyToHost(host_distances.data(), h_distance_count);
   }
   if (h_bond_count > 0) {
-    hipMemcpy(host_bonds.data(), d_bonds, h_bond_count * sizeof(GPUBond<T>), hipMemcpyDeviceToHost);
+    d_bonds.copyToHost(host_bonds.data(), h_bond_count);
   }
 
-  hipFree(d_wrapped_x);
-  hipFree(d_wrapped_y);
-  hipFree(d_wrapped_z);
-  hipFree(d_element_ids);
-  hipFree(d_atom_bin);
-  hipFree(d_bin_offsets);
-  hipFree(d_bin_indices);
-  hipFree(d_bond_cutoffs_sq);
-  hipFree(d_distance_counter);
-  hipFree(d_bond_counter);
-  if (d_distances != nullptr) {
-    hipFree(d_distances);
-  }
-  if (d_bonds != nullptr) {
-    hipFree(d_bonds);
-  }
+  // DeviceBuffers are automatically freed here via RAII destructors.
 
   unpack_gpu_results(host_distances, host_bonds, element_ids, out_histograms, hist_config, out_graph);
 }

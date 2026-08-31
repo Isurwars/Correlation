@@ -27,6 +27,7 @@ using hipError_t = cudaError_t;
 #define hipMemcpyHostToDevice cudaMemcpyHostToDevice
 #define hipMemcpyDeviceToHost cudaMemcpyDeviceToHost
 #define hipDeviceSynchronize cudaDeviceSynchronize
+#define hipGetErrorString cudaGetErrorString
 
 #if defined(__CUDACC__)
 // Portable kernel launch function
@@ -79,6 +80,7 @@ inline hipError_t hipMemcpy(void *dst, const void *src, std::size_t count, int k
 constexpr int hipMemcpyHostToDevice = 0;
 constexpr int hipMemcpyDeviceToHost = 0;
 inline hipError_t hipDeviceSynchronize() { return 0; }
+inline const char *hipGetErrorString([[maybe_unused]] hipError_t err) noexcept { return "Success"; }
 
 template <typename T, typename U> inline T atomicAdd(T *addr, U val) {
   if (addr != nullptr) {
