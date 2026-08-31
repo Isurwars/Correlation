@@ -77,4 +77,33 @@ TEST(GPUDistanceCalculatorTests, DoublePrecisionDistanceComputation) {
   }
 }
 
+TEST(GPUDistanceCalculatorTests, SinglePassDirectHistogramAccumulation) {
+  correlation::core::Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
+  cell.addAtom("Si", {0.0, 0.0, 0.0});
+  cell.addAtom("O", {1.2, 0.0, 0.0});
+
+  double const cutoff_sq = 4.0;
+  // Empty bond cutoffs simulating RDF calculator mode
+  std::vector<std::vector<double>> const empty_bond_cutoffs;
+
+  size_t const num_elements = cell.elements().size();
+  RawHistogramTensor out_histograms(num_elements,
+                                    std::vector<std::vector<real_t>>(num_elements, std::vector<real_t>(100, 0.0)));
+  DistanceCalculationConfig const config{
+      .r_max = 2.0,
+      .r_bin_width = 0.02,
+      .num_bins = 100,
+  };
+  correlation::core::NeighborGraph out_graph(0);
+
+  if (has_gpu_device()) {
+    EXPECT_NO_THROW(
+        compute_distances_gpu<double>(cell, cutoff_sq, empty_bond_cutoffs, true, &out_histograms, config, out_graph));
+
+    // Distance 1.2 / 0.02 = bin 60
+    EXPECT_EQ(out_histograms[0][1][60], 1.0);
+    EXPECT_EQ(out_histograms[1][0][60], 1.0);
+  }
+}
+
 } // namespace correlation::calculators::gpu

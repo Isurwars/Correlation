@@ -83,7 +83,7 @@ inline hipError_t hipDeviceSynchronize() { return 0; }
 inline const char *hipGetErrorString([[maybe_unused]] hipError_t err) noexcept { return "Success"; }
 
 template <typename T, typename U> inline T atomicAdd(T *addr, U val) {
-  if (addr != nullptr) {
+  if (addr == nullptr) {
     return T{};
   }
   T old = *addr;
