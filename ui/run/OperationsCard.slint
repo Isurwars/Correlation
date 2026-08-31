@@ -32,6 +32,7 @@ import { TrajectoryOptionsCard } from "../options/TrajectoryOptionsCard.slint";
 export component OperationsCard inherits FilledCard {
     // File Loading
     in property <bool> load_enabled: true;
+    in property <bool> file_loading: false;
     callback browse_file();
 
     // File Status & Metadata
@@ -140,14 +141,18 @@ export component OperationsCard inherits FilledCard {
                 accessible-label: "Load structure or trajectory file";
                 height: MaterialStyleMetrics.size_40;
                 FilledButton {
-                    enabled: root.load_enabled;
+                    enabled: root.load_enabled && !root.file_loading;
                     height: 100%;
                     width: 100%;
-                    text: "Load file";
+                    text: root.file_loading ? "Loading..." : "Load file";
                     clicked => {
                         root.browse_file();
                     }
                 }
+            }
+
+            if root.file_loading: LinearProgressIndicator {
+                indeterminate: true;
             }
         }
 

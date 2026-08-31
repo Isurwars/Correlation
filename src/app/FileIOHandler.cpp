@@ -153,6 +153,7 @@ void FileIOHandler::handleBrowseFile() {
 
     window_.set_in_file_text(slint::SharedString(filepath));
     window_.set_file_status_text(slint::SharedString("Loading file..."));
+    window_.set_file_loading(true);
     window_.set_timer_running(true);
     window_.set_text_opacity(true);
     window_.set_progress(0.0F);
@@ -182,6 +183,7 @@ void FileIOHandler::handleBrowseFile() {
 
       slint::invoke_from_event_loop([this, message, success]() {
         window_.set_file_status_text(slint::SharedString(message));
+        window_.set_file_loading(false);
         window_.set_timer_running(false);
         window_.set_text_opacity(false);
 

@@ -1,0 +1,83 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import { MaterialPalette } from "../styling/material_palette.slint";
+import { MaterialTypography } from "../styling/material_typography.slint";
+import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
+import { MaterialText } from "./material_text.slint";
+import { FilledButton } from "./filled_button.slint";
+import { Vertical } from "./vertical.slint";
+import { Horizontal } from "./horizontal.slint";
+
+export component ConfirmationDialog inherits Rectangle {
+    in property <bool> show: false;
+    in property <string> title: "Confirm Action";
+    in property <string> message: "Are you sure you want to proceed?";
+    in property <string> confirm_label: "Confirm";
+    in property <string> cancel_label: "Cancel";
+
+    callback confirmed();
+    callback cancelled();
+
+    visible: root.show;
+    width: 100%;
+    height: 100%;
+    background: MaterialPalette.background_modal;
+    z: 100;
+
+    // Scrim dismissal
+    TouchArea {
+        width: 100%;
+        height: 100%;
+        clicked => { root.cancelled(); }
+    }
+
+    // Centered Dialog Container Card
+    Rectangle {
+        width: min(400px, parent.width - 32px);
+        height: dialog_layout.preferred-height + 24px;
+        background: MaterialPalette.surface_container_high;
+        border-radius: MaterialStyleMetrics.border_radius_12;
+        border-width: 1px;
+        border-color: MaterialPalette.outline_variant;
+
+        dialog_layout := Vertical {
+            padding: MaterialStyleMetrics.padding_16;
+            spacing: MaterialStyleMetrics.spacing_12;
+
+            MaterialText {
+                text: root.title;
+                style: MaterialTypography.title_medium;
+                color: MaterialPalette.on_surface;
+            }
+
+            MaterialText {
+                text: root.message;
+                style: MaterialTypography.body_medium;
+                color: MaterialPalette.on_surface_variant;
+                wrap: word-wrap;
+            }
+
+            Horizontal {
+                spacing: MaterialStyleMetrics.spacing_8;
+                alignment: end;
+
+                FilledButton {
+                    text: root.cancel_label;
+                    background: MaterialPalette.surface_container_highest;
+                    text_color: MaterialPalette.on_surface;
+                    clicked => { root.cancelled(); }
+                }
+
+                FilledButton {
+                    text: root.confirm_label;
+                    background: MaterialPalette.error;
+                    text_color: MaterialPalette.on_error;
+                    clicked => { root.confirmed(); }
+                }
+            }
+        }
+    }
+}

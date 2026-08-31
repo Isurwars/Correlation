@@ -254,6 +254,8 @@ export component OptionsCard inherits FilledCard {
                     }
                     visible: root.active_tab == 0;
                     height: root.active_tab == 0 ? self.preferred-height : 0px;
+                    opacity: root.active_tab == 0 ? 1.0 : 0.0;
+                    animate opacity { duration: 150ms; }
                 }
 
                 rdf_card := RDFOptionsCard {
@@ -264,6 +266,8 @@ export component OptionsCard inherits FilledCard {
                     r_bin_error: root.r_bin_error;
                     visible: root.active_tab == 0 && root.has_radial_active;
                     height: (root.active_tab == 0 && root.has_radial_active) ? self.preferred-height : 0px;
+                    opacity: (root.active_tab == 0 && root.has_radial_active) ? 1.0 : 0.0;
+                    animate opacity { duration: 150ms; }
                 }
 
                 angle_card := BondAngleOptionsCard {
@@ -274,6 +278,8 @@ export component OptionsCard inherits FilledCard {
                     dihedral_bin_error: root.dihedral_bin_error;
                     visible: root.active_tab == 0 && root.has_angular_active;
                     height: (root.active_tab == 0 && root.has_angular_active) ? self.preferred-height : 0px;
+                    opacity: (root.active_tab == 0 && root.has_angular_active) ? 1.0 : 0.0;
+                    animate opacity { duration: 150ms; }
                 }
 
                 // Advanced Tab Options (SQ, Rings, Smoothing)
@@ -287,6 +293,8 @@ export component OptionsCard inherits FilledCard {
                     r_int_max_error: root.r_int_max_error;
                     visible: root.active_tab == 1 && root.has_scattering_active;
                     height: (root.active_tab == 1 && root.has_scattering_active) ? self.preferred-height : 0px;
+                    opacity: (root.active_tab == 1 && root.has_scattering_active) ? 1.0 : 0.0;
+                    animate opacity { duration: 150ms; }
                 }
 
                 rings_card := RingsOptionsCard {
@@ -295,6 +303,8 @@ export component OptionsCard inherits FilledCard {
                     max_ring_error: root.max_ring_error;
                     visible: root.active_tab == 1 && root.has_rings_active;
                     height: (root.active_tab == 1 && root.has_rings_active) ? self.preferred-height : 0px;
+                    opacity: (root.active_tab == 1 && root.has_rings_active) ? 1.0 : 0.0;
+                    animate opacity { duration: 150ms; }
                 }
 
                 smoothing_card := SmoothingOptionsCard {
@@ -305,6 +315,8 @@ export component OptionsCard inherits FilledCard {
                     smoothing_sigma_error: root.smoothing_sigma_error;
                     visible: root.active_tab == 1;
                     height: root.active_tab == 1 ? self.preferred-height : 0px;
+                    opacity: root.active_tab == 1 ? 1.0 : 0.0;
+                    animate opacity { duration: 150ms; }
                 }
 
                 advanced_card := AdvancedOptionsCard {
@@ -317,12 +329,16 @@ export component OptionsCard inherits FilledCard {
                     hyper_samples_error: root.hyper_samples_error;
                     visible: root.active_tab == 1;
                     height: root.active_tab == 1 ? self.preferred-height : 0px;
+                    opacity: root.active_tab == 1 ? 1.0 : 0.0;
+                    animate opacity { duration: 150ms; }
                 }
 
                 // Plot Tab Options (Comparison Overlay & Publication Export Settings)
                 comparison_overlay := ComparisonOverlayCard {
                     visible: root.active_tab == 2;
                     height: root.active_tab == 2 ? self.preferred-height : 0px;
+                    opacity: root.active_tab == 2 ? 1.0 : 0.0;
+                    animate opacity { duration: 150ms; }
                     enabled: root.file_loaded;
                     comparison_curves: root.comparison_curves;
                     show_difference: root.show_difference;
@@ -335,6 +351,8 @@ export component OptionsCard inherits FilledCard {
                 export_settings := ExportSettingsCard {
                     visible: root.active_tab == 2;
                     height: root.active_tab == 2 ? self.preferred-height : 0px;
+                    opacity: root.active_tab == 2 ? 1.0 : 0.0;
+                    animate opacity { duration: 150ms; }
                     enabled: root.file_loaded;
                     export_size_preset <=> root.export_size_preset;
                     export_palette <=> root.export_palette;
@@ -358,6 +376,8 @@ export component OptionsCard inherits FilledCard {
                     }
                     visible: root.active_tab == 3;
                     height: root.active_tab == 3 ? self.preferred-height : 0px;
+                    opacity: root.active_tab == 3 ? 1.0 : 0.0;
+                    animate opacity { duration: 150ms; }
                 }
             }
         }

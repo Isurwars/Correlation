@@ -10,6 +10,8 @@
 
 #include <cstdint>
 #include <filesystem>
+#include <string>
+#include <vector>
 
 namespace correlation::app {
 
@@ -22,6 +24,7 @@ struct AppSettings {
   uint32_t window_height{795};
   float left_col_width{260.0F};
   float middle_col_width{260.0F};
+  std::vector<std::string> recent_files;
 };
 
 /**

@@ -57,7 +57,7 @@ export component ElevatedCard {
     callback clicked <=> base.clicked;
 
     forward_focus: base;
-    accessible-role: button;
+    accessible-role: none;
     accessible-enabled: root.clickable;
     accessible-action-default => {
         base.clicked();
@@ -79,7 +79,7 @@ export component FilledCard {
     callback clicked <=> base.clicked;
 
     forward_focus: base;
-    accessible-role: button;
+    accessible-role: none;
     accessible-enabled: root.clickable;
     accessible-action-default => {
         base.clicked();
@@ -100,7 +100,7 @@ export component OutlinedCard {
     callback clicked <=> base.clicked;
 
     forward_focus: base;
-    accessible-role: button;
+    accessible-role: none;
     accessible-enabled: root.clickable;
     accessible-action-default => {
         base.clicked();

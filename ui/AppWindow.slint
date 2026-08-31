@@ -88,6 +88,7 @@ export component AppWindow inherits Window {
 
     /// File status and metadata
     in property <bool> file_loaded: false;
+    in property <bool> file_loading: false;
     in property <int> num_frames: 0;
     in property <int> total_atoms: 0;
     in property <int> removed_frames_count: 0;
@@ -381,15 +382,75 @@ export component AppWindow inherits Window {
     default-font-size: MaterialTypography.body_small.font_size;
     default-font-weight: MaterialTypography.body_small.font_weight;
     default-font-family: "Outfit";
-    //min-width: 1050px;
-    //min-height: 725px;
+    min-width: 1050px;
+    min-height: 725px;
     preferred-width: 1180px;
     preferred-height: 795px;
 
     // ============================================================================
     // Main UI structure
     // ============================================================================
-    VerticalLayout {
+    FocusScope {
+        KeyBinding {
+            keys: @keys(Control+O);
+            activated => { root.browse_file(); }
+        }
+        KeyBinding {
+            keys: @keys(Control+R);
+            activated => {
+                if (root.file_loaded && !root.has_validation_errors && !root.analysis_running) {
+                    root.run_analysis();
+                }
+            }
+        }
+        KeyBinding {
+            keys: @keys(Escape);
+            activated => {
+                if (root.analysis_running) {
+                    root.cancel_analysis();
+                }
+            }
+        }
+        KeyBinding {
+            keys: @keys(Control+S);
+            activated => {
+                if (root.analysis_done) {
+                    root.write_files();
+                }
+            }
+        }
+        KeyBinding {
+            keys: @keys(Control+Shift+S);
+            activated => {
+                if (root.selected_plot_index >= 0) {
+                    root.save_plot();
+                }
+            }
+        }
+        KeyBinding {
+            keys: @keys(Control+D);
+            activated => {
+                Palette.color-scheme = Palette.color-scheme == ColorScheme.dark ? ColorScheme.light : ColorScheme.dark;
+            }
+        }
+        KeyBinding {
+            keys: @keys(Control+"]");
+            activated => {
+                if (root.plot_items.length > 0) {
+                    root.select_plot(Math.min(root.selected_plot_index + 1, root.plot_items.length - 1));
+                }
+            }
+        }
+        KeyBinding {
+            keys: @keys(Control+"[");
+            activated => {
+                if (root.plot_items.length > 0) {
+                    root.select_plot(Math.max(root.selected_plot_index - 1, 0));
+                }
+            }
+        }
+
+        VerticalLayout {
         padding: 0;
         spacing: 0;
 
@@ -407,14 +468,22 @@ export component AppWindow inherits Window {
             vertical-stretch: 1;
 
             // 1. Left column: Operations & CLI command
-            Vertical {
-                padding: 0;
+            DropArea {
                 width: root.left_col_width;
                 horizontal-stretch: 0;
-                spacing: MaterialStyleMetrics.spacing_8;
+                can-drop(event) => DragAction.copy;
+                dropped(event) => {
+                    return DragAction.copy;
+                }
+
+                Vertical {
+                    padding: 0;
+                    width: 100%;
+                    spacing: MaterialStyleMetrics.spacing_8;
 
                 operations_card := OperationsCard {
                     load_enabled: !root.timer_running;
+                    file_loading: root.file_loading;
                     browse_file => {
                         root.browse_file();
                     }
@@ -446,10 +515,15 @@ export component AppWindow inherits Window {
                     }
                 }
             }
+            }
 
             SplitterHandle {
                 moved(delta) => {
                     root.left_col_width = Math.min(450px, Math.max(200px, root.left_col_width + delta));
+                    root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
+                }
+                reset => {
+                    root.left_col_width = 260px;
                     root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
                 }
             }
@@ -511,6 +585,10 @@ export component AppWindow inherits Window {
             SplitterHandle {
                 moved(delta) => {
                     root.middle_col_width = Math.min(450px, Math.max(200px, root.middle_col_width + delta));
+                    root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
+                }
+                reset => {
+                    root.middle_col_width = 260px;
                     root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
                 }
             }
@@ -589,6 +667,7 @@ export component AppWindow inherits Window {
                 root.open_url(url);
             }
         }
+    }
     }
 
     AppToolTips {

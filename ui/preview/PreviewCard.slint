@@ -13,6 +13,7 @@ import {
     InfoRow,
     ScrollView,
     TabItem,
+    TextField,
 } from "../material/material.slint";
 import { ExportSettingsCard } from "ExportSettingsCard.slint";
 import { TableRow, CurveToggleItem } from "../Types.slint";
@@ -196,6 +197,7 @@ export component PreviewCard inherits FilledCard {
                             width: 380px;
                             image-fit: contain;
                             horizontal-alignment: center;
+                            colorize: MaterialPalette.primary;
                         }
                     }
 
@@ -498,6 +500,16 @@ export component PreviewCard inherits FilledCard {
                                     }
                                 }
                             }
+
+                            TextField {
+                                placeholder_text: "#RRGGBB";
+                                accepted(hex) => {
+                                    if (hex != "") {
+                                        root.set_curve_color(root.active_color_picker_id, hex);
+                                        root.active_color_picker_id = -1;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -570,7 +582,7 @@ export component PreviewCard inherits FilledCard {
                         VerticalLayout {
                             for row[row_idx] in root.table_rows: Rectangle {
                                 height: 28px;
-                                background: (row_idx / 2 * 2 == row_idx) ? MaterialPalette.surface : MaterialPalette.surface_container_lowest;
+                                background: Math.mod(row_idx, 2) == 0 ? MaterialPalette.surface : MaterialPalette.surface_container_lowest;
 
                                 VerticalLayout {
                                     HorizontalLayout {

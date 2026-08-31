@@ -10,6 +10,7 @@ import { Palette } from "std-widgets.slint";
 
 export component TabItem inherits Rectangle {
     in property <string> text;
+    in property <image> icon;
     in property <bool> active;
     callback clicked();
 
@@ -28,14 +29,23 @@ export component TabItem inherits Rectangle {
         clicked => { root.clicked(); }
     }
 
-    VerticalLayout {
+    HorizontalLayout {
         alignment: center;
+        spacing: 4px;
+        if root.icon.width > 0 && root.icon.height > 0: Image {
+            source: root.icon;
+            width: 14px;
+            height: 14px;
+            colorize: active ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+            y: (parent.height - self.height) / 2;
+        }
         MaterialText {
             text: root.text;
             style: MaterialTypography.label_medium;
             font_weight: active ? MaterialTypography.semibold : MaterialTypography.medium;
             color: active ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
             horizontal-alignment: center;
+            vertical-alignment: center;
         }
     }
 

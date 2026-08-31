@@ -3,37 +3,36 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-import { ToolTip } from "material/material.slint";
+import { ToolTip, TooltipState } from "material/material.slint";
 
 // ============================================================================
 // AppToolTips Component
 // ============================================================================
-/// This component manages all tooltips displayed across the application.
-/// 
-/// C++ Binding Architecture:
-/// - This component does not directly interface with the C++ backend.
-/// - Instead, it relies on hover states (e.g., `file_hover`, `r_max_hover`)
-///   passed down from the parent `AppWindow` and its child components. 
-/// - It acts purely as a presentation layer for UI hints.
+/// Manages tooltips displayed across the application via global TooltipState.
 // ============================================================================
 export component AppToolTips inherits Rectangle {
     in property <length> hovered_x;
     in property <length> hovered_y;
     in property <length> hovered_width;
     in property <length> hovered_height;
-    background: transparent;
-    
-    // Hover text to display
     in property <string> hovered_tooltip_text: "";
 
+    property <string> active_text: TooltipState.active.text != "" ? TooltipState.active.text : root.hovered_tooltip_text;
+    property <length> active_x: TooltipState.active.text != "" ? TooltipState.active.x : root.hovered_x;
+    property <length> active_y: TooltipState.active.text != "" ? TooltipState.active.y : root.hovered_y;
+    property <length> active_w: TooltipState.active.text != "" ? TooltipState.active.width : root.hovered_width;
+    property <length> active_h: TooltipState.active.text != "" ? TooltipState.active.height : root.hovered_height;
+
+    background: transparent;
+
     ToolTip {
-        hovered_x: root.hovered_x;
-        hovered_y: root.hovered_y;
-        hovered_width: root.hovered_width;
-        hovered_height: root.hovered_height;
+        hovered_x: root.active_x;
+        hovered_y: root.active_y;
+        hovered_width: root.active_w;
+        hovered_height: root.active_h;
         parent_width: root.width;
         parent_height: root.height;
-        visible: root.hovered_tooltip_text != "";
-        text: root.hovered_tooltip_text;
+        visible: root.active_text != "";
+        text: root.active_text;
     }
 }
