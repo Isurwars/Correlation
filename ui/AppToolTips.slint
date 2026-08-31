@@ -1,20 +1,9 @@
-// Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
-// SPDX-License-Identifier: AGPL-3.0-only
-// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
-
 import { ToolTip } from "material/material.slint";
 
 // ============================================================================
 // AppToolTips Component
 // ============================================================================
-/// This component manages all tooltips displayed across the application.
-/// 
-/// C++ Binding Architecture:
-/// - This component does not directly interface with the C++ backend.
-/// - Instead, it relies on hover states (e.g., `file_hover`, `r_max_hover`)
-///   passed down from the parent `AppWindow` and its child components. 
-/// - It acts purely as a presentation layer for UI hints.
+/// Manages tooltips displayed across the application.
 // ============================================================================
 export component AppToolTips inherits Rectangle {
     in property <length> hovered_x;

@@ -25,13 +25,30 @@ export component AppFooter inherits Rectangle {
         }
     }
 
+    property <int> elapsed_seconds: 0;
+    elapsed_timer := Timer {
+        interval: 1000ms;
+        running: root.analysis_running;
+        triggered() => {
+            root.elapsed_seconds += 1;
+        }
+    }
+
+    changed analysis_running => {
+        if root.analysis_running {
+            root.elapsed_seconds = 0;
+        }
+    }
+
     HorizontalLayout {
         padding-left: 12px;
         padding-right: 12px;
         alignment: space-between;
 
         Text {
-            text: root.status_text;
+            text: root.analysis_running ?
+                (root.status_text + " (" + Math.floor(root.elapsed_seconds / 60) + "m " + Math.mod(root.elapsed_seconds, 60) + "s)") :
+                root.status_text;
             font-size: MaterialTypography.body_small.font_size;
             color: MaterialPalette.on_surface_variant;
             vertical-alignment: center;

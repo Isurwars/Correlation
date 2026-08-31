@@ -88,6 +88,7 @@ export component AppWindow inherits Window {
 
     /// File status and metadata
     in property <bool> file_loaded: false;
+    in property <bool> file_loading: false;
     in property <int> num_frames: 0;
     in property <int> total_atoms: 0;
     in property <int> removed_frames_count: 0;
@@ -381,8 +382,8 @@ export component AppWindow inherits Window {
     default-font-size: MaterialTypography.body_small.font_size;
     default-font-weight: MaterialTypography.body_small.font_weight;
     default-font-family: "Outfit";
-    //min-width: 1050px;
-    //min-height: 725px;
+    min-width: 1050px;
+    min-height: 725px;
     preferred-width: 1180px;
     preferred-height: 795px;
 
@@ -451,196 +452,205 @@ export component AppWindow inherits Window {
                 file_loaded: root.file_loaded;
             }
 
-        Horizontal {
-            spacing: 2px;
-            padding-left: 4px;
-            padding-right: 4px;
-            vertical-stretch: 1;
+            Horizontal {
+                spacing: 2px;
+                padding-left: 4px;
+                padding-right: 4px;
+                vertical-stretch: 1;
 
-            // 1. Left column: Operations & CLI command
-            Vertical {
-                padding: 0;
-                width: root.left_col_width;
-                horizontal-stretch: 0;
-                spacing: MaterialStyleMetrics.spacing_8;
-
-                operations_card := OperationsCard {
-                    load_enabled: !root.timer_running;
-                    browse_file => {
-                        root.browse_file();
-                    }
-                    file_status_text <=> root.file_status_text;
-                    file_loaded: root.file_loaded;
-                    num_frames: root.num_frames;
-                    total_atoms: root.total_atoms;
-                    removed_frames_count: root.removed_frames_count;
-                    atom_counts: root.atom_counts;
-
-                    material_type <=> root.material_type;
-                    time_step <=> root.analysis_options.time_step;
-                    time_step_error: root.app_errors.time_step_error;
-                    min_frame <=> root.analysis_options.min_frame;
-                    max_frame <=> root.analysis_options.max_frame;
-                    min_frame_error: root.app_errors.min_frame_error;
-                    max_frame_error: root.app_errors.max_frame_error;
-
-                    analysis_running: root.analysis_running;
-                    analysis_done: root.analysis_done;
-                    progress: root.progress;
-                    analysis_status_text: root.analysis_status_text;
-                    has_validation_errors: root.has_validation_errors;
-                    run_analysis => {
-                        root.run_analysis();
-                    }
-                    cancel_analysis => {
-                        root.cancel_analysis();
-                    }
-                }
-            }
-
-            SplitterHandle {
-                moved(delta) => {
-                    root.left_col_width = Math.min(450px, Math.max(200px, root.left_col_width + delta));
-                    root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
-                }
-            }
-
-            // 2. Middle column: Options Tabbed Card (Common, Advanced, Plot, Analyses)
-            options_card := OptionsCard {
-                width: root.middle_col_width;
-                horizontal-stretch: 0;
-                enabled: root.file_loaded;
-                file_loaded: root.file_loaded;
-                calculator_groups: root.calculator_groups;
-                total_calculator_count: root.total_calculator_count;
-                toggle_calculator(id, enabled) => {
-                    root.toggle_calculator(id, enabled);
-                }
-                has_radial_active: root.has_radial_active;
-                has_angular_active: root.has_angular_active;
-                has_scattering_active: root.has_scattering_active;
-                has_rings_active: root.has_rings_active;
-                bond_cutoffs <=> root.bond_cutoffs;
-                atom_counts: root.atom_counts;
-                reset_bond_cutoffs => {
-                    root.reset_bond_cutoffs();
-                }
-                analysis_options <=> root.analysis_options;
-                app_errors: root.app_errors;
-                num_frames: root.num_frames;
-                preset_items: root.preset_items;
-                selected_preset <=> root.selected_preset;
-
-                diff_msd: root.diff_msd;
-                diff_vacf: root.diff_vacf;
-                relaxation_time: root.relaxation_time;
-                deborah_number: root.deborah_number;
-
-                export_size_preset <=> root.export_size_preset;
-                export_palette <=> root.export_palette;
-                export_font_scale <=> root.export_font_scale;
-                export_line_width <=> root.export_line_width;
-                export_show_legend <=> root.export_show_legend;
-                export_show_grid <=> root.export_show_grid;
-                export_show_markers <=> root.export_show_markers;
-                export_fill_area <=> root.export_fill_area;
-                export_font_scale_error: root.export_font_scale_error;
-                export_line_width_error: root.export_line_width_error;
-
-                comparison_curves: root.comparison_curves;
-                show_difference: root.show_difference;
-                pin_current_run => { root.pin_run(); }
-                import_comparison_file => { root.import_comparison_file(); }
-                remove_comparison_curve(id) => { root.remove_comparison_curve(id); }
-                toggle_difference_plot(show) => { root.toggle_difference_plot(show); }
-
-                load_preset(idx) => { root.load_preset(idx); }
-                save_preset(name) => { root.save_preset(name); }
-                delete_preset(idx) => { root.delete_preset(idx); }
-            }
-
-            SplitterHandle {
-                moved(delta) => {
-                    root.middle_col_width = Math.min(450px, Math.max(200px, root.middle_col_width + delta));
-                    root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
-                }
-            }
-
-            // 3. Right column: Visual Preview Card (stretches to fill remaining space)
-            Rectangle {
-                horizontal-stretch: 1;
-                min-width: 400px;
-
+                // 1. Left column: Operations & CLI command
                 Vertical {
-                    width: 100%;
-                    height: 100%;
                     padding: 0;
-                    opacity: root.analysis_done ? 1.0 : 0.45;
-                    animate opacity { duration: 150ms; }
+                    width: root.left_col_width;
+                    horizontal-stretch: 0;
+                    spacing: MaterialStyleMetrics.spacing_8;
 
-                    preview_card := PreviewCard {
-                        enabled: root.analysis_done;
+                    operations_card := OperationsCard {
+                        load_enabled: !root.timer_running;
+                        file_loading: root.file_loading;
+                        browse_file => {
+                            root.browse_file();
+                        }
+                        file_status_text <=> root.file_status_text;
+                        file_loaded: root.file_loaded;
+                        num_frames: root.num_frames;
+                        total_atoms: root.total_atoms;
+                        removed_frames_count: root.removed_frames_count;
+                        atom_counts: root.atom_counts;
+
+                        material_type <=> root.material_type;
+                        time_step <=> root.analysis_options.time_step;
+                        time_step_error: root.app_errors.time_step_error;
+                        min_frame <=> root.analysis_options.min_frame;
+                        max_frame <=> root.analysis_options.max_frame;
+                        min_frame_error: root.app_errors.min_frame_error;
+                        max_frame_error: root.app_errors.max_frame_error;
+
+                        analysis_running: root.analysis_running;
                         analysis_done: root.analysis_done;
-                        vertical-stretch: 1;
-                        horizontal-stretch: 1;
-                        preview_plot <=> root.preview_plot;
-                        plot_items <=> root.plot_items;
-                        curve_toggle_items: root.curve_toggle_items;
-                        selected_plot_index <=> root.selected_plot_index;
-                        pinned_runs_count: root.pinned_runs_count;
+                        progress: root.progress;
+                        analysis_status_text: root.analysis_status_text;
+                        has_validation_errors: root.has_validation_errors;
+                        run_analysis => {
+                            root.run_analysis();
+                        }
+                        cancel_analysis => {
+                            root.cancel_analysis();
+                        }
+                    }
+                }
 
-                        table_headers: root.table_headers;
-                        table_rows: root.table_rows;
+                SplitterHandle {
+                    moved(delta) => {
+                        root.left_col_width = Math.min(450px, Math.max(200px, root.left_col_width + delta));
+                        root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
+                    }
+                    reset => {
+                        root.left_col_width = 260px;
+                        root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
+                    }
+                }
 
-                        plot_selected(idx) => {
-                            root.select_plot(idx);
-                        }
-                        toggle_curve_visibility(id, vis) => {
-                            root.toggle_curve_visibility(id, vis);
-                        }
-                        toggle_all_curves(vis) => {
-                            root.toggle_all_curves(vis);
-                        }
-                        set_curve_color(id, col) => {
-                            root.set_curve_color(id, col);
-                        }
-                        save_plot => {
-                            root.save_plot();
-                        }
-                        write_files => {
-                            root.write_files();
-                        }
-                        pin_run => {
-                            root.pin_run();
-                        }
-                        clear_pinned_runs => {
-                            root.clear_pinned_runs();
-                        }
-                        mouse_move(mx, my, hover, w, h) => {
-                            root.mouse_move(mx, my, hover, w, h);
-                        }
-                        plot_resized(w, h) => {
-                            root.plot_resized(w, h);
+                // 2. Middle column: Options Tabbed Card (Common, Advanced, Plot, Analyses)
+            options_card := OptionsCard {
+                    width: root.middle_col_width;
+                    horizontal-stretch: 0;
+                    enabled: root.file_loaded;
+                    file_loaded: root.file_loaded;
+                    calculator_groups: root.calculator_groups;
+                    total_calculator_count: root.total_calculator_count;
+                    toggle_calculator(id, enabled) => {
+                        root.toggle_calculator(id, enabled);
+                    }
+                    has_radial_active: root.has_radial_active;
+                    has_angular_active: root.has_angular_active;
+                    has_scattering_active: root.has_scattering_active;
+                    has_rings_active: root.has_rings_active;
+                    bond_cutoffs <=> root.bond_cutoffs;
+                    atom_counts: root.atom_counts;
+                    reset_bond_cutoffs => {
+                        root.reset_bond_cutoffs();
+                    }
+                    analysis_options <=> root.analysis_options;
+                    app_errors: root.app_errors;
+                    num_frames: root.num_frames;
+                    preset_items: root.preset_items;
+                    selected_preset <=> root.selected_preset;
+
+                    diff_msd: root.diff_msd;
+                    diff_vacf: root.diff_vacf;
+                    relaxation_time: root.relaxation_time;
+                    deborah_number: root.deborah_number;
+
+                    export_size_preset <=> root.export_size_preset;
+                    export_palette <=> root.export_palette;
+                    export_font_scale <=> root.export_font_scale;
+                    export_line_width <=> root.export_line_width;
+                    export_show_legend <=> root.export_show_legend;
+                    export_show_grid <=> root.export_show_grid;
+                    export_show_markers <=> root.export_show_markers;
+                    export_fill_area <=> root.export_fill_area;
+                    export_font_scale_error: root.export_font_scale_error;
+                    export_line_width_error: root.export_line_width_error;
+
+                    comparison_curves: root.comparison_curves;
+                    show_difference: root.show_difference;
+                    pin_current_run => { root.pin_run(); }
+                    import_comparison_file => { root.import_comparison_file(); }
+                    remove_comparison_curve(id) => { root.remove_comparison_curve(id); }
+                    toggle_difference_plot(show) => { root.toggle_difference_plot(show); }
+
+                    load_preset(idx) => { root.load_preset(idx); }
+                    save_preset(name) => { root.save_preset(name); }
+                    delete_preset(idx) => { root.delete_preset(idx); }
+                }
+
+                SplitterHandle {
+                    moved(delta) => {
+                        root.middle_col_width = Math.min(450px, Math.max(200px, root.middle_col_width + delta));
+                        root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
+                    }
+                    reset => {
+                        root.middle_col_width = 260px;
+                        root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
+                    }
+                }
+
+                // 3. Right column: Visual Preview Card (stretches to fill remaining space)
+            Rectangle {
+                    horizontal-stretch: 1;
+                    min-width: 400px;
+
+                    Vertical {
+                        width: 100%;
+                        height: 100%;
+                        padding: 0;
+                        opacity: root.analysis_done ? 1.0 : 0.45;
+                        animate opacity { duration: 150ms; }
+
+                        preview_card := PreviewCard {
+                            enabled: root.analysis_done;
+                            analysis_done: root.analysis_done;
+                            vertical-stretch: 1;
+                            horizontal-stretch: 1;
+                            preview_plot <=> root.preview_plot;
+                            plot_items <=> root.plot_items;
+                            curve_toggle_items: root.curve_toggle_items;
+                            selected_plot_index <=> root.selected_plot_index;
+                            pinned_runs_count: root.pinned_runs_count;
+
+                            table_headers: root.table_headers;
+                            table_rows: root.table_rows;
+
+                            plot_selected(idx) => {
+                                root.select_plot(idx);
+                            }
+                            toggle_curve_visibility(id, vis) => {
+                                root.toggle_curve_visibility(id, vis);
+                            }
+                            toggle_all_curves(vis) => {
+                                root.toggle_all_curves(vis);
+                            }
+                            set_curve_color(id, col) => {
+                                root.set_curve_color(id, col);
+                            }
+                            save_plot => {
+                                root.save_plot();
+                            }
+                            write_files => {
+                                root.write_files();
+                            }
+                            pin_run => {
+                                root.pin_run();
+                            }
+                            clear_pinned_runs => {
+                                root.clear_pinned_runs();
+                            }
+                            mouse_move(mx, my, hover, w, h) => {
+                                root.mouse_move(mx, my, hover, w, h);
+                            }
+                            plot_resized(w, h) => {
+                                root.plot_resized(w, h);
+                            }
                         }
                     }
                 }
             }
-        }
 
-        AppFooter {
-            status_text: root.analysis_running ? root.analysis_status_text :
-                root.analysis_done ? "Analysis complete — results ready" :
-                root.file_loaded ? root.file_status_text : "Ready";
-            progress: root.progress;
-            analysis_running: root.analysis_running;
-            update_available: root.update_available;
-            update_version: root.update_version;
-            update_url: root.update_url;
-            open_url(url) => {
-                root.open_url(url);
+            AppFooter {
+                status_text: root.analysis_running ? root.analysis_status_text :
+                    root.analysis_done ? "Analysis complete — results ready" :
+                    root.file_loaded ? root.file_status_text : "Ready";
+                progress: root.progress;
+                analysis_running: root.analysis_running;
+                update_available: root.update_available;
+                update_version: root.update_version;
+                update_url: root.update_url;
+                open_url(url) => {
+                    root.open_url(url);
+                }
             }
         }
-    }
     }
 
     AppToolTips {

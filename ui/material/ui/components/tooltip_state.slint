@@ -1,0 +1,16 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+export struct TooltipData {
+    text: string,
+    x: length,
+    y: length,
+    width: length,
+    height: length,
+}
+
+export global TooltipState {
+    in-out property <TooltipData> active: { text: "", x: 0px, y: 0px, width: 0px, height: 0px };
+}

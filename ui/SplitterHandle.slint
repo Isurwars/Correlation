@@ -24,6 +24,8 @@ export component SplitterHandle inherits Rectangle {
         animate background { duration: 150ms; }
     }
 
+    callback reset();
+
     touch := TouchArea {
         enabled: root.enabled;
         mouse-cursor: ew-resize;
@@ -32,6 +34,10 @@ export component SplitterHandle inherits Rectangle {
             if (self.pressed) {
                 root.moved(self.mouse-x - self.pressed-x);
             }
+        }
+
+        double-clicked => {
+            root.reset();
         }
     }
 }
