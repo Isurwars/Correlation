@@ -1,38 +1,28 @@
-// Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
-// SPDX-License-Identifier: AGPL-3.0-only
-// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
-
-import { ToolTip, TooltipState } from "material/material.slint";
+import { ToolTip } from "material/material.slint";
 
 // ============================================================================
 // AppToolTips Component
 // ============================================================================
-/// Manages tooltips displayed across the application via global TooltipState.
+/// Manages tooltips displayed across the application.
 // ============================================================================
 export component AppToolTips inherits Rectangle {
     in property <length> hovered_x;
     in property <length> hovered_y;
     in property <length> hovered_width;
     in property <length> hovered_height;
+    background: transparent;
+    
+    // Hover text to display
     in property <string> hovered_tooltip_text: "";
 
-    property <string> active_text: TooltipState.active.text != "" ? TooltipState.active.text : root.hovered_tooltip_text;
-    property <length> active_x: TooltipState.active.text != "" ? TooltipState.active.x : root.hovered_x;
-    property <length> active_y: TooltipState.active.text != "" ? TooltipState.active.y : root.hovered_y;
-    property <length> active_w: TooltipState.active.text != "" ? TooltipState.active.width : root.hovered_width;
-    property <length> active_h: TooltipState.active.text != "" ? TooltipState.active.height : root.hovered_height;
-
-    background: transparent;
-
     ToolTip {
-        hovered_x: root.active_x;
-        hovered_y: root.active_y;
-        hovered_width: root.active_w;
-        hovered_height: root.active_h;
+        hovered_x: root.hovered_x;
+        hovered_y: root.hovered_y;
+        hovered_width: root.hovered_width;
+        hovered_height: root.hovered_height;
         parent_width: root.width;
         parent_height: root.height;
-        visible: root.active_text != "";
-        text: root.active_text;
+        visible: root.hovered_tooltip_text != "";
+        text: root.hovered_tooltip_text;
     }
 }
