@@ -29,6 +29,7 @@
 - **Interatomic Potentials:** Maintain uniform interfaces for ML potentials (MACE, ORB-v3). Use abstract contiguous matrix wrappers for coordinate processing.
 - **See skill:** [cpp-coding-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-coding-standards/SKILL.md) for the comprehensive C++ Core Guidelines reference.
 - **See rule:** [code-style-guide](file:///home/isurwars/Projects/Correlation/.agents/rules/code-style-guide.md) for clang-tidy compliance, Doxygen standards, and static analysis gates.
+- **See rule:** [complexity-gate](file:///home/isurwars/Projects/Correlation/.agents/rules/complexity-gate.md) for cognitive complexity threshold limits (<= 25) and structural decomposition.
 - **See rule:** [cmake-architecture-rule](file:///home/isurwars/Projects/Correlation/.agents/rules/cmake-architecture-rule.md) for target-centric CMake design, compile commands export, and build safety.
 - **See rule:** [git-workflow](file:///home/isurwars/Projects/Correlation/.agents/rules/git-workflow.md) for trunk-based development and Conventional Commits.
 - **See rule:** [testing-standards](file:///home/isurwars/Projects/Correlation/.agents/rules/testing-standards.md) for Google Test standards and verification targets.
@@ -44,6 +45,7 @@
 
 ## 6. Delegation & Skill Invocation
 - **C++ Refactoring / Code Generation:** Activate [cpp-coding-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-coding-standards/SKILL.md) for RAII, modern C++20 type safety, and memory-locality guidelines.
+- **Cognitive Complexity Gate:** Activate [complexity-gate](file:///home/isurwars/Projects/Correlation/.agents/skills/complexity-gate/SKILL.md) for refactoring complex control flow, parameter object extraction, and keeping cognitive complexity <= 25.
 - **Performance & Benchmarking:** Activate [cpp-performance-benchmark](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-performance-benchmark/SKILL.md) for Google Benchmark, cache alignment (`alignas(64)`), and SIMD loop friendliness.
 - **Error Diagnosis:** Activate [cpp-error-diagnosis](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-error-diagnosis/SKILL.md) for structured compiler, linker, and sanitizer error parsing.
 - **Git Commit Generation:** Activate [git-commit-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/git-commit-standards/SKILL.md) for Conventional Commits formatting and scope mapping.
@@ -62,5 +64,6 @@
 ## 7. Verification & Quality Gates
 1. **Compilation:** Code must compile cleanly with `-Wall -Wextra -Wpedantic -Werror`.
 2. **Static Analysis:** Run `clang-tidy` against `compile_commands.json` on all modified files. Zero `NOLINT` suppressions permitted.
-3. **Testing:** Execute `cmake --build build --target correlation_unit_tests` (or applicable target) and verify all tests pass.
-4. **Documentation:** Verify Doxygen blocks on all public/protected interfaces in header files.
+3. **Cognitive Complexity:** All functions must maintain Cognitive Complexity <= 25 (`readability-function-cognitive-complexity`).
+4. **Testing:** Execute `cmake --build build --target correlation_unit_tests` (or applicable target) and verify all tests pass.
+5. **Documentation:** Verify Doxygen blocks on all public/protected interfaces in header files.

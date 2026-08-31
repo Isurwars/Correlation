@@ -6,6 +6,7 @@
 - **Tooling Compliance:** All C++ code must strictly align with workspace `.clang-format` and `.clang-tidy` rules.
 - **Verification Gate:** Run `clang-tidy` against `compile_commands.json` on all modified files prior to task completion. Resolve all warnings and linter findings before presenting code.
 - **Strict Compilation:** Code must compile cleanly with `-Wall -Wextra -Wpedantic -Werror`.
+- **Cognitive Complexity Gate:** Function cognitive complexity must be $\le 25$ (`readability-function-cognitive-complexity`). See [complexity-gate](file:///home/isurwars/Projects/Correlation/.agents/rules/complexity-gate.md).
 - **Zero Narrowing:** Implicit narrowing conversions (e.g., `double` to `float`, `size_t` to `int`) are prohibited. Use `static_cast` or explicit conversions where appropriate.
 - **Prohibit NOLINT Suppressions:** Never insert `NOLINT`, `NOLINTNEXTLINE`, `NOLINTBEGIN`, `NOLINTEND`, or any inline suppression comments. Fix the root cause in code design or types.
 
