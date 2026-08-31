@@ -37,6 +37,19 @@ std::string sniffFormatFromOutFile(const std::string &filename) {
     if (uline.contains("&CELL") || uline.contains("&COORD") || uline.contains("&GLOBAL") || uline.contains("CP2K")) {
       return ".restart";
     }
+    if (uline.contains("O   R   C   A") || uline.contains("ORCA") ||
+        uline.contains("CARTESIAN COORDINATES (ANGSTROEM)")) {
+      return ".orca";
+    }
+    if (uline.contains("GPAW") || uline.contains("PROJECTOR-AUGMENTED WAVE")) {
+      return ".gpaw";
+    }
+    if (uline.contains("ABINIT") || uline.contains("RPRIM") || uline.contains("ACELL")) {
+      return ".abi";
+    }
+    if (uline.contains("DFTB+") || uline.contains("GENFORMAT")) {
+      return ".gen";
+    }
   }
 
   return "";

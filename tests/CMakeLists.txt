@@ -25,6 +25,10 @@ add_executable(correlation_unit_tests
     unit/readers/XYZReaderTests.cpp
     unit/readers/QEReaderTests.cpp
     unit/readers/CP2KReaderTests.cpp
+    unit/readers/OrcaReaderTests.cpp
+    unit/readers/GpawReaderTests.cpp
+    unit/readers/AbinitReaderTests.cpp
+    unit/readers/DftbReaderTests.cpp
     unit/readers/GromacsReaderTests.cpp
     unit/readers/PdbReaderTests.cpp
     unit/readers/ArcReaderTests.cpp

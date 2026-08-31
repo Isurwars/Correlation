@@ -21,6 +21,10 @@ add_library(readers_obj OBJECT
     readers/QEReader.cpp
     readers/CP2KReader.cpp
     readers/XYZReader.cpp
+    readers/OrcaReader.cpp
+    readers/GpawReader.cpp
+    readers/AbinitReader.cpp
+    readers/DftbReader.cpp
 )
 target_include_directories(readers_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
