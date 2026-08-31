@@ -17,6 +17,7 @@
 #include "core_bindings.hpp"
 #include "io_bindings.hpp"
 #include "math_bindings.hpp"
+#include "mlip_bindings.hpp"
 #include "writer_bindings.hpp"
 
 #include <pybind11/pybind11.h>
@@ -40,4 +41,5 @@ PYBIND11_MODULE(_correlation, mod) {
   init_analysis(mod);
   init_calculators(mod);
   init_writers(mod);
+  init_mlip(mod);
 }

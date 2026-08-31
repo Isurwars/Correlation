@@ -31,6 +31,8 @@ void init_core(py::module_ &mod) {
 
   py::class_<Cell>(mod, "Cell")
       .def(py::init<>())
+      .def(py::init<const std::array<real_t, 6> &>(), py::arg("lattice_parameters"),
+           "Construct a Cell from lattice parameters [a, b, c, alpha, beta, gamma].")
       .def(
           "add_atom",
           [](Cell &cell, const std::string &symbol, const std::array<real_t, 3> &pos) -> Atom & {

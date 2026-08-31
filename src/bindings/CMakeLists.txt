@@ -6,6 +6,7 @@ pybind11_add_module(_correlation
     analysis_bindings.cpp
     calculator_bindings.cpp
     writer_bindings.cpp
+    mlip_bindings.cpp
 )
 
 # Keep backward compatibility: the library file is named _correlation.so/.pyd

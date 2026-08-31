@@ -83,13 +83,81 @@ TEST(PeriodicGraphBuilderTests, DimerWithinCutoff) {
   EXPECT_EQ(graph.atomic_numbers[1], 8);
 
   ASSERT_EQ(graph.edge_index_flat.size(), 4U);
-  // Edge 0: 0 -> 1, Edge 1: 1 -> 0 (or vice versa)
+  ASSERT_EQ(graph.edge_vectors_flat.size(), 6U);
+  ASSERT_EQ(graph.edge_distances.size(), 2U);
+
+  // Check distances
+  EXPECT_NEAR(graph.edge_distances[0], static_cast<real_t>(1.2), 1e-5);
+  EXPECT_NEAR(graph.edge_distances[1], static_cast<real_t>(1.2), 1e-5);
+
+  // Edge 0: 0 -> 1 (vector +1.2, 0, 0), Edge 1: 1 -> 0 (vector -1.2, 0, 0)
   const int64_t src0 = graph.edge_index_flat[0 * 2 + 0];
   const int64_t dst0 = graph.edge_index_flat[1 * 2 + 0];
   const int64_t src1 = graph.edge_index_flat[0 * 2 + 1];
   const int64_t dst1 = graph.edge_index_flat[1 * 2 + 1];
 
   EXPECT_TRUE((src0 == 0 && dst0 == 1 && src1 == 1 && dst1 == 0) || (src0 == 1 && dst0 == 0 && src1 == 0 && dst1 == 1));
+
+  if (src0 == 0 && dst0 == 1) {
+    EXPECT_NEAR(graph.edge_vectors_flat[0 * 3 + 0], static_cast<real_t>(1.2), 1e-5);
+    EXPECT_NEAR(graph.edge_vectors_flat[1 * 3 + 0], static_cast<real_t>(-1.2), 1e-5);
+  } else {
+    EXPECT_NEAR(graph.edge_vectors_flat[0 * 3 + 0], static_cast<real_t>(-1.2), 1e-5);
+    EXPECT_NEAR(graph.edge_vectors_flat[1 * 3 + 0], static_cast<real_t>(1.2), 1e-5);
+  }
+}
+
+TEST(PeriodicGraphBuilderTests, SelfLoopsToggle) {
+  correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  cell.addAtom("Si", {0.0, 0.0, 0.0});
+
+  // Small cutoff that has no periodic images within 2.0 Å
+  auto graph_no_loops = PeriodicGraphBuilder::buildGraph(cell, 2.0, false);
+  EXPECT_EQ(graph_no_loops.edge_count, 0U);
+
+  auto graph_with_loops = PeriodicGraphBuilder::buildGraph(cell, 2.0, true);
+  EXPECT_EQ(graph_with_loops.edge_count, 1U);
+  EXPECT_EQ(graph_with_loops.edge_index_flat[0], 0);
+  EXPECT_EQ(graph_with_loops.edge_index_flat[1], 0);
+  EXPECT_NEAR(graph_with_loops.edge_distances[0], static_cast<real_t>(0.0), 1e-6);
+}
+
+TEST(PeriodicGraphBuilderTests, CutoffEnvelopeMath) {
+  const real_t cutoff_radius = 5.0;
+  EXPECT_NEAR(PeriodicGraphBuilder::computeCutoffEnvelope(0.0, cutoff_radius), static_cast<real_t>(1.0), 1e-6);
+  EXPECT_NEAR(PeriodicGraphBuilder::computeCutoffEnvelope(5.0, cutoff_radius), static_cast<real_t>(0.0), 1e-6);
+  EXPECT_NEAR(PeriodicGraphBuilder::computeCutoffEnvelope(6.0, cutoff_radius), static_cast<real_t>(0.0), 1e-6);
+
+  const real_t mid = PeriodicGraphBuilder::computeCutoffEnvelope(2.5, cutoff_radius);
+  EXPECT_GT(mid, static_cast<real_t>(0.0));
+  EXPECT_LT(mid, static_cast<real_t>(1.0));
+}
+
+TEST(PeriodicGraphBuilderTests, BesselBasisFeatures) {
+  const real_t cutoff_radius = 5.0;
+  const size_t num_basis = 8;
+
+  auto basis_inside = PeriodicGraphBuilder::computeBesselBasis(1.5, cutoff_radius, num_basis);
+  EXPECT_EQ(basis_inside.size(), num_basis);
+  for (size_t i = 0; i < num_basis; ++i) {
+    EXPECT_TRUE(std::isfinite(basis_inside[i]));
+  }
+
+  auto basis_outside = PeriodicGraphBuilder::computeBesselBasis(5.5, cutoff_radius, num_basis);
+  EXPECT_EQ(basis_outside.size(), num_basis);
+  for (size_t i = 0; i < num_basis; ++i) {
+    EXPECT_NEAR(basis_outside[i], static_cast<real_t>(0.0), 1e-6);
+  }
+}
+
+TEST(PeriodicGraphBuilderTests, GaussianRBFExpansion) {
+  const size_t num_basis = 5;
+  auto rbf = PeriodicGraphBuilder::computeGaussianRBF(1.0, {.start = 0.0, .stop = 4.0, .num_basis = num_basis});
+  EXPECT_EQ(rbf.size(), num_basis);
+  // Center 1 is at 1.0, so rbf[1] should be exactly 1.0 (diff = 0)
+  EXPECT_NEAR(rbf[1], static_cast<real_t>(1.0), 1e-5);
+  EXPECT_LT(rbf[0], static_cast<real_t>(1.0));
+  EXPECT_LT(rbf[2], static_cast<real_t>(1.0));
 }
 
 TEST(TorchGNNModelTests, InterfaceAndAccessors) {

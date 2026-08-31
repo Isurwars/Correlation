@@ -85,13 +85,13 @@ MLIPOutput TorchGNNModel::evaluate(const correlation::core::Cell &cell) const {
   const torch::ScalarType tensor_dtype = (sizeof(real_t) == sizeof(double)) ? torch::kFloat64 : torch::kFloat32;
 
   // 3. Construct input tensors (zero-copy from flat buffers into torch tensors)
-  torch::Tensor pos =
-      torch::from_blob(const_cast<real_t *>(graph.positions_flat.data()), {static_cast<int64_t>(N), 3}, tensor_dtype)
-          .to(impl_->device);
+  torch::Tensor pos = torch::from_blob(const_cast<real_t *>(graph.positions_flat.data()),
+                                       {static_cast<int64_t>(number_atoms), 3}, tensor_dtype)
+                          .to(impl_->device);
 
-  torch::Tensor atomic_numbers =
-      torch::from_blob(const_cast<int64_t *>(graph.atomic_numbers.data()), {static_cast<int64_t>(N)}, torch::kInt64)
-          .to(impl_->device);
+  torch::Tensor atomic_numbers = torch::from_blob(const_cast<int64_t *>(graph.atomic_numbers.data()),
+                                                  {static_cast<int64_t>(number_atoms)}, torch::kInt64)
+                                     .to(impl_->device);
 
   torch::Tensor edge_index;
   if (E > 0) {
@@ -132,9 +132,9 @@ MLIPOutput TorchGNNModel::evaluate(const correlation::core::Cell &cell) const {
     // Extract Forces
     if (dict.contains("forces")) {
       auto forces_t = dict.at("forces").toTensor().to(torch::kCPU).to(tensor_dtype).contiguous();
-      output.forces.resize(N);
+      output.forces.resize(number_atoms);
       const auto *f_ptr = forces_t.data_ptr<real_t>();
-      for (size_t i = 0; i < N; ++i) {
+      for (size_t i = 0; i < number_atoms; ++i) {
         output.forces[i] = correlation::math::Vector3<real_t>{f_ptr[i * 3 + 0], f_ptr[i * 3 + 1], f_ptr[i * 3 + 2]};
       }
     }
@@ -143,12 +143,12 @@ MLIPOutput TorchGNNModel::evaluate(const correlation::core::Cell &cell) const {
     if (dict.contains("ldos")) {
       auto ldos_t = dict.at("ldos").toTensor().to(torch::kCPU).to(tensor_dtype).contiguous();
       const auto sizes = ldos_t.sizes();
-      if (sizes.size() == 2 && sizes[0] == static_cast<int64_t>(N)) {
+      if (sizes.size() == 2 && sizes[0] == static_cast<int64_t>(number_atoms)) {
         const size_t n_bins = static_cast<size_t>(sizes[1]);
         output.ldos_bins = n_bins;
-        output.ldos.resize(N, std::vector<real_t>(n_bins, static_cast<real_t>(0.0)));
+        output.ldos.resize(number_atoms, std::vector<real_t>(n_bins, static_cast<real_t>(0.0)));
         const auto *ldos_ptr = ldos_t.data_ptr<real_t>();
-        for (size_t i = 0; i < N; ++i) {
+        for (size_t i = 0; i < number_atoms; ++i) {
           for (size_t b = 0; b < n_bins; ++b) {
             output.ldos[i][b] = ldos_ptr[i * n_bins + b];
           }

@@ -54,8 +54,10 @@ print(f"  Trajectory frames: {traj.num_frames()}")
 
 # ── 2.5 NumPy zero-copy bindings ─────────────────────────────────────
 section("2.5 NumPy Zero-Copy Bindings")
+HAS_NUMPY = False
 try:
     import numpy as np
+    HAS_NUMPY = True
     
     # Generate some mock data
     pos = cell.positions
@@ -191,13 +193,52 @@ for c in calcs:
 names = correlation.list_calculators()
 print(f"  Short names: {names}")
 
-# ── 7. Writer access ─────────────────────────────────────────────────
-section("7. Writers")
-writer_names = correlation.list_writers()
-print(f"  Registered writers ({len(writer_names)}): {writer_names}")
+# ── 7.5. GNN Periodic Graph & MLIP ────────────────────────────────────
+section("7.5. GNN Periodic Graph & MLIP")
+cell_sc = correlation.Cell([4.0, 4.0, 4.0, 90.0, 90.0, 90.0])
+cell_sc.add_atom("Si", [0.0, 0.0, 0.0])
+# Test PeriodicGraphBuilder.build_graph (cutoff 4.1 encompasses 6 periodic neighbors)
+graph = correlation.build_periodic_graph(cell_sc, cutoff_radius=4.1, include_self_loops=False)
+print(f"  Graph atoms: {graph.atom_count}, edges: {graph.edge_count}")
+assert graph.atom_count == 1, "Graph atom_count mismatch"
+assert graph.edge_count == 6, f"Graph edge_count expected 6, got {graph.edge_count}"
+if HAS_NUMPY:
+    print(f"  Graph pos shape: {graph.positions.shape}")
+    print(f"  Graph Z shape: {graph.atomic_numbers.shape}, Z: {graph.atomic_numbers}")
+    print(f"  Graph edge_index shape: {graph.edge_index.shape}")
+    print(f"  Graph edge_shifts shape: {graph.edge_shifts.shape}")
+    print(f"  Graph edge_vectors shape: {graph.edge_vectors.shape}")
+    print(f"  Graph edge_distances shape: {graph.edge_distances.shape}")
+    assert graph.edge_index.shape == (2, 6), "Edge index shape mismatch"
+    assert graph.edge_vectors.shape == (6, 3), "Edge vectors shape mismatch"
+    assert graph.edge_distances.shape == (6,), "Edge distances shape mismatch"
+    assert all(abs(d - 4.0) < 1e-4 for d in graph.edge_distances), "Edge distance value mismatch"
+else:
+    print("  numpy not installed. Skipping zero-copy graph array shape checks.")
 
-csv_writer = correlation.get_writer("CSV")
-print(f"  CSV writer: {csv_writer.get_name()}, extensions={csv_writer.get_extensions()}")
+# Test RBF utilities
+env = correlation.PeriodicGraphBuilder.compute_cutoff_envelope(2.5, 5.0)
+print(f"  Cutoff envelope(2.5, 5.0): {env}")
+assert 0.0 < env < 1.0, "Cutoff envelope out of range"
+
+bessel = correlation.PeriodicGraphBuilder.compute_bessel_basis(2.5, 5.0, 6)
+print(f"  Bessel basis (6): {bessel}")
+assert len(bessel) == 6, "Bessel basis length mismatch"
+
+rbf = correlation.PeriodicGraphBuilder.compute_gaussian_rbf(1.0, 0.0, 4.0, 5)
+print(f"  Gaussian RBF (5): {rbf}")
+assert len(rbf) == 5, "Gaussian RBF length mismatch"
+assert abs(rbf[1] - 1.0) < 1e-4, "Gaussian RBF peak center mismatch"
+
+# Test MLIPCalculator
+mlip_calc = correlation.MLIPCalculator()
+print(f"  MLIPCalculator: {mlip_calc.get_name()}")
+mlip_out = correlation.MLIPCalculator.calculate(cell_sc)
+if HAS_NUMPY:
+    print(f"  MLIP output total_energy: {mlip_out.total_energy}, forces shape: {mlip_out.forces.shape}")
+    assert mlip_out.forces.shape == (1, 3), "MLIP forces shape mismatch"
+else:
+    print(f"  MLIP output total_energy: {mlip_out.total_energy}")
 
 # ── 8. Summary ───────────────────────────────────────────────────────
 section("Summary")

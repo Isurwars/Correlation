@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <numbers>
 #include <string_view>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
@@ -26,6 +27,10 @@ struct EdgeTuple {
   real_t shift_x;
   real_t shift_y;
   real_t shift_z;
+  real_t vec_x;
+  real_t vec_y;
+  real_t vec_z;
+  real_t distance;
 };
 
 /// @brief Candidate neighbor pair with periodic image shift and squared distance.
@@ -35,7 +40,11 @@ struct CandidateEdge {
   int nx;
   int ny;
   int nz;
+  real_t vec_x;
+  real_t vec_y;
+  real_t vec_z;
   real_t dist_sq;
+  real_t distance;
 };
 
 // Periodic search grid boundaries
@@ -119,8 +128,17 @@ void collectEdgesForAtom(size_t atom_i, const std::vector<correlation::core::Ato
             continue;
           }
 
-          const CandidateEdge candidate{
-              .atom_i = atom_i, .atom_j = j, .nx = nx, .ny = ny, .nz = nz, .dist_sq = dist_sq};
+          const real_t dist = std::sqrt(dist_sq);
+          const CandidateEdge candidate{.atom_i = atom_i,
+                                        .atom_j = j,
+                                        .nx = nx,
+                                        .ny = ny,
+                                        .nz = nz,
+                                        .vec_x = r_ij.x(),
+                                        .vec_y = r_ij.y(),
+                                        .vec_z = r_ij.z(),
+                                        .dist_sq = dist_sq,
+                                        .distance = dist};
           if (isSelfInteraction(candidate, include_self_loops)) {
             continue;
           }
@@ -131,6 +149,10 @@ void collectEdgesForAtom(size_t atom_i, const std::vector<correlation::core::Ato
               .shift_x = static_cast<real_t>(candidate.nx),
               .shift_y = static_cast<real_t>(candidate.ny),
               .shift_z = static_cast<real_t>(candidate.nz),
+              .vec_x = candidate.vec_x,
+              .vec_y = candidate.vec_y,
+              .vec_z = candidate.vec_z,
+              .distance = candidate.distance,
           });
         }
       }
@@ -148,6 +170,8 @@ void flattenEdges(const tbb::enumerable_thread_specific<std::vector<EdgeTuple>> 
 
   data.edge_index_flat.resize(2 * total_edges);
   data.edge_shifts_flat.resize(total_edges * 3);
+  data.edge_vectors_flat.resize(total_edges * 3);
+  data.edge_distances.resize(total_edges);
 
   size_t edge_idx = 0;
   for (const auto &vec : local_edges) {
@@ -158,6 +182,12 @@ void flattenEdges(const tbb::enumerable_thread_specific<std::vector<EdgeTuple>> 
       data.edge_shifts_flat[edge_idx * 3 + 0] = edge.shift_x;
       data.edge_shifts_flat[edge_idx * 3 + 1] = edge.shift_y;
       data.edge_shifts_flat[edge_idx * 3 + 2] = edge.shift_z;
+
+      data.edge_vectors_flat[edge_idx * 3 + 0] = edge.vec_x;
+      data.edge_vectors_flat[edge_idx * 3 + 1] = edge.vec_y;
+      data.edge_vectors_flat[edge_idx * 3 + 2] = edge.vec_z;
+
+      data.edge_distances[edge_idx] = edge.distance;
 
       ++edge_idx;
     }
@@ -238,6 +268,79 @@ PeriodicGraphData PeriodicGraphBuilder::buildGraph(const correlation::core::Cell
   flattenEdges(local_edges, data);
 
   return data;
+}
+
+real_t PeriodicGraphBuilder::computeCutoffEnvelope(real_t distance, real_t cutoff_radius) noexcept {
+  if (cutoff_radius <= static_cast<real_t>(0.0)) {
+    return static_cast<real_t>(0.0);
+  }
+  const real_t scaled_distance = distance / cutoff_radius;
+  if (scaled_distance >= static_cast<real_t>(1.0)) {
+    return static_cast<real_t>(0.0);
+  }
+  if (scaled_distance <= static_cast<real_t>(0.0)) {
+    return static_cast<real_t>(1.0);
+  }
+  // Smooth 5th-order polynomial cutoff envelope: 1 - 6u^5 + 15u^4 - 10u^3
+  const real_t dist_cubed = scaled_distance * scaled_distance * scaled_distance;
+  const real_t dist_fourth = dist_cubed * scaled_distance;
+  const real_t dist_fifth = dist_fourth * scaled_distance;
+  return static_cast<real_t>(1.0) - static_cast<real_t>(6.0) * dist_fifth + static_cast<real_t>(15.0) * dist_fourth -
+         static_cast<real_t>(10.0) * dist_cubed;
+}
+
+std::vector<real_t> PeriodicGraphBuilder::computeBesselBasis(real_t distance, real_t cutoff_radius, size_t num_basis) {
+  std::vector<real_t> basis(num_basis, static_cast<real_t>(0.0));
+  if (num_basis == 0 || cutoff_radius <= static_cast<real_t>(0.0)) {
+    return basis;
+  }
+
+  const real_t env = computeCutoffEnvelope(distance, cutoff_radius);
+  if (env <= static_cast<real_t>(0.0)) {
+    return basis;
+  }
+
+  constexpr real_t k_pi = std::numbers::pi_v<real_t>;
+  const real_t norm_factor = std::sqrt(static_cast<real_t>(2.0) / cutoff_radius);
+
+  for (size_t idx_basis = 0; idx_basis < num_basis; ++idx_basis) {
+    const real_t n_val = static_cast<real_t>(idx_basis + 1);
+    const real_t k_n = n_val * k_pi / cutoff_radius;
+    real_t bessel_val = static_cast<real_t>(0.0);
+    if (distance < static_cast<real_t>(1e-8)) {
+      bessel_val = k_n;
+    } else {
+      bessel_val = std::sin(k_n * distance) / distance;
+    }
+    basis[idx_basis] = norm_factor * bessel_val * env;
+  }
+
+  return basis;
+}
+
+std::vector<real_t> PeriodicGraphBuilder::computeGaussianRBF(real_t distance,
+                                                             const GaussianRBFConfig &config) {
+  std::vector<real_t> basis(config.num_basis, static_cast<real_t>(0.0));
+  if (config.num_basis == 0) {
+    return basis;
+  }
+  if (config.num_basis == 1) {
+    const real_t center = (config.start + config.stop) * static_cast<real_t>(0.5);
+    const real_t diff = distance - center;
+    basis[0] = std::exp(-diff * diff);
+    return basis;
+  }
+
+  const real_t step = (config.stop - config.start) / static_cast<real_t>(config.num_basis - 1);
+  const real_t gamma = static_cast<real_t>(0.5) / (step * step);
+
+  for (size_t idx_basis = 0; idx_basis < config.num_basis; ++idx_basis) {
+    const real_t center = config.start + static_cast<real_t>(idx_basis) * step;
+    const real_t diff = distance - center;
+    basis[idx_basis] = std::exp(-gamma * diff * diff);
+  }
+
+  return basis;
 }
 
 } // namespace correlation::mlip

@@ -54,11 +54,18 @@ protected:
       }
     }
     data_dir_ = base_dir + "car/";
+    cleanFiles();
   }
 
   void TearDown() override {
+    cleanFiles();
+  }
+
+  static void cleanFiles() {
     // Clean up all generated files.
     std::vector<std::string> const files_to_remove = {"test_si_g.csv",
+                                                      "test_si_g_unweighted.csv",
+                                                      "test_si_H.csv",
                                                       "test_si_J.csv",
                                                       "test_si_G_reduced.csv",
                                                       "test_si_PAD.csv",
@@ -70,9 +77,16 @@ protected:
                                                       "test_si_XRD.csv",
                                                       "test_si_CN.csv",
                                                       "test_si_g_smoothed.csv",
+                                                      "test_si_g_unweighted_smoothed.csv",
+                                                      "test_si_H_smoothed.csv",
                                                       "test_si_J_smoothed.csv",
                                                       "test_si_G_reduced_smoothed.csv",
                                                       "test_si_PAD_smoothed.csv",
+                                                      "test_si_DAD_smoothed.csv",
+                                                      "test_si_RD_smoothed.csv",
+                                                      "test_si_S_smoothed.csv",
+                                                      "test_si_XRD_smoothed.csv",
+                                                      "test_si_CN_smoothed.csv",
                                                       "test_si.h5",
                                                       "test_vacf.h5",
                                                       "test_vacf_new.h5",
@@ -84,12 +98,18 @@ protected:
                                                       "test_vacf_vdos_VACF_norm.csv",
                                                       "test_vacf_vdos_VDOS.csv",
                                                       "test_si_g.parquet",
+                                                      "test_si_g_unweighted.parquet",
+                                                      "test_si_H.parquet",
                                                       "test_si_J.parquet",
                                                       "test_si_G_reduced.parquet",
                                                       "test_si_PAD.parquet",
                                                       "test_si_PAD_raw.parquet",
                                                       "test_si_DAD.parquet",
                                                       "test_si_DAD_raw.parquet",
+                                                      "test_si_RD.parquet",
+                                                      "test_si_S.parquet",
+                                                      "test_si_XRD.parquet",
+                                                      "test_si_CN.parquet",
                                                       "test_si_summary.txt",
                                                       "test_vacf_new_summary.txt",
                                                       "test_vacf_vdos_summary.txt"};
