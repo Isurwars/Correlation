@@ -62,12 +62,14 @@ if(NOT (BUILD_WITH_CUDA OR BUILD_WITH_HIP))
         calculators/GPUSQCalculator.cu
         calculators/GPUDistanceCalculator.cu
         calculators/GPUSteinhardtCalculator.cu
+        calculators/GPUXRDCalculator.cu
         PROPERTIES LANGUAGE CXX
     )
     target_sources(calculators_obj PRIVATE
         calculators/GPUSQCalculator.cu
         calculators/GPUDistanceCalculator.cu
         calculators/GPUSteinhardtCalculator.cu
+        calculators/GPUXRDCalculator.cu
     )
 endif()
 target_sources(calculators_obj PRIVATE
@@ -90,6 +92,7 @@ if(BUILD_WITH_CUDA OR BUILD_WITH_HIP)
         calculators/GPUSQCalculator.cu
         calculators/GPUDistanceCalculator.cu
         calculators/GPUSteinhardtCalculator.cu
+        calculators/GPUXRDCalculator.cu
     )
     target_include_directories(gpu_calculators_obj PRIVATE
         ${PROJECT_SOURCE_DIR}/include

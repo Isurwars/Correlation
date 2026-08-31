@@ -60,6 +60,7 @@ add_executable(correlation_unit_tests
     unit/calculators/GPUSteinhardtCalculatorTests.cpp
     unit/calculators/GPUDistanceCalculatorTests.cpp
     unit/calculators/GPUSQCalculatorTests.cpp
+    unit/calculators/GPUXRDCalculatorTests.cpp
     unit/calculators/SYCLCalculatorTests.cpp
     unit/physics/PhysicalDataTests.cpp
     unit/calculators/AngleCalculatorTests.cpp

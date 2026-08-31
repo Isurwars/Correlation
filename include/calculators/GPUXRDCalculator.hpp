@@ -1,6 +1,6 @@
 /**
  * @file GPUXRDCalculator.hpp
- * @brief GPU-accelerated X-Ray Diffraction (XRD) calculator declaration.
+ * @brief GPU-accelerated X-Ray Diffraction (XRD) calculator with automatic CPU fallback.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -8,18 +8,67 @@
 
 #pragma once
 
+#include "BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
-#include "calculators/gpu/SYCLXRDCalculator.hpp"
 #include "core/Cell.hpp"
 
-namespace correlation::calculators::gpu {
+namespace correlation::calculators {
 
 /**
- * @brief Performs GPU-accelerated X-Ray Diffraction (XRD) calculations with automatic fallback to CPU.
+ * @struct GPUXRDParams
+ * @brief Configuration parameters for GPU-accelerated XRD calculation.
  */
-inline correlation::analysis::Histogram compute_xrd_gpu(const correlation::core::Cell &cell,
-                                                        const sycl_gpu::SYCLXRDParams &params = {}) {
-  return sycl_gpu::compute_xrd_sycl(cell, params);
-}
+struct GPUXRDParams {
+  real_t lambda{1.5406};  ///< X-ray source wavelength in Angstroms (default: Cu-Kalpha = 1.5406 A).
+  real_t theta_min{10.0}; ///< Minimum 2theta diffraction angle in degrees.
+  real_t theta_max{80.0}; ///< Maximum 2theta diffraction angle in degrees.
+  real_t bin_width{0.1};  ///< Angular resolution delta(2theta) in degrees.
+};
 
-} // namespace correlation::calculators::gpu
+namespace gpu {
+
+/**
+ * @brief Computes XRD diffraction pattern using direct Debye scattering summation on GPU with CPU fallback.
+ * @param[in] cell The atomic unit cell or cluster.
+ * @param[in] params Diffraction parameters (wavelength, theta bounds, resolution).
+ * @return Histogram containing 2theta bins and diffraction intensity.
+ */
+correlation::analysis::Histogram compute_xrd_gpu(const correlation::core::Cell &cell, const GPUXRDParams &params = {});
+
+} // namespace gpu
+
+/**
+ * @class GPUXRDCalculator
+ * @brief Computes XRD patterns on GPU (CUDA/HIP) using direct Debye scattering with CPU fallback.
+ *
+ * Build requirements:
+ *   - Compile with `-DBUILD_WITH_CUDA=ON` or `-DBUILD_WITH_HIP=ON`.
+ *
+ * Runtime behaviour:
+ *   - Probes for a compatible GPU device on construction and execution.
+ *   - If no device is detected, falls back seamlessly to the CPU XRDCalculator.
+ */
+class GPUXRDCalculator : public BaseCalculator {
+public:
+  GPUXRDCalculator();
+
+  [[nodiscard]] std::string getName() const override { return "XRD — GPU Accelerated"; }
+  [[nodiscard]] std::string getShortName() const override { return "XRD_GPU"; }
+  [[nodiscard]] std::string getGroup() const override { return "Diffraction"; }
+  [[nodiscard]] std::string getDescription() const override {
+    return "GPU-accelerated X-Ray Diffraction (XRD) pattern calculation using direct Debye scattering.";
+  }
+
+  [[nodiscard]] bool isFrameCalculator() const override { return true; }
+  [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
+
+  void calculateFrame(correlation::analysis::DistributionFunctions &dists,
+                      const correlation::analysis::AnalysisSettings &settings) const override;
+
+  [[nodiscard]] bool hasGPU() const noexcept { return has_gpu_; }
+
+private:
+  bool has_gpu_{false};
+};
+
+} // namespace correlation::calculators
