@@ -31,7 +31,6 @@ import {
     ComparisonCurveData,
 } from "Types.slint";
 
-import { AppHeader } from "nav/AppHeader.slint";
 import { AppFooter } from "nav/AppFooter.slint";
 import { OperationsCard } from "run/OperationsCard.slint";
 import { AnalysesSelectionCard } from "options/AnalysesSelectionCard.slint";
@@ -377,7 +376,8 @@ export component AppWindow inherits Window {
         options_hovered_tooltip != "" ? options_card.hovered_height :
         preview_hovered_tooltip != "" ? preview_card.hovered_height : 0px;
 
-    title: "Correlation";
+    title: root.file_loaded ? ("Correlation " + root.app_version + " - " + root.file_status_text) : ("Correlation " + root.app_version);
+    icon: @image-url("../Images/Logo.png");
     background: MaterialPalette.background;
     default-font-size: MaterialTypography.body_small.font_size;
     default-font-weight: MaterialTypography.body_small.font_weight;
@@ -445,17 +445,12 @@ export component AppWindow inherits Window {
             padding: 0;
             spacing: 0;
 
-            AppHeader {
-                title_text: "Correlation";
-                version_text: root.app_version;
-                status_text: root.file_loaded ? root.file_status_text : "";
-                file_loaded: root.file_loaded;
-            }
-
             Horizontal {
                 spacing: 2px;
                 padding-left: 4px;
                 padding-right: 4px;
+                padding-top: 4px;
+                padding-bottom: 2px;
                 vertical-stretch: 1;
 
                 // 1. Left column: Operations & CLI command
@@ -487,9 +482,6 @@ export component AppWindow inherits Window {
                         max_frame_error: root.app_errors.max_frame_error;
 
                         analysis_running: root.analysis_running;
-                        analysis_done: root.analysis_done;
-                        progress: root.progress;
-                        analysis_status_text: root.analysis_status_text;
                         has_validation_errors: root.has_validation_errors;
                         run_analysis => {
                             root.run_analysis();

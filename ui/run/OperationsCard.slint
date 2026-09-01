@@ -54,9 +54,6 @@ export component OperationsCard inherits FilledCard {
 
     // Analysis Execution
     in property <bool> analysis_running;
-    in property <bool> analysis_done;
-    in property <float> progress;
-    in property <string> analysis_status_text;
     in property <bool> has_validation_errors;
     callback run_analysis();
     callback cancel_analysis();
@@ -105,7 +102,6 @@ export component OperationsCard inherits FilledCard {
 
     in-out property <bool> atoms_expanded: false;
     property <length> atoms_height: atoms_expanded ? root.atom_counts.length * 36px : 0px;
-    property <length> progress_height: (root.analysis_running || root.analysis_done) ? 55px : 0px;
 
     Vertical {
         spacing: MaterialStyleMetrics.spacing_12;
@@ -277,37 +273,6 @@ export component OperationsCard inherits FilledCard {
                         } else {
                             root.run_analysis();
                         }
-                    }
-                }
-            }
-
-            Vertical {
-                height: root.progress_height;
-                visible: self.height > 0.1px;
-                opacity: (root.analysis_running || root.analysis_done) ? 1.0 : 0.0;
-                animate height {
-                    duration: 250ms;
-                    easing: ease-in-out;
-                }
-                animate opacity {
-                    duration: 250ms;
-                    easing: ease-in-out;
-                }
-                spacing: MaterialStyleMetrics.spacing_2;
-                MaterialText {
-                    text: root.analysis_status_text;
-                    color: MaterialPalette.on_surface_variant;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
-                    horizontal-stretch: 1;
-                    wrap: word-wrap;
-                }
-
-                LinearProgressIndicator {
-                    progress: root.progress;
-                    animate progress {
-                        duration: 200ms;
-                        easing: ease-out;
                     }
                 }
             }
