@@ -17,6 +17,7 @@ import {
 } from "../material/material.slint";
 import { ExportSettingsCard } from "ExportSettingsCard.slint";
 import { TableRow, CurveToggleItem } from "../Types.slint";
+import { SplitterHandle } from "../SplitterHandle.slint";
 
 // ============================================================================
 
@@ -47,6 +48,7 @@ export component PreviewCard inherits FilledCard {
     in property <[CurveToggleItem]> curve_toggle_items: [];
     in-out property <int> selected_plot_index: -1;
     in property <int> pinned_runs_count: 0;
+    in-out property <length> sidebar_width: 180px;
 
     // Table data
     in property <[string]> table_headers: [];
@@ -329,9 +331,18 @@ export component PreviewCard inherits FilledCard {
                 }
             }
 
+            if root.curve_toggle_items.length > 0: SplitterHandle {
+                moved(delta) => {
+                    root.sidebar_width = Math.min(450px, Math.max(120px, root.sidebar_width - delta));
+                }
+                reset => {
+                    root.sidebar_width = 180px;
+                }
+            }
+
             // Curve Visibility Sidebar (Vertical Checklist to the right of the plot)
             if root.curve_toggle_items.length > 0: Rectangle {
-                width: 180px;
+                width: root.sidebar_width;
                 background: MaterialPalette.surface_container_low;
                 border-radius: MaterialStyleMetrics.border_radius_2;
 
