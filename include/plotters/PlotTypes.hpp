@@ -43,10 +43,11 @@ struct PlotConfig {
   bool show_difference_curve = false;         ///< Toggle overlaid absolute difference curve Y_diff = Y_ref - Y_target.
 
   // Publication settings
-  real_t font_scale = static_cast<real_t>(1.0); ///< Multiplier for all font sizes
-  real_t line_width = static_cast<real_t>(3.0); ///< Data line stroke width
-  bool show_legend = true;                      ///< Toggle legend visibility
-  bool use_native_text = false;                 ///< Use standard SVG &lt;text&gt; elements instead of Hershey paths.
+  real_t font_scale = static_cast<real_t>(1.0);  ///< Multiplier for all font sizes
+  real_t line_width = static_cast<real_t>(3.0);  ///< Data line stroke width
+  real_t marker_size = static_cast<real_t>(3.5); ///< Data point marker radius (px)
+  bool show_legend = true;                       ///< Toggle legend visibility
+  bool use_native_text = false;                  ///< Use standard SVG &lt;text&gt; elements instead of Hershey paths.
 
   /** @brief Color palette selections */
   enum class Palette : std::uint8_t {

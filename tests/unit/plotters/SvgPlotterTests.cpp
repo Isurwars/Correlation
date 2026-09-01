@@ -197,4 +197,19 @@ TEST(SvgPlotterTests, RendersContinuousColormapsAndCustomColors) {
   EXPECT_NE(custom_svg.find("stroke=\"#FF00FF\""), std::string::npos);
 }
 
+TEST(SvgPlotterTests, RendersCustomMarkerSizeCorrectly) {
+  Histogram hist;
+  hist.title = "Marker Test";
+  hist.bins = {1.0, 2.0, 3.0};
+  hist.partials["Total"] = {1.0, 2.0, 1.5};
+
+  PlotConfig config;
+  config.show_markers = true;
+  config.marker_size = 5.2;
+
+  std::string svg = renderHistogramAsSvg(hist, config);
+  EXPECT_FALSE(svg.empty());
+  EXPECT_NE(svg.find("r=\"5.2\""), std::string::npos);
+}
+
 } // namespace correlation::testing

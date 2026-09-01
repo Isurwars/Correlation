@@ -104,6 +104,7 @@ export component OptionsCard inherits FilledCard {
     in-out property <int> export_palette: 0;
     in-out property <string> export_font_scale: "1.0";
     in-out property <string> export_line_width: "3.0";
+    in-out property <string> export_marker_size: "3.5";
     in-out property <bool> export_show_legend: true;
     in-out property <bool> export_show_grid: true;
     in-out property <bool> export_show_markers: false;
@@ -111,6 +112,7 @@ export component OptionsCard inherits FilledCard {
 
     in property <string> export_font_scale_error: "";
     in property <string> export_line_width_error: "";
+    in property <string> export_marker_size_error: "";
 
     in-out property <int> active_tab: 0;
 
@@ -358,12 +360,14 @@ export component OptionsCard inherits FilledCard {
                     export_palette <=> root.export_palette;
                     export_font_scale <=> root.export_font_scale;
                     export_line_width <=> root.export_line_width;
+                    export_marker_size <=> root.export_marker_size;
                     export_show_legend <=> root.export_show_legend;
                     export_show_grid <=> root.export_show_grid;
                     export_show_markers <=> root.export_show_markers;
                     export_fill_area <=> root.export_fill_area;
                     export_font_scale_error: root.export_font_scale_error;
                     export_line_width_error: root.export_line_width_error;
+                    export_marker_size_error: root.export_marker_size_error;
                 }
 
                 // Analyses Tab Options

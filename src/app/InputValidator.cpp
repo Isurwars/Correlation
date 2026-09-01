@@ -301,6 +301,13 @@ bool InputValidator::validateExportConfig(AppErrors &errs) {
     valid = false;
   }
 
+  float marker_size_val = 0.0F;
+  std::string marker_size_s = window_->get_export_config().marker_size.data();
+  if (!is_positive_float(marker_size_s, marker_size_val)) {
+    errs.export_marker_size_error = "Must be a positive number";
+    valid = false;
+  }
+
   return valid;
 }
 
@@ -322,6 +329,7 @@ bool InputValidator::validateInputs() {
   errs.max_frame_error = "";
   errs.export_font_scale_error = "";
   errs.export_line_width_error = "";
+  errs.export_marker_size_error = "";
   errs.lef_cutoff_error = "";
   errs.lef_sigma_error = "";
 
@@ -360,6 +368,7 @@ bool InputValidator::validateInputs() {
       current_errs.max_frame_error != errs.max_frame_error ||
       current_errs.export_font_scale_error != errs.export_font_scale_error ||
       current_errs.export_line_width_error != errs.export_line_width_error ||
+      current_errs.export_marker_size_error != errs.export_marker_size_error ||
       current_errs.lef_cutoff_error != errs.lef_cutoff_error || current_errs.lef_sigma_error != errs.lef_sigma_error) {
     window_->set_app_errors(errs);
   }

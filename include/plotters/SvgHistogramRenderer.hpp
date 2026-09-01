@@ -363,8 +363,8 @@ struct SvgHistogramRenderer {
       for (std::size_t point_idx = 0; point_idx < num_points; ++point_idx) {
         real_t screen_x = mapValue(xs->at(point_idx), xScale.min, xScale.max, px0, px1);
         real_t screen_y = mapValue(value.at(point_idx), yScale.min, yScale.max, py1, py0);
-        svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"3.5\" fill=\"{}\" stroke=\"none\"/>\n", screen_x,
-                           screen_y, col);
+        svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"{:.1f}\" fill=\"{}\" stroke=\"none\"/>\n",
+                           screen_x, screen_y, config->marker_size, col);
       }
     }
   }

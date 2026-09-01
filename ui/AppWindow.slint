@@ -132,6 +132,7 @@ export component AppWindow inherits Window {
         palette: 0,
         font_scale: "1.0",
         line_width: "3.0",
+        marker_size: "3.5",
         show_legend: true,
         show_grid: true,
         show_markers: false,
@@ -177,12 +178,14 @@ export component AppWindow inherits Window {
     property <int> export_palette <=> export_config.palette;
     property <string> export_font_scale <=> export_config.font_scale;
     property <string> export_line_width <=> export_config.line_width;
+    property <string> export_marker_size <=> export_config.marker_size;
     property <bool> export_show_legend <=> export_config.show_legend;
     property <bool> export_show_grid <=> export_config.show_grid;
     property <bool> export_show_markers <=> export_config.show_markers;
     property <bool> export_fill_area <=> export_config.fill_area;
     property <string> export_font_scale_error <=> app_errors.export_font_scale_error;
     property <string> export_line_width_error <=> app_errors.export_line_width_error;
+    property <string> export_marker_size_error <=> app_errors.export_marker_size_error;
 
     // Global: any validation error prevents running analysis
     in-out property <bool> has_validation_errors: false;
@@ -320,6 +323,10 @@ export component AppWindow inherits Window {
         root.select_plot(root.selected_plot_index);
     }
     changed export_line_width => {
+        root.validate_inputs();
+        root.select_plot(root.selected_plot_index);
+    }
+    changed export_marker_size => {
         root.validate_inputs();
         root.select_plot(root.selected_plot_index);
     }
@@ -538,12 +545,14 @@ export component AppWindow inherits Window {
                     export_palette <=> root.export_palette;
                     export_font_scale <=> root.export_font_scale;
                     export_line_width <=> root.export_line_width;
+                    export_marker_size <=> root.export_marker_size;
                     export_show_legend <=> root.export_show_legend;
                     export_show_grid <=> root.export_show_grid;
                     export_show_markers <=> root.export_show_markers;
                     export_fill_area <=> root.export_fill_area;
                     export_font_scale_error: root.export_font_scale_error;
                     export_line_width_error: root.export_line_width_error;
+                    export_marker_size_error: root.export_marker_size_error;
 
                     comparison_curves: root.comparison_curves;
                     show_difference: root.show_difference;

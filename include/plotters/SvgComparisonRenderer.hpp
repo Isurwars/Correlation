@@ -245,85 +245,99 @@ struct SvgComparisonRenderer {
     }
   }
 
-  void drawPolylines() {
-    std::size_t color_idx = 0;
-    std::vector<real_t> diff_x_vals;
-    std::vector<real_t> diff_y_vals;
-    bool has_diff_curve = false;
+  [[nodiscard]] bool computeDifferenceCurve(std::vector<real_t> &diff_x, std::vector<real_t> &diff_y) const {
+    if (!config->show_difference_curve || datasets->size() < 2) {
+      return false;
+    }
+    const auto &ref_ds = datasets->at(0);
+    const auto &tgt_ds = datasets->at(1);
+    const auto &ref_partials =
+        ref_ds.hist->smoothed_partials.empty() ? ref_ds.hist->partials : ref_ds.hist->smoothed_partials;
+    const auto &tgt_partials =
+        tgt_ds.hist->smoothed_partials.empty() ? tgt_ds.hist->partials : tgt_ds.hist->smoothed_partials;
+    if (!ref_partials.contains(*partial_key) || !tgt_partials.contains(*partial_key)) {
+      return false;
+    }
+    const auto &ref_x = ref_ds.hist->bins;
+    const auto &ref_y = ref_partials.at(*partial_key);
+    const auto &tgt_x = tgt_ds.hist->bins;
+    const auto &tgt_y = tgt_partials.at(*partial_key);
+    const std::size_t number_bins = std::min(ref_x.size(), ref_y.size());
+    diff_x = ref_x;
+    diff_y.resize(number_bins);
+    for (std::size_t i = 0; i < number_bins; ++i) {
+      const real_t y_interp = sampleHistogramClamped(tgt_x, tgt_y, ref_x[i]);
+      diff_y[i] = ref_y[i] - y_interp;
+    }
+    return true;
+  }
 
-    if (config->show_difference_curve && datasets->size() >= 2) {
-      const auto &ref_ds = datasets->at(0);
-      const auto &tgt_ds = datasets->at(1);
-      const auto &ref_partials = ref_ds.hist->smoothed_partials.empty() ? ref_ds.hist->partials : ref_ds.hist->smoothed_partials;
-      const auto &tgt_partials = tgt_ds.hist->smoothed_partials.empty() ? tgt_ds.hist->partials : tgt_ds.hist->smoothed_partials;
-      if (ref_partials.contains(*partial_key) && tgt_partials.contains(*partial_key)) {
-        const auto &ref_x = ref_ds.hist->bins;
-        const auto &ref_y = ref_partials.at(*partial_key);
-        const auto &tgt_x = tgt_ds.hist->bins;
-        const auto &tgt_y = tgt_partials.at(*partial_key);
-        std::size_t n = std::min(ref_x.size(), ref_y.size());
-        diff_x_vals = ref_x;
-        diff_y_vals.resize(n);
-        for (std::size_t i = 0; i < n; ++i) {
-          real_t y_interp = sampleHistogramClamped(tgt_x, tgt_y, ref_x[i]);
-          diff_y_vals[i] = ref_y[i] - y_interp;
-        }
-        has_diff_curve = true;
-      }
+  void drawDatasetPolyline(const LabeledHistogram &dataset, std::size_t color_idx) {
+    if (!dataset.style.visible) {
+      return;
+    }
+    const auto &partials =
+        dataset.hist->smoothed_partials.empty() ? dataset.hist->partials : dataset.hist->smoothed_partials;
+    auto partial_iter = partials.find(*partial_key);
+    if (partial_iter == partials.end()) {
+      return;
     }
 
+    const auto &x_values = dataset.hist->bins;
+    const auto &y_values = partial_iter->second;
+    const std::string col =
+        dataset.style.color_hex.empty() ? detail::color(color_idx, config->palette) : dataset.style.color_hex;
+    const float stroke_w =
+        dataset.style.stroke_width > 0.0F ? dataset.style.stroke_width : static_cast<float>(config->line_width);
+
+    std::string dash_attr;
+    if (dataset.style.dash_style == 1) {
+      dash_attr = " stroke-dasharray=\"6,6\"";
+    } else if (dataset.style.dash_style == 2) {
+      dash_attr = " stroke-dasharray=\"2,4\"";
+    }
+
+    svg << std::format(
+        R"(  <polyline fill="none" stroke="{}" stroke-width="{:.1f}"{} stroke-linejoin="round" points=")", col,
+        stroke_w, dash_attr);
+    const std::size_t n_points = std::min(x_values.size(), y_values.size());
+    for (std::size_t i = 0; i < n_points; ++i) {
+      real_t sp_x = detail::mapValue(x_values[i], xScale.min, xScale.max, px0, px1);
+      real_t sp_y = detail::mapValue(y_values[i], yScale.min, yScale.max, py1, py0);
+      svg << std::format("{:.2f},{:.2f} ", sp_x, sp_y);
+    }
+    svg << "\" />\n";
+    legend.emplace_back(dataset.label, col);
+  }
+
+  void drawDifferencePolyline(std::span<const real_t> diff_x, std::span<const real_t> diff_y) {
+    const std::string diff_col = "#E63946";
+    svg << std::format(
+        R"(  <polyline fill="none" stroke="{}" stroke-width="{:.1f}" stroke-dasharray="6,4" stroke-linejoin="round" points=")",
+        diff_col, config->line_width);
+    const std::size_t n_points = std::min(diff_x.size(), diff_y.size());
+    for (std::size_t i = 0; i < n_points; ++i) {
+      real_t sp_x = detail::mapValue(diff_x[i], xScale.min, xScale.max, px0, px1);
+      real_t sp_y = detail::mapValue(diff_y[i], yScale.min, yScale.max, py1, py0);
+      svg << std::format("{:.2f},{:.2f} ", sp_x, sp_y);
+    }
+    svg << "\" />\n";
+    legend.emplace_back("Y_diff (Ref - Target)", diff_col);
+  }
+
+  void drawPolylines() {
+    std::vector<real_t> diff_x_vals;
+    std::vector<real_t> diff_y_vals;
+    const bool has_diff_curve = computeDifferenceCurve(diff_x_vals, diff_y_vals);
+
+    std::size_t color_idx = 0;
     for (const auto &dataset : *datasets) {
-      if (!dataset.style.visible) {
-        color_idx++;
-        continue;
-      }
-      const auto &partials =
-          dataset.hist->smoothed_partials.empty() ? dataset.hist->partials : dataset.hist->smoothed_partials;
-      auto partial_iter = partials.find(*partial_key);
-      if (partial_iter == partials.end()) {
-        color_idx++;
-        continue;
-      }
-
-      const auto &x_values = dataset.hist->bins;
-      const auto &y_values = partial_iter->second;
-      std::string col = dataset.style.color_hex.empty() ? detail::color(color_idx, config->palette) : dataset.style.color_hex;
-      float stroke_w = dataset.style.stroke_width > 0.0f ? dataset.style.stroke_width : static_cast<float>(config->line_width);
-
-      std::string dash_attr;
-      if (dataset.style.dash_style == 1) {
-        dash_attr = " stroke-dasharray=\"6,6\"";
-      } else if (dataset.style.dash_style == 2) {
-        dash_attr = " stroke-dasharray=\"2,4\"";
-      }
-
-      svg << std::format(
-          R"(  <polyline fill="none" stroke="{}" stroke-width="{:.1f}"{} stroke-linejoin="round" points=")", col,
-          stroke_w, dash_attr);
-      std::size_t n_points = std::min(x_values.size(), y_values.size());
-      for (std::size_t i = 0; i < n_points; ++i) {
-        real_t sp_x = detail::mapValue(x_values[i], xScale.min, xScale.max, px0, px1);
-        real_t sp_y = detail::mapValue(y_values[i], yScale.min, yScale.max, py1, py0);
-        svg << std::format("{:.2f},{:.2f} ", sp_x, sp_y);
-      }
-      svg << "\" />\n";
-      legend.emplace_back(dataset.label, col);
+      drawDatasetPolyline(dataset, color_idx);
       color_idx++;
     }
 
     if (has_diff_curve) {
-      std::string diff_col = "#E63946";
-      svg << std::format(
-          R"(  <polyline fill="none" stroke="{}" stroke-width="{:.1f}" stroke-dasharray="6,4" stroke-linejoin="round" points=")",
-          diff_col, config->line_width);
-      std::size_t n_points = std::min(diff_x_vals.size(), diff_y_vals.size());
-      for (std::size_t i = 0; i < n_points; ++i) {
-        real_t sp_x = detail::mapValue(diff_x_vals[i], xScale.min, xScale.max, px0, px1);
-        real_t sp_y = detail::mapValue(diff_y_vals[i], yScale.min, yScale.max, py1, py0);
-        svg << std::format("{:.2f},{:.2f} ", sp_x, sp_y);
-      }
-      svg << "\" />\n";
-      legend.emplace_back("Y_diff (Ref - Target)", diff_col);
+      drawDifferencePolyline(diff_x_vals, diff_y_vals);
     }
   }
 
@@ -342,8 +356,8 @@ struct SvgComparisonRenderer {
           for (std::size_t i = 0; i < n_points; ++i) {
             real_t sp_x = detail::mapValue(x_values[i], xScale.min, xScale.max, px0, px1);
             real_t sp_y = detail::mapValue(y_values[i], yScale.min, yScale.max, py1, py0);
-            svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"3.5\" fill=\"{}\" stroke=\"none\"/>\n", sp_x,
-                               sp_y, col);
+            svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"{:.1f}\" fill=\"{}\" stroke=\"none\"/>\n",
+                               sp_x, sp_y, config->marker_size, col);
           }
         } else {
           marker_color_idx++;

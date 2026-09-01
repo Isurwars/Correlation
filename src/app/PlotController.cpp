@@ -148,6 +148,11 @@ correlation::plotters::PlotConfig PlotController::buildPlotConfigFromUI() {
     config.line_width = 3.0F;
   }
 
+  config.marker_size = safe_parse(window_.get_export_config().marker_size, 3.5F);
+  if (config.marker_size <= 0.0F) {
+    config.marker_size = 3.5F;
+  }
+
   config.show_grid = window_.get_export_config().show_grid;
   config.show_legend = window_.get_export_config().show_legend;
   config.show_markers = window_.get_export_config().show_markers;
@@ -467,10 +472,11 @@ bool PlotController::isPlotCacheHit(int index, const correlation::plotters::Plot
           config.theme == last_config_.theme && config.preset_size == last_config_.preset_size &&
           std::abs(config.width - last_config_.width) < 1e-2 && std::abs(config.height - last_config_.height) < 1e-2 &&
           config.palette == last_config_.palette && std::abs(config.font_scale - last_config_.font_scale) < 1e-4 &&
-          std::abs(config.line_width - last_config_.line_width) < 1e-4 && config.show_grid == last_config_.show_grid &&
-          config.show_legend == last_config_.show_legend && config.show_markers == last_config_.show_markers &&
-          config.fill_area == last_config_.fill_area && hover.active == last_hover_.active &&
-          std::abs(hover.mouse_x - last_hover_.mouse_x) < 1e-2 &&
+          std::abs(config.line_width - last_config_.line_width) < 1e-4 &&
+          std::abs(config.marker_size - last_config_.marker_size) < 1e-4 &&
+          config.show_grid == last_config_.show_grid && config.show_legend == last_config_.show_legend &&
+          config.show_markers == last_config_.show_markers && config.fill_area == last_config_.fill_area &&
+          hover.active == last_hover_.active && std::abs(hover.mouse_x - last_hover_.mouse_x) < 1e-2 &&
           std::abs(hover.mouse_y - last_hover_.mouse_y) < 1e-2 &&
           std::abs(hover.widget_width - last_hover_.widget_width) < 1e-2 &&
           std::abs(hover.widget_height - last_hover_.widget_height) < 1e-2);
