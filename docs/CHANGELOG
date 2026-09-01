@@ -1,6 +1,43 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.9.1] - 2026-08-31
+
+### Quantum Chemistry & Simulation Readers
+- **New Quantum Chemistry & DFT Readers**: Implemented and registered four new simulation format parsers in `ReaderFactory`:
+  - **ORCA** (`OrcaReader`): Parses output geometry from ORCA quantum chemistry calculations.
+  - **GPAW** (`GpawReader`): Parses structure output from GPAW grid/LCAO electronic structure simulations.
+  - **ABINIT** (`AbinitReader`): Parses output structures from ABINIT plane-wave DFT calculations.
+  - **DFTB+** (`DftbReader`): Parses atomic positions and lattice parameters from detailed DFTB+ outputs.
+- **Reader Factory Sniffing**: Integrated content-based sniffing in `ReaderFactory` to automatically differentiate quantum calculation outputs (`.out`, `.log`, `.txt`).
+
+### GPU Acceleration & Core Performance
+- **GPU-Accelerated X-Ray Diffraction**: Implemented `GPUXRDCalculator.cu` for direct Debye scattering formula evaluation on CUDA, HIP, and SYCL architectures with automatic fallback to SIMD CPU routines.
+- **GPU Distance Histogram Accumulation**: Refactored pair processing kernels in `GPUDistanceCalculator.cu` to support inline histogram binning and reduction.
+- **Exception-Safe GPU Memory Management**: Introduced RAII wrapper `DeviceBuffer<T>` (`include/core/DeviceBuffer.hpp`) and structured error trapping (`GPUErrorCheck.hpp`) for unified CUDA/HIP memory life-cycle safety.
+
+### Machine Learning & Graph Descriptors
+- **PyTorch Geometric (PyG) Integration**: Added `to_torch_geometric` (`to_pyg`) in Python bindings (`python/correlation/__init__.py`) for zero-copy/NumPy conversion of `PeriodicGraphData` to `torch_geometric.data.Data`.
+- **Periodic Graph Builder Extensions**: Extended `PeriodicGraphBuilder` with periodic displacement vector calculations, cutoff smoothing envelopes, and Bessel basis radial expansion.
+- **MLIP Python Bindings**: Added `src/bindings/mlip_bindings.cpp` exposing graph builder, basis encoders, and MLIP tensor structures directly to Python.
+
+### UI / UX Modernization & Accessibility (Slint)
+- **Preview Card Sidebar Splitter**: Added an interactive horizontal resize bar (`SplitterHandle`) to the right Curve Visibility panel in `PreviewCard.slint` with smooth drag resizing (clamped between 120px and 450px) and double-click reset to default 180px.
+- **Configurable Data Marker Size**: Added interactive marker radius slider (`export_marker_size`) in `ExportSettingsCard.slint`, `ExportConfig`, and vector plotters (`SvgPlotter`, `SvgComparisonRenderer`).
+- **Streamlined Layout & Workspace Maximization**: Removed `AppHeader.slint` to maximize vertical plot area, updated native window title dynamically with the active file path, and relocated analysis status text and progress bar directly into `AppFooter.slint`.
+- **Keyboard Shortcuts**: Added centralized keyboard shortcut dispatcher (`Ctrl+O` open file, `Ctrl+R` run analysis, `Ctrl+S` save plot, `Ctrl+E` export results, `Escape` cancel) in `AppWindow.slint`.
+- **Contextual Tooltip Engine**: Integrated rich multi-line tooltip overlay system (`AppToolTips.slint`, `TooltipState`, `TooltipTarget`) across cards with zero-latency input field hover binding.
+- **Recent Files History**: Extended `SettingsManager` with recent file history persistence across desktop sessions.
+- **Plot Rendering & Interaction**: Optimized SVG preview rendering pipeline and synchronized crosshair mouse tracking across comparison preview cards.
+
+### Code Quality, Governance & Documentation
+- **Cognitive Complexity Gate**: Enforced cognitive complexity limit ($\le 25$) with clang-tidy `readability-function-cognitive-complexity`. Decomposed `SvgComparisonRenderer::drawPolylines` into modular subroutines (`computeDifferenceCurve`, `drawDatasetPolyline`, `drawDifferencePolyline`).
+- **Roadmap & README Overhaul**:
+  - Updated `RoadMap.md` to reflect baseline v3.9.x features and established v4.0.0 (Q4 2026) targets (native Graph descriptors and Total Density of States TDoS accumulator from GNN LDoS outputs).
+  - Modernized `README.md` with complete categorical calculator matrix, reader table, multi-vendor GPU execution, and updated author attributions.
+  - Promoted Flor B. Quiroga (`quiroga.acbg@ciencias.unam.mx`) to primary co-author and contributor in `docs/AUTHORS` and `README.md`.
+- **CI/CD Optimization**: Unified workflow dependency caching across Linux/macOS/Windows and refined test timeouts.
+
 ## [3.9.0] - 2026-08-28
 
 ### Added
