@@ -1,316 +1,270 @@
 ![](Images/Banner.png)
 
-# `Correlation`: An Analysis Tool for Liquids and for Amorphous Solids
+# `Correlation`: Advanced Atomistic Structural & Dynamic Analysis Suite
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5514113.svg)](https://doi.org/10.5281/zenodo.5514113) [![Version](https://img.shields.io/badge/version-3.9.0-green)](https://img.shields.io/badge/version-3.9.0-green) [![License](https://img.shields.io/badge/license-AGPLv3-brightgreen)](https://img.shields.io/badge/license-AGPLv3-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](docs/CODE_OF_CONDUCT.md) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02976/status.svg)](https://doi.org/10.21105/joss.02976)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5514113.svg)](https://doi.org/10.5281/zenodo.5514113) [![Version](https://img.shields.io/badge/version-3.9.0-green)](https://img.shields.io/badge/version-3.9.0-green) [![C++ Standard](https://img.shields.io/badge/C%2B%2B-23-blue.svg)](https://en.cppreference.com/w/cpp/23) [![Conda-Forge](https://img.shields.io/conda/vn/conda-forge/correlation.svg)](https://anaconda.org/conda-forge/correlation) [![License](https://img.shields.io/badge/license-AGPLv3-brightgreen)](https://img.shields.io/badge/license-AGPLv3-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](docs/CODE_OF_CONDUCT.md) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02976/status.svg)](https://doi.org/10.21105/joss.02976)
 
-`Correlation` is a high-performance, user-friendly tool for calculating and analyzing the structural and dynamic properties of materials. It is designed for researchers working with atomistic simulations of liquids, amorphous solids, crystalline structures, and soft-matter systems.
+`Correlation` is a high-performance C++23 structural and dynamic analysis engine for atomistic simulations of **liquids, amorphous solids, crystals, disordered networks, and soft-matter systems**. 
 
-The software computes key correlation functions from atomic coordinate trajectories and exports results in multiple formats (CSV, Parquet, HDF5), making it easy to integrate into scientific workflows.
+Built for modern HPC clusters and workstations, `Correlation` delivers multi-vendor GPU acceleration (**CUDA, HIP, Intel oneAPI/SYCL**), dynamic SIMD vectorization (**AVX2, AVX-512**), multi-threaded oneTBB scaling, memory-mapped multi-gigabyte trajectory parsing, a modern Slint GUI with multi-curve comparison overlays, and direct Python/PyTorch Geometric interoperability.
 
 ---
 
-## Table of Contents
-- [`Correlation`: An Analysis Tool for Liquids and for Amorphous Solids](#correlation-an-analysis-tool-for-liquids-and-for-amorphous-solids)
-  - [Table of Contents](#table-of-contents)
-  - [Key Features](#key-features)
-    - [📊 Comprehensive Calculator Suite](#-comprehensive-calculator-suite)
-    - [📂 Broad File Format Support](#-broad-file-format-support)
-    - [🚀 High Performance Core](#-high-performance-core)
-  - [Installation](#installation)
-    - [Prerequisites](#prerequisites)
-      - [Package Managers Installation Examples](#package-managers-installation-examples)
-        - [Linux (Debian/Ubuntu)](#linux-debianubuntu)
-        - [Linux (Arch/Manjaro)](#linux-archmanjaro)
-        - [MacOS (Homebrew)](#macos-homebrew)
-        - [Windows](#windows)
-    - [Build Instructions](#build-instructions)
+## 📑 Table of Contents
+- [`Correlation`: Advanced Atomistic Structural \& Dynamic Analysis Suite](#correlation-advanced-atomistic-structural--dynamic-analysis-suite)
+  - [📑 Table of Contents](#-table-of-contents)
+  - [🌟 Key Capabilities](#-key-capabilities)
+    - [📊 Scientific Calculator Suite](#-scientific-calculator-suite)
+    - [📂 Comprehensive Format Support](#-comprehensive-format-support)
+    - [⚡ High-Performance Core \& Multi-Vendor GPU](#-high-performance-core--multi-vendor-gpu)
+  - [📦 Installation](#-installation)
+    - [Pre-compiled Packages](#pre-compiled-packages)
+    - [Conda-Forge / Pixi](#conda-forge--pixi)
+    - [Building from Source](#building-from-source)
+      - [Prerequisites](#prerequisites)
+      - [Step-by-Step Build](#step-by-step-build)
     - [CMake Build Options](#cmake-build-options)
-  - [Usage Modes](#usage-modes)
+  - [🚀 Usage Modes](#-usage-modes)
     - [1. Graphical User Interface (GUI)](#1-graphical-user-interface-gui)
-      - [GUI Workflow:](#gui-workflow)
+      - [Key GUI Highlights:](#key-gui-highlights)
     - [2. Command Line Interface (CLI)](#2-command-line-interface-cli)
-      - [Usage Example:](#usage-example)
-      - [Command Options:](#command-options)
-      - [Calculator IDs for `--calculators`:](#calculator-ids-for---calculators)
-    - [3. Python Bindings](#3-python-bindings)
-      - [Installation](#installation-1)
-      - [Code Example](#code-example)
-  - [Built with](#built-with)
-  - [Authors](#authors)
-  - [License](#license)
-  - [Acknowledgments](#acknowledgments)
+      - [Core CLI Arguments:](#core-cli-arguments)
+    - [3. Python Bindings \& PyTorch Geometric](#3-python-bindings--pytorch-geometric)
+  - [👥 Authors \& Citation](#-authors--citation)
+    - [Corresponding Author](#corresponding-author)
+    - [Contributors \& Co-Authors](#contributors--co-authors)
+    - [Citation](#citation)
+  - [📜 License](#-license)
+  - [🙏 Acknowledgments](#-acknowledgments)
 
 ---
 
-## Key Features
+## 🌟 Key Capabilities
 
-### 📊 Comprehensive Calculator Suite
-`Correlation` computes a rich set of structural, angular, ring, and dynamic properties:
-- **Radial/Pair Distributions**: Radial Distribution Function ($J(r)$), Pair Distribution Function ($g(r)$), and Reduced Pair Distribution Function ($G(r)$).
-- **Structure Factor & Diffraction**: Structure Factor ($S(Q)$ or $S(K)$) and X-ray Diffraction (XRD) patterns.
-- **Angular Distributions**: Plane-Angle Distribution (PAD), Dihedral-Angle Distribution (DAD), and generic bond angles.
-- **Topological & Neighbors**: Coordination Number (CN), Common Neighbor Analysis (CNA), Ring Distribution (RD), and Cluster Analysis.
-- **Dynamics**: Mean Squared Displacement (MSD), Velocity Autocorrelation Function (VACF), and Vibrational Density of States (VDOS).
-- **Advanced Mapping**: Steinhardt Bond-Orientational Parameters ($Q_4, Q_6, W_6$), Hydrogen Bond Analysis, and 3D Spatial Distribution Functions (SDF).
+### 📊 Scientific Calculator Suite
+`Correlation` computes an extensive array of spatial, radial, angular, topological, electronic, and dynamic properties:
 
-### 📂 Broad File Format Support
-Compatible with structure and trajectory files from:
-- **VASP** (`.poscar`, `.contcar`, `.vasp`, `.xdatcar`)
-- **LAMMPS** (`.dump`, `.lammpstrj`)
-- **GROMACS** (`.gro`, `.xtc`, `.trr`)
-- **PDB** (`.pdb`, `.ent`)
-- **Quantum ESPRESSO** (`.pwi`, `.pwo`, `.in`, `.out`)
-- **CP2K** (`.inp`, `.restart`, `.out`, `.cp2k`)
-- **Extended XYZ** (`.xyz`, `.exyz`)
-- **Crystallographic Information** (`.cif`)
-- **Materials Studio / Accelrys** (`.car`, `.arc`)
-- **CASTEP** (`.cell`, `.md`)
-- **ONETEP** (`.dat`)
-
-### 🚀 High Performance Core
-- **Cell-Lists Partitioning**: Neighbor searching scales at $O(N)$ complexity instead of $O(N^2)$ for large systems.
-- **SIMD Vectorization**: Optimization using AVX2/AVX-512 vector execution.
-- **Task-Based Parallelism**: Advanced parallelization using Intel Threading Building Blocks (TBB).
-- **Optional GPU Acceleration**: CUDA-accelerated $S(Q)$ computation (`-DBUILD_WITH_CUDA=ON`) with automatic CPU fallback.
-- **Memory-Mapped I/O**: Efficient lazy loading of multi-gigabyte trajectory files via `MappedFile`.
+| Category                        | Calculators & Functions                                                                                                                                             | Output Properties                                                                                                                     |
+| :------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------ |
+| **Radial / Pair**               | **Radial Distribution Function ($J(r)$)**, **Pair Distribution Function ($g(r)$)**, **Reduced Pair Distribution ($G(r)$)**                                          | Total & partial pair correlations, coordination shells, density scaling                                                               |
+| **Scattering & Diffraction**    | **Structure Factor ($S(Q) / S(K)$)**, **Powder X-ray Diffraction (XRD)**                                                                                            | Elastic scattering intensity, Faber-Ziman partials, Debye scattering equation                                                         |
+| **Angular Distributions**       | **Plane-Angle Distribution (PAD)**, **Dihedral-Angle Distribution (DAD)**, **Generic Bond Angles**                                                                  | 3-body & 4-body angular configurations, tetrahedrality, dihedral orientation                                                          |
+| **Topology & Local Structure**  | **Common Neighbor Analysis (CNA)**, **Coordination Numbers (CN)**, **Ring Distribution (RD)**, **Voronoi Polyhedra**, **Cluster Connectivity**, **Motif Detection** | FCC/HCP/BCC/Icosahedral classification, Voronoi index $\langle n_3, n_4, n_5, n_6 \rangle$, topological shortest-path ring statistics |
+| **Order Parameters & Symmetry** | **Steinhardt Bond-Orientational Parameters ($Q_4, Q_6, W_6$)**, **Local Inversion Chirality**, **Local Excess Entropy ($s_2$)**, **Hyperuniformity Index**          | Global/local orientational order, structural chirality asymmetry, two-body excess entropy, low-$Q$ density fluctuations               |
+| **Dynamics & Transport**        | **Mean Squared Displacement (MSD)**, **Velocity Autocorrelation Function (VACF)**, **Vibrational Density of States (VDOS)**                                         | Self-diffusion coefficients ($D_{MSD}, D_{VACF}$), relaxation time $\tau$, Deborah number $De$, vibrational power spectra             |
+| **Spatial & Electronic / ML**   | **3D Spatial Distribution Functions (SDF)**, **Hydrogen Bonding (HBond)**, **Machine Learning Interatomic Potentials (MLIP)**                                       | 3D local coordinate voxel density, donor-acceptor geometric networks, LibTorch GNN evaluation, PyG graph construction                 |
 
 ---
 
-## Installation
+### 📂 Comprehensive Format Support
+Native high-speed parsing with content-based format sniffing (`ReaderFactory`) for automatic detection of extensionless or generic `.in`/`.out` files:
 
-> [!TIP]
-> **Pre-compiled Packages**: Pre-built packages for **Linux** (**AppImage**, **Debian/Ubuntu** `.deb`, **Fedora/RHEL** `.rpm`), **macOS** (`.dmg`), and **Windows** (`.exe` installer) are provided directly in the GitHub [Releases](https://github.com/Isurwars/Correlation/releases) section.
-
-### Prerequisites
-* **Compiler**: Modern C++ compiler with C++23 support (GCC 13+, Clang 16+, MSVC 2022+)
-* **CMake**: Version 3.24 or higher
-* **Git**: To clone the repository
-* **Intel TBB**: For parallelization
-* **Slint**: Required for GUI compilation
-* **Optional Dependencies**:
-  * **HDF5**: For HDF5 output format support
-  * **Apache Arrow/Parquet**: For Parquet output format support
-  * **CUDA Toolkit**: For GPU acceleration
-  * **Python 3.9+ & pybind11**: For compiling Python bindings
-
-#### Package Managers Installation Examples
-
-##### Linux (Debian/Ubuntu)
-```bash
-sudo apt update
-sudo apt install build-essential cmake git rustc cargo libtbb-dev
-# Optional:
-sudo apt install libhdf5-dev
-```
-
-##### Linux (Arch/Manjaro)
-```bash
-sudo pacman -Syu
-sudo pacman -S base-devel cmake git rust intel-tbb
-# Optional:
-sudo pacman -S hdf5
-```
-
-##### MacOS (Homebrew)
-```bash
-xcode-select --install
-brew install cmake git rustup tbb
-# Optional:
-brew install hdf5
-```
-
-##### Windows
-1. Install [Visual Studio](https://visualstudio.microsoft.com/downloads/) with the "Desktop development with C++" workload (includes MSVC and CMake).
-2. Install [Rust](https://www.rust-lang.org/tools/install) (required by the Slint GUI compiler).
-3. Install [Git](https://git-scm.com/download/win).
+* **Quantum Chemistry & DFT:** **VASP** (`POSCAR`, `CONTCAR`, `XDATCAR`), **Quantum ESPRESSO** (`.pwi`, `.pwo`, `.in`, `.out`), **CP2K** (`.inp`, `.restart`, `.out`), **ORCA** (`.out`), **GPAW** (`.gpw`), **ABINIT** (`.abi`), **DFTB+** (`.gen`), **CASTEP** (`.cell`, `.md`), **ONETEP** (`.dat`), **DMol³ / Materials Studio** (`.outmol`, `.car`, `.arc`).
+* **Classical Molecular Dynamics:** **LAMMPS** (`.dump`, `.lammpstrj`), **GROMACS** (`.gro`, `.xtc`, `.trr`), **CHARMM / NAMD / Amber** (`.pdb`, `.ent`).
+* **Crystallography & Exchange:** **Extended XYZ** (`.xyz`, `.exyz`), **Crystallographic Information** (`.cif`).
+* **Export Targets:** High-throughput tabular and binary export in **CSV**, **HDF5** (`.h5`), **Apache Arrow / Parquet** (`.parquet`), **SVG**, **PNG**, and native vector **PDF**.
 
 ---
 
-### Build Instructions
+### ⚡ High-Performance Core & Multi-Vendor GPU
+* **Multi-Vendor GPU Acceleration:** Unified GPU layer supporting **NVIDIA (CUDA)**, **AMD (HIP)**, and **Intel (oneAPI / SYCL)** for $S(Q)$, pairwise distance binning, Steinhardt order parameters, and XRD Debye scattering.
+* **SIMD Kernel Dispatch:** Optimized runtime vector kernels utilizing **AVX2**, **AVX-512**, and scalar fallbacks.
+* **Configurable Precision (`real_t`):** Native compile-time toggle between single-precision (`float`) and double-precision (`double`) execution via `-DUSE_SINGLE_PRECISION=ON/OFF`.
+* **Zero-Copy Memory-Mapped I/O:** `MappedFile` architecture allows instant lazy frame seeking across multi-gigabyte trajectories without memory exhaustion.
+* **Numerical Stability:** Project-wide **Kahan compensated summation** across numerical integrals, unwrapped trajectory tracking, and Debye scattering accumulators.
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/isurwars/correlation.git
-   cd correlation
-   ```
+---
 
-2. **Configure and Build:**
-   ```bash
-   mkdir build && cd build
-   cmake ..
-   cmake --build .
-   ```
+## 📦 Installation
 
-3. **Run Tests:**
-   ```bash
-   ctest -V
-   ```
+### Pre-compiled Packages
+Download pre-built executables and installers from the [GitHub Releases](https://github.com/Isurwars/Correlation/releases) page:
+* **Linux:** Portable `AppImage`, Debian/Ubuntu `.deb`, Fedora/RHEL/openSUSE `.rpm`
+* **macOS:** Universal `.dmg`
+* **Windows:** Standalone `.exe` installer
 
-4. **Install (Optional):**
-   ```bash
-   sudo cmake --install .
-   ```
+### Conda-Forge / Pixi
+Install the CLI and Python package via `conda-forge`:
+```bash
+# Using Conda / Mamba
+conda install -c conda-forge correlation
+
+# Using Pixi
+pixi add correlation
+```
+
+---
+
+### Building from Source
+
+#### Prerequisites
+* **C++ Compiler:** Modern C++ compiler supporting C++23 (GCC 13+, Clang 16+, MSVC 2022+)
+* **CMake:** Version 3.24 or higher
+* **Ninja** or **Make**
+* **Rust & Cargo:** (Required for Slint GUI compilation)
+* **Intel oneTBB:** Threading Building Blocks development headers
+* **Optional:** HDF5 (`libhdf5-dev`), Apache Arrow (`libarrow-dev`), FFTW3 (`libfftw3-dev`), CUDA Toolkit (12.0+) / Intel oneAPI DPC++.
+
+#### Step-by-Step Build
+```bash
+# 1. Clone the repository
+git clone https://github.com/Isurwars/Correlation.git
+cd Correlation
+
+# 2. Configure build with CMake
+cmake -B build -G Ninja \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DBUILD_GUI=ON \
+  -DBUILD_PYTHON_BINDINGS=ON
+
+# 3. Compile
+cmake --build build -j$(nproc)
+
+# 4. Execute test suite (700+ tests)
+ctest --test-dir build --output-on-failure
+```
 
 ---
 
 ### CMake Build Options
 
-Configure these options using `cmake .. -D<OPTION>=<ON|OFF>` during compilation:
-
-| Option                  | Default | Description                                                         |
-| :---------------------- | :------ | :------------------------------------------------------------------ |
-| `BUILD_GUI`             | `ON`    | Compiles the Slint-based Graphical User Interface (`correlation`)   |
-| `BUILD_PYTHON_BINDINGS` | `OFF`   | Compiles Python bindings via pybind11                               |
-| `BUILD_WITH_HDF5`       | `OFF`   | Enables HDF5 output format support (requires HDF5 library)          |
-| `BUILD_WITH_ARROW`      | `OFF`   | Enables Parquet output format support (requires Apache Arrow)       |
-| `BUILD_WITH_CUDA`       | `OFF`   | Enables CUDA GPU acceleration for structure factors (requires CUDA) |
-| `ENABLE_COVERAGE`       | `OFF`   | Instruments binaries with coverage profiling (GCC/Clang only)       |
+| CMake Flag                    | Default | Description                                                           |
+| :---------------------------- | :------ | :-------------------------------------------------------------------- |
+| `BUILD_GUI`                   | `ON`    | Compiles the Slint-based Graphical User Interface (`src/correlation`) |
+| `BUILD_PYTHON_BINDINGS`       | `OFF`   | Compiles Python C-extension bindings via pybind11                     |
+| `USE_SINGLE_PRECISION`        | `OFF`   | Compiles core algorithms using single-precision `float` (`real_t`)    |
+| `BUILD_WITH_CUDA`             | `OFF`   | Enables NVIDIA CUDA GPU acceleration kernels                          |
+| `BUILD_WITH_SYCL`             | `OFF`   | Enables Intel oneAPI / SYCL multi-vendor GPU acceleration             |
+| `BUILD_WITH_HDF5`             | `OFF`   | Enables HDF5 consolidated binary export format                        |
+| `BUILD_WITH_ARROW`            | `OFF`   | Enables Apache Arrow / Parquet columnar export format                 |
+| `BUILD_WASM`                  | `OFF`   | Compiles WebAssembly client-side library bindings                     |
+| `CORRELATION_ENABLE_LIBTORCH` | `OFF`   | Links LibTorch for native GNN MLIP evaluation                         |
 
 ---
 
-## Usage Modes
-
-`Correlation` can be executed in three ways: via GUI, headless CLI, or Python.
+## 🚀 Usage Modes
 
 ### 1. Graphical User Interface (GUI)
-Start the GUI version by running the main executable:
+Launch the modern Slint-based interface:
 ```bash
 ./build/src/correlation
 ```
 
 ![Correlation Demo](Images/demo.gif)
 
-#### GUI Workflow:
-1. **Load File**: Click **"Load a structure file"** to import trajectories or structures.
-2. **Verify File Info**: Check element distributions and frames in the **File Info** card.
-3. **Configure Options**: Adjust thresholds, maximum integration lengths, bin widths, and smoothing parameters (Gaussian, Bump, Triweight).
-4. **Define Bond Cutoffs**: Review or customize element-pair bond distance cutoffs.
-5. **Run & Save**: Choose output formats (CSV, HDF5, Parquet), run calculations, inspect the interactive dynamic plot preview, and save plots (SVG) or output datasets.
+#### Key GUI Highlights:
+* **Interactive 3-Column Layout:** Seamlessly navigate between structure setup, parameter cards, bond cutoff matrices, and live plot rendering.
+* **Multi-Curve Comparison Overlay:** Load and overlay multiple datasets or trajectories simultaneously, compute dynamic difference plots ($Y_{Diff} = Y_1 - Y_2$), and customize individual styles, dashes, and color palettes.
+* **Vector Publication Export:** Export high-resolution plots directly to **SVG**, **PNG**, or native **PDF** with embedded normalized vector fonts and Greek character glyphs.
+* **Preset Configuration Manager:** Save and load custom analysis presets for liquid, crystalline, or amorphous simulations.
 
 ---
 
 ### 2. Command Line Interface (CLI)
-Run calculations headlessly using `correlation-cli` without requiring any graphical shell:
+Execute headlessly in automated cluster pipelines using `correlation-cli`:
+
 ```bash
-./build/src/correlation-cli <input_file> [options]
+# Analyze RDF, CNA, and MSD from a VASP trajectory with HDF5 and CSV output
+correlation-cli Trajectory.xdatcar -o ./output/run_1 \
+  --calculators RDF,CNA,MSD \
+  --r-max 15.0 --r-bin 0.02 \
+  --time-step 1.5 \
+  --csv --hdf5
 ```
 
-#### Usage Example:
-```bash
-./build/src/correlation-cli Trajectory.xdatcar -o ./output/run_1 --calculators RDF,CNA,MSD --r-max 12.0 --csv --hdf5
-```
-
-#### Command Options:
-| Flag                         | Parameter | Description                                                           |
-| :--------------------------- | :-------- | :-------------------------------------------------------------------- |
-| `-o`, `--output`             | `<path>`  | Base output path (default: input stem)                                |
-| `--r-max`                    | `<float>` | Max radius for RDF calculations (default: `20.0`)                     |
-| `--r-bin`                    | `<float>` | Bin width for RDF (default: `0.02`)                                   |
-| `--q-max`                    | `<float>` | Max momentum vector $Q$ for $S(Q)$ (default: `20.0`)                  |
-| `--q-bin`                    | `<float>` | Bin width for $S(Q)$ (default: `0.02`)                                |
-| `--angle-bin`                | `<float>` | Angular bin width in degrees (default: `1.0`)                         |
-| `--max-ring-size`            | `<int>`   | Maximum size of topological rings to find (default: `8`)              |
-| `--time-step`                | `<float>` | Simulation time step in fs (default: `1.0`)                           |
-| `--min-frame`                | `<int>`   | Start frame index, 1-based (default: `1`)                             |
-| `--max-frame`                | `<int>`   | End frame index, `-1` for all (default: `-1`)                         |
-| `--csv` / `--no-csv`         |           | Enable / Disable CSV tabular output (default: `ON`)                   |
-| `--hdf5` / `--no-hdf5`       |           | Enable / Disable HDF5 consolidated binary output (default: `OFF`)     |
-| `--parquet` / `--no-parquet` |           | Enable / Disable Parquet/Arrow tabular format (default: `OFF`)        |
-| `--calculators`              | `<list>`  | Comma-separated list of Calculator IDs to run (default: all)          |
-| `--smoothing-sigma`          | `<float>` | Standard deviation for Gaussian kernel smoothing (default: `0.1`)     |
-| `--smoothing-kernel`         | `<str>`   | Kernel type: `gaussian`, `bump`, or `triweight` (default: `gaussian`) |
-| `--no-smoothing`             |           | Disable post-processing data smoothing                                |
-| `-q`, `--quiet`              |           | Suppress command progress console messages                            |
-| `-h`, `--help`               |           | Show usage help information                                           |
-| `-v`, `--version`            |           | Show program version                                                  |
-
-#### Calculator IDs for `--calculators`:
-| ID           | Full Name                            | Group      | Description                                      |
-| :----------- | :----------------------------------- | :--------- | :----------------------------------------------- |
-| `RDF`        | `g(r), J(r), G(r)`                   | Radial     | Radial, pair, and reduced distribution functions |
-| `S_K`        | `S(K)`                               | Scattering | Static structure factor                          |
-| `S_Q_GPU`    | `S(Q) — GPU Accelerated`             | Scattering | GPU-powered structure factor                     |
-| `XRD`        | `XRD`                                | Scattering | Powder X-ray diffraction pattern                 |
-| `PAD`        | `PAD`                                | Angular    | Plane-Angle distribution                         |
-| `DAD`        | `DAD`                                | Angular    | Dihedral-Angle distribution                      |
-| `CN`         | `CN`                                 | Structural | Coordination number counts                       |
-| `CNA`        | `CNA`                                | Structural | Common Neighbor Analysis crystal topology        |
-| `RD`         | `RD`                                 | Rings      | Ring size distribution                           |
-| `MSD`        | `MSD`                                | Dynamic    | Mean squared displacement                        |
-| `VACF`       | `VACF`                               | Dynamic    | Velocity autocorrelation function                |
-| `vDoS`       | `vDoS`                               | Dynamic    | Vibrational density of states                    |
-| `Steinhardt` | `Steinhardt Parameter`               | Structural | Bond-orientational parameters ($Q_4, Q_6$)       |
-| `HBond`      | `Hydrogen Bond`                      | Structural | Hydrogen bond analysis                           |
-| `Clusters`   | `Cluster Analysis`                   | Structural | Atomic cluster connectivity analysis             |
-| `SDF`        | `Spatial Distribution Function (3D)` | Spatial    | 3D local density map                             |
+#### Core CLI Arguments:
+| Flag                           | Parameter | Description                                                                |
+| :----------------------------- | :-------- | :------------------------------------------------------------------------- |
+| `-o`, `--output`               | `<path>`  | Base output path (default: input file stem)                                |
+| `--calculators`                | `<list>`  | Comma-separated list of calculators to execute (e.g. `RDF,XRD,PAD,CNA`)    |
+| `--r-max`, `--r-bin`           | `<float>` | Maximum radius ($Å$) and bin width ($Å$) for radial calculations           |
+| `--q-max`, `--q-bin`           | `<float>` | Maximum scattering vector $Q$ ($Å^{-1}$) and bin width for $S(Q)$          |
+| `--angle-bin`                  | `<float>` | Angular bin width in degrees for PAD/DAD (default: `1.0`)                  |
+| `--max-ring-size`              | `<int>`   | Maximum topological ring size to evaluate (default: `8`)                   |
+| `--time-step`                  | `<float>` | Simulation timestep in femtoseconds (default: `1.0`)                       |
+| `--min-frame`, `--max-frame`   | `<int>`   | 1-based frame evaluation range (`-1` for all frames)                       |
+| `--smoothing-kernel`           | `<str>`   | Smoothing filter: `gaussian`, `bump`, or `triweight` (default: `gaussian`) |
+| `--csv`, `--hdf5`, `--parquet` |           | Toggle tabular CSV, consolidated HDF5, or Apache Parquet output            |
 
 ---
 
-### 3. Python Bindings
-Integrate `Correlation` directly into Python data-science workflows (e.g., Jupyter Notebooks):
+### 3. Python Bindings & PyTorch Geometric
 
-#### Installation
+Integrate `Correlation` directly into Python data-science environments, NumPy pipelines, and GNN frameworks:
 
-Via **Conda-Forge** (recommended):
-```bash
-conda install -c conda-forge correlation
-# Or using pixi:
-pixi add correlation
-```
-
-Or build and install locally from source:
-```bash
-pip install .
-```
-
-#### Code Example
 ```python
 import correlation
+import numpy as np
 
-# Load structure or trajectory file
-cell = correlation.Cell.from_file("structure.poscar")
+# 1. Load atomistic structure or trajectory
+cell = correlation.Cell.from_file("POSCAR")
 
-# Set up distribution functions analysis
-df = correlation.DistributionFunctions(cell, cutoff=8.0)
+# 2. Configure structural analysis engine
+df = correlation.DistributionFunctions(cell, cutoff=10.0)
 
-# Calculate RDF g(r), G(r), J(r)
-df.calculate_rdf(r_max=15.0, bin_width=0.05)
+# 3. Compute radial and angular distribution functions
+df.calculate_rdf(r_max=12.0, bin_width=0.05)
+df.calculate_pad(bin_width=1.0)
 
-# Access calculated histogram datasets
-rdf_hist = df.get_histogram("g_r")
+# 4. Access computed histograms and partials
+gr_hist = df.get_histogram("g_r")
+bins = gr_hist.bins            # NumPy float array
+total_gr = gr_hist.partials["Total"]
 
-# Retrieve values
-bins = rdf_hist.get_bins()          # numpy float64 view
-total_gr = rdf_hist.get_partial("Total")  # total RDF list
+print(f"Computed {len(bins)} bins for g(r). Peak value: {np.max(total_gr):.3f}")
 
-print("Bins:", bins[:5])
-print("Total g(r):", total_gr[:5])
+# 5. Build periodic graph & convert to PyTorch Geometric Data
+graph_data = correlation.build_periodic_graph(cell, cutoff=5.0)
+pyg_data = correlation.to_torch_geometric(graph_data)
+
+print(pyg_data)
+# Data(pos=[N, 3], z=[N], edge_index=[2, E], edge_shift=[E, 3], edge_vec=[E, 3], cell=[3, 3], pbc=[3])
 ```
 
 ---
 
-## Built with
-- [emacs](https://www.gnu.org/software/emacs/) - An extensible, customizable, free/libre text editor — and more.
+## 👥 Authors & Citation
 
-## Authors
-- **Isaías Rodríguez** - _Corresponding Author_ - [Isurwars](https://github.com/Isurwars) <isurwars@gmail.com>
-- **Salvador Villareal Lopez Rebuelta** <salvadorvillarreallr@gmail.com>
-- **Renela M. Valladares** <renelavalladares@gmail.com>
-- **Alexander Valladares** <valladar@ciencias.unam.mx>
-- **David Hinojosa-Romero** <david18_hr@ciencias.unam.mx>
-- **Ulises Santiago**
-- **Ariel A. Valladares** <valladar@unam.mx>
+### Corresponding Author
+* **Isaías Rodríguez** — [Isurwars](https://github.com/Isurwars) <isurwars@gmail.com>
 
-## License
-This project is licensed under the GNU Affero General Public License v3 (AGPLv3) - see the [LICENSE](LICENSE) file for details.
+### Contributors & Co-Authors
+* **Flor B. Quiroga** <quiroga.acbg@ciencias.unam.mx>
+* **Renela M. Valladares** <renelavalladares@gmail.com>
+* **Salvador Villarreal Lopez Rebuelta** <salvadorvillarreallr@gmail.com>
+* **Alexander Valladares** <valladar@ciencias.unam.mx>
+* **David Hinojosa-Romero** <david18_hr@ciencias.unam.mx>
+* **Ulises Santiago**
+* **Ariel A. Valladares** <valladar@unam.mx>
 
-## Acknowledgments
-* I.R. acknowledge SECIHTI and DGAPA-UNAM for his postdoctoral fellowship.
-* D.H.R. acknowledge DGAPA-UNAM for his postdoctoral fellowship.
-* A.A.V., R.M.V., and A.V. thank DGAPA-UNAM for continued financial support to carry out research projects under Grant No. IN104617, IN116520, IIN118223 and IN119226.
-* A.A.V., R.M.V., A.V., and I.R. acknowledge SECIHTI for the financial support to carry out research projects under Grant No. CBF-2025-G-886.
-* M. T. Vázquez and O. Jiménez provided the information requested.
-* A. Pompa helped with the maintenance and support of the supercomputer in IIM-UNAM.
-* Simulations were partially carried out in the Supercomputing Center of DGTIC-UNAM.
-* I.R. would like to express his gratitude to F. B. Quiroga, M. A. Carrillo, R. S. Vilchis, S. Calderón, A. de Leon, J.A. Albarran, David A. de Jésus and A. Perez-Aguiar for their time invested in testing the code, as well as the structures provided for benchmarks and tests.
+### Citation
+If you use `Correlation` in scientific publications, please cite:
+```bibtex
+@article{Rodriguez2021Correlation,
+  doi = {10.21105/joss.02976},
+  url = {https://doi.org/10.21105/joss.02976},
+  year = {2021},
+  publisher = {The Open Journal},
+  volume = {6},
+  number = {59},
+  pages = {2976},
+  author = {Isa{\'i}as Rodr{\'i}guez and David Hinojosa-Romero and Alexander Valladares and Renela M. Valladares and Ariel A. Valladares},
+  title = {Correlation: An Analysis Tool for Liquids and for Amorphous Solids},
+  journal = {Journal of Open Source Software}
+}
+```
+
+---
+
+## 📜 License
+`Correlation` is free and open-source software licensed under the **GNU Affero General Public License v3 (AGPL-3.0-only)**. See [LICENSE](LICENSE) for details.
+
+---
+
+## 🙏 Acknowledgments
+* **I.R.** acknowledges SECIHTI and DGAPA-UNAM for postdoctoral fellowship support.
+* **D.H.R.** acknowledges DGAPA-UNAM for postdoctoral fellowship support.
+* **A.A.V., R.M.V., and A.V.** thank DGAPA-UNAM for continued financial support (Grant Nos. IN104617, IN116520, IN118223, and IN119226).
+* **A.A.V., R.M.V., A.V., and I.R.** acknowledge SECIHTI for research project grant support (Grant No. CBF-2025-G-886).
+* Simulations and benchmarks were partially conducted at the Supercomputing Center of DGTIC-UNAM and IIM-UNAM.
+* Special gratitude to M. A. Carrillo, R. S. Vilchis, S. Calderón, A. de Leon, J. A. Albarran, David A. de Jesús, and A. Perez-Aguiar for testing, benchmarking structures, and feedback.

@@ -1,15 +1,16 @@
 Correlation was originally created in late 2010 by Prof. Valladares Group
 at Materials Research Institute, National Autonomous University of Mexico.
 
-Developers of Correlation (2021):
+Developers of Correlation:
 
-Isaías Rodríguez        <isurwars@gmail.com>
-Salvador Villareal      <salvadorvillarreallr@gmail.com>
-Renela M. Valladares    <renelavalladares@gmail.com>
-Alexander Valladares    <valladar@ciencias.unam.mx>
-David Hinojosa-Romero   <david18_hr@ciencias.unam.mx>
+Isaías Rodríguez         <isurwars@gmail.com>
+Flor B. Quiroga          <quiroga.acbg@ciencias.unam.mx>
+Renela M. Valladares     <renelavalladares@gmail.com>
+Salvador Villareal       <salvadorvillarreallr@gmail.com>
+Alexander Valladares     <valladar@ciencias.unam.mx>
+David Hinojosa-Romero    <david18_hr@ciencias.unam.mx>
 Ulises Santiago
-Ariel A. Valladares     <valladar@unam.mx>
+Ariel A. Valladares      <valladar@unam.mx>
 
 Special thanks to the editor and reviewers from Journal of Open Source Software:
 
@@ -30,7 +31,6 @@ Andrés Díaz
 Brandon E. Dévora
 Cristina Romero
 Edgar Saynes
-Flor B. Quiroga
 Gerardo Antonio
 Joel Vásquez
 Jonathan Galván
