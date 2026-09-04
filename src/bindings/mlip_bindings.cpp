@@ -8,7 +8,9 @@
 
 #include "mlip_bindings.hpp"
 #include "calculators/MLIPCalculator.hpp"
+#include "calculators/TDOSCalculator.hpp"
 #include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
 #include "mlip/MLIPInterface.hpp"
 #include "mlip/PeriodicGraphBuilder.hpp"
 
@@ -212,4 +214,34 @@ void init_mlip(py::module_ &mod) {
             return MLIPCalculator::calculate(cell, model);
           },
           py::arg("cell"), py::arg("model") = nullptr, "Evaluate MLIP on a given cell.");
+
+  // ------------------------------------------------------------------
+  // TDOSParams
+  // ------------------------------------------------------------------
+  py::class_<TDOSParams>(mod, "TDOSParams", "Configuration parameters for Total Density of States (TDOS) calculation.")
+      .def(py::init<real_t, real_t, const MLIPInterface *>(), py::arg("e_min") = static_cast<real_t>(-15.0),
+           py::arg("e_max") = static_cast<real_t>(5.0), py::arg("model") = nullptr)
+      .def_readwrite("e_min", &TDOSParams::e_min, "Lower energy bound in eV (relative to E_F).")
+      .def_readwrite("e_max", &TDOSParams::e_max, "Upper energy bound in eV (relative to E_F).")
+      .def_readwrite("model", &TDOSParams::model, "MLIPInterface model pointer.");
+
+  // ------------------------------------------------------------------
+  // TDOSCalculator
+  // ------------------------------------------------------------------
+  py::class_<TDOSCalculator, BaseCalculator>(mod, "TDOSCalculator",
+                                             "Calculator for MLIP Total Density of States (TDOS).")
+      .def(py::init<>())
+      .def_static(
+          "calculate",
+          [](const correlation::core::Cell &cell, const TDOSParams &params) {
+            return TDOSCalculator::calculate(cell, params);
+          },
+          py::arg("cell"), py::arg("params") = TDOSParams{}, "Calculate Total Density of States for a single cell.")
+      .def_static(
+          "calculate_trajectory",
+          [](const correlation::core::Trajectory &traj, const TDOSParams &params) {
+            return TDOSCalculator::calculateTrajectory(traj, params, nullptr);
+          },
+          py::arg("traj"), py::arg("params") = TDOSParams{},
+          "Calculate frame-averaged Total Density of States for a trajectory.");
 }

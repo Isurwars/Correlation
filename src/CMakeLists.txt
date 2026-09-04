@@ -59,6 +59,7 @@ add_library(calculators_obj OBJECT
     calculators/VoronoiCalculator.cpp
     calculators/HyperuniformityCalculator.cpp
     calculators/MLIPCalculator.cpp
+    calculators/TDOSCalculator.cpp
 )
 
 if(NOT (BUILD_WITH_CUDA OR BUILD_WITH_HIP))

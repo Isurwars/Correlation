@@ -243,6 +243,16 @@ if HAS_NUMPY:
 else:
     print(f"  MLIP output total_energy: {mlip_out.total_energy}")
 
+# Test TDOSCalculator & TDOSParams
+tdos_calc = correlation.TDOSCalculator()
+print(f"  TDOSCalculator: {tdos_calc.get_name()} ({tdos_calc.get_short_name()})")
+tdos_params = correlation.TDOSParams()
+assert tdos_params.e_min == -15.0, "TDOSParams e_min mismatch"
+assert tdos_params.e_max == 5.0, "TDOSParams e_max mismatch"
+tdos_hist = correlation.TDOSCalculator.calculate(cell_sc, tdos_params)
+assert len(tdos_hist.bins) == 0, "TDOS without model should return empty bins"
+print("  TDOSCalculator & TDOSParams validated OK")
+
 # ── 8. Summary ───────────────────────────────────────────────────────
 section("Summary")
 print("  All binding layers loaded successfully OK")

@@ -60,6 +60,7 @@ add_executable(correlation_unit_tests
     unit/calculators/ChiralityCalculatorTests.cpp
     unit/calculators/HyperuniformityCalculatorTests.cpp
     unit/calculators/MLIPCalculatorTests.cpp
+    unit/calculators/TDOSCalculatorTests.cpp
     unit/mlip/PeriodicGraphBuilderTests.cpp
     unit/calculators/GPUSteinhardtCalculatorTests.cpp
     unit/calculators/GPUDistanceCalculatorTests.cpp
