@@ -408,18 +408,18 @@ void AppBackend::calculateDynamicProperties() {
   }
 }
 
-std::string AppBackend::run_analysis() {
+std::expected<void, std::string> AppBackend::run_analysis() {
   if (!trajectory_ || trajectory_->getFrameCount() == 0) {
     std::string err = AppDefaults::MSG_ANALYSIS_ABORTED;
     std::cerr << err << '\n';
-    return err;
+    return std::unexpected(err);
   }
 
   cancel_flag_ = false;
 
   std::string validation_error = validateOptions();
   if (!validation_error.empty()) {
-    return validation_error;
+    return std::unexpected(validation_error);
   }
 
   try {
@@ -490,20 +490,20 @@ std::string AppBackend::run_analysis() {
   } catch (const std::exception &e) {
     std::string err = std::string(AppDefaults::MSG_ERROR_ANALYSIS) + e.what();
     std::cerr << "Analysis Exception: " << e.what() << '\n';
-    return err;
+    return std::unexpected(err);
   } catch (...) {
     std::string err = std::string(AppDefaults::MSG_ERROR_ANALYSIS) + "Unknown error.";
     std::cerr << "Analysis Exception: Unknown error." << '\n';
-    return err;
+    return std::unexpected(err);
   }
-  return "";
+  return {};
 }
 
-std::string AppBackend::write_files() {
+std::expected<void, std::string> AppBackend::write_files() {
   if (!df_) {
     std::string err = AppDefaults::MSG_NO_DATA_TO_WRITE;
     std::cerr << err << '\n';
-    return err;
+    return std::unexpected(err);
   }
 
   try {
@@ -515,9 +515,9 @@ std::string AppBackend::write_files() {
   } catch (const std::exception &e) {
     std::string err = std::string(AppDefaults::MSG_ERROR_WRITING) + e.what();
     std::cerr << err << '\n';
-    return err;
+    return std::unexpected(err);
   }
-  return "";
+  return {};
 }
 
 } // namespace correlation::app

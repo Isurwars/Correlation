@@ -324,7 +324,7 @@ TEST_F(AppControllerTests, PopulatesTableAndDynamicProperties) {
   correlation::app::AppController controller(*window, backend);
 
   // Run analysis
-  EXPECT_TRUE(backend.run_analysis().empty());
+  EXPECT_TRUE(backend.run_analysis().has_value());
 
   // Populate plot list (which also sets dynamic properties)
   controller.getPlotController()->populatePlotList();

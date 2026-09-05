@@ -131,9 +131,9 @@ int main(int argc, char *argv[]) {
     if (!cli.quiet) {
       std::cerr << "Running analysis...\n";
     }
-    std::string const err = backend.run_analysis();
-    if (!err.empty()) {
-      std::cerr << "\nAnalysis error: " << err << "\n";
+    auto const run_res = backend.run_analysis();
+    if (!run_res) {
+      std::cerr << "\nAnalysis error: " << run_res.error() << "\n";
       return 1;
     }
     if (!cli.quiet) {
@@ -146,9 +146,9 @@ int main(int argc, char *argv[]) {
 
   // Write output files
   try {
-    std::string const err = backend.write_files();
-    if (!err.empty()) {
-      std::cerr << "Write error: " << err << "\n";
+    auto const write_res = backend.write_files();
+    if (!write_res) {
+      std::cerr << "Write error: " << write_res.error() << "\n";
       return 1;
     }
     if (!cli.quiet) {

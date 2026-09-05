@@ -14,6 +14,7 @@
 #include "math/Smoothing.hpp"
 
 #include <atomic>
+#include <expected>
 #include <functional>
 #include <map>
 #include <memory>
@@ -180,19 +181,17 @@ public:
    * 4. Calculates VACF and VDOS if applicable.
    * 5. Smooths results if requested.
    *
-   * @return A string containing an error message if the analysis failed, or an
-   * empty string if successful.
+   * @return std::expected<void, std::string> indicating success or containing an error message.
    */
-  [[nodiscard]] std::string run_analysis();
+  [[nodiscard]] std::expected<void, std::string> run_analysis();
 
   /**
    * @brief Writes the analysis results to files (CSV, HDF5) as specified in
    * options.
    *
-   * @return A string containing an error message if the writing failed, or an
-   * empty string if successful.
+   * @return std::expected<void, std::string> indicating success or containing an error message.
    */
-  [[nodiscard]] std::string write_files();
+  [[nodiscard]] std::expected<void, std::string> write_files();
 
   /**
    * @brief Gets the atom counts for the current structure.

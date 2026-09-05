@@ -85,11 +85,11 @@ void FileIOHandler::handleWriteFiles() {
     opts.use_parquet = use_parquet;
     backend_.setOptions(opts);
 
-    const std::string err = backend_.write_files();
-    if (err.empty()) {
+    const auto write_res = backend_.write_files();
+    if (write_res) {
       window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_FILES_WRITTEN));
     } else {
-      window_.set_analysis_status_text(slint::SharedString(err));
+      window_.set_analysis_status_text(slint::SharedString(write_res.error()));
     }
   } else if (result == NFD_CANCEL) {
     window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));

@@ -61,7 +61,8 @@ void AnalysisRunner::handleRunAnalysis() {
   }
 
   analysis_thread_ = std::thread([this]() {
-    std::string err = backend_.run_analysis();
+    auto result = backend_.run_analysis();
+    std::string err = result ? "" : result.error();
 
     slint::invoke_from_event_loop([this, err]() {
       window_.set_analysis_running(false);

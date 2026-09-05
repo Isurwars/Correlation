@@ -83,11 +83,15 @@ TEST_F(AppBackendTests, ValidateOptionsRejectsInvalidMaxRingSize) {
 
   opts.max_ring_size = 2;
   backend.setOptions(opts);
-  EXPECT_EQ(backend.run_analysis(), "Error: max_ring_size must be an integer >= 3.");
+  auto const res1 = backend.run_analysis();
+  ASSERT_FALSE(res1.has_value());
+  EXPECT_EQ(res1.error(), "Error: max_ring_size must be an integer >= 3.");
 
   opts.max_ring_size = 0;
   backend.setOptions(opts);
-  EXPECT_EQ(backend.run_analysis(), "Error: max_ring_size must be an integer >= 3.");
+  auto const res2 = backend.run_analysis();
+  ASSERT_FALSE(res2.has_value());
+  EXPECT_EQ(res2.error(), "Error: max_ring_size must be an integer >= 3.");
 }
 
 TEST_F(AppBackendTests, LoadInvalidFileThrowsException) {
@@ -166,8 +170,8 @@ TEST_F(AppBackendTests, LoadValidCarFileAndRunAnalysisAndWriteFiles) {
   opts.active_calculators["RDF"] = true;
   backend.setOptions(opts);
 
-  std::string const run_status = backend.run_analysis();
-  EXPECT_TRUE(run_status.empty()) << "Analysis failed: " << run_status;
+  auto const run_status = backend.run_analysis();
+  EXPECT_TRUE(run_status.has_value()) << "Analysis failed: " << (run_status ? "" : run_status.error());
 
   // Verify histograms
   auto const hist_names = backend.getAvailableHistogramNames();
@@ -203,8 +207,8 @@ TEST_F(AppBackendTests, LoadValidCarFileAndRunAnalysisAndWriteFiles) {
   opts.use_parquet = false;
   backend.setOptions(opts);
 
-  std::string const write_status = backend.write_files();
-  EXPECT_TRUE(write_status.empty()) << "Write files failed: " << write_status;
+  auto const write_status = backend.write_files();
+  EXPECT_TRUE(write_status.has_value()) << "Write files failed: " << (write_status ? "" : write_status.error());
 
   // Verify file was written
   EXPECT_TRUE(std::filesystem::exists(out_base + "_g.csv"));
