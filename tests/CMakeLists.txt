@@ -87,6 +87,7 @@ add_executable(correlation_unit_tests
     unit/math/SmoothingTests.cpp
     unit/math/FFTUtilsTests.cpp
     unit/math/ConstantsTests.cpp
+    unit/analysis/CorrelationEngineTests.cpp
     unit/app/AppBackendTests.cpp
     unit/app/PresetManagerTests.cpp
     unit/app/SettingsManagerTests.cpp

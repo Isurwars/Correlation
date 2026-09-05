@@ -7,8 +7,7 @@
  */
 
 #include "app/AppBackend.hpp"
-#include "analysis/DynamicsAnalyzer.hpp"
-#include "calculators/CalculatorFactory.hpp"
+#include "analysis/CorrelationEngine.hpp"
 #include "math/Precision.hpp"
 #include "physics/PhysicalData.hpp"
 #include "readers/FileReader.hpp"
@@ -198,311 +197,68 @@ std::string AppBackend::load_file(const std::string &path) {
 
 namespace {
 
-[[nodiscard]] std::string validateHistogramOptions(const ProgramOptions &options) {
-  if (options.r_max <= 0.0) {
-    return "Error: r_max must be strictly positive.";
-  }
-  if (options.r_bin_width <= 0.0) {
-    return "Error: r_bin_width must be strictly positive.";
-  }
-  if (options.r_bin_width >= options.r_max) {
-    return "Error: r_bin_width must be strictly less than r_max.";
-  }
-  if (options.q_max <= 0.0) {
-    return "Error: q_max must be strictly positive.";
-  }
-  if (options.q_bin_width <= 0.0) {
-    return "Error: q_bin_width must be strictly positive.";
-  }
-  if (options.q_bin_width >= options.q_max) {
-    return "Error: q_bin_width must be strictly less than q_max.";
-  }
-  if (options.r_int_max <= 0.0) {
-    return "Error: r_int_max must be strictly positive.";
-  }
-  return "";
-}
+[[nodiscard]] correlation::analysis::CorrelationEngineConfig toEngineConfig(const ProgramOptions &options,
+                                                                            std::atomic<bool> *cancel_flag) {
+  correlation::analysis::CorrelationEngineConfig config;
+  config.settings.r_max = options.r_max;
+  config.settings.r_bin_width = options.r_bin_width;
+  config.settings.q_max = options.q_max;
+  config.settings.q_bin_width = options.q_bin_width;
+  config.settings.r_int_max = options.r_int_max;
+  config.settings.angle_bin_width = options.angle_bin_width;
+  config.settings.dihedral_bin_width = options.dihedral_bin_width;
+  config.settings.max_ring_size = options.max_ring_size;
+  config.settings.active_calculators = options.active_calculators;
+  config.settings.smoothing = options.smoothing;
+  config.settings.smoothing_sigma = options.smoothing_sigma;
+  config.settings.smoothing_kernel = options.smoothing_kernel;
+  config.settings.lef_cutoff = options.lef_cutoff;
+  config.settings.lef_sigma = options.lef_sigma;
+  config.settings.hyperuniformity_samples = options.hyper_samples;
+  config.settings.cancel_flag = cancel_flag;
 
-[[nodiscard]] std::string validateAngularOptions(const ProgramOptions &options) {
-  if (options.angle_bin_width <= 0.0) {
-    return "Error: angle_bin_width must be strictly positive.";
-  }
-  if (options.angle_bin_width > 180.0) {
-    return "Error: angle_bin_width must be at most 180.0 degrees.";
-  }
-  if (options.dihedral_bin_width <= 0.0) {
-    return "Error: dihedral_bin_width must be strictly positive.";
-  }
-  if (options.dihedral_bin_width > 360.0) {
-    return "Error: dihedral_bin_width must be at most 360.0 degrees.";
-  }
-  return "";
-}
-
-[[nodiscard]] std::string validateSimulationOptions(const ProgramOptions &options) {
-  if (options.time_step <= 0.0) {
-    return "Error: time_step must be strictly positive.";
-  }
-  if (options.max_ring_size < 3) {
-    return "Error: max_ring_size must be an integer >= 3.";
-  }
-  if (options.hyper_samples == 0) {
-    return "Error: hyper_samples must be strictly positive.";
-  }
-  if (options.max_frame < -1) {
-    return "Error: max_frame cannot be less than -1.";
-  }
-  if (options.max_frame >= 0 && options.min_frame > options.max_frame) {
-    return "Error: min_frame cannot be greater than max_frame.";
-  }
-  return "";
-}
-
-[[nodiscard]] std::string validateSmoothingOptions(const ProgramOptions &options) {
-  if (options.smoothing && options.smoothing_sigma <= 0.0) {
-    return "Error: smoothing_sigma must be strictly positive when smoothing is enabled.";
-  }
-  if (options.smoothing_sigma < 0.0) {
-    return "Error: smoothing_sigma cannot be negative.";
-  }
-  if (options.lef_cutoff <= 0.0) {
-    return "Error: lef_cutoff must be strictly positive.";
-  }
-  if (options.lef_sigma <= 0.0) {
-    return "Error: lef_sigma must be strictly positive.";
-  }
-  return "";
-}
-
-[[nodiscard]] std::string validateBondCutoffOptions(const correlation::analysis::BondCutoffMatrix &cutoffs) {
-  for (const auto &row : cutoffs) {
-    for (const auto &range : row) {
-      if (range.min_sq < 0.0 || range.max_sq < 0.0) {
-        return "Error: Bond cutoff bounds cannot be negative.";
-      }
-      if (range.min_sq > range.max_sq) {
-        return "Error: Minimum bond cutoff cannot be greater than maximum bond cutoff.";
-      }
-    }
-  }
-  return "";
+  config.bond_cutoffs = options.bond_cutoffs;
+  config.min_frame = options.min_frame;
+  config.max_frame = options.max_frame;
+  config.time_step = options.time_step;
+  return config;
 }
 
 } // namespace
 
 std::string AppBackend::validateOptions() const {
-  if (std::string const err = validateHistogramOptions(options_); !err.empty()) {
-    return err;
-  }
-  if (std::string const err = validateAngularOptions(options_); !err.empty()) {
-    return err;
-  }
-  if (std::string const err = validateSimulationOptions(options_); !err.empty()) {
-    return err;
-  }
-  if (std::string const err = validateSmoothingOptions(options_); !err.empty()) {
-    return err;
-  }
-  return validateBondCutoffOptions(options_.bond_cutoffs);
-}
-
-void AppBackend::setupTrajectorySettings(size_t &start_f) {
-  // Apply custom bond cutoffs if they were set in options
-  if (!options_.bond_cutoffs.empty()) {
-    trajectory_->setBondCutoffs(options_.bond_cutoffs);
-  } else {
-    if (trajectory_->getBondCutoffs().empty()) {
-      trajectory_->precomputeBondCutoffs();
-    }
-  }
-
-  // Ensure min_frame is within bounds
-  start_f = options_.min_frame;
-  if (start_f >= trajectory_->getFrameCount()) {
-    start_f = 0; // Default to 0 if out of bounds
-  }
-
-  trajectory_->setTimeStep(options_.time_step);
-}
-
-void AppBackend::runTrajectoryCalculators(const correlation::analysis::AnalysisSettings &settings) {
-  const auto &factory_calcs = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
-
-  // Check if we need velocities
-  bool need_velocities = false;
-  for (const auto &calc : factory_calcs) {
-    bool const is_active = settings.isActive(calc->getName()) || settings.isActive(calc->getShortName());
-    if (calc->isTrajectoryCalculator() && calc->isConfigured() && is_active) {
-      if (calc->getName() == "VACF" || calc->getShortName() == "VACF" || calc->getName() == "vDoS" ||
-          calc->getShortName() == "vDoS") {
-        need_velocities = true;
-        break;
-      }
-    }
-  }
-
-  if (need_velocities) {
-    if (trajectory_->getFrameCount() == 0) {
-      throw std::runtime_error("VACF requires a trajectory with frames");
-    }
-    trajectory_->calculateVelocities();
-  }
-
-  for (const auto &calc : factory_calcs) {
-    if (calc->isTrajectoryCalculator() && calc->isConfigured() &&
-        (settings.isActive(calc->getName()) || settings.isActive(calc->getShortName()))) {
-      calc->calculateTrajectory(*df_, *trajectory_, settings);
-    }
-  }
-}
-
-void AppBackend::calculateDynamicProperties() {
-  const auto &hists = df_->getAllHistograms();
-
-  auto it_msd = hists.find("MSD");
-  if (it_msd != hists.end()) {
-    const auto &hist = it_msd->second;
-    auto it_total = hist.partials.find("Total");
-    if (it_total != hist.partials.end()) {
-      real_t const d_msd =
-          correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(hist.bins, it_total->second);
-      df_->setDiffusionCoefficientMSD(d_msd);
-    }
-  }
-
-  auto it_vacf = hists.find("VACF");
-  if (it_vacf != hists.end()) {
-    const auto &hist = it_vacf->second;
-    auto it_total = hist.partials.find("Total");
-    if (it_total != hist.partials.end()) {
-      real_t const d_vacf =
-          correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientVACF(hist.bins, it_total->second);
-      df_->setDiffusionCoefficientVACF(d_vacf);
-    }
-  }
-
-  auto it_norm = hists.find("Normalized VACF");
-  if (it_norm != hists.end()) {
-    const auto &hist = it_norm->second;
-    auto it_total = hist.partials.find("Total");
-    if (it_total != hist.partials.end()) {
-      real_t const tau = correlation::analysis::DynamicsAnalyzer::computeRelaxationTime(hist.bins, it_total->second);
-      df_->setRelaxationTime(tau);
-      real_t deborah = 0.0;
-      if (!hist.bins.empty() && hist.bins.back() > 0.0) {
-        deborah = tau / hist.bins.back();
-      }
-      df_->setDeborahNumber(deborah);
-    }
-  }
-
-  // Log the calculated values to the console
-  if (df_->getDiffusionCoefficientMSD() > 0.0) {
-    std::cout << "Self-diffusion coefficient (from MSD): " << df_->getDiffusionCoefficientMSD() << " Å²/fs" << '\n';
-  }
-  if (df_->getDiffusionCoefficientVACF() > 0.0) {
-    std::cout << "Self-diffusion coefficient (from VACF): " << df_->getDiffusionCoefficientVACF() << " Å²/fs" << '\n';
-  }
-  if (df_->getRelaxationTime() > 0.0) {
-    std::cout << "Relaxation time (from VACF): " << df_->getRelaxationTime() << " fs" << '\n';
-    std::cout << "Deborah number: " << df_->getDeborahNumber() << '\n';
-  }
+  const auto config = toEngineConfig(options_, nullptr);
+  return correlation::analysis::CorrelationEngine::validateConfig(config);
 }
 
 std::expected<void, std::string> AppBackend::run_analysis() {
   if (!trajectory_ || trajectory_->getFrameCount() == 0) {
-    std::string err = AppDefaults::MSG_ANALYSIS_ABORTED;
+    std::string const err = AppDefaults::MSG_ANALYSIS_ABORTED;
     std::cerr << err << '\n';
     return std::unexpected(err);
   }
 
   cancel_flag_ = false;
 
-  std::string validation_error = validateOptions();
+  std::string const validation_error = validateOptions();
   if (!validation_error.empty()) {
     return std::unexpected(validation_error);
   }
 
-  try {
-    size_t start_f = 0;
-    setupTrajectorySettings(start_f);
-
-    // Determine which cutoffs to use: explicit overrides or precomputed defaults.
-    const auto &active_cutoffs = !options_.bond_cutoffs.empty() ? options_.bond_cutoffs : trajectory_->getBondCutoffs();
-
-    if (progress_callback_) {
-      progress_callback_(0.0F, "Starting analysis...");
-    }
-
-    // Define progress callbacks
-    // Since TrajectoryAnalyzer no longer does heavy lifting during
-    // initialization, we give the entire progress duration to the
-    // DistributionFunctions::computeMean phase.
-    auto cb_structure = [this](float /*p*/, const std::string &msg) {
-      if (progress_callback_) {
-        progress_callback_(0.0F, msg); // just show message, progress is negligible
-      }
-    };
-
-    auto cb_dist = [this](float progress, const std::string &msg) {
-      if (progress_callback_) {
-        progress_callback_(progress, msg);
-      }
-    };
-
-    // Initialize the TrajectoryAnalyzer, which handles frame-by-frame
-    // structural analysis
-    trajectory_analyzer_ = std::make_unique<correlation::analysis::TrajectoryAnalyzer>(
-        *trajectory_, options_.r_max, active_cutoffs, correlation::analysis::StartFrame{start_f},
-        correlation::analysis::EndFrame{static_cast<size_t>(options_.max_frame)}, true, cb_structure);
-
-    // Prepare settings
-    correlation::analysis::AnalysisSettings settings;
-    settings.r_max = options_.r_max;
-    settings.r_bin_width = options_.r_bin_width;
-    settings.q_max = options_.q_max;
-    settings.q_bin_width = options_.q_bin_width;
-    settings.r_int_max = options_.r_int_max;
-    settings.angle_bin_width = options_.angle_bin_width;
-    settings.dihedral_bin_width = options_.dihedral_bin_width;
-    settings.max_ring_size = options_.max_ring_size;
-    settings.active_calculators = options_.active_calculators;
-    settings.smoothing = options_.smoothing;
-    settings.smoothing_sigma = options_.smoothing_sigma;
-    settings.smoothing_kernel = options_.smoothing_kernel;
-    settings.lef_cutoff = options_.lef_cutoff;
-    settings.lef_sigma = options_.lef_sigma;
-    settings.hyperuniformity_samples = options_.hyper_samples;
-    settings.cancel_flag = &cancel_flag_;
-
-    // Run parallel analysis to compute distribution functions
-    // This accumulates results from all processed frames.
-    df_ = correlation::analysis::DistributionFunctions::computeMean(*trajectory_, *trajectory_analyzer_, start_f,
-                                                                    settings, cb_dist);
-
-    if (df_) {
-      // Trajectory-wide calculators (VACF, VDOS, MSD, etc.)
-      runTrajectoryCalculators(settings);
-
-      // Check for dynamic properties and calculate/set them
-      calculateDynamicProperties();
-    }
-
-  } catch (const std::exception &e) {
-    std::string err = std::string(AppDefaults::MSG_ERROR_ANALYSIS) + e.what();
-    std::cerr << "Analysis Exception: " << e.what() << '\n';
-    return std::unexpected(err);
-  } catch (...) {
-    std::string err = std::string(AppDefaults::MSG_ERROR_ANALYSIS) + "Unknown error.";
-    std::cerr << "Analysis Exception: Unknown error." << '\n';
-    return std::unexpected(err);
+  const auto config = toEngineConfig(options_, &cancel_flag_);
+  auto result = correlation::analysis::CorrelationEngine::runAnalysis(*trajectory_, config, progress_callback_);
+  if (!result) {
+    std::cerr << "Analysis Exception: " << result.error() << '\n';
+    return std::unexpected(result.error());
   }
+
+  df_ = std::move(result.value());
   return {};
 }
 
 std::expected<void, std::string> AppBackend::write_files() {
   if (!df_) {
-    std::string err = AppDefaults::MSG_NO_DATA_TO_WRITE;
+    std::string const err = AppDefaults::MSG_NO_DATA_TO_WRITE;
     std::cerr << err << '\n';
     return std::unexpected(err);
   }
@@ -514,7 +270,7 @@ std::expected<void, std::string> AppBackend::write_files() {
                  options_.smoothing);
     std::cout << "Files written to: " << options_.output_file_base << '\n';
   } catch (const std::exception &e) {
-    std::string err = std::string(AppDefaults::MSG_ERROR_WRITING) + e.what();
+    std::string const err = std::string(AppDefaults::MSG_ERROR_WRITING) + e.what();
     std::cerr << err << '\n';
     return std::unexpected(err);
   }

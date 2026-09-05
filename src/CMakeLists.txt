@@ -165,6 +165,7 @@ add_library(correlation_lib STATIC
     core/Cell.cpp
     analysis/DistributionFunctions.cpp
     analysis/DynamicsAnalyzer.cpp
+    analysis/CorrelationEngine.cpp
     core/NeighborGraph.cpp
     analysis/StructureAnalyzer.cpp
     core/Trajectory.cpp

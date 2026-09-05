@@ -36,6 +36,16 @@ struct RDFParams {
 };
 
 /**
+ * @brief Trajectory-wide dynamic properties computed from time-series correlation functions.
+ */
+struct DynamicProperties {
+  real_t diffusion_coefficient_msd{0.0};  ///< Self-diffusion coefficient from MSD (Å²/fs).
+  real_t diffusion_coefficient_vacf{0.0}; ///< Self-diffusion coefficient from VACF (Å²/fs).
+  real_t relaxation_time{0.0};            ///< Relaxation time from normalized VACF (fs).
+  real_t deborah_number{0.0};             ///< Deborah number.
+};
+
+/**
  * @brief Parameters for X-Ray Diffraction (XRD) pattern calculation.
  */
 struct XRDParams {
@@ -70,7 +80,7 @@ struct AnalysisSettings {
    * @param calc_id The identifier of the calculator (e.g. "RDF").
    * @return True if active or if no active calculators are specified.
    */
-  bool isActive(std::string_view calc_id) const {
+  [[nodiscard]] bool isActive(std::string_view calc_id) const {
     if (active_calculators.empty()) {
       return true; // default: all enabled
     }
@@ -217,52 +227,78 @@ public:
   std::vector<std::string> getAvailableHistograms() const;
 
   /**
+   * @brief Gets the trajectory-wide dynamic properties.
+   * @return Const reference to DynamicProperties.
+   */
+  [[nodiscard]] const DynamicProperties &dynamicProperties() const noexcept { return dynamic_properties_; }
+
+  /**
+   * @brief Gets mutable trajectory-wide dynamic properties.
+   * @return Reference to DynamicProperties.
+   */
+  [[nodiscard]] DynamicProperties &dynamicProperties() noexcept { return dynamic_properties_; }
+
+  /**
+   * @brief Sets the trajectory-wide dynamic properties.
+   * @param props The DynamicProperties struct.
+   */
+  void setDynamicProperties(const DynamicProperties &props) noexcept { dynamic_properties_ = props; }
+
+  /**
    * @brief Gets the self-diffusion coefficient computed from Mean Squared Displacement (MSD).
    * @return The diffusion coefficient in Å²/fs.
    */
-  [[nodiscard]] real_t getDiffusionCoefficientMSD() const noexcept;
+  [[nodiscard]] real_t getDiffusionCoefficientMSD() const noexcept {
+    return dynamic_properties_.diffusion_coefficient_msd;
+  }
 
   /**
    * @brief Sets the self-diffusion coefficient computed from Mean Squared Displacement (MSD).
    * @param diff_coeff The new diffusion coefficient value in Å²/fs.
    */
-  void setDiffusionCoefficientMSD(real_t diff_coeff) noexcept;
+  void setDiffusionCoefficientMSD(real_t diff_coeff) noexcept {
+    dynamic_properties_.diffusion_coefficient_msd = diff_coeff;
+  }
 
   /**
    * @brief Gets the self-diffusion coefficient computed from Velocity Autocorrelation Function (VACF).
    * @return The diffusion coefficient in Å²/fs.
    */
-  [[nodiscard]] real_t getDiffusionCoefficientVACF() const noexcept;
+  [[nodiscard]] real_t getDiffusionCoefficientVACF() const noexcept {
+    return dynamic_properties_.diffusion_coefficient_vacf;
+  }
 
   /**
    * @brief Sets the self-diffusion coefficient computed from Velocity Autocorrelation Function (VACF).
    * @param diff_coeff The new diffusion coefficient value in Å²/fs.
    */
-  void setDiffusionCoefficientVACF(real_t diff_coeff) noexcept;
+  void setDiffusionCoefficientVACF(real_t diff_coeff) noexcept {
+    dynamic_properties_.diffusion_coefficient_vacf = diff_coeff;
+  }
 
   /**
    * @brief Gets the relaxation time computed from normalized VACF.
    * @return The relaxation time in fs.
    */
-  [[nodiscard]] real_t getRelaxationTime() const noexcept;
+  [[nodiscard]] real_t getRelaxationTime() const noexcept { return dynamic_properties_.relaxation_time; }
 
   /**
    * @brief Sets the relaxation time computed from normalized VACF.
    * @param relax_time The new relaxation time value in fs.
    */
-  void setRelaxationTime(real_t relax_time) noexcept;
+  void setRelaxationTime(real_t relax_time) noexcept { dynamic_properties_.relaxation_time = relax_time; }
 
   /**
    * @brief Gets the Deborah number.
    * @return The Deborah number.
    */
-  [[nodiscard]] real_t getDeborahNumber() const noexcept;
+  [[nodiscard]] real_t getDeborahNumber() const noexcept { return dynamic_properties_.deborah_number; }
 
   /**
    * @brief Sets the Deborah number.
    * @param deborah_num The new Deborah number value.
    */
-  void setDeborahNumber(real_t deborah_num) noexcept;
+  void setDeborahNumber(real_t deborah_num) noexcept { dynamic_properties_.deborah_number = deborah_num; }
 
   ///@}
 
@@ -426,10 +462,7 @@ private:
   std::map<std::string, real_t> ashcroft_weights_; ///< Scalar weights for S(Q) calculations.
   mutable std::mutex histogram_mutex_;             ///< Protects concurrent access to histograms_.
 
-  real_t diffusion_coefficient_msd_{0.0};  ///< Self-diffusion coefficient from MSD (Å²/fs).
-  real_t diffusion_coefficient_vacf_{0.0}; ///< Self-diffusion coefficient from VACF (Å²/fs).
-  real_t relaxation_time_{0.0};            ///< Relaxation time (fs).
-  real_t deborah_number_{0.0};             ///< Deborah number.
+  DynamicProperties dynamic_properties_{}; ///< Trajectory-wide dynamic properties.
 };
 
 } // namespace correlation::analysis

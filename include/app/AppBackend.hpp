@@ -9,7 +9,6 @@
 #pragma once
 
 #include "analysis/DistributionFunctions.hpp"
-#include "analysis/TrajectoryAnalyzer.hpp"
 #include "core/Trajectory.hpp"
 #include "math/Smoothing.hpp"
 
@@ -24,11 +23,11 @@ namespace correlation::app {
  * @brief Default values and messages for the application.
  */
 struct AppDefaults {
-  static constexpr real_t R_MAX = 20.0;          ///< Default max radius for RDF (Angstrom).
-  static constexpr real_t R_BIN_WIDTH = 0.02;    ///< Default bin width for RDF (Angstrom).
-  static constexpr real_t Q_MAX = 20.0;          ///< Default max q for S(Q) (Angstrom^-1).
-  static constexpr real_t Q_BIN_WIDTH = 0.02;    ///< Default bin width for S(Q) (Angstrom^-1).
-  static constexpr real_t R_INT_MAX = 10.0;      ///< Default max radius for integration (Angstrom).
+  static constexpr real_t R_MAX = 20.0;           ///< Default max radius for RDF (Angstrom).
+  static constexpr real_t R_BIN_WIDTH = 0.02;     ///< Default bin width for RDF (Angstrom).
+  static constexpr real_t Q_MAX = 20.0;           ///< Default max q for S(Q) (Angstrom^-1).
+  static constexpr real_t Q_BIN_WIDTH = 0.02;     ///< Default bin width for S(Q) (Angstrom^-1).
+  static constexpr real_t R_INT_MAX = 10.0;       ///< Default max radius for integration (Angstrom).
   static constexpr real_t ANGLE_BIN_WIDTH = 0.25; ///< Default bin width for ADF (Degrees).
   static constexpr real_t SMOOTHING_SIGMA = 0.1;  ///< Default Gaussian smoothing sigma.
   static constexpr real_t LEF_CUTOFF = 5.0;       ///< Default cutoff for local entropy.
@@ -320,14 +319,10 @@ public:
 
 private:
   std::string validateOptions() const;
-  void setupTrajectorySettings(size_t &start_f);
-  void runTrajectoryCalculators(const correlation::analysis::AnalysisSettings &settings);
-  void calculateDynamicProperties();
 
   // --- Private Data Members ---
-  std::unique_ptr<correlation::core::Trajectory> trajectory_;                      ///< Loaded trajectory data.
-  std::unique_ptr<correlation::analysis::TrajectoryAnalyzer> trajectory_analyzer_; ///< Analysis engine instance.
-  std::unique_ptr<correlation::analysis::DistributionFunctions> df_;               ///< Combined calculation results.
+  std::unique_ptr<correlation::core::Trajectory> trajectory_;        ///< Loaded trajectory data.
+  std::unique_ptr<correlation::analysis::DistributionFunctions> df_; ///< Combined calculation results.
 
   ProgramOptions options_;                                            ///< Active configuration.
   std::function<void(float, const std::string &)> progress_callback_; ///< Progress notification hook.

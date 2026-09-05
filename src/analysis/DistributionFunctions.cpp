@@ -43,17 +43,11 @@ DistributionFunctions::DistributionFunctions(DistributionFunctions &&other) noex
     : cell_(std::move(other.cell_)), neighbors_ref_(other.neighbors_ref_),
       neighbors_owned_(std::move(other.neighbors_owned_)), current_cutoff_(other.current_cutoff_),
       bond_cutoffs_(std::move(other.bond_cutoffs_)), histograms_(std::move(other.histograms_)),
-      ashcroft_weights_(std::move(other.ashcroft_weights_)),
-      diffusion_coefficient_msd_(other.diffusion_coefficient_msd_),
-      diffusion_coefficient_vacf_(other.diffusion_coefficient_vacf_), relaxation_time_(other.relaxation_time_),
-      deborah_number_(other.deborah_number_) {
+      ashcroft_weights_(std::move(other.ashcroft_weights_)), dynamic_properties_(other.dynamic_properties_) {
 
   other.current_cutoff_ = -1.0;
   other.neighbors_ref_ = nullptr;
-  other.diffusion_coefficient_msd_ = 0.0;
-  other.diffusion_coefficient_vacf_ = 0.0;
-  other.relaxation_time_ = 0.0;
-  other.deborah_number_ = 0.0;
+  other.dynamic_properties_ = {};
 }
 
 // Move Assignment Operator
@@ -66,17 +60,11 @@ DistributionFunctions &DistributionFunctions::operator=(DistributionFunctions &&
     bond_cutoffs_ = std::move(other.bond_cutoffs_);
     histograms_ = std::move(other.histograms_);
     ashcroft_weights_ = std::move(other.ashcroft_weights_);
-    diffusion_coefficient_msd_ = other.diffusion_coefficient_msd_;
-    diffusion_coefficient_vacf_ = other.diffusion_coefficient_vacf_;
-    relaxation_time_ = other.relaxation_time_;
-    deborah_number_ = other.deborah_number_;
+    dynamic_properties_ = other.dynamic_properties_;
 
     other.current_cutoff_ = -1.0;
     other.neighbors_ref_ = nullptr;
-    other.diffusion_coefficient_msd_ = 0.0;
-    other.diffusion_coefficient_vacf_ = 0.0;
-    other.relaxation_time_ = 0.0;
-    other.deborah_number_ = 0.0;
+    other.dynamic_properties_ = {};
   }
   return *this;
 }
@@ -530,25 +518,5 @@ DistributionFunctions::computeMean(correlation::core::Trajectory &trajectory, co
 
   return std::move(final_df);
 }
-
-real_t DistributionFunctions::getDiffusionCoefficientMSD() const noexcept { return diffusion_coefficient_msd_; }
-
-void DistributionFunctions::setDiffusionCoefficientMSD(real_t diff_coeff) noexcept {
-  diffusion_coefficient_msd_ = diff_coeff;
-}
-
-real_t DistributionFunctions::getDiffusionCoefficientVACF() const noexcept { return diffusion_coefficient_vacf_; }
-
-void DistributionFunctions::setDiffusionCoefficientVACF(real_t diff_coeff) noexcept {
-  diffusion_coefficient_vacf_ = diff_coeff;
-}
-
-real_t DistributionFunctions::getRelaxationTime() const noexcept { return relaxation_time_; }
-
-void DistributionFunctions::setRelaxationTime(real_t relax_time) noexcept { relaxation_time_ = relax_time; }
-
-real_t DistributionFunctions::getDeborahNumber() const noexcept { return deborah_number_; }
-
-void DistributionFunctions::setDeborahNumber(real_t deborah_num) noexcept { deborah_number_ = deborah_num; }
 
 } // namespace correlation::analysis
