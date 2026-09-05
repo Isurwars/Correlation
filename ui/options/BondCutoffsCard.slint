@@ -18,6 +18,7 @@ export component BondCutoffsCard inherits FilledCard {
     in property <bool> file_loaded;
     in property <[AtomCount]> atom_counts;
     in-out property <[BondCutoff]> bond_cutoffs;
+    in property <int> bond_cutoffs_reset_trigger: 0;
     callback reset_bond_cutoffs();
 
     pure function get_flat_index(i: int, j: int, N: int) -> int {
@@ -154,6 +155,7 @@ export component BondCutoffsCard inherits FilledCard {
             if (root.file_loaded): Matrix {
                 headers: root.atom_counts;
                 enabled: root.file_loaded;
+                reset_trigger: root.bond_cutoffs_reset_trigger;
 
                 cell_value(r, c) => {
                     let r_idx = min(r, c);

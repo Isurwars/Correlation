@@ -51,6 +51,7 @@ export component OptionsCard inherits FilledCard {
     in-out property <int> material_type: 0;
     in-out property <[BondCutoff]> bond_cutoffs: [];
     in property <[AtomCount]> atom_counts: [];
+    in property <int> bond_cutoffs_reset_trigger: 0;
 
     in property <int> num_frames: 0;
 
@@ -251,6 +252,7 @@ export component OptionsCard inherits FilledCard {
                     file_loaded: root.file_loaded;
                     bond_cutoffs <=> root.bond_cutoffs;
                     atom_counts: root.atom_counts;
+                    bond_cutoffs_reset_trigger: root.bond_cutoffs_reset_trigger;
                     reset_bond_cutoffs => {
                         root.reset_bond_cutoffs();
                     }

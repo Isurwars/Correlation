@@ -11,11 +11,18 @@ import { MaterialTypography } from "../styling/material_typography.slint";
 import { AtomCount } from "../../../Types.slint";
 
 component OffDiagonalCell {
-    in-out property <string> text;
+    in property <int> reset_trigger: 0;
+    in property <string> initial_text;
     in property <bool> enabled: true;
     in property <bool> is_upper: true; // true = Max (j > i), false = Min (i > j)
     in property <bool> has_error: false;
     callback edited(string);
+
+    property <string> current_text: root.initial_text;
+
+    changed reset_trigger => {
+        root.current_text = root.initial_text;
+    }
 
     property <bool> has_focus: input.has_focus;
 
@@ -68,7 +75,7 @@ component OffDiagonalCell {
                 color: root.has_error ? MaterialPalette.error :
                     root.enabled ? MaterialPalette.on_surface :
                     MaterialPalette.on_surface.with_alpha(38%);
-                text <=> root.text;
+                text <=> root.current_text;
                 enabled: root.enabled;
 
                 edited => {
@@ -80,12 +87,21 @@ component OffDiagonalCell {
 }
 
 component DiagonalCell {
-    in-out property <string> max_text;
-    in-out property <string> min_text;
+    in property <int> reset_trigger: 0;
+    in property <string> initial_max;
+    in property <string> initial_min;
     in property <bool> enabled: true;
     in property <bool> has_error: false;
     callback max_edited(string);
     callback min_edited(string);
+
+    property <string> current_max: root.initial_max;
+    property <string> current_min: root.initial_min;
+
+    changed reset_trigger => {
+        root.current_max = root.initial_max;
+        root.current_min = root.initial_min;
+    }
 
     property <bool> max_focused: max_input.has_focus;
     property <bool> min_focused: min_input.has_focus;
@@ -142,7 +158,7 @@ component DiagonalCell {
                         color: root.has_error ? MaterialPalette.error :
                             root.enabled ? MaterialPalette.on_surface :
                             MaterialPalette.on_surface.with_alpha(38%);
-                        text <=> root.max_text;
+                        text <=> root.current_max;
                         enabled: root.enabled;
 
                         edited => {
@@ -191,7 +207,7 @@ component DiagonalCell {
                         color: root.has_error ? MaterialPalette.error :
                             root.enabled ? MaterialPalette.on_surface :
                             MaterialPalette.on_surface.with_alpha(38%);
-                        text <=> root.min_text;
+                        text <=> root.current_min;
                         enabled: root.enabled;
 
                         edited => {
@@ -207,6 +223,7 @@ component DiagonalCell {
 export component Matrix {
     in property <[AtomCount]> headers;
     in property <bool> enabled: true;
+    in property <int> reset_trigger: 0;
 
     // Callbacks to read and write cell data (reading must be pure/side-effect free)
     pure callback cell_value(int, int) -> string;
@@ -282,8 +299,9 @@ export component Matrix {
                     height: root.cell_height;
 
                     if (i == j): DiagonalCell {
-                        max_text: root.diagonal_max_value(i);
-                        min_text: root.diagonal_min_value(i);
+                        reset_trigger: root.reset_trigger;
+                        initial_max: root.diagonal_max_value(i);
+                        initial_min: root.diagonal_min_value(i);
                         enabled: root.enabled;
                         has_error: root.cell_has_error(i, j);
 
@@ -296,7 +314,8 @@ export component Matrix {
                     }
 
                     if (i != j): OffDiagonalCell {
-                        text: root.cell_value(i, j);
+                        reset_trigger: root.reset_trigger;
+                        initial_text: root.cell_value(i, j);
                         enabled: root.enabled;
                         is_upper: j > i;
                         has_error: root.cell_has_error(i, j);

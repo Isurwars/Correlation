@@ -21,6 +21,7 @@
 #include "app/PresetController.hpp"
 #include "app/UpdateChecker.hpp"
 #include "calculators/CalculatorFactory.hpp"
+#include "physics/PhysicalData.hpp"
 
 #include <algorithm>
 #include <cctype>
@@ -152,9 +153,7 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
   window_.on_reset_bond_cutoffs([this]() { setBondCutoffs(); });
 
   // Handle open external URL (e.g. download update from browser)
-  window_.on_open_url([](const slint::SharedString &url) {
-    UpdateChecker::openUrlInBrowser(std::string(url.data()));
-  });
+  window_.on_open_url([](const slint::SharedString &url) { UpdateChecker::openUrlInBrowser(std::string(url.data())); });
 
   // Initial load of settings and preset list
   loadSettings();
@@ -456,18 +455,29 @@ ProgramOptions AppController::handleOptionsfromUI() {
 };
 
 void AppController::setBondCutoffs() {
-  auto recommended = backend_.getRecommendedBondCutoffs();
-  auto elements = backend_.cell()->elements();
+  if (backend_.cell() == nullptr) {
+    return;
+  }
+
+  const auto &elements = backend_.cell()->elements();
   auto slint_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
 
+  auto safeGetRadius = [](const std::string &symbol) -> real_t {
+    try {
+      return physics::getCovalentRadius(symbol);
+    } catch (const std::out_of_range &) {
+      return static_cast<real_t>(1.5);
+    }
+  };
+
   for (size_t i = 0; i < elements.size(); ++i) {
+    const real_t radius_a = safeGetRadius(elements[i].symbol);
     for (size_t j = i; j < elements.size(); ++j) {
-      real_t min_d = 0.0;
-      real_t max_d = 0.0;
-      if (i < recommended.size() && j < recommended[i].size()) {
-        min_d = std::sqrt(recommended[i][j].min_sq);
-        max_d = std::sqrt(recommended[i][j].max_sq);
-      }
+      const real_t radius_b = safeGetRadius(elements[j].symbol);
+      const real_t sum_radii = radius_a + radius_b;
+      const real_t min_d = sum_radii * static_cast<real_t>(0.6);
+      const real_t max_d = sum_radii * static_cast<real_t>(1.3);
+
       slint_cutoffs->push_back({
           .element1 = slint::SharedString(elements[i].symbol),
           .element2 = slint::SharedString(elements[j].symbol),
@@ -476,7 +486,10 @@ void AppController::setBondCutoffs() {
       });
     }
   }
+
   window_.set_bond_cutoffs(slint_cutoffs);
+  window_.set_bond_cutoffs_reset_trigger(window_.get_bond_cutoffs_reset_trigger() + 1);
+  backend_.setBondCutoffs(getBondCutoffs());
 }
 
 correlation::analysis::BondCutoffMatrix AppController::getBondCutoffs() {
@@ -524,7 +537,7 @@ correlation::analysis::BondCutoffMatrix AppController::getBondCutoffs() {
     }
 
     if (idx1 != -1 && idx2 != -1) {
-      correlation::analysis::BondCutoffRange range{
+      const correlation::analysis::BondCutoffRange range{
           .min_sq = min_dist * min_dist,
           .max_sq = max_dist * max_dist,
       };

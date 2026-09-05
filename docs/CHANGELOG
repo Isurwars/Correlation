@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.9.2] - 2026-09-04
+
+### UI / UX & Options
+- **Radial Cutoffs Default Recalculation & Placement**: Fixed the "Reset Defaults" button in the Radial/Bond Cutoffs matrix card (`BondCutoffsCard.slint`, `matrix.slint`). The reset action now recalculates default covalent radii bounds ($r_{\text{min}} = 0.6 \times \sum r_{\text{cov}}$, $r_{\text{max}} = 1.3 \times \sum r_{\text{cov}}$) directly from the structure's elements in `AppController::setBondCutoffs()`, updates backend storage, and dispatches a reset trigger notification across the UI hierarchy to instantly refresh and place all updated values in the matrix cells.
+
+### Machine Learning & Calculators
+- **Total Density of States (TDOS)**: Implemented `TDOSCalculator` and `TDOSParams` for computing per-atom LDOS-based density of states from ML interatomic potential outputs.
+
 ## [3.9.1] - 2026-08-31
 
 ### Quantum Chemistry & Simulation Readers

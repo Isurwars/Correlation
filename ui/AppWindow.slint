@@ -127,6 +127,7 @@ export component AppWindow inherits Window {
     };
     in-out property <AppErrors> app_errors;
     in-out property <[BondCutoff]> bond_cutoffs: [];
+    in-out property <int> bond_cutoffs_reset_trigger: 0;
     in-out property <ExportConfig> export_config: {
         size_preset: 0,
         palette: 0,
@@ -527,6 +528,7 @@ export component AppWindow inherits Window {
                     has_rings_active: root.has_rings_active;
                     bond_cutoffs <=> root.bond_cutoffs;
                     atom_counts: root.atom_counts;
+                    bond_cutoffs_reset_trigger: root.bond_cutoffs_reset_trigger;
                     reset_bond_cutoffs => {
                         root.reset_bond_cutoffs();
                     }
