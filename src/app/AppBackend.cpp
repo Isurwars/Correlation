@@ -520,8 +520,4 @@ std::string AppBackend::write_files() {
   return "";
 }
 
-void AppBackend::analysis_thread_func() {
-  // Implementation of analysis thread if needed, currently inline in
-  // run_analysis or managed by AppController
-}
 } // namespace correlation::app

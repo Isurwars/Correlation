@@ -320,15 +320,6 @@ public:
   ///@}
 
 private:
-  /**
-   * @brief Main function executed by the analysis thread.
-   *
-   * Responsible for orchestrating the computation of distribution functions
-   * and notifying the provided progress callback upon completion or error.
-   * This is typically run via std::async or std::thread.
-   */
-  void analysis_thread_func();
-
   std::string validateOptions() const;
   void setupTrajectorySettings(size_t &start_f);
   void runTrajectoryCalculators(const correlation::analysis::AnalysisSettings &settings);
