@@ -429,6 +429,9 @@ DistributionFunctions::processSingleFrame(correlation::core::Trajectory &traject
     if (!calc->isFrameCalculator()) {
       continue;
     }
+    if (!calc->isConfigured()) {
+      continue;
+    }
     if (calc->getName() == "XRD" || calc->getShortName() == "XRD") {
       continue; // Run XRD after base calculators finish so g_r is available
     }
@@ -441,7 +444,8 @@ DistributionFunctions::processSingleFrame(correlation::core::Trajectory &traject
 
   // Run dependent frame calculators (e.g. XRD) after g_r is computed
   const auto *xrd_calc = ::correlation::calculators::CalculatorFactory::instance().getCalculator("XRD");
-  if (xrd_calc != nullptr && (settings.isActive(xrd_calc->getName()) || settings.isActive(xrd_calc->getShortName()))) {
+  if (xrd_calc != nullptr && xrd_calc->isConfigured() &&
+      (settings.isActive(xrd_calc->getName()) || settings.isActive(xrd_calc->getShortName()))) {
     xrd_calc->calculateFrame(*frame_df, settings);
   }
 

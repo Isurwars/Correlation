@@ -17,8 +17,11 @@ const bool registered = CalculatorFactory::registerTypeSafe<MLIPCalculator>("MLI
 
 void MLIPCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                     const correlation::analysis::AnalysisSettings & /*settings*/) const {
+  if (model_ == nullptr) {
+    return;
+  }
   const auto &cell = dists.cell();
-  auto output = calculate(cell);
+  auto output = calculate(cell, model_);
 
   // Store metadata or per-atom property distribution into DistributionFunctions if applicable
   (void)output;

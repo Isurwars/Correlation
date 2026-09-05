@@ -66,6 +66,12 @@ public:
   virtual bool isTrajectoryCalculator() const = 0;
 
   /**
+   * @brief Check if the calculator has all required models, parameters, and resources configured to execute.
+   * @return True if configured and runnable; false if prerequisites (e.g. ML model weights) are missing.
+   */
+  [[nodiscard]] virtual bool isConfigured() const { return true; }
+
+  /**
    * @brief Calculate per-frame properties.
    *        Called concurrently on different DistributionFunctions objects.
    *        Must be thread-safe (const).

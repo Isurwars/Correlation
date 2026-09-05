@@ -10,7 +10,6 @@
 #include "calculators/CalculatorFactory.hpp"
 
 #include <map>
-#include <span>
 #include <string>
 #include <vector>
 
@@ -85,8 +84,7 @@ void accumulateFrameLdos(const correlation::core::Cell &cell, const std::vector<
 /**
  * @brief Finalizes accumulated double-precision sums into the target Histogram.
  */
-void finalizeHistogram(correlation::analysis::Histogram &hist, double frame_scale,
-                       const std::vector<double> &acc_total,
+void finalizeHistogram(correlation::analysis::Histogram &hist, double frame_scale, const std::vector<double> &acc_total,
                        const std::map<std::string, std::vector<double>> &acc_species) {
   const size_t num_bins = hist.bins.size();
   auto &total_vec = hist.partials["total"];
@@ -108,8 +106,12 @@ void finalizeHistogram(correlation::analysis::Histogram &hist, double frame_scal
 
 void TDOSCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                     const correlation::analysis::AnalysisSettings & /*settings*/) const {
+  if (model_ == nullptr) {
+    return;
+  }
   const auto &cell = dists.cell();
-  const TDOSParams params;
+  TDOSParams params;
+  params.model = model_;
   auto hist = calculate(cell, params);
   if (!hist.bins.empty()) {
     dists.addHistogram("tdos", std::move(hist));
@@ -119,7 +121,11 @@ void TDOSCalculator::calculateFrame(correlation::analysis::DistributionFunctions
 void TDOSCalculator::calculateTrajectory(correlation::analysis::DistributionFunctions &dists,
                                          const correlation::core::Trajectory &traj,
                                          const correlation::analysis::AnalysisSettings &settings) const {
-  const TDOSParams params;
+  if (model_ == nullptr) {
+    return;
+  }
+  TDOSParams params;
+  params.model = model_;
   auto hist = calculateTrajectory(traj, params, settings.cancel_flag);
   if (!hist.bins.empty()) {
     dists.addHistogram("tdos", std::move(hist));

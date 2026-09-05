@@ -34,6 +34,7 @@ struct TDOSParams {
 class TDOSCalculator : public BaseCalculator {
 public:
   TDOSCalculator() = default;
+  explicit TDOSCalculator(const correlation::mlip::MLIPInterface *model) noexcept : model_(model) {}
 
   [[nodiscard]] std::string getName() const override { return "Total Density of States (TDOS)"; }
   [[nodiscard]] std::string getShortName() const override { return "TDOS"; }
@@ -44,6 +45,24 @@ public:
 
   [[nodiscard]] bool isFrameCalculator() const override { return true; }
   [[nodiscard]] bool isTrajectoryCalculator() const override { return true; }
+
+  /**
+   * @brief Checks if a valid MLIP evaluation model is attached.
+   * @return True if model is non-null; false otherwise.
+   */
+  [[nodiscard]] bool isConfigured() const override { return model_ != nullptr; }
+
+  /**
+   * @brief Sets or updates the attached MLIP model engine.
+   * @param model Pointer to the MLIPInterface engine.
+   */
+  void setModel(const correlation::mlip::MLIPInterface *model) noexcept { model_ = model; }
+
+  /**
+   * @brief Gets the attached MLIP model engine.
+   * @return Pointer to the MLIPInterface engine, or nullptr if unset.
+   */
+  [[nodiscard]] const correlation::mlip::MLIPInterface *getModel() const noexcept { return model_; }
 
   /**
    * @brief Calculates per-frame TDOS and inserts into DistributionFunctions.
@@ -82,6 +101,9 @@ public:
   [[nodiscard]] static correlation::analysis::Histogram
   calculateTrajectory(const correlation::core::Trajectory &traj, const TDOSParams &params = {},
                       const std::atomic<bool> *cancel_flag = nullptr);
+
+private:
+  const correlation::mlip::MLIPInterface *model_{nullptr};
 };
 
 } // namespace correlation::calculators

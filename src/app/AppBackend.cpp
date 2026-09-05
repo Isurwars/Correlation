@@ -331,7 +331,7 @@ void AppBackend::runTrajectoryCalculators(const correlation::analysis::AnalysisS
   bool need_velocities = false;
   for (const auto &calc : factory_calcs) {
     bool const is_active = settings.isActive(calc->getName()) || settings.isActive(calc->getShortName());
-    if (calc->isTrajectoryCalculator() && is_active) {
+    if (calc->isTrajectoryCalculator() && calc->isConfigured() && is_active) {
       if (calc->getName() == "VACF" || calc->getShortName() == "VACF" || calc->getName() == "vDoS" ||
           calc->getShortName() == "vDoS") {
         need_velocities = true;
@@ -348,7 +348,7 @@ void AppBackend::runTrajectoryCalculators(const correlation::analysis::AnalysisS
   }
 
   for (const auto &calc : factory_calcs) {
-    if (calc->isTrajectoryCalculator() &&
+    if (calc->isTrajectoryCalculator() && calc->isConfigured() &&
         (settings.isActive(calc->getName()) || settings.isActive(calc->getShortName()))) {
       calc->calculateTrajectory(*df_, *trajectory_, settings);
     }

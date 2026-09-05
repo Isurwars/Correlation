@@ -42,6 +42,7 @@ option(BUILD_WITH_HDF5 "Build with HDF5 support" OFF)
 option(BUILD_WITH_ARROW "Build with Arrow/Parquet support" OFF)
 option(BUILD_FUZZ_TESTS "Build libFuzzer fuzz testing targets (requires Clang)" OFF)
 option(USE_SINGLE_PRECISION "Compile the core using single-precision floats instead of doubles" ON)
+option(BUILD_PYTHON_BINDINGS "Build pybind11 bindings for Correlation" OFF)
 option(ENABLE_FIXUP_BUNDLE "Enable BundleUtilities fixup_bundle on macOS for standalone binaries" ON)
 
 if(USE_SINGLE_PRECISION)

@@ -352,7 +352,6 @@ endif()
 #------------------------------------------------------------------
 # Python Bindings
 #------------------------------------------------------------------
-option(BUILD_PYTHON_BINDINGS "Build pybind11 bindings for Correlation" OFF)
 if(BUILD_PYTHON_BINDINGS)
     add_subdirectory(bindings)
 endif()

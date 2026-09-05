@@ -23,6 +23,7 @@ namespace correlation::calculators {
 class MLIPCalculator : public BaseCalculator {
 public:
   MLIPCalculator() = default;
+  explicit MLIPCalculator(const correlation::mlip::MLIPInterface *model) noexcept : model_(model) {}
 
   [[nodiscard]] std::string getName() const override { return "ML Interatomic Potential (ORB-v3)"; }
   [[nodiscard]] std::string getShortName() const override { return "MLIP"; }
@@ -33,6 +34,24 @@ public:
 
   [[nodiscard]] bool isFrameCalculator() const override { return true; }
   [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
+
+  /**
+   * @brief Checks if a valid MLIP evaluation model is attached.
+   * @return True if model is non-null; false otherwise.
+   */
+  [[nodiscard]] bool isConfigured() const override { return model_ != nullptr; }
+
+  /**
+   * @brief Sets or updates the attached MLIP model engine.
+   * @param model Pointer to the MLIPInterface engine.
+   */
+  void setModel(const correlation::mlip::MLIPInterface *model) noexcept { model_ = model; }
+
+  /**
+   * @brief Gets the attached MLIP model engine.
+   * @return Pointer to the MLIPInterface engine, or nullptr if unset.
+   */
+  [[nodiscard]] const correlation::mlip::MLIPInterface *getModel() const noexcept { return model_; }
 
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;
@@ -45,6 +64,9 @@ public:
    */
   static correlation::mlip::MLIPOutput calculate(const correlation::core::Cell &cell,
                                                  const correlation::mlip::MLIPInterface *model = nullptr);
+
+private:
+  const correlation::mlip::MLIPInterface *model_{nullptr};
 };
 
 } // namespace correlation::calculators

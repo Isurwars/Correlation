@@ -231,6 +231,10 @@ void init_mlip(py::module_ &mod) {
   py::class_<TDOSCalculator, BaseCalculator>(mod, "TDOSCalculator",
                                              "Calculator for MLIP Total Density of States (TDOS).")
       .def(py::init<>())
+      .def(py::init<const MLIPInterface *>(), py::arg("model") = nullptr,
+           "Construct TDOSCalculator with an optional MLIP model engine.")
+      .def("set_model", &TDOSCalculator::setModel, py::arg("model"), "Set or update the MLIP model engine.")
+      .def("get_model", &TDOSCalculator::getModel, "Get pointer to attached MLIP model engine.")
       .def_static(
           "calculate",
           [](const correlation::core::Cell &cell, const TDOSParams &params) {

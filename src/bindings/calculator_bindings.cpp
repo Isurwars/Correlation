@@ -40,6 +40,7 @@ public:
   std::string getDescription() const override { PYBIND11_OVERRIDE_PURE(std::string, BaseCalculator, getDescription); }
   bool isFrameCalculator() const override { PYBIND11_OVERRIDE_PURE(bool, BaseCalculator, isFrameCalculator); }
   bool isTrajectoryCalculator() const override { PYBIND11_OVERRIDE_PURE(bool, BaseCalculator, isTrajectoryCalculator); }
+  bool isConfigured() const override { PYBIND11_OVERRIDE(bool, BaseCalculator, isConfigured); }
   void calculateFrame(DistributionFunctions &dists, const AnalysisSettings &settings) const override {
     PYBIND11_OVERRIDE(void, BaseCalculator, calculateFrame, dists, settings);
   }
@@ -64,7 +65,9 @@ void init_calculators(py::module_ &mod) {
       .def("get_description", &BaseCalculator::getDescription, "Human-readable description of the calculator.")
       .def("is_frame_calculator", &BaseCalculator::isFrameCalculator, "True if this calculator operates per-frame.")
       .def("is_trajectory_calculator", &BaseCalculator::isTrajectoryCalculator,
-           "True if this calculator operates over the full trajectory.");
+           "True if this calculator operates over the full trajectory.")
+      .def("is_configured", &BaseCalculator::isConfigured,
+           "True if the calculator has all required dependencies and models configured to execute.");
 
   // ------------------------------------------------------------------
   // CalculatorFactory access — module-level free functions
