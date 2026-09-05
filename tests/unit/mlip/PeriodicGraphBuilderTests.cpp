@@ -160,21 +160,4 @@ TEST(PeriodicGraphBuilderTests, GaussianRBFExpansion) {
   EXPECT_LT(rbf[2], static_cast<real_t>(1.0));
 }
 
-TEST(TorchGNNModelTests, InterfaceAndAccessors) {
-  TorchGNNModel model("non_existent_model.pt", "cpu", 6.0);
-
-  EXPECT_EQ(model.cutoff(), static_cast<real_t>(6.0));
-  model.setCutoff(4.5);
-  EXPECT_EQ(model.cutoff(), static_cast<real_t>(4.5));
-  EXPECT_TRUE(model.getModelName().contains("non_existent_model.pt"));
-
-#ifndef CORRELATION_HAS_LIBTORCH
-  EXPECT_FALSE(model.isLoaded());
-  correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
-  cell.addAtom("Si", {0.0, 0.0, 0.0});
-  auto output = model.evaluate(cell);
-  EXPECT_EQ(output.forces.size(), 1U);
-#endif
-}
-
 } // namespace correlation::mlip

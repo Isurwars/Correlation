@@ -62,6 +62,7 @@ add_executable(correlation_unit_tests
     unit/calculators/MLIPCalculatorTests.cpp
     unit/calculators/TDOSCalculatorTests.cpp
     unit/mlip/PeriodicGraphBuilderTests.cpp
+    unit/mlip/TorchGNNModelTests.cpp
     unit/calculators/GPUSteinhardtCalculatorTests.cpp
     unit/calculators/GPUDistanceCalculatorTests.cpp
     unit/calculators/GPUSQCalculatorTests.cpp
@@ -128,6 +129,8 @@ add_executable(correlation_functional_tests
     functional/analysis/StructureAnalyzerTests.cpp
     functional/analysis/TrajectoryAnalyzerTests.cpp
     functional/analysis/DynamicsAnalyzerTests.cpp
+    functional/app/AppBackendIntegrationTests.cpp
+    ../src/app/AppBackend.cpp
 )
 
 target_link_libraries(correlation_functional_tests PRIVATE
@@ -135,11 +138,12 @@ target_link_libraries(correlation_functional_tests PRIVATE
     readers_obj
     writers_obj
     calculators_obj
+    mlip_obj
     GTest::gtest
     GTest::gmock
     GTest::gtest_main
 )
-add_dependencies(correlation_functional_tests readers_obj writers_obj calculators_obj)
+add_dependencies(correlation_functional_tests readers_obj writers_obj calculators_obj mlip_obj)
 
 #-----------------------------------------------------------
 # 2b. CLI End-to-End Tests (subprocess-based)

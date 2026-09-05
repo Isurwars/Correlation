@@ -84,20 +84,26 @@ MLIPOutput TorchGNNModel::evaluate(const correlation::core::Cell &cell) const {
   // 2. Select tensor precision based on real_t
   const torch::ScalarType tensor_dtype = (sizeof(real_t) == sizeof(double)) ? torch::kFloat64 : torch::kFloat32;
 
-  // 3. Construct input tensors (zero-copy from flat buffers into torch tensors)
+  // 3. Construct input tensors (zero-copy initial mapping cloned to guarantee immutability & memory safety)
+  // Safety contract: torch::from_blob requires non-const void* because LibTorch's C++ API
+  // does not provide a const overload. We clone the tensors immediately into target device memory,
+  // guaranteeing the source PeriodicGraph buffers remain strictly immutable and physically isolated.
   torch::Tensor pos = torch::from_blob(const_cast<real_t *>(graph.positions_flat.data()),
                                        {static_cast<int64_t>(number_atoms), 3}, tensor_dtype)
-                          .to(impl_->device);
+                          .to(impl_->device)
+                          .clone();
 
   torch::Tensor atomic_numbers = torch::from_blob(const_cast<int64_t *>(graph.atomic_numbers.data()),
                                                   {static_cast<int64_t>(number_atoms)}, torch::kInt64)
-                                     .to(impl_->device);
+                                     .to(impl_->device)
+                                     .clone();
 
   torch::Tensor edge_index;
   if (E > 0) {
     edge_index = torch::from_blob(const_cast<int64_t *>(graph.edge_index_flat.data()), {2, static_cast<int64_t>(E)},
                                   torch::kInt64)
-                     .to(impl_->device);
+                     .to(impl_->device)
+                     .clone();
   } else {
     edge_index = torch::empty({2, 0}, torch::TensorOptions().dtype(torch::kInt64).device(impl_->device));
   }
@@ -106,13 +112,14 @@ MLIPOutput TorchGNNModel::evaluate(const correlation::core::Cell &cell) const {
   if (E > 0) {
     edge_shift = torch::from_blob(const_cast<real_t *>(graph.edge_shifts_flat.data()), {static_cast<int64_t>(E), 3},
                                   tensor_dtype)
-                     .to(impl_->device);
+                     .to(impl_->device)
+                     .clone();
   } else {
     edge_shift = torch::empty({0, 3}, torch::TensorOptions().dtype(tensor_dtype).device(impl_->device));
   }
 
   torch::Tensor cell_t =
-      torch::from_blob(const_cast<real_t *>(graph.cell_flat.data()), {3, 3}, tensor_dtype).to(impl_->device);
+      torch::from_blob(const_cast<real_t *>(graph.cell_flat.data()), {3, 3}, tensor_dtype).to(impl_->device).clone();
 
   // 4. Run forward pass
   std::vector<torch::jit::IValue> inputs;
