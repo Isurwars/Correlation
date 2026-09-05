@@ -96,7 +96,7 @@ public:
    * @brief Gets the lattice parameters (a, b, c, alpha, beta, gamma).
    * @return Array of 6 real_t containing the parameters.
    */
-  [[nodiscard]] const std::array<real_t, 6> &lattice_parameters() const { return lattice_parameters_; }
+  [[nodiscard]] const std::array<real_t, 6> &lattice_parameters() const noexcept { return lattice_parameters_; }
 
   void setLatticeParameters(const std::array<real_t, 6> &params);
 
@@ -139,7 +139,7 @@ public:
    * @brief Gets the list of unique chemical elements in the cell.
    * @return Constant reference to the vector of elements.
    */
-  [[nodiscard]] const std::vector<Element> &elements() const { return elements_; }
+  [[nodiscard]] const std::vector<Element> &elements() const noexcept { return elements_; }
 
   /**
    * @brief Gets the total number of atoms in the cell.
@@ -198,13 +198,13 @@ public:
    * @brief Sets the energy of the cell frame.
    * @param energy The energy value.
    */
-  void setEnergy(real_t energy) { energy_ = energy; }
+  void setEnergy(real_t energy) noexcept { energy_ = energy; }
 
   /**
    * @brief Gets the energy of the cell frame.
    * @return The energy value.
    */
-  [[nodiscard]] real_t getEnergy() const { return energy_; }
+  [[nodiscard]] real_t getEnergy() const noexcept { return energy_; }
 
   /**
    * @brief Internal helper to update lattice vectors and recompute volume/inverse.

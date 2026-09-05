@@ -55,6 +55,6 @@ std::vector<bool> NeighborGraph::getDenseAdjacencyMatrix() const {
   return matrix;
 }
 
-size_t NeighborGraph::nodeCount() const { return adj_list_.size(); }
+size_t NeighborGraph::nodeCount() const noexcept { return adj_list_.size(); }
 
 } // namespace correlation::core

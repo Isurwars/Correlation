@@ -104,7 +104,7 @@ public:
   [[nodiscard]] std::vector<bool> getDenseAdjacencyMatrix() const;
 
   /** @return Total number of nodes in the graph. */
-  [[nodiscard]] size_t nodeCount() const;
+  [[nodiscard]] size_t nodeCount() const noexcept;
 
 private:
   std::vector<std::vector<Neighbor>> adj_list_; ///< Internal adjacency list.

@@ -48,7 +48,7 @@ const std::vector<Cell> &Trajectory::getFrames() const {
   return frames_;
 }
 
-size_t Trajectory::getFrameCount() const {
+size_t Trajectory::getFrameCount() const noexcept {
   if (mapped_file_) {
     return frame_offsets_.size() - 1;
   }

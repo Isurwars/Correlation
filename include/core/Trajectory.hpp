@@ -80,7 +80,7 @@ public:
    * @brief Gets the total number of frames in the trajectory.
    * @return The number of frames.
    */
-  [[nodiscard]] size_t getFrameCount() const;
+  [[nodiscard]] size_t getFrameCount() const noexcept;
 
   /**
    * @brief Gets a constant reference to the first frame of the trajectory.
@@ -101,13 +101,13 @@ public:
    * @brief Gets the time step between frames.
    * @return The time step in simulation units.
    */
-  [[nodiscard]] real_t getTimeStep() const { return time_step_; }
+  [[nodiscard]] real_t getTimeStep() const noexcept { return time_step_; }
 
   /**
    * @brief Sets the simulation time step.
    * @param step Time step in femtoseconds.
    */
-  void setTimeStep(real_t step) { time_step_ = step; }
+  void setTimeStep(real_t step) noexcept { time_step_ = step; }
 
   /**
    * @brief Gets the bond cutoff range for two given element types.
@@ -181,19 +181,19 @@ public:
    * @brief Gets the matrix of bond cutoff ranges for element pairs.
    * @return The bond cutoff matrix.
    */
-  [[nodiscard]] const correlation::analysis::BondCutoffMatrix &getBondCutoffs() const { return bond_cutoffs_; }
+  [[nodiscard]] const correlation::analysis::BondCutoffMatrix &getBondCutoffs() const noexcept { return bond_cutoffs_; }
 
   /**
    * @brief Backward-compatible alias returning the bond cutoff matrix.
    * @return The bond cutoff matrix.
    */
-  [[nodiscard]] const correlation::analysis::BondCutoffMatrix &getBondCutoffsSQ() const { return bond_cutoffs_; }
+  [[nodiscard]] const correlation::analysis::BondCutoffMatrix &getBondCutoffsSQ() const noexcept { return bond_cutoffs_; }
 
   /**
    * @brief Returns the number of frames removed during deduplication.
    * @return Count of duplicate frames found and removed.
    */
-  [[nodiscard]] size_t getRemovedFrameCount() const { return removed_frames_count_; }
+  [[nodiscard]] size_t getRemovedFrameCount() const noexcept { return removed_frames_count_; }
 
   ///@}
 
