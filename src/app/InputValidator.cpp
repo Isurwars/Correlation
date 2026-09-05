@@ -39,7 +39,7 @@ bool is_positive_float(const std::string &str, float &val) {
     }
     val = parsed_val;
     return true;
-  } catch (...) {
+  } catch (const std::exception &) {
     return false;
   }
 }
@@ -53,7 +53,7 @@ bool is_non_negative_float(const std::string &str, float &val) {
     }
     val = parsed_val;
     return true;
-  } catch (...) {
+  } catch (const std::exception &) {
     return false;
   }
 }
@@ -67,7 +67,7 @@ bool is_positive_int(const std::string &str, int &val) {
     }
     val = parsed_val;
     return true;
-  } catch (...) {
+  } catch (const std::exception &) {
     return false;
   }
 }

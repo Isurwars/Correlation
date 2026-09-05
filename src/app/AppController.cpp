@@ -424,7 +424,7 @@ ProgramOptions AppController::handleOptionsfromUI() {
     } else {
       opt.min_frame = std::max(0, std::stoi(min_s) - 1); // UI is 1-based
     }
-  } catch (...) {
+  } catch (const std::exception &) {
     opt.min_frame = 0;
   }
 
@@ -442,7 +442,7 @@ ProgramOptions AppController::handleOptionsfromUI() {
     } else {
       opt.max_frame = std::stoi(max_s);
     }
-  } catch (...) {
+  } catch (const std::exception &) {
     opt.max_frame = -1;
   }
 
@@ -516,12 +516,12 @@ correlation::analysis::BondCutoffMatrix AppController::getBondCutoffs() {
     real_t max_dist = 0.0;
     try {
       min_dist = static_cast<real_t>(std::stod(item.min_distance.data()));
-    } catch (...) {
+    } catch (const std::exception &) {
       min_dist = 0.0;
     }
     try {
       max_dist = static_cast<real_t>(std::stod(item.max_distance.data()));
-    } catch (...) {
+    } catch (const std::exception &) {
       max_dist = 0.0;
     }
 

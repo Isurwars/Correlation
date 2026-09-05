@@ -171,7 +171,7 @@ real_t parseDoubleValue(const std::string &json, const std::string &key, real_t 
   }
   try {
     return std::stod(json.substr(start, end - start));
-  } catch (...) {
+  } catch (const std::exception &) {
     return fallback;
   }
 }
@@ -195,7 +195,7 @@ int parseIntValue(const std::string &json, const std::string &key, int fallback)
   }
   try {
     return std::stoi(json.substr(start, end - start));
-  } catch (...) {
+  } catch (const std::exception &) {
     return fallback;
   }
 }
