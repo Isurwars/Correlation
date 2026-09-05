@@ -400,3 +400,110 @@ TEST_F(FileReaderTests, ReadExtensionlessVaspTrajectory) {
   EXPECT_EQ(file_1.atomCount(), 2);
   EXPECT_NEAR(file_1.lattice_parameters()[0], 5.43, 1e-6);
 }
+
+TEST_F(FileReaderTests, DetermineFileTypeMace) {
+  using correlation::readers::determineFileType;
+  using correlation::readers::FileType;
+
+  EXPECT_EQ(determineFileType("trajectory.mace"), FileType::Mace);
+  EXPECT_EQ(determineFileType("output.extxyz"), FileType::Mace);
+  EXPECT_EQ(determineFileType("/path/to/trajectory.MACE"), FileType::Mace);
+  EXPECT_EQ(determineFileType("relative/path/output.EXTXYZ"), FileType::Mace);
+}
+
+TEST_F(FileReaderTests, ReadMaceThroughFileReader) {
+  using correlation::readers::FileType;
+  using correlation::readers::readStructure;
+
+  const std::string mace_content =
+      "2\n"
+      "Lattice=\"6.0 0.0 0.0 0.0 6.0 0.0 0.0 0.0 6.0\" Properties=species:S:1:pos:R:3:mace_forces:R:3 "
+      "mace_energy=-33.5\n"
+      "Si 0.0 0.0 0.0 0.0 0.0 0.0\n"
+      "Si 1.5 1.5 1.5 0.0 0.0 0.0\n";
+
+  const std::filesystem::path temp_file = std::filesystem::temp_directory_path() / "filereader_test.mace";
+  {
+    std::ofstream ofs(temp_file);
+    ofs << mace_content;
+  }
+
+  correlation::core::Cell cell = readStructure(temp_file.string(), FileType::Mace);
+  EXPECT_EQ(cell.atomCount(), 2);
+  EXPECT_NEAR(cell.getEnergy(), -33.5, 1e-4);
+  EXPECT_NEAR(cell.lattice_parameters()[0], 6.0, 1e-4);
+
+  std::error_code err;
+  std::filesystem::remove(temp_file, err);
+}
+
+TEST_F(FileReaderTests, DetermineFileTypeChgnet) {
+  using correlation::readers::determineFileType;
+  using correlation::readers::FileType;
+
+  EXPECT_EQ(determineFileType("trajectory.chgnet"), FileType::Chgnet);
+  EXPECT_EQ(determineFileType("/path/to/trajectory.CHGNET"), FileType::Chgnet);
+}
+
+TEST_F(FileReaderTests, ReadChgnetThroughFileReader) {
+  using correlation::readers::FileType;
+  using correlation::readers::readStructure;
+
+  const std::string chgnet_content =
+      "2\n"
+      "Lattice=\"4.0 0.0 0.0 0.0 4.0 0.0 0.0 0.0 4.0\" Properties=species:S:1:pos:R:3:chgnet_forces:R:3 "
+      "chgnet_energy=-18.75\n"
+      "Fe 0.0 0.0 0.0 0.0 0.0 0.0\n"
+      "O 1.0 1.0 1.0 0.0 0.0 0.0\n";
+
+  const std::filesystem::path temp_file = std::filesystem::temp_directory_path() / "filereader_test.chgnet";
+  {
+    std::ofstream ofs(temp_file);
+    ofs << chgnet_content;
+  }
+
+  correlation::core::Cell cell = readStructure(temp_file.string(), FileType::Chgnet);
+  EXPECT_EQ(cell.atomCount(), 2);
+  EXPECT_NEAR(cell.getEnergy(), -18.75, 1e-4);
+  EXPECT_NEAR(cell.lattice_parameters()[0], 4.0, 1e-4);
+
+  std::error_code err;
+  std::filesystem::remove(temp_file, err);
+}
+
+TEST_F(FileReaderTests, DetermineFileTypeGap) {
+  using correlation::readers::determineFileType;
+  using correlation::readers::FileType;
+
+  EXPECT_EQ(determineFileType("trajectory.gap"), FileType::Gap);
+  EXPECT_EQ(determineFileType("/path/to/trajectory.GAP"), FileType::Gap);
+  EXPECT_EQ(determineFileType("trajectory.quip"), FileType::Gap);
+  EXPECT_EQ(determineFileType("/path/to/trajectory.QUIP"), FileType::Gap);
+}
+
+TEST_F(FileReaderTests, ReadGapThroughFileReader) {
+  using correlation::readers::FileType;
+  using correlation::readers::readStructure;
+
+  const std::string gap_content =
+      "2\n"
+      "Lattice=\"4.5 0.0 0.0 0.0 4.5 0.0 0.0 0.0 4.5\" Properties=species:S:1:pos:R:3:gap_forces:R:3 "
+      "gap_energy=-22.5\n"
+      "C 0.0 0.0 0.0 0.0 0.0 0.0\n"
+      "C 1.2 1.2 1.2 0.0 0.0 0.0\n";
+
+  const std::filesystem::path temp_file = std::filesystem::temp_directory_path() / "filereader_test.gap";
+  {
+    std::ofstream ofs(temp_file);
+    ofs << gap_content;
+  }
+
+  correlation::core::Cell cell = readStructure(temp_file.string(), FileType::Gap);
+  EXPECT_EQ(cell.atomCount(), 2);
+  EXPECT_NEAR(cell.getEnergy(), -22.5, 1e-4);
+  EXPECT_NEAR(cell.lattice_parameters()[0], 4.5, 1e-4);
+
+  std::error_code err;
+  std::filesystem::remove(temp_file, err);
+}
+

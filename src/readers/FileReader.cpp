@@ -16,60 +16,50 @@
 
 namespace correlation::readers {
 
-FileType determineFileType(const std::string &filename) {
-  std::string ext = std::filesystem::path(filename).extension().string();
-  std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+namespace {
 
-  if (ext == ".car") {
-    return FileType::Car;
-  }
-  if (ext == ".cell") {
-    return FileType::Cell;
-  }
-  if (ext == ".cif") {
-    return FileType::Cif;
-  }
-  if (ext == ".arc") {
-    return FileType::Arc;
-  }
-  if (ext == ".dump" || ext == ".lammpstrj") {
-    return FileType::LammpsDump;
-  }
-  if (ext == ".dat") {
-    return FileType::OnetepDat;
-  }
-  if (ext == ".md") {
-    return FileType::CastepMd;
-  }
-  if (ext == ".outmol") {
-    return FileType::Outmol;
-  }
-  if (ext == ".poscar" || ext == ".contcar" || ext == ".vasp") {
+FileType getExtensionlessVaspType(const std::filesystem::path &filepath) {
+  std::string basename = filepath.filename().string();
+  std::ranges::transform(basename, basename.begin(), ::tolower);
+  if (basename == "poscar" || basename == "contcar") {
     return FileType::Vasp;
   }
-  if (ext == ".xdatcar") {
+  if (basename == "xdatcar") {
     return FileType::Xdatcar;
   }
-  if (ext == ".gro") {
-    return FileType::Gromacs;
-  }
-  if (ext == ".pdb" || ext == ".ent") {
-    return FileType::Pdb;
-  }
-  if (ext == ".xyz" || ext == ".exyz") {
-    return FileType::Xyz;
+  return FileType::Unknown;
+}
+
+const std::unordered_map<std::string, FileType> &getExtensionTypeMap() {
+  static const std::unordered_map<std::string, FileType> k_extension_map = {
+      {".car", FileType::Car},           {".cell", FileType::Cell},        {".cif", FileType::Cif},
+      {".arc", FileType::Arc},           {".dump", FileType::LammpsDump},  {".lammpstrj", FileType::LammpsDump},
+      {".dat", FileType::OnetepDat},     {".md", FileType::CastepMd},      {".outmol", FileType::Outmol},
+      {".poscar", FileType::Vasp},       {".contcar", FileType::Vasp},     {".vasp", FileType::Vasp},
+      {".xdatcar", FileType::Xdatcar},   {".gro", FileType::Gromacs},      {".pdb", FileType::Pdb},
+      {".ent", FileType::Pdb},           {".xyz", FileType::Xyz},          {".exyz", FileType::Xyz},
+      {".mace", FileType::Mace},         {".extxyz", FileType::Mace},      {".chgnet", FileType::Chgnet},
+      {".gap", FileType::Gap},           {".quip", FileType::Gap},
+  };
+  return k_extension_map;
+}
+
+} // namespace
+
+FileType determineFileType(const std::string &filename) {
+  const std::filesystem::path filepath(filename);
+  std::string ext = filepath.extension().string();
+  std::ranges::transform(ext, ext.begin(), ::tolower);
+
+  const auto &map = getExtensionTypeMap();
+  const auto iter = map.find(ext);
+  if (iter != map.end()) {
+    return iter->second;
   }
 
   // Check basename for extensionless VASP files (POSCAR, CONTCAR, XDATCAR)
   if (ext.empty() || ext == ".") {
-    std::string basename = std::filesystem::path(filename).filename().string();
-    std::transform(basename.begin(), basename.end(), basename.begin(), ::tolower);
-    if (basename == "poscar" || basename == "contcar") {
-      return FileType::Vasp;
-    }
-    if (basename == "xdatcar") {
-      return FileType::Xdatcar;
-    }
+    return getExtensionlessVaspType(filepath);
   }
 
   return FileType::Unknown;
@@ -99,7 +89,7 @@ BaseReader *findReaderForFile(const std::string &filename) {
 
   // Extensionless files: try basename (handles POSCAR, CONTCAR, XDATCAR)
   std::string basename = std::filesystem::path(filename).filename().string();
-  std::transform(basename.begin(), basename.end(), basename.begin(), ::tolower);
+  std::ranges::transform(basename, basename.begin(), ::tolower);
 
   if (basename == "poscar" || basename == "contcar") {
     return ReaderFactory::instance().getReaderForExtension(".poscar");
@@ -139,6 +129,12 @@ BaseReader *findReaderForType(FileType type) {
     return ReaderFactory::instance().getReaderForExtension(".pdb");
   case FileType::Xyz:
     return ReaderFactory::instance().getReaderForExtension(".xyz");
+  case FileType::Mace:
+    return ReaderFactory::instance().getReaderForExtension(".mace");
+  case FileType::Chgnet:
+    return ReaderFactory::instance().getReaderForExtension(".chgnet");
+  case FileType::Gap:
+    return ReaderFactory::instance().getReaderForExtension(".gap");
   default:
     return nullptr;
   }

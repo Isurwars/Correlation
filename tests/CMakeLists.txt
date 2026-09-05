@@ -23,6 +23,9 @@ add_executable(correlation_unit_tests
     unit/readers/VaspReaderTests.cpp
     unit/readers/XdatcarReaderTests.cpp
     unit/readers/XYZReaderTests.cpp
+    unit/readers/MaceReaderTests.cpp
+    unit/readers/ChgnetReaderTests.cpp
+    unit/readers/GapReaderTests.cpp
     unit/readers/QEReaderTests.cpp
     unit/readers/CP2KReaderTests.cpp
     unit/readers/OrcaReaderTests.cpp

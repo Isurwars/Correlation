@@ -25,6 +25,9 @@ add_library(readers_obj OBJECT
     readers/GpawReader.cpp
     readers/AbinitReader.cpp
     readers/DftbReader.cpp
+    readers/MaceReader.cpp
+    readers/ChgnetReader.cpp
+    readers/GapReader.cpp
 )
 target_include_directories(readers_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include

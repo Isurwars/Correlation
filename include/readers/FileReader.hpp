@@ -37,6 +37,9 @@ enum class FileType : std::uint8_t {
   Gromacs,    ///< GROMACS .gro format
   Pdb,        ///< PDB .pdb format
   Xyz,        ///< Extended XYZ .xyz format
+  Mace,       ///< MACE Extended XYZ format (.mace, .extxyz)
+  Chgnet,     ///< CHGNet Extended XYZ format (.chgnet)
+  Gap,        ///< GAP Extended XYZ format (.gap, .quip)
   Unknown     ///< Unrecognized or unsupported file format
 };
 
