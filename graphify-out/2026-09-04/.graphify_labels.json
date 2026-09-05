@@ -317,20 +317,5 @@
   "315": "FileReaderTests",
   "316": "SYCLAngleParams",
   "317": "QVector",
-  "318": "precomputePhases",
-  "319": "TEST_F",
-  "320": "GPUXRDCalculator",
-  "321": "HBondCalculator",
-  "322": "string",
-  "323": "ClusterCalculator",
-  "324": "VDOSParams",
-  "325": "pdf_set_font_ttf_file",
-  "326": "LammpsDumpReader::readTrajectory",
-  "327": "2. Refactoring Patterns",
-  "328": "DummyPos",
-  "329": "GPUXRDParams",
-  "330": "MockWriter",
-  "331": "Rule: Function Cognitive Complexity Gate",
-  "332": "HDF5Writer.cpp",
-  "333": "BlendParams"
+  "318": "precomputePhases"
 }
