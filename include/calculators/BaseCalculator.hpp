@@ -11,7 +11,6 @@
 #include "analysis/DistributionFunctions.hpp"
 #include "core/Trajectory.hpp"
 
-#include <string>
 #include <string_view>
 
 namespace correlation::calculators {

@@ -14,6 +14,7 @@
 #include "core/NeighborGraph.hpp"
 
 #include <atomic>
+#include <memory>
 #include <mutex>
 #include <vector>
 
@@ -40,6 +41,26 @@ public:
 
   /** @name Constructors & Destructors */
   ///@{
+  /**
+   * @brief Constructs a StructureAnalyzer using shared ownership of the Cell.
+   * @param cell Shared pointer to the periodic simulation cell (zero-copy).
+   * @param cutoff Neighbor search cutoff radius.
+   * @param bond_cutoffs Matrix of per-pair bond cutoffs.
+   * @param ignore_periodic_self_interactions Flag to ignore periodic self-interactions.
+   * @param r_bin_width Bin width for radial histograms.
+   */
+  explicit StructureAnalyzer(std::shared_ptr<const correlation::core::Cell> cell, real_t cutoff,
+                             BondCutoffMatrix bond_cutoffs, bool ignore_periodic_self_interactions = true,
+                             real_t r_bin_width = 0.02);
+
+  /**
+   * @brief Constructs a StructureAnalyzer copying the cell into a shared instance.
+   * @param cell Reference to the periodic simulation cell.
+   * @param cutoff Neighbor search cutoff radius.
+   * @param bond_cutoffs Matrix of per-pair bond cutoffs.
+   * @param ignore_periodic_self_interactions Flag to ignore periodic self-interactions.
+   * @param r_bin_width Bin width for radial histograms.
+   */
   explicit StructureAnalyzer(const correlation::core::Cell &cell, real_t cutoff, BondCutoffMatrix bond_cutoffs,
                              bool ignore_periodic_self_interactions = true, real_t r_bin_width = 0.02);
 
@@ -53,6 +74,18 @@ public:
 
   /** @name Accessors */
   ///@{
+  /**
+   * @brief Gets a reference to the periodic cell.
+   * @return Constant reference to the Cell object.
+   */
+  [[nodiscard]] const correlation::core::Cell &cell() const noexcept { return *cell_; }
+
+  /**
+   * @brief Gets the shared pointer to the periodic cell.
+   * @return Constant shared pointer to the Cell object.
+   */
+  [[nodiscard]] std::shared_ptr<const correlation::core::Cell> cellPtr() const noexcept { return cell_; }
+
   /**
    * @brief Gets a multi-dimensional tensor containing raw distance histogram bins.
    * @return The raw histogram tensor `[element1][element2][bin_index]`.
@@ -94,9 +127,9 @@ private:
   void ensureAnglesComputed() const;
   void ensureDihedralsComputed() const;
 
-  correlation::core::Cell cell_;  ///< Reference to the current periodic cell.
-  real_t cutoff_sq_;              ///< Squared cutoff for efficiency.
-  BondCutoffMatrix bond_cutoffs_; ///< Internal bond cutoffs matrix.
+  std::shared_ptr<const correlation::core::Cell> cell_; ///< Shared pointer to the periodic cell.
+  real_t cutoff_sq_;                                    ///< Squared cutoff for efficiency.
+  BondCutoffMatrix bond_cutoffs_;                       ///< Internal bond cutoffs matrix.
 
   bool ignore_periodic_self_interactions_; ///< Interaction guard.
 

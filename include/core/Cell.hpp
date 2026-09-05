@@ -14,7 +14,6 @@
 
 #include <array>
 #include <optional>
-#include <string>
 #include <string_view>
 #include <vector>
 
@@ -208,11 +207,20 @@ public:
   [[nodiscard]] real_t getEnergy() const noexcept { return energy_; }
 
   /**
-   * @brief Internal helper to update lattice vectors and recompute volume/inverse.
+   * @brief Reserves capacity for atom storage to minimize reallocations.
+   * @param count Expected number of atoms.
+   */
+  void reserveAtoms(std::size_t count) { atoms_.reserve(count); }
+
+  /**
+   * @brief Updates lattice vectors and recomputes volume, inverse matrix, and scalar parameters.
    * @param new_lattice New 3x3 lattice matrix.
    */
   void updateLattice(const math::Matrix3<real_t> &new_lattice);
 
+  ///@}
+
+private:
   /**
    * @brief Internal helper to synchronize scalar parameters with vector matrix.
    */
@@ -224,8 +232,6 @@ public:
    * @return The existing or newly assigned ElementID.
    */
   ElementID getOrRegisterElement(std::string_view symbol);
-
-  ///@}
 
   math::Matrix3<real_t> lattice_vectors_;         ///< Basis vectors of the box.
   math::Matrix3<real_t> inverse_lattice_vectors_; ///< Inverse matrix for fractional mapping.

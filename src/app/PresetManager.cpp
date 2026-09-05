@@ -170,7 +170,7 @@ real_t parseDoubleValue(const std::string &json, const std::string &key, real_t 
     end = json.size();
   }
   try {
-    return std::stod(json.substr(start, end - start));
+    return static_cast<real_t>(std::stod(json.substr(start, end - start)));
   } catch (const std::exception &) {
     return fallback;
   }

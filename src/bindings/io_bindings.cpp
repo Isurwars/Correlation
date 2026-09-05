@@ -16,7 +16,7 @@ void init_io(py::module_ &mod) {
         std::filesystem::path path(filepath);
         auto extension = path.extension().string();
 
-        auto *reader = ReaderFactory::instance().getReaderForExtension({extension, filepath});
+        auto *reader = ReaderFactory::instance().getReaderForExtension({.extension = extension, .filename = filepath});
         if (!reader) {
           throw std::runtime_error("No reader found for file extension: " + extension);
         }

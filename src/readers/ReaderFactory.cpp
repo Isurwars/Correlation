@@ -94,7 +94,7 @@ BaseReader *ReaderFactory::getReaderForExtension(const ReaderExtensionQuery &que
   std::ranges::transform(lower_ext, lower_ext.begin(), ::tolower);
 
   if ((lower_ext == ".out" || lower_ext == ".in") && !query.filename.empty()) {
-    std::string sniffed = sniffFormatFromOutFile(query.filename);
+    const std::string sniffed = sniffFormatFromOutFile(query.filename);
     if (!sniffed.empty()) {
       auto iter = extension_map_.find(sniffed);
       if (iter != extension_map_.end()) {
@@ -108,6 +108,10 @@ BaseReader *ReaderFactory::getReaderForExtension(const ReaderExtensionQuery &que
     return iter->second;
   }
   return nullptr;
+}
+
+BaseReader *ReaderFactory::getReaderForExtension(std::string_view extension) {
+  return getReaderForExtension(ReaderExtensionQuery{.extension = extension, .filename = {}});
 }
 
 std::vector<std::string> ReaderFactory::getAllExtensions() const {

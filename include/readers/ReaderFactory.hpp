@@ -25,10 +25,6 @@ namespace correlation::readers {
 struct ReaderExtensionQuery {
   std::string_view extension;
   std::string_view filename;
-
-  constexpr ReaderExtensionQuery(const char *ext) : extension(ext != nullptr ? ext : "") {}
-  constexpr ReaderExtensionQuery(std::string_view ext) : extension(ext) {}
-  constexpr ReaderExtensionQuery(std::string_view ext, std::string_view file) : extension(ext), filename(file) {}
 };
 
 /**
@@ -71,19 +67,26 @@ public:
    * @param query The reader extension query parameters.
    * @return A pointer to the reader instance, or nullptr if not found.
    */
-  BaseReader *getReaderForExtension(const ReaderExtensionQuery &query);
+  [[nodiscard]] BaseReader *getReaderForExtension(const ReaderExtensionQuery &query);
+
+  /**
+   * @brief Finds a reader that supports the given file extension.
+   * @param extension The file extension (e.g., ".car", ".cif").
+   * @return A pointer to the reader instance, or nullptr if not found.
+   */
+  [[nodiscard]] BaseReader *getReaderForExtension(std::string_view extension);
 
   /**
    * @brief Returns all registered extensions.
    * @return A vector of extension strings (e.g., {".car", ".arc"}).
    */
-  std::vector<std::string> getAllExtensions() const;
+  [[nodiscard]] std::vector<std::string> getAllExtensions() const;
 
   /**
    * @brief Returns all registered readers.
    * @return Constant reference to the internal vector of readers.
    */
-  const std::vector<std::unique_ptr<BaseReader>> &getReaders() const;
+  [[nodiscard]] const std::vector<std::unique_ptr<BaseReader>> &getReaders() const;
 
 private:
   ReaderFactory() = default;

@@ -53,16 +53,16 @@ void AnalysisRunner::handleRunAnalysis() {
   // Run analysis in a separate thread asynchronously without blocking GUI event loop
   if (analysis_thread_.joinable()) {
     std::thread old_thread = std::move(analysis_thread_);
-    std::thread([t = std::move(old_thread)]() mutable {
-      if (t.joinable()) {
-        t.join();
+    std::thread([thread_to_join = std::move(old_thread)]() mutable {
+      if (thread_to_join.joinable()) {
+        thread_to_join.join();
       }
     }).detach();
   }
 
   analysis_thread_ = std::thread([this]() {
     auto result = backend_.run_analysis();
-    std::string err = result ? "" : result.error();
+    const std::string err = result ? "" : result.error();
 
     slint::invoke_from_event_loop([this, err]() {
       window_.set_analysis_running(false);
