@@ -45,10 +45,10 @@ struct HyperuniformityParams {
  */
 class HyperuniformityCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "σ²_N(R), χ_H(R)"; }
-  std::string getShortName() const override { return "Hyperuniformity"; }
-  std::string getGroup() const override { return "Advanced"; }
-  std::string getDescription() const override { return "Computes local number variance and hyperuniformity index."; }
+  [[nodiscard]] std::string_view getName() const override { return "σ²_N(R), χ_H(R)"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "Hyperuniformity"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Advanced"; }
+  [[nodiscard]] std::string_view getDescription() const override { return "Computes local number variance and hyperuniformity index."; }
 
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }

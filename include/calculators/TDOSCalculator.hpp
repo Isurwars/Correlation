@@ -36,10 +36,10 @@ public:
   TDOSCalculator() = default;
   explicit TDOSCalculator(const correlation::mlip::MLIPInterface *model) noexcept : model_(model) {}
 
-  [[nodiscard]] std::string getName() const override { return "Total Density of States (TDOS)"; }
-  [[nodiscard]] std::string getShortName() const override { return "TDOS"; }
-  [[nodiscard]] std::string getGroup() const override { return "Machine Learning"; }
-  [[nodiscard]] std::string getDescription() const override {
+  [[nodiscard]] std::string_view getName() const override { return "Total Density of States (TDOS)"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "TDOS"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Machine Learning"; }
+  [[nodiscard]] std::string_view getDescription() const override {
     return "Computes the Total Density of States (TDOS) from MLIP per-atom Local Density of States predictions.";
   }
 

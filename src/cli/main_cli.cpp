@@ -90,10 +90,10 @@ int main(int argc, char *argv[]) {
   }
 
   for (const auto &calc : factory_calcs) {
-    std::string const calc_group = to_lower(calc->getGroup());
+    std::string const calc_group = to_lower(std::string(calc->getGroup()));
     bool const active = (!disabled_groups.contains(calc_group)) && calc->isConfigured();
-    opts.active_calculators[calc->getName()] = active;
-    opts.active_calculators[calc->getShortName()] = active;
+    opts.active_calculators[std::string(calc->getName())] = active;
+    opts.active_calculators[std::string(calc->getShortName())] = active;
   }
 
   // Create backend

@@ -26,10 +26,10 @@ namespace correlation::calculators {
  */
 class StructureFactorCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "S(K)"; }
-  std::string getShortName() const override { return "S_K"; }
-  std::string getGroup() const override { return "Scattering"; }
-  std::string getDescription() const override {
+  [[nodiscard]] std::string_view getName() const override { return "S(K)"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "S_K"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Scattering"; }
+  [[nodiscard]] std::string_view getDescription() const override {
     return "Computes the static structure factor S(K) via plane wave summation "
            "over reciprocal lattice vectors (for periodic systems).";
   }

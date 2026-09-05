@@ -27,10 +27,10 @@ namespace correlation::calculators {
  */
 class VoronoiCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string getName() const override { return "Voronoi Tessellation"; }
-  [[nodiscard]] std::string getShortName() const override { return "Voronoi"; }
-  [[nodiscard]] std::string getGroup() const override { return "Structural"; }
-  [[nodiscard]] std::string getDescription() const override {
+  [[nodiscard]] std::string_view getName() const override { return "Voronoi Tessellation"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "Voronoi"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
+  [[nodiscard]] std::string_view getDescription() const override {
     return "Computes Voronoi cell volumes, coordination numbers, sphericity, and polyhedral signatures.";
   }
 

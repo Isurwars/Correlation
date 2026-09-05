@@ -30,10 +30,10 @@ namespace correlation::calculators {
  */
 class RDFCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "g(r), J(r), G(r)"; }
-  std::string getShortName() const override { return "RDF"; }
-  std::string getGroup() const override { return "Radial"; }
-  std::string getDescription() const override { return "Computes the Radial Distribution Function g_r, J_r, and G_r."; }
+  [[nodiscard]] std::string_view getName() const override { return "g(r), J(r), G(r)"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "RDF"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Radial"; }
+  [[nodiscard]] std::string_view getDescription() const override { return "Computes the Radial Distribution Function g_r, J_r, and G_r."; }
 
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }

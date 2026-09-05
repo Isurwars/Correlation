@@ -31,10 +31,10 @@ namespace correlation::calculators {
  */
 class MSDCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "MSD"; }
-  std::string getShortName() const override { return "MSD"; }
-  std::string getGroup() const override { return "Dynamic"; }
-  std::string getDescription() const override {
+  [[nodiscard]] std::string_view getName() const override { return "MSD"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "MSD"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Dynamic"; }
+  [[nodiscard]] std::string_view getDescription() const override {
     return "Computes the Mean Squared Displacement (MSD) and diffusion "
            "coefficient via the Einstein relation.";
   }

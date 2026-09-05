@@ -22,10 +22,10 @@ namespace correlation::calculators {
  */
 class ClusterCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string getName() const override { return "Cluster Analysis"; }
-  [[nodiscard]] std::string getShortName() const override { return "Clusters"; }
-  [[nodiscard]] std::string getGroup() const override { return "Topology"; }
-  [[nodiscard]] std::string getDescription() const override {
+  [[nodiscard]] std::string_view getName() const override { return "Cluster Analysis"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "Clusters"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Topology"; }
+  [[nodiscard]] std::string_view getDescription() const override {
     return "Identifies connected components (clusters) using the neighbor graph.";
   }
   [[nodiscard]] bool isFrameCalculator() const override { return true; }

@@ -19,10 +19,10 @@ namespace correlation::calculators {
  */
 class DADCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string getName() const override { return "DAD"; }
-  [[nodiscard]] std::string getShortName() const override { return "DAD"; }
-  [[nodiscard]] std::string getGroup() const override { return "Angular"; }
-  [[nodiscard]] std::string getDescription() const override {
+  [[nodiscard]] std::string_view getName() const override { return "DAD"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "DAD"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Angular"; }
+  [[nodiscard]] std::string_view getDescription() const override {
     return "Computes the Dihedral Angle Distribution (DAD).";
   }
 

@@ -37,10 +37,10 @@ struct DistanceCalculationConfig {
  */
 class DistanceCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "Distance"; }
-  std::string getShortName() const override { return "Distance"; }
-  std::string getGroup() const override { return "Structural"; }
-  std::string getDescription() const override { return "Computes all unique 2-body distances."; }
+  [[nodiscard]] std::string_view getName() const override { return "Distance"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "Distance"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
+  [[nodiscard]] std::string_view getDescription() const override { return "Computes all unique 2-body distances."; }
 
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }

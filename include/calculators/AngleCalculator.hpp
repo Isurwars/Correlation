@@ -35,10 +35,10 @@ using AngleTensor = std::vector<std::vector<std::vector<std::vector<real_t>>>>;
  */
 class AngleCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string getName() const override { return "Angle"; }
-  [[nodiscard]] std::string getShortName() const override { return "PAD"; }
-  [[nodiscard]] std::string getGroup() const override { return "Structural"; }
-  [[nodiscard]] std::string getDescription() const override { return "Computes the Plane-Angle Distribution (PAD)."; }
+  [[nodiscard]] std::string_view getName() const override { return "Angle"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "PAD"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
+  [[nodiscard]] std::string_view getDescription() const override { return "Computes the Plane-Angle Distribution (PAD)."; }
 
   [[nodiscard]] bool isFrameCalculator() const override { return true; }
   [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }

@@ -332,9 +332,9 @@ void AppController::updateActiveGroupFlags() {
   bool has_rings = false;
 
   for (const auto &calc : calculators) {
-    const std::string &grp = calc->getGroup();
+    std::string_view const grp = calc->getGroup();
     bool enabled = true; // default on
-    auto calc_it = opts.active_calculators.find(calc->getName());
+    auto calc_it = opts.active_calculators.find(std::string(calc->getName()));
     if (calc_it != opts.active_calculators.end()) {
       enabled = calc_it->second;
     }
@@ -556,7 +556,7 @@ void AppController::populateCalculatorGroups() {
   std::vector<std::string> group_order;
   std::map<std::string, std::vector<const correlation::calculators::BaseCalculator *>> groups_map;
   for (const auto &calc : calculators) {
-    const std::string &grp = calc->getGroup();
+    std::string const grp = std::string(calc->getGroup());
     if (!groups_map.contains(grp)) {
       group_order.push_back(grp);
     }
@@ -568,7 +568,7 @@ void AppController::populateCalculatorGroups() {
     auto calcs_model = std::make_shared<slint::VectorModel<CalculatorInfo>>();
     for (const auto *calc : groups_map.at(grp_name)) {
       bool enabled = true; // default on
-      auto calc_it = opts.active_calculators.find(calc->getName());
+      auto calc_it = opts.active_calculators.find(std::string(calc->getName()));
       if (calc_it != opts.active_calculators.end()) {
         enabled = calc_it->second;
       }

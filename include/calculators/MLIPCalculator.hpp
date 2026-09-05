@@ -25,10 +25,10 @@ public:
   MLIPCalculator() = default;
   explicit MLIPCalculator(const correlation::mlip::MLIPInterface *model) noexcept : model_(model) {}
 
-  [[nodiscard]] std::string getName() const override { return "ML Interatomic Potential (ORB-v3)"; }
-  [[nodiscard]] std::string getShortName() const override { return "MLIP"; }
-  [[nodiscard]] std::string getGroup() const override { return "Machine Learning"; }
-  [[nodiscard]] std::string getDescription() const override {
+  [[nodiscard]] std::string_view getName() const override { return "ML Interatomic Potential (ORB-v3)"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "MLIP"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Machine Learning"; }
+  [[nodiscard]] std::string_view getDescription() const override {
     return "Evaluates atomic energy, forces, and stress using ORB-v3 / ORB-mol model family.";
   }
 

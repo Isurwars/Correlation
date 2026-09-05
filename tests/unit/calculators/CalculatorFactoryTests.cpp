@@ -15,10 +15,10 @@ using namespace correlation::calculators;
 namespace {
 class MockCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string getName() const override { return "MockCalculator"; }
-  [[nodiscard]] std::string getShortName() const override { return "Mock"; }
-  [[nodiscard]] std::string getGroup() const override { return "Test"; }
-  [[nodiscard]] std::string getDescription() const override { return "A mock calculator for testing."; }
+  [[nodiscard]] std::string_view getName() const override { return "MockCalculator"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "Mock"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Test"; }
+  [[nodiscard]] std::string_view getDescription() const override { return "A mock calculator for testing."; }
   [[nodiscard]] bool isFrameCalculator() const override { return true; }
   [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 };
@@ -46,7 +46,7 @@ TEST(CalculatorFactoryTests, LookupStandardCalculators) {
   // Let's check getCalculator with different potential names or just use any from getCalculators()
   const auto &calculators = factory.getCalculators();
   ASSERT_FALSE(calculators.empty());
-  std::string const first_calc_name = calculators[0]->getName();
+  std::string_view const first_calc_name = calculators[0]->getName();
 
   const BaseCalculator *retrieved = factory.getCalculator(first_calc_name);
   ASSERT_NE(retrieved, nullptr);

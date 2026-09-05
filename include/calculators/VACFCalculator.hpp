@@ -23,10 +23,10 @@ namespace correlation::calculators {
  */
 class VACFCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "VACF"; }
-  std::string getShortName() const override { return "VACF"; }
-  std::string getGroup() const override { return "Dynamic"; }
-  std::string getDescription() const override { return "Computes the Velocity Autocorrelation Function (VACF)."; }
+  [[nodiscard]] std::string_view getName() const override { return "VACF"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "VACF"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Dynamic"; }
+  [[nodiscard]] std::string_view getDescription() const override { return "Computes the Velocity Autocorrelation Function (VACF)."; }
 
   bool isFrameCalculator() const override { return false; }
   bool isTrajectoryCalculator() const override { return true; }

@@ -22,10 +22,10 @@ namespace correlation::calculators {
  */
 class ChiralityCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string getName() const override { return "Chiral Order Parameter"; }
-  [[nodiscard]] std::string getShortName() const override { return "COP"; }
-  [[nodiscard]] std::string getGroup() const override { return "Structural"; }
-  [[nodiscard]] std::string getDescription() const override {
+  [[nodiscard]] std::string_view getName() const override { return "Chiral Order Parameter"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "COP"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
+  [[nodiscard]] std::string_view getDescription() const override {
     return "Computes the Chiral Order Parameter (COP) distribution.";
   }
 

@@ -25,10 +25,10 @@ class GPUSteinhardtCalculator : public BaseCalculator {
 public:
   GPUSteinhardtCalculator();
 
-  [[nodiscard]] std::string getName() const override { return "Steinhardt Parameter — GPU Accelerated"; }
-  [[nodiscard]] std::string getShortName() const override { return "Steinhardt_GPU"; }
-  [[nodiscard]] std::string getGroup() const override { return "Structural"; }
-  [[nodiscard]] std::string getDescription() const override {
+  [[nodiscard]] std::string_view getName() const override { return "Steinhardt Parameter — GPU Accelerated"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "Steinhardt_GPU"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
+  [[nodiscard]] std::string_view getDescription() const override {
     return "GPU-accelerated Steinhardt bond-orientational parameters (Q4, Q6, W6). "
            "Falls back to CPU when no compatible GPU is detected.";
   }

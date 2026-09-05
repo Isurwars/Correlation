@@ -19,10 +19,10 @@ namespace correlation::calculators {
  */
 class CNCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "CN"; }
-  std::string getShortName() const override { return "CN"; }
-  std::string getGroup() const override { return "Structural"; }
-  std::string getDescription() const override { return "Computes the Coordination Number (CN)."; }
+  [[nodiscard]] std::string_view getName() const override { return "CN"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "CN"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
+  [[nodiscard]] std::string_view getDescription() const override { return "Computes the Coordination Number (CN)."; }
 
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }

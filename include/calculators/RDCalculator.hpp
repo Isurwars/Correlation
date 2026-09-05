@@ -19,10 +19,10 @@ namespace correlation::calculators {
  */
 class RDCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "RD"; }
-  std::string getShortName() const override { return "RD"; }
-  std::string getGroup() const override { return "Rings"; }
-  std::string getDescription() const override { return "Computes the Ring Distribution (RD)."; }
+  [[nodiscard]] std::string_view getName() const override { return "RD"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "RD"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Rings"; }
+  [[nodiscard]] std::string_view getDescription() const override { return "Computes the Ring Distribution (RD)."; }
 
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }

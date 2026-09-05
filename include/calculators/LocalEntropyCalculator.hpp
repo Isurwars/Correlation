@@ -30,10 +30,10 @@ struct LocalEntropyParams {
  */
 class LocalEntropyCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string getName() const override { return "Local Entropy"; }
-  [[nodiscard]] std::string getShortName() const override { return "LEF"; }
-  [[nodiscard]] std::string getGroup() const override { return "Structural"; }
-  [[nodiscard]] std::string getDescription() const override {
+  [[nodiscard]] std::string_view getName() const override { return "Local Entropy"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "LEF"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
+  [[nodiscard]] std::string_view getDescription() const override {
     return "Computes the Local Entropic Fingerprint (LEF) distribution.";
   }
 

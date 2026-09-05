@@ -19,10 +19,10 @@ namespace correlation::calculators {
  */
 class PADCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "PAD"; }
-  std::string getShortName() const override { return "PAD"; }
-  std::string getGroup() const override { return "Angular"; }
-  std::string getDescription() const override { return "Computes the Plane-Angle Distribution (PAD)."; }
+  [[nodiscard]] std::string_view getName() const override { return "PAD"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "PAD"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Angular"; }
+  [[nodiscard]] std::string_view getDescription() const override { return "Computes the Plane-Angle Distribution (PAD)."; }
 
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }

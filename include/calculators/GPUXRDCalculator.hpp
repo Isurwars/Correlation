@@ -52,10 +52,10 @@ class GPUXRDCalculator : public BaseCalculator {
 public:
   GPUXRDCalculator();
 
-  [[nodiscard]] std::string getName() const override { return "XRD — GPU Accelerated"; }
-  [[nodiscard]] std::string getShortName() const override { return "XRD_GPU"; }
-  [[nodiscard]] std::string getGroup() const override { return "Diffraction"; }
-  [[nodiscard]] std::string getDescription() const override {
+  [[nodiscard]] std::string_view getName() const override { return "XRD — GPU Accelerated"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "XRD_GPU"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Diffraction"; }
+  [[nodiscard]] std::string_view getDescription() const override {
     return "GPU-accelerated X-Ray Diffraction (XRD) pattern calculation using direct Debye scattering.";
   }
 

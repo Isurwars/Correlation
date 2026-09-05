@@ -17,10 +17,10 @@ namespace correlation::calculators {
  */
 class CNACalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string getName() const override { return "CNA"; }
-  [[nodiscard]] std::string getShortName() const override { return "CNA"; }
-  [[nodiscard]] std::string getGroup() const override { return "Structural"; }
-  [[nodiscard]] std::string getDescription() const override {
+  [[nodiscard]] std::string_view getName() const override { return "CNA"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "CNA"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
+  [[nodiscard]] std::string_view getDescription() const override {
     return "Common Neighbor Analysis for local environment classification.";
   }
 

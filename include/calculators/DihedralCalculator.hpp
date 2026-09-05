@@ -28,10 +28,10 @@ namespace correlation::calculators {
  */
 class DihedralCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string getName() const override { return "Dihedral"; }
-  [[nodiscard]] std::string getShortName() const override { return "Dihedral"; }
-  [[nodiscard]] std::string getGroup() const override { return "Structural"; }
-  [[nodiscard]] std::string getDescription() const override {
+  [[nodiscard]] std::string_view getName() const override { return "Dihedral"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "Dihedral"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
+  [[nodiscard]] std::string_view getDescription() const override {
     return "Computes all unique 4-body dihedral (torsion) angles.";
   }
 

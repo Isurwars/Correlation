@@ -25,10 +25,10 @@ namespace correlation::calculators {
  */
 class SDFCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "Spatial Distribution Function (3D)"; }
-  std::string getShortName() const override { return "SDF"; }
-  std::string getGroup() const override { return "Spatial"; }
-  std::string getDescription() const override {
+  [[nodiscard]] std::string_view getName() const override { return "Spatial Distribution Function (3D)"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "SDF"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Spatial"; }
+  [[nodiscard]] std::string_view getDescription() const override {
     return "Computes the 3D Spatial Distribution Function (SDF) density grid.";
   }
 

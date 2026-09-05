@@ -21,10 +21,10 @@ namespace correlation::calculators {
  */
 class SteinhardtCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string getName() const override { return "Steinhardt Parameter"; }
-  [[nodiscard]] std::string getShortName() const override { return "Steinhardt"; }
-  [[nodiscard]] std::string getGroup() const override { return "Structural"; }
-  [[nodiscard]] std::string getDescription() const override {
+  [[nodiscard]] std::string_view getName() const override { return "Steinhardt Parameter"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "Steinhardt"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
+  [[nodiscard]] std::string_view getDescription() const override {
     return "Computes Steinhardt Bond-Orientational Parameters (Q4, Q6, W6).";
   }
 

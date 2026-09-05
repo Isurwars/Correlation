@@ -12,6 +12,7 @@
 #include "core/Trajectory.hpp"
 
 #include <string>
+#include <string_view>
 
 namespace correlation::calculators {
 
@@ -31,27 +32,27 @@ public:
    * @brief Returns the unique identifier/name of the calculator.
    * @return The full name of the calculator (e.g. "Radial Distribution Function").
    */
-  virtual std::string getName() const = 0;
+  [[nodiscard]] virtual std::string_view getName() const = 0;
 
   /**
    * @brief Returns a short, UI-friendly name of the calculator (e.g. "g_r",
    * "S_q").
    * @return The short name/abbreviation of the calculator.
    */
-  virtual std::string getShortName() const = 0;
+  [[nodiscard]] virtual std::string_view getShortName() const = 0;
 
   /**
    * @brief Returns the UI group this calculator belongs to (e.g., "Radial",
    * "Angular", "Dynamic", "Rings").
    * @return The group name for UI categorization.
    */
-  virtual std::string getGroup() const = 0;
+  [[nodiscard]] virtual std::string_view getGroup() const = 0;
 
   /**
    * @brief Returns a brief description of the calculator's purpose.
    * @return A human-readable description string.
    */
-  virtual std::string getDescription() const = 0;
+  [[nodiscard]] virtual std::string_view getDescription() const = 0;
 
   /**
    * @brief Check if this calculator runs per-frame (e.g. RDF, PAD).

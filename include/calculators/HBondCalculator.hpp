@@ -17,10 +17,10 @@ namespace correlation::calculators {
  */
 class HBondCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "Hydrogen Bond"; }
-  std::string getShortName() const override { return "HBond"; }
-  std::string getGroup() const override { return "Structural"; }
-  std::string getDescription() const override { return "Computes hydrogen bond statistics (counts and distribution)."; }
+  [[nodiscard]] std::string_view getName() const override { return "Hydrogen Bond"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "HBond"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
+  [[nodiscard]] std::string_view getDescription() const override { return "Computes hydrogen bond statistics (counts and distribution)."; }
 
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
