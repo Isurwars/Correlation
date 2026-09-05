@@ -99,7 +99,7 @@ void Cell::updateLatticeParametersFromVectors() {
                          gamma_rad * static_cast<real_t>(math::rad_to_deg)};
 }
 
-std::optional<Element> Cell::findElement(const std::string &symbol) const {
+std::optional<Element> Cell::findElement(std::string_view symbol) const {
   auto iter =
       std::find_if(elements_.begin(), elements_.end(), [&](const Element &elem) { return elem.symbol == symbol; });
   if (iter != elements_.end()) {
@@ -108,20 +108,20 @@ std::optional<Element> Cell::findElement(const std::string &symbol) const {
   return std::nullopt;
 }
 
-ElementID Cell::getOrRegisterElement(const std::string &symbol) {
+ElementID Cell::getOrRegisterElement(std::string_view symbol) {
   if (auto existing_element = findElement(symbol)) {
     return existing_element->id;
   }
   // Register the new element
   ElementID new_id{static_cast<int>(elements_.size())};
   elements_.push_back({
-      .symbol = symbol,
+      .symbol = std::string(symbol),
       .id = new_id,
   });
   return new_id;
 }
 
-Atom &Cell::addAtom(const std::string &symbol, const math::Vector3<real_t> &position) {
+Atom &Cell::addAtom(std::string_view symbol, const math::Vector3<real_t> &position) {
   ElementID element_id = getOrRegisterElement(symbol);
   auto element_it = std::find_if(elements_.begin(), elements_.end(),
                                  [&](const Element &elem) { return elem.id.value == element_id.value; });

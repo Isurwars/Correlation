@@ -25,7 +25,7 @@ bool CalculatorFactory::registerCalculator(std::unique_ptr<BaseCalculator> calcu
 
 const std::vector<std::unique_ptr<BaseCalculator>> &CalculatorFactory::getCalculators() const { return calculators_; }
 
-const BaseCalculator *CalculatorFactory::getCalculator(const std::string &name) const {
+const BaseCalculator *CalculatorFactory::getCalculator(std::string_view name) const {
   for (const auto &calc : calculators_) {
     if (calc->getName() == name) {
       return calc.get();

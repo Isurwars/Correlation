@@ -15,8 +15,8 @@ namespace correlation::readers {
 
 namespace {
 
-std::string sniffFormatFromOutFile(const std::string &filename) {
-  std::ifstream file(filename);
+std::string sniffFormatFromOutFile(std::string_view filename) {
+  std::ifstream file{std::string(filename)};
   if (!file.is_open()) {
     return "";
   }
@@ -84,7 +84,7 @@ bool ReaderFactory::registerReader(std::unique_ptr<BaseReader> reader) {
 }
 
 BaseReader *ReaderFactory::getReaderForExtension(const ReaderExtensionQuery &query) {
-  std::string lower_ext = query.extension;
+  std::string lower_ext = std::string(query.extension);
   if (lower_ext.empty()) {
     return nullptr;
   }

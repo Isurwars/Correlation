@@ -15,6 +15,7 @@
 #include <array>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace correlation::core {
@@ -159,7 +160,7 @@ public:
    * @return An optional containing the Element struct if found, otherwise
    * std::nullopt.
    */
-  [[nodiscard]] std::optional<Element> findElement(const std::string &symbol) const;
+  [[nodiscard]] std::optional<Element> findElement(std::string_view symbol) const;
 
   ///@}
 
@@ -185,7 +186,7 @@ public:
    * @param position The Cartesian position [x, y, z] in Angstroms.
    * @return A reference to the newly created Atom.
    */
-  Atom &addAtom(const std::string &symbol, const math::Vector3<real_t> &position);
+  Atom &addAtom(std::string_view symbol, const math::Vector3<real_t> &position);
 
   /**
    * @brief Applies periodic boundary conditions to all atom positions.
@@ -222,7 +223,7 @@ public:
    * @param symbol Element symbol (e.g. "O").
    * @return The existing or newly assigned ElementID.
    */
-  ElementID getOrRegisterElement(const std::string &symbol);
+  ElementID getOrRegisterElement(std::string_view symbol);
 
   ///@}
 

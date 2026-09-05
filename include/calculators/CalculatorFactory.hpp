@@ -13,6 +13,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace correlation::calculators {
@@ -63,7 +64,7 @@ public:
    * @param name The name of the calculator.
    * @return Pointer to the calculator, or nullptr if not found.
    */
-  [[nodiscard]] const BaseCalculator *getCalculator(const std::string &name) const;
+  [[nodiscard]] const BaseCalculator *getCalculator(std::string_view name) const;
 
 private:
   CalculatorFactory() = default;

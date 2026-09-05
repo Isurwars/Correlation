@@ -14,6 +14,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace correlation::readers {
@@ -22,12 +23,12 @@ namespace correlation::readers {
  * @brief Parameters for querying a reader by extension and optional filename.
  */
 struct ReaderExtensionQuery {
-  std::string extension;
-  std::string filename;
+  std::string_view extension;
+  std::string_view filename;
 
-  ReaderExtensionQuery(const char *ext) : extension(ext) {}
-  ReaderExtensionQuery(std::string ext) : extension(std::move(ext)) {}
-  ReaderExtensionQuery(std::string ext, std::string file) : extension(std::move(ext)), filename(std::move(file)) {}
+  constexpr ReaderExtensionQuery(const char *ext) : extension(ext != nullptr ? ext : "") {}
+  constexpr ReaderExtensionQuery(std::string_view ext) : extension(ext) {}
+  constexpr ReaderExtensionQuery(std::string_view ext, std::string_view file) : extension(ext), filename(file) {}
 };
 
 /**

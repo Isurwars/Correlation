@@ -20,6 +20,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace correlation::analysis {
@@ -69,11 +70,11 @@ struct AnalysisSettings {
    * @param calc_id The identifier of the calculator (e.g. "RDF").
    * @return True if active or if no active calculators are specified.
    */
-  bool isActive(const std::string &calc_id) const {
+  bool isActive(std::string_view calc_id) const {
     if (active_calculators.empty()) {
       return true; // default: all enabled
     }
-    auto iter = active_calculators.find(calc_id);
+    auto iter = active_calculators.find(std::string(calc_id));
     return iter != active_calculators.end() && iter->second;
   }
 
