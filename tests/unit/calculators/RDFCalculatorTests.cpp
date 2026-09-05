@@ -21,7 +21,7 @@ namespace correlation::analysis {
 
 namespace {
 // Test fixture for DistributionFunctions tests.
-class RDFTests : public ::testing::Test {
+class RDFCalculatorTests : public ::testing::Test {
 protected:
   void SetUp() override {
     // A simple cubic cell containing two atoms
@@ -48,12 +48,12 @@ public:
 };
 } // namespace
 
-TEST_F(RDFTests, DefaultConstructorWorks) {
+TEST_F(RDFCalculatorTests, DefaultConstructorWorks) {
   updateTrajectory();
   ASSERT_NO_THROW(DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ()));
 }
 
-TEST_F(RDFTests, MoveConstructorWorks) {
+TEST_F(RDFCalculatorTests, MoveConstructorWorks) {
   updateTrajectory();
   DistributionFunctions dfSource(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   dfSource.calculateRDF({
@@ -67,7 +67,7 @@ TEST_F(RDFTests, MoveConstructorWorks) {
   EXPECT_EQ(dfDest.cell().atomCount(), 2);
 }
 
-TEST_F(RDFTests, MoveAssignmentWorks) {
+TEST_F(RDFCalculatorTests, MoveAssignmentWorks) {
   updateTrajectory();
   DistributionFunctions dfSource(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   dfSource.calculateRDF({
@@ -82,7 +82,7 @@ TEST_F(RDFTests, MoveAssignmentWorks) {
   EXPECT_EQ(dfDest.cell().atomCount(), 2);
 }
 
-TEST_F(RDFTests, AccessorsWork) {
+TEST_F(RDFCalculatorTests, AccessorsWork) {
   updateTrajectory();
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
@@ -116,7 +116,7 @@ TEST_F(RDFTests, AccessorsWork) {
   EXPECT_TRUE(allHists.count("G_r"));
 }
 
-TEST_F(RDFTests, CalculateRDF) {
+TEST_F(RDFCalculatorTests, CalculateRDF) {
   updateTrajectory();
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
@@ -150,7 +150,7 @@ TEST_F(RDFTests, CalculateRDF) {
   EXPECT_NEAR(peak_r, 1.5, 0.001);
 }
 
-TEST_F(RDFTests, CalculateCoordinationNumber) {
+TEST_F(RDFCalculatorTests, CalculateCoordinationNumber) {
   // Use a setup where we know neighbors exactly
   correlation::core::Cell cnCall({10, 10, 10, 90, 90, 90});
   cnCall.addAtom("Si", {5.0, 5.0, 5.0});
@@ -177,7 +177,7 @@ TEST_F(RDFTests, CalculateCoordinationNumber) {
   EXPECT_EQ(osi_cn[1], 2);
 }
 
-TEST_F(RDFTests, Smoothing) {
+TEST_F(RDFCalculatorTests, Smoothing) {
   updateTrajectory();
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   dists.calculateRDF({
@@ -198,7 +198,7 @@ TEST_F(RDFTests, Smoothing) {
   EXPECT_FALSE(cn_hist.smoothed_partials.empty());
 }
 
-TEST_F(RDFTests, SetStructureAnalyzer) {
+TEST_F(RDFCalculatorTests, SetStructureAnalyzer) {
   updateTrajectory();
   // Create an external analyzer
   StructureAnalyzer const analyzer(cell_, 5.0, trajectory_.getBondCutoffsSQ());
@@ -215,7 +215,7 @@ TEST_F(RDFTests, SetStructureAnalyzer) {
   EXPECT_FALSE(dists.getHistogram("g_r").partials.empty());
 }
 
-TEST_F(RDFTests, AddAndScale) {
+TEST_F(RDFCalculatorTests, AddAndScale) {
   updateTrajectory();
   DistributionFunctions df1(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   df1.calculateRDF({
@@ -259,7 +259,7 @@ TEST_F(RDFTests, AddAndScale) {
   EXPECT_NEAR(peak, refPeak, 1e-4);
 }
 
-TEST_F(RDFTests, ComputeMean) {
+TEST_F(RDFCalculatorTests, ComputeMean) {
   updateTrajectory();
   TrajectoryAnalyzer const analyzer(trajectory_, 5.0, trajectory_.getBondCutoffsSQ());
 
@@ -273,7 +273,7 @@ TEST_F(RDFTests, ComputeMean) {
   EXPECT_NO_THROW(dfMean->getHistogram("g_r"));
 }
 
-TEST_F(RDFTests, HandlesMissingPartialInAdd) {
+TEST_F(RDFCalculatorTests, HandlesMissingPartialInAdd) {
   // Build cell 1: pure Ar
   correlation::core::Cell c_1({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   c_1.addAtom("Ar", {0.0, 0.0, 0.0});
@@ -319,7 +319,7 @@ TEST_F(RDFTests, HandlesMissingPartialInAdd) {
   EXPECT_TRUE(g_r_df1_after.partials.count("Xe-Xe"));
 }
 
-TEST_F(RDFTests, VerifyAshcroftWeightsAreCorrect) {
+TEST_F(RDFCalculatorTests, VerifyAshcroftWeightsAreCorrect) {
   // Build cell with 3 Ar atoms and 1 Xe atom (total 4 atoms)
   // Concentration: x_Ar = 0.75, x_Xe = 0.25
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
@@ -372,7 +372,7 @@ TEST_F(RDFTests, VerifyAshcroftWeightsAreCorrect) {
   }
 }
 
-TEST_F(RDFTests, FCC_Copper_RDF) {
+TEST_F(RDFCalculatorTests, FCC_Copper_RDF) {
   real_t const lat_a = 3.615;
   auto cell = correlation::testing::crystals::createFCCCell(lat_a, "Cu", 2, 2, 2);
   updateTrajectory(cell);
@@ -400,7 +400,7 @@ TEST_F(RDFTests, FCC_Copper_RDF) {
   EXPECT_GT(max_val1, 1.0);
 }
 
-TEST_F(RDFTests, BCC_Iron_RDF) {
+TEST_F(RDFCalculatorTests, BCC_Iron_RDF) {
   real_t const lat_a = 2.866;
   auto cell = correlation::testing::crystals::createBCCCell(lat_a, "Fe", 3, 3, 3);
   updateTrajectory(cell);
@@ -428,7 +428,7 @@ TEST_F(RDFTests, BCC_Iron_RDF) {
   EXPECT_GT(max_val1, 1.0);
 }
 
-TEST_F(RDFTests, Diamond_Silicon_RDF) {
+TEST_F(RDFCalculatorTests, Diamond_Silicon_RDF) {
   real_t const lat_a = 5.431;
   auto cell = correlation::testing::crystals::createDiamondCell(lat_a, "Si", 2, 2, 2);
   updateTrajectory(cell);
@@ -456,7 +456,7 @@ TEST_F(RDFTests, Diamond_Silicon_RDF) {
   EXPECT_GT(max_val1, 1.0);
 }
 
-TEST_F(RDFTests, NaCl_RockSalt_RDF) {
+TEST_F(RDFCalculatorTests, NaCl_RockSalt_RDF) {
   real_t const lat_a = 5.64;
   auto cell = correlation::testing::crystals::createNaClCell(lat_a, "Na", "Cl", 2, 2, 2);
   updateTrajectory(cell);
@@ -498,7 +498,7 @@ TEST_F(RDFTests, NaCl_RockSalt_RDF) {
   EXPECT_GT(max_nana, 1.0);
 }
 
-TEST_F(RDFTests, VerifyRawAndUnweightedHistograms) {
+TEST_F(RDFCalculatorTests, VerifyRawAndUnweightedHistograms) {
   updateTrajectory();
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   dists.calculateRDF({
@@ -528,7 +528,7 @@ TEST_F(RDFTests, VerifyRawAndUnweightedHistograms) {
   ASSERT_TRUE(g_unw.partials.contains("Ar-Ar"));
 }
 
-TEST_F(RDFTests, AddAccumulatesWithMismatchedPartialSizes) {
+TEST_F(RDFCalculatorTests, AddAccumulatesWithMismatchedPartialSizes) {
   updateTrajectory();
   DistributionFunctions df1(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   DistributionFunctions df2(cell_, 5.0, trajectory_.getBondCutoffsSQ());

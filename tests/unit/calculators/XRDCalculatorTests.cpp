@@ -18,7 +18,7 @@
 namespace correlation::analysis {
 
 // Test fixture for XRD tests.
-class XRDTests : public ::testing::Test {
+class XRDCalculatorTests : public ::testing::Test {
 protected:
   void SetUp() override {
     // A simple cubic cell containing two atoms
@@ -44,7 +44,7 @@ public:
   correlation::core::Trajectory trajectory_;
 };
 
-TEST_F(XRDTests, CalculateXRD) {
+TEST_F(XRDCalculatorTests, CalculateXRD) {
   updateTrajectory();
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
@@ -71,7 +71,7 @@ TEST_F(XRDTests, CalculateXRD) {
   EXPECT_LE(hist.bins.back(), 90.0);
 }
 
-TEST_F(XRDTests, CalculateXRD_ThrowsIfNoRDF) {
+TEST_F(XRDCalculatorTests, CalculateXRD_ThrowsIfNoRDF) {
   updateTrajectory();
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
@@ -85,7 +85,7 @@ TEST_F(XRDTests, CalculateXRD_ThrowsIfNoRDF) {
                std::logic_error);
 }
 
-TEST_F(XRDTests, CalculateXRD_InvalidBinWidth) {
+TEST_F(XRDCalculatorTests, CalculateXRD_InvalidBinWidth) {
   updateTrajectory();
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
@@ -111,7 +111,7 @@ TEST_F(XRDTests, CalculateXRD_InvalidBinWidth) {
                std::invalid_argument);
 }
 
-TEST_F(XRDTests, CalculateXRD_IntensityIsZeroAtThetaZero) {
+TEST_F(XRDCalculatorTests, CalculateXRD_IntensityIsZeroAtThetaZero) {
   updateTrajectory();
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
@@ -139,7 +139,7 @@ TEST_F(XRDTests, CalculateXRD_IntensityIsZeroAtThetaZero) {
   EXPECT_DOUBLE_EQ(intensities.front(), 0.0);
 }
 
-TEST_F(XRDTests, CalculateXRDCubicCell) {
+TEST_F(XRDCalculatorTests, CalculateXRDCubicCell) {
   // Simple cubic cell a = 3.0, 3x3x3 supercell
   correlation::core::Cell cubic_cell({9.0, 9.0, 9.0, 90.0, 90.0, 90.0});
   for (int i = 0; i < 2; ++i) {
@@ -195,7 +195,7 @@ TEST_F(XRDTests, CalculateXRDCubicCell) {
   EXPECT_NEAR(max_theta, 28.5, 1.0);
 }
 
-TEST_F(XRDTests, CalculateXRD_InvalidInputsThrow) {
+TEST_F(XRDCalculatorTests, CalculateXRD_InvalidInputsThrow) {
   updateTrajectory();
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   dists.calculateRDF({
@@ -226,7 +226,7 @@ TEST_F(XRDTests, CalculateXRD_InvalidInputsThrow) {
                std::invalid_argument);
 }
 
-TEST_F(XRDTests, CalculateFromSq) {
+TEST_F(XRDCalculatorTests, CalculateFromSq) {
   updateTrajectory();
 
   Histogram s_q_hist;
@@ -252,7 +252,7 @@ TEST_F(XRDTests, CalculateFromSq) {
   EXPECT_EQ(xrd_hist.partials.at("Total").size(), xrd_hist.bins.size());
 }
 
-TEST_F(XRDTests, FCC_Copper_XRD) {
+TEST_F(XRDCalculatorTests, FCC_Copper_XRD) {
   real_t const a = 3.615;
   auto cell = correlation::testing::crystals::createFCCCell(a, "Cu", 3, 3, 3);
   updateTrajectory(cell);
@@ -288,7 +288,7 @@ TEST_F(XRDTests, FCC_Copper_XRD) {
   EXPECT_NEAR(max_theta, 43.3, 1.5);
 }
 
-TEST_F(XRDTests, BCC_Iron_XRD) {
+TEST_F(XRDCalculatorTests, BCC_Iron_XRD) {
   real_t const a = 2.866;
   auto cell = correlation::testing::crystals::createBCCCell(a, "Fe", 3, 3, 3);
   updateTrajectory(cell);
@@ -324,7 +324,7 @@ TEST_F(XRDTests, BCC_Iron_XRD) {
   EXPECT_NEAR(max_theta, 44.7, 1.5);
 }
 
-TEST_F(XRDTests, Diamond_Silicon_XRD) {
+TEST_F(XRDCalculatorTests, Diamond_Silicon_XRD) {
   real_t const a = 5.431;
   auto cell = correlation::testing::crystals::createDiamondCell(a, "Si", 2, 2, 2);
   updateTrajectory(cell);
@@ -360,7 +360,7 @@ TEST_F(XRDTests, Diamond_Silicon_XRD) {
   EXPECT_NEAR(max_theta, 28.4, 1.5);
 }
 
-TEST_F(XRDTests, NaCl_RockSalt_XRD) {
+TEST_F(XRDCalculatorTests, NaCl_RockSalt_XRD) {
   real_t const a = 5.64;
   auto cell = correlation::testing::crystals::createNaClCell(a, "Na", "Cl", 2, 2, 2);
   updateTrajectory(cell);

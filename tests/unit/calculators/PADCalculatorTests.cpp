@@ -25,7 +25,7 @@ namespace correlation::analysis {
 // Part 1: Angle Reproduction Tests
 // ============================================================================
 namespace {
-class PADTests_AngleReproduction : public ::testing::Test {
+class PADCalculatorTests_AngleReproduction : public ::testing::Test {
 protected:
   void SetUp() override {
     // Simple cubic cell
@@ -54,7 +54,7 @@ real_t sumHistogram(const std::vector<real_t> &hist) {
   return std::accumulate(hist.begin(), hist.end(), static_cast<real_t>(0.0));
 }
 
-class PADTests : public ::testing::Test {
+class PADCalculatorTests : public ::testing::Test {
 protected:
   void SetUp() override {
     // Large box to avoid PBC issues by default
@@ -73,7 +73,7 @@ public:
 };
 } // namespace
 
-TEST_F(PADTests_AngleReproduction, CalculatePAD) {
+TEST_F(PADCalculatorTests_AngleReproduction, CalculatePAD) {
   auto water = correlation::testing::crystals::createWaterMoleculeCell(
       {.O_pos = {5.0, 5.0, 5.0}, .r_OH = 1.0, .angle_HOH_deg = 104.5, .box_size = 10.0});
 
@@ -94,7 +94,7 @@ TEST_F(PADTests_AngleReproduction, CalculatePAD) {
   EXPECT_NEAR(angle, 104.5, 0.001);
 }
 
-TEST_F(PADTests_AngleReproduction, MissingAnglesWhenCutoffIsTooSmall) {
+TEST_F(PADCalculatorTests_AngleReproduction, MissingAnglesWhenCutoffIsTooSmall) {
   // A-B-C angle.
   // B is at (5,5,5)
   // A is at (3.4,5,5) -> dist 1.6
@@ -127,7 +127,7 @@ TEST_F(PADTests_AngleReproduction, MissingAnglesWhenCutoffIsTooSmall) {
   }
 }
 
-TEST_F(PADTests_AngleReproduction, PBCAngleDetection) {
+TEST_F(PADCalculatorTests_AngleReproduction, PBCAngleDetection) {
   cell_.addAtom("Si", {0.5, 0.5, 0.5});
   cell_.addAtom("O", {8.9, 0.5, 0.5});
   cell_.addAtom("O", {0.5, 8.9, 0.5});
@@ -151,7 +151,7 @@ TEST_F(PADTests_AngleReproduction, PBCAngleDetection) {
   EXPECT_TRUE(found) << "Should find 90 degree angle across PBC";
 }
 
-TEST_F(PADTests_AngleReproduction, SiTetrahedron_4Atoms) {
+TEST_F(PADCalculatorTests_AngleReproduction, SiTetrahedron_4Atoms) {
   cell_.addAtom("Si", {5.0, 5.0, 5.0}); // Center
   cell_.addAtom("Si", {6.0, 6.0, 6.0}); // correlation::core::Neighbor 1 (1,1,1)
   cell_.addAtom("Si", {6.0, 4.0, 4.0}); // correlation::core::Neighbor 2 (1,-1,-1)
@@ -187,7 +187,7 @@ TEST_F(PADTests_AngleReproduction, SiTetrahedron_4Atoms) {
                                "degrees for a standard Si tetrahedron";
 }
 
-TEST_F(PADTests_AngleReproduction, Icosahedron_13Atoms) {
+TEST_F(PADCalculatorTests_AngleReproduction, Icosahedron_13Atoms) {
   real_t const base_coord = static_cast<real_t>(10.0);
   cell_.addAtom("Si", {base_coord, base_coord, base_coord}); // Center
 
@@ -266,14 +266,14 @@ TEST_F(PADTests_AngleReproduction, Icosahedron_13Atoms) {
 // Part 2: Plane Angle Distribution (PAD) Tests
 // ============================================================================
 // 1. Trivial Cases
-TEST_F(PADTests, EmptyCellThrows) {
+TEST_F(PADCalculatorTests, EmptyCellThrows) {
   // Current implementation throws explicitly if atoms are empty in
   // calculateAshcroftWeights or implicitly via other checks.
   updateTrajectory();
   EXPECT_THROW({ DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ()); }, std::invalid_argument);
 }
 
-TEST_F(PADTests, SingleAtomNoAngles) {
+TEST_F(PADCalculatorTests, SingleAtomNoAngles) {
   cell_.addAtom("Si", {10.0, 10.0, 10.0});
   updateTrajectory();
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
@@ -291,13 +291,13 @@ TEST_F(PADTests, SingleAtomNoAngles) {
   }
 }
 
-TEST_F(PADTests, NullNeighborsThrows) {
+TEST_F(PADCalculatorTests, NullNeighborsThrows) {
   cell_.addAtom("Si", {10.0, 10.0, 10.0});
   EXPECT_THROW({ correlation::calculators::PADCalculator::calculate(cell_, nullptr, 1.0); }, std::logic_error);
 }
 
 // 2. Geometry Verification
-TEST_F(PADTests, LinearGeometry180) {
+TEST_F(PADCalculatorTests, LinearGeometry180) {
   // A-B-C line
   cell_.addAtom("O", {8.4, 10.0, 10.0});
   cell_.addAtom("Si", {10.0, 10.0, 10.0});
@@ -349,7 +349,7 @@ TEST_F(PADTests, LinearGeometry180) {
   }
 }
 
-TEST_F(PADTests, RightAngle90) {
+TEST_F(PADCalculatorTests, RightAngle90) {
   cell_.addAtom("O", {10.0, 8.4, 10.0});
   cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
   cell_.addAtom("O", {11.6, 10.0, 10.0});
@@ -376,7 +376,7 @@ TEST_F(PADTests, RightAngle90) {
   EXPECT_NEAR(peak_angle, 90.0, 0.001);
 }
 
-TEST_F(PADTests, EquilateralTriangle60) {
+TEST_F(PADCalculatorTests, EquilateralTriangle60) {
   // Si at (0,0,0)
   // O at (1.6,0,0)
   // O at (0.8, 1.6*sqrt(3)/2, 0)
@@ -404,7 +404,7 @@ TEST_F(PADTests, EquilateralTriangle60) {
   EXPECT_GT(partial[bin_60] + partial[bin_60 - 1], 0.1) << "Should have peak near 60 degrees";
 }
 
-TEST_F(PADTests, TetrahedralAngle) {
+TEST_F(PADCalculatorTests, TetrahedralAngle) {
   // Si at center
   // 4 Neighbors at tetrahedral positions.
   // For simplicity, just check one angle 109.47
@@ -443,7 +443,7 @@ TEST_F(PADTests, TetrahedralAngle) {
 }
 
 // 3. Symmetry & Multi-Species
-TEST_F(PADTests, SymmetryAndSorting) {
+TEST_F(PADCalculatorTests, SymmetryAndSorting) {
   cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
   cell_.addAtom("O", {11.6, 10.0, 10.0});
   cell_.addAtom("N", {10.0, 11.6, 10.0}); // 90 degrees
@@ -467,7 +467,7 @@ TEST_F(PADTests, SymmetryAndSorting) {
 }
 
 // 4. Normalization
-TEST_F(PADTests, FullNormalizationCheck) {
+TEST_F(PADCalculatorTests, FullNormalizationCheck) {
   // 1 Si, 4 O neighbors (tetrahedron)
   // 4 neighbors -> 4*3/2 = 6 angles.
   // All 6 angles are 109.47
@@ -520,7 +520,7 @@ TEST_F(PADTests, FullNormalizationCheck) {
   EXPECT_NEAR(sum_total, 1.0, 0.05);
 }
 
-TEST_F(PADTests, IcosahedronAnglesPAD) {
+TEST_F(PADCalculatorTests, IcosahedronAnglesPAD) {
   cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
   real_t phi = static_cast<real_t>(std::numbers::phi);
   std::vector<std::vector<real_t>> const vertices = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
@@ -580,7 +580,7 @@ TEST_F(PADTests, IcosahedronAnglesPAD) {
   EXPECT_TRUE(found_180) << "Should find PAD peak near 180.00 degrees";
 }
 
-TEST_F(PADTests, BondDistanceBelowMinCutoffProducesNoAngles) {
+TEST_F(PADCalculatorTests, BondDistanceBelowMinCutoffProducesNoAngles) {
   // Center Si at (10, 10, 10), O at (10.5, 10, 10) [dist 0.5 Å], O at (10, 11.5, 10) [dist 1.5 Å]
   cell_.addAtom("Si", {10.0, 10.0, 10.0});
   cell_.addAtom("O", {10.5, 10.0, 10.0}); // dist = 0.5 Å
@@ -609,7 +609,7 @@ TEST_F(PADTests, BondDistanceBelowMinCutoffProducesNoAngles) {
   EXPECT_EQ(total_angles, 0);
 }
 
-TEST_F(PADTests, BondDistanceAboveMaxCutoffProducesNoAngles) {
+TEST_F(PADCalculatorTests, BondDistanceAboveMaxCutoffProducesNoAngles) {
   // Center Si at (10, 10, 10), O at (11.5, 10, 10) [dist 1.5 Å], O at (10, 12.5, 10) [dist 2.5 Å]
   cell_.addAtom("Si", {10.0, 10.0, 10.0});
   cell_.addAtom("O", {11.5, 10.0, 10.0}); // dist = 1.5 Å
@@ -638,7 +638,7 @@ TEST_F(PADTests, BondDistanceAboveMaxCutoffProducesNoAngles) {
   EXPECT_EQ(total_angles, 0);
 }
 
-TEST_F(PADTests, BondDistanceWithinCutoffRangeProducesAngle) {
+TEST_F(PADCalculatorTests, BondDistanceWithinCutoffRangeProducesAngle) {
   // Center Si at (10, 10, 10), O at (11.5, 10, 10) [dist 1.5 Å], O at (10, 11.5, 10) [dist 1.5 Å]
   cell_.addAtom("Si", {10.0, 10.0, 10.0});
   cell_.addAtom("O", {11.5, 10.0, 10.0}); // dist = 1.5 Å
@@ -671,7 +671,7 @@ TEST_F(PADTests, BondDistanceWithinCutoffRangeProducesAngle) {
   EXPECT_TRUE(found_90);
 }
 
-TEST_F(PADTests, VerifyPADRawHistogram) {
+TEST_F(PADCalculatorTests, VerifyPADRawHistogram) {
   // Linear O-Si-O -> 1 angle of 180 degrees
   cell_.addAtom("O", {8.4, 10.0, 10.0});
   cell_.addAtom("Si", {10.0, 10.0, 10.0});

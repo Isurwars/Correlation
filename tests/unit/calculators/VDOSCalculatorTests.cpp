@@ -13,7 +13,7 @@
 
 namespace correlation::analysis {
 
-TEST(vDoSTests, VDOSIsNonZeroAtZeroFrequencyForConstantVACF) {
+TEST(VDOSCalculatorTests, VDOSIsNonZeroAtZeroFrequencyForConstantVACF) {
   // Create a simple constant VACF (DC signal)
   // Fourier transform of a constant is a delta at f=0.
   // Since we define VDOS as the Fourier Transform of the VACF (without
@@ -34,7 +34,7 @@ TEST(vDoSTests, VDOSIsNonZeroAtZeroFrequencyForConstantVACF) {
   EXPECT_GT(intensities[0], 1.0) << "VDOS at 0 THz should be non-zero for a constant VACF (DC component)";
 }
 
-TEST(vDoSTests, PerfectSolidShowsSinglePeak) {
+TEST(VDOSCalculatorTests, PerfectSolidShowsSinglePeak) {
   // A perfect solid has a VACF represented by non-decaying cosine waves.
   // We model a single vibrational mode as a pure cosine wave.
   // The resulting VDOS (real part) should have a single maximum at that
@@ -71,7 +71,7 @@ TEST(vDoSTests, PerfectSolidShowsSinglePeak) {
   EXPECT_GT(*max_it, 0.0) << "The peak real intensity should be positive.";
 }
 
-TEST(vDoSTests, IdealGasShowsImaginaryPeak) {
+TEST(VDOSCalculatorTests, IdealGasShowsImaginaryPeak) {
   // An ideal gas (or a purely diffusive liquid) has a VACF that decays
   // exponentially without oscillations. A pure exponential decay e^(-at)
   // translates to a VDOS where the real part peaks at 0 THz and the imaginary

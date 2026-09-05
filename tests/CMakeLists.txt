@@ -41,13 +41,13 @@ add_executable(correlation_unit_tests
     unit/readers/OutmolReaderTests.cpp
     unit/calculators/DihedralCalculatorTests.cpp
     unit/calculators/MotifFinderTests.cpp
-    unit/calculators/RDFTests.cpp
-    unit/calculators/XRDTests.cpp
-    unit/calculators/PADTests.cpp
-    unit/calculators/VACFTests.cpp
-    unit/calculators/vDoSTests.cpp
-    unit/calculators/DADTests.cpp
-    unit/calculators/RDTests.cpp
+    unit/calculators/RDFCalculatorTests.cpp
+    unit/calculators/XRDCalculatorTests.cpp
+    unit/calculators/PADCalculatorTests.cpp
+    unit/calculators/VACFCalculatorTests.cpp
+    unit/calculators/VDOSCalculatorTests.cpp
+    unit/calculators/DADCalculatorTests.cpp
+    unit/calculators/RDCalculatorTests.cpp
     unit/calculators/RingCellTests.cpp
     unit/calculators/StructureFactorCalculatorTests.cpp
     unit/calculators/SteinhardtCalculatorTests.cpp

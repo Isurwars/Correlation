@@ -14,13 +14,13 @@
 namespace correlation::analysis {
 namespace {
 // Test fixture for VACF and VDOS tests.
-class VACFTests : public ::testing::Test {
+class VACFCalculatorTests : public ::testing::Test {
 protected:
   // No special setup needed for VACF usually, or different from Test06
 };
 } // namespace
 
-TEST_F(VACFTests, CalculateVACF_and_VDOS) {
+TEST_F(VACFCalculatorTests, CalculateVACF_and_VDOS) {
   correlation::core::Cell cell({10, 10, 10, 90, 90, 90});
   cell.addAtom("Ar", {0, 0, 0});
   correlation::core::Trajectory trajectory;
@@ -65,7 +65,7 @@ TEST_F(VACFTests, CalculateVACF_and_VDOS) {
   EXPECT_TRUE(vdos_hist.partials.count("Frequency_cm_1"));
 }
 
-TEST_F(VACFTests, CalculateVACF_WithFrameRange) {
+TEST_F(VACFCalculatorTests, CalculateVACF_WithFrameRange) {
   correlation::core::Trajectory tRange;
   tRange.setTimeStep(1.0);
 
@@ -102,7 +102,7 @@ TEST_F(VACFTests, CalculateVACF_WithFrameRange) {
   EXPECT_NEAR(vacf[3], 1.0, 1e-6);
 }
 
-TEST_F(VACFTests, CalculateVACF_GasLike) {
+TEST_F(VACFCalculatorTests, CalculateVACF_GasLike) {
   correlation::core::Trajectory tGas;
   tGas.setTimeStep(1.0);
 
@@ -148,7 +148,7 @@ TEST_F(VACFTests, CalculateVACF_GasLike) {
   EXPECT_GT(vacf[4], 0.0);
 }
 
-TEST_F(VACFTests, ComputeDiffusionCoefficientVACF_and_RelaxationTime) {
+TEST_F(VACFCalculatorTests, ComputeDiffusionCoefficientVACF_and_RelaxationTime) {
   std::vector<real_t> time = {0.0, 1.0, 2.0};
   std::vector<real_t> vacf = {3.0, 3.0, 3.0};
   std::vector<real_t> norm_vacf = {1.0, 1.0, 1.0};
@@ -160,7 +160,7 @@ TEST_F(VACFTests, ComputeDiffusionCoefficientVACF_and_RelaxationTime) {
   EXPECT_NEAR(relaxation_time, 2.0, 1e-6);
 }
 
-TEST_F(VACFTests, DistributionFunctionsDynamicProperties) {
+TEST_F(VACFCalculatorTests, DistributionFunctionsDynamicProperties) {
   correlation::core::Cell cell({10, 10, 10, 90, 90, 90});
   cell.addAtom("Ar", {0.0, 0.0, 0.0});
   DistributionFunctions dists(cell);
@@ -184,7 +184,7 @@ TEST_F(VACFTests, DistributionFunctionsDynamicProperties) {
   EXPECT_THAT(dists.getDeborahNumber(), correlation::testing::IsRealEq(0.12));
 }
 
-TEST_F(VACFTests, DynamicsAnalyzerNonPhysicalInputs) {
+TEST_F(VACFCalculatorTests, DynamicsAnalyzerNonPhysicalInputs) {
   // Test mismatched size / empty inputs
   std::vector<real_t> time_empty = {};
   std::vector<real_t> vacf_empty = {};
@@ -214,7 +214,7 @@ TEST_F(VACFTests, DynamicsAnalyzerNonPhysicalInputs) {
   EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeRelaxationTime(time_valid, vacf_neg), 0.0);
 }
 
-TEST_F(VACFTests, DistributionFunctionsNonPhysicalOptions) {
+TEST_F(VACFCalculatorTests, DistributionFunctionsNonPhysicalOptions) {
   correlation::core::Cell cell({10, 10, 10, 90, 90, 90});
   cell.addAtom("Ar", {0.0, 0.0, 0.0});
   DistributionFunctions dists(cell);

@@ -12,7 +12,7 @@
 
 namespace correlation::analysis {
 namespace {
-class DADTests : public ::testing::Test {
+class DADCalculatorTests : public ::testing::Test {
 public:
   correlation::core::Cell cell_;
 
@@ -31,10 +31,11 @@ protected:
 };
 } // namespace
 
-TEST_F(DADTests, BasicCalculation) {
+TEST_F(DADCalculatorTests, BasicCalculation) {
   // Cutoff must be > 1.0 to find the bonds (dist is 1.0 each)
   real_t const r_cut = 1.5;
-  BondCutoffMatrix const bond_cutoffs(1, std::vector<BondCutoffRange>(1, BondCutoffRange{0.36, r_cut * r_cut}));
+  BondCutoffMatrix const bond_cutoffs(
+      1, std::vector<BondCutoffRange>(1, BondCutoffRange{.min_sq = 0.36, .max_sq = r_cut * r_cut}));
   StructureAnalyzer const analyzer(cell_, r_cut, bond_cutoffs, true);
 
   real_t const bin_width = 10.0;
@@ -71,7 +72,7 @@ TEST_F(DADTests, BasicCalculation) {
   EXPECT_GT(raw_sum, 0.0);
 }
 
-TEST_F(DADTests, IcosahedronAnglesDAD) {
+TEST_F(DADCalculatorTests, IcosahedronAnglesDAD) {
   correlation::core::Cell cell_iso;
   cell_iso.setLatticeParameters({30.0, 30.0, 30.0, 90.0, 90.0, 90.0});
   cell_iso.addAtom("Si", {10.0, 10.0, 10.0}); // Center
@@ -87,7 +88,8 @@ TEST_F(DADTests, IcosahedronAnglesDAD) {
   }
 
   real_t const r_cut = 2.5;
-  BondCutoffMatrix const bond_cutoffs(1, std::vector<BondCutoffRange>(1, BondCutoffRange{0.36, r_cut * r_cut}));
+  BondCutoffMatrix const bond_cutoffs(
+      1, std::vector<BondCutoffRange>(1, BondCutoffRange{.min_sq = 0.36, .max_sq = r_cut * r_cut}));
   StructureAnalyzer const analyzer(cell_iso, r_cut, bond_cutoffs, true);
 
   real_t const bin_width = 1.0;
@@ -119,7 +121,7 @@ TEST_F(DADTests, IcosahedronAnglesDAD) {
   }
 }
 
-TEST_F(DADTests, NullNeighborsThrows) {
+TEST_F(DADCalculatorTests, NullNeighborsThrows) {
   EXPECT_THROW({ correlation::calculators::DADCalculator::calculate(cell_, nullptr, 10.0); }, std::logic_error);
 }
 
