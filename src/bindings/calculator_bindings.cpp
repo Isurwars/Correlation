@@ -31,13 +31,54 @@ using namespace correlation::analysis;
 // ------------------------------------------------------------------
 namespace {
 class PyBaseCalculator : public BaseCalculator {
+  mutable std::string cached_name_;
+  mutable std::string cached_short_name_;
+  mutable std::string cached_group_;
+  mutable std::string cached_description_;
+
 public:
   using BaseCalculator::BaseCalculator;
 
-  std::string getName() const override { PYBIND11_OVERRIDE_PURE(std::string, BaseCalculator, getName); }
-  std::string getShortName() const override { PYBIND11_OVERRIDE_PURE(std::string, BaseCalculator, getShortName); }
-  std::string getGroup() const override { PYBIND11_OVERRIDE_PURE(std::string, BaseCalculator, getGroup); }
-  std::string getDescription() const override { PYBIND11_OVERRIDE_PURE(std::string, BaseCalculator, getDescription); }
+  std::string_view getName() const override {
+    const py::gil_scoped_acquire gil;
+    const py::function overload = py::get_overload(this, "get_name");
+    if (overload) {
+      cached_name_ = overload().cast<std::string>();
+      return cached_name_;
+    }
+    py::pybind11_fail("Tried to call pure virtual function \"BaseCalculator::getName\"");
+  }
+
+  std::string_view getShortName() const override {
+    const py::gil_scoped_acquire gil;
+    const py::function overload = py::get_overload(this, "get_short_name");
+    if (overload) {
+      cached_short_name_ = overload().cast<std::string>();
+      return cached_short_name_;
+    }
+    py::pybind11_fail("Tried to call pure virtual function \"BaseCalculator::getShortName\"");
+  }
+
+  std::string_view getGroup() const override {
+    const py::gil_scoped_acquire gil;
+    const py::function overload = py::get_overload(this, "get_group");
+    if (overload) {
+      cached_group_ = overload().cast<std::string>();
+      return cached_group_;
+    }
+    py::pybind11_fail("Tried to call pure virtual function \"BaseCalculator::getGroup\"");
+  }
+
+  std::string_view getDescription() const override {
+    const py::gil_scoped_acquire gil;
+    const py::function overload = py::get_overload(this, "get_description");
+    if (overload) {
+      cached_description_ = overload().cast<std::string>();
+      return cached_description_;
+    }
+    py::pybind11_fail("Tried to call pure virtual function \"BaseCalculator::getDescription\"");
+  }
+
   bool isFrameCalculator() const override { PYBIND11_OVERRIDE_PURE(bool, BaseCalculator, isFrameCalculator); }
   bool isTrajectoryCalculator() const override { PYBIND11_OVERRIDE_PURE(bool, BaseCalculator, isTrajectoryCalculator); }
   bool isConfigured() const override { PYBIND11_OVERRIDE(bool, BaseCalculator, isConfigured); }
@@ -78,7 +119,7 @@ void init_calculators(py::module_ &mod) {
       []() {
         std::vector<std::string> names;
         for (const auto &calculator : CalculatorFactory::instance().getCalculators()) {
-          names.push_back(calculator->getShortName());
+          names.emplace_back(calculator->getShortName());
         }
         return names;
       },

@@ -17,3 +17,11 @@ tests/fuzz/corpus/*/*
 !tests/fuzz/corpus/*/*.xdatcar
 !tests/fuzz/corpus/*/Si*
 project_analysis.md
+
+# Python
+*.so
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/

@@ -37,12 +37,12 @@ void init_mlip(py::module_ &mod) {
           [](py::object &obj) -> py::array_t<real_t> {
             const auto &graph = obj.cast<const PeriodicGraphData &>();
             if (graph.positions_flat.empty() || graph.atom_count == 0) {
-              return py::array_t<real_t>();
+              return {};
             }
-            py::ssize_t rows = static_cast<py::ssize_t>(graph.atom_count);
-            py::ssize_t cols = 3;
-            py::ssize_t stride_row = static_cast<py::ssize_t>(3 * sizeof(real_t));
-            py::ssize_t stride_col = static_cast<py::ssize_t>(sizeof(real_t));
+            const auto rows = static_cast<py::ssize_t>(graph.atom_count);
+            const py::ssize_t cols = 3;
+            const auto stride_row = static_cast<py::ssize_t>(3 * sizeof(real_t));
+            const auto stride_col = static_cast<py::ssize_t>(sizeof(real_t));
             return py::array_t<real_t>({rows, cols}, {stride_row, stride_col}, graph.positions_flat.data(), obj);
           },
           "Zero-copy access to atomic Cartesian coordinates as a (N, 3) NumPy array.")
@@ -51,10 +51,10 @@ void init_mlip(py::module_ &mod) {
           [](py::object &obj) -> py::array_t<int64_t> {
             const auto &graph = obj.cast<const PeriodicGraphData &>();
             if (graph.atomic_numbers.empty() || graph.atom_count == 0) {
-              return py::array_t<int64_t>();
+              return {};
             }
-            py::ssize_t count = static_cast<py::ssize_t>(graph.atom_count);
-            py::ssize_t stride = static_cast<py::ssize_t>(sizeof(int64_t));
+            const auto count = static_cast<py::ssize_t>(graph.atom_count);
+            const auto stride = static_cast<py::ssize_t>(sizeof(int64_t));
             return py::array_t<int64_t>({count}, {stride}, graph.atomic_numbers.data(), obj);
           },
           "Zero-copy access to atomic numbers (Z) as a (N,) NumPy array.")
@@ -63,12 +63,12 @@ void init_mlip(py::module_ &mod) {
           [](py::object &obj) -> py::array_t<int64_t> {
             const auto &graph = obj.cast<const PeriodicGraphData &>();
             if (graph.edge_index_flat.empty() || graph.edge_count == 0) {
-              return py::array_t<int64_t>();
+              return {};
             }
-            py::ssize_t rows = 2;
-            py::ssize_t cols = static_cast<py::ssize_t>(graph.edge_count);
-            py::ssize_t stride_row = static_cast<py::ssize_t>(graph.edge_count * sizeof(int64_t));
-            py::ssize_t stride_col = static_cast<py::ssize_t>(sizeof(int64_t));
+            const py::ssize_t rows = 2;
+            const auto cols = static_cast<py::ssize_t>(graph.edge_count);
+            const auto stride_row = static_cast<py::ssize_t>(graph.edge_count * sizeof(int64_t));
+            const auto stride_col = static_cast<py::ssize_t>(sizeof(int64_t));
             return py::array_t<int64_t>({rows, cols}, {stride_row, stride_col}, graph.edge_index_flat.data(), obj);
           },
           "Zero-copy access to directed edge indices (COO format) as a (2, E) NumPy array.")
@@ -77,12 +77,12 @@ void init_mlip(py::module_ &mod) {
           [](py::object &obj) -> py::array_t<real_t> {
             const auto &graph = obj.cast<const PeriodicGraphData &>();
             if (graph.edge_shifts_flat.empty() || graph.edge_count == 0) {
-              return py::array_t<real_t>();
+              return {};
             }
-            py::ssize_t rows = static_cast<py::ssize_t>(graph.edge_count);
-            py::ssize_t cols = 3;
-            py::ssize_t stride_row = static_cast<py::ssize_t>(3 * sizeof(real_t));
-            py::ssize_t stride_col = static_cast<py::ssize_t>(sizeof(real_t));
+            const auto rows = static_cast<py::ssize_t>(graph.edge_count);
+            const py::ssize_t cols = 3;
+            const auto stride_row = static_cast<py::ssize_t>(3 * sizeof(real_t));
+            const auto stride_col = static_cast<py::ssize_t>(sizeof(real_t));
             return py::array_t<real_t>({rows, cols}, {stride_row, stride_col}, graph.edge_shifts_flat.data(), obj);
           },
           "Zero-copy access to periodic cell integer shift vectors as a (E, 3) NumPy array.")
@@ -91,12 +91,12 @@ void init_mlip(py::module_ &mod) {
           [](py::object &obj) -> py::array_t<real_t> {
             const auto &graph = obj.cast<const PeriodicGraphData &>();
             if (graph.edge_vectors_flat.empty() || graph.edge_count == 0) {
-              return py::array_t<real_t>();
+              return {};
             }
-            py::ssize_t rows = static_cast<py::ssize_t>(graph.edge_count);
-            py::ssize_t cols = 3;
-            py::ssize_t stride_row = static_cast<py::ssize_t>(3 * sizeof(real_t));
-            py::ssize_t stride_col = static_cast<py::ssize_t>(sizeof(real_t));
+            const auto rows = static_cast<py::ssize_t>(graph.edge_count);
+            const py::ssize_t cols = 3;
+            const auto stride_row = static_cast<py::ssize_t>(3 * sizeof(real_t));
+            const auto stride_col = static_cast<py::ssize_t>(sizeof(real_t));
             return py::array_t<real_t>({rows, cols}, {stride_row, stride_col}, graph.edge_vectors_flat.data(), obj);
           },
           "Zero-copy access to Cartesian displacement vectors r_ij as a (E, 3) NumPy array.")
@@ -105,10 +105,10 @@ void init_mlip(py::module_ &mod) {
           [](py::object &obj) -> py::array_t<real_t> {
             const auto &graph = obj.cast<const PeriodicGraphData &>();
             if (graph.edge_distances.empty() || graph.edge_count == 0) {
-              return py::array_t<real_t>();
+              return {};
             }
-            py::ssize_t count = static_cast<py::ssize_t>(graph.edge_count);
-            py::ssize_t stride = static_cast<py::ssize_t>(sizeof(real_t));
+            const auto count = static_cast<py::ssize_t>(graph.edge_count);
+            const auto stride = static_cast<py::ssize_t>(sizeof(real_t));
             return py::array_t<real_t>({count}, {stride}, graph.edge_distances.data(), obj);
           },
           "Zero-copy access to Euclidean edge distances ||r_ij|| as a (E,) NumPy array.")
@@ -116,13 +116,28 @@ void init_mlip(py::module_ &mod) {
           "cell",
           [](py::object &obj) -> py::array_t<real_t> {
             const auto &graph = obj.cast<const PeriodicGraphData &>();
-            py::ssize_t rows = 3;
-            py::ssize_t cols = 3;
-            py::ssize_t stride_row = static_cast<py::ssize_t>(3 * sizeof(real_t));
-            py::ssize_t stride_col = static_cast<py::ssize_t>(sizeof(real_t));
+            const py::ssize_t rows = 3;
+            const py::ssize_t cols = 3;
+            const auto stride_row = static_cast<py::ssize_t>(3 * sizeof(real_t));
+            const auto stride_col = static_cast<py::ssize_t>(sizeof(real_t));
             return py::array_t<real_t>({rows, cols}, {stride_row, stride_col}, graph.cell_flat.data(), obj);
           },
-          "Zero-copy access to lattice matrix as a (3, 3) NumPy array.");
+          "Zero-copy access to lattice matrix as a (3, 3) NumPy array.")
+      .def_property_readonly(
+          "edge_spherical_harmonics",
+          [](py::object &obj) -> py::array_t<real_t> {
+            const auto &graph = obj.cast<const PeriodicGraphData &>();
+            if (graph.edge_spherical_harmonics_flat.empty() || graph.edge_count == 0) {
+              return {};
+            }
+            const auto rows = static_cast<py::ssize_t>(graph.edge_count);
+            const auto cols = static_cast<py::ssize_t>(graph.edge_spherical_harmonics_flat.size() / graph.edge_count);
+            const auto stride_row = static_cast<py::ssize_t>(cols * sizeof(real_t));
+            const auto stride_col = static_cast<py::ssize_t>(sizeof(real_t));
+            return py::array_t<real_t>({rows, cols}, {stride_row, stride_col},
+                                       graph.edge_spherical_harmonics_flat.data(), obj);
+          },
+          "Zero-copy access to spherical harmonics features as a (E, (l_max+1)^2) NumPy array.");
 
   // ------------------------------------------------------------------
   // GaussianRBFConfig
@@ -142,7 +157,7 @@ void init_mlip(py::module_ &mod) {
                                    "Constructs periodic neighbor graphs for atomic GNN evaluation.")
       .def_static("build_graph", &PeriodicGraphBuilder::buildGraph, py::arg("cell"),
                   py::arg("cutoff_radius") = static_cast<real_t>(5.0), py::arg("include_self_loops") = false,
-                  "Build periodic neighbor graph data for a unit cell.")
+                  py::arg("l_max") = static_cast<size_t>(0), "Build periodic neighbor graph data for a unit cell.")
       .def_static("get_atomic_number", &PeriodicGraphBuilder::getAtomicNumber, py::arg("symbol"),
                   "Return atomic number (Z) for element symbol.")
       .def_static("compute_cutoff_envelope", &PeriodicGraphBuilder::computeCutoffEnvelope, py::arg("distance"),
@@ -168,6 +183,7 @@ void init_mlip(py::module_ &mod) {
   // Free function alias for convenient top-level usage
   mod.def("build_periodic_graph", &PeriodicGraphBuilder::buildGraph, py::arg("cell"),
           py::arg("cutoff_radius") = static_cast<real_t>(5.0), py::arg("include_self_loops") = false,
+          py::arg("l_max") = static_cast<size_t>(0),
           "Convenience helper to construct periodic neighbor graph for GNN evaluation.");
 
   // ------------------------------------------------------------------
@@ -191,12 +207,12 @@ void init_mlip(py::module_ &mod) {
           "forces",
           [](const MLIPOutput &out) -> py::array_t<real_t> {
             const size_t n_atoms = out.forces.size();
-            py::array_t<real_t> arr({static_cast<py::ssize_t>(n_atoms), py::ssize_t(3)});
+            py::array_t<real_t> arr({static_cast<py::ssize_t>(n_atoms), static_cast<py::ssize_t>(3)});
             auto buf = arr.mutable_unchecked<2>();
-            for (size_t i = 0; i < n_atoms; ++i) {
-              buf(i, 0) = out.forces[i].x();
-              buf(i, 1) = out.forces[i].y();
-              buf(i, 2) = out.forces[i].z();
+            for (size_t idx = 0; idx < n_atoms; ++idx) {
+              buf(idx, 0) = out.forces[idx].x();
+              buf(idx, 1) = out.forces[idx].y();
+              buf(idx, 2) = out.forces[idx].z();
             }
             return arr;
           },

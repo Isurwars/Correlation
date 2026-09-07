@@ -13,7 +13,7 @@ void init_io(py::module_ &mod) {
   mod.def(
       "read",
       [](const std::string &filepath) -> Trajectory {
-        std::filesystem::path path(filepath);
+        const std::filesystem::path path(filepath);
         auto extension = path.extension().string();
 
         auto *reader = ReaderFactory::instance().getReaderForExtension({.extension = extension, .filename = filepath});
@@ -23,5 +23,16 @@ void init_io(py::module_ &mod) {
 
         return reader->readTrajectory(filepath, nullptr);
       },
-      "Read a trajectory from a file.");
+      py::arg("filepath"),
+      "Read an atomic trajectory or structure file into a Trajectory object.\n\n"
+      "Automatically detects format from file extension (e.g. .car, .arc, .lammps, .xyz).\n\n"
+      "Parameters\n----------\n"
+      "filepath : str\n"
+      "    Path to the input structure or trajectory file.\n\n"
+      "Returns\n-------\n"
+      "Trajectory\n"
+      "    Parsed trajectory containing one or more simulation Cell frames.\n\n"
+      "Raises\n------\n"
+      "RuntimeError\n"
+      "    If no reader is available for the given file extension or parsing fails.");
 }

@@ -77,10 +77,13 @@ def from_ase(atoms: Any) -> Any:
     if correlation is None:
         raise RuntimeError("Correlation C++ extension module is not loaded.")
 
-    is_periodic = any(atoms.pbc) or (hasattr(atoms, "cell") and getattr(atoms.cell, "volume", 0.0) > 1e-6)
+    has_cell = hasattr(atoms, "cell") and hasattr(atoms.cell, "cellpar")
+    cellpar = [float(p) for p in atoms.cell.cellpar()] if has_cell else []
+    has_positive_lengths = len(cellpar) >= 3 and cellpar[0] > 1e-6 and cellpar[1] > 1e-6 and cellpar[2] > 1e-6
+
+    is_periodic = any(getattr(atoms, "pbc", [])) and has_positive_lengths
 
     if is_periodic:
-        cellpar = [float(p) for p in atoms.cell.cellpar()]
         cell = correlation.Cell(cellpar)
     else:
         cell = correlation.Cell()
