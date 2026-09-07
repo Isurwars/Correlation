@@ -51,6 +51,10 @@ if(EMSCRIPTEN OR BUILD_WASM)
         SUFFIX ".js"
     )
 
+    target_compile_options(correlation_wasm PRIVATE
+        --bind
+    )
+
     target_link_options(correlation_wasm PRIVATE
         -O3
         -msimd128

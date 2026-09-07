@@ -64,7 +64,7 @@ jobs:
 
       - name: Compile WebAssembly Target
         run: |
-          cmake --build build-wasm --target correlation_wasm --config Release -j$(nproc)
+          cmake --build build-wasm --target correlation_wasm --config Release -j$(nproc) --verbose
 
       - name: Stage Web Application Bundle
         run: |

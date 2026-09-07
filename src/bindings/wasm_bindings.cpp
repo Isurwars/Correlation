@@ -22,6 +22,7 @@
 #include "core/Trajectory.hpp"
 #include "readers/FileReader.hpp"
 
+#include <cstring>
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
 #include <fstream>
@@ -30,22 +31,24 @@
 #include <vector>
 
 using namespace emscripten;
+using namespace correlation;
 using namespace correlation::core;
 using namespace correlation::analysis;
 using namespace correlation::readers;
 
 // ---------------------------------------------------------------------------
 // Helper: write a string buffer to the Emscripten virtual filesystem, read it
-// back via the normal reader pipeline.
+// back via the normal reader pipeline. Returns unique_ptr to avoid copy construction
+// on move-only Trajectory.
 // ---------------------------------------------------------------------------
-static Trajectory readFromBuffer(const std::string &data, const std::string &filename) {
+static std::unique_ptr<Trajectory> readFromBuffer(const std::string &data, const std::string &filename) {
   // Write to virtual FS.
   {
     std::ofstream f("/" + filename, std::ios::binary);
     f.write(data.c_str(), static_cast<std::streamsize>(data.size()));
   }
   FileType ft = determineFileType(filename);
-  return readTrajectory("/" + filename, ft);
+  return std::make_unique<Trajectory>(readTrajectory("/" + filename, ft));
 }
 
 // ---------------------------------------------------------------------------
@@ -80,7 +83,7 @@ static val getPartialKeysJS(const Histogram &h) {
 // Factory: create DistributionFunctions from a Trajectory (uses last frame).
 // ---------------------------------------------------------------------------
 static std::unique_ptr<DistributionFunctions> createDFFromTrajectory(const Trajectory &traj, real_t cutoff,
-                                                                     val /*unused_radii*/) {
+                                                                     const val & /*unused_radii*/) {
   if (traj.getFrameCount() == 0) {
     throw std::runtime_error("Trajectory contains no frames");
   }
@@ -149,7 +152,7 @@ EMSCRIPTEN_BINDINGS(correlation_wasm) {
       .property("lefSigma", &AnalysisSettings::lef_sigma);
 
   // ---- DistributionFunctions ----
-  class_<DistributionFunctions, std::unique_ptr<DistributionFunctions>>("DistributionFunctions")
+  class_<DistributionFunctions>("DistributionFunctions")
       .constructor(&createDFFromTrajectory)
       .class_function("fromCell", &createDFFromCell)
       .class_function("from_cell", &createDFFromCell)
@@ -161,10 +164,8 @@ EMSCRIPTEN_BINDINGS(correlation_wasm) {
                 }))
       .function("calculatePAD", &DistributionFunctions::calculatePAD)
       .function("calculate_pad", &DistributionFunctions::calculatePAD)
-      .function("getHistogram",
-                select_overload<const Histogram &(const std::string &) const>(&DistributionFunctions::getHistogram))
-      .function("get_histogram",
-                select_overload<const Histogram &(const std::string &) const>(&DistributionFunctions::getHistogram))
+      .function("getHistogram", &DistributionFunctions::getHistogram)
+      .function("get_histogram", &DistributionFunctions::getHistogram)
       .function("getAvailableHistograms", &DistributionFunctions::getAvailableHistograms)
       .function("get_available_histograms", &DistributionFunctions::getAvailableHistograms);
 

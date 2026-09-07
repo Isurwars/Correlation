@@ -104,6 +104,9 @@ endif()
 # Testing setup (early so BUILD_TESTING defaults to ON)
 # -----------------------------------------------------------
 include(CTest)
+if(BUILD_FUZZ_TESTS AND NOT BUILD_TESTING)
+    enable_testing()
+endif()
 
 # -----------------------------------------------------------
 # Utils & Dependencies
@@ -162,9 +165,10 @@ add_subdirectory(src)
 #-----------------------------------------------------------
 if(BUILD_TESTING)
     add_subdirectory(tests)
-    if(BUILD_FUZZ_TESTS)
-        add_subdirectory(tests/fuzz)
-    endif()
+endif()
+
+if(BUILD_FUZZ_TESTS)
+    add_subdirectory(tests/fuzz)
 endif()
 
 #-------------------------------------------

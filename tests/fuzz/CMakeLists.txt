@@ -23,6 +23,9 @@ set(FUZZ_LINK_FLAGS      ${FUZZ_SANITIZER_FLAGS})
 # Common libraries every fuzz target needs
 set(FUZZ_LINK_LIBS
     correlation_lib
+    readers_obj
+    writers_obj
+    calculators_obj
 )
 
 # ---------------------------------------------------------------
