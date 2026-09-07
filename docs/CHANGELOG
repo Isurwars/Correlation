@@ -1,6 +1,34 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.0.0] - 2026-09-06
+
+### Ecosystem Interoperability & Python Adapters
+- **Pure Python Ecosystem Adapters**: Implemented `python/correlation/adapters.py` providing seamless bidirectional conversions between `correlation.Cell` and major materials science frameworks without introducing compile-time C++ dependencies:
+  - **Atomic Simulation Environment (ASE)**: `from_ase()`, `to_ase()`, `from_ase_trajectory()`, and `to_ase_trajectory()`.
+  - **Pymatgen**: `from_pymatgen()` and `to_pymatgen()`.
+  - **Dynamic Feature Detection**: Non-intrusive runtime detection of external libraries.
+  - **Monkey-Patched Methods**: Injected `.to_correlation()` into `ase.Atoms` and `pymatgen.core.Structure`, and `.to_ase()` / `.to_pymatgen()` into `correlation.Cell`.
+- **PyTorch Geometric (PyG) Descriptors**: Provided `to_torch_geometric()` for zero-copy/NumPy conversion of atomic periodic graphs to `torch_geometric.data.Data`.
+- **Python Bindings Enhancements**: Added pybind11 buffer-protocol bindings and comprehensive test coverage (`tests/test_adapters.py`).
+
+### WebAssembly & Browser Runtime
+- **Emscripten Target**: Added `correlation_wasm` build target enabled via `BUILD_WASM=ON` with Embind, single-precision compilation, SIMD128 acceleration, and virtual filesystem support (`readFromBuffer()`).
+- **Web Application Interface**: Updated `ui/wasm_app/` with drag-and-drop structure parsing, dynamic parameter selection, real-time client-side analysis, and HTML5 canvas distribution plotting.
+- **GitHub Actions CI/CD Deployment**: Automated WebAssembly build and GitHub Pages deployment workflow (`.github/workflows/wasm.yml`) using `mymindstorm/setup-emsdk@v14`.
+
+### Interactive Tutorials & Documentation
+- **Jupyter Notebook Tutorial Suite**: Created interactive tutorials in `notebooks/`:
+  - `01_getting_started.ipynb`: Basic structure loading, RDF and PAD calculations, partials extraction, and Matplotlib visualization.
+  - `02_ase_pymatgen_interop.ipynb`: Data roundtripping with ASE and Pymatgen, thermal jitter simulation, and hybrid workflows.
+  - `03_trajectory_and_dynamics.ipynb`: Multi-frame trajectory analysis, ensemble-averaged RDF, Mean Squared Displacement (MSD), and VACF diffusion evaluation.
+- **Architecture Decision Records (ADRs)**: Established `docs/adr/` documenting foundational architectural choices (C++23 standards, Slint MVVM, MLIP/GNN descriptors, pure Python adapters, and WebAssembly).
+- **Contributing Guidelines**: Modernized `docs/CONTRIBUTING.md` with C++23 standards, cognitive complexity gate ($\le 25$), zero-suppression policy, and testing workflows.
+
+### Core C++23 & Code Quality
+- **Cognitive Complexity Gate**: All core and calculator routines strictly conform to Cognitive Complexity $\le 25$ (`readability-function-cognitive-complexity`) with zero `NOLINT` suppressions.
+- **Regression Suite**: 100% test pass rate across all 746 C++ unit and integration tests, alongside Python test suites.
+
 ## [3.9.2] - 2026-09-04
 
 ### UI / UX & Options

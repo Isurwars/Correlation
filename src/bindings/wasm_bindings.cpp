@@ -7,11 +7,11 @@
  *
  * Compile with the Emscripten toolchain:
  *   emcmake cmake .. -DBUILD_WASM=ON -DBUILD_TESTING=OFF
- *   emmake make correlation_wasm
+ *   cmake --build . --target correlation_wasm
  *
  * Exposes the following to JavaScript via embind:
  *   - Cell, Trajectory, DistributionFunctions (construction + calculation)
- *   - read()  — parse a file buffer into a Trajectory
+ *   - readFromBuffer()  — parse a file buffer into a Trajectory
  *   - Histogram data extraction for plotting
  */
 
@@ -25,6 +25,7 @@
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
 #include <fstream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -41,7 +42,7 @@ static Trajectory readFromBuffer(const std::string &data, const std::string &fil
   // Write to virtual FS.
   {
     std::ofstream f("/" + filename, std::ios::binary);
-    f.write(data.c_str(), data.size());
+    f.write(data.c_str(), static_cast<std::streamsize>(data.size()));
   }
   FileType ft = determineFileType(filename);
   return readTrajectory("/" + filename, ft);
@@ -57,8 +58,9 @@ static val getBinsJS(const Histogram &h) { return val(typed_memory_view(h.bins.s
 // ---------------------------------------------------------------------------
 static val getPartialJS(const Histogram &h, const std::string &key) {
   auto it = h.partials.find(key);
-  if (it == h.partials.end())
+  if (it == h.partials.end()) {
     return val::null();
+  }
   return val(typed_memory_view(it->second.size(), it->second.data()));
 }
 
@@ -74,10 +76,33 @@ static val getPartialKeysJS(const Histogram &h) {
   return keys;
 }
 
+// ---------------------------------------------------------------------------
+// Factory: create DistributionFunctions from a Trajectory (uses last frame).
+// ---------------------------------------------------------------------------
+static std::unique_ptr<DistributionFunctions> createDFFromTrajectory(const Trajectory &traj, real_t cutoff,
+                                                                     val /*unused_radii*/) {
+  if (traj.getFrameCount() == 0) {
+    throw std::runtime_error("Trajectory contains no frames");
+  }
+  Cell frame = traj.getFrame(traj.getFrameCount() - 1);
+  return std::make_unique<DistributionFunctions>(frame, cutoff, BondCutoffMatrix{});
+}
+
+// ---------------------------------------------------------------------------
+// Factory: create DistributionFunctions from a Cell directly.
+// ---------------------------------------------------------------------------
+static std::unique_ptr<DistributionFunctions> createDFFromCell(const Cell &cell, real_t cutoff) {
+  return std::make_unique<DistributionFunctions>(cell, cutoff, BondCutoffMatrix{});
+}
+
 // ============================================================================
 // Emscripten bindings
 // ============================================================================
 EMSCRIPTEN_BINDINGS(correlation_wasm) {
+
+  // ---- Vector registrations ----
+  register_vector<std::string>("VectorString");
+  register_vector<real_t>("VectorReal");
 
   // ---- Cell ----
   class_<Cell>("Cell").constructor<>().function("atomCount", &Cell::atomCount).function("getVolume", &Cell::volume);
@@ -86,6 +111,9 @@ EMSCRIPTEN_BINDINGS(correlation_wasm) {
   class_<Trajectory>("Trajectory")
       .constructor<>()
       .function("numFrames", &Trajectory::getFrameCount)
+      .function("getFrameCount", &Trajectory::getFrameCount)
+      .function("getFrame", &Trajectory::getFrame)
+      .function("firstFrame", &Trajectory::firstFrame)
       .property("timeStep", &Trajectory::getTimeStep, &Trajectory::setTimeStep);
 
   // ---- Histogram ----
@@ -109,9 +137,12 @@ EMSCRIPTEN_BINDINGS(correlation_wasm) {
       .property("lefSigma", &AnalysisSettings::lef_sigma);
 
   // ---- DistributionFunctions ----
-  class_<DistributionFunctions>("DistributionFunctions")
-      .constructor<Cell &, real_t, const std::vector<std::vector<real_t>> &>()
-      .function("calculateRDF", &DistributionFunctions::calculateRDF)
+  class_<DistributionFunctions, std::unique_ptr<DistributionFunctions>>("DistributionFunctions")
+      .constructor(&createDFFromTrajectory)
+      .class_function("fromCell", &createDFFromCell)
+      .function("calculateRDF", optional_override([](DistributionFunctions &df, real_t r_max, real_t r_bin_width) {
+                  df.calculateRDF(RDFParams{.r_max = r_max, .r_bin_width = r_bin_width});
+                }))
       .function("calculatePAD", &DistributionFunctions::calculatePAD)
       .function("getHistogram",
                 select_overload<const Histogram &(const std::string &) const>(&DistributionFunctions::getHistogram))
@@ -119,6 +150,8 @@ EMSCRIPTEN_BINDINGS(correlation_wasm) {
 
   // ---- Free functions ----
   function("readFromBuffer", &readFromBuffer);
+  function("createDistributionFunctions", &createDFFromTrajectory);
+  function("createDistributionFunctionsFromCell", &createDFFromCell);
 }
 
 #endif // __EMSCRIPTEN__

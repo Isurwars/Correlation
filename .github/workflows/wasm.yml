@@ -1,0 +1,107 @@
+name: WebAssembly CI & Pages Deployment
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "include/**"
+      - "src/**"
+      - "ui/wasm_app/**"
+      - "CMakeLists.txt"
+      - "cmake/**"
+      - ".github/workflows/wasm.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "include/**"
+      - "src/**"
+      - "ui/wasm_app/**"
+      - "CMakeLists.txt"
+      - "cmake/**"
+      - ".github/workflows/wasm.yml"
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  EMSCRIPTEN_VERSION: 3.1.64
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build-wasm:
+    name: Build WebAssembly Module
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Emscripten SDK
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: ${{ env.EMSCRIPTEN_VERSION }}
+          actions-cache-folder: 'emsdk-cache'
+
+      - name: Verify Emscripten Compiler
+        run: |
+          emcc --version
+          em++ --version
+
+      - name: Configure CMake for WebAssembly
+        run: |
+          emcmake cmake -B build-wasm -S . \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_WASM=ON \
+            -DBUILD_GUI=OFF \
+            -DBUILD_TESTING=OFF \
+            -DBUILD_PYTHON_BINDINGS=OFF \
+            -DUSE_SINGLE_PRECISION=ON
+
+      - name: Compile WebAssembly Target
+        run: |
+          cmake --build build-wasm --target correlation_wasm --config Release -j$(nproc)
+
+      - name: Stage Web Application Bundle
+        run: |
+          mkdir -p _site
+          cp ui/wasm_app/index.html _site/
+          cp ui/wasm_app/style.css _site/
+          cp ui/wasm_app/app.js _site/
+          cp build-wasm/src/bindings/correlation_wasm.js _site/
+          cp build-wasm/src/bindings/correlation_wasm.wasm _site/
+          ls -lh _site/
+
+      - name: Upload Web Application Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm-web-app
+          path: _site/
+          retention-days: 14
+
+      - name: Upload Pages Artifact
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site/
+
+  deploy-pages:
+    name: Deploy to GitHub Pages
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build-wasm
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

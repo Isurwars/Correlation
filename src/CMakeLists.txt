@@ -308,54 +308,55 @@ if(BUILD_GUI)
 endif()
 
 #------------------------------------------------------------------
-# CLI Parser (OBJECT library — shared with tests)
+# CLI Parser & Executable Target (disabled for WebAssembly builds)
 #------------------------------------------------------------------
-add_library(cli_parser_obj OBJECT
-    cli/CliParser.cpp
-)
-target_include_directories(cli_parser_obj PUBLIC
-    ${PROJECT_SOURCE_DIR}/include
-)
-target_link_libraries(cli_parser_obj PUBLIC correlation_simd_options CLI11::CLI11)
+if(NOT (EMSCRIPTEN OR BUILD_WASM))
+    # CLI Parser (OBJECT library — shared with tests)
+    add_library(cli_parser_obj OBJECT
+        cli/CliParser.cpp
+    )
+    target_include_directories(cli_parser_obj PUBLIC
+        ${PROJECT_SOURCE_DIR}/include
+    )
+    target_link_libraries(cli_parser_obj PUBLIC correlation_simd_options CLI11::CLI11)
 
-#------------------------------------------------------------------
-# CLI Executable Target (correlation-cli) — no GUI dependency
-#------------------------------------------------------------------
-add_executable(correlation-cli
-    cli/main_cli.cpp
-    app/AppBackend.cpp
-)
-target_link_libraries(correlation-cli PRIVATE
-    correlation_lib readers_obj writers_obj calculators_obj cli_parser_obj
-)
-target_include_directories(correlation-cli PRIVATE
-    ${PROJECT_SOURCE_DIR}/include
-)
-target_compile_definitions(correlation-cli PRIVATE _USE_MATH_DEFINES)
-target_link_libraries(correlation-cli PRIVATE correlation_simd_options)
-bundle_windows_dlls(correlation-cli)
-install(TARGETS correlation-cli RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT correlation)
-if (NOT WIN32)
-    if(APPLE)
-        set_target_properties(correlation-cli PROPERTIES
-            INSTALL_RPATH "@loader_path/../${CMAKE_INSTALL_LIBDIR}"
-        )
-    else()
-        set_target_properties(correlation-cli PROPERTIES
-            INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
-        )
+    # CLI Executable Target (correlation-cli) — no GUI dependency
+    add_executable(correlation-cli
+        cli/main_cli.cpp
+        app/AppBackend.cpp
+    )
+    target_link_libraries(correlation-cli PRIVATE
+        correlation_lib readers_obj writers_obj calculators_obj cli_parser_obj
+    )
+    target_include_directories(correlation-cli PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+    )
+    target_compile_definitions(correlation-cli PRIVATE _USE_MATH_DEFINES)
+    target_link_libraries(correlation-cli PRIVATE correlation_simd_options)
+    bundle_windows_dlls(correlation-cli)
+    install(TARGETS correlation-cli RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT correlation)
+    if (NOT WIN32)
+        if(APPLE)
+            set_target_properties(correlation-cli PROPERTIES
+                INSTALL_RPATH "@loader_path/../${CMAKE_INSTALL_LIBDIR}"
+            )
+        else()
+            set_target_properties(correlation-cli PROPERTIES
+                INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
+            )
+        endif()
+    endif()
+    if(BUILD_WITH_CUDA)
+        set_target_properties(correlation-cli PROPERTIES CUDA_STANDARD 20)
+    endif()
+    if(BUILD_WITH_HIP)
+        set_target_properties(correlation-cli PROPERTIES HIP_STANDARD 20)
     endif()
 endif()
-if(BUILD_WITH_CUDA)
-    set_target_properties(correlation-cli PROPERTIES CUDA_STANDARD 20)
-endif()
-if(BUILD_WITH_HIP)
-    set_target_properties(correlation-cli PROPERTIES HIP_STANDARD 20)
-endif()
 
 #------------------------------------------------------------------
-# Python Bindings
+# Language & Platform Bindings (Python / WebAssembly)
 #------------------------------------------------------------------
-if(BUILD_PYTHON_BINDINGS)
+if(BUILD_PYTHON_BINDINGS OR EMSCRIPTEN OR BUILD_WASM)
     add_subdirectory(bindings)
 endif()
