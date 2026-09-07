@@ -105,15 +105,24 @@ EMSCRIPTEN_BINDINGS(correlation_wasm) {
   register_vector<real_t>("VectorReal");
 
   // ---- Cell ----
-  class_<Cell>("Cell").constructor<>().function("atomCount", &Cell::atomCount).function("getVolume", &Cell::volume);
+  class_<Cell>("Cell")
+      .constructor<>()
+      .function("atomCount", &Cell::atomCount)
+      .function("atom_count", &Cell::atomCount)
+      .function("getVolume", &Cell::volume)
+      .function("volume", &Cell::volume);
 
   // ---- Trajectory ----
   class_<Trajectory>("Trajectory")
       .constructor<>()
       .function("numFrames", &Trajectory::getFrameCount)
+      .function("num_frames", &Trajectory::getFrameCount)
       .function("getFrameCount", &Trajectory::getFrameCount)
+      .function("frame_count", &Trajectory::getFrameCount)
       .function("getFrame", &Trajectory::getFrame)
+      .function("get_frame", &Trajectory::getFrame)
       .function("firstFrame", &Trajectory::firstFrame)
+      .function("first_frame", &Trajectory::firstFrame)
       .property("timeStep", &Trajectory::getTimeStep, &Trajectory::setTimeStep);
 
   // ---- Histogram ----
@@ -122,8 +131,11 @@ EMSCRIPTEN_BINDINGS(correlation_wasm) {
       .property("xLabel", &Histogram::x_label)
       .property("yLabel", &Histogram::y_label)
       .function("getBins", &getBinsJS)
+      .function("get_bins", &getBinsJS)
       .function("getPartial", &getPartialJS)
-      .function("getPartialKeys", &getPartialKeysJS);
+      .function("get_partial", &getPartialJS)
+      .function("getPartialKeys", &getPartialKeysJS)
+      .function("get_partial_keys", &getPartialKeysJS);
 
   // ---- AnalysisSettings ----
   class_<AnalysisSettings>("AnalysisSettings")
@@ -140,18 +152,29 @@ EMSCRIPTEN_BINDINGS(correlation_wasm) {
   class_<DistributionFunctions, std::unique_ptr<DistributionFunctions>>("DistributionFunctions")
       .constructor(&createDFFromTrajectory)
       .class_function("fromCell", &createDFFromCell)
+      .class_function("from_cell", &createDFFromCell)
       .function("calculateRDF", optional_override([](DistributionFunctions &df, real_t r_max, real_t r_bin_width) {
                   df.calculateRDF(RDFParams{.r_max = r_max, .r_bin_width = r_bin_width});
                 }))
+      .function("calculate_rdf", optional_override([](DistributionFunctions &df, real_t r_max, real_t r_bin_width) {
+                  df.calculateRDF(RDFParams{.r_max = r_max, .r_bin_width = r_bin_width});
+                }))
       .function("calculatePAD", &DistributionFunctions::calculatePAD)
+      .function("calculate_pad", &DistributionFunctions::calculatePAD)
       .function("getHistogram",
                 select_overload<const Histogram &(const std::string &) const>(&DistributionFunctions::getHistogram))
-      .function("getAvailableHistograms", &DistributionFunctions::getAvailableHistograms);
+      .function("get_histogram",
+                select_overload<const Histogram &(const std::string &) const>(&DistributionFunctions::getHistogram))
+      .function("getAvailableHistograms", &DistributionFunctions::getAvailableHistograms)
+      .function("get_available_histograms", &DistributionFunctions::getAvailableHistograms);
 
   // ---- Free functions ----
   function("readFromBuffer", &readFromBuffer);
+  function("read_from_buffer", &readFromBuffer);
   function("createDistributionFunctions", &createDFFromTrajectory);
+  function("create_distribution_functions", &createDFFromTrajectory);
   function("createDistributionFunctionsFromCell", &createDFFromCell);
+  function("create_distribution_functions_from_cell", &createDFFromCell);
 }
 
 #endif // __EMSCRIPTEN__

@@ -30,11 +30,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const plotSelect = document.getElementById('plot-select');
     const partialSelect = document.getElementById('partial-select');
 
+    // Feature detection for WebAssembly
+    if (typeof WebAssembly !== 'object' || typeof WebAssembly.instantiate !== 'function') {
+        statusEl.textContent = 'Error: WebAssembly is not supported by your browser.';
+        return;
+    }
+
     // Wait for Emscripten module.
     if (typeof createCorrelationModule === 'function') {
         createCorrelationModule().then(m => {
             Module = m;
-            statusEl.textContent = 'WASM module loaded.';
+            statusEl.textContent = 'Correlation WASM module ready.';
+        }).catch(err => {
+            statusEl.textContent = `Error initializing WASM module: ${err.message || err}`;
+            console.error('WASM module loading error:', err);
         });
     } else {
         statusEl.textContent = 'WASM module not found — ensure correlation_wasm.js is built.';
@@ -105,16 +114,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             try {
-                // Use last frame for analysis.
-                const frames = trajectory.numFrames();
-                // We construct DF on the last frame.
-                // Note: API matches the embind registration.
+                // Construct DF on the trajectory (will use last frame)
                 df = new Module.DistributionFunctions(
-                    trajectory, // will internally get last frame
+                    trajectory,
                     0.0,
                     []
                 );
                 df.calculateRDF(rMax, binWidth);
+
+                // Calculate Plane Angle Distribution if enabled
+                const calcPadEl = document.getElementById('calc-pad');
+                if (calcPadEl && calcPadEl.checked) {
+                    df.calculatePAD(0.5);
+                }
 
                 // Populate plot selector.
                 const histNames = df.getAvailableHistograms();
