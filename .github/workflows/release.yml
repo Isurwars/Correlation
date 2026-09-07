@@ -16,88 +16,28 @@ env:
 
 jobs:
   fuzz:
-    name: Fuzz Testing (Ubuntu, Clang)
-    runs-on: ubuntu-24.04
-    env:
-      SCCACHE_GHA_ENABLED: "true"
-      SCCACHE_IDLE_TIMEOUT: "0"
-      SCCACHE_RETRY_ATTEMPTS: "5"
-      SCCACHE_RETRY_DELAY: "2"
-      RUSTC_WRAPPER: "sccache"
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Set up sccache
-        uses: mozilla-actions/sccache-action@v0.0.10
-
-      - name: Start sccache server
-        shell: bash
-        run: |
-          for i in {1..5}; do
-            sccache --start-server && break || sleep 2
-          done
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang-18 llvm-18 ninja-build libtbb-dev libhdf5-dev build-essential cmake pkg-config libfftw3-dev
-
-      - name: Configure CMake
-        run: |
-          cmake -B build-fuzz -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
-            -DCMAKE_C_COMPILER=clang-18 \
-            -DCMAKE_CXX_COMPILER=clang++-18 \
-            -DBUILD_FUZZ_TESTS=ON \
-            -DBUILD_GUI=OFF \
-            -DCMAKE_C_COMPILER_LAUNCHER=sccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
-
-      - name: Build Fuzz Targets
-        run: cmake --build build-fuzz --config Release --parallel
-
-      - name: Run Fuzz Smoke Tests
-        run: cd build-fuzz && ctest -L fuzz --output-on-failure
+    name: Fuzz Testing
+    uses: ./.github/workflows/fuzz.yml
+    secrets: inherit
 
   build-linux:
     name: Build Linux
     needs: [fuzz]
     runs-on: ubuntu-latest
-    env:
-      SCCACHE_GHA_ENABLED: "true"
-      SCCACHE_IDLE_TIMEOUT: "0"
-      SCCACHE_RETRY_ATTEMPTS: "5"
-      SCCACHE_RETRY_DELAY: "2"
-      RUSTC_WRAPPER: "sccache"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
 
       - name: Set up sccache
-        uses: mozilla-actions/sccache-action@v0.0.10
-
-      - name: Start sccache server
-        shell: bash
-        run: |
-          for i in {1..5}; do
-            sccache --start-server && break || sleep 2
-          done
+        uses: ./.github/actions/setup-sccache
 
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y ninja-build libtbb-dev libhdf5-dev build-essential cmake pkg-config libfontconfig-dev libfreetype6-dev libexpat1-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-x11-0 xvfb rpm libgtk-3-dev libfftw3-dev
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Cache Rust toolchain
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-          key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: cargo-${{ runner.os }}-
+      - name: Set up Rust & Cargo Cache
+        uses: ./.github/actions/setup-rust
 
       - name: Configure CMake
         run: |
@@ -164,40 +104,18 @@ jobs:
     name: Build Windows
     needs: [fuzz]
     runs-on: windows-latest
-    env:
-      SCCACHE_GHA_ENABLED: "true"
-      SCCACHE_IDLE_TIMEOUT: "0"
-      SCCACHE_RETRY_ATTEMPTS: "5"
-      SCCACHE_RETRY_DELAY: "2"
-      RUSTC_WRAPPER: "sccache"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
 
       - name: Set up sccache
-        uses: mozilla-actions/sccache-action@v0.0.10
-
-      - name: Start sccache server
-        shell: bash
-        run: |
-          for i in {1..5}; do
-            sccache --start-server && break || sleep 2
-          done
+        uses: ./.github/actions/setup-sccache
 
       - name: Install NSIS
         run: choco install nsis -y
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Cache Rust toolchain
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~\.cargo\registry
-            ~\.cargo\git
-          key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: cargo-${{ runner.os }}-
+      - name: Set up Rust & Cargo Cache
+        uses: ./.github/actions/setup-rust
 
       - name: Setup MSVC
         uses: TheMrMilchmann/setup-msvc-dev@v4
@@ -249,40 +167,18 @@ jobs:
     name: Build macOS
     needs: [fuzz]
     runs-on: macos-latest
-    env:
-      SCCACHE_GHA_ENABLED: "true"
-      SCCACHE_IDLE_TIMEOUT: "0"
-      SCCACHE_RETRY_ATTEMPTS: "5"
-      SCCACHE_RETRY_DELAY: "2"
-      RUSTC_WRAPPER: "sccache"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
 
       - name: Set up sccache
-        uses: mozilla-actions/sccache-action@v0.0.10
-
-      - name: Start sccache server
-        shell: bash
-        run: |
-          for i in {1..5}; do
-            sccache --start-server && break || sleep 2
-          done
+        uses: ./.github/actions/setup-sccache
 
       - name: Install dependencies
         run: brew install ninja tbb hdf5 llvm@18 fftw
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Cache Rust toolchain
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-          key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: cargo-${{ runner.os }}-
+      - name: Set up Rust & Cargo Cache
+        uses: ./.github/actions/setup-rust
 
       - name: Configure CMake
         run: |
@@ -355,8 +251,6 @@ jobs:
       - name: Update PKGBUILD
         run: |
           sed -i "s/pkgver=.*/pkgver=${{ env.VERSION }}/" packaging/PKGBUILD
-          # The source URL in PKGBUILD also needs the correct version
-          # (though it usually uses ${pkgver})
 
       - name: Update Checksums
         run: |
@@ -409,4 +303,3 @@ jobs:
           git add PKGBUILD .SRCINFO
           git diff --cached --quiet || git commit -m "Release v${{ env.VERSION }}"
           git push
-

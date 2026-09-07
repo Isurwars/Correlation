@@ -1,0 +1,24 @@
+name: "Set up sccache"
+description: "Configures sccache with GitHub Actions caching backend and starts daemon"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up sccache
+      uses: mozilla-actions/sccache-action@v0.0.10
+
+    - name: Configure sccache environment
+      shell: bash
+      run: |
+        echo "SCCACHE_GHA_ENABLED=true" >> "$GITHUB_ENV"
+        echo "SCCACHE_IDLE_TIMEOUT=0" >> "$GITHUB_ENV"
+        echo "SCCACHE_RETRY_ATTEMPTS=5" >> "$GITHUB_ENV"
+        echo "SCCACHE_RETRY_DELAY=2" >> "$GITHUB_ENV"
+        echo "RUSTC_WRAPPER=sccache" >> "$GITHUB_ENV"
+
+    - name: Start sccache server
+      shell: bash
+      run: |
+        for i in {1..5}; do
+          sccache --start-server && break || sleep 2
+        done

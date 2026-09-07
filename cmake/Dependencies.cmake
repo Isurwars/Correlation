@@ -8,6 +8,17 @@ set(CMAKE_POLICY_VERSION_MINIMUM 3.10 CACHE STRING "" FORCE)
 
 set(BUILD_SHARED_LIBS ON CACHE BOOL "Force shared libraries")
 
+# Helpers to manage BUILD_SHARED_LIBS state across third-party dependencies
+macro(correlation_push_shared_libs new_value)
+  set(_CORRELATION_SAVED_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
+  set(BUILD_SHARED_LIBS ${new_value} CACHE BOOL "Force shared libraries" FORCE)
+endmacro()
+
+macro(correlation_pop_shared_libs)
+  set(BUILD_SHARED_LIBS ${_CORRELATION_SAVED_BUILD_SHARED_LIBS} CACHE BOOL "Force shared libraries" FORCE)
+  unset(_CORRELATION_SAVED_BUILD_SHARED_LIBS)
+endmacro()
+
 # Save original BUILD_TESTING cache state if it exists
 get_property(BUILD_TESTING_EXISTS CACHE BUILD_TESTING PROPERTY VALUE SET)
 if(BUILD_TESTING_EXISTS)
@@ -45,8 +56,7 @@ if(BUILD_GUI)
     message(STATUS "Slint not found. Downloading Slint from GitHub...")
 
     # Temporarily disable BUILD_SHARED_LIBS so Slint is built statically
-    set(TEMP_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
-    set(BUILD_SHARED_LIBS OFF CACHE BOOL "Force shared libraries" FORCE)
+    correlation_push_shared_libs(OFF)
 
     FetchContent_Declare(
       Slint
@@ -58,7 +68,7 @@ if(BUILD_GUI)
     FetchContent_MakeAvailable(Slint)
 
     # Restore BUILD_SHARED_LIBS
-    set(BUILD_SHARED_LIBS ${TEMP_BUILD_SHARED_LIBS} CACHE BOOL "Force shared libraries" FORCE)
+    correlation_pop_shared_libs()
   endif()
 
   # Transitively propagate platform dependencies for statically built Slint
@@ -230,6 +240,29 @@ if(ORIG_BUILD_TESTING)
   endif()
 endif()
 
+# Helper to create ALIAS targets for Arrow and Parquet
+function(correlation_create_arrow_aliases)
+  if (NOT TARGET arrow_shared)
+    if (TARGET Arrow::arrow_shared)
+      add_library(arrow_shared ALIAS Arrow::arrow_shared)
+    elseif (TARGET arrow_static)
+      add_library(arrow_shared ALIAS arrow_static)
+    elseif (TARGET Arrow::arrow_static)
+      add_library(arrow_shared ALIAS Arrow::arrow_static)
+    endif()
+  endif()
+
+  if (NOT TARGET parquet_shared)
+    if (TARGET Parquet::parquet_shared)
+      add_library(parquet_shared ALIAS Parquet::parquet_shared)
+    elseif (TARGET parquet_static)
+      add_library(parquet_shared ALIAS parquet_static)
+    elseif (TARGET Parquet::parquet_static)
+      add_library(parquet_shared ALIAS Parquet::parquet_static)
+    endif()
+  endif()
+endfunction()
+
 # 6. Arrow/Parquet
 if(BUILD_WITH_ARROW)
   find_package(Arrow QUIET)
@@ -239,25 +272,7 @@ if(BUILD_WITH_ARROW)
     message(STATUS "Found Parquet: ${Parquet_DIR} (Version: ${Parquet_VERSION})")
 
     # Create ALIAS targets so the rest of the project can just link 'arrow_shared' and 'parquet_shared'
-    if (NOT TARGET arrow_shared)
-      if (TARGET Arrow::arrow_shared)
-        add_library(arrow_shared ALIAS Arrow::arrow_shared)
-      elseif (TARGET arrow_static)
-        add_library(arrow_shared ALIAS arrow_static)
-      elseif (TARGET Arrow::arrow_static)
-        add_library(arrow_shared ALIAS Arrow::arrow_static)
-      endif()
-    endif()
-
-    if (NOT TARGET parquet_shared)
-      if (TARGET Parquet::parquet_shared)
-        add_library(parquet_shared ALIAS Parquet::parquet_shared)
-      elseif (TARGET parquet_static)
-        add_library(parquet_shared ALIAS parquet_static)
-      elseif (TARGET Parquet::parquet_static)
-        add_library(parquet_shared ALIAS Parquet::parquet_static)
-      endif()
-    endif()
+    correlation_create_arrow_aliases()
   else()
     message(STATUS "Arrow/Parquet not found. Downloading Arrow from GitHub...")
     FetchContent_Declare(
@@ -296,32 +311,10 @@ if(BUILD_WITH_ARROW)
     set(ARROW_BUILD_BENCHMARKS OFF CACHE INTERNAL "")
     set(ARROW_SIMD_LEVEL "NONE" CACHE STRING "Arrow SIMD Level" FORCE)
 
-    # Arrow pulls in rapidjson which has a broken CMake < 3.5 minimum version check for CMake 4.0+.
-    # We enforce a policy version minimum before making it available to avoid errors.
-    set(CMAKE_POLICY_VERSION_MINIMUM 3.10 CACHE STRING "" FORCE)
-
     FetchContent_MakeAvailable(arrow)
 
     # Create alias targets for the shared/static libraries built from source
-    if (NOT TARGET arrow_shared)
-      if (TARGET Arrow::arrow_shared)
-        add_library(arrow_shared ALIAS Arrow::arrow_shared)
-      elseif (TARGET arrow_static)
-        add_library(arrow_shared ALIAS arrow_static)
-      elseif (TARGET Arrow::arrow_static)
-        add_library(arrow_shared ALIAS Arrow::arrow_static)
-      endif()
-    endif()
-
-    if (NOT TARGET parquet_shared)
-      if (TARGET Parquet::parquet_shared)
-        add_library(parquet_shared ALIAS Parquet::parquet_shared)
-      elseif (TARGET parquet_static)
-        add_library(parquet_shared ALIAS parquet_static)
-      elseif (TARGET Parquet::parquet_static)
-        add_library(parquet_shared ALIAS Parquet::parquet_static)
-      endif()
-    endif()
+    correlation_create_arrow_aliases()
 
     # Arrow targets built from source don't set the correct INCLUDE directories by default
     # We manually expose source and generated header folders.
@@ -387,8 +380,7 @@ if(BUILD_GUI)
   message(STATUS "Downloading nativefiledialog-extended from GitHub...")
   set(NFD_BUILD_TESTS OFF CACHE BOOL "Disable NFD tests" FORCE)
 
-  set(TEMP_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
-  set(BUILD_SHARED_LIBS OFF CACHE BOOL "Force shared libraries" FORCE)
+  correlation_push_shared_libs(OFF)
 
   FetchContent_Declare(
     nfd
@@ -397,7 +389,7 @@ if(BUILD_GUI)
   )
   FetchContent_MakeAvailable(nfd)
 
-  set(BUILD_SHARED_LIBS ${TEMP_BUILD_SHARED_LIBS} CACHE BOOL "Force shared libraries" FORCE)
+  correlation_pop_shared_libs()
 
   if(TARGET nfd)
     set_target_properties(nfd PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -508,8 +500,7 @@ set(VORO_ENABLE_DOXYGEN OFF CACHE BOOL "Disable voro++ doxygen" FORCE)
 
 # We build voro++ statically on all platforms to avoid polluting the installation directory
 # and causing conflicting files (e.g. installing voro++.1 man page or headers).
-set(TEMP_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "Force shared libraries" FORCE)
+correlation_push_shared_libs(OFF)
 
 FetchContent_Declare(
   voro
@@ -519,7 +510,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(voro)
 
-set(BUILD_SHARED_LIBS ${TEMP_BUILD_SHARED_LIBS} CACHE BOOL "Force shared libraries" FORCE)
+correlation_pop_shared_libs()
 
 # Ensure voro++ is built with position-independent code (PIC) since it might be linked into shared libraries/modules
 if(TARGET voro++)

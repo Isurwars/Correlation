@@ -227,16 +227,16 @@ void CorrelationEngine::calculateDynamicProperties(DistributionFunctions &distri
   }
 }
 
-correlation::expected<std::unique_ptr<DistributionFunctions>, std::string>
+std::expected<std::unique_ptr<DistributionFunctions>, std::string>
 CorrelationEngine::runAnalysis(correlation::core::Trajectory &trajectory, const CorrelationEngineConfig &config,
                                std::function<void(float, const std::string &)> progress_callback) {
   if (trajectory.getFrameCount() == 0) {
-    return correlation::unexpected("Analysis aborted: No trajectory loaded.");
+    return std::unexpected("Analysis aborted: No trajectory loaded.");
   }
 
   std::string const validation_error = validateConfig(config);
   if (!validation_error.empty()) {
-    return correlation::unexpected(validation_error);
+    return std::unexpected(validation_error);
   }
 
   try {
@@ -274,7 +274,7 @@ CorrelationEngine::runAnalysis(correlation::core::Trajectory &trajectory, const 
 
     return dist_funcs;
   } catch (const std::exception &e) {
-    return correlation::unexpected(std::string("Error during analysis: ") + e.what());
+    return std::unexpected(std::string("Error during analysis: ") + e.what());
   }
 }
 

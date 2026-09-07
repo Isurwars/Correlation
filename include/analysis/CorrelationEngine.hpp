@@ -11,7 +11,7 @@
 #include "analysis/DistributionFunctions.hpp"
 #include "core/Trajectory.hpp"
 
-#include "core/Expected.hpp"
+#include <expected>
 #include <functional>
 #include <memory>
 #include <string>
@@ -52,7 +52,7 @@ public:
    * @param progress_callback Optional progress callback function.
    * @return Unique pointer to computed DistributionFunctions, or error message string.
    */
-  [[nodiscard]] static correlation::expected<std::unique_ptr<DistributionFunctions>, std::string>
+  [[nodiscard]] static std::expected<std::unique_ptr<DistributionFunctions>, std::string>
   runAnalysis(correlation::core::Trajectory &trajectory, const CorrelationEngineConfig &config,
               std::function<void(float, const std::string &)> progress_callback = nullptr);
 

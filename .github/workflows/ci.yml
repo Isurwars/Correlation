@@ -27,25 +27,11 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
-    env:
-      SCCACHE_GHA_ENABLED: "true"
-      SCCACHE_IDLE_TIMEOUT: "0"
-      SCCACHE_RETRY_ATTEMPTS: "5"
-      SCCACHE_RETRY_DELAY: "2"
-      RUSTC_WRAPPER: "sccache"
-
     steps:
       - uses: actions/checkout@v6
 
       - name: Set up sccache
-        uses: mozilla-actions/sccache-action@v0.0.10
-
-      - name: Start sccache server
-        shell: bash
-        run: |
-          for i in {1..5}; do
-            sccache --start-server && break || sleep 2
-          done
+        uses: ./.github/actions/setup-sccache
 
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
@@ -57,17 +43,8 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install ninja tbb hdf5 llvm@18 fftw
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Cache Rust toolchain
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-          key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: cargo-${{ runner.os }}-
+      - name: Set up Rust & Cargo Cache
+        uses: ./.github/actions/setup-rust
 
       - name: Setup MSVC
         uses: TheMrMilchmann/setup-msvc-dev@v4
@@ -75,95 +52,37 @@ jobs:
         with:
           arch: x64
 
-      - name: Configure CMake (Unix)
-        if: runner.os != 'Windows'
+      - name: Configure CMake
+        shell: bash
         run: |
+          EXTRA_FLAGS=()
           if [ "${{ runner.os }}" = "macOS" ]; then
             export CC="$(brew --prefix llvm@18)/bin/clang"
             export CXX="$(brew --prefix llvm@18)/bin/clang++"
-            export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
-            cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
-              -DCMAKE_OSX_SYSROOT="$SDKROOT" \
-              -DCMAKE_C_COMPILER_LAUNCHER=sccache \
-              -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
-              -DBUILD_WITH_HDF5=ON \
-              -DBUILD_WITH_ARROW=ON
-          else
-            cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
-              -DCMAKE_C_COMPILER_LAUNCHER=sccache \
-              -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
-              -DBUILD_WITH_HDF5=ON \
-              -DBUILD_WITH_ARROW=ON
+            EXTRA_FLAGS+=("-DCMAKE_OSX_SYSROOT=$(xcrun --sdk macosx --show-sdk-path)")
           fi
-
-      - name: Configure CMake (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja `
-            -DCMAKE_C_COMPILER_LAUNCHER=sccache `
-            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache `
-            -DBUILD_WITH_HDF5=ON `
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
+            "${EXTRA_FLAGS[@]}" \
+            -DCMAKE_C_COMPILER_LAUNCHER=sccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
+            -DBUILD_WITH_HDF5=ON \
             -DBUILD_WITH_ARROW=ON
 
       - name: Build
         run: cmake --build build --config Release --parallel
 
-      - name: Test (Linux)
-        if: runner.os == 'Linux'
-        run: cd build && xvfb-run ctest --output-on-failure
-
-      - name: Test (macOS)
-        if: runner.os == 'macOS'
-        run: cd build && ctest --output-on-failure
-
-      - name: Test (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          Set-Location build
-          ctest -C Release --output-on-failure -E PythonBindings
-
-  fuzz:
-    name: Fuzz Testing (Ubuntu, Clang)
-    runs-on: ubuntu-24.04
-    env:
-      SCCACHE_GHA_ENABLED: "true"
-      SCCACHE_IDLE_TIMEOUT: "0"
-      SCCACHE_RETRY_ATTEMPTS: "5"
-      SCCACHE_RETRY_DELAY: "2"
-      RUSTC_WRAPPER: "sccache"
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Set up sccache
-        uses: mozilla-actions/sccache-action@v0.0.10
-
-      - name: Start sccache server
+      - name: Run Tests
         shell: bash
         run: |
-          for i in {1..5}; do
-            sccache --start-server && break || sleep 2
-          done
+          cd build
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            xvfb-run ctest --output-on-failure
+          elif [ "${{ runner.os }}" = "Windows" ]; then
+            ctest -C Release --output-on-failure -E PythonBindings
+          else
+            ctest --output-on-failure
+          fi
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang-18 llvm-18 ninja-build libtbb-dev libhdf5-dev build-essential cmake pkg-config libfftw3-dev
-
-      - name: Configure CMake
-        run: |
-          cmake -B build-fuzz -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
-            -DCMAKE_C_COMPILER=clang-18 \
-            -DCMAKE_CXX_COMPILER=clang++-18 \
-            -DBUILD_FUZZ_TESTS=ON \
-            -DBUILD_GUI=OFF \
-            -DCMAKE_C_COMPILER_LAUNCHER=sccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
-
-      - name: Build Fuzz Targets
-        run: cmake --build build-fuzz --config Release --parallel
-
-      - name: Run Fuzz Smoke Tests
-        run: cd build-fuzz && ctest -L fuzz --output-on-failure
-
+  fuzz:
+    name: Fuzz Testing
+    uses: ./.github/workflows/fuzz.yml
