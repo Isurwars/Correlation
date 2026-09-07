@@ -51,22 +51,18 @@ if(EMSCRIPTEN OR BUILD_WASM)
         SUFFIX ".js"
     )
 
-    target_compile_options(correlation_wasm PRIVATE
-        --bind
-    )
-
     target_link_options(correlation_wasm PRIVATE
         -O3
         -msimd128
         --bind
-        -s WASM=1
-        -s MODULARIZE=1
-        -s EXPORT_NAME="createCorrelationModule"
-        -s ALLOW_MEMORY_GROWTH=1
-        -s MAXIMUM_MEMORY=2GB
-        -s FORCE_FILESYSTEM=1
-        -s NO_DISABLE_EXCEPTION_CATCHING
-        -s ENVIRONMENT=web,worker
+        -sWASM=1
+        -sMODULARIZE=1
+        -sEXPORT_NAME=createCorrelationModule
+        -sALLOW_MEMORY_GROWTH=1
+        -sMAXIMUM_MEMORY=2GB
+        -sFORCE_FILESYSTEM=1
+        -sNO_DISABLE_EXCEPTION_CATCHING
+        -sENVIRONMENT=web,worker
     )
 endif()
 

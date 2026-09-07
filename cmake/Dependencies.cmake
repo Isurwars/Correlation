@@ -42,7 +42,12 @@ else()
     GIT_TAG v2023.0.0  
   )
   set(TBB_TEST OFF CACHE BOOL "Disable TBB tests" FORCE)
+  set(TBB_STRICT OFF CACHE BOOL "Disable TBB strict mode" FORCE)
   set(TBB_INSTALL OFF CACHE BOOL "Suppress TBB install rules" FORCE)
+  if(EMSCRIPTEN OR BUILD_WASM)
+    set(EMSCRIPTEN_WITHOUT_PTHREAD ON CACHE BOOL "Compile oneTBB without pthreads for WASM" FORCE)
+    set(TBB_DISABLE_HWLOC_AUTOMATIC_SEARCH ON CACHE BOOL "Disable hwloc search for WASM" FORCE)
+  endif()
   FetchContent_MakeAvailable(TBB)
 endif()
 
