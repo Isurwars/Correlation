@@ -83,6 +83,13 @@ if(NOT (EMSCRIPTEN OR BUILD_WASM))
     endif()
 endif()
 
+# Workaround for Clang <= 18 with libstdc++: libstdc++ guards <expected> behind __cpp_concepts >= 202002L,
+# while Clang <= 18 defaults __cpp_concepts to 201907L.
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND NOT CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "19.0")
+    add_compile_definitions(__cpp_concepts=202002L)
+    add_compile_options(-Wno-builtin-macro-redefined)
+endif()
+
 # Configure MSVC debug information format to allow sccache to cache objects
 if(POLICY CMP0141)
     cmake_policy(SET CMP0141 NEW)
