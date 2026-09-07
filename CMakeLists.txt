@@ -70,6 +70,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Enforce minimum compiler versions supporting C++23 features (e.g., std::expected)
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND NOT CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "17.0")
+    message(FATAL_ERROR "Correlation requires Clang >= 17.0 for C++23 std::expected support. Detected: ${CMAKE_CXX_COMPILER_VERSION}")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "15.0")
+    message(FATAL_ERROR "Correlation requires AppleClang >= 15.0 for C++23 std::expected support. Detected: ${CMAKE_CXX_COMPILER_VERSION}")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "12.1")
+    message(FATAL_ERROR "Correlation requires GCC >= 12.1 for C++23 support. Detected: ${CMAKE_CXX_COMPILER_VERSION}")
+elseif(MSVC AND MSVC_VERSION LESS 1933)
+    message(FATAL_ERROR "Correlation requires MSVC >= 19.33 (Visual Studio 2022 17.3) for C++23 support. Detected: ${MSVC_VERSION}")
+endif()
+
 # Configure MSVC debug information format to allow sccache to cache objects
 if(POLICY CMP0141)
     cmake_policy(SET CMP0141 NEW)
