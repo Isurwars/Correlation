@@ -14,6 +14,7 @@
 
 #include <array>
 #include <cstdint>
+#include <span>
 #include <string_view>
 #include <vector>
 
@@ -30,9 +31,11 @@ struct PeriodicGraphData {
   std::vector<real_t> edge_shifts_flat;  /**< [E * 3] Periodic cell displacement integer shift vectors. */
   std::vector<real_t> edge_vectors_flat; /**< [E * 3] Cartesian displacement vectors r_ij = r_j + R*s - r_i. */
   std::vector<real_t> edge_distances;    /**< [E] Euclidean edge distances ||r_ij||. */
-  std::array<real_t, 9> cell_flat{};     /**< [3 * 3] Lattice vectors matrix. */
-  size_t atom_count{0};                  /**< Total atom count N. */
-  size_t edge_count{0};                  /**< Total directed edge count E. */
+  std::vector<real_t> edge_spherical_harmonics_flat; /**< [E * (l_max + 1)^2] Equivariant spherical harmonics features
+                                                        (if l_max > 0). */
+  std::array<real_t, 9> cell_flat{};                 /**< [3 * 3] Lattice vectors matrix. */
+  size_t atom_count{0};                              /**< Total atom count N. */
+  size_t edge_count{0};                              /**< Total directed edge count E. */
 };
 
 /**
@@ -56,11 +59,12 @@ public:
    * @param[in] cell Simulation cell containing lattice vectors and atomic positions.
    * @param[in] cutoff_radius Cutoff sphere radius in Angstroms (default: 5.0).
    * @param[in] include_self_loops Whether to include zero-displacement self-loops (default: false).
+   * @param[in] l_max Maximum spherical harmonics degree (0..3) to embed (default: 0, no harmonics computed).
    * @return Extracted flat PeriodicGraphData buffers.
    */
   [[nodiscard]] static PeriodicGraphData buildGraph(const correlation::core::Cell &cell,
                                                     real_t cutoff_radius = static_cast<real_t>(5.0),
-                                                    bool include_self_loops = false);
+                                                    bool include_self_loops = false, size_t l_max = 0);
 
   /**
    * @brief Resolves atomic number Z for a chemical element symbol.
@@ -92,8 +96,25 @@ public:
    * @param[in] config Gaussian RBF configuration parameters.
    * @return Vector of Gaussian RBF values of length @p config.num_basis.
    */
-  [[nodiscard]] static std::vector<real_t> computeGaussianRBF(real_t distance,
-                                                              const GaussianRBFConfig &config);
+  [[nodiscard]] static std::vector<real_t> computeGaussianRBF(real_t distance, const GaussianRBFConfig &config);
+
+  /**
+   * @brief Evaluates real orthonormal spherical harmonics Y_lm(r) up to l_max <= 3 into a pre-allocated span.
+   * @param[in] vec 3D displacement vector r.
+   * @param[in] l_max Maximum degree (clamped to 3). Total components evaluated: (l_max + 1)^2.
+   * @param[out] out Destination span of size at least (l_max + 1)^2.
+   */
+  static void computeSphericalHarmonics(const correlation::math::Vector3<real_t> &vec, size_t l_max,
+                                        std::span<real_t> out) noexcept;
+
+  /**
+   * @brief Evaluates real orthonormal spherical harmonics Y_lm(r) up to l_max <= 3 returning a newly allocated vector.
+   * @param[in] vec 3D displacement vector r.
+   * @param[in] l_max Maximum degree (clamped to 3). Total components evaluated: (l_max + 1)^2.
+   * @return Vector of length (l_max + 1)^2 containing real spherical harmonics.
+   */
+  [[nodiscard]] static std::vector<real_t> computeSphericalHarmonics(const correlation::math::Vector3<real_t> &vec,
+                                                                     size_t l_max);
 };
 
 } // namespace correlation::mlip

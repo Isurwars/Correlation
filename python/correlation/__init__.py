@@ -86,3 +86,19 @@ def to_torch_geometric(graph_data):
 
 to_pyg = to_torch_geometric
 
+# Register ecosystem adapters (ASE, Pymatgen)
+try:
+    from correlation.adapters import (
+        from_ase,
+        to_ase,
+        from_ase_trajectory,
+        to_ase_trajectory,
+        from_pymatgen,
+        to_pymatgen,
+        _register_adapters,
+    )
+
+    _register_adapters()
+except ImportError:
+    pass
+
