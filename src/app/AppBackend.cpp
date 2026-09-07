@@ -231,36 +231,36 @@ std::string AppBackend::validateOptions() const {
   return correlation::analysis::CorrelationEngine::validateConfig(config);
 }
 
-std::expected<void, std::string> AppBackend::run_analysis() {
+correlation::expected<void, std::string> AppBackend::run_analysis() {
   if (!trajectory_ || trajectory_->getFrameCount() == 0) {
     std::string const err = AppDefaults::MSG_ANALYSIS_ABORTED;
     std::cerr << err << '\n';
-    return std::unexpected(err);
+    return correlation::unexpected(err);
   }
 
   cancel_flag_ = false;
 
   std::string const validation_error = validateOptions();
   if (!validation_error.empty()) {
-    return std::unexpected(validation_error);
+    return correlation::unexpected(validation_error);
   }
 
   const auto config = toEngineConfig(options_, &cancel_flag_);
   auto result = correlation::analysis::CorrelationEngine::runAnalysis(*trajectory_, config, progress_callback_);
   if (!result) {
     std::cerr << "Analysis Exception: " << result.error() << '\n';
-    return std::unexpected(result.error());
+    return correlation::unexpected(result.error());
   }
 
   df_ = std::move(result.value());
   return {};
 }
 
-std::expected<void, std::string> AppBackend::write_files() {
+correlation::expected<void, std::string> AppBackend::write_files() {
   if (!df_) {
     std::string const err = AppDefaults::MSG_NO_DATA_TO_WRITE;
     std::cerr << err << '\n';
-    return std::unexpected(err);
+    return correlation::unexpected(err);
   }
 
   try {
@@ -272,7 +272,7 @@ std::expected<void, std::string> AppBackend::write_files() {
   } catch (const std::exception &e) {
     std::string const err = std::string(AppDefaults::MSG_ERROR_WRITING) + e.what();
     std::cerr << err << '\n';
-    return std::unexpected(err);
+    return correlation::unexpected(err);
   }
   return {};
 }

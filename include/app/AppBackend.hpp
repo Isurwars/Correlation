@@ -12,8 +12,8 @@
 #include "core/Trajectory.hpp"
 #include "math/Smoothing.hpp"
 
+#include "core/Expected.hpp"
 #include <atomic>
-#include <expected>
 #include <functional>
 #include <map>
 #include <memory>
@@ -180,17 +180,17 @@ public:
    * 4. Calculates VACF and VDOS if applicable.
    * 5. Smooths results if requested.
    *
-   * @return std::expected<void, std::string> indicating success or containing an error message.
+   * @return correlation::expected<void, std::string> indicating success or containing an error message.
    */
-  [[nodiscard]] std::expected<void, std::string> run_analysis();
+  [[nodiscard]] correlation::expected<void, std::string> run_analysis();
 
   /**
    * @brief Writes the analysis results to files (CSV, HDF5) as specified in
    * options.
    *
-   * @return std::expected<void, std::string> indicating success or containing an error message.
+   * @return correlation::expected<void, std::string> indicating success or containing an error message.
    */
-  [[nodiscard]] std::expected<void, std::string> write_files();
+  [[nodiscard]] correlation::expected<void, std::string> write_files();
 
   /**
    * @brief Gets the atom counts for the current structure.
