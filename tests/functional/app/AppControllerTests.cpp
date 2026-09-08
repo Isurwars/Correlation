@@ -265,6 +265,78 @@ TEST_F(AppControllerTests, ResetsBondCutoffsToDefaultsWhenInvoked) {
   }
 }
 
+TEST_F(AppControllerTests, ResetsOptionBlocksToDefaultsWhenInvoked) {
+  auto window = AppWindow::create();
+  correlation::app::AppBackend backend;
+  correlation::app::AppController controller(*window, backend);
+
+  // Set modified/custom values for all option blocks
+  auto opts = window->get_analysis_options();
+  opts.r_max = "99.00";
+  opts.r_bin_width = "1.23";
+  opts.angle_bin_width = "45.00";
+  opts.dihedral_bin_width = "60.00";
+  opts.q_max = "50.00";
+  opts.q_bin_width = "0.99";
+  opts.r_int_max = "25.00";
+  opts.max_ring_size = "20";
+  opts.smoothing_enabled = false;
+  opts.smoothing_sigma = "0.85";
+  opts.smoothing_kernel = 2;
+  opts.lef_cutoff = "12.00";
+  opts.lef_sigma = "0.95";
+  opts.hyper_samples = "500";
+  opts.time_step = "5.00";
+  opts.min_frame = "10";
+  opts.max_frame = "20";
+  window->set_analysis_options(opts);
+
+  // 1. Reset RDF options
+  window->invoke_reset_rdf_options();
+  opts = window->get_analysis_options();
+  EXPECT_EQ(opts.r_max, "20.00");
+  EXPECT_EQ(opts.r_bin_width, "0.02");
+
+  // 2. Reset Angle options
+  window->invoke_reset_angle_options();
+  opts = window->get_analysis_options();
+  EXPECT_EQ(opts.angle_bin_width, "0.25");
+  EXPECT_EQ(opts.dihedral_bin_width, "0.25");
+
+  // 3. Reset SQ options
+  window->invoke_reset_sq_options();
+  opts = window->get_analysis_options();
+  EXPECT_EQ(opts.q_max, "20.00");
+  EXPECT_EQ(opts.q_bin_width, "0.02");
+  EXPECT_EQ(opts.r_int_max, "10.00");
+
+  // 4. Reset Rings options
+  window->invoke_reset_rings_options();
+  opts = window->get_analysis_options();
+  EXPECT_EQ(opts.max_ring_size, "8");
+
+  // 5. Reset Smoothing options
+  window->invoke_reset_smoothing_options();
+  opts = window->get_analysis_options();
+  EXPECT_TRUE(opts.smoothing_enabled);
+  EXPECT_EQ(opts.smoothing_sigma, "0.10");
+  EXPECT_EQ(opts.smoothing_kernel, 0);
+
+  // 6. Reset Advanced options
+  window->invoke_reset_advanced_options();
+  opts = window->get_analysis_options();
+  EXPECT_EQ(opts.lef_cutoff, "5.00");
+  EXPECT_EQ(opts.lef_sigma, "0.20");
+  EXPECT_EQ(opts.hyper_samples, "10000");
+
+  // 7. Reset Trajectory options
+  window->invoke_reset_trajectory_options();
+  opts = window->get_analysis_options();
+  EXPECT_EQ(opts.time_step, "1.00");
+  EXPECT_EQ(opts.min_frame, "1");
+  EXPECT_EQ(opts.max_frame, "End");
+}
+
 TEST_F(AppControllerTests, UpdatesActiveGroupFlagsWhenCalculatorsToggled) {
   auto window = AppWindow::create();
   correlation::app::AppBackend backend;

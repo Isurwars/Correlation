@@ -12,6 +12,7 @@ export component RingsOptionsCard inherits FilledCard {
     in property <bool> file_loaded;
     in-out property <string> max_ring_size;
     in property <string> max_ring_error: "";
+    callback reset();
 
     out property <string> hovered_tooltip_text:
         ring_size_area.has-hover ? "Maximum ring size for topological ring statistics.\n\n📏 Recommended: 8–12 (default: 12).\n\n🔬 Physics: Rings are closed loops of bonded atoms — they characterize medium-range order in network glasses (e.g., SiO₂ has predominantly 6-membered rings). Larger max sizes capture rare large rings but increase computation time exponentially. For most amorphous networks, rings >12 are statistically rare and computationally expensive." : "";
@@ -30,6 +31,9 @@ export component RingsOptionsCard inherits FilledCard {
         ExpandableHeader {
             text: "Topological Rings";
             expanded <=> root.expanded;
+            show_reset: true;
+            reset_enabled: root.file_loaded;
+            reset => { root.reset(); }
         }
 
         Vertical {

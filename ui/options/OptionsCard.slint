@@ -47,6 +47,12 @@ export component OptionsCard inherits FilledCard {
     in property <int> total_calculator_count: 0;
     callback toggle_calculator(string, bool);
     callback reset_bond_cutoffs();
+    callback reset_rdf_options();
+    callback reset_angle_options();
+    callback reset_sq_options();
+    callback reset_rings_options();
+    callback reset_smoothing_options();
+    callback reset_advanced_options();
 
     in-out property <int> material_type: 0;
     in-out property <[BondCutoff]> bond_cutoffs: [];
@@ -268,6 +274,7 @@ export component OptionsCard inherits FilledCard {
                     r_bin_width <=> root.r_bin_width;
                     r_max_error: root.r_max_error;
                     r_bin_error: root.r_bin_error;
+                    reset => { root.reset_rdf_options(); }
                     visible: root.active_tab == 0 && root.has_radial_active;
                     height: (root.active_tab == 0 && root.has_radial_active) ? self.preferred-height : 0px;
                     opacity: (root.active_tab == 0 && root.has_radial_active) ? 1.0 : 0.0;
@@ -280,6 +287,7 @@ export component OptionsCard inherits FilledCard {
                     dihedral_bin_width <=> root.dihedral_bin_width;
                     angle_bin_error: root.angle_bin_error;
                     dihedral_bin_error: root.dihedral_bin_error;
+                    reset => { root.reset_angle_options(); }
                     visible: root.active_tab == 0 && root.has_angular_active;
                     height: (root.active_tab == 0 && root.has_angular_active) ? self.preferred-height : 0px;
                     opacity: (root.active_tab == 0 && root.has_angular_active) ? 1.0 : 0.0;
@@ -295,6 +303,7 @@ export component OptionsCard inherits FilledCard {
                     q_max_error: root.q_max_error;
                     q_bin_error: root.q_bin_error;
                     r_int_max_error: root.r_int_max_error;
+                    reset => { root.reset_sq_options(); }
                     visible: root.active_tab == 1 && root.has_scattering_active;
                     height: (root.active_tab == 1 && root.has_scattering_active) ? self.preferred-height : 0px;
                     opacity: (root.active_tab == 1 && root.has_scattering_active) ? 1.0 : 0.0;
@@ -305,6 +314,7 @@ export component OptionsCard inherits FilledCard {
                     file_loaded: root.file_loaded;
                     max_ring_size <=> root.max_ring_size;
                     max_ring_error: root.max_ring_error;
+                    reset => { root.reset_rings_options(); }
                     visible: root.active_tab == 1 && root.has_rings_active;
                     height: (root.active_tab == 1 && root.has_rings_active) ? self.preferred-height : 0px;
                     opacity: (root.active_tab == 1 && root.has_rings_active) ? 1.0 : 0.0;
@@ -317,6 +327,7 @@ export component OptionsCard inherits FilledCard {
                     smoothing_sigma <=> root.smoothing_sigma;
                     smoothing_kernel <=> root.smoothing_kernel;
                     smoothing_sigma_error: root.smoothing_sigma_error;
+                    reset => { root.reset_smoothing_options(); }
                     visible: root.active_tab == 1;
                     height: root.active_tab == 1 ? self.preferred-height : 0px;
                     opacity: root.active_tab == 1 ? 1.0 : 0.0;
@@ -331,6 +342,7 @@ export component OptionsCard inherits FilledCard {
                     lef_sigma_error: root.lef_sigma_error;
                     hyper_samples <=> root.hyper_samples;
                     hyper_samples_error: root.hyper_samples_error;
+                    reset => { root.reset_advanced_options(); }
                     visible: root.active_tab == 1;
                     height: root.active_tab == 1 ? self.preferred-height : 0px;
                     opacity: root.active_tab == 1 ? 1.0 : 0.0;

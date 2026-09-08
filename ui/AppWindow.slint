@@ -255,6 +255,13 @@ export component AppWindow inherits Window {
     callback delete_preset(int);
     callback material_type_changed(int);
     callback reset_bond_cutoffs();
+    callback reset_rdf_options();
+    callback reset_angle_options();
+    callback reset_sq_options();
+    callback reset_rings_options();
+    callback reset_smoothing_options();
+    callback reset_advanced_options();
+    callback reset_trajectory_options();
 
     // ============================================================================
     // Core Layout Logic
@@ -488,6 +495,9 @@ export component AppWindow inherits Window {
                         max_frame <=> root.analysis_options.max_frame;
                         min_frame_error: root.app_errors.min_frame_error;
                         max_frame_error: root.app_errors.max_frame_error;
+                        reset_trajectory_options => {
+                            root.reset_trajectory_options();
+                        }
 
                         analysis_running: root.analysis_running;
                         has_validation_errors: root.has_validation_errors;
@@ -531,6 +541,24 @@ export component AppWindow inherits Window {
                     bond_cutoffs_reset_trigger: root.bond_cutoffs_reset_trigger;
                     reset_bond_cutoffs => {
                         root.reset_bond_cutoffs();
+                    }
+                    reset_rdf_options => {
+                        root.reset_rdf_options();
+                    }
+                    reset_angle_options => {
+                        root.reset_angle_options();
+                    }
+                    reset_sq_options => {
+                        root.reset_sq_options();
+                    }
+                    reset_rings_options => {
+                        root.reset_rings_options();
+                    }
+                    reset_smoothing_options => {
+                        root.reset_smoothing_options();
+                    }
+                    reset_advanced_options => {
+                        root.reset_advanced_options();
                     }
                     analysis_options <=> root.analysis_options;
                     app_errors: root.app_errors;

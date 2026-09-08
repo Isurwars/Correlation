@@ -14,6 +14,7 @@ export component BondAngleOptionsCard inherits FilledCard {
     in-out property <string> dihedral_bin_width;
     in property <string> angle_bin_error: "";
     in property <string> dihedral_bin_error: "";
+    callback reset();
 
     out property <string> hovered_tooltip_text:
         theta_bin_area.has-hover ? "Bin width for the Plane-Angle Distribution (PAD).\n\n📏 Recommended: 1.0°.\n\n🔬 Physics: The PAD measures plane angles between triplets of atoms (e.g., O–Si–O ≈ 109.5° in tetrahedral coordination). 1° resolves distinct coordination geometries while maintaining good statistics. Finer bins (0.5°) help for crystalline systems with sharp angular peaks." : dihedral_bin_area.has-hover ? "Bin width for the Dihedral-Angle Distribution (DAD).\n\n📏 Recommended: 1.0°.\n\n🔬 Physics: Dihedral angles measure torsion across four-atom chains (A–B–C–D). They reveal rotational conformations and ring puckering. 1° is sufficient for most amorphous systems; use finer bins for molecular crystals with distinct torsional states." : "";
@@ -36,6 +37,9 @@ export component BondAngleOptionsCard inherits FilledCard {
         ExpandableHeader {
             text: "Plane Angle";
             expanded <=> root.expanded;
+            show_reset: true;
+            reset_enabled: root.file_loaded;
+            reset => { root.reset(); }
         }
 
         Vertical {

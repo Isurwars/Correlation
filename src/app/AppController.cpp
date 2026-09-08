@@ -151,6 +151,13 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
 
   // Handle reset bond cutoffs request from UI
   window_.on_reset_bond_cutoffs([this]() { setBondCutoffs(); });
+  window_.on_reset_rdf_options([this]() { handleResetRDFOptions(); });
+  window_.on_reset_angle_options([this]() { handleResetAngleOptions(); });
+  window_.on_reset_sq_options([this]() { handleResetSQOptions(); });
+  window_.on_reset_rings_options([this]() { handleResetRingsOptions(); });
+  window_.on_reset_smoothing_options([this]() { handleResetSmoothingOptions(); });
+  window_.on_reset_advanced_options([this]() { handleResetAdvancedOptions(); });
+  window_.on_reset_trajectory_options([this]() { handleResetTrajectoryOptions(); });
 
   // Handle open external URL (e.g. download update from browser)
   window_.on_open_url([](const slint::SharedString &url) { UpdateChecker::openUrlInBrowser(std::string(url.data())); });
@@ -586,6 +593,97 @@ void AppController::populateCalculatorGroups() {
   }
   window_.set_calculator_groups(groups_model);
   window_.set_total_calculator_count(static_cast<int>(calculators.size()));
+}
+
+void AppController::handleResetRDFOptions() {
+  auto opts = window_.get_analysis_options();
+  opts.r_max = slint::SharedString(std::format("{:.2f}", AppDefaults::R_MAX));
+  if (opts.material_type == 2) {
+    opts.r_bin_width = slint::SharedString(std::format("{:.3f}", AppDefaults::R_BIN_WIDTH_CRYSTAL));
+  } else if (opts.material_type == 1) {
+    opts.r_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH_LIQUID));
+  } else {
+    opts.r_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH));
+  }
+  window_.set_analysis_options(opts);
+  static_cast<void>(input_validator_->validateInputs());
+}
+
+void AppController::handleResetAngleOptions() {
+  auto opts = window_.get_analysis_options();
+  if (opts.material_type == 2) {
+    opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
+    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
+  } else if (opts.material_type == 1) {
+    opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
+    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
+  } else {
+    opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
+    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
+  }
+  window_.set_analysis_options(opts);
+  static_cast<void>(input_validator_->validateInputs());
+}
+
+void AppController::handleResetSQOptions() {
+  auto opts = window_.get_analysis_options();
+  opts.q_max = slint::SharedString(std::format("{:.2f}", AppDefaults::Q_MAX));
+  opts.r_int_max = slint::SharedString(std::format("{:.2f}", AppDefaults::R_INT_MAX));
+  if (opts.material_type == 2) {
+    opts.q_bin_width = slint::SharedString(std::format("{:.3f}", AppDefaults::Q_BIN_WIDTH_CRYSTAL));
+  } else if (opts.material_type == 1) {
+    opts.q_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH_LIQUID));
+  } else {
+    opts.q_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH));
+  }
+  window_.set_analysis_options(opts);
+  static_cast<void>(input_validator_->validateInputs());
+}
+
+void AppController::handleResetRingsOptions() {
+  auto opts = window_.get_analysis_options();
+  opts.max_ring_size = slint::SharedString(std::to_string(ProgramOptions{}.max_ring_size));
+  window_.set_analysis_options(opts);
+  static_cast<void>(input_validator_->validateInputs());
+}
+
+void AppController::handleResetSmoothingOptions() {
+  auto opts = window_.get_analysis_options();
+  opts.smoothing_enabled = ProgramOptions{}.smoothing;
+  opts.smoothing_kernel = static_cast<int>(AppDefaults::SMOOTHING_KERNEL);
+  if (opts.material_type == 2) {
+    opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_CRYSTAL));
+  } else if (opts.material_type == 1) {
+    opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_LIQUID));
+  } else {
+    opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA));
+  }
+  window_.set_analysis_options(opts);
+  static_cast<void>(input_validator_->validateInputs());
+}
+
+void AppController::handleResetAdvancedOptions() {
+  auto opts = window_.get_analysis_options();
+  opts.lef_cutoff = slint::SharedString(std::format("{:.2f}", AppDefaults::LEF_CUTOFF));
+  opts.lef_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::LEF_SIGMA));
+  opts.hyper_samples = slint::SharedString(std::to_string(ProgramOptions{}.hyper_samples));
+  window_.set_analysis_options(opts);
+  static_cast<void>(input_validator_->validateInputs());
+}
+
+void AppController::handleResetTrajectoryOptions() {
+  auto opts = window_.get_analysis_options();
+  if (backend_.getFrameCount() > 0) {
+    opts.time_step = slint::SharedString(std::format("{:.2f}", backend_.getRecommendedTimeStep()));
+    opts.min_frame = "1";
+    opts.max_frame = slint::SharedString(std::to_string(backend_.getFrameCount()));
+  } else {
+    opts.time_step = slint::SharedString(std::format("{:.2f}", AppDefaults::TIME_STEP));
+    opts.min_frame = "1";
+    opts.max_frame = "End";
+  }
+  window_.set_analysis_options(opts);
+  static_cast<void>(input_validator_->validateInputs());
 }
 
 } // namespace correlation::app

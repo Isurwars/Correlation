@@ -85,6 +85,41 @@ public:
   correlation::analysis::BondCutoffMatrix getBondCutoffs();
 
   /**
+   * @brief Restores default radial distribution (RDF) options in the UI.
+   */
+  void handleResetRDFOptions();
+
+  /**
+   * @brief Restores default bond and dihedral angle options in the UI.
+   */
+  void handleResetAngleOptions();
+
+  /**
+   * @brief Restores default structure factor (SQ) options in the UI.
+   */
+  void handleResetSQOptions();
+
+  /**
+   * @brief Restores default topological rings options in the UI.
+   */
+  void handleResetRingsOptions();
+
+  /**
+   * @brief Restores default smoothing options in the UI.
+   */
+  void handleResetSmoothingOptions();
+
+  /**
+   * @brief Restores default advanced order parameter options in the UI.
+   */
+  void handleResetAdvancedOptions();
+
+  /**
+   * @brief Restores default trajectory analysis options in the UI.
+   */
+  void handleResetTrajectoryOptions();
+
+  /**
    * @brief Populates the UI calculator groups from CalculatorFactory.
    */
   void populateCalculatorGroups();

@@ -51,6 +51,7 @@ export component OperationsCard inherits FilledCard {
     in-out property <string> max_frame: "End";
     in property <string> min_frame_error: "";
     in property <string> max_frame_error: "";
+    callback reset_trajectory_options();
 
     // Analysis Execution
     in property <bool> analysis_running;
@@ -235,6 +236,7 @@ export component OperationsCard inherits FilledCard {
             max_frame <=> root.max_frame;
             min_frame_error: root.min_frame_error;
             max_frame_error: root.max_frame_error;
+            reset => { root.reset_trajectory_options(); }
             opacity: (root.file_loaded && root.num_frames > 1) ? 1.0 : 0.5;
         }
 

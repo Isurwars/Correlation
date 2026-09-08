@@ -16,6 +16,7 @@ export component AdvancedOptionsCard inherits FilledCard {
     in property <string> lef_cutoff_error: "";
     in property <string> lef_sigma_error: "";
     in property <string> hyper_samples_error: "";
+    callback reset();
 
     out property <string> hovered_tooltip_text:
         cutoff_area.has-hover ? "Cutoff radius (Rc) for the local entropy integration.\n\n📏 Recommended: 5.0 Å.\n\n🔬 Physics: Defines the maximum distance to consider when calculating the local entropic fingerprint around each atom. Integrates local correlations up to this distance." :
@@ -44,6 +45,9 @@ export component AdvancedOptionsCard inherits FilledCard {
         ExpandableHeader {
             text: "Advanced Order Parameters";
             expanded <=> root.expanded;
+            show_reset: true;
+            reset_enabled: root.file_loaded;
+            reset => { root.reset(); }
         }
 
         Vertical {
