@@ -33,3 +33,6 @@ When a function exceeds the complexity threshold, apply the following structural
   clang-tidy -p build <path/to/modified_file>
   ```
 - Verify zero `readability-function-cognitive-complexity` warnings are emitted.
+
+## Reference
+- **See skill:** [refactor-complexity](file:///home/isurwars/Projects/Correlation/.agents/skills/refactor-complexity/SKILL.md) for step-by-step refactoring workflows and structural patterns.

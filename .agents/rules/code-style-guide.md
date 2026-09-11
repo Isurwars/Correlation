@@ -32,4 +32,4 @@
 
 ## Reference
 
-- **See skill:** [cpp-coding-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-coding-standards/SKILL.md) for comprehensive C++ coding standards and guidelines (RAII, smart pointers, modern C++20/23 architecture, const correctness, move semantics, concurrency patterns).
+- **See skill:** [cpp-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-standards/SKILL.md) for comprehensive C++ coding standards and guidelines (RAII, smart pointers, modern C++20/23 architecture, const correctness, move semantics, concurrency patterns).

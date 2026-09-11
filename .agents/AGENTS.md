@@ -43,11 +43,12 @@
 - Use `// ...` placeholders extensively. Never print untouched structural logic or boilerplate code blocks.
 - Prefer tables for multi-variable comparisons. Bold the primary technical anchor word in every bullet point.
 - Use strict **[File:Line] -> [Error Type] -> [Fix Action]** format for diagnostics.
-- See [caveman-communication](file:///home/isurwars/Projects/Correlation/.agents/skills/caveman-communication/SKILL.md) and [always-grind-interrogation](file:///home/isurwars/Projects/Correlation/.agents/skills/always-grind-interrogation/SKILL.md).
+- See [caveman](file:///home/isurwars/Projects/Correlation/.agents/skills/caveman/SKILL.md) and [grill-me](file:///home/isurwars/Projects/Correlation/.agents/skills/grill-me/SKILL.md).
 
 ## 6. Verification & Quality Gates
 1. **Compilation:** Code must compile cleanly with `-Wall -Wextra -Wpedantic -Werror`.
 2. **Static Analysis:** Run `clang-tidy` against `compile_commands.json` on all modified files. Zero `NOLINT` suppressions permitted.
-3. **Cognitive Complexity:** All functions must maintain Cognitive Complexity $\le 25$.
-4. **Testing:** Execute `ctest --test-dir build --output-on-failure` (or targeted test executable) and verify all tests pass.
-5. **Documentation:** Verify Doxygen blocks on all public/protected interfaces in header files.
+3. **Cognitive Complexity:** All functions must maintain Cognitive Complexity $\le 25$ (see [refactor-complexity](file:///home/isurwars/Projects/Correlation/.agents/skills/refactor-complexity/SKILL.md)).
+4. **Testing:** Execute `ctest --test-dir build --output-on-failure` and verify all tests pass (see [tdd](file:///home/isurwars/Projects/Correlation/.agents/skills/tdd/SKILL.md)).
+5. **Documentation:** Verify Doxygen blocks on all public/protected interfaces in header files (see [doc-generator](file:///home/isurwars/Projects/Correlation/.agents/skills/doc-generator/SKILL.md)).
+6. **Code Review:** Execute [code-review](file:///home/isurwars/Projects/Correlation/.agents/skills/code-review/SKILL.md) audit prior to staging or committing changes.
