@@ -75,7 +75,7 @@ struct GapParser {
     int num_atoms = 0;
     try {
       num_atoms = std::stoi(atom_count_str);
-    } catch (...) {
+    } catch (const std::exception &) {
       throw std::runtime_error("Invalid GAP file: malformed atom count at offset " + std::to_string(offset));
     }
     if (num_atoms <= 0) {
@@ -163,8 +163,8 @@ void parseAtomLine(const std::string &line, const GapReader::CommentData &comm_d
       }
     }
   } catch (const std::exception &err) {
-    throw std::runtime_error("Invalid GAP file: failed to parse coordinates/forces from atom line: " + line +
-                             " (" + err.what() + ")");
+    throw std::runtime_error("Invalid GAP file: failed to parse coordinates/forces from atom line: " + line + " (" +
+                             err.what() + ")");
   }
 }
 
@@ -188,7 +188,7 @@ correlation::core::Cell GapReader::parseGapFrame(const char *data, size_t size) 
   int num_atoms = 0;
   try {
     num_atoms = std::stoi(line);
-  } catch (...) {
+  } catch (const std::exception &) {
     throw std::runtime_error("Invalid GAP file: malformed atom count: " + line);
   }
 

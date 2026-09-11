@@ -89,7 +89,7 @@ const StructureAnalyzer *DistributionFunctions::neighbors() const {
 }
 
 const Histogram &DistributionFunctions::getHistogram(const std::string &name) const {
-  std::lock_guard<std::mutex> lock(histogram_mutex_);
+  const std::scoped_lock lock(histogram_mutex_);
   auto iter = histograms_.find(name);
   if (iter == histograms_.end() && name == "BAD") {
     iter = histograms_.find("PAD");
@@ -113,12 +113,12 @@ void DistributionFunctions::ensureNeighborsComputed(real_t r_max) {
 }
 
 void DistributionFunctions::addHistogram(const std::string &name, Histogram &&histogram) {
-  std::lock_guard<std::mutex> lock(histogram_mutex_);
+  const std::scoped_lock lock(histogram_mutex_);
   histograms_[name] = std::move(histogram);
 }
 
 std::vector<std::string> DistributionFunctions::getAvailableHistograms() const {
-  std::lock_guard<std::mutex> lock(histogram_mutex_);
+  const std::scoped_lock lock(histogram_mutex_);
   std::vector<std::string> keys;
   keys.reserve(histograms_.size());
   // Iterate through the map of histograms and extract the key for each entry.
@@ -491,7 +491,7 @@ DistributionFunctions::computeMean(correlation::core::Trajectory &trajectory, co
 
       const size_t current_completed = ++completed_frames;
       if (progress_callback) {
-        std::lock_guard<std::mutex> lock(callback_mutex);
+        const std::scoped_lock lock(callback_mutex);
         progress_callback(static_cast<float>(current_completed) / static_cast<float>(num_frames),
                           "Calculating: " + std::to_string(current_completed) + " of " + std::to_string(num_frames));
       }

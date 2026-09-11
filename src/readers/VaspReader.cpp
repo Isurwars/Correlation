@@ -50,9 +50,9 @@ struct VaspParser {
     auto lattice = parseLatticeVectors();
     applyScalingFactor(lattice, scaling_factor);
 
-    correlation::core::Cell tempCell({lattice.at(0).at(0), lattice.at(0).at(1), lattice.at(0).at(2)},
-                                     {lattice.at(1).at(0), lattice.at(1).at(1), lattice.at(1).at(2)},
-                                     {lattice.at(2).at(0), lattice.at(2).at(1), lattice.at(2).at(2)});
+    correlation::core::Cell temp_cell({lattice.at(0).at(0), lattice.at(0).at(1), lattice.at(0).at(2)},
+                                      {lattice.at(1).at(0), lattice.at(1).at(1), lattice.at(1).at(2)},
+                                      {lattice.at(2).at(0), lattice.at(2).at(1), lattice.at(2).at(2)});
 
     // Species names and atom counts
     auto [species, atom_counts] = parseSpeciesAndCounts();
@@ -62,10 +62,10 @@ struct VaspParser {
     bool const is_direct = parseCoordinateType();
 
     // Read atom positions
-    parseAtomPositions(tempCell, species, atom_counts, total_atoms, is_direct);
+    parseAtomPositions(temp_cell, species, atom_counts, total_atoms, is_direct);
 
-    tempCell.wrapPositions();
-    return tempCell;
+    temp_cell.wrapPositions();
+    return temp_cell;
   }
 
 private:
@@ -132,7 +132,7 @@ private:
         for (size_t i = 0; i < atom_counts.size(); ++i) {
           species.push_back("Type" + std::to_string(i + 1));
         }
-      } catch (...) {
+      } catch (const std::exception &) {
         // VASP 5+ format (species names)
         is_species_line = true;
         species.push_back(token);
@@ -169,8 +169,8 @@ private:
       }
       total_atoms_sum += count;
     }
-    constexpr int kMaxAtomCount = 100'000'000;
-    if (total_atoms_sum > kMaxAtomCount) {
+    constexpr int k_max_atom_count = 100'000'000;
+    if (total_atoms_sum > k_max_atom_count) {
       throw std::runtime_error("POSCAR: total atom count exceeds limit: " + std::to_string(total_atoms_sum));
     }
     return static_cast<int>(total_atoms_sum);
@@ -203,11 +203,11 @@ private:
     return ' ';
   }
 
-  void parseAtomPositions(correlation::core::Cell &tempCell, const std::vector<std::string> &species,
+  void parseAtomPositions(correlation::core::Cell &temp_cell, const std::vector<std::string> &species,
                           const std::vector<int> &atom_counts, int total_atoms, bool is_direct) const {
     int species_idx = 0;
     int atoms_in_species = 0;
-    const auto &lattice_vectors = tempCell.latticeVectors();
+    const auto &lattice_vectors = temp_cell.latticeVectors();
     std::string line;
 
     for (int i = 0; i < total_atoms; ++i) {
@@ -237,7 +237,7 @@ private:
       } else {
         pos = {pos_x, pos_y, pos_z};
       }
-      tempCell.addAtom(species.at(species_idx), pos);
+      temp_cell.addAtom(species.at(species_idx), pos);
       atoms_in_species++;
     }
   }

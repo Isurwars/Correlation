@@ -108,7 +108,7 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
     plan = iterator->second;
   } else {
     static std::mutex planner_mutex;
-    std::lock_guard<std::mutex> lock(planner_mutex);
+    const std::scoped_lock lock(planner_mutex);
 
     plan = fftw_plan_dft_1d(static_cast<int>(size), fftw_data, fftw_data, invert ? FFTW_BACKWARD : FFTW_FORWARD,
                             FFTW_ESTIMATE);

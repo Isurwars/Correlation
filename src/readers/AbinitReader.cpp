@@ -116,7 +116,7 @@ struct AbinitTrajectoryParser {
           parsing_xangst = false;
           return;
         }
-      } catch (...) {
+      } catch (const std::exception &) {
         parsing_xcart = false;
         parsing_xangst = false;
         return;

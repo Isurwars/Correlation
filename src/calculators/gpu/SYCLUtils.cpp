@@ -15,7 +15,7 @@ bool has_sycl_gpu_device() noexcept {
   try {
     const auto devices = sycl::device::get_devices(sycl::info::device_type::gpu);
     return !devices.empty();
-  } catch (...) {
+  } catch (const std::exception &) {
     return false;
   }
 #else

@@ -71,7 +71,7 @@ struct LammpsFrameParser {
     int num_atoms = 0;
     try {
       num_atoms = std::stoi(line);
-    } catch (...) {
+    } catch (const std::exception &) {
       throw std::runtime_error("Failed to parse atom count in LAMMPS dump frame");
     }
     if (num_atoms <= 0) {
@@ -192,7 +192,7 @@ struct LammpsFrameParser {
         frac_x = static_cast<real_t>(std::stod(fields[layout.col_x]));
         frac_y = static_cast<real_t>(std::stod(fields[layout.col_y]));
         frac_z = static_cast<real_t>(std::stod(fields[layout.col_z]));
-      } catch (...) {
+      } catch (const std::exception &) {
         continue;
       }
 

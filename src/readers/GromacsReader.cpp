@@ -12,7 +12,6 @@
 #include "core/MappedFile.hpp"
 #include "math/Precision.hpp"
 #include "readers/ReaderFactory.hpp"
-#include <math.h>
 
 #include <cstring>
 #include <sstream>
@@ -51,8 +50,8 @@ inline size_t skipLineEnding(const char *data, size_t total, size_t pos) {
 // ---------------------------------------------------------------------------
 // Helper: extract a line as std::string from [pos, lineEnd)
 // ---------------------------------------------------------------------------
-inline std::string extractLine(const char *data, size_t pos, size_t lineEnd) {
-  return std::string(data + pos, lineEnd - pos);
+inline std::string extractLine(const char *data, size_t pos, size_t line_end) {
+  return std::string(data + pos, line_end - pos);
 }
 
 size_t skipBlankLines(const char *data, size_t total_size, size_t offset) {
@@ -89,7 +88,7 @@ size_t scanNextFrame(const char *data, size_t total_size, size_t offset) {
   int num_atoms = 0;
   try {
     num_atoms = std::stoi(count_str);
-  } catch (...) {
+  } catch (const std::exception &) {
     return 0; // Not a valid frame
   }
 
@@ -128,24 +127,24 @@ size_t scanNextFrame(const char *data, size_t total_size, size_t offset) {
 // ---------------------------------------------------------------------------
 correlation::core::Cell GromacsReader::parseGroFrame(const char *data, size_t size) {
   size_t offset = 0;
-  size_t lineEnd = 0;
+  size_t line_end = 0;
 
-  auto nextLine = [&]() -> std::string {
-    lineEnd = findLineEnd(data, size, offset);
-    std::string line = extractLine(data, offset, lineEnd);
-    offset = skipLineEnding(data, size, lineEnd);
+  auto next_line = [&]() -> std::string {
+    line_end = findLineEnd(data, size, offset);
+    std::string line = extractLine(data, offset, line_end);
+    offset = skipLineEnding(data, size, line_end);
     return line;
   };
 
   // Line 1: Title/Comment
-  nextLine(); // skip title
+  next_line(); // skip title
 
   // Line 2: Number of atoms
-  std::string line = nextLine();
+  std::string line = next_line();
   int num_atoms = 0;
   try {
     num_atoms = std::stoi(line);
-  } catch (...) {
+  } catch (const std::exception &) {
     throw std::runtime_error("Invalid GROMACS file: non-numeric atom count");
   }
 
@@ -155,8 +154,8 @@ correlation::core::Cell GromacsReader::parseGroFrame(const char *data, size_t si
   if (num_atoms <= 0) {
     throw std::runtime_error("Invalid GROMACS file: non-positive atom count: " + std::to_string(num_atoms));
   }
-  constexpr int kMaxAtomCount = 100'000'000;
-  if (num_atoms > kMaxAtomCount) {
+  constexpr int k_max_atom_count = 100'000'000;
+  if (num_atoms > k_max_atom_count) {
     throw std::runtime_error("Invalid GROMACS file: atom count exceeds limit: " + std::to_string(num_atoms));
   }
   const size_t remaining = (offset < size) ? (size - offset) : 0;
@@ -172,7 +171,7 @@ correlation::core::Cell GromacsReader::parseGroFrame(const char *data, size_t si
   // Lines 3 to num_atoms + 2: Atoms
   // Format: 5pos 5res 5atom 5id 8x 8y 8z 8vx 8vy 8vz (last 3 optional)
   for (int i = 0; i < num_atoms; ++i) {
-    line = nextLine();
+    line = next_line();
     if (line.length() < 44) {
       continue; // Basic coordinate check
     }
@@ -206,7 +205,7 @@ correlation::core::Cell GromacsReader::parseGroFrame(const char *data, size_t si
   // Last line: Box vectors (v1x v2y v3z v1y v1z v2x v2z v3x v3y)
   // Most common: 3 values (orthogonal box)
   if (offset < size) {
-    line = nextLine();
+    line = next_line();
     std::stringstream str_stream(line);
     real_t box_x = 0.0;
     real_t box_y = 0.0;

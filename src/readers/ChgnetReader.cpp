@@ -75,7 +75,7 @@ struct ChgnetParser {
     int num_atoms = 0;
     try {
       num_atoms = std::stoi(atom_count_str);
-    } catch (...) {
+    } catch (const std::exception &) {
       throw std::runtime_error("Invalid CHGNet file: expected atom count, got: " + atom_count_str);
     }
 
@@ -136,8 +136,7 @@ struct ChgnetParser {
   }
 };
 
-void parseAtomLine(const std::string &line, const ChgnetReader::CommentData &comm_data,
-                   correlation::core::Cell &cell) {
+void parseAtomLine(const std::string &line, const ChgnetReader::CommentData &comm_data, correlation::core::Cell &cell) {
   std::istringstream iss(line);
   std::vector<std::string> tokens;
   std::string token;
@@ -168,7 +167,7 @@ void parseAtomLine(const std::string &line, const ChgnetReader::CommentData &com
         atom.setVelocity(correlation::math::Vector3<real_t>(force_x, force_y, force_z));
       }
     }
-  } catch (...) {
+  } catch (const std::exception &) {
     throw std::runtime_error("Invalid CHGNet file: invalid coordinates or forces: " + line);
   }
 }
@@ -189,7 +188,7 @@ correlation::core::Cell ChgnetReader::parseChgnetFrame(const char *data, size_t 
   int num_atoms = 0;
   try {
     num_atoms = std::stoi(line);
-  } catch (...) {
+  } catch (const std::exception &) {
     throw std::runtime_error("Invalid CHGNet file: expected atom count, got: " + line);
   }
 
@@ -362,9 +361,8 @@ ChgnetReader::CommentData ChgnetReader::parseCommentLine(const std::string &comm
   return data;
 }
 
-correlation::core::Cell
-ChgnetReader::readStructure(const std::string &filename,
-                            std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell ChgnetReader::readStructure(const std::string &filename,
+                                                    std::function<void(float, const std::string &)> progress_callback) {
   auto traj = readTrajectory(filename, std::move(progress_callback));
   if (traj.getFrameCount() == 0) {
     throw std::runtime_error("No structure found in CHGNet file: " + filename);
@@ -396,9 +394,7 @@ ChgnetReader::readTrajectory(const std::string &filename,
     progress_callback(1.0F, "CHGNet file loaded.");
   }
 
-  auto parser_func = [](const char *data_begin, size_t data_size) {
-    return parseChgnetFrame(data_begin, data_size);
-  };
+  auto parser_func = [](const char *data_begin, size_t data_size) { return parseChgnetFrame(data_begin, data_size); };
 
   return {mapped_file, std::move(frame_offsets), parser_func, 1.0};
 }

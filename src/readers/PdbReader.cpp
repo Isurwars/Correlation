@@ -43,7 +43,7 @@ std::optional<PdbCrystParams> parsePdbCrystLine(const std::string &line) {
         .b = param_b,
         .c = param_c,
     };
-  } catch (...) {
+  } catch (const std::exception &) {
     return std::nullopt;
   }
 }
@@ -87,7 +87,7 @@ std::optional<PdbAtomData> parsePdbAtomLine(const std::string &line) {
         .y = frac_y,
         .z = frac_z,
     };
-  } catch (...) {
+  } catch (const std::exception &) {
     return std::nullopt;
   }
 }

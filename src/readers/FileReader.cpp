@@ -32,14 +32,14 @@ FileType getExtensionlessVaspType(const std::filesystem::path &filepath) {
 
 const std::unordered_map<std::string, FileType> &getExtensionTypeMap() {
   static const std::unordered_map<std::string, FileType> k_extension_map = {
-      {".car", FileType::Car},           {".cell", FileType::Cell},        {".cif", FileType::Cif},
-      {".arc", FileType::Arc},           {".dump", FileType::LammpsDump},  {".lammpstrj", FileType::LammpsDump},
-      {".dat", FileType::OnetepDat},     {".md", FileType::CastepMd},      {".outmol", FileType::Outmol},
-      {".poscar", FileType::Vasp},       {".contcar", FileType::Vasp},     {".vasp", FileType::Vasp},
-      {".xdatcar", FileType::Xdatcar},   {".gro", FileType::Gromacs},      {".pdb", FileType::Pdb},
-      {".ent", FileType::Pdb},           {".xyz", FileType::Xyz},          {".exyz", FileType::Xyz},
-      {".mace", FileType::Mace},         {".extxyz", FileType::Mace},      {".chgnet", FileType::Chgnet},
-      {".gap", FileType::Gap},           {".quip", FileType::Gap},
+      {".car", FileType::Car},         {".cell", FileType::Cell},       {".cif", FileType::Cif},
+      {".arc", FileType::Arc},         {".dump", FileType::LammpsDump}, {".lammpstrj", FileType::LammpsDump},
+      {".dat", FileType::OnetepDat},   {".md", FileType::CastepMd},     {".outmol", FileType::Outmol},
+      {".poscar", FileType::Vasp},     {".contcar", FileType::Vasp},    {".vasp", FileType::Vasp},
+      {".xdatcar", FileType::Xdatcar}, {".gro", FileType::Gromacs},     {".pdb", FileType::Pdb},
+      {".ent", FileType::Pdb},         {".xyz", FileType::Xyz},         {".exyz", FileType::Xyz},
+      {".mace", FileType::Mace},       {".extxyz", FileType::Mace},     {".chgnet", FileType::Chgnet},
+      {".gap", FileType::Gap},         {".quip", FileType::Gap},
   };
   return k_extension_map;
 }
@@ -187,7 +187,7 @@ correlation::core::Trajectory readTrajectory(const std::string &filename, FileTy
       std::vector<correlation::core::Cell> frames;
       frames.push_back(std::move(cell));
       return {frames, 1.0};
-    } catch (...) {
+    } catch (const std::exception &) {
       throw std::runtime_error("Reader for \"" + filename + "\" does not support trajectory reading.");
     }
   }

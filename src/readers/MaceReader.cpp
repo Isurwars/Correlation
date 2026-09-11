@@ -75,7 +75,7 @@ struct MaceParser {
     int num_atoms = 0;
     try {
       num_atoms = std::stoi(atom_count_str);
-    } catch (...) {
+    } catch (const std::exception &) {
       throw std::runtime_error("Invalid MACE file: expected atom count, got: " + atom_count_str);
     }
 
@@ -167,7 +167,7 @@ void parseAtomLine(const std::string &line, const MaceReader::CommentData &comm_
         atom.setVelocity(correlation::math::Vector3<real_t>(force_x, force_y, force_z));
       }
     }
-  } catch (...) {
+  } catch (const std::exception &) {
     throw std::runtime_error("Invalid MACE file: invalid coordinates or forces: " + line);
   }
 }
@@ -188,7 +188,7 @@ correlation::core::Cell MaceReader::parseMaceFrame(const char *data, size_t size
   int num_atoms = 0;
   try {
     num_atoms = std::stoi(line);
-  } catch (...) {
+  } catch (const std::exception &) {
     throw std::runtime_error("Invalid MACE file: expected atom count, got: " + line);
   }
 

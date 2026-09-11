@@ -75,7 +75,7 @@ struct XYZParser {
     int num_atoms = 0;
     try {
       num_atoms = std::stoi(atom_count_str);
-    } catch (...) {
+    } catch (const std::exception &) {
       throw std::runtime_error("Invalid XYZ file: expected atom count, got: " + atom_count_str);
     }
 
@@ -157,7 +157,7 @@ correlation::core::Cell XYZReader::parseXYZFrame(const char *data, size_t size) 
   int num_atoms = 0;
   try {
     num_atoms = std::stoi(line);
-  } catch (...) {
+  } catch (const std::exception &) {
     throw std::runtime_error("Invalid XYZ file: expected atom count, got: " + line);
   }
 
@@ -214,7 +214,7 @@ correlation::core::Cell XYZReader::parseXYZFrame(const char *data, size_t size) 
       real_t const pos_y = static_cast<real_t>(std::stod(tokens[comm_data.pos_y_col]));
       real_t const pos_z = static_cast<real_t>(std::stod(tokens[comm_data.pos_z_col]));
       cell.addAtom(symbol, correlation::math::Vector3<real_t>(pos_x, pos_y, pos_z));
-    } catch (...) {
+    } catch (const std::exception &) {
       throw std::runtime_error("Invalid XYZ file: invalid coordinates: " + line);
     }
   }

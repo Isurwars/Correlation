@@ -6,11 +6,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include <cstdio>
 #include <cstdlib>
 #include <exception>
-#include <filesystem>
-#include <fstream>
 #include <iostream>
 
 #ifdef _WIN32
@@ -156,6 +153,6 @@ int main() {
   }
 }
 
-#if _WIN32
+#ifdef _WIN32
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) { return main(); }
 #endif

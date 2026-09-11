@@ -332,5 +332,11 @@
   "330": "MockWriter",
   "331": "Rule: Function Cognitive Complexity Gate",
   "332": "HDF5Writer.cpp",
-  "333": "BlendParams"
+  "333": "BlendParams",
+  "334": "QVector",
+  "335": "Modern C++ Standards (C++20/C++23)",
+  "336": "Session Handoff",
+  "337": "LocalEntropyParams",
+  "338": "precomputePhases",
+  "339": "TempDirectoryGuard"
 }
