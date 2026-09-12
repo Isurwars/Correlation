@@ -15,6 +15,10 @@
 #define IDI_ICON1 101
 #include <Windows.h>
 
+#include <cstdio>
+#include <filesystem>
+#include <string>
+
 namespace {
 void setupWindowsDebugEnvironment() {
   // Ensure Rust/Slint outputs detailed backtraces on panics
