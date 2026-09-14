@@ -23,10 +23,31 @@ using correlation::real_t;
 using namespace correlation::mlip;
 using namespace correlation::calculators;
 
-void init_mlip(py::module_ &mod) {
-  // ------------------------------------------------------------------
-  // PeriodicGraphData
-  // ------------------------------------------------------------------
+namespace {
+
+template <typename T>
+[[nodiscard]] py::array_t<T> makeEmptyOr1D(std::span<const T> buffer, size_t count, py::object &obj) {
+  if (buffer.empty() || count == 0) {
+    return {};
+  }
+  const auto count_val = static_cast<py::ssize_t>(count);
+  const auto stride = static_cast<py::ssize_t>(sizeof(T));
+  return py::array_t<T>({count_val}, {stride}, buffer.data(), obj);
+}
+
+template <typename T>
+[[nodiscard]] py::array_t<T> makeEmptyOr2D(std::span<const T> buffer, size_t rows, size_t cols, py::object &obj) {
+  if (buffer.empty() || rows == 0 || cols == 0) {
+    return {};
+  }
+  const auto num_rows = static_cast<py::ssize_t>(rows);
+  const auto num_cols = static_cast<py::ssize_t>(cols);
+  const auto stride_row = static_cast<py::ssize_t>(num_cols * sizeof(T));
+  const auto stride_col = static_cast<py::ssize_t>(sizeof(T));
+  return py::array_t<T>({num_rows, num_cols}, {stride_row, stride_col}, buffer.data(), obj);
+}
+
+void bindPeriodicGraphData(py::module_ &mod) {
   py::class_<PeriodicGraphData>(mod, "PeriodicGraphData",
                                 "Container for periodic neighbor graph tensors ready for GNN model inference.")
       .def(py::init<>())
@@ -35,110 +56,104 @@ void init_mlip(py::module_ &mod) {
       .def_property_readonly(
           "positions",
           [](py::object &obj) -> py::array_t<real_t> {
-            const auto &graph = obj.cast<const PeriodicGraphData &>();
-            if (graph.positions_flat.empty() || graph.atom_count == 0) {
-              return {};
-            }
-            const auto rows = static_cast<py::ssize_t>(graph.atom_count);
-            const py::ssize_t cols = 3;
-            const auto stride_row = static_cast<py::ssize_t>(3 * sizeof(real_t));
-            const auto stride_col = static_cast<py::ssize_t>(sizeof(real_t));
-            return py::array_t<real_t>({rows, cols}, {stride_row, stride_col}, graph.positions_flat.data(), obj);
+            const auto &graph_data = obj.cast<const PeriodicGraphData &>();
+            return makeEmptyOr2D<real_t>(graph_data.positions_flat, graph_data.atom_count, 3, obj);
           },
           "Zero-copy access to atomic Cartesian coordinates as a (N, 3) NumPy array.")
       .def_property_readonly(
           "atomic_numbers",
           [](py::object &obj) -> py::array_t<int64_t> {
-            const auto &graph = obj.cast<const PeriodicGraphData &>();
-            if (graph.atomic_numbers.empty() || graph.atom_count == 0) {
-              return {};
-            }
-            const auto count = static_cast<py::ssize_t>(graph.atom_count);
-            const auto stride = static_cast<py::ssize_t>(sizeof(int64_t));
-            return py::array_t<int64_t>({count}, {stride}, graph.atomic_numbers.data(), obj);
+            const auto &graph_data = obj.cast<const PeriodicGraphData &>();
+            return makeEmptyOr1D<int64_t>(graph_data.atomic_numbers, graph_data.atom_count, obj);
           },
           "Zero-copy access to atomic numbers (Z) as a (N,) NumPy array.")
       .def_property_readonly(
           "edge_index",
           [](py::object &obj) -> py::array_t<int64_t> {
-            const auto &graph = obj.cast<const PeriodicGraphData &>();
-            if (graph.edge_index_flat.empty() || graph.edge_count == 0) {
+            const auto &graph_data = obj.cast<const PeriodicGraphData &>();
+            if (graph_data.edge_index_flat.empty() || graph_data.edge_count == 0) {
               return {};
             }
             const py::ssize_t rows = 2;
-            const auto cols = static_cast<py::ssize_t>(graph.edge_count);
-            const auto stride_row = static_cast<py::ssize_t>(graph.edge_count * sizeof(int64_t));
+            const auto cols = static_cast<py::ssize_t>(graph_data.edge_count);
+            const auto stride_row = static_cast<py::ssize_t>(graph_data.edge_count * sizeof(int64_t));
             const auto stride_col = static_cast<py::ssize_t>(sizeof(int64_t));
-            return py::array_t<int64_t>({rows, cols}, {stride_row, stride_col}, graph.edge_index_flat.data(), obj);
+            return py::array_t<int64_t>({rows, cols}, {stride_row, stride_col}, graph_data.edge_index_flat.data(), obj);
           },
           "Zero-copy access to directed edge indices (COO format) as a (2, E) NumPy array.")
       .def_property_readonly(
           "edge_shifts",
           [](py::object &obj) -> py::array_t<real_t> {
-            const auto &graph = obj.cast<const PeriodicGraphData &>();
-            if (graph.edge_shifts_flat.empty() || graph.edge_count == 0) {
-              return {};
-            }
-            const auto rows = static_cast<py::ssize_t>(graph.edge_count);
-            const py::ssize_t cols = 3;
-            const auto stride_row = static_cast<py::ssize_t>(3 * sizeof(real_t));
-            const auto stride_col = static_cast<py::ssize_t>(sizeof(real_t));
-            return py::array_t<real_t>({rows, cols}, {stride_row, stride_col}, graph.edge_shifts_flat.data(), obj);
+            const auto &graph_data = obj.cast<const PeriodicGraphData &>();
+            return makeEmptyOr2D<real_t>(graph_data.edge_shifts_flat, graph_data.edge_count, 3, obj);
           },
           "Zero-copy access to periodic cell integer shift vectors as a (E, 3) NumPy array.")
       .def_property_readonly(
           "edge_vectors",
           [](py::object &obj) -> py::array_t<real_t> {
-            const auto &graph = obj.cast<const PeriodicGraphData &>();
-            if (graph.edge_vectors_flat.empty() || graph.edge_count == 0) {
-              return {};
-            }
-            const auto rows = static_cast<py::ssize_t>(graph.edge_count);
-            const py::ssize_t cols = 3;
-            const auto stride_row = static_cast<py::ssize_t>(3 * sizeof(real_t));
-            const auto stride_col = static_cast<py::ssize_t>(sizeof(real_t));
-            return py::array_t<real_t>({rows, cols}, {stride_row, stride_col}, graph.edge_vectors_flat.data(), obj);
+            const auto &graph_data = obj.cast<const PeriodicGraphData &>();
+            return makeEmptyOr2D<real_t>(graph_data.edge_vectors_flat, graph_data.edge_count, 3, obj);
           },
           "Zero-copy access to Cartesian displacement vectors r_ij as a (E, 3) NumPy array.")
       .def_property_readonly(
           "edge_distances",
           [](py::object &obj) -> py::array_t<real_t> {
-            const auto &graph = obj.cast<const PeriodicGraphData &>();
-            if (graph.edge_distances.empty() || graph.edge_count == 0) {
-              return {};
-            }
-            const auto count = static_cast<py::ssize_t>(graph.edge_count);
-            const auto stride = static_cast<py::ssize_t>(sizeof(real_t));
-            return py::array_t<real_t>({count}, {stride}, graph.edge_distances.data(), obj);
+            const auto &graph_data = obj.cast<const PeriodicGraphData &>();
+            return makeEmptyOr1D<real_t>(graph_data.edge_distances, graph_data.edge_count, obj);
           },
           "Zero-copy access to Euclidean edge distances ||r_ij|| as a (E,) NumPy array.")
       .def_property_readonly(
           "cell",
           [](py::object &obj) -> py::array_t<real_t> {
-            const auto &graph = obj.cast<const PeriodicGraphData &>();
-            const py::ssize_t rows = 3;
-            const py::ssize_t cols = 3;
-            const auto stride_row = static_cast<py::ssize_t>(3 * sizeof(real_t));
-            const auto stride_col = static_cast<py::ssize_t>(sizeof(real_t));
-            return py::array_t<real_t>({rows, cols}, {stride_row, stride_col}, graph.cell_flat.data(), obj);
+            const auto &graph_data = obj.cast<const PeriodicGraphData &>();
+            return makeEmptyOr2D<real_t>(graph_data.cell_flat, 3, 3, obj);
           },
           "Zero-copy access to lattice matrix as a (3, 3) NumPy array.")
       .def_property_readonly(
           "edge_spherical_harmonics",
           [](py::object &obj) -> py::array_t<real_t> {
-            const auto &graph = obj.cast<const PeriodicGraphData &>();
-            if (graph.edge_spherical_harmonics_flat.empty() || graph.edge_count == 0) {
-              return {};
-            }
-            const auto rows = static_cast<py::ssize_t>(graph.edge_count);
-            const auto cols = static_cast<py::ssize_t>(graph.edge_spherical_harmonics_flat.size() / graph.edge_count);
-            const auto stride_row = static_cast<py::ssize_t>(cols * sizeof(real_t));
-            const auto stride_col = static_cast<py::ssize_t>(sizeof(real_t));
-            return py::array_t<real_t>({rows, cols}, {stride_row, stride_col},
-                                       graph.edge_spherical_harmonics_flat.data(), obj);
+            const auto &graph_data = obj.cast<const PeriodicGraphData &>();
+            const size_t cols = (graph_data.edge_count > 0)
+                                    ? (graph_data.edge_spherical_harmonics_flat.size() / graph_data.edge_count)
+                                    : 0;
+            return makeEmptyOr2D<real_t>(graph_data.edge_spherical_harmonics_flat, graph_data.edge_count, cols, obj);
           },
-          "Zero-copy access to spherical harmonics features as a (E, (l_max+1)^2) NumPy array.");
+          "Zero-copy access to spherical harmonics features as a (E, (l_max+1)^2) NumPy array.")
+      .def_property_readonly(
+          "edge_unit_vectors",
+          [](py::object &obj) -> py::array_t<real_t> {
+            const auto &graph_data = obj.cast<const PeriodicGraphData &>();
+            return makeEmptyOr2D<real_t>(graph_data.edge_unit_vectors_flat, graph_data.edge_count, 3, obj);
+          },
+          "Zero-copy access to normalized unit displacement vectors r_hat_ij as a (E, 3) NumPy array.")
+      .def_property_readonly(
+          "edge_radial_basis",
+          [](py::object &obj) -> py::array_t<real_t> {
+            const auto &graph_data = obj.cast<const PeriodicGraphData &>();
+            const size_t cols =
+                (graph_data.edge_count > 0) ? (graph_data.edge_radial_basis_flat.size() / graph_data.edge_count) : 0;
+            return makeEmptyOr2D<real_t>(graph_data.edge_radial_basis_flat, graph_data.edge_count, cols, obj);
+          },
+          "Zero-copy access to edge radial basis features as a (E, num_rbf) NumPy array.")
+      .def_property_readonly(
+          "edge_cutoff_envelope",
+          [](py::object &obj) -> py::array_t<real_t> {
+            const auto &graph_data = obj.cast<const PeriodicGraphData &>();
+            return makeEmptyOr1D<real_t>(graph_data.edge_cutoff_envelope_flat, graph_data.edge_count, obj);
+          },
+          "Zero-copy access to polynomial cutoff envelope values f_c(d) as a (E,) NumPy array.")
+      .def_property_readonly(
+          "edge_orb_features",
+          [](py::object &obj) -> py::array_t<real_t> {
+            const auto &graph_data = obj.cast<const PeriodicGraphData &>();
+            const size_t cols =
+                (graph_data.edge_count > 0) ? (graph_data.edge_orb_features_flat.size() / graph_data.edge_count) : 0;
+            return makeEmptyOr2D<real_t>(graph_data.edge_orb_features_flat, graph_data.edge_count, cols, obj);
+          },
+          "Zero-copy access to fused ORB-v3 edge features f_cut * (RBF (x) Y_lm) as a (E, num_rbf * num_sh) NumPy array.");
+}
 
+void bindPeriodicGraphBuilder(py::module_ &mod) {
   // ------------------------------------------------------------------
   // GaussianRBFConfig
   // ------------------------------------------------------------------
@@ -151,6 +166,21 @@ void init_mlip(py::module_ &mod) {
       .def_readwrite("num_basis", &GaussianRBFConfig::num_basis, "Number of Gaussian basis centers.");
 
   // ------------------------------------------------------------------
+  // OrbDescriptorConfig
+  // ------------------------------------------------------------------
+  py::class_<OrbDescriptorConfig>(mod, "OrbDescriptorConfig",
+                                  "Configuration parameters for ORB-v3 graph and descriptor extraction.")
+      .def(py::init<real_t, size_t, size_t, bool, bool>(), py::arg("r_max") = static_cast<real_t>(6.0),
+           py::arg("num_rbf") = static_cast<size_t>(8), py::arg("l_max") = static_cast<size_t>(3),
+           py::arg("include_self_loops") = false, py::arg("compute_orb_features") = true)
+      .def_readwrite("r_max", &OrbDescriptorConfig::r_max, "Radial cutoff distance in Angstroms.")
+      .def_readwrite("num_rbf", &OrbDescriptorConfig::num_rbf, "Number of Bessel radial basis functions.")
+      .def_readwrite("l_max", &OrbDescriptorConfig::l_max, "Maximum spherical harmonics degree l.")
+      .def_readwrite("include_self_loops", &OrbDescriptorConfig::include_self_loops, "Whether to include self loops.")
+      .def_readwrite("compute_orb_features", &OrbDescriptorConfig::compute_orb_features,
+                     "Whether to compute fused outer-product [E, 128] ORB edge features.");
+
+  // ------------------------------------------------------------------
   // PeriodicGraphBuilder
   // ------------------------------------------------------------------
   py::class_<PeriodicGraphBuilder>(mod, "PeriodicGraphBuilder",
@@ -158,12 +188,30 @@ void init_mlip(py::module_ &mod) {
       .def_static("build_graph", &PeriodicGraphBuilder::buildGraph, py::arg("cell"),
                   py::arg("cutoff_radius") = static_cast<real_t>(5.0), py::arg("include_self_loops") = false,
                   py::arg("l_max") = static_cast<size_t>(0), "Build periodic neighbor graph data for a unit cell.")
+      .def_static("build_orb_graph", &PeriodicGraphBuilder::buildOrbGraph, py::arg("cell"),
+                  py::arg("config") = OrbDescriptorConfig{},
+                  "Construct periodic neighbor graph and compute native ORB-v3 descriptors.")
       .def_static("get_atomic_number", &PeriodicGraphBuilder::getAtomicNumber, py::arg("symbol"),
                   "Return atomic number (Z) for element symbol.")
       .def_static("compute_cutoff_envelope", &PeriodicGraphBuilder::computeCutoffEnvelope, py::arg("distance"),
                   py::arg("cutoff_radius"), "Compute smooth polynomial cutoff envelope.")
+      .def_static("compute_orb_cutoff_envelope", &PeriodicGraphBuilder::computeOrbCutoffEnvelope, py::arg("distance"),
+                  py::arg("cutoff_radius"), "Compute ORB-v3 polynomial cutoff envelope of order p=4.")
       .def_static("compute_bessel_basis", &PeriodicGraphBuilder::computeBesselBasis, py::arg("distance"),
                   py::arg("cutoff_radius"), py::arg("num_basis"), "Compute spherical Bessel radial basis.")
+      .def_static("compute_orb_bessel_basis", &PeriodicGraphBuilder::computeOrbBesselBasis, py::arg("distance"),
+                  py::arg("config") = OrbDescriptorConfig{}, "Compute ORB-v3 Bessel radial basis functions.")
+      .def_static(
+          "compute_orb_spherical_harmonics",
+          [](const std::vector<real_t> &unit_vec, size_t l_max) {
+            if (unit_vec.size() < 3) {
+              throw std::invalid_argument("unit_vec must have at least 3 elements");
+            }
+            return PeriodicGraphBuilder::computeOrbSphericalHarmonics(
+                correlation::math::Vector3<real_t>{unit_vec[0], unit_vec[1], unit_vec[2]}, l_max);
+          },
+          py::arg("unit_vec"), py::arg("l_max") = static_cast<size_t>(3),
+          "Compute ORB-v3 e3nn component-normalized spherical harmonics.")
       .def_static(
           "compute_gaussian_rbf",
           [](real_t distance, real_t start, real_t stop, size_t num_basis) {
@@ -180,12 +228,17 @@ void init_mlip(py::module_ &mod) {
           py::arg("distance"), py::arg("config"),
           "Compute Gaussian radial basis functions using configuration struct.");
 
-  // Free function alias for convenient top-level usage
+  // Free function aliases for convenient top-level usage
   mod.def("build_periodic_graph", &PeriodicGraphBuilder::buildGraph, py::arg("cell"),
           py::arg("cutoff_radius") = static_cast<real_t>(5.0), py::arg("include_self_loops") = false,
           py::arg("l_max") = static_cast<size_t>(0),
           "Convenience helper to construct periodic neighbor graph for GNN evaluation.");
+  mod.def("build_orb_graph", &PeriodicGraphBuilder::buildOrbGraph, py::arg("cell"),
+          py::arg("config") = OrbDescriptorConfig{},
+          "Convenience helper to construct periodic neighbor graph and extract ORB-v3 descriptors.");
+}
 
+void bindMlipInterface(py::module_ &mod) {
   // ------------------------------------------------------------------
   // MLIPInterface
   // ------------------------------------------------------------------
@@ -230,7 +283,9 @@ void init_mlip(py::module_ &mod) {
             return MLIPCalculator::calculate(cell, model);
           },
           py::arg("cell"), py::arg("model") = nullptr, "Evaluate MLIP on a given cell.");
+}
 
+void bindTdos(py::module_ &mod) {
   // ------------------------------------------------------------------
   // TDOSParams
   // ------------------------------------------------------------------
@@ -264,4 +319,13 @@ void init_mlip(py::module_ &mod) {
           },
           py::arg("traj"), py::arg("params") = TDOSParams{},
           "Calculate frame-averaged Total Density of States for a trajectory.");
+}
+
+} // namespace
+
+void init_mlip(py::module_ &mod) {
+  bindPeriodicGraphData(mod);
+  bindPeriodicGraphBuilder(mod);
+  bindMlipInterface(mod);
+  bindTdos(mod);
 }

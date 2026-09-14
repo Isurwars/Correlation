@@ -266,4 +266,137 @@ TEST(PeriodicGraphBuilderTests, PeriodicGraphWithSphericalHarmonics) {
   }
 }
 
+TEST(PeriodicGraphBuilderTests, OrbCutoffEnvelopeAnalytical) {
+  const real_t r_max = static_cast<real_t>(6.0);
+
+  // Boundary conditions
+  EXPECT_NEAR(PeriodicGraphBuilder::computeOrbCutoffEnvelope(0.0, r_max), static_cast<real_t>(1.0), 1e-6);
+  EXPECT_NEAR(PeriodicGraphBuilder::computeOrbCutoffEnvelope(-1.0, r_max), static_cast<real_t>(1.0), 1e-6);
+  EXPECT_NEAR(PeriodicGraphBuilder::computeOrbCutoffEnvelope(6.0, r_max), static_cast<real_t>(0.0), 1e-6);
+  EXPECT_NEAR(PeriodicGraphBuilder::computeOrbCutoffEnvelope(7.5, r_max), static_cast<real_t>(0.0), 1e-6);
+  EXPECT_NEAR(PeriodicGraphBuilder::computeOrbCutoffEnvelope(3.0, 0.0), static_cast<real_t>(0.0), 1e-6);
+
+  // Midpoint u = 0.5: 1 - 15*(0.5)^4 + 24*(0.5)^5 - 10*(0.5)^6 = 0.65625
+  const real_t mid_val = PeriodicGraphBuilder::computeOrbCutoffEnvelope(3.0, r_max);
+  EXPECT_NEAR(mid_val, static_cast<real_t>(0.65625), 1e-6);
+
+  // Quarter-point u = 0.25: 1 - 15/256 + 24/1024 - 10/4096 = 1 - 0.05859375 + 0.0234375 - 0.00244140625 = 0.96240234375
+  const real_t quarter_val = PeriodicGraphBuilder::computeOrbCutoffEnvelope(1.5, r_max);
+  EXPECT_NEAR(quarter_val, static_cast<real_t>(0.96240234375), 1e-5);
+}
+
+TEST(PeriodicGraphBuilderTests, OrbBesselBasisAnalytical) {
+  const OrbDescriptorConfig cfg{.r_max = 6.0, .num_rbf = 8};
+  constexpr real_t k_pi = std::numbers::pi_v<real_t>;
+  const real_t prefactor = std::sqrt(static_cast<real_t>(2.0) / static_cast<real_t>(6.0));
+
+  // Limit at distance = 0
+  const auto zero_basis = PeriodicGraphBuilder::computeOrbBesselBasis(0.0, cfg);
+  ASSERT_EQ(zero_basis.size(), 8U);
+  for (size_t idx_n = 0; idx_n < 8; ++idx_n) {
+    const real_t expected = prefactor * static_cast<real_t>(idx_n + 1) * k_pi / static_cast<real_t>(6.0);
+    EXPECT_NEAR(zero_basis[idx_n], expected, 1e-5);
+  }
+
+  // Value at midpoint distance = 3.0 (u = 0.5)
+  const auto mid_basis = PeriodicGraphBuilder::computeOrbBesselBasis(3.0, cfg);
+  ASSERT_EQ(mid_basis.size(), 8U);
+  for (size_t idx_n = 0; idx_n < 8; ++idx_n) {
+    const real_t arg = static_cast<real_t>(idx_n + 1) * k_pi * static_cast<real_t>(0.5);
+    const real_t expected = prefactor * std::sin(arg) / static_cast<real_t>(3.0);
+    EXPECT_NEAR(mid_basis[idx_n], expected, 1e-5);
+  }
+}
+
+TEST(PeriodicGraphBuilderTests, OrbSphericalHarmonicsComponentNormalization) {
+  const std::vector<correlation::math::Vector3<real_t>> test_dirs = {
+      {1.0, 0.0, 0.0},
+      {0.0, 1.0, 0.0},
+      {0.0, 0.0, 1.0},
+      {static_cast<real_t>(1.0 / std::numbers::sqrt3_v<double>),
+       static_cast<real_t>(1.0 / std::numbers::sqrt3_v<double>),
+       static_cast<real_t>(1.0 / std::numbers::sqrt3_v<double>)},
+      {static_cast<real_t>(0.6), static_cast<real_t>(0.8), static_cast<real_t>(0.0)},
+      {static_cast<real_t>(0.26726124), static_cast<real_t>(0.53452248), static_cast<real_t>(0.80178373)},
+  };
+
+  for (const auto &dir : test_dirs) {
+    const auto y_lm = PeriodicGraphBuilder::computeOrbSphericalHarmonics(dir, 3);
+    ASSERT_EQ(y_lm.size(), 16U);
+
+    // l=0: Y_00 = 1.0 -> sum sq = 1.0 = 2*0 + 1
+    const real_t sum_l0 = y_lm[0] * y_lm[0];
+    EXPECT_NEAR(sum_l0, static_cast<real_t>(1.0), 1e-4);
+
+    // l=1: components 1..3 -> sum sq = 2*1 + 1 = 3.0
+    const real_t sum_l1 = y_lm[1] * y_lm[1] + y_lm[2] * y_lm[2] + y_lm[3] * y_lm[3];
+    EXPECT_NEAR(sum_l1, static_cast<real_t>(3.0), 1e-4);
+
+    // l=2: components 4..8 -> sum sq = 2*2 + 1 = 5.0
+    real_t sum_l2 = 0.0;
+    for (size_t i = 4; i <= 8; ++i) {
+      sum_l2 += y_lm[i] * y_lm[i];
+    }
+    EXPECT_NEAR(sum_l2, static_cast<real_t>(5.0), 1e-4);
+
+    // l=3: components 9..15 -> sum sq = 2*3 + 1 = 7.0
+    real_t sum_l3 = 0.0;
+    for (size_t i = 9; i <= 15; ++i) {
+      sum_l3 += y_lm[i] * y_lm[i];
+    }
+    EXPECT_NEAR(sum_l3, static_cast<real_t>(7.0), 1e-4);
+  }
+}
+
+TEST(PeriodicGraphBuilderTests, BuildOrbGraphDescriptorsIntegrity) {
+  correlation::core::Cell cell({4.0, 4.0, 4.0, 90.0, 90.0, 90.0});
+  cell.addAtom("Si", {0.0, 0.0, 0.0});
+
+  const OrbDescriptorConfig cfg{
+      .r_max = 6.0,
+      .num_rbf = 8,
+      .l_max = 3,
+      .include_self_loops = false,
+      .compute_orb_features = true,
+  };
+
+  const auto graph = PeriodicGraphBuilder::buildOrbGraph(cell, cfg);
+  EXPECT_EQ(graph.atom_count, 1U);
+  EXPECT_GT(graph.edge_count, 0U);
+
+  const size_t total_edges = graph.edge_count;
+  EXPECT_EQ(graph.edge_unit_vectors_flat.size(), total_edges * 3);
+  EXPECT_EQ(graph.edge_radial_basis_flat.size(), total_edges * 8);
+  EXPECT_EQ(graph.edge_spherical_harmonics_flat.size(), total_edges * 16);
+  EXPECT_EQ(graph.edge_cutoff_envelope_flat.size(), total_edges);
+  EXPECT_EQ(graph.edge_orb_features_flat.size(), total_edges * 128);
+
+  for (size_t edge_idx = 0; edge_idx < total_edges; ++edge_idx) {
+    const real_t unit_x = graph.edge_unit_vectors_flat[edge_idx * 3 + 0];
+    const real_t unit_y = graph.edge_unit_vectors_flat[edge_idx * 3 + 1];
+    const real_t unit_z = graph.edge_unit_vectors_flat[edge_idx * 3 + 2];
+    const real_t unit_norm = std::sqrt(unit_x * unit_x + unit_y * unit_y + unit_z * unit_z);
+    EXPECT_NEAR(unit_norm, static_cast<real_t>(1.0), 1e-5);
+
+    const real_t cutoff = graph.edge_cutoff_envelope_flat[edge_idx];
+    EXPECT_GE(cutoff, static_cast<real_t>(0.0));
+    EXPECT_LE(cutoff, static_cast<real_t>(1.0));
+
+    // Check fused outer product: f_c * RBF_n * Y_m
+    const size_t orb_offset = edge_idx * 128;
+    const size_t rbf_offset = edge_idx * 8;
+    const size_t sh_offset = edge_idx * 16;
+
+    for (size_t idx_n = 0; idx_n < 8; ++idx_n) {
+      const real_t rbf_val = graph.edge_radial_basis_flat[rbf_offset + idx_n];
+      for (size_t idx_m = 0; idx_m < 16; ++idx_m) {
+        const real_t sh_val = graph.edge_spherical_harmonics_flat[sh_offset + idx_m];
+        const real_t expected_feature = cutoff * rbf_val * sh_val;
+        const real_t actual_feature = graph.edge_orb_features_flat[orb_offset + idx_n * 16 + idx_m];
+        EXPECT_NEAR(actual_feature, expected_feature, 1e-5);
+      }
+    }
+  }
+}
+
 } // namespace correlation::mlip

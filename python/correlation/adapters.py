@@ -273,6 +273,138 @@ def to_pymatgen(cell: Any) -> Any:
 
 
 # -----------------------------------------------------------------------------
+# ORB-v3 AtomGraphs Adapter
+# -----------------------------------------------------------------------------
+
+def to_atom_graphs(
+    cell_or_graph: Any,
+    config: Any = None,
+    device: Any = None,
+    output_dtype: Any = None,
+    max_num_neighbors: int | None = None,
+) -> Any:
+    """
+    Convert a Correlation Cell or PeriodicGraphData into an orb_models AtomGraphs batch.
+
+    Parameters
+    ----------
+    cell_or_graph : correlation.Cell or correlation.PeriodicGraphData
+        Input simulation cell or precomputed periodic graph data.
+    config : correlation.OrbDescriptorConfig, optional
+        Configuration parameters for ORB graph extraction.
+    device : torch.device or str, optional
+        Target device for PyTorch tensors.
+    output_dtype : torch.dtype, optional
+        Floating-point dtype for tensors (e.g. torch.float32).
+    max_num_neighbors : int, optional
+        Cap on neighbors per node.
+
+    Returns
+    -------
+    orb_models.common.atoms.batch.graph_batch.AtomGraphs or dict
+        Constructed AtomGraphs object ready for inference with ORB-v3 models.
+    """
+    try:
+        import torch
+    except ImportError as err:
+        raise ImportError("to_atom_graphs requires 'torch' to be installed.") from err
+
+    # If given a Cell, construct the ORB graph
+    if hasattr(cell_or_graph, "add_atom") or not hasattr(cell_or_graph, "edge_orb_features"):
+        if correlation is None:
+            raise RuntimeError("Correlation C++ extension module is not loaded.")
+        if config is None:
+            config = getattr(correlation, "OrbDescriptorConfig", lambda: None)()
+        graph_data = correlation.build_orb_graph(cell_or_graph, config)
+    else:
+        graph_data = cell_or_graph
+
+    radius = getattr(config, "r_max", 6.0) if config is not None else 6.0
+
+    positions = torch.from_numpy(np.array(graph_data.positions, copy=True))
+    atomic_numbers = torch.from_numpy(np.array(graph_data.atomic_numbers, copy=True)).long()
+
+    edge_idx_arr = np.array(graph_data.edge_index, copy=True)
+    if len(edge_idx_arr) >= 2 and edge_idx_arr.shape[1] > 0:
+        senders = torch.from_numpy(edge_idx_arr[0]).long()
+        receivers = torch.from_numpy(edge_idx_arr[1]).long()
+    else:
+        senders = torch.empty(0, dtype=torch.long)
+        receivers = torch.empty(0, dtype=torch.long)
+
+    vectors = torch.from_numpy(np.array(graph_data.edge_vectors, copy=True))
+    unit_shifts = torch.from_numpy(np.array(graph_data.edge_shifts, copy=True))
+    cell_tensor = torch.from_numpy(np.array(graph_data.cell, copy=True)).unsqueeze(0)
+    pbc_tensor = torch.tensor([[True, True, True]], dtype=torch.bool)
+
+    node_feats = {
+        "positions": positions,
+        "atomic_numbers": atomic_numbers,
+        "atomic_numbers_embedding": atomic_numbers,
+        "atom_identity": torch.arange(len(positions), dtype=torch.long),
+    }
+
+    edge_feats = {
+        "vectors": vectors,
+        "unit_shifts": unit_shifts,
+    }
+    if hasattr(graph_data, "edge_radial_basis") and len(graph_data.edge_radial_basis) > 0:
+        edge_feats["rbf"] = torch.from_numpy(np.array(graph_data.edge_radial_basis, copy=True))
+    if hasattr(graph_data, "edge_unit_vectors") and len(graph_data.edge_unit_vectors) > 0:
+        edge_feats["r_hat"] = torch.from_numpy(np.array(graph_data.edge_unit_vectors, copy=True))
+    if hasattr(graph_data, "edge_spherical_harmonics") and len(graph_data.edge_spherical_harmonics) > 0:
+        edge_feats["sh"] = torch.from_numpy(np.array(graph_data.edge_spherical_harmonics, copy=True))
+    if hasattr(graph_data, "edge_cutoff_envelope") and len(graph_data.edge_cutoff_envelope) > 0:
+        edge_feats["cutoff"] = torch.from_numpy(np.array(graph_data.edge_cutoff_envelope, copy=True))
+    if hasattr(graph_data, "edge_orb_features") and len(graph_data.edge_orb_features) > 0:
+        edge_feats["orb_features"] = torch.from_numpy(np.array(graph_data.edge_orb_features, copy=True))
+
+    system_feats = {
+        "cell": cell_tensor,
+        "pbc": pbc_tensor,
+    }
+
+    actual_max_neighbors = max_num_neighbors if max_num_neighbors is not None else len(senders)
+
+    try:
+        from orb_models.common.atoms.batch.graph_batch import AtomGraphs
+
+        graph_obj = AtomGraphs(
+            senders=senders,
+            receivers=receivers,
+            n_node=torch.tensor([len(positions)], dtype=torch.long),
+            n_edge=torch.tensor([len(senders)], dtype=torch.long),
+            node_features=node_feats,
+            edge_features=edge_feats,
+            system_features=system_feats,
+            node_targets={},
+            edge_targets={},
+            system_targets={},
+            system_id=None,
+            fix_atoms=None,
+            tags=None,
+            radius=float(radius),
+            max_num_neighbors=torch.tensor([actual_max_neighbors], dtype=torch.long),
+            half_supercell=False,
+        )
+        if device is not None or output_dtype is not None:
+            graph_obj = graph_obj.to(device=device, dtype=output_dtype)
+        return graph_obj
+    except ImportError:
+        return {
+            "senders": senders,
+            "receivers": receivers,
+            "n_node": torch.tensor([len(positions)], dtype=torch.long),
+            "n_edge": torch.tensor([len(senders)], dtype=torch.long),
+            "node_features": node_feats,
+            "edge_features": edge_feats,
+            "system_features": system_feats,
+            "radius": float(radius),
+            "max_num_neighbors": torch.tensor([actual_max_neighbors], dtype=torch.long),
+        }
+
+
+# -----------------------------------------------------------------------------
 # Dynamic Class Registration
 # -----------------------------------------------------------------------------
 
@@ -288,6 +420,7 @@ def _register_adapters() -> None:
         correlation.Cell.from_ase = staticmethod(from_ase)
         correlation.Cell.to_pymatgen = to_pymatgen
         correlation.Cell.from_pymatgen = staticmethod(from_pymatgen)
+        correlation.Cell.to_atom_graphs = to_atom_graphs
 
     if hasattr(correlation, "Trajectory"):
         correlation.Trajectory.to_ase = to_ase_trajectory

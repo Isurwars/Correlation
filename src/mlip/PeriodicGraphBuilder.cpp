@@ -218,6 +218,137 @@ constexpr real_t k_y00 = static_cast<real_t>(0.5) * std::numbers::inv_sqrtpi_v<r
   };
 }
 
+[[nodiscard]] constexpr real_t computeOrbY0() noexcept { return static_cast<real_t>(1.0); }
+
+[[nodiscard]] std::array<real_t, 3> computeOrbY1(real_t dir_x, real_t dir_y, real_t dir_z) noexcept {
+  const real_t factor_y1 = std::numbers::sqrt3_v<real_t>;
+  return {factor_y1 * dir_x, factor_y1 * dir_y, factor_y1 * dir_z};
+}
+
+[[nodiscard]] std::array<real_t, 5> computeOrbY2(real_t dir_x, real_t dir_y, real_t dir_z) noexcept {
+  const real_t sqrt3 = std::numbers::sqrt3_v<real_t>;
+  const real_t sqrt5 = std::sqrt(static_cast<real_t>(5.0));
+
+  const real_t sh_2_0 = sqrt3 * dir_x * dir_z;
+  const real_t sh_2_1 = sqrt3 * dir_x * dir_y;
+  const real_t sq_y = dir_y * dir_y;
+  const real_t sq_xz = dir_x * dir_x + dir_z * dir_z;
+  const real_t sh_2_2 = sq_y - static_cast<real_t>(0.5) * sq_xz;
+  const real_t sh_2_3 = sqrt3 * dir_y * dir_z;
+  const real_t sh_2_4 = sqrt3 * static_cast<real_t>(0.5) * (dir_z * dir_z - dir_x * dir_x);
+
+  return {
+      sqrt5 * sh_2_0, sqrt5 * sh_2_1, sqrt5 * sh_2_2, sqrt5 * sh_2_3, sqrt5 * sh_2_4,
+  };
+}
+
+[[nodiscard]] std::array<real_t, 7> computeOrbY3(real_t dir_x, real_t dir_y, real_t dir_z) noexcept {
+  const real_t sqrt3 = std::numbers::sqrt3_v<real_t>;
+  const real_t sqrt7 = std::sqrt(static_cast<real_t>(7.0));
+
+  const real_t sh_2_0 = sqrt3 * dir_x * dir_z;
+  const real_t sq_y = dir_y * dir_y;
+  const real_t sq_xz = dir_x * dir_x + dir_z * dir_z;
+  const real_t sh_2_4 = sqrt3 * static_cast<real_t>(0.5) * (dir_z * dir_z - dir_x * dir_x);
+
+  const real_t factor_30_36 = std::sqrt(static_cast<real_t>(5.0) / static_cast<real_t>(6.0));
+  const real_t factor_31_35 = std::sqrt(static_cast<real_t>(5.0));
+  const real_t factor_32_34 = std::sqrt(static_cast<real_t>(3.0) / static_cast<real_t>(8.0));
+
+  const real_t sh_3_0 = factor_30_36 * (sh_2_0 * dir_z + sh_2_4 * dir_x);
+  const real_t sh_3_1 = factor_31_35 * sh_2_0 * dir_y;
+  const real_t sh_3_2 = factor_32_34 * (static_cast<real_t>(4.0) * sq_y - sq_xz) * dir_x;
+  const real_t sh_3_3 =
+      static_cast<real_t>(0.5) * dir_y * (static_cast<real_t>(2.0) * sq_y - static_cast<real_t>(3.0) * sq_xz);
+  const real_t sh_3_4 = factor_32_34 * (static_cast<real_t>(4.0) * sq_y - sq_xz) * dir_z;
+  const real_t sh_3_5 = factor_31_35 * sh_2_4 * dir_y;
+  const real_t sh_3_6 = factor_30_36 * (sh_2_4 * dir_z - sh_2_0 * dir_x);
+
+  return {
+      sqrt7 * sh_3_0, sqrt7 * sh_3_1, sqrt7 * sh_3_2, sqrt7 * sh_3_3, sqrt7 * sh_3_4, sqrt7 * sh_3_5, sqrt7 * sh_3_6,
+  };
+}
+
+struct OrbUnitCutoffResult {
+  real_t unit_x{0.0};
+  real_t unit_y{0.0};
+  real_t unit_z{0.0};
+  real_t cutoff_val{0.0};
+};
+
+[[nodiscard]] inline OrbUnitCutoffResult computeOrbUnitAndCutoff(const correlation::math::Vector3<real_t> &vec,
+                                                                 real_t edge_dist, real_t cutoff_radius) noexcept {
+  OrbUnitCutoffResult res;
+  if (edge_dist > static_cast<real_t>(1e-10)) {
+    const real_t inv_dist = static_cast<real_t>(1.0) / edge_dist;
+    res.unit_x = vec.x() * inv_dist;
+    res.unit_y = vec.y() * inv_dist;
+    res.unit_z = vec.z() * inv_dist;
+  }
+  res.cutoff_val = PeriodicGraphBuilder::computeOrbCutoffEnvelope(edge_dist, cutoff_radius);
+  return res;
+}
+
+struct OrbEdgeContext {
+  real_t cutoff_radius{6.0};
+  real_t bessel_prefactor{0.0};
+  size_t num_rbf{8};
+  size_t num_sh{16};
+  size_t effective_l_max{3};
+  bool compute_orb_features{true};
+  std::span<const real_t> bessel_weights;
+};
+
+struct OrbLocalBuffers {
+  std::span<real_t> sh_buffer;
+  std::span<real_t> rbf_buffer;
+};
+
+inline void evaluateOrbEdge(size_t idx_edge, const PeriodicGraphData &data_in, const OrbEdgeContext &ctx,
+                            PeriodicGraphData &data_out, const OrbLocalBuffers &buffers) noexcept {
+  const real_t vec_x = data_in.edge_vectors_flat[idx_edge * 3 + 0];
+  const real_t vec_y = data_in.edge_vectors_flat[idx_edge * 3 + 1];
+  const real_t vec_z = data_in.edge_vectors_flat[idx_edge * 3 + 2];
+  const real_t edge_dist = data_in.edge_distances[idx_edge];
+
+  const auto geom =
+      computeOrbUnitAndCutoff(correlation::math::Vector3<real_t>{vec_x, vec_y, vec_z}, edge_dist, ctx.cutoff_radius);
+  data_out.edge_unit_vectors_flat[idx_edge * 3 + 0] = geom.unit_x;
+  data_out.edge_unit_vectors_flat[idx_edge * 3 + 1] = geom.unit_y;
+  data_out.edge_unit_vectors_flat[idx_edge * 3 + 2] = geom.unit_z;
+  data_out.edge_cutoff_envelope_flat[idx_edge] = geom.cutoff_val;
+
+  for (size_t idx_rbf = 0; idx_rbf < ctx.num_rbf; ++idx_rbf) {
+    const real_t weight_n = ctx.bessel_weights[idx_rbf];
+    real_t rbf_val = 0.0;
+    if (edge_dist < static_cast<real_t>(1e-8)) {
+      rbf_val = ctx.bessel_prefactor * weight_n;
+    } else {
+      rbf_val = ctx.bessel_prefactor * std::sin(weight_n * edge_dist) / edge_dist;
+    }
+    buffers.rbf_buffer[idx_rbf] = rbf_val;
+    data_out.edge_radial_basis_flat[idx_edge * ctx.num_rbf + idx_rbf] = rbf_val;
+  }
+
+  PeriodicGraphBuilder::computeOrbSphericalHarmonics(
+      correlation::math::Vector3<real_t>{geom.unit_x, geom.unit_y, geom.unit_z}, ctx.effective_l_max,
+      buffers.sh_buffer);
+  for (size_t idx_sh = 0; idx_sh < ctx.num_sh; ++idx_sh) {
+    data_out.edge_spherical_harmonics_flat[idx_edge * ctx.num_sh + idx_sh] = buffers.sh_buffer[idx_sh];
+  }
+
+  if (ctx.compute_orb_features) {
+    const size_t orb_feat_dim = ctx.num_rbf * ctx.num_sh;
+    for (size_t idx_rbf = 0; idx_rbf < ctx.num_rbf; ++idx_rbf) {
+      const real_t scaled_rbf = geom.cutoff_val * buffers.rbf_buffer[idx_rbf];
+      for (size_t idx_sh = 0; idx_sh < ctx.num_sh; ++idx_sh) {
+        data_out.edge_orb_features_flat[idx_edge * orb_feat_dim + idx_rbf * ctx.num_sh + idx_sh] =
+            scaled_rbf * buffers.sh_buffer[idx_sh];
+      }
+    }
+  }
+}
+
 /// @brief Flattens thread-local edge buffers into COO-format output arrays.
 void flattenEdges(const tbb::enumerable_thread_specific<std::vector<EdgeTuple>> &local_edges, PeriodicGraphData &data,
                   size_t l_max) {
@@ -477,6 +608,169 @@ std::vector<real_t> PeriodicGraphBuilder::computeSphericalHarmonics(const correl
   std::vector<real_t> out(required_size, static_cast<real_t>(0.0));
   computeSphericalHarmonics(vec, effective_l_max, out);
   return out;
+}
+
+void PeriodicGraphBuilder::computeOrbSphericalHarmonics(const correlation::math::Vector3<real_t> &unit_vec,
+                                                        size_t l_max, std::span<real_t> out) noexcept {
+  const size_t effective_l_max = std::min(l_max, size_t{3});
+  const size_t required_size = (effective_l_max + 1) * (effective_l_max + 1);
+  if (out.size() < required_size) {
+    return;
+  }
+
+  const real_t pos_x = unit_vec.x();
+  const real_t pos_y = unit_vec.y();
+  const real_t pos_z = unit_vec.z();
+  const real_t rad_sq = pos_x * pos_x + pos_y * pos_y + pos_z * pos_z;
+
+  out[0] = computeOrbY0();
+
+  if (rad_sq < static_cast<real_t>(1e-12)) {
+    for (size_t out_idx = 1; out_idx < required_size; ++out_idx) {
+      out[out_idx] = static_cast<real_t>(0.0);
+    }
+    return;
+  }
+
+  const real_t inv_r = static_cast<real_t>(1.0) / std::sqrt(rad_sq);
+  const real_t norm_x = pos_x * inv_r;
+  const real_t norm_y = pos_y * inv_r;
+  const real_t norm_z = pos_z * inv_r;
+
+  if (effective_l_max >= 1) {
+    const auto y1_vals = computeOrbY1(norm_x, norm_y, norm_z);
+    out[1] = y1_vals[0];
+    out[2] = y1_vals[1];
+    out[3] = y1_vals[2];
+  }
+
+  if (effective_l_max >= 2) {
+    const auto y2_vals = computeOrbY2(norm_x, norm_y, norm_z);
+    out[4] = y2_vals[0];
+    out[5] = y2_vals[1];
+    out[6] = y2_vals[2];
+    out[7] = y2_vals[3];
+    out[8] = y2_vals[4];
+  }
+
+  if (effective_l_max >= 3) {
+    const auto y3_vals = computeOrbY3(norm_x, norm_y, norm_z);
+    out[9] = y3_vals[0];
+    out[10] = y3_vals[1];
+    out[11] = y3_vals[2];
+    out[12] = y3_vals[3];
+    out[13] = y3_vals[4];
+    out[14] = y3_vals[5];
+    out[15] = y3_vals[6];
+  }
+}
+
+std::vector<real_t>
+PeriodicGraphBuilder::computeOrbSphericalHarmonics(const correlation::math::Vector3<real_t> &unit_vec, size_t l_max) {
+  const size_t effective_l_max = std::min(l_max, size_t{3});
+  const size_t required_size = (effective_l_max + 1) * (effective_l_max + 1);
+  std::vector<real_t> out(required_size, static_cast<real_t>(0.0));
+  computeOrbSphericalHarmonics(unit_vec, effective_l_max, out);
+  return out;
+}
+
+real_t PeriodicGraphBuilder::computeOrbCutoffEnvelope(real_t distance, real_t cutoff_radius) noexcept {
+  if (cutoff_radius <= static_cast<real_t>(0.0) || distance >= cutoff_radius) {
+    return static_cast<real_t>(0.0);
+  }
+  if (distance <= static_cast<real_t>(0.0)) {
+    return static_cast<real_t>(1.0);
+  }
+  const real_t ratio_u = distance / cutoff_radius;
+  const real_t ratio_u2 = ratio_u * ratio_u;
+  const real_t ratio_u4 = ratio_u2 * ratio_u2;
+  const real_t ratio_u5 = ratio_u4 * ratio_u;
+  const real_t ratio_u6 = ratio_u5 * ratio_u;
+  return static_cast<real_t>(1.0) - static_cast<real_t>(15.0) * ratio_u4 + static_cast<real_t>(24.0) * ratio_u5 -
+         static_cast<real_t>(10.0) * ratio_u6;
+}
+
+std::vector<real_t> PeriodicGraphBuilder::computeOrbBesselBasis(real_t distance, const OrbDescriptorConfig &config) {
+  const size_t num_basis = config.num_rbf;
+  const real_t cutoff_radius = config.r_max;
+  std::vector<real_t> basis(num_basis, static_cast<real_t>(0.0));
+  if (num_basis == 0 || cutoff_radius <= static_cast<real_t>(0.0)) {
+    return basis;
+  }
+
+  constexpr real_t k_pi = std::numbers::pi_v<real_t>;
+  const real_t prefactor = std::sqrt(static_cast<real_t>(2.0) / cutoff_radius);
+
+  for (size_t idx_basis = 0; idx_basis < num_basis; ++idx_basis) {
+    const auto n_val = static_cast<real_t>(idx_basis + 1);
+    const real_t weight_n = n_val * k_pi / cutoff_radius;
+    if (distance < static_cast<real_t>(1e-8)) {
+      basis[idx_basis] = prefactor * weight_n;
+    } else {
+      basis[idx_basis] = prefactor * std::sin(weight_n * distance) / distance;
+    }
+  }
+
+  return basis;
+}
+
+PeriodicGraphData PeriodicGraphBuilder::buildOrbGraph(const correlation::core::Cell &cell,
+                                                      const OrbDescriptorConfig &config) {
+  const real_t cutoff = config.r_max;
+  const bool include_self_loops = config.include_self_loops;
+  const size_t effective_l_max = std::min(config.l_max, size_t{3});
+
+  PeriodicGraphData data = buildGraph(cell, cutoff, include_self_loops, 0);
+  const size_t total_edges = data.edge_count;
+
+  const size_t num_rbf = config.num_rbf;
+  const size_t num_sh = (effective_l_max + 1) * (effective_l_max + 1);
+
+  data.edge_unit_vectors_flat.resize(total_edges * 3);
+  data.edge_radial_basis_flat.resize(total_edges * num_rbf);
+  data.edge_spherical_harmonics_flat.resize(total_edges * num_sh);
+  data.edge_cutoff_envelope_flat.resize(total_edges);
+
+  const size_t orb_feat_dim = num_rbf * num_sh;
+  if (config.compute_orb_features) {
+    data.edge_orb_features_flat.resize(total_edges * orb_feat_dim);
+  } else {
+    data.edge_orb_features_flat.clear();
+  }
+
+  constexpr real_t k_pi = std::numbers::pi_v<real_t>;
+  const real_t cutoff_radius = config.r_max;
+  const real_t bessel_prefactor = (cutoff_radius > static_cast<real_t>(0.0))
+                                      ? std::sqrt(static_cast<real_t>(2.0) / cutoff_radius)
+                                      : static_cast<real_t>(0.0);
+
+  std::vector<real_t> bessel_weights(num_rbf);
+  for (size_t idx_weight = 0; idx_weight < num_rbf; ++idx_weight) {
+    bessel_weights[idx_weight] = static_cast<real_t>(idx_weight + 1) * k_pi / cutoff_radius;
+  }
+
+  const OrbEdgeContext ctx{
+      .cutoff_radius = cutoff_radius,
+      .bessel_prefactor = bessel_prefactor,
+      .num_rbf = num_rbf,
+      .num_sh = num_sh,
+      .effective_l_max = effective_l_max,
+      .compute_orb_features = config.compute_orb_features,
+      .bessel_weights = bessel_weights,
+  };
+
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, total_edges), [&](const tbb::blocked_range<size_t> &range) {
+    std::vector<real_t> local_sh_buf(num_sh);
+    std::vector<real_t> local_rbf_buf(num_rbf);
+    const std::span<real_t> local_sh(local_sh_buf.data(), num_sh);
+    const std::span<real_t> local_rbf(local_rbf_buf.data(), num_rbf);
+
+    for (size_t idx_edge = range.begin(); idx_edge < range.end(); ++idx_edge) {
+      evaluateOrbEdge(idx_edge, data, ctx, data, OrbLocalBuffers{.sh_buffer = local_sh, .rbf_buffer = local_rbf});
+    }
+  });
+
+  return data;
 }
 
 } // namespace correlation::mlip

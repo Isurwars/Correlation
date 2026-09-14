@@ -24,11 +24,14 @@ Example usage::
 
 try:
     from correlation._correlation import *  # noqa: F401,F403
-except ImportError as e:
-    raise ImportError(
-        "Failed to import the Correlation C++ extension module. "
-        "Make sure the package was built correctly with: pip install ."
-    ) from e
+except ImportError:
+    try:
+        from _correlation import *  # noqa: F401,F403
+    except ImportError as e:
+        raise ImportError(
+            "Failed to import the Correlation C++ extension module. "
+            "Make sure the package was built correctly with: pip install ."
+        ) from e
 
 
 def to_torch_geometric(graph_data):
@@ -38,7 +41,7 @@ def to_torch_geometric(graph_data):
     Parameters
     ----------
     graph_data : PeriodicGraphData
-        Periodic neighbor graph constructed by build_periodic_graph().
+        Periodic neighbor graph constructed by build_periodic_graph() or build_orb_graph().
 
     Returns
     -------
@@ -52,6 +55,11 @@ def to_torch_geometric(graph_data):
         - edge_dist: Euclidean distances ||r_ij|| (E,)
         - cell: Lattice vector matrix (3, 3)
         - pbc: Periodic boundary flags [True, True, True]
+        - edge_unit_vec: Normalized unit displacement vectors r_hat (E, 3) [if present]
+        - edge_rbf: Bessel radial basis expansion (E, 8) [if present]
+        - edge_sh: e3nn spherical harmonics (E, 16) [if present]
+        - edge_cutoff: Order p=4 polynomial cutoff envelope (E,) [if present]
+        - edge_orb_features: Fused ORB-v3 edge attributes (E, 128) [if present]
     """
     try:
         import torch
@@ -71,7 +79,7 @@ def to_torch_geometric(graph_data):
     edge_dist = torch.from_numpy(np.array(graph_data.edge_distances, copy=True))
     cell = torch.from_numpy(np.array(graph_data.cell, copy=True))
 
-    return Data(
+    data = Data(
         pos=pos,
         z=z,
         edge_index=edge_index,
@@ -82,6 +90,21 @@ def to_torch_geometric(graph_data):
         pbc=torch.tensor([True, True, True], dtype=torch.bool),
         num_nodes=graph_data.atom_count,
     )
+
+    if hasattr(graph_data, "edge_unit_vectors") and len(graph_data.edge_unit_vectors) > 0:
+        data.edge_unit_vec = torch.from_numpy(np.array(graph_data.edge_unit_vectors, copy=True))
+    if hasattr(graph_data, "edge_radial_basis") and len(graph_data.edge_radial_basis) > 0:
+        data.edge_rbf = torch.from_numpy(np.array(graph_data.edge_radial_basis, copy=True))
+    if hasattr(graph_data, "edge_spherical_harmonics") and len(graph_data.edge_spherical_harmonics) > 0:
+        data.edge_sh = torch.from_numpy(np.array(graph_data.edge_spherical_harmonics, copy=True))
+    if hasattr(graph_data, "edge_cutoff_envelope") and len(graph_data.edge_cutoff_envelope) > 0:
+        data.edge_cutoff = torch.from_numpy(np.array(graph_data.edge_cutoff_envelope, copy=True))
+    if hasattr(graph_data, "edge_orb_features") and len(graph_data.edge_orb_features) > 0:
+        orb_feat = torch.from_numpy(np.array(graph_data.edge_orb_features, copy=True))
+        data.edge_orb_features = orb_feat
+        data.edge_attr = orb_feat
+
+    return data
 
 
 to_pyg = to_torch_geometric

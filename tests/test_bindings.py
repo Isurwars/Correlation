@@ -253,6 +253,65 @@ tdos_hist = correlation.TDOSCalculator.calculate(cell_sc, tdos_params)
 assert len(tdos_hist.bins) == 0, "TDOS without model should return empty bins"
 print("  TDOSCalculator & TDOSParams validated OK")
 
+# ── 7.6. ORB-v3 Graph Descriptors ──────────────────────────────────
+section("7.6. ORB-v3 Native Graph Descriptors")
+orb_cfg = correlation.OrbDescriptorConfig(r_max=6.0, num_rbf=8, l_max=3, include_self_loops=False, compute_orb_features=True)
+assert orb_cfg.r_max == 6.0, "OrbDescriptorConfig r_max mismatch"
+assert orb_cfg.num_rbf == 8, "OrbDescriptorConfig num_rbf mismatch"
+assert orb_cfg.l_max == 3, "OrbDescriptorConfig l_max mismatch"
+
+orb_graph = correlation.build_orb_graph(cell_sc, orb_cfg)
+print(f"  ORB Graph atoms: {orb_graph.atom_count}, edges: {orb_graph.edge_count}")
+assert orb_graph.atom_count == 1, "ORB graph atom count mismatch"
+assert orb_graph.edge_count > 0, "ORB graph edge count should be > 0"
+
+if HAS_NUMPY:
+    print(f"  ORB edge_unit_vectors shape: {orb_graph.edge_unit_vectors.shape}")
+    print(f"  ORB edge_radial_basis shape: {orb_graph.edge_radial_basis.shape}")
+    print(f"  ORB edge_spherical_harmonics shape: {orb_graph.edge_spherical_harmonics.shape}")
+    print(f"  ORB edge_cutoff_envelope shape: {orb_graph.edge_cutoff_envelope.shape}")
+    print(f"  ORB edge_orb_features shape: {orb_graph.edge_orb_features.shape}")
+
+    E = orb_graph.edge_count
+    assert orb_graph.edge_unit_vectors.shape == (E, 3), "edge_unit_vectors shape mismatch"
+    assert orb_graph.edge_radial_basis.shape == (E, 8), "edge_radial_basis shape mismatch"
+    assert orb_graph.edge_spherical_harmonics.shape == (E, 16), "edge_spherical_harmonics shape mismatch"
+    assert orb_graph.edge_cutoff_envelope.shape == (E,), "edge_cutoff_envelope shape mismatch"
+    assert orb_graph.edge_orb_features.shape == (E, 128), "edge_orb_features shape mismatch"
+
+    # Verify unit vector normalization
+    norms = np.linalg.norm(orb_graph.edge_unit_vectors, axis=1)
+    assert np.allclose(norms, 1.0, atol=1e-4), "Unit vectors not normalized"
+
+    # Verify fused feature values: cutoff * RBF * SH
+    c = orb_graph.edge_cutoff_envelope[0]
+    r = orb_graph.edge_radial_basis[0]
+    y = orb_graph.edge_spherical_harmonics[0]
+    fused = orb_graph.edge_orb_features[0]
+    expected_fused = (c * np.outer(r, y)).reshape(-1)
+    assert np.allclose(fused, expected_fused, atol=1e-4), "Fused ORB features mismatch"
+    print("  ORB fused features verification passed.")
+
+# Test standalone math functions
+orb_cut = correlation.PeriodicGraphBuilder.compute_orb_cutoff_envelope(3.0, 6.0)
+assert abs(orb_cut - 0.65625) < 1e-5, f"Cutoff midpoint mismatch: {orb_cut}"
+print(f"  ORB cutoff envelope midpoint: {orb_cut}")
+
+orb_bessel = correlation.PeriodicGraphBuilder.compute_orb_bessel_basis(3.0, orb_cfg)
+assert len(orb_bessel) == 8, "Bessel basis length mismatch"
+print(f"  ORB Bessel basis: {orb_bessel}")
+
+orb_sh = correlation.PeriodicGraphBuilder.compute_orb_spherical_harmonics([0.0, 1.0, 0.0], 3)
+assert len(orb_sh) == 16, "Spherical harmonics length mismatch"
+if HAS_NUMPY:
+    sh_arr = np.array(orb_sh)
+    # On y-axis, sum of squares per l degree should equal 2l+1
+    assert abs(sh_arr[0]**2 - 1.0) < 1e-4, "l=0 norm mismatch"
+    assert abs(np.sum(sh_arr[1:4]**2) - 3.0) < 1e-4, "l=1 norm mismatch"
+    assert abs(np.sum(sh_arr[4:9]**2) - 5.0) < 1e-4, "l=2 norm mismatch"
+    assert abs(np.sum(sh_arr[9:16]**2) - 7.0) < 1e-4, "l=3 norm mismatch"
+print("  ORB standalone math functions verified OK")
+
 # ── 8. Summary ───────────────────────────────────────────────────────
 section("Summary")
 print("  All binding layers loaded successfully OK")

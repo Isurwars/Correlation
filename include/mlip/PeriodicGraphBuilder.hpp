@@ -33,9 +33,14 @@ struct PeriodicGraphData {
   std::vector<real_t> edge_distances;    /**< [E] Euclidean edge distances ||r_ij||. */
   std::vector<real_t> edge_spherical_harmonics_flat; /**< [E * (l_max + 1)^2] Equivariant spherical harmonics features
                                                         (if l_max > 0). */
-  std::array<real_t, 9> cell_flat{};                 /**< [3 * 3] Lattice vectors matrix. */
-  size_t atom_count{0};                              /**< Total atom count N. */
-  size_t edge_count{0};                              /**< Total directed edge count E. */
+  std::vector<real_t> edge_unit_vectors_flat;        /**< [E * 3] Normalized displacement vectors r_hat = r_ij / d. */
+  std::vector<real_t> edge_radial_basis_flat;        /**< [E * num_rbf] Bessel radial basis expansion. */
+  std::vector<real_t> edge_cutoff_envelope_flat;     /**< [E] Polynomial cutoff envelope f_cut(d). */
+  std::vector<real_t>
+      edge_orb_features_flat; /**< [E * (num_rbf * (l_max + 1)^2)] Fused outer product tensor f_cut * (RBF (x) Y_lm). */
+  std::array<real_t, 9> cell_flat{}; /**< [3 * 3] Lattice vectors matrix. */
+  size_t atom_count{0};              /**< Total atom count N. */
+  size_t edge_count{0};              /**< Total directed edge count E. */
 };
 
 /**
@@ -46,6 +51,18 @@ struct GaussianRBFConfig {
   real_t start{static_cast<real_t>(0.0)}; /**< Start center distance in Angstroms. */
   real_t stop{static_cast<real_t>(5.0)};  /**< Stop center distance in Angstroms. */
   size_t num_basis{8};                    /**< Number of Gaussian basis centers. */
+};
+
+/**
+ * @struct OrbDescriptorConfig
+ * @brief Configuration parameters for ORB-v3 equivariant GNN graph descriptors.
+ */
+struct OrbDescriptorConfig {
+  real_t r_max{static_cast<real_t>(6.0)}; /**< Cutoff sphere radius in Angstroms. */
+  size_t num_rbf{8};                      /**< Number of Bessel radial basis functions. */
+  size_t l_max{3};                        /**< Maximum spherical harmonics degree (0..3). */
+  bool include_self_loops{false};         /**< Whether to include zero-displacement self-loops. */
+  bool compute_orb_features{true};        /**< Whether to compute fused outer-product descriptors. */
 };
 
 /**
@@ -67,6 +84,15 @@ public:
                                                     bool include_self_loops = false, size_t l_max = 0);
 
   /**
+   * @brief Constructs a periodic atomic graph and extracts complete ORB-v3 descriptors.
+   * @param[in] cell Simulation cell containing lattice vectors and atomic positions.
+   * @param[in] config ORB descriptor configuration parameters.
+   * @return Extracted flat PeriodicGraphData buffers including ORB tensors.
+   */
+  [[nodiscard]] static PeriodicGraphData buildOrbGraph(const correlation::core::Cell &cell,
+                                                       const OrbDescriptorConfig &config = {});
+
+  /**
    * @brief Resolves atomic number Z for a chemical element symbol.
    * @param[in] symbol Element symbol string (e.g. "Si", "Fe", "O").
    * @return Atomic number Z (1..118) or 0 if unknown.
@@ -82,6 +108,14 @@ public:
   [[nodiscard]] static real_t computeCutoffEnvelope(real_t distance, real_t cutoff_radius) noexcept;
 
   /**
+   * @brief Computes ORB-v3 polynomial cutoff envelope f_c(d) of order p=4 decaying smoothly to 0 at cutoff_radius.
+   * @param[in] distance Interatomic distance d.
+   * @param[in] cutoff_radius Cutoff radius.
+   * @return Envelope value in range [0, 1].
+   */
+  [[nodiscard]] static real_t computeOrbCutoffEnvelope(real_t distance, real_t cutoff_radius) noexcept;
+
+  /**
    * @brief Computes spherical Bessel radial basis functions with polynomial envelope.
    * @param[in] distance Interatomic distance d.
    * @param[in] cutoff_radius Cutoff radius r_c.
@@ -89,6 +123,15 @@ public:
    * @return Vector of Bessel basis values of length @p num_basis.
    */
   [[nodiscard]] static std::vector<real_t> computeBesselBasis(real_t distance, real_t cutoff_radius, size_t num_basis);
+
+  /**
+   * @brief Computes ORB-v3 Bessel radial basis functions without envelope.
+   * @param[in] distance Interatomic distance d.
+   * @param[in] config ORB descriptor configuration specifying cutoff and basis count.
+   * @return Vector of Bessel basis values of length @p config.num_rbf.
+   */
+  [[nodiscard]] static std::vector<real_t> computeOrbBesselBasis(real_t distance,
+                                                                 const OrbDescriptorConfig &config = {});
 
   /**
    * @brief Computes Gaussian radial basis functions (RBF) for an interatomic distance.
@@ -115,6 +158,24 @@ public:
    */
   [[nodiscard]] static std::vector<real_t> computeSphericalHarmonics(const correlation::math::Vector3<real_t> &vec,
                                                                      size_t l_max);
+
+  /**
+   * @brief Evaluates e3nn component-normalized spherical harmonics Y_lm(r) up to l_max <= 3 into a span.
+   * @param[in] unit_vec 3D normalized unit displacement vector.
+   * @param[in] l_max Maximum degree (clamped to 3). Total components evaluated: (l_max + 1)^2.
+   * @param[out] out Destination span of size at least (l_max + 1)^2.
+   */
+  static void computeOrbSphericalHarmonics(const correlation::math::Vector3<real_t> &unit_vec, size_t l_max,
+                                           std::span<real_t> out) noexcept;
+
+  /**
+   * @brief Evaluates e3nn component-normalized spherical harmonics Y_lm(r) returning a vector.
+   * @param[in] unit_vec 3D normalized unit displacement vector.
+   * @param[in] l_max Maximum degree (clamped to 3).
+   * @return Vector of length (l_max + 1)^2.
+   */
+  [[nodiscard]] static std::vector<real_t>
+  computeOrbSphericalHarmonics(const correlation::math::Vector3<real_t> &unit_vec, size_t l_max);
 };
 
 } // namespace correlation::mlip
