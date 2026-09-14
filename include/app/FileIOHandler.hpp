@@ -9,6 +9,8 @@
 #pragma once
 
 #include "app/AppBackend.hpp"
+#include <atomic>
+#include <string>
 #include <thread>
 
 class AppWindow;
@@ -32,26 +34,41 @@ public:
   FileIOHandler(::AppWindow &window, AppBackend &backend, AppController &controller);
 
   /**
-   * @brief Destructor. Ensures background load thread is joined.
+   * @brief Destructor. Ensures background threads are joined.
    */
   ~FileIOHandler();
 
   /**
-   * @brief Displays file open dialog and triggers background loading of selected structure/trajectory file.
+   * @brief Displays file open dialog asynchronously and triggers background loading of selected structure/trajectory
+   * file.
    */
   void handleBrowseFile();
 
   /**
-   * @brief Displays file save dialog and exports active structural data.
+   * @brief Displays file save dialog asynchronously and exports active structural data.
    */
   void handleWriteFiles();
 
 private:
+  /**
+   * @brief Initiates asynchronous trajectory loading on the background worker thread.
+   * @param[in] filepath Absolute path to structure or trajectory file.
+   */
+  void startLoadingTrajectory(const std::string &filepath);
+
+  /**
+   * @brief Executes export of active structural datasets based on the selected file path extension.
+   * @param[in] filepath Absolute base path for writing files.
+   */
+  void executeWriteFiles(const std::string &filepath);
+
   ::AppWindow &window_;
   AppBackend &backend_;
   AppController &controller_;
 
-  std::thread load_thread_; ///< Background thread for loading files without blocking UI
+  std::thread dialog_thread_;              ///< Background worker thread for native file dialogs
+  std::thread load_thread_;                ///< Background thread for loading files without blocking UI
+  std::atomic<bool> dialog_active_{false}; ///< Concurrency guard preventing duplicate dialog launches
 };
 
 } // namespace correlation::app

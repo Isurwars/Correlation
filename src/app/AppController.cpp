@@ -35,11 +35,6 @@
 namespace correlation::app {
 
 AppController::AppController(::AppWindow &window, AppBackend &backend) : window_(window), backend_(backend) {
-#if defined(__linux__)
-  // Prevent GTK3 from hanging for 25 seconds if xdg-desktop-portal is missing or failing
-  setenv("GTK_USE_PORTAL", "0", 0);
-#endif
-
   // Initialize Native File Dialog
   NFD_Init();
 
@@ -208,7 +203,7 @@ namespace {
  * @param default_value The value to return if parsing fails.
  * @return The parsed value or default_value on error.
  */
-template <typename T> T safe_parse(const slint::SharedString &str, T default_value) {
+template <typename T> T safeParse(const slint::SharedString &str, T default_value) {
   try {
     if constexpr (std::is_same_v<T, float>) {
       return std::stof(str.data());
@@ -372,17 +367,17 @@ ProgramOptions AppController::handleOptionsfromUI() {
   opt.input_file = input_path_str;
   opt.output_file_base = output_path.make_preferred().string();
   opt.smoothing = true;
-  opt.r_max = safe_parse(window_.get_analysis_options().r_max, opt.r_max);
-  opt.r_bin_width = safe_parse(window_.get_analysis_options().r_bin_width, opt.r_bin_width);
-  opt.q_max = safe_parse(window_.get_analysis_options().q_max, opt.q_max);
-  opt.q_bin_width = safe_parse(window_.get_analysis_options().q_bin_width, opt.q_bin_width);
-  opt.r_int_max = safe_parse(window_.get_analysis_options().r_int_max, opt.r_int_max);
-  opt.angle_bin_width = safe_parse(window_.get_analysis_options().angle_bin_width, opt.angle_bin_width);
-  opt.dihedral_bin_width = safe_parse(window_.get_analysis_options().dihedral_bin_width, opt.dihedral_bin_width);
+  opt.r_max = safeParse(window_.get_analysis_options().r_max, opt.r_max);
+  opt.r_bin_width = safeParse(window_.get_analysis_options().r_bin_width, opt.r_bin_width);
+  opt.q_max = safeParse(window_.get_analysis_options().q_max, opt.q_max);
+  opt.q_bin_width = safeParse(window_.get_analysis_options().q_bin_width, opt.q_bin_width);
+  opt.r_int_max = safeParse(window_.get_analysis_options().r_int_max, opt.r_int_max);
+  opt.angle_bin_width = safeParse(window_.get_analysis_options().angle_bin_width, opt.angle_bin_width);
+  opt.dihedral_bin_width = safeParse(window_.get_analysis_options().dihedral_bin_width, opt.dihedral_bin_width);
   opt.max_ring_size = static_cast<size_t>(
-      safe_parse(window_.get_analysis_options().max_ring_size, static_cast<real_t>(opt.max_ring_size)));
+      safeParse(window_.get_analysis_options().max_ring_size, static_cast<real_t>(opt.max_ring_size)));
   opt.hyper_samples = static_cast<size_t>(
-      safe_parse(window_.get_analysis_options().hyper_samples, static_cast<real_t>(opt.hyper_samples)));
+      safeParse(window_.get_analysis_options().hyper_samples, static_cast<real_t>(opt.hyper_samples)));
 
   // Collect active_calculators from the UI model
   const auto groups = window_.get_calculator_groups();
@@ -402,11 +397,11 @@ ProgramOptions AppController::handleOptionsfromUI() {
     }
   }
 
-  opt.smoothing_sigma = safe_parse(window_.get_analysis_options().smoothing_sigma, opt.smoothing_sigma);
+  opt.smoothing_sigma = safeParse(window_.get_analysis_options().smoothing_sigma, opt.smoothing_sigma);
   opt.smoothing_kernel = static_cast<correlation::math::KernelType>(window_.get_analysis_options().smoothing_kernel);
   opt.material_type = window_.get_analysis_options().material_type;
-  opt.lef_cutoff = safe_parse(window_.get_analysis_options().lef_cutoff, opt.lef_cutoff);
-  opt.lef_sigma = safe_parse(window_.get_analysis_options().lef_sigma, opt.lef_sigma);
+  opt.lef_cutoff = safeParse(window_.get_analysis_options().lef_cutoff, opt.lef_cutoff);
+  opt.lef_sigma = safeParse(window_.get_analysis_options().lef_sigma, opt.lef_sigma);
 
   // Parse Frame Selection
   // - Handles string presets "start" and "end" case-insensitively.
@@ -453,7 +448,7 @@ ProgramOptions AppController::handleOptionsfromUI() {
     opt.max_frame = -1;
   }
 
-  opt.time_step = safe_parse(window_.get_analysis_options().time_step, opt.time_step);
+  opt.time_step = safeParse(window_.get_analysis_options().time_step, opt.time_step);
 
   // Handle Bond Cutoffs
   opt.bond_cutoffs = getBondCutoffs();
@@ -469,7 +464,7 @@ void AppController::setBondCutoffs() {
   const auto &elements = backend_.cell()->elements();
   auto slint_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
 
-  auto safeGetRadius = [](const std::string &symbol) -> real_t {
+  auto safe_get_radius = [](const std::string &symbol) -> real_t {
     try {
       return physics::getCovalentRadius(symbol);
     } catch (const std::out_of_range &) {
@@ -478,9 +473,9 @@ void AppController::setBondCutoffs() {
   };
 
   for (size_t i = 0; i < elements.size(); ++i) {
-    const real_t radius_a = safeGetRadius(elements[i].symbol);
+    const real_t radius_a = safe_get_radius(elements[i].symbol);
     for (size_t j = i; j < elements.size(); ++j) {
-      const real_t radius_b = safeGetRadius(elements[j].symbol);
+      const real_t radius_b = safe_get_radius(elements[j].symbol);
       const real_t sum_radii = radius_a + radius_b;
       const real_t min_d = sum_radii * static_cast<real_t>(0.6);
       const real_t max_d = sum_radii * static_cast<real_t>(1.3);

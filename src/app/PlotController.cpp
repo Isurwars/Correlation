@@ -30,7 +30,7 @@ std::string getComparisonKey(const correlation::analysis::Histogram *hist) {
   return key;
 }
 
-template <typename T> T safe_parse(const slint::SharedString &str, T default_value) {
+template <typename T> T safeParse(const slint::SharedString &str, T default_value) {
   try {
     if constexpr (std::is_same_v<T, float>) {
       return std::stof(str.data());
@@ -60,6 +60,9 @@ PlotController::PlotController(::AppWindow &window, AppBackend &backend) : windo
 }
 
 PlotController::~PlotController() {
+  if (dialog_thread_.joinable()) {
+    dialog_thread_.join();
+  }
   if (render_thread_.joinable()) {
     render_thread_.join();
   }
@@ -138,17 +141,17 @@ correlation::plotters::PlotConfig PlotController::buildPlotConfigFromUI() {
     break;
   }
 
-  config.font_scale = safe_parse(window_.get_export_config().font_scale, 1.0F);
+  config.font_scale = safeParse(window_.get_export_config().font_scale, 1.0F);
   if (config.font_scale <= 0.0F) {
     config.font_scale = 1.0F;
   }
 
-  config.line_width = safe_parse(window_.get_export_config().line_width, 3.0F);
+  config.line_width = safeParse(window_.get_export_config().line_width, 3.0F);
   if (config.line_width <= 0.0F) {
     config.line_width = 3.0F;
   }
 
-  config.marker_size = safe_parse(window_.get_export_config().marker_size, 3.5F);
+  config.marker_size = safeParse(window_.get_export_config().marker_size, 3.5F);
   if (config.marker_size <= 0.0F) {
     config.marker_size = 3.5F;
   }
@@ -535,13 +538,19 @@ void PlotController::executePlotRender(RenderTaskData data) {
 }
 
 void PlotController::handleSavePlot() {
-  int index = window_.get_selected_plot_index();
-  if (index < 0 || index >= static_cast<int>(available_plot_keys_.size())) {
+  if (dialog_active_.exchange(true)) {
     return;
   }
-  const std::string &name = available_plot_keys_[index];
+
+  int index = window_.get_selected_plot_index();
+  if (index < 0 || index >= static_cast<int>(available_plot_keys_.size())) {
+    dialog_active_.store(false);
+    return;
+  }
+  const std::string name = available_plot_keys_[index];
   const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
   if (hist == nullptr) {
+    dialog_active_.store(false);
     return;
   }
 
@@ -556,32 +565,48 @@ void PlotController::handleSavePlot() {
   std::string default_dir = def_path.parent_path().string();
   std::string default_name = def_path.filename().string();
 
-  std::array<nfdfilteritem_t, 2> filterList = {{{
-                                                    .name = "SVG Image",
-                                                    .spec = "svg",
-                                                },
-                                                {
-                                                    .name = "PDF Document",
-                                                    .spec = "pdf",
-                                                }}};
-  nfdfiltersize_t filterCount = filterList.size();
-
-  nfdchar_t *outPath = nullptr;
-  nfdresult_t result =
-      NFD_SaveDialogU8(&outPath, filterList.data(), filterCount, default_dir.empty() ? nullptr : default_dir.c_str(),
-                       default_name.empty() ? nullptr : default_name.c_str());
-
-  if (result == NFD_OKAY) {
-    std::string filepath(outPath);
-    NFD_FreePathU8(outPath);
-    executeSavePlot(filepath, hist, name);
-  } else if (result == NFD_CANCEL) {
-    window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
-  } else {
-    std::string error_msg = "Error: ";
-    error_msg += NFD_GetError();
-    window_.set_analysis_status_text(slint::SharedString(error_msg));
+  if (dialog_thread_.joinable()) {
+    dialog_thread_.join();
   }
+
+  dialog_thread_ =
+      std::thread([this, default_dir = std::move(default_dir), default_name = std::move(default_name), hist, name]() {
+        std::array<nfdfilteritem_t, 2> filter_list = {{{
+                                                           .name = "SVG Image",
+                                                           .spec = "svg",
+                                                       },
+                                                       {
+                                                           .name = "PDF Document",
+                                                           .spec = "pdf",
+                                                       }}};
+        const nfdfiltersize_t filter_count = filter_list.size();
+
+        nfdchar_t *out_path = nullptr;
+        const nfdresult_t result = NFD_SaveDialogU8(&out_path, filter_list.data(), filter_count,
+                                                    default_dir.empty() ? nullptr : default_dir.c_str(),
+                                                    default_name.empty() ? nullptr : default_name.c_str());
+
+        if (result == NFD_OKAY) {
+          std::string filepath(out_path);
+          NFD_FreePathU8(out_path);
+          slint::invoke_from_event_loop([this, filepath = std::move(filepath), hist, name]() {
+            dialog_active_.store(false);
+            executeSavePlot(filepath, hist, name);
+          });
+        } else if (result == NFD_CANCEL) {
+          slint::invoke_from_event_loop([this]() {
+            dialog_active_.store(false);
+            window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
+          });
+        } else {
+          std::string error_msg = "Error: ";
+          error_msg += NFD_GetError();
+          slint::invoke_from_event_loop([this, error_msg = std::move(error_msg)]() {
+            dialog_active_.store(false);
+            window_.set_analysis_status_text(slint::SharedString(error_msg));
+          });
+        }
+      });
 }
 
 void PlotController::executeSavePlot(const std::string &filepath, const correlation::analysis::Histogram *hist,

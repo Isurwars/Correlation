@@ -387,6 +387,10 @@ if(BUILD_GUI)
 
   correlation_push_shared_libs(OFF)
 
+  if(UNIX AND NOT APPLE)
+    set(NFD_PORTAL ON CACHE BOOL "Use xdg-desktop-portal instead of GTK" FORCE)
+  endif()
+
   FetchContent_Declare(
     nfd
     GIT_REPOSITORY https://github.com/btzy/nativefiledialog-extended.git
