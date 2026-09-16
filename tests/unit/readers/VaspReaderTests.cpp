@@ -127,5 +127,6 @@ TEST_F(VaspReaderTests, ReadTrajectoryThrows) {
 }
 
 TEST_F(VaspReaderTests, NonExistentFileThrows) {
-  EXPECT_THROW(correlation::readers::VaspReader::read("nonexistent_file.poscar"), std::runtime_error);
+  EXPECT_THROW(correlation::readers::VaspReader::read("nonexistent_file.poscar"),
+               std::runtime_error);
 }

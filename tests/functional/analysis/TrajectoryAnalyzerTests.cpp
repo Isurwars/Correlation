@@ -58,7 +58,8 @@ TEST(TrajectoryAnalyzerTests, StartAndEndFrameLimits) {
 
   // Case 1: Analyze frames from index 1 to 3 (exclusive, so frames 1 and 2, getNumFrames() = 2)
   {
-    TrajectoryAnalyzer const analyzer(trajectory, neighbor_cutoff, bond_cutoffs, StartFrame{1}, EndFrame{3});
+    TrajectoryAnalyzer const analyzer(trajectory, neighbor_cutoff, bond_cutoffs, StartFrame{1},
+                                      EndFrame{3});
     EXPECT_EQ(analyzer.getStartFrame(), 1);
     EXPECT_EQ(analyzer.getNumFrames(), 2);
     EXPECT_DOUBLE_EQ(analyzer.getTimeStep(), 2.5);
@@ -67,7 +68,8 @@ TEST(TrajectoryAnalyzerTests, StartAndEndFrameLimits) {
 
   // Case 2: Analyze all frames using default/out-of-bounds limits
   {
-    TrajectoryAnalyzer const analyzer(trajectory, neighbor_cutoff, bond_cutoffs, StartFrame{0}, EndFrame{999}, false);
+    TrajectoryAnalyzer const analyzer(trajectory, neighbor_cutoff, bond_cutoffs, StartFrame{0},
+                                      EndFrame{999}, false);
     EXPECT_EQ(analyzer.getStartFrame(), 0);
     EXPECT_EQ(analyzer.getNumFrames(), 4);
     EXPECT_FALSE(analyzer.getIgnorePeriodicSelfInteractions());
@@ -75,7 +77,8 @@ TEST(TrajectoryAnalyzerTests, StartAndEndFrameLimits) {
 
   // Case 3: Start frame out of bounds (should clamp to n_frames and start == end == 4)
   {
-    TrajectoryAnalyzer const analyzer(trajectory, neighbor_cutoff, bond_cutoffs, StartFrame{10}, EndFrame{15});
+    TrajectoryAnalyzer const analyzer(trajectory, neighbor_cutoff, bond_cutoffs, StartFrame{10},
+                                      EndFrame{15});
     EXPECT_EQ(analyzer.getStartFrame(), 4);
     EXPECT_EQ(analyzer.getNumFrames(), 0);
   }
@@ -102,8 +105,8 @@ TEST(TrajectoryAnalyzerTests, ProgressCallbackIsCalled) {
     progress_msg = message;
   };
 
-  TrajectoryAnalyzer const analyzer(trajectory, neighbor_cutoff, bond_cutoffs, StartFrame{0}, EndFrame{1}, true,
-                                    callback);
+  TrajectoryAnalyzer const analyzer(trajectory, neighbor_cutoff, bond_cutoffs, StartFrame{0},
+                                    EndFrame{1}, true, callback);
 
   EXPECT_TRUE(callback_called);
   EXPECT_EQ(progress_val, 1.0F);

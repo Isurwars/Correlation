@@ -42,14 +42,18 @@ void writeHistogramToGroup(HighFive::File &file, const std::string &name,
   const std::string description = hist.description.empty() ? "Data export" : hist.description;
   const std::string dim_label = hist.x_label.empty() ? "x" : hist.x_label;
 
-  group.createAttribute<std::string>("description", HighFive::DataSpace::From(description)).write(description);
+  group.createAttribute<std::string>("description", HighFive::DataSpace::From(description))
+      .write(description);
 
   // 1. Write Coordinate / Bin Dataset
   const std::vector<float> bin_data(hist.bins.begin(), hist.bins.end());
   HighFive::DataSet bin_dataset = group.createDataSet(dim_label, bin_data);
-  bin_dataset.createAttribute<std::string>("units", HighFive::DataSpace::From(bin_unit)).write(bin_unit);
-  bin_dataset.createAttribute<std::string>("label", HighFive::DataSpace::From(dim_label)).write(dim_label);
-  bin_dataset.createAttribute<std::string>("description", HighFive::DataSpace::From(description)).write(description);
+  bin_dataset.createAttribute<std::string>("units", HighFive::DataSpace::From(bin_unit))
+      .write(bin_unit);
+  bin_dataset.createAttribute<std::string>("label", HighFive::DataSpace::From(dim_label))
+      .write(dim_label);
+  bin_dataset.createAttribute<std::string>("description", HighFive::DataSpace::From(description))
+      .write(description);
 
   // 2. Write Raw Companion Datasets (non-normalized counts)
   if (raw_companion != nullptr) {
@@ -69,8 +73,10 @@ void writeHistogramToGroup(HighFive::File &file, const std::string &name,
       const std::string ds_name = key + "_raw";
 
       HighFive::DataSet dataset = group.createDataSet(ds_name, float_values);
-      dataset.createAttribute<std::string>("units", HighFive::DataSpace::From(companion_unit)).write(companion_unit);
-      dataset.createAttribute<std::string>("label", HighFive::DataSpace::From(ds_name)).write(ds_name);
+      dataset.createAttribute<std::string>("units", HighFive::DataSpace::From(companion_unit))
+          .write(companion_unit);
+      dataset.createAttribute<std::string>("label", HighFive::DataSpace::From(ds_name))
+          .write(ds_name);
     }
   }
 
@@ -87,7 +93,8 @@ void writeHistogramToGroup(HighFive::File &file, const std::string &name,
     const std::vector<float> float_values(values.begin(), values.end());
 
     HighFive::DataSet dataset = group.createDataSet(key, float_values);
-    dataset.createAttribute<std::string>("units", HighFive::DataSpace::From(data_unit)).write(data_unit);
+    dataset.createAttribute<std::string>("units", HighFive::DataSpace::From(data_unit))
+        .write(data_unit);
     dataset.createAttribute<std::string>("label", HighFive::DataSpace::From(key)).write(key);
   }
 
@@ -105,16 +112,20 @@ void writeHistogramToGroup(HighFive::File &file, const std::string &name,
     const std::string smoothed_name = key + "_smoothed";
 
     HighFive::DataSet dataset = group.createDataSet(smoothed_name, float_values);
-    dataset.createAttribute<std::string>("units", HighFive::DataSpace::From(data_unit)).write(data_unit);
-    dataset.createAttribute<std::string>("label", HighFive::DataSpace::From(smoothed_name)).write(smoothed_name);
+    dataset.createAttribute<std::string>("units", HighFive::DataSpace::From(data_unit))
+        .write(data_unit);
+    dataset.createAttribute<std::string>("label", HighFive::DataSpace::From(smoothed_name))
+        .write(smoothed_name);
   }
 }
 
 } // namespace
 
-void HDF5Writer::writeHDF(const std::string &filename, const correlation::analysis::DistributionFunctions &dists) {
+void HDF5Writer::writeHDF(const std::string &filename,
+                          const correlation::analysis::DistributionFunctions &dists) {
   try {
-    HighFive::File file(filename, HighFive::File::ReadWrite | HighFive::File::Create | HighFive::File::Truncate);
+    HighFive::File file(filename, HighFive::File::ReadWrite | HighFive::File::Create |
+                                      HighFive::File::Truncate);
 
     for (const auto &[name, hist] : dists.getAllHistograms()) {
       if (hist.partials.empty() || hist.bins.empty()) {

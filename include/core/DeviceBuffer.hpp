@@ -85,7 +85,9 @@ public:
    * @brief Sets the entire buffer to a value via host-to-device copy of a single element.
    * @param[in] value The value to write (copied to device for the first element).
    */
-  void setScalar(const T &value) { hipCheck(hipMemcpy(ptr_, &value, sizeof(T), hipMemcpyHostToDevice)); }
+  void setScalar(const T &value) {
+    hipCheck(hipMemcpy(ptr_, &value, sizeof(T), hipMemcpyHostToDevice));
+  }
 
   /**
    * @brief Returns the raw device pointer.

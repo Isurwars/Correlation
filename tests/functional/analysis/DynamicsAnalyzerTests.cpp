@@ -33,7 +33,8 @@ TEST(DynamicsAnalyzerTests, CalculatesVACFFromExampletraj) {
     }
   }
 
-  ASSERT_TRUE(std::filesystem::exists(file_path)) << "Could not find example file: " << EXAMPLE_FILE;
+  ASSERT_TRUE(std::filesystem::exists(file_path))
+      << "Could not find example file: " << EXAMPLE_FILE;
 
   // 2. Read correlation::core::Trajectory
   correlation::core::Trajectory traj =
@@ -58,7 +59,8 @@ TEST(DynamicsAnalyzerTests, CalculatesVACFFromExampletraj) {
 
   // 4. Calculate VACF
   int const max_lag = 50; // Calculate for 50 frames lag
-  std::vector<real_t> vacf = DynamicsAnalyzer::calculateVACF(traj, correlation::analysis::MaxFrames{max_lag});
+  std::vector<real_t> vacf =
+      DynamicsAnalyzer::calculateVACF(traj, correlation::analysis::MaxFrames{max_lag});
 
   ASSERT_EQ(vacf.size(), max_lag + 1);
 
@@ -89,7 +91,8 @@ TEST(DynamicsAnalyzerTests, CalculatesVDOSCorrectly) {
   }
 
   // 2. Calculate VDOS
-  auto [frequencies, intensities_real, intensities_imag] = DynamicsAnalyzer::calculateVDOS(vacf, time_step);
+  auto [frequencies, intensities_real, intensities_imag] =
+      DynamicsAnalyzer::calculateVDOS(vacf, time_step);
 
   ASSERT_FALSE(frequencies.empty());
   ASSERT_EQ(frequencies.size(), intensities_real.size());
@@ -212,8 +215,10 @@ TEST(DynamicsAnalyzerTests, HandlesEmptyAndInvalidTrajectories) {
   trajectory.addFrame(cell);
 
   // start_frame >= end_frame
-  EXPECT_TRUE(DynamicsAnalyzer::calculateVACF(trajectory, MaxFrames{1}, StartFrame{1}, EndFrame{1}).empty());
-  EXPECT_TRUE(DynamicsAnalyzer::calculateMSD(trajectory, MaxFrames{1}, StartFrame{1}, EndFrame{1}).empty());
+  EXPECT_TRUE(DynamicsAnalyzer::calculateVACF(trajectory, MaxFrames{1}, StartFrame{1}, EndFrame{1})
+                  .empty());
+  EXPECT_TRUE(
+      DynamicsAnalyzer::calculateMSD(trajectory, MaxFrames{1}, StartFrame{1}, EndFrame{1}).empty());
 }
 
 } // namespace correlation::analysis

@@ -27,8 +27,8 @@ struct CreateRandomCellParams {
 };
 
 /**
- * @brief Portable 53-bit uniform double generator in [0, 1) to guarantee bit-for-bit reproducible random sampling
- * across compilers and platforms.
+ * @brief Portable 53-bit uniform double generator in [0, 1) to guarantee bit-for-bit reproducible
+ * random sampling across compilers and platforms.
  */
 [[nodiscard]] double generate_canonical_portable(std::mt19937_64 &rng) noexcept {
   return static_cast<double>(rng() >> 11) * (1.0 / 9007199254740992.0);
@@ -38,8 +38,8 @@ struct CreateRandomCellParams {
  * @brief Safely fits log(variance) vs log(R) using least squares with strict non-finite guards.
  */
 template <typename T, typename U>
-[[nodiscard]] double fitSlope(const std::vector<T> &bins, const std::vector<U> &var, double r_min, double r_max,
-                              double var_threshold = 1e-4) {
+[[nodiscard]] double fitSlope(const std::vector<T> &bins, const std::vector<U> &var, double r_min,
+                              double r_max, double var_threshold = 1e-4) {
   double sum_x = 0.0;
   double sum_y = 0.0;
   double sum_xx = 0.0;
@@ -88,8 +88,8 @@ template <typename T, typename U>
  */
 correlation::core::Cell createSCLattice(real_t box_length, int atoms_per_axis) {
   real_t const lattice_constant = box_length / static_cast<real_t>(atoms_per_axis);
-  return correlation::testing::crystals::createSimpleCubicCell(lattice_constant, "Ar", atoms_per_axis, atoms_per_axis,
-                                                               atoms_per_axis);
+  return correlation::testing::crystals::createSimpleCubicCell(
+      lattice_constant, "Ar", atoms_per_axis, atoms_per_axis, atoms_per_axis);
 }
 
 /**
@@ -98,7 +98,8 @@ correlation::core::Cell createSCLattice(real_t box_length, int atoms_per_axis) {
  * Uses a fixed seed for reproducibility.
  */
 correlation::core::Cell createRandomCell(CreateRandomCellParams params) {
-  correlation::core::Cell cell({static_cast<real_t>(params.box_length), static_cast<real_t>(params.box_length),
+  correlation::core::Cell cell({static_cast<real_t>(params.box_length),
+                                static_cast<real_t>(params.box_length),
                                 static_cast<real_t>(params.box_length), static_cast<real_t>(90.0),
                                 static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
   std::seed_seq seed{12345};
@@ -281,17 +282,19 @@ TEST_F(HyperuniformityCalculatorTests, LatticeHasLowerSlopeThanRandom) {
   ASSERT_TRUE(lattice_results.contains("sigma2_N"));
   ASSERT_TRUE(random_results.contains("sigma2_N"));
 
-  double const lattice_slope = fitSlope(lattice_results.at("sigma2_N").bins,
-                                        lattice_results.at("sigma2_N").partials.at("Total"), 3.0, 12.0, 1e-4);
+  double const lattice_slope =
+      fitSlope(lattice_results.at("sigma2_N").bins,
+               lattice_results.at("sigma2_N").partials.at("Total"), 3.0, 12.0, 1e-4);
   double const random_slope =
-      fitSlope(random_results.at("sigma2_N").bins, random_results.at("sigma2_N").partials.at("Total"), 3.0, 12.0, 1e-4);
+      fitSlope(random_results.at("sigma2_N").bins,
+               random_results.at("sigma2_N").partials.at("Total"), 3.0, 12.0, 1e-4);
 
   ASSERT_GT(lattice_slope, 0.0) << "Lattice slope computation failed";
   ASSERT_GT(random_slope, 0.0) << "Random slope computation failed";
 
-  EXPECT_LT(lattice_slope, random_slope) << "Lattice (slope=" << lattice_slope
-                                         << ") should have lower variance scaling "
-                                         << "than random (slope=" << random_slope << ")";
+  EXPECT_LT(lattice_slope, random_slope)
+      << "Lattice (slope=" << lattice_slope << ") should have lower variance scaling "
+      << "than random (slope=" << random_slope << ")";
 }
 
 // =============================================================================

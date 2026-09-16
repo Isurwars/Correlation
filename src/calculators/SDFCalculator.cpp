@@ -27,7 +27,8 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
   const auto &cell = dists.cell();
   // SDF is a 3D grid and requires a coarser resolution than 1D radial distributions.
   // We enforce a minimum grid spacing of 0.5 Å to prevent memory explosion.
-  const real_t d_x = static_cast<real_t>(std::max(settings.r_bin_width > 0.0 ? settings.r_bin_width : 0.5, 0.5));
+  const real_t d_x =
+      static_cast<real_t>(std::max(settings.r_bin_width > 0.0 ? settings.r_bin_width : 0.5, 0.5));
 
   // For a general implementation, we build a 3D grid based on the cell
   // dimensions
@@ -55,8 +56,8 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
   sdf_hist.y_label = "Density";
   sdf_hist.x_unit = "-";
   sdf_hist.y_unit = "atoms/A^3";
-  sdf_hist.description = "Flattened 3D Spatial Distribution Grid (" + std::to_string(n_x) + "x" + std::to_string(n_y) +
-                         "x" + std::to_string(n_z) + ")";
+  sdf_hist.description = "Flattened 3D Spatial Distribution Grid (" + std::to_string(n_x) + "x" +
+                         std::to_string(n_y) + "x" + std::to_string(n_z) + ")";
   sdf_hist.file_suffix = "_sdf";
 
   // Dummy bins to satisfy dimensions

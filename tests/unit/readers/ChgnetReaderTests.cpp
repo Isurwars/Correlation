@@ -113,13 +113,12 @@ TEST_F(ChgnetReaderTests, ReadMultiFrameTrajectory) {
 }
 
 TEST_F(ChgnetReaderTests, ReadStructureReturnsLastFrame) {
-  std::string const traj_content =
-      "1\n"
-      "Properties=species:S:1:pos:R:3 energy=-5.0\n"
-      "Fe 0.0 0.0 0.0\n"
-      "1\n"
-      "Properties=species:S:1:pos:R:3 energy=-8.0\n"
-      "Fe 0.5 0.5 0.5\n";
+  std::string const traj_content = "1\n"
+                                   "Properties=species:S:1:pos:R:3 energy=-5.0\n"
+                                   "Fe 0.0 0.0 0.0\n"
+                                   "1\n"
+                                   "Properties=species:S:1:pos:R:3 energy=-8.0\n"
+                                   "Fe 0.5 0.5 0.5\n";
 
   auto file_path = createTempFile({.filename = "last_frame.chgnet", .content = traj_content});
 
@@ -132,10 +131,9 @@ TEST_F(ChgnetReaderTests, ReadStructureReturnsLastFrame) {
 }
 
 TEST_F(ChgnetReaderTests, MalformedHeaderThrows) {
-  std::string const malformed_content =
-      "invalid_atoms\n"
-      "Properties=species:S:1:pos:R:3\n"
-      "Fe 0.0 0.0 0.0\n";
+  std::string const malformed_content = "invalid_atoms\n"
+                                        "Properties=species:S:1:pos:R:3\n"
+                                        "Fe 0.0 0.0 0.0\n";
 
   auto file_path = createTempFile({.filename = "malformed.chgnet", .content = malformed_content});
 

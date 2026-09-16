@@ -25,7 +25,9 @@ class GPUSteinhardtCalculator : public BaseCalculator {
 public:
   GPUSteinhardtCalculator();
 
-  [[nodiscard]] std::string_view getName() const override { return "Steinhardt Parameter — GPU Accelerated"; }
+  [[nodiscard]] std::string_view getName() const override {
+    return "Steinhardt Parameter — GPU Accelerated";
+  }
   [[nodiscard]] std::string_view getShortName() const override { return "Steinhardt_GPU"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
   [[nodiscard]] std::string_view getDescription() const override {

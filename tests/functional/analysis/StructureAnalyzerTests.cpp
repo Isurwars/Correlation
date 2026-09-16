@@ -124,11 +124,11 @@ TEST_F(StructureAnalyzerTests, CalculatesCorrectAnglesForWater) {
   const real_t bond_angle_rad = bond_angle_deg * correlation::math::deg_to_rad;
 
   water_cell.addAtom("O", {10.0, 10.0, 10.0});
-  water_cell.addAtom("H",
-                     {static_cast<real_t>(10.0 + bond_length), static_cast<real_t>(10.0), static_cast<real_t>(10.0)});
-  water_cell.addAtom("H",
-                     {static_cast<real_t>(10.0 + bond_length * std::cos(bond_angle_rad)),
-                      static_cast<real_t>(10.0 + bond_length * std::sin(bond_angle_rad)), static_cast<real_t>(10.0)});
+  water_cell.addAtom("H", {static_cast<real_t>(10.0 + bond_length), static_cast<real_t>(10.0),
+                           static_cast<real_t>(10.0)});
+  water_cell.addAtom("H", {static_cast<real_t>(10.0 + bond_length * std::cos(bond_angle_rad)),
+                           static_cast<real_t>(10.0 + bond_length * std::sin(bond_angle_rad)),
+                           static_cast<real_t>(10.0)});
   updateTrajectory(water_cell);
 
   // Act: Calculate neighbors and angles.
@@ -142,7 +142,8 @@ TEST_F(StructureAnalyzerTests, CalculatesCorrectAnglesForWater) {
   ASSERT_EQ(o_id, 0);
 
   // The angle tensor is indexed by [type1][central_type][type2].
-  ASSERT_TRUE(angles.size() > h_id && angles[h_id].size() > o_id && angles[h_id][o_id].size() > h_id);
+  ASSERT_TRUE(angles.size() > h_id && angles[h_id].size() > o_id &&
+              angles[h_id][o_id].size() > h_id);
 
   const auto &hoh_angles = angles[h_id][o_id][h_id];
 
@@ -283,8 +284,9 @@ TEST_F(StructureAnalyzerTests, EnforcesNeighborSymmetry) {
           break;
         }
       }
-      EXPECT_TRUE(found_reverse) << "Symmetry broken: correlation::core::Atom " << i << " sees " << neighbor_idx
-                                 << " but " << neighbor_idx << " does not see " << i;
+      EXPECT_TRUE(found_reverse) << "Symmetry broken: correlation::core::Atom " << i << " sees "
+                                 << neighbor_idx << " but " << neighbor_idx << " does not see "
+                                 << i;
     }
   }
 }
@@ -331,12 +333,15 @@ TEST_F(StructureAnalyzerTests, TriangleMoleculeConnectivity) {
   // Distance 2.0 < 2.304, so they should be connected.
 
   const real_t distance = 2.0;
-  const real_t height_triangle = std::sqrt(distance * distance - (distance / 2) * (distance / 2)); // sqrt(3)
+  const real_t height_triangle =
+      std::sqrt(distance * distance - (distance / 2) * (distance / 2)); // sqrt(3)
 
   cell.addAtom("Ar", {5.0, 5.0, 5.0}); // A
-  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) + distance, static_cast<real_t>(5.0),
+  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) + distance,
+                                                        static_cast<real_t>(5.0),
                                                         static_cast<real_t>(5.0))); // B
-  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) + distance / static_cast<real_t>(2.0),
+  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) +
+                                                            distance / static_cast<real_t>(2.0),
                                                         static_cast<real_t>(5.0) + height_triangle,
                                                         static_cast<real_t>(5.0))); // C
   updateTrajectory(cell);
@@ -398,8 +403,10 @@ TEST_F(StructureAnalyzerTests, ThrowsOnInvalidCutoff) {
   cell.addAtom("Ar", {5.0, 5.0, 5.0});
   updateTrajectory(cell);
 
-  EXPECT_THROW(StructureAnalyzer(cell, 0.0, trajectory().getBondCutoffsSQ()), std::invalid_argument);
-  EXPECT_THROW(StructureAnalyzer(cell, -1.0, trajectory().getBondCutoffsSQ()), std::invalid_argument);
+  EXPECT_THROW(StructureAnalyzer(cell, 0.0, trajectory().getBondCutoffsSQ()),
+               std::invalid_argument);
+  EXPECT_THROW(StructureAnalyzer(cell, -1.0, trajectory().getBondCutoffsSQ()),
+               std::invalid_argument);
 
   // Inverted range: max_sq (1.0) < min_sq (4.0)
   BondCutoffMatrix inverted_cutoffs = {{{4.0, 1.0}}};

@@ -33,13 +33,13 @@ public:
   std::vector<std::string> getExtensions() const override { return {"dump", "lammpstrj"}; }
   bool isTrajectory() const override { return true; }
 
-  correlation::core::Cell
-  readStructure(const std::string &filename,
-                std::function<void(float, const std::string &)> progress_callback = nullptr) override;
+  correlation::core::Cell readStructure(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
-  correlation::core::Trajectory
-  readTrajectory(const std::string &filename,
-                 std::function<void(float, const std::string &)> progress_callback = nullptr) override;
+  correlation::core::Trajectory readTrajectory(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
   /**
    * @brief Parses a single LAMMPS dump frame from a memory region.

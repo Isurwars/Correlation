@@ -30,7 +30,8 @@ public:
   std::string getName() const override { return "HDF5"; }
   std::vector<std::string> getExtensions() const override { return {".h5", ".hdf5"}; }
 
-  void write(const std::string &base_path, const correlation::analysis::DistributionFunctions &dists,
+  void write(const std::string &base_path,
+             const correlation::analysis::DistributionFunctions &dists,
              bool /*smoothing*/) const override {
     writeHDF(base_path + ".h5", dists);
   }
@@ -40,7 +41,8 @@ public:
    * @param filename The full path of the HDF5 file to write.
    * @param dists The DistributionFunctions object containing the data.
    */
-  static void writeHDF(const std::string &filename, const correlation::analysis::DistributionFunctions &dists);
+  static void writeHDF(const std::string &filename,
+                       const correlation::analysis::DistributionFunctions &dists);
 };
 
 } // namespace correlation::writers

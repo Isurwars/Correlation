@@ -51,8 +51,9 @@ void populateHistogramMetadata(correlation::analysis::Histogram &hist, std::vect
 /**
  * @brief Accumulates per-atom LDOS into total and species-resolved double-precision accumulators.
  */
-void accumulateFrameLdos(const correlation::core::Cell &cell, const std::vector<std::vector<real_t>> &ldos,
-                         size_t num_bins, std::vector<double> &acc_total,
+void accumulateFrameLdos(const correlation::core::Cell &cell,
+                         const std::vector<std::vector<real_t>> &ldos, size_t num_bins,
+                         std::vector<double> &acc_total,
                          std::map<std::string, std::vector<double>> &acc_species) {
   const auto &atoms = cell.atoms();
   const size_t num_atoms = atoms.size();
@@ -84,7 +85,8 @@ void accumulateFrameLdos(const correlation::core::Cell &cell, const std::vector<
 /**
  * @brief Finalizes accumulated double-precision sums into the target Histogram.
  */
-void finalizeHistogram(correlation::analysis::Histogram &hist, double frame_scale, const std::vector<double> &acc_total,
+void finalizeHistogram(correlation::analysis::Histogram &hist, double frame_scale,
+                       const std::vector<double> &acc_total,
                        const std::map<std::string, std::vector<double>> &acc_species) {
   const size_t num_bins = hist.bins.size();
   auto &total_vec = hist.partials["total"];
@@ -104,8 +106,9 @@ void finalizeHistogram(correlation::analysis::Histogram &hist, double frame_scal
 
 } // namespace
 
-void TDOSCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
-                                    const correlation::analysis::AnalysisSettings & /*settings*/) const {
+void TDOSCalculator::calculateFrame(
+    correlation::analysis::DistributionFunctions &dists,
+    const correlation::analysis::AnalysisSettings & /*settings*/) const {
   if (model_ == nullptr) {
     return;
   }
@@ -118,9 +121,9 @@ void TDOSCalculator::calculateFrame(correlation::analysis::DistributionFunctions
   }
 }
 
-void TDOSCalculator::calculateTrajectory(correlation::analysis::DistributionFunctions &dists,
-                                         const correlation::core::Trajectory &traj,
-                                         const correlation::analysis::AnalysisSettings &settings) const {
+void TDOSCalculator::calculateTrajectory(
+    correlation::analysis::DistributionFunctions &dists, const correlation::core::Trajectory &traj,
+    const correlation::analysis::AnalysisSettings &settings) const {
   if (model_ == nullptr) {
     return;
   }
@@ -157,9 +160,10 @@ correlation::analysis::Histogram TDOSCalculator::calculate(const correlation::co
   return hist;
 }
 
-correlation::analysis::Histogram TDOSCalculator::calculateTrajectory(const correlation::core::Trajectory &traj,
-                                                                     const TDOSParams &params,
-                                                                     const std::atomic<bool> *cancel_flag) {
+correlation::analysis::Histogram
+TDOSCalculator::calculateTrajectory(const correlation::core::Trajectory &traj,
+                                    const TDOSParams &params,
+                                    const std::atomic<bool> *cancel_flag) {
   correlation::analysis::Histogram hist;
   const size_t total_frames = traj.getFrameCount();
   if (params.model == nullptr || total_frames == 0) {

@@ -110,7 +110,8 @@ struct ChgnetParser {
     }
   }
 
-  std::vector<size_t> findFrameOffsets(const std::function<void(float, const std::string &)> &progress_callback) {
+  std::vector<size_t>
+  findFrameOffsets(const std::function<void(float, const std::string &)> &progress_callback) {
     std::vector<size_t> frame_offsets;
 
     while (true) {
@@ -136,7 +137,8 @@ struct ChgnetParser {
   }
 };
 
-void parseAtomLine(const std::string &line, const ChgnetReader::CommentData &comm_data, correlation::core::Cell &cell) {
+void parseAtomLine(const std::string &line, const ChgnetReader::CommentData &comm_data,
+                   correlation::core::Cell &cell) {
   std::istringstream iss(line);
   std::vector<std::string> tokens;
   std::string token;
@@ -144,8 +146,8 @@ void parseAtomLine(const std::string &line, const ChgnetReader::CommentData &com
     tokens.push_back(token);
   }
 
-  int const max_idx =
-      (std::max)({comm_data.species_col, comm_data.pos_x_col, comm_data.pos_y_col, comm_data.pos_z_col});
+  int const max_idx = (std::max)({comm_data.species_col, comm_data.pos_x_col, comm_data.pos_y_col,
+                                  comm_data.pos_z_col});
 
   if (std::cmp_less_equal(tokens.size(), max_idx)) {
     throw std::runtime_error("Invalid CHGNet file: malformed atom line: " + line);
@@ -159,7 +161,8 @@ void parseAtomLine(const std::string &line, const ChgnetReader::CommentData &com
     auto &atom = cell.addAtom(symbol, correlation::math::Vector3<real_t>(pos_x, pos_y, pos_z));
 
     if (comm_data.force_x_col >= 0 && comm_data.force_y_col >= 0 && comm_data.force_z_col >= 0) {
-      int const max_force_idx = (std::max)({comm_data.force_x_col, comm_data.force_y_col, comm_data.force_z_col});
+      int const max_force_idx =
+          (std::max)({comm_data.force_x_col, comm_data.force_y_col, comm_data.force_z_col});
       if (std::cmp_greater(tokens.size(), max_force_idx)) {
         const auto force_x = static_cast<real_t>(std::stod(tokens[comm_data.force_x_col]));
         const auto force_y = static_cast<real_t>(std::stod(tokens[comm_data.force_y_col]));
@@ -220,7 +223,8 @@ correlation::core::Cell ChgnetReader::parseChgnetFrame(const char *data, size_t 
 
   for (int i = 0; i < num_atoms; ++i) {
     if (!std::getline(stream, line)) {
-      throw std::runtime_error("Invalid CHGNet file: unexpected EOF while reading atom " + std::to_string(i + 1));
+      throw std::runtime_error("Invalid CHGNet file: unexpected EOF while reading atom " +
+                               std::to_string(i + 1));
     }
     parseAtomLine(line, comm_data, cell);
   }
@@ -274,12 +278,14 @@ void ChgnetReader::parseEnergy(const std::string &comment, CommentData &data) {
     } else {
       end = comment.find_first_of(" \t\r\n", start);
     }
-    std::string const val_str = comment.substr(start, end == std::string::npos ? std::string::npos : end - start);
+    std::string const val_str =
+        comment.substr(start, end == std::string::npos ? std::string::npos : end - start);
     try {
       data.energy = static_cast<real_t>(std::stod(val_str));
       break;
     } catch (const std::exception &err) {
-      std::cerr << "Warning: Failed to parse CHGNet energy value '" << val_str << "': " << err.what() << '\n';
+      std::cerr << "Warning: Failed to parse CHGNet energy value '" << val_str
+                << "': " << err.what() << '\n';
     }
   }
 }
@@ -302,7 +308,8 @@ void ChgnetReader::parseProperties(const std::string &comment, CommentData &data
     end = comment.find_first_of(" \t\r\n", start);
   }
 
-  std::string const props = comment.substr(start, end == std::string::npos ? std::string::npos : end - start);
+  std::string const props =
+      comment.substr(start, end == std::string::npos ? std::string::npos : end - start);
 
   std::vector<std::string> parts;
   std::istringstream p_ss(props);
@@ -361,8 +368,9 @@ ChgnetReader::CommentData ChgnetReader::parseCommentLine(const std::string &comm
   return data;
 }
 
-correlation::core::Cell ChgnetReader::readStructure(const std::string &filename,
-                                                    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell
+ChgnetReader::readStructure(const std::string &filename,
+                            std::function<void(float, const std::string &)> progress_callback) {
   auto traj = readTrajectory(filename, std::move(progress_callback));
   if (traj.getFrameCount() == 0) {
     throw std::runtime_error("No structure found in CHGNet file: " + filename);
@@ -394,7 +402,9 @@ ChgnetReader::readTrajectory(const std::string &filename,
     progress_callback(1.0F, "CHGNet file loaded.");
   }
 
-  auto parser_func = [](const char *data_begin, size_t data_size) { return parseChgnetFrame(data_begin, data_size); };
+  auto parser_func = [](const char *data_begin, size_t data_size) {
+    return parseChgnetFrame(data_begin, data_size);
+  };
 
   return {mapped_file, std::move(frame_offsets), parser_func, 1.0};
 }

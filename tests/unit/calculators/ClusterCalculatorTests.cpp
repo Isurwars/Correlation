@@ -32,7 +32,8 @@ TEST(ClusterCalculatorTests, BasicClustering) {
   AnalysisSettings const settings;
 
   real_t const cutoff = 1.5;
-  StructureAnalyzer const analyzer(cell, cutoff, {{{0.36, static_cast<real_t>(cutoff * cutoff)}}}, false);
+  StructureAnalyzer const analyzer(cell, cutoff, {{{0.36, static_cast<real_t>(cutoff * cutoff)}}},
+                                   false);
   dists.setStructureAnalyzer(&analyzer);
 
   ClusterCalculator const calc;
@@ -60,14 +61,16 @@ TEST(ClusterCalculatorTests, SingleGiantCluster) {
 
   // Create a chain of 10 atoms
   for (int i = 0; i < 10; ++i) {
-    cell.addAtom("C", {static_cast<real_t>(i) * static_cast<real_t>(1.0) + static_cast<real_t>(0.5), 5.0, 5.0});
+    cell.addAtom("C", {static_cast<real_t>(i) * static_cast<real_t>(1.0) + static_cast<real_t>(0.5),
+                       5.0, 5.0});
   }
 
   DistributionFunctions dists(cell);
   AnalysisSettings const settings;
 
   real_t const cutoff = 1.5;
-  StructureAnalyzer const analyzer(cell, cutoff, {{{0.36, static_cast<real_t>(cutoff * cutoff)}}}, false);
+  StructureAnalyzer const analyzer(cell, cutoff, {{{0.36, static_cast<real_t>(cutoff * cutoff)}}},
+                                   false);
   dists.setStructureAnalyzer(&analyzer);
 
   ClusterCalculator const calc;

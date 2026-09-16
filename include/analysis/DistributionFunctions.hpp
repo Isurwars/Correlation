@@ -59,16 +59,16 @@ struct XRDParams {
  * @brief Configuration settings for distribution function analysis.
  */
 struct AnalysisSettings {
-  real_t r_max = 20.0;                    ///< Maximum radius for RDF calculations (Angstroms).
-  real_t r_bin_width = 0.02;              ///< Bin width for radial distributions (Angstroms).
-  real_t q_max = 20.0;                    ///< Maximum momentum transfer for S(Q) (Angstroms^-1).
-  real_t q_bin_width = 0.02;              ///< Bin width for S(Q) (Angstroms^-1).
-  real_t r_int_max = 10.0;                ///< Cutoff for integration-based properties.
-  real_t angle_bin_width = 1.0;           ///< Bin width for bond angle distributions (degrees).
-  real_t dihedral_bin_width = 1.0;        ///< Bin width for dihedral distributions (degrees).
-  size_t max_ring_size = 8;               ///< Maximum size of rings to search for.
-  real_t lef_cutoff = 5.0;                ///< Cutoff radius for local entropy integration.
-  real_t lef_sigma = 0.2;                 ///< Standard deviation for Gaussian smoothing in local entropy.
+  real_t r_max = 20.0;             ///< Maximum radius for RDF calculations (Angstroms).
+  real_t r_bin_width = 0.02;       ///< Bin width for radial distributions (Angstroms).
+  real_t q_max = 20.0;             ///< Maximum momentum transfer for S(Q) (Angstroms^-1).
+  real_t q_bin_width = 0.02;       ///< Bin width for S(Q) (Angstroms^-1).
+  real_t r_int_max = 10.0;         ///< Cutoff for integration-based properties.
+  real_t angle_bin_width = 1.0;    ///< Bin width for bond angle distributions (degrees).
+  real_t dihedral_bin_width = 1.0; ///< Bin width for dihedral distributions (degrees).
+  size_t max_ring_size = 8;        ///< Maximum size of rings to search for.
+  real_t lef_cutoff = 5.0;         ///< Cutoff radius for local entropy integration.
+  real_t lef_sigma = 0.2;          ///< Standard deviation for Gaussian smoothing in local entropy.
   size_t hyperuniformity_samples = 10000; ///< Number of random sample points for hyperuniformity.
 
   /// Maps calculator ID (e.g., "RDF", "SQ") to whether it is enabled.
@@ -230,7 +230,9 @@ public:
    * @brief Gets the trajectory-wide dynamic properties.
    * @return Const reference to DynamicProperties.
    */
-  [[nodiscard]] const DynamicProperties &dynamicProperties() const noexcept { return dynamic_properties_; }
+  [[nodiscard]] const DynamicProperties &dynamicProperties() const noexcept {
+    return dynamic_properties_;
+  }
 
   /**
    * @brief Gets mutable trajectory-wide dynamic properties.
@@ -242,7 +244,9 @@ public:
    * @brief Sets the trajectory-wide dynamic properties.
    * @param props The DynamicProperties struct.
    */
-  void setDynamicProperties(const DynamicProperties &props) noexcept { dynamic_properties_ = props; }
+  void setDynamicProperties(const DynamicProperties &props) noexcept {
+    dynamic_properties_ = props;
+  }
 
   /**
    * @brief Gets the self-diffusion coefficient computed from Mean Squared Displacement (MSD).
@@ -261,7 +265,8 @@ public:
   }
 
   /**
-   * @brief Gets the self-diffusion coefficient computed from Velocity Autocorrelation Function (VACF).
+   * @brief Gets the self-diffusion coefficient computed from Velocity Autocorrelation Function
+   * (VACF).
    * @return The diffusion coefficient in Å²/fs.
    */
   [[nodiscard]] real_t getDiffusionCoefficientVACF() const noexcept {
@@ -269,7 +274,8 @@ public:
   }
 
   /**
-   * @brief Sets the self-diffusion coefficient computed from Velocity Autocorrelation Function (VACF).
+   * @brief Sets the self-diffusion coefficient computed from Velocity Autocorrelation Function
+   * (VACF).
    * @param diff_coeff The new diffusion coefficient value in Å²/fs.
    */
   void setDiffusionCoefficientVACF(real_t diff_coeff) noexcept {
@@ -280,25 +286,33 @@ public:
    * @brief Gets the relaxation time computed from normalized VACF.
    * @return The relaxation time in fs.
    */
-  [[nodiscard]] real_t getRelaxationTime() const noexcept { return dynamic_properties_.relaxation_time; }
+  [[nodiscard]] real_t getRelaxationTime() const noexcept {
+    return dynamic_properties_.relaxation_time;
+  }
 
   /**
    * @brief Sets the relaxation time computed from normalized VACF.
    * @param relax_time The new relaxation time value in fs.
    */
-  void setRelaxationTime(real_t relax_time) noexcept { dynamic_properties_.relaxation_time = relax_time; }
+  void setRelaxationTime(real_t relax_time) noexcept {
+    dynamic_properties_.relaxation_time = relax_time;
+  }
 
   /**
    * @brief Gets the Deborah number.
    * @return The Deborah number.
    */
-  [[nodiscard]] real_t getDeborahNumber() const noexcept { return dynamic_properties_.deborah_number; }
+  [[nodiscard]] real_t getDeborahNumber() const noexcept {
+    return dynamic_properties_.deborah_number;
+  }
 
   /**
    * @brief Sets the Deborah number.
    * @param deborah_num The new Deborah number value.
    */
-  void setDeborahNumber(real_t deborah_num) noexcept { dynamic_properties_.deborah_number = deborah_num; }
+  void setDeborahNumber(real_t deborah_num) noexcept {
+    dynamic_properties_.deborah_number = deborah_num;
+  }
 
   ///@}
 
@@ -338,8 +352,9 @@ public:
    * @param start_frame Starting frame index.
    * @param end_frame Ending frame index (exclusive).
    */
-  void calculateVACF(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames = {-1},
-                     StartFrame start_frame = {0}, EndFrame end_frame = {static_cast<size_t>(-1)});
+  void calculateVACF(const correlation::core::Trajectory &traj,
+                     MaxFrames max_correlation_frames = {-1}, StartFrame start_frame = {0},
+                     EndFrame end_frame = {static_cast<size_t>(-1)});
 
   /**
    * @brief Calculates the Vibrational Density of States (VDOS) from the VACF.
@@ -367,7 +382,8 @@ public:
    * @param sigma Smoothing width.
    * @param kernel The smoothing kernel type.
    */
-  void smoothAll(real_t sigma, correlation::math::KernelType kernel = correlation::math::KernelType::Gaussian);
+  void smoothAll(real_t sigma,
+                 correlation::math::KernelType kernel = correlation::math::KernelType::Gaussian);
 
   /**
    * @brief Uses an external StructureAnalyzer for neighborhood/bond info.
@@ -411,17 +427,17 @@ public:
    * @return A unique_ptr to the newly created and populated DistributionFunctions object.
    */
   static std::unique_ptr<DistributionFunctions>
-  computeMean(correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer, size_t start_frame,
-              const AnalysisSettings &settings,
+  computeMean(correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
+              size_t start_frame, const AnalysisSettings &settings,
               std::function<void(float, const std::string &)> progress_callback = nullptr);
 
   ///@}
 
 private:
-  static std::unique_ptr<DistributionFunctions> processSingleFrame(correlation::core::Trajectory &trajectory,
-                                                                   const TrajectoryAnalyzer &analyzer, size_t frame_idx,
-                                                                   const AnalysisSettings &settings,
-                                                                   const BondCutoffMatrix &bond_cutoffs);
+  static std::unique_ptr<DistributionFunctions>
+  processSingleFrame(correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
+                     size_t frame_idx, const AnalysisSettings &settings,
+                     const BondCutoffMatrix &bond_cutoffs);
 
   static void normalizeHistograms(DistributionFunctions &dist_funcs);
 

@@ -20,7 +20,8 @@ class MockORBv3Model : public correlation::mlip::MLIPInterface {
 public:
   [[nodiscard]] std::string getModelName() const override { return "ORB-v3"; }
 
-  [[nodiscard]] correlation::mlip::MLIPOutput evaluate(const correlation::core::Cell &cell) const override {
+  [[nodiscard]] correlation::mlip::MLIPOutput
+  evaluate(const correlation::core::Cell &cell) const override {
     correlation::mlip::MLIPOutput out;
     const size_t n_atoms = cell.atoms().size();
     out.total_energy = static_cast<real_t>(-42.5);

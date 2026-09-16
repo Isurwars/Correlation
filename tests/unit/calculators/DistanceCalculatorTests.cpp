@@ -40,7 +40,8 @@ TEST(DistanceCalculatorTests, ComputesPairwiseDistancesAndNeighborGraph) {
   };
 
   // Act
-  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_graph, &out_histograms, config);
+  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_graph, &out_histograms,
+                              config);
 
   // Assert: Check distance histogram bin for 1.5 Å (1.5 / 0.02 = 75)
   // Si (index 0, type 0), O (index 1, type 1)
@@ -78,7 +79,8 @@ TEST(DistanceCalculatorTests, DistanceAcrossPeriodicBoundary) {
       .num_bins = 100,
   };
 
-  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_graph, &out_histograms, config);
+  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_graph, &out_histograms,
+                              config);
 
   // Distance 1.0 Å in bin 1.0 / 0.02 = 50
   ASSERT_EQ(out_histograms.size(), 1);
@@ -105,7 +107,8 @@ TEST(DistanceCalculatorTests, SingleAtomProducesNoDistances) {
   };
 
   // With ignore_periodic_self_interactions = true, a single atom has no pairs
-  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_graph, &out_histograms, config);
+  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_graph, &out_histograms,
+                              config);
 
   for (real_t const count : out_histograms[0][0]) {
     EXPECT_EQ(count, 0.0);
@@ -130,7 +133,8 @@ TEST(DistanceCalculatorTests, NonOrthogonalCell) {
       .num_bins = 150,
   };
 
-  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_graph, &out_histograms, config);
+  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_graph, &out_histograms,
+                              config);
 
   real_t total_count = 0.0;
   for (real_t const count : out_histograms[0][0]) {
@@ -146,8 +150,9 @@ TEST(DistanceCalculatorTests, AtomsOutsideCutoff) {
 
   // Cutoff = 2.0, so this pair should NOT be found
   real_t const cutoff_sq = 4.0;
-  BondCutoffMatrix const bond_cutoffs = {{{.min_sq = 0.36, .max_sq = 4.0}, {.min_sq = 0.36, .max_sq = 4.0}},
-                                         {{.min_sq = 0.36, .max_sq = 4.0}, {.min_sq = 0.36, .max_sq = 4.0}}};
+  BondCutoffMatrix const bond_cutoffs = {
+      {{.min_sq = 0.36, .max_sq = 4.0}, {.min_sq = 0.36, .max_sq = 4.0}},
+      {{.min_sq = 0.36, .max_sq = 4.0}, {.min_sq = 0.36, .max_sq = 4.0}}};
 
   RawHistogramTensor out_histograms;
   NeighborGraph out_graph(2);
@@ -157,7 +162,8 @@ TEST(DistanceCalculatorTests, AtomsOutsideCutoff) {
       .num_bins = 100,
   };
 
-  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_graph, &out_histograms, config);
+  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_graph, &out_histograms,
+                              config);
 
   for (real_t const count : out_histograms[0][1]) {
     EXPECT_EQ(count, 0.0);
@@ -172,8 +178,10 @@ TEST(DistanceCalculatorTests, ThrowsOnInvalidCutoff) {
   BondCutoffMatrix const bond_cutoffs = {{{.min_sq = 0.36, .max_sq = 4.0}}};
   NeighborGraph out_graph(1);
 
-  EXPECT_THROW(DistanceCalculator::compute(cell, -1.0, bond_cutoffs, true, out_graph), std::invalid_argument);
-  EXPECT_THROW(DistanceCalculator::compute(cell, 0.0, bond_cutoffs, true, out_graph), std::invalid_argument);
+  EXPECT_THROW(DistanceCalculator::compute(cell, -1.0, bond_cutoffs, true, out_graph),
+               std::invalid_argument);
+  EXPECT_THROW(DistanceCalculator::compute(cell, 0.0, bond_cutoffs, true, out_graph),
+               std::invalid_argument);
 }
 
 TEST(DistanceCalculatorTests, ThrowsWhenMinBondCutoffExceedsMax) {
@@ -184,7 +192,8 @@ TEST(DistanceCalculatorTests, ThrowsWhenMinBondCutoffExceedsMax) {
   BondCutoffMatrix const invalid_cutoffs = {{{.min_sq = 4.0, .max_sq = 2.25}}};
   NeighborGraph out_graph(1);
 
-  EXPECT_THROW(DistanceCalculator::compute(cell, 9.0, invalid_cutoffs, true, out_graph), std::invalid_argument);
+  EXPECT_THROW(DistanceCalculator::compute(cell, 9.0, invalid_cutoffs, true, out_graph),
+               std::invalid_argument);
 }
 
 TEST(DistanceCalculatorTests, ThrowsWhenCutoffBoundsAreNegative) {
@@ -194,10 +203,12 @@ TEST(DistanceCalculatorTests, ThrowsWhenCutoffBoundsAreNegative) {
   NeighborGraph out_graph(1);
 
   BondCutoffMatrix const neg_min = {{{.min_sq = -0.5, .max_sq = 4.0}}};
-  EXPECT_THROW(DistanceCalculator::compute(cell, 9.0, neg_min, true, out_graph), std::invalid_argument);
+  EXPECT_THROW(DistanceCalculator::compute(cell, 9.0, neg_min, true, out_graph),
+               std::invalid_argument);
 
   BondCutoffMatrix const neg_max = {{{.min_sq = 0.5, .max_sq = -4.0}}};
-  EXPECT_THROW(DistanceCalculator::compute(cell, 9.0, neg_max, true, out_graph), std::invalid_argument);
+  EXPECT_THROW(DistanceCalculator::compute(cell, 9.0, neg_max, true, out_graph),
+               std::invalid_argument);
 }
 
 TEST(DistanceCalculatorTests, EnforcesMinimumAndMaximumBondCutoffs) {
@@ -205,7 +216,8 @@ TEST(DistanceCalculatorTests, EnforcesMinimumAndMaximumBondCutoffs) {
   cell.addAtom("Si", {0.0, 0.0, 0.0});
   cell.addAtom("Si", {0.4, 0.0, 0.0}); // Distance = 0.4 Å (below min 0.8 Å)
   cell.addAtom("Si", {1.5, 0.0, 0.0}); // Distance = 1.5 Å (within [0.8, 2.0] Å)
-  cell.addAtom("Si", {2.5, 0.0, 0.0}); // Distance = 2.5 Å (above max 2.0 Å, below global cutoff 3.0 Å)
+  cell.addAtom("Si",
+               {2.5, 0.0, 0.0}); // Distance = 2.5 Å (above max 2.0 Å, below global cutoff 3.0 Å)
 
   real_t const cutoff_sq = 9.0; // Global search cutoff = 3.0 Å
 
@@ -219,7 +231,8 @@ TEST(DistanceCalculatorTests, EnforcesMinimumAndMaximumBondCutoffs) {
       .num_bins = 150,
   };
 
-  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_graph, &out_histograms, config);
+  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_graph, &out_histograms,
+                              config);
 
   // All 3 pairs are within global cutoff 3.0 Å, so histogram has counts for them
   real_t total_count = 0.0;
@@ -269,7 +282,8 @@ TEST(DistanceCalculatorTests, LargeTriclinicCellSubcellPartitioning) {
       .num_bins = static_cast<size_t>(std::ceil(cutoff / 0.02)),
   };
 
-  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_graph, &out_histograms, config);
+  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_graph, &out_histograms,
+                              config);
 
   // Atom 0 <-> Atom 1 (2.0 Å) should be connected
   EXPECT_TRUE(out_graph.areConnected(AtomIndex{0}, AtomIndex{1}));
@@ -304,7 +318,8 @@ TEST(DistanceCalculatorTests, SmallCrystalCellMultiImageExpansion) {
       .num_bins = num_bins,
   };
 
-  DistanceCalculator::compute(cell, cutoff_sq, empty_bonds, false, out_graph, &out_histograms, config);
+  DistanceCalculator::compute(cell, cutoff_sq, empty_bonds, false, out_graph, &out_histograms,
+                              config);
 
   ASSERT_EQ(out_histograms.size(), 1);
   ASSERT_EQ(out_histograms[0].size(), 1);
@@ -343,19 +358,22 @@ TEST(DistanceCalculatorTests, SmallCellFCCMultiImageExpansionMatchesSupercellUpT
   auto unit_cell = crystals::createFCCCell(lat_a, "Cu", 1, 1, 1);
   RawHistogramTensor unit_hists;
   NeighborGraph unit_graph(unit_cell.atoms().size());
-  DistanceCalculator::compute(unit_cell, cutoff_sq, empty_bonds, false, unit_graph, &unit_hists, config);
+  DistanceCalculator::compute(unit_cell, cutoff_sq, empty_bonds, false, unit_graph, &unit_hists,
+                              config);
 
   // 2. Large supercell: 7x7x7 FCC (1372 atoms, cell dimension 25.2 Å > 20 Å)
   auto super_cell_7 = crystals::createFCCCell(lat_a, "Cu", 7, 7, 7);
   RawHistogramTensor super_hists_7;
   NeighborGraph super_graph_7(super_cell_7.atoms().size());
-  DistanceCalculator::compute(super_cell_7, cutoff_sq, empty_bonds, false, super_graph_7, &super_hists_7, config);
+  DistanceCalculator::compute(super_cell_7, cutoff_sq, empty_bonds, false, super_graph_7,
+                              &super_hists_7, config);
 
   // 3. Medium supercell: 5x5x5 FCC (500 atoms, cell dimension 18.0 Å)
   auto super_cell_5 = crystals::createFCCCell(lat_a, "Cu", 5, 5, 5);
   RawHistogramTensor super_hists_5;
   NeighborGraph super_graph_5(super_cell_5.atoms().size());
-  DistanceCalculator::compute(super_cell_5, cutoff_sq, empty_bonds, false, super_graph_5, &super_hists_5, config);
+  DistanceCalculator::compute(super_cell_5, cutoff_sq, empty_bonds, false, super_graph_5,
+                              &super_hists_5, config);
 
   const auto n_unit = static_cast<real_t>(unit_cell.atoms().size());
   const auto n_super_7 = static_cast<real_t>(super_cell_7.atoms().size());
@@ -372,10 +390,12 @@ TEST(DistanceCalculatorTests, SmallCellFCCMultiImageExpansionMatchesSupercellUpT
     cum_unit += unit_hists[0][0][bin] / n_unit;
     cum_super_7 += super_hists_7[0][0][bin] / n_super_7;
     cum_super_5 += super_hists_5[0][0][bin] / n_super_5;
-    EXPECT_NEAR(cum_unit, cum_super_7, 1e-3) << "Mismatch vs 7x7x7 at cumulative bin " << bin
-                                             << " (r = " << (static_cast<real_t>(bin) + 1.0) * bin_width << " Å)";
-    EXPECT_NEAR(cum_unit, cum_super_5, 1e-3) << "Mismatch vs 5x5x5 at cumulative bin " << bin
-                                             << " (r = " << (static_cast<real_t>(bin) + 1.0) * bin_width << " Å)";
+    EXPECT_NEAR(cum_unit, cum_super_7, 1e-3)
+        << "Mismatch vs 7x7x7 at cumulative bin " << bin
+        << " (r = " << (static_cast<real_t>(bin) + 1.0) * bin_width << " Å)";
+    EXPECT_NEAR(cum_unit, cum_super_5, 1e-3)
+        << "Mismatch vs 5x5x5 at cumulative bin " << bin
+        << " (r = " << (static_cast<real_t>(bin) + 1.0) * bin_width << " Å)";
   }
 }
 
@@ -396,19 +416,22 @@ TEST(DistanceCalculatorTests, SmallCellBCCMultiImageExpansionMatchesSupercellUpT
   auto unit_cell = crystals::createBCCCell(lat_a, "Fe", 1, 1, 1);
   RawHistogramTensor unit_hists;
   NeighborGraph unit_graph(unit_cell.atoms().size());
-  DistanceCalculator::compute(unit_cell, cutoff_sq, empty_bonds, false, unit_graph, &unit_hists, config);
+  DistanceCalculator::compute(unit_cell, cutoff_sq, empty_bonds, false, unit_graph, &unit_hists,
+                              config);
 
   // 2. Large supercell: 7x7x7 BCC (686 atoms, cell dimension 20.16 Å > 20 Å)
   auto super_cell_7 = crystals::createBCCCell(lat_a, "Fe", 7, 7, 7);
   RawHistogramTensor super_hists_7;
   NeighborGraph super_graph_7(super_cell_7.atoms().size());
-  DistanceCalculator::compute(super_cell_7, cutoff_sq, empty_bonds, false, super_graph_7, &super_hists_7, config);
+  DistanceCalculator::compute(super_cell_7, cutoff_sq, empty_bonds, false, super_graph_7,
+                              &super_hists_7, config);
 
   // 3. Medium supercell: 5x5x5 BCC (250 atoms, cell dimension 14.4 Å)
   auto super_cell_5 = crystals::createBCCCell(lat_a, "Fe", 5, 5, 5);
   RawHistogramTensor super_hists_5;
   NeighborGraph super_graph_5(super_cell_5.atoms().size());
-  DistanceCalculator::compute(super_cell_5, cutoff_sq, empty_bonds, false, super_graph_5, &super_hists_5, config);
+  DistanceCalculator::compute(super_cell_5, cutoff_sq, empty_bonds, false, super_graph_5,
+                              &super_hists_5, config);
 
   const auto n_unit = static_cast<real_t>(unit_cell.atoms().size());
   const auto n_super_7 = static_cast<real_t>(super_cell_7.atoms().size());
@@ -425,10 +448,12 @@ TEST(DistanceCalculatorTests, SmallCellBCCMultiImageExpansionMatchesSupercellUpT
     cum_unit += unit_hists[0][0][bin] / n_unit;
     cum_super_7 += super_hists_7[0][0][bin] / n_super_7;
     cum_super_5 += super_hists_5[0][0][bin] / n_super_5;
-    EXPECT_NEAR(cum_unit, cum_super_7, 1e-3) << "Mismatch vs 7x7x7 at cumulative bin " << bin
-                                             << " (r = " << (static_cast<real_t>(bin) + 1.0) * bin_width << " Å)";
-    EXPECT_NEAR(cum_unit, cum_super_5, 1e-3) << "Mismatch vs 5x5x5 at cumulative bin " << bin
-                                             << " (r = " << (static_cast<real_t>(bin) + 1.0) * bin_width << " Å)";
+    EXPECT_NEAR(cum_unit, cum_super_7, 1e-3)
+        << "Mismatch vs 7x7x7 at cumulative bin " << bin
+        << " (r = " << (static_cast<real_t>(bin) + 1.0) * bin_width << " Å)";
+    EXPECT_NEAR(cum_unit, cum_super_5, 1e-3)
+        << "Mismatch vs 5x5x5 at cumulative bin " << bin
+        << " (r = " << (static_cast<real_t>(bin) + 1.0) * bin_width << " Å)";
   }
 }
 
@@ -451,7 +476,8 @@ TEST(DistanceCalculatorTests, Large40ACellSubcellPartitioningAndPBCWrapping) {
   // Atom 4 across Z PBC boundary at (0.5, 0.5, 38.8) in bin (0, 0, 7) (wrapped dist = 1.7 Å)
   cell.addAtom("Si", {0.5, 0.5, 38.8});
 
-  // Atom 5 across diagonal 3D corner PBC at (39.5, 39.5, 39.5) in bin (7, 7, 7) (wrapped dist = sqrt(3) ≈ 1.732 Å)
+  // Atom 5 across diagonal 3D corner PBC at (39.5, 39.5, 39.5) in bin (7, 7, 7) (wrapped dist =
+  // sqrt(3) ≈ 1.732 Å)
   cell.addAtom("Si", {39.5, 39.5, 39.5});
 
   // Atom 6 deep in interior at (20.0, 20.0, 20.0) in bin (4, 4, 4) (~28 Å away from Atom 0)
@@ -472,7 +498,8 @@ TEST(DistanceCalculatorTests, Large40ACellSubcellPartitioningAndPBCWrapping) {
       .num_bins = static_cast<size_t>(std::ceil(cutoff / 0.05)),
   };
 
-  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_graph, &out_histograms, config);
+  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_graph, &out_histograms,
+                              config);
 
   // Atom 0 <-> Atom 1 (1.0 Å within subcell)
   EXPECT_TRUE(out_graph.areConnected(AtomIndex{0}, AtomIndex{1}));
@@ -540,7 +567,8 @@ TEST(DistanceCalculatorTests, Large40ATriclinicSubcellPartitioningAndPBCWrapping
       .num_bins = static_cast<size_t>(std::ceil(cutoff / 0.05)),
   };
 
-  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_graph, &out_histograms, config);
+  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, out_graph, &out_histograms,
+                              config);
 
   // Atom 0 <-> Atom 1 (distant center subcell) must NOT be connected
   EXPECT_FALSE(out_graph.areConnected(AtomIndex{0}, AtomIndex{1}));

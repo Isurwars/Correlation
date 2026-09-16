@@ -27,15 +27,16 @@ protected:
 TEST_F(StructureFactorCalculatorTests, CalculatesSimpleCubicBraggPeak) {
   // Build a 2x2x2 simple cubic supercell with lattice constant a=3.0 Å
   const real_t vec_a = 3.0;
-  correlation::core::Cell cell(std::array<real_t, 6>{static_cast<real_t>(2 * vec_a), static_cast<real_t>(2 * vec_a),
-                                                     static_cast<real_t>(2 * vec_a), 90.0, 90.0, 90.0});
+  correlation::core::Cell cell(
+      std::array<real_t, 6>{static_cast<real_t>(2 * vec_a), static_cast<real_t>(2 * vec_a),
+                            static_cast<real_t>(2 * vec_a), 90.0, 90.0, 90.0});
 
   // 8 atoms at corners of a 2x2x2 supercell
   for (int ix = 0; ix < 2; ++ix) {
     for (int iy = 0; iy < 2; ++iy) {
       for (int iz = 0; iz < 2; ++iz) {
-        cell.addAtom(
-            "Si", {static_cast<real_t>(ix) * vec_a, static_cast<real_t>(iy) * vec_a, static_cast<real_t>(iz) * vec_a});
+        cell.addAtom("Si", {static_cast<real_t>(ix) * vec_a, static_cast<real_t>(iy) * vec_a,
+                            static_cast<real_t>(iz) * vec_a});
       }
     }
   }
@@ -115,7 +116,8 @@ TEST_F(StructureFactorCalculatorTests, DimerProducesValidSQ) {
     real_t q_val = hist.bins[i];
     real_t expected_sq = static_cast<real_t>(1.0);
     if (q_val > static_cast<real_t>(1e-6)) {
-      expected_sq += std::sin(q_val * static_cast<real_t>(1.5)) / (q_val * static_cast<real_t>(1.5));
+      expected_sq +=
+          std::sin(q_val * static_cast<real_t>(1.5)) / (q_val * static_cast<real_t>(1.5));
     } else {
       expected_sq = static_cast<real_t>(2.0);
     }

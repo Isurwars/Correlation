@@ -34,7 +34,8 @@
 namespace correlation::core {
 
 /// Maximum trajectory file size (4 GiB).
-inline constexpr std::uint64_t kMaxTrajectoryBytes = static_cast<std::uint64_t>(4) * 1024 * 1024 * 1024;
+inline constexpr std::uint64_t kMaxTrajectoryBytes =
+    static_cast<std::uint64_t>(4) * 1024 * 1024 * 1024;
 
 /**
  * @class MappedFile
@@ -61,8 +62,8 @@ public:
    */
   explicit MappedFile(const std::string &path, bool enforce_size_limit = true)
 #ifdef _WIN32
-      : file_handle_(CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING,
-                                 FILE_ATTRIBUTE_NORMAL, nullptr))
+      : file_handle_(CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr,
+                                 OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr))
 #else
       : fd_(::open(path.c_str(), O_RDONLY, 0))
 #endif
@@ -183,7 +184,9 @@ public:
   [[nodiscard]] std::size_t size() const noexcept { return size_; }
 
   /// Convenience: pointer past the end.
-  [[nodiscard]] const char *end() const noexcept { return static_cast<const char *>(data_) + size_; }
+  [[nodiscard]] const char *end() const noexcept {
+    return static_cast<const char *>(data_) + size_;
+  }
 
 private:
   void release() noexcept {

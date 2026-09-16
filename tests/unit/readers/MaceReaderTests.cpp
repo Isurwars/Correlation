@@ -113,13 +113,12 @@ TEST_F(MaceReaderTests, ReadMultiFrameTrajectory) {
 }
 
 TEST_F(MaceReaderTests, ReadStructureReturnsLastFrame) {
-  std::string const traj_content =
-      "1\n"
-      "Properties=species:S:1:pos:R:3 energy=-10.0\n"
-      "H 0.0 0.0 0.0\n"
-      "1\n"
-      "Properties=species:S:1:pos:R:3 energy=-15.0\n"
-      "H 1.0 1.0 1.0\n";
+  std::string const traj_content = "1\n"
+                                   "Properties=species:S:1:pos:R:3 energy=-10.0\n"
+                                   "H 0.0 0.0 0.0\n"
+                                   "1\n"
+                                   "Properties=species:S:1:pos:R:3 energy=-15.0\n"
+                                   "H 1.0 1.0 1.0\n";
 
   auto file_path = createTempFile({.filename = "last_frame.xyz", .content = traj_content});
 
@@ -132,10 +131,9 @@ TEST_F(MaceReaderTests, ReadStructureReturnsLastFrame) {
 }
 
 TEST_F(MaceReaderTests, MalformedHeaderThrows) {
-  std::string const malformed_content =
-      "invalid_count\n"
-      "Properties=species:S:1:pos:R:3\n"
-      "H 0.0 0.0 0.0\n";
+  std::string const malformed_content = "invalid_count\n"
+                                        "Properties=species:S:1:pos:R:3\n"
+                                        "H 0.0 0.0 0.0\n";
 
   auto file_path = createTempFile({.filename = "malformed.extxyz", .content = malformed_content});
 

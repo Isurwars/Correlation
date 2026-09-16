@@ -17,7 +17,8 @@ namespace correlation::testing::crystals {
 /// \param n_x Number of unit cells along X
 /// \param n_y Number of unit cells along Y
 /// \param n_z Number of unit cells along Z
-inline correlation::core::Cell createSimpleCubicCell(real_t lat_a, const std::string &element = "Ar", int n_x = 2,
+inline correlation::core::Cell createSimpleCubicCell(real_t lat_a,
+                                                     const std::string &element = "Ar", int n_x = 2,
                                                      int n_y = 2, int n_z = 2) {
   real_t const box_x = static_cast<real_t>(n_x) * lat_a;
   real_t const box_y = static_cast<real_t>(n_y) * lat_a;
@@ -45,8 +46,8 @@ inline correlation::core::Cell createSimpleCubicCell(real_t lat_a, const std::st
 /// \param n_x Number of unit cells along X
 /// \param n_y Number of unit cells along Y
 /// \param n_z Number of unit cells along Z
-inline correlation::core::Cell createFCCCell(real_t lat_a, const std::string &element = "Cu", int n_x = 2, int n_y = 2,
-                                             int n_z = 2) {
+inline correlation::core::Cell createFCCCell(real_t lat_a, const std::string &element = "Cu",
+                                             int n_x = 2, int n_y = 2, int n_z = 2) {
   real_t const box_x = static_cast<real_t>(n_x) * lat_a;
   real_t const box_y = static_cast<real_t>(n_y) * lat_a;
   real_t const box_z = static_cast<real_t>(n_z) * lat_a;
@@ -61,9 +62,12 @@ inline correlation::core::Cell createFCCCell(real_t lat_a, const std::string &el
         real_t const o_z = static_cast<real_t>(i_z) * lat_a;
 
         cell.addAtom(element, {o_x, o_y, o_z});
-        cell.addAtom(element, {o_x + static_cast<real_t>(0.5) * lat_a, o_y + static_cast<real_t>(0.5) * lat_a, o_z});
-        cell.addAtom(element, {o_x + static_cast<real_t>(0.5) * lat_a, o_y, o_z + static_cast<real_t>(0.5) * lat_a});
-        cell.addAtom(element, {o_x, o_y + static_cast<real_t>(0.5) * lat_a, o_z + static_cast<real_t>(0.5) * lat_a});
+        cell.addAtom(element, {o_x + static_cast<real_t>(0.5) * lat_a,
+                               o_y + static_cast<real_t>(0.5) * lat_a, o_z});
+        cell.addAtom(element, {o_x + static_cast<real_t>(0.5) * lat_a, o_y,
+                               o_z + static_cast<real_t>(0.5) * lat_a});
+        cell.addAtom(element, {o_x, o_y + static_cast<real_t>(0.5) * lat_a,
+                               o_z + static_cast<real_t>(0.5) * lat_a});
       }
     }
   }
@@ -77,8 +81,8 @@ inline correlation::core::Cell createFCCCell(real_t lat_a, const std::string &el
 /// \param n_x Number of unit cells along X
 /// \param n_y Number of unit cells along Y
 /// \param n_z Number of unit cells along Z
-inline correlation::core::Cell createBCCCell(real_t lat_a, const std::string &element = "Fe", int n_x = 2, int n_y = 2,
-                                             int n_z = 2) {
+inline correlation::core::Cell createBCCCell(real_t lat_a, const std::string &element = "Fe",
+                                             int n_x = 2, int n_y = 2, int n_z = 2) {
   real_t const box_x = static_cast<real_t>(n_x) * lat_a;
   real_t const box_y = static_cast<real_t>(n_y) * lat_a;
   real_t const box_z = static_cast<real_t>(n_z) * lat_a;
@@ -93,7 +97,8 @@ inline correlation::core::Cell createBCCCell(real_t lat_a, const std::string &el
         real_t const o_z = static_cast<real_t>(i_z) * lat_a;
 
         cell.addAtom(element, {o_x, o_y, o_z});
-        cell.addAtom(element, {o_x + static_cast<real_t>(0.5) * lat_a, o_y + static_cast<real_t>(0.5) * lat_a,
+        cell.addAtom(element, {o_x + static_cast<real_t>(0.5) * lat_a,
+                               o_y + static_cast<real_t>(0.5) * lat_a,
                                o_z + static_cast<real_t>(0.5) * lat_a});
       }
     }
@@ -109,7 +114,8 @@ inline correlation::core::Cell createBCCCell(real_t lat_a, const std::string &el
 /// \param n_x Number of unit cells along X
 /// \param n_y Number of unit cells along Y
 /// \param n_z Number of unit cells along Z
-inline correlation::core::Cell createHCPCell(real_t lat_a, real_t lat_c, const std::string &element = "Mg", int n_x = 2,
+inline correlation::core::Cell createHCPCell(real_t lat_a, real_t lat_c,
+                                             const std::string &element = "Mg", int n_x = 2,
                                              int n_y = 2, int n_z = 2) {
   constexpr real_t SQRT3 = std::numbers::sqrt3_v<real_t>;
   real_t const box_x = static_cast<real_t>(n_x) * lat_a;
@@ -121,13 +127,15 @@ inline correlation::core::Cell createHCPCell(real_t lat_a, real_t lat_c, const s
   for (int i_x = 0; i_x < n_x; ++i_x) {
     for (int i_y = 0; i_y < n_y; ++i_y) {
       for (int i_z = 0; i_z < n_z; ++i_z) {
-        real_t const o_x = static_cast<real_t>(i_x) * lat_a +
-                           (i_y % 2 == 1 ? static_cast<real_t>(0.5) * lat_a : static_cast<real_t>(0.0));
+        real_t const o_x =
+            static_cast<real_t>(i_x) * lat_a +
+            (i_y % 2 == 1 ? static_cast<real_t>(0.5) * lat_a : static_cast<real_t>(0.0));
         real_t const o_y = static_cast<real_t>(i_y) * lat_a * SQRT3 / static_cast<real_t>(2.0);
         real_t const o_z = static_cast<real_t>(i_z) * lat_c;
 
         cell.addAtom(element, {o_x, o_y, o_z});
-        cell.addAtom(element, {o_x + static_cast<real_t>(0.5) * lat_a, o_y + lat_a / static_cast<real_t>(2.0 * SQRT3),
+        cell.addAtom(element, {o_x + static_cast<real_t>(0.5) * lat_a,
+                               o_y + lat_a / static_cast<real_t>(2.0 * SQRT3),
                                o_z + static_cast<real_t>(0.5) * lat_c});
       }
     }
@@ -142,8 +150,8 @@ inline correlation::core::Cell createHCPCell(real_t lat_a, real_t lat_c, const s
 /// \param n_x Number of unit cells along X
 /// \param n_y Number of unit cells along Y
 /// \param n_z Number of unit cells along Z
-inline correlation::core::Cell createDiamondCell(real_t lat_a, const std::string &element = "Si", int n_x = 2,
-                                                 int n_y = 2, int n_z = 2) {
+inline correlation::core::Cell createDiamondCell(real_t lat_a, const std::string &element = "Si",
+                                                 int n_x = 2, int n_y = 2, int n_z = 2) {
   real_t const box_x = static_cast<real_t>(n_x) * lat_a;
   real_t const box_y = static_cast<real_t>(n_y) * lat_a;
   real_t const box_z = static_cast<real_t>(n_z) * lat_a;
@@ -159,18 +167,25 @@ inline correlation::core::Cell createDiamondCell(real_t lat_a, const std::string
 
         // FCC basis
         cell.addAtom(element, {o_x, o_y, o_z});
-        cell.addAtom(element, {o_x + static_cast<real_t>(0.5) * lat_a, o_y + static_cast<real_t>(0.5) * lat_a, o_z});
-        cell.addAtom(element, {o_x + static_cast<real_t>(0.5) * lat_a, o_y, o_z + static_cast<real_t>(0.5) * lat_a});
-        cell.addAtom(element, {o_x, o_y + static_cast<real_t>(0.5) * lat_a, o_z + static_cast<real_t>(0.5) * lat_a});
+        cell.addAtom(element, {o_x + static_cast<real_t>(0.5) * lat_a,
+                               o_y + static_cast<real_t>(0.5) * lat_a, o_z});
+        cell.addAtom(element, {o_x + static_cast<real_t>(0.5) * lat_a, o_y,
+                               o_z + static_cast<real_t>(0.5) * lat_a});
+        cell.addAtom(element, {o_x, o_y + static_cast<real_t>(0.5) * lat_a,
+                               o_z + static_cast<real_t>(0.5) * lat_a});
 
         // Shifted FCC basis by (a/4, a/4, a/4)
-        cell.addAtom(element, {o_x + static_cast<real_t>(0.25) * lat_a, o_y + static_cast<real_t>(0.25) * lat_a,
+        cell.addAtom(element, {o_x + static_cast<real_t>(0.25) * lat_a,
+                               o_y + static_cast<real_t>(0.25) * lat_a,
                                o_z + static_cast<real_t>(0.25) * lat_a});
-        cell.addAtom(element, {o_x + static_cast<real_t>(0.75) * lat_a, o_y + static_cast<real_t>(0.75) * lat_a,
+        cell.addAtom(element, {o_x + static_cast<real_t>(0.75) * lat_a,
+                               o_y + static_cast<real_t>(0.75) * lat_a,
                                o_z + static_cast<real_t>(0.25) * lat_a});
-        cell.addAtom(element, {o_x + static_cast<real_t>(0.75) * lat_a, o_y + static_cast<real_t>(0.25) * lat_a,
+        cell.addAtom(element, {o_x + static_cast<real_t>(0.75) * lat_a,
+                               o_y + static_cast<real_t>(0.25) * lat_a,
                                o_z + static_cast<real_t>(0.75) * lat_a});
-        cell.addAtom(element, {o_x + static_cast<real_t>(0.25) * lat_a, o_y + static_cast<real_t>(0.75) * lat_a,
+        cell.addAtom(element, {o_x + static_cast<real_t>(0.25) * lat_a,
+                               o_y + static_cast<real_t>(0.75) * lat_a,
                                o_z + static_cast<real_t>(0.75) * lat_a});
       }
     }
@@ -187,8 +202,8 @@ inline correlation::core::Cell createDiamondCell(real_t lat_a, const std::string
 /// \param n_y Number of unit cells along Y
 /// \param n_z Number of unit cells along Z
 inline correlation::core::Cell createNaClCell(real_t lat_a, const std::string &cat_elem = "Na",
-                                              const std::string &an_elem = "Cl", int n_x = 2, int n_y = 2,
-                                              int n_z = 2) {
+                                              const std::string &an_elem = "Cl", int n_x = 2,
+                                              int n_y = 2, int n_z = 2) {
   real_t const box_x = static_cast<real_t>(n_x) * lat_a;
   real_t const box_y = static_cast<real_t>(n_y) * lat_a;
   real_t const box_z = static_cast<real_t>(n_z) * lat_a;
@@ -204,15 +219,19 @@ inline correlation::core::Cell createNaClCell(real_t lat_a, const std::string &c
 
         // Cations (Na) at FCC lattice sites
         cell.addAtom(cat_elem, {o_x, o_y, o_z});
-        cell.addAtom(cat_elem, {o_x + static_cast<real_t>(0.5) * lat_a, o_y + static_cast<real_t>(0.5) * lat_a, o_z});
-        cell.addAtom(cat_elem, {o_x + static_cast<real_t>(0.5) * lat_a, o_y, o_z + static_cast<real_t>(0.5) * lat_a});
-        cell.addAtom(cat_elem, {o_x, o_y + static_cast<real_t>(0.5) * lat_a, o_z + static_cast<real_t>(0.5) * lat_a});
+        cell.addAtom(cat_elem, {o_x + static_cast<real_t>(0.5) * lat_a,
+                                o_y + static_cast<real_t>(0.5) * lat_a, o_z});
+        cell.addAtom(cat_elem, {o_x + static_cast<real_t>(0.5) * lat_a, o_y,
+                                o_z + static_cast<real_t>(0.5) * lat_a});
+        cell.addAtom(cat_elem, {o_x, o_y + static_cast<real_t>(0.5) * lat_a,
+                                o_z + static_cast<real_t>(0.5) * lat_a});
 
         // Anions (Cl) at FCC sites shifted by (a/2, 0, 0)
         cell.addAtom(an_elem, {o_x + static_cast<real_t>(0.5) * lat_a, o_y, o_z});
         cell.addAtom(an_elem, {o_x, o_y + static_cast<real_t>(0.5) * lat_a, o_z});
         cell.addAtom(an_elem, {o_x, o_y, o_z + static_cast<real_t>(0.5) * lat_a});
-        cell.addAtom(an_elem, {o_x + static_cast<real_t>(0.5) * lat_a, o_y + static_cast<real_t>(0.5) * lat_a,
+        cell.addAtom(an_elem, {o_x + static_cast<real_t>(0.5) * lat_a,
+                               o_y + static_cast<real_t>(0.5) * lat_a,
                                o_z + static_cast<real_t>(0.5) * lat_a});
       }
     }
@@ -257,8 +276,8 @@ inline correlation::core::Cell createWaterMoleculeCell(WaterMoleculeOptions cons
   // H1 along +X axis from O
   cell.addAtom("H", {opts.O_pos.x() + opts.r_OH, opts.O_pos.y(), opts.O_pos.z()});
   // H2 rotated by ang_rad in XY plane
-  cell.addAtom("H", {opts.O_pos.x() + opts.r_OH * std::cos(ang_rad), opts.O_pos.y() + opts.r_OH * std::sin(ang_rad),
-                     opts.O_pos.z()});
+  cell.addAtom("H", {opts.O_pos.x() + opts.r_OH * std::cos(ang_rad),
+                     opts.O_pos.y() + opts.r_OH * std::sin(ang_rad), opts.O_pos.z()});
 
   return cell;
 }
@@ -276,17 +295,18 @@ struct TriatomicAngleCellOptions {
 
 /// Create a Triatomic Bent / Angle molecule cell.
 /// \param opts Configuration options for the triatomic angle cell
-inline correlation::core::Cell createTriatomicAngleCell(TriatomicAngleCellOptions const &opts = {}) {
+inline correlation::core::Cell
+createTriatomicAngleCell(TriatomicAngleCellOptions const &opts = {}) {
   correlation::core::Cell cell({opts.box_size, opts.box_size, opts.box_size, 90.0, 90.0, 90.0});
   real_t const mid = opts.box_size * static_cast<real_t>(0.5);
   cell.addAtom(opts.center_elem, {mid, mid, mid});
   cell.addAtom(opts.arm_elem1, {mid + opts.dist1, mid, mid});
 
   real_t const ang_rad = opts.angle_deg * static_cast<real_t>(correlation::math::deg_to_rad);
-  cell.addAtom(opts.arm_elem2, {mid + opts.dist2 * std::cos(ang_rad), mid + opts.dist2 * std::sin(ang_rad), mid});
+  cell.addAtom(opts.arm_elem2,
+               {mid + opts.dist2 * std::cos(ang_rad), mid + opts.dist2 * std::sin(ang_rad), mid});
   return cell;
 }
-
 
 /// Parameters for Regular N-Polygon Ring cell creation.
 struct RingCellOptions {
@@ -302,10 +322,12 @@ inline correlation::core::Cell createRingCell(RingCellOptions const &opts = {}) 
   correlation::core::Cell cell({opts.box_size, opts.box_size, opts.box_size, 90.0, 90.0, 90.0});
   real_t const mid = opts.box_size * static_cast<real_t>(0.5);
 
-  real_t const d_theta = static_cast<real_t>(correlation::math::two_pi) / static_cast<real_t>(opts.num_atoms);
+  real_t const d_theta =
+      static_cast<real_t>(correlation::math::two_pi) / static_cast<real_t>(opts.num_atoms);
   for (size_t i = 0; i < opts.num_atoms; ++i) {
     real_t const theta = static_cast<real_t>(i) * d_theta;
-    cell.addAtom(opts.element, {mid + opts.radius * std::cos(theta), mid + opts.radius * std::sin(theta), mid});
+    cell.addAtom(opts.element,
+                 {mid + opts.radius * std::cos(theta), mid + opts.radius * std::sin(theta), mid});
   }
 
   return cell;
@@ -321,7 +343,8 @@ struct IcosahedralClusterOptions {
 
 /// Create a 13-atom Icosahedral Cluster cell.
 /// \param opts Configuration options for the cluster cell
-inline correlation::core::Cell createIcosahedralClusterCell(IcosahedralClusterOptions const &opts = {}) {
+inline correlation::core::Cell
+createIcosahedralClusterCell(IcosahedralClusterOptions const &opts = {}) {
   correlation::core::Cell cell({opts.box_size, opts.box_size, opts.box_size, 90.0, 90.0, 90.0});
   real_t const mid = opts.box_size * static_cast<real_t>(0.5);
 

@@ -39,15 +39,17 @@ struct PlotConfig {
   real_t height = static_cast<real_t>(900.0); ///< SVG canvas height (px).
   bool show_grid = true;                      ///< Whether to render background grid lines.
   bool show_markers = false;                  ///< Whether to render data point markers (dots).
-  bool fill_area = false;                     ///< Whether to render matching gradient fills under the curves.
-  bool show_difference_curve = false;         ///< Toggle overlaid absolute difference curve Y_diff = Y_ref - Y_target.
+  bool fill_area = false; ///< Whether to render matching gradient fills under the curves.
+  bool show_difference_curve =
+      false; ///< Toggle overlaid absolute difference curve Y_diff = Y_ref - Y_target.
 
   // Publication settings
   real_t font_scale = static_cast<real_t>(1.0);  ///< Multiplier for all font sizes
   real_t line_width = static_cast<real_t>(3.0);  ///< Data line stroke width
   real_t marker_size = static_cast<real_t>(3.5); ///< Data point marker radius (px)
   bool show_legend = true;                       ///< Toggle legend visibility
-  bool use_native_text = false;                  ///< Use standard SVG &lt;text&gt; elements instead of Hershey paths.
+  bool use_native_text =
+      false; ///< Use standard SVG &lt;text&gt; elements instead of Hershey paths.
 
   /** @brief Color palette selections */
   enum class Palette : std::uint8_t {
@@ -129,7 +131,7 @@ enum class TextAnchor : std::uint8_t {
  * @brief Custom rendering style for individual comparison curves.
  */
 struct CurveStyle {
-  std::string color_hex;     ///< Custom hex color string (e.g. "#E63946"). Empty uses default palette.
+  std::string color_hex; ///< Custom hex color string (e.g. "#E63946"). Empty uses default palette.
   float stroke_width = 2.0F; ///< Stroke line thickness in px.
   int dash_style = 0;        ///< Dash pattern style (0: Solid, 1: Dashed, 2: Dotted).
   bool visible = true;       ///< Visibility toggle flag.
@@ -142,14 +144,15 @@ struct LabeledHistogram {
   std::string label;                            ///< Run / dataset label.
   const correlation::analysis::Histogram *hist; ///< Pointer to histogram data.
   CurveStyle style{};                           ///< Per-curve custom style settings.
-  bool is_difference = false;                   ///< Flag indicating if this is an overlaid difference curve.
+  bool is_difference = false; ///< Flag indicating if this is an overlaid difference curve.
 };
 
 /**
- * @brief Samples a 1D dataset y(x) at point x using linear interpolation with boundary clamping to [x_min, x_max].
+ * @brief Samples a 1D dataset y(x) at point x using linear interpolation with boundary clamping to
+ * [x_min, x_max].
  */
-inline real_t sampleHistogramClamped(const std::vector<real_t> &x_bins, const std::vector<real_t> &y_vals,
-                                     real_t x_val) {
+inline real_t sampleHistogramClamped(const std::vector<real_t> &x_bins,
+                                     const std::vector<real_t> &y_vals, real_t x_val) {
   if (x_bins.empty() || y_vals.empty()) {
     return static_cast<real_t>(0.0);
   }
@@ -178,8 +181,9 @@ inline real_t sampleHistogramClamped(const std::vector<real_t> &x_bins, const st
  * @brief Renders text as a filled SVG path using the Roboto outline font.
  * Uses evenodd fill-rule to render the font's inner holes properly.
  */
-inline std::string renderTextAsPath(const std::string &text, real_t x_pos, real_t y_pos, real_t size, TextAnchor anchor,
-                                    const std::string &color, bool use_native_text = false) {
+inline std::string renderTextAsPath(const std::string &text, real_t x_pos, real_t y_pos,
+                                    real_t size, TextAnchor anchor, const std::string &color,
+                                    bool use_native_text = false) {
   std::string anchor_str = "start";
   if (anchor == TextAnchor::Middle) {
     anchor_str = "middle";
@@ -200,7 +204,8 @@ inline std::string renderTextAsPath(const std::string &text, real_t x_pos, real_
       .font_size = size,
       .anchor = anchor_str,
   });
-  return std::format("  <path d=\"{}\" fill=\"{}\" fill-rule=\"evenodd\" stroke=\"none\"/>\n", path_d, color);
+  return std::format("  <path d=\"{}\" fill=\"{}\" fill-rule=\"evenodd\" stroke=\"none\"/>\n",
+                     path_d, color);
 }
 
 namespace detail {
@@ -218,10 +223,12 @@ constexpr std::array<std::string_view, 8> kColors = {
 };
 
 /// Grayscale palette for B&W printing.
-constexpr std::array<std::string_view, 5> kGrayscale = {"#000000", "#404040", "#808080", "#B0B0B0", "#D0D0D0"};
+constexpr std::array<std::string_view, 5> kGrayscale = {"#000000", "#404040", "#808080", "#B0B0B0",
+                                                        "#D0D0D0"};
 
 /// Viridis perceptually uniform palette.
-constexpr std::array<std::string_view, 5> kViridis = {"#440154", "#3B528B", "#21908C", "#5DC863", "#FDE725"};
+constexpr std::array<std::string_view, 5> kViridis = {"#440154", "#3B528B", "#21908C", "#5DC863",
+                                                      "#FDE725"};
 
 struct ColorStop {
   float t;
@@ -234,26 +241,29 @@ inline std::string interpolateColorStops(float position, std::span<const ColorSt
   }
   if (position <= stops.front().t) {
     return std::format("#{:02X}{:02X}{:02X}", static_cast<unsigned int>(stops.front().r),
-                       static_cast<unsigned int>(stops.front().g), static_cast<unsigned int>(stops.front().b));
+                       static_cast<unsigned int>(stops.front().g),
+                       static_cast<unsigned int>(stops.front().b));
   }
   if (position >= stops.back().t) {
     return std::format("#{:02X}{:02X}{:02X}", static_cast<unsigned int>(stops.back().r),
-                       static_cast<unsigned int>(stops.back().g), static_cast<unsigned int>(stops.back().b));
+                       static_cast<unsigned int>(stops.back().g),
+                       static_cast<unsigned int>(stops.back().b));
   }
   for (std::size_t i = 0; i < stops.size() - 1; ++i) {
     if (position >= stops[i].t && position <= stops[i + 1].t) {
       float factor = (position - stops[i].t) / (stops[i + 1].t - stops[i].t);
-      auto red = static_cast<unsigned int>(
-          std::round(std::lerp(static_cast<float>(stops[i].r), static_cast<float>(stops[i + 1].r), factor)));
-      auto green = static_cast<unsigned int>(
-          std::round(std::lerp(static_cast<float>(stops[i].g), static_cast<float>(stops[i + 1].g), factor)));
-      auto blue = static_cast<unsigned int>(
-          std::round(std::lerp(static_cast<float>(stops[i].b), static_cast<float>(stops[i + 1].b), factor)));
+      auto red = static_cast<unsigned int>(std::round(
+          std::lerp(static_cast<float>(stops[i].r), static_cast<float>(stops[i + 1].r), factor)));
+      auto green = static_cast<unsigned int>(std::round(
+          std::lerp(static_cast<float>(stops[i].g), static_cast<float>(stops[i + 1].g), factor)));
+      auto blue = static_cast<unsigned int>(std::round(
+          std::lerp(static_cast<float>(stops[i].b), static_cast<float>(stops[i + 1].b), factor)));
       return std::format("#{:02X}{:02X}{:02X}", red, green, blue);
     }
   }
   return std::format("#{:02X}{:02X}{:02X}", static_cast<unsigned int>(stops.back().r),
-                     static_cast<unsigned int>(stops.back().g), static_cast<unsigned int>(stops.back().b));
+                     static_cast<unsigned int>(stops.back().g),
+                     static_cast<unsigned int>(stops.back().b));
 }
 
 inline std::string sampleContinuousColormap(float position, PlotConfig::Palette pal) {
@@ -267,10 +277,11 @@ inline std::string sampleContinuousColormap(float position, PlotConfig::Palette 
     return interpolateColorStops(position, kMagmaStops);
   }
   case PlotConfig::Palette::Heatmap: {
-    constexpr std::array<ColorStop, 4> kHeatmapStops = {{{.t = 0.00F, .r = 0, .g = 0, .b = 0},
-                                                         {.t = 0.33F, .r = 255, .g = 0, .b = 0},
-                                                         {.t = 0.66F, .r = 255, .g = 255, .b = 0},
-                                                         {.t = 1.00F, .r = 255, .g = 255, .b = 255}}};
+    constexpr std::array<ColorStop, 4> kHeatmapStops = {
+        {{.t = 0.00F, .r = 0, .g = 0, .b = 0},
+         {.t = 0.33F, .r = 255, .g = 0, .b = 0},
+         {.t = 0.66F, .r = 255, .g = 255, .b = 0},
+         {.t = 1.00F, .r = 255, .g = 255, .b = 255}}};
     return interpolateColorStops(position, kHeatmapStops);
   }
   case PlotConfig::Palette::Rainbow: {
@@ -298,19 +309,21 @@ inline std::string sampleContinuousColormap(float position, PlotConfig::Palette 
     return interpolateColorStops(position, kPlasmaStops);
   }
   case PlotConfig::Palette::Inferno: {
-    constexpr std::array<ColorStop, 5> kInfernoStops = {{{.t = 0.00F, .r = 0, .g = 0, .b = 4},
-                                                         {.t = 0.25F, .r = 87, .g = 9, .b = 107},
-                                                         {.t = 0.50F, .r = 187, .g = 55, .b = 84},
-                                                         {.t = 0.75F, .r = 249, .g = 142, .b = 9},
-                                                         {.t = 1.00F, .r = 252, .g = 255, .b = 164}}};
+    constexpr std::array<ColorStop, 5> kInfernoStops = {
+        {{.t = 0.00F, .r = 0, .g = 0, .b = 4},
+         {.t = 0.25F, .r = 87, .g = 9, .b = 107},
+         {.t = 0.50F, .r = 187, .g = 55, .b = 84},
+         {.t = 0.75F, .r = 249, .g = 142, .b = 9},
+         {.t = 1.00F, .r = 252, .g = 255, .b = 164}}};
     return interpolateColorStops(position, kInfernoStops);
   }
   case PlotConfig::Palette::Cividis: {
-    constexpr std::array<ColorStop, 5> kCividisStops = {{{.t = 0.00F, .r = 0, .g = 32, .b = 81},
-                                                         {.t = 0.25F, .r = 58, .g = 71, .b = 108},
-                                                         {.t = 0.50F, .r = 107, .g = 112, .b = 116},
-                                                         {.t = 0.75F, .r = 161, .g = 156, .b = 114},
-                                                         {.t = 1.00F, .r = 254, .g = 254, .b = 98}}};
+    constexpr std::array<ColorStop, 5> kCividisStops = {
+        {{.t = 0.00F, .r = 0, .g = 32, .b = 81},
+         {.t = 0.25F, .r = 58, .g = 71, .b = 108},
+         {.t = 0.50F, .r = 107, .g = 112, .b = 116},
+         {.t = 0.75F, .r = 161, .g = 156, .b = 114},
+         {.t = 1.00F, .r = 254, .g = 254, .b = 98}}};
     return interpolateColorStops(position, kCividisStops);
   }
   default:
@@ -334,7 +347,8 @@ inline std::string color(std::size_t index, std::size_t total_count, PlotConfig:
   case PlotConfig::Palette::OkabeIto:
     return std::string(kColors.at(index % kColors.size()));
   default: {
-    float position = (total_count <= 1) ? 0.5F : static_cast<float>(index) / static_cast<float>(total_count - 1);
+    float position =
+        (total_count <= 1) ? 0.5F : static_cast<float>(index) / static_cast<float>(total_count - 1);
     return sampleContinuousColormap(position, pal);
   }
   }
@@ -343,7 +357,9 @@ inline std::string color(std::size_t index, std::size_t total_count, PlotConfig:
 /**
  * @brief Legacy overload retrieving color with default count.
  */
-inline std::string color(std::size_t index, PlotConfig::Palette pal) { return color(index, 8, pal); }
+inline std::string color(std::size_t index, PlotConfig::Palette pal) {
+  return color(index, 8, pal);
+}
 
 /**
  * @brief Maps a value from data space to SVG coordinate space.
@@ -354,7 +370,8 @@ inline std::string color(std::size_t index, PlotConfig::Palette pal) { return co
  * @param svg_max Target SVG end coordinate.
  * @return The mapped SVG coordinate.
  */
-inline real_t mapValue(real_t value, real_t data_min, real_t data_max, real_t svg_min, real_t svg_max) {
+inline real_t mapValue(real_t value, real_t data_min, real_t data_max, real_t svg_min,
+                       real_t svg_max) {
   if (std::abs(data_max - data_min) < static_cast<real_t>(1e-15)) {
     return (svg_min + svg_max) / static_cast<real_t>(2.0);
   }

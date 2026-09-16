@@ -91,7 +91,8 @@ TEST(CorrelationEngineTests, RunAnalysisSucceedsOnSingleFrameTrajectory) {
 
   bool progress_called = false;
   auto const result = CorrelationEngine::runAnalysis(
-      traj, config, [&progress_called](float /*p*/, const std::string & /*msg*/) { progress_called = true; });
+      traj, config,
+      [&progress_called](float /*p*/, const std::string & /*msg*/) { progress_called = true; });
 
   ASSERT_TRUE(result.has_value()) << "runAnalysis failed: " << (result ? "" : result.error());
   ASSERT_NE(result.value(), nullptr);

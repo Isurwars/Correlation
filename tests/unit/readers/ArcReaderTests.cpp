@@ -52,7 +52,8 @@ TEST(ArcReaderTests, ReadsTrajectory) {
   // Frame 2 check
   const auto &frame_2 = traj.getFrame(1);
   EXPECT_EQ(frame_2.atomCount(), 1);
-  EXPECT_THAT(frame_2.lattice_parameters()[0], correlation::testing::IsRealEq(100.0)); // PBC=OFF sets 100.0
+  EXPECT_THAT(frame_2.lattice_parameters()[0],
+              correlation::testing::IsRealEq(100.0)); // PBC=OFF sets 100.0
   EXPECT_THAT(frame_2.getEnergy(), correlation::testing::IsRealEq(42.0));
   EXPECT_EQ(frame_2.atoms()[0].element().symbol, "C");
 }

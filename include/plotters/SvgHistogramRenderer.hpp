@@ -57,12 +57,12 @@ struct SvgHistogramRenderer {
 
   std::ostringstream svg;
 
-  SvgHistogramRenderer(const correlation::analysis::Histogram &histogram, const PlotConfig &cfg, const HoverInfo &hov,
-                       const std::map<std::string, real_t> &component_weights,
+  SvgHistogramRenderer(const correlation::analysis::Histogram &histogram, const PlotConfig &cfg,
+                       const HoverInfo &hov, const std::map<std::string, real_t> &component_weights,
                        const std::map<std::string, bool> &visibility = {},
                        const std::map<std::string, std::string> &colors = {})
-      : hist(&histogram), config(&cfg), hover(&hov), weights(&component_weights), curve_visibility(&visibility),
-        custom_colors(&colors), xs(&histogram.bins) {
+      : hist(&histogram), config(&cfg), hover(&hov), weights(&component_weights),
+        curve_visibility(&visibility), custom_colors(&colors), xs(&histogram.bins) {
     initializeLayoutAndLabels();
     filterPartials();
   }
@@ -104,7 +104,8 @@ struct SvgHistogramRenderer {
     return (iterator != curve_visibility->end()) ? iterator->second : true;
   }
 
-  [[nodiscard]] real_t calculateScore(const std::string &key, const std::vector<real_t> &value) const {
+  [[nodiscard]] real_t calculateScore(const std::string &key,
+                                      const std::vector<real_t> &value) const {
     if (weights != nullptr && !weights->empty()) {
       auto wit = weights->find(key);
       if (wit != weights->end()) {
@@ -119,7 +120,8 @@ struct SvgHistogramRenderer {
   }
 
   void filterPartials() {
-    const auto &raw_partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
+    const auto &raw_partials =
+        hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
     auto total_it = raw_partials.find("Total");
     if (total_it != raw_partials.end() && isCurveVisible("Total")) {
       partials["Total"] = total_it->second;
@@ -140,7 +142,8 @@ struct SvgHistogramRenderer {
               [](const auto &lhs, const auto &rhs) { return lhs.first < rhs.first; });
 
     bool has_custom_vis = curve_visibility != nullptr && !curve_visibility->empty();
-    std::size_t limit = has_custom_vis ? candidates.size() : std::min(candidates.size(), std::size_t(10));
+    std::size_t limit =
+        has_custom_vis ? candidates.size() : std::min(candidates.size(), std::size_t(10));
     for (std::size_t i = 0; i < limit; ++i) {
       const std::string &key = candidates.at(i).first;
       auto iter = raw_partials.find(key);
@@ -160,8 +163,8 @@ struct SvgHistogramRenderer {
           "<text x=\"{3:.1f}\" y=\"{4:.1f}\" font-family=\"'Outfit', 'Plus Jakarta Sans', 'Inter', 'Roboto', 'Helvetica Neue', "
           "sans-serif\" font-size=\"{5:.1f}\" text-anchor=\"middle\" fill=\"{6}\">No data available</text></svg>",
           kW, kH, config->bg_color(), kW / static_cast<real_t>(2.0),
-          kH / static_cast<real_t>(2.0) + static_cast<real_t>(8.0), static_cast<real_t>(24.0) * config->font_scale,
-          config->text_color());
+          kH / static_cast<real_t>(2.0) + static_cast<real_t>(8.0),
+          static_cast<real_t>(24.0) * config->font_scale, config->text_color());
     }
     std::string no_data_path = Roboto::instance().render(TextRenderParameters{
         .text = "No data available",
@@ -219,9 +222,10 @@ struct SvgHistogramRenderer {
   }
 
   void writeHeader() {
-    svg << std::format("<svg width='{:.0f}' height='{:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {} {}\" "
-                       "shape-rendering=\"geometricPrecision\" text-rendering=\"geometricPrecision\">\n",
-                       kW, kH, kW, kH);
+    svg << std::format(
+        "<svg width='{:.0f}' height='{:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {} {}\" "
+        "shape-rendering=\"geometricPrecision\" text-rendering=\"geometricPrecision\">\n",
+        kW, kH, kW, kH);
     svg << "  <defs>\n"
         << "    <filter id=\"tooltip-shadow\" x=\"-10%\" y=\"-10%\" width=\"120%\" height=\"120%\">\n"
         << "      <feDropShadow dx=\"2\" dy=\"4\" stdDeviation=\"4\" flood-color=\"#000000\" flood-opacity=\"0.15\"/>\n"
@@ -231,15 +235,17 @@ struct SvgHistogramRenderer {
     for (const auto &[key, value] : partials) {
       std::string col = getColorForKey(key, color_idx);
       std::string grad_id = std::format("area-grad-{}", color_idx);
-      svg << std::format("    <linearGradient id=\"{}\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n"
-                         "      <stop offset=\"0%\" stop-color=\"{}\" stop-opacity=\"0.35\"/>\n"
-                         "      <stop offset=\"100%\" stop-color=\"{}\" stop-opacity=\"0.0\"/>\n"
-                         "    </linearGradient>\n",
-                         grad_id, col, col);
+      svg << std::format(
+          "    <linearGradient id=\"{}\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n"
+          "      <stop offset=\"0%\" stop-color=\"{}\" stop-opacity=\"0.35\"/>\n"
+          "      <stop offset=\"100%\" stop-color=\"{}\" stop-opacity=\"0.0\"/>\n"
+          "    </linearGradient>\n",
+          grad_id, col, col);
       color_idx++;
     }
     svg << "  </defs>\n";
-    svg << std::format("  <rect width=\"100%\" height=\"100%\" fill=\"{}\" rx=\"6\"/>\n", config->bg_color());
+    svg << std::format("  <rect width=\"100%\" height=\"100%\" fill=\"{}\" rx=\"6\"/>\n",
+                       config->bg_color());
   }
 
   void drawGridAndAxes() {
@@ -254,9 +260,10 @@ struct SvgHistogramRenderer {
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                          "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
                          px0 - static_cast<real_t>(8.0), spy, px0, spy, config->axis_color());
-      svg << renderTextAsPath(fmtScientific(y_val), px0 - static_cast<real_t>(15.0), spy + static_cast<real_t>(7.0),
-                              static_cast<real_t>(20.0) * config->font_scale, TextAnchor::End, config->text_color(),
-                              config->use_native_text);
+      svg << renderTextAsPath(fmtScientific(y_val), px0 - static_cast<real_t>(15.0),
+                              spy + static_cast<real_t>(7.0),
+                              static_cast<real_t>(20.0) * config->font_scale, TextAnchor::End,
+                              config->text_color(), config->use_native_text);
     }
 
     for (real_t x_val : xScale.ticks) {
@@ -270,8 +277,8 @@ struct SvgHistogramRenderer {
                          "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
                          spx, py1, spx, py1 + static_cast<real_t>(8.0), config->axis_color());
       svg << renderTextAsPath(fmtScientific(x_val), spx, py1 + static_cast<real_t>(25.0),
-                              static_cast<real_t>(20.0) * config->font_scale, TextAnchor::Middle, config->text_color(),
-                              config->use_native_text);
+                              static_cast<real_t>(20.0) * config->font_scale, TextAnchor::Middle,
+                              config->text_color(), config->use_native_text);
     }
 
     svg << std::format("  <rect x=\"{:.1f}\" y=\"{:.1f}\" width=\"{:.1f}\" height=\"{:.1f}\" "
@@ -293,9 +300,10 @@ struct SvgHistogramRenderer {
     for (real_t focus_y : emphasis_values) {
       if (focus_y >= yScale.min && focus_y <= yScale.max) {
         real_t spy = mapValue(focus_y, yScale.min, yScale.max, py1, py0);
-        std::string extra = (std::abs(focus_y - static_cast<real_t>(1.0)) < static_cast<real_t>(1e-6))
-                                ? " stroke-dasharray=\"5,5\""
-                                : "";
+        std::string extra =
+            (std::abs(focus_y - static_cast<real_t>(1.0)) < static_cast<real_t>(1e-6))
+                ? " stroke-dasharray=\"5,5\""
+                : "";
         svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                            "stroke=\"{}\" stroke-width=\"1.8\"{}/>\n",
                            px0, spy, px1, spy, config->axis_color(), extra);
@@ -338,8 +346,8 @@ struct SvgHistogramRenderer {
     for (const auto &[key, value] : partials) {
       const std::string col = getColorForKey(key, color_idx++);
       svg << std::format(
-          R"(  <polyline fill="none" stroke="{}" stroke-width="{:.1f}" stroke-linejoin="round" points=")", col,
-          config->line_width);
+          R"(  <polyline fill="none" stroke="{}" stroke-width="{:.1f}" stroke-linejoin="round" points=")",
+          col, config->line_width);
       std::size_t num_points = std::min(xs->size(), value.size());
       for (std::size_t point_idx = 0; point_idx < num_points; ++point_idx) {
         real_t screen_x = mapValue(xs->at(point_idx), xScale.min, xScale.max, px0, px1);
@@ -363,8 +371,9 @@ struct SvgHistogramRenderer {
       for (std::size_t point_idx = 0; point_idx < num_points; ++point_idx) {
         real_t screen_x = mapValue(xs->at(point_idx), xScale.min, xScale.max, px0, px1);
         real_t screen_y = mapValue(value.at(point_idx), yScale.min, yScale.max, py1, py0);
-        svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"{:.1f}\" fill=\"{}\" stroke=\"none\"/>\n",
-                           screen_x, screen_y, config->marker_size, col);
+        svg << std::format(
+            "  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"{:.1f}\" fill=\"{}\" stroke=\"none\"/>\n",
+            screen_x, screen_y, config->marker_size, col);
       }
     }
   }
@@ -378,25 +387,27 @@ struct SvgHistogramRenderer {
     for (const auto &iter : std::views::reverse(legend)) {
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                          "stroke=\"{}\" stroke-width=\"4.0\"/>\n",
-                         legend_x - static_cast<real_t>(40.0), legend_y, legend_x - static_cast<real_t>(10.0), legend_y,
-                         iter.second);
-      svg << renderTextAsPath(iter.first, legend_x - static_cast<real_t>(45.0), legend_y + static_cast<real_t>(6.0),
-                              static_cast<real_t>(18.0) * config->font_scale, TextAnchor::End, config->text_color(),
-                              config->use_native_text);
+                         legend_x - static_cast<real_t>(40.0), legend_y,
+                         legend_x - static_cast<real_t>(10.0), legend_y, iter.second);
+      svg << renderTextAsPath(iter.first, legend_x - static_cast<real_t>(45.0),
+                              legend_y + static_cast<real_t>(6.0),
+                              static_cast<real_t>(18.0) * config->font_scale, TextAnchor::End,
+                              config->text_color(), config->use_native_text);
       legend_y += static_cast<real_t>(28.0);
     }
   }
 
   void drawTitlesAndLabels() {
-    svg << renderTextAsPath(x_label, (px0 + px1) / static_cast<real_t>(2.0), py1 + static_cast<real_t>(75.0),
-                            static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle, config->text_color(),
-                            config->use_native_text);
+    svg << renderTextAsPath(x_label, (px0 + px1) / static_cast<real_t>(2.0),
+                            py1 + static_cast<real_t>(75.0),
+                            static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle,
+                            config->text_color(), config->use_native_text);
 
-    svg << std::format("  <g transform=\"translate({:.1f}, {:.1f}) rotate(-90)\">\n", static_cast<real_t>(40.0),
-                       (py0 + py1) / static_cast<real_t>(2.0));
+    svg << std::format("  <g transform=\"translate({:.1f}, {:.1f}) rotate(-90)\">\n",
+                       static_cast<real_t>(40.0), (py0 + py1) / static_cast<real_t>(2.0));
     svg << renderTextAsPath(y_label, static_cast<real_t>(0.0), static_cast<real_t>(0.0),
-                            static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle, config->text_color(),
-                            config->use_native_text);
+                            static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle,
+                            config->text_color(), config->use_native_text);
     svg << "  </g>\n";
   }
 
@@ -440,13 +451,15 @@ struct SvgHistogramRenderer {
     real_t target_x;        ///< Physical x-axis data coordinate.
   };
 
-  void drawTooltipBox(const TooltipPosition &pos, const std::string &best_key,
-                      const std::vector<std::tuple<std::string, real_t, std::string>> &hover_values) {
+  void
+  drawTooltipBox(const TooltipPosition &pos, const std::string &best_key,
+                 const std::vector<std::tuple<std::string, real_t, std::string>> &hover_values) {
     if (hover_values.empty()) {
       return;
     }
     real_t tooltip_w = static_cast<real_t>(200.0);
-    real_t tooltip_h = static_cast<real_t>(35.0) + static_cast<real_t>(22.0) * static_cast<real_t>(hover_values.size());
+    real_t tooltip_h = static_cast<real_t>(35.0) +
+                       static_cast<real_t>(22.0) * static_cast<real_t>(hover_values.size());
 
     real_t tooltip_x = (pos.sx_data < kW / static_cast<real_t>(2.0))
                            ? pos.sx_data + static_cast<real_t>(15.0)
@@ -454,8 +467,8 @@ struct SvgHistogramRenderer {
     real_t tooltip_y = (pos.snapped_sy_data >= static_cast<real_t>(0.0))
                            ? pos.snapped_sy_data - tooltip_h / static_cast<real_t>(2.0)
                            : py0 + static_cast<real_t>(15.0);
-    tooltip_y =
-        std::max(py0 + static_cast<real_t>(8.0), std::min(py1 - tooltip_h - static_cast<real_t>(8.0), tooltip_y));
+    tooltip_y = std::max(py0 + static_cast<real_t>(8.0),
+                         std::min(py1 - tooltip_h - static_cast<real_t>(8.0), tooltip_y));
 
     std::string card_bg = (config->theme == PlotConfig::Theme::Light) ? "#FFFFFF" : "#181825";
     std::string card_border = (config->theme == PlotConfig::Theme::Light) ? "#dddddd" : "#45475a";
@@ -467,28 +480,30 @@ struct SvgHistogramRenderer {
         tooltip_x, tooltip_y, tooltip_w, tooltip_h, card_bg, card_border);
 
     std::string x_unit_str = hist->x_unit;
-    std::string header_txt =
-        std::format("{} = {:.4f}{}", x_label, pos.target_x, x_unit_str.empty() ? "" : " " + x_unit_str);
+    std::string header_txt = std::format("{} = {:.4f}{}", x_label, pos.target_x,
+                                         x_unit_str.empty() ? "" : " " + x_unit_str);
     auto paren = x_label.find(" (");
     if (paren != std::string::npos) {
       header_txt = std::format("{} = {:.4f}", x_label.substr(0, paren), pos.target_x);
     }
 
-    svg << renderTextAsPath(header_txt, tooltip_x + static_cast<real_t>(12.0), tooltip_y + static_cast<real_t>(20.0),
-                            static_cast<real_t>(14.0) * config->font_scale, TextAnchor::Start, fg_color,
-                            config->use_native_text);
+    svg << renderTextAsPath(header_txt, tooltip_x + static_cast<real_t>(12.0),
+                            tooltip_y + static_cast<real_t>(20.0),
+                            static_cast<real_t>(14.0) * config->font_scale, TextAnchor::Start,
+                            fg_color, config->use_native_text);
 
     real_t cur_y = tooltip_y + static_cast<real_t>(42.0);
     for (const auto &[name, val, col] : hover_values) {
       svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"5\" fill=\"{}\"/>\n",
-                         tooltip_x + static_cast<real_t>(18.0), cur_y - static_cast<real_t>(4.0), col);
+                         tooltip_x + static_cast<real_t>(18.0), cur_y - static_cast<real_t>(4.0),
+                         col);
       std::string line_txt = std::format("{}: {:.4f}", name, val);
       if (name == best_key) {
         line_txt += " (nearest)";
       }
       svg << renderTextAsPath(line_txt, tooltip_x + static_cast<real_t>(30.0), cur_y,
-                              static_cast<real_t>(13.0) * config->font_scale, TextAnchor::Start, fg_color,
-                              config->use_native_text);
+                              static_cast<real_t>(13.0) * config->font_scale, TextAnchor::Start,
+                              fg_color, config->use_native_text);
       cur_y += static_cast<real_t>(22.0);
     }
   }
@@ -543,8 +558,8 @@ struct SvgHistogramRenderer {
         }
 
         svg << std::format(
-            "  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"6\" fill=\"{}\" stroke=\"{}\" stroke-width=\"2\"/>\n", sx_data,
-            sy_data, col, config->bg_color());
+            "  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"6\" fill=\"{}\" stroke=\"{}\" stroke-width=\"2\"/>\n",
+            sx_data, sy_data, col, config->bg_color());
 
         hover_values.emplace_back(key, y_val, col);
       }
@@ -570,11 +585,13 @@ struct SvgHistogramRenderer {
 /**
  * @brief Renders a `Histogram` as a self-contained SVG string.
  */
-inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &hist, const PlotConfig &config = {},
-                                        const HoverInfo &hover = {}, const std::map<std::string, real_t> &weights = {},
-                                        const std::map<std::string, bool> &curve_visibility = {},
-                                        const std::map<std::string, std::string> &custom_colors = {}) {
-  detail::SvgHistogramRenderer renderer(hist, config, hover, weights, curve_visibility, custom_colors);
+inline std::string
+renderHistogramAsSvg(const correlation::analysis::Histogram &hist, const PlotConfig &config = {},
+                     const HoverInfo &hover = {}, const std::map<std::string, real_t> &weights = {},
+                     const std::map<std::string, bool> &curve_visibility = {},
+                     const std::map<std::string, std::string> &custom_colors = {}) {
+  detail::SvgHistogramRenderer renderer(hist, config, hover, weights, curve_visibility,
+                                        custom_colors);
   if (renderer.hasNoData()) {
     return renderer.renderNoData();
   }

@@ -16,8 +16,9 @@
 
 namespace correlation::calculators {
 
-void DihedralCalculator::calculateFrame(correlation::analysis::DistributionFunctions & /*dists*/,
-                                        const correlation::analysis::AnalysisSettings & /*settings*/) const {
+void DihedralCalculator::calculateFrame(
+    correlation::analysis::DistributionFunctions & /*dists*/,
+    const correlation::analysis::AnalysisSettings & /*settings*/) const {
   // DihedralCalculator is a foundational calculator — called by
   // StructureAnalyzer during its construction. Nothing to do here.
 }
@@ -70,10 +71,11 @@ std::optional<real_t> calculateDihedralAngle(const DihedralVectors &vectors) {
 /**
  * @brief Helper to find and bin dihedral angles for a specific central pair B-C.
  */
-void findAndProcessDihedralsForPair(size_t idx_b, size_t idx_c, const correlation::core::NeighborGraph &graph,
-                                    const std::vector<correlation::core::Atom> &atoms,
-                                    const correlation::core::Neighbor &neighbor_c,
-                                    correlation::analysis::StructureAnalyzer::DihedralTensor &local_tensor) {
+void findAndProcessDihedralsForPair(
+    size_t idx_b, size_t idx_c, const correlation::core::NeighborGraph &graph,
+    const std::vector<correlation::core::Atom> &atoms,
+    const correlation::core::Neighbor &neighbor_c,
+    correlation::analysis::StructureAnalyzer::DihedralTensor &local_tensor) {
   const auto &neighbors_b = graph.getNeighbors(idx_b);
   const auto &neighbors_c = graph.getNeighbors(idx_c);
 
@@ -123,16 +125,18 @@ void findAndProcessDihedralsForPair(size_t idx_b, size_t idx_c, const correlatio
  */
 void mergeThreadLocalTensors(
     correlation::analysis::StructureAnalyzer::DihedralTensor &out_dihedrals,
-    const tbb::enumerable_thread_specific<correlation::analysis::StructureAnalyzer::DihedralTensor> &ets,
+    const tbb::enumerable_thread_specific<correlation::analysis::StructureAnalyzer::DihedralTensor>
+        &ets,
     size_t num_elements) {
   for (const auto &local_tensor : ets) {
     for (size_t idx_a = 0; idx_a < num_elements; ++idx_a) {
       for (size_t idx_b = 0; idx_b < num_elements; ++idx_b) {
         for (size_t idx_c = 0; idx_c < num_elements; ++idx_c) {
           for (size_t idx_d = 0; idx_d < num_elements; ++idx_d) {
-            out_dihedrals[idx_a][idx_b][idx_c][idx_d].insert(out_dihedrals[idx_a][idx_b][idx_c][idx_d].end(),
-                                                             local_tensor[idx_a][idx_b][idx_c][idx_d].begin(),
-                                                             local_tensor[idx_a][idx_b][idx_c][idx_d].end());
+            out_dihedrals[idx_a][idx_b][idx_c][idx_d].insert(
+                out_dihedrals[idx_a][idx_b][idx_c][idx_d].end(),
+                local_tensor[idx_a][idx_b][idx_c][idx_d].begin(),
+                local_tensor[idx_a][idx_b][idx_c][idx_d].end());
           }
         }
       }
@@ -142,49 +146,54 @@ void mergeThreadLocalTensors(
 
 } // namespace
 
-void DihedralCalculator::compute(const correlation::core::Cell &cell, const correlation::core::NeighborGraph &graph,
-                                 correlation::analysis::StructureAnalyzer::DihedralTensor &out_dihedrals) {
+void DihedralCalculator::compute(
+    const correlation::core::Cell &cell, const correlation::core::NeighborGraph &graph,
+    correlation::analysis::StructureAnalyzer::DihedralTensor &out_dihedrals) {
   const auto &atoms = cell.atoms();
   const size_t atom_count = atoms.size();
   const size_t num_elements = cell.elements().size();
 
   // Initialize thread-local storage
-  tbb::enumerable_thread_specific<correlation::analysis::StructureAnalyzer::DihedralTensor> ets([&]() {
-    return correlation::analysis::StructureAnalyzer::DihedralTensor(
-        num_elements, std::vector<std::vector<std::vector<std::vector<real_t>>>>(
-                          num_elements, std::vector<std::vector<std::vector<real_t>>>(
-                                            num_elements, std::vector<std::vector<real_t>>(num_elements))));
-  });
+  tbb::enumerable_thread_specific<correlation::analysis::StructureAnalyzer::DihedralTensor> ets(
+      [&]() {
+        return correlation::analysis::StructureAnalyzer::DihedralTensor(
+            num_elements,
+            std::vector<std::vector<std::vector<std::vector<real_t>>>>(
+                num_elements, std::vector<std::vector<std::vector<real_t>>>(
+                                  num_elements, std::vector<std::vector<real_t>>(num_elements))));
+      });
 
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, atom_count), [&](const tbb::blocked_range<size_t> &blocked_range) {
-    auto &local_tensor = ets.local();
+  tbb::parallel_for(
+      tbb::blocked_range<size_t>(0, atom_count),
+      [&](const tbb::blocked_range<size_t> &blocked_range) {
+        auto &local_tensor = ets.local();
 
-    // Let atom `idx_b` be atom `B` in the A-B-C-D sequence
-    for (size_t idx_b = blocked_range.begin(); idx_b != blocked_range.end(); ++idx_b) {
-      const auto &neighbors_b = graph.getNeighbors(idx_b);
-      if (neighbors_b.size() < 2) {
-        continue;
-      }
+        // Let atom `idx_b` be atom `B` in the A-B-C-D sequence
+        for (size_t idx_b = blocked_range.begin(); idx_b != blocked_range.end(); ++idx_b) {
+          const auto &neighbors_b = graph.getNeighbors(idx_b);
+          if (neighbors_b.size() < 2) {
+            continue;
+          }
 
-      // Loop over all neighbors of B, which we consider as `C`
-      for (const auto &neighbor_c : neighbors_b) {
-        size_t const idx_c = neighbor_c.index;
+          // Loop over all neighbors of B, which we consider as `C`
+          for (const auto &neighbor_c : neighbors_b) {
+            size_t const idx_c = neighbor_c.index;
 
-        // To prevent real_t counting the identical bond B-C as C-B,
-        // we enforce an ordering constraint: B < C
-        if (idx_b >= idx_c) {
-          continue;
+            // To prevent real_t counting the identical bond B-C as C-B,
+            // we enforce an ordering constraint: B < C
+            if (idx_b >= idx_c) {
+              continue;
+            }
+
+            const auto &neighbors_c = graph.getNeighbors(idx_c);
+            if (neighbors_c.size() < 2) {
+              continue;
+            }
+
+            findAndProcessDihedralsForPair(idx_b, idx_c, graph, atoms, neighbor_c, local_tensor);
+          }
         }
-
-        const auto &neighbors_c = graph.getNeighbors(idx_c);
-        if (neighbors_c.size() < 2) {
-          continue;
-        }
-
-        findAndProcessDihedralsForPair(idx_b, idx_c, graph, atoms, neighbor_c, local_tensor);
-      }
-    }
-  });
+      });
 
   mergeThreadLocalTensors(out_dihedrals, ets, num_elements);
 }

@@ -25,7 +25,8 @@ namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-const bool registered = CalculatorFactory::registerTypeSafe<ChiralityCalculator>("ChiralityCalculator");
+const bool registered =
+    CalculatorFactory::registerTypeSafe<ChiralityCalculator>("ChiralityCalculator");
 
 struct BinningConfig {
   real_t min_val;
@@ -41,8 +42,8 @@ void initHistogramMap(std::map<std::string, std::vector<real_t>> &partials,
   partials["Total"].assign(bins, 0.0);
 }
 
-void addValueToHistogram(std::map<std::string, std::vector<real_t>> &partials, const std::string &symbol, real_t val,
-                         BinningConfig config, size_t bins) {
+void addValueToHistogram(std::map<std::string, std::vector<real_t>> &partials,
+                         const std::string &symbol, real_t val, BinningConfig config, size_t bins) {
   if (val >= config.min_val && val <= config.max_val) {
     auto bin_idx = static_cast<size_t>((val - config.min_val) / config.d_val);
     if (bin_idx >= bins) {
@@ -82,13 +83,15 @@ void copyPartialsToHistogram(correlation::analysis::Histogram &hist,
 }
 } // namespace
 
-void ChiralityCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
-                                         const correlation::analysis::AnalysisSettings & /*settings*/) const {
+void ChiralityCalculator::calculateFrame(
+    correlation::analysis::DistributionFunctions &dists,
+    const correlation::analysis::AnalysisSettings & /*settings*/) const {
   dists.addHistogram("COP", calculate(dists.cell(), dists.neighbors()));
 }
 
-real_t ChiralityCalculator::computeSingleAtomChirality(size_t atom_idx, const correlation::core::Cell & /*cell*/,
-                                                       const correlation::analysis::StructureAnalyzer *neighbors) {
+real_t ChiralityCalculator::computeSingleAtomChirality(
+    size_t atom_idx, const correlation::core::Cell & /*cell*/,
+    const correlation::analysis::StructureAnalyzer *neighbors) {
   if (neighbors == nullptr) {
     return 0.0;
   }
@@ -110,10 +113,10 @@ real_t ChiralityCalculator::computeSingleAtomChirality(size_t atom_idx, const co
   }
 
   // Sort neighbors by distance in ascending order to find the 3 nearest neighbors
-  std::ranges::sort(valid_neighbors,
-                    [](const correlation::core::Neighbor &neighbor_a, const correlation::core::Neighbor &neighbor_b) {
-                      return neighbor_a.distance < neighbor_b.distance;
-                    });
+  std::ranges::sort(valid_neighbors, [](const correlation::core::Neighbor &neighbor_a,
+                                        const correlation::core::Neighbor &neighbor_b) {
+    return neighbor_a.distance < neighbor_b.distance;
+  });
 
   const auto &r_1 = valid_neighbors[0].r_ij;
   const auto &r_2 = valid_neighbors[1].r_ij;
@@ -138,7 +141,8 @@ correlation::analysis::Histogram
 ChiralityCalculator::calculate(const correlation::core::Cell &cell,
                                const correlation::analysis::StructureAnalyzer *neighbors) {
   if (neighbors == nullptr) {
-    throw std::logic_error("Cannot calculate Chiral Order Parameter. Neighbor list has not been computed.");
+    throw std::logic_error(
+        "Cannot calculate Chiral Order Parameter. Neighbor list has not been computed.");
   }
 
   const auto &atoms = cell.atoms();
@@ -146,11 +150,12 @@ ChiralityCalculator::calculate(const correlation::core::Cell &cell,
 
   // Compute local chirality for all atoms
   std::vector<real_t> chiralities(num_atoms, 0.0);
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, num_atoms), [&](const tbb::blocked_range<size_t> &range) {
-    for (size_t i = range.begin(); i != range.end(); ++i) {
-      chiralities[i] = computeSingleAtomChirality(i, cell, neighbors);
-    }
-  });
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, num_atoms),
+                    [&](const tbb::blocked_range<size_t> &range) {
+                      for (size_t i = range.begin(); i != range.end(); ++i) {
+                        chiralities[i] = computeSingleAtomChirality(i, cell, neighbors);
+                      }
+                    });
 
   // Setup histogram configuration
   size_t const bins = 100;
@@ -188,20 +193,21 @@ ChiralityCalculator::calculate(const correlation::core::Cell &cell,
     return local;
   });
 
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, num_atoms), [&](const tbb::blocked_range<size_t> &range) {
-    auto &local = ets.local();
-    for (size_t i = range.begin(); i != range.end(); ++i) {
-      local.num_atoms_f += 1.0;
-      const std::string &symbol = atoms[i].element().symbol;
-      addValueToHistogram(local.partials, symbol, chiralities[i],
-                          {
-                              .min_val = min_val,
-                              .max_val = max_val,
-                              .d_val = d_val,
-                          },
-                          bins);
-    }
-  });
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, num_atoms),
+                    [&](const tbb::blocked_range<size_t> &range) {
+                      auto &local = ets.local();
+                      for (size_t i = range.begin(); i != range.end(); ++i) {
+                        local.num_atoms_f += 1.0;
+                        const std::string &symbol = atoms[i].element().symbol;
+                        addValueToHistogram(local.partials, symbol, chiralities[i],
+                                            {
+                                                .min_val = min_val,
+                                                .max_val = max_val,
+                                                .d_val = d_val,
+                                            },
+                                            bins);
+                      }
+                    });
 
   // Reduce thread-local histograms
   std::map<std::string, std::vector<real_t>> partials;

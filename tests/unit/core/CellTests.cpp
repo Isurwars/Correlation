@@ -57,10 +57,10 @@ TEST_F(CellTests, NonOrthogonalVolumeIsCorrect) {
   const real_t cos_a = static_cast<real_t>(std::cos(80.0 * correlation::math::deg_to_rad));
   const real_t cos_b = static_cast<real_t>(std::cos(90.0 * correlation::math::deg_to_rad));
   const real_t cos_g = static_cast<real_t>(std::cos(100.0 * correlation::math::deg_to_rad));
-  const real_t vol_sqrt = static_cast<real_t>(1.0) - (cos_a * cos_a) - (cos_b * cos_b) - (cos_g * cos_g) +
-                          static_cast<real_t>(2.0) * (cos_a * cos_b * cos_g);
-  const real_t expected_volume =
-      static_cast<real_t>(5.0) * static_cast<real_t>(6.0) * static_cast<real_t>(7.0) * std::sqrt(vol_sqrt);
+  const real_t vol_sqrt = static_cast<real_t>(1.0) - (cos_a * cos_a) - (cos_b * cos_b) -
+                          (cos_g * cos_g) + static_cast<real_t>(2.0) * (cos_a * cos_b * cos_g);
+  const real_t expected_volume = static_cast<real_t>(5.0) * static_cast<real_t>(6.0) *
+                                 static_cast<real_t>(7.0) * std::sqrt(vol_sqrt);
 
   EXPECT_NEAR(cell.volume(), expected_volume, correlation::is_single_precision ? 1e-5 : 1e-9);
 }

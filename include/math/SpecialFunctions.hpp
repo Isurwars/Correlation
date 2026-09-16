@@ -85,7 +85,8 @@ inline real_t sph_legendre(LegendreParams params, real_t theta) {
   // Compute P_m^m(x)
   real_t p_mm = static_cast<real_t>(1.0);
   if (order > 0) {
-    real_t const somx2 = std::sqrt((static_cast<real_t>(1.0) - cos_theta) * (static_cast<real_t>(1.0) + cos_theta));
+    real_t const somx2 =
+        std::sqrt((static_cast<real_t>(1.0) - cos_theta) * (static_cast<real_t>(1.0) + cos_theta));
     real_t fact = static_cast<real_t>(1.0);
     for (int i = 1; i <= order; ++i) {
       p_mm *= -fact * somx2;
@@ -106,7 +107,8 @@ inline real_t sph_legendre(LegendreParams params, real_t theta) {
       real_t p_ll_1 = p_mp1m; // P_{l-1}^m
 
       for (int ll = order + 2; ll <= degree; ++ll) {
-        p_lm = (cos_theta * static_cast<real_t>(2 * ll - 1) * p_ll_1 - static_cast<real_t>(ll + order - 1) * p_ll_2) /
+        p_lm = (cos_theta * static_cast<real_t>(2 * ll - 1) * p_ll_1 -
+                static_cast<real_t>(ll + order - 1) * p_ll_2) /
                static_cast<real_t>(ll - order);
         p_ll_2 = p_ll_1;
         p_ll_1 = p_lm;
@@ -117,7 +119,8 @@ inline real_t sph_legendre(LegendreParams params, real_t theta) {
   // Normalization factor
   real_t norm = static_cast<real_t>(std::sqrt(
       (static_cast<real_t>(2.0) * static_cast<real_t>(degree) + static_cast<real_t>(1.0)) /
-      (static_cast<real_t>(4.0) * static_cast<real_t>(pi)) * factorial(degree - order) / factorial(degree + order)));
+      (static_cast<real_t>(4.0) * static_cast<real_t>(pi)) * factorial(degree - order) /
+      factorial(degree + order)));
 
   // Cancel Condon-Shortley phase to match std::sph_legendre
   if (order % 2 != 0) {
@@ -150,7 +153,8 @@ inline void sph_legendre_batch(LegendreParams params, const real_t *CORRELATION_
   // Precompute normalization factor and Condon-Shortley phase
   real_t norm = static_cast<real_t>(std::sqrt(
       (static_cast<real_t>(2.0) * static_cast<real_t>(degree) + static_cast<real_t>(1.0)) /
-      (static_cast<real_t>(4.0) * static_cast<real_t>(pi)) * factorial(degree - order) / factorial(degree + order)));
+      (static_cast<real_t>(4.0) * static_cast<real_t>(pi)) * factorial(degree - order) /
+      factorial(degree + order)));
   if (order % 2 != 0) {
     norm = -norm;
   }
@@ -187,7 +191,8 @@ inline void sph_legendre_batch(LegendreParams params, const real_t *CORRELATION_
         __m512d vp_ll_1 = vp_mp1m;
 
         for (int ll = order + 2; ll <= degree; ++ll) {
-          __m512d term1 = _mm512_mul_pd(_mm512_mul_pd(v_x, _mm512_set1_pd(2.0 * ll - 1.0)), vp_ll_1);
+          __m512d term1 =
+              _mm512_mul_pd(_mm512_mul_pd(v_x, _mm512_set1_pd(2.0 * ll - 1.0)), vp_ll_1);
           __m512d term2 = _mm512_mul_pd(_mm512_set1_pd(ll + order - 1.0), vp_ll_2);
           __m512d diff = _mm512_sub_pd(term1, term2);
           vp_lm = _mm512_mul_pd(diff, _mm512_set1_pd(1.0 / (ll - order)));
@@ -240,7 +245,8 @@ inline void sph_legendre_batch(LegendreParams params, const real_t *CORRELATION_
         __m256d vp_ll_1 = vp_mp1m;
 
         for (int ll = order + 2; ll <= degree; ++ll) {
-          __m256d term1 = _mm256_mul_pd(_mm256_mul_pd(v_x, _mm256_set1_pd(2.0 * ll - 1.0)), vp_ll_1);
+          __m256d term1 =
+              _mm256_mul_pd(_mm256_mul_pd(v_x, _mm256_set1_pd(2.0 * ll - 1.0)), vp_ll_1);
           __m256d term2 = _mm256_mul_pd(_mm256_set1_pd(ll + order - 1.0), vp_ll_2);
           __m256d diff = _mm256_sub_pd(term1, term2);
           vp_lm = _mm256_mul_pd(diff, _mm256_set1_pd(1.0 / (ll - order)));

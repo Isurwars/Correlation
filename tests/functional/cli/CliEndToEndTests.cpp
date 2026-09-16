@@ -85,7 +85,8 @@ int runCli(const std::string &args) {
   si.hStdOutput = INVALID_HANDLE_VALUE;
   si.hStdError = INVALID_HANDLE_VALUE;
 
-  if (CreateProcessA(nullptr, cmd.data(), nullptr, nullptr, FALSE, CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi) == 0) {
+  if (CreateProcessA(nullptr, cmd.data(), nullptr, nullptr, FALSE, CREATE_NO_WINDOW, nullptr,
+                     nullptr, &si, &pi) == 0) {
     return -1;
   }
 
@@ -113,7 +114,8 @@ int runCli(const std::string &args) {
   posix_spawn_file_actions_addopen(&actions, STDERR_FILENO, "/dev/null", O_WRONLY, 0);
 
   pid_t pid = 0;
-  int const spawn_err = posix_spawn(&pid, std::string(CLI_BIN).c_str(), &actions, nullptr, argv.data(), environ);
+  int const spawn_err =
+      posix_spawn(&pid, std::string(CLI_BIN).c_str(), &actions, nullptr, argv.data(), environ);
   posix_spawn_file_actions_destroy(&actions);
 
   if (spawn_err != 0) {
@@ -150,7 +152,8 @@ std::string runCliCapture(const std::string &args) {
   si.wShowWindow = SW_HIDE;
 
   PROCESS_INFORMATION pi{};
-  if (CreateProcessA(nullptr, cmd.data(), nullptr, nullptr, TRUE, CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi) == 0) {
+  if (CreateProcessA(nullptr, cmd.data(), nullptr, nullptr, TRUE, CREATE_NO_WINDOW, nullptr,
+                     nullptr, &si, &pi) == 0) {
     CloseHandle(hReadPipe);
     CloseHandle(hWritePipe);
     return "";
@@ -162,7 +165,8 @@ std::string runCliCapture(const std::string &args) {
   std::array<char, 512> buffer{};
   DWORD bytesRead = 0;
 
-  while (ReadFile(hReadPipe, buffer.data(), static_cast<DWORD>(buffer.size()), &bytesRead, nullptr) != 0 &&
+  while (ReadFile(hReadPipe, buffer.data(), static_cast<DWORD>(buffer.size()), &bytesRead,
+                  nullptr) != 0 &&
          bytesRead > 0) {
     result.append(buffer.data(), bytesRead);
   }
@@ -195,7 +199,8 @@ std::string runCliCapture(const std::string &args) {
   posix_spawn_file_actions_addopen(&actions, STDERR_FILENO, "/dev/null", O_WRONLY, 0);
 
   pid_t pid = 0;
-  int const spawn_err = posix_spawn(&pid, std::string(CLI_BIN).c_str(), &actions, nullptr, argv.data(), environ);
+  int const spawn_err =
+      posix_spawn(&pid, std::string(CLI_BIN).c_str(), &actions, nullptr, argv.data(), environ);
   posix_spawn_file_actions_destroy(&actions);
   close(pipefd[1]); // Close write end in parent
 
@@ -242,7 +247,9 @@ TEST_F(CliEndToEndTests, VersionPrintsVersionString) {
 
 TEST_F(CliEndToEndTests, NoArgsReturnsNonZero) { EXPECT_NE(runCli(""), 0); }
 
-TEST_F(CliEndToEndTests, UnknownOptionReturnsNonZero) { EXPECT_NE(runCli("--this-does-not-exist"), 0); }
+TEST_F(CliEndToEndTests, UnknownOptionReturnsNonZero) {
+  EXPECT_NE(runCli("--this-does-not-exist"), 0);
+}
 
 constexpr std::string_view FAST_TEST_ARGS =
     " --quiet --r-max 5.0 --r-bin 0.25 --q-max 5.0 --q-bin 0.5 --hyper-samples 10 --max-ring-size 4 --no-smoothing "
@@ -250,7 +257,9 @@ constexpr std::string_view FAST_TEST_ARGS =
 
 // ===== File loading tests =====
 
-TEST_F(CliEndToEndTests, NonexistentFileReturnsNonZero) { EXPECT_NE(runCli("nonexistent_file_xyz.poscar --quiet"), 0); }
+TEST_F(CliEndToEndTests, NonexistentFileReturnsNonZero) {
+  EXPECT_NE(runCli("nonexistent_file_xyz.poscar --quiet"), 0);
+}
 
 TEST_F(CliEndToEndTests, ValidFileRunsSuccessfully) {
   // Use a temp directory for output so we don't pollute the test data dir
@@ -300,9 +309,9 @@ TEST_F(CliEndToEndTests, DisableRadialAndScatteringGroups) {
 
   std::string const input = dataDir() + "Si.poscar";
   // Run with radial and scattering groups disabled (also disable heavy unused groups)
-  int const run_cli_status =
-      runCli(input + " -o " + out_base + " --disable-groups radial,scattering,spatial,dynamic,advanced" +
-             std::string(FAST_TEST_ARGS));
+  int const run_cli_status = runCli(input + " -o " + out_base +
+                                    " --disable-groups radial,scattering,spatial,dynamic,advanced" +
+                                    std::string(FAST_TEST_ARGS));
 
   EXPECT_EQ(run_cli_status, 0);
 

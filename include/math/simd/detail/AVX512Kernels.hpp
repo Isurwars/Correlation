@@ -16,7 +16,8 @@
 
 namespace correlation::math::detail::avx512 {
 
-inline void compute_dsq_block(float ref_x, float ref_y, float ref_z, const PositionBlockT<float> &block,
+inline void compute_dsq_block(float ref_x, float ref_y, float ref_z,
+                              const PositionBlockT<float> &block,
                               float *CORRELATION_RESTRICT out_dsq) noexcept {
   const __m512 va_x = _mm512_set1_ps(ref_x);
   const __m512 va_y = _mm512_set1_ps(ref_y);
@@ -31,7 +32,8 @@ inline void compute_dsq_block(float ref_x, float ref_y, float ref_z, const Posit
     _mm512_storeu_ps(out_dsq + idx, dsq);
   }
   if (idx < block.count) {
-    const auto mask = static_cast<__mmask16>((1U << static_cast<std::uint32_t>(block.count - idx)) - 1U);
+    const auto mask =
+        static_cast<__mmask16>((1U << static_cast<std::uint32_t>(block.count - idx)) - 1U);
     const __m512 dx = _mm512_sub_ps(_mm512_maskz_loadu_ps(mask, block.x + idx), va_x);
     const __m512 dy = _mm512_sub_ps(_mm512_maskz_loadu_ps(mask, block.y + idx), va_y);
     const __m512 dz = _mm512_sub_ps(_mm512_maskz_loadu_ps(mask, block.z + idx), va_z);
@@ -40,7 +42,8 @@ inline void compute_dsq_block(float ref_x, float ref_y, float ref_z, const Posit
   }
 }
 
-inline void compute_dsq_block(double ref_x, double ref_y, double ref_z, const PositionBlockT<double> &block,
+inline void compute_dsq_block(double ref_x, double ref_y, double ref_z,
+                              const PositionBlockT<double> &block,
                               double *CORRELATION_RESTRICT out_dsq) noexcept {
   const __m512d va_x = _mm512_set1_pd(ref_x);
   const __m512d va_y = _mm512_set1_pd(ref_y);
@@ -55,7 +58,8 @@ inline void compute_dsq_block(double ref_x, double ref_y, double ref_z, const Po
     _mm512_storeu_pd(out_dsq + idx, dsq);
   }
   if (idx < block.count) {
-    const auto mask = static_cast<__mmask8>((1U << static_cast<std::uint32_t>(block.count - idx)) - 1U);
+    const auto mask =
+        static_cast<__mmask8>((1U << static_cast<std::uint32_t>(block.count - idx)) - 1U);
     const __m512d dx = _mm512_sub_pd(_mm512_maskz_loadu_pd(mask, block.x + idx), va_x);
     const __m512d dy = _mm512_sub_pd(_mm512_maskz_loadu_pd(mask, block.y + idx), va_y);
     const __m512d dz = _mm512_sub_pd(_mm512_maskz_loadu_pd(mask, block.z + idx), va_z);
@@ -64,8 +68,8 @@ inline void compute_dsq_block(double ref_x, double ref_y, double ref_z, const Po
   }
 }
 
-inline double simd_dot(const double *CORRELATION_RESTRICT input_a, const double *CORRELATION_RESTRICT input_b,
-                       std::size_t count) noexcept {
+inline double simd_dot(const double *CORRELATION_RESTRICT input_a,
+                       const double *CORRELATION_RESTRICT input_b, std::size_t count) noexcept {
   __m512d vacc = _mm512_setzero_pd();
   std::size_t idx = 0;
   for (; idx + 8 <= count; idx += 8) {
@@ -85,8 +89,8 @@ inline double simd_dot(const double *CORRELATION_RESTRICT input_a, const double 
   return acc;
 }
 
-inline float simd_dot(const float *CORRELATION_RESTRICT input_a, const float *CORRELATION_RESTRICT input_b,
-                      std::size_t count) noexcept {
+inline float simd_dot(const float *CORRELATION_RESTRICT input_a,
+                      const float *CORRELATION_RESTRICT input_b, std::size_t count) noexcept {
   __m512 vacc = _mm512_setzero_ps();
   std::size_t idx = 0;
   for (; idx + 16 <= count; idx += 16) {
@@ -102,16 +106,18 @@ inline float simd_dot(const float *CORRELATION_RESTRICT input_a, const float *CO
 }
 
 inline void dot_block(double v1x, double v1y, double v1z, const double *CORRELATION_RESTRICT v2x,
-                      const double *CORRELATION_RESTRICT v2y, const double *CORRELATION_RESTRICT v2z,
-                      double *CORRELATION_RESTRICT out_dot, std::size_t count) noexcept {
+                      const double *CORRELATION_RESTRICT v2y,
+                      const double *CORRELATION_RESTRICT v2z, double *CORRELATION_RESTRICT out_dot,
+                      std::size_t count) noexcept {
   const __m512d vv1x = _mm512_set1_pd(v1x);
   const __m512d vv1y = _mm512_set1_pd(v1y);
   const __m512d vv1z = _mm512_set1_pd(v1z);
   std::size_t idx = 0;
   for (; idx + 8 <= count; idx += 8) {
-    const __m512d d_res = _mm512_fmadd_pd(
-        vv1x, _mm512_loadu_pd(v2x + idx),
-        _mm512_fmadd_pd(vv1y, _mm512_loadu_pd(v2y + idx), _mm512_mul_pd(vv1z, _mm512_loadu_pd(v2z + idx))));
+    const __m512d d_res =
+        _mm512_fmadd_pd(vv1x, _mm512_loadu_pd(v2x + idx),
+                        _mm512_fmadd_pd(vv1y, _mm512_loadu_pd(v2y + idx),
+                                        _mm512_mul_pd(vv1z, _mm512_loadu_pd(v2z + idx))));
     _mm512_storeu_pd(out_dot + idx, d_res);
   }
   for (; idx < count; ++idx) {
@@ -127,9 +133,10 @@ inline void dot_block(float v1x, float v1y, float v1z, const float *CORRELATION_
   const __m512 vv1z = _mm512_set1_ps(v1z);
   std::size_t idx = 0;
   for (; idx + 16 <= count; idx += 16) {
-    const __m512 d_res = _mm512_fmadd_ps(
-        vv1x, _mm512_loadu_ps(v2x + idx),
-        _mm512_fmadd_ps(vv1y, _mm512_loadu_ps(v2y + idx), _mm512_mul_ps(vv1z, _mm512_loadu_ps(v2z + idx))));
+    const __m512 d_res =
+        _mm512_fmadd_ps(vv1x, _mm512_loadu_ps(v2x + idx),
+                        _mm512_fmadd_ps(vv1y, _mm512_loadu_ps(v2y + idx),
+                                        _mm512_mul_ps(vv1z, _mm512_loadu_ps(v2z + idx))));
     _mm512_storeu_ps(out_dot + idx, d_res);
   }
   for (; idx < count; ++idx) {
@@ -222,7 +229,8 @@ inline void normalize_rdf_bins(const RDFNormalizationParams<double> &params) noe
     const __m512d vr2 = _mm512_mul_pd(vr, vr);
     const __m512d vg = _mm512_div_pd(_mm512_mul_pd(vH, vg_norm), vr2);
     _mm512_storeu_pd(params.g_out + idx, vg);
-    _mm512_storeu_pd(params.G_out + idx, _mm512_mul_pd(vpi4rho, _mm512_mul_pd(vr, _mm512_sub_pd(vg, v1))));
+    _mm512_storeu_pd(params.G_out + idx,
+                     _mm512_mul_pd(vpi4rho, _mm512_mul_pd(vr, _mm512_sub_pd(vg, v1))));
     _mm512_storeu_pd(params.J_out + idx, _mm512_mul_pd(vH, vinNidr));
     _mm512_storeu_pd(params.Jinv_out + idx, _mm512_mul_pd(vH, vinNjdr));
   }
@@ -263,7 +271,8 @@ inline void normalize_rdf_bins(const RDFNormalizationParams<float> &params) noex
     const __m512 vr2 = _mm512_mul_ps(vr, vr);
     const __m512 vg = _mm512_div_ps(_mm512_mul_ps(vH, vg_norm), vr2);
     _mm512_storeu_ps(params.g_out + idx, vg);
-    _mm512_storeu_ps(params.G_out + idx, _mm512_mul_ps(vpi4rho, _mm512_mul_ps(vr, _mm512_sub_ps(vg, v1))));
+    _mm512_storeu_ps(params.G_out + idx,
+                     _mm512_mul_ps(vpi4rho, _mm512_mul_ps(vr, _mm512_sub_ps(vg, v1))));
     _mm512_storeu_ps(params.J_out + idx, _mm512_mul_ps(vH, vinNidr));
     _mm512_storeu_ps(params.Jinv_out + idx, _mm512_mul_ps(vH, vinNjdr));
   }
@@ -343,7 +352,8 @@ inline void miller_phase_sum(const MillerPhaseSumParams<double> &params,
   }
 }
 
-inline void miller_phase_sum(const MillerPhaseSumParams<float> &params, MillerPhaseSumResult<float> &result) noexcept {
+inline void miller_phase_sum(const MillerPhaseSumParams<float> &params,
+                             MillerPhaseSumResult<float> &result) noexcept {
   __m512 vc_sum = _mm512_setzero_ps();
   __m512 vs_sum = _mm512_setzero_ps();
   std::size_t idx = 0;

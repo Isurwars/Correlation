@@ -171,7 +171,8 @@ TEST_F(AppBackendTests, LoadValidCarFileAndRunAnalysisAndWriteFiles) {
   backend.setOptions(opts);
 
   auto const run_status = backend.run_analysis();
-  EXPECT_TRUE(run_status.has_value()) << "Analysis failed: " << (run_status ? "" : run_status.error());
+  EXPECT_TRUE(run_status.has_value())
+      << "Analysis failed: " << (run_status ? "" : run_status.error());
 
   // Verify histograms
   auto const hist_names = backend.getAvailableHistogramNames();
@@ -208,7 +209,8 @@ TEST_F(AppBackendTests, LoadValidCarFileAndRunAnalysisAndWriteFiles) {
   backend.setOptions(opts);
 
   auto const write_status = backend.write_files();
-  EXPECT_TRUE(write_status.has_value()) << "Write files failed: " << (write_status ? "" : write_status.error());
+  EXPECT_TRUE(write_status.has_value())
+      << "Write files failed: " << (write_status ? "" : write_status.error());
 
   // Verify file was written
   EXPECT_TRUE(std::filesystem::exists(out_base + "_g.csv"));

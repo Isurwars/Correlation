@@ -38,8 +38,9 @@ bool NeighborGraph::areConnected(AtomIndex first_atom, AtomIndex second_atom) co
     return false;
   }
   auto target_id = static_cast<AtomID>(second_atom.id);
-  return std::ranges::any_of(adj_list_[first_atom.id],
-                             [target_id](const auto &neighbor) { return neighbor.index == target_id; });
+  return std::ranges::any_of(adj_list_[first_atom.id], [target_id](const auto &neighbor) {
+    return neighbor.index == target_id;
+  });
 }
 
 std::vector<bool> NeighborGraph::getDenseAdjacencyMatrix() const {

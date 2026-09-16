@@ -90,8 +90,10 @@ struct XdatcarParser {
     for (int i = 0; i < 3; ++i) {
       line = nextLine();
       std::istringstream iss(line);
-      if (!(iss >> header->lattice.at(i).at(0) >> header->lattice.at(i).at(1) >> header->lattice.at(i).at(2))) {
-        throw std::runtime_error("XDATCAR: failed to parse lattice vector on line " + std::to_string(i + 3) + ".");
+      if (!(iss >> header->lattice.at(i).at(0) >> header->lattice.at(i).at(1) >>
+            header->lattice.at(i).at(2))) {
+        throw std::runtime_error("XDATCAR: failed to parse lattice vector on line " +
+                                 std::to_string(i + 3) + ".");
       }
     }
 
@@ -123,7 +125,8 @@ struct XdatcarParser {
     return header;
   }
 
-  std::vector<size_t> findFrameOffsets(const std::function<void(float, const std::string &)> &progress_callback) {
+  std::vector<size_t>
+  findFrameOffsets(const std::function<void(float, const std::string &)> &progress_callback) {
     std::vector<size_t> frame_offsets;
 
     while (offset < total_size) {
@@ -173,13 +176,13 @@ private:
     } else if (scaling_factor < 0.0) {
       real_t const target_volume = std::abs(scaling_factor);
       const auto &lattice_vecs = header->lattice;
-      real_t const current_volume =
-          std::abs(lattice_vecs.at(0).at(0) * (lattice_vecs.at(1).at(1) * lattice_vecs.at(2).at(2) -
-                                               lattice_vecs.at(1).at(2) * lattice_vecs.at(2).at(1)) -
-                   lattice_vecs.at(0).at(1) * (lattice_vecs.at(1).at(0) * lattice_vecs.at(2).at(2) -
-                                               lattice_vecs.at(1).at(2) * lattice_vecs.at(2).at(0)) +
-                   lattice_vecs.at(0).at(2) * (lattice_vecs.at(1).at(0) * lattice_vecs.at(2).at(1) -
-                                               lattice_vecs.at(1).at(1) * lattice_vecs.at(2).at(0)));
+      real_t const current_volume = std::abs(
+          lattice_vecs.at(0).at(0) * (lattice_vecs.at(1).at(1) * lattice_vecs.at(2).at(2) -
+                                      lattice_vecs.at(1).at(2) * lattice_vecs.at(2).at(1)) -
+          lattice_vecs.at(0).at(1) * (lattice_vecs.at(1).at(0) * lattice_vecs.at(2).at(2) -
+                                      lattice_vecs.at(1).at(2) * lattice_vecs.at(2).at(0)) +
+          lattice_vecs.at(0).at(2) * (lattice_vecs.at(1).at(0) * lattice_vecs.at(2).at(1) -
+                                      lattice_vecs.at(1).at(1) * lattice_vecs.at(2).at(0)));
       real_t const scale = std::cbrt(target_volume / current_volume);
       for (auto &row : header->lattice) {
         for (int j = 0; j < 3; ++j) {
@@ -204,7 +207,8 @@ private:
 
     constexpr int kMaxAtomCount = 100'000'000;
     if (total_atoms_sum > kMaxAtomCount) {
-      throw std::runtime_error("XDATCAR: total atom count exceeds limit: " + std::to_string(total_atoms_sum));
+      throw std::runtime_error("XDATCAR: total atom count exceeds limit: " +
+                               std::to_string(total_atoms_sum));
     }
 
     // The number of atoms cannot exceed the file size in bytes
@@ -225,8 +229,8 @@ private:
   }
 };
 
-correlation::core::Cell parseXdatcarFrame(const std::shared_ptr<XdatcarHeader> &header, const char *frame_data,
-                                          size_t frame_size) {
+correlation::core::Cell parseXdatcarFrame(const std::shared_ptr<XdatcarHeader> &header,
+                                          const char *frame_data, size_t frame_size) {
   size_t offset = 0;
   size_t line_end = 0;
 
@@ -241,9 +245,10 @@ correlation::core::Cell parseXdatcarFrame(const std::shared_ptr<XdatcarHeader> &
   nextLn();
 
   const auto &lattice_vecs = header->lattice;
-  correlation::core::Cell cell({lattice_vecs.at(0).at(0), lattice_vecs.at(0).at(1), lattice_vecs.at(0).at(2)},
-                               {lattice_vecs.at(1).at(0), lattice_vecs.at(1).at(1), lattice_vecs.at(1).at(2)},
-                               {lattice_vecs.at(2).at(0), lattice_vecs.at(2).at(1), lattice_vecs.at(2).at(2)});
+  correlation::core::Cell cell(
+      {lattice_vecs.at(0).at(0), lattice_vecs.at(0).at(1), lattice_vecs.at(0).at(2)},
+      {lattice_vecs.at(1).at(0), lattice_vecs.at(1).at(1), lattice_vecs.at(1).at(2)},
+      {lattice_vecs.at(2).at(0), lattice_vecs.at(2).at(1), lattice_vecs.at(2).at(2)});
 
   for (int atom_idx = 0; atom_idx < header->total_atoms; ++atom_idx) {
     if (offset >= frame_size) {
@@ -259,9 +264,12 @@ correlation::core::Cell parseXdatcarFrame(const std::shared_ptr<XdatcarHeader> &
     }
     // Convert fractional coordinates to Cartesian: pos = x*a + y*b + z*c
     correlation::math::Vector3<real_t> const pos = {
-        lattice_vecs.at(0).at(0) * pos_x + lattice_vecs.at(1).at(0) * pos_y + lattice_vecs.at(2).at(0) * pos_z,
-        lattice_vecs.at(0).at(1) * pos_x + lattice_vecs.at(1).at(1) * pos_y + lattice_vecs.at(2).at(1) * pos_z,
-        lattice_vecs.at(0).at(2) * pos_x + lattice_vecs.at(1).at(2) * pos_y + lattice_vecs.at(2).at(2) * pos_z};
+        lattice_vecs.at(0).at(0) * pos_x + lattice_vecs.at(1).at(0) * pos_y +
+            lattice_vecs.at(2).at(0) * pos_z,
+        lattice_vecs.at(0).at(1) * pos_x + lattice_vecs.at(1).at(1) * pos_y +
+            lattice_vecs.at(2).at(1) * pos_z,
+        lattice_vecs.at(0).at(2) * pos_x + lattice_vecs.at(1).at(2) * pos_y +
+            lattice_vecs.at(2).at(2) * pos_z};
     cell.addAtom(header->atom_species.at(atom_idx), pos);
   }
 
@@ -316,7 +324,8 @@ XdatcarReader::readTrajectory(const std::string &filename,
   }
 
   // Build the parser lambda that captures the shared header.
-  auto frame_parser = [header](const char *data_begin, size_t data_size) -> correlation::core::Cell {
+  auto frame_parser = [header](const char *data_begin,
+                               size_t data_size) -> correlation::core::Cell {
     return parseXdatcarFrame(header, data_begin, data_size);
   };
 

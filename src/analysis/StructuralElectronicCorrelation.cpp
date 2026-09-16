@@ -88,7 +88,8 @@ void normalizeResult(MotifProjectedTDOS &result, size_t total_atoms) {
   }
 }
 
-std::vector<std::vector<size_t>> buildAtomEdgeLists(const correlation::mlip::PeriodicGraphData &graph) {
+std::vector<std::vector<size_t>>
+buildAtomEdgeLists(const correlation::mlip::PeriodicGraphData &graph) {
   std::vector<std::vector<size_t>> atom_edges(graph.atom_count);
   for (size_t edge_idx = 0; edge_idx < graph.edge_count; ++edge_idx) {
     const auto src = static_cast<size_t>(graph.edge_index_flat[edge_idx]);
@@ -118,7 +119,8 @@ real_t computeAtomQ6(size_t atom_idx, const correlation::mlip::PeriodicGraphData
       continue;
     }
 
-    const real_t theta = std::acos(std::clamp(delta_z / dist, static_cast<real_t>(-1.0), static_cast<real_t>(1.0)));
+    const real_t theta =
+        std::acos(std::clamp(delta_z / dist, static_cast<real_t>(-1.0), static_cast<real_t>(1.0)));
     const real_t phi = std::atan2(delta_y, delta_x);
     for (size_t array_idx = 0; array_idx < 13; ++array_idx) {
       const int m_idx = static_cast<int>(array_idx) - 6;
@@ -152,10 +154,9 @@ Histogram MotifProjectedTDOS::toHistogram(std::string_view title) const {
   return hist;
 }
 
-MotifProjectedTDOS StructuralElectronicCorrelation::correlateCNA(DistributionFunctions &dists,
-                                                                 const core::Trajectory &traj,
-                                                                 const calculators::TDOSParams &params,
-                                                                 const std::atomic<bool> *cancel_flag) {
+MotifProjectedTDOS StructuralElectronicCorrelation::correlateCNA(
+    DistributionFunctions &dists, const core::Trajectory &traj,
+    const calculators::TDOSParams &params, const std::atomic<bool> *cancel_flag) {
   MotifProjectedTDOS result;
   const size_t num_frames = traj.getFrameCount();
   if (params.model == nullptr || num_frames == 0) {
@@ -184,7 +185,8 @@ MotifProjectedTDOS StructuralElectronicCorrelation::correlateCNA(DistributionFun
 
     const size_t n_atoms = cell.atomCount();
     for (size_t i = 0; i < n_atoms && i < mlip_out.ldos.size(); ++i) {
-      const auto motif_name = std::string(cnaLabelToString(i < cna_labels.size() ? cna_labels[i] : 0));
+      const auto motif_name =
+          std::string(cnaLabelToString(i < cna_labels.size() ? cna_labels[i] : 0));
       accumulateVector(mlip_out.ldos[i], result.motif_tdos[motif_name]);
       accumulateVector(mlip_out.ldos[i], result.total_tdos);
       ++total_atoms;
@@ -197,10 +199,9 @@ MotifProjectedTDOS StructuralElectronicCorrelation::correlateCNA(DistributionFun
   return result;
 }
 
-MotifProjectedTDOS StructuralElectronicCorrelation::correlateSteinhardt(DistributionFunctions &dists,
-                                                                        const core::Trajectory &traj,
-                                                                        const calculators::TDOSParams &params,
-                                                                        const std::atomic<bool> *cancel_flag) {
+MotifProjectedTDOS StructuralElectronicCorrelation::correlateSteinhardt(
+    DistributionFunctions &dists, const core::Trajectory &traj,
+    const calculators::TDOSParams &params, const std::atomic<bool> *cancel_flag) {
   MotifProjectedTDOS result;
   const size_t num_frames = traj.getFrameCount();
   if (params.model == nullptr || num_frames == 0) {
@@ -239,7 +240,8 @@ MotifProjectedTDOS StructuralElectronicCorrelation::correlateSteinhardt(Distribu
   }
 
   normalizeResult(result, total_atoms);
-  dists.addHistogram("MotifProjectedTDOS_Steinhardt", result.toHistogram("Motif-Projected TDOS (Steinhardt)"));
+  dists.addHistogram("MotifProjectedTDOS_Steinhardt",
+                     result.toHistogram("Motif-Projected TDOS (Steinhardt)"));
   return result;
 }
 

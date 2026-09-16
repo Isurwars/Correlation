@@ -18,9 +18,9 @@ namespace {
 const bool registered = CalculatorFactory::registerTypeSafe<MSDCalculator>("MSDCalculator");
 } // namespace
 
-void MSDCalculator::calculateTrajectory(correlation::analysis::DistributionFunctions &dists,
-                                        const correlation::core::Trajectory &traj,
-                                        const correlation::analysis::AnalysisSettings & /*settings*/) const {
+void MSDCalculator::calculateTrajectory(
+    correlation::analysis::DistributionFunctions &dists, const correlation::core::Trajectory &traj,
+    const correlation::analysis::AnalysisSettings & /*settings*/) const {
   auto results = calculate(traj, {-1}, {0}, {static_cast<size_t>(-1)});
   for (auto &[name, histogram] : results) {
     dists.addHistogram(name, std::move(histogram));
@@ -30,7 +30,8 @@ void MSDCalculator::calculateTrajectory(correlation::analysis::DistributionFunct
 std::map<std::string, correlation::analysis::Histogram>
 MSDCalculator::calculate(const correlation::core::Trajectory &traj,
                          correlation::analysis::MaxFrames max_correlation_frames,
-                         correlation::analysis::StartFrame start_frame, correlation::analysis::EndFrame end_frame) {
+                         correlation::analysis::StartFrame start_frame,
+                         correlation::analysis::EndFrame end_frame) {
   std::map<std::string, correlation::analysis::Histogram> results;
 
   // MSD requires positional data only (frames), not velocity data
@@ -39,8 +40,8 @@ MSDCalculator::calculate(const correlation::core::Trajectory &traj,
     return results;
   }
 
-  std::vector<real_t> raw_msd =
-      correlation::analysis::DynamicsAnalyzer::calculateMSD(traj, max_correlation_frames, start_frame, end_frame);
+  std::vector<real_t> raw_msd = correlation::analysis::DynamicsAnalyzer::calculateMSD(
+      traj, max_correlation_frames, start_frame, end_frame);
 
   if (raw_msd.empty()) {
     return results;

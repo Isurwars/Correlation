@@ -51,7 +51,8 @@ public:
    * C][correlation::core::Element D][angle_idx]` where elements are the
    * indices, populated with angles in radians [-pi, pi].
    */
-  static void compute(const correlation::core::Cell &cell, const correlation::core::NeighborGraph &graph,
+  static void compute(const correlation::core::Cell &cell,
+                      const correlation::core::NeighborGraph &graph,
                       correlation::analysis::StructureAnalyzer::DihedralTensor &out_dihedrals);
 };
 

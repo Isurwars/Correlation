@@ -97,7 +97,8 @@ TEST(PeriodicGraphBuilderTests, DimerWithinCutoff) {
   const int64_t src1 = graph.edge_index_flat[0 * 2 + 1];
   const int64_t dst1 = graph.edge_index_flat[1 * 2 + 1];
 
-  EXPECT_TRUE((src0 == 0 && dst0 == 1 && src1 == 1 && dst1 == 0) || (src0 == 1 && dst0 == 0 && src1 == 0 && dst1 == 1));
+  EXPECT_TRUE((src0 == 0 && dst0 == 1 && src1 == 1 && dst1 == 0) ||
+              (src0 == 1 && dst0 == 0 && src1 == 0 && dst1 == 1));
 
   if (src0 == 0 && dst0 == 1) {
     EXPECT_NEAR(graph.edge_vectors_flat[0 * 3 + 0], static_cast<real_t>(1.2), 1e-5);
@@ -125,9 +126,12 @@ TEST(PeriodicGraphBuilderTests, SelfLoopsToggle) {
 
 TEST(PeriodicGraphBuilderTests, CutoffEnvelopeMath) {
   const real_t cutoff_radius = 5.0;
-  EXPECT_NEAR(PeriodicGraphBuilder::computeCutoffEnvelope(0.0, cutoff_radius), static_cast<real_t>(1.0), 1e-6);
-  EXPECT_NEAR(PeriodicGraphBuilder::computeCutoffEnvelope(5.0, cutoff_radius), static_cast<real_t>(0.0), 1e-6);
-  EXPECT_NEAR(PeriodicGraphBuilder::computeCutoffEnvelope(6.0, cutoff_radius), static_cast<real_t>(0.0), 1e-6);
+  EXPECT_NEAR(PeriodicGraphBuilder::computeCutoffEnvelope(0.0, cutoff_radius),
+              static_cast<real_t>(1.0), 1e-6);
+  EXPECT_NEAR(PeriodicGraphBuilder::computeCutoffEnvelope(5.0, cutoff_radius),
+              static_cast<real_t>(0.0), 1e-6);
+  EXPECT_NEAR(PeriodicGraphBuilder::computeCutoffEnvelope(6.0, cutoff_radius),
+              static_cast<real_t>(0.0), 1e-6);
 
   const real_t mid = PeriodicGraphBuilder::computeCutoffEnvelope(2.5, cutoff_radius);
   EXPECT_GT(mid, static_cast<real_t>(0.0));
@@ -153,7 +157,8 @@ TEST(PeriodicGraphBuilderTests, BesselBasisFeatures) {
 
 TEST(PeriodicGraphBuilderTests, GaussianRBFExpansion) {
   const size_t num_basis = 5;
-  auto rbf = PeriodicGraphBuilder::computeGaussianRBF(1.0, {.start = 0.0, .stop = 4.0, .num_basis = num_basis});
+  auto rbf = PeriodicGraphBuilder::computeGaussianRBF(
+      1.0, {.start = 0.0, .stop = 4.0, .num_basis = num_basis});
   EXPECT_EQ(rbf.size(), num_basis);
   // Center 1 is at 1.0, so rbf[1] should be exactly 1.0 (diff = 0)
   EXPECT_NEAR(rbf[1], static_cast<real_t>(1.0), 1e-5);
@@ -165,25 +170,29 @@ namespace {
 
 void verifyUnsoldsSum(std::span<const real_t> harmonics, real_t k_pi) {
   const real_t sum_l0 = harmonics[0] * harmonics[0];
-  EXPECT_NEAR(sum_l0, static_cast<real_t>(1.0) / (static_cast<real_t>(4.0) * k_pi), static_cast<real_t>(1e-5));
+  EXPECT_NEAR(sum_l0, static_cast<real_t>(1.0) / (static_cast<real_t>(4.0) * k_pi),
+              static_cast<real_t>(1e-5));
 
   real_t sum_l1 = 0.0;
   for (size_t idx_m = 1; idx_m <= 3; ++idx_m) {
     sum_l1 += harmonics[idx_m] * harmonics[idx_m];
   }
-  EXPECT_NEAR(sum_l1, static_cast<real_t>(3.0) / (static_cast<real_t>(4.0) * k_pi), static_cast<real_t>(1e-5));
+  EXPECT_NEAR(sum_l1, static_cast<real_t>(3.0) / (static_cast<real_t>(4.0) * k_pi),
+              static_cast<real_t>(1e-5));
 
   real_t sum_l2 = 0.0;
   for (size_t idx_m = 4; idx_m <= 8; ++idx_m) {
     sum_l2 += harmonics[idx_m] * harmonics[idx_m];
   }
-  EXPECT_NEAR(sum_l2, static_cast<real_t>(5.0) / (static_cast<real_t>(4.0) * k_pi), static_cast<real_t>(1e-5));
+  EXPECT_NEAR(sum_l2, static_cast<real_t>(5.0) / (static_cast<real_t>(4.0) * k_pi),
+              static_cast<real_t>(1e-5));
 
   real_t sum_l3 = 0.0;
   for (size_t idx_m = 9; idx_m <= 15; ++idx_m) {
     sum_l3 += harmonics[idx_m] * harmonics[idx_m];
   }
-  EXPECT_NEAR(sum_l3, static_cast<real_t>(7.0) / (static_cast<real_t>(4.0) * k_pi), static_cast<real_t>(1e-5));
+  EXPECT_NEAR(sum_l3, static_cast<real_t>(7.0) / (static_cast<real_t>(4.0) * k_pi),
+              static_cast<real_t>(1e-5));
 }
 
 } // namespace
@@ -261,7 +270,8 @@ TEST(PeriodicGraphBuilderTests, PeriodicGraphWithSphericalHarmonics) {
 
   for (size_t edge_idx = 0; edge_idx < 2; ++edge_idx) {
     const size_t offset = edge_idx * 16;
-    const std::span<const real_t> edge_sh(graph_l3.edge_spherical_harmonics_flat.data() + offset, 16);
+    const std::span<const real_t> edge_sh(graph_l3.edge_spherical_harmonics_flat.data() + offset,
+                                          16);
     verifyUnsoldsSum(edge_sh, k_pi);
   }
 }
@@ -270,17 +280,23 @@ TEST(PeriodicGraphBuilderTests, OrbCutoffEnvelopeAnalytical) {
   const real_t r_max = static_cast<real_t>(6.0);
 
   // Boundary conditions
-  EXPECT_NEAR(PeriodicGraphBuilder::computeOrbCutoffEnvelope(0.0, r_max), static_cast<real_t>(1.0), 1e-6);
-  EXPECT_NEAR(PeriodicGraphBuilder::computeOrbCutoffEnvelope(-1.0, r_max), static_cast<real_t>(1.0), 1e-6);
-  EXPECT_NEAR(PeriodicGraphBuilder::computeOrbCutoffEnvelope(6.0, r_max), static_cast<real_t>(0.0), 1e-6);
-  EXPECT_NEAR(PeriodicGraphBuilder::computeOrbCutoffEnvelope(7.5, r_max), static_cast<real_t>(0.0), 1e-6);
-  EXPECT_NEAR(PeriodicGraphBuilder::computeOrbCutoffEnvelope(3.0, 0.0), static_cast<real_t>(0.0), 1e-6);
+  EXPECT_NEAR(PeriodicGraphBuilder::computeOrbCutoffEnvelope(0.0, r_max), static_cast<real_t>(1.0),
+              1e-6);
+  EXPECT_NEAR(PeriodicGraphBuilder::computeOrbCutoffEnvelope(-1.0, r_max), static_cast<real_t>(1.0),
+              1e-6);
+  EXPECT_NEAR(PeriodicGraphBuilder::computeOrbCutoffEnvelope(6.0, r_max), static_cast<real_t>(0.0),
+              1e-6);
+  EXPECT_NEAR(PeriodicGraphBuilder::computeOrbCutoffEnvelope(7.5, r_max), static_cast<real_t>(0.0),
+              1e-6);
+  EXPECT_NEAR(PeriodicGraphBuilder::computeOrbCutoffEnvelope(3.0, 0.0), static_cast<real_t>(0.0),
+              1e-6);
 
   // Midpoint u = 0.5: 1 - 15*(0.5)^4 + 24*(0.5)^5 - 10*(0.5)^6 = 0.65625
   const real_t mid_val = PeriodicGraphBuilder::computeOrbCutoffEnvelope(3.0, r_max);
   EXPECT_NEAR(mid_val, static_cast<real_t>(0.65625), 1e-6);
 
-  // Quarter-point u = 0.25: 1 - 15/256 + 24/1024 - 10/4096 = 1 - 0.05859375 + 0.0234375 - 0.00244140625 = 0.96240234375
+  // Quarter-point u = 0.25: 1 - 15/256 + 24/1024 - 10/4096 = 1 - 0.05859375 + 0.0234375 -
+  // 0.00244140625 = 0.96240234375
   const real_t quarter_val = PeriodicGraphBuilder::computeOrbCutoffEnvelope(1.5, r_max);
   EXPECT_NEAR(quarter_val, static_cast<real_t>(0.96240234375), 1e-5);
 }
@@ -294,7 +310,8 @@ TEST(PeriodicGraphBuilderTests, OrbBesselBasisAnalytical) {
   const auto zero_basis = PeriodicGraphBuilder::computeOrbBesselBasis(0.0, cfg);
   ASSERT_EQ(zero_basis.size(), 8U);
   for (size_t idx_n = 0; idx_n < 8; ++idx_n) {
-    const real_t expected = prefactor * static_cast<real_t>(idx_n + 1) * k_pi / static_cast<real_t>(6.0);
+    const real_t expected =
+        prefactor * static_cast<real_t>(idx_n + 1) * k_pi / static_cast<real_t>(6.0);
     EXPECT_NEAR(zero_basis[idx_n], expected, 1e-5);
   }
 
@@ -317,7 +334,8 @@ TEST(PeriodicGraphBuilderTests, OrbSphericalHarmonicsComponentNormalization) {
        static_cast<real_t>(1.0 / std::numbers::sqrt3_v<double>),
        static_cast<real_t>(1.0 / std::numbers::sqrt3_v<double>)},
       {static_cast<real_t>(0.6), static_cast<real_t>(0.8), static_cast<real_t>(0.0)},
-      {static_cast<real_t>(0.26726124), static_cast<real_t>(0.53452248), static_cast<real_t>(0.80178373)},
+      {static_cast<real_t>(0.26726124), static_cast<real_t>(0.53452248),
+       static_cast<real_t>(0.80178373)},
   };
 
   for (const auto &dir : test_dirs) {

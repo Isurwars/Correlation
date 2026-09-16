@@ -244,8 +244,9 @@ struct pdf_path_operation {
  * in PDFGen. Alpha values range from 0 (opaque) to 0xff
  * (transparent)
  */
-#define PDF_ARGB(a, r, g, b)                                                                                           \
-  (uint32_t)(((uint32_t)((a) & 0xff) << 24) | (((r) & 0xff) << 16) | (((g) & 0xff) << 8) | (((b) & 0xff)))
+#define PDF_ARGB(a, r, g, b)                                                                       \
+  (uint32_t)(((uint32_t)((a) & 0xff) << 24) | (((r) & 0xff) << 16) | (((g) & 0xff) << 8) |         \
+             (((b) & 0xff)))
 
 /*! Utility macro to provide bright red */
 #define PDF_RED PDF_RGB(0xff, 0, 0)
@@ -365,8 +366,8 @@ const char *pdf_set_font_ttf_file(struct pdf_doc *pdf, FILE *fp, const char *pat
  * @param text_width area to store calculated width in
  * @return < 0 on failure, 0 on success
  */
-int pdf_get_font_text_width(struct pdf_doc *pdf, const char *font_name, const char *text, float size,
-                            float *text_width);
+int pdf_get_font_text_width(struct pdf_doc *pdf, const char *font_name, const char *text,
+                            float size, float *text_width);
 
 /**
  * Retrieves a PDF document height
@@ -451,8 +452,8 @@ int pdf_save_file(struct pdf_doc *pdf, FILE *fp);
  * @param colour Colour to draw the text
  * @return 0 on success, < 0 on failure
  */
-int pdf_add_text(struct pdf_doc *pdf, struct pdf_object *page, const char *text, float size, float xoff, float yoff,
-                 uint32_t colour);
+int pdf_add_text(struct pdf_doc *pdf, struct pdf_object *page, const char *text, float size,
+                 float xoff, float yoff, uint32_t colour);
 
 /**
  * Add a text string to the document at a rotated angle
@@ -466,8 +467,8 @@ int pdf_add_text(struct pdf_doc *pdf, struct pdf_object *page, const char *text,
  * @param colour Colour to draw the text
  * @return 0 on success, < 0 on failure
  */
-int pdf_add_text_rotate(struct pdf_doc *pdf, struct pdf_object *page, const char *text, float size, float xoff,
-                        float yoff, float angle, uint32_t colour);
+int pdf_add_text_rotate(struct pdf_doc *pdf, struct pdf_object *page, const char *text, float size,
+                        float xoff, float yoff, float angle, uint32_t colour);
 /**
  * Add a text string to the document, making it wrap if it is too
  * long
@@ -484,8 +485,9 @@ int pdf_add_text_rotate(struct pdf_doc *pdf, struct pdf_object *page, const char
  * @param height Store the final height of the wrapped text here (optional)
  * @return < 0 on failure, >= 0 on success
  */
-int pdf_add_text_wrap(struct pdf_doc *pdf, struct pdf_object *page, const char *text, float size, float xoff,
-                      float yoff, float angle, uint32_t colour, float wrap_width, int align, float *height);
+int pdf_add_text_wrap(struct pdf_doc *pdf, struct pdf_object *page, const char *text, float size,
+                      float xoff, float yoff, float angle, uint32_t colour, float wrap_width,
+                      int align, float *height);
 
 /**
  * Add a line to the document
@@ -499,8 +501,8 @@ int pdf_add_text_wrap(struct pdf_doc *pdf, struct pdf_object *page, const char *
  * @param colour Colour to draw the line
  * @return 0 on success, < 0 on failure
  */
-int pdf_add_line(struct pdf_doc *pdf, struct pdf_object *page, float x1, float y1, float x2, float y2, float width,
-                 uint32_t colour);
+int pdf_add_line(struct pdf_doc *pdf, struct pdf_object *page, float x1, float y1, float x2,
+                 float y2, float width, uint32_t colour);
 
 /**
  * Add a cubic bezier curve to the document
@@ -518,8 +520,9 @@ int pdf_add_line(struct pdf_doc *pdf, struct pdf_object *page, float x1, float y
  * @param colour Colour to draw the curve
  * @return 0 on success, < 0 on failure
  */
-int pdf_add_cubic_bezier(struct pdf_doc *pdf, struct pdf_object *page, float x1, float y1, float x2, float y2,
-                         float xq1, float yq1, float xq2, float yq2, float width, uint32_t colour);
+int pdf_add_cubic_bezier(struct pdf_doc *pdf, struct pdf_object *page, float x1, float y1, float x2,
+                         float y2, float xq1, float yq1, float xq2, float yq2, float width,
+                         uint32_t colour);
 
 /**
  * Add a quadratic bezier curve to the document
@@ -535,8 +538,9 @@ int pdf_add_cubic_bezier(struct pdf_doc *pdf, struct pdf_object *page, float x1,
  * @param colour Colour to draw the curve
  * @return 0 on success, < 0 on failure
  */
-int pdf_add_quadratic_bezier(struct pdf_doc *pdf, struct pdf_object *page, float x1, float y1, float x2, float y2,
-                             float xq1, float yq1, float width, uint32_t colour);
+int pdf_add_quadratic_bezier(struct pdf_doc *pdf, struct pdf_object *page, float x1, float y1,
+                             float x2, float y2, float xq1, float yq1, float width,
+                             uint32_t colour);
 
 /**
  * Add a custom path to the document
@@ -549,8 +553,9 @@ int pdf_add_quadratic_bezier(struct pdf_doc *pdf, struct pdf_object *page, float
  * @param fill_colour Colour to fill the path
  * @return 0 on success, < 0 on failure
  */
-int pdf_add_custom_path(struct pdf_doc *pdf, struct pdf_object *page, const struct pdf_path_operation *operations,
-                        int operation_count, float stroke_width, uint32_t stroke_colour, uint32_t fill_colour);
+int pdf_add_custom_path(struct pdf_doc *pdf, struct pdf_object *page,
+                        const struct pdf_path_operation *operations, int operation_count,
+                        float stroke_width, uint32_t stroke_colour, uint32_t fill_colour);
 
 /**
  * Add an ellipse to the document
@@ -565,8 +570,8 @@ int pdf_add_custom_path(struct pdf_doc *pdf, struct pdf_object *page, const stru
  * @param fill_colour Colour to fill the ellipse
  * @return 0 on success, < 0 on failure
  */
-int pdf_add_ellipse(struct pdf_doc *pdf, struct pdf_object *page, float x, float y, float xradius, float yradius,
-                    float width, uint32_t colour, uint32_t fill_colour);
+int pdf_add_ellipse(struct pdf_doc *pdf, struct pdf_object *page, float x, float y, float xradius,
+                    float yradius, float width, uint32_t colour, uint32_t fill_colour);
 
 /**
  * Add a circle to the document
@@ -580,8 +585,8 @@ int pdf_add_ellipse(struct pdf_doc *pdf, struct pdf_object *page, float x, float
  * @param fill_colour Colour to fill the circle
  * @return 0 on success, < 0 on failure
  */
-int pdf_add_circle(struct pdf_doc *pdf, struct pdf_object *page, float x, float y, float radius, float width,
-                   uint32_t colour, uint32_t fill_colour);
+int pdf_add_circle(struct pdf_doc *pdf, struct pdf_object *page, float x, float y, float radius,
+                   float width, uint32_t colour, uint32_t fill_colour);
 
 /**
  * Add an outline rectangle to the document
@@ -595,8 +600,8 @@ int pdf_add_circle(struct pdf_doc *pdf, struct pdf_object *page, float x, float 
  * @param colour Colour to draw the rectangle
  * @return 0 on success, < 0 on failure
  */
-int pdf_add_rectangle(struct pdf_doc *pdf, struct pdf_object *page, float x, float y, float width, float height,
-                      float border_width, uint32_t colour);
+int pdf_add_rectangle(struct pdf_doc *pdf, struct pdf_object *page, float x, float y, float width,
+                      float height, float border_width, uint32_t colour);
 
 /**
  * Add a filled rectangle to the document
@@ -611,8 +616,9 @@ int pdf_add_rectangle(struct pdf_doc *pdf, struct pdf_object *page, float x, flo
  * @param colour_border Colour to draw the rectangle
  * @return 0 on success, < 0 on failure
  */
-int pdf_add_filled_rectangle(struct pdf_doc *pdf, struct pdf_object *page, float x, float y, float width, float height,
-                             float border_width, uint32_t colour_fill, uint32_t colour_border);
+int pdf_add_filled_rectangle(struct pdf_doc *pdf, struct pdf_object *page, float x, float y,
+                             float width, float height, float border_width, uint32_t colour_fill,
+                             uint32_t colour_border);
 
 /**
  * Add an outline polygon to the document
@@ -625,8 +631,8 @@ int pdf_add_filled_rectangle(struct pdf_doc *pdf, struct pdf_object *page, float
  * @param colour Colour to draw the polygon
  * @return 0 on success, < 0 on failure
  */
-int pdf_add_polygon(struct pdf_doc *pdf, struct pdf_object *page, float x[], float y[], int count, float border_width,
-                    uint32_t colour);
+int pdf_add_polygon(struct pdf_doc *pdf, struct pdf_object *page, float x[], float y[], int count,
+                    float border_width, uint32_t colour);
 
 /**
  * Add a filled polygon to the document
@@ -639,8 +645,8 @@ int pdf_add_polygon(struct pdf_doc *pdf, struct pdf_object *page, float x[], flo
  * @param colour Colour to draw the polygon
  * @return 0 on success, < 0 on failure
  */
-int pdf_add_filled_polygon(struct pdf_doc *pdf, struct pdf_object *page, float x[], float y[], int count,
-                           float border_width, uint32_t colour);
+int pdf_add_filled_polygon(struct pdf_doc *pdf, struct pdf_object *page, float x[], float y[],
+                           int count, float border_width, uint32_t colour);
 
 /**
  * Add a bookmark to the document
@@ -668,8 +674,8 @@ int pdf_add_bookmark(struct pdf_doc *pdf, struct pdf_object *page, int parent, c
  * @param target_y Y coordinate to position at the top of the view
  * @return < 0 on failure, new bookmark id on success
  */
-int pdf_add_link(struct pdf_doc *pdf, struct pdf_object *page, float x, float y, float width, float height,
-                 struct pdf_object *target_page, float target_x, float target_y);
+int pdf_add_link(struct pdf_doc *pdf, struct pdf_object *page, float x, float y, float width,
+                 float height, struct pdf_object *target_page, float target_x, float target_y);
 
 /**
  * List of different barcode encodings that are supported
@@ -696,8 +702,8 @@ enum {
  * @param colour Colour to draw barcode
  * @return < 0 on failure, >= 0 on success
  */
-int pdf_add_barcode(struct pdf_doc *pdf, struct pdf_object *page, int code, float x, float y, float width, float height,
-                    const char *string, uint32_t colour);
+int pdf_add_barcode(struct pdf_doc *pdf, struct pdf_object *page, int code, float x, float y,
+                    float width, float height, const char *string, uint32_t colour);
 
 /**
  * Add image data as an image to the document.
@@ -716,8 +722,8 @@ int pdf_add_barcode(struct pdf_doc *pdf, struct pdf_object *page, int code, floa
  * @param len Length of data
  * @return < 0 on failure, >= 0 on success
  */
-int pdf_add_image_data(struct pdf_doc *pdf, struct pdf_object *page, float x, float y, float display_width,
-                       float display_height, const uint8_t *data, size_t len);
+int pdf_add_image_data(struct pdf_doc *pdf, struct pdf_object *page, float x, float y,
+                       float display_width, float display_height, const uint8_t *data, size_t len);
 
 /**
  * Add a raw 24 bit per pixel RGB buffer as an image to the document
@@ -736,8 +742,9 @@ int pdf_add_image_data(struct pdf_doc *pdf, struct pdf_object *page, float x, fl
  * @param height height of image in pixels
  * @return < 0 on failure, >= 0 on success
  */
-int pdf_add_rgb24(struct pdf_doc *pdf, struct pdf_object *page, float x, float y, float display_width,
-                  float display_height, const uint8_t *data, uint32_t width, uint32_t height);
+int pdf_add_rgb24(struct pdf_doc *pdf, struct pdf_object *page, float x, float y,
+                  float display_width, float display_height, const uint8_t *data, uint32_t width,
+                  uint32_t height);
 
 /**
  * Add a raw 8 bit per pixel grayscale buffer as an image to the document
@@ -752,8 +759,9 @@ int pdf_add_rgb24(struct pdf_doc *pdf, struct pdf_object *page, float x, float y
  * @param height height of image in pixels
  * @return < 0 on failure, >= 0 on success
  */
-int pdf_add_grayscale8(struct pdf_doc *pdf, struct pdf_object *page, float x, float y, float display_width,
-                       float display_height, const uint8_t *data, uint32_t width, uint32_t height);
+int pdf_add_grayscale8(struct pdf_doc *pdf, struct pdf_object *page, float x, float y,
+                       float display_width, float display_height, const uint8_t *data,
+                       uint32_t width, uint32_t height);
 
 /**
  * Add an image file as an image to the document.
@@ -771,8 +779,8 @@ int pdf_add_grayscale8(struct pdf_doc *pdf, struct pdf_object *page, float x, fl
  * @param image_filename Filename of image file to display
  * @return < 0 on failure, >= 0 on success
  */
-int pdf_add_image_file(struct pdf_doc *pdf, struct pdf_object *page, float x, float y, float display_width,
-                       float display_height, const char *image_filename);
+int pdf_add_image_file(struct pdf_doc *pdf, struct pdf_object *page, float x, float y,
+                       float display_width, float display_height, const char *image_filename);
 
 /**
  * Parse image data to determine the image type & metadata
@@ -783,8 +791,8 @@ int pdf_add_image_file(struct pdf_doc *pdf, struct pdf_object *page, float x, fl
  * @param err_msg_length maximum number of bytes to store in err_msg
  * @return < 0 on failure, >= 0 on success
  */
-int pdf_parse_image_header(struct pdf_img_info *info, const uint8_t *data, size_t length, char *err_msg,
-                           size_t err_msg_length);
+int pdf_parse_image_header(struct pdf_img_info *info, const uint8_t *data, size_t length,
+                           char *err_msg, size_t err_msg_length);
 
 /**
  * Save the given pdf document to the supplied filename with password

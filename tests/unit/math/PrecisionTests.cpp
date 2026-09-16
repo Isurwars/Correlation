@@ -23,8 +23,10 @@ protected:
   const Vector3<double> vd1{d_x1, d_y1, d_z1};
   const Vector3<double> vd2{d_x2, d_y2, d_z2};
 
-  const Vector3<float> vf1{static_cast<float>(d_x1), static_cast<float>(d_y1), static_cast<float>(d_z1)};
-  const Vector3<float> vf2{static_cast<float>(d_x2), static_cast<float>(d_y2), static_cast<float>(d_z2)};
+  const Vector3<float> vf1{static_cast<float>(d_x1), static_cast<float>(d_y1),
+                           static_cast<float>(d_z1)};
+  const Vector3<float> vf2{static_cast<float>(d_x2), static_cast<float>(d_y2),
+                           static_cast<float>(d_z2)};
 };
 } // namespace
 

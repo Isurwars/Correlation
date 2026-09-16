@@ -57,7 +57,8 @@ public:
               std::function<void(float, const std::string &)> progress_callback = nullptr);
 
   /**
-   * @brief Computes trajectory-wide dynamic properties (MSD, VACF, relaxation time, Deborah number).
+   * @brief Computes trajectory-wide dynamic properties (MSD, VACF, relaxation time, Deborah
+   * number).
    * @param distribution_functions Target DistributionFunctions container to update.
    */
   static void calculateDynamicProperties(DistributionFunctions &distribution_functions);
@@ -69,7 +70,8 @@ public:
    * @param settings Active analysis settings.
    */
   static void runTrajectoryCalculators(DistributionFunctions &distribution_functions,
-                                       correlation::core::Trajectory &trajectory, const AnalysisSettings &settings);
+                                       correlation::core::Trajectory &trajectory,
+                                       const AnalysisSettings &settings);
 };
 
 } // namespace correlation::analysis

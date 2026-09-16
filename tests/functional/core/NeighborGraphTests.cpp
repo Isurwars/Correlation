@@ -28,14 +28,15 @@ TEST_F(NeighborGraphFunctionalTests, VerifySimpleCubicTopology) {
   const real_t lattice_a = static_cast<real_t>(3.0); // 3.0 Angstroms
 
   // Define coordinate mapping for convenience
-  std::vector<Vector3R> coords = {{static_cast<real_t>(0.0), static_cast<real_t>(0.0), static_cast<real_t>(0.0)},
-                                  {lattice_a, static_cast<real_t>(0.0), static_cast<real_t>(0.0)},
-                                  {static_cast<real_t>(0.0), lattice_a, static_cast<real_t>(0.0)},
-                                  {static_cast<real_t>(0.0), static_cast<real_t>(0.0), lattice_a},
-                                  {lattice_a, lattice_a, static_cast<real_t>(0.0)},
-                                  {lattice_a, static_cast<real_t>(0.0), lattice_a},
-                                  {static_cast<real_t>(0.0), lattice_a, lattice_a},
-                                  {lattice_a, lattice_a, lattice_a}};
+  std::vector<Vector3R> coords = {
+      {static_cast<real_t>(0.0), static_cast<real_t>(0.0), static_cast<real_t>(0.0)},
+      {lattice_a, static_cast<real_t>(0.0), static_cast<real_t>(0.0)},
+      {static_cast<real_t>(0.0), lattice_a, static_cast<real_t>(0.0)},
+      {static_cast<real_t>(0.0), static_cast<real_t>(0.0), lattice_a},
+      {lattice_a, lattice_a, static_cast<real_t>(0.0)},
+      {lattice_a, static_cast<real_t>(0.0), lattice_a},
+      {static_cast<real_t>(0.0), lattice_a, lattice_a},
+      {lattice_a, lattice_a, lattice_a}};
 
   // Add directed edges for every adjacent pair along grid lines (Simple Cubic nearest neighbors)
   // For SC, every node has neighbors at distance lattice_a
@@ -70,7 +71,8 @@ TEST_F(NeighborGraphFunctionalTests, VerifySimpleCubicTopology) {
   EXPECT_TRUE(graph.areConnected(AtomIndex{0}, AtomIndex{1}));
   EXPECT_TRUE(graph.areConnected(AtomIndex{0}, AtomIndex{2}));
   EXPECT_TRUE(graph.areConnected(AtomIndex{0}, AtomIndex{3}));
-  EXPECT_FALSE(graph.areConnected(AtomIndex{0}, AtomIndex{7})); // opposite corner not directly connected
+  EXPECT_FALSE(
+      graph.areConnected(AtomIndex{0}, AtomIndex{7})); // opposite corner not directly connected
 
   // Get neighbors of node 0
   const auto &neighbors_0 = graph.getNeighbors(0);

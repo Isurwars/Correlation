@@ -152,11 +152,13 @@ correlation::core::Cell GromacsReader::parseGroFrame(const char *data, size_t si
   // is at least 44 characters, so we can estimate a reasonable upper bound from
   // the remaining data.  Additionally cap at 100 million as an absolute limit.
   if (num_atoms <= 0) {
-    throw std::runtime_error("Invalid GROMACS file: non-positive atom count: " + std::to_string(num_atoms));
+    throw std::runtime_error("Invalid GROMACS file: non-positive atom count: " +
+                             std::to_string(num_atoms));
   }
   constexpr int k_max_atom_count = 100'000'000;
   if (num_atoms > k_max_atom_count) {
-    throw std::runtime_error("Invalid GROMACS file: atom count exceeds limit: " + std::to_string(num_atoms));
+    throw std::runtime_error("Invalid GROMACS file: atom count exceeds limit: " +
+                             std::to_string(num_atoms));
   }
   const size_t remaining = (offset < size) ? (size - offset) : 0;
   // Each atom line needs at least ~20 bytes (even short lines). If the claimed
@@ -195,9 +197,12 @@ correlation::core::Cell GromacsReader::parseGroFrame(const char *data, size_t si
       symbol = symbol.substr(0, 1);
     }
 
-    auto const pos_x = static_cast<real_t>(std::stod(line.substr(20, 8))) * static_cast<real_t>(10.0); // nm to A
-    auto const pos_y = static_cast<real_t>(std::stod(line.substr(28, 8))) * static_cast<real_t>(10.0);
-    auto const pos_z = static_cast<real_t>(std::stod(line.substr(36, 8))) * static_cast<real_t>(10.0);
+    auto const pos_x =
+        static_cast<real_t>(std::stod(line.substr(20, 8))) * static_cast<real_t>(10.0); // nm to A
+    auto const pos_y =
+        static_cast<real_t>(std::stod(line.substr(28, 8))) * static_cast<real_t>(10.0);
+    auto const pos_z =
+        static_cast<real_t>(std::stod(line.substr(36, 8))) * static_cast<real_t>(10.0);
 
     cell.addAtom(symbol, correlation::math::Vector3<real_t>(pos_x, pos_y, pos_z));
   }
@@ -211,7 +216,8 @@ correlation::core::Cell GromacsReader::parseGroFrame(const char *data, size_t si
     real_t box_y = 0.0;
     real_t box_z = 0.0;
     if (str_stream >> box_x >> box_y >> box_z) {
-      cell.setLatticeParameters({static_cast<real_t>(box_x * 10.0), static_cast<real_t>(box_y * 10.0),
+      cell.setLatticeParameters({static_cast<real_t>(box_x * 10.0),
+                                 static_cast<real_t>(box_y * 10.0),
                                  static_cast<real_t>(box_z * 10.0), static_cast<real_t>(90.0),
                                  static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
     }

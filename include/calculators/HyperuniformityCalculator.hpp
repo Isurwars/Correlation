@@ -48,7 +48,9 @@ public:
   [[nodiscard]] std::string_view getName() const override { return "σ²_N(R), χ_H(R)"; }
   [[nodiscard]] std::string_view getShortName() const override { return "Hyperuniformity"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Advanced"; }
-  [[nodiscard]] std::string_view getDescription() const override { return "Computes local number variance and hyperuniformity index."; }
+  [[nodiscard]] std::string_view getDescription() const override {
+    return "Computes local number variance and hyperuniformity index.";
+  }
 
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
@@ -63,8 +65,8 @@ public:
    * @param params Sampling and binning parameters.
    * @return A map containing "sigma2_N" and "chi_H" histograms.
    */
-  static std::map<std::string, correlation::analysis::Histogram> calculate(const correlation::core::Cell &cell,
-                                                                           const HyperuniformityParams &params);
+  static std::map<std::string, correlation::analysis::Histogram>
+  calculate(const correlation::core::Cell &cell, const HyperuniformityParams &params);
 };
 
 } // namespace correlation::calculators

@@ -27,8 +27,8 @@ struct TorchGNNModel::Impl {
 };
 
 TorchGNNModel::TorchGNNModel(std::string model_path, std::string device, real_t cutoff)
-    : impl_(std::make_unique<Impl>()), model_path_(std::move(model_path)), device_str_(std::move(device)),
-      cutoff_(cutoff) {
+    : impl_(std::make_unique<Impl>()), model_path_(std::move(model_path)),
+      device_str_(std::move(device)), cutoff_(cutoff) {
 #ifdef CORRELATION_HAS_LIBTORCH
   try {
     if (device_str_ == "cuda" || device_str_.rfind("cuda:", 0) == 0) {
@@ -53,7 +53,8 @@ TorchGNNModel::TorchGNNModel(std::string model_path, std::string device, real_t 
     impl_->loaded = false;
   }
 #else
-  std::cerr << "[TorchGNNModel] LibTorch support was not compiled in (-DCORRELATION_ENABLE_LIBTORCH=OFF).\n";
+  std::cerr
+      << "[TorchGNNModel] LibTorch support was not compiled in (-DCORRELATION_ENABLE_LIBTORCH=OFF).\n";
 #endif
 }
 
@@ -82,19 +83,22 @@ MLIPOutput TorchGNNModel::evaluate(const correlation::core::Cell &cell) const {
   const size_t E = graph.edge_count;
 
   // 2. Select tensor precision based on real_t
-  const torch::ScalarType tensor_dtype = (sizeof(real_t) == sizeof(double)) ? torch::kFloat64 : torch::kFloat32;
+  const torch::ScalarType tensor_dtype =
+      (sizeof(real_t) == sizeof(double)) ? torch::kFloat64 : torch::kFloat32;
 
   // 3. Construct input tensors from mutable staging buffers.
   // torch::from_blob requires non-const void*. We copy graph data into local mutable
   // buffers and clone into device memory, guaranteeing source immutability.
   auto positions_buf = graph.positions_flat;
-  torch::Tensor pos = torch::from_blob(positions_buf.data(), {static_cast<int64_t>(number_atoms), 3}, tensor_dtype)
-                          .to(impl_->device)
-                          .clone();
+  torch::Tensor pos =
+      torch::from_blob(positions_buf.data(), {static_cast<int64_t>(number_atoms), 3}, tensor_dtype)
+          .to(impl_->device)
+          .clone();
 
   auto atomic_numbers_buf = graph.atomic_numbers;
   torch::Tensor atomic_numbers =
-      torch::from_blob(atomic_numbers_buf.data(), {static_cast<int64_t>(number_atoms)}, torch::kInt64)
+      torch::from_blob(atomic_numbers_buf.data(), {static_cast<int64_t>(number_atoms)},
+                       torch::kInt64)
           .to(impl_->device)
           .clone();
 
@@ -102,22 +106,29 @@ MLIPOutput TorchGNNModel::evaluate(const correlation::core::Cell &cell) const {
   if (E > 0) {
     auto edge_index_buf = graph.edge_index_flat;
     edge_index =
-        torch::from_blob(edge_index_buf.data(), {2, static_cast<int64_t>(E)}, torch::kInt64).to(impl_->device).clone();
+        torch::from_blob(edge_index_buf.data(), {2, static_cast<int64_t>(E)}, torch::kInt64)
+            .to(impl_->device)
+            .clone();
   } else {
-    edge_index = torch::empty({2, 0}, torch::TensorOptions().dtype(torch::kInt64).device(impl_->device));
+    edge_index =
+        torch::empty({2, 0}, torch::TensorOptions().dtype(torch::kInt64).device(impl_->device));
   }
 
   torch::Tensor edge_shift;
   if (E > 0) {
     auto edge_shifts_buf = graph.edge_shifts_flat;
     edge_shift =
-        torch::from_blob(edge_shifts_buf.data(), {static_cast<int64_t>(E), 3}, tensor_dtype).to(impl_->device).clone();
+        torch::from_blob(edge_shifts_buf.data(), {static_cast<int64_t>(E), 3}, tensor_dtype)
+            .to(impl_->device)
+            .clone();
   } else {
-    edge_shift = torch::empty({0, 3}, torch::TensorOptions().dtype(tensor_dtype).device(impl_->device));
+    edge_shift =
+        torch::empty({0, 3}, torch::TensorOptions().dtype(tensor_dtype).device(impl_->device));
   }
 
   auto cell_buf = graph.cell_flat;
-  torch::Tensor cell_t = torch::from_blob(cell_buf.data(), {3, 3}, tensor_dtype).to(impl_->device).clone();
+  torch::Tensor cell_t =
+      torch::from_blob(cell_buf.data(), {3, 3}, tensor_dtype).to(impl_->device).clone();
 
   // 4. Run forward pass
   std::vector<torch::jit::IValue> inputs;
@@ -140,7 +151,8 @@ MLIPOutput TorchGNNModel::evaluate(const correlation::core::Cell &cell) const {
       output.forces.resize(number_atoms);
       const auto *f_ptr = forces_t.data_ptr<real_t>();
       for (size_t i = 0; i < number_atoms; ++i) {
-        output.forces[i] = correlation::math::Vector3<real_t>{f_ptr[i * 3 + 0], f_ptr[i * 3 + 1], f_ptr[i * 3 + 2]};
+        output.forces[i] = correlation::math::Vector3<real_t>{f_ptr[i * 3 + 0], f_ptr[i * 3 + 1],
+                                                              f_ptr[i * 3 + 2]};
       }
     }
 

@@ -21,8 +21,8 @@ const bool registered = CalculatorFactory::registerTypeSafe<CNCalculator>("CNCal
 /**
  * @brief Helper to compute the "Any" and "Total" partial distributions for the histogram.
  */
-void populateCombinationPartials(correlation::analysis::Histogram &cn_histogram, const correlation::core::Cell &cell,
-                                 size_t num_bins) {
+void populateCombinationPartials(correlation::analysis::Histogram &cn_histogram,
+                                 const correlation::core::Cell &cell, size_t num_bins) {
   const auto &elements = cell.elements();
   std::vector<real_t> any_any_dist(num_bins, real_t{0});
 
@@ -53,13 +53,15 @@ void populateCombinationPartials(correlation::analysis::Histogram &cn_histogram,
 }
 } // namespace
 
-void CNCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
-                                  const correlation::analysis::AnalysisSettings & /*settings*/) const {
+void CNCalculator::calculateFrame(
+    correlation::analysis::DistributionFunctions &dists,
+    const correlation::analysis::AnalysisSettings & /*settings*/) const {
   dists.addHistogram("CN", calculate(dists.cell(), dists.neighbors()));
 }
 
-correlation::analysis::Histogram CNCalculator::calculate(const correlation::core::Cell &cell,
-                                                         const correlation::analysis::StructureAnalyzer *neighbors) {
+correlation::analysis::Histogram
+CNCalculator::calculate(const correlation::core::Cell &cell,
+                        const correlation::analysis::StructureAnalyzer *neighbors) {
   if (neighbors == nullptr) {
     throw std::logic_error("Cannot calculate Coordination Number. Neighbor list has not been "
                            "computed.");

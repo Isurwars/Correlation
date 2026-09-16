@@ -83,8 +83,8 @@ TEST_F(VACFCalculatorTests, CalculateVACF_WithFrameRange) {
   DistributionFunctions dists(base_cell);
 
   // Restrict VACF to frames 2 through 7 (5 frames total)
-  dists.calculateVACF(tRange, correlation::analysis::MaxFrames{3}, correlation::analysis::StartFrame{2},
-                      correlation::analysis::EndFrame{7});
+  dists.calculateVACF(tRange, correlation::analysis::MaxFrames{3},
+                      correlation::analysis::StartFrame{2}, correlation::analysis::EndFrame{7});
 
   EXPECT_NO_THROW(dists.getHistogram("VACF"));
   const auto &vacf = dists.getHistogram("VACF").partials.at("Total");
@@ -198,13 +198,15 @@ TEST_F(VACFCalculatorTests, DynamicsAnalyzerNonPhysicalInputs) {
 
   std::vector<real_t> time_mismatch = {0.0, 1.0};
   std::vector<real_t> vacf_mismatch = {1.0, 1.0, 1.0};
-  EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeDiffusionCoefficientVACF(time_mismatch, vacf_mismatch), 0.0);
+  EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeDiffusionCoefficientVACF(time_mismatch, vacf_mismatch),
+                   0.0);
   EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeRelaxationTime(time_mismatch, vacf_mismatch), 0.0);
 
   // Test non-increasing time values (dt <= 0)
   std::vector<real_t> time_non_inc = {0.0, 0.0, 1.0};
   std::vector<real_t> vacf_valid = {1.0, 1.0, 1.0};
-  EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeDiffusionCoefficientVACF(time_non_inc, vacf_valid), 0.0);
+  EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeDiffusionCoefficientVACF(time_non_inc, vacf_valid),
+                   0.0);
   EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeRelaxationTime(time_non_inc, vacf_valid), 0.0);
 
   // Test negative result handling (Green-Kubo integral < 0)

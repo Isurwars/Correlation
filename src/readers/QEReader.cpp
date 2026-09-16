@@ -40,9 +40,10 @@ struct QETrajectoryParser {
         iss >> row.at(0) >> row.at(1) >> row.at(2);
       }
     }
-    current_cell.updateLattice(correlation::math::Matrix3<real_t>(
-        {lat_vec.at(0)[0], lat_vec.at(0)[1], lat_vec.at(0)[2]}, {lat_vec.at(1)[0], lat_vec.at(1)[1], lat_vec.at(1)[2]},
-        {lat_vec.at(2)[0], lat_vec.at(2)[1], lat_vec.at(2)[2]}));
+    current_cell.updateLattice(
+        correlation::math::Matrix3<real_t>({lat_vec.at(0)[0], lat_vec.at(0)[1], lat_vec.at(0)[2]},
+                                           {lat_vec.at(1)[0], lat_vec.at(1)[1], lat_vec.at(1)[2]},
+                                           {lat_vec.at(2)[0], lat_vec.at(2)[1], lat_vec.at(2)[2]}));
     has_box = true;
     parsing_atoms = false;
   }
@@ -101,8 +102,9 @@ struct QETrajectoryParser {
 
 } // namespace
 
-correlation::core::Cell QEReader::readStructure(const std::string &filename,
-                                                std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell
+QEReader::readStructure(const std::string &filename,
+                        std::function<void(float, const std::string &)> progress_callback) {
   auto traj = readTrajectory(filename, progress_callback);
   if (traj.getFrameCount() == 0) {
     throw std::runtime_error("No structure found in QE file: " + filename);

@@ -169,8 +169,8 @@ std::string AppBackend::load_file(const std::string &path) {
   bool is_trajectory = false;
   std::string const ext = std::filesystem::path(path).extension().string();
   if (!ext.empty()) {
-    auto *reader =
-        correlation::readers::ReaderFactory::instance().getReaderForExtension({.extension = ext, .filename = path});
+    auto *reader = correlation::readers::ReaderFactory::instance().getReaderForExtension(
+        {.extension = ext, .filename = path});
     if (reader != nullptr) {
       is_trajectory = reader->isTrajectory();
     }
@@ -197,8 +197,8 @@ std::string AppBackend::load_file(const std::string &path) {
 
 namespace {
 
-[[nodiscard]] correlation::analysis::CorrelationEngineConfig toEngineConfig(const ProgramOptions &options,
-                                                                            std::atomic<bool> *cancel_flag) {
+[[nodiscard]] correlation::analysis::CorrelationEngineConfig
+toEngineConfig(const ProgramOptions &options, std::atomic<bool> *cancel_flag) {
   correlation::analysis::CorrelationEngineConfig config;
   config.settings.r_max = options.r_max;
   config.settings.r_bin_width = options.r_bin_width;
@@ -246,7 +246,8 @@ std::expected<void, std::string> AppBackend::run_analysis() {
   }
 
   const auto config = toEngineConfig(options_, &cancel_flag_);
-  auto result = correlation::analysis::CorrelationEngine::runAnalysis(*trajectory_, config, progress_callback_);
+  auto result = correlation::analysis::CorrelationEngine::runAnalysis(*trajectory_, config,
+                                                                      progress_callback_);
   if (!result) {
     std::cerr << "Analysis Exception: " << result.error() << '\n';
     return std::unexpected(result.error());
@@ -266,8 +267,8 @@ std::expected<void, std::string> AppBackend::write_files() {
   try {
     // --- Write results ---
     correlation::writers::FileWriter const writer(*df_);
-    writer.write(options_.output_file_base, options_.use_csv, options_.use_hdf5, options_.use_parquet,
-                 options_.smoothing);
+    writer.write(options_.output_file_base, options_.use_csv, options_.use_hdf5,
+                 options_.use_parquet, options_.smoothing);
     std::cout << "Files written to: " << options_.output_file_base << '\n';
   } catch (const std::exception &e) {
     std::string const err = std::string(AppDefaults::MSG_ERROR_WRITING) + e.what();

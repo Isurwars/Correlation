@@ -32,7 +32,8 @@ public:
    * @return A map where the key is the ring size and the value is the total
    * count of such rings.
    */
-  static std::map<int, size_t> findRings(const correlation::core::NeighborGraph &graph, size_t max_size = 6);
+  static std::map<int, size_t> findRings(const correlation::core::NeighborGraph &graph,
+                                         size_t max_size = 6);
 
   /**
    * @brief Extracts all exact cycles of a specific target size.

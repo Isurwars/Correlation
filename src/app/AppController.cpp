@@ -34,7 +34,8 @@
 
 namespace correlation::app {
 
-AppController::AppController(::AppWindow &window, AppBackend &backend) : window_(window), backend_(backend) {
+AppController::AppController(::AppWindow &window, AppBackend &backend)
+    : window_(window), backend_(backend) {
   // Initialize Native File Dialog
   NFD_Init();
 
@@ -72,8 +73,10 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
   window_.on_cancel_analysis([this]() { backend_.cancel_analysis(); });
   window_.on_browse_file([this]() { file_io_handler_->handleBrowseFile(); });
   window_.on_write_files([this]() { file_io_handler_->handleWriteFiles(); });
-  window_.on_validate_inputs(
-      [this]() { slint::invoke_from_event_loop([this]() { static_cast<void>(input_validator_->validateInputs()); }); });
+  window_.on_validate_inputs([this]() {
+    slint::invoke_from_event_loop(
+        [this]() { static_cast<void>(input_validator_->validateInputs()); });
+  });
 
   // Handle calculator toggle: update backend options and refresh the UI model
   window_.on_toggle_calculator([this](const slint::SharedString &calc_id, bool enabled) {
@@ -84,23 +87,27 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
 
   // Handle plot selection: generate SVG and push to UI
   window_.on_select_plot([this](int index) {
-    slint::invoke_from_event_loop([this, index]() { plot_controller_->requestPlotUpdate(index, true); });
+    slint::invoke_from_event_loop(
+        [this, index]() { plot_controller_->requestPlotUpdate(index, true); });
   });
 
   // Handle curve visibility toggle from PreviewCard checklist
-  window_.on_toggle_curve_visibility(
-      [this](int curve_id, bool visible) { plot_controller_->handleToggleCurveVisibility(curve_id, visible); });
+  window_.on_toggle_curve_visibility([this](int curve_id, bool visible) {
+    plot_controller_->handleToggleCurveVisibility(curve_id, visible);
+  });
 
-  window_.on_toggle_all_curves([this](bool visible) { plot_controller_->handleToggleAllCurves(visible); });
+  window_.on_toggle_all_curves(
+      [this](bool visible) { plot_controller_->handleToggleAllCurves(visible); });
 
   window_.on_set_curve_color([this](int curve_id, const slint::SharedString &color_hex) {
     plot_controller_->handleSetCurveColor(curve_id, color_hex);
   });
 
   // Handle mouse move on preview plot
-  window_.on_mouse_move([this](float mouse_x, float mouse_y, bool hover, float width, float height) {
-    plot_controller_->handleMouseMove(mouse_x, mouse_y, hover, width, height);
-  });
+  window_.on_mouse_move(
+      [this](float mouse_x, float mouse_y, bool hover, float width, float height) {
+        plot_controller_->handleMouseMove(mouse_x, mouse_y, hover, width, height);
+      });
 
   // Handle save plot request (SVG or PDF)
   window_.on_save_plot([this]() { plot_controller_->handleSavePlot(); });
@@ -112,21 +119,25 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
   window_.on_clear_pinned_runs([this]() { plot_controller_->handleClearPinnedRuns(); });
 
   // Handle difference plot toggle
-  window_.on_toggle_difference_plot([this](bool show) { plot_controller_->handleToggleDifferencePlot(show); });
+  window_.on_toggle_difference_plot(
+      [this](bool show) { plot_controller_->handleToggleDifferencePlot(show); });
 
   // Handle preset load, save, delete requests
   window_.on_load_preset([this](int index) {
     slint::invoke_from_event_loop([this, index]() { preset_controller_->handleLoadPreset(index); });
   });
   window_.on_save_preset([this](const slint::SharedString &name) {
-    slint::invoke_from_event_loop(
-        [this, sname = std::string(name.data())]() { preset_controller_->handleSavePreset(sname); });
+    slint::invoke_from_event_loop([this, sname = std::string(name.data())]() {
+      preset_controller_->handleSavePreset(sname);
+    });
   });
   window_.on_delete_preset([this](int index) {
-    slint::invoke_from_event_loop([this, index]() { preset_controller_->handleDeletePreset(index); });
+    slint::invoke_from_event_loop(
+        [this, index]() { preset_controller_->handleDeletePreset(index); });
   });
   window_.on_material_type_changed([this](int type) {
-    slint::invoke_from_event_loop([this, type]() { preset_controller_->handleMaterialTypeChanged(type); });
+    slint::invoke_from_event_loop(
+        [this, type]() { preset_controller_->handleMaterialTypeChanged(type); });
   });
 
   // Handle plot resized callback from UI
@@ -155,7 +166,9 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
   window_.on_reset_trajectory_options([this]() { handleResetTrajectoryOptions(); });
 
   // Handle open external URL (e.g. download update from browser)
-  window_.on_open_url([](const slint::SharedString &url) { UpdateChecker::openUrlInBrowser(std::string(url.data())); });
+  window_.on_open_url([](const slint::SharedString &url) {
+    UpdateChecker::openUrlInBrowser(std::string(url.data()));
+  });
 
   // Initial load of settings and preset list
   loadSettings();
@@ -176,7 +189,8 @@ void AppController::loadSettings() {
   window_.set_left_col_width(settings_.left_col_width);
   window_.set_middle_col_width(settings_.middle_col_width);
   if (settings_.window_width > 0 && settings_.window_height > 0) {
-    window_.window().set_size(slint::PhysicalSize({settings_.window_width, settings_.window_height}));
+    window_.window().set_size(
+        slint::PhysicalSize({settings_.window_width, settings_.window_height}));
   }
 }
 
@@ -325,7 +339,8 @@ void AppController::handleOptionstoUI() {
 };
 
 void AppController::updateActiveGroupFlags() {
-  const auto &calculators = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
+  const auto &calculators =
+      ::correlation::calculators::CalculatorFactory::instance().getCalculators();
   const auto &opts = backend_.options();
 
   bool has_radial = false;
@@ -372,12 +387,14 @@ ProgramOptions AppController::handleOptionsfromUI() {
   opt.q_max = safeParse(window_.get_analysis_options().q_max, opt.q_max);
   opt.q_bin_width = safeParse(window_.get_analysis_options().q_bin_width, opt.q_bin_width);
   opt.r_int_max = safeParse(window_.get_analysis_options().r_int_max, opt.r_int_max);
-  opt.angle_bin_width = safeParse(window_.get_analysis_options().angle_bin_width, opt.angle_bin_width);
-  opt.dihedral_bin_width = safeParse(window_.get_analysis_options().dihedral_bin_width, opt.dihedral_bin_width);
-  opt.max_ring_size = static_cast<size_t>(
-      safeParse(window_.get_analysis_options().max_ring_size, static_cast<real_t>(opt.max_ring_size)));
-  opt.hyper_samples = static_cast<size_t>(
-      safeParse(window_.get_analysis_options().hyper_samples, static_cast<real_t>(opt.hyper_samples)));
+  opt.angle_bin_width =
+      safeParse(window_.get_analysis_options().angle_bin_width, opt.angle_bin_width);
+  opt.dihedral_bin_width =
+      safeParse(window_.get_analysis_options().dihedral_bin_width, opt.dihedral_bin_width);
+  opt.max_ring_size = static_cast<size_t>(safeParse(window_.get_analysis_options().max_ring_size,
+                                                    static_cast<real_t>(opt.max_ring_size)));
+  opt.hyper_samples = static_cast<size_t>(safeParse(window_.get_analysis_options().hyper_samples,
+                                                    static_cast<real_t>(opt.hyper_samples)));
 
   // Collect active_calculators from the UI model
   const auto groups = window_.get_calculator_groups();
@@ -397,8 +414,10 @@ ProgramOptions AppController::handleOptionsfromUI() {
     }
   }
 
-  opt.smoothing_sigma = safeParse(window_.get_analysis_options().smoothing_sigma, opt.smoothing_sigma);
-  opt.smoothing_kernel = static_cast<correlation::math::KernelType>(window_.get_analysis_options().smoothing_kernel);
+  opt.smoothing_sigma =
+      safeParse(window_.get_analysis_options().smoothing_sigma, opt.smoothing_sigma);
+  opt.smoothing_kernel =
+      static_cast<correlation::math::KernelType>(window_.get_analysis_options().smoothing_kernel);
   opt.material_type = window_.get_analysis_options().material_type;
   opt.lef_cutoff = safeParse(window_.get_analysis_options().lef_cutoff, opt.lef_cutoff);
   opt.lef_sigma = safeParse(window_.get_analysis_options().lef_sigma, opt.lef_sigma);
@@ -410,7 +429,8 @@ ProgramOptions AppController::handleOptionsfromUI() {
   // Helper lambda for case-insensitive comparison
   auto to_lower = [](const std::string &str) -> std::string {
     std::string data = str;
-    std::ranges::transform(data, data.begin(), [](unsigned char chr) { return static_cast<char>(std::tolower(chr)); });
+    std::ranges::transform(data, data.begin(),
+                           [](unsigned char chr) { return static_cast<char>(std::tolower(chr)); });
     return data;
   };
 
@@ -502,9 +522,9 @@ correlation::analysis::BondCutoffMatrix AppController::getBondCutoffs() {
   auto elements = backend_.cell()->elements();
   const size_t num_elements = elements.size();
   correlation::analysis::BondCutoffMatrix cutoffs(
-      num_elements,
-      std::vector<correlation::analysis::BondCutoffRange>(
-          num_elements, correlation::analysis::BondCutoffRange{static_cast<real_t>(0.0), static_cast<real_t>(0.0)}));
+      num_elements, std::vector<correlation::analysis::BondCutoffRange>(
+                        num_elements, correlation::analysis::BondCutoffRange{
+                                          static_cast<real_t>(0.0), static_cast<real_t>(0.0)}));
 
   for (size_t k = 0; k < slint_cutoffs->row_count(); ++k) {
     auto maybe_item = slint_cutoffs->row_data(k);
@@ -551,7 +571,8 @@ correlation::analysis::BondCutoffMatrix AppController::getBondCutoffs() {
 }
 
 void AppController::populateCalculatorGroups() {
-  const auto &calculators = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
+  const auto &calculators =
+      ::correlation::calculators::CalculatorFactory::instance().getCalculators();
   const auto &opts = backend_.options();
 
   // Collect group names in insertion order
@@ -607,14 +628,19 @@ void AppController::handleResetRDFOptions() {
 void AppController::handleResetAngleOptions() {
   auto opts = window_.get_analysis_options();
   if (opts.material_type == 2) {
-    opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
-    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
+    opts.angle_bin_width =
+        slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
+    opts.dihedral_bin_width =
+        slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
   } else if (opts.material_type == 1) {
-    opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
-    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
+    opts.angle_bin_width =
+        slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
+    opts.dihedral_bin_width =
+        slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
   } else {
     opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
-    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
+    opts.dihedral_bin_width =
+        slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
   }
   window_.set_analysis_options(opts);
   static_cast<void>(input_validator_->validateInputs());
@@ -647,9 +673,11 @@ void AppController::handleResetSmoothingOptions() {
   opts.smoothing_enabled = ProgramOptions{}.smoothing;
   opts.smoothing_kernel = static_cast<int>(AppDefaults::SMOOTHING_KERNEL);
   if (opts.material_type == 2) {
-    opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_CRYSTAL));
+    opts.smoothing_sigma =
+        slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_CRYSTAL));
   } else if (opts.material_type == 1) {
-    opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_LIQUID));
+    opts.smoothing_sigma =
+        slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_LIQUID));
   } else {
     opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA));
   }

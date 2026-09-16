@@ -13,7 +13,8 @@
 
 namespace correlation::calculators::sycl_gpu {
 
-void compute_angle_tensor_sycl(const correlation::core::Cell &cell, const correlation::core::NeighborGraph &graph,
+void compute_angle_tensor_sycl(const correlation::core::Cell &cell,
+                               const correlation::core::NeighborGraph &graph,
                                AngleTensor &out_angles) {
 #if defined(CORRELATION_USE_SYCL)
   if (!has_sycl_gpu_device()) {
@@ -43,7 +44,8 @@ correlation::analysis::Histogram compute_angles_sycl(const correlation::core::Ce
   hist.y_unit = "a.u.";
   hist.file_suffix = "_PAD";
 
-  size_t const num_bins = static_cast<size_t>((params.max_angle_deg - params.min_angle_deg) / params.bin_width_deg) + 1;
+  size_t const num_bins =
+      static_cast<size_t>((params.max_angle_deg - params.min_angle_deg) / params.bin_width_deg) + 1;
   hist.bins.reserve(num_bins);
   for (size_t bin = 0; bin < num_bins; ++bin) {
     hist.bins.push_back(params.min_angle_deg + static_cast<real_t>(bin) * params.bin_width_deg);
@@ -58,7 +60,8 @@ correlation::analysis::Histogram compute_angles_sycl(const correlation::core::Ce
         for (real_t angle_rad : o2_vec) {
           real_t const angle_deg = angle_rad * rad_to_deg;
           if (angle_deg >= params.min_angle_deg && angle_deg <= params.max_angle_deg) {
-            size_t const bin_idx = static_cast<size_t>((angle_deg - params.min_angle_deg) / params.bin_width_deg);
+            size_t const bin_idx =
+                static_cast<size_t>((angle_deg - params.min_angle_deg) / params.bin_width_deg);
             if (bin_idx < num_bins) {
               counts[bin_idx] += static_cast<real_t>(1.0);
             }

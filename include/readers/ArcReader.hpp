@@ -27,13 +27,13 @@ public:
   std::vector<std::string> getExtensions() const override { return {"arc"}; }
   bool isTrajectory() const override { return true; }
 
-  correlation::core::Cell
-  readStructure(const std::string &filename,
-                std::function<void(float, const std::string &)> progress_callback = nullptr) override;
+  correlation::core::Cell readStructure(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
-  correlation::core::Trajectory
-  readTrajectory(const std::string &filename,
-                 std::function<void(float, const std::string &)> progress_callback = nullptr) override;
+  correlation::core::Trajectory readTrajectory(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
   /**
    * @brief Low-level parser for the specific file format.
@@ -46,9 +46,10 @@ public:
        const std::function<void(float, const std::string &)> &progress_callback = nullptr);
 
 private:
-  static void updateProgress(std::streampos current_pos, std::streampos file_size, std::streampos &last_progress_pos,
-                             size_t update_interval,
-                             const std::function<void(float, const std::string &)> &progress_callback);
+  static void
+  updateProgress(std::streampos current_pos, std::streampos file_size,
+                 std::streampos &last_progress_pos, size_t update_interval,
+                 const std::function<void(float, const std::string &)> &progress_callback);
 
   static void parseLine(const std::string &line, correlation::core::Cell &tempCell,
                         std::vector<correlation::core::Cell> &frames);

@@ -45,7 +45,8 @@ TEST(GPUSteinhardtCalculatorTests, FallbackOrGPUExecution) {
   }
 
   EXPECT_NO_THROW(gpu_calc.calculateFrame(dists, settings));
-  EXPECT_TRUE(dists.getAllHistograms().contains("Q4") || dists.getAllHistograms().contains("Q4_gpu"));
+  EXPECT_TRUE(dists.getAllHistograms().contains("Q4") ||
+              dists.getAllHistograms().contains("Q4_gpu"));
 }
 
 TEST(GPUSteinhardtCalculatorTests, FloatPrecisionEvaluation) {

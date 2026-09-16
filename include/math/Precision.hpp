@@ -22,7 +22,8 @@ inline constexpr bool is_single_precision = false;
 
 /**
  * @struct KahanAccumulator
- * @brief Performs Kahan-Babuška-Neumaier compensated summation to prevent floating-point loss of precision.
+ * @brief Performs Kahan-Babuška-Neumaier compensated summation to prevent floating-point loss of
+ * precision.
  * @tparam T Floating point type (defaults to real_t).
  */
 template <typename T = real_t> struct KahanAccumulator {

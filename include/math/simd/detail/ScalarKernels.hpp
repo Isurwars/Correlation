@@ -14,7 +14,8 @@
 
 namespace correlation::math::detail::scalar {
 
-inline void compute_dsq_block(float ref_x, float ref_y, float ref_z, const PositionBlockT<float> &block,
+inline void compute_dsq_block(float ref_x, float ref_y, float ref_z,
+                              const PositionBlockT<float> &block,
                               float *CORRELATION_RESTRICT out_dsq) noexcept {
   for (std::size_t idx = 0; idx < block.count; ++idx) {
     out_dsq[idx] = dist_sq_scalar<float>(
@@ -31,7 +32,8 @@ inline void compute_dsq_block(float ref_x, float ref_y, float ref_z, const Posit
   }
 }
 
-inline void compute_dsq_block(double ref_x, double ref_y, double ref_z, const PositionBlockT<double> &block,
+inline void compute_dsq_block(double ref_x, double ref_y, double ref_z,
+                              const PositionBlockT<double> &block,
                               double *CORRELATION_RESTRICT out_dsq) noexcept {
   for (std::size_t idx = 0; idx < block.count; ++idx) {
     out_dsq[idx] = dist_sq_scalar<double>(
@@ -48,8 +50,8 @@ inline void compute_dsq_block(double ref_x, double ref_y, double ref_z, const Po
   }
 }
 
-inline double simd_dot(const double *CORRELATION_RESTRICT input_a, const double *CORRELATION_RESTRICT input_b,
-                       std::size_t count) noexcept {
+inline double simd_dot(const double *CORRELATION_RESTRICT input_a,
+                       const double *CORRELATION_RESTRICT input_b, std::size_t count) noexcept {
   double acc = 0.0;
   double carry = 0.0;
   for (std::size_t idx = 0; idx < count; ++idx) {
@@ -62,8 +64,8 @@ inline double simd_dot(const double *CORRELATION_RESTRICT input_a, const double 
   return acc;
 }
 
-inline float simd_dot(const float *CORRELATION_RESTRICT input_a, const float *CORRELATION_RESTRICT input_b,
-                      std::size_t count) noexcept {
+inline float simd_dot(const float *CORRELATION_RESTRICT input_a,
+                      const float *CORRELATION_RESTRICT input_b, std::size_t count) noexcept {
   float acc = 0.0F;
   for (std::size_t idx = 0; idx < count; ++idx) {
     acc += input_a[idx] * input_b[idx];
@@ -72,8 +74,9 @@ inline float simd_dot(const float *CORRELATION_RESTRICT input_a, const float *CO
 }
 
 inline void dot_block(double v1x, double v1y, double v1z, const double *CORRELATION_RESTRICT v2x,
-                      const double *CORRELATION_RESTRICT v2y, const double *CORRELATION_RESTRICT v2z,
-                      double *CORRELATION_RESTRICT out_dot, std::size_t count) noexcept {
+                      const double *CORRELATION_RESTRICT v2y,
+                      const double *CORRELATION_RESTRICT v2z, double *CORRELATION_RESTRICT out_dot,
+                      std::size_t count) noexcept {
   for (std::size_t idx = 0; idx < count; ++idx) {
     out_dot[idx] = v1x * v2x[idx] + v1y * v2y[idx] + v1z * v2z[idx];
   }
@@ -130,7 +133,8 @@ inline float debye_sum(float q_magnitude, const float *CORRELATION_RESTRICT dist
   float acc = 0.0F;
   for (std::size_t idx = 0; idx < count; ++idx) {
     const float val_x = q_magnitude * distances[idx];
-    const float val = (val_x < 1.0e-4F) ? (1.0F - (val_x * val_x) / 6.0F) : (std::sin(val_x) / val_x);
+    const float val =
+        (val_x < 1.0e-4F) ? (1.0F - (val_x * val_x) / 6.0F) : (std::sin(val_x) / val_x);
     scratch[idx] = val;
     acc += val;
   }
@@ -209,7 +213,8 @@ inline void miller_phase_sum(const MillerPhaseSumParams<double> &params,
   }
 }
 
-inline void miller_phase_sum(const MillerPhaseSumParams<float> &params, MillerPhaseSumResult<float> &result) noexcept {
+inline void miller_phase_sum(const MillerPhaseSumParams<float> &params,
+                             MillerPhaseSumResult<float> &result) noexcept {
   result.cos_sum = 0.0F;
   result.sin_sum = 0.0F;
   for (std::size_t idx = 0; idx < params.count; ++idx) {

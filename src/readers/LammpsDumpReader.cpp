@@ -75,7 +75,8 @@ struct LammpsFrameParser {
       throw std::runtime_error("Failed to parse atom count in LAMMPS dump frame");
     }
     if (num_atoms <= 0) {
-      throw std::runtime_error("Invalid LAMMPS dump frame: non-positive atom count: " + std::to_string(num_atoms));
+      throw std::runtime_error("Invalid LAMMPS dump frame: non-positive atom count: " +
+                               std::to_string(num_atoms));
     }
     return num_atoms;
   }
@@ -106,7 +107,8 @@ struct LammpsFrameParser {
     std::stringstream(nextLine()) >> xlo >> xhi;
     std::stringstream(nextLine()) >> ylo >> yhi;
     std::stringstream(nextLine()) >> zlo >> zhi;
-    return correlation::core::Cell({xhi - xlo, 0.0, 0.0}, {0.0, yhi - ylo, 0.0}, {0.0, 0.0, zhi - zlo});
+    return correlation::core::Cell({xhi - xlo, 0.0, 0.0}, {0.0, yhi - ylo, 0.0},
+                                   {0.0, 0.0, zhi - zlo});
   }
 
   struct ColumnLayout {
@@ -203,8 +205,8 @@ struct LammpsFrameParser {
       } else if (layout.col_type >= 0 && layout.col_type < num_fields) {
         element_symbol = fields[layout.col_type];
       } else {
-        element_symbol =
-            (layout.col_id >= 0 && layout.col_id < num_fields) ? fields[layout.col_id] : std::to_string(i + 1);
+        element_symbol = (layout.col_id >= 0 && layout.col_id < num_fields) ? fields[layout.col_id]
+                                                                            : std::to_string(i + 1);
       }
 
       // Convert scaled (fractional) coordinates to Cartesian if needed.
@@ -263,9 +265,9 @@ LammpsDumpReader::readStructure(const std::string &filename,
 // ---------------------------------------------------------------------------
 // readTrajectory — memory-mapped lazy loading
 // ---------------------------------------------------------------------------
-correlation::core::Trajectory
-LammpsDumpReader::readTrajectory(const std::string &filename,
-                                 std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Trajectory LammpsDumpReader::readTrajectory(
+    const std::string &filename,
+    std::function<void(float, const std::string &)> progress_callback) {
 
   if (progress_callback) {
     progress_callback(0.0F, "Reading LAMMPS dump file...");
@@ -286,7 +288,8 @@ LammpsDumpReader::readTrajectory(const std::string &filename,
   while (pos < total_size) {
     // Check if current position starts with the needle
     bool at_line_start = (pos == 0) || (pos > 0 && (data[pos - 1] == '\n'));
-    if (at_line_start && pos + needle_len <= total_size && std::memcmp(data + pos, needle, needle_len) == 0) {
+    if (at_line_start && pos + needle_len <= total_size &&
+        std::memcmp(data + pos, needle, needle_len) == 0) {
       frame_offsets.push_back(pos);
 
       // Report progress.

@@ -64,8 +64,9 @@ private:
 
 } // namespace
 
-void ClusterCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
-                                       const correlation::analysis::AnalysisSettings & /*settings*/) const {
+void ClusterCalculator::calculateFrame(
+    correlation::analysis::DistributionFunctions &dists,
+    const correlation::analysis::AnalysisSettings & /*settings*/) const {
   const auto *analyzer = dists.neighbors();
   if (analyzer == nullptr) {
     return;

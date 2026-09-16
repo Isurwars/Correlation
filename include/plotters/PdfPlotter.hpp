@@ -53,9 +53,12 @@ inline uint32_t blendColor(BlendParams colors, real_t opacity) {
   real_t g_bg = static_cast<real_t>((colors.bg >> 8) & 0xff);
   real_t b_bg = static_cast<real_t>(colors.bg & 0xff);
 
-  uint32_t red = static_cast<uint32_t>(r_fg * opacity + r_bg * (static_cast<real_t>(1.0) - opacity));
-  uint32_t green = static_cast<uint32_t>(g_fg * opacity + g_bg * (static_cast<real_t>(1.0) - opacity));
-  uint32_t blue = static_cast<uint32_t>(b_fg * opacity + b_bg * (static_cast<real_t>(1.0) - opacity));
+  uint32_t red =
+      static_cast<uint32_t>(r_fg * opacity + r_bg * (static_cast<real_t>(1.0) - opacity));
+  uint32_t green =
+      static_cast<uint32_t>(g_fg * opacity + g_bg * (static_cast<real_t>(1.0) - opacity));
+  uint32_t blue =
+      static_cast<uint32_t>(b_fg * opacity + b_bg * (static_cast<real_t>(1.0) - opacity));
 
   return PDF_RGB(red, green, blue);
 }
@@ -89,7 +92,8 @@ inline std::string fmtScientificPdf(real_t value) {
 // Sanitize unit strings to use ASCII superscripts instead of Unicode
 inline std::string sanitizeUnitPdf(const std::string &unit) {
   std::string clean = unit;
-  auto replaceAll = [](std::string &str, const std::string &search_for, const std::string &replacement) {
+  auto replaceAll = [](std::string &str, const std::string &search_for,
+                       const std::string &replacement) {
     size_t start_pos = 0;
     while ((start_pos = str.find(search_for, start_pos)) != std::string::npos) {
       str.replace(start_pos, search_for.length(), replacement);
@@ -118,8 +122,9 @@ struct PdfPoint {
 };
 
 // Helper to draw text with specified alignment (TextAnchor) and optional rotation angle
-inline void drawPdfText(pdf_doc *pdf, struct pdf_object *page, const std::string &text, PdfPoint pos, real_t size,
-                        TextAnchor anchor, uint32_t color, real_t angle = static_cast<real_t>(0.0)) {
+inline void drawPdfText(pdf_doc *pdf, struct pdf_object *page, const std::string &text,
+                        PdfPoint pos, real_t size, TextAnchor anchor, uint32_t color,
+                        real_t angle = static_cast<real_t>(0.0)) {
   std::string sanitized = sanitizeUnitPdf(text);
   float width = 0.0F;
   pdf_get_font_text_width(pdf, "Helvetica", sanitized.c_str(), static_cast<float>(size), &width);
@@ -137,11 +142,12 @@ inline void drawPdfText(pdf_doc *pdf, struct pdf_object *page, const std::string
   real_t y_aligned = pos.y + offset_y;
 
   if (angle != static_cast<real_t>(0.0)) {
-    pdf_add_text_rotate(pdf, page, sanitized.c_str(), static_cast<float>(size), static_cast<float>(x_aligned),
-                        static_cast<float>(y_aligned), static_cast<float>(angle), color);
+    pdf_add_text_rotate(pdf, page, sanitized.c_str(), static_cast<float>(size),
+                        static_cast<float>(x_aligned), static_cast<float>(y_aligned),
+                        static_cast<float>(angle), color);
   } else {
-    pdf_add_text(pdf, page, sanitized.c_str(), static_cast<float>(size), static_cast<float>(x_aligned),
-                 static_cast<float>(y_aligned), color);
+    pdf_add_text(pdf, page, sanitized.c_str(), static_cast<float>(size),
+                 static_cast<float>(x_aligned), static_cast<float>(y_aligned), color);
   }
 }
 
@@ -172,13 +178,15 @@ struct PdfHistogramRenderer {
   detail::NiceScale yScale;
   std::map<std::string, std::vector<real_t>> partials;
 
-  PdfHistogramRenderer(const correlation::analysis::Histogram &histogram, const PlotConfig &cfg, pdf_doc *pdf_doc_ptr,
-                       struct pdf_object *pdf_page)
-      : hist(&histogram), config(&cfg), pdf(pdf_doc_ptr), page(pdf_page), canvas_width(cfg.effective_width()),
-        canvas_height(cfg.effective_height()), px0(static_cast<real_t>(100.0)),
-        px1(cfg.effective_width() - static_cast<real_t>(40.0)), py0(static_cast<real_t>(50.0)),
-        py1(cfg.effective_height() - static_cast<real_t>(90.0)), bg_col(detail::parseHexColor(cfg.bg_color())),
-        axis_col(detail::parseHexColor(cfg.axis_color())), grid_col(detail::parseHexColor(cfg.grid_color())),
+  PdfHistogramRenderer(const correlation::analysis::Histogram &histogram, const PlotConfig &cfg,
+                       pdf_doc *pdf_doc_ptr, struct pdf_object *pdf_page)
+      : hist(&histogram), config(&cfg), pdf(pdf_doc_ptr), page(pdf_page),
+        canvas_width(cfg.effective_width()), canvas_height(cfg.effective_height()),
+        px0(static_cast<real_t>(100.0)), px1(cfg.effective_width() - static_cast<real_t>(40.0)),
+        py0(static_cast<real_t>(50.0)), py1(cfg.effective_height() - static_cast<real_t>(90.0)),
+        bg_col(detail::parseHexColor(cfg.bg_color())),
+        axis_col(detail::parseHexColor(cfg.axis_color())),
+        grid_col(detail::parseHexColor(cfg.grid_color())),
         text_col(detail::parseHexColor(cfg.text_color())) {}
 
   real_t toPdfY(real_t y_svg) const { return canvas_height - y_svg; }
@@ -228,28 +236,32 @@ struct PdfHistogramRenderer {
       real_t spy = detail::mapValue(y_val, yScale.min, yScale.max, py1, py0);
       real_t pdf_y = toPdfY(spy);
       if (config->show_grid) {
-        pdf_add_line(pdf, page, static_cast<float>(px0), static_cast<float>(pdf_y), static_cast<float>(px1),
-                     static_cast<float>(pdf_y), 0.8F, grid_col);
+        pdf_add_line(pdf, page, static_cast<float>(px0), static_cast<float>(pdf_y),
+                     static_cast<float>(px1), static_cast<float>(pdf_y), 0.8F, grid_col);
       }
-      pdf_add_line(pdf, page, static_cast<float>(px0 - static_cast<real_t>(8.0)), static_cast<float>(pdf_y),
-                   static_cast<float>(px0), static_cast<float>(pdf_y), 1.5F, axis_col);
-      detail::drawPdfText(pdf, page, detail::fmtScientificPdf(y_val),
-                          {px0 - static_cast<real_t>(15.0), pdf_y - static_cast<real_t>(5.0) * config->font_scale},
-                          static_cast<real_t>(20.0) * config->font_scale, TextAnchor::End, text_col);
+      pdf_add_line(pdf, page, static_cast<float>(px0 - static_cast<real_t>(8.0)),
+                   static_cast<float>(pdf_y), static_cast<float>(px0), static_cast<float>(pdf_y),
+                   1.5F, axis_col);
+      detail::drawPdfText(
+          pdf, page, detail::fmtScientificPdf(y_val),
+          {px0 - static_cast<real_t>(15.0), pdf_y - static_cast<real_t>(5.0) * config->font_scale},
+          static_cast<real_t>(20.0) * config->font_scale, TextAnchor::End, text_col);
     }
 
     for (real_t x_val : xScale.ticks) {
       real_t spx = detail::mapValue(x_val, xScale.min, xScale.max, px0, px1);
       real_t pdf_y = toPdfY(py1);
       if (config->show_grid) {
-        pdf_add_line(pdf, page, static_cast<float>(spx), static_cast<float>(toPdfY(py0)), static_cast<float>(spx),
-                     static_cast<float>(pdf_y), 0.8F, grid_col);
+        pdf_add_line(pdf, page, static_cast<float>(spx), static_cast<float>(toPdfY(py0)),
+                     static_cast<float>(spx), static_cast<float>(pdf_y), 0.8F, grid_col);
       }
-      pdf_add_line(pdf, page, static_cast<float>(spx), static_cast<float>(pdf_y - static_cast<real_t>(8.0)),
-                   static_cast<float>(spx), static_cast<float>(pdf_y), 1.5F, axis_col);
+      pdf_add_line(pdf, page, static_cast<float>(spx),
+                   static_cast<float>(pdf_y - static_cast<real_t>(8.0)), static_cast<float>(spx),
+                   static_cast<float>(pdf_y), 1.5F, axis_col);
       detail::drawPdfText(pdf, page, detail::fmtScientificPdf(x_val),
                           {spx, pdf_y - static_cast<real_t>(25.0) * config->font_scale},
-                          static_cast<real_t>(20.0) * config->font_scale, TextAnchor::Middle, text_col);
+                          static_cast<real_t>(20.0) * config->font_scale, TextAnchor::Middle,
+                          text_col);
     }
 
     pdf_add_rectangle(pdf, page, static_cast<float>(px0), static_cast<float>(toPdfY(py1)),
@@ -272,8 +284,8 @@ struct PdfHistogramRenderer {
       if (focus_y >= yScale.min && focus_y <= yScale.max) {
         real_t spy = detail::mapValue(focus_y, yScale.min, yScale.max, py1, py0);
         real_t pdf_y = toPdfY(spy);
-        pdf_add_line(pdf, page, static_cast<float>(px0), static_cast<float>(pdf_y), static_cast<float>(px1),
-                     static_cast<float>(pdf_y), 1.8F, axis_col);
+        pdf_add_line(pdf, page, static_cast<float>(px0), static_cast<float>(pdf_y),
+                     static_cast<float>(px1), static_cast<float>(pdf_y), 1.8F, axis_col);
       }
     }
   }
@@ -309,12 +321,13 @@ struct PdfHistogramRenderer {
             y_coords.push_back(static_cast<float>(toPdfY(sy_clamped)));
           }
 
-          real_t sx_end = detail::mapValue(hist->bins[num_points - 1], xScale.min, xScale.max, px0, px1);
+          real_t sx_end =
+              detail::mapValue(hist->bins[num_points - 1], xScale.min, xScale.max, px0, px1);
           x_coords.push_back(static_cast<float>(sx_end));
           y_coords.push_back(static_cast<float>(toPdfY(py1)));
 
-          pdf_add_filled_polygon(pdf, page, x_coords.data(), y_coords.data(), static_cast<int>(x_coords.size()), 0.0F,
-                                 shade_col);
+          pdf_add_filled_polygon(pdf, page, x_coords.data(), y_coords.data(),
+                                 static_cast<int>(x_coords.size()), 0.0F, shade_col);
         }
       }
     }
@@ -334,8 +347,9 @@ struct PdfHistogramRenderer {
         real_t x_2 = detail::mapValue(hist->bins[i], xScale.min, xScale.max, px0, px1);
         real_t y_2 = detail::mapValue(vals[i], yScale.min, yScale.max, py1, py0);
 
-        pdf_add_line(pdf, page, static_cast<float>(x_1), static_cast<float>(toPdfY(y_1)), static_cast<float>(x_2),
-                     static_cast<float>(toPdfY(y_2)), static_cast<float>(config->line_width), col);
+        pdf_add_line(pdf, page, static_cast<float>(x_1), static_cast<float>(toPdfY(y_1)),
+                     static_cast<float>(x_2), static_cast<float>(toPdfY(y_2)),
+                     static_cast<float>(config->line_width), col);
       }
     }
     return legend_items;
@@ -350,7 +364,8 @@ struct PdfHistogramRenderer {
         for (std::size_t i = 0; i < num_points; ++i) {
           real_t screen_x = detail::mapValue(hist->bins[i], xScale.min, xScale.max, px0, px1);
           real_t screen_y = detail::mapValue(vals[i], yScale.min, yScale.max, py1, py0);
-          pdf_add_circle(pdf, page, static_cast<float>(screen_x), static_cast<float>(toPdfY(screen_y)),
+          pdf_add_circle(pdf, page, static_cast<float>(screen_x),
+                         static_cast<float>(toPdfY(screen_y)),
                          static_cast<float>(config->marker_size), 0.0F, col, col);
         }
       }
@@ -364,12 +379,15 @@ struct PdfHistogramRenderer {
       for (auto it = legend_items.rbegin(); it != legend_items.rend(); ++it) {
         const auto &[label, col] = *it;
         real_t pdf_y = toPdfY(legend_y);
-        pdf_add_line(pdf, page, static_cast<float>(legend_x - static_cast<real_t>(40.0)), static_cast<float>(pdf_y),
-                     static_cast<float>(legend_x - static_cast<real_t>(10.0)), static_cast<float>(pdf_y), 4.0F, col);
-        detail::drawPdfText(
-            pdf, page, label,
-            {.x = legend_x - static_cast<real_t>(45.0), .y = pdf_y - static_cast<real_t>(5.0) * config->font_scale},
-            static_cast<real_t>(18.0) * config->font_scale, TextAnchor::End, text_col);
+        pdf_add_line(pdf, page, static_cast<float>(legend_x - static_cast<real_t>(40.0)),
+                     static_cast<float>(pdf_y),
+                     static_cast<float>(legend_x - static_cast<real_t>(10.0)),
+                     static_cast<float>(pdf_y), 4.0F, col);
+        detail::drawPdfText(pdf, page, label,
+                            {.x = legend_x - static_cast<real_t>(45.0),
+                             .y = pdf_y - static_cast<real_t>(5.0) * config->font_scale},
+                            static_cast<real_t>(18.0) * config->font_scale, TextAnchor::End,
+                            text_col);
         legend_y += static_cast<real_t>(28.0);
       }
     }
@@ -391,16 +409,19 @@ struct PdfHistogramRenderer {
       y_label += " (" + y_unit + ")";
     }
 
-    detail::drawPdfText(pdf, page, title_txt,
-                        {.x = canvas_width / static_cast<real_t>(2.0), .y = toPdfY(static_cast<real_t>(30.0))},
-                        static_cast<real_t>(24.0) * config->font_scale, TextAnchor::Middle, text_col);
-    detail::drawPdfText(pdf, page, x_label,
-                        {.x = (px0 + px1) / static_cast<real_t>(2.0), .y = toPdfY(py1 + static_cast<real_t>(75.0))},
-                        static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle, text_col);
-    detail::drawPdfText(pdf, page, y_label,
-                        {.x = static_cast<real_t>(40.0), .y = toPdfY((py0 + py1) / static_cast<real_t>(2.0))},
-                        static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle, text_col,
-                        detail::kPi / static_cast<real_t>(2.0));
+    detail::drawPdfText(
+        pdf, page, title_txt,
+        {.x = canvas_width / static_cast<real_t>(2.0), .y = toPdfY(static_cast<real_t>(30.0))},
+        static_cast<real_t>(24.0) * config->font_scale, TextAnchor::Middle, text_col);
+    detail::drawPdfText(
+        pdf, page, x_label,
+        {.x = (px0 + px1) / static_cast<real_t>(2.0), .y = toPdfY(py1 + static_cast<real_t>(75.0))},
+        static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle, text_col);
+    detail::drawPdfText(
+        pdf, page, y_label,
+        {.x = static_cast<real_t>(40.0), .y = toPdfY((py0 + py1) / static_cast<real_t>(2.0))},
+        static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle, text_col,
+        detail::kPi / static_cast<real_t>(2.0));
   }
 };
 
@@ -435,18 +456,21 @@ struct PdfComparisonRenderer {
   PdfComparisonRenderer(const std::vector<LabeledHistogram> &datasets_ref, const std::string &key,
                         const PlotConfig &cfg, pdf_doc *pdf_doc_ptr, struct pdf_object *pdf_page)
       : datasets(&datasets_ref), query_key(&key), config(&cfg), pdf(pdf_doc_ptr), page(pdf_page),
-        canvas_width(cfg.effective_width()), canvas_height(cfg.effective_height()), px0(static_cast<real_t>(100.0)),
-        px1(cfg.effective_width() - static_cast<real_t>(40.0)), py0(static_cast<real_t>(50.0)),
-        py1(cfg.effective_height() - static_cast<real_t>(90.0)), bg_col(detail::parseHexColor(cfg.bg_color())),
-        axis_col(detail::parseHexColor(cfg.axis_color())), grid_col(detail::parseHexColor(cfg.grid_color())),
+        canvas_width(cfg.effective_width()), canvas_height(cfg.effective_height()),
+        px0(static_cast<real_t>(100.0)), px1(cfg.effective_width() - static_cast<real_t>(40.0)),
+        py0(static_cast<real_t>(50.0)), py1(cfg.effective_height() - static_cast<real_t>(90.0)),
+        bg_col(detail::parseHexColor(cfg.bg_color())),
+        axis_col(detail::parseHexColor(cfg.axis_color())),
+        grid_col(detail::parseHexColor(cfg.grid_color())),
         text_col(detail::parseHexColor(cfg.text_color())) {}
 
   real_t toPdfY(real_t y_svg) const { return canvas_height - y_svg; }
 
   bool prepareData() {
     for (const auto &dataset : *datasets) {
-      const auto &partials =
-          dataset.hist->smoothed_partials.empty() ? dataset.hist->partials : dataset.hist->smoothed_partials;
+      const auto &partials = dataset.hist->smoothed_partials.empty()
+                                 ? dataset.hist->partials
+                                 : dataset.hist->smoothed_partials;
       auto iterator = partials.find(*query_key);
       if (iterator == partials.end()) {
         continue;
@@ -490,29 +514,33 @@ struct PdfComparisonRenderer {
       real_t spy = detail::mapValue(y_val, yScale.min, yScale.max, py1, py0);
       real_t pdf_y = toPdfY(spy);
       if (config->show_grid) {
-        pdf_add_line(pdf, page, static_cast<float>(px0), static_cast<float>(pdf_y), static_cast<float>(px1),
-                     static_cast<float>(pdf_y), 0.8F, grid_col);
+        pdf_add_line(pdf, page, static_cast<float>(px0), static_cast<float>(pdf_y),
+                     static_cast<float>(px1), static_cast<float>(pdf_y), 0.8F, grid_col);
       }
-      pdf_add_line(pdf, page, static_cast<float>(px0 - static_cast<real_t>(8.0)), static_cast<float>(pdf_y),
-                   static_cast<float>(px0), static_cast<float>(pdf_y), 1.5F, axis_col);
-      detail::drawPdfText(
-          pdf, page, detail::fmtScientificPdf(y_val),
-          {.x = px0 - static_cast<real_t>(15.0), .y = pdf_y - static_cast<real_t>(5.0) * config->font_scale},
-          static_cast<real_t>(20.0) * config->font_scale, TextAnchor::End, text_col);
+      pdf_add_line(pdf, page, static_cast<float>(px0 - static_cast<real_t>(8.0)),
+                   static_cast<float>(pdf_y), static_cast<float>(px0), static_cast<float>(pdf_y),
+                   1.5F, axis_col);
+      detail::drawPdfText(pdf, page, detail::fmtScientificPdf(y_val),
+                          {.x = px0 - static_cast<real_t>(15.0),
+                           .y = pdf_y - static_cast<real_t>(5.0) * config->font_scale},
+                          static_cast<real_t>(20.0) * config->font_scale, TextAnchor::End,
+                          text_col);
     }
 
     for (real_t x_val : xScale.ticks) {
       real_t spx = detail::mapValue(x_val, xScale.min, xScale.max, px0, px1);
       real_t pdf_y = toPdfY(py1);
       if (config->show_grid) {
-        pdf_add_line(pdf, page, static_cast<float>(spx), static_cast<float>(toPdfY(py0)), static_cast<float>(spx),
-                     static_cast<float>(pdf_y), 0.8F, grid_col);
+        pdf_add_line(pdf, page, static_cast<float>(spx), static_cast<float>(toPdfY(py0)),
+                     static_cast<float>(spx), static_cast<float>(pdf_y), 0.8F, grid_col);
       }
-      pdf_add_line(pdf, page, static_cast<float>(spx), static_cast<float>(pdf_y - static_cast<real_t>(8.0)),
-                   static_cast<float>(spx), static_cast<float>(pdf_y), 1.5F, axis_col);
+      pdf_add_line(pdf, page, static_cast<float>(spx),
+                   static_cast<float>(pdf_y - static_cast<real_t>(8.0)), static_cast<float>(spx),
+                   static_cast<float>(pdf_y), 1.5F, axis_col);
       detail::drawPdfText(pdf, page, detail::fmtScientificPdf(x_val),
                           {.x = spx, .y = pdf_y - static_cast<real_t>(25.0) * config->font_scale},
-                          static_cast<real_t>(20.0) * config->font_scale, TextAnchor::Middle, text_col);
+                          static_cast<real_t>(20.0) * config->font_scale, TextAnchor::Middle,
+                          text_col);
     }
 
     pdf_add_rectangle(pdf, page, static_cast<float>(px0), static_cast<float>(toPdfY(py1)),
@@ -523,8 +551,9 @@ struct PdfComparisonRenderer {
     if (config->fill_area) {
       std::size_t fill_ci = 0;
       for (const auto &dataset : *datasets) {
-        const auto &partials =
-            dataset.hist->smoothed_partials.empty() ? dataset.hist->partials : dataset.hist->smoothed_partials;
+        const auto &partials = dataset.hist->smoothed_partials.empty()
+                                   ? dataset.hist->partials
+                                   : dataset.hist->smoothed_partials;
         auto iterator = partials.find(*query_key);
         if (iterator != partials.end()) {
           const auto &x_values = dataset.hist->bins;
@@ -556,12 +585,13 @@ struct PdfComparisonRenderer {
               y_coords.push_back(static_cast<float>(toPdfY(sp_y_clamped)));
             }
 
-            real_t sx_end = detail::mapValue(x_values[n_points - 1], xScale.min, xScale.max, px0, px1);
+            real_t sx_end =
+                detail::mapValue(x_values[n_points - 1], xScale.min, xScale.max, px0, px1);
             x_coords.push_back(static_cast<float>(sx_end));
             y_coords.push_back(static_cast<float>(toPdfY(py1)));
 
-            pdf_add_filled_polygon(pdf, page, x_coords.data(), y_coords.data(), static_cast<int>(x_coords.size()), 0.0F,
-                                   shade_col);
+            pdf_add_filled_polygon(pdf, page, x_coords.data(), y_coords.data(),
+                                   static_cast<int>(x_coords.size()), 0.0F, shade_col);
           }
         }
         fill_ci++;
@@ -572,8 +602,9 @@ struct PdfComparisonRenderer {
   void drawPolylines() {
     std::size_t color_idx = 0;
     for (const auto &dataset : *datasets) {
-      const auto &partials =
-          dataset.hist->smoothed_partials.empty() ? dataset.hist->partials : dataset.hist->smoothed_partials;
+      const auto &partials = dataset.hist->smoothed_partials.empty()
+                                 ? dataset.hist->partials
+                                 : dataset.hist->smoothed_partials;
       auto partial_iter = partials.find(*query_key);
       if (partial_iter == partials.end()) {
         continue;
@@ -591,8 +622,9 @@ struct PdfComparisonRenderer {
         real_t x_2 = detail::mapValue(x_values[i], xScale.min, xScale.max, px0, px1);
         real_t y_2 = detail::mapValue(y_values[i], yScale.min, yScale.max, py1, py0);
 
-        pdf_add_line(pdf, page, static_cast<float>(x_1), static_cast<float>(toPdfY(y_1)), static_cast<float>(x_2),
-                     static_cast<float>(toPdfY(y_2)), static_cast<float>(config->line_width), col);
+        pdf_add_line(pdf, page, static_cast<float>(x_1), static_cast<float>(toPdfY(y_1)),
+                     static_cast<float>(x_2), static_cast<float>(toPdfY(y_2)),
+                     static_cast<float>(config->line_width), col);
       }
     }
   }
@@ -601,8 +633,9 @@ struct PdfComparisonRenderer {
     if (config->show_markers) {
       std::size_t marker_color_idx = 0;
       for (const auto &dataset : *datasets) {
-        const auto &partials =
-            dataset.hist->smoothed_partials.empty() ? dataset.hist->partials : dataset.hist->smoothed_partials;
+        const auto &partials = dataset.hist->smoothed_partials.empty()
+                                   ? dataset.hist->partials
+                                   : dataset.hist->smoothed_partials;
         auto partial_iter = partials.find(*query_key);
         if (partial_iter != partials.end()) {
           const auto &x_values = dataset.hist->bins;
@@ -629,12 +662,15 @@ struct PdfComparisonRenderer {
       for (auto it = legend_items.rbegin(); it != legend_items.rend(); ++it) {
         const auto &[label, col] = *it;
         real_t pdf_y = toPdfY(legend_y);
-        pdf_add_line(pdf, page, static_cast<float>(legend_x - static_cast<real_t>(40.0)), static_cast<float>(pdf_y),
-                     static_cast<float>(legend_x - static_cast<real_t>(10.0)), static_cast<float>(pdf_y), 4.0F, col);
-        detail::drawPdfText(
-            pdf, page, label,
-            {legend_x - static_cast<real_t>(45.0), pdf_y - static_cast<real_t>(5.0) * config->font_scale},
-            static_cast<real_t>(18.0) * config->font_scale, TextAnchor::End, text_col);
+        pdf_add_line(pdf, page, static_cast<float>(legend_x - static_cast<real_t>(40.0)),
+                     static_cast<float>(pdf_y),
+                     static_cast<float>(legend_x - static_cast<real_t>(10.0)),
+                     static_cast<float>(pdf_y), 4.0F, col);
+        detail::drawPdfText(pdf, page, label,
+                            {legend_x - static_cast<real_t>(45.0),
+                             pdf_y - static_cast<real_t>(5.0) * config->font_scale},
+                            static_cast<real_t>(18.0) * config->font_scale, TextAnchor::End,
+                            text_col);
         legend_y += static_cast<real_t>(28.0);
       }
     }
@@ -657,47 +693,52 @@ struct PdfComparisonRenderer {
       y_label += " (" + y_unit + ")";
     }
 
-    detail::drawPdfText(pdf, page, title_txt,
-                        {.x = canvas_width / static_cast<real_t>(2.0), .y = toPdfY(static_cast<real_t>(30.0))},
-                        static_cast<real_t>(24.0) * config->font_scale, TextAnchor::Middle, text_col);
-    detail::drawPdfText(pdf, page, x_label,
-                        {.x = (px0 + px1) / static_cast<real_t>(2.0), .y = toPdfY(py1 + static_cast<real_t>(75.0))},
-                        static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle, text_col);
-    detail::drawPdfText(pdf, page, y_label,
-                        {.x = static_cast<real_t>(40.0), .y = toPdfY((py0 + py1) / static_cast<real_t>(2.0))},
-                        static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle, text_col,
-                        detail::kPi / static_cast<real_t>(2.0));
+    detail::drawPdfText(
+        pdf, page, title_txt,
+        {.x = canvas_width / static_cast<real_t>(2.0), .y = toPdfY(static_cast<real_t>(30.0))},
+        static_cast<real_t>(24.0) * config->font_scale, TextAnchor::Middle, text_col);
+    detail::drawPdfText(
+        pdf, page, x_label,
+        {.x = (px0 + px1) / static_cast<real_t>(2.0), .y = toPdfY(py1 + static_cast<real_t>(75.0))},
+        static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle, text_col);
+    detail::drawPdfText(
+        pdf, page, y_label,
+        {.x = static_cast<real_t>(40.0), .y = toPdfY((py0 + py1) / static_cast<real_t>(2.0))},
+        static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle, text_col,
+        detail::kPi / static_cast<real_t>(2.0));
   }
 };
 
 } // namespace detail
 
-inline void renderHistogramAsPdf(const correlation::analysis::Histogram &hist, const std::string &filepath,
-                                 const PlotConfig &config) {
+inline void renderHistogramAsPdf(const correlation::analysis::Histogram &hist,
+                                 const std::string &filepath, const PlotConfig &config) {
   real_t canvas_width = config.effective_width();
   real_t canvas_height = config.effective_height();
 
   // Setup pdfgen
   pdf_info info = {};
-  pdf_doc *pdf = pdf_create(static_cast<float>(canvas_width), static_cast<float>(canvas_height), &info);
+  pdf_doc *pdf =
+      pdf_create(static_cast<float>(canvas_width), static_cast<float>(canvas_height), &info);
   struct pdf_object *page = pdf_append_page(pdf);
 
   uint32_t bg_col = detail::parseHexColor(config.bg_color());
   uint32_t text_col = detail::parseHexColor(config.text_color());
 
   // Background
-  pdf_add_filled_rectangle(pdf, page, 0.0F, 0.0F, static_cast<float>(canvas_width), static_cast<float>(canvas_height),
-                           0.0F, bg_col, PDF_TRANSPARENT);
+  pdf_add_filled_rectangle(pdf, page, 0.0F, 0.0F, static_cast<float>(canvas_width),
+                           static_cast<float>(canvas_height), 0.0F, bg_col, PDF_TRANSPARENT);
 
   pdf_set_font(pdf, "Helvetica");
 
   auto toPdfY = [&](real_t y_svg) { return canvas_height - y_svg; };
 
   if (hist.bins.empty() || (hist.smoothed_partials.empty() && hist.partials.empty())) {
-    detail::drawPdfText(
-        pdf, page, "No data available",
-        {.x = canvas_width / static_cast<real_t>(2.0), .y = toPdfY(canvas_height / static_cast<real_t>(2.0))},
-        static_cast<real_t>(24.0) * config.font_scale, TextAnchor::Middle, text_col);
+    detail::drawPdfText(pdf, page, "No data available",
+                        {.x = canvas_width / static_cast<real_t>(2.0),
+                         .y = toPdfY(canvas_height / static_cast<real_t>(2.0))},
+                        static_cast<real_t>(24.0) * config.font_scale, TextAnchor::Middle,
+                        text_col);
     pdf_save(pdf, filepath.c_str());
     pdf_destroy(pdf);
     return;
@@ -723,8 +764,8 @@ struct ComparisonQuery {
   std::string filepath;
 };
 
-inline void renderComparisonPdf(const std::vector<LabeledHistogram> &datasets, const ComparisonQuery &query,
-                                const PlotConfig &config) {
+inline void renderComparisonPdf(const std::vector<LabeledHistogram> &datasets,
+                                const ComparisonQuery &query, const PlotConfig &config) {
   if (datasets.empty()) {
     return;
   }
@@ -733,15 +774,16 @@ inline void renderComparisonPdf(const std::vector<LabeledHistogram> &datasets, c
   real_t canvas_height = config.effective_height();
 
   pdf_info info = {};
-  pdf_doc *pdf = pdf_create(static_cast<float>(canvas_width), static_cast<float>(canvas_height), &info);
+  pdf_doc *pdf =
+      pdf_create(static_cast<float>(canvas_width), static_cast<float>(canvas_height), &info);
   struct pdf_object *page = pdf_append_page(pdf);
 
   uint32_t bg_col = detail::parseHexColor(config.bg_color());
   uint32_t text_col = detail::parseHexColor(config.text_color());
 
   // Background
-  pdf_add_filled_rectangle(pdf, page, 0.0F, 0.0F, static_cast<float>(canvas_width), static_cast<float>(canvas_height),
-                           0.0F, bg_col, PDF_TRANSPARENT);
+  pdf_add_filled_rectangle(pdf, page, 0.0F, 0.0F, static_cast<float>(canvas_width),
+                           static_cast<float>(canvas_height), 0.0F, bg_col, PDF_TRANSPARENT);
 
   pdf_set_font(pdf, "Helvetica");
 
@@ -756,10 +798,11 @@ inline void renderComparisonPdf(const std::vector<LabeledHistogram> &datasets, c
     renderer.drawLegend();
     renderer.drawTitlesAndLabels();
   } else {
-    detail::drawPdfText(
-        pdf, page, "No comparison data",
-        {.x = canvas_width / static_cast<real_t>(2.0), .y = toPdfY(canvas_height / static_cast<real_t>(2.0))},
-        static_cast<real_t>(24.0) * config.font_scale, TextAnchor::Middle, text_col);
+    detail::drawPdfText(pdf, page, "No comparison data",
+                        {.x = canvas_width / static_cast<real_t>(2.0),
+                         .y = toPdfY(canvas_height / static_cast<real_t>(2.0))},
+                        static_cast<real_t>(24.0) * config.font_scale, TextAnchor::Middle,
+                        text_col);
   }
 
   pdf_save(pdf, query.filepath.c_str());

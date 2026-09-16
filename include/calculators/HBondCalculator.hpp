@@ -20,7 +20,9 @@ public:
   [[nodiscard]] std::string_view getName() const override { return "Hydrogen Bond"; }
   [[nodiscard]] std::string_view getShortName() const override { return "HBond"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
-  [[nodiscard]] std::string_view getDescription() const override { return "Computes hydrogen bond statistics (counts and distribution)."; }
+  [[nodiscard]] std::string_view getDescription() const override {
+    return "Computes hydrogen bond statistics (counts and distribution).";
+  }
 
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
@@ -34,8 +36,9 @@ public:
    * @param neighbors The structural analyzer.
    * @return A histogram of H-bond counts.
    */
-  static correlation::analysis::Histogram calculate(const correlation::core::Cell &cell,
-                                                    const correlation::analysis::StructureAnalyzer *neighbors);
+  static correlation::analysis::Histogram
+  calculate(const correlation::core::Cell &cell,
+            const correlation::analysis::StructureAnalyzer *neighbors);
 };
 
 } // namespace correlation::calculators

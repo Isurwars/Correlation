@@ -35,10 +35,12 @@ void init_writers(py::module_ &mod) {
   // ------------------------------------------------------------------
   py::class_<BaseWriter>(mod, "BaseWriter", "Abstract base class for all file-format writers.")
       .def("get_name", &BaseWriter::getName, "Display name of this writer (e.g. 'CSV', 'HDF5').")
-      .def("get_extensions", &BaseWriter::getExtensions, "List of supported file extensions (e.g. ['.csv']).")
+      .def("get_extensions", &BaseWriter::getExtensions,
+           "List of supported file extensions (e.g. ['.csv']).")
       .def(
           "write",
-          [](const BaseWriter &writer, const std::string &base_path, const DistributionFunctions &dists,
+          [](const BaseWriter &writer, const std::string &base_path,
+             const DistributionFunctions &dists,
              bool smoothing) { writer.write(base_path, dists, smoothing); },
           py::arg("base_path"), py::arg("dists"), py::arg("smoothing") = false,
           "Write distribution function data to file(s).\n\n"
@@ -53,16 +55,16 @@ void init_writers(py::module_ &mod) {
   // ------------------------------------------------------------------
   // CSVWriter
   // ------------------------------------------------------------------
-  py::class_<CSVWriter, BaseWriter>(mod, "CSVWriter",
-                                    "Writes distribution function histograms to CSV files.\n\n"
-                                    "For each histogram (e.g. g(r)) a separate .csv file is created\n"
-                                    "with all partials as columns.")
+  py::class_<CSVWriter, BaseWriter>(
+      mod, "CSVWriter",
+      "Writes distribution function histograms to CSV files.\n\n"
+      "For each histogram (e.g. g(r)) a separate .csv file is created\n"
+      "with all partials as columns.")
       .def(py::init<>())
       .def(
           "write_all_csvs",
-          [](const CSVWriter &, const std::string &base_path, const DistributionFunctions &dists, bool write_smoothed) {
-            CSVWriter::writeAllCSVs(base_path, dists, write_smoothed);
-          },
+          [](const CSVWriter &, const std::string &base_path, const DistributionFunctions &dists,
+             bool write_smoothed) { CSVWriter::writeAllCSVs(base_path, dists, write_smoothed); },
           py::arg("base_path"), py::arg("dists"), py::arg("write_smoothed") = false,
           "Write all available histograms to individual CSV files.");
 
@@ -98,7 +100,8 @@ void init_writers(py::module_ &mod) {
         }
         return writer;
       },
-      py::arg("extension"), py::return_value_policy::reference, "Look up a writer by file extension (e.g. '.csv').");
+      py::arg("extension"), py::return_value_policy::reference,
+      "Look up a writer by file extension (e.g. '.csv').");
 
   mod.def(
       "list_writers",

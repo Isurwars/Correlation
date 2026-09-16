@@ -52,12 +52,12 @@ public:
     try {
       return instance().registerReader(std::make_unique<T>());
     } catch (const std::exception &e) {
-      std::cerr << "[FATAL] Failed to statically register reader '" << (name != nullptr ? name : "unknown")
-                << "': " << e.what() << '\n';
+      std::cerr << "[FATAL] Failed to statically register reader '"
+                << (name != nullptr ? name : "unknown") << "': " << e.what() << '\n';
       return false;
     } catch (...) {
-      std::cerr << "[FATAL] Failed to statically register reader '" << (name != nullptr ? name : "unknown")
-                << "' due to an unknown exception." << '\n';
+      std::cerr << "[FATAL] Failed to statically register reader '"
+                << (name != nullptr ? name : "unknown") << "' due to an unknown exception." << '\n';
       return false;
     }
   }

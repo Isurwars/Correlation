@@ -32,8 +32,8 @@ using hipError_t = cudaError_t;
 #if defined(__CUDACC__)
 // Portable kernel launch function
 template <typename K, typename... Args>
-inline void hipLaunchKernelGGL(K kernel, dim3 grid, dim3 block, std::size_t shared, cudaStream_t stream,
-                               Args &&...args) {
+inline void hipLaunchKernelGGL(K kernel, dim3 grid, dim3 block, std::size_t shared,
+                               cudaStream_t stream, Args &&...args) {
   kernel<<<grid, block, shared, stream>>>(std::forward<Args>(args)...);
 }
 #endif

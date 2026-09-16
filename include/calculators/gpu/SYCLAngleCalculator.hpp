@@ -31,7 +31,8 @@ struct SYCLAngleParams {
  * @param[in] graph Pre-computed neighbor connectivity graph.
  * @param[out] out_angles Output 4D angle tensor populated with angles in radians.
  */
-void compute_angle_tensor_sycl(const correlation::core::Cell &cell, const correlation::core::NeighborGraph &graph,
+void compute_angle_tensor_sycl(const correlation::core::Cell &cell,
+                               const correlation::core::NeighborGraph &graph,
                                AngleTensor &out_angles);
 
 /**

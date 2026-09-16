@@ -54,7 +54,8 @@ private:
 
 TEST(AppBackendIntegrationTests, EndToEndMultiFrameTrajectoryPipeline) {
   const std::string trajectory_path = findTestDataPath("xdatcar/Si.xdatcar");
-  ASSERT_TRUE(std::filesystem::exists(trajectory_path)) << "Trajectory test fixture not found: " << trajectory_path;
+  ASSERT_TRUE(std::filesystem::exists(trajectory_path))
+      << "Trajectory test fixture not found: " << trajectory_path;
 
   correlation::app::AppBackend backend;
   const std::string load_status = backend.load_file(trajectory_path);
@@ -92,7 +93,8 @@ TEST(AppBackendIntegrationTests, EndToEndMultiFrameTrajectoryPipeline) {
   });
 
   const auto run_result = backend.run_analysis();
-  ASSERT_TRUE(run_result.has_value()) << "run_analysis failed: " << (run_result ? "" : run_result.error());
+  ASSERT_TRUE(run_result.has_value())
+      << "run_analysis failed: " << (run_result ? "" : run_result.error());
   EXPECT_TRUE(progress_invoked);
   EXPECT_FALSE(backend.is_cancelled());
 
@@ -103,7 +105,8 @@ TEST(AppBackendIntegrationTests, EndToEndMultiFrameTrajectoryPipeline) {
   EXPECT_NE(std::ranges::find(available_hists, "MSD"), available_hists.end());
 
   const auto write_result = backend.write_files();
-  ASSERT_TRUE(write_result.has_value()) << "write_files failed: " << (write_result ? "" : write_result.error());
+  ASSERT_TRUE(write_result.has_value())
+      << "write_files failed: " << (write_result ? "" : write_result.error());
 
   EXPECT_TRUE(std::filesystem::exists(out_base + "_g.csv"));
   EXPECT_TRUE(std::filesystem::exists(out_base + "_J.csv"));

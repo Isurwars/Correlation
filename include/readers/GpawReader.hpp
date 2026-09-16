@@ -19,16 +19,18 @@ namespace correlation::readers {
 class GpawReader : public BaseReader {
 public:
   [[nodiscard]] std::string getName() const override { return "GPAW Reader"; }
-  [[nodiscard]] std::vector<std::string> getExtensions() const override { return {".gpaw", ".txt", ".log"}; }
+  [[nodiscard]] std::vector<std::string> getExtensions() const override {
+    return {".gpaw", ".txt", ".log"};
+  }
   [[nodiscard]] bool isTrajectory() const override { return true; }
 
-  correlation::core::Cell
-  readStructure(const std::string &filename,
-                std::function<void(float, const std::string &)> progress_callback = nullptr) override;
+  correlation::core::Cell readStructure(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
-  correlation::core::Trajectory
-  readTrajectory(const std::string &filename,
-                 std::function<void(float, const std::string &)> progress_callback = nullptr) override;
+  correlation::core::Trajectory readTrajectory(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 };
 
 } // namespace correlation::readers

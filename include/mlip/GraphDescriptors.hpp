@@ -31,7 +31,8 @@ enum class CNALabel : std::uint8_t {
 
 /**
  * @class GraphDescriptors
- * @brief Utility for extracting topological, structural, and spectral descriptors from PeriodicGraphData.
+ * @brief Utility for extracting topological, structural, and spectral descriptors from
+ * PeriodicGraphData.
  */
 class GraphDescriptors {
 public:
@@ -45,8 +46,8 @@ public:
    * @param[in] max_size Maximum ring size to search for (default: 6).
    * @return Flattened array of size [N * max_size] with per-atom ring counts.
    */
-  [[nodiscard]] static std::vector<real_t> computeRingStatisticsDescriptor(const PeriodicGraphData &graph,
-                                                                           size_t max_size = 6);
+  [[nodiscard]] static std::vector<real_t>
+  computeRingStatisticsDescriptor(const PeriodicGraphData &graph, size_t max_size = 6);
 
   /**
    * @brief Computes per-atom Common Neighbor Analysis (CNA) classification labels.
@@ -62,7 +63,8 @@ public:
    * @param[in] graph The periodic neighbor graph tensor buffers.
    * @return Array of size [N] containing the degree of each node.
    */
-  [[nodiscard]] static std::vector<real_t> computeCoordinationEmbedding(const PeriodicGraphData &graph);
+  [[nodiscard]] static std::vector<real_t>
+  computeCoordinationEmbedding(const PeriodicGraphData &graph);
 
   /**
    * @brief Computes top-k eigenvalues of the graph adjacency matrix.
@@ -71,7 +73,8 @@ public:
    * @param[in] k_eigenvalues Number of leading eigenvalues to compute.
    * @return Array of top-k eigenvalues sorted in descending order.
    */
-  [[nodiscard]] static std::vector<real_t> computeGraphSpectrum(const PeriodicGraphData &graph, size_t k_eigenvalues);
+  [[nodiscard]] static std::vector<real_t> computeGraphSpectrum(const PeriodicGraphData &graph,
+                                                                size_t k_eigenvalues);
 
   /**
    * @brief Populates all descriptor fields in PeriodicGraphData in-place.

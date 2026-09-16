@@ -36,7 +36,8 @@ TEST(GPUXRDCalculatorTests, FallbackOrGPUExecution) {
 
   GPUXRDCalculator const gpu_calc;
   EXPECT_NO_THROW(gpu_calc.calculateFrame(dists, settings));
-  EXPECT_TRUE(dists.getAllHistograms().contains("XRD_gpu") || dists.getAllHistograms().contains("XRD"));
+  EXPECT_TRUE(dists.getAllHistograms().contains("XRD_gpu") ||
+              dists.getAllHistograms().contains("XRD"));
 }
 
 TEST(GPUXRDCalculatorTests, ComputeXRDDirectFunction) {
@@ -80,7 +81,8 @@ TEST(GPUXRDCalculatorTests, ThrowsOnInvalidParams) {
   EXPECT_THROW(gpu::compute_xrd_gpu(cell, {.lambda = -1.0}), std::invalid_argument);
 
   // Invalid theta bounds
-  EXPECT_THROW(gpu::compute_xrd_gpu(cell, {.theta_min = 80.0, .theta_max = 10.0}), std::invalid_argument);
+  EXPECT_THROW(gpu::compute_xrd_gpu(cell, {.theta_min = 80.0, .theta_max = 10.0}),
+               std::invalid_argument);
 
   // Invalid bin width
   EXPECT_THROW(gpu::compute_xrd_gpu(cell, {.bin_width = 0.0}), std::invalid_argument);

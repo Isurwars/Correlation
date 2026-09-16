@@ -25,7 +25,8 @@ public:
 
   [[nodiscard]] std::string getModelName() const override { return "MockElectronicModel"; }
 
-  [[nodiscard]] correlation::mlip::MLIPOutput evaluate(const correlation::core::Cell &cell) const override {
+  [[nodiscard]] correlation::mlip::MLIPOutput
+  evaluate(const correlation::core::Cell &cell) const override {
     correlation::mlip::MLIPOutput out;
     const size_t n_atoms = cell.atomCount();
     out.ldos_bins = bins_;
@@ -33,8 +34,8 @@ public:
 
     for (size_t i = 0; i < n_atoms; ++i) {
       for (size_t bin_idx = 0; bin_idx < bins_; ++bin_idx) {
-        out.ldos[i][bin_idx] =
-            static_cast<real_t>(1.0 + static_cast<double>(i) * 0.2 + static_cast<double>(bin_idx) * 0.05);
+        out.ldos[i][bin_idx] = static_cast<real_t>(1.0 + static_cast<double>(i) * 0.2 +
+                                                   static_cast<double>(bin_idx) * 0.05);
       }
     }
     return out;
@@ -47,9 +48,12 @@ private:
 correlation::core::Cell makeFccCell(real_t lattice_a = static_cast<real_t>(3.615)) {
   correlation::core::Cell cell({lattice_a, lattice_a, lattice_a, 90.0, 90.0, 90.0});
   cell.addAtom("Cu", {0.0, 0.0, 0.0});
-  cell.addAtom("Cu", {0.0, lattice_a * static_cast<real_t>(0.5), lattice_a * static_cast<real_t>(0.5)});
-  cell.addAtom("Cu", {lattice_a * static_cast<real_t>(0.5), 0.0, lattice_a * static_cast<real_t>(0.5)});
-  cell.addAtom("Cu", {lattice_a * static_cast<real_t>(0.5), lattice_a * static_cast<real_t>(0.5), 0.0});
+  cell.addAtom("Cu",
+               {0.0, lattice_a * static_cast<real_t>(0.5), lattice_a * static_cast<real_t>(0.5)});
+  cell.addAtom("Cu",
+               {lattice_a * static_cast<real_t>(0.5), 0.0, lattice_a * static_cast<real_t>(0.5)});
+  cell.addAtom("Cu",
+               {lattice_a * static_cast<real_t>(0.5), lattice_a * static_cast<real_t>(0.5), 0.0});
   return cell;
 }
 

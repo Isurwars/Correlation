@@ -20,9 +20,10 @@ namespace {
 const bool registered = CalculatorFactory::registerTypeSafe<VDOSCalculator>("VDOSCalculator");
 } // namespace
 
-void VDOSCalculator::calculateTrajectory(correlation::analysis::DistributionFunctions &dists,
-                                         const correlation::core::Trajectory & /*traj*/,
-                                         const correlation::analysis::AnalysisSettings & /*settings*/) const {
+void VDOSCalculator::calculateTrajectory(
+    correlation::analysis::DistributionFunctions &dists,
+    const correlation::core::Trajectory & /*traj*/,
+    const correlation::analysis::AnalysisSettings & /*settings*/) const {
   const auto &all = dists.getAllHistograms();
   if (!all.contains("VACF")) {
     return; // VACF must be computed first
@@ -35,8 +36,9 @@ void VDOSCalculator::calculateTrajectory(correlation::analysis::DistributionFunc
   dists.addHistogram("VDOS", calculate(vacf_hist));
 }
 
-correlation::analysis::Histogram VDOSCalculator::calculate(const correlation::analysis::Histogram &vacf_hist,
-                                                           const VDOSParams &params) {
+correlation::analysis::Histogram
+VDOSCalculator::calculate(const correlation::analysis::Histogram &vacf_hist,
+                          const VDOSParams &params) {
   const auto &vacf_data = vacf_hist.partials.at("Total");
 
   if (vacf_data.size() < 2) {
@@ -63,8 +65,10 @@ correlation::analysis::Histogram VDOSCalculator::calculate(const correlation::an
   for (size_t i = num_points - 1; i > 0; --i) {
     if (frequencies[i] <= params.max_imag_freq) {
       combined_frequencies.push_back(-frequencies[i]);
-      combined_frequencies_cmInv.push_back(-frequencies[i] * static_cast<real_t>(correlation::math::thz_to_cminv));
-      combined_frequencies_meV.push_back(-frequencies[i] * static_cast<real_t>(correlation::math::thz_to_mev));
+      combined_frequencies_cmInv.push_back(-frequencies[i] *
+                                           static_cast<real_t>(correlation::math::thz_to_cminv));
+      combined_frequencies_meV.push_back(-frequencies[i] *
+                                         static_cast<real_t>(correlation::math::thz_to_mev));
       combined_intensities.push_back(intensities_imag[i]);
     }
   }
@@ -73,8 +77,10 @@ correlation::analysis::Histogram VDOSCalculator::calculate(const correlation::an
   for (size_t i = 0; i < num_points; ++i) {
     if (frequencies[i] <= params.max_real_freq) {
       combined_frequencies.push_back(frequencies[i]);
-      combined_frequencies_cmInv.push_back(frequencies[i] * static_cast<real_t>(correlation::math::thz_to_cminv));
-      combined_frequencies_meV.push_back(frequencies[i] * static_cast<real_t>(correlation::math::thz_to_mev));
+      combined_frequencies_cmInv.push_back(frequencies[i] *
+                                           static_cast<real_t>(correlation::math::thz_to_cminv));
+      combined_frequencies_meV.push_back(frequencies[i] *
+                                         static_cast<real_t>(correlation::math::thz_to_mev));
       combined_intensities.push_back(intensities_real[i]);
     }
   }
@@ -95,8 +101,9 @@ correlation::analysis::Histogram VDOSCalculator::calculate(const correlation::an
   return vdos_hist;
 }
 
-correlation::analysis::Histogram VDOSCalculator::calculate(const correlation::analysis::Histogram &vacf_hist,
-                                                           real_t max_imag_freq, real_t max_real_freq) {
+correlation::analysis::Histogram
+VDOSCalculator::calculate(const correlation::analysis::Histogram &vacf_hist, real_t max_imag_freq,
+                          real_t max_real_freq) {
   return calculate(vacf_hist, VDOSParams{
                                   .max_imag_freq = max_imag_freq,
                                   .max_real_freq = max_real_freq,

@@ -31,7 +31,8 @@ TEST(VDOSCalculatorTests, VDOSIsNonZeroAtZeroFrequencyForConstantVACF) {
   // The integral of a constant 1.0 over 100 points with dt=1.0 is roughly
   // 100.0. With windowing and normalization, it might vary, but it should
   // definitely be non-zero.
-  EXPECT_GT(intensities[0], 1.0) << "VDOS at 0 THz should be non-zero for a constant VACF (DC component)";
+  EXPECT_GT(intensities[0], 1.0)
+      << "VDOS at 0 THz should be non-zero for a constant VACF (DC component)";
 }
 
 TEST(VDOSCalculatorTests, PerfectSolidShowsSinglePeak) {
@@ -50,10 +51,12 @@ TEST(VDOSCalculatorTests, PerfectSolidShowsSinglePeak) {
   for (size_t i = 0; i < num_frames; ++i) {
     real_t t_fs = static_cast<real_t>(i) * time_step;
     // 0.001 converts fs to ps for THz frequency
-    vacf[i] = static_cast<real_t>(std::cos(2.0 * correlation::math::pi * target_nu_thz * t_fs * 0.001));
+    vacf[i] =
+        static_cast<real_t>(std::cos(2.0 * correlation::math::pi * target_nu_thz * t_fs * 0.001));
   }
 
-  auto [frequencies, intensities_real, intensities_imag] = DynamicsAnalyzer::calculateVDOS(vacf, time_step);
+  auto [frequencies, intensities_real, intensities_imag] =
+      DynamicsAnalyzer::calculateVDOS(vacf, time_step);
 
   // Find the maximum intensity in the real part
   auto max_it = std::ranges::max_element(intensities_real);
@@ -84,14 +87,16 @@ TEST(VDOSCalculatorTests, IdealGasShowsImaginaryPeak) {
   // We choose an exponential decay coefficient 'a' such that the imaginary peak
   // is at 10.0 THz.
   real_t target_nu_peak = 10.0;
-  auto vec_a = static_cast<real_t>(2.0 * correlation::math::pi * target_nu_peak); // a in THz (ps^-1)
+  auto vec_a =
+      static_cast<real_t>(2.0 * correlation::math::pi * target_nu_peak); // a in THz (ps^-1)
 
   for (size_t i = 0; i < num_frames; ++i) {
     auto t_ps = static_cast<real_t>(static_cast<real_t>(i) * time_step * 0.001); // fs to ps
     vacf[i] = std::exp(-vec_a * t_ps);
   }
 
-  auto [frequencies, intensities_real, intensities_imag] = DynamicsAnalyzer::calculateVDOS(vacf, time_step);
+  auto [frequencies, intensities_real, intensities_imag] =
+      DynamicsAnalyzer::calculateVDOS(vacf, time_step);
 
   // 1. The Real part should peak at exactly 0 Hz for pure exponential decay
   auto max_real_it = std::ranges::max_element(intensities_real);

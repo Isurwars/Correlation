@@ -55,8 +55,10 @@ slint::Color parseHexColor(const std::string &hex) {
 }
 } // namespace
 
-PlotController::PlotController(::AppWindow &window, AppBackend &backend) : window_(window), backend_(backend) {
-  update_timer_.start(slint::TimerMode::Repeated, std::chrono::milliseconds(1000), [this]() { handleUpdateTimer(); });
+PlotController::PlotController(::AppWindow &window, AppBackend &backend)
+    : window_(window), backend_(backend) {
+  update_timer_.start(slint::TimerMode::Repeated, std::chrono::milliseconds(1000),
+                      [this]() { handleUpdateTimer(); });
 }
 
 PlotController::~PlotController() {
@@ -69,7 +71,8 @@ PlotController::~PlotController() {
 }
 
 void PlotController::handlePlotResized(PlotSize size) {
-  if (std::abs(size.width - last_plot_width_) < 1.0F && std::abs(size.height - last_plot_height_) < 1.0F) {
+  if (std::abs(size.width - last_plot_width_) < 1.0F &&
+      std::abs(size.height - last_plot_height_) < 1.0F) {
     return;
   }
   last_plot_width_ = size.width;
@@ -169,9 +172,11 @@ void PlotController::populatePlotList() {
   auto names = backend_.getAvailableHistogramNames();
 
   std::map<std::string, int> priority = {
-      {"g_r", 0},  {"g_r_unweighted", 1}, {"H_r", 2},      {"G_r", 3},   {"J_r", 4},       {"S_q", 10},
-      {"XRD", 11}, {"PAD", 20},           {"PAD_raw", 21}, {"DAD", 22},  {"DAD_raw", 23},  {"CN", 24},
-      {"RD", 25},  {"MSD", 30},           {"VACF", 31},    {"VDOS", 32}, {"sigma2_N", 40}, {"chi_H", 41}};
+      {"g_r", 0},       {"g_r_unweighted", 1}, {"H_r", 2},      {"G_r", 3},
+      {"J_r", 4},       {"S_q", 10},           {"XRD", 11},     {"PAD", 20},
+      {"PAD_raw", 21},  {"DAD", 22},           {"DAD_raw", 23}, {"CN", 24},
+      {"RD", 25},       {"MSD", 30},           {"VACF", 31},    {"VDOS", 32},
+      {"sigma2_N", 40}, {"chi_H", 41}};
 
   std::ranges::sort(names, [&](const std::string &lhs, const std::string &rhs) {
     int prio_a = priority.contains(lhs) ? priority.at(lhs) : 100;
@@ -235,7 +240,8 @@ void PlotController::populatePlotList() {
   window_.set_selected_plot_index(names.empty() ? -1 : 0);
 }
 
-void PlotController::handleMouseMove(float mouse_x, float mouse_y, bool hover, float width, float height) {
+void PlotController::handleMouseMove(float mouse_x, float mouse_y, bool hover, float width,
+                                     float height) {
   bool actual_hover = hover;
 
   if (std::abs(mouse_x - last_mouse_x_) < 0.5F && std::abs(mouse_y - last_mouse_y_) < 0.5F &&
@@ -312,8 +318,11 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
   for (const auto &pinned_run : pinned_runs_) {
     auto hist_it = pinned_run.histograms.find(name);
     if (hist_it != pinned_run.histograms.end()) {
-      bool vis = curve_visibility_map_.contains(pinned_run.label) ? curve_visibility_map_[pinned_run.label] : true;
-      data.comparison_hists.push_back({.label = pinned_run.label, .hist = &hist_it->second, .style = {.visible = vis}});
+      bool vis = curve_visibility_map_.contains(pinned_run.label)
+                     ? curve_visibility_map_[pinned_run.label]
+                     : true;
+      data.comparison_hists.push_back(
+          {.label = pinned_run.label, .hist = &hist_it->second, .style = {.visible = vis}});
     }
   }
 
@@ -405,7 +414,8 @@ void PlotController::updateCurveToggleItems(const correlation::analysis::Histogr
   }
   std::sort(sorted_partial_keys.begin(), sorted_partial_keys.end());
 
-  std::size_t total_curves = (partials.contains("Total") ? 1 : 0) + sorted_partial_keys.size() + pinned_runs_.size();
+  std::size_t total_curves =
+      (partials.contains("Total") ? 1 : 0) + sorted_partial_keys.size() + pinned_runs_.size();
 
   int curve_id = 0;
   std::size_t color_idx = 0;
@@ -473,13 +483,17 @@ bool PlotController::isPlotCacheHit(int index, const correlation::plotters::Plot
                                     const correlation::plotters::HoverInfo &hover) const {
   return (index == last_rendered_index_ && pinned_runs_.size() == last_pinned_runs_count_ &&
           config.theme == last_config_.theme && config.preset_size == last_config_.preset_size &&
-          std::abs(config.width - last_config_.width) < 1e-2 && std::abs(config.height - last_config_.height) < 1e-2 &&
-          config.palette == last_config_.palette && std::abs(config.font_scale - last_config_.font_scale) < 1e-4 &&
+          std::abs(config.width - last_config_.width) < 1e-2 &&
+          std::abs(config.height - last_config_.height) < 1e-2 &&
+          config.palette == last_config_.palette &&
+          std::abs(config.font_scale - last_config_.font_scale) < 1e-4 &&
           std::abs(config.line_width - last_config_.line_width) < 1e-4 &&
           std::abs(config.marker_size - last_config_.marker_size) < 1e-4 &&
-          config.show_grid == last_config_.show_grid && config.show_legend == last_config_.show_legend &&
-          config.show_markers == last_config_.show_markers && config.fill_area == last_config_.fill_area &&
-          hover.active == last_hover_.active && std::abs(hover.mouse_x - last_hover_.mouse_x) < 1e-2 &&
+          config.show_grid == last_config_.show_grid &&
+          config.show_legend == last_config_.show_legend &&
+          config.show_markers == last_config_.show_markers &&
+          config.fill_area == last_config_.fill_area && hover.active == last_hover_.active &&
+          std::abs(hover.mouse_x - last_hover_.mouse_x) < 1e-2 &&
           std::abs(hover.mouse_y - last_hover_.mouse_y) < 1e-2 &&
           std::abs(hover.widget_width - last_hover_.widget_width) < 1e-2 &&
           std::abs(hover.widget_height - last_hover_.widget_height) < 1e-2);
@@ -493,23 +507,26 @@ void PlotController::executePlotRender(RenderTaskData data) {
     data.config.show_difference_curve = show_difference_curve_;
     std::string svg;
     if (data.comparison_hists.size() <= 1) {
-      svg =
-          correlation::plotters::renderHistogramAsSvg(data.active_hist, data.config, data.hover, data.ashcroft_weights,
-                                                      data.curve_visibility, custom_curve_colors_);
+      svg = correlation::plotters::renderHistogramAsSvg(
+          data.active_hist, data.config, data.hover, data.ashcroft_weights, data.curve_visibility,
+          custom_curve_colors_);
     } else {
       std::string key = "Total";
-      const auto &partials =
-          data.active_hist.smoothed_partials.empty() ? data.active_hist.partials : data.active_hist.smoothed_partials;
+      const auto &partials = data.active_hist.smoothed_partials.empty()
+                                 ? data.active_hist.partials
+                                 : data.active_hist.smoothed_partials;
       if (!partials.empty() && !partials.contains(key)) {
         key = partials.begin()->first;
       }
-      svg = correlation::plotters::renderComparisonSvg(data.comparison_hists, key, data.config, data.hover);
+      svg = correlation::plotters::renderComparisonSvg(data.comparison_hists, key, data.config,
+                                                       data.hover);
     }
 
     slint::invoke_from_event_loop([this, svg = std::move(svg)]() {
       static std::atomic<uint64_t> file_counter{0};
       auto temp_dir = std::filesystem::temp_directory_path();
-      auto temp_path = temp_dir / ("correlation_preview_" + std::to_string(file_counter++) + ".svg");
+      auto temp_path =
+          temp_dir / ("correlation_preview_" + std::to_string(file_counter++) + ".svg");
 
       std::ofstream out(temp_path);
       if (out) {
@@ -522,8 +539,8 @@ void PlotController::executePlotRender(RenderTaskData data) {
         std::filesystem::remove(temp_path, error_code);
       } else {
         const auto *svg_bytes = std::bit_cast<const uint8_t *>(svg.data());
-        auto img =
-            slint::private_api::load_image_from_embedded_data(std::span<const uint8_t>(svg_bytes, svg.size()), "svg");
+        auto img = slint::private_api::load_image_from_embedded_data(
+            std::span<const uint8_t>(svg_bytes, svg.size()), "svg");
         window_.set_preview_plot(img);
       }
 
@@ -569,47 +586,49 @@ void PlotController::handleSavePlot() {
     dialog_thread_.join();
   }
 
-  dialog_thread_ =
-      std::thread([this, default_dir = std::move(default_dir), default_name = std::move(default_name), hist, name]() {
-        std::array<nfdfilteritem_t, 2> filter_list = {{{
-                                                           .name = "SVG Image",
-                                                           .spec = "svg",
-                                                       },
-                                                       {
-                                                           .name = "PDF Document",
-                                                           .spec = "pdf",
-                                                       }}};
-        const nfdfiltersize_t filter_count = filter_list.size();
+  dialog_thread_ = std::thread([this, default_dir = std::move(default_dir),
+                                default_name = std::move(default_name), hist, name]() {
+    std::array<nfdfilteritem_t, 2> filter_list = {{{
+                                                       .name = "SVG Image",
+                                                       .spec = "svg",
+                                                   },
+                                                   {
+                                                       .name = "PDF Document",
+                                                       .spec = "pdf",
+                                                   }}};
+    const nfdfiltersize_t filter_count = filter_list.size();
 
-        nfdchar_t *out_path = nullptr;
-        const nfdresult_t result = NFD_SaveDialogU8(&out_path, filter_list.data(), filter_count,
-                                                    default_dir.empty() ? nullptr : default_dir.c_str(),
-                                                    default_name.empty() ? nullptr : default_name.c_str());
+    nfdchar_t *out_path = nullptr;
+    const nfdresult_t result =
+        NFD_SaveDialogU8(&out_path, filter_list.data(), filter_count,
+                         default_dir.empty() ? nullptr : default_dir.c_str(),
+                         default_name.empty() ? nullptr : default_name.c_str());
 
-        if (result == NFD_OKAY) {
-          std::string filepath(out_path);
-          NFD_FreePathU8(out_path);
-          slint::invoke_from_event_loop([this, filepath = std::move(filepath), hist, name]() {
-            dialog_active_.store(false);
-            executeSavePlot(filepath, hist, name);
-          });
-        } else if (result == NFD_CANCEL) {
-          slint::invoke_from_event_loop([this]() {
-            dialog_active_.store(false);
-            window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
-          });
-        } else {
-          std::string error_msg = "Error: ";
-          error_msg += NFD_GetError();
-          slint::invoke_from_event_loop([this, error_msg = std::move(error_msg)]() {
-            dialog_active_.store(false);
-            window_.set_analysis_status_text(slint::SharedString(error_msg));
-          });
-        }
+    if (result == NFD_OKAY) {
+      std::string filepath(out_path);
+      NFD_FreePathU8(out_path);
+      slint::invoke_from_event_loop([this, filepath = std::move(filepath), hist, name]() {
+        dialog_active_.store(false);
+        executeSavePlot(filepath, hist, name);
       });
+    } else if (result == NFD_CANCEL) {
+      slint::invoke_from_event_loop([this]() {
+        dialog_active_.store(false);
+        window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
+      });
+    } else {
+      std::string error_msg = "Error: ";
+      error_msg += NFD_GetError();
+      slint::invoke_from_event_loop([this, error_msg = std::move(error_msg)]() {
+        dialog_active_.store(false);
+        window_.set_analysis_status_text(slint::SharedString(error_msg));
+      });
+    }
+  });
 }
 
-void PlotController::executeSavePlot(const std::string &filepath, const correlation::analysis::Histogram *hist,
+void PlotController::executeSavePlot(const std::string &filepath,
+                                     const correlation::analysis::Histogram *hist,
                                      const std::string &name) {
   correlation::plotters::PlotConfig config = buildPlotConfigFromUI();
   config.use_native_text = true;
@@ -638,15 +657,19 @@ void PlotController::executeSavePlot(const std::string &filepath, const correlat
     if (pinned_runs_.empty()) {
       correlation::plotters::renderHistogramAsPdf(*hist, filepath, config);
     } else {
-      correlation::plotters::renderComparisonPdf(build_datasets(), {getComparisonKey(hist), filepath}, config);
+      correlation::plotters::renderComparisonPdf(build_datasets(),
+                                                 {getComparisonKey(hist), filepath}, config);
     }
-    window_.set_analysis_status_text(slint::SharedString(name + " plot saved as PDF successfully."));
+    window_.set_analysis_status_text(
+        slint::SharedString(name + " plot saved as PDF successfully."));
   } else {
     std::string svg;
     if (pinned_runs_.empty()) {
-      svg = correlation::plotters::renderHistogramAsSvg(*hist, config, {}, backend_.getAshcroftWeights());
+      svg = correlation::plotters::renderHistogramAsSvg(*hist, config, {},
+                                                        backend_.getAshcroftWeights());
     } else {
-      svg = correlation::plotters::renderComparisonSvg(build_datasets(), getComparisonKey(hist), config);
+      svg = correlation::plotters::renderComparisonSvg(build_datasets(), getComparisonKey(hist),
+                                                       config);
     }
     std::ofstream out(filepath);
     if (out.is_open()) {

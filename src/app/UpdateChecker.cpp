@@ -136,14 +136,16 @@ std::optional<ReleaseInfo> UpdateChecker::parseReleaseJson(const std::string &js
 
 #ifdef _WIN32
 std::optional<ReleaseInfo> UpdateChecker::fetchLatestRelease() {
-  HINTERNET hInternet = InternetOpenA("Correlation-App", INTERNET_OPEN_TYPE_DIRECT, nullptr, nullptr, 0);
+  HINTERNET hInternet =
+      InternetOpenA("Correlation-App", INTERNET_OPEN_TYPE_DIRECT, nullptr, nullptr, 0);
   if (!hInternet) {
     return std::nullopt;
   }
 
-  HINTERNET hUrl = InternetOpenUrlA(hInternet, "https://api.github.com/repos/Isurwars/Correlation/releases/latest",
-                                    "User-Agent: Correlation-App\r\nAccept: application/vnd.github.v3+json\r\n", -1,
-                                    INTERNET_FLAG_RELOAD | INTERNET_FLAG_SECURE | INTERNET_FLAG_DONT_CACHE, 0);
+  HINTERNET hUrl = InternetOpenUrlA(
+      hInternet, "https://api.github.com/repos/Isurwars/Correlation/releases/latest",
+      "User-Agent: Correlation-App\r\nAccept: application/vnd.github.v3+json\r\n", -1,
+      INTERNET_FLAG_RELOAD | INTERNET_FLAG_SECURE | INTERNET_FLAG_DONT_CACHE, 0);
   if (!hUrl) {
     InternetCloseHandle(hInternet);
     return std::nullopt;
@@ -152,7 +154,9 @@ std::optional<ReleaseInfo> UpdateChecker::fetchLatestRelease() {
   std::string response;
   std::array<char, 4096> buffer{};
   DWORD bytes_read = 0;
-  while (InternetReadFile(hUrl, buffer.data(), static_cast<DWORD>(buffer.size() - 1), &bytes_read) && bytes_read > 0) {
+  while (
+      InternetReadFile(hUrl, buffer.data(), static_cast<DWORD>(buffer.size() - 1), &bytes_read) &&
+      bytes_read > 0) {
     response.append(buffer.data(), bytes_read);
   }
 
@@ -185,19 +189,22 @@ std::optional<ReleaseInfo> UpdateChecker::fetchLatestRelease() {
   posix_spawn_file_actions_addclose(&actions, pipefd[1]);
   posix_spawn_file_actions_addopen(&actions, STDERR_FILENO, "/dev/null", O_WRONLY, 0);
 
-  std::array<std::string, 9> arg_strs = {"curl",
-                                         "-s",
-                                         "-m",
-                                         "5",
-                                         "-H",
-                                         "User-Agent: Correlation-App",
-                                         "-H",
-                                         "Accept: application/vnd.github.v3+json",
-                                         "https://api.github.com/repos/Isurwars/Correlation/releases/latest"};
+  std::array<std::string, 9> arg_strs = {
+      "curl",
+      "-s",
+      "-m",
+      "5",
+      "-H",
+      "User-Agent: Correlation-App",
+      "-H",
+      "Accept: application/vnd.github.v3+json",
+      "https://api.github.com/repos/Isurwars/Correlation/releases/latest"};
 
-  std::array<char *, 10> args = {
-      arg_strs[0].data(), arg_strs[1].data(), arg_strs[2].data(), arg_strs[3].data(), arg_strs[4].data(),
-      arg_strs[5].data(), arg_strs[6].data(), arg_strs[7].data(), arg_strs[8].data(), nullptr};
+  std::array<char *, 10> args = {arg_strs[0].data(), arg_strs[1].data(),
+                                 arg_strs[2].data(), arg_strs[3].data(),
+                                 arg_strs[4].data(), arg_strs[5].data(),
+                                 arg_strs[6].data(), arg_strs[7].data(),
+                                 arg_strs[8].data(), nullptr};
 
   pid_t pid = 0;
   const int spawn_res = posix_spawnp(&pid, args[0], &actions, nullptr, args.data(), environ);
@@ -263,8 +270,9 @@ void UpdateChecker::checkForUpdatesAsync(AppWindow &window, const std::string &c
       const auto release = fetchLatestRelease();
       if (release.has_value() && isNewerVersion(release->tag_name, current_version)) {
         const std::string tag = release->tag_name;
-        const std::string url =
-            release->html_url.empty() ? "https://github.com/Isurwars/Correlation/releases" : release->html_url;
+        const std::string url = release->html_url.empty()
+                                    ? "https://github.com/Isurwars/Correlation/releases"
+                                    : release->html_url;
 
         slint::invoke_from_event_loop([&window, tag, url]() {
           window.set_update_version(slint::SharedString(tag));
@@ -278,7 +286,8 @@ void UpdateChecker::checkForUpdatesAsync(AppWindow &window, const std::string &c
   }).detach();
 }
 #else
-void UpdateChecker::checkForUpdatesAsync(AppWindow & /*window*/, const std::string & /*current_version*/) {
+void UpdateChecker::checkForUpdatesAsync(AppWindow & /*window*/,
+                                         const std::string & /*current_version*/) {
   // No-op in headless test builds without Slint AppWindow
 }
 #endif

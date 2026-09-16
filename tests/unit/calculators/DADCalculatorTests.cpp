@@ -77,14 +77,15 @@ TEST_F(DADCalculatorTests, IcosahedronAnglesDAD) {
   cell_iso.setLatticeParameters({30.0, 30.0, 30.0, 90.0, 90.0, 90.0});
   cell_iso.addAtom("Si", {10.0, 10.0, 10.0}); // Center
   real_t const phi = std::numbers::phi;
-  std::vector<std::vector<real_t>> const vertices = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
-                                                     {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
-                                                     {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
+  std::vector<std::vector<real_t>> const vertices = {
+      {0, 1, phi},  {0, 1, -phi},  {0, -1, phi}, {0, -1, -phi}, {1, phi, 0},  {1, -phi, 0},
+      {-1, phi, 0}, {-1, -phi, 0}, {phi, 0, 1},  {phi, 0, -1},  {-phi, 0, 1}, {-phi, 0, -1}};
 
   for (const auto &vertex : vertices) {
-    cell_iso.addAtom("Si", correlation::math::Vector3<real_t>(static_cast<real_t>(10.0) + vertex[0],
-                                                              static_cast<real_t>(10.0) + vertex[1],
-                                                              static_cast<real_t>(10.0) + vertex[2]));
+    cell_iso.addAtom("Si",
+                     correlation::math::Vector3<real_t>(static_cast<real_t>(10.0) + vertex[0],
+                                                        static_cast<real_t>(10.0) + vertex[1],
+                                                        static_cast<real_t>(10.0) + vertex[2]));
   }
 
   real_t const r_cut = 2.5;
@@ -102,9 +103,10 @@ TEST_F(DADCalculatorTests, IcosahedronAnglesDAD) {
 
   // DAD expects multiple angles due to Center-Vertex and Vertex-Vertex chains
   std::vector<real_t> const expected_angles = {
-      static_cast<real_t>(0.0),   static_cast<real_t>(31.7),  static_cast<real_t>(36.0),  static_cast<real_t>(63.4),
-      static_cast<real_t>(72.0),  static_cast<real_t>(100.0), static_cast<real_t>(108.0), static_cast<real_t>(138.19),
-      static_cast<real_t>(144.0), static_cast<real_t>(180.0)};
+      static_cast<real_t>(0.0),   static_cast<real_t>(31.7),   static_cast<real_t>(36.0),
+      static_cast<real_t>(63.4),  static_cast<real_t>(72.0),   static_cast<real_t>(100.0),
+      static_cast<real_t>(108.0), static_cast<real_t>(138.19), static_cast<real_t>(144.0),
+      static_cast<real_t>(180.0)};
 
   for (real_t const target : expected_angles) {
     bool found = false;
@@ -122,7 +124,9 @@ TEST_F(DADCalculatorTests, IcosahedronAnglesDAD) {
 }
 
 TEST_F(DADCalculatorTests, NullNeighborsThrows) {
-  EXPECT_THROW({ correlation::calculators::DADCalculator::calculate(cell_, nullptr, 10.0); }, std::logic_error);
+  EXPECT_THROW(
+      { correlation::calculators::DADCalculator::calculate(cell_, nullptr, 10.0); },
+      std::logic_error);
 }
 
 } // namespace correlation::analysis

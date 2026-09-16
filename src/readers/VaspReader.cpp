@@ -50,9 +50,10 @@ struct VaspParser {
     auto lattice = parseLatticeVectors();
     applyScalingFactor(lattice, scaling_factor);
 
-    correlation::core::Cell temp_cell({lattice.at(0).at(0), lattice.at(0).at(1), lattice.at(0).at(2)},
-                                      {lattice.at(1).at(0), lattice.at(1).at(1), lattice.at(1).at(2)},
-                                      {lattice.at(2).at(0), lattice.at(2).at(1), lattice.at(2).at(2)});
+    correlation::core::Cell temp_cell(
+        {lattice.at(0).at(0), lattice.at(0).at(1), lattice.at(0).at(2)},
+        {lattice.at(1).at(0), lattice.at(1).at(1), lattice.at(1).at(2)},
+        {lattice.at(2).at(0), lattice.at(2).at(1), lattice.at(2).at(2)});
 
     // Species names and atom counts
     auto [species, atom_counts] = parseSpeciesAndCounts();
@@ -77,14 +78,17 @@ private:
         throw std::runtime_error("POSCAR: unexpected end of file (lattice vector).");
       }
       std::istringstream iss(line);
-      if (!(iss >> lattice_vectors.at(i).at(0) >> lattice_vectors.at(i).at(1) >> lattice_vectors.at(i).at(2))) {
-        throw std::runtime_error("POSCAR: failed to parse lattice vector on line " + std::to_string(i + 3) + ".");
+      if (!(iss >> lattice_vectors.at(i).at(0) >> lattice_vectors.at(i).at(1) >>
+            lattice_vectors.at(i).at(2))) {
+        throw std::runtime_error("POSCAR: failed to parse lattice vector on line " +
+                                 std::to_string(i + 3) + ".");
       }
     }
     return lattice_vectors;
   }
 
-  static void applyScalingFactor(std::array<std::array<real_t, 3>, 3> &lattice_vectors, real_t scaling_factor) {
+  static void applyScalingFactor(std::array<std::array<real_t, 3>, 3> &lattice_vectors,
+                                 real_t scaling_factor) {
     if (scaling_factor > 0.0) {
       for (auto &row : lattice_vectors) {
         for (real_t &val : row) {
@@ -94,12 +98,15 @@ private:
     } else if (scaling_factor < 0.0) {
       real_t const target_volume = std::abs(scaling_factor);
       real_t const current_volume =
-          std::abs(lattice_vectors.at(0).at(0) * (lattice_vectors.at(1).at(1) * lattice_vectors.at(2).at(2) -
-                                                  lattice_vectors.at(1).at(2) * lattice_vectors.at(2).at(1)) -
-                   lattice_vectors.at(0).at(1) * (lattice_vectors.at(1).at(0) * lattice_vectors.at(2).at(2) -
-                                                  lattice_vectors.at(1).at(2) * lattice_vectors.at(2).at(0)) +
-                   lattice_vectors.at(0).at(2) * (lattice_vectors.at(1).at(0) * lattice_vectors.at(2).at(1) -
-                                                  lattice_vectors.at(1).at(1) * lattice_vectors.at(2).at(0)));
+          std::abs(lattice_vectors.at(0).at(0) *
+                       (lattice_vectors.at(1).at(1) * lattice_vectors.at(2).at(2) -
+                        lattice_vectors.at(1).at(2) * lattice_vectors.at(2).at(1)) -
+                   lattice_vectors.at(0).at(1) *
+                       (lattice_vectors.at(1).at(0) * lattice_vectors.at(2).at(2) -
+                        lattice_vectors.at(1).at(2) * lattice_vectors.at(2).at(0)) +
+                   lattice_vectors.at(0).at(2) *
+                       (lattice_vectors.at(1).at(0) * lattice_vectors.at(2).at(1) -
+                        lattice_vectors.at(1).at(1) * lattice_vectors.at(2).at(0)));
       real_t const scale = std::cbrt(target_volume / current_volume);
       for (auto &row : lattice_vectors) {
         for (real_t &val : row) {
@@ -155,7 +162,8 @@ private:
 
     if (species.size() != atom_counts.size()) {
       throw std::runtime_error("POSCAR: species count (" + std::to_string(species.size()) +
-                               ") does not match atom count entries (" + std::to_string(atom_counts.size()) + ").");
+                               ") does not match atom count entries (" +
+                               std::to_string(atom_counts.size()) + ").");
     }
 
     return {species, atom_counts};
@@ -165,13 +173,15 @@ private:
     long long total_atoms_sum = 0;
     for (int const count : atom_counts) {
       if (count < 0) {
-        throw std::runtime_error("POSCAR: negative atom count encountered: " + std::to_string(count));
+        throw std::runtime_error("POSCAR: negative atom count encountered: " +
+                                 std::to_string(count));
       }
       total_atoms_sum += count;
     }
     constexpr int k_max_atom_count = 100'000'000;
     if (total_atoms_sum > k_max_atom_count) {
-      throw std::runtime_error("POSCAR: total atom count exceeds limit: " + std::to_string(total_atoms_sum));
+      throw std::runtime_error("POSCAR: total atom count exceeds limit: " +
+                               std::to_string(total_atoms_sum));
     }
     return static_cast<int>(total_atoms_sum);
   }
@@ -186,7 +196,8 @@ private:
 
     if (first_char == 'S' || first_char == 's') {
       if (!std::getline(*file, line)) {
-        throw std::runtime_error("POSCAR: unexpected end of file (coordinate type after selective dynamics).");
+        throw std::runtime_error(
+            "POSCAR: unexpected end of file (coordinate type after selective dynamics).");
       }
       first_char = getFirstNonSpaceChar(line);
     }
@@ -203,8 +214,10 @@ private:
     return ' ';
   }
 
-  void parseAtomPositions(correlation::core::Cell &temp_cell, const std::vector<std::string> &species,
-                          const std::vector<int> &atom_counts, int total_atoms, bool is_direct) const {
+  void parseAtomPositions(correlation::core::Cell &temp_cell,
+                          const std::vector<std::string> &species,
+                          const std::vector<int> &atom_counts, int total_atoms,
+                          bool is_direct) const {
     int species_idx = 0;
     int atoms_in_species = 0;
     const auto &lattice_vectors = temp_cell.latticeVectors();
@@ -212,11 +225,13 @@ private:
 
     for (int i = 0; i < total_atoms; ++i) {
       if (!std::getline(*file, line)) {
-        throw std::runtime_error("POSCAR: unexpected end of file (atom position " + std::to_string(i + 1) + " of " +
-                                 std::to_string(total_atoms) + ").");
+        throw std::runtime_error("POSCAR: unexpected end of file (atom position " +
+                                 std::to_string(i + 1) + " of " + std::to_string(total_atoms) +
+                                 ").");
       }
 
-      while (std::cmp_less(species_idx, atom_counts.size()) && atoms_in_species >= atom_counts.at(species_idx)) {
+      while (std::cmp_less(species_idx, atom_counts.size()) &&
+             atoms_in_species >= atom_counts.at(species_idx)) {
         atoms_in_species = 0;
         species_idx++;
       }
@@ -226,14 +241,18 @@ private:
       real_t pos_y = 0.0;
       real_t pos_z = 0.0;
       if (!(iss >> pos_x >> pos_y >> pos_z)) {
-        throw std::runtime_error("POSCAR: failed to parse atom coordinates on atom " + std::to_string(i + 1) + ".");
+        throw std::runtime_error("POSCAR: failed to parse atom coordinates on atom " +
+                                 std::to_string(i + 1) + ".");
       }
 
       correlation::math::Vector3<real_t> pos;
       if (is_direct) {
-        pos = {pos_x * lattice_vectors[0][0] + pos_y * lattice_vectors[1][0] + pos_z * lattice_vectors[2][0],
-               pos_x * lattice_vectors[0][1] + pos_y * lattice_vectors[1][1] + pos_z * lattice_vectors[2][1],
-               pos_x * lattice_vectors[0][2] + pos_y * lattice_vectors[1][2] + pos_z * lattice_vectors[2][2]};
+        pos = {pos_x * lattice_vectors[0][0] + pos_y * lattice_vectors[1][0] +
+                   pos_z * lattice_vectors[2][0],
+               pos_x * lattice_vectors[0][1] + pos_y * lattice_vectors[1][1] +
+                   pos_z * lattice_vectors[2][1],
+               pos_x * lattice_vectors[0][2] + pos_y * lattice_vectors[1][2] +
+                   pos_z * lattice_vectors[2][2]};
       } else {
         pos = {pos_x, pos_y, pos_z};
       }
@@ -260,7 +279,8 @@ VaspReader::readTrajectory(const std::string & /*filename*/,
 correlation::core::Cell VaspReader::read(const std::string &file_name) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
-    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) + ").");
+    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) +
+                             ").");
   }
 
   VaspParser parser(myfile);

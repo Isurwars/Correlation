@@ -81,13 +81,14 @@ TEST_F(SIMDUtilsTests, SincIntegralMatchesScalar) {
       expected_acc += integrand[idx] * std::sin(q_value * rbins[idx]);
     }
 
-    const double actual_acc = correlation::math::sinc_integral(correlation::math::SincIntegralParams<double>{
-        .q_magnitude = q_value,
-        .integrand = integrand.data(),
-        .radial_bins = rbins.data(),
-        .sinqr_scratch = scratch.data(),
-        .count = size,
-    });
+    const double actual_acc =
+        correlation::math::sinc_integral(correlation::math::SincIntegralParams<double>{
+            .q_magnitude = q_value,
+            .integrand = integrand.data(),
+            .radial_bins = rbins.data(),
+            .sinqr_scratch = scratch.data(),
+            .count = size,
+        });
 
     EXPECT_NEAR(actual_acc, expected_acc, 1e-5) << "Failed for size: " << size;
   }
@@ -107,13 +108,14 @@ TEST_F(SIMDUtilsTests, SincIntegralFloatMatchesScalar) {
       expected_acc += integrand[idx] * std::sin(q_value * rbins[idx]);
     }
 
-    const float actual_acc = correlation::math::sinc_integral(correlation::math::SincIntegralParams<float>{
-        .q_magnitude = q_value,
-        .integrand = integrand.data(),
-        .radial_bins = rbins.data(),
-        .sinqr_scratch = scratch.data(),
-        .count = size,
-    });
+    const float actual_acc =
+        correlation::math::sinc_integral(correlation::math::SincIntegralParams<float>{
+            .q_magnitude = q_value,
+            .integrand = integrand.data(),
+            .radial_bins = rbins.data(),
+            .sinqr_scratch = scratch.data(),
+            .count = size,
+        });
 
     EXPECT_NEAR(actual_acc, expected_acc, 1e-3F) << "Float sinc_integral failed for size: " << size;
   }
@@ -200,7 +202,8 @@ TEST_F(SIMDUtilsTests, ComputeDsqBlockMatchesScalar) {
     correlation::math::compute_dsq_block(vec_ax, vec_ay, vec_az, block, actual_dsq.data());
 
     for (std::size_t idx = 0; idx < size; ++idx) {
-      EXPECT_NEAR(actual_dsq[idx], expected_dsq[idx], 1e-4) << "Failed at index " << idx << " for size: " << size;
+      EXPECT_NEAR(actual_dsq[idx], expected_dsq[idx], 1e-4)
+          << "Failed at index " << idx << " for size: " << size;
     }
   }
 }
@@ -295,10 +298,14 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsMatchesScalar) {
       const double expected_j = vec_h[idx] * inv_Ni_dr;
       const double expected_jinv = vec_h[idx] * inv_Nj_dr;
 
-      EXPECT_NEAR(actual_g[idx], expected_g, 1e-9) << "g failed at index " << idx << " for size: " << size;
-      EXPECT_NEAR(actual_g_cap[idx], expected_g_cap, 1e-9) << "G failed at index " << idx << " for size: " << size;
-      EXPECT_NEAR(actual_j[idx], expected_j, 1e-9) << "J failed at index " << idx << " for size: " << size;
-      EXPECT_NEAR(actual_jinv[idx], expected_jinv, 1e-9) << "Jinv failed at index " << idx << " for size: " << size;
+      EXPECT_NEAR(actual_g[idx], expected_g, 1e-9)
+          << "g failed at index " << idx << " for size: " << size;
+      EXPECT_NEAR(actual_g_cap[idx], expected_g_cap, 1e-9)
+          << "G failed at index " << idx << " for size: " << size;
+      EXPECT_NEAR(actual_j[idx], expected_j, 1e-9)
+          << "J failed at index " << idx << " for size: " << size;
+      EXPECT_NEAR(actual_jinv[idx], expected_jinv, 1e-9)
+          << "Jinv failed at index " << idx << " for size: " << size;
     }
   }
 }
@@ -346,10 +353,12 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsFloatMatchesScalar) {
       const float expected_j = vec_h[idx] * inv_Ni_dr;
       const float expected_jinv = vec_h[idx] * inv_Nj_dr;
 
-      EXPECT_NEAR(actual_g[idx], expected_g, 1e-4F) << "Float g failed at index " << idx << " for size: " << size;
+      EXPECT_NEAR(actual_g[idx], expected_g, 1e-4F)
+          << "Float g failed at index " << idx << " for size: " << size;
       EXPECT_NEAR(actual_g_cap[idx], expected_g_cap, 1e-4F)
           << "Float G failed at index " << idx << " for size: " << size;
-      EXPECT_NEAR(actual_j[idx], expected_j, 1e-4F) << "Float J failed at index " << idx << " for size: " << size;
+      EXPECT_NEAR(actual_j[idx], expected_j, 1e-4F)
+          << "Float J failed at index " << idx << " for size: " << size;
       EXPECT_NEAR(actual_jinv[idx], expected_jinv, 1e-4F)
           << "Float Jinv failed at index " << idx << " for size: " << size;
     }
@@ -374,7 +383,8 @@ TEST_F(SIMDUtilsTests, ScaleBinsMatchesScalar) {
     correlation::math::scale_bins(data.data(), scale_factor, size);
 
     for (std::size_t idx = 0; idx < size; ++idx) {
-      EXPECT_NEAR(data[idx], expected[idx], 1e-9) << "Failed at index " << idx << " for size: " << size;
+      EXPECT_NEAR(data[idx], expected[idx], 1e-9)
+          << "Failed at index " << idx << " for size: " << size;
     }
   }
 }
@@ -411,7 +421,8 @@ TEST_F(SIMDUtilsTests, DebyeSumDoubleAndFloat) {
   for (const std::size_t size : sizes) {
     std::vector<double> dists_d = generateRandomDataDouble(size, true);
     std::vector<double> scratch_d(size, 0.0);
-    const double actual_d = correlation::math::debye_sum(q_d, dists_d.data(), scratch_d.data(), size);
+    const double actual_d =
+        correlation::math::debye_sum(q_d, dists_d.data(), scratch_d.data(), size);
 
     double expected_d = 0.0;
     for (std::size_t idx = 0; idx < size; ++idx) {
@@ -422,7 +433,8 @@ TEST_F(SIMDUtilsTests, DebyeSumDoubleAndFloat) {
 
     std::vector<float> dists_f = generateRandomDataFloat(size, true);
     std::vector<float> scratch_f(size, 0.0F);
-    const float actual_f = correlation::math::debye_sum(q_f, dists_f.data(), scratch_f.data(), size);
+    const float actual_f =
+        correlation::math::debye_sum(q_f, dists_f.data(), scratch_f.data(), size);
 
     float expected_f = 0.0F;
     for (std::size_t idx = 0; idx < size; ++idx) {
@@ -455,10 +467,12 @@ TEST_F(SIMDUtilsTests, DotBlockMatchesScalar) {
       expected_out[idx] = v1x * v2x[idx] + v1y * v2y[idx] + v1z * v2z[idx];
     }
 
-    correlation::math::dot_block(v1x, v1y, v1z, v2x.data(), v2y.data(), v2z.data(), actual_out.data(), size);
+    correlation::math::dot_block(v1x, v1y, v1z, v2x.data(), v2y.data(), v2z.data(),
+                                 actual_out.data(), size);
 
     for (std::size_t idx = 0; idx < size; ++idx) {
-      EXPECT_NEAR(actual_out[idx], expected_out[idx], 1e-9) << "Failed at index " << idx << " for size: " << size;
+      EXPECT_NEAR(actual_out[idx], expected_out[idx], 1e-9)
+          << "Failed at index " << idx << " for size: " << size;
     }
   }
 }
@@ -614,7 +628,8 @@ TEST_F(SIMDUtilsTests, MillerPhaseSumResultStructMatchesScalar) {
       .count = c_1.size(),
   };
 
-  const correlation::math::MillerPhaseSumResult<double> res = correlation::math::miller_phase_sum(params);
+  const correlation::math::MillerPhaseSumResult<double> res =
+      correlation::math::miller_phase_sum(params);
 
   double expected_cos = 0.0;
   double expected_sin = 0.0;
@@ -649,8 +664,8 @@ TEST_F(SIMDUtilsTests, FillPositionBlockParamsStructWorks) {
   std::vector<double> y_s;
   std::vector<double> z_s;
 
-  const std::size_t count =
-      correlation::math::fill_position_block(correlation::math::FillPositionBlockParams<std::vector<DummyPos>, double>{
+  const std::size_t count = correlation::math::fill_position_block(
+      correlation::math::FillPositionBlockParams<std::vector<DummyPos>, double>{
           .atoms = &dummy_atoms,
           .begin_idx = 0,
           .end_idx = dummy_atoms.size(),

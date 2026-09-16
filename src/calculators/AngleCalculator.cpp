@@ -19,8 +19,9 @@
 
 namespace correlation::calculators {
 
-void AngleCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
-                                     const correlation::analysis::AnalysisSettings &settings) const {
+void AngleCalculator::calculateFrame(
+    correlation::analysis::DistributionFunctions &dists,
+    const correlation::analysis::AnalysisSettings &settings) const {
   // AngleCalculator is a foundational calculator. It is currently
   // called by StructureAnalyzer during its construction.
 }
@@ -40,9 +41,10 @@ struct AngleScratch {
   }
 };
 
-void computeTriadAngles(int type_central, const std::vector<correlation::core::Atom> &atoms, size_t neighbor_count,
-                        const std::vector<correlation::core::Neighbor> &neighbors, size_t num_elements,
-                        AngleScratch &scratch, AngleTensor &local_tensor) {
+void computeTriadAngles(int type_central, const std::vector<correlation::core::Atom> &atoms,
+                        size_t neighbor_count,
+                        const std::vector<correlation::core::Neighbor> &neighbors,
+                        size_t num_elements, AngleScratch &scratch, AngleTensor &local_tensor) {
   for (size_t j_idx = 0; j_idx < neighbor_count - 1; ++j_idx) {
     const size_t k_count = neighbor_count - j_idx - 1; // number of k's for this j
 
@@ -72,8 +74,8 @@ void computeTriadAngles(int type_central, const std::vector<correlation::core::A
         continue;
       }
 
-      const real_t cos_theta =
-          std::clamp(scratch.dots[m_idx] / (dist1 * dist2), static_cast<real_t>(-1.0), static_cast<real_t>(1.0));
+      const real_t cos_theta = std::clamp(scratch.dots[m_idx] / (dist1 * dist2),
+                                          static_cast<real_t>(-1.0), static_cast<real_t>(1.0));
       const real_t angle_rad = std::acos(cos_theta);
 
       local_tensor[type1][type_central][type2].push_back(angle_rad);
@@ -85,8 +87,8 @@ void computeTriadAngles(int type_central, const std::vector<correlation::core::A
 }
 
 void processCentralAtom(size_t atom_idx, const correlation::core::Cell &cell,
-                        const correlation::core::NeighborGraph &graph, size_t num_elements, AngleScratch &scratch,
-                        AngleTensor &local_tensor) {
+                        const correlation::core::NeighborGraph &graph, size_t num_elements,
+                        AngleScratch &scratch, AngleTensor &local_tensor) {
   const auto &atoms = cell.atoms();
   const auto &neighbors = graph.getNeighbors(atom_idx);
   const size_t neighbor_count = neighbors.size();
@@ -109,26 +111,30 @@ void processCentralAtom(size_t atom_idx, const correlation::core::Cell &cell,
     scratch.nb_dist[nb_idx] = neighbors[nb_idx].distance;
   }
 
-  computeTriadAngles(type_central, atoms, neighbor_count, neighbors, num_elements, scratch, local_tensor);
+  computeTriadAngles(type_central, atoms, neighbor_count, neighbors, num_elements, scratch,
+                     local_tensor);
 }
 
 } // namespace
 
-void AngleCalculator::compute(const correlation::core::Cell &cell, const correlation::core::NeighborGraph &graph,
+void AngleCalculator::compute(const correlation::core::Cell &cell,
+                              const correlation::core::NeighborGraph &graph,
                               AngleTensor &out_angles) {
   const auto &atoms = cell.atoms();
   const size_t atom_count = atoms.size();
   const size_t num_elements = cell.elements().size();
 
   if (out_angles.size() < num_elements) {
-    out_angles = AngleTensor(num_elements, std::vector<std::vector<std::vector<real_t>>>(
-                                               num_elements, std::vector<std::vector<real_t>>(num_elements)));
+    out_angles = AngleTensor(num_elements,
+                             std::vector<std::vector<std::vector<real_t>>>(
+                                 num_elements, std::vector<std::vector<real_t>>(num_elements)));
   }
 
   // Thread-local AngleTensor accumulator
   tbb::enumerable_thread_specific<AngleTensor> ets([&]() {
-    return AngleTensor(num_elements, std::vector<std::vector<std::vector<real_t>>>(
-                                         num_elements, std::vector<std::vector<real_t>>(num_elements)));
+    return AngleTensor(num_elements,
+                       std::vector<std::vector<std::vector<real_t>>>(
+                           num_elements, std::vector<std::vector<real_t>>(num_elements)));
   });
 
   // Thread-local SoA scratch: pre-built per central atom and reused across
@@ -136,14 +142,15 @@ void AngleCalculator::compute(const correlation::core::Cell &cell, const correla
   // heap allocs after the first high-CN atom is processed.
   tbb::enumerable_thread_specific<AngleScratch> scratch_ets;
 
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, atom_count), [&](const tbb::blocked_range<size_t> &range) {
-    auto &local_tensor = ets.local();
-    auto &scratch = scratch_ets.local();
+  tbb::parallel_for(
+      tbb::blocked_range<size_t>(0, atom_count), [&](const tbb::blocked_range<size_t> &range) {
+        auto &local_tensor = ets.local();
+        auto &scratch = scratch_ets.local();
 
-    for (size_t atom_idx = range.begin(); atom_idx != range.end(); ++atom_idx) {
-      processCentralAtom(atom_idx, cell, graph, num_elements, scratch, local_tensor);
-    }
-  });
+        for (size_t atom_idx = range.begin(); atom_idx != range.end(); ++atom_idx) {
+          processCentralAtom(atom_idx, cell, graph, num_elements, scratch, local_tensor);
+        }
+      });
 
   // Merge results
   for (const auto &local_tensor : ets) {

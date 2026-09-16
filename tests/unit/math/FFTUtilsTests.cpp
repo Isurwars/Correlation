@@ -37,7 +37,8 @@ TEST_F(FFTUtilsTests, ComputeFFTHandlesPowerOfTwoAndInvert) {
 
 #if defined(CORRELATION_USE_FFTW3) || defined(CORRELATION_USE_MKL)
 TEST_F(FFTUtilsTests, ComputeFFTHandlesNonPowerOfTwo) {
-  std::vector<std::complex<double>> signal = {{1.0, 0.0}, {2.0, 0.0}, {3.0, 0.0}, {4.0, 0.0}, {5.0, 0.0}, {6.0, 0.0}};
+  std::vector<std::complex<double>> signal = {{1.0, 0.0}, {2.0, 0.0}, {3.0, 0.0},
+                                              {4.0, 0.0}, {5.0, 0.0}, {6.0, 0.0}};
   auto original = signal;
   computeFFT(signal, false);
   computeFFT(signal, true);

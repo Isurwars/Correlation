@@ -26,13 +26,13 @@ public:
   std::vector<std::string> getExtensions() const override { return {"md"}; }
   bool isTrajectory() const override { return true; }
 
-  correlation::core::Cell
-  readStructure(const std::string &filename,
-                std::function<void(float, const std::string &)> progress_callback = nullptr) override;
+  correlation::core::Cell readStructure(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
-  correlation::core::Trajectory
-  readTrajectory(const std::string &filename,
-                 std::function<void(float, const std::string &)> progress_callback = nullptr) override;
+  correlation::core::Trajectory readTrajectory(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
   /**
    * @brief Low-level parser for the specific file format.
@@ -45,17 +45,20 @@ public:
        const std::function<void(float, const std::string &)> &progress_callback = nullptr);
 
 private:
-  static void updateProgress(std::streampos current_pos, std::streampos file_size, std::streampos &last_progress_pos,
-                             size_t update_interval,
-                             const std::function<void(float, const std::string &)> &progress_callback);
+  static void
+  updateProgress(std::streampos current_pos, std::streampos file_size,
+                 std::streampos &last_progress_pos, size_t update_interval,
+                 const std::function<void(float, const std::string &)> &progress_callback);
 
-  static void parseEnergyLine(const std::string &line, real_t &current_energy, correlation::core::Cell &tempCell,
-                              bool &cell_has_atoms, std::vector<correlation::core::Cell> &frames);
+  static void parseEnergyLine(const std::string &line, real_t &current_energy,
+                              correlation::core::Cell &tempCell, bool &cell_has_atoms,
+                              std::vector<correlation::core::Cell> &frames);
 
-  static void parseLatticeLine(std::ifstream &myfile, const std::string &line, correlation::core::Cell &tempCell);
+  static void parseLatticeLine(std::ifstream &myfile, const std::string &line,
+                               correlation::core::Cell &tempCell);
 
-  static void parseAtomLine(const std::string &line, real_t current_energy, correlation::core::Cell &tempCell,
-                            bool &cell_has_atoms);
+  static void parseAtomLine(const std::string &line, real_t current_energy,
+                            correlation::core::Cell &tempCell, bool &cell_has_atoms);
 };
 
 } // namespace correlation::readers

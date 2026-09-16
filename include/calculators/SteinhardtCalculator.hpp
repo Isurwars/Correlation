@@ -42,7 +42,8 @@ public:
    * @return A map of histograms for each requested parameter.
    */
   static std::map<std::string, correlation::analysis::Histogram>
-  calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors);
+  calculate(const correlation::core::Cell &cell,
+            const correlation::analysis::StructureAnalyzer *neighbors);
 
   /**
    * @struct SphericalAngles

@@ -14,21 +14,24 @@ namespace correlation::readers {
 
 /**
  * @class OrcaReader
- * @brief Handles parsing of ORCA output and log files for structures and geometry optimization trajectories.
+ * @brief Handles parsing of ORCA output and log files for structures and geometry optimization
+ * trajectories.
  */
 class OrcaReader : public BaseReader {
 public:
   [[nodiscard]] std::string getName() const override { return "ORCA Reader"; }
-  [[nodiscard]] std::vector<std::string> getExtensions() const override { return {".orca", ".out", ".log"}; }
+  [[nodiscard]] std::vector<std::string> getExtensions() const override {
+    return {".orca", ".out", ".log"};
+  }
   [[nodiscard]] bool isTrajectory() const override { return true; }
 
-  correlation::core::Cell
-  readStructure(const std::string &filename,
-                std::function<void(float, const std::string &)> progress_callback = nullptr) override;
+  correlation::core::Cell readStructure(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
-  correlation::core::Trajectory
-  readTrajectory(const std::string &filename,
-                 std::function<void(float, const std::string &)> progress_callback = nullptr) override;
+  correlation::core::Trajectory readTrajectory(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 };
 
 } // namespace correlation::readers

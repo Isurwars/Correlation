@@ -41,9 +41,9 @@ public:
    * @return A vector containing the VACF values for lag times 0 to
    * max_correlation_frames.
    */
-  [[nodiscard]] static std::vector<real_t> calculateVACF(const correlation::core::Trajectory &traj,
-                                                         MaxFrames max_correlation_frames, StartFrame start_frame = {0},
-                                                         EndFrame end_frame = {static_cast<size_t>(-1)});
+  [[nodiscard]] static std::vector<real_t>
+  calculateVACF(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames,
+                StartFrame start_frame = {0}, EndFrame end_frame = {static_cast<size_t>(-1)});
 
   /**
    * @brief Calculates the Normalized Velocity Autocorrelation Function.
@@ -55,10 +55,10 @@ public:
    * @param end_frame One-past-last frame to include (default: all frames).
    * @return A vector containing the normalized VACF values.
    */
-  [[nodiscard]] static std::vector<real_t> calculateNormalizedVACF(const correlation::core::Trajectory &traj,
-                                                                   MaxFrames max_correlation_frames,
-                                                                   StartFrame start_frame = {0},
-                                                                   EndFrame end_frame = {static_cast<size_t>(-1)});
+  [[nodiscard]] static std::vector<real_t>
+  calculateNormalizedVACF(const correlation::core::Trajectory &traj,
+                          MaxFrames max_correlation_frames, StartFrame start_frame = {0},
+                          EndFrame end_frame = {static_cast<size_t>(-1)});
 
   /**
    * @brief Calculates the Mean Squared Displacement (MSD).
@@ -78,9 +78,9 @@ public:
    * @param end_frame One-past-last frame to include (default: all frames).
    * @return A vector of MSD values indexed by lag (in Å²).
    */
-  [[nodiscard]] static std::vector<real_t> calculateMSD(const correlation::core::Trajectory &traj,
-                                                        MaxFrames max_correlation_frames, StartFrame start_frame = {0},
-                                                        EndFrame end_frame = {static_cast<size_t>(-1)});
+  [[nodiscard]] static std::vector<real_t>
+  calculateMSD(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames,
+               StartFrame start_frame = {0}, EndFrame end_frame = {static_cast<size_t>(-1)});
 
   /**
    * @brief Calculates the Vibrational Density of States (VDOS) from the VACF.
@@ -99,8 +99,8 @@ public:
   calculateVDOS(const std::vector<real_t> &vacf, real_t time_step);
 
   /**
-   * @brief Computes the self-diffusion coefficient D from MSD using linear regression on the second half of the time
-   * series.
+   * @brief Computes the self-diffusion coefficient D from MSD using linear regression on the second
+   * half of the time series.
    * @param time The time values (bins).
    * @param msd The MSD values.
    * @return The diffusion coefficient in Å²/fs.
@@ -109,7 +109,8 @@ public:
                                                              const std::vector<real_t> &msd);
 
   /**
-   * @brief Computes the self-diffusion coefficient D from VACF using Green-Kubo integration (trapezoidal rule).
+   * @brief Computes the self-diffusion coefficient D from VACF using Green-Kubo integration
+   * (trapezoidal rule).
    * @param time The time values (bins).
    * @param vacf The VACF values.
    * @return The diffusion coefficient in Å²/fs.

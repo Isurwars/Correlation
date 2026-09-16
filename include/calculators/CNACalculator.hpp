@@ -36,8 +36,9 @@ public:
    * @param neighbors The structural analyzer with neighbor info.
    * @return A histogram of CNA indices.
    */
-  static correlation::analysis::Histogram calculate(const correlation::core::Cell &cell,
-                                                    const correlation::analysis::StructureAnalyzer *neighbors);
+  static correlation::analysis::Histogram
+  calculate(const correlation::core::Cell &cell,
+            const correlation::analysis::StructureAnalyzer *neighbors);
 };
 
 } // namespace correlation::calculators

@@ -16,7 +16,8 @@
 
 namespace correlation::core {
 
-Cell::Cell(const math::Vector3<real_t> &vec_a, const math::Vector3<real_t> &vec_b, const math::Vector3<real_t> &vec_c) {
+Cell::Cell(const math::Vector3<real_t> &vec_a, const math::Vector3<real_t> &vec_b,
+           const math::Vector3<real_t> &vec_c) {
   updateLattice(math::Matrix3<real_t>(vec_a, vec_b, vec_c));
 }
 
@@ -31,12 +32,14 @@ void Cell::setLatticeParameters(const std::array<real_t, 6> &params) {
   const real_t beta = params[4] * static_cast<real_t>(math::deg_to_rad);
   const real_t gamma = params[5] * static_cast<real_t>(math::deg_to_rad);
 
-  if (std::isnan(len_a) || std::isnan(len_b) || std::isnan(len_c) || len_a <= 0 || len_b <= 0 || len_c <= 0) {
+  if (std::isnan(len_a) || std::isnan(len_b) || std::isnan(len_c) || len_a <= 0 || len_b <= 0 ||
+      len_c <= 0) {
     throw std::invalid_argument("Lattice parameters a, b, c must be positive.");
   }
 
-  if (std::isnan(params[3]) || std::isnan(params[4]) || std::isnan(params[5]) || params[3] <= 0 || params[3] >= 180 ||
-      params[4] <= 0 || params[4] >= 180 || params[5] <= 0 || params[5] >= 180) {
+  if (std::isnan(params[3]) || std::isnan(params[4]) || std::isnan(params[5]) || params[3] <= 0 ||
+      params[3] >= 180 || params[4] <= 0 || params[4] >= 180 || params[5] <= 0 ||
+      params[5] >= 180) {
     throw std::invalid_argument("Lattice angles must be between 0 and 180 degrees.");
   }
 
@@ -45,11 +48,13 @@ void Cell::setLatticeParameters(const std::array<real_t, 6> &params) {
 
   math::Vector3<real_t> const v_a = {len_a, 0.0, 0.0};
   math::Vector3<real_t> const v_b = {len_b * cos_g, len_b * sin_g, 0.0};
-  math::Vector3<real_t> v_c = {len_c * std::cos(beta), len_c * (std::cos(alpha) - std::cos(beta) * cos_g) / sin_g, 0.0};
-  const auto volume = static_cast<real_t>(len_a * len_b * len_c *
-                                          std::sqrt(1.0 - std::pow(std::cos(alpha), 2) - std::pow(std::cos(beta), 2) -
-                                                    std::pow(std::cos(gamma), 2) +
-                                                    2.0 * std::cos(alpha) * std::cos(beta) * std::cos(gamma)));
+  math::Vector3<real_t> v_c = {len_c * std::cos(beta),
+                               len_c * (std::cos(alpha) - std::cos(beta) * cos_g) / sin_g, 0.0};
+  const auto volume =
+      static_cast<real_t>(len_a * len_b * len_c *
+                          std::sqrt(1.0 - std::pow(std::cos(alpha), 2) -
+                                    std::pow(std::cos(beta), 2) - std::pow(std::cos(gamma), 2) +
+                                    2.0 * std::cos(alpha) * std::cos(beta) * std::cos(gamma)));
   v_c.z() = volume / (len_a * len_b * sin_g);
   updateLattice(math::Matrix3<real_t>(v_a, v_b, v_c));
 }
@@ -73,7 +78,8 @@ void Cell::updateLatticeParametersFromVectors() {
   const real_t len_b = math::norm(b_vec);
   const real_t len_c = math::norm(c_vec);
 
-  if (std::isnan(len_a) || std::isnan(len_b) || std::isnan(len_c) || len_a < 1e-9 || len_b < 1e-9 || len_c < 1e-9) {
+  if (std::isnan(len_a) || std::isnan(len_b) || std::isnan(len_c) || len_a < 1e-9 || len_b < 1e-9 ||
+      len_c < 1e-9) {
     lattice_parameters_ = {0, 0, 0, 0, 0, 0};
     return;
   }
@@ -87,9 +93,12 @@ void Cell::updateLatticeParametersFromVectors() {
     return;
   }
 
-  const real_t alpha_rad = std::acos(std::clamp(cos_alpha, static_cast<real_t>(-1.0), static_cast<real_t>(1.0)));
-  const real_t beta_rad = std::acos(std::clamp(cos_beta, static_cast<real_t>(-1.0), static_cast<real_t>(1.0)));
-  const real_t gamma_rad = std::acos(std::clamp(cos_gamma, static_cast<real_t>(-1.0), static_cast<real_t>(1.0)));
+  const real_t alpha_rad =
+      std::acos(std::clamp(cos_alpha, static_cast<real_t>(-1.0), static_cast<real_t>(1.0)));
+  const real_t beta_rad =
+      std::acos(std::clamp(cos_beta, static_cast<real_t>(-1.0), static_cast<real_t>(1.0)));
+  const real_t gamma_rad =
+      std::acos(std::clamp(cos_gamma, static_cast<real_t>(-1.0), static_cast<real_t>(1.0)));
 
   lattice_parameters_ = {len_a,
                          len_b,
@@ -100,7 +109,8 @@ void Cell::updateLatticeParametersFromVectors() {
 }
 
 std::optional<Element> Cell::findElement(std::string_view symbol) const {
-  auto iter = std::ranges::find_if(elements_, [&](const Element &elem) { return elem.symbol == symbol; });
+  auto iter =
+      std::ranges::find_if(elements_, [&](const Element &elem) { return elem.symbol == symbol; });
   if (iter != elements_.end()) {
     return *iter;
   }
@@ -122,8 +132,8 @@ ElementID Cell::getOrRegisterElement(std::string_view symbol) {
 
 Atom &Cell::addAtom(std::string_view symbol, const math::Vector3<real_t> &position) {
   ElementID element_id = getOrRegisterElement(symbol);
-  auto element_it =
-      std::ranges::find_if(elements_, [&](const Element &elem) { return elem.id.value == element_id.value; });
+  auto element_it = std::ranges::find_if(
+      elements_, [&](const Element &elem) { return elem.id.value == element_id.value; });
 
   AtomID const new_atom_id{static_cast<std::uint32_t>(atoms_.size())};
   atoms_.emplace_back(*element_it, position, new_atom_id);

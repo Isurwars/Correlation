@@ -45,7 +45,8 @@ private:
    * @param[out] q_max_val Evaluated maximum reciprocal space momentum.
    * @return true if valid, false otherwise.
    */
-  [[nodiscard]] bool validateRadialAndScattering(AppErrors &errs, float &r_max_val, float &q_max_val);
+  [[nodiscard]] bool validateRadialAndScattering(AppErrors &errs, float &r_max_val,
+                                                 float &q_max_val);
 
   /**
    * @brief Validates angular and ring distribution options.

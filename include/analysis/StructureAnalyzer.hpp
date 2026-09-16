@@ -50,7 +50,8 @@ public:
    * @param r_bin_width Bin width for radial histograms.
    */
   explicit StructureAnalyzer(std::shared_ptr<const correlation::core::Cell> cell, real_t cutoff,
-                             BondCutoffMatrix bond_cutoffs, bool ignore_periodic_self_interactions = true,
+                             BondCutoffMatrix bond_cutoffs,
+                             bool ignore_periodic_self_interactions = true,
                              real_t r_bin_width = 0.02);
 
   /**
@@ -61,8 +62,10 @@ public:
    * @param ignore_periodic_self_interactions Flag to ignore periodic self-interactions.
    * @param r_bin_width Bin width for radial histograms.
    */
-  explicit StructureAnalyzer(const correlation::core::Cell &cell, real_t cutoff, BondCutoffMatrix bond_cutoffs,
-                             bool ignore_periodic_self_interactions = true, real_t r_bin_width = 0.02);
+  explicit StructureAnalyzer(const correlation::core::Cell &cell, real_t cutoff,
+                             BondCutoffMatrix bond_cutoffs,
+                             bool ignore_periodic_self_interactions = true,
+                             real_t r_bin_width = 0.02);
 
   ~StructureAnalyzer() = default;
   StructureAnalyzer(const StructureAnalyzer &) = delete;
@@ -84,7 +87,9 @@ public:
    * @brief Gets the shared pointer to the periodic cell.
    * @return Constant shared pointer to the Cell object.
    */
-  [[nodiscard]] std::shared_ptr<const correlation::core::Cell> cellPtr() const noexcept { return cell_; }
+  [[nodiscard]] std::shared_ptr<const correlation::core::Cell> cellPtr() const noexcept {
+    return cell_;
+  }
 
   /**
    * @brief Gets a multi-dimensional tensor containing raw distance histogram bins.
@@ -113,13 +118,17 @@ public:
    * connections.
    * @return Constant reference to the correlation::core::NeighborGraph object.
    */
-  [[nodiscard]] const correlation::core::NeighborGraph &neighborGraph() const { return neighbor_graph_; }
+  [[nodiscard]] const correlation::core::NeighborGraph &neighborGraph() const {
+    return neighbor_graph_;
+  }
 
   /**
    * @brief Returns true if periodic self-interactions are ignored.
    * @return True if periodic self-interactions are ignored.
    */
-  [[nodiscard]] bool getIgnorePeriodicSelfInteractions() const { return ignore_periodic_self_interactions_; }
+  [[nodiscard]] bool getIgnorePeriodicSelfInteractions() const {
+    return ignore_periodic_self_interactions_;
+  }
 
   ///@}
 
@@ -138,9 +147,10 @@ private:
   mutable AngleTensor angle_tensor_;                ///< Bond angle storage (lazy).
   mutable DihedralTensor dihedral_tensor_;          ///< Dihedral angle storage (lazy).
 
-  mutable std::mutex compute_mutex_;                    ///< Mutex guarding lazy computation.
-  mutable std::atomic<bool> angles_computed_{false};    ///< Flag indicating if angles are computed.
-  mutable std::atomic<bool> dihedrals_computed_{false}; ///< Flag indicating if dihedrals are computed.
+  mutable std::mutex compute_mutex_;                 ///< Mutex guarding lazy computation.
+  mutable std::atomic<bool> angles_computed_{false}; ///< Flag indicating if angles are computed.
+  mutable std::atomic<bool> dihedrals_computed_{
+      false}; ///< Flag indicating if dihedrals are computed.
 };
 
 } // namespace correlation::analysis

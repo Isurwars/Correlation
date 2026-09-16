@@ -45,29 +45,35 @@ struct KernelSmoothingParams {
 };
 namespace detail {
 
-inline void fillGaussian(std::vector<real_t> &kernel, const KernelGenerationParams &params, real_t center) {
-  const real_t prefactor = static_cast<real_t>(1.0) / static_cast<real_t>(std::sqrt(two_pi) * params.sigma);
-  const real_t exp_coeff = static_cast<real_t>(-1.0) / (static_cast<real_t>(2.0) * params.sigma * params.sigma);
+inline void fillGaussian(std::vector<real_t> &kernel, const KernelGenerationParams &params,
+                         real_t center) {
+  const real_t prefactor =
+      static_cast<real_t>(1.0) / static_cast<real_t>(std::sqrt(two_pi) * params.sigma);
+  const real_t exp_coeff =
+      static_cast<real_t>(-1.0) / (static_cast<real_t>(2.0) * params.sigma * params.sigma);
   for (size_t i = 0; i < params.size; ++i) {
     const real_t distance = (static_cast<real_t>(i) - center) * params.bin_width;
     kernel[i] = prefactor * std::exp(exp_coeff * distance * distance);
   }
 }
 
-inline void fillTriweight(std::vector<real_t> &kernel, const KernelGenerationParams &params, real_t center) {
+inline void fillTriweight(std::vector<real_t> &kernel, const KernelGenerationParams &params,
+                          real_t center) {
   constexpr real_t factor = static_cast<real_t>(35.0) / static_cast<real_t>(32.0);
   for (size_t i = 0; i < params.size; ++i) {
     const real_t norm_dist = ((static_cast<real_t>(i) - center) * params.bin_width) / params.sigma;
     if (std::abs(norm_dist) <= 1.0) {
       const real_t norm_dist_sq = norm_dist * norm_dist;
-      kernel[i] = factor * std::pow(static_cast<real_t>(1.0) - norm_dist_sq, static_cast<real_t>(3.0));
+      kernel[i] =
+          factor * std::pow(static_cast<real_t>(1.0) - norm_dist_sq, static_cast<real_t>(3.0));
     } else {
       kernel[i] = 0.0;
     }
   }
 }
 
-inline void fillBump(std::vector<real_t> &kernel, const KernelGenerationParams &params, real_t center) {
+inline void fillBump(std::vector<real_t> &kernel, const KernelGenerationParams &params,
+                     real_t center) {
   for (size_t i = 0; i < params.size; ++i) {
     const real_t norm_dist = ((static_cast<real_t>(i) - center) * params.bin_width) / params.sigma;
     if (std::abs(norm_dist) < 1.0) {
@@ -79,7 +85,8 @@ inline void fillBump(std::vector<real_t> &kernel, const KernelGenerationParams &
   }
 }
 
-inline void fillEpanechnikov(std::vector<real_t> &kernel, const KernelGenerationParams &params, real_t center) {
+inline void fillEpanechnikov(std::vector<real_t> &kernel, const KernelGenerationParams &params,
+                             real_t center) {
   const real_t factor = static_cast<real_t>(3.0) / static_cast<real_t>(4.0);
   for (size_t i = 0; i < params.size; ++i) {
     const real_t norm_dist = ((static_cast<real_t>(i) - center) * params.bin_width) / params.sigma;
@@ -91,25 +98,29 @@ inline void fillEpanechnikov(std::vector<real_t> &kernel, const KernelGeneration
   }
 }
 
-inline void fillCosine(std::vector<real_t> &kernel, const KernelGenerationParams &params, real_t center) {
+inline void fillCosine(std::vector<real_t> &kernel, const KernelGenerationParams &params,
+                       real_t center) {
   const real_t cos_factor = pi / static_cast<real_t>(4.0);
   for (size_t i = 0; i < params.size; ++i) {
     const real_t norm_dist = ((static_cast<real_t>(i) - center) * params.bin_width) / params.sigma;
     if (std::abs(norm_dist) <= 1.0) {
-      kernel[i] = static_cast<real_t>(cos_factor * std::cos(pi * norm_dist / static_cast<real_t>(2.0)));
+      kernel[i] =
+          static_cast<real_t>(cos_factor * std::cos(pi * norm_dist / static_cast<real_t>(2.0)));
     } else {
       kernel[i] = 0.0;
     }
   }
 }
 
-inline void fillBiweight(std::vector<real_t> &kernel, const KernelGenerationParams &params, real_t center) {
+inline void fillBiweight(std::vector<real_t> &kernel, const KernelGenerationParams &params,
+                         real_t center) {
   const real_t factor = static_cast<real_t>(15.0) / static_cast<real_t>(16.0);
   for (size_t i = 0; i < params.size; ++i) {
     const real_t norm_dist = ((static_cast<real_t>(i) - center) * params.bin_width) / params.sigma;
     if (std::abs(norm_dist) <= 1.0) {
       const real_t norm_dist_sq = norm_dist * norm_dist;
-      kernel[i] = factor * (static_cast<real_t>(1.0) - norm_dist_sq) * (static_cast<real_t>(1.0) - norm_dist_sq);
+      kernel[i] = factor * (static_cast<real_t>(1.0) - norm_dist_sq) *
+                  (static_cast<real_t>(1.0) - norm_dist_sq);
     } else {
       kernel[i] = 0.0;
     }
@@ -171,7 +182,8 @@ inline void fillBiweight(std::vector<real_t> &kernel, const KernelGenerationPara
  * @param params   Kernel smoothing configuration parameters.
  * @return A vector containing the smoothed data (same length as `y_values`).
  */
-inline std::vector<real_t> KernelSmoothing(const std::vector<real_t> &y_values, KernelSmoothingParams params) {
+inline std::vector<real_t> KernelSmoothing(const std::vector<real_t> &y_values,
+                                           KernelSmoothingParams params) {
   real_t const bin_width = params.bin_width;
   real_t const sigma = params.sigma;
   KernelType const type = params.type;
@@ -210,8 +222,8 @@ inline std::vector<real_t> KernelSmoothing(const std::vector<real_t> &y_values, 
   // Phase 1 – left boundary (bins 0 .. kernel_radius-1): needs index clamping.
   for (size_t i = 0; i < std::min(kernel_radius, num_points); ++i) {
     for (size_t j = 0; j < kernel_size; ++j) {
-      const long long idx =
-          static_cast<long long>(i) + static_cast<long long>(j) - static_cast<long long>(kernel_radius);
+      const long long idx = static_cast<long long>(i) + static_cast<long long>(j) -
+                            static_cast<long long>(kernel_radius);
       smoothed[i] += y_values[static_cast<size_t>(std::max(0LL, idx))] * kernel[j];
     }
   }
@@ -235,8 +247,8 @@ inline std::vector<real_t> KernelSmoothing(const std::vector<real_t> &y_values, 
   const size_t right_start = (num_points > kernel_radius) ? num_points - kernel_radius : num_points;
   for (size_t i = right_start; i < num_points; ++i) {
     for (size_t j = 0; j < kernel_size; ++j) {
-      const long long idx =
-          static_cast<long long>(i) + static_cast<long long>(j) - static_cast<long long>(kernel_radius);
+      const long long idx = static_cast<long long>(i) + static_cast<long long>(j) -
+                            static_cast<long long>(kernel_radius);
       const long long clamped = std::min(idx, static_cast<long long>(num_points) - 1);
       smoothed[i] += y_values[static_cast<size_t>(clamped)] * kernel[j];
     }
@@ -253,7 +265,8 @@ inline std::vector<real_t> KernelSmoothing(const std::vector<real_t> &y_values, 
  * @param params   Kernel smoothing configuration parameters.
  * @return A vector containing the smoothed data.
  */
-inline std::vector<real_t> KernelSmoothing(const std::vector<real_t> &r_values, const std::vector<real_t> &y_values,
+inline std::vector<real_t> KernelSmoothing(const std::vector<real_t> &r_values,
+                                           const std::vector<real_t> &y_values,
                                            KernelSmoothingParams params) {
   if (r_values.size() != y_values.size() || r_values.size() < 2) {
     return {};

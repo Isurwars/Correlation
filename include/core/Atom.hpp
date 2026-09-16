@@ -156,7 +156,8 @@ private:
  * @param atom_b The other outer atom.
  * @return The angle in radians, or 0.0 if vectors are collinear or zero.
  */
-[[nodiscard]] inline real_t angle(const Atom &center, const Atom &atom_a, const Atom &atom_b) noexcept {
+[[nodiscard]] inline real_t angle(const Atom &center, const Atom &atom_a,
+                                  const Atom &atom_b) noexcept {
   const math::Vector3<real_t> vec_A = atom_a.position() - center.position();
   const math::Vector3<real_t> vec_B = atom_b.position() - center.position();
 

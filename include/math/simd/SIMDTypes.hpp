@@ -158,7 +158,8 @@ template <typename AtomRange, typename T = real_t> struct FillPositionBlockParam
  * @param[in] point_b The second point.
  * @return The scalar squared distance.
  */
-template <typename T> [[nodiscard]] inline T dist_sq_scalar(Point3T<T> point_a, Point3T<T> point_b) noexcept {
+template <typename T>
+[[nodiscard]] inline T dist_sq_scalar(Point3T<T> point_a, Point3T<T> point_b) noexcept {
   const T dist_x = point_b.x - point_a.x;
   const T dist_y = point_b.y - point_a.y;
   const T dist_z = point_b.z - point_a.z;

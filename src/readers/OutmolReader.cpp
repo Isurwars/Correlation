@@ -107,9 +107,9 @@ struct OutmolParser {
       real_t pos_y = 0.0;
       real_t pos_z = 0.0;
       if (str_stream >> symbol >> pos_x >> pos_y >> pos_z) {
-        tempCell.addAtom(symbol,
-                         {pos_x * correlation::math::bohr_to_angstrom, pos_y * correlation::math::bohr_to_angstrom,
-                          pos_z * correlation::math::bohr_to_angstrom});
+        tempCell.addAtom(symbol, {pos_x * correlation::math::bohr_to_angstrom,
+                                  pos_y * correlation::math::bohr_to_angstrom,
+                                  pos_z * correlation::math::bohr_to_angstrom});
       }
     }
     if (!tempCell.isEmpty()) {
@@ -136,9 +136,9 @@ struct OutmolParser {
       real_t pos_z = 0.0;
       if (str_stream >> data_block >> symbol >> pos_x >> pos_y >> pos_z) {
         if (data_block == "df") {
-          tempCell.addAtom(symbol,
-                           {pos_x * correlation::math::bohr_to_angstrom, pos_y * correlation::math::bohr_to_angstrom,
-                            pos_z * correlation::math::bohr_to_angstrom});
+          tempCell.addAtom(symbol, {pos_x * correlation::math::bohr_to_angstrom,
+                                    pos_y * correlation::math::bohr_to_angstrom,
+                                    pos_z * correlation::math::bohr_to_angstrom});
         }
       }
     }
@@ -174,8 +174,9 @@ struct OutmolParser {
 
 } // namespace
 
-correlation::core::Cell OutmolReader::readStructure(const std::string &filename,
-                                                    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell
+OutmolReader::readStructure(const std::string &filename,
+                            std::function<void(float, const std::string &)> progress_callback) {
   return read(filename, progress_callback).at(0);
 }
 
@@ -186,10 +187,12 @@ OutmolReader::readTrajectory(const std::string &filename,
 }
 
 std::vector<correlation::core::Cell>
-OutmolReader::read(const std::string &file_name, std::function<void(float, const std::string &)> progress_callback) {
+OutmolReader::read(const std::string &file_name,
+                   std::function<void(float, const std::string &)> progress_callback) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
-    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) + ").");
+    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) +
+                             ").");
   }
 
   OutmolParser parser(myfile, std::move(progress_callback));

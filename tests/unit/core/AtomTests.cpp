@@ -114,7 +114,8 @@ TEST_F(AtomTests, DistanceHandlesLargeCoordinates) {
   const Element element = {.symbol = "H", .id = {0}};
   const real_t large = correlation::is_single_precision ? 1e4 : 1e10;
   const Atom atom1(element, {large, large, large}, 0);
-  const Atom atom2(element, {static_cast<real_t>(large + 3.0), static_cast<real_t>(large + 4.0), large}, 1);
+  const Atom atom2(element,
+                   {static_cast<real_t>(large + 3.0), static_cast<real_t>(large + 4.0), large}, 1);
 
   EXPECT_NEAR(distance(atom1, atom2), 5.0, correlation::is_single_precision ? 1e-3 : 1e-7);
 }
@@ -167,8 +168,8 @@ TEST_F(AtomTests, AngleFunctionHandlesNaNCoordinates) {
   const Atom atom_a(element, {std::numeric_limits<real_t>::quiet_NaN(), 1.0, 1.0}, 1);
   const Atom atom_b(element, {1.0, 1.0, 1.0}, 2);
 
-  // Since NaN coordinate makes dot/norm_sq NaN or invalid, we expect standard clamp/acos behavior or nan
-  // Let's assert it safely returns 0 or NaN, without crashing.
+  // Since NaN coordinate makes dot/norm_sq NaN or invalid, we expect standard clamp/acos behavior
+  // or nan Let's assert it safely returns 0 or NaN, without crashing.
   EXPECT_TRUE(std::isnan(angle(center, atom_a, atom_b)) || angle(center, atom_a, atom_b) == 0.0);
 }
 

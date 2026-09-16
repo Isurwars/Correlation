@@ -75,14 +75,16 @@ void init_analysis(py::module_ &mod) {
   // ------------------------------------------------------------------
   // BondCutoffRange
   // ------------------------------------------------------------------
-  py::class_<BondCutoffRange>(mod, "BondCutoffRange", "Squared minimum and maximum bond distance cutoff bounds.")
+  py::class_<BondCutoffRange>(mod, "BondCutoffRange",
+                              "Squared minimum and maximum bond distance cutoff bounds.")
       .def(py::init<>())
       .def(py::init([](real_t min_sq, real_t max_sq) {
              if (min_sq < 0.0 || max_sq < 0.0) {
                throw py::value_error("Bond cutoff bounds cannot be negative.");
              }
              if (min_sq > max_sq) {
-               throw py::value_error("Minimum bond cutoff cannot be greater than maximum bond cutoff.");
+               throw py::value_error(
+                   "Minimum bond cutoff cannot be greater than maximum bond cutoff.");
              }
              return BondCutoffRange{min_sq, max_sq};
            }),
@@ -90,8 +92,8 @@ void init_analysis(py::module_ &mod) {
       .def_readwrite("min_sq", &BondCutoffRange::min_sq)
       .def_readwrite("max_sq", &BondCutoffRange::max_sq)
       .def("__repr__", [](const BondCutoffRange &range) {
-        return "<BondCutoffRange min_sq=" + std::to_string(range.min_sq) + " max_sq=" + std::to_string(range.max_sq) +
-               ">";
+        return "<BondCutoffRange min_sq=" + std::to_string(range.min_sq) +
+               " max_sq=" + std::to_string(range.max_sq) + ">";
       });
 
   // ------------------------------------------------------------------
@@ -103,21 +105,25 @@ void init_analysis(py::module_ &mod) {
                                "to override need to be set.")
       .def(py::init<>())
       // Radial
-      .def_readwrite("r_max", &AnalysisSettings::r_max, "Maximum radius for RDF calculations (Å). Default 20.0.")
+      .def_readwrite("r_max", &AnalysisSettings::r_max,
+                     "Maximum radius for RDF calculations (Å). Default 20.0.")
       .def_readwrite("r_bin_width", &AnalysisSettings::r_bin_width,
                      "Bin width for radial distributions (Å). Default 0.02.")
       .def_readwrite("r_int_max", &AnalysisSettings::r_int_max,
                      "Cutoff for integration-based properties (Å). Default 10.0.")
       // Reciprocal space
-      .def_readwrite("q_max", &AnalysisSettings::q_max, "Maximum momentum transfer for S(Q) (Å⁻¹). Default 20.0.")
-      .def_readwrite("q_bin_width", &AnalysisSettings::q_bin_width, "Bin width for S(Q) (Å⁻¹). Default 0.02.")
+      .def_readwrite("q_max", &AnalysisSettings::q_max,
+                     "Maximum momentum transfer for S(Q) (Å⁻¹). Default 20.0.")
+      .def_readwrite("q_bin_width", &AnalysisSettings::q_bin_width,
+                     "Bin width for S(Q) (Å⁻¹). Default 0.02.")
       // Angular
       .def_readwrite("angle_bin_width", &AnalysisSettings::angle_bin_width,
                      "Bin width for bond angle distributions (°). Default 1.0.")
       .def_readwrite("dihedral_bin_width", &AnalysisSettings::dihedral_bin_width,
                      "Bin width for dihedral distributions (°). Default 1.0.")
       // Rings
-      .def_readwrite("max_ring_size", &AnalysisSettings::max_ring_size, "Maximum ring size to search for. Default 8.")
+      .def_readwrite("max_ring_size", &AnalysisSettings::max_ring_size,
+                     "Maximum ring size to search for. Default 8.")
       // Calculator selection
       .def_readwrite("active_calculators", &AnalysisSettings::active_calculators,
                      "Dict mapping calculator IDs to enabled state.\n"
@@ -138,25 +144,31 @@ void init_analysis(py::module_ &mod) {
       .def_readwrite("hyperuniformity_samples", &AnalysisSettings::hyperuniformity_samples,
                      "Number of random sampling points for hyperuniformity. Default 10000.")
       .def(
-          "is_active", [](const AnalysisSettings &settings, const std::string &idx) { return settings.isActive(idx); },
+          "is_active",
+          [](const AnalysisSettings &settings, const std::string &idx) {
+            return settings.isActive(idx);
+          },
           py::arg("idx"), "Return True if the given calculator index is enabled.");
 
   // ------------------------------------------------------------------
   // Histogram
   // ------------------------------------------------------------------
-  py::class_<Histogram>(mod, "Histogram", "Container for a single calculated distribution function.")
+  py::class_<Histogram>(mod, "Histogram",
+                        "Container for a single calculated distribution function.")
       .def_readonly("title", &Histogram::title, "Descriptive title.")
       .def_readonly("x_label", &Histogram::x_label, "X-axis label.")
       .def_readonly("y_label", &Histogram::y_label, "Y-axis label.")
       .def_readonly("x_unit", &Histogram::x_unit, "X-axis physical unit (e.g. 'Å').")
       .def_readwrite("bins", &Histogram::bins, "List of bin center coordinates.")
-      .def_readwrite("partials", &Histogram::partials, "Dict mapping partial key (e.g. 'Si-O') to y-values.")
+      .def_readwrite("partials", &Histogram::partials,
+                     "Dict mapping partial key (e.g. 'Si-O') to y-values.")
       .def_readwrite("smoothed_partials", &Histogram::smoothed_partials,
                      "Dict mapping partial key to smoothed y-values.")
       .def(
           "get_bins_numpy",
           [](const Histogram &hist) -> py::array_t<real_t> {
-            return py::array_t<real_t>(static_cast<py::ssize_t>(hist.bins.size()), hist.bins.data());
+            return py::array_t<real_t>(static_cast<py::ssize_t>(hist.bins.size()),
+                                       hist.bins.data());
           },
           "Return x-axis bins as a NumPy array (copy).")
       .def(
@@ -166,7 +178,8 @@ void init_analysis(py::module_ &mod) {
             if (iter == hist.partials.end()) {
               throw std::runtime_error("Partial key not found: " + key);
             }
-            return py::array_t<real_t>(static_cast<py::ssize_t>(iter->second.size()), iter->second.data());
+            return py::array_t<real_t>(static_cast<py::ssize_t>(iter->second.size()),
+                                       iter->second.data());
           },
           py::arg("key"), "Return a specific partial distribution as a NumPy array.")
       .def(
@@ -176,22 +189,25 @@ void init_analysis(py::module_ &mod) {
             if (iter == hist.smoothed_partials.end()) {
               throw std::runtime_error("Smoothed partial key not found: " + key);
             }
-            return py::array_t<real_t>(static_cast<py::ssize_t>(iter->second.size()), iter->second.data());
+            return py::array_t<real_t>(static_cast<py::ssize_t>(iter->second.size()),
+                                       iter->second.data());
           },
           py::arg("key"), "Return a specific smoothed partial distribution as a NumPy array.");
 
   // ------------------------------------------------------------------
   // StructureAnalyzer
   // ------------------------------------------------------------------
-  py::class_<StructureAnalyzer>(mod, "StructureAnalyzer",
-                                "Computes pairwise distances, bond angles, and dihedral angles\n"
-                                "for a single simulation cell (frame).\n\n"
-                                "The tensors are indexed by element type: distances[e1][e2][pair_idx],\n"
-                                "angles[center][e1][e2][angle_idx], dihedrals[e1][e2][e3][e4][idx].")
+  py::class_<StructureAnalyzer>(
+      mod, "StructureAnalyzer",
+      "Computes pairwise distances, bond angles, and dihedral angles\n"
+      "for a single simulation cell (frame).\n\n"
+      "The tensors are indexed by element type: distances[e1][e2][pair_idx],\n"
+      "angles[center][e1][e2][angle_idx], dihedrals[e1][e2][e3][e4][idx].")
       .def(py::init([](Cell &cell, real_t cutoff, const py::object &bond_cutoffs_obj,
                        bool ignore_periodic_self_interactions) {
              BondCutoffMatrix cutoffs = parseBondCutoffMatrix(bond_cutoffs_obj);
-             return std::make_unique<StructureAnalyzer>(cell, cutoff, cutoffs, ignore_periodic_self_interactions);
+             return std::make_unique<StructureAnalyzer>(cell, cutoff, cutoffs,
+                                                        ignore_periodic_self_interactions);
            }),
            py::arg("cell"), py::arg("cutoff"), py::arg("bond_cutoffs_sq"),
            py::arg("ignore_periodic_self_interactions") = true,
@@ -205,7 +221,8 @@ void init_analysis(py::module_ &mod) {
            "    Per-element-pair bond cutoffs.\n"
            "ignore_periodic_self_interactions : bool\n"
            "    If True, atoms do not interact with their own periodic images.")
-      .def("raw_histograms", &StructureAnalyzer::rawHistograms, py::return_value_policy::reference_internal,
+      .def("raw_histograms", &StructureAnalyzer::rawHistograms,
+           py::return_value_policy::reference_internal,
            "3D tensor of raw distance histogram bins [e1][e2][bin_idx].")
       .def("angles", &StructureAnalyzer::angles, py::return_value_policy::reference_internal,
            "4D tensor of bond angles [center_e][e1][e2][angle_idx].")
@@ -215,19 +232,23 @@ void init_analysis(py::module_ &mod) {
   // ------------------------------------------------------------------
   // TrajectoryAnalyzer
   // ------------------------------------------------------------------
-  py::class_<TrajectoryAnalyzer>(mod, "TrajectoryAnalyzer",
-                                 "Orchestrates structural analysis across multiple frames of a trajectory.\n\n"
-                                 "Provides per-frame StructureAnalyzer factories and trajectory metadata.")
-      .def(py::init([](Trajectory &trajectory, real_t neighbor_cutoff, const py::object &bond_cutoffs_obj,
-                       size_t start_frame, long long end_frame, bool ignore_periodic_self_interactions,
+  py::class_<TrajectoryAnalyzer>(
+      mod, "TrajectoryAnalyzer",
+      "Orchestrates structural analysis across multiple frames of a trajectory.\n\n"
+      "Provides per-frame StructureAnalyzer factories and trajectory metadata.")
+      .def(py::init([](Trajectory &trajectory, real_t neighbor_cutoff,
+                       const py::object &bond_cutoffs_obj, size_t start_frame, long long end_frame,
+                       bool ignore_periodic_self_interactions,
                        const std::function<void(float, const std::string &)> &progress_callback) {
              BondCutoffMatrix cutoffs = parseBondCutoffMatrix(bond_cutoffs_obj);
-             return std::make_unique<TrajectoryAnalyzer>(trajectory, neighbor_cutoff, cutoffs, StartFrame{start_frame},
-                                                         EndFrame{static_cast<size_t>(end_frame)},
-                                                         ignore_periodic_self_interactions, progress_callback);
+             return std::make_unique<TrajectoryAnalyzer>(
+                 trajectory, neighbor_cutoff, cutoffs, StartFrame{start_frame},
+                 EndFrame{static_cast<size_t>(end_frame)}, ignore_periodic_self_interactions,
+                 progress_callback);
            }),
-           py::arg("trajectory"), py::arg("neighbor_cutoff"), py::arg("bond_cutoffs"), py::arg("start_frame") = 0,
-           py::arg("end_frame") = -1LL, py::arg("ignore_periodic_self_interactions") = true,
+           py::arg("trajectory"), py::arg("neighbor_cutoff"), py::arg("bond_cutoffs"),
+           py::arg("start_frame") = 0, py::arg("end_frame") = -1LL,
+           py::arg("ignore_periodic_self_interactions") = true,
            py::arg("progress_callback") = nullptr,
            "Construct a TrajectoryAnalyzer.\n\n"
            "Parameters\n----------\n"
@@ -245,10 +266,14 @@ void init_analysis(py::module_ &mod) {
            "    Skip atom–own-image interactions. Default True.\n"
            "progress_callback : callable, optional\n"
            "    Called with (fraction: float, message: str) during computation.")
-      .def("get_num_frames", &TrajectoryAnalyzer::getNumFrames, "Total number of frames in the analysis window.")
-      .def("get_start_frame", &TrajectoryAnalyzer::getStartFrame, "Index of the first frame being analyzed.")
-      .def("get_time_step", &TrajectoryAnalyzer::getTimeStep, "Time step between frames (from trajectory metadata).")
-      .def("get_neighbor_cutoff", &TrajectoryAnalyzer::getNeighborCutoff, "Global neighbor search cutoff radius (Å).")
+      .def("get_num_frames", &TrajectoryAnalyzer::getNumFrames,
+           "Total number of frames in the analysis window.")
+      .def("get_start_frame", &TrajectoryAnalyzer::getStartFrame,
+           "Index of the first frame being analyzed.")
+      .def("get_time_step", &TrajectoryAnalyzer::getTimeStep,
+           "Time step between frames (from trajectory metadata).")
+      .def("get_neighbor_cutoff", &TrajectoryAnalyzer::getNeighborCutoff,
+           "Global neighbor search cutoff radius (Å).")
       .def(
           "create_analyzer",
           [](const TrajectoryAnalyzer &trajectory_analyser, size_t frame_idx) {
@@ -259,28 +284,30 @@ void init_analysis(py::module_ &mod) {
   // ------------------------------------------------------------------
   // DistributionFunctions
   // ------------------------------------------------------------------
-  py::class_<DistributionFunctions>(mod, "DistributionFunctions",
-                                    "Manager for distribution function calculations (RDF, PAD, S(Q), …).\n\n"
-                                    "This is the primary analysis object. Construct it with a Cell (or obtain\n"
-                                    "a trajectory-averaged instance via compute_mean), then call the desired\n"
-                                    "calculate_* methods, and retrieve results via get_histogram().\n\n"
-                                    ".. note::\n"
-                                    "   The DistributionFunctions holds an internal reference to the Cell\n"
-                                    "   passed at construction. The Cell (and owning Trajectory) must remain\n"
-                                    "   alive for the lifetime of this object.")
-      .def(py::init([](Cell &cell, real_t cutoff, const py::object &bond_cutoffs_obj) {
-             BondCutoffMatrix cutoffs = parseBondCutoffMatrix(bond_cutoffs_obj);
-             return std::make_unique<DistributionFunctions>(cell, cutoff, cutoffs);
-           }),
-           py::arg("cell"), py::arg("cutoff") = 0.0, py::arg("bond_cutoffs") = py::none(),
-           "Construct a DistributionFunctions for a single Cell.\n\n"
-           "Parameters\n----------\n"
-           "cell : Cell\n"
-           "    The simulation cell to analyze.\n"
-           "cutoff : float, optional\n"
-           "    Neighbor search cutoff (Å). 0 uses a heuristic. Default 0.0.\n"
-           "bond_cutoffs : list[list[BondCutoffRange]] | list[list[tuple]] | list[list[float]], optional\n"
-           "    Per-element-pair bond cutoffs. Default is None (auto).")
+  py::class_<DistributionFunctions>(
+      mod, "DistributionFunctions",
+      "Manager for distribution function calculations (RDF, PAD, S(Q), …).\n\n"
+      "This is the primary analysis object. Construct it with a Cell (or obtain\n"
+      "a trajectory-averaged instance via compute_mean), then call the desired\n"
+      "calculate_* methods, and retrieve results via get_histogram().\n\n"
+      ".. note::\n"
+      "   The DistributionFunctions holds an internal reference to the Cell\n"
+      "   passed at construction. The Cell (and owning Trajectory) must remain\n"
+      "   alive for the lifetime of this object.")
+      .def(
+          py::init([](Cell &cell, real_t cutoff, const py::object &bond_cutoffs_obj) {
+            BondCutoffMatrix cutoffs = parseBondCutoffMatrix(bond_cutoffs_obj);
+            return std::make_unique<DistributionFunctions>(cell, cutoff, cutoffs);
+          }),
+          py::arg("cell"), py::arg("cutoff") = 0.0, py::arg("bond_cutoffs") = py::none(),
+          "Construct a DistributionFunctions for a single Cell.\n\n"
+          "Parameters\n----------\n"
+          "cell : Cell\n"
+          "    The simulation cell to analyze.\n"
+          "cutoff : float, optional\n"
+          "    Neighbor search cutoff (Å). 0 uses a heuristic. Default 0.0.\n"
+          "bond_cutoffs : list[list[BondCutoffRange]] | list[list[tuple]] | list[list[float]], optional\n"
+          "    Per-element-pair bond cutoffs. Default is None (auto).")
 
       // Accessors
       .def(
@@ -296,7 +323,8 @@ void init_analysis(py::module_ &mod) {
           [](const DistributionFunctions &dists) -> const std::map<std::string, Histogram> & {
             return dists.getAllHistograms();
           },
-          py::return_value_policy::reference_internal, "Return a dict of all calculated histograms.")
+          py::return_value_policy::reference_internal,
+          "Return a dict of all calculated histograms.")
       .def("get_available_histograms", &DistributionFunctions::getAvailableHistograms,
            "Return a list of names for all currently available histograms.")
       .def(
@@ -304,14 +332,16 @@ void init_analysis(py::module_ &mod) {
           [](const DistributionFunctions &dists) -> const std::map<std::string, real_t> & {
             return dists.getAshcroftWeights();
           },
-          py::return_value_policy::reference_internal, "Return the Ashcroft-Langreth weights used for S(Q) partials.")
+          py::return_value_policy::reference_internal,
+          "Return the Ashcroft-Langreth weights used for S(Q) partials.")
       .def("get_diffusion_coefficient_msd", &DistributionFunctions::getDiffusionCoefficientMSD,
            "Get the self-diffusion coefficient computed from MSD (Å²/fs).")
       .def("get_diffusion_coefficient_vacf", &DistributionFunctions::getDiffusionCoefficientVACF,
            "Get the self-diffusion coefficient computed from VACF (Å²/fs).")
       .def("get_relaxation_time", &DistributionFunctions::getRelaxationTime,
            "Get the relaxation time computed from normalized VACF (fs).")
-      .def("get_deborah_number", &DistributionFunctions::getDeborahNumber, "Get the Deborah number.")
+      .def("get_deborah_number", &DistributionFunctions::getDeborahNumber,
+           "Get the Deborah number.")
 
       // Calculations
       .def(
@@ -332,9 +362,10 @@ void init_analysis(py::module_ &mod) {
            "bin_width : float\n    Angular bin width (°). Default 0.25.")
       .def(
           "calculate_vacf",
-          [](DistributionFunctions &dists, const Trajectory &traj, int max_correlation_frames, size_t start_frame,
-             size_t end_frame) {
-            dists.calculateVACF(traj, MaxFrames{max_correlation_frames}, StartFrame{start_frame}, EndFrame{end_frame});
+          [](DistributionFunctions &dists, const Trajectory &traj, int max_correlation_frames,
+             size_t start_frame, size_t end_frame) {
+            dists.calculateVACF(traj, MaxFrames{max_correlation_frames}, StartFrame{start_frame},
+                                EndFrame{end_frame});
           },
           py::arg("traj"), py::arg("max_correlation_frames") = -1, py::arg("start_frame") = 0,
           py::arg("end_frame") = static_cast<size_t>(-1),
@@ -349,9 +380,12 @@ void init_analysis(py::module_ &mod) {
            "Requires calculate_vacf() to have been called first.")
       .def(
           "calculate_xrd",
-          [](DistributionFunctions &dists, real_t wave_length, real_t theta_min, real_t theta_max, real_t bin_width) {
-            dists.calculateXRD(XRDParams{
-                .lambda = wave_length, .theta_min = theta_min, .theta_max = theta_max, .bin_width = bin_width});
+          [](DistributionFunctions &dists, real_t wave_length, real_t theta_min, real_t theta_max,
+             real_t bin_width) {
+            dists.calculateXRD(XRDParams{.lambda = wave_length,
+                                         .theta_min = theta_min,
+                                         .theta_max = theta_max,
+                                         .bin_width = bin_width});
           },
           py::arg("lambda") = 1.5406, py::arg("theta_min") = 5.0, py::arg("theta_max") = 90.0,
           py::arg("bin_width") = 1.0,
@@ -368,9 +402,8 @@ void init_analysis(py::module_ &mod) {
       // Smoothing
       .def(
           "smooth",
-          [](DistributionFunctions &dists, const std::string &name, real_t sigma, KernelType kernel) {
-            dists.smooth(name, sigma, kernel);
-          },
+          [](DistributionFunctions &dists, const std::string &name, real_t sigma,
+             KernelType kernel) { dists.smooth(name, sigma, kernel); },
           py::arg("name"), py::arg("sigma"), py::arg("kernel") = KernelType::Gaussian,
           "Smooth a specific histogram.\n\n"
           "Parameters\n----------\n"
@@ -379,7 +412,9 @@ void init_analysis(py::module_ &mod) {
           "kernel : KernelType\n    Smoothing kernel. Default Gaussian.")
       .def(
           "smooth_all",
-          [](DistributionFunctions &dists, real_t sigma, KernelType kernel) { dists.smoothAll(sigma, kernel); },
+          [](DistributionFunctions &dists, real_t sigma, KernelType kernel) {
+            dists.smoothAll(sigma, kernel);
+          },
           py::arg("sigma"), py::arg("kernel") = KernelType::Gaussian,
           "Smooth all available histograms.\n\n"
           "sigma : float\n    Kernel bandwidth.\n"
@@ -396,7 +431,8 @@ void init_analysis(py::module_ &mod) {
       .def_static(
           "compute_mean",
           [](Trajectory &trajectory, const TrajectoryAnalyzer &analyzer, size_t start_frame,
-             const AnalysisSettings &settings, std::function<void(float, const std::string &)> progress_callback) {
+             const AnalysisSettings &settings,
+             std::function<void(float, const std::string &)> progress_callback) {
             return DistributionFunctions::computeMean(trajectory, analyzer, start_frame, settings,
                                                       std::move(progress_callback));
           },
@@ -425,42 +461,52 @@ void init_analysis(py::module_ &mod) {
                                  "Container for motif-partitioned Total Density of States spectra.")
       .def(py::init<>())
       .def_readwrite("energies", &MotifProjectedTDOS::energies, "Energy grid values [eV].")
-      .def_readwrite("motif_tdos", &MotifProjectedTDOS::motif_tdos, "Partial TDOS spectra mapped by motif name.")
-      .def_readwrite("total_tdos", &MotifProjectedTDOS::total_tdos, "Total aggregated TDOS spectrum.")
-      .def_readwrite("frame_count", &MotifProjectedTDOS::frame_count, "Evaluated trajectory frame count.")
-      .def("to_histogram", &MotifProjectedTDOS::toHistogram, py::arg("title") = "Motif-Projected TDOS",
+      .def_readwrite("motif_tdos", &MotifProjectedTDOS::motif_tdos,
+                     "Partial TDOS spectra mapped by motif name.")
+      .def_readwrite("total_tdos", &MotifProjectedTDOS::total_tdos,
+                     "Total aggregated TDOS spectrum.")
+      .def_readwrite("frame_count", &MotifProjectedTDOS::frame_count,
+                     "Evaluated trajectory frame count.")
+      .def("to_histogram", &MotifProjectedTDOS::toHistogram,
+           py::arg("title") = "Motif-Projected TDOS",
            "Convert motif-projected TDOS into a standard Histogram.");
 
   // ------------------------------------------------------------------
   // StructuralElectronicCorrelation
   // ------------------------------------------------------------------
-  py::class_<StructuralElectronicCorrelation>(mod, "StructuralElectronicCorrelation",
-                                              "Trajectory-level structural-electronic correlation pipeline.")
+  py::class_<StructuralElectronicCorrelation>(
+      mod, "StructuralElectronicCorrelation",
+      "Trajectory-level structural-electronic correlation pipeline.")
       .def_static(
           "correlate_cna",
-          [](DistributionFunctions &dists, const Trajectory &traj, const correlation::calculators::TDOSParams &params) {
+          [](DistributionFunctions &dists, const Trajectory &traj,
+             const correlation::calculators::TDOSParams &params) {
             return StructuralElectronicCorrelation::correlateCNA(dists, traj, params, nullptr);
           },
           py::arg("dists"), py::arg("traj"), py::arg("params"),
           "Correlate trajectory LDoS with Common Neighbor Analysis (CNA) classifications.")
       .def_static(
           "correlate_steinhardt",
-          [](DistributionFunctions &dists, const Trajectory &traj, const correlation::calculators::TDOSParams &params) {
-            return StructuralElectronicCorrelation::correlateSteinhardt(dists, traj, params, nullptr);
+          [](DistributionFunctions &dists, const Trajectory &traj,
+             const correlation::calculators::TDOSParams &params) {
+            return StructuralElectronicCorrelation::correlateSteinhardt(dists, traj, params,
+                                                                        nullptr);
           },
           py::arg("dists"), py::arg("traj"), py::arg("params"),
           "Correlate trajectory LDoS with Steinhardt bond-order parameters.");
 
   mod.def(
       "correlate_cna",
-      [](DistributionFunctions &dists, const Trajectory &traj, const correlation::calculators::TDOSParams &params) {
+      [](DistributionFunctions &dists, const Trajectory &traj,
+         const correlation::calculators::TDOSParams &params) {
         return StructuralElectronicCorrelation::correlateCNA(dists, traj, params, nullptr);
       },
       py::arg("dists"), py::arg("traj"), py::arg("params"),
       "Correlate trajectory LDoS with Common Neighbor Analysis (CNA) classifications.");
   mod.def(
       "correlate_steinhardt",
-      [](DistributionFunctions &dists, const Trajectory &traj, const correlation::calculators::TDOSParams &params) {
+      [](DistributionFunctions &dists, const Trajectory &traj,
+         const correlation::calculators::TDOSParams &params) {
         return StructuralElectronicCorrelation::correlateSteinhardt(dists, traj, params, nullptr);
       },
       py::arg("dists"), py::arg("traj"), py::arg("params"),

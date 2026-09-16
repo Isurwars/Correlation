@@ -122,7 +122,8 @@ TEST_F(TrajectoryTests, AddFrameThrowsOnElementCountMismatch) {
 // --- Unitary Tests: Deduplication ---
 
 TEST_F(TrajectoryTests, RemoveDuplicatedFrames) {
-  std::vector<Cell> const frames = {createSimpleFrame(0, 0, 0), createSimpleFrame(0, 0, 0), createSimpleFrame(1, 1, 1)};
+  std::vector<Cell> const frames = {createSimpleFrame(0, 0, 0), createSimpleFrame(0, 0, 0),
+                                    createSimpleFrame(1, 1, 1)};
   Trajectory traj;
   for (const auto &frame : frames) {
     // AddFrame doesn't deduplicate automatically, but Trajectory(vector) does.
@@ -135,7 +136,8 @@ TEST_F(TrajectoryTests, RemoveDuplicatedFrames) {
 }
 
 TEST_F(TrajectoryTests, RemovesConsecutiveTriplicates) {
-  std::vector<Cell> const frames = {createSimpleFrame(0, 0, 0), createSimpleFrame(0, 0, 0), createSimpleFrame(0, 0, 0)};
+  std::vector<Cell> const frames = {createSimpleFrame(0, 0, 0), createSimpleFrame(0, 0, 0),
+                                    createSimpleFrame(0, 0, 0)};
   Trajectory const traj(frames, 1.0);
   EXPECT_EQ(traj.getFrameCount(), 1);
 }
@@ -155,7 +157,8 @@ TEST_F(TrajectoryTests, HandlesAllDuplicates) {
 // --- Unitary Tests: Physics & State ---
 
 TEST_F(TrajectoryTests, CalculateVelocitiesComputesCorrectVelocities) {
-  std::vector<Cell> const frames = {createSimpleFrame(0, 0, 0), createSimpleFrame(1, 0, 0), createSimpleFrame(2, 0, 0)};
+  std::vector<Cell> const frames = {createSimpleFrame(0, 0, 0), createSimpleFrame(1, 0, 0),
+                                    createSimpleFrame(2, 0, 0)};
   Trajectory traj(frames, 1.0);
   traj.calculateVelocities();
   EXPECT_NEAR(traj.getFrame(0).atoms()[0].velocity().x(), 1.0, 1e-6);
@@ -232,7 +235,8 @@ TEST_F(TrajectoryTests, ParseEnergyFromArc) {
   out << "!BIOSYM archive 3\nPBC=ON\n                                      -12345.6789\n!DATE\nPBC 10.0 10.0 10.0 90.0 90.0 90.0\nHe 0.0 0.0 0.0 XXXX 1 xx He 0.0\nend\nend\n";
   out.close();
   auto traj = correlation::readers::readTrajectory(filename, correlation::readers::FileType::Arc);
-  EXPECT_NEAR(traj.getFrames()[0].getEnergy(), -12345.6789, correlation::is_single_precision ? 1e-3 : 1e-9);
+  EXPECT_NEAR(traj.getFrames()[0].getEnergy(), -12345.6789,
+              correlation::is_single_precision ? 1e-3 : 1e-9);
 }
 
 TEST_F(TrajectoryTests, ParseMultipleFramesWithEnergy) {
@@ -243,8 +247,10 @@ TEST_F(TrajectoryTests, ParseMultipleFramesWithEnergy) {
   out.close();
   auto traj = correlation::readers::readTrajectory(filename, correlation::readers::FileType::Arc);
   ASSERT_EQ(traj.getFrameCount(), 2);
-  EXPECT_NEAR(traj.getFrames()[0].getEnergy(), -100.0, correlation::is_single_precision ? 1e-4 : 1e-9);
-  EXPECT_NEAR(traj.getFrames()[1].getEnergy(), -200.5, correlation::is_single_precision ? 1e-4 : 1e-9);
+  EXPECT_NEAR(traj.getFrames()[0].getEnergy(), -100.0,
+              correlation::is_single_precision ? 1e-4 : 1e-9);
+  EXPECT_NEAR(traj.getFrames()[1].getEnergy(), -200.5,
+              correlation::is_single_precision ? 1e-4 : 1e-9);
 }
 
 TEST_F(TrajectoryTests, CalculateVelocitiesHandlesZeroOrNegativeTimeStep) {

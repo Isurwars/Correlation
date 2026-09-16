@@ -79,10 +79,15 @@ public:
     py::pybind11_fail("Tried to call pure virtual function \"BaseCalculator::getDescription\"");
   }
 
-  bool isFrameCalculator() const override { PYBIND11_OVERRIDE_PURE(bool, BaseCalculator, isFrameCalculator); }
-  bool isTrajectoryCalculator() const override { PYBIND11_OVERRIDE_PURE(bool, BaseCalculator, isTrajectoryCalculator); }
+  bool isFrameCalculator() const override {
+    PYBIND11_OVERRIDE_PURE(bool, BaseCalculator, isFrameCalculator);
+  }
+  bool isTrajectoryCalculator() const override {
+    PYBIND11_OVERRIDE_PURE(bool, BaseCalculator, isTrajectoryCalculator);
+  }
   bool isConfigured() const override { PYBIND11_OVERRIDE(bool, BaseCalculator, isConfigured); }
-  void calculateFrame(DistributionFunctions &dists, const AnalysisSettings &settings) const override {
+  void calculateFrame(DistributionFunctions &dists,
+                      const AnalysisSettings &settings) const override {
     PYBIND11_OVERRIDE(void, BaseCalculator, calculateFrame, dists, settings);
   }
   void calculateTrajectory(DistributionFunctions &dists, const correlation::core::Trajectory &traj,
@@ -96,19 +101,26 @@ void init_calculators(py::module_ &mod) {
   // ------------------------------------------------------------------
   // BaseCalculator
   // ------------------------------------------------------------------
-  py::class_<BaseCalculator, PyBaseCalculator>(mod, "BaseCalculator",
-                                               "Abstract base class for all analysis calculators.\n\n"
-                                               "Subclass this in Python to create custom calculators.")
+  py::class_<BaseCalculator, PyBaseCalculator>(
+      mod, "BaseCalculator",
+      "Abstract base class for all analysis calculators.\n\n"
+      "Subclass this in Python to create custom calculators.")
       .def(py::init<>())
-      .def("get_name", &BaseCalculator::getName, "Full display name of the calculator (e.g. 'g(r), J(r), G(r)').")
-      .def("get_short_name", &BaseCalculator::getShortName, "Short identifier used as a key (e.g. 'RDF').")
-      .def("get_group", &BaseCalculator::getGroup, "UI group this calculator belongs to (e.g. 'Radial', 'Angular').")
-      .def("get_description", &BaseCalculator::getDescription, "Human-readable description of the calculator.")
-      .def("is_frame_calculator", &BaseCalculator::isFrameCalculator, "True if this calculator operates per-frame.")
+      .def("get_name", &BaseCalculator::getName,
+           "Full display name of the calculator (e.g. 'g(r), J(r), G(r)').")
+      .def("get_short_name", &BaseCalculator::getShortName,
+           "Short identifier used as a key (e.g. 'RDF').")
+      .def("get_group", &BaseCalculator::getGroup,
+           "UI group this calculator belongs to (e.g. 'Radial', 'Angular').")
+      .def("get_description", &BaseCalculator::getDescription,
+           "Human-readable description of the calculator.")
+      .def("is_frame_calculator", &BaseCalculator::isFrameCalculator,
+           "True if this calculator operates per-frame.")
       .def("is_trajectory_calculator", &BaseCalculator::isTrajectoryCalculator,
            "True if this calculator operates over the full trajectory.")
-      .def("is_configured", &BaseCalculator::isConfigured,
-           "True if the calculator has all required dependencies and models configured to execute.");
+      .def(
+          "is_configured", &BaseCalculator::isConfigured,
+          "True if the calculator has all required dependencies and models configured to execute.");
 
   // ------------------------------------------------------------------
   // CalculatorFactory access — module-level free functions

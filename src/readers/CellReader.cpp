@@ -39,11 +39,13 @@ CellReader::readTrajectory(const std::string & /*filename*/,
 
 namespace {
 void toLower(std::string &str) {
-  std::transform(str.begin(), str.end(), str.begin(), [](unsigned char chr) { return std::tolower(chr); });
+  std::transform(str.begin(), str.end(), str.begin(),
+                 [](unsigned char chr) { return std::tolower(chr); });
 }
 
 void parseLatticeCart(std::stringstream &line_stream, int &lattice_row_count,
-                      std::array<std::array<real_t, 3>, 3> &lat_vec, correlation::core::Cell &tempCell) {
+                      std::array<std::array<real_t, 3>, 3> &lat_vec,
+                      correlation::core::Cell &tempCell) {
   if (lattice_row_count >= 3) {
     return;
   }
@@ -53,15 +55,16 @@ void parseLatticeCart(std::stringstream &line_stream, int &lattice_row_count,
       lat_vec.at(lattice_row_count).at(2)) {
     lattice_row_count++;
     if (lattice_row_count == 3) {
-      tempCell = correlation::core::Cell({lat_vec.at(0).at(0), lat_vec.at(0).at(1), lat_vec.at(0).at(2)},
-                                         {lat_vec.at(1).at(0), lat_vec.at(1).at(1), lat_vec.at(1).at(2)},
-                                         {lat_vec.at(2).at(0), lat_vec.at(2).at(1), lat_vec.at(2).at(2)});
+      tempCell =
+          correlation::core::Cell({lat_vec.at(0).at(0), lat_vec.at(0).at(1), lat_vec.at(0).at(2)},
+                                  {lat_vec.at(1).at(0), lat_vec.at(1).at(1), lat_vec.at(1).at(2)},
+                                  {lat_vec.at(2).at(0), lat_vec.at(2).at(1), lat_vec.at(2).at(2)});
     }
   }
 }
 
-void parseLatticeAbc(std::stringstream &line_stream, int &lattice_row_count, std::array<real_t, 6> &lat,
-                     correlation::core::Cell &tempCell) {
+void parseLatticeAbc(std::stringstream &line_stream, int &lattice_row_count,
+                     std::array<real_t, 6> &lat, correlation::core::Cell &tempCell) {
   if (lattice_row_count >= 2) {
     return;
   }
@@ -88,7 +91,8 @@ void parsePositionsAbs(std::stringstream &line_stream, correlation::core::Cell &
   }
 }
 
-void parsePositionsFrac(std::stringstream &line_stream, correlation::core::Cell &tempCell, bool &frac_flag) {
+void parsePositionsFrac(std::stringstream &line_stream, correlation::core::Cell &tempCell,
+                        bool &frac_flag) {
   std::string element;
   real_t coord_x = 0.0;
   real_t coord_y = 0.0;
@@ -99,9 +103,12 @@ void parsePositionsFrac(std::stringstream &line_stream, correlation::core::Cell 
     frac_flag = true;
     const auto &lattice_vectors = tempCell.latticeVectors();
     correlation::math::Vector3<real_t> const pos = {
-        coord_x * lattice_vectors[0].x() + coord_y * lattice_vectors[1].x() + coord_z * lattice_vectors[2].x(),
-        coord_x * lattice_vectors[0].y() + coord_y * lattice_vectors[1].y() + coord_z * lattice_vectors[2].y(),
-        coord_x * lattice_vectors[0].z() + coord_y * lattice_vectors[1].z() + coord_z * lattice_vectors[2].z()};
+        coord_x * lattice_vectors[0].x() + coord_y * lattice_vectors[1].x() +
+            coord_z * lattice_vectors[2].x(),
+        coord_x * lattice_vectors[0].y() + coord_y * lattice_vectors[1].y() +
+            coord_z * lattice_vectors[2].y(),
+        coord_x * lattice_vectors[0].z() + coord_y * lattice_vectors[1].z() +
+            coord_z * lattice_vectors[2].z()};
     tempCell.addAtom(element, pos);
   }
 }
@@ -110,7 +117,8 @@ void parsePositionsFrac(std::stringstream &line_stream, correlation::core::Cell 
 correlation::core::Cell CellReader::read(const std::string &file_name) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
-    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) + ").");
+    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) +
+                             ").");
   }
 
   correlation::core::Cell tempCell;

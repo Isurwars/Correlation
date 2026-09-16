@@ -38,7 +38,8 @@ public:
 
   [[nodiscard]] std::string getModelName() const override { return "MockTDOSModel"; }
 
-  [[nodiscard]] correlation::mlip::MLIPOutput evaluate(const correlation::core::Cell &cell) const override {
+  [[nodiscard]] correlation::mlip::MLIPOutput
+  evaluate(const correlation::core::Cell &cell) const override {
     correlation::mlip::MLIPOutput out;
     const size_t n_atoms = cell.atoms().size();
     out.ldos_bins = bins_;
@@ -56,7 +57,8 @@ public:
       }
 
       for (size_t bin_idx = 0; bin_idx < bins_; ++bin_idx) {
-        out.ldos[i][bin_idx] = base_val_ * multiplier + static_cast<real_t>(bin_idx) * static_cast<real_t>(0.1);
+        out.ldos[i][bin_idx] =
+            base_val_ * multiplier + static_cast<real_t>(bin_idx) * static_cast<real_t>(0.1);
       }
     }
     return out;
@@ -69,8 +71,9 @@ private:
   real_t base_val_{static_cast<real_t>(1.0)};
 };
 
-void verifyConservation(const std::vector<real_t> &total,
-                        std::initializer_list<std::reference_wrapper<const std::vector<real_t>>> partials) {
+void verifyConservation(
+    const std::vector<real_t> &total,
+    std::initializer_list<std::reference_wrapper<const std::vector<real_t>>> partials) {
   const size_t num_bins = total.size();
   for (size_t bin_idx = 0; bin_idx < num_bins; ++bin_idx) {
     auto sum_species = static_cast<real_t>(0.0);
@@ -113,7 +116,8 @@ TEST(TDOSCalculatorTests, EnergyGridVerification) {
 
   const size_t num_bins = 50;
   const MockTDOSModel model({.bins = num_bins});
-  const TDOSParams params{.e_min = static_cast<real_t>(-15.0), .e_max = static_cast<real_t>(5.0), .model = &model};
+  const TDOSParams params{
+      .e_min = static_cast<real_t>(-15.0), .e_max = static_cast<real_t>(5.0), .model = &model};
 
   const auto hist = TDOSCalculator::calculate(cell, params);
 
@@ -122,10 +126,12 @@ TEST(TDOSCalculatorTests, EnergyGridVerification) {
   EXPECT_EQ(hist.x_unit, "eV");
   EXPECT_EQ(hist.y_unit, "states/eV/atom");
 
-  const real_t delta = (static_cast<real_t>(5.0) - static_cast<real_t>(-15.0)) / static_cast<real_t>(num_bins);
+  const real_t delta =
+      (static_cast<real_t>(5.0) - static_cast<real_t>(-15.0)) / static_cast<real_t>(num_bins);
   for (size_t bin_idx = 0; bin_idx < num_bins; ++bin_idx) {
     const real_t expected_energy =
-        static_cast<real_t>(-15.0) + (static_cast<real_t>(bin_idx) + static_cast<real_t>(0.5)) * delta;
+        static_cast<real_t>(-15.0) +
+        (static_cast<real_t>(bin_idx) + static_cast<real_t>(0.5)) * delta;
     EXPECT_NEAR(hist.bins[bin_idx], expected_energy, static_cast<real_t>(1e-5));
   }
 }
@@ -138,7 +144,8 @@ TEST(TDOSCalculatorTests, SpeciesPartialsConservation) {
 
   const size_t num_bins = 10;
   const MockTDOSModel model({.bins = num_bins});
-  const TDOSParams params{.e_min = static_cast<real_t>(-15.0), .e_max = static_cast<real_t>(5.0), .model = &model};
+  const TDOSParams params{
+      .e_min = static_cast<real_t>(-15.0), .e_max = static_cast<real_t>(5.0), .model = &model};
 
   const auto hist = TDOSCalculator::calculate(cell, params);
 
@@ -169,7 +176,8 @@ TEST(TDOSCalculatorTests, TrajectoryAveraging) {
 
   const size_t num_bins = 10;
   MockTDOSModel model({.bins = num_bins});
-  const TDOSParams params{.e_min = static_cast<real_t>(-15.0), .e_max = static_cast<real_t>(5.0), .model = &model};
+  const TDOSParams params{
+      .e_min = static_cast<real_t>(-15.0), .e_max = static_cast<real_t>(5.0), .model = &model};
 
   const auto hist1 = TDOSCalculator::calculate(cell1, params);
 
@@ -194,7 +202,8 @@ TEST(TDOSCalculatorTests, CancellationResponsiveness) {
   traj.addFrame(cell);
 
   const MockTDOSModel model({.bins = 10});
-  const TDOSParams params{.e_min = static_cast<real_t>(-15.0), .e_max = static_cast<real_t>(5.0), .model = &model};
+  const TDOSParams params{
+      .e_min = static_cast<real_t>(-15.0), .e_max = static_cast<real_t>(5.0), .model = &model};
 
   const std::atomic<bool> cancel_flag{true};
   const auto hist = TDOSCalculator::calculateTrajectory(traj, params, &cancel_flag);

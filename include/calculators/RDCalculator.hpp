@@ -22,7 +22,9 @@ public:
   [[nodiscard]] std::string_view getName() const override { return "RD"; }
   [[nodiscard]] std::string_view getShortName() const override { return "RD"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Rings"; }
-  [[nodiscard]] std::string_view getDescription() const override { return "Computes the Ring Distribution (RD)."; }
+  [[nodiscard]] std::string_view getDescription() const override {
+    return "Computes the Ring Distribution (RD).";
+  }
 
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }

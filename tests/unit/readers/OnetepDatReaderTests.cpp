@@ -41,11 +41,11 @@ TEST(OnetepDatReaderTests, ReadsStructureCartesianAndBohr) {
   auto cell = reader.readStructure(data_dir + "clean.dat");
 
   EXPECT_EQ(cell.atomCount(), 1);
-  // Since unit bohr was used for lattice: 10.0 bohr (meaning the cell has those parameters directly, wait, does
-  // OnetepDatReader convert bohr to angstrom? No, OnetepDatReader doesn't do a bohr-to-angstrom conversion for
-  // lattice/positions, it just skips the token "bohr" or "angstrom"). Let's verify. Yes: in OnetepDatReader.cpp: if
-  // (lower_first == "angstrom" || lower_first == "bohr") { continue; } So it skips them. Thus cell parameters
-  // remain 10.0.
+  // Since unit bohr was used for lattice: 10.0 bohr (meaning the cell has those parameters
+  // directly, wait, does OnetepDatReader convert bohr to angstrom? No, OnetepDatReader doesn't do a
+  // bohr-to-angstrom conversion for lattice/positions, it just skips the token "bohr" or
+  // "angstrom"). Let's verify. Yes: in OnetepDatReader.cpp: if (lower_first == "angstrom" ||
+  // lower_first == "bohr") { continue; } So it skips them. Thus cell parameters remain 10.0.
   EXPECT_DOUBLE_EQ(cell.lattice_parameters()[0], 10.0);
   EXPECT_EQ(cell.atoms()[0].element().symbol, "C");
   EXPECT_DOUBLE_EQ(cell.atoms()[0].position().x(), 1.0);

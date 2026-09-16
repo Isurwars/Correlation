@@ -58,8 +58,10 @@ public:
    *  - "D_eff" : running diffusion coefficient D(t) = MSD(t) / (6t) (Angstrom^2/fs)
    */
   static std::map<std::string, correlation::analysis::Histogram>
-  calculate(const correlation::core::Trajectory &traj, correlation::analysis::MaxFrames max_correlation_frames,
-            correlation::analysis::StartFrame start_frame, correlation::analysis::EndFrame end_frame);
+  calculate(const correlation::core::Trajectory &traj,
+            correlation::analysis::MaxFrames max_correlation_frames,
+            correlation::analysis::StartFrame start_frame,
+            correlation::analysis::EndFrame end_frame);
 };
 
 } // namespace correlation::calculators

@@ -30,7 +30,8 @@ correlation::core::NeighborGraph buildNeighborGraphFromBuffers(const PeriodicGra
 
   for (size_t edge_idx = 0; edge_idx < total_edges; ++edge_idx) {
     const auto src = static_cast<correlation::core::AtomID>(graph.edge_index_flat[edge_idx]);
-    const auto dst = static_cast<correlation::core::AtomID>(graph.edge_index_flat[total_edges + edge_idx]);
+    const auto dst =
+        static_cast<correlation::core::AtomID>(graph.edge_index_flat[total_edges + edge_idx]);
     const real_t dist = has_distances ? graph.edge_distances[edge_idx] : static_cast<real_t>(0.0);
 
     correlation::math::Vector3<real_t> r_ij{0.0, 0.0, 0.0};
@@ -65,7 +66,8 @@ struct DfsStackFrame {
 };
 
 // Stack-based iterative DFS to avoid recursion
-size_t dfsLongestPathIterative(size_t start_node, const std::map<size_t, std::vector<size_t>> &adj) {
+size_t dfsLongestPathIterative(size_t start_node,
+                               const std::map<size_t, std::vector<size_t>> &adj) {
   std::set<size_t> visited;
   visited.insert(start_node);
 
@@ -112,7 +114,8 @@ size_t dfsLongestPathIterative(size_t start_node, const std::map<size_t, std::ve
   return final_best;
 }
 
-size_t computeLongestChain(const std::vector<size_t> &common, const std::map<size_t, std::vector<size_t>> &adj) {
+size_t computeLongestChain(const std::vector<size_t> &common,
+                           const std::map<size_t, std::vector<size_t>> &adj) {
   size_t best = 0;
   for (const size_t start : common) {
     best = std::max(best, dfsLongestPathIterative(start, adj));
@@ -130,7 +133,8 @@ struct CNAPairSig {
   }
 };
 
-CNAPairSig evaluatePairSignature(size_t atom_i, size_t atom_j, const std::vector<std::set<size_t>> &adj) {
+CNAPairSig evaluatePairSignature(size_t atom_i, size_t atom_j,
+                                 const std::vector<std::set<size_t>> &adj) {
   std::vector<size_t> common;
   for (const size_t nbr : adj[atom_i]) {
     if (adj[atom_j].contains(nbr)) {
@@ -174,7 +178,8 @@ CNALabel classifyEnvironment(const MotifSignatureCounts &counts) noexcept {
   if (counts.coordination == 12 && counts.count_421 == 6 && counts.count_422 == 6) {
     return CNALabel::HCP;
   }
-  if ((counts.coordination == 14 && counts.count_666 == 8) || (counts.coordination == 8 && counts.count_666 == 8)) {
+  if ((counts.coordination == 14 && counts.count_666 == 8) ||
+      (counts.coordination == 8 && counts.count_666 == 8)) {
     return CNALabel::BCC;
   }
   if (counts.coordination == 12 && counts.count_555 == 12) {
@@ -240,10 +245,13 @@ std::vector<real_t> computeSymmetricEigenvalues(std::vector<real_t> mat, size_t 
     const real_t aqq = mat[idx_q * matrix_dim + idx_q];
     const real_t apq = mat[idx_p * matrix_dim + idx_q];
     const real_t theta = static_cast<real_t>(0.5) * (aqq - app) / apq;
-    const real_t t_val =
-        (theta >= 0.0) ? static_cast<real_t>(1.0) / (theta + std::sqrt(theta * theta + static_cast<real_t>(1.0)))
-                       : static_cast<real_t>(-1.0) / (-theta + std::sqrt(theta * theta + static_cast<real_t>(1.0)));
-    const real_t cos_val = static_cast<real_t>(1.0) / std::sqrt(t_val * t_val + static_cast<real_t>(1.0));
+    const real_t t_val = (theta >= 0.0)
+                             ? static_cast<real_t>(1.0) /
+                                   (theta + std::sqrt(theta * theta + static_cast<real_t>(1.0)))
+                             : static_cast<real_t>(-1.0) /
+                                   (-theta + std::sqrt(theta * theta + static_cast<real_t>(1.0)));
+    const real_t cos_val =
+        static_cast<real_t>(1.0) / std::sqrt(t_val * t_val + static_cast<real_t>(1.0));
     const real_t sin_val = t_val * cos_val;
     const real_t tau_val = sin_val / (static_cast<real_t>(1.0) + cos_val);
 
@@ -273,7 +281,8 @@ std::vector<real_t> computeSymmetricEigenvalues(std::vector<real_t> mat, size_t 
 
 } // anonymous namespace
 
-std::vector<real_t> GraphDescriptors::computeRingStatisticsDescriptor(const PeriodicGraphData &graph, size_t max_size) {
+std::vector<real_t>
+GraphDescriptors::computeRingStatisticsDescriptor(const PeriodicGraphData &graph, size_t max_size) {
   if (graph.atom_count == 0 || max_size < 3) {
     return {};
   }
@@ -286,7 +295,8 @@ std::vector<real_t> GraphDescriptors::computeRingStatisticsDescriptor(const Peri
     for (const auto &cycle : cycles) {
       for (const auto atom_id : cycle) {
         if (static_cast<size_t>(atom_id) < graph.atom_count) {
-          ring_desc[static_cast<size_t>(atom_id) * max_size + (size - 1)] += static_cast<real_t>(1.0);
+          ring_desc[static_cast<size_t>(atom_id) * max_size + (size - 1)] +=
+              static_cast<real_t>(1.0);
         }
       }
     }
@@ -324,7 +334,8 @@ std::vector<real_t> GraphDescriptors::computeCoordinationEmbedding(const Periodi
   return coord;
 }
 
-std::vector<real_t> GraphDescriptors::computeGraphSpectrum(const PeriodicGraphData &graph, size_t k_eigenvalues) {
+std::vector<real_t> GraphDescriptors::computeGraphSpectrum(const PeriodicGraphData &graph,
+                                                           size_t k_eigenvalues) {
   const size_t num_atoms = graph.atom_count;
   if (num_atoms == 0 || k_eigenvalues == 0) {
     return {};

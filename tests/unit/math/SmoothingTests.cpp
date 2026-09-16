@@ -30,7 +30,8 @@ TEST_F(SmoothingTests, GenerateKernelNormalizesAndCalculatesCorrectly) {
       .type = KernelType::Gaussian,
   });
   EXPECT_EQ(k_gauss.size(), size);
-  real_t const sum_gauss = std::accumulate(k_gauss.begin(), k_gauss.end(), static_cast<real_t>(0.0));
+  real_t const sum_gauss =
+      std::accumulate(k_gauss.begin(), k_gauss.end(), static_cast<real_t>(0.0));
   EXPECT_NEAR(sum_gauss, static_cast<real_t>(1.0), tol);
 
   // Triweight
@@ -89,7 +90,8 @@ TEST_F(SmoothingTests, GenerateKernelNormalizesAndCalculatesCorrectly) {
   EXPECT_NEAR(sum_biw, static_cast<real_t>(1.0), tol);
 
   // Invalid kernel type throws invalid_argument
-  EXPECT_THROW((void)generateKernel({size, bin_width, sigma, static_cast<KernelType>(-1)}), std::invalid_argument);
+  EXPECT_THROW((void)generateKernel({size, bin_width, sigma, static_cast<KernelType>(-1)}),
+               std::invalid_argument);
 }
 
 TEST_F(SmoothingTests, KernelSmoothingBoundaryInputsAndErrors) {
@@ -150,8 +152,8 @@ TEST_F(SmoothingTests, KernelSmoothingComputesConvolutions) {
   ASSERT_EQ(smoothed.size(), y_values.size());
 
   // Smoothing step function should blur the boundary.
-  // The first element should be smoothed using left clamping (mostly 0.0, but slightly pulled up if kernel overlaps)
-  // The transition should be intermediate.
+  // The first element should be smoothed using left clamping (mostly 0.0, but slightly pulled up if
+  // kernel overlaps) The transition should be intermediate.
   EXPECT_GT(smoothed[3], smoothed[0]);
   EXPECT_LT(smoothed[3], 10.0);
 }

@@ -25,7 +25,9 @@ public:
   MLIPCalculator() = default;
   explicit MLIPCalculator(const correlation::mlip::MLIPInterface *model) noexcept : model_(model) {}
 
-  [[nodiscard]] std::string_view getName() const override { return "ML Interatomic Potential (ORB-v3)"; }
+  [[nodiscard]] std::string_view getName() const override {
+    return "ML Interatomic Potential (ORB-v3)";
+  }
   [[nodiscard]] std::string_view getShortName() const override { return "MLIP"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Machine Learning"; }
   [[nodiscard]] std::string_view getDescription() const override {
@@ -62,8 +64,9 @@ public:
    * @param[in] model Optional custom MLIPInterface engine pointer.
    * @return Generated MLIPOutput struct.
    */
-  static correlation::mlip::MLIPOutput calculate(const correlation::core::Cell &cell,
-                                                 const correlation::mlip::MLIPInterface *model = nullptr);
+  static correlation::mlip::MLIPOutput
+  calculate(const correlation::core::Cell &cell,
+            const correlation::mlip::MLIPInterface *model = nullptr);
 
 private:
   const correlation::mlip::MLIPInterface *model_{nullptr};

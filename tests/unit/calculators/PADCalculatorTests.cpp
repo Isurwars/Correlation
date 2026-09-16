@@ -193,13 +193,14 @@ TEST_F(PADCalculatorTests_AngleReproduction, Icosahedron_13Atoms) {
 
   real_t const phi = static_cast<real_t>(std::numbers::phi);
   // Vertices of icosahedron (edge length 2) relative to center
-  std::vector<std::vector<real_t>> const vertices = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
-                                                     {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
-                                                     {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
+  std::vector<std::vector<real_t>> const vertices = {
+      {0, 1, phi},  {0, 1, -phi},  {0, -1, phi}, {0, -1, -phi}, {1, phi, 0},  {1, -phi, 0},
+      {-1, phi, 0}, {-1, -phi, 0}, {phi, 0, 1},  {phi, 0, -1},  {-phi, 0, 1}, {-phi, 0, -1}};
 
   for (const auto &vertex : vertices) {
-    cell_.addAtom("Si", correlation::math::Vector3<real_t>(base_coord + vertex[0], base_coord + vertex[1],
-                                                           base_coord + vertex[2]));
+    cell_.addAtom("Si",
+                  correlation::math::Vector3<real_t>(base_coord + vertex[0], base_coord + vertex[1],
+                                                     base_coord + vertex[2]));
   }
   updateTrajectory();
 
@@ -270,7 +271,9 @@ TEST_F(PADCalculatorTests, EmptyCellThrows) {
   // Current implementation throws explicitly if atoms are empty in
   // calculateAshcroftWeights or implicitly via other checks.
   updateTrajectory();
-  EXPECT_THROW({ DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ()); }, std::invalid_argument);
+  EXPECT_THROW(
+      { DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ()); },
+      std::invalid_argument);
 }
 
 TEST_F(PADCalculatorTests, SingleAtomNoAngles) {
@@ -293,7 +296,9 @@ TEST_F(PADCalculatorTests, SingleAtomNoAngles) {
 
 TEST_F(PADCalculatorTests, NullNeighborsThrows) {
   cell_.addAtom("Si", {10.0, 10.0, 10.0});
-  EXPECT_THROW({ correlation::calculators::PADCalculator::calculate(cell_, nullptr, 1.0); }, std::logic_error);
+  EXPECT_THROW(
+      { correlation::calculators::PADCalculator::calculate(cell_, nullptr, 1.0); },
+      std::logic_error);
 }
 
 // 2. Geometry Verification
@@ -327,7 +332,8 @@ TEST_F(PADCalculatorTests, LinearGeometry180) {
   // Bin for 180 degrees.
   // Multiply counts/density by bin width (0.001) to get the probability sum
   double const total_prob = sumHistogram(partial) * 0.001;
-  EXPECT_NEAR(total_prob, 1.0, 1e-5) << "Should be normalized to 1 angle (normalized by counts * bin_width)";
+  EXPECT_NEAR(total_prob, 1.0, 1e-5)
+      << "Should be normalized to 1 angle (normalized by counts * bin_width)";
 
   // Check peak location
   double peak_val = 0;
@@ -416,9 +422,11 @@ TEST_F(PADCalculatorTests, TetrahedralAngle) {
 
   real_t const lattice_constant = static_cast<real_t>(1.6 * std::numbers::inv_sqrt3);
 
-  cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord + lattice_constant, base_coord + lattice_constant,
+  cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord + lattice_constant,
+                                                        base_coord + lattice_constant,
                                                         base_coord + lattice_constant));
-  cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord + lattice_constant, base_coord - lattice_constant,
+  cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord + lattice_constant,
+                                                        base_coord - lattice_constant,
                                                         base_coord - lattice_constant));
   updateTrajectory();
 
@@ -476,13 +484,17 @@ TEST_F(PADCalculatorTests, FullNormalizationCheck) {
   real_t const lattice_constant = static_cast<real_t>(1.6 * std::numbers::inv_sqrt3);
 
   // Tetrahedral vertices
-  cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord + lattice_constant, base_coord + lattice_constant,
+  cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord + lattice_constant,
+                                                        base_coord + lattice_constant,
                                                         base_coord + lattice_constant));
-  cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord + lattice_constant, base_coord - lattice_constant,
+  cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord + lattice_constant,
+                                                        base_coord - lattice_constant,
                                                         base_coord - lattice_constant));
-  cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord - lattice_constant, base_coord + lattice_constant,
+  cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord - lattice_constant,
+                                                        base_coord + lattice_constant,
                                                         base_coord - lattice_constant));
-  cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord - lattice_constant, base_coord - lattice_constant,
+  cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord - lattice_constant,
+                                                        base_coord - lattice_constant,
                                                         base_coord + lattice_constant));
   updateTrajectory();
 
@@ -523,9 +535,9 @@ TEST_F(PADCalculatorTests, FullNormalizationCheck) {
 TEST_F(PADCalculatorTests, IcosahedronAnglesPAD) {
   cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
   real_t phi = static_cast<real_t>(std::numbers::phi);
-  std::vector<std::vector<real_t>> const vertices = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
-                                                     {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
-                                                     {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
+  std::vector<std::vector<real_t>> const vertices = {
+      {0, 1, phi},  {0, 1, -phi},  {0, -1, phi}, {0, -1, -phi}, {1, phi, 0},  {1, -phi, 0},
+      {-1, phi, 0}, {-1, -phi, 0}, {phi, 0, 1},  {phi, 0, -1},  {-phi, 0, 1}, {-phi, 0, -1}};
 
   for (const auto &vertex : vertices) {
     cell_.addAtom("Si", correlation::math::Vector3<real_t>(static_cast<real_t>(10.0) + vertex[0],

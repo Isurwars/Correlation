@@ -29,7 +29,8 @@ protected:
 #endif
   }
 
-  static correlation::app::ProgramOptions callHandleOptionsfromUI(correlation::app::AppController &controller) {
+  static correlation::app::ProgramOptions
+  callHandleOptionsfromUI(correlation::app::AppController &controller) {
     return controller.handleOptionsfromUI();
   }
 };
@@ -157,7 +158,8 @@ TEST_F(AppControllerTests, SynchronizesOptionsToAndFromUI) {
   EXPECT_EQ(window->get_analysis_options().dihedral_bin_width, "3.00");
   EXPECT_EQ(window->get_analysis_options().max_ring_size, "8");
   EXPECT_EQ(window->get_analysis_options().smoothing_sigma, "0.03");
-  EXPECT_EQ(window->get_analysis_options().smoothing_kernel, static_cast<int>(correlation::math::KernelType::Gaussian));
+  EXPECT_EQ(window->get_analysis_options().smoothing_kernel,
+            static_cast<int>(correlation::math::KernelType::Gaussian));
   EXPECT_EQ(window->get_analysis_options().material_type, 1);
   EXPECT_EQ(window->get_analysis_options().min_frame, "3"); // UI is 1-based (2 + 1 = 3)
   EXPECT_EQ(window->get_analysis_options().max_frame, "10");
@@ -243,9 +245,12 @@ TEST_F(AppControllerTests, ResetsBondCutoffsToDefaultsWhenInvoked) {
 
   // Set modified/custom cutoffs
   auto cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
-  cutoffs->push_back({.element1 = "Pd", .element2 = "Pd", .min_distance = "9.99", .max_distance = "9.99"});
-  cutoffs->push_back({.element1 = "Pd", .element2 = "Si", .min_distance = "9.99", .max_distance = "9.99"});
-  cutoffs->push_back({.element1 = "Si", .element2 = "Si", .min_distance = "9.99", .max_distance = "9.99"});
+  cutoffs->push_back(
+      {.element1 = "Pd", .element2 = "Pd", .min_distance = "9.99", .max_distance = "9.99"});
+  cutoffs->push_back(
+      {.element1 = "Pd", .element2 = "Si", .min_distance = "9.99", .max_distance = "9.99"});
+  cutoffs->push_back(
+      {.element1 = "Si", .element2 = "Si", .min_distance = "9.99", .max_distance = "9.99"});
   window->set_bond_cutoffs(cutoffs);
 
   // Invoke reset callback
@@ -423,7 +428,8 @@ TEST_F(AppControllerTests, GuiLaunchAndEventLoopSmokeTest) {
   correlation::app::AppController controller(*window, backend);
 
   slint::Timer quit_timer;
-  quit_timer.start(slint::TimerMode::SingleShot, std::chrono::milliseconds(50), []() { slint::quit_event_loop(); });
+  quit_timer.start(slint::TimerMode::SingleShot, std::chrono::milliseconds(50),
+                   []() { slint::quit_event_loop(); });
 
   EXPECT_NO_THROW(window->run());
 }

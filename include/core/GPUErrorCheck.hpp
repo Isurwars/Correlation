@@ -29,11 +29,12 @@ public:
  * @param[in] loc The source location where the check was invoked.
  * @throws GPUError If result is not equal to hipSuccess.
  */
-inline void hipCheck(hipError_t result, std::source_location const loc = std::source_location::current()) {
+inline void hipCheck(hipError_t result,
+                     std::source_location const loc = std::source_location::current()) {
 #if defined(CORRELATION_USE_CUDA) || defined(CORRELATION_USE_HIP)
   if (result != hipSuccess) {
-    throw GPUError(std::string("GPU error in ") + loc.file_name() + ":" + std::to_string(loc.line()) + " — " +
-                   hipGetErrorString(result));
+    throw GPUError(std::string("GPU error in ") + loc.file_name() + ":" +
+                   std::to_string(loc.line()) + " — " + hipGetErrorString(result));
   }
 #else
   (void)result;

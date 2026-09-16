@@ -22,21 +22,25 @@ namespace correlation::calculators {
  * @brief Parameter configuration for Total Density of States evaluation.
  */
 struct TDOSParams {
-  real_t e_min = static_cast<real_t>(-15.0);              /**< Lower energy boundary in eV (relative to E_F). */
-  real_t e_max = static_cast<real_t>(5.0);                /**< Upper energy boundary in eV (relative to E_F). */
-  const correlation::mlip::MLIPInterface *model{nullptr}; /**< Pointer to MLIP evaluation model engine. */
+  real_t e_min = static_cast<real_t>(-15.0); /**< Lower energy boundary in eV (relative to E_F). */
+  real_t e_max = static_cast<real_t>(5.0);   /**< Upper energy boundary in eV (relative to E_F). */
+  const correlation::mlip::MLIPInterface *model{
+      nullptr}; /**< Pointer to MLIP evaluation model engine. */
 };
 
 /**
  * @class TDOSCalculator
- * @brief Computes Total Density of States (TDOS) from MLIP per-atom Local Density of States predictions.
+ * @brief Computes Total Density of States (TDOS) from MLIP per-atom Local Density of States
+ * predictions.
  */
 class TDOSCalculator : public BaseCalculator {
 public:
   TDOSCalculator() = default;
   explicit TDOSCalculator(const correlation::mlip::MLIPInterface *model) noexcept : model_(model) {}
 
-  [[nodiscard]] std::string_view getName() const override { return "Total Density of States (TDOS)"; }
+  [[nodiscard]] std::string_view getName() const override {
+    return "Total Density of States (TDOS)";
+  }
   [[nodiscard]] std::string_view getShortName() const override { return "TDOS"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Machine Learning"; }
   [[nodiscard]] std::string_view getDescription() const override {
@@ -88,8 +92,8 @@ public:
    * @param[in] params Evaluation parameters and model pointer.
    * @return Generated Histogram with total and species-resolved partials.
    */
-  [[nodiscard]] static correlation::analysis::Histogram calculate(const correlation::core::Cell &cell,
-                                                                  const TDOSParams &params = {});
+  [[nodiscard]] static correlation::analysis::Histogram
+  calculate(const correlation::core::Cell &cell, const TDOSParams &params = {});
 
   /**
    * @brief Evaluates trajectory-averaged TDOS across multiple frames.

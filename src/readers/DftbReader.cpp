@@ -106,20 +106,21 @@ correlation::math::Matrix3<real_t> parse_lattice(std::istream &stream) {
       lat_iss >> row[0] >> row[1] >> row[2];
     }
   }
-  return {
-      correlation::math::Vector3<real_t>(lat_vec[0][0], lat_vec[0][1], lat_vec[0][2]),
-      correlation::math::Vector3<real_t>(lat_vec[1][0], lat_vec[1][1], lat_vec[1][2]),
-      correlation::math::Vector3<real_t>(lat_vec[2][0], lat_vec[2][1], lat_vec[2][2])};
+  return {correlation::math::Vector3<real_t>(lat_vec[0][0], lat_vec[0][1], lat_vec[0][2]),
+          correlation::math::Vector3<real_t>(lat_vec[1][0], lat_vec[1][1], lat_vec[1][2]),
+          correlation::math::Vector3<real_t>(lat_vec[2][0], lat_vec[2][1], lat_vec[2][2])};
 }
 
 void populate_cell_atoms(correlation::core::Cell &cell, const std::vector<TempAtom> &raw_atoms,
                          const std::vector<std::string> &element_types, char mode,
                          const correlation::math::Matrix3<real_t> &lattice) {
   for (const auto &raw : raw_atoms) {
-    size_t const elem_idx = (raw.type_idx > 0 && raw.type_idx <= element_types.size()) ? (raw.type_idx - 1) : 0;
+    size_t const elem_idx =
+        (raw.type_idx > 0 && raw.type_idx <= element_types.size()) ? (raw.type_idx - 1) : 0;
     const std::string &symbol = element_types[elem_idx];
     if (mode == 'F') {
-      correlation::math::Vector3<real_t> const cart = lattice * correlation::math::Vector3<real_t>(raw.x, raw.y, raw.z);
+      correlation::math::Vector3<real_t> const cart =
+          lattice * correlation::math::Vector3<real_t>(raw.x, raw.y, raw.z);
       cell.addAtom(symbol, cart);
     } else {
       cell.addAtom(symbol, correlation::math::Vector3<real_t>(raw.x, raw.y, raw.z));
@@ -137,15 +138,17 @@ correlation::core::Cell parse_gen_file(std::istream &stream) {
     cell.updateLattice(lattice);
     populate_cell_atoms(cell, raw_atoms, header.element_types, header.mode, lattice);
   } else {
-    populate_cell_atoms(cell, raw_atoms, header.element_types, header.mode, correlation::math::Matrix3<real_t>());
+    populate_cell_atoms(cell, raw_atoms, header.element_types, header.mode,
+                        correlation::math::Matrix3<real_t>());
   }
   return cell;
 }
 
 } // namespace
 
-correlation::core::Cell DftbReader::readStructure(const std::string &filename,
-                                                  std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell
+DftbReader::readStructure(const std::string &filename,
+                          std::function<void(float, const std::string &)> progress_callback) {
   std::ifstream file(filename);
   if (!file.is_open()) {
     throw std::runtime_error("Could not open DFTB+ file: " + filename);

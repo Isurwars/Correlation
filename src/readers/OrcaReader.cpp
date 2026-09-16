@@ -35,7 +35,8 @@ struct OrcaTrajectoryParser {
   explicit OrcaTrajectoryParser(std::ifstream &stream) : file(&stream) {}
 
   void checkHeader(const std::string &line) {
-    if (line.contains("CARTESIAN COORDINATES (ANGSTROEM)") || line.contains("COORDINATES (ANGSTROEMS)") ||
+    if (line.contains("CARTESIAN COORDINATES (ANGSTROEM)") ||
+        line.contains("COORDINATES (ANGSTROEMS)") ||
         line.contains("CARTESIAN COORDINATES (ANGSTROM)")) {
       startNewFrame(false);
     } else if (line.contains("CARTESIAN COORDINATES (A.U.)")) {
@@ -106,7 +107,8 @@ struct OrcaTrajectoryParser {
 
       checkHeader(line);
 
-      if (in_coord_block && !line.contains("CARTESIAN COORDINATES") && !line.contains("COORDINATES (ANGSTROM")) {
+      if (in_coord_block && !line.contains("CARTESIAN COORDINATES") &&
+          !line.contains("COORDINATES (ANGSTROM")) {
         parseAtomLine(line);
       }
     }
@@ -119,8 +121,9 @@ struct OrcaTrajectoryParser {
 
 } // namespace
 
-correlation::core::Cell OrcaReader::readStructure(const std::string &filename,
-                                                  std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell
+OrcaReader::readStructure(const std::string &filename,
+                          std::function<void(float, const std::string &)> progress_callback) {
   auto trajectory = readTrajectory(filename, std::move(progress_callback));
   if (trajectory.getFrameCount() == 0) {
     throw std::runtime_error("No atomic coordinates found in ORCA file: " + filename);

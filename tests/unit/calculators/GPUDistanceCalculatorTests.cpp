@@ -26,8 +26,8 @@ TEST(GPUDistanceCalculatorTests, FloatPrecisionDistanceComputation) {
   std::vector<std::vector<float>> const bond_cutoffs_sq = {{{4.0F, 4.0F}, {4.0F, 4.0F}}};
 
   size_t const num_elements = cell.elements().size();
-  RawHistogramTensor out_histograms(num_elements,
-                                    std::vector<std::vector<real_t>>(num_elements, std::vector<real_t>(100, 0.0)));
+  RawHistogramTensor out_histograms(
+      num_elements, std::vector<std::vector<real_t>>(num_elements, std::vector<real_t>(100, 0.0)));
   DistanceCalculationConfig const config{
       .r_max = 2.0,
       .r_bin_width = 0.02,
@@ -36,12 +36,13 @@ TEST(GPUDistanceCalculatorTests, FloatPrecisionDistanceComputation) {
   correlation::core::NeighborGraph out_graph(2);
 
   if (has_gpu_device()) {
-    EXPECT_NO_THROW(
-        compute_distances_gpu<float>(cell, cutoff_sq, bond_cutoffs_sq, true, &out_histograms, config, out_graph));
+    EXPECT_NO_THROW(compute_distances_gpu<float>(cell, cutoff_sq, bond_cutoffs_sq, true,
+                                                 &out_histograms, config, out_graph));
 
     EXPECT_EQ(out_histograms[0][1][75], 1.0);
 
-    EXPECT_TRUE(out_graph.areConnected(correlation::core::AtomIndex{0}, correlation::core::AtomIndex{1}));
+    EXPECT_TRUE(
+        out_graph.areConnected(correlation::core::AtomIndex{0}, correlation::core::AtomIndex{1}));
     const auto &neighbors = out_graph.getNeighbors(0);
     ASSERT_EQ(neighbors.size(), 1);
     EXPECT_EQ(neighbors[0].index, 1);
@@ -58,8 +59,8 @@ TEST(GPUDistanceCalculatorTests, DoublePrecisionDistanceComputation) {
   std::vector<std::vector<double>> const bond_cutoffs_sq = {{4.0}};
 
   size_t const num_elements = cell.elements().size();
-  RawHistogramTensor out_histograms(num_elements,
-                                    std::vector<std::vector<real_t>>(num_elements, std::vector<real_t>(100, 0.0)));
+  RawHistogramTensor out_histograms(
+      num_elements, std::vector<std::vector<real_t>>(num_elements, std::vector<real_t>(100, 0.0)));
   DistanceCalculationConfig const config{
       .r_max = 2.0,
       .r_bin_width = 0.02,
@@ -68,12 +69,13 @@ TEST(GPUDistanceCalculatorTests, DoublePrecisionDistanceComputation) {
   correlation::core::NeighborGraph out_graph(2);
 
   if (has_gpu_device()) {
-    EXPECT_NO_THROW(
-        compute_distances_gpu<double>(cell, cutoff_sq, bond_cutoffs_sq, true, &out_histograms, config, out_graph));
+    EXPECT_NO_THROW(compute_distances_gpu<double>(cell, cutoff_sq, bond_cutoffs_sq, true,
+                                                  &out_histograms, config, out_graph));
 
     EXPECT_EQ(out_histograms[0][0][50], 1.0);
 
-    EXPECT_TRUE(out_graph.areConnected(correlation::core::AtomIndex{0}, correlation::core::AtomIndex{1}));
+    EXPECT_TRUE(
+        out_graph.areConnected(correlation::core::AtomIndex{0}, correlation::core::AtomIndex{1}));
   }
 }
 
@@ -87,8 +89,8 @@ TEST(GPUDistanceCalculatorTests, SinglePassDirectHistogramAccumulation) {
   std::vector<std::vector<double>> const empty_bond_cutoffs;
 
   size_t const num_elements = cell.elements().size();
-  RawHistogramTensor out_histograms(num_elements,
-                                    std::vector<std::vector<real_t>>(num_elements, std::vector<real_t>(100, 0.0)));
+  RawHistogramTensor out_histograms(
+      num_elements, std::vector<std::vector<real_t>>(num_elements, std::vector<real_t>(100, 0.0)));
   DistanceCalculationConfig const config{
       .r_max = 2.0,
       .r_bin_width = 0.02,
@@ -97,8 +99,8 @@ TEST(GPUDistanceCalculatorTests, SinglePassDirectHistogramAccumulation) {
   correlation::core::NeighborGraph out_graph(0);
 
   if (has_gpu_device()) {
-    EXPECT_NO_THROW(
-        compute_distances_gpu<double>(cell, cutoff_sq, empty_bond_cutoffs, true, &out_histograms, config, out_graph));
+    EXPECT_NO_THROW(compute_distances_gpu<double>(cell, cutoff_sq, empty_bond_cutoffs, true,
+                                                  &out_histograms, config, out_graph));
 
     // Distance 1.2 / 0.02 = bin 60
     EXPECT_EQ(out_histograms[0][1][60], 1.0);

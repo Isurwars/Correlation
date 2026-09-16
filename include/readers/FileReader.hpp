@@ -54,8 +54,9 @@ enum class FileType : std::uint8_t {
  * structure.
  * @throws std::runtime_error if the file cannot be opened or is malformed.
  */
-correlation::core::Cell readStructure(const std::string &filename, FileType type,
-                                      std::function<void(float, const std::string &)> progress_callback = nullptr);
+correlation::core::Cell
+readStructure(const std::string &filename, FileType type,
+              std::function<void(float, const std::string &)> progress_callback = nullptr);
 
 /**
  * @brief Reads a trajectory from a file.

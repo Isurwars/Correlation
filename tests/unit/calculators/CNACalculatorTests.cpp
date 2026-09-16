@@ -64,7 +64,8 @@ TEST(CNACalculatorTests, HistogramDimensionsAreConsistent) {
 
   for (const auto &[key, values] : hist.partials) {
     EXPECT_EQ(values.size(), hist.bins.size())
-        << "Partial '" << key << "' has size " << values.size() << " but bins has size " << hist.bins.size();
+        << "Partial '" << key << "' has size " << values.size() << " but bins has size "
+        << hist.bins.size();
   }
 }
 
@@ -81,8 +82,9 @@ TEST(CNACalculatorTests, TotalPartialSumsToOne) {
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
   ASSERT_TRUE(hist.partials.contains("Total"));
-  real_t const sum = static_cast<real_t>(
-      std::accumulate(hist.partials.at("Total").begin(), hist.partials.at("Total").end(), static_cast<real_t>(0.0)));
+  real_t const sum = static_cast<real_t>(std::accumulate(hist.partials.at("Total").begin(),
+                                                         hist.partials.at("Total").end(),
+                                                         static_cast<real_t>(0.0)));
   EXPECT_NEAR(sum, static_cast<real_t>(1.0), static_cast<real_t>(1e-12));
 }
 
@@ -126,8 +128,8 @@ TEST(CNACalculatorTests, FCC_Supercell_ProducesNonEmptyResult) {
   EXPECT_TRUE(hist.partials.count("1421")) << "FCC should produce CNA index 1421.";
 
   // The Total partial should sum to 1.0
-  real_t const sum =
-      static_cast<real_t>(std::accumulate(hist.partials.at("Total").begin(), hist.partials.at("Total").end(), 0.0));
+  real_t const sum = static_cast<real_t>(
+      std::accumulate(hist.partials.at("Total").begin(), hist.partials.at("Total").end(), 0.0));
   EXPECT_NEAR(sum, static_cast<real_t>(1.0), static_cast<real_t>(1e-12));
 }
 
@@ -152,8 +154,8 @@ TEST(CNACalculatorTests, BCC_Supercell_ProducesOutput) {
   }
 
   // Total should sum to 1.0
-  real_t const sum =
-      static_cast<real_t>(std::accumulate(hist.partials.at("Total").begin(), hist.partials.at("Total").end(), 0.0));
+  real_t const sum = static_cast<real_t>(
+      std::accumulate(hist.partials.at("Total").begin(), hist.partials.at("Total").end(), 0.0));
   EXPECT_NEAR(sum, static_cast<real_t>(1.0), static_cast<real_t>(1e-12));
 }
 

@@ -25,7 +25,9 @@ namespace correlation::calculators {
  */
 class SDFCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string_view getName() const override { return "Spatial Distribution Function (3D)"; }
+  [[nodiscard]] std::string_view getName() const override {
+    return "Spatial Distribution Function (3D)";
+  }
   [[nodiscard]] std::string_view getShortName() const override { return "SDF"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Spatial"; }
   [[nodiscard]] std::string_view getDescription() const override {

@@ -61,8 +61,9 @@ real_t sampleSq(const QGrid &q_grid, const std::vector<real_t> &sq_data, real_t 
   return sq_data[idx - 1] + d_t * (sq_data[idx] - sq_data[idx - 1]);
 }
 
-std::vector<PartialInfoSq> buildPartialSqList(const std::map<std::string, std::vector<real_t>> &partials,
-                                              const std::map<std::string, real_t> &concentrations) {
+std::vector<PartialInfoSq>
+buildPartialSqList(const std::map<std::string, std::vector<real_t>> &partials,
+                   const std::map<std::string, real_t> &concentrations) {
   std::vector<PartialInfoSq> partial_sq_list;
   for (const auto &[key, sq_data] : partials) {
     if (key == "Total") {
@@ -87,7 +88,8 @@ std::vector<PartialInfoSq> buildPartialSqList(const std::map<std::string, std::v
 }
 
 real_t calculateIntensityAtQ(real_t q_value, const std::map<std::string, real_t> &concentrations,
-                             const std::vector<PartialInfoSq> &partial_sq_list, const QGrid &q_grid) {
+                             const std::vector<PartialInfoSq> &partial_sq_list,
+                             const QGrid &q_grid) {
   if (q_value < 1e-6) {
     return 0.0;
   }
@@ -121,8 +123,9 @@ void XRDCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
                                    const correlation::analysis::AnalysisSettings &settings) const {
   // Primary path: Use S(Q) if available
   if (dists.getAllHistograms().contains("S_q")) {
-    dists.addHistogram("XRD", calculateFromSq(dists.getHistogram("S_q"), dists.cell(), dists.getAshcroftWeights(),
-                                              Wavelength{1.5406}, MinTheta{10.0}, MaxTheta{140.0}, BinWidth{0.05}));
+    dists.addHistogram("XRD", calculateFromSq(dists.getHistogram("S_q"), dists.cell(),
+                                              dists.getAshcroftWeights(), Wavelength{1.5406},
+                                              MinTheta{10.0}, MaxTheta{140.0}, BinWidth{0.05}));
     return;
   }
 
@@ -134,16 +137,17 @@ void XRDCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
     }
   }
   if (dists.getAllHistograms().contains("g_r")) {
-    dists.addHistogram("XRD", calculate(dists.getHistogram("g_r"), dists.cell(), dists.getAshcroftWeights(),
-                                        Wavelength{1.5406}, MinTheta{10.0}, MaxTheta{140.0}, BinWidth{0.05}));
+    dists.addHistogram("XRD", calculate(dists.getHistogram("g_r"), dists.cell(),
+                                        dists.getAshcroftWeights(), Wavelength{1.5406},
+                                        MinTheta{10.0}, MaxTheta{140.0}, BinWidth{0.05}));
   }
 }
 
-correlation::analysis::Histogram XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
-                                                          const correlation::core::Cell &cell,
-                                                          const std::map<std::string, real_t> &ashcroft_weights,
-                                                          Wavelength lambda, MinTheta theta_min, MaxTheta theta_max,
-                                                          BinWidth bin_width) {
+correlation::analysis::Histogram
+XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
+                         const correlation::core::Cell &cell,
+                         const std::map<std::string, real_t> &ashcroft_weights, Wavelength lambda,
+                         MinTheta theta_min, MaxTheta theta_max, BinWidth bin_width) {
   real_t const lambda_val = lambda.value;
   real_t const theta_min_val = theta_min.value;
   real_t const theta_max_val = theta_max.value;
@@ -206,50 +210,55 @@ correlation::analysis::Histogram XRDCalculator::calculate(const correlation::ana
 
   // Thread-local sin(Q*r) scratch buffer
   const size_t r_count = r_bins.size();
-  tbb::enumerable_thread_specific<std::vector<real_t>> sinqr_ets([&] { return std::vector<real_t>(r_count, 0.0); });
+  tbb::enumerable_thread_specific<std::vector<real_t>> sinqr_ets(
+      [&] { return std::vector<real_t>(r_count, 0.0); });
 
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, num_bins), [&](const tbb::blocked_range<size_t> &range) {
-    auto &sinqr = sinqr_ets.local();
+  tbb::parallel_for(
+      tbb::blocked_range<size_t>(0, num_bins), [&](const tbb::blocked_range<size_t> &range) {
+        auto &sinqr = sinqr_ets.local();
 
-    for (size_t i = range.begin(); i != range.end(); ++i) {
-      auto const two_theta = theta_min_val + static_cast<real_t>(i) * bin_width_val;
-      xrd_hist.bins[i] = two_theta;
+        for (size_t i = range.begin(); i != range.end(); ++i) {
+          auto const two_theta = theta_min_val + static_cast<real_t>(i) * bin_width_val;
+          xrd_hist.bins[i] = two_theta;
 
-      auto const theta_rad = static_cast<real_t>((two_theta / 2.0) * correlation::math::deg_to_rad);
-      auto const q_value = static_cast<real_t>(correlation::math::four_pi * std::sin(theta_rad) / lambda_val);
+          auto const theta_rad =
+              static_cast<real_t>((two_theta / 2.0) * correlation::math::deg_to_rad);
+          auto const q_value =
+              static_cast<real_t>(correlation::math::four_pi * std::sin(theta_rad) / lambda_val);
 
-      if (q_value < 1e-6) {
-        intensities[i] = 0.0;
-        continue;
-      }
+          if (q_value < 1e-6) {
+            intensities[i] = 0.0;
+            continue;
+          }
 
-      correlation::KahanAccumulator<real_t> intensity_Q;
+          correlation::KahanAccumulator<real_t> intensity_Q;
 
-      for (const auto &[sym, concentration] : concentrations) {
-        auto const form_factor = getAtomicFormFactor(sym, q_value);
-        intensity_Q.add(static_cast<real_t>(concentration) * form_factor * form_factor);
-      }
+          for (const auto &[sym, concentration] : concentrations) {
+            auto const form_factor = getAtomicFormFactor(sym, q_value);
+            intensity_Q.add(static_cast<real_t>(concentration) * form_factor * form_factor);
+          }
 
-      // Precompute sinqr once per theta step (angle bin)
-      for (size_t j = 0; j < r_count; ++j) {
-        sinqr[j] = std::sin(q_value * r_bins[j]);
-      }
+          // Precompute sinqr once per theta step (angle bin)
+          for (size_t j = 0; j < r_count; ++j) {
+            sinqr[j] = std::sin(q_value * r_bins[j]);
+          }
 
-      for (size_t partial_idx = 0; partial_idx < num_xrd_partials; ++partial_idx) {
-        const PartialXRD &partial_xrd = xrd_partials[partial_idx];
-        const size_t pcount = std::min(partial_xrd.integrand->size(), r_count);
-        auto const integral =
-            static_cast<real_t>(correlation::math::simd_dot(partial_xrd.integrand->data(), sinqr.data(), pcount));
-        real_t const form_factor_1 = getAtomicFormFactor(partial_xrd.sym1, q_value);
-        real_t const form_factor_2 = getAtomicFormFactor(partial_xrd.sym2, q_value);
+          for (size_t partial_idx = 0; partial_idx < num_xrd_partials; ++partial_idx) {
+            const PartialXRD &partial_xrd = xrd_partials[partial_idx];
+            const size_t pcount = std::min(partial_xrd.integrand->size(), r_count);
+            auto const integral = static_cast<real_t>(
+                correlation::math::simd_dot(partial_xrd.integrand->data(), sinqr.data(), pcount));
+            real_t const form_factor_1 = getAtomicFormFactor(partial_xrd.sym1, q_value);
+            real_t const form_factor_2 = getAtomicFormFactor(partial_xrd.sym2, q_value);
 
-        intensity_Q.add(static_cast<real_t>(form_factor_1 * form_factor_2 *
-                                            (correlation::math::four_pi * total_rho / q_value) * integral));
-      }
+            intensity_Q.add(static_cast<real_t>(form_factor_1 * form_factor_2 *
+                                                (correlation::math::four_pi * total_rho / q_value) *
+                                                integral));
+          }
 
-      intensities[i] = intensity_Q.value();
-    }
-  });
+          intensities[i] = intensity_Q.value();
+        }
+      });
 
   xrd_hist.partials["Total"] = std::move(intensities);
 
@@ -262,12 +271,14 @@ real_t XRDCalculator::getAtomicFormFactor(const std::string &symbol, real_t q_va
   real_t s_squared = s_value * s_value;
   auto form_factor = static_cast<real_t>(coeffs.at(8));
   for (size_t i = 0; i < 4; ++i) {
-    form_factor += static_cast<real_t>(coeffs.at(2 * i) * std::exp(-coeffs.at(2 * i + 1) * s_squared));
+    form_factor +=
+        static_cast<real_t>(coeffs.at(2 * i) * std::exp(-coeffs.at(2 * i + 1) * s_squared));
   }
   return form_factor;
 }
 
-std::map<std::string, real_t> XRDCalculator::calculateConcentrations(const correlation::core::Cell &cell) {
+std::map<std::string, real_t>
+XRDCalculator::calculateConcentrations(const correlation::core::Cell &cell) {
   std::map<std::string, real_t> concentrations;
   real_t const total_atoms = static_cast<real_t>(cell.atomCount());
   if (total_atoms == 0) {
@@ -285,10 +296,10 @@ std::map<std::string, real_t> XRDCalculator::calculateConcentrations(const corre
   return concentrations;
 }
 
-correlation::analysis::Histogram
-XRDCalculator::calculateFromSq(const correlation::analysis::Histogram &s_q_hist, const correlation::core::Cell &cell,
-                               const std::map<std::string, real_t> & /*ashcroft_weights*/, Wavelength lambda,
-                               MinTheta theta_min, MaxTheta theta_max, BinWidth bin_width) {
+correlation::analysis::Histogram XRDCalculator::calculateFromSq(
+    const correlation::analysis::Histogram &s_q_hist, const correlation::core::Cell &cell,
+    const std::map<std::string, real_t> & /*ashcroft_weights*/, Wavelength lambda,
+    MinTheta theta_min, MaxTheta theta_max, BinWidth bin_width) {
   real_t const lambda_val = lambda.value;
   real_t const theta_min_val = theta_min.value;
   real_t const theta_max_val = theta_max.value;
@@ -324,17 +335,20 @@ XRDCalculator::calculateFromSq(const correlation::analysis::Histogram &s_q_hist,
   QGrid q_grid{.bins = &q_bins, .min = q_min, .max = q_max};
   auto partial_sq_list = buildPartialSqList(s_q_hist.partials, concentrations);
 
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, num_bins), [&](const tbb::blocked_range<size_t> &range) {
-    for (size_t i = range.begin(); i != range.end(); ++i) {
-      auto const two_theta = theta_min_val + static_cast<real_t>(i) * bin_width_val;
-      xrd_hist.bins[i] = two_theta;
+  tbb::parallel_for(
+      tbb::blocked_range<size_t>(0, num_bins), [&](const tbb::blocked_range<size_t> &range) {
+        for (size_t i = range.begin(); i != range.end(); ++i) {
+          auto const two_theta = theta_min_val + static_cast<real_t>(i) * bin_width_val;
+          xrd_hist.bins[i] = two_theta;
 
-      auto const theta_rad = static_cast<real_t>((two_theta / 2.0) * correlation::math::deg_to_rad);
-      auto const q_value = static_cast<real_t>(correlation::math::four_pi * std::sin(theta_rad) / lambda_val);
+          auto const theta_rad =
+              static_cast<real_t>((two_theta / 2.0) * correlation::math::deg_to_rad);
+          auto const q_value =
+              static_cast<real_t>(correlation::math::four_pi * std::sin(theta_rad) / lambda_val);
 
-      intensities[i] = calculateIntensityAtQ(q_value, concentrations, partial_sq_list, q_grid);
-    }
-  });
+          intensities[i] = calculateIntensityAtQ(q_value, concentrations, partial_sq_list, q_grid);
+        }
+      });
 
   xrd_hist.partials["Total"] = std::move(intensities);
   return xrd_hist;
@@ -342,7 +356,8 @@ XRDCalculator::calculateFromSq(const correlation::analysis::Histogram &s_q_hist,
 
 std::map<std::string, std::vector<real_t>>
 XRDCalculator::calculatePartialIntegrands(const correlation::analysis::Histogram &g_r_hist,
-                                          const std::map<std::string, real_t> &ashcroft_weights, real_t delta_r) {
+                                          const std::map<std::string, real_t> &ashcroft_weights,
+                                          real_t delta_r) {
   std::map<std::string, std::vector<real_t>> partial_integrands;
   const auto &r_bins = g_r_hist.bins;
   for (const auto &[key, g_partial] : g_r_hist.partials) {

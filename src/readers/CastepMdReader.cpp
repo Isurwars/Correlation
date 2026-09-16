@@ -43,7 +43,8 @@ CastepMdReader::read(const std::string &file_name,
                      const std::function<void(float, const std::string &)> &progress_callback) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
-    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) + ").");
+    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) +
+                             ").");
   }
 
   std::vector<correlation::core::Cell> frames;
@@ -72,7 +73,8 @@ CastepMdReader::read(const std::string &file_name,
 
   while (std::getline(myfile, line)) {
     if (progress_callback) {
-      updateProgress(myfile.tellg(), file_size, last_progress_pos, update_interval, progress_callback);
+      updateProgress(myfile.tellg(), file_size, last_progress_pos, update_interval,
+                     progress_callback);
     }
     // If line represents energies/time
     if (line.contains("<-- E")) {
@@ -99,9 +101,10 @@ CastepMdReader::read(const std::string &file_name,
   return frames;
 }
 
-void CastepMdReader::updateProgress(std::streampos current_pos, std::streampos file_size,
-                                    std::streampos &last_progress_pos, size_t update_interval,
-                                    const std::function<void(float, const std::string &)> &progress_callback) {
+void CastepMdReader::updateProgress(
+    std::streampos current_pos, std::streampos file_size, std::streampos &last_progress_pos,
+    size_t update_interval,
+    const std::function<void(float, const std::string &)> &progress_callback) {
   if (std::cmp_greater(current_pos - last_progress_pos, update_interval)) {
     const float progress = static_cast<float>(current_pos) / static_cast<float>(file_size);
     progress_callback(progress, "Loading CASTEP MD file...");
@@ -109,8 +112,9 @@ void CastepMdReader::updateProgress(std::streampos current_pos, std::streampos f
   }
 }
 
-void CastepMdReader::parseEnergyLine(const std::string &line, real_t &current_energy, correlation::core::Cell &tempCell,
-                                     bool &cell_has_atoms, std::vector<correlation::core::Cell> &frames) {
+void CastepMdReader::parseEnergyLine(const std::string &line, real_t &current_energy,
+                                     correlation::core::Cell &tempCell, bool &cell_has_atoms,
+                                     std::vector<correlation::core::Cell> &frames) {
   // For CASTEP MD, the frame usually starts with time (single float on a
   // line without tag) We skip it and read E. If we have atoms in tempCell,
   // it means this is a new frame starting
@@ -168,13 +172,14 @@ void CastepMdReader::parseLatticeLine(std::ifstream &myfile, const std::string &
   lattice_vector_3[1] *= correlation::math::bohr_to_angstrom;
   lattice_vector_3[2] *= correlation::math::bohr_to_angstrom;
 
-  tempCell = correlation::core::Cell({lattice_vector_1[0], lattice_vector_1[1], lattice_vector_1[2]},
-                                     {lattice_vector_2[0], lattice_vector_2[1], lattice_vector_2[2]},
-                                     {lattice_vector_3[0], lattice_vector_3[1], lattice_vector_3[2]});
+  tempCell =
+      correlation::core::Cell({lattice_vector_1[0], lattice_vector_1[1], lattice_vector_1[2]},
+                              {lattice_vector_2[0], lattice_vector_2[1], lattice_vector_2[2]},
+                              {lattice_vector_3[0], lattice_vector_3[1], lattice_vector_3[2]});
 }
 
-void CastepMdReader::parseAtomLine(const std::string &line, real_t current_energy, correlation::core::Cell &tempCell,
-                                   bool &cell_has_atoms) {
+void CastepMdReader::parseAtomLine(const std::string &line, real_t current_energy,
+                                   correlation::core::Cell &tempCell, bool &cell_has_atoms) {
   // Positions R are given in Bohr
   // Format: Symbol ID x y z <-- R
   std::stringstream line_stream(line);
@@ -184,9 +189,10 @@ void CastepMdReader::parseAtomLine(const std::string &line, real_t current_energ
   real_t coord_y = 0.0;
   real_t coord_z = 0.0;
   if (line_stream >> symbol >> atom_id >> coord_x >> coord_y >> coord_z) {
-    tempCell.addAtom(symbol, correlation::math::Vector3<real_t>(coord_x * correlation::math::bohr_to_angstrom,
-                                                                coord_y * correlation::math::bohr_to_angstrom,
-                                                                coord_z * correlation::math::bohr_to_angstrom));
+    tempCell.addAtom(
+        symbol, correlation::math::Vector3<real_t>(coord_x * correlation::math::bohr_to_angstrom,
+                                                   coord_y * correlation::math::bohr_to_angstrom,
+                                                   coord_z * correlation::math::bohr_to_angstrom));
     tempCell.setEnergy(current_energy); // Assign energy once per atom or frame
     cell_has_atoms = true;
   }

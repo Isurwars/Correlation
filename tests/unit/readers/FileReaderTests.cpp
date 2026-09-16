@@ -120,7 +120,8 @@ TEST_F(FileReaderTests, ReadCifFileCorrectly) {
       na_origin_found = true;
     }
     correlation::math::Vector3R expected_cl_pos = {2.82, 2.82, 2.82};
-    if (atom.element().symbol == "Cl" && correlation::math::norm(atom.position() - expected_cl_pos) < 1e-4) {
+    if (atom.element().symbol == "Cl" &&
+        correlation::math::norm(atom.position() - expected_cl_pos) < 1e-4) {
       cl_center_found = true;
     }
   }
@@ -393,7 +394,8 @@ TEST_F(FileReaderTests, ReadExtensionlessVaspTrajectory) {
   using correlation::readers::FileType;
   using correlation::readers::readTrajectory;
 
-  correlation::core::Trajectory traj = readTrajectory(data_dir_ + "xdatcar/XDATCAR", FileType::Xdatcar);
+  correlation::core::Trajectory traj =
+      readTrajectory(data_dir_ + "xdatcar/XDATCAR", FileType::Xdatcar);
   EXPECT_EQ(traj.getFrameCount(), 2);
 
   const auto &file_1 = traj.getFrame(0);
@@ -422,7 +424,8 @@ TEST_F(FileReaderTests, ReadMaceThroughFileReader) {
       "Si 0.0 0.0 0.0 0.0 0.0 0.0\n"
       "Si 1.5 1.5 1.5 0.0 0.0 0.0\n";
 
-  const std::filesystem::path temp_file = std::filesystem::temp_directory_path() / "filereader_test.mace";
+  const std::filesystem::path temp_file =
+      std::filesystem::temp_directory_path() / "filereader_test.mace";
   {
     std::ofstream ofs(temp_file);
     ofs << mace_content;
@@ -456,7 +459,8 @@ TEST_F(FileReaderTests, ReadChgnetThroughFileReader) {
       "Fe 0.0 0.0 0.0 0.0 0.0 0.0\n"
       "O 1.0 1.0 1.0 0.0 0.0 0.0\n";
 
-  const std::filesystem::path temp_file = std::filesystem::temp_directory_path() / "filereader_test.chgnet";
+  const std::filesystem::path temp_file =
+      std::filesystem::temp_directory_path() / "filereader_test.chgnet";
   {
     std::ofstream ofs(temp_file);
     ofs << chgnet_content;
@@ -492,7 +496,8 @@ TEST_F(FileReaderTests, ReadGapThroughFileReader) {
       "C 0.0 0.0 0.0 0.0 0.0 0.0\n"
       "C 1.2 1.2 1.2 0.0 0.0 0.0\n";
 
-  const std::filesystem::path temp_file = std::filesystem::temp_directory_path() / "filereader_test.gap";
+  const std::filesystem::path temp_file =
+      std::filesystem::temp_directory_path() / "filereader_test.gap";
   {
     std::ofstream ofs(temp_file);
     ofs << gap_content;
@@ -506,4 +511,3 @@ TEST_F(FileReaderTests, ReadGapThroughFileReader) {
   std::error_code err;
   std::filesystem::remove(temp_file, err);
 }
-

@@ -41,7 +41,8 @@ using namespace correlation::readers;
 // back via the normal reader pipeline. Returns unique_ptr to avoid copy construction
 // on move-only Trajectory.
 // ---------------------------------------------------------------------------
-static std::unique_ptr<Trajectory> readFromBuffer(const std::string &data, const std::string &filename) {
+static std::unique_ptr<Trajectory> readFromBuffer(const std::string &data,
+                                                  const std::string &filename) {
   // Write to virtual FS.
   {
     std::ofstream f("/" + filename, std::ios::binary);
@@ -54,7 +55,9 @@ static std::unique_ptr<Trajectory> readFromBuffer(const std::string &data, const
 // ---------------------------------------------------------------------------
 // Helper: extract histogram bins as a JS Float64Array.
 // ---------------------------------------------------------------------------
-static val getBinsJS(const Histogram &h) { return val(typed_memory_view(h.bins.size(), h.bins.data())); }
+static val getBinsJS(const Histogram &h) {
+  return val(typed_memory_view(h.bins.size(), h.bins.data()));
+}
 
 // ---------------------------------------------------------------------------
 // Helper: extract a partial as a JS Float64Array.
@@ -82,8 +85,8 @@ static val getPartialKeysJS(const Histogram &h) {
 // ---------------------------------------------------------------------------
 // Factory: create DistributionFunctions from a Trajectory (uses last frame).
 // ---------------------------------------------------------------------------
-static std::unique_ptr<DistributionFunctions> createDFFromTrajectory(const Trajectory &traj, real_t cutoff,
-                                                                     const val & /*unused_radii*/) {
+static std::unique_ptr<DistributionFunctions>
+createDFFromTrajectory(const Trajectory &traj, real_t cutoff, const val & /*unused_radii*/) {
   if (traj.getFrameCount() == 0) {
     throw std::runtime_error("Trajectory contains no frames");
   }
@@ -156,10 +159,12 @@ EMSCRIPTEN_BINDINGS(correlation_wasm) {
       .constructor(&createDFFromTrajectory)
       .class_function("fromCell", &createDFFromCell)
       .class_function("from_cell", &createDFFromCell)
-      .function("calculateRDF", optional_override([](DistributionFunctions &df, real_t r_max, real_t r_bin_width) {
+      .function("calculateRDF",
+                optional_override([](DistributionFunctions &df, real_t r_max, real_t r_bin_width) {
                   df.calculateRDF(RDFParams{.r_max = r_max, .r_bin_width = r_bin_width});
                 }))
-      .function("calculate_rdf", optional_override([](DistributionFunctions &df, real_t r_max, real_t r_bin_width) {
+      .function("calculate_rdf",
+                optional_override([](DistributionFunctions &df, real_t r_max, real_t r_bin_width) {
                   df.calculateRDF(RDFParams{.r_max = r_max, .r_bin_width = r_bin_width});
                 }))
       .function("calculatePAD", &DistributionFunctions::calculatePAD)

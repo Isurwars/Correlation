@@ -21,8 +21,9 @@ namespace correlation::readers {
 // Automatic registration
 const bool registered = ReaderFactory::registerTypeSafe<CP2KReader>("CP2KReader");
 
-correlation::core::Cell CP2KReader::readStructure(const std::string &filename,
-                                                  std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell
+CP2KReader::readStructure(const std::string &filename,
+                          std::function<void(float, const std::string &)> progress_callback) {
 
   auto traj = readTrajectory(filename, progress_callback);
   if (traj.getFrameCount() == 0) {

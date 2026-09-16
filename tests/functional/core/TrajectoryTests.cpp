@@ -96,11 +96,12 @@ TEST_F(TrajectoryFunctionalTests, VerifyValidationOfMismatchedFrames) {
 
 TEST_F(TrajectoryFunctionalTests, VerifyDeduplicationStatTracking) {
   // Test frame deduplication stats on a trajectory with repeated coordinates
-  std::vector<Cell> frames = {
-      createSingleAtomCell("Si", {1.0, 1.0, 1.0}), createSingleAtomCell("Si", {1.0, 1.0, 1.0}), // duplicate 1
-      createSingleAtomCell("Si", {2.0, 2.0, 2.0}), createSingleAtomCell("Si", {2.0, 2.0, 2.0}), // duplicate 2
-      createSingleAtomCell("Si", {2.0, 2.0, 2.0}),                                              // duplicate 3
-      createSingleAtomCell("Si", {3.0, 3.0, 3.0})};
+  std::vector<Cell> frames = {createSingleAtomCell("Si", {1.0, 1.0, 1.0}),
+                              createSingleAtomCell("Si", {1.0, 1.0, 1.0}), // duplicate 1
+                              createSingleAtomCell("Si", {2.0, 2.0, 2.0}),
+                              createSingleAtomCell("Si", {2.0, 2.0, 2.0}), // duplicate 2
+                              createSingleAtomCell("Si", {2.0, 2.0, 2.0}), // duplicate 3
+                              createSingleAtomCell("Si", {3.0, 3.0, 3.0})};
 
   Trajectory traj(frames, 1.0);
   // Deduplication happens in the constructor for vector-loaded trajectories

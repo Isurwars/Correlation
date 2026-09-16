@@ -28,12 +28,14 @@ struct GPUXRDParams {
 namespace gpu {
 
 /**
- * @brief Computes XRD diffraction pattern using direct Debye scattering summation on GPU with CPU fallback.
+ * @brief Computes XRD diffraction pattern using direct Debye scattering summation on GPU with CPU
+ * fallback.
  * @param[in] cell The atomic unit cell or cluster.
  * @param[in] params Diffraction parameters (wavelength, theta bounds, resolution).
  * @return Histogram containing 2theta bins and diffraction intensity.
  */
-correlation::analysis::Histogram compute_xrd_gpu(const correlation::core::Cell &cell, const GPUXRDParams &params = {});
+correlation::analysis::Histogram compute_xrd_gpu(const correlation::core::Cell &cell,
+                                                 const GPUXRDParams &params = {});
 
 } // namespace gpu
 

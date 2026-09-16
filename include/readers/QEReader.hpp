@@ -20,16 +20,18 @@ namespace correlation::readers {
 class QEReader : public BaseReader {
 public:
   std::string getName() const override { return "Quantum ESPRESSO Reader"; }
-  std::vector<std::string> getExtensions() const override { return {".pwi", ".pwo", ".in", ".out"}; }
+  std::vector<std::string> getExtensions() const override {
+    return {".pwi", ".pwo", ".in", ".out"};
+  }
   bool isTrajectory() const override { return true; }
 
-  correlation::core::Cell
-  readStructure(const std::string &filename,
-                std::function<void(float, const std::string &)> progress_callback = nullptr) override;
+  correlation::core::Cell readStructure(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
-  correlation::core::Trajectory
-  readTrajectory(const std::string &filename,
-                 std::function<void(float, const std::string &)> progress_callback = nullptr) override;
+  correlation::core::Trajectory readTrajectory(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 };
 
 } // namespace correlation::readers

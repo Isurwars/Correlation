@@ -55,7 +55,8 @@ correlation::analysis::Histogram initializeHistogram(HistogramParameters const &
   f_dihedral.file_suffix = "_DAD";
   f_dihedral.bins.resize(params.num_bins);
   for (size_t idx = 0; idx < params.num_bins; ++idx) {
-    f_dihedral.bins[idx] = params.theta_min + (static_cast<real_t>(idx) + static_cast<real_t>(0.5)) * params.bin_width;
+    f_dihedral.bins[idx] =
+        params.theta_min + (static_cast<real_t>(idx) + static_cast<real_t>(0.5)) * params.bin_width;
   }
   return f_dihedral;
 }
@@ -112,7 +113,8 @@ void normalizeAndScale(NormalizeParams const &params) {
   }
 
   if (total_counts >= static_cast<real_t>(1.0)) {
-    const real_t normalization_factor = static_cast<real_t>(1.0) / (total_counts * params.bin_width);
+    const real_t normalization_factor =
+        static_cast<real_t>(1.0) / (total_counts * params.bin_width);
     for (auto &[key, partial] : *params.partials) {
       for (auto &val : partial) {
         val *= normalization_factor;
@@ -131,7 +133,8 @@ void DADCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
 }
 
 std::map<std::string, correlation::analysis::Histogram>
-DADCalculator::calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors,
+DADCalculator::calculate(const correlation::core::Cell &cell,
+                         const correlation::analysis::StructureAnalyzer *neighbors,
                          real_t bin_width) {
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive");
@@ -178,8 +181,8 @@ DADCalculator::calculate(const correlation::core::Cell &cell, const correlation:
             continue;
           }
 
-          std::string const key = elements[idx_a].symbol + "-" + elements[idx_b].symbol + "-" + elements[idx_c].symbol +
-                                  "-" + elements[idx_d].symbol;
+          std::string const key = elements[idx_a].symbol + "-" + elements[idx_b].symbol + "-" +
+                                  elements[idx_c].symbol + "-" + elements[idx_d].symbol;
 
           auto &partial_hist = f_dihedral_raw.partials[key];
           if (partial_hist.empty()) {

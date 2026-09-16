@@ -51,8 +51,8 @@ public:
    * @param parser Function to parse a frame from a slice of memory.
    * @param time_step The time interval between consecutive frames.
    */
-  Trajectory(std::shared_ptr<MappedFile> mapped_file, std::vector<size_t> frame_offsets, FrameParser parser,
-             real_t time_step);
+  Trajectory(std::shared_ptr<MappedFile> mapped_file, std::vector<size_t> frame_offsets,
+             FrameParser parser, real_t time_step);
 
   /**
    * @brief Appends a new frame to the trajectory.
@@ -115,7 +115,8 @@ public:
    * @param type2 ID of the second element type.
    * @return Const reference to the BondCutoffRange.
    */
-  [[nodiscard]] const correlation::analysis::BondCutoffRange &getBondCutoffRange(size_t type1, size_t type2) const;
+  [[nodiscard]] const correlation::analysis::BondCutoffRange &
+  getBondCutoffRange(size_t type1, size_t type2) const;
 
   /**
    * @brief Gets a squared bond cutoff distance for two given element types.
@@ -181,13 +182,17 @@ public:
    * @brief Gets the matrix of bond cutoff ranges for element pairs.
    * @return The bond cutoff matrix.
    */
-  [[nodiscard]] const correlation::analysis::BondCutoffMatrix &getBondCutoffs() const noexcept { return bond_cutoffs_; }
+  [[nodiscard]] const correlation::analysis::BondCutoffMatrix &getBondCutoffs() const noexcept {
+    return bond_cutoffs_;
+  }
 
   /**
    * @brief Backward-compatible alias returning the bond cutoff matrix.
    * @return The bond cutoff matrix.
    */
-  [[nodiscard]] const correlation::analysis::BondCutoffMatrix &getBondCutoffsSQ() const noexcept { return bond_cutoffs_; }
+  [[nodiscard]] const correlation::analysis::BondCutoffMatrix &getBondCutoffsSQ() const noexcept {
+    return bond_cutoffs_;
+  }
 
   /**
    * @brief Returns the number of frames removed during deduplication.
@@ -213,7 +218,7 @@ private:
   mutable std::optional<Cell> first_frame_;
   mutable correlation::analysis::BondCutoffMatrix bond_cutoffs_; ///< Cached bond cutoff ranges.
   real_t time_step_;                                             ///< Time between snapshots.
-  size_t removed_frames_count_{0};                               ///< Counter for deduplicated frames.
+  size_t removed_frames_count_{0}; ///< Counter for deduplicated frames.
 
   std::shared_ptr<MappedFile> mapped_file_;
   std::vector<size_t> frame_offsets_;

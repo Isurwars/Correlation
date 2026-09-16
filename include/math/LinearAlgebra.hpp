@@ -103,7 +103,9 @@ public:
    * @brief Checks if the vector is a zero vector.
    * @return True if every component is exactly zero.
    */
-  [[nodiscard]] constexpr bool empty() const noexcept { return data_[0] == T{} && data_[1] == T{} && data_[2] == T{}; }
+  [[nodiscard]] constexpr bool empty() const noexcept {
+    return data_[0] == T{} && data_[1] == T{} && data_[2] == T{};
+  }
 
   /** @return Pointer to the beginning of the underlying data. */
   constexpr const T *begin() const noexcept { return data_.data(); }
@@ -136,7 +138,9 @@ public:
    * @brief Unary negation.
    * @return A new vector with all components negated.
    */
-  [[nodiscard]] constexpr Vector3 operator-() const noexcept { return {-data_[0], -data_[1], -data_[2]}; }
+  [[nodiscard]] constexpr Vector3 operator-() const noexcept {
+    return {-data_[0], -data_[1], -data_[2]};
+  }
 
   /**
    * @brief Scalar multiplication.
@@ -234,7 +238,9 @@ public:
    * @param rhs The vector to compare with.
    * @return True if any component differs.
    */
-  [[nodiscard]] constexpr bool operator!=(const Vector3 &rhs) const noexcept { return !(*this == rhs); }
+  [[nodiscard]] constexpr bool operator!=(const Vector3 &rhs) const noexcept {
+    return !(*this == rhs);
+  }
 
 private:
   std::array<T, 3> data_; ///< Underlying vector components.
@@ -272,7 +278,8 @@ public:
    * @param c_one Second column vector.
    * @param c_two Third column vector.
    */
-  constexpr Matrix3(const Vector3<T> &c_zero, const Vector3<T> &c_one, const Vector3<T> &c_two) noexcept
+  constexpr Matrix3(const Vector3<T> &c_zero, const Vector3<T> &c_one,
+                    const Vector3<T> &c_two) noexcept
       : data_{c_zero, c_one, c_two} {}
 
   template <typename U>
@@ -283,7 +290,9 @@ public:
    * @param col_idx Column index (0, 1, or 2).
    * @return Constant reference to the column vector.
    */
-  [[nodiscard]] constexpr const Vector3<T> &operator[](std::size_t col_idx) const noexcept { return data_.at(col_idx); }
+  [[nodiscard]] constexpr const Vector3<T> &operator[](std::size_t col_idx) const noexcept {
+    return data_.at(col_idx);
+  }
 
   /**
    * @brief Access mutable column vector by index.
@@ -308,7 +317,9 @@ public:
    * @param col_idx Column index.
    * @return Reference to the element.
    */
-  constexpr T &operator()(std::size_t row_idx, std::size_t col_idx) noexcept { return data_.at(col_idx)[row_idx]; }
+  constexpr T &operator()(std::size_t row_idx, std::size_t col_idx) noexcept {
+    return data_.at(col_idx)[row_idx];
+  }
 
   /**
    * @brief Converts the matrix to a nested std::array.
@@ -324,7 +335,9 @@ public:
    * @brief Computes the matrix trace.
    * @return Sum of the diagonal elements.
    */
-  [[nodiscard]] constexpr T trace() const noexcept { return data_[0][0] + data_[1][1] + data_[2][2]; }
+  [[nodiscard]] constexpr T trace() const noexcept {
+    return data_[0][0] + data_[1][1] + data_[2][2];
+  }
 
   /**
    * @brief Matrix-scalar multiplication.
@@ -416,7 +429,9 @@ public:
    * @param rhs The matrix to compare with.
    * @return True if any element differs.
    */
-  [[nodiscard]] constexpr bool operator!=(const Matrix3 &rhs) const noexcept { return !(*this == rhs); }
+  [[nodiscard]] constexpr bool operator!=(const Matrix3 &rhs) const noexcept {
+    return !(*this == rhs);
+  }
 
 private:
   std::array<Vector3<T>, 3> data_; ///< Column vectors of the matrix.
@@ -443,7 +458,8 @@ namespace correlation::math {
  * @param vec_b The second vector.
  * @return The scalar dot product.
  */
-template <typename T> [[nodiscard]] constexpr T dot(const Vector3<T> &vec_a, const Vector3<T> &vec_b) noexcept {
+template <typename T>
+[[nodiscard]] constexpr T dot(const Vector3<T> &vec_a, const Vector3<T> &vec_b) noexcept {
   return vec_a * vec_b;
 }
 
@@ -455,7 +471,8 @@ template <typename T> [[nodiscard]] constexpr T dot(const Vector3<T> &vec_a, con
  * @return A new Vector3 representing the cross product vec_a x vec_b.
  */
 template <typename T>
-[[nodiscard]] constexpr Vector3<T> cross(const Vector3<T> &vec_a, const Vector3<T> &vec_b) noexcept {
+[[nodiscard]] constexpr Vector3<T> cross(const Vector3<T> &vec_a,
+                                         const Vector3<T> &vec_b) noexcept {
   return {vec_a[1] * vec_b[2] - vec_a[2] * vec_b[1], vec_a[2] * vec_b[0] - vec_a[0] * vec_b[2],
           vec_a[0] * vec_b[1] - vec_a[1] * vec_b[0]};
 }
@@ -471,7 +488,8 @@ template <typename T>
  * @return A new Vector3 representing the cross product vec_a x vec_b.
  */
 #if defined(CORRELATION_SIMD_AVX2) || defined(CORRELATION_SIMD_AVX512)
-[[nodiscard]] inline Vector3<double> cross(const Vector3<double> &vec_a, const Vector3<double> &vec_b) noexcept {
+[[nodiscard]] inline Vector3<double> cross(const Vector3<double> &vec_a,
+                                           const Vector3<double> &vec_b) noexcept {
   return {vec_a[1] * vec_b[2] - vec_a[2] * vec_b[1], vec_a[2] * vec_b[0] - vec_a[0] * vec_b[2],
           vec_a[0] * vec_b[1] - vec_a[1] * vec_b[0]};
 }
@@ -483,7 +501,9 @@ template <typename T>
  * @param vec_a The vector.
  * @return The squared length of the vector.
  */
-template <typename T> [[nodiscard]] constexpr T norm_sq(const Vector3<T> &vec_a) noexcept { return vec_a * vec_a; }
+template <typename T> [[nodiscard]] constexpr T norm_sq(const Vector3<T> &vec_a) noexcept {
+  return vec_a * vec_a;
+}
 /**
  * @brief Computes the vector norm (length).
  *
@@ -502,7 +522,8 @@ template <typename T> [[nodiscard]] constexpr T norm(const Vector3<T> &vec_a) no
  * @param vec_b The second vector.
  * @return The Euclidean distance between vec_a and vec_b.
  */
-template <typename T> [[nodiscard]] constexpr T distance(const Vector3<T> &vec_a, const Vector3<T> &vec_b) noexcept {
+template <typename T>
+[[nodiscard]] constexpr T distance(const Vector3<T> &vec_a, const Vector3<T> &vec_b) noexcept {
   return norm(vec_a - vec_b);
 }
 
@@ -568,8 +589,10 @@ template <typename T> [[nodiscard]] constexpr Matrix3<T> invert(const Matrix3<T>
  * @param matrix The matrix to transpose.
  * @return The transposed matrix.
  */
-template <typename T> [[nodiscard]] constexpr Matrix3<T> transpose(const Matrix3<T> &matrix) noexcept {
-  return Matrix3<T>({matrix(0, 0), matrix(0, 1), matrix(0, 2)}, {matrix(1, 0), matrix(1, 1), matrix(1, 2)},
+template <typename T>
+[[nodiscard]] constexpr Matrix3<T> transpose(const Matrix3<T> &matrix) noexcept {
+  return Matrix3<T>({matrix(0, 0), matrix(0, 1), matrix(0, 2)},
+                    {matrix(1, 0), matrix(1, 1), matrix(1, 2)},
                     {matrix(2, 0), matrix(2, 1), matrix(2, 2)});
 }
 
@@ -581,17 +604,19 @@ template <typename T> [[nodiscard]] constexpr Matrix3<T> transpose(const Matrix3
  * @return Transformed vector matrix * vector.
  */
 template <typename T, typename U>
-[[nodiscard]] constexpr auto operator*(const Matrix3<T> &matrix, const Vector3<U> &vector) noexcept {
+[[nodiscard]] constexpr auto operator*(const Matrix3<T> &matrix,
+                                       const Vector3<U> &vector) noexcept {
   using CommonT = std::common_type_t<T, U>;
   const auto v_x = static_cast<CommonT>(vector.x());
   const auto v_y = static_cast<CommonT>(vector.y());
   const auto v_z = static_cast<CommonT>(vector.z());
-  return Vector3<CommonT>(v_x * static_cast<CommonT>(matrix[0].x()) + v_y * static_cast<CommonT>(matrix[1].x()) +
-                              v_z * static_cast<CommonT>(matrix[2].x()),
-                          v_x * static_cast<CommonT>(matrix[0].y()) + v_y * static_cast<CommonT>(matrix[1].y()) +
-                              v_z * static_cast<CommonT>(matrix[2].y()),
-                          v_x * static_cast<CommonT>(matrix[0].z()) + v_y * static_cast<CommonT>(matrix[1].z()) +
-                              v_z * static_cast<CommonT>(matrix[2].z()));
+  return Vector3<CommonT>(
+      v_x * static_cast<CommonT>(matrix[0].x()) + v_y * static_cast<CommonT>(matrix[1].x()) +
+          v_z * static_cast<CommonT>(matrix[2].x()),
+      v_x * static_cast<CommonT>(matrix[0].y()) + v_y * static_cast<CommonT>(matrix[1].y()) +
+          v_z * static_cast<CommonT>(matrix[2].y()),
+      v_x * static_cast<CommonT>(matrix[0].z()) + v_y * static_cast<CommonT>(matrix[1].z()) +
+          v_z * static_cast<CommonT>(matrix[2].z()));
 }
 
 /**
@@ -602,7 +627,8 @@ template <typename T, typename U>
  * @return Resulting matrix product mat_a * mat_b.
  */
 template <typename T>
-[[nodiscard]] constexpr Matrix3<T> operator*(const Matrix3<T> &mat_a, const Matrix3<T> &mat_b) noexcept {
+[[nodiscard]] constexpr Matrix3<T> operator*(const Matrix3<T> &mat_a,
+                                             const Matrix3<T> &mat_b) noexcept {
   return Matrix3<T>(mat_a * mat_b[0], mat_a * mat_b[1], mat_a * mat_b[2]);
 }
 

@@ -30,11 +30,13 @@ std::string sniffFormatFromOutFile(std::string_view filename) {
       chr = static_cast<char>(std::toupper(static_cast<unsigned char>(chr)));
     }
 
-    if (uline.contains("CELL_PARAMETERS") || uline.contains("ATOMIC_POSITIONS") || uline.contains("QUANTUM ESPRESSO") ||
-        uline.contains("PWSCF") || uline.contains("&CONTROL") || uline.contains("&SYSTEM")) {
+    if (uline.contains("CELL_PARAMETERS") || uline.contains("ATOMIC_POSITIONS") ||
+        uline.contains("QUANTUM ESPRESSO") || uline.contains("PWSCF") ||
+        uline.contains("&CONTROL") || uline.contains("&SYSTEM")) {
       return ".pwo";
     }
-    if (uline.contains("&CELL") || uline.contains("&COORD") || uline.contains("&GLOBAL") || uline.contains("CP2K")) {
+    if (uline.contains("&CELL") || uline.contains("&COORD") || uline.contains("&GLOBAL") ||
+        uline.contains("CP2K")) {
       return ".restart";
     }
     if (uline.contains("O   R   C   A") || uline.contains("ORCA") ||
@@ -123,6 +125,8 @@ std::vector<std::string> ReaderFactory::getAllExtensions() const {
   return extensions;
 }
 
-const std::vector<std::unique_ptr<BaseReader>> &ReaderFactory::getReaders() const { return readers_; }
+const std::vector<std::unique_ptr<BaseReader>> &ReaderFactory::getReaders() const {
+  return readers_;
+}
 
 } // namespace correlation::readers

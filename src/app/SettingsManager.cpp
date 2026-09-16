@@ -75,9 +75,11 @@ void parseSettingsLine(const std::string &line, AppSettings &settings) {
       size_t cur = 0;
       while (cur < content.size()) {
         const auto q1 = content.find('"', cur);
-        if (q1 == std::string::npos) break;
+        if (q1 == std::string::npos)
+          break;
         const auto q2 = content.find('"', q1 + 1);
-        if (q2 == std::string::npos) break;
+        if (q2 == std::string::npos)
+          break;
         const std::string path = content.substr(q1 + 1, q2 - q1 - 1);
         if (!path.empty()) {
           settings.recent_files.push_back(path);

@@ -20,8 +20,10 @@ namespace correlation::calculators {
  * prevent accidental argument swapping (bugprone-easily-swappable-parameters).
  */
 struct VDOSParams {
-  real_t max_imag_freq = static_cast<real_t>(5.0);  ///< Maximum negative (imaginary) frequency bound in THz.
-  real_t max_real_freq = static_cast<real_t>(10.0); ///< Maximum positive (real) frequency bound in THz.
+  real_t max_imag_freq =
+      static_cast<real_t>(5.0); ///< Maximum negative (imaginary) frequency bound in THz.
+  real_t max_real_freq =
+      static_cast<real_t>(10.0); ///< Maximum positive (real) frequency bound in THz.
 };
 
 /**
@@ -33,7 +35,9 @@ public:
   [[nodiscard]] std::string_view getName() const override { return "vDoS"; }
   [[nodiscard]] std::string_view getShortName() const override { return "vDoS"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Dynamic"; }
-  [[nodiscard]] std::string_view getDescription() const override { return "Computes the Vibrational Density of States (vDoS)."; }
+  [[nodiscard]] std::string_view getDescription() const override {
+    return "Computes the Vibrational Density of States (vDoS).";
+  }
 
   bool isFrameCalculator() const override { return false; }
   bool isTrajectoryCalculator() const override { return true; }
@@ -48,8 +52,8 @@ public:
    * @param params Frequency bounds parameters for VDOS calculation.
    * @return A histogram representing intensity vs frequency (THz/cm^-1).
    */
-  static correlation::analysis::Histogram calculate(const correlation::analysis::Histogram &vacf_hist,
-                                                    const VDOSParams &params = {});
+  static correlation::analysis::Histogram
+  calculate(const correlation::analysis::Histogram &vacf_hist, const VDOSParams &params = {});
 
   /**
    * @brief Computes the Vibrational Density of States (VDOS) with explicit frequency bounds.
@@ -58,8 +62,9 @@ public:
    * @param max_real_freq Maximum positive (real) frequency bound in THz.
    * @return A histogram representing intensity vs frequency (THz/cm^-1).
    */
-  static correlation::analysis::Histogram calculate(const correlation::analysis::Histogram &vacf_hist,
-                                                    real_t max_imag_freq, real_t max_real_freq);
+  static correlation::analysis::Histogram
+  calculate(const correlation::analysis::Histogram &vacf_hist, real_t max_imag_freq,
+            real_t max_real_freq);
 };
 
 } // namespace correlation::calculators

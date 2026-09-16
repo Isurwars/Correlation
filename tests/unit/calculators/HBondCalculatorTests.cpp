@@ -40,7 +40,8 @@ TEST(HBondCalculatorTests, NoElectronegativeAtomsNoHBonds) {
   cell.addAtom("H", {5.0, 6.0, 5.0});
 
   real_t cutoff = 5.0;
-  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
+  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(
+                                         2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
   analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
   auto hist = HBondCalculator::calculate(cell, &analyzer);
 
@@ -49,7 +50,8 @@ TEST(HBondCalculatorTests, NoElectronegativeAtomsNoHBonds) {
   // Either way, no non-zero H-bond counts should exist.
   for (size_t i = 0; i < hist.bins.size(); ++i) {
     if (hist.bins[i] > 0) {
-      EXPECT_NEAR(hist.partials.at("Total")[i], 0.0, 1e-12) << "Non-zero H-bond count should have zero probability.";
+      EXPECT_NEAR(hist.partials.at("Total")[i], 0.0, 1e-12)
+          << "Non-zero H-bond count should have zero probability.";
     }
   }
 }
@@ -61,7 +63,8 @@ TEST(HBondCalculatorTests, OnlyHydrogensNoHBonds) {
   cell.addAtom("H", {5.0, 5.0, 6.0});
 
   real_t cutoff = 5.0;
-  analysis::BondCutoffMatrix bcsq(1, std::vector<analysis::BondCutoffRange>(1, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
+  analysis::BondCutoffMatrix bcsq(1, std::vector<analysis::BondCutoffRange>(
+                                         1, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
   analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
   auto hist = HBondCalculator::calculate(cell, &analyzer);
 
@@ -90,12 +93,14 @@ TEST(HBondCalculatorTests, HistogramDimensionsAreConsistent) {
 
   real_t cutoff = 5.0;
   // 2 element types: O (0), H (1)
-  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
+  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(
+                                         2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
   analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
   auto hist = HBondCalculator::calculate(cell, &analyzer);
 
   for (const auto &[key, values] : hist.partials) {
-    EXPECT_EQ(values.size(), hist.bins.size()) << "Partial '" << key << "' size mismatch with bins.";
+    EXPECT_EQ(values.size(), hist.bins.size())
+        << "Partial '" << key << "' size mismatch with bins.";
   }
 }
 
@@ -118,7 +123,8 @@ TEST(HBondCalculatorTests, TotalDistributionSumsToOne) {
 
   real_t cutoff = 5.0;
   // 2 elements: O(0), H(1)
-  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
+  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(
+                                         2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
   analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
   auto hist = HBondCalculator::calculate(cell, &analyzer);
 
@@ -138,7 +144,8 @@ TEST(HBondCalculatorTests, HistogramMetadataIsPopulated) {
   cell.addAtom("O", {10.0, 10.0, 12.5});
 
   real_t cutoff = 5.0;
-  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
+  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(
+                                         2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
   analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
   auto hist = HBondCalculator::calculate(cell, &analyzer);
 
@@ -166,7 +173,8 @@ TEST(HBondCalculatorTests, LinearHBond_IsDetected) {
   cell.addAtom("O", {10.0, 10.0, 12.5});
 
   real_t cutoff = 5.0;
-  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
+  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(
+                                         2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
   analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
   auto hist = HBondCalculator::calculate(cell, &analyzer);
 
@@ -201,7 +209,8 @@ TEST(HBondCalculatorTests, OppositeDirection_NotDetected) {
   // not to the acceptor O.
   real_t cutoff = 1.5;
   // 2 elements: O(0), H(1)
-  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
+  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(
+                                         2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
   analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
   auto hist = HBondCalculator::calculate(cell, &analyzer);
 
@@ -209,7 +218,8 @@ TEST(HBondCalculatorTests, OppositeDirection_NotDetected) {
   // All electronegative atoms should have 0 H-bonds.
   for (size_t i = 0; i < hist.bins.size(); ++i) {
     if (hist.bins[i] > 0) {
-      EXPECT_NEAR(hist.partials.at("Total")[i], 0.0, 1e-12) << "Opposite-direction geometry should yield zero H-bonds.";
+      EXPECT_NEAR(hist.partials.at("Total")[i], 0.0, 1e-12)
+          << "Opposite-direction geometry should yield zero H-bonds.";
     }
   }
 }
@@ -225,13 +235,15 @@ TEST(HBondCalculatorTests, TooFarApart_NotDetected) {
   cell.addAtom("O", {10.0, 10.0, 15.0});
 
   real_t cutoff = 6.0;
-  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
+  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(
+                                         2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
   analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
   auto hist = HBondCalculator::calculate(cell, &analyzer);
 
   // All electronegative atoms should have 0 H-bonds
   if (!hist.bins.empty()) {
-    EXPECT_NEAR(hist.partials.at("Total")[0], 1.0, 1e-12) << "D-A > 3.5 Å should yield zero H-bonds.";
+    EXPECT_NEAR(hist.partials.at("Total")[0], 1.0, 1e-12)
+        << "D-A > 3.5 Å should yield zero H-bonds.";
   }
 }
 
@@ -251,7 +263,8 @@ TEST(HBondCalculatorTests, NitrogenDonor_IsDetected) {
 
   real_t cutoff = 5.0;
   // 3 elements: N(0), H(1), O(2)
-  analysis::BondCutoffMatrix bcsq(3, std::vector<analysis::BondCutoffRange>(3, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
+  analysis::BondCutoffMatrix bcsq(3, std::vector<analysis::BondCutoffRange>(
+                                         3, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
   analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
   auto hist = HBondCalculator::calculate(cell, &analyzer);
 
@@ -279,7 +292,8 @@ TEST(HBondCalculatorTests, FluorineDonorAndAcceptor) {
   cell.addAtom("F", {10.0, 10.0, 12.5});
 
   real_t cutoff = 5.0;
-  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
+  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(
+                                         2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
   analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
   auto hist = HBondCalculator::calculate(cell, &analyzer);
 
@@ -308,7 +322,8 @@ TEST(HBondCalculatorTests, CoincidentHAndDonor_DoesNotCrash) {
   cell.addAtom("O", {10.0, 10.0, 12.5});
 
   real_t cutoff = 5.0;
-  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
+  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(
+                                         2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
   analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
 
   // Should not throw or produce NaN
@@ -332,7 +347,8 @@ TEST(HBondCalculatorTests, CoincidentDonorAndAcceptor_DoesNotCrash) {
   cell.addAtom("O", {10.0, 10.0, 10.0});
 
   real_t cutoff = 5.0;
-  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
+  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(
+                                         2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
   analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
 
   ASSERT_NO_THROW({
@@ -356,7 +372,8 @@ TEST(HBondCalculatorTests, AcceptorOnly_NoHydrogens) {
   cell.addAtom("H", {10.0, 10.0, 11.54}); // H between the two O atoms
 
   real_t cutoff = 5.0;
-  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
+  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(
+                                         2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
   analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
   auto hist = HBondCalculator::calculate(cell, &analyzer);
 
@@ -371,15 +388,18 @@ TEST(HBondCalculatorTests, AcceptorOnly_NoHydrogens) {
 TEST(HBondCalculatorTests, BulkMetalNoHBonds) {
   // 4-atom FCC copper — no H, O, N, F, S atoms at all
   real_t const lattice_parameter = 3.6;
-  correlation::core::Cell cell({lattice_parameter, lattice_parameter, lattice_parameter, static_cast<real_t>(90.0),
-                                static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
+  correlation::core::Cell cell({lattice_parameter, lattice_parameter, lattice_parameter,
+                                static_cast<real_t>(90.0), static_cast<real_t>(90.0),
+                                static_cast<real_t>(90.0)});
   cell.addAtom("Cu", {0.0, 0.0, 0.0});
   cell.addAtom("Cu", {lattice_parameter / 2, lattice_parameter / 2, 0.0});
   cell.addAtom("Cu", {lattice_parameter / 2, 0.0, lattice_parameter / 2});
   cell.addAtom("Cu", {0.0, lattice_parameter / 2, lattice_parameter / 2});
 
   real_t const cutoff = 3.0;
-  analysis::BondCutoffMatrix const bond_cutoffs_sq(1, std::vector<analysis::BondCutoffRange>(1, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
+  analysis::BondCutoffMatrix const bond_cutoffs_sq(
+      1,
+      std::vector<analysis::BondCutoffRange>(1, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
   analysis::StructureAnalyzer const analyzer(cell, cutoff, bond_cutoffs_sq, false);
   auto hist = HBondCalculator::calculate(cell, &analyzer);
 
@@ -400,7 +420,8 @@ TEST(HBondCalculatorTests, DeterministicResults) {
   cell.addAtom("O", {10.0, 10.0, 12.5});
 
   real_t cutoff = 5.0;
-  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
+  analysis::BondCutoffMatrix bcsq(2, std::vector<analysis::BondCutoffRange>(
+                                         2, analysis::BondCutoffRange{0.36, cutoff * cutoff}));
   analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
 
   auto hist1 = HBondCalculator::calculate(cell, &analyzer);

@@ -48,7 +48,8 @@ struct SymmetryOp {
   correlation::math::Vector3<real_t> translation{0, 0, 0};
 
   // Applies the operation: new_pos = rotation * old_pos + translation
-  [[nodiscard]] correlation::math::Vector3<real_t> apply(const correlation::math::Vector3<real_t> &pos) const {
+  [[nodiscard]] correlation::math::Vector3<real_t>
+  apply(const correlation::math::Vector3<real_t> &pos) const {
     return rotation * pos + translation;
   }
 };
@@ -65,7 +66,8 @@ std::string cleanCifValue(std::string str) {
     str.erase(p_pos);
   }
   // Remove surrounding quotes
-  if (!str.empty() && ((str.front() == '\'' && str.back() == '\'') || (str.front() == '"' && str.back() == '"'))) {
+  if (!str.empty() &&
+      ((str.front() == '\'' && str.back() == '\'') || (str.front() == '"' && str.back() == '"'))) {
     return str.substr(1, str.length() - 2);
   }
   return str;
@@ -136,7 +138,8 @@ SymmetryOp parseSymmetryString(const std::string &op_str) {
 
 enum class TokenizerState : std::uint8_t { OUTSIDE_TOKEN, INSIDE_UNQUOTED, INSIDE_QUOTED };
 
-void handleOutsideToken(char chr, char &quote_char, TokenizerState &state, std::string &current_token) {
+void handleOutsideToken(char chr, char &quote_char, TokenizerState &state,
+                        std::string &current_token) {
   if (chr == '\'' || chr == '"') {
     quote_char = chr;
     state = TokenizerState::INSIDE_QUOTED;
@@ -157,7 +160,8 @@ void handleInsideUnquoted(char chr, TokenizerState &state, std::string &current_
   }
 }
 
-void handleInsideQuoted(char chr, char &quote_char, TokenizerState &state, std::string &current_token) {
+void handleInsideQuoted(char chr, char &quote_char, TokenizerState &state,
+                        std::string &current_token) {
   if (chr == quote_char) {
     quote_char = '\0';
     state = TokenizerState::INSIDE_UNQUOTED;
@@ -200,7 +204,8 @@ struct AsymmetricAtom {
 enum class ParseState : std::uint8_t { GLOBAL, LOOP_HEADER, LOOP_DATA };
 
 void processLoopDataLine(const std::string &line, const std::vector<std::string> &loop_headers,
-                         std::vector<AsymmetricAtom> &asymmetric_atoms, std::vector<SymmetryOp> &symmetry_ops) {
+                         std::vector<AsymmetricAtom> &asymmetric_atoms,
+                         std::vector<SymmetryOp> &symmetry_ops) {
   // Map headers to their column index for efficient lookup
   std::map<std::string, size_t> header_map;
   for (size_t i = 0; i < loop_headers.size(); ++i) {
@@ -209,8 +214,8 @@ void processLoopDataLine(const std::string &line, const std::vector<std::string>
 
   // Check which loop we're in by looking for key headers
   bool const is_atom_loop = header_map.contains("_atom_site_fract_x");
-  bool const is_symm_loop =
-      header_map.contains("_symmetry_equiv_pos_as_xyz") || header_map.contains("_space_group_symop_operation_xyz");
+  bool const is_symm_loop = header_map.contains("_symmetry_equiv_pos_as_xyz") ||
+                            header_map.contains("_space_group_symop_operation_xyz");
 
   auto tokens = tokenizeCifLine(line);
   if (tokens.empty()) {
@@ -226,9 +231,12 @@ void processLoopDataLine(const std::string &line, const std::vector<std::string>
       std::erase_if(element, ::isdigit);
 
       correlation::math::Vector3<real_t> const pos = {
-          static_cast<real_t>(std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_x"))))),
-          static_cast<real_t>(std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_y"))))),
-          static_cast<real_t>(std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_z")))))};
+          static_cast<real_t>(
+              std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_x"))))),
+          static_cast<real_t>(
+              std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_y"))))),
+          static_cast<real_t>(
+              std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_z")))))};
       asymmetric_atoms.push_back({
           .symbol = element,
           .frac_pos = pos,
@@ -239,15 +247,18 @@ void processLoopDataLine(const std::string &line, const std::vector<std::string>
     }
   } else if (is_symm_loop) {
     // The symmetry operation might be the only token on the line
-    std::string const op_key = (static_cast<unsigned int>(header_map.contains("_symmetry_equiv_pos_as_xyz")) != 0U)
-                                   ? "_symmetry_equiv_pos_as_xyz"
-                                   : "_space_group_symop_operation_xyz";
+    std::string const op_key =
+        (static_cast<unsigned int>(header_map.contains("_symmetry_equiv_pos_as_xyz")) != 0U)
+            ? "_symmetry_equiv_pos_as_xyz"
+            : "_space_group_symop_operation_xyz";
     symmetry_ops.push_back(parseSymmetryString(tokens.at(header_map.at(op_key))));
   }
 }
 
-void processCifLine(const std::string &line, ParseState &state, std::vector<std::string> &loop_headers,
-                    std::map<std::string, std::string> &cif_data, std::vector<AsymmetricAtom> &asymmetric_atoms,
+void processCifLine(const std::string &line, ParseState &state,
+                    std::vector<std::string> &loop_headers,
+                    std::map<std::string, std::string> &cif_data,
+                    std::vector<AsymmetricAtom> &asymmetric_atoms,
                     std::vector<SymmetryOp> &symmetry_ops) {
   // A new global tag or a new loop definition ends a previous loop's data section
   if (state == ParseState::LOOP_DATA && (line[0] == '_' || line.starts_with("loop_"))) {
@@ -285,7 +296,8 @@ void processCifLine(const std::string &line, ParseState &state, std::vector<std:
 }
 
 void parseCifFile(std::ifstream &file, std::map<std::string, std::string> &cif_data,
-                  std::vector<AsymmetricAtom> &asymmetric_atoms, std::vector<SymmetryOp> &symmetry_ops) {
+                  std::vector<AsymmetricAtom> &asymmetric_atoms,
+                  std::vector<SymmetryOp> &symmetry_ops) {
   std::string line;
   ParseState state = ParseState::GLOBAL;
   std::vector<std::string> loop_headers;
@@ -300,22 +312,25 @@ void parseCifFile(std::ifstream &file, std::map<std::string, std::string> &cif_d
   }
 }
 
-void setupLatticeParameters(correlation::core::Cell &cell, const std::map<std::string, std::string> &cif_data) {
+void setupLatticeParameters(correlation::core::Cell &cell,
+                            const std::map<std::string, std::string> &cif_data) {
   try {
-    std::array<real_t, 6> const params = {static_cast<real_t>(std::stod(cif_data.at("_cell_length_a"))),
-                                          static_cast<real_t>(std::stod(cif_data.at("_cell_length_b"))),
-                                          static_cast<real_t>(std::stod(cif_data.at("_cell_length_c"))),
-                                          static_cast<real_t>(std::stod(cif_data.at("_cell_angle_alpha"))),
-                                          static_cast<real_t>(std::stod(cif_data.at("_cell_angle_beta"))),
-                                          static_cast<real_t>(std::stod(cif_data.at("_cell_angle_gamma")))};
+    std::array<real_t, 6> const params = {
+        static_cast<real_t>(std::stod(cif_data.at("_cell_length_a"))),
+        static_cast<real_t>(std::stod(cif_data.at("_cell_length_b"))),
+        static_cast<real_t>(std::stod(cif_data.at("_cell_length_c"))),
+        static_cast<real_t>(std::stod(cif_data.at("_cell_angle_alpha"))),
+        static_cast<real_t>(std::stod(cif_data.at("_cell_angle_beta"))),
+        static_cast<real_t>(std::stod(cif_data.at("_cell_angle_gamma")))};
     cell.setLatticeParameters(params);
   } catch (const std::exception &e) {
-    throw std::runtime_error("CIF Error: Missing or invalid cell parameters: " + std::string(e.what()));
+    throw std::runtime_error("CIF Error: Missing or invalid cell parameters: " +
+                             std::string(e.what()));
   }
 }
 
-bool isDuplicateAtom(const correlation::math::Vector3<real_t> &pos1, const correlation::math::Vector3<real_t> &pos2,
-                     real_t tolerance) {
+bool isDuplicateAtom(const correlation::math::Vector3<real_t> &pos1,
+                     const correlation::math::Vector3<real_t> &pos2, real_t tolerance) {
   correlation::math::Vector3<real_t> diff = pos1 - pos2;
   // Account for periodic boundary wrapping
   diff.x() = static_cast<real_t>(std::fmod(diff.x(), 1.0));
@@ -333,8 +348,9 @@ bool isDuplicateAtom(const correlation::math::Vector3<real_t> &pos1, const corre
   return correlation::math::norm(diff) < tolerance;
 }
 
-std::vector<AsymmetricAtom> generateSymmetryAtoms(const std::vector<AsymmetricAtom> &asymmetric_atoms,
-                                                  std::vector<SymmetryOp> &symmetry_ops) {
+std::vector<AsymmetricAtom>
+generateSymmetryAtoms(const std::vector<AsymmetricAtom> &asymmetric_atoms,
+                      std::vector<SymmetryOp> &symmetry_ops) {
   if (symmetry_ops.empty()) { // If no symmetry specified, 'x,y,z' is implicit
     symmetry_ops.push_back(parseSymmetryString("x,y,z"));
   }
@@ -361,7 +377,8 @@ std::vector<AsymmetricAtom> generateSymmetryAtoms(const std::vector<AsymmetricAt
       // Avoid adding duplicate atoms
       bool exists = false;
       for (const auto &final_atom : final_atoms) {
-        if (final_atom.symbol == atom.symbol && isDuplicateAtom(frac_pos, final_atom.frac_pos, tolerance)) {
+        if (final_atom.symbol == atom.symbol &&
+            isDuplicateAtom(frac_pos, final_atom.frac_pos, tolerance)) {
           exists = true;
           break;
         }

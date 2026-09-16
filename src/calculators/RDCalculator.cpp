@@ -28,8 +28,8 @@ void RDCalculator::calculateFrame(correlation::analysis::DistributionFunctions &
   dists.addHistogram("RD", calculate(dists.neighbors()->neighborGraph(), settings.max_ring_size));
 }
 
-correlation::analysis::Histogram RDCalculator::calculate(const correlation::core::NeighborGraph &graph,
-                                                         size_t max_ring_size) {
+correlation::analysis::Histogram
+RDCalculator::calculate(const correlation::core::NeighborGraph &graph, size_t max_ring_size) {
   if (max_ring_size < 3) {
     throw std::invalid_argument("Max ring size must be at least 3");
   }

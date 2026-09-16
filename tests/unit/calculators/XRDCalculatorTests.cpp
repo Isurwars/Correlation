@@ -221,7 +221,8 @@ TEST_F(XRDCalculatorTests, CalculateXRD_InvalidInputsThrow) {
   Histogram empty_gr;
   EXPECT_THROW(correlation::calculators::XRDCalculator::calculate(
                    empty_gr, cell_, {}, correlation::calculators::Wavelength{1.5406},
-                   correlation::calculators::MinTheta{5.0}, correlation::calculators::MaxTheta{90.0},
+                   correlation::calculators::MinTheta{5.0},
+                   correlation::calculators::MaxTheta{90.0},
                    correlation::calculators::BinWidth{0.5}),
                std::invalid_argument);
 }

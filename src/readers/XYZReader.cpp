@@ -100,7 +100,8 @@ struct XYZParser {
   void skipCoordinateLines(int num_atoms) {
     for (int atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
       if (offset >= total_size) {
-        throw std::runtime_error("Invalid XYZ file: unexpected EOF while reading atom " + std::to_string(atom_idx + 1));
+        throw std::runtime_error("Invalid XYZ file: unexpected EOF while reading atom " +
+                                 std::to_string(atom_idx + 1));
       }
       size_t line_end = offset;
       while (line_end < total_size && data[line_end] != '\n' && data[line_end] != '\r') {
@@ -110,7 +111,8 @@ struct XYZParser {
     }
   }
 
-  std::vector<size_t> findFrameOffsets(const std::function<void(float, const std::string &)> &progress_callback) {
+  std::vector<size_t>
+  findFrameOffsets(const std::function<void(float, const std::string &)> &progress_callback) {
     std::vector<size_t> frame_offsets;
 
     while (offset < total_size) {
@@ -178,9 +180,12 @@ correlation::core::Cell XYZReader::parseXYZFrame(const char *data, size_t size) 
 
   if (comm_data.lattice) {
     const auto &lattice_vecs = *comm_data.lattice;
-    correlation::math::Vector3<real_t> const param_a(lattice_vecs[0], lattice_vecs[1], lattice_vecs[2]);
-    correlation::math::Vector3<real_t> const param_b(lattice_vecs[3], lattice_vecs[4], lattice_vecs[5]);
-    correlation::math::Vector3<real_t> const param_c(lattice_vecs[6], lattice_vecs[7], lattice_vecs[8]);
+    correlation::math::Vector3<real_t> const param_a(lattice_vecs[0], lattice_vecs[1],
+                                                     lattice_vecs[2]);
+    correlation::math::Vector3<real_t> const param_b(lattice_vecs[3], lattice_vecs[4],
+                                                     lattice_vecs[5]);
+    correlation::math::Vector3<real_t> const param_c(lattice_vecs[6], lattice_vecs[7],
+                                                     lattice_vecs[8]);
     cell = correlation::core::Cell(param_a, param_b, param_c);
   }
 
@@ -191,7 +196,8 @@ correlation::core::Cell XYZReader::parseXYZFrame(const char *data, size_t size) 
   // --- Lines 3..N+2: atom data ---
   for (int i = 0; i < num_atoms; ++i) {
     if (!std::getline(stream, line)) {
-      throw std::runtime_error("Invalid XYZ file: unexpected EOF while reading atom " + std::to_string(i + 1));
+      throw std::runtime_error("Invalid XYZ file: unexpected EOF while reading atom " +
+                               std::to_string(i + 1));
     }
 
     std::istringstream iss(line);
@@ -201,8 +207,8 @@ correlation::core::Cell XYZReader::parseXYZFrame(const char *data, size_t size) 
       tokens.push_back(token);
     }
 
-    int const max_idx =
-        (std::max)({comm_data.species_col, comm_data.pos_x_col, comm_data.pos_y_col, comm_data.pos_z_col});
+    int const max_idx = (std::max)({comm_data.species_col, comm_data.pos_x_col, comm_data.pos_y_col,
+                                    comm_data.pos_z_col});
 
     if (std::cmp_less_equal(tokens.size(), max_idx)) {
       throw std::runtime_error("Invalid XYZ file: malformed atom line: " + line);
@@ -260,13 +266,14 @@ void XYZReader::parseEnergy(const std::string &comment, CommentData &data) {
         } else {
           end = comment.find_first_of(" \t\r\n", start);
         }
-        std::string const val_str = comment.substr(start, end == std::string::npos ? std::string::npos : end - start);
+        std::string const val_str =
+            comment.substr(start, end == std::string::npos ? std::string::npos : end - start);
         try {
           data.energy = static_cast<real_t>(std::stod(val_str));
           break;
         } catch (const std::exception &err) {
-          std::cerr << "Warning: Failed to parse energy value '" << val_str << "' in comment line: " << err.what()
-                    << '\n';
+          std::cerr << "Warning: Failed to parse energy value '" << val_str
+                    << "' in comment line: " << err.what() << '\n';
         }
       }
     }
@@ -291,7 +298,8 @@ void XYZReader::parseProperties(const std::string &comment, CommentData &data) {
     end = comment.find_first_of(" \t\r\n", start);
   }
 
-  std::string const props = comment.substr(start, end == std::string::npos ? std::string::npos : end - start);
+  std::string const props =
+      comment.substr(start, end == std::string::npos ? std::string::npos : end - start);
 
   // format is name:type:cols:name:type:cols...
   std::vector<std::string> parts;
@@ -353,8 +361,9 @@ XYZReader::CommentData XYZReader::parseCommentLine(const std::string &comment) {
 // ---------------------------------------------------------------------------
 // readStructure  – returns the last frame
 // ---------------------------------------------------------------------------
-correlation::core::Cell XYZReader::readStructure(const std::string &filename,
-                                                 std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell
+XYZReader::readStructure(const std::string &filename,
+                         std::function<void(float, const std::string &)> progress_callback) {
 
   auto traj = readTrajectory(filename, progress_callback);
   if (traj.getFrameCount() == 0) {
@@ -392,7 +401,9 @@ XYZReader::readTrajectory(const std::string &filename,
     progress_callback(1.0F, "XYZ file loaded.");
   }
 
-  auto parser_func = [](const char *data_begin, size_t data_size) { return parseXYZFrame(data_begin, data_size); };
+  auto parser_func = [](const char *data_begin, size_t data_size) {
+    return parseXYZFrame(data_begin, data_size);
+  };
 
   return {mapped_file, std::move(frame_offsets), parser_func, 1.0};
 }

@@ -16,7 +16,8 @@
 namespace correlation::plotters {
 
 void renderHistogramAsPng(const correlation::analysis::Histogram &hist, const std::string &filepath,
-                          const PlotConfig &config, const std::map<std::string, real_t> &ashcroft_weights, int dpi) {
+                          const PlotConfig &config,
+                          const std::map<std::string, real_t> &ashcroft_weights, int dpi) {
   (void)dpi;
   // Fallback / standard vector SVG-based file writing for PNG pipeline
   std::string svg_data = renderHistogramAsSvg(hist, config, {}, ashcroft_weights);
@@ -27,8 +28,9 @@ void renderHistogramAsPng(const correlation::analysis::Histogram &hist, const st
   out.write(svg_data.data(), static_cast<std::streamsize>(svg_data.size()));
 }
 
-void renderComparisonPng(const std::vector<LabeledHistogram> &datasets, const std::string &partial_key,
-                         const std::string &filepath, const PlotConfig &config, int dpi) {
+void renderComparisonPng(const std::vector<LabeledHistogram> &datasets,
+                         const std::string &partial_key, const std::string &filepath,
+                         const PlotConfig &config, int dpi) {
   (void)dpi;
   std::string svg_data = renderComparisonSvg(datasets, partial_key, config, {});
   std::ofstream out(filepath, std::ios::binary);

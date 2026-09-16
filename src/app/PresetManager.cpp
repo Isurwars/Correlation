@@ -310,14 +310,16 @@ std::vector<Preset> PresetManager::loadAll() {
           Preset const preset = fromJson(string_stream.str());
           presets.push_back(preset);
         } catch (const std::exception &err) {
-          std::cerr << "Failed to load preset " << entry.path().string() << ": " << err.what() << '\n';
+          std::cerr << "Failed to load preset " << entry.path().string() << ": " << err.what()
+                    << '\n';
         }
       }
     }
   }
 
   // Sort alphabetically
-  std::ranges::sort(presets, [](const Preset &pre_a, const Preset &pre_b) { return pre_a.name < pre_b.name; });
+  std::ranges::sort(
+      presets, [](const Preset &pre_a, const Preset &pre_b) { return pre_a.name < pre_b.name; });
 
   return presets;
 }
@@ -328,7 +330,8 @@ void PresetManager::save(const Preset &preset) {
 
   // Filename is safe name
   std::string filename = preset.name;
-  std::ranges::replace_if(filename, [](char chr) { return !std::isalnum(chr) && chr != '-' && chr != '_'; }, '_');
+  std::ranges::replace_if(
+      filename, [](char chr) { return !std::isalnum(chr) && chr != '-' && chr != '_'; }, '_');
 
   std::filesystem::path const filepath = dir / (filename + ".json");
   std::ofstream out(filepath);
@@ -344,7 +347,8 @@ void PresetManager::remove(const std::string &name) {
   }
 
   std::string filename = name;
-  std::ranges::replace_if(filename, [](char chr) { return !std::isalnum(chr) && chr != '-' && chr != '_'; }, '_');
+  std::ranges::replace_if(
+      filename, [](char chr) { return !std::isalnum(chr) && chr != '-' && chr != '_'; }, '_');
 
   std::filesystem::path const filepath = dir / (filename + ".json");
   if (std::filesystem::exists(filepath)) {
@@ -354,7 +358,8 @@ void PresetManager::remove(const std::string &name) {
 
 std::string PresetManager::toJson(const Preset &preset) {
   std::string active_calcs_json;
-  for (auto it = preset.options.active_calculators.begin(); it != preset.options.active_calculators.end(); ++it) {
+  for (auto it = preset.options.active_calculators.begin();
+       it != preset.options.active_calculators.end(); ++it) {
     if (it != preset.options.active_calculators.begin()) {
       active_calcs_json += ", ";
     }
@@ -388,14 +393,16 @@ std::string PresetManager::toJson(const Preset &preset) {
       "  \"material_type\": {},\n"
       "  \"active_calculators\": {{{}}}\n"
       "}}",
-      escapeJsonString(preset.name), escapeJsonString(preset.description), preset.options.smoothing ? "true" : "false",
-      preset.options.use_csv ? "true" : "false", preset.options.use_hdf5 ? "true" : "false",
-      preset.options.use_parquet ? "true" : "false", preset.options.r_max, preset.options.r_bin_width,
-      preset.options.q_max, preset.options.q_bin_width, preset.options.r_int_max, preset.options.angle_bin_width,
+      escapeJsonString(preset.name), escapeJsonString(preset.description),
+      preset.options.smoothing ? "true" : "false", preset.options.use_csv ? "true" : "false",
+      preset.options.use_hdf5 ? "true" : "false", preset.options.use_parquet ? "true" : "false",
+      preset.options.r_max, preset.options.r_bin_width, preset.options.q_max,
+      preset.options.q_bin_width, preset.options.r_int_max, preset.options.angle_bin_width,
       preset.options.dihedral_bin_width, preset.options.max_ring_size, preset.options.hyper_samples,
       preset.options.smoothing_sigma, preset.options.lef_cutoff, preset.options.lef_sigma,
-      static_cast<int>(preset.options.smoothing_kernel), preset.options.min_frame, preset.options.max_frame,
-      preset.options.time_step, preset.options.material_type, active_calcs_json);
+      static_cast<int>(preset.options.smoothing_kernel), preset.options.min_frame,
+      preset.options.max_frame, preset.options.time_step, preset.options.material_type,
+      active_calcs_json);
 }
 
 Preset PresetManager::fromJson(const std::string &json) {
@@ -413,12 +420,15 @@ Preset PresetManager::fromJson(const std::string &json) {
   preset.options.q_max = parseDoubleValue(json, "q_max", AppDefaults::Q_MAX);
   preset.options.q_bin_width = parseDoubleValue(json, "q_bin_width", AppDefaults::Q_BIN_WIDTH);
   preset.options.r_int_max = parseDoubleValue(json, "r_int_max", AppDefaults::R_INT_MAX);
-  preset.options.angle_bin_width = parseDoubleValue(json, "angle_bin_width", AppDefaults::ANGLE_BIN_WIDTH);
-  preset.options.dihedral_bin_width = parseDoubleValue(json, "dihedral_bin_width", AppDefaults::ANGLE_BIN_WIDTH);
+  preset.options.angle_bin_width =
+      parseDoubleValue(json, "angle_bin_width", AppDefaults::ANGLE_BIN_WIDTH);
+  preset.options.dihedral_bin_width =
+      parseDoubleValue(json, "dihedral_bin_width", AppDefaults::ANGLE_BIN_WIDTH);
 
   preset.options.max_ring_size = static_cast<size_t>(parseIntValue(json, "max_ring_size", 8));
   preset.options.hyper_samples = static_cast<size_t>(parseIntValue(json, "hyper_samples", 10000));
-  preset.options.smoothing_sigma = parseDoubleValue(json, "smoothing_sigma", AppDefaults::SMOOTHING_SIGMA);
+  preset.options.smoothing_sigma =
+      parseDoubleValue(json, "smoothing_sigma", AppDefaults::SMOOTHING_SIGMA);
   preset.options.lef_cutoff = parseDoubleValue(json, "lef_cutoff", AppDefaults::LEF_CUTOFF);
   preset.options.lef_sigma = parseDoubleValue(json, "lef_sigma", AppDefaults::LEF_SIGMA);
   preset.options.smoothing_kernel =

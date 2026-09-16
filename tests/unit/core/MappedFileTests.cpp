@@ -18,7 +18,8 @@ class MappedFileTests : public ::testing::Test {
 public:
   std::string test_dir_ = "mapped_file_test_data";
   std::string valid_file_path_ = test_dir_ + "/valid_test.txt";
-  std::string file_content_ = "Hello, memory-mapped world! This is a test file for MappedFile RAII class.";
+  std::string file_content_ =
+      "Hello, memory-mapped world! This is a test file for MappedFile RAII class.";
 
   void SetUp() override {
     std::filesystem::create_directory(test_dir_);
@@ -45,7 +46,9 @@ TEST_F(MappedFileTests, ThrowsOnNonExistentFile) {
   EXPECT_THROW(MappedFile{"non_existent_file_xyz_123.txt"}, std::runtime_error);
 }
 
-TEST_F(MappedFileTests, ThrowsOnDirectoryPath) { EXPECT_THROW(MappedFile{test_dir_}, std::runtime_error); }
+TEST_F(MappedFileTests, ThrowsOnDirectoryPath) {
+  EXPECT_THROW(MappedFile{test_dir_}, std::runtime_error);
+}
 
 TEST_F(MappedFileTests, MoveConstructorTransfersOwnership) {
   MappedFile mf1(valid_file_path_);

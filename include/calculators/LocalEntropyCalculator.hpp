@@ -51,9 +51,10 @@ public:
    * @param params Integration cutoff and Gaussian smoothing parameters.
    * @return A histogram of local entropy values.
    */
-  static correlation::analysis::Histogram calculate(const correlation::core::Cell &cell,
-                                                    const correlation::analysis::StructureAnalyzer *neighbors = nullptr,
-                                                    LocalEntropyParams params = {});
+  static correlation::analysis::Histogram
+  calculate(const correlation::core::Cell &cell,
+            const correlation::analysis::StructureAnalyzer *neighbors = nullptr,
+            LocalEntropyParams params = {});
 };
 
 } // namespace correlation::calculators

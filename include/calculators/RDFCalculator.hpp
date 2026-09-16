@@ -33,7 +33,9 @@ public:
   [[nodiscard]] std::string_view getName() const override { return "g(r), J(r), G(r)"; }
   [[nodiscard]] std::string_view getShortName() const override { return "RDF"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Radial"; }
-  [[nodiscard]] std::string_view getDescription() const override { return "Computes the Radial Distribution Function g_r, J_r, and G_r."; }
+  [[nodiscard]] std::string_view getDescription() const override {
+    return "Computes the Radial Distribution Function g_r, J_r, and G_r.";
+  }
 
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
@@ -57,8 +59,10 @@ public:
    * partial and total.
    */
   static std::map<std::string, correlation::analysis::Histogram>
-  calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors,
-            const std::map<std::string, real_t> &ashcroft_weights, real_t r_max, real_t r_bin_width);
+  calculate(const correlation::core::Cell &cell,
+            const correlation::analysis::StructureAnalyzer *neighbors,
+            const std::map<std::string, real_t> &ashcroft_weights, real_t r_max,
+            real_t r_bin_width);
 };
 
 } // namespace correlation::calculators

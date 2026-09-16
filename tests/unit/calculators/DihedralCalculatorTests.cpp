@@ -56,7 +56,8 @@ TEST_F(DihedralCalculatorTests, ComputesCorrect90DegreeDihedral) {
   ASSERT_EQ(angles.size(), 1);
 
   // Test the angle: expected pi/2.
-  EXPECT_NEAR(angles[0], correlation::math::pi / 2.0, correlation::is_single_precision ? 1e-4 : 1e-12);
+  EXPECT_NEAR(angles[0], correlation::math::pi / 2.0,
+              correlation::is_single_precision ? 1e-4 : 1e-12);
 }
 
 TEST_F(DihedralCalculatorTests, ComputesCorrect0DegreeDihedral) {

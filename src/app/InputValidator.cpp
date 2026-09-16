@@ -26,7 +26,8 @@ namespace {
 
 std::string to_lower_str(const std::string &str) {
   std::string data = str;
-  std::ranges::transform(data, data.begin(), [](const unsigned char chr) { return std::tolower(chr); });
+  std::ranges::transform(data, data.begin(),
+                         [](const unsigned char chr) { return std::tolower(chr); });
   return data;
 }
 
@@ -135,7 +136,8 @@ bool validate_max_frame_input(const std::string &frame_s, int total_frames, int 
 InputValidator::InputValidator(::AppWindow &window, AppBackend &backend, AppController &controller)
     : window_(&window), backend_(&backend), controller_(&controller) {}
 
-bool InputValidator::validateRadialAndScattering(AppErrors &errs, float &r_max_val, float &q_max_val) {
+bool InputValidator::validateRadialAndScattering(AppErrors &errs, float &r_max_val,
+                                                 float &q_max_val) {
   bool valid = true;
 
   std::string r_max_s = window_->get_analysis_options().r_max.data();
@@ -262,13 +264,15 @@ bool InputValidator::validateFrames(AppErrors &errs) {
   int total_frames = window_->get_num_frames();
 
   std::string min_frame_s = window_->get_analysis_options().min_frame.data();
-  bool min_frame_valid = validate_min_frame_input(min_frame_s, total_frames, min_frame_val, errs.min_frame_error);
+  bool min_frame_valid =
+      validate_min_frame_input(min_frame_s, total_frames, min_frame_val, errs.min_frame_error);
   if (!min_frame_valid) {
     valid = false;
   }
 
   std::string max_frame_s = window_->get_analysis_options().max_frame.data();
-  bool max_frame_valid = validate_max_frame_input(max_frame_s, total_frames, max_frame_val, errs.max_frame_error);
+  bool max_frame_valid =
+      validate_max_frame_input(max_frame_s, total_frames, max_frame_val, errs.max_frame_error);
   if (!max_frame_valid) {
     valid = false;
   }
@@ -358,18 +362,23 @@ bool InputValidator::validateInputs() {
   }
 
   auto current_errs = window_->get_app_errors();
-  if (current_errs.r_max_error != errs.r_max_error || current_errs.r_bin_error != errs.r_bin_error ||
-      current_errs.q_max_error != errs.q_max_error || current_errs.q_bin_error != errs.q_bin_error ||
-      current_errs.r_int_max_error != errs.r_int_max_error || current_errs.angle_bin_error != errs.angle_bin_error ||
+  if (current_errs.r_max_error != errs.r_max_error ||
+      current_errs.r_bin_error != errs.r_bin_error ||
+      current_errs.q_max_error != errs.q_max_error ||
+      current_errs.q_bin_error != errs.q_bin_error ||
+      current_errs.r_int_max_error != errs.r_int_max_error ||
+      current_errs.angle_bin_error != errs.angle_bin_error ||
       current_errs.dihedral_bin_error != errs.dihedral_bin_error ||
       current_errs.max_ring_error != errs.max_ring_error ||
       current_errs.smoothing_sigma_error != errs.smoothing_sigma_error ||
-      current_errs.time_step_error != errs.time_step_error || current_errs.min_frame_error != errs.min_frame_error ||
+      current_errs.time_step_error != errs.time_step_error ||
+      current_errs.min_frame_error != errs.min_frame_error ||
       current_errs.max_frame_error != errs.max_frame_error ||
       current_errs.export_font_scale_error != errs.export_font_scale_error ||
       current_errs.export_line_width_error != errs.export_line_width_error ||
       current_errs.export_marker_size_error != errs.export_marker_size_error ||
-      current_errs.lef_cutoff_error != errs.lef_cutoff_error || current_errs.lef_sigma_error != errs.lef_sigma_error) {
+      current_errs.lef_cutoff_error != errs.lef_cutoff_error ||
+      current_errs.lef_sigma_error != errs.lef_sigma_error) {
     window_->set_app_errors(errs);
   }
 

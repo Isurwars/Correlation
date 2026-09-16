@@ -37,8 +37,10 @@ inline void compute_dsq_block(T ref_x, T ref_y, T ref_z, const PositionBlockT<T>
  * @tparam T Coordinate scalar type (defaults to real_t).
  */
 template <typename AtomRange, typename T = real_t>
-inline std::size_t fill_position_block(const FillPositionBlockParams<AtomRange, T> &params) noexcept {
-  if (params.atoms == nullptr || params.x_s == nullptr || params.y_s == nullptr || params.z_s == nullptr) {
+inline std::size_t
+fill_position_block(const FillPositionBlockParams<AtomRange, T> &params) noexcept {
+  if (params.atoms == nullptr || params.x_s == nullptr || params.y_s == nullptr ||
+      params.z_s == nullptr) {
     return 0;
   }
   const std::size_t count = params.end_idx - params.begin_idx;

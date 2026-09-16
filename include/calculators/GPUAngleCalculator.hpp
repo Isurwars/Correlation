@@ -18,7 +18,8 @@ namespace correlation::calculators::gpu {
 /**
  * @brief Performs GPU-accelerated bond angle tensor computations with automatic fallback to CPU.
  */
-inline void compute_angles_gpu(const correlation::core::Cell &cell, const correlation::core::NeighborGraph &graph,
+inline void compute_angles_gpu(const correlation::core::Cell &cell,
+                               const correlation::core::NeighborGraph &graph,
                                AngleTensor &out_angles) {
   correlation::calculators::sycl_gpu::compute_angle_tensor_sycl(cell, graph, out_angles);
 }

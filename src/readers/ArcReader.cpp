@@ -41,7 +41,8 @@ ArcReader::read(const std::string &file_name,
                 const std::function<void(float, const std::string &)> &progress_callback) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
-    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) + ").");
+    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) +
+                             ").");
   }
 
   std::vector<correlation::core::Cell> frames;
@@ -56,7 +57,8 @@ ArcReader::read(const std::string &file_name,
 
   while (std::getline(myfile, line)) {
     if (progress_callback) {
-      updateProgress(myfile.tellg(), file_size, last_progress_pos, update_interval, progress_callback);
+      updateProgress(myfile.tellg(), file_size, last_progress_pos, update_interval,
+                     progress_callback);
     }
     parseLine(line, tempCell, frames);
   }
@@ -64,9 +66,10 @@ ArcReader::read(const std::string &file_name,
   return frames;
 }
 
-void ArcReader::updateProgress(std::streampos current_pos, std::streampos file_size, std::streampos &last_progress_pos,
-                               size_t update_interval,
-                               const std::function<void(float, const std::string &)> &progress_callback) {
+void ArcReader::updateProgress(
+    std::streampos current_pos, std::streampos file_size, std::streampos &last_progress_pos,
+    size_t update_interval,
+    const std::function<void(float, const std::string &)> &progress_callback) {
   if (std::cmp_greater(current_pos - last_progress_pos, update_interval)) {
     const float progress = static_cast<float>(current_pos) / static_cast<float>(file_size);
     progress_callback(progress, "Loading ARC file...");
@@ -95,8 +98,8 @@ void ArcReader::parseLine(const std::string &line, correlation::core::Cell &temp
 
   if (first_token == "PBC") {
     std::array<real_t, 6> lattice_params{};
-    if (line_stream >> lattice_params[0] >> lattice_params[1] >> lattice_params[2] >> lattice_params[3] >>
-        lattice_params[4] >> lattice_params[5]) {
+    if (line_stream >> lattice_params[0] >> lattice_params[1] >> lattice_params[2] >>
+        lattice_params[3] >> lattice_params[4] >> lattice_params[5]) {
       tempCell.setLatticeParameters(lattice_params);
     }
     return;
@@ -137,8 +140,8 @@ void ArcReader::parseLine(const std::string &line, correlation::core::Cell &temp
   real_t coord_y = 0.0;
   real_t coord_z = 0.0;
 
-  if (line_stream >> dummy_token_1 >> coord_x >> coord_y >> coord_z >> dummy_token_5 >> dummy_token_6 >>
-      dummy_token_7 >> element) {
+  if (line_stream >> dummy_token_1 >> coord_x >> coord_y >> coord_z >> dummy_token_5 >>
+      dummy_token_6 >> dummy_token_7 >> element) {
     tempCell.addAtom(element, {coord_x, coord_y, coord_z});
   }
 }

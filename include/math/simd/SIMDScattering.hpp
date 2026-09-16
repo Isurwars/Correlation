@@ -1,6 +1,7 @@
 /**
  * @file SIMDScattering.hpp
- * @brief SIMD-accelerated dot product, Debye sum, complex exponential, and Miller phase sum kernels.
+ * @brief SIMD-accelerated dot product, Debye sum, complex exponential, and Miller phase sum
+ * kernels.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -38,8 +39,9 @@ inline T simd_dot(const T *CORRELATION_RESTRICT input_a, const T *CORRELATION_RE
  * @tparam T Floating-point precision (float or double).
  */
 template <typename T>
-inline void dot_block(T v1x, T v1y, T v1z, const T *CORRELATION_RESTRICT v2x, const T *CORRELATION_RESTRICT v2y,
-                      const T *CORRELATION_RESTRICT v2z, T *CORRELATION_RESTRICT out_dot, std::size_t count) noexcept {
+inline void dot_block(T v1x, T v1y, T v1z, const T *CORRELATION_RESTRICT v2x,
+                      const T *CORRELATION_RESTRICT v2y, const T *CORRELATION_RESTRICT v2z,
+                      T *CORRELATION_RESTRICT out_dot, std::size_t count) noexcept {
 #ifdef CORRELATION_SIMD_AVX512
   detail::avx512::dot_block(v1x, v1y, v1z, v2x, v2y, v2z, out_dot, count);
 #elif defined(CORRELATION_SIMD_AVX2)
@@ -54,8 +56,8 @@ inline void dot_block(T v1x, T v1y, T v1z, const T *CORRELATION_RESTRICT v2x, co
  * @tparam T Floating-point precision (float or double).
  */
 template <typename T>
-inline T debye_sum(T q_magnitude, const T *CORRELATION_RESTRICT distances, T *CORRELATION_RESTRICT scratch,
-                   std::size_t count) noexcept {
+inline T debye_sum(T q_magnitude, const T *CORRELATION_RESTRICT distances,
+                   T *CORRELATION_RESTRICT scratch, std::size_t count) noexcept {
 #ifdef CORRELATION_SIMD_AVX512
   return detail::avx512::debye_sum(q_magnitude, distances, scratch, count);
 #elif defined(CORRELATION_SIMD_AVX2)
@@ -70,9 +72,9 @@ inline T debye_sum(T q_magnitude, const T *CORRELATION_RESTRICT distances, T *CO
  * @tparam T Coordinate scalar type (float or double).
  */
 template <typename T>
-inline void complex_exp_sum(T q_x, T q_y, T q_z, const T *CORRELATION_RESTRICT x_s, const T *CORRELATION_RESTRICT y_s,
-                            const T *CORRELATION_RESTRICT z_s, std::size_t count,
-                            ComplexExpSumResult<T> &result) noexcept {
+inline void complex_exp_sum(T q_x, T q_y, T q_z, const T *CORRELATION_RESTRICT x_s,
+                            const T *CORRELATION_RESTRICT y_s, const T *CORRELATION_RESTRICT z_s,
+                            std::size_t count, ComplexExpSumResult<T> &result) noexcept {
   result.cos_sum = static_cast<T>(0.0);
   result.sin_sum = static_cast<T>(0.0);
   for (std::size_t idx = 0; idx < count; ++idx) {
@@ -83,14 +85,17 @@ inline void complex_exp_sum(T q_x, T q_y, T q_z, const T *CORRELATION_RESTRICT x
 }
 
 template <typename T>
-inline void complex_exp_sum(const ComplexExpSumParams<T> &params, ComplexExpSumResult<T> &result) noexcept {
-  complex_exp_sum(params.q_x, params.q_y, params.q_z, params.x_s, params.y_s, params.z_s, params.count, result);
+inline void complex_exp_sum(const ComplexExpSumParams<T> &params,
+                            ComplexExpSumResult<T> &result) noexcept {
+  complex_exp_sum(params.q_x, params.q_y, params.q_z, params.x_s, params.y_s, params.z_s,
+                  params.count, result);
 }
 
 template <typename T = real_t>
-inline ComplexExpSumResult<T> complex_exp_sum(T q_x, T q_y, T q_z, const T *CORRELATION_RESTRICT x_s,
-                                              const T *CORRELATION_RESTRICT y_s, const T *CORRELATION_RESTRICT z_s,
-                                              std::size_t count) noexcept {
+inline ComplexExpSumResult<T>
+complex_exp_sum(T q_x, T q_y, T q_z, const T *CORRELATION_RESTRICT x_s,
+                const T *CORRELATION_RESTRICT y_s, const T *CORRELATION_RESTRICT z_s,
+                std::size_t count) noexcept {
   ComplexExpSumResult<T> result;
   complex_exp_sum(q_x, q_y, q_z, x_s, y_s, z_s, count, result);
   return result;
@@ -108,7 +113,8 @@ inline ComplexExpSumResult<T> complex_exp_sum(const MillerExpSumParams<T> &param
  * @tparam T Floating-point precision (float or double).
  */
 template <typename T>
-inline void miller_phase_sum(const MillerPhaseSumParams<T> &params, MillerPhaseSumResult<T> &result) noexcept {
+inline void miller_phase_sum(const MillerPhaseSumParams<T> &params,
+                             MillerPhaseSumResult<T> &result) noexcept {
 #ifdef CORRELATION_SIMD_AVX512
   detail::avx512::miller_phase_sum(params, result);
 #elif defined(CORRELATION_SIMD_AVX2)
@@ -128,8 +134,8 @@ inline MillerPhaseSumResult<T> miller_phase_sum(const MillerPhaseSumParams<T> &p
 template <typename T>
 inline void miller_phase_sum(const T *CORRELATION_RESTRICT cos1, const T *CORRELATION_RESTRICT sin1,
                              const T *CORRELATION_RESTRICT cos2, const T *CORRELATION_RESTRICT sin2,
-                             const T *CORRELATION_RESTRICT cos3, const T *CORRELATION_RESTRICT sin3, std::size_t count,
-                             MillerPhaseSumResult<T> &result) noexcept {
+                             const T *CORRELATION_RESTRICT cos3, const T *CORRELATION_RESTRICT sin3,
+                             std::size_t count, MillerPhaseSumResult<T> &result) noexcept {
   miller_phase_sum(
       MillerPhaseSumParams<T>{
           .cos1 = cos1,
@@ -144,10 +150,11 @@ inline void miller_phase_sum(const T *CORRELATION_RESTRICT cos1, const T *CORREL
 }
 
 template <typename T = real_t>
-inline MillerPhaseSumResult<T> miller_phase_sum(const T *CORRELATION_RESTRICT cos1, const T *CORRELATION_RESTRICT sin1,
-                                                const T *CORRELATION_RESTRICT cos2, const T *CORRELATION_RESTRICT sin2,
-                                                const T *CORRELATION_RESTRICT cos3, const T *CORRELATION_RESTRICT sin3,
-                                                std::size_t count) noexcept {
+inline MillerPhaseSumResult<T>
+miller_phase_sum(const T *CORRELATION_RESTRICT cos1, const T *CORRELATION_RESTRICT sin1,
+                 const T *CORRELATION_RESTRICT cos2, const T *CORRELATION_RESTRICT sin2,
+                 const T *CORRELATION_RESTRICT cos3, const T *CORRELATION_RESTRICT sin3,
+                 std::size_t count) noexcept {
   MillerPhaseSumResult<T> result;
   miller_phase_sum(cos1, sin1, cos2, sin2, cos3, sin3, count, result);
   return result;

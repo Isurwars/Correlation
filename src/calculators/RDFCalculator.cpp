@@ -47,8 +47,8 @@ struct RDFSettings {
 };
 
 void accumulateRawCounts(const correlation::core::Cell &cell,
-                         const correlation::analysis::StructureAnalyzer * /*neighbors*/, RDFSettings settings,
-                         correlation::analysis::Histogram &H_r) {
+                         const correlation::analysis::StructureAnalyzer * /*neighbors*/,
+                         RDFSettings settings, correlation::analysis::Histogram &H_r) {
   const auto &elements = cell.elements();
   const size_t num_elements = elements.size();
 
@@ -62,7 +62,8 @@ void accumulateRawCounts(const correlation::core::Cell &cell,
       .r_bin_width = settings.r_bin_width,
       .num_bins = settings.num_bins,
   };
-  DistanceCalculator::compute(cell, cutoff_sq, empty_bonds, true, dummy_graph, &standalone_histograms, hist_config);
+  DistanceCalculator::compute(cell, cutoff_sq, empty_bonds, true, dummy_graph,
+                              &standalone_histograms, hist_config);
 
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = i; j < num_elements; ++j) {
@@ -80,7 +81,8 @@ void accumulateRawCounts(const correlation::core::Cell &cell,
       // raw_histograms. We multiply by 2 to account for both A_1 -> A_2 and A_2
       // -> A_1 interactions.
       if (i == j) {
-        correlation::math::scale_bins(partial_hist.data(), static_cast<real_t>(2.0), settings.num_bins);
+        correlation::math::scale_bins(partial_hist.data(), static_cast<real_t>(2.0),
+                                      settings.num_bins);
       }
     }
   }
@@ -92,9 +94,12 @@ struct RDFNormalizationSettings {
   size_t num_bins;
 };
 
-void normalizeDistributions(const correlation::core::Cell &cell, const std::map<std::string, real_t> &element_counts,
-                            RDFNormalizationSettings settings, const correlation::analysis::Histogram &H_r,
-                            correlation::analysis::Histogram &g_r, correlation::analysis::Histogram &G_r,
+void normalizeDistributions(const correlation::core::Cell &cell,
+                            const std::map<std::string, real_t> &element_counts,
+                            RDFNormalizationSettings settings,
+                            const correlation::analysis::Histogram &H_r,
+                            correlation::analysis::Histogram &g_r,
+                            correlation::analysis::Histogram &G_r,
                             correlation::analysis::Histogram &J_r) {
   const auto &elements = cell.elements();
   const size_t num_elements = elements.size();
@@ -120,7 +125,8 @@ void normalizeDistributions(const correlation::core::Cell &cell, const std::map<
       // Second Pass: Normalize the raw counts H(r) into target distribution
       // functions. g(r) normalization constant: V / (4 * pi * dr * N_i * N_j).
       // The r^2 term is applied per-bin inside the SIMD kernel.
-      const real_t g_norm_constant = settings.volume / (correlation::math::four_pi * settings.bin_width * N_i * N_j);
+      const real_t g_norm_constant =
+          settings.volume / (correlation::math::four_pi * settings.bin_width * N_i * N_j);
       const real_t rho_j = N_j / settings.volume;
       const real_t inv_Ni_dr = static_cast<real_t>(1.0) / (N_i * settings.bin_width);
       const real_t inv_Nj_dr = static_cast<real_t>(1.0) / (N_j * settings.bin_width);
@@ -149,7 +155,8 @@ struct RDFWeightingSettings {
   size_t num_bins;
 };
 
-void weightPartials(const correlation::core::Cell &cell, const std::map<std::string, real_t> &ashcroft_weights,
+void weightPartials(const correlation::core::Cell &cell,
+                    const std::map<std::string, real_t> &ashcroft_weights,
                     RDFWeightingSettings settings, correlation::analysis::Histogram &g_r,
                     correlation::analysis::Histogram &G_r) {
   const auto &elements = cell.elements();
@@ -185,16 +192,16 @@ void weightPartials(const correlation::core::Cell &cell, const std::map<std::str
 
 void RDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                    const correlation::analysis::AnalysisSettings &settings) const {
-  auto results =
-      calculate(dists.cell(), dists.neighbors(), dists.getAshcroftWeights(), settings.r_max, settings.r_bin_width);
+  auto results = calculate(dists.cell(), dists.neighbors(), dists.getAshcroftWeights(),
+                           settings.r_max, settings.r_bin_width);
   for (auto &[name, histogram] : results) {
     dists.addHistogram(name, std::move(histogram));
   }
 }
 
-std::map<std::string, correlation::analysis::Histogram>
-RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors,
-                         const std::map<std::string, real_t> &ashcroft_weights, real_t r_max, real_t r_bin_width) {
+std::map<std::string, correlation::analysis::Histogram> RDFCalculator::calculate(
+    const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors,
+    const std::map<std::string, real_t> &ashcroft_weights, real_t r_max, real_t r_bin_width) {
   if (r_bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive, got: " + std::to_string(r_bin_width));
   }

@@ -142,8 +142,9 @@ private:
   RenderTaskData pending_task_data_;
   std::mutex pending_task_mutex_;
 
-  std::thread dialog_thread_;              ///< Worker thread for native save dialogs
-  std::atomic<bool> dialog_active_{false}; ///< Concurrency guard preventing duplicate dialog launches
+  std::thread dialog_thread_; ///< Worker thread for native save dialogs
+  std::atomic<bool> dialog_active_{
+      false}; ///< Concurrency guard preventing duplicate dialog launches
 
   std::vector<std::string> available_plot_keys_;
 

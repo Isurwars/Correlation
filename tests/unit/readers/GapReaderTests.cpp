@@ -135,10 +135,9 @@ TEST_F(GapReaderTests, ReadStructureReturnsLastFrame) {
 }
 
 TEST_F(GapReaderTests, MalformedHeaderThrows) {
-  const std::string malformed_count =
-      "not_a_number\n"
-      "Properties=species:S:1:pos:R:3\n"
-      "C 0.0 0.0 0.0\n";
+  const std::string malformed_count = "not_a_number\n"
+                                      "Properties=species:S:1:pos:R:3\n"
+                                      "C 0.0 0.0 0.0\n";
 
   auto file1 = createTempFile({.filename = "malformed1.gap", .content = malformed_count});
   correlation::readers::GapReader reader;

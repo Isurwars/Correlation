@@ -80,7 +80,9 @@ TEST_F(MappedFileFunctionalTests, VerifyDataBufferIterationAndSearch) {
 
   // Count spaces in the mapped file
   long long space_count = std::count(begin, end, ' ');
-  EXPECT_EQ(space_count, 9); // "File A: Initial trajectory data with several frames and coordinates." has 9 spaces
+  EXPECT_EQ(
+      space_count,
+      9); // "File A: Initial trajectory data with several frames and coordinates." has 9 spaces
 }
 
 TEST_F(MappedFileFunctionalTests, VerifyPostCreationAppendsAreNotMapped) {

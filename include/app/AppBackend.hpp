@@ -23,11 +23,11 @@ namespace correlation::app {
  * @brief Default values and messages for the application.
  */
 struct AppDefaults {
-  static constexpr real_t R_MAX = 20.0;           ///< Default max radius for RDF (Angstrom).
-  static constexpr real_t R_BIN_WIDTH = 0.02;     ///< Default bin width for RDF (Angstrom).
-  static constexpr real_t Q_MAX = 20.0;           ///< Default max q for S(Q) (Angstrom^-1).
-  static constexpr real_t Q_BIN_WIDTH = 0.02;     ///< Default bin width for S(Q) (Angstrom^-1).
-  static constexpr real_t R_INT_MAX = 10.0;       ///< Default max radius for integration (Angstrom).
+  static constexpr real_t R_MAX = 20.0;       ///< Default max radius for RDF (Angstrom).
+  static constexpr real_t R_BIN_WIDTH = 0.02; ///< Default bin width for RDF (Angstrom).
+  static constexpr real_t Q_MAX = 20.0;       ///< Default max q for S(Q) (Angstrom^-1).
+  static constexpr real_t Q_BIN_WIDTH = 0.02; ///< Default bin width for S(Q) (Angstrom^-1).
+  static constexpr real_t R_INT_MAX = 10.0;   ///< Default max radius for integration (Angstrom).
   static constexpr real_t ANGLE_BIN_WIDTH = 0.25; ///< Default bin width for ADF (Degrees).
   static constexpr real_t SMOOTHING_SIGMA = 0.1;  ///< Default Gaussian smoothing sigma.
   static constexpr real_t LEF_CUTOFF = 5.0;       ///< Default cutoff for local entropy.
@@ -52,50 +52,59 @@ struct AppDefaults {
   static constexpr real_t TIME_STEP = 1.0; ///< Default time step (fs).
 
   // --- Status Messages ---
-  static constexpr const char *MSG_RUNNING_ANALYSIS = "Running Analysis...";      ///< Status: Computation in progress.
-  static constexpr const char *MSG_ANALYSIS_ENDED = "Analysis ended.";            ///< Status: Successfully completed.
-  static constexpr const char *MSG_SELECTING_OUTPUT = "Selecting output file..."; ///< UI: File picker open.
-  static constexpr const char *MSG_FILE_SELECTION_CANCELLED = "File selection cancelled."; ///< UI: User closed picker.
-  static constexpr const char *MSG_ERROR_LOADING = "Error loading file: "; ///< Error: IO or parsing failure.
-  static constexpr const char *MSG_FILES_WRITTEN = "Files Written.";       ///< Success: Data exported.
-  static constexpr const char *MSG_SAVE_CANCELLED = "Save cancelled.";     ///< UI: User aborted save.
+  static constexpr const char *MSG_RUNNING_ANALYSIS =
+      "Running Analysis..."; ///< Status: Computation in progress.
+  static constexpr const char *MSG_ANALYSIS_ENDED =
+      "Analysis ended."; ///< Status: Successfully completed.
+  static constexpr const char *MSG_SELECTING_OUTPUT =
+      "Selecting output file..."; ///< UI: File picker open.
+  static constexpr const char *MSG_FILE_SELECTION_CANCELLED =
+      "File selection cancelled."; ///< UI: User closed picker.
+  static constexpr const char *MSG_ERROR_LOADING =
+      "Error loading file: "; ///< Error: IO or parsing failure.
+  static constexpr const char *MSG_FILES_WRITTEN = "Files Written.";   ///< Success: Data exported.
+  static constexpr const char *MSG_SAVE_CANCELLED = "Save cancelled."; ///< UI: User aborted save.
   static constexpr const char *MSG_ANALYSIS_ABORTED =
-      "Analysis aborted: No trajectory loaded.";                                    ///< Error: Missing data.
-  static constexpr const char *MSG_ERROR_ANALYSIS = "Error during analysis: ";      ///< Error: Computation failure.
-  static constexpr const char *MSG_ERROR_WRITING = "Error during file writing: ";   ///< Error: Export failure.
-  static constexpr const char *MSG_NO_DATA_TO_WRITE = "No analysis data to write."; ///< Error: Empty results.
+      "Analysis aborted: No trajectory loaded."; ///< Error: Missing data.
+  static constexpr const char *MSG_ERROR_ANALYSIS =
+      "Error during analysis: "; ///< Error: Computation failure.
+  static constexpr const char *MSG_ERROR_WRITING =
+      "Error during file writing: "; ///< Error: Export failure.
+  static constexpr const char *MSG_NO_DATA_TO_WRITE =
+      "No analysis data to write."; ///< Error: Empty results.
 };
 
 /**
  * @brief Encapsulates all configurable options for the application.
  */
 struct ProgramOptions {
-  std::string input_file;                                   ///< Path to the input trajectory file.
-  std::string output_file_base;                             ///< Base path/name for output files.
-  bool smoothing = true;                                    ///< Whether to apply Gaussian smoothing to results.
-  bool use_hdf5 = false;                                    ///< Enable HDF5 output format.
-  bool use_csv = true;                                      ///< Enable CSV output format.
-  bool use_parquet = false;                                 ///< Enable Parquet output format.
-  real_t r_max = AppDefaults::R_MAX;                        ///< Max distance for RDF calculation.
+  std::string input_file;            ///< Path to the input trajectory file.
+  std::string output_file_base;      ///< Base path/name for output files.
+  bool smoothing = true;             ///< Whether to apply Gaussian smoothing to results.
+  bool use_hdf5 = false;             ///< Enable HDF5 output format.
+  bool use_csv = true;               ///< Enable CSV output format.
+  bool use_parquet = false;          ///< Enable Parquet output format.
+  real_t r_max = AppDefaults::R_MAX; ///< Max distance for RDF calculation.
   real_t r_bin_width = AppDefaults::R_BIN_WIDTH;            ///< Step size for RDF histogram.
   real_t q_max = AppDefaults::Q_MAX;                        ///< Max momentum transfer for S(Q).
   real_t q_bin_width = AppDefaults::Q_BIN_WIDTH;            ///< Step size for S(Q) histogram.
   real_t r_int_max = AppDefaults::R_INT_MAX;                ///< Upper limit for g(r) integration.
   real_t angle_bin_width = AppDefaults::ANGLE_BIN_WIDTH;    ///< Step size for ADF.
   real_t dihedral_bin_width = AppDefaults::ANGLE_BIN_WIDTH; ///< Step size for dihedral analysis.
-  size_t max_ring_size = 8;                                 ///< Maximum ring size for topological analysis.
+  size_t max_ring_size = 8; ///< Maximum ring size for topological analysis.
 
   /** @brief Map of calculator ID to its enabled state. */
   std::map<std::string, bool> active_calculators;
 
   real_t smoothing_sigma = AppDefaults::SMOOTHING_SIGMA; ///< Sigma for Gaussian kernel.
   real_t lef_cutoff = AppDefaults::LEF_CUTOFF;           ///< Cutoff radius for local entropy.
-  real_t lef_sigma = AppDefaults::LEF_SIGMA;             ///< Gaussian standard deviation for local entropy.
-  size_t hyper_samples = 10000;                          ///< Number of random samples for hyperuniformity.
-  correlation::math::KernelType smoothing_kernel = AppDefaults::SMOOTHING_KERNEL; ///< Smoothing kernel type.
-  int min_frame = 0;                                                              ///< Starting frame index.
-  int max_frame = -1;                                                             ///< Ending frame index (-1 for all).
-  real_t time_step = AppDefaults::TIME_STEP;                                      ///< Simulation time step in fs.
+  real_t lef_sigma = AppDefaults::LEF_SIGMA; ///< Gaussian standard deviation for local entropy.
+  size_t hyper_samples = 10000;              ///< Number of random samples for hyperuniformity.
+  correlation::math::KernelType smoothing_kernel =
+      AppDefaults::SMOOTHING_KERNEL;         ///< Smoothing kernel type.
+  int min_frame = 0;                         ///< Starting frame index.
+  int max_frame = -1;                        ///< Ending frame index (-1 for all).
+  real_t time_step = AppDefaults::TIME_STEP; ///< Simulation time step in fs.
 
   int material_type = 0; ///< Material type (0: Amorphous, 1: Liquid, 2: Crystalline).
 
@@ -142,7 +151,9 @@ public:
    * @param calc_id Calculator ID (e.g., "RDF", "SQ").
    * @param enabled Whether this calculator should run.
    */
-  void setCalculatorActive(const std::string &calc_id, bool enabled) { options_.active_calculators[calc_id] = enabled; }
+  void setCalculatorActive(const std::string &calc_id, bool enabled) {
+    options_.active_calculators[calc_id] = enabled;
+  }
 
   /**
    * @brief Gets a pointer to the current cell (first frame of trajectory).
@@ -283,7 +294,8 @@ public:
    * @brief Returns all histograms from the last analysis.
    * @return A map of histogram names to Histogram objects.
    */
-  [[nodiscard]] const std::map<std::string, correlation::analysis::Histogram> &getHistograms() const {
+  [[nodiscard]] const std::map<std::string, correlation::analysis::Histogram> &
+  getHistograms() const {
     static const std::map<std::string, correlation::analysis::Histogram> empty_map;
     return df_ ? df_->getAllHistograms() : empty_map;
   }
@@ -292,7 +304,8 @@ public:
    * @brief Returns the DistributionFunctions results.
    * @return Pointer to the active DistributionFunctions container.
    */
-  [[nodiscard]] const correlation::analysis::DistributionFunctions *getDistributionFunctions() const {
+  [[nodiscard]] const correlation::analysis::DistributionFunctions *
+  getDistributionFunctions() const {
     return df_.get();
   }
 
@@ -321,11 +334,13 @@ private:
   std::string validateOptions() const;
 
   // --- Private Data Members ---
-  std::unique_ptr<correlation::core::Trajectory> trajectory_;        ///< Loaded trajectory data.
-  std::unique_ptr<correlation::analysis::DistributionFunctions> df_; ///< Combined calculation results.
+  std::unique_ptr<correlation::core::Trajectory> trajectory_; ///< Loaded trajectory data.
+  std::unique_ptr<correlation::analysis::DistributionFunctions>
+      df_; ///< Combined calculation results.
 
-  ProgramOptions options_;                                            ///< Active configuration.
-  std::function<void(float, const std::string &)> progress_callback_; ///< Progress notification hook.
-  std::atomic<bool> cancel_flag_{false};                              ///< Flag to cancel ongoing analysis.
+  ProgramOptions options_; ///< Active configuration.
+  std::function<void(float, const std::string &)>
+      progress_callback_;                ///< Progress notification hook.
+  std::atomic<bool> cancel_flag_{false}; ///< Flag to cancel ongoing analysis.
 };
 } // namespace correlation::app

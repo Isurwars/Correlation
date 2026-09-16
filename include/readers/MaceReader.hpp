@@ -28,31 +28,35 @@ namespace correlation::readers {
 class MaceReader : public BaseReader {
 public:
   [[nodiscard]] std::string getName() const override { return "MACE Reader"; }
-  [[nodiscard]] std::vector<std::string> getExtensions() const override { return {".mace", ".xyz", ".extxyz"}; }
+  [[nodiscard]] std::vector<std::string> getExtensions() const override {
+    return {".mace", ".xyz", ".extxyz"};
+  }
   [[nodiscard]] bool isTrajectory() const override { return true; }
 
-  correlation::core::Cell
-  readStructure(const std::string &filename,
-                std::function<void(float, const std::string &)> progress_callback = nullptr) override;
+  correlation::core::Cell readStructure(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
-  correlation::core::Trajectory
-  readTrajectory(const std::string &filename,
-                 std::function<void(float, const std::string &)> progress_callback = nullptr) override;
+  correlation::core::Trajectory readTrajectory(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
   /**
    * @struct CommentData
-   * @brief Intermediate storage for parsed MACE Extended XYZ comment line metadata and column layout.
+   * @brief Intermediate storage for parsed MACE Extended XYZ comment line metadata and column
+   * layout.
    */
   struct CommentData {
-    std::optional<std::array<real_t, 9>> lattice; ///< Optional 3x3 lattice vector matrix (Angstroms).
-    std::optional<real_t> energy;                 ///< Optional total potential energy.
-    int species_col = 0;                          ///< 0-based column index for chemical species.
-    int pos_x_col = 1;                            ///< 0-based column index for X coordinate.
-    int pos_y_col = 2;                            ///< 0-based column index for Y coordinate.
-    int pos_z_col = 3;                            ///< 0-based column index for Z coordinate.
-    int force_x_col = -1;                         ///< 0-based column index for X force (or -1 if absent).
-    int force_y_col = -1;                         ///< 0-based column index for Y force (or -1 if absent).
-    int force_z_col = -1;                         ///< 0-based column index for Z force (or -1 if absent).
+    std::optional<std::array<real_t, 9>>
+        lattice;                  ///< Optional 3x3 lattice vector matrix (Angstroms).
+    std::optional<real_t> energy; ///< Optional total potential energy.
+    int species_col = 0;          ///< 0-based column index for chemical species.
+    int pos_x_col = 1;            ///< 0-based column index for X coordinate.
+    int pos_y_col = 2;            ///< 0-based column index for Y coordinate.
+    int pos_z_col = 3;            ///< 0-based column index for Z coordinate.
+    int force_x_col = -1;         ///< 0-based column index for X force (or -1 if absent).
+    int force_y_col = -1;         ///< 0-based column index for Y force (or -1 if absent).
+    int force_z_col = -1;         ///< 0-based column index for Z force (or -1 if absent).
   };
 
 private:

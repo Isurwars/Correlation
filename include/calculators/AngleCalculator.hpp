@@ -38,7 +38,9 @@ public:
   [[nodiscard]] std::string_view getName() const override { return "Angle"; }
   [[nodiscard]] std::string_view getShortName() const override { return "PAD"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
-  [[nodiscard]] std::string_view getDescription() const override { return "Computes the Plane-Angle Distribution (PAD)."; }
+  [[nodiscard]] std::string_view getDescription() const override {
+    return "Computes the Plane-Angle Distribution (PAD).";
+  }
 
   [[nodiscard]] bool isFrameCalculator() const override { return true; }
   [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
@@ -54,8 +56,8 @@ public:
    * @param out_angles A 4D tensor `[outer1][central][outer2][angle_idx]`
    * populated with angles in radians.
    */
-  static void compute(const correlation::core::Cell &cell, const correlation::core::NeighborGraph &graph,
-                      AngleTensor &out_angles);
+  static void compute(const correlation::core::Cell &cell,
+                      const correlation::core::NeighborGraph &graph, AngleTensor &out_angles);
 };
 
 } // namespace correlation::calculators

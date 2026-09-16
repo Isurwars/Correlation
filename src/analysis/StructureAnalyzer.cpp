@@ -30,7 +30,8 @@ void validateBondCutoffs(const BondCutoffMatrix &bond_cutoffs) {
         throw std::invalid_argument("Minimum bond cutoff squared must be non-negative.");
       }
       if (range.max_sq > 0.0 && range.max_sq < range.min_sq) {
-        throw std::invalid_argument("Maximum bond cutoff squared cannot be less than minimum bond cutoff squared.");
+        throw std::invalid_argument(
+            "Maximum bond cutoff squared cannot be less than minimum bond cutoff squared.");
       }
     }
   }
@@ -54,9 +55,9 @@ real_t computeMaxBondDistance(const BondCutoffMatrix &bond_cutoffs, size_t num_e
 
 } // namespace
 
-StructureAnalyzer::StructureAnalyzer(std::shared_ptr<const correlation::core::Cell> cell, real_t cutoff,
-                                     BondCutoffMatrix bond_cutoffs, bool ignore_periodic_self_interactions,
-                                     real_t r_bin_width)
+StructureAnalyzer::StructureAnalyzer(std::shared_ptr<const correlation::core::Cell> cell,
+                                     real_t cutoff, BondCutoffMatrix bond_cutoffs,
+                                     bool ignore_periodic_self_interactions, real_t r_bin_width)
     : cell_(std::move(cell)), cutoff_sq_(cutoff * cutoff), bond_cutoffs_(std::move(bond_cutoffs)),
       ignore_periodic_self_interactions_(ignore_periodic_self_interactions) {
   if (!cell_) {
@@ -80,10 +81,11 @@ StructureAnalyzer::StructureAnalyzer(std::shared_ptr<const correlation::core::Ce
 
   // Initialize the raw histogram tensor and neighbor graph
   const size_t num_elements = cell_->elements().size();
-  const size_t num_bins =
-      (r_bin_width > 0.0 && cutoff > 0.0) ? static_cast<size_t>(std::ceil(cutoff / r_bin_width)) : 0;
-  raw_histograms_.resize(num_elements,
-                         std::vector<std::vector<real_t>>(num_elements, std::vector<real_t>(num_bins, 0.0)));
+  const size_t num_bins = (r_bin_width > 0.0 && cutoff > 0.0)
+                              ? static_cast<size_t>(std::ceil(cutoff / r_bin_width))
+                              : 0;
+  raw_histograms_.resize(num_elements, std::vector<std::vector<real_t>>(
+                                           num_elements, std::vector<real_t>(num_bins, 0.0)));
   neighbor_graph_ = correlation::core::NeighborGraph(cell_->atomCount());
 
   calculators::DistanceCalculationConfig const hist_config{
@@ -93,21 +95,25 @@ StructureAnalyzer::StructureAnalyzer(std::shared_ptr<const correlation::core::Ce
   };
 
   // Delegate distance and neighbor graph computation to DistanceCalculator
-  correlation::calculators::DistanceCalculator::compute(*cell_, cutoff_sq_, bond_cutoffs_,
-                                                        ignore_periodic_self_interactions_, neighbor_graph_,
-                                                        &raw_histograms_, hist_config);
+  correlation::calculators::DistanceCalculator::compute(
+      *cell_, cutoff_sq_, bond_cutoffs_, ignore_periodic_self_interactions_, neighbor_graph_,
+      &raw_histograms_, hist_config);
 }
 
-StructureAnalyzer::StructureAnalyzer(const correlation::core::Cell &cell, real_t cutoff, BondCutoffMatrix bond_cutoffs,
+StructureAnalyzer::StructureAnalyzer(const correlation::core::Cell &cell, real_t cutoff,
+                                     BondCutoffMatrix bond_cutoffs,
                                      bool ignore_periodic_self_interactions, real_t r_bin_width)
-    : StructureAnalyzer(std::make_shared<correlation::core::Cell>(cell), cutoff, std::move(bond_cutoffs),
-                        ignore_periodic_self_interactions, r_bin_width) {}
+    : StructureAnalyzer(std::make_shared<correlation::core::Cell>(cell), cutoff,
+                        std::move(bond_cutoffs), ignore_periodic_self_interactions, r_bin_width) {}
 
 StructureAnalyzer::StructureAnalyzer(StructureAnalyzer &&other) noexcept
-    : cell_(std::move(other.cell_)), cutoff_sq_(other.cutoff_sq_), bond_cutoffs_(std::move(other.bond_cutoffs_)),
+    : cell_(std::move(other.cell_)), cutoff_sq_(other.cutoff_sq_),
+      bond_cutoffs_(std::move(other.bond_cutoffs_)),
       ignore_periodic_self_interactions_(other.ignore_periodic_self_interactions_),
-      neighbor_graph_(std::move(other.neighbor_graph_)), raw_histograms_(std::move(other.raw_histograms_)),
-      angle_tensor_(std::move(other.angle_tensor_)), dihedral_tensor_(std::move(other.dihedral_tensor_)),
+      neighbor_graph_(std::move(other.neighbor_graph_)),
+      raw_histograms_(std::move(other.raw_histograms_)),
+      angle_tensor_(std::move(other.angle_tensor_)),
+      dihedral_tensor_(std::move(other.dihedral_tensor_)),
       angles_computed_(other.angles_computed_.load(std::memory_order_relaxed)),
       dihedrals_computed_(other.dihedrals_computed_.load(std::memory_order_relaxed)) {}
 
@@ -122,8 +128,10 @@ StructureAnalyzer &StructureAnalyzer::operator=(StructureAnalyzer &&other) noexc
     raw_histograms_ = std::move(other.raw_histograms_);
     angle_tensor_ = std::move(other.angle_tensor_);
     dihedral_tensor_ = std::move(other.dihedral_tensor_);
-    angles_computed_.store(other.angles_computed_.load(std::memory_order_relaxed), std::memory_order_relaxed);
-    dihedrals_computed_.store(other.dihedrals_computed_.load(std::memory_order_relaxed), std::memory_order_relaxed);
+    angles_computed_.store(other.angles_computed_.load(std::memory_order_relaxed),
+                           std::memory_order_relaxed);
+    dihedrals_computed_.store(other.dihedrals_computed_.load(std::memory_order_relaxed),
+                              std::memory_order_relaxed);
   }
   return *this;
 }
@@ -147,8 +155,9 @@ void StructureAnalyzer::ensureAnglesComputed() const {
     return;
   }
   const size_t num_elements = cell_->elements().size();
-  angle_tensor_.resize(num_elements, std::vector<std::vector<std::vector<real_t>>>(
-                                         num_elements, std::vector<std::vector<real_t>>(num_elements)));
+  angle_tensor_.resize(num_elements,
+                       std::vector<std::vector<std::vector<real_t>>>(
+                           num_elements, std::vector<std::vector<real_t>>(num_elements)));
 
   correlation::calculators::AngleCalculator::compute(*cell_, neighbor_graph_, angle_tensor_);
   angles_computed_.store(true, std::memory_order_release);
@@ -163,10 +172,11 @@ void StructureAnalyzer::ensureDihedralsComputed() const {
     return;
   }
   const size_t num_elements = cell_->elements().size();
-  dihedral_tensor_.resize(num_elements,
-                          std::vector<std::vector<std::vector<std::vector<real_t>>>>(
-                              num_elements, std::vector<std::vector<std::vector<real_t>>>(
-                                                num_elements, std::vector<std::vector<real_t>>(num_elements))));
+  dihedral_tensor_.resize(
+      num_elements,
+      std::vector<std::vector<std::vector<std::vector<real_t>>>>(
+          num_elements, std::vector<std::vector<std::vector<real_t>>>(
+                            num_elements, std::vector<std::vector<real_t>>(num_elements))));
 
   correlation::calculators::DihedralCalculator::compute(*cell_, neighbor_graph_, dihedral_tensor_);
   dihedrals_computed_.store(true, std::memory_order_release);

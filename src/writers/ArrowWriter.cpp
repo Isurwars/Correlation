@@ -38,12 +38,14 @@ std::vector<std::string> getSortedKeys(const std::map<std::string, std::vector<r
   return keys;
 }
 
-void addFloatColumn(const std::string &name, const std::vector<real_t> &values, arrow::FieldVector &fields,
+void addFloatColumn(const std::string &name, const std::vector<real_t> &values,
+                    arrow::FieldVector &fields,
                     std::vector<std::shared_ptr<arrow::Array>> &arrays) {
   fields.push_back(arrow::field(name, arrow::float32()));
   arrow::FloatBuilder builder;
   std::vector<float> float_values(values.begin(), values.end());
-  PARQUET_THROW_NOT_OK(builder.AppendValues(float_values.data(), static_cast<int64_t>(float_values.size())));
+  PARQUET_THROW_NOT_OK(
+      builder.AppendValues(float_values.data(), static_cast<int64_t>(float_values.size())));
   std::shared_ptr<arrow::Array> array;
   PARQUET_THROW_NOT_OK(builder.Finish(&array));
   arrays.push_back(array);
@@ -55,15 +57,16 @@ void writeTableToParquet(const std::string &filename, const std::shared_ptr<arro
 
   std::shared_ptr<parquet::WriterProperties> props = parquet::WriterProperties::Builder().build();
 
-  PARQUET_THROW_NOT_OK(
-      parquet::arrow::WriteTable(*table, arrow::default_memory_pool(), outfile, 1024LL * 1024LL, props));
+  PARQUET_THROW_NOT_OK(parquet::arrow::WriteTable(*table, arrow::default_memory_pool(), outfile,
+                                                  1024LL * 1024LL, props));
   PARQUET_THROW_NOT_OK(outfile->Close());
 }
 
 } // namespace
 
 void ArrowWriter::writeAllParquet(const std::string &base_path,
-                                  const correlation::analysis::DistributionFunctions &dists, bool /*write_smoothed*/) {
+                                  const correlation::analysis::DistributionFunctions &dists,
+                                  bool /*write_smoothed*/) {
   const auto &all_histograms = dists.getAllHistograms();
   for (const auto &[name, hist] : all_histograms) {
     try {
@@ -88,7 +91,8 @@ void ArrowWriter::writeAllParquet(const std::string &base_path,
   }
 }
 
-void ArrowWriter::writeHistogramToParquet(const std::string &filename, const correlation::analysis::Histogram &hist,
+void ArrowWriter::writeHistogramToParquet(const std::string &filename,
+                                          const correlation::analysis::Histogram &hist,
                                           const correlation::analysis::Histogram *raw_companion) {
   if (hist.partials.empty() || hist.bins.empty()) {
     return;
@@ -136,9 +140,8 @@ void ArrowWriter::writeHistogramToParquet(const std::string &filename, const cor
   }
 
   // Attach CSV-aligned header metadata to schema
-  auto metadata = arrow::key_value_metadata(
-      {"dim_label", "bin_unit", "data_unit", "description"},
-      {dim_label, bin_unit, data_unit, description});
+  auto metadata = arrow::key_value_metadata({"dim_label", "bin_unit", "data_unit", "description"},
+                                            {dim_label, bin_unit, data_unit, description});
   auto schema = arrow::schema(fields, metadata);
 
   int64_t num_rows = static_cast<int64_t>(hist.bins.size());

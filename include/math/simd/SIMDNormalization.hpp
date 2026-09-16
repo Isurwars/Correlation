@@ -33,7 +33,8 @@ template <typename T> inline T sinc_integral(const SincIntegralParams<T> &params
  * @brief Computes a sinc-weighted integral for double precision (backward compatibility).
  */
 inline double sinc_integral(double q_magnitude, const double *CORRELATION_RESTRICT integrand,
-                            const double *CORRELATION_RESTRICT radial_bins, double *CORRELATION_RESTRICT sinqr_scratch,
+                            const double *CORRELATION_RESTRICT radial_bins,
+                            double *CORRELATION_RESTRICT sinqr_scratch,
                             std::size_t count) noexcept {
   return sinc_integral(SincIntegralParams<double>{
       .q_magnitude = q_magnitude,
@@ -48,8 +49,8 @@ inline double sinc_integral(double q_magnitude, const double *CORRELATION_RESTRI
  * @brief Computes a sinc-weighted integral for single precision (backward compatibility).
  */
 inline float sinc_integral(float q_magnitude, const float *CORRELATION_RESTRICT integrand,
-                           const float *CORRELATION_RESTRICT radial_bins, float *CORRELATION_RESTRICT sinqr_scratch,
-                           std::size_t count) noexcept {
+                           const float *CORRELATION_RESTRICT radial_bins,
+                           float *CORRELATION_RESTRICT sinqr_scratch, std::size_t count) noexcept {
   return sinc_integral(SincIntegralParams<float>{
       .q_magnitude = q_magnitude,
       .integrand = integrand,
@@ -63,7 +64,8 @@ inline float sinc_integral(float q_magnitude, const float *CORRELATION_RESTRICT 
  * @brief Normalizes Radial Distribution Function (RDF) bins.
  * @tparam T Floating-point precision (float or double).
  */
-template <typename T> inline void normalize_rdf_bins(const RDFNormalizationParams<T> &params) noexcept {
+template <typename T>
+inline void normalize_rdf_bins(const RDFNormalizationParams<T> &params) noexcept {
 #ifdef CORRELATION_SIMD_AVX512
   detail::avx512::normalize_rdf_bins(params);
 #elif defined(CORRELATION_SIMD_AVX2)

@@ -94,8 +94,9 @@ std::optional<PdbAtomData> parsePdbAtomLine(const std::string &line) {
 
 } // namespace
 
-correlation::core::Cell PdbReader::readStructure(const std::string &filename,
-                                                 std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell
+PdbReader::readStructure(const std::string &filename,
+                         std::function<void(float, const std::string &)> progress_callback) {
   std::ifstream file(filename);
   if (!file.is_open()) {
     throw std::runtime_error("Could not open file: " + filename);
@@ -159,7 +160,8 @@ PdbReader::readTrajectory(const std::string &filename,
       in_model = true;
     } else if (line.starts_with("ATOM") || line.starts_with("HETATM")) {
       if (auto atom = parsePdbAtomLine(line)) {
-        current_cell.addAtom(atom->symbol, correlation::math::Vector3<real_t>(atom->x, atom->y, atom->z));
+        current_cell.addAtom(atom->symbol,
+                             correlation::math::Vector3<real_t>(atom->x, atom->y, atom->z));
       }
     } else if (line.starts_with("ENDMDL")) {
       frames.push_back(std::move(current_cell));

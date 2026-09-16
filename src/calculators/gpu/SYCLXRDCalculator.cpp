@@ -12,7 +12,8 @@
 
 namespace correlation::calculators::sycl_gpu {
 
-correlation::analysis::Histogram compute_xrd_sycl(const correlation::core::Cell &cell, const SYCLXRDParams &params) {
+correlation::analysis::Histogram compute_xrd_sycl(const correlation::core::Cell &cell,
+                                                  const SYCLXRDParams &params) {
   real_t const r_max = 10.0;
   correlation::core::Trajectory traj;
   traj.addFrame(cell);
@@ -23,8 +24,9 @@ correlation::analysis::Histogram compute_xrd_sycl(const correlation::core::Cell 
 
   const auto &g_r_hist = dists.getHistogram("g_r");
 
-  return XRDCalculator::calculate(g_r_hist, cell, dists.getAshcroftWeights(), Wavelength{params.lambda},
-                                  MinTheta{params.theta_min}, MaxTheta{params.theta_max}, BinWidth{params.bin_width});
+  return XRDCalculator::calculate(g_r_hist, cell, dists.getAshcroftWeights(),
+                                  Wavelength{params.lambda}, MinTheta{params.theta_min},
+                                  MaxTheta{params.theta_max}, BinWidth{params.bin_width});
 }
 
 } // namespace correlation::calculators::sycl_gpu

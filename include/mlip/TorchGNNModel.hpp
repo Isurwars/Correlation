@@ -27,7 +27,8 @@ public:
    * @param[in] device Execution target device (e.g. "cpu", "cuda", "cuda:0").
    * @param[in] cutoff Radial neighbor cutoff radius in Angstroms (default: 5.0).
    */
-  explicit TorchGNNModel(std::string model_path, std::string device = "cpu", real_t cutoff = static_cast<real_t>(5.0));
+  explicit TorchGNNModel(std::string model_path, std::string device = "cpu",
+                         real_t cutoff = static_cast<real_t>(5.0));
 
   ~TorchGNNModel() override;
 

@@ -43,7 +43,8 @@ DistributionFunctions::DistributionFunctions(DistributionFunctions &&other) noex
     : cell_(std::move(other.cell_)), neighbors_ref_(other.neighbors_ref_),
       neighbors_owned_(std::move(other.neighbors_owned_)), current_cutoff_(other.current_cutoff_),
       bond_cutoffs_(std::move(other.bond_cutoffs_)), histograms_(std::move(other.histograms_)),
-      ashcroft_weights_(std::move(other.ashcroft_weights_)), dynamic_properties_(other.dynamic_properties_) {
+      ashcroft_weights_(std::move(other.ashcroft_weights_)),
+      dynamic_properties_(other.dynamic_properties_) {
 
   other.current_cutoff_ = -1.0;
   other.neighbors_ref_ = nullptr;
@@ -187,7 +188,8 @@ void DistributionFunctions::calculateAshcroftWeights() {
   // calculation.
 }
 
-void DistributionFunctions::smooth(const std::string &name, real_t sigma, correlation::math::KernelType kernel) {
+void DistributionFunctions::smooth(const std::string &name, real_t sigma,
+                                   correlation::math::KernelType kernel) {
   if (!histograms_.contains(name)) {
     throw std::runtime_error("Histogram '" + name + "' not found for smoothing.");
   }
@@ -209,8 +211,8 @@ void DistributionFunctions::smooth(const std::string &name, real_t sigma, correl
   if (name == "BAD" || name == "PAD" || name == "PAD_raw" || name == "DAD" || name == "DAD_raw") {
     // Angular distributions operate on [0, 180] or [0, 360] degrees instead of [0, 20] Angstroms.
     // Domain ratio between angular space (~180 deg) and spatial r_max (~20 Å) is ~9.0x.
-    // Scale sigma proportionally so that angular smoothing spans an enhanced smoothing window (~15x spatial sigma, e.g.
-    // 0.1 -> 1.5 deg).
+    // Scale sigma proportionally so that angular smoothing spans an enhanced smoothing window (~15x
+    // spatial sigma, e.g. 0.1 -> 1.5 deg).
     constexpr auto angular_domain_scale = static_cast<real_t>(15.0);
     effective_sigma = sigma * angular_domain_scale;
   }
@@ -227,15 +229,17 @@ void DistributionFunctions::smooth(const std::string &name, real_t sigma, correl
 
   // Compute each partial's smoothed values in parallel.
   std::vector<std::vector<real_t>> results(entries.size());
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, entries.size()), [&](const tbb::blocked_range<size_t> &range) {
-    for (size_t i = range.begin(); i != range.end(); ++i) {
-      results[i] = correlation::math::KernelSmoothing(*entries[i].second, {
-                                                                              .bin_width = bin_dx,
-                                                                              .sigma = min_sigma,
-                                                                              .type = kernel,
-                                                                          });
-    }
-  });
+  tbb::parallel_for(
+      tbb::blocked_range<size_t>(0, entries.size()), [&](const tbb::blocked_range<size_t> &range) {
+        for (size_t i = range.begin(); i != range.end(); ++i) {
+          results[i] =
+              correlation::math::KernelSmoothing(*entries[i].second, {
+                                                                         .bin_width = bin_dx,
+                                                                         .sigma = min_sigma,
+                                                                         .type = kernel,
+                                                                     });
+        }
+      });
 
   // Serial writeback — map insertions are not thread-safe.
   for (size_t i = 0; i < entries.size(); ++i) {
@@ -270,8 +274,8 @@ void DistributionFunctions::calculateRDF(RDFParams params) {
     settings.r_bin_width = r_bin_width;
     calc->calculateFrame(*this, settings);
   } else {
-    auto results =
-        correlation::calculators::RDFCalculator::calculate(cell_, neighbors(), ashcroft_weights_, r_max, r_bin_width);
+    auto results = correlation::calculators::RDFCalculator::calculate(
+        cell_, neighbors(), ashcroft_weights_, r_max, r_bin_width);
     for (auto &[name, histogram] : results) {
       histograms_[name] = std::move(histogram);
     }
@@ -298,10 +302,11 @@ void DistributionFunctions::calculateDAD(real_t bin_width) {
   }
 }
 
-void DistributionFunctions::calculateVACF(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames,
-                                          StartFrame start_frame, EndFrame end_frame) {
-  auto results =
-      correlation::calculators::VACFCalculator::calculate(traj, max_correlation_frames, start_frame, end_frame);
+void DistributionFunctions::calculateVACF(const correlation::core::Trajectory &traj,
+                                          MaxFrames max_correlation_frames, StartFrame start_frame,
+                                          EndFrame end_frame) {
+  auto results = correlation::calculators::VACFCalculator::calculate(traj, max_correlation_frames,
+                                                                     start_frame, end_frame);
   for (auto &[name, histogram] : results) {
     histograms_[name] = std::move(histogram);
   }
@@ -398,20 +403,21 @@ void DistributionFunctions::scale(real_t factor) {
   }
 }
 
-std::unique_ptr<DistributionFunctions>
-DistributionFunctions::processSingleFrame(correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
-                                          size_t frame_idx, const AnalysisSettings &settings,
-                                          const BondCutoffMatrix &bond_cutoffs) {
+std::unique_ptr<DistributionFunctions> DistributionFunctions::processSingleFrame(
+    correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer, size_t frame_idx,
+    const AnalysisSettings &settings, const BondCutoffMatrix &bond_cutoffs) {
   if (frame_idx >= trajectory.getFrameCount()) {
     return nullptr;
   }
 
   correlation::core::Cell frame = trajectory.getFrame(frame_idx);
-  auto frame_df = std::make_unique<DistributionFunctions>(frame, static_cast<real_t>(0.0), bond_cutoffs);
+  auto frame_df =
+      std::make_unique<DistributionFunctions>(frame, static_cast<real_t>(0.0), bond_cutoffs);
   frame_df->setStructureAnalyzerOwned(analyzer.createAnalyzer(frame_idx));
 
   // Dispatch independent frame-based calculators from the factory
-  const auto &factory_calcs = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
+  const auto &factory_calcs =
+      ::correlation::calculators::CalculatorFactory::instance().getCalculators();
   tbb::task_group calc_group;
   for (const auto &calc : factory_calcs) {
     if (!calc->isFrameCalculator()) {
@@ -426,12 +432,14 @@ DistributionFunctions::processSingleFrame(correlation::core::Trajectory &traject
     if (!settings.isActive(calc->getName()) && !settings.isActive(calc->getShortName())) {
       continue;
     }
-    calc_group.run([&calc, df_ptr = frame_df.get(), &settings]() { calc->calculateFrame(*df_ptr, settings); });
+    calc_group.run(
+        [&calc, df_ptr = frame_df.get(), &settings]() { calc->calculateFrame(*df_ptr, settings); });
   }
   calc_group.wait();
 
   // Run dependent frame calculators (e.g. XRD) after g_r is computed
-  const auto *xrd_calc = ::correlation::calculators::CalculatorFactory::instance().getCalculator("XRD");
+  const auto *xrd_calc =
+      ::correlation::calculators::CalculatorFactory::instance().getCalculator("XRD");
   if (xrd_calc != nullptr && xrd_calc->isConfigured() &&
       (settings.isActive(xrd_calc->getName()) || settings.isActive(xrd_calc->getShortName()))) {
     xrd_calc->calculateFrame(*frame_df, settings);
@@ -458,10 +466,10 @@ void DistributionFunctions::normalizeHistograms(DistributionFunctions &dist_func
   }
 }
 
-std::unique_ptr<DistributionFunctions>
-DistributionFunctions::computeMean(correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
-                                   size_t start_frame, const AnalysisSettings &settings,
-                                   std::function<void(float, const std::string &)> progress_callback) {
+std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
+    correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
+    size_t start_frame, const AnalysisSettings &settings,
+    std::function<void(float, const std::string &)> progress_callback) {
 
   const size_t num_frames = analyzer.getNumFrames();
   if (num_frames == 0) {
@@ -477,26 +485,29 @@ DistributionFunctions::computeMean(correlation::core::Trajectory &trajectory, co
   std::atomic<size_t> completed_frames{0};
 
   // TBB parallel_for nests cleanly with TBB calls inside each frame's
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, num_frames), [&](const tbb::blocked_range<size_t> &range) {
-    for (size_t i = range.begin(); i != range.end(); ++i) {
-      if (settings.cancel_flag && settings.cancel_flag->load()) {
-        continue;
-      }
-      const size_t frame_idx = start_frame + i;
+  tbb::parallel_for(
+      tbb::blocked_range<size_t>(0, num_frames), [&](const tbb::blocked_range<size_t> &range) {
+        for (size_t i = range.begin(); i != range.end(); ++i) {
+          if (settings.cancel_flag && settings.cancel_flag->load()) {
+            continue;
+          }
+          const size_t frame_idx = start_frame + i;
 
-      results[i] = processSingleFrame(trajectory, analyzer, frame_idx, settings, bond_cutoffs);
-      if (!results[i]) {
-        continue;
-      }
+          results[i] = processSingleFrame(trajectory, analyzer, frame_idx, settings, bond_cutoffs);
+          if (!results[i]) {
+            continue;
+          }
 
-      const size_t current_completed = ++completed_frames;
-      if (progress_callback) {
-        const std::scoped_lock lock(callback_mutex);
-        progress_callback(static_cast<float>(current_completed) / static_cast<float>(num_frames),
-                          "Calculating: " + std::to_string(current_completed) + " of " + std::to_string(num_frames));
-      }
-    }
-  });
+          const size_t current_completed = ++completed_frames;
+          if (progress_callback) {
+            const std::scoped_lock lock(callback_mutex);
+            progress_callback(static_cast<float>(current_completed) /
+                                  static_cast<float>(num_frames),
+                              "Calculating: " + std::to_string(current_completed) + " of " +
+                                  std::to_string(num_frames));
+          }
+        }
+      });
 
   // Accumulate results
   if (results.empty() || !results[0]) {

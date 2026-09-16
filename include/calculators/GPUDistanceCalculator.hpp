@@ -21,26 +21,27 @@ namespace correlation::calculators::gpu {
 bool has_gpu_device();
 
 /**
- * @brief Performs GPU-accelerated pairwise distance computations for floating point precision T (float or double).
+ * @brief Performs GPU-accelerated pairwise distance computations for floating point precision T
+ * (float or double).
  */
 template <typename T = real_t>
 void compute_distances_gpu(const correlation::core::Cell &cell, T cutoff_sq,
-                           const std::vector<std::vector<T>> &bond_cutoffs_sq, bool ignore_periodic_self_interactions,
-                           RawHistogramTensor *out_histograms, DistanceCalculationConfig hist_config,
+                           const std::vector<std::vector<T>> &bond_cutoffs_sq,
+                           bool ignore_periodic_self_interactions,
+                           RawHistogramTensor *out_histograms,
+                           DistanceCalculationConfig hist_config,
                            correlation::core::NeighborGraph &out_graph);
 
-extern template void compute_distances_gpu<float>(const correlation::core::Cell &cell, float cutoff_sq,
-                                                  const std::vector<std::vector<float>> &bond_cutoffs_sq,
-                                                  bool ignore_periodic_self_interactions,
-                                                  RawHistogramTensor *out_histograms,
-                                                  DistanceCalculationConfig hist_config,
-                                                  correlation::core::NeighborGraph &out_graph);
+extern template void compute_distances_gpu<float>(
+    const correlation::core::Cell &cell, float cutoff_sq,
+    const std::vector<std::vector<float>> &bond_cutoffs_sq, bool ignore_periodic_self_interactions,
+    RawHistogramTensor *out_histograms, DistanceCalculationConfig hist_config,
+    correlation::core::NeighborGraph &out_graph);
 
-extern template void compute_distances_gpu<double>(const correlation::core::Cell &cell, double cutoff_sq,
-                                                   const std::vector<std::vector<double>> &bond_cutoffs_sq,
-                                                   bool ignore_periodic_self_interactions,
-                                                   RawHistogramTensor *out_histograms,
-                                                   DistanceCalculationConfig hist_config,
-                                                   correlation::core::NeighborGraph &out_graph);
+extern template void compute_distances_gpu<double>(
+    const correlation::core::Cell &cell, double cutoff_sq,
+    const std::vector<std::vector<double>> &bond_cutoffs_sq, bool ignore_periodic_self_interactions,
+    RawHistogramTensor *out_histograms, DistanceCalculationConfig hist_config,
+    correlation::core::NeighborGraph &out_graph);
 
 } // namespace correlation::calculators::gpu

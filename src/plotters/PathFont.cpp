@@ -68,7 +68,8 @@ std::string Roboto::render(TextRenderParameters const &params) {
         for (size_t idx = 0; idx < stroke.size(); ++idx) {
           const real_t point_x = offset_x + stroke[idx].first * scale;
           const real_t point_y =
-              params.start_y - stroke[idx].second * scale; // Flip Y direction (TTF Y is up, SVG Y is down)
+              params.start_y -
+              stroke[idx].second * scale; // Flip Y direction (TTF Y is up, SVG Y is down)
           if (idx == 0) {
             path_data += std::format("M {:.2f} {:.2f} ", point_x, point_y);
           } else {
@@ -102,8 +103,9 @@ std::vector<uint32_t> Roboto::utf8ToUnicode(const std::string &utf8_string) {
       }
     } else if ((byte_val & 0xF0) == 0xE0) {
       if (index + 2 < utf8_string.length()) {
-        const uint32_t code_point =
-            ((byte_val & 0x0F) << 12) | ((utf8_string[index + 1] & 0x3F) << 6) | (utf8_string[index + 2] & 0x3F);
+        const uint32_t code_point = ((byte_val & 0x0F) << 12) |
+                                    ((utf8_string[index + 1] & 0x3F) << 6) |
+                                    (utf8_string[index + 2] & 0x3F);
         unicode_points.push_back(code_point);
         index += 3;
       } else {

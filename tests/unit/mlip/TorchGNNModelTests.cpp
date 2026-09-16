@@ -43,7 +43,8 @@ TEST(TorchGNNModelTests, MoveSemantics) {
 
 TEST(TorchGNNModelTests, FallbackOnEmptyCell) {
   TorchGNNModel const model("dummy.pt", "cpu", 5.0);
-  correlation::core::Cell const empty_cell(std::array<real_t, 6>{10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  correlation::core::Cell const empty_cell(
+      std::array<real_t, 6>{10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
 
   auto const output = model.evaluate(empty_cell);
   EXPECT_TRUE(output.forces.empty());

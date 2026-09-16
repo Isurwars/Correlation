@@ -18,18 +18,20 @@ namespace {
 class MockReader : public BaseReader {
 public:
   [[nodiscard]] std::string getName() const override { return "MockReader"; }
-  [[nodiscard]] std::vector<std::string> getExtensions() const override { return {".mock", ".mck"}; }
+  [[nodiscard]] std::vector<std::string> getExtensions() const override {
+    return {".mock", ".mck"};
+  }
   [[nodiscard]] bool isTrajectory() const override { return false; }
 
-  correlation::core::Cell
-  readStructure(const std::string & /*filename*/,
-                std::function<void(float, const std::string &)> /*progress_callback*/ = nullptr) override {
+  correlation::core::Cell readStructure(
+      const std::string & /*filename*/,
+      std::function<void(float, const std::string &)> /*progress_callback*/ = nullptr) override {
     return correlation::core::Cell();
   }
 
-  correlation::core::Trajectory
-  readTrajectory(const std::string & /*filename*/,
-                 std::function<void(float, const std::string &)> /*progress_callback*/ = nullptr) override {
+  correlation::core::Trajectory readTrajectory(
+      const std::string & /*filename*/,
+      std::function<void(float, const std::string &)> /*progress_callback*/ = nullptr) override {
     return correlation::core::Trajectory();
   }
 };
@@ -112,7 +114,8 @@ TEST(ReaderFactoryTests, SniffsQuantumEspressoFromOutFile) {
   out.close();
 
   auto &factory = ReaderFactory::instance();
-  BaseReader *retrieved = factory.getReaderForExtension({.extension = ".out", .filename = filename});
+  BaseReader *retrieved =
+      factory.getReaderForExtension({.extension = ".out", .filename = filename});
   ASSERT_NE(retrieved, nullptr);
   EXPECT_EQ(retrieved->getName(), "Quantum ESPRESSO Reader");
 
@@ -129,7 +132,8 @@ TEST(ReaderFactoryTests, SniffsCP2KFromOutFile) {
   out.close();
 
   auto &factory = ReaderFactory::instance();
-  BaseReader *retrieved = factory.getReaderForExtension({.extension = ".out", .filename = filename});
+  BaseReader *retrieved =
+      factory.getReaderForExtension({.extension = ".out", .filename = filename});
   ASSERT_NE(retrieved, nullptr);
   EXPECT_EQ(retrieved->getName(), "CP2K Reader");
 

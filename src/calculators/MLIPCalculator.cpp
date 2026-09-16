@@ -15,8 +15,9 @@ namespace {
 const bool registered = CalculatorFactory::registerTypeSafe<MLIPCalculator>("MLIPCalculator");
 } // namespace
 
-void MLIPCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
-                                    const correlation::analysis::AnalysisSettings & /*settings*/) const {
+void MLIPCalculator::calculateFrame(
+    correlation::analysis::DistributionFunctions &dists,
+    const correlation::analysis::AnalysisSettings & /*settings*/) const {
   if (model_ == nullptr) {
     return;
   }
@@ -27,8 +28,9 @@ void MLIPCalculator::calculateFrame(correlation::analysis::DistributionFunctions
   (void)output;
 }
 
-correlation::mlip::MLIPOutput MLIPCalculator::calculate(const correlation::core::Cell &cell,
-                                                        const correlation::mlip::MLIPInterface *model) {
+correlation::mlip::MLIPOutput
+MLIPCalculator::calculate(const correlation::core::Cell &cell,
+                          const correlation::mlip::MLIPInterface *model) {
   correlation::mlip::MLIPOutput output;
   const size_t atom_count = cell.atoms().size();
 

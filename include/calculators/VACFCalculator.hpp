@@ -26,7 +26,9 @@ public:
   [[nodiscard]] std::string_view getName() const override { return "VACF"; }
   [[nodiscard]] std::string_view getShortName() const override { return "VACF"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Dynamic"; }
-  [[nodiscard]] std::string_view getDescription() const override { return "Computes the Velocity Autocorrelation Function (VACF)."; }
+  [[nodiscard]] std::string_view getDescription() const override {
+    return "Computes the Velocity Autocorrelation Function (VACF).";
+  }
 
   bool isFrameCalculator() const override { return false; }
   bool isTrajectoryCalculator() const override { return true; }
@@ -45,8 +47,10 @@ public:
    * @return A map of histograms (VACF per element).
    */
   static std::map<std::string, correlation::analysis::Histogram>
-  calculate(const correlation::core::Trajectory &traj, correlation::analysis::MaxFrames max_correlation_frames,
-            correlation::analysis::StartFrame start_frame, correlation::analysis::EndFrame end_frame);
+  calculate(const correlation::core::Trajectory &traj,
+            correlation::analysis::MaxFrames max_correlation_frames,
+            correlation::analysis::StartFrame start_frame,
+            correlation::analysis::EndFrame end_frame);
 };
 
 } // namespace correlation::calculators

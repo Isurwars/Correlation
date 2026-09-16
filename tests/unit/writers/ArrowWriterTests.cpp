@@ -8,13 +8,13 @@
 
 #ifdef CORRELATION_USE_ARROW
 
-#include "writers/ArrowWriter.hpp"
 #include "analysis/DistributionFunctions.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
+#include "writers/ArrowWriter.hpp"
 
-#include <gtest/gtest.h>
 #include <filesystem>
+#include <gtest/gtest.h>
 
 namespace correlation::writers::testing {
 
@@ -27,7 +27,8 @@ TEST(ArrowWriterTests, MetadataAndExtensionInfo) {
 }
 
 TEST(ArrowWriterTests, WriteAllParquetCreatesOutputFile) {
-  std::filesystem::path temp_dir = std::filesystem::temp_directory_path() / "correlation_arrow_tests";
+  std::filesystem::path temp_dir =
+      std::filesystem::temp_directory_path() / "correlation_arrow_tests";
   std::filesystem::create_directories(temp_dir);
   std::string base_output = (temp_dir / "test_sample").string();
 
@@ -54,4 +55,3 @@ TEST(ArrowWriterTests, WriteAllParquetCreatesOutputFile) {
 } // namespace correlation::writers::testing
 
 #endif
-

@@ -18,7 +18,8 @@
 
 namespace correlation::math::detail::avx2 {
 
-inline void compute_dsq_block(float ref_x, float ref_y, float ref_z, const PositionBlockT<float> &block,
+inline void compute_dsq_block(float ref_x, float ref_y, float ref_z,
+                              const PositionBlockT<float> &block,
                               float *CORRELATION_RESTRICT out_dsq) noexcept {
   const __m256 va_x = _mm256_set1_ps(ref_x);
   const __m256 va_y = _mm256_set1_ps(ref_y);
@@ -30,10 +31,11 @@ inline void compute_dsq_block(float ref_x, float ref_y, float ref_z, const Posit
     const __m256 d_y = _mm256_sub_ps(_mm256_loadu_ps(block.y + idx), va_y);
     const __m256 d_z = _mm256_sub_ps(_mm256_loadu_ps(block.z + idx), va_z);
 #ifdef __FMA__
-    const __m256 dsq = _mm256_fmadd_ps(d_x, d_x, _mm256_fmadd_ps(d_y, d_y, _mm256_mul_ps(d_z, d_z)));
-#else
     const __m256 dsq =
-        _mm256_add_ps(_mm256_mul_ps(d_x, d_x), _mm256_add_ps(_mm256_mul_ps(d_y, d_y), _mm256_mul_ps(d_z, d_z)));
+        _mm256_fmadd_ps(d_x, d_x, _mm256_fmadd_ps(d_y, d_y, _mm256_mul_ps(d_z, d_z)));
+#else
+    const __m256 dsq = _mm256_add_ps(
+        _mm256_mul_ps(d_x, d_x), _mm256_add_ps(_mm256_mul_ps(d_y, d_y), _mm256_mul_ps(d_z, d_z)));
 #endif
     _mm256_storeu_ps(out_dsq + idx, dsq);
   }
@@ -52,7 +54,8 @@ inline void compute_dsq_block(float ref_x, float ref_y, float ref_z, const Posit
   }
 }
 
-inline void compute_dsq_block(double ref_x, double ref_y, double ref_z, const PositionBlockT<double> &block,
+inline void compute_dsq_block(double ref_x, double ref_y, double ref_z,
+                              const PositionBlockT<double> &block,
                               double *CORRELATION_RESTRICT out_dsq) noexcept {
   const __m256d va_x = _mm256_set1_pd(ref_x);
   const __m256d va_y = _mm256_set1_pd(ref_y);
@@ -64,10 +67,11 @@ inline void compute_dsq_block(double ref_x, double ref_y, double ref_z, const Po
     const __m256d d_y = _mm256_sub_pd(_mm256_loadu_pd(block.y + idx), va_y);
     const __m256d d_z = _mm256_sub_pd(_mm256_loadu_pd(block.z + idx), va_z);
 #ifdef __FMA__
-    const __m256d dsq = _mm256_fmadd_pd(d_x, d_x, _mm256_fmadd_pd(d_y, d_y, _mm256_mul_pd(d_z, d_z)));
-#else
     const __m256d dsq =
-        _mm256_add_pd(_mm256_mul_pd(d_x, d_x), _mm256_add_pd(_mm256_mul_pd(d_y, d_y), _mm256_mul_pd(d_z, d_z)));
+        _mm256_fmadd_pd(d_x, d_x, _mm256_fmadd_pd(d_y, d_y, _mm256_mul_pd(d_z, d_z)));
+#else
+    const __m256d dsq = _mm256_add_pd(
+        _mm256_mul_pd(d_x, d_x), _mm256_add_pd(_mm256_mul_pd(d_y, d_y), _mm256_mul_pd(d_z, d_z)));
 #endif
     _mm256_storeu_pd(out_dsq + idx, dsq);
   }
@@ -86,8 +90,8 @@ inline void compute_dsq_block(double ref_x, double ref_y, double ref_z, const Po
   }
 }
 
-inline double simd_dot(const double *CORRELATION_RESTRICT input_a, const double *CORRELATION_RESTRICT input_b,
-                       std::size_t count) noexcept {
+inline double simd_dot(const double *CORRELATION_RESTRICT input_a,
+                       const double *CORRELATION_RESTRICT input_b, std::size_t count) noexcept {
   __m256d vacc = _mm256_setzero_pd();
   std::size_t idx = 0;
   for (; idx + 4 <= count; idx += 4) {
@@ -115,8 +119,8 @@ inline double simd_dot(const double *CORRELATION_RESTRICT input_a, const double 
   return acc;
 }
 
-inline float simd_dot(const float *CORRELATION_RESTRICT input_a, const float *CORRELATION_RESTRICT input_b,
-                      std::size_t count) noexcept {
+inline float simd_dot(const float *CORRELATION_RESTRICT input_a,
+                      const float *CORRELATION_RESTRICT input_b, std::size_t count) noexcept {
   __m256 vacc = _mm256_setzero_ps();
   std::size_t idx = 0;
   for (; idx + 8 <= count; idx += 8) {
@@ -130,8 +134,8 @@ inline float simd_dot(const float *CORRELATION_RESTRICT input_a, const float *CO
   }
   alignas(32) std::array<float, 8> float_buf{};
   _mm256_storeu_ps(float_buf.data(), vacc);
-  float acc = float_buf[0] + float_buf[1] + float_buf[2] + float_buf[3] + float_buf[4] + float_buf[5] + float_buf[6] +
-              float_buf[7];
+  float acc = float_buf[0] + float_buf[1] + float_buf[2] + float_buf[3] + float_buf[4] +
+              float_buf[5] + float_buf[6] + float_buf[7];
   for (; idx < count; ++idx) {
     acc += input_a[idx] * input_b[idx];
   }
@@ -139,21 +143,24 @@ inline float simd_dot(const float *CORRELATION_RESTRICT input_a, const float *CO
 }
 
 inline void dot_block(double v1x, double v1y, double v1z, const double *CORRELATION_RESTRICT v2x,
-                      const double *CORRELATION_RESTRICT v2y, const double *CORRELATION_RESTRICT v2z,
-                      double *CORRELATION_RESTRICT out_dot, std::size_t count) noexcept {
+                      const double *CORRELATION_RESTRICT v2y,
+                      const double *CORRELATION_RESTRICT v2z, double *CORRELATION_RESTRICT out_dot,
+                      std::size_t count) noexcept {
   const __m256d vv1x = _mm256_set1_pd(v1x);
   const __m256d vv1y = _mm256_set1_pd(v1y);
   const __m256d vv1z = _mm256_set1_pd(v1z);
   std::size_t idx = 0;
   for (; idx + 4 <= count; idx += 4) {
 #ifdef __FMA__
-    const __m256d d_res = _mm256_fmadd_pd(
-        vv1x, _mm256_loadu_pd(v2x + idx),
-        _mm256_fmadd_pd(vv1y, _mm256_loadu_pd(v2y + idx), _mm256_mul_pd(vv1z, _mm256_loadu_pd(v2z + idx))));
+    const __m256d d_res =
+        _mm256_fmadd_pd(vv1x, _mm256_loadu_pd(v2x + idx),
+                        _mm256_fmadd_pd(vv1y, _mm256_loadu_pd(v2y + idx),
+                                        _mm256_mul_pd(vv1z, _mm256_loadu_pd(v2z + idx))));
 #else
-    const __m256d d_res = _mm256_add_pd(_mm256_mul_pd(vv1x, _mm256_loadu_pd(v2x + idx)),
-                                        _mm256_add_pd(_mm256_mul_pd(vv1y, _mm256_loadu_pd(v2y + idx)),
-                                                      _mm256_mul_pd(vv1z, _mm256_loadu_pd(v2z + idx))));
+    const __m256d d_res =
+        _mm256_add_pd(_mm256_mul_pd(vv1x, _mm256_loadu_pd(v2x + idx)),
+                      _mm256_add_pd(_mm256_mul_pd(vv1y, _mm256_loadu_pd(v2y + idx)),
+                                    _mm256_mul_pd(vv1z, _mm256_loadu_pd(v2z + idx))));
 #endif
     _mm256_storeu_pd(out_dot + idx, d_res);
   }
@@ -171,13 +178,15 @@ inline void dot_block(float v1x, float v1y, float v1z, const float *CORRELATION_
   std::size_t idx = 0;
   for (; idx + 8 <= count; idx += 8) {
 #ifdef __FMA__
-    const __m256 d_res = _mm256_fmadd_ps(
-        vv1x, _mm256_loadu_ps(v2x + idx),
-        _mm256_fmadd_ps(vv1y, _mm256_loadu_ps(v2y + idx), _mm256_mul_ps(vv1z, _mm256_loadu_ps(v2z + idx))));
+    const __m256 d_res =
+        _mm256_fmadd_ps(vv1x, _mm256_loadu_ps(v2x + idx),
+                        _mm256_fmadd_ps(vv1y, _mm256_loadu_ps(v2y + idx),
+                                        _mm256_mul_ps(vv1z, _mm256_loadu_ps(v2z + idx))));
 #else
-    const __m256 d_res = _mm256_add_ps(_mm256_mul_ps(vv1x, _mm256_loadu_ps(v2x + idx)),
-                                       _mm256_add_ps(_mm256_mul_ps(vv1y, _mm256_loadu_ps(v2y + idx)),
-                                                     _mm256_mul_ps(vv1z, _mm256_loadu_ps(v2z + idx))));
+    const __m256 d_res =
+        _mm256_add_ps(_mm256_mul_ps(vv1x, _mm256_loadu_ps(v2x + idx)),
+                      _mm256_add_ps(_mm256_mul_ps(vv1y, _mm256_loadu_ps(v2y + idx)),
+                                    _mm256_mul_ps(vv1z, _mm256_loadu_ps(v2z + idx))));
 #endif
     _mm256_storeu_ps(out_dot + idx, d_res);
   }
@@ -250,8 +259,8 @@ inline float debye_sum(float q_magnitude, const float *CORRELATION_RESTRICT dist
   }
   alignas(32) std::array<float, 8> float_buf{};
   _mm256_storeu_ps(float_buf.data(), vacc);
-  float acc = float_buf[0] + float_buf[1] + float_buf[2] + float_buf[3] + float_buf[4] + float_buf[5] + float_buf[6] +
-              float_buf[7];
+  float acc = float_buf[0] + float_buf[1] + float_buf[2] + float_buf[3] + float_buf[4] +
+              float_buf[5] + float_buf[6] + float_buf[7];
   for (; idx < count; ++idx) {
     acc += scratch[idx];
   }
@@ -278,7 +287,8 @@ inline void normalize_rdf_bins(const RDFNormalizationParams<double> &params) noe
     const __m256d vr2 = _mm256_mul_pd(v_r, v_r);
     const __m256d v_g = _mm256_div_pd(_mm256_mul_pd(v_H, vg_norm), vr2);
     _mm256_storeu_pd(params.g_out + idx, v_g);
-    _mm256_storeu_pd(params.G_out + idx, _mm256_mul_pd(vpi4rho, _mm256_mul_pd(v_r, _mm256_sub_pd(v_g, v_1))));
+    _mm256_storeu_pd(params.G_out + idx,
+                     _mm256_mul_pd(vpi4rho, _mm256_mul_pd(v_r, _mm256_sub_pd(v_g, v_1))));
     _mm256_storeu_pd(params.J_out + idx, _mm256_mul_pd(v_H, vinNidr));
     _mm256_storeu_pd(params.Jinv_out + idx, _mm256_mul_pd(v_H, vinNjdr));
   }
@@ -319,7 +329,8 @@ inline void normalize_rdf_bins(const RDFNormalizationParams<float> &params) noex
     const __m256 vr2 = _mm256_mul_ps(v_r, v_r);
     const __m256 v_g = _mm256_div_ps(_mm256_mul_ps(v_H, vg_norm), vr2);
     _mm256_storeu_ps(params.g_out + idx, v_g);
-    _mm256_storeu_ps(params.G_out + idx, _mm256_mul_ps(vpi4rho, _mm256_mul_ps(v_r, _mm256_sub_ps(v_g, v_1))));
+    _mm256_storeu_ps(params.G_out + idx,
+                     _mm256_mul_ps(vpi4rho, _mm256_mul_ps(v_r, _mm256_sub_ps(v_g, v_1))));
     _mm256_storeu_ps(params.J_out + idx, _mm256_mul_ps(v_H, vinNidr));
     _mm256_storeu_ps(params.Jinv_out + idx, _mm256_mul_ps(v_H, vinNjdr));
   }
@@ -414,7 +425,8 @@ inline void miller_phase_sum(const MillerPhaseSumParams<double> &params,
   }
 }
 
-inline void miller_phase_sum(const MillerPhaseSumParams<float> &params, MillerPhaseSumResult<float> &result) noexcept {
+inline void miller_phase_sum(const MillerPhaseSumParams<float> &params,
+                             MillerPhaseSumResult<float> &result) noexcept {
   __m256 vc_sum = _mm256_setzero_ps();
   __m256 vs_sum = _mm256_setzero_ps();
   std::size_t idx = 0;
@@ -451,8 +463,10 @@ inline void miller_phase_sum(const MillerPhaseSumParams<float> &params, MillerPh
   alignas(32) std::array<float, 8> s_buf{};
   _mm256_storeu_ps(c_buf.data(), vc_sum);
   _mm256_storeu_ps(s_buf.data(), vs_sum);
-  result.cos_sum = c_buf[0] + c_buf[1] + c_buf[2] + c_buf[3] + c_buf[4] + c_buf[5] + c_buf[6] + c_buf[7];
-  result.sin_sum = s_buf[0] + s_buf[1] + s_buf[2] + s_buf[3] + s_buf[4] + s_buf[5] + s_buf[6] + s_buf[7];
+  result.cos_sum =
+      c_buf[0] + c_buf[1] + c_buf[2] + c_buf[3] + c_buf[4] + c_buf[5] + c_buf[6] + c_buf[7];
+  result.sin_sum =
+      s_buf[0] + s_buf[1] + s_buf[2] + s_buf[3] + s_buf[4] + s_buf[5] + s_buf[6] + s_buf[7];
   for (; idx < count; ++idx) {
     const float c12 = cos1[idx] * cos2[idx] - sin1[idx] * sin2[idx];
     const float s12 = sin1[idx] * cos2[idx] + cos1[idx] * sin2[idx];

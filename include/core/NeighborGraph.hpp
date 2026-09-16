@@ -73,7 +73,8 @@ public:
    * @param distance Separation distance (Angstrom).
    * @param r_ij Relative position vector from source to target.
    */
-  void addDirectedEdge(AtomID source, AtomID target, real_t distance, const math::Vector3<real_t> &r_ij) {
+  void addDirectedEdge(AtomID source, AtomID target, real_t distance,
+                       const math::Vector3<real_t> &r_ij) {
     addDirectedEdge(Edge{
         .source = source,
         .target = target,

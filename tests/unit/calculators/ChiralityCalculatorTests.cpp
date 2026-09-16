@@ -42,7 +42,8 @@ TEST_F(ChiralityCalculatorTests, AchiralCoplanarMotif) {
   cell.addAtom("Ar", {3.8, 3.8, 5.0}); // Neighbor 3: r3 = (-1.2, -1.2, 0), d = 1.697
 
   StructureAnalyzer const analyzer(cell, 2.5, {{{0.36, 2.5 * 2.5}}}, false);
-  real_t const chi = correlation::calculators::ChiralityCalculator::computeSingleAtomChirality(0, cell, &analyzer);
+  real_t const chi =
+      correlation::calculators::ChiralityCalculator::computeSingleAtomChirality(0, cell, &analyzer);
 
   EXPECT_NEAR(chi, 0.0, 1e-7);
 }
@@ -56,7 +57,8 @@ TEST_F(ChiralityCalculatorTests, ChiralRightHandedMotif) {
   cell.addAtom("Ar", {5.0, 5.0, 6.2}); // Neighbor 3: r3 = (0, 0, 1.2), d = 1.2
 
   StructureAnalyzer const analyzer(cell, 2.5, {{{0.36, 2.5 * 2.5}}}, false);
-  real_t const chi = correlation::calculators::ChiralityCalculator::computeSingleAtomChirality(0, cell, &analyzer);
+  real_t const chi =
+      correlation::calculators::ChiralityCalculator::computeSingleAtomChirality(0, cell, &analyzer);
 
   EXPECT_NEAR(chi, 1.0, 1e-7);
 }
@@ -70,7 +72,8 @@ TEST_F(ChiralityCalculatorTests, ChiralLeftHandedMotif) {
   cell.addAtom("Ar", {5.0, 5.0, 3.8}); // Neighbor 3: r3 = (0, 0, -1.2), d = 1.2
 
   StructureAnalyzer const analyzer(cell, 2.5, {{{0.36, 2.5 * 2.5}}}, false);
-  real_t const chi = correlation::calculators::ChiralityCalculator::computeSingleAtomChirality(0, cell, &analyzer);
+  real_t const chi =
+      correlation::calculators::ChiralityCalculator::computeSingleAtomChirality(0, cell, &analyzer);
 
   EXPECT_NEAR(chi, -1.0, 1e-7);
 }

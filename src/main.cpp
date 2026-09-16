@@ -49,9 +49,11 @@ void setupWindowsDebugEnvironment() {
   // Set top-level unhandled exception filter
   SetUnhandledExceptionFilter([](EXCEPTION_POINTERS *info) -> LONG {
     char msg[512];
-    std::snprintf(msg, sizeof(msg), "Unhandled Windows Exception 0x%08X at Address %p.\nLog written to temp directory.",
-                  static_cast<unsigned int>(info->ExceptionRecord->ExceptionCode),
-                  info->ExceptionRecord->ExceptionAddress);
+    std::snprintf(
+        msg, sizeof(msg),
+        "Unhandled Windows Exception 0x%08X at Address %p.\nLog written to temp directory.",
+        static_cast<unsigned int>(info->ExceptionRecord->ExceptionCode),
+        info->ExceptionRecord->ExceptionAddress);
     std::cerr << "FATAL: " << msg << "\n";
     std::cerr.flush();
     MessageBoxA(nullptr, msg, "Correlation - Unhandled Crash", MB_ICONERROR | MB_OK);
@@ -105,7 +107,8 @@ slint::ComponentHandle<AppWindow> createAppWindow() {
 #endif
     return AppWindow::create();
   } catch (...) {
-    std::cerr << "Primary Slint backend failed with unknown error. Falling back to software renderer...\n";
+    std::cerr
+        << "Primary Slint backend failed with unknown error. Falling back to software renderer...\n";
 #ifdef _WIN32
     _putenv_s("SLINT_BACKEND", "software");
 #else
@@ -150,13 +153,15 @@ int main() {
   } catch (...) {
     std::cerr << "An unknown fatal error occurred during application startup.\n";
 #ifdef _WIN32
-    MessageBoxA(nullptr, "An unknown fatal error occurred during application startup.", "Correlation - Startup Error",
-                MB_ICONERROR | MB_OK);
+    MessageBoxA(nullptr, "An unknown fatal error occurred during application startup.",
+                "Correlation - Startup Error", MB_ICONERROR | MB_OK);
 #endif
     return 1;
   }
 }
 
 #ifdef _WIN32
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) { return main(); }
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+  return main();
+}
 #endif

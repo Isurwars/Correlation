@@ -98,7 +98,8 @@ void FileIOHandler::handleWriteFiles() {
     const nfdfiltersize_t filter_count = filter_list.size();
 
     nfdchar_t *out_path = nullptr;
-    const nfdresult_t result = NFD_SaveDialogU8(&out_path, filter_list.data(), filter_count, nullptr, nullptr);
+    const nfdresult_t result =
+        NFD_SaveDialogU8(&out_path, filter_list.data(), filter_count, nullptr, nullptr);
 
     if (result == NFD_OKAY) {
       std::string filepath(out_path);
@@ -184,7 +185,8 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath) {
         window_.set_removed_frames_count(static_cast<int>(backend_.getRemovedFrameCount()));
         {
           auto opts = window_.get_analysis_options();
-          opts.time_step = slint::SharedString(std::format("{:.2f}", backend_.getRecommendedTimeStep()));
+          opts.time_step =
+              slint::SharedString(std::format("{:.2f}", backend_.getRecommendedTimeStep()));
           window_.set_analysis_options(opts);
         }
 
@@ -259,7 +261,8 @@ void FileIOHandler::handleBrowseFile() {
     const nfdfiltersize_t filter_count = filter_list.size();
 
     nfdchar_t *out_path = nullptr;
-    const nfdresult_t result = NFD_OpenDialogU8(&out_path, filter_list.data(), filter_count, nullptr);
+    const nfdresult_t result =
+        NFD_OpenDialogU8(&out_path, filter_list.data(), filter_count, nullptr);
 
     if (result == NFD_OKAY) {
       std::string filepath(out_path);

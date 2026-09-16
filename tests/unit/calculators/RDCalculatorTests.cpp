@@ -110,7 +110,8 @@ TEST_F(RDCalculatorTests, CelluloseRingDistribution) {
 
   size_t max_ring_size = 10;
 
-  Histogram f_motif = correlation::calculators::RDCalculator::calculate(graph_cellulose, max_ring_size);
+  Histogram f_motif =
+      correlation::calculators::RDCalculator::calculate(graph_cellulose, max_ring_size);
 
   EXPECT_EQ(f_motif.x_label, "Ring Size");
   ASSERT_EQ(f_motif.bins.size(), max_ring_size - 2);

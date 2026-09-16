@@ -18,48 +18,49 @@
 namespace correlation::cli {
 
 void printUsage(const char *program) {
-  std::cerr << "Correlation — Structural Analysis Tool (CLI Mode)\n"
-            << "Usage: " << program << " <input_file> [options]\n\n"
-            << "General Options:\n"
-            << "  -o, --output <path>       Output base path (default: input stem)\n"
-            << "  -q, --quiet               Suppress progress output\n"
-            << "  --material <str>          Material type: amorphous, liquid, crystalline (default: amorphous)\n"
-            << "  -v, --version             Show version info\n"
-            << "  -h, --help                Show this help message\n\n"
-            << "Calculator Selection:\n"
-            << "  -g, --disable-groups <list> Comma-separated groups to disable: radial, scattering,\n"
-            << "                            structural, spatial, angular, dynamic, rings,\n"
-            << "                            topology (default: none)\n\n"
-            << "Simulation / Frame Range:\n"
-            << "  --min-frame <int>         Start frame, 1-based (default: 1)\n"
-            << "  --max-frame <int>         End frame, -1=all (default: -1)\n"
-            << "  --time-step <float>       Simulation time step in fs (default: 1.0)\n\n"
-            << "Radial Parameters:\n"
-            << "  --r-max <float>           Max radius for RDF (default: 20.0)\n"
-            << "  --r-bin <float>           RDF bin width (default: 0.02)\n"
-            << "  --r-int-max <float>       Max radius for g(r) integration (default: 10.0)\n\n"
-            << "Scattering Parameters:\n"
-            << "  --q-max <float>           Max q for S(Q) (default: 20.0)\n"
-            << "  --q-bin <float>           S(Q) bin width (default: 0.02)\n\n"
-            << "Angular Parameters:\n"
-            << "  --angle-bin <float>       Angular bin width (default: 1.0)\n"
-            << "  --dihedral-bin <float>    Dihedral bin width (default: copy angle-bin)\n\n"
-            << "Ring Parameters:\n"
-            << "  --max-ring-size <int>     Max ring size for topology (default: 8)\n\n"
-            << "Post-Processing & Output Formats:\n"
-            << "  --smoothing-sigma <float> Bandwidth for kernel smoothing (default: 0.1)\n"
-            << "  --smoothing-kernel <str>  Kernel type (gaussian, bump, triweight, \n"
-            << "                            epanechnikov, cosine, biweight) (default: gaussian)\n"
-            << "  --no-smoothing            Disable post-processing smoothing\n"
-            << "  --csv                     Enable CSV output (default: on)\n"
-            << "  --no-csv                  Disable CSV output\n"
-            << "  --hdf5                    Enable HDF5 output\n"
-            << "  --no-hdf5                 Disable HDF5 output (default: off)\n"
-            << "  --parquet                 Enable Parquet output\n"
-            << "  --no-parquet              Disable Parquet output\n\n"
-            << "Local Entropy Parameters:\n"
-            << "  --lef-cutoff <float>      Cutoff radius for local entropy (default: 5.0)\n"
-            << "  --lef-sigma <float>       Gaussian standard deviation for local entropy (default: 0.2)\n";
+  std::cerr
+      << "Correlation — Structural Analysis Tool (CLI Mode)\n"
+      << "Usage: " << program << " <input_file> [options]\n\n"
+      << "General Options:\n"
+      << "  -o, --output <path>       Output base path (default: input stem)\n"
+      << "  -q, --quiet               Suppress progress output\n"
+      << "  --material <str>          Material type: amorphous, liquid, crystalline (default: amorphous)\n"
+      << "  -v, --version             Show version info\n"
+      << "  -h, --help                Show this help message\n\n"
+      << "Calculator Selection:\n"
+      << "  -g, --disable-groups <list> Comma-separated groups to disable: radial, scattering,\n"
+      << "                            structural, spatial, angular, dynamic, rings,\n"
+      << "                            topology (default: none)\n\n"
+      << "Simulation / Frame Range:\n"
+      << "  --min-frame <int>         Start frame, 1-based (default: 1)\n"
+      << "  --max-frame <int>         End frame, -1=all (default: -1)\n"
+      << "  --time-step <float>       Simulation time step in fs (default: 1.0)\n\n"
+      << "Radial Parameters:\n"
+      << "  --r-max <float>           Max radius for RDF (default: 20.0)\n"
+      << "  --r-bin <float>           RDF bin width (default: 0.02)\n"
+      << "  --r-int-max <float>       Max radius for g(r) integration (default: 10.0)\n\n"
+      << "Scattering Parameters:\n"
+      << "  --q-max <float>           Max q for S(Q) (default: 20.0)\n"
+      << "  --q-bin <float>           S(Q) bin width (default: 0.02)\n\n"
+      << "Angular Parameters:\n"
+      << "  --angle-bin <float>       Angular bin width (default: 1.0)\n"
+      << "  --dihedral-bin <float>    Dihedral bin width (default: copy angle-bin)\n\n"
+      << "Ring Parameters:\n"
+      << "  --max-ring-size <int>     Max ring size for topology (default: 8)\n\n"
+      << "Post-Processing & Output Formats:\n"
+      << "  --smoothing-sigma <float> Bandwidth for kernel smoothing (default: 0.1)\n"
+      << "  --smoothing-kernel <str>  Kernel type (gaussian, bump, triweight, \n"
+      << "                            epanechnikov, cosine, biweight) (default: gaussian)\n"
+      << "  --no-smoothing            Disable post-processing smoothing\n"
+      << "  --csv                     Enable CSV output (default: on)\n"
+      << "  --no-csv                  Disable CSV output\n"
+      << "  --hdf5                    Enable HDF5 output\n"
+      << "  --no-hdf5                 Disable HDF5 output (default: off)\n"
+      << "  --parquet                 Enable Parquet output\n"
+      << "  --no-parquet              Disable Parquet output\n\n"
+      << "Local Entropy Parameters:\n"
+      << "  --lef-cutoff <float>      Cutoff radius for local entropy (default: 5.0)\n"
+      << "  --lef-sigma <float>       Gaussian standard deviation for local entropy (default: 0.2)\n";
 }
 
 namespace {
@@ -182,7 +183,8 @@ bool validateOptions(const CliOptions &opts) {
     return false;
   }
   if (!opts.csv && !opts.hdf5 && !opts.parquet) {
-    std::cerr << "Error: At least one output format (--csv, --hdf5, or --parquet) must be enabled.\n";
+    std::cerr
+        << "Error: At least one output format (--csv, --hdf5, or --parquet) must be enabled.\n";
     return false;
   }
   return true;
@@ -236,7 +238,8 @@ bool parseArgs(std::span<const char *const> argv, CliOptions &opts) {
   std::string k_str = "gaussian";
   app.add_option("--smoothing-kernel", k_str);
 
-  std::map<std::string, int> const mat_map = {{"amorphous", 0}, {"liquid", 1}, {"crystalline", 2}, {"crystal", 2}};
+  std::map<std::string, int> const mat_map = {
+      {"amorphous", 0}, {"liquid", 1}, {"crystalline", 2}, {"crystal", 2}};
   app.add_option("--material", opts.material_type, "Material type (amorphous, liquid, crystalline)")
       ->transform(CLI::CheckedTransformer(mat_map, CLI::ignore_case));
 
@@ -273,7 +276,8 @@ bool parseArgs(std::span<const char *const> argv, CliOptions &opts) {
   }
 
   // Process smoothing kernel string (case insensitive, fallback to gaussian)
-  std::ranges::transform(k_str, k_str.begin(), [](unsigned char character) { return std::tolower(character); });
+  std::ranges::transform(k_str, k_str.begin(),
+                         [](unsigned char character) { return std::tolower(character); });
   if (k_str == "gaussian" || k_str == "gauss") {
     opts.smoothing_kernel = correlation::math::KernelType::Gaussian;
   } else if (k_str == "bump") {

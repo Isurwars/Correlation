@@ -27,7 +27,8 @@ namespace correlation::plotters {
  */
 void renderHistogramAsPng(const correlation::analysis::Histogram &hist, const std::string &filepath,
                           const PlotConfig &config = {},
-                          const std::map<std::string, real_t> &ashcroft_weights = {}, int dpi = 300);
+                          const std::map<std::string, real_t> &ashcroft_weights = {},
+                          int dpi = 300);
 
 /**
  * @brief Renders multiple comparison histograms as a high-resolution PNG image.
@@ -37,7 +38,8 @@ void renderHistogramAsPng(const correlation::analysis::Histogram &hist, const st
  * @param config Visualization and canvas layout configuration.
  * @param dpi Target DPI resolution (e.g. 150, 300, 600).
  */
-void renderComparisonPng(const std::vector<LabeledHistogram> &datasets, const std::string &partial_key,
-                         const std::string &filepath, const PlotConfig &config = {}, int dpi = 300);
+void renderComparisonPng(const std::vector<LabeledHistogram> &datasets,
+                         const std::string &partial_key, const std::string &filepath,
+                         const PlotConfig &config = {}, int dpi = 300);
 
 } // namespace correlation::plotters

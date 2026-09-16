@@ -31,7 +31,8 @@ public:
   std::string getName() const override { return "Parquet"; }
   std::vector<std::string> getExtensions() const override { return {".parquet"}; }
 
-  void write(const std::string &base_path, const correlation::analysis::DistributionFunctions &dists,
+  void write(const std::string &base_path,
+             const correlation::analysis::DistributionFunctions &dists,
              bool smoothing) const override {
     writeAllParquet(base_path, dists, smoothing);
   }
@@ -48,7 +49,8 @@ public:
    * @param dists The DistributionFunctions object containing the data.
    * @param write_smoothed If true, also writes smoothed data columns.
    */
-  static void writeAllParquet(const std::string &base_path, const correlation::analysis::DistributionFunctions &dists,
+  static void writeAllParquet(const std::string &base_path,
+                              const correlation::analysis::DistributionFunctions &dists,
                               bool write_smoothed = false);
 
 private:
@@ -61,8 +63,9 @@ private:
    *        (e.g. PAD_raw for PAD). When non-null, its partials are prepended
    *        as `{key}_raw` columns before the normalized data.
    */
-  static void writeHistogramToParquet(const std::string &filename, const correlation::analysis::Histogram &hist,
-                                     const correlation::analysis::Histogram *raw_companion = nullptr);
+  static void
+  writeHistogramToParquet(const std::string &filename, const correlation::analysis::Histogram &hist,
+                          const correlation::analysis::Histogram *raw_companion = nullptr);
 };
 
 } // namespace correlation::writers

@@ -55,7 +55,8 @@ void PADCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
 }
 
 std::map<std::string, correlation::analysis::Histogram>
-PADCalculator::calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors,
+PADCalculator::calculate(const correlation::core::Cell &cell,
+                         const correlation::analysis::StructureAnalyzer *neighbors,
                          real_t bin_width) {
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive");
@@ -103,7 +104,8 @@ PADCalculator::calculate(const correlation::core::Cell &cell, const correlation:
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = 0; j < num_elements; ++j) {
       for (size_t k = j; k < num_elements; ++k) {
-        std::string const key = elements[j].symbol + "-" + elements[i].symbol + "-" + elements[k].symbol;
+        std::string const key =
+            elements[j].symbol + "-" + elements[i].symbol + "-" + elements[k].symbol;
         auto &partial_hist = f_theta_raw.partials[key];
         partial_hist.assign(num_bins, 0.0);
 

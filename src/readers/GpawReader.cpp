@@ -50,9 +50,10 @@ struct GpawTrajectoryParser {
         iss >> row.at(0) >> row.at(1) >> row.at(2);
       }
     }
-    current_lattice = correlation::math::Matrix3<real_t>({lat_vec.at(0)[0], lat_vec.at(0)[1], lat_vec.at(0)[2]},
-                                                         {lat_vec.at(1)[0], lat_vec.at(1)[1], lat_vec.at(1)[2]},
-                                                         {lat_vec.at(2)[0], lat_vec.at(2)[1], lat_vec.at(2)[2]});
+    current_lattice =
+        correlation::math::Matrix3<real_t>({lat_vec.at(0)[0], lat_vec.at(0)[1], lat_vec.at(0)[2]},
+                                           {lat_vec.at(1)[0], lat_vec.at(1)[1], lat_vec.at(1)[2]},
+                                           {lat_vec.at(2)[0], lat_vec.at(2)[1], lat_vec.at(2)[2]});
     has_lattice = true;
     current_cell.updateLattice(current_lattice);
   }
@@ -111,7 +112,8 @@ struct GpawTrajectoryParser {
         continue;
       }
 
-      if (line.starts_with("Unit cell:") || line.starts_with("Lattice vectors:") || line.starts_with("Cell:")) {
+      if (line.starts_with("Unit cell:") || line.starts_with("Lattice vectors:") ||
+          line.starts_with("Cell:")) {
         parseLatticeVectors();
       } else if (line.starts_with("Positions:") || line.starts_with("Cartesian positions:") ||
                  line.starts_with("ATOMIC_POSITIONS")) {
@@ -129,8 +131,9 @@ struct GpawTrajectoryParser {
 
 } // namespace
 
-correlation::core::Cell GpawReader::readStructure(const std::string &filename,
-                                                  std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell
+GpawReader::readStructure(const std::string &filename,
+                          std::function<void(float, const std::string &)> progress_callback) {
   auto trajectory = readTrajectory(filename, std::move(progress_callback));
   if (trajectory.getFrameCount() == 0) {
     throw std::runtime_error("No atomic coordinates found in GPAW file: " + filename);

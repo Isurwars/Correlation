@@ -41,8 +41,8 @@ public:
    * @return A map of histograms containing normalized "DAD" and raw "DAD_raw".
    */
   static std::map<std::string, correlation::analysis::Histogram>
-  calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors,
-            real_t bin_width);
+  calculate(const correlation::core::Cell &cell,
+            const correlation::analysis::StructureAnalyzer *neighbors, real_t bin_width);
 };
 
 } // namespace correlation::calculators

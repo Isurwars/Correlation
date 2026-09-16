@@ -38,7 +38,8 @@ TEST(GPUSQCalculatorTests, FallbackOrGPUExecution) {
 
   GPUSQCalculator gpu_calc;
   EXPECT_NO_THROW(gpu_calc.calculateFrame(dists, settings));
-  EXPECT_TRUE(dists.getAllHistograms().contains("S_q") || dists.getAllHistograms().contains("S_Q") ||
+  EXPECT_TRUE(dists.getAllHistograms().contains("S_q") ||
+              dists.getAllHistograms().contains("S_Q") ||
               dists.getAllHistograms().contains("S_Q_gpu"));
 }
 

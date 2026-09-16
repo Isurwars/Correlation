@@ -57,9 +57,7 @@ protected:
     cleanFiles();
   }
 
-  void TearDown() override {
-    cleanFiles();
-  }
+  void TearDown() override { cleanFiles(); }
 
   static void cleanFiles() {
     // Clean up all generated files.
@@ -164,11 +162,11 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
 
   // Find peaks in expected regions for crystalline silicon.
   // 1st neighbor shell: ~2.35 Å. Search from 2.0 to 3.0 Å.
-  size_t const first_peak_idx =
-      find_peak_idx(si_si_rdf, static_cast<size_t>(2.0 / rdf_bin), static_cast<size_t>(3.0 / rdf_bin));
+  size_t const first_peak_idx = find_peak_idx(si_si_rdf, static_cast<size_t>(2.0 / rdf_bin),
+                                              static_cast<size_t>(3.0 / rdf_bin));
   // 2nd neighbor shell: ~3.84 Å. Search from 3.5 to 4.2 Å.
-  size_t const second_peak_idx =
-      find_peak_idx(si_si_rdf, static_cast<size_t>(3.5 / rdf_bin), static_cast<size_t>(4.2 / rdf_bin));
+  size_t const second_peak_idx = find_peak_idx(si_si_rdf, static_cast<size_t>(3.5 / rdf_bin),
+                                               static_cast<size_t>(4.2 / rdf_bin));
 
   EXPECT_NEAR(bins[first_peak_idx], 2.35, rdf_bin * 2);
   EXPECT_NEAR(bins[second_peak_idx], 3.84, rdf_bin * 2);
@@ -227,8 +225,7 @@ TEST_F(FileWriterTests, PADCsvContainsRawAndNormalizedAndSmoothedColumns) {
   // Verify the raw columns appear before the normalized columns
   auto raw_pos = header_line.find("Si-Si-Si_raw");
   auto norm_pos = header_line.find(",Si-Si-Si,");
-  EXPECT_LT(raw_pos, norm_pos)
-      << "Raw companion columns should appear before normalized columns";
+  EXPECT_LT(raw_pos, norm_pos) << "Raw companion columns should appear before normalized columns";
 }
 
 TEST_F(FileWriterTests, PADRawCsvContainsRawCountsAndSmoothed) {

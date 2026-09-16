@@ -19,7 +19,8 @@ namespace correlation::core {
 
 Trajectory::Trajectory() : time_step_(1.0) {}
 
-Trajectory::Trajectory(std::vector<Cell> frames, real_t time_step) : frames_(std::move(frames)), time_step_(time_step) {
+Trajectory::Trajectory(std::vector<Cell> frames, real_t time_step)
+    : frames_(std::move(frames)), time_step_(time_step) {
   // Validate all frames against the first one
   if (!frames_.empty()) {
     for (size_t i = 1; i < frames_.size(); ++i) {
@@ -29,10 +30,10 @@ Trajectory::Trajectory(std::vector<Cell> frames, real_t time_step) : frames_(std
   }
 }
 
-Trajectory::Trajectory(std::shared_ptr<MappedFile> mapped_file, std::vector<size_t> frame_offsets, FrameParser parser,
-                       real_t time_step)
-    : mapped_file_(std::move(mapped_file)), frame_offsets_(std::move(frame_offsets)), parser_(std::move(parser)),
-      time_step_(time_step) {
+Trajectory::Trajectory(std::shared_ptr<MappedFile> mapped_file, std::vector<size_t> frame_offsets,
+                       FrameParser parser, real_t time_step)
+    : mapped_file_(std::move(mapped_file)), frame_offsets_(std::move(frame_offsets)),
+      parser_(std::move(parser)), time_step_(time_step) {
   if (getFrameCount() > 0) {
     precomputeBondCutoffs();
   }
@@ -63,7 +64,8 @@ Cell Trajectory::getFrame(size_t index) const {
     return frames_[index];
   }
   if (mapped_file_) {
-    return parser_(mapped_file_->data() + frame_offsets_[index], frame_offsets_[index + 1] - frame_offsets_[index]);
+    return parser_(mapped_file_->data() + frame_offsets_[index],
+                   frame_offsets_[index + 1] - frame_offsets_[index]);
   }
   throw std::runtime_error("Trajectory::getFrame: trajectory is empty");
 }
@@ -94,14 +96,17 @@ void Trajectory::ensureMaterialized() const {
     size_t const count = getFrameCount();
     frames_.resize(count);
     for (size_t i = 0; i < count; ++i) {
-      frames_[i] = parser_(mapped_file_->data() + frame_offsets_[i], frame_offsets_[i + 1] - frame_offsets_[i]);
+      frames_[i] = parser_(mapped_file_->data() + frame_offsets_[i],
+                           frame_offsets_[i + 1] - frame_offsets_[i]);
     }
     first_frame_.reset();
   }
 }
 
-const correlation::analysis::BondCutoffRange &Trajectory::getBondCutoffRange(size_t type1, size_t type2) const {
-  static const correlation::analysis::BondCutoffRange default_range{static_cast<real_t>(0.0), static_cast<real_t>(0.0)};
+const correlation::analysis::BondCutoffRange &Trajectory::getBondCutoffRange(size_t type1,
+                                                                             size_t type2) const {
+  static const correlation::analysis::BondCutoffRange default_range{static_cast<real_t>(0.0),
+                                                                    static_cast<real_t>(0.0)};
   if (bond_cutoffs_.empty()) {
     precomputeBondCutoffs();
   }
@@ -113,13 +118,17 @@ const correlation::analysis::BondCutoffRange &Trajectory::getBondCutoffRange(siz
   return bond_cutoffs_[type1][type2];
 }
 
-real_t Trajectory::getBondCutoffSQ(size_t type1, size_t type2) const { return getBondCutoffRange(type1, type2).max_sq; }
+real_t Trajectory::getBondCutoffSQ(size_t type1, size_t type2) const {
+  return getBondCutoffRange(type1, type2).max_sq;
+}
 
 real_t Trajectory::getMinBondCutoffSQ(size_t type1, size_t type2) const {
   return getBondCutoffRange(type1, type2).min_sq;
 }
 
-real_t Trajectory::getBondCutoff(size_t type1, size_t type2) const { return std::sqrt(getBondCutoffSQ(type1, type2)); }
+real_t Trajectory::getBondCutoff(size_t type1, size_t type2) const {
+  return std::sqrt(getBondCutoffSQ(type1, type2));
+}
 
 real_t Trajectory::getMinBondCutoff(size_t type1, size_t type2) const {
   return std::sqrt(getMinBondCutoffSQ(type1, type2));
@@ -132,7 +141,8 @@ void Trajectory::setBondCutoffs(const correlation::analysis::BondCutoffMatrix &c
         throw std::invalid_argument("Bond cutoff bounds cannot be negative.");
       }
       if (range.min_sq > range.max_sq) {
-        throw std::invalid_argument("Minimum bond cutoff cannot be greater than maximum bond cutoff.");
+        throw std::invalid_argument(
+            "Minimum bond cutoff cannot be greater than maximum bond cutoff.");
       }
     }
   }
@@ -162,7 +172,8 @@ void Trajectory::precomputeBondCutoffs() const {
   Cell const first_frame = getFrame(0);
   const auto &elements = first_frame.elements();
   const size_t num_elements = elements.size();
-  bond_cutoffs_.resize(num_elements, std::vector<correlation::analysis::BondCutoffRange>(num_elements));
+  bond_cutoffs_.resize(num_elements,
+                       std::vector<correlation::analysis::BondCutoffRange>(num_elements));
 
   auto safeGetRadius = [](const std::string &symbol) -> real_t {
     try {
@@ -309,7 +320,8 @@ void Trajectory::validateFrame(const Cell &new_frame) const {
   const auto &new_elements = new_frame.elements();
   if (ref_elements.size() != new_elements.size()) {
     throw std::runtime_error("Frame validation failed: Element count mismatch. Expected " +
-                             std::to_string(ref_elements.size()) + ", but got " + std::to_string(new_elements.size()));
+                             std::to_string(ref_elements.size()) + ", but got " +
+                             std::to_string(new_elements.size()));
   }
 
   // Map new element IDs to reference element IDs for fast comparison
@@ -317,8 +329,9 @@ void Trajectory::validateFrame(const Cell &new_frame) const {
   for (size_t i = 0; i < new_elements.size(); ++i) {
     auto element_iterator = std::ranges::find(ref_elements, new_elements[i]);
     if (element_iterator == ref_elements.end()) {
-      throw std::runtime_error("Frame validation failed: Element symbol mismatch at index " + std::to_string(i) +
-                               ". Expected " + ref_elements[i].symbol + ", but got " + new_elements[i].symbol);
+      throw std::runtime_error("Frame validation failed: Element symbol mismatch at index " +
+                               std::to_string(i) + ". Expected " + ref_elements[i].symbol +
+                               ", but got " + new_elements[i].symbol);
     }
     new_to_ref[i] = static_cast<int>(std::distance(ref_elements.begin(), element_iterator));
   }
@@ -336,9 +349,9 @@ void Trajectory::validateFrame(const Cell &new_frame) const {
     if (ref_id != new_id) {
       // For a helpful error message, we get the mapped original new_id
       const int original_new_id = new_atoms[i].element_id();
-      throw std::runtime_error("Frame validation failed: Atom symbol mismatch at index " + std::to_string(i) +
-                               ". Expected " + ref_elements[ref_id].symbol + ", but got " +
-                               new_elements[original_new_id].symbol);
+      throw std::runtime_error("Frame validation failed: Atom symbol mismatch at index " +
+                               std::to_string(i) + ". Expected " + ref_elements[ref_id].symbol +
+                               ", but got " + new_elements[original_new_id].symbol);
     }
   }
 }

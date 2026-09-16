@@ -22,7 +22,9 @@ public:
   [[nodiscard]] std::string_view getName() const override { return "PAD"; }
   [[nodiscard]] std::string_view getShortName() const override { return "PAD"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Angular"; }
-  [[nodiscard]] std::string_view getDescription() const override { return "Computes the Plane-Angle Distribution (PAD)."; }
+  [[nodiscard]] std::string_view getDescription() const override {
+    return "Computes the Plane-Angle Distribution (PAD).";
+  }
 
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
@@ -39,8 +41,8 @@ public:
    * @return A map of histograms containing normalized "PAD" and raw "PAD_raw".
    */
   static std::map<std::string, correlation::analysis::Histogram>
-  calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors,
-            real_t bin_width);
+  calculate(const correlation::core::Cell &cell,
+            const correlation::analysis::StructureAnalyzer *neighbors, real_t bin_width);
 };
 
 } // namespace correlation::calculators

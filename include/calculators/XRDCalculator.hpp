@@ -55,7 +55,9 @@ public:
   [[nodiscard]] std::string_view getName() const override { return "XRD"; }
   [[nodiscard]] std::string_view getShortName() const override { return "XRD"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Scattering"; }
-  [[nodiscard]] std::string_view getDescription() const override { return "Computes the X-Ray Diffraction Pattern (XRD)."; }
+  [[nodiscard]] std::string_view getDescription() const override {
+    return "Computes the X-Ray Diffraction Pattern (XRD).";
+  }
 
   [[nodiscard]] bool isFrameCalculator() const override { return true; }
   [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
@@ -75,11 +77,10 @@ public:
    * @param bin_width Angular resolution (degrees).
    * @return A histogram representing intensity vs 2-theta.
    */
-  static correlation::analysis::Histogram calculate(const correlation::analysis::Histogram &g_r_hist,
-                                                    const correlation::core::Cell &cell,
-                                                    const std::map<std::string, real_t> &ashcroft_weights,
-                                                    Wavelength lambda, MinTheta theta_min, MaxTheta theta_max,
-                                                    BinWidth bin_width);
+  static correlation::analysis::Histogram
+  calculate(const correlation::analysis::Histogram &g_r_hist, const correlation::core::Cell &cell,
+            const std::map<std::string, real_t> &ashcroft_weights, Wavelength lambda,
+            MinTheta theta_min, MaxTheta theta_max, BinWidth bin_width);
 
   /**
    * @brief Direct reciprocal-space calculation of XRD pattern from partial structure factors S(Q).
@@ -93,14 +94,15 @@ public:
    * @param bin_width Angular resolution (degrees).
    * @return A histogram representing intensity vs 2-theta.
    */
-  static correlation::analysis::Histogram calculateFromSq(const correlation::analysis::Histogram &s_q_hist,
-                                                          const correlation::core::Cell &cell,
-                                                          const std::map<std::string, real_t> &ashcroft_weights,
-                                                          Wavelength lambda, MinTheta theta_min, MaxTheta theta_max,
-                                                          BinWidth bin_width);
+  static correlation::analysis::Histogram
+  calculateFromSq(const correlation::analysis::Histogram &s_q_hist,
+                  const correlation::core::Cell &cell,
+                  const std::map<std::string, real_t> &ashcroft_weights, Wavelength lambda,
+                  MinTheta theta_min, MaxTheta theta_max, BinWidth bin_width);
 
   /**
-   * @brief Calculate the atomic form factor f(Q) for a given element symbol and scattering vector Q.
+   * @brief Calculate the atomic form factor f(Q) for a given element symbol and scattering vector
+   * Q.
    * @param symbol Element symbol (e.g. "Ar").
    * @param q_value Magnitude of scattering vector Q in 1/Angstrom.
    * @return Atomic form factor value.

@@ -16,7 +16,9 @@ public:
   correlation::core::Cell cell;
   correlation::core::NeighborGraph graph;
 
-  void SetUp() override { cell = correlation::core::Cell({20.0, 0.0, 0.0}, {0.0, 20.0, 0.0}, {0.0, 0.0, 20.0}); }
+  void SetUp() override {
+    cell = correlation::core::Cell({20.0, 0.0, 0.0}, {0.0, 20.0, 0.0}, {0.0, 0.0, 20.0});
+  }
 };
 } // namespace
 

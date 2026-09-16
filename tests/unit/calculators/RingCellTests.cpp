@@ -50,8 +50,9 @@ TEST_P(RingCellTests, GeometryAndBondDistances) {
   EXPECT_EQ(cell.atomCount(), numAtoms);
 
   real_t const mid = boxSize() * static_cast<real_t>(0.5);
-  real_t const expected_bond_dist = static_cast<real_t>(2.0) * radius() *
-                                    std::sin(static_cast<real_t>(std::numbers::pi) / static_cast<real_t>(numAtoms));
+  real_t const expected_bond_dist =
+      static_cast<real_t>(2.0) * radius() *
+      std::sin(static_cast<real_t>(std::numbers::pi) / static_cast<real_t>(numAtoms));
 
   // Check radius of each atom relative to center
   for (size_t i = 0; i < numAtoms; ++i) {
@@ -89,7 +90,8 @@ TEST_P(RingCellTests, MotifFinderRingDetection) {
   }
 
   auto rings = calculators::MotifFinder::findRings(graph, 8);
-  EXPECT_EQ(rings[numAtoms], 1) << "Ring of size " << numAtoms << " should detect exactly 1 ring motif.";
+  EXPECT_EQ(rings[numAtoms], 1) << "Ring of size " << numAtoms
+                                << " should detect exactly 1 ring motif.";
 }
 
 // 3. Verify Plane Angle Distribution (PAD) internal angles
@@ -97,8 +99,9 @@ TEST_P(RingCellTests, PlaneAngleDistribution) {
   size_t const numAtoms = GetParam();
   auto const cell = createRing(numAtoms);
 
-  real_t const bond_dist = static_cast<real_t>(2.0) * radius() *
-                           std::sin(static_cast<real_t>(std::numbers::pi) / static_cast<real_t>(numAtoms));
+  real_t const bond_dist =
+      static_cast<real_t>(2.0) * radius() *
+      std::sin(static_cast<real_t>(std::numbers::pi) / static_cast<real_t>(numAtoms));
   real_t const cutoff = bond_dist * static_cast<real_t>(1.2);
 
   core::Trajectory traj;
@@ -108,8 +111,8 @@ TEST_P(RingCellTests, PlaneAngleDistribution) {
   DistributionFunctions dists(cell, cutoff, traj.getBondCutoffsSQ());
   dists.calculatePAD(0.01);
 
-  real_t const expected_angle_deg =
-      static_cast<real_t>(180.0) * static_cast<real_t>(numAtoms - 2) / static_cast<real_t>(numAtoms);
+  real_t const expected_angle_deg = static_cast<real_t>(180.0) * static_cast<real_t>(numAtoms - 2) /
+                                    static_cast<real_t>(numAtoms);
 
   if (dists.getAllHistograms().contains("PAD")) {
     const auto &hist = dists.getHistogram("PAD");
@@ -120,7 +123,8 @@ TEST_P(RingCellTests, PlaneAngleDistribution) {
         auto const idx = static_cast<size_t>(std::distance(ccc.begin(), max_it));
         real_t const measured_angle = hist.bins[idx];
         EXPECT_NEAR(measured_angle, expected_angle_deg, 2.0)
-            << "PAD peak for " << numAtoms << "-ring should be around " << expected_angle_deg << " degrees.";
+            << "PAD peak for " << numAtoms << "-ring should be around " << expected_angle_deg
+            << " degrees.";
       }
     }
   }
@@ -131,8 +135,9 @@ TEST_P(RingCellTests, PlanarAngleDistributionRunsCleanly) {
   size_t const numAtoms = GetParam();
   auto const cell = createRing(numAtoms);
 
-  real_t const bond_dist = static_cast<real_t>(2.0) * radius() *
-                           std::sin(static_cast<real_t>(std::numbers::pi) / static_cast<real_t>(numAtoms));
+  real_t const bond_dist =
+      static_cast<real_t>(2.0) * radius() *
+      std::sin(static_cast<real_t>(std::numbers::pi) / static_cast<real_t>(numAtoms));
   real_t const cutoff = bond_dist * static_cast<real_t>(1.2);
 
   core::Trajectory traj;
@@ -152,19 +157,22 @@ TEST_P(RingCellTests, RadialPairDistances) {
   for (size_t stepK = 1; stepK <= numAtoms / 2; ++stepK) {
     real_t const expected_d_k =
         static_cast<real_t>(2.0) * radius() *
-        std::sin(static_cast<real_t>(stepK) * static_cast<real_t>(std::numbers::pi) / static_cast<real_t>(numAtoms));
+        std::sin(static_cast<real_t>(stepK) * static_cast<real_t>(std::numbers::pi) /
+                 static_cast<real_t>(numAtoms));
 
     // Find at least one pair matching this topological distance step
     bool distance_found = false;
     for (size_t i = 0; i < numAtoms; ++i) {
       size_t const targetIdx = (i + stepK) % numAtoms;
-      real_t const actual_d = vecNorm(cell.atoms()[i].position() - cell.atoms()[targetIdx].position());
+      real_t const actual_d =
+          vecNorm(cell.atoms()[i].position() - cell.atoms()[targetIdx].position());
       if (std::abs(actual_d - expected_d_k) < 1e-4) {
         distance_found = true;
         break;
       }
     }
-    EXPECT_TRUE(distance_found) << "Ring size " << numAtoms << " missing expected pair distance for step k=" << stepK;
+    EXPECT_TRUE(distance_found) << "Ring size " << numAtoms
+                                << " missing expected pair distance for step k=" << stepK;
   }
 }
 

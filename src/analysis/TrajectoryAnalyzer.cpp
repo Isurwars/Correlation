@@ -11,17 +11,20 @@
 
 namespace correlation::analysis {
 
-TrajectoryAnalyzer::TrajectoryAnalyzer(correlation::core::Trajectory &trajectory, real_t neighbor_cutoff,
-                                       const BondCutoffMatrix &bond_cutoffs, StartFrame start_frame,
-                                       EndFrame end_frame, bool ignore_periodic_self_interactions,
-                                       const std::function<void(float, const std::string &)> &progress_callback)
-    : trajectory_(&trajectory), time_step_(trajectory.getTimeStep()), neighbor_cutoff_(neighbor_cutoff),
-      bond_cutoffs_(bond_cutoffs), ignore_periodic_self_interactions_(ignore_periodic_self_interactions) {
+TrajectoryAnalyzer::TrajectoryAnalyzer(
+    correlation::core::Trajectory &trajectory, real_t neighbor_cutoff,
+    const BondCutoffMatrix &bond_cutoffs, StartFrame start_frame, EndFrame end_frame,
+    bool ignore_periodic_self_interactions,
+    const std::function<void(float, const std::string &)> &progress_callback)
+    : trajectory_(&trajectory), time_step_(trajectory.getTimeStep()),
+      neighbor_cutoff_(neighbor_cutoff), bond_cutoffs_(bond_cutoffs),
+      ignore_periodic_self_interactions_(ignore_periodic_self_interactions) {
 
   size_t n_frames = trajectory.getFrameCount();
 
-  effective_end_ =
-      (end_frame.value == static_cast<size_t>(-1) || end_frame.value >= n_frames) ? n_frames : end_frame.value;
+  effective_end_ = (end_frame.value == static_cast<size_t>(-1) || end_frame.value >= n_frames)
+                       ? n_frames
+                       : end_frame.value;
 
   start_frame_ = (start_frame.value >= n_frames) ? n_frames : start_frame.value;
 
@@ -37,8 +40,8 @@ std::unique_ptr<StructureAnalyzer> TrajectoryAnalyzer::createAnalyzer(size_t fra
     return nullptr;
   }
   const auto &cutoffs = !bond_cutoffs_.empty() ? bond_cutoffs_ : trajectory_->getBondCutoffs();
-  return std::make_unique<StructureAnalyzer>(trajectory_->getFrame(frame_idx), neighbor_cutoff_, cutoffs,
-                                             ignore_periodic_self_interactions_);
+  return std::make_unique<StructureAnalyzer>(trajectory_->getFrame(frame_idx), neighbor_cutoff_,
+                                             cutoffs, ignore_periodic_self_interactions_);
 }
 
 } // namespace correlation::analysis

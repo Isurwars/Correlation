@@ -110,8 +110,8 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
     static std::mutex planner_mutex;
     const std::scoped_lock lock(planner_mutex);
 
-    plan = fftw_plan_dft_1d(static_cast<int>(size), fftw_data, fftw_data, invert ? FFTW_BACKWARD : FFTW_FORWARD,
-                            FFTW_ESTIMATE);
+    plan = fftw_plan_dft_1d(static_cast<int>(size), fftw_data, fftw_data,
+                            invert ? FFTW_BACKWARD : FFTW_FORWARD, FFTW_ESTIMATE);
     if (plan == nullptr) {
       throw std::runtime_error("Failed to create FFTW plan for size " + std::to_string(size));
     }
@@ -135,8 +135,10 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
  * @brief Thread-local cache for reusing Intel MKL DFTI descriptors across transform sizes.
  */
 struct MKLDescriptorCache {
-  std::unordered_map<size_t, DFTI_DESCRIPTOR_HANDLE> forward_handles;  ///< Cached MKL forward handles.
-  std::unordered_map<size_t, DFTI_DESCRIPTOR_HANDLE> backward_handles; ///< Cached MKL backward handles.
+  std::unordered_map<size_t, DFTI_DESCRIPTOR_HANDLE>
+      forward_handles; ///< Cached MKL forward handles.
+  std::unordered_map<size_t, DFTI_DESCRIPTOR_HANDLE>
+      backward_handles; ///< Cached MKL backward handles.
 
   ~MKLDescriptorCache() {
     for (auto &p : forward_handles) {
@@ -162,7 +164,8 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
   if (it != handles.end()) {
     handle = it->second;
   } else {
-    MKL_LONG status = DftiCreateDescriptor(&handle, DFTI_DOUBLE, DFTI_COMPLEX, 1, static_cast<MKL_LONG>(size));
+    MKL_LONG status =
+        DftiCreateDescriptor(&handle, DFTI_DOUBLE, DFTI_COMPLEX, 1, static_cast<MKL_LONG>(size));
     if (status != DFTI_NO_ERROR) {
       throw std::runtime_error("MKL DftiCreateDescriptor failed");
     }
@@ -199,7 +202,8 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
  * @param data The input/output vector of complex numbers. Modifies in-place.
  * @param invert If true, performs an inverse FFT and scales the result by 1/N.
  */
-template <typename T = double> inline void computeFFT(std::vector<std::complex<T>> &data, bool invert) {
+template <typename T = double>
+inline void computeFFT(std::vector<std::complex<T>> &data, bool invert) {
   size_t size = data.size();
   if (size == 0) {
     return;
@@ -255,7 +259,8 @@ template <typename T = double> inline void computeFFT(std::vector<std::complex<T
  * @return          Autocorrelation sequence of length N equal to signal.size().
  */
 template <typename T = real_t>
-inline std::vector<T> autocorrelate(const std::vector<T> &signal, std::vector<std::complex<T>> &workspace) {
+inline std::vector<T> autocorrelate(const std::vector<T> &signal,
+                                    std::vector<std::complex<T>> &workspace) {
   size_t size = signal.size();
   if (size == 0) {
     return {};
@@ -272,7 +277,8 @@ inline std::vector<T> autocorrelate(const std::vector<T> &signal, std::vector<st
   // Convert to std::vector<std::complex<double>> for external FFT library computation
   std::vector<std::complex<double>> double_ws(len);
   for (size_t i = 0; i < len; ++i) {
-    double_ws[i] = {static_cast<double>(workspace[i].real()), static_cast<double>(workspace[i].imag())};
+    double_ws[i] = {static_cast<double>(workspace[i].real()),
+                    static_cast<double>(workspace[i].imag())};
   }
 
   computeFFT(double_ws, false);

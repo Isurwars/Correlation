@@ -31,16 +31,19 @@ void init_core(py::module_ &mod) {
       .def_property("id", &Atom::id, &Atom::setID, "Atom identifier.")
       .def_property("element", &Atom::element, &Atom::setElement, "Chemical element metadata.");
 
-  py::class_<Cell>(mod, "Cell", "Simulation cell containing atomic coordinates and periodic box geometry.")
+  py::class_<Cell>(mod, "Cell",
+                   "Simulation cell containing atomic coordinates and periodic box geometry.")
       .def(py::init<>(), "Construct an empty non-periodic Cell.")
       .def(py::init<const std::array<real_t, 6> &>(), py::arg("lattice_parameters"),
            "Construct a Cell from lattice parameters [a, b, c, alpha, beta, gamma].")
       .def(py::init([](const std::array<real_t, 3> &vec_a, const std::array<real_t, 3> &vec_b,
                        const std::array<real_t, 3> &vec_c) {
-             return Cell(correlation::math::Vector3<real_t>(vec_a), correlation::math::Vector3<real_t>(vec_b),
+             return Cell(correlation::math::Vector3<real_t>(vec_a),
+                         correlation::math::Vector3<real_t>(vec_b),
                          correlation::math::Vector3<real_t>(vec_c));
            }),
-           py::arg("a"), py::arg("b"), py::arg("c"), "Construct a Cell from three lattice vectors a, b, and c.")
+           py::arg("a"), py::arg("b"), py::arg("c"),
+           "Construct a Cell from three lattice vectors a, b, and c.")
       .def(
           "add_atom",
           [](Cell &cell, const std::string &symbol, const std::array<real_t, 3> &pos) -> Atom & {
@@ -50,11 +53,15 @@ void init_core(py::module_ &mod) {
           "Add an atom with given symbol and Cartesian position to the cell.")
       .def("get_volume", &Cell::volume, "Get unit cell volume in cubic Angstroms.")
       .def_property_readonly("volume", &Cell::volume, "Unit cell volume in cubic Angstroms.")
-      .def_property("energy", &Cell::getEnergy, &Cell::setEnergy, "Potential energy of the cell snapshot.")
+      .def_property("energy", &Cell::getEnergy, &Cell::setEnergy,
+                    "Potential energy of the cell snapshot.")
       .def_property_readonly("atom_count", &Cell::atomCount, "Number of atoms in the cell.")
       .def("__len__", &Cell::atomCount, "Number of atoms in the cell.")
       .def(
-          "__iter__", [](const Cell &cell) { return py::make_iterator(cell.atoms().begin(), cell.atoms().end()); },
+          "__iter__",
+          [](const Cell &cell) {
+            return py::make_iterator(cell.atoms().begin(), cell.atoms().end());
+          },
           py::keep_alive<0, 1>(), "Iterate over atoms in the cell.")
       .def_property_readonly(
           "atoms", [](const Cell &cell) -> const std::vector<Atom> & { return cell.atoms(); },
@@ -63,11 +70,13 @@ void init_core(py::module_ &mod) {
           "get_positions",
           [](const Cell &cell) -> py::array_t<real_t> {
             const py::module_ warnings = py::module_::import("warnings");
-            warnings.attr("warn")("get_positions() is deprecated, use the zero-copy .positions property instead.",
-                                  warnings.attr("DeprecationWarning"));
+            warnings.attr("warn")(
+                "get_positions() is deprecated, use the zero-copy .positions property instead.",
+                warnings.attr("DeprecationWarning"));
             const auto &atoms = cell.atoms();
             const size_t num_atoms = atoms.size();
-            py::array_t<real_t> arr({static_cast<py::ssize_t>(num_atoms), static_cast<py::ssize_t>(3)});
+            py::array_t<real_t> arr(
+                {static_cast<py::ssize_t>(num_atoms), static_cast<py::ssize_t>(3)});
             auto buf = arr.mutable_unchecked<2>();
             for (size_t idx = 0; idx < num_atoms; ++idx) {
               const auto &position = atoms[idx].position();
@@ -182,10 +191,13 @@ void init_core(py::module_ &mod) {
             return trajectory.getFrame(static_cast<size_t>(index));
           },
           py::arg("index"), "Access a frame snapshot by integer index.")
-      .def("add_frame", &Trajectory::addFrame, py::arg("frame"), "Append a Cell frame to the trajectory.")
+      .def("add_frame", &Trajectory::addFrame, py::arg("frame"),
+           "Append a Cell frame to the trajectory.")
       .def("append", &Trajectory::addFrame, py::arg("frame"),
            "Append a Cell frame to the trajectory (alias for add_frame).")
       .def_property_readonly(
-          "frames", [](Trajectory &trajectory) -> std::vector<Cell> & { return trajectory.getFrames(); },
-          py::return_value_policy::reference_internal, "Direct reference to the sequence of Cell frames.");
+          "frames",
+          [](Trajectory &trajectory) -> std::vector<Cell> & { return trajectory.getFrames(); },
+          py::return_value_policy::reference_internal,
+          "Direct reference to the sequence of Cell frames.");
 }

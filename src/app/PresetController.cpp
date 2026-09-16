@@ -15,7 +15,8 @@
 
 namespace correlation::app {
 
-PresetController::PresetController(::AppWindow &window, AppBackend &backend, AppController &controller)
+PresetController::PresetController(::AppWindow &window, AppBackend &backend,
+                                   AppController &controller)
     : window_(window), backend_(backend), controller_(controller) {}
 
 void PresetController::handleLoadPreset(int index) {
@@ -41,7 +42,8 @@ void PresetController::handleLoadPreset(int index) {
   controller_.updateActiveGroupFlags();
   static_cast<void>(controller_.getInputValidator()->validateInputs());
 
-  window_.set_analysis_status_text(slint::SharedString(std::string("Loaded preset: ") + preset.name));
+  window_.set_analysis_status_text(
+      slint::SharedString(std::string("Loaded preset: ") + preset.name));
 }
 
 void PresetController::handleSavePreset(const std::string &name) {
@@ -94,20 +96,27 @@ void PresetController::handleMaterialTypeChanged(int type) {
   if (type == 2) { // Crystalline
     opts.r_bin_width = slint::SharedString(std::format("{:.3f}", AppDefaults::R_BIN_WIDTH_CRYSTAL));
     opts.q_bin_width = slint::SharedString(std::format("{:.3f}", AppDefaults::Q_BIN_WIDTH_CRYSTAL));
-    opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
-    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
-    opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_CRYSTAL));
+    opts.angle_bin_width =
+        slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
+    opts.dihedral_bin_width =
+        slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
+    opts.smoothing_sigma =
+        slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_CRYSTAL));
   } else if (type == 1) { // Liquid
     opts.r_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH_LIQUID));
     opts.q_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH_LIQUID));
-    opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
-    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
-    opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_LIQUID));
+    opts.angle_bin_width =
+        slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
+    opts.dihedral_bin_width =
+        slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
+    opts.smoothing_sigma =
+        slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_LIQUID));
   } else if (type == 0) { // Amorphous (0)
     opts.r_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH));
     opts.q_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH));
     opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
-    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
+    opts.dihedral_bin_width =
+        slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
     opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA));
   }
 

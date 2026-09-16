@@ -74,7 +74,8 @@ int main(int argc, char *argv[]) {
     return str;
   };
 
-  const auto &factory_calcs = correlation::calculators::CalculatorFactory::instance().getCalculators();
+  const auto &factory_calcs =
+      correlation::calculators::CalculatorFactory::instance().getCalculators();
 
   // Parse disabled groups
   std::set<std::string> disabled_groups;
@@ -119,7 +120,8 @@ int main(int argc, char *argv[]) {
     backend.setOptions(opts);
     if (!cli.quiet) {
       std::cerr << msg << "\n";
-      std::cerr << "Frames: " << backend.getFrameCount() << "  Atoms: " << backend.getTotalAtomCount() << "\n";
+      std::cerr << "Frames: " << backend.getFrameCount()
+                << "  Atoms: " << backend.getTotalAtomCount() << "\n";
     }
   } catch (const std::exception &e) {
     std::cerr << "Error loading file: " << e.what() << "\n";

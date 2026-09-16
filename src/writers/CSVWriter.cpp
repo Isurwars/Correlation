@@ -23,7 +23,8 @@ namespace correlation::writers {
 // Automatic registration
 const bool registered = WriterFactory::registerTypeSafe<CSVWriter>("CSVWriter");
 
-void CSVWriter::writeAllCSVs(const std::string &base_path, const correlation::analysis::DistributionFunctions &dists,
+void CSVWriter::writeAllCSVs(const std::string &base_path,
+                             const correlation::analysis::DistributionFunctions &dists,
                              bool /*write_smoothed*/) {
   const auto &all_histograms = dists.getAllHistograms();
   for (const auto &[name, hist] : all_histograms) {
@@ -69,23 +70,28 @@ getSortedKeys(const std::map<std::string, std::vector<correlation::real_t>> &map
   return keys;
 }
 
-[[nodiscard]] std::vector<ColumnDef> buildColumns(const correlation::analysis::Histogram &hist,
-                                                  const correlation::analysis::Histogram *raw_companion) {
+[[nodiscard]] std::vector<ColumnDef>
+buildColumns(const correlation::analysis::Histogram &hist,
+             const correlation::analysis::Histogram *raw_companion) {
   std::vector<ColumnDef> cols;
 
-  const std::string raw_unit =
-      (raw_companion != nullptr && !raw_companion->y_unit.empty()) ? raw_companion->y_unit : "counts";
+  const std::string raw_unit = (raw_companion != nullptr && !raw_companion->y_unit.empty())
+                                   ? raw_companion->y_unit
+                                   : "counts";
   const std::string data_unit = hist.y_unit.empty() ? "arbitrary units" : hist.y_unit;
 
   if (raw_companion != nullptr) {
     for (const auto &key : getSortedKeys(raw_companion->partials)) {
-      cols.push_back(
-          {.name = key + "_raw", .unit = raw_unit, .comment = key + "_raw", .data = &raw_companion->partials.at(key)});
+      cols.push_back({.name = key + "_raw",
+                      .unit = raw_unit,
+                      .comment = key + "_raw",
+                      .data = &raw_companion->partials.at(key)});
     }
   }
 
   for (const auto &key : getSortedKeys(hist.partials)) {
-    cols.push_back({.name = key, .unit = data_unit, .comment = key, .data = &hist.partials.at(key)});
+    cols.push_back(
+        {.name = key, .unit = data_unit, .comment = key, .data = &hist.partials.at(key)});
   }
 
   for (const auto &key : getSortedKeys(hist.smoothed_partials)) {
@@ -98,7 +104,8 @@ getSortedKeys(const std::map<std::string, std::vector<correlation::real_t>> &map
   return cols;
 }
 
-void writeHeader(std::ostream &file, const correlation::analysis::Histogram &hist, const std::vector<ColumnDef> &cols) {
+void writeHeader(std::ostream &file, const correlation::analysis::Histogram &hist,
+                 const std::vector<ColumnDef> &cols) {
   const std::string bin_unit = hist.x_unit.empty() ? "arbitrary units" : hist.x_unit;
   const std::string description = hist.description.empty() ? "Data export" : hist.description;
   const std::string dim_label = hist.x_label.empty() ? "x" : hist.x_label;
@@ -139,7 +146,8 @@ void writeDataRows(std::ostream &file, const std::vector<correlation::real_t> &b
 
 } // namespace
 
-void CSVWriter::writeHistogramToCSV(const std::string &filename, const correlation::analysis::Histogram &hist,
+void CSVWriter::writeHistogramToCSV(const std::string &filename,
+                                    const correlation::analysis::Histogram &hist,
                                     const correlation::analysis::Histogram *raw_companion) {
   if (hist.partials.empty() || hist.bins.empty()) {
     return;

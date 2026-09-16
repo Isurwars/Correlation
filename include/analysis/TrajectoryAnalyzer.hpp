@@ -31,10 +31,11 @@ class TrajectoryAnalyzer {
 public:
   /** @name Constructors */
   ///@{
-  TrajectoryAnalyzer(correlation::core::Trajectory &trajectory, real_t neighbor_cutoff,
-                     const BondCutoffMatrix &bond_cutoffs, StartFrame start_frame = {0},
-                     EndFrame end_frame = {static_cast<size_t>(-1)}, bool ignore_periodic_self_interactions = true,
-                     const std::function<void(float, const std::string &)> &progress_callback = nullptr);
+  TrajectoryAnalyzer(
+      correlation::core::Trajectory &trajectory, real_t neighbor_cutoff,
+      const BondCutoffMatrix &bond_cutoffs, StartFrame start_frame = {0},
+      EndFrame end_frame = {static_cast<size_t>(-1)}, bool ignore_periodic_self_interactions = true,
+      const std::function<void(float, const std::string &)> &progress_callback = nullptr);
 
   ///@}
 
@@ -59,7 +60,9 @@ public:
   /** @return The bond cutoff matrix used for topological analysis. */
   [[nodiscard]] const BondCutoffMatrix &getBondCutoffs() const { return bond_cutoffs_; }
   /** @return True if periodic self-interactions are being ignored. */
-  [[nodiscard]] bool getIgnorePeriodicSelfInteractions() const { return ignore_periodic_self_interactions_; }
+  [[nodiscard]] bool getIgnorePeriodicSelfInteractions() const {
+    return ignore_periodic_self_interactions_;
+  }
 
   ///@}
 

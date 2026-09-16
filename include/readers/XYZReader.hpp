@@ -28,13 +28,13 @@ public:
   std::vector<std::string> getExtensions() const override { return {".xyz", ".exyz"}; }
   bool isTrajectory() const override { return true; }
 
-  correlation::core::Cell
-  readStructure(const std::string &filename,
-                std::function<void(float, const std::string &)> progress_callback = nullptr) override;
+  correlation::core::Cell readStructure(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
-  correlation::core::Trajectory
-  readTrajectory(const std::string &filename,
-                 std::function<void(float, const std::string &)> progress_callback = nullptr) override;
+  correlation::core::Trajectory readTrajectory(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
 private:
   /**
@@ -42,12 +42,13 @@ private:
    * @brief Intermediate storage for parsed Extended XYZ comment line metadata and column layout.
    */
   struct CommentData {
-    std::optional<std::array<real_t, 9>> lattice; ///< Optional 3x3 lattice vector matrix (Angstroms).
-    std::optional<real_t> energy;                 ///< Optional total potential energy.
-    int species_col = 0;                          ///< 0-based column index for chemical species.
-    int pos_x_col = 1;                            ///< 0-based column index for X coordinate.
-    int pos_y_col = 2;                            ///< 0-based column index for Y coordinate.
-    int pos_z_col = 3;                            ///< 0-based column index for Z coordinate.
+    std::optional<std::array<real_t, 9>>
+        lattice;                  ///< Optional 3x3 lattice vector matrix (Angstroms).
+    std::optional<real_t> energy; ///< Optional total potential energy.
+    int species_col = 0;          ///< 0-based column index for chemical species.
+    int pos_x_col = 1;            ///< 0-based column index for X coordinate.
+    int pos_y_col = 2;            ///< 0-based column index for Y coordinate.
+    int pos_z_col = 3;            ///< 0-based column index for Z coordinate.
   };
 
   static void parseLattice(const std::string &comment, CommentData &data);

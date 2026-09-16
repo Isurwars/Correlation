@@ -109,8 +109,8 @@ namespace {
   return "";
 }
 
-void configureTrajectory(correlation::core::Trajectory &trajectory, const CorrelationEngineConfig &config,
-                         size_t &start_f) {
+void configureTrajectory(correlation::core::Trajectory &trajectory,
+                         const CorrelationEngineConfig &config, size_t &start_f) {
   if (!config.bond_cutoffs.empty()) {
     trajectory.setBondCutoffs(config.bond_cutoffs);
   } else if (trajectory.getBondCutoffs().empty()) {
@@ -125,12 +125,14 @@ void configureTrajectory(correlation::core::Trajectory &trajectory, const Correl
 }
 
 bool requiresVelocities(const AnalysisSettings &settings) {
-  const auto &factory_calcs = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
+  const auto &factory_calcs =
+      ::correlation::calculators::CalculatorFactory::instance().getCalculators();
   for (const auto &calc : factory_calcs) {
-    bool const is_active = settings.isActive(calc->getName()) || settings.isActive(calc->getShortName());
+    bool const is_active =
+        settings.isActive(calc->getName()) || settings.isActive(calc->getShortName());
     if (calc->isTrajectoryCalculator() && calc->isConfigured() && is_active) {
-      if (calc->getName() == "VACF" || calc->getShortName() == "VACF" || calc->getName() == "vDoS" ||
-          calc->getShortName() == "vDoS") {
+      if (calc->getName() == "VACF" || calc->getShortName() == "VACF" ||
+          calc->getName() == "vDoS" || calc->getShortName() == "vDoS") {
         return true;
       }
     }
@@ -166,7 +168,8 @@ void CorrelationEngine::runTrajectoryCalculators(DistributionFunctions &distribu
     trajectory.calculateVelocities();
   }
 
-  const auto &factory_calcs = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
+  const auto &factory_calcs =
+      ::correlation::calculators::CalculatorFactory::instance().getCalculators();
   for (const auto &calc : factory_calcs) {
     if (calc->isTrajectoryCalculator() && calc->isConfigured() &&
         (settings.isActive(calc->getName()) || settings.isActive(calc->getShortName()))) {
@@ -183,7 +186,8 @@ void CorrelationEngine::calculateDynamicProperties(DistributionFunctions &distri
     const auto &hist = it_msd->second;
     auto it_total = hist.partials.find("Total");
     if (it_total != hist.partials.end()) {
-      real_t const d_msd = DynamicsAnalyzer::computeDiffusionCoefficientMSD(hist.bins, it_total->second);
+      real_t const d_msd =
+          DynamicsAnalyzer::computeDiffusionCoefficientMSD(hist.bins, it_total->second);
       distribution_functions.setDiffusionCoefficientMSD(d_msd);
     }
   }
@@ -193,7 +197,8 @@ void CorrelationEngine::calculateDynamicProperties(DistributionFunctions &distri
     const auto &hist = it_vacf->second;
     auto it_total = hist.partials.find("Total");
     if (it_total != hist.partials.end()) {
-      real_t const d_vacf = DynamicsAnalyzer::computeDiffusionCoefficientVACF(hist.bins, it_total->second);
+      real_t const d_vacf =
+          DynamicsAnalyzer::computeDiffusionCoefficientVACF(hist.bins, it_total->second);
       distribution_functions.setDiffusionCoefficientVACF(d_vacf);
     }
   }
@@ -214,21 +219,23 @@ void CorrelationEngine::calculateDynamicProperties(DistributionFunctions &distri
   }
 
   if (distribution_functions.getDiffusionCoefficientMSD() > 0.0) {
-    std::cout << "Self-diffusion coefficient (from MSD): " << distribution_functions.getDiffusionCoefficientMSD()
-              << " Å²/fs\n";
+    std::cout << "Self-diffusion coefficient (from MSD): "
+              << distribution_functions.getDiffusionCoefficientMSD() << " Å²/fs\n";
   }
   if (distribution_functions.getDiffusionCoefficientVACF() > 0.0) {
-    std::cout << "Self-diffusion coefficient (from VACF): " << distribution_functions.getDiffusionCoefficientVACF()
-              << " Å²/fs\n";
+    std::cout << "Self-diffusion coefficient (from VACF): "
+              << distribution_functions.getDiffusionCoefficientVACF() << " Å²/fs\n";
   }
   if (distribution_functions.getRelaxationTime() > 0.0) {
-    std::cout << "Relaxation time (from VACF): " << distribution_functions.getRelaxationTime() << " fs\n";
+    std::cout << "Relaxation time (from VACF): " << distribution_functions.getRelaxationTime()
+              << " fs\n";
     std::cout << "Deborah number: " << distribution_functions.getDeborahNumber() << '\n';
   }
 }
 
 std::expected<std::unique_ptr<DistributionFunctions>, std::string>
-CorrelationEngine::runAnalysis(correlation::core::Trajectory &trajectory, const CorrelationEngineConfig &config,
+CorrelationEngine::runAnalysis(correlation::core::Trajectory &trajectory,
+                               const CorrelationEngineConfig &config,
                                std::function<void(float, const std::string &)> progress_callback) {
   if (trajectory.getFrameCount() == 0) {
     return std::unexpected("Analysis aborted: No trajectory loaded.");
@@ -243,7 +250,8 @@ CorrelationEngine::runAnalysis(correlation::core::Trajectory &trajectory, const 
     size_t start_f = 0;
     configureTrajectory(trajectory, config, start_f);
 
-    const auto &active_cutoffs = !config.bond_cutoffs.empty() ? config.bond_cutoffs : trajectory.getBondCutoffs();
+    const auto &active_cutoffs =
+        !config.bond_cutoffs.empty() ? config.bond_cutoffs : trajectory.getBondCutoffs();
 
     if (progress_callback) {
       progress_callback(0.0F, "Starting analysis...");
@@ -261,11 +269,12 @@ CorrelationEngine::runAnalysis(correlation::core::Trajectory &trajectory, const 
       }
     };
 
-    const TrajectoryAnalyzer trajectory_analyzer(trajectory, config.settings.r_max, active_cutoffs, StartFrame{start_f},
-                                                 EndFrame{static_cast<size_t>(config.max_frame)}, true, cb_structure);
+    const TrajectoryAnalyzer trajectory_analyzer(
+        trajectory, config.settings.r_max, active_cutoffs, StartFrame{start_f},
+        EndFrame{static_cast<size_t>(config.max_frame)}, true, cb_structure);
 
-    auto dist_funcs =
-        DistributionFunctions::computeMean(trajectory, trajectory_analyzer, start_f, config.settings, cb_dist);
+    auto dist_funcs = DistributionFunctions::computeMean(trajectory, trajectory_analyzer, start_f,
+                                                         config.settings, cb_dist);
 
     if (dist_funcs) {
       runTrajectoryCalculators(*dist_funcs, trajectory, config.settings);

@@ -28,7 +28,8 @@ namespace {
 const bool registered = ReaderFactory::registerTypeSafe<OnetepDatReader>("OnetepDatReader");
 
 void toLower(std::string &str) {
-  std::transform(str.begin(), str.end(), str.begin(), [](unsigned char chr) { return std::tolower(chr); });
+  std::transform(str.begin(), str.end(), str.begin(),
+                 [](unsigned char chr) { return std::tolower(chr); });
 }
 
 struct OnetepDatParser {
@@ -77,11 +78,13 @@ struct OnetepDatParser {
     }
     if (lattice_row_count < 3) {
       std::stringstream str_stream(line);
-      if (str_stream >> v.at(lattice_row_count)[0] >> v.at(lattice_row_count)[1] >> v.at(lattice_row_count)[2]) {
+      if (str_stream >> v.at(lattice_row_count)[0] >> v.at(lattice_row_count)[1] >>
+          v.at(lattice_row_count)[2]) {
         lattice_row_count++;
         if (lattice_row_count == 3) {
-          tempCell = correlation::core::Cell({v[0][0], v[0][1], v[0][2]}, {v[1][0], v[1][1], v[1][2]},
-                                             {v[2][0], v[2][1], v[2][2]});
+          tempCell =
+              correlation::core::Cell({v[0][0], v[0][1], v[0][2]}, {v[1][0], v[1][1], v[1][2]},
+                                      {v[2][0], v[2][1], v[2][2]});
         }
       }
     }
@@ -143,9 +146,12 @@ struct OnetepDatParser {
     if (str_stream >> element >> frac_x >> frac_y >> frac_z) {
       const auto &lattice_vectors = tempCell.latticeVectors();
       correlation::math::Vector3<real_t> pos = {
-          frac_x * lattice_vectors[0][0] + frac_y * lattice_vectors[1][0] + frac_z * lattice_vectors[2][0],
-          frac_x * lattice_vectors[0][1] + frac_y * lattice_vectors[1][1] + frac_z * lattice_vectors[2][1],
-          frac_x * lattice_vectors[0][2] + frac_y * lattice_vectors[1][2] + frac_z * lattice_vectors[2][2]};
+          frac_x * lattice_vectors[0][0] + frac_y * lattice_vectors[1][0] +
+              frac_z * lattice_vectors[2][0],
+          frac_x * lattice_vectors[0][1] + frac_y * lattice_vectors[1][1] +
+              frac_z * lattice_vectors[2][1],
+          frac_x * lattice_vectors[0][2] + frac_y * lattice_vectors[1][2] +
+              frac_z * lattice_vectors[2][2]};
       tempCell.addAtom(element, pos);
     }
   }
@@ -194,22 +200,23 @@ struct OnetepDatParser {
 
 } // namespace
 
-correlation::core::Cell
-OnetepDatReader::readStructure(const std::string &filename,
-                               std::function<void(float, const std::string &)> /*progress_callback*/) {
+correlation::core::Cell OnetepDatReader::readStructure(
+    const std::string &filename,
+    std::function<void(float, const std::string &)> /*progress_callback*/) {
   return read(filename);
 }
 
-correlation::core::Trajectory
-OnetepDatReader::readTrajectory(const std::string & /*filename*/,
-                                std::function<void(float, const std::string &)> /*progress_callback*/) {
+correlation::core::Trajectory OnetepDatReader::readTrajectory(
+    const std::string & /*filename*/,
+    std::function<void(float, const std::string &)> /*progress_callback*/) {
   throw std::runtime_error("ONETEP DAT files are structures, use readStructure.");
 }
 
 correlation::core::Cell OnetepDatReader::read(const std::string &file_name) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
-    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) + ").");
+    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) +
+                             ").");
   }
 
   OnetepDatParser parser;

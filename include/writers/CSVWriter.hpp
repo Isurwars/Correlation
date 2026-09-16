@@ -31,7 +31,8 @@ public:
   std::string getName() const override { return "CSV"; }
   std::vector<std::string> getExtensions() const override { return {".csv"}; }
 
-  void write(const std::string &base_path, const correlation::analysis::DistributionFunctions &dists,
+  void write(const std::string &base_path,
+             const correlation::analysis::DistributionFunctions &dists,
              bool smoothing) const override {
     writeAllCSVs(base_path, dists, smoothing);
   }
@@ -48,7 +49,8 @@ public:
    * @param write_smoothed If true, also writes smoothed data to separate files
    * (e.g., "base_path_g_smoothed.csv").
    */
-  static void writeAllCSVs(const std::string &base_path, const correlation::analysis::DistributionFunctions &dists,
+  static void writeAllCSVs(const std::string &base_path,
+                           const correlation::analysis::DistributionFunctions &dists,
                            bool write_smoothed = false);
 
 private:
@@ -61,7 +63,8 @@ private:
    *        (e.g. PAD_raw for PAD). When non-null, its partials are prepended
    *        as `{key}_raw` columns before the normalized data.
    */
-  static void writeHistogramToCSV(const std::string &filename, const correlation::analysis::Histogram &hist,
+  static void writeHistogramToCSV(const std::string &filename,
+                                  const correlation::analysis::Histogram &hist,
                                   const correlation::analysis::Histogram *raw_companion = nullptr);
 };
 

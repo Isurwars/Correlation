@@ -45,8 +45,8 @@ TEST(SYCLCalculatorTests, ComputesDistancesViaSYCLFallback) {
       .num_bins = 100,
   };
 
-  correlation::calculators::sycl_gpu::compute_distances_sycl(cell, cutoff_sq, bond_cutoffs, false, out_graph,
-                                                             &out_histograms, hist_config);
+  correlation::calculators::sycl_gpu::compute_distances_sycl(
+      cell, cutoff_sq, bond_cutoffs, false, out_graph, &out_histograms, hist_config);
 
   EXPECT_FALSE(out_histograms.empty());
   EXPECT_EQ(out_histograms.size(), num_elements);
@@ -69,8 +69,8 @@ TEST(SYCLCalculatorTests, ComputesDistancesGPUWrapper) {
       .num_bins = 100,
   };
 
-  correlation::calculators::gpu::compute_distances_gpu(cell, cutoff_sq, bond_cutoffs_sq, false, &out_histograms,
-                                                       hist_config, out_graph);
+  correlation::calculators::gpu::compute_distances_gpu(cell, cutoff_sq, bond_cutoffs_sq, false,
+                                                       &out_histograms, hist_config, out_graph);
 
   EXPECT_FALSE(out_histograms.empty());
 }
@@ -119,12 +119,13 @@ TEST(SYCLCalculatorTests, ComputesAnglesViaSYCLFallback) {
   graph.addDirectedEdge(0, 1, 1.0, {1.0, 0.0, 0.0});
   graph.addDirectedEdge(0, 2, 1.0, {0.0, 1.0, 0.0});
 
-  auto angle_hist = correlation::calculators::sycl_gpu::compute_angles_sycl(cell, graph,
-                                                                            {
-                                                                                .min_angle_deg = 0.0,
-                                                                                .max_angle_deg = 180.0,
-                                                                                .bin_width_deg = 1.0,
-                                                                            });
+  auto angle_hist =
+      correlation::calculators::sycl_gpu::compute_angles_sycl(cell, graph,
+                                                              {
+                                                                  .min_angle_deg = 0.0,
+                                                                  .max_angle_deg = 180.0,
+                                                                  .bin_width_deg = 1.0,
+                                                              });
   EXPECT_FALSE(angle_hist.bins.empty());
   EXPECT_TRUE(angle_hist.partials.contains("Total"));
 }

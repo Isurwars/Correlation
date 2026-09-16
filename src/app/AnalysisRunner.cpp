@@ -48,7 +48,8 @@ void AnalysisRunner::handleRunAnalysis() {
   backend_.setOptions(controller_.handleOptionsfromUI());
 
   // Set the progress callback
-  backend_.setProgressCallback([this](float progress, const std::string &msg) { updateProgress(progress, msg); });
+  backend_.setProgressCallback(
+      [this](float progress, const std::string &msg) { updateProgress(progress, msg); });
 
   // Run analysis in a separate thread asynchronously without blocking GUI event loop
   if (analysis_thread_.joinable()) {

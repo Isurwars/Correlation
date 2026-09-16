@@ -57,7 +57,9 @@ BaseWriter *WriterFactory::getWriterForExtension(const std::string &extension) {
   return nullptr;
 }
 
-const std::vector<std::unique_ptr<BaseWriter>> &WriterFactory::getWriters() const { return writers_; }
+const std::vector<std::unique_ptr<BaseWriter>> &WriterFactory::getWriters() const {
+  return writers_;
+}
 
 BaseWriter *WriterFactory::getWriter(const std::string &name) {
   auto iterator = name_map_.find(name);

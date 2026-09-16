@@ -18,7 +18,9 @@ public:
   [[nodiscard]] std::string_view getName() const override { return "MockCalculator"; }
   [[nodiscard]] std::string_view getShortName() const override { return "Mock"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Test"; }
-  [[nodiscard]] std::string_view getDescription() const override { return "A mock calculator for testing."; }
+  [[nodiscard]] std::string_view getDescription() const override {
+    return "A mock calculator for testing.";
+  }
   [[nodiscard]] bool isFrameCalculator() const override { return true; }
   [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 };
@@ -39,11 +41,10 @@ TEST(CalculatorFactoryTests, GetRegisteredCalculators) {
 TEST(CalculatorFactoryTests, LookupStandardCalculators) {
   auto &factory = CalculatorFactory::instance();
   // "RDF" is a standard calculator registered under calculators_obj
-  // Wait, let's make sure the name matches. RDFCalculator name is "RDF" or "Radial Distribution Function"?
-  // Let's verify RDFCalculator::getName() or short name.
-  // Actually, let's look up by the name.
-  // Let's find one standard calculator. We know RDFCalculator is registered.
-  // Let's check getCalculator with different potential names or just use any from getCalculators()
+  // Wait, let's make sure the name matches. RDFCalculator name is "RDF" or "Radial Distribution
+  // Function"? Let's verify RDFCalculator::getName() or short name. Actually, let's look up by the
+  // name. Let's find one standard calculator. We know RDFCalculator is registered. Let's check
+  // getCalculator with different potential names or just use any from getCalculators()
   const auto &calculators = factory.getCalculators();
   ASSERT_FALSE(calculators.empty());
   std::string_view const first_calc_name = calculators[0]->getName();

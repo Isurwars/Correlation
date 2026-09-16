@@ -16,8 +16,8 @@ namespace {
 
 class SteinhardtCalculatorTests : public ::testing::Test {
 protected:
-  static void checkOutputs(const std::map<std::string, Histogram> &hists, real_t expected_Q4, real_t expected_Q6,
-                           real_t expected_W6_hat) {
+  static void checkOutputs(const std::map<std::string, Histogram> &hists, real_t expected_Q4,
+                           real_t expected_Q6, real_t expected_W6_hat) {
     const auto &hist_Q4 = hists.at("Q4").partials.at("Total");
     const auto &hist_Q6 = hists.at("Q6").partials.at("Total");
     const auto &hist_W6 = hists.at("W6_hat").partials.at("Total");
@@ -162,8 +162,8 @@ TEST_F(SteinhardtCalculatorTests, SphericalHarmonics) {
     EXPECT_NEAR(val.imag(), 0.0, 1e-5);
   }
 
-  // L = 1, M = 1: Y_1^1 = 0.5 * sqrt(3/(2*pi)) * sin(theta) * e^(i*phi) ~ 0.345494149 * sin(theta) * e^(i*phi)
-  // (Condon-Shortley phase is cancelled)
+  // L = 1, M = 1: Y_1^1 = 0.5 * sqrt(3/(2*pi)) * sin(theta) * e^(i*phi) ~ 0.345494149 * sin(theta)
+  // * e^(i*phi) (Condon-Shortley phase is cancelled)
   {
     real_t const theta = 0.8;
     real_t const phi = 0.6;
@@ -172,8 +172,8 @@ TEST_F(SteinhardtCalculatorTests, SphericalHarmonics) {
                                                            .theta = static_cast<real_t>(theta),
                                                            .phi = static_cast<real_t>(phi),
                                                        });
-    std::complex<real_t> expected =
-        static_cast<real_t>(0.345494149) * std::sin(theta) * std::polar(static_cast<real_t>(1.0), phi);
+    std::complex<real_t> expected = static_cast<real_t>(0.345494149) * std::sin(theta) *
+                                    std::polar(static_cast<real_t>(1.0), phi);
     EXPECT_NEAR(val.real(), expected.real(), 1e-5);
     EXPECT_NEAR(val.imag(), expected.imag(), 1e-5);
   }
@@ -187,8 +187,8 @@ TEST_F(SteinhardtCalculatorTests, SphericalHarmonics) {
                                                            .theta = static_cast<real_t>(theta),
                                                            .phi = static_cast<real_t>(phi),
                                                        });
-    std::complex<real_t> expected =
-        -std::conj(static_cast<real_t>(0.345494149) * std::sin(theta) * std::polar(static_cast<real_t>(1.0), phi));
+    std::complex<real_t> expected = -std::conj(static_cast<real_t>(0.345494149) * std::sin(theta) *
+                                               std::polar(static_cast<real_t>(1.0), phi));
     EXPECT_NEAR(val.real(), expected.real(), 1e-5);
     EXPECT_NEAR(val.imag(), expected.imag(), 1e-5);
   }

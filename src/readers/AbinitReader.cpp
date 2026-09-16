@@ -163,8 +163,9 @@ struct AbinitTrajectoryParser {
 
 } // namespace
 
-correlation::core::Cell AbinitReader::readStructure(const std::string &filename,
-                                                    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell
+AbinitReader::readStructure(const std::string &filename,
+                            std::function<void(float, const std::string &)> progress_callback) {
   auto trajectory = readTrajectory(filename, std::move(progress_callback));
   if (trajectory.getFrameCount() == 0) {
     throw std::runtime_error("No atomic coordinates found in ABINIT file: " + filename);

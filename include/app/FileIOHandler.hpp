@@ -39,8 +39,8 @@ public:
   ~FileIOHandler();
 
   /**
-   * @brief Displays file open dialog asynchronously and triggers background loading of selected structure/trajectory
-   * file.
+   * @brief Displays file open dialog asynchronously and triggers background loading of selected
+   * structure/trajectory file.
    */
   void handleBrowseFile();
 
@@ -66,9 +66,10 @@ private:
   AppBackend &backend_;
   AppController &controller_;
 
-  std::thread dialog_thread_;              ///< Background worker thread for native file dialogs
-  std::thread load_thread_;                ///< Background thread for loading files without blocking UI
-  std::atomic<bool> dialog_active_{false}; ///< Concurrency guard preventing duplicate dialog launches
+  std::thread dialog_thread_; ///< Background worker thread for native file dialogs
+  std::thread load_thread_;   ///< Background thread for loading files without blocking UI
+  std::atomic<bool> dialog_active_{
+      false}; ///< Concurrency guard preventing duplicate dialog launches
 };
 
 } // namespace correlation::app

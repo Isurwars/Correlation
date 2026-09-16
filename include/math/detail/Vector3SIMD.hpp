@@ -85,7 +85,9 @@ public:
   double &operator()(std::size_t idx) noexcept { return data_.at(idx); }
 
   /** @return True if x, y, and z are all 0.0. */
-  [[nodiscard]] bool empty() const noexcept { return data_.at(0) == 0.0 && data_.at(1) == 0.0 && data_.at(2) == 0.0; }
+  [[nodiscard]] bool empty() const noexcept {
+    return data_.at(0) == 0.0 && data_.at(1) == 0.0 && data_.at(2) == 0.0;
+  }
 
   // Arithmetic with SIMD
   /**
@@ -95,7 +97,8 @@ public:
    */
   [[nodiscard]] Vector3 operator+(const Vector3 &rhs) const noexcept {
     Vector3 res;
-    _mm256_store_pd(res.data_.data(), _mm256_add_pd(_mm256_load_pd(data_.data()), _mm256_load_pd(rhs.data_.data())));
+    _mm256_store_pd(res.data_.data(),
+                    _mm256_add_pd(_mm256_load_pd(data_.data()), _mm256_load_pd(rhs.data_.data())));
     return res;
   }
 
@@ -106,7 +109,8 @@ public:
    */
   [[nodiscard]] Vector3 operator-(const Vector3 &rhs) const noexcept {
     Vector3 res;
-    _mm256_store_pd(res.data_.data(), _mm256_sub_pd(_mm256_load_pd(data_.data()), _mm256_load_pd(rhs.data_.data())));
+    _mm256_store_pd(res.data_.data(),
+                    _mm256_sub_pd(_mm256_load_pd(data_.data()), _mm256_load_pd(rhs.data_.data())));
     return res;
   }
 
@@ -116,7 +120,8 @@ public:
    */
   [[nodiscard]] Vector3 operator-() const noexcept {
     Vector3 res;
-    _mm256_store_pd(res.data_.data(), _mm256_sub_pd(_mm256_setzero_pd(), _mm256_load_pd(data_.data())));
+    _mm256_store_pd(res.data_.data(),
+                    _mm256_sub_pd(_mm256_setzero_pd(), _mm256_load_pd(data_.data())));
     return res;
   }
 
@@ -127,7 +132,8 @@ public:
    */
   [[nodiscard]] Vector3 operator*(double scalar) const noexcept {
     Vector3 res;
-    _mm256_store_pd(res.data_.data(), _mm256_mul_pd(_mm256_load_pd(data_.data()), _mm256_set1_pd(scalar)));
+    _mm256_store_pd(res.data_.data(),
+                    _mm256_mul_pd(_mm256_load_pd(data_.data()), _mm256_set1_pd(scalar)));
     return res;
   }
 
@@ -138,7 +144,8 @@ public:
    */
   [[nodiscard]] Vector3 operator/(double scalar) const noexcept {
     Vector3 res;
-    _mm256_store_pd(res.data_.data(), _mm256_div_pd(_mm256_load_pd(data_.data()), _mm256_set1_pd(scalar)));
+    _mm256_store_pd(res.data_.data(),
+                    _mm256_div_pd(_mm256_load_pd(data_.data()), _mm256_set1_pd(scalar)));
     return res;
   }
 
@@ -148,7 +155,8 @@ public:
    * @return Reference to this vector.
    */
   Vector3 &operator+=(const Vector3 &rhs) noexcept {
-    _mm256_store_pd(data_.data(), _mm256_add_pd(_mm256_load_pd(data_.data()), _mm256_load_pd(rhs.data_.data())));
+    _mm256_store_pd(data_.data(),
+                    _mm256_add_pd(_mm256_load_pd(data_.data()), _mm256_load_pd(rhs.data_.data())));
     return *this;
   }
 
@@ -158,7 +166,8 @@ public:
    * @return Reference to this vector.
    */
   Vector3 &operator-=(const Vector3 &rhs) noexcept {
-    _mm256_store_pd(data_.data(), _mm256_sub_pd(_mm256_load_pd(data_.data()), _mm256_load_pd(rhs.data_.data())));
+    _mm256_store_pd(data_.data(),
+                    _mm256_sub_pd(_mm256_load_pd(data_.data()), _mm256_load_pd(rhs.data_.data())));
     return *this;
   }
 
@@ -168,7 +177,8 @@ public:
    * @return Reference to this vector.
    */
   Vector3 &operator*=(double scalar) noexcept {
-    _mm256_store_pd(data_.data(), _mm256_mul_pd(_mm256_load_pd(data_.data()), _mm256_set1_pd(scalar)));
+    _mm256_store_pd(data_.data(),
+                    _mm256_mul_pd(_mm256_load_pd(data_.data()), _mm256_set1_pd(scalar)));
     return *this;
   }
 
@@ -178,7 +188,8 @@ public:
    * @return Reference to this vector.
    */
   Vector3 &operator/=(double scalar) noexcept {
-    _mm256_store_pd(data_.data(), _mm256_div_pd(_mm256_load_pd(data_.data()), _mm256_set1_pd(scalar)));
+    _mm256_store_pd(data_.data(),
+                    _mm256_div_pd(_mm256_load_pd(data_.data()), _mm256_set1_pd(scalar)));
     return *this;
   }
 
@@ -200,7 +211,9 @@ public:
    * @brief Converts the vector to a std::array.
    * @return Array containing {x, y, z}.
    */
-  [[nodiscard]] std::array<double, 3> array() const noexcept { return {data_[0], data_[1], data_[2]}; }
+  [[nodiscard]] std::array<double, 3> array() const noexcept {
+    return {data_[0], data_[1], data_[2]};
+  }
 
   /**
    * @brief Equality comparison.
@@ -228,7 +241,8 @@ public:
   [[nodiscard]] double *end() noexcept { return data_.data() + 3; }
 
 private:
-  CORRELATION_ALIGN(32) std::array<double, 4> data_ {}; ///< Padded to 4 doubles for 256-bit SIMD alignment.
+  CORRELATION_ALIGN(32)
+  std::array<double, 4> data_ {}; ///< Padded to 4 doubles for 256-bit SIMD alignment.
 };
 
 /**
@@ -370,13 +384,15 @@ public:
 
   /** @brief In-place addition. */
   Vector3 &operator+=(const Vector3 &rhs) noexcept {
-    _mm_store_ps(data_.data(), _mm_add_ps(_mm_load_ps(data_.data()), _mm_load_ps(rhs.data_.data())));
+    _mm_store_ps(data_.data(),
+                 _mm_add_ps(_mm_load_ps(data_.data()), _mm_load_ps(rhs.data_.data())));
     return *this;
   }
 
   /** @brief In-place subtraction. */
   Vector3 &operator-=(const Vector3 &rhs) noexcept {
-    _mm_store_ps(data_.data(), _mm_sub_ps(_mm_load_ps(data_.data()), _mm_load_ps(rhs.data_.data())));
+    _mm_store_ps(data_.data(),
+                 _mm_sub_ps(_mm_load_ps(data_.data()), _mm_load_ps(rhs.data_.data())));
     return *this;
   }
 
@@ -402,10 +418,14 @@ public:
   }
 
   /** @return Array containing {x, y, z}. */
-  [[nodiscard]] std::array<float, 3> array() const noexcept { return {data_[0], data_[1], data_[2]}; }
+  [[nodiscard]] std::array<float, 3> array() const noexcept {
+    return {data_[0], data_[1], data_[2]};
+  }
 
   /** @brief Checks if the vector is a zero vector. */
-  [[nodiscard]] bool empty() const noexcept { return data_[0] == 0.0F && data_[1] == 0.0F && data_[2] == 0.0F; }
+  [[nodiscard]] bool empty() const noexcept {
+    return data_[0] == 0.0F && data_[1] == 0.0F && data_[2] == 0.0F;
+  }
 
   /** @brief Equality comparison. */
   [[nodiscard]] bool operator==(const Vector3 &rhs) const noexcept {
@@ -425,7 +445,8 @@ public:
   [[nodiscard]] float *end() noexcept { return data_.data() + 3; }
 
 private:
-  CORRELATION_ALIGN(16) std::array<float, 4> data_ {}; ///< Padded to 4 floats for 128-bit SSE alignment.
+  CORRELATION_ALIGN(16)
+  std::array<float, 4> data_ {}; ///< Padded to 4 floats for 128-bit SSE alignment.
 };
 
 #endif // SIMD Specialized Vector3<float>

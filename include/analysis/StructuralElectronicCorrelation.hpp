@@ -26,7 +26,7 @@ namespace correlation::analysis {
  * @brief Total Density of States partitioned across structural motifs.
  */
 struct MotifProjectedTDOS {
-  std::vector<real_t> energies;                          /**< Energy grid values [num_bins] in eV. */
+  std::vector<real_t> energies; /**< Energy grid values [num_bins] in eV. */
   std::map<std::string, std::vector<real_t>> motif_tdos; /**< Partial TDOS spectra by motif name. */
   std::vector<real_t> total_tdos;                        /**< Total aggregated TDOS spectrum. */
   size_t frame_count{0};                                 /**< Evaluated frame count. */
@@ -41,7 +41,8 @@ struct MotifProjectedTDOS {
 
 /**
  * @class StructuralElectronicCorrelation
- * @brief Trajectory-level pipeline correlating MLIP electronic structures with local structural motifs.
+ * @brief Trajectory-level pipeline correlating MLIP electronic structures with local structural
+ * motifs.
  */
 class StructuralElectronicCorrelation {
 public:
@@ -67,7 +68,8 @@ public:
    * @param[in] cancel_flag Optional atomic flag to abort computation prematurely.
    * @return Generated MotifProjectedTDOS structure.
    */
-  static MotifProjectedTDOS correlateSteinhardt(DistributionFunctions &dists, const core::Trajectory &traj,
+  static MotifProjectedTDOS correlateSteinhardt(DistributionFunctions &dists,
+                                                const core::Trajectory &traj,
                                                 const calculators::TDOSParams &params,
                                                 const std::atomic<bool> *cancel_flag = nullptr);
 };

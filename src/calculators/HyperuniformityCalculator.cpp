@@ -21,19 +21,21 @@ namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-const bool registered = CalculatorFactory::registerTypeSafe<HyperuniformityCalculator>("HyperuniformityCalculator");
+const bool registered =
+    CalculatorFactory::registerTypeSafe<HyperuniformityCalculator>("HyperuniformityCalculator");
 
 /**
- * @brief Portable 53-bit uniform generator in [0, 1) to guarantee bit-for-bit reproducible random sampling across
- * compilers and platforms.
+ * @brief Portable 53-bit uniform generator in [0, 1) to guarantee bit-for-bit reproducible random
+ * sampling across compilers and platforms.
  */
 [[nodiscard]] real_t generate_canonical_portable(std::mt19937_64 &rng) noexcept {
   return static_cast<real_t>(rng() >> 11) * static_cast<real_t>(1.0 / 9007199254740992.0);
 }
 } // namespace
 
-void HyperuniformityCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
-                                               const correlation::analysis::AnalysisSettings &settings) const {
+void HyperuniformityCalculator::calculateFrame(
+    correlation::analysis::DistributionFunctions &dists,
+    const correlation::analysis::AnalysisSettings &settings) const {
   auto results = calculate(dists.cell(), {
                                              .num_samples = settings.hyperuniformity_samples,
                                              .r_bin_width = settings.r_bin_width,
@@ -44,7 +46,8 @@ void HyperuniformityCalculator::calculateFrame(correlation::analysis::Distributi
 }
 
 std::map<std::string, correlation::analysis::Histogram>
-HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const HyperuniformityParams &params) {
+HyperuniformityCalculator::calculate(const correlation::core::Cell &cell,
+                                     const HyperuniformityParams &params) {
   const auto num_samples = params.num_samples;
   const auto r_bin_width = params.r_bin_width;
 
@@ -81,7 +84,8 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
   // Pre-compute bin radii
   std::vector<real_t> radii(num_bins);
   for (size_t k = 0; k < num_bins; ++k) {
-    radii[k] = static_cast<real_t>(r_min + (static_cast<real_t>(k) + static_cast<real_t>(0.5)) * r_bin_width);
+    radii[k] = static_cast<real_t>(r_min + (static_cast<real_t>(k) + static_cast<real_t>(0.5)) *
+                                               r_bin_width);
   }
 
   // Squared radii for distance comparison
@@ -185,10 +189,12 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
     const real_t mean_N = sum_N[k] / n_samples;
     const real_t mean_N2 = sum_N2[k] / n_samples;
     const real_t raw_var = mean_N2 - mean_N * mean_N;
-    const auto variance = (raw_var > static_cast<real_t>(1e-12)) ? raw_var : static_cast<real_t>(0.0);
+    const auto variance =
+        (raw_var > static_cast<real_t>(1e-12)) ? raw_var : static_cast<real_t>(0.0);
 
     sigma2_total[k] = variance;
-    chi_total[k] = (mean_N > static_cast<real_t>(0.0)) ? (variance / mean_N) : static_cast<real_t>(0.0);
+    chi_total[k] =
+        (mean_N > static_cast<real_t>(0.0)) ? (variance / mean_N) : static_cast<real_t>(0.0);
   }
 
   std::map<std::string, correlation::analysis::Histogram> results;

@@ -27,7 +27,8 @@ namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-const bool registered = CalculatorFactory::registerTypeSafe<LocalEntropyCalculator>("LocalEntropyCalculator");
+const bool registered =
+    CalculatorFactory::registerTypeSafe<LocalEntropyCalculator>("LocalEntropyCalculator");
 
 struct SearchGridConfig {
   int K_x = 1;
@@ -108,18 +109,22 @@ struct MetricNeighborGrid {
     grid.max_dy = static_cast<int>(std::ceil(cutoff / (h_y / static_cast<real_t>(grid.K_y))));
     grid.max_dz = static_cast<int>(std::ceil(cutoff / (h_z / static_cast<real_t>(grid.K_z))));
 
-    const size_t total_bins =
-        static_cast<size_t>(grid.K_x) * static_cast<size_t>(grid.K_y) * static_cast<size_t>(grid.K_z);
+    const size_t total_bins = static_cast<size_t>(grid.K_x) * static_cast<size_t>(grid.K_y) *
+                              static_cast<size_t>(grid.K_z);
     std::vector<size_t> bin_counts(total_bins, 0);
 
     const auto &atoms = cell.atoms();
     for (size_t i = 0; i < num_atoms; ++i) {
-      correlation::math::Vector3<real_t> const frac = wrapFractional(inv_lattice * atoms[i].position());
+      correlation::math::Vector3<real_t> const frac =
+          wrapFractional(inv_lattice * atoms[i].position());
       wrapped_positions[i] = lattice * frac;
 
-      int const b_x = std::clamp(static_cast<int>(frac.x() * static_cast<real_t>(grid.K_x)), 0, grid.K_x - 1);
-      int const b_y = std::clamp(static_cast<int>(frac.y() * static_cast<real_t>(grid.K_y)), 0, grid.K_y - 1);
-      int const b_z = std::clamp(static_cast<int>(frac.z() * static_cast<real_t>(grid.K_z)), 0, grid.K_z - 1);
+      int const b_x =
+          std::clamp(static_cast<int>(frac.x() * static_cast<real_t>(grid.K_x)), 0, grid.K_x - 1);
+      int const b_y =
+          std::clamp(static_cast<int>(frac.y() * static_cast<real_t>(grid.K_y)), 0, grid.K_y - 1);
+      int const b_z =
+          std::clamp(static_cast<int>(frac.z() * static_cast<real_t>(grid.K_z)), 0, grid.K_z - 1);
 
       int const bin_idx = b_x * (grid.K_y * grid.K_z) + b_y * grid.K_z + b_z;
       atom_bin[i] = bin_idx;
@@ -139,8 +144,9 @@ struct MetricNeighborGrid {
     }
   }
 
-  void scanBinDistances(const QueryContext &ctx, int bin_idx, const correlation::math::Vector3<real_t> &disp,
-                        bool zero_disp, std::vector<real_t> &distances_out) const {
+  void scanBinDistances(const QueryContext &ctx, int bin_idx,
+                        const correlation::math::Vector3<real_t> &disp, bool zero_disp,
+                        std::vector<real_t> &distances_out) const {
     size_t const start = bin_offsets[bin_idx];
     size_t const end = bin_offsets[bin_idx + 1];
 
@@ -186,7 +192,8 @@ struct MetricNeighborGrid {
 
           int const n_bin = wrap_x * (grid.K_y * grid.K_z) + wrap_y * grid.K_z + wrap_z;
           correlation::math::Vector3<real_t> const disp =
-              lattice * correlation::math::Vector3<real_t>(static_cast<real_t>(shift_x), static_cast<real_t>(shift_y),
+              lattice * correlation::math::Vector3<real_t>(static_cast<real_t>(shift_x),
+                                                           static_cast<real_t>(shift_y),
                                                            static_cast<real_t>(shift_z));
           bool const zero_disp = (shift_x == 0 && shift_y == 0 && shift_z == 0);
 
@@ -197,7 +204,8 @@ struct MetricNeighborGrid {
   }
 };
 
-real_t computeSingleAtomEntropy(const std::vector<real_t> &atom_distances, const correlation::core::Cell &cell,
+real_t computeSingleAtomEntropy(const std::vector<real_t> &atom_distances,
+                                const correlation::core::Cell &cell,
                                 const LocalEntropyParams &params) {
   real_t const cutoff = params.cutoff;
   real_t const sigma = params.sigma;
@@ -216,7 +224,8 @@ real_t computeSingleAtomEntropy(const std::vector<real_t> &atom_distances, const
 
   // Gaussian prefactor: 1 / sqrt(2 * pi * sigma^2)
   real_t const gaussian_prefactor =
-      static_cast<real_t>(1.0) / (sigma * std::sqrt(static_cast<real_t>(2.0) * correlation::math::pi));
+      static_cast<real_t>(1.0) /
+      (sigma * std::sqrt(static_cast<real_t>(2.0) * correlation::math::pi));
 
   const real_t two_sigma_sq = static_cast<real_t>(2.0) * sigma * sigma;
 
@@ -278,8 +287,8 @@ void initHistogramMap(std::map<std::string, std::vector<real_t>> &partials,
   partials["Total"].assign(bins, 0.0);
 }
 
-void addValueToHistogram(std::map<std::string, std::vector<real_t>> &partials, const std::string &symbol, real_t val,
-                         BinningConfig config) {
+void addValueToHistogram(std::map<std::string, std::vector<real_t>> &partials,
+                         const std::string &symbol, real_t val, BinningConfig config) {
   if (val >= config.min_val && val < config.max_val) {
     auto const bin_idx = static_cast<size_t>((val - config.min_val) / config.d_val);
     partials[symbol][bin_idx] += 1.0;
@@ -317,8 +326,9 @@ void copyPartialsToHistogram(correlation::analysis::Histogram &hist,
 
 } // namespace
 
-void LocalEntropyCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
-                                            const correlation::analysis::AnalysisSettings &settings) const {
+void LocalEntropyCalculator::calculateFrame(
+    correlation::analysis::DistributionFunctions &dists,
+    const correlation::analysis::AnalysisSettings &settings) const {
   auto hist = calculate(dists.cell(), dists.neighbors(),
                         LocalEntropyParams{
                             .cutoff = settings.lef_cutoff,
@@ -337,7 +347,8 @@ LocalEntropyCalculator::calculate(const correlation::core::Cell &cell,
     return {};
   }
 
-  bool const ignore_self_periodic = (neighbors != nullptr) ? neighbors->getIgnorePeriodicSelfInteractions() : false;
+  bool const ignore_self_periodic =
+      (neighbors != nullptr) ? neighbors->getIgnorePeriodicSelfInteractions() : false;
 
   MetricNeighborGrid grid;
   grid.build(cell, params.cutoff);
@@ -350,13 +361,14 @@ LocalEntropyCalculator::calculate(const correlation::core::Cell &cell,
 
   // Compute local entropy for all atoms
   std::vector<real_t> entropies(num_atoms, 0.0);
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, num_atoms), [&](const tbb::blocked_range<size_t> &range) {
-    auto &scratch = thread_scratch.local();
-    for (size_t i = range.begin(); i != range.end(); ++i) {
-      grid.queryDistances(i, cell, params.cutoff, scratch.distances, ignore_self_periodic);
-      entropies[i] = computeSingleAtomEntropy(scratch.distances, cell, params);
-    }
-  });
+  tbb::parallel_for(
+      tbb::blocked_range<size_t>(0, num_atoms), [&](const tbb::blocked_range<size_t> &range) {
+        auto &scratch = thread_scratch.local();
+        for (size_t i = range.begin(); i != range.end(); ++i) {
+          grid.queryDistances(i, cell, params.cutoff, scratch.distances, ignore_self_periodic);
+          entropies[i] = computeSingleAtomEntropy(scratch.distances, cell, params);
+        }
+      });
 
   // Setup histogram configuration
   size_t const bins = 150;
@@ -394,19 +406,20 @@ LocalEntropyCalculator::calculate(const correlation::core::Cell &cell,
     return local;
   });
 
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, num_atoms), [&](const tbb::blocked_range<size_t> &range) {
-    auto &local = ets.local();
-    for (size_t i = range.begin(); i != range.end(); ++i) {
-      local.num_atoms_f += 1.0;
-      const std::string &symbol = atoms[i].element().symbol;
-      addValueToHistogram(local.partials, symbol, entropies[i],
-                          {
-                              .min_val = min_val,
-                              .max_val = max_val,
-                              .d_val = d_val,
-                          });
-    }
-  });
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, num_atoms),
+                    [&](const tbb::blocked_range<size_t> &range) {
+                      auto &local = ets.local();
+                      for (size_t i = range.begin(); i != range.end(); ++i) {
+                        local.num_atoms_f += 1.0;
+                        const std::string &symbol = atoms[i].element().symbol;
+                        addValueToHistogram(local.partials, symbol, entropies[i],
+                                            {
+                                                .min_val = min_val,
+                                                .max_val = max_val,
+                                                .d_val = d_val,
+                                            });
+                      }
+                    });
 
   // Reduce thread-local histograms
   std::map<std::string, std::vector<real_t>> partials;

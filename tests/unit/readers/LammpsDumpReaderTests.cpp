@@ -70,7 +70,8 @@ TEST(LammpsDumpReaderTests, ReadsTrajectoryTriclinicScaledAndElement) {
   // b = (xy, ly, 0) = (1, 10, 0)
   // c = (xz, yz, lz) = (2, 3, 10)
   // For Atom 1 (xs=0.5, ys=0.5, zs=0.5):
-  // pos = 0.5*a + 0.5*b + 0.5*c = (5.0, 0.0, 0.0) + (0.5, 5.0, 0.0) + (1.0, 1.5, 5.0) = (6.5, 6.5, 5.0)
+  // pos = 0.5*a + 0.5*b + 0.5*c = (5.0, 0.0, 0.0) + (0.5, 5.0, 0.0) + (1.0, 1.5, 5.0) =
+  // (6.5, 6.5, 5.0)
   const auto &pos1 = frame.atoms()[0].position();
   EXPECT_NEAR(pos1.x(), 6.5, 1e-5);
   EXPECT_NEAR(pos1.y(), 6.5, 1e-5);

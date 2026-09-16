@@ -96,7 +96,9 @@ public:
    * @brief Gets the lattice parameters (a, b, c, alpha, beta, gamma).
    * @return Array of 6 real_t containing the parameters.
    */
-  [[nodiscard]] const std::array<real_t, 6> &lattice_parameters() const noexcept { return lattice_parameters_; }
+  [[nodiscard]] const std::array<real_t, 6> &lattice_parameters() const noexcept {
+    return lattice_parameters_;
+  }
 
   void setLatticeParameters(const std::array<real_t, 6> &params);
 
@@ -105,14 +107,18 @@ public:
    * @brief Gets the lattice vectors as a 3x3 matrix.
    * @return Constant reference to the lattice vectors matrix.
    */
-  [[nodiscard]] const math::Matrix3<real_t> &latticeVectors() const noexcept { return lattice_vectors_; }
+  [[nodiscard]] const math::Matrix3<real_t> &latticeVectors() const noexcept {
+    return lattice_vectors_;
+  }
 
   /**
    * @brief Gets the inverse lattice vectors as a 3x3 matrix.
    * Useful for converting Cartesian coordinates to fractional coordinates.
    * @return Constant reference to the inverse lattice vectors matrix.
    */
-  [[nodiscard]] const math::Matrix3<real_t> &inverseLatticeVectors() const noexcept { return inverse_lattice_vectors_; }
+  [[nodiscard]] const math::Matrix3<real_t> &inverseLatticeVectors() const noexcept {
+    return inverse_lattice_vectors_;
+  }
 
   // Volume
   /**
@@ -237,9 +243,9 @@ private:
   math::Matrix3<real_t> inverse_lattice_vectors_; ///< Inverse matrix for fractional mapping.
   std::array<real_t, 6> lattice_parameters_{};    ///< {a, b, c, alpha, beta, gamma}.
   real_t volume_{0.0};                            ///< Cached volume in Angstroms^3.
-  real_t energy_{0.0};                            ///< Potential energy of this specific coordinate set.
-  std::vector<Atom> atoms_;                       ///< Collection of atoms in the cell.
-  std::vector<Element> elements_;                 ///< Unique elements present in the system.
+  real_t energy_{0.0};            ///< Potential energy of this specific coordinate set.
+  std::vector<Atom> atoms_;       ///< Collection of atoms in the cell.
+  std::vector<Element> elements_; ///< Unique elements present in the system.
 };
 
 } // namespace correlation::core
