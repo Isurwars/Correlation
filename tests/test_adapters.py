@@ -42,7 +42,7 @@ def mock_ase():
         def get_positions(self):
             return self.positions
 
-    mock_mod.Atoms = MockAtoms
+    setattr(mock_mod, "Atoms", MockAtoms)
     sys.modules["ase"] = mock_mod
     yield mock_mod
     sys.modules.pop("ase", None)
@@ -100,11 +100,11 @@ def mock_pymatgen():
         def __len__(self):
             return len(self.sites)
 
-    pmg_core.Lattice = MockLattice
-    pmg_core.Structure = MockStructure
-    pmg_core.Molecule = MockMolecule
-    pmg_core.Site = MockSite
-    pmg_mod.core = pmg_core
+    setattr(pmg_core, "Lattice", MockLattice)
+    setattr(pmg_core, "Structure", MockStructure)
+    setattr(pmg_core, "Molecule", MockMolecule)
+    setattr(pmg_core, "Site", MockSite)
+    setattr(pmg_mod, "core", pmg_core)
 
     sys.modules["pymatgen"] = pmg_mod
     sys.modules["pymatgen.core"] = pmg_core
@@ -117,9 +117,9 @@ def mock_pymatgen():
 # Tests: Dependency Absence
 # -----------------------------------------------------------------------------
 
-def test_ase_missing_raises_import_error():
+def test_ase_missing_raises_import_error(monkeypatch):
     """Verify informative ImportError when ASE is not installed."""
-    sys.modules.pop("ase", None)
+    monkeypatch.setitem(sys.modules, "ase", None)
     cell = correlation.Cell([10.0, 0.0, 0.0], [0.0, 10.0, 0.0], [0.0, 0.0, 10.0])
 
     with pytest.raises(ImportError, match="Atomic Simulation Environment"):
@@ -137,10 +137,10 @@ def test_ase_missing_raises_import_error():
         adapters.to_ase_trajectory(traj)
 
 
-def test_pymatgen_missing_raises_import_error():
+def test_pymatgen_missing_raises_import_error(monkeypatch):
     """Verify informative ImportError when Pymatgen is not installed."""
-    sys.modules.pop("pymatgen", None)
-    sys.modules.pop("pymatgen.core", None)
+    monkeypatch.setitem(sys.modules, "pymatgen", None)
+    monkeypatch.setitem(sys.modules, "pymatgen.core", None)
     cell = correlation.Cell([10.0, 0.0, 0.0], [0.0, 10.0, 0.0], [0.0, 0.0, 10.0])
 
     with pytest.raises(ImportError, match="Pymatgen is required"):

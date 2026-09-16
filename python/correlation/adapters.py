@@ -262,7 +262,7 @@ def to_pymatgen(cell: Any) -> Any:
         and params[2] > 1e-6
     )
 
-    if is_periodic:
+    if is_periodic and params is not None:
         lattice = Lattice.from_parameters(
             float(params[0]), float(params[1]), float(params[2]),
             float(params[3]), float(params[4]), float(params[5])
@@ -305,7 +305,7 @@ def to_atom_graphs(
         Constructed AtomGraphs object ready for inference with ORB-v3 models.
     """
     try:
-        import torch
+        import torch  # type: ignore[import-not-found]
     except ImportError as err:
         raise ImportError("to_atom_graphs requires 'torch' to be installed.") from err
 
@@ -367,7 +367,7 @@ def to_atom_graphs(
     actual_max_neighbors = max_num_neighbors if max_num_neighbors is not None else len(senders)
 
     try:
-        from orb_models.common.atoms.batch.graph_batch import AtomGraphs
+        from orb_models.common.atoms.batch.graph_batch import AtomGraphs  # type: ignore[import-not-found]
 
         graph_obj = AtomGraphs(
             senders=senders,
@@ -377,18 +377,9 @@ def to_atom_graphs(
             node_features=node_feats,
             edge_features=edge_feats,
             system_features=system_feats,
-            node_targets={},
-            edge_targets={},
-            system_targets={},
-            system_id=None,
-            fix_atoms=None,
-            tags=None,
             radius=float(radius),
             max_num_neighbors=torch.tensor([actual_max_neighbors], dtype=torch.long),
-            half_supercell=False,
         )
-        if device is not None or output_dtype is not None:
-            graph_obj = graph_obj.to(device=device, dtype=output_dtype)
         return graph_obj
     except ImportError:
         return {
@@ -416,12 +407,12 @@ def _register_adapters() -> None:
         return
 
     if hasattr(correlation, "Cell"):
-        correlation.Cell.to_ase = to_ase
-        correlation.Cell.from_ase = staticmethod(from_ase)
-        correlation.Cell.to_pymatgen = to_pymatgen
-        correlation.Cell.from_pymatgen = staticmethod(from_pymatgen)
-        correlation.Cell.to_atom_graphs = to_atom_graphs
+        setattr(correlation.Cell, "to_ase", to_ase)
+        setattr(correlation.Cell, "from_ase", staticmethod(from_ase))
+        setattr(correlation.Cell, "to_pymatgen", to_pymatgen)
+        setattr(correlation.Cell, "from_pymatgen", staticmethod(from_pymatgen))
+        setattr(correlation.Cell, "to_atom_graphs", to_atom_graphs)
 
     if hasattr(correlation, "Trajectory"):
-        correlation.Trajectory.to_ase = to_ase_trajectory
-        correlation.Trajectory.from_ase = staticmethod(from_ase_trajectory)
+        setattr(correlation.Trajectory, "to_ase", to_ase_trajectory)
+        setattr(correlation.Trajectory, "from_ase", staticmethod(from_ase_trajectory))

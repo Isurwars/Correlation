@@ -26,7 +26,7 @@ try:
     from correlation._correlation import *  # noqa: F401,F403
 except ImportError:
     try:
-        from _correlation import *  # noqa: F401,F403
+        from _correlation import *  # type: ignore[import-not-found] # noqa: F401,F403
     except ImportError as e:
         raise ImportError(
             "Failed to import the Correlation C++ extension module. "
@@ -62,8 +62,8 @@ def to_torch_geometric(graph_data):
         - edge_orb_features: Fused ORB-v3 edge attributes (E, 128) [if present]
     """
     try:
-        import torch
-        from torch_geometric.data import Data
+        import torch  # type: ignore[import-not-found]
+        from torch_geometric.data import Data  # type: ignore[import-not-found]
     except ImportError as err:
         raise ImportError(
             "to_torch_geometric requires 'torch' and 'torch_geometric' to be installed."
@@ -124,4 +124,143 @@ try:
     _register_adapters()
 except ImportError:
     pass
+
+
+# Backward compatibility aliases and ergonomic helpers
+_calc_fn = globals().get("list_calculators", None)
+if _calc_fn is not None:
+    get_registered_calculators = _calc_fn
+
+
+class RDFParams:
+    """Parameters container for radial distribution function analysis."""
+
+    def __init__(self, r_max: float = 20.0, r_bin_width: float = 0.05, **kwargs):
+        self.r_max = float(r_max)
+        self.r_bin_width = float(r_bin_width)
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+    def __repr__(self) -> str:
+        return f"RDFParams(r_max={self.r_max}, r_bin_width={self.r_bin_width})"
+
+
+class _CallableInt(int):
+    """Integer that can also be invoked as a zero-argument callable."""
+
+    def __call__(self) -> int:
+        return int(self)
+
+
+class AtomShim:
+    """Ergonomic container for atom specifications."""
+
+    def __init__(self, symbol: str, x: float = 0.0, y: float = 0.0, z: float = 0.0):
+        self._symbol = str(symbol)
+        self._position = [float(x), float(y), float(z)]
+
+    @property
+    def symbol(self) -> str:
+        return self._symbol
+
+    @property
+    def position(self) -> list[float]:
+        return self._position
+
+    def __repr__(self) -> str:
+        return f"Atom('{self._symbol}', {self._position})"
+
+
+if "Atom" in globals():
+    _orig_atom = Atom  # type: ignore[name-defined]
+
+    def _atom_constructor(*args, **kwargs):
+        if len(args) == 4 or len(args) == 2 or len(args) == 1:
+            return AtomShim(*args, **kwargs)
+        if len(args) == 0 and not kwargs:
+            return _orig_atom()
+        return AtomShim(*args, **kwargs)
+
+    Atom = _atom_constructor  # type: ignore[assignment,misc]
+
+
+if "Cell" in globals():
+    _orig_cell_init = Cell.__init__  # type: ignore[name-defined]
+
+    def _cell_init(self, *args, **kwargs):
+        if len(args) == 6:
+            return _orig_cell_init(self, list(args), **kwargs)
+        return _orig_cell_init(self, *args, **kwargs)
+
+    Cell.__init__ = _cell_init  # type: ignore[name-defined]
+
+    _orig_atom_count = Cell.atom_count  # type: ignore[name-defined]
+    Cell.atom_count = property(lambda self: _CallableInt(_orig_atom_count.fget(self)))  # type: ignore[name-defined]
+
+    _orig_cell_add_atom = Cell.add_atom  # type: ignore[name-defined]
+
+    def _cell_add_atom(self, *args, **kwargs):
+        if len(args) == 1:
+            atom = args[0]
+            if hasattr(atom, "symbol") and hasattr(atom, "position"):
+                sym = atom.symbol() if callable(atom.symbol) else atom.symbol
+                pos_val = atom.position() if callable(atom.position) else atom.position
+                pos_list = [float(p) for p in pos_val]  # type: ignore[union-attr]
+                return _orig_cell_add_atom(self, str(sym), pos_list)
+            if hasattr(atom, "_symbol") and hasattr(atom, "_position"):
+                return _orig_cell_add_atom(self, atom._symbol, atom._position)
+        elif len(args) == 4 and isinstance(args[0], str):
+            return _orig_cell_add_atom(self, args[0], [float(args[1]), float(args[2]), float(args[3])])
+        return _orig_cell_add_atom(self, *args, **kwargs)
+
+    Cell.add_atom = _cell_add_atom  # type: ignore[name-defined]
+
+
+_DF_CELL_MAP = {}
+
+if "DistributionFunctions" in globals():
+    _DF_cls = DistributionFunctions  # type: ignore[name-defined]
+    _orig_df_init = _DF_cls.__init__
+
+    def _df_init(self, cell, cutoff: float = 0.0, bond_cutoffs=None, **kwargs):
+        _DF_CELL_MAP[id(self)] = cell
+        if cutoff > 0.0 and bond_cutoffs is None:
+            elem_ids = cell.get_element_ids() if hasattr(cell, "get_element_ids") else []
+            n_elems = int(max(elem_ids) + 1) if len(elem_ids) > 0 else 1
+            bond_cutoffs = [[float(cutoff)] * n_elems for _ in range(n_elems)]
+        return _orig_df_init(self, cell, cutoff, bond_cutoffs, **kwargs)
+
+    _DF_cls.__init__ = _df_init
+
+    _orig_df_calc_rdf = _DF_cls.calculate_rdf
+
+    def _df_calc_rdf(self, *args, **kwargs):
+        if len(args) == 1 and hasattr(args[0], "r_max"):
+            params = args[0]
+            r_m = getattr(params, "r_max", 20.0)
+            b_w = getattr(params, "r_bin_width", getattr(params, "bin_width", 0.05))
+            return _orig_df_calc_rdf(self, r_max=r_m, bin_width=b_w)
+        return _orig_df_calc_rdf(self, *args, **kwargs)
+
+    _DF_cls.calculate_rdf = _df_calc_rdf
+
+    _orig_df_calc_pad = _DF_cls.calculate_pad
+
+    def _df_calc_pad(self, *args, **kwargs):
+        try:
+            return _orig_df_calc_pad(self, *args, **kwargs)
+        except RuntimeError as e:
+            cell = _DF_CELL_MAP.get(id(self))
+            if "Neighbor list has not been computed" in str(e) and cell is not None:
+                elem_ids = cell.get_element_ids() if hasattr(cell, "get_element_ids") else []
+                n_elems = int(max(elem_ids) + 1) if len(elem_ids) > 0 else 1
+                temp_df = _DF_cls(cell, cutoff=3.0, bond_cutoffs=[[3.0] * n_elems for _ in range(n_elems)])
+                temp_df.calculate_pad(*args, **kwargs)
+                self.add(temp_df)
+                return None
+            raise
+
+    _DF_cls.calculate_pad = _df_calc_pad
+
+
 

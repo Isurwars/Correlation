@@ -19,6 +19,27 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Chemistry",
     "Topic :: Scientific/Engineering :: Physics",
 ]
+dependencies = [
+    "numpy>=1.20",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "matplotlib>=3.5",
+    "ipykernel>=6.0",
+    "ase>=3.22",
+    "pymatgen>=2023.1.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=7.0",
+    "matplotlib>=3.5",
+    "ipykernel>=6.0",
+    "ase>=3.22",
+    "pymatgen>=2023.1.1",
+]
 
 [project.urls]
 Homepage = "https://github.com/Isurwars/Correlation"
@@ -60,4 +81,18 @@ environment = { CC="/opt/rh/gcc-toolset-13/root/usr/bin/gcc", CXX="/opt/rh/gcc-t
 [tool.cibuildwheel.windows]
 # Delvewheel is required to vendor the compiled tbb.dll inside the Windows wheel
 before-build = "pip install delvewheel"
+
+[tool.basedpyright]
+typeCheckingMode = "standard"
+pythonVersion = "3.14"
+venvPath = "."
+venv = ".venv"
+extraPaths = ["python"]
+
+[tool.pyright]
+typeCheckingMode = "standard"
+pythonVersion = "3.14"
+venvPath = "."
+venv = ".venv"
+extraPaths = ["python"]
 

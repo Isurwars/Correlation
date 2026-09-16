@@ -8,6 +8,7 @@ Run from the build directory after building the correlation_py target:
 import importlib
 import os
 import sys
+import numpy as np
 
 try:
     import correlation
@@ -18,8 +19,12 @@ except ImportError:
 # Force UTF-8 stdout on Windows (cp1252 can't encode box-drawing chars)
 if sys.stdout.encoding and sys.stdout.encoding.lower() not in ("utf-8", "utf8"):
     try:
-        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+        reconf_out = getattr(sys.stdout, "reconfigure", None)
+        if reconf_out is not None:
+            reconf_out(encoding="utf-8", errors="replace")
+        reconf_err = getattr(sys.stderr, "reconfigure", None)
+        if reconf_err is not None:
+            reconf_err(encoding="utf-8", errors="replace")
     except (AttributeError, OSError):
         import io
         sys.stdout = io.TextIOWrapper(
