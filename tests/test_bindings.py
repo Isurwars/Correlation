@@ -312,6 +312,49 @@ if HAS_NUMPY:
     assert abs(np.sum(sh_arr[9:16]**2) - 7.0) < 1e-4, "l=3 norm mismatch"
 print("  ORB standalone math functions verified OK")
 
+# ── 7.7. Topological Graph Descriptors & Structural-Electronic Correlation ─────
+section("7.7. Topological Descriptors & Structural-Electronic Correlation")
+
+fcc_cell = correlation.Cell([3.615, 3.615, 3.615, 90.0, 90.0, 90.0])
+fcc_cell.add_atom("Cu", [0.0, 0.0, 0.0])
+fcc_cell.add_atom("Cu", [0.0, 1.8075, 1.8075])
+fcc_cell.add_atom("Cu", [1.8075, 0.0, 1.8075])
+fcc_cell.add_atom("Cu", [1.8075, 1.8075, 0.0])
+
+fcc_graph = correlation.build_periodic_graph(fcc_cell, 2.8)
+coords = correlation.compute_coordination_embedding(fcc_graph)
+assert len(coords) == 4, "Coordination array length mismatch"
+print(f"  FCC Coordination: {coords}")
+
+rings = correlation.compute_ring_statistics_descriptor(fcc_graph, 4)
+assert len(rings) == 4 * 4, "Ring statistics descriptor length mismatch"
+print(f"  FCC Ring descriptors (N x 4): {len(rings)} elements")
+
+spectrum = correlation.compute_graph_spectrum(fcc_graph, 3)
+assert len(spectrum) == 3, "Graph spectrum length mismatch"
+assert spectrum[0] >= spectrum[1] >= spectrum[2], "Spectrum not sorted descending"
+print(f"  Graph Spectrum top-3 eigenvalues: {spectrum}")
+
+correlation.populate_descriptors(fcc_graph, 4)
+if HAS_NUMPY:
+    assert len(fcc_graph.cna_labels) == 4
+    assert len(fcc_graph.coordination_desc) == 4
+    assert fcc_graph.ring_desc.shape == (4, 4)
+    assert fcc_graph.ring_desc.size == 16
+print("  populate_descriptors verified OK")
+
+# StructuralElectronicCorrelation verification
+fcc_traj = correlation.Trajectory()
+fcc_traj.add_frame(fcc_cell)
+tdos_dists = correlation.DistributionFunctions(fcc_cell)
+tdos_params = correlation.TDOSParams(-10.0, 5.0, None)
+
+motif_cna = correlation.correlate_cna(tdos_dists, fcc_traj, tdos_params)
+assert isinstance(motif_cna, correlation.MotifProjectedTDOS)
+motif_steinhardt = correlation.correlate_steinhardt(tdos_dists, fcc_traj, tdos_params)
+assert isinstance(motif_steinhardt, correlation.MotifProjectedTDOS)
+print("  StructuralElectronicCorrelation bindings verified OK")
+
 # ── 8. Summary ───────────────────────────────────────────────────────
 section("Summary")
 print("  All binding layers loaded successfully OK")

@@ -13,8 +13,10 @@
 #include "analysis_bindings.hpp"
 
 #include "analysis/DistributionFunctions.hpp"
+#include "analysis/StructuralElectronicCorrelation.hpp"
 #include "analysis/StructureAnalyzer.hpp"
 #include "analysis/TrajectoryAnalyzer.hpp"
+#include "calculators/TDOSCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 #include "math/Smoothing.hpp"
@@ -34,7 +36,7 @@ using namespace correlation::core;
 using namespace correlation::math;
 
 namespace {
-BondCutoffMatrix parse_bond_cutoff_matrix(const py::object &bond_cutoffs_obj) {
+BondCutoffMatrix parseBondCutoffMatrix(const py::object &bond_cutoffs_obj) {
   BondCutoffMatrix cutoffs;
   if (bond_cutoffs_obj.is_none()) {
     return cutoffs;
@@ -188,7 +190,7 @@ void init_analysis(py::module_ &mod) {
                                 "angles[center][e1][e2][angle_idx], dihedrals[e1][e2][e3][e4][idx].")
       .def(py::init([](Cell &cell, real_t cutoff, const py::object &bond_cutoffs_obj,
                        bool ignore_periodic_self_interactions) {
-             BondCutoffMatrix cutoffs = parse_bond_cutoff_matrix(bond_cutoffs_obj);
+             BondCutoffMatrix cutoffs = parseBondCutoffMatrix(bond_cutoffs_obj);
              return std::make_unique<StructureAnalyzer>(cell, cutoff, cutoffs, ignore_periodic_self_interactions);
            }),
            py::arg("cell"), py::arg("cutoff"), py::arg("bond_cutoffs_sq"),
@@ -219,7 +221,7 @@ void init_analysis(py::module_ &mod) {
       .def(py::init([](Trajectory &trajectory, real_t neighbor_cutoff, const py::object &bond_cutoffs_obj,
                        size_t start_frame, long long end_frame, bool ignore_periodic_self_interactions,
                        const std::function<void(float, const std::string &)> &progress_callback) {
-             BondCutoffMatrix cutoffs = parse_bond_cutoff_matrix(bond_cutoffs_obj);
+             BondCutoffMatrix cutoffs = parseBondCutoffMatrix(bond_cutoffs_obj);
              return std::make_unique<TrajectoryAnalyzer>(trajectory, neighbor_cutoff, cutoffs, StartFrame{start_frame},
                                                          EndFrame{static_cast<size_t>(end_frame)},
                                                          ignore_periodic_self_interactions, progress_callback);
@@ -267,7 +269,7 @@ void init_analysis(py::module_ &mod) {
                                     "   passed at construction. The Cell (and owning Trajectory) must remain\n"
                                     "   alive for the lifetime of this object.")
       .def(py::init([](Cell &cell, real_t cutoff, const py::object &bond_cutoffs_obj) {
-             BondCutoffMatrix cutoffs = parse_bond_cutoff_matrix(bond_cutoffs_obj);
+             BondCutoffMatrix cutoffs = parseBondCutoffMatrix(bond_cutoffs_obj);
              return std::make_unique<DistributionFunctions>(cell, cutoff, cutoffs);
            }),
            py::arg("cell"), py::arg("cutoff") = 0.0, py::arg("bond_cutoffs") = py::none(),
@@ -415,4 +417,52 @@ void init_analysis(py::module_ &mod) {
           "Returns\n-------\n"
           "DistributionFunctions\n"
           "    A new object containing the averaged results.");
+
+  // ------------------------------------------------------------------
+  // MotifProjectedTDOS
+  // ------------------------------------------------------------------
+  py::class_<MotifProjectedTDOS>(mod, "MotifProjectedTDOS",
+                                 "Container for motif-partitioned Total Density of States spectra.")
+      .def(py::init<>())
+      .def_readwrite("energies", &MotifProjectedTDOS::energies, "Energy grid values [eV].")
+      .def_readwrite("motif_tdos", &MotifProjectedTDOS::motif_tdos, "Partial TDOS spectra mapped by motif name.")
+      .def_readwrite("total_tdos", &MotifProjectedTDOS::total_tdos, "Total aggregated TDOS spectrum.")
+      .def_readwrite("frame_count", &MotifProjectedTDOS::frame_count, "Evaluated trajectory frame count.")
+      .def("to_histogram", &MotifProjectedTDOS::toHistogram, py::arg("title") = "Motif-Projected TDOS",
+           "Convert motif-projected TDOS into a standard Histogram.");
+
+  // ------------------------------------------------------------------
+  // StructuralElectronicCorrelation
+  // ------------------------------------------------------------------
+  py::class_<StructuralElectronicCorrelation>(mod, "StructuralElectronicCorrelation",
+                                              "Trajectory-level structural-electronic correlation pipeline.")
+      .def_static(
+          "correlate_cna",
+          [](DistributionFunctions &dists, const Trajectory &traj, const correlation::calculators::TDOSParams &params) {
+            return StructuralElectronicCorrelation::correlateCNA(dists, traj, params, nullptr);
+          },
+          py::arg("dists"), py::arg("traj"), py::arg("params"),
+          "Correlate trajectory LDoS with Common Neighbor Analysis (CNA) classifications.")
+      .def_static(
+          "correlate_steinhardt",
+          [](DistributionFunctions &dists, const Trajectory &traj, const correlation::calculators::TDOSParams &params) {
+            return StructuralElectronicCorrelation::correlateSteinhardt(dists, traj, params, nullptr);
+          },
+          py::arg("dists"), py::arg("traj"), py::arg("params"),
+          "Correlate trajectory LDoS with Steinhardt bond-order parameters.");
+
+  mod.def(
+      "correlate_cna",
+      [](DistributionFunctions &dists, const Trajectory &traj, const correlation::calculators::TDOSParams &params) {
+        return StructuralElectronicCorrelation::correlateCNA(dists, traj, params, nullptr);
+      },
+      py::arg("dists"), py::arg("traj"), py::arg("params"),
+      "Correlate trajectory LDoS with Common Neighbor Analysis (CNA) classifications.");
+  mod.def(
+      "correlate_steinhardt",
+      [](DistributionFunctions &dists, const Trajectory &traj, const correlation::calculators::TDOSParams &params) {
+        return StructuralElectronicCorrelation::correlateSteinhardt(dists, traj, params, nullptr);
+      },
+      py::arg("dists"), py::arg("traj"), py::arg("params"),
+      "Correlate trajectory LDoS with Steinhardt bond-order parameters.");
 }

@@ -38,9 +38,12 @@ struct PeriodicGraphData {
   std::vector<real_t> edge_cutoff_envelope_flat;     /**< [E] Polynomial cutoff envelope f_cut(d). */
   std::vector<real_t>
       edge_orb_features_flat; /**< [E * (num_rbf * (l_max + 1)^2)] Fused outer product tensor f_cut * (RBF (x) Y_lm). */
-  std::array<real_t, 9> cell_flat{}; /**< [3 * 3] Lattice vectors matrix. */
-  size_t atom_count{0};              /**< Total atom count N. */
-  size_t edge_count{0};              /**< Total directed edge count E. */
+  std::vector<int> cna_labels;           /**< [N] Per-atom Common Neighbor Analysis (CNA) classification label. */
+  std::vector<real_t> coordination_desc; /**< [N] Per-atom coordination number embedding. */
+  std::vector<real_t> ring_desc;         /**< [N * max_ring_size] Per-atom ring membership count embedding. */
+  std::array<real_t, 9> cell_flat{};     /**< [3 * 3] Lattice vectors matrix. */
+  size_t atom_count{0};                  /**< Total atom count N. */
+  size_t edge_count{0};                  /**< Total directed edge count E. */
 };
 
 /**

@@ -151,6 +151,7 @@ endif()
 set(MLIP_SOURCES
     mlip/PeriodicGraphBuilder.cpp
     mlip/TorchGNNModel.cpp
+    mlip/GraphDescriptors.cpp
 )
 
 add_library(mlip_obj OBJECT ${MLIP_SOURCES})
@@ -169,6 +170,7 @@ add_library(correlation_lib STATIC
     analysis/DistributionFunctions.cpp
     analysis/DynamicsAnalyzer.cpp
     analysis/CorrelationEngine.cpp
+    analysis/StructuralElectronicCorrelation.cpp
     core/NeighborGraph.cpp
     analysis/StructureAnalyzer.cpp
     core/Trajectory.cpp

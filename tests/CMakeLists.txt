@@ -66,6 +66,7 @@ add_executable(correlation_unit_tests
     unit/calculators/TDOSCalculatorTests.cpp
     unit/mlip/PeriodicGraphBuilderTests.cpp
     unit/mlip/TorchGNNModelTests.cpp
+    unit/mlip/GraphDescriptorsTests.cpp
     unit/calculators/GPUSteinhardtCalculatorTests.cpp
     unit/calculators/GPUDistanceCalculatorTests.cpp
     unit/calculators/GPUSQCalculatorTests.cpp
@@ -92,6 +93,7 @@ add_executable(correlation_unit_tests
     unit/math/FFTUtilsTests.cpp
     unit/math/ConstantsTests.cpp
     unit/analysis/CorrelationEngineTests.cpp
+    unit/analysis/StructuralElectronicCorrelationTests.cpp
     unit/app/AppBackendTests.cpp
     unit/app/PresetManagerTests.cpp
     unit/app/SettingsManagerTests.cpp

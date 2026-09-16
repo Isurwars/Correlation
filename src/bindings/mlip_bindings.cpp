@@ -11,6 +11,7 @@
 #include "calculators/TDOSCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
+#include "mlip/GraphDescriptors.hpp"
 #include "mlip/MLIPInterface.hpp"
 #include "mlip/PeriodicGraphBuilder.hpp"
 
@@ -150,7 +151,29 @@ void bindPeriodicGraphData(py::module_ &mod) {
                 (graph_data.edge_count > 0) ? (graph_data.edge_orb_features_flat.size() / graph_data.edge_count) : 0;
             return makeEmptyOr2D<real_t>(graph_data.edge_orb_features_flat, graph_data.edge_count, cols, obj);
           },
-          "Zero-copy access to fused ORB-v3 edge features f_cut * (RBF (x) Y_lm) as a (E, num_rbf * num_sh) NumPy array.");
+          "Zero-copy access to fused ORB-v3 edge features f_cut * (RBF (x) Y_lm) as a (E, num_rbf * num_sh) NumPy array.")
+      .def_property_readonly(
+          "cna_labels",
+          [](py::object &obj) -> py::array_t<int> {
+            const auto &graph_data = obj.cast<const PeriodicGraphData &>();
+            return makeEmptyOr1D<int>(graph_data.cna_labels, graph_data.cna_labels.size(), obj);
+          },
+          "Zero-copy access to CNA classification labels as a (N,) NumPy array.")
+      .def_property_readonly(
+          "coordination_desc",
+          [](py::object &obj) -> py::array_t<real_t> {
+            const auto &graph_data = obj.cast<const PeriodicGraphData &>();
+            return makeEmptyOr1D<real_t>(graph_data.coordination_desc, graph_data.coordination_desc.size(), obj);
+          },
+          "Zero-copy access to coordination numbers as a (N,) NumPy array.")
+      .def_property_readonly(
+          "ring_desc",
+          [](py::object &obj) -> py::array_t<real_t> {
+            const auto &graph_data = obj.cast<const PeriodicGraphData &>();
+            const size_t cols = (graph_data.atom_count > 0) ? (graph_data.ring_desc.size() / graph_data.atom_count) : 0;
+            return makeEmptyOr2D<real_t>(graph_data.ring_desc, graph_data.atom_count, cols, obj);
+          },
+          "Zero-copy access to per-atom ring descriptors as a (N, max_ring_size) NumPy array.");
 }
 
 void bindPeriodicGraphBuilder(py::module_ &mod) {
@@ -321,6 +344,41 @@ void bindTdos(py::module_ &mod) {
           "Calculate frame-averaged Total Density of States for a trajectory.");
 }
 
+void bindGraphDescriptors(py::module_ &mod) {
+  py::enum_<CNALabel>(mod, "CNALabel", "Canonical Common Neighbor Analysis structural motifs.")
+      .value("OTHER", CNALabel::Other)
+      .value("FCC", CNALabel::FCC)
+      .value("HCP", CNALabel::HCP)
+      .value("BCC", CNALabel::BCC)
+      .value("ICO", CNALabel::ICO)
+      .export_values();
+
+  py::class_<GraphDescriptors>(mod, "GraphDescriptors",
+                               "Extracts topological, structural, and spectral descriptors from PeriodicGraphData.")
+      .def_static("compute_ring_statistics_descriptor", &GraphDescriptors::computeRingStatisticsDescriptor,
+                  py::arg("graph"), py::arg("max_size") = 6,
+                  "Compute per-atom ring statistics embedding using cycle basis detection.")
+      .def_static("compute_cna_descriptor", &GraphDescriptors::computeCNADescriptor, py::arg("graph"),
+                  "Compute per-atom Common Neighbor Analysis (CNA) classification labels.")
+      .def_static("compute_coordination_embedding", &GraphDescriptors::computeCoordinationEmbedding, py::arg("graph"),
+                  "Compute per-atom coordination number embedding.")
+      .def_static("compute_graph_spectrum", &GraphDescriptors::computeGraphSpectrum, py::arg("graph"), py::arg("k"),
+                  "Compute top-k eigenvalues of the graph adjacency matrix.")
+      .def_static("populate_descriptors", &GraphDescriptors::populateDescriptors, py::arg("graph"),
+                  py::arg("max_ring_size") = 6, "Populate all descriptor fields in PeriodicGraphData in-place.");
+
+  mod.def("compute_ring_statistics_descriptor", &GraphDescriptors::computeRingStatisticsDescriptor, py::arg("graph"),
+          py::arg("max_size") = 6, "Compute per-atom ring statistics embedding using cycle basis detection.");
+  mod.def("compute_cna_descriptor", &GraphDescriptors::computeCNADescriptor, py::arg("graph"),
+          "Compute per-atom Common Neighbor Analysis (CNA) classification labels.");
+  mod.def("compute_coordination_embedding", &GraphDescriptors::computeCoordinationEmbedding, py::arg("graph"),
+          "Compute per-atom coordination number embedding.");
+  mod.def("compute_graph_spectrum", &GraphDescriptors::computeGraphSpectrum, py::arg("graph"), py::arg("k"),
+          "Compute top-k eigenvalues of the graph adjacency matrix.");
+  mod.def("populate_descriptors", &GraphDescriptors::populateDescriptors, py::arg("graph"),
+          py::arg("max_ring_size") = 6, "Populate all descriptor fields in PeriodicGraphData in-place.");
+}
+
 } // namespace
 
 void init_mlip(py::module_ &mod) {
@@ -328,4 +386,5 @@ void init_mlip(py::module_ &mod) {
   bindPeriodicGraphBuilder(mod);
   bindMlipInterface(mod);
   bindTdos(mod);
+  bindGraphDescriptors(mod);
 }
