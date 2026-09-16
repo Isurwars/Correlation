@@ -295,12 +295,26 @@ void bindPeriodicGraphBuilder(py::module_ &mod) {
       "Convenience helper to construct periodic neighbor graph and extract ORB-v3 descriptors.");
 }
 
+class PyMLIPInterface : public MLIPInterface {
+public:
+  using MLIPInterface::MLIPInterface;
+
+  [[nodiscard]] std::string getModelName() const override {
+    PYBIND11_OVERRIDE_PURE_NAME(std::string, MLIPInterface, "get_model_name", getModelName);
+  }
+
+  [[nodiscard]] MLIPOutput evaluate(const correlation::core::Cell &cell) const override {
+    PYBIND11_OVERRIDE_PURE(MLIPOutput, MLIPInterface, evaluate, cell);
+  }
+};
+
 void bindMlipInterface(py::module_ &mod) {
   // ------------------------------------------------------------------
   // MLIPInterface
   // ------------------------------------------------------------------
-  py::class_<MLIPInterface, std::unique_ptr<MLIPInterface, py::nodelete>>(
+  py::class_<MLIPInterface, PyMLIPInterface>(
       mod, "MLIPInterface", "Abstract interface for MLIP engines.")
+      .def(py::init<>())
       .def("get_model_name", &MLIPInterface::getModelName, "Return model descriptor name.")
       .def("evaluate", &MLIPInterface::evaluate, py::arg("cell"),
            "Evaluate model on an atomic cell.");
