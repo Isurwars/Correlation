@@ -191,26 +191,84 @@ export component InputSelect {
                     background: MaterialPalette.outline_variant;
                 }
 
-                ScrollView {
+                dropdown_content := Rectangle {
                     height: popup_container.menu_dropdown_height;
-                    vertical-stretch: 1;
-                    vertical_scrollbar_policy: items_layout.preferred-height > popup_container.menu_dropdown_height ? ScrollBarPolicy.as_needed : ScrollBarPolicy.always_off;
-                    horizontal_scrollbar_policy: ScrollBarPolicy.always_off;
+                    property <bool> has_scroll: items_layout.preferred-height > self.height;
 
-                    content_height: max(popup_container.menu_dropdown_height, items_layout.preferred-height);
+                    scroll_view := ScrollView {
+                        x: 0;
+                        y: 0;
+                        width: dropdown_content.has_scroll ? parent.width - 16px : parent.width;
+                        height: parent.height;
+                        vertical-stretch: 1;
+                        vertical_scrollbar_policy: ScrollBarPolicy.always_off;
+                        horizontal_scrollbar_policy: ScrollBarPolicy.always_off;
 
-                    items_layout := VerticalLayout {
-                        padding: 0;
-                        spacing: 0;
+                        content_height: max(parent.height, items_layout.preferred-height);
 
-                        for item[index] in root.items: InputSelectItem {
-                            text: item.text;
-                            enabled: item.enabled;
-                            selected: index == root.current_index;
-                            is_match: !root.filter_active || root.text == "" || (item.text.to-lowercase().replace-all(root.text.to-lowercase(), "") != item.text.to-lowercase());
+                        items_layout := VerticalLayout {
+                            padding: 0;
+                            spacing: 0;
 
-                            clicked => {
-                                root.choose_item(index);
+                            for item[index] in root.items: InputSelectItem {
+                                text: item.text;
+                                enabled: item.enabled;
+                                selected: index == root.current_index;
+                                is_match: !root.filter_active || root.text == "" || (item.text.to-lowercase().replace-all(root.text.to-lowercase(), "") != item.text.to-lowercase());
+
+                                clicked => {
+                                    root.choose_item(index);
+                                }
+                            }
+                        }
+                    }
+
+                    // High contrast scrollbar: always visible when options exceed viewport
+                    if dropdown_content.has_scroll: scroll_track := Rectangle {
+                        x: parent.width - 12px;
+                        y: 4px;
+                        width: 8px;
+                        height: parent.height - 8px;
+                        background: MaterialPalette.surface_container_highest;
+                        border_radius: 4px;
+
+                        thumb := Rectangle {
+                            property <length> track_h: scroll_track.height;
+                            property <length> max_scroll: max(1px, items_layout.preferred-height - scroll_view.height);
+                            property <length> thumb_h: max(28px, track_h * (scroll_view.height / max(1px, items_layout.preferred-height)));
+
+                            x: 0px;
+                            y: clamp((track_h - self.thumb_h) * (-scroll_view.content_y / self.max_scroll), 0px, track_h - self.thumb_h);
+                            width: 8px;
+                            height: self.thumb_h;
+                            border_radius: 4px;
+                            background: thumb_touch.pressed ? MaterialPalette.primary.darker(15%) : thumb_touch.has_hover ? MaterialPalette.primary.brighter(15%) : MaterialPalette.primary;
+                        }
+
+                        thumb_touch := TouchArea {
+                            property <length> press_y;
+                            property <length> start_content_y;
+
+                            pointer-event(event) => {
+                                if event.button == PointerEventButton.left && event.kind == PointerEventKind.down {
+                                    self.press_y = self.mouse-y;
+                                    self.start_content_y = scroll_view.content_y;
+                                }
+                            }
+
+                            moved => {
+                                if self.pressed && (scroll_track.height > thumb.thumb_h) {
+                                    scroll_view.content_y = min(0px, max(-(items_layout.preferred-height - scroll_view.height),
+                                        self.start_content_y - (self.mouse-y - self.press_y) * (items_layout.preferred-height - scroll_view.height) / (scroll_track.height - thumb.thumb_h)));
+                                }
+                            }
+
+                            scroll-event(event) => {
+                                if event.delta-y != 0 {
+                                    scroll_view.content_y = min(0px, max(-(items_layout.preferred-height - scroll_view.height), scroll_view.content_y + event.delta-y));
+                                    return accept;
+                                }
+                                reject
                             }
                         }
                     }
