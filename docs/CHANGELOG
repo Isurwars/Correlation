@@ -1,7 +1,29 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [4.0.0] - 2026-09-06
+## [3.9.3] - 2026-09-18
+
+### UI / UX Modernization & Accessibility (Slint)
+- **InputSelect Component**: Replaced static `DropDownMenu` in `PreviewCard` with a responsive, searchable combobox (`input_select.slint`):
+  - In-place text filtering with live case-insensitive substring matching.
+  - Quick-clear button (`Icons.close`) that resets input to show all available plots.
+  - Empty text field by default showing the full catalog of computed and previewable distributions.
+- **Dynamic Dropdown Menu Sizing**:
+  - Automatically shrinks down to fit matching options (down to a minimum of 1 item = 40px) when fewer than 6 items match, eliminating empty background space.
+  - Automatically caps at 6 visible items (240px) with smooth vertical scrolling when options exceed 6.
+- **Persistent High-Contrast Custom Scrollbar**:
+  - Replaced faint, disappearing default platform scrollbar with a dedicated 8px scrollbar track (`surface_container_highest`) and 8px high-contrast thumb (`primary`).
+  - Stays persistently visible whenever options exceed the viewport limit (no auto-hiding).
+  - Supports mouse wheel scrolling over items, mouse wheel on the track, and direct click-and-drag dragging with hover and pressed state styling.
+- **Maximized Startup Mode**:
+  - Configured root `AppWindow` to launch maximized to the active monitor's full available width and height by default while respecting window manager docks, taskbars, and titlebars.
+- **Slint v1.18.0 Toolchain Upgrade**:
+  - Upgraded project Slint dependency from v1.17.1 to v1.18.0.
+  - Migrated deprecated `viewport-width`, `viewport-height`, `viewport-x`, and `viewport-y` properties to modern `content-*` equivalents across all `.slint` templates.
+- **Asynchronous File & Trajectory Operations**:
+  - Offloaded native file dialog invocations and heavy trajectory file parsing to background worker threads, keeping the Slint UI fully interactive during multi-gigabyte trajectory loads.
+- **Comprehensive Option Resets**:
+  - Standardized "Reset Defaults" behavior across all analysis cards (RDF, PAD, S(Q), Rings, Smoothing, Advanced, and Trajectory) with immediate two-way UI state synchronization.
 
 ### Ecosystem Interoperability & Python Adapters
 - **Pure Python Ecosystem Adapters**: Implemented `python/correlation/adapters.py` providing seamless bidirectional conversions between `correlation.Cell` and major materials science frameworks without introducing compile-time C++ dependencies:
@@ -10,24 +32,28 @@ All notable changes to this project will be documented in this file.
   - **Dynamic Feature Detection**: Non-intrusive runtime detection of external libraries.
   - **Monkey-Patched Methods**: Injected `.to_correlation()` into `ase.Atoms` and `pymatgen.core.Structure`, and `.to_ase()` / `.to_pymatgen()` into `correlation.Cell`.
 - **PyTorch Geometric (PyG) Descriptors**: Provided `to_torch_geometric()` for zero-copy/NumPy conversion of atomic periodic graphs to `torch_geometric.data.Data`.
-- **Python Bindings Enhancements**: Added pybind11 buffer-protocol bindings and comprehensive test coverage (`tests/test_adapters.py`).
+- **ORB-v3 AtomGraphs Support**: Added adapters for ORB-v3 interatomic potential graph representations.
+- **MLIP Python Bindings**: Added `PyMLIPInterface` trampoline class and bindings for structural-electronic correlation pipelines (`src/bindings/mlip_bindings.cpp`).
 
 ### WebAssembly & Browser Runtime
 - **Emscripten Target**: Added `correlation_wasm` build target enabled via `BUILD_WASM=ON` with Embind, single-precision compilation, SIMD128 acceleration, and virtual filesystem support (`readFromBuffer()`).
 - **Web Application Interface**: Updated `ui/wasm_app/` with drag-and-drop structure parsing, dynamic parameter selection, real-time client-side analysis, and HTML5 canvas distribution plotting.
+- **PAD UI & Snake-Case Aliases**: Added Planar Angle Distribution computation UI and exposed snake_case API aliases for WASM bindings.
 - **GitHub Actions CI/CD Deployment**: Automated WebAssembly build and GitHub Pages deployment workflow (`.github/workflows/wasm.yml`) using `mymindstorm/setup-emsdk@v14`.
+
+### Simulation Readers & Core Calculators
+- **New Quantum & MLIP Readers**: Added `ChgnetReader`, `GapReader`, and `MaceReader` with automatic sniffing and registration in `ReaderFactory`.
+- **Spherical Harmonics**: Implemented real spherical harmonics computation integrated into `PeriodicGraphBuilder`.
+- **Portable Expected Fallback**: Added `correlation::expected` fallback for older Clang/libstdc++ combinations and WebAssembly builds.
 
 ### Interactive Tutorials & Documentation
 - **Jupyter Notebook Tutorial Suite**: Created interactive tutorials in `notebooks/`:
   - `01_getting_started.ipynb`: Basic structure loading, RDF and PAD calculations, partials extraction, and Matplotlib visualization.
   - `02_ase_pymatgen_interop.ipynb`: Data roundtripping with ASE and Pymatgen, thermal jitter simulation, and hybrid workflows.
   - `03_trajectory_and_dynamics.ipynb`: Multi-frame trajectory analysis, ensemble-averaged RDF, Mean Squared Displacement (MSD), and VACF diffusion evaluation.
+  - `04_structural_electronic_correlation.ipynb`: MLIP-derived density of states correlation.
 - **Architecture Decision Records (ADRs)**: Established `docs/adr/` documenting foundational architectural choices (C++23 standards, Slint MVVM, MLIP/GNN descriptors, pure Python adapters, and WebAssembly).
 - **Contributing Guidelines**: Modernized `docs/CONTRIBUTING.md` with C++23 standards, cognitive complexity gate ($\le 25$), zero-suppression policy, and testing workflows.
-
-### Core C++23 & Code Quality
-- **Cognitive Complexity Gate**: All core and calculator routines strictly conform to Cognitive Complexity $\le 25$ (`readability-function-cognitive-complexity`) with zero `NOLINT` suppressions.
-- **Regression Suite**: 100% test pass rate across all 746 C++ unit and integration tests, alongside Python test suites.
 
 ## [3.9.2] - 2026-09-04
 
