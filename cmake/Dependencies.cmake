@@ -66,7 +66,7 @@ if(BUILD_GUI)
     FetchContent_Declare(
       Slint
       GIT_REPOSITORY https://github.com/slint-ui/slint.git
-      GIT_TAG v1.17.1
+      GIT_TAG v1.18.0
       SOURCE_SUBDIR api/cpp
     )
     set(SLINT_FEATURE_JEMALLOC OFF CACHE BOOL "Disable jemalloc on macOS" FORCE)

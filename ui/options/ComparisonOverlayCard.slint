@@ -77,7 +77,7 @@ export component ComparisonOverlayCard inherits FilledCard {
 
         // Curve Items Table
         if root.comparison_curves.length > 0: ScrollView {
-            viewport-height: root.comparison_curves.length * 36px;
+            content-height: root.comparison_curves.length * 36px;
             max-height: 200px;
 
             VerticalLayout {

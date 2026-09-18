@@ -402,7 +402,7 @@ export component PreviewCard inherits FilledCard {
 
                     ScrollView {
                         vertical-stretch: 1;
-                        viewport-height: root.curve_toggle_items.length * 30px;
+                        content-height: root.curve_toggle_items.length * 30px;
 
                         VerticalLayout {
                             spacing: 2px;
@@ -592,7 +592,7 @@ export component PreviewCard inherits FilledCard {
 
                     // Scrollable Rows (High density: 28px height)
                     ScrollView {
-                        viewport-height: root.table_rows.length * 28px;
+                        content-height: root.table_rows.length * 28px;
 
                         VerticalLayout {
                             for row[row_idx] in root.table_rows: Rectangle {
