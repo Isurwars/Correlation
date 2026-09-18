@@ -1,0 +1,252 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import { TextField } from "./text_field.slint";
+import { MenuItem } from "../items/menu_item.slint";
+import { Icons } from "../icons/icons.slint";
+import { StateLayerArea } from "./state_layer.slint";
+import { MaterialPalette } from "../styling/material_palette.slint";
+import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
+import { MaterialTypography } from "../styling/material_typography.slint";
+import { MaterialText } from "./material_text.slint";
+import { ScrollView } from "std-widgets.slint";
+
+component InputSelectItem {
+    in property <string> text;
+    in property <bool> enabled: true;
+    in property <bool> selected: false;
+    in property <bool> is_match: true;
+
+    callback clicked();
+
+    visible: root.is_match;
+    height: root.is_match ? MaterialStyleMetrics.size_40 : 0px;
+
+    background_layer := Rectangle {
+        clip: true;
+        width: 100%;
+        height: 100%;
+        background: root.selected ? MaterialPalette.surface_container_highest : #00000000;
+
+        state_area := StateLayerArea {
+            color: MaterialPalette.on_surface;
+            enabled: root.enabled;
+
+            HorizontalLayout {
+                padding_left: MaterialStyleMetrics.padding_12;
+                padding_right: MaterialStyleMetrics.padding_12;
+                spacing: MaterialStyleMetrics.spacing_8;
+                alignment: center;
+
+                if root.selected: Rectangle {
+                    width: 16px;
+                    height: 16px;
+                    Image {
+                        width: 16px;
+                        height: 16px;
+                        source: Icons.check;
+                        colorize: MaterialPalette.primary;
+                    }
+                }
+
+                MaterialText {
+                    horizontal-stretch: 1;
+                    text: root.text;
+                    style: MaterialTypography.body_medium;
+                    color: root.selected ? MaterialPalette.primary : MaterialPalette.on_surface;
+                    vertical-alignment: center;
+                    overflow: elide;
+                }
+            }
+
+            clicked => {
+                root.clicked();
+            }
+        }
+    }
+}
+
+export component InputSelect {
+    in property <string> label: "Select Plot";
+    in property <bool> enabled: true;
+    in property <image> leading_icon;
+    in property <[MenuItem]> items: [];
+    in_out property <int> current_index: -1;
+    in_out property <string> text: "";
+
+    callback selected(index: int);
+
+    property <bool> is_open: false;
+    property <bool> filter_active: false;
+    property <length> item_height: MaterialStyleMetrics.size_40;
+    property <int> max_visible_items: 6;
+    out property <bool> has-hover: main_text_field.has_focus;
+
+    min_width: 180px;
+    preferred_width: 280px;
+    min_height: MaterialStyleMetrics.size_40;
+    preferred_height: MaterialStyleMetrics.size_40;
+    forward_focus: main_text_field;
+    accessible-role: combobox;
+    accessible-enabled: root.enabled;
+    accessible-value: root.text;
+
+    changed current_index => {
+        if root.current_index >= 0 && root.current_index < root.items.length {
+            root.text = root.items[root.current_index].text;
+            root.filter_active = false;
+        }
+    }
+
+    // Collapsed / Base view: directly editable TextField
+    main_text_field := TextField {
+        width: 100%;
+        height: 100%;
+        label: root.label;
+        placeholder_text: "Filter or select plot...";
+        text <=> root.text;
+        leading_icon: root.leading_icon;
+        trailing_icon: root.text != "" ? Icons.close : (root.is_open ? Icons.arrow_drop_up : Icons.arrow_drop_down);
+        read_only: false;
+        enabled: root.enabled;
+
+        trailing_icon_clicked => {
+            if root.text != "" {
+                root.text = "";
+                root.filter_active = false;
+                root.open_menu();
+            } else {
+                root.toggle_menu();
+            }
+        }
+
+        edited(new_text) => {
+            root.text = new_text;
+            root.filter_active = (new_text != "");
+            root.open_menu();
+        }
+
+        accepted(text) => {
+            root.select_first_match();
+        }
+    }
+
+    menu := PopupWindow {
+        x: 0;
+        y: 0;
+        width: root.width;
+        height: popup_container.height;
+        close_policy: close_on_click_outside;
+        forward_focus: popup_text_field;
+
+        popup_container := Rectangle {
+            width: root.width;
+            property <length> menu_dropdown_height: min(max(items_layout.preferred-height, root.item_height), root.max_visible_items * root.item_height);
+            height: root.height + self.menu_dropdown_height;
+            border_radius: MaterialStyleMetrics.border_radius_2;
+            background: MaterialPalette.surface_container;
+            border_width: 1px;
+            border_color: MaterialPalette.outline_variant;
+            clip: true;
+
+            VerticalLayout {
+                padding: 0;
+                spacing: 0;
+
+                popup_text_field := TextField {
+                    width: root.width;
+                    height: root.height;
+                    label: root.label;
+                    placeholder_text: "Filter or select plot...";
+                    text <=> root.text;
+                    leading_icon: root.leading_icon;
+                    trailing_icon: root.text != "" ? Icons.close : Icons.arrow_drop_up;
+                    read_only: false;
+                    enabled: true;
+
+                    trailing_icon_clicked => {
+                        if root.text != "" {
+                            root.text = "";
+                            root.filter_active = false;
+                        } else {
+                            menu.close();
+                            root.is_open = false;
+                        }
+                    }
+
+                    edited(new_text) => {
+                        root.text = new_text;
+                        root.filter_active = (new_text != "");
+                    }
+
+                    accepted(text) => {
+                        root.select_first_match();
+                    }
+                }
+
+                Rectangle {
+                    height: 1px;
+                    background: MaterialPalette.outline_variant;
+                }
+
+                ScrollView {
+                    height: popup_container.menu_dropdown_height;
+                    vertical-stretch: 1;
+                    vertical_scrollbar_policy: items_layout.preferred-height > popup_container.menu_dropdown_height ? ScrollBarPolicy.as_needed : ScrollBarPolicy.always_off;
+                    horizontal_scrollbar_policy: ScrollBarPolicy.always_off;
+
+                    content_height: max(popup_container.menu_dropdown_height, items_layout.preferred-height);
+
+                    items_layout := VerticalLayout {
+                        padding: 0;
+                        spacing: 0;
+
+                        for item[index] in root.items: InputSelectItem {
+                            text: item.text;
+                            enabled: item.enabled;
+                            selected: index == root.current_index;
+                            is_match: !root.filter_active || root.text == "" || (item.text.to-lowercase().replace-all(root.text.to-lowercase(), "") != item.text.to-lowercase());
+
+                            clicked => {
+                                root.choose_item(index);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    function open_menu() {
+        root.is_open = true;
+        menu.show();
+    }
+
+    function toggle_menu() {
+        if root.is_open {
+            menu.close();
+            root.is_open = false;
+        } else {
+            root.filter_active = false;
+            root.open_menu();
+        }
+    }
+
+    function choose_item(index: int) {
+        root.current_index = index;
+        if index >= 0 && index < root.items.length {
+            root.text = root.items[index].text;
+        }
+        root.filter_active = false;
+        root.is_open = false;
+        menu.close();
+        root.selected(index);
+    }
+
+    function select_first_match() {
+        root.is_open = false;
+        menu.close();
+    }
+}

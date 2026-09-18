@@ -5,6 +5,7 @@ import {
     FilledCard,
     MaterialText,
     DropDownMenu,
+    InputSelect,
     MenuItem,
     Vertical,
     FilledButton,
@@ -117,20 +118,16 @@ export component PreviewCard inherits FilledCard {
             spacing: MaterialStyleMetrics.spacing_8;
             height: MaterialStyleMetrics.size_40;
 
-            plot_dropdown_area := TouchArea {
+            plot_dropdown_area := InputSelect {
                 horizontal-stretch: 1;
                 height: 100%;
-                DropDownMenu {
-                    width: 100%;
-                    height: 100%;
-                    label: "Select Plot";
-                    enabled: root.plot_items.length > 0;
-                    items: root.plot_items;
-                    current_index <=> root.selected_plot_index;
+                label: "Select Plot";
+                enabled: root.plot_items.length > 0;
+                items: root.plot_items;
+                current_index <=> root.selected_plot_index;
 
-                    selected(idx) => {
-                        root.plot_selected(idx);
-                    }
+                selected(idx) => {
+                    root.plot_selected(idx);
                 }
             }
 
