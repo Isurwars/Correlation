@@ -69,8 +69,22 @@ if(BUILD_GUI)
       GIT_TAG v1.18.0
       SOURCE_SUBDIR api/cpp
     )
-    set(SLINT_FEATURE_JEMALLOC OFF CACHE BOOL "Disable jemalloc on macOS" FORCE)
+    set(SLINT_FEATURE_JEMALLOC OFF CACHE BOOL "Disable jemalloc for Slint runtime" FORCE)
     FetchContent_MakeAvailable(Slint)
+
+    # Slint 1.18.0 unconditionally enables "jemalloc" for slint-compiler
+    # when not cross-compiling, ignoring SLINT_FEATURE_JEMALLOC.
+    # tikv-jemalloc-sys's link directives don't propagate through
+    # Corrosion's linker override, causing undefined _rjem_* symbols.
+    # Strip it from the compiler's cargo features.
+    if(TARGET slint-compiler)
+      get_target_property(_compiler_features slint-compiler CORROSION_FEATURES)
+      if(_compiler_features)
+        list(REMOVE_ITEM _compiler_features "jemalloc")
+        set_property(TARGET slint-compiler PROPERTY CORROSION_FEATURES ${_compiler_features})
+        message(STATUS "Stripped jemalloc from slint-compiler features: ${_compiler_features}")
+      endif()
+    endif()
 
     # Restore BUILD_SHARED_LIBS
     correlation_pop_shared_libs()

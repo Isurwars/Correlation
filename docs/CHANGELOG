@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.9.4] - 2026-09-19
+
+### Build System
+- **Fixed Slint jemalloc linker failure**: Slint 1.18.0 unconditionally enables `jemalloc` for `slint-compiler` when not cross-compiling, ignoring `SLINT_FEATURE_JEMALLOC`. This caused undefined `_rjem_*` symbol errors during linking because `tikv-jemalloc-sys`'s `cargo:rustc-link-lib` directives don't propagate through Corrosion's linker override. The fix strips `jemalloc` from `slint-compiler`'s `CORROSION_FEATURES` after `FetchContent_MakeAvailable(Slint)`.
+
 ## [3.9.3] - 2026-09-18
 
 ### UI / UX Modernization & Accessibility (Slint)
