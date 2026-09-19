@@ -41,21 +41,16 @@ export component TrajectoryOptionsCard inherits FilledCard {
         end_frame_area.has-hover ? "Last frame to include in the analysis.\n\n📏 Tip: Use 'End' to include all remaining frames.\n\n🔬 Physics: Selecting a subset of frames can speed up analysis during parameter exploration. Once you find good settings, use the full range for publication-quality results." : "";
 
     out property <length> hovered_x:
-        time_step_area.has-hover ? tf_time.absolute-position.x :
-        start_frame_area.has-hover ? tf_start.absolute-position.x :
-        end_frame_area.has-hover ? tf_end.absolute-position.x : 0px;
+        time_step_area.has-hover ? time_step_area.absolute-position.x + time_step_area.mouse-x :
+        start_frame_area.has-hover ? start_frame_area.absolute-position.x + start_frame_area.mouse-x :
+        end_frame_area.has-hover ? end_frame_area.absolute-position.x + end_frame_area.mouse-x : 0px;
     out property <length> hovered_y:
-        time_step_area.has-hover ? tf_time.absolute-position.y :
-        start_frame_area.has-hover ? tf_start.absolute-position.y :
-        end_frame_area.has-hover ? tf_end.absolute-position.y : 0px;
-    out property <length> hovered_width:
-        time_step_area.has-hover ? tf_time.width :
-        start_frame_area.has-hover ? tf_start.width :
-        end_frame_area.has-hover ? tf_end.width : 0px;
-    out property <length> hovered_height:
-        time_step_area.has-hover ? tf_time.height :
-        start_frame_area.has-hover ? tf_start.height :
-        end_frame_area.has-hover ? tf_end.height : 0px;
+        time_step_area.has-hover ? time_step_area.absolute-position.y + time_step_area.mouse-y :
+        start_frame_area.has-hover ? start_frame_area.absolute-position.y + start_frame_area.mouse-y :
+        end_frame_area.has-hover ? end_frame_area.absolute-position.y + end_frame_area.mouse-y : 0px;
+    out property <length> hovered_width: 0px;
+    out property <length> hovered_height: 0px;
+
 
     Vertical {
         spacing: MaterialStyleMetrics.spacing_12;

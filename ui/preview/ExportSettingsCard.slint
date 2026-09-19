@@ -46,45 +46,28 @@ export component ExportSettingsCard inherits FilledCard {
         fill_area_checkbox_area.has-hover ? "Toggle a soft transparent background shading under the curves." : "";
 
     out property <length> hovered_x:
-        size_area.has-hover ? size_area.absolute-position.x :
-        palette_area.has-hover ? palette_area.absolute-position.x :
-        font_area.has-hover ? font_area.absolute-position.x :
-        line_area.has-hover ? line_area.absolute-position.x :
-        marker_size_area.has-hover ? marker_size_area.absolute-position.x :
-        grid_area.has-hover ? grid_area.absolute-position.x :
-        legend_area.has-hover ? legend_area.absolute-position.x :
-        markers_area.has-hover ? markers_area.absolute-position.x :
-        fill_area_checkbox_area.has-hover ? fill_area_checkbox_area.absolute-position.x : 0px;
+        size_area.has-hover ? size_area.absolute-position.x + size_area.mouse-x :
+        palette_area.has-hover ? palette_area.absolute-position.x + palette_area.mouse-x :
+        font_area.has-hover ? font_area.absolute-position.x + font_area.mouse-x :
+        line_area.has-hover ? line_area.absolute-position.x + line_area.mouse-x :
+        marker_size_area.has-hover ? marker_size_area.absolute-position.x + marker_size_area.mouse-x :
+        grid_area.has-hover ? grid_area.absolute-position.x + grid_area.mouse-x :
+        legend_area.has-hover ? legend_area.absolute-position.x + legend_area.mouse-x :
+        markers_area.has-hover ? markers_area.absolute-position.x + markers_area.mouse-x :
+        fill_area_checkbox_area.has-hover ? fill_area_checkbox_area.absolute-position.x + fill_area_checkbox_area.mouse-x : 0px;
     out property <length> hovered_y:
-        size_area.has-hover ? size_area.absolute-position.y :
-        palette_area.has-hover ? palette_area.absolute-position.y :
-        font_area.has-hover ? font_area.absolute-position.y :
-        line_area.has-hover ? line_area.absolute-position.y :
-        marker_size_area.has-hover ? marker_size_area.absolute-position.y :
-        grid_area.has-hover ? grid_area.absolute-position.y :
-        legend_area.has-hover ? legend_area.absolute-position.y :
-        markers_area.has-hover ? markers_area.absolute-position.y :
-        fill_area_checkbox_area.has-hover ? fill_area_checkbox_area.absolute-position.y : 0px;
-    out property <length> hovered_width:
-        size_area.has-hover ? size_area.width :
-        palette_area.has-hover ? palette_area.width :
-        font_area.has-hover ? font_area.width :
-        line_area.has-hover ? line_area.width :
-        marker_size_area.has-hover ? marker_size_area.width :
-        grid_area.has-hover ? grid_area.width :
-        legend_area.has-hover ? legend_area.width :
-        markers_area.has-hover ? markers_area.width :
-        fill_area_checkbox_area.has-hover ? fill_area_checkbox_area.width : 0px;
-    out property <length> hovered_height:
-        size_area.has-hover ? size_area.height :
-        palette_area.has-hover ? palette_area.height :
-        font_area.has-hover ? font_area.height :
-        line_area.has-hover ? line_area.height :
-        marker_size_area.has-hover ? marker_size_area.height :
-        grid_area.has-hover ? grid_area.height :
-        legend_area.has-hover ? legend_area.height :
-        markers_area.has-hover ? markers_area.height :
-        fill_area_checkbox_area.has-hover ? fill_area_checkbox_area.height : 0px;
+        size_area.has-hover ? size_area.absolute-position.y + size_area.mouse-y :
+        palette_area.has-hover ? palette_area.absolute-position.y + palette_area.mouse-y :
+        font_area.has-hover ? font_area.absolute-position.y + font_area.mouse-y :
+        line_area.has-hover ? line_area.absolute-position.y + line_area.mouse-y :
+        marker_size_area.has-hover ? marker_size_area.absolute-position.y + marker_size_area.mouse-y :
+        grid_area.has-hover ? grid_area.absolute-position.y + grid_area.mouse-y :
+        legend_area.has-hover ? legend_area.absolute-position.y + legend_area.mouse-y :
+        markers_area.has-hover ? markers_area.absolute-position.y + markers_area.mouse-y :
+        fill_area_checkbox_area.has-hover ? fill_area_checkbox_area.absolute-position.y + fill_area_checkbox_area.mouse-y : 0px;
+    out property <length> hovered_width: 0px;
+    out property <length> hovered_height: 0px;
+
 
     property <[MenuItem]> size_items: [
         { text: "Default (1200x900)", enabled: true },

@@ -21,13 +21,12 @@ export component MaterialTypeCard inherits FilledCard {
         material_dropdown_area.has-hover ? "Select the material type to load recommended parameter defaults." : "";
 
     out property <length> hovered_x:
-        material_dropdown_area.has-hover ? material_dropdown_area.absolute-position.x : 0px;
+        material_dropdown_area.has-hover ? material_dropdown_area.absolute-position.x + material_dropdown_area.mouse-x : 0px;
     out property <length> hovered_y:
-        material_dropdown_area.has-hover ? material_dropdown_area.absolute-position.y : 0px;
-    out property <length> hovered_width:
-        material_dropdown_area.has-hover ? material_dropdown_area.width : 0px;
-    out property <length> hovered_height:
-        material_dropdown_area.has-hover ? material_dropdown_area.height : 0px;
+        material_dropdown_area.has-hover ? material_dropdown_area.absolute-position.y + material_dropdown_area.mouse-y : 0px;
+    out property <length> hovered_width: 0px;
+    out property <length> hovered_height: 0px;
+
 
     Vertical {
         ExpandableHeader {

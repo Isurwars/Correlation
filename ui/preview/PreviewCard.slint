@@ -94,21 +94,16 @@ export component PreviewCard inherits FilledCard {
         save_results_area.has-hover ? "Export analysis results to files in the selected formats (CSV, HDF5, Parquet).\n\n💡 Tip: Results are written to the same directory as the input file. The output base name matches the input file name." : "";
 
     out property <length> hovered_x:
-        plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.x :
-        save_plot_area.has-hover ? save_plot_area.absolute-position.x :
-        save_results_area.has-hover ? save_results_area.absolute-position.x : 0px;
+        plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.x + plot_dropdown_area.mouse-x :
+        save_plot_area.has-hover ? save_plot_area.absolute-position.x + save_plot_area.mouse-x :
+        save_results_area.has-hover ? save_results_area.absolute-position.x + save_results_area.mouse-x : 0px;
     out property <length> hovered_y:
-        plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.y :
-        save_plot_area.has-hover ? save_plot_area.absolute-position.y :
-        save_results_area.has-hover ? save_results_area.absolute-position.y : 0px;
-    out property <length> hovered_width:
-        plot_dropdown_area.has-hover ? plot_dropdown_area.width :
-        save_plot_area.has-hover ? save_plot_area.width :
-        save_results_area.has-hover ? save_results_area.width : 0px;
-    out property <length> hovered_height:
-        plot_dropdown_area.has-hover ? plot_dropdown_area.height :
-        save_plot_area.has-hover ? save_plot_area.height :
-        save_results_area.has-hover ? save_results_area.height : 0px;
+        plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.y + plot_dropdown_area.mouse-y :
+        save_plot_area.has-hover ? save_plot_area.absolute-position.y + save_plot_area.mouse-y :
+        save_results_area.has-hover ? save_results_area.absolute-position.y + save_results_area.mouse-y : 0px;
+    out property <length> hovered_width: 0px;
+    out property <length> hovered_height: 0px;
+
 
     Vertical {
         spacing: MaterialStyleMetrics.spacing_8;

@@ -82,7 +82,9 @@ export component InputSelect {
     property <bool> filter_active: false;
     property <length> item_height: MaterialStyleMetrics.size_40;
     property <int> max_visible_items: 6;
-    out property <bool> has-hover: main_text_field.has_focus;
+    out property <bool> has-hover: touch_area.has-hover && !root.is_open;
+    out property <length> mouse-x: touch_area.mouse-x;
+    out property <length> mouse-y: touch_area.mouse-y;
 
     min_width: 180px;
     preferred_width: 280px;
@@ -130,6 +132,18 @@ export component InputSelect {
 
         accepted(text) => {
             root.select_first_match();
+        }
+    }
+
+    touch_area := TouchArea {
+        width: 100%;
+        height: 100%;
+        mouse-cursor: root.enabled ? pointer : default;
+
+        clicked => {
+            if root.enabled {
+                root.open_menu();
+            }
         }
     }
 
