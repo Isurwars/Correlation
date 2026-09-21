@@ -40,6 +40,7 @@ enum class FileType : std::uint8_t {
   Mace,       ///< MACE Extended XYZ format (.mace, .extxyz)
   Chgnet,     ///< CHGNet Extended XYZ format (.chgnet)
   Gap,        ///< GAP Extended XYZ format (.gap, .quip)
+  Nequip,     ///< NequIP Extended XYZ format (.nequip)
   Unknown     ///< Unrecognized or unsupported file format
 };
 

@@ -88,11 +88,14 @@ def from_ase(atoms: Any) -> Any:
     else:
         cell = correlation.Cell()
 
-    symbols = atoms.get_chemical_symbols()
-    positions = atoms.get_positions()
+    symbols = [str(sym) for sym in atoms.get_chemical_symbols()]
+    positions = np.ascontiguousarray(atoms.get_positions(), dtype=np.float64)
 
-    for sym, pos in zip(symbols, positions):
-        cell.add_atom(str(sym), [float(pos[0]), float(pos[1]), float(pos[2])])
+    if hasattr(cell, "from_arrays") and len(symbols) > 0:
+        cell.from_arrays(positions, symbols)
+    else:
+        for sym, pos in zip(symbols, positions):
+            cell.add_atom(str(sym), [float(pos[0]), float(pos[1]), float(pos[2])])
 
     return cell
 
@@ -217,10 +220,17 @@ def from_pymatgen(structure_or_molecule: Any) -> Any:
     else:
         cell = correlation.Cell()
 
-    for site in structure_or_molecule:
-        symbol = getattr(site.specie, "symbol", str(site.specie))
-        coords = [float(site.coords[0]), float(site.coords[1]), float(site.coords[2])]
-        cell.add_atom(symbol, coords)
+    symbols = [getattr(site.specie, "symbol", str(site.specie)) for site in structure_or_molecule]
+    if hasattr(structure_or_molecule, "cart_coords"):
+        positions = np.ascontiguousarray(structure_or_molecule.cart_coords, dtype=np.float64)
+    else:
+        positions = np.ascontiguousarray([site.coords for site in structure_or_molecule], dtype=np.float64)
+
+    if hasattr(cell, "from_arrays") and len(symbols) > 0:
+        cell.from_arrays(positions, symbols)
+    else:
+        for symbol, coords in zip(symbols, positions):
+            cell.add_atom(symbol, [float(coords[0]), float(coords[1]), float(coords[2])])
 
     return cell
 

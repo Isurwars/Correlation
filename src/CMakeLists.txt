@@ -28,6 +28,7 @@ add_library(readers_obj OBJECT
     readers/MaceReader.cpp
     readers/ChgnetReader.cpp
     readers/GapReader.cpp
+    readers/NequipReader.cpp
 )
 target_include_directories(readers_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include

@@ -15,6 +15,35 @@ namespace correlation::readers {
 
 namespace {
 
+std::string sniffFormatFromLine(const std::string &uline) {
+  if (uline.contains("CELL_PARAMETERS") || uline.contains("ATOMIC_POSITIONS") ||
+      uline.contains("QUANTUM ESPRESSO") || uline.contains("PWSCF") || uline.contains("&CONTROL") ||
+      uline.contains("&SYSTEM")) {
+    return ".pwo";
+  }
+  if (uline.contains("&CELL") || uline.contains("&COORD") || uline.contains("&GLOBAL") ||
+      uline.contains("CP2K")) {
+    return ".restart";
+  }
+  if (uline.contains("O   R   C   A") || uline.contains("ORCA") ||
+      uline.contains("CARTESIAN COORDINATES (ANGSTROEM)")) {
+    return ".orca";
+  }
+  if (uline.contains("GPAW") || uline.contains("PROJECTOR-AUGMENTED WAVE")) {
+    return ".gpaw";
+  }
+  if (uline.contains("ABINIT") || uline.contains("RPRIM") || uline.contains("ACELL")) {
+    return ".abi";
+  }
+  if (uline.contains("DFTB+") || uline.contains("GENFORMAT")) {
+    return ".gen";
+  }
+  if (uline.contains("NEQUIP") || uline.contains("NEQUIP_ENERGY")) {
+    return ".nequip";
+  }
+  return "";
+}
+
 std::string sniffFormatFromOutFile(std::string_view filename) {
   std::ifstream file{std::string(filename)};
   if (!file.is_open()) {
@@ -30,27 +59,9 @@ std::string sniffFormatFromOutFile(std::string_view filename) {
       chr = static_cast<char>(std::toupper(static_cast<unsigned char>(chr)));
     }
 
-    if (uline.contains("CELL_PARAMETERS") || uline.contains("ATOMIC_POSITIONS") ||
-        uline.contains("QUANTUM ESPRESSO") || uline.contains("PWSCF") ||
-        uline.contains("&CONTROL") || uline.contains("&SYSTEM")) {
-      return ".pwo";
-    }
-    if (uline.contains("&CELL") || uline.contains("&COORD") || uline.contains("&GLOBAL") ||
-        uline.contains("CP2K")) {
-      return ".restart";
-    }
-    if (uline.contains("O   R   C   A") || uline.contains("ORCA") ||
-        uline.contains("CARTESIAN COORDINATES (ANGSTROEM)")) {
-      return ".orca";
-    }
-    if (uline.contains("GPAW") || uline.contains("PROJECTOR-AUGMENTED WAVE")) {
-      return ".gpaw";
-    }
-    if (uline.contains("ABINIT") || uline.contains("RPRIM") || uline.contains("ACELL")) {
-      return ".abi";
-    }
-    if (uline.contains("DFTB+") || uline.contains("GENFORMAT")) {
-      return ".gen";
+    std::string const format = sniffFormatFromLine(uline);
+    if (!format.empty()) {
+      return format;
     }
   }
 

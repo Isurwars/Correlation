@@ -14,23 +14,23 @@ graph TD
     classDef core fill:#ff9f1c,stroke:#011627,stroke-width:2px,color:#fdfffc;
 
     A["Correlation 4.0.0 (Q4 2026)"]:::core --> B["1. Core & Multi-Vendor GPU"]:::completed
-    A --> C["2. ML & Electronic Structure"]:::planned
+    A --> C["2. ML & Electronic Structure"]:::completed
     A --> D["3. Widespread Format Support"]:::completed
-    A --> E["4. Python Publishing & Interop"]:::planned
-    A --> F["5. GUI & WASM Experience"]:::planned
+    A --> E["4. Python Publishing & Interop"]:::completed
+    A --> F["5. GUI & WASM Experience"]:::completed
 
     B --> B1["Completed: SYCL/CUDA/HIP, Single-Precision real_t, GPU RDF & XRD"]:::completed
     
     C --> C1["Completed: MLIPInterface, TorchGNNModel, PyG Export"]:::completed
-    C --> C2["Planned (4.0.0): Graph Descriptors, TDoS Accumulator, MACE/GAP Trajectories"]:::planned
+    C --> C2["Completed (4.0.0): Graph Descriptors, TDoS Accumulator, MLIP Trajectories (MACE/CHGNet/GAP/NequIP)"]:::completed
     
     D --> D1["Completed: ORCA, GPAW, ABINIT, DFTB+, Sniffing & Fuzzing"]:::completed
 
     E --> E1["Completed: Conda-Forge Recipe & Feedstock Automation"]:::completed
-    E --> E2["Planned (4.0.0): Zero-Copy ASE & Pymatgen Interop, Notebook Suite"]:::planned
+    E --> E2["Completed (4.0.0): Zero-Copy ASE & Pymatgen Interop, Notebook Suite (01-07)"]:::completed
 
     F --> F1["Completed: Slint GUI Multi-Curve Comparison, PDF Vector Engine"]:::completed
-    F --> F2["Planned (4.0.0): Automated GitHub Pages Hosted WASM App"]:::planned
+    F --> F2["Completed (4.0.0): Automated GitHub Pages Hosted WASM App with Web Workers"]:::completed
 ```
 
 ---
@@ -177,7 +177,7 @@ Python bindings make `Correlation` scriptable. Focus for 4.0.0 centers on zero-c
 | :--- | :--- | :--- | :--- |
 | **v3.7.0** | **Completed (Jul 2026)** | **Multi-Vendor GPU & Precision** | • SYCL/oneAPI & CUDA/HIP GPU acceleration<br>• Configurable `real_t` single-precision path<br>• `MLIPCalculator` interface & SIMD vectorization |
 | **v3.9.0** | **Completed (Aug 2026)** | **Comparison, Readers & GPU XRD** | • Slint GUI multi-curve overlay & difference plots<br>• ORCA, GPAW, ABINIT, and DFTB+ readers<br>• Content-based `ReaderFactory` sniffing<br>• GPU XRD/Debye & GPU RDF cell binning<br>• PyG (`to_torch_geometric`) GNN export<br>• Kahan-compensated unwrapped MSD & XRD |
-| **v4.0.0** | **Target: Q4 2026** | **MLIP GNN, Python Bridges & WASM** | • Periodic graph descriptors & edge-feature embeddings<br>• Structural-Electronic correlation & Total DOS (TDoS) accumulator (Cellulose project)<br>• MACE, CHGNet, GAP trajectory parsers<br>• Zero-copy ASE & Pymatgen Python bindings<br>• Automated GitHub Pages deployment for WASM Web App<br>• End-to-end Jupyter Notebook tutorial suite<br>• Stable 4.0.0 API freeze |
+| **v4.0.0** | **Completed (Sep 2026)** | **MLIP Suite, Python Bridges & WASM** | • Periodic graph descriptors & edge-feature embeddings<br>• Structural-Electronic correlation & Total DOS (TDoS) accumulator<br>• MACE, CHGNet, GAP, and NequIP trajectory parsers<br>• Zero-copy NumPy buffer protocols & ASE/Pymatgen adapters (`Cell.from_arrays`)<br>• Automated GitHub Pages deployment with Web Worker WASM pipeline<br>• End-to-end Jupyter Notebook tutorial suite (Tutorials 01–07)<br>• Public API freeze & stability contract (`docs/API_STABILITY.md`) |
 
 ---
 

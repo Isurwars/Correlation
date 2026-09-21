@@ -308,3 +308,37 @@ def test_monkey_patched_methods(mock_ase, mock_pymatgen):
 
     traj_from_ase = correlation.Trajectory.from_ase(ase_traj)
     assert len(traj_from_ase) == 1
+
+
+# -----------------------------------------------------------------------------
+# Tests: Bulk from_arrays Method
+# -----------------------------------------------------------------------------
+
+def test_from_arrays_direct():
+    """Verify Cell.from_arrays bulk atom construction."""
+    cell = correlation.Cell([10.0, 0.0, 0.0], [0.0, 10.0, 0.0], [0.0, 0.0, 10.0])
+    positions = np.array([[0.1, 0.2, 0.3], [1.5, 2.5, 3.5], [4.0, 5.0, 6.0]], dtype=np.float64)
+    symbols = ["Si", "O", "O"]
+
+    cell.from_arrays(positions, symbols)
+    assert len(cell) == 3
+    assert [a.element.symbol for a in cell.atoms] == symbols
+    assert np.allclose(cell.positions, positions, atol=1e-5)
+
+
+def test_from_arrays_validation():
+    """Verify Cell.from_arrays error handling on malformed shapes/lengths."""
+    cell = correlation.Cell()
+
+    # Mismatched lengths
+    positions = np.array([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]], dtype=np.float64)
+    symbols = ["Si"]
+    with pytest.raises((ValueError, RuntimeError)):
+        cell.from_arrays(positions, symbols)
+
+    # Wrong dimension (N, 2)
+    positions_2d = np.array([[0.0, 0.0], [1.0, 1.0]], dtype=np.float64)
+    symbols_2d = ["Si", "O"]
+    with pytest.raises((ValueError, RuntimeError)):
+        cell.from_arrays(positions_2d, symbols_2d)
+

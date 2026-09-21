@@ -11,7 +11,9 @@ namespace py = pybind11;
 using correlation::real_t;
 using namespace correlation::core;
 
-void init_core(py::module_ &mod) {
+namespace {
+
+void bindElement(py::module_ &mod) {
   py::class_<Element>(mod, "Element", "Chemical element specification.")
       .def(py::init<>(), "Construct an empty Element.")
       .def_readwrite("symbol", &Element::symbol, "Chemical symbol (e.g., 'C', 'O', 'Fe').")
@@ -19,7 +21,9 @@ void init_core(py::module_ &mod) {
           "id", [](const Element &element) { return element.id.value; },
           [](Element &element, int value) { element.id.value = value; },
           "Unique integer identifier for the element type.");
+}
 
+void bindAtom(py::module_ &mod) {
   py::class_<Atom>(mod, "Atom", "Single atomic site with Cartesian position and chemical element.")
       .def(py::init<>(), "Construct an atom at the origin.")
       .def_property(
@@ -30,7 +34,9 @@ void init_core(py::module_ &mod) {
           "Cartesian position [x, y, z] in Angstroms.")
       .def_property("id", &Atom::id, &Atom::setID, "Atom identifier.")
       .def_property("element", &Atom::element, &Atom::setElement, "Chemical element metadata.");
+}
 
+void bindCell(py::module_ &mod) {
   py::class_<Cell>(mod, "Cell",
                    "Simulation cell containing atomic coordinates and periodic box geometry.")
       .def(py::init<>(), "Construct an empty non-periodic Cell.")
@@ -126,6 +132,29 @@ void init_core(py::module_ &mod) {
           },
           "Zero-copy access to atom velocities as a (N, 3) NumPy array.")
       .def(
+          "from_arrays",
+          [](Cell &cell,
+             const py::array_t<real_t, py::array::c_style | py::array::forcecast> &positions,
+             const std::vector<std::string> &symbols) {
+            if (positions.ndim() != 2 || positions.shape(1) != 3) {
+              throw std::invalid_argument("Positions array must have shape (N, 3)");
+            }
+            if (static_cast<size_t>(positions.shape(0)) != symbols.size()) {
+              throw std::invalid_argument("Positions count does not match symbols count");
+            }
+
+            const auto count = static_cast<size_t>(positions.shape(0));
+            cell.reserveAtoms(count);
+            auto buf = positions.unchecked<2>();
+
+            for (size_t i = 0; i < count; ++i) {
+              cell.addAtom(symbols[i],
+                           correlation::math::Vector3<real_t>(buf(i, 0), buf(i, 1), buf(i, 2)));
+            }
+          },
+          py::arg("positions"), py::arg("symbols"),
+          "Bulk-add atoms from a (N, 3) positions array and symbols list.")
+      .def(
           "get_element_ids",
           [](const Cell &cell) -> py::array_t<int> {
             const auto &atoms = cell.atoms();
@@ -164,7 +193,9 @@ void init_core(py::module_ &mod) {
             return arr;
           },
           "Lattice vectors as a (3, 3) NumPy array where rows are vectors a, b, and c.");
+}
 
+void bindTrajectory(py::module_ &mod) {
   py::class_<Trajectory>(mod, "Trajectory", "Time-series collection of Cell simulation snapshots.")
       .def(py::init<>(), "Construct an empty trajectory.")
       .def_property("time_step", &Trajectory::getTimeStep, &Trajectory::setTimeStep,
@@ -200,4 +231,13 @@ void init_core(py::module_ &mod) {
           [](Trajectory &trajectory) -> std::vector<Cell> & { return trajectory.getFrames(); },
           py::return_value_policy::reference_internal,
           "Direct reference to the sequence of Cell frames.");
+}
+
+} // namespace
+
+void init_core(py::module_ &mod) {
+  bindElement(mod);
+  bindAtom(mod);
+  bindCell(mod);
+  bindTrajectory(mod);
 }

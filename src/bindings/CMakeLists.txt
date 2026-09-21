@@ -64,5 +64,13 @@ if(EMSCRIPTEN OR BUILD_WASM)
         -sNO_DISABLE_EXCEPTION_CATCHING
         -sENVIRONMENT=web,worker
     )
+
+    if(WASM_ENABLE_THREADS)
+        target_compile_options(correlation_wasm PRIVATE -pthread)
+        target_link_options(correlation_wasm PRIVATE
+            -pthread
+            -sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency
+        )
+    endif()
 endif()
 

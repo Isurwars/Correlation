@@ -72,6 +72,7 @@ jobs:
           cp ui/wasm_app/index.html _site/
           cp ui/wasm_app/style.css _site/
           cp ui/wasm_app/app.js _site/
+          cp ui/wasm_app/worker.js _site/
           cp build-wasm/src/bindings/correlation_wasm.js _site/
           cp build-wasm/src/bindings/correlation_wasm.wasm _site/
           ls -lh _site/

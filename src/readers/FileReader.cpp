@@ -43,7 +43,7 @@ const std::unordered_map<std::string, FileType> &getExtensionTypeMap() {
       {".xyz", FileType::Xyz},         {".exyz", FileType::Xyz},
       {".mace", FileType::Mace},       {".extxyz", FileType::Mace},
       {".chgnet", FileType::Chgnet},   {".gap", FileType::Gap},
-      {".quip", FileType::Gap},
+      {".quip", FileType::Gap},        {".nequip", FileType::Nequip},
   };
   return k_extension_map;
 }
@@ -140,6 +140,8 @@ BaseReader *findReaderForType(FileType type) {
     return ReaderFactory::instance().getReaderForExtension(".chgnet");
   case FileType::Gap:
     return ReaderFactory::instance().getReaderForExtension(".gap");
+  case FileType::Nequip:
+    return ReaderFactory::instance().getReaderForExtension(".nequip");
   default:
     return nullptr;
   }
