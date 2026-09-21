@@ -338,5 +338,19 @@
   "336": "Session Handoff",
   "337": "LocalEntropyParams",
   "338": "precomputePhases",
-  "339": "TempDirectoryGuard"
+  "339": "TempDirectoryGuard",
+  "340": "real_t",
+  "341": "core_bindings.cpp",
+  "342": "MotifSignatureCounts",
+  "343": "SIMDTypes.hpp",
+  "344": "ScaleBinsParams",
+  "345": "MockWriter",
+  "346": "Trajectory::Trajectory",
+  "347": "OrbUnitCutoffResult",
+  "348": "_correlation",
+  "349": "_CallableInt",
+  "350": "RDFParams",
+  "351": "BinningConfig",
+  "352": "DfsStackFrame",
+  "353": "worker.js"
 }
