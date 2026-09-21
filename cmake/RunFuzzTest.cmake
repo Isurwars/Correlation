@@ -6,9 +6,12 @@ if(NOT FUZZ_TARGET OR NOT SEED_DIR OR NOT OUT_DIR)
     message(FATAL_ERROR "Usage: cmake -DFUZZ_TARGET=<target> -DSEED_DIR=<dir> -DOUT_DIR=<dir> -P RunFuzzTest.cmake")
 endif()
 
-# 1. Clean and recreate the output directory
+# 1. Clean and recreate the output directory, and ensure SEED_DIR exists
 file(REMOVE_RECURSE "${OUT_DIR}")
 file(MAKE_DIRECTORY "${OUT_DIR}")
+if(NOT EXISTS "${SEED_DIR}")
+    file(MAKE_DIRECTORY "${SEED_DIR}")
+endif()
 
 # 2. Run the fuzzer smoke test (max 10 seconds, timeout 5 seconds per input)
 execute_process(

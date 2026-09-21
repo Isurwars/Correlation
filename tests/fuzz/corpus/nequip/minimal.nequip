@@ -1,0 +1,4 @@
+2
+Lattice="5.0 0.0 0.0 0.0 6.0 0.0 0.0 0.0 7.0" Properties=species:S:1:pos:R:3:nequip_forces:R:3 nequip_energy=-25.432
+Si 0.1 0.2 0.3 0.01 -0.02 0.03
+O 1.5 2.5 3.5 -0.04 0.05 -0.06

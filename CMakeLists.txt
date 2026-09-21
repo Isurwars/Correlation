@@ -167,6 +167,28 @@ if(ENABLE_COVERAGE)
     endif()
 endif()
 
+# -----------------------------------------------------------
+# Static Analysis (clang-tidy)
+# -----------------------------------------------------------
+option(ENABLE_CLANG_TIDY "Run clang-tidy on project targets during compilation" OFF)
+find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
+if(CLANG_TIDY_EXE)
+    if(ENABLE_CLANG_TIDY)
+        set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE}")
+        message(STATUS "clang-tidy enabled for project targets: ${CLANG_TIDY_EXE}")
+    endif()
+
+    find_program(RUN_CLANG_TIDY_EXE NAMES "run-clang-tidy")
+    if(RUN_CLANG_TIDY_EXE)
+        add_custom_target(clang-tidy
+            COMMAND ${RUN_CLANG_TIDY_EXE} -p ${PROJECT_BINARY_DIR} "^${PROJECT_SOURCE_DIR}/(src|include|tests)/.*"
+            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+            COMMENT "Running clang-tidy across all project source files..."
+            VERBATIM
+        )
+    endif()
+endif()
+
 #-----------------------------------------------------------
 # Targets setup
 #-----------------------------------------------------------

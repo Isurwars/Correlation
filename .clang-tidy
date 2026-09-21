@@ -1,4 +1,4 @@
-# Correlation C++20 Static Analysis Configuration
+# Correlation C++20/C++23 Static Analysis Configuration
 # SPDX-License-Identifier: AGPL-3.0-only
 ---
 Checks: >
@@ -19,13 +19,17 @@ Checks: >
   -readability-math-missing-parentheses
 
 HeaderFilterRegex: '^(?!.*(build/_deps|build-fuzz/_deps|/usr/|/opt/)).*$'
+FormatStyle: file
 WarningsAsErrors: 'bugprone-*,cert-*,performance-*'
 
 CheckOptions:
+  bugprone-easily-swappable-parameters.MinimumLength: '3'
   cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor: 'true'
   misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic: 'true'
+  modernize-loop-convert.MinConfidence: 'reasonable'
+  modernize-use-auto.MinConfidence: 'reasonable'
   readability-function-cognitive-complexity.Threshold: '25'
-  readability-identifier-length.IgnoredVariableNames: 'pi'
+  readability-identifier-length.IgnoredVariableNames: '^(x|y|z|a|b|c|r|q|q[0-9]|p[0-9]|pi)$'
   readability-identifier-naming.ClassCase: 'CamelCase'
   readability-identifier-naming.StructCase: 'CamelCase'
   readability-identifier-naming.FunctionCase: 'camelBack'
