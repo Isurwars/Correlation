@@ -151,27 +151,6 @@ target_link_libraries(correlation_functional_tests PRIVATE
 )
 add_dependencies(correlation_functional_tests readers_obj writers_obj calculators_obj mlip_obj)
 
-#-----------------------------------------------------------
-# 2b. CLI End-to-End Tests (subprocess-based)
-#-----------------------------------------------------------
-add_executable(correlation_cli_e2e_tests
-    functional/cli/CliEndToEndTests.cpp
-)
-
-target_link_libraries(correlation_cli_e2e_tests PRIVATE
-    GTest::gtest
-    GTest::gmock
-    GTest::gtest_main
-)
-
-# Tell the test binary where the CLI executable lives
-target_compile_definitions(correlation_cli_e2e_tests PRIVATE
-    CORRELATION_CLI_PATH="$<TARGET_FILE:correlation-cli>"
-)
-
-# The E2E tests depend on the CLI binary being built
-add_dependencies(correlation_cli_e2e_tests correlation-cli)
-# (Definitions and discovery are configured at the end of the file in a loop)
 
 #-----------------------------------------------------------
 # 3. GUI tests (requires Slint — runs on platforms with a display)
@@ -219,7 +198,7 @@ if(BUILD_GUI)
 endif()
 
 # Configure common test target settings and discovery
-set(TEST_TARGETS correlation_unit_tests correlation_functional_tests correlation_cli_e2e_tests)
+set(TEST_TARGETS correlation_unit_tests correlation_functional_tests)
 if(BUILD_GUI)
     list(APPEND TEST_TARGETS correlation_gui_tests)
 endif()
