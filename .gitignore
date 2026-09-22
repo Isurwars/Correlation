@@ -2,6 +2,7 @@
 .venv
 .vs
 .vscode
+.obsidian/
 compile_commands.json
 build*/
 installers
@@ -28,3 +29,5 @@ __pycache__/
 *.pyo
 *.pyd
 .pytest_cache/
+.ruff_cache/
+
