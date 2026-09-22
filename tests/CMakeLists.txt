@@ -96,11 +96,15 @@ add_executable(correlation_unit_tests
     unit/analysis/CorrelationEngineTests.cpp
     unit/analysis/StructuralElectronicCorrelationTests.cpp
     unit/app/AppBackendTests.cpp
+    unit/app/BondCutoffMapperTests.cpp
+    unit/app/PlotExportServiceTests.cpp
     unit/app/PresetManagerTests.cpp
     unit/app/SettingsManagerTests.cpp
     unit/app/UpdateCheckerTests.cpp
     unit/cli/CliParserTests.cpp
     ../src/app/AppBackend.cpp
+    ../src/app/BondCutoffMapper.cpp
+    ../src/app/PlotExportService.cpp
     ../src/app/PresetManager.cpp
     ../src/app/SettingsManager.cpp
     ../src/app/UpdateChecker.cpp
@@ -162,9 +166,11 @@ if(BUILD_GUI)
         ../src/app/AnalysisRunner.cpp
         ../src/app/AppBackend.cpp
         ../src/app/AppController.cpp
+        ../src/app/BondCutoffMapper.cpp
         ../src/app/FileIOHandler.cpp
         ../src/app/InputValidator.cpp
         ../src/app/PlotController.cpp
+        ../src/app/PlotExportService.cpp
         ../src/app/PresetController.cpp
         ../src/app/PresetManager.cpp
         ../src/app/SettingsManager.cpp

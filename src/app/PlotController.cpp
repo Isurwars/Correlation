@@ -8,7 +8,7 @@
 
 #include "app/PlotController.hpp"
 #include "AppWindow.h"
-#include "plotters/PdfPlotter.hpp"
+#include "app/PlotExportService.hpp"
 #include <nfd.h>
 
 #include <algorithm>
@@ -21,15 +21,6 @@
 namespace correlation::app {
 
 namespace {
-std::string getComparisonKey(const correlation::analysis::Histogram *hist) {
-  std::string key = "Total";
-  const auto &partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
-  if (!partials.empty() && !partials.contains(key)) {
-    key = partials.begin()->first;
-  }
-  return key;
-}
-
 template <typename T> T safeParse(const slint::SharedString &str, T default_value) {
   try {
     if constexpr (std::is_same_v<T, float>) {
@@ -511,13 +502,7 @@ void PlotController::executePlotRender(RenderTaskData data) {
           data.active_hist, data.config, data.hover, data.ashcroft_weights, data.curve_visibility,
           custom_curve_colors_);
     } else {
-      std::string key = "Total";
-      const auto &partials = data.active_hist.smoothed_partials.empty()
-                                 ? data.active_hist.partials
-                                 : data.active_hist.smoothed_partials;
-      if (!partials.empty() && !partials.contains(key)) {
-        key = partials.begin()->first;
-      }
+      const std::string key = PlotExportService::getComparisonKey(&data.active_hist);
       svg = correlation::plotters::renderComparisonSvg(data.comparison_hists, key, data.config,
                                                        data.hover);
     }
@@ -630,6 +615,10 @@ void PlotController::handleSavePlot() {
 void PlotController::executeSavePlot(const std::string &filepath,
                                      const correlation::analysis::Histogram *hist,
                                      const std::string &name) {
+  if (hist == nullptr) {
+    return;
+  }
+
   correlation::plotters::PlotConfig config = buildPlotConfigFromUI();
   config.use_native_text = true;
 
@@ -638,11 +627,13 @@ void PlotController::executeSavePlot(const std::string &filepath,
     config.height = 900.0;
   }
 
-  std::string ext = std::filesystem::path(filepath).extension().string();
-  bool save_as_pdf = (ext == ".pdf" || ext == ".PDF");
-
-  auto build_datasets = [&]() {
+  std::expected<void, std::string> result;
+  if (pinned_runs_.empty()) {
+    result = PlotExportService::exportHistogram(filepath, *hist, config,
+                                                backend_.getAshcroftWeights());
+  } else {
     std::vector<correlation::plotters::LabeledHistogram> datasets;
+    datasets.reserve(pinned_runs_.size() + 1);
     datasets.push_back({"Current", hist});
     for (const auto &pinned_run : pinned_runs_) {
       auto hist_it = pinned_run.histograms.find(name);
@@ -650,35 +641,14 @@ void PlotController::executeSavePlot(const std::string &filepath,
         datasets.push_back({pinned_run.label, &hist_it->second});
       }
     }
-    return datasets;
-  };
+    const std::string comp_key = PlotExportService::getComparisonKey(hist);
+    result = PlotExportService::exportComparison(filepath, datasets, comp_key, config);
+  }
 
-  if (save_as_pdf) {
-    if (pinned_runs_.empty()) {
-      correlation::plotters::renderHistogramAsPdf(*hist, filepath, config);
-    } else {
-      correlation::plotters::renderComparisonPdf(build_datasets(),
-                                                 {getComparisonKey(hist), filepath}, config);
-    }
-    window_.set_analysis_status_text(
-        slint::SharedString(name + " plot saved as PDF successfully."));
+  if (result.has_value()) {
+    window_.set_analysis_status_text(slint::SharedString(name + " plot saved successfully."));
   } else {
-    std::string svg;
-    if (pinned_runs_.empty()) {
-      svg = correlation::plotters::renderHistogramAsSvg(*hist, config, {},
-                                                        backend_.getAshcroftWeights());
-    } else {
-      svg = correlation::plotters::renderComparisonSvg(build_datasets(), getComparisonKey(hist),
-                                                       config);
-    }
-    std::ofstream out(filepath);
-    if (out.is_open()) {
-      out << svg;
-      out.close();
-      window_.set_analysis_status_text(slint::SharedString(name + " plot saved successfully."));
-    } else {
-      window_.set_analysis_status_text(slint::SharedString("Failed to open file for saving plot."));
-    }
+    window_.set_analysis_status_text(slint::SharedString("Failed to save plot: " + result.error()));
   }
 }
 

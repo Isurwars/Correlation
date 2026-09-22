@@ -239,9 +239,11 @@ if(BUILD_GUI)
         app/AnalysisRunner.cpp
         app/AppBackend.cpp
         app/AppController.cpp
+        app/BondCutoffMapper.cpp
         app/FileIOHandler.cpp
         app/InputValidator.cpp
         app/PlotController.cpp
+        app/PlotExportService.cpp
         app/PresetController.cpp
         app/PresetManager.cpp
         app/SettingsManager.cpp

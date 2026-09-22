@@ -15,13 +15,13 @@
 #include "app/AnalysisRunner.hpp"
 #include "app/AppController.hpp"
 
+#include "app/BondCutoffMapper.hpp"
 #include "app/FileIOHandler.hpp"
 #include "app/InputValidator.hpp"
 #include "app/PlotController.hpp"
 #include "app/PresetController.hpp"
 #include "app/UpdateChecker.hpp"
 #include "calculators/CalculatorFactory.hpp"
-#include "physics/PhysicalData.hpp"
 
 #include <algorithm>
 #include <cctype>
@@ -489,31 +489,16 @@ void AppController::setBondCutoffs() {
   }
 
   const auto &elements = backend_.cell()->elements();
+  const auto entries = BondCutoffMapper::createDefaultCutoffEntries(elements);
+
   auto slint_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
-
-  auto safe_get_radius = [](const std::string &symbol) -> real_t {
-    try {
-      return physics::getCovalentRadius(symbol);
-    } catch (const std::out_of_range &) {
-      return static_cast<real_t>(1.5);
-    }
-  };
-
-  for (size_t i = 0; i < elements.size(); ++i) {
-    const real_t radius_a = safe_get_radius(elements[i].symbol);
-    for (size_t j = i; j < elements.size(); ++j) {
-      const real_t radius_b = safe_get_radius(elements[j].symbol);
-      const real_t sum_radii = radius_a + radius_b;
-      const real_t min_d = sum_radii * static_cast<real_t>(0.6);
-      const real_t max_d = sum_radii * static_cast<real_t>(1.3);
-
-      slint_cutoffs->push_back({
-          .element1 = slint::SharedString(elements[i].symbol),
-          .element2 = slint::SharedString(elements[j].symbol),
-          .min_distance = slint::SharedString(std::format("{:.2f}", min_d)),
-          .max_distance = slint::SharedString(std::format("{:.2f}", max_d)),
-      });
-    }
+  for (const auto &entry : entries) {
+    slint_cutoffs->push_back({
+        .element1 = slint::SharedString(entry.element1),
+        .element2 = slint::SharedString(entry.element2),
+        .min_distance = slint::SharedString(entry.min_distance),
+        .max_distance = slint::SharedString(entry.max_distance),
+    });
   }
 
   window_.set_bond_cutoffs(slint_cutoffs);
@@ -523,16 +508,13 @@ void AppController::setBondCutoffs() {
 
 correlation::analysis::BondCutoffMatrix AppController::getBondCutoffs() {
   auto slint_cutoffs = window_.get_bond_cutoffs();
-  if (backend_.cell() == nullptr) {
+  if (backend_.cell() == nullptr || slint_cutoffs == nullptr) {
     return {};
   }
-  auto elements = backend_.cell()->elements();
-  const size_t num_elements = elements.size();
-  correlation::analysis::BondCutoffMatrix cutoffs(
-      num_elements, std::vector<correlation::analysis::BondCutoffRange>(
-                        num_elements, correlation::analysis::BondCutoffRange{
-                                          .min_sq = static_cast<real_t>(0.0),
-                                          .max_sq = static_cast<real_t>(0.0)}));
+
+  const auto &elements = backend_.cell()->elements();
+  std::vector<CutoffEntry> entries;
+  entries.reserve(slint_cutoffs->row_count());
 
   for (size_t k = 0; k < slint_cutoffs->row_count(); ++k) {
     auto maybe_item = slint_cutoffs->row_data(k);
@@ -540,42 +522,15 @@ correlation::analysis::BondCutoffMatrix AppController::getBondCutoffs() {
       continue;
     }
     const auto &item = maybe_item.value();
-    const std::string symbol1 = item.element1.data();
-    const std::string symbol2 = item.element2.data();
-    real_t min_dist = 0.0;
-    real_t max_dist = 0.0;
-    try {
-      min_dist = static_cast<real_t>(std::stod(item.min_distance.data()));
-    } catch (const std::exception &) {
-      min_dist = 0.0;
-    }
-    try {
-      max_dist = static_cast<real_t>(std::stod(item.max_distance.data()));
-    } catch (const std::exception &) {
-      max_dist = 0.0;
-    }
-
-    int idx1 = -1;
-    int idx2 = -1;
-    for (size_t elem_idx = 0; elem_idx < num_elements; ++elem_idx) {
-      if (elements[elem_idx].symbol == symbol1) {
-        idx1 = static_cast<int>(elem_idx);
-      }
-      if (elements[elem_idx].symbol == symbol2) {
-        idx2 = static_cast<int>(elem_idx);
-      }
-    }
-
-    if (idx1 != -1 && idx2 != -1) {
-      const correlation::analysis::BondCutoffRange range{
-          .min_sq = min_dist * min_dist,
-          .max_sq = max_dist * max_dist,
-      };
-      cutoffs[idx1][idx2] = range;
-      cutoffs[idx2][idx1] = range;
-    }
+    entries.push_back(CutoffEntry{
+        .element1 = std::string(item.element1.data()),
+        .element2 = std::string(item.element2.data()),
+        .min_distance = std::string(item.min_distance.data()),
+        .max_distance = std::string(item.max_distance.data()),
+    });
   }
-  return cutoffs;
+
+  return BondCutoffMapper::parseCutoffMatrix(entries, elements);
 }
 
 void AppController::populateCalculatorGroups() {
