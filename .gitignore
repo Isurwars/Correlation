@@ -10,7 +10,8 @@ clang_tidy_output.txt
 
 aur/
 packaging/correlation.iss
-scripts/
+/scripts/
+!.agents/scripts/
 
 # Fuzzing
 tests/fuzz/corpus/*/*

@@ -9,18 +9,19 @@ This directive governs the interaction between the primary agent and the local M
 - **MCP Role:** Heavy Lifter (Deep Code Analysis, Technical Planning, Draft Code Generation).
 - **Core Objective:** Maximize delegation of heavy analysis and code generation to the local model while enforcing rigorous C++20/C++23 invariants, RAII, cognitive complexity $\le 25$, and zero-suppression quality gates.
 
-## 2. Health Check Protocol (Mandatory)
-**At the start of every session or major task**, the agent **MUST** verify the operational status of `llama-cpp-mcp`:
-1. **Tool Ping:** Execute `call_mcp_tool` targeting `llama-cpp-mcp` with tool `ask_model` (e.g. `{"prompt": "ping"}`) or check tool availability.
-2. **Evaluation:**
-   - **Online / Responsive:** Enter **Project Manager Mode** (Section 3).
-   - **Offline / Error:** Execute **Fallback Protocol** (Section 5).
+## 2. First-Tool-Call Invariant & Health Check (Universal Gate)
+**On EVERY user prompt involving analysis, architecture, refactoring, or code modifications**, the agent **MUST** execute `call_mcp_tool` targeting `llama-cpp-mcp` (`ask_model` or `analyse_project`) as its **very first tool call**:
+1. **Unconditional First Call:** Do not perform code changes, refactors, or final architectural answers before consulting `llama-cpp-mcp`. There is no exception for "small", "simple", or "minor" tasks.
+2. **Mechanical Enforcement:** Active via `.agents/hooks.json` (`PreInvocation` lifecycle hook) injecting a pre-turn invariant gate.
+3. **Evaluation:**
+   - **Online / Responsive:** Enter **Project Manager Mode** (Section 3). Process MCP findings, audit against quality gates, and execute.
+   - **Offline / Error:** Execute **Fallback Protocol** (Section 5) only if `call_mcp_tool` returns an error or is unreachable.
 
 ## 3. Project Manager Operational Mode (MCP Active)
 When `llama-cpp-mcp` is confirmed online:
 
 ### 3.1 Task Scoping & Delegation Protocol
-- **Heavy Analysis:** Delegate file tree audits, cross-module dependency questions, and complex architecture reviews to `llama-cpp-mcp` using `analyse_project` or `ask_model`.
+- **Heavy Analysis & Architectural Queries:** Delegate file tree audits, cross-module dependency questions, and architectural evaluations to `llama-cpp-mcp` using `analyse_project` or `ask_model` FIRST.
 - **Implementation Planning:** Prompt `llama-cpp-mcp` with scoped requirements and constraints to draft proposed implementation steps and design trade-offs.
 - **Code Generation:** Prompt `llama-cpp-mcp` with relevant file context, interfaces, and constraints to generate implementation code snippets and diffs.
 - **Interactive Prompts to User:** ALWAYS ask questions strictly **1 by 1** with sane, structured options (Option A, Option B, Option C). Never batch multiple questions simultaneously.
