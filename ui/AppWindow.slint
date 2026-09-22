@@ -15,7 +15,9 @@ import {
     FilledButton,
     IconButton,
     ScrollView,
+    SplitterHandle,
     TabItem,
+    ToolTip,
 } from "material/material.slint";
 import { Palette } from "std-widgets.slint";
 
@@ -41,8 +43,6 @@ import { PlotExportPanelCard } from "cards/plot/PlotExportPanelCard.slint";
 import { PresetsPanelCard } from "cards/presets/PresetsPanelCard.slint";
 import { AnalysesPanelCard } from "cards/analyses/AnalysesPanelCard.slint";
 import { PreviewCard } from "cards/preview/PreviewCard.slint";
-import { AppToolTips } from "AppToolTips.slint";
-import { SplitterHandle } from "SplitterHandle.slint";
 
 export {
     AtomCount,
@@ -915,15 +915,14 @@ export component AppWindow inherits Window {
         }
     }
 
-    AppToolTips {
-        x: 0;
-        y: 0;
-        width: 100%;
-        height: 100%;
+    ToolTip {
         hovered_x: root.hovered_x;
         hovered_y: root.hovered_y;
         hovered_width: root.hovered_width;
         hovered_height: root.hovered_height;
-        hovered_tooltip_text: root.hovered_tooltip_text;
+        parent_width: root.width;
+        parent_height: root.height;
+        visible: root.hovered_tooltip_text != "";
+        text: root.hovered_tooltip_text;
     }
 }
