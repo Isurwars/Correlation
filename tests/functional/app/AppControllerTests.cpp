@@ -433,3 +433,22 @@ TEST_F(AppControllerTests, GuiLaunchAndEventLoopSmokeTest) {
 
   EXPECT_NO_THROW(window->run());
 }
+
+TEST_F(AppControllerTests, MiniSideBarPanelNavigationAndCollapse) {
+  auto window = AppWindow::create();
+  correlation::app::AppBackend backend;
+  correlation::app::AppController controller(*window, backend);
+
+  // Initial state defaults to panel 0 (Operations)
+  EXPECT_EQ(window->get_active_panel(), 0);
+
+  // Switch across all 6 panels
+  for (int panel = 0; panel <= 5; ++panel) {
+    window->set_active_panel(panel);
+    EXPECT_EQ(window->get_active_panel(), panel);
+  }
+
+  // Collapse drawer (-1)
+  window->set_active_panel(-1);
+  EXPECT_EQ(window->get_active_panel(), -1);
+}

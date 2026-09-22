@@ -13,6 +13,7 @@ import {
     Horizontal,
     Icons,
     FilledButton,
+    IconButton,
     ScrollView,
     TabItem,
 } from "material/material.slint";
@@ -31,6 +32,7 @@ import {
     ComparisonCurveData,
 } from "Types.slint";
 
+import { MiniSideBar } from "nav/MiniSideBar.slint";
 import { AppFooter } from "nav/AppFooter.slint";
 import { OperationsCard } from "run/OperationsCard.slint";
 import { AnalysesSelectionCard } from "options/AnalysesSelectionCard.slint";
@@ -224,8 +226,11 @@ export component AppWindow inherits Window {
     in property <bool> show_difference: false;
 
     // Resizable layout geometry properties
-    in-out property <length> left_col_width: 260px;
-    in-out property <length> middle_col_width: 260px;
+    in-out property <length> left_col_width: 220px;
+    in-out property <length> last_col_width: 220px;
+    in-out property <length> middle_col_width: 220px;
+    in-out property <int> active_panel: 0;
+    in-out property <int> last_active_panel: 0;
 
     // Callbacks (Bound to AppController.cpp)
     callback layout_geometry_changed(length, length);
@@ -355,7 +360,7 @@ export component AppWindow inherits Window {
     }
     changed analysis_done => {
         if root.analysis_done {
-            options_card.active_tab = 2;
+            root.active_panel = 3;
         }
     }
 
@@ -397,8 +402,8 @@ export component AppWindow inherits Window {
     default-font-size: MaterialTypography.body_small.font_size;
     default-font-weight: MaterialTypography.body_small.font_weight;
     default-font-family: "Outfit";
-    min-width: 1050px;
-    min-height: 725px;
+    min-width: 360px;
+    min-height: 500px;
     preferred-width: 1180px;
     preferred-height: 795px;
     maximized: true;
@@ -463,155 +468,259 @@ export component AppWindow inherits Window {
 
             Horizontal {
                 spacing: 2px;
-                padding-left: 4px;
+                padding-left: 2px;
                 padding-right: 4px;
                 padding-top: 4px;
                 padding-bottom: 2px;
                 vertical-stretch: 1;
 
-                // 1. Left column: Operations & CLI command
+                // 0. Far-Left Activity Bar (MiniSideBar) - Fixed 48px
+                mini_sidebar := MiniSideBar {
+                    active_panel <=> root.active_panel;
+                    file_loaded: root.file_loaded;
+                    analysis_running: root.analysis_running;
+                    has_validation_errors: root.has_validation_errors;
+                    is_dark: root.is_dark;
+                    select_panel(id) => {
+                        if (id >= 0) {
+                            root.last_active_panel = id;
+                            root.active_panel = id;
+                            root.left_col_width = Math.max(180px, root.last_col_width);
+                            root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
+                        } else {
+                            if (root.active_panel >= 0) {
+                                root.last_active_panel = root.active_panel;
+                            }
+                            root.active_panel = -1;
+                        }
+                    }
+                    run_analysis => { root.run_analysis(); }
+                    cancel_analysis => { root.cancel_analysis(); }
+                    toggle_theme => {
+                        Palette.color-scheme = Palette.color-scheme == ColorScheme.dark ? ColorScheme.light : ColorScheme.dark;
+                    }
+                    toggle_collapse => {
+                        if (root.active_panel >= 0) {
+                            root.last_active_panel = root.active_panel;
+                            root.active_panel = -1;
+                        } else {
+                            root.active_panel = root.last_active_panel >= 0 ? root.last_active_panel : 0;
+                            root.left_col_width = Math.max(180px, root.last_col_width);
+                            root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
+                        }
+                    }
+                }
+
+                // 1. Single Active Panel Column (Column 1)
                 Vertical {
                     padding: 0;
-                    width: root.left_col_width;
+                    width: root.active_panel == -1 ? 0px : root.left_col_width;
+                    visible: root.active_panel >= 0;
                     horizontal-stretch: 0;
-                    spacing: MaterialStyleMetrics.spacing_8;
+                    spacing: 0;
 
-                    operations_card := OperationsCard {
-                        load_enabled: !root.timer_running;
-                        file_loading: root.file_loading;
-                        browse_file => {
-                            root.browse_file();
-                        }
-                        file_status_text <=> root.file_status_text;
-                        file_loaded: root.file_loaded;
-                        num_frames: root.num_frames;
-                        total_atoms: root.total_atoms;
-                        removed_frames_count: root.removed_frames_count;
-                        atom_counts: root.atom_counts;
+                    // Panel Header with Title and Close Button
+                    Horizontal {
+                        height: 36px;
+                        padding-left: 8px;
+                        padding-right: 4px;
+                        alignment: center;
 
-                        material_type <=> root.material_type;
-                        time_step <=> root.analysis_options.time_step;
-                        time_step_error: root.app_errors.time_step_error;
-                        min_frame <=> root.analysis_options.min_frame;
-                        max_frame <=> root.analysis_options.max_frame;
-                        min_frame_error: root.app_errors.min_frame_error;
-                        max_frame_error: root.app_errors.max_frame_error;
-                        reset_trajectory_options => {
-                            root.reset_trajectory_options();
+                        MaterialText {
+                            text: root.active_panel == 0 ? "Operations" :
+                                root.active_panel == 1 ? "Common Options" :
+                                root.active_panel == 2 ? "Advanced Options" :
+                                root.active_panel == 3 ? "Plot & Export" :
+                                root.active_panel == 4 ? "Presets" : "Analyses";
+                            style: MaterialTypography.title_small;
+                            color: MaterialPalette.on_surface;
+                            vertical-alignment: center;
+                            horizontal-stretch: 1;
                         }
 
-                        analysis_running: root.analysis_running;
-                        has_validation_errors: root.has_validation_errors;
-                        run_analysis => {
-                            root.run_analysis();
+                        IconButton {
+                            icon: Icons.close;
+                            tooltip: "Close Panel";
+                            inline: true;
+                            clicked => {
+                                if (root.active_panel >= 0) {
+                                    root.last_active_panel = root.active_panel;
+                                }
+                                root.active_panel = -1;
+                            }
                         }
-                        cancel_analysis => {
-                            root.cancel_analysis();
+                    }
+
+                    // Panel Content Area (Starts at the top, occupies 100% remaining height)
+                    Rectangle {
+                        vertical-stretch: 1;
+
+                        // Content: OperationsCard when panel == 0
+                        operations_card := OperationsCard {
+                            x: 0;
+                            y: 0;
+                            width: 100%;
+                            height: 100%;
+                            visible: root.active_panel == 0;
+                            load_enabled: !root.timer_running;
+                            file_loading: root.file_loading;
+                            browse_file => {
+                                root.browse_file();
+                            }
+                            file_status_text <=> root.file_status_text;
+                            file_loaded: root.file_loaded;
+                            num_frames: root.num_frames;
+                            total_atoms: root.total_atoms;
+                            removed_frames_count: root.removed_frames_count;
+                            atom_counts: root.atom_counts;
+
+                            material_type <=> root.material_type;
+                            time_step <=> root.analysis_options.time_step;
+                            time_step_error: root.app_errors.time_step_error;
+                            min_frame <=> root.analysis_options.min_frame;
+                            max_frame <=> root.analysis_options.max_frame;
+                            min_frame_error: root.app_errors.min_frame_error;
+                            max_frame_error: root.app_errors.max_frame_error;
+                            reset_trajectory_options => {
+                                root.reset_trajectory_options();
+                            }
+
+                            analysis_running: root.analysis_running;
+                            has_validation_errors: root.has_validation_errors;
+                            run_analysis => {
+                                root.run_analysis();
+                            }
+                            cancel_analysis => {
+                                root.cancel_analysis();
+                            }
+                        }
+
+                        // Content: OptionsCard configured to active_panel when panel > 0
+                        options_card := OptionsCard {
+                            x: 0;
+                            y: 0;
+                            width: 100%;
+                            height: 100%;
+                            visible: root.active_panel > 0;
+                            active_tab: root.active_panel == 1 ? 0 :
+                                root.active_panel == 2 ? 1 :
+                                root.active_panel == 3 ? 2 :
+                                root.active_panel == 5 ? 3 : 0;
+                            show_tab_bar: false;
+                            show_only_presets: root.active_panel == 4;
+
+                            enabled: root.file_loaded;
+                            file_loaded: root.file_loaded;
+                            calculator_groups: root.calculator_groups;
+                            total_calculator_count: root.total_calculator_count;
+                            toggle_calculator(id, enabled) => {
+                                root.toggle_calculator(id, enabled);
+                            }
+                            has_radial_active: root.has_radial_active;
+                            has_angular_active: root.has_angular_active;
+                            has_scattering_active: root.has_scattering_active;
+                            has_rings_active: root.has_rings_active;
+                            bond_cutoffs <=> root.bond_cutoffs;
+                            atom_counts: root.atom_counts;
+                            bond_cutoffs_reset_trigger: root.bond_cutoffs_reset_trigger;
+                            reset_bond_cutoffs => {
+                                root.reset_bond_cutoffs();
+                            }
+                            reset_rdf_options => {
+                                root.reset_rdf_options();
+                            }
+                            reset_angle_options => {
+                                root.reset_angle_options();
+                            }
+                            reset_sq_options => {
+                                root.reset_sq_options();
+                            }
+                            reset_rings_options => {
+                                root.reset_rings_options();
+                            }
+                            reset_smoothing_options => {
+                                root.reset_smoothing_options();
+                            }
+                            reset_advanced_options => {
+                                root.reset_advanced_options();
+                            }
+                            analysis_options <=> root.analysis_options;
+                            app_errors: root.app_errors;
+                            num_frames: root.num_frames;
+                            preset_items: root.preset_items;
+                            selected_preset <=> root.selected_preset;
+
+                            diff_msd: root.diff_msd;
+                            diff_vacf: root.diff_vacf;
+                            relaxation_time: root.relaxation_time;
+                            deborah_number: root.deborah_number;
+
+                            export_size_preset <=> root.export_size_preset;
+                            export_palette <=> root.export_palette;
+                            export_font_scale <=> root.export_font_scale;
+                            export_line_width <=> root.export_line_width;
+                            export_marker_size <=> root.export_marker_size;
+                            export_show_legend <=> root.export_show_legend;
+                            export_show_grid <=> root.export_show_grid;
+                            export_show_markers <=> root.export_show_markers;
+                            export_fill_area <=> root.export_fill_area;
+                            export_font_scale_error: root.export_font_scale_error;
+                            export_line_width_error: root.export_line_width_error;
+                            export_marker_size_error: root.export_marker_size_error;
+
+                            comparison_curves: root.comparison_curves;
+                            show_difference: root.show_difference;
+                            pin_current_run => { root.pin_run(); }
+                            import_comparison_file => { root.import_comparison_file(); }
+                            remove_comparison_curve(id) => { root.remove_comparison_curve(id); }
+                            toggle_difference_plot(show) => { root.toggle_difference_plot(show); }
+
+                            load_preset(idx) => { root.load_preset(idx); }
+                            save_preset(name) => { root.save_preset(name); }
+                            delete_preset(idx) => { root.delete_preset(idx); }
                         }
                     }
                 }
 
-                SplitterHandle {
+                // Splitter Handle between Column 1 and Column 2
+                splitter_handle := SplitterHandle {
+                    visible: (root.active_panel >= 0 || self.is_dragging) && root.width >= 500px;
                     moved(delta) => {
-                        root.left_col_width = Math.min(450px, Math.max(200px, root.left_col_width + delta));
-                        root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
+                        let current_w = root.active_panel == -1 ? 0px : root.left_col_width;
+                        let target_w = current_w + delta;
+                        if (target_w < 100px) {
+                            if (root.active_panel >= 0) {
+                                root.last_active_panel = root.active_panel;
+                            }
+                            root.active_panel = -1;
+                        } else if (target_w < 180px) {
+                            if (root.active_panel == -1) {
+                                root.active_panel = root.last_active_panel >= 0 ? root.last_active_panel : 0;
+                            }
+                            root.left_col_width = 180px;
+                            root.last_col_width = 180px;
+                            root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
+                        } else {
+                            if (root.active_panel == -1) {
+                                root.active_panel = root.last_active_panel >= 0 ? root.last_active_panel : 0;
+                            }
+                            root.left_col_width = Math.min(450px, target_w);
+                            root.last_col_width = root.left_col_width;
+                            root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
+                        }
                     }
                     reset => {
-                        root.left_col_width = 260px;
+                        root.left_col_width = 220px;
+                        root.last_col_width = 220px;
                         root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
                     }
                 }
 
-                // 2. Middle column: Options Tabbed Card (Common, Advanced, Plot, Analyses)
-            options_card := OptionsCard {
-                    width: root.middle_col_width;
-                    horizontal-stretch: 0;
-                    enabled: root.file_loaded;
-                    file_loaded: root.file_loaded;
-                    calculator_groups: root.calculator_groups;
-                    total_calculator_count: root.total_calculator_count;
-                    toggle_calculator(id, enabled) => {
-                        root.toggle_calculator(id, enabled);
-                    }
-                    has_radial_active: root.has_radial_active;
-                    has_angular_active: root.has_angular_active;
-                    has_scattering_active: root.has_scattering_active;
-                    has_rings_active: root.has_rings_active;
-                    bond_cutoffs <=> root.bond_cutoffs;
-                    atom_counts: root.atom_counts;
-                    bond_cutoffs_reset_trigger: root.bond_cutoffs_reset_trigger;
-                    reset_bond_cutoffs => {
-                        root.reset_bond_cutoffs();
-                    }
-                    reset_rdf_options => {
-                        root.reset_rdf_options();
-                    }
-                    reset_angle_options => {
-                        root.reset_angle_options();
-                    }
-                    reset_sq_options => {
-                        root.reset_sq_options();
-                    }
-                    reset_rings_options => {
-                        root.reset_rings_options();
-                    }
-                    reset_smoothing_options => {
-                        root.reset_smoothing_options();
-                    }
-                    reset_advanced_options => {
-                        root.reset_advanced_options();
-                    }
-                    analysis_options <=> root.analysis_options;
-                    app_errors: root.app_errors;
-                    num_frames: root.num_frames;
-                    preset_items: root.preset_items;
-                    selected_preset <=> root.selected_preset;
-
-                    diff_msd: root.diff_msd;
-                    diff_vacf: root.diff_vacf;
-                    relaxation_time: root.relaxation_time;
-                    deborah_number: root.deborah_number;
-
-                    export_size_preset <=> root.export_size_preset;
-                    export_palette <=> root.export_palette;
-                    export_font_scale <=> root.export_font_scale;
-                    export_line_width <=> root.export_line_width;
-                    export_marker_size <=> root.export_marker_size;
-                    export_show_legend <=> root.export_show_legend;
-                    export_show_grid <=> root.export_show_grid;
-                    export_show_markers <=> root.export_show_markers;
-                    export_fill_area <=> root.export_fill_area;
-                    export_font_scale_error: root.export_font_scale_error;
-                    export_line_width_error: root.export_line_width_error;
-                    export_marker_size_error: root.export_marker_size_error;
-
-                    comparison_curves: root.comparison_curves;
-                    show_difference: root.show_difference;
-                    pin_current_run => { root.pin_run(); }
-                    import_comparison_file => { root.import_comparison_file(); }
-                    remove_comparison_curve(id) => { root.remove_comparison_curve(id); }
-                    toggle_difference_plot(show) => { root.toggle_difference_plot(show); }
-
-                    load_preset(idx) => { root.load_preset(idx); }
-                    save_preset(name) => { root.save_preset(name); }
-                    delete_preset(idx) => { root.delete_preset(idx); }
-                }
-
-                SplitterHandle {
-                    moved(delta) => {
-                        root.middle_col_width = Math.min(450px, Math.max(200px, root.middle_col_width + delta));
-                        root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
-                    }
-                    reset => {
-                        root.middle_col_width = 260px;
-                        root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
-                    }
-                }
-
-                // 3. Right column: Visual Preview Card (stretches to fill remaining space)
-            Rectangle {
+                // 2. Right column: Visual Preview Card (Column 2)
+                Rectangle {
                     horizontal-stretch: 1;
-                    min-width: 400px;
+                    min-width: 200px;
+                    visible: root.active_panel == -1 || root.width >= 500px;
 
                     Vertical {
                         width: 100%;

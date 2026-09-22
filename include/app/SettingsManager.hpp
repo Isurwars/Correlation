@@ -22,8 +22,8 @@ namespace correlation::app {
 struct AppSettings {
   uint32_t window_width{1180};
   uint32_t window_height{795};
-  float left_col_width{260.0F};
-  float middle_col_width{260.0F};
+  float left_col_width{220.0F};
+  float middle_col_width{220.0F};
   std::vector<std::string> recent_files;
 };
 

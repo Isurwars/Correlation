@@ -62,10 +62,10 @@ void parseSettingsLine(const std::string &line, AppSettings &settings) {
     settings.window_height = std::max(600U, static_cast<uint32_t>(std::stoul(val)));
   }
   if (const auto val = extractJsonValue(line, "left_col_width"); !val.empty()) {
-    settings.left_col_width = std::clamp(std::stof(val), 200.0F, 450.0F);
+    settings.left_col_width = std::clamp(std::stof(val), 180.0F, 450.0F);
   }
   if (const auto val = extractJsonValue(line, "middle_col_width"); !val.empty()) {
-    settings.middle_col_width = std::clamp(std::stof(val), 200.0F, 450.0F);
+    settings.middle_col_width = std::clamp(std::stof(val), 180.0F, 450.0F);
   }
   if (const auto pos = line.find("\"recent_files\""); pos != std::string::npos) {
     const auto start = line.find('[', pos);
@@ -75,11 +75,13 @@ void parseSettingsLine(const std::string &line, AppSettings &settings) {
       size_t cur = 0;
       while (cur < content.size()) {
         const auto q1 = content.find('"', cur);
-        if (q1 == std::string::npos)
+        if (q1 == std::string::npos) {
           break;
+        }
         const auto q2 = content.find('"', q1 + 1);
-        if (q2 == std::string::npos)
+        if (q2 == std::string::npos) {
           break;
+        }
         const std::string path = content.substr(q1 + 1, q2 - q1 - 1);
         if (!path.empty()) {
           settings.recent_files.push_back(path);
