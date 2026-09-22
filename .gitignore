@@ -6,6 +6,7 @@ compile_commands.json
 build*/
 installers
 Testing/
+clang_tidy_output.txt
 
 aur/
 packaging/correlation.iss
