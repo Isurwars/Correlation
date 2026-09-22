@@ -1,0 +1,250 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialPalette,
+    OutlinedCard,
+    MaterialText,
+    FilledButton,
+    LinearProgressIndicator,
+    ExpandableHeader,
+    InfoRow,
+    Vertical,
+    Horizontal,
+    IconButton,
+    Icons,
+    ScrollView,
+} from "../../material/material.slint";
+import { AtomCount } from "../../Types.slint";
+import { MaterialTypeCard } from "MaterialTypeCard.slint";
+import { TrajectoryOptionsCard } from "TrajectoryOptionsCard.slint";
+
+// ============================================================================
+// OperationsPanelCard Component (Panel 0)
+// ============================================================================
+export component OperationsPanelCard inherits Rectangle {
+    // File Loading
+    in property <bool> load_enabled: true;
+    in property <bool> file_loading: false;
+    callback browse_file();
+
+    // File Status & Metadata
+    in-out property <string> file_status_text;
+    in property <bool> file_loaded;
+    in property <int> num_frames;
+    in property <int> total_atoms;
+    in property <int> removed_frames_count;
+    in property <[AtomCount]> atom_counts;
+
+    // Material & Trajectory Setup Options
+    in-out property <int> material_type: 0;
+    callback reset_material_type();
+
+    in-out property <string> time_step: "1.0";
+    in property <string> time_step_error: "";
+    in-out property <string> min_frame: "1";
+    in-out property <string> max_frame: "End";
+    in property <string> min_frame_error: "";
+    in property <string> max_frame_error: "";
+    callback reset_trajectory_options();
+
+    // Analysis Execution
+    in property <bool> analysis_running;
+    in property <bool> has_validation_errors;
+    callback run_analysis();
+    callback cancel_analysis();
+
+    out property <string> hovered_tooltip_text:
+        load_area.has-hover ? "Load a structure or trajectory file" :
+        atoms_layout.has-hover ? "Total number of atoms found in a single frame.\n\n🔬 Physics: Larger systems reduce finite-size effects in correlation functions. For reliable RDF, systems with >200 atoms are recommended. For ring statistics, >500 atoms is preferred." :
+        frames_layout.has-hover ? "Number of structural frames parsed from the file.\n\n🔬 Physics: More frames improve statistical averaging for distribution functions. For converged g(r) in a liquid, typically 100+ frames are recommended." :
+        removed_layout.has-hover ? "Number of frames skipped due to parsing errors or missing structural data.\n\n⚠️ If this number is large relative to total frames, check the input file for formatting issues or incomplete trajectory data." :
+        (material_card.hovered_tooltip_text != "" ? material_card.hovered_tooltip_text :
+        (trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_tooltip_text :
+        run_area.has-hover ? "Run all selected analyses on the loaded trajectory.\n\n🔬 This computes distribution functions (RDF, S(Q), PAD, etc.) across the selected frame range, averaging over all frames. Results appear in the Preview panel and can be saved afterward." : ""));
+
+    out property <length> hovered_x:
+        load_area.has-hover ? load_area.absolute-position.x + load_area.mouse-x :
+        atoms_layout.has-hover ? atoms_layout.absolute-position.x + atoms_layout.mouse-x :
+        frames_layout.has-hover ? frames_layout.absolute-position.x + frames_layout.mouse-x :
+        removed_layout.has-hover ? removed_layout.absolute-position.x + removed_layout.mouse-x :
+        (material_card.hovered_tooltip_text != "" ? material_card.hovered_x :
+        (trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_x :
+        run_area.has-hover ? run_area.absolute-position.x + run_area.mouse-x : 0px));
+    out property <length> hovered_y:
+        load_area.has-hover ? load_area.absolute-position.y + load_area.mouse-y :
+        atoms_layout.has-hover ? atoms_layout.absolute-position.y + atoms_layout.mouse-y :
+        frames_layout.has-hover ? frames_layout.absolute-position.y + frames_layout.mouse-y :
+        removed_layout.has-hover ? removed_layout.absolute-position.y + removed_layout.mouse-y :
+        (material_card.hovered_tooltip_text != "" ? material_card.hovered_y :
+        (trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_y :
+        run_area.has-hover ? run_area.absolute-position.y + run_area.mouse-y : 0px));
+    out property <length> hovered_width: 0px;
+    out property <length> hovered_height: 0px;
+
+    in-out property <bool> atoms_expanded: false;
+    property <length> atoms_height: atoms_expanded ? root.atom_counts.length * 36px : 0px;
+
+    ScrollView {
+        width: 100%;
+        height: 100%;
+
+        Vertical {
+            spacing: MaterialStyleMetrics.spacing_8;
+            padding: 0;
+
+            // --- File Loading Card ---
+            OutlinedCard {
+                Vertical {
+                    padding: MaterialStyleMetrics.spacing_8;
+                    spacing: MaterialStyleMetrics.spacing_4;
+
+                    load_area := TouchArea {
+                        accessible-role: button;
+                        accessible-label: "Load Structure or Trajectory File";
+                        height: MaterialStyleMetrics.size_40;
+                        FilledButton {
+                            width: 100%;
+                            height: 100%;
+                            text: "Load File";
+                            icon: Icons.folder_open;
+                            enabled: root.load_enabled && !root.analysis_running;
+                            clicked => {
+                                root.browse_file();
+                            }
+                        }
+                    }
+
+                    if root.file_loading: LinearProgressIndicator {
+                        width: 100%;
+                        height: 4px;
+                        indeterminate: true;
+                    }
+
+                    MaterialText {
+                        text: root.file_status_text != "" ? root.file_status_text : "No file loaded";
+                        style: MaterialTypography.body_small;
+                        wrap: word-wrap;
+                        color: root.file_loaded ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
+                    }
+
+                    atoms_layout := ExpandableHeader {
+                        text: "Total Atoms: " + root.total_atoms;
+                        expanded <=> root.atoms_expanded;
+                        enabled: root.file_loaded;
+                        opacity: root.file_loaded ? 1.0 : 0.4;
+                    }
+
+                    Vertical {
+                        height: root.atoms_height;
+                        opacity: root.atoms_expanded ? 1.0 : 0.0;
+                        animate height {
+                            duration: 250ms;
+                            easing: ease-in-out;
+                        }
+                        animate opacity {
+                            duration: 250ms;
+                            easing: ease-in-out;
+                        }
+                        spacing: MaterialStyleMetrics.spacing_2;
+                        for info in root.atom_counts: InfoRow {
+                            label: info.symbol + ":";
+                            value: info.count;
+                        }
+                    }
+
+                    frames_layout := InfoRow {
+                        opacity: root.num_frames > 1 ? 1.0 : 0.0;
+                        height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
+                        animate height {
+                            duration: 250ms;
+                            easing: ease-in-out;
+                        }
+                        animate opacity {
+                            duration: 250ms;
+                            easing: ease-in-out;
+                        }
+                        label: "Frames:";
+                        value: root.num_frames;
+                    }
+
+                    removed_layout := InfoRow {
+                        opacity: (root.num_frames > 1 && root.removed_frames_count > 0) ? 1.0 : 0.0;
+                        height: (root.num_frames > 1 && root.removed_frames_count > 0) ? MaterialStyleMetrics.size_40 : 0px;
+                        animate height {
+                            duration: 250ms;
+                            easing: ease-in-out;
+                        }
+                        animate opacity {
+                            duration: 250ms;
+                            easing: ease-in-out;
+                        }
+                        label: "Removed Frames:";
+                        value: root.removed_frames_count;
+                        text-color: MaterialPalette.error;
+                    }
+                }
+            }
+
+            // --- Setup Options (Material & Trajectory) ---
+            material_card := MaterialTypeCard {
+                file_loaded: root.file_loaded;
+                material_type <=> root.material_type;
+                reset => { root.reset_material_type(); }
+            }
+
+            trajectory_card := TrajectoryOptionsCard {
+                file_loaded: root.file_loaded;
+                num_frames: root.num_frames;
+                time_step <=> root.time_step;
+                time_step_error: root.time_step_error;
+                min_frame <=> root.min_frame;
+                max_frame <=> root.max_frame;
+                min_frame_error: root.min_frame_error;
+                max_frame_error: root.max_frame_error;
+                reset => { root.reset_trajectory_options(); }
+                opacity: (root.file_loaded && root.num_frames > 1) ? 1.0 : 0.5;
+            }
+
+            // --- Analysis Execution ---
+            OutlinedCard {
+                Vertical {
+                    padding: MaterialStyleMetrics.spacing_8;
+                    spacing: MaterialStyleMetrics.spacing_8;
+
+                    if root.has_validation_errors && !root.analysis_running: MaterialText {
+                        text: "⚠ Fix validation errors before running";
+                        color: MaterialPalette.error;
+                        wrap: word-wrap;
+                        horizontal-alignment: center;
+                    }
+
+                    run_area := TouchArea {
+                        accessible-role: button;
+                        accessible-label: root.analysis_running ? "Cancel Analysis" : "Run Analysis";
+                        height: MaterialStyleMetrics.size_40;
+                        FilledButton {
+                            width: 100%;
+                            height: 100%;
+                            text: root.analysis_running ? "Cancel Analysis" : "Run Analysis";
+                            enabled: root.analysis_running || (root.file_loaded && !root.has_validation_errors);
+                            background: root.analysis_running ? MaterialPalette.error : MaterialPalette.run;
+                            text_color: root.analysis_running ? MaterialPalette.on_error : MaterialPalette.on_run;
+                            clicked => {
+                                if (root.analysis_running) {
+                                    root.cancel_analysis();
+                                } else {
+                                    root.run_analysis();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

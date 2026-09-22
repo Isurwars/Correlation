@@ -1,0 +1,99 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialStyleMetrics,
+    MaterialPalette,
+    ScrollView,
+    Vertical,
+} from "../../material/material.slint";
+import { ComparisonCurveData } from "../../Types.slint";
+import { ComparisonOverlayCard } from "ComparisonOverlayCard.slint";
+import { ExportSettingsCard } from "ExportSettingsCard.slint";
+
+// ============================================================================
+// PlotExportPanelCard Component (Panel 3)
+// ============================================================================
+export component PlotExportPanelCard inherits Rectangle {
+    in property <bool> enabled: true;
+
+    // Comparison Overlay properties & callbacks
+    in property <[ComparisonCurveData]> comparison_curves: [];
+    in property <bool> show_difference: false;
+    callback pin_current_run();
+    callback import_comparison_file();
+    callback remove_comparison_curve(int);
+    callback toggle_difference_plot(bool);
+    callback clear_comparison_curves();
+
+    // Export Settings properties & callbacks
+    in-out property <int> export_size_preset: 0;
+    in-out property <int> export_palette: 0;
+    in-out property <string> export_font_scale: "1.0";
+    in-out property <string> export_line_width: "3.0";
+    in-out property <string> export_marker_size: "3.5";
+    in-out property <bool> export_show_legend: true;
+    in-out property <bool> export_show_grid: true;
+    in-out property <bool> export_show_markers: false;
+    in-out property <bool> export_fill_area: false;
+
+    in property <string> export_font_scale_error: "";
+    in property <string> export_line_width_error: "";
+    in property <string> export_marker_size_error: "";
+    callback reset_export_settings();
+
+    out property <string> hovered_tooltip_text:
+        export_settings_card.hovered_tooltip_text != "" ? export_settings_card.hovered_tooltip_text : "";
+
+    out property <length> hovered_x:
+        export_settings_card.hovered_tooltip_text != "" ? export_settings_card.hovered_x : 0px;
+
+    out property <length> hovered_y:
+        export_settings_card.hovered_tooltip_text != "" ? export_settings_card.hovered_y : 0px;
+
+    out property <length> hovered_width:
+        export_settings_card.hovered_tooltip_text != "" ? export_settings_card.hovered_width : 0px;
+
+    out property <length> hovered_height:
+        export_settings_card.hovered_tooltip_text != "" ? export_settings_card.hovered_height : 0px;
+
+    ScrollView {
+        width: 100%;
+        height: 100%;
+
+        Vertical {
+            padding: 0;
+            spacing: MaterialStyleMetrics.spacing_8;
+
+            comparison_card := ComparisonOverlayCard {
+                enabled: root.enabled;
+                comparison_curves: root.comparison_curves;
+                show_difference: root.show_difference;
+                pin_current_run => { root.pin_current_run(); }
+                import_comparison_file => { root.import_comparison_file(); }
+                remove_comparison_curve(id) => { root.remove_comparison_curve(id); }
+                toggle_difference_plot(diff) => { root.toggle_difference_plot(diff); }
+                clear_comparison_curves => { root.clear_comparison_curves(); }
+            }
+
+            export_settings_card := ExportSettingsCard {
+                enabled: root.enabled;
+                export_size_preset <=> root.export_size_preset;
+                export_palette <=> root.export_palette;
+                export_font_scale <=> root.export_font_scale;
+                export_line_width <=> root.export_line_width;
+                export_marker_size <=> root.export_marker_size;
+                export_show_legend <=> root.export_show_legend;
+                export_show_grid <=> root.export_show_grid;
+                export_show_markers <=> root.export_show_markers;
+                export_fill_area <=> root.export_fill_area;
+                export_font_scale_error: root.export_font_scale_error;
+                export_line_width_error: root.export_line_width_error;
+                export_marker_size_error: root.export_marker_size_error;
+                reset => { root.reset_export_settings(); }
+            }
+        }
+    }
+}

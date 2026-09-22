@@ -7,14 +7,15 @@ import {
     MaterialStyleMetrics,
     MaterialTypography,
     MaterialPalette,
-    FilledCard,
+    OutlinedCard,
+    ExpandableHeader,
     MaterialText,
     TextField,
     Vertical,
     Horizontal,
     Icon,
     Icons,
-} from "../material/material.slint";
+} from "../../material/material.slint";
 
 // ============================================================================
 // TrajectoryOptionsCard Component
@@ -22,7 +23,8 @@ import {
 /// Allows users to specify trajectory analysis configurations, specifically
 /// the time step (fs) and range of frames (Start and End) to be analyzed.
 // ============================================================================
-export component TrajectoryOptionsCard inherits FilledCard {
+export component TrajectoryOptionsCard inherits OutlinedCard {
+    in-out property <bool> expanded: true;
     in property <bool> file_loaded;
     in property <int> num_frames;
     callback reset();
@@ -51,99 +53,76 @@ export component TrajectoryOptionsCard inherits FilledCard {
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
 
-
     Vertical {
-        spacing: MaterialStyleMetrics.spacing_12;
-        padding: MaterialStyleMetrics.spacing_12;
+        padding: MaterialStyleMetrics.spacing_8;
+        spacing: MaterialStyleMetrics.spacing_8;
 
-        Horizontal {
-            alignment: space-between;
+        ExpandableHeader {
+            text: "Trajectory Options";
+            expanded <=> root.expanded;
+            show_reset: true;
+            reset_enabled: root.file_loaded;
+            reset => { root.reset(); }
+        }
 
-            MaterialText {
-                text: "Trajectory Options";
-                style: MaterialTypography.label_large;
-                color: MaterialPalette.on_surface_variant;
-                vertical-alignment: center;
+        Vertical {
+            height: root.expanded ? self.preferred-height : 0px;
+            visible: self.height > 0px;
+            opacity: root.expanded ? 1.0 : 0.0;
+            animate height, opacity {
+                duration: 250ms;
+                easing: ease-in-out;
             }
 
-            reset_touch := TouchArea {
-                width: reset_text.preferred-width + 12px;
-                height: 22px;
-                enabled: root.file_loaded;
-                accessible-role: button;
-                accessible-label: "Reset Defaults";
+            padding: 0;
+            spacing: MaterialStyleMetrics.spacing_8;
 
-                Rectangle {
+            // Time Step input
+            time_step_area := TouchArea {
+                accessible-role: text-input;
+                accessible-label: "Time Step in femtoseconds";
+                tf_time := TextField {
                     width: 100%;
-                    height: 100%;
-                    background: reset_touch.has-hover ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_low;
-                    border-radius: 4px;
-                    border-width: 1px;
-                    border-color: MaterialPalette.outline_variant.with_alpha(50%);
-                    animate background { duration: 150ms; }
+                    label: "Time Step (fs)";
+                    horizontal-stretch: 1;
+                    vertical-stretch: 0;
+                    text <=> root.time_step;
+                    enabled: root.file_loaded && root.num_frames > 1;
+                    has_error: root.time_step_error != "";
+                    supporting_text: root.time_step_error;
+                }
+            }
 
-                    reset_text := MaterialText {
-                        text: "Reset Defaults";
-                        style: MaterialTypography.label_small;
-                        font_size: 10px;
-                        font_weight: MaterialTypography.medium;
-                        color: root.file_loaded ? MaterialPalette.primary : MaterialPalette.outline;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
+            // Frame Range inputs
+            Horizontal {
+                spacing: MaterialStyleMetrics.spacing_8;
+
+                start_frame_area := TouchArea {
+                    accessible-role: text-input;
+                    accessible-label: "Start Frame";
+                    horizontal-stretch: 1;
+                    tf_start := TextField {
+                        width: 100%;
+                        enabled: root.file_loaded && root.num_frames > 1;
+                        label: "Start Frame";
+                        text <=> root.min_frame;
+                        has_error: root.min_frame_error != "";
+                        supporting_text: root.min_frame_error;
                     }
                 }
 
-                clicked => {
-                    root.reset();
-                }
-            }
-        }
-
-        // Time Step input
-        time_step_area := TouchArea {
-            accessible-role: text-input;
-            accessible-label: "Time Step in femtoseconds";
-            tf_time := TextField {
-                width: 100%;
-                label: "Time Step (fs)";
-                horizontal-stretch: 1;
-                vertical-stretch: 0;
-                text <=> root.time_step;
-                enabled: root.file_loaded && root.num_frames > 1;
-                has_error: root.time_step_error != "";
-                supporting_text: root.time_step_error;
-            }
-        }
-
-        // Frame Range inputs
-        Horizontal {
-            spacing: MaterialStyleMetrics.spacing_8;
-
-            start_frame_area := TouchArea {
-                accessible-role: text-input;
-                accessible-label: "Start Frame";
-                horizontal-stretch: 1;
-                tf_start := TextField {
-                    width: 100%;
-                    enabled: root.file_loaded && root.num_frames > 1;
-                    label: "Start Frame";
-                    text <=> root.min_frame;
-                    has_error: root.min_frame_error != "";
-                    supporting_text: root.min_frame_error;
-                }
-            }
-
-            end_frame_area := TouchArea {
-                accessible-role: text-input;
-                accessible-label: "End Frame";
-                horizontal-stretch: 1;
-                tf_end := TextField {
-                    width: 100%;
-                    enabled: root.file_loaded && root.num_frames > 1;
-                    label: "End Frame";
-                    text <=> root.max_frame;
-                    has_error: root.max_frame_error != "";
-                    supporting_text: root.max_frame_error;
+                end_frame_area := TouchArea {
+                    accessible-role: text-input;
+                    accessible-label: "End Frame";
+                    horizontal-stretch: 1;
+                    tf_end := TextField {
+                        width: 100%;
+                        enabled: root.file_loaded && root.num_frames > 1;
+                        label: "End Frame";
+                        text <=> root.max_frame;
+                        has_error: root.max_frame_error != "";
+                        supporting_text: root.max_frame_error;
+                    }
                 }
             }
         }

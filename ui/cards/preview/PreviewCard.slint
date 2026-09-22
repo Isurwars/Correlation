@@ -15,10 +15,10 @@ import {
     ScrollView,
     TabItem,
     TextField,
-} from "../material/material.slint";
-import { ExportSettingsCard } from "ExportSettingsCard.slint";
-import { TableRow, CurveToggleItem } from "../Types.slint";
-import { SplitterHandle } from "../SplitterHandle.slint";
+} from "../../material/material.slint";
+import { ExportSettingsCard } from "../plot/ExportSettingsCard.slint";
+import { TableRow, CurveToggleItem } from "../../Types.slint";
+import { SplitterHandle } from "../../SplitterHandle.slint";
 
 // ============================================================================
 
@@ -186,7 +186,7 @@ export component PreviewCard inherits FilledCard {
                         alignment: center;
 
                         Image {
-                            source: @image-url("../../Images/Banner.png");
+                            source: @image-url("../../../Images/Banner.png");
                             height: 120px;
                             width: 380px;
                             image-fit: contain;

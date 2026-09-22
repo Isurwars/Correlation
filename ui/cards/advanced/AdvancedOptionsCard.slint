@@ -1,13 +1,13 @@
 import {
     MaterialStyleMetrics,
     MaterialPalette,
-    FilledCard,
+    OutlinedCard,
     ExpandableHeader,
     TextField,
     Vertical,
-} from "../material/material.slint";
+} from "../../material/material.slint";
 
-export component AdvancedOptionsCard inherits FilledCard {
+export component AdvancedOptionsCard inherits OutlinedCard {
     in-out property <bool> expanded: true;
     in property <bool> file_loaded;
     in-out property <string> lef_cutoff;
@@ -34,8 +34,9 @@ export component AdvancedOptionsCard inherits FilledCard {
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
 
-
     Vertical {
+        padding: MaterialStyleMetrics.spacing_8;
+        spacing: MaterialStyleMetrics.spacing_8;
 
         ExpandableHeader {
             text: "Advanced Order Parameters";
@@ -49,11 +50,12 @@ export component AdvancedOptionsCard inherits FilledCard {
             height: root.expanded ? self.preferred-height : 0px;
             visible: self.height > 0px;
             opacity: root.expanded ? 1.0 : 0.0;
+            padding: 0;
+            spacing: MaterialStyleMetrics.spacing_8;
             animate height, opacity {
                 duration: 250ms;
                 easing: ease-in-out;
             }
-            spacing: MaterialStyleMetrics.spacing_4;
 
             cutoff_area := TouchArea {
                 TextField {

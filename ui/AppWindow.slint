@@ -34,10 +34,13 @@ import {
 
 import { MiniSideBar } from "nav/MiniSideBar.slint";
 import { AppFooter } from "nav/AppFooter.slint";
-import { OperationsCard } from "run/OperationsCard.slint";
-import { AnalysesSelectionCard } from "options/AnalysesSelectionCard.slint";
-import { OptionsCard } from "options/OptionsCard.slint";
-import { PreviewCard } from "preview/PreviewCard.slint";
+import { OperationsPanelCard } from "cards/operations/OperationsPanelCard.slint";
+import { CommonOptionsPanelCard } from "cards/common/CommonOptionsPanelCard.slint";
+import { AdvancedOptionsPanelCard } from "cards/advanced/AdvancedOptionsPanelCard.slint";
+import { PlotExportPanelCard } from "cards/plot/PlotExportPanelCard.slint";
+import { PresetsPanelCard } from "cards/presets/PresetsPanelCard.slint";
+import { AnalysesPanelCard } from "cards/analyses/AnalysesPanelCard.slint";
+import { PreviewCard } from "cards/preview/PreviewCard.slint";
 import { AppToolTips } from "AppToolTips.slint";
 import { SplitterHandle } from "SplitterHandle.slint";
 
@@ -258,6 +261,7 @@ export component AppWindow inherits Window {
     callback load_preset(int);
     callback save_preset(string);
     callback delete_preset(int);
+    callback reset_presets();
     callback material_type_changed(int);
     callback reset_bond_cutoffs();
     callback reset_rdf_options();
@@ -267,6 +271,10 @@ export component AppWindow inherits Window {
     callback reset_smoothing_options();
     callback reset_advanced_options();
     callback reset_trajectory_options();
+    callback reset_export_settings();
+    callback reset_analyses_selection();
+    callback reset_material_type();
+    callback clear_comparison_curves();
 
     // ============================================================================
     // Core Layout Logic
@@ -368,32 +376,53 @@ export component AppWindow inherits Window {
 
     /// hovered_tooltip_text: Dynamically update based on the currently
     ///   hovered component.
-    property <string> sidebar_tooltip: operations_card.hovered_tooltip_text;
+    property <string> active_panel_tooltip:
+        root.active_panel == 0 ? panel_operations.hovered_tooltip_text :
+        root.active_panel == 1 ? panel_common.hovered_tooltip_text :
+        root.active_panel == 2 ? panel_advanced.hovered_tooltip_text :
+        root.active_panel == 3 ? panel_plot_export.hovered_tooltip_text :
+        root.active_panel == 4 ? panel_presets.hovered_tooltip_text :
+        root.active_panel == 5 ? panel_analyses.hovered_tooltip_text : "";
 
-    property <string> options_hovered_tooltip: options_card.hovered_tooltip_text;
     property <string> preview_hovered_tooltip: preview_card.hovered_tooltip_text;
 
     property <string> hovered_tooltip_text: 
-        sidebar_tooltip != "" ? sidebar_tooltip : options_hovered_tooltip != "" ? options_hovered_tooltip : preview_hovered_tooltip;
+        active_panel_tooltip != "" ? active_panel_tooltip : preview_hovered_tooltip;
 
     property <length> hovered_x:
-        operations_card.hovered_tooltip_text != "" ? operations_card.hovered_x :
-        options_hovered_tooltip != "" ? options_card.hovered_x :
+        root.active_panel == 0 && panel_operations.hovered_tooltip_text != "" ? panel_operations.hovered_x :
+        root.active_panel == 1 && panel_common.hovered_tooltip_text != "" ? panel_common.hovered_x :
+        root.active_panel == 2 && panel_advanced.hovered_tooltip_text != "" ? panel_advanced.hovered_x :
+        root.active_panel == 3 && panel_plot_export.hovered_tooltip_text != "" ? panel_plot_export.hovered_x :
+        root.active_panel == 4 && panel_presets.hovered_tooltip_text != "" ? panel_presets.hovered_x :
+        root.active_panel == 5 && panel_analyses.hovered_tooltip_text != "" ? panel_analyses.hovered_x :
         preview_hovered_tooltip != "" ? preview_card.hovered_x : 0px;
 
     property <length> hovered_y:
-        operations_card.hovered_tooltip_text != "" ? operations_card.hovered_y :
-        options_hovered_tooltip != "" ? options_card.hovered_y :
+        root.active_panel == 0 && panel_operations.hovered_tooltip_text != "" ? panel_operations.hovered_y :
+        root.active_panel == 1 && panel_common.hovered_tooltip_text != "" ? panel_common.hovered_y :
+        root.active_panel == 2 && panel_advanced.hovered_tooltip_text != "" ? panel_advanced.hovered_y :
+        root.active_panel == 3 && panel_plot_export.hovered_tooltip_text != "" ? panel_plot_export.hovered_y :
+        root.active_panel == 4 && panel_presets.hovered_tooltip_text != "" ? panel_presets.hovered_y :
+        root.active_panel == 5 && panel_analyses.hovered_tooltip_text != "" ? panel_analyses.hovered_y :
         preview_hovered_tooltip != "" ? preview_card.hovered_y : 0px;
 
     property <length> hovered_width:
-        operations_card.hovered_tooltip_text != "" ? operations_card.hovered_width :
-        options_hovered_tooltip != "" ? options_card.hovered_width :
+        root.active_panel == 0 && panel_operations.hovered_tooltip_text != "" ? panel_operations.hovered_width :
+        root.active_panel == 1 && panel_common.hovered_tooltip_text != "" ? panel_common.hovered_width :
+        root.active_panel == 2 && panel_advanced.hovered_tooltip_text != "" ? panel_advanced.hovered_width :
+        root.active_panel == 3 && panel_plot_export.hovered_tooltip_text != "" ? panel_plot_export.hovered_width :
+        root.active_panel == 4 && panel_presets.hovered_tooltip_text != "" ? panel_presets.hovered_width :
+        root.active_panel == 5 && panel_analyses.hovered_tooltip_text != "" ? panel_analyses.hovered_width :
         preview_hovered_tooltip != "" ? preview_card.hovered_width : 0px;
 
     property <length> hovered_height:
-        operations_card.hovered_tooltip_text != "" ? operations_card.hovered_height :
-        options_hovered_tooltip != "" ? options_card.hovered_height :
+        root.active_panel == 0 && panel_operations.hovered_tooltip_text != "" ? panel_operations.hovered_height :
+        root.active_panel == 1 && panel_common.hovered_tooltip_text != "" ? panel_common.hovered_height :
+        root.active_panel == 2 && panel_advanced.hovered_tooltip_text != "" ? panel_advanced.hovered_height :
+        root.active_panel == 3 && panel_plot_export.hovered_tooltip_text != "" ? panel_plot_export.hovered_height :
+        root.active_panel == 4 && panel_presets.hovered_tooltip_text != "" ? panel_presets.hovered_height :
+        root.active_panel == 5 && panel_analyses.hovered_tooltip_text != "" ? panel_analyses.hovered_height :
         preview_hovered_tooltip != "" ? preview_card.hovered_height : 0px;
 
     title: root.file_loaded ? ("Correlation " + root.app_version + " - " + root.file_status_text) : ("Correlation " + root.app_version);
@@ -555,8 +584,8 @@ export component AppWindow inherits Window {
                     Rectangle {
                         vertical-stretch: 1;
 
-                        // Content: OperationsCard when panel == 0
-                        operations_card := OperationsCard {
+                        // Panel 0: Operations
+                        panel_operations := OperationsPanelCard {
                             x: 0;
                             y: 0;
                             width: 100%;
@@ -584,6 +613,9 @@ export component AppWindow inherits Window {
                             reset_trajectory_options => {
                                 root.reset_trajectory_options();
                             }
+                            reset_material_type => {
+                                root.reset_material_type();
+                            }
 
                             analysis_running: root.analysis_running;
                             has_validation_errors: root.has_validation_errors;
@@ -595,65 +627,118 @@ export component AppWindow inherits Window {
                             }
                         }
 
-                        // Content: OptionsCard configured to active_panel when panel > 0
-                        options_card := OptionsCard {
+                        // Panel 1: Common Options
+                        panel_common := CommonOptionsPanelCard {
                             x: 0;
                             y: 0;
                             width: 100%;
                             height: 100%;
-                            visible: root.active_panel > 0;
-                            active_tab: root.active_panel == 1 ? 0 :
-                                root.active_panel == 2 ? 1 :
-                                root.active_panel == 3 ? 2 :
-                                root.active_panel == 5 ? 3 : 0;
-                            show_tab_bar: false;
-                            show_only_presets: root.active_panel == 4;
-
-                            enabled: root.file_loaded;
+                            visible: root.active_panel == 1;
                             file_loaded: root.file_loaded;
-                            calculator_groups: root.calculator_groups;
-                            total_calculator_count: root.total_calculator_count;
-                            toggle_calculator(id, enabled) => {
-                                root.toggle_calculator(id, enabled);
-                            }
                             has_radial_active: root.has_radial_active;
                             has_angular_active: root.has_angular_active;
-                            has_scattering_active: root.has_scattering_active;
-                            has_rings_active: root.has_rings_active;
-                            bond_cutoffs <=> root.bond_cutoffs;
-                            atom_counts: root.atom_counts;
-                            bond_cutoffs_reset_trigger: root.bond_cutoffs_reset_trigger;
-                            reset_bond_cutoffs => {
-                                root.reset_bond_cutoffs();
-                            }
-                            reset_rdf_options => {
-                                root.reset_rdf_options();
-                            }
-                            reset_angle_options => {
-                                root.reset_angle_options();
-                            }
-                            reset_sq_options => {
-                                root.reset_sq_options();
-                            }
-                            reset_rings_options => {
-                                root.reset_rings_options();
-                            }
-                            reset_smoothing_options => {
-                                root.reset_smoothing_options();
-                            }
-                            reset_advanced_options => {
-                                root.reset_advanced_options();
-                            }
-                            analysis_options <=> root.analysis_options;
-                            app_errors: root.app_errors;
-                            num_frames: root.num_frames;
-                            preset_items: root.preset_items;
-                            selected_preset <=> root.selected_preset;
 
                             diff_msd: root.diff_msd;
                             diff_vacf: root.diff_vacf;
                             relaxation_time: root.relaxation_time;
                             deborah_number: root.deborah_number;
+
+                            atom_counts: root.atom_counts;
+                            bond_cutoffs <=> root.bond_cutoffs;
+                            bond_cutoffs_reset_trigger: root.bond_cutoffs_reset_trigger;
+                            reset_bond_cutoffs => {
+                                root.reset_bond_cutoffs();
+                            }
+
+                            r_max <=> root.analysis_options.r_max;
+                            r_bin_width <=> root.analysis_options.r_bin_width;
+                            r_max_error: root.app_errors.r_max_error;
+                            r_bin_error: root.app_errors.r_bin_error;
+                            reset_rdf_options => {
+                                root.reset_rdf_options();
+                            }
+
+                            angle_bin_width <=> root.analysis_options.angle_bin_width;
+                            dihedral_bin_width <=> root.analysis_options.dihedral_bin_width;
+                            angle_bin_error: root.app_errors.angle_bin_error;
+                            dihedral_bin_error: root.app_errors.dihedral_bin_error;
+                            reset_angle_options => {
+                                root.reset_angle_options();
+                            }
+                        }
+
+                        // Panel 2: Advanced Options
+                        panel_advanced := AdvancedOptionsPanelCard {
+                            x: 0;
+                            y: 0;
+                            width: 100%;
+                            height: 100%;
+                            visible: root.active_panel == 2;
+                            file_loaded: root.file_loaded;
+                            has_scattering_active: root.has_scattering_active;
+                            has_rings_active: root.has_rings_active;
+
+                            q_max <=> root.analysis_options.q_max;
+                            q_bin_width <=> root.analysis_options.q_bin_width;
+                            r_int_max <=> root.analysis_options.r_int_max;
+                            q_max_error: root.app_errors.q_max_error;
+                            q_bin_error: root.app_errors.q_bin_error;
+                            r_int_max_error: root.app_errors.r_int_max_error;
+                            reset_sq_options => {
+                                root.reset_sq_options();
+                            }
+
+                            max_ring_size <=> root.analysis_options.max_ring_size;
+                            max_ring_error: root.app_errors.max_ring_error;
+                            reset_rings_options => {
+                                root.reset_rings_options();
+                            }
+
+                            smoothing_enabled <=> root.analysis_options.smoothing_enabled;
+                            smoothing_sigma <=> root.analysis_options.smoothing_sigma;
+                            smoothing_kernel <=> root.analysis_options.smoothing_kernel;
+                            smoothing_sigma_error: root.app_errors.smoothing_sigma_error;
+                            reset_smoothing_options => {
+                                root.reset_smoothing_options();
+                            }
+
+                            lef_cutoff <=> root.analysis_options.lef_cutoff;
+                            lef_sigma <=> root.analysis_options.lef_sigma;
+                            hyper_samples <=> root.analysis_options.hyper_samples;
+                            lef_cutoff_error: root.app_errors.lef_cutoff_error;
+                            lef_sigma_error: root.app_errors.lef_sigma_error;
+                            hyper_samples_error: root.app_errors.hyper_samples_error;
+                            reset_advanced_options => {
+                                root.reset_advanced_options();
+                            }
+                        }
+
+                        // Panel 3: Plot & Export
+                        panel_plot_export := PlotExportPanelCard {
+                            x: 0;
+                            y: 0;
+                            width: 100%;
+                            height: 100%;
+                            visible: root.active_panel == 3;
+                            enabled: root.file_loaded;
+
+                            comparison_curves: root.comparison_curves;
+                            show_difference: root.show_difference;
+                            pin_current_run => {
+                                root.pin_run();
+                            }
+                            import_comparison_file => {
+                                root.import_comparison_file();
+                            }
+                            remove_comparison_curve(id) => {
+                                root.remove_comparison_curve(id);
+                            }
+                            toggle_difference_plot(show) => {
+                                root.toggle_difference_plot(show);
+                            }
+                            clear_comparison_curves => {
+                                root.clear_comparison_curves();
+                            }
 
                             export_size_preset <=> root.export_size_preset;
                             export_palette <=> root.export_palette;
@@ -667,17 +752,53 @@ export component AppWindow inherits Window {
                             export_font_scale_error: root.export_font_scale_error;
                             export_line_width_error: root.export_line_width_error;
                             export_marker_size_error: root.export_marker_size_error;
+                            reset_export_settings => {
+                                root.reset_export_settings();
+                            }
+                        }
 
-                            comparison_curves: root.comparison_curves;
-                            show_difference: root.show_difference;
-                            pin_current_run => { root.pin_run(); }
-                            import_comparison_file => { root.import_comparison_file(); }
-                            remove_comparison_curve(id) => { root.remove_comparison_curve(id); }
-                            toggle_difference_plot(show) => { root.toggle_difference_plot(show); }
+                        // Panel 4: Presets
+                        panel_presets := PresetsPanelCard {
+                            x: 0;
+                            y: 0;
+                            width: 100%;
+                            height: 100%;
+                            visible: root.active_panel == 4;
+                            enabled: root.file_loaded;
 
-                            load_preset(idx) => { root.load_preset(idx); }
-                            save_preset(name) => { root.save_preset(name); }
-                            delete_preset(idx) => { root.delete_preset(idx); }
+                            preset_items: root.preset_items;
+                            selected_preset <=> root.selected_preset;
+                            load_preset(idx) => {
+                                root.load_preset(idx);
+                            }
+                            save_preset(name) => {
+                                root.save_preset(name);
+                            }
+                            delete_preset(idx) => {
+                                root.delete_preset(idx);
+                            }
+                            reset_presets => {
+                                root.reset_presets();
+                            }
+                        }
+
+                        // Panel 5: Analyses
+                        panel_analyses := AnalysesPanelCard {
+                            x: 0;
+                            y: 0;
+                            width: 100%;
+                            height: 100%;
+                            visible: root.active_panel == 5;
+                            file_loaded: root.file_loaded;
+
+                            calculator_groups: root.calculator_groups;
+                            total_calculator_count: root.total_calculator_count;
+                            toggle_calculator(id, enabled) => {
+                                root.toggle_calculator(id, enabled);
+                            }
+                            reset_analyses_selection => {
+                                root.reset_analyses_selection();
+                            }
                         }
                     }
                 }

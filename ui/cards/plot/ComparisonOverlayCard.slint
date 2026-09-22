@@ -1,0 +1,140 @@
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    OutlinedCard,
+    ExpandableHeader,
+    MaterialText,
+    FilledButton,
+    Horizontal,
+    Vertical,
+    Icons,
+    ScrollView,
+} from "../../material/material.slint";
+import { ComparisonCurveData } from "../../Types.slint";
+
+// ============================================================================
+// ComparisonOverlayCard Component
+// ============================================================================
+export component ComparisonOverlayCard inherits OutlinedCard {
+    in-out property <bool> expanded: true;
+    in property <bool> enabled: true;
+    in property <[ComparisonCurveData]> comparison_curves: [];
+    in property <bool> show_difference: false;
+
+    callback import_comparison_file();
+    callback remove_comparison_curve(int);
+    callback toggle_difference_plot(bool);
+    callback pin_current_run();
+    callback clear_comparison_curves();
+
+    Vertical {
+        padding: MaterialStyleMetrics.spacing_8;
+        spacing: MaterialStyleMetrics.spacing_8;
+
+        ExpandableHeader {
+            text: "Analysis Comparison Overlay";
+            expanded <=> root.expanded;
+            show_reset: true;
+            reset_enabled: root.comparison_curves.length > 0;
+            reset => { root.clear_comparison_curves(); }
+        }
+
+        Vertical {
+            height: root.expanded ? self.preferred-height : 0px;
+            visible: self.height > 0px;
+            opacity: root.expanded ? 1.0 : 0.0;
+            padding: 0;
+            spacing: MaterialStyleMetrics.spacing_8;
+            animate height, opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+
+            FilledButton {
+                height: MaterialStyleMetrics.size_40;
+                text: "Pin Current Run";
+                icon: Icons.pin;
+                clicked => { root.pin_current_run(); }
+            }
+
+            FilledButton {
+                height: MaterialStyleMetrics.size_40;
+                text: "Import File...";
+                icon: Icons.edit;
+                clicked => { root.import_comparison_file(); }
+            }
+
+            // Difference Plot Toggle
+            TouchArea {
+                height: 32px;
+                clicked => { root.toggle_difference_plot(!root.show_difference); }
+
+                HorizontalLayout {
+                    spacing: MaterialStyleMetrics.spacing_8;
+                    alignment: start;
+
+                    Rectangle {
+                        width: 18px;
+                        height: 18px;
+                        border-radius: 4px;
+                        background: root.show_difference ? MaterialPalette.primary : MaterialPalette.surface_container_high;
+                        border-width: 1px;
+                        border-color: MaterialPalette.outline;
+                    }
+
+                    MaterialText {
+                        text: "Show Overlaid Absolute Difference (Y_diff = Y_ref - Y_target)";
+                        style: MaterialTypography.body_medium;
+                        color: MaterialPalette.on_surface;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+
+            // Curve Items Table
+            if root.comparison_curves.length > 0: ScrollView {
+                content-height: root.comparison_curves.length * 36px;
+                max-height: 200px;
+
+                VerticalLayout {
+                    spacing: 4px;
+                    for curve in root.comparison_curves: Rectangle {
+                        height: 32px;
+                        background: MaterialPalette.surface_container_low;
+                        border-radius: MaterialStyleMetrics.border_radius_2;
+
+                        HorizontalLayout {
+                            padding-left: 8px;
+                            padding-right: 8px;
+                            spacing: 8px;
+                            alignment: center;
+
+                            Rectangle {
+                                width: 14px;
+                                height: 14px;
+                                border-radius: 7px;
+                                background: curve.color_hex;
+                            }
+
+                            MaterialText {
+                                horizontal-stretch: 1;
+                                text: curve.label;
+                                style: MaterialTypography.body_medium;
+                                color: MaterialPalette.on_surface;
+                                overflow: elide;
+                            }
+
+                            FilledButton {
+                                width: 60px;
+                                height: 26px;
+                                text: "Remove";
+                                clicked => { root.remove_comparison_curve(curve.id); }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

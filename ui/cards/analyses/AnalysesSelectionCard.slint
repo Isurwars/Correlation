@@ -1,0 +1,114 @@
+import {
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialPalette,
+    OutlinedCard,
+    ExpandableHeader,
+    CheckBoxRow,
+    MaterialText,
+    Vertical,
+    Horizontal,
+} from "../../material/material.slint";
+import { CalculatorGroup } from "../../Types.slint";
+
+export component AnalysesSelectionCard inherits OutlinedCard {
+    in-out property <bool> expanded: true;
+    in property <bool> file_loaded;
+    in property <[CalculatorGroup]> calculator_groups: [];
+    in property <int> total_calculator_count: 0;
+    callback toggle_calculator(string, bool);
+    callback reset();
+
+    out property <string> hovered_calculator_description: "";
+    out property <length> hovered_x: bg_touch_area.has-hover ? bg_touch_area.absolute-position.x + bg_touch_area.mouse-x : 0px;
+    out property <length> hovered_y: bg_touch_area.has-hover ? bg_touch_area.absolute-position.y + bg_touch_area.mouse-y : 0px;
+    out property <length> hovered_width: 0px;
+    out property <length> hovered_height: 0px;
+
+    property <bool> is_bg_hovered: bg_touch_area.has-hover;
+    changed is_bg_hovered => {
+        if (!root.is_bg_hovered) {
+            root.hovered_calculator_description = "";
+        }
+    }
+
+    Vertical {
+        padding: MaterialStyleMetrics.spacing_8;
+        spacing: MaterialStyleMetrics.spacing_8;
+
+        ExpandableHeader {
+            text: "Analyses Selection";
+            expanded <=> root.expanded;
+            show_reset: true;
+            reset_enabled: root.file_loaded;
+            reset => { root.reset(); }
+        }
+
+        Vertical {
+            height: root.expanded ? self.preferred-height : 0px;
+            visible: self.height > 0px;
+            opacity: root.expanded ? 1.0 : 0.0;
+            padding: 0;
+            spacing: MaterialStyleMetrics.spacing_8;
+            animate height, opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+
+            bg_touch_area := TouchArea {
+                width: 100%;
+
+                Vertical {
+                    width: 100%;
+                    padding: 0;
+                    spacing: MaterialStyleMetrics.spacing_4;
+                    alignment: start;
+
+                    for group[gi] in root.calculator_groups: Vertical {
+                        property <bool> group_expanded: group.name == "Radial" || gi == 0;
+                        spacing: MaterialStyleMetrics.spacing_2;
+
+                        if gi > 0: Rectangle {
+                            height: 1px;
+                            background: MaterialPalette.outline_variant;
+                        }
+
+                        ExpandableHeader {
+                            text: group.name;
+                            expanded <=> group_expanded;
+                            height: 32px;
+                        }
+
+                        if group_expanded: Vertical {
+                            spacing: MaterialStyleMetrics.spacing_2;
+                            padding-left: MaterialStyleMetrics.spacing_4;
+
+                            for calc[ci] in group.calculators: Horizontal {
+                                height: 28px;
+                                padding-left: MaterialStyleMetrics.spacing_2;
+
+                                CheckBoxRow {
+                                    enabled: root.file_loaded;
+                                    check_state_bool: calc.enabled;
+                                    text: calc.name;
+                                    horizontal-stretch: 1;
+
+                                    property <bool> _hover: self.has-hover;
+                                    changed _hover => {
+                                        if (self.has-hover) {
+                                            root.hovered_calculator_description = calc.description;
+                                        }
+                                    }
+
+                                    checked_state_changed(s) => {
+                                        root.toggle_calculator(calc.id, s);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

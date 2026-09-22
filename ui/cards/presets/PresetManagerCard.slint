@@ -6,7 +6,7 @@
 import {
     MaterialStyleMetrics,
     MaterialPalette,
-    FilledCard,
+    OutlinedCard,
     ExpandableHeader,
     TextField,
     Vertical,
@@ -15,9 +15,9 @@ import {
     MenuItem,
     FilledButton,
     Icons,
-} from "../material/material.slint";
+} from "../../material/material.slint";
 
-export component PresetManagerCard inherits FilledCard {
+export component PresetManagerCard inherits OutlinedCard {
     in-out property <bool> expanded: false;
     in property <bool> enabled: true;
 
@@ -27,6 +27,7 @@ export component PresetManagerCard inherits FilledCard {
     callback load_preset(int);
     callback save_preset(string); // name
     callback delete_preset(int);
+    callback reset();
 
     property <string> save_name: "";
 
@@ -42,7 +43,7 @@ export component PresetManagerCard inherits FilledCard {
         load_btn_area.has-hover ? load_btn_area.absolute-position.x + load_btn_area.mouse-x :
         delete_btn_area.has-hover ? delete_btn_area.absolute-position.x + delete_btn_area.mouse-x :
         save_input_area.has-hover ? save_input_area.absolute-position.x + save_input_area.mouse-x :
-        save_btn_area.has-hover ? save_btn_area.absolute-position.x + save_btn_area.mouse-x : 0px;
+        save_btn_area.has-hover ? save_btn_area.absolute-position.y + save_btn_area.mouse-y : 0px;
     out property <length> hovered_y:
         preset_dropdown_area.has-hover ? preset_dropdown_area.absolute-position.y + preset_dropdown_area.mouse-y :
         load_btn_area.has-hover ? load_btn_area.absolute-position.y + load_btn_area.mouse-y :
@@ -52,24 +53,28 @@ export component PresetManagerCard inherits FilledCard {
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
 
-
     Vertical {
+        padding: MaterialStyleMetrics.spacing_8;
+        spacing: MaterialStyleMetrics.spacing_8;
+
         ExpandableHeader {
             text: "Parameter Presets";
             expanded <=> root.expanded;
+            show_reset: true;
+            reset_enabled: root.enabled && root.selected_preset >= 0;
+            reset => { root.reset(); }
         }
 
         Vertical {
             height: root.expanded ? self.preferred-height : 0px;
             visible: self.height > 0px;
             opacity: root.expanded ? 1.0 : 0.0;
+            padding: 0;
+            spacing: MaterialStyleMetrics.spacing_8;
             animate height, opacity {
                 duration: 250ms;
                 easing: ease-in-out;
             }
-
-            padding: MaterialStyleMetrics.spacing_8;
-            spacing: MaterialStyleMetrics.spacing_12;
 
             // Load and Delete
             VerticalLayout {

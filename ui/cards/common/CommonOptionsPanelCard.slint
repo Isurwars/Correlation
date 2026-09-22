@@ -1,0 +1,128 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialStyleMetrics,
+    MaterialPalette,
+    ScrollView,
+    Vertical,
+} from "../../material/material.slint";
+import { AtomCount, BondCutoff } from "../../Types.slint";
+import { DynamicPropertiesCard } from "../dynamic/DynamicPropertiesCard.slint";
+import { BondCutoffsCard } from "BondCutoffsCard.slint";
+import { RDFOptionsCard } from "RDFOptionsCard.slint";
+import { BondAngleOptionsCard } from "BondAngleOptionsCard.slint";
+
+// ============================================================================
+// CommonOptionsPanelCard Component (Panel 1)
+// ============================================================================
+export component CommonOptionsPanelCard inherits Rectangle {
+    in property <bool> file_loaded: false;
+    in property <bool> has_radial_active: true;
+    in property <bool> has_angular_active: true;
+
+    // Dynamic Properties
+    in property <string> diff_msd: "";
+    in property <string> diff_vacf: "";
+    in property <string> relaxation_time: "";
+    in property <string> deborah_number: "";
+
+    // Bond Cutoffs
+    in property <[AtomCount]> atom_counts: [];
+    in-out property <[BondCutoff]> bond_cutoffs: [];
+    in property <int> bond_cutoffs_reset_trigger: 0;
+    callback reset_bond_cutoffs();
+
+    // RDF Options
+    in-out property <string> r_max;
+    in-out property <string> r_bin_width;
+    in property <string> r_max_error: "";
+    in property <string> r_bin_error: "";
+    callback reset_rdf_options();
+
+    // Angle Options
+    in-out property <string> angle_bin_width;
+    in-out property <string> dihedral_bin_width;
+    in property <string> angle_bin_error: "";
+    in property <string> dihedral_bin_error: "";
+    callback reset_angle_options();
+
+    out property <string> hovered_tooltip_text:
+        rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_tooltip_text :
+        angle_card.hovered_tooltip_text != "" ? angle_card.hovered_tooltip_text : "";
+
+    out property <length> hovered_x:
+        rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_x :
+        angle_card.hovered_tooltip_text != "" ? angle_card.hovered_x : 0px;
+
+    out property <length> hovered_y:
+        rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_y :
+        angle_card.hovered_tooltip_text != "" ? angle_card.hovered_y : 0px;
+
+    out property <length> hovered_width:
+        rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_width :
+        angle_card.hovered_tooltip_text != "" ? angle_card.hovered_width : 0px;
+
+    out property <length> hovered_height:
+        rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_height :
+        angle_card.hovered_tooltip_text != "" ? angle_card.hovered_height : 0px;
+
+    ScrollView {
+        width: 100%;
+        height: 100%;
+
+        Vertical {
+            padding: 0;
+            spacing: MaterialStyleMetrics.spacing_8;
+
+            // Calculated Dynamic Properties (visible when present)
+            dynamic_properties := DynamicPropertiesCard {
+                diff_msd: root.diff_msd;
+                diff_vacf: root.diff_vacf;
+                relaxation_time: root.relaxation_time;
+                deborah_number: root.deborah_number;
+            }
+
+            // Bond Cutoffs Card
+            bond_cutoffs_card := BondCutoffsCard {
+                file_loaded: root.file_loaded;
+                bond_cutoffs <=> root.bond_cutoffs;
+                atom_counts: root.atom_counts;
+                bond_cutoffs_reset_trigger: root.bond_cutoffs_reset_trigger;
+                reset_bond_cutoffs => {
+                    root.reset_bond_cutoffs();
+                }
+            }
+
+            // RDF Options Card
+            rdf_card := RDFOptionsCard {
+                file_loaded: root.file_loaded;
+                r_max <=> root.r_max;
+                r_bin_width <=> root.r_bin_width;
+                r_max_error: root.r_max_error;
+                r_bin_error: root.r_bin_error;
+                reset => { root.reset_rdf_options(); }
+                visible: root.has_radial_active;
+                height: root.has_radial_active ? self.preferred-height : 0px;
+                opacity: root.has_radial_active ? 1.0 : 0.0;
+                animate opacity { duration: 150ms; }
+            }
+
+            // Plane Angle Options Card
+            angle_card := BondAngleOptionsCard {
+                file_loaded: root.file_loaded;
+                angle_bin_width <=> root.angle_bin_width;
+                dihedral_bin_width <=> root.dihedral_bin_width;
+                angle_bin_error: root.angle_bin_error;
+                dihedral_bin_error: root.dihedral_bin_error;
+                reset => { root.reset_angle_options(); }
+                visible: root.has_angular_active;
+                height: root.has_angular_active ? self.preferred-height : 0px;
+                opacity: root.has_angular_active ? 1.0 : 0.0;
+                animate opacity { duration: 150ms; }
+            }
+        }
+    }
+}

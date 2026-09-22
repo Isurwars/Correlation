@@ -241,7 +241,7 @@ TEST_F(AppControllerTests, ResetsBondCutoffsToDefaultsWhenInvoked) {
   }
   backend.load_file(file_path);
 
-  correlation::app::AppController controller(*window, backend);
+  const correlation::app::AppController controller(*window, backend);
 
   // Set modified/custom cutoffs
   auto cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
@@ -260,9 +260,14 @@ TEST_F(AppControllerTests, ResetsBondCutoffsToDefaultsWhenInvoked) {
   auto restored = window->get_bond_cutoffs();
   ASSERT_EQ(restored->row_count(), 3);
   for (size_t i = 0; i < restored->row_count(); ++i) {
-    auto item = restored->row_data(i).value();
-    std::string el1 = item.element1.data();
-    std::string el2 = item.element2.data();
+    const auto maybe_item = restored->row_data(i);
+    ASSERT_TRUE(maybe_item.has_value());
+    if (!maybe_item.has_value()) {
+      continue;
+    }
+    const auto &item = *maybe_item;
+    const std::string el1 = item.element1.data();
+    const std::string el2 = item.element2.data();
     if (el1 == "Pd" && el2 == "Pd") {
       EXPECT_EQ(item.min_distance.data(), std::string("1.44"));
       EXPECT_EQ(item.max_distance.data(), std::string("3.12"));
@@ -273,7 +278,7 @@ TEST_F(AppControllerTests, ResetsBondCutoffsToDefaultsWhenInvoked) {
 TEST_F(AppControllerTests, ResetsOptionBlocksToDefaultsWhenInvoked) {
   auto window = AppWindow::create();
   correlation::app::AppBackend backend;
-  correlation::app::AppController controller(*window, backend);
+  const correlation::app::AppController controller(*window, backend);
 
   // Set modified/custom values for all option blocks
   auto opts = window->get_analysis_options();
@@ -340,6 +345,48 @@ TEST_F(AppControllerTests, ResetsOptionBlocksToDefaultsWhenInvoked) {
   EXPECT_EQ(opts.time_step, "1.00");
   EXPECT_EQ(opts.min_frame, "1");
   EXPECT_EQ(opts.max_frame, "End");
+
+  // 8. Reset Export options
+  ExportConfig cfg;
+  cfg.size_preset = 3;
+  cfg.palette = 2;
+  cfg.font_scale = "2.5";
+  cfg.line_width = "5.0";
+  cfg.marker_size = "8.0";
+  cfg.show_legend = false;
+  cfg.show_grid = false;
+  cfg.show_markers = true;
+  cfg.fill_area = true;
+  window->set_export_config(cfg);
+  window->invoke_reset_export_settings();
+  auto restored_cfg = window->get_export_config();
+  EXPECT_EQ(restored_cfg.size_preset, 0);
+  EXPECT_EQ(restored_cfg.palette, 0);
+  EXPECT_EQ(restored_cfg.font_scale, "1.0");
+  EXPECT_EQ(restored_cfg.line_width, "3.0");
+  EXPECT_EQ(restored_cfg.marker_size, "3.5");
+  EXPECT_TRUE(restored_cfg.show_legend);
+  EXPECT_TRUE(restored_cfg.show_grid);
+  EXPECT_FALSE(restored_cfg.show_markers);
+  EXPECT_FALSE(restored_cfg.fill_area);
+
+  // 9. Reset Material Type
+  opts.material_type = 2;
+  window->set_analysis_options(opts);
+  window->invoke_reset_material_type();
+  EXPECT_EQ(window->get_analysis_options().material_type, 0);
+
+  // 10. Reset Analyses Selection
+  window->invoke_reset_analyses_selection();
+  EXPECT_GT(window->get_calculator_groups()->row_count(), 0);
+
+  // 11. Clear Comparison Curves
+  auto comp_curves = std::make_shared<slint::VectorModel<ComparisonCurveData>>();
+  comp_curves->push_back({.id = 1, .label = "Run 1"});
+  window->set_comparison_curves(comp_curves);
+  EXPECT_EQ(window->get_comparison_curves()->row_count(), 1);
+  window->invoke_clear_comparison_curves();
+  EXPECT_EQ(window->get_comparison_curves()->row_count(), 0);
 }
 
 TEST_F(AppControllerTests, UpdatesActiveGroupFlagsWhenCalculatorsToggled) {
@@ -364,7 +411,7 @@ TEST_F(AppControllerTests, HandlesCalculatorToggleSignal) {
   auto window = AppWindow::create();
   correlation::app::AppBackend backend;
 
-  correlation::app::AppController controller(*window, backend);
+  const correlation::app::AppController controller(*window, backend);
 
   // Trigger toggle calculator signal from the UI
   window->invoke_toggle_calculator("g(r), J(r), G(r)", false);
@@ -425,7 +472,7 @@ TEST_F(AppControllerTests, PopulatesTableAndDynamicProperties) {
 TEST_F(AppControllerTests, GuiLaunchAndEventLoopSmokeTest) {
   auto window = AppWindow::create();
   correlation::app::AppBackend backend;
-  correlation::app::AppController controller(*window, backend);
+  const correlation::app::AppController controller(*window, backend);
 
   slint::Timer quit_timer;
   quit_timer.start(slint::TimerMode::SingleShot, std::chrono::milliseconds(50),
@@ -437,7 +484,7 @@ TEST_F(AppControllerTests, GuiLaunchAndEventLoopSmokeTest) {
 TEST_F(AppControllerTests, MiniSideBarPanelNavigationAndCollapse) {
   auto window = AppWindow::create();
   correlation::app::AppBackend backend;
-  correlation::app::AppController controller(*window, backend);
+  const correlation::app::AppController controller(*window, backend);
 
   // Initial state defaults to panel 0 (Operations)
   EXPECT_EQ(window->get_active_panel(), 0);

@@ -120,6 +120,26 @@ public:
   void handleResetTrajectoryOptions();
 
   /**
+   * @brief Restores default publication export settings in the UI.
+   */
+  void handleResetExportSettings();
+
+  /**
+   * @brief Restores default calculator selections in the UI.
+   */
+  void handleResetAnalysesSelection();
+
+  /**
+   * @brief Restores default material type in the UI.
+   */
+  void handleResetMaterialType();
+
+  /**
+   * @brief Clears all comparison curves from the plot overlay.
+   */
+  void handleClearComparisonCurves();
+
+  /**
    * @brief Populates the UI calculator groups from CalculatorFactory.
    */
   void populateCalculatorGroups();

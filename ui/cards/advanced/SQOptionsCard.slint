@@ -1,13 +1,13 @@
 import {
     MaterialStyleMetrics,
     MaterialPalette,
-    FilledCard,
+    OutlinedCard,
     ExpandableHeader,
     TextField,
     Vertical,
-} from "../material/material.slint";
+} from "../../material/material.slint";
 
-export component SQOptionsCard inherits FilledCard {
+export component SQOptionsCard inherits OutlinedCard {
     in-out property <bool> expanded: true;
     in property <bool> file_loaded;
     in-out property <string> q_max;
@@ -32,8 +32,9 @@ export component SQOptionsCard inherits FilledCard {
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
 
-
     Vertical {
+        padding: MaterialStyleMetrics.spacing_8;
+        spacing: MaterialStyleMetrics.spacing_8;
 
         ExpandableHeader {
             text: "Structure Factor";
@@ -47,6 +48,8 @@ export component SQOptionsCard inherits FilledCard {
             height: root.expanded ? self.preferred-height : 0px;
             visible: self.height > 0px;
             opacity: root.expanded ? 1.0 : 0.0;
+            padding: 0;
+            spacing: MaterialStyleMetrics.spacing_8;
             animate height, opacity {
                 duration: 250ms;
                 easing: ease-in-out;
@@ -69,7 +72,7 @@ export component SQOptionsCard inherits FilledCard {
                 TextField {
                     enabled: root.file_loaded;
                     width: 100%;
-                    label: "S(Q) Bin Width (Å⁻¹)";
+                    label: "Q Bin Width (Å⁻¹)";
                     text <=> root.q_bin_width;
                     has_error: root.q_bin_error != "";
                     supporting_text: root.q_bin_error;
@@ -81,7 +84,7 @@ export component SQOptionsCard inherits FilledCard {
                 TextField {
                     enabled: root.file_loaded;
                     width: 100%;
-                    label: "Max r for the FFT (Å)";
+                    label: "Fourier Cutoff (Å)";
                     text <=> root.r_int_max;
                     has_error: root.r_int_max_error != "";
                     supporting_text: root.r_int_max_error;

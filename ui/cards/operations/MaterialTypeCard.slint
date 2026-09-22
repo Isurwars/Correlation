@@ -6,16 +6,17 @@
 import {
     MaterialStyleMetrics,
     MaterialPalette,
-    FilledCard,
+    OutlinedCard,
     ExpandableHeader,
     DropDownMenu,
     Vertical,
-} from "../material/material.slint";
+} from "../../material/material.slint";
 
-export component MaterialTypeCard inherits FilledCard {
+export component MaterialTypeCard inherits OutlinedCard {
     in-out property <bool> expanded: true;
     in property <bool> file_loaded;
     in-out property <int> material_type: 0; // 0: Amorphous, 1: Liquid, 2: Crystalline
+    callback reset();
 
     out property <string> hovered_tooltip_text:
         material_dropdown_area.has-hover ? "Select the material type to load recommended parameter defaults." : "";
@@ -27,11 +28,16 @@ export component MaterialTypeCard inherits FilledCard {
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
 
-
     Vertical {
+        padding: MaterialStyleMetrics.spacing_8;
+        spacing: MaterialStyleMetrics.spacing_8;
+
         ExpandableHeader {
             text: "Material Type";
             expanded <=> root.expanded;
+            show_reset: true;
+            reset_enabled: root.file_loaded;
+            reset => { root.reset(); }
         }
 
         Vertical {
@@ -43,8 +49,8 @@ export component MaterialTypeCard inherits FilledCard {
                 easing: ease-in-out;
             }
 
-            padding: MaterialStyleMetrics.spacing_8;
-            spacing: MaterialStyleMetrics.spacing_12;
+            padding: 0;
+            spacing: MaterialStyleMetrics.spacing_8;
 
             material_dropdown_area := TouchArea {
                 DropDownMenu {

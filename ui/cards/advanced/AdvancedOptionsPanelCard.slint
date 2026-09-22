@@ -1,0 +1,144 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialStyleMetrics,
+    MaterialPalette,
+    ScrollView,
+    Vertical,
+} from "../../material/material.slint";
+import { SQOptionsCard } from "SQOptionsCard.slint";
+import { RingsOptionsCard } from "RingsOptionsCard.slint";
+import { SmoothingOptionsCard } from "SmoothingOptionsCard.slint";
+import { AdvancedOptionsCard } from "AdvancedOptionsCard.slint";
+
+// ============================================================================
+// AdvancedOptionsPanelCard Component (Panel 2)
+// ============================================================================
+export component AdvancedOptionsPanelCard inherits Rectangle {
+    in property <bool> file_loaded: false;
+    in property <bool> has_scattering_active: true;
+    in property <bool> has_rings_active: true;
+
+    // SQ Options
+    in-out property <string> q_max;
+    in-out property <string> q_bin_width;
+    in-out property <string> r_int_max;
+    in property <string> q_max_error: "";
+    in property <string> q_bin_error: "";
+    in property <string> r_int_max_error: "";
+    callback reset_sq_options();
+
+    // Rings Options
+    in-out property <string> max_ring_size;
+    in property <string> max_ring_error: "";
+    callback reset_rings_options();
+
+    // Smoothing Options
+    in-out property <bool> smoothing_enabled;
+    in-out property <string> smoothing_sigma;
+    in-out property <int> smoothing_kernel;
+    in property <string> smoothing_sigma_error: "";
+    callback reset_smoothing_options();
+
+    // Advanced Options (LEF / Hyperuniformity)
+    in-out property <string> lef_cutoff;
+    in-out property <string> lef_sigma;
+    in-out property <string> hyper_samples;
+    in property <string> lef_cutoff_error: "";
+    in property <string> lef_sigma_error: "";
+    in property <string> hyper_samples_error: "";
+    callback reset_advanced_options();
+
+    out property <string> hovered_tooltip_text:
+        sq_card.hovered_tooltip_text != "" ? sq_card.hovered_tooltip_text :
+        rings_card.hovered_tooltip_text != "" ? rings_card.hovered_tooltip_text :
+        smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_tooltip_text :
+        advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_tooltip_text : "";
+
+    out property <length> hovered_x:
+        sq_card.hovered_tooltip_text != "" ? sq_card.hovered_x :
+        rings_card.hovered_tooltip_text != "" ? rings_card.hovered_x :
+        smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_x :
+        advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_x : 0px;
+
+    out property <length> hovered_y:
+        sq_card.hovered_tooltip_text != "" ? sq_card.hovered_y :
+        rings_card.hovered_tooltip_text != "" ? rings_card.hovered_y :
+        smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_y :
+        advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_y : 0px;
+
+    out property <length> hovered_width:
+        sq_card.hovered_tooltip_text != "" ? sq_card.hovered_width :
+        rings_card.hovered_tooltip_text != "" ? rings_card.hovered_width :
+        smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_width :
+        advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_width : 0px;
+
+    out property <length> hovered_height:
+        sq_card.hovered_tooltip_text != "" ? sq_card.hovered_height :
+        rings_card.hovered_tooltip_text != "" ? rings_card.hovered_height :
+        smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_height :
+        advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_height : 0px;
+
+    ScrollView {
+        width: 100%;
+        height: 100%;
+
+        Vertical {
+            padding: 0;
+            spacing: MaterialStyleMetrics.spacing_8;
+
+            // Structure Factor S(Q) Card
+            sq_card := SQOptionsCard {
+                file_loaded: root.file_loaded;
+                q_max <=> root.q_max;
+                q_bin_width <=> root.q_bin_width;
+                r_int_max <=> root.r_int_max;
+                q_max_error: root.q_max_error;
+                q_bin_error: root.q_bin_error;
+                r_int_max_error: root.r_int_max_error;
+                reset => { root.reset_sq_options(); }
+                visible: root.has_scattering_active;
+                height: root.has_scattering_active ? self.preferred-height : 0px;
+                opacity: root.has_scattering_active ? 1.0 : 0.0;
+                animate opacity { duration: 150ms; }
+            }
+
+            // Rings Card
+            rings_card := RingsOptionsCard {
+                file_loaded: root.file_loaded;
+                max_ring_size <=> root.max_ring_size;
+                max_ring_error: root.max_ring_error;
+                reset => { root.reset_rings_options(); }
+                visible: root.has_rings_active;
+                height: root.has_rings_active ? self.preferred-height : 0px;
+                opacity: root.has_rings_active ? 1.0 : 0.0;
+                animate opacity { duration: 150ms; }
+            }
+
+            // Smoothing Card
+            smoothing_card := SmoothingOptionsCard {
+                file_loaded: root.file_loaded;
+                smoothing_enabled <=> root.smoothing_enabled;
+                smoothing_sigma <=> root.smoothing_sigma;
+                smoothing_kernel <=> root.smoothing_kernel;
+                smoothing_sigma_error: root.smoothing_sigma_error;
+                reset => { root.reset_smoothing_options(); }
+            }
+
+            // Advanced Order Parameters Card
+            advanced_card := AdvancedOptionsCard {
+                file_loaded: root.file_loaded;
+                lef_cutoff <=> root.lef_cutoff;
+                lef_sigma <=> root.lef_sigma;
+                lef_cutoff_error: root.lef_cutoff_error;
+                lef_sigma_error: root.lef_sigma_error;
+                hyper_samples <=> root.hyper_samples;
+                hyper_samples_error: root.hyper_samples_error;
+                reset => { root.reset_advanced_options(); }
+            }
+        }
+    }
+}

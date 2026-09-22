@@ -1,0 +1,58 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialStyleMetrics,
+    MaterialPalette,
+    ScrollView,
+    Vertical,
+} from "../../material/material.slint";
+import { CalculatorGroup } from "../../Types.slint";
+import { AnalysesSelectionCard } from "AnalysesSelectionCard.slint";
+
+// ============================================================================
+// AnalysesPanelCard Component (Panel 5)
+// ============================================================================
+export component AnalysesPanelCard inherits Rectangle {
+    in property <bool> file_loaded: false;
+    in property <[CalculatorGroup]> calculator_groups: [];
+    in property <int> total_calculator_count: 0;
+
+    callback toggle_calculator(string, bool);
+    callback reset_analyses_selection();
+
+    out property <string> hovered_tooltip_text:
+        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_calculator_description : "";
+
+    out property <length> hovered_x:
+        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_x : 0px;
+
+    out property <length> hovered_y:
+        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_y : 0px;
+
+    out property <length> hovered_width:
+        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_width : 0px;
+
+    out property <length> hovered_height:
+        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_height : 0px;
+
+    ScrollView {
+        width: 100%;
+        height: 100%;
+
+        Vertical {
+            padding: 0;
+            spacing: MaterialStyleMetrics.spacing_8;
+
+            analyses_card := AnalysesSelectionCard {
+                file_loaded: root.file_loaded;
+                calculator_groups: root.calculator_groups;
+                total_calculator_count: root.total_calculator_count;
+                toggle_calculator(id, val) => { root.toggle_calculator(id, val); }
+                reset => { root.reset_analyses_selection(); }
+            }
+        }
+    }
+}

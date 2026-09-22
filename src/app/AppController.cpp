@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#if defined(_WIN32)
+#ifdef _WIN32
 #define NOMINMAX
 #include <Windows.h>
 #endif
@@ -164,6 +164,11 @@ AppController::AppController(::AppWindow &window, AppBackend &backend)
   window_.on_reset_smoothing_options([this]() { handleResetSmoothingOptions(); });
   window_.on_reset_advanced_options([this]() { handleResetAdvancedOptions(); });
   window_.on_reset_trajectory_options([this]() { handleResetTrajectoryOptions(); });
+  window_.on_reset_export_settings([this]() { handleResetExportSettings(); });
+  window_.on_reset_analyses_selection([this]() { handleResetAnalysesSelection(); });
+  window_.on_reset_material_type([this]() { handleResetMaterialType(); });
+  window_.on_reset_presets([this]() { window_.set_selected_preset(-1); });
+  window_.on_clear_comparison_curves([this]() { handleClearComparisonCurves(); });
 
   // Handle open external URL (e.g. download update from browser)
   window_.on_open_url([](const slint::SharedString &url) {
@@ -190,8 +195,8 @@ void AppController::loadSettings() {
   window_.set_last_col_width(settings_.left_col_width);
   window_.set_middle_col_width(settings_.middle_col_width);
   if (settings_.window_width > 0 && settings_.window_height > 0) {
-    window_.window().set_size(slint::PhysicalSize(
-        {.width = settings_.window_width, .height = settings_.window_height}));
+    window_.window().set_size(
+        slint::PhysicalSize({.width = settings_.window_width, .height = settings_.window_height}));
   }
 }
 
@@ -453,7 +458,7 @@ ProgramOptions AppController::handleOptionsfromUI() {
   }
 
   try {
-    std::string max_s = window_.get_analysis_options().max_frame.data();
+    const std::string max_s = window_.get_analysis_options().max_frame.data();
     const std::string max_s_lower = to_lower(max_s);
 
     if (max_s_lower == "end" || max_s.empty()) {
@@ -526,7 +531,8 @@ correlation::analysis::BondCutoffMatrix AppController::getBondCutoffs() {
   correlation::analysis::BondCutoffMatrix cutoffs(
       num_elements, std::vector<correlation::analysis::BondCutoffRange>(
                         num_elements, correlation::analysis::BondCutoffRange{
-                                          static_cast<real_t>(0.0), static_cast<real_t>(0.0)}));
+                                          .min_sq = static_cast<real_t>(0.0),
+                                          .max_sq = static_cast<real_t>(0.0)}));
 
   for (size_t k = 0; k < slint_cutoffs->row_count(); ++k) {
     auto maybe_item = slint_cutoffs->row_data(k);
@@ -709,6 +715,45 @@ void AppController::handleResetTrajectoryOptions() {
   }
   window_.set_analysis_options(opts);
   static_cast<void>(input_validator_->validateInputs());
+}
+
+void AppController::handleResetExportSettings() {
+  ExportConfig cfg;
+  cfg.size_preset = 0;
+  cfg.palette = 0;
+  cfg.font_scale = "1.0";
+  cfg.line_width = "3.0";
+  cfg.marker_size = "3.5";
+  cfg.show_legend = true;
+  cfg.show_grid = true;
+  cfg.show_markers = false;
+  cfg.fill_area = false;
+  window_.set_export_config(cfg);
+  if (plot_controller_) {
+    plot_controller_->requestPlotUpdate(window_.get_selected_plot_index(), true);
+  }
+}
+
+void AppController::handleResetAnalysesSelection() {
+  populateCalculatorGroups();
+  updateActiveGroupFlags();
+}
+
+void AppController::handleResetMaterialType() {
+  auto opts = window_.get_analysis_options();
+  opts.material_type = 0;
+  window_.set_analysis_options(opts);
+  if (preset_controller_) {
+    preset_controller_->handleMaterialTypeChanged(0);
+  }
+}
+
+void AppController::handleClearComparisonCurves() {
+  auto empty_model = std::make_shared<slint::VectorModel<ComparisonCurveData>>();
+  window_.set_comparison_curves(empty_model);
+  if (plot_controller_) {
+    plot_controller_->handleClearPinnedRuns();
+  }
 }
 
 } // namespace correlation::app

@@ -2,7 +2,7 @@ import {
     MaterialStyleMetrics,
     MaterialTypography,
     MaterialPalette,
-    FilledCard,
+    OutlinedCard,
     ExpandableHeader,
     TextField,
     MaterialText,
@@ -10,10 +10,10 @@ import {
     Horizontal,
     Matrix,
     TabItem,
-} from "../material/material.slint";
-import { BondCutoff, AtomCount } from "../Types.slint";
+} from "../../material/material.slint";
+import { BondCutoff, AtomCount } from "../../Types.slint";
 
-export component BondCutoffsCard inherits FilledCard {
+export component BondCutoffsCard inherits OutlinedCard {
     in-out property <bool> expanded: true;
     in property <bool> file_loaded;
     in property <[AtomCount]> atom_counts;
@@ -53,6 +53,8 @@ export component BondCutoffsCard inherits FilledCard {
     }
 
     Vertical {
+        padding: MaterialStyleMetrics.spacing_8;
+        spacing: MaterialStyleMetrics.spacing_8;
 
         ExpandableHeader {
             text: "Bond Cutoffs";
@@ -66,9 +68,7 @@ export component BondCutoffsCard inherits FilledCard {
             height: root.expanded ? self.preferred-height : 0px;
             visible: self.height > 0px;
             opacity: root.expanded ? 1.0 : 0.0;
-            padding_left: MaterialStyleMetrics.spacing_8;
-            padding_right: MaterialStyleMetrics.spacing_8;
-            padding_bottom: MaterialStyleMetrics.spacing_8;
+            padding: 0;
             spacing: MaterialStyleMetrics.spacing_8;
             animate height, opacity {
                 duration: 250ms;
@@ -186,4 +186,3 @@ export component BondCutoffsCard inherits FilledCard {
         }
     }
 }
-
