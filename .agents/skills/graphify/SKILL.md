@@ -9,10 +9,13 @@ This skill maintains the structural dependency graph (`graphify-out/`) for the C
 
 ## 1. Trigger Conditions
 
-Run graph maintenance whenever any of the following files are added, modified, or deleted:
-- C++ source files (`*.cpp`, `*.hpp`, `*.h`)
-- Slint UI components (`*.slint`)
-- Build scripts (`CMakeLists.txt`, `*.cmake`)
+### Mandatory Execution Triggers:
+1. **Post-Implementation Plan Execution (Non-Negotiable):**
+   - Whenever an implementation plan is completed and code modifications have passed verification/tests, `graphify update .` MUST be executed immediately before concluding the task.
+2. **File Additions, Modifications, or Deletions:**
+   - C++ source files (`*.cpp`, `*.hpp`, `*.h`)
+   - Slint UI components (`*.slint`)
+   - Build scripts (`CMakeLists.txt`, `*.cmake`)
 
 ## 2. Execution Protocol
 

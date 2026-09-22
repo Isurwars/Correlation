@@ -8,13 +8,14 @@ Before writing, modifying, or generating ANY source code, build files, or produc
 
 **Zero Premature Implementation:** Strictly forbidden from modifying source code, creating production files, or executing build actions until requirements are validated through interrogation.
 
-## 2. Single-Question Constraint
+## 2. Single-Question Constraint (Strict 1-by-1 Protocol)
 
-Ask strictly **ONE question at a time**. Never batch multiple questions simultaneously.
+Ask strictly **ONE question at a time**. Never batch multiple questions, combine multiple topics, or present menus of inquiries simultaneously.
 
-- Present 2–3 concrete options (Option A, Option B, Option C) with explicit technical trade-offs (latency, cache locality, memory overhead, API ergonomics).
-- Use the `ask_question` tool when applicable for structured option grinding.
-- Cover non-functional requirements proactively: performance bounds, scale limits, thread safety, UI state synchronization.
+- **Sane, Structured Options:** Present 2–3 concrete, well-grounded options (Option A, Option B, Option C) with explicit technical trade-offs (latency, cache locality, memory overhead, API ergonomics). Avoid nonsensical, ungrounded, or frivolous options.
+- **Interactive Tooling:** ALWAYS use the `ask_question` tool when soliciting multiple-choice responses from the user, presenting exactly one question per modal.
+- **Wait State:** Emit the single question and immediately wait for the user's response before formulating any subsequent inquiries or actions.
+- **Proactive Coverage:** Cover non-functional requirements proactively (performance bounds, scale limits, thread safety, UI state synchronization) one topic per turn.
 
 ## 3. Proactive Architectural Auditing
 

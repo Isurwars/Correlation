@@ -19,8 +19,7 @@
    - Treat context tokens as a strict budget. Open *only* the single, minimal set of files identified by the dependency graph required to fulfill the prompt.
    - Do not pull in header files or upstream dependencies unless a compilation or type definition error explicitly demands it.
 
-## 2. Execution Workflow
-
 - **Step 1 (Map):** Consult `graphify-out/GRAPH_REPORT.md` to map the target node or cluster.
 - **Step 2 (Filter):** Select the exact file path(s) tied to the relevant node.
 - **Step 3 (Execute):** Perform the required analysis or edit on those specific target files only.
+- **Step 4 (Synchronize):** Immediately upon completing an implementation plan and validating changes, execute `graphify update .` to keep graph artifacts synchronized with source edits.
