@@ -22,7 +22,7 @@ namespace correlation::readers {
 
 namespace {
 // Automatic registration
-const bool registered = ReaderFactory::registerTypeSafe<ChgnetReader>("CHGNet Reader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<ChgnetReader>("CHGNet Reader");
 
 struct ChgnetParser {
   const char *data = nullptr;

@@ -25,7 +25,7 @@ namespace correlation::readers {
 namespace {
 
 // Automatic registration
-const bool registered = ReaderFactory::registerTypeSafe<OutmolReader>("OutmolReader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<OutmolReader>("OutmolReader");
 
 struct OutmolParser {
   std::ifstream *myfile = nullptr;
@@ -93,8 +93,9 @@ struct OutmolParser {
   }
 
   void parseCoordinates() {
-    correlation::core::Cell tempCell({h_one[0], h_one[1], h_one[2]}, {h_two[0], h_two[1], h_two[2]},
-                                     {h_three[0], h_three[1], h_three[2]});
+    correlation::core::Cell temp_cell({h_one[0], h_one[1], h_one[2]},
+                                      {h_two[0], h_two[1], h_two[2]},
+                                      {h_three[0], h_three[1], h_three[2]});
     std::string line;
     while (std::getline(*myfile, line)) {
       if (line.contains("$end")) {
@@ -107,21 +108,22 @@ struct OutmolParser {
       real_t pos_y = 0.0;
       real_t pos_z = 0.0;
       if (str_stream >> symbol >> pos_x >> pos_y >> pos_z) {
-        tempCell.addAtom(symbol, {pos_x * correlation::math::bohr_to_angstrom,
-                                  pos_y * correlation::math::bohr_to_angstrom,
-                                  pos_z * correlation::math::bohr_to_angstrom});
+        temp_cell.addAtom(symbol, {pos_x * correlation::math::bohr_to_angstrom,
+                                   pos_y * correlation::math::bohr_to_angstrom,
+                                   pos_z * correlation::math::bohr_to_angstrom});
       }
     }
-    if (!tempCell.isEmpty()) {
-      frames.push_back(std::move(tempCell));
+    if (!temp_cell.isEmpty()) {
+      frames.push_back(std::move(temp_cell));
     }
   }
 
   void parseAtomicCoordinates() {
     std::string line;
     std::getline(*myfile, line); // Next line is header: df x y z ...
-    correlation::core::Cell tempCell({h_one[0], h_one[1], h_one[2]}, {h_two[0], h_two[1], h_two[2]},
-                                     {h_three[0], h_three[1], h_three[2]});
+    correlation::core::Cell temp_cell({h_one[0], h_one[1], h_one[2]},
+                                      {h_two[0], h_two[1], h_two[2]},
+                                      {h_three[0], h_three[1], h_three[2]});
     while (std::getline(*myfile, line)) {
       // Look for the "df" prefix
       if (!line.contains("df")) {
@@ -136,14 +138,14 @@ struct OutmolParser {
       real_t pos_z = 0.0;
       if (str_stream >> data_block >> symbol >> pos_x >> pos_y >> pos_z) {
         if (data_block == "df") {
-          tempCell.addAtom(symbol, {pos_x * correlation::math::bohr_to_angstrom,
-                                    pos_y * correlation::math::bohr_to_angstrom,
-                                    pos_z * correlation::math::bohr_to_angstrom});
+          temp_cell.addAtom(symbol, {pos_x * correlation::math::bohr_to_angstrom,
+                                     pos_y * correlation::math::bohr_to_angstrom,
+                                     pos_z * correlation::math::bohr_to_angstrom});
         }
       }
     }
-    if (!tempCell.isEmpty()) {
-      frames.push_back(std::move(tempCell));
+    if (!temp_cell.isEmpty()) {
+      frames.push_back(std::move(temp_cell));
     }
   }
 

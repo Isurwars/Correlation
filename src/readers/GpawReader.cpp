@@ -23,7 +23,7 @@ namespace correlation::readers {
 
 namespace {
 
-const bool registered = ReaderFactory::registerTypeSafe<GpawReader>("GpawReader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<GpawReader>("GpawReader");
 
 struct GpawTrajectoryParser {
   std::ifstream *file{nullptr};

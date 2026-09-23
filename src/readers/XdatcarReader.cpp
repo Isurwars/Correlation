@@ -23,7 +23,7 @@ namespace correlation::readers {
 namespace {
 
 // Automatic registration
-const bool registered = ReaderFactory::registerTypeSafe<XdatcarReader>("XdatcarReader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<XdatcarReader>("XdatcarReader");
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -45,8 +45,8 @@ inline size_t skipLineEnding(const char *data, size_t total, size_t pos) {
   return pos;
 }
 
-inline std::string extractLine(const char *data, size_t pos, size_t lineEnd) {
-  return std::string(data + pos, lineEnd - pos);
+inline std::string extractLine(const char *data, size_t pos, size_t line_end) {
+  return {data + pos, line_end - pos};
 }
 
 /**
@@ -65,14 +65,14 @@ struct XdatcarParser {
   const char *data = nullptr;
   size_t total_size = 0;
   size_t offset = 0;
-  size_t lineEnd = 0;
+  size_t line_end = 0;
 
   XdatcarParser(const char *data, size_t total_size) : data(data), total_size(total_size) {}
 
   std::string nextLine() {
-    lineEnd = findLineEnd(data, total_size, offset);
-    std::string line = extractLine(data, offset, lineEnd);
-    offset = skipLineEnding(data, total_size, lineEnd);
+    line_end = findLineEnd(data, total_size, offset);
+    std::string line = extractLine(data, offset, line_end);
+    offset = skipLineEnding(data, total_size, line_end);
     return line;
   }
 
@@ -84,7 +84,7 @@ struct XdatcarParser {
 
     // Line 2: Scaling factor
     std::string line = nextLine();
-    real_t const scaling_factor = static_cast<real_t>(std::stod(line));
+    const auto scaling_factor = static_cast<real_t>(std::stod(line));
 
     // Lines 3-5: Lattice vectors
     for (int i = 0; i < 3; ++i) {
@@ -205,8 +205,8 @@ private:
       total_atoms_sum += count;
     }
 
-    constexpr int kMaxAtomCount = 100'000'000;
-    if (total_atoms_sum > kMaxAtomCount) {
+    constexpr int K_MAX_ATOM_COUNT = 100'000'000;
+    if (total_atoms_sum > K_MAX_ATOM_COUNT) {
       throw std::runtime_error("XDATCAR: total atom count exceeds limit: " +
                                std::to_string(total_atoms_sum));
     }
@@ -234,7 +234,7 @@ correlation::core::Cell parseXdatcarFrame(const std::shared_ptr<XdatcarHeader> &
   size_t offset = 0;
   size_t line_end = 0;
 
-  auto nextLn = [&]() -> std::string {
+  auto next_ln = [&]() -> std::string {
     line_end = findLineEnd(frame_data, frame_size, offset);
     std::string line = extractLine(frame_data, offset, line_end);
     offset = skipLineEnding(frame_data, frame_size, line_end);
@@ -242,7 +242,7 @@ correlation::core::Cell parseXdatcarFrame(const std::shared_ptr<XdatcarHeader> &
   };
 
   // Skip the "Direct configuration= N" line
-  nextLn();
+  next_ln();
 
   const auto &lattice_vecs = header->lattice;
   correlation::core::Cell cell(
@@ -254,7 +254,7 @@ correlation::core::Cell parseXdatcarFrame(const std::shared_ptr<XdatcarHeader> &
     if (offset >= frame_size) {
       break;
     }
-    std::string const line = nextLn();
+    std::string const line = next_ln();
     std::istringstream iss(line);
     real_t pos_x = 0.0;
     real_t pos_y = 0.0;

@@ -21,7 +21,7 @@
 namespace correlation::writers {
 
 // Automatic registration
-const bool registered = WriterFactory::registerTypeSafe<CSVWriter>("CSVWriter");
+const bool REGISTERED = WriterFactory::registerTypeSafe<CSVWriter>("CSVWriter");
 
 void CSVWriter::writeAllCSVs(const std::string &base_path,
                              const correlation::analysis::DistributionFunctions &dists,

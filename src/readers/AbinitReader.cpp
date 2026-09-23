@@ -9,7 +9,6 @@
 #include "readers/AbinitReader.hpp"
 #include "math/LinearAlgebra.hpp"
 #include "math/Precision.hpp"
-#include "physics/PhysicalData.hpp"
 #include "readers/ReaderFactory.hpp"
 
 #include <array>
@@ -24,9 +23,9 @@ namespace correlation::readers {
 
 namespace {
 
-const bool registered = ReaderFactory::registerTypeSafe<AbinitReader>("AbinitReader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<AbinitReader>("AbinitReader");
 
-constexpr real_t bohr_to_angstrom = static_cast<real_t>(0.52917721092);
+constexpr real_t BOHR_TO_ANGSTROM = static_cast<real_t>(0.52917721092);
 
 struct AbinitTrajectoryParser {
   std::ifstream *file{nullptr};
@@ -65,12 +64,12 @@ struct AbinitTrajectoryParser {
 
   void updateCellLattice() {
     correlation::math::Matrix3<real_t> const lattice(
-        {rprim[0][0] * acell[0] * bohr_to_angstrom, rprim[0][1] * acell[0] * bohr_to_angstrom,
-         rprim[0][2] * acell[0] * bohr_to_angstrom},
-        {rprim[1][0] * acell[1] * bohr_to_angstrom, rprim[1][1] * acell[1] * bohr_to_angstrom,
-         rprim[1][2] * acell[1] * bohr_to_angstrom},
-        {rprim[2][0] * acell[2] * bohr_to_angstrom, rprim[2][1] * acell[2] * bohr_to_angstrom,
-         rprim[2][2] * acell[2] * bohr_to_angstrom});
+        {rprim[0][0] * acell[0] * BOHR_TO_ANGSTROM, rprim[0][1] * acell[0] * BOHR_TO_ANGSTROM,
+         rprim[0][2] * acell[0] * BOHR_TO_ANGSTROM},
+        {rprim[1][0] * acell[1] * BOHR_TO_ANGSTROM, rprim[1][1] * acell[1] * BOHR_TO_ANGSTROM,
+         rprim[1][2] * acell[1] * BOHR_TO_ANGSTROM},
+        {rprim[2][0] * acell[2] * BOHR_TO_ANGSTROM, rprim[2][1] * acell[2] * BOHR_TO_ANGSTROM,
+         rprim[2][2] * acell[2] * BOHR_TO_ANGSTROM});
     current_cell.updateLattice(lattice);
     has_lattice = true;
   }
@@ -124,9 +123,9 @@ struct AbinitTrajectoryParser {
     }
 
     if (parsing_xcart) {
-      pos_x *= bohr_to_angstrom;
-      pos_y *= bohr_to_angstrom;
-      pos_z *= bohr_to_angstrom;
+      pos_x *= BOHR_TO_ANGSTROM;
+      pos_y *= BOHR_TO_ANGSTROM;
+      pos_z *= BOHR_TO_ANGSTROM;
     }
 
     current_cell.addAtom(symbol, correlation::math::Vector3<real_t>(pos_x, pos_y, pos_z));

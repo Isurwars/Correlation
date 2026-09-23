@@ -22,7 +22,7 @@ namespace correlation::writers {
 namespace {
 
 // Automatic registration
-const bool registered = WriterFactory::registerTypeSafe<HDF5Writer>("HDF5Writer");
+const bool REGISTERED = WriterFactory::registerTypeSafe<HDF5Writer>("HDF5Writer");
 
 void writeHistogramToGroup(HighFive::File &file, const std::string &name,
                            const correlation::analysis::Histogram &hist,
@@ -124,8 +124,7 @@ void writeHistogramToGroup(HighFive::File &file, const std::string &name,
 void HDF5Writer::writeHDF(const std::string &filename,
                           const correlation::analysis::DistributionFunctions &dists) {
   try {
-    HighFive::File file(filename, HighFive::File::ReadWrite | HighFive::File::Create |
-                                      HighFive::File::Truncate);
+    HighFive::File file(filename, HighFive::File::Overwrite);
 
     for (const auto &[name, hist] : dists.getAllHistograms()) {
       if (hist.partials.empty() || hist.bins.empty()) {

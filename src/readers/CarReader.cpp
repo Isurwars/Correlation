@@ -21,7 +21,7 @@
 namespace correlation::readers {
 
 // Automatic registration
-const bool registered = ReaderFactory::registerTypeSafe<CarReader>("CarReader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<CarReader>("CarReader");
 
 correlation::core::Cell
 CarReader::readStructure(const std::string &filename,
@@ -42,7 +42,7 @@ correlation::core::Cell CarReader::read(const std::string &file_name) {
                              ").");
   }
 
-  correlation::core::Cell tempCell;
+  correlation::core::Cell temp_cell;
   std::string line;
 
   while (std::getline(myfile, line)) {
@@ -61,14 +61,14 @@ correlation::core::Cell CarReader::read(const std::string &file_name) {
       // The token "PBC" is consumed, so we read the 6 numbers that follow.
       if (line_stream >> lattice_params[0] >> lattice_params[1] >> lattice_params[2] >>
           lattice_params[3] >> lattice_params[4] >> lattice_params[5]) {
-        tempCell.setLatticeParameters(lattice_params);
+        temp_cell.setLatticeParameters(lattice_params);
       }
       continue;
     }
 
     if (first_token == "PBC=OFF") {
       const std::array<real_t, 6> lattice_params = {100.0, 100.0, 100.0, 90.0, 90.0, 90.0};
-      tempCell.setLatticeParameters(lattice_params);
+      temp_cell.setLatticeParameters(lattice_params);
       continue;
     }
 
@@ -89,11 +89,11 @@ correlation::core::Cell CarReader::read(const std::string &file_name) {
     // Read exactly 8 columns to get the element.
     if (line_stream >> dummy_token_1 >> coord_x >> coord_y >> coord_z >> dummy_token_5 >>
         dummy_token_6 >> dummy_token_7 >> element) {
-      tempCell.addAtom(element, {coord_x, coord_y, coord_z});
+      temp_cell.addAtom(element, {coord_x, coord_y, coord_z});
     }
   }
 
-  return tempCell;
+  return temp_cell;
 }
 
 } // namespace correlation::readers

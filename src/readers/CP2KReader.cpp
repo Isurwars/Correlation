@@ -9,7 +9,7 @@
 #include "readers/CP2KReader.hpp"
 
 #include "readers/ReaderFactory.hpp"
-#include <math.h>
+#include <cmath>
 
 #include <cctype>
 #include <fstream>
@@ -19,7 +19,7 @@
 namespace correlation::readers {
 
 // Automatic registration
-const bool registered = ReaderFactory::registerTypeSafe<CP2KReader>("CP2KReader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<CP2KReader>("CP2KReader");
 
 correlation::core::Cell
 CP2KReader::readStructure(const std::string &filename,

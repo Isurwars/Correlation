@@ -25,14 +25,14 @@ namespace correlation::readers {
 namespace {
 
 // Automatic registration
-const bool registered = ReaderFactory::registerTypeSafe<VaspReader>("VaspReader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<VaspReader>("VaspReader");
 
 struct VaspParser {
   std::ifstream *file = nullptr;
 
   explicit VaspParser(std::ifstream &file) : file(&file) {}
 
-  correlation::core::Cell parse() const {
+  [[nodiscard]] correlation::core::Cell parse() const {
     std::string line;
 
     // Line 1: Comment
@@ -44,7 +44,7 @@ struct VaspParser {
     if (!std::getline(*file, line)) {
       throw std::runtime_error("POSCAR: unexpected end of file (scaling factor).");
     }
-    real_t const scaling_factor = static_cast<real_t>(std::stod(line));
+    const auto scaling_factor = static_cast<real_t>(std::stod(line));
 
     // Lines 3-5: Lattice vectors
     auto lattice = parseLatticeVectors();
@@ -70,7 +70,7 @@ struct VaspParser {
   }
 
 private:
-  std::array<std::array<real_t, 3>, 3> parseLatticeVectors() const {
+  [[nodiscard]] std::array<std::array<real_t, 3>, 3> parseLatticeVectors() const {
     std::array<std::array<real_t, 3>, 3> lattice_vectors = {};
     std::string line;
     for (int i = 0; i < 3; ++i) {
@@ -116,7 +116,8 @@ private:
     }
   }
 
-  std::pair<std::vector<std::string>, std::vector<int>> parseSpeciesAndCounts() const {
+  [[nodiscard]] std::pair<std::vector<std::string>, std::vector<int>>
+  parseSpeciesAndCounts() const {
     std::string line;
     if (!std::getline(*file, line)) {
       throw std::runtime_error("POSCAR: unexpected end of file (species/counts).");
@@ -178,8 +179,8 @@ private:
       }
       total_atoms_sum += count;
     }
-    constexpr int k_max_atom_count = 100'000'000;
-    if (total_atoms_sum > k_max_atom_count) {
+    constexpr int K_MAX_ATOM_COUNT = 100'000'000;
+    if (total_atoms_sum > K_MAX_ATOM_COUNT) {
       throw std::runtime_error("POSCAR: total atom count exceeds limit: " +
                                std::to_string(total_atoms_sum));
     }
@@ -283,7 +284,7 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
                              ").");
   }
 
-  VaspParser parser(myfile);
+  const VaspParser parser(myfile);
   return parser.parse();
 }
 

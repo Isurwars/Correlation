@@ -18,7 +18,7 @@ namespace correlation::readers {
 namespace {
 
 // Automatic registration
-const bool registered = ReaderFactory::registerTypeSafe<PdbReader>("PdbReader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<PdbReader>("PdbReader");
 
 struct PdbCrystParams {
   real_t a = 0.0;
@@ -104,13 +104,11 @@ PdbReader::readStructure(const std::string &filename,
 
   correlation::core::Cell cell;
   std::string line;
-  bool has_box = false;
 
   while (std::getline(file, line)) {
     if (line.starts_with("CRYST1")) {
       if (auto params = parsePdbCrystLine(line)) {
         cell.setLatticeParameters({params->a, params->b, params->c, 90.0, 90.0, 90.0});
-        has_box = true;
       }
     } else if (line.starts_with("ATOM") || line.starts_with("HETATM")) {
       if (auto atom = parsePdbAtomLine(line)) {
@@ -138,7 +136,6 @@ PdbReader::readTrajectory(const std::string &filename,
   std::vector<correlation::core::Cell> frames;
   std::string line;
   correlation::core::Cell current_cell;
-  bool in_model = false;
   bool has_box = false;
   real_t param_a = 0.0;
   real_t param_b = 0.0;
@@ -157,7 +154,6 @@ PdbReader::readTrajectory(const std::string &filename,
       if (has_box) {
         current_cell.setLatticeParameters({param_a, param_b, param_c, 90.0, 90.0, 90.0});
       }
-      in_model = true;
     } else if (line.starts_with("ATOM") || line.starts_with("HETATM")) {
       if (auto atom = parsePdbAtomLine(line)) {
         current_cell.addAtom(atom->symbol,
@@ -166,7 +162,6 @@ PdbReader::readTrajectory(const std::string &filename,
     } else if (line.starts_with("ENDMDL")) {
       frames.push_back(std::move(current_cell));
       current_cell = correlation::core::Cell();
-      in_model = false;
     }
   }
 

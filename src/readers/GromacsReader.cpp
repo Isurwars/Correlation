@@ -22,7 +22,7 @@ namespace correlation::readers {
 
 namespace {
 // Automatic registration
-const bool registered = ReaderFactory::registerTypeSafe<GromacsReader>("GromacsReader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<GromacsReader>("GromacsReader");
 
 // ---------------------------------------------------------------------------
 // Helper: find end of line
@@ -51,7 +51,7 @@ inline size_t skipLineEnding(const char *data, size_t total, size_t pos) {
 // Helper: extract a line as std::string from [pos, lineEnd)
 // ---------------------------------------------------------------------------
 inline std::string extractLine(const char *data, size_t pos, size_t line_end) {
-  return std::string(data + pos, line_end - pos);
+  return {data + pos, line_end - pos};
 }
 
 size_t skipBlankLines(const char *data, size_t total_size, size_t offset) {
@@ -155,8 +155,8 @@ correlation::core::Cell GromacsReader::parseGroFrame(const char *data, size_t si
     throw std::runtime_error("Invalid GROMACS file: non-positive atom count: " +
                              std::to_string(num_atoms));
   }
-  constexpr int k_max_atom_count = 100'000'000;
-  if (num_atoms > k_max_atom_count) {
+  constexpr int K_MAX_ATOM_COUNT = 100'000'000;
+  if (num_atoms > K_MAX_ATOM_COUNT) {
     throw std::runtime_error("Invalid GROMACS file: atom count exceeds limit: " +
                              std::to_string(num_atoms));
   }

@@ -19,7 +19,7 @@ namespace correlation::readers {
 namespace {
 
 // Automatic registration
-const bool registered = ReaderFactory::registerTypeSafe<LammpsDumpReader>("LammpsDumpReader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<LammpsDumpReader>("LammpsDumpReader");
 
 // ---------------------------------------------------------------------------
 // Helper: advance past the current line ending (\r\n or \n)
@@ -47,8 +47,8 @@ inline size_t findLineEnd(const char *data, size_t total, size_t pos) {
 // ---------------------------------------------------------------------------
 // Helper: extract a line as std::string from [pos, lineEnd)
 // ---------------------------------------------------------------------------
-inline std::string extractLine(const char *data, size_t pos, size_t lineEnd) {
-  return std::string(data + pos, lineEnd - pos);
+inline std::string extractLine(const char *data, size_t pos, size_t line_end) {
+  return {data + pos, line_end - pos};
 }
 
 // Struct to encapsulate parsing a single LAMMPS dump frame.
@@ -56,18 +56,18 @@ struct LammpsFrameParser {
   const char *data = nullptr;
   size_t size = 0;
   size_t offset = 0;
-  size_t lineEnd = 0;
+  size_t line_end = 0;
 
   std::string nextLine() {
-    lineEnd = findLineEnd(data, size, offset);
-    std::string line = extractLine(data, offset, lineEnd);
-    offset = skipLineEnding(data, size, lineEnd);
+    line_end = findLineEnd(data, size, offset);
+    const std::string line = extractLine(data, offset, line_end);
+    offset = skipLineEnding(data, size, line_end);
     return line;
   }
 
   int parseAtomCount() {
     nextLine(); // "ITEM: NUMBER OF ATOMS"
-    std::string line = nextLine();
+    const std::string line = nextLine();
     int num_atoms = 0;
     try {
       num_atoms = std::stoi(line);
@@ -82,7 +82,7 @@ struct LammpsFrameParser {
   }
 
   correlation::core::Cell parseBoxBounds() {
-    std::string line = nextLine(); // "ITEM: BOX BOUNDS ..."
+    const std::string line = nextLine(); // "ITEM: BOX BOUNDS ..."
     const bool triclinic = (line.contains("xy"));
 
     real_t xlo = 0.0;
@@ -122,7 +122,7 @@ struct LammpsFrameParser {
   };
 
   ColumnLayout parseAtomsHeader() {
-    std::string line = nextLine(); // "ITEM: ATOMS ..."
+    const std::string line = nextLine(); // "ITEM: ATOMS ..."
 
     std::istringstream header_ss(line);
     std::string token;
@@ -134,28 +134,28 @@ struct LammpsFrameParser {
     }
 
     ColumnLayout layout;
-    for (int i = 0; i < static_cast<int>(col_names.size()); ++i) {
+    for (size_t i = 0; i < col_names.size(); ++i) {
       const std::string &col_name = col_names[i];
       if (col_name == "id") {
-        layout.col_id = i;
+        layout.col_id = static_cast<int>(i);
       } else if (col_name == "type") {
-        layout.col_type = i;
+        layout.col_type = static_cast<int>(i);
       } else if (col_name == "element") {
-        layout.col_element = i;
+        layout.col_element = static_cast<int>(i);
       } else if (col_name == "x") {
-        layout.col_x = i;
+        layout.col_x = static_cast<int>(i);
       } else if (col_name == "y") {
-        layout.col_y = i;
+        layout.col_y = static_cast<int>(i);
       } else if (col_name == "z") {
-        layout.col_z = i;
+        layout.col_z = static_cast<int>(i);
       } else if (col_name == "xs" || col_name == "xsu") {
-        layout.col_x = i;
+        layout.col_x = static_cast<int>(i);
         layout.scaled_coords = true;
       } else if (col_name == "ys" || col_name == "ysu") {
-        layout.col_y = i;
+        layout.col_y = static_cast<int>(i);
         layout.scaled_coords = true;
       } else if (col_name == "zs" || col_name == "zsu") {
-        layout.col_z = i;
+        layout.col_z = static_cast<int>(i);
         layout.scaled_coords = true;
       }
     }
@@ -174,7 +174,7 @@ struct LammpsFrameParser {
       if (offset >= size) {
         break;
       }
-      std::string line = nextLine();
+      const std::string line = nextLine();
 
       std::istringstream atom_ss(line);
       std::vector<std::string> fields;
@@ -228,14 +228,14 @@ struct LammpsFrameParser {
 // parseDumpFrame — parses a single frame from a memory region
 // ---------------------------------------------------------------------------
 correlation::core::Cell LammpsDumpReader::parseDumpFrame(const char *data, size_t size) {
-  LammpsFrameParser parser{data, size, 0, 0};
+  LammpsFrameParser parser{.data = data, .size = size, .offset = 0, .line_end = 0};
 
   // --- ITEM: TIMESTEP ---
   parser.nextLine(); // "ITEM: TIMESTEP"
   parser.nextLine(); // timestep value (ignored)
 
   // --- NUMBER OF ATOMS ---
-  int num_atoms = parser.parseAtomCount();
+  const int num_atoms = parser.parseAtomCount();
 
   // --- BOX BOUNDS & Build the Cell ---
   correlation::core::Cell frame = parser.parseBoxBounds();
@@ -287,14 +287,14 @@ correlation::core::Trajectory LammpsDumpReader::readTrajectory(
   size_t pos = 0;
   while (pos < total_size) {
     // Check if current position starts with the needle
-    bool at_line_start = (pos == 0) || (pos > 0 && (data[pos - 1] == '\n'));
+    const bool at_line_start = (pos == 0) || (pos > 0 && (data[pos - 1] == '\n'));
     if (at_line_start && pos + needle_len <= total_size &&
         std::memcmp(data + pos, needle, needle_len) == 0) {
       frame_offsets.push_back(pos);
 
       // Report progress.
       if (progress_callback && total_size > 0) {
-        float progress = static_cast<float>(pos) / static_cast<float>(total_size);
+        const float progress = static_cast<float>(pos) / static_cast<float>(total_size);
         progress_callback(progress, "Scanning LAMMPS dump frames...");
       }
     }
@@ -316,7 +316,7 @@ correlation::core::Trajectory LammpsDumpReader::readTrajectory(
 
   auto parser = [](const char *data, size_t size) { return parseDumpFrame(data, size); };
 
-  return correlation::core::Trajectory(mapped_file, std::move(frame_offsets), parser, 1.0);
+  return {mapped_file, std::move(frame_offsets), parser, 1.0};
 }
 
 } // namespace correlation::readers

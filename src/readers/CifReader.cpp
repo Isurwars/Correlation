@@ -11,7 +11,6 @@
 #include "core/Trajectory.hpp"
 #include "math/LinearAlgebra.hpp"
 #include "readers/ReaderFactory.hpp"
-#include <math.h>
 
 #include <cctype>
 #include <cmath>
@@ -26,7 +25,7 @@
 namespace correlation::readers {
 
 // Automatic registration
-const bool registered = ReaderFactory::registerTypeSafe<CifReader>("CifReader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<CifReader>("CifReader");
 
 correlation::core::Cell
 CifReader::readStructure(const std::string &filename,
@@ -363,16 +362,16 @@ generateSymmetryAtoms(const std::vector<AsymmetricAtom> &asymmetric_atoms,
       correlation::math::Vector3<real_t> frac_pos = sym_op.apply(atom.frac_pos);
 
       // Normalize fractional coordinates to be within [0-epsilon, 1-epsilon)
-      auto normalizeCoord = [](real_t val) -> real_t {
+      auto normalize_coord = [](real_t val) -> real_t {
         auto res = static_cast<real_t>(std::fmod(val, 1.0));
         if (res < 0) {
           res += 1.0;
         }
         return res;
       };
-      frac_pos.x() = normalizeCoord(frac_pos.x());
-      frac_pos.y() = normalizeCoord(frac_pos.y());
-      frac_pos.z() = normalizeCoord(frac_pos.z());
+      frac_pos.x() = normalize_coord(frac_pos.x());
+      frac_pos.y() = normalize_coord(frac_pos.y());
+      frac_pos.z() = normalize_coord(frac_pos.z());
 
       // Avoid adding duplicate atoms
       bool exists = false;
@@ -402,7 +401,7 @@ correlation::core::Cell CifReader::read(const std::string &file_name) {
     throw std::runtime_error("Could not open CIF file: " + file_name);
   }
 
-  correlation::core::Cell tempCell;
+  correlation::core::Cell temp_cell;
   std::map<std::string, std::string> cif_data;
   std::vector<AsymmetricAtom> asymmetric_atoms;
   std::vector<SymmetryOp> symmetry_ops;
@@ -411,18 +410,19 @@ correlation::core::Cell CifReader::read(const std::string &file_name) {
   parseCifFile(file, cif_data, asymmetric_atoms, symmetry_ops);
 
   // 2. Set Lattice Parameters
-  setupLatticeParameters(tempCell, cif_data);
+  setupLatticeParameters(temp_cell, cif_data);
 
   // 3. Generate all atoms by applying symmetry and filtering duplicates
-  std::vector<AsymmetricAtom> final_atoms = generateSymmetryAtoms(asymmetric_atoms, symmetry_ops);
+  const std::vector<AsymmetricAtom> final_atoms =
+      generateSymmetryAtoms(asymmetric_atoms, symmetry_ops);
 
   // 4. Convert to Cartesian coordinates and add to the cell
-  const auto &lattice = tempCell.latticeVectors();
+  const auto &lattice = temp_cell.latticeVectors();
   for (const auto &atom : final_atoms) {
-    tempCell.addAtom(atom.symbol, lattice * atom.frac_pos);
+    temp_cell.addAtom(atom.symbol, lattice * atom.frac_pos);
   }
 
-  return tempCell;
+  return temp_cell;
 }
 
 } // namespace correlation::readers

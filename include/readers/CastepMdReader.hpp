@@ -51,14 +51,14 @@ private:
                  const std::function<void(float, const std::string &)> &progress_callback);
 
   static void parseEnergyLine(const std::string &line, real_t &current_energy,
-                              correlation::core::Cell &tempCell, bool &cell_has_atoms,
+                              correlation::core::Cell &temp_cell, bool &cell_has_atoms,
                               std::vector<correlation::core::Cell> &frames);
 
   static void parseLatticeLine(std::ifstream &myfile, const std::string &line,
-                               correlation::core::Cell &tempCell);
+                               correlation::core::Cell &temp_cell);
 
   static void parseAtomLine(const std::string &line, real_t current_energy,
-                            correlation::core::Cell &tempCell, bool &cell_has_atoms);
+                            correlation::core::Cell &temp_cell, bool &cell_has_atoms);
 };
 
 } // namespace correlation::readers

@@ -23,7 +23,7 @@ namespace correlation::readers {
 
 namespace {
 // Automatic registration
-const bool registered = ReaderFactory::registerTypeSafe<GapReader>("GAP Reader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<GapReader>("GAP Reader");
 
 struct GapParser {
   const char *data = nullptr;

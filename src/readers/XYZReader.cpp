@@ -22,7 +22,7 @@ namespace correlation::readers {
 
 namespace {
 // Automatic registration
-const bool registered = ReaderFactory::registerTypeSafe<XYZReader>("XYZReader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<XYZReader>("XYZReader");
 
 struct XYZParser {
   const char *data = nullptr;
@@ -54,7 +54,7 @@ struct XYZParser {
     }
   }
 
-  size_t skipLineEnding(size_t pos) const {
+  [[nodiscard]] size_t skipLineEnding(size_t pos) const {
     if (pos < total_size && data[pos] == '\r') {
       pos++;
     }
@@ -216,9 +216,9 @@ correlation::core::Cell XYZReader::parseXYZFrame(const char *data, size_t size) 
 
     std::string const symbol = tokens[comm_data.species_col];
     try {
-      real_t const pos_x = static_cast<real_t>(std::stod(tokens[comm_data.pos_x_col]));
-      real_t const pos_y = static_cast<real_t>(std::stod(tokens[comm_data.pos_y_col]));
-      real_t const pos_z = static_cast<real_t>(std::stod(tokens[comm_data.pos_z_col]));
+      const auto pos_x = static_cast<real_t>(std::stod(tokens[comm_data.pos_x_col]));
+      const auto pos_y = static_cast<real_t>(std::stod(tokens[comm_data.pos_y_col]));
+      const auto pos_z = static_cast<real_t>(std::stod(tokens[comm_data.pos_z_col]));
       cell.addAtom(symbol, correlation::math::Vector3<real_t>(pos_x, pos_y, pos_z));
     } catch (const std::exception &) {
       throw std::runtime_error("Invalid XYZ file: invalid coordinates: " + line);

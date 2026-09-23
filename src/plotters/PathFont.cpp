@@ -31,7 +31,7 @@ void Roboto::add(GlyphParameters const &params) {
   };
 }
 
-void Roboto::add(const uint32_t code_point, const real_t left_bearing, const real_t right_bearing,
+void Roboto::add(uint32_t code_point, real_t left_bearing, real_t right_bearing,
                  std::vector<std::vector<std::pair<real_t, real_t>>> stroke_paths) {
   add(GlyphParameters{
       .code_point = code_point,
@@ -45,7 +45,7 @@ std::string Roboto::render(TextRenderParameters const &params) {
   const real_t scale = params.font_size; // Glyphs are normalized to EM square of size 1.0
   const std::vector<uint32_t> codes = utf8ToUnicode(params.text);
 
-  real_t total_width = static_cast<real_t>(0.0);
+  auto total_width = static_cast<real_t>(0.0);
   for (const uint32_t code_point : codes) {
     if (glyphs_.contains(code_point)) {
       total_width += (glyphs_.at(code_point).right - glyphs_.at(code_point).left) * scale;

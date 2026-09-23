@@ -23,7 +23,7 @@ namespace correlation::readers {
 
 namespace {
 
-const bool registered = ReaderFactory::registerTypeSafe<DftbReader>("DftbReader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<DftbReader>("DftbReader");
 
 struct GenHeaderData {
   size_t atom_count{0};
@@ -38,7 +38,7 @@ struct TempAtom {
   real_t z{0.0};
 };
 
-GenHeaderData parse_gen_header(std::istream &stream) {
+GenHeaderData parseGenHeader(std::istream &stream) {
   std::string header_line;
   if (!std::getline(stream, header_line)) {
     throw std::runtime_error("Empty DFTB+ GenFormat file.");
@@ -71,7 +71,7 @@ GenHeaderData parse_gen_header(std::istream &stream) {
   return {.atom_count = atom_count, .mode = mode, .element_types = std::move(element_types)};
 }
 
-std::vector<TempAtom> parse_raw_atoms(std::istream &stream, size_t atom_count) {
+std::vector<TempAtom> parseRawAtoms(std::istream &stream, size_t atom_count) {
   std::vector<TempAtom> raw_atoms;
   raw_atoms.reserve(atom_count);
 
@@ -94,7 +94,7 @@ std::vector<TempAtom> parse_raw_atoms(std::istream &stream, size_t atom_count) {
   return raw_atoms;
 }
 
-correlation::math::Matrix3<real_t> parse_lattice(std::istream &stream) {
+correlation::math::Matrix3<real_t> parseLattice(std::istream &stream) {
   std::string origin_line;
   std::getline(stream, origin_line); // origin (0 0 0)
 
@@ -111,9 +111,9 @@ correlation::math::Matrix3<real_t> parse_lattice(std::istream &stream) {
           correlation::math::Vector3<real_t>(lat_vec[2][0], lat_vec[2][1], lat_vec[2][2])};
 }
 
-void populate_cell_atoms(correlation::core::Cell &cell, const std::vector<TempAtom> &raw_atoms,
-                         const std::vector<std::string> &element_types, char mode,
-                         const correlation::math::Matrix3<real_t> &lattice) {
+void populateCellAtoms(correlation::core::Cell &cell, const std::vector<TempAtom> &raw_atoms,
+                       const std::vector<std::string> &element_types, char mode,
+                       const correlation::math::Matrix3<real_t> &lattice) {
   for (const auto &raw : raw_atoms) {
     size_t const elem_idx =
         (raw.type_idx > 0 && raw.type_idx <= element_types.size()) ? (raw.type_idx - 1) : 0;
@@ -128,18 +128,18 @@ void populate_cell_atoms(correlation::core::Cell &cell, const std::vector<TempAt
   }
 }
 
-correlation::core::Cell parse_gen_file(std::istream &stream) {
-  GenHeaderData const header = parse_gen_header(stream);
-  std::vector<TempAtom> const raw_atoms = parse_raw_atoms(stream, header.atom_count);
+correlation::core::Cell parseGenFile(std::istream &stream) {
+  GenHeaderData const header = parseGenHeader(stream);
+  std::vector<TempAtom> const raw_atoms = parseRawAtoms(stream, header.atom_count);
 
   correlation::core::Cell cell;
   if (header.mode == 'S' || header.mode == 'F') {
-    correlation::math::Matrix3<real_t> const lattice = parse_lattice(stream);
+    correlation::math::Matrix3<real_t> const lattice = parseLattice(stream);
     cell.updateLattice(lattice);
-    populate_cell_atoms(cell, raw_atoms, header.element_types, header.mode, lattice);
+    populateCellAtoms(cell, raw_atoms, header.element_types, header.mode, lattice);
   } else {
-    populate_cell_atoms(cell, raw_atoms, header.element_types, header.mode,
-                        correlation::math::Matrix3<real_t>());
+    populateCellAtoms(cell, raw_atoms, header.element_types, header.mode,
+                      correlation::math::Matrix3<real_t>());
   }
   return cell;
 }
@@ -158,7 +158,7 @@ DftbReader::readStructure(const std::string &filename,
     progress_callback(0.1F, "Parsing DFTB+ GenFormat structure...");
   }
 
-  correlation::core::Cell cell = parse_gen_file(file);
+  correlation::core::Cell cell = parseGenFile(file);
 
   if (cell.atomCount() == 0) {
     throw std::runtime_error("No atoms parsed from DFTB+ file: " + filename);

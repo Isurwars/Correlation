@@ -26,7 +26,7 @@ namespace correlation::writers {
 namespace {
 
 // Automatic registration
-const bool registered = WriterFactory::registerTypeSafe<ArrowWriter>("ArrowWriter");
+const bool REGISTERED = WriterFactory::registerTypeSafe<ArrowWriter>("ArrowWriter");
 
 std::vector<std::string> getSortedKeys(const std::map<std::string, std::vector<real_t>> &map) {
   std::vector<std::string> keys;
@@ -55,7 +55,8 @@ void writeTableToParquet(const std::string &filename, const std::shared_ptr<arro
   std::shared_ptr<arrow::io::FileOutputStream> outfile;
   PARQUET_ASSIGN_OR_THROW(outfile, arrow::io::FileOutputStream::Open(filename));
 
-  std::shared_ptr<parquet::WriterProperties> props = parquet::WriterProperties::Builder().build();
+  const std::shared_ptr<parquet::WriterProperties> props =
+      parquet::WriterProperties::Builder().build();
 
   PARQUET_THROW_NOT_OK(parquet::arrow::WriteTable(*table, arrow::default_memory_pool(), outfile,
                                                   1024LL * 1024LL, props));
@@ -74,7 +75,7 @@ void ArrowWriter::writeAllParquet(const std::string &base_path,
         continue;
       }
 
-      std::string filename = base_path + hist.file_suffix + ".parquet";
+      const std::string filename = base_path + hist.file_suffix + ".parquet";
 
       // For normalized PAD/DAD, inject raw companion partials.
       const correlation::analysis::Histogram *raw_companion = nullptr;
@@ -99,10 +100,10 @@ void ArrowWriter::writeHistogramToParquet(const std::string &filename,
   }
 
   // Extract metadata matching CSV header standard
-  std::string bin_unit = hist.x_unit.empty() ? "arbitrary units" : hist.x_unit;
-  std::string data_unit = hist.y_unit.empty() ? "arbitrary units" : hist.y_unit;
-  std::string description = hist.description.empty() ? "Data export" : hist.description;
-  std::string dim_label = hist.x_label.empty() ? "x" : hist.x_label;
+  const std::string bin_unit = hist.x_unit.empty() ? "arbitrary units" : hist.x_unit;
+  const std::string data_unit = hist.y_unit.empty() ? "arbitrary units" : hist.y_unit;
+  const std::string description = hist.description.empty() ? "Data export" : hist.description;
+  const std::string dim_label = hist.x_label.empty() ? "x" : hist.x_label;
 
   // Get sorted keys for raw companion, normalized, and smoothed data
   std::vector<std::string> companion_keys;
@@ -114,8 +115,8 @@ void ArrowWriter::writeHistogramToParquet(const std::string &filename,
     std::ranges::sort(companion_keys);
   }
 
-  std::vector<std::string> raw_keys = getSortedKeys(hist.partials);
-  std::vector<std::string> smoothed_keys = getSortedKeys(hist.smoothed_partials);
+  const std::vector<std::string> raw_keys = getSortedKeys(hist.partials);
+  const std::vector<std::string> smoothed_keys = getSortedKeys(hist.smoothed_partials);
 
   // Build Arrow Schema and Data Columns
   arrow::FieldVector fields;
@@ -144,7 +145,7 @@ void ArrowWriter::writeHistogramToParquet(const std::string &filename,
                                             {dim_label, bin_unit, data_unit, description});
   auto schema = arrow::schema(fields, metadata);
 
-  int64_t num_rows = static_cast<int64_t>(hist.bins.size());
+  const auto num_rows = static_cast<int64_t>(hist.bins.size());
   std::vector<std::shared_ptr<arrow::ChunkedArray>> chunked_arrays;
   chunked_arrays.reserve(arrays.size());
   for (const auto &arr : arrays) {

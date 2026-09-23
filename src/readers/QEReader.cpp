@@ -20,7 +20,7 @@ namespace correlation::readers {
 namespace {
 
 // Automatic registration
-const bool registered = ReaderFactory::registerTypeSafe<QEReader>("QEReader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<QEReader>("QEReader");
 
 struct QETrajectoryParser {
   std::ifstream *file = nullptr;

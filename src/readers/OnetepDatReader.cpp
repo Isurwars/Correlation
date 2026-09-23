@@ -25,15 +25,14 @@ namespace correlation::readers {
 namespace {
 
 // Automatic registration
-const bool registered = ReaderFactory::registerTypeSafe<OnetepDatReader>("OnetepDatReader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<OnetepDatReader>("OnetepDatReader");
 
 void toLower(std::string &str) {
-  std::transform(str.begin(), str.end(), str.begin(),
-                 [](unsigned char chr) { return std::tolower(chr); });
+  std::ranges::transform(str, str.begin(), [](unsigned char chr) { return std::tolower(chr); });
 }
 
 struct OnetepDatParser {
-  correlation::core::Cell tempCell;
+  correlation::core::Cell temp_cell;
   bool in_block = false;
   bool frac_flag = false;
   std::string current_block_type;
@@ -43,7 +42,7 @@ struct OnetepDatParser {
 
   static void cleanLine(std::string &line) {
     // Strip comments
-    size_t comment_pos = line.find_first_of("#!");
+    const size_t comment_pos = line.find_first_of("#!");
     if (comment_pos != std::string::npos) {
       line = line.substr(0, comment_pos);
     }
@@ -82,7 +81,7 @@ struct OnetepDatParser {
           v.at(lattice_row_count)[2]) {
         lattice_row_count++;
         if (lattice_row_count == 3) {
-          tempCell =
+          temp_cell =
               correlation::core::Cell({v[0][0], v[0][1], v[0][2]}, {v[1][0], v[1][1], v[1][2]},
                                       {v[2][0], v[2][1], v[2][2]});
         }
@@ -108,7 +107,7 @@ struct OnetepDatParser {
           lat.at(2 + 3 * lattice_row_count)) {
         lattice_row_count++;
         if (lattice_row_count == 2) {
-          tempCell.setLatticeParameters(lat);
+          temp_cell.setLatticeParameters(lat);
         }
       }
     }
@@ -132,7 +131,7 @@ struct OnetepDatParser {
     }
     std::stringstream str_stream(line);
     if (str_stream >> element >> pos_x >> pos_y >> pos_z) {
-      tempCell.addAtom(element, {pos_x, pos_y, pos_z});
+      temp_cell.addAtom(element, {pos_x, pos_y, pos_z});
     }
   }
 
@@ -144,15 +143,15 @@ struct OnetepDatParser {
     frac_flag = true;
     std::istringstream str_stream(line);
     if (str_stream >> element >> frac_x >> frac_y >> frac_z) {
-      const auto &lattice_vectors = tempCell.latticeVectors();
-      correlation::math::Vector3<real_t> pos = {
+      const auto &lattice_vectors = temp_cell.latticeVectors();
+      const correlation::math::Vector3<real_t> pos = {
           frac_x * lattice_vectors[0][0] + frac_y * lattice_vectors[1][0] +
               frac_z * lattice_vectors[2][0],
           frac_x * lattice_vectors[0][1] + frac_y * lattice_vectors[1][1] +
               frac_z * lattice_vectors[2][1],
           frac_x * lattice_vectors[0][2] + frac_y * lattice_vectors[1][2] +
               frac_z * lattice_vectors[2][2]};
-      tempCell.addAtom(element, pos);
+      temp_cell.addAtom(element, pos);
     }
   }
 
@@ -223,9 +222,9 @@ correlation::core::Cell OnetepDatReader::read(const std::string &file_name) {
   parser.parse(myfile);
 
   if (parser.frac_flag) {
-    parser.tempCell.wrapPositions();
+    parser.temp_cell.wrapPositions();
   }
-  return parser.tempCell;
+  return parser.temp_cell;
 }
 
 } // namespace correlation::readers

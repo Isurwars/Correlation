@@ -21,9 +21,9 @@ namespace correlation::readers {
 
 namespace {
 
-const bool registered = ReaderFactory::registerTypeSafe<OrcaReader>("OrcaReader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<OrcaReader>("OrcaReader");
 
-constexpr real_t bohr_to_angstrom = static_cast<real_t>(0.52917721092);
+constexpr real_t BOHR_TO_ANGSTROM = static_cast<real_t>(0.52917721092);
 
 struct OrcaTrajectoryParser {
   std::ifstream *file{nullptr};
@@ -84,9 +84,9 @@ struct OrcaTrajectoryParser {
     }
 
     if (is_bohr) {
-      pos_x *= bohr_to_angstrom;
-      pos_y *= bohr_to_angstrom;
-      pos_z *= bohr_to_angstrom;
+      pos_x *= BOHR_TO_ANGSTROM;
+      pos_y *= BOHR_TO_ANGSTROM;
+      pos_z *= BOHR_TO_ANGSTROM;
     }
 
     current_cell.addAtom(symbol, correlation::math::Vector3<real_t>(pos_x, pos_y, pos_z));

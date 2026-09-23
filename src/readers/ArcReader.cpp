@@ -22,7 +22,7 @@
 namespace correlation::readers {
 
 // Automatic registration
-const bool registered = ReaderFactory::registerTypeSafe<ArcReader>("ArcReader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<ArcReader>("ArcReader");
 
 correlation::core::Cell
 ArcReader::readStructure(const std::string & /*filename*/,
@@ -46,7 +46,7 @@ ArcReader::read(const std::string &file_name,
   }
 
   std::vector<correlation::core::Cell> frames;
-  correlation::core::Cell tempCell;
+  correlation::core::Cell temp_cell;
   std::string line;
 
   myfile.seekg(0, std::ios::end);
@@ -60,7 +60,7 @@ ArcReader::read(const std::string &file_name,
       updateProgress(myfile.tellg(), file_size, last_progress_pos, update_interval,
                      progress_callback);
     }
-    parseLine(line, tempCell, frames);
+    parseLine(line, temp_cell, frames);
   }
 
   return frames;
@@ -77,7 +77,7 @@ void ArcReader::updateProgress(
   }
 }
 
-void ArcReader::parseLine(const std::string &line, correlation::core::Cell &tempCell,
+void ArcReader::parseLine(const std::string &line, correlation::core::Cell &temp_cell,
                           std::vector<correlation::core::Cell> &frames) {
   // Ignore empty lines or comment lines
   if (line.empty() || line[0] == '!') {
@@ -89,9 +89,9 @@ void ArcReader::parseLine(const std::string &line, correlation::core::Cell &temp
   line_stream >> first_token;
 
   if (first_token == "end") {
-    if (!tempCell.isEmpty()) {
-      frames.push_back(std::move(tempCell));
-      tempCell = correlation::core::Cell(); // Reset for next frame
+    if (!temp_cell.isEmpty()) {
+      frames.push_back(std::move(temp_cell));
+      temp_cell = correlation::core::Cell(); // Reset for next frame
     }
     return;
   }
@@ -100,14 +100,14 @@ void ArcReader::parseLine(const std::string &line, correlation::core::Cell &temp
     std::array<real_t, 6> lattice_params{};
     if (line_stream >> lattice_params[0] >> lattice_params[1] >> lattice_params[2] >>
         lattice_params[3] >> lattice_params[4] >> lattice_params[5]) {
-      tempCell.setLatticeParameters(lattice_params);
+      temp_cell.setLatticeParameters(lattice_params);
     }
     return;
   }
 
   if (first_token == "PBC=OFF") {
     const std::array<real_t, 6> lattice_params = {100.0, 100.0, 100.0, 90.0, 90.0, 90.0};
-    tempCell.setLatticeParameters(lattice_params);
+    temp_cell.setLatticeParameters(lattice_params);
     return;
   }
 
@@ -121,7 +121,7 @@ void ArcReader::parseLine(const std::string &line, correlation::core::Cell &temp
     real_t energy = 0.0;
     std::istringstream parse_stream(first_token);
     if (parse_stream >> energy) {
-      tempCell.setEnergy(energy);
+      temp_cell.setEnergy(energy);
       return;
     }
   }
@@ -142,7 +142,7 @@ void ArcReader::parseLine(const std::string &line, correlation::core::Cell &temp
 
   if (line_stream >> dummy_token_1 >> coord_x >> coord_y >> coord_z >> dummy_token_5 >>
       dummy_token_6 >> dummy_token_7 >> element) {
-    tempCell.addAtom(element, {coord_x, coord_y, coord_z});
+    temp_cell.addAtom(element, {coord_x, coord_y, coord_z});
   }
 }
 

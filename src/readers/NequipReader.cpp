@@ -22,7 +22,7 @@ namespace correlation::readers {
 
 namespace {
 // Automatic registration
-const bool registered = ReaderFactory::registerTypeSafe<NequipReader>("NequIP Reader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<NequipReader>("NequIP Reader");
 
 struct NequipParser {
   const char *data = nullptr;

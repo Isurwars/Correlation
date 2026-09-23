@@ -22,7 +22,7 @@ namespace correlation::readers {
 
 namespace {
 // Automatic registration
-const bool registered = ReaderFactory::registerTypeSafe<MaceReader>("MACE Reader");
+const bool REGISTERED = ReaderFactory::registerTypeSafe<MaceReader>("MACE Reader");
 
 struct MaceParser {
   const char *data = nullptr;
