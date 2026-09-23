@@ -249,7 +249,7 @@ std::map<std::string, correlation::analysis::Histogram> RDFCalculator::calculate
   g_r.title = "g(r) — Radial Distribution Function";
   g_r.y_label = "g(r)";
   g_r.x_unit = "Å";
-  g_r.y_unit = "dimensionless";
+  g_r.y_unit = "Å⁻¹";
   g_r.description = "Radial Distribution Function";
   g_r.file_suffix = "_g";
 
@@ -257,7 +257,7 @@ std::map<std::string, correlation::analysis::Histogram> RDFCalculator::calculate
   G_r.title = "G(r) — Reduced Pair Distribution Function";
   G_r.y_label = "G(r)";
   G_r.x_unit = "Å";
-  G_r.y_unit = "Å⁻²";
+  G_r.y_unit = "Å⁻¹";
   G_r.description = "Radial Distribution Function";
   G_r.file_suffix = "_G_reduced";
 

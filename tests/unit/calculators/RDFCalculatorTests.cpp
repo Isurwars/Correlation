@@ -525,7 +525,14 @@ TEST_F(RDFCalculatorTests, VerifyRawAndUnweightedHistograms) {
 
   const auto &g_unw = dists.getHistogram("g_r_unweighted");
   EXPECT_EQ(g_unw.title, "g(r) — Unweighted Radial Distribution Function");
+  EXPECT_EQ(g_unw.y_unit, "Å⁻¹");
   ASSERT_TRUE(g_unw.partials.contains("Ar-Ar"));
+
+  const auto &g_r = dists.getHistogram("g_r");
+  EXPECT_EQ(g_r.y_unit, "Å⁻¹");
+
+  const auto &G_r = dists.getHistogram("G_r");
+  EXPECT_EQ(G_r.y_unit, "Å⁻¹");
 }
 
 TEST_F(RDFCalculatorTests, AddAccumulatesWithMismatchedPartialSizes) {

@@ -350,7 +350,7 @@ createInitialHistogram(const QBinning &binning, const std::vector<PartialInfo> &
   s_q_hist.title = "S(Q) — Structure Factor";
   s_q_hist.y_label = "S(Q)";
   s_q_hist.x_unit = "Å⁻¹";
-  s_q_hist.y_unit = "arbitrary units";
+  s_q_hist.y_unit = "Å";
   s_q_hist.description = "Structure Factor S(Q)";
   s_q_hist.file_suffix = "_S";
   for (size_t i = 0; i < binning.num_bins; ++i) {

@@ -292,7 +292,7 @@ void GPUSQCalculator::calculateFrame(correlation::analysis::DistributionFunction
   hist.title = "Structure Factor S(Q) (GPU)";
   hist.y_label = "S(Q)";
   hist.x_unit = "1/Å";
-  hist.y_unit = "dimensionless";
+  hist.y_unit = "Å";
   hist.description = "Static Structure Factor S(Q) computed on GPU";
   hist.file_suffix = "_sq_gpu";
   hist.bins.resize(num_q_bins);
