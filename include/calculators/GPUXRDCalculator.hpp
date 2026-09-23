@@ -34,8 +34,8 @@ namespace gpu {
  * @param[in] params Diffraction parameters (wavelength, theta bounds, resolution).
  * @return Histogram containing 2theta bins and diffraction intensity.
  */
-correlation::analysis::Histogram compute_xrd_gpu(const correlation::core::Cell &cell,
-                                                 const GPUXRDParams &params = {});
+[[nodiscard]] correlation::analysis::Histogram compute_xrd_gpu(const correlation::core::Cell &cell,
+                                                               const GPUXRDParams &params = {});
 
 } // namespace gpu
 
@@ -64,6 +64,11 @@ public:
   [[nodiscard]] bool isFrameCalculator() const override { return true; }
   [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
+  /**
+   * @brief Calculates XRD diffraction pattern on a frame using GPU if available.
+   * @param[in,out] dists DistributionFunctions target container.
+   * @param[in] settings Analysis configuration settings.
+   */
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;
 

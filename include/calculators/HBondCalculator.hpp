@@ -24,19 +24,19 @@ public:
     return "Computes hydrogen bond statistics (counts and distribution).";
   }
 
-  bool isFrameCalculator() const override { return true; }
-  bool isTrajectoryCalculator() const override { return false; }
+  [[nodiscard]] bool isFrameCalculator() const override { return true; }
+  [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief Performs Hydrogen Bond analysis.
-   * @param cell The simulation cell.
-   * @param neighbors The structural analyzer.
+   * @param[in] cell The simulation cell.
+   * @param[in] neighbors The structural analyzer.
    * @return A histogram of H-bond counts.
    */
-  static correlation::analysis::Histogram
+  [[nodiscard]] static correlation::analysis::Histogram
   calculate(const correlation::core::Cell &cell,
             const correlation::analysis::StructureAnalyzer *neighbors);
 };

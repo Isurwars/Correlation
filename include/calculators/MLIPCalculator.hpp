@@ -64,7 +64,7 @@ public:
    * @param[in] model Optional custom MLIPInterface engine pointer.
    * @return Generated MLIPOutput struct.
    */
-  static correlation::mlip::MLIPOutput
+  [[nodiscard]] static correlation::mlip::MLIPOutput
   calculate(const correlation::core::Cell &cell,
             const correlation::mlip::MLIPInterface *model = nullptr);
 

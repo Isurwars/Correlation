@@ -1,6 +1,7 @@
 /**
  * @file GPUSQCalculator.cu
- * @brief CUDA/HIP implementation of GPU-accelerated S(Q) calculation supporting float and double precision.
+ * @brief CUDA/HIP implementation of GPU-accelerated S(Q) calculation supporting float and double
+ * precision.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -24,7 +25,7 @@ namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-const bool registered = CalculatorFactory::registerTypeSafe<GPUSQCalculator>("GPUSQCalculator");
+const bool REGISTERED = CalculatorFactory::registerTypeSafe<GPUSQCalculator>("GPUSQCalculator");
 
 template <typename T> struct QVectorsData {
   std::vector<T> qx;
@@ -50,13 +51,15 @@ template <typename T> struct DeviceResults {
   T *CORRELATION_RESTRICT rho_sin;
 };
 
-template <typename T> CORRELATION_DEVICE CORRELATION_HOST inline void gpu_sincos(T val, T *sin_val, T *cos_val);
+template <typename T>
+CORRELATION_DEVICE CORRELATION_HOST inline void gpuSincos(T val, T *sin_val, T *cos_val);
 
 template <>
-CORRELATION_DEVICE CORRELATION_HOST inline void gpu_sincos<float>(float val, float *sin_val, float *cos_val) {
-#if defined(__CUDA_ARCH__)
+CORRELATION_DEVICE CORRELATION_HOST inline void gpuSincos<float>(float val, float *sin_val,
+                                                                 float *cos_val) {
+#ifdef __CUDA_ARCH__
   __sincosf(val, sin_val, cos_val);
-#elif defined(__HIP_DEVICE_COMPILE__)
+#elifdef __HIP_DEVICE_COMPILE__
   ::sincosf(val, sin_val, cos_val);
 #elif defined(_GNU_SOURCE) || defined(__USE_GNU)
   ::sincosf(val, sin_val, cos_val);
@@ -67,10 +70,11 @@ CORRELATION_DEVICE CORRELATION_HOST inline void gpu_sincos<float>(float val, flo
 }
 
 template <>
-CORRELATION_DEVICE CORRELATION_HOST inline void gpu_sincos<double>(double val, double *sin_val, double *cos_val) {
-#if defined(__CUDA_ARCH__)
+CORRELATION_DEVICE CORRELATION_HOST inline void gpuSincos<double>(double val, double *sin_val,
+                                                                  double *cos_val) {
+#ifdef __CUDA_ARCH__
   __sincos(val, sin_val, cos_val);
-#elif defined(__HIP_DEVICE_COMPILE__)
+#elifdef __HIP_DEVICE_COMPILE__
   ::sincos(val, sin_val, cos_val);
 #elif defined(_GNU_SOURCE) || defined(__USE_GNU)
   ::sincos(val, sin_val, cos_val);
@@ -80,7 +84,8 @@ CORRELATION_DEVICE CORRELATION_HOST inline void gpu_sincos<double>(double val, d
 #endif
 }
 
-template <typename T> QVectorsData<T> generateQVectors(const correlation::core::Cell &cell, T q_max) {
+template <typename T>
+QVectorsData<T> generateQVectors(const correlation::core::Cell &cell, T q_max) {
   const auto &inv = cell.inverseLatticeVectors();
   const T two_pi = static_cast<T>(correlation::math::two_pi);
   const T bx_x = two_pi * static_cast<T>(inv(0, 0));
@@ -97,9 +102,12 @@ template <typename T> QVectorsData<T> generateQVectors(const correlation::core::
   const T b2_norm = std::sqrt(by_x * by_x + by_y * by_y + by_z * by_z);
   const T b3_norm = std::sqrt(bz_x * bz_x + bz_y * bz_y + bz_z * bz_z);
 
-  const int hmax = (b1_norm > static_cast<T>(1e-10)) ? static_cast<int>(std::ceil(q_max / b1_norm)) : 0;
-  const int kmax = (b2_norm > static_cast<T>(1e-10)) ? static_cast<int>(std::ceil(q_max / b2_norm)) : 0;
-  const int lmax = (b3_norm > static_cast<T>(1e-10)) ? static_cast<int>(std::ceil(q_max / b3_norm)) : 0;
+  const int hmax =
+      (b1_norm > static_cast<T>(1e-10)) ? static_cast<int>(std::ceil(q_max / b1_norm)) : 0;
+  const int kmax =
+      (b2_norm > static_cast<T>(1e-10)) ? static_cast<int>(std::ceil(q_max / b2_norm)) : 0;
+  const int lmax =
+      (b3_norm > static_cast<T>(1e-10)) ? static_cast<int>(std::ceil(q_max / b3_norm)) : 0;
 
   const T q_max_sq = q_max * q_max;
   QVectorsData<T> q_data;
@@ -109,9 +117,12 @@ template <typename T> QVectorsData<T> generateQVectors(const correlation::core::
         if (h_idx == 0 && k_idx == 0 && l_idx == 0) {
           continue;
         }
-        T q_x = static_cast<T>(h_idx) * bx_x + static_cast<T>(k_idx) * by_x + static_cast<T>(l_idx) * bz_x;
-        T q_y = static_cast<T>(h_idx) * bx_y + static_cast<T>(k_idx) * by_y + static_cast<T>(l_idx) * bz_y;
-        T q_z = static_cast<T>(h_idx) * bx_z + static_cast<T>(k_idx) * by_z + static_cast<T>(l_idx) * bz_z;
+        T q_x = static_cast<T>(h_idx) * bx_x + static_cast<T>(k_idx) * by_x +
+                static_cast<T>(l_idx) * bz_x;
+        T q_y = static_cast<T>(h_idx) * bx_y + static_cast<T>(k_idx) * by_y +
+                static_cast<T>(l_idx) * bz_y;
+        T q_z = static_cast<T>(h_idx) * bx_z + static_cast<T>(k_idx) * by_z +
+                static_cast<T>(l_idx) * bz_z;
         T qmag_sq = q_x * q_x + q_y * q_y + q_z * q_z;
         if (qmag_sq <= q_max_sq) {
           q_data.qx.push_back(q_x);
@@ -126,8 +137,9 @@ template <typename T> QVectorsData<T> generateQVectors(const correlation::core::
 }
 
 template <typename T>
-std::vector<real_t> averageBinnedSQ(const std::vector<T> &rho_cos, size_t num_q_bins, const std::vector<T> &rho_sin,
-                                    T q_bin_width, const std::vector<T> &qmag, size_t num_atoms) {
+std::vector<real_t> averageBinnedSQ(const std::vector<T> &rho_cos, size_t num_q_bins,
+                                    const std::vector<T> &rho_sin, T q_bin_width,
+                                    const std::vector<T> &qmag, size_t num_atoms) {
   std::vector<real_t> total_sq(num_q_bins, static_cast<real_t>(0.0));
   std::vector<size_t> total_count(num_q_bins, 0);
   const int num_q = static_cast<int>(qmag.size());
@@ -155,8 +167,8 @@ std::vector<real_t> averageBinnedSQ(const std::vector<T> &rho_cos, size_t num_q_
 // CUDA kernel: compute rho_cos and rho_sin for a batch of q-vectors.
 // -------------------------------------------------------------------------
 template <typename T>
-CORRELATION_GLOBAL void sq_kernel(DeviceAtoms<T> atoms, int num_atoms, DeviceQVectors<T> q_vecs, int num_q,
-                                  DeviceResults<T> results) {
+CORRELATION_GLOBAL void sqKernel(DeviceAtoms<T> atoms, int num_atoms, DeviceQVectors<T> q_vecs,
+                                 int num_q, DeviceResults<T> results) {
   int q_i = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
   if (q_i >= num_q) {
     return;
@@ -173,7 +185,7 @@ CORRELATION_GLOBAL void sq_kernel(DeviceAtoms<T> atoms, int num_atoms, DeviceQVe
     T phase = q_x * atoms.x[j] + q_y * atoms.y[j] + q_z * atoms.z[j];
     T sin_val = static_cast<T>(0.0);
     T cos_val = static_cast<T>(0.0);
-    gpu_sincos(phase, &sin_val, &cos_val);
+    gpuSincos(phase, &sin_val, &cos_val);
     cos_sum += cos_val;
     sin_sum += sin_val;
   }
@@ -185,15 +197,16 @@ CORRELATION_GLOBAL void sq_kernel(DeviceAtoms<T> atoms, int num_atoms, DeviceQVe
 
 GPUSQCalculator::GPUSQCalculator() {
   int device_count = 0;
-  hipError_t err = hipGetDeviceCount(&device_count);
+  const hipError_t err = hipGetDeviceCount(&device_count);
   has_gpu_ = (err == hipSuccess && device_count > 0);
 }
 
-void GPUSQCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
-                                     const correlation::analysis::AnalysisSettings &settings) const {
+void GPUSQCalculator::calculateFrame(
+    correlation::analysis::DistributionFunctions &dists,
+    const correlation::analysis::AnalysisSettings &settings) const {
 
   if (!has_gpu_) {
-    StructureFactorCalculator cpu_calc;
+    const StructureFactorCalculator cpu_calc;
     cpu_calc.calculateFrame(dists, settings);
     return;
   }
@@ -259,15 +272,15 @@ void GPUSQCalculator::calculateFrame(correlation::analysis::DistributionFunction
   hipMemcpy(d_qy, q_data.qy.data(), num_q * sizeof(T), hipMemcpyHostToDevice);
   hipMemcpy(d_qz, q_data.qz.data(), num_q * sizeof(T), hipMemcpyHostToDevice);
 
-  int block_size = 256;
-  int grid_size = (static_cast<int>(num_q) + block_size - 1) / block_size;
+  const int block_size = 256;
+  const int grid_size = (static_cast<int>(num_q) + block_size - 1) / block_size;
 
-  DeviceAtoms<T> dev_atoms{d_x, d_y, d_z};
-  DeviceQVectors<T> dev_qvecs{d_qx, d_qy, d_qz};
-  DeviceResults<T> dev_results{d_rho_cos, d_rho_sin};
+  const DeviceAtoms<T> dev_atoms{.x = d_x, .y = d_y, .z = d_z};
+  const DeviceQVectors<T> dev_qvecs{.qx = d_qx, .qy = d_qy, .qz = d_qz};
+  const DeviceResults<T> dev_results{.rho_cos = d_rho_cos, .rho_sin = d_rho_sin};
 
-  hipLaunchKernelGGL(sq_kernel<T>, grid_size, block_size, 0, 0, dev_atoms, static_cast<int>(num_atoms), dev_qvecs,
-                     static_cast<int>(num_q), dev_results);
+  hipLaunchKernelGGL(sqKernel<T>, grid_size, block_size, 0, 0, dev_atoms,
+                     static_cast<int>(num_atoms), dev_qvecs, static_cast<int>(num_q), dev_results);
   hipDeviceSynchronize();
 
   std::vector<T> h_rho_cos(num_q);
@@ -285,7 +298,8 @@ void GPUSQCalculator::calculateFrame(correlation::analysis::DistributionFunction
   hipFree(d_rho_cos);
   hipFree(d_rho_sin);
 
-  std::vector<real_t> s_q = averageBinnedSQ<T>(h_rho_cos, num_q_bins, h_rho_sin, q_bin_width, q_data.qmag, num_atoms);
+  const std::vector<real_t> s_q =
+      averageBinnedSQ<T>(h_rho_cos, num_q_bins, h_rho_sin, q_bin_width, q_data.qmag, num_atoms);
 
   correlation::analysis::Histogram hist;
   hist.x_label = "Q";

@@ -17,7 +17,7 @@ correlation::analysis::Histogram compute_sq_sycl(const correlation::core::Cell &
   correlation::analysis::AnalysisSettings settings;
   settings.q_max = params.q_max;
   settings.q_bin_width = params.q_bin_width;
-  StructureFactorCalculator calc;
+  const StructureFactorCalculator calc;
   calc.calculateFrame(dists, settings);
   return dists.getHistogram("S_q");
 }

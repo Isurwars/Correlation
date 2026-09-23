@@ -31,6 +31,12 @@ public:
   [[nodiscard]] bool isFrameCalculator() const override { return true; }
   [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
+  /**
+   * @brief Dispatches the calculation for a single configuration frame.
+   *
+   * @param[in,out] dists Distribution functions container to append results to.
+   * @param[in] settings Current analysis configuration settings.
+   */
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;
 };

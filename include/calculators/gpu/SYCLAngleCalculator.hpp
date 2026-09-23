@@ -42,8 +42,9 @@ void compute_angle_tensor_sycl(const correlation::core::Cell &cell,
  * @param[in] params SYCL angle calculation parameters.
  * @return Histogram profile containing computed plane angle distribution P(theta).
  */
-correlation::analysis::Histogram compute_angles_sycl(const correlation::core::Cell &cell,
-                                                     const correlation::core::NeighborGraph &graph,
-                                                     const SYCLAngleParams &params = {});
+[[nodiscard]] correlation::analysis::Histogram
+compute_angles_sycl(const correlation::core::Cell &cell,
+                    const correlation::core::NeighborGraph &graph,
+                    const SYCLAngleParams &params = {});
 
 } // namespace correlation::calculators::sycl_gpu

@@ -1,6 +1,7 @@
 /**
  * @file GPUXRDCalculator.cu
- * @brief CUDA/HIP implementation of GPU-accelerated X-Ray Diffraction (XRD) using direct Debye scattering.
+ * @brief CUDA/HIP implementation of GPU-accelerated X-Ray Diffraction (XRD) using direct Debye
+ * scattering.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -24,9 +25,9 @@ namespace correlation::calculators {
 
 namespace {
 
-const bool registered = CalculatorFactory::registerTypeSafe<GPUXRDCalculator>("GPUXRDCalculator");
+const bool REGISTERED = CalculatorFactory::registerTypeSafe<GPUXRDCalculator>("GPUXRDCalculator");
 
-bool has_gpu_device() {
+bool hasGpuDevice() {
   int device_count = 0;
   hipError_t const err = hipGetDeviceCount(&device_count);
   return (err == hipSuccess && device_count > 0);
@@ -53,7 +54,8 @@ template <typename T> struct XRDGridConfig {
   int num_bins;
 };
 
-template <typename T> CORRELATION_DEVICE T eval_form_factor(const CromerMannCoeffs<T> &coeffs, T q_val) {
+template <typename T>
+CORRELATION_DEVICE T evalFormFactor(const CromerMannCoeffs<T> &coeffs, T q_val) {
   T const s_val = q_val / static_cast<T>(correlation::math::four_pi);
   T const s_sq = s_val * s_val;
   T form_factor = coeffs.c;
@@ -65,16 +67,19 @@ template <typename T> CORRELATION_DEVICE T eval_form_factor(const CromerMannCoef
 
 template <typename T>
 CORRELATION_GLOBAL void
-debye_xrd_kernel(DeviceAtomData<T> atoms, int num_atoms, const CromerMannCoeffs<T> *CORRELATION_RESTRICT element_coeffs,
-                 int num_elements, XRDGridConfig<T> grid_cfg, T *CORRELATION_RESTRICT out_intensity) {
+debyeXrdKernel(DeviceAtomData<T> atoms, int num_atoms,
+               const CromerMannCoeffs<T> *CORRELATION_RESTRICT element_coeffs, int num_elements,
+               XRDGridConfig<T> grid_cfg, T *CORRELATION_RESTRICT out_intensity) {
   int const bin_idx = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
   if (bin_idx >= grid_cfg.num_bins) {
     return;
   }
 
   T const two_theta = grid_cfg.theta_min + static_cast<T>(bin_idx) * grid_cfg.bin_width;
-  T const theta_rad = (two_theta / static_cast<T>(2.0)) * static_cast<T>(correlation::math::deg_to_rad);
-  T const q_val = static_cast<T>(correlation::math::four_pi) * std::sin(theta_rad) / grid_cfg.lambda;
+  T const theta_rad =
+      (two_theta / static_cast<T>(2.0)) * static_cast<T>(correlation::math::deg_to_rad);
+  T const q_val =
+      static_cast<T>(correlation::math::four_pi) * std::sin(theta_rad) / grid_cfg.lambda;
 
   if (q_val < static_cast<T>(1e-6)) {
     out_intensity[bin_idx] = static_cast<T>(0.0);
@@ -83,7 +88,7 @@ debye_xrd_kernel(DeviceAtomData<T> atoms, int num_atoms, const CromerMannCoeffs<
 
   std::array<T, 16> f_values{};
   for (int elem_idx = 0; elem_idx < num_elements && elem_idx < 16; ++elem_idx) {
-    f_values[static_cast<size_t>(elem_idx)] = eval_form_factor(element_coeffs[elem_idx], q_val);
+    f_values[static_cast<size_t>(elem_idx)] = evalFormFactor(element_coeffs[elem_idx], q_val);
   }
 
   T intensity = static_cast<T>(0.0);
@@ -107,7 +112,8 @@ debye_xrd_kernel(DeviceAtomData<T> atoms, int num_atoms, const CromerMannCoeffs<
       T const r_ij = std::sqrt(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z);
 
       T const q_dist = q_val * r_ij;
-      T const sinc_val = (q_dist > static_cast<T>(1e-6)) ? (std::sin(q_dist) / q_dist) : static_cast<T>(1.0);
+      T const sinc_val =
+          (q_dist > static_cast<T>(1e-6)) ? (std::sin(q_dist) / q_dist) : static_cast<T>(1.0);
 
       intensity += static_cast<T>(2.0) * f_i * f_j * sinc_val;
     }
@@ -120,7 +126,8 @@ debye_xrd_kernel(DeviceAtomData<T> atoms, int num_atoms, const CromerMannCoeffs<
   }
 }
 
-template <typename T> std::vector<CromerMannCoeffs<T>> build_element_coeffs(const correlation::core::Cell &cell) {
+template <typename T>
+std::vector<CromerMannCoeffs<T>> buildElementCoeffs(const correlation::core::Cell &cell) {
   const auto &elements = cell.elements();
   size_t const num_elements = elements.size();
   std::vector<CromerMannCoeffs<T>> coeffs(num_elements);
@@ -147,7 +154,7 @@ template <typename T> struct HostAtomBuffer {
   std::vector<int> type_idx;
 };
 
-template <typename T> HostAtomBuffer<T> extract_host_atoms(const correlation::core::Cell &cell) {
+template <typename T> HostAtomBuffer<T> extractHostAtoms(const correlation::core::Cell &cell) {
   const auto &atoms = cell.atoms();
   const size_t num_atoms = atoms.size();
   const auto &elements = cell.elements();
@@ -175,13 +182,14 @@ template <typename T> HostAtomBuffer<T> extract_host_atoms(const correlation::co
 }
 
 template <typename T>
-std::vector<T> execute_gpu_debye(const correlation::core::Cell &cell, const XRDGridConfig<T> &grid_cfg) {
+std::vector<T> executeGpuDebye(const correlation::core::Cell &cell,
+                               const XRDGridConfig<T> &grid_cfg) {
   size_t const num_atoms = cell.atoms().size();
   size_t const num_elements = cell.elements().size();
   auto const num_bins = static_cast<size_t>(grid_cfg.num_bins);
 
-  HostAtomBuffer<T> const h_atoms = extract_host_atoms<T>(cell);
-  std::vector<CromerMannCoeffs<T>> const h_coeffs = build_element_coeffs<T>(cell);
+  HostAtomBuffer<T> const h_atoms = extractHostAtoms<T>(cell);
+  std::vector<CromerMannCoeffs<T>> const h_coeffs = buildElementCoeffs<T>(cell);
 
   using correlation::core::gpu::DeviceBuffer;
   DeviceBuffer<T> d_x(num_atoms);
@@ -207,8 +215,9 @@ std::vector<T> execute_gpu_debye(const correlation::core::Cell &cell, const XRDG
       .type_idx = d_type_idx.get(),
   };
 
-  hipLaunchKernelGGL(debye_xrd_kernel<T>, grid_size, block_size, 0, 0, dev_atoms, static_cast<int>(num_atoms),
-                     d_coeffs.get(), static_cast<int>(num_elements), grid_cfg, d_intensity.get());
+  hipLaunchKernelGGL(debyeXrdKernel<T>, grid_size, block_size, 0, 0, dev_atoms,
+                     static_cast<int>(num_atoms), d_coeffs.get(), static_cast<int>(num_elements),
+                     grid_cfg, d_intensity.get());
   correlation::core::gpu::hipCheck(hipDeviceSynchronize());
 
   std::vector<T> h_intensity(num_bins);
@@ -216,8 +225,8 @@ std::vector<T> execute_gpu_debye(const correlation::core::Cell &cell, const XRDG
   return h_intensity;
 }
 
-correlation::analysis::Histogram assemble_histogram(const std::vector<real_t> &intensities,
-                                                    const GPUXRDParams &params) {
+correlation::analysis::Histogram assembleHistogram(const std::vector<real_t> &intensities,
+                                                   const GPUXRDParams &params) {
   size_t const num_bins = intensities.size();
   correlation::analysis::Histogram hist;
   hist.x_label = "2θ";
@@ -240,7 +249,8 @@ correlation::analysis::Histogram assemble_histogram(const std::vector<real_t> &i
 
 namespace gpu {
 
-correlation::analysis::Histogram compute_xrd_gpu(const correlation::core::Cell &cell, const GPUXRDParams &params) {
+correlation::analysis::Histogram compute_xrd_gpu(const correlation::core::Cell &cell,
+                                                 const GPUXRDParams &params) {
   if (params.bin_width <= static_cast<real_t>(0.0)) {
     throw std::invalid_argument("Angular resolution bin_width must be strictly positive.");
   }
@@ -251,14 +261,15 @@ correlation::analysis::Histogram compute_xrd_gpu(const correlation::core::Cell &
     throw std::invalid_argument("Wavelength lambda must be strictly positive.");
   }
 
-  size_t const num_bins = static_cast<size_t>((params.theta_max - params.theta_min) / params.bin_width) + 1;
+  size_t const num_bins =
+      static_cast<size_t>((params.theta_max - params.theta_min) / params.bin_width) + 1;
 
   if (cell.atomCount() == 0) {
     std::vector<real_t> const zero_intensity(num_bins, static_cast<real_t>(0.0));
-    return assemble_histogram(zero_intensity, params);
+    return assembleHistogram(zero_intensity, params);
   }
 
-  if (!has_gpu_device()) {
+  if (!hasGpuDevice()) {
     // Fallback to CPU calculation via S(Q) / XRDCalculator
     XRDCalculator const cpu_calc;
     correlation::analysis::DistributionFunctions dists(cell);
@@ -268,7 +279,7 @@ correlation::analysis::Histogram compute_xrd_gpu(const correlation::core::Cell &
       return dists.getHistogram("XRD");
     }
     std::vector<real_t> const fallback_intensity(num_bins, static_cast<real_t>(0.0));
-    return assemble_histogram(fallback_intensity, params);
+    return assembleHistogram(fallback_intensity, params);
   }
 
   XRDGridConfig<real_t> const grid_cfg{
@@ -279,16 +290,17 @@ correlation::analysis::Histogram compute_xrd_gpu(const correlation::core::Cell &
       .num_bins = static_cast<int>(num_bins),
   };
 
-  std::vector<real_t> const intensities = execute_gpu_debye<real_t>(cell, grid_cfg);
-  return assemble_histogram(intensities, params);
+  std::vector<real_t> const intensities = executeGpuDebye<real_t>(cell, grid_cfg);
+  return assembleHistogram(intensities, params);
 }
 
 } // namespace gpu
 
-GPUXRDCalculator::GPUXRDCalculator() : has_gpu_(has_gpu_device()) {}
+GPUXRDCalculator::GPUXRDCalculator() : has_gpu_(hasGpuDevice()) {}
 
-void GPUXRDCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
-                                      const correlation::analysis::AnalysisSettings & /*settings*/) const {
+void GPUXRDCalculator::calculateFrame(
+    correlation::analysis::DistributionFunctions &dists,
+    const correlation::analysis::AnalysisSettings & /*settings*/) const {
   GPUXRDParams const params{
       .lambda = static_cast<real_t>(1.5406),
       .theta_min = static_cast<real_t>(10.0),

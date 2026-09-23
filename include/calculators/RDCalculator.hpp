@@ -26,18 +26,25 @@ public:
     return "Computes the Ring Distribution (RD).";
   }
 
-  bool isFrameCalculator() const override { return true; }
-  bool isTrajectoryCalculator() const override { return false; }
+  [[nodiscard]] bool isFrameCalculator() const override { return true; }
+  [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
+  /**
+   * @brief Dispatches the calculation for a single configuration frame.
+   *
+   * @param[in,out] dists Distribution functions container to append results to.
+   * @param[in] settings Current analysis configuration settings.
+   */
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief High-performance computation of the Ring Distribution (RD).
    *
-   * @param graph The pre-computed neighbor graph.
-   * @param max_ring_size The maximum number of atoms in a single ring.
+   * @param[in] graph The pre-computed neighbor graph.
+   * @param[in] max_ring_size The maximum number of atoms in a single ring.
    * @return A histogram representing the ring size distribution.
+   * @throws std::invalid_argument If @p max_ring_size is less than 3.
    */
   static correlation::analysis::Histogram calculate(const correlation::core::NeighborGraph &graph,
                                                     size_t max_ring_size);

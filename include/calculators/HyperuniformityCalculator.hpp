@@ -52,8 +52,8 @@ public:
     return "Computes local number variance and hyperuniformity index.";
   }
 
-  bool isFrameCalculator() const override { return true; }
-  bool isTrajectoryCalculator() const override { return false; }
+  [[nodiscard]] bool isFrameCalculator() const override { return true; }
+  [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;
@@ -61,11 +61,12 @@ public:
   /**
    * @brief Computes σ²_N(R) and χ_H(R) histograms.
    *
-   * @param cell The simulation cell.
-   * @param params Sampling and binning parameters.
+   * @param[in] cell The simulation cell.
+   * @param[in] params Sampling and binning parameters.
    * @return A map containing "sigma2_N" and "chi_H" histograms.
+   * @throws std::invalid_argument if bin width or num_samples is non-positive.
    */
-  static std::map<std::string, correlation::analysis::Histogram>
+  [[nodiscard]] static std::map<std::string, correlation::analysis::Histogram>
   calculate(const correlation::core::Cell &cell, const HyperuniformityParams &params);
 };
 

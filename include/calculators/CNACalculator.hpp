@@ -27,14 +27,22 @@ public:
   [[nodiscard]] bool isFrameCalculator() const override { return true; }
   [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
+  /**
+   * @brief Dispatches the calculation for a single configuration frame.
+   *
+   * @param[in,out] dists Distribution functions container to append results to.
+   * @param[in] settings Current analysis configuration settings.
+   */
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief Performs CNA on a single cell.
-   * @param cell The simulation cell.
-   * @param neighbors The structural analyzer with neighbor info.
+   *
+   * @param[in] cell The simulation cell.
+   * @param[in] neighbors The structural analyzer with neighbor info.
    * @return A histogram of CNA indices.
+   * @throws std::logic_error If @p neighbors is nullptr.
    */
   static correlation::analysis::Histogram
   calculate(const correlation::core::Cell &cell,

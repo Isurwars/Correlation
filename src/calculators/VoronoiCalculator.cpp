@@ -18,7 +18,6 @@
 #include <cmath>
 #include <format>
 #include <map>
-#include <numeric>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -27,7 +26,7 @@ namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-const bool registered = CalculatorFactory::registerTypeSafe<VoronoiCalculator>("VoronoiCalculator");
+const bool REGISTERED = CalculatorFactory::registerTypeSafe<VoronoiCalculator>("VoronoiCalculator");
 
 /**
  * @brief Evaluates face topology and polyhedral signature of a single Voronoi cell.
@@ -49,8 +48,8 @@ std::pair<int, std::string> processCellTopology(voro::voronoicell &voro_cell) {
   int n_6 = 0;
   int significant_faces = 0;
 
-  constexpr real_t min_face_area = static_cast<real_t>(0.01);
-  constexpr real_t min_edge_len_sq = static_cast<real_t>(1e-6); // 1e-3 A edge length threshold
+  constexpr auto MIN_FACE_AREA = static_cast<real_t>(0.01);
+  constexpr auto MIN_EDGE_LEN_SQ = static_cast<real_t>(1e-6); // 1e-3 A edge length threshold
 
   size_t v_idx = 0;
   size_t face_i = 0;
@@ -61,7 +60,7 @@ std::pair<int, std::string> processCellTopology(voro::voronoicell &voro_cell) {
                             : static_cast<real_t>(0.0);
     face_i++;
 
-    if (area < min_face_area) {
+    if (area < MIN_FACE_AREA) {
       v_idx += num_face_vertices + 1;
       continue;
     }
@@ -74,10 +73,10 @@ std::pair<int, std::string> processCellTopology(voro::voronoicell &voro_cell) {
       auto const vert_idx1 = static_cast<size_t>(face_verts[v_idx + 1 + edge_idx]);
       auto const vert_idx2 =
           static_cast<size_t>(face_verts[v_idx + 1 + ((edge_idx + 1) % num_face_vertices)]);
-      real_t const dist_x = static_cast<real_t>(pts[3 * vert_idx1] - pts[3 * vert_idx2]);
-      real_t const dist_y = static_cast<real_t>(pts[3 * vert_idx1 + 1] - pts[3 * vert_idx2 + 1]);
-      real_t const dist_z = static_cast<real_t>(pts[3 * vert_idx1 + 2] - pts[3 * vert_idx2 + 2]);
-      if (dist_x * dist_x + dist_y * dist_y + dist_z * dist_z < min_edge_len_sq) {
+      const auto dist_x = static_cast<real_t>(pts[3 * vert_idx1] - pts[3 * vert_idx2]);
+      const auto dist_y = static_cast<real_t>(pts[3 * vert_idx1 + 1] - pts[3 * vert_idx2 + 1]);
+      const auto dist_z = static_cast<real_t>(pts[3 * vert_idx1 + 2] - pts[3 * vert_idx2 + 2]);
+      if (dist_x * dist_x + dist_y * dist_y + dist_z * dist_z < MIN_EDGE_LEN_SQ) {
         parasitic_edges++;
       }
     }
@@ -138,14 +137,14 @@ VoronoiCalculator::computeVoronoiCells(const correlation::core::Cell &cell) {
   // a = (bx, 0, 0)
   // b = (bxy, by, 0)
   // c = (bxz, byz, bz)
-  real_t const bx_ = lattice[0].x();
-  real_t const bxy = lattice[1].x();
-  real_t const by_ = lattice[1].y();
-  real_t const bxz = lattice[2].x();
-  real_t const byz = lattice[2].y();
-  real_t const bz_ = lattice[2].z();
+  real_t const box_x = lattice[0].x();
+  real_t const box_xy = lattice[1].x();
+  real_t const box_y = lattice[1].y();
+  real_t const box_xz = lattice[2].x();
+  real_t const box_yz = lattice[2].y();
+  real_t const box_z = lattice[2].z();
 
-  if (bx_ <= 1e-9 || by_ <= 1e-9 || bz_ <= 1e-9) {
+  if (box_x <= 1e-9 || box_y <= 1e-9 || box_z <= 1e-9) {
     throw std::runtime_error(
         "Invalid or non-orthogonal/skewed cell dimensions for Voronoi calculation.");
   }
@@ -172,22 +171,23 @@ VoronoiCalculator::computeVoronoiCells(const correlation::core::Cell &cell) {
       frac.z() = static_cast<real_t>(0.0);
     }
 
-    real_t const ax_ = frac.x() * bx_ + frac.y() * bxy + frac.z() * bxz;
-    real_t const ay_ = frac.y() * by_ + frac.z() * byz;
-    real_t const az_ = frac.z() * bz_;
-    aligned_positions[i] = {ax_, ay_, az_};
+    real_t const align_x = frac.x() * box_x + frac.y() * box_xy + frac.z() * box_xz;
+    real_t const align_y = frac.y() * box_y + frac.z() * box_yz;
+    real_t const align_z = frac.z() * box_z;
+    aligned_positions[i] = {align_x, align_y, align_z};
   }
 
   // Dynamic grid estimator (aim for ~6 particles per grid block)
-  real_t const optimal_block_vol =
+  const auto optimal_block_vol =
       static_cast<real_t>(6.0 / (static_cast<real_t>(num_atoms) / volume));
   real_t const block_side = std::max(static_cast<real_t>(1.0), std::cbrt(optimal_block_vol));
-  int const nx_ = std::max(1, static_cast<int>(std::round(bx_ / block_side)));
-  int const ny_ = std::max(1, static_cast<int>(std::round(by_ / block_side)));
-  int const nz_ = std::max(1, static_cast<int>(std::round(bz_ / block_side)));
+  int const block_nx = std::max(1, static_cast<int>(std::round(box_x / block_side)));
+  int const block_ny = std::max(1, static_cast<int>(std::round(box_y / block_side)));
+  int const block_nz = std::max(1, static_cast<int>(std::round(box_z / block_side)));
 
   // Setup periodic container and particle order tracker
-  voro::container_periodic con(bx_, bxy, by_, bxz, byz, bz_, nx_, ny_, nz_, 8);
+  voro::container_periodic con(box_x, box_xy, box_y, box_xz, box_yz, box_z, block_nx, block_ny,
+                               block_nz, 8);
   voro::particle_order order(static_cast<int>(num_atoms));
 
   // Put atoms into container
@@ -215,12 +215,12 @@ VoronoiCalculator::computeVoronoiCells(const correlation::core::Cell &cell) {
     }
 
     int const pid = voro_loop.pid();
-    if (pid < 0 || pid >= static_cast<int>(num_atoms)) {
+    if (pid < 0 || std::cmp_greater_equal(pid, num_atoms)) {
       continue;
     }
 
-    real_t const vol = static_cast<real_t>(voro_cell.volume());
-    real_t const area = static_cast<real_t>(voro_cell.surface_area());
+    const auto vol = static_cast<real_t>(voro_cell.volume());
+    const auto area = static_cast<real_t>(voro_cell.surface_area());
     real_t const sphericity = (area > static_cast<real_t>(1e-9))
                                   ? static_cast<real_t>(std::pow(correlation::math::pi, 1.0 / 3.0) *
                                                         std::pow(6.0 * vol, 2.0 / 3.0)) /
@@ -342,11 +342,11 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
   std::map<std::string, correlation::analysis::Histogram> results;
 
   // 3a. Volume histogram
-  real_t max_vol = *std::max_element(data.volumes.begin(), data.volumes.end());
+  real_t max_vol = *std::ranges::max_element(data.volumes);
   if (max_vol <= 0.0) {
     max_vol = 100.0;
   }
-  real_t const max_vol_range = static_cast<real_t>(max_vol * 1.2);
+  const auto max_vol_range = static_cast<real_t>(max_vol * 1.2);
   size_t const vol_bins = 100;
   real_t const vol_d = max_vol_range / static_cast<real_t>(vol_bins);
 
@@ -373,12 +373,16 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
       sph_bin_centers, element_symbols);
 
   // 3c. Coordination number histogram
-  int max_cn =
-      *std::max_element(data.coordination_numbers.begin(), data.coordination_numbers.end());
+  const int max_cn = *std::ranges::max_element(data.coordination_numbers);
   size_t const cn_bins = std::max(25, max_cn + 2);
 
-  std::vector<real_t> cn_bin_values(cn_bins);
-  std::iota(cn_bin_values.begin(), cn_bin_values.end(), static_cast<real_t>(0.0));
+  const auto cn_bin_values = [&]() {
+    std::vector<real_t> values(cn_bins);
+    for (size_t i = 0; i < cn_bins; ++i) {
+      values[i] = static_cast<real_t>(i);
+    }
+    return values;
+  }();
   results["Voronoi Coordination Number"] = makeHistogram(
       "Voronoi Coordination Number Distribution", "Coordination Number", "Probability", "faces",
       "probability", "Probability distribution of Voronoi cell face counts.", "_vcn", cn_bin_values,
@@ -387,8 +391,13 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
   // 3d. Signatures histogram
   size_t const sig_bins = std::max(size_t{1}, sorted_sigs.size());
 
-  std::vector<real_t> sig_bin_values(sig_bins);
-  std::iota(sig_bin_values.begin(), sig_bin_values.end(), static_cast<real_t>(0.0));
+  const auto sig_bin_values = [&]() {
+    std::vector<real_t> values(sig_bins);
+    for (size_t i = 0; i < sig_bins; ++i) {
+      values[i] = static_cast<real_t>(i);
+    }
+    return values;
+  }();
   results["Voronoi Signatures"] =
       makeHistogram("Voronoi Polyhedral Signatures", "Signature Index", "Probability", "index",
                     "probability", sig_desc, "_vsig", sig_bin_values, element_symbols);
@@ -443,7 +452,7 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
   }
 
   // 5. Normalize histograms
-  real_t const factor = static_cast<real_t>(1.0 / static_cast<real_t>(num_atoms));
+  const auto factor = static_cast<real_t>(1.0 / static_cast<real_t>(num_atoms));
   for (auto &[name, hist] : results) {
     for (auto &[key, vec] : hist.partials) {
       for (auto &val : vec) {

@@ -18,12 +18,11 @@
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
 
-namespace correlation {
-namespace calculators {
+namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-const bool registered = CalculatorFactory::registerTypeSafe<XRDCalculator>("XRDCalculator");
+const bool REGISTERED = CalculatorFactory::registerTypeSafe<XRDCalculator>("XRDCalculator");
 
 struct PartialInfoSq {
   std::string key;
@@ -50,14 +49,14 @@ real_t sampleSq(const QGrid &q_grid, const std::vector<real_t> &sq_data, real_t 
     return sq_data.back();
   }
   const auto &bins = *q_grid.bins;
-  auto iterator = std::lower_bound(bins.begin(), bins.end(), q_val);
-  size_t idx = std::distance(bins.begin(), iterator);
+  auto iterator = std::ranges::lower_bound(bins, q_val);
+  const auto idx = static_cast<size_t>(std::distance(bins.begin(), iterator));
   if (idx == 0) {
     return sq_data[0];
   }
-  real_t q_0 = bins[idx - 1];
-  real_t q_1 = bins[idx];
-  real_t d_t = (q_val - q_0) / (q_1 - q_0);
+  const real_t q_0 = bins[idx - 1];
+  const real_t q_1 = bins[idx];
+  const real_t d_t = (q_val - q_0) / (q_1 - q_0);
   return sq_data[idx - 1] + d_t * (sq_data[idx] - sq_data[idx - 1]);
 }
 
@@ -69,11 +68,13 @@ buildPartialSqList(const std::map<std::string, std::vector<real_t>> &partials,
     if (key == "Total") {
       continue;
     }
-    size_t dash_pos = key.find('-');
-    std::string sym1 = key.substr(0, dash_pos);
-    std::string sym2 = key.substr(dash_pos + 1);
-    real_t c_1 = concentrations.contains(sym1) ? concentrations.at(sym1) : static_cast<real_t>(0.0);
-    real_t c_2 = concentrations.contains(sym2) ? concentrations.at(sym2) : static_cast<real_t>(0.0);
+    const size_t dash_pos = key.find('-');
+    const std::string sym1 = key.substr(0, dash_pos);
+    const std::string sym2 = key.substr(dash_pos + 1);
+    const real_t c_1 =
+        concentrations.contains(sym1) ? concentrations.at(sym1) : static_cast<real_t>(0.0);
+    const real_t c_2 =
+        concentrations.contains(sym2) ? concentrations.at(sym2) : static_cast<real_t>(0.0);
     partial_sq_list.push_back({
         .key = key,
         .data = &sq_data,
@@ -105,12 +106,12 @@ real_t calculateIntensityAtQ(real_t q_value, const std::map<std::string, real_t>
   // 2. Inter-atomic interference term from partial S_ij(Q):
   // sum_{i <= j} (2 - delta_ij) * sqrt(c_i * c_j) * f_i(Q) * f_j(Q) * (S_ij(Q) - delta_ij)
   for (const auto &p_sq : partial_sq_list) {
-    real_t sq_val = sampleSq(q_grid, *p_sq.data, q_value);
-    real_t f_1 = XRDCalculator::getAtomicFormFactor(p_sq.sym1, q_value);
-    real_t f_2 = XRDCalculator::getAtomicFormFactor(p_sq.sym2, q_value);
-    real_t factor = p_sq.is_identical ? static_cast<real_t>(1.0) : static_cast<real_t>(2.0);
-    real_t delta_ij = p_sq.is_identical ? static_cast<real_t>(1.0) : static_cast<real_t>(0.0);
-    real_t weight = factor * std::sqrt(p_sq.c_i * p_sq.c_j);
+    const real_t sq_val = sampleSq(q_grid, *p_sq.data, q_value);
+    const real_t f_1 = XRDCalculator::getAtomicFormFactor(p_sq.sym1, q_value);
+    const real_t f_2 = XRDCalculator::getAtomicFormFactor(p_sq.sym2, q_value);
+    const real_t factor = p_sq.is_identical ? static_cast<real_t>(1.0) : static_cast<real_t>(2.0);
+    const real_t delta_ij = p_sq.is_identical ? static_cast<real_t>(1.0) : static_cast<real_t>(0.0);
+    const real_t weight = factor * std::sqrt(p_sq.c_i * p_sq.c_j);
 
     intensity_q.add(weight * f_1 * f_2 * (sq_val - delta_ij));
   }
@@ -209,10 +210,10 @@ XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
   std::vector<PartialXRD> xrd_partials;
   xrd_partials.reserve(partial_integrands.size());
   for (const auto &[key, integ] : partial_integrands) {
-    auto weight = static_cast<real_t>(ashcroft_weights.at(key));
-    size_t dash_pos = key.find('-');
-    std::string sym1 = key.substr(0, dash_pos);
-    std::string sym2 = key.substr(dash_pos + 1);
+    const auto weight = static_cast<real_t>(ashcroft_weights.at(key));
+    const size_t dash_pos = key.find('-');
+    const std::string sym1 = key.substr(0, dash_pos);
+    const std::string sym2 = key.substr(dash_pos + 1);
     xrd_partials.push_back({
         .key = &key,
         .integrand = &integ,
@@ -282,8 +283,8 @@ XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
 
 real_t XRDCalculator::getAtomicFormFactor(const std::string &symbol, real_t q_value) {
   const auto &coeffs = correlation::physics::getAtomicFormFactors(symbol);
-  auto s_value = static_cast<real_t>(q_value / correlation::math::four_pi);
-  real_t s_squared = s_value * s_value;
+  const auto s_value = static_cast<real_t>(q_value / correlation::math::four_pi);
+  const real_t s_squared = s_value * s_value;
   auto form_factor = static_cast<real_t>(coeffs.at(8));
   for (size_t i = 0; i < 4; ++i) {
     form_factor +=
@@ -295,7 +296,7 @@ real_t XRDCalculator::getAtomicFormFactor(const std::string &symbol, real_t q_va
 std::map<std::string, real_t>
 XRDCalculator::calculateConcentrations(const correlation::core::Cell &cell) {
   std::map<std::string, real_t> concentrations;
-  real_t const total_atoms = static_cast<real_t>(cell.atomCount());
+  const auto total_atoms = static_cast<real_t>(cell.atomCount());
   if (total_atoms == 0) {
     return concentrations;
   }
@@ -388,5 +389,4 @@ XRDCalculator::calculatePartialIntegrands(const correlation::analysis::Histogram
   return partial_integrands;
 }
 
-} // namespace calculators
-} // namespace correlation
+} // namespace correlation::calculators

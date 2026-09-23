@@ -12,7 +12,7 @@
 namespace correlation::calculators {
 
 namespace {
-const bool registered = CalculatorFactory::registerTypeSafe<MLIPCalculator>("MLIPCalculator");
+const bool REGISTERED = CalculatorFactory::registerTypeSafe<MLIPCalculator>("MLIPCalculator");
 } // namespace
 
 void MLIPCalculator::calculateFrame(

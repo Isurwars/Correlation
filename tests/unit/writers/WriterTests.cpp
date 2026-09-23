@@ -24,7 +24,7 @@
 namespace {
 
 // Helper to find the index of the maximum value in a given range.
-size_t find_peak_idx(const std::vector<correlation::real_t> &vec, size_t start, size_t end) {
+size_t findPeakIdx(const std::vector<correlation::real_t> &vec, size_t start, size_t end) {
   auto const iterator = std::max_element(vec.begin() + static_cast<std::ptrdiff_t>(start),
                                          vec.begin() + static_cast<std::ptrdiff_t>(end));
   return static_cast<size_t>(std::distance(vec.begin(), iterator));
@@ -162,10 +162,10 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
 
   // Find peaks in expected regions for crystalline silicon.
   // 1st neighbor shell: ~2.35 Å. Search from 2.0 to 3.0 Å.
-  size_t const first_peak_idx = find_peak_idx(si_si_rdf, static_cast<size_t>(2.0 / rdf_bin),
+  size_t const first_peak_idx = findPeakIdx(si_si_rdf, static_cast<size_t>(2.0 / rdf_bin),
                                               static_cast<size_t>(3.0 / rdf_bin));
   // 2nd neighbor shell: ~3.84 Å. Search from 3.5 to 4.2 Å.
-  size_t const second_peak_idx = find_peak_idx(si_si_rdf, static_cast<size_t>(3.5 / rdf_bin),
+  size_t const second_peak_idx = findPeakIdx(si_si_rdf, static_cast<size_t>(3.5 / rdf_bin),
                                                static_cast<size_t>(4.2 / rdf_bin));
 
   EXPECT_NEAR(bins[first_peak_idx], 2.35, rdf_bin * 2);
@@ -363,7 +363,7 @@ TEST_F(FileWriterTests, WritesHDF5File) {
   EXPECT_TRUE(data_ds.hasAttribute("units"));
   std::string data_units;
   data_ds.getAttribute("units").read(data_units);
-  EXPECT_EQ(data_units, "dimensionless");
+  EXPECT_EQ(data_units, "Å⁻¹");
 
   EXPECT_TRUE(data_ds.hasAttribute("label"));
   std::string data_label;

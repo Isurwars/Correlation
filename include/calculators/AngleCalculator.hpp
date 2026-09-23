@@ -45,15 +45,23 @@ public:
   [[nodiscard]] bool isFrameCalculator() const override { return true; }
   [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
+  /**
+   * @brief Dispatches the calculation for a single configuration frame.
+   *
+   * @note Currently a no-op as AngleCalculator is invoked directly during StructureAnalyzer
+   * construction.
+   * @param[in,out] dists Distribution functions container.
+   * @param[in] settings Current analysis configuration settings.
+   */
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief Computes and populates the bond angles tensor.
    *
-   * @param cell The simulation cell containing atoms and positions.
-   * @param graph The pre-computed neighbor graph containing local connections.
-   * @param out_angles A 4D tensor `[outer1][central][outer2][angle_idx]`
+   * @param[in] cell The simulation cell containing atoms and positions.
+   * @param[in] graph The pre-computed neighbor graph containing local connections.
+   * @param[out] out_angles A 4D tensor `[outer1][central][outer2][angle_idx]`
    * populated with angles in radians.
    */
   static void compute(const correlation::core::Cell &cell,

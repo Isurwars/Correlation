@@ -30,9 +30,16 @@ public:
     return "Computes the Velocity Autocorrelation Function (VACF).";
   }
 
-  bool isFrameCalculator() const override { return false; }
-  bool isTrajectoryCalculator() const override { return true; }
+  [[nodiscard]] bool isFrameCalculator() const override { return false; }
+  [[nodiscard]] bool isTrajectoryCalculator() const override { return true; }
 
+  /**
+   * @brief Dispatches the calculation for an entire trajectory.
+   *
+   * @param[in,out] dists Distribution functions container to append results to.
+   * @param[in] traj Atomic trajectory container.
+   * @param[in] settings Current analysis configuration settings.
+   */
   void calculateTrajectory(correlation::analysis::DistributionFunctions &dists,
                            const correlation::core::Trajectory &traj,
                            const correlation::analysis::AnalysisSettings &settings) const override;
@@ -40,10 +47,10 @@ public:
   /**
    * @brief High-performance computation of the Velocity Autocorrelation Function (VACF).
    *
-   * @param traj The source trajectory containing atomic velocities.
-   * @param max_correlation_frames Maximum time lag (dt) for correlation.
-   * @param start_frame Index of the first frame to include.
-   * @param end_frame Index of the last frame to include.
+   * @param[in] traj The source trajectory containing atomic velocities.
+   * @param[in] max_correlation_frames Maximum time lag (dt) for correlation.
+   * @param[in] start_frame Index of the first frame to include.
+   * @param[in] end_frame Index of the last frame to include.
    * @return A map of histograms (VACF per element).
    */
   static std::map<std::string, correlation::analysis::Histogram>

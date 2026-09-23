@@ -48,3 +48,7 @@ CheckOptions:
   readability-identifier-naming.ProtectedMemberSuffix: '_'
   readability-identifier-naming.ClassIgnoredRegexp: '.*_Test|.*_.*'
   readability-identifier-naming.FunctionIgnoredRegexp: 'LLVMFuzzer.*'
+  readability-identifier-naming.ConstexprVariableIgnoredRegexp: 'hip.*|threadIdx|blockIdx|blockDim'
+  readability-identifier-naming.GlobalConstantIgnoredRegexp: 'hip.*|threadIdx|blockIdx|blockDim'
+  readability-identifier-naming.StructIgnoredRegexp: 'dim3'
+

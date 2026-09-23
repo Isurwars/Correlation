@@ -34,9 +34,14 @@ public:
     return "Computes the 3D Spatial Distribution Function (SDF) density grid.";
   }
 
-  bool isFrameCalculator() const override { return true; }
-  bool isTrajectoryCalculator() const override { return false; }
+  [[nodiscard]] bool isFrameCalculator() const override { return true; }
+  [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
+  /**
+   * @brief Computes 3D Spatial Distribution Function on a frame.
+   * @param[in,out] dists Target distribution functions.
+   * @param[in] settings Calculation settings.
+   */
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;
 };

@@ -17,7 +17,7 @@ namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-const bool registered = CalculatorFactory::registerTypeSafe<VDOSCalculator>("VDOSCalculator");
+const bool REGISTERED = CalculatorFactory::registerTypeSafe<VDOSCalculator>("VDOSCalculator");
 } // namespace
 
 void VDOSCalculator::calculateTrajectory(
@@ -53,22 +53,22 @@ VDOSCalculator::calculate(const correlation::analysis::Histogram &vacf_hist,
   size_t const num_points = frequencies.size();
 
   std::vector<real_t> combined_frequencies;
-  std::vector<real_t> combined_frequencies_cmInv;
-  std::vector<real_t> combined_frequencies_meV;
+  std::vector<real_t> combined_frequencies_cm_inv;
+  std::vector<real_t> combined_frequencies_me_v;
   std::vector<real_t> combined_intensities;
   combined_frequencies.reserve(2 * num_points);
-  combined_frequencies_cmInv.reserve(2 * num_points);
-  combined_frequencies_meV.reserve(2 * num_points);
+  combined_frequencies_cm_inv.reserve(2 * num_points);
+  combined_frequencies_me_v.reserve(2 * num_points);
   combined_intensities.reserve(2 * num_points);
 
   // Imaginary frequencies (negative axis, range: -params.max_imag_freq to 0)
   for (size_t i = num_points - 1; i > 0; --i) {
     if (frequencies[i] <= params.max_imag_freq) {
       combined_frequencies.push_back(-frequencies[i]);
-      combined_frequencies_cmInv.push_back(-frequencies[i] *
-                                           static_cast<real_t>(correlation::math::thz_to_cminv));
-      combined_frequencies_meV.push_back(-frequencies[i] *
-                                         static_cast<real_t>(correlation::math::thz_to_mev));
+      combined_frequencies_cm_inv.push_back(-frequencies[i] *
+                                            static_cast<real_t>(correlation::math::thz_to_cminv));
+      combined_frequencies_me_v.push_back(-frequencies[i] *
+                                          static_cast<real_t>(correlation::math::thz_to_mev));
       combined_intensities.push_back(intensities_imag[i]);
     }
   }
@@ -77,10 +77,10 @@ VDOSCalculator::calculate(const correlation::analysis::Histogram &vacf_hist,
   for (size_t i = 0; i < num_points; ++i) {
     if (frequencies[i] <= params.max_real_freq) {
       combined_frequencies.push_back(frequencies[i]);
-      combined_frequencies_cmInv.push_back(frequencies[i] *
-                                           static_cast<real_t>(correlation::math::thz_to_cminv));
-      combined_frequencies_meV.push_back(frequencies[i] *
-                                         static_cast<real_t>(correlation::math::thz_to_mev));
+      combined_frequencies_cm_inv.push_back(frequencies[i] *
+                                            static_cast<real_t>(correlation::math::thz_to_cminv));
+      combined_frequencies_me_v.push_back(frequencies[i] *
+                                          static_cast<real_t>(correlation::math::thz_to_mev));
       combined_intensities.push_back(intensities_real[i]);
     }
   }
@@ -95,8 +95,8 @@ VDOSCalculator::calculate(const correlation::analysis::Histogram &vacf_hist,
   vdos_hist.y_unit = "arbitrary units";
   vdos_hist.bins = combined_frequencies;
   vdos_hist.partials["Total"] = combined_intensities;
-  vdos_hist.partials["Frequency_cm_1"] = combined_frequencies_cmInv;
-  vdos_hist.partials["Frequency_meV"] = combined_frequencies_meV;
+  vdos_hist.partials["Frequency_cm_1"] = combined_frequencies_cm_inv;
+  vdos_hist.partials["Frequency_meV"] = combined_frequencies_me_v;
 
   return vdos_hist;
 }

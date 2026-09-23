@@ -30,7 +30,7 @@ struct SYCLXRDParams {
  * @param[in] params SYCL XRD calculation parameters.
  * @return Histogram profile containing computed XRD pattern I(2theta).
  */
-correlation::analysis::Histogram compute_xrd_sycl(const correlation::core::Cell &cell,
-                                                  const SYCLXRDParams &params = {});
+[[nodiscard]] correlation::analysis::Histogram compute_xrd_sycl(const correlation::core::Cell &cell,
+                                                                const SYCLXRDParams &params = {});
 
 } // namespace correlation::calculators::sycl_gpu

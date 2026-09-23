@@ -17,12 +17,12 @@ namespace correlation::calculators {
 namespace {
 
 struct HBondCriteria {
-  real_t R_cut_sq;
-  real_t Alpha_cut;
+  real_t r_cut_sq;
+  real_t alpha_cut;
 };
 
 // Static registration of the calculator in the factory
-const bool registered = CalculatorFactory::registerTypeSafe<HBondCalculator>("HBondCalculator");
+const bool REGISTERED = CalculatorFactory::registerTypeSafe<HBondCalculator>("HBondCalculator");
 
 bool isElectronegative(const std::string &symbol) {
   return symbol == "O" || symbol == "N" || symbol == "F" || symbol == "S";
@@ -46,29 +46,29 @@ void checkAcceptorsForHydrogen(const correlation::core::Cell &cell, size_t donor
   const auto &atoms = cell.atoms();
   const auto &pos_h = atoms[h_idx].position();
   const auto &pos_d = atoms[donor_idx].position();
-  correlation::math::Vector3<real_t> v_dh = cell.minimumImage(pos_h - pos_d);
-  real_t d_dh_sq = correlation::math::norm_sq(v_dh);
+  const correlation::math::Vector3<real_t> v_dh = cell.minimumImage(pos_h - pos_d);
+  const real_t d_dh_sq = correlation::math::norm_sq(v_dh);
   if (d_dh_sq < static_cast<real_t>(1e-12)) {
     return;
   }
-  real_t norm_dh = std::sqrt(d_dh_sq);
+  const real_t norm_dh = std::sqrt(d_dh_sq);
 
-  for (size_t atom_idx : en_indices) {
+  for (const size_t atom_idx : en_indices) {
     if (donor_idx == atom_idx) {
       continue;
     }
     const auto &atom_j = atoms[atom_idx];
-    correlation::math::Vector3<real_t> v_da = cell.minimumImage(atom_j.position() - pos_d);
-    real_t d_da_sq = correlation::math::norm_sq(v_da);
+    const correlation::math::Vector3<real_t> v_da = cell.minimumImage(atom_j.position() - pos_d);
+    const real_t d_da_sq = correlation::math::norm_sq(v_da);
 
-    if (d_da_sq < criteria.R_cut_sq && d_da_sq >= static_cast<real_t>(1e-12)) {
-      real_t dot_val = v_dh * v_da;
-      real_t cos_alpha = dot_val / (norm_dh * std::sqrt(d_da_sq));
-      real_t alpha = std::acos(std::max(static_cast<real_t>(-1.0),
-                                        std::min(static_cast<real_t>(1.0), cos_alpha))) *
-                     static_cast<real_t>(correlation::math::rad_to_deg);
+    if (d_da_sq < criteria.r_cut_sq && d_da_sq >= static_cast<real_t>(1e-12)) {
+      const real_t dot_val = v_dh * v_da;
+      const real_t cos_alpha = dot_val / (norm_dh * std::sqrt(d_da_sq));
+      const real_t alpha = std::acos(std::max(static_cast<real_t>(-1.0),
+                                              std::min(static_cast<real_t>(1.0), cos_alpha))) *
+                           static_cast<real_t>(correlation::math::rad_to_deg);
 
-      if (alpha < criteria.Alpha_cut) {
+      if (alpha < criteria.alpha_cut) {
         hbond_counts[donor_idx]++;
         hbond_counts[atom_idx]++;
       }
@@ -81,13 +81,13 @@ void findHydrogenBonds(const correlation::core::Cell &cell,
                        const std::vector<size_t> &en_indices, const HBondCriteria &criteria,
                        std::vector<int> &hbond_counts) {
   const auto &atoms = cell.atoms();
-  for (size_t donor_idx : en_indices) {
-    std::vector<size_t> hydrogens = findBondedHydrogens(donor_idx, atoms, neighbor_graph);
+  for (const size_t donor_idx : en_indices) {
+    const std::vector<size_t> hydrogens = findBondedHydrogens(donor_idx, atoms, neighbor_graph);
     if (hydrogens.empty()) {
       continue;
     }
 
-    for (size_t h_idx : hydrogens) {
+    for (const size_t h_idx : hydrogens) {
       checkAcceptorsForHydrogen(cell, donor_idx, h_idx, en_indices, criteria, hbond_counts);
     }
   }
@@ -115,8 +115,8 @@ HBondCalculator::calculate(const correlation::core::Cell &cell,
 
   // Geometric criteria
   const HBondCriteria criteria{
-      .R_cut_sq = static_cast<real_t>(3.5 * 3.5), // Donor-Acceptor distance squared
-      .Alpha_cut = static_cast<real_t>(30.0)      // H-D...A angle,
+      .r_cut_sq = static_cast<real_t>(3.5 * 3.5), // Donor-Acceptor distance squared
+      .alpha_cut = static_cast<real_t>(30.0)      // H-D...A angle,
   };
 
   std::vector<int> hbond_counts(num_atoms, 0);
@@ -139,8 +139,8 @@ HBondCalculator::calculate(const correlation::core::Cell &cell,
   // Use pre-filtered en_indices for the final distribution loop.
   std::map<int, real_t> distribution;
   int max_hb = 0;
-  int num_en_atoms = static_cast<int>(en_indices.size());
-  for (size_t atom_idx : en_indices) {
+  const int num_en_atoms = static_cast<int>(en_indices.size());
+  for (const size_t atom_idx : en_indices) {
     distribution[hbond_counts[atom_idx]] += static_cast<real_t>(1.0);
     max_hb = std::max(max_hb, hbond_counts[atom_idx]);
   }
@@ -156,8 +156,8 @@ HBondCalculator::calculate(const correlation::core::Cell &cell,
 
   for (int idx = 0; idx <= max_hb; ++idx) {
     hist.bins.push_back(static_cast<real_t>(idx));
-    real_t freq = (num_en_atoms > 0) ? (distribution[idx] / static_cast<real_t>(num_en_atoms))
-                                     : static_cast<real_t>(0.0);
+    const real_t freq = (num_en_atoms > 0) ? (distribution[idx] / static_cast<real_t>(num_en_atoms))
+                                           : static_cast<real_t>(0.0);
     hist.partials["Total"].push_back(freq);
   }
 

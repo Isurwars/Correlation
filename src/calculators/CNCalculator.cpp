@@ -9,14 +9,13 @@
 #include "calculators/CNCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
 
-#include <numeric>
 #include <stdexcept>
 
 namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-const bool registered = CalculatorFactory::registerTypeSafe<CNCalculator>("CNCalculator");
+const bool REGISTERED = CalculatorFactory::registerTypeSafe<CNCalculator>("CNCalculator");
 
 /**
  * @brief Helper to compute the "Any" and "Total" partial distributions for the histogram.
@@ -107,7 +106,9 @@ CNCalculator::calculate(const correlation::core::Cell &cell,
   cn_histogram.file_suffix = "_CN";
 
   cn_histogram.bins.resize(num_bins);
-  std::iota(cn_histogram.bins.begin(), cn_histogram.bins.end(), static_cast<real_t>(0));
+  for (size_t bin_idx = 0; bin_idx < num_bins; ++bin_idx) {
+    cn_histogram.bins[bin_idx] = static_cast<real_t>(bin_idx);
+  }
 
   for (auto &[key, dist_vector] : partial_dists) {
     dist_vector.resize(num_bins, 0);

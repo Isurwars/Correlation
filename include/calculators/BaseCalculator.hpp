@@ -57,13 +57,13 @@ public:
    * @brief Check if this calculator runs per-frame (e.g. RDF, PAD).
    * @return True if it calculates properties for individual snapshots.
    */
-  virtual bool isFrameCalculator() const = 0;
+  [[nodiscard]] virtual bool isFrameCalculator() const = 0;
 
   /**
    * @brief Check if this calculator runs on the whole trajectory (e.g. VACF).
    * @return True if it calculates time-dependent or multi-frame properties.
    */
-  virtual bool isTrajectoryCalculator() const = 0;
+  [[nodiscard]] virtual bool isTrajectoryCalculator() const = 0;
 
   /**
    * @brief Check if the calculator has all required models, parameters, and resources configured to
@@ -77,22 +77,29 @@ public:
    * @brief Calculate per-frame properties.
    *        Called concurrently on different DistributionFunctions objects.
    *        Must be thread-safe (const).
-   * @param dists The DistributionFunctions object to store the results.
-   * @param settings The analysis settings and parameters.
+   * @param[in,out] dists The DistributionFunctions object to store the results.
+   * @param[in] settings The analysis settings and parameters.
    */
   virtual void calculateFrame(correlation::analysis::DistributionFunctions &dists,
-                              const correlation::analysis::AnalysisSettings &settings) const {}
+                              const correlation::analysis::AnalysisSettings &settings) const {
+    (void)dists;
+    (void)settings;
+  }
 
   /**
    * @brief Calculate multi-frame properties or post-processing.
    *        Called once after all frames are accumulated.
-   * @param dists The DistributionFunctions container to store trajectory-wide results.
-   * @param traj The complete trajectory data.
-   * @param settings The analysis settings and parameters.
+   * @param[in,out] dists The DistributionFunctions container to store trajectory-wide results.
+   * @param[in] traj The complete trajectory data.
+   * @param[in] settings The analysis settings and parameters.
    */
   virtual void calculateTrajectory(correlation::analysis::DistributionFunctions &dists,
                                    const correlation::core::Trajectory &traj,
-                                   const correlation::analysis::AnalysisSettings &settings) const {}
+                                   const correlation::analysis::AnalysisSettings &settings) const {
+    (void)dists;
+    (void)traj;
+    (void)settings;
+  }
 };
 
 } // namespace correlation::calculators

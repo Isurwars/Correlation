@@ -24,11 +24,11 @@ namespace correlation::calculators {
 class CalculatorFactory {
 public:
   /** @return Singleton instance of the CalculatorFactory. */
-  static CalculatorFactory &instance();
+  [[nodiscard]] static CalculatorFactory &instance();
 
   /**
    * @brief Registers a new calculator.
-   * @param calculator Unique pointer to the calculator instance.
+   * @param[in] calculator Unique pointer to the calculator instance.
    * @return true if registration was successful.
    */
   bool registerCalculator(std::unique_ptr<BaseCalculator> calculator);
@@ -36,7 +36,7 @@ public:
   /**
    * @brief Exception-safe template helper for static auto-registration.
    * @tparam T The specific Calculator class type to instantiate.
-   * @param name The human-readable name of the calculator (for error logging).
+   * @param[in] name The human-readable name of the calculator (for error logging).
    * @return true if registration succeeded, false if an exception occurred.
    */
   template <typename T> static bool registerTypeSafe(const char *name) noexcept {
@@ -61,7 +61,7 @@ public:
 
   /**
    * @brief Gets a calculator by its name.
-   * @param name The name of the calculator.
+   * @param[in] name The name of the calculator.
    * @return Pointer to the calculator, or nullptr if not found.
    */
   [[nodiscard]] const BaseCalculator *getCalculator(std::string_view name) const;

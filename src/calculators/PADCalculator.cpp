@@ -18,7 +18,7 @@ namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-const bool registered = CalculatorFactory::registerTypeSafe<PADCalculator>("PADCalculator");
+const bool REGISTERED = CalculatorFactory::registerTypeSafe<PADCalculator>("PADCalculator");
 
 struct PADSettings {
   real_t bin_width;
@@ -136,7 +136,7 @@ PADCalculator::calculate(const correlation::core::Cell &cell,
   f_theta.partials = f_theta_raw.partials;
 
   if (total_counts >= 1) {
-    const real_t normalization_factor = static_cast<real_t>(1.0 / (total_counts * bin_width));
+    const auto normalization_factor = static_cast<real_t>(1.0 / (total_counts * bin_width));
     for (auto &[key, partial] : f_theta.partials) {
       for (auto &val : partial) {
         val *= normalization_factor;

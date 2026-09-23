@@ -17,6 +17,9 @@ namespace correlation::calculators::gpu {
 
 /**
  * @brief Performs GPU-accelerated bond angle tensor computations with automatic fallback to CPU.
+ * @param[in] cell Simulation cell containing atomic coordinates and box dimensions.
+ * @param[in] graph Precomputed neighbor connectivity graph.
+ * @param[out] out_angles Output 4D angle tensor populated with computed angles in radians.
  */
 inline void compute_angles_gpu(const correlation::core::Cell &cell,
                                const correlation::core::NeighborGraph &graph,

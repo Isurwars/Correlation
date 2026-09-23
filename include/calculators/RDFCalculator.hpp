@@ -47,16 +47,18 @@ public:
    * @brief Calculates the J(r), g(r), and G(r) histograms for the given cell
    * and pair distances.
    *
-   * @param cell The simulation correlation::core::Cell containing atoms and
+   * @param[in] cell The simulation correlation::core::Cell containing atoms and
    * lattice information.
-   * @param neighbors The StructureAnalyzer containing pre-computed pair
+   * @param[in] neighbors The StructureAnalyzer containing pre-computed pair
    * distances.
-   * @param ashcroft_weights The Ashcroft-Langreth scattering weights for
+   * @param[in] ashcroft_weights The Ashcroft-Langreth scattering weights for
    * assembling the total `g(r)` from partials.
-   * @param r_max The maximum radius to calculate the RDF up to.
-   * @param r_bin_width The histogram bin width in Angstroms.
+   * @param[in] r_max The maximum radius to calculate the RDF up to.
+   * @param[in] r_bin_width The histogram bin width in Angstroms.
    * @return A map containing the `J(r)`, `g(r)`, and `G(r)` histograms, both
    * partial and total.
+   * @throws std::invalid_argument If r_bin_width or r_max is non-positive.
+   * @throws std::logic_error If cell volume is non-positive.
    */
   static std::map<std::string, correlation::analysis::Histogram>
   calculate(const correlation::core::Cell &cell,

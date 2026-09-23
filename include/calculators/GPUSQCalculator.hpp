@@ -43,9 +43,14 @@ public:
            "when no compatible Nvidia GPU is detected.";
   }
 
-  bool isFrameCalculator() const override { return true; }
-  bool isTrajectoryCalculator() const override { return false; }
+  [[nodiscard]] bool isFrameCalculator() const override { return true; }
+  [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
+  /**
+   * @brief Calculates static structure factor S(Q) on a frame using GPU if available.
+   * @param[in,out] dists DistributionFunctions target container.
+   * @param[in] settings Analysis configuration settings.
+   */
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;
 

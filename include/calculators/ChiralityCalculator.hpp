@@ -32,16 +32,23 @@ public:
   [[nodiscard]] bool isFrameCalculator() const override { return true; }
   [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
+  /**
+   * @brief Dispatches the calculation for a single configuration frame.
+   *
+   * @param[in,out] dists Distribution functions container to append results to.
+   * @param[in] settings Current analysis configuration settings.
+   */
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief Computes the Chiral Order Parameter for a single atom.
    *
-   * @param atom_idx Index of the central atom.
-   * @param cell The periodic cell.
-   * @param neighbors Structural analyzer containing the neighbor graph.
+   * @param[in] atom_idx Index of the central atom.
+   * @param[in] cell The periodic cell.
+   * @param[in] neighbors Structural analyzer containing the neighbor graph.
    * @return The normalized scalar triple product chirality value.
+   * @throws std::logic_error If @p neighbors is nullptr.
    */
   static real_t
   computeSingleAtomChirality(size_t atom_idx, const correlation::core::Cell &cell,
@@ -50,9 +57,10 @@ public:
   /**
    * @brief Computes the Chiral Order Parameter distribution for all atoms in the cell.
    *
-   * @param cell The periodic cell.
-   * @param neighbors Structural analyzer containing the neighbor graph.
+   * @param[in] cell The periodic cell.
+   * @param[in] neighbors Structural analyzer containing the neighbor graph.
    * @return A histogram of chirality values in the range [-1.0, 1.0].
+   * @throws std::logic_error If @p neighbors is nullptr.
    */
   static correlation::analysis::Histogram
   calculate(const correlation::core::Cell &cell,

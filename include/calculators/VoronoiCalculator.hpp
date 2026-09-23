@@ -38,14 +38,20 @@ public:
   [[nodiscard]] bool isFrameCalculator() const override { return true; }
   [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
+  /**
+   * @brief Dispatches the calculation for a single configuration frame.
+   *
+   * @param[in,out] dists Distribution functions container to append results to.
+   * @param[in] settings Current analysis configuration settings.
+   */
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief Computes Voronoi tessellation and extracts metric histograms.
    *
-   * @param cell The periodic simulation cell.
-   * @param neighbors Optional structure analyzer for API consistency.
+   * @param[in] cell The periodic simulation cell.
+   * @param[in] neighbors Optional structure analyzer for API consistency.
    * @return A map of histogram names to their respective Histogram data.
    */
   static std::map<std::string, correlation::analysis::Histogram>

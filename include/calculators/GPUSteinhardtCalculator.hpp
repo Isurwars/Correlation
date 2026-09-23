@@ -38,6 +38,11 @@ public:
   [[nodiscard]] bool isFrameCalculator() const override { return true; }
   [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
+  /**
+   * @brief Calculates Steinhardt order parameters on a frame.
+   * @param[in,out] dists DistributionFunctions target container.
+   * @param[in] settings Analysis configuration settings.
+   */
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;
 

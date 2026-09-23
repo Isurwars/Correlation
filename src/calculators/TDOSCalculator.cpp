@@ -17,7 +17,7 @@ namespace correlation::calculators {
 
 namespace {
 
-const bool registered = CalculatorFactory::registerTypeSafe<TDOSCalculator>("TDOSCalculator");
+const bool REGISTERED = CalculatorFactory::registerTypeSafe<TDOSCalculator>("TDOSCalculator");
 
 /**
  * @brief Generates uniform energy bin centers between e_min and e_max.

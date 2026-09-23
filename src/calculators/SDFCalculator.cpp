@@ -18,7 +18,7 @@ namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-const bool registered = CalculatorFactory::registerTypeSafe<SDFCalculator>("SDFCalculator");
+const bool REGISTERED = CalculatorFactory::registerTypeSafe<SDFCalculator>("SDFCalculator");
 } // namespace
 
 void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
@@ -67,7 +67,7 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
   // description string.
 
   // Voxel volume = total cell volume / number of voxels (correct for triclinic).
-  const real_t d_V = cell.volume() / static_cast<real_t>(total_bins);
+  const real_t d_v = cell.volume() / static_cast<real_t>(total_bins);
   const auto &inv_lv = cell.inverseLatticeVectors();
 
   for (const auto &atom : cell.atoms()) {
@@ -88,13 +88,13 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
     size_t const i_z = static_cast<size_t>(f_z * static_cast<real_t>(n_z)) % n_z;
 
     size_t const idx = i_x * (n_y * n_z) + i_y * n_z + i_z;
-    sdf_hist.partials[sym][idx] += static_cast<real_t>(1.0) / d_V; // Density contribution per frame
+    sdf_hist.partials[sym][idx] += static_cast<real_t>(1.0) / d_v; // Density contribution per frame
 
     // Also accumulate to total
     if (!sdf_hist.partials.contains("Total")) {
       sdf_hist.partials["Total"].assign(total_bins, 0.0);
     }
-    sdf_hist.partials["Total"][idx] += static_cast<real_t>(1.0) / d_V;
+    sdf_hist.partials["Total"][idx] += static_cast<real_t>(1.0) / d_v;
   }
 
   if (!sdf_hist.partials.contains("Total")) {

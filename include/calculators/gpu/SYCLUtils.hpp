@@ -8,7 +8,7 @@
 
 #pragma once
 
-#if defined(CORRELATION_USE_SYCL)
+#ifdef CORRELATION_USE_SYCL
 #include <sycl/sycl.hpp>
 #endif
 
@@ -17,13 +17,13 @@ namespace correlation::calculators::sycl_gpu {
 /**
  * @brief Checks if a compatible SYCL GPU device (NVIDIA, AMD, Intel) is available at runtime.
  */
-bool has_sycl_gpu_device() noexcept;
+[[nodiscard]] bool hasSyclGpuDevice() noexcept;
 
-#if defined(CORRELATION_USE_SYCL)
+#ifdef CORRELATION_USE_SYCL
 /**
  * @brief Returns a reference to the shared SYCL queue instance.
  */
-sycl::queue &get_sycl_queue();
+[[nodiscard]] sycl::queue &get_sycl_queue();
 #endif
 
 } // namespace correlation::calculators::sycl_gpu

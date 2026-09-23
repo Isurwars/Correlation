@@ -25,7 +25,7 @@ namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-const bool registered =
+const bool REGISTERED =
     CalculatorFactory::registerTypeSafe<ChiralityCalculator>("ChiralityCalculator");
 
 struct BinningConfig {

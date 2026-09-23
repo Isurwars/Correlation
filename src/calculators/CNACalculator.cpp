@@ -21,7 +21,7 @@ namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-const bool registered = CalculatorFactory::registerTypeSafe<CNACalculator>("CNACalculator");
+const bool REGISTERED = CalculatorFactory::registerTypeSafe<CNACalculator>("CNACalculator");
 
 /**
  * @brief DFS helper to find the longest path in the common neighbor subgraph.

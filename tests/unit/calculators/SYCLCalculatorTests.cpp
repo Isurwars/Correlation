@@ -23,7 +23,7 @@
 namespace correlation::testing {
 
 TEST(SYCLCalculatorTests, DeviceDetectionDoesNotCrash) {
-  bool const has_gpu = correlation::calculators::sycl_gpu::has_sycl_gpu_device();
+  bool const has_gpu = correlation::calculators::sycl_gpu::hasSyclGpuDevice();
   (void)has_gpu;
   SUCCEED();
 }

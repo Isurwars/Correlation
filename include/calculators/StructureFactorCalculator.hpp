@@ -37,6 +37,11 @@ public:
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
 
+  /**
+   * @brief Computes static structure factor S(Q) for a single frame.
+   * @param[in,out] dists Distribution functions container receiving S(Q) histogram.
+   * @param[in] settings Calculation parameters including q_max and q_bin_width.
+   */
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;
 };

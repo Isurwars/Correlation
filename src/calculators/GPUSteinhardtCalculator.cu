@@ -1,6 +1,7 @@
 /**
  * @file GPUSteinhardtCalculator.cu
- * @brief CUDA/HIP implementation of GPU-accelerated Steinhardt parameter calculation supporting float and double.
+ * @brief CUDA/HIP implementation of GPU-accelerated Steinhardt parameter calculation supporting
+ * float and double.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -21,7 +22,8 @@ namespace correlation::calculators {
 
 namespace {
 
-const bool registered = CalculatorFactory::registerTypeSafe<GPUSteinhardtCalculator>("GPUSteinhardtCalculator");
+const bool REGISTERED =
+    CalculatorFactory::registerTypeSafe<GPUSteinhardtCalculator>("GPUSteinhardtCalculator");
 
 template <typename T> struct GPUPoint {
   T x;
@@ -68,7 +70,8 @@ template <typename T> struct SteinhardtOutputPointers {
 // Device helper: spherical harmonic Y_l^m for l=4 and l=6 (templated on T)
 // -------------------------------------------------------------------------
 template <typename T>
-CORRELATION_DEVICE void compute_y4m(SphericalHarmonicInput<T> input, SphericalHarmonicOutput<T> output) {
+CORRELATION_DEVICE void computeY4m(SphericalHarmonicInput<T> input,
+                                   SphericalHarmonicOutput<T> output) {
   T const costheta = input.costheta;
   T const phi = input.phi;
   T *real_y = output.real_y;
@@ -77,11 +80,13 @@ CORRELATION_DEVICE void compute_y4m(SphericalHarmonicInput<T> input, SphericalHa
   T const sin2 = static_cast<T>(1.0) - costheta * costheta;
   T const sintheta = (sin2 > static_cast<T>(0.0)) ? sqrt(sin2) : static_cast<T>(0.0);
 
-  T const p40 = static_cast<T>(0.125) * (static_cast<T>(35.0) * costheta * costheta * costheta * costheta -
-                                         static_cast<T>(30.0) * costheta * costheta + static_cast<T>(3.0));
-  T const p41 =
-      static_cast<T>(-2.5) * costheta * (static_cast<T>(7.0) * costheta * costheta - static_cast<T>(3.0)) * sintheta;
-  T const p42 = static_cast<T>(7.5) * (static_cast<T>(7.0) * costheta * costheta - static_cast<T>(1.0)) * sin2;
+  T const p40 =
+      static_cast<T>(0.125) * (static_cast<T>(35.0) * costheta * costheta * costheta * costheta -
+                               static_cast<T>(30.0) * costheta * costheta + static_cast<T>(3.0));
+  T const p41 = static_cast<T>(-2.5) * costheta *
+                (static_cast<T>(7.0) * costheta * costheta - static_cast<T>(3.0)) * sintheta;
+  T const p42 = static_cast<T>(7.5) *
+                (static_cast<T>(7.0) * costheta * costheta - static_cast<T>(1.0)) * sin2;
   T const p43 = static_cast<T>(-105.0) * costheta * sintheta * sin2;
   T const p44 = static_cast<T>(105.0) * sin2 * sin2;
 
@@ -109,7 +114,8 @@ CORRELATION_DEVICE void compute_y4m(SphericalHarmonicInput<T> input, SphericalHa
 }
 
 template <typename T>
-CORRELATION_DEVICE void compute_y6m(SphericalHarmonicInput<T> input, SphericalHarmonicOutput<T> output) {
+CORRELATION_DEVICE void computeY6m(SphericalHarmonicInput<T> input,
+                                   SphericalHarmonicOutput<T> output) {
   T const costheta = input.costheta;
   T const phi = input.phi;
   T *real_y = output.real_y;
@@ -122,15 +128,19 @@ CORRELATION_DEVICE void compute_y6m(SphericalHarmonicInput<T> input, SphericalHa
   T const cos4 = cos2 * cos2;
   T const cos6 = cos4 * cos2;
 
-  T const p60 = static_cast<T>(0.0625) * (static_cast<T>(231.0) * cos6 - static_cast<T>(315.0) * cos4 +
-                                          static_cast<T>(105.0) * cos2 - static_cast<T>(5.0));
+  T const p60 =
+      static_cast<T>(0.0625) * (static_cast<T>(231.0) * cos6 - static_cast<T>(315.0) * cos4 +
+                                static_cast<T>(105.0) * cos2 - static_cast<T>(5.0));
   T const p61 = static_cast<T>(-2.625) * costheta *
-                (static_cast<T>(33.0) * cos4 - static_cast<T>(30.0) * cos2 + static_cast<T>(5.0)) * sintheta;
-  T const p62 =
-      static_cast<T>(13.125) * (static_cast<T>(33.0) * cos4 - static_cast<T>(18.0) * cos2 + static_cast<T>(1.0)) * sin2;
-  T const p63 =
-      static_cast<T>(-492.1875) * costheta * (static_cast<T>(11.0) * cos2 - static_cast<T>(3.0)) * sintheta * sin2;
-  T const p64 = static_cast<T>(492.1875) * (static_cast<T>(11.0) * cos2 - static_cast<T>(1.0)) * sin2 * sin2;
+                (static_cast<T>(33.0) * cos4 - static_cast<T>(30.0) * cos2 + static_cast<T>(5.0)) *
+                sintheta;
+  T const p62 = static_cast<T>(13.125) *
+                (static_cast<T>(33.0) * cos4 - static_cast<T>(18.0) * cos2 + static_cast<T>(1.0)) *
+                sin2;
+  T const p63 = static_cast<T>(-492.1875) * costheta *
+                (static_cast<T>(11.0) * cos2 - static_cast<T>(3.0)) * sintheta * sin2;
+  T const p64 =
+      static_cast<T>(492.1875) * (static_cast<T>(11.0) * cos2 - static_cast<T>(1.0)) * sin2 * sin2;
   T const p65 = static_cast<T>(-10335.9375) * costheta * sintheta * sin2 * sin2;
   T const p66 = static_cast<T>(10335.9375) * sin2 * sin2 * sin2;
 
@@ -164,8 +174,9 @@ CORRELATION_DEVICE void compute_y6m(SphericalHarmonicInput<T> input, SphericalHa
 // CUDA Kernel: compute Steinhardt parameters Q4 and Q6 per atom
 // -------------------------------------------------------------------------
 template <typename T>
-CORRELATION_GLOBAL void steinhardt_kernel(GPUPoint<T> const *CORRELATION_RESTRICT atoms, NeighborGraphPointers graph,
-                                          int num_atoms, SteinhardtOutputPointers<T> outputs) {
+CORRELATION_GLOBAL void steinhardtKernel(GPUPoint<T> const *CORRELATION_RESTRICT atoms,
+                                         NeighborGraphPointers graph, int num_atoms,
+                                         SteinhardtOutputPointers<T> outputs) {
 
   int atom_idx = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
   if (atom_idx >= num_atoms) {
@@ -212,7 +223,7 @@ CORRELATION_GLOBAL void steinhardt_kernel(GPUPoint<T> const *CORRELATION_RESTRIC
     std::array<T, 13> y6_r{};
     std::array<T, 13> y6_i{};
 
-    compute_y4m<T>(
+    computeY4m<T>(
         {
             .costheta = costheta,
             .phi = phi,
@@ -221,7 +232,7 @@ CORRELATION_GLOBAL void steinhardt_kernel(GPUPoint<T> const *CORRELATION_RESTRIC
             .real_y = y4_r.data(),
             .imag_y = y4_i.data(),
         });
-    compute_y6m<T>(
+    computeY6m<T>(
         {
             .costheta = costheta,
             .phi = phi,
@@ -272,15 +283,16 @@ CORRELATION_GLOBAL void steinhardt_kernel(GPUPoint<T> const *CORRELATION_RESTRIC
 
 GPUSteinhardtCalculator::GPUSteinhardtCalculator() {
   int device_count = 0;
-  hipError_t err = hipGetDeviceCount(&device_count);
+  const hipError_t err = hipGetDeviceCount(&device_count);
   has_gpu_ = (err == hipSuccess && device_count > 0);
 }
 
-void GPUSteinhardtCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
-                                             const correlation::analysis::AnalysisSettings &settings) const {
+void GPUSteinhardtCalculator::calculateFrame(
+    correlation::analysis::DistributionFunctions &dists,
+    const correlation::analysis::AnalysisSettings &settings) const {
 
   if (!has_gpu_) {
-    SteinhardtCalculator cpu_calc;
+    const SteinhardtCalculator cpu_calc;
     cpu_calc.calculateFrame(dists, settings);
     return;
   }
@@ -288,7 +300,7 @@ void GPUSteinhardtCalculator::calculateFrame(correlation::analysis::Distribution
   using T = real_t;
 
   if (dists.neighbors() == nullptr) {
-    SteinhardtCalculator cpu_calc;
+    const SteinhardtCalculator cpu_calc;
     cpu_calc.calculateFrame(dists, settings);
     return;
   }
@@ -324,7 +336,7 @@ void GPUSteinhardtCalculator::calculateFrame(correlation::analysis::Distribution
   h_offsets[num_atoms] = static_cast<int>(h_indices.size());
 
   if (h_indices.empty()) {
-    SteinhardtCalculator cpu_calc;
+    const SteinhardtCalculator cpu_calc;
     cpu_calc.calculateFrame(dists, settings);
     return;
   }
@@ -347,7 +359,7 @@ void GPUSteinhardtCalculator::calculateFrame(correlation::analysis::Distribution
 
   int const block_size = 256;
   int const grid_size = (static_cast<int>(num_atoms) + block_size - 1) / block_size;
-  hipLaunchKernelGGL(steinhardt_kernel<T>, grid_size, block_size, 0, 0, d_atoms,
+  hipLaunchKernelGGL(steinhardtKernel<T>, grid_size, block_size, 0, 0, d_atoms,
                      NeighborGraphPointers{d_offsets, d_indices}, static_cast<int>(num_atoms),
                      SteinhardtOutputPointers<T>{d_q4, d_q6});
   hipDeviceSynchronize();
@@ -363,59 +375,61 @@ void GPUSteinhardtCalculator::calculateFrame(correlation::analysis::Distribution
   hipFree(d_q4);
   hipFree(d_q6);
 
-  size_t const bins_Q = 100;
-  T const Q_max = static_cast<T>(1.0);
-  T const d_q = Q_max / static_cast<T>(bins_Q);
+  size_t const bins_q = 100;
+  T const q_max = static_cast<T>(1.0);
+  T const d_q = q_max / static_cast<T>(bins_q);
 
-  correlation::analysis::Histogram hist_Q4;
-  hist_Q4.x_label = "Q4";
-  hist_Q4.title = "Steinhardt Q4 Interface Parameter (GPU)";
-  hist_Q4.y_label = "Probability";
-  hist_Q4.x_unit = "arbitrary units";
-  hist_Q4.y_unit = "counts";
-  hist_Q4.description = "Steinhardt Q4 Bond Orientational Order Parameter (GPU)";
-  hist_Q4.file_suffix = "_Q4_gpu";
-  hist_Q4.bins.resize(bins_Q);
-  std::vector<real_t> q4_bins(bins_Q, static_cast<real_t>(0.0));
+  correlation::analysis::Histogram hist_q4;
+  hist_q4.x_label = "Q4";
+  hist_q4.title = "Steinhardt Q4 Interface Parameter (GPU)";
+  hist_q4.y_label = "Probability";
+  hist_q4.x_unit = "arbitrary units";
+  hist_q4.y_unit = "counts";
+  hist_q4.description = "Steinhardt Q4 Bond Orientational Order Parameter (GPU)";
+  hist_q4.file_suffix = "_Q4_gpu";
+  hist_q4.bins.resize(bins_q);
+  std::vector<real_t> q4_bins(bins_q, static_cast<real_t>(0.0));
 
-  correlation::analysis::Histogram hist_Q6;
-  hist_Q6.x_label = "Q6";
-  hist_Q6.title = "Steinhardt Q6 Interface Parameter (GPU)";
-  hist_Q6.y_label = "Probability";
-  hist_Q6.x_unit = "arbitrary units";
-  hist_Q6.y_unit = "counts";
-  hist_Q6.description = "Steinhardt Q6 Bond Orientational Order Parameter (GPU)";
-  hist_Q6.file_suffix = "_Q6_gpu";
-  hist_Q6.bins.resize(bins_Q);
-  std::vector<real_t> q6_bins(bins_Q, static_cast<real_t>(0.0));
+  correlation::analysis::Histogram hist_q6;
+  hist_q6.x_label = "Q6";
+  hist_q6.title = "Steinhardt Q6 Interface Parameter (GPU)";
+  hist_q6.y_label = "Probability";
+  hist_q6.x_unit = "arbitrary units";
+  hist_q6.y_unit = "counts";
+  hist_q6.description = "Steinhardt Q6 Bond Orientational Order Parameter (GPU)";
+  hist_q6.file_suffix = "_Q6_gpu";
+  hist_q6.bins.resize(bins_q);
+  std::vector<real_t> q6_bins(bins_q, static_cast<real_t>(0.0));
 
-  for (size_t bin_idx = 0; bin_idx < bins_Q; ++bin_idx) {
-    *(hist_Q4.bins.data() + bin_idx) = static_cast<real_t>((static_cast<T>(bin_idx) + static_cast<T>(0.5)) * d_q);
-    *(hist_Q6.bins.data() + bin_idx) = static_cast<real_t>((static_cast<T>(bin_idx) + static_cast<T>(0.5)) * d_q);
+  for (size_t bin_idx = 0; bin_idx < bins_q; ++bin_idx) {
+    *(hist_q4.bins.data() + bin_idx) =
+        static_cast<real_t>((static_cast<T>(bin_idx) + static_cast<T>(0.5)) * d_q);
+    *(hist_q6.bins.data() + bin_idx) =
+        static_cast<real_t>((static_cast<T>(bin_idx) + static_cast<T>(0.5)) * d_q);
   }
 
   for (size_t i = 0; i < num_atoms; ++i) {
     T const q4_val = *(h_q4.data() + i);
     T const q6_val = *(h_q6.data() + i);
-    if (q4_val >= static_cast<T>(0.0) && q4_val < Q_max) {
+    if (q4_val >= static_cast<T>(0.0) && q4_val < q_max) {
       auto bin = static_cast<size_t>(q4_val / d_q);
-      if (bin < bins_Q) {
+      if (bin < bins_q) {
         *(q4_bins.data() + bin) += static_cast<real_t>(1.0);
       }
     }
-    if (q6_val >= static_cast<T>(0.0) && q6_val < Q_max) {
+    if (q6_val >= static_cast<T>(0.0) && q6_val < q_max) {
       auto bin = static_cast<size_t>(q6_val / d_q);
-      if (bin < bins_Q) {
+      if (bin < bins_q) {
         *(q6_bins.data() + bin) += static_cast<real_t>(1.0);
       }
     }
   }
 
-  hist_Q4.partials["Total"] = q4_bins;
-  hist_Q6.partials["Total"] = q6_bins;
+  hist_q4.partials["Total"] = q4_bins;
+  hist_q6.partials["Total"] = q6_bins;
 
-  dists.addHistogram("Q4_gpu", std::move(hist_Q4));
-  dists.addHistogram("Q6_gpu", std::move(hist_Q6));
+  dists.addHistogram("Q4_gpu", std::move(hist_q4));
+  dists.addHistogram("Q6_gpu", std::move(hist_q6));
 }
 
 } // namespace correlation::calculators

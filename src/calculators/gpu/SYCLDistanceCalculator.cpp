@@ -16,8 +16,8 @@ void compute_distances_sycl(const correlation::core::Cell &cell, real_t cutoff_s
                             correlation::core::NeighborGraph &out_graph,
                             RawHistogramTensor *out_histograms,
                             DistanceCalculationConfig hist_config) {
-#if defined(CORRELATION_USE_SYCL)
-  if (!has_sycl_gpu_device()) {
+#ifdef CORRELATION_USE_SYCL
+  if (!hasSyclGpuDevice()) {
     // Fallback to CPU calculation if SYCL device is unavailable
     DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, ignore_periodic_self_interactions,
                                 out_graph, out_histograms, hist_config);

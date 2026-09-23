@@ -62,19 +62,24 @@ public:
   [[nodiscard]] bool isFrameCalculator() const override { return true; }
   [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
+  /**
+   * @brief Computes the X-ray diffraction pattern for a single frame.
+   * @param[in,out] dists Distribution functions container receiving XRD histogram.
+   * @param[in] settings Calculation settings including XRD angular bounds and wavelength.
+   */
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief High-performance computation of the X-Ray Diffraction (XRD) pattern from g(r).
    *
-   * @param g_r_hist Input Radial Distribution Function g(r).
-   * @param cell The periodic cell.
-   * @param ashcroft_weights Composition-dependent scattering weights.
-   * @param lambda X-ray wavelength (Angstrom).
-   * @param theta_min Minimum 2-theta angle (degrees).
-   * @param theta_max Maximum 2-theta angle (degrees).
-   * @param bin_width Angular resolution (degrees).
+   * @param[in] g_r_hist Input Radial Distribution Function g(r).
+   * @param[in] cell The periodic cell.
+   * @param[in] ashcroft_weights Composition-dependent scattering weights.
+   * @param[in] lambda X-ray wavelength (Angstrom).
+   * @param[in] theta_min Minimum 2-theta angle (degrees).
+   * @param[in] theta_max Maximum 2-theta angle (degrees).
+   * @param[in] bin_width Angular resolution (degrees).
    * @return A histogram representing intensity vs 2-theta.
    */
   static correlation::analysis::Histogram
@@ -85,13 +90,13 @@ public:
   /**
    * @brief Direct reciprocal-space calculation of XRD pattern from partial structure factors S(Q).
    *
-   * @param s_q_hist Input Structure Factor histogram S(Q).
-   * @param cell The periodic cell.
-   * @param ashcroft_weights Composition-dependent scattering weights.
-   * @param lambda X-ray wavelength (Angstrom).
-   * @param theta_min Minimum 2-theta angle (degrees).
-   * @param theta_max Maximum 2-theta angle (degrees).
-   * @param bin_width Angular resolution (degrees).
+   * @param[in] s_q_hist Input Structure Factor histogram S(Q).
+   * @param[in] cell The periodic cell.
+   * @param[in] ashcroft_weights Composition-dependent scattering weights.
+   * @param[in] lambda X-ray wavelength (Angstrom).
+   * @param[in] theta_min Minimum 2-theta angle (degrees).
+   * @param[in] theta_max Maximum 2-theta angle (degrees).
+   * @param[in] bin_width Angular resolution (degrees).
    * @return A histogram representing intensity vs 2-theta.
    */
   static correlation::analysis::Histogram
@@ -103,8 +108,8 @@ public:
   /**
    * @brief Calculate the atomic form factor f(Q) for a given element symbol and scattering vector
    * Q.
-   * @param symbol Element symbol (e.g. "Ar").
-   * @param q_value Magnitude of scattering vector Q in 1/Angstrom.
+   * @param[in] symbol Element symbol (e.g. "Ar").
+   * @param[in] q_value Magnitude of scattering vector Q in 1/Angstrom.
    * @return Atomic form factor value.
    */
   static real_t getAtomicFormFactor(const std::string &symbol, real_t q_value);

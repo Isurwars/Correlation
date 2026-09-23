@@ -14,7 +14,7 @@ namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-const bool registered = CalculatorFactory::registerTypeSafe<VACFCalculator>("VACFCalculator");
+const bool REGISTERED = CalculatorFactory::registerTypeSafe<VACFCalculator>("VACFCalculator");
 } // namespace
 
 void VACFCalculator::calculateTrajectory(

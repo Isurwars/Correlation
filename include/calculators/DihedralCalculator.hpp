@@ -38,18 +38,24 @@ public:
   [[nodiscard]] bool isFrameCalculator() const override { return true; }
   [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
+  /**
+   * @brief Dispatches the calculation for a single configuration frame.
+   *
+   * @note Currently a no-op as DihedralCalculator is invoked directly during StructureAnalyzer
+   * construction.
+   * @param[in,out] dists Distribution functions container.
+   * @param[in] settings Current analysis configuration settings.
+   */
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief Computes and populates the dihedral angles tensor.
    *
-   * @param cell The simulation cell containing atoms and positions.
-   * @param graph The pre-computed neighbor graph containing local connections.
-   * @param out_dihedrals A 5D tensor `[correlation::core::Element
-   * A][correlation::core::Element B][correlation::core::Element
-   * C][correlation::core::Element D][angle_idx]` where elements are the
-   * indices, populated with angles in radians [-pi, pi].
+   * @param[in] cell The simulation cell containing atoms and positions.
+   * @param[in] graph The pre-computed neighbor graph containing local connections.
+   * @param[out] out_dihedrals A 5D tensor `[Element A][Element B][Element C][Element D][angle_idx]`
+   * where elements are the indices, populated with angles in radians [-pi, pi].
    */
   static void compute(const correlation::core::Cell &cell,
                       const correlation::core::NeighborGraph &graph,

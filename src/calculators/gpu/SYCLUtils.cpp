@@ -10,8 +10,8 @@
 
 namespace correlation::calculators::sycl_gpu {
 
-bool has_sycl_gpu_device() noexcept {
-#if defined(CORRELATION_USE_SYCL)
+bool hasSyclGpuDevice() noexcept {
+#ifdef CORRELATION_USE_SYCL
   try {
     const auto devices = sycl::device::get_devices(sycl::info::device_type::gpu);
     return !devices.empty();
@@ -23,7 +23,7 @@ bool has_sycl_gpu_device() noexcept {
 #endif
 }
 
-#if defined(CORRELATION_USE_SYCL)
+#ifdef CORRELATION_USE_SYCL
 sycl::queue &get_sycl_queue() {
   static sycl::queue queue(sycl::gpu_selector_v, sycl::property::queue::in_order());
   return queue;

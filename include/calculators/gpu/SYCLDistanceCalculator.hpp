@@ -17,6 +17,13 @@ namespace correlation::calculators::sycl_gpu {
 
 /**
  * @brief Performs multi-vendor SYCL GPU-accelerated pairwise distance computations.
+ * @param[in] cell Atomic simulation unit cell.
+ * @param[in] cutoff_sq Squared distance cutoff threshold.
+ * @param[in] bond_cutoffs Matrix of species-pair bond distance thresholds.
+ * @param[in] ignore_periodic_self_interactions If true, suppresses self periodic images.
+ * @param[out] out_graph Generated NeighborGraph to populate.
+ * @param[out] out_histograms Optional raw histogram tensor pointer.
+ * @param[in] hist_config Histogram binning configuration.
  */
 void compute_distances_sycl(const correlation::core::Cell &cell, real_t cutoff_sq,
                             const correlation::analysis::BondCutoffMatrix &bond_cutoffs,

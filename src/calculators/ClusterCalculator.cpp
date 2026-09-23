@@ -18,25 +18,25 @@ namespace correlation::calculators {
 namespace {
 
 // Static registration of the calculator in the factory
-const bool registered = CalculatorFactory::registerTypeSafe<ClusterCalculator>("ClusterCalculator");
+const bool REGISTERED = CalculatorFactory::registerTypeSafe<ClusterCalculator>("ClusterCalculator");
 
 // Disjoint-Set (Union-Find) data structure for identifying connected components
 class UnionFind {
 public:
-  explicit UnionFind(size_t num_nodes) : parent(num_nodes), sz(num_nodes, 1) {
-    std::iota(parent.begin(), parent.end(), 0);
+  explicit UnionFind(size_t num_nodes) : parent_(num_nodes), sz_(num_nodes, 1) {
+    std::ranges::iota(parent_, 0);
   }
 
   size_t find(size_t node) {
     size_t root = node;
-    while (root != parent[root]) {
-      root = parent[root];
+    while (root != parent_[root]) {
+      root = parent_[root];
     }
     // Path compression
     size_t curr = node;
     while (curr != root) {
-      size_t const nxt = parent[curr];
-      parent[curr] = root;
+      size_t const nxt = parent_[curr];
+      parent_[curr] = root;
       curr = nxt;
     }
     return root;
@@ -47,19 +47,19 @@ public:
     size_t root_j = find(node_j);
     if (root_i != root_j) {
       // Union by size
-      if (sz[root_i] < sz[root_j]) {
+      if (sz_[root_i] < sz_[root_j]) {
         std::swap(root_i, root_j);
       }
-      parent[root_j] = root_i;
-      sz[root_i] += sz[root_j];
+      parent_[root_j] = root_i;
+      sz_[root_i] += sz_[root_j];
     }
   }
 
-  size_t getSize(size_t node) { return sz[find(node)]; }
+  size_t getSize(size_t node) { return sz_[find(node)]; }
 
 private:
-  std::vector<size_t> parent;
-  std::vector<size_t> sz;
+  std::vector<size_t> parent_;
+  std::vector<size_t> sz_;
 };
 
 } // namespace

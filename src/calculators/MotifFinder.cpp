@@ -71,10 +71,10 @@ struct BFSScratch {
 // ---------------------------------------------------------------------------
 // Reconstruct paths from a BFS node back to root (unchanged from original).
 // ---------------------------------------------------------------------------
-void get_paths(BFSScratch::PathEndpoints endpoints,
-               const std::vector<std::vector<correlation::core::AtomID>> &parents,
-               std::vector<correlation::core::AtomID> &current_path,
-               std::vector<std::vector<correlation::core::AtomID>> &all_paths) {
+void getPaths(BFSScratch::PathEndpoints endpoints,
+              const std::vector<std::vector<correlation::core::AtomID>> &parents,
+              std::vector<correlation::core::AtomID> &current_path,
+              std::vector<std::vector<correlation::core::AtomID>> &all_paths) {
   struct StackFrame {
     size_t node;
     size_t parent_idx;
@@ -90,7 +90,7 @@ void get_paths(BFSScratch::PathEndpoints endpoints,
 
   while (!stack.empty()) {
     auto &frame = stack.back();
-    size_t node = frame.node;
+    size_t const node = frame.node;
 
     if (node == endpoints.root) {
       all_paths.push_back(current_path);
@@ -176,8 +176,7 @@ bool isKingRing(const correlation::core::NeighborGraph &graph,
       size_t const target_node = cycle[j];
       size_t const diff = (j > i) ? (j - i) : (i - j);
       size_t const dist_in_cycle = std::min(diff, size - diff);
-      if (dist_king[target_node] != -1 &&
-          static_cast<size_t>(dist_king[target_node]) < dist_in_cycle) {
+      if (dist_king[target_node] != -1 && std::cmp_less(dist_king[target_node], dist_in_cycle)) {
         is_king = false;
         break;
       }
@@ -233,7 +232,7 @@ void findCrossEdges(const correlation::core::NeighborGraph &graph,
   size_t q_head = 0;
 
   while (q_head < bsc.q.size()) {
-    size_t curr_node = bsc.q[q_head++];
+    size_t const curr_node = bsc.q[q_head++];
 
     for (const auto &neighbor : graph.getNeighbors(curr_node)) {
       size_t const neighbor_node = neighbor.index;
@@ -279,13 +278,13 @@ void processCrossEdge(const correlation::core::NeighborGraph &graph,
   cur_u.reserve(settings.max_size);
   cur_v.reserve(settings.max_size);
 
-  get_paths(
+  getPaths(
       {
           .start = first_node,
           .root = settings.root,
       },
       bsc.parents, cur_u, paths_u);
-  get_paths(
+  getPaths(
       {
           .start = second_node,
           .root = settings.root,
@@ -324,8 +323,8 @@ void processCrossEdge(const correlation::core::NeighborGraph &graph,
   }
 }
 
-void process_root(const correlation::core::NeighborGraph &graph,
-                  BFSScratch::RootSearchSettings settings, BFSScratch &bsc) {
+void processRoot(const correlation::core::NeighborGraph &graph,
+                 BFSScratch::RootSearchSettings settings, BFSScratch &bsc) {
   bsc.visited.clear();
   bsc.cross_edges.clear();
   bsc.q.clear();
@@ -374,12 +373,12 @@ getAllShortestRings(const correlation::core::NeighborGraph &graph, size_t max_si
       [&](const tbb::blocked_range<size_t> &range) {
         BFSScratch &bsc = ets.local();
         for (size_t root = range.begin(); root != range.end(); ++root) {
-          process_root(graph,
-                       {
-                           .root = root,
-                           .max_size = max_size,
-                       },
-                       bsc);
+          processRoot(graph,
+                      {
+                          .root = root,
+                          .max_size = max_size,
+                      },
+                      bsc);
         }
       },
       tbb::auto_partitioner{});
@@ -392,9 +391,9 @@ getAllShortestRings(const correlation::core::NeighborGraph &graph, size_t max_si
 
   // Final deduplication (oriented cycles may still have orientation variants
   // produced by different paths within the same root's BFS)
-  std::sort(all_cycles.begin(), all_cycles.end());
-  auto last = std::unique(all_cycles.begin(), all_cycles.end());
-  all_cycles.erase(last, all_cycles.end());
+  std::ranges::sort(all_cycles);
+  auto const [first, last] = std::ranges::unique(all_cycles);
+  all_cycles.erase(first, last);
 
   return all_cycles;
 }

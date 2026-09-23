@@ -17,7 +17,7 @@ namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-const bool registered = CalculatorFactory::registerTypeSafe<DADCalculator>("DADCalculator");
+const bool REGISTERED = CalculatorFactory::registerTypeSafe<DADCalculator>("DADCalculator");
 
 struct HistogramParameters {
   size_t num_bins;
@@ -28,6 +28,15 @@ struct HistogramParameters {
 struct DihedralProcessParameters {
   std::span<const real_t> angles_rad;
   std::vector<real_t> *partial_hist{nullptr};
+  real_t bin_width{0.0};
+  size_t num_bins{0};
+  real_t theta_min{0.0};
+  real_t theta_max{0.0};
+};
+
+struct DihedralPopulationParams {
+  std::span<const correlation::core::Element> elements;
+  const correlation::analysis::StructureAnalyzer *neighbors{nullptr};
   real_t bin_width{0.0};
   size_t num_bins{0};
   real_t theta_min{0.0};
@@ -101,7 +110,7 @@ void normalizeAndScale(NormalizeParams const &params) {
     return;
   }
   params.total_f->assign(params.num_bins, static_cast<real_t>(0.0));
-  real_t total_counts = static_cast<real_t>(0.0);
+  auto total_counts = static_cast<real_t>(0.0);
 
   for (const auto &[key, partial] : *params.partials) {
     if (key != "Total") {
@@ -113,11 +122,51 @@ void normalizeAndScale(NormalizeParams const &params) {
   }
 
   if (total_counts >= static_cast<real_t>(1.0)) {
-    const real_t normalization_factor =
-        static_cast<real_t>(1.0) / (total_counts * params.bin_width);
+    const auto normalization_factor = static_cast<real_t>(1.0) / (total_counts * params.bin_width);
     for (auto &[key, partial] : *params.partials) {
       for (auto &val : partial) {
         val *= normalization_factor;
+      }
+    }
+  }
+}
+
+/**
+ * @brief Helper to populate raw dihedral angle histograms across all element quadruplets.
+ */
+void populateAllDihedrals(const DihedralPopulationParams &params,
+                          correlation::analysis::Histogram &f_dihedral_raw) {
+  if (params.neighbors == nullptr) {
+    return;
+  }
+  const size_t num_elements = params.elements.size();
+  for (size_t idx_a = 0; idx_a < num_elements; ++idx_a) {
+    for (size_t idx_b = 0; idx_b < num_elements; ++idx_b) {
+      for (size_t idx_c = 0; idx_c < num_elements; ++idx_c) {
+        for (size_t idx_d = 0; idx_d < num_elements; ++idx_d) {
+          const auto &angles_rad = params.neighbors->dihedrals()[idx_a][idx_b][idx_c][idx_d];
+          if (angles_rad.empty()) {
+            continue;
+          }
+
+          std::string const key =
+              params.elements[idx_a].symbol + "-" + params.elements[idx_b].symbol + "-" +
+              params.elements[idx_c].symbol + "-" + params.elements[idx_d].symbol;
+
+          auto &partial_hist = f_dihedral_raw.partials[key];
+          if (partial_hist.empty()) {
+            partial_hist.assign(params.num_bins, 0.0);
+          }
+
+          processDihedralAngles({
+              .angles_rad = angles_rad,
+              .partial_hist = &partial_hist,
+              .bin_width = params.bin_width,
+              .num_bins = params.num_bins,
+              .theta_min = params.theta_min,
+              .theta_max = params.theta_max,
+          });
+        }
       }
     }
   }
@@ -144,8 +193,8 @@ DADCalculator::calculate(const correlation::core::Cell &cell,
   }
 
   // Dihedral angles are from -180 to 180 degrees.
-  const real_t theta_min = static_cast<real_t>(-180.0);
-  const real_t theta_max = static_cast<real_t>(180.0);
+  const auto theta_min = static_cast<real_t>(-180.0);
+  const auto theta_max = static_cast<real_t>(180.0);
   const real_t theta_range = theta_max - theta_min;
 
   const auto &elements = cell.elements();
@@ -171,36 +220,16 @@ DADCalculator::calculate(const correlation::core::Cell &cell,
       .bin_width = bin_width,
   });
 
-  for (size_t idx_a = 0; idx_a < num_elements; ++idx_a) {
-    for (size_t idx_b = 0; idx_b < num_elements; ++idx_b) {
-      for (size_t idx_c = 0; idx_c < num_elements; ++idx_c) {
-        for (size_t idx_d = 0; idx_d < num_elements; ++idx_d) {
-
-          const auto &angles_rad = neighbors->dihedrals()[idx_a][idx_b][idx_c][idx_d];
-          if (angles_rad.empty()) {
-            continue;
-          }
-
-          std::string const key = elements[idx_a].symbol + "-" + elements[idx_b].symbol + "-" +
-                                  elements[idx_c].symbol + "-" + elements[idx_d].symbol;
-
-          auto &partial_hist = f_dihedral_raw.partials[key];
-          if (partial_hist.empty()) {
-            partial_hist.assign(num_bins, 0.0);
-          }
-
-          processDihedralAngles({
-              .angles_rad = angles_rad,
-              .partial_hist = &partial_hist,
-              .bin_width = bin_width,
-              .num_bins = num_bins,
-              .theta_min = theta_min,
-              .theta_max = theta_max,
-          });
-        }
-      }
-    }
-  }
+  populateAllDihedrals(
+      {
+          .elements = elements,
+          .neighbors = neighbors,
+          .bin_width = bin_width,
+          .num_bins = num_bins,
+          .theta_min = theta_min,
+          .theta_max = theta_max,
+      },
+      f_dihedral_raw);
 
   auto &total_raw = f_dihedral_raw.partials["Total"];
   total_raw.assign(num_bins, static_cast<real_t>(0.0));

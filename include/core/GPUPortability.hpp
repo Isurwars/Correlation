@@ -113,6 +113,14 @@ inline constexpr dim3 blockDim{
     .z = 1,
 };
 
-#define hipLaunchKernelGGL(kernel, grid, block, shared, stream, ...)
+#define hipLaunchKernelGGL(kernel, grid, block, shared, stream, ...)                           \
+  [&]() noexcept {                                                                              \
+    (void)(grid);                                                                               \
+    (void)(block);                                                                              \
+    (void)(shared);                                                                             \
+    (void)(stream);                                                                             \
+    [[maybe_unused]] auto discard_kernel_args = []([[maybe_unused]] auto &&..._args) {};        \
+    discard_kernel_args(__VA_ARGS__);                                                           \
+  }()
 
 #endif

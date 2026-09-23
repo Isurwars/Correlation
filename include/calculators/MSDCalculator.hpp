@@ -39,9 +39,16 @@ public:
            "coefficient via the Einstein relation.";
   }
 
-  bool isFrameCalculator() const override { return false; }
-  bool isTrajectoryCalculator() const override { return true; }
+  [[nodiscard]] bool isFrameCalculator() const override { return false; }
+  [[nodiscard]] bool isTrajectoryCalculator() const override { return true; }
 
+  /**
+   * @brief Dispatches the calculation for an entire trajectory.
+   *
+   * @param[in,out] dists Distribution functions container to append results to.
+   * @param[in] traj Atomic trajectory container.
+   * @param[in] settings Current analysis configuration settings.
+   */
   void calculateTrajectory(correlation::analysis::DistributionFunctions &dists,
                            const correlation::core::Trajectory &traj,
                            const correlation::analysis::AnalysisSettings &settings) const override;
@@ -49,10 +56,10 @@ public:
   /**
    * @brief Core MSD calculation returning named histograms.
    *
-   * @param traj               The trajectory.
-   * @param max_correlation_frames  Maximum lag in frames (-1 = half trajectory).
-   * @param start_frame        First frame to use.
-   * @param end_frame          One-past-last frame to use.
+   * @param[in] traj               The trajectory.
+   * @param[in] max_correlation_frames  Maximum lag in frames (-1 = half trajectory).
+   * @param[in] start_frame        First frame to use.
+   * @param[in] end_frame          One-past-last frame to use.
    * @return A map of histograms:
    *  - "MSD"   : raw MSD (Angstrom^2) vs time (fs)
    *  - "D_eff" : running diffusion coefficient D(t) = MSD(t) / (6t) (Angstrom^2/fs)

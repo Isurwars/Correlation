@@ -59,13 +59,13 @@ struct GPUBinData {
   const unsigned long long *CORRELATION_RESTRICT indices;
 };
 
-CORRELATION_DEVICE CORRELATION_FORCEINLINE void wrap_coordinate(int bin, int k_val, int &wrap, int &shift) {
+CORRELATION_DEVICE CORRELATION_FORCEINLINE void wrapCoordinate(int bin, int k_val, int &wrap, int &shift) {
   shift = (bin >= 0) ? (bin / k_val) : ((bin - k_val + 1) / k_val);
   wrap = bin - shift * k_val;
 }
 
-CORRELATION_DEVICE CORRELATION_FORCEINLINE bool should_skip_atom_pair(int i_val, int j_val, bool zero_disp,
-                                                                      bool ignore_periodic_self) {
+CORRELATION_DEVICE CORRELATION_FORCEINLINE bool shouldSkipAtomPair(int i_val, int j_val, bool zero_disp,
+                                                                   bool ignore_periodic_self) {
   if (j_val < i_val) {
     return true;
   }
@@ -78,8 +78,8 @@ CORRELATION_DEVICE CORRELATION_FORCEINLINE bool should_skip_atom_pair(int i_val,
 struct AtomPair {
   int i_val;
   int j_val;
-  int type_A;
-  int type_B;
+  int type_a;
+  int type_b;
 };
 
 template <typename T> struct PairPositions {
@@ -89,18 +89,18 @@ template <typename T> struct PairPositions {
 
 template <typename T>
 CORRELATION_DEVICE CORRELATION_FORCEINLINE void
-accumulate_histograms(AtomPair pair, T dist, int num_elements, T hist_r_max, T hist_r_bin_width, int hist_num_bins,
-                      unsigned long long *CORRELATION_RESTRICT d_histograms) {
+accumulateHistograms(AtomPair pair, T dist, int num_elements, T hist_r_max, T hist_r_bin_width, int hist_num_bins,
+                     unsigned long long *CORRELATION_RESTRICT d_histograms) {
   if (d_histograms == nullptr || hist_num_bins <= 0 || hist_r_bin_width <= static_cast<T>(0.0) || dist >= hist_r_max) {
     return;
   }
 
   int const bin_idx = static_cast<int>(dist / hist_r_bin_width);
   if (bin_idx >= 0 && bin_idx < hist_num_bins) {
-    atomicAdd(&d_histograms[pair.type_A * (num_elements * hist_num_bins) + pair.type_B * hist_num_bins + bin_idx],
+    atomicAdd(&d_histograms[pair.type_a * (num_elements * hist_num_bins) + pair.type_b * hist_num_bins + bin_idx],
               1ULL);
-    if (pair.i_val != pair.j_val && pair.type_A != pair.type_B) {
-      atomicAdd(&d_histograms[pair.type_B * (num_elements * hist_num_bins) + pair.type_A * hist_num_bins + bin_idx],
+    if (pair.i_val != pair.j_val && pair.type_a != pair.type_b) {
+      atomicAdd(&d_histograms[pair.type_b * (num_elements * hist_num_bins) + pair.type_a * hist_num_bins + bin_idx],
                 1ULL);
     }
   }
@@ -108,14 +108,14 @@ accumulate_histograms(AtomPair pair, T dist, int num_elements, T hist_r_max, T h
 
 template <bool WriteBonds, typename T>
 CORRELATION_DEVICE CORRELATION_FORCEINLINE void
-record_bond_interaction(AtomPair pair, T d_sq, PairPositions<T> positions, GPUAtomData<T> atoms, int num_elements,
-                        const T *CORRELATION_RESTRICT bond_cutoffs_sq,
-                        unsigned long long *CORRELATION_RESTRICT bond_counter, GPUBond<T> *CORRELATION_RESTRICT bonds) {
-  if (bond_cutoffs_sq == nullptr || pair.type_A >= num_elements || pair.type_B >= num_elements) {
+recordBondInteraction(AtomPair pair, T d_sq, PairPositions<T> positions, GPUAtomData<T> atoms, int num_elements,
+                      const T *CORRELATION_RESTRICT bond_cutoffs_sq,
+                      unsigned long long *CORRELATION_RESTRICT bond_counter, GPUBond<T> *CORRELATION_RESTRICT bonds) {
+  if (bond_cutoffs_sq == nullptr || pair.type_a >= num_elements || pair.type_b >= num_elements) {
     return;
   }
 
-  T const max_bond_dist_sq = bond_cutoffs_sq[pair.type_A * num_elements + pair.type_B];
+  T const max_bond_dist_sq = bond_cutoffs_sq[pair.type_a * num_elements + pair.type_b];
   if (max_bond_dist_sq <= static_cast<T>(0.0) || d_sq > max_bond_dist_sq) {
     return;
   }
@@ -147,18 +147,18 @@ record_bond_interaction(AtomPair pair, T d_sq, PairPositions<T> positions, GPUAt
 
 template <bool WriteBonds, typename T>
 CORRELATION_DEVICE CORRELATION_FORCEINLINE void
-process_bin(int i_val, GPUPosition<T> atom_pos, int type_A, GPUPosition<T> disp, int n_bin_idx, GPUAtomData<T> atoms,
-            bool zero_disp, GPUBinData bins, T cutoff_sq, const T *CORRELATION_RESTRICT bond_cutoffs_sq,
-            int num_elements, bool ignore_periodic_self_interactions,
-            unsigned long long *CORRELATION_RESTRICT bond_counter, GPUBond<T> *CORRELATION_RESTRICT bonds, T hist_r_max,
-            T hist_r_bin_width, int hist_num_bins, unsigned long long *CORRELATION_RESTRICT d_histograms) {
+processBin(int i_val, GPUPosition<T> atom_pos, int type_a, GPUPosition<T> disp, int n_bin_idx, GPUAtomData<T> atoms,
+           bool zero_disp, GPUBinData bins, T cutoff_sq, const T *CORRELATION_RESTRICT bond_cutoffs_sq,
+           int num_elements, bool ignore_periodic_self_interactions,
+           unsigned long long *CORRELATION_RESTRICT bond_counter, GPUBond<T> *CORRELATION_RESTRICT bonds, T hist_r_max,
+           T hist_r_bin_width, int hist_num_bins, unsigned long long *CORRELATION_RESTRICT d_histograms) {
 
   unsigned long long const start = bins.offsets[n_bin_idx];
   unsigned long long const end = bins.offsets[n_bin_idx + 1];
 
   for (unsigned long long offset = start; offset < end; ++offset) {
     int const j_val = static_cast<int>(bins.indices[offset]);
-    if (should_skip_atom_pair(i_val, j_val, zero_disp, ignore_periodic_self_interactions)) {
+    if (shouldSkipAtomPair(i_val, j_val, zero_disp, ignore_periodic_self_interactions)) {
       continue;
     }
 
@@ -176,25 +176,25 @@ process_bin(int i_val, GPUPosition<T> atom_pos, int type_A, GPUPosition<T> disp,
     }
 
     T const dist = sqrt(d_sq);
-    int const type_B = atoms.element_ids[j_val];
-    AtomPair const pair{.i_val = i_val, .j_val = j_val, .type_A = type_A, .type_B = type_B};
+    int const type_b = atoms.element_ids[j_val];
+    AtomPair const pair{.i_val = i_val, .j_val = j_val, .type_a = type_a, .type_b = type_b};
     GPUPosition<T> const shifted{.x = shifted_x, .y = shifted_y, .z = shifted_z};
 
-    accumulate_histograms(pair, dist, num_elements, hist_r_max, hist_r_bin_width, hist_num_bins, d_histograms);
+    accumulateHistograms(pair, dist, num_elements, hist_r_max, hist_r_bin_width, hist_num_bins, d_histograms);
 
     PairPositions<T> const positions{.atom_pos = atom_pos, .shifted = shifted};
-    record_bond_interaction<WriteBonds>(pair, d_sq, positions, atoms, num_elements, bond_cutoffs_sq, bond_counter,
-                                        bonds);
+    recordBondInteraction<WriteBonds>(pair, d_sq, positions, atoms, num_elements, bond_cutoffs_sq, bond_counter,
+                                      bonds);
   }
 }
 
 template <bool WriteBonds, typename T>
-CORRELATION_GLOBAL void distance_kernel(GPUAtomData<T> atoms, GPUBinData bins, GPULattice<T> lattice,
-                                        GPUSearchGrid grid, T cutoff_sq, const T *CORRELATION_RESTRICT bond_cutoffs_sq,
-                                        int num_elements, bool ignore_periodic_self_interactions, int num_atoms,
-                                        unsigned long long *CORRELATION_RESTRICT bond_counter,
-                                        GPUBond<T> *CORRELATION_RESTRICT bonds, T hist_r_max, T hist_r_bin_width,
-                                        int hist_num_bins, unsigned long long *CORRELATION_RESTRICT d_histograms) {
+CORRELATION_GLOBAL void distanceKernel(GPUAtomData<T> atoms, GPUBinData bins, GPULattice<T> lattice,
+                                       GPUSearchGrid grid, T cutoff_sq, const T *CORRELATION_RESTRICT bond_cutoffs_sq,
+                                       int num_elements, bool ignore_periodic_self_interactions, int num_atoms,
+                                       unsigned long long *CORRELATION_RESTRICT bond_counter,
+                                       GPUBond<T> *CORRELATION_RESTRICT bonds, T hist_r_max, T hist_r_bin_width,
+                                       int hist_num_bins, unsigned long long *CORRELATION_RESTRICT d_histograms) {
 
   int const i_val = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
   if (i_val >= num_atoms) {
@@ -204,7 +204,7 @@ CORRELATION_GLOBAL void distance_kernel(GPUAtomData<T> atoms, GPUBinData bins, G
   T const a_x = atoms.wrapped_x[i_val];
   T const a_y = atoms.wrapped_y[i_val];
   T const a_z = atoms.wrapped_z[i_val];
-  int const type_A = atoms.element_ids[i_val];
+  int const type_a = atoms.element_ids[i_val];
 
   int const c_bin = atoms.atom_bin[i_val];
   int const c_x = c_bin / (grid.K_y * grid.K_z);
@@ -214,17 +214,17 @@ CORRELATION_GLOBAL void distance_kernel(GPUAtomData<T> atoms, GPUBinData bins, G
   for (int dx = -grid.max_dx; dx <= grid.max_dx; ++dx) {
     int wrap_x = 0;
     int shift_x = 0;
-    wrap_coordinate(c_x + dx, grid.K_x, wrap_x, shift_x);
+    wrapCoordinate(c_x + dx, grid.K_x, wrap_x, shift_x);
 
     for (int dy = -grid.max_dy; dy <= grid.max_dy; ++dy) {
       int wrap_y = 0;
       int shift_y = 0;
-      wrap_coordinate(c_y + dy, grid.K_y, wrap_y, shift_y);
+      wrapCoordinate(c_y + dy, grid.K_y, wrap_y, shift_y);
 
       for (int dz = -grid.max_dz; dz <= grid.max_dz; ++dz) {
         int wrap_z = 0;
         int shift_z = 0;
-        wrap_coordinate(c_z + dz, grid.K_z, wrap_z, shift_z);
+        wrapCoordinate(c_z + dz, grid.K_z, wrap_z, shift_z);
 
         int const n_bin_idx = wrap_x * (grid.K_y * grid.K_z) + wrap_y * grid.K_z + wrap_z;
 
@@ -237,28 +237,28 @@ CORRELATION_GLOBAL void distance_kernel(GPUAtomData<T> atoms, GPUBinData bins, G
 
         bool const zero_disp = (shift_x == 0 && shift_y == 0 && shift_z == 0);
 
-        process_bin<WriteBonds, T>(i_val,
-                                   GPUPosition<T>{
-                                       .x = a_x,
-                                       .y = a_y,
-                                       .z = a_z,
-                                   },
-                                   type_A,
-                                   GPUPosition<T>{
-                                       .x = disp_x,
-                                       .y = disp_y,
-                                       .z = disp_z,
-                                   },
-                                   n_bin_idx, atoms, zero_disp, bins, cutoff_sq, bond_cutoffs_sq, num_elements,
-                                   ignore_periodic_self_interactions, bond_counter, bonds, hist_r_max, hist_r_bin_width,
-                                   hist_num_bins, d_histograms);
+        processBin<WriteBonds, T>(i_val,
+                                  GPUPosition<T>{
+                                      .x = a_x,
+                                      .y = a_y,
+                                      .z = a_z,
+                                  },
+                                  type_a,
+                                  GPUPosition<T>{
+                                      .x = disp_x,
+                                      .y = disp_y,
+                                      .z = disp_z,
+                                  },
+                                  n_bin_idx, atoms, zero_disp, bins, cutoff_sq, bond_cutoffs_sq, num_elements,
+                                  ignore_periodic_self_interactions, bond_counter, bonds, hist_r_max, hist_r_bin_width,
+                                  hist_num_bins, d_histograms);
       }
     }
   }
 }
 
 template <typename T>
-std::vector<T> flatten_bond_cutoffs(const std::vector<std::vector<T>> &bond_cutoffs_sq, size_t num_elements) {
+std::vector<T> flattenBondCutoffs(const std::vector<std::vector<T>> &bond_cutoffs_sq, size_t num_elements) {
   std::vector<T> flat_cutoffs(num_elements * num_elements, static_cast<T>(0.0));
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = 0; j < num_elements; ++j) {
@@ -271,7 +271,7 @@ std::vector<T> flatten_bond_cutoffs(const std::vector<std::vector<T>> &bond_cuto
 }
 
 template <typename T>
-void unpack_gpu_bonds(const std::vector<GPUBond<T>> &host_bonds, correlation::core::NeighborGraph &out_graph) {
+void unpackGpuBonds(const std::vector<GPUBond<T>> &host_bonds, correlation::core::NeighborGraph &out_graph) {
   for (const auto &bond : host_bonds) {
     out_graph.addDirectedEdge(
         static_cast<core::AtomID>(bond.from), static_cast<core::AtomID>(bond.to), static_cast<real_t>(bond.distance),
@@ -300,8 +300,8 @@ template <typename T> struct SpatialPartitionData {
 };
 
 template <typename T>
-SpatialPartitionData<T> build_spatial_partition(const correlation::core::Cell &cell, T cutoff_sq,
-                                                bool ignore_periodic_self_interactions) {
+SpatialPartitionData<T> buildSpatialPartition(const correlation::core::Cell &cell, T cutoff_sq,
+                                              bool ignore_periodic_self_interactions) {
   const auto &atoms = cell.atoms();
   const size_t atom_count = atoms.size();
   const auto &lattice = cell.latticeVectors();
@@ -381,7 +381,7 @@ SpatialPartitionData<T> build_spatial_partition(const correlation::core::Cell &c
   };
 }
 
-template <typename T> bool has_active_bonds(const std::vector<std::vector<T>> &bond_cutoffs_sq) {
+template <typename T> bool hasActiveBonds(const std::vector<std::vector<T>> &bond_cutoffs_sq) {
   for (const auto &row : bond_cutoffs_sq) {
     for (T val : row) {
       if (val > static_cast<T>(0.0)) {
@@ -392,9 +392,9 @@ template <typename T> bool has_active_bonds(const std::vector<std::vector<T>> &b
   return false;
 }
 
-void copy_and_unpack_histograms(const correlation::core::gpu::DeviceBuffer<unsigned long long> &d_histograms,
-                                size_t num_elements, const DistanceCalculationConfig &hist_config,
-                                RawHistogramTensor &out_histograms) {
+void copyAndUnpackHistograms(const correlation::core::gpu::DeviceBuffer<unsigned long long> &d_histograms,
+                             size_t num_elements, const DistanceCalculationConfig &hist_config,
+                             RawHistogramTensor &out_histograms) {
   size_t const hist_tensor_size = num_elements * num_elements * hist_config.num_bins;
   std::vector<unsigned long long> host_histograms(hist_tensor_size);
   d_histograms.copyToHost(host_histograms.data(), hist_tensor_size);
@@ -429,9 +429,9 @@ template <typename T> struct TwoPassExecutionContext {
 };
 
 template <typename T>
-void execute_two_pass_bonds(const TwoPassExecutionContext<T> &ctx, const std::vector<std::vector<T>> &bond_cutoffs_sq,
-                            correlation::core::NeighborGraph &out_graph) {
-  std::vector<T> const h_bond_cutoffs_sq = flatten_bond_cutoffs(bond_cutoffs_sq, ctx.num_elements);
+void executeTwoPassBonds(const TwoPassExecutionContext<T> &ctx, const std::vector<std::vector<T>> &bond_cutoffs_sq,
+                         correlation::core::NeighborGraph &out_graph) {
+  std::vector<T> const h_bond_cutoffs_sq = flattenBondCutoffs(bond_cutoffs_sq, ctx.num_elements);
   correlation::core::gpu::DeviceBuffer<T> d_bond_cutoffs_sq(ctx.num_elements * ctx.num_elements);
   d_bond_cutoffs_sq.copyFromHost(h_bond_cutoffs_sq.data(), ctx.num_elements * ctx.num_elements);
 
@@ -440,7 +440,7 @@ void execute_two_pass_bonds(const TwoPassExecutionContext<T> &ctx, const std::ve
   d_bond_counter.setScalar(zero_val);
 
   // Pass 1: Count bonds (pass d_histograms = nullptr to prevent double-counting)
-  hipLaunchKernelGGL((distance_kernel<false, T>), ctx.launch_config.grid_size, ctx.launch_config.block_size, 0, 0,
+  hipLaunchKernelGGL((distanceKernel<false, T>), ctx.launch_config.grid_size, ctx.launch_config.block_size, 0, 0,
                      ctx.gpu_atoms, ctx.gpu_bins, ctx.gpu_lattice, ctx.gpu_grid, ctx.cutoff_sq, d_bond_cutoffs_sq.get(),
                      static_cast<int>(ctx.num_elements), ctx.ignore_periodic_self_interactions,
                      static_cast<int>(ctx.atom_count), d_bond_counter.get(), nullptr, static_cast<T>(0),
@@ -454,7 +454,7 @@ void execute_two_pass_bonds(const TwoPassExecutionContext<T> &ctx, const std::ve
   d_bond_counter.setScalar(zero_val);
 
   // Pass 2: Write bonds and accumulate device histograms
-  hipLaunchKernelGGL((distance_kernel<true, T>), ctx.launch_config.grid_size, ctx.launch_config.block_size, 0, 0,
+  hipLaunchKernelGGL((distanceKernel<true, T>), ctx.launch_config.grid_size, ctx.launch_config.block_size, 0, 0,
                      ctx.gpu_atoms, ctx.gpu_bins, ctx.gpu_lattice, ctx.gpu_grid, ctx.cutoff_sq, d_bond_cutoffs_sq.get(),
                      static_cast<int>(ctx.num_elements), ctx.ignore_periodic_self_interactions,
                      static_cast<int>(ctx.atom_count), d_bond_counter.get(), d_bonds.get(),
@@ -466,22 +466,22 @@ void execute_two_pass_bonds(const TwoPassExecutionContext<T> &ctx, const std::ve
   if (h_bond_count > 0) {
     d_bonds.copyToHost(host_bonds.data(), h_bond_count);
   }
-  unpack_gpu_bonds(host_bonds, out_graph);
+  unpackGpuBonds(host_bonds, out_graph);
 }
 
 } // namespace
 
-bool has_gpu_device() {
+bool hasGpuDevice() {
   int device_count = 0;
   hipError_t const err = hipGetDeviceCount(&device_count);
   return (err == hipSuccess && device_count > 0);
 }
 
 template <typename T>
-void compute_distances_gpu(const correlation::core::Cell &cell, T cutoff_sq,
-                           const std::vector<std::vector<T>> &bond_cutoffs_sq, bool ignore_periodic_self_interactions,
-                           RawHistogramTensor *out_histograms, DistanceCalculationConfig hist_config,
-                           correlation::core::NeighborGraph &out_graph) {
+void computeDistancesGpu(const correlation::core::Cell &cell, T cutoff_sq,
+                         const std::vector<std::vector<T>> &bond_cutoffs_sq, bool ignore_periodic_self_interactions,
+                         RawHistogramTensor *out_histograms, DistanceCalculationConfig hist_config,
+                         correlation::core::NeighborGraph &out_graph) {
   const size_t atom_count = cell.atoms().size();
   if (atom_count == 0) {
     return;
@@ -489,9 +489,9 @@ void compute_distances_gpu(const correlation::core::Cell &cell, T cutoff_sq,
   const size_t num_elements = cell.elements().size();
   const auto &lattice = cell.latticeVectors();
 
-  auto const partition = build_spatial_partition(cell, cutoff_sq, ignore_periodic_self_interactions);
+  auto const partition = buildSpatialPartition(cell, cutoff_sq, ignore_periodic_self_interactions);
 
-  bool const has_bonds = has_active_bonds(bond_cutoffs_sq);
+  bool const has_bonds = hasActiveBonds(bond_cutoffs_sq);
   bool const has_histograms = (out_histograms != nullptr && hist_config.num_bins > 0 && hist_config.r_bin_width > 0.0);
   size_t const hist_tensor_size = has_histograms ? (num_elements * num_elements * hist_config.num_bins) : 0;
 
@@ -533,7 +533,7 @@ void compute_distances_gpu(const correlation::core::Cell &cell, T cutoff_sq,
 
   if (!has_bonds) {
     // Single-pass direct histogramming kernel (no pair/bond allocation overhead)
-    hipLaunchKernelGGL((distance_kernel<false, T>), grid_size, block_size, 0, 0, gpu_atoms, gpu_bins, gpu_lattice,
+    hipLaunchKernelGGL((distanceKernel<false, T>), grid_size, block_size, 0, 0, gpu_atoms, gpu_bins, gpu_lattice,
                        partition.grid, cutoff_sq, nullptr, static_cast<int>(num_elements),
                        partition.ignore_periodic_self_interactions, static_cast<int>(atom_count), nullptr, nullptr,
                        static_cast<T>(hist_config.r_max), static_cast<T>(hist_config.r_bin_width),
@@ -553,25 +553,25 @@ void compute_distances_gpu(const correlation::core::Cell &cell, T cutoff_sq,
         .hist_config = hist_config,
         .d_histograms_ptr = has_histograms ? d_histograms.get() : nullptr,
     };
-    execute_two_pass_bonds(ctx, bond_cutoffs_sq, out_graph);
+    executeTwoPassBonds(ctx, bond_cutoffs_sq, out_graph);
   }
 
   // Copy histograms to host
   if (has_histograms) {
-    copy_and_unpack_histograms(d_histograms, num_elements, hist_config, *out_histograms);
+    copyAndUnpackHistograms(d_histograms, num_elements, hist_config, *out_histograms);
   }
 }
 
-template void compute_distances_gpu<float>(const correlation::core::Cell &cell, float cutoff_sq,
-                                           const std::vector<std::vector<float>> &bond_cutoffs_sq,
-                                           bool ignore_periodic_self_interactions, RawHistogramTensor *out_histograms,
-                                           DistanceCalculationConfig hist_config,
-                                           correlation::core::NeighborGraph &out_graph);
+template void computeDistancesGpu<float>(const correlation::core::Cell &cell, float cutoff_sq,
+                                         const std::vector<std::vector<float>> &bond_cutoffs_sq,
+                                         bool ignore_periodic_self_interactions, RawHistogramTensor *out_histograms,
+                                         DistanceCalculationConfig hist_config,
+                                         correlation::core::NeighborGraph &out_graph);
 
-template void compute_distances_gpu<double>(const correlation::core::Cell &cell, double cutoff_sq,
-                                            const std::vector<std::vector<double>> &bond_cutoffs_sq,
-                                            bool ignore_periodic_self_interactions, RawHistogramTensor *out_histograms,
-                                            DistanceCalculationConfig hist_config,
-                                            correlation::core::NeighborGraph &out_graph);
+template void computeDistancesGpu<double>(const correlation::core::Cell &cell, double cutoff_sq,
+                                          const std::vector<std::vector<double>> &bond_cutoffs_sq,
+                                          bool ignore_periodic_self_interactions, RawHistogramTensor *out_histograms,
+                                          DistanceCalculationConfig hist_config,
+                                          correlation::core::NeighborGraph &out_graph);
 
 } // namespace correlation::calculators::gpu

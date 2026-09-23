@@ -17,7 +17,7 @@ namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-const bool registered = CalculatorFactory::registerTypeSafe<RDCalculator>("RDCalculator");
+const bool REGISTERED = CalculatorFactory::registerTypeSafe<RDCalculator>("RDCalculator");
 } // namespace
 
 void RDCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,

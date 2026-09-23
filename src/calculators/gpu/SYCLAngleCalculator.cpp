@@ -16,8 +16,8 @@ namespace correlation::calculators::sycl_gpu {
 void compute_angle_tensor_sycl(const correlation::core::Cell &cell,
                                const correlation::core::NeighborGraph &graph,
                                AngleTensor &out_angles) {
-#if defined(CORRELATION_USE_SYCL)
-  if (!has_sycl_gpu_device()) {
+#ifdef CORRELATION_USE_SYCL
+  if (!hasSyclGpuDevice()) {
     AngleCalculator::compute(cell, graph, out_angles);
     return;
   }
@@ -52,15 +52,15 @@ correlation::analysis::Histogram compute_angles_sycl(const correlation::core::Ce
   }
 
   std::vector<real_t> counts(num_bins, 0.0);
-  real_t const rad_to_deg = static_cast<real_t>(180.0 / std::numbers::pi);
+  const auto rad_to_deg = static_cast<real_t>(180.0 / std::numbers::pi);
 
   for (const auto &c_mat : angles) {
     for (const auto &o1_mat : c_mat) {
       for (const auto &o2_vec : o1_mat) {
-        for (real_t angle_rad : o2_vec) {
+        for (const real_t angle_rad : o2_vec) {
           real_t const angle_deg = angle_rad * rad_to_deg;
           if (angle_deg >= params.min_angle_deg && angle_deg <= params.max_angle_deg) {
-            size_t const bin_idx =
+            const auto bin_idx =
                 static_cast<size_t>((angle_deg - params.min_angle_deg) / params.bin_width_deg);
             if (bin_idx < num_bins) {
               counts[bin_idx] += static_cast<real_t>(1.0);

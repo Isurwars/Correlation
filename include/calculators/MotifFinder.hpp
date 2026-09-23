@@ -27,8 +27,8 @@ public:
   /**
    * @brief Finds and counts all chordless rings up to a maximum size.
    *
-   * @param graph The neighbor graph representing atomic bonds.
-   * @param max_size The maximum ring size (number of atoms) to search for.
+   * @param[in] graph The neighbor graph representing atomic bonds.
+   * @param[in] max_size The maximum ring size (number of atoms) to search for.
    * @return A map where the key is the ring size and the value is the total
    * count of such rings.
    */
@@ -38,8 +38,8 @@ public:
   /**
    * @brief Extracts all exact cycles of a specific target size.
    *
-   * @param graph The neighbor graph to search.
-   * @param target_size The exact size of the rings to extract.
+   * @param[in] graph The neighbor graph to search.
+   * @param[in] target_size The exact size of the rings to extract.
    * @return A vector of rings, where each ring is represented as a vector of
    * AtomIDs in order.
    */

@@ -22,7 +22,7 @@ namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-const bool registered =
+const bool REGISTERED =
     CalculatorFactory::registerTypeSafe<StructureFactorCalculator>("StructureFactorCalculator");
 
 struct ReciprocalVector {
@@ -71,12 +71,12 @@ struct PhaseArrays {
 };
 
 struct PrecomputedPhases {
-  const real_t *E1_cos;
-  const real_t *E1_sin;
-  const real_t *E2_cos;
-  const real_t *E2_sin;
-  const real_t *E3_cos;
-  const real_t *E3_sin;
+  const real_t *e1_cos;
+  const real_t *e1_sin;
+  const real_t *e2_cos;
+  const real_t *e2_sin;
+  const real_t *e3_cos;
+  const real_t *e3_sin;
 };
 
 struct ThreadAccumulators {
@@ -117,7 +117,14 @@ ReciprocalBasis computeReciprocalBasis(const correlation::core::Cell &cell, real
   const int lmax =
       (b3_norm > static_cast<real_t>(1e-10)) ? static_cast<int>(std::ceil(q_max / b3_norm)) : 0;
 
-  return {{bx_x, bx_y, bx_z}, {by_x, by_y, by_z}, {bz_x, bz_y, bz_z}, hmax, kmax, lmax};
+  return ReciprocalBasis{
+      .b1 = {.x = bx_x, .y = bx_y, .z = bx_z},
+      .b2 = {.x = by_x, .y = by_y, .z = by_z},
+      .b3 = {.x = bz_x, .y = bz_y, .z = bz_z},
+      .hmax = hmax,
+      .kmax = kmax,
+      .lmax = lmax,
+  };
 }
 
 std::vector<QVector> generateQVectors(const ReciprocalBasis &basis, real_t q_max) {
@@ -191,12 +198,12 @@ std::vector<PartialInfo> buildPartialsInfo(const std::vector<TypeBlock> &type_bl
   std::vector<PartialInfo> partials_info;
   for (size_t ti = 0; ti < type_blocks.size(); ++ti) {
     for (size_t tj = ti; tj < type_blocks.size(); ++tj) {
-      const auto &tbA = type_blocks[ti];
-      const auto &tbB = type_blocks[tj];
+      const auto &tb_a = type_blocks[ti];
+      const auto &tb_b = type_blocks[tj];
       bool const is_identical = (ti == tj);
-      std::string const key = (tbA.symbol < tbB.symbol) ? (tbA.symbol + "-" + tbB.symbol)
-                                                        : (tbB.symbol + "-" + tbA.symbol);
-      real_t weight = static_cast<real_t>(0.0);
+      std::string const key = (tb_a.symbol < tb_b.symbol) ? (tb_a.symbol + "-" + tb_b.symbol)
+                                                          : (tb_b.symbol + "-" + tb_a.symbol);
+      auto weight = static_cast<real_t>(0.0);
       auto wit = ashcroft_weights.find(key);
       if (wit != ashcroft_weights.end()) {
         weight = wit->second;
@@ -205,8 +212,8 @@ std::vector<PartialInfo> buildPartialsInfo(const std::vector<TypeBlock> &type_bl
           .key = key,
           .typeA_idx = ti,
           .typeB_idx = tj,
-          .N_A = tbA.count,
-          .N_B = tbB.count,
+          .N_A = tb_a.count,
+          .N_B = tb_b.count,
           .is_identical = is_identical,
           .weight = weight,
       });
@@ -229,25 +236,25 @@ void precomputePhases(int max_idx, const ReciprocalVector &rec_vec, size_t num_a
     return;
   }
 
-  std::vector<real_t> Cosine(num_atoms);
-  std::vector<real_t> Sine(num_atoms);
+  std::vector<real_t> cosine(num_atoms);
+  std::vector<real_t> sine(num_atoms);
   for (size_t j = 0; j < num_atoms; ++j) {
     real_t const phase =
         rec_vec.x * coords.x[j] + rec_vec.y * coords.y[j] + rec_vec.z * coords.z[j];
-    Cosine[j] = std::cos(phase);
-    Sine[j] = std::sin(phase);
+    cosine[j] = std::cos(phase);
+    sine[j] = std::sin(phase);
   }
 
   real_t *cos_one = &(*phases.cos)[(1 + max_idx) * num_atoms];
   real_t *sin_one = &(*phases.sin)[(1 + max_idx) * num_atoms];
-  std::copy(Cosine.begin(), Cosine.end(), cos_one);
-  std::copy(Sine.begin(), Sine.end(), sin_one);
+  std::ranges::copy(cosine, cos_one);
+  std::ranges::copy(sine, sin_one);
 
   real_t *cos_neg_one = &(*phases.cos)[(-1 + max_idx) * num_atoms];
   real_t *sin_neg_one = &(*phases.sin)[(-1 + max_idx) * num_atoms];
-  std::copy(Cosine.begin(), Cosine.end(), cos_neg_one);
+  std::ranges::copy(cosine, cos_neg_one);
   for (size_t j = 0; j < num_atoms; ++j) {
-    sin_neg_one[j] = -Sine[j];
+    sin_neg_one[j] = -sine[j];
   }
 
   for (int h_idx = 2; h_idx <= max_idx; ++h_idx) {
@@ -259,8 +266,8 @@ void precomputePhases(int max_idx, const ReciprocalVector &rec_vec, size_t num_a
     real_t *sin_neg = &(*phases.sin)[(-h_idx + max_idx) * num_atoms];
 
     for (size_t j = 0; j < num_atoms; ++j) {
-      real_t const c_val = cos_prev[j] * Cosine[j] - sin_prev[j] * Sine[j];
-      real_t const s_val = sin_prev[j] * Cosine[j] + cos_prev[j] * Sine[j];
+      real_t const c_val = cos_prev[j] * cosine[j] - sin_prev[j] * sine[j];
+      real_t const s_val = sin_prev[j] * cosine[j] + cos_prev[j] * sine[j];
       cos_curr[j] = c_val;
       sin_curr[j] = s_val;
       cos_neg[j] = c_val;
@@ -289,12 +296,12 @@ inline void processSingleQVector(const QVector &q_vec, QBinning binning, size_t 
     const size_t cnt = type_blocks[ti].count;
     const auto result =
         correlation::math::miller_phase_sum(correlation::math::MillerPhaseSumParams<real_t>{
-            .cos1 = phases.E1_cos + (q_vec.h + basis.hmax) * num_atoms + off,
-            .sin1 = phases.E1_sin + (q_vec.h + basis.hmax) * num_atoms + off,
-            .cos2 = phases.E2_cos + (q_vec.k + basis.kmax) * num_atoms + off,
-            .sin2 = phases.E2_sin + (q_vec.k + basis.kmax) * num_atoms + off,
-            .cos3 = phases.E3_cos + (q_vec.l + basis.lmax) * num_atoms + off,
-            .sin3 = phases.E3_sin + (q_vec.l + basis.lmax) * num_atoms + off,
+            .cos1 = phases.e1_cos + (q_vec.h + basis.hmax) * num_atoms + off,
+            .sin1 = phases.e1_sin + (q_vec.h + basis.hmax) * num_atoms + off,
+            .cos2 = phases.e2_cos + (q_vec.k + basis.kmax) * num_atoms + off,
+            .sin2 = phases.e2_sin + (q_vec.k + basis.kmax) * num_atoms + off,
+            .cos3 = phases.e3_cos + (q_vec.l + basis.lmax) * num_atoms + off,
+            .sin3 = phases.e3_sin + (q_vec.l + basis.lmax) * num_atoms + off,
             .count = cnt,
         });
     type_cos[ti] = result.cos_sum;
@@ -302,8 +309,8 @@ inline void processSingleQVector(const QVector &q_vec, QBinning binning, size_t 
   }
 
   // Accumulate total S(Q) via the full sum |rho(q)|^2 / N.
-  real_t full_cos = static_cast<real_t>(0.0);
-  real_t full_sin = static_cast<real_t>(0.0);
+  auto full_cos = static_cast<real_t>(0.0);
+  auto full_sin = static_cast<real_t>(0.0);
   for (size_t ti = 0; ti < type_blocks.size(); ++ti) {
     full_cos += type_cos[ti];
     full_sin += type_sin[ti];
@@ -322,10 +329,10 @@ inline void processSingleQVector(const QVector &q_vec, QBinning binning, size_t 
   const size_t num_partials = partials_info.size();
   for (size_t pi = 0; pi < num_partials; ++pi) {
     const auto &pinfo = partials_info[pi];
-    const size_t tiA = pinfo.typeA_idx;
-    const size_t tiB = pinfo.typeB_idx;
+    const size_t ti_a = pinfo.typeA_idx;
+    const size_t ti_b = pinfo.typeB_idx;
     // Re[rho_A* rho_B] = cosA*cosB + sinA*sinB
-    real_t const cross = type_cos[tiA] * type_cos[tiB] + type_sin[tiA] * type_sin[tiB];
+    real_t const cross = type_cos[ti_a] * type_cos[ti_b] + type_sin[ti_a] * type_sin[ti_b];
     real_t const denom = std::sqrt(static_cast<real_t>(pinfo.N_A) * static_cast<real_t>(pinfo.N_B));
     real_t const sq_partial =
         (denom > static_cast<real_t>(0.0)) ? cross / denom : static_cast<real_t>(0.0);
@@ -437,8 +444,8 @@ void StructureFactorCalculator::calculateFrame(
     return;
   }
 
-  const real_t q_max = static_cast<real_t>(settings.q_max);
-  const real_t q_bin_width = static_cast<real_t>(settings.q_bin_width);
+  const auto q_max = static_cast<real_t>(settings.q_max);
+  const auto q_bin_width = static_cast<real_t>(settings.q_bin_width);
   const auto num_q_bins = static_cast<size_t>(std::floor(q_max / q_bin_width));
   if (num_q_bins == 0) {
     throw std::invalid_argument("Q_max is too small for the given Q_bin_width.");
@@ -460,12 +467,12 @@ void StructureFactorCalculator::calculateFrame(
   const auto &ashcroft_weights = dists.getAshcroftWeights();
   std::vector<PartialInfo> const partials_info = buildPartialsInfo(type_blocks, ashcroft_weights);
 
-  std::vector<real_t> E1_cos;
-  std::vector<real_t> E1_sin;
-  std::vector<real_t> E2_cos;
-  std::vector<real_t> E2_sin;
-  std::vector<real_t> E3_cos;
-  std::vector<real_t> E3_sin;
+  std::vector<real_t> e1_cos;
+  std::vector<real_t> e1_sin;
+  std::vector<real_t> e2_cos;
+  std::vector<real_t> e2_sin;
+  std::vector<real_t> e3_cos;
+  std::vector<real_t> e3_sin;
 
   precomputePhases(basis.hmax, basis.b1, num_atoms,
                    {
@@ -474,8 +481,8 @@ void StructureFactorCalculator::calculateFrame(
                        .z = z_s.data(),
                    },
                    {
-                       .cos = &E1_cos,
-                       .sin = &E1_sin,
+                       .cos = &e1_cos,
+                       .sin = &e1_sin,
                    });
   precomputePhases(basis.kmax, basis.b2, num_atoms,
                    {
@@ -484,8 +491,8 @@ void StructureFactorCalculator::calculateFrame(
                        .z = z_s.data(),
                    },
                    {
-                       .cos = &E2_cos,
-                       .sin = &E2_sin,
+                       .cos = &e2_cos,
+                       .sin = &e2_sin,
                    });
   precomputePhases(basis.lmax, basis.b3, num_atoms,
                    {
@@ -494,8 +501,8 @@ void StructureFactorCalculator::calculateFrame(
                        .z = z_s.data(),
                    },
                    {
-                       .cos = &E3_cos,
-                       .sin = &E3_sin,
+                       .cos = &e3_cos,
+                       .sin = &e3_sin,
                    });
 
   QBinning const binning{
@@ -533,12 +540,12 @@ void StructureFactorCalculator::calculateFrame(
         for (size_t qi = range.begin(); qi != range.end(); ++qi) {
           processSingleQVector(q_vectors[qi], binning, num_atoms, basis, type_blocks, partials_info,
                                {
-                                   .E1_cos = E1_cos.data(),
-                                   .E1_sin = E1_sin.data(),
-                                   .E2_cos = E2_cos.data(),
-                                   .E2_sin = E2_sin.data(),
-                                   .E3_cos = E3_cos.data(),
-                                   .E3_sin = E3_sin.data(),
+                                   .e1_cos = e1_cos.data(),
+                                   .e1_sin = e1_sin.data(),
+                                   .e2_cos = e2_cos.data(),
+                                   .e2_sin = e2_sin.data(),
+                                   .e3_cos = e3_cos.data(),
+                                   .e3_sin = e3_sin.data(),
                                },
                                {
                                    .total_sum = &local_total_sum,

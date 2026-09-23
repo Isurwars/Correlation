@@ -29,16 +29,24 @@ public:
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
 
+  /**
+   * @brief Dispatches the calculation for a single configuration frame.
+   *
+   * @param[in,out] dists Distribution functions container to append results to.
+   * @param[in] settings Current analysis configuration settings.
+   */
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief High-performance computation of the Plane Angle Distribution (PAD).
    *
-   * @param cell The periodic cell.
-   * @param neighbors Structural analyzer containing the neighbor graph.
-   * @param bin_width Angular resolution (degrees).
+   * @param[in] cell The periodic cell.
+   * @param[in] neighbors Structural analyzer containing the neighbor graph.
+   * @param[in] bin_width Angular resolution (degrees).
    * @return A map of histograms containing normalized "PAD" and raw "PAD_raw".
+   * @throws std::invalid_argument If @p bin_width is less than or equal to zero.
+   * @throws std::logic_error If @p neighbors is nullptr.
    */
   static std::map<std::string, correlation::analysis::Histogram>
   calculate(const correlation::core::Cell &cell,

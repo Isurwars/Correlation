@@ -29,7 +29,7 @@ struct SYCLSQParams {
  * @param[in] params SYCL S(Q) calculation parameters.
  * @return Histogram profile containing computed S(Q) data.
  */
-correlation::analysis::Histogram compute_sq_sycl(const correlation::core::Cell &cell,
-                                                 const SYCLSQParams &params = {});
+[[nodiscard]] correlation::analysis::Histogram compute_sq_sycl(const correlation::core::Cell &cell,
+                                                               const SYCLSQParams &params = {});
 
 } // namespace correlation::calculators::sycl_gpu
