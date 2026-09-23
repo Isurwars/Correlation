@@ -413,9 +413,6 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<real_t> &vacf, real_t time_ste
     windowed_vacf[frame_idx] = vacf[frame_idx] * window;
   }
 
-  std::vector<size_t> freq_indices(num_freq_points);
-  std::ranges::iota(freq_indices, 0);
-
   tbb::parallel_for(static_cast<size_t>(0), num_freq_points, [&](size_t freq_idx) {
     real_t const freq_val = static_cast<real_t>(freq_idx) * d_nu; // Frequency in THz
     frequencies[freq_idx] = freq_val;

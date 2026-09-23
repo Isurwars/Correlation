@@ -24,7 +24,9 @@ const bool REGISTERED = CalculatorFactory::registerTypeSafe<ClusterCalculator>("
 class UnionFind {
 public:
   explicit UnionFind(size_t num_nodes) : parent_(num_nodes), sz_(num_nodes, 1) {
-    std::ranges::iota(parent_, 0);
+    for (size_t i = 0; i < num_nodes; ++i) {
+      parent_[i] = i;
+    }
   }
 
   size_t find(size_t node) {
