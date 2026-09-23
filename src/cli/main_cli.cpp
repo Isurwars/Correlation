@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
   };
 
   auto to_lower = [](std::string str) {
-    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+    std::ranges::transform(str, str.begin(), ::tolower);
     return str;
   };
 

@@ -42,10 +42,10 @@ BondCutoffMatrix parseBondCutoffMatrix(const py::object &bond_cutoffs_obj) {
     return cutoffs;
   }
   if (py::isinstance<py::list>(bond_cutoffs_obj)) {
-    py::list list_2d = bond_cutoffs_obj.cast<py::list>();
+    const auto list_2d = bond_cutoffs_obj.cast<py::list>();
     cutoffs.resize(list_2d.size());
     for (size_t i = 0; i < list_2d.size(); ++i) {
-      py::list row = list_2d[i].cast<py::list>();
+      const auto row = list_2d[i].cast<py::list>();
       cutoffs[i].resize(row.size());
       for (size_t j = 0; j < row.size(); ++j) {
         if (py::isinstance<BondCutoffRange>(row[j])) {
@@ -54,7 +54,7 @@ BondCutoffMatrix parseBondCutoffMatrix(const py::object &bond_cutoffs_obj) {
           auto pair = row[j].cast<std::pair<real_t, real_t>>();
           cutoffs[i][j] = BondCutoffRange{.min_sq = pair.first, .max_sq = pair.second};
         } else {
-          real_t max_val = row[j].cast<real_t>();
+          const auto max_val = row[j].cast<real_t>();
           cutoffs[i][j] = BondCutoffRange{.min_sq = static_cast<real_t>(0.0), .max_sq = max_val};
         }
         if (cutoffs[i][j].min_sq < 0.0 || cutoffs[i][j].max_sq < 0.0) {
@@ -86,7 +86,7 @@ void init_analysis(py::module_ &mod) {
                throw py::value_error(
                    "Minimum bond cutoff cannot be greater than maximum bond cutoff.");
              }
-             return BondCutoffRange{min_sq, max_sq};
+             return BondCutoffRange{.min_sq = min_sq, .max_sq = max_sq};
            }),
            py::arg("min_sq"), py::arg("max_sq"))
       .def_readwrite("min_sq", &BondCutoffRange::min_sq)
@@ -205,7 +205,7 @@ void init_analysis(py::module_ &mod) {
       "angles[center][e1][e2][angle_idx], dihedrals[e1][e2][e3][e4][idx].")
       .def(py::init([](Cell &cell, real_t cutoff, const py::object &bond_cutoffs_obj,
                        bool ignore_periodic_self_interactions) {
-             BondCutoffMatrix cutoffs = parseBondCutoffMatrix(bond_cutoffs_obj);
+             const BondCutoffMatrix cutoffs = parseBondCutoffMatrix(bond_cutoffs_obj);
              return std::make_unique<StructureAnalyzer>(cell, cutoff, cutoffs,
                                                         ignore_periodic_self_interactions);
            }),
@@ -240,7 +240,7 @@ void init_analysis(py::module_ &mod) {
                        const py::object &bond_cutoffs_obj, size_t start_frame, long long end_frame,
                        bool ignore_periodic_self_interactions,
                        const std::function<void(float, const std::string &)> &progress_callback) {
-             BondCutoffMatrix cutoffs = parseBondCutoffMatrix(bond_cutoffs_obj);
+             const BondCutoffMatrix cutoffs = parseBondCutoffMatrix(bond_cutoffs_obj);
              return std::make_unique<TrajectoryAnalyzer>(
                  trajectory, neighbor_cutoff, cutoffs, StartFrame{start_frame},
                  EndFrame{static_cast<size_t>(end_frame)}, ignore_periodic_self_interactions,
@@ -296,7 +296,7 @@ void init_analysis(py::module_ &mod) {
       "   alive for the lifetime of this object.")
       .def(
           py::init([](Cell &cell, real_t cutoff, const py::object &bond_cutoffs_obj) {
-            BondCutoffMatrix cutoffs = parseBondCutoffMatrix(bond_cutoffs_obj);
+            const BondCutoffMatrix cutoffs = parseBondCutoffMatrix(bond_cutoffs_obj);
             return std::make_unique<DistributionFunctions>(cell, cutoff, cutoffs);
           }),
           py::arg("cell"), py::arg("cutoff") = 0.0, py::arg("bond_cutoffs") = py::none(),

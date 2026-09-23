@@ -26,8 +26,7 @@ namespace {
 
 std::string toLowerStr(const std::string &str) {
   std::string data = str;
-  std::ranges::transform(data, data.begin(),
-                         [](const unsigned char chr) { return std::tolower(chr); });
+  std::ranges::transform(data, data.begin(), [](unsigned char chr) { return std::tolower(chr); });
   return data;
 }
 

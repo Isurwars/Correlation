@@ -17,6 +17,7 @@
 #include <fstream>
 #include <map>
 #include <span>
+#include <utility>
 
 namespace correlation::app {
 
@@ -68,14 +69,14 @@ void PlotController::handlePlotResized(PlotSize size) {
   }
   last_plot_width_ = size.width;
   last_plot_height_ = size.height;
-  int current_idx = window_.get_selected_plot_index();
+  const int current_idx = window_.get_selected_plot_index();
   if (current_idx >= 0) {
     slint::invoke_from_event_loop([this, current_idx] { requestPlotUpdate(current_idx, true); });
   }
 }
 
 void PlotController::handleUpdateTimer() {
-  int current_idx = window_.get_selected_plot_index();
+  const int current_idx = window_.get_selected_plot_index();
   if (current_idx >= 0) {
     requestPlotUpdate(current_idx, false);
   }
@@ -86,7 +87,7 @@ correlation::plotters::PlotConfig PlotController::buildPlotConfigFromUI() {
   config.theme = window_.get_is_dark() ? correlation::plotters::PlotConfig::Theme::Dark
                                        : correlation::plotters::PlotConfig::Theme::Light;
 
-  int size_preset_val = window_.get_export_config().size_preset;
+  const int size_preset_val = window_.get_export_config().size_preset;
   if (size_preset_val == 1) {
     config.preset_size = correlation::plotters::PlotConfig::PresetSize::SingleColumn;
   } else if (size_preset_val == 2) {
@@ -101,7 +102,7 @@ correlation::plotters::PlotConfig PlotController::buildPlotConfigFromUI() {
     }
   }
 
-  int palette_val = window_.get_export_config().palette;
+  const int palette_val = window_.get_export_config().palette;
   switch (palette_val) {
   case 1:
     config.palette = correlation::plotters::PlotConfig::Palette::Grayscale;
@@ -170,8 +171,8 @@ void PlotController::populatePlotList() {
       {"sigma2_N", 40}, {"chi_H", 41}};
 
   std::ranges::sort(names, [&](const std::string &lhs, const std::string &rhs) {
-    int prio_a = priority.contains(lhs) ? priority.at(lhs) : 100;
-    int prio_b = priority.contains(rhs) ? priority.at(rhs) : 100;
+    const int prio_a = priority.contains(lhs) ? priority.at(lhs) : 100;
+    const int prio_b = priority.contains(rhs) ? priority.at(rhs) : 100;
     if (prio_a != prio_b) {
       return prio_a < prio_b;
     }
@@ -184,7 +185,7 @@ void PlotController::populatePlotList() {
   for (const auto &name : names) {
     MenuItem item;
     const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
-    std::string display_text = (hist != nullptr && !hist->title.empty()) ? hist->title : name;
+    const std::string display_text = (hist != nullptr && !hist->title.empty()) ? hist->title : name;
     item.text = slint::SharedString(display_text);
     item.enabled = true;
     menu_model->push_back(item);
@@ -233,7 +234,7 @@ void PlotController::populatePlotList() {
 
 void PlotController::handleMouseMove(float mouse_x, float mouse_y, bool hover, float width,
                                      float height) {
-  bool actual_hover = hover;
+  const bool actual_hover = hover;
 
   if (std::abs(mouse_x - last_mouse_x_) < 0.5F && std::abs(mouse_y - last_mouse_y_) < 0.5F &&
       actual_hover == mouse_hover_ && std::abs(width - last_plot_width_) < 1e-2F &&
@@ -241,7 +242,7 @@ void PlotController::handleMouseMove(float mouse_x, float mouse_y, bool hover, f
     return;
   }
 
-  bool hover_changed = (actual_hover != mouse_hover_);
+  const bool hover_changed = (actual_hover != mouse_hover_);
 
   last_mouse_x_ = mouse_x;
   last_mouse_y_ = mouse_y;
@@ -249,14 +250,14 @@ void PlotController::handleMouseMove(float mouse_x, float mouse_y, bool hover, f
   last_plot_width_ = width;
   last_plot_height_ = height;
 
-  int current_idx = window_.get_selected_plot_index();
+  const int current_idx = window_.get_selected_plot_index();
   if (current_idx >= 0) {
     requestPlotUpdate(current_idx, hover_changed || !actual_hover);
   }
 }
 
 void PlotController::requestPlotUpdate(int index, bool immediate) {
-  if (index < 0 || index >= static_cast<int>(available_plot_keys_.size())) {
+  if (index < 0 || std::cmp_greater_equal(index, available_plot_keys_.size())) {
     return;
   }
 
@@ -273,7 +274,7 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
     needs_redraw_ = true;
   }
 
-  correlation::plotters::PlotConfig config = buildPlotConfigFromUI();
+  const correlation::plotters::PlotConfig config = buildPlotConfigFromUI();
   correlation::plotters::HoverInfo hover;
   hover.active = mouse_hover_;
   hover.mouse_x = last_mouse_x_;
@@ -309,9 +310,9 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
   for (const auto &pinned_run : pinned_runs_) {
     auto hist_it = pinned_run.histograms.find(name);
     if (hist_it != pinned_run.histograms.end()) {
-      bool vis = curve_visibility_map_.contains(pinned_run.label)
-                     ? curve_visibility_map_[pinned_run.label]
-                     : true;
+      const bool vis = curve_visibility_map_.contains(pinned_run.label)
+                           ? curve_visibility_map_[pinned_run.label]
+                           : true;
       data.comparison_hists.push_back(
           {.label = pinned_run.label, .hist = &hist_it->second, .style = {.visible = vis}});
     }
@@ -337,7 +338,7 @@ void PlotController::updateTableData(const correlation::analysis::Histogram *his
       keys.push_back(pair.first);
     }
   }
-  std::sort(keys.begin(), keys.end());
+  std::ranges::sort(keys);
   if (partials.contains("Total")) {
     keys.insert(keys.begin(), "Total");
   }
@@ -354,7 +355,7 @@ void PlotController::updateTableData(const correlation::analysis::Histogram *his
   window_.set_table_headers(slint_headers);
 
   auto slint_rows = std::make_shared<slint::VectorModel<TableRow>>();
-  size_t num_bins = hist->bins.size();
+  const size_t num_bins = hist->bins.size();
   for (size_t i = 0; i < num_bins; ++i) {
     TableRow row;
     auto row_values = std::make_shared<slint::VectorModel<slint::SharedString>>();
@@ -379,12 +380,12 @@ void PlotController::updateTableData(const correlation::analysis::Histogram *his
 }
 
 void PlotController::handleSetCurveColor(int curve_id, const slint::SharedString &color_hex) {
-  if (curve_id < 0 || curve_id >= static_cast<int>(current_toggle_keys_.size())) {
+  if (curve_id < 0 || std::cmp_greater_equal(curve_id, current_toggle_keys_.size())) {
     return;
   }
   const std::string &key = current_toggle_keys_[curve_id];
   custom_curve_colors_[key] = std::string(color_hex.data());
-  int current_idx = window_.get_selected_plot_index();
+  const int current_idx = window_.get_selected_plot_index();
   if (current_idx >= 0) {
     requestPlotUpdate(current_idx, true);
   }
@@ -403,7 +404,7 @@ void PlotController::updateCurveToggleItems(const correlation::analysis::Histogr
       sorted_partial_keys.push_back(pair.first);
     }
   }
-  std::sort(sorted_partial_keys.begin(), sorted_partial_keys.end());
+  std::ranges::sort(sorted_partial_keys);
 
   std::size_t total_curves =
       (partials.contains("Total") ? 1 : 0) + sorted_partial_keys.size() + pinned_runs_.size();
@@ -419,10 +420,11 @@ void PlotController::updateCurveToggleItems(const correlation::analysis::Histogr
   };
 
   if (partials.contains("Total")) {
-    bool vis = curve_visibility_map_.contains("Total") ? curve_visibility_map_["Total"] : true;
+    const bool vis =
+        curve_visibility_map_.contains("Total") ? curve_visibility_map_["Total"] : true;
     curve_visibility_map_["Total"] = vis;
-    current_toggle_keys_.push_back("Total");
-    std::string color_hex = get_hex_for_key("Total");
+    current_toggle_keys_.emplace_back("Total");
+    const std::string color_hex = get_hex_for_key("Total");
     toggle_model->push_back(CurveToggleItem{
         .id = curve_id++,
         .label = slint::SharedString("Total"),
@@ -435,10 +437,11 @@ void PlotController::updateCurveToggleItems(const correlation::analysis::Histogr
 
   std::size_t rank = 0;
   for (const auto &p_key : sorted_partial_keys) {
-    bool default_vis = (rank < 7);
-    bool vis = curve_visibility_map_.contains(p_key) ? curve_visibility_map_[p_key] : default_vis;
+    const bool default_vis = (rank < 7);
+    const bool vis =
+        curve_visibility_map_.contains(p_key) ? curve_visibility_map_[p_key] : default_vis;
     curve_visibility_map_[p_key] = vis;
-    std::string color_hex = get_hex_for_key(p_key);
+    const std::string color_hex = get_hex_for_key(p_key);
     current_toggle_keys_.push_back(p_key);
     toggle_model->push_back(CurveToggleItem{
         .id = curve_id++,
@@ -451,11 +454,12 @@ void PlotController::updateCurveToggleItems(const correlation::analysis::Histogr
     rank++;
   }
 
-  for (std::size_t i = 0; i < pinned_runs_.size(); ++i) {
-    std::string pin_label = pinned_runs_[i].label;
-    bool vis = curve_visibility_map_.contains(pin_label) ? curve_visibility_map_[pin_label] : true;
+  for (const auto &pinned_run : pinned_runs_) {
+    const std::string &pin_label = pinned_run.label;
+    const bool vis =
+        curve_visibility_map_.contains(pin_label) ? curve_visibility_map_[pin_label] : true;
     curve_visibility_map_[pin_label] = vis;
-    std::string color_hex = get_hex_for_key(pin_label);
+    const std::string color_hex = get_hex_for_key(pin_label);
     current_toggle_keys_.push_back(pin_label);
     toggle_model->push_back(CurveToggleItem{
         .id = curve_id++,
@@ -523,7 +527,7 @@ void PlotController::executePlotRender(RenderTaskData data) {
         std::error_code error_code;
         std::filesystem::remove(temp_path, error_code);
       } else {
-        const auto *svg_bytes = std::bit_cast<const uint8_t *>(svg.data());
+        const auto *svg_bytes = reinterpret_cast<const uint8_t *>(svg.data());
         auto img = slint::private_api::load_image_from_embedded_data(
             std::span<const uint8_t>(svg_bytes, svg.size()), "svg");
         window_.set_preview_plot(img);
@@ -544,8 +548,8 @@ void PlotController::handleSavePlot() {
     return;
   }
 
-  int index = window_.get_selected_plot_index();
-  if (index < 0 || index >= static_cast<int>(available_plot_keys_.size())) {
+  const int index = window_.get_selected_plot_index();
+  if (index < 0 || std::cmp_greater_equal(index, available_plot_keys_.size())) {
     dialog_active_.store(false);
     return;
   }
@@ -563,7 +567,7 @@ void PlotController::handleSavePlot() {
     default_path = name;
   }
 
-  std::filesystem::path def_path(default_path);
+  const std::filesystem::path def_path(default_path);
   std::string default_dir = def_path.parent_path().string();
   std::string default_name = def_path.filename().string();
 
@@ -629,16 +633,16 @@ void PlotController::executeSavePlot(const std::string &filepath,
 
   std::expected<void, std::string> result;
   if (pinned_runs_.empty()) {
-    result = PlotExportService::exportHistogram(filepath, *hist, config,
-                                                backend_.getAshcroftWeights());
+    result =
+        PlotExportService::exportHistogram(filepath, *hist, config, backend_.getAshcroftWeights());
   } else {
     std::vector<correlation::plotters::LabeledHistogram> datasets;
     datasets.reserve(pinned_runs_.size() + 1);
-    datasets.push_back({"Current", hist});
+    datasets.push_back({.label = "Current", .hist = hist});
     for (const auto &pinned_run : pinned_runs_) {
       auto hist_it = pinned_run.histograms.find(name);
       if (hist_it != pinned_run.histograms.end()) {
-        datasets.push_back({pinned_run.label, &hist_it->second});
+        datasets.push_back({.label = pinned_run.label, .hist = &hist_it->second});
       }
     }
     const std::string comp_key = PlotExportService::getComparisonKey(hist);
@@ -658,13 +662,13 @@ void PlotController::handlePinRun() {
     return;
   }
 
-  std::string label = "Run " + std::to_string(pinned_runs_.size() + 1);
-  pinned_runs_.push_back({label, hists});
+  const std::string label = "Run " + std::to_string(pinned_runs_.size() + 1);
+  pinned_runs_.push_back({.label = label, .histograms = hists});
 
   slint::invoke_from_event_loop([this]() {
     window_.set_pinned_runs_count(static_cast<int>(pinned_runs_.size()));
 
-    int current_idx = window_.get_selected_plot_index();
+    const int current_idx = window_.get_selected_plot_index();
     if (current_idx >= 0) {
       requestPlotUpdate(current_idx, true);
     }
@@ -677,7 +681,7 @@ void PlotController::handleClearPinnedRuns() {
   slint::invoke_from_event_loop([this]() {
     window_.set_pinned_runs_count(0);
 
-    int current_idx = window_.get_selected_plot_index();
+    const int current_idx = window_.get_selected_plot_index();
     if (current_idx >= 0) {
       requestPlotUpdate(current_idx, true);
     }
@@ -685,12 +689,12 @@ void PlotController::handleClearPinnedRuns() {
 }
 
 void PlotController::handleToggleCurveVisibility(int curve_id, bool visible) {
-  if (curve_id >= 0 && curve_id < static_cast<int>(current_toggle_keys_.size())) {
+  if (curve_id >= 0 && std::cmp_less(curve_id, current_toggle_keys_.size())) {
     const std::string &key = current_toggle_keys_[curve_id];
     curve_visibility_map_[key] = visible;
   }
   slint::invoke_from_event_loop([this]() {
-    int current_idx = window_.get_selected_plot_index();
+    const int current_idx = window_.get_selected_plot_index();
     if (current_idx >= 0) {
       requestPlotUpdate(current_idx, true);
     }
@@ -702,7 +706,7 @@ void PlotController::handleToggleAllCurves(bool visible) {
     curve_visibility_map_[key] = visible;
   }
   slint::invoke_from_event_loop([this]() {
-    int current_idx = window_.get_selected_plot_index();
+    const int current_idx = window_.get_selected_plot_index();
     if (current_idx >= 0) {
       requestPlotUpdate(current_idx, true);
     }
@@ -712,7 +716,7 @@ void PlotController::handleToggleAllCurves(bool visible) {
 void PlotController::handleToggleDifferencePlot(bool show_difference) {
   show_difference_curve_ = show_difference;
   slint::invoke_from_event_loop([this]() {
-    int current_idx = window_.get_selected_plot_index();
+    const int current_idx = window_.get_selected_plot_index();
     if (current_idx >= 0) {
       requestPlotUpdate(current_idx, true);
     }
