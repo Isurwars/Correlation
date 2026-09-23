@@ -291,6 +291,9 @@ export component AppWindow inherits Window {
     callback reset_sq_options();
     callback reset_xrd_options();
     callback xrd_radiation_preset_changed(int);
+    callback apply_min_factor(float);
+    callback apply_max_factor(float);
+    callback apply_global_cutoff(float);
     callback apply_scaled_cutoffs(float);
     callback set_uniform_cutoff(float);
     callback reset_rings_options();
@@ -683,6 +686,15 @@ export component AppWindow inherits Window {
                             bond_cutoffs_reset_trigger: root.bond_cutoffs_reset_trigger;
                             reset_bond_cutoffs => {
                                 root.reset_bond_cutoffs();
+                            }
+                            apply_min_factor(factor) => {
+                                root.apply_min_factor(factor);
+                            }
+                            apply_max_factor(factor) => {
+                                root.apply_max_factor(factor);
+                            }
+                            apply_global_cutoff(cutoff) => {
+                                root.apply_global_cutoff(cutoff);
                             }
                             apply_scaled_cutoffs(factor) => {
                                 root.apply_scaled_cutoffs(factor);

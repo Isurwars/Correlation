@@ -155,7 +155,7 @@ correlation::analysis::BondCutoffMatrix AppBackend::applyScaledBondCutoffs(real_
 
 correlation::analysis::BondCutoffMatrix AppBackend::setUniformBondCutoff(real_t min_cutoff,
                                                                          real_t max_cutoff) {
-  if (!cell()) {
+  if (cell() == nullptr) {
     return {};
   }
   const size_t num_elements = cell()->elements().size();
@@ -163,8 +163,8 @@ correlation::analysis::BondCutoffMatrix AppBackend::setUniformBondCutoff(real_t 
                                                                 : static_cast<real_t>(0.0);
   const real_t max_sq = (max_cutoff > min_cutoff) ? (max_cutoff * max_cutoff) : min_sq;
   correlation::analysis::BondCutoffMatrix cutoffs(
-      num_elements,
-      std::vector<correlation::analysis::BondCutoffRange>(num_elements, {min_sq, max_sq}));
+      num_elements, std::vector<correlation::analysis::BondCutoffRange>(
+                        num_elements, {.min_sq = min_sq, .max_sq = max_sq}));
   setBondCutoffs(cutoffs);
   return cutoffs;
 }
@@ -191,7 +191,7 @@ std::map<std::string, real_t> AppBackend::getAshcroftWeights() const {
   return df_ ? df_->getAshcroftWeights() : std::map<std::string, real_t>{};
 }
 
-std::string AppBackend::load_file(const std::string &path) {
+std::string AppBackend::loadFile(const std::string &path) {
   std::string display_path = path;
   std::ranges::replace(display_path, '\\', '/');
   correlation::readers::FileType const type = correlation::readers::determineFileType(path);
@@ -266,7 +266,7 @@ std::string AppBackend::validateOptions() const {
   return correlation::analysis::CorrelationEngine::validateConfig(config);
 }
 
-std::expected<void, std::string> AppBackend::run_analysis() {
+std::expected<void, std::string> AppBackend::runAnalysis() {
   if (!trajectory_ || trajectory_->getFrameCount() == 0) {
     std::string const err = AppDefaults::MSG_ANALYSIS_ABORTED;
     std::cerr << err << '\n';
@@ -292,7 +292,7 @@ std::expected<void, std::string> AppBackend::run_analysis() {
   return {};
 }
 
-std::expected<void, std::string> AppBackend::write_files() {
+std::expected<void, std::string> AppBackend::writeFiles() {
   if (!df_) {
     std::string const err = AppDefaults::MSG_NO_DATA_TO_WRITE;
     std::cerr << err << '\n';

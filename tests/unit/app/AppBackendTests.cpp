@@ -77,19 +77,19 @@ TEST_F(AppBackendTests, ValidateOptionsRejectsInvalidMaxRingSize) {
   correlation::app::AppBackend backend;
   std::string const data_dir = getTestDataDir();
   std::string const filepath = data_dir + "xyz/clean.xyz";
-  backend.load_file(filepath);
+  backend.loadFile(filepath);
 
   correlation::app::ProgramOptions opts = backend.options();
 
   opts.max_ring_size = 2;
   backend.setOptions(opts);
-  auto const res1 = backend.run_analysis();
+  auto const res1 = backend.runAnalysis();
   ASSERT_FALSE(res1.has_value());
   EXPECT_EQ(res1.error(), "Error: max_ring_size must be an integer >= 3.");
 
   opts.max_ring_size = 0;
   backend.setOptions(opts);
-  auto const res2 = backend.run_analysis();
+  auto const res2 = backend.runAnalysis();
   ASSERT_FALSE(res2.has_value());
   EXPECT_EQ(res2.error(), "Error: max_ring_size must be an integer >= 3.");
 }
@@ -99,7 +99,7 @@ TEST_F(AppBackendTests, LoadInvalidFileThrowsException) {
   correlation::app::AppBackend backend;
 
   // Act & Assert
-  EXPECT_THROW(backend.load_file("nonexistent_file_that_should_not_exist.xyz"), std::runtime_error);
+  EXPECT_THROW(backend.loadFile("nonexistent_file_that_should_not_exist.xyz"), std::runtime_error);
 }
 
 TEST_F(AppBackendTests, RecommendedTimeStepWithNoCellReturnsDefault) {
@@ -120,7 +120,7 @@ TEST_F(AppBackendTests, LoadValidXYZFile) {
   std::string const filepath = data_dir + "xyz/clean.xyz";
 
   // Act
-  std::string const load_status = backend.load_file(filepath);
+  std::string const load_status = backend.loadFile(filepath);
 
   // Assert
   EXPECT_NE(load_status.find("File loaded:"), std::string::npos);
@@ -143,7 +143,7 @@ TEST_F(AppBackendTests, LoadValidCarFileAndRunAnalysisAndWriteFiles) {
   std::string const filepath = data_dir + "car/clean.car";
 
   // Act & Assert 1: Load file
-  std::string const load_status = backend.load_file(filepath);
+  std::string const load_status = backend.loadFile(filepath);
   EXPECT_NE(load_status.find("File loaded:"), std::string::npos);
   EXPECT_EQ(backend.getFrameCount(), 1);
   EXPECT_EQ(backend.getTotalAtomCount(), 2);
@@ -170,7 +170,7 @@ TEST_F(AppBackendTests, LoadValidCarFileAndRunAnalysisAndWriteFiles) {
   opts.active_calculators["RDF"] = true;
   backend.setOptions(opts);
 
-  auto const run_status = backend.run_analysis();
+  auto const run_status = backend.runAnalysis();
   EXPECT_TRUE(run_status.has_value())
       << "Analysis failed: " << (run_status ? "" : run_status.error());
 
@@ -208,7 +208,7 @@ TEST_F(AppBackendTests, LoadValidCarFileAndRunAnalysisAndWriteFiles) {
   opts.use_parquet = false;
   backend.setOptions(opts);
 
-  auto const write_status = backend.write_files();
+  auto const write_status = backend.writeFiles();
   EXPECT_TRUE(write_status.has_value())
       << "Write files failed: " << (write_status ? "" : write_status.error());
 
@@ -229,7 +229,7 @@ TEST_F(AppBackendTests, ApplyScaledBondCutoffs) {
   correlation::app::AppBackend backend;
   std::string const data_dir = getTestDataDir();
   std::string const filepath = data_dir + "xyz/clean.xyz";
-  backend.load_file(filepath);
+  backend.loadFile(filepath);
 
   const auto cutoffs = backend.applyScaledBondCutoffs(1.2);
   ASSERT_EQ(cutoffs.size(), 2);
@@ -242,7 +242,7 @@ TEST_F(AppBackendTests, SetUniformBondCutoff) {
   correlation::app::AppBackend backend;
   std::string const data_dir = getTestDataDir();
   std::string const filepath = data_dir + "xyz/clean.xyz";
-  backend.load_file(filepath);
+  backend.loadFile(filepath);
 
   const auto cutoffs = backend.setUniformBondCutoff(0.5, 3.5);
   ASSERT_EQ(cutoffs.size(), 2);

@@ -23,7 +23,7 @@ real_t BondCutoffMapper::parseDistanceSafe(const std::string &str) {
 }
 
 int BondCutoffMapper::findElementIndex(std::span<const correlation::core::Element> elements,
-                                      const std::string &symbol) {
+                                       const std::string &symbol) {
   for (size_t idx = 0; idx < elements.size(); ++idx) {
     if (elements[idx].symbol == symbol) {
       return static_cast<int>(idx);
@@ -52,7 +52,7 @@ BondCutoffMapper::createDefaultCutoffEntries(std::span<const correlation::core::
       const real_t radius_b = safe_get_radius(elements[j].symbol);
       const real_t sum_radii = radius_a + radius_b;
       const real_t min_d = sum_radii * static_cast<real_t>(0.6);
-      const real_t max_d = sum_radii * static_cast<real_t>(1.3);
+      const real_t max_d = sum_radii * static_cast<real_t>(1.2);
 
       entries.push_back(CutoffEntry{
           .element1 = elements[i].symbol,
@@ -68,7 +68,7 @@ BondCutoffMapper::createDefaultCutoffEntries(std::span<const correlation::core::
 
 correlation::analysis::BondCutoffMatrix
 BondCutoffMapper::parseCutoffMatrix(std::span<const CutoffEntry> entries,
-                                   std::span<const correlation::core::Element> elements) {
+                                    std::span<const correlation::core::Element> elements) {
   const size_t num_elements = elements.size();
   correlation::analysis::BondCutoffMatrix cutoffs(
       num_elements, std::vector<correlation::analysis::BondCutoffRange>(

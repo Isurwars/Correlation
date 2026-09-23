@@ -60,7 +60,7 @@ TEST_F(AppControllerTests, HandlesBondCutoffsCorrectly) {
   if (!std::filesystem::exists(file_path)) {
     file_path = "examples/a-PdSi/a-PdSi.car";
   }
-  backend.load_file(file_path);
+  backend.loadFile(file_path);
 
   correlation::app::AppController controller(*window, backend);
 
@@ -189,7 +189,7 @@ TEST_F(AppControllerTests, PopulatesRecommendedBondCutoffs) {
   if (!std::filesystem::exists(file_path)) {
     file_path = "examples/a-PdSi/a-PdSi.car";
   }
-  backend.load_file(file_path);
+  backend.loadFile(file_path);
 
   correlation::app::AppController controller(*window, backend);
 
@@ -209,17 +209,17 @@ TEST_F(AppControllerTests, PopulatesRecommendedBondCutoffs) {
     if (el1 == "Pd" && el2 == "Pd") {
       found_pd_pd = true;
       EXPECT_EQ(item.min_distance.data(), std::string("1.44"));
-      EXPECT_EQ(item.max_distance.data(), std::string("3.12"));
+      EXPECT_EQ(item.max_distance.data(), std::string("2.88"));
     }
     if ((el1 == "Pd" && el2 == "Si") || (el1 == "Si" && el2 == "Pd")) {
       found_pd_si = true;
       EXPECT_EQ(item.min_distance.data(), std::string("1.42"));
-      EXPECT_EQ(item.max_distance.data(), std::string("3.07"));
+      EXPECT_EQ(item.max_distance.data(), std::string("2.83"));
     }
     if (el1 == "Si" && el2 == "Si") {
       found_si_si = true;
       EXPECT_EQ(item.min_distance.data(), std::string("1.39"));
-      EXPECT_EQ(item.max_distance.data(), std::string("3.02"));
+      EXPECT_EQ(item.max_distance.data(), std::string("2.78"));
     }
   }
 
@@ -239,7 +239,7 @@ TEST_F(AppControllerTests, ResetsBondCutoffsToDefaultsWhenInvoked) {
   if (!std::filesystem::exists(file_path)) {
     file_path = "examples/a-PdSi/a-PdSi.car";
   }
-  backend.load_file(file_path);
+  backend.loadFile(file_path);
 
   const correlation::app::AppController controller(*window, backend);
 
@@ -270,7 +270,7 @@ TEST_F(AppControllerTests, ResetsBondCutoffsToDefaultsWhenInvoked) {
     const std::string el2 = item.element2.data();
     if (el1 == "Pd" && el2 == "Pd") {
       EXPECT_EQ(item.min_distance.data(), std::string("1.44"));
-      EXPECT_EQ(item.max_distance.data(), std::string("3.12"));
+      EXPECT_EQ(item.max_distance.data(), std::string("2.88"));
     }
   }
 }
@@ -416,7 +416,7 @@ TEST_F(AppControllerTests, HandlesXRDOptionsAndCutoffHeuristics) {
   if (!std::filesystem::exists(file_path)) {
     file_path = "examples/a-PdSi/a-PdSi.car";
   }
-  backend.load_file(file_path);
+  backend.loadFile(file_path);
 
   const correlation::app::AppController controller(*window, backend);
 
@@ -449,6 +449,25 @@ TEST_F(AppControllerTests, HandlesXRDOptionsAndCutoffHeuristics) {
     ASSERT_TRUE(opt.has_value());
     EXPECT_EQ(opt->min_distance.data(), std::string("0.00"));
     EXPECT_EQ(opt->max_distance.data(), std::string("3.40"));
+  }
+
+  // Test Min, Max, and Global Cutoff signals
+  window->invoke_apply_min_factor(0.6F);
+  cutoffs = window->get_bond_cutoffs();
+  ASSERT_GT(cutoffs->row_count(), 0);
+
+  window->invoke_apply_max_factor(1.2F);
+  cutoffs = window->get_bond_cutoffs();
+  ASSERT_GT(cutoffs->row_count(), 0);
+
+  window->invoke_apply_global_cutoff(3.5F);
+  cutoffs = window->get_bond_cutoffs();
+  ASSERT_GT(cutoffs->row_count(), 0);
+  for (size_t i = 0; i < cutoffs->row_count(); ++i) {
+    const auto opt = cutoffs->row_data(i);
+    ASSERT_TRUE(opt.has_value());
+    EXPECT_EQ(opt->min_distance.data(), std::string("0.00"));
+    EXPECT_EQ(opt->max_distance.data(), std::string("3.50"));
   }
 }
 
@@ -501,7 +520,7 @@ TEST_F(AppControllerTests, PopulatesTableAndDynamicProperties) {
   if (!std::filesystem::exists(file_path)) {
     file_path = "examples/a-PdSi/a-PdSi.car";
   }
-  backend.load_file(file_path);
+  backend.loadFile(file_path);
 
   // Set the RDF calculator active
   correlation::app::ProgramOptions opts = backend.options();
@@ -511,7 +530,7 @@ TEST_F(AppControllerTests, PopulatesTableAndDynamicProperties) {
   correlation::app::AppController controller(*window, backend);
 
   // Run analysis
-  EXPECT_TRUE(backend.run_analysis().has_value());
+  EXPECT_TRUE(backend.runAnalysis().has_value());
 
   // Populate plot list (which also sets dynamic properties)
   controller.getPlotController()->populatePlotList();

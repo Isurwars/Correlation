@@ -66,7 +66,7 @@ void FileIOHandler::executeWriteFiles(const std::string &filepath) {
   opts.use_parquet = use_parquet;
   backend_.setOptions(opts);
 
-  const auto write_res = backend_.write_files();
+  const auto write_res = backend_.writeFiles();
   if (write_res) {
     window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_FILES_WRITTEN));
   } else {
@@ -151,7 +151,7 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath) {
     std::string message;
     bool success = false;
     try {
-      message = backend_.load_file(filepath);
+      message = backend_.loadFile(filepath);
       success = true;
     } catch (const std::exception &e) {
       message = std::string(AppDefaults::MSG_ERROR_LOADING) + std::string(e.what());
@@ -239,8 +239,8 @@ void FileIOHandler::updateBoxDiagnostics(const core::Cell *cell) {
     }
   }
   if (vol > 0.0 && total_mass > 0.0) {
-    constexpr auto da_per_a3_to_g_cm3 = static_cast<real_t>(1.66053906660);
-    const real_t density_g_cm3 = (total_mass / vol) * da_per_a3_to_g_cm3;
+    constexpr auto DA_PER_A3_TO_G_CM3 = static_cast<real_t>(1.66053906660);
+    const real_t density_g_cm3 = (total_mass / vol) * DA_PER_A3_TO_G_CM3;
     window_.set_box_density(slint::SharedString(std::format("{:.2f} g/cm³", density_g_cm3)));
   } else {
     window_.set_box_density(slint::SharedString("N/A"));

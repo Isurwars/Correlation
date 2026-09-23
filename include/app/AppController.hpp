@@ -123,6 +123,24 @@ public:
   void handleSetUniformCutoff(float max_cutoff);
 
   /**
+   * @brief Applies min factor multiplier to covalent radii sums for minimum bond cutoffs.
+   * @param min_factor Multiplier applied to sum of covalent radii for min distance.
+   */
+  void handleApplyMinFactor(float min_factor);
+
+  /**
+   * @brief Applies max factor multiplier to covalent radii sums for maximum bond cutoffs.
+   * @param max_factor Multiplier applied to sum of covalent radii for max distance.
+   */
+  void handleApplyMaxFactor(float max_factor);
+
+  /**
+   * @brief Applies global uniform cutoff across all atom pairs.
+   * @param global_cutoff Maximum cutoff distance in Å.
+   */
+  void handleApplyGlobalCutoff(float global_cutoff);
+
+  /**
    * @brief Restores default topological rings options in the UI.
    */
   void handleResetRingsOptions();

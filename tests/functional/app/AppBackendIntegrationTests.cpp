@@ -58,7 +58,7 @@ TEST(AppBackendIntegrationTests, EndToEndMultiFrameTrajectoryPipeline) {
       << "Trajectory test fixture not found: " << trajectory_path;
 
   correlation::app::AppBackend backend;
-  const std::string load_status = backend.load_file(trajectory_path);
+  const std::string load_status = backend.loadFile(trajectory_path);
   EXPECT_FALSE(load_status.empty());
   EXPECT_EQ(backend.getFrameCount(), 3);
   ASSERT_NE(backend.cell(), nullptr);
@@ -92,11 +92,11 @@ TEST(AppBackendIntegrationTests, EndToEndMultiFrameTrajectoryPipeline) {
     }
   });
 
-  const auto run_result = backend.run_analysis();
+  const auto run_result = backend.runAnalysis();
   ASSERT_TRUE(run_result.has_value())
-      << "run_analysis failed: " << (run_result ? "" : run_result.error());
+      << "runAnalysis failed: " << (run_result ? "" : run_result.error());
   EXPECT_TRUE(progress_invoked);
-  EXPECT_FALSE(backend.is_cancelled());
+  EXPECT_FALSE(backend.isCancelled());
 
   const auto available_hists = backend.getAvailableHistogramNames();
   EXPECT_FALSE(available_hists.empty());
@@ -104,9 +104,9 @@ TEST(AppBackendIntegrationTests, EndToEndMultiFrameTrajectoryPipeline) {
   EXPECT_NE(std::ranges::find(available_hists, "VACF"), available_hists.end());
   EXPECT_NE(std::ranges::find(available_hists, "MSD"), available_hists.end());
 
-  const auto write_result = backend.write_files();
+  const auto write_result = backend.writeFiles();
   ASSERT_TRUE(write_result.has_value())
-      << "write_files failed: " << (write_result ? "" : write_result.error());
+      << "writeFiles failed: " << (write_result ? "" : write_result.error());
 
   EXPECT_TRUE(std::filesystem::exists(out_base + "_g.csv"));
   EXPECT_TRUE(std::filesystem::exists(out_base + "_J.csv"));
@@ -116,7 +116,7 @@ TEST(AppBackendIntegrationTests, EndToEndMultiFrameTrajectoryPipeline) {
 
 TEST(AppBackendIntegrationTests, AbortsGracefullyOnMissingTrajectory) {
   correlation::app::AppBackend backend;
-  const auto run_result = backend.run_analysis();
+  const auto run_result = backend.runAnalysis();
   ASSERT_FALSE(run_result.has_value());
   EXPECT_EQ(run_result.error(), correlation::app::AppDefaults::MSG_ANALYSIS_ABORTED);
 }

@@ -22,6 +22,7 @@
 #include "app/PresetController.hpp"
 #include "app/UpdateChecker.hpp"
 #include "calculators/CalculatorFactory.hpp"
+#include "physics/PhysicalData.hpp"
 
 #include <algorithm>
 #include <cctype>
@@ -70,7 +71,7 @@ AppController::AppController(::AppWindow &window, AppBackend &backend)
   // Connect the UI signals to the controller's member functions.
   // We use lambdas to capture 'this' and call the appropriate method.
   window_.on_run_analysis([this]() { analysis_runner_->handleRunAnalysis(); });
-  window_.on_cancel_analysis([this]() { backend_.cancel_analysis(); });
+  window_.on_cancel_analysis([this]() { backend_.cancelAnalysis(); });
   window_.on_browse_file([this]() { file_io_handler_->handleBrowseFile(); });
   window_.on_reload_file([this]() { file_io_handler_->handleReloadFile(); });
   window_.on_write_files([this]() { file_io_handler_->handleWriteFiles(); });
@@ -165,6 +166,9 @@ AppController::AppController(::AppWindow &window, AppBackend &backend)
   window_.on_xrd_radiation_preset_changed([this](int idx) { handleXRDPresetChanged(idx); });
   window_.on_apply_scaled_cutoffs([this](float factor) { handleApplyScaledCutoffs(factor); });
   window_.on_set_uniform_cutoff([this](float max_val) { handleSetUniformCutoff(max_val); });
+  window_.on_apply_min_factor([this](float factor) { handleApplyMinFactor(factor); });
+  window_.on_apply_max_factor([this](float factor) { handleApplyMaxFactor(factor); });
+  window_.on_apply_global_cutoff([this](float cutoff) { handleApplyGlobalCutoff(cutoff); });
   window_.on_reset_rings_options([this]() { handleResetRingsOptions(); });
   window_.on_reset_smoothing_options([this]() { handleResetSmoothingOptions(); });
   window_.on_reset_advanced_options([this]() { handleResetAdvancedOptions(); });
@@ -831,6 +835,112 @@ void AppController::handleSetUniformCutoff(float max_cutoff) {
 
   window_.set_bond_cutoffs(slint_cutoffs);
   window_.set_bond_cutoffs_reset_trigger(window_.get_bond_cutoffs_reset_trigger() + 1);
+}
+
+void AppController::handleApplyMinFactor(float min_factor) {
+  if (backend_.cell() == nullptr || min_factor <= 0.0F) {
+    return;
+  }
+  const auto &elements = backend_.cell()->elements();
+  const auto num_elements = elements.size();
+  auto slint_cutoffs = window_.get_bond_cutoffs();
+
+  auto safe_get_radius = [](const std::string &symbol) -> real_t {
+    try {
+      return physics::getCovalentRadius(symbol);
+    } catch (const std::out_of_range &) {
+      return static_cast<real_t>(1.5);
+    }
+  };
+
+  auto new_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
+  size_t row_index = 0;
+  for (size_t i = 0; i < num_elements; ++i) {
+    const real_t radius_a = safe_get_radius(elements[i].symbol);
+    for (size_t j = i; j < num_elements; ++j) {
+      const real_t radius_b = safe_get_radius(elements[j].symbol);
+      const real_t sum_radii = radius_a + radius_b;
+      const real_t min_d = sum_radii * static_cast<real_t>(min_factor);
+
+      slint::SharedString max_d_str;
+      if (slint_cutoffs != nullptr && row_index < slint_cutoffs->row_count()) {
+        const auto opt = slint_cutoffs->row_data(row_index);
+        max_d_str = opt.has_value() ? opt->max_distance
+                                    : slint::SharedString(std::format(
+                                          "{:.2f}", sum_radii * AppDefaults::BOND_MAX_FACTOR));
+      } else {
+        max_d_str =
+            slint::SharedString(std::format("{:.2f}", sum_radii * AppDefaults::BOND_MAX_FACTOR));
+      }
+
+      new_cutoffs->push_back(BondCutoff{
+          .element1 = slint::SharedString(elements[i].symbol),
+          .element2 = slint::SharedString(elements[j].symbol),
+          .min_distance = slint::SharedString(std::format("{:.2f}", min_d)),
+          .max_distance = max_d_str,
+      });
+      ++row_index;
+    }
+  }
+
+  window_.set_bond_cutoffs(new_cutoffs);
+  window_.set_bond_cutoffs_reset_trigger(window_.get_bond_cutoffs_reset_trigger() + 1);
+  backend_.setBondCutoffs(getBondCutoffs());
+}
+
+void AppController::handleApplyMaxFactor(float max_factor) {
+  if (backend_.cell() == nullptr || max_factor <= 0.0F) {
+    return;
+  }
+  const auto &elements = backend_.cell()->elements();
+  const auto num_elements = elements.size();
+  auto slint_cutoffs = window_.get_bond_cutoffs();
+
+  auto safe_get_radius = [](const std::string &symbol) -> real_t {
+    try {
+      return physics::getCovalentRadius(symbol);
+    } catch (const std::out_of_range &) {
+      return static_cast<real_t>(1.5);
+    }
+  };
+
+  auto new_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
+  size_t row_index = 0;
+  for (size_t i = 0; i < num_elements; ++i) {
+    const real_t radius_a = safe_get_radius(elements[i].symbol);
+    for (size_t j = i; j < num_elements; ++j) {
+      const real_t radius_b = safe_get_radius(elements[j].symbol);
+      const real_t sum_radii = radius_a + radius_b;
+      const real_t max_d = sum_radii * static_cast<real_t>(max_factor);
+
+      slint::SharedString min_d_str;
+      if (slint_cutoffs != nullptr && row_index < slint_cutoffs->row_count()) {
+        const auto opt = slint_cutoffs->row_data(row_index);
+        min_d_str = opt.has_value() ? opt->min_distance
+                                    : slint::SharedString(std::format(
+                                          "{:.2f}", sum_radii * AppDefaults::BOND_MIN_FACTOR));
+      } else {
+        min_d_str =
+            slint::SharedString(std::format("{:.2f}", sum_radii * AppDefaults::BOND_MIN_FACTOR));
+      }
+
+      new_cutoffs->push_back(BondCutoff{
+          .element1 = slint::SharedString(elements[i].symbol),
+          .element2 = slint::SharedString(elements[j].symbol),
+          .min_distance = min_d_str,
+          .max_distance = slint::SharedString(std::format("{:.2f}", max_d)),
+      });
+      ++row_index;
+    }
+  }
+
+  window_.set_bond_cutoffs(new_cutoffs);
+  window_.set_bond_cutoffs_reset_trigger(window_.get_bond_cutoffs_reset_trigger() + 1);
+  backend_.setBondCutoffs(getBondCutoffs());
+}
+
+void AppController::handleApplyGlobalCutoff(float global_cutoff) {
+  handleSetUniformCutoff(global_cutoff);
 }
 
 } // namespace correlation::app

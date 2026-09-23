@@ -62,13 +62,13 @@ void AnalysisRunner::handleRunAnalysis() {
   }
 
   analysis_thread_ = std::thread([this]() {
-    auto result = backend_.run_analysis();
+    auto result = backend_.runAnalysis();
     const std::string err = result ? "" : result.error();
 
     slint::invoke_from_event_loop([this, err]() {
       window_.set_analysis_running(false);
       if (err.empty()) {
-        if (backend_.is_cancelled()) {
+        if (backend_.isCancelled()) {
           window_.set_analysis_status_text(slint::SharedString("Analysis Cancelled."));
         } else {
           window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_ANALYSIS_ENDED));

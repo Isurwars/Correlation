@@ -113,9 +113,9 @@ int main(int argc, char *argv[]) {
     if (!cli.quiet) {
       std::cerr << "Loading: " << cli.input_file << "\n";
     }
-    std::string const msg = backend.load_file(cli.input_file);
+    std::string const msg = backend.loadFile(cli.input_file);
 
-    // Re-apply options since load_file overwrites output_file_base
+    // Re-apply options since loadFile overwrites output_file_base
     opts.output_file_base = cli.output_base;
     backend.setOptions(opts);
     if (!cli.quiet) {
@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
     if (!cli.quiet) {
       std::cerr << "Running analysis...\n";
     }
-    auto const run_res = backend.run_analysis();
+    auto const run_res = backend.runAnalysis();
     if (!run_res) {
       std::cerr << "\nAnalysis error: " << run_res.error() << "\n";
       return 1;
@@ -148,7 +148,7 @@ int main(int argc, char *argv[]) {
 
   // Write output files
   try {
-    auto const write_res = backend.write_files();
+    auto const write_res = backend.writeFiles();
     if (!write_res) {
       std::cerr << "Write error: " << write_res.error() << "\n";
       return 1;

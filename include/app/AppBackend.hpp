@@ -57,6 +57,13 @@ struct AppDefaults {
   static constexpr real_t XRD_THETA_MAX = 140.0; ///< Default max 2-theta in degrees.
   static constexpr real_t XRD_BIN_WIDTH = 0.05;  ///< Default 2-theta bin width in degrees.
 
+  // Bond Cutoff Defaults
+  static constexpr real_t BOND_MIN_FACTOR =
+      0.6; ///< Default factor for minimum bond cutoff distance.
+  static constexpr real_t BOND_MAX_FACTOR =
+      1.2; ///< Default factor for maximum bond cutoff distance.
+  static constexpr real_t BOND_GLOBAL_CUTOFF = 3.5; ///< Default global uniform bond cutoff in Å.
+
   // --- Status Messages ---
   static constexpr const char *MSG_RUNNING_ANALYSIS =
       "Running Analysis..."; ///< Status: Computation in progress.
@@ -193,7 +200,7 @@ public:
    * @return A status message indicating success or details about the loaded
    * file.
    */
-  std::string load_file(const std::string &path);
+  std::string loadFile(const std::string &path);
 
   /**
    * @brief Runs the analysis based on the current options and loaded
@@ -208,7 +215,7 @@ public:
    *
    * @return std::expected<void, std::string> indicating success or containing an error message.
    */
-  [[nodiscard]] std::expected<void, std::string> run_analysis();
+  [[nodiscard]] std::expected<void, std::string> runAnalysis();
 
   /**
    * @brief Writes the analysis results to files (CSV, HDF5) as specified in
@@ -216,7 +223,7 @@ public:
    *
    * @return std::expected<void, std::string> indicating success or containing an error message.
    */
-  [[nodiscard]] std::expected<void, std::string> write_files();
+  [[nodiscard]] std::expected<void, std::string> writeFiles();
 
   /**
    * @brief Gets the atom counts for the current structure.
@@ -327,8 +334,8 @@ public:
    */
   [[nodiscard]] const std::map<std::string, correlation::analysis::Histogram> &
   getHistograms() const {
-    static const std::map<std::string, correlation::analysis::Histogram> empty_map;
-    return df_ ? df_->getAllHistograms() : empty_map;
+    static const std::map<std::string, correlation::analysis::Histogram> EMPTY_MAP;
+    return df_ ? df_->getAllHistograms() : EMPTY_MAP;
   }
 
   /**
@@ -352,17 +359,17 @@ public:
   /**
    * @brief Cancels the currently running analysis.
    */
-  void cancel_analysis() { cancel_flag_ = true; }
+  void cancelAnalysis() { cancel_flag_ = true; }
 
   /**
    * @brief Checks if analysis has been cancelled.
    */
-  bool is_cancelled() const { return cancel_flag_; }
+  [[nodiscard]] bool isCancelled() const { return cancel_flag_; }
 
   ///@}
 
 private:
-  std::string validateOptions() const;
+  [[nodiscard]] std::string validateOptions() const;
 
   // --- Private Data Members ---
   std::unique_ptr<correlation::core::Trajectory> trajectory_; ///< Loaded trajectory data.
