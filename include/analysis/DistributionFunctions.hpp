@@ -70,6 +70,7 @@ struct AnalysisSettings {
   real_t lef_cutoff = 5.0;         ///< Cutoff radius for local entropy integration.
   real_t lef_sigma = 0.2;          ///< Standard deviation for Gaussian smoothing in local entropy.
   size_t hyperuniformity_samples = 10000; ///< Number of random sample points for hyperuniformity.
+  size_t frame_stride = 1;                ///< Sampling stride between frames (>= 1).
 
   /// Maps calculator ID (e.g., "RDF", "SQ") to whether it is enabled.
   /// An empty map means all calculators are enabled by default.

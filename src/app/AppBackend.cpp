@@ -221,6 +221,7 @@ toEngineConfig(const ProgramOptions &options, std::atomic<bool> *cancel_flag) {
   config.min_frame = options.min_frame;
   config.max_frame = options.max_frame;
   config.time_step = options.time_step;
+  config.settings.frame_stride = static_cast<size_t>(std::max(1, options.frame_stride));
   return config;
 }
 

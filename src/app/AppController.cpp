@@ -72,6 +72,7 @@ AppController::AppController(::AppWindow &window, AppBackend &backend)
   window_.on_run_analysis([this]() { analysis_runner_->handleRunAnalysis(); });
   window_.on_cancel_analysis([this]() { backend_.cancel_analysis(); });
   window_.on_browse_file([this]() { file_io_handler_->handleBrowseFile(); });
+  window_.on_reload_file([this]() { file_io_handler_->handleReloadFile(); });
   window_.on_write_files([this]() { file_io_handler_->handleWriteFiles(); });
   window_.on_validate_inputs([this]() {
     slint::invoke_from_event_loop(
@@ -342,6 +343,11 @@ void AppController::handleOptionstoUI() {
     opts.time_step = slint::SharedString(std::format("{:.2f}", opt.time_step));
     window_.set_analysis_options(opts);
   }
+  {
+    auto opts = window_.get_analysis_options();
+    opts.frame_stride = slint::SharedString(std::to_string(opt.frame_stride));
+    window_.set_analysis_options(opts);
+  }
   updateActiveGroupFlags();
 };
 
@@ -476,6 +482,13 @@ ProgramOptions AppController::handleOptionsfromUI() {
   }
 
   opt.time_step = safeParse(window_.get_analysis_options().time_step, opt.time_step);
+
+  try {
+    const std::string stride_s = window_.get_analysis_options().frame_stride.data();
+    opt.frame_stride = std::max(1, std::stoi(stride_s));
+  } catch (const std::exception &) {
+    opt.frame_stride = 1;
+  }
 
   // Handle Bond Cutoffs
   opt.bond_cutoffs = getBondCutoffs();
@@ -668,6 +681,7 @@ void AppController::handleResetTrajectoryOptions() {
     opts.min_frame = "1";
     opts.max_frame = "End";
   }
+  opts.frame_stride = "1";
   window_.set_analysis_options(opts);
   static_cast<void>(input_validator_->validateInputs());
 }

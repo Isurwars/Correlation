@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#if defined(_WIN32)
+#ifdef _WIN32
 #define NOMINMAX
 #include <Windows.h>
 #endif
@@ -24,17 +24,17 @@ namespace correlation::app {
 
 namespace {
 
-std::string to_lower_str(const std::string &str) {
+std::string toLowerStr(const std::string &str) {
   std::string data = str;
   std::ranges::transform(data, data.begin(),
                          [](const unsigned char chr) { return std::tolower(chr); });
   return data;
 }
 
-bool is_positive_float(const std::string &str, float &val) {
+bool isPositiveFloat(const std::string &str, float &val) {
   try {
     size_t idx = 0;
-    float parsed_val = std::stof(str, &idx);
+    const float parsed_val = std::stof(str, &idx);
     if (idx < str.size() || parsed_val <= 0.0F) {
       return false;
     }
@@ -45,10 +45,10 @@ bool is_positive_float(const std::string &str, float &val) {
   }
 }
 
-bool is_non_negative_float(const std::string &str, float &val) {
+bool isNonNegativeFloat(const std::string &str, float &val) {
   try {
     size_t idx = 0;
-    float parsed_val = std::stof(str, &idx);
+    const float parsed_val = std::stof(str, &idx);
     if (idx < str.size() || parsed_val < 0.0F) {
       return false;
     }
@@ -59,10 +59,10 @@ bool is_non_negative_float(const std::string &str, float &val) {
   }
 }
 
-bool is_positive_int(const std::string &str, int &val) {
+bool isPositiveInt(const std::string &str, int &val) {
   try {
     size_t idx = 0;
-    int parsed_val = std::stoi(str, &idx);
+    const int parsed_val = std::stoi(str, &idx);
     if (idx < str.size() || parsed_val <= 0) {
       return false;
     }
@@ -73,9 +73,9 @@ bool is_positive_int(const std::string &str, int &val) {
   }
 }
 
-bool validate_min_frame_input(const std::string &frame_s, int total_frames, int &frame_val,
-                              slint::SharedString &error_out) {
-  std::string frame_lower = to_lower_str(frame_s);
+bool validateMinFrameInput(const std::string &frame_s, int total_frames, int &frame_val,
+                           slint::SharedString &error_out) {
+  const std::string frame_lower = toLowerStr(frame_s);
 
   if (frame_lower == "start" || frame_s.empty()) {
     frame_val = 0;
@@ -88,7 +88,7 @@ bool validate_min_frame_input(const std::string &frame_s, int total_frames, int 
   }
 
   int parsed_val = 0;
-  if (!is_positive_int(frame_s, parsed_val)) {
+  if (!isPositiveInt(frame_s, parsed_val)) {
     error_out = "Must be positive integer, 'Start', or 'End'";
     return false;
   }
@@ -102,9 +102,9 @@ bool validate_min_frame_input(const std::string &frame_s, int total_frames, int 
   return true;
 }
 
-bool validate_max_frame_input(const std::string &frame_s, int total_frames, int &frame_val,
-                              slint::SharedString &error_out) {
-  std::string frame_lower = to_lower_str(frame_s);
+bool validateMaxFrameInput(const std::string &frame_s, int total_frames, int &frame_val,
+                           slint::SharedString &error_out) {
+  const std::string frame_lower = toLowerStr(frame_s);
 
   if (frame_lower == "end" || frame_s.empty()) {
     frame_val = total_frames > 0 ? total_frames - 1 : -1;
@@ -117,7 +117,7 @@ bool validate_max_frame_input(const std::string &frame_s, int total_frames, int 
   }
 
   int parsed_val = 0;
-  if (!is_positive_int(frame_s, parsed_val)) {
+  if (!isPositiveInt(frame_s, parsed_val)) {
     error_out = "Must be positive integer or 'End'";
     return false;
   }
@@ -131,6 +131,21 @@ bool validate_max_frame_input(const std::string &frame_s, int total_frames, int 
   return true;
 }
 
+bool validateFrameStrideInput(const std::string &stride_s, int &stride_val,
+                              slint::SharedString &error_out) {
+  if (stride_s.empty() || toLowerStr(stride_s) == "1") {
+    stride_val = 1;
+    return true;
+  }
+  int parsed_val = 0;
+  if (!isPositiveInt(stride_s, parsed_val) || parsed_val <= 0) {
+    error_out = "Must be a positive integer (≥ 1)";
+    return false;
+  }
+  stride_val = parsed_val;
+  return true;
+}
+
 } // namespace
 
 InputValidator::InputValidator(::AppWindow &window, AppBackend &backend, AppController &controller)
@@ -140,15 +155,15 @@ bool InputValidator::validateRadialAndScattering(AppErrors &errs, float &r_max_v
                                                  float &q_max_val) {
   bool valid = true;
 
-  std::string r_max_s = window_->get_analysis_options().r_max.data();
-  if (!is_positive_float(r_max_s, r_max_val)) {
+  const std::string r_max_s = window_->get_analysis_options().r_max.data();
+  if (!isPositiveFloat(r_max_s, r_max_val)) {
     errs.r_max_error = "Must be a positive number";
     valid = false;
   }
 
   float r_bin_val = 0.0F;
-  std::string r_bin_s = window_->get_analysis_options().r_bin_width.data();
-  if (!is_positive_float(r_bin_s, r_bin_val)) {
+  const std::string r_bin_s = window_->get_analysis_options().r_bin_width.data();
+  if (!isPositiveFloat(r_bin_s, r_bin_val)) {
     errs.r_bin_error = "Must be a positive number";
     valid = false;
   } else if (r_max_val > 0.0F && r_bin_val > r_max_val) {
@@ -156,15 +171,15 @@ bool InputValidator::validateRadialAndScattering(AppErrors &errs, float &r_max_v
     valid = false;
   }
 
-  std::string q_max_s = window_->get_analysis_options().q_max.data();
-  if (!is_positive_float(q_max_s, q_max_val)) {
+  const std::string q_max_s = window_->get_analysis_options().q_max.data();
+  if (!isPositiveFloat(q_max_s, q_max_val)) {
     errs.q_max_error = "Must be a positive number";
     valid = false;
   }
 
   float q_bin_val = 0.0F;
-  std::string q_bin_s = window_->get_analysis_options().q_bin_width.data();
-  if (!is_positive_float(q_bin_s, q_bin_val)) {
+  const std::string q_bin_s = window_->get_analysis_options().q_bin_width.data();
+  if (!isPositiveFloat(q_bin_s, q_bin_val)) {
     errs.q_bin_error = "Must be a positive number";
     valid = false;
   } else if (q_max_val > 0.0F && q_bin_val > q_max_val) {
@@ -173,8 +188,8 @@ bool InputValidator::validateRadialAndScattering(AppErrors &errs, float &r_max_v
   }
 
   float r_int_max_val = 0.0F;
-  std::string r_int_max_s = window_->get_analysis_options().r_int_max.data();
-  if (!is_positive_float(r_int_max_s, r_int_max_val)) {
+  const std::string r_int_max_s = window_->get_analysis_options().r_int_max.data();
+  if (!isPositiveFloat(r_int_max_s, r_int_max_val)) {
     errs.r_int_max_error = "Must be a positive number";
     valid = false;
   }
@@ -186,8 +201,8 @@ bool InputValidator::validateAngularAndRings(AppErrors &errs) {
   bool valid = true;
 
   float angle_bin_val = 0.0F;
-  std::string angle_bin_s = window_->get_analysis_options().angle_bin_width.data();
-  if (!is_positive_float(angle_bin_s, angle_bin_val)) {
+  const std::string angle_bin_s = window_->get_analysis_options().angle_bin_width.data();
+  if (!isPositiveFloat(angle_bin_s, angle_bin_val)) {
     errs.angle_bin_error = "Must be a positive number";
     valid = false;
   } else if (angle_bin_val > 180.0F) {
@@ -196,8 +211,8 @@ bool InputValidator::validateAngularAndRings(AppErrors &errs) {
   }
 
   float dihedral_bin_val = 0.0F;
-  std::string dihedral_bin_s = window_->get_analysis_options().dihedral_bin_width.data();
-  if (!is_positive_float(dihedral_bin_s, dihedral_bin_val)) {
+  const std::string dihedral_bin_s = window_->get_analysis_options().dihedral_bin_width.data();
+  if (!isPositiveFloat(dihedral_bin_s, dihedral_bin_val)) {
     errs.dihedral_bin_error = "Must be a positive number";
     valid = false;
   } else if (dihedral_bin_val > 360.0F) {
@@ -206,8 +221,8 @@ bool InputValidator::validateAngularAndRings(AppErrors &errs) {
   }
 
   int max_ring_val = 0;
-  std::string max_ring_s = window_->get_analysis_options().max_ring_size.data();
-  if (!is_positive_int(max_ring_s, max_ring_val) || max_ring_val < 3) {
+  const std::string max_ring_s = window_->get_analysis_options().max_ring_size.data();
+  if (!isPositiveInt(max_ring_s, max_ring_val) || max_ring_val < 3) {
     errs.max_ring_error = "Must be an integer ≥ 3";
     valid = false;
   }
@@ -219,36 +234,36 @@ bool InputValidator::validateOtherAnalysisOptions(AppErrors &errs) {
   bool valid = true;
 
   float smoothing_sigma_val = 0.0F;
-  std::string smoothing_sigma_s = window_->get_analysis_options().smoothing_sigma.data();
-  if (!is_non_negative_float(smoothing_sigma_s, smoothing_sigma_val)) {
+  const std::string smoothing_sigma_s = window_->get_analysis_options().smoothing_sigma.data();
+  if (!isNonNegativeFloat(smoothing_sigma_s, smoothing_sigma_val)) {
     errs.smoothing_sigma_error = "Must be a non-negative number";
     valid = false;
   }
 
   float time_step_val = 0.0F;
-  std::string time_step_s = window_->get_analysis_options().time_step.data();
-  if (!is_positive_float(time_step_s, time_step_val)) {
+  const std::string time_step_s = window_->get_analysis_options().time_step.data();
+  if (!isPositiveFloat(time_step_s, time_step_val)) {
     errs.time_step_error = "Must be a positive number";
     valid = false;
   }
 
   float lef_cutoff_val = 0.0F;
-  std::string lef_cutoff_s = window_->get_analysis_options().lef_cutoff.data();
-  if (!is_positive_float(lef_cutoff_s, lef_cutoff_val)) {
+  const std::string lef_cutoff_s = window_->get_analysis_options().lef_cutoff.data();
+  if (!isPositiveFloat(lef_cutoff_s, lef_cutoff_val)) {
     errs.lef_cutoff_error = "Must be a positive number";
     valid = false;
   }
 
   float lef_sigma_val = 0.0F;
-  std::string lef_sigma_s = window_->get_analysis_options().lef_sigma.data();
-  if (!is_positive_float(lef_sigma_s, lef_sigma_val)) {
+  const std::string lef_sigma_s = window_->get_analysis_options().lef_sigma.data();
+  if (!isPositiveFloat(lef_sigma_s, lef_sigma_val)) {
     errs.lef_sigma_error = "Must be a positive number";
     valid = false;
   }
 
   int hyper_samples_val = 0;
-  std::string hyper_samples_s = window_->get_analysis_options().hyper_samples.data();
-  if (!is_positive_int(hyper_samples_s, hyper_samples_val)) {
+  const std::string hyper_samples_s = window_->get_analysis_options().hyper_samples.data();
+  if (!isPositiveInt(hyper_samples_s, hyper_samples_val)) {
     errs.hyper_samples_error = "Must be a positive integer";
     valid = false;
   }
@@ -261,18 +276,18 @@ bool InputValidator::validateFrames(AppErrors &errs) {
 
   int min_frame_val = -1;
   int max_frame_val = -1;
-  int total_frames = window_->get_num_frames();
+  const int total_frames = window_->get_num_frames();
 
-  std::string min_frame_s = window_->get_analysis_options().min_frame.data();
-  bool min_frame_valid =
-      validate_min_frame_input(min_frame_s, total_frames, min_frame_val, errs.min_frame_error);
+  const std::string min_frame_s = window_->get_analysis_options().min_frame.data();
+  const bool min_frame_valid =
+      validateMinFrameInput(min_frame_s, total_frames, min_frame_val, errs.min_frame_error);
   if (!min_frame_valid) {
     valid = false;
   }
 
-  std::string max_frame_s = window_->get_analysis_options().max_frame.data();
-  bool max_frame_valid =
-      validate_max_frame_input(max_frame_s, total_frames, max_frame_val, errs.max_frame_error);
+  const std::string max_frame_s = window_->get_analysis_options().max_frame.data();
+  const bool max_frame_valid =
+      validateMaxFrameInput(max_frame_s, total_frames, max_frame_val, errs.max_frame_error);
   if (!max_frame_valid) {
     valid = false;
   }
@@ -285,6 +300,12 @@ bool InputValidator::validateFrames(AppErrors &errs) {
     }
   }
 
+  int stride_val = 1;
+  const std::string stride_s = window_->get_analysis_options().frame_stride.data();
+  if (!validateFrameStrideInput(stride_s, stride_val, errs.frame_stride_error)) {
+    valid = false;
+  }
+
   return valid;
 }
 
@@ -292,22 +313,22 @@ bool InputValidator::validateExportConfig(AppErrors &errs) {
   bool valid = true;
 
   float font_scale_val = 0.0F;
-  std::string font_scale_s = window_->get_export_config().font_scale.data();
-  if (!is_positive_float(font_scale_s, font_scale_val)) {
+  const std::string font_scale_s = window_->get_export_config().font_scale.data();
+  if (!isPositiveFloat(font_scale_s, font_scale_val)) {
     errs.export_font_scale_error = "Must be a positive number";
     valid = false;
   }
 
   float line_width_val = 0.0F;
-  std::string line_width_s = window_->get_export_config().line_width.data();
-  if (!is_positive_float(line_width_s, line_width_val)) {
+  const std::string line_width_s = window_->get_export_config().line_width.data();
+  if (!isPositiveFloat(line_width_s, line_width_val)) {
     errs.export_line_width_error = "Must be a positive number";
     valid = false;
   }
 
   float marker_size_val = 0.0F;
-  std::string marker_size_s = window_->get_export_config().marker_size.data();
-  if (!is_positive_float(marker_size_s, marker_size_val)) {
+  const std::string marker_size_s = window_->get_export_config().marker_size.data();
+  if (!isPositiveFloat(marker_size_s, marker_size_val)) {
     errs.export_marker_size_error = "Must be a positive number";
     valid = false;
   }
@@ -331,6 +352,7 @@ bool InputValidator::validateInputs() {
   errs.time_step_error = "";
   errs.min_frame_error = "";
   errs.max_frame_error = "";
+  errs.frame_stride_error = "";
   errs.export_font_scale_error = "";
   errs.export_line_width_error = "";
   errs.export_marker_size_error = "";
@@ -356,12 +378,12 @@ bool InputValidator::validateInputs() {
     valid = false;
   }
 
-  bool has_errors = !valid;
+  const bool has_errors = !valid;
   if (window_->get_has_validation_errors() != has_errors) {
     window_->set_has_validation_errors(has_errors);
   }
 
-  auto current_errs = window_->get_app_errors();
+  const auto current_errs = window_->get_app_errors();
   if (current_errs.r_max_error != errs.r_max_error ||
       current_errs.r_bin_error != errs.r_bin_error ||
       current_errs.q_max_error != errs.q_max_error ||
@@ -374,6 +396,7 @@ bool InputValidator::validateInputs() {
       current_errs.time_step_error != errs.time_step_error ||
       current_errs.min_frame_error != errs.min_frame_error ||
       current_errs.max_frame_error != errs.max_frame_error ||
+      current_errs.frame_stride_error != errs.frame_stride_error ||
       current_errs.export_font_scale_error != errs.export_font_scale_error ||
       current_errs.export_line_width_error != errs.export_line_width_error ||
       current_errs.export_marker_size_error != errs.export_marker_size_error ||

@@ -37,19 +37,25 @@ export component TrajectoryOptionsCard inherits OutlinedCard {
     in property <string> min_frame_error: "";
     in property <string> max_frame_error: "";
 
+    in-out property <string> frame_stride: "1";
+    in property <string> frame_stride_error: "";
+
     out property <string> hovered_tooltip_text:
         time_step_area.has-hover ? "Time interval between parsed frames in femtoseconds (fs).\n\n📏 Auto-calculated from atomic masses using √(9m/5), where m is the lightest element's mass.\n\n🔬 Physics: The time step determines the time axis for dynamic properties (MSD, VACF, vDoS). Verify this matches your simulation's actual time step for accurate diffusion coefficients and vibrational spectra." :
         start_frame_area.has-hover ? "First frame to include in the analysis.\n\n📏 Tip: Use 'Start' or '1' for the first frame.\n\n🔬 Physics: In molecular dynamics, the initial frames may represent an equilibration phase. Excluding early frames ensures only the production run is analyzed. A common practice is to discard the first 10–20% of frames." :
-        end_frame_area.has-hover ? "Last frame to include in the analysis.\n\n📏 Tip: Use 'End' to include all remaining frames.\n\n🔬 Physics: Selecting a subset of frames can speed up analysis during parameter exploration. Once you find good settings, use the full range for publication-quality results." : "";
+        end_frame_area.has-hover ? "Last frame to include in the analysis.\n\n📏 Tip: Use 'End' to include all remaining frames.\n\n🔬 Physics: Selecting a subset of frames can speed up analysis during parameter exploration. Once you find good settings, use the full range for publication-quality results." :
+        stride_area.has-hover ? "Sampling stride between frames (e.g. 10 evaluates every 10th frame).\n\n🔬 Physics: Useful for rapid preliminary screening of long trajectories to save compute time while maintaining statistical convergence." : "";
 
     out property <length> hovered_x:
         time_step_area.has-hover ? time_step_area.absolute-position.x + time_step_area.mouse-x :
         start_frame_area.has-hover ? start_frame_area.absolute-position.x + start_frame_area.mouse-x :
-        end_frame_area.has-hover ? end_frame_area.absolute-position.x + end_frame_area.mouse-x : 0px;
+        end_frame_area.has-hover ? end_frame_area.absolute-position.x + end_frame_area.mouse-x :
+        stride_area.has-hover ? stride_area.absolute-position.x + stride_area.mouse-x : 0px;
     out property <length> hovered_y:
         time_step_area.has-hover ? time_step_area.absolute-position.y + time_step_area.mouse-y :
         start_frame_area.has-hover ? start_frame_area.absolute-position.y + start_frame_area.mouse-y :
-        end_frame_area.has-hover ? end_frame_area.absolute-position.y + end_frame_area.mouse-y : 0px;
+        end_frame_area.has-hover ? end_frame_area.absolute-position.y + end_frame_area.mouse-y :
+        stride_area.has-hover ? stride_area.absolute-position.y + stride_area.mouse-y : 0px;
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
 
@@ -122,6 +128,20 @@ export component TrajectoryOptionsCard inherits OutlinedCard {
                         text <=> root.max_frame;
                         has_error: root.max_frame_error != "";
                         supporting_text: root.max_frame_error;
+                    }
+                }
+
+                stride_area := TouchArea {
+                    accessible-role: text-input;
+                    accessible-label: "Frame Stride";
+                    horizontal-stretch: 1;
+                    tf_stride := TextField {
+                        width: 100%;
+                        enabled: root.file_loaded && root.num_frames > 1;
+                        label: "Stride";
+                        text <=> root.frame_stride;
+                        has_error: root.frame_stride_error != "";
+                        supporting_text: root.frame_stride_error;
                     }
                 }
             }

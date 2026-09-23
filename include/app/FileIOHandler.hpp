@@ -45,6 +45,11 @@ public:
   void handleBrowseFile();
 
   /**
+   * @brief Reloads the currently loaded structure/trajectory file from disk asynchronously.
+   */
+  void handleReloadFile();
+
+  /**
    * @brief Displays file save dialog asynchronously and exports active structural data.
    */
   void handleWriteFiles();
@@ -55,6 +60,18 @@ private:
    * @param[in] filepath Absolute path to structure or trajectory file.
    */
   void startLoadingTrajectory(const std::string &filepath);
+
+  /**
+   * @brief Updates simulation cell diagnostics (volume, dimensions, density) on the UI.
+   * @param[in] cell Pointer to the simulation cell, or nullptr if unavailable.
+   */
+  void updateBoxDiagnostics(const core::Cell *cell);
+
+  /**
+   * @brief Updates loaded file metadata (basename, frame counts, atom counts) on the UI.
+   * @param[in] filepath Path to the loaded structure or trajectory file.
+   */
+  void updateFileMetadata(const std::string &filepath);
 
   /**
    * @brief Executes export of active structural datasets based on the selected file path extension.

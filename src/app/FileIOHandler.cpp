@@ -10,6 +10,7 @@
 #include "AppWindow.h"
 #include "app/AppController.hpp"
 #include "app/InputValidator.hpp"
+#include "physics/PhysicalData.hpp"
 #include <filesystem>
 #include <format>
 #include <nfd.h>
@@ -156,7 +157,7 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath) {
       message = std::string(AppDefaults::MSG_ERROR_LOADING) + std::string(e.what());
     }
 
-    slint::invoke_from_event_loop([this, message, success]() {
+    slint::invoke_from_event_loop([this, filepath, message, success]() {
       window_.set_file_status_text(slint::SharedString(message));
       window_.set_file_loading(false);
       window_.set_timer_running(false);
@@ -179,10 +180,12 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath) {
         // Bond Cutoffs
         controller_.setBondCutoffs();
 
-        // File Info
-        window_.set_num_frames(static_cast<int>(backend_.getFrameCount()));
-        window_.set_total_atoms(static_cast<int>(backend_.getTotalAtomCount()));
-        window_.set_removed_frames_count(static_cast<int>(backend_.getRemovedFrameCount()));
+        // File Info & Basename
+        updateFileMetadata(filepath);
+
+        // Box Diagnostics
+        updateBoxDiagnostics(backend_.cell());
+
         {
           auto opts = window_.get_analysis_options();
           opts.time_step =
@@ -194,6 +197,7 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath) {
         {
           auto opts = window_.get_analysis_options();
           opts.min_frame = "1";
+          opts.frame_stride = "1";
           window_.set_analysis_options(opts);
         }
         {
@@ -205,6 +209,50 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath) {
       }
     });
   });
+}
+
+void FileIOHandler::handleReloadFile() {
+  const std::string &path = backend_.options().input_file;
+  if (!path.empty()) {
+    startLoadingTrajectory(path);
+  }
+}
+
+void FileIOHandler::updateBoxDiagnostics(const core::Cell *cell) {
+  if (cell == nullptr) {
+    return;
+  }
+  const real_t vol = cell->volume();
+  const std::string vol_str = (vol > 0.0) ? std::format("{:.2f} Å³", vol) : "N/A";
+  window_.set_box_volume(slint::SharedString(vol_str));
+
+  const auto &params = cell->lattice_parameters();
+  const std::string dims_str =
+      std::format("a: {:.2f}  b: {:.2f}  c: {:.2f} Å", params[0], params[1], params[2]);
+  window_.set_box_dimensions(slint::SharedString(dims_str));
+
+  real_t total_mass = 0.0;
+  for (const auto &atom : cell->atoms()) {
+    const auto *elem_data = physics::detail::find(atom.element().symbol);
+    if (elem_data != nullptr) {
+      total_mass += elem_data->mass;
+    }
+  }
+  if (vol > 0.0 && total_mass > 0.0) {
+    constexpr auto da_per_a3_to_g_cm3 = static_cast<real_t>(1.66053906660);
+    const real_t density_g_cm3 = (total_mass / vol) * da_per_a3_to_g_cm3;
+    window_.set_box_density(slint::SharedString(std::format("{:.2f} g/cm³", density_g_cm3)));
+  } else {
+    window_.set_box_density(slint::SharedString("N/A"));
+  }
+}
+
+void FileIOHandler::updateFileMetadata(const std::string &filepath) {
+  const std::string basename = std::filesystem::path(filepath).filename().string();
+  window_.set_file_basename(slint::SharedString(basename));
+  window_.set_num_frames(static_cast<int>(backend_.getFrameCount()));
+  window_.set_total_atoms(static_cast<int>(backend_.getTotalAtomCount()));
+  window_.set_removed_frames_count(static_cast<int>(backend_.getRemovedFrameCount()));
 }
 
 void FileIOHandler::handleBrowseFile() {

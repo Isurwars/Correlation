@@ -98,6 +98,11 @@ export component AppWindow inherits Window {
     in property <int> removed_frames_count: 0;
     in property <[AtomCount]> atom_counts: [];
     in-out property <string> file_status_text: "No file loaded.";
+    in-out property <string> file_basename: "";
+    in property <string> box_volume: "";
+    in property <string> box_density: "";
+    in property <string> box_dimensions: "";
+    callback reload_file();
 
     /// Analysis execution state
     in property <bool> analysis_running: false;
@@ -125,6 +130,7 @@ export component AppWindow inherits Window {
         min_frame: "0",
         max_frame: "End",
         time_step: "1.0",
+        frame_stride: "1",
         material_type: 0,
         lef_cutoff: "5.0",
         lef_sigma: "0.2",
@@ -159,6 +165,7 @@ export component AppWindow inherits Window {
     property <string> smoothing_sigma <=> analysis_options.smoothing_sigma;
     property <int> smoothing_kernel <=> analysis_options.smoothing_kernel;
     property <string> time_step <=> analysis_options.time_step;
+    property <string> frame_stride <=> analysis_options.frame_stride;
     property <int> material_type <=> analysis_options.material_type;
     property <string> lef_cutoff <=> analysis_options.lef_cutoff;
     property <string> lef_sigma <=> analysis_options.lef_sigma;
@@ -176,6 +183,7 @@ export component AppWindow inherits Window {
     property <string> min_frame_error <=> app_errors.min_frame_error;
     property <string> max_frame_error <=> app_errors.max_frame_error;
     property <string> time_step_error <=> app_errors.time_step_error;
+    property <string> frame_stride_error <=> app_errors.frame_stride_error;
     property <string> lef_cutoff_error <=> app_errors.lef_cutoff_error;
     property <string> lef_sigma_error <=> app_errors.lef_sigma_error;
     property <string> hyper_samples_error <=> app_errors.hyper_samples_error;
@@ -596,12 +604,19 @@ export component AppWindow inherits Window {
                             browse_file => {
                                 root.browse_file();
                             }
+                            reload_file => {
+                                root.reload_file();
+                            }
                             file_status_text <=> root.file_status_text;
+                            file_basename: root.file_basename;
                             file_loaded: root.file_loaded;
                             num_frames: root.num_frames;
                             total_atoms: root.total_atoms;
                             removed_frames_count: root.removed_frames_count;
                             atom_counts: root.atom_counts;
+                            box_volume: root.box_volume;
+                            box_density: root.box_density;
+                            box_dimensions: root.box_dimensions;
 
                             material_type <=> root.material_type;
                             time_step <=> root.analysis_options.time_step;
@@ -610,6 +625,8 @@ export component AppWindow inherits Window {
                             max_frame <=> root.analysis_options.max_frame;
                             min_frame_error: root.app_errors.min_frame_error;
                             max_frame_error: root.app_errors.max_frame_error;
+                            frame_stride <=> root.analysis_options.frame_stride;
+                            frame_stride_error: root.app_errors.frame_stride_error;
                             reset_trajectory_options => {
                                 root.reset_trajectory_options();
                             }

@@ -476,7 +476,10 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
     return nullptr;
   }
 
-  std::vector<std::unique_ptr<DistributionFunctions>> results(num_frames);
+  const size_t stride = std::max<size_t>(1, settings.frame_stride);
+  const size_t sample_count = (num_frames + stride - 1) / stride;
+
+  std::vector<std::unique_ptr<DistributionFunctions>> results(sample_count);
 
   // Retrieve bond cutoffs from the analyzer.
   const auto &bond_cutoffs = analyzer.getBondCutoffs();
@@ -486,15 +489,16 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
 
   // TBB parallel_for nests cleanly with TBB calls inside each frame's
   tbb::parallel_for(
-      tbb::blocked_range<size_t>(0, num_frames), [&](const tbb::blocked_range<size_t> &range) {
-        for (size_t i = range.begin(); i != range.end(); ++i) {
+      tbb::blocked_range<size_t>(0, sample_count), [&](const tbb::blocked_range<size_t> &range) {
+        for (size_t sample_idx = range.begin(); sample_idx != range.end(); ++sample_idx) {
           if (settings.cancel_flag && settings.cancel_flag->load()) {
             continue;
           }
-          const size_t frame_idx = start_frame + i;
+          const size_t frame_idx = start_frame + sample_idx * stride;
 
-          results[i] = processSingleFrame(trajectory, analyzer, frame_idx, settings, bond_cutoffs);
-          if (!results[i]) {
+          results[sample_idx] =
+              processSingleFrame(trajectory, analyzer, frame_idx, settings, bond_cutoffs);
+          if (!results[sample_idx]) {
             continue;
           }
 
@@ -502,9 +506,9 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
           if (progress_callback) {
             const std::scoped_lock lock(callback_mutex);
             progress_callback(static_cast<float>(current_completed) /
-                                  static_cast<float>(num_frames),
+                                  static_cast<float>(sample_count),
                               "Calculating: " + std::to_string(current_completed) + " of " +
-                                  std::to_string(num_frames));
+                                  std::to_string(sample_count));
           }
         }
       });
@@ -515,7 +519,7 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
   }
 
   auto &final_df = results[0];
-  for (size_t i = 1; i < num_frames; ++i) {
+  for (size_t i = 1; i < sample_count; ++i) {
     if (results[i]) {
       final_df->add(*results[i]);
     }

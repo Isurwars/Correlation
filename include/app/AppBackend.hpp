@@ -104,6 +104,7 @@ struct ProgramOptions {
       AppDefaults::SMOOTHING_KERNEL;         ///< Smoothing kernel type.
   int min_frame = 0;                         ///< Starting frame index.
   int max_frame = -1;                        ///< Ending frame index (-1 for all).
+  int frame_stride = 1;                      ///< Stride between analyzed frames (>= 1).
   real_t time_step = AppDefaults::TIME_STEP; ///< Simulation time step in fs.
 
   int material_type = 0; ///< Material type (0: Amorphous, 1: Liquid, 2: Crystalline).
