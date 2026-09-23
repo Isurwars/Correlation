@@ -1,11 +1,1 @@
-{
-  "mcp-enforcement": {
-    "PreInvocation": [
-      {
-        "type": "command",
-        "command": "./scripts/mcp-reminder.sh",
-        "timeout": 5
-      }
-    ]
-  }
-}
+{}
