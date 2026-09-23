@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-import { ScrollView } from "std-widgets.slint";
+import { MaterialScrollView } from "./scroll_view.slint";
 import { MaterialText } from "./material_text.slint";
 import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
 import { MaterialPalette } from "../styling/material_palette.slint";
@@ -243,18 +243,19 @@ export component Matrix {
     height: self.preferred-height;
     width: 100%;
 
-    ScrollView {
+    MaterialScrollView {
         width: 100%;
         height: 100%;
-        vertical_scrollbar_policy: ScrollBarPolicy.always_off;
-        horizontal_scrollbar_policy: ScrollBarPolicy.as_needed;
+        direction: "horizontal";
+        has_vertical_scroll: false;
+        has_horizontal_scroll: true;
 
-        content-width: matrix_layout.preferred-width;
-        content-height: matrix_layout.preferred-height;
+        content_width: matrix_layout.preferred-width;
+        content_height: matrix_layout.preferred-height;
 
         matrix_layout := VerticalLayout {
             padding-left: 4px;
-            padding-right: 4px;
+            padding-right: 16px;
             padding-top: 4px;
             padding-bottom: 4px;
             spacing: 4px;

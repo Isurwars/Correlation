@@ -1,0 +1,177 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import { MaterialPalette } from "../styling/material_palette.slint";
+import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
+
+export component MaterialScrollView {
+    in property <bool> has_vertical_scroll: true;
+    in property <bool> has_horizontal_scroll: false;
+    in property <string> direction: "vertical"; // "vertical" | "horizontal" | "both"
+    in property <bool> enabled: true;
+
+    // Directional resolution
+    property <bool> is_v_enabled: (root.direction == "vertical" || root.direction == "both") && root.has_vertical_scroll;
+    property <bool> is_h_enabled: (root.direction == "horizontal" || root.direction == "both") && root.has_horizontal_scroll;
+
+    // Slint standard property bindings
+    in-out property <length> viewport_x <=> flick.content-x;
+    in-out property <length> viewport_y <=> flick.content-y;
+    in-out property <length> viewport_width: 0px;
+    in-out property <length> viewport_height: 0px;
+
+    in-out property <length> content_x <=> flick.content-x;
+    in-out property <length> content_y <=> flick.content-y;
+    in-out property <length> content_width <=> root.viewport_width;
+    in-out property <length> content_height <=> root.viewport_height;
+
+    out property <length> visible_width: flick.width;
+    out property <length> visible_height: flick.height;
+
+    min_width: 50px;
+    min_height: 50px;
+    horizontal_stretch: 1;
+    vertical_stretch: 1;
+
+    flick := Flickable {
+        x: 0;
+        y: 0;
+        width: 100%;
+        height: 100%;
+        interactive: root.enabled;
+
+        viewport := Rectangle {
+            x: 0;
+            y: 0;
+            width: (!root.is_h_enabled) ? flick.width : (root.viewport_width > 0px ? root.viewport_width : self.preferred-width);
+            height: (!root.is_v_enabled) ? flick.height : (root.viewport_height > 0px ? root.viewport_height : self.preferred-height);
+
+            @children
+        }
+    }
+
+    // Scroll metrics
+    property <length> max_scroll_x: max(0px, flick.content-width - flick.width);
+    property <length> max_scroll_y: max(0px, flick.content-height - flick.height);
+
+    property <bool> show_h_bar: root.is_h_enabled && (root.max_scroll_x > 1px) && (flick.width > 24px);
+    property <bool> show_v_bar: root.is_v_enabled && (root.max_scroll_y > 1px) && (flick.height > 24px);
+
+    // Horizontal Overlay Scrollbar
+    h_bar := Rectangle {
+        visible: root.show_h_bar;
+        x: 2px;
+        y: parent.height - self.height - 2px;
+        width: parent.width - 4px - (root.show_v_bar ? 8px : 0px);
+        height: h_touch.has_hover || h_touch.pressed ? 6px : 4px;
+        border-radius: self.height / 2;
+        background: MaterialPalette.outline_variant.with_alpha(20%);
+        z: 10;
+
+        animate height { duration: 150ms; easing: ease-out; }
+
+        h_thumb := Rectangle {
+            width: max(24px, parent.width * (flick.width / max(1px, flick.content-width)));
+            height: parent.height;
+            border-radius: self.height / 2;
+            background: h_touch.pressed ? MaterialPalette.primary :
+                h_touch.has_hover ? MaterialPalette.on_surface_variant :
+                MaterialPalette.outline_variant.with_alpha(70%);
+            x: (parent.width - self.width) * (root.max_scroll_x > 0px ? max(0.0, min(1.0, -flick.content-x / root.max_scroll_x)) : 0.0);
+
+            animate background { duration: 150ms; }
+        }
+
+        h_touch := TouchArea {
+            width: 100%;
+            height: 100%;
+            property <length> press_x;
+            property <length> press_vp_x;
+
+            pointer-event(event) => {
+                if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                    let avail = parent.width - h_thumb.width;
+                    if (avail > 0px) {
+                        if (self.mouse-x < h_thumb.x || self.mouse-x > h_thumb.x + h_thumb.width) {
+                            let ratio = max(0.0, min(1.0, (self.mouse-x - h_thumb.width / 2) / avail));
+                            flick.content-x = -root.max_scroll_x * ratio;
+                        }
+                    }
+                    self.press_x = self.mouse-x;
+                    self.press_vp_x = flick.content-x;
+                }
+            }
+
+            moved => {
+                if (self.pressed) {
+                    let avail = parent.width - h_thumb.width;
+                    if (avail > 0px) {
+                        let dx = self.mouse-x - self.press_x;
+                        let ratio = root.max_scroll_x / avail;
+                        flick.content-x = min(0px, max(-root.max_scroll_x, self.press_vp_x - dx * ratio));
+                    }
+                }
+            }
+        }
+    }
+
+    // Vertical Overlay Scrollbar
+    v_bar := Rectangle {
+        visible: root.show_v_bar;
+        x: parent.width - self.width - 2px;
+        y: 2px;
+        width: v_touch.has_hover || v_touch.pressed ? 6px : 4px;
+        height: parent.height - 4px - (root.show_h_bar ? 8px : 0px);
+        border-radius: self.width / 2;
+        background: MaterialPalette.outline_variant.with_alpha(20%);
+        z: 10;
+
+        animate width { duration: 150ms; easing: ease-out; }
+
+        v_thumb := Rectangle {
+            width: parent.width;
+            height: max(24px, parent.height * (flick.height / max(1px, flick.content-height)));
+            border-radius: self.width / 2;
+            background: v_touch.pressed ? MaterialPalette.primary :
+                v_touch.has_hover ? MaterialPalette.on_surface_variant :
+                MaterialPalette.outline_variant.with_alpha(70%);
+            y: (parent.height - self.height) * (root.max_scroll_y > 0px ? max(0.0, min(1.0, -flick.content-y / root.max_scroll_y)) : 0.0);
+
+            animate background { duration: 150ms; }
+        }
+
+        v_touch := TouchArea {
+            width: 100%;
+            height: 100%;
+            property <length> press_y;
+            property <length> press_vp_y;
+
+            pointer-event(event) => {
+                if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                    let avail = parent.height - v_thumb.height;
+                    if (avail > 0px) {
+                        if (self.mouse-y < v_thumb.y || self.mouse-y > v_thumb.y + v_thumb.height) {
+                            let ratio = max(0.0, min(1.0, (self.mouse-y - v_thumb.height / 2) / avail));
+                            flick.content-y = -root.max_scroll_y * ratio;
+                        }
+                    }
+                    self.press_y = self.mouse-y;
+                    self.press_vp_y = flick.content-y;
+                }
+            }
+
+            moved => {
+                if (self.pressed) {
+                    let avail = parent.height - v_thumb.height;
+                    if (avail > 0px) {
+                        let dy = self.mouse-y - self.press_y;
+                        let ratio = root.max_scroll_y / avail;
+                        flick.content-y = min(0px, max(-root.max_scroll_y, self.press_vp_y - dy * ratio));
+                    }
+                }
+            }
+        }
+    }
+}
