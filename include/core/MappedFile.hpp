@@ -34,7 +34,7 @@
 namespace correlation::core {
 
 /// Maximum trajectory file size (4 GiB).
-inline constexpr std::uint64_t kMaxTrajectoryBytes =
+inline constexpr std::uint64_t K_MAX_TRAJECTORY_BYTES =
     static_cast<std::uint64_t>(4) * 1024 * 1024 * 1024;
 
 /**
@@ -79,7 +79,7 @@ public:
     }
     size_ = static_cast<std::size_t>(li.QuadPart);
 
-    if (enforce_size_limit && static_cast<std::uint64_t>(size_) > kMaxTrajectoryBytes) {
+    if (enforce_size_limit && static_cast<std::uint64_t>(size_) > K_MAX_TRAJECTORY_BYTES) {
       CloseHandle(file_handle_);
       throw std::runtime_error("MappedFile: file exceeds 4 GiB trajectory limit: " + path);
     }
@@ -113,7 +113,7 @@ public:
     }
     size_ = static_cast<std::size_t>(file_stat.st_size);
 
-    if (enforce_size_limit && static_cast<std::uint64_t>(size_) > kMaxTrajectoryBytes) {
+    if (enforce_size_limit && static_cast<std::uint64_t>(size_) > K_MAX_TRAJECTORY_BYTES) {
       ::close(fd_);
       throw std::runtime_error("MappedFile: file exceeds 4 GiB trajectory limit: " + path);
     }

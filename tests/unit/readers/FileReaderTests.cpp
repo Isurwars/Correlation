@@ -44,7 +44,7 @@ TEST_F(FileReaderTests, ReadCarFileCorrectly) {
   correlation::core::Cell result_cell = correlation::readers::readStructure(path, type);
 
   // Assert: Check lattice parameters
-  const auto &params = result_cell.lattice_parameters();
+  const auto &params = result_cell.latticeParameters();
   EXPECT_DOUBLE_EQ(params[0], 10.5);
   EXPECT_DOUBLE_EQ(params[1], 11.5);
   EXPECT_DOUBLE_EQ(params[2], 12.5);
@@ -73,7 +73,7 @@ TEST_F(FileReaderTests, ReadCellFileCorrectly) {
   correlation::core::Cell result_cell = correlation::readers::readStructure(path, type);
 
   // Assert: Check lattice parameters
-  const auto &params = result_cell.lattice_parameters();
+  const auto &params = result_cell.latticeParameters();
   EXPECT_THAT(params[0], correlation::testing::IsRealEq(15.0));  // a
   EXPECT_THAT(params[1], correlation::testing::IsRealEq(15.0));  // b
   EXPECT_THAT(params[2], correlation::testing::IsRealEq(20.0));  // c
@@ -102,7 +102,7 @@ TEST_F(FileReaderTests, ReadCifFileCorrectly) {
   correlation::core::Cell result_cell = correlation::readers::readStructure(path, type);
 
   // Assert: Check lattice parameters
-  const auto &params = result_cell.lattice_parameters();
+  const auto &params = result_cell.latticeParameters();
   EXPECT_THAT(params[0], correlation::testing::IsRealEq(5.64)); // a
   EXPECT_THAT(params[1], correlation::testing::IsRealEq(5.64)); // b
   EXPECT_THAT(params[2], correlation::testing::IsRealEq(5.64)); // c
@@ -141,13 +141,13 @@ TEST_F(FileReaderTests, ReadArcFileCorrectly) {
 
   // Check Frame 1
   const auto &file_1 = frames[0];
-  EXPECT_DOUBLE_EQ(file_1.lattice_parameters()[0], 10.0);
+  EXPECT_DOUBLE_EQ(file_1.latticeParameters()[0], 10.0);
   ASSERT_EQ(file_1.atomCount(), 1);
   EXPECT_DOUBLE_EQ(file_1.atoms()[0].position().x(), 1.0);
 
   // Check Frame 2
   const auto &file_2 = frames[1];
-  EXPECT_DOUBLE_EQ(file_2.lattice_parameters()[0], 11.0);
+  EXPECT_DOUBLE_EQ(file_2.latticeParameters()[0], 11.0);
   ASSERT_EQ(file_2.atomCount(), 1);
   EXPECT_DOUBLE_EQ(file_2.atoms()[0].position().x(), 2.0);
 }
@@ -163,11 +163,11 @@ TEST_F(FileReaderTests, ReadArcFileDuplicatedFrames) {
   ASSERT_EQ(frames.size(), 2);
 
   // Check Frame 1
-  EXPECT_DOUBLE_EQ(frames[0].lattice_parameters()[0], 10.0);
+  EXPECT_DOUBLE_EQ(frames[0].latticeParameters()[0], 10.0);
   EXPECT_DOUBLE_EQ(frames[0].atoms()[0].position().x(), 1.0);
 
   // Check Frame 2
-  EXPECT_DOUBLE_EQ(frames[1].lattice_parameters()[0], 11.0);
+  EXPECT_DOUBLE_EQ(frames[1].latticeParameters()[0], 11.0);
   EXPECT_DOUBLE_EQ(frames[1].atoms()[0].position().x(), 2.0);
 }
 
@@ -177,7 +177,7 @@ TEST_F(FileReaderTests, ReadLammpsDumpCorrectly) {
   correlation::core::Cell result_cell = correlation::readers::readStructure(path, type);
 
   // Assert: Check lattice parameters
-  const auto &params = result_cell.lattice_parameters();
+  const auto &params = result_cell.latticeParameters();
   EXPECT_DOUBLE_EQ(params[0], 10.0);
   EXPECT_DOUBLE_EQ(params[1], 11.0);
   EXPECT_DOUBLE_EQ(params[2], 12.0);
@@ -242,7 +242,7 @@ TEST_F(FileReaderTests, ReadOnetepDatCorrectly) {
   correlation::core::Cell result_cell = correlation::readers::readStructure(path, type);
 
   // Assert: Check lattice parameters
-  const auto &params = result_cell.lattice_parameters();
+  const auto &params = result_cell.latticeParameters();
   EXPECT_DOUBLE_EQ(params[0], 10.0);
   EXPECT_DOUBLE_EQ(params[1], 11.0);
   EXPECT_DOUBLE_EQ(params[2], 12.0);
@@ -274,11 +274,11 @@ TEST_F(FileReaderTests, ReadCastepMdCorrectly) {
 
   // Check Frame 1
   const auto &file_1 = frames[0];
-  EXPECT_THAT(file_1.lattice_parameters()[0],
+  EXPECT_THAT(file_1.latticeParameters()[0],
               correlation::testing::IsRealEq(10.0 * correlation::math::bohr_to_angstrom));
-  EXPECT_THAT(file_1.lattice_parameters()[1],
+  EXPECT_THAT(file_1.latticeParameters()[1],
               correlation::testing::IsRealEq(11.0 * correlation::math::bohr_to_angstrom));
-  EXPECT_THAT(file_1.lattice_parameters()[2],
+  EXPECT_THAT(file_1.latticeParameters()[2],
               correlation::testing::IsRealEq(12.0 * correlation::math::bohr_to_angstrom));
   ASSERT_EQ(file_1.atomCount(), 2);
   EXPECT_THAT(file_1.atoms()[0].position().x(),
@@ -290,7 +290,7 @@ TEST_F(FileReaderTests, ReadCastepMdCorrectly) {
 
   // Check Frame 2
   const auto &file_2 = frames[1];
-  EXPECT_THAT(file_2.lattice_parameters()[0],
+  EXPECT_THAT(file_2.latticeParameters()[0],
               correlation::testing::IsRealEq(10.0 * correlation::math::bohr_to_angstrom));
   EXPECT_THAT(file_2.atoms()[0].position().x(),
               correlation::testing::IsRealEq(1.1 * correlation::math::bohr_to_angstrom));
@@ -351,9 +351,9 @@ TEST_F(FileReaderTests, ReadOutmolCorrectly) {
     const correlation::core::Cell &frame0 = frames[0];
     EXPECT_EQ(frame0.atomCount(), 216);
 
-    EXPECT_NEAR(frame0.lattice_parameters()[0], 14.172, 1e-3);
-    EXPECT_NEAR(frame0.lattice_parameters()[1], 14.172, 1e-3);
-    EXPECT_NEAR(frame0.lattice_parameters()[2], 14.172, 1e-3);
+    EXPECT_NEAR(frame0.latticeParameters()[0], 14.172, 1e-3);
+    EXPECT_NEAR(frame0.latticeParameters()[1], 14.172, 1e-3);
+    EXPECT_NEAR(frame0.latticeParameters()[2], 14.172, 1e-3);
   }
 }
 
@@ -383,11 +383,11 @@ TEST_F(FileReaderTests, ReadExtensionlessVaspStructure) {
 
   correlation::core::Cell poscar_cell = readStructure(data_dir_ + "vasp/POSCAR", FileType::Vasp);
   EXPECT_EQ(poscar_cell.atomCount(), 2);
-  EXPECT_NEAR(poscar_cell.lattice_parameters()[0], 5.43, 1e-6);
+  EXPECT_NEAR(poscar_cell.latticeParameters()[0], 5.43, 1e-6);
 
   correlation::core::Cell contcar_cell = readStructure(data_dir_ + "vasp/CONTCAR", FileType::Vasp);
   EXPECT_EQ(contcar_cell.atomCount(), 2);
-  EXPECT_NEAR(contcar_cell.lattice_parameters()[0], 5.43, 1e-6);
+  EXPECT_NEAR(contcar_cell.latticeParameters()[0], 5.43, 1e-6);
 }
 
 TEST_F(FileReaderTests, ReadExtensionlessVaspTrajectory) {
@@ -400,7 +400,7 @@ TEST_F(FileReaderTests, ReadExtensionlessVaspTrajectory) {
 
   const auto &file_1 = traj.getFrame(0);
   EXPECT_EQ(file_1.atomCount(), 2);
-  EXPECT_NEAR(file_1.lattice_parameters()[0], 5.43, 1e-6);
+  EXPECT_NEAR(file_1.latticeParameters()[0], 5.43, 1e-6);
 }
 
 TEST_F(FileReaderTests, DetermineFileTypeMace) {
@@ -434,7 +434,7 @@ TEST_F(FileReaderTests, ReadMaceThroughFileReader) {
   correlation::core::Cell cell = readStructure(temp_file.string(), FileType::Mace);
   EXPECT_EQ(cell.atomCount(), 2);
   EXPECT_NEAR(cell.getEnergy(), -33.5, 1e-4);
-  EXPECT_NEAR(cell.lattice_parameters()[0], 6.0, 1e-4);
+  EXPECT_NEAR(cell.latticeParameters()[0], 6.0, 1e-4);
 
   std::error_code err;
   std::filesystem::remove(temp_file, err);
@@ -469,7 +469,7 @@ TEST_F(FileReaderTests, ReadChgnetThroughFileReader) {
   correlation::core::Cell cell = readStructure(temp_file.string(), FileType::Chgnet);
   EXPECT_EQ(cell.atomCount(), 2);
   EXPECT_NEAR(cell.getEnergy(), -18.75, 1e-4);
-  EXPECT_NEAR(cell.lattice_parameters()[0], 4.0, 1e-4);
+  EXPECT_NEAR(cell.latticeParameters()[0], 4.0, 1e-4);
 
   std::error_code err;
   std::filesystem::remove(temp_file, err);
@@ -506,7 +506,7 @@ TEST_F(FileReaderTests, ReadGapThroughFileReader) {
   correlation::core::Cell cell = readStructure(temp_file.string(), FileType::Gap);
   EXPECT_EQ(cell.atomCount(), 2);
   EXPECT_NEAR(cell.getEnergy(), -22.5, 1e-4);
-  EXPECT_NEAR(cell.lattice_parameters()[0], 4.5, 1e-4);
+  EXPECT_NEAR(cell.latticeParameters()[0], 4.5, 1e-4);
 
   std::error_code err;
   std::filesystem::remove(temp_file, err);

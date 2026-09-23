@@ -26,11 +26,12 @@
 
 namespace correlation::analysis {
 
-DistributionFunctions::DistributionFunctions(const correlation::core::Cell &cell, real_t cutoff,
-                                             const BondCutoffMatrix &bond_cutoffs)
-    : cell_(cell), neighbors_owned_(nullptr), current_cutoff_(0.0), bond_cutoffs_(bond_cutoffs) {
+DistributionFunctions::DistributionFunctions(correlation::core::Cell cell, real_t cutoff,
+                                             BondCutoffMatrix bond_cutoffs)
+    : cell_(std::move(cell)), neighbors_owned_(nullptr), current_cutoff_(0.0),
+      bond_cutoffs_(std::move(bond_cutoffs)) {
   if (cutoff > 0.0) {
-    if (bond_cutoffs.empty()) {
+    if (bond_cutoffs_.empty()) {
       throw std::invalid_argument("Bond cutoffs must be provided if cutoff > 0.0");
     }
     ensureNeighborsComputed(cutoff);
@@ -180,7 +181,7 @@ void DistributionFunctions::calculateAshcroftWeights() {
       }
 
       // Get the canonical key (e.g., "Si-O", not "O-Si")
-      std::string key = getPartialKey(element_i.id.value, element_j.id.value);
+      const std::string key = getPartialKey(element_i.id.value, element_j.id.value);
       ashcroft_weights_[key] = weight;
     }
   }
@@ -213,8 +214,8 @@ void DistributionFunctions::smooth(const std::string &name, real_t sigma,
     // Domain ratio between angular space (~180 deg) and spatial r_max (~20 Å) is ~9.0x.
     // Scale sigma proportionally so that angular smoothing spans an enhanced smoothing window (~15x
     // spatial sigma, e.g. 0.1 -> 1.5 deg).
-    constexpr auto angular_domain_scale = static_cast<real_t>(15.0);
-    effective_sigma = sigma * angular_domain_scale;
+    constexpr auto ANGULAR_DOMAIN_SCALE = static_cast<real_t>(15.0);
+    effective_sigma = sigma * ANGULAR_DOMAIN_SCALE;
   }
   const real_t min_sigma = std::max(bin_dx, effective_sigma);
 
@@ -389,15 +390,15 @@ void DistributionFunctions::add(const DistributionFunctions &other) {
 void DistributionFunctions::scale(real_t factor) {
   for (auto &[name, hist] : histograms_) {
     for (auto &[key, partial] : hist.partials) {
-      for (size_t i = 0; i < partial.size(); ++i) {
-        partial[i] *= factor;
+      for (auto &val : partial) {
+        val *= factor;
       }
     }
     // Also scale smoothed partials if they exist (though they shouldn't if we
     // just accumulated)
     for (auto &[key, smoothed_partial] : hist.smoothed_partials) {
-      for (size_t i = 0; i < smoothed_partial.size(); ++i) {
-        smoothed_partial[i] *= factor;
+      for (auto &val : smoothed_partial) {
+        val *= factor;
       }
     }
   }
@@ -410,7 +411,7 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::processSingleFrame
     return nullptr;
   }
 
-  correlation::core::Cell frame = trajectory.getFrame(frame_idx);
+  const correlation::core::Cell frame = trajectory.getFrame(frame_idx);
   auto frame_df =
       std::make_unique<DistributionFunctions>(frame, static_cast<real_t>(0.0), bond_cutoffs);
   frame_df->setStructureAnalyzerOwned(analyzer.createAnalyzer(frame_idx));

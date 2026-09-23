@@ -226,7 +226,7 @@ void FileIOHandler::updateBoxDiagnostics(const core::Cell *cell) {
   const std::string vol_str = (vol > 0.0) ? std::format("{:.2f} Å³", vol) : "N/A";
   window_.set_box_volume(slint::SharedString(vol_str));
 
-  const auto &params = cell->lattice_parameters();
+  const auto &params = cell->latticeParameters();
   const std::string dims_str =
       std::format("a: {:.2f}  b: {:.2f}  c: {:.2f} Å", params[0], params[1], params[2]);
   window_.set_box_dimensions(slint::SharedString(dims_str));

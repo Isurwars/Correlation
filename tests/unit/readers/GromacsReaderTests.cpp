@@ -55,7 +55,7 @@ TEST_F(GromacsReaderTests, ReadMultiFrameTrajectory) {
   EXPECT_THAT(pos1.y(), correlation::testing::IsRealEq(2.0));
   EXPECT_THAT(pos1.z(), correlation::testing::IsRealEq(3.0));
 
-  auto lat1 = frame1.lattice_parameters();
+  auto lat1 = frame1.latticeParameters();
   EXPECT_THAT(lat1[0], correlation::testing::IsRealEq(10.0));
   EXPECT_THAT(lat1[1], correlation::testing::IsRealEq(20.0));
   EXPECT_THAT(lat1[2], correlation::testing::IsRealEq(30.0));
@@ -68,7 +68,7 @@ TEST_F(GromacsReaderTests, ReadMultiFrameTrajectory) {
   EXPECT_THAT(pos2.y(), correlation::testing::IsRealEq(2.1));
   EXPECT_THAT(pos2.z(), correlation::testing::IsRealEq(3.1));
 
-  auto lat2 = frame2.lattice_parameters();
+  auto lat2 = frame2.latticeParameters();
   EXPECT_THAT(lat2[0], correlation::testing::IsRealEq(11.0));
 }
 

@@ -14,6 +14,7 @@
 #include "core/Trajectory.hpp"
 
 #include <functional>
+#include <limits>
 #include <memory>
 
 namespace correlation::analysis {
@@ -33,8 +34,9 @@ public:
   ///@{
   TrajectoryAnalyzer(
       correlation::core::Trajectory &trajectory, real_t neighbor_cutoff,
-      const BondCutoffMatrix &bond_cutoffs, StartFrame start_frame = {0},
-      EndFrame end_frame = {static_cast<size_t>(-1)}, bool ignore_periodic_self_interactions = true,
+      BondCutoffMatrix bond_cutoffs, StartFrame start_frame = {0},
+      EndFrame end_frame = {std::numeric_limits<size_t>::max()},
+      bool ignore_periodic_self_interactions = true,
       const std::function<void(float, const std::string &)> &progress_callback = nullptr);
 
   ///@}
@@ -46,7 +48,7 @@ public:
    * @param frame_idx The frame index within the trajectory.
    * @return A unique_ptr to a configured StructureAnalyzer.
    */
-  std::unique_ptr<StructureAnalyzer> createAnalyzer(size_t frame_idx) const;
+  [[nodiscard]] std::unique_ptr<StructureAnalyzer> createAnalyzer(size_t frame_idx) const;
 
   /** @return Total number of frames after accounting for start/end limits. */
   [[nodiscard]] size_t getNumFrames() const { return effective_end_ - start_frame_; }

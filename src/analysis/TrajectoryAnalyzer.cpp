@@ -8,23 +8,25 @@
 
 #include "analysis/TrajectoryAnalyzer.hpp"
 #include <algorithm>
+#include <limits>
 
 namespace correlation::analysis {
 
 TrajectoryAnalyzer::TrajectoryAnalyzer(
     correlation::core::Trajectory &trajectory, real_t neighbor_cutoff,
-    const BondCutoffMatrix &bond_cutoffs, StartFrame start_frame, EndFrame end_frame,
+    BondCutoffMatrix bond_cutoffs, StartFrame start_frame, EndFrame end_frame,
     bool ignore_periodic_self_interactions,
     const std::function<void(float, const std::string &)> &progress_callback)
     : trajectory_(&trajectory), time_step_(trajectory.getTimeStep()),
-      neighbor_cutoff_(neighbor_cutoff), bond_cutoffs_(bond_cutoffs),
+      neighbor_cutoff_(neighbor_cutoff), bond_cutoffs_(std::move(bond_cutoffs)),
       ignore_periodic_self_interactions_(ignore_periodic_self_interactions) {
 
-  size_t n_frames = trajectory.getFrameCount();
+  const size_t n_frames = trajectory.getFrameCount();
 
-  effective_end_ = (end_frame.value == static_cast<size_t>(-1) || end_frame.value >= n_frames)
-                       ? n_frames
-                       : end_frame.value;
+  effective_end_ =
+      (end_frame.value == std::numeric_limits<size_t>::max() || end_frame.value >= n_frames)
+          ? n_frames
+          : end_frame.value;
 
   start_frame_ = (start_frame.value >= n_frames) ? n_frames : start_frame.value;
 

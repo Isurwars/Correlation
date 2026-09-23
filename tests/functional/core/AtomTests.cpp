@@ -74,7 +74,7 @@ TEST_F(AtomFunctionalTests, VerifyDynamicAttributeModifications) {
   atom.setVelocity({0.1, -0.2, 0.5});
 
   EXPECT_EQ(atom.element().symbol, "O");
-  EXPECT_EQ(atom.element_id(), 8);
+  EXPECT_EQ(atom.elementId(), 8);
   EXPECT_EQ(atom.id(), 101);
 
   EXPECT_NEAR(atom.position().x(), 1.5, 1e-6);

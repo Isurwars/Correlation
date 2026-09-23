@@ -79,8 +79,8 @@ void findAndProcessDihedralsForPair(
   const auto &neighbors_b = graph.getNeighbors(idx_b);
   const auto &neighbors_c = graph.getNeighbors(idx_c);
 
-  const int type_b = atoms[idx_b].element_id();
-  const int type_c = atoms[idx_c].element_id();
+  const int type_b = atoms[idx_b].elementId();
+  const int type_c = atoms[idx_c].elementId();
   const correlation::math::Vector3<real_t> &r_bc = neighbor_c.r_ij;
 
   for (const auto &neighbor_a : neighbors_b) {
@@ -89,7 +89,7 @@ void findAndProcessDihedralsForPair(
       continue;
     }
 
-    const int type_a = atoms[idx_a].element_id();
+    const int type_a = atoms[idx_a].elementId();
     const correlation::math::Vector3<real_t> &r_ba = neighbor_a.r_ij;
 
     for (const auto &neighbor_d : neighbors_c) {
@@ -98,7 +98,7 @@ void findAndProcessDihedralsForPair(
         continue;
       }
 
-      const int type_d = atoms[idx_d].element_id();
+      const int type_d = atoms[idx_d].elementId();
       const correlation::math::Vector3<real_t> &r_cd = neighbor_d.r_ij;
 
       auto const dihedral_angle_opt = calculateDihedralAngle({

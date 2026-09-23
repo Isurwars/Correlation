@@ -48,7 +48,7 @@ TEST(OutmolReaderTests, ReadsTrajectoryFormat1) {
   EXPECT_EQ(frame.atomCount(), 2);
 
   // Bohr to angstrom check
-  EXPECT_NEAR(frame.lattice_parameters()[0], 10.0 * correlation::math::bohr_to_angstrom, 1e-5);
+  EXPECT_NEAR(frame.latticeParameters()[0], 10.0 * correlation::math::bohr_to_angstrom, 1e-5);
   EXPECT_NEAR(frame.atoms()[0].position().x(), 1.0 * correlation::math::bohr_to_angstrom, 1e-5);
   EXPECT_EQ(frame.atoms()[0].element().symbol, "C");
   EXPECT_EQ(frame.atoms()[1].element().symbol, "H");
@@ -66,7 +66,7 @@ TEST(OutmolReaderTests, ReadsTrajectoryFormat2) {
   const auto &frame = traj.getFrame(0);
   EXPECT_EQ(frame.atomCount(), 2);
 
-  EXPECT_NEAR(frame.lattice_parameters()[0], 12.0 * correlation::math::bohr_to_angstrom, 1e-5);
+  EXPECT_NEAR(frame.latticeParameters()[0], 12.0 * correlation::math::bohr_to_angstrom, 1e-5);
   EXPECT_NEAR(frame.atoms()[0].position().x(), 2.0 * correlation::math::bohr_to_angstrom, 1e-5);
   EXPECT_EQ(frame.atoms()[0].element().symbol, "Si");
   EXPECT_EQ(frame.atoms()[1].element().symbol, "O");

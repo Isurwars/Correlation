@@ -59,7 +59,7 @@ TEST_F(MaceReaderTests, ReadSingleFrameMace) {
   EXPECT_EQ(cell.atomCount(), 2);
   EXPECT_THAT(cell.getEnergy(), correlation::testing::IsRealEq(-25.432));
 
-  const auto &params = cell.lattice_parameters();
+  const auto &params = cell.latticeParameters();
   EXPECT_THAT(params[0], correlation::testing::IsRealEq(5.0));
   EXPECT_THAT(params[1], correlation::testing::IsRealEq(6.0));
   EXPECT_THAT(params[2], correlation::testing::IsRealEq(7.0));

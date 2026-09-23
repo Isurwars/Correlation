@@ -128,7 +128,7 @@ public:
    * @brief Gets the integer ID of the element type.
    * @return The element ID value.
    */
-  [[nodiscard]] int element_id() const { return element_.id.value; }
+  [[nodiscard]] int elementId() const { return element_.id.value; }
 
   ///@}
 
@@ -158,20 +158,20 @@ private:
  */
 [[nodiscard]] inline real_t angle(const Atom &center, const Atom &atom_a,
                                   const Atom &atom_b) noexcept {
-  const math::Vector3<real_t> vec_A = atom_a.position() - center.position();
-  const math::Vector3<real_t> vec_B = atom_b.position() - center.position();
+  const math::Vector3<real_t> vec_a = atom_a.position() - center.position();
+  const math::Vector3<real_t> vec_b = atom_b.position() - center.position();
 
-  const real_t norm_sq_A = math::dot(vec_A, vec_A);
-  const real_t norm_sq_B = math::dot(vec_B, vec_B);
+  const real_t norm_sq_a = math::dot(vec_a, vec_a);
+  const real_t norm_sq_b = math::dot(vec_b, vec_b);
 
   // Guard against near-zero norms to prevent division by zero or NaN underflows
-  if (norm_sq_A < 1e-12 || norm_sq_B < 1e-12) {
+  if (norm_sq_a < 1e-12 || norm_sq_b < 1e-12) {
     return 0.0;
   }
 
   using std::acos;
   using std::sqrt;
-  real_t cos_theta = math::dot(vec_A, vec_B) / sqrt(norm_sq_A * norm_sq_B);
+  real_t cos_theta = math::dot(vec_a, vec_b) / sqrt(norm_sq_a * norm_sq_b);
 
   // Clamp for numerical stability
   cos_theta = std::clamp(cos_theta, static_cast<real_t>(-1.0), static_cast<real_t>(1.0));

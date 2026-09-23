@@ -46,7 +46,7 @@ TEST(OnetepDatReaderTests, ReadsStructureCartesianAndBohr) {
   // bohr-to-angstrom conversion for lattice/positions, it just skips the token "bohr" or
   // "angstrom"). Let's verify. Yes: in OnetepDatReader.cpp: if (lower_first == "angstrom" ||
   // lower_first == "bohr") { continue; } So it skips them. Thus cell parameters remain 10.0.
-  EXPECT_DOUBLE_EQ(cell.lattice_parameters()[0], 10.0);
+  EXPECT_DOUBLE_EQ(cell.latticeParameters()[0], 10.0);
   EXPECT_EQ(cell.atoms()[0].element().symbol, "C");
   EXPECT_DOUBLE_EQ(cell.atoms()[0].position().x(), 1.0);
 }
@@ -57,7 +57,7 @@ TEST(OnetepDatReaderTests, ReadsStructureLatticeAbcAndPositionsFrac) {
   auto cell = reader.readStructure(data_dir + "clean_abc.dat");
 
   EXPECT_EQ(cell.atomCount(), 2);
-  EXPECT_DOUBLE_EQ(cell.lattice_parameters()[0], 15.0);
+  EXPECT_DOUBLE_EQ(cell.latticeParameters()[0], 15.0);
   EXPECT_EQ(cell.atoms()[0].element().symbol, "H");
   EXPECT_EQ(cell.atoms()[1].element().symbol, "O");
 

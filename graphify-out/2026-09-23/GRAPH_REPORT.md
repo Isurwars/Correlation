@@ -1,7 +1,7 @@
-# Graph Report - Correlation  (2026-09-22)
+# Graph Report - Correlation  (2026-09-23)
 
 ## Corpus Check
-- 423 files · ~5,196,695 words
+- 423 files · ~5,196,712 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `53eafab9`
+- Built from commit: `d4edb29d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -709,7 +709,7 @@ Nodes (22): color(), size_t, string, PlotConfig, fill_area, font_scale, height, 
 
 ### Community 69 - "TEST"
 Cohesion: 0.19
-Nodes (26): find_128_encoding(), find_font_widths(), find_word_break(), pdf_add_barcode(), pdf_add_barcode_128a(), pdf_add_barcode_ean13(), pdf_add_barcode_ean8(), pdf_add_barcode_upca() (+18 more)
+Nodes (26): find_39_encoding(), find_font_widths(), find_word_break(), pdf_add_barcode(), pdf_add_barcode_39(), pdf_add_barcode_ean13(), pdf_add_barcode_ean8(), pdf_add_barcode_upca() (+18 more)
 
 ### Community 70 - "TEST"
 Cohesion: 0.13
@@ -1129,7 +1129,7 @@ Nodes (8): normalize_rdf_bins(), RDFNormalizationParams, CORRELATION_RESTRICT, c
 
 ### Community 174 - "pdf_add_image_data"
 Cohesion: 0.07
-Nodes (55): FILE, determine_image_format(), dgets(), find_39_encoding(), flexarray_clear(), flexarray_get(), flexarray_get_bin(), flexarray_get_bin_offset() (+47 more)
+Nodes (55): FILE, determine_image_format(), dgets(), find_128_encoding(), flexarray_clear(), flexarray_get(), flexarray_get_bin(), flexarray_get_bin_offset() (+47 more)
 
 ### Community 175 - "AnalysisRunner.cpp"
 Cohesion: 0.38

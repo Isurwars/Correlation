@@ -16,7 +16,8 @@ Checks: >
   -cppcoreguidelines-pro-bounds-avoid-unchecked-container-access,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   -misc-include-cleaner,
-  -readability-math-missing-parentheses
+  -readability-math-missing-parentheses,
+  -cppcoreguidelines-pro-type-reinterpret-cast
 
 HeaderFilterRegex: '^(?!.*(build/_deps|build-fuzz/_deps|/usr/|/opt/)).*$'
 FormatStyle: file

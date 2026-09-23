@@ -120,7 +120,7 @@ void CastepMdReader::parseEnergyLine(const std::string &line, real_t &current_en
   // it means this is a new frame starting
   if (cell_has_atoms) {
     // Save lattice parameters and energy
-    std::array<real_t, 6> const last_lattice = tempCell.lattice_parameters();
+    std::array<real_t, 6> const last_lattice = tempCell.latticeParameters();
     real_t const last_energy = tempCell.getEnergy();
 
     frames.push_back(std::move(tempCell));

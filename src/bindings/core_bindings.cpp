@@ -162,7 +162,7 @@ void bindCell(py::module_ &mod) {
             py::array_t<int> arr(static_cast<py::ssize_t>(num_atoms));
             auto buf = arr.mutable_unchecked<1>();
             for (size_t idx = 0; idx < num_atoms; ++idx) {
-              buf(idx) = atoms[idx].element_id();
+              buf(idx) = atoms[idx].elementId();
             }
             return arr;
           },
@@ -170,7 +170,7 @@ void bindCell(py::module_ &mod) {
       .def(
           "get_lattice_parameters",
           [](const Cell &cell) -> py::array_t<real_t> {
-            const auto &lattice_parameters = cell.lattice_parameters();
+            const auto &lattice_parameters = cell.latticeParameters();
             py::array_t<real_t> arr(6);
             auto buf = arr.mutable_unchecked<1>();
             for (int idx = 0; idx < 6; ++idx) {

@@ -53,7 +53,7 @@ void computeTriadAngles(int type_central, const std::vector<correlation::core::A
                                  scratch.nb_x.data() + j_idx + 1, scratch.nb_y.data() + j_idx + 1,
                                  scratch.nb_z.data() + j_idx + 1, scratch.dots.data(), k_count);
 
-    const int type1 = atoms[neighbors[j_idx].index].element_id();
+    const int type1 = atoms[neighbors[j_idx].index].elementId();
     const real_t dist1 = scratch.nb_dist[j_idx];
     if (dist1 < 1e-6) {
       continue;
@@ -69,7 +69,7 @@ void computeTriadAngles(int type_central, const std::vector<correlation::core::A
         continue;
       }
 
-      const int type2 = atoms[neighbors[k_idx].index].element_id();
+      const int type2 = atoms[neighbors[k_idx].index].elementId();
       if (type2 < 0 || std::cmp_greater_equal(type2, num_elements)) {
         continue;
       }
@@ -96,7 +96,7 @@ void processCentralAtom(size_t atom_idx, const correlation::core::Cell &cell,
     return;
   }
 
-  const int type_central = atoms[atom_idx].element_id();
+  const int type_central = atoms[atom_idx].elementId();
   if (type_central < 0 || std::cmp_greater_equal(type_central, num_elements)) {
     return;
   }

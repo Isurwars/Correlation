@@ -41,8 +41,8 @@ TEST(CellReaderTests, ReadsStructureLatticeAbc) {
   auto cell = reader.readStructure(data_dir + "clean.cell");
 
   EXPECT_EQ(cell.atomCount(), 1);
-  EXPECT_DOUBLE_EQ(cell.lattice_parameters()[0], 15.0);
-  EXPECT_DOUBLE_EQ(cell.lattice_parameters()[5], 120.0);
+  EXPECT_DOUBLE_EQ(cell.latticeParameters()[0], 15.0);
+  EXPECT_DOUBLE_EQ(cell.latticeParameters()[5], 120.0);
   EXPECT_EQ(cell.atoms()[0].element().symbol, "C");
 }
 
@@ -52,9 +52,9 @@ TEST(CellReaderTests, ReadsStructureLatticeCartAndFrac) {
   auto cell = reader.readStructure(data_dir + "clean_cart.cell");
 
   EXPECT_EQ(cell.atomCount(), 2);
-  EXPECT_DOUBLE_EQ(cell.lattice_parameters()[0], 10.0);
-  EXPECT_DOUBLE_EQ(cell.lattice_parameters()[1], 10.0);
-  EXPECT_DOUBLE_EQ(cell.lattice_parameters()[2], 10.0);
+  EXPECT_DOUBLE_EQ(cell.latticeParameters()[0], 10.0);
+  EXPECT_DOUBLE_EQ(cell.latticeParameters()[1], 10.0);
+  EXPECT_DOUBLE_EQ(cell.latticeParameters()[2], 10.0);
 
   EXPECT_EQ(cell.atoms()[0].element().symbol, "Si");
   EXPECT_EQ(cell.atoms()[1].element().symbol, "O");

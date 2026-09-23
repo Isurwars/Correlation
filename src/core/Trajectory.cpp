@@ -105,14 +105,14 @@ void Trajectory::ensureMaterialized() const {
 
 const correlation::analysis::BondCutoffRange &Trajectory::getBondCutoffRange(size_t type1,
                                                                              size_t type2) const {
-  static const correlation::analysis::BondCutoffRange default_range{static_cast<real_t>(0.0),
-                                                                    static_cast<real_t>(0.0)};
+  static const correlation::analysis::BondCutoffRange DEFAULT_RANGE{
+      .min_sq = static_cast<real_t>(0.0), .max_sq = static_cast<real_t>(0.0)};
   if (bond_cutoffs_.empty()) {
     precomputeBondCutoffs();
   }
 
   if (type1 >= bond_cutoffs_.size() || type2 >= bond_cutoffs_.size()) {
-    return default_range;
+    return DEFAULT_RANGE;
   }
 
   return bond_cutoffs_[type1][type2];
@@ -175,7 +175,7 @@ void Trajectory::precomputeBondCutoffs() const {
   bond_cutoffs_.resize(num_elements,
                        std::vector<correlation::analysis::BondCutoffRange>(num_elements));
 
-  auto safeGetRadius = [](const std::string &symbol) -> real_t {
+  auto safe_get_radius = [](const std::string &symbol) -> real_t {
     try {
       return physics::getCovalentRadius(symbol);
     } catch (const std::out_of_range &) {
@@ -184,10 +184,10 @@ void Trajectory::precomputeBondCutoffs() const {
   };
 
   for (size_t i = 0; i < num_elements; ++i) {
-    const real_t radius_A = safeGetRadius(elements[i].symbol);
+    const real_t radius_a = safe_get_radius(elements[i].symbol);
     for (size_t j = i; j < num_elements; ++j) {
-      const real_t radius_B = safeGetRadius(elements[j].symbol);
-      const real_t sum_radii = radius_A + radius_B;
+      const real_t radius_b = safe_get_radius(elements[j].symbol);
+      const real_t sum_radii = radius_a + radius_b;
       const real_t min_bond_dist = sum_radii * static_cast<real_t>(0.6);
       const real_t min_bond_dist_sq = min_bond_dist * min_bond_dist;
       const real_t max_bond_dist = sum_radii * static_cast<real_t>(1.3);
@@ -215,7 +215,7 @@ void Trajectory::removeDuplicatedFrames() {
   unique_frames.reserve(frames_.size());
   unique_frames.push_back(frames_[0]);
 
-  const real_t epsilon = static_cast<real_t>(1e-5); // Tolerance for position comparison
+  const auto epsilon = static_cast<real_t>(1e-5); // Tolerance for position comparison
 
   for (size_t i = 1; i < frames_.size(); ++i) {
     const auto &current_frame = frames_[i];
@@ -285,9 +285,9 @@ void Trajectory::calculateVelocities() {
       }
     } else if (frame_idx == num_frames - 1) {
       for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
-        const auto &posN = frames_[num_frames - 1].atoms()[atom_idx].position();
-        const auto &posN_1 = frames_[num_frames - 2].atoms()[atom_idx].position();
-        frames_[frame_idx].atoms()[atom_idx].setVelocity(displacement(posN, posN_1) / time_step_);
+        const auto &pos_n = frames_[num_frames - 1].atoms()[atom_idx].position();
+        const auto &pos_n_1 = frames_[num_frames - 2].atoms()[atom_idx].position();
+        frames_[frame_idx].atoms()[atom_idx].setVelocity(displacement(pos_n, pos_n_1) / time_step_);
       }
     } else {
       for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
@@ -343,12 +343,12 @@ void Trajectory::validateFrame(const Cell &new_frame) const {
   const auto &new_atoms = new_frame.atoms();
 
   for (size_t i = 0; i < ref_atoms.size(); ++i) {
-    const int &ref_id = ref_atoms[i].element_id();
-    const int &new_id = new_to_ref[new_atoms[i].element_id()];
+    const int &ref_id = ref_atoms[i].elementId();
+    const int &new_id = new_to_ref[new_atoms[i].elementId()];
 
     if (ref_id != new_id) {
       // For a helpful error message, we get the mapped original new_id
-      const int original_new_id = new_atoms[i].element_id();
+      const int original_new_id = new_atoms[i].elementId();
       throw std::runtime_error("Frame validation failed: Atom symbol mismatch at index " +
                                std::to_string(i) + ". Expected " + ref_elements[ref_id].symbol +
                                ", but got " + new_elements[original_new_id].symbol);

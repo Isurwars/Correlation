@@ -44,9 +44,9 @@ TEST(LammpsDumpReaderTests, ReadsTrajectoryOrtho) {
   EXPECT_EQ(traj.getFrameCount(), 1);
   const auto &frame = traj.getFrame(0);
   EXPECT_EQ(frame.atomCount(), 1);
-  EXPECT_DOUBLE_EQ(frame.lattice_parameters()[0], 10.0);
-  EXPECT_DOUBLE_EQ(frame.lattice_parameters()[1], 11.0);
-  EXPECT_DOUBLE_EQ(frame.lattice_parameters()[2], 12.0);
+  EXPECT_DOUBLE_EQ(frame.latticeParameters()[0], 10.0);
+  EXPECT_DOUBLE_EQ(frame.latticeParameters()[1], 11.0);
+  EXPECT_DOUBLE_EQ(frame.latticeParameters()[2], 12.0);
   // Standard atom mapping should fall back to type since no element was specified
   EXPECT_EQ(frame.atoms()[0].element().symbol, "2");
 }

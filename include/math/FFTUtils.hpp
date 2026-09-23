@@ -12,12 +12,13 @@
 #include <stdexcept>
 #include <vector>
 
-#if defined(CORRELATION_USE_FFTW3)
-#include <bit>
+#include "math/Precision.hpp"
+
+#ifdef CORRELATION_USE_FFTW3
 #include <fftw3.h>
 #include <mutex>
 #include <unordered_map>
-#elif defined(CORRELATION_USE_MKL)
+#elifdef CORRELATION_USE_MKL
 #include <mkl_dfti.h>
 #include <unordered_map>
 #else
@@ -65,7 +66,7 @@ inline size_t findNextGoodFFTSize(size_t target) {
 #endif
 }
 
-#if defined(CORRELATION_USE_FFTW3)
+#ifdef CORRELATION_USE_FFTW3
 
 /**
  * @struct FFTWPlanCache
@@ -93,7 +94,7 @@ struct FFTWPlanCache {
 };
 
 inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
-  size_t size = data.size();
+  const size_t size = data.size();
   if (size == 0) {
     return;
   }
@@ -102,7 +103,7 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
   auto &plans = invert ? cache.backward_plans : cache.forward_plans;
   auto iterator = plans.find(size);
   fftw_plan plan = nullptr;
-  auto *fftw_data = std::bit_cast<fftw_complex *>(data.data());
+  auto *fftw_data = reinterpret_cast<fftw_complex *>(data.data());
 
   if (iterator != plans.end()) {
     plan = iterator->second;
@@ -121,14 +122,14 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
   fftw_execute_dft(plan, fftw_data, fftw_data);
 
   if (invert) {
-    double scale = 1.0 / static_cast<double>(size);
+    const double scale = 1.0 / static_cast<double>(size);
     for (auto &val : data) {
       val *= scale;
     }
   }
 }
 
-#elif defined(CORRELATION_USE_MKL)
+#elifdef CORRELATION_USE_MKL
 
 /**
  * @struct MKLDescriptorCache
@@ -261,12 +262,12 @@ inline void computeFFT(std::vector<std::complex<T>> &data, bool invert) {
 template <typename T = real_t>
 inline std::vector<T> autocorrelate(const std::vector<T> &signal,
                                     std::vector<std::complex<T>> &workspace) {
-  size_t size = signal.size();
+  const size_t size = signal.size();
   if (size == 0) {
     return {};
   }
 
-  size_t len = findNextGoodFFTSize(2 * size - 1);
+  const size_t len = findNextGoodFFTSize(2 * size - 1);
 
   // Reuse caller-supplied workspace; only reallocates when length grows.
   workspace.assign(len, {static_cast<T>(0.0), static_cast<T>(0.0)});

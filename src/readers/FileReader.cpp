@@ -31,7 +31,7 @@ FileType getExtensionlessVaspType(const std::filesystem::path &filepath) {
 }
 
 const std::unordered_map<std::string, FileType> &getExtensionTypeMap() {
-  static const std::unordered_map<std::string, FileType> k_extension_map = {
+  static const std::unordered_map<std::string, FileType> EXTENSION_MAP = {
       {".car", FileType::Car},         {".cell", FileType::Cell},
       {".cif", FileType::Cif},         {".arc", FileType::Arc},
       {".dump", FileType::LammpsDump}, {".lammpstrj", FileType::LammpsDump},
@@ -45,7 +45,7 @@ const std::unordered_map<std::string, FileType> &getExtensionTypeMap() {
       {".chgnet", FileType::Chgnet},   {".gap", FileType::Gap},
       {".quip", FileType::Gap},        {".nequip", FileType::Nequip},
   };
-  return k_extension_map;
+  return EXTENSION_MAP;
 }
 
 } // namespace
@@ -183,7 +183,7 @@ readTrajectory(const std::string &filename, FileType type,
   if (reader != nullptr) {
     // Enforce 4 GiB trajectory file size limit.
     auto file_size = std::filesystem::file_size(filename);
-    if (static_cast<std::uint64_t>(file_size) > correlation::core::kMaxTrajectoryBytes) {
+    if (static_cast<std::uint64_t>(file_size) > correlation::core::K_MAX_TRAJECTORY_BYTES) {
       throw std::runtime_error("Trajectory file exceeds the 4 GiB memory limit: " + filename);
     }
 

@@ -445,7 +445,7 @@ void ThreadLocalDistances::computeDistances(
   }
 
   const auto &atom_a = atoms[atom_idx];
-  const int type_a = atom_a.element_id();
+  const int type_a = atom_a.elementId();
   const real_t a_x = coords.x[atom_idx];
   const real_t a_y = coords.y[atom_idx];
   const real_t a_z = coords.z[atom_idx];
@@ -466,7 +466,7 @@ void ThreadLocalDistances::computeDistances(
     }
 
     size_t const j_idx = candidate_j[k];
-    int const type_b = atoms[j_idx].element_id();
+    int const type_b = atoms[j_idx].elementId();
 
     const BondCandidate cand{
         .atom_idx = atom_idx,

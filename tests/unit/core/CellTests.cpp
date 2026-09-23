@@ -38,7 +38,7 @@ TEST_F(CellTests, ParameterConstructorSetsCorrectVolume) {
 
 TEST_F(CellTests, VectorConstructorCalculatesParameters) {
   const Cell cell({2.0, 0.0, 0.0}, {0.0, 3.0, 0.0}, {0.0, 0.0, 4.0});
-  const auto &params = cell.lattice_parameters();
+  const auto &params = cell.latticeParameters();
 
   EXPECT_NEAR(params[0], 2.0, 1e-9);
   EXPECT_NEAR(params[1], 3.0, 1e-9);
@@ -288,7 +288,7 @@ TEST_F(CellTests, HighAtomCount) {
 
 TEST_F(CellTests, AcosNumericalNoiseClamping) {
   Cell const cell({1.0, 0.0, 0.0}, {-1.0, 1.01e-8, 0.0}, {0.0, 0.0, 1.0});
-  auto params = cell.lattice_parameters();
+  auto params = cell.latticeParameters();
   EXPECT_FALSE(std::isnan(params[3]));
   EXPECT_FALSE(std::isnan(params[4]));
   EXPECT_FALSE(std::isnan(params[5]));

@@ -59,7 +59,7 @@ TEST_F(ChgnetReaderTests, ReadSingleFrameChgnet) {
   EXPECT_EQ(cell.atomCount(), 2);
   EXPECT_THAT(cell.getEnergy(), correlation::testing::IsRealEq(-18.75));
 
-  const auto &params = cell.lattice_parameters();
+  const auto &params = cell.latticeParameters();
   EXPECT_THAT(params[0], correlation::testing::IsRealEq(4.0));
   EXPECT_THAT(params[1], correlation::testing::IsRealEq(4.0));
   EXPECT_THAT(params[2], correlation::testing::IsRealEq(4.0));

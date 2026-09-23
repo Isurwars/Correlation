@@ -22,7 +22,7 @@ namespace correlation::analysis {
 
 namespace {
 std::pair<real_t, real_t>
-integrate_vdos_frequency(real_t theta, const std::vector<real_t> &windowed_vacf, real_t time_step) {
+integrateVdosFrequency(real_t theta, const std::vector<real_t> &windowed_vacf, real_t time_step) {
   size_t const num_frames = windowed_vacf.size();
   real_t integral_real = 0.0;
   real_t integral_imag = 0.0;
@@ -54,17 +54,17 @@ integrate_vdos_frequency(real_t theta, const std::vector<real_t> &windowed_vacf,
                                     static_cast<real_t>(2.0) * sin_theta * cos_theta / theta3);
     real_t const gamma = static_cast<real_t>(4.0) * (sin_theta / theta3 - cos_theta / theta2);
 
-    size_t two_N = (num_frames % 2 == 0) ? num_frames - 2 : num_frames - 1;
-    two_N = std::max<size_t>(two_N, 0);
+    size_t two_n = (num_frames % 2 == 0) ? num_frames - 2 : num_frames - 1;
+    two_n = std::max<size_t>(two_n, 0);
 
     real_t const f_0 = windowed_vacf[0];
-    real_t const f_2N = windowed_vacf[two_N];
+    real_t const f_2_n = windowed_vacf[two_n];
 
-    real_t const arg_2N = theta * static_cast<real_t>(two_N);
+    real_t const arg_2_n = theta * static_cast<real_t>(two_n);
 
     real_t sum_odd_cos = 0.0;
     real_t sum_odd_sin = 0.0;
-    for (size_t frame_idx = 1; frame_idx < two_N; frame_idx += 2) {
+    for (size_t frame_idx = 1; frame_idx < two_n; frame_idx += 2) {
       real_t const arg = theta * static_cast<real_t>(frame_idx);
       sum_odd_cos += windowed_vacf[frame_idx] * std::cos(arg);
       sum_odd_sin += windowed_vacf[frame_idx] * std::sin(arg);
@@ -72,19 +72,21 @@ integrate_vdos_frequency(real_t theta, const std::vector<real_t> &windowed_vacf,
 
     real_t sum_even_cos = 0.0;
     real_t sum_even_sin = 0.0;
-    for (size_t frame_idx = 2; frame_idx < two_N; frame_idx += 2) {
+    for (size_t frame_idx = 2; frame_idx < two_n; frame_idx += 2) {
       real_t const arg = theta * static_cast<real_t>(frame_idx);
       sum_even_cos += windowed_vacf[frame_idx] * std::cos(arg);
       sum_even_sin += windowed_vacf[frame_idx] * std::sin(arg);
     }
 
-    real_t const even_cos_trapz = static_cast<real_t>(
-        sum_even_cos + static_cast<real_t>(0.5) * (f_0 * std::cos(0.0) + f_2N * std::cos(arg_2N)));
-    real_t const even_sin_trapz = static_cast<real_t>(
-        sum_even_sin + static_cast<real_t>(0.5) * (f_0 * std::sin(0.0) + f_2N * std::sin(arg_2N)));
+    const auto even_cos_trapz =
+        static_cast<real_t>(sum_even_cos + static_cast<real_t>(0.5) *
+                                               (f_0 * std::cos(0.0) + f_2_n * std::cos(arg_2_n)));
+    const auto even_sin_trapz =
+        static_cast<real_t>(sum_even_sin + static_cast<real_t>(0.5) *
+                                               (f_0 * std::sin(0.0) + f_2_n * std::sin(arg_2_n)));
 
-    real_t const bound_cos = f_2N * std::sin(arg_2N);
-    real_t const bound_sin = static_cast<real_t>(f_0 * std::cos(0.0) - f_2N * std::cos(arg_2N));
+    real_t const bound_cos = f_2_n * std::sin(arg_2_n);
+    const auto bound_sin = static_cast<real_t>(f_0 * std::cos(0.0) - f_2_n * std::cos(arg_2_n));
 
     integral_real = time_step * (alpha * bound_cos + beta * even_cos_trapz + gamma * sum_odd_cos);
     integral_imag = time_step * (alpha * bound_sin + beta * even_sin_trapz + gamma * sum_odd_sin);
@@ -194,12 +196,12 @@ std::vector<real_t> DynamicsAnalyzer::calculateVACF(const correlation::core::Tra
       vel_z[frame_idx] = v_i[frame_idx].z();
     }
 
-    auto S2_x = correlation::math::autocorrelate(vel_x, workspace);
-    auto S2_y = correlation::math::autocorrelate(vel_y, workspace);
-    auto S2_z = correlation::math::autocorrelate(vel_z, workspace);
+    auto s2_x = correlation::math::autocorrelate(vel_x, workspace);
+    auto s2_y = correlation::math::autocorrelate(vel_y, workspace);
+    auto s2_z = correlation::math::autocorrelate(vel_z, workspace);
 
     for (int lag = 0; lag <= max_correlation_frames; ++lag) {
-      local_vacf[lag] += S2_x[lag] + S2_y[lag] + S2_z[lag];
+      local_vacf[lag] += s2_x[lag] + s2_y[lag] + s2_z[lag];
     }
   });
 
@@ -324,20 +326,20 @@ std::vector<real_t> DynamicsAnalyzer::calculateMSD(const correlation::core::Traj
                         pos_z[frame_idx] * pos_z[frame_idx];
     }
 
-    auto S2_x = correlation::math::autocorrelate(pos_x, workspace);
-    auto S2_y = correlation::math::autocorrelate(pos_y, workspace);
-    auto S2_z = correlation::math::autocorrelate(pos_z, workspace);
+    auto s2_x = correlation::math::autocorrelate(pos_x, workspace);
+    auto s2_y = correlation::math::autocorrelate(pos_y, workspace);
+    auto s2_z = correlation::math::autocorrelate(pos_z, workspace);
 
-    std::vector<real_t> sum_S1(max_correlation_frames + 1, 0.0);
-    sum_S1[0] = static_cast<real_t>(static_cast<real_t>(2.0) *
+    std::vector<real_t> sum_s1(max_correlation_frames + 1, 0.0);
+    sum_s1[0] = static_cast<real_t>(static_cast<real_t>(2.0) *
                                     std::accumulate(r_sq.begin(), r_sq.end(), 0.0));
     for (int lag_idx = 1; lag_idx <= max_correlation_frames; ++lag_idx) {
-      sum_S1[lag_idx] = sum_S1[lag_idx - 1] - r_sq[lag_idx - 1] - r_sq[num_frames - lag_idx];
+      sum_s1[lag_idx] = sum_s1[lag_idx - 1] - r_sq[lag_idx - 1] - r_sq[num_frames - lag_idx];
     }
 
     for (int lag = 1; lag <= max_correlation_frames; ++lag) {
-      real_t const sum_S2 = S2_x[lag] + S2_y[lag] + S2_z[lag];
-      local_msd[lag] += (sum_S1[lag] - static_cast<real_t>(2.0) * sum_S2);
+      real_t const sum_s2 = s2_x[lag] + s2_y[lag] + s2_z[lag];
+      local_msd[lag] += (sum_s1[lag] - static_cast<real_t>(2.0) * sum_s2);
     }
   });
 
@@ -380,7 +382,7 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<real_t> &vacf, real_t time_ste
     return {};
   }
 
-  size_t num_frames = vacf.size();
+  const size_t num_frames = vacf.size();
   real_t const t_max = static_cast<real_t>(num_frames - 1) * time_step; // Total time of correlation
 
   // Define frequency range
@@ -412,7 +414,7 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<real_t> &vacf, real_t time_ste
   }
 
   std::vector<size_t> freq_indices(num_freq_points);
-  std::iota(freq_indices.begin(), freq_indices.end(), 0);
+  std::ranges::iota(freq_indices, 0);
 
   tbb::parallel_for(static_cast<size_t>(0), num_freq_points, [&](size_t freq_idx) {
     real_t const freq_val = static_cast<real_t>(freq_idx) * d_nu; // Frequency in THz
@@ -423,7 +425,7 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<real_t> &vacf, real_t time_ste
     real_t const theta =
         correlation::math::two_pi * freq_val * time_step * static_cast<real_t>(0.001);
 
-    auto [integral_real, integral_imag] = integrate_vdos_frequency(theta, windowed_vacf, time_step);
+    auto [integral_real, integral_imag] = integrateVdosFrequency(theta, windowed_vacf, time_step);
 
     real_t const damping = std::exp(
         -static_cast<real_t>(0.5) *

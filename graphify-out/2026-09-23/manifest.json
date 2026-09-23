@@ -615,8 +615,8 @@
     "semantic_hash": ""
   },
   "src/calculators/GPUSQCalculator.cu": {
-    "mtime": 1784868335.4253016,
-    "ast_hash": "e7c99fcf8a400afbc6bd6ac47dcde80d",
+    "mtime": 1790172574.0162137,
+    "ast_hash": "e6272419c6f6b4412859785cbe3b1767",
     "semantic_hash": ""
   },
   "src/calculators/HBondCalculator.cpp": {
@@ -655,8 +655,8 @@
     "semantic_hash": ""
   },
   "src/calculators/RDFCalculator.cpp": {
-    "mtime": 1789591639.714342,
-    "ast_hash": "90f03495ebdebe1b0245bc641b18a4ba",
+    "mtime": 1790172561.6523254,
+    "ast_hash": "d9b02ab52e78092b123ed3cbffaa36c8",
     "semantic_hash": ""
   },
   "src/calculators/SDFCalculator.cpp": {
@@ -670,8 +670,8 @@
     "semantic_hash": ""
   },
   "src/calculators/StructureFactorCalculator.cpp": {
-    "mtime": 1789591639.607526,
-    "ast_hash": "d3c91a508baf613703142e4afd6c2982",
+    "mtime": 1790172568.1572673,
+    "ast_hash": "c14dbefd1e98a3585203aa5f595b39a2",
     "semantic_hash": ""
   },
   "src/calculators/VACFCalculator.cpp": {
@@ -1085,8 +1085,8 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/StructureFactorCalculatorTests.cpp": {
-    "mtime": 1789591640.0530994,
-    "ast_hash": "9b971e57d80601002dc742cbd9632c8e",
+    "mtime": 1790172597.845982,
+    "ast_hash": "8b6090cc061b9904d29163b6a6acff13",
     "semantic_hash": ""
   },
   "tests/unit/calculators/VoronoiCalculatorTests.cpp": {
@@ -1985,8 +1985,8 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/RDFCalculatorTests.cpp": {
-    "mtime": 1788618782.184823,
-    "ast_hash": "30d2c43abf7cc44ee16f74d60426b5a9",
+    "mtime": 1790172584.4511147,
+    "ast_hash": "c3b69a28a6bf18b208a34d4519f9d3f9",
     "semantic_hash": ""
   },
   "tests/unit/calculators/VACFCalculatorTests.cpp": {

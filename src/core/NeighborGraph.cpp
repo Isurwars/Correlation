@@ -26,9 +26,9 @@ void NeighborGraph::addDirectedEdge(const Edge &edge) {
 }
 
 const std::vector<Neighbor> &NeighborGraph::getNeighbors(size_t atom_index) const {
-  static const std::vector<Neighbor> empty_list;
+  static const std::vector<Neighbor> EMPTY_LIST;
   if (atom_index >= adj_list_.size()) {
-    return empty_list;
+    return EMPTY_LIST;
   }
   return adj_list_[atom_index];
 }

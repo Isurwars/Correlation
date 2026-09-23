@@ -50,7 +50,7 @@ TEST_F(VaspReaderTests, ParseSiDiamondPoscar) {
   EXPECT_EQ(cell.elements()[0].symbol, "Si");
 
   // Lattice should be 5.43 x 5.43 x 5.43 (scaling factor * unit vectors)
-  auto params = cell.lattice_parameters();
+  auto params = cell.latticeParameters();
   EXPECT_NEAR(params[0], 5.43, 1e-6);
   EXPECT_NEAR(params[1], 5.43, 1e-6);
   EXPECT_NEAR(params[2], 5.43, 1e-6);
@@ -94,7 +94,7 @@ TEST_F(VaspReaderTests, ParseMultiSpecies) {
   // Verify species assignment
   std::map<std::string, int> counts;
   for (const auto &atom : cell.atoms()) {
-    counts[cell.elements()[atom.element_id()].symbol]++;
+    counts[cell.elements()[atom.elementId()].symbol]++;
   }
   EXPECT_EQ(counts["Si"], 4);
   EXPECT_EQ(counts["O"], 4);
@@ -105,7 +105,7 @@ TEST_F(VaspReaderTests, ScalingFactorApplied) {
 
   // The POSCAR has scaling factor 5.43 with unit vectors
   // So lattice should be 5.43 Å
-  auto params = cell.lattice_parameters();
+  auto params = cell.latticeParameters();
   EXPECT_NEAR(params[0], 5.43, 1e-6);
 }
 

@@ -32,9 +32,9 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
 
   // For a general implementation, we build a 3D grid based on the cell
   // dimensions
-  real_t const l_x = cell.lattice_parameters()[0];
-  real_t const l_y = cell.lattice_parameters()[1];
-  real_t const l_z = cell.lattice_parameters()[2];
+  real_t const l_x = cell.latticeParameters()[0];
+  real_t const l_y = cell.latticeParameters()[1];
+  real_t const l_z = cell.latticeParameters()[2];
 
   if (l_x <= 0 || l_y <= 0 || l_z <= 0) {
     return;

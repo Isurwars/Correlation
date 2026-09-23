@@ -31,7 +31,7 @@
 #ifndef CORRELATION_RESTRICT
 #if defined(__CUDACC__) || defined(__HIPCC__)
 #define CORRELATION_RESTRICT __restrict__
-#elif defined(_MSC_VER)
+#elifdef _MSC_VER
 #define CORRELATION_RESTRICT __restrict
 #elif defined(__GNUC__) || defined(__clang__)
 #define CORRELATION_RESTRICT __restrict__
@@ -44,7 +44,7 @@
 // Memory Alignment Macro
 // ---------------------------------------------------------------------------
 #ifndef CORRELATION_ALIGN
-#if defined(_MSC_VER)
+#ifdef _MSC_VER
 #define CORRELATION_ALIGN(n) __declspec(align(n))
 #else
 #define CORRELATION_ALIGN(n) __attribute__((aligned(n)))

@@ -59,7 +59,7 @@ TEST_F(XYZReaderTests, ReadExtendedXYZ) {
   EXPECT_THAT(cell.getEnergy(), correlation::testing::IsRealEq(-15.2));
 
   // Check lattice
-  auto params = cell.lattice_parameters();
+  auto params = cell.latticeParameters();
   EXPECT_THAT(params[0], correlation::testing::IsRealEq(10.0));
   EXPECT_THAT(params[1], correlation::testing::IsRealEq(10.0));
   EXPECT_THAT(params[2], correlation::testing::IsRealEq(10.0));

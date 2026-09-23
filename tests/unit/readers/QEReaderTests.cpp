@@ -38,7 +38,7 @@ TEST_F(QEReaderTests, ReadsSingleFrame) {
   auto cell = reader.readStructure(data_dir_ + "clean.pwo");
   EXPECT_EQ(cell.atomCount(), 2);
   EXPECT_EQ(cell.atoms()[0].element().symbol, "C");
-  EXPECT_EQ(cell.lattice_parameters()[0], 10.0);
+  EXPECT_EQ(cell.latticeParameters()[0], 10.0);
 }
 
 TEST_F(QEReaderTests, ReadsNonOrthogonalLattice) {

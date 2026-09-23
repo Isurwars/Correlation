@@ -41,9 +41,9 @@ TEST(CarReaderTests, ReadsStructure) {
   auto cell = reader.readStructure(data_dir + "clean.car");
 
   EXPECT_EQ(cell.atomCount(), 2);
-  EXPECT_DOUBLE_EQ(cell.lattice_parameters()[0], 10.5);
-  EXPECT_DOUBLE_EQ(cell.lattice_parameters()[1], 11.5);
-  EXPECT_DOUBLE_EQ(cell.lattice_parameters()[2], 12.5);
+  EXPECT_DOUBLE_EQ(cell.latticeParameters()[0], 10.5);
+  EXPECT_DOUBLE_EQ(cell.latticeParameters()[1], 11.5);
+  EXPECT_DOUBLE_EQ(cell.latticeParameters()[2], 12.5);
   EXPECT_EQ(cell.atoms()[0].element().symbol, "C");
   EXPECT_EQ(cell.atoms()[1].element().symbol, "H");
 }
@@ -54,7 +54,7 @@ TEST(CarReaderTests, ReadsStructurePbcOff) {
   auto cell = reader.readStructure(data_dir + "clean_off.car");
 
   EXPECT_EQ(cell.atomCount(), 1);
-  EXPECT_DOUBLE_EQ(cell.lattice_parameters()[0], 100.0); // PBC=OFF sets 100.0
+  EXPECT_DOUBLE_EQ(cell.latticeParameters()[0], 100.0); // PBC=OFF sets 100.0
   EXPECT_EQ(cell.atoms()[0].element().symbol, "O");
 }
 

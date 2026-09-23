@@ -52,7 +52,7 @@ TEST_F(AtomTests, AccessorsModifyStateCorrectly) {
   EXPECT_EQ(atom.id(), 42);
   EXPECT_EQ(atom.element().symbol, "Fe");
   EXPECT_EQ(atom.element().id.value, 26);
-  EXPECT_EQ(atom.element_id(), 26);
+  EXPECT_EQ(atom.elementId(), 26);
   EXPECT_NEAR(atom.position().x(), 1.0, 1e-9);
   EXPECT_NEAR(atom.position().y(), 2.0, 1e-9);
   EXPECT_NEAR(atom.position().z(), 3.0, 1e-9);
@@ -125,7 +125,7 @@ TEST_F(AtomTests, HandlesEmptyElementSymbol) {
   const Atom atom(element, {0.0, 0.0, 0.0}, 0);
 
   EXPECT_EQ(atom.element().symbol, "");
-  EXPECT_EQ(atom.element_id(), -1);
+  EXPECT_EQ(atom.elementId(), -1);
 }
 
 TEST_F(AtomTests, ElementIDEqualityWorks) {
@@ -178,7 +178,7 @@ TEST_F(AtomTests, HandlesLongAndSpecialElementSymbols) {
   const Atom atom(element, {1.0, 2.0, 3.0}, 999999);
 
   EXPECT_EQ(atom.element().symbol, "Uun-110_LongSymbolTest!@#");
-  EXPECT_EQ(atom.element_id(), 110);
+  EXPECT_EQ(atom.elementId(), 110);
   EXPECT_EQ(atom.id(), 999999);
 }
 

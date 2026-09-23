@@ -58,7 +58,7 @@ void processCp2kLine(const std::string &line, std::vector<correlation::core::Cel
       frames.push_back(current_cell);
       current_cell = correlation::core::Cell();
       if (state.has_box) {
-        current_cell.setLatticeParameters(frames.back().lattice_parameters());
+        current_cell.setLatticeParameters(frames.back().latticeParameters());
       }
     }
   } else if (uline.starts_with("&END CELL") || uline.starts_with("&END COORD")) {

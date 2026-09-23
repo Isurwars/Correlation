@@ -259,8 +259,8 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsMatchesScalar) {
   const std::vector<std::size_t> sizes = {2, 5, 8, 9, 16, 17, 33, 100};
 
   const double g_norm = 1.5;
-  const double inv_Ni_dr = 0.1;
-  const double inv_Nj_dr = 0.2;
+  const double inv_ni_dr = 0.1;
+  const double inv_nj_dr = 0.2;
   const double pi4_rho_j = 3.14;
 
   for (const std::size_t size : sizes) {
@@ -277,8 +277,8 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsMatchesScalar) {
         .hist_data = vec_h.data(),
         .radial_bins = rbins.data(),
         .g_norm = g_norm,
-        .inv_Ni_dr = inv_Ni_dr,
-        .inv_Nj_dr = inv_Nj_dr,
+        .inv_Ni_dr = inv_ni_dr,
+        .inv_Nj_dr = inv_nj_dr,
         .pi4_rho_j = pi4_rho_j,
         .g_out = actual_g.data(),
         .G_out = actual_g_cap.data(),
@@ -295,8 +295,8 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsMatchesScalar) {
 
       const double expected_g = vec_h[idx] * g_norm / (r_val * r_val);
       const double expected_g_cap = pi4_rho_j * r_val * (expected_g - 1.0);
-      const double expected_j = vec_h[idx] * inv_Ni_dr;
-      const double expected_jinv = vec_h[idx] * inv_Nj_dr;
+      const double expected_j = vec_h[idx] * inv_ni_dr;
+      const double expected_jinv = vec_h[idx] * inv_nj_dr;
 
       EXPECT_NEAR(actual_g[idx], expected_g, 1e-9)
           << "g failed at index " << idx << " for size: " << size;
@@ -314,8 +314,8 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsFloatMatchesScalar) {
   const std::vector<std::size_t> sizes = {2, 5, 8, 9, 16, 17, 33, 100};
 
   const float g_norm = 1.5F;
-  const float inv_Ni_dr = 0.1F;
-  const float inv_Nj_dr = 0.2F;
+  const float inv_ni_dr = 0.1F;
+  const float inv_nj_dr = 0.2F;
   const float pi4_rho_j = 3.14F;
 
   for (const std::size_t size : sizes) {
@@ -332,8 +332,8 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsFloatMatchesScalar) {
         .hist_data = vec_h.data(),
         .radial_bins = rbins.data(),
         .g_norm = g_norm,
-        .inv_Ni_dr = inv_Ni_dr,
-        .inv_Nj_dr = inv_Nj_dr,
+        .inv_Ni_dr = inv_ni_dr,
+        .inv_Nj_dr = inv_nj_dr,
         .pi4_rho_j = pi4_rho_j,
         .g_out = actual_g.data(),
         .G_out = actual_g_cap.data(),
@@ -350,8 +350,8 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsFloatMatchesScalar) {
 
       const float expected_g = vec_h[idx] * g_norm / (r_val * r_val);
       const float expected_g_cap = pi4_rho_j * r_val * (expected_g - 1.0F);
-      const float expected_j = vec_h[idx] * inv_Ni_dr;
-      const float expected_jinv = vec_h[idx] * inv_Nj_dr;
+      const float expected_j = vec_h[idx] * inv_ni_dr;
+      const float expected_jinv = vec_h[idx] * inv_nj_dr;
 
       EXPECT_NEAR(actual_g[idx], expected_g, 1e-4F)
           << "Float g failed at index " << idx << " for size: " << size;
@@ -499,18 +499,18 @@ TEST_F(SIMDUtilsTests, KahanSummationPrecision) {
 // Test: normalize_rdf_bins Bin 0 Initialization
 // -----------------------------------------------------------------------------
 TEST_F(SIMDUtilsTests, NormalizeRdfBinsZeroInitializesBinZeroDouble) {
-  constexpr std::size_t size = 16;
-  std::vector<double> hist(size, 5.0);
-  std::vector<double> rbins(size);
-  for (std::size_t i = 0; i < size; ++i) {
+  constexpr std::size_t SIZE = 16;
+  std::vector<double> hist(SIZE, 5.0);
+  std::vector<double> rbins(SIZE);
+  for (std::size_t i = 0; i < SIZE; ++i) {
     rbins[i] = static_cast<double>(i) * 0.1;
   }
 
   // Pre-fill outputs with non-zero garbage to ensure bin 0 is explicitly zeroed
-  std::vector<double> g_out(size, 999.0);
-  std::vector<double> G_out(size, 999.0);
-  std::vector<double> J_out(size, 999.0);
-  std::vector<double> Jinv_out(size, 999.0);
+  std::vector<double> g_out(SIZE, 999.0);
+  std::vector<double> g_cap_out(SIZE, 999.0);
+  std::vector<double> j_out(SIZE, 999.0);
+  std::vector<double> jinv_out(SIZE, 999.0);
 
   correlation::math::normalize_rdf_bins(correlation::math::RDFNormalizationParams<double>{
       .hist_data = hist.data(),
@@ -520,31 +520,31 @@ TEST_F(SIMDUtilsTests, NormalizeRdfBinsZeroInitializesBinZeroDouble) {
       .inv_Nj_dr = 0.5,
       .pi4_rho_j = 12.56,
       .g_out = g_out.data(),
-      .G_out = G_out.data(),
-      .J_out = J_out.data(),
-      .Jinv_out = Jinv_out.data(),
-      .count = size,
+      .G_out = g_cap_out.data(),
+      .J_out = j_out.data(),
+      .Jinv_out = jinv_out.data(),
+      .count = SIZE,
   });
 
   EXPECT_DOUBLE_EQ(g_out[0], 0.0);
-  EXPECT_DOUBLE_EQ(G_out[0], 0.0);
-  EXPECT_DOUBLE_EQ(J_out[0], 0.0);
-  EXPECT_DOUBLE_EQ(Jinv_out[0], 0.0);
+  EXPECT_DOUBLE_EQ(g_cap_out[0], 0.0);
+  EXPECT_DOUBLE_EQ(j_out[0], 0.0);
+  EXPECT_DOUBLE_EQ(jinv_out[0], 0.0);
 }
 
 TEST_F(SIMDUtilsTests, NormalizeRdfBinsZeroInitializesBinZeroFloat) {
-  constexpr std::size_t size = 16;
-  std::vector<float> hist(size, 5.0F);
-  std::vector<float> rbins(size);
-  for (std::size_t i = 0; i < size; ++i) {
+  constexpr std::size_t SIZE = 16;
+  std::vector<float> hist(SIZE, 5.0F);
+  std::vector<float> rbins(SIZE);
+  for (std::size_t i = 0; i < SIZE; ++i) {
     rbins[i] = static_cast<float>(i) * 0.1F;
   }
 
   // Pre-fill outputs with non-zero garbage
-  std::vector<float> g_out(size, 999.0F);
-  std::vector<float> G_out(size, 999.0F);
-  std::vector<float> J_out(size, 999.0F);
-  std::vector<float> Jinv_out(size, 999.0F);
+  std::vector<float> g_out(SIZE, 999.0F);
+  std::vector<float> g_cap_out(SIZE, 999.0F);
+  std::vector<float> j_out(SIZE, 999.0F);
+  std::vector<float> jinv_out(SIZE, 999.0F);
 
   correlation::math::normalize_rdf_bins(correlation::math::RDFNormalizationParams<float>{
       .hist_data = hist.data(),
@@ -554,16 +554,16 @@ TEST_F(SIMDUtilsTests, NormalizeRdfBinsZeroInitializesBinZeroFloat) {
       .inv_Nj_dr = 0.5F,
       .pi4_rho_j = 12.56F,
       .g_out = g_out.data(),
-      .G_out = G_out.data(),
-      .J_out = J_out.data(),
-      .Jinv_out = Jinv_out.data(),
-      .count = size,
+      .G_out = g_cap_out.data(),
+      .J_out = j_out.data(),
+      .Jinv_out = jinv_out.data(),
+      .count = SIZE,
   });
 
   EXPECT_FLOAT_EQ(g_out[0], 0.0F);
-  EXPECT_FLOAT_EQ(G_out[0], 0.0F);
-  EXPECT_FLOAT_EQ(J_out[0], 0.0F);
-  EXPECT_FLOAT_EQ(Jinv_out[0], 0.0F);
+  EXPECT_FLOAT_EQ(g_cap_out[0], 0.0F);
+  EXPECT_FLOAT_EQ(j_out[0], 0.0F);
+  EXPECT_FLOAT_EQ(jinv_out[0], 0.0F);
 }
 
 // -----------------------------------------------------------------------------
@@ -572,7 +572,7 @@ TEST_F(SIMDUtilsTests, NormalizeRdfBinsZeroInitializesBinZeroFloat) {
 TEST_F(SIMDUtilsTests, TemplateDispatchersMatchFloat) {
   const std::vector<float> vec_a = {1.0F, 2.0F, 3.0F, 4.0F};
   const std::vector<float> vec_b = {0.5F, 1.5F, 2.5F, 3.5F};
-  const float dot = correlation::math::simd_dot<float>(vec_a.data(), vec_b.data(), vec_a.size());
+  const auto dot = correlation::math::simd_dot<float>(vec_a.data(), vec_b.data(), vec_a.size());
   EXPECT_NEAR(dot, 25.0F, 1e-5F);
 }
 

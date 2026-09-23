@@ -41,7 +41,7 @@ TEST_F(PdbReaderTests, ReadSingleStructure) {
   auto cell = reader.readStructure(data_dir_ + "clean.pdb");
 
   // Check lattice
-  auto params = cell.lattice_parameters();
+  auto params = cell.latticeParameters();
   EXPECT_DOUBLE_EQ(params[0], 20.0);
   EXPECT_DOUBLE_EQ(params[1], 25.0);
   EXPECT_DOUBLE_EQ(params[2], 30.0);

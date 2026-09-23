@@ -58,7 +58,7 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell,
     throw std::invalid_argument("Number of samples must be positive.");
   }
 
-  const auto &lattice_params = cell.lattice_parameters();
+  const auto &lattice_params = cell.latticeParameters();
   const real_t l_x = lattice_params[0];
   const real_t l_y = lattice_params[1];
   const real_t l_z = lattice_params[2];

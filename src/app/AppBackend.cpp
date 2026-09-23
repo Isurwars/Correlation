@@ -36,7 +36,7 @@ std::map<std::string, int> AppBackend::getAtomCounts() const {
   std::vector<int> id_counts(elements.size(), 0);
 
   for (const auto &atom : current_cell->atoms()) {
-    id_counts[atom.element_id()]++;
+    id_counts[atom.elementId()]++;
   }
 
   for (size_t i = 0; i < elements.size(); ++i) {

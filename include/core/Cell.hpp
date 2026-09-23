@@ -96,7 +96,7 @@ public:
    * @brief Gets the lattice parameters (a, b, c, alpha, beta, gamma).
    * @return Array of 6 real_t containing the parameters.
    */
-  [[nodiscard]] const std::array<real_t, 6> &lattice_parameters() const noexcept {
+  [[nodiscard]] const std::array<real_t, 6> &latticeParameters() const noexcept {
     return lattice_parameters_;
   }
 

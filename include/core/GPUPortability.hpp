@@ -12,9 +12,9 @@
 #include <cstddef>
 #include <utility> // IWYU pragma: keep
 
-#if defined(CORRELATION_USE_HIP)
+#ifdef CORRELATION_USE_HIP
 #include <hip/hip_runtime.h>
-#elif defined(CORRELATION_USE_CUDA)
+#elifdef CORRELATION_USE_CUDA
 #include <cuda_runtime.h>
 
 // Map HIP API names to CUDA equivalents
@@ -113,14 +113,26 @@ inline constexpr dim3 blockDim{
     .z = 1,
 };
 
-#define hipLaunchKernelGGL(kernel, grid, block, shared, stream, ...)                           \
-  [&]() noexcept {                                                                              \
-    (void)(grid);                                                                               \
-    (void)(block);                                                                              \
-    (void)(shared);                                                                             \
-    (void)(stream);                                                                             \
-    [[maybe_unused]] auto discard_kernel_args = []([[maybe_unused]] auto &&..._args) {};        \
-    discard_kernel_args(__VA_ARGS__);                                                           \
-  }()
+/**
+ * @brief Host fallback stub for kernel launch when GPU acceleration is disabled.
+ * @tparam K Kernel function type.
+ * @tparam Grid Grid dimension type.
+ * @tparam Block Block dimension type.
+ * @tparam Shared Shared memory size type.
+ * @tparam Stream Stream type.
+ * @tparam Args Kernel argument types.
+ * @param kernel Kernel function pointer or callable.
+ * @param grid Grid dimensions.
+ * @param block Block dimensions.
+ * @param shared Shared memory allocation size in bytes.
+ * @param stream Execution stream.
+ * @param args Kernel launch arguments.
+ */
+template <typename K, typename Grid, typename Block, typename Shared, typename Stream,
+          typename... Args>
+constexpr void hipLaunchKernelGGL([[maybe_unused]] K &&kernel, [[maybe_unused]] Grid &&grid,
+                                  [[maybe_unused]] Block &&block, [[maybe_unused]] Shared &&shared,
+                                  [[maybe_unused]] Stream &&stream,
+                                  [[maybe_unused]] Args &&...args) noexcept {}
 
 #endif

@@ -9,27 +9,28 @@
 #pragma once
 
 #include "core/CompilerPortability.hpp" // IWYU pragma: export
+#include <cstddef>
 
 // ---------------------------------------------------------------------------
 // SIMD level detection
 // ---------------------------------------------------------------------------
-#if defined(__AVX512F__)
+#ifdef __AVX512F__
 /** @brief Defined if AVX-512 instruction set is supported and enabled. */
 #define CORRELATION_SIMD_AVX512
-#elif defined(__AVX2__)
+#elifdef __AVX2__
 /** @brief Defined if AVX2 instruction set is supported and enabled. */
 #define CORRELATION_SIMD_AVX2
 #endif
 
-#if defined(CORRELATION_SIMD_AVX512)
+#ifdef CORRELATION_SIMD_AVX512
 #include <immintrin.h>
 /** @brief Number of 64-bit float elements per SIMD register. */
-#define CORRELATION_SIMD_WIDTH 8
-#elif defined(CORRELATION_SIMD_AVX2)
+inline constexpr std::size_t CORRELATION_SIMD_WIDTH = 8;
+#elifdef CORRELATION_SIMD_AVX2
 #include <immintrin.h>
 /** @brief Number of 64-bit float elements per SIMD register. */
-#define CORRELATION_SIMD_WIDTH 4
+inline constexpr std::size_t CORRELATION_SIMD_WIDTH = 4;
 #else
 /** @brief Number of 64-bit float elements per SIMD register. */
-#define CORRELATION_SIMD_WIDTH 1
+inline constexpr std::size_t CORRELATION_SIMD_WIDTH = 1;
 #endif

@@ -61,7 +61,7 @@ TEST_F(XdatcarReaderTests, LatticeConsistentAcrossFrames) {
   // All frames should share the same lattice (5.43 Å cubic)
   for (size_t i = 0; i < traj.getFrameCount(); ++i) {
     auto frame = traj.getFrame(i);
-    auto params = frame.lattice_parameters();
+    auto params = frame.latticeParameters();
     EXPECT_NEAR(params[0], 5.43, 1e-6);
     EXPECT_NEAR(params[1], 5.43, 1e-6);
     EXPECT_NEAR(params[2], 5.43, 1e-6);

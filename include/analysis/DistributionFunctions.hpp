@@ -147,8 +147,8 @@ public:
    * computed).
    * @param bond_cutoffs Optional bond cutoffs for neighbor calculations.
    */
-  explicit DistributionFunctions(const correlation::core::Cell &cell, real_t cutoff = 0.0,
-                                 const BondCutoffMatrix &bond_cutoffs = {});
+  explicit DistributionFunctions(correlation::core::Cell cell, real_t cutoff = 0.0,
+                                 BondCutoffMatrix bond_cutoffs = {});
 
   /**
    * @brief Move constructor.
