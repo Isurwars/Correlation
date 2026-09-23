@@ -26,7 +26,7 @@ component OffDiagonalCell {
 
     property <bool> has_focus: input.has_focus;
 
-    width: 76px;
+    width: 70px;
     height: 48px;
 
     container := Rectangle {
@@ -106,7 +106,7 @@ component DiagonalCell {
     property <bool> max_focused: max_input.has_focus;
     property <bool> min_focused: min_input.has_focus;
 
-    width: 76px;
+    width: 70px;
     height: 48px;
 
     container := Rectangle {
@@ -136,7 +136,6 @@ component DiagonalCell {
                     padding_left: 4px;
                     padding_right: 4px;
                     spacing: 2px;
-                    alignment: center;
 
                     MaterialText {
                         text: "▲";
@@ -148,7 +147,7 @@ component DiagonalCell {
                     }
 
                     max_input := TextInput {
-                        width: parent.width - 12px;
+                        width: parent.width - 20px;
                         height: 20px;
                         font_size: 11px;
                         font_weight: MaterialTypography.medium;
@@ -185,7 +184,6 @@ component DiagonalCell {
                     padding_left: 4px;
                     padding_right: 4px;
                     spacing: 2px;
-                    alignment: center;
 
                     MaterialText {
                         text: "▼";
@@ -197,7 +195,7 @@ component DiagonalCell {
                     }
 
                     min_input := TextInput {
-                        width: parent.width - 12px;
+                        width: parent.width - 20px;
                         height: 20px;
                         font_size: 11px;
                         font_weight: MaterialTypography.medium;
@@ -236,12 +234,12 @@ export component Matrix {
     callback diagonal_min_edited(int, string);
 
     // Styling properties
-    in property <length> cell_width: 76px;
+    in property <length> cell_width: 70px;
     in property <length> cell_height: 48px;
     in property <length> header_height: 24px;
-    in property <length> header_width: 36px;
+    in property <length> header_width: 32px;
 
-    preferred-height: matrix_layout.preferred-height + 12px;
+    preferred-height: matrix_layout.preferred-height + 8px;
     height: self.preferred-height;
     width: 100%;
 
@@ -255,7 +253,10 @@ export component Matrix {
         content-height: matrix_layout.preferred-height;
 
         matrix_layout := VerticalLayout {
-            padding: 4px;
+            padding-left: 4px;
+            padding-right: 4px;
+            padding-top: 4px;
+            padding-bottom: 4px;
             spacing: 4px;
 
             // Header Row

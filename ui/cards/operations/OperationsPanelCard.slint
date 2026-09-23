@@ -110,7 +110,7 @@ export component OperationsPanelCard inherits Rectangle {
                 spacing: MaterialStyleMetrics.spacing_8;
                 padding: 0;
 
-                // --- File Loading & Diagnostics Card (Option B) ---
+                // --- File Loading Card ---
                 OutlinedCard {
                     Vertical {
                         padding: MaterialStyleMetrics.spacing_8;
@@ -159,6 +159,21 @@ export component OperationsPanelCard inherits Rectangle {
                             height: 4px;
                             indeterminate: true;
                         }
+                    }
+                }
+
+                // --- Setup Options: Material Type ---
+                material_card := MaterialTypeCard {
+                    file_loaded: root.file_loaded;
+                    material_type <=> root.material_type;
+                    reset => { root.reset_material_type(); }
+                }
+
+                // --- File Summary & Diagnostics Card ---
+                OutlinedCard {
+                    Vertical {
+                        padding: MaterialStyleMetrics.spacing_8;
+                        spacing: MaterialStyleMetrics.spacing_6;
 
                         // Tier 1: Summary Header (Basename + Metrics chip)
                         file_header_area := TouchArea {
@@ -231,13 +246,6 @@ export component OperationsPanelCard inherits Rectangle {
                             }
                         }
                     }
-                }
-
-                // --- Setup Options (Material & Trajectory) ---
-                material_card := MaterialTypeCard {
-                    file_loaded: root.file_loaded;
-                    material_type <=> root.material_type;
-                    reset => { root.reset_material_type(); }
                 }
 
                 trajectory_card := TrajectoryOptionsCard {
