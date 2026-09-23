@@ -143,14 +143,15 @@ export component BondCutoffsCard inherits OutlinedCard {
                 // Row 1: Min factor (default 0.6)
                 HorizontalLayout {
                     spacing: 8px;
-                    alignment: start;
                     TextField {
+                        horizontal-stretch: 1;
+                        min-width: 90px;
                         enabled: root.file_loaded;
-                        width: 110px;
                         label: "Min Factor";
                         text <=> root.min_factor;
                     }
                     FilledButton {
+                        horizontal-stretch: 0;
                         enabled: root.file_loaded;
                         text: "Apply Min";
                         clicked => {
@@ -162,14 +163,15 @@ export component BondCutoffsCard inherits OutlinedCard {
                 // Row 2: Max factor (default 1.2)
                 HorizontalLayout {
                     spacing: 8px;
-                    alignment: start;
                     TextField {
+                        horizontal-stretch: 1;
+                        min-width: 90px;
                         enabled: root.file_loaded;
-                        width: 110px;
                         label: "Max Factor";
                         text <=> root.max_factor;
                     }
                     FilledButton {
+                        horizontal-stretch: 0;
                         enabled: root.file_loaded;
                         text: "Apply Max";
                         clicked => {
@@ -181,14 +183,15 @@ export component BondCutoffsCard inherits OutlinedCard {
                 // Row 3: Global cutoff (default 3.5)
                 HorizontalLayout {
                     spacing: 8px;
-                    alignment: start;
                     TextField {
+                        horizontal-stretch: 1;
+                        min-width: 90px;
                         enabled: root.file_loaded;
-                        width: 110px;
                         label: "Global Cutoff";
                         text <=> root.global_cutoff;
                     }
                     FilledButton {
+                        horizontal-stretch: 0;
                         enabled: root.file_loaded;
                         text: "Set Global";
                         clicked => {

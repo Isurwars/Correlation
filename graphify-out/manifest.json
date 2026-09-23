@@ -30,13 +30,13 @@
     "semantic_hash": ""
   },
   "include/app/AppBackend.hpp": {
-    "mtime": 1790126854.5995953,
-    "ast_hash": "5a918f35bcb025ca8a8d9d3d18474144",
+    "mtime": 1790131770.5766482,
+    "ast_hash": "3c175b1447061e9ac33b9dc0ede9169e",
     "semantic_hash": ""
   },
   "include/app/AppController.hpp": {
-    "mtime": 1790126612.0753245,
-    "ast_hash": "31e20a4aa6891cd4bb5686c507ce2b84",
+    "mtime": 1790131132.3160923,
+    "ast_hash": "56174422f0268a5618d46924180a514f",
     "semantic_hash": ""
   },
   "include/app/FileIOHandler.hpp": {
@@ -455,23 +455,23 @@
     "semantic_hash": ""
   },
   "src/app/AnalysisRunner.cpp": {
-    "mtime": 1789591639.3514833,
-    "ast_hash": "1870f633e0170d932d6c736b3e473c8e",
+    "mtime": 1790131793.6186347,
+    "ast_hash": "7233e593195d9dfc3530e64399354d17",
     "semantic_hash": ""
   },
   "src/app/AppBackend.cpp": {
-    "mtime": 1790126854.6056669,
-    "ast_hash": "72c0b7f9f78bba5183951da1d5727fdc",
+    "mtime": 1790131824.0586908,
+    "ast_hash": "5c502c91c5e9f4f91d3b6868b1e4c0b5",
     "semantic_hash": ""
   },
   "src/app/AppController.cpp": {
-    "mtime": 1790126854.6247175,
-    "ast_hash": "843d0910f01e1befd5c48ef648cd6e31",
+    "mtime": 1790131594.5459347,
+    "ast_hash": "51c3078ad9af44b2c6f9bdb18b21f17b",
     "semantic_hash": ""
   },
   "src/app/FileIOHandler.cpp": {
-    "mtime": 1790110819.4446473,
-    "ast_hash": "34ae1af0f836d0c0707c96f61a12df39",
+    "mtime": 1790131901.2462647,
+    "ast_hash": "04f4ec23a4527e758cf6e5a74f599268",
     "semantic_hash": ""
   },
   "src/app/InputValidator.cpp": {
@@ -690,8 +690,8 @@
     "semantic_hash": ""
   },
   "src/calculators/XRDCalculator.cpp": {
-    "mtime": 1790126959.359555,
-    "ast_hash": "5b9bc7aefd17c1eea84bb9a3b5a51af2",
+    "mtime": 1790130459.2254999,
+    "ast_hash": "246787bd5f0fde97e03e776bf827692c",
     "semantic_hash": ""
   },
   "src/cli/CliParser.cpp": {
@@ -700,8 +700,8 @@
     "semantic_hash": ""
   },
   "src/cli/main_cli.cpp": {
-    "mtime": 1789591639.5885274,
-    "ast_hash": "f2dba55d02a6af95ab49c6d8a4f55882",
+    "mtime": 1790131784.504643,
+    "ast_hash": "4cb174bea4a17d1ded92915712830ac2",
     "semantic_hash": ""
   },
   "src/core/Cell.cpp": {
@@ -880,8 +880,8 @@
     "semantic_hash": ""
   },
   "tests/functional/app/AppControllerTests.cpp": {
-    "mtime": 1790127103.7202485,
-    "ast_hash": "57de60ed6db28f0c2e7b06cf881de8c5",
+    "mtime": 1790131817.7715943,
+    "ast_hash": "77ec136ea6498fafc42269af1d0d760c",
     "semantic_hash": ""
   },
   "tests/functional/app/SlintSvgIntegrationTests.cpp": {
@@ -1000,8 +1000,8 @@
     "semantic_hash": ""
   },
   "tests/unit/app/AppBackendTests.cpp": {
-    "mtime": 1790127075.0457187,
-    "ast_hash": "da99c35e0783b265d901653e9cfee37c",
+    "mtime": 1790131805.9016173,
+    "ast_hash": "599f88617bdf7497566314fea33ae593",
     "semantic_hash": ""
   },
   "tests/unit/app/PresetManagerTests.cpp": {
@@ -1955,8 +1955,8 @@
     "semantic_hash": ""
   },
   "tests/functional/app/AppBackendIntegrationTests.cpp": {
-    "mtime": 1789591639.9106638,
-    "ast_hash": "0495021824d4ad8cb9a61751467b2c86",
+    "mtime": 1790131811.4356074,
+    "ast_hash": "26d07ac50a051b0c572892ba116b2dd7",
     "semantic_hash": ""
   },
   "tests/test_adapters.py": {
@@ -2335,8 +2335,8 @@
     "semantic_hash": ""
   },
   "src/app/BondCutoffMapper.cpp": {
-    "mtime": 1790074564.5014257,
-    "ast_hash": "66c769ce248cac61f6aa94dee4138a2c",
+    "mtime": 1790131296.4896524,
+    "ast_hash": "ec2f29bb048277deaafbea7d730560ba",
     "semantic_hash": ""
   },
   "src/app/PlotExportService.cpp": {
