@@ -161,6 +161,10 @@ AppController::AppController(::AppWindow &window, AppBackend &backend)
   window_.on_reset_rdf_options([this]() { handleResetRDFOptions(); });
   window_.on_reset_angle_options([this]() { handleResetAngleOptions(); });
   window_.on_reset_sq_options([this]() { handleResetSQOptions(); });
+  window_.on_reset_xrd_options([this]() { handleResetXRDOptions(); });
+  window_.on_xrd_radiation_preset_changed([this](int idx) { handleXRDPresetChanged(idx); });
+  window_.on_apply_scaled_cutoffs([this](float factor) { handleApplyScaledCutoffs(factor); });
+  window_.on_set_uniform_cutoff([this](float max_val) { handleSetUniformCutoff(max_val); });
   window_.on_reset_rings_options([this]() { handleResetRingsOptions(); });
   window_.on_reset_smoothing_options([this]() { handleResetSmoothingOptions(); });
   window_.on_reset_advanced_options([this]() { handleResetAdvancedOptions(); });
@@ -319,6 +323,15 @@ void AppController::handleOptionstoUI() {
     opts.hyper_samples = slint::SharedString(std::to_string(opt.hyper_samples));
     window_.set_analysis_options(opts);
   }
+  {
+    auto opts = window_.get_analysis_options();
+    opts.xrd_radiation_preset = 0;
+    opts.xrd_lambda = slint::SharedString(std::format("{:.4f}", opt.xrd_params.lambda));
+    opts.xrd_theta_min = slint::SharedString(std::format("{:.1f}", opt.xrd_params.theta_min));
+    opts.xrd_theta_max = slint::SharedString(std::format("{:.1f}", opt.xrd_params.theta_max));
+    opts.xrd_bin_width = slint::SharedString(std::format("{:.2f}", opt.xrd_params.bin_width));
+    window_.set_analysis_options(opts);
+  }
 
   {
     auto opts = window_.get_analysis_options();
@@ -434,6 +447,14 @@ ProgramOptions AppController::handleOptionsfromUI() {
   opt.material_type = window_.get_analysis_options().material_type;
   opt.lef_cutoff = safeParse(window_.get_analysis_options().lef_cutoff, opt.lef_cutoff);
   opt.lef_sigma = safeParse(window_.get_analysis_options().lef_sigma, opt.lef_sigma);
+  opt.xrd_params.lambda =
+      safeParse(window_.get_analysis_options().xrd_lambda, opt.xrd_params.lambda);
+  opt.xrd_params.theta_min =
+      safeParse(window_.get_analysis_options().xrd_theta_min, opt.xrd_params.theta_min);
+  opt.xrd_params.theta_max =
+      safeParse(window_.get_analysis_options().xrd_theta_max, opt.xrd_params.theta_max);
+  opt.xrd_params.bin_width =
+      safeParse(window_.get_analysis_options().xrd_bin_width, opt.xrd_params.bin_width);
 
   // Parse Frame Selection
   // - Handles string presets "start" and "end" case-insensitively.
@@ -723,6 +744,93 @@ void AppController::handleClearComparisonCurves() {
   if (plot_controller_) {
     plot_controller_->handleClearPinnedRuns();
   }
+}
+
+void AppController::handleResetXRDOptions() {
+  auto opts = window_.get_analysis_options();
+  opts.xrd_radiation_preset = 0;
+  opts.xrd_lambda = slint::SharedString(std::format("{:.4f}", AppDefaults::XRD_LAMBDA));
+  opts.xrd_theta_min = slint::SharedString(std::format("{:.1f}", AppDefaults::XRD_THETA_MIN));
+  opts.xrd_theta_max = slint::SharedString(std::format("{:.1f}", AppDefaults::XRD_THETA_MAX));
+  opts.xrd_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::XRD_BIN_WIDTH));
+  window_.set_analysis_options(opts);
+  static_cast<void>(input_validator_->validateInputs());
+}
+
+void AppController::handleXRDPresetChanged(int preset_idx) {
+  auto opts = window_.get_analysis_options();
+  opts.xrd_radiation_preset = preset_idx;
+  switch (preset_idx) {
+  case 0: // Cu-Ka
+    opts.xrd_lambda = "1.5406";
+    break;
+  case 1: // Mo-Ka
+    opts.xrd_lambda = "0.7107";
+    break;
+  case 2: // Co-Ka
+    opts.xrd_lambda = "1.7890";
+    break;
+  case 3: // Cr-Ka
+    opts.xrd_lambda = "2.2897";
+    break;
+  case 4: // Custom
+  default:
+    break;
+  }
+  window_.set_analysis_options(opts);
+  static_cast<void>(input_validator_->validateInputs());
+}
+
+void AppController::handleApplyScaledCutoffs(float scale_factor) {
+  if (backend_.cell() == nullptr || scale_factor <= 0.0F) {
+    return;
+  }
+  const auto scaled_cutoffs = backend_.applyScaledBondCutoffs(static_cast<real_t>(scale_factor));
+  const auto &elements = backend_.cell()->elements();
+  const auto num_elements = elements.size();
+
+  auto slint_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
+  for (size_t i = 0; i < num_elements; ++i) {
+    for (size_t j = i; j < num_elements; ++j) {
+      const real_t min_d = std::sqrt(scaled_cutoffs[i][j].min_sq);
+      const real_t max_d = std::sqrt(scaled_cutoffs[i][j].max_sq);
+      slint_cutoffs->push_back(BondCutoff{
+          .element1 = slint::SharedString(elements[i].symbol),
+          .element2 = slint::SharedString(elements[j].symbol),
+          .min_distance = slint::SharedString(std::format("{:.2f}", min_d)),
+          .max_distance = slint::SharedString(std::format("{:.2f}", max_d)),
+      });
+    }
+  }
+
+  window_.set_bond_cutoffs(slint_cutoffs);
+  window_.set_bond_cutoffs_reset_trigger(window_.get_bond_cutoffs_reset_trigger() + 1);
+}
+
+void AppController::handleSetUniformCutoff(float max_cutoff) {
+  if (backend_.cell() == nullptr || max_cutoff <= 0.0F) {
+    return;
+  }
+  const auto uniform_cutoffs = backend_.setUniformBondCutoff(0.0, static_cast<real_t>(max_cutoff));
+  const auto &elements = backend_.cell()->elements();
+  const auto num_elements = elements.size();
+
+  auto slint_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
+  for (size_t i = 0; i < num_elements; ++i) {
+    for (size_t j = i; j < num_elements; ++j) {
+      const real_t min_d = std::sqrt(uniform_cutoffs[i][j].min_sq);
+      const real_t max_d = std::sqrt(uniform_cutoffs[i][j].max_sq);
+      slint_cutoffs->push_back(BondCutoff{
+          .element1 = slint::SharedString(elements[i].symbol),
+          .element2 = slint::SharedString(elements[j].symbol),
+          .min_distance = slint::SharedString(std::format("{:.2f}", min_d)),
+          .max_distance = slint::SharedString(std::format("{:.2f}", max_d)),
+      });
+    }
+  }
+
+  window_.set_bond_cutoffs(slint_cutoffs);
+  window_.set_bond_cutoffs_reset_trigger(window_.get_bond_cutoffs_reset_trigger() + 1);
 }
 
 } // namespace correlation::app

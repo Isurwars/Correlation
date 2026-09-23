@@ -51,6 +51,12 @@ struct AppDefaults {
 
   static constexpr real_t TIME_STEP = 1.0; ///< Default time step (fs).
 
+  // XRD Defaults
+  static constexpr real_t XRD_LAMBDA = 1.5406;   ///< Default X-ray wavelength in Å (Cu K-alpha).
+  static constexpr real_t XRD_THETA_MIN = 10.0;  ///< Default min 2-theta in degrees.
+  static constexpr real_t XRD_THETA_MAX = 140.0; ///< Default max 2-theta in degrees.
+  static constexpr real_t XRD_BIN_WIDTH = 0.05;  ///< Default 2-theta bin width in degrees.
+
   // --- Status Messages ---
   static constexpr const char *MSG_RUNNING_ANALYSIS =
       "Running Analysis..."; ///< Status: Computation in progress.
@@ -108,6 +114,14 @@ struct ProgramOptions {
   real_t time_step = AppDefaults::TIME_STEP; ///< Simulation time step in fs.
 
   int material_type = 0; ///< Material type (0: Amorphous, 1: Liquid, 2: Crystalline).
+
+  /** @brief Parameters for X-Ray Diffraction calculation. */
+  correlation::analysis::XRDParams xrd_params{
+      .lambda = AppDefaults::XRD_LAMBDA,
+      .theta_min = AppDefaults::XRD_THETA_MIN,
+      .theta_max = AppDefaults::XRD_THETA_MAX,
+      .bin_width = AppDefaults::XRD_BIN_WIDTH,
+  };
 
   /** @brief Bond cutoff ranges for neighbor & topological calculations. */
   correlation::analysis::BondCutoffMatrix bond_cutoffs;
@@ -268,6 +282,22 @@ public:
    * @param cutoffs Matrix of cutoffs.
    */
   void setBondCutoffs(const correlation::analysis::BondCutoffMatrix &cutoffs);
+
+  /**
+   * @brief Scales recommended covalent cutoffs by a multiplicative factor.
+   * @param scale_factor Multiplier applied to covalent bond distances (e.g. 1.15).
+   * @return The newly scaled BondCutoffMatrix.
+   */
+  correlation::analysis::BondCutoffMatrix applyScaledBondCutoffs(real_t scale_factor);
+
+  /**
+   * @brief Assigns uniform min and max cutoff distances across all atom pairs.
+   * @param min_cutoff Minimum cutoff distance in Å.
+   * @param max_cutoff Maximum cutoff distance in Å.
+   * @return The updated uniform BondCutoffMatrix.
+   */
+  correlation::analysis::BondCutoffMatrix setUniformBondCutoff(real_t min_cutoff,
+                                                               real_t max_cutoff);
 
   /**
    * @brief Returns the names of all histograms available from the last

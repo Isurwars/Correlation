@@ -134,6 +134,39 @@ void AppBackend::setBondCutoffs(const correlation::analysis::BondCutoffMatrix &c
     return;
   }
   trajectory_->setBondCutoffs(cutoffs);
+  options_.bond_cutoffs = cutoffs;
+}
+
+correlation::analysis::BondCutoffMatrix AppBackend::applyScaledBondCutoffs(real_t scale_factor) {
+  auto cutoffs = getRecommendedBondCutoffs();
+  if (cutoffs.empty() || scale_factor <= static_cast<real_t>(0.0)) {
+    return cutoffs;
+  }
+  const real_t factor_sq = scale_factor * scale_factor;
+  for (auto &row : cutoffs) {
+    for (auto &range : row) {
+      range.min_sq *= factor_sq;
+      range.max_sq *= factor_sq;
+    }
+  }
+  setBondCutoffs(cutoffs);
+  return cutoffs;
+}
+
+correlation::analysis::BondCutoffMatrix AppBackend::setUniformBondCutoff(real_t min_cutoff,
+                                                                         real_t max_cutoff) {
+  if (!cell()) {
+    return {};
+  }
+  const size_t num_elements = cell()->elements().size();
+  const real_t min_sq = (min_cutoff > static_cast<real_t>(0.0)) ? (min_cutoff * min_cutoff)
+                                                                : static_cast<real_t>(0.0);
+  const real_t max_sq = (max_cutoff > min_cutoff) ? (max_cutoff * max_cutoff) : min_sq;
+  correlation::analysis::BondCutoffMatrix cutoffs(
+      num_elements,
+      std::vector<correlation::analysis::BondCutoffRange>(num_elements, {min_sq, max_sq}));
+  setBondCutoffs(cutoffs);
+  return cutoffs;
 }
 
 std::vector<std::string> AppBackend::getAvailableHistogramNames() const {
@@ -216,6 +249,7 @@ toEngineConfig(const ProgramOptions &options, std::atomic<bool> *cancel_flag) {
   config.settings.lef_sigma = options.lef_sigma;
   config.settings.hyperuniformity_samples = options.hyper_samples;
   config.settings.cancel_flag = cancel_flag;
+  config.settings.xrd_params = options.xrd_params;
 
   config.bond_cutoffs = options.bond_cutoffs;
   config.min_frame = options.min_frame;

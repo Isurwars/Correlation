@@ -216,4 +216,41 @@ TEST_F(AppBackendTests, LoadValidCarFileAndRunAnalysisAndWriteFiles) {
   EXPECT_TRUE(std::filesystem::exists(out_base + "_g.csv"));
 }
 
+TEST_F(AppBackendTests, XRDOptionsDefaultsAndSettings) {
+  correlation::app::AppBackend backend;
+  const auto opts = backend.options();
+  EXPECT_DOUBLE_EQ(opts.xrd_params.lambda, correlation::app::AppDefaults::XRD_LAMBDA);
+  EXPECT_DOUBLE_EQ(opts.xrd_params.theta_min, correlation::app::AppDefaults::XRD_THETA_MIN);
+  EXPECT_DOUBLE_EQ(opts.xrd_params.theta_max, correlation::app::AppDefaults::XRD_THETA_MAX);
+  EXPECT_DOUBLE_EQ(opts.xrd_params.bin_width, correlation::app::AppDefaults::XRD_BIN_WIDTH);
+}
+
+TEST_F(AppBackendTests, ApplyScaledBondCutoffs) {
+  correlation::app::AppBackend backend;
+  std::string const data_dir = getTestDataDir();
+  std::string const filepath = data_dir + "xyz/clean.xyz";
+  backend.load_file(filepath);
+
+  const auto cutoffs = backend.applyScaledBondCutoffs(1.2);
+  ASSERT_EQ(cutoffs.size(), 2);
+  ASSERT_EQ(cutoffs[0].size(), 2);
+  EXPECT_GT(cutoffs[0][0].max_sq, 0.0);
+  EXPECT_GT(cutoffs[0][1].max_sq, 0.0);
+}
+
+TEST_F(AppBackendTests, SetUniformBondCutoff) {
+  correlation::app::AppBackend backend;
+  std::string const data_dir = getTestDataDir();
+  std::string const filepath = data_dir + "xyz/clean.xyz";
+  backend.load_file(filepath);
+
+  const auto cutoffs = backend.setUniformBondCutoff(0.5, 3.5);
+  ASSERT_EQ(cutoffs.size(), 2);
+  ASSERT_EQ(cutoffs[0].size(), 2);
+  EXPECT_NEAR(cutoffs[0][0].min_sq, 0.25, 1e-4);
+  EXPECT_NEAR(cutoffs[0][0].max_sq, 12.25, 1e-4);
+  EXPECT_NEAR(cutoffs[0][1].min_sq, 0.25, 1e-4);
+  EXPECT_NEAR(cutoffs[0][1].max_sq, 12.25, 1e-4);
+}
+
 } // namespace

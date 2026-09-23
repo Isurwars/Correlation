@@ -194,6 +194,43 @@ bool InputValidator::validateRadialAndScattering(AppErrors &errs, float &r_max_v
     valid = false;
   }
 
+  float lambda_val = 0.0F;
+  const std::string lambda_s = window_->get_analysis_options().xrd_lambda.data();
+  if (!isPositiveFloat(lambda_s, lambda_val)) {
+    errs.xrd_lambda_error = "Must be a positive number";
+    valid = false;
+  }
+
+  float theta_min_val = 0.0F;
+  const std::string theta_min_s = window_->get_analysis_options().xrd_theta_min.data();
+  if (!isNonNegativeFloat(theta_min_s, theta_min_val)) {
+    errs.xrd_theta_min_error = "Must be non-negative";
+    valid = false;
+  } else if (theta_min_val >= 180.0F) {
+    errs.xrd_theta_min_error = "Must be < 180°";
+    valid = false;
+  }
+
+  float theta_max_val = 0.0F;
+  const std::string theta_max_s = window_->get_analysis_options().xrd_theta_max.data();
+  if (!isPositiveFloat(theta_max_s, theta_max_val)) {
+    errs.xrd_theta_max_error = "Must be a positive number";
+    valid = false;
+  } else if (theta_max_val > 180.0F) {
+    errs.xrd_theta_max_error = "Must be ≤ 180°";
+    valid = false;
+  } else if (theta_min_val >= theta_max_val) {
+    errs.xrd_theta_max_error = "Must be > Min 2θ";
+    valid = false;
+  }
+
+  float bin_width_val = 0.0F;
+  const std::string bin_width_s = window_->get_analysis_options().xrd_bin_width.data();
+  if (!isPositiveFloat(bin_width_s, bin_width_val)) {
+    errs.xrd_bin_width_error = "Must be a positive number";
+    valid = false;
+  }
+
   return valid;
 }
 
@@ -358,6 +395,10 @@ bool InputValidator::validateInputs() {
   errs.export_marker_size_error = "";
   errs.lef_cutoff_error = "";
   errs.lef_sigma_error = "";
+  errs.xrd_lambda_error = "";
+  errs.xrd_theta_min_error = "";
+  errs.xrd_theta_max_error = "";
+  errs.xrd_bin_width_error = "";
 
   float r_max_val = 0.0F;
   float q_max_val = 0.0F;
@@ -401,7 +442,11 @@ bool InputValidator::validateInputs() {
       current_errs.export_line_width_error != errs.export_line_width_error ||
       current_errs.export_marker_size_error != errs.export_marker_size_error ||
       current_errs.lef_cutoff_error != errs.lef_cutoff_error ||
-      current_errs.lef_sigma_error != errs.lef_sigma_error) {
+      current_errs.lef_sigma_error != errs.lef_sigma_error ||
+      current_errs.xrd_lambda_error != errs.xrd_lambda_error ||
+      current_errs.xrd_theta_min_error != errs.xrd_theta_min_error ||
+      current_errs.xrd_theta_max_error != errs.xrd_theta_max_error ||
+      current_errs.xrd_bin_width_error != errs.xrd_bin_width_error) {
     window_->set_app_errors(errs);
   }
 

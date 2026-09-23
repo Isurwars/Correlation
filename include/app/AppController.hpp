@@ -100,6 +100,29 @@ public:
   void handleResetSQOptions();
 
   /**
+   * @brief Restores default powder XRD options in the UI.
+   */
+  void handleResetXRDOptions();
+
+  /**
+   * @brief Updates XRD wavelength based on radiation source preset.
+   * @param preset_idx Selected preset index.
+   */
+  void handleXRDPresetChanged(int preset_idx);
+
+  /**
+   * @brief Scales recommended covalent cutoffs and updates the UI matrix.
+   * @param scale_factor Multiplier applied to covalent distances.
+   */
+  void handleApplyScaledCutoffs(float scale_factor);
+
+  /**
+   * @brief Sets uniform cutoffs across all pairs and updates the UI matrix.
+   * @param max_cutoff Maximum cutoff distance in Å.
+   */
+  void handleSetUniformCutoff(float max_cutoff);
+
+  /**
    * @brief Restores default topological rings options in the UI.
    */
   void handleResetRingsOptions();

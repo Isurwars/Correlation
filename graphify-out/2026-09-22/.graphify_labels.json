@@ -359,6 +359,7 @@
   "357": "PlotController::requestPlotUpdate",
   "358": "XRDCalculator",
   "359": "NeighborGraph.cpp",
+  "360": "HDF5Writer.cpp",
   "364": "SincIntegralParams",
   "368": "SYCLXRDParams",
   "369": "core_bindings.cpp",

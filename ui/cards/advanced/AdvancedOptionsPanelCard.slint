@@ -10,6 +10,7 @@ import {
     Vertical,
 } from "../../material/material.slint";
 import { SQOptionsCard } from "SQOptionsCard.slint";
+import { XRDOptionsCard } from "XRDOptionsCard.slint";
 import { RingsOptionsCard } from "RingsOptionsCard.slint";
 import { SmoothingOptionsCard } from "SmoothingOptionsCard.slint";
 import { AdvancedOptionsCard } from "AdvancedOptionsCard.slint";
@@ -30,6 +31,19 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
     in property <string> q_bin_error: "";
     in property <string> r_int_max_error: "";
     callback reset_sq_options();
+
+    // XRD Options
+    in-out property <int> xrd_radiation_preset: 0;
+    in-out property <string> xrd_lambda: "1.5406";
+    in-out property <string> xrd_theta_min: "10.0";
+    in-out property <string> xrd_theta_max: "140.0";
+    in-out property <string> xrd_bin_width: "0.05";
+    in property <string> xrd_lambda_error: "";
+    in property <string> xrd_theta_min_error: "";
+    in property <string> xrd_theta_max_error: "";
+    in property <string> xrd_bin_width_error: "";
+    callback reset_xrd_options();
+    callback xrd_radiation_preset_changed(int);
 
     // Rings Options
     in-out property <string> max_ring_size;
@@ -54,30 +68,35 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
 
     out property <string> hovered_tooltip_text:
         sq_card.hovered_tooltip_text != "" ? sq_card.hovered_tooltip_text :
+        xrd_card.hovered_tooltip_text != "" ? xrd_card.hovered_tooltip_text :
         rings_card.hovered_tooltip_text != "" ? rings_card.hovered_tooltip_text :
         smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_tooltip_text :
         advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_tooltip_text : "";
 
     out property <length> hovered_x:
         sq_card.hovered_tooltip_text != "" ? sq_card.hovered_x :
+        xrd_card.hovered_tooltip_text != "" ? xrd_card.hovered_x :
         rings_card.hovered_tooltip_text != "" ? rings_card.hovered_x :
         smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_x :
         advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_x : 0px;
 
     out property <length> hovered_y:
         sq_card.hovered_tooltip_text != "" ? sq_card.hovered_y :
+        xrd_card.hovered_tooltip_text != "" ? xrd_card.hovered_y :
         rings_card.hovered_tooltip_text != "" ? rings_card.hovered_y :
         smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_y :
         advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_y : 0px;
 
     out property <length> hovered_width:
         sq_card.hovered_tooltip_text != "" ? sq_card.hovered_width :
+        xrd_card.hovered_tooltip_text != "" ? xrd_card.hovered_width :
         rings_card.hovered_tooltip_text != "" ? rings_card.hovered_width :
         smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_width :
         advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_width : 0px;
 
     out property <length> hovered_height:
         sq_card.hovered_tooltip_text != "" ? sq_card.hovered_height :
+        xrd_card.hovered_tooltip_text != "" ? xrd_card.hovered_height :
         rings_card.hovered_tooltip_text != "" ? rings_card.hovered_height :
         smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_height :
         advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_height : 0px;
@@ -100,6 +119,26 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
                 q_bin_error: root.q_bin_error;
                 r_int_max_error: root.r_int_max_error;
                 reset => { root.reset_sq_options(); }
+                visible: root.has_scattering_active;
+                height: root.has_scattering_active ? self.preferred-height : 0px;
+                opacity: root.has_scattering_active ? 1.0 : 0.0;
+                animate opacity { duration: 150ms; }
+            }
+
+            // Powder Diffraction (XRD) Card
+            xrd_card := XRDOptionsCard {
+                file_loaded: root.file_loaded;
+                radiation_preset <=> root.xrd_radiation_preset;
+                lambda <=> root.xrd_lambda;
+                theta_min <=> root.xrd_theta_min;
+                theta_max <=> root.xrd_theta_max;
+                bin_width <=> root.xrd_bin_width;
+                lambda_error: root.xrd_lambda_error;
+                theta_min_error: root.xrd_theta_min_error;
+                theta_max_error: root.xrd_theta_max_error;
+                bin_width_error: root.xrd_bin_width_error;
+                reset => { root.reset_xrd_options(); }
+                radiation_preset_changed(idx) => { root.xrd_radiation_preset_changed(idx); }
                 visible: root.has_scattering_active;
                 height: root.has_scattering_active ? self.preferred-height : 0px;
                 opacity: root.has_scattering_active ? 1.0 : 0.0;

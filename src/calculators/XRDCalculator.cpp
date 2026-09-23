@@ -94,12 +94,12 @@ real_t calculateIntensityAtQ(real_t q_value, const std::map<std::string, real_t>
     return 0.0;
   }
 
-  correlation::KahanAccumulator<real_t> intensity_Q;
+  correlation::KahanAccumulator<real_t> intensity_q;
 
   // 1. Self-scattering term: sum_i c_i * f_i(Q)^2
   for (const auto &[sym, concentration] : concentrations) {
     auto const form_factor = XRDCalculator::getAtomicFormFactor(sym, q_value);
-    intensity_Q.add(static_cast<real_t>(concentration) * form_factor * form_factor);
+    intensity_q.add(static_cast<real_t>(concentration) * form_factor * form_factor);
   }
 
   // 2. Inter-atomic interference term from partial S_ij(Q):
@@ -112,20 +112,36 @@ real_t calculateIntensityAtQ(real_t q_value, const std::map<std::string, real_t>
     real_t delta_ij = p_sq.is_identical ? static_cast<real_t>(1.0) : static_cast<real_t>(0.0);
     real_t weight = factor * std::sqrt(p_sq.c_i * p_sq.c_j);
 
-    intensity_Q.add(weight * f_1 * f_2 * (sq_val - delta_ij));
+    intensity_q.add(weight * f_1 * f_2 * (sq_val - delta_ij));
   }
 
-  return intensity_Q.value();
+  return intensity_q.value();
 }
 } // namespace
 
 void XRDCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                    const correlation::analysis::AnalysisSettings &settings) const {
+  const real_t wavelength_val =
+      (settings.xrd_params.lambda > 0.0) ? settings.xrd_params.lambda : static_cast<real_t>(1.5406);
+  const real_t min_theta_val = (settings.xrd_params.theta_max > settings.xrd_params.theta_min)
+                                   ? settings.xrd_params.theta_min
+                                   : static_cast<real_t>(10.0);
+  const real_t max_theta_val = (settings.xrd_params.theta_max > settings.xrd_params.theta_min)
+                                   ? settings.xrd_params.theta_max
+                                   : static_cast<real_t>(140.0);
+  const real_t bin_width_val = (settings.xrd_params.bin_width > 0.0) ? settings.xrd_params.bin_width
+                                                                     : static_cast<real_t>(0.05);
+
+  const Wavelength wavelength{wavelength_val};
+  const MinTheta min_theta{min_theta_val};
+  const MaxTheta max_theta{max_theta_val};
+  const BinWidth bin_width{bin_width_val};
+
   // Primary path: Use S(Q) if available
   if (dists.getAllHistograms().contains("S_q")) {
     dists.addHistogram("XRD", calculateFromSq(dists.getHistogram("S_q"), dists.cell(),
-                                              dists.getAshcroftWeights(), Wavelength{1.5406},
-                                              MinTheta{10.0}, MaxTheta{140.0}, BinWidth{0.05}));
+                                              dists.getAshcroftWeights(), wavelength, min_theta,
+                                              max_theta, bin_width));
     return;
   }
 
@@ -138,8 +154,8 @@ void XRDCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
   }
   if (dists.getAllHistograms().contains("g_r")) {
     dists.addHistogram("XRD", calculate(dists.getHistogram("g_r"), dists.cell(),
-                                        dists.getAshcroftWeights(), Wavelength{1.5406},
-                                        MinTheta{10.0}, MaxTheta{140.0}, BinWidth{0.05}));
+                                        dists.getAshcroftWeights(), wavelength, min_theta,
+                                        max_theta, bin_width));
   }
 }
 
@@ -166,9 +182,8 @@ XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
   const auto &r_bins = g_r_hist.bins;
   const real_t delta_r = r_bins[1] - r_bins[0];
   const real_t total_rho = static_cast<real_t>(cell.atomCount()) / cell.volume();
-  const real_t max_r = r_bins.back();
 
-  size_t num_bins = static_cast<size_t>((theta_max_val - theta_min_val) / bin_width_val) + 1;
+  const size_t num_bins = static_cast<size_t>((theta_max_val - theta_min_val) / bin_width_val) + 1;
   correlation::analysis::Histogram xrd_hist;
   xrd_hist.x_label = "2θ";
   xrd_hist.title = "XRD Pattern";
@@ -231,11 +246,11 @@ XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
             continue;
           }
 
-          correlation::KahanAccumulator<real_t> intensity_Q;
+          correlation::KahanAccumulator<real_t> intensity_q;
 
           for (const auto &[sym, concentration] : concentrations) {
             auto const form_factor = getAtomicFormFactor(sym, q_value);
-            intensity_Q.add(static_cast<real_t>(concentration) * form_factor * form_factor);
+            intensity_q.add(static_cast<real_t>(concentration) * form_factor * form_factor);
           }
 
           // Precompute sinqr once per theta step (angle bin)
@@ -251,12 +266,12 @@ XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
             real_t const form_factor_1 = getAtomicFormFactor(partial_xrd.sym1, q_value);
             real_t const form_factor_2 = getAtomicFormFactor(partial_xrd.sym2, q_value);
 
-            intensity_Q.add(static_cast<real_t>(form_factor_1 * form_factor_2 *
+            intensity_q.add(static_cast<real_t>(form_factor_1 * form_factor_2 *
                                                 (correlation::math::four_pi * total_rho / q_value) *
                                                 integral));
           }
 
-          intensities[i] = intensity_Q.value();
+          intensities[i] = intensity_q.value();
         }
       });
 
@@ -315,7 +330,7 @@ correlation::analysis::Histogram XRDCalculator::calculateFromSq(
     throw std::invalid_argument("Wavelength lambda must be strictly positive.");
   }
 
-  size_t num_bins = static_cast<size_t>((theta_max_val - theta_min_val) / bin_width_val) + 1;
+  const size_t num_bins = static_cast<size_t>((theta_max_val - theta_min_val) / bin_width_val) + 1;
   correlation::analysis::Histogram xrd_hist;
   xrd_hist.x_label = "2θ";
   xrd_hist.title = "XRD Pattern";

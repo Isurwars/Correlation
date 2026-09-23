@@ -5,6 +5,7 @@ import {
     OutlinedCard,
     ExpandableHeader,
     TextField,
+    FilledButton,
     MaterialText,
     Vertical,
     Horizontal,
@@ -19,7 +20,11 @@ export component BondCutoffsCard inherits OutlinedCard {
     in property <[AtomCount]> atom_counts;
     in-out property <[BondCutoff]> bond_cutoffs;
     in property <int> bond_cutoffs_reset_trigger: 0;
+    in-out property <string> scale_factor: "1.15";
+    in-out property <string> uniform_cutoff: "3.5";
     callback reset_bond_cutoffs();
+    callback apply_scaled_cutoffs(float);
+    callback set_uniform_cutoff(float);
 
     pure function get_flat_index(i: int, j: int, N: int) -> int {
         let r = min(i, j);
@@ -117,6 +122,47 @@ export component BondCutoffsCard inherits OutlinedCard {
                         style: MaterialTypography.label_small;
                         font_size: 11px;
                         color: MaterialPalette.on_surface_variant;
+                    }
+                }
+            }
+
+            if (root.file_loaded): HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_8;
+                alignment: space-between;
+
+                HorizontalLayout {
+                    spacing: 6px;
+                    alignment: start;
+                    TextField {
+                        enabled: root.file_loaded;
+                        width: 95px;
+                        label: "Scale Factor";
+                        text <=> root.scale_factor;
+                    }
+                    FilledButton {
+                        enabled: root.file_loaded;
+                        text: "Auto Scale";
+                        clicked => {
+                            root.apply_scaled_cutoffs(root.scale_factor.to-float());
+                        }
+                    }
+                }
+
+                HorizontalLayout {
+                    spacing: 6px;
+                    alignment: end;
+                    TextField {
+                        enabled: root.file_loaded;
+                        width: 95px;
+                        label: "Uniform Max";
+                        text <=> root.uniform_cutoff;
+                    }
+                    FilledButton {
+                        enabled: root.file_loaded;
+                        text: "Set Uniform";
+                        clicked => {
+                            root.set_uniform_cutoff(root.uniform_cutoff.to-float());
+                        }
                     }
                 }
             }

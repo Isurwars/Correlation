@@ -134,7 +134,12 @@ export component AppWindow inherits Window {
         material_type: 0,
         lef_cutoff: "5.0",
         lef_sigma: "0.2",
-        hyper_samples: "10000"
+        hyper_samples: "10000",
+        xrd_radiation_preset: 0,
+        xrd_lambda: "1.5406",
+        xrd_theta_min: "10.0",
+        xrd_theta_max: "140.0",
+        xrd_bin_width: "0.05"
     };
     in-out property <AppErrors> app_errors;
     in-out property <[BondCutoff]> bond_cutoffs: [];
@@ -170,6 +175,11 @@ export component AppWindow inherits Window {
     property <string> lef_cutoff <=> analysis_options.lef_cutoff;
     property <string> lef_sigma <=> analysis_options.lef_sigma;
     property <string> hyper_samples <=> analysis_options.hyper_samples;
+    property <int> xrd_radiation_preset <=> analysis_options.xrd_radiation_preset;
+    property <string> xrd_lambda <=> analysis_options.xrd_lambda;
+    property <string> xrd_theta_min <=> analysis_options.xrd_theta_min;
+    property <string> xrd_theta_max <=> analysis_options.xrd_theta_max;
+    property <string> xrd_bin_width <=> analysis_options.xrd_bin_width;
 
     property <string> r_max_error <=> app_errors.r_max_error;
     property <string> r_bin_error <=> app_errors.r_bin_error;
@@ -187,6 +197,10 @@ export component AppWindow inherits Window {
     property <string> lef_cutoff_error <=> app_errors.lef_cutoff_error;
     property <string> lef_sigma_error <=> app_errors.lef_sigma_error;
     property <string> hyper_samples_error <=> app_errors.hyper_samples_error;
+    property <string> xrd_lambda_error <=> app_errors.xrd_lambda_error;
+    property <string> xrd_theta_min_error <=> app_errors.xrd_theta_min_error;
+    property <string> xrd_theta_max_error <=> app_errors.xrd_theta_max_error;
+    property <string> xrd_bin_width_error <=> app_errors.xrd_bin_width_error;
 
     property <int> export_size_preset <=> export_config.size_preset;
     property <int> export_palette <=> export_config.palette;
@@ -275,6 +289,10 @@ export component AppWindow inherits Window {
     callback reset_rdf_options();
     callback reset_angle_options();
     callback reset_sq_options();
+    callback reset_xrd_options();
+    callback xrd_radiation_preset_changed(int);
+    callback apply_scaled_cutoffs(float);
+    callback set_uniform_cutoff(float);
     callback reset_rings_options();
     callback reset_smoothing_options();
     callback reset_advanced_options();
@@ -666,6 +684,12 @@ export component AppWindow inherits Window {
                             reset_bond_cutoffs => {
                                 root.reset_bond_cutoffs();
                             }
+                            apply_scaled_cutoffs(factor) => {
+                                root.apply_scaled_cutoffs(factor);
+                            }
+                            set_uniform_cutoff(max_val) => {
+                                root.set_uniform_cutoff(max_val);
+                            }
 
                             r_max <=> root.analysis_options.r_max;
                             r_bin_width <=> root.analysis_options.r_bin_width;
@@ -703,6 +727,22 @@ export component AppWindow inherits Window {
                             r_int_max_error: root.app_errors.r_int_max_error;
                             reset_sq_options => {
                                 root.reset_sq_options();
+                            }
+
+                            xrd_radiation_preset <=> root.analysis_options.xrd_radiation_preset;
+                            xrd_lambda <=> root.analysis_options.xrd_lambda;
+                            xrd_theta_min <=> root.analysis_options.xrd_theta_min;
+                            xrd_theta_max <=> root.analysis_options.xrd_theta_max;
+                            xrd_bin_width <=> root.analysis_options.xrd_bin_width;
+                            xrd_lambda_error: root.app_errors.xrd_lambda_error;
+                            xrd_theta_min_error: root.app_errors.xrd_theta_min_error;
+                            xrd_theta_max_error: root.app_errors.xrd_theta_max_error;
+                            xrd_bin_width_error: root.app_errors.xrd_bin_width_error;
+                            reset_xrd_options => {
+                                root.reset_xrd_options();
+                            }
+                            xrd_radiation_preset_changed(idx) => {
+                                root.xrd_radiation_preset_changed(idx);
                             }
 
                             max_ring_size <=> root.analysis_options.max_ring_size;

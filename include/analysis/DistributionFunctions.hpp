@@ -95,6 +95,7 @@ struct AnalysisSettings {
       correlation::math::KernelType::Gaussian; ///< The kernel to use for smoothing.
 
   std::atomic<bool> *cancel_flag = nullptr; ///< Pointer to a cancellation flag.
+  XRDParams xrd_params{};                   ///< Parameters for XRD calculation.
 };
 
 // A structure to hold all data related to a single histogram.

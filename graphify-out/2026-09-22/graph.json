@@ -940,8 +940,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_hpp_atomic",
-      "community": 164,
-      "community_name": "Caveman Communication & Token Economy Protocol",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "atomic"
     },
     {
@@ -1578,8 +1578,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_hpp_mutex",
-      "community": 78,
-      "community_name": "StructureAnalyzer",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "mutex"
     },
     {
@@ -1875,8 +1875,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer",
-      "community": 78,
-      "community_name": "StructureAnalyzer",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "structureanalyzer.hpp"
     },
     {
@@ -8992,8 +8992,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_tdoscalculator",
-      "community": 164,
-      "community_name": "Caveman Communication & Token Economy Protocol",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "tdoscalculator.hpp"
     },
     {
@@ -25089,15 +25089,15 @@
       "norm_label": "inputvalidator.cpp"
     },
     {
-      "label": "to_lower_str()",
+      "label": "toLowerStr()",
       "file_type": "code",
       "source_file": "src/app/InputValidator.cpp",
       "source_location": "L27",
       "_origin": "ast",
-      "id": "src_app_inputvalidator_to_lower_str",
+      "id": "src_app_inputvalidator_tolowerstr",
       "community": 18,
       "community_name": "InputValidator.cpp",
-      "norm_label": "to_lower_str()"
+      "norm_label": "tolowerstr()"
     },
     {
       "label": "string",
@@ -25111,48 +25111,48 @@
       "norm_label": "string"
     },
     {
-      "label": "is_positive_float()",
+      "label": "isPositiveFloat()",
       "file_type": "code",
       "source_file": "src/app/InputValidator.cpp",
       "source_location": "L34",
       "_origin": "ast",
-      "id": "src_app_inputvalidator_is_positive_float",
+      "id": "src_app_inputvalidator_ispositivefloat",
       "community": 18,
       "community_name": "InputValidator.cpp",
-      "norm_label": "is_positive_float()"
+      "norm_label": "ispositivefloat()"
     },
     {
-      "label": "is_non_negative_float()",
+      "label": "isNonNegativeFloat()",
       "file_type": "code",
       "source_file": "src/app/InputValidator.cpp",
       "source_location": "L48",
       "_origin": "ast",
-      "id": "src_app_inputvalidator_is_non_negative_float",
+      "id": "src_app_inputvalidator_isnonnegativefloat",
       "community": 18,
       "community_name": "InputValidator.cpp",
-      "norm_label": "is_non_negative_float()"
+      "norm_label": "isnonnegativefloat()"
     },
     {
-      "label": "is_positive_int()",
+      "label": "isPositiveInt()",
       "file_type": "code",
       "source_file": "src/app/InputValidator.cpp",
       "source_location": "L62",
       "_origin": "ast",
-      "id": "src_app_inputvalidator_is_positive_int",
+      "id": "src_app_inputvalidator_ispositiveint",
       "community": 18,
       "community_name": "InputValidator.cpp",
-      "norm_label": "is_positive_int()"
+      "norm_label": "ispositiveint()"
     },
     {
-      "label": "validate_min_frame_input()",
+      "label": "validateMinFrameInput()",
       "file_type": "code",
       "source_file": "src/app/InputValidator.cpp",
       "source_location": "L76",
       "_origin": "ast",
-      "id": "src_app_inputvalidator_validate_min_frame_input",
+      "id": "src_app_inputvalidator_validateminframeinput",
       "community": 18,
       "community_name": "InputValidator.cpp",
-      "norm_label": "validate_min_frame_input()"
+      "norm_label": "validateminframeinput()"
     },
     {
       "label": "SharedString",
@@ -25166,15 +25166,15 @@
       "norm_label": "sharedstring"
     },
     {
-      "label": "validate_max_frame_input()",
+      "label": "validateMaxFrameInput()",
       "file_type": "code",
       "source_file": "src/app/InputValidator.cpp",
       "source_location": "L105",
       "_origin": "ast",
-      "id": "src_app_inputvalidator_validate_max_frame_input",
+      "id": "src_app_inputvalidator_validatemaxframeinput",
       "community": 18,
       "community_name": "InputValidator.cpp",
-      "norm_label": "validate_max_frame_input()"
+      "norm_label": "validatemaxframeinput()"
     },
     {
       "label": "validateFrameStrideInput()",
@@ -38031,8 +38031,8 @@
       "source_location": "L3660",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_find_128_encoding",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "find_128_encoding()"
     },
     {
@@ -38042,8 +38042,8 @@
       "source_location": "L3669",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_barcode_128a_ch",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_barcode_128a_ch()"
     },
     {
@@ -38053,8 +38053,8 @@
       "source_location": "L3688",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_barcode_128a",
-      "community": 69,
-      "community_name": "TEST",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_add_barcode_128a()"
     },
     {
@@ -38064,8 +38064,8 @@
       "source_location": "L3752",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_find_39_encoding",
-      "community": 174,
-      "community_name": "pdf_add_image_data",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "find_39_encoding()"
     },
     {
@@ -38075,8 +38075,8 @@
       "source_location": "L3762",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_barcode_39_ch",
-      "community": 174,
-      "community_name": "pdf_add_image_data",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "pdf_barcode_39_ch()"
     },
     {
@@ -38086,8 +38086,8 @@
       "source_location": "L3798",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_pdf_add_barcode_39",
-      "community": 174,
-      "community_name": "pdf_add_image_data",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "pdf_add_barcode_39()"
     },
     {
@@ -44224,8 +44224,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_writers_hdf5writer",
-      "community": 9,
-      "community_name": "vector",
+      "community": 360,
+      "community_name": "HDF5Writer.cpp",
       "norm_label": "hdf5writer.cpp"
     },
     {
@@ -44235,8 +44235,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "src_writers_hdf5writer_writehistogramtogroup",
-      "community": 9,
-      "community_name": "vector",
+      "community": 360,
+      "community_name": "HDF5Writer.cpp",
       "norm_label": "writehistogramtogroup()"
     },
     {
@@ -44246,8 +44246,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_writers_hdf5writer_cpp_file",
-      "community": 9,
-      "community_name": "vector",
+      "community": 360,
+      "community_name": "HDF5Writer.cpp",
       "norm_label": "file"
     },
     {
@@ -44257,8 +44257,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_writers_hdf5writer_cpp_string",
-      "community": 9,
-      "community_name": "vector",
+      "community": 360,
+      "community_name": "HDF5Writer.cpp",
       "norm_label": "string"
     },
     {
@@ -44268,8 +44268,8 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "src_writers_hdf5writer_hdf5writer_writehdf",
-      "community": 9,
-      "community_name": "vector",
+      "community": 360,
+      "community_name": "HDF5Writer.cpp",
       "norm_label": "hdf5writer::writehdf()"
     },
     {
@@ -51858,8 +51858,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_calculators_tdoscalculatortests",
-      "community": 164,
-      "community_name": "Caveman Communication & Token Economy Protocol",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "tdoscalculatortests.cpp"
     },
     {
@@ -129655,7 +129655,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_inputvalidator",
-      "target": "src_app_inputvalidator_is_non_negative_float",
+      "target": "src_app_inputvalidator_isnonnegativefloat",
       "confidence_score": 1.0
     },
     {
@@ -129666,7 +129666,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_inputvalidator",
-      "target": "src_app_inputvalidator_is_positive_float",
+      "target": "src_app_inputvalidator_ispositivefloat",
       "confidence_score": 1.0
     },
     {
@@ -129677,7 +129677,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_inputvalidator",
-      "target": "src_app_inputvalidator_is_positive_int",
+      "target": "src_app_inputvalidator_ispositiveint",
       "confidence_score": 1.0
     },
     {
@@ -129688,29 +129688,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_inputvalidator",
-      "target": "src_app_inputvalidator_to_lower_str",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/InputValidator.cpp",
-      "source_location": "L105",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_app_inputvalidator",
-      "target": "src_app_inputvalidator_validate_max_frame_input",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/InputValidator.cpp",
-      "source_location": "L76",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_app_inputvalidator",
-      "target": "src_app_inputvalidator_validate_min_frame_input",
+      "target": "src_app_inputvalidator_tolowerstr",
       "confidence_score": 1.0
     },
     {
@@ -129725,6 +129703,28 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/InputValidator.cpp",
+      "source_location": "L105",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_inputvalidator",
+      "target": "src_app_inputvalidator_validatemaxframeinput",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/InputValidator.cpp",
+      "source_location": "L76",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_inputvalidator",
+      "target": "src_app_inputvalidator_validateminframeinput",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/app/InputValidator.cpp",
@@ -129732,32 +129732,8 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "src_app_inputvalidator_to_lower_str",
+      "source": "src_app_inputvalidator_tolowerstr",
       "target": "src_app_inputvalidator_cpp_string",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/InputValidator.cpp",
-      "source_location": "L107",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_app_inputvalidator_validate_max_frame_input",
-      "target": "src_app_inputvalidator_to_lower_str",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/InputValidator.cpp",
-      "source_location": "L78",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_app_inputvalidator_validate_min_frame_input",
-      "target": "src_app_inputvalidator_to_lower_str",
       "confidence_score": 1.0
     },
     {
@@ -129769,7 +129745,31 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_inputvalidator_validateframestrideinput",
-      "target": "src_app_inputvalidator_to_lower_str",
+      "target": "src_app_inputvalidator_tolowerstr",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/InputValidator.cpp",
+      "source_location": "L107",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_inputvalidator_validatemaxframeinput",
+      "target": "src_app_inputvalidator_tolowerstr",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/InputValidator.cpp",
+      "source_location": "L78",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_inputvalidator_validateminframeinput",
+      "target": "src_app_inputvalidator_tolowerstr",
       "confidence_score": 1.0
     },
     {
@@ -129780,7 +129780,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "src_app_inputvalidator_is_non_negative_float",
+      "source": "src_app_inputvalidator_isnonnegativefloat",
       "target": "src_app_inputvalidator_cpp_string",
       "confidence_score": 1.0
     },
@@ -129792,7 +129792,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "src_app_inputvalidator_is_positive_float",
+      "source": "src_app_inputvalidator_ispositivefloat",
       "target": "src_app_inputvalidator_cpp_string",
       "confidence_score": 1.0
     },
@@ -129804,31 +129804,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "src_app_inputvalidator_is_positive_int",
-      "target": "src_app_inputvalidator_cpp_string",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/InputValidator.cpp",
-      "source_location": "L105",
-      "weight": 1.0,
-      "context": "parameter_type",
-      "_origin": "ast",
-      "source": "src_app_inputvalidator_validate_max_frame_input",
-      "target": "src_app_inputvalidator_cpp_string",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/InputValidator.cpp",
-      "source_location": "L76",
-      "weight": 1.0,
-      "context": "parameter_type",
-      "_origin": "ast",
-      "source": "src_app_inputvalidator_validate_min_frame_input",
+      "source": "src_app_inputvalidator_ispositiveint",
       "target": "src_app_inputvalidator_cpp_string",
       "confidence_score": 1.0
     },
@@ -129841,6 +129817,30 @@
       "context": "parameter_type",
       "_origin": "ast",
       "source": "src_app_inputvalidator_validateframestrideinput",
+      "target": "src_app_inputvalidator_cpp_string",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/InputValidator.cpp",
+      "source_location": "L105",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "_origin": "ast",
+      "source": "src_app_inputvalidator_validatemaxframeinput",
+      "target": "src_app_inputvalidator_cpp_string",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/InputValidator.cpp",
+      "source_location": "L76",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "_origin": "ast",
+      "source": "src_app_inputvalidator_validateminframeinput",
       "target": "src_app_inputvalidator_cpp_string",
       "confidence_score": 1.0
     },
@@ -129853,7 +129853,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_inputvalidator_inputvalidator_validateangularandrings",
-      "target": "src_app_inputvalidator_is_positive_float",
+      "target": "src_app_inputvalidator_ispositivefloat",
       "confidence_score": 1.0
     },
     {
@@ -129865,7 +129865,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_inputvalidator_inputvalidator_validateexportconfig",
-      "target": "src_app_inputvalidator_is_positive_float",
+      "target": "src_app_inputvalidator_ispositivefloat",
       "confidence_score": 1.0
     },
     {
@@ -129877,7 +129877,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_inputvalidator_inputvalidator_validateotheranalysisoptions",
-      "target": "src_app_inputvalidator_is_positive_float",
+      "target": "src_app_inputvalidator_ispositivefloat",
       "confidence_score": 1.0
     },
     {
@@ -129889,7 +129889,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_inputvalidator_inputvalidator_validateradialandscattering",
-      "target": "src_app_inputvalidator_is_positive_float",
+      "target": "src_app_inputvalidator_ispositivefloat",
       "confidence_score": 1.0
     },
     {
@@ -129901,7 +129901,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_inputvalidator_inputvalidator_validateotheranalysisoptions",
-      "target": "src_app_inputvalidator_is_non_negative_float",
+      "target": "src_app_inputvalidator_isnonnegativefloat",
       "confidence_score": 1.0
     },
     {
@@ -129913,7 +129913,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_inputvalidator_inputvalidator_validateangularandrings",
-      "target": "src_app_inputvalidator_is_positive_int",
+      "target": "src_app_inputvalidator_ispositiveint",
       "confidence_score": 1.0
     },
     {
@@ -129925,31 +129925,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_inputvalidator_inputvalidator_validateotheranalysisoptions",
-      "target": "src_app_inputvalidator_is_positive_int",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/InputValidator.cpp",
-      "source_location": "L120",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_app_inputvalidator_validate_max_frame_input",
-      "target": "src_app_inputvalidator_is_positive_int",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/InputValidator.cpp",
-      "source_location": "L91",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_app_inputvalidator_validate_min_frame_input",
-      "target": "src_app_inputvalidator_is_positive_int",
+      "target": "src_app_inputvalidator_ispositiveint",
       "confidence_score": 1.0
     },
     {
@@ -129961,7 +129937,31 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_inputvalidator_validateframestrideinput",
-      "target": "src_app_inputvalidator_is_positive_int",
+      "target": "src_app_inputvalidator_ispositiveint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/InputValidator.cpp",
+      "source_location": "L120",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_inputvalidator_validatemaxframeinput",
+      "target": "src_app_inputvalidator_ispositiveint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/InputValidator.cpp",
+      "source_location": "L91",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_inputvalidator_validateminframeinput",
+      "target": "src_app_inputvalidator_ispositiveint",
       "confidence_score": 1.0
     },
     {
@@ -129973,7 +129973,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_inputvalidator_inputvalidator_validateframes",
-      "target": "src_app_inputvalidator_validate_min_frame_input",
+      "target": "src_app_inputvalidator_validateminframeinput",
       "confidence_score": 1.0
     },
     {
@@ -129984,19 +129984,7 @@
       "source_location": "L76",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "src_app_inputvalidator_validate_min_frame_input",
-      "target": "src_app_inputvalidator_cpp_sharedstring",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "context": "parameter_type",
-      "confidence": "EXTRACTED",
-      "source_file": "src/app/InputValidator.cpp",
-      "source_location": "L105",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_app_inputvalidator_validate_max_frame_input",
+      "source": "src_app_inputvalidator_validateminframeinput",
       "target": "src_app_inputvalidator_cpp_sharedstring",
       "confidence_score": 1.0
     },
@@ -130013,6 +130001,18 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/InputValidator.cpp",
+      "source_location": "L105",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_inputvalidator_validatemaxframeinput",
+      "target": "src_app_inputvalidator_cpp_sharedstring",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -130021,7 +130021,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_inputvalidator_inputvalidator_validateframes",
-      "target": "src_app_inputvalidator_validate_max_frame_input",
+      "target": "src_app_inputvalidator_validatemaxframeinput",
       "confidence_score": 1.0
     },
     {

@@ -58,6 +58,11 @@ export struct AnalysisOptions {
     lef_cutoff: string,
     lef_sigma: string,
     hyper_samples: string,
+    xrd_radiation_preset: int,
+    xrd_lambda: string,
+    xrd_theta_min: string,
+    xrd_theta_max: string,
+    xrd_bin_width: string,
 }
 
 export struct AppErrors {
@@ -80,6 +85,10 @@ export struct AppErrors {
     lef_cutoff_error: string,
     lef_sigma_error: string,
     hyper_samples_error: string,
+    xrd_lambda_error: string,
+    xrd_theta_min_error: string,
+    xrd_theta_max_error: string,
+    xrd_bin_width_error: string,
 }
 
 export struct ExportConfig {

@@ -34,6 +34,8 @@ export component CommonOptionsPanelCard inherits Rectangle {
     in-out property <[BondCutoff]> bond_cutoffs: [];
     in property <int> bond_cutoffs_reset_trigger: 0;
     callback reset_bond_cutoffs();
+    callback apply_scaled_cutoffs(float);
+    callback set_uniform_cutoff(float);
 
     // RDF Options
     in-out property <string> r_max;
@@ -93,6 +95,12 @@ export component CommonOptionsPanelCard inherits Rectangle {
                 bond_cutoffs_reset_trigger: root.bond_cutoffs_reset_trigger;
                 reset_bond_cutoffs => {
                     root.reset_bond_cutoffs();
+                }
+                apply_scaled_cutoffs(factor) => {
+                    root.apply_scaled_cutoffs(factor);
+                }
+                set_uniform_cutoff(max_val) => {
+                    root.set_uniform_cutoff(max_val);
                 }
             }
 

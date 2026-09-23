@@ -387,6 +387,69 @@ TEST_F(AppControllerTests, ResetsOptionBlocksToDefaultsWhenInvoked) {
   EXPECT_EQ(window->get_comparison_curves()->row_count(), 1);
   window->invoke_clear_comparison_curves();
   EXPECT_EQ(window->get_comparison_curves()->row_count(), 0);
+
+  // 12. Reset XRD options
+  opts = window->get_analysis_options();
+  opts.xrd_lambda = "0.7107";
+  opts.xrd_theta_min = "5.0";
+  opts.xrd_theta_max = "90.0";
+  opts.xrd_bin_width = "0.01";
+  opts.xrd_radiation_preset = 1;
+  window->set_analysis_options(opts);
+  window->invoke_reset_xrd_options();
+  opts = window->get_analysis_options();
+  EXPECT_EQ(opts.xrd_lambda, "1.5406");
+  EXPECT_EQ(opts.xrd_theta_min, "10.0");
+  EXPECT_EQ(opts.xrd_theta_max, "140.0");
+  EXPECT_EQ(opts.xrd_bin_width, "0.05");
+  EXPECT_EQ(opts.xrd_radiation_preset, 0);
+}
+
+TEST_F(AppControllerTests, HandlesXRDOptionsAndCutoffHeuristics) {
+  auto window = AppWindow::create();
+  correlation::app::AppBackend backend;
+
+  std::string file_path = "../../examples/a-PdSi/a-PdSi.car";
+  if (!std::filesystem::exists(file_path)) {
+    file_path = "../examples/a-PdSi/a-PdSi.car";
+  }
+  if (!std::filesystem::exists(file_path)) {
+    file_path = "examples/a-PdSi/a-PdSi.car";
+  }
+  backend.load_file(file_path);
+
+  const correlation::app::AppController controller(*window, backend);
+
+  // Test XRD preset changed callback
+  window->invoke_xrd_radiation_preset_changed(1); // Mo-Kalpha (0.7107)
+  auto opts = window->get_analysis_options();
+  EXPECT_EQ(opts.xrd_radiation_preset, 1);
+  EXPECT_EQ(opts.xrd_lambda, "0.7107");
+
+  window->invoke_xrd_radiation_preset_changed(2); // Co-Kalpha (1.7890)
+  opts = window->get_analysis_options();
+  EXPECT_EQ(opts.xrd_radiation_preset, 2);
+  EXPECT_EQ(opts.xrd_lambda, "1.7890");
+
+  window->invoke_xrd_radiation_preset_changed(3); // Cr-Kalpha (2.2897)
+  opts = window->get_analysis_options();
+  EXPECT_EQ(opts.xrd_radiation_preset, 3);
+  EXPECT_EQ(opts.xrd_lambda, "2.2897");
+
+  // Test Cutoff Heuristics
+  window->invoke_apply_scaled_cutoffs(1.15F);
+  auto cutoffs = window->get_bond_cutoffs();
+  ASSERT_GT(cutoffs->row_count(), 0);
+
+  window->invoke_set_uniform_cutoff(3.4F);
+  cutoffs = window->get_bond_cutoffs();
+  ASSERT_GT(cutoffs->row_count(), 0);
+  for (size_t i = 0; i < cutoffs->row_count(); ++i) {
+    const auto opt = cutoffs->row_data(i);
+    ASSERT_TRUE(opt.has_value());
+    EXPECT_EQ(opt->min_distance.data(), std::string("0.00"));
+    EXPECT_EQ(opt->max_distance.data(), std::string("3.40"));
+  }
 }
 
 TEST_F(AppControllerTests, UpdatesActiveGroupFlagsWhenCalculatorsToggled) {
