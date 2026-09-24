@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
   - Comprehensive unit test suite (`tests/unit/readers/NequipReaderTests.cpp`) and libFuzzer harness with dedicated corpus (`tests/fuzz/fuzz_nequip.cpp`, `tests/fuzz/corpus/nequip/minimal.nequip`).
 
 ### WebAssembly & Browser Runtime
-- **Web Worker Background Execution**: Refactored the client-side WebAssembly application (`ui/wasm_app/worker.js`, `ui/wasm_app/app.js`) to offload heavy structural analysis and histogram accumulation to a dedicated Web Worker:
+- **Web Worker Background Execution**: Refactored the client-side WebAssembly application (`web/worker.js`, `web/app.js`) to offload heavy structural analysis and histogram accumulation to a dedicated Web Worker:
   - Asynchronous non-blocking execution prevents UI freezing during multi-thousand-atom calculations.
   - Structured event dispatching and progress reporting between UI and WebAssembly worker thread.
 
@@ -74,7 +74,7 @@ All notable changes to this project will be documented in this file.
 
 ### WebAssembly & Browser Runtime
 - **Emscripten Target**: Added `correlation_wasm` build target enabled via `BUILD_WASM=ON` with Embind, single-precision compilation, SIMD128 acceleration, and virtual filesystem support (`readFromBuffer()`).
-- **Web Application Interface**: Updated `ui/wasm_app/` with drag-and-drop structure parsing, dynamic parameter selection, real-time client-side analysis, and HTML5 canvas distribution plotting.
+- **Web Application Interface**: Updated `web/` with drag-and-drop structure parsing, dynamic parameter selection, real-time client-side analysis, and HTML5 canvas distribution plotting.
 - **PAD UI & Snake-Case Aliases**: Added Planar Angle Distribution computation UI and exposed snake_case API aliases for WASM bindings.
 - **GitHub Actions CI/CD Deployment**: Automated WebAssembly build and GitHub Pages deployment workflow (`.github/workflows/wasm.yml`) using `mymindstorm/setup-emsdk@v14`.
 

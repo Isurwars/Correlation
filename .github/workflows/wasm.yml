@@ -7,7 +7,7 @@ on:
     paths:
       - "include/**"
       - "src/**"
-      - "ui/wasm_app/**"
+      - "web/**"
       - "CMakeLists.txt"
       - "cmake/**"
       - ".github/workflows/wasm.yml"
@@ -17,7 +17,7 @@ on:
     paths:
       - "include/**"
       - "src/**"
-      - "ui/wasm_app/**"
+      - "web/**"
       - "CMakeLists.txt"
       - "cmake/**"
       - ".github/workflows/wasm.yml"
@@ -69,10 +69,10 @@ jobs:
       - name: Stage Web Application Bundle
         run: |
           mkdir -p _site
-          cp ui/wasm_app/index.html _site/
-          cp ui/wasm_app/style.css _site/
-          cp ui/wasm_app/app.js _site/
-          cp ui/wasm_app/worker.js _site/
+          cp web/index.html _site/
+          cp web/style.css _site/
+          cp web/app.js _site/
+          cp web/worker.js _site/
           cp build-wasm/src/bindings/correlation_wasm.js _site/
           cp build-wasm/src/bindings/correlation_wasm.wasm _site/
           ls -lh _site/

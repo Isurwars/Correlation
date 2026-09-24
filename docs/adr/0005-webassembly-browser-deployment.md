@@ -21,7 +21,7 @@ Potential users and reviewers frequently require instant evaluation of scientifi
 
 ## Consequences
 ### Positive
-- Zero-install, browser-based live demonstration and structural evaluation tool (`ui/wasm_app/`).
+- Zero-install, browser-based live demonstration and structural evaluation tool (`web/`).
 - Shared calculation algorithms between native desktop, Python bindings, and web runtimes.
 
 ### Negative / Trade-offs

@@ -151,7 +151,7 @@ Python bindings make `Correlation` scriptable. Focus for 4.0.0 centers on zero-c
 ### 5.2 Hosted Standalone WASM Web Application (Target: 4.0.0 / Q4 2026)
 * **Objective:** Deploy the client-side C++ engine to the web via WebAssembly (`-DBUILD_WASM=ON`).
 * **Implementation:**
-  * Automate GitHub Actions CI deployment of `ui/wasm_app/` to GitHub Pages.
+  * Automate GitHub Actions CI deployment of `web/` to GitHub Pages.
   * Optimize WebAssembly binaries utilizing **WASM SIMD128** intrinsics and multi-threaded Web Workers.
 
 ---

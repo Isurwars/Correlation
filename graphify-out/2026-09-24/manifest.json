@@ -1259,6 +1259,11 @@
     "ast_hash": "37a699e2d97632115acb139911b937f6",
     "semantic_hash": ""
   },
+  "ui/wasm_app/app.js": {
+    "mtime": 1789966629.5108097,
+    "ast_hash": "ac329c95f138afe302fe81484edc765a",
+    "semantic_hash": ""
+  },
   ".github/workflows/ci.yml": {
     "mtime": 1788797049.2118578,
     "ast_hash": "9c2a98d846655fa36de992b88db8e042",
@@ -1295,8 +1300,8 @@
     "semantic_hash": ""
   },
   "docs/RoadMap.md": {
-    "mtime": 1790272982.585649,
-    "ast_hash": "661312350b6e7047ad59d7f8f1f1edf6",
+    "mtime": 1789966748.6960568,
+    "ast_hash": "58e9d3c824cf1a063a0351dc3c32e342",
     "semantic_hash": ""
   },
   "examples/Cellulose/Cellulose.md": {
@@ -1327,6 +1332,11 @@
   "tests/fuzz/CMakeLists.txt": {
     "mtime": 1789966293.131794,
     "ast_hash": "a56d4303c69374f4dce2cb6a9ee02731",
+    "semantic_hash": ""
+  },
+  "ui/wasm_app/index.html": {
+    "mtime": 1788742495.6772528,
+    "ast_hash": "91d9254f1d1ace1bb554f448d96c22d5",
     "semantic_hash": ""
   },
   "Images/Banner.png": {
@@ -2150,8 +2160,8 @@
     "semantic_hash": ""
   },
   ".github/workflows/wasm.yml": {
-    "mtime": 1790272953.406135,
-    "ast_hash": "de4cabefa5267d9d73b406d2d505e235",
+    "mtime": 1789966636.5747056,
+    "ast_hash": "eb36f4996cbdf75e62fb187aeff50c65",
     "semantic_hash": ""
   },
   "docs/adr/0001-modern-cpp-standards-and-simd.md": {
@@ -2175,8 +2185,8 @@
     "semantic_hash": ""
   },
   "docs/adr/0005-webassembly-browser-deployment.md": {
-    "mtime": 1790272974.0454998,
-    "ast_hash": "c46e6e65e84fff581e59222241bf06be",
+    "mtime": 1788742236.078409,
+    "ast_hash": "a94da3f16f3b84d1f8173ecf3621c018",
     "semantic_hash": ""
   },
   "docs/adr/README.md": {
@@ -2242,6 +2252,11 @@
   "tests/unit/readers/NequipReaderTests.cpp": {
     "mtime": 1790181953.0672348,
     "ast_hash": "9bdd2d20b570468782a7f1f6fcd4c277",
+    "semantic_hash": ""
+  },
+  "ui/wasm_app/worker.js": {
+    "mtime": 1789966596.7552922,
+    "ast_hash": "59ae34fc3887e80fe04137bb2b0c6efe",
     "semantic_hash": ""
   },
   ".agents/rules/communication-density.md": {
@@ -2337,21 +2352,6 @@
   "tests/unit/app/PlotExportServiceTests.cpp": {
     "mtime": 1790181953.056027,
     "ast_hash": "99b59496c0eea9f5d1c02963c63b6a13",
-    "semantic_hash": ""
-  },
-  "web/app.js": {
-    "mtime": 1789966629.5108097,
-    "ast_hash": "ac329c95f138afe302fe81484edc765a",
-    "semantic_hash": ""
-  },
-  "web/worker.js": {
-    "mtime": 1789966596.7552922,
-    "ast_hash": "59ae34fc3887e80fe04137bb2b0c6efe",
-    "semantic_hash": ""
-  },
-  "web/index.html": {
-    "mtime": 1788742495.6772528,
-    "ast_hash": "91d9254f1d1ace1bb554f448d96c22d5",
     "semantic_hash": ""
   }
 }
