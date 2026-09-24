@@ -203,7 +203,7 @@ TEST_F(Vector3Tests, Vector3Equality) {
   EXPECT_TRUE(vec_z1 == vec_z2);
 }
 
-TEST_F(Vector3Tests, Vector3BeginEnd) {
+TEST_F(Vector3Tests, Vector3ConstIteration) {
   Vector3<double> const vec_v(10.0, 20.0, 30.0);
 
   // Verify pointer-based iteration
@@ -218,11 +218,16 @@ TEST_F(Vector3Tests, Vector3BeginEnd) {
 
   // Range-for loop reads
   double sum = 0.0;
-  for (double val : vec_v) {
+  for (const double val : vec_v) {
     sum += val;
   }
   EXPECT_DOUBLE_EQ(sum, 60.0);
 
+  // std::distance between begin and end
+  EXPECT_EQ(vec_v.end() - vec_v.begin(), 3);
+}
+
+TEST_F(Vector3Tests, Vector3MutableIteration) {
   // Mutable iteration
   Vector3<double> vec_v2(1.0, 2.0, 3.0);
   for (double &val : vec_v2) {
@@ -231,9 +236,6 @@ TEST_F(Vector3Tests, Vector3BeginEnd) {
   EXPECT_DOUBLE_EQ(vec_v2.x(), 10.0);
   EXPECT_DOUBLE_EQ(vec_v2.y(), 20.0);
   EXPECT_DOUBLE_EQ(vec_v2.z(), 30.0);
-
-  // std::distance between begin and end
-  EXPECT_EQ(vec_v.end() - vec_v.begin(), 3);
 }
 
 TEST_F(Vector3Tests, ScalarTimesVector) {

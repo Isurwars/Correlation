@@ -5,6 +5,7 @@
 
 #include "math/Smoothing.hpp"
 
+#include <bit>
 #include <gtest/gtest.h>
 #include <numeric>
 #include <vector>
@@ -20,7 +21,7 @@ TEST_F(SmoothingTests, GenerateKernelNormalizesAndCalculatesCorrectly) {
   size_t const size = 11;
   real_t const bin_width = 0.1;
   real_t const sigma = 0.3;
-  real_t const tol = static_cast<real_t>(1e-5);
+  const auto tol = static_cast<real_t>(1e-5);
 
   // Gaussian
   auto k_gauss = generateKernel({
@@ -90,7 +91,8 @@ TEST_F(SmoothingTests, GenerateKernelNormalizesAndCalculatesCorrectly) {
   EXPECT_NEAR(sum_biw, static_cast<real_t>(1.0), tol);
 
   // Invalid kernel type throws invalid_argument
-  EXPECT_THROW((void)generateKernel({size, bin_width, sigma, static_cast<KernelType>(-1)}),
+  EXPECT_THROW((void)generateKernel({size, bin_width, sigma,
+                                     std::bit_cast<KernelType>(static_cast<std::uint8_t>(255))}),
                std::invalid_argument);
 }
 

@@ -63,13 +63,13 @@ TEST_F(FFTUtilsTests, ComputeFFTHandlesEmptyInput) {
 }
 
 TEST_F(FFTUtilsTests, AutocorrelateEmptyReturnsEmpty) {
-  std::vector<double> empty_x;
+  const std::vector<double> empty_x;
   auto res = autocorrelate(empty_x);
   EXPECT_TRUE(res.empty());
 }
 
 TEST_F(FFTUtilsTests, AutocorrelateMatchesMathematicalDefinition) {
-  std::vector<double> positive_positions = {1.0, 2.0, 3.0};
+  const std::vector<double> positive_positions = {1.0, 2.0, 3.0};
 
   // Linear autocorrelation:
   // R[0] = 1*1 + 2*2 + 3*3 = 14
@@ -84,8 +84,8 @@ TEST_F(FFTUtilsTests, AutocorrelateMatchesMathematicalDefinition) {
 }
 
 TEST_F(FFTUtilsTests, AutocorrelateReusesWorkspaceCorrectly) {
-  std::vector<double> pos_1 = {1.0, 2.0};
-  std::vector<double> pos_2 = {1.0, 2.0, 3.0, 4.0};
+  const std::vector<double> pos_1 = {1.0, 2.0};
+  const std::vector<double> pos_2 = {1.0, 2.0, 3.0, 4.0};
   std::vector<std::complex<double>> workspace;
 
   auto result_1 = autocorrelate(pos_1, workspace);

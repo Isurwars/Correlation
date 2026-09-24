@@ -176,7 +176,8 @@ TEST_F(TrajectoryTests, CalculateVelocitiesHandlesPBC) {
 
 TEST_F(TrajectoryTests, SetBondCutoffsManuallyWorks) {
   Trajectory traj;
-  traj.setBondCutoffs({{{0.36, 2.25}, {0.49, 4.0}}, {{0.49, 4.0}, {0.64, 6.25}}});
+  traj.setBondCutoffs({{{.min_sq = 0.36, .max_sq = 2.25}, {.min_sq = 0.49, .max_sq = 4.0}},
+                       {{.min_sq = 0.49, .max_sq = 4.0}, {.min_sq = 0.64, .max_sq = 6.25}}});
   EXPECT_NEAR(traj.getMinBondCutoffSQ(0, 0), 0.36, 1e-5);
   EXPECT_NEAR(traj.getBondCutoffSQ(0, 0), 2.25, 1e-5);
   EXPECT_NEAR(traj.getMinBondCutoff(0, 0), 0.6, 1e-5);
@@ -278,7 +279,7 @@ TEST_F(TrajectoryTests, ConstructorThrowsOnMismatchedFrames) {
   Cell bad_frame = createSimpleFrame(1.0, 1.0, 1.0);
   bad_frame.addAtom("O", {2.0, 2.0, 2.0});
   frames.push_back(bad_frame);
-  EXPECT_THROW(Trajectory traj(frames, 1.0), std::runtime_error);
+  EXPECT_THROW((void)Trajectory(frames, 1.0), std::runtime_error);
 }
 
 TEST_F(TrajectoryTests, GetBondCutoffOutOfBoundsReturnsZero) {
@@ -390,7 +391,7 @@ TEST_F(TrajectoryTests, FirstFrameConcurrentThreadSafe) {
   out.close();
 
   auto mapped = std::make_shared<MappedFile>(test_file);
-  std::vector<size_t> offsets = {0, 24, 48};
+  const std::vector<size_t> offsets = {0, 24, 48};
   auto parser = [](const char *data, size_t size) {
     (void)data;
     (void)size;
@@ -401,11 +402,11 @@ TEST_F(TrajectoryTests, FirstFrameConcurrentThreadSafe) {
 
   Trajectory const traj(mapped, offsets, parser, 1.0);
 
-  constexpr int num_threads = 16;
+  constexpr int NUM_THREADS = 16;
   std::vector<std::thread> workers;
-  workers.reserve(num_threads);
+  workers.reserve(NUM_THREADS);
 
-  for (int i = 0; i < num_threads; ++i) {
+  for (int i = 0; i < NUM_THREADS; ++i) {
     workers.emplace_back([&traj]() {
       for (int iter = 0; iter < 100; ++iter) {
         const Cell &frame = traj.firstFrame();

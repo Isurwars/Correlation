@@ -262,7 +262,7 @@ TEST_F(Matrix3Tests, Matrix3InPlaceScalarMultiply) {
   Vector3<double> const vec_col_0(1.0, 0.0, 0.0);
   Vector3<double> const vec_col_1(0.0, 2.0, 0.0);
   Vector3<double> const vec_col_2(0.0, 0.0, 3.0);
-  Matrix3<double> mat_m1(vec_col_0, vec_col_1, vec_col_2);
+  Matrix3<double> const mat_m1(vec_col_0, vec_col_1, vec_col_2);
 
   Matrix3<double> mat_m2 = mat_m1;
   mat_m2 *= 4.0;
@@ -277,7 +277,7 @@ TEST_F(Matrix3Tests, Matrix3InPlaceScalarMultiply) {
   EXPECT_DOUBLE_EQ(mat_m2(2, 2), 0.0);
 }
 
-TEST_F(Matrix3Tests, Matrix3InPlaceMatrixMultiply) {
+TEST_F(Matrix3Tests, Matrix3InPlaceMatrixMultiplyDiagonal) {
   Vector3<double> const vec_col_0(2.0, 0.0, 0.0);
   Vector3<double> const vec_col_1(0.0, 3.0, 0.0);
   Vector3<double> const vec_col_2(0.0, 0.0, 5.0);
@@ -293,7 +293,9 @@ TEST_F(Matrix3Tests, Matrix3InPlaceMatrixMultiply) {
   EXPECT_DOUBLE_EQ(mat_m1(1, 1), 6.0);
   EXPECT_DOUBLE_EQ(mat_m1(2, 2), 15.0);
   EXPECT_DOUBLE_EQ(mat_m1(0, 1), 0.0);
+}
 
+TEST_F(Matrix3Tests, Matrix3InPlaceMatrixMultiplyIdentity) {
   Vector3<double> const vec_col_6(1.0, 2.0, 3.0);
   Vector3<double> const vec_col_7(4.0, 5.0, 6.0);
   Vector3<double> const vec_col_8(7.0, 8.0, 9.0);
@@ -325,7 +327,7 @@ TEST_F(Matrix3Tests, Matrix3ArrayConversion) {
   EXPECT_DOUBLE_EQ(arr[2][2], 9.0);
 }
 
-TEST_F(Matrix3Tests, TransposeProperties) {
+TEST_F(Matrix3Tests, TransposeInvolution) {
   Vector3<double> const vec_col_0(1.0, 2.0, 3.0);
   Vector3<double> const vec_col_1(4.0, 5.0, 6.0);
   Vector3<double> const vec_col_2(7.0, 8.0, 9.0);
@@ -337,6 +339,13 @@ TEST_F(Matrix3Tests, TransposeProperties) {
       EXPECT_DOUBLE_EQ(mat_m_transposed_twice(row, col), mat_m(row, col));
     }
   }
+}
+
+TEST_F(Matrix3Tests, TransposeSpecialMatrices) {
+  Vector3<double> const vec_col_0(1.0, 2.0, 3.0);
+  Vector3<double> const vec_col_1(4.0, 5.0, 6.0);
+  Vector3<double> const vec_col_2(7.0, 8.0, 9.0);
+  Matrix3<double> const mat_m(vec_col_0, vec_col_1, vec_col_2);
 
   auto mat_identity = Matrix3<double>::identity();
   auto mat_identity_t = transpose(mat_identity);
@@ -358,14 +367,11 @@ TEST_F(Matrix3Tests, TransposeProperties) {
   EXPECT_DOUBLE_EQ(determinant(non_singular), determinant(transpose(non_singular)));
 }
 
-TEST_F(Matrix3Tests, InvertRoundTripGeneral) {
+TEST_F(Matrix3Tests, InvertRightMultiplyIdentity) {
   Vector3<double> const vec_col_0(2.0, 1.0, 0.0);
   Vector3<double> const vec_col_1(-1.0, 3.0, 2.0);
   Vector3<double> const vec_col_2(4.0, -2.0, 5.0);
   Matrix3<double> const mat_m(vec_col_0, vec_col_1, vec_col_2);
-
-  double const det = determinant(mat_m);
-  EXPECT_GT(std::abs(det), 1e-10);
 
   auto mat_m_inv = invert(mat_m);
 
@@ -376,6 +382,18 @@ TEST_F(Matrix3Tests, InvertRoundTripGeneral) {
       EXPECT_NEAR(product(row, col), expected, 1e-14);
     }
   }
+}
+
+TEST_F(Matrix3Tests, InvertLeftMultiplyIdentityAndDeterminant) {
+  Vector3<double> const vec_col_0(2.0, 1.0, 0.0);
+  Vector3<double> const vec_col_1(-1.0, 3.0, 2.0);
+  Vector3<double> const vec_col_2(4.0, -2.0, 5.0);
+  Matrix3<double> const mat_m(vec_col_0, vec_col_1, vec_col_2);
+
+  double const det = determinant(mat_m);
+  EXPECT_GT(std::abs(det), 1e-10);
+
+  auto mat_m_inv = invert(mat_m);
 
   auto product2 = mat_m_inv * mat_m;
   for (std::size_t row = 0; row < 3; ++row) {

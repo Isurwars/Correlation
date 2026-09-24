@@ -129,9 +129,9 @@ TEST_F(AtomTests, HandlesEmptyElementSymbol) {
 }
 
 TEST_F(AtomTests, ElementIDEqualityWorks) {
-  ElementID id1{5};
-  ElementID id2{5};
-  ElementID id3{10};
+  const ElementID id1{5};
+  const ElementID id2{5};
+  const ElementID id3{10};
 
   EXPECT_TRUE(id1 == id2);
   EXPECT_FALSE(id1 == id3);
@@ -148,7 +148,7 @@ TEST_F(AtomTests, DistanceHandlesSubnormalCoordinates) {
   const real_t subnormal = 1e-308;
   const Atom atom1(element, {0.0, 0.0, 0.0}, 0);
   const Atom atom2(element, {subnormal, subnormal, subnormal}, 1);
-  real_t dist = distance(atom1, atom2);
+  const real_t dist = distance(atom1, atom2);
   EXPECT_TRUE(dist == 0.0 || std::abs(dist - std::sqrt(3.0) * subnormal) < 1e-310);
 }
 
@@ -213,7 +213,7 @@ TEST_F(AtomTests, CopyAndMoveSemanticsWork) {
   EXPECT_EQ(copy_assigned.element().symbol, "Si");
 
   // Move construction
-  Atom move_constructed(std::move(copy_constructed));
+  const Atom move_constructed(std::move(copy_constructed));
   EXPECT_EQ(move_constructed.id(), 42);
   EXPECT_EQ(move_constructed.element().symbol, "Si");
 
