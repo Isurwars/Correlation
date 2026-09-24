@@ -49,6 +49,13 @@ private:
                                                  float &q_max_val);
 
   /**
+   * @brief Validates powder X-ray diffraction options.
+   * @param[out] errs AppErrors structure for reporting invalid field states.
+   * @return true if valid, false otherwise.
+   */
+  [[nodiscard]] bool validateXrdOptions(AppErrors &errs);
+
+  /**
    * @brief Validates angular and ring distribution options.
    * @param[out] errs AppErrors structure for reporting invalid field states.
    * @return true if valid, false otherwise.

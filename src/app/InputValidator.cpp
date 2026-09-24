@@ -1,6 +1,6 @@
 /**
  * @file InputValidator.cpp
- * @brief Implementation of InputValidator.
+ * @brief Implementation of InputValidator coordinating UI validation rules.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -14,138 +14,9 @@
 #include "AppWindow.h"
 #include "app/AppController.hpp"
 #include "app/InputValidator.hpp"
-
-#include <algorithm>
-#include <cctype>
-#include <format>
-#include <string>
+#include "app/ValidationRuleService.hpp"
 
 namespace correlation::app {
-
-namespace {
-
-std::string toLowerStr(const std::string &str) {
-  std::string data = str;
-  std::ranges::transform(data, data.begin(), [](unsigned char chr) { return std::tolower(chr); });
-  return data;
-}
-
-bool isPositiveFloat(const std::string &str, float &val) {
-  try {
-    size_t idx = 0;
-    const float parsed_val = std::stof(str, &idx);
-    if (idx < str.size() || parsed_val <= 0.0F) {
-      return false;
-    }
-    val = parsed_val;
-    return true;
-  } catch (const std::exception &) {
-    return false;
-  }
-}
-
-bool isNonNegativeFloat(const std::string &str, float &val) {
-  try {
-    size_t idx = 0;
-    const float parsed_val = std::stof(str, &idx);
-    if (idx < str.size() || parsed_val < 0.0F) {
-      return false;
-    }
-    val = parsed_val;
-    return true;
-  } catch (const std::exception &) {
-    return false;
-  }
-}
-
-bool isPositiveInt(const std::string &str, int &val) {
-  try {
-    size_t idx = 0;
-    const int parsed_val = std::stoi(str, &idx);
-    if (idx < str.size() || parsed_val <= 0) {
-      return false;
-    }
-    val = parsed_val;
-    return true;
-  } catch (const std::exception &) {
-    return false;
-  }
-}
-
-bool validateMinFrameInput(const std::string &frame_s, int total_frames, int &frame_val,
-                           slint::SharedString &error_out) {
-  const std::string frame_lower = toLowerStr(frame_s);
-
-  if (frame_lower == "start" || frame_s.empty()) {
-    frame_val = 0;
-    return true;
-  }
-
-  if (frame_lower == "end") {
-    frame_val = total_frames > 0 ? total_frames - 1 : 0;
-    return true;
-  }
-
-  int parsed_val = 0;
-  if (!isPositiveInt(frame_s, parsed_val)) {
-    error_out = "Must be positive integer, 'Start', or 'End'";
-    return false;
-  }
-
-  if (total_frames > 0 && parsed_val > total_frames) {
-    error_out = slint::SharedString(std::format("Must be ≤ total frames ({})", total_frames));
-    return false;
-  }
-
-  frame_val = parsed_val - 1;
-  return true;
-}
-
-bool validateMaxFrameInput(const std::string &frame_s, int total_frames, int &frame_val,
-                           slint::SharedString &error_out) {
-  const std::string frame_lower = toLowerStr(frame_s);
-
-  if (frame_lower == "end" || frame_s.empty()) {
-    frame_val = total_frames > 0 ? total_frames - 1 : -1;
-    return true;
-  }
-
-  if (frame_lower == "start") {
-    frame_val = 0;
-    return true;
-  }
-
-  int parsed_val = 0;
-  if (!isPositiveInt(frame_s, parsed_val)) {
-    error_out = "Must be positive integer or 'End'";
-    return false;
-  }
-
-  if (total_frames > 0 && parsed_val > total_frames) {
-    error_out = slint::SharedString(std::format("Must be ≤ total frames ({})", total_frames));
-    return false;
-  }
-
-  frame_val = parsed_val - 1;
-  return true;
-}
-
-bool validateFrameStrideInput(const std::string &stride_s, int &stride_val,
-                              slint::SharedString &error_out) {
-  if (stride_s.empty() || toLowerStr(stride_s) == "1") {
-    stride_val = 1;
-    return true;
-  }
-  int parsed_val = 0;
-  if (!isPositiveInt(stride_s, parsed_val) || parsed_val <= 0) {
-    error_out = "Must be a positive integer (≥ 1)";
-    return false;
-  }
-  stride_val = parsed_val;
-  return true;
-}
-
-} // namespace
 
 InputValidator::InputValidator(::AppWindow &window, AppBackend &backend, AppController &controller)
     : window_(&window), backend_(&backend), controller_(&controller) {}
@@ -153,80 +24,90 @@ InputValidator::InputValidator(::AppWindow &window, AppBackend &backend, AppCont
 bool InputValidator::validateRadialAndScattering(AppErrors &errs, float &r_max_val,
                                                  float &q_max_val) {
   bool valid = true;
+  const auto opts = window_->get_analysis_options();
 
-  const std::string r_max_s = window_->get_analysis_options().r_max.data();
-  if (!isPositiveFloat(r_max_s, r_max_val)) {
-    errs.r_max_error = "Must be a positive number";
+  if (const auto res = ValidationRuleService::parsePositiveFloat(opts.r_max.data()); res) {
+    r_max_val = *res;
+  } else {
+    errs.r_max_error = slint::SharedString(res.error());
     valid = false;
   }
 
-  float r_bin_val = 0.0F;
-  const std::string r_bin_s = window_->get_analysis_options().r_bin_width.data();
-  if (!isPositiveFloat(r_bin_s, r_bin_val)) {
-    errs.r_bin_error = "Must be a positive number";
-    valid = false;
-  } else if (r_max_val > 0.0F && r_bin_val > r_max_val) {
-    errs.r_bin_error = "Must be ≤ r_max";
-    valid = false;
-  }
-
-  const std::string q_max_s = window_->get_analysis_options().q_max.data();
-  if (!isPositiveFloat(q_max_s, q_max_val)) {
-    errs.q_max_error = "Must be a positive number";
+  if (const auto res = ValidationRuleService::parsePositiveFloat(opts.r_bin_width.data()); res) {
+    if (const auto bin_check =
+            ValidationRuleService::validateBinWithinMax(*res, r_max_val, "r_max");
+        !bin_check) {
+      errs.r_bin_error = slint::SharedString(bin_check.error());
+      valid = false;
+    }
+  } else {
+    errs.r_bin_error = slint::SharedString(res.error());
     valid = false;
   }
 
-  float q_bin_val = 0.0F;
-  const std::string q_bin_s = window_->get_analysis_options().q_bin_width.data();
-  if (!isPositiveFloat(q_bin_s, q_bin_val)) {
-    errs.q_bin_error = "Must be a positive number";
-    valid = false;
-  } else if (q_max_val > 0.0F && q_bin_val > q_max_val) {
-    errs.q_bin_error = "Must be ≤ q_max";
+  if (const auto res = ValidationRuleService::parsePositiveFloat(opts.q_max.data()); res) {
+    q_max_val = *res;
+  } else {
+    errs.q_max_error = slint::SharedString(res.error());
     valid = false;
   }
 
-  float r_int_max_val = 0.0F;
-  const std::string r_int_max_s = window_->get_analysis_options().r_int_max.data();
-  if (!isPositiveFloat(r_int_max_s, r_int_max_val)) {
-    errs.r_int_max_error = "Must be a positive number";
+  if (const auto res = ValidationRuleService::parsePositiveFloat(opts.q_bin_width.data()); res) {
+    if (const auto bin_check =
+            ValidationRuleService::validateBinWithinMax(*res, q_max_val, "q_max");
+        !bin_check) {
+      errs.q_bin_error = slint::SharedString(bin_check.error());
+      valid = false;
+    }
+  } else {
+    errs.q_bin_error = slint::SharedString(res.error());
     valid = false;
   }
 
-  float lambda_val = 0.0F;
-  const std::string lambda_s = window_->get_analysis_options().xrd_lambda.data();
-  if (!isPositiveFloat(lambda_s, lambda_val)) {
-    errs.xrd_lambda_error = "Must be a positive number";
+  if (const auto res = ValidationRuleService::parsePositiveFloat(opts.r_int_max.data()); !res) {
+    errs.r_int_max_error = slint::SharedString(res.error());
     valid = false;
   }
 
-  float theta_min_val = 0.0F;
-  const std::string theta_min_s = window_->get_analysis_options().xrd_theta_min.data();
-  if (!isNonNegativeFloat(theta_min_s, theta_min_val)) {
-    errs.xrd_theta_min_error = "Must be non-negative";
-    valid = false;
-  } else if (theta_min_val >= 180.0F) {
-    errs.xrd_theta_min_error = "Must be < 180°";
+  return valid;
+}
+
+bool InputValidator::validateXrdOptions(AppErrors &errs) {
+  bool valid = true;
+  const auto opts = window_->get_analysis_options();
+
+  if (const auto res = ValidationRuleService::parsePositiveFloat(opts.xrd_lambda.data()); !res) {
+    errs.xrd_lambda_error = slint::SharedString(res.error());
     valid = false;
   }
 
-  float theta_max_val = 0.0F;
-  const std::string theta_max_s = window_->get_analysis_options().xrd_theta_max.data();
-  if (!isPositiveFloat(theta_max_s, theta_max_val)) {
-    errs.xrd_theta_max_error = "Must be a positive number";
-    valid = false;
-  } else if (theta_max_val > 180.0F) {
-    errs.xrd_theta_max_error = "Must be ≤ 180°";
-    valid = false;
-  } else if (theta_min_val >= theta_max_val) {
-    errs.xrd_theta_max_error = "Must be > Min 2θ";
+  float theta_min = -1.0F;
+  float theta_max = -1.0F;
+  if (const auto res = ValidationRuleService::parseNonNegativeFloat(opts.xrd_theta_min.data());
+      res) {
+    theta_min = *res;
+  } else {
+    errs.xrd_theta_min_error = slint::SharedString(res.error());
     valid = false;
   }
 
-  float bin_width_val = 0.0F;
-  const std::string bin_width_s = window_->get_analysis_options().xrd_bin_width.data();
-  if (!isPositiveFloat(bin_width_s, bin_width_val)) {
-    errs.xrd_bin_width_error = "Must be a positive number";
+  if (const auto res = ValidationRuleService::parsePositiveFloat(opts.xrd_theta_max.data()); res) {
+    theta_max = *res;
+  } else {
+    errs.xrd_theta_max_error = slint::SharedString(res.error());
+    valid = false;
+  }
+
+  if (theta_min >= 0.0F && theta_max > 0.0F) {
+    if (const auto theta_check = ValidationRuleService::validateXrdTheta(theta_min, theta_max);
+        !theta_check) {
+      errs.xrd_theta_max_error = slint::SharedString(theta_check.error());
+      valid = false;
+    }
+  }
+
+  if (const auto res = ValidationRuleService::parsePositiveFloat(opts.xrd_bin_width.data()); !res) {
+    errs.xrd_bin_width_error = slint::SharedString(res.error());
     valid = false;
   }
 
@@ -235,30 +116,36 @@ bool InputValidator::validateRadialAndScattering(AppErrors &errs, float &r_max_v
 
 bool InputValidator::validateAngularAndRings(AppErrors &errs) {
   bool valid = true;
+  const auto opts = window_->get_analysis_options();
 
-  float angle_bin_val = 0.0F;
-  const std::string angle_bin_s = window_->get_analysis_options().angle_bin_width.data();
-  if (!isPositiveFloat(angle_bin_s, angle_bin_val)) {
-    errs.angle_bin_error = "Must be a positive number";
-    valid = false;
-  } else if (angle_bin_val > 180.0F) {
-    errs.angle_bin_error = "Must be ≤ 180°";
+  if (const auto res = ValidationRuleService::parsePositiveFloat(opts.angle_bin_width.data());
+      res) {
+    if (const auto angle_check = ValidationRuleService::validateAngleDegrees(*res); !angle_check) {
+      errs.angle_bin_error = slint::SharedString(angle_check.error());
+      valid = false;
+    }
+  } else {
+    errs.angle_bin_error = slint::SharedString(res.error());
     valid = false;
   }
 
-  float dihedral_bin_val = 0.0F;
-  const std::string dihedral_bin_s = window_->get_analysis_options().dihedral_bin_width.data();
-  if (!isPositiveFloat(dihedral_bin_s, dihedral_bin_val)) {
-    errs.dihedral_bin_error = "Must be a positive number";
-    valid = false;
-  } else if (dihedral_bin_val > 360.0F) {
-    errs.dihedral_bin_error = "Must be ≤ 360°";
+  if (const auto res = ValidationRuleService::parsePositiveFloat(opts.dihedral_bin_width.data());
+      res) {
+    if (*res > 360.0F) {
+      errs.dihedral_bin_error = "Must be ≤ 360°";
+      valid = false;
+    }
+  } else {
+    errs.dihedral_bin_error = slint::SharedString(res.error());
     valid = false;
   }
 
-  int max_ring_val = 0;
-  const std::string max_ring_s = window_->get_analysis_options().max_ring_size.data();
-  if (!isPositiveInt(max_ring_s, max_ring_val) || max_ring_val < 3) {
+  if (const auto res = ValidationRuleService::parsePositiveInt(opts.max_ring_size.data()); res) {
+    if (*res < 3) {
+      errs.max_ring_error = "Must be an integer ≥ 3";
+      valid = false;
+    }
+  } else {
     errs.max_ring_error = "Must be an integer ≥ 3";
     valid = false;
   }
@@ -268,39 +155,31 @@ bool InputValidator::validateAngularAndRings(AppErrors &errs) {
 
 bool InputValidator::validateOtherAnalysisOptions(AppErrors &errs) {
   bool valid = true;
+  const auto opts = window_->get_analysis_options();
 
-  float smoothing_sigma_val = 0.0F;
-  const std::string smoothing_sigma_s = window_->get_analysis_options().smoothing_sigma.data();
-  if (!isNonNegativeFloat(smoothing_sigma_s, smoothing_sigma_val)) {
+  if (const auto res = ValidationRuleService::parseNonNegativeFloat(opts.smoothing_sigma.data());
+      !res) {
     errs.smoothing_sigma_error = "Must be a non-negative number";
     valid = false;
   }
 
-  float time_step_val = 0.0F;
-  const std::string time_step_s = window_->get_analysis_options().time_step.data();
-  if (!isPositiveFloat(time_step_s, time_step_val)) {
-    errs.time_step_error = "Must be a positive number";
+  if (const auto res = ValidationRuleService::parsePositiveFloat(opts.time_step.data()); !res) {
+    errs.time_step_error = slint::SharedString(res.error());
     valid = false;
   }
 
-  float lef_cutoff_val = 0.0F;
-  const std::string lef_cutoff_s = window_->get_analysis_options().lef_cutoff.data();
-  if (!isPositiveFloat(lef_cutoff_s, lef_cutoff_val)) {
-    errs.lef_cutoff_error = "Must be a positive number";
+  if (const auto res = ValidationRuleService::parsePositiveFloat(opts.lef_cutoff.data()); !res) {
+    errs.lef_cutoff_error = slint::SharedString(res.error());
     valid = false;
   }
 
-  float lef_sigma_val = 0.0F;
-  const std::string lef_sigma_s = window_->get_analysis_options().lef_sigma.data();
-  if (!isPositiveFloat(lef_sigma_s, lef_sigma_val)) {
-    errs.lef_sigma_error = "Must be a positive number";
+  if (const auto res = ValidationRuleService::parsePositiveFloat(opts.lef_sigma.data()); !res) {
+    errs.lef_sigma_error = slint::SharedString(res.error());
     valid = false;
   }
 
-  int hyper_samples_val = 0;
-  const std::string hyper_samples_s = window_->get_analysis_options().hyper_samples.data();
-  if (!isPositiveInt(hyper_samples_s, hyper_samples_val)) {
-    errs.hyper_samples_error = "Must be a positive integer";
+  if (const auto res = ValidationRuleService::parsePositiveInt(opts.hyper_samples.data()); !res) {
+    errs.hyper_samples_error = slint::SharedString(res.error());
     valid = false;
   }
 
@@ -309,36 +188,36 @@ bool InputValidator::validateOtherAnalysisOptions(AppErrors &errs) {
 
 bool InputValidator::validateFrames(AppErrors &errs) {
   bool valid = true;
+  const int total_frames = window_->get_num_frames();
+  const auto opts = window_->get_analysis_options();
 
   int min_frame_val = -1;
   int max_frame_val = -1;
-  const int total_frames = window_->get_num_frames();
 
-  const std::string min_frame_s = window_->get_analysis_options().min_frame.data();
-  const bool min_frame_valid =
-      validateMinFrameInput(min_frame_s, total_frames, min_frame_val, errs.min_frame_error);
-  if (!min_frame_valid) {
+  if (const auto res = ValidationRuleService::parseMinFrame(opts.min_frame.data(), total_frames);
+      res) {
+    min_frame_val = *res;
+  } else {
+    errs.min_frame_error = slint::SharedString(res.error());
     valid = false;
   }
 
-  const std::string max_frame_s = window_->get_analysis_options().max_frame.data();
-  const bool max_frame_valid =
-      validateMaxFrameInput(max_frame_s, total_frames, max_frame_val, errs.max_frame_error);
-  if (!max_frame_valid) {
+  if (const auto res = ValidationRuleService::parseMaxFrame(opts.max_frame.data(), total_frames);
+      res) {
+    max_frame_val = *res;
+  } else {
+    errs.max_frame_error = slint::SharedString(res.error());
     valid = false;
   }
 
-  if (min_frame_valid && max_frame_valid && min_frame_val >= 0 && max_frame_val >= 0) {
-    if (min_frame_val > max_frame_val) {
-      errs.min_frame_error = "Start frame must be ≤ End frame";
-      errs.max_frame_error = "End frame must be ≥ Start frame";
-      valid = false;
-    }
+  if (min_frame_val >= 0 && max_frame_val >= 0 && min_frame_val > max_frame_val) {
+    errs.min_frame_error = "Start frame must be ≤ End frame";
+    errs.max_frame_error = "End frame must be ≥ Start frame";
+    valid = false;
   }
 
-  int stride_val = 1;
-  const std::string stride_s = window_->get_analysis_options().frame_stride.data();
-  if (!validateFrameStrideInput(stride_s, stride_val, errs.frame_stride_error)) {
+  if (const auto res = ValidationRuleService::parseFrameStride(opts.frame_stride.data()); !res) {
+    errs.frame_stride_error = slint::SharedString(res.error());
     valid = false;
   }
 
@@ -347,25 +226,23 @@ bool InputValidator::validateFrames(AppErrors &errs) {
 
 bool InputValidator::validateExportConfig(AppErrors &errs) {
   bool valid = true;
+  const auto export_cfg = window_->get_export_config();
 
-  float font_scale_val = 0.0F;
-  const std::string font_scale_s = window_->get_export_config().font_scale.data();
-  if (!isPositiveFloat(font_scale_s, font_scale_val)) {
-    errs.export_font_scale_error = "Must be a positive number";
+  if (const auto res = ValidationRuleService::parsePositiveFloat(export_cfg.font_scale.data());
+      !res) {
+    errs.export_font_scale_error = slint::SharedString(res.error());
     valid = false;
   }
 
-  float line_width_val = 0.0F;
-  const std::string line_width_s = window_->get_export_config().line_width.data();
-  if (!isPositiveFloat(line_width_s, line_width_val)) {
-    errs.export_line_width_error = "Must be a positive number";
+  if (const auto res = ValidationRuleService::parsePositiveFloat(export_cfg.line_width.data());
+      !res) {
+    errs.export_line_width_error = slint::SharedString(res.error());
     valid = false;
   }
 
-  float marker_size_val = 0.0F;
-  const std::string marker_size_s = window_->get_export_config().marker_size.data();
-  if (!isPositiveFloat(marker_size_s, marker_size_val)) {
-    errs.export_marker_size_error = "Must be a positive number";
+  if (const auto res = ValidationRuleService::parsePositiveFloat(export_cfg.marker_size.data());
+      !res) {
+    errs.export_marker_size_error = slint::SharedString(res.error());
     valid = false;
   }
 
@@ -403,6 +280,9 @@ bool InputValidator::validateInputs() {
   float q_max_val = 0.0F;
 
   if (!validateRadialAndScattering(errs, r_max_val, q_max_val)) {
+    valid = false;
+  }
+  if (!validateXrdOptions(errs)) {
     valid = false;
   }
   if (!validateAngularAndRings(errs)) {

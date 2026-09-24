@@ -242,12 +242,14 @@ if(BUILD_GUI)
         app/BondCutoffMapper.cpp
         app/FileIOHandler.cpp
         app/InputValidator.cpp
+        app/PhysicsService.cpp
         app/PlotController.cpp
         app/PlotExportService.cpp
         app/PresetController.cpp
         app/PresetManager.cpp
         app/SettingsManager.cpp
         app/UpdateChecker.cpp
+        app/ValidationRuleService.cpp
     )
 
     if (WIN32)
@@ -319,6 +321,7 @@ if(NOT (EMSCRIPTEN OR BUILD_WASM))
     add_executable(correlation-cli
         cli/main_cli.cpp
         app/AppBackend.cpp
+        app/PhysicsService.cpp
     )
     target_link_libraries(correlation-cli PRIVATE
         correlation_lib readers_obj writers_obj calculators_obj cli_parser_obj

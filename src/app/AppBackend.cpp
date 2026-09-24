@@ -8,8 +8,8 @@
 
 #include "app/AppBackend.hpp"
 #include "analysis/CorrelationEngine.hpp"
+#include "app/PhysicsService.hpp"
 #include "math/Precision.hpp"
-#include "physics/PhysicalData.hpp"
 #include "readers/FileReader.hpp"
 #include "readers/ReaderFactory.hpp"
 #include "writers/FileWriter.hpp"
@@ -17,9 +17,7 @@
 #include <algorithm>
 #include <filesystem>
 
-#include <cmath>
 #include <iostream>
-#include <limits>
 
 namespace correlation::app {
 
@@ -77,32 +75,7 @@ real_t AppBackend::getTimeStep() const {
 }
 
 real_t AppBackend::getRecommendedTimeStep() const {
-  const correlation::core::Cell *current_cell = cell();
-  if ((current_cell == nullptr) || current_cell->elements().empty()) {
-    return AppDefaults::TIME_STEP;
-  }
-
-  real_t min_mass = std::numeric_limits<real_t>::max();
-  bool found = false;
-
-  for (const auto &element : current_cell->elements()) {
-    try {
-      real_t const mass = correlation::physics::getAtomicMass(element.symbol);
-      if (mass < min_mass) {
-        min_mass = mass;
-        found = true;
-      }
-    } catch (const std::out_of_range &err) {
-      std::cerr << "Warning: Unknown element symbol '" << element.symbol
-                << "' ignored in mass calculation: " << err.what() << '\n';
-    }
-  }
-
-  if (found && min_mass > 0.0) {
-    return static_cast<real_t>(std::sqrt(9.0 * min_mass / 5.0));
-  }
-
-  return AppDefaults::TIME_STEP;
+  return PhysicsService::computeRecommendedTimeStep(cell());
 }
 
 correlation::analysis::BondCutoffMatrix AppBackend::getRecommendedBondCutoffs() const {
@@ -138,17 +111,7 @@ void AppBackend::setBondCutoffs(const correlation::analysis::BondCutoffMatrix &c
 }
 
 correlation::analysis::BondCutoffMatrix AppBackend::applyScaledBondCutoffs(real_t scale_factor) {
-  auto cutoffs = getRecommendedBondCutoffs();
-  if (cutoffs.empty() || scale_factor <= static_cast<real_t>(0.0)) {
-    return cutoffs;
-  }
-  const real_t factor_sq = scale_factor * scale_factor;
-  for (auto &row : cutoffs) {
-    for (auto &range : row) {
-      range.min_sq *= factor_sq;
-      range.max_sq *= factor_sq;
-    }
-  }
+  auto cutoffs = PhysicsService::scaleBondCutoffs(getRecommendedBondCutoffs(), scale_factor);
   setBondCutoffs(cutoffs);
   return cutoffs;
 }
@@ -158,13 +121,8 @@ correlation::analysis::BondCutoffMatrix AppBackend::setUniformBondCutoff(real_t 
   if (cell() == nullptr) {
     return {};
   }
-  const size_t num_elements = cell()->elements().size();
-  const real_t min_sq = (min_cutoff > static_cast<real_t>(0.0)) ? (min_cutoff * min_cutoff)
-                                                                : static_cast<real_t>(0.0);
-  const real_t max_sq = (max_cutoff > min_cutoff) ? (max_cutoff * max_cutoff) : min_sq;
-  correlation::analysis::BondCutoffMatrix cutoffs(
-      num_elements, std::vector<correlation::analysis::BondCutoffRange>(
-                        num_elements, {.min_sq = min_sq, .max_sq = max_sq}));
+  auto cutoffs =
+      PhysicsService::buildUniformBondCutoffs(cell()->elements().size(), min_cutoff, max_cutoff);
   setBondCutoffs(cutoffs);
   return cutoffs;
 }
