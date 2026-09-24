@@ -1275,13 +1275,13 @@
     "semantic_hash": ""
   },
   "CMakeLists.txt": {
-    "mtime": 1790021135.036003,
-    "ast_hash": "6fac181694050e586c0814c7e46e31ec",
+    "mtime": 1790280464.1285527,
+    "ast_hash": "3be72a1358070a61de1b54c75c4876bb",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1790021140.927924,
-    "ast_hash": "46364b9c046aa6577b3fc6ba9b89920c",
+    "mtime": 1790280487.3365166,
+    "ast_hash": "3b4f0015079813780fd5eb8fd77641a5",
     "semantic_hash": ""
   },
   "docs/CODE_OF_CONDUCT.md": {
@@ -1730,8 +1730,8 @@
     "semantic_hash": ""
   },
   "recipe/meta.yaml": {
-    "mtime": 1790021174.565471,
-    "ast_hash": "88701305b7024af993498f906d683e5d",
+    "mtime": 1790280518.9304502,
+    "ast_hash": "7abc5779aca87a913037f38ad132c55c",
     "semantic_hash": ""
   },
   "include/app/SettingsManager.hpp": {

@@ -1,6 +1,34 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.9.6] - 2026-09-24
+
+### WebAssembly & Browser Runtime
+- **Standalone Web Application Decoupling**: Relocated client-side WebAssembly application files from `ui/wasm_app/` to dedicated top-level `web/` (`web/app.js`, `web/index.html`, `web/style.css`, `web/worker.js`):
+  - Cleanly decoupled browser demonstration runtime from desktop Slint UI.
+  - Updated GitHub Actions CI deployment pipeline (`.github/workflows/wasm.yml`) and project documentation.
+
+### UI / UX Modernization & Slint Architecture
+- **XRD Options Card**: Added dedicated Powder X-ray Diffraction configuration card (`ui/cards/xrd_card.slint`), integrating radiation source presets (Cu, Mo, Fe, Ag, Cr) and angular $2\theta$ range parameters.
+- **Collapsible MiniSideBar & Navigation**: Added `MiniSideBar` component with Material Design icons for streamlined workspace section navigation.
+- **MaterialScrollView**: Implemented custom `MaterialScrollView` component replacing standard Slint `ScrollView` across parameter cards for uniform scrolling behavior.
+- **UI Modularization & Directory Reorganization**: Reorganized Slint cards into structured subdirectories (`ui/cards/`, `ui/material/`, `ui/nav/`).
+- **Bond Cutoff Tuning Controls**: Extended `BondCutoffsCard` with dynamic factor controls (minimum factor, maximum factor, uniform cutoff, scale factor) for real-time covalent cutoff tuning.
+- **File Reloading & Trajectory Controls**: Added instant file reloading (`on_reload_file`), frame stride controls, and periodic boundary box diagnostics to the operations panel.
+
+### Decoupled Application Services (SOLID Foundations)
+- **PlotExportService**: Extracted plot export and file writing logic to a dedicated service (`include/app/PlotExportService.hpp`, `src/app/PlotExportService.cpp`).
+- **BondCutoffMapper**: Implemented stateless mapping service (`include/app/BondCutoffMapper.hpp`, `src/app/BondCutoffMapper.cpp`) translating between UI models and domain cutoff matrices.
+
+### C++20/C++23 Modernization & Core Refactoring
+- **I/O & Plotting Overhaul**: Modernized simulation readers, writers, and plotters to modern C++20/C++23 standards (`std::span`, ranges, RAII).
+- **Calculator Standardization**: Modernized calculator codebase with camelCase naming conventions and standardized interfaces.
+- **Unit Test Modernization**: Modernized unit test suites across `tests/unit/core/` and `tests/unit/math/` with C++20/C++23 practices.
+
+### Bug Fixes
+- **macOS LLVM 18 Compatibility**: Fixed compilation error caused by missing `std::ranges::iota` in Apple Clang / LLVM 18.
+- **Histogram Units**: Corrected y-axis units for structure factor $S(Q)$ and pair distribution function $g(r)$ in SVG plot rendering.
+
 ## [3.9.5] - 2026-09-21
 
 ### Simulation Readers & Formats
