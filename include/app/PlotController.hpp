@@ -9,6 +9,8 @@
 #pragma once
 
 #include "app/AppBackend.hpp"
+#include "app/PlotSeriesManager.hpp"
+#include "app/PlotTableFormatter.hpp"
 #include "plotters/SvgPlotter.hpp"
 #include <slint.h>
 
@@ -121,9 +123,16 @@ public:
    */
   void handleSetCurveColor(int curve_id, const slint::SharedString &color_hex);
 
+  /**
+   * @brief Resets all plot series state (visibility overrides, custom colors, pinned runs).
+   */
+  void resetPlotState() noexcept;
+
 private:
   ::AppWindow &window_;
   AppBackend &backend_;
+
+  PlotSeriesManager series_manager_;
 
   std::thread render_thread_;
 
@@ -134,6 +143,7 @@ private:
     correlation::plotters::HoverInfo hover;
     std::map<std::string, real_t> ashcroft_weights;
     std::map<std::string, bool> curve_visibility;
+    std::map<std::string, std::string> custom_curve_colors;
   };
 
   std::atomic<bool> is_rendering_{false};
@@ -147,17 +157,6 @@ private:
       false}; ///< Concurrency guard preventing duplicate dialog launches
 
   std::vector<std::string> available_plot_keys_;
-
-  struct PinnedRun {
-    std::string label;
-    std::map<std::string, correlation::analysis::Histogram> histograms;
-  };
-  std::vector<PinnedRun> pinned_runs_;
-
-  std::map<std::string, bool> curve_visibility_map_;
-  std::map<std::string, std::string> custom_curve_colors_;
-  std::vector<std::string> current_toggle_keys_;
-  bool show_difference_curve_{false};
 
   float last_mouse_x_ = -1.0F;
   float last_mouse_y_ = -1.0F;

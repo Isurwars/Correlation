@@ -245,6 +245,8 @@ if(BUILD_GUI)
         app/PhysicsService.cpp
         app/PlotController.cpp
         app/PlotExportService.cpp
+        app/PlotSeriesManager.cpp
+        app/PlotTableFormatter.cpp
         app/PresetController.cpp
         app/PresetManager.cpp
         app/SettingsManager.cpp

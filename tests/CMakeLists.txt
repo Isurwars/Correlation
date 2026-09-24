@@ -168,6 +168,8 @@ if(BUILD_GUI)
     add_executable(correlation_gui_tests
         functional/app/AppControllerTests.cpp
         functional/app/SlintSvgIntegrationTests.cpp
+        unit/app/PlotSeriesManagerTests.cpp
+        unit/app/PlotTableFormatterTests.cpp
         ../src/app/AnalysisRunner.cpp
         ../src/app/AppBackend.cpp
         ../src/app/AppController.cpp
@@ -177,6 +179,8 @@ if(BUILD_GUI)
         ../src/app/PhysicsService.cpp
         ../src/app/PlotController.cpp
         ../src/app/PlotExportService.cpp
+        ../src/app/PlotSeriesManager.cpp
+        ../src/app/PlotTableFormatter.cpp
         ../src/app/PresetController.cpp
         ../src/app/PresetManager.cpp
         ../src/app/SettingsManager.cpp

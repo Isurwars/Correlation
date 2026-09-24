@@ -236,8 +236,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_analysis_analysistypes",
-      "community": 9,
-      "community_name": "vector",
+      "community": 371,
+      "community_name": "HyperuniformityCalculatorTests.cpp",
       "norm_label": "analysistypes.hpp"
     },
     {
@@ -313,8 +313,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "include_analysis_analysistypes_bondcutoffrange",
-      "community": 346,
-      "community_name": "string",
+      "community": 371,
+      "community_name": "HyperuniformityCalculatorTests.cpp",
       "norm_label": "bondcutoffrange"
     },
     {
@@ -324,8 +324,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_analysis_analysistypes_hpp_real_t",
-      "community": 346,
-      "community_name": "string",
+      "community": 371,
+      "community_name": "HyperuniformityCalculatorTests.cpp",
       "norm_label": "real_t"
     },
     {
@@ -335,8 +335,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "include_analysis_analysistypes_bondcutoffrange_min_sq",
-      "community": 346,
-      "community_name": "string",
+      "community": 371,
+      "community_name": "HyperuniformityCalculatorTests.cpp",
       "norm_label": "min_sq"
     },
     {
@@ -346,8 +346,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "include_analysis_analysistypes_bondcutoffrange_max_sq",
-      "community": 346,
-      "community_name": "string",
+      "community": 371,
+      "community_name": "HyperuniformityCalculatorTests.cpp",
       "norm_label": "max_sq"
     },
     {
@@ -357,8 +357,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "include_analysis_analysistypes_bondcutoffrange_isvalid",
-      "community": 346,
-      "community_name": "string",
+      "community": 371,
+      "community_name": "HyperuniformityCalculatorTests.cpp",
       "norm_label": ".isvalid()"
     },
     {
@@ -522,8 +522,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions",
-      "community": 9,
-      "community_name": "vector",
+      "community": 323,
+      "community_name": "LocalEntropyCalculator",
       "norm_label": "distributionfunctions.hpp"
     },
     {
@@ -533,8 +533,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_trajectoryanalyzer",
-      "community": 9,
-      "community_name": "vector",
+      "community": 323,
+      "community_name": "LocalEntropyCalculator",
       "norm_label": "trajectoryanalyzer"
     },
     {
@@ -544,8 +544,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_rdfparams",
-      "community": 76,
-      "community_name": "GPUBond",
+      "community": 323,
+      "community_name": "LocalEntropyCalculator",
       "norm_label": "rdfparams"
     },
     {
@@ -566,8 +566,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_rdfparams_r_max",
-      "community": 76,
-      "community_name": "GPUBond",
+      "community": 323,
+      "community_name": "LocalEntropyCalculator",
       "norm_label": "r_max"
     },
     {
@@ -577,8 +577,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_rdfparams_r_bin_width",
-      "community": 76,
-      "community_name": "GPUBond",
+      "community": 323,
+      "community_name": "LocalEntropyCalculator",
       "norm_label": "r_bin_width"
     },
     {
@@ -643,8 +643,8 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_xrdparams",
-      "community": 14,
-      "community_name": "DistributionFunctions.cpp",
+      "community": 323,
+      "community_name": "LocalEntropyCalculator",
       "norm_label": "xrdparams"
     },
     {
@@ -654,8 +654,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_xrdparams_lambda",
-      "community": 14,
-      "community_name": "DistributionFunctions.cpp",
+      "community": 323,
+      "community_name": "LocalEntropyCalculator",
       "norm_label": "lambda"
     },
     {
@@ -665,8 +665,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_xrdparams_theta_min",
-      "community": 14,
-      "community_name": "DistributionFunctions.cpp",
+      "community": 323,
+      "community_name": "LocalEntropyCalculator",
       "norm_label": "theta_min"
     },
     {
@@ -676,8 +676,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_xrdparams_theta_max",
-      "community": 14,
-      "community_name": "DistributionFunctions.cpp",
+      "community": 323,
+      "community_name": "LocalEntropyCalculator",
       "norm_label": "theta_max"
     },
     {
@@ -687,8 +687,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_xrdparams_bin_width",
-      "community": 14,
-      "community_name": "DistributionFunctions.cpp",
+      "community": 323,
+      "community_name": "LocalEntropyCalculator",
       "norm_label": "bin_width"
     },
     {
@@ -874,8 +874,8 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_analysissettings_isactive",
-      "community": 53,
-      "community_name": "TEST_F",
+      "community": 14,
+      "community_name": "DistributionFunctions.cpp",
       "norm_label": ".isactive()"
     },
     {
@@ -1589,8 +1589,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_hpp_mutex",
-      "community": 9,
-      "community_name": "vector",
+      "community": 323,
+      "community_name": "LocalEntropyCalculator",
       "norm_label": "mutex"
     },
     {
@@ -1622,8 +1622,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_analysis_dynamicsanalyzer",
-      "community": 9,
-      "community_name": "vector",
+      "community": 371,
+      "community_name": "HyperuniformityCalculatorTests.cpp",
       "norm_label": "dynamicsanalyzer.hpp"
     },
     {
@@ -1886,8 +1886,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer",
-      "community": 9,
-      "community_name": "vector",
+      "community": 323,
+      "community_name": "LocalEntropyCalculator",
       "norm_label": "structureanalyzer.hpp"
     },
     {
@@ -4570,8 +4570,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_app_physicsservice",
-      "community": 9,
-      "community_name": "vector",
+      "community": 371,
+      "community_name": "HyperuniformityCalculatorTests.cpp",
       "norm_label": "physicsservice.hpp"
     },
     {
@@ -7727,8 +7727,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "include_calculators_gpuxrdcalculator_gpuxrdparams",
-      "community": 323,
-      "community_name": "LocalEntropyCalculator",
+      "community": 23,
+      "community_name": "AnalysisSettings",
       "norm_label": "gpuxrdparams"
     },
     {
@@ -7738,8 +7738,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_calculators_gpuxrdcalculator_hpp_real_t",
-      "community": 323,
-      "community_name": "LocalEntropyCalculator",
+      "community": 23,
+      "community_name": "AnalysisSettings",
       "norm_label": "real_t"
     },
     {
@@ -7749,8 +7749,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "include_calculators_gpuxrdcalculator_gpuxrdparams_lambda",
-      "community": 323,
-      "community_name": "LocalEntropyCalculator",
+      "community": 23,
+      "community_name": "AnalysisSettings",
       "norm_label": "lambda"
     },
     {
@@ -7760,8 +7760,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "include_calculators_gpuxrdcalculator_gpuxrdparams_theta_min",
-      "community": 323,
-      "community_name": "LocalEntropyCalculator",
+      "community": 23,
+      "community_name": "AnalysisSettings",
       "norm_label": "theta_min"
     },
     {
@@ -7771,8 +7771,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "include_calculators_gpuxrdcalculator_gpuxrdparams_theta_max",
-      "community": 323,
-      "community_name": "LocalEntropyCalculator",
+      "community": 23,
+      "community_name": "AnalysisSettings",
       "norm_label": "theta_max"
     },
     {
@@ -7782,8 +7782,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "include_calculators_gpuxrdcalculator_gpuxrdparams_bin_width",
-      "community": 323,
-      "community_name": "LocalEntropyCalculator",
+      "community": 23,
+      "community_name": "AnalysisSettings",
       "norm_label": "bin_width"
     },
     {
@@ -10620,8 +10620,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_cli_cliparser",
-      "community": 9,
-      "community_name": "vector",
+      "community": 323,
+      "community_name": "LocalEntropyCalculator",
       "norm_label": "cliparser.hpp"
     },
     {
@@ -11940,8 +11940,8 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "include_core_gpuportability_hipdevicesynchronize",
-      "community": 160,
-      "community_name": "CalculatorFactory",
+      "community": 23,
+      "community_name": "AnalysisSettings",
       "norm_label": "hipdevicesynchronize()"
     },
     {
@@ -12798,8 +12798,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_math_constants",
-      "community": 371,
-      "community_name": "HyperuniformityCalculatorTests.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "constants.hpp"
     },
     {
@@ -19563,8 +19563,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "include_readers_arcreader_arcreader_readtrajectory",
-      "community": 36,
-      "community_name": "fuzz_utils.hpp",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "readtrajectory"
     },
     {
@@ -21444,8 +21444,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "include_readers_onetepdatreader_onetepdatreader_readstructure",
-      "community": 70,
-      "community_name": "TEST",
+      "community": 36,
+      "community_name": "fuzz_utils.hpp",
       "norm_label": "readstructure"
     },
     {
@@ -24094,8 +24094,8 @@
       "source_location": "L323",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_calculatexrd",
-      "community": 14,
-      "community_name": "DistributionFunctions.cpp",
+      "community": 323,
+      "community_name": "LocalEntropyCalculator",
       "norm_label": "distributionfunctions::calculatexrd()"
     },
     {
@@ -24127,8 +24127,8 @@
       "source_location": "L407",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_processsingleframe",
-      "community": 53,
-      "community_name": "TEST_F",
+      "community": 14,
+      "community_name": "DistributionFunctions.cpp",
       "norm_label": "distributionfunctions::processsingleframe()"
     },
     {
@@ -30551,8 +30551,8 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "src_calculators_gpudistancecalculator_atompair",
-      "community": 361,
-      "community_name": "AtomPair",
+      "community": 110,
+      "community_name": "StructureFactorCalculator.cpp",
       "norm_label": "atompair"
     },
     {
@@ -30562,8 +30562,8 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "src_calculators_gpudistancecalculator_atompair_i_val",
-      "community": 361,
-      "community_name": "AtomPair",
+      "community": 110,
+      "community_name": "StructureFactorCalculator.cpp",
       "norm_label": "i_val"
     },
     {
@@ -30573,8 +30573,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "src_calculators_gpudistancecalculator_atompair_j_val",
-      "community": 361,
-      "community_name": "AtomPair",
+      "community": 110,
+      "community_name": "StructureFactorCalculator.cpp",
       "norm_label": "j_val"
     },
     {
@@ -30584,8 +30584,8 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "src_calculators_gpudistancecalculator_atompair_type_a",
-      "community": 361,
-      "community_name": "AtomPair",
+      "community": 110,
+      "community_name": "StructureFactorCalculator.cpp",
       "norm_label": "type_a"
     },
     {
@@ -30595,8 +30595,8 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "src_calculators_gpudistancecalculator_atompair_type_b",
-      "community": 361,
-      "community_name": "AtomPair",
+      "community": 110,
+      "community_name": "StructureFactorCalculator.cpp",
       "norm_label": "type_b"
     },
     {
@@ -33158,8 +33158,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_calculators_padcalculator",
-      "community": 371,
-      "community_name": "HyperuniformityCalculatorTests.cpp",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "padcalculator.cpp"
     },
     {
@@ -33246,8 +33246,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "src_calculators_padcalculator_padcalculator_calculateframe",
-      "community": 371,
-      "community_name": "HyperuniformityCalculatorTests.cpp",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "padcalculator::calculateframe()"
     },
     {
@@ -34984,8 +34984,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_calculators_vdoscalculator",
-      "community": 371,
-      "community_name": "HyperuniformityCalculatorTests.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "vdoscalculator.cpp"
     },
     {
@@ -34995,8 +34995,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "src_calculators_vdoscalculator_vdoscalculator_calculatetrajectory",
-      "community": 371,
-      "community_name": "HyperuniformityCalculatorTests.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "vdoscalculator::calculatetrajectory()"
     },
     {
@@ -42992,8 +42992,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_readers_outmolreader",
-      "community": 371,
-      "community_name": "HyperuniformityCalculatorTests.cpp",
+      "community": 346,
+      "community_name": "string",
       "norm_label": "outmolreader.cpp"
     },
     {
@@ -43036,8 +43036,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_outmolreader_cpp_function",
-      "community": 371,
-      "community_name": "HyperuniformityCalculatorTests.cpp",
+      "community": 346,
+      "community_name": "string",
       "norm_label": "function"
     },
     {
@@ -43267,8 +43267,8 @@
       "source_location": "L179",
       "_origin": "ast",
       "id": "src_readers_outmolreader_outmolreader_readstructure",
-      "community": 371,
-      "community_name": "HyperuniformityCalculatorTests.cpp",
+      "community": 346,
+      "community_name": "string",
       "norm_label": "outmolreader::readstructure()"
     },
     {
@@ -43278,8 +43278,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_outmolreader_cpp_string",
-      "community": 371,
-      "community_name": "HyperuniformityCalculatorTests.cpp",
+      "community": 346,
+      "community_name": "string",
       "norm_label": "string"
     },
     {
@@ -43289,8 +43289,8 @@
       "source_location": "L185",
       "_origin": "ast",
       "id": "src_readers_outmolreader_outmolreader_readtrajectory",
-      "community": 371,
-      "community_name": "HyperuniformityCalculatorTests.cpp",
+      "community": 346,
+      "community_name": "string",
       "norm_label": "outmolreader::readtrajectory()"
     },
     {
@@ -43300,8 +43300,8 @@
       "source_location": "L191",
       "_origin": "ast",
       "id": "src_readers_outmolreader_outmolreader_read",
-      "community": 371,
-      "community_name": "HyperuniformityCalculatorTests.cpp",
+      "community": 346,
+      "community_name": "string",
       "norm_label": "outmolreader::read()"
     },
     {
@@ -45973,8 +45973,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tests_functional_analysis_trajectoryanalyzertests_test",
-      "community": 14,
-      "community_name": "DistributionFunctions.cpp",
+      "community": 61,
+      "community_name": "TEST_F",
       "norm_label": "test()"
     },
     {
@@ -45984,8 +45984,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "trajectoryanalyzertests",
-      "community": 14,
-      "community_name": "DistributionFunctions.cpp",
+      "community": 61,
+      "community_name": "TEST_F",
       "norm_label": "trajectoryanalyzertests"
     },
     {
@@ -45995,8 +45995,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "basicusage",
-      "community": 14,
-      "community_name": "DistributionFunctions.cpp",
+      "community": 61,
+      "community_name": "TEST_F",
       "norm_label": "basicusage"
     },
     {
@@ -46006,8 +46006,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "startandendframelimits",
-      "community": 14,
-      "community_name": "DistributionFunctions.cpp",
+      "community": 61,
+      "community_name": "TEST_F",
       "norm_label": "startandendframelimits"
     },
     {
@@ -46017,8 +46017,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "progresscallbackiscalled",
-      "community": 14,
-      "community_name": "DistributionFunctions.cpp",
+      "community": 61,
+      "community_name": "TEST_F",
       "norm_label": "progresscallbackiscalled"
     },
     {
@@ -46028,8 +46028,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "createanalyzeroutofboundsreturnsnullptr",
-      "community": 14,
-      "community_name": "DistributionFunctions.cpp",
+      "community": 61,
+      "community_name": "TEST_F",
       "norm_label": "createanalyzeroutofboundsreturnsnullptr"
     },
     {
@@ -47018,8 +47018,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_fuzz_fuzz_arc",
-      "community": 36,
-      "community_name": "fuzz_utils.hpp",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "fuzz_arc.cpp"
     },
     {
@@ -47029,8 +47029,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_fuzz_fuzz_arc_llvmfuzzertestoneinput",
-      "community": 36,
-      "community_name": "fuzz_utils.hpp",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "llvmfuzzertestoneinput()"
     },
     {
@@ -47216,8 +47216,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_fuzz_fuzz_onetep_dat",
-      "community": 70,
-      "community_name": "TEST",
+      "community": 36,
+      "community_name": "fuzz_utils.hpp",
       "norm_label": "fuzz_onetep_dat.cpp"
     },
     {
@@ -47227,8 +47227,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_fuzz_fuzz_onetep_dat_llvmfuzzertestoneinput",
-      "community": 70,
-      "community_name": "TEST",
+      "community": 36,
+      "community_name": "fuzz_utils.hpp",
       "norm_label": "llvmfuzzertestoneinput()"
     },
     {
@@ -48401,7 +48401,7 @@
       "label": "TEST()",
       "file_type": "code",
       "source_file": "tests/unit/app/PhysicsServiceTests.cpp",
-      "source_location": "L18",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "tests_unit_app_physicsservicetests_test",
       "community": 20,
@@ -49042,8 +49042,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_calculators_anglecalculatortests",
-      "community": 371,
-      "community_name": "HyperuniformityCalculatorTests.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "anglecalculatortests.cpp"
     },
     {
@@ -52045,8 +52045,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "smoothing",
-      "community": 9,
-      "community_name": "vector",
+      "community": 323,
+      "community_name": "LocalEntropyCalculator",
       "norm_label": "smoothing"
     },
     {
@@ -53332,8 +53332,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_calculators_vdoscalculatortests",
-      "community": 371,
-      "community_name": "HyperuniformityCalculatorTests.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "vdoscalculatortests.cpp"
     },
     {
@@ -54586,8 +54586,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_core_atomtests",
-      "community": 371,
-      "community_name": "HyperuniformityCalculatorTests.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "unit/core/atomtests.cpp"
     },
     {
@@ -56665,8 +56665,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_math_smoothingtests",
-      "community": 9,
-      "community_name": "vector",
+      "community": 323,
+      "community_name": "LocalEntropyCalculator",
       "norm_label": "smoothingtests.cpp"
     },
     {
@@ -58865,8 +58865,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_readers_filereadertests",
-      "community": 371,
-      "community_name": "HyperuniformityCalculatorTests.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "filereadertests.cpp"
     },
     {
@@ -82181,7 +82181,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/unit/app/PhysicsServiceTests.cpp",
-      "source_location": "L19",
+      "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_unit_app_physicsservicetests_test",
@@ -82205,7 +82205,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/unit/app/PhysicsServiceTests.cpp",
-      "source_location": "L19",
+      "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_unit_app_physicsservicetests_test",
@@ -82229,7 +82229,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/unit/app/PhysicsServiceTests.cpp",
-      "source_location": "L39",
+      "source_location": "L38",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_unit_app_physicsservicetests_test",
@@ -82253,7 +82253,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/unit/app/PhysicsServiceTests.cpp",
-      "source_location": "L58",
+      "source_location": "L57",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_unit_app_physicsservicetests_test",
@@ -97180,7 +97180,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/unit/app/PhysicsServiceTests.cpp",
-      "source_location": "L27",
+      "source_location": "L26",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_unit_app_physicsservicetests_test",
@@ -175681,7 +175681,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/app/PhysicsServiceTests.cpp",
-      "source_location": "L57",
+      "source_location": "L56",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_unit_app_physicsservicetests",
@@ -175692,7 +175692,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/app/PhysicsServiceTests.cpp",
-      "source_location": "L57",
+      "source_location": "L56",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -175704,7 +175704,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/app/PhysicsServiceTests.cpp",
-      "source_location": "L18",
+      "source_location": "L17",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -175716,7 +175716,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/app/PhysicsServiceTests.cpp",
-      "source_location": "L25",
+      "source_location": "L24",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -175728,7 +175728,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/app/PhysicsServiceTests.cpp",
-      "source_location": "L57",
+      "source_location": "L56",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -175740,7 +175740,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/app/PhysicsServiceTests.cpp",
-      "source_location": "L37",
+      "source_location": "L36",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
