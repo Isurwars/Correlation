@@ -440,7 +440,10 @@ TEST_F(AppControllerTests, HandlesXRDOptionsAndCutoffHeuristics) {
   ASSERT_GT(cutoffs->row_count(), 0);
   for (size_t i = 0; i < cutoffs->row_count(); ++i) {
     const auto opt = cutoffs->row_data(i);
-    ASSERT_TRUE(opt.has_value());
+    if (!opt) {
+      FAIL() << "Missing row data at index " << i;
+      return;
+    }
     EXPECT_EQ(opt->min_distance.data(), std::string("0.00"));
     EXPECT_EQ(opt->max_distance.data(), std::string("3.40"));
   }
@@ -459,7 +462,10 @@ TEST_F(AppControllerTests, HandlesXRDOptionsAndCutoffHeuristics) {
   ASSERT_GT(cutoffs->row_count(), 0);
   for (size_t i = 0; i < cutoffs->row_count(); ++i) {
     const auto opt = cutoffs->row_data(i);
-    ASSERT_TRUE(opt.has_value());
+    if (!opt) {
+      FAIL() << "Missing row data at index " << i;
+      return;
+    }
     EXPECT_EQ(opt->min_distance.data(), std::string("0.00"));
     EXPECT_EQ(opt->max_distance.data(), std::string("3.50"));
   }

@@ -181,7 +181,7 @@ if(CLANG_TIDY_EXE)
     find_program(RUN_CLANG_TIDY_EXE NAMES "run-clang-tidy")
     if(RUN_CLANG_TIDY_EXE)
         add_custom_target(clang-tidy
-            COMMAND ${RUN_CLANG_TIDY_EXE} -p ${PROJECT_BINARY_DIR} "^${PROJECT_SOURCE_DIR}/(src|include|tests)/.*"
+            COMMAND ${RUN_CLANG_TIDY_EXE} -p ${PROJECT_BINARY_DIR} "^${PROJECT_SOURCE_DIR}/(src|include|tests)/(?!plotters/pdfgen\\.c|plotters/RobotoData_).*"
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
             COMMENT "Running clang-tidy across all project source files..."
             VERBATIM

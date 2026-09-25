@@ -25,43 +25,43 @@
     "semantic_hash": ""
   },
   "include/app/AnalysisRunner.hpp": {
-    "mtime": 1784587159.8740132,
-    "ast_hash": "d2ceecc65b1d8c8faf6fd47bae11cda1",
+    "mtime": 1790365989.6013007,
+    "ast_hash": "0e6355650c585c7312d7c47effda6d9e",
     "semantic_hash": ""
   },
   "include/app/AppBackend.hpp": {
-    "mtime": 1790131770.5766482,
-    "ast_hash": "3c175b1447061e9ac33b9dc0ede9169e",
+    "mtime": 1790365989.6011353,
+    "ast_hash": "3bca1f53d617ba82c7f19bd3a600aa51",
     "semantic_hash": ""
   },
   "include/app/AppController.hpp": {
-    "mtime": 1790295896.5277343,
-    "ast_hash": "a18d38a0a0f599a120ae195cde2ff32c",
+    "mtime": 1790365989.6012373,
+    "ast_hash": "96a0c3513395df4b26fdb5ebf6301dcf",
     "semantic_hash": ""
   },
   "include/app/FileIOHandler.hpp": {
-    "mtime": 1790110698.5438535,
-    "ast_hash": "406c1e0086435a39c5f99d7b680ad4f9",
+    "mtime": 1790365989.601319,
+    "ast_hash": "89f7273085fc7a0aec3a0ed1dc2be180",
     "semantic_hash": ""
   },
   "include/app/InputValidator.hpp": {
-    "mtime": 1790281857.0417864,
-    "ast_hash": "23e0a467824abb59b83eed1745784d95",
+    "mtime": 1790365989.60133,
+    "ast_hash": "a476c0b5184a77f1e550b32971cbc69a",
     "semantic_hash": ""
   },
   "include/app/PlotController.hpp": {
-    "mtime": 1790293412.0289643,
-    "ast_hash": "f72a4606f8751c065a7cfdd1d218b484",
+    "mtime": 1790365989.6012783,
+    "ast_hash": "652f8307b5ca3d47a8ea1e626777635f",
     "semantic_hash": ""
   },
   "include/app/PresetController.hpp": {
-    "mtime": 1784587176.214772,
-    "ast_hash": "081f318b10c48d62967b9bc95730a700",
+    "mtime": 1790365989.6012888,
+    "ast_hash": "e679b54ecb43f8a4b1a8bab8ade391db",
     "semantic_hash": ""
   },
   "include/app/PresetManager.hpp": {
-    "mtime": 1784586332.8035674,
-    "ast_hash": "407633e1441b9f07418d00ed80b12b96",
+    "mtime": 1790365989.60138,
+    "ast_hash": "3cd499439e8f0140f93b2ce2d1001e8f",
     "semantic_hash": ""
   },
   "include/calculators/AngleCalculator.hpp": {
@@ -452,46 +452,6 @@
   "src/analysis/TrajectoryAnalyzer.cpp": {
     "mtime": 1790182259.2377555,
     "ast_hash": "d40bb9a9b4f8ddfdfd7cbc782a9f9c27",
-    "semantic_hash": ""
-  },
-  "src/app/AnalysisRunner.cpp": {
-    "mtime": 1790181953.0399728,
-    "ast_hash": "7233e593195d9dfc3530e64399354d17",
-    "semantic_hash": ""
-  },
-  "src/app/AppBackend.cpp": {
-    "mtime": 1790291486.5265248,
-    "ast_hash": "8f1e153afc1cc863ce4ebd4acac988b5",
-    "semantic_hash": ""
-  },
-  "src/app/AppController.cpp": {
-    "mtime": 1790296329.8648455,
-    "ast_hash": "e8730275b7c11d74375238de3c7fb578",
-    "semantic_hash": ""
-  },
-  "src/app/FileIOHandler.cpp": {
-    "mtime": 1790181953.0402176,
-    "ast_hash": "9984357f2a766339178fdc7caa9791a8",
-    "semantic_hash": ""
-  },
-  "src/app/InputValidator.cpp": {
-    "mtime": 1790281887.7540147,
-    "ast_hash": "458391bb1c0ff102132345cec33c01c9",
-    "semantic_hash": ""
-  },
-  "src/app/PlotController.cpp": {
-    "mtime": 1790293438.9214718,
-    "ast_hash": "73d3ba18c86218e0877d98ed1c238004",
-    "semantic_hash": ""
-  },
-  "src/app/PresetController.cpp": {
-    "mtime": 1790181953.0396495,
-    "ast_hash": "3b69bb7860578f0a04cf6465e8874b54",
-    "semantic_hash": ""
-  },
-  "src/app/PresetManager.cpp": {
-    "mtime": 1790181953.0395882,
-    "ast_hash": "e9d753c8ec196b8c692cdf195e8fadc0",
     "semantic_hash": ""
   },
   "src/bindings/analysis_bindings.cpp": {
@@ -1310,8 +1270,8 @@
     "semantic_hash": "fa5794c577c54fcf0888468db60e0c22"
   },
   "src/CMakeLists.txt": {
-    "mtime": 1790296030.8385553,
-    "ast_hash": "730a7e2a479442c8fc66aeab59503c0c",
+    "mtime": 1790366131.2765193,
+    "ast_hash": "52ac81334d6570f8a23ddf6eafdfc7b2",
     "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
@@ -1320,8 +1280,8 @@
     "semantic_hash": ""
   },
   "tests/CMakeLists.txt": {
-    "mtime": 1790296039.9044077,
-    "ast_hash": "4ca491014dcbc746e29490e29f3fc58d",
+    "mtime": 1790366105.6429524,
+    "ast_hash": "905bd980eeb4d9c526db27de98ac9831",
     "semantic_hash": ""
   },
   "tests/fuzz/CMakeLists.txt": {
@@ -1735,13 +1695,8 @@
     "semantic_hash": ""
   },
   "include/app/SettingsManager.hpp": {
-    "mtime": 1790054145.06483,
-    "ast_hash": "ace3ed3c45d6172e0345796d6780abd2",
-    "semantic_hash": ""
-  },
-  "src/app/SettingsManager.cpp": {
-    "mtime": 1790181953.039265,
-    "ast_hash": "b6c689cd7dc427fab6ef394cf4538829",
+    "mtime": 1790365989.6012516,
+    "ast_hash": "77af3d716cde96ee7d5f21889357696c",
     "semantic_hash": ""
   },
   "tests/unit/app/SettingsManagerTests.cpp": {
@@ -1775,8 +1730,8 @@
     "semantic_hash": ""
   },
   "include/app/UpdateChecker.hpp": {
-    "mtime": 1787944534.7185404,
-    "ast_hash": "b934cf5b832446bba379f8e0cc04dd24",
+    "mtime": 1790365989.60139,
+    "ast_hash": "6f89d8c030ae96ae0a3363118510bbae",
     "semantic_hash": ""
   },
   "include/calculators/TDOSCalculator.hpp": {
@@ -1812,11 +1767,6 @@
   "include/readers/OrcaReader.hpp": {
     "mtime": 1789591639.1153545,
     "ast_hash": "73f2810c8778acbda10a0faf66ce8b87",
-    "semantic_hash": ""
-  },
-  "src/app/UpdateChecker.cpp": {
-    "mtime": 1790181953.0394783,
-    "ast_hash": "12020e0f350c5ddb534d26453673dc09",
     "semantic_hash": ""
   },
   "src/bindings/mlip_bindings.cpp": {
@@ -2310,23 +2260,13 @@
     "semantic_hash": ""
   },
   "include/app/BondCutoffMapper.hpp": {
-    "mtime": 1790105221.1763065,
-    "ast_hash": "56074a97262d89d5d67a7368000583b3",
+    "mtime": 1790365989.601411,
+    "ast_hash": "0f2fbd4a1efb6f2396ea191c76e69935",
     "semantic_hash": ""
   },
   "include/app/PlotExportService.hpp": {
-    "mtime": 1790075515.5650866,
-    "ast_hash": "b7f108649d6adb0216664b1032a3aa9b",
-    "semantic_hash": ""
-  },
-  "src/app/BondCutoffMapper.cpp": {
-    "mtime": 1790181953.0396786,
-    "ast_hash": "ec2f29bb048277deaafbea7d730560ba",
-    "semantic_hash": ""
-  },
-  "src/app/PlotExportService.cpp": {
-    "mtime": 1790188335.6335318,
-    "ast_hash": "79492d1e909483f63547783eed1646f7",
+    "mtime": 1790365989.601421,
+    "ast_hash": "c26854326388b1f33e78cf170f683eb6",
     "semantic_hash": ""
   },
   "tests/unit/app/BondCutoffMapperTests.cpp": {
@@ -2355,23 +2295,13 @@
     "semantic_hash": ""
   },
   "include/app/PhysicsService.hpp": {
-    "mtime": 1790281277.536148,
-    "ast_hash": "491bd523e2d178d09dc0db25ce1956b7",
+    "mtime": 1790365989.6013699,
+    "ast_hash": "7cf624037c1572c099b4ee2decf56a08",
     "semantic_hash": ""
   },
   "include/app/ValidationRuleService.hpp": {
-    "mtime": 1790281757.512348,
-    "ast_hash": "cf622447dc99843a1bced3e927c0eddf",
-    "semantic_hash": ""
-  },
-  "src/app/PhysicsService.cpp": {
-    "mtime": 1790281288.7410378,
-    "ast_hash": "ecbd0e28aea0c0f8d309af04ab7079ac",
-    "semantic_hash": ""
-  },
-  "src/app/ValidationRuleService.cpp": {
-    "mtime": 1790281849.4792342,
-    "ast_hash": "c4c2e765ff0d9bbab7a0de0fc0a54870",
+    "mtime": 1790365989.6014004,
+    "ast_hash": "6658c48e2ade072c5a0ebef4c5c8b7a8",
     "semantic_hash": ""
   },
   "tests/unit/app/PhysicsServiceTests.cpp": {
@@ -2385,23 +2315,13 @@
     "semantic_hash": ""
   },
   "include/app/PlotSeriesManager.hpp": {
-    "mtime": 1790294129.3616982,
-    "ast_hash": "465aa3bc6a14042e83aeeda8462aadb4",
+    "mtime": 1790365989.6014328,
+    "ast_hash": "b13afa12cdd9072e8c797156fdfea800",
     "semantic_hash": ""
   },
   "include/app/PlotTableFormatter.hpp": {
-    "mtime": 1790293648.069165,
-    "ast_hash": "b7e38fd04a487344bb5daee02373fd89",
-    "semantic_hash": ""
-  },
-  "src/app/PlotSeriesManager.cpp": {
-    "mtime": 1790294154.3172095,
-    "ast_hash": "83e3bdca971d353e9075eb268c8e613f",
-    "semantic_hash": ""
-  },
-  "src/app/PlotTableFormatter.cpp": {
-    "mtime": 1790294134.1484883,
-    "ast_hash": "c8ab18484c6fb82dabc409dd415094dd",
+    "mtime": 1790365989.6014438,
+    "ast_hash": "c093c526eb89d190b8c1d3ca6398a47c",
     "semantic_hash": ""
   },
   "tests/unit/app/PlotSeriesManagerTests.cpp": {
@@ -2415,33 +2335,18 @@
     "semantic_hash": ""
   },
   "include/app/BondCutoffController.hpp": {
-    "mtime": 1790296329.843468,
-    "ast_hash": "128a6f1dafe851770ac86b3c377ba600",
+    "mtime": 1790365989.6012666,
+    "ast_hash": "9b89639776755a01df9e7efe7970d797",
     "semantic_hash": ""
   },
   "include/app/OptionsResetService.hpp": {
-    "mtime": 1790295592.525615,
-    "ast_hash": "ac4426f131c375a32648f7aec608a1b5",
+    "mtime": 1790365989.601347,
+    "ast_hash": "14249498567c583adc95e6aac4a1e4f3",
     "semantic_hash": ""
   },
   "include/app/OptionsSyncService.hpp": {
-    "mtime": 1790296124.377032,
-    "ast_hash": "7e171b785c071ac3389ad3889d18bbec",
-    "semantic_hash": ""
-  },
-  "src/app/BondCutoffController.cpp": {
-    "mtime": 1790296477.2311862,
-    "ast_hash": "d9e8bc1895223e985b3f22a0d75ea7b2",
-    "semantic_hash": ""
-  },
-  "src/app/OptionsResetService.cpp": {
-    "mtime": 1790296203.1734352,
-    "ast_hash": "cd1bcf6c660ff4ddb3d494b4a39908cc",
-    "semantic_hash": ""
-  },
-  "src/app/OptionsSyncService.cpp": {
-    "mtime": 1790296329.854615,
-    "ast_hash": "380d94c402828e565e09e3c4e35b2d03",
+    "mtime": 1790365989.6013587,
+    "ast_hash": "3511d7ab220dc556bbc22f490389743b",
     "semantic_hash": ""
   },
   "tests/unit/app/BondCutoffControllerTests.cpp": {
@@ -2457,6 +2362,196 @@
   "tests/unit/app/OptionsSyncServiceTests.cpp": {
     "mtime": 1790296638.9250162,
     "ast_hash": "e30e746fdb08751fe893155e54d00b03",
+    "semantic_hash": ""
+  },
+  "include/app/core/AppBackend.hpp": {
+    "mtime": 1790131770.5766482,
+    "ast_hash": "3c175b1447061e9ac33b9dc0ede9169e",
+    "semantic_hash": ""
+  },
+  "include/app/core/AppController.hpp": {
+    "mtime": 1790295896.5277343,
+    "ast_hash": "a18d38a0a0f599a120ae195cde2ff32c",
+    "semantic_hash": ""
+  },
+  "include/app/core/SettingsManager.hpp": {
+    "mtime": 1790054145.06483,
+    "ast_hash": "ace3ed3c45d6172e0345796d6780abd2",
+    "semantic_hash": ""
+  },
+  "include/app/formatters/BondCutoffMapper.hpp": {
+    "mtime": 1790105221.1763065,
+    "ast_hash": "56074a97262d89d5d67a7368000583b3",
+    "semantic_hash": ""
+  },
+  "include/app/formatters/PlotExportService.hpp": {
+    "mtime": 1790075515.5650866,
+    "ast_hash": "b7f108649d6adb0216664b1032a3aa9b",
+    "semantic_hash": ""
+  },
+  "include/app/formatters/PlotSeriesManager.hpp": {
+    "mtime": 1790294129.3616982,
+    "ast_hash": "465aa3bc6a14042e83aeeda8462aadb4",
+    "semantic_hash": ""
+  },
+  "include/app/formatters/PlotTableFormatter.hpp": {
+    "mtime": 1790293648.069165,
+    "ast_hash": "b7e38fd04a487344bb5daee02373fd89",
+    "semantic_hash": ""
+  },
+  "include/app/services/AnalysisRunner.hpp": {
+    "mtime": 1784587159.8740132,
+    "ast_hash": "d2ceecc65b1d8c8faf6fd47bae11cda1",
+    "semantic_hash": ""
+  },
+  "include/app/services/FileIOHandler.hpp": {
+    "mtime": 1790110698.5438535,
+    "ast_hash": "406c1e0086435a39c5f99d7b680ad4f9",
+    "semantic_hash": ""
+  },
+  "include/app/services/InputValidator.hpp": {
+    "mtime": 1790281857.0417864,
+    "ast_hash": "23e0a467824abb59b83eed1745784d95",
+    "semantic_hash": ""
+  },
+  "include/app/services/OptionsResetService.hpp": {
+    "mtime": 1790295592.525615,
+    "ast_hash": "ac4426f131c375a32648f7aec608a1b5",
+    "semantic_hash": ""
+  },
+  "include/app/services/OptionsSyncService.hpp": {
+    "mtime": 1790297721.610934,
+    "ast_hash": "1b8a3b4564720113f391399df0265d46",
+    "semantic_hash": ""
+  },
+  "include/app/services/PhysicsService.hpp": {
+    "mtime": 1790281277.536148,
+    "ast_hash": "491bd523e2d178d09dc0db25ce1956b7",
+    "semantic_hash": ""
+  },
+  "include/app/services/PresetManager.hpp": {
+    "mtime": 1784586332.8035674,
+    "ast_hash": "407633e1441b9f07418d00ed80b12b96",
+    "semantic_hash": ""
+  },
+  "include/app/services/UpdateChecker.hpp": {
+    "mtime": 1787944534.7185404,
+    "ast_hash": "b934cf5b832446bba379f8e0cc04dd24",
+    "semantic_hash": ""
+  },
+  "include/app/services/ValidationRuleService.hpp": {
+    "mtime": 1790281757.512348,
+    "ast_hash": "cf622447dc99843a1bced3e927c0eddf",
+    "semantic_hash": ""
+  },
+  "include/app/viewmodel/BondCutoffController.hpp": {
+    "mtime": 1790296329.843468,
+    "ast_hash": "128a6f1dafe851770ac86b3c377ba600",
+    "semantic_hash": ""
+  },
+  "include/app/viewmodel/PlotController.hpp": {
+    "mtime": 1790293412.0289643,
+    "ast_hash": "f72a4606f8751c065a7cfdd1d218b484",
+    "semantic_hash": ""
+  },
+  "include/app/viewmodel/PresetController.hpp": {
+    "mtime": 1784587176.214772,
+    "ast_hash": "081f318b10c48d62967b9bc95730a700",
+    "semantic_hash": ""
+  },
+  "src/app/core/AppBackend.cpp": {
+    "mtime": 1790291486.5265248,
+    "ast_hash": "8f1e153afc1cc863ce4ebd4acac988b5",
+    "semantic_hash": ""
+  },
+  "src/app/core/AppController.cpp": {
+    "mtime": 1790296329.8648455,
+    "ast_hash": "e8730275b7c11d74375238de3c7fb578",
+    "semantic_hash": ""
+  },
+  "src/app/core/SettingsManager.cpp": {
+    "mtime": 1790181953.039265,
+    "ast_hash": "b6c689cd7dc427fab6ef394cf4538829",
+    "semantic_hash": ""
+  },
+  "src/app/formatters/BondCutoffMapper.cpp": {
+    "mtime": 1790181953.0396786,
+    "ast_hash": "ec2f29bb048277deaafbea7d730560ba",
+    "semantic_hash": ""
+  },
+  "src/app/formatters/PlotExportService.cpp": {
+    "mtime": 1790188335.6335318,
+    "ast_hash": "79492d1e909483f63547783eed1646f7",
+    "semantic_hash": ""
+  },
+  "src/app/formatters/PlotSeriesManager.cpp": {
+    "mtime": 1790294154.3172095,
+    "ast_hash": "83e3bdca971d353e9075eb268c8e613f",
+    "semantic_hash": ""
+  },
+  "src/app/formatters/PlotTableFormatter.cpp": {
+    "mtime": 1790294134.1484883,
+    "ast_hash": "c8ab18484c6fb82dabc409dd415094dd",
+    "semantic_hash": ""
+  },
+  "src/app/services/AnalysisRunner.cpp": {
+    "mtime": 1790181953.0399728,
+    "ast_hash": "7233e593195d9dfc3530e64399354d17",
+    "semantic_hash": ""
+  },
+  "src/app/services/FileIOHandler.cpp": {
+    "mtime": 1790181953.0402176,
+    "ast_hash": "9984357f2a766339178fdc7caa9791a8",
+    "semantic_hash": ""
+  },
+  "src/app/services/InputValidator.cpp": {
+    "mtime": 1790281887.7540147,
+    "ast_hash": "458391bb1c0ff102132345cec33c01c9",
+    "semantic_hash": ""
+  },
+  "src/app/services/OptionsResetService.cpp": {
+    "mtime": 1790296203.1734352,
+    "ast_hash": "cd1bcf6c660ff4ddb3d494b4a39908cc",
+    "semantic_hash": ""
+  },
+  "src/app/services/OptionsSyncService.cpp": {
+    "mtime": 1790296329.854615,
+    "ast_hash": "380d94c402828e565e09e3c4e35b2d03",
+    "semantic_hash": ""
+  },
+  "src/app/services/PhysicsService.cpp": {
+    "mtime": 1790281288.7410378,
+    "ast_hash": "ecbd0e28aea0c0f8d309af04ab7079ac",
+    "semantic_hash": ""
+  },
+  "src/app/services/PresetManager.cpp": {
+    "mtime": 1790181953.0395882,
+    "ast_hash": "e9d753c8ec196b8c692cdf195e8fadc0",
+    "semantic_hash": ""
+  },
+  "src/app/services/UpdateChecker.cpp": {
+    "mtime": 1790181953.0394783,
+    "ast_hash": "12020e0f350c5ddb534d26453673dc09",
+    "semantic_hash": ""
+  },
+  "src/app/services/ValidationRuleService.cpp": {
+    "mtime": 1790281849.4792342,
+    "ast_hash": "c4c2e765ff0d9bbab7a0de0fc0a54870",
+    "semantic_hash": ""
+  },
+  "src/app/viewmodel/BondCutoffController.cpp": {
+    "mtime": 1790296477.2311862,
+    "ast_hash": "d9e8bc1895223e985b3f22a0d75ea7b2",
+    "semantic_hash": ""
+  },
+  "src/app/viewmodel/PlotController.cpp": {
+    "mtime": 1790293438.9214718,
+    "ast_hash": "73d3ba18c86218e0877d98ed1c238004",
+    "semantic_hash": ""
+  },
+  "src/app/viewmodel/PresetController.cpp": {
+    "mtime": 1790181953.0396495,
+    "ast_hash": "3b69bb7860578f0a04cf6465e8874b54",
     "semantic_hash": ""
   }
 }

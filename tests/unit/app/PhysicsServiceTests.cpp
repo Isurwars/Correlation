@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "app/PhysicsService.hpp"
 #include "app/core/AppOptions.hpp"
+#include "app/services/PhysicsService.hpp"
 #include "core/Cell.hpp"
 #include <gtest/gtest.h>
 

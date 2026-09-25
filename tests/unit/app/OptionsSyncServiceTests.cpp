@@ -7,7 +7,7 @@
  */
 
 #include "AppWindow.h"
-#include "app/OptionsSyncService.hpp"
+#include "app/services/OptionsSyncService.hpp"
 
 #include <gtest/gtest.h>
 #include <optional>

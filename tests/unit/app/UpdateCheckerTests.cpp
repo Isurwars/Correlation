@@ -46,7 +46,10 @@ TEST(UpdateCheckerTests, ParsesReleaseJsonCorrectly) {
   })";
 
   const auto release = UpdateChecker::parseReleaseJson(mock_json);
-  ASSERT_TRUE(release.has_value());
+  if (!release) {
+    FAIL() << "Release should have value";
+    return;
+  }
   EXPECT_EQ(release->tag_name, "v3.9.1");
   EXPECT_EQ(release->html_url, "https://github.com/Isurwars/Correlation/releases/tag/v3.9.1");
 }

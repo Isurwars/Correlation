@@ -29,11 +29,6 @@
     "ast_hash": "0e6355650c585c7312d7c47effda6d9e",
     "semantic_hash": ""
   },
-  "include/app/AppBackend.hpp": {
-    "mtime": 1790365989.6011353,
-    "ast_hash": "3bca1f53d617ba82c7f19bd3a600aa51",
-    "semantic_hash": ""
-  },
   "include/app/AppController.hpp": {
     "mtime": 1790365989.6012373,
     "ast_hash": "96a0c3513395df4b26fdb5ebf6301dcf",
@@ -660,8 +655,8 @@
     "semantic_hash": ""
   },
   "src/cli/main_cli.cpp": {
-    "mtime": 1790188037.8195744,
-    "ast_hash": "e660a3fe5cddbe592bbfe8ec8b9770de",
+    "mtime": 1790368013.305254,
+    "ast_hash": "24676806e1dd7217224b23126fefd37f",
     "semantic_hash": ""
   },
   "src/core/Cell.cpp": {
@@ -680,8 +675,8 @@
     "semantic_hash": ""
   },
   "src/main.cpp": {
-    "mtime": 1790181953.0462399,
-    "ast_hash": "79ae2ccc6cd6bcfe41a434282b84f84a",
+    "mtime": 1790370891.1381924,
+    "ast_hash": "adf3579d87c6911999de83223673c393",
     "semantic_hash": ""
   },
   "src/plotters/PathFont.cpp": {
@@ -825,13 +820,13 @@
     "semantic_hash": ""
   },
   "tests/functional/analysis/DynamicsAnalyzerTests.cpp": {
-    "mtime": 1790181953.0521975,
-    "ast_hash": "a96d85758407058b5f9957597c5c1ffa",
+    "mtime": 1790376795.9196618,
+    "ast_hash": "3f1b228de42be94ab36d3123f08f2158",
     "semantic_hash": ""
   },
   "tests/functional/analysis/StructureAnalyzerTests.cpp": {
-    "mtime": 1790181953.0519292,
-    "ast_hash": "20c6e2a43f0946ede9cf43a4a50d4a65",
+    "mtime": 1790375474.826891,
+    "ast_hash": "6b6c36830c8ae8f4d66b45a33985ae37",
     "semantic_hash": ""
   },
   "tests/functional/analysis/TrajectoryAnalyzerTests.cpp": {
@@ -840,8 +835,8 @@
     "semantic_hash": ""
   },
   "tests/functional/app/AppControllerTests.cpp": {
-    "mtime": 1790181953.0526018,
-    "ast_hash": "77ec136ea6498fafc42269af1d0d760c",
+    "mtime": 1790375506.0614142,
+    "ast_hash": "e45e197c2c09ba67c5decae13c3b28e9",
     "semantic_hash": ""
   },
   "tests/functional/app/SlintSvgIntegrationTests.cpp": {
@@ -860,8 +855,8 @@
     "semantic_hash": ""
   },
   "tests/functional/core/MappedFileTests.cpp": {
-    "mtime": 1790181953.0538566,
-    "ast_hash": "97ff69abd1a4ed75edbdb3261e2125b5",
+    "mtime": 1790375281.4328442,
+    "ast_hash": "d0b9bd30b718976a9144be246e234a97",
     "semantic_hash": ""
   },
   "tests/functional/core/NeighborGraphTests.cpp": {
@@ -959,11 +954,6 @@
     "ast_hash": "98f2bedea807a73713d7cd0d5af030f7",
     "semantic_hash": ""
   },
-  "tests/unit/app/AppBackendTests.cpp": {
-    "mtime": 1790181953.0561352,
-    "ast_hash": "599f88617bdf7497566314fea33ae593",
-    "semantic_hash": ""
-  },
   "tests/unit/app/PresetManagerTests.cpp": {
     "mtime": 1790181953.0562944,
     "ast_hash": "d866196f3a1ac43640c3aa9e47ea754b",
@@ -1010,8 +1000,8 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/HBondCalculatorTests.cpp": {
-    "mtime": 1790181953.0608535,
-    "ast_hash": "5a237451e081c816aa61bf3b168bc2d3",
+    "mtime": 1790376795.899863,
+    "ast_hash": "a22245d9c1951933cf85b653cb481baa",
     "semantic_hash": ""
   },
   "tests/unit/calculators/HyperuniformityCalculatorTests.cpp": {
@@ -1235,8 +1225,8 @@
     "semantic_hash": ""
   },
   "CMakeLists.txt": {
-    "mtime": 1790280464.1285527,
-    "ast_hash": "3be72a1358070a61de1b54c75c4876bb",
+    "mtime": 1790375671.3638935,
+    "ast_hash": "d481382092569cde2f0ac5d368346727",
     "semantic_hash": ""
   },
   "README.md": {
@@ -1270,8 +1260,8 @@
     "semantic_hash": "fa5794c577c54fcf0888468db60e0c22"
   },
   "src/CMakeLists.txt": {
-    "mtime": 1790366131.2765193,
-    "ast_hash": "52ac81334d6570f8a23ddf6eafdfc7b2",
+    "mtime": 1790375682.2697272,
+    "ast_hash": "c6133587e3163f36286710ed095a9291",
     "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
@@ -1280,8 +1270,8 @@
     "semantic_hash": ""
   },
   "tests/CMakeLists.txt": {
-    "mtime": 1790366105.6429524,
-    "ast_hash": "905bd980eeb4d9c526db27de98ac9831",
+    "mtime": 1790375693.2035606,
+    "ast_hash": "0a7481cdff0606e51f18a02b082ad8c7",
     "semantic_hash": ""
   },
   "tests/fuzz/CMakeLists.txt": {
@@ -1715,8 +1705,8 @@
     "semantic_hash": ""
   },
   "src/mlip/PeriodicGraphBuilder.cpp": {
-    "mtime": 1790181953.04667,
-    "ast_hash": "3ea6429494e5d15c9ca5138eaa13d286",
+    "mtime": 1790376795.9146616,
+    "ast_hash": "6898d973d3f4e5bf430afb5ada97a183",
     "semantic_hash": ""
   },
   "src/mlip/TorchGNNModel.cpp": {
@@ -1810,8 +1800,8 @@
     "semantic_hash": ""
   },
   "tests/unit/app/UpdateCheckerTests.cpp": {
-    "mtime": 1790181953.0557725,
-    "ast_hash": "765aea1ef8f323ec7a3a9f2735ad5d90",
+    "mtime": 1790375527.453088,
+    "ast_hash": "80e9397b4f889394ef8af071d7e16184",
     "semantic_hash": ""
   },
   "tests/unit/calculators/GPUXRDCalculatorTests.cpp": {
@@ -1894,11 +1884,6 @@
     "ast_hash": "ae03f675e1e03881d4ab0b392ba7870b",
     "semantic_hash": ""
   },
-  "tests/functional/app/AppBackendIntegrationTests.cpp": {
-    "mtime": 1790181953.0524054,
-    "ast_hash": "26d07ac50a051b0c572892ba116b2dd7",
-    "semantic_hash": ""
-  },
   "tests/test_adapters.py": {
     "mtime": 1789966510.8615603,
     "ast_hash": "b3da3ec21aef6b5cc586e58cf1ad7cb6",
@@ -1915,8 +1900,8 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/PADCalculatorTests.cpp": {
-    "mtime": 1790181953.0591507,
-    "ast_hash": "4f73a0da45b0014a173a9ec26e827ae6",
+    "mtime": 1790376795.892662,
+    "ast_hash": "4dbb2e21fe774504b77c2bfc33e4bcc2",
     "semantic_hash": ""
   },
   "tests/unit/calculators/RDCalculatorTests.cpp": {
@@ -2305,8 +2290,8 @@
     "semantic_hash": ""
   },
   "tests/unit/app/PhysicsServiceTests.cpp": {
-    "mtime": 1790282765.5371568,
-    "ast_hash": "3602df8f730f750057c51d422d10ad72",
+    "mtime": 1790370525.239801,
+    "ast_hash": "a2ba76c2d9e036f1f3658756f8805a31",
     "semantic_hash": ""
   },
   "tests/unit/app/ValidationRuleServiceTests.cpp": {
@@ -2350,28 +2335,23 @@
     "semantic_hash": ""
   },
   "tests/unit/app/BondCutoffControllerTests.cpp": {
-    "mtime": 1790296614.7354639,
-    "ast_hash": "0befcabb6df5d3e453c5c51045d3890e",
+    "mtime": 1790370558.9624088,
+    "ast_hash": "b6af3a9724cd7ee323e65fb4ecab998a",
     "semantic_hash": ""
   },
   "tests/unit/app/OptionsResetServiceTests.cpp": {
-    "mtime": 1790296590.3639169,
-    "ast_hash": "53cd7e0c58083ecad6333682c857b467",
+    "mtime": 1790370512.4599476,
+    "ast_hash": "cd62d79544bd15a67224f9747a6d66c8",
     "semantic_hash": ""
   },
   "tests/unit/app/OptionsSyncServiceTests.cpp": {
-    "mtime": 1790296638.9250162,
-    "ast_hash": "e30e746fdb08751fe893155e54d00b03",
-    "semantic_hash": ""
-  },
-  "include/app/core/AppBackend.hpp": {
-    "mtime": 1790131770.5766482,
-    "ast_hash": "3c175b1447061e9ac33b9dc0ede9169e",
+    "mtime": 1790370499.3880959,
+    "ast_hash": "400d5319b03767a2ded39949e69e5b73",
     "semantic_hash": ""
   },
   "include/app/core/AppController.hpp": {
-    "mtime": 1790295896.5277343,
-    "ast_hash": "a18d38a0a0f599a120ae195cde2ff32c",
+    "mtime": 1790370860.1436076,
+    "ast_hash": "d9a1c6a3b7d667997f0446806f9c2349",
     "semantic_hash": ""
   },
   "include/app/core/SettingsManager.hpp": {
@@ -2400,28 +2380,28 @@
     "semantic_hash": ""
   },
   "include/app/services/AnalysisRunner.hpp": {
-    "mtime": 1784587159.8740132,
-    "ast_hash": "d2ceecc65b1d8c8faf6fd47bae11cda1",
+    "mtime": 1790370985.555382,
+    "ast_hash": "6b0272724d130c6fec185b026c122354",
     "semantic_hash": ""
   },
   "include/app/services/FileIOHandler.hpp": {
-    "mtime": 1790110698.5438535,
-    "ast_hash": "406c1e0086435a39c5f99d7b680ad4f9",
+    "mtime": 1790370985.5578165,
+    "ast_hash": "7c81b1e384feeb389510a09d69dee1b1",
     "semantic_hash": ""
   },
   "include/app/services/InputValidator.hpp": {
-    "mtime": 1790281857.0417864,
-    "ast_hash": "23e0a467824abb59b83eed1745784d95",
+    "mtime": 1790370985.5592365,
+    "ast_hash": "13e891c2050db66e41ffebb0ee5d2b84",
     "semantic_hash": ""
   },
   "include/app/services/OptionsResetService.hpp": {
-    "mtime": 1790295592.525615,
-    "ast_hash": "ac4426f131c375a32648f7aec608a1b5",
+    "mtime": 1790370985.5603628,
+    "ast_hash": "84cbe1e4de4c86771d154531d42c3e4d",
     "semantic_hash": ""
   },
   "include/app/services/OptionsSyncService.hpp": {
-    "mtime": 1790297721.610934,
-    "ast_hash": "1b8a3b4564720113f391399df0265d46",
+    "mtime": 1790370985.5614607,
+    "ast_hash": "5bfe1f46ac67d6b0bf9b3e887fa1afba",
     "semantic_hash": ""
   },
   "include/app/services/PhysicsService.hpp": {
@@ -2430,8 +2410,8 @@
     "semantic_hash": ""
   },
   "include/app/services/PresetManager.hpp": {
-    "mtime": 1784586332.8035674,
-    "ast_hash": "407633e1441b9f07418d00ed80b12b96",
+    "mtime": 1790370657.2192228,
+    "ast_hash": "2c636b357bcdb519372157d9d918cdc9",
     "semantic_hash": ""
   },
   "include/app/services/UpdateChecker.hpp": {
@@ -2445,28 +2425,23 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/BondCutoffController.hpp": {
-    "mtime": 1790296329.843468,
-    "ast_hash": "128a6f1dafe851770ac86b3c377ba600",
+    "mtime": 1790370985.5635805,
+    "ast_hash": "71f681f2e07aa0770076112c2a2150c4",
     "semantic_hash": ""
   },
   "include/app/viewmodel/PlotController.hpp": {
-    "mtime": 1790293412.0289643,
-    "ast_hash": "f72a4606f8751c065a7cfdd1d218b484",
+    "mtime": 1790370985.5660954,
+    "ast_hash": "4b8a98ecc27f927e03f4143df5e91e26",
     "semantic_hash": ""
   },
   "include/app/viewmodel/PresetController.hpp": {
-    "mtime": 1784587176.214772,
-    "ast_hash": "081f318b10c48d62967b9bc95730a700",
-    "semantic_hash": ""
-  },
-  "src/app/core/AppBackend.cpp": {
-    "mtime": 1790291486.5265248,
-    "ast_hash": "8f1e153afc1cc863ce4ebd4acac988b5",
+    "mtime": 1790370985.5672538,
+    "ast_hash": "1e535b96ea6fe648e76e2dbc1f6e5af3",
     "semantic_hash": ""
   },
   "src/app/core/AppController.cpp": {
-    "mtime": 1790296329.8648455,
-    "ast_hash": "e8730275b7c11d74375238de3c7fb578",
+    "mtime": 1790370985.577276,
+    "ast_hash": "2cee690264547acff1c6c2e1f834ff98",
     "semantic_hash": ""
   },
   "src/app/core/SettingsManager.cpp": {
@@ -2495,33 +2470,33 @@
     "semantic_hash": ""
   },
   "src/app/services/AnalysisRunner.cpp": {
-    "mtime": 1790181953.0399728,
-    "ast_hash": "7233e593195d9dfc3530e64399354d17",
+    "mtime": 1790370985.5796425,
+    "ast_hash": "0606530e217227c610c59bfe0c08e13a",
     "semantic_hash": ""
   },
   "src/app/services/FileIOHandler.cpp": {
-    "mtime": 1790181953.0402176,
-    "ast_hash": "9984357f2a766339178fdc7caa9791a8",
+    "mtime": 1790370985.5898693,
+    "ast_hash": "e91f00b7856716975089df69ee1cd50b",
     "semantic_hash": ""
   },
   "src/app/services/InputValidator.cpp": {
-    "mtime": 1790281887.7540147,
-    "ast_hash": "458391bb1c0ff102132345cec33c01c9",
+    "mtime": 1790370985.5942013,
+    "ast_hash": "4520b0ec7e67fb1aa4901a9baa0f7cbc",
     "semantic_hash": ""
   },
   "src/app/services/OptionsResetService.cpp": {
-    "mtime": 1790296203.1734352,
-    "ast_hash": "cd1bcf6c660ff4ddb3d494b4a39908cc",
+    "mtime": 1790371063.1178305,
+    "ast_hash": "e196cb8f9f2bcfbecf4eeb6ef5c12bdd",
     "semantic_hash": ""
   },
   "src/app/services/OptionsSyncService.cpp": {
-    "mtime": 1790296329.854615,
-    "ast_hash": "380d94c402828e565e09e3c4e35b2d03",
+    "mtime": 1790370985.6009169,
+    "ast_hash": "5f0dbbedbd5c63b97aef2a590bfc095d",
     "semantic_hash": ""
   },
   "src/app/services/PhysicsService.cpp": {
-    "mtime": 1790281288.7410378,
-    "ast_hash": "ecbd0e28aea0c0f8d309af04ab7079ac",
+    "mtime": 1790370666.3781092,
+    "ast_hash": "b06079d706889756ced984e58c95a5cc",
     "semantic_hash": ""
   },
   "src/app/services/PresetManager.cpp": {
@@ -2540,18 +2515,93 @@
     "semantic_hash": ""
   },
   "src/app/viewmodel/BondCutoffController.cpp": {
-    "mtime": 1790296477.2311862,
-    "ast_hash": "d9e8bc1895223e985b3f22a0d75ea7b2",
+    "mtime": 1790370985.6074908,
+    "ast_hash": "ce1376cc7f72f20ef4bac037abadfb66",
     "semantic_hash": ""
   },
   "src/app/viewmodel/PlotController.cpp": {
-    "mtime": 1790293438.9214718,
-    "ast_hash": "73d3ba18c86218e0877d98ed1c238004",
+    "mtime": 1790370985.619251,
+    "ast_hash": "14fd16033daa1aa42d55b2184f812cd7",
     "semantic_hash": ""
   },
   "src/app/viewmodel/PresetController.cpp": {
-    "mtime": 1790181953.0396495,
-    "ast_hash": "3b69bb7860578f0a04cf6465e8874b54",
+    "mtime": 1790370985.6217465,
+    "ast_hash": "5eb6abc11210632c0f55b5d62427e41c",
+    "semantic_hash": ""
+  },
+  "include/app/AnalysisDispatcher.hpp": {
+    "mtime": 1790367418.6599526,
+    "ast_hash": "19bf3774853b89cee839653f7a624f8a",
+    "semantic_hash": ""
+  },
+  "include/app/AppOptions.hpp": {
+    "mtime": 1790367571.0464098,
+    "ast_hash": "9b0b0d4815eaa5dace78bab37d299e67",
+    "semantic_hash": ""
+  },
+  "include/app/BondCutoffService.hpp": {
+    "mtime": 1790367424.3208582,
+    "ast_hash": "71118ad92c40027bdc59236fcaca42f1",
+    "semantic_hash": ""
+  },
+  "include/app/TrajectoryLoader.hpp": {
+    "mtime": 1790367410.8320832,
+    "ast_hash": "3d377ca3e755f8466d37331c5b4c7e4f",
+    "semantic_hash": ""
+  },
+  "include/app/core/AppOptions.hpp": {
+    "mtime": 1790367934.9543395,
+    "ast_hash": "b8f9149715679ce022691f59619809b6",
+    "semantic_hash": ""
+  },
+  "include/app/services/AnalysisDispatcher.hpp": {
+    "mtime": 1790371040.1301513,
+    "ast_hash": "e9a02bfd6f7ac3749425239c63d7814b",
+    "semantic_hash": ""
+  },
+  "include/app/services/BondCutoffService.hpp": {
+    "mtime": 1790369932.5177095,
+    "ast_hash": "474e71eb6b0b242e4b55b01e4c555e85",
+    "semantic_hash": ""
+  },
+  "include/app/services/TrajectoryLoader.hpp": {
+    "mtime": 1790369990.542003,
+    "ast_hash": "eec2b625b96344ede07c2e48191b9456",
+    "semantic_hash": ""
+  },
+  "src/app/services/AnalysisDispatcher.cpp": {
+    "mtime": 1790371046.3590646,
+    "ast_hash": "fb99d0c2cd3f7d0474de17ee5d352424",
+    "semantic_hash": ""
+  },
+  "src/app/services/BondCutoffService.cpp": {
+    "mtime": 1790369943.3055408,
+    "ast_hash": "116d7a8da8bd00576b87e612800c1fdb",
+    "semantic_hash": ""
+  },
+  "src/app/services/TrajectoryLoader.cpp": {
+    "mtime": 1790369924.3188376,
+    "ast_hash": "e936742daac1c54feda5e2eb0d993382",
+    "semantic_hash": ""
+  },
+  "tests/functional/app/ServiceIntegrationTests.cpp": {
+    "mtime": 1790371087.7094858,
+    "ast_hash": "3f96639f991dcbb3992ced58f4c788d7",
+    "semantic_hash": ""
+  },
+  "tests/unit/app/AnalysisDispatcherTests.cpp": {
+    "mtime": 1790367777.7629614,
+    "ast_hash": "173defd739d81f1b52a31078829138ab",
+    "semantic_hash": ""
+  },
+  "tests/unit/app/BondCutoffServiceTests.cpp": {
+    "mtime": 1790369985.4658809,
+    "ast_hash": "819d29a053e240e527de2ee44400a832",
+    "semantic_hash": ""
+  },
+  "tests/unit/app/TrajectoryLoaderTests.cpp": {
+    "mtime": 1790367516.8873134,
+    "ast_hash": "510e8795fe684f2220d335e863c1dbb2",
     "semantic_hash": ""
   }
 }

@@ -223,7 +223,7 @@ if(BUILD_GUI)
         ../ui/AppWindow.slint
         LIBRARY_PATHS material=${CMAKE_CURRENT_SOURCE_DIR}/../ui/material/material.slint
     )
-    target_include_directories(correlation_gui_tests PRIVATE
+    target_include_directories(correlation_gui_tests SYSTEM PRIVATE
       ${CMAKE_CURRENT_BINARY_DIR}
     )
 endif()

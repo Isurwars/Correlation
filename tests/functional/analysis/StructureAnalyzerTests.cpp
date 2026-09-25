@@ -16,6 +16,14 @@
 namespace correlation::analysis {
 namespace {
 
+[[nodiscard]] int getElementId(const correlation::core::Cell &cell, const std::string &symbol) {
+  const auto elem = cell.findElement(symbol);
+  if (!elem) {
+    throw std::runtime_error("Element not found: " + symbol);
+  }
+  return elem->id.value;
+}
+
 // A test fixture for StructureAnalyzer tests.
 class StructureAnalyzerTests : public ::testing::Test {
 protected:
@@ -83,13 +91,13 @@ TEST_F(StructureAnalyzerTests, DistancesTensorIsCorrect) {
   const auto &histograms = analyzer.rawHistograms();
 
   // Assert Same Species
-  int const id_Ar = cell.findElement("Ar")->id.value;
-  ASSERT_EQ(id_Ar, 0);
+  int const id_ar = getElementId(cell, "Ar");
+  ASSERT_EQ(id_ar, 0);
 
   // StructureAnalyzer stores raw histogram counts for same-species
   // For 2 Ar atoms at 3.0 Å (bin = 3.0 / 0.02 = 150), expect count 1 in [Ar][Ar]
   ASSERT_GT(histograms.size(), 0);
-  const auto &ar_ar_hist = histograms[id_Ar][id_Ar];
+  const auto &ar_ar_hist = histograms[id_ar][id_ar];
   ASSERT_GT(ar_ar_hist.size(), 150);
   EXPECT_EQ(ar_ar_hist[150], 1.0);
 
@@ -102,13 +110,13 @@ TEST_F(StructureAnalyzerTests, DistancesTensorIsCorrect) {
   StructureAnalyzer const mixed_analyzer(mixed_cell, 5.0, trajectory().getBondCutoffsSQ());
   const auto &mixed_histograms = mixed_analyzer.rawHistograms();
 
-  int const id_Ar_m = mixed_cell.findElement("Ar")->id.value;
-  int const id_Xe_m = mixed_cell.findElement("Xe")->id.value;
+  int const id_ar_m = getElementId(mixed_cell, "Ar");
+  int const id_xe_m = getElementId(mixed_cell, "Xe");
 
   // StructureAnalyzer stores symmetric pairs for different species
   // Distance 4.0 Å (bin = 4.0 / 0.02 = 200)
-  const auto &ar_xe_hist = mixed_histograms[id_Ar_m][id_Xe_m];
-  const auto &xe_ar_hist = mixed_histograms[id_Xe_m][id_Ar_m];
+  const auto &ar_xe_hist = mixed_histograms[id_ar_m][id_xe_m];
+  const auto &xe_ar_hist = mixed_histograms[id_xe_m][id_ar_m];
 
   ASSERT_GT(ar_xe_hist.size(), 200);
   ASSERT_GT(xe_ar_hist.size(), 200);
@@ -136,8 +144,8 @@ TEST_F(StructureAnalyzerTests, CalculatesCorrectAnglesForWater) {
   const auto &angles = neighbors.angles();
 
   // Assert: We need to get the element IDs to index the angle tensor correctly.
-  const int h_id = water_cell.findElement("H")->id.value;
-  const int o_id = water_cell.findElement("O")->id.value;
+  const int h_id = getElementId(water_cell, "H");
+  const int o_id = getElementId(water_cell, "O");
   ASSERT_EQ(h_id, 1);
   ASSERT_EQ(o_id, 0);
 
@@ -182,8 +190,8 @@ TEST_F(StructureAnalyzerTests, CalculatesCorrectAngleWithPBC) {
   const auto &angles = analyzer.angles();
 
   // Assert
-  const int c_id = pbc_cell.findElement("C")->id.value;
-  const int o_id = pbc_cell.findElement("O")->id.value;
+  const int c_id = getElementId(pbc_cell, "C");
+  const int o_id = getElementId(pbc_cell, "O");
   ASSERT_EQ(c_id, 0);
   ASSERT_EQ(o_id, 1);
 
@@ -383,7 +391,7 @@ TEST_F(StructureAnalyzerTests, CalculatesCorrectDihedralAngles) {
   const auto &dihedrals = analyzer.dihedrals();
 
   // Assert
-  const int carbon_id = cell.findElement("C")->id.value;
+  const int carbon_id = getElementId(cell, "C");
   ASSERT_EQ(carbon_id, 0);
 
   // The dihedral tensor is indexed by [typeA][typeB][typeC][typeD]

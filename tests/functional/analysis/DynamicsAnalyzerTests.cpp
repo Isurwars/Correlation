@@ -21,27 +21,38 @@ namespace correlation::analysis {
 // We need to locate the l-Bi.arc file
 constexpr std::string_view EXAMPLE_FILE = "examples/l-Bi/l-Bi.arc";
 
-TEST(DynamicsAnalyzerTests, CalculatesVACFFromExampletraj) {
-  // 1. Locate the file
-  std::filesystem::path file_path = std::filesystem::absolute(EXAMPLE_FILE);
+namespace {
 
-  if (!std::filesystem::exists(file_path)) {
-    // Try going up levels if not found
-    file_path = std::filesystem::path("../") / EXAMPLE_FILE;
-    if (!std::filesystem::exists(file_path)) {
-      file_path = std::filesystem::path("../../") / EXAMPLE_FILE;
+[[nodiscard]] std::filesystem::path resolveExampleFilePath(std::string_view rel_path) {
+  for (const auto &prefix : {"", "../", "../../"}) {
+    const auto cand_path = std::filesystem::path(prefix) / rel_path;
+    if (std::filesystem::exists(cand_path)) {
+      return std::filesystem::absolute(cand_path);
     }
   }
+  return std::filesystem::absolute(rel_path);
+}
 
+void checkNonZeroVelocities(const std::vector<correlation::core::Cell> &frames) {
+  correlation::real_t max_v_sq = 0.0;
+  for (const auto &atom : frames[10].atoms()) {
+    const auto velocity = atom.velocity();
+    max_v_sq = std::max(max_v_sq, correlation::math::dot(velocity, velocity));
+  }
+  EXPECT_GT(max_v_sq, 0.0) << "Particles should be moving";
+}
+
+} // namespace
+
+TEST(DynamicsAnalyzerTests, CalculatesVACFFromExampletraj) {
+  const auto file_path = resolveExampleFilePath(EXAMPLE_FILE);
   ASSERT_TRUE(std::filesystem::exists(file_path))
       << "Could not find example file: " << EXAMPLE_FILE;
 
-  // 2. Read correlation::core::Trajectory
   correlation::core::Trajectory traj =
       correlation::readers::readTrajectory(file_path.string(), correlation::readers::FileType::Arc);
   ASSERT_GT(traj.getFrameCount(), 0) << "correlation::core::Trajectory should not be empty";
 
-  // 3. Calculate Velocities
   traj.calculateVelocities();
 
   const auto &frames = traj.getFrames();
@@ -49,26 +60,16 @@ TEST(DynamicsAnalyzerTests, CalculatesVACFFromExampletraj) {
   EXPECT_NE(frames[1].atoms()[0].velocity().x(), 0.0);
   ASSERT_EQ(frames[0].atomCount(), traj.getFrames()[0].atomCount());
 
-  // Check if we have some non-zero velocities (it's liquid Bi, particles move)
-  correlation::real_t max_v_sq = 0.0;
-  for (const auto &atom : frames[10].atoms()) { // Check some intermediate frame
-    auto velocity = atom.velocity();
-    max_v_sq = std::max(max_v_sq, correlation::math::dot(velocity, velocity));
-  }
-  EXPECT_GT(max_v_sq, 0.0) << "Particles should be moving";
+  checkNonZeroVelocities(frames);
 
-  // 4. Calculate VACF
-  int const max_lag = 50; // Calculate for 50 frames lag
-  std::vector<real_t> vacf =
+  int const max_lag = 50;
+  const std::vector<real_t> vacf =
       DynamicsAnalyzer::calculateVACF(traj, correlation::analysis::MaxFrames{max_lag});
 
   ASSERT_EQ(vacf.size(), max_lag + 1);
-
-  // C(0) should be positive (autocorrelation at t=0 is <v^2>)
   EXPECT_GT(vacf[0], 0.0);
 
-  // 5. Calculate Normalized VACF
-  std::vector<real_t> norm_vacf =
+  const std::vector<real_t> norm_vacf =
       DynamicsAnalyzer::calculateNormalizedVACF(traj, correlation::analysis::MaxFrames{max_lag});
 
   ASSERT_EQ(norm_vacf.size(), max_lag + 1);
@@ -87,7 +88,7 @@ TEST(DynamicsAnalyzerTests, CalculatesVDOSCorrectly) {
   std::vector<real_t> vacf(num_frames);
   for (size_t i = 0; i < num_frames; ++i) {
     real_t const time = static_cast<real_t>(i) * time_step;
-    vacf[i] = std::cos(2.0 * correlation::math::pi * frequency * time * 0.001);
+    vacf[i] = static_cast<real_t>(std::cos(2.0 * correlation::math::pi * frequency * time * 0.001));
   }
 
   // 2. Calculate VDOS
@@ -138,7 +139,7 @@ TEST(DynamicsAnalyzerTests, CalculatesMSDCorrectly) {
 }
 
 TEST(DynamicsAnalyzerTests, ComputesDiffusionCoefficientMSD) {
-  std::vector<real_t> time = {0.0, 1.0, 2.0, 3.0, 4.0};
+  const std::vector<real_t> time = {0.0, 1.0, 2.0, 3.0, 4.0};
   // Fit is done on the second half of the data.
   // time.size() / 2 = 2.
   // Second half indices are: 2, 3, 4.
@@ -147,14 +148,14 @@ TEST(DynamicsAnalyzerTests, ComputesDiffusionCoefficientMSD) {
   // If D = 0.5, slope should be 6 * 0.5 = 3.0.
   // So msd = 3.0 * time.
   // msd values: 6.0, 9.0, 12.0.
-  std::vector<real_t> msd = {0.0, 3.0, 6.0, 9.0, 12.0};
+  const std::vector<real_t> msd = {0.0, 3.0, 6.0, 9.0, 12.0};
 
-  real_t d_coef = DynamicsAnalyzer::computeDiffusionCoefficientMSD(time, msd);
+  const real_t d_coef = DynamicsAnalyzer::computeDiffusionCoefficientMSD(time, msd);
   EXPECT_NEAR(d_coef, 0.5, 1e-6);
 
   // Negative slope test should return 0.0
-  std::vector<real_t> msd_neg = {0.0, -3.0, -6.0, -9.0, -12.0};
-  real_t d_coef_neg = DynamicsAnalyzer::computeDiffusionCoefficientMSD(time, msd_neg);
+  const std::vector<real_t> msd_neg = {0.0, -3.0, -6.0, -9.0, -12.0};
+  const real_t d_coef_neg = DynamicsAnalyzer::computeDiffusionCoefficientMSD(time, msd_neg);
   EXPECT_DOUBLE_EQ(d_coef_neg, 0.0);
 
   // Under minimum required points (needs at least 2 points in second half)
@@ -170,14 +171,14 @@ TEST(DynamicsAnalyzerTests, ComputesDiffusionCoefficientVACF) {
   // Step 2: 0.5 * (1.0 + 1.0) * 1.0 = 1.0
   // Total integral = 2.0.
   // D = 2.0 / 3.0 ≈ 0.666667.
-  std::vector<real_t> time = {0.0, 1.0, 2.0};
-  std::vector<real_t> vacf = {1.0, 1.0, 1.0};
+  const std::vector<real_t> time = {0.0, 1.0, 2.0};
+  const std::vector<real_t> vacf = {1.0, 1.0, 1.0};
 
-  real_t d_coef = DynamicsAnalyzer::computeDiffusionCoefficientVACF(time, vacf);
+  const real_t d_coef = DynamicsAnalyzer::computeDiffusionCoefficientVACF(time, vacf);
   EXPECT_NEAR(d_coef, 2.0 / 3.0, 1e-6);
 
   // Time step <= 0.0 should return 0.0
-  std::vector<real_t> invalid_time = {0.0, 0.0, 1.0};
+  const std::vector<real_t> invalid_time = {0.0, 0.0, 1.0};
   EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeDiffusionCoefficientVACF(invalid_time, vacf), 0.0);
 
   // Mismatched sizes or empty vectors should return 0.0
@@ -193,10 +194,10 @@ TEST(DynamicsAnalyzerTests, ComputesRelaxationTime) {
   // Step 1: 0.5 * (1.0 + 0.5) * 1.0 = 0.75
   // Step 2: 0.5 * (0.5 + 0.0) * 1.0 = 0.25
   // Total = 1.0.
-  std::vector<real_t> time = {0.0, 1.0, 2.0};
-  std::vector<real_t> norm_vacf = {1.0, 0.5, 0.0};
+  const std::vector<real_t> time = {0.0, 1.0, 2.0};
+  const std::vector<real_t> norm_vacf = {1.0, 0.5, 0.0};
 
-  real_t tau = DynamicsAnalyzer::computeRelaxationTime(time, norm_vacf);
+  const real_t tau = DynamicsAnalyzer::computeRelaxationTime(time, norm_vacf);
   EXPECT_NEAR(tau, 1.0, 1e-6);
 
   // Mismatched sizes or empty vectors should return 0.0
@@ -204,7 +205,7 @@ TEST(DynamicsAnalyzerTests, ComputesRelaxationTime) {
 }
 
 TEST(DynamicsAnalyzerTests, HandlesEmptyAndInvalidTrajectories) {
-  correlation::core::Trajectory empty_traj;
+  const correlation::core::Trajectory empty_traj;
   EXPECT_TRUE(DynamicsAnalyzer::calculateVACF(empty_traj, MaxFrames{5}).empty());
   EXPECT_TRUE(DynamicsAnalyzer::calculateMSD(empty_traj, MaxFrames{5}).empty());
 

@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include "app/AnalysisDispatcher.hpp"
-#include "app/AppOptions.hpp"
-#include "app/TrajectoryLoader.hpp"
+#include "app/core/AppOptions.hpp"
+#include "app/services/AnalysisDispatcher.hpp"
+#include "app/services/TrajectoryLoader.hpp"
 #include <atomic>
 #include <string>
 #include <thread>

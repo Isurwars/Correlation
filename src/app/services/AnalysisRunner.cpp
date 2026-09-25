@@ -6,11 +6,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "app/AnalysisRunner.hpp"
+#include "app/services/AnalysisRunner.hpp"
 #include "AppWindow.h"
-#include "app/AppController.hpp"
-#include "app/InputValidator.hpp"
-#include "app/PlotController.hpp"
+#include "app/core/AppController.hpp"
+#include "app/services/AnalysisDispatcher.hpp"
+#include "app/services/InputValidator.hpp"
+#include "app/viewmodel/PlotController.hpp"
 #include <algorithm>
 
 namespace correlation::app {

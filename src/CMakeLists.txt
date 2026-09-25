@@ -287,7 +287,7 @@ if(BUILD_GUI)
     endif()
 
     # Add the include directory for the generated slint header
-    target_include_directories(correlation PRIVATE
+    target_include_directories(correlation SYSTEM PRIVATE
       ${CMAKE_CURRENT_BINARY_DIR}
     )
 

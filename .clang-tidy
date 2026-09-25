@@ -19,7 +19,7 @@ Checks: >
   -readability-math-missing-parentheses,
   -cppcoreguidelines-pro-type-reinterpret-cast
 
-HeaderFilterRegex: '^(?!.*(build/_deps|build-fuzz/_deps|/usr/|/opt/)).*$'
+HeaderFilterRegex: '^(?!.*(build/|build-fuzz/|/usr/|/opt/|pdfgen|RobotoData)).*$'
 FormatStyle: file
 WarningsAsErrors: 'bugprone-*,cert-*,performance-*'
 

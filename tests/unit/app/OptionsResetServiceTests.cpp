@@ -7,8 +7,8 @@
  */
 
 #include "AppWindow.h"
-#include "app/OptionsResetService.hpp"
-#include "app/TrajectoryLoader.hpp"
+#include "app/services/OptionsResetService.hpp"
+#include "app/services/TrajectoryLoader.hpp"
 
 #include <gtest/gtest.h>
 #include <optional>

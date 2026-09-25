@@ -2,9 +2,9 @@ CompileFlags:
   Add:
     - "-std=c++23"
     - "-Iinclude"
-    - "-Ibuild/src"
+    - "-isystembuild/src"
     - "-isystem/usr/include/slint"
-    - "-I./build/"
+    - "-isystem./build/"
   Remove:
     - "-fmodules-ts"
     - "-fdeps-format=p1689r5"
@@ -17,3 +17,8 @@ CompileFlags:
     - "--generate-code*"
     - "-gencode*"
     - "-Xcompiler*"
+Diagnostics:
+  Suppress:
+    - "build/.*"
+    - ".*pdfgen.*"
+    - ".*RobotoData.*"

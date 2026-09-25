@@ -163,17 +163,17 @@ void collectEdgesForAtom(size_t atom_i, const std::vector<correlation::core::Ato
 }
 
 // Precomputed constants for real orthonormal spherical harmonics Y_lm up to l=3
-constexpr real_t k_pi_val = std::numbers::pi_v<real_t>;
+constexpr real_t PI_VAL = std::numbers::pi_v<real_t>;
 
 // l=0: sqrt(1 / (4 * pi))
-constexpr real_t k_y00 = static_cast<real_t>(0.5) * std::numbers::inv_sqrtpi_v<real_t>;
+constexpr real_t Y00 = static_cast<real_t>(0.5) * std::numbers::inv_sqrtpi_v<real_t>;
 
-[[nodiscard]] constexpr real_t computeY0() noexcept { return k_y00; }
+[[nodiscard]] constexpr real_t computeY0() noexcept { return Y00; }
 
 [[nodiscard]] std::array<real_t, 3> computeY1(real_t dir_x, real_t dir_y, real_t dir_z,
                                               real_t inv_r) noexcept {
   const real_t factor_y1 =
-      std::sqrt(static_cast<real_t>(3.0) / (static_cast<real_t>(4.0) * k_pi_val));
+      std::sqrt(static_cast<real_t>(3.0) / (static_cast<real_t>(4.0) * PI_VAL));
   return {
       factor_y1 * dir_y * inv_r,
       factor_y1 * dir_z * inv_r,
@@ -184,11 +184,9 @@ constexpr real_t k_y00 = static_cast<real_t>(0.5) * std::numbers::inv_sqrtpi_v<r
 [[nodiscard]] std::array<real_t, 5> computeY2(real_t dir_x, real_t dir_y, real_t dir_z,
                                               real_t inv_r2) noexcept {
   const real_t factor_m21 =
-      static_cast<real_t>(0.5) * std::sqrt(static_cast<real_t>(15.0) / k_pi_val);
-  const real_t factor_0 =
-      static_cast<real_t>(0.25) * std::sqrt(static_cast<real_t>(5.0) / k_pi_val);
-  const real_t factor_2 =
-      static_cast<real_t>(0.25) * std::sqrt(static_cast<real_t>(15.0) / k_pi_val);
+      static_cast<real_t>(0.5) * std::sqrt(static_cast<real_t>(15.0) / PI_VAL);
+  const real_t factor_0 = static_cast<real_t>(0.25) * std::sqrt(static_cast<real_t>(5.0) / PI_VAL);
+  const real_t factor_2 = static_cast<real_t>(0.25) * std::sqrt(static_cast<real_t>(15.0) / PI_VAL);
   const real_t sq_x = dir_x * dir_x;
   const real_t sq_y = dir_y * dir_y;
   const real_t sq_z = dir_z * dir_z;
@@ -205,16 +203,15 @@ constexpr real_t k_y00 = static_cast<real_t>(0.5) * std::numbers::inv_sqrtpi_v<r
                                               real_t inv_r3) noexcept {
   const real_t factor_3 =
       static_cast<real_t>(0.25) *
-      std::sqrt(static_cast<real_t>(35.0) / (static_cast<real_t>(2.0) * k_pi_val));
+      std::sqrt(static_cast<real_t>(35.0) / (static_cast<real_t>(2.0) * PI_VAL));
   const real_t factor_m2 =
-      static_cast<real_t>(0.5) * std::sqrt(static_cast<real_t>(105.0) / k_pi_val);
+      static_cast<real_t>(0.5) * std::sqrt(static_cast<real_t>(105.0) / PI_VAL);
   const real_t factor_1 =
       static_cast<real_t>(0.25) *
-      std::sqrt(static_cast<real_t>(21.0) / (static_cast<real_t>(2.0) * k_pi_val));
-  const real_t factor_0 =
-      static_cast<real_t>(0.25) * std::sqrt(static_cast<real_t>(7.0) / k_pi_val);
+      std::sqrt(static_cast<real_t>(21.0) / (static_cast<real_t>(2.0) * PI_VAL));
+  const real_t factor_0 = static_cast<real_t>(0.25) * std::sqrt(static_cast<real_t>(7.0) / PI_VAL);
   const real_t factor_2 =
-      static_cast<real_t>(0.25) * std::sqrt(static_cast<real_t>(105.0) / k_pi_val);
+      static_cast<real_t>(0.25) * std::sqrt(static_cast<real_t>(105.0) / PI_VAL);
 
   const real_t sq_x = dir_x * dir_x;
   const real_t sq_y = dir_y * dir_y;
@@ -425,7 +422,7 @@ void flattenEdges(const tbb::enumerable_thread_specific<std::vector<EdgeTuple>> 
 } // namespace
 
 int64_t PeriodicGraphBuilder::getAtomicNumber(std::string_view symbol) noexcept {
-  static const std::unordered_map<std::string_view, int64_t> k_symbol_to_z = {
+  static const std::unordered_map<std::string_view, int64_t> SYMBOL_TO_Z = {
       {"H", 1},    {"He", 2},   {"Li", 3},   {"Be", 4},   {"B", 5},    {"C", 6},    {"N", 7},
       {"O", 8},    {"F", 9},    {"Ne", 10},  {"Na", 11},  {"Mg", 12},  {"Al", 13},  {"Si", 14},
       {"P", 15},   {"S", 16},   {"Cl", 17},  {"Ar", 18},  {"K", 19},   {"Ca", 20},  {"Sc", 21},
@@ -444,8 +441,8 @@ int64_t PeriodicGraphBuilder::getAtomicNumber(std::string_view symbol) noexcept 
       {"Sg", 106}, {"Bh", 107}, {"Hs", 108}, {"Mt", 109}, {"Ds", 110}, {"Rg", 111}, {"Cn", 112},
       {"Nh", 113}, {"Fl", 114}, {"Mc", 115}, {"Lv", 116}, {"Ts", 117}, {"Og", 118}};
 
-  auto itx = k_symbol_to_z.find(symbol);
-  if (itx != k_symbol_to_z.end()) {
+  auto itx = SYMBOL_TO_Z.find(symbol);
+  if (itx != SYMBOL_TO_Z.end()) {
     return itx->second;
   }
   return 0;
@@ -535,12 +532,12 @@ std::vector<real_t> PeriodicGraphBuilder::computeBesselBasis(real_t distance, re
     return basis;
   }
 
-  constexpr real_t k_pi = std::numbers::pi_v<real_t>;
+  constexpr real_t PI_VAL = std::numbers::pi_v<real_t>;
   const real_t norm_factor = std::sqrt(static_cast<real_t>(2.0) / cutoff_radius);
 
   for (size_t idx_basis = 0; idx_basis < num_basis; ++idx_basis) {
     const auto n_val = static_cast<real_t>(idx_basis + 1);
-    const real_t k_n = n_val * k_pi / cutoff_radius;
+    const real_t k_n = n_val * PI_VAL / cutoff_radius;
     auto bessel_val = static_cast<real_t>(0.0);
     if (distance < static_cast<real_t>(1e-8)) {
       bessel_val = k_n;
@@ -734,12 +731,12 @@ std::vector<real_t> PeriodicGraphBuilder::computeOrbBesselBasis(real_t distance,
     return basis;
   }
 
-  constexpr real_t k_pi = std::numbers::pi_v<real_t>;
+  constexpr real_t PI_VAL = std::numbers::pi_v<real_t>;
   const real_t prefactor = std::sqrt(static_cast<real_t>(2.0) / cutoff_radius);
 
   for (size_t idx_basis = 0; idx_basis < num_basis; ++idx_basis) {
     const auto n_val = static_cast<real_t>(idx_basis + 1);
-    const real_t weight_n = n_val * k_pi / cutoff_radius;
+    const real_t weight_n = n_val * PI_VAL / cutoff_radius;
     if (distance < static_cast<real_t>(1e-8)) {
       basis[idx_basis] = prefactor * weight_n;
     } else {
@@ -774,7 +771,7 @@ PeriodicGraphData PeriodicGraphBuilder::buildOrbGraph(const correlation::core::C
     data.edge_orb_features_flat.clear();
   }
 
-  constexpr real_t k_pi = std::numbers::pi_v<real_t>;
+  constexpr real_t PI_VAL = std::numbers::pi_v<real_t>;
   const real_t cutoff_radius = config.r_max;
   const real_t bessel_prefactor = (cutoff_radius > static_cast<real_t>(0.0))
                                       ? std::sqrt(static_cast<real_t>(2.0) / cutoff_radius)
@@ -782,7 +779,7 @@ PeriodicGraphData PeriodicGraphBuilder::buildOrbGraph(const correlation::core::C
 
   std::vector<real_t> bessel_weights(num_rbf);
   for (size_t idx_weight = 0; idx_weight < num_rbf; ++idx_weight) {
-    bessel_weights[idx_weight] = static_cast<real_t>(idx_weight + 1) * k_pi / cutoff_radius;
+    bessel_weights[idx_weight] = static_cast<real_t>(idx_weight + 1) * PI_VAL / cutoff_radius;
   }
 
   const OrbEdgeContext ctx{

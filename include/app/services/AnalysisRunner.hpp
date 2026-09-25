@@ -8,9 +8,8 @@
 
 #pragma once
 
-#include "app/AnalysisDispatcher.hpp"
-#include "app/AppOptions.hpp"
-#include "app/TrajectoryLoader.hpp"
+#include "app/core/AppOptions.hpp"
+#include "app/services/TrajectoryLoader.hpp"
 #include <string>
 #include <thread>
 
@@ -18,6 +17,7 @@ class AppWindow;
 
 namespace correlation::app {
 
+class AnalysisDispatcher;
 class AppController;
 
 /**
