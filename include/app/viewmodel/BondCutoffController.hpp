@@ -10,6 +10,9 @@
 
 #include "AppWindow.h"
 #include "analysis/DistributionFunctions.hpp"
+#include "app/BondCutoffService.hpp"
+#include "app/TrajectoryLoader.hpp"
+#include "app/core/AppOptions.hpp"
 
 namespace correlation::app {
 
@@ -28,7 +31,25 @@ enum class FactorBound { Min, Max };
 class BondCutoffController {
 public:
   /**
-   * @brief Constructs a BondCutoffController with the given UI window and backend.
+   * @brief Constructs a BondCutoffController with injected services.
+   * @param[in,out] window Target UI window.
+   * @param[in,out] loader Trajectory loader providing cell and trajectory.
+   * @param[in,out] options Program options holding bond cutoffs.
+   */
+  BondCutoffController(AppWindow &window, TrajectoryLoader &loader, ProgramOptions &options);
+
+  /**
+   * @brief Constructs a BondCutoffController with injected services (transitional).
+   * @param[in,out] window Target UI window.
+   * @param[in,out] loader Trajectory loader providing cell and trajectory.
+   * @param[in,out] cutoff_service Cutoff calculation service.
+   * @param[in,out] options Program options holding bond cutoffs.
+   */
+  BondCutoffController(AppWindow &window, TrajectoryLoader &loader,
+                       BondCutoffService &cutoff_service, ProgramOptions &options);
+
+  /**
+   * @brief Constructs a BondCutoffController with the given UI window and backend (transitional).
    * @param[in,out] window Target UI window.
    * @param[in,out] backend Application backend holding atomic cell and cutoffs.
    */
@@ -72,7 +93,8 @@ public:
 
 private:
   AppWindow &window_;
-  AppBackend &backend_;
+  TrajectoryLoader &loader_;
+  ProgramOptions &options_;
 };
 
 } // namespace correlation::app

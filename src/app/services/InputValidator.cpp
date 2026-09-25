@@ -18,8 +18,12 @@
 
 namespace correlation::app {
 
-InputValidator::InputValidator(::AppWindow &window, AppBackend &backend, AppController &controller)
-    : window_(&window), backend_(&backend), controller_(&controller) {}
+InputValidator::InputValidator(::AppWindow &window, AppController &controller)
+    : window_(&window), controller_(&controller) {}
+
+InputValidator::InputValidator(::AppWindow &window, AppBackend & /*backend*/,
+                               AppController &controller)
+    : InputValidator(window, controller) {}
 
 bool InputValidator::validateRadialAndScattering(AppErrors &errs, float &r_max_val,
                                                  float &q_max_val) {

@@ -10,7 +10,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "app/AppBackend.hpp"
+#include "app/core/AppOptions.hpp"
+#include "app/services/AnalysisDispatcher.hpp"
+#include "app/services/TrajectoryLoader.hpp"
 #include "cli/CliParser.hpp"
 
 #include "calculators/CalculatorFactory.hpp"
@@ -97,13 +99,13 @@ int main(int argc, char *argv[]) {
     opts.active_calculators[std::string(calc->getShortName())] = active;
   }
 
-  // Create backend
-  correlation::app::AppBackend backend;
-  backend.setOptions(opts);
+  // Create decoupled services
+  correlation::app::TrajectoryLoader loader;
+  correlation::app::AnalysisDispatcher dispatcher;
 
   // Set up progress callback
   if (!cli.quiet) {
-    backend.setProgressCallback([](float progress, const std::string &msg) {
+    dispatcher.setProgressCallback([](float progress, const std::string &msg) {
       std::cerr << "\r[" << static_cast<int>(progress * 100) << "%] " << msg << std::flush;
     });
   }
@@ -113,15 +115,16 @@ int main(int argc, char *argv[]) {
     if (!cli.quiet) {
       std::cerr << "Loading: " << cli.input_file << "\n";
     }
-    std::string const msg = backend.loadFile(cli.input_file);
+    auto load_res = loader.loadFile(cli.input_file);
+    if (!load_res) {
+      std::cerr << "Error loading file: " << load_res.error() << "\n";
+      return 1;
+    }
 
-    // Re-apply options since loadFile overwrites output_file_base
-    opts.output_file_base = cli.output_base;
-    backend.setOptions(opts);
     if (!cli.quiet) {
-      std::cerr << msg << "\n";
-      std::cerr << "Frames: " << backend.getFrameCount()
-                << "  Atoms: " << backend.getTotalAtomCount() << "\n";
+      std::cerr << load_res.value() << "\n";
+      std::cerr << "Frames: " << loader.getFrameCount() << "  Atoms: " << loader.getTotalAtomCount()
+                << "\n";
     }
   } catch (const std::exception &e) {
     std::cerr << "Error loading file: " << e.what() << "\n";
@@ -133,7 +136,7 @@ int main(int argc, char *argv[]) {
     if (!cli.quiet) {
       std::cerr << "Running analysis...\n";
     }
-    auto const run_res = backend.runAnalysis();
+    auto const run_res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);
     if (!run_res) {
       std::cerr << "\nAnalysis error: " << run_res.error() << "\n";
       return 1;
@@ -148,7 +151,7 @@ int main(int argc, char *argv[]) {
 
   // Write output files
   try {
-    auto const write_res = backend.writeFiles();
+    auto const write_res = dispatcher.writeFiles(opts);
     if (!write_res) {
       std::cerr << "Write error: " << write_res.error() << "\n";
       return 1;

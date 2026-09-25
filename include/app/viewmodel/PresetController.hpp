@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "app/AppBackend.hpp"
 #include "app/PresetManager.hpp"
+#include "app/core/AppOptions.hpp"
 
 #include <string>
 #include <vector>
@@ -18,6 +18,7 @@ class AppWindow;
 
 namespace correlation::app {
 
+class AppBackend;
 class AppController;
 
 /**
@@ -27,7 +28,15 @@ class AppController;
 class PresetController {
 public:
   /**
-   * @brief Constructs the PresetController.
+   * @brief Constructs the PresetController with injected options.
+   * @param[in,out] window Reference to the UI window.
+   * @param[in,out] options Reference to program options.
+   * @param[in,out] controller Reference to the main AppController.
+   */
+  PresetController(::AppWindow &window, ProgramOptions &options, AppController &controller);
+
+  /**
+   * @brief Constructs the PresetController (transitional).
    * @param[in,out] window Reference to the UI window.
    * @param[in,out] backend Reference to the application backend.
    * @param[in,out] controller Reference to the main AppController.
@@ -71,7 +80,7 @@ public:
 
 private:
   ::AppWindow &window_;
-  AppBackend &backend_;
+  ProgramOptions &options_;
   AppController &controller_;
 
   std::vector<Preset> presets_;

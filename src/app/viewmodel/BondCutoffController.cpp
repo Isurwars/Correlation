@@ -19,15 +19,24 @@
 
 namespace correlation::app {
 
+BondCutoffController::BondCutoffController(AppWindow &window, TrajectoryLoader &loader,
+                                           ProgramOptions &options)
+    : window_(window), loader_(loader), options_(options) {}
+
+BondCutoffController::BondCutoffController(AppWindow &window, TrajectoryLoader &loader,
+                                           [[maybe_unused]] BondCutoffService &cutoff_service,
+                                           ProgramOptions &options)
+    : BondCutoffController(window, loader, options) {}
+
 BondCutoffController::BondCutoffController(AppWindow &window, AppBackend &backend)
-    : window_(window), backend_(backend) {}
+    : BondCutoffController(window, backend.loader(), backend.options()) {}
 
 void BondCutoffController::setBondCutoffs() {
-  if (backend_.cell() == nullptr) {
+  if (loader_.cell() == nullptr) {
     return;
   }
 
-  const auto &elements = backend_.cell()->elements();
+  const auto &elements = loader_.cell()->elements();
   const auto entries = BondCutoffMapper::createDefaultCutoffEntries(elements);
 
   auto slint_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
@@ -42,16 +51,17 @@ void BondCutoffController::setBondCutoffs() {
 
   window_.set_bond_cutoffs(slint_cutoffs);
   window_.set_bond_cutoffs_reset_trigger(window_.get_bond_cutoffs_reset_trigger() + 1);
-  backend_.setBondCutoffs(getBondCutoffs());
+  options_.bond_cutoffs = getBondCutoffs();
+  BondCutoffService::setBondCutoffs(loader_.trajectoryMut(), options_.bond_cutoffs);
 }
 
 correlation::analysis::BondCutoffMatrix BondCutoffController::getBondCutoffs() const {
   auto slint_cutoffs = window_.get_bond_cutoffs();
-  if (backend_.cell() == nullptr || slint_cutoffs == nullptr) {
+  if (loader_.cell() == nullptr || slint_cutoffs == nullptr) {
     return {};
   }
 
-  const auto &elements = backend_.cell()->elements();
+  const auto &elements = loader_.cell()->elements();
   std::vector<CutoffEntry> entries;
   entries.reserve(slint_cutoffs->row_count());
 
@@ -73,11 +83,12 @@ correlation::analysis::BondCutoffMatrix BondCutoffController::getBondCutoffs() c
 }
 
 void BondCutoffController::applyScaledCutoffs(float scale_factor) {
-  if (backend_.cell() == nullptr || scale_factor <= 0.0F) {
+  if (loader_.cell() == nullptr || scale_factor <= 0.0F) {
     return;
   }
-  const auto scaled_cutoffs = backend_.applyScaledBondCutoffs(static_cast<real_t>(scale_factor));
-  const auto &elements = backend_.cell()->elements();
+  const auto scaled_cutoffs = BondCutoffService::applyScaledBondCutoffs(
+      loader_.trajectoryMut(), static_cast<real_t>(scale_factor));
+  const auto &elements = loader_.cell()->elements();
   const auto num_elements = elements.size();
 
   auto slint_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
@@ -96,15 +107,16 @@ void BondCutoffController::applyScaledCutoffs(float scale_factor) {
 
   window_.set_bond_cutoffs(slint_cutoffs);
   window_.set_bond_cutoffs_reset_trigger(window_.get_bond_cutoffs_reset_trigger() + 1);
-  backend_.setBondCutoffs(getBondCutoffs());
+  options_.bond_cutoffs = getBondCutoffs();
 }
 
 void BondCutoffController::setUniformCutoff(float max_cutoff) {
-  if (backend_.cell() == nullptr || max_cutoff <= 0.0F) {
+  if (loader_.cell() == nullptr || max_cutoff <= 0.0F) {
     return;
   }
-  const auto uniform_cutoffs = backend_.setUniformBondCutoff(0.0, static_cast<real_t>(max_cutoff));
-  const auto &elements = backend_.cell()->elements();
+  const auto uniform_cutoffs = BondCutoffService::setUniformBondCutoff(
+      loader_.cell(), loader_.trajectoryMut(), 0.0, static_cast<real_t>(max_cutoff));
+  const auto &elements = loader_.cell()->elements();
   const auto num_elements = elements.size();
 
   auto slint_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
@@ -123,7 +135,7 @@ void BondCutoffController::setUniformCutoff(float max_cutoff) {
 
   window_.set_bond_cutoffs(slint_cutoffs);
   window_.set_bond_cutoffs_reset_trigger(window_.get_bond_cutoffs_reset_trigger() + 1);
-  backend_.setBondCutoffs(getBondCutoffs());
+  options_.bond_cutoffs = getBondCutoffs();
 }
 
 namespace {
@@ -190,10 +202,10 @@ createCovalentCutoffRow(const CovalentCutoffInput &input,
 } // namespace
 
 void BondCutoffController::applyCovalentFactor(float factor, FactorBound bound) {
-  if (backend_.cell() == nullptr || factor <= 0.0F) {
+  if (loader_.cell() == nullptr || factor <= 0.0F) {
     return;
   }
-  const auto &elements = backend_.cell()->elements();
+  const auto &elements = loader_.cell()->elements();
   const auto num_elements = elements.size();
   const auto slint_cutoffs = window_.get_bond_cutoffs();
 
@@ -220,7 +232,8 @@ void BondCutoffController::applyCovalentFactor(float factor, FactorBound bound) 
 
   window_.set_bond_cutoffs(new_cutoffs);
   window_.set_bond_cutoffs_reset_trigger(window_.get_bond_cutoffs_reset_trigger() + 1);
-  backend_.setBondCutoffs(getBondCutoffs());
+  options_.bond_cutoffs = getBondCutoffs();
+  BondCutoffService::setBondCutoffs(loader_.trajectoryMut(), options_.bond_cutoffs);
 }
 
 void BondCutoffController::applyGlobalCutoff(float global_cutoff) {

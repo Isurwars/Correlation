@@ -8,6 +8,7 @@
 
 #include "app/AnalysisRunner.hpp"
 #include "AppWindow.h"
+#include "app/AppBackend.hpp"
 #include "app/AppController.hpp"
 #include "app/InputValidator.hpp"
 #include "app/PlotController.hpp"
@@ -15,8 +16,15 @@
 
 namespace correlation::app {
 
+AnalysisRunner::AnalysisRunner(::AppWindow &window, TrajectoryLoader &loader,
+                               AnalysisDispatcher &dispatcher, ProgramOptions &options,
+                               AppController &controller)
+    : window_(window), loader_(loader), dispatcher_(dispatcher), options_(options),
+      controller_(controller) {}
+
 AnalysisRunner::AnalysisRunner(::AppWindow &window, AppBackend &backend, AppController &controller)
-    : window_(window), backend_(backend), controller_(controller) {}
+    : AnalysisRunner(window, backend.loader(), backend.dispatcher(), backend.options(),
+                     controller) {}
 
 AnalysisRunner::~AnalysisRunner() {
   if (analysis_thread_.joinable()) {
@@ -45,10 +53,10 @@ void AnalysisRunner::handleRunAnalysis() {
   window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_RUNNING_ANALYSIS));
 
   // Create a ProgramOptions object from the UI properties
-  backend_.setOptions(controller_.handleOptionsfromUI());
+  options_ = controller_.handleOptionsfromUI();
 
   // Set the progress callback
-  backend_.setProgressCallback(
+  dispatcher_.setProgressCallback(
       [this](float progress, const std::string &msg) { updateProgress(progress, msg); });
 
   // Run analysis in a separate thread asynchronously without blocking GUI event loop
@@ -62,13 +70,20 @@ void AnalysisRunner::handleRunAnalysis() {
   }
 
   analysis_thread_ = std::thread([this]() {
-    auto result = backend_.runAnalysis();
-    const std::string err = result ? "" : result.error();
+    std::string err;
+    if (loader_.trajectory() == nullptr || loader_.getFrameCount() == 0) {
+      err = AppDefaults::MSG_ANALYSIS_ABORTED;
+    } else {
+      auto result = dispatcher_.runAnalysis(*loader_.trajectoryMut(), options_);
+      if (!result) {
+        err = result.error();
+      }
+    }
 
     slint::invoke_from_event_loop([this, err]() {
       window_.set_analysis_running(false);
       if (err.empty()) {
-        if (backend_.isCancelled()) {
+        if (dispatcher_.isCancelled()) {
           window_.set_analysis_status_text(slint::SharedString("Analysis Cancelled."));
         } else {
           window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_ANALYSIS_ENDED));
@@ -81,7 +96,7 @@ void AnalysisRunner::handleRunAnalysis() {
 
       // Populate the plot dropdown and auto-preview the first histogram
       controller_.getPlotController()->populatePlotList();
-      if (!backend_.getAvailableHistogramNames().empty()) {
+      if (!dispatcher_.getAvailableHistogramNames().empty()) {
         controller_.getPlotController()->requestPlotUpdate(0, true);
       }
     });

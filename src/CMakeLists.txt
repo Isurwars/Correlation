@@ -242,13 +242,16 @@ if(BUILD_GUI)
         app/viewmodel/BondCutoffController.cpp
         app/viewmodel/PlotController.cpp
         app/viewmodel/PresetController.cpp
+        app/services/AnalysisDispatcher.cpp
         app/services/AnalysisRunner.cpp
+        app/services/BondCutoffService.cpp
         app/services/FileIOHandler.cpp
         app/services/InputValidator.cpp
         app/services/OptionsResetService.cpp
         app/services/OptionsSyncService.cpp
         app/services/PhysicsService.cpp
         app/services/PresetManager.cpp
+        app/services/TrajectoryLoader.cpp
         app/services/UpdateChecker.cpp
         app/services/ValidationRuleService.cpp
         app/formatters/BondCutoffMapper.cpp
@@ -325,8 +328,9 @@ if(NOT (EMSCRIPTEN OR BUILD_WASM))
     # CLI Executable Target (correlation-cli) — no GUI dependency
     add_executable(correlation-cli
         cli/main_cli.cpp
-        app/core/AppBackend.cpp
+        app/services/AnalysisDispatcher.cpp
         app/services/PhysicsService.cpp
+        app/services/TrajectoryLoader.cpp
     )
     target_link_libraries(correlation-cli PRIVATE
         correlation_lib readers_obj writers_obj calculators_obj cli_parser_obj

@@ -64,8 +64,11 @@ void setupWindowsDebugEnvironment() {
 #endif
 
 #include "AppWindow.h"
-#include "app/AppBackend.hpp"
+#include "app/AnalysisDispatcher.hpp"
 #include "app/AppController.hpp"
+#include "app/AppOptions.hpp"
+#include "app/BondCutoffService.hpp"
+#include "app/TrajectoryLoader.hpp"
 
 namespace {
 
@@ -139,8 +142,12 @@ int main() {
 
   try {
     auto window = createAppWindow();
-    correlation::app::AppBackend backend;
-    correlation::app::AppController const controller(*window, backend);
+    correlation::app::TrajectoryLoader loader;
+    correlation::app::AnalysisDispatcher dispatcher;
+    correlation::app::BondCutoffService cutoff_service;
+    correlation::app::ProgramOptions options;
+    correlation::app::AppController const controller(*window, loader, dispatcher, cutoff_service,
+                                                     options);
 
     window->run();
     return 0;

@@ -8,6 +8,7 @@
 
 #include "app/PresetController.hpp"
 #include "AppWindow.h"
+#include "app/AppBackend.hpp"
 #include "app/AppController.hpp"
 #include "app/InputValidator.hpp"
 #include "app/PresetManager.hpp"
@@ -15,9 +16,13 @@
 
 namespace correlation::app {
 
+PresetController::PresetController(::AppWindow &window, ProgramOptions &options,
+                                   AppController &controller)
+    : window_(window), options_(options), controller_(controller) {}
+
 PresetController::PresetController(::AppWindow &window, AppBackend &backend,
                                    AppController &controller)
-    : window_(window), backend_(backend), controller_(controller) {}
+    : PresetController(window, backend.options(), controller) {}
 
 void PresetController::handleLoadPreset(int index) {
   if (index < 0 || static_cast<size_t>(index) >= presets_.size()) {
@@ -26,15 +31,12 @@ void PresetController::handleLoadPreset(int index) {
 
   const Preset &preset = presets_[index];
 
-  // Update backend options
-  ProgramOptions current_opts = backend_.options();
-  // Keep input_file and output_file_base
-  const std::string input = current_opts.input_file;
-  const std::string output = current_opts.output_file_base;
-  current_opts = preset.options;
-  current_opts.input_file = input;
-  current_opts.output_file_base = output;
-  backend_.setOptions(current_opts);
+  // Update options
+  const std::string input = options_.input_file;
+  const std::string output = options_.output_file_base;
+  options_ = preset.options;
+  options_.input_file = input;
+  options_.output_file_base = output;
 
   // Update UI components with the new options
   controller_.handleOptionstoUI();

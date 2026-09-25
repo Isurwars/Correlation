@@ -8,7 +8,8 @@
 
 #pragma once
 
-#include "app/AppBackend.hpp"
+#include "app/AnalysisDispatcher.hpp"
+#include "app/AppOptions.hpp"
 #include "app/PlotSeriesManager.hpp"
 #include "app/PlotTableFormatter.hpp"
 #include "plotters/SvgPlotter.hpp"
@@ -26,6 +27,8 @@ class AppWindow;
 
 namespace correlation::app {
 
+class AppBackend;
+
 struct PlotSize {
   float width;
   float height;
@@ -38,7 +41,16 @@ struct PlotSize {
 class PlotController {
 public:
   /**
-   * @brief Constructs the PlotController.
+   * @brief Constructs the PlotController with injected dispatcher and options.
+   * @param[in,out] window Reference to the UI window.
+   * @param[in,out] dispatcher Reference to the analysis dispatcher.
+   * @param[in] options Reference to program options.
+   */
+  PlotController(::AppWindow &window, AnalysisDispatcher &dispatcher,
+                 const ProgramOptions &options);
+
+  /**
+   * @brief Constructs the PlotController (transitional).
    * @param[in,out] window Reference to the UI window.
    * @param[in,out] backend Reference to the application backend.
    */
@@ -130,7 +142,8 @@ public:
 
 private:
   ::AppWindow &window_;
-  AppBackend &backend_;
+  AnalysisDispatcher &dispatcher_;
+  const ProgramOptions &options_;
 
   PlotSeriesManager series_manager_;
 

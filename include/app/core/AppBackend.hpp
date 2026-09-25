@@ -1,6 +1,7 @@
 /**
  * @file AppBackend.hpp
- * @brief Application backend interface between the UI and analysis engine.
+ * @brief Application backend facade coordinating TrajectoryLoader, AnalysisDispatcher, and
+ * BondCutoffService.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -9,152 +10,33 @@
 #pragma once
 
 #include "analysis/DistributionFunctions.hpp"
+#include "app/core/AppOptions.hpp"
+#include "app/services/AnalysisDispatcher.hpp"
+#include "app/services/BondCutoffService.hpp"
+#include "app/services/TrajectoryLoader.hpp"
 #include "core/Trajectory.hpp"
 #include "math/Smoothing.hpp"
 
-#include <atomic>
 #include <expected>
 #include <functional>
 #include <map>
 #include <memory>
+
 namespace correlation::app {
 
 /**
- * @brief Default values and messages for the application.
- */
-struct AppDefaults {
-  static constexpr real_t R_MAX = 20.0;       ///< Default max radius for RDF (Angstrom).
-  static constexpr real_t R_BIN_WIDTH = 0.02; ///< Default bin width for RDF (Angstrom).
-  static constexpr real_t Q_MAX = 20.0;       ///< Default max q for S(Q) (Angstrom^-1).
-  static constexpr real_t Q_BIN_WIDTH = 0.02; ///< Default bin width for S(Q) (Angstrom^-1).
-  static constexpr real_t R_INT_MAX = 10.0;   ///< Default max radius for integration (Angstrom).
-  static constexpr real_t ANGLE_BIN_WIDTH = 0.25; ///< Default bin width for ADF (Degrees).
-  static constexpr real_t SMOOTHING_SIGMA = 0.1;  ///< Default Gaussian smoothing sigma.
-  static constexpr real_t LEF_CUTOFF = 5.0;       ///< Default cutoff for local entropy.
-  static constexpr real_t LEF_SIGMA = 0.2;        ///< Default Gaussian sigma for local entropy.
-
-  // Crystalline Defaults (1 order of magnitude smaller)
-  static constexpr real_t R_BIN_WIDTH_CRYSTAL = 0.002;
-  static constexpr real_t Q_BIN_WIDTH_CRYSTAL = 0.002;
-  static constexpr real_t ANGLE_BIN_WIDTH_CRYSTAL = 0.1;
-  static constexpr real_t SMOOTHING_SIGMA_CRYSTAL = 0.01;
-
-  // Liquid Defaults (broad/diffuse features)
-  static constexpr real_t R_BIN_WIDTH_LIQUID = 0.05;
-  static constexpr real_t Q_BIN_WIDTH_LIQUID = 0.05;
-  static constexpr real_t ANGLE_BIN_WIDTH_LIQUID = 0.5;
-  static constexpr real_t SMOOTHING_SIGMA_LIQUID = 0.15;
-
-  /** @brief Default smoothing kernel. */
-  static constexpr decltype(correlation::math::KernelType::Gaussian) SMOOTHING_KERNEL =
-      correlation::math::KernelType::Gaussian;
-
-  static constexpr real_t TIME_STEP = 1.0; ///< Default time step (fs).
-
-  // XRD Defaults
-  static constexpr real_t XRD_LAMBDA = 1.5406;   ///< Default X-ray wavelength in Å (Cu K-alpha).
-  static constexpr real_t XRD_THETA_MIN = 10.0;  ///< Default min 2-theta in degrees.
-  static constexpr real_t XRD_THETA_MAX = 140.0; ///< Default max 2-theta in degrees.
-  static constexpr real_t XRD_BIN_WIDTH = 0.05;  ///< Default 2-theta bin width in degrees.
-
-  // Bond Cutoff Defaults
-  static constexpr real_t BOND_MIN_FACTOR =
-      0.6; ///< Default factor for minimum bond cutoff distance.
-  static constexpr real_t BOND_MAX_FACTOR =
-      1.2; ///< Default factor for maximum bond cutoff distance.
-  static constexpr real_t BOND_GLOBAL_CUTOFF = 3.5; ///< Default global uniform bond cutoff in Å.
-
-  // --- Status Messages ---
-  static constexpr const char *MSG_RUNNING_ANALYSIS =
-      "Running Analysis..."; ///< Status: Computation in progress.
-  static constexpr const char *MSG_ANALYSIS_ENDED =
-      "Analysis ended."; ///< Status: Successfully completed.
-  static constexpr const char *MSG_SELECTING_OUTPUT =
-      "Selecting output file..."; ///< UI: File picker open.
-  static constexpr const char *MSG_FILE_SELECTION_CANCELLED =
-      "File selection cancelled."; ///< UI: User closed picker.
-  static constexpr const char *MSG_ERROR_LOADING =
-      "Error loading file: "; ///< Error: IO or parsing failure.
-  static constexpr const char *MSG_FILES_WRITTEN = "Files Written.";   ///< Success: Data exported.
-  static constexpr const char *MSG_SAVE_CANCELLED = "Save cancelled."; ///< UI: User aborted save.
-  static constexpr const char *MSG_ANALYSIS_ABORTED =
-      "Analysis aborted: No trajectory loaded."; ///< Error: Missing data.
-  static constexpr const char *MSG_ERROR_ANALYSIS =
-      "Error during analysis: "; ///< Error: Computation failure.
-  static constexpr const char *MSG_ERROR_WRITING =
-      "Error during file writing: "; ///< Error: Export failure.
-  static constexpr const char *MSG_NO_DATA_TO_WRITE =
-      "No analysis data to write."; ///< Error: Empty results.
-};
-
-/**
- * @brief Encapsulates all configurable options for the application.
- */
-struct ProgramOptions {
-  std::string input_file;            ///< Path to the input trajectory file.
-  std::string output_file_base;      ///< Base path/name for output files.
-  bool smoothing = true;             ///< Whether to apply Gaussian smoothing to results.
-  bool use_hdf5 = false;             ///< Enable HDF5 output format.
-  bool use_csv = true;               ///< Enable CSV output format.
-  bool use_parquet = false;          ///< Enable Parquet output format.
-  real_t r_max = AppDefaults::R_MAX; ///< Max distance for RDF calculation.
-  real_t r_bin_width = AppDefaults::R_BIN_WIDTH;            ///< Step size for RDF histogram.
-  real_t q_max = AppDefaults::Q_MAX;                        ///< Max momentum transfer for S(Q).
-  real_t q_bin_width = AppDefaults::Q_BIN_WIDTH;            ///< Step size for S(Q) histogram.
-  real_t r_int_max = AppDefaults::R_INT_MAX;                ///< Upper limit for g(r) integration.
-  real_t angle_bin_width = AppDefaults::ANGLE_BIN_WIDTH;    ///< Step size for ADF.
-  real_t dihedral_bin_width = AppDefaults::ANGLE_BIN_WIDTH; ///< Step size for dihedral analysis.
-  size_t max_ring_size = 8; ///< Maximum ring size for topological analysis.
-
-  /** @brief Map of calculator ID to its enabled state. */
-  std::map<std::string, bool> active_calculators;
-
-  real_t smoothing_sigma = AppDefaults::SMOOTHING_SIGMA; ///< Sigma for Gaussian kernel.
-  real_t lef_cutoff = AppDefaults::LEF_CUTOFF;           ///< Cutoff radius for local entropy.
-  real_t lef_sigma = AppDefaults::LEF_SIGMA; ///< Gaussian standard deviation for local entropy.
-  size_t hyper_samples = 10000;              ///< Number of random samples for hyperuniformity.
-  correlation::math::KernelType smoothing_kernel =
-      AppDefaults::SMOOTHING_KERNEL;         ///< Smoothing kernel type.
-  int min_frame = 0;                         ///< Starting frame index.
-  int max_frame = -1;                        ///< Ending frame index (-1 for all).
-  int frame_stride = 1;                      ///< Stride between analyzed frames (>= 1).
-  real_t time_step = AppDefaults::TIME_STEP; ///< Simulation time step in fs.
-
-  int material_type = 0; ///< Material type (0: Amorphous, 1: Liquid, 2: Crystalline).
-
-  /** @brief Parameters for X-Ray Diffraction calculation. */
-  correlation::analysis::XRDParams xrd_params{
-      .lambda = AppDefaults::XRD_LAMBDA,
-      .theta_min = AppDefaults::XRD_THETA_MIN,
-      .theta_max = AppDefaults::XRD_THETA_MAX,
-      .bin_width = AppDefaults::XRD_BIN_WIDTH,
-  };
-
-  /** @brief Bond cutoff ranges for neighbor & topological calculations. */
-  correlation::analysis::BondCutoffMatrix bond_cutoffs;
-};
-
-/**
- * @brief The main backend class for the application.
- *
- * This class orchestrates the loading of files, setting of options, running of
- * analyses, and writing of results. It acts as the bridge between the
- * UI/Controller and the core data/analysis logic.
+ * @class AppBackend
+ * @brief Facade composing TrajectoryLoader, AnalysisDispatcher, and BondCutoffService.
  */
 class AppBackend {
 public:
-  /** @name Constructors */
-  ///@{
-
-  /**
-   * @brief Default constructor.
-   */
   AppBackend();
+  ~AppBackend() = default;
 
-  ///@}
-
-  /** @name Accessors */
-  ///@{
+  AppBackend(const AppBackend &) = delete;
+  AppBackend &operator=(const AppBackend &) = delete;
+  AppBackend(AppBackend &&) = delete;
+  AppBackend &operator=(AppBackend &&) = delete;
 
   /**
    * @brief Sets the program options.
@@ -164,14 +46,18 @@ public:
 
   /**
    * @brief Gets the current program options.
-   * @return Copy of the current options.
+   * @return Mutable reference to current options.
    */
-  [[nodiscard]] ProgramOptions options() const { return options_; }
+  [[nodiscard]] ProgramOptions &options() noexcept { return options_; }
+
+  /**
+   * @brief Gets the current program options (const).
+   * @return Const reference to current options.
+   */
+  [[nodiscard]] const ProgramOptions &options() const noexcept { return options_; }
 
   /**
    * @brief Updates the enabled state of a single calculator.
-   * @param calc_id Calculator ID (e.g., "RDF", "SQ").
-   * @param enabled Whether this calculator should run.
    */
   void setCalculatorActive(const std::string &calc_id, bool enabled) {
     options_.active_calculators[calc_id] = enabled;
@@ -179,206 +65,179 @@ public:
 
   /**
    * @brief Gets a pointer to the current cell (first frame of trajectory).
-   * @return Pointer to the correlation::core::Cell, or nullptr if no trajectory
-   * loaded.
    */
-  [[nodiscard]] const correlation::core::Cell *cell() const {
-    if (trajectory_ && trajectory_->getFrameCount() > 0) {
-      return &trajectory_->firstFrame();
-    }
-    return nullptr;
-  }
-
-  ///@}
-
-  /** @name Methods */
-  ///@{
+  [[nodiscard]] const correlation::core::Cell *cell() const { return loader_.cell(); }
 
   /**
    * @brief Loads a file from a given path.
-   * @param path Absolute path to the file.
-   * @return A status message indicating success or details about the loaded
-   * file.
    */
   std::string loadFile(const std::string &path);
 
   /**
-   * @brief Runs the analysis based on the current options and loaded
-   * trajectory.
-   *
-   * This method performs the following:
-   * 1. Sets up bond cutoffs and time steps.
-   * 2. Initializes the TrajectoryAnalyzer.
-   * 3. Computes the mean Distribution Functions (RDF, ADF, etc.).
-   * 4. Calculates VACF and VDOS if applicable.
-   * 5. Smooths results if requested.
-   *
-   * @return std::expected<void, std::string> indicating success or containing an error message.
+   * @brief Runs the analysis based on current options and loaded trajectory.
    */
   [[nodiscard]] std::expected<void, std::string> runAnalysis();
 
   /**
-   * @brief Writes the analysis results to files (CSV, HDF5) as specified in
-   * options.
-   *
-   * @return std::expected<void, std::string> indicating success or containing an error message.
+   * @brief Writes the analysis results to files (CSV, HDF5, Parquet).
    */
   [[nodiscard]] std::expected<void, std::string> writeFiles();
 
   /**
    * @brief Gets the atom counts for the current structure.
-   * @return A map of correlation::core::Element Symbol -> Count.
    */
-  [[nodiscard]] std::map<std::string, int> getAtomCounts() const;
+  [[nodiscard]] std::map<std::string, int> getAtomCounts() const { return loader_.getAtomCounts(); }
 
   /**
    * @brief Gets the total number of frames in the trajectory.
-   * @return Number of frames.
    */
-  [[nodiscard]] size_t getFrameCount() const;
+  [[nodiscard]] size_t getFrameCount() const { return loader_.getFrameCount(); }
 
   /**
    * @brief Gets the total number of atoms in the first frame.
-   * @return Number of atoms.
    */
-  [[nodiscard]] size_t getTotalAtomCount() const;
+  [[nodiscard]] size_t getTotalAtomCount() const { return loader_.getTotalAtomCount(); }
 
   /**
-   * @brief Gets the count of frames removed/skipped during loading/processing.
-   * @return Number of removed frames.
+   * @brief Gets the count of frames removed/skipped during loading.
    */
-  [[nodiscard]] size_t getRemovedFrameCount() const;
+  [[nodiscard]] size_t getRemovedFrameCount() const { return loader_.getRemovedFrameCount(); }
 
   /**
    * @brief Gets the time step of the trajectory.
-   * @return Time step in femtoseconds.
    */
-  [[nodiscard]] real_t getTimeStep() const;
+  [[nodiscard]] real_t getTimeStep() const { return loader_.getTimeStep(); }
 
   /**
-   * @brief Calculates a recommended time step in fs based on the smallest
-   * atomic mass. Uses formula: sqrt(9 * Minimal_mass / 5)
-   * @return Recommended time step in femtoseconds.
+   * @brief Calculates a recommended time step in fs based on atomic masses.
    */
-  [[nodiscard]] real_t getRecommendedTimeStep() const;
+  [[nodiscard]] real_t getRecommendedTimeStep() const { return loader_.getRecommendedTimeStep(); }
 
   /**
    * @brief Calculates recommended bond cutoffs (min and max).
-   * @return A matrix of cutoff ranges where entry [i][j] contains min and max cutoffs for pair i-j.
    */
-  [[nodiscard]] correlation::analysis::BondCutoffMatrix getRecommendedBondCutoffs() const;
+  [[nodiscard]] correlation::analysis::BondCutoffMatrix getRecommendedBondCutoffs();
 
   /**
    * @brief Gets the bond cutoff for a specific pair of element types.
-   * @param type1 Index of the first element type.
-   * @param type2 Index of the second element type.
-   * @return The cutoff distance.
    */
-  [[nodiscard]] real_t getBondCutoff(size_t type1, size_t type2) const;
+  [[nodiscard]] real_t getBondCutoff(size_t type1, size_t type2) const {
+    return cutoff_service_.getBondCutoff(loader_.trajectory(), type1, type2);
+  }
 
   /**
    * @brief Gets the minimum bond cutoff for a specific pair of element types.
-   * @param type1 Index of the first element type.
-   * @param type2 Index of the second element type.
-   * @return The minimum cutoff distance.
    */
-  [[nodiscard]] real_t getMinBondCutoff(size_t type1, size_t type2) const;
+  [[nodiscard]] real_t getMinBondCutoff(size_t type1, size_t type2) const {
+    return cutoff_service_.getMinBondCutoff(loader_.trajectory(), type1, type2);
+  }
 
   /**
    * @brief Sets the bond cutoffs to be used in analysis.
-   * @param cutoffs Matrix of cutoffs.
    */
   void setBondCutoffs(const correlation::analysis::BondCutoffMatrix &cutoffs);
 
   /**
    * @brief Scales recommended covalent cutoffs by a multiplicative factor.
-   * @param scale_factor Multiplier applied to covalent bond distances (e.g. 1.15).
-   * @return The newly scaled BondCutoffMatrix.
    */
   correlation::analysis::BondCutoffMatrix applyScaledBondCutoffs(real_t scale_factor);
 
   /**
    * @brief Assigns uniform min and max cutoff distances across all atom pairs.
-   * @param min_cutoff Minimum cutoff distance in Å.
-   * @param max_cutoff Maximum cutoff distance in Å.
-   * @return The updated uniform BondCutoffMatrix.
    */
   correlation::analysis::BondCutoffMatrix setUniformBondCutoff(real_t min_cutoff,
                                                                real_t max_cutoff);
 
   /**
-   * @brief Returns the names of all histograms available from the last
-   * analysis.
-   * @return Sorted vector of histogram names (e.g., "g(r)", "S(Q)", "PAD").
-   *         Returns an empty vector if no analysis has been run yet.
+   * @brief Returns names of all available histograms.
    */
-  [[nodiscard]] std::vector<std::string> getAvailableHistogramNames() const;
+  [[nodiscard]] std::vector<std::string> getAvailableHistogramNames() const {
+    return dispatcher_.getAvailableHistogramNames();
+  }
 
   /**
-   * @brief Returns a pointer to a specific histogram from the last analysis.
-   * @param name The histogram name (e.g., "g(r)").
-   * @return Pointer to the Histogram, or nullptr if not found or no analysis
-   * run.
+   * @brief Returns a pointer to a specific histogram.
    */
-  [[nodiscard]] const correlation::analysis::Histogram *getHistogram(const std::string &name) const;
+  [[nodiscard]] const correlation::analysis::Histogram *
+  getHistogram(const std::string &name) const {
+    return dispatcher_.getHistogram(name);
+  }
 
   /**
-   * @brief Returns the Ashcroft-Langreth weights from the last completed analysis.
-   * @return A map of element pair strings to weight values.
+   * @brief Returns Ashcroft-Langreth weights.
    */
-  [[nodiscard]] std::map<std::string, real_t> getAshcroftWeights() const;
+  [[nodiscard]] std::map<std::string, real_t> getAshcroftWeights() const {
+    return dispatcher_.getAshcroftWeights();
+  }
 
   /**
-   * @brief Returns all histograms from the last analysis.
-   * @return A map of histogram names to Histogram objects.
+   * @brief Returns all histograms from last analysis.
    */
   [[nodiscard]] const std::map<std::string, correlation::analysis::Histogram> &
   getHistograms() const {
-    static const std::map<std::string, correlation::analysis::Histogram> EMPTY_MAP;
-    return df_ ? df_->getAllHistograms() : EMPTY_MAP;
+    return dispatcher_.getHistograms();
   }
 
   /**
-   * @brief Returns the DistributionFunctions results.
-   * @return Pointer to the active DistributionFunctions container.
+   * @brief Returns DistributionFunctions results.
    */
   [[nodiscard]] const correlation::analysis::DistributionFunctions *
   getDistributionFunctions() const {
-    return df_.get();
+    return dispatcher_.getDistributionFunctions();
   }
 
-  // Callbacks
   /**
-   * @brief Sets a callback function for analysis progress updates.
-   * @param callback Callback: void(float progress, const std::string &message).
+   * @brief Sets progress notification hook.
    */
   void setProgressCallback(std::function<void(float, const std::string &)> callback) {
-    progress_callback_ = std::move(callback);
+    progress_callback_ = callback;
+    dispatcher_.setProgressCallback(std::move(callback));
   }
 
   /**
-   * @brief Cancels the currently running analysis.
+   * @brief Cancels running analysis.
    */
-  void cancelAnalysis() { cancel_flag_ = true; }
+  void cancelAnalysis() { dispatcher_.cancelAnalysis(); }
 
   /**
-   * @brief Checks if analysis has been cancelled.
+   * @brief Checks if analysis was cancelled.
    */
-  [[nodiscard]] bool isCancelled() const { return cancel_flag_; }
+  [[nodiscard]] bool isCancelled() const { return dispatcher_.isCancelled(); }
 
-  ///@}
+  /**
+   * @brief Access underlying TrajectoryLoader service.
+   */
+  [[nodiscard]] TrajectoryLoader &trajectoryLoader() noexcept { return loader_; }
+  [[nodiscard]] const TrajectoryLoader &trajectoryLoader() const noexcept { return loader_; }
+  [[nodiscard]] TrajectoryLoader &loader() noexcept { return loader_; }
+  [[nodiscard]] const TrajectoryLoader &loader() const noexcept { return loader_; }
+
+  /**
+   * @brief Access underlying AnalysisDispatcher service.
+   */
+  [[nodiscard]] AnalysisDispatcher &analysisDispatcher() noexcept { return dispatcher_; }
+  [[nodiscard]] const AnalysisDispatcher &analysisDispatcher() const noexcept {
+    return dispatcher_;
+  }
+  [[nodiscard]] AnalysisDispatcher &dispatcher() noexcept { return dispatcher_; }
+  [[nodiscard]] const AnalysisDispatcher &dispatcher() const noexcept { return dispatcher_; }
+
+  /**
+   * @brief Access underlying BondCutoffService.
+   */
+  [[nodiscard]] BondCutoffService &bondCutoffService() noexcept { return cutoff_service_; }
+  [[nodiscard]] const BondCutoffService &bondCutoffService() const noexcept {
+    return cutoff_service_;
+  }
+  [[nodiscard]] BondCutoffService &cutoffService() noexcept { return cutoff_service_; }
+  [[nodiscard]] const BondCutoffService &cutoffService() const noexcept { return cutoff_service_; }
 
 private:
-  [[nodiscard]] std::string validateOptions() const;
-
-  // --- Private Data Members ---
-  std::unique_ptr<correlation::core::Trajectory> trajectory_; ///< Loaded trajectory data.
-  std::unique_ptr<correlation::analysis::DistributionFunctions>
-      df_; ///< Combined calculation results.
-
-  ProgramOptions options_; ///< Active configuration.
-  std::function<void(float, const std::string &)>
-      progress_callback_;                ///< Progress notification hook.
-  std::atomic<bool> cancel_flag_{false}; ///< Flag to cancel ongoing analysis.
+  TrajectoryLoader loader_;
+  AnalysisDispatcher dispatcher_;
+  BondCutoffService cutoff_service_;
+  ProgramOptions options_;
+  std::function<void(float, const std::string &)> progress_callback_;
 };
+
 } // namespace correlation::app

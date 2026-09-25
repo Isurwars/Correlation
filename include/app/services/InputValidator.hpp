@@ -9,12 +9,12 @@
 #pragma once
 
 #include "AppWindow.h"
-#include "app/AppBackend.hpp"
 
 class AppWindow;
 
 namespace correlation::app {
 
+class AppBackend;
 class AppController; // Forward declaration
 
 /**
@@ -25,6 +25,13 @@ class InputValidator {
 public:
   /**
    * @brief Constructs the InputValidator.
+   * @param[in,out] window Reference to the UI window.
+   * @param[in,out] controller Reference to the main AppController.
+   */
+  InputValidator(::AppWindow &window, AppController &controller);
+
+  /**
+   * @brief Constructs the InputValidator (transitional).
    * @param[in,out] window Reference to the UI window.
    * @param[in,out] backend Reference to the application backend.
    * @param[in,out] controller Reference to the main AppController.
@@ -84,7 +91,6 @@ private:
   [[nodiscard]] bool validateExportConfig(AppErrors &errs);
 
   ::AppWindow *window_;
-  AppBackend *backend_;
   AppController *controller_;
 };
 

@@ -9,13 +9,15 @@
 #pragma once
 
 #include "AppWindow.h"
-#include "app/AppBackend.hpp"
+#include "app/AppOptions.hpp"
 
 #include <cstddef>
 #include <expected>
 #include <string>
 
 namespace correlation::app {
+
+class AppBackend;
 
 /**
  * @class OptionsSyncService
@@ -36,6 +38,13 @@ public:
 
   /**
    * @brief Writes ProgramOptions fields to the target UI window.
+   * @param[in,out] window Target UI window.
+   * @param[in] options Source program options to serialize.
+   */
+  static void writeToUI(AppWindow &window, const ProgramOptions &options);
+
+  /**
+   * @brief Writes ProgramOptions fields to the target UI window (transitional).
    * @param[in,out] window Target UI window.
    * @param[in] options Source program options to serialize.
    * @param[in] backend Application backend holding trajectory and calculation state.

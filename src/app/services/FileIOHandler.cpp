@@ -8,6 +8,7 @@
 
 #include "app/FileIOHandler.hpp"
 #include "AppWindow.h"
+#include "app/AppBackend.hpp"
 #include "app/AppController.hpp"
 #include "app/InputValidator.hpp"
 #include "physics/PhysicalData.hpp"
@@ -17,8 +18,15 @@
 
 namespace correlation::app {
 
+FileIOHandler::FileIOHandler(::AppWindow &window, TrajectoryLoader &loader,
+                             AnalysisDispatcher &dispatcher, ProgramOptions &options,
+                             AppController &controller)
+    : window_(window), loader_(loader), dispatcher_(dispatcher), options_(options),
+      controller_(controller) {}
+
 FileIOHandler::FileIOHandler(::AppWindow &window, AppBackend &backend, AppController &controller)
-    : window_(window), backend_(backend), controller_(controller) {}
+    : FileIOHandler(window, backend.loader(), backend.dispatcher(), backend.options(), controller) {
+}
 
 FileIOHandler::~FileIOHandler() {
   if (dialog_thread_.joinable()) {
@@ -64,9 +72,9 @@ void FileIOHandler::executeWriteFiles(const std::string &filepath) {
   opts.use_csv = use_csv;
   opts.use_hdf5 = use_hdf5;
   opts.use_parquet = use_parquet;
-  backend_.setOptions(opts);
+  options_ = opts;
 
-  const auto write_res = backend_.writeFiles();
+  const auto write_res = dispatcher_.writeFiles(options_);
   if (write_res) {
     window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_FILES_WRITTEN));
   } else {
@@ -139,22 +147,24 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath) {
   }
 
   load_thread_ = std::thread([this, filepath]() {
-    backend_.setProgressCallback([this](float progress, const std::string &msg) {
+    auto progress_cb = [this](float progress, const std::string &msg) {
       slint::invoke_from_event_loop([progress, msg, this]() {
         window_.set_progress(progress);
         if (!msg.empty()) {
           window_.set_file_status_text(slint::SharedString(msg));
         }
       });
-    });
+    };
 
     std::string message;
     bool success = false;
-    try {
-      message = backend_.loadFile(filepath);
+    const auto load_res = loader_.loadFile(filepath, progress_cb);
+    if (load_res) {
+      message = *load_res;
       success = true;
-    } catch (const std::exception &e) {
-      message = std::string(AppDefaults::MSG_ERROR_LOADING) + std::string(e.what());
+      options_.input_file = filepath;
+    } else {
+      message = std::string(AppDefaults::MSG_ERROR_LOADING) + load_res.error();
     }
 
     slint::invoke_from_event_loop([this, filepath, message, success]() {
@@ -163,11 +173,11 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath) {
       window_.set_timer_running(false);
       window_.set_text_opacity(false);
 
-      if (success && backend_.cell() != nullptr) {
+      if (success && loader_.cell() != nullptr) {
         window_.set_file_loaded(true);
 
         // Atom Counts
-        auto atom_counts_map = backend_.getAtomCounts();
+        auto atom_counts_map = loader_.getAtomCounts();
         auto slint_atom_counts = std::make_shared<slint::VectorModel<AtomCount>>();
         for (const auto &[symbol, count] : atom_counts_map) {
           slint_atom_counts->push_back({
@@ -184,12 +194,12 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath) {
         updateFileMetadata(filepath);
 
         // Box Diagnostics
-        updateBoxDiagnostics(backend_.cell());
+        updateBoxDiagnostics(loader_.cell());
 
         {
           auto opts = window_.get_analysis_options();
           opts.time_step =
-              slint::SharedString(std::format("{:.2f}", backend_.getRecommendedTimeStep()));
+              slint::SharedString(std::format("{:.2f}", loader_.getRecommendedTimeStep()));
           window_.set_analysis_options(opts);
         }
 
@@ -202,7 +212,7 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath) {
         }
         {
           auto opts = window_.get_analysis_options();
-          opts.max_frame = slint::SharedString(std::to_string(backend_.getFrameCount()));
+          opts.max_frame = slint::SharedString(std::to_string(loader_.getFrameCount()));
           window_.set_analysis_options(opts);
         }
         static_cast<void>(controller_.getInputValidator()->validateInputs());
@@ -212,7 +222,7 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath) {
 }
 
 void FileIOHandler::handleReloadFile() {
-  const std::string &path = backend_.options().input_file;
+  const std::string &path = options_.input_file;
   if (!path.empty()) {
     startLoadingTrajectory(path);
   }
@@ -250,9 +260,9 @@ void FileIOHandler::updateBoxDiagnostics(const core::Cell *cell) {
 void FileIOHandler::updateFileMetadata(const std::string &filepath) {
   const std::string basename = std::filesystem::path(filepath).filename().string();
   window_.set_file_basename(slint::SharedString(basename));
-  window_.set_num_frames(static_cast<int>(backend_.getFrameCount()));
-  window_.set_total_atoms(static_cast<int>(backend_.getTotalAtomCount()));
-  window_.set_removed_frames_count(static_cast<int>(backend_.getRemovedFrameCount()));
+  window_.set_num_frames(static_cast<int>(loader_.getFrameCount()));
+  window_.set_total_atoms(static_cast<int>(loader_.getTotalAtomCount()));
+  window_.set_removed_frames_count(static_cast<int>(loader_.getRemovedFrameCount()));
 }
 
 void FileIOHandler::handleBrowseFile() {

@@ -141,8 +141,7 @@ void OptionsSyncService::updateActiveGroupFlags(AppWindow &window, const Program
   window.set_has_rings_active(has_rings);
 }
 
-void OptionsSyncService::writeToUI(AppWindow &window, const ProgramOptions &options,
-                                   const AppBackend & /*backend*/) {
+void OptionsSyncService::writeToUI(AppWindow &window, const ProgramOptions &options) {
   window.set_in_file_text(slint::SharedString(options.input_file));
 
   auto opts = window.get_analysis_options();
@@ -230,6 +229,11 @@ OptionsSyncService::readFromUI(const AppWindow &window, size_t frame_count,
 
   opt.bond_cutoffs = bond_cutoffs;
   return opt;
+}
+
+void OptionsSyncService::writeToUI(AppWindow &window, const ProgramOptions &options,
+                                   const AppBackend & /*backend*/) {
+  writeToUI(window, options);
 }
 
 } // namespace correlation::app

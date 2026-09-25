@@ -7,6 +7,8 @@
  */
 
 #include "app/OptionsResetService.hpp"
+#include "app/AppBackend.hpp"
+#include "app/TrajectoryLoader.hpp"
 
 #include <format>
 #include <string>
@@ -100,12 +102,12 @@ void OptionsResetService::resetAdvanced(AppWindow &window) {
   window.set_analysis_options(opts);
 }
 
-void OptionsResetService::resetTrajectory(AppWindow &window, const AppBackend &backend) {
+void OptionsResetService::resetTrajectory(AppWindow &window, const TrajectoryLoader &loader) {
   auto opts = window.get_analysis_options();
-  if (backend.getFrameCount() > 0) {
-    opts.time_step = slint::SharedString(std::format("{:.2f}", backend.getRecommendedTimeStep()));
+  if (loader.getFrameCount() > 0) {
+    opts.time_step = slint::SharedString(std::format("{:.2f}", loader.getRecommendedTimeStep()));
     opts.min_frame = "1";
-    opts.max_frame = slint::SharedString(std::to_string(backend.getFrameCount()));
+    opts.max_frame = slint::SharedString(std::to_string(loader.getFrameCount()));
   } else {
     opts.time_step = slint::SharedString(std::format("{:.2f}", AppDefaults::TIME_STEP));
     opts.min_frame = "1";
@@ -113,6 +115,10 @@ void OptionsResetService::resetTrajectory(AppWindow &window, const AppBackend &b
   }
   opts.frame_stride = "1";
   window.set_analysis_options(opts);
+}
+
+void OptionsResetService::resetTrajectory(AppWindow &window, const AppBackend &backend) {
+  resetTrajectory(window, backend.loader());
 }
 
 void OptionsResetService::resetExportSettings(AppWindow &window) {

@@ -13,6 +13,7 @@
 
 #include "AppWindow.h"
 #include "app/AnalysisRunner.hpp"
+#include "app/AppBackend.hpp"
 #include "app/AppController.hpp"
 
 #include "app/BondCutoffController.hpp"
@@ -38,8 +39,11 @@
 
 namespace correlation::app {
 
-AppController::AppController(::AppWindow &window, AppBackend &backend)
-    : window_(window), backend_(backend), bond_cutoff_controller_(window, backend) {
+AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
+                             AnalysisDispatcher &dispatcher, BondCutoffService &cutoff_service,
+                             ProgramOptions &options)
+    : window_(window), loader_(loader), dispatcher_(dispatcher), cutoff_service_(cutoff_service),
+      options_(options), bond_cutoff_controller_(window, loader, cutoff_service, options) {
   // Initialize Native File Dialog
   NFD_Init();
 
@@ -62,11 +66,13 @@ AppController::AppController(::AppWindow &window, AppBackend &backend)
   // Set application version string for UI display
   window_.set_app_version(slint::SharedString(std::string("v") + CORRELATION_VERSION_STRING));
 
-  analysis_runner_ = std::make_unique<AnalysisRunner>(window_, backend_, *this);
-  file_io_handler_ = std::make_unique<FileIOHandler>(window_, backend_, *this);
-  input_validator_ = std::make_unique<InputValidator>(window_, backend_, *this);
-  plot_controller_ = std::make_unique<PlotController>(window_, backend_);
-  preset_controller_ = std::make_unique<PresetController>(window_, backend_, *this);
+  analysis_runner_ =
+      std::make_unique<AnalysisRunner>(window_, loader_, dispatcher_, options_, *this);
+  file_io_handler_ =
+      std::make_unique<FileIOHandler>(window_, loader_, dispatcher_, options_, *this);
+  input_validator_ = std::make_unique<InputValidator>(window_, *this);
+  plot_controller_ = std::make_unique<PlotController>(window_, dispatcher_, options_);
+  preset_controller_ = std::make_unique<PresetController>(window_, options_, *this);
 
   // default options to UI
   handleOptionstoUI();
@@ -74,7 +80,7 @@ AppController::AppController(::AppWindow &window, AppBackend &backend)
   // Connect the UI signals to the controller's member functions.
   // We use lambdas to capture 'this' and call the appropriate method.
   window_.on_run_analysis([this]() { analysis_runner_->handleRunAnalysis(); });
-  window_.on_cancel_analysis([this]() { backend_.cancelAnalysis(); });
+  window_.on_cancel_analysis([this]() { dispatcher_.cancelAnalysis(); });
   window_.on_browse_file([this]() { file_io_handler_->handleBrowseFile(); });
   window_.on_reload_file([this]() { file_io_handler_->handleReloadFile(); });
   window_.on_write_files([this]() { file_io_handler_->handleWriteFiles(); });
@@ -83,9 +89,9 @@ AppController::AppController(::AppWindow &window, AppBackend &backend)
         [this]() { static_cast<void>(input_validator_->validateInputs()); });
   });
 
-  // Handle calculator toggle: update backend options and refresh the UI model
+  // Handle calculator toggle: update options and refresh the UI model
   window_.on_toggle_calculator([this](const slint::SharedString &calc_id, bool enabled) {
-    backend_.setCalculatorActive(std::string(calc_id.data()), enabled);
+    options_.active_calculators[std::string(calc_id.data())] = enabled;
     populateCalculatorGroups();
     updateActiveGroupFlags();
   });
@@ -195,6 +201,10 @@ AppController::AppController(::AppWindow &window, AppBackend &backend)
   UpdateChecker::checkForUpdatesAsync(window_, CORRELATION_VERSION_STRING);
 }
 
+AppController::AppController(::AppWindow &window, AppBackend &backend)
+    : AppController(window, backend.loader(), backend.dispatcher(), backend.cutoffService(),
+                    backend.options()) {}
+
 AppController::~AppController() {
   saveSettings();
   // Quit Native File Dialog
@@ -224,17 +234,15 @@ void AppController::saveSettings() const {
   }
   SettingsManager::save(settings);
 }
-void AppController::handleOptionstoUI() {
-  OptionsSyncService::writeToUI(window_, backend_.options(), backend_);
-}
+void AppController::handleOptionstoUI() { OptionsSyncService::writeToUI(window_, options_); }
 
 void AppController::updateActiveGroupFlags() {
-  OptionsSyncService::updateActiveGroupFlags(window_, backend_.options());
+  OptionsSyncService::updateActiveGroupFlags(window_, options_);
 }
 
 ProgramOptions AppController::handleOptionsfromUI() {
   const auto cutoffs = bond_cutoff_controller_.getBondCutoffs();
-  auto opt_expected = OptionsSyncService::readFromUI(window_, backend_.getFrameCount(), cutoffs);
+  auto opt_expected = OptionsSyncService::readFromUI(window_, loader_.getFrameCount(), cutoffs);
   if (opt_expected) {
     return *opt_expected;
   }
@@ -252,7 +260,7 @@ correlation::analysis::BondCutoffMatrix AppController::getBondCutoffs() {
 void AppController::populateCalculatorGroups() {
   const auto &calculators =
       ::correlation::calculators::CalculatorFactory::instance().getCalculators();
-  const auto &opts = backend_.options();
+  const auto &opts = options_;
 
   // Collect group names in insertion order
   std::vector<std::string> group_order;
@@ -321,7 +329,7 @@ void AppController::handleResetAdvancedOptions() {
 }
 
 void AppController::handleResetTrajectoryOptions() {
-  OptionsResetService::resetTrajectory(window_, backend_);
+  OptionsResetService::resetTrajectory(window_, loader_);
   static_cast<void>(input_validator_->validateInputs());
 }
 

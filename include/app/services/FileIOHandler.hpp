@@ -8,7 +8,9 @@
 
 #pragma once
 
-#include "app/AppBackend.hpp"
+#include "app/AnalysisDispatcher.hpp"
+#include "app/AppOptions.hpp"
+#include "app/TrajectoryLoader.hpp"
 #include <atomic>
 #include <string>
 #include <thread>
@@ -17,6 +19,7 @@ class AppWindow;
 
 namespace correlation::app {
 
+class AppBackend;
 class AppController;
 
 /**
@@ -26,7 +29,18 @@ class AppController;
 class FileIOHandler {
 public:
   /**
-   * @brief Constructs the FileIOHandler.
+   * @brief Constructs the FileIOHandler with injected services.
+   * @param[in,out] window Reference to the UI window.
+   * @param[in,out] loader Reference to the trajectory loader.
+   * @param[in,out] dispatcher Reference to the analysis dispatcher.
+   * @param[in,out] options Reference to program options.
+   * @param[in,out] controller Reference to the main AppController.
+   */
+  FileIOHandler(::AppWindow &window, TrajectoryLoader &loader, AnalysisDispatcher &dispatcher,
+                ProgramOptions &options, AppController &controller);
+
+  /**
+   * @brief Constructs the FileIOHandler (transitional).
    * @param[in,out] window Reference to the UI window.
    * @param[in,out] backend Reference to the application backend.
    * @param[in,out] controller Reference to the main AppController.
@@ -80,7 +94,9 @@ private:
   void executeWriteFiles(const std::string &filepath);
 
   ::AppWindow &window_;
-  AppBackend &backend_;
+  TrajectoryLoader &loader_;
+  AnalysisDispatcher &dispatcher_;
+  ProgramOptions &options_;
   AppController &controller_;
 
   std::thread dialog_thread_; ///< Background worker thread for native file dialogs

@@ -8,7 +8,9 @@
 
 #pragma once
 
-#include "app/AppBackend.hpp"
+#include "app/AnalysisDispatcher.hpp"
+#include "app/AppOptions.hpp"
+#include "app/TrajectoryLoader.hpp"
 #include <string>
 #include <thread>
 
@@ -16,6 +18,7 @@ class AppWindow;
 
 namespace correlation::app {
 
+class AppBackend;
 class AppController;
 
 /**
@@ -25,7 +28,18 @@ class AppController;
 class AnalysisRunner {
 public:
   /**
-   * @brief Constructs the AnalysisRunner.
+   * @brief Constructs the AnalysisRunner with injected services.
+   * @param[in,out] window Reference to the UI window.
+   * @param[in,out] loader Reference to the trajectory loader.
+   * @param[in,out] dispatcher Reference to the analysis dispatcher.
+   * @param[in,out] options Reference to program options.
+   * @param[in,out] controller Reference to the main AppController.
+   */
+  AnalysisRunner(::AppWindow &window, TrajectoryLoader &loader, AnalysisDispatcher &dispatcher,
+                 ProgramOptions &options, AppController &controller);
+
+  /**
+   * @brief Constructs the AnalysisRunner (transitional).
    * @param[in,out] window Reference to the UI window.
    * @param[in,out] backend Reference to the application backend.
    * @param[in,out] controller Reference to the main AppController.
@@ -51,7 +65,9 @@ public:
 
 private:
   ::AppWindow &window_;
-  AppBackend &backend_;
+  TrajectoryLoader &loader_;
+  AnalysisDispatcher &dispatcher_;
+  ProgramOptions &options_;
   AppController &controller_;
 
   std::thread analysis_thread_; ///< Handle for the background analysis computation.

@@ -4,9 +4,13 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "AppWindow.h"
+#include "app/AnalysisDispatcher.hpp"
 #include "app/AppBackend.hpp"
 #include "app/AppController.hpp"
+#include "app/AppOptions.hpp"
+#include "app/BondCutoffService.hpp"
 #include "app/PlotController.hpp"
+#include "app/TrajectoryLoader.hpp"
 #include <filesystem>
 
 #include <gtest/gtest.h>
@@ -46,6 +50,21 @@ TEST_F(AppControllerTests, ConstructorInitializesCorrectly) {
 
   // Act & Assert
   EXPECT_NO_THROW({ correlation::app::AppController controller(*window, backend); });
+}
+
+TEST_F(AppControllerTests, DirectDependencyInjectionConstructorInitializesCorrectly) {
+  // Arrange
+  auto window = AppWindow::create();
+  correlation::app::TrajectoryLoader loader;
+  correlation::app::AnalysisDispatcher dispatcher;
+  correlation::app::BondCutoffService cutoff_service;
+  correlation::app::ProgramOptions options;
+
+  // Act & Assert
+  EXPECT_NO_THROW({
+    correlation::app::AppController controller(*window, loader, dispatcher, cutoff_service,
+                                               options);
+  });
 }
 
 TEST_F(AppControllerTests, HandlesBondCutoffsCorrectly) {

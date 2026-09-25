@@ -9,7 +9,12 @@
 #pragma once
 
 #include "AppWindow.h"
-#include "app/AppBackend.hpp"
+#include "app/AnalysisDispatcher.hpp"
+#include "app/AppOptions.hpp"
+#include "app/BondCutoffController.hpp"
+#include "app/BondCutoffService.hpp"
+#include "app/SettingsManager.hpp"
+#include "app/TrajectoryLoader.hpp"
 #include <nfd.h>
 
 #include <memory>
@@ -17,11 +22,9 @@
 class AppControllerTests;
 class AppWindow;
 
-#include "app/BondCutoffController.hpp"
-#include "app/SettingsManager.hpp"
-
 namespace correlation::app {
 
+class AppBackend;
 class AnalysisRunner;
 class FileIOHandler;
 class InputValidator;
@@ -30,11 +33,11 @@ class PresetController;
 
 /**
  * @class AppController
- * @brief Controller class for the application.
+ * @brief Controller class for the application orchestrating services and UI.
  *
  * This class handles the interaction between the User Interface (AppWindow)
- * and the logic Backend (AppBackend). It manages event handling, threading for
- * analysis, and data synchronization between UI and Backend.
+ * and domain services (TrajectoryLoader, AnalysisDispatcher, BondCutoffService).
+ * It manages event handling, threading for analysis, and data synchronization.
  */
 class AppController {
 public:
@@ -42,7 +45,18 @@ public:
   ///@{
 
   /**
-   * @brief Constructs the AppController.
+   * @brief Constructs the AppController with injected domain services.
+   * @param window Reference to the main application window.
+   * @param loader Reference to the trajectory loading service.
+   * @param dispatcher Reference to the analysis dispatching service.
+   * @param cutoff_service Reference to the bond cutoff service.
+   * @param options Reference to application configuration options.
+   */
+  AppController(AppWindow &window, TrajectoryLoader &loader, AnalysisDispatcher &dispatcher,
+                BondCutoffService &cutoff_service, ProgramOptions &options);
+
+  /**
+   * @brief Constructs the AppController from AppBackend (transitional adapter).
    * @param window Reference to the main application window.
    * @param backend Reference to the application backend.
    */
@@ -215,8 +229,11 @@ public:
 
 private:
   friend class ::AppControllerTests;
-  AppWindow &window_;   ///< Reference to the managed UI window.
-  AppBackend &backend_; ///< Reference to the logic backend.
+  AppWindow &window_;
+  TrajectoryLoader &loader_;
+  AnalysisDispatcher &dispatcher_;
+  BondCutoffService &cutoff_service_;
+  ProgramOptions &options_;
 
   BondCutoffController bond_cutoff_controller_;
   std::unique_ptr<AnalysisRunner> analysis_runner_;

@@ -8,6 +8,7 @@
 
 #include "app/PlotController.hpp"
 #include "AppWindow.h"
+#include "app/AppBackend.hpp"
 #include "app/PlotExportService.hpp"
 #include <nfd.h>
 
@@ -38,11 +39,15 @@ template <typename T> T safeParse(const slint::SharedString &str, T default_valu
 
 } // namespace
 
-PlotController::PlotController(::AppWindow &window, AppBackend &backend)
-    : window_(window), backend_(backend) {
+PlotController::PlotController(::AppWindow &window, AnalysisDispatcher &dispatcher,
+                               const ProgramOptions &options)
+    : window_(window), dispatcher_(dispatcher), options_(options) {
   update_timer_.start(slint::TimerMode::Repeated, std::chrono::milliseconds(1000),
                       [this]() { handleUpdateTimer(); });
 }
+
+PlotController::PlotController(::AppWindow &window, AppBackend &backend)
+    : PlotController(window, backend.dispatcher(), backend.options()) {}
 
 PlotController::~PlotController() {
   if (dialog_thread_.joinable()) {
@@ -152,7 +157,7 @@ correlation::plotters::PlotConfig PlotController::buildPlotConfigFromUI() {
 
 void PlotController::populatePlotList() {
   last_rendered_index_ = -1;
-  auto names = backend_.getAvailableHistogramNames();
+  auto names = dispatcher_.getAvailableHistogramNames();
 
   std::map<std::string, int> priority = {
       {"g_r", 0},       {"g_r_unweighted", 1}, {"H_r", 2},      {"G_r", 3},
@@ -175,7 +180,7 @@ void PlotController::populatePlotList() {
   auto menu_model = std::make_shared<slint::VectorModel<MenuItem>>();
   for (const auto &name : names) {
     MenuItem item;
-    const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
+    const correlation::analysis::Histogram *hist = dispatcher_.getHistogram(name);
     const std::string display_text = (hist != nullptr && !hist->title.empty()) ? hist->title : name;
     item.text = slint::SharedString(display_text);
     item.enabled = true;
@@ -184,7 +189,7 @@ void PlotController::populatePlotList() {
   window_.set_plot_items(menu_model);
 
   // Update dynamic properties
-  const auto *distribution_functions = backend_.getDistributionFunctions();
+  const auto *distribution_functions = dispatcher_.getDistributionFunctions();
   if (distribution_functions != nullptr) {
     real_t msd = distribution_functions->getDiffusionCoefficientMSD();
     if (msd > 0.0) {
@@ -253,7 +258,7 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
   }
 
   const std::string &name = available_plot_keys_[index];
-  const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
+  const correlation::analysis::Histogram *hist = dispatcher_.getHistogram(name);
   if (hist == nullptr) {
     return;
   }
@@ -295,7 +300,7 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
   data.config = config;
   data.config.show_difference_curve = series_manager_.shouldShowDifference();
   data.hover = hover;
-  data.ashcroft_weights = backend_.getAshcroftWeights();
+  data.ashcroft_weights = dispatcher_.getAshcroftWeights();
   data.curve_visibility = series_manager_.getCurveVisibilityMap();
   data.custom_curve_colors = series_manager_.getCustomColors();
 
@@ -419,13 +424,13 @@ void PlotController::handleSavePlot() {
     return;
   }
   const std::string name = available_plot_keys_[index];
-  const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
+  const correlation::analysis::Histogram *hist = dispatcher_.getHistogram(name);
   if (hist == nullptr) {
     dialog_active_.store(false);
     return;
   }
 
-  std::string default_path = backend_.options().output_file_base;
+  std::string default_path = options_.output_file_base;
   if (!default_path.empty()) {
     default_path += "_" + name;
   } else {
@@ -498,8 +503,8 @@ void PlotController::executeSavePlot(const std::string &filepath,
 
   std::expected<void, std::string> result;
   if (series_manager_.getPinnedRuns().empty()) {
-    result =
-        PlotExportService::exportHistogram(filepath, *hist, config, backend_.getAshcroftWeights());
+    result = PlotExportService::exportHistogram(filepath, *hist, config,
+                                                dispatcher_.getAshcroftWeights());
   } else {
     std::vector<correlation::plotters::LabeledHistogram> datasets;
     datasets.reserve(series_manager_.getPinnedRunsCount() + 1);
@@ -522,7 +527,7 @@ void PlotController::executeSavePlot(const std::string &filepath,
 }
 
 void PlotController::handlePinRun() {
-  const auto &hists = backend_.getHistograms();
+  const auto &hists = dispatcher_.getHistograms();
   if (hists.empty()) {
     return;
   }
