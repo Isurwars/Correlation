@@ -12,7 +12,6 @@
 
 namespace correlation::app {
 
-class AppBackend;
 class TrajectoryLoader;
 
 /**
@@ -69,13 +68,6 @@ public:
    * @param[in] loader Source TrajectoryLoader containing frame count and trajectory data.
    */
   static void resetTrajectory(AppWindow &window, const TrajectoryLoader &loader);
-
-  /**
-   * @brief Restores default trajectory analysis options in the UI (transitional).
-   * @param[in,out] window Target UI window.
-   * @param[in] backend Source backend containing frame count and trajectory data.
-   */
-  static void resetTrajectory(AppWindow &window, const AppBackend &backend);
 
   /**
    * @brief Restores default publication export settings in the UI.

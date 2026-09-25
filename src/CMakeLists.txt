@@ -236,7 +236,6 @@ endif()
 if(BUILD_GUI)
     set(CORRELATION_SOURCES
         main.cpp
-        app/core/AppBackend.cpp
         app/core/AppController.cpp
         app/core/SettingsManager.cpp
         app/viewmodel/BondCutoffController.cpp

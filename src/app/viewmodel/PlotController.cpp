@@ -8,7 +8,6 @@
 
 #include "app/PlotController.hpp"
 #include "AppWindow.h"
-#include "app/AppBackend.hpp"
 #include "app/PlotExportService.hpp"
 #include <nfd.h>
 
@@ -45,9 +44,6 @@ PlotController::PlotController(::AppWindow &window, AnalysisDispatcher &dispatch
   update_timer_.start(slint::TimerMode::Repeated, std::chrono::milliseconds(1000),
                       [this]() { handleUpdateTimer(); });
 }
-
-PlotController::PlotController(::AppWindow &window, AppBackend &backend)
-    : PlotController(window, backend.dispatcher(), backend.options()) {}
 
 PlotController::~PlotController() {
   if (dialog_thread_.joinable()) {

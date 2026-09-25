@@ -8,7 +8,6 @@
 
 #include "app/PresetController.hpp"
 #include "AppWindow.h"
-#include "app/AppBackend.hpp"
 #include "app/AppController.hpp"
 #include "app/InputValidator.hpp"
 #include "app/PresetManager.hpp"
@@ -19,10 +18,6 @@ namespace correlation::app {
 PresetController::PresetController(::AppWindow &window, ProgramOptions &options,
                                    AppController &controller)
     : window_(window), options_(options), controller_(controller) {}
-
-PresetController::PresetController(::AppWindow &window, AppBackend &backend,
-                                   AppController &controller)
-    : PresetController(window, backend.options(), controller) {}
 
 void PresetController::handleLoadPreset(int index) {
   if (index < 0 || static_cast<size_t>(index) >= presets_.size()) {

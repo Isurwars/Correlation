@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "app/AppBackend.hpp"
+#include "app/services/AnalysisDispatcher.hpp"
+#include "app/services/TrajectoryLoader.hpp"
 
 #include <filesystem>
 #include <gtest/gtest.h>
@@ -52,23 +53,23 @@ private:
   std::filesystem::path path_;
 };
 
-TEST(AppBackendIntegrationTests, EndToEndMultiFrameTrajectoryPipeline) {
+TEST(ServiceIntegrationTests, EndToEndMultiFrameTrajectoryPipeline) {
   const std::string trajectory_path = findTestDataPath("xdatcar/Si.xdatcar");
   ASSERT_TRUE(std::filesystem::exists(trajectory_path))
       << "Trajectory test fixture not found: " << trajectory_path;
 
-  correlation::app::AppBackend backend;
-  const std::string load_status = backend.loadFile(trajectory_path);
-  EXPECT_FALSE(load_status.empty());
-  EXPECT_EQ(backend.getFrameCount(), 3);
-  ASSERT_NE(backend.cell(), nullptr);
-  EXPECT_EQ(backend.cell()->atomCount(), 4);
+  correlation::app::TrajectoryLoader loader;
+  const auto load_result = loader.loadFile(trajectory_path);
+  ASSERT_TRUE(load_result.has_value()) << load_result.error();
+  EXPECT_EQ(loader.getFrameCount(), 3);
+  ASSERT_NE(loader.cell(), nullptr);
+  EXPECT_EQ(loader.cell()->atomCount(), 4);
 
-  const auto temp_dir = std::filesystem::temp_directory_path() / "correlation_e2e_backend_test";
+  const auto temp_dir = std::filesystem::temp_directory_path() / "correlation_e2e_service_test";
   const TempDirectoryGuard temp_guard{temp_dir};
   const std::string out_base = (temp_guard.path() / "analysis_run").string();
 
-  correlation::app::ProgramOptions options = backend.options();
+  correlation::app::ProgramOptions options;
   options.output_file_base = out_base;
   options.r_max = 5.0;
   options.r_bin_width = 0.25;
@@ -83,28 +84,28 @@ TEST(AppBackendIntegrationTests, EndToEndMultiFrameTrajectoryPipeline) {
   options.active_calculators["SQ"] = true;
   options.active_calculators["VACF"] = true;
   options.active_calculators["MSD"] = true;
-  backend.setOptions(options);
 
+  correlation::app::AnalysisDispatcher dispatcher;
   bool progress_invoked = false;
-  backend.setProgressCallback([&progress_invoked](float progress, const std::string &) {
+  dispatcher.setProgressCallback([&progress_invoked](float progress, const std::string &) {
     if (progress > 0.0F) {
       progress_invoked = true;
     }
   });
 
-  const auto run_result = backend.runAnalysis();
+  const auto run_result = dispatcher.runAnalysis(loader.trajectoryMut(), options);
   ASSERT_TRUE(run_result.has_value())
       << "runAnalysis failed: " << (run_result ? "" : run_result.error());
   EXPECT_TRUE(progress_invoked);
-  EXPECT_FALSE(backend.isCancelled());
+  EXPECT_FALSE(dispatcher.isCancelled());
 
-  const auto available_hists = backend.getAvailableHistogramNames();
+  const auto available_hists = dispatcher.getAvailableHistogramNames();
   EXPECT_FALSE(available_hists.empty());
   EXPECT_NE(std::ranges::find(available_hists, "g_r"), available_hists.end());
   EXPECT_NE(std::ranges::find(available_hists, "VACF"), available_hists.end());
   EXPECT_NE(std::ranges::find(available_hists, "MSD"), available_hists.end());
 
-  const auto write_result = backend.writeFiles();
+  const auto write_result = dispatcher.writeFiles(options);
   ASSERT_TRUE(write_result.has_value())
       << "writeFiles failed: " << (write_result ? "" : write_result.error());
 
@@ -114,9 +115,10 @@ TEST(AppBackendIntegrationTests, EndToEndMultiFrameTrajectoryPipeline) {
   EXPECT_TRUE(std::filesystem::exists(out_base + "_MSD.csv"));
 }
 
-TEST(AppBackendIntegrationTests, AbortsGracefullyOnMissingTrajectory) {
-  correlation::app::AppBackend backend;
-  const auto run_result = backend.runAnalysis();
+TEST(ServiceIntegrationTests, AbortsGracefullyOnMissingTrajectory) {
+  correlation::app::AnalysisDispatcher dispatcher;
+  correlation::app::ProgramOptions const options;
+  const auto run_result = dispatcher.runAnalysis(nullptr, options);
   ASSERT_FALSE(run_result.has_value());
   EXPECT_EQ(run_result.error(), correlation::app::AppDefaults::MSG_ANALYSIS_ABORTED);
 }

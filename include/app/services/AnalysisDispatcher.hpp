@@ -45,6 +45,15 @@ public:
    * @param[in] options Analytical configuration parameters.
    * @return Success or error message.
    */
+  std::expected<void, std::string> runAnalysis(correlation::core::Trajectory *trajectory,
+                                               const ProgramOptions &options);
+
+  /**
+   * @brief Executes analysis for the given trajectory reference and options.
+   * @param[in] trajectory Source trajectory reference with structures to analyze.
+   * @param[in] options Analytical configuration parameters.
+   * @return Success or error message.
+   */
   std::expected<void, std::string> runAnalysis(correlation::core::Trajectory &trajectory,
                                                const ProgramOptions &options);
 

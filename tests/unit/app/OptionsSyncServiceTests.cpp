@@ -7,7 +7,6 @@
  */
 
 #include "AppWindow.h"
-#include "app/AppBackend.hpp"
 #include "app/OptionsSyncService.hpp"
 
 #include <gtest/gtest.h>
@@ -46,7 +45,6 @@ private:
 
 TEST_F(OptionsSyncServiceTests, WriteToUIPopulatesAllFieldsCorrectly) {
   auto &win = window();
-  const AppBackend backend;
 
   ProgramOptions opt;
   opt.input_file = "/tmp/test_structure.xyz";
@@ -74,7 +72,7 @@ TEST_F(OptionsSyncServiceTests, WriteToUIPopulatesAllFieldsCorrectly) {
   opt.time_step = 1.25;
   opt.frame_stride = 2;
 
-  OptionsSyncService::writeToUI(win, opt, backend);
+  OptionsSyncService::writeToUI(win, opt);
 
   EXPECT_EQ(win.get_in_file_text(), "/tmp/test_structure.xyz");
   const auto ui_opts = win.get_analysis_options();
@@ -105,13 +103,12 @@ TEST_F(OptionsSyncServiceTests, WriteToUIPopulatesAllFieldsCorrectly) {
 
 TEST_F(OptionsSyncServiceTests, ReadFromUISuccessAndOutputBaseCalculation) {
   auto &win = window();
-  const AppBackend backend;
 
   ProgramOptions opt;
   opt.input_file = "/path/to/trajectory.xyz";
   opt.min_frame = 2; // 0-based index 2 -> UI frame 3
   opt.max_frame = 50;
-  OptionsSyncService::writeToUI(win, opt, backend);
+  OptionsSyncService::writeToUI(win, opt);
 
   const auto res = OptionsSyncService::readFromUI(win, 100);
   ASSERT_TRUE(res.has_value());

@@ -8,7 +8,6 @@
 
 #include "app/AnalysisRunner.hpp"
 #include "AppWindow.h"
-#include "app/AppBackend.hpp"
 #include "app/AppController.hpp"
 #include "app/InputValidator.hpp"
 #include "app/PlotController.hpp"
@@ -21,10 +20,6 @@ AnalysisRunner::AnalysisRunner(::AppWindow &window, TrajectoryLoader &loader,
                                AppController &controller)
     : window_(window), loader_(loader), dispatcher_(dispatcher), options_(options),
       controller_(controller) {}
-
-AnalysisRunner::AnalysisRunner(::AppWindow &window, AppBackend &backend, AppController &controller)
-    : AnalysisRunner(window, backend.loader(), backend.dispatcher(), backend.options(),
-                     controller) {}
 
 AnalysisRunner::~AnalysisRunner() {
   if (analysis_thread_.joinable()) {

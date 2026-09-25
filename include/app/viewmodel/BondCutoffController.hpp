@@ -16,8 +16,6 @@
 
 namespace correlation::app {
 
-class AppBackend;
-
 /**
  * @enum FactorBound
  * @brief Specifies which cutoff bound (Min or Max) to adjust by a covalent factor.
@@ -47,13 +45,6 @@ public:
    */
   BondCutoffController(AppWindow &window, TrajectoryLoader &loader,
                        BondCutoffService &cutoff_service, ProgramOptions &options);
-
-  /**
-   * @brief Constructs a BondCutoffController with the given UI window and backend (transitional).
-   * @param[in,out] window Target UI window.
-   * @param[in,out] backend Application backend holding atomic cell and cutoffs.
-   */
-  BondCutoffController(AppWindow &window, AppBackend &backend);
 
   /**
    * @brief Populates the UI model with default recommended bond cutoffs based on atomic elements.

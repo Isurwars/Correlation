@@ -7,7 +7,6 @@
  */
 
 #include "app/OptionsSyncService.hpp"
-#include "app/AppBackend.hpp"
 #include "calculators/CalculatorFactory.hpp"
 
 #include <algorithm>
@@ -229,11 +228,6 @@ OptionsSyncService::readFromUI(const AppWindow &window, size_t frame_count,
 
   opt.bond_cutoffs = bond_cutoffs;
   return opt;
-}
-
-void OptionsSyncService::writeToUI(AppWindow &window, const ProgramOptions &options,
-                                   const AppBackend & /*backend*/) {
-  writeToUI(window, options);
 }
 
 } // namespace correlation::app

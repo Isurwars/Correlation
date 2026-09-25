@@ -27,8 +27,6 @@ class AppWindow;
 
 namespace correlation::app {
 
-class AppBackend;
-
 struct PlotSize {
   float width;
   float height;
@@ -48,13 +46,6 @@ public:
    */
   PlotController(::AppWindow &window, AnalysisDispatcher &dispatcher,
                  const ProgramOptions &options);
-
-  /**
-   * @brief Constructs the PlotController (transitional).
-   * @param[in,out] window Reference to the UI window.
-   * @param[in,out] backend Reference to the application backend.
-   */
-  PlotController(::AppWindow &window, AppBackend &backend);
 
   /**
    * @brief Destructor. Joins render worker thread before destruction.

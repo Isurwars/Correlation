@@ -18,7 +18,6 @@ class AppWindow;
 
 namespace correlation::app {
 
-class AppBackend;
 class AppController;
 
 /**
@@ -34,14 +33,6 @@ public:
    * @param[in,out] controller Reference to the main AppController.
    */
   PresetController(::AppWindow &window, ProgramOptions &options, AppController &controller);
-
-  /**
-   * @brief Constructs the PresetController (transitional).
-   * @param[in,out] window Reference to the UI window.
-   * @param[in,out] backend Reference to the application backend.
-   * @param[in,out] controller Reference to the main AppController.
-   */
-  PresetController(::AppWindow &window, AppBackend &backend, AppController &controller);
 
   ~PresetController() = default;
   PresetController(const PresetController &) = delete;

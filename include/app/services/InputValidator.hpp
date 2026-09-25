@@ -14,7 +14,6 @@ class AppWindow;
 
 namespace correlation::app {
 
-class AppBackend;
 class AppController; // Forward declaration
 
 /**
@@ -29,14 +28,6 @@ public:
    * @param[in,out] controller Reference to the main AppController.
    */
   InputValidator(::AppWindow &window, AppController &controller);
-
-  /**
-   * @brief Constructs the InputValidator (transitional).
-   * @param[in,out] window Reference to the UI window.
-   * @param[in,out] backend Reference to the application backend.
-   * @param[in,out] controller Reference to the main AppController.
-   */
-  InputValidator(::AppWindow &window, AppBackend &backend, AppController &controller);
 
   /**
    * @brief Validates all numeric input fields and pushes error states to the UI.

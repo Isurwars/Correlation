@@ -24,7 +24,6 @@ class AppWindow;
 
 namespace correlation::app {
 
-class AppBackend;
 class AnalysisRunner;
 class FileIOHandler;
 class InputValidator;
@@ -49,18 +48,21 @@ public:
    * @param window Reference to the main application window.
    * @param loader Reference to the trajectory loading service.
    * @param dispatcher Reference to the analysis dispatching service.
+   * @param options Reference to application configuration options.
+   */
+  AppController(AppWindow &window, TrajectoryLoader &loader, AnalysisDispatcher &dispatcher,
+                ProgramOptions &options);
+
+  /**
+   * @brief Constructs the AppController with injected domain services (transitional).
+   * @param window Reference to the main application window.
+   * @param loader Reference to the trajectory loading service.
+   * @param dispatcher Reference to the analysis dispatching service.
    * @param cutoff_service Reference to the bond cutoff service.
    * @param options Reference to application configuration options.
    */
   AppController(AppWindow &window, TrajectoryLoader &loader, AnalysisDispatcher &dispatcher,
                 BondCutoffService &cutoff_service, ProgramOptions &options);
-
-  /**
-   * @brief Constructs the AppController from AppBackend (transitional adapter).
-   * @param window Reference to the main application window.
-   * @param backend Reference to the application backend.
-   */
-  AppController(AppWindow &window, AppBackend &backend);
 
   /**
    * @brief Destructor. Ensures analysis threads are joined before destruction.
@@ -232,7 +234,6 @@ private:
   AppWindow &window_;
   TrajectoryLoader &loader_;
   AnalysisDispatcher &dispatcher_;
-  BondCutoffService &cutoff_service_;
   ProgramOptions &options_;
 
   BondCutoffController bond_cutoff_controller_;

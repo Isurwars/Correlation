@@ -13,7 +13,6 @@
 
 #include "AppWindow.h"
 #include "app/AnalysisRunner.hpp"
-#include "app/AppBackend.hpp"
 #include "app/AppController.hpp"
 
 #include "app/BondCutoffController.hpp"
@@ -40,10 +39,9 @@
 namespace correlation::app {
 
 AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
-                             AnalysisDispatcher &dispatcher, BondCutoffService &cutoff_service,
-                             ProgramOptions &options)
-    : window_(window), loader_(loader), dispatcher_(dispatcher), cutoff_service_(cutoff_service),
-      options_(options), bond_cutoff_controller_(window, loader, cutoff_service, options) {
+                             AnalysisDispatcher &dispatcher, ProgramOptions &options)
+    : window_(window), loader_(loader), dispatcher_(dispatcher), options_(options),
+      bond_cutoff_controller_(window, loader, options) {
   // Initialize Native File Dialog
   NFD_Init();
 
@@ -201,9 +199,11 @@ AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
   UpdateChecker::checkForUpdatesAsync(window_, CORRELATION_VERSION_STRING);
 }
 
-AppController::AppController(::AppWindow &window, AppBackend &backend)
-    : AppController(window, backend.loader(), backend.dispatcher(), backend.cutoffService(),
-                    backend.options()) {}
+AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
+                             AnalysisDispatcher &dispatcher,
+                             [[maybe_unused]] BondCutoffService &cutoff_service,
+                             ProgramOptions &options)
+    : AppController(window, loader, dispatcher, options) {}
 
 AppController::~AppController() {
   saveSettings();

@@ -8,7 +8,6 @@
 
 #include "app/FileIOHandler.hpp"
 #include "AppWindow.h"
-#include "app/AppBackend.hpp"
 #include "app/AppController.hpp"
 #include "app/InputValidator.hpp"
 #include "physics/PhysicalData.hpp"
@@ -23,10 +22,6 @@ FileIOHandler::FileIOHandler(::AppWindow &window, TrajectoryLoader &loader,
                              AppController &controller)
     : window_(window), loader_(loader), dispatcher_(dispatcher), options_(options),
       controller_(controller) {}
-
-FileIOHandler::FileIOHandler(::AppWindow &window, AppBackend &backend, AppController &controller)
-    : FileIOHandler(window, backend.loader(), backend.dispatcher(), backend.options(), controller) {
-}
 
 FileIOHandler::~FileIOHandler() {
   if (dialog_thread_.joinable()) {

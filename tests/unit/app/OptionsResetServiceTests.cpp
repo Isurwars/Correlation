@@ -7,8 +7,8 @@
  */
 
 #include "AppWindow.h"
-#include "app/AppBackend.hpp"
 #include "app/OptionsResetService.hpp"
+#include "app/TrajectoryLoader.hpp"
 
 #include <gtest/gtest.h>
 #include <optional>
@@ -149,10 +149,10 @@ TEST_F(OptionsResetServiceTests, ResetRingsAndSmoothingAndAdvanced) {
 
 TEST_F(OptionsResetServiceTests, ResetTrajectoryWithZeroAndNonZeroFrames) {
   auto &win = window();
-  const AppBackend backend;
+  const correlation::app::TrajectoryLoader loader;
 
   // Frame count 0
-  OptionsResetService::resetTrajectory(win, backend);
+  OptionsResetService::resetTrajectory(win, loader);
   auto opts = win.get_analysis_options();
   EXPECT_EQ(opts.min_frame, "1");
   EXPECT_EQ(opts.max_frame, "End");

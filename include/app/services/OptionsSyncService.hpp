@@ -17,8 +17,6 @@
 
 namespace correlation::app {
 
-class AppBackend;
-
 /**
  * @class OptionsSyncService
  * @brief Stateless bidirectional synchronization between ProgramOptions and UI analysis models.
@@ -42,15 +40,6 @@ public:
    * @param[in] options Source program options to serialize.
    */
   static void writeToUI(AppWindow &window, const ProgramOptions &options);
-
-  /**
-   * @brief Writes ProgramOptions fields to the target UI window (transitional).
-   * @param[in,out] window Target UI window.
-   * @param[in] options Source program options to serialize.
-   * @param[in] backend Application backend holding trajectory and calculation state.
-   */
-  static void writeToUI(AppWindow &window, const ProgramOptions &options,
-                        const AppBackend &backend);
 
   /**
    * @brief Updates boolean UI visibility/active flags for calculator groups.

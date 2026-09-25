@@ -18,7 +18,6 @@ class AppWindow;
 
 namespace correlation::app {
 
-class AppBackend;
 class AppController;
 
 /**
@@ -37,14 +36,6 @@ public:
    */
   AnalysisRunner(::AppWindow &window, TrajectoryLoader &loader, AnalysisDispatcher &dispatcher,
                  ProgramOptions &options, AppController &controller);
-
-  /**
-   * @brief Constructs the AnalysisRunner (transitional).
-   * @param[in,out] window Reference to the UI window.
-   * @param[in,out] backend Reference to the application backend.
-   * @param[in,out] controller Reference to the main AppController.
-   */
-  AnalysisRunner(::AppWindow &window, AppBackend &backend, AppController &controller);
 
   /**
    * @brief Destructor. Ensures analysis thread is joined.

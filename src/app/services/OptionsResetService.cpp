@@ -7,8 +7,8 @@
  */
 
 #include "app/OptionsResetService.hpp"
-#include "app/AppBackend.hpp"
 #include "app/TrajectoryLoader.hpp"
+#include "app/core/AppOptions.hpp"
 
 #include <format>
 #include <string>
@@ -115,10 +115,6 @@ void OptionsResetService::resetTrajectory(AppWindow &window, const TrajectoryLoa
   }
   opts.frame_stride = "1";
   window.set_analysis_options(opts);
-}
-
-void OptionsResetService::resetTrajectory(AppWindow &window, const AppBackend &backend) {
-  resetTrajectory(window, backend.loader());
 }
 
 void OptionsResetService::resetExportSettings(AppWindow &window) {

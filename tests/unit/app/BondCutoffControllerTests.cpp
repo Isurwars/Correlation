@@ -7,8 +7,9 @@
  */
 
 #include "AppWindow.h"
-#include "app/AppBackend.hpp"
 #include "app/BondCutoffController.hpp"
+#include "app/TrajectoryLoader.hpp"
+#include "app/core/AppOptions.hpp"
 
 #include <filesystem>
 #include <gtest/gtest.h>
@@ -71,8 +72,9 @@ private:
 
 TEST_F(BondCutoffControllerTests, HandlesNullCellGracefully) {
   auto &win = window();
-  AppBackend backend;
-  BondCutoffController controller(win, backend);
+  TrajectoryLoader loader;
+  ProgramOptions options;
+  BondCutoffController controller(win, loader, options);
 
   EXPECT_NO_THROW(controller.setBondCutoffs());
   const auto matrix = controller.getBondCutoffs();
@@ -87,12 +89,14 @@ TEST_F(BondCutoffControllerTests, HandlesNullCellGracefully) {
 
 TEST_F(BondCutoffControllerTests, IgnoresInvalidScaleAndCutoffFactors) {
   auto &win = window();
-  AppBackend backend;
+  TrajectoryLoader loader;
+  ProgramOptions options;
   const std::string filepath = getTestDataDir() + "xyz/clean.xyz";
-  backend.loadFile(filepath);
-  ASSERT_NE(backend.cell(), nullptr);
+  auto res = loader.loadFile(filepath);
+  ASSERT_TRUE(res.has_value());
+  ASSERT_NE(loader.cell(), nullptr);
 
-  BondCutoffController controller(win, backend);
+  BondCutoffController controller(win, loader, options);
   controller.setBondCutoffs();
   const int initial_trigger = win.get_bond_cutoffs_reset_trigger();
 
@@ -107,12 +111,14 @@ TEST_F(BondCutoffControllerTests, IgnoresInvalidScaleAndCutoffFactors) {
 
 TEST_F(BondCutoffControllerTests, PopulatesAndParsesCutoffsWithLoadedCell) {
   auto &win = window();
-  AppBackend backend;
+  TrajectoryLoader loader;
+  ProgramOptions options;
   const std::string filepath = getTestDataDir() + "xyz/clean.xyz";
-  backend.loadFile(filepath);
-  ASSERT_NE(backend.cell(), nullptr);
+  auto res = loader.loadFile(filepath);
+  ASSERT_TRUE(res.has_value());
+  ASSERT_NE(loader.cell(), nullptr);
 
-  BondCutoffController controller(win, backend);
+  BondCutoffController controller(win, loader, options);
   const int initial_trigger = win.get_bond_cutoffs_reset_trigger();
 
   controller.setBondCutoffs();
@@ -124,17 +130,19 @@ TEST_F(BondCutoffControllerTests, PopulatesAndParsesCutoffsWithLoadedCell) {
 
   const auto matrix = controller.getBondCutoffs();
   EXPECT_FALSE(matrix.empty());
-  EXPECT_EQ(matrix.size(), backend.cell()->elements().size());
+  EXPECT_EQ(matrix.size(), loader.cell()->elements().size());
 }
 
 TEST_F(BondCutoffControllerTests, SetUniformCutoffAndGlobalCutoff) {
   auto &win = window();
-  AppBackend backend;
+  TrajectoryLoader loader;
+  ProgramOptions options;
   const std::string filepath = getTestDataDir() + "xyz/clean.xyz";
-  backend.loadFile(filepath);
-  ASSERT_NE(backend.cell(), nullptr);
+  auto res = loader.loadFile(filepath);
+  ASSERT_TRUE(res.has_value());
+  ASSERT_NE(loader.cell(), nullptr);
 
-  BondCutoffController controller(win, backend);
+  BondCutoffController controller(win, loader, options);
   controller.setUniformCutoff(2.80F);
 
   auto cutoffs_model = win.get_bond_cutoffs();
@@ -154,12 +162,14 @@ TEST_F(BondCutoffControllerTests, SetUniformCutoffAndGlobalCutoff) {
 
 TEST_F(BondCutoffControllerTests, ApplyCovalentFactorMinAndMax) {
   auto &win = window();
-  AppBackend backend;
+  TrajectoryLoader loader;
+  ProgramOptions options;
   const std::string filepath = getTestDataDir() + "xyz/clean.xyz";
-  backend.loadFile(filepath);
-  ASSERT_NE(backend.cell(), nullptr);
+  auto res = loader.loadFile(filepath);
+  ASSERT_TRUE(res.has_value());
+  ASSERT_NE(loader.cell(), nullptr);
 
-  BondCutoffController controller(win, backend);
+  BondCutoffController controller(win, loader, options);
   controller.setBondCutoffs();
 
   // Apply Min Factor

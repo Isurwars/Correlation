@@ -7,7 +7,6 @@
  */
 
 #include "app/BondCutoffController.hpp"
-#include "app/AppBackend.hpp"
 #include "app/BondCutoffMapper.hpp"
 #include "physics/PhysicalData.hpp"
 
@@ -27,9 +26,6 @@ BondCutoffController::BondCutoffController(AppWindow &window, TrajectoryLoader &
                                            [[maybe_unused]] BondCutoffService &cutoff_service,
                                            ProgramOptions &options)
     : BondCutoffController(window, loader, options) {}
-
-BondCutoffController::BondCutoffController(AppWindow &window, AppBackend &backend)
-    : BondCutoffController(window, backend.loader(), backend.options()) {}
 
 void BondCutoffController::setBondCutoffs() {
   if (loader_.cell() == nullptr) {

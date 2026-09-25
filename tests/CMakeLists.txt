@@ -96,7 +96,6 @@ add_executable(correlation_unit_tests
     unit/analysis/CorrelationEngineTests.cpp
     unit/analysis/StructuralElectronicCorrelationTests.cpp
     unit/app/AnalysisDispatcherTests.cpp
-    unit/app/AppBackendTests.cpp
     unit/app/BondCutoffMapperTests.cpp
     unit/app/BondCutoffServiceTests.cpp
     unit/app/PhysicsServiceTests.cpp
@@ -108,7 +107,6 @@ add_executable(correlation_unit_tests
     unit/app/ValidationRuleServiceTests.cpp
     unit/cli/CliParserTests.cpp
     ../src/app/services/AnalysisDispatcher.cpp
-    ../src/app/core/AppBackend.cpp
     ../src/app/formatters/BondCutoffMapper.cpp
     ../src/app/services/BondCutoffService.cpp
     ../src/app/services/PhysicsService.cpp
@@ -149,9 +147,8 @@ add_executable(correlation_functional_tests
     functional/analysis/StructureAnalyzerTests.cpp
     functional/analysis/TrajectoryAnalyzerTests.cpp
     functional/analysis/DynamicsAnalyzerTests.cpp
-    functional/app/AppBackendIntegrationTests.cpp
+    functional/app/ServiceIntegrationTests.cpp
     ../src/app/services/AnalysisDispatcher.cpp
-    ../src/app/core/AppBackend.cpp
     ../src/app/services/BondCutoffService.cpp
     ../src/app/services/PhysicsService.cpp
     ../src/app/services/TrajectoryLoader.cpp
@@ -184,7 +181,6 @@ if(BUILD_GUI)
         unit/app/PlotTableFormatterTests.cpp
         ../src/app/services/AnalysisDispatcher.cpp
         ../src/app/services/AnalysisRunner.cpp
-        ../src/app/core/AppBackend.cpp
         ../src/app/core/AppController.cpp
         ../src/app/viewmodel/BondCutoffController.cpp
         ../src/app/formatters/BondCutoffMapper.cpp

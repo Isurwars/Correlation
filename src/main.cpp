@@ -144,10 +144,8 @@ int main() {
     auto window = createAppWindow();
     correlation::app::TrajectoryLoader loader;
     correlation::app::AnalysisDispatcher dispatcher;
-    correlation::app::BondCutoffService cutoff_service;
     correlation::app::ProgramOptions options;
-    correlation::app::AppController const controller(*window, loader, dispatcher, cutoff_service,
-                                                     options);
+    correlation::app::AppController const controller(*window, loader, dispatcher, options);
 
     window->run();
     return 0;

@@ -54,9 +54,9 @@ std::string AnalysisDispatcher::validateOptions(const ProgramOptions &options) {
 }
 
 std::expected<void, std::string>
-AnalysisDispatcher::runAnalysis(correlation::core::Trajectory &trajectory,
+AnalysisDispatcher::runAnalysis(correlation::core::Trajectory *trajectory,
                                 const ProgramOptions &options) {
-  if (trajectory.getFrameCount() == 0) {
+  if (trajectory == nullptr || trajectory->getFrameCount() == 0) {
     std::string const err = AppDefaults::MSG_ANALYSIS_ABORTED;
     std::cerr << err << '\n';
     return std::unexpected(err);
@@ -70,8 +70,8 @@ AnalysisDispatcher::runAnalysis(correlation::core::Trajectory &trajectory,
   }
 
   const auto config = toEngineConfig(options, &cancel_flag_);
-  auto result =
-      correlation::analysis::CorrelationEngine::runAnalysis(trajectory, config, progress_callback_);
+  auto result = correlation::analysis::CorrelationEngine::runAnalysis(
+      *trajectory, config, progress_callback_);
   if (!result) {
     std::cerr << "Analysis Exception: " << result.error() << '\n';
     return std::unexpected(result.error());
@@ -79,6 +79,12 @@ AnalysisDispatcher::runAnalysis(correlation::core::Trajectory &trajectory,
 
   df_ = std::move(result.value());
   return {};
+}
+
+std::expected<void, std::string>
+AnalysisDispatcher::runAnalysis(correlation::core::Trajectory &trajectory,
+                                const ProgramOptions &options) {
+  return runAnalysis(&trajectory, options);
 }
 
 std::expected<void, std::string>

@@ -5,7 +5,6 @@
 
 #include "AppWindow.h"
 #include "app/AnalysisDispatcher.hpp"
-#include "app/AppBackend.hpp"
 #include "app/AppController.hpp"
 #include "app/AppOptions.hpp"
 #include "app/BondCutoffService.hpp"
@@ -23,6 +22,10 @@
 // Test fixture for the AppController class
 class AppControllerTests : public ::testing::Test {
 protected:
+  correlation::app::TrajectoryLoader loader;
+  correlation::app::AnalysisDispatcher dispatcher;
+  correlation::app::ProgramOptions options;
+
   void SetUp() override {
     // Ensure Slint uses the software backend during tests to avoid OpenGL
     // requirements in headless CI/Xvfb environments
@@ -40,37 +43,14 @@ protected:
 };
 
 TEST_F(AppControllerTests, ConstructorInitializesCorrectly) {
-  // Slint testing backend setup if headless env var is not enough.
-  // slint::testing::backend::init(); // available in slint-testing
-
-  // Arrange
   auto window = AppWindow::create();
-
-  correlation::app::AppBackend backend;
-
-  // Act & Assert
-  EXPECT_NO_THROW({ correlation::app::AppController controller(*window, backend); });
-}
-
-TEST_F(AppControllerTests, DirectDependencyInjectionConstructorInitializesCorrectly) {
-  // Arrange
-  auto window = AppWindow::create();
-  correlation::app::TrajectoryLoader loader;
-  correlation::app::AnalysisDispatcher dispatcher;
-  correlation::app::BondCutoffService cutoff_service;
-  correlation::app::ProgramOptions options;
-
-  // Act & Assert
-  EXPECT_NO_THROW({
-    correlation::app::AppController controller(*window, loader, dispatcher, cutoff_service,
-                                               options);
-  });
+  EXPECT_NO_THROW(
+      { correlation::app::AppController controller(*window, loader, dispatcher, options); });
 }
 
 TEST_F(AppControllerTests, HandlesBondCutoffsCorrectly) {
   // Arrange
   auto window = AppWindow::create();
-  correlation::app::AppBackend backend;
 
   std::string file_path = "../../examples/a-PdSi/a-PdSi.car";
   if (!std::filesystem::exists(file_path)) {
@@ -79,9 +59,9 @@ TEST_F(AppControllerTests, HandlesBondCutoffsCorrectly) {
   if (!std::filesystem::exists(file_path)) {
     file_path = "examples/a-PdSi/a-PdSi.car";
   }
-  backend.loadFile(file_path);
+  ASSERT_TRUE(loader.loadFile(file_path).has_value());
 
-  correlation::app::AppController controller(*window, backend);
+  correlation::app::AppController controller(*window, loader, dispatcher, options);
 
   // Set up elements in UI that match the elements in loaded cell (Pd, Si)
   auto atom_counts = std::make_shared<slint::VectorModel<AtomCount>>();
@@ -139,7 +119,6 @@ TEST_F(AppControllerTests, HandlesBondCutoffsCorrectly) {
 
 TEST_F(AppControllerTests, SynchronizesOptionsToAndFromUI) {
   auto window = AppWindow::create();
-  correlation::app::AppBackend backend;
 
   correlation::app::ProgramOptions backend_opts;
   backend_opts.input_file = "dummy_input.arc";
@@ -159,9 +138,9 @@ TEST_F(AppControllerTests, SynchronizesOptionsToAndFromUI) {
   backend_opts.max_frame = 10;
   backend_opts.time_step = 2.0;
 
-  backend.setOptions(backend_opts);
+  options = backend_opts;
 
-  correlation::app::AppController controller(*window, backend);
+  correlation::app::AppController controller(*window, loader, dispatcher, options);
 
   // 1. Verify synchronization TO the UI
   controller.handleOptionstoUI();
@@ -199,7 +178,6 @@ TEST_F(AppControllerTests, SynchronizesOptionsToAndFromUI) {
 
 TEST_F(AppControllerTests, PopulatesRecommendedBondCutoffs) {
   auto window = AppWindow::create();
-  correlation::app::AppBackend backend;
 
   std::string file_path = "../../examples/a-PdSi/a-PdSi.car";
   if (!std::filesystem::exists(file_path)) {
@@ -208,9 +186,9 @@ TEST_F(AppControllerTests, PopulatesRecommendedBondCutoffs) {
   if (!std::filesystem::exists(file_path)) {
     file_path = "examples/a-PdSi/a-PdSi.car";
   }
-  backend.loadFile(file_path);
+  ASSERT_TRUE(loader.loadFile(file_path).has_value());
 
-  correlation::app::AppController controller(*window, backend);
+  correlation::app::AppController controller(*window, loader, dispatcher, options);
 
   controller.setBondCutoffs();
 
@@ -249,7 +227,6 @@ TEST_F(AppControllerTests, PopulatesRecommendedBondCutoffs) {
 
 TEST_F(AppControllerTests, ResetsBondCutoffsToDefaultsWhenInvoked) {
   auto window = AppWindow::create();
-  correlation::app::AppBackend backend;
 
   std::string file_path = "../../examples/a-PdSi/a-PdSi.car";
   if (!std::filesystem::exists(file_path)) {
@@ -258,9 +235,9 @@ TEST_F(AppControllerTests, ResetsBondCutoffsToDefaultsWhenInvoked) {
   if (!std::filesystem::exists(file_path)) {
     file_path = "examples/a-PdSi/a-PdSi.car";
   }
-  backend.loadFile(file_path);
+  ASSERT_TRUE(loader.loadFile(file_path).has_value());
 
-  const correlation::app::AppController controller(*window, backend);
+  const correlation::app::AppController controller(*window, loader, dispatcher, options);
 
   // Set modified/custom cutoffs
   auto cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
@@ -296,8 +273,7 @@ TEST_F(AppControllerTests, ResetsBondCutoffsToDefaultsWhenInvoked) {
 
 TEST_F(AppControllerTests, ResetsOptionBlocksToDefaultsWhenInvoked) {
   auto window = AppWindow::create();
-  correlation::app::AppBackend backend;
-  const correlation::app::AppController controller(*window, backend);
+  const correlation::app::AppController controller(*window, loader, dispatcher, options);
 
   // Set modified/custom values for all option blocks
   auto opts = window->get_analysis_options();
@@ -426,7 +402,6 @@ TEST_F(AppControllerTests, ResetsOptionBlocksToDefaultsWhenInvoked) {
 
 TEST_F(AppControllerTests, HandlesXRDOptionsAndCutoffHeuristics) {
   auto window = AppWindow::create();
-  correlation::app::AppBackend backend;
 
   std::string file_path = "../../examples/a-PdSi/a-PdSi.car";
   if (!std::filesystem::exists(file_path)) {
@@ -435,9 +410,9 @@ TEST_F(AppControllerTests, HandlesXRDOptionsAndCutoffHeuristics) {
   if (!std::filesystem::exists(file_path)) {
     file_path = "examples/a-PdSi/a-PdSi.car";
   }
-  backend.loadFile(file_path);
+  ASSERT_TRUE(loader.loadFile(file_path).has_value());
 
-  const correlation::app::AppController controller(*window, backend);
+  const correlation::app::AppController controller(*window, loader, dispatcher, options);
 
   // Test XRD preset changed callback
   window->invoke_xrd_radiation_preset_changed(1); // Mo-Kalpha (0.7107)
@@ -492,45 +467,38 @@ TEST_F(AppControllerTests, HandlesXRDOptionsAndCutoffHeuristics) {
 
 TEST_F(AppControllerTests, UpdatesActiveGroupFlagsWhenCalculatorsToggled) {
   auto window = AppWindow::create();
-  correlation::app::AppBackend backend;
 
-  correlation::app::ProgramOptions opts = backend.options();
-  opts.active_calculators["g(r), J(r), G(r)"] = true;
-  backend.setOptions(opts);
+  options.active_calculators["g(r), J(r), G(r)"] = true;
 
-  correlation::app::AppController controller(*window, backend);
+  correlation::app::AppController controller(*window, loader, dispatcher, options);
 
   controller.updateActiveGroupFlags();
   EXPECT_TRUE(window->get_has_radial_active());
 
-  backend.setCalculatorActive("g(r), J(r), G(r)", false);
+  options.active_calculators["g(r), J(r), G(r)"] = false;
   controller.updateActiveGroupFlags();
   EXPECT_FALSE(window->get_has_radial_active());
 }
 
 TEST_F(AppControllerTests, HandlesCalculatorToggleSignal) {
   auto window = AppWindow::create();
-  correlation::app::AppBackend backend;
 
-  const correlation::app::AppController controller(*window, backend);
+  const correlation::app::AppController controller(*window, loader, dispatcher, options);
 
   // Trigger toggle calculator signal from the UI
   window->invoke_toggle_calculator("g(r), J(r), G(r)", false);
 
-  // Verify backend active state has been changed
-  const auto active_calcs = backend.options().active_calculators;
-  ASSERT_TRUE(active_calcs.contains("g(r), J(r), G(r)"));
-  EXPECT_FALSE(active_calcs.at("g(r), J(r), G(r)"));
+  // Verify options active state has been changed
+  ASSERT_TRUE(options.active_calculators.contains("g(r), J(r), G(r)"));
+  EXPECT_FALSE(options.active_calculators.at("g(r), J(r), G(r)"));
 
   window->invoke_toggle_calculator("g(r), J(r), G(r)", true);
-  const auto active_calcs_updated = backend.options().active_calculators;
-  ASSERT_TRUE(active_calcs_updated.contains("g(r), J(r), G(r)"));
-  EXPECT_TRUE(active_calcs_updated.at("g(r), J(r), G(r)"));
+  ASSERT_TRUE(options.active_calculators.contains("g(r), J(r), G(r)"));
+  EXPECT_TRUE(options.active_calculators.at("g(r), J(r), G(r)"));
 }
 
 TEST_F(AppControllerTests, PopulatesTableAndDynamicProperties) {
   auto window = AppWindow::create();
-  correlation::app::AppBackend backend;
 
   std::string file_path = "../../examples/a-PdSi/a-PdSi.car";
   if (!std::filesystem::exists(file_path)) {
@@ -539,17 +507,15 @@ TEST_F(AppControllerTests, PopulatesTableAndDynamicProperties) {
   if (!std::filesystem::exists(file_path)) {
     file_path = "examples/a-PdSi/a-PdSi.car";
   }
-  backend.loadFile(file_path);
+  ASSERT_TRUE(loader.loadFile(file_path).has_value());
 
   // Set the RDF calculator active
-  correlation::app::ProgramOptions opts = backend.options();
-  opts.active_calculators["g(r), J(r), G(r)"] = true;
-  backend.setOptions(opts);
+  options.active_calculators["g(r), J(r), G(r)"] = true;
 
-  correlation::app::AppController controller(*window, backend);
+  correlation::app::AppController controller(*window, loader, dispatcher, options);
 
   // Run analysis
-  EXPECT_TRUE(backend.runAnalysis().has_value());
+  EXPECT_TRUE(dispatcher.runAnalysis(loader.trajectoryMut(), options).has_value());
 
   // Populate plot list (which also sets dynamic properties)
   controller.getPlotController()->populatePlotList();
@@ -572,8 +538,7 @@ TEST_F(AppControllerTests, PopulatesTableAndDynamicProperties) {
 
 TEST_F(AppControllerTests, GuiLaunchAndEventLoopSmokeTest) {
   auto window = AppWindow::create();
-  correlation::app::AppBackend backend;
-  const correlation::app::AppController controller(*window, backend);
+  const correlation::app::AppController controller(*window, loader, dispatcher, options);
 
   slint::Timer quit_timer;
   quit_timer.start(slint::TimerMode::SingleShot, std::chrono::milliseconds(50),
@@ -584,8 +549,7 @@ TEST_F(AppControllerTests, GuiLaunchAndEventLoopSmokeTest) {
 
 TEST_F(AppControllerTests, MiniSideBarPanelNavigationAndCollapse) {
   auto window = AppWindow::create();
-  correlation::app::AppBackend backend;
-  const correlation::app::AppController controller(*window, backend);
+  const correlation::app::AppController controller(*window, loader, dispatcher, options);
 
   // Initial state defaults to panel 0 (Operations)
   EXPECT_EQ(window->get_active_panel(), 0);

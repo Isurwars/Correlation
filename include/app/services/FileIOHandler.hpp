@@ -19,7 +19,6 @@ class AppWindow;
 
 namespace correlation::app {
 
-class AppBackend;
 class AppController;
 
 /**
@@ -38,14 +37,6 @@ public:
    */
   FileIOHandler(::AppWindow &window, TrajectoryLoader &loader, AnalysisDispatcher &dispatcher,
                 ProgramOptions &options, AppController &controller);
-
-  /**
-   * @brief Constructs the FileIOHandler (transitional).
-   * @param[in,out] window Reference to the UI window.
-   * @param[in,out] backend Reference to the application backend.
-   * @param[in,out] controller Reference to the main AppController.
-   */
-  FileIOHandler(::AppWindow &window, AppBackend &backend, AppController &controller);
 
   /**
    * @brief Destructor. Ensures background threads are joined.
