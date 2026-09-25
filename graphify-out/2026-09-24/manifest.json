@@ -50,8 +50,8 @@
     "semantic_hash": ""
   },
   "include/app/PlotController.hpp": {
-    "mtime": 1789591638.7466807,
-    "ast_hash": "511a27347b7ca5a88f913f5933e1d93d",
+    "mtime": 1790293412.0289643,
+    "ast_hash": "f72a4606f8751c065a7cfdd1d218b484",
     "semantic_hash": ""
   },
   "include/app/PresetController.hpp": {
@@ -460,8 +460,8 @@
     "semantic_hash": ""
   },
   "src/app/AppBackend.cpp": {
-    "mtime": 1790281757.519377,
-    "ast_hash": "a2a72fba594760fc75e67f937687637f",
+    "mtime": 1790291486.5265248,
+    "ast_hash": "8f1e153afc1cc863ce4ebd4acac988b5",
     "semantic_hash": ""
   },
   "src/app/AppController.cpp": {
@@ -480,8 +480,8 @@
     "semantic_hash": ""
   },
   "src/app/PlotController.cpp": {
-    "mtime": 1790188335.647068,
-    "ast_hash": "f3690a87541ae7a346e8721dad9e53a8",
+    "mtime": 1790293438.9214718,
+    "ast_hash": "73d3ba18c86218e0877d98ed1c238004",
     "semantic_hash": ""
   },
   "src/app/PresetController.cpp": {
@@ -1310,8 +1310,8 @@
     "semantic_hash": "fa5794c577c54fcf0888468db60e0c22"
   },
   "src/CMakeLists.txt": {
-    "mtime": 1790281479.7310884,
-    "ast_hash": "a06ae43272669109c2142a587cd73094",
+    "mtime": 1790293459.1751013,
+    "ast_hash": "ded43df6e6e111923d59908671d03464",
     "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
@@ -1320,8 +1320,8 @@
     "semantic_hash": ""
   },
   "tests/CMakeLists.txt": {
-    "mtime": 1790281729.7983813,
-    "ast_hash": "4c020d17d0bf7ed58bc65382170f1755",
+    "mtime": 1790293506.911229,
+    "ast_hash": "3eac96ca7cb37dc26e52a9f49be665e7",
     "semantic_hash": ""
   },
   "tests/fuzz/CMakeLists.txt": {
@@ -2382,6 +2382,36 @@
   "tests/unit/app/ValidationRuleServiceTests.cpp": {
     "mtime": 1790281433.7685688,
     "ast_hash": "2739c742ba878331fd32cbc8fedd7ee9",
+    "semantic_hash": ""
+  },
+  "include/app/PlotSeriesManager.hpp": {
+    "mtime": 1790293648.0647492,
+    "ast_hash": "49c5caa0946d1d48e08fbd81fbe6b7df",
+    "semantic_hash": ""
+  },
+  "include/app/PlotTableFormatter.hpp": {
+    "mtime": 1790293648.069165,
+    "ast_hash": "b7e38fd04a487344bb5daee02373fd89",
+    "semantic_hash": ""
+  },
+  "src/app/PlotSeriesManager.cpp": {
+    "mtime": 1790293924.3146372,
+    "ast_hash": "e16d297c332f623efe4998b10acea367",
+    "semantic_hash": ""
+  },
+  "src/app/PlotTableFormatter.cpp": {
+    "mtime": 1790293929.9155354,
+    "ast_hash": "ad89f46bc7d06c73348d23f390969157",
+    "semantic_hash": ""
+  },
+  "tests/unit/app/PlotSeriesManagerTests.cpp": {
+    "mtime": 1790293955.3496265,
+    "ast_hash": "c3448d4d10308a9c11e932e4411d45d4",
+    "semantic_hash": ""
+  },
+  "tests/unit/app/PlotTableFormatterTests.cpp": {
+    "mtime": 1790293808.700742,
+    "ast_hash": "cbd8a17bc3648a3f56f106c8148600f5",
     "semantic_hash": ""
   }
 }

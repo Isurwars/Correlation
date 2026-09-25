@@ -168,14 +168,20 @@ if(BUILD_GUI)
     add_executable(correlation_gui_tests
         functional/app/AppControllerTests.cpp
         functional/app/SlintSvgIntegrationTests.cpp
+        unit/app/BondCutoffControllerTests.cpp
+        unit/app/OptionsResetServiceTests.cpp
+        unit/app/OptionsSyncServiceTests.cpp
         unit/app/PlotSeriesManagerTests.cpp
         unit/app/PlotTableFormatterTests.cpp
         ../src/app/AnalysisRunner.cpp
         ../src/app/AppBackend.cpp
         ../src/app/AppController.cpp
+        ../src/app/BondCutoffController.cpp
         ../src/app/BondCutoffMapper.cpp
         ../src/app/FileIOHandler.cpp
         ../src/app/InputValidator.cpp
+        ../src/app/OptionsResetService.cpp
+        ../src/app/OptionsSyncService.cpp
         ../src/app/PhysicsService.cpp
         ../src/app/PlotController.cpp
         ../src/app/PlotExportService.cpp

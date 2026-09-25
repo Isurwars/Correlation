@@ -15,9 +15,12 @@
 #include "app/AnalysisRunner.hpp"
 #include "app/AppController.hpp"
 
+#include "app/BondCutoffController.hpp"
 #include "app/BondCutoffMapper.hpp"
 #include "app/FileIOHandler.hpp"
 #include "app/InputValidator.hpp"
+#include "app/OptionsResetService.hpp"
+#include "app/OptionsSyncService.hpp"
 #include "app/PlotController.hpp"
 #include "app/PresetController.hpp"
 #include "app/UpdateChecker.hpp"
@@ -36,7 +39,7 @@
 namespace correlation::app {
 
 AppController::AppController(::AppWindow &window, AppBackend &backend)
-    : window_(window), backend_(backend) {
+    : window_(window), backend_(backend), bond_cutoff_controller_(window, backend) {
   // Initialize Native File Dialog
   NFD_Init();
 
@@ -221,354 +224,29 @@ void AppController::saveSettings() const {
   }
   SettingsManager::save(settings);
 }
-
-// Safe conversion helper
-namespace {
-/**
- * @brief Safely converts a Slint SharedString to a numeric type with a default
- * fallback.
- *
- * @tparam T The numeric type to return (e.g., float, real_t).
- * @param str The Slint string to parse.
- * @param default_value The value to return if parsing fails.
- * @return The parsed value or default_value on error.
- */
-template <typename T> T safeParse(const slint::SharedString &str, T default_value) {
-  try {
-    if constexpr (std::is_same_v<T, float>) {
-      return std::stof(str.data());
-    } else if constexpr (std::is_same_v<T, real_t>) {
-      return std::stod(str.data());
-    } else {
-      return default_value;
-    }
-  } catch (const std::exception &e) {
-    // Optionally, log the error or update a UI status message
-    return default_value;
-  }
-}
-} // namespace
-
 void AppController::handleOptionstoUI() {
-  ProgramOptions opt = backend_.options();
-  window_.set_in_file_text(slint::SharedString(opt.input_file));
-  {
-    auto opts = window_.get_analysis_options();
-    opts.smoothing_enabled = opt.smoothing;
-    window_.set_analysis_options(opts);
-  }
-  {
-    auto opts = window_.get_analysis_options();
-    opts.r_max = slint::SharedString(std::format("{:.2f}", opt.r_max));
-    window_.set_analysis_options(opts);
-  }
-  {
-    auto opts = window_.get_analysis_options();
-    opts.r_bin_width = slint::SharedString(std::format("{:.2f}", opt.r_bin_width));
-    window_.set_analysis_options(opts);
-  }
-  {
-    auto opts = window_.get_analysis_options();
-    opts.q_max = slint::SharedString(std::format("{:.2f}", opt.q_max));
-    window_.set_analysis_options(opts);
-  }
-  {
-    auto opts = window_.get_analysis_options();
-    opts.q_bin_width = slint::SharedString(std::format("{:.2f}", opt.q_bin_width));
-    window_.set_analysis_options(opts);
-  }
-  {
-    auto opts = window_.get_analysis_options();
-    opts.r_int_max = slint::SharedString(std::format("{:.2f}", opt.r_int_max));
-    window_.set_analysis_options(opts);
-  }
-  {
-    auto opts = window_.get_analysis_options();
-    opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", opt.angle_bin_width));
-    window_.set_analysis_options(opts);
-  }
-  {
-    auto opts = window_.get_analysis_options();
-    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", opt.dihedral_bin_width));
-    window_.set_analysis_options(opts);
-  }
-  {
-    auto opts = window_.get_analysis_options();
-    opts.max_ring_size = slint::SharedString(std::to_string(opt.max_ring_size));
-    window_.set_analysis_options(opts);
-  }
-  {
-    auto opts = window_.get_analysis_options();
-    opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", opt.smoothing_sigma));
-    window_.set_analysis_options(opts);
-  }
-  {
-    auto opts = window_.get_analysis_options();
-    opts.smoothing_kernel = static_cast<int>(opt.smoothing_kernel);
-    window_.set_analysis_options(opts);
-  }
-  {
-    auto opts = window_.get_analysis_options();
-    opts.material_type = opt.material_type;
-    window_.set_analysis_options(opts);
-  }
-  {
-    auto opts = window_.get_analysis_options();
-    opts.lef_cutoff = slint::SharedString(std::format("{:.2f}", opt.lef_cutoff));
-    window_.set_analysis_options(opts);
-  }
-  {
-    auto opts = window_.get_analysis_options();
-    opts.lef_sigma = slint::SharedString(std::format("{:.2f}", opt.lef_sigma));
-    window_.set_analysis_options(opts);
-  }
-  {
-    auto opts = window_.get_analysis_options();
-    opts.hyper_samples = slint::SharedString(std::to_string(opt.hyper_samples));
-    window_.set_analysis_options(opts);
-  }
-  {
-    auto opts = window_.get_analysis_options();
-    opts.xrd_radiation_preset = 0;
-    opts.xrd_lambda = slint::SharedString(std::format("{:.4f}", opt.xrd_params.lambda));
-    opts.xrd_theta_min = slint::SharedString(std::format("{:.1f}", opt.xrd_params.theta_min));
-    opts.xrd_theta_max = slint::SharedString(std::format("{:.1f}", opt.xrd_params.theta_max));
-    opts.xrd_bin_width = slint::SharedString(std::format("{:.2f}", opt.xrd_params.bin_width));
-    window_.set_analysis_options(opts);
-  }
-
-  {
-    auto opts = window_.get_analysis_options();
-    opts.min_frame = slint::SharedString(std::to_string(opt.min_frame + 1));
-    window_.set_analysis_options(opts);
-  } // UI is 1-based
-  if (opt.max_frame == -1) {
-    {
-      auto opts = window_.get_analysis_options();
-      opts.max_frame = "End";
-      window_.set_analysis_options(opts);
-    }
-  } else {
-    {
-      auto opts = window_.get_analysis_options();
-      opts.max_frame = slint::SharedString(std::to_string(opt.max_frame));
-      window_.set_analysis_options(opts);
-    }
-  }
-  {
-    auto opts = window_.get_analysis_options();
-    opts.time_step = slint::SharedString(std::format("{:.2f}", opt.time_step));
-    window_.set_analysis_options(opts);
-  }
-  {
-    auto opts = window_.get_analysis_options();
-    opts.frame_stride = slint::SharedString(std::to_string(opt.frame_stride));
-    window_.set_analysis_options(opts);
-  }
-  updateActiveGroupFlags();
-};
+  OptionsSyncService::writeToUI(window_, backend_.options(), backend_);
+}
 
 void AppController::updateActiveGroupFlags() {
-  const auto &calculators =
-      ::correlation::calculators::CalculatorFactory::instance().getCalculators();
-  const auto &opts = backend_.options();
-
-  bool has_radial = false;
-  bool has_scattering = false;
-  bool has_angular = false;
-  bool has_rings = false;
-
-  for (const auto &calc : calculators) {
-    std::string_view const grp = calc->getGroup();
-    bool enabled = true; // default on
-    auto calc_it = opts.active_calculators.find(std::string(calc->getName()));
-    if (calc_it != opts.active_calculators.end()) {
-      enabled = calc_it->second;
-    }
-    if (enabled) {
-      if (grp == "Radial") {
-        has_radial = true;
-      } else if (grp == "Scattering") {
-        has_scattering = true;
-      } else if (grp == "Angular") {
-        has_angular = true;
-      } else if (grp == "Rings") {
-        has_rings = true;
-      }
-    }
-  }
-
-  window_.set_has_radial_active(has_radial);
-  window_.set_has_scattering_active(has_scattering);
-  window_.set_has_angular_active(has_angular);
-  window_.set_has_rings_active(has_rings);
+  OptionsSyncService::updateActiveGroupFlags(window_, backend_.options());
 }
 
 ProgramOptions AppController::handleOptionsfromUI() {
-  ProgramOptions opt;
-  const std::string input_path_str = window_.get_in_file_text().data();
-  const std::filesystem::path full_path(input_path_str);
-  std::filesystem::path output_path = full_path.parent_path() / full_path.stem();
-  opt.input_file = input_path_str;
-  opt.output_file_base = output_path.make_preferred().string();
-  opt.smoothing = true;
-  opt.r_max = safeParse(window_.get_analysis_options().r_max, opt.r_max);
-  opt.r_bin_width = safeParse(window_.get_analysis_options().r_bin_width, opt.r_bin_width);
-  opt.q_max = safeParse(window_.get_analysis_options().q_max, opt.q_max);
-  opt.q_bin_width = safeParse(window_.get_analysis_options().q_bin_width, opt.q_bin_width);
-  opt.r_int_max = safeParse(window_.get_analysis_options().r_int_max, opt.r_int_max);
-  opt.angle_bin_width =
-      safeParse(window_.get_analysis_options().angle_bin_width, opt.angle_bin_width);
-  opt.dihedral_bin_width =
-      safeParse(window_.get_analysis_options().dihedral_bin_width, opt.dihedral_bin_width);
-  opt.max_ring_size = static_cast<size_t>(safeParse(window_.get_analysis_options().max_ring_size,
-                                                    static_cast<real_t>(opt.max_ring_size)));
-  opt.hyper_samples = static_cast<size_t>(safeParse(window_.get_analysis_options().hyper_samples,
-                                                    static_cast<real_t>(opt.hyper_samples)));
-
-  // Collect active_calculators from the UI model
-  const auto groups = window_.get_calculator_groups();
-  for (size_t gi = 0; gi < groups->row_count(); ++gi) {
-    const auto maybe_group = groups->row_data(gi);
-    if (!maybe_group.has_value()) {
-      continue;
-    }
-    const auto &group = maybe_group.value();
-    for (size_t ci = 0; ci < group.calculators->row_count(); ++ci) {
-      const auto maybe_calc = group.calculators->row_data(ci);
-      if (!maybe_calc.has_value()) {
-        continue;
-      }
-      const auto &calc = maybe_calc.value();
-      opt.active_calculators[std::string(calc.id.data())] = calc.enabled;
-    }
+  const auto cutoffs = bond_cutoff_controller_.getBondCutoffs();
+  auto opt_expected = OptionsSyncService::readFromUI(window_, backend_.getFrameCount(), cutoffs);
+  if (opt_expected) {
+    return *opt_expected;
   }
-
-  opt.smoothing_sigma =
-      safeParse(window_.get_analysis_options().smoothing_sigma, opt.smoothing_sigma);
-  opt.smoothing_kernel =
-      static_cast<correlation::math::KernelType>(window_.get_analysis_options().smoothing_kernel);
-  opt.material_type = window_.get_analysis_options().material_type;
-  opt.lef_cutoff = safeParse(window_.get_analysis_options().lef_cutoff, opt.lef_cutoff);
-  opt.lef_sigma = safeParse(window_.get_analysis_options().lef_sigma, opt.lef_sigma);
-  opt.xrd_params.lambda =
-      safeParse(window_.get_analysis_options().xrd_lambda, opt.xrd_params.lambda);
-  opt.xrd_params.theta_min =
-      safeParse(window_.get_analysis_options().xrd_theta_min, opt.xrd_params.theta_min);
-  opt.xrd_params.theta_max =
-      safeParse(window_.get_analysis_options().xrd_theta_max, opt.xrd_params.theta_max);
-  opt.xrd_params.bin_width =
-      safeParse(window_.get_analysis_options().xrd_bin_width, opt.xrd_params.bin_width);
-
-  // Parse Frame Selection
-  // - Handles string presets "start" and "end" case-insensitively.
-  // - Numeric values are 1-based in UI, converted to 0-based for backend.
-
-  // Helper lambda for case-insensitive comparison
-  auto to_lower = [](const std::string &str) -> std::string {
-    std::string data = str;
-    std::ranges::transform(data, data.begin(),
-                           [](unsigned char chr) { return static_cast<char>(std::tolower(chr)); });
-    return data;
-  };
-
-  // Frame Selection
-  try {
-    const std::string min_s = window_.get_analysis_options().min_frame.data();
-    const std::string min_s_lower = to_lower(min_s);
-
-    if (min_s_lower == "start") {
-      opt.min_frame = 0;
-    } else if (min_s_lower == "end") {
-      opt.min_frame = std::max(0, static_cast<int>(backend_.getFrameCount()) - 1);
-    } else {
-      opt.min_frame = std::max(0, std::stoi(min_s) - 1); // UI is 1-based
-    }
-  } catch (const std::exception &) {
-    opt.min_frame = 0;
-  }
-
-  try {
-    const std::string max_s = window_.get_analysis_options().max_frame.data();
-    const std::string max_s_lower = to_lower(max_s);
-
-    if (max_s_lower == "end" || max_s.empty()) {
-      opt.max_frame = -1;
-    } else if (max_s_lower == "start") {
-      opt.max_frame = 1; // 1-based index 1 -> implies reading only the first
-                         // frame. In TrajectoryAnalyzer loop: i < max_frame. So
-                         // max_frame=1 means process frame 0 only.
-      opt.max_frame = 1;
-    } else {
-      opt.max_frame = std::stoi(max_s);
-    }
-  } catch (const std::exception &) {
-    opt.max_frame = -1;
-  }
-
-  opt.time_step = safeParse(window_.get_analysis_options().time_step, opt.time_step);
-
-  try {
-    const std::string stride_s = window_.get_analysis_options().frame_stride.data();
-    opt.frame_stride = std::max(1, std::stoi(stride_s));
-  } catch (const std::exception &) {
-    opt.frame_stride = 1;
-  }
-
-  // Handle Bond Cutoffs
-  opt.bond_cutoffs = getBondCutoffs();
-
-  return opt;
-};
-
-void AppController::setBondCutoffs() {
-  if (backend_.cell() == nullptr) {
-    return;
-  }
-
-  const auto &elements = backend_.cell()->elements();
-  const auto entries = BondCutoffMapper::createDefaultCutoffEntries(elements);
-
-  auto slint_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
-  for (const auto &entry : entries) {
-    slint_cutoffs->push_back({
-        .element1 = slint::SharedString(entry.element1),
-        .element2 = slint::SharedString(entry.element2),
-        .min_distance = slint::SharedString(entry.min_distance),
-        .max_distance = slint::SharedString(entry.max_distance),
-    });
-  }
-
-  window_.set_bond_cutoffs(slint_cutoffs);
-  window_.set_bond_cutoffs_reset_trigger(window_.get_bond_cutoffs_reset_trigger() + 1);
-  backend_.setBondCutoffs(getBondCutoffs());
+  ProgramOptions default_opts;
+  default_opts.bond_cutoffs = cutoffs;
+  return default_opts;
 }
 
+void AppController::setBondCutoffs() { bond_cutoff_controller_.setBondCutoffs(); }
+
 correlation::analysis::BondCutoffMatrix AppController::getBondCutoffs() {
-  auto slint_cutoffs = window_.get_bond_cutoffs();
-  if (backend_.cell() == nullptr || slint_cutoffs == nullptr) {
-    return {};
-  }
-
-  const auto &elements = backend_.cell()->elements();
-  std::vector<CutoffEntry> entries;
-  entries.reserve(slint_cutoffs->row_count());
-
-  for (size_t k = 0; k < slint_cutoffs->row_count(); ++k) {
-    auto maybe_item = slint_cutoffs->row_data(k);
-    if (!maybe_item.has_value()) {
-      continue;
-    }
-    const auto &item = maybe_item.value();
-    entries.push_back(CutoffEntry{
-        .element1 = std::string(item.element1.data()),
-        .element2 = std::string(item.element2.data()),
-        .min_distance = std::string(item.min_distance.data()),
-        .max_distance = std::string(item.max_distance.data()),
-    });
-  }
-
-  return BondCutoffMapper::parseCutoffMatrix(entries, elements);
+  return bond_cutoff_controller_.getBondCutoffs();
 }
 
 void AppController::populateCalculatorGroups() {
@@ -613,116 +291,42 @@ void AppController::populateCalculatorGroups() {
 }
 
 void AppController::handleResetRDFOptions() {
-  auto opts = window_.get_analysis_options();
-  opts.r_max = slint::SharedString(std::format("{:.2f}", AppDefaults::R_MAX));
-  if (opts.material_type == 2) {
-    opts.r_bin_width = slint::SharedString(std::format("{:.3f}", AppDefaults::R_BIN_WIDTH_CRYSTAL));
-  } else if (opts.material_type == 1) {
-    opts.r_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH_LIQUID));
-  } else {
-    opts.r_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH));
-  }
-  window_.set_analysis_options(opts);
+  OptionsResetService::resetRDF(window_);
   static_cast<void>(input_validator_->validateInputs());
 }
 
 void AppController::handleResetAngleOptions() {
-  auto opts = window_.get_analysis_options();
-  if (opts.material_type == 2) {
-    opts.angle_bin_width =
-        slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
-    opts.dihedral_bin_width =
-        slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
-  } else if (opts.material_type == 1) {
-    opts.angle_bin_width =
-        slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
-    opts.dihedral_bin_width =
-        slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
-  } else {
-    opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
-    opts.dihedral_bin_width =
-        slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
-  }
-  window_.set_analysis_options(opts);
+  OptionsResetService::resetAngle(window_);
   static_cast<void>(input_validator_->validateInputs());
 }
 
 void AppController::handleResetSQOptions() {
-  auto opts = window_.get_analysis_options();
-  opts.q_max = slint::SharedString(std::format("{:.2f}", AppDefaults::Q_MAX));
-  opts.r_int_max = slint::SharedString(std::format("{:.2f}", AppDefaults::R_INT_MAX));
-  if (opts.material_type == 2) {
-    opts.q_bin_width = slint::SharedString(std::format("{:.3f}", AppDefaults::Q_BIN_WIDTH_CRYSTAL));
-  } else if (opts.material_type == 1) {
-    opts.q_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH_LIQUID));
-  } else {
-    opts.q_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH));
-  }
-  window_.set_analysis_options(opts);
+  OptionsResetService::resetSQ(window_);
   static_cast<void>(input_validator_->validateInputs());
 }
 
 void AppController::handleResetRingsOptions() {
-  auto opts = window_.get_analysis_options();
-  opts.max_ring_size = slint::SharedString(std::to_string(ProgramOptions{}.max_ring_size));
-  window_.set_analysis_options(opts);
+  OptionsResetService::resetRings(window_);
   static_cast<void>(input_validator_->validateInputs());
 }
 
 void AppController::handleResetSmoothingOptions() {
-  auto opts = window_.get_analysis_options();
-  opts.smoothing_enabled = ProgramOptions{}.smoothing;
-  opts.smoothing_kernel = static_cast<int>(AppDefaults::SMOOTHING_KERNEL);
-  if (opts.material_type == 2) {
-    opts.smoothing_sigma =
-        slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_CRYSTAL));
-  } else if (opts.material_type == 1) {
-    opts.smoothing_sigma =
-        slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_LIQUID));
-  } else {
-    opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA));
-  }
-  window_.set_analysis_options(opts);
+  OptionsResetService::resetSmoothing(window_);
   static_cast<void>(input_validator_->validateInputs());
 }
 
 void AppController::handleResetAdvancedOptions() {
-  auto opts = window_.get_analysis_options();
-  opts.lef_cutoff = slint::SharedString(std::format("{:.2f}", AppDefaults::LEF_CUTOFF));
-  opts.lef_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::LEF_SIGMA));
-  opts.hyper_samples = slint::SharedString(std::to_string(ProgramOptions{}.hyper_samples));
-  window_.set_analysis_options(opts);
+  OptionsResetService::resetAdvanced(window_);
   static_cast<void>(input_validator_->validateInputs());
 }
 
 void AppController::handleResetTrajectoryOptions() {
-  auto opts = window_.get_analysis_options();
-  if (backend_.getFrameCount() > 0) {
-    opts.time_step = slint::SharedString(std::format("{:.2f}", backend_.getRecommendedTimeStep()));
-    opts.min_frame = "1";
-    opts.max_frame = slint::SharedString(std::to_string(backend_.getFrameCount()));
-  } else {
-    opts.time_step = slint::SharedString(std::format("{:.2f}", AppDefaults::TIME_STEP));
-    opts.min_frame = "1";
-    opts.max_frame = "End";
-  }
-  opts.frame_stride = "1";
-  window_.set_analysis_options(opts);
+  OptionsResetService::resetTrajectory(window_, backend_);
   static_cast<void>(input_validator_->validateInputs());
 }
 
 void AppController::handleResetExportSettings() {
-  ExportConfig cfg;
-  cfg.size_preset = 0;
-  cfg.palette = 0;
-  cfg.font_scale = "1.0";
-  cfg.line_width = "3.0";
-  cfg.marker_size = "3.5";
-  cfg.show_legend = true;
-  cfg.show_grid = true;
-  cfg.show_markers = false;
-  cfg.fill_area = false;
-  window_.set_export_config(cfg);
+  OptionsResetService::resetExportSettings(window_);
   if (plot_controller_) {
     plot_controller_->requestPlotUpdate(window_.get_selected_plot_index(), true);
   }
@@ -734,9 +338,7 @@ void AppController::handleResetAnalysesSelection() {
 }
 
 void AppController::handleResetMaterialType() {
-  auto opts = window_.get_analysis_options();
-  opts.material_type = 0;
-  window_.set_analysis_options(opts);
+  OptionsResetService::resetMaterialType(window_);
   if (preset_controller_) {
     preset_controller_->handleMaterialTypeChanged(0);
   }
@@ -751,13 +353,7 @@ void AppController::handleClearComparisonCurves() {
 }
 
 void AppController::handleResetXRDOptions() {
-  auto opts = window_.get_analysis_options();
-  opts.xrd_radiation_preset = 0;
-  opts.xrd_lambda = slint::SharedString(std::format("{:.4f}", AppDefaults::XRD_LAMBDA));
-  opts.xrd_theta_min = slint::SharedString(std::format("{:.1f}", AppDefaults::XRD_THETA_MIN));
-  opts.xrd_theta_max = slint::SharedString(std::format("{:.1f}", AppDefaults::XRD_THETA_MAX));
-  opts.xrd_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::XRD_BIN_WIDTH));
-  window_.set_analysis_options(opts);
+  OptionsResetService::resetXRD(window_);
   static_cast<void>(input_validator_->validateInputs());
 }
 
@@ -786,161 +382,23 @@ void AppController::handleXRDPresetChanged(int preset_idx) {
 }
 
 void AppController::handleApplyScaledCutoffs(float scale_factor) {
-  if (backend_.cell() == nullptr || scale_factor <= 0.0F) {
-    return;
-  }
-  const auto scaled_cutoffs = backend_.applyScaledBondCutoffs(static_cast<real_t>(scale_factor));
-  const auto &elements = backend_.cell()->elements();
-  const auto num_elements = elements.size();
-
-  auto slint_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
-  for (size_t i = 0; i < num_elements; ++i) {
-    for (size_t j = i; j < num_elements; ++j) {
-      const real_t min_d = std::sqrt(scaled_cutoffs[i][j].min_sq);
-      const real_t max_d = std::sqrt(scaled_cutoffs[i][j].max_sq);
-      slint_cutoffs->push_back(BondCutoff{
-          .element1 = slint::SharedString(elements[i].symbol),
-          .element2 = slint::SharedString(elements[j].symbol),
-          .min_distance = slint::SharedString(std::format("{:.2f}", min_d)),
-          .max_distance = slint::SharedString(std::format("{:.2f}", max_d)),
-      });
-    }
-  }
-
-  window_.set_bond_cutoffs(slint_cutoffs);
-  window_.set_bond_cutoffs_reset_trigger(window_.get_bond_cutoffs_reset_trigger() + 1);
+  bond_cutoff_controller_.applyScaledCutoffs(scale_factor);
 }
 
 void AppController::handleSetUniformCutoff(float max_cutoff) {
-  if (backend_.cell() == nullptr || max_cutoff <= 0.0F) {
-    return;
-  }
-  const auto uniform_cutoffs = backend_.setUniformBondCutoff(0.0, static_cast<real_t>(max_cutoff));
-  const auto &elements = backend_.cell()->elements();
-  const auto num_elements = elements.size();
-
-  auto slint_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
-  for (size_t i = 0; i < num_elements; ++i) {
-    for (size_t j = i; j < num_elements; ++j) {
-      const real_t min_d = std::sqrt(uniform_cutoffs[i][j].min_sq);
-      const real_t max_d = std::sqrt(uniform_cutoffs[i][j].max_sq);
-      slint_cutoffs->push_back(BondCutoff{
-          .element1 = slint::SharedString(elements[i].symbol),
-          .element2 = slint::SharedString(elements[j].symbol),
-          .min_distance = slint::SharedString(std::format("{:.2f}", min_d)),
-          .max_distance = slint::SharedString(std::format("{:.2f}", max_d)),
-      });
-    }
-  }
-
-  window_.set_bond_cutoffs(slint_cutoffs);
-  window_.set_bond_cutoffs_reset_trigger(window_.get_bond_cutoffs_reset_trigger() + 1);
+  bond_cutoff_controller_.setUniformCutoff(max_cutoff);
 }
 
 void AppController::handleApplyMinFactor(float min_factor) {
-  if (backend_.cell() == nullptr || min_factor <= 0.0F) {
-    return;
-  }
-  const auto &elements = backend_.cell()->elements();
-  const auto num_elements = elements.size();
-  auto slint_cutoffs = window_.get_bond_cutoffs();
-
-  auto safe_get_radius = [](const std::string &symbol) -> real_t {
-    try {
-      return physics::getCovalentRadius(symbol);
-    } catch (const std::out_of_range &) {
-      return static_cast<real_t>(1.5);
-    }
-  };
-
-  auto new_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
-  size_t row_index = 0;
-  for (size_t i = 0; i < num_elements; ++i) {
-    const real_t radius_a = safe_get_radius(elements[i].symbol);
-    for (size_t j = i; j < num_elements; ++j) {
-      const real_t radius_b = safe_get_radius(elements[j].symbol);
-      const real_t sum_radii = radius_a + radius_b;
-      const real_t min_d = sum_radii * static_cast<real_t>(min_factor);
-
-      slint::SharedString max_d_str;
-      if (slint_cutoffs != nullptr && row_index < slint_cutoffs->row_count()) {
-        const auto opt = slint_cutoffs->row_data(row_index);
-        max_d_str = opt.has_value() ? opt->max_distance
-                                    : slint::SharedString(std::format(
-                                          "{:.2f}", sum_radii * AppDefaults::BOND_MAX_FACTOR));
-      } else {
-        max_d_str =
-            slint::SharedString(std::format("{:.2f}", sum_radii * AppDefaults::BOND_MAX_FACTOR));
-      }
-
-      new_cutoffs->push_back(BondCutoff{
-          .element1 = slint::SharedString(elements[i].symbol),
-          .element2 = slint::SharedString(elements[j].symbol),
-          .min_distance = slint::SharedString(std::format("{:.2f}", min_d)),
-          .max_distance = max_d_str,
-      });
-      ++row_index;
-    }
-  }
-
-  window_.set_bond_cutoffs(new_cutoffs);
-  window_.set_bond_cutoffs_reset_trigger(window_.get_bond_cutoffs_reset_trigger() + 1);
-  backend_.setBondCutoffs(getBondCutoffs());
+  bond_cutoff_controller_.applyCovalentFactor(min_factor, FactorBound::Min);
 }
 
 void AppController::handleApplyMaxFactor(float max_factor) {
-  if (backend_.cell() == nullptr || max_factor <= 0.0F) {
-    return;
-  }
-  const auto &elements = backend_.cell()->elements();
-  const auto num_elements = elements.size();
-  auto slint_cutoffs = window_.get_bond_cutoffs();
-
-  auto safe_get_radius = [](const std::string &symbol) -> real_t {
-    try {
-      return physics::getCovalentRadius(symbol);
-    } catch (const std::out_of_range &) {
-      return static_cast<real_t>(1.5);
-    }
-  };
-
-  auto new_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
-  size_t row_index = 0;
-  for (size_t i = 0; i < num_elements; ++i) {
-    const real_t radius_a = safe_get_radius(elements[i].symbol);
-    for (size_t j = i; j < num_elements; ++j) {
-      const real_t radius_b = safe_get_radius(elements[j].symbol);
-      const real_t sum_radii = radius_a + radius_b;
-      const real_t max_d = sum_radii * static_cast<real_t>(max_factor);
-
-      slint::SharedString min_d_str;
-      if (slint_cutoffs != nullptr && row_index < slint_cutoffs->row_count()) {
-        const auto opt = slint_cutoffs->row_data(row_index);
-        min_d_str = opt.has_value() ? opt->min_distance
-                                    : slint::SharedString(std::format(
-                                          "{:.2f}", sum_radii * AppDefaults::BOND_MIN_FACTOR));
-      } else {
-        min_d_str =
-            slint::SharedString(std::format("{:.2f}", sum_radii * AppDefaults::BOND_MIN_FACTOR));
-      }
-
-      new_cutoffs->push_back(BondCutoff{
-          .element1 = slint::SharedString(elements[i].symbol),
-          .element2 = slint::SharedString(elements[j].symbol),
-          .min_distance = min_d_str,
-          .max_distance = slint::SharedString(std::format("{:.2f}", max_d)),
-      });
-      ++row_index;
-    }
-  }
-
-  window_.set_bond_cutoffs(new_cutoffs);
-  window_.set_bond_cutoffs_reset_trigger(window_.get_bond_cutoffs_reset_trigger() + 1);
-  backend_.setBondCutoffs(getBondCutoffs());
+  bond_cutoff_controller_.applyCovalentFactor(max_factor, FactorBound::Max);
 }
 
 void AppController::handleApplyGlobalCutoff(float global_cutoff) {
-  handleSetUniformCutoff(global_cutoff);
+  bond_cutoff_controller_.applyGlobalCutoff(global_cutoff);
 }
 
 } // namespace correlation::app

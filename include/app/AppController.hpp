@@ -17,6 +17,7 @@
 class AppControllerTests;
 class AppWindow;
 
+#include "app/BondCutoffController.hpp"
 #include "app/SettingsManager.hpp"
 
 namespace correlation::app {
@@ -200,6 +201,16 @@ public:
    */
   PlotController *getPlotController() { return plot_controller_.get(); }
 
+  /**
+   * @brief Returns the BondCutoffController instance.
+   */
+  BondCutoffController &getBondCutoffController() { return bond_cutoff_controller_; }
+
+  /**
+   * @brief Returns the const BondCutoffController instance.
+   */
+  const BondCutoffController &getBondCutoffController() const { return bond_cutoff_controller_; }
+
   ///@}
 
 private:
@@ -207,6 +218,7 @@ private:
   AppWindow &window_;   ///< Reference to the managed UI window.
   AppBackend &backend_; ///< Reference to the logic backend.
 
+  BondCutoffController bond_cutoff_controller_;
   std::unique_ptr<AnalysisRunner> analysis_runner_;
   std::unique_ptr<FileIOHandler> file_io_handler_;
   std::unique_ptr<InputValidator> input_validator_;
