@@ -236,25 +236,25 @@ endif()
 if(BUILD_GUI)
     set(CORRELATION_SOURCES
         main.cpp
-        app/AnalysisRunner.cpp
-        app/AppBackend.cpp
-        app/AppController.cpp
-        app/BondCutoffController.cpp
-        app/BondCutoffMapper.cpp
-        app/FileIOHandler.cpp
-        app/InputValidator.cpp
-        app/OptionsResetService.cpp
-        app/OptionsSyncService.cpp
-        app/PhysicsService.cpp
-        app/PlotController.cpp
-        app/PlotExportService.cpp
-        app/PlotSeriesManager.cpp
-        app/PlotTableFormatter.cpp
-        app/PresetController.cpp
-        app/PresetManager.cpp
-        app/SettingsManager.cpp
-        app/UpdateChecker.cpp
-        app/ValidationRuleService.cpp
+        app/core/AppBackend.cpp
+        app/core/AppController.cpp
+        app/core/SettingsManager.cpp
+        app/viewmodel/BondCutoffController.cpp
+        app/viewmodel/PlotController.cpp
+        app/viewmodel/PresetController.cpp
+        app/services/AnalysisRunner.cpp
+        app/services/FileIOHandler.cpp
+        app/services/InputValidator.cpp
+        app/services/OptionsResetService.cpp
+        app/services/OptionsSyncService.cpp
+        app/services/PhysicsService.cpp
+        app/services/PresetManager.cpp
+        app/services/UpdateChecker.cpp
+        app/services/ValidationRuleService.cpp
+        app/formatters/BondCutoffMapper.cpp
+        app/formatters/PlotExportService.cpp
+        app/formatters/PlotSeriesManager.cpp
+        app/formatters/PlotTableFormatter.cpp
     )
 
     if (WIN32)
@@ -325,8 +325,8 @@ if(NOT (EMSCRIPTEN OR BUILD_WASM))
     # CLI Executable Target (correlation-cli) — no GUI dependency
     add_executable(correlation-cli
         cli/main_cli.cpp
-        app/AppBackend.cpp
-        app/PhysicsService.cpp
+        app/core/AppBackend.cpp
+        app/services/PhysicsService.cpp
     )
     target_link_libraries(correlation-cli PRIVATE
         correlation_lib readers_obj writers_obj calculators_obj cli_parser_obj

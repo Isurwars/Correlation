@@ -104,14 +104,14 @@ add_executable(correlation_unit_tests
     unit/app/UpdateCheckerTests.cpp
     unit/app/ValidationRuleServiceTests.cpp
     unit/cli/CliParserTests.cpp
-    ../src/app/AppBackend.cpp
-    ../src/app/BondCutoffMapper.cpp
-    ../src/app/PhysicsService.cpp
-    ../src/app/PlotExportService.cpp
-    ../src/app/PresetManager.cpp
-    ../src/app/SettingsManager.cpp
-    ../src/app/UpdateChecker.cpp
-    ../src/app/ValidationRuleService.cpp
+    ../src/app/core/AppBackend.cpp
+    ../src/app/formatters/BondCutoffMapper.cpp
+    ../src/app/services/PhysicsService.cpp
+    ../src/app/formatters/PlotExportService.cpp
+    ../src/app/services/PresetManager.cpp
+    ../src/app/core/SettingsManager.cpp
+    ../src/app/services/UpdateChecker.cpp
+    ../src/app/services/ValidationRuleService.cpp
 )
 
 target_link_libraries(correlation_unit_tests PRIVATE
@@ -144,8 +144,8 @@ add_executable(correlation_functional_tests
     functional/analysis/TrajectoryAnalyzerTests.cpp
     functional/analysis/DynamicsAnalyzerTests.cpp
     functional/app/AppBackendIntegrationTests.cpp
-    ../src/app/AppBackend.cpp
-    ../src/app/PhysicsService.cpp
+    ../src/app/core/AppBackend.cpp
+    ../src/app/services/PhysicsService.cpp
 )
 
 target_link_libraries(correlation_functional_tests PRIVATE
@@ -173,25 +173,25 @@ if(BUILD_GUI)
         unit/app/OptionsSyncServiceTests.cpp
         unit/app/PlotSeriesManagerTests.cpp
         unit/app/PlotTableFormatterTests.cpp
-        ../src/app/AnalysisRunner.cpp
-        ../src/app/AppBackend.cpp
-        ../src/app/AppController.cpp
-        ../src/app/BondCutoffController.cpp
-        ../src/app/BondCutoffMapper.cpp
-        ../src/app/FileIOHandler.cpp
-        ../src/app/InputValidator.cpp
-        ../src/app/OptionsResetService.cpp
-        ../src/app/OptionsSyncService.cpp
-        ../src/app/PhysicsService.cpp
-        ../src/app/PlotController.cpp
-        ../src/app/PlotExportService.cpp
-        ../src/app/PlotSeriesManager.cpp
-        ../src/app/PlotTableFormatter.cpp
-        ../src/app/PresetController.cpp
-        ../src/app/PresetManager.cpp
-        ../src/app/SettingsManager.cpp
-        ../src/app/UpdateChecker.cpp
-        ../src/app/ValidationRuleService.cpp
+        ../src/app/services/AnalysisRunner.cpp
+        ../src/app/core/AppBackend.cpp
+        ../src/app/core/AppController.cpp
+        ../src/app/viewmodel/BondCutoffController.cpp
+        ../src/app/formatters/BondCutoffMapper.cpp
+        ../src/app/services/FileIOHandler.cpp
+        ../src/app/services/InputValidator.cpp
+        ../src/app/services/OptionsResetService.cpp
+        ../src/app/services/OptionsSyncService.cpp
+        ../src/app/services/PhysicsService.cpp
+        ../src/app/viewmodel/PlotController.cpp
+        ../src/app/formatters/PlotExportService.cpp
+        ../src/app/formatters/PlotSeriesManager.cpp
+        ../src/app/formatters/PlotTableFormatter.cpp
+        ../src/app/viewmodel/PresetController.cpp
+        ../src/app/services/PresetManager.cpp
+        ../src/app/core/SettingsManager.cpp
+        ../src/app/services/UpdateChecker.cpp
+        ../src/app/services/ValidationRuleService.cpp
     )
 
     target_link_libraries(correlation_gui_tests PRIVATE
