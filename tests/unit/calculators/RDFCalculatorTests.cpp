@@ -46,40 +46,95 @@ public:
   correlation::core::Cell cell_;
   correlation::core::Trajectory trajectory_;
 };
+
+[[nodiscard]] std::pair<real_t, real_t> findPeakInRange(const std::vector<real_t> &bins,
+                                                        const std::vector<real_t> &values,
+                                                        real_t r_min, real_t r_max) {
+  real_t max_val = 0;
+  real_t peak_r = 0;
+  for (size_t i = 0; i < bins.size() && i < values.size(); ++i) {
+    if (bins[i] >= r_min && bins[i] <= r_max && values[i] > max_val) {
+      max_val = values[i];
+      peak_r = bins[i];
+    }
+  }
+  return {peak_r, max_val};
+}
+
+void verifyAshcroftSums(const Histogram &g_r, const Histogram &g_r_total) {
+  const auto &g_ar_ar = g_r.partials.at("Ar-Ar");
+  const auto &g_xe_xe = g_r.partials.at("Xe-Xe");
+  const auto &g_ar_xe = g_r.partials.at("Ar-Xe");
+  const auto &g_total = g_r.partials.at("Total");
+
+  const auto &g_tot_ar_ar = g_r_total.partials.at("Ar-Ar");
+  const auto &g_tot_xe_xe = g_r_total.partials.at("Xe-Xe");
+  const auto &g_tot_ar_xe = g_r_total.partials.at("Ar-Xe");
+  const auto &g_tot_total = g_r_total.partials.at("Total");
+
+  ASSERT_EQ(g_total.size(), g_ar_ar.size());
+  for (size_t i = 0; i < g_total.size(); ++i) {
+    double const sum_g_partials = g_ar_ar[i] + g_xe_xe[i] + g_ar_xe[i];
+    EXPECT_NEAR(g_total[i], sum_g_partials, 1e-6);
+
+    double const sum_g_tot_partials = g_tot_ar_ar[i] + g_tot_xe_xe[i] + g_tot_ar_xe[i];
+    EXPECT_NEAR(g_tot_total[i], sum_g_tot_partials, 1e-6);
+  }
+}
+
+void verifyHrHistogram(const DistributionFunctions &dists) {
+  const auto &h_r = dists.getHistogram("H_r");
+  EXPECT_EQ(h_r.y_unit, "counts");
+  EXPECT_EQ(h_r.title, "H(r) — Distance Histogram");
+  ASSERT_TRUE(h_r.partials.contains("Ar-Ar"));
+}
+
+void verifyGrHistograms(const DistributionFunctions &dists) {
+  const auto &g_unw = dists.getHistogram("g_r_unweighted");
+  EXPECT_EQ(g_unw.title, "g(r) — Unweighted Radial Distribution Function");
+  EXPECT_EQ(g_unw.y_unit, "Å⁻¹");
+  ASSERT_TRUE(g_unw.partials.contains("Ar-Ar"));
+
+  const auto &g_r = dists.getHistogram("g_r");
+  EXPECT_EQ(g_r.y_unit, "Å⁻¹");
+
+  const auto &g_r_tot = dists.getHistogram("G_r");
+  EXPECT_EQ(g_r_tot.y_unit, "Å⁻¹");
+}
 } // namespace
 
 TEST_F(RDFCalculatorTests, DefaultConstructorWorks) {
   updateTrajectory();
-  ASSERT_NO_THROW(DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ()));
+  ASSERT_NO_THROW(DistributionFunctions const dists(cell_, 5.0, trajectory_.getBondCutoffsSQ()));
 }
 
 TEST_F(RDFCalculatorTests, MoveConstructorWorks) {
   updateTrajectory();
-  DistributionFunctions dfSource(cell_, 5.0, trajectory_.getBondCutoffsSQ());
-  dfSource.calculateRDF({
+  DistributionFunctions df_source(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+  df_source.calculateRDF({
       .r_max = 5.0,
       .r_bin_width = 0.1,
   });
 
-  DistributionFunctions const dfDest(std::move(dfSource));
+  DistributionFunctions const df_dest(std::move(df_source));
 
-  EXPECT_NO_THROW(dfDest.getHistogram("g_r"));
-  EXPECT_EQ(dfDest.cell().atomCount(), 2);
+  EXPECT_NO_THROW(df_dest.getHistogram("g_r"));
+  EXPECT_EQ(df_dest.cell().atomCount(), 2);
 }
 
 TEST_F(RDFCalculatorTests, MoveAssignmentWorks) {
   updateTrajectory();
-  DistributionFunctions dfSource(cell_, 5.0, trajectory_.getBondCutoffsSQ());
-  dfSource.calculateRDF({
+  DistributionFunctions df_source(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+  df_source.calculateRDF({
       .r_max = 5.0,
       .r_bin_width = 0.1,
   });
 
-  DistributionFunctions dfDest(cell_);
-  dfDest = std::move(dfSource);
+  DistributionFunctions df_dest(cell_);
+  df_dest = std::move(df_source);
 
-  EXPECT_NO_THROW(dfDest.getHistogram("g_r"));
-  EXPECT_EQ(dfDest.cell().atomCount(), 2);
+  EXPECT_NO_THROW(df_dest.getHistogram("g_r"));
+  EXPECT_EQ(df_dest.cell().atomCount(), 2);
 }
 
 TEST_F(RDFCalculatorTests, AccessorsWork) {
@@ -90,30 +145,30 @@ TEST_F(RDFCalculatorTests, AccessorsWork) {
   EXPECT_EQ(dists.cell().atomCount(), 2);
 
   // getAvailableHistograms() - initially empty or minimal
-  auto histNames = dists.getAvailableHistograms();
-  EXPECT_TRUE(histNames.empty());
+  auto hist_names = dists.getAvailableHistograms();
+  EXPECT_TRUE(hist_names.empty());
 
   // Calculate something
   dists.calculateRDF({
       .r_max = 5.0,
       .r_bin_width = 0.1,
   });
-  histNames = dists.getAvailableHistograms();
-  EXPECT_FALSE(histNames.empty());
-  EXPECT_NE(std::find(histNames.begin(), histNames.end(), "g_r"), histNames.end());
+  hist_names = dists.getAvailableHistograms();
+  EXPECT_FALSE(hist_names.empty());
+  EXPECT_NE(std::ranges::find(hist_names, "g_r"), hist_names.end());
 
   // getHistogram()
   EXPECT_NO_THROW(dists.getHistogram("g_r"));
   EXPECT_THROW(dists.getHistogram("NonExistent"), std::out_of_range);
 
   // getAllHistograms()
-  const auto &allHists = dists.getAllHistograms();
-  EXPECT_EQ(allHists.size(), 5);
-  EXPECT_TRUE(allHists.count("g_r"));
-  EXPECT_TRUE(allHists.count("g_r_unweighted"));
-  EXPECT_TRUE(allHists.count("H_r"));
-  EXPECT_TRUE(allHists.count("J_r"));
-  EXPECT_TRUE(allHists.count("G_r"));
+  const auto &all_hists = dists.getAllHistograms();
+  EXPECT_EQ(all_hists.size(), 5);
+  EXPECT_TRUE(all_hists.count("g_r"));
+  EXPECT_TRUE(all_hists.count("g_r_unweighted"));
+  EXPECT_TRUE(all_hists.count("H_r"));
+  EXPECT_TRUE(all_hists.count("J_r"));
+  EXPECT_TRUE(all_hists.count("G_r"));
 }
 
 TEST_F(RDFCalculatorTests, CalculateRDF) {
@@ -141,7 +196,7 @@ TEST_F(RDFCalculatorTests, CalculateRDF) {
   const auto &total = hist.partials.at("Ar-Ar");
 
   // High precision peak location
-  auto max_it = std::max_element(total.begin(), total.end());
+  auto max_it = std::ranges::max_element(total);
   size_t const peak_idx = std::distance(total.begin(), max_it);
   real_t const peak_r = hist.bins[peak_idx];
 
@@ -152,14 +207,14 @@ TEST_F(RDFCalculatorTests, CalculateRDF) {
 
 TEST_F(RDFCalculatorTests, CalculateCoordinationNumber) {
   // Use a setup where we know neighbors exactly
-  correlation::core::Cell cnCall({10, 10, 10, 90, 90, 90});
-  cnCall.addAtom("Si", {5.0, 5.0, 5.0});
-  cnCall.addAtom("O", {6.6, 5.0, 5.0}); // 1.6 dist
-  cnCall.addAtom("O", {3.4, 5.0, 5.0}); // 1.6 dist
+  correlation::core::Cell cn_cell({10, 10, 10, 90, 90, 90});
+  cn_cell.addAtom("Si", {5.0, 5.0, 5.0});
+  cn_cell.addAtom("O", {6.6, 5.0, 5.0}); // 1.6 dist
+  cn_cell.addAtom("O", {3.4, 5.0, 5.0}); // 1.6 dist
   // Si has 2 O neighbors at 1.6.
 
-  updateTrajectory(cnCall);
-  DistributionFunctions dists(cnCall, 2.0, trajectory_.getBondCutoffsSQ());
+  updateTrajectory(cn_cell);
+  DistributionFunctions dists(cn_cell, 2.0, trajectory_.getBondCutoffsSQ());
 
   dists.calculateCoordinationNumber();
 
@@ -248,15 +303,15 @@ TEST_F(RDFCalculatorTests, AddAndScale) {
 
   // Single frame RDF peak value depends on volume and density, but it's
   // consistent. Let's compare with a fresh one
-  DistributionFunctions dfRef(cell_, 5.0, trajectory_.getBondCutoffsSQ());
-  dfRef.calculateRDF({
+  DistributionFunctions df_ref(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+  df_ref.calculateRDF({
       .r_max = 5.0,
       .r_bin_width = 0.1,
   });
-  real_t const refPeak = *std::max_element(dfRef.getHistogram("g_r").partials.at("Ar-Ar").begin(),
-                                           dfRef.getHistogram("g_r").partials.at("Ar-Ar").end());
+  real_t const ref_peak =
+      *std::ranges::max_element(df_ref.getHistogram("g_r").partials.at("Ar-Ar"));
 
-  EXPECT_NEAR(peak, refPeak, 1e-4);
+  EXPECT_NEAR(peak, ref_peak, 1e-4);
 }
 
 TEST_F(RDFCalculatorTests, ComputeMean) {
@@ -267,10 +322,11 @@ TEST_F(RDFCalculatorTests, ComputeMean) {
   settings.r_max = 5.0;
   settings.r_bin_width = 0.1;
   settings.smoothing = false;
+  settings.active_calculators["RDF"] = true;
 
-  auto dfMean = DistributionFunctions::computeMean(trajectory_, analyzer, 0, settings);
-  ASSERT_TRUE(dfMean != nullptr);
-  EXPECT_NO_THROW(dfMean->getHistogram("g_r"));
+  auto df_mean = DistributionFunctions::computeMean(trajectory_, analyzer, 0, settings);
+  ASSERT_TRUE(df_mean != nullptr);
+  EXPECT_NO_THROW(df_mean->getHistogram("g_r"));
 }
 
 TEST_F(RDFCalculatorTests, HandlesMissingPartialInAdd) {
@@ -336,13 +392,13 @@ TEST_F(RDFCalculatorTests, VerifyAshcroftWeightsAreCorrect) {
 
   // 1. Verify calculated Ashcroft weights
   const auto &weights = dists.getAshcroftWeights();
-  double const expected_w_ArAr = 0.75 * 0.75;       // 0.5625
-  double const expected_w_XeXe = 0.25 * 0.25;       // 0.0625
-  double const expected_w_ArXe = 2.0 * 0.75 * 0.25; // 0.375 (doubled!)
+  double const expected_w_ar_ar = 0.75 * 0.75;       // 0.5625
+  double const expected_w_xe_xe = 0.25 * 0.25;       // 0.0625
+  double const expected_w_ar_xe = 2.0 * 0.75 * 0.25; // 0.375 (doubled!)
 
-  EXPECT_NEAR(weights.at("Ar-Ar"), expected_w_ArAr, 1e-6);
-  EXPECT_NEAR(weights.at("Xe-Xe"), expected_w_XeXe, 1e-6);
-  EXPECT_NEAR(weights.at("Ar-Xe"), expected_w_ArXe, 1e-6);
+  EXPECT_NEAR(weights.at("Ar-Ar"), expected_w_ar_ar, 1e-6);
+  EXPECT_NEAR(weights.at("Xe-Xe"), expected_w_xe_xe, 1e-6);
+  EXPECT_NEAR(weights.at("Ar-Xe"), expected_w_ar_xe, 1e-6);
 
   // 2. Verify RDF total is the sum of weighted partials
   dists.calculateRDF({
@@ -350,26 +406,8 @@ TEST_F(RDFCalculatorTests, VerifyAshcroftWeightsAreCorrect) {
       .r_bin_width = 0.1,
   });
   const auto &g_r = dists.getHistogram("g_r");
-  const auto &G_r = dists.getHistogram("G_r");
-
-  const auto &g_ArAr = g_r.partials.at("Ar-Ar");
-  const auto &g_XeXe = g_r.partials.at("Xe-Xe");
-  const auto &g_ArXe = g_r.partials.at("Ar-Xe");
-  const auto &g_Total = g_r.partials.at("Total");
-
-  const auto &G_ArAr = G_r.partials.at("Ar-Ar");
-  const auto &G_XeXe = G_r.partials.at("Xe-Xe");
-  const auto &G_ArXe = G_r.partials.at("Ar-Xe");
-  const auto &G_Total = G_r.partials.at("Total");
-
-  ASSERT_EQ(g_Total.size(), g_ArAr.size());
-  for (size_t i = 0; i < g_Total.size(); ++i) {
-    double const sum_g_partials = g_ArAr[i] + g_XeXe[i] + g_ArXe[i];
-    EXPECT_NEAR(g_Total[i], sum_g_partials, 1e-6);
-
-    double const sum_G_partials = G_ArAr[i] + G_XeXe[i] + G_ArXe[i];
-    EXPECT_NEAR(G_Total[i], sum_G_partials, 1e-6);
-  }
+  const auto &g_r_total = dists.getHistogram("G_r");
+  verifyAshcroftSums(g_r, g_r_total);
 }
 
 TEST_F(RDFCalculatorTests, FCC_Copper_RDF) {
@@ -386,16 +424,7 @@ TEST_F(RDFCalculatorTests, FCC_Copper_RDF) {
   const auto &hist = dists.getHistogram("g_r");
   const auto &cu_cu = hist.partials.at("Cu-Cu");
 
-  real_t max_val1 = 0;
-  real_t peak_r1 = 0;
-  for (size_t i = 0; i < hist.bins.size(); ++i) {
-    if (hist.bins[i] >= 2.0 && hist.bins[i] <= 3.0) {
-      if (cu_cu[i] > max_val1) {
-        max_val1 = cu_cu[i];
-        peak_r1 = hist.bins[i];
-      }
-    }
-  }
+  const auto [peak_r1, max_val1] = findPeakInRange(hist.bins, cu_cu, 2.0, 3.0);
   EXPECT_NEAR(peak_r1, lat_a / std::numbers::sqrt2, 0.02);
   EXPECT_GT(max_val1, 1.0);
 }
@@ -414,16 +443,7 @@ TEST_F(RDFCalculatorTests, BCC_Iron_RDF) {
   const auto &hist = dists.getHistogram("g_r");
   const auto &fe_fe = hist.partials.at("Fe-Fe");
 
-  real_t max_val1 = 0;
-  real_t peak_r1 = 0;
-  for (size_t i = 0; i < hist.bins.size(); ++i) {
-    if (hist.bins[i] >= 2.0 && hist.bins[i] <= 2.7) {
-      if (fe_fe[i] > max_val1) {
-        max_val1 = fe_fe[i];
-        peak_r1 = hist.bins[i];
-      }
-    }
-  }
+  const auto [peak_r1, max_val1] = findPeakInRange(hist.bins, fe_fe, 2.0, 2.7);
   EXPECT_NEAR(peak_r1, lat_a * std::sqrt(3.0) / 2.0, 0.02);
   EXPECT_GT(max_val1, 1.0);
 }
@@ -442,16 +462,7 @@ TEST_F(RDFCalculatorTests, Diamond_Silicon_RDF) {
   const auto &hist = dists.getHistogram("g_r");
   const auto &si_si = hist.partials.at("Si-Si");
 
-  real_t max_val1 = 0;
-  real_t peak_r1 = 0;
-  for (size_t i = 0; i < hist.bins.size(); ++i) {
-    if (hist.bins[i] >= 2.0 && hist.bins[i] <= 2.6) {
-      if (si_si[i] > max_val1) {
-        max_val1 = si_si[i];
-        peak_r1 = hist.bins[i];
-      }
-    }
-  }
+  const auto [peak_r1, max_val1] = findPeakInRange(hist.bins, si_si, 2.0, 2.6);
   EXPECT_NEAR(peak_r1, lat_a * std::sqrt(3.0) / 4.0, 0.02);
   EXPECT_GT(max_val1, 1.0);
 }
@@ -471,29 +482,11 @@ TEST_F(RDFCalculatorTests, NaCl_RockSalt_RDF) {
   const auto &nacl = hist.partials.at("Na-Cl");
   const auto &nana = hist.partials.at("Na-Na");
 
-  real_t max_nacl = 0;
-  real_t peak_nacl = 0;
-  for (size_t i = 0; i < hist.bins.size(); ++i) {
-    if (hist.bins[i] >= 2.5 && hist.bins[i] <= 3.2) {
-      if (nacl[i] > max_nacl) {
-        max_nacl = nacl[i];
-        peak_nacl = hist.bins[i];
-      }
-    }
-  }
+  const auto [peak_nacl, max_nacl] = findPeakInRange(hist.bins, nacl, 2.5, 3.2);
   EXPECT_NEAR(peak_nacl, lat_a / 2.0, 0.02);
   EXPECT_GT(max_nacl, 1.0);
 
-  real_t max_nana = 0;
-  real_t peak_nana = 0;
-  for (size_t i = 0; i < hist.bins.size(); ++i) {
-    if (hist.bins[i] >= 3.6 && hist.bins[i] <= 4.4) {
-      if (nana[i] > max_nana) {
-        max_nana = nana[i];
-        peak_nana = hist.bins[i];
-      }
-    }
-  }
+  const auto [peak_nana, max_nana] = findPeakInRange(hist.bins, nana, 3.6, 4.4);
   EXPECT_NEAR(peak_nana, lat_a / std::numbers::sqrt2, 0.02);
   EXPECT_GT(max_nana, 1.0);
 }
@@ -510,29 +503,14 @@ TEST_F(RDFCalculatorTests, VerifyRawAndUnweightedHistograms) {
   ASSERT_TRUE(dists.getAllHistograms().contains("g_r_unweighted"));
 
   const auto &h_r = dists.getHistogram("H_r");
-  EXPECT_EQ(h_r.y_unit, "counts");
-  EXPECT_EQ(h_r.title, "H(r) — Distance Histogram");
-  ASSERT_TRUE(h_r.partials.contains("Ar-Ar"));
-
-  // Check that the 1 pair at distance 1.5 is in bin 1.55 (index 15 with r_bin_width 0.1)
-  // Distance 1.5 -> bin index 15: [1.5, 1.6)
   real_t raw_counts_sum = 0;
-  for (real_t val : h_r.partials.at("Ar-Ar")) {
+  for (const real_t val : h_r.partials.at("Ar-Ar")) {
     raw_counts_sum += val;
   }
-  // 2 self/inter counts for 1 pair of Ar-Ar
   EXPECT_GT(raw_counts_sum, 0.0);
 
-  const auto &g_unw = dists.getHistogram("g_r_unweighted");
-  EXPECT_EQ(g_unw.title, "g(r) — Unweighted Radial Distribution Function");
-  EXPECT_EQ(g_unw.y_unit, "Å⁻¹");
-  ASSERT_TRUE(g_unw.partials.contains("Ar-Ar"));
-
-  const auto &g_r = dists.getHistogram("g_r");
-  EXPECT_EQ(g_r.y_unit, "Å⁻¹");
-
-  const auto &G_r = dists.getHistogram("G_r");
-  EXPECT_EQ(G_r.y_unit, "Å⁻¹");
+  verifyHrHistogram(dists);
+  verifyGrHistograms(dists);
 }
 
 TEST_F(RDFCalculatorTests, AddAccumulatesWithMismatchedPartialSizes) {

@@ -17,6 +17,10 @@ CompileFlags:
     - "--generate-code*"
     - "-gencode*"
     - "-Xcompiler*"
+    - "--expt-relaxed-constexpr"
+    - "-expt-relaxed-constexpr"
+    - "--expt-extended-lambda"
+    - "-expt-extended-lambda"
 Diagnostics:
   Suppress:
     - "build/.*"

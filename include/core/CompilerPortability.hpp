@@ -31,7 +31,7 @@
 #ifndef CORRELATION_RESTRICT
 #if defined(__CUDACC__) || defined(__HIPCC__)
 #define CORRELATION_RESTRICT __restrict__
-#elifdef _MSC_VER
+#elif defined(_MSC_VER)
 #define CORRELATION_RESTRICT __restrict
 #elif defined(__GNUC__) || defined(__clang__)
 #define CORRELATION_RESTRICT __restrict__

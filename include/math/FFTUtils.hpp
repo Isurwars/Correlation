@@ -18,7 +18,7 @@
 #include <fftw3.h>
 #include <mutex>
 #include <unordered_map>
-#elifdef CORRELATION_USE_MKL
+#elif defined(CORRELATION_USE_MKL)
 #include <mkl_dfti.h>
 #include <unordered_map>
 #else
@@ -129,7 +129,7 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
   }
 }
 
-#elifdef CORRELATION_USE_MKL
+#elif defined(CORRELATION_USE_MKL)
 
 /**
  * @struct MKLDescriptorCache

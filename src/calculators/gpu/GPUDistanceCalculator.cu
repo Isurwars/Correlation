@@ -477,27 +477,28 @@ void executeTwoPassBonds(const TwoPassExecutionContext<T> &ctx,
   d_bond_counter.setScalar(zero_val);
 
   // Pass 1: Count bonds (pass d_histograms = nullptr to prevent double-counting)
-  hipLaunchKernelGGL((distanceKernel<false, T>), ctx.launch_config.grid_size,
-                     ctx.launch_config.block_size, 0, 0, ctx.gpu_atoms, ctx.gpu_bins,
-                     ctx.gpu_lattice, ctx.gpu_grid, ctx.cutoff_sq, d_bond_cutoffs_sq.get(),
-                     static_cast<int>(ctx.num_elements), ctx.ignore_periodic_self_interactions,
-                     static_cast<int>(ctx.atom_count), d_bond_counter.get(), nullptr,
-                     static_cast<T>(0), static_cast<T>(0), 0, nullptr);
+  auto const count_kernel = distanceKernel<false, T>;
+  hipLaunchKernelGGL(count_kernel, ctx.launch_config.grid_size, ctx.launch_config.block_size, 0,
+                     nullptr, ctx.gpu_atoms, ctx.gpu_bins, ctx.gpu_lattice, ctx.gpu_grid,
+                     ctx.cutoff_sq, d_bond_cutoffs_sq.get(), static_cast<int>(ctx.num_elements),
+                     ctx.ignore_periodic_self_interactions, static_cast<int>(ctx.atom_count),
+                     d_bond_counter.get(), nullptr, static_cast<T>(0), static_cast<T>(0), 0,
+                     nullptr);
   correlation::core::gpu::hipCheck(hipDeviceSynchronize());
 
   unsigned long long h_bond_count = 0;
   d_bond_counter.copyToHost(&h_bond_count, 1);
 
-  correlation::core::gpu::DeviceBuffer<GPUBond<T>> const d_bonds(h_bond_count);
+  correlation::core::gpu::DeviceBuffer<GPUBond<T>> d_bonds(h_bond_count);
   d_bond_counter.setScalar(zero_val);
 
   // Pass 2: Write bonds and accumulate device histograms
-  hipLaunchKernelGGL((distanceKernel<true, T>), ctx.launch_config.grid_size,
-                     ctx.launch_config.block_size, 0, 0, ctx.gpu_atoms, ctx.gpu_bins,
-                     ctx.gpu_lattice, ctx.gpu_grid, ctx.cutoff_sq, d_bond_cutoffs_sq.get(),
-                     static_cast<int>(ctx.num_elements), ctx.ignore_periodic_self_interactions,
-                     static_cast<int>(ctx.atom_count), d_bond_counter.get(), d_bonds.get(),
-                     static_cast<T>(ctx.hist_config.r_max),
+  auto const bond_kernel = distanceKernel<true, T>;
+  hipLaunchKernelGGL(bond_kernel, ctx.launch_config.grid_size, ctx.launch_config.block_size, 0,
+                     nullptr, ctx.gpu_atoms, ctx.gpu_bins, ctx.gpu_lattice, ctx.gpu_grid,
+                     ctx.cutoff_sq, d_bond_cutoffs_sq.get(), static_cast<int>(ctx.num_elements),
+                     ctx.ignore_periodic_self_interactions, static_cast<int>(ctx.atom_count),
+                     d_bond_counter.get(), d_bonds.get(), static_cast<T>(ctx.hist_config.r_max),
                      static_cast<T>(ctx.hist_config.r_bin_width),
                      static_cast<int>(ctx.hist_config.num_bins), ctx.d_histograms_ptr);
   correlation::core::gpu::hipCheck(hipDeviceSynchronize());
@@ -577,8 +578,9 @@ void computeDistancesGpu(const correlation::core::Cell &cell, T cutoff_sq,
 
   if (!has_bonds) {
     // Single-pass direct histogramming kernel (no pair/bond allocation overhead)
+    auto const single_pass_kernel = distanceKernel<false, T>;
     hipLaunchKernelGGL(
-        (distanceKernel<false, T>), grid_size, block_size, 0, 0, gpu_atoms, gpu_bins, gpu_lattice,
+        single_pass_kernel, grid_size, block_size, 0, nullptr, gpu_atoms, gpu_bins, gpu_lattice,
         partition.grid, cutoff_sq, nullptr, static_cast<int>(num_elements),
         partition.ignore_periodic_self_interactions, static_cast<int>(atom_count), nullptr, nullptr,
         static_cast<T>(hist_config.r_max), static_cast<T>(hist_config.r_bin_width),

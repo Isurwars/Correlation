@@ -501,31 +501,6 @@ void validateInputs(real_t cutoff_sq, const correlation::analysis::BondCutoffMat
     }
   }
 }
-#if defined(CORRELATION_USE_CUDA) || defined(CORRELATION_USE_HIP)
-/**
- * @brief Dispatches calculation to GPU if a compatible device is present.
- */
-bool tryComputeGpu(const correlation::core::Cell &cell, real_t cutoff_sq,
-                   const correlation::analysis::BondCutoffMatrix &bond_cutoffs,
-                   bool ignore_periodic_self_interactions, RawHistogramTensor *out_histograms,
-                   DistanceCalculationConfig hist_config,
-                   correlation::core::NeighborGraph &out_graph) {
-  if (gpu::has_gpu_device()) {
-    std::vector<std::vector<real_t>> max_cutoffs_sq(bond_cutoffs.size());
-    for (size_t i = 0; i < bond_cutoffs.size(); ++i) {
-      max_cutoffs_sq[i].resize(bond_cutoffs[i].size());
-      for (size_t j = 0; j < bond_cutoffs[i].size(); ++j) {
-        max_cutoffs_sq[i][j] = bond_cutoffs[i][j].max_sq;
-      }
-    }
-    gpu::compute_distances_gpu(cell, cutoff_sq, max_cutoffs_sq, ignore_periodic_self_interactions,
-                               out_histograms, hist_config, out_graph);
-    return true;
-  }
-  return false;
-}
-#endif
-
 /**
  * @brief Computes search grid dimensions and cutoff parameters.
  */
@@ -566,6 +541,44 @@ SearchGridConfig buildSearchGridConfig(const correlation::core::Cell &cell, real
       .is_small_cell = is_small_cell,
   };
 }
+
+#if defined(CORRELATION_USE_CUDA) || defined(CORRELATION_USE_HIP)
+/**
+ * @brief Dispatches calculation to GPU if a compatible device is present and system is eligible.
+ */
+bool tryComputeGpu(const correlation::core::Cell &cell, real_t cutoff_sq,
+                   const correlation::analysis::BondCutoffMatrix &bond_cutoffs,
+                   bool ignore_periodic_self_interactions, RawHistogramTensor *out_histograms,
+                   DistanceCalculationConfig hist_config,
+                   correlation::core::NeighborGraph &out_graph,
+                   const SearchGridConfig &grid_config) {
+  if (grid_config.is_small_cell) {
+    return false;
+  }
+  for (const auto &row : bond_cutoffs) {
+    for (const auto &b : row) {
+      if (b.min_sq > 0.0) {
+        return false;
+      }
+    }
+  }
+  if (gpu::has_gpu_device()) {
+    std::vector<std::vector<real_t>> max_cutoffs_sq(bond_cutoffs.size());
+    for (size_t i = 0; i < bond_cutoffs.size(); ++i) {
+      max_cutoffs_sq[i].resize(bond_cutoffs[i].size());
+      for (size_t j = 0; j < bond_cutoffs[i].size(); ++j) {
+        max_cutoffs_sq[i][j] = bond_cutoffs[i][j].max_sq;
+      }
+    }
+    gpu::compute_distances_gpu(cell, cutoff_sq, max_cutoffs_sq, ignore_periodic_self_interactions,
+                               out_histograms, hist_config, out_graph);
+    return true;
+  }
+  return false;
+}
+#endif
+
+
 
 /**
  * @struct WrappedPositions
@@ -712,14 +725,14 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cut
                                num_elements, std::vector<real_t>(hist_config.num_bins, 0.0)));
   }
 
+  const SearchGridConfig grid_config = buildSearchGridConfig(cell, cutoff_sq);
+
 #if defined(CORRELATION_USE_CUDA) || defined(CORRELATION_USE_HIP)
   if (tryComputeGpu(cell, cutoff_sq, bond_cutoffs, ignore_periodic_self_interactions,
-                    out_histograms, hist_config, out_graph)) {
+                    out_histograms, hist_config, out_graph, grid_config)) {
     return;
   }
 #endif
-
-  const SearchGridConfig grid_config = buildSearchGridConfig(cell, cutoff_sq);
   const WrappedPositions wrapped = buildWrappedPositionsAndBins(cell, grid_config);
   const FlatCellListData cell_list_data =
       buildFlatCellList(wrapped.bin_counts, wrapped.atom_bin, atom_count);

@@ -169,7 +169,7 @@ std::vector<real_t> averageBinnedSQ(const std::vector<T> &rho_cos, size_t num_q_
 template <typename T>
 CORRELATION_GLOBAL void sqKernel(DeviceAtoms<T> atoms, int num_atoms, DeviceQVectors<T> q_vecs,
                                  int num_q, DeviceResults<T> results) {
-  int q_i = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
+  int const q_i = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
   if (q_i >= num_q) {
     return;
   }
@@ -279,7 +279,7 @@ void GPUSQCalculator::calculateFrame(
   const DeviceQVectors<T> dev_qvecs{.qx = d_qx, .qy = d_qy, .qz = d_qz};
   const DeviceResults<T> dev_results{.rho_cos = d_rho_cos, .rho_sin = d_rho_sin};
 
-  hipLaunchKernelGGL(sqKernel<T>, grid_size, block_size, 0, 0, dev_atoms,
+  hipLaunchKernelGGL(sqKernel<T>, grid_size, block_size, 0, nullptr, dev_atoms,
                      static_cast<int>(num_atoms), dev_qvecs, static_cast<int>(num_q), dev_results);
   hipDeviceSynchronize();
 
@@ -316,6 +316,14 @@ void GPUSQCalculator::calculateFrame(
   }
 
   hist.partials["Total"] = s_q;
+  if (cell.elements().size() == 1) {
+    const std::string sym = cell.elements()[0].symbol;
+    hist.partials[sym + "-" + sym] = s_q;
+  }
+  correlation::analysis::Histogram s_q_copy = hist;
+  s_q_copy.title = "Structure Factor S(Q)";
+  s_q_copy.file_suffix = "_sq";
+  dists.addHistogram("S_q", std::move(s_q_copy));
   dists.addHistogram("S_Q_gpu", std::move(hist));
 }
 

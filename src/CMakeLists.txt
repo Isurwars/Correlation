@@ -119,11 +119,13 @@ if(BUILD_WITH_CUDA OR BUILD_WITH_HIP)
     )
     target_link_libraries(gpu_calculators_obj PRIVATE
         TBB::tbb
+        correlation_simd_options
     )
     if(BUILD_WITH_CUDA)
         target_link_libraries(gpu_calculators_obj PRIVATE CUDA::cudart)
+        target_compile_options(gpu_calculators_obj PRIVATE $<$<AND:$<COMPILE_LANGUAGE:CUDA>,$<CUDA_COMPILER_ID:NVIDIA>>:--expt-relaxed-constexpr>)
         set_target_properties(gpu_calculators_obj PROPERTIES
-            CUDA_STANDARD 20
+            CUDA_STANDARD 23
             POSITION_INDEPENDENT_CODE ON
         )
     elseif(BUILD_WITH_HIP)

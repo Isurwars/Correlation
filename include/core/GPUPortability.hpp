@@ -9,12 +9,12 @@
 #pragma once
 
 #include "core/CompilerPortability.hpp" // IWYU pragma: export
-#include <cstddef>
-#include <utility> // IWYU pragma: keep
+#include <cstddef>                      // IWYU pragma: keep
+#include <utility>                      // IWYU pragma: keep
 
 #ifdef CORRELATION_USE_HIP
 #include <hip/hip_runtime.h>
-#elifdef CORRELATION_USE_CUDA
+#elif defined(CORRELATION_USE_CUDA)
 #include <cuda_runtime.h>
 
 // Map HIP API names to CUDA equivalents

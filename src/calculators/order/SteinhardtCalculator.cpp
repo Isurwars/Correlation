@@ -12,6 +12,10 @@
 #include "math/LinearAlgebra.hpp"
 #include "math/Precision.hpp"
 #include "math/SpecialFunctions.hpp"
+
+#if defined(CORRELATION_USE_CUDA) || defined(CORRELATION_USE_HIP)
+#include "calculators/gpu/GPUSteinhardtCalculator.hpp"
+#endif
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -393,7 +397,16 @@ real_t SteinhardtCalculator::wigner3j(Wigner3jParams params) {
 
 void SteinhardtCalculator::calculateFrame(
     correlation::analysis::DistributionFunctions &dists,
-    const correlation::analysis::AnalysisSettings & /*settings*/) const {
+    const correlation::analysis::AnalysisSettings &settings) const {
+#if defined(CORRELATION_USE_CUDA) || defined(CORRELATION_USE_HIP)
+  static const GPUSteinhardtCalculator GPU_CALC;
+  if (GPU_CALC.hasGPU() && dists.neighbors() != nullptr) {
+    GPU_CALC.calculateFrame(dists, settings);
+    return;
+  }
+#else
+  (void)settings;
+#endif
   auto histograms = calculate(dists.cell(), dists.neighbors());
   for (auto &[name, hist] : histograms) {
     dists.addHistogram(name, std::move(hist));

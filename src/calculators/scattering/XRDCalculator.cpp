@@ -13,6 +13,11 @@
 #include "math/SIMDUtils.hpp"
 #include "physics/PhysicalData.hpp"
 
+#if defined(CORRELATION_USE_CUDA) || defined(CORRELATION_USE_HIP)
+#include "calculators/gpu/GPUDistanceCalculator.hpp"
+#include "calculators/gpu/GPUXRDCalculator.hpp"
+#endif
+
 #include <cmath>
 #include <stdexcept>
 #include <tbb/enumerable_thread_specific.h>
@@ -137,6 +142,20 @@ void XRDCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
   const MinTheta min_theta{min_theta_val};
   const MaxTheta max_theta{max_theta_val};
   const BinWidth bin_width{bin_width_val};
+
+#if defined(CORRELATION_USE_CUDA) || defined(CORRELATION_USE_HIP)
+  if (!dists.getAllHistograms().contains("S_q") && !dists.getAllHistograms().contains("g_r") &&
+      gpu::hasGpuDevice()) {
+    const GPUXRDParams gpu_params{
+        .lambda = wavelength_val,
+        .theta_min = min_theta_val,
+        .theta_max = max_theta_val,
+        .bin_width = bin_width_val,
+    };
+    dists.addHistogram("XRD", gpu::compute_xrd_gpu(dists.cell(), gpu_params));
+    return;
+  }
+#endif
 
   // Primary path: Use S(Q) if available
   if (dists.getAllHistograms().contains("S_q")) {

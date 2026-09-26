@@ -58,11 +58,10 @@ template <typename T>
 CORRELATION_DEVICE T evalFormFactor(const CromerMannCoeffs<T> &coeffs, T q_val) {
   T const s_val = q_val / static_cast<T>(correlation::math::four_pi);
   T const s_sq = s_val * s_val;
-  T form_factor = coeffs.c;
-  for (int k = 0; k < 4; ++k) {
-    form_factor += coeffs.a[k] * std::exp(-coeffs.b[k] * s_sq);
-  }
-  return form_factor;
+  return coeffs.c + (coeffs.a[0] * std::exp(-coeffs.b[0] * s_sq)) +
+         (coeffs.a[1] * std::exp(-coeffs.b[1] * s_sq)) +
+         (coeffs.a[2] * std::exp(-coeffs.b[2] * s_sq)) +
+         (coeffs.a[3] * std::exp(-coeffs.b[3] * s_sq));
 }
 
 template <typename T>
@@ -88,14 +87,14 @@ debyeXrdKernel(DeviceAtomData<T> atoms, int num_atoms,
 
   std::array<T, 16> f_values{};
   for (int elem_idx = 0; elem_idx < num_elements && elem_idx < 16; ++elem_idx) {
-    f_values[static_cast<size_t>(elem_idx)] = evalFormFactor(element_coeffs[elem_idx], q_val);
+    f_values.data()[elem_idx] = evalFormFactor(element_coeffs[elem_idx], q_val);
   }
 
   T intensity = static_cast<T>(0.0);
 
   for (int i = 0; i < num_atoms; ++i) {
     int const type_i = atoms.type_idx[i];
-    T const f_i = f_values[static_cast<size_t>(type_i)];
+    T const f_i = f_values.data()[type_i];
     intensity += f_i * f_i;
 
     T const x_i = atoms.x[i];
@@ -104,7 +103,7 @@ debyeXrdKernel(DeviceAtomData<T> atoms, int num_atoms,
 
     for (int j = i + 1; j < num_atoms; ++j) {
       int const type_j = atoms.type_idx[j];
-      T const f_j = f_values[static_cast<size_t>(type_j)];
+      T const f_j = f_values.data()[type_j];
 
       T const delta_x = x_i - atoms.x[j];
       T const delta_y = y_i - atoms.y[j];
@@ -197,7 +196,7 @@ std::vector<T> executeGpuDebye(const correlation::core::Cell &cell,
   DeviceBuffer<T> d_z(num_atoms);
   DeviceBuffer<int> d_type_idx(num_atoms);
   DeviceBuffer<CromerMannCoeffs<T>> d_coeffs(num_elements);
-  DeviceBuffer<T> const d_intensity(num_bins);
+  DeviceBuffer<T> d_intensity(num_bins);
 
   d_x.copyFromHost(h_atoms.x.data(), num_atoms);
   d_y.copyFromHost(h_atoms.y.data(), num_atoms);
@@ -215,7 +214,7 @@ std::vector<T> executeGpuDebye(const correlation::core::Cell &cell,
       .type_idx = d_type_idx.get(),
   };
 
-  hipLaunchKernelGGL(debyeXrdKernel<T>, grid_size, block_size, 0, 0, dev_atoms,
+  hipLaunchKernelGGL(debyeXrdKernel<T>, grid_size, block_size, 0, nullptr, dev_atoms,
                      static_cast<int>(num_atoms), d_coeffs.get(), static_cast<int>(num_elements),
                      grid_cfg, d_intensity.get());
   correlation::core::gpu::hipCheck(hipDeviceSynchronize());

@@ -12,6 +12,10 @@
 #include "math/Constants.hpp"
 #include "math/SIMDUtils.hpp"
 
+#if defined(CORRELATION_USE_CUDA) || defined(CORRELATION_USE_HIP)
+#include "calculators/gpu/GPUSQCalculator.hpp"
+#endif
+
 #include <algorithm>
 #include <map>
 #include <stdexcept>
@@ -443,6 +447,14 @@ void StructureFactorCalculator::calculateFrame(
   if (num_atoms == 0) {
     return;
   }
+
+#if defined(CORRELATION_USE_CUDA) || defined(CORRELATION_USE_HIP)
+  static const GPUSQCalculator GPU_SQ_CALC;
+  if (GPU_SQ_CALC.hasGPU() && cell.elements().size() == 1) {
+    GPU_SQ_CALC.calculateFrame(dists, settings);
+    return;
+  }
+#endif
 
   const auto q_max = static_cast<real_t>(settings.q_max);
   const auto q_bin_width = static_cast<real_t>(settings.q_bin_width);

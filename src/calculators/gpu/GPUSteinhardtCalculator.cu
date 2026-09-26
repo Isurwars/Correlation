@@ -178,7 +178,7 @@ CORRELATION_GLOBAL void steinhardtKernel(GPUPoint<T> const *CORRELATION_RESTRICT
                                          NeighborGraphPointers graph, int num_atoms,
                                          SteinhardtOutputPointers<T> outputs) {
 
-  int atom_idx = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
+  int const atom_idx = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
   if (atom_idx >= num_atoms) {
     return;
   }
@@ -336,8 +336,10 @@ void GPUSteinhardtCalculator::calculateFrame(
   h_offsets[num_atoms] = static_cast<int>(h_indices.size());
 
   if (h_indices.empty()) {
-    const SteinhardtCalculator cpu_calc;
-    cpu_calc.calculateFrame(dists, settings);
+    auto histograms = SteinhardtCalculator::calculate(dists.cell(), dists.neighbors());
+    for (auto &[name, hist] : histograms) {
+      dists.addHistogram(name, std::move(hist));
+    }
     return;
   }
 
@@ -359,9 +361,10 @@ void GPUSteinhardtCalculator::calculateFrame(
 
   int const block_size = 256;
   int const grid_size = (static_cast<int>(num_atoms) + block_size - 1) / block_size;
-  hipLaunchKernelGGL(steinhardtKernel<T>, grid_size, block_size, 0, 0, d_atoms,
-                     NeighborGraphPointers{d_offsets, d_indices}, static_cast<int>(num_atoms),
-                     SteinhardtOutputPointers<T>{d_q4, d_q6});
+  hipLaunchKernelGGL(steinhardtKernel<T>, grid_size, block_size, 0, nullptr, d_atoms,
+                     NeighborGraphPointers{.offsets = d_offsets, .indices = d_indices},
+                     static_cast<int>(num_atoms),
+                     SteinhardtOutputPointers<T>{.q4_out = d_q4, .q6_out = d_q6});
   hipDeviceSynchronize();
 
   std::vector<T> h_q4(num_atoms, static_cast<T>(0.0));
@@ -428,7 +431,14 @@ void GPUSteinhardtCalculator::calculateFrame(
   hist_q4.partials["Total"] = q4_bins;
   hist_q6.partials["Total"] = q6_bins;
 
+  correlation::analysis::Histogram q4_copy = hist_q4;
+  q4_copy.file_suffix = "_Q4";
+  dists.addHistogram("Q4", std::move(q4_copy));
   dists.addHistogram("Q4_gpu", std::move(hist_q4));
+
+  correlation::analysis::Histogram q6_copy = hist_q6;
+  q6_copy.file_suffix = "_Q6";
+  dists.addHistogram("Q6", std::move(q6_copy));
   dists.addHistogram("Q6_gpu", std::move(hist_q6));
 }
 
