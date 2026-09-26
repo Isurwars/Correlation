@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "app/BondCutoffMapper.hpp"
+#include "app/formatters/BondCutoffMapper.hpp"
 #include <gtest/gtest.h>
 
 namespace {
@@ -72,7 +72,10 @@ TEST(BondCutoffMapperTests, ParseCutoffMatrixInvalidDistanceHandledGracefully) {
   };
 
   std::vector<CutoffEntry> entries = {
-      CutoffEntry{.element1 = "C", .element2 = "C", .min_distance = "invalid_min", .max_distance = "not_a_number"},
+      CutoffEntry{.element1 = "C",
+                  .element2 = "C",
+                  .min_distance = "invalid_min",
+                  .max_distance = "not_a_number"},
   };
 
   const auto matrix = BondCutoffMapper::parseCutoffMatrix(entries, elements);

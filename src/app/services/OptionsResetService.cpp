@@ -6,9 +6,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "app/OptionsResetService.hpp"
-#include "app/TrajectoryLoader.hpp"
+#include "app/services/OptionsResetService.hpp"
 #include "app/core/AppOptions.hpp"
+#include "app/services/TrajectoryLoader.hpp"
 
 #include <format>
 #include <string>

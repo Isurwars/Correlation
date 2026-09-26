@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "app/PlotTableFormatter.hpp"
+#include "app/formatters/PlotTableFormatter.hpp"
 #include <gtest/gtest.h>
 #include <optional>
 #include <stdexcept>

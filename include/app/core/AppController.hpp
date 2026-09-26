@@ -9,12 +9,12 @@
 #pragma once
 
 #include "AppWindow.h"
-#include "app/AnalysisDispatcher.hpp"
-#include "app/AppOptions.hpp"
-#include "app/BondCutoffController.hpp"
-#include "app/BondCutoffService.hpp"
-#include "app/SettingsManager.hpp"
-#include "app/TrajectoryLoader.hpp"
+#include "app/core/AppOptions.hpp"
+#include "app/core/SettingsManager.hpp"
+#include "app/services/AnalysisDispatcher.hpp"
+#include "app/services/BondCutoffService.hpp"
+#include "app/services/TrajectoryLoader.hpp"
+#include "app/viewmodel/BondCutoffController.hpp"
 #include <nfd.h>
 
 #include <memory>

@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "app/BondCutoffController.hpp"
-#include "app/BondCutoffMapper.hpp"
+#include "app/viewmodel/BondCutoffController.hpp"
+#include "app/formatters/BondCutoffMapper.hpp"
 #include "physics/PhysicalData.hpp"
 
 #include <cmath>

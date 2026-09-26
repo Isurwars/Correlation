@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "app/PlotExportService.hpp"
+#include "app/formatters/PlotExportService.hpp"
 #include "plotters/PdfPlotter.hpp"
 
 #include <algorithm>

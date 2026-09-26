@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "app/PhysicsService.hpp"
+#include "app/services/PhysicsService.hpp"
 #include "app/core/AppOptions.hpp"
 #include "physics/PhysicalData.hpp"
 

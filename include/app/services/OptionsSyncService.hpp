@@ -9,7 +9,7 @@
 #pragma once
 
 #include "AppWindow.h"
-#include "app/AppOptions.hpp"
+#include "app/core/AppOptions.hpp"
 
 #include <cstddef>
 #include <expected>

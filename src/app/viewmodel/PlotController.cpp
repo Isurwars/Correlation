@@ -6,9 +6,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "app/PlotController.hpp"
+#include "app/viewmodel/PlotController.hpp"
 #include "AppWindow.h"
-#include "app/PlotExportService.hpp"
+#include "app/formatters/PlotExportService.hpp"
 #include <nfd.h>
 
 #include <algorithm>

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "app/ValidationRuleService.hpp"
+#include "app/services/ValidationRuleService.hpp"
 #include <gtest/gtest.h>
 
 namespace {

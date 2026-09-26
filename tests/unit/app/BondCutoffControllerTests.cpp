@@ -7,9 +7,9 @@
  */
 
 #include "AppWindow.h"
-#include "app/BondCutoffController.hpp"
-#include "app/TrajectoryLoader.hpp"
 #include "app/core/AppOptions.hpp"
+#include "app/services/TrajectoryLoader.hpp"
+#include "app/viewmodel/BondCutoffController.hpp"
 
 #include <filesystem>
 #include <gtest/gtest.h>

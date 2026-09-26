@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "app/ValidationRuleService.hpp"
+#include "app/services/ValidationRuleService.hpp"
 
 #include <algorithm>
 #include <cctype>

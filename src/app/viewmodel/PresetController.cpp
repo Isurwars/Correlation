@@ -6,11 +6,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "app/PresetController.hpp"
+#include "app/viewmodel/PresetController.hpp"
 #include "AppWindow.h"
-#include "app/AppController.hpp"
-#include "app/InputValidator.hpp"
-#include "app/PresetManager.hpp"
+#include "app/core/AppController.hpp"
+#include "app/services/InputValidator.hpp"
+#include "app/services/PresetManager.hpp"
 #include <format>
 
 namespace correlation::app {

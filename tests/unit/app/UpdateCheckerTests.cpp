@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "app/UpdateChecker.hpp"
+#include "app/services/UpdateChecker.hpp"
 
 #include <gtest/gtest.h>
 #include <string>

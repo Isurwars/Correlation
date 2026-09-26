@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "app/UpdateChecker.hpp"
+#include "app/services/UpdateChecker.hpp"
 
 #if __has_include("AppWindow.h")
 #include "AppWindow.h"

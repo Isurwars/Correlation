@@ -6,10 +6,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "app/FileIOHandler.hpp"
+#include "app/services/FileIOHandler.hpp"
 #include "AppWindow.h"
-#include "app/AppController.hpp"
-#include "app/InputValidator.hpp"
+#include "app/core/AppController.hpp"
+#include "app/services/InputValidator.hpp"
 #include "physics/PhysicalData.hpp"
 #include <filesystem>
 #include <format>

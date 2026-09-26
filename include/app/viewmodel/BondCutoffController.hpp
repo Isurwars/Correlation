@@ -10,9 +10,9 @@
 
 #include "AppWindow.h"
 #include "analysis/DistributionFunctions.hpp"
-#include "app/BondCutoffService.hpp"
-#include "app/TrajectoryLoader.hpp"
 #include "app/core/AppOptions.hpp"
+#include "app/services/BondCutoffService.hpp"
+#include "app/services/TrajectoryLoader.hpp"
 
 namespace correlation::app {
 

@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "app/OptionsSyncService.hpp"
+#include "app/services/OptionsSyncService.hpp"
 #include "calculators/CalculatorFactory.hpp"
 
 #include <algorithm>

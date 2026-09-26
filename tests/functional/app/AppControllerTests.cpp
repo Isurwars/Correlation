@@ -4,12 +4,12 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "AppWindow.h"
-#include "app/AnalysisDispatcher.hpp"
-#include "app/AppController.hpp"
-#include "app/AppOptions.hpp"
-#include "app/BondCutoffService.hpp"
-#include "app/PlotController.hpp"
-#include "app/TrajectoryLoader.hpp"
+#include "app/core/AppController.hpp"
+#include "app/core/AppOptions.hpp"
+#include "app/services/AnalysisDispatcher.hpp"
+#include "app/services/BondCutoffService.hpp"
+#include "app/services/TrajectoryLoader.hpp"
+#include "app/viewmodel/PlotController.hpp"
 #include <filesystem>
 
 #include <gtest/gtest.h>

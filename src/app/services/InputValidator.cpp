@@ -12,9 +12,9 @@
 #endif
 
 #include "AppWindow.h"
-#include "app/AppController.hpp"
-#include "app/InputValidator.hpp"
-#include "app/ValidationRuleService.hpp"
+#include "app/core/AppController.hpp"
+#include "app/services/InputValidator.hpp"
+#include "app/services/ValidationRuleService.hpp"
 
 namespace correlation::app {
 

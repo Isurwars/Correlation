@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "app/PlotExportService.hpp"
+#include "app/formatters/PlotExportService.hpp"
 #include <filesystem>
 #include <fstream>
 #include <gtest/gtest.h>
@@ -72,7 +72,8 @@ TEST(PlotExportServiceTests, ExportComparisonToSvgFile) {
   std::error_code ec;
   std::filesystem::remove(temp_path, ec);
 
-  const auto result = PlotExportService::exportComparison(temp_path.string(), datasets, "Total", config);
+  const auto result =
+      PlotExportService::exportComparison(temp_path.string(), datasets, "Total", config);
   ASSERT_TRUE(result.has_value());
   EXPECT_TRUE(std::filesystem::exists(temp_path));
 

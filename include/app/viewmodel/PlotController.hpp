@@ -8,10 +8,10 @@
 
 #pragma once
 
-#include "app/AnalysisDispatcher.hpp"
-#include "app/AppOptions.hpp"
-#include "app/PlotSeriesManager.hpp"
-#include "app/PlotTableFormatter.hpp"
+#include "app/core/AppOptions.hpp"
+#include "app/formatters/PlotSeriesManager.hpp"
+#include "app/formatters/PlotTableFormatter.hpp"
+#include "app/services/AnalysisDispatcher.hpp"
 #include "plotters/SvgPlotter.hpp"
 #include <slint.h>
 
