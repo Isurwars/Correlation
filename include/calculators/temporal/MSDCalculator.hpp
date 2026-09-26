@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/contracts/ITemporalCalculator.hpp"
 #include "core/Trajectory.hpp"
 
 #include <map>
@@ -29,7 +29,7 @@ namespace correlation::calculators {
  * The diffusion coefficient can be extracted from the long-time slope:
  *   D = MSD(t) / (6 * t)   (3D isotropic)
  */
-class MSDCalculator : public BaseCalculator {
+class MSDCalculator : public ITemporalCalculator {
 public:
   [[nodiscard]] std::string_view getName() const override { return "MSD"; }
   [[nodiscard]] std::string_view getShortName() const override { return "MSD"; }
@@ -38,9 +38,6 @@ public:
     return "Computes the Mean Squared Displacement (MSD) and diffusion "
            "coefficient via the Einstein relation.";
   }
-
-  [[nodiscard]] bool isFrameCalculator() const override { return false; }
-  [[nodiscard]] bool isTrajectoryCalculator() const override { return true; }
 
   /**
    * @brief Dispatches the calculation for an entire trajectory.

@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/contracts/ISpatialCalculator.hpp"
 
 #include <map>
 #include <string>
@@ -28,7 +28,7 @@ namespace correlation::calculators {
  * - `J(r)`: The radial distribution function related to the coordination
  * number, `J(r) = 4 * \pi * r^2 * \rho_0 * g(r)`.
  */
-class RDFCalculator : public BaseCalculator {
+class RDFCalculator : public ISpatialCalculator {
 public:
   [[nodiscard]] std::string_view getName() const override { return "g(r), J(r), G(r)"; }
   [[nodiscard]] std::string_view getShortName() const override { return "RDF"; }
@@ -36,9 +36,6 @@ public:
   [[nodiscard]] std::string_view getDescription() const override {
     return "Computes the Radial Distribution Function g_r, J_r, and G_r.";
   }
-
-  bool isFrameCalculator() const override { return true; }
-  bool isTrajectoryCalculator() const override { return false; }
 
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;

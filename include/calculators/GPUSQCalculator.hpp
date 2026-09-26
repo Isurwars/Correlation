@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "BaseCalculator.hpp"
+#include "calculators/BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
 
 namespace correlation::calculators {

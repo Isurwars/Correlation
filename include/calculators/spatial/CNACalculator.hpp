@@ -7,7 +7,7 @@
  */
 #pragma once
 
-#include "BaseCalculator.hpp"
+#include "calculators/BaseCalculator.hpp"
 
 namespace correlation::calculators {
 

@@ -38,32 +38,41 @@ target_link_libraries(readers_obj PRIVATE correlation_simd_options)
 
 # Calculators as an OBJECT library to ensure static registration triggers
 add_library(calculators_obj OBJECT
-    calculators/AngleCalculator.cpp
-    calculators/CNACalculator.cpp
-    calculators/ChiralityCalculator.cpp
-    calculators/DihedralCalculator.cpp
-    calculators/HBondCalculator.cpp
-    calculators/MotifFinder.cpp
-    calculators/CNCalculator.cpp
-    calculators/DistanceCalculator.cpp
-    calculators/RDFCalculator.cpp
-    calculators/PADCalculator.cpp
-    calculators/DADCalculator.cpp
-    calculators/RDCalculator.cpp
-    calculators/VACFCalculator.cpp
-    calculators/VDOSCalculator.cpp
-    calculators/StructureFactorCalculator.cpp
-    calculators/XRDCalculator.cpp
-    calculators/SteinhardtCalculator.cpp
-    calculators/MSDCalculator.cpp
+    # Base and factory
     calculators/CalculatorFactory.cpp
-    calculators/SDFCalculator.cpp
-    calculators/ClusterCalculator.cpp
-    calculators/LocalEntropyCalculator.cpp
-    calculators/VoronoiCalculator.cpp
-    calculators/HyperuniformityCalculator.cpp
     calculators/MLIPCalculator.cpp
-    calculators/TDOSCalculator.cpp
+
+    # Spatial calculators
+    calculators/spatial/AngleCalculator.cpp
+    calculators/spatial/ClusterCalculator.cpp
+    calculators/spatial/CNACalculator.cpp
+    calculators/spatial/CNCalculator.cpp
+    calculators/spatial/DADCalculator.cpp
+    calculators/spatial/DihedralCalculator.cpp
+    calculators/spatial/DistanceCalculator.cpp
+    calculators/spatial/HBondCalculator.cpp
+    calculators/spatial/MotifFinder.cpp
+    calculators/spatial/PADCalculator.cpp
+    calculators/spatial/RDCalculator.cpp
+    calculators/spatial/RDFCalculator.cpp
+    calculators/spatial/SDFCalculator.cpp
+    calculators/spatial/VoronoiCalculator.cpp
+
+    # Order and symmetry calculators
+    calculators/order/ChiralityCalculator.cpp
+    calculators/order/HyperuniformityCalculator.cpp
+    calculators/order/LocalEntropyCalculator.cpp
+    calculators/order/SteinhardtCalculator.cpp
+
+    # Temporal / dynamic calculators
+    calculators/temporal/MSDCalculator.cpp
+    calculators/temporal/VACFCalculator.cpp
+    calculators/temporal/VDOSCalculator.cpp
+
+    # Scattering and reciprocal space calculators
+    calculators/scattering/StructureFactorCalculator.cpp
+    calculators/scattering/TDOSCalculator.cpp
+    calculators/scattering/XRDCalculator.cpp
 )
 
 if(NOT (BUILD_WITH_CUDA OR BUILD_WITH_HIP))

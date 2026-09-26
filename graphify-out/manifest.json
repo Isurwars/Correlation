@@ -25,53 +25,53 @@
     "semantic_hash": ""
   },
   "include/calculators/AngleCalculator.hpp": {
-    "mtime": 1790173699.4832523,
-    "ast_hash": "2f4fe6df0cde9867dee5f016d9d79666",
+    "mtime": 1790389524.061249,
+    "ast_hash": "cbe08902d0ca75571f3fc728cdcd633c",
     "semantic_hash": ""
   },
   "include/calculators/BaseCalculator.hpp": {
-    "mtime": 1790175360.75406,
-    "ast_hash": "14fa918adfdfb7748c4233f6cda64582",
+    "mtime": 1790389582.064848,
+    "ast_hash": "ebe2951750b58010dce0150305b59610",
     "semantic_hash": ""
   },
   "include/calculators/CNACalculator.hpp": {
-    "mtime": 1790174283.5700057,
-    "ast_hash": "bc79dfbd4aa242bf529fe3122ca3033f",
+    "mtime": 1790389524.0621908,
+    "ast_hash": "90560b29ff7e727b0a29310e9948dd7e",
     "semantic_hash": ""
   },
   "include/calculators/CNCalculator.hpp": {
-    "mtime": 1790174242.7031405,
-    "ast_hash": "45c52999b2491f7d25dbe52d56d7f566",
+    "mtime": 1790389524.0621743,
+    "ast_hash": "885e5fbd75a47743730aa49912373118",
     "semantic_hash": ""
   },
   "include/calculators/CalculatorFactory.hpp": {
-    "mtime": 1790175378.4759955,
-    "ast_hash": "325d6d5b18a2979d81138e0da56860b3",
+    "mtime": 1790389589.7742732,
+    "ast_hash": "f20ff30f28db6125351252643751d007",
     "semantic_hash": ""
   },
   "include/calculators/ChiralityCalculator.hpp": {
-    "mtime": 1790174156.3865294,
-    "ast_hash": "f6db1fbb1e8118bc83bff6991a4df88e",
+    "mtime": 1790389524.0623078,
+    "ast_hash": "58b7417531b060472dcd9df224290fb9",
     "semantic_hash": ""
   },
   "include/calculators/ClusterCalculator.hpp": {
-    "mtime": 1790174464.5219564,
-    "ast_hash": "d95f7fc7caab305565ecb539f1bc4dc5",
+    "mtime": 1790389524.0622082,
+    "ast_hash": "43ce05003cafd64440bfed64b527514c",
     "semantic_hash": ""
   },
   "include/calculators/DADCalculator.hpp": {
-    "mtime": 1790173546.1848829,
-    "ast_hash": "8a5861b95b26eee141d3dfbd742024aa",
+    "mtime": 1790389524.0621078,
+    "ast_hash": "5a14c9fa1375683378a40470373be4cd",
     "semantic_hash": ""
   },
   "include/calculators/DihedralCalculator.hpp": {
-    "mtime": 1790173733.300703,
-    "ast_hash": "129953735e11371647bb5ff354ff7637",
+    "mtime": 1790389524.0621367,
+    "ast_hash": "622fff1d595c6721d0eb6301ead9b892",
     "semantic_hash": ""
   },
   "include/calculators/DistanceCalculator.hpp": {
-    "mtime": 1790173975.7647588,
-    "ast_hash": "061038844af6b074cfdc9a6d3659bcc6",
+    "mtime": 1790389524.0614882,
+    "ast_hash": "c48fa6d439c987dd8fa77a657a84289a",
     "semantic_hash": ""
   },
   "include/calculators/GPUDistanceCalculator.hpp": {
@@ -80,83 +80,83 @@
     "semantic_hash": ""
   },
   "include/calculators/GPUSQCalculator.hpp": {
-    "mtime": 1790175665.3850176,
-    "ast_hash": "3572bffd29c51ee6ead0b38fb33ab3d5",
+    "mtime": 1790389589.773289,
+    "ast_hash": "c4a99342eb229402f52d2ab99de61252",
     "semantic_hash": ""
   },
   "include/calculators/HBondCalculator.hpp": {
-    "mtime": 1790175153.9961288,
-    "ast_hash": "c44d99c031de1927264fea9265b7bf3f",
+    "mtime": 1790389524.062224,
+    "ast_hash": "23b2a06ae97a495c0bfc8175c340f65e",
     "semantic_hash": ""
   },
   "include/calculators/HyperuniformityCalculator.hpp": {
-    "mtime": 1790175212.0552516,
-    "ast_hash": "745de0c7d9701e5288e4984153a7e417",
+    "mtime": 1790389524.0623412,
+    "ast_hash": "60a8657203d926a05463b5d6f4adfeb1",
     "semantic_hash": ""
   },
   "include/calculators/LocalEntropyCalculator.hpp": {
-    "mtime": 1790175258.6732645,
-    "ast_hash": "bbc5c7472742b1a9e354f96673c26735",
+    "mtime": 1790389524.0623243,
+    "ast_hash": "ae7748cf403138c4d5e904718655c30a",
     "semantic_hash": ""
   },
   "include/calculators/MSDCalculator.hpp": {
-    "mtime": 1790174948.4795241,
-    "ast_hash": "f324da23473b633e753c0dfd32d742a3",
+    "mtime": 1790389524.062359,
+    "ast_hash": "5b7ab7866096ee2b4714a2580328e235",
     "semantic_hash": ""
   },
   "include/calculators/MotifFinder.hpp": {
-    "mtime": 1790174554.8254242,
-    "ast_hash": "08bfd349a66efab251ba9217efc082da",
+    "mtime": 1790389524.0622413,
+    "ast_hash": "22d0d65a2fc298942ef231e4d6a77e88",
     "semantic_hash": ""
   },
   "include/calculators/PADCalculator.hpp": {
-    "mtime": 1790173502.9809837,
-    "ast_hash": "3c6d6db9b4b8ff3d3097596b20ad4e4f",
+    "mtime": 1790389524.061918,
+    "ast_hash": "6a188325df3718eef8ad837a47b08e35",
     "semantic_hash": ""
   },
   "include/calculators/RDCalculator.hpp": {
-    "mtime": 1790174652.2355232,
-    "ast_hash": "f062fca24852502e55fd768c34596499",
+    "mtime": 1790389524.062259,
+    "ast_hash": "dcfc0bc467c175d905eb9af6616f33b5",
     "semantic_hash": ""
   },
   "include/calculators/RDFCalculator.hpp": {
-    "mtime": 1790173240.3233912,
-    "ast_hash": "916ff2e8b0f8d14355162261a02bd5e7",
+    "mtime": 1790389524.0618455,
+    "ast_hash": "0770b0c4b272226817f44992d641185b",
     "semantic_hash": ""
   },
   "include/calculators/SDFCalculator.hpp": {
-    "mtime": 1790175297.2582228,
-    "ast_hash": "8b8f4d616ee4c693627e648cf26fa8a1",
+    "mtime": 1790389524.0622742,
+    "ast_hash": "b952485bd90ff4e975fd38d97f18fa4b",
     "semantic_hash": ""
   },
   "include/calculators/SteinhardtCalculator.hpp": {
-    "mtime": 1790174328.0037694,
-    "ast_hash": "9b044a187a790b2abb3eaf54a3adc74b",
+    "mtime": 1790389524.0622919,
+    "ast_hash": "cd00978812a9e734609dab98fa13ebbb",
     "semantic_hash": ""
   },
   "include/calculators/StructureFactorCalculator.hpp": {
-    "mtime": 1790173328.6942983,
-    "ast_hash": "593bd1038081ddb7b2d918468587e53b",
+    "mtime": 1790389524.0624077,
+    "ast_hash": "dfdc690233c4085dc18740dcc49bedea",
     "semantic_hash": ""
   },
   "include/calculators/VACFCalculator.hpp": {
-    "mtime": 1790175001.218135,
-    "ast_hash": "d990ce44681f077bbaac53149fcaa0c5",
+    "mtime": 1790389524.0623753,
+    "ast_hash": "e549eefaeab7bf4a965dcab0456bec09",
     "semantic_hash": ""
   },
   "include/calculators/VDOSCalculator.hpp": {
-    "mtime": 1790175058.5636337,
-    "ast_hash": "7d8b31749b32703892115e368e0b8738",
+    "mtime": 1790389524.062391,
+    "ast_hash": "225f4971b477d6bdecc8870a560d9dc1",
     "semantic_hash": ""
   },
   "include/calculators/VoronoiCalculator.hpp": {
-    "mtime": 1790174021.9492238,
-    "ast_hash": "bc81fcab9767c289e51cba7ee810af7b",
+    "mtime": 1790389524.0621567,
+    "ast_hash": "9d79d38f346dcf49df422513b277a625",
     "semantic_hash": ""
   },
   "include/calculators/XRDCalculator.hpp": {
-    "mtime": 1790173412.9752395,
-    "ast_hash": "7e2ee94869187117d19dd800aaf7c5c2",
+    "mtime": 1790389524.0624232,
+    "ast_hash": "553eb0a5f67afdc84b34d8c45476ebfd",
     "semantic_hash": ""
   },
   "include/cli/CliParser.hpp": {
@@ -484,49 +484,9 @@
     "ast_hash": "e4056ce7ba2a89e00efc6403ac5ee499",
     "semantic_hash": "e4056ce7ba2a89e00efc6403ac5ee499"
   },
-  "src/calculators/AngleCalculator.cpp": {
-    "mtime": 1790181953.0450177,
-    "ast_hash": "38ee3d5f263fc2293e4e7ae30ea1c5c4",
-    "semantic_hash": ""
-  },
-  "src/calculators/CNACalculator.cpp": {
-    "mtime": 1790181953.044397,
-    "ast_hash": "ae5a20eed7d1a7e3e0ede7939ef9fd67",
-    "semantic_hash": ""
-  },
-  "src/calculators/CNCalculator.cpp": {
-    "mtime": 1790181953.0436502,
-    "ast_hash": "f7c8b20c17540bb090a8163db8face8a",
-    "semantic_hash": ""
-  },
   "src/calculators/CalculatorFactory.cpp": {
     "mtime": 1790181953.0442843,
     "ast_hash": "0d946b5dd221abc202fa8b282f1bd49b",
-    "semantic_hash": ""
-  },
-  "src/calculators/ChiralityCalculator.cpp": {
-    "mtime": 1790181953.0450659,
-    "ast_hash": "1ab907995b5b682c912b95734e885aad",
-    "semantic_hash": ""
-  },
-  "src/calculators/ClusterCalculator.cpp": {
-    "mtime": 1790186024.978606,
-    "ast_hash": "078b0ffe681527ac9f434a391d5e7850",
-    "semantic_hash": ""
-  },
-  "src/calculators/DADCalculator.cpp": {
-    "mtime": 1790181953.0429933,
-    "ast_hash": "d39680cc94d3df214f0b5878074e79cf",
-    "semantic_hash": ""
-  },
-  "src/calculators/DihedralCalculator.cpp": {
-    "mtime": 1790181953.0438359,
-    "ast_hash": "012f3bc6b974df82b5b6a1f94dee7f69",
-    "semantic_hash": ""
-  },
-  "src/calculators/DistanceCalculator.cpp": {
-    "mtime": 1790181953.044794,
-    "ast_hash": "c339ac8bed6134e8fed66a3c4f9822ec",
     "semantic_hash": ""
   },
   "src/calculators/GPUDistanceCalculator.cu": {
@@ -537,81 +497,6 @@
   "src/calculators/GPUSQCalculator.cu": {
     "mtime": 1790181953.0431867,
     "ast_hash": "6b5991d985e53610c6d125ac5895f303",
-    "semantic_hash": ""
-  },
-  "src/calculators/HBondCalculator.cpp": {
-    "mtime": 1790181953.0432484,
-    "ast_hash": "9fe4c3ecc49732617c1d06e16cfa4ba5",
-    "semantic_hash": ""
-  },
-  "src/calculators/HyperuniformityCalculator.cpp": {
-    "mtime": 1790181953.0445101,
-    "ast_hash": "40758ed709afe9d12e041549845cc703",
-    "semantic_hash": ""
-  },
-  "src/calculators/LocalEntropyCalculator.cpp": {
-    "mtime": 1790181953.0452244,
-    "ast_hash": "607b478d5c25d07f1ab1b8c40194edf9",
-    "semantic_hash": ""
-  },
-  "src/calculators/MSDCalculator.cpp": {
-    "mtime": 1790181953.044917,
-    "ast_hash": "d65e34757fc02c9084f9195ac4101a7a",
-    "semantic_hash": ""
-  },
-  "src/calculators/MotifFinder.cpp": {
-    "mtime": 1790181953.044588,
-    "ast_hash": "9d46216502ac9eadf63ac4ce7865910e",
-    "semantic_hash": ""
-  },
-  "src/calculators/PADCalculator.cpp": {
-    "mtime": 1790181953.0445533,
-    "ast_hash": "662faf93c951cd36106be020d92e4a51",
-    "semantic_hash": ""
-  },
-  "src/calculators/RDCalculator.cpp": {
-    "mtime": 1790181953.0449486,
-    "ast_hash": "9f0c096b0f6a1a62f518b41ea76ac9b3",
-    "semantic_hash": ""
-  },
-  "src/calculators/RDFCalculator.cpp": {
-    "mtime": 1790181953.0451076,
-    "ast_hash": "20ea2263f0d81843e6d8b8ae14aaefa3",
-    "semantic_hash": ""
-  },
-  "src/calculators/SDFCalculator.cpp": {
-    "mtime": 1790181953.044988,
-    "ast_hash": "71f4a084272b189eb6188f8612ebafb1",
-    "semantic_hash": ""
-  },
-  "src/calculators/SteinhardtCalculator.cpp": {
-    "mtime": 1790182259.3240716,
-    "ast_hash": "9c445f8d81f4fbe0e03af363f9e69c48",
-    "semantic_hash": ""
-  },
-  "src/calculators/StructureFactorCalculator.cpp": {
-    "mtime": 1790181953.042749,
-    "ast_hash": "a9b4eabc7737589881bc47b1d1943e4c",
-    "semantic_hash": ""
-  },
-  "src/calculators/VACFCalculator.cpp": {
-    "mtime": 1790181953.0446446,
-    "ast_hash": "bd4fa23996f34902d03aee18bd877931",
-    "semantic_hash": ""
-  },
-  "src/calculators/VDOSCalculator.cpp": {
-    "mtime": 1790181953.0432875,
-    "ast_hash": "de48a97ae836a4275beae0e011d0295d",
-    "semantic_hash": ""
-  },
-  "src/calculators/VoronoiCalculator.cpp": {
-    "mtime": 1790181953.0437639,
-    "ast_hash": "4744e841ba135dd94273dc27630f9ca1",
-    "semantic_hash": ""
-  },
-  "src/calculators/XRDCalculator.cpp": {
-    "mtime": 1790181953.0436954,
-    "ast_hash": "8b8ee404c022e626f35cce98c631b8d5",
     "semantic_hash": ""
   },
   "src/cli/CliParser.cpp": {
@@ -1225,8 +1110,8 @@
     "semantic_hash": "fa5794c577c54fcf0888468db60e0c22"
   },
   "src/CMakeLists.txt": {
-    "mtime": 1790375682.2697272,
-    "ast_hash": "c6133587e3163f36286710ed095a9291",
+    "mtime": 1790389531.55261,
+    "ast_hash": "e6d3189a8a57c5d9b5f303cb5841a39a",
     "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
@@ -1405,13 +1290,13 @@
     "semantic_hash": ""
   },
   "include/calculators/GPUSteinhardtCalculator.hpp": {
-    "mtime": 1790175676.143916,
-    "ast_hash": "5725092d49657c04a957c994eab30a3b",
+    "mtime": 1790389589.772732,
+    "ast_hash": "2c445f523c27774a11180d9a9d1cbdde",
     "semantic_hash": ""
   },
   "include/calculators/MLIPCalculator.hpp": {
-    "mtime": 1790175334.6881404,
-    "ast_hash": "acdaffcb593b54daf7dc420cbc97b9b0",
+    "mtime": 1790389589.7736118,
+    "ast_hash": "41b8d52ea7557ee74c9fe2ee29652c1e",
     "semantic_hash": ""
   },
   "include/mlip/MLIPInterface.hpp": {
@@ -1600,8 +1485,8 @@
     "semantic_hash": ""
   },
   "include/calculators/GPUXRDCalculator.hpp": {
-    "mtime": 1790175956.6377733,
-    "ast_hash": "485a3cf8829489176572b1f225e182d1",
+    "mtime": 1790389589.7741132,
+    "ast_hash": "ed6cdeae2191b494a168605938fed529",
     "semantic_hash": ""
   },
   "include/calculators/gpu/SYCLAngleCalculator.hpp": {
@@ -1680,8 +1565,8 @@
     "semantic_hash": ""
   },
   "include/calculators/TDOSCalculator.hpp": {
-    "mtime": 1789591638.8465993,
-    "ast_hash": "a92237d415dee27d19858ac0ac2fbf08",
+    "mtime": 1790389524.062439,
+    "ast_hash": "95e544d676df3a90d156926d1ecac514",
     "semantic_hash": ""
   },
   "include/core/DeviceBuffer.hpp": {
@@ -1727,11 +1612,6 @@
   "src/calculators/GPUXRDCalculator.cu": {
     "mtime": 1790181953.0434268,
     "ast_hash": "e35ccec2a1130917de27fb960b1297d5",
-    "semantic_hash": ""
-  },
-  "src/calculators/TDOSCalculator.cpp": {
-    "mtime": 1790181953.044348,
-    "ast_hash": "8d68fa702b0f36443266e74a1ff97c9f",
     "semantic_hash": ""
   },
   "src/readers/AbinitReader.cpp": {
@@ -2492,6 +2372,261 @@
   "tests/unit/app/TrajectoryLoaderTests.cpp": {
     "mtime": 1790367516.8873134,
     "ast_hash": "510e8795fe684f2220d335e863c1dbb2",
+    "semantic_hash": ""
+  },
+  "include/calculators/contracts/ICalculator.hpp": {
+    "mtime": 1790389464.2656293,
+    "ast_hash": "0d04070765dd92dead0d3f51c5e92148",
+    "semantic_hash": ""
+  },
+  "include/calculators/contracts/ISpatialCalculator.hpp": {
+    "mtime": 1790389474.9964664,
+    "ast_hash": "6e3699c94af2676d4ee5abf7df62c37c",
+    "semantic_hash": ""
+  },
+  "include/calculators/contracts/ITemporalCalculator.hpp": {
+    "mtime": 1790389480.3943844,
+    "ast_hash": "883b76b7bb755ff76436f589865447f2",
+    "semantic_hash": ""
+  },
+  "include/calculators/order/ChiralityCalculator.hpp": {
+    "mtime": 1790389589.776148,
+    "ast_hash": "93f512be5490390898665f6e169ef2e0",
+    "semantic_hash": ""
+  },
+  "include/calculators/order/HyperuniformityCalculator.hpp": {
+    "mtime": 1790389589.7762218,
+    "ast_hash": "4805444fc9472e0635752b5a3cdcb616",
+    "semantic_hash": ""
+  },
+  "include/calculators/order/LocalEntropyCalculator.hpp": {
+    "mtime": 1790389589.776255,
+    "ast_hash": "d3aa3ea77ee3fced62e67f19cdd7789f",
+    "semantic_hash": ""
+  },
+  "include/calculators/order/SteinhardtCalculator.hpp": {
+    "mtime": 1790389589.7761834,
+    "ast_hash": "6957775ef872888845f84d88e68ae6f8",
+    "semantic_hash": ""
+  },
+  "include/calculators/scattering/StructureFactorCalculator.hpp": {
+    "mtime": 1790389589.7758338,
+    "ast_hash": "7a76c33b05931b36d394ddc0cdf2fa7c",
+    "semantic_hash": ""
+  },
+  "include/calculators/scattering/TDOSCalculator.hpp": {
+    "mtime": 1790389589.775982,
+    "ast_hash": "6ee2c238fe0f8e18b446b941e3f77b23",
+    "semantic_hash": ""
+  },
+  "include/calculators/scattering/XRDCalculator.hpp": {
+    "mtime": 1790389589.7757888,
+    "ast_hash": "a2369fa508e8ad6b6b81a03b1151a21b",
+    "semantic_hash": ""
+  },
+  "include/calculators/spatial/AngleCalculator.hpp": {
+    "mtime": 1790389589.7750518,
+    "ast_hash": "4ab5018e7a18ae96c6575e6c75cd0ce6",
+    "semantic_hash": ""
+  },
+  "include/calculators/spatial/CNACalculator.hpp": {
+    "mtime": 1790389589.7753527,
+    "ast_hash": "f45c24b4a90178460fd5764479099488",
+    "semantic_hash": ""
+  },
+  "include/calculators/spatial/CNCalculator.hpp": {
+    "mtime": 1790389589.774675,
+    "ast_hash": "8c1dd57a689385e56e85d8c7dea05624",
+    "semantic_hash": ""
+  },
+  "include/calculators/spatial/ClusterCalculator.hpp": {
+    "mtime": 1790174464.5219564,
+    "ast_hash": "d95f7fc7caab305565ecb539f1bc4dc5",
+    "semantic_hash": ""
+  },
+  "include/calculators/spatial/DADCalculator.hpp": {
+    "mtime": 1790389589.7753177,
+    "ast_hash": "eef426d16fcbf3e80596cb0ecfebd782",
+    "semantic_hash": ""
+  },
+  "include/calculators/spatial/DihedralCalculator.hpp": {
+    "mtime": 1790389589.775448,
+    "ast_hash": "e25d9c025507eeb14b7855a5242598a3",
+    "semantic_hash": ""
+  },
+  "include/calculators/spatial/DistanceCalculator.hpp": {
+    "mtime": 1790389589.7756188,
+    "ast_hash": "b2189915632db93afcd62a4957854756",
+    "semantic_hash": ""
+  },
+  "include/calculators/spatial/HBondCalculator.hpp": {
+    "mtime": 1790389589.775566,
+    "ast_hash": "621a4ef134b7af1f1cb2fcc776b7fba7",
+    "semantic_hash": ""
+  },
+  "include/calculators/spatial/MotifFinder.hpp": {
+    "mtime": 1790174554.8254242,
+    "ast_hash": "08bfd349a66efab251ba9217efc082da",
+    "semantic_hash": ""
+  },
+  "include/calculators/spatial/PADCalculator.hpp": {
+    "mtime": 1790389589.7748327,
+    "ast_hash": "fbd6c73d830d91f3eeaf1b9545d427a5",
+    "semantic_hash": ""
+  },
+  "include/calculators/spatial/RDCalculator.hpp": {
+    "mtime": 1790389589.7752147,
+    "ast_hash": "18c77174cef4481dbc0072a84a4f4732",
+    "semantic_hash": ""
+  },
+  "include/calculators/spatial/RDFCalculator.hpp": {
+    "mtime": 1790389550.343326,
+    "ast_hash": "9ae1d4f1da9e21345d58041134783270",
+    "semantic_hash": ""
+  },
+  "include/calculators/spatial/SDFCalculator.hpp": {
+    "mtime": 1790389589.7754905,
+    "ast_hash": "6afaa63ce0713fcf6561127a82af6ea1",
+    "semantic_hash": ""
+  },
+  "include/calculators/spatial/VoronoiCalculator.hpp": {
+    "mtime": 1790389589.7756948,
+    "ast_hash": "5d947ab46696b67da744a8a2f790fab1",
+    "semantic_hash": ""
+  },
+  "include/calculators/temporal/MSDCalculator.hpp": {
+    "mtime": 1790389556.305236,
+    "ast_hash": "b0fb74899d4b30035d9d618ed80a3e85",
+    "semantic_hash": ""
+  },
+  "include/calculators/temporal/VACFCalculator.hpp": {
+    "mtime": 1790389589.7760882,
+    "ast_hash": "c42406370e4c3160d854fd5b55ff9dc2",
+    "semantic_hash": ""
+  },
+  "include/calculators/temporal/VDOSCalculator.hpp": {
+    "mtime": 1790389589.7760408,
+    "ast_hash": "7037830d2a35a2c9ca0b079f8162c4d0",
+    "semantic_hash": ""
+  },
+  "src/calculators/order/ChiralityCalculator.cpp": {
+    "mtime": 1790181953.0450659,
+    "ast_hash": "1ab907995b5b682c912b95734e885aad",
+    "semantic_hash": ""
+  },
+  "src/calculators/order/HyperuniformityCalculator.cpp": {
+    "mtime": 1790181953.0445101,
+    "ast_hash": "40758ed709afe9d12e041549845cc703",
+    "semantic_hash": ""
+  },
+  "src/calculators/order/LocalEntropyCalculator.cpp": {
+    "mtime": 1790181953.0452244,
+    "ast_hash": "607b478d5c25d07f1ab1b8c40194edf9",
+    "semantic_hash": ""
+  },
+  "src/calculators/order/SteinhardtCalculator.cpp": {
+    "mtime": 1790182259.3240716,
+    "ast_hash": "9c445f8d81f4fbe0e03af363f9e69c48",
+    "semantic_hash": ""
+  },
+  "src/calculators/scattering/StructureFactorCalculator.cpp": {
+    "mtime": 1790181953.042749,
+    "ast_hash": "a9b4eabc7737589881bc47b1d1943e4c",
+    "semantic_hash": ""
+  },
+  "src/calculators/scattering/TDOSCalculator.cpp": {
+    "mtime": 1790181953.044348,
+    "ast_hash": "8d68fa702b0f36443266e74a1ff97c9f",
+    "semantic_hash": ""
+  },
+  "src/calculators/scattering/XRDCalculator.cpp": {
+    "mtime": 1790181953.0436954,
+    "ast_hash": "8b8ee404c022e626f35cce98c631b8d5",
+    "semantic_hash": ""
+  },
+  "src/calculators/spatial/AngleCalculator.cpp": {
+    "mtime": 1790181953.0450177,
+    "ast_hash": "38ee3d5f263fc2293e4e7ae30ea1c5c4",
+    "semantic_hash": ""
+  },
+  "src/calculators/spatial/CNACalculator.cpp": {
+    "mtime": 1790181953.044397,
+    "ast_hash": "ae5a20eed7d1a7e3e0ede7939ef9fd67",
+    "semantic_hash": ""
+  },
+  "src/calculators/spatial/CNCalculator.cpp": {
+    "mtime": 1790181953.0436502,
+    "ast_hash": "f7c8b20c17540bb090a8163db8face8a",
+    "semantic_hash": ""
+  },
+  "src/calculators/spatial/ClusterCalculator.cpp": {
+    "mtime": 1790186024.978606,
+    "ast_hash": "078b0ffe681527ac9f434a391d5e7850",
+    "semantic_hash": ""
+  },
+  "src/calculators/spatial/DADCalculator.cpp": {
+    "mtime": 1790181953.0429933,
+    "ast_hash": "d39680cc94d3df214f0b5878074e79cf",
+    "semantic_hash": ""
+  },
+  "src/calculators/spatial/DihedralCalculator.cpp": {
+    "mtime": 1790181953.0438359,
+    "ast_hash": "012f3bc6b974df82b5b6a1f94dee7f69",
+    "semantic_hash": ""
+  },
+  "src/calculators/spatial/DistanceCalculator.cpp": {
+    "mtime": 1790181953.044794,
+    "ast_hash": "c339ac8bed6134e8fed66a3c4f9822ec",
+    "semantic_hash": ""
+  },
+  "src/calculators/spatial/HBondCalculator.cpp": {
+    "mtime": 1790181953.0432484,
+    "ast_hash": "9fe4c3ecc49732617c1d06e16cfa4ba5",
+    "semantic_hash": ""
+  },
+  "src/calculators/spatial/MotifFinder.cpp": {
+    "mtime": 1790181953.044588,
+    "ast_hash": "9d46216502ac9eadf63ac4ce7865910e",
+    "semantic_hash": ""
+  },
+  "src/calculators/spatial/PADCalculator.cpp": {
+    "mtime": 1790181953.0445533,
+    "ast_hash": "662faf93c951cd36106be020d92e4a51",
+    "semantic_hash": ""
+  },
+  "src/calculators/spatial/RDCalculator.cpp": {
+    "mtime": 1790181953.0449486,
+    "ast_hash": "9f0c096b0f6a1a62f518b41ea76ac9b3",
+    "semantic_hash": ""
+  },
+  "src/calculators/spatial/RDFCalculator.cpp": {
+    "mtime": 1790181953.0451076,
+    "ast_hash": "20ea2263f0d81843e6d8b8ae14aaefa3",
+    "semantic_hash": ""
+  },
+  "src/calculators/spatial/SDFCalculator.cpp": {
+    "mtime": 1790181953.044988,
+    "ast_hash": "71f4a084272b189eb6188f8612ebafb1",
+    "semantic_hash": ""
+  },
+  "src/calculators/spatial/VoronoiCalculator.cpp": {
+    "mtime": 1790181953.0437639,
+    "ast_hash": "4744e841ba135dd94273dc27630f9ca1",
+    "semantic_hash": ""
+  },
+  "src/calculators/temporal/MSDCalculator.cpp": {
+    "mtime": 1790181953.044917,
+    "ast_hash": "d65e34757fc02c9084f9195ac4101a7a",
+    "semantic_hash": ""
+  },
+  "src/calculators/temporal/VACFCalculator.cpp": {
+    "mtime": 1790181953.0446446,
+    "ast_hash": "bd4fa23996f34902d03aee18bd877931",
+    "semantic_hash": ""
+  },
+  "src/calculators/temporal/VDOSCalculator.cpp": {
+    "mtime": 1790181953.0432875,
+    "ast_hash": "de48a97ae836a4275beae0e011d0295d",
     "semantic_hash": ""
   }
 }
