@@ -5,7 +5,7 @@
 
 #include "analysis/DistributionFunctions.hpp"
 #include "analysis/StructureAnalyzer.hpp"
-#include "calculators/PADCalculator.hpp"
+#include "calculators/spatial/PADCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 

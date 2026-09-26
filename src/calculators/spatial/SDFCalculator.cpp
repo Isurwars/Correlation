@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/SDFCalculator.hpp"
+#include "calculators/spatial/SDFCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/Precision.hpp"
 

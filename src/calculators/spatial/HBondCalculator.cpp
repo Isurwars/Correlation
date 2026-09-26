@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/HBondCalculator.hpp"
+#include "calculators/spatial/HBondCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/Constants.hpp"
 #include <algorithm>

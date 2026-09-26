@@ -8,8 +8,8 @@
  */
 
 #include "mlip_bindings.hpp"
-#include "calculators/MLIPCalculator.hpp"
-#include "calculators/TDOSCalculator.hpp"
+#include "calculators/ml/MLIPCalculator.hpp"
+#include "calculators/scattering/TDOSCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 #include "mlip/GraphDescriptors.hpp"

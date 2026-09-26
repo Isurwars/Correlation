@@ -4,7 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "analysis/DynamicsAnalyzer.hpp"
-#include "calculators/MSDCalculator.hpp"
+#include "calculators/temporal/MSDCalculator.hpp"
 #include "core/Trajectory.hpp"
 
 #include <gtest/gtest.h>

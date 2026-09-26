@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/GPUDistanceCalculator.hpp"
+#include "calculators/gpu/GPUDistanceCalculator.hpp"
 #include "core/DeviceBuffer.hpp"
 #include "core/GPUErrorCheck.hpp"
 #include "core/GPUPortability.hpp"

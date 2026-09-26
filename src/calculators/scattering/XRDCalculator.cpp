@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/XRDCalculator.hpp"
+#include "calculators/scattering/XRDCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/Constants.hpp"
 #include "math/Precision.hpp"

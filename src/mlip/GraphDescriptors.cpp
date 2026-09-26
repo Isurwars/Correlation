@@ -7,7 +7,7 @@
  */
 
 #include "mlip/GraphDescriptors.hpp"
-#include "calculators/MotifFinder.hpp"
+#include "calculators/spatial/MotifFinder.hpp"
 #include "core/NeighborGraph.hpp"
 
 #include <algorithm>

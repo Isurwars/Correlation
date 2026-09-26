@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/DihedralCalculator.hpp"
+#include "calculators/spatial/DihedralCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
 #include "math/LinearAlgebra.hpp"
 

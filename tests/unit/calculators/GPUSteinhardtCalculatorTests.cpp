@@ -9,8 +9,8 @@
 #include "analysis/DistributionFunctions.hpp"
 #include "analysis/StructureAnalyzer.hpp"
 #include "calculators/CalculatorFactory.hpp"
-#include "calculators/GPUSteinhardtCalculator.hpp"
-#include "calculators/SteinhardtCalculator.hpp"
+#include "calculators/gpu/GPUSteinhardtCalculator.hpp"
+#include "calculators/order/SteinhardtCalculator.hpp"
 #include "core/Cell.hpp"
 
 #include <gtest/gtest.h>

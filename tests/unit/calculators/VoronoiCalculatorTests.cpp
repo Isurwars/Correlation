@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "calculators/VoronoiCalculator.hpp"
+#include "calculators/spatial/VoronoiCalculator.hpp"
 #include "core/Cell.hpp"
 #include "math/Precision.hpp"
 

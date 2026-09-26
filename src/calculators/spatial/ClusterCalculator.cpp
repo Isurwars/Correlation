@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/ClusterCalculator.hpp"
+#include "calculators/spatial/ClusterCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
 
 #include <algorithm>

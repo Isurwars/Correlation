@@ -6,9 +6,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 #include "analysis/StructureAnalyzer.hpp"
-#include "calculators/AngleCalculator.hpp"
-#include "calculators/DihedralCalculator.hpp"
-#include "calculators/DistanceCalculator.hpp"
+#include "calculators/spatial/AngleCalculator.hpp"
+#include "calculators/spatial/DihedralCalculator.hpp"
+#include "calculators/spatial/DistanceCalculator.hpp"
 
 #include <algorithm>
 #include <cmath>

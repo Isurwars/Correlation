@@ -9,7 +9,7 @@
 #pragma once
 
 #include "analysis/DistributionFunctions.hpp"
-#include "calculators/AngleCalculator.hpp"
+#include "calculators/spatial/AngleCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/NeighborGraph.hpp"
 #include "math/Precision.hpp"

@@ -9,7 +9,7 @@
 #pragma once
 
 #include "analysis/DistributionFunctions.hpp"
-#include "calculators/TDOSCalculator.hpp"
+#include "calculators/scattering/TDOSCalculator.hpp"
 #include "core/Trajectory.hpp"
 #include "math/Precision.hpp"
 

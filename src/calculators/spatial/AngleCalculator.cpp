@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/AngleCalculator.hpp"
+#include "calculators/spatial/AngleCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
 #include "math/Precision.hpp"
 #include "math/SIMDUtils.hpp"

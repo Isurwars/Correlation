@@ -16,7 +16,7 @@
 #include "analysis/StructuralElectronicCorrelation.hpp"
 #include "analysis/StructureAnalyzer.hpp"
 #include "analysis/TrajectoryAnalyzer.hpp"
-#include "calculators/TDOSCalculator.hpp"
+#include "calculators/scattering/TDOSCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 #include "math/Smoothing.hpp"

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "calculators/DistanceCalculator.hpp"
+#include "calculators/spatial/DistanceCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/NeighborGraph.hpp"
 #include "math/Precision.hpp"

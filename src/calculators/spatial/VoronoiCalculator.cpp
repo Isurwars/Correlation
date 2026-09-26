@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/VoronoiCalculator.hpp"
+#include "calculators/spatial/VoronoiCalculator.hpp"
 #include "c_loops.hh"
 #include "calculators/CalculatorFactory.hpp"
 #include "cell.hh"

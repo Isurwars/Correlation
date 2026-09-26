@@ -4,7 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "analysis/DistributionFunctions.hpp"
-#include "calculators/HyperuniformityCalculator.hpp"
+#include "calculators/order/HyperuniformityCalculator.hpp"
 #include "core/Cell.hpp"
 
 #include "../../CrystalTestHelper.hpp"

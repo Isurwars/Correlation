@@ -8,8 +8,8 @@
  */
 
 #include "calculators/CalculatorFactory.hpp"
-#include "calculators/GPUXRDCalculator.hpp"
-#include "calculators/XRDCalculator.hpp"
+#include "calculators/gpu/GPUXRDCalculator.hpp"
+#include "calculators/scattering/XRDCalculator.hpp"
 #include "core/DeviceBuffer.hpp"
 #include "core/GPUPortability.hpp"
 #include "math/Constants.hpp"

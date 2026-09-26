@@ -6,9 +6,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/RDFCalculator.hpp"
+#include "calculators/spatial/RDFCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
-#include "calculators/DistanceCalculator.hpp"
+#include "calculators/spatial/DistanceCalculator.hpp"
 #include "math/Constants.hpp"
 #include "math/Precision.hpp"
 #include "math/SIMDUtils.hpp"

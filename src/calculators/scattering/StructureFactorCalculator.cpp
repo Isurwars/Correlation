@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/StructureFactorCalculator.hpp"
+#include "calculators/scattering/StructureFactorCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/Constants.hpp"

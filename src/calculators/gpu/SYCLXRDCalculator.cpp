@@ -7,7 +7,7 @@
  */
 
 #include "calculators/gpu/SYCLXRDCalculator.hpp"
-#include "calculators/XRDCalculator.hpp"
+#include "calculators/scattering/XRDCalculator.hpp"
 #include "core/Trajectory.hpp"
 
 namespace correlation::calculators::sycl_gpu {

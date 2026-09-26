@@ -7,7 +7,7 @@
  */
 
 #include "calculators/gpu/SYCLSQCalculator.hpp"
-#include "calculators/StructureFactorCalculator.hpp"
+#include "calculators/scattering/StructureFactorCalculator.hpp"
 
 namespace correlation::calculators::sycl_gpu {
 

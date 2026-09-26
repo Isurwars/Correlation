@@ -7,7 +7,7 @@
  */
 
 #include "calculators/CalculatorFactory.hpp"
-#include "calculators/TDOSCalculator.hpp"
+#include "calculators/scattering/TDOSCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 #include "mlip/MLIPInterface.hpp"

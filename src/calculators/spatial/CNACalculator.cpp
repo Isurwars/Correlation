@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/CNACalculator.hpp"
+#include "calculators/spatial/CNACalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include <algorithm>
 #include <map>

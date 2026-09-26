@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/MSDCalculator.hpp"
+#include "calculators/temporal/MSDCalculator.hpp"
 #include "analysis/DynamicsAnalyzer.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/Precision.hpp"

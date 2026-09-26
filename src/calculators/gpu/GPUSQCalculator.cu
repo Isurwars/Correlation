@@ -10,8 +10,8 @@
  */
 
 #include "calculators/CalculatorFactory.hpp"
-#include "calculators/GPUSQCalculator.hpp"
-#include "calculators/StructureFactorCalculator.hpp"
+#include "calculators/gpu/GPUSQCalculator.hpp"
+#include "calculators/scattering/StructureFactorCalculator.hpp"
 #include "core/GPUPortability.hpp"
 #include "math/Constants.hpp"
 #include "math/Precision.hpp"

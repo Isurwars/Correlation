@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/LocalEntropyCalculator.hpp"
+#include "calculators/order/LocalEntropyCalculator.hpp"
 #include "analysis/StructureAnalyzer.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/Constants.hpp"

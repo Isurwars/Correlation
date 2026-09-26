@@ -4,7 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "analysis/DistributionFunctions.hpp"
-#include "calculators/StructureFactorCalculator.hpp"
+#include "calculators/scattering/StructureFactorCalculator.hpp"
 #include "core/Cell.hpp"
 #include "math/Precision.hpp"
 

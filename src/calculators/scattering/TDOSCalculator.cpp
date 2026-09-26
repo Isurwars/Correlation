@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/TDOSCalculator.hpp"
+#include "calculators/scattering/TDOSCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
 
 #include <map>

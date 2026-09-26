@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "calculators/MotifFinder.hpp"
+#include "calculators/spatial/MotifFinder.hpp"
 #include "core/Cell.hpp"
 #include "core/NeighborGraph.hpp"
 

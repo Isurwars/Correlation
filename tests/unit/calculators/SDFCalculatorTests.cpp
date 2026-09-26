@@ -4,7 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "analysis/DistributionFunctions.hpp"
-#include "calculators/SDFCalculator.hpp"
+#include "calculators/spatial/SDFCalculator.hpp"
 #include <gtest/gtest.h>
 
 using namespace correlation::calculators;

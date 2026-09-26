@@ -1,5 +1,5 @@
 #include "analysis/AnalysisTypes.hpp"
-#include "calculators/DistanceCalculator.hpp"
+#include "calculators/spatial/DistanceCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/NeighborGraph.hpp"
 

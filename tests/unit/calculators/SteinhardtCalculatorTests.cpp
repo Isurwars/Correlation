@@ -4,7 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "analysis/StructureAnalyzer.hpp"
-#include "calculators/SteinhardtCalculator.hpp"
+#include "calculators/order/SteinhardtCalculator.hpp"
 #include "core/Cell.hpp"
 
 #include "../../CrystalTestHelper.hpp"

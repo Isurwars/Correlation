@@ -6,14 +6,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/DistanceCalculator.hpp"
+#include "calculators/spatial/DistanceCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
 #include "math/LinearAlgebra.hpp"
 #include "math/Precision.hpp"
 #include "math/SIMDUtils.hpp"
 
 #if defined(CORRELATION_USE_CUDA) || defined(CORRELATION_USE_HIP)
-#include "calculators/GPUDistanceCalculator.hpp"
+#include "calculators/gpu/GPUDistanceCalculator.hpp"
 #endif
 
 #include <cmath>

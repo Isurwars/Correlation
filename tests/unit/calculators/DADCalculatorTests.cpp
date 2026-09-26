@@ -4,7 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "analysis/StructureAnalyzer.hpp"
-#include "calculators/DADCalculator.hpp"
+#include "calculators/spatial/DADCalculator.hpp"
 #include "core/Cell.hpp"
 
 #include <gtest/gtest.h>

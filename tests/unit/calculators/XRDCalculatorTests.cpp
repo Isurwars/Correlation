@@ -4,7 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "analysis/DistributionFunctions.hpp"
-#include "calculators/XRDCalculator.hpp"
+#include "calculators/scattering/XRDCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 

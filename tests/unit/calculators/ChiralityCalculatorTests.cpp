@@ -7,7 +7,7 @@
  */
 
 #include "analysis/StructureAnalyzer.hpp"
-#include "calculators/ChiralityCalculator.hpp"
+#include "calculators/order/ChiralityCalculator.hpp"
 #include "core/Cell.hpp"
 
 #include <gtest/gtest.h>

@@ -4,7 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "analysis/StructureAnalyzer.hpp"
-#include "calculators/LocalEntropyCalculator.hpp"
+#include "calculators/order/LocalEntropyCalculator.hpp"
 #include "core/Cell.hpp"
 
 #include <gtest/gtest.h>

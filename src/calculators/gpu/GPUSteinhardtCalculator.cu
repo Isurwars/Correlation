@@ -8,8 +8,8 @@
  */
 
 #include "calculators/CalculatorFactory.hpp"
-#include "calculators/GPUSteinhardtCalculator.hpp"
-#include "calculators/SteinhardtCalculator.hpp"
+#include "calculators/gpu/GPUSteinhardtCalculator.hpp"
+#include "calculators/order/SteinhardtCalculator.hpp"
 #include "core/GPUPortability.hpp"
 #include "math/Constants.hpp"
 #include "math/Precision.hpp"

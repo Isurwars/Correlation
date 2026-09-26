@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/VDOSCalculator.hpp"
+#include "calculators/temporal/VDOSCalculator.hpp"
 #include "analysis/DynamicsAnalyzer.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/Constants.hpp"

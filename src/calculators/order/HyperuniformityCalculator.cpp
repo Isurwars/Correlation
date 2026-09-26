@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/HyperuniformityCalculator.hpp"
+#include "calculators/order/HyperuniformityCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/LinearAlgebra.hpp"
 #include "math/Precision.hpp"

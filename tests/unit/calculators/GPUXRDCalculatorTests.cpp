@@ -8,7 +8,7 @@
 
 #include "analysis/DistributionFunctions.hpp"
 #include "calculators/CalculatorFactory.hpp"
-#include "calculators/GPUXRDCalculator.hpp"
+#include "calculators/gpu/GPUXRDCalculator.hpp"
 #include "core/Cell.hpp"
 
 #include <gtest/gtest.h>

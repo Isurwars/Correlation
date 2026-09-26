@@ -4,7 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "analysis/StructureAnalyzer.hpp"
-#include "calculators/RDCalculator.hpp"
+#include "calculators/spatial/RDCalculator.hpp"
 #include "core/NeighborGraph.hpp"
 #include "core/Trajectory.hpp"
 #include "readers/FileReader.hpp"

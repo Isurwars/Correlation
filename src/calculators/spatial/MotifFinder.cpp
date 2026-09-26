@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/MotifFinder.hpp"
+#include "calculators/spatial/MotifFinder.hpp"
 
 #include <algorithm>
 #include <cstddef>

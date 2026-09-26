@@ -7,7 +7,7 @@
  */
 
 #include "analysis/StructuralElectronicCorrelation.hpp"
-#include "calculators/SteinhardtCalculator.hpp"
+#include "calculators/order/SteinhardtCalculator.hpp"
 #include "math/Constants.hpp"
 #include "mlip/GraphDescriptors.hpp"
 #include "mlip/PeriodicGraphBuilder.hpp"

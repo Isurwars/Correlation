@@ -40,7 +40,9 @@ target_link_libraries(readers_obj PRIVATE correlation_simd_options)
 add_library(calculators_obj OBJECT
     # Base and factory
     calculators/CalculatorFactory.cpp
-    calculators/MLIPCalculator.cpp
+
+    # Machine learning calculators
+    calculators/ml/MLIPCalculator.cpp
 
     # Spatial calculators
     calculators/spatial/AngleCalculator.cpp
@@ -77,17 +79,17 @@ add_library(calculators_obj OBJECT
 
 if(NOT (BUILD_WITH_CUDA OR BUILD_WITH_HIP))
     set_source_files_properties(
-        calculators/GPUSQCalculator.cu
-        calculators/GPUDistanceCalculator.cu
-        calculators/GPUSteinhardtCalculator.cu
-        calculators/GPUXRDCalculator.cu
+        calculators/gpu/GPUSQCalculator.cu
+        calculators/gpu/GPUDistanceCalculator.cu
+        calculators/gpu/GPUSteinhardtCalculator.cu
+        calculators/gpu/GPUXRDCalculator.cu
         PROPERTIES LANGUAGE CXX
     )
     target_sources(calculators_obj PRIVATE
-        calculators/GPUSQCalculator.cu
-        calculators/GPUDistanceCalculator.cu
-        calculators/GPUSteinhardtCalculator.cu
-        calculators/GPUXRDCalculator.cu
+        calculators/gpu/GPUSQCalculator.cu
+        calculators/gpu/GPUDistanceCalculator.cu
+        calculators/gpu/GPUSteinhardtCalculator.cu
+        calculators/gpu/GPUXRDCalculator.cu
     )
 endif()
 target_sources(calculators_obj PRIVATE
@@ -107,10 +109,10 @@ target_link_libraries(calculators_obj PRIVATE correlation_simd_options)
 # Optional GPU-accelerated calculators (CUDA / HIP)
 if(BUILD_WITH_CUDA OR BUILD_WITH_HIP)
     add_library(gpu_calculators_obj OBJECT
-        calculators/GPUSQCalculator.cu
-        calculators/GPUDistanceCalculator.cu
-        calculators/GPUSteinhardtCalculator.cu
-        calculators/GPUXRDCalculator.cu
+        calculators/gpu/GPUSQCalculator.cu
+        calculators/gpu/GPUDistanceCalculator.cu
+        calculators/gpu/GPUSteinhardtCalculator.cu
+        calculators/gpu/GPUXRDCalculator.cu
     )
     target_include_directories(gpu_calculators_obj PRIVATE
         ${PROJECT_SOURCE_DIR}/include

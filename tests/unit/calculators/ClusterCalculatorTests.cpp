@@ -5,7 +5,7 @@
 
 #include "analysis/DistributionFunctions.hpp"
 #include "analysis/StructureAnalyzer.hpp"
-#include "calculators/ClusterCalculator.hpp"
+#include "calculators/spatial/ClusterCalculator.hpp"
 #include "core/Cell.hpp"
 #include <gtest/gtest.h>
 

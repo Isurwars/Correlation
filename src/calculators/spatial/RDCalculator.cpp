@@ -6,9 +6,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/RDCalculator.hpp"
+#include "calculators/spatial/RDCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
-#include "calculators/MotifFinder.hpp"
+#include "calculators/spatial/MotifFinder.hpp"
 
 #include <stdexcept>
 #include <utility>

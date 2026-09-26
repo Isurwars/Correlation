@@ -6,9 +6,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/GPUAngleCalculator.hpp"
-#include "calculators/GPUDistanceCalculator.hpp"
-#include "calculators/GPUXRDCalculator.hpp"
+#include "calculators/gpu/GPUAngleCalculator.hpp"
+#include "calculators/gpu/GPUDistanceCalculator.hpp"
+#include "calculators/gpu/GPUXRDCalculator.hpp"
 #include "calculators/gpu/SYCLAngleCalculator.hpp"
 #include "calculators/gpu/SYCLDistanceCalculator.hpp"
 #include "calculators/gpu/SYCLSQCalculator.hpp"

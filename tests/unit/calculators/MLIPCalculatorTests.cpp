@@ -7,7 +7,7 @@
  */
 
 #include "calculators/CalculatorFactory.hpp"
-#include "calculators/MLIPCalculator.hpp"
+#include "calculators/ml/MLIPCalculator.hpp"
 #include "core/Cell.hpp"
 #include "mlip/MLIPInterface.hpp"
 
