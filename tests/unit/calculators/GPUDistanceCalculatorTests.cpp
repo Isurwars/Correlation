@@ -15,7 +15,9 @@
 
 namespace correlation::calculators::gpu {
 
-TEST(GPUDistanceCalculatorTests, HasGPUDeviceCheck) { EXPECT_NO_THROW(has_gpu_device()); }
+TEST(GPUDistanceCalculatorTests, HasGPUDeviceCheck) {
+  EXPECT_NO_THROW({ [[maybe_unused]] bool has_dev = has_gpu_device(); });
+}
 
 TEST(GPUDistanceCalculatorTests, FloatPrecisionDistanceComputation) {
   correlation::core::Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});

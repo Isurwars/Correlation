@@ -78,14 +78,14 @@ TEST(GPUXRDCalculatorTests, ThrowsOnInvalidParams) {
   cell.addAtom("Si", {0.0, 0.0, 0.0});
 
   // Invalid lambda
-  EXPECT_THROW(gpu::compute_xrd_gpu(cell, {.lambda = -1.0}), std::invalid_argument);
+  EXPECT_THROW((void)gpu::compute_xrd_gpu(cell, {.lambda = -1.0}), std::invalid_argument);
 
   // Invalid theta bounds
-  EXPECT_THROW(gpu::compute_xrd_gpu(cell, {.theta_min = 80.0, .theta_max = 10.0}),
+  EXPECT_THROW((void)gpu::compute_xrd_gpu(cell, {.theta_min = 80.0, .theta_max = 10.0}),
                std::invalid_argument);
 
   // Invalid bin width
-  EXPECT_THROW(gpu::compute_xrd_gpu(cell, {.bin_width = 0.0}), std::invalid_argument);
+  EXPECT_THROW((void)gpu::compute_xrd_gpu(cell, {.bin_width = 0.0}), std::invalid_argument);
 }
 
 } // namespace correlation::calculators

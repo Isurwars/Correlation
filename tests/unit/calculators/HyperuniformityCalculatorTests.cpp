@@ -172,28 +172,28 @@ TEST_F(HyperuniformityCalculatorTests, ProducesExpectedHistograms) {
 TEST_F(HyperuniformityCalculatorTests, ThrowsOnInvalidBinWidth) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {5.0, 5.0, 5.0});
-  EXPECT_THROW(HyperuniformityCalculator::calculate(cell,
-                                                    {
-                                                        .num_samples = 100,
-                                                        .r_bin_width = 0.0,
-                                                    }),
+  EXPECT_THROW((void)HyperuniformityCalculator::calculate(cell,
+                                                          {
+                                                              .num_samples = 100,
+                                                              .r_bin_width = 0.0,
+                                                          }),
                std::invalid_argument);
-  EXPECT_THROW(HyperuniformityCalculator::calculate(cell,
-                                                    {
-                                                        .num_samples = 100,
-                                                        .r_bin_width = -1.0,
-                                                    }),
+  EXPECT_THROW((void)HyperuniformityCalculator::calculate(cell,
+                                                          {
+                                                              .num_samples = 100,
+                                                              .r_bin_width = -1.0,
+                                                          }),
                std::invalid_argument);
 }
 
 TEST_F(HyperuniformityCalculatorTests, ThrowsOnZeroSamples) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {5.0, 5.0, 5.0});
-  EXPECT_THROW(HyperuniformityCalculator::calculate(cell,
-                                                    {
-                                                        .num_samples = 0,
-                                                        .r_bin_width = 0.5,
-                                                    }),
+  EXPECT_THROW((void)HyperuniformityCalculator::calculate(cell,
+                                                          {
+                                                              .num_samples = 0,
+                                                              .r_bin_width = 0.5,
+                                                          }),
                std::invalid_argument);
 }
 

@@ -46,6 +46,8 @@ PlotController::PlotController(::AppWindow &window, AnalysisDispatcher &dispatch
 }
 
 PlotController::~PlotController() {
+  update_timer_.stop();
+  hover_timer_.stop();
   if (dialog_thread_.joinable()) {
     dialog_thread_.join();
   }

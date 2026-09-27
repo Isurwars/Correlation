@@ -95,13 +95,13 @@ TEST(AnalysisDispatcherTests, WriteFilesZipBundle) {
   opts.use_csv = true;
 
   const std::string zip_file = "test_dispatcher_bundle.zip";
-  std::error_code ec;
-  std::filesystem::remove(zip_file, ec);
+  std::error_code error_code;
+  std::filesystem::remove(zip_file, error_code);
 
   auto write_res = dispatcher.writeFiles(opts);
   EXPECT_TRUE(write_res.has_value()) << (write_res ? "" : write_res.error());
   EXPECT_TRUE(std::filesystem::exists(zip_file));
-  std::filesystem::remove(zip_file, ec);
+  std::filesystem::remove(zip_file, error_code);
 }
 
 } // namespace
