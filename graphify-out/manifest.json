@@ -920,8 +920,8 @@
     "semantic_hash": ""
   },
   "tests/unit/writers/WriterTests.cpp": {
-    "mtime": 1790181953.0629342,
-    "ast_hash": "37a699e2d97632115acb139911b937f6",
+    "mtime": 1790468479.8017406,
+    "ast_hash": "67cbc31d3bf0abe4deb4a2c40a035028",
     "semantic_hash": ""
   },
   ".github/workflows/ci.yml": {
@@ -2395,8 +2395,8 @@
     "semantic_hash": ""
   },
   "src/calculators/spatial/DistanceCalculator.cpp": {
-    "mtime": 1790447016.6097517,
-    "ast_hash": "2fc94ad9fdb946d62b8fc0fc270d1ab0",
+    "mtime": 1790468324.218588,
+    "ast_hash": "5d1b5dc3b6c8e393d2fed9ef4d1c3208",
     "semantic_hash": ""
   },
   "src/calculators/spatial/HBondCalculator.cpp": {

@@ -387,7 +387,9 @@
   "385": "ThreadAccumulators",
   "386": "PlotController::PlotController",
   "387": "TEST",
+  "388": "BinningConfig",
   "389": "PlotSize",
+  "390": "PeriodicShift",
   "391": "AtomFunctionalTests",
   "419": "MotifSignatureCounts"
 }
