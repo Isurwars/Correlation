@@ -12,8 +12,8 @@ Before writing, modifying, or generating ANY source code, build files, or produc
 
 Ask strictly **ONE question at a time**. Never batch multiple questions, combine multiple topics, or present menus of inquiries simultaneously.
 
-- **Sane, Structured Options:** Present 2–3 concrete, well-grounded options (Option A, Option B, Option C) with explicit technical trade-offs (latency, cache locality, memory overhead, API ergonomics). Avoid nonsensical, ungrounded, or frivolous options.
-- **Interactive Tooling:** ALWAYS use the `ask_question` tool when soliciting multiple-choice responses from the user, presenting exactly one question per modal.
+- **Sane, Structured Options:** Present 2–3 concrete, well-grounded options with explicit technical trade-offs (latency, cache locality, memory overhead, API ergonomics). Format the optimal option with the `(Recommended)` prefix as the first choice to enable rapid single-click decision making.
+- **Interactive Tooling:** ALWAYS use the `ask_question` tool when soliciting multiple-choice responses from the user, presenting exactly one question per modal. Do NOT append manual option numbers (1, 2, 3 or A, B, C) or redundant "Other" options inside the option text strings.
 - **Wait State:** Emit the single question and immediately wait for the user's response before formulating any subsequent inquiries or actions.
 - **Proactive Coverage:** Cover non-functional requirements proactively (performance bounds, scale limits, thread safety, UI state synchronization) one topic per turn.
 

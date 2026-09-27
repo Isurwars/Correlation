@@ -55,10 +55,16 @@ When reporting failure loops or compilation issues, use a strict **[File:Line] -
 
 - **Example**: `[src/buffer.cpp:14] -> Linker Error (Unresolved external symbol) -> Add target_link_libraries in CMakeLists.txt.`
 
-### 3. Structural Scannability
+### 3. Structural Scannability & Progressive Disclosure
 - Avoid paragraphs longer than two sentences.
 - Prefer tables for multi-variable comparisons.
-- Bold the primary technical anchor word in every bullet point.
+- **Bold** the primary technical anchor word in every bullet point.
+- **Progressive Disclosure:** Offload detailed analyses, audits, or implementation plans exceeding **30 lines** into markdown artifacts (`brain/.../*.md`). Present only clickable file links and dense summary tables in the chat response.
+
+### 4. Progress & MCP Telemetry
+- **Progress Checkpoints:** For multi-step tasks, emit compact tables (`| Phase | Action | Status | Notes |`).
+- **MCP Delegation Log:** When using local MCP workers, emit:
+  `[MCP: <ServerName>] -> [Task: <Action>] -> [Status: OK | FALLBACK] -> [Audit: PASS | REJECTED]`
 
 ---
 
