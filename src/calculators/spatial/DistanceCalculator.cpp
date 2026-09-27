@@ -502,9 +502,17 @@ void validateInputs(real_t cutoff_sq, const correlation::analysis::BondCutoffMat
   }
 }
 /**
- * @brief Computes search grid dimensions and cutoff parameters.
+ * @brief Computes search grid dimensions and cutoff parameters with numerical degeneracy guards.
  */
 SearchGridConfig buildSearchGridConfig(const correlation::core::Cell &cell, real_t cutoff_sq) {
+  constexpr auto K_ZERO = static_cast<real_t>(0.0);
+  const real_t volume = std::abs(cell.volume());
+
+  if (cutoff_sq <= K_ZERO || volume <= K_ZERO) {
+    return SearchGridConfig{
+        .k_x = 1, .k_y = 1, .k_z = 1, .max_dx = 1, .max_dy = 1, .max_dz = 1, .is_small_cell = true};
+  }
+
   const auto &lattice = cell.latticeVectors();
   const math::Vector3<real_t> lattice_a = lattice[0];
   const math::Vector3<real_t> lattice_b = lattice[1];
@@ -514,10 +522,18 @@ SearchGridConfig buildSearchGridConfig(const correlation::core::Cell &cell, real
   const math::Vector3<real_t> cross_ca = math::cross(lattice_c, lattice_a);
   const math::Vector3<real_t> cross_ab = math::cross(lattice_a, lattice_b);
 
-  const real_t volume = cell.volume();
-  const real_t width_x = volume / math::norm(cross_bc);
-  const real_t width_y = volume / math::norm(cross_ca);
-  const real_t width_z = volume / math::norm(cross_ab);
+  const real_t norm_bc = math::norm(cross_bc);
+  const real_t norm_ca = math::norm(cross_ca);
+  const real_t norm_ab = math::norm(cross_ab);
+
+  if (norm_bc <= K_ZERO || norm_ca <= K_ZERO || norm_ab <= K_ZERO) {
+    return SearchGridConfig{
+        .k_x = 1, .k_y = 1, .k_z = 1, .max_dx = 1, .max_dy = 1, .max_dz = 1, .is_small_cell = true};
+  }
+
+  const real_t width_x = volume / norm_bc;
+  const real_t width_y = volume / norm_ca;
+  const real_t width_z = volume / norm_ab;
 
   const real_t cutoff = std::sqrt(cutoff_sq);
 
@@ -577,8 +593,6 @@ bool tryComputeGpu(const correlation::core::Cell &cell, real_t cutoff_sq,
   return false;
 }
 #endif
-
-
 
 /**
  * @struct WrappedPositions

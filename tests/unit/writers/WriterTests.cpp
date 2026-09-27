@@ -54,67 +54,19 @@ protected:
       }
     }
     data_dir_ = base_dir + "car/";
-    cleanFiles();
   }
 
-  void TearDown() override { cleanFiles(); }
+  void TearDown() override {}
 
-  static void cleanFiles() {
-    // Clean up all generated files.
-    std::vector<std::string> const files_to_remove = {"test_si_g.csv",
-                                                      "test_si_g_unweighted.csv",
-                                                      "test_si_H.csv",
-                                                      "test_si_J.csv",
-                                                      "test_si_G_reduced.csv",
-                                                      "test_si_PAD.csv",
-                                                      "test_si_PAD_raw.csv",
-                                                      "test_si_DAD.csv",
-                                                      "test_si_DAD_raw.csv",
-                                                      "test_si_RD.csv",
-                                                      "test_si_S.csv",
-                                                      "test_si_XRD.csv",
-                                                      "test_si_CN.csv",
-                                                      "test_si_g_smoothed.csv",
-                                                      "test_si_g_unweighted_smoothed.csv",
-                                                      "test_si_H_smoothed.csv",
-                                                      "test_si_J_smoothed.csv",
-                                                      "test_si_G_reduced_smoothed.csv",
-                                                      "test_si_PAD_smoothed.csv",
-                                                      "test_si_DAD_smoothed.csv",
-                                                      "test_si_RD_smoothed.csv",
-                                                      "test_si_S_smoothed.csv",
-                                                      "test_si_XRD_smoothed.csv",
-                                                      "test_si_CN_smoothed.csv",
-                                                      "test_si.h5",
-                                                      "test_vacf.h5",
-                                                      "test_vacf_new.h5",
-                                                      "test_vacf_new_VACF.csv",
-                                                      "test_vacf_new_VACF_norm.csv",
-                                                      "test_vacf_new_VDOS.csv",
-                                                      "test_vacf_vdos.h5",
-                                                      "test_vacf_vdos_VACF.csv",
-                                                      "test_vacf_vdos_VACF_norm.csv",
-                                                      "test_vacf_vdos_VDOS.csv",
-                                                      "test_si_g.parquet",
-                                                      "test_si_g_unweighted.parquet",
-                                                      "test_si_H.parquet",
-                                                      "test_si_J.parquet",
-                                                      "test_si_G_reduced.parquet",
-                                                      "test_si_PAD.parquet",
-                                                      "test_si_PAD_raw.parquet",
-                                                      "test_si_DAD.parquet",
-                                                      "test_si_DAD_raw.parquet",
-                                                      "test_si_RD.parquet",
-                                                      "test_si_S.parquet",
-                                                      "test_si_XRD.parquet",
-                                                      "test_si_CN.parquet",
-                                                      "test_si_summary.txt",
-                                                      "test_vacf_new_summary.txt",
-                                                      "test_vacf_vdos_summary.txt"};
-
-    for (const auto &file : files_to_remove) {
-      std::error_code error_code;
-      std::filesystem::remove(file, error_code);
+  static void cleanPrefix(const std::string &prefix) {
+    std::error_code error_code;
+    for (const auto &entry : std::filesystem::directory_iterator(".", error_code)) {
+      if (entry.is_regular_file()) {
+        const auto filename = entry.path().filename().string();
+        if (filename.rfind(prefix, 0) == 0) {
+          std::filesystem::remove(entry.path(), error_code);
+        }
+      }
     }
   }
 
@@ -151,8 +103,11 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   dists.calculateDAD(dad_bin);
   dists.smoothAll(0.1);
 
+  const std::string prefix = "test_si_calc";
+  cleanPrefix(prefix);
+
   correlation::writers::FileWriter const writer(dists);
-  writer.write("test_si", true, false, false, true);
+  writer.write(prefix, true, false, false, true);
 
   // Assert: Part 1 - Validate content of the calculated g_r histogram.
 
@@ -163,10 +118,10 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   // Find peaks in expected regions for crystalline silicon.
   // 1st neighbor shell: ~2.35 Å. Search from 2.0 to 3.0 Å.
   size_t const first_peak_idx = findPeakIdx(si_si_rdf, static_cast<size_t>(2.0 / rdf_bin),
-                                              static_cast<size_t>(3.0 / rdf_bin));
+                                            static_cast<size_t>(3.0 / rdf_bin));
   // 2nd neighbor shell: ~3.84 Å. Search from 3.5 to 4.2 Å.
   size_t const second_peak_idx = findPeakIdx(si_si_rdf, static_cast<size_t>(3.5 / rdf_bin),
-                                               static_cast<size_t>(4.2 / rdf_bin));
+                                             static_cast<size_t>(4.2 / rdf_bin));
 
   EXPECT_NEAR(bins[first_peak_idx], 2.35, rdf_bin * 2);
   EXPECT_NEAR(bins[second_peak_idx], 3.84, rdf_bin * 2);
@@ -184,13 +139,15 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   EXPECT_NEAR(pad_bins[peak_index], 109.5, pad_bin * 2.0);
 
   // Assert: Part 3 - Check that all expected files were created
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_g.csv"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_J.csv"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_G_reduced.csv"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD.csv"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD_raw.csv"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_DAD.csv"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_DAD_raw.csv"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty(prefix + "_g.csv"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty(prefix + "_J.csv"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty(prefix + "_G_reduced.csv"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty(prefix + "_PAD.csv"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty(prefix + "_PAD_raw.csv"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty(prefix + "_DAD.csv"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty(prefix + "_DAD_raw.csv"));
+
+  cleanPrefix(prefix);
 }
 
 TEST_F(FileWriterTests, PADCsvContainsRawAndNormalizedAndSmoothedColumns) {
@@ -206,11 +163,14 @@ TEST_F(FileWriterTests, PADCsvContainsRawAndNormalizedAndSmoothedColumns) {
   dists.calculatePAD(2.0);
   dists.smoothAll(0.1);
 
+  const std::string prefix = "test_si_pad_cols";
+  cleanPrefix(prefix);
+
   correlation::writers::FileWriter const writer(dists);
-  writer.write("test_si", true, false, false, true);
+  writer.write(prefix, true, false, false, true);
 
   // Act: read the PAD CSV header (line 1)
-  std::ifstream pad_file("test_si_PAD.csv");
+  std::ifstream pad_file(prefix + "_PAD.csv");
   ASSERT_TRUE(pad_file.good());
   std::string header_line;
   std::getline(pad_file, header_line);
@@ -226,6 +186,8 @@ TEST_F(FileWriterTests, PADCsvContainsRawAndNormalizedAndSmoothedColumns) {
   auto raw_pos = header_line.find("Si-Si-Si_raw");
   auto norm_pos = header_line.find(",Si-Si-Si,");
   EXPECT_LT(raw_pos, norm_pos) << "Raw companion columns should appear before normalized columns";
+
+  cleanPrefix(prefix);
 }
 
 TEST_F(FileWriterTests, PADRawCsvContainsRawCountsAndSmoothed) {
@@ -241,11 +203,14 @@ TEST_F(FileWriterTests, PADRawCsvContainsRawCountsAndSmoothed) {
   dists.calculatePAD(2.0);
   dists.smoothAll(0.1);
 
+  const std::string prefix = "test_si_pad_raw";
+  cleanPrefix(prefix);
+
   correlation::writers::FileWriter const writer(dists);
-  writer.write("test_si", true, false, false, true);
+  writer.write(prefix, true, false, false, true);
 
   // Assert: PAD_raw CSV exists and has smoothed columns
-  std::ifstream raw_file("test_si_PAD_raw.csv");
+  std::ifstream raw_file(prefix + "_PAD_raw.csv");
   ASSERT_TRUE(raw_file.good());
   std::string header_line;
   std::getline(raw_file, header_line);
@@ -263,6 +228,8 @@ TEST_F(FileWriterTests, PADRawCsvContainsRawCountsAndSmoothed) {
   std::getline(raw_file, units_line);
   EXPECT_NE(units_line.find("counts"), std::string::npos)
       << "PAD_raw CSV units row should contain 'counts'";
+
+  cleanPrefix(prefix);
 }
 
 TEST_F(FileWriterTests, DADCsvAndRawCsvAreCreated) {
@@ -278,20 +245,25 @@ TEST_F(FileWriterTests, DADCsvAndRawCsvAreCreated) {
   dists.calculateDAD(2.0);
   dists.smoothAll(0.1);
 
+  const std::string prefix = "test_si_dad";
+  cleanPrefix(prefix);
+
   correlation::writers::FileWriter const writer(dists);
-  writer.write("test_si", true, false, false, true);
+  writer.write(prefix, true, false, false, true);
 
   // Both normalized and raw DAD CSVs must exist
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_DAD.csv"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_DAD_raw.csv"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty(prefix + "_DAD.csv"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty(prefix + "_DAD_raw.csv"));
 
   // Verify DAD.csv header contains raw companion columns
-  std::ifstream dad_file("test_si_DAD.csv");
+  std::ifstream dad_file(prefix + "_DAD.csv");
   ASSERT_TRUE(dad_file.good());
   std::string header_line;
   std::getline(dad_file, header_line);
   EXPECT_NE(header_line.find("_raw"), std::string::npos)
       << "DAD CSV header should contain raw companion columns with '_raw' suffix";
+
+  cleanPrefix(prefix);
 }
 
 #ifdef CORRELATION_USE_HDF5
@@ -314,14 +286,17 @@ TEST_F(FileWriterTests, WritesHDF5File) {
   });
   dists.calculatePAD(2.0);
 
+  const std::string prefix = "test_si_h5";
+  cleanPrefix(prefix);
+
   correlation::writers::FileWriter writer(dists);
-  writer.write("test_si", false, true, false, false);
+  writer.write(prefix, false, true, false, false);
 
   // Assert
-  ASSERT_TRUE(fileExistsAndIsNotEmpty("test_si.h5"));
+  ASSERT_TRUE(fileExistsAndIsNotEmpty(prefix + ".h5"));
 
   // Verify content using HighFive
-  HighFive::File file("test_si.h5", HighFive::File::ReadOnly);
+  HighFive::File file(prefix + ".h5", HighFive::File::ReadOnly);
   EXPECT_TRUE(file.exist("g_r"));
   EXPECT_TRUE(file.exist("PAD"));
 
@@ -515,17 +490,22 @@ TEST_F(FileWriterTests, WritesParquetFiles) {
   });
   dists.calculatePAD(2.0);
 
+  const std::string prefix = "test_si_parquet";
+  cleanPrefix(prefix);
+
   correlation::writers::FileWriter writer(dists);
 
   // Act
   // write(base_path, use_csv, use_hdf5, use_parquet, smoothing)
-  writer.write("test_si", false, false, true, false);
+  writer.write(prefix, false, false, true, false);
 
   // Assert
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_g.parquet"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_J.parquet"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_G_reduced.parquet"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD.parquet"));
-  EXPECT_FALSE(fileExistsAndIsNotEmpty("test_si_S.parquet"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty(prefix + "_g.parquet"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty(prefix + "_J.parquet"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty(prefix + "_G_reduced.parquet"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty(prefix + "_PAD.parquet"));
+  EXPECT_FALSE(fileExistsAndIsNotEmpty(prefix + "_S.parquet"));
+
+  cleanPrefix(prefix);
 }
 #endif
