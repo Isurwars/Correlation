@@ -86,6 +86,7 @@ add_executable(correlation_unit_tests
     unit/plotters/PdfPlotterTests.cpp
     unit/plotters/PathFontTests.cpp
     unit/utils/SIMDUtilsTests.cpp
+    unit/utils/ZipArchiveWriterTests.cpp
     unit/math/Vector3Tests.cpp
     unit/math/Matrix3Tests.cpp
     unit/math/PrecisionTests.cpp
@@ -125,6 +126,7 @@ target_link_libraries(correlation_unit_tests PRIVATE
     calculators_obj
     mlip_obj
     cli_parser_obj
+    miniz
     GTest::gtest
     GTest::gmock
     GTest::gtest_main

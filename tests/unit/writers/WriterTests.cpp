@@ -15,6 +15,7 @@
 #include <filesystem>
 #include <fstream>
 #include <gtest/gtest.h>
+#include <miniz.h>
 #ifdef CORRELATION_USE_HDF5
 #include <highfive/highfive.hpp>
 #endif
@@ -509,3 +510,52 @@ TEST_F(FileWriterTests, WritesParquetFiles) {
   cleanPrefix(prefix);
 }
 #endif
+
+TEST_F(FileWriterTests, WritesZipBundle) {
+  // Arrange
+  std::string const path = getDataDir() + "si_crystal.car";
+  correlation::readers::FileType type = correlation::readers::determineFileType(path);
+  correlation::core::Cell si_cell = correlation::readers::readStructure(path, type);
+  correlation::core::Trajectory trajectory;
+  trajectory.addFrame(si_cell);
+  trajectory.precomputeBondCutoffs();
+
+  correlation::analysis::DistributionFunctions dists(si_cell, 5.0, trajectory.getBondCutoffsSQ());
+
+  dists.calculateRDF({
+      .r_max = 5.0,
+      .r_bin_width = 0.1,
+  });
+  dists.calculatePAD(2.0);
+
+  const std::string zip_path = "test_si_bundle.zip";
+  std::error_code ec;
+  std::filesystem::remove(zip_path, ec);
+
+  correlation::writers::FileWriter writer(dists);
+
+  // Act: write bundle with CSV and SVG enabled
+  auto res = writer.writeBundle(zip_path, /*use_csv=*/true, /*use_hdf5=*/false,
+                                /*use_parquet=*/false, /*include_svg=*/true,
+                                /*smoothing=*/false);
+
+  // Assert
+  ASSERT_TRUE(res.has_value()) << res.error();
+  ASSERT_TRUE(std::filesystem::exists(zip_path));
+  EXPECT_GT(std::filesystem::file_size(zip_path), 0u);
+
+  // Verify contents using miniz
+  mz_zip_archive zip;
+  mz_zip_zero_struct(&zip);
+  ASSERT_TRUE(mz_zip_reader_init_file(&zip, zip_path.c_str(), 0));
+
+  EXPECT_GE(mz_zip_reader_locate_file(&zip, "summary.txt", nullptr, 0), 0);
+  EXPECT_GE(mz_zip_reader_locate_file(&zip, "plots/g.svg", nullptr, 0), 0);
+  EXPECT_GE(mz_zip_reader_locate_file(&zip, "plots/PAD.svg", nullptr, 0), 0);
+  EXPECT_GE(mz_zip_reader_locate_file(&zip, "csv/g.csv", nullptr, 0), 0);
+  EXPECT_GE(mz_zip_reader_locate_file(&zip, "csv/PAD.csv", nullptr, 0), 0);
+
+  mz_zip_reader_end(&zip);
+  std::filesystem::remove(zip_path, ec);
+}
+

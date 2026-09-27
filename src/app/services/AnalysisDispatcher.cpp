@@ -97,9 +97,23 @@ AnalysisDispatcher::writeFiles(const ProgramOptions &options) const {
 
   try {
     correlation::writers::FileWriter const writer(*df_);
-    writer.write(options.output_file_base, options.use_csv, options.use_hdf5, options.use_parquet,
-                 options.smoothing);
-    std::cout << "Files written to: " << options.output_file_base << '\n';
+    if (options.use_zip) {
+      std::string zip_path = options.output_file_base;
+      if (!zip_path.ends_with(".zip")) {
+        zip_path += ".zip";
+      }
+      auto zip_res = writer.writeBundle(zip_path, options.use_csv, options.use_hdf5,
+                                        options.use_parquet, /*include_svg=*/true,
+                                        options.smoothing);
+      if (!zip_res) {
+        return std::unexpected(zip_res.error());
+      }
+      std::cout << "Consolidated archive written to: " << zip_path << '\n';
+    } else {
+      writer.write(options.output_file_base, options.use_csv, options.use_hdf5, options.use_parquet,
+                   options.smoothing);
+      std::cout << "Files written to: " << options.output_file_base << '\n';
+    }
   } catch (const std::exception &e) {
     std::string const err = std::string(AppDefaults::MSG_ERROR_WRITING) + e.what();
     std::cerr << err << '\n';

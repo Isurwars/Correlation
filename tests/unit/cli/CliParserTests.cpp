@@ -643,3 +643,25 @@ TEST_F(CliParserTests, MaterialDefaultsWithOverrides) {
   EXPECT_THAT(opts.dihedral_bin_width, correlation::testing::IsRealEq(0.1)); // Crystal default
   EXPECT_THAT(opts.smoothing_sigma, correlation::testing::IsRealEq(0.05));   // Overridden
 }
+
+TEST_F(CliParserTests, ZipBundleCliFlags) {
+  {
+    ArgBuilder args{"correlation-cli", "input.poscar", "--zip"};
+    correlation::cli::CliOptions opts;
+    ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+    EXPECT_TRUE(opts.zip);
+  }
+  {
+    ArgBuilder args{"correlation-cli", "input.poscar", "--bundle"};
+    correlation::cli::CliOptions opts;
+    ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+    EXPECT_TRUE(opts.zip);
+  }
+  {
+    ArgBuilder args{"correlation-cli", "input.poscar", "--no-zip"};
+    correlation::cli::CliOptions opts;
+    ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+    EXPECT_FALSE(opts.zip);
+  }
+}
+

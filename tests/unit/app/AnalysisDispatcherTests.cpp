@@ -76,4 +76,33 @@ TEST(AnalysisDispatcherTests, CancellationSetsFlag) {
   EXPECT_TRUE(dispatcher.isCancelled());
 }
 
+TEST(AnalysisDispatcherTests, WriteFilesZipBundle) {
+  correlation::app::TrajectoryLoader loader;
+  std::string const filepath = getTestDataDir() + "car/clean.car";
+
+  ASSERT_TRUE(loader.loadFile(filepath).has_value());
+
+  correlation::app::AnalysisDispatcher dispatcher;
+  correlation::app::ProgramOptions opts;
+  opts.r_max = 5.0;
+  opts.r_bin_width = 0.1;
+  opts.active_calculators["RDF"] = true;
+
+  ASSERT_TRUE(dispatcher.runAnalysis(*loader.trajectoryMut(), opts).has_value());
+
+  opts.output_file_base = "test_dispatcher_bundle";
+  opts.use_zip = true;
+  opts.use_csv = true;
+
+  const std::string zip_file = "test_dispatcher_bundle.zip";
+  std::error_code ec;
+  std::filesystem::remove(zip_file, ec);
+
+  auto write_res = dispatcher.writeFiles(opts);
+  EXPECT_TRUE(write_res.has_value()) << (write_res ? "" : write_res.error());
+  EXPECT_TRUE(std::filesystem::exists(zip_file));
+  std::filesystem::remove(zip_file, ec);
+}
+
 } // namespace
+

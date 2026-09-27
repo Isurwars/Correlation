@@ -555,6 +555,21 @@ if(CORRELATION_ENABLE_LIBTORCH)
   endif()
 endif()
 
+# 13. miniz (Zip archive creation)
+message(STATUS "Fetching miniz for zip export...")
+FetchContent_Declare(
+  miniz
+  GIT_REPOSITORY https://github.com/richgel999/miniz.git
+  GIT_TAG 3.0.2
+)
+set(BUILD_EXAMPLES OFF CACHE BOOL "Disable miniz examples" FORCE)
+set(BUILD_FUZZERS OFF CACHE BOOL "Disable miniz fuzzers" FORCE)
+FetchContent_MakeAvailable(miniz)
+
+if(TARGET miniz)
+  set_target_properties(miniz PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
+
 # Restore original BUILD_TESTING cache state
 if(BUILD_TESTING_EXISTS)
   set(BUILD_TESTING "${ORIG_BUILD_TESTING}" CACHE ${ORIG_BUILD_TESTING_TYPE} "${ORIG_BUILD_TESTING_HELP}" FORCE)

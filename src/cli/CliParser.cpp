@@ -246,6 +246,7 @@ bool parseArgs(std::span<const char *const> argv, CliOptions &opts) {
   app.add_flag("--csv,!--no-csv", opts.csv);
   app.add_flag("--hdf5,!--no-hdf5", opts.hdf5);
   app.add_flag("--parquet,!--no-parquet", opts.parquet);
+  app.add_flag("--zip,--bundle,!--no-zip", opts.zip, "Export consolidated ZIP archive bundle");
   app.add_flag("--smoothing,!--no-smoothing", opts.smoothing);
 
   try {

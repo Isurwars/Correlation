@@ -10,6 +10,7 @@
 
 #include "analysis/DistributionFunctions.hpp"
 
+#include <expected>
 #include <string>
 
 namespace correlation::writers {
@@ -42,6 +43,21 @@ public:
    */
   void write(const std::string &base_path, bool use_csv, bool use_hdf5, bool use_parquet,
              bool smoothing) const;
+
+  /**
+   * @brief Writes a consolidated ZIP bundle containing plots, tables, and summary.
+   *
+   * @param zip_path The target path for the zip file (e.g., "output/bundle.zip").
+   * @param use_csv Whether to include CSV tables.
+   * @param use_hdf5 Whether to include HDF5 data.
+   * @param use_parquet Whether to include Parquet data.
+   * @param include_svg Whether to include SVG plots.
+   * @param smoothing Whether to include smoothed curves.
+   * @return std::expected<void, std::string> Success or error message.
+   */
+  std::expected<void, std::string>
+  writeBundle(const std::string &zip_path, bool use_csv = true, bool use_hdf5 = false,
+              bool use_parquet = false, bool include_svg = true, bool smoothing = true) const;
 
 private:
   void writeSummaryFile(const std::string &base_path) const;

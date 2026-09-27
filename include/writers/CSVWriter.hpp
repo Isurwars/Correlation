@@ -53,6 +53,16 @@ public:
                            const correlation::analysis::DistributionFunctions &dists,
                            bool write_smoothed = false);
 
+  /**
+   * @brief Writes a single histogram and its smoothed companion to an output stream (CSV format).
+   * @param os Output stream.
+   * @param hist The Histogram data structure.
+   * @param raw_companion Optional raw companion histogram.
+   */
+  static void writeHistogramToStream(std::ostream &os,
+                                     const correlation::analysis::Histogram &hist,
+                                     const correlation::analysis::Histogram *raw_companion = nullptr);
+
 private:
   /**
    * @brief The core implementation for writing a single histogram

@@ -139,6 +139,7 @@ endif()
 # Writers as an OBJECT library to ensure static registration triggers
 set(WRITERS_SOURCES
     writers/CSVWriter.cpp
+    writers/ExportBundleWriter.cpp
     writers/FileWriter.cpp
     writers/WriterFactory.cpp
 )
@@ -153,7 +154,7 @@ add_library(writers_obj OBJECT ${WRITERS_SOURCES})
 target_include_directories(writers_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
-target_link_libraries(writers_obj PRIVATE correlation_simd_options)
+target_link_libraries(writers_obj PRIVATE correlation_simd_options miniz)
 if(BUILD_WITH_HDF5)
     target_link_libraries(writers_obj PRIVATE HighFive HDF5::HDF5 HDF5::HDF5_HL)
 endif()
@@ -195,6 +196,7 @@ add_library(correlation_lib STATIC
     plotters/RobotoData_ASCII_1.cpp
     plotters/RobotoData_ASCII_2.cpp
     plotters/RobotoData_Extended.cpp
+    utils/ZipArchiveWriter.cpp
     $<TARGET_OBJECTS:readers_obj>
     $<TARGET_OBJECTS:calculators_obj>
     $<TARGET_OBJECTS:writers_obj>
@@ -202,7 +204,7 @@ add_library(correlation_lib STATIC
     $<$<OR:$<BOOL:${BUILD_WITH_CUDA}>,$<BOOL:${BUILD_WITH_HIP}>>:$<TARGET_OBJECTS:gpu_calculators_obj>>
 )
 
-target_link_libraries(correlation_lib PRIVATE readers_obj calculators_obj writers_obj mlip_obj)
+target_link_libraries(correlation_lib PRIVATE readers_obj calculators_obj writers_obj mlip_obj miniz)
 if(CORRELATION_ENABLE_LIBTORCH AND Torch_FOUND)
     target_link_libraries(correlation_lib PRIVATE "${TORCH_LIBRARIES}")
 endif()

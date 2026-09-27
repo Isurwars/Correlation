@@ -38,6 +38,7 @@ struct CliOptions {
   bool csv = true;               ///< Flag to enable CSV output format.
   bool hdf5 = false;             ///< Flag to enable HDF5 output format.
   bool parquet = false;          ///< Flag to enable Parquet output format.
+  bool zip = false;              ///< Flag to export a consolidated ZIP bundle.
   bool smoothing = true;         ///< Flag to enable post-processing curve smoothing.
   bool quiet = false;            ///< Suppress non-error console output.
   std::string disable_groups;    ///< Comma-separated list of analysis groups to disable.

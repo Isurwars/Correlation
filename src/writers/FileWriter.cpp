@@ -7,6 +7,7 @@
  */
 
 #include "writers/FileWriter.hpp"
+#include "writers/ExportBundleWriter.hpp"
 #include "writers/WriterFactory.hpp"
 
 #include <fstream>
@@ -38,6 +39,23 @@ void FileWriter::write(const std::string &base_path, bool use_csv, bool use_hdf5
   }
 
   writeSummaryFile(base_path);
+}
+
+std::expected<void, std::string>
+FileWriter::writeBundle(const std::string &zip_path, bool use_csv, bool use_hdf5,
+                        bool use_parquet, bool include_svg, bool smoothing) const {
+  if (df_ == nullptr) {
+    return std::unexpected("No distribution functions data available for export");
+  }
+
+  ExportBundleOptions options;
+  options.include_csv = use_csv;
+  options.include_hdf5 = use_hdf5;
+  options.include_parquet = use_parquet;
+  options.include_svg = include_svg;
+  options.smoothing = smoothing;
+
+  return ExportBundleWriter::writeBundle(zip_path, *df_, options);
 }
 
 void FileWriter::writeSummaryFile(const std::string &base_path) const {

@@ -54,6 +54,7 @@ int main(int argc, char *argv[]) {
   opts.use_csv = cli.csv;
   opts.use_hdf5 = cli.hdf5;
   opts.use_parquet = cli.parquet;
+  opts.use_zip = cli.zip;
   opts.time_step = cli.time_step;
   opts.r_int_max = cli.r_int_max;
   opts.max_ring_size = cli.max_ring_size;

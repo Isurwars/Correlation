@@ -96,6 +96,7 @@ struct ProgramOptions {
   bool use_hdf5 = false;             ///< Enable HDF5 output format.
   bool use_csv = true;               ///< Enable CSV output format.
   bool use_parquet = false;          ///< Enable Parquet output format.
+  bool use_zip = false;              ///< Enable consolidated ZIP bundle output format.
   real_t r_max = AppDefaults::R_MAX; ///< Max distance for RDF calculation.
   real_t r_bin_width = AppDefaults::R_BIN_WIDTH;            ///< Step size for RDF histogram.
   real_t q_max = AppDefaults::Q_MAX;                        ///< Max momentum transfer for S(Q).

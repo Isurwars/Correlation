@@ -50,21 +50,23 @@ void FileIOHandler::executeWriteFiles(const std::string &filepath) {
   }
 #endif
 
+  const bool use_zip = (ext == ".zip");
   const bool use_hdf5 = (ext == ".h5" || ext == ".hdf5");
   const bool use_parquet = (ext == ".parquet");
-  const bool use_csv = (!use_hdf5 && !use_parquet);
+  const bool use_csv = (!use_zip && !use_hdf5 && !use_parquet);
 
   if (use_csv && ext != ".csv") {
     file_path_obj.replace_extension(".csv");
   }
 
-  if (file_path_obj.has_extension()) {
+  if (!use_zip && file_path_obj.has_extension()) {
     file_path_obj.replace_extension("");
   }
 
   ProgramOptions opts = controller_.handleOptionsfromUI();
   opts.output_file_base = file_path_obj.string();
-  opts.use_csv = use_csv;
+  opts.use_zip = use_zip;
+  opts.use_csv = use_csv || use_zip;
   opts.use_hdf5 = use_hdf5;
   opts.use_parquet = use_parquet;
   options_ = opts;
@@ -87,7 +89,11 @@ void FileIOHandler::handleWriteFiles() {
   }
 
   dialog_thread_ = std::thread([this]() {
-    std::array<nfdfilteritem_t, 3> filter_list = {{{
+    std::array<nfdfilteritem_t, 4> filter_list = {{{
+                                                       .name = "Consolidated ZIP Bundle",
+                                                       .spec = "zip",
+                                                   },
+                                                   {
                                                        .name = "Comma Separated Values",
                                                        .spec = "csv",
                                                    },

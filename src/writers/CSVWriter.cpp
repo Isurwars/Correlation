@@ -146,6 +146,18 @@ void writeDataRows(std::ostream &file, const std::vector<correlation::real_t> &b
 
 } // namespace
 
+void CSVWriter::writeHistogramToStream(std::ostream &os,
+                                       const correlation::analysis::Histogram &hist,
+                                       const correlation::analysis::Histogram *raw_companion) {
+  if (hist.partials.empty() || hist.bins.empty()) {
+    return;
+  }
+
+  const auto columns = buildColumns(hist, raw_companion);
+  writeHeader(os, hist, columns);
+  writeDataRows(os, hist.bins, columns);
+}
+
 void CSVWriter::writeHistogramToCSV(const std::string &filename,
                                     const correlation::analysis::Histogram &hist,
                                     const correlation::analysis::Histogram *raw_companion) {
@@ -158,9 +170,7 @@ void CSVWriter::writeHistogramToCSV(const std::string &filename,
     throw std::runtime_error("Failed to open file for writing: " + filename);
   }
 
-  const auto columns = buildColumns(hist, raw_companion);
-  writeHeader(file, hist, columns);
-  writeDataRows(file, hist.bins, columns);
+  writeHistogramToStream(file, hist, raw_companion);
 }
 
 } // namespace correlation::writers
