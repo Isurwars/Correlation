@@ -1,0 +1,272 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialStyleMetrics,
+    MaterialPalette,
+    MaterialTypography,
+    MaterialText,
+    OutlinedCard,
+    ExpandableHeader,
+    CheckBoxRow,
+    FilledButton,
+    Vertical,
+    Horizontal,
+    Icons,
+} from "../../material/material.slint";
+import { ExportFormatOptions, ExportAnalysisItem } from "../../Types.slint";
+
+export component ExportOptionsCard inherits OutlinedCard {
+    in-out property <bool> expanded: true;
+    in property <bool> enabled: true;
+    in property <bool> analysis_done: false;
+
+    in-out property <ExportFormatOptions> format_options: {
+        export_csv: true,
+        export_hdf5: false,
+        export_arrow: false,
+        export_images: true,
+        use_zip: false,
+    };
+
+    in-out property <[ExportAnalysisItem]> export_analyses: [];
+    in-out property <bool> export_all_analyses: true;
+
+    callback toggle_analysis(string, bool);
+    callback toggle_all_analyses(bool);
+    callback write_files();
+    callback reset();
+
+    out property <string> hovered_tooltip_text:
+        csv_row.has-hover ? "Export standard tabular Comma-Separated Values into csv/ directory.\n\n📄 Contains normalized distribution values and coordinate grids." :
+        images_row.has-hover ? "Export publication-quality vector plots into plots/ directory.\n\n📊 High-resolution SVG files formatted using current plot styling settings." :
+        hdf5_row.has-hover ? "Export hierarchical binary HDF5 dataset into hdf5/analysis.h5.\n\n💾 Ideal for large datasets, multi-frame trajectories, and Python/SciPy pipelines." :
+        arrow_row.has-hover ? "Export high-throughput Apache Arrow/Parquet columnar tables into arrow/ directory.\n\n⚡ Optimized for Polars, DuckDB, Pandas, and fast analytics." :
+        zip_row.has-hover ? "Package all selected formats into a single compressed .zip file archive.\n\n📦 If unchecked (default), exports a clean categorized folder with subdirectories." :
+        select_all_row.has-hover ? "Select or deselect all computed analyses for export." :
+        export_btn_area.has-hover ? (root.analysis_done ? "Export analysis results into a categorized destination folder or zip bundle." : "Analysis must be run before results can be exported.") : "";
+
+    out property <length> hovered_x:
+        csv_row.has-hover ? csv_row.absolute-position.x + csv_row.mouse-x :
+        images_row.has-hover ? images_row.absolute-position.x + images_row.mouse-x :
+        hdf5_row.has-hover ? hdf5_row.absolute-position.x + hdf5_row.mouse-x :
+        arrow_row.has-hover ? arrow_row.absolute-position.x + arrow_row.mouse-x :
+        zip_row.has-hover ? zip_row.absolute-position.y + zip_row.mouse-y :
+        select_all_row.has-hover ? select_all_row.absolute-position.x + select_all_row.mouse-x :
+        export_btn_area.has-hover ? export_btn_area.absolute-position.x + export_btn_area.mouse-x : 0px;
+
+    out property <length> hovered_y:
+        csv_row.has-hover ? csv_row.absolute-position.y + csv_row.mouse-y :
+        images_row.has-hover ? images_row.absolute-position.y + images_row.mouse-y :
+        hdf5_row.has-hover ? hdf5_row.absolute-position.y + hdf5_row.mouse-y :
+        arrow_row.has-hover ? arrow_row.absolute-position.y + arrow_row.mouse-y :
+        zip_row.has-hover ? zip_row.absolute-position.y + zip_row.mouse-y :
+        select_all_row.has-hover ? select_all_row.absolute-position.y + select_all_row.mouse-y :
+        export_btn_area.has-hover ? export_btn_area.absolute-position.y + export_btn_area.mouse-y : 0px;
+
+    out property <length> hovered_width: 0px;
+    out property <length> hovered_height: 0px;
+
+    Vertical {
+        padding: MaterialStyleMetrics.spacing_8;
+        spacing: MaterialStyleMetrics.spacing_8;
+
+        ExpandableHeader {
+            text: "Export Options";
+            expanded <=> root.expanded;
+            show_reset: true;
+            reset_enabled: root.enabled;
+            reset => { root.reset(); }
+        }
+
+        Vertical {
+            height: root.expanded ? self.preferred-height : 0px;
+            visible: self.height > 0px;
+            opacity: root.expanded ? 1.0 : 0.0;
+            padding: 0;
+            spacing: MaterialStyleMetrics.spacing_8;
+            animate height, opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+
+            // Section: File Formats
+            MaterialText {
+                text: "Export Formats";
+                style: MaterialTypography.label_medium;
+                color: MaterialPalette.on_surface_variant;
+            }
+
+            Vertical {
+                spacing: MaterialStyleMetrics.spacing_4;
+                padding-left: MaterialStyleMetrics.spacing_4;
+
+                Horizontal {
+                    height: 28px;
+                    csv_row := CheckBoxRow {
+                        width: 100%;
+                        height: 100%;
+                        text: "Comma Separated Values (.csv)";
+                        check_state_bool: root.format_options.export_csv;
+                        enabled: root.enabled;
+                        checked_state_changed(val) => {
+                            root.format_options.export_csv = val;
+                        }
+                    }
+                }
+
+                Horizontal {
+                    height: 28px;
+                    images_row := CheckBoxRow {
+                        width: 100%;
+                        height: 100%;
+                        text: "Plots & Figures (.svg)";
+                        check_state_bool: root.format_options.export_images;
+                        enabled: root.enabled;
+                        checked_state_changed(val) => {
+                            root.format_options.export_images = val;
+                        }
+                    }
+                }
+
+                Horizontal {
+                    height: 28px;
+                    hdf5_row := CheckBoxRow {
+                        width: 100%;
+                        height: 100%;
+                        text: "Hierarchical Data Format (.h5)";
+                        check_state_bool: root.format_options.export_hdf5;
+                        enabled: root.enabled;
+                        checked_state_changed(val) => {
+                            root.format_options.export_hdf5 = val;
+                        }
+                    }
+                }
+
+                Horizontal {
+                    height: 28px;
+                    arrow_row := CheckBoxRow {
+                        width: 100%;
+                        height: 100%;
+                        text: "Apache Arrow / Parquet (.parquet)";
+                        check_state_bool: root.format_options.export_arrow;
+                        enabled: root.enabled;
+                        checked_state_changed(val) => {
+                            root.format_options.export_arrow = val;
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                height: 1px;
+                background: MaterialPalette.outline_variant;
+            }
+
+            // Section: Archive Packaging
+            MaterialText {
+                text: "Packaging";
+                style: MaterialTypography.label_medium;
+                color: MaterialPalette.on_surface_variant;
+            }
+
+            Vertical {
+                spacing: MaterialStyleMetrics.spacing_4;
+                padding-left: MaterialStyleMetrics.spacing_4;
+
+                Horizontal {
+                    height: 28px;
+                    zip_row := CheckBoxRow {
+                        width: 100%;
+                        height: 100%;
+                        text: "Create consolidated ZIP archive";
+                        check_state_bool: root.format_options.use_zip;
+                        enabled: root.enabled;
+                        checked_state_changed(val) => {
+                            root.format_options.use_zip = val;
+                        }
+                    }
+                }
+            }
+
+            // Section: Categorized Algorithm Selection (if items present)
+            Rectangle {
+                visible: root.export_analyses.length > 0;
+                height: self.visible ? 1px : 0px;
+                background: MaterialPalette.outline_variant;
+            }
+
+            Horizontal {
+                visible: root.export_analyses.length > 0;
+                height: self.visible ? self.preferred-height : 0px;
+                alignment: space-between;
+                MaterialText {
+                    text: "Exported Analyses";
+                    style: MaterialTypography.label_medium;
+                    color: MaterialPalette.on_surface_variant;
+                    vertical-alignment: center;
+                }
+
+                Horizontal {
+                    width: 100px;
+                    height: 24px;
+                    select_all_row := CheckBoxRow {
+                        width: 100%;
+                        height: 100%;
+                        text: "All";
+                        check_state_bool: root.export_all_analyses;
+                        enabled: root.enabled;
+                        checked_state_changed(val) => {
+                            root.export_all_analyses = val;
+                            root.toggle_all_analyses(val);
+                        }
+                    }
+                }
+            }
+
+            Vertical {
+                visible: root.export_analyses.length > 0;
+                height: self.visible ? self.preferred-height : 0px;
+                spacing: MaterialStyleMetrics.spacing_2;
+                padding-left: MaterialStyleMetrics.spacing_4;
+
+                for item[idx] in root.export_analyses: Horizontal {
+                    height: 26px;
+                    CheckBoxRow {
+                        width: 100%;
+                        height: 100%;
+                        text: item.name;
+                        check_state_bool: item.enabled;
+                        enabled: root.enabled;
+                        checked_state_changed(val) => {
+                            root.toggle_analysis(item.id, val);
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                height: MaterialStyleMetrics.spacing_4;
+            }
+
+            // Export Action Button
+            export_btn_area := TouchArea {
+                width: 100%;
+                height: 38px;
+                FilledButton {
+                    width: 100%;
+                    height: 100%;
+                    text: root.format_options.use_zip ? "Export ZIP Archive" : "Export Categorized Folder";
+                    enabled: root.enabled && root.analysis_done;
+                    background: MaterialPalette.primary;
+                    text_color: MaterialPalette.on_primary;
+                    clicked => {
+                        root.write_files();
+                    }
+                }
+            }
+        }
+    }
+}

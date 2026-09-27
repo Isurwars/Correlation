@@ -29,6 +29,8 @@ import {
     AnalysisOptions,
     AppErrors,
     ExportConfig,
+    ExportFormatOptions,
+    ExportAnalysisItem,
     TableRow,
     CurveToggleItem,
     ComparisonCurveData,
@@ -36,6 +38,7 @@ import {
 
 import { MiniSideBar } from "nav/MiniSideBar.slint";
 import { AppFooter } from "nav/AppFooter.slint";
+import { SaveExportPanelCard } from "cards/export/SaveExportPanelCard.slint";
 import { OperationsPanelCard } from "cards/operations/OperationsPanelCard.slint";
 import { CommonOptionsPanelCard } from "cards/common/CommonOptionsPanelCard.slint";
 import { AdvancedOptionsPanelCard } from "cards/advanced/AdvancedOptionsPanelCard.slint";
@@ -52,6 +55,8 @@ export {
     AnalysisOptions,
     AppErrors,
     ExportConfig,
+    ExportFormatOptions,
+    ExportAnalysisItem,
     TableRow,
     CurveToggleItem,
     ComparisonCurveData,
@@ -257,6 +262,20 @@ export component AppWindow inherits Window {
     in-out property <int> active_panel: 0;
     in-out property <int> last_active_panel: 0;
 
+    // Export Options Properties & Callbacks
+    in-out property <ExportFormatOptions> export_format_options: {
+        export_csv: true,
+        export_hdf5: false,
+        export_arrow: false,
+        export_images: true,
+        use_zip: false,
+    };
+    in-out property <[ExportAnalysisItem]> export_analysis_items: [];
+    in-out property <bool> export_all_analyses: true;
+    callback toggle_export_analysis(string, bool);
+    callback toggle_all_export_analyses(bool);
+    callback reset_export_options();
+
     // Callbacks (Bound to AppController.cpp)
     callback layout_geometry_changed(length, length);
     callback browse_file();
@@ -397,20 +416,18 @@ export component AppWindow inherits Window {
     }
     changed analysis_done => {
         if root.analysis_done {
-            root.active_panel = 3;
+            root.active_panel = 0;
         }
     }
-
-
 
     /// hovered_tooltip_text: Dynamically update based on the currently
     ///   hovered component.
     property <string> active_panel_tooltip:
-        root.active_panel == 0 ? panel_operations.hovered_tooltip_text :
-        root.active_panel == 1 ? panel_common.hovered_tooltip_text :
-        root.active_panel == 2 ? panel_advanced.hovered_tooltip_text :
-        root.active_panel == 3 ? panel_plot_export.hovered_tooltip_text :
-        root.active_panel == 4 ? panel_presets.hovered_tooltip_text :
+        root.active_panel == 0 ? panel_save_export.hovered_tooltip_text :
+        root.active_panel == 1 ? panel_operations.hovered_tooltip_text :
+        root.active_panel == 2 ? panel_common.hovered_tooltip_text :
+        root.active_panel == 3 ? panel_advanced.hovered_tooltip_text :
+        root.active_panel == 4 ? panel_plot_export.hovered_tooltip_text :
         root.active_panel == 5 ? panel_analyses.hovered_tooltip_text : "";
 
     property <string> preview_hovered_tooltip: preview_card.hovered_tooltip_text;
@@ -419,38 +436,38 @@ export component AppWindow inherits Window {
         active_panel_tooltip != "" ? active_panel_tooltip : preview_hovered_tooltip;
 
     property <length> hovered_x:
-        root.active_panel == 0 && panel_operations.hovered_tooltip_text != "" ? panel_operations.hovered_x :
-        root.active_panel == 1 && panel_common.hovered_tooltip_text != "" ? panel_common.hovered_x :
-        root.active_panel == 2 && panel_advanced.hovered_tooltip_text != "" ? panel_advanced.hovered_x :
-        root.active_panel == 3 && panel_plot_export.hovered_tooltip_text != "" ? panel_plot_export.hovered_x :
-        root.active_panel == 4 && panel_presets.hovered_tooltip_text != "" ? panel_presets.hovered_x :
+        root.active_panel == 0 && panel_save_export.hovered_tooltip_text != "" ? panel_save_export.hovered_x :
+        root.active_panel == 1 && panel_operations.hovered_tooltip_text != "" ? panel_operations.hovered_x :
+        root.active_panel == 2 && panel_common.hovered_tooltip_text != "" ? panel_common.hovered_x :
+        root.active_panel == 3 && panel_advanced.hovered_tooltip_text != "" ? panel_advanced.hovered_x :
+        root.active_panel == 4 && panel_plot_export.hovered_tooltip_text != "" ? panel_plot_export.hovered_x :
         root.active_panel == 5 && panel_analyses.hovered_tooltip_text != "" ? panel_analyses.hovered_x :
         preview_hovered_tooltip != "" ? preview_card.hovered_x : 0px;
 
     property <length> hovered_y:
-        root.active_panel == 0 && panel_operations.hovered_tooltip_text != "" ? panel_operations.hovered_y :
-        root.active_panel == 1 && panel_common.hovered_tooltip_text != "" ? panel_common.hovered_y :
-        root.active_panel == 2 && panel_advanced.hovered_tooltip_text != "" ? panel_advanced.hovered_y :
-        root.active_panel == 3 && panel_plot_export.hovered_tooltip_text != "" ? panel_plot_export.hovered_y :
-        root.active_panel == 4 && panel_presets.hovered_tooltip_text != "" ? panel_presets.hovered_y :
+        root.active_panel == 0 && panel_save_export.hovered_tooltip_text != "" ? panel_save_export.hovered_y :
+        root.active_panel == 1 && panel_operations.hovered_tooltip_text != "" ? panel_operations.hovered_y :
+        root.active_panel == 2 && panel_common.hovered_tooltip_text != "" ? panel_common.hovered_y :
+        root.active_panel == 3 && panel_advanced.hovered_tooltip_text != "" ? panel_advanced.hovered_y :
+        root.active_panel == 4 && panel_plot_export.hovered_tooltip_text != "" ? panel_plot_export.hovered_y :
         root.active_panel == 5 && panel_analyses.hovered_tooltip_text != "" ? panel_analyses.hovered_y :
         preview_hovered_tooltip != "" ? preview_card.hovered_y : 0px;
 
     property <length> hovered_width:
-        root.active_panel == 0 && panel_operations.hovered_tooltip_text != "" ? panel_operations.hovered_width :
-        root.active_panel == 1 && panel_common.hovered_tooltip_text != "" ? panel_common.hovered_width :
-        root.active_panel == 2 && panel_advanced.hovered_tooltip_text != "" ? panel_advanced.hovered_width :
-        root.active_panel == 3 && panel_plot_export.hovered_tooltip_text != "" ? panel_plot_export.hovered_width :
-        root.active_panel == 4 && panel_presets.hovered_tooltip_text != "" ? panel_presets.hovered_width :
+        root.active_panel == 0 && panel_save_export.hovered_tooltip_text != "" ? panel_save_export.hovered_width :
+        root.active_panel == 1 && panel_operations.hovered_tooltip_text != "" ? panel_operations.hovered_width :
+        root.active_panel == 2 && panel_common.hovered_tooltip_text != "" ? panel_common.hovered_width :
+        root.active_panel == 3 && panel_advanced.hovered_tooltip_text != "" ? panel_advanced.hovered_width :
+        root.active_panel == 4 && panel_plot_export.hovered_tooltip_text != "" ? panel_plot_export.hovered_width :
         root.active_panel == 5 && panel_analyses.hovered_tooltip_text != "" ? panel_analyses.hovered_width :
         preview_hovered_tooltip != "" ? preview_card.hovered_width : 0px;
 
     property <length> hovered_height:
-        root.active_panel == 0 && panel_operations.hovered_tooltip_text != "" ? panel_operations.hovered_height :
-        root.active_panel == 1 && panel_common.hovered_tooltip_text != "" ? panel_common.hovered_height :
-        root.active_panel == 2 && panel_advanced.hovered_tooltip_text != "" ? panel_advanced.hovered_height :
-        root.active_panel == 3 && panel_plot_export.hovered_tooltip_text != "" ? panel_plot_export.hovered_height :
-        root.active_panel == 4 && panel_presets.hovered_tooltip_text != "" ? panel_presets.hovered_height :
+        root.active_panel == 0 && panel_save_export.hovered_tooltip_text != "" ? panel_save_export.hovered_height :
+        root.active_panel == 1 && panel_operations.hovered_tooltip_text != "" ? panel_operations.hovered_height :
+        root.active_panel == 2 && panel_common.hovered_tooltip_text != "" ? panel_common.hovered_height :
+        root.active_panel == 3 && panel_advanced.hovered_tooltip_text != "" ? panel_advanced.hovered_height :
+        root.active_panel == 4 && panel_plot_export.hovered_tooltip_text != "" ? panel_plot_export.hovered_height :
         root.active_panel == 5 && panel_analyses.hovered_tooltip_text != "" ? panel_analyses.hovered_height :
         preview_hovered_tooltip != "" ? preview_card.hovered_height : 0px;
 
@@ -585,11 +602,11 @@ export component AppWindow inherits Window {
                         alignment: center;
 
                         MaterialText {
-                            text: root.active_panel == 0 ? "Operations" :
-                                root.active_panel == 1 ? "Common Options" :
-                                root.active_panel == 2 ? "Advanced Options" :
-                                root.active_panel == 3 ? "Plot & Export" :
-                                root.active_panel == 4 ? "Presets" : "Analyses";
+                            text: root.active_panel == 0 ? "Save & Export" :
+                                root.active_panel == 1 ? "Operations" :
+                                root.active_panel == 2 ? "Common Options" :
+                                root.active_panel == 3 ? "Advanced Options" :
+                                root.active_panel == 4 ? "Plot Settings" : "Analyses";
                             style: MaterialTypography.title_small;
                             color: MaterialPalette.on_surface;
                             vertical-alignment: center;
@@ -613,13 +630,56 @@ export component AppWindow inherits Window {
                     Rectangle {
                         vertical-stretch: 1;
 
-                        // Panel 0: Operations
-                        panel_operations := OperationsPanelCard {
+                        // Panel 0: Save & Export
+                        panel_save_export := SaveExportPanelCard {
                             x: 0;
                             y: 0;
                             width: 100%;
                             height: 100%;
                             visible: root.active_panel == 0;
+                            enabled: root.file_loaded;
+                            analysis_done: root.analysis_done;
+
+                            format_options <=> root.export_format_options;
+                            export_analyses <=> root.export_analysis_items;
+                            export_all_analyses <=> root.export_all_analyses;
+
+                            toggle_analysis(id, val) => {
+                                root.toggle_export_analysis(id, val);
+                            }
+                            toggle_all_analyses(val) => {
+                                root.toggle_all_export_analyses(val);
+                            }
+                            write_files => {
+                                root.write_files();
+                            }
+                            reset_export_options => {
+                                root.reset_export_options();
+                            }
+
+                            preset_items: root.preset_items;
+                            selected_preset <=> root.selected_preset;
+                            load_preset(idx) => {
+                                root.load_preset(idx);
+                            }
+                            save_preset(name) => {
+                                root.save_preset(name);
+                            }
+                            delete_preset(idx) => {
+                                root.delete_preset(idx);
+                            }
+                            reset_presets => {
+                                root.reset_presets();
+                            }
+                        }
+
+                        // Panel 1: Operations
+                        panel_operations := OperationsPanelCard {
+                            x: 0;
+                            y: 0;
+                            width: 100%;
+                            height: 100%;
+                            visible: root.active_panel == 1;
                             load_enabled: !root.timer_running;
                             file_loading: root.file_loading;
                             browse_file => {
@@ -665,13 +725,13 @@ export component AppWindow inherits Window {
                             }
                         }
 
-                        // Panel 1: Common Options
+                        // Panel 2: Common Options
                         panel_common := CommonOptionsPanelCard {
                             x: 0;
                             y: 0;
                             width: 100%;
                             height: 100%;
-                            visible: root.active_panel == 1;
+                            visible: root.active_panel == 2;
                             file_loaded: root.file_loaded;
                             has_radial_active: root.has_radial_active;
                             has_angular_active: root.has_angular_active;
@@ -720,13 +780,13 @@ export component AppWindow inherits Window {
                             }
                         }
 
-                        // Panel 2: Advanced Options
+                        // Panel 3: Advanced Options
                         panel_advanced := AdvancedOptionsPanelCard {
                             x: 0;
                             y: 0;
                             width: 100%;
                             height: 100%;
-                            visible: root.active_panel == 2;
+                            visible: root.active_panel == 3;
                             file_loaded: root.file_loaded;
                             has_scattering_active: root.has_scattering_active;
                             has_rings_active: root.has_rings_active;
@@ -782,13 +842,13 @@ export component AppWindow inherits Window {
                             }
                         }
 
-                        // Panel 3: Plot & Export
+                        // Panel 4: Plot Settings
                         panel_plot_export := PlotExportPanelCard {
                             x: 0;
                             y: 0;
                             width: 100%;
                             height: 100%;
-                            visible: root.active_panel == 3;
+                            visible: root.active_panel == 4;
                             enabled: root.file_loaded;
 
                             comparison_curves: root.comparison_curves;
@@ -823,31 +883,6 @@ export component AppWindow inherits Window {
                             export_marker_size_error: root.export_marker_size_error;
                             reset_export_settings => {
                                 root.reset_export_settings();
-                            }
-                        }
-
-                        // Panel 4: Presets
-                        panel_presets := PresetsPanelCard {
-                            x: 0;
-                            y: 0;
-                            width: 100%;
-                            height: 100%;
-                            visible: root.active_panel == 4;
-                            enabled: root.file_loaded;
-
-                            preset_items: root.preset_items;
-                            selected_preset <=> root.selected_preset;
-                            load_preset(idx) => {
-                                root.load_preset(idx);
-                            }
-                            save_preset(name) => {
-                                root.save_preset(name);
-                            }
-                            delete_preset(idx) => {
-                                root.delete_preset(idx);
-                            }
-                            reset_presets => {
-                                root.reset_presets();
                             }
                         }
 

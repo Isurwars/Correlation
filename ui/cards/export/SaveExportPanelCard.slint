@@ -1,0 +1,101 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialStyleMetrics,
+    MaterialPalette,
+    ScrollView,
+    Vertical,
+    MenuItem,
+} from "../../material/material.slint";
+import { ExportFormatOptions, ExportAnalysisItem } from "../../Types.slint";
+import { ExportOptionsCard } from "ExportOptionsCard.slint";
+import { PresetManagerCard } from "../presets/PresetManagerCard.slint";
+
+// ============================================================================
+// SaveExportPanelCard Component (Panel 0)
+// ============================================================================
+export component SaveExportPanelCard inherits Rectangle {
+    in property <bool> enabled: true;
+    in property <bool> analysis_done: false;
+
+    // Export Options Properties
+    in-out property <ExportFormatOptions> format_options: {
+        export_csv: true,
+        export_hdf5: false,
+        export_arrow: false,
+        export_images: true,
+        use_zip: false,
+    };
+    in-out property <[ExportAnalysisItem]> export_analyses: [];
+    in-out property <bool> export_all_analyses: true;
+
+    callback toggle_analysis(string, bool);
+    callback toggle_all_analyses(bool);
+    callback write_files();
+    callback reset_export_options();
+
+    // Preset Manager Properties
+    in property <[MenuItem]> preset_items: [];
+    in-out property <int> selected_preset: -1;
+
+    callback load_preset(int);
+    callback save_preset(string);
+    callback delete_preset(int);
+    callback reset_presets();
+
+    out property <string> hovered_tooltip_text:
+        export_card.hovered_tooltip_text != "" ? export_card.hovered_tooltip_text :
+        preset_card.hovered_tooltip_text != "" ? preset_card.hovered_tooltip_text : "";
+
+    out property <length> hovered_x:
+        export_card.hovered_tooltip_text != "" ? export_card.hovered_x :
+        preset_card.hovered_tooltip_text != "" ? preset_card.hovered_x : 0px;
+
+    out property <length> hovered_y:
+        export_card.hovered_tooltip_text != "" ? export_card.hovered_y :
+        preset_card.hovered_tooltip_text != "" ? preset_card.hovered_y : 0px;
+
+    out property <length> hovered_width:
+        export_card.hovered_tooltip_text != "" ? export_card.hovered_width :
+        preset_card.hovered_tooltip_text != "" ? preset_card.hovered_width : 0px;
+
+    out property <length> hovered_height:
+        export_card.hovered_tooltip_text != "" ? export_card.hovered_height :
+        preset_card.hovered_tooltip_text != "" ? preset_card.hovered_height : 0px;
+
+    ScrollView {
+        width: 100%;
+        height: 100%;
+
+        Vertical {
+            padding: 0;
+            spacing: MaterialStyleMetrics.spacing_8;
+
+            export_card := ExportOptionsCard {
+                enabled: root.enabled;
+                analysis_done: root.analysis_done;
+                format_options <=> root.format_options;
+                export_analyses <=> root.export_analyses;
+                export_all_analyses <=> root.export_all_analyses;
+
+                toggle_analysis(id, val) => { root.toggle_analysis(id, val); }
+                toggle_all_analyses(val) => { root.toggle_all_analyses(val); }
+                write_files => { root.write_files(); }
+                reset => { root.reset_export_options(); }
+            }
+
+            preset_card := PresetManagerCard {
+                enabled: root.enabled;
+                preset_items: root.preset_items;
+                selected_preset <=> root.selected_preset;
+                load_preset(idx) => { root.load_preset(idx); }
+                save_preset(name) => { root.save_preset(name); }
+                delete_preset(idx) => { root.delete_preset(idx); }
+                reset => { root.reset_presets(); }
+            }
+        }
+    }
+}

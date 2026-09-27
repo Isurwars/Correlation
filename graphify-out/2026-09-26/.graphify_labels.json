@@ -391,5 +391,12 @@
   "389": "PlotSize",
   "390": "PeriodicShift",
   "391": "AtomFunctionalTests",
+  "392": "CarReader.cpp",
+  "393": "WaterMoleculeOptions",
+  "394": "ZipArchiveWriterTest",
+  "395": "TDOSParams",
+  "396": "QVector",
+  "397": "CNAPairSig",
+  "398": "HDF5Writer.cpp",
   "419": "MotifSignatureCounts"
 }

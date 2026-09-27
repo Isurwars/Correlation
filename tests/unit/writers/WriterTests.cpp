@@ -529,8 +529,8 @@ TEST_F(FileWriterTests, WritesZipBundle) {
   dists.calculatePAD(2.0);
 
   const std::string zip_path = "test_si_bundle.zip";
-  std::error_code ec;
-  std::filesystem::remove(zip_path, ec);
+  std::error_code error_code;
+  std::filesystem::remove(zip_path, error_code);
 
   correlation::writers::FileWriter writer(dists);
 
@@ -542,7 +542,7 @@ TEST_F(FileWriterTests, WritesZipBundle) {
   // Assert
   ASSERT_TRUE(res.has_value()) << res.error();
   ASSERT_TRUE(std::filesystem::exists(zip_path));
-  EXPECT_GT(std::filesystem::file_size(zip_path), 0u);
+  EXPECT_GT(std::filesystem::file_size(zip_path), 0U);
 
   // Verify contents using miniz
   mz_zip_archive zip;
@@ -556,6 +556,87 @@ TEST_F(FileWriterTests, WritesZipBundle) {
   EXPECT_GE(mz_zip_reader_locate_file(&zip, "csv/PAD.csv", nullptr, 0), 0);
 
   mz_zip_reader_end(&zip);
-  std::filesystem::remove(zip_path, ec);
+  std::filesystem::remove(zip_path, error_code);
 }
 
+TEST_F(FileWriterTests, WritesCategorizedFolder) {
+  // Arrange
+  std::string const path = getDataDir() + "si_crystal.car";
+  correlation::readers::FileType type = correlation::readers::determineFileType(path);
+  correlation::core::Cell si_cell = correlation::readers::readStructure(path, type);
+  correlation::core::Trajectory trajectory;
+  trajectory.addFrame(si_cell);
+  trajectory.precomputeBondCutoffs();
+
+  correlation::analysis::DistributionFunctions dists(si_cell, 5.0, trajectory.getBondCutoffsSQ());
+  dists.calculateRDF({
+      .r_max = 5.0,
+      .r_bin_width = 0.1,
+  });
+  dists.calculatePAD(2.0);
+
+  const std::string folder_path = "test_si_folder_export";
+  std::error_code error_code;
+  std::filesystem::remove_all(folder_path, error_code);
+
+  correlation::writers::FileWriter writer(dists);
+
+  // Act: write categorized folder with CSV and SVG enabled
+  auto res = writer.writeFolder(folder_path, /*use_csv=*/true, /*use_hdf5=*/false,
+                                /*use_parquet=*/false, /*include_svg=*/true,
+                                /*smoothing=*/false);
+
+  // Assert
+  ASSERT_TRUE(res.has_value()) << res.error();
+  ASSERT_TRUE(std::filesystem::is_directory(folder_path));
+
+  EXPECT_TRUE(std::filesystem::exists(std::filesystem::path(folder_path) / "summary.txt"));
+  EXPECT_TRUE(std::filesystem::exists(std::filesystem::path(folder_path) / "csv" / "g.csv"));
+  EXPECT_TRUE(std::filesystem::exists(std::filesystem::path(folder_path) / "csv" / "PAD.csv"));
+  EXPECT_TRUE(std::filesystem::exists(std::filesystem::path(folder_path) / "plots" / "g.svg"));
+  EXPECT_TRUE(std::filesystem::exists(std::filesystem::path(folder_path) / "plots" / "PAD.svg"));
+
+  std::filesystem::remove_all(folder_path, error_code);
+}
+
+TEST_F(FileWriterTests, WritesCategorizedFolderWithAlgorithmFiltering) {
+  // Arrange
+  std::string const path = getDataDir() + "si_crystal.car";
+  correlation::readers::FileType type = correlation::readers::determineFileType(path);
+  correlation::core::Cell si_cell = correlation::readers::readStructure(path, type);
+  correlation::core::Trajectory trajectory;
+  trajectory.addFrame(si_cell);
+  trajectory.precomputeBondCutoffs();
+
+  correlation::analysis::DistributionFunctions dists(si_cell, 5.0, trajectory.getBondCutoffsSQ());
+  dists.calculateRDF({
+      .r_max = 5.0,
+      .r_bin_width = 0.1,
+  });
+  dists.calculatePAD(2.0);
+
+  const std::string folder_path = "test_si_folder_filtered";
+  std::error_code error_code;
+  std::filesystem::remove_all(folder_path, error_code);
+
+  correlation::writers::FileWriter writer(dists);
+
+  // Filter only PAD (exclude RDF / g(r))
+  std::vector<std::string> selected_algos = {"PAD"};
+
+  // Act
+  auto res = writer.writeFolder(folder_path, /*use_csv=*/true, /*use_hdf5=*/false,
+                                /*use_parquet=*/false, /*include_svg=*/true,
+                                /*smoothing=*/false, selected_algos);
+
+  // Assert
+  ASSERT_TRUE(res.has_value()) << res.error();
+  ASSERT_TRUE(std::filesystem::is_directory(folder_path));
+
+  EXPECT_TRUE(std::filesystem::exists(std::filesystem::path(folder_path) / "csv" / "PAD.csv"));
+  EXPECT_TRUE(std::filesystem::exists(std::filesystem::path(folder_path) / "plots" / "PAD.svg"));
+  EXPECT_FALSE(std::filesystem::exists(std::filesystem::path(folder_path) / "csv" / "g.csv"));
+  EXPECT_FALSE(std::filesystem::exists(std::filesystem::path(folder_path) / "plots" / "g.svg"));
+
+  std::filesystem::remove_all(folder_path, error_code);
+}

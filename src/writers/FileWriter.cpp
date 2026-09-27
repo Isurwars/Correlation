@@ -42,8 +42,9 @@ void FileWriter::write(const std::string &base_path, bool use_csv, bool use_hdf5
 }
 
 std::expected<void, std::string>
-FileWriter::writeBundle(const std::string &zip_path, bool use_csv, bool use_hdf5,
-                        bool use_parquet, bool include_svg, bool smoothing) const {
+FileWriter::writeBundle(const std::string &zip_path, bool use_csv, bool use_hdf5, bool use_parquet,
+                        bool include_svg, bool smoothing,
+                        const std::vector<std::string> &selected_algorithms) const {
   if (df_ == nullptr) {
     return std::unexpected("No distribution functions data available for export");
   }
@@ -54,8 +55,28 @@ FileWriter::writeBundle(const std::string &zip_path, bool use_csv, bool use_hdf5
   options.include_parquet = use_parquet;
   options.include_svg = include_svg;
   options.smoothing = smoothing;
+  options.selected_algorithms = selected_algorithms;
 
   return ExportBundleWriter::writeBundle(zip_path, *df_, options);
+}
+
+std::expected<void, std::string>
+FileWriter::writeFolder(const std::string &dest_dir, bool use_csv, bool use_hdf5, bool use_parquet,
+                        bool include_svg, bool smoothing,
+                        const std::vector<std::string> &selected_algorithms) const {
+  if (df_ == nullptr) {
+    return std::unexpected("No distribution functions data available for export");
+  }
+
+  ExportBundleOptions options;
+  options.include_csv = use_csv;
+  options.include_hdf5 = use_hdf5;
+  options.include_parquet = use_parquet;
+  options.include_svg = include_svg;
+  options.smoothing = smoothing;
+  options.selected_algorithms = selected_algorithms;
+
+  return ExportBundleWriter::writeFolder(dest_dir, *df_, options);
 }
 
 void FileWriter::writeSummaryFile(const std::string &base_path) const {

@@ -33,42 +33,27 @@ FileIOHandler::~FileIOHandler() {
 }
 
 void FileIOHandler::executeWriteFiles(const std::string &filepath) {
-  std::filesystem::path file_path_obj(filepath);
-  const std::string ext = file_path_obj.extension().string();
-
-#ifndef CORRELATION_USE_HDF5
-  if (ext == ".h5" || ext == ".hdf5") {
-    window_.set_analysis_status_text("Error: HDF5 format is not available.");
-    return;
-  }
-#endif
-
-#ifndef CORRELATION_USE_ARROW
-  if (ext == ".parquet") {
-    window_.set_analysis_status_text("Error: Parquet format is not available.");
-    return;
-  }
-#endif
-
-  const bool use_zip = (ext == ".zip");
-  const bool use_hdf5 = (ext == ".h5" || ext == ".hdf5");
-  const bool use_parquet = (ext == ".parquet");
-  const bool use_csv = (!use_zip && !use_hdf5 && !use_parquet);
-
-  if (use_csv && ext != ".csv") {
-    file_path_obj.replace_extension(".csv");
-  }
-
-  if (!use_zip && file_path_obj.has_extension()) {
-    file_path_obj.replace_extension("");
-  }
-
   ProgramOptions opts = controller_.handleOptionsfromUI();
-  opts.output_file_base = file_path_obj.string();
-  opts.use_zip = use_zip;
-  opts.use_csv = use_csv || use_zip;
-  opts.use_hdf5 = use_hdf5;
-  opts.use_parquet = use_parquet;
+  opts.output_file_base = filepath;
+
+  const auto format_opts = window_.get_export_format_options();
+  opts.use_zip = format_opts.use_zip;
+  opts.use_csv = format_opts.export_csv;
+  opts.use_hdf5 = format_opts.export_hdf5;
+  opts.use_parquet = format_opts.export_arrow;
+  opts.export_images = format_opts.export_images;
+
+  opts.export_algorithms.clear();
+  const auto export_algos_model = window_.get_export_analysis_items();
+  if (export_algos_model) {
+    for (size_t i = 0; i < export_algos_model->row_count(); ++i) {
+      const auto maybe_item = export_algos_model->row_data(i);
+      if (maybe_item && maybe_item->enabled) {
+        opts.export_algorithms.emplace_back(maybe_item->id.data());
+      }
+    }
+  }
+
   options_ = opts;
 
   const auto write_res = dispatcher_.writeFiles(options_);
@@ -87,29 +72,40 @@ void FileIOHandler::handleWriteFiles() {
   if (dialog_thread_.joinable()) {
     dialog_thread_.join();
   }
+  const auto format_opts = window_.get_export_format_options();
 
-  dialog_thread_ = std::thread([this]() {
-    std::array<nfdfilteritem_t, 4> filter_list = {{{
-                                                       .name = "Consolidated ZIP Bundle",
-                                                       .spec = "zip",
-                                                   },
-                                                   {
-                                                       .name = "Comma Separated Values",
-                                                       .spec = "csv",
-                                                   },
-                                                   {
-                                                       .name = "Hierarchical Data Format",
-                                                       .spec = "h5,hdf5",
-                                                   },
-                                                   {
-                                                       .name = "Apache Parquet",
-                                                       .spec = "parquet",
-                                                   }}};
-    const nfdfiltersize_t filter_count = filter_list.size();
+#ifndef CORRELATION_USE_HDF5
+  if (format_opts.export_hdf5) {
+    dialog_active_.store(false);
+    window_.set_analysis_status_text("Error: HDF5 format is not available.");
+    return;
+  }
+#endif
 
+#ifndef CORRELATION_USE_ARROW
+  if (format_opts.export_arrow) {
+    dialog_active_.store(false);
+    window_.set_analysis_status_text("Error: Parquet format is not available.");
+    return;
+  }
+#endif
+
+  const bool is_zip = format_opts.use_zip;
+
+  dialog_thread_ = std::thread([this, is_zip]() {
     nfdchar_t *out_path = nullptr;
-    const nfdresult_t result =
-        NFD_SaveDialogU8(&out_path, filter_list.data(), filter_count, nullptr, nullptr);
+    nfdresult_t result = NFD_CANCEL;
+
+    if (is_zip) {
+      std::array<nfdfilteritem_t, 1> filter_list = {{{
+          .name = "Consolidated ZIP Bundle",
+          .spec = "zip",
+      }}};
+      result = NFD_SaveDialogU8(&out_path, filter_list.data(), filter_list.size(), nullptr,
+                                "correlation_export.zip");
+    } else {
+      result = NFD_PickFolderU8(&out_path, nullptr);
+    }
 
     if (result == NFD_OKAY) {
       std::string filepath(out_path);

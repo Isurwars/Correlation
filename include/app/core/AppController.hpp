@@ -91,6 +91,11 @@ public:
   void handleOptionstoUI();
 
   /**
+   * @brief Populates the export analyses selection list with computed histograms.
+   */
+  void populateExportAnalyses();
+
+  /**
    * @brief Updates the UI with the recommended bond cutoffs from the backend.
    */
   void setBondCutoffs();

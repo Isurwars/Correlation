@@ -569,7 +569,7 @@ FetchContent_MakeAvailable(miniz)
 if(TARGET miniz)
   set_target_properties(miniz PROPERTIES POSITION_INDEPENDENT_CODE ON)
   if(CMAKE_C_COMPILER_ID MATCHES "Clang")
-    target_compile_options(miniz PRIVATE -Wno-#pragma-messages)
+    target_compile_options(miniz PRIVATE "-Wno-#pragma-messages")
   endif()
 endif()
 

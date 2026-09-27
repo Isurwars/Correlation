@@ -38,6 +38,20 @@ export struct CalculatorGroup {
     calculators: [CalculatorInfo],
 }
 
+export struct ExportFormatOptions {
+    export_csv: bool,
+    export_hdf5: bool,
+    export_arrow: bool,
+    export_images: bool,
+    use_zip: bool,
+}
+
+export struct ExportAnalysisItem {
+    id: string,
+    name: string,
+    enabled: bool,
+}
+
 export struct AnalysisOptions {
     r_max: string,
     r_bin_width: string,

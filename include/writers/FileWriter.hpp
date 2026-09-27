@@ -57,7 +57,25 @@ public:
    */
   std::expected<void, std::string>
   writeBundle(const std::string &zip_path, bool use_csv = true, bool use_hdf5 = false,
-              bool use_parquet = false, bool include_svg = true, bool smoothing = true) const;
+              bool use_parquet = false, bool include_svg = true, bool smoothing = true,
+              const std::vector<std::string> &selected_algorithms = {}) const;
+
+  /**
+   * @brief Writes analysis outputs into categorized subfolders within a destination folder.
+   *
+   * @param dest_dir Destination directory path.
+   * @param use_csv Whether to include CSV tables in `csv/`.
+   * @param use_hdf5 Whether to include HDF5 data in `hdf5/`.
+   * @param use_parquet Whether to include Parquet data in `arrow/`.
+   * @param include_svg Whether to include SVG plots in `plots/`.
+   * @param smoothing Whether to include smoothed curves.
+   * @param selected_algorithms Optional filter list of algorithms to export (empty for all).
+   * @return std::expected<void, std::string> Success or error message.
+   */
+  std::expected<void, std::string>
+  writeFolder(const std::string &dest_dir, bool use_csv = true, bool use_hdf5 = false,
+              bool use_parquet = false, bool include_svg = true, bool smoothing = true,
+              const std::vector<std::string> &selected_algorithms = {}) const;
 
 private:
   void writeSummaryFile(const std::string &base_path) const;

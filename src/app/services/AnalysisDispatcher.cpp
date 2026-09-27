@@ -70,8 +70,8 @@ AnalysisDispatcher::runAnalysis(correlation::core::Trajectory *trajectory,
   }
 
   const auto config = toEngineConfig(options, &cancel_flag_);
-  auto result = correlation::analysis::CorrelationEngine::runAnalysis(
-      *trajectory, config, progress_callback_);
+  auto result = correlation::analysis::CorrelationEngine::runAnalysis(*trajectory, config,
+                                                                      progress_callback_);
   if (!result) {
     std::cerr << "Analysis Exception: " << result.error() << '\n';
     return std::unexpected(result.error());
@@ -102,17 +102,21 @@ AnalysisDispatcher::writeFiles(const ProgramOptions &options) const {
       if (!zip_path.ends_with(".zip")) {
         zip_path += ".zip";
       }
-      auto zip_res = writer.writeBundle(zip_path, options.use_csv, options.use_hdf5,
-                                        options.use_parquet, /*include_svg=*/true,
-                                        options.smoothing);
+      auto zip_res =
+          writer.writeBundle(zip_path, options.use_csv, options.use_hdf5, options.use_parquet,
+                             options.export_images, options.smoothing, options.export_algorithms);
       if (!zip_res) {
         return std::unexpected(zip_res.error());
       }
       std::cout << "Consolidated archive written to: " << zip_path << '\n';
     } else {
-      writer.write(options.output_file_base, options.use_csv, options.use_hdf5, options.use_parquet,
-                   options.smoothing);
-      std::cout << "Files written to: " << options.output_file_base << '\n';
+      auto folder_res = writer.writeFolder(
+          options.output_file_base, options.use_csv, options.use_hdf5, options.use_parquet,
+          options.export_images, options.smoothing, options.export_algorithms);
+      if (!folder_res) {
+        return std::unexpected(folder_res.error());
+      }
+      std::cout << "Categorized files written to directory: " << options.output_file_base << '\n';
     }
   } catch (const std::exception &e) {
     std::string const err = std::string(AppDefaults::MSG_ERROR_WRITING) + e.what();

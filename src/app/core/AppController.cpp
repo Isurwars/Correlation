@@ -15,7 +15,6 @@
 #include "app/core/AppController.hpp"
 #include "app/services/AnalysisRunner.hpp"
 
-#include "app/formatters/BondCutoffMapper.hpp"
 #include "app/services/FileIOHandler.hpp"
 #include "app/services/InputValidator.hpp"
 #include "app/services/OptionsResetService.hpp"
@@ -25,13 +24,8 @@
 #include "app/viewmodel/PlotController.hpp"
 #include "app/viewmodel/PresetController.hpp"
 #include "calculators/CalculatorFactory.hpp"
-#include "physics/PhysicalData.hpp"
 
-#include <algorithm>
-#include <cctype>
 #include <cstdlib>
-#include <filesystem>
-#include <format>
 #include <map>
 #include <string>
 #include <vector>
@@ -181,10 +175,63 @@ AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
   window_.on_reset_advanced_options([this]() { handleResetAdvancedOptions(); });
   window_.on_reset_trajectory_options([this]() { handleResetTrajectoryOptions(); });
   window_.on_reset_export_settings([this]() { handleResetExportSettings(); });
-  window_.on_reset_analyses_selection([this]() { handleResetAnalysesSelection(); });
   window_.on_reset_material_type([this]() { handleResetMaterialType(); });
+  window_.on_reset_analyses_selection([this]() { handleResetAnalysesSelection(); });
   window_.on_reset_presets([this]() { window_.set_selected_preset(-1); });
   window_.on_clear_comparison_curves([this]() { handleClearComparisonCurves(); });
+
+  window_.on_toggle_export_analysis([this](const slint::SharedString &analysis_id, bool enabled) {
+    auto model = window_.get_export_analysis_items();
+    if (!model) {
+      return;
+    }
+    for (size_t i = 0; i < model->row_count(); ++i) {
+      auto maybe_item = model->row_data(i);
+      if (maybe_item && maybe_item->id == analysis_id) {
+        auto item = *maybe_item;
+        item.enabled = enabled;
+        model->set_row_data(i, item);
+        break;
+      }
+    }
+  });
+
+  window_.on_toggle_all_export_analyses([this](bool enabled) {
+    auto model = window_.get_export_analysis_items();
+    if (!model) {
+      return;
+    }
+    for (size_t i = 0; i < model->row_count(); ++i) {
+      auto maybe_item = model->row_data(i);
+      if (maybe_item) {
+        auto item = *maybe_item;
+        item.enabled = enabled;
+        model->set_row_data(i, item);
+      }
+    }
+  });
+
+  window_.on_reset_export_options([this]() {
+    ExportFormatOptions opts{};
+    opts.export_csv = true;
+    opts.export_images = true;
+    opts.export_hdf5 = false;
+    opts.export_arrow = false;
+    opts.use_zip = false;
+    window_.set_export_format_options(opts);
+    window_.set_export_all_analyses(true);
+    auto model = window_.get_export_analysis_items();
+    if (model) {
+      for (size_t i = 0; i < model->row_count(); ++i) {
+        auto maybe_item = model->row_data(i);
+        if (maybe_item) {
+          auto item = *maybe_item;
+          item.enabled = true;
+          model->set_row_data(i, item);
+        }
+      }
+    }
+  });
 
   // Handle open external URL (e.g. download update from browser)
   window_.on_open_url([](const slint::SharedString &url) {
@@ -407,6 +454,25 @@ void AppController::handleApplyMaxFactor(float max_factor) {
 
 void AppController::handleApplyGlobalCutoff(float global_cutoff) {
   bond_cutoff_controller_.applyGlobalCutoff(global_cutoff);
+}
+
+void AppController::populateExportAnalyses() {
+  const auto names = dispatcher_.getAvailableHistogramNames();
+  auto model = std::make_shared<slint::VectorModel<ExportAnalysisItem>>();
+  for (const auto &name : names) {
+    if (name.ends_with("_raw")) {
+      continue;
+    }
+    const auto *hist = dispatcher_.getHistogram(name);
+    const std::string label = (hist != nullptr && !hist->title.empty()) ? hist->title : name;
+    ExportAnalysisItem item;
+    item.id = slint::SharedString(name);
+    item.name = slint::SharedString(label);
+    item.enabled = true;
+    model->push_back(item);
+  }
+  window_.set_export_analysis_items(model);
+  window_.set_export_all_analyses(true);
 }
 
 } // namespace correlation::app

@@ -92,6 +92,7 @@ void AnalysisRunner::handleRunAnalysis() {
 
       // Populate the plot dropdown and auto-preview the first histogram
       controller_.getPlotController()->populatePlotList();
+      controller_.populateExportAnalyses();
       if (!dispatcher_.getAvailableHistogramNames().empty()) {
         controller_.getPlotController()->requestPlotUpdate(0, true);
       }

@@ -109,10 +109,12 @@ TEST(ServiceIntegrationTests, EndToEndMultiFrameTrajectoryPipeline) {
   ASSERT_TRUE(write_result.has_value())
       << "writeFiles failed: " << (write_result ? "" : write_result.error());
 
-  EXPECT_TRUE(std::filesystem::exists(out_base + "_g.csv"));
-  EXPECT_TRUE(std::filesystem::exists(out_base + "_J.csv"));
-  EXPECT_TRUE(std::filesystem::exists(out_base + "_VACF.csv"));
-  EXPECT_TRUE(std::filesystem::exists(out_base + "_MSD.csv"));
+  const auto csv_dir = std::filesystem::path(out_base) / "csv";
+  EXPECT_TRUE(std::filesystem::exists(csv_dir / "g.csv"));
+  EXPECT_TRUE(std::filesystem::exists(csv_dir / "J.csv"));
+  EXPECT_TRUE(std::filesystem::exists(csv_dir / "VACF.csv"));
+  EXPECT_TRUE(std::filesystem::exists(csv_dir / "MSD.csv"));
+  EXPECT_TRUE(std::filesystem::exists(std::filesystem::path(out_base) / "summary.txt"));
 }
 
 TEST(ServiceIntegrationTests, AbortsGracefullyOnMissingTrajectory) {

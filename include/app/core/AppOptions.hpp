@@ -90,14 +90,16 @@ struct AppDefaults {
  * @brief Encapsulates all configurable options for the application.
  */
 struct ProgramOptions {
-  std::string input_file;            ///< Path to the input trajectory file.
-  std::string output_file_base;      ///< Base path/name for output files.
-  bool smoothing = true;             ///< Whether to apply Gaussian smoothing to results.
-  bool use_hdf5 = false;             ///< Enable HDF5 output format.
-  bool use_csv = true;               ///< Enable CSV output format.
-  bool use_parquet = false;          ///< Enable Parquet output format.
-  bool use_zip = false;              ///< Enable consolidated ZIP bundle output format.
-  real_t r_max = AppDefaults::R_MAX; ///< Max distance for RDF calculation.
+  std::string input_file;                     ///< Path to the input trajectory file.
+  std::string output_file_base;               ///< Base path/name for output files.
+  bool smoothing = true;                      ///< Whether to apply Gaussian smoothing to results.
+  bool use_hdf5 = false;                      ///< Enable HDF5 output format.
+  bool use_csv = true;                        ///< Enable CSV output format.
+  bool use_parquet = false;                   ///< Enable Parquet output format.
+  bool use_zip = false;                       ///< Enable consolidated ZIP bundle output format.
+  bool export_images = true;                  ///< Enable SVG plots export.
+  std::vector<std::string> export_algorithms; ///< Filter algorithms for export (empty = all).
+  real_t r_max = AppDefaults::R_MAX;          ///< Max distance for RDF calculation.
   real_t r_bin_width = AppDefaults::R_BIN_WIDTH;            ///< Step size for RDF histogram.
   real_t q_max = AppDefaults::Q_MAX;                        ///< Max momentum transfer for S(Q).
   real_t q_bin_width = AppDefaults::Q_BIN_WIDTH;            ///< Step size for S(Q) histogram.
