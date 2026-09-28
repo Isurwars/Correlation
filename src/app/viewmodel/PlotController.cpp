@@ -36,8 +36,9 @@ template <typename T> T safeParse(const slint::SharedString &str, T default_valu
   }
 }
 
-correlation::plotters::detail::NiceScale computeXScale(const correlation::analysis::Histogram &hist,
-                                                       const correlation::plotters::PlotConfig &config) {
+correlation::plotters::detail::NiceScale
+computeXScale(const correlation::analysis::Histogram &hist,
+              const correlation::plotters::PlotConfig &config) {
   real_t raw_x_min = hist.bins.empty() ? static_cast<real_t>(0.0) : hist.bins.front();
   real_t raw_x_max = hist.bins.empty() ? static_cast<real_t>(1.0) : hist.bins.back();
   bool strict_x = false;
@@ -50,8 +51,9 @@ correlation::plotters::detail::NiceScale computeXScale(const correlation::analys
       correlation::plotters::detail::DataRange{.min = raw_x_min, .max = raw_x_max}, 11, strict_x);
 }
 
-correlation::plotters::detail::NiceScale computeYScale(const correlation::analysis::Histogram &hist,
-                                                       const correlation::plotters::PlotConfig &config) {
+correlation::plotters::detail::NiceScale
+computeYScale(const correlation::analysis::Histogram &hist,
+              const correlation::plotters::PlotConfig &config) {
   real_t raw_y_min = static_cast<real_t>(0.0);
   real_t raw_y_max = static_cast<real_t>(0.0);
   const auto &partials = hist.smoothed_partials.empty() ? hist.partials : hist.smoothed_partials;
@@ -301,11 +303,11 @@ void PlotController::handleMouseMove(float mouse_x, float mouse_y, bool hover, f
         auto [svg_x, svg_y] =
             correlation::plotters::detail::screenToSvg(mouse_x, mouse_y, width, height, config);
         if (svg_x >= geom.px0 && svg_x <= geom.px1 && svg_y >= geom.py0 && svg_y <= geom.py1) {
-          auto xs = computeXScale(*hist, config);
-          auto ys = computeYScale(*hist, config);
-          auto [dx, dy] =
-              correlation::plotters::detail::screenToData(mouse_x, mouse_y, width, height, config, xs, ys);
-          std::string text = std::format("X: {:.4g}  Y: {:.4g}", dx, dy);
+          auto x_scale = computeXScale(*hist, config);
+          auto y_scale = computeYScale(*hist, config);
+          auto [d_x, d_y] = correlation::plotters::detail::screenToData(
+              mouse_x, mouse_y, width, height, config, x_scale, y_scale);
+          std::string text = std::format("X: {:.4g}  Y: {:.4g}", d_x, d_y);
           window_.set_hover_coord_text(slint::SharedString(text));
         } else {
           window_.set_hover_coord_text("");
@@ -665,8 +667,8 @@ void PlotController::handleToggleDifferencePlot(bool show_difference) {
   });
 }
 
-void PlotController::handleZoomRect(float x1, float y1, float x2, float y2) {
-  if (std::abs(x2 - x1) < 5.0F || std::abs(y2 - y1) < 5.0F) {
+void PlotController::handleZoomRect(float start_x, float start_y, float end_x, float end_y) {
+  if (std::abs(end_x - start_x) < 5.0F || std::abs(end_y - start_y) < 5.0F) {
     return;
   }
   const int current_idx = window_.get_selected_plot_index();
@@ -680,13 +682,13 @@ void PlotController::handleZoomRect(float x1, float y1, float x2, float y2) {
   }
 
   auto config = buildPlotConfigFromUI();
-  auto xs = computeXScale(*hist, config);
-  auto ys = computeYScale(*hist, config);
+  auto x_scale = computeXScale(*hist, config);
+  auto y_scale = computeYScale(*hist, config);
 
   auto [dx1, dy1] = correlation::plotters::detail::screenToData(
-      x1, y1, last_plot_width_, last_plot_height_, config, xs, ys);
+      start_x, start_y, last_plot_width_, last_plot_height_, config, x_scale, y_scale);
   auto [dx2, dy2] = correlation::plotters::detail::screenToData(
-      x2, y2, last_plot_width_, last_plot_height_, config, xs, ys);
+      end_x, end_y, last_plot_width_, last_plot_height_, config, x_scale, y_scale);
 
   zoom_x_min_ = std::min(dx1, dx2);
   zoom_x_max_ = std::max(dx1, dx2);
@@ -710,7 +712,7 @@ void PlotController::handleResetZoom() {
   }
 }
 
-void PlotController::handleAddMarker(bool is_vertical) {
+void PlotController::handleAddMarkerAt(float click_x, float click_y, bool is_vertical) {
   const int current_idx = window_.get_selected_plot_index();
   if (current_idx < 0 || std::cmp_greater_equal(current_idx, available_plot_keys_.size())) {
     return;
@@ -722,13 +724,13 @@ void PlotController::handleAddMarker(bool is_vertical) {
   }
 
   auto config = buildPlotConfigFromUI();
-  auto xs = computeXScale(*hist, config);
-  auto ys = computeYScale(*hist, config);
+  auto x_scale = computeXScale(*hist, config);
+  auto y_scale = computeYScale(*hist, config);
 
-  auto [dx, dy] = correlation::plotters::detail::screenToData(
-      last_mouse_x_, last_mouse_y_, last_plot_width_, last_plot_height_, config, xs, ys);
+  auto [d_x, d_y] = correlation::plotters::detail::screenToData(
+      click_x, click_y, last_plot_width_, last_plot_height_, config, x_scale, y_scale);
 
-  real_t val = is_vertical ? dx : dy;
+  real_t val = is_vertical ? d_x : d_y;
   std::string color = is_vertical ? "#0284C7" : "#E11D48";
   std::string label = std::format("{}: {:.3f}", is_vertical ? "X" : "Y", val);
 
@@ -741,6 +743,10 @@ void PlotController::handleAddMarker(bool is_vertical) {
 
   window_.set_markers_count(static_cast<int>(reference_markers_.size()));
   requestPlotUpdate(current_idx, true);
+}
+
+void PlotController::handleAddMarker(bool is_vertical) {
+  handleAddMarkerAt(last_mouse_x_, last_mouse_y_, is_vertical);
 }
 
 void PlotController::handleClearMarkers() {

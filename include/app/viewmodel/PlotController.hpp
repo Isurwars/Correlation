@@ -10,7 +10,6 @@
 
 #include "app/core/AppOptions.hpp"
 #include "app/formatters/PlotSeriesManager.hpp"
-#include "app/formatters/PlotTableFormatter.hpp"
 #include "app/services/AnalysisDispatcher.hpp"
 #include "plotters/SvgPlotter.hpp"
 #include <slint.h>
@@ -128,8 +127,12 @@ public:
 
   /**
    * @brief Handles box zoom to a specified screen bounding rectangle.
+   * @param[in] start_x Starting screen X coordinate.
+   * @param[in] start_y Starting screen Y coordinate.
+   * @param[in] end_x Ending screen X coordinate.
+   * @param[in] end_y Ending screen Y coordinate.
    */
-  void handleZoomRect(float x1, float y1, float x2, float y2);
+  void handleZoomRect(float start_x, float start_y, float end_x, float end_y);
 
   /**
    * @brief Resets zoom to full dataset auto bounds.

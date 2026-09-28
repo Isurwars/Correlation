@@ -148,11 +148,14 @@ void AppController::registerPlotCallbacks() {
     });
   });
 
-  window_.on_zoom_to_rect([this](float x1, float y1, float x2, float y2) {
-    plot_controller_->handleZoomRect(x1, y1, x2, y2);
+  window_.on_zoom_to_rect([this](float start_x, float start_y, float end_x, float end_y) {
+    plot_controller_->handleZoomRect(start_x, start_y, end_x, end_y);
   });
   window_.on_reset_zoom([this]() {
     plot_controller_->handleResetZoom();
+  });
+  window_.on_add_marker_at([this](float click_x, float click_y, bool is_vert) {
+    plot_controller_->handleAddMarkerAt(click_x, click_y, is_vert);
   });
   window_.on_add_marker([this](bool is_vert) {
     plot_controller_->handleAddMarker(is_vert);

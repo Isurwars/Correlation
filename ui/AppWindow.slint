@@ -302,6 +302,7 @@ export component AppWindow inherits Window {
     callback plot_resized(length, length);
     callback zoom_to_rect(float, float, float, float);
     callback reset_zoom();
+    callback add_marker_at(float, float, bool);
     callback add_marker(bool);
     callback clear_markers();
 
@@ -1011,6 +1012,9 @@ export component AppWindow inherits Window {
                             }
                             reset_zoom => {
                                 root.reset_zoom();
+                            }
+                            add_marker_at(x, y, is_vert) => {
+                                root.add_marker_at(x, y, is_vert);
                             }
                             add_marker(is_vert) => {
                                 root.add_marker(is_vert);

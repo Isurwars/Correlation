@@ -2040,8 +2040,8 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/PlotController.hpp": {
-    "mtime": 1790634513.356891,
-    "ast_hash": "8bbd55cd9ee19769da2bc34407454a56",
+    "mtime": 1790635759.6614463,
+    "ast_hash": "55b746a58c4bd0c10ff466201c7b4253",
     "semantic_hash": ""
   },
   "include/app/viewmodel/PresetController.hpp": {
@@ -2050,8 +2050,8 @@
     "semantic_hash": ""
   },
   "src/app/core/AppController.cpp": {
-    "mtime": 1790634829.558501,
-    "ast_hash": "140b3edd6c4004f747055e3c3f4d745d",
+    "mtime": 1790635868.576755,
+    "ast_hash": "c0b6bcfb83ea7fcee53eb2f304912d6a",
     "semantic_hash": ""
   },
   "src/app/core/SettingsManager.cpp": {
@@ -2130,8 +2130,8 @@
     "semantic_hash": ""
   },
   "src/app/viewmodel/PlotController.cpp": {
-    "mtime": 1790634976.8953545,
-    "ast_hash": "9f6c9aa7bb2563c6ecab0425e69e6a72",
+    "mtime": 1790635773.0162392,
+    "ast_hash": "0c7c800cbcdd2a90db90954b994a733d",
     "semantic_hash": ""
   },
   "src/app/viewmodel/PresetController.cpp": {
@@ -2545,8 +2545,8 @@
     "semantic_hash": ""
   },
   ".agents/.hook_state.json": {
-    "mtime": 1790635395.938527,
-    "ast_hash": "1e90f2cc14dc05d970c7c5b962af200d",
+    "mtime": 1790636006.1490893,
+    "ast_hash": "d5d51e4ca9462a0c99fe88ad28f311c6",
     "semantic_hash": ""
   },
   "tests/functional/analysis/NumericalParityTests.cpp": {

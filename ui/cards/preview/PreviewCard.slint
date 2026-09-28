@@ -54,7 +54,7 @@ export component PreviewCard inherits FilledCard {
     in property <string> hover_coord_text: "";
     in property <bool> has_active_zoom: false;
     in property <int> markers_count: 0;
-    property <bool> zoom_mode: false;
+    property <int> active_tool: 0; // 0: None, 1: Zoom Box, 2: +X Marker, 3: +Y Marker
     property <bool> is_selecting: false;
     property <length> drag_start_x: 0px;
     property <length> drag_start_y: 0px;
@@ -97,6 +97,7 @@ export component PreviewCard inherits FilledCard {
     callback plot_resized(length, length);
     callback zoom_to_rect(float, float, float, float);
     callback reset_zoom();
+    callback add_marker_at(float, float, bool);
     callback add_marker(bool);
     callback clear_markers();
 
@@ -311,25 +312,31 @@ export component PreviewCard inherits FilledCard {
                     width: 100%;
                     height: 100%;
                     visible: root.selected_plot_index >= 0;
-                    mouse-cursor: root.zoom_mode ? crosshair : default;
+                    mouse-cursor: root.active_tool != 0 ? crosshair : default;
 
                     pointer-event(event) => {
-                        if (root.zoom_mode) {
-                            if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                        if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                            if (root.active_tool == 2) {
+                                root.add_marker_at(self.mouse-x / 1px, self.mouse-y / 1px, true);
+                                root.active_tool = 0;
+                            } else if (root.active_tool == 3) {
+                                root.add_marker_at(self.mouse-x / 1px, self.mouse-y / 1px, false);
+                                root.active_tool = 0;
+                            } else if (root.active_tool == 1) {
                                 root.drag_start_x = self.mouse-x;
                                 root.drag_start_y = self.mouse-y;
                                 root.drag_current_x = self.mouse-x;
                                 root.drag_current_y = self.mouse-y;
                                 root.is_selecting = true;
-                            } else if (event.kind == PointerEventKind.up) {
-                                if (root.is_selecting) {
-                                    root.is_selecting = false;
-                                    root.zoom_to_rect(root.drag_start_x / 1px, root.drag_start_y / 1px, root.drag_current_x / 1px, root.drag_current_y / 1px);
-                                    root.zoom_mode = false;
-                                }
-                            } else if (event.kind == PointerEventKind.cancel) {
-                                root.is_selecting = false;
                             }
+                        } else if (event.kind == PointerEventKind.up) {
+                            if (root.is_selecting) {
+                                root.is_selecting = false;
+                                root.zoom_to_rect(root.drag_start_x / 1px, root.drag_start_y / 1px, root.drag_current_x / 1px, root.drag_current_y / 1px);
+                                root.active_tool = 0;
+                            }
+                        } else if (event.kind == PointerEventKind.cancel) {
+                            root.is_selecting = false;
                         }
                     }
 
@@ -374,44 +381,22 @@ export component PreviewCard inherits FilledCard {
                     border-radius: 2px;
                 }
 
-                // Live HUD Coordinates (top-left)
-                if root.hover_coord_text != "" : Rectangle {
+                // Floating Imaging Toolbar with Buttons and Live Coordinates to the right
+                if root.selected_plot_index >= 0 : Rectangle {
                     x: 12px;
                     y: 12px;
-                    height: 26px;
-                    border-radius: 13px;
-                    background: MaterialPalette.surface_container_highest.with_alpha(85%);
-                    border-width: 1px;
-                    border-color: MaterialPalette.outline_variant.with_alpha(50%);
-
-                    HorizontalLayout {
-                        padding-left: 10px;
-                        padding-right: 10px;
-                        alignment: center;
-                        MaterialText {
-                            text: root.hover_coord_text;
-                            style: MaterialTypography.label_medium;
-                            color: MaterialPalette.on_surface;
-                            vertical-alignment: center;
-                        }
-                    }
-                }
-
-                // Floating Imaging Toolbar (top-right)
-                if root.selected_plot_index >= 0 : Rectangle {
-                    x: parent.width - self.width - 12px;
-                    y: 12px;
+                    width: toolbar_layout.preferred-width + 12px;
                     height: 32px;
                     border-radius: 16px;
                     background: MaterialPalette.surface_container_highest.with_alpha(85%);
                     border-width: 1px;
                     border-color: MaterialPalette.outline_variant.with_alpha(50%);
 
-                    HorizontalLayout {
+                    toolbar_layout := HorizontalLayout {
                         padding-left: 6px;
                         padding-right: 6px;
                         spacing: 4px;
-                        alignment: center;
+                        alignment: start;
 
                         // Home (Reset Zoom)
                         home_touch := TouchArea {
@@ -439,30 +424,35 @@ export component PreviewCard inherits FilledCard {
                         }
 
                         // Divider
-                        Rectangle {
-                            width: 1px;
-                            height: 16px;
-                            background: MaterialPalette.outline_variant.with_alpha(50%);
+                        VerticalLayout {
+                            alignment: center;
+                            Rectangle {
+                                width: 1px;
+                                height: 16px;
+                                background: MaterialPalette.outline_variant.with_alpha(50%);
+                            }
                         }
 
                         // Box Zoom Toggle
-                        TouchArea {
+                        zoom_touch := TouchArea {
                             width: 26px;
                             height: 26px;
                             mouse-cursor: pointer;
-                            clicked => { root.zoom_mode = !root.zoom_mode; }
+                            clicked => {
+                                root.active_tool = (root.active_tool == 1 ? 0 : 1);
+                            }
 
                             Rectangle {
                                 width: 100%;
                                 height: 100%;
                                 border-radius: 13px;
-                                background: root.zoom_mode ? MaterialPalette.primary_container : (parent.has-hover ? MaterialPalette.surface_container_high : transparent);
+                                background: root.active_tool == 1 ? MaterialPalette.primary_container : (zoom_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
 
                                 Image {
                                     width: 16px;
                                     height: 16px;
                                     source: Icons.zoom_in;
-                                    colorize: root.zoom_mode ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
+                                    colorize: root.active_tool == 1 ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
                                     horizontal-alignment: center;
                                     vertical-alignment: center;
                                 }
@@ -470,52 +460,59 @@ export component PreviewCard inherits FilledCard {
                         }
 
                         // Divider
-                        Rectangle {
-                            width: 1px;
-                            height: 16px;
-                            background: MaterialPalette.outline_variant.with_alpha(50%);
+                        VerticalLayout {
+                            alignment: center;
+                            Rectangle {
+                                width: 1px;
+                                height: 16px;
+                                background: MaterialPalette.outline_variant.with_alpha(50%);
+                            }
                         }
 
-                        // Add Vertical X Marker
-                        TouchArea {
+                        // Add Vertical X Marker (+X)
+                        marker_x_touch := TouchArea {
                             width: 26px;
                             height: 26px;
                             mouse-cursor: pointer;
-                            clicked => { root.add_marker(true); }
+                            clicked => {
+                                root.active_tool = (root.active_tool == 2 ? 0 : 2);
+                            }
 
                             Rectangle {
                                 width: 100%;
                                 height: 100%;
                                 border-radius: 13px;
-                                background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
+                                background: root.active_tool == 2 ? MaterialPalette.primary_container : (marker_x_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
 
                                 MaterialText {
                                     text: "+X";
                                     style: MaterialTypography.label_medium;
-                                    color: MaterialPalette.on_surface;
+                                    color: root.active_tool == 2 ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
                                     horizontal-alignment: center;
                                     vertical-alignment: center;
                                 }
                             }
                         }
 
-                        // Add Horizontal Y Marker
-                        TouchArea {
+                        // Add Horizontal Y Marker (+Y)
+                        marker_y_touch := TouchArea {
                             width: 26px;
                             height: 26px;
                             mouse-cursor: pointer;
-                            clicked => { root.add_marker(false); }
+                            clicked => {
+                                root.active_tool = (root.active_tool == 3 ? 0 : 3);
+                            }
 
                             Rectangle {
                                 width: 100%;
                                 height: 100%;
                                 border-radius: 13px;
-                                background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
+                                background: root.active_tool == 3 ? MaterialPalette.primary_container : (marker_y_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
 
                                 MaterialText {
                                     text: "+Y";
                                     style: MaterialTypography.label_medium;
-                                    color: MaterialPalette.on_surface;
+                                    color: root.active_tool == 3 ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
                                     horizontal-alignment: center;
                                     vertical-alignment: center;
                                 }
@@ -523,7 +520,7 @@ export component PreviewCard inherits FilledCard {
                         }
 
                         // Clear Markers
-                        if root.markers_count > 0 : TouchArea {
+                        if root.markers_count > 0 : clear_markers_touch := TouchArea {
                             width: 26px;
                             height: 26px;
                             mouse-cursor: pointer;
@@ -533,7 +530,7 @@ export component PreviewCard inherits FilledCard {
                                 width: 100%;
                                 height: 100%;
                                 border-radius: 13px;
-                                background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
+                                background: clear_markers_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
 
                                 Image {
                                     width: 16px;
@@ -543,6 +540,30 @@ export component PreviewCard inherits FilledCard {
                                     horizontal-alignment: center;
                                     vertical-alignment: center;
                                 }
+                            }
+                        }
+
+                        // Divider before coordinates (only if coordinates present)
+                        if root.hover_coord_text != "" : VerticalLayout {
+                            alignment: center;
+                            Rectangle {
+                                width: 1px;
+                                height: 16px;
+                                background: MaterialPalette.outline_variant.with_alpha(50%);
+                            }
+                        }
+
+                        // Live HUD Coordinates (to the right of the buttons!)
+                        if root.hover_coord_text != "" : HorizontalLayout {
+                            padding-left: 6px;
+                            padding-right: 6px;
+                            alignment: center;
+
+                            MaterialText {
+                                text: root.hover_coord_text;
+                                style: MaterialTypography.label_medium;
+                                color: MaterialPalette.on_surface;
+                                vertical-alignment: center;
                             }
                         }
                     }
