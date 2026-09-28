@@ -7,6 +7,7 @@
  */
 
 #include "calculators/gpu/GPUDistanceCalculator.hpp"
+#include "calculators/spatial/DistanceCalculator.hpp"
 #include "core/DeviceBuffer.hpp"
 #include "core/GPUErrorCheck.hpp"
 #include "core/GPUPortability.hpp"
@@ -528,6 +529,28 @@ void computeDistancesGpu(const correlation::core::Cell &cell, T cutoff_sq,
   if (atom_count == 0) {
     return;
   }
+
+  if (!hasGpuDevice()) {
+    const size_t num_elements = cell.elements().size();
+    correlation::analysis::BondCutoffMatrix bond_cutoffs(num_elements);
+    for (size_t i = 0; i < num_elements; ++i) {
+      bond_cutoffs[i].resize(num_elements);
+      for (size_t j = 0; j < num_elements; ++j) {
+        real_t const max_sq = (i < bond_cutoffs_sq.size() && j < bond_cutoffs_sq[i].size())
+                                  ? static_cast<real_t>(bond_cutoffs_sq[i][j])
+                                  : static_cast<real_t>(0.0);
+        bond_cutoffs[i][j] = correlation::analysis::BondCutoffRange{
+            .min_sq = 0.0,
+            .max_sq = max_sq,
+        };
+      }
+    }
+    DistanceCalculator::compute(cell, static_cast<real_t>(cutoff_sq), bond_cutoffs,
+                                ignore_periodic_self_interactions, out_graph, out_histograms,
+                                hist_config);
+    return;
+  }
+
   const size_t num_elements = cell.elements().size();
   const auto &lattice = cell.latticeVectors();
 

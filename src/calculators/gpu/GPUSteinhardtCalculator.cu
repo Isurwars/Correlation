@@ -25,6 +25,12 @@ namespace {
 const bool REGISTERED =
     CalculatorFactory::registerTypeSafe<GPUSteinhardtCalculator>("GPUSteinhardtCalculator");
 
+bool hasGpuDevice() {
+  int device_count = 0;
+  hipError_t const err = hipGetDeviceCount(&device_count);
+  return (err == hipSuccess && device_count > 0);
+}
+
 template <typename T> struct GPUPoint {
   T x;
   T y;
@@ -299,7 +305,7 @@ void GPUSteinhardtCalculator::calculateFrame(
 
   using T = real_t;
 
-  if (dists.neighbors() == nullptr) {
+  if (!hasGpuDevice() || dists.neighbors() == nullptr) {
     const SteinhardtCalculator cpu_calc;
     cpu_calc.calculateFrame(dists, settings);
     return;

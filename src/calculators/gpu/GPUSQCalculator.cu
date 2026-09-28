@@ -27,6 +27,12 @@ namespace {
 // Static registration of the calculator in the factory
 const bool REGISTERED = CalculatorFactory::registerTypeSafe<GPUSQCalculator>("GPUSQCalculator");
 
+bool hasGpuDevice() {
+  int device_count = 0;
+  hipError_t const err = hipGetDeviceCount(&device_count);
+  return (err == hipSuccess && device_count > 0);
+}
+
 template <typename T> struct QVectorsData {
   std::vector<T> qx;
   std::vector<T> qy;
@@ -221,6 +227,12 @@ void GPUSQCalculator::calculateFrame(
   const auto &atoms = cell.atoms();
   const size_t num_atoms = atoms.size();
   if (num_atoms == 0) {
+    return;
+  }
+
+  if (!hasGpuDevice()) {
+    const StructureFactorCalculator cpu_calc;
+    cpu_calc.calculateFrame(dists, settings);
     return;
   }
 
