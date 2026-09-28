@@ -165,6 +165,7 @@ target_link_libraries(correlation_functional_tests PRIVATE
     writers_obj
     calculators_obj
     mlip_obj
+    TBB::tbb
     GTest::gtest
     GTest::gmock
     GTest::gtest_main

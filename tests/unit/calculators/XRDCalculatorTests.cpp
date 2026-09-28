@@ -10,13 +10,12 @@
 
 #include "../../CrystalTestHelper.hpp"
 
-#include <cmath>
 #include <gtest/gtest.h>
-#include <numbers>
 #include <vector>
 
 namespace correlation::analysis {
 
+namespace {
 // Test fixture for XRD tests.
 class XRDCalculatorTests : public ::testing::Test {
 protected:
@@ -43,6 +42,7 @@ public:
   correlation::core::Cell cell_;
   correlation::core::Trajectory trajectory_;
 };
+} // namespace
 
 TEST_F(XRDCalculatorTests, CalculateXRD) {
   updateTrajectory();
@@ -236,7 +236,7 @@ TEST_F(XRDCalculatorTests, CalculateFromSq) {
   s_q_hist.bins = {0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0};
   s_q_hist.partials["Ar-Ar"] = std::vector<real_t>(10, 1.0);
 
-  std::map<std::string, real_t> ashcroft_weights = {{"Ar-Ar", 1.0}};
+  std::map<std::string, real_t> ashcroft_weights = {{"Ar-Ar", static_cast<real_t>(1.0)}};
 
   EXPECT_NO_THROW(correlation::calculators::XRDCalculator::calculateFromSq(
       s_q_hist, cell_, ashcroft_weights, correlation::calculators::Wavelength{1.5406},
