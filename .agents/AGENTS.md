@@ -17,6 +17,7 @@
    - See [caveman-navigation](file:///home/isurwars/Projects/Correlation/.agents/rules/caveman-navigation.md) for the full protocol.
 3. **Execution Guardrails:**
    - Never commit or edit generated build directories (`build/`, `graphify-out/`, `CMakeCache.txt`).
+   - **Deterministic Lifecycle Hooks:** Enforce safety and code quality invariants deterministically via [.agents/hooks.json](file:///home/isurwars/Projects/Correlation/.agents/hooks.json) and [.agents/scripts/hook_runner.py](file:///home/isurwars/Projects/Correlation/.agents/scripts/hook_runner.py) (`PreToolUse`, `PostToolUse`, `PreInvocation`).
    - Validate modifications against `clang-format` and `clang-tidy` rules before task completion.
    - **Mandatory Post-Plan Graphify:** Execute `graphify update .` immediately upon completing an implementation plan to prevent context drift.
    - **Manager-Led MCP Delegation:** Follow [mcp-orchestration](file:///home/isurwars/Projects/Correlation/.agents/rules/mcp-orchestration.md) and [mcp-delegation](file:///home/isurwars/Projects/Correlation/.agents/skills/mcp-delegation/SKILL.md) where Agent plans, analyzes, and reviews, delegating only atomic scoped tasks ($\le 150$ lines) to MCP with circuit breakers.

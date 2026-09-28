@@ -940,13 +940,13 @@
     "semantic_hash": ""
   },
   "CMakeLists.txt": {
-    "mtime": 1790561431.1131322,
-    "ast_hash": "498f9c0b64bdcbda251b4e021353febe",
+    "mtime": 1790375671.3638935,
+    "ast_hash": "d481382092569cde2f0ac5d368346727",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1790561443.1838882,
-    "ast_hash": "e7e4d08aa9da3024d9e029c0c3c9fab1",
+    "mtime": 1790280487.3365166,
+    "ast_hash": "3b4f0015079813780fd5eb8fd77641a5",
     "semantic_hash": ""
   },
   "docs/CODE_OF_CONDUCT.md": {
@@ -1135,8 +1135,8 @@
     "semantic_hash": "d33dd3a82cfd7f01825b5c82a23dee17"
   },
   ".agents/AGENTS.md": {
-    "mtime": 1790566770.0222824,
-    "ast_hash": "14604fac4196a37d73d1b382e00eaf72",
+    "mtime": 1790467362.3343167,
+    "ast_hash": "2a5dddfa50da0dc21c10895f51466aa0",
     "semantic_hash": ""
   },
   ".agents/rules/caveman-navigation.md": {
@@ -1360,8 +1360,8 @@
     "semantic_hash": ""
   },
   "recipe/meta.yaml": {
-    "mtime": 1790561454.7107663,
-    "ast_hash": "a554ef56002b62958c1cfefb458457a6",
+    "mtime": 1790280518.9304502,
+    "ast_hash": "7abc5779aca87a913037f38ad132c55c",
     "semantic_hash": ""
   },
   "tests/unit/app/SettingsManagerTests.cpp": {
@@ -1890,8 +1890,8 @@
     "semantic_hash": ""
   },
   ".agents/hooks.json": {
-    "mtime": 1790566730.444775,
-    "ast_hash": "b80658cdc817b9cf37be6b7178ab3742",
+    "mtime": 1790125131.9877667,
+    "ast_hash": "8a80554c91d9fca8acb82f023de02f11",
     "semantic_hash": ""
   },
   ".agents/scripts/mcp-reminder.sh": {
@@ -2050,8 +2050,8 @@
     "semantic_hash": ""
   },
   "src/app/core/AppController.cpp": {
-    "mtime": 1790480676.1145492,
-    "ast_hash": "3e3012fa68f7a94a386a4e841714b105",
+    "mtime": 1790480608.5346131,
+    "ast_hash": "cbcc76bfcc0dde5d9e9d605abf603559",
     "semantic_hash": ""
   },
   "src/app/core/SettingsManager.cpp": {
@@ -2532,16 +2532,6 @@
   "tests/unit/utils/ZipArchiveWriterTests.cpp": {
     "mtime": 1790476705.9123263,
     "ast_hash": "2565e93d27f846a3b1c549e437130091",
-    "semantic_hash": ""
-  },
-  ".agents/scripts/hook_runner.py": {
-    "mtime": 1790566712.6169965,
-    "ast_hash": "405816167758d5fa9d2ab9c96cb86bda",
-    "semantic_hash": ""
-  },
-  ".agents/scripts/test_hooks.py": {
-    "mtime": 1790566743.5706117,
-    "ast_hash": "795106ea8971fb3b45dfc22d7e1c7fde",
     "semantic_hash": ""
   }
 }

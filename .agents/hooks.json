@@ -1,1 +1,35 @@
-{}
+{
+  "correlation-governance": {
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /home/isurwars/Projects/Correlation/.agents/scripts/hook_runner.py pre_tool_use",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /home/isurwars/Projects/Correlation/.agents/scripts/hook_runner.py post_tool_use",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "python3 /home/isurwars/Projects/Correlation/.agents/scripts/hook_runner.py pre_invocation",
+        "timeout": 5
+      }
+    ]
+  }
+}
