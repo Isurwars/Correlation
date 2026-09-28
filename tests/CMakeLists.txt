@@ -149,6 +149,8 @@ add_executable(correlation_functional_tests
     functional/analysis/StructureAnalyzerTests.cpp
     functional/analysis/TrajectoryAnalyzerTests.cpp
     functional/analysis/DynamicsAnalyzerTests.cpp
+    functional/analysis/NumericalParityTests.cpp
+    functional/analysis/ThreadDeterminismTests.cpp
     functional/app/ServiceIntegrationTests.cpp
     ../src/app/services/AnalysisDispatcher.cpp
     ../src/app/services/BondCutoffService.cpp

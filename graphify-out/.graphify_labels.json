@@ -372,19 +372,14 @@
   "370": "OrbUnitCutoffResult",
   "371": "HyperuniformityCalculatorTests.cpp",
   "372": "HyperuniformityCalculatorTests.cpp",
+  "373": "StructureFactorCalculatorTests",
   "374": "RDFCalculator",
   "375": "HistogramConfigs",
   "376": "makeEmptyOr1D",
   "378": "mcp-reminder.sh",
-  "381": "PhysicsService.cpp",
-  "383": "TrajectoryTests",
   "386": "PlotController::PlotController",
   "389": "PlotSize",
   "390": "PeriodicShift",
-  "392": "CarReader.cpp",
   "394": "ZipArchiveWriterTest",
-  "395": "TDOSParams",
-  "397": "CNAPairSig",
-  "398": "HDF5Writer.cpp",
-  "419": "MotifSignatureCounts"
+  "397": "CNAPairSig"
 }

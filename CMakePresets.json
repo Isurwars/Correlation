@@ -1,0 +1,127 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 24,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-${presetName}",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "BUILD_TESTING": "ON"
+      }
+    },
+    {
+      "name": "dev-single",
+      "displayName": "Development (Single Precision, GUI, Release)",
+      "description": "Default fast development build with float precision and Slint GUI enabled",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "USE_SINGLE_PRECISION": "ON",
+        "BUILD_GUI": "ON"
+      }
+    },
+    {
+      "name": "dev-double",
+      "displayName": "Development (Double Precision, GUI, Release)",
+      "description": "High-precision validation build with double precision and Slint GUI enabled",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build-double",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "USE_SINGLE_PRECISION": "OFF",
+        "BUILD_GUI": "ON"
+      }
+    },
+    {
+      "name": "asan",
+      "displayName": "AddressSanitizer + UndefinedBehaviorSanitizer (Debug)",
+      "description": "Debug build instrumented with ASan and UBSan for memory and UB diagnosis",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build-asan",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_FLAGS": "-fsanitize=address,undefined -fno-omit-frame-pointer",
+        "USE_SINGLE_PRECISION": "ON",
+        "BUILD_GUI": "OFF"
+      }
+    },
+    {
+      "name": "tsan",
+      "displayName": "ThreadSanitizer (Debug)",
+      "description": "Debug build instrumented with TSan for multi-threaded data race detection",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build-tsan",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_FLAGS": "-fsanitize=thread",
+        "USE_SINGLE_PRECISION": "ON",
+        "BUILD_GUI": "OFF"
+      }
+    },
+    {
+      "name": "release",
+      "displayName": "Release Packaging Build",
+      "description": "Fully optimized release build with GUI and packaging targets",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "USE_SINGLE_PRECISION": "ON",
+        "BUILD_GUI": "ON",
+        "BUILD_TESTING": "OFF"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "dev-single",
+      "configurePreset": "dev-single"
+    },
+    {
+      "name": "dev-double",
+      "configurePreset": "dev-double"
+    },
+    {
+      "name": "asan",
+      "configurePreset": "asan"
+    },
+    {
+      "name": "tsan",
+      "configurePreset": "tsan"
+    },
+    {
+      "name": "release",
+      "configurePreset": "release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "dev-single",
+      "configurePreset": "dev-single",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "jobs": 4
+      }
+    },
+    {
+      "name": "dev-double",
+      "configurePreset": "dev-double",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "jobs": 4
+      }
+    }
+  ]
+}

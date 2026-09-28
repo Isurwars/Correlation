@@ -980,8 +980,8 @@
     "semantic_hash": ""
   },
   "tests/CMakeLists.txt": {
-    "mtime": 1790476717.3341215,
-    "ast_hash": "670b69e293577d1e11fb05124f2d1487",
+    "mtime": 1790567880.280424,
+    "ast_hash": "bcbbed6aabb606c8d25d70a73031ace0",
     "semantic_hash": ""
   },
   "tests/fuzz/CMakeLists.txt": {
@@ -2542,6 +2542,26 @@
   ".agents/scripts/test_hooks.py": {
     "mtime": 1790566743.5706117,
     "ast_hash": "795106ea8971fb3b45dfc22d7e1c7fde",
+    "semantic_hash": ""
+  },
+  ".agents/.hook_state.json": {
+    "mtime": 1790568063.8576665,
+    "ast_hash": "8378b6a0e4fdda64ff20f4e8021f9cb1",
+    "semantic_hash": ""
+  },
+  "tests/functional/analysis/NumericalParityTests.cpp": {
+    "mtime": 1790567777.3996942,
+    "ast_hash": "d78856906bab703393ba384e8e953199",
+    "semantic_hash": ""
+  },
+  "tests/functional/analysis/ThreadDeterminismTests.cpp": {
+    "mtime": 1790567927.9365606,
+    "ast_hash": "aed7c825e109cd31a4287a0afbc50744",
+    "semantic_hash": ""
+  },
+  "CMakePresets.json": {
+    "mtime": 1790568043.3976767,
+    "ast_hash": "affa183c106eba93dc30a656762392e7",
     "semantic_hash": ""
   }
 }
