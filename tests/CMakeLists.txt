@@ -18,6 +18,7 @@ add_executable(correlation_unit_tests
     unit/core/TrajectoryTests.cpp
     unit/core/NeighborGraphTests.cpp
     unit/core/MappedFileTests.cpp
+    unit/core/GPUPortabilityTests.cpp
     unit/readers/FileReaderTests.cpp
     unit/writers/WriterTests.cpp
     unit/readers/VaspReaderTests.cpp

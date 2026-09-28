@@ -12,6 +12,7 @@
 
 #include <source_location>
 #include <stdexcept>
+#include <string>
 
 namespace correlation::core::gpu {
 
@@ -31,15 +32,10 @@ public:
  */
 inline void hipCheck(hipError_t result,
                      std::source_location loc = std::source_location::current()) {
-#if defined(CORRELATION_USE_CUDA) || defined(CORRELATION_USE_HIP)
   if (result != hipSuccess) {
     throw GPUError(std::string("GPU error in ") + loc.file_name() + ":" +
                    std::to_string(loc.line()) + " — " + hipGetErrorString(result));
   }
-#else
-  (void)result;
-  (void)loc;
-#endif
 }
 
 } // namespace correlation::core::gpu
