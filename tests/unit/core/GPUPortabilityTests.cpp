@@ -30,7 +30,8 @@ TEST(GPUPortabilityTests, HostFallbackDeviceCountReturnsSuccess) {
 
 TEST(GPUPortabilityTests, HostFallbackMallocFailsSafe) {
 #if !defined(CORRELATION_USE_CUDA) && !defined(CORRELATION_USE_HIP)
-  float *ptr = reinterpret_cast<float *>(0xDEADBEEF);
+  float dummy = 1.0F;
+  float *ptr = &dummy;
   hipError_t const err = hipMalloc(&ptr, sizeof(float) * 10);
   EXPECT_EQ(err, hipErrorNoDevice);
   EXPECT_EQ(ptr, nullptr);
