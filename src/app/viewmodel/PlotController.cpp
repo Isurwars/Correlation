@@ -9,6 +9,7 @@
 #include "app/viewmodel/PlotController.hpp"
 #include "AppWindow.h"
 #include "app/formatters/PlotExportService.hpp"
+#include "app/formatters/PlotTableFormatter.hpp"
 #include <nfd.h>
 
 #include <algorithm>

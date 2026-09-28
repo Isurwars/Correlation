@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.9.8] - 2026-09-28
+
+### Interactive Plotting & Coordinate Inspection
+- **Interactive Box Zoom & View Reset**: Implemented interactive rectangle-based box zooming (`handleZoomRect`) and reset-to-fit auto-scaling (`handleResetZoom`) across SVG histogram and comparison plots.
+- **Dynamic Cursor Coordinate Inspection**: Integrated real-time screen-to-data coordinate transformation (`screenToData`) displaying precise $(X, Y)$ values dynamically on hover.
+- **Reference Line Markers**: Added clicked-coordinate reference marker inspection (`handleAddMarkerAt`, `handleClearMarkers`) allowing vertical ($X$) and horizontal ($Y$) alignment guides with color-coded badges and clear actions.
+- **Preview Card Toolbar Controls**: Added zoom reset, clear markers, and interaction toolbars in `PreviewCard.slint` backed by Material Design icon assets.
+
+### UI & Architecture Polish
+- **Centralized Export Workflow**: Streamlined `PreviewCard.slint` by removing redundant local save plot triggers, consolidating all export functions into dedicated export options panels.
+- **Navigation & Layout Improvements**: Refined `MiniSideBar.slint` navigation button structure and `AppWindow.slint` responsive card presentation.
+- **Controller Modernization**: Refactored `PlotController` interaction APIs to ensure clean variable naming standards, comprehensive Doxygen interface documentation, and strict static analysis compliance.
+- **Repository Hygiene**: Excluded transient `.agents/.hook_state.json` from git tracking.
+
 ## [3.9.7] - 2026-09-27
 
 ### Consolidated Zip Export Bundles & Export UI
