@@ -1,6 +1,37 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.9.7] - 2026-09-27
+
+### Consolidated Zip Export Bundles & Export UI
+- **Embedded Miniz Zip Archive Engine**: Integrated embedded `miniz` library via CMake FetchContent with move-only RAII `ZipArchiveWriter` wrapping `mz_zip_archive`.
+- **ExportBundleWriter Pipeline**: Implemented consolidated export bundle writer (`include/writers/ExportBundleWriter.hpp`, `src/writers/ExportBundleWriter.cpp`) packaging in-memory SVG plots (`plots/`), CSV tabular datasets (`csv/`), HDF5 containers (`hdf5/`), Apache Parquet tables (`parquet/`), and simulation parameters (`summary.txt`) into a single archive.
+- **Export Options & Granular Algorithm Filtering**: Introduced `ExportOptions` struct with fine-grained algorithm selection (RDF, SQ, XRD, MSD, VACF, VDOS, DAD, PAD, CN, etc.) and format toggles (CSV, SVG, HDF5, Parquet, Zip Bundle).
+- **Dedicated Export UI Cards**: Added `ExportOptionsCard.slint` and `SaveExportPanelCard.slint` with dynamic checkboxes, algorithm filter cards, format selection, and save directory dialogs wired into `MiniSideBar` and `AppWindow`.
+- **CLI Zip & Bundle Arguments**: Added `--zip` and `--bundle` flags to `CliParser` and `correlation-cli` for batch calculation export packaging directly from the terminal.
+
+### Application Architecture Decomposition (SOLID Refactoring)
+- **Specialized Domain Services**: Decomposed monolithic `AppBackend` into single-responsibility domain services:
+  - `TrajectoryLoader`: Frame ingestion, trajectory format validation, and dataset lifecycle management.
+  - `AnalysisDispatcher`: Asynchronous calculation orchestration, worker task dispatching, and export execution.
+  - `BondCutoffService` & `BondCutoffController`: Dynamic covalent radius lookups, cutoff matrix management, and view model synchronization.
+  - `PhysicsService`: Isolated physical property evaluations, unit cell validation, and density calculations.
+  - `ValidationRuleService`: Extracted input validation business logic from `InputValidator` into isolated validation rules.
+  - `OptionsSyncService` & `OptionsResetService`: Bidirectional synchronization between Slint UI and `ProgramOptions`, plus options reset policies.
+  - `PlotSeriesManager` & `PlotTableFormatter`: Decoupled plot series state management and formatted data table generation.
+- **Elimination of Legacy AppBackend**: Completely removed legacy `AppBackend` facade and transitional adapters in favor of direct dependency injection across `AppController`, view models, and CLI runners.
+- **Application Directory Modularization**: Reorganized application headers and sources into domain-driven subdirectories (`include/app/core/`, `include/app/services/`, `include/app/viewmodel/`, `include/app/formatters/`).
+- **Service Integration Tests**: Migrated application integration testing suites to `tests/functional/app/ServiceIntegrationTests.cpp`.
+
+### GPU Acceleration & Calculator Modernization
+- **Multi-Vendor GPU Acceleration (CUDA / HIP)**: Added and updated GPU acceleration support for pairwise distance calculations (`GPUDistanceCalculator`), Steinhardt order parameters (`GPUSteinhardtCalculator`), structure factor $S(Q)$ (`GPUSQCalculator`), and Powder XRD Debye scattering (`GPUXRDCalculator`).
+- **HIP Kernel & Portability Modernization**: Refactored GPU kernel launches, portability wrappers (`GPUPortability.hpp`), and preprocessor conditionals for seamless compilation across NVIDIA CUDA and AMD ROCm/HIP.
+- **Calculator Directory Reorganization**: Reorganized calculator interfaces and implementations into domain categories (`calculators/spatial/`, `calculators/scattering/`, `calculators/temporal/`, `calculators/order/`, `calculators/gpu/`, and `calculators/ml/`).
+
+### Numerical Stability & Bug Fixes
+- **Search Grid Degeneracy Guards**: Added numerical degeneracy guards to `buildSearchGridConfig` preventing division-by-zero or infinite loops on non-positive cutoffs, zero-volume cells, and collinear lattice vectors.
+- **Parallel Test Race Condition Fix**: Isolated output file prefixes across `WriterTests` to prevent parallel CTest deletion race conditions during automated testing runs.
+
 ## [3.9.6] - 2026-09-24
 
 ### WebAssembly & Browser Runtime
