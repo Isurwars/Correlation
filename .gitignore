@@ -34,3 +34,5 @@ dist/
 .pytest_cache/
 .ruff_cache/
 
+# Agent transient state
+.agents/.hook_state.json
