@@ -18,11 +18,22 @@
 #include <cstdint>
 #include <format>
 #include <span>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
 
 namespace correlation::plotters {
+
+/**
+ * @brief User-defined reference marker line (constant X or constant Y).
+ */
+struct ReferenceLine {
+  real_t value{0.0};
+  bool is_vertical{true}; ///< true for X = const, false for Y = const.
+  std::string label;      ///< Optional text label (e.g. "r = 2.45 Å").
+  std::string color_hex;  ///< Optional color (default axis color if empty).
+};
 
 /**
  * @brief Theme and layout configuration for the plot.
@@ -104,6 +115,15 @@ struct PlotConfig {
   std::string grid_color() const { return (theme == Theme::Light) ? "#808080" : "#45475a"; }
   /** @return Hex color string for labels and titles. */
   std::string text_color() const { return (theme == Theme::Light) ? "#333333" : "#a6adc8"; }
+
+  // Manual Zoom Bounds
+  std::optional<real_t> manual_x_min;
+  std::optional<real_t> manual_x_max;
+  std::optional<real_t> manual_y_min;
+  std::optional<real_t> manual_y_max;
+
+  // Reference lines
+  std::vector<ReferenceLine> reference_lines;
 };
 
 /**
@@ -403,25 +423,37 @@ struct NiceScale {
    * @param range The measured data range (min and max).
    * @param max_ticks Target number of ticks.
    */
-  explicit NiceScale(const DataRange &range, int max_ticks = 6) {
+  explicit NiceScale(const DataRange &range, int max_ticks = 6, bool strict_bounds = false) {
     real_t actual_min = range.min;
     real_t actual_max = range.max;
+    if (actual_max < actual_min) {
+      std::swap(actual_min, actual_max);
+    }
     if (std::abs(actual_max - actual_min) < static_cast<real_t>(1e-12)) {
       min = actual_min - static_cast<real_t>(0.5);
       max = actual_min + static_cast<real_t>(0.5);
       spacing = static_cast<real_t>(0.1);
+      ticks.push_back(actual_min);
     } else {
       real_t range_val = niceNum(actual_max - actual_min, false);
       spacing = niceNum(range_val / static_cast<real_t>(max_ticks - 1), true);
-      min = std::floor(actual_min / spacing) * spacing;
-      max = std::ceil(actual_max / spacing) * spacing;
-    }
-
-    real_t range_span = max - min;
-    int num_ticks = static_cast<int>(std::round(range_span / spacing)) + 1;
-    for (int idx = 0; idx < num_ticks; ++idx) {
-      real_t value = min + static_cast<real_t>(idx) * spacing;
-      ticks.push_back(value);
+      if (strict_bounds) {
+        min = actual_min;
+        max = actual_max;
+        real_t first_tick = std::ceil(min / spacing) * spacing;
+        for (real_t val = first_tick; val <= max + static_cast<real_t>(1e-6) * spacing; val += spacing) {
+          ticks.push_back(val);
+        }
+      } else {
+        min = std::floor(actual_min / spacing) * spacing;
+        max = std::ceil(actual_max / spacing) * spacing;
+        real_t range_span = max - min;
+        int num_ticks = static_cast<int>(std::round(range_span / spacing)) + 1;
+        for (int idx = 0; idx < num_ticks; ++idx) {
+          real_t value = min + static_cast<real_t>(idx) * spacing;
+          ticks.push_back(value);
+        }
+      }
     }
   }
 
@@ -515,6 +547,68 @@ inline std::string fmtScientific(real_t value) {
     }
   }
   return str;
+}
+
+struct PlotViewportGeometry {
+  real_t kw{1200.0};
+  real_t kh{900.0};
+  real_t px0{100.0};
+  real_t px1{1160.0};
+  real_t py0{50.0};
+  real_t py1{830.0};
+};
+
+inline PlotViewportGeometry getViewportGeometry(const PlotConfig &config) {
+  real_t kw = config.effective_width();
+  real_t kh = config.effective_height();
+  const real_t kLeft = static_cast<real_t>(100.0);
+  const real_t kRight = static_cast<real_t>(40.0);
+  const real_t kTop = static_cast<real_t>(50.0);
+  const real_t kBottom = static_cast<real_t>(70.0);
+  return PlotViewportGeometry{
+      .kw = kw,
+      .kh = kh,
+      .px0 = kLeft,
+      .px1 = kw - kRight,
+      .py0 = kTop,
+      .py1 = kh - kBottom,
+  };
+}
+
+inline std::pair<real_t, real_t> screenToSvg(real_t screen_x, real_t screen_y, real_t widget_w,
+                                             real_t widget_h, const PlotConfig &config) {
+  real_t kw = config.effective_width();
+  real_t kh = config.effective_height();
+  real_t widget_aspect = (widget_h > 0) ? (widget_w / widget_h) : (kw / kh);
+  real_t plot_aspect = kw / kh;
+  real_t scale = static_cast<real_t>(1.0);
+  real_t offset_x = static_cast<real_t>(0.0);
+  real_t offset_y = static_cast<real_t>(0.0);
+  if (widget_aspect > plot_aspect) {
+    scale = (widget_h > 0) ? (widget_h / kh) : static_cast<real_t>(1.0);
+    offset_x = (widget_w - kw * scale) / static_cast<real_t>(2.0);
+  } else {
+    scale = (widget_w > 0) ? (widget_w / kw) : static_cast<real_t>(1.0);
+    offset_y = (widget_h - kh * scale) / static_cast<real_t>(2.0);
+  }
+  real_t svg_x = (scale > 0) ? ((screen_x - offset_x) / scale) : screen_x;
+  real_t svg_y = (scale > 0) ? ((screen_y - offset_y) / scale) : screen_y;
+  return {svg_x, svg_y};
+}
+
+inline std::pair<real_t, real_t> screenToData(real_t screen_x, real_t screen_y, real_t widget_w,
+                                              real_t widget_h, const PlotConfig &config,
+                                              const NiceScale &xScale, const NiceScale &yScale) {
+  auto [svg_x, svg_y] = screenToSvg(screen_x, screen_y, widget_w, widget_h, config);
+  auto geom = getViewportGeometry(config);
+  real_t clamped_x = std::clamp(svg_x, geom.px0, geom.px1);
+  real_t clamped_y = std::clamp(svg_y, geom.py0, geom.py1);
+
+  real_t data_x =
+      xScale.min + (clamped_x - geom.px0) / (geom.px1 - geom.px0) * (xScale.max - xScale.min);
+  real_t data_y =
+      yScale.min + (geom.py1 - clamped_y) / (geom.py1 - geom.py0) * (yScale.max - yScale.min);
+  return {data_x, data_y};
 }
 
 } // namespace detail

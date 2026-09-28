@@ -50,8 +50,8 @@
     "semantic_hash": ""
   },
   "include/core/GPUPortability.hpp": {
-    "mtime": 1790464414.4892018,
-    "ast_hash": "56029519c06c2386457d03042ba17119",
+    "mtime": 1790568882.1125286,
+    "ast_hash": "2640b02a2d468ba33fa31756c28ba980",
     "semantic_hash": ""
   },
   "include/core/MappedFile.hpp": {
@@ -970,8 +970,8 @@
     "semantic_hash": "fa5794c577c54fcf0888468db60e0c22"
   },
   "src/CMakeLists.txt": {
-    "mtime": 1790476860.1315653,
-    "ast_hash": "b9b45b493e568f21771541106000fe57",
+    "mtime": 1790568947.1618865,
+    "ast_hash": "0ed2289a2bd3d743b209a2d595092b5a",
     "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
@@ -980,8 +980,8 @@
     "semantic_hash": ""
   },
   "tests/CMakeLists.txt": {
-    "mtime": 1790567880.280424,
-    "ast_hash": "bcbbed6aabb606c8d25d70a73031ace0",
+    "mtime": 1790627188.7172058,
+    "ast_hash": "52d971ebec6640f9adaaac84af876911",
     "semantic_hash": ""
   },
   "tests/fuzz/CMakeLists.txt": {
@@ -1400,8 +1400,8 @@
     "semantic_hash": ""
   },
   "include/core/GPUErrorCheck.hpp": {
-    "mtime": 1790178031.1923783,
-    "ast_hash": "4ef2b41dbd48c4b09df08dbc31404110",
+    "mtime": 1790568852.3362737,
+    "ast_hash": "c3b1978f74fa4cc9cd9f73d74b6ddca7",
     "semantic_hash": ""
   },
   "include/readers/AbinitReader.hpp": {
@@ -1580,8 +1580,8 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/XRDCalculatorTests.cpp": {
-    "mtime": 1790391314.5352898,
-    "ast_hash": "5031e2d3b077bfc7c94ac515661c16cc",
+    "mtime": 1790627345.8954096,
+    "ast_hash": "91f8b01e96045873ea40f6fd4ff411b4",
     "semantic_hash": ""
   },
   "tests/unit/mlip/TorchGNNModelTests.cpp": {
@@ -2475,18 +2475,18 @@
     "semantic_hash": ""
   },
   "src/calculators/gpu/GPUDistanceCalculator.cu": {
-    "mtime": 1790450684.7359602,
-    "ast_hash": "7f1539871ae4cd73d19809612ed7626a",
+    "mtime": 1790619681.420542,
+    "ast_hash": "3b43ff39d3403c59d0fbbe407b42ed68",
     "semantic_hash": ""
   },
   "src/calculators/gpu/GPUSQCalculator.cu": {
-    "mtime": 1790450353.6339371,
-    "ast_hash": "1f8a3b0dd6533555111517c4edbbbaa5",
+    "mtime": 1790619622.29097,
+    "ast_hash": "5ba9996eaebfdb2490a6e3359e551979",
     "semantic_hash": ""
   },
   "src/calculators/gpu/GPUSteinhardtCalculator.cu": {
-    "mtime": 1790450364.5408185,
-    "ast_hash": "93a62b28c2eb5357238863c44f46cc21",
+    "mtime": 1790619652.2116685,
+    "ast_hash": "e5042563f5ebdd6032b647b683e922e0",
     "semantic_hash": ""
   },
   "src/calculators/gpu/GPUXRDCalculator.cu": {
@@ -2545,23 +2545,28 @@
     "semantic_hash": ""
   },
   ".agents/.hook_state.json": {
-    "mtime": 1790568063.8576665,
-    "ast_hash": "8378b6a0e4fdda64ff20f4e8021f9cb1",
+    "mtime": 1790633477.5497165,
+    "ast_hash": "2d6fadb4f2e401a4c86e84211c332965",
     "semantic_hash": ""
   },
   "tests/functional/analysis/NumericalParityTests.cpp": {
-    "mtime": 1790567777.3996942,
-    "ast_hash": "d78856906bab703393ba384e8e953199",
+    "mtime": 1790568466.0040286,
+    "ast_hash": "ab69d36df3578579942f760a2a27db9b",
     "semantic_hash": ""
   },
   "tests/functional/analysis/ThreadDeterminismTests.cpp": {
-    "mtime": 1790567927.9365606,
-    "ast_hash": "aed7c825e109cd31a4287a0afbc50744",
+    "mtime": 1790568331.3350928,
+    "ast_hash": "f60db4244b19803d4f334ee9738dd570",
     "semantic_hash": ""
   },
   "CMakePresets.json": {
     "mtime": 1790568043.3976767,
     "ast_hash": "affa183c106eba93dc30a656762392e7",
+    "semantic_hash": ""
+  },
+  "tests/unit/core/GPUPortabilityTests.cpp": {
+    "mtime": 1790620143.4464421,
+    "ast_hash": "8313aa94eb641c8f3e9007a1d2372589",
     "semantic_hash": ""
   }
 }

@@ -197,18 +197,31 @@ struct SvgHistogramRenderer {
     real_t y_padding = (raw_y_max - raw_y_min) * static_cast<real_t>(0.05);
     raw_y_max += y_padding;
 
+    bool strict_x = false;
+    bool strict_y = false;
+    if (config->manual_x_min.has_value() && config->manual_x_max.has_value()) {
+      raw_x_min = *config->manual_x_min;
+      raw_x_max = *config->manual_x_max;
+      strict_x = true;
+    }
+    if (config->manual_y_min.has_value() && config->manual_y_max.has_value()) {
+      raw_y_min = *config->manual_y_min;
+      raw_y_max = *config->manual_y_max;
+      strict_y = true;
+    }
+
     xScale = detail::NiceScale(
         detail::DataRange{
             .min = raw_x_min,
             .max = raw_x_max,
         },
-        11);
+        11, strict_x);
     yScale = detail::NiceScale(
         detail::DataRange{
             .min = raw_y_min,
             .max = raw_y_max,
         },
-        8);
+        8, strict_y);
   }
 
   [[nodiscard]] std::string getColorForKey(const std::string &key, std::size_t color_idx) const {
@@ -243,6 +256,10 @@ struct SvgHistogramRenderer {
           grad_id, col, col);
       color_idx++;
     }
+    svg << std::format(
+        "    <clipPath id=\"plot-area-clip\"><rect x=\"{:.1f}\" y=\"{:.1f}\" width=\"{:.1f}\" "
+        "height=\"{:.1f}\"/></clipPath>\n",
+        px0, py0, px1 - px0, py1 - py0);
     svg << "  </defs>\n";
     svg << std::format("  <rect width=\"100%\" height=\"100%\" fill=\"{}\" rx=\"6\"/>\n",
                        config->bg_color());
@@ -374,6 +391,44 @@ struct SvgHistogramRenderer {
         svg << std::format(
             "  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"{:.1f}\" fill=\"{}\" stroke=\"none\"/>\n",
             screen_x, screen_y, config->marker_size, col);
+      }
+    }
+  }
+
+  void drawReferenceLines() {
+    if (config == nullptr || config->reference_lines.empty()) {
+      return;
+    }
+    for (const auto &ref : config->reference_lines) {
+      std::string color = ref.color_hex.empty() ? config->axis_color() : ref.color_hex;
+      if (ref.is_vertical) {
+        if (ref.value >= xScale.min && ref.value <= xScale.max) {
+          real_t spx = mapValue(ref.value, xScale.min, xScale.max, px0, px1);
+          svg << std::format(
+              "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+              "stroke=\"{}\" stroke-width=\"1.8\" stroke-dasharray=\"4,4\"/>\n",
+              spx, py0, spx, py1, color);
+          if (!ref.label.empty()) {
+            svg << renderTextAsPath(ref.label, spx + static_cast<real_t>(5.0),
+                                    py0 + static_cast<real_t>(18.0),
+                                    static_cast<real_t>(14.0) * config->font_scale,
+                                    TextAnchor::Start, color, config->use_native_text);
+          }
+        }
+      } else {
+        if (ref.value >= yScale.min && ref.value <= yScale.max) {
+          real_t spy = mapValue(ref.value, yScale.min, yScale.max, py1, py0);
+          svg << std::format(
+              "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+              "stroke=\"{}\" stroke-width=\"1.8\" stroke-dasharray=\"4,4\"/>\n",
+              px0, spy, px1, spy, color);
+          if (!ref.label.empty()) {
+            svg << renderTextAsPath(ref.label, px0 + static_cast<real_t>(8.0),
+                                    spy - static_cast<real_t>(5.0),
+                                    static_cast<real_t>(14.0) * config->font_scale,
+                                    TextAnchor::Start, color, config->use_native_text);
+          }
+        }
       }
     }
   }
@@ -599,9 +654,14 @@ renderHistogramAsSvg(const correlation::analysis::Histogram &hist, const PlotCon
   renderer.writeHeader();
   renderer.drawGridAndAxes();
   renderer.drawEmphasisLines();
+
+  renderer.svg << "  <g clip-path=\"url(#plot-area-clip)\">\n";
   renderer.drawAreaFills();
   auto legend = renderer.drawPolylines();
   renderer.drawMarkers();
+  renderer.drawReferenceLines();
+  renderer.svg << "  </g>\n";
+
   renderer.drawLegend(legend);
   renderer.drawTitlesAndLabels();
   renderer.drawHoverTooltip();

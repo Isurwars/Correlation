@@ -244,6 +244,10 @@ export component AppWindow inherits Window {
     in property <int> pinned_runs_count: 0;
     out property <bool> is_dark: Palette.color_scheme == ColorScheme.dark;
 
+    in-out property <string> hover_coord_text: "";
+    in-out property <bool> has_active_zoom: false;
+    in-out property <int> markers_count: 0;
+
     // Table data and calculated scalar properties
     in property <[string]> table_headers: [];
     in property <[TableRow]> table_rows: [];
@@ -296,6 +300,10 @@ export component AppWindow inherits Window {
     callback validate_inputs();
     callback mouse_move(length, length, bool, length, length);
     callback plot_resized(length, length);
+    callback zoom_to_rect(float, float, float, float);
+    callback reset_zoom();
+    callback add_marker(bool);
+    callback clear_markers();
 
     // Presets callbacks
     callback export_config_changed();
@@ -994,6 +1002,21 @@ export component AppWindow inherits Window {
                             }
                             plot_resized(w, h) => {
                                 root.plot_resized(w, h);
+                            }
+                            hover_coord_text: root.hover_coord_text;
+                            has_active_zoom: root.has_active_zoom;
+                            markers_count: root.markers_count;
+                            zoom_to_rect(x1, y1, x2, y2) => {
+                                root.zoom_to_rect(x1, y1, x2, y2);
+                            }
+                            reset_zoom => {
+                                root.reset_zoom();
+                            }
+                            add_marker(is_vert) => {
+                                root.add_marker(is_vert);
+                            }
+                            clear_markers => {
+                                root.clear_markers();
                             }
                         }
                     }

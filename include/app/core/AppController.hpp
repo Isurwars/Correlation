@@ -248,5 +248,10 @@ private:
   std::unique_ptr<PlotController> plot_controller_;
   std::unique_ptr<PresetController> preset_controller_;
   AppSettings settings_;
+
+  void registerActionCallbacks();
+  void registerPlotCallbacks();
+  void registerPresetAndOptionCallbacks();
+  void registerExportCallbacks();
 };
 } // namespace correlation::app

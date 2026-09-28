@@ -157,8 +157,11 @@ def audit_cpp_file(file_path: Path) -> list[str]:
     func_complexity = 0
     nesting_depth = 0
     brace_depth = 0
+    func_base_depth = 0
 
-    func_sig_re = re.compile(r"^(?:auto|void|int|bool|double|float|[\w:]+(?:<[^>]+>)?)\s+([\w:~]+)\s*\([^)]*\)\s*(?:const)?\s*(?:noexcept)?\s*\{?")
+    func_sig_re = re.compile(
+        r"^(?:(?:auto|void|int|bool|double|float|[a-zA-Z_]\w*(?:::[a-zA-Z_]\w*)*(?:<[^>]+>)?)\s+)?([a-zA-Z_]\w*::[a-zA-Z_~]\w*|[a-zA-Z_]\w+)\s*\([^)]*\)\s*(?:const)?\s*(?:noexcept)?\s*\{?"
+    )
 
     for idx, line in enumerate(lines, start=1):
         stripped = line.strip()
@@ -166,13 +169,14 @@ def audit_cpp_file(file_path: Path) -> list[str]:
             continue
 
         # Check for function start when at top level or namespace level
-        if current_func is None and brace_depth <= 1:
+        if current_func is None and brace_depth <= 2 and not stripped.startswith(":"):
             match = func_sig_re.search(stripped)
             if match and not stripped.endswith(";"):
                 current_func = match.group(1)
                 func_start_line = idx
                 func_complexity = 0
                 nesting_depth = 0
+                func_base_depth = brace_depth
 
         open_braces = line.count("{")
         close_braces = line.count("}")
@@ -191,7 +195,7 @@ def audit_cpp_file(file_path: Path) -> list[str]:
             if close_braces > 0:
                 nesting_depth = max(0, nesting_depth - close_braces)
 
-            if brace_depth <= 0 and (open_braces > 0 or close_braces > 0):
+            if brace_depth <= func_base_depth and (open_braces > 0 or close_braces > 0):
                 if func_complexity > COGNITIVE_COMPLEXITY_THRESHOLD:
                     violations.append(
                         f"[{rel_path}:{func_start_line}] -> Cognitive Complexity ({func_complexity} > {COGNITIVE_COMPLEXITY_THRESHOLD}) in function '{current_func}' -> Decompose into subroutines."

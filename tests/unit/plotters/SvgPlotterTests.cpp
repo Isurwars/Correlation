@@ -212,4 +212,78 @@ TEST(SvgPlotterTests, RendersCustomMarkerSizeCorrectly) {
   EXPECT_NE(svg.find("r=\"5.2\""), std::string::npos);
 }
 
+TEST(SvgPlotterTests, AppliesManualZoomBoundsAndClipping) {
+  Histogram hist;
+  hist.title = "Zoom Test";
+  hist.bins = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0};
+  hist.partials["Total"] = {0.0, 1.0, 2.5, 3.0, 1.5, 0.2};
+
+  PlotConfig config;
+  config.manual_x_min = 1.5;
+  config.manual_x_max = 3.5;
+  config.manual_y_min = 0.5;
+  config.manual_y_max = 2.8;
+
+  std::string svg = renderHistogramAsSvg(hist, config);
+  EXPECT_FALSE(svg.empty());
+  EXPECT_NE(svg.find("id=\"plot-area-clip\""), std::string::npos);
+  EXPECT_NE(svg.find("clip-path=\"url(#plot-area-clip)\""), std::string::npos);
+}
+
+TEST(SvgPlotterTests, RendersReferenceLinesWithLabels) {
+  Histogram hist;
+  hist.title = "Marker Lines Test";
+  hist.bins = {1.0, 2.0, 3.0, 4.0};
+  hist.partials["Total"] = {0.5, 1.0, 1.5, 2.0};
+
+  PlotConfig config;
+  config.use_native_text = true;
+  config.reference_lines.push_back(ReferenceLine{
+      .value = 2.5,
+      .is_vertical = true,
+      .label = "X: 2.500",
+      .color_hex = "#0284C7",
+  });
+  config.reference_lines.push_back(ReferenceLine{
+      .value = 1.2,
+      .is_vertical = false,
+      .label = "Y: 1.200",
+      .color_hex = "#E11D48",
+  });
+
+  std::string svg = renderHistogramAsSvg(hist, config);
+  EXPECT_FALSE(svg.empty());
+  EXPECT_NE(svg.find("stroke=\"#0284C7\""), std::string::npos);
+  EXPECT_NE(svg.find("stroke=\"#E11D48\""), std::string::npos);
+  EXPECT_NE(svg.find("stroke-dasharray=\"4,4\""), std::string::npos);
+  EXPECT_NE(svg.find("X: 2.500"), std::string::npos);
+  EXPECT_NE(svg.find("Y: 1.200"), std::string::npos);
+}
+
+TEST(SvgPlotterTests, ScreenToDataGeometryTransformsAccurately) {
+  PlotConfig config;
+  config.width = 1000.0;
+  config.height = 600.0;
+
+  auto geom = detail::getViewportGeometry(config);
+  EXPECT_DOUBLE_EQ(geom.kw, 1000.0);
+  EXPECT_DOUBLE_EQ(geom.kh, 600.0);
+  EXPECT_DOUBLE_EQ(geom.px0, 100.0);
+  EXPECT_DOUBLE_EQ(geom.px1, 960.0);
+  EXPECT_DOUBLE_EQ(geom.py0, 50.0);
+  EXPECT_DOUBLE_EQ(geom.py1, 530.0);
+
+  detail::NiceScale xs(detail::DataRange{.min = 0.0, .max = 10.0}, 10, true);
+  detail::NiceScale ys(detail::DataRange{.min = 0.0, .max = 5.0}, 5, true);
+
+  // Screen matches SVG 1:1 when widget is 1000x600
+  auto [data_x, data_y] = detail::screenToData(100.0, 530.0, 1000.0, 600.0, config, xs, ys);
+  EXPECT_NEAR(data_x, 0.0, 1e-4);
+  EXPECT_NEAR(data_y, 0.0, 1e-4);
+
+  auto [top_x, top_y] = detail::screenToData(960.0, 50.0, 1000.0, 600.0, config, xs, ys);
+  EXPECT_NEAR(top_x, 10.0, 1e-4);
+  EXPECT_NEAR(top_y, 5.0, 1e-4);
+}
+
 } // namespace correlation::testing

@@ -36,6 +36,44 @@ template <typename T> T safeParse(const slint::SharedString &str, T default_valu
   }
 }
 
+correlation::plotters::detail::NiceScale computeXScale(const correlation::analysis::Histogram &hist,
+                                                       const correlation::plotters::PlotConfig &config) {
+  real_t raw_x_min = hist.bins.empty() ? static_cast<real_t>(0.0) : hist.bins.front();
+  real_t raw_x_max = hist.bins.empty() ? static_cast<real_t>(1.0) : hist.bins.back();
+  bool strict_x = false;
+  if (config.manual_x_min.has_value() && config.manual_x_max.has_value()) {
+    raw_x_min = *config.manual_x_min;
+    raw_x_max = *config.manual_x_max;
+    strict_x = true;
+  }
+  return correlation::plotters::detail::NiceScale(
+      correlation::plotters::detail::DataRange{.min = raw_x_min, .max = raw_x_max}, 11, strict_x);
+}
+
+correlation::plotters::detail::NiceScale computeYScale(const correlation::analysis::Histogram &hist,
+                                                       const correlation::plotters::PlotConfig &config) {
+  real_t raw_y_min = static_cast<real_t>(0.0);
+  real_t raw_y_max = static_cast<real_t>(0.0);
+  const auto &partials = hist.smoothed_partials.empty() ? hist.partials : hist.smoothed_partials;
+  for (const auto &[key, value] : partials) {
+    for (real_t val : value) {
+      raw_y_max = std::max(raw_y_max, val);
+      raw_y_min = std::min(raw_y_min, val);
+    }
+  }
+  real_t y_padding = (raw_y_max - raw_y_min) * static_cast<real_t>(0.05);
+  raw_y_max += y_padding;
+
+  bool strict_y = false;
+  if (config.manual_y_min.has_value() && config.manual_y_max.has_value()) {
+    raw_y_min = *config.manual_y_min;
+    raw_y_max = *config.manual_y_max;
+    strict_y = true;
+  }
+  return correlation::plotters::detail::NiceScale(
+      correlation::plotters::detail::DataRange{.min = raw_y_min, .max = raw_y_max}, 8, strict_y);
+}
+
 } // namespace
 
 PlotController::PlotController(::AppWindow &window, AnalysisDispatcher &dispatcher,
@@ -150,6 +188,12 @@ correlation::plotters::PlotConfig PlotController::buildPlotConfigFromUI() {
   config.show_markers = window_.get_export_config().show_markers;
   config.fill_area = window_.get_export_config().fill_area;
 
+  config.manual_x_min = zoom_x_min_;
+  config.manual_x_max = zoom_x_max_;
+  config.manual_y_min = zoom_y_min_;
+  config.manual_y_max = zoom_y_max_;
+  config.reference_lines = reference_markers_;
+
   return config;
 }
 
@@ -243,6 +287,36 @@ void PlotController::handleMouseMove(float mouse_x, float mouse_y, bool hover, f
   mouse_hover_ = actual_hover;
   last_plot_width_ = width;
   last_plot_height_ = height;
+
+  if (!actual_hover) {
+    window_.set_hover_coord_text("");
+  } else {
+    const int current_idx = window_.get_selected_plot_index();
+    if (current_idx >= 0 && std::cmp_less(current_idx, available_plot_keys_.size())) {
+      const std::string &name = available_plot_keys_[current_idx];
+      const auto *hist = dispatcher_.getHistogram(name);
+      if (hist != nullptr && !hist->bins.empty()) {
+        auto config = buildPlotConfigFromUI();
+        auto geom = correlation::plotters::detail::getViewportGeometry(config);
+        auto [svg_x, svg_y] =
+            correlation::plotters::detail::screenToSvg(mouse_x, mouse_y, width, height, config);
+        if (svg_x >= geom.px0 && svg_x <= geom.px1 && svg_y >= geom.py0 && svg_y <= geom.py1) {
+          auto xs = computeXScale(*hist, config);
+          auto ys = computeYScale(*hist, config);
+          auto [dx, dy] =
+              correlation::plotters::detail::screenToData(mouse_x, mouse_y, width, height, config, xs, ys);
+          std::string text = std::format("X: {:.4g}  Y: {:.4g}", dx, dy);
+          window_.set_hover_coord_text(slint::SharedString(text));
+        } else {
+          window_.set_hover_coord_text("");
+        }
+      } else {
+        window_.set_hover_coord_text("");
+      }
+    } else {
+      window_.set_hover_coord_text("");
+    }
+  }
 
   const int current_idx = window_.get_selected_plot_index();
   if (current_idx >= 0) {
@@ -356,7 +430,13 @@ bool PlotController::isPlotCacheHit(int index, const correlation::plotters::Plot
           config.show_grid == last_config_.show_grid &&
           config.show_legend == last_config_.show_legend &&
           config.show_markers == last_config_.show_markers &&
-          config.fill_area == last_config_.fill_area && hover.active == last_hover_.active &&
+          config.fill_area == last_config_.fill_area &&
+          config.manual_x_min == last_config_.manual_x_min &&
+          config.manual_x_max == last_config_.manual_x_max &&
+          config.manual_y_min == last_config_.manual_y_min &&
+          config.manual_y_max == last_config_.manual_y_max &&
+          config.reference_lines.size() == last_config_.reference_lines.size() &&
+          hover.active == last_hover_.active &&
           std::abs(hover.mouse_x - last_hover_.mouse_x) < 1e-2 &&
           std::abs(hover.mouse_y - last_hover_.mouse_y) < 1e-2 &&
           std::abs(hover.widget_width - last_hover_.widget_width) < 1e-2 &&
@@ -585,10 +665,105 @@ void PlotController::handleToggleDifferencePlot(bool show_difference) {
   });
 }
 
+void PlotController::handleZoomRect(float x1, float y1, float x2, float y2) {
+  if (std::abs(x2 - x1) < 5.0F || std::abs(y2 - y1) < 5.0F) {
+    return;
+  }
+  const int current_idx = window_.get_selected_plot_index();
+  if (current_idx < 0 || std::cmp_greater_equal(current_idx, available_plot_keys_.size())) {
+    return;
+  }
+  const std::string &name = available_plot_keys_[current_idx];
+  const auto *hist = dispatcher_.getHistogram(name);
+  if (hist == nullptr || hist->bins.empty()) {
+    return;
+  }
+
+  auto config = buildPlotConfigFromUI();
+  auto xs = computeXScale(*hist, config);
+  auto ys = computeYScale(*hist, config);
+
+  auto [dx1, dy1] = correlation::plotters::detail::screenToData(
+      x1, y1, last_plot_width_, last_plot_height_, config, xs, ys);
+  auto [dx2, dy2] = correlation::plotters::detail::screenToData(
+      x2, y2, last_plot_width_, last_plot_height_, config, xs, ys);
+
+  zoom_x_min_ = std::min(dx1, dx2);
+  zoom_x_max_ = std::max(dx1, dx2);
+  zoom_y_min_ = std::min(dy1, dy2);
+  zoom_y_max_ = std::max(dy1, dy2);
+
+  window_.set_has_active_zoom(true);
+  requestPlotUpdate(current_idx, true);
+}
+
+void PlotController::handleResetZoom() {
+  zoom_x_min_.reset();
+  zoom_x_max_.reset();
+  zoom_y_min_.reset();
+  zoom_y_max_.reset();
+
+  window_.set_has_active_zoom(false);
+  const int current_idx = window_.get_selected_plot_index();
+  if (current_idx >= 0) {
+    requestPlotUpdate(current_idx, true);
+  }
+}
+
+void PlotController::handleAddMarker(bool is_vertical) {
+  const int current_idx = window_.get_selected_plot_index();
+  if (current_idx < 0 || std::cmp_greater_equal(current_idx, available_plot_keys_.size())) {
+    return;
+  }
+  const std::string &name = available_plot_keys_[current_idx];
+  const auto *hist = dispatcher_.getHistogram(name);
+  if (hist == nullptr || hist->bins.empty()) {
+    return;
+  }
+
+  auto config = buildPlotConfigFromUI();
+  auto xs = computeXScale(*hist, config);
+  auto ys = computeYScale(*hist, config);
+
+  auto [dx, dy] = correlation::plotters::detail::screenToData(
+      last_mouse_x_, last_mouse_y_, last_plot_width_, last_plot_height_, config, xs, ys);
+
+  real_t val = is_vertical ? dx : dy;
+  std::string color = is_vertical ? "#0284C7" : "#E11D48";
+  std::string label = std::format("{}: {:.3f}", is_vertical ? "X" : "Y", val);
+
+  reference_markers_.push_back(correlation::plotters::ReferenceLine{
+      .value = val,
+      .is_vertical = is_vertical,
+      .label = std::move(label),
+      .color_hex = std::move(color),
+  });
+
+  window_.set_markers_count(static_cast<int>(reference_markers_.size()));
+  requestPlotUpdate(current_idx, true);
+}
+
+void PlotController::handleClearMarkers() {
+  reference_markers_.clear();
+  window_.set_markers_count(0);
+  const int current_idx = window_.get_selected_plot_index();
+  if (current_idx >= 0) {
+    requestPlotUpdate(current_idx, true);
+  }
+}
+
 void PlotController::resetPlotState() noexcept {
   series_manager_.reset();
+  zoom_x_min_.reset();
+  zoom_x_max_.reset();
+  zoom_y_min_.reset();
+  zoom_y_max_.reset();
+  reference_markers_.clear();
   slint::invoke_from_event_loop([this]() {
     window_.set_pinned_runs_count(0);
+    window_.set_has_active_zoom(false);
+    window_.set_markers_count(0);
+    window_.set_hover_coord_text("");
     const int current_idx = window_.get_selected_plot_index();
     if (current_idx >= 0) {
       requestPlotUpdate(current_idx, true);

@@ -51,6 +51,16 @@ export component PreviewCard inherits FilledCard {
     in property <int> pinned_runs_count: 0;
     in-out property <length> sidebar_width: 180px;
 
+    in property <string> hover_coord_text: "";
+    in property <bool> has_active_zoom: false;
+    in property <int> markers_count: 0;
+    property <bool> zoom_mode: false;
+    property <bool> is_selecting: false;
+    property <length> drag_start_x: 0px;
+    property <length> drag_start_y: 0px;
+    property <length> drag_current_x: 0px;
+    property <length> drag_current_y: 0px;
+
     // Table data
     in property <[string]> table_headers: [];
     in property <[TableRow]> table_rows: [];
@@ -85,6 +95,10 @@ export component PreviewCard inherits FilledCard {
     callback clear_pinned_runs();
     callback mouse_move(length, length, bool, length, length);
     callback plot_resized(length, length);
+    callback zoom_to_rect(float, float, float, float);
+    callback reset_zoom();
+    callback add_marker(bool);
+    callback clear_markers();
 
     // Hover state for tooltip
     out property <string> hovered_tooltip_text:
@@ -297,16 +311,46 @@ export component PreviewCard inherits FilledCard {
                     width: 100%;
                     height: 100%;
                     visible: root.selected_plot_index >= 0;
+                    mouse-cursor: root.zoom_mode ? crosshair : default;
+
+                    pointer-event(event) => {
+                        if (root.zoom_mode) {
+                            if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                                root.drag_start_x = self.mouse-x;
+                                root.drag_start_y = self.mouse-y;
+                                root.drag_current_x = self.mouse-x;
+                                root.drag_current_y = self.mouse-y;
+                                root.is_selecting = true;
+                            } else if (event.kind == PointerEventKind.up) {
+                                if (root.is_selecting) {
+                                    root.is_selecting = false;
+                                    root.zoom_to_rect(root.drag_start_x / 1px, root.drag_start_y / 1px, root.drag_current_x / 1px, root.drag_current_y / 1px);
+                                    root.zoom_mode = false;
+                                }
+                            } else if (event.kind == PointerEventKind.cancel) {
+                                root.is_selecting = false;
+                            }
+                        }
+                    }
 
                     changed has-hover => {
+                        if (!self.has-hover) {
+                            root.is_selecting = false;
+                        }
                         root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
                     }
 
                     changed mouse-x => {
+                        if (root.is_selecting) {
+                            root.drag_current_x = self.mouse-x;
+                        }
                         root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
                     }
 
                     changed mouse-y => {
+                        if (root.is_selecting) {
+                            root.drag_current_y = self.mouse-y;
+                        }
                         root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
                     }
 
@@ -315,6 +359,192 @@ export component PreviewCard inherits FilledCard {
                         height: 100%;
                         source: root.preview_plot;
                         image-fit: contain;
+                    }
+                }
+
+                // Rubberband ROI Box
+                if root.is_selecting : Rectangle {
+                    x: Math.min(root.drag_start_x, root.drag_current_x);
+                    y: Math.min(root.drag_start_y, root.drag_current_y);
+                    width: Math.max(root.drag_start_x, root.drag_current_x) - Math.min(root.drag_start_x, root.drag_current_x);
+                    height: Math.max(root.drag_start_y, root.drag_current_y) - Math.min(root.drag_start_y, root.drag_current_y);
+                    background: MaterialPalette.primary.with_alpha(20%);
+                    border-width: 1.5px;
+                    border-color: MaterialPalette.primary;
+                    border-radius: 2px;
+                }
+
+                // Live HUD Coordinates (top-left)
+                if root.hover_coord_text != "" : Rectangle {
+                    x: 12px;
+                    y: 12px;
+                    height: 26px;
+                    border-radius: 13px;
+                    background: MaterialPalette.surface_container_highest.with_alpha(85%);
+                    border-width: 1px;
+                    border-color: MaterialPalette.outline_variant.with_alpha(50%);
+
+                    HorizontalLayout {
+                        padding-left: 10px;
+                        padding-right: 10px;
+                        alignment: center;
+                        MaterialText {
+                            text: root.hover_coord_text;
+                            style: MaterialTypography.label_medium;
+                            color: MaterialPalette.on_surface;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+
+                // Floating Imaging Toolbar (top-right)
+                if root.selected_plot_index >= 0 : Rectangle {
+                    x: parent.width - self.width - 12px;
+                    y: 12px;
+                    height: 32px;
+                    border-radius: 16px;
+                    background: MaterialPalette.surface_container_highest.with_alpha(85%);
+                    border-width: 1px;
+                    border-color: MaterialPalette.outline_variant.with_alpha(50%);
+
+                    HorizontalLayout {
+                        padding-left: 6px;
+                        padding-right: 6px;
+                        spacing: 4px;
+                        alignment: center;
+
+                        // Home (Reset Zoom)
+                        home_touch := TouchArea {
+                            width: 26px;
+                            height: 26px;
+                            enabled: root.has_active_zoom;
+                            mouse-cursor: self.enabled ? pointer : default;
+                            clicked => { root.reset_zoom(); }
+
+                            Rectangle {
+                                width: 100%;
+                                height: 100%;
+                                border-radius: 13px;
+                                background: home_touch.has-hover && home_touch.enabled ? MaterialPalette.surface_container_high : transparent;
+
+                                Image {
+                                    width: 16px;
+                                    height: 16px;
+                                    source: Icons.home;
+                                    colorize: home_touch.enabled ? MaterialPalette.on_surface : MaterialPalette.outline;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+
+                        // Divider
+                        Rectangle {
+                            width: 1px;
+                            height: 16px;
+                            background: MaterialPalette.outline_variant.with_alpha(50%);
+                        }
+
+                        // Box Zoom Toggle
+                        TouchArea {
+                            width: 26px;
+                            height: 26px;
+                            mouse-cursor: pointer;
+                            clicked => { root.zoom_mode = !root.zoom_mode; }
+
+                            Rectangle {
+                                width: 100%;
+                                height: 100%;
+                                border-radius: 13px;
+                                background: root.zoom_mode ? MaterialPalette.primary_container : (parent.has-hover ? MaterialPalette.surface_container_high : transparent);
+
+                                Image {
+                                    width: 16px;
+                                    height: 16px;
+                                    source: Icons.zoom_in;
+                                    colorize: root.zoom_mode ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+
+                        // Divider
+                        Rectangle {
+                            width: 1px;
+                            height: 16px;
+                            background: MaterialPalette.outline_variant.with_alpha(50%);
+                        }
+
+                        // Add Vertical X Marker
+                        TouchArea {
+                            width: 26px;
+                            height: 26px;
+                            mouse-cursor: pointer;
+                            clicked => { root.add_marker(true); }
+
+                            Rectangle {
+                                width: 100%;
+                                height: 100%;
+                                border-radius: 13px;
+                                background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                                MaterialText {
+                                    text: "+X";
+                                    style: MaterialTypography.label_medium;
+                                    color: MaterialPalette.on_surface;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+
+                        // Add Horizontal Y Marker
+                        TouchArea {
+                            width: 26px;
+                            height: 26px;
+                            mouse-cursor: pointer;
+                            clicked => { root.add_marker(false); }
+
+                            Rectangle {
+                                width: 100%;
+                                height: 100%;
+                                border-radius: 13px;
+                                background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                                MaterialText {
+                                    text: "+Y";
+                                    style: MaterialTypography.label_medium;
+                                    color: MaterialPalette.on_surface;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+
+                        // Clear Markers
+                        if root.markers_count > 0 : TouchArea {
+                            width: 26px;
+                            height: 26px;
+                            mouse-cursor: pointer;
+                            clicked => { root.clear_markers(); }
+
+                            Rectangle {
+                                width: 100%;
+                                height: 100%;
+                                border-radius: 13px;
+                                background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                                Image {
+                                    width: 16px;
+                                    height: 16px;
+                                    source: Icons.delete_sweep;
+                                    colorize: MaterialPalette.error;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
                     }
                 }
             }

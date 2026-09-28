@@ -67,10 +67,29 @@ AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
   preset_controller_ = std::make_unique<PresetController>(window_, options_, *this);
 
   // default options to UI
+  // default options to UI
   handleOptionstoUI();
 
   // Connect the UI signals to the controller's member functions.
-  // We use lambdas to capture 'this' and call the appropriate method.
+  registerActionCallbacks();
+  registerPlotCallbacks();
+  registerPresetAndOptionCallbacks();
+  registerExportCallbacks();
+
+  // Handle open external URL (e.g. download update from browser)
+  window_.on_open_url([](const slint::SharedString &url) {
+    UpdateChecker::openUrlInBrowser(std::string(url.data()));
+  });
+
+  // Initial load of settings and preset list
+  loadSettings();
+  preset_controller_->refreshPresetList();
+
+  // Asynchronously check for GitHub releases in the background without interrupting the user
+  UpdateChecker::checkForUpdatesAsync(window_, CORRELATION_VERSION_STRING);
+}
+
+void AppController::registerActionCallbacks() {
   window_.on_run_analysis([this]() { analysis_runner_->handleRunAnalysis(); });
   window_.on_cancel_analysis([this]() { dispatcher_.cancelAnalysis(); });
   window_.on_browse_file([this]() { file_io_handler_->handleBrowseFile(); });
@@ -81,20 +100,25 @@ AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
         [this]() { static_cast<void>(input_validator_->validateInputs()); });
   });
 
-  // Handle calculator toggle: update options and refresh the UI model
   window_.on_toggle_calculator([this](const slint::SharedString &calc_id, bool enabled) {
     options_.active_calculators[std::string(calc_id.data())] = enabled;
     populateCalculatorGroups();
     updateActiveGroupFlags();
   });
 
-  // Handle plot selection: generate SVG and push to UI
+  window_.on_layout_geometry_changed([this](float left_w, float mid_w) {
+    settings_.left_col_width = left_w;
+    settings_.middle_col_width = mid_w;
+    saveSettings();
+  });
+}
+
+void AppController::registerPlotCallbacks() {
   window_.on_select_plot([this](int index) {
     slint::invoke_from_event_loop(
         [this, index]() { plot_controller_->requestPlotUpdate(index, true); });
   });
 
-  // Handle curve visibility toggle from PreviewCard checklist
   window_.on_toggle_curve_visibility([this](int curve_id, bool visible) {
     plot_controller_->handleToggleCurveVisibility(curve_id, visible);
   });
@@ -106,26 +130,39 @@ AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
     plot_controller_->handleSetCurveColor(curve_id, color_hex);
   });
 
-  // Handle mouse move on preview plot
   window_.on_mouse_move(
       [this](float mouse_x, float mouse_y, bool hover, float width, float height) {
         plot_controller_->handleMouseMove(mouse_x, mouse_y, hover, width, height);
       });
 
-  // Handle save plot request (SVG or PDF)
   window_.on_save_plot([this]() { plot_controller_->handleSavePlot(); });
-
-  // Handle pin run request
   window_.on_pin_run([this]() { plot_controller_->handlePinRun(); });
-
-  // Handle clear pinned runs request
   window_.on_clear_pinned_runs([this]() { plot_controller_->handleClearPinnedRuns(); });
-
-  // Handle difference plot toggle
   window_.on_toggle_difference_plot(
       [this](bool show) { plot_controller_->handleToggleDifferencePlot(show); });
 
-  // Handle preset load, save, delete requests
+  window_.on_plot_resized([this](float width, float height) {
+    plot_controller_->handlePlotResized({
+        .width = width,
+        .height = height,
+    });
+  });
+
+  window_.on_zoom_to_rect([this](float x1, float y1, float x2, float y2) {
+    plot_controller_->handleZoomRect(x1, y1, x2, y2);
+  });
+  window_.on_reset_zoom([this]() {
+    plot_controller_->handleResetZoom();
+  });
+  window_.on_add_marker([this](bool is_vert) {
+    plot_controller_->handleAddMarker(is_vert);
+  });
+  window_.on_clear_markers([this]() {
+    plot_controller_->handleClearMarkers();
+  });
+}
+
+void AppController::registerPresetAndOptionCallbacks() {
   window_.on_load_preset([this](int index) {
     slint::invoke_from_event_loop([this, index]() { preset_controller_->handleLoadPreset(index); });
   });
@@ -143,22 +180,6 @@ AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
         [this, type]() { preset_controller_->handleMaterialTypeChanged(type); });
   });
 
-  // Handle plot resized callback from UI
-  window_.on_plot_resized([this](float width, float height) {
-    plot_controller_->handlePlotResized({
-        .width = width,
-        .height = height,
-    });
-  });
-
-  // Handle layout geometry changed callback from UI
-  window_.on_layout_geometry_changed([this](float left_w, float mid_w) {
-    settings_.left_col_width = left_w;
-    settings_.middle_col_width = mid_w;
-    saveSettings();
-  });
-
-  // Handle reset bond cutoffs request from UI
   window_.on_reset_bond_cutoffs([this]() { setBondCutoffs(); });
   window_.on_reset_rdf_options([this]() { handleResetRDFOptions(); });
   window_.on_reset_angle_options([this]() { handleResetAngleOptions(); });
@@ -179,7 +200,9 @@ AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
   window_.on_reset_analyses_selection([this]() { handleResetAnalysesSelection(); });
   window_.on_reset_presets([this]() { window_.set_selected_preset(-1); });
   window_.on_clear_comparison_curves([this]() { handleClearComparisonCurves(); });
+}
 
+void AppController::registerExportCallbacks() {
   window_.on_toggle_export_analysis([this](const slint::SharedString &analysis_id, bool enabled) {
     auto model = window_.get_export_analysis_items();
     if (!model) {
@@ -232,18 +255,6 @@ AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
       }
     }
   });
-
-  // Handle open external URL (e.g. download update from browser)
-  window_.on_open_url([](const slint::SharedString &url) {
-    UpdateChecker::openUrlInBrowser(std::string(url.data()));
-  });
-
-  // Initial load of settings and preset list
-  loadSettings();
-  preset_controller_->refreshPresetList();
-
-  // Asynchronously check for GitHub releases in the background without interrupting the user
-  UpdateChecker::checkForUpdatesAsync(window_, CORRELATION_VERSION_STRING);
 }
 
 AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,

@@ -127,6 +127,35 @@ public:
   void handleSetCurveColor(int curve_id, const slint::SharedString &color_hex);
 
   /**
+   * @brief Handles box zoom to a specified screen bounding rectangle.
+   */
+  void handleZoomRect(float x1, float y1, float x2, float y2);
+
+  /**
+   * @brief Resets zoom to full dataset auto bounds.
+   */
+  void handleResetZoom();
+
+  /**
+   * @brief Adds a reference line (vertical for X, horizontal for Y) at clicked screen coordinates.
+   * @param[in] click_x Screen X coordinate of the click.
+   * @param[in] click_y Screen Y coordinate of the click.
+   * @param[in] is_vertical True for vertical X marker, false for horizontal Y marker.
+   */
+  void handleAddMarkerAt(float click_x, float click_y, bool is_vertical);
+
+  /**
+   * @brief Adds a reference line (vertical for X, horizontal for Y) at current cursor position.
+   * @param[in] is_vertical True for vertical X marker, false for horizontal Y marker.
+   */
+  void handleAddMarker(bool is_vertical);
+
+  /**
+   * @brief Clears all user reference markers.
+   */
+  void handleClearMarkers();
+
+  /**
    * @brief Resets all plot series state (visibility overrides, custom colors, pinned runs).
    */
   void resetPlotState() noexcept;
@@ -181,6 +210,12 @@ private:
   std::size_t last_pinned_runs_count_ = 0;
 
   std::shared_ptr<std::string> current_svg_;
+
+  std::optional<real_t> zoom_x_min_;
+  std::optional<real_t> zoom_x_max_;
+  std::optional<real_t> zoom_y_min_;
+  std::optional<real_t> zoom_y_max_;
+  std::vector<correlation::plotters::ReferenceLine> reference_markers_;
 
   correlation::plotters::PlotConfig buildPlotConfigFromUI();
   bool isPlotCacheHit(int index, const correlation::plotters::PlotConfig &config,
