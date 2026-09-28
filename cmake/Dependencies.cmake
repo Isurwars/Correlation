@@ -557,6 +557,7 @@ endif()
 
 # 13. miniz (Zip archive creation)
 message(STATUS "Fetching miniz for zip export...")
+correlation_push_shared_libs(OFF)
 FetchContent_Declare(
   miniz
   GIT_REPOSITORY https://github.com/richgel999/miniz.git
@@ -565,6 +566,7 @@ FetchContent_Declare(
 set(BUILD_EXAMPLES OFF CACHE BOOL "Disable miniz examples" FORCE)
 set(BUILD_FUZZERS OFF CACHE BOOL "Disable miniz fuzzers" FORCE)
 FetchContent_MakeAvailable(miniz)
+correlation_pop_shared_libs()
 
 if(TARGET miniz)
   set_target_properties(miniz PROPERTIES POSITION_INDEPENDENT_CODE ON)
