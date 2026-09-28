@@ -89,61 +89,61 @@ export component MiniSideBar inherits Rectangle {
         padding-right: 4px;
         spacing: 6px;
 
-        // Panel 0: Save & Export
+        // Panel 0: Operations & Trajectory
         RailButton {
-            icon: Icons.save;
+            icon: Icons.folder_open;
             active: root.active_panel == 0;
-            tooltip: "Save & Export (Ctrl+S)";
+            tooltip: "Operations & Trajectory (Ctrl+O)";
             clicked => {
                 root.select_panel(root.active_panel == 0 ? -1 : 0);
             }
         }
 
-        // Panel 1: Operations & Trajectory
+        // Panel 1: Common Options (RDF, Cutoffs, Angles)
         RailButton {
-            icon: Icons.folder_open;
+            icon: Icons.tune;
             active: root.active_panel == 1;
-            tooltip: "Operations & Trajectory (Ctrl+O)";
+            tooltip: "Common Options (RDF, Cutoffs, Angles)";
             clicked => {
                 root.select_panel(root.active_panel == 1 ? -1 : 1);
             }
         }
 
-        // Panel 2: Common Options (RDF, Cutoffs, Angles)
+        // Panel 2: Advanced Options (S(Q), Rings, Smoothing, Order)
         RailButton {
-            icon: Icons.tune;
+            icon: Icons.science;
             active: root.active_panel == 2;
-            tooltip: "Common Options (RDF, Cutoffs, Angles)";
+            tooltip: "Advanced Options (S(Q), Rings, Smoothing)";
             clicked => {
                 root.select_panel(root.active_panel == 2 ? -1 : 2);
             }
         }
 
-        // Panel 3: Advanced Options (S(Q), Rings, Smoothing, Order)
+        // Panel 3: Plot Settings & Comparisons
         RailButton {
-            icon: Icons.science;
+            icon: Icons.auto_graph;
             active: root.active_panel == 3;
-            tooltip: "Advanced Options (S(Q), Rings, Smoothing)";
+            tooltip: "Plot Settings & Comparisons";
             clicked => {
                 root.select_panel(root.active_panel == 3 ? -1 : 3);
             }
         }
 
-        // Panel 4: Plot Settings & Comparisons
+        // Panel 4: Analyses Selection
         RailButton {
-            icon: Icons.auto_graph;
+            icon: Icons.analytics;
             active: root.active_panel == 4;
-            tooltip: "Plot Settings & Comparisons";
+            tooltip: "Analyses Selection";
             clicked => {
                 root.select_panel(root.active_panel == 4 ? -1 : 4);
             }
         }
 
-        // Panel 5: Analyses Selection
+        // Panel 5: Save & Export
         RailButton {
-            icon: Icons.analytics;
+            icon: Icons.save;
             active: root.active_panel == 5;
-            tooltip: "Analyses Selection";
+            tooltip: "Save & Export (Ctrl+S)";
             clicked => {
                 root.select_panel(root.active_panel == 5 ? -1 : 5);
             }
