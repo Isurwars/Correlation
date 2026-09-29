@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.0.0] - 2026-09-29
+
+### PyPI Distribution & MatCorr Python Suite
+- **PyPI Package Brand (`matcorr`)**: Renamed and registered Python distribution metadata under `matcorr` (Materials Correlation), providing structural and correlation analysis for liquid, amorphous, and nanostructured materials simulations.
+- **Python CLI Suite (`matcorr` / `mcor` / `correlation`)**: Implemented Python command-line interface in `python/matcorr/cli.py` and `python/matcorr/__main__.py` with full material presets (amorphous, liquid, crystalline), simulation frame windowing, kernel smoothing, and automated CSV export.
+- **Automated PyPI Release Pipeline**: Integrated `cibuildwheel` matrix (Linux x86_64/aarch64, macOS Intel/Apple Silicon, Windows AMD64) and PyPI Trusted Publishing via GitHub Actions OIDC (`pypa/gh-action-pypi-publish@release/v1`) directly into `.github/workflows/release.yml`.
+- **Static Structure Ingestion**: Extended Python I/O bindings (`correlation.read()`) with automated `readStructure` fallback for static CAR, CIF, and crystal coordinate files.
+- **C++ Version Milestone**: Bumped core engine project version to `4.0.0`.
+
 ## [3.9.8] - 2026-09-28
 
 ### Interactive Plotting & Coordinate Inspection

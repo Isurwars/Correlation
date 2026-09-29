@@ -22,7 +22,16 @@ void init_io(py::module_ &mod) {
           throw std::runtime_error("No reader found for file extension: " + extension);
         }
 
-        return reader->readTrajectory(filepath, nullptr);
+        try {
+          return reader->readTrajectory(filepath, nullptr);
+        } catch (const std::exception &) {
+          try {
+            auto cell = reader->readStructure(filepath, nullptr);
+            return Trajectory({std::move(cell)}, 1.0);
+          } catch (...) {
+            throw;
+          }
+        }
       },
       py::arg("filepath"),
       "Read an atomic trajectory or structure file into a Trajectory object.\n\n"

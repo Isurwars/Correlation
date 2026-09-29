@@ -3,9 +3,9 @@ requires = ["scikit-build-core>=0.11", "pybind11>=2.12"]
 build-backend = "scikit_build_core.build"
 
 [project]
-name = "correlation-analysis"
+name = "matcorr"
 dynamic = ["version"]
-description = "High-performance structural analysis for atomistic simulations"
+description = "Materials Correlation: high-performance structural analysis for liquids, amorphous solids, and nanostructures"
 readme = "README.md"
 license = {text = "AGPL-3.0-only"}
 requires-python = ">=3.9"
@@ -18,10 +18,27 @@ classifiers = [
     "License :: OSI Approved :: GNU Affero General Public License v3",
     "Topic :: Scientific/Engineering :: Chemistry",
     "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Materials Science",
+]
+keywords = [
+    "materials-science",
+    "correlation",
+    "amorphous",
+    "liquids",
+    "nanostructures",
+    "pair-distribution-function",
+    "radial-distribution-function",
+    "structure-factor",
+    "molecular-dynamics",
 ]
 dependencies = [
     "numpy>=1.20",
 ]
+
+[project.scripts]
+matcorr = "matcorr.cli:main"
+mcor = "matcorr.cli:main"
+correlation = "matcorr.cli:main"
 
 [project.optional-dependencies]
 dev = [
@@ -56,12 +73,12 @@ cmake.args = [
     "-DBUILD_TESTING=OFF",
     "-DBUILD_GUI=OFF"
 ]
-wheel.packages = ["python/correlation"]
+wheel.packages = ["python/correlation", "python/matcorr"]
 build-dir = "build/{wheel_tag}"
 
 [tool.cibuildwheel]
-# Build only Python 3.9 through 3.12+ (CPython)
-build = "cp39-* cp310-* cp311-* cp312-* cp313-*"
+# Build only Python 3.10 through 3.14 (CPython)
+build = "cp310-* cp311-* cp312-* cp313-* cp314-*"
 skip = "pp* *musllinux*"
 test-skip = "*_universal2 *-macosx_x86_64"
 test-requires = "numpy pytest"
@@ -77,6 +94,9 @@ repair-wheel-command = "python python/repair_wheel.py {wheel} {dest_dir}"
 [tool.cibuildwheel.linux]
 before-all = "dnf install -y gcc-toolset-13-gcc-c++"
 environment = { CC="/opt/rh/gcc-toolset-13/root/usr/bin/gcc", CXX="/opt/rh/gcc-toolset-13/root/usr/bin/g++" }
+
+[tool.cibuildwheel.macos]
+before-build = "pip install delocate"
 
 [tool.cibuildwheel.windows]
 # Delvewheel is required to vendor the compiled tbb.dll inside the Windows wheel

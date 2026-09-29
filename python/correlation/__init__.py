@@ -33,6 +33,12 @@ except ImportError:
             "Make sure the package was built correctly with: pip install ."
         ) from e
 
+try:
+    from importlib.metadata import PackageNotFoundError, version
+    __version__ = version("matcorr")
+except (PackageNotFoundError, ImportError):
+    __version__ = "4.0.0"
+
 
 def to_torch_geometric(graph_data):
     """

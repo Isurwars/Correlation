@@ -4,7 +4,7 @@
 # Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 cmake_minimum_required(VERSION 3.24)
-project(Correlation VERSION 3.9.8 LANGUAGES CXX C)
+project(Correlation VERSION 4.0.0 LANGUAGES CXX C)
 
 # -----------------------------------------------------------
 # Auto-generate packaging files from templates.
@@ -271,17 +271,6 @@ if (NOT WIN32)
         # Force all dynamic libraries to be placed directly in the same bin/ folder
         # as the executables using gp_item_default_embedded_path_override.
 
-        # Recursively find all directories under _deps containing .dylib files (e.g. oneTBB compiler output dirs)
-        file(GLOB_RECURSE _mac_dylibs "${PROJECT_BINARY_DIR}/_deps/*.dylib")
-        set(_mac_extra_dirs "")
-        foreach(_dylib IN LISTS _mac_dylibs)
-            get_filename_component(_dylib_dir "${_dylib}" DIRECTORY)
-            list(APPEND _mac_extra_dirs "${_dylib_dir}")
-        endforeach()
-        if(_mac_extra_dirs)
-            list(REMOVE_DUPLICATES _mac_extra_dirs)
-        endif()
-
         # Define the exact workspace directories where our compiled shared dependencies live
         set(MAC_DEPENDENCY_DIRS
             "${PROJECT_BINARY_DIR}/src"
@@ -298,7 +287,6 @@ if (NOT WIN32)
             "${PROJECT_BINARY_DIR}/_deps/tbb-build/src"
             "${PROJECT_BINARY_DIR}/_deps/tbb-build/src/tbb"
             "${PROJECT_BINARY_DIR}/_deps/tbb-build/src/tbbmalloc"
-            ${_mac_extra_dirs}
             "/opt/homebrew/lib"
             "/usr/local/lib"
         )
