@@ -1,0 +1,63 @@
+name: "Package Desktop"
+description: "Creates platform-specific installers (CPack DEB/RPM/TGZ, AppImage, NSIS, DragNDrop DMG)"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Package Release (Linux)
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        cd build
+        cpack
+
+    - name: Build AppImage (Linux)
+      if: runner.os == 'Linux'
+      env:
+        APPIMAGE_EXTRACT_AND_RUN: "1"
+      shell: bash
+      run: |
+        curl -L -o linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+        chmod +x linuxdeploy
+        DESTDIR=$PWD/AppDir cmake --install build --prefix /usr
+        if [ -d AppDir/usr/lib/x86_64-linux-gnu ]; then
+          mkdir -p AppDir/usr/lib
+          cp -rn AppDir/usr/lib/x86_64-linux-gnu/* AppDir/usr/lib/ || true
+        fi
+        if [ -d AppDir/usr/lib64 ]; then
+          mkdir -p AppDir/usr/lib
+          cp -rn AppDir/usr/lib64/* AppDir/usr/lib/ || true
+        fi
+        export LD_LIBRARY_PATH="$PWD/AppDir/usr/lib:$PWD/AppDir/usr/lib/x86_64-linux-gnu:$PWD/AppDir/usr/lib64:$PWD/build/src:$PWD/build/_deps/arrow-build/cpp/src/arrow:$PWD/build/_deps/arrow-build/cpp/src/parquet:${LD_LIBRARY_PATH}"
+        ./linuxdeploy --appdir AppDir \
+          --desktop-file AppDir/usr/share/applications/correlation.desktop \
+          --icon-file AppDir/usr/share/icons/hicolor/512x512/apps/correlation.png \
+          --output appimage
+        mv Correlation*.AppImage build/
+
+    - name: Pre-Package Diagnostics (Windows)
+      if: runner.os == 'Windows'
+      shell: bash
+      run: |
+        cd build
+        ls -la *.dll || true
+
+    - name: Create Installer (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        Set-Location build
+        Start-Sleep -Seconds 3
+        cpack -G NSIS --verbose
+        if ($LASTEXITCODE -ne 0) {
+          Write-Error "CPack NSIS failed (exit $LASTEXITCODE)"
+          exit $LASTEXITCODE
+        }
+
+    - name: Package Release (macOS)
+      if: runner.os == 'macOS'
+      shell: bash
+      run: |
+        cd build
+        sleep 15
+        cpack -G DragNDrop

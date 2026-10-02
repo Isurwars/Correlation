@@ -1,0 +1,35 @@
+name: "CMake Configure & Build"
+description: "Configures CMake with Ninja, sccache, and standard features, then executes parallel build"
+
+inputs:
+  cmake-flags:
+    description: "Additional CMake flags"
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Configure CMake
+      shell: bash
+      run: |
+        EXTRA_FLAGS=()
+        if [ "${{ runner.os }}" = "Linux" ]; then
+          EXTRA_FLAGS+=("-DCMAKE_INSTALL_PREFIX=/usr" "-DCMAKE_INSTALL_LIBDIR=lib")
+        elif [ "${{ runner.os }}" = "macOS" ]; then
+          export CC="$(brew --prefix llvm@18)/bin/clang"
+          export CXX="$(brew --prefix llvm@18)/bin/clang++"
+          export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
+          EXTRA_FLAGS+=("-DCMAKE_OSX_SYSROOT=${SDKROOT}")
+        fi
+        cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
+          -DCMAKE_C_COMPILER_LAUNCHER=sccache \
+          -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
+          -DBUILD_WITH_HDF5=ON \
+          -DBUILD_WITH_ARROW=ON \
+          "${EXTRA_FLAGS[@]}" \
+          ${{ inputs.cmake-flags }}
+
+    - name: Build correlation
+      shell: bash
+      run: cmake --build build --config Release --parallel

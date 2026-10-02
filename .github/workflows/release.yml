@@ -28,68 +28,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Set up sccache
-        uses: ./.github/actions/setup-sccache
+      - name: Set up dependencies
+        uses: ./.github/actions/setup-dependencies
+        with:
+          include-packaging: "true"
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ninja-build libtbb-dev libhdf5-dev build-essential cmake pkg-config libfontconfig-dev libfreetype6-dev libexpat1-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-x11-0 xvfb rpm libgtk-3-dev libfftw3-dev
+      - name: Configure and build
+        uses: ./.github/actions/cmake-build
 
-      - name: Set up Rust & Cargo Cache
-        uses: ./.github/actions/setup-rust
+      - name: Run tests and verifications
+        uses: ./.github/actions/run-tests
 
-      - name: Configure CMake
-        run: |
-          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
-            -DCMAKE_INSTALL_PREFIX=/usr \
-            -DCMAKE_INSTALL_LIBDIR=lib \
-            -DCMAKE_C_COMPILER_LAUNCHER=sccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
-            -DBUILD_WITH_HDF5=ON \
-            -DBUILD_WITH_ARROW=ON
-
-      - name: Build correlation
-        run: cmake --build build --config Release --parallel
-
-      - name: Test
-        run: cd build && xvfb-run ctest --output-on-failure
-
-      - name: Verify Shared Linking
-        run: |
-          ldd build/src/correlation
-          if ! ldd build/src/correlation | grep -q -E "libtbb|libhdf5"; then
-            echo "ERROR: Required shared dependencies (tbb/hdf5) were not dynamically linked!"
-            exit 1
-          fi
-          echo "Success: Shared library dependencies verified."
-
-      - name: Package Release
-        run: |
-          cd build
-          cpack
-
-      - name: Build AppImage
-        env:
-          APPIMAGE_EXTRACT_AND_RUN: "1"
-        run: |
-          curl -L -o linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-          chmod +x linuxdeploy
-          DESTDIR=$PWD/AppDir cmake --install build --prefix /usr
-          if [ -d AppDir/usr/lib/x86_64-linux-gnu ]; then
-            mkdir -p AppDir/usr/lib
-            cp -rn AppDir/usr/lib/x86_64-linux-gnu/* AppDir/usr/lib/ || true
-          fi
-          if [ -d AppDir/usr/lib64 ]; then
-            mkdir -p AppDir/usr/lib
-            cp -rn AppDir/usr/lib64/* AppDir/usr/lib/ || true
-          fi
-          export LD_LIBRARY_PATH="$PWD/AppDir/usr/lib:$PWD/AppDir/usr/lib/x86_64-linux-gnu:$PWD/AppDir/usr/lib64:$PWD/build/src:$PWD/build/_deps/arrow-build/cpp/src/arrow:$PWD/build/_deps/arrow-build/cpp/src/parquet:${LD_LIBRARY_PATH}"
-          ./linuxdeploy --appdir AppDir \
-            --desktop-file AppDir/usr/share/applications/correlation.desktop \
-            --icon-file AppDir/usr/share/icons/hicolor/512x512/apps/correlation.png \
-            --output appimage
-          mv Correlation*.AppImage build/
+      - name: Package desktop artifacts
+        uses: ./.github/actions/package-desktop
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v3
@@ -108,55 +59,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Set up sccache
-        uses: ./.github/actions/setup-sccache
-
-      - name: Install NSIS
-        run: choco install nsis -y
-
-      - name: Set up Rust & Cargo Cache
-        uses: ./.github/actions/setup-rust
-
-      - name: Setup MSVC
-        uses: TheMrMilchmann/setup-msvc-dev@v4
+      - name: Set up dependencies
+        uses: ./.github/actions/setup-dependencies
         with:
-          arch: x64
+          include-packaging: "true"
 
-      - name: Configure CMake
-        run: |
-          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja `
-            -DCMAKE_C_COMPILER_LAUNCHER=sccache `
-            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache `
-            -DBUILD_WITH_HDF5=ON `
-            -DBUILD_WITH_ARROW=ON
+      - name: Configure and build
+        uses: ./.github/actions/cmake-build
 
-      - name: Build correlation
-        run: cmake --build build --config Release --parallel
+      - name: Run tests and verifications
+        uses: ./.github/actions/run-tests
 
-      - name: Run Test Suite & GUI Smoke Tests
-        shell: pwsh
-        run: |
-          Set-Location build
-          ctest -C Release --output-on-failure -E PythonBindings
-
-      - name: Pre-Package Diagnostics
-        shell: bash
-        run: |
-          cd build
-          ls -la *.dll || true
-
-      - name: Create Installer
-        shell: pwsh
-        run: |
-          Set-Location build
-          # Give the build a moment to release all file handles
-          Start-Sleep -Seconds 3
-          # Run CPack directly to ensure logs are captured by GitHub Actions
-          cpack -G NSIS --verbose
-          if ($LASTEXITCODE -ne 0) {
-            Write-Error "CPack NSIS failed (exit $LASTEXITCODE)"
-            exit $LASTEXITCODE
-          }
+      - name: Package desktop artifacts
+        uses: ./.github/actions/package-desktop
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v3
@@ -171,60 +86,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Set up sccache
-        uses: ./.github/actions/setup-sccache
+      - name: Set up dependencies
+        uses: ./.github/actions/setup-dependencies
 
-      - name: Install dependencies
-        run: brew install ninja tbb hdf5 llvm@18 fftw
+      - name: Configure and build
+        uses: ./.github/actions/cmake-build
 
-      - name: Set up Rust & Cargo Cache
-        uses: ./.github/actions/setup-rust
+      - name: Run tests and verifications
+        uses: ./.github/actions/run-tests
 
-      - name: Configure CMake
-        run: |
-          export CC="$(brew --prefix llvm@18)/bin/clang"
-          export CXX="$(brew --prefix llvm@18)/bin/clang++"
-          export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
-          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
-            -DCMAKE_OSX_SYSROOT="$SDKROOT" \
-            -DCMAKE_C_COMPILER_LAUNCHER=sccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
-            -DBUILD_WITH_HDF5=ON \
-            -DBUILD_WITH_ARROW=ON
-
-      - name: Build correlation
-        run: cmake --build build --config Release --parallel
-
-      - name: Test
-        run: cd build && ctest --output-on-failure
-
-      - name: Verify Bundle Dependencies
-        run: |
-          # Perform a temporary test installation
-          cmake --install build --prefix $PWD/install_test
-
-          # Inspect linked libraries of the GUI and CLI binaries
-          echo "==== Executable Library Dependencies ===="
-          otool -L install_test/bin/correlation
-          otool -L install_test/bin/correlation-cli
-
-          # Assert that TBB and HDF5 are not referenced at absolute paths
-          if otool -L install_test/bin/correlation | grep -E "(/opt/homebrew|/usr/local/Cellar|/usr/local/lib/libtbb|/usr/local/lib/libhdf5)"; then
-            echo "ERROR: GUI executable still references absolute external library paths!"
-            exit 1
-          fi
-          if otool -L install_test/bin/correlation-cli | grep -E "(/opt/homebrew|/usr/local/Cellar|/usr/local/lib/libtbb|/usr/local/lib/libhdf5)"; then
-            echo "ERROR: CLI executable still references absolute external library paths!"
-            exit 1
-          fi
-          echo "Success: macOS dependencies are successfully bundled and paths updated!"
-
-      - name: Package Release
-        run: |
-          cd build
-          # Brief pause to ensure the build releases all file handles on macOS
-          sleep 15
-          cpack -G DragNDrop
+      - name: Package desktop artifacts
+        uses: ./.github/actions/package-desktop
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v3
@@ -377,7 +249,7 @@ jobs:
 
   publish-pypi:
     name: Publish to PyPI
-    needs: [build-wheels, build-sdist]
+    needs: [build-macos, build-wheels, build-sdist]
     runs-on: ubuntu-latest
     environment:
       name: pypi

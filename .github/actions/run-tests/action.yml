@@ -1,0 +1,46 @@
+name: "Run Tests & Verify Linkage"
+description: "Executes test suite and verifies dynamic linking and library bundling"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run Test Suite
+      shell: bash
+      run: |
+        cd build
+        if [ "${{ runner.os }}" = "Linux" ]; then
+          xvfb-run ctest --output-on-failure
+        elif [ "${{ runner.os }}" = "Windows" ]; then
+          ctest -C Release --output-on-failure -E PythonBindings
+        else
+          ctest --output-on-failure
+        fi
+
+    - name: Verify Shared Linking (Linux)
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        ldd build/src/correlation
+        if ! ldd build/src/correlation | grep -q -E "libtbb|libhdf5"; then
+          echo "ERROR: Required shared dependencies (tbb/hdf5) were not dynamically linked!"
+          exit 1
+        fi
+        echo "Success: Shared library dependencies verified."
+
+    - name: Verify Bundle Dependencies (macOS)
+      if: runner.os == 'macOS'
+      shell: bash
+      run: |
+        cmake --install build --prefix "$PWD/install_test"
+        echo "==== Executable Library Dependencies ===="
+        otool -L install_test/bin/correlation
+        otool -L install_test/bin/correlation-cli
+        if otool -L install_test/bin/correlation | grep -E "(/opt/homebrew|/usr/local/Cellar|/usr/local/lib/libtbb|/usr/local/lib/libhdf5)"; then
+          echo "ERROR: GUI executable still references absolute external library paths!"
+          exit 1
+        fi
+        if otool -L install_test/bin/correlation-cli | grep -E "(/opt/homebrew|/usr/local/Cellar|/usr/local/lib/libtbb|/usr/local/lib/libhdf5)"; then
+          echo "ERROR: CLI executable still references absolute external library paths!"
+          exit 1
+        fi
+        echo "Success: macOS dependencies are successfully bundled and paths updated!"
