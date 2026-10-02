@@ -40,7 +40,13 @@ runs:
       with:
         arch: x64
 
+    - name: Disable Git link.exe shadowing MSVC linker (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        Remove-Item -Path "C:\Program Files\Git\usr\bin\link.exe" -Force -ErrorAction SilentlyContinue
+
     - name: Install packaging tools (Windows)
       if: runner.os == 'Windows' && inputs.include-packaging == 'true'
-      shell: bash
+      shell: pwsh
       run: choco install nsis -y

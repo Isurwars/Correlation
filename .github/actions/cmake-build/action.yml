@@ -10,7 +10,8 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Configure CMake
+    - name: Configure CMake (POSIX)
+      if: runner.os != 'Windows'
       shell: bash
       run: |
         EXTRA_FLAGS=()
@@ -30,6 +31,23 @@ runs:
           "${EXTRA_FLAGS[@]}" \
           ${{ inputs.cmake-flags }}
 
-    - name: Build correlation
+    - name: Configure CMake (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja `
+          -DCMAKE_C_COMPILER_LAUNCHER=sccache `
+          -DCMAKE_CXX_COMPILER_LAUNCHER=sccache `
+          -DBUILD_WITH_HDF5=ON `
+          -DBUILD_WITH_ARROW=ON `
+          ${{ inputs.cmake-flags }}
+
+    - name: Build correlation (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: cmake --build build --config Release --parallel
+
+    - name: Build correlation (POSIX)
+      if: runner.os != 'Windows'
       shell: bash
       run: cmake --build build --config Release --parallel

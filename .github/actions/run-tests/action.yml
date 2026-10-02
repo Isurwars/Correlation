@@ -4,14 +4,20 @@ description: "Executes test suite and verifies dynamic linking and library bundl
 runs:
   using: "composite"
   steps:
-    - name: Run Test Suite
+    - name: Run Test Suite (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        Set-Location build
+        ctest -C Release --output-on-failure -E PythonBindings
+
+    - name: Run Test Suite (POSIX)
+      if: runner.os != 'Windows'
       shell: bash
       run: |
         cd build
         if [ "${{ runner.os }}" = "Linux" ]; then
           xvfb-run ctest --output-on-failure
-        elif [ "${{ runner.os }}" = "Windows" ]; then
-          ctest -C Release --output-on-failure -E PythonBindings
         else
           ctest --output-on-failure
         fi
