@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "calculators/BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/BaseCalculator.hpp"
 
 #include <complex>
 
@@ -68,7 +68,10 @@ public:
   struct SingleAtomSteinhardt {
     real_t Q4{0.0};     ///< Q4 bond-orientational order parameter.
     real_t Q6{0.0};     ///< Q6 bond-orientational order parameter.
+    real_t W4_hat{0.0}; ///< Normalized W4 bond-orientational order parameter.
     real_t W6_hat{0.0}; ///< Normalized W6 bond-orientational order parameter.
+    real_t Q4_bar{0.0}; ///< Lechner-Dellago averaged Q4 order parameter.
+    real_t Q6_bar{0.0}; ///< Lechner-Dellago averaged Q6 order parameter.
   };
 
   /**
@@ -78,7 +81,10 @@ public:
   struct SteinhardtParams {
     std::vector<real_t> Q4;     ///< Per-atom Q4 values.
     std::vector<real_t> Q6;     ///< Per-atom Q6 values.
+    std::vector<real_t> W4_hat; ///< Per-atom W4_hat values.
     std::vector<real_t> W6_hat; ///< Per-atom W6_hat values.
+    std::vector<real_t> Q4_bar; ///< Per-atom Q4_bar values.
+    std::vector<real_t> Q6_bar; ///< Per-atom Q6_bar values.
   };
 
   /**
