@@ -45,8 +45,8 @@
     "semantic_hash": ""
   },
   "include/core/Cell.hpp": {
-    "mtime": 1791180627.6716177,
-    "ast_hash": "c86dda66ad1fd1e670215b98f15e048c",
+    "mtime": 1791179620.2348633,
+    "ast_hash": "c9fb57331f329cdc2fc9237b7607fc3a",
     "semantic_hash": ""
   },
   "include/core/GPUPortability.hpp": {
@@ -375,8 +375,8 @@
     "semantic_hash": ""
   },
   "src/core/Cell.cpp": {
-    "mtime": 1791180641.894364,
-    "ast_hash": "87a59f1a4d2b7df365b1199492d946aa",
+    "mtime": 1791179629.7016337,
+    "ast_hash": "1b538bf8e311361d67ded7fd223dd26d",
     "semantic_hash": ""
   },
   "src/core/NeighborGraph.cpp": {
@@ -770,8 +770,8 @@
     "semantic_hash": ""
   },
   "tests/unit/core/CellTests.cpp": {
-    "mtime": 1791180610.0636156,
-    "ast_hash": "919ba0e5b5de21f9c69da19ea4b6aaac",
+    "mtime": 1790221877.379957,
+    "ast_hash": "36a9f1f6640ce474e101bd603ae7eb96",
     "semantic_hash": ""
   },
   "tests/unit/core/MappedFileTests.cpp": {
@@ -920,8 +920,8 @@
     "semantic_hash": ""
   },
   "tests/unit/writers/WriterTests.cpp": {
-    "mtime": 1791179918.5471475,
-    "ast_hash": "6af347a0bc4d0a81840e01a3e3b2232f",
+    "mtime": 1791177337.0933297,
+    "ast_hash": "1760898a4ca99c644b6c3e110f1816e3",
     "semantic_hash": ""
   },
   ".github/workflows/ci.yml": {
@@ -2420,8 +2420,8 @@
     "semantic_hash": ""
   },
   "src/calculators/spatial/RDFCalculator.cpp": {
-    "mtime": 1791180789.5847511,
-    "ast_hash": "a856dfa44b7db637c42ada3c162eb1a1",
+    "mtime": 1791179610.6300979,
+    "ast_hash": "4a329954695149228837b3130074149b",
     "semantic_hash": ""
   },
   "src/calculators/spatial/SDFCalculator.cpp": {
