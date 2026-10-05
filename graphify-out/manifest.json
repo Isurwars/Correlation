@@ -745,8 +745,8 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/SteinhardtCalculatorTests.cpp": {
-    "mtime": 1790391314.5373893,
-    "ast_hash": "df527360682428da551db1e99dd30b37",
+    "mtime": 1791182069.7012026,
+    "ast_hash": "03e25842690254301882b2c438d73086",
     "semantic_hash": ""
   },
   "tests/unit/calculators/StructureFactorCalculatorTests.cpp": {
@@ -2225,8 +2225,8 @@
     "semantic_hash": ""
   },
   "include/calculators/order/SteinhardtCalculator.hpp": {
-    "mtime": 1790389589.7761834,
-    "ast_hash": "6957775ef872888845f84d88e68ae6f8",
+    "mtime": 1791181767.9213243,
+    "ast_hash": "d2fe2d661c2f81909cb9ed50d6b9ffa6",
     "semantic_hash": ""
   },
   "include/calculators/scattering/StructureFactorCalculator.hpp": {
@@ -2345,8 +2345,8 @@
     "semantic_hash": ""
   },
   "src/calculators/order/SteinhardtCalculator.cpp": {
-    "mtime": 1790450389.5615418,
-    "ast_hash": "129de451450c72a0abd7d7d76abf9fcf",
+    "mtime": 1791181935.7422395,
+    "ast_hash": "2c79912e0aa913469a57ee3582d8f242",
     "semantic_hash": ""
   },
   "src/calculators/scattering/StructureFactorCalculator.cpp": {

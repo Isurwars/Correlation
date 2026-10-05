@@ -399,5 +399,9 @@
   "397": "CNAPairSig",
   "398": "AbinitReader.cpp",
   "399": "OrcaReader.cpp",
-  "400": "NumericalParityTests"
+  "400": "NumericalParityTests",
+  "401": "TEST",
+  "402": ".setEnergy",
+  "403": "TDOSParams",
+  "404": "CNAPairSig"
 }

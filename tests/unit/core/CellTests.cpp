@@ -364,12 +364,12 @@ TEST_F(CellTests, ReplicateThrowsOnInvalidFactorsOrExcessiveAtoms) {
              static_cast<real_t>(90.0), static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
   cell.addAtom("C", {static_cast<real_t>(1.0), static_cast<real_t>(1.0), static_cast<real_t>(1.0)});
 
-  EXPECT_THROW(cell.replicate(0, 1, 1), std::invalid_argument);
-  EXPECT_THROW(cell.replicate(1, -1, 1), std::invalid_argument);
-  EXPECT_THROW(cell.replicate(1, 1, 0), std::invalid_argument);
+  EXPECT_THROW(static_cast<void>(cell.replicate(0, 1, 1)), std::invalid_argument);
+  EXPECT_THROW(static_cast<void>(cell.replicate(1, -1, 1)), std::invalid_argument);
+  EXPECT_THROW(static_cast<void>(cell.replicate(1, 1, 0)), std::invalid_argument);
 
   // Replicate 50x50x50 with 1 atom = 125,000 atoms > 50,000 ceiling
-  EXPECT_THROW(cell.replicate(50, 50, 50), std::invalid_argument);
+  EXPECT_THROW(static_cast<void>(cell.replicate(50, 50, 50)), std::invalid_argument);
 }
 
 TEST_F(CellTests, AutoSupercellSatisfiesMinimumImageConvention) {
@@ -394,10 +394,12 @@ TEST_F(CellTests, AutoSupercellSatisfiesMinimumImageConvention) {
   EXPECT_EQ(same.atomCount(), 1);
 
   // r_cut > max_radius (50.0) throws
-  EXPECT_THROW(cell.autoSupercell(static_cast<real_t>(51.0)), std::invalid_argument);
+  EXPECT_THROW(static_cast<void>(cell.autoSupercell(static_cast<real_t>(51.0))),
+               std::invalid_argument);
 
   // Requires replication > max_replication (10) throws
-  EXPECT_THROW(cell.autoSupercell(static_cast<real_t>(20.0), 10), std::invalid_argument);
+  EXPECT_THROW(static_cast<void>(cell.autoSupercell(static_cast<real_t>(20.0), 10)),
+               std::invalid_argument);
 }
 
 } // namespace correlation::testing
