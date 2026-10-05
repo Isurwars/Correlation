@@ -277,7 +277,7 @@ CORRELATION_GLOBAL void steinhardtKernel(GPUPoint<T> const *CORRELATION_RESTRICT
     sum_sq6 += (real6 * real6 + imag6 * imag6);
   }
 
-  T const pi_val = static_cast<T>(correlation::math::pi);
+  T const pi_val = static_cast<T>(correlation::math::PI);
   T const norm_q4 = sqrt((static_cast<T>(4.0) * pi_val / static_cast<T>(9.0)) * sum_sq4);
   T const norm_q6 = sqrt((static_cast<T>(4.0) * pi_val / static_cast<T>(13.0)) * sum_sq6);
 

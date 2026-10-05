@@ -8,6 +8,7 @@
 
 #include "app/services/OptionsSyncService.hpp"
 #include "calculators/CalculatorFactory.hpp"
+#include "math/Constants.hpp"
 
 #include <algorithm>
 #include <cctype>
@@ -221,6 +222,9 @@ OptionsSyncService::readFromUI(const AppWindow &window, size_t frame_count,
   }
   if (opt.r_max > 0.0 && opt.r_bin_width > opt.r_max) {
     return std::unexpected("r_bin_width must be ≤ r_max");
+  }
+  if (opt.r_max > correlation::math::MAX_CUTOFF_RADIUS) {
+    return std::unexpected("r_max must be ≤ 50.0 Å");
   }
   if (opt.q_max > 0.0 && opt.q_bin_width > opt.q_max) {
     return std::unexpected("q_bin_width must be ≤ q_max");

@@ -29,7 +29,7 @@ struct PADSettings {
 void populateTripletHistogram(const std::vector<real_t> &angles, PADSettings settings,
                               std::vector<real_t> &partial_hist) {
   for (const auto &angle_rad : angles) {
-    auto const angle_deg = static_cast<real_t>(angle_rad * correlation::math::rad_to_deg);
+    auto const angle_deg = static_cast<real_t>(angle_rad * correlation::math::RAD_TO_DEG);
 
     if (angle_deg <= settings.theta_cut + 1e-5) {
       auto bin = static_cast<size_t>(angle_deg / settings.bin_width);

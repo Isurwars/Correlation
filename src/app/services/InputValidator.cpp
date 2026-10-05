@@ -18,6 +18,56 @@
 
 namespace correlation::app {
 
+namespace {
+
+void resetAppErrors(AppErrors &errs) {
+  errs.r_max_error = "";
+  errs.r_bin_error = "";
+  errs.q_max_error = "";
+  errs.q_bin_error = "";
+  errs.r_int_max_error = "";
+  errs.angle_bin_error = "";
+  errs.dihedral_bin_error = "";
+  errs.max_ring_error = "";
+  errs.smoothing_sigma_error = "";
+  errs.time_step_error = "";
+  errs.min_frame_error = "";
+  errs.max_frame_error = "";
+  errs.frame_stride_error = "";
+  errs.export_font_scale_error = "";
+  errs.export_line_width_error = "";
+  errs.export_marker_size_error = "";
+  errs.lef_cutoff_error = "";
+  errs.lef_sigma_error = "";
+  errs.xrd_lambda_error = "";
+  errs.xrd_theta_min_error = "";
+  errs.xrd_theta_max_error = "";
+  errs.xrd_bin_width_error = "";
+}
+
+[[nodiscard]] bool areErrorsDifferent(const AppErrors &lhs, const AppErrors &rhs) {
+  return lhs.r_max_error != rhs.r_max_error || lhs.r_bin_error != rhs.r_bin_error ||
+         lhs.q_max_error != rhs.q_max_error || lhs.q_bin_error != rhs.q_bin_error ||
+         lhs.r_int_max_error != rhs.r_int_max_error || lhs.angle_bin_error != rhs.angle_bin_error ||
+         lhs.dihedral_bin_error != rhs.dihedral_bin_error ||
+         lhs.max_ring_error != rhs.max_ring_error ||
+         lhs.smoothing_sigma_error != rhs.smoothing_sigma_error ||
+         lhs.time_step_error != rhs.time_step_error || lhs.min_frame_error != rhs.min_frame_error ||
+         lhs.max_frame_error != rhs.max_frame_error ||
+         lhs.frame_stride_error != rhs.frame_stride_error ||
+         lhs.export_font_scale_error != rhs.export_font_scale_error ||
+         lhs.export_line_width_error != rhs.export_line_width_error ||
+         lhs.export_marker_size_error != rhs.export_marker_size_error ||
+         lhs.lef_cutoff_error != rhs.lef_cutoff_error ||
+         lhs.lef_sigma_error != rhs.lef_sigma_error ||
+         lhs.xrd_lambda_error != rhs.xrd_lambda_error ||
+         lhs.xrd_theta_min_error != rhs.xrd_theta_min_error ||
+         lhs.xrd_theta_max_error != rhs.xrd_theta_max_error ||
+         lhs.xrd_bin_width_error != rhs.xrd_bin_width_error;
+}
+
+} // namespace
+
 InputValidator::InputValidator(::AppWindow &window, AppController &controller)
     : window_(&window), controller_(&controller) {}
 
@@ -27,7 +77,12 @@ bool InputValidator::validateRadialAndScattering(AppErrors &errs, float &r_max_v
   const auto opts = window_->get_analysis_options();
 
   if (const auto res = ValidationRuleService::parsePositiveFloat(opts.r_max.data()); res) {
-    r_max_val = *res;
+    if (const auto check = ValidationRuleService::validateMaxCutoff(*res); !check) {
+      errs.r_max_error = slint::SharedString(check.error());
+      valid = false;
+    } else {
+      r_max_val = *res;
+    }
   } else {
     errs.r_max_error = slint::SharedString(res.error());
     valid = false;
@@ -252,29 +307,7 @@ bool InputValidator::validateExportConfig(AppErrors &errs) {
 bool InputValidator::validateInputs() {
   bool valid = true;
   auto errs = window_->get_app_errors();
-
-  errs.r_max_error = "";
-  errs.r_bin_error = "";
-  errs.q_max_error = "";
-  errs.q_bin_error = "";
-  errs.r_int_max_error = "";
-  errs.angle_bin_error = "";
-  errs.dihedral_bin_error = "";
-  errs.max_ring_error = "";
-  errs.smoothing_sigma_error = "";
-  errs.time_step_error = "";
-  errs.min_frame_error = "";
-  errs.max_frame_error = "";
-  errs.frame_stride_error = "";
-  errs.export_font_scale_error = "";
-  errs.export_line_width_error = "";
-  errs.export_marker_size_error = "";
-  errs.lef_cutoff_error = "";
-  errs.lef_sigma_error = "";
-  errs.xrd_lambda_error = "";
-  errs.xrd_theta_min_error = "";
-  errs.xrd_theta_max_error = "";
-  errs.xrd_bin_width_error = "";
+  resetAppErrors(errs);
 
   float r_max_val = 0.0F;
   float q_max_val = 0.0F;
@@ -304,28 +337,7 @@ bool InputValidator::validateInputs() {
   }
 
   const auto current_errs = window_->get_app_errors();
-  if (current_errs.r_max_error != errs.r_max_error ||
-      current_errs.r_bin_error != errs.r_bin_error ||
-      current_errs.q_max_error != errs.q_max_error ||
-      current_errs.q_bin_error != errs.q_bin_error ||
-      current_errs.r_int_max_error != errs.r_int_max_error ||
-      current_errs.angle_bin_error != errs.angle_bin_error ||
-      current_errs.dihedral_bin_error != errs.dihedral_bin_error ||
-      current_errs.max_ring_error != errs.max_ring_error ||
-      current_errs.smoothing_sigma_error != errs.smoothing_sigma_error ||
-      current_errs.time_step_error != errs.time_step_error ||
-      current_errs.min_frame_error != errs.min_frame_error ||
-      current_errs.max_frame_error != errs.max_frame_error ||
-      current_errs.frame_stride_error != errs.frame_stride_error ||
-      current_errs.export_font_scale_error != errs.export_font_scale_error ||
-      current_errs.export_line_width_error != errs.export_line_width_error ||
-      current_errs.export_marker_size_error != errs.export_marker_size_error ||
-      current_errs.lef_cutoff_error != errs.lef_cutoff_error ||
-      current_errs.lef_sigma_error != errs.lef_sigma_error ||
-      current_errs.xrd_lambda_error != errs.xrd_lambda_error ||
-      current_errs.xrd_theta_min_error != errs.xrd_theta_min_error ||
-      current_errs.xrd_theta_max_error != errs.xrd_theta_max_error ||
-      current_errs.xrd_bin_width_error != errs.xrd_bin_width_error) {
+  if (areErrorsDifferent(current_errs, errs)) {
     window_->set_app_errors(errs);
   }
 

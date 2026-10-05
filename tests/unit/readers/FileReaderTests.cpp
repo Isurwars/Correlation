@@ -275,25 +275,25 @@ TEST_F(FileReaderTests, ReadCastepMdCorrectly) {
   // Check Frame 1
   const auto &file_1 = frames[0];
   EXPECT_THAT(file_1.latticeParameters()[0],
-              correlation::testing::IsRealEq(10.0 * correlation::math::bohr_to_angstrom));
+              correlation::testing::IsRealEq(10.0 * correlation::math::BOHR_TO_ANGSTROM));
   EXPECT_THAT(file_1.latticeParameters()[1],
-              correlation::testing::IsRealEq(11.0 * correlation::math::bohr_to_angstrom));
+              correlation::testing::IsRealEq(11.0 * correlation::math::BOHR_TO_ANGSTROM));
   EXPECT_THAT(file_1.latticeParameters()[2],
-              correlation::testing::IsRealEq(12.0 * correlation::math::bohr_to_angstrom));
+              correlation::testing::IsRealEq(12.0 * correlation::math::BOHR_TO_ANGSTROM));
   ASSERT_EQ(file_1.atomCount(), 2);
   EXPECT_THAT(file_1.atoms()[0].position().x(),
-              correlation::testing::IsRealEq(1.0 * correlation::math::bohr_to_angstrom));
+              correlation::testing::IsRealEq(1.0 * correlation::math::BOHR_TO_ANGSTROM));
   EXPECT_THAT(file_1.atoms()[1].position().x(),
-              correlation::testing::IsRealEq(4.0 * correlation::math::bohr_to_angstrom));
+              correlation::testing::IsRealEq(4.0 * correlation::math::BOHR_TO_ANGSTROM));
 
   EXPECT_THAT(file_1.getEnergy(), correlation::testing::IsRealEq(-31.8206146));
 
   // Check Frame 2
   const auto &file_2 = frames[1];
   EXPECT_THAT(file_2.latticeParameters()[0],
-              correlation::testing::IsRealEq(10.0 * correlation::math::bohr_to_angstrom));
+              correlation::testing::IsRealEq(10.0 * correlation::math::BOHR_TO_ANGSTROM));
   EXPECT_THAT(file_2.atoms()[0].position().x(),
-              correlation::testing::IsRealEq(1.1 * correlation::math::bohr_to_angstrom));
+              correlation::testing::IsRealEq(1.1 * correlation::math::BOHR_TO_ANGSTROM));
 }
 
 TEST_F(FileReaderTests, ReadCelluloseExample) {

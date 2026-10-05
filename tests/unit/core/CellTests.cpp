@@ -54,9 +54,9 @@ TEST_F(CellTests, NonOrthogonalVolumeIsCorrect) {
   const Cell cell(params);
 
   // Expected volume calculation
-  const auto cos_a = static_cast<real_t>(std::cos(80.0 * correlation::math::deg_to_rad));
-  const auto cos_b = static_cast<real_t>(std::cos(90.0 * correlation::math::deg_to_rad));
-  const auto cos_g = static_cast<real_t>(std::cos(100.0 * correlation::math::deg_to_rad));
+  const auto cos_a = static_cast<real_t>(std::cos(80.0 * correlation::math::DEG_TO_RAD));
+  const auto cos_b = static_cast<real_t>(std::cos(90.0 * correlation::math::DEG_TO_RAD));
+  const auto cos_g = static_cast<real_t>(std::cos(100.0 * correlation::math::DEG_TO_RAD));
   const real_t vol_sqrt = static_cast<real_t>(1.0) - (cos_a * cos_a) - (cos_b * cos_b) -
                           (cos_g * cos_g) + static_cast<real_t>(2.0) * (cos_a * cos_b * cos_g);
   const real_t expected_volume = static_cast<real_t>(5.0) * static_cast<real_t>(6.0) *

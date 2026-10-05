@@ -160,4 +160,12 @@ std::expected<void, std::string> ValidationRuleService::validateXrdTheta(float t
   return {};
 }
 
+std::expected<void, std::string> ValidationRuleService::validateMaxCutoff(float r_max,
+                                                                          float max_ceiling) {
+  if (r_max > max_ceiling) {
+    return std::unexpected(std::format("Must be ≤ {:.1f} Å", max_ceiling));
+  }
+  return {};
+}
+
 } // namespace correlation::app

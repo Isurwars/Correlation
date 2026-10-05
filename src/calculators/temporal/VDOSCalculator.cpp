@@ -66,9 +66,9 @@ VDOSCalculator::calculate(const correlation::analysis::Histogram &vacf_hist,
     if (frequencies[i] <= params.max_imag_freq) {
       combined_frequencies.push_back(-frequencies[i]);
       combined_frequencies_cm_inv.push_back(-frequencies[i] *
-                                            static_cast<real_t>(correlation::math::thz_to_cminv));
+                                            static_cast<real_t>(correlation::math::THZ_TO_CMINV));
       combined_frequencies_me_v.push_back(-frequencies[i] *
-                                          static_cast<real_t>(correlation::math::thz_to_mev));
+                                          static_cast<real_t>(correlation::math::THZ_TO_MEV));
       combined_intensities.push_back(intensities_imag[i]);
     }
   }
@@ -78,9 +78,9 @@ VDOSCalculator::calculate(const correlation::analysis::Histogram &vacf_hist,
     if (frequencies[i] <= params.max_real_freq) {
       combined_frequencies.push_back(frequencies[i]);
       combined_frequencies_cm_inv.push_back(frequencies[i] *
-                                            static_cast<real_t>(correlation::math::thz_to_cminv));
+                                            static_cast<real_t>(correlation::math::THZ_TO_CMINV));
       combined_frequencies_me_v.push_back(frequencies[i] *
-                                          static_cast<real_t>(correlation::math::thz_to_mev));
+                                          static_cast<real_t>(correlation::math::THZ_TO_MEV));
       combined_intensities.push_back(intensities_real[i]);
     }
   }

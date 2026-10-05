@@ -56,7 +56,7 @@ template <typename T> struct XRDGridConfig {
 
 template <typename T>
 CORRELATION_DEVICE T evalFormFactor(const CromerMannCoeffs<T> &coeffs, T q_val) {
-  T const s_val = q_val / static_cast<T>(correlation::math::four_pi);
+  T const s_val = q_val / static_cast<T>(correlation::math::FOUR_PI);
   T const s_sq = s_val * s_val;
   return coeffs.c + (coeffs.a[0] * std::exp(-coeffs.b[0] * s_sq)) +
          (coeffs.a[1] * std::exp(-coeffs.b[1] * s_sq)) +
@@ -76,9 +76,9 @@ debyeXrdKernel(DeviceAtomData<T> atoms, int num_atoms,
 
   T const two_theta = grid_cfg.theta_min + static_cast<T>(bin_idx) * grid_cfg.bin_width;
   T const theta_rad =
-      (two_theta / static_cast<T>(2.0)) * static_cast<T>(correlation::math::deg_to_rad);
+      (two_theta / static_cast<T>(2.0)) * static_cast<T>(correlation::math::DEG_TO_RAD);
   T const q_val =
-      static_cast<T>(correlation::math::four_pi) * std::sin(theta_rad) / grid_cfg.lambda;
+      static_cast<T>(correlation::math::FOUR_PI) * std::sin(theta_rad) / grid_cfg.lambda;
 
   if (q_val < static_cast<T>(1e-6)) {
     out_intensity[bin_idx] = static_cast<T>(0.0);

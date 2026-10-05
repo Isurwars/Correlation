@@ -225,7 +225,7 @@ real_t computeSingleAtomEntropy(const std::vector<real_t> &atom_distances,
   // Gaussian prefactor: 1 / sqrt(2 * pi * sigma^2)
   real_t const gaussian_prefactor =
       static_cast<real_t>(1.0) /
-      (sigma * std::sqrt(static_cast<real_t>(2.0) * correlation::math::pi));
+      (sigma * std::sqrt(static_cast<real_t>(2.0) * correlation::math::PI));
 
   const real_t two_sigma_sq = static_cast<real_t>(2.0) * sigma * sigma;
 
@@ -248,7 +248,7 @@ real_t computeSingleAtomEntropy(const std::vector<real_t> &atom_distances,
     g_val *= gaussian_prefactor;
 
     // Normalization: 4 * pi * density * r^2
-    real_t const norm = static_cast<real_t>(4.0) * correlation::math::pi * density * r_val * r_val;
+    real_t const norm = static_cast<real_t>(4.0) * correlation::math::PI * density * r_val * r_val;
     if (norm > 0.0) {
       g_val /= norm;
     } else {
@@ -270,7 +270,7 @@ real_t computeSingleAtomEntropy(const std::vector<real_t> &atom_distances,
     integral += integrand * weight;
   }
 
-  return static_cast<real_t>(-2.0) * correlation::math::pi * density * integral;
+  return static_cast<real_t>(-2.0) * correlation::math::PI * density * integral;
 }
 
 struct BinningConfig {

@@ -119,7 +119,7 @@ inline real_t sphLegendre(LegendreParams params, real_t theta) {
   // Normalization factor
   const auto norm = static_cast<real_t>(std::sqrt(
       (static_cast<real_t>(2.0) * static_cast<real_t>(degree) + static_cast<real_t>(1.0)) /
-      (static_cast<real_t>(4.0) * static_cast<real_t>(pi)) * factorial(degree - order) /
+      (static_cast<real_t>(4.0) * static_cast<real_t>(PI)) * factorial(degree - order) /
       factorial(degree + order)));
 
   // Cancel Condon-Shortley phase to match std::sph_legendre
@@ -153,7 +153,7 @@ inline void sphLegendreBatch(LegendreParams params, const real_t *CORRELATION_RE
 #if defined(CORRELATION_SIMD_AVX512) && defined(CORRELATION_USE_DOUBLE)
   auto norm = static_cast<real_t>(std::sqrt(
       (static_cast<real_t>(2.0) * static_cast<real_t>(degree) + static_cast<real_t>(1.0)) /
-      (static_cast<real_t>(4.0) * static_cast<real_t>(pi)) * factorial(degree - order) /
+      (static_cast<real_t>(4.0) * static_cast<real_t>(PI)) * factorial(degree - order) /
       factorial(degree + order)));
   if (order % 2 != 0) {
     norm = -norm;
@@ -215,7 +215,7 @@ inline void sphLegendreBatch(LegendreParams params, const real_t *CORRELATION_RE
 #elif defined(CORRELATION_SIMD_AVX2) && defined(CORRELATION_USE_DOUBLE)
   auto norm = static_cast<real_t>(std::sqrt(
       (static_cast<real_t>(2.0) * static_cast<real_t>(degree) + static_cast<real_t>(1.0)) /
-      (static_cast<real_t>(4.0) * static_cast<real_t>(pi)) * factorial(degree - order) /
+      (static_cast<real_t>(4.0) * static_cast<real_t>(PI)) * factorial(degree - order) /
       factorial(degree + order)));
   if (order % 2 != 0) {
     norm = -norm;

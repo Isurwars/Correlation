@@ -10,6 +10,7 @@
 #include "analysis/DynamicsAnalyzer.hpp"
 #include "analysis/TrajectoryAnalyzer.hpp"
 #include "calculators/CalculatorFactory.hpp"
+#include "math/Constants.hpp"
 
 #include <iostream>
 #include <stdexcept>
@@ -22,6 +23,9 @@ namespace {
 [[nodiscard]] std::string validateHistogramSettings(const AnalysisSettings &settings) {
   if (settings.r_max <= 0.0) {
     return "Error: r_max must be strictly positive.";
+  }
+  if (settings.r_max > correlation::math::MAX_CUTOFF_RADIUS) {
+    return "Error: r_max exceeds safe maximum radius.";
   }
   if (settings.r_bin_width <= 0.0) {
     return "Error: r_bin_width must be strictly positive.";

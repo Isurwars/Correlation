@@ -30,7 +30,7 @@ CheckOptions:
   modernize-loop-convert.MinConfidence: 'reasonable'
   modernize-use-auto.MinConfidence: 'reasonable'
   readability-function-cognitive-complexity.Threshold: '25'
-  readability-identifier-length.IgnoredVariableNames: '^(x|y|z|a|b|c|r|q|q[0-9]|p[0-9]|pi)$'
+  readability-identifier-length.IgnoredVariableNames: '^(x|y|z|a|b|c|r|q|q[0-9]|p[0-9]|pi|PI)$'
   readability-identifier-naming.ClassCase: 'CamelCase'
   readability-identifier-naming.StructCase: 'CamelCase'
   readability-identifier-naming.FunctionCase: 'camelBack'

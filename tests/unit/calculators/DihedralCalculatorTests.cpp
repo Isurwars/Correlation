@@ -56,7 +56,7 @@ TEST_F(DihedralCalculatorTests, ComputesCorrect90DegreeDihedral) {
   ASSERT_EQ(angles.size(), 1);
 
   // Test the angle: expected pi/2.
-  EXPECT_NEAR(angles[0], correlation::math::pi / 2.0,
+  EXPECT_NEAR(angles[0], correlation::math::PI / 2.0,
               correlation::is_single_precision ? 1e-4 : 1e-12);
 }
 
@@ -119,7 +119,7 @@ TEST_F(DihedralCalculatorTests, ComputesCorrect180DegreeDihedral) {
 
   const auto &angles = dict[0][0][0][0];
   ASSERT_EQ(angles.size(), 1);
-  EXPECT_NEAR(std::abs(angles[0]), correlation::math::pi, 1e-5);
+  EXPECT_NEAR(std::abs(angles[0]), correlation::math::PI, 1e-5);
 }
 
 TEST_F(DihedralCalculatorTests, HandlesCoincidentCentralBondSafely) {

@@ -47,13 +47,13 @@ struct ActiveCellContext {
   bool is_expanded{false};
   real_t replication_factor{1.0};
 
-  void initialize(const correlation::core::Cell &original, real_t r_max) {
+  void initialize(const correlation::core::Cell &original, real_t r_max, real_t max_radius) {
     const auto widths = original.perpendicularWidths();
     const real_t eps = std::numeric_limits<real_t>::epsilon();
     if (widths[0] > eps && widths[1] > eps && widths[2] > eps) {
       const real_t target_width = static_cast<real_t>(2.0) * r_max;
       if (widths[0] < target_width || widths[1] < target_width || widths[2] < target_width) {
-        supercell_holder = original.autoSupercell(r_max);
+        supercell_holder = original.autoSupercell(r_max, 10, max_radius);
         if (supercell_holder.atomCount() > original.atomCount() && original.atomCount() > 0) {
           is_expanded = true;
           replication_factor = static_cast<real_t>(supercell_holder.atomCount()) /
@@ -147,11 +147,11 @@ void normalizeDistributions(const correlation::core::Cell &cell,
       // functions. g(r) normalization constant: V / (4 * pi * dr * n_i * n_j).
       // The r^2 term is applied per-bin inside the SIMD kernel.
       const real_t g_norm_constant =
-          settings.volume / (correlation::math::four_pi * settings.bin_width * n_i * n_j);
+          settings.volume / (correlation::math::FOUR_PI * settings.bin_width * n_i * n_j);
       const real_t rho_j = n_j / settings.volume;
       const real_t inv_ni_dr = static_cast<real_t>(1.0) / (n_i * settings.bin_width);
       const real_t inv_nj_dr = static_cast<real_t>(1.0) / (n_j * settings.bin_width);
-      const real_t pi4_rho_j = correlation::math::four_pi * rho_j;
+      const real_t pi4_rho_j = correlation::math::FOUR_PI * rho_j;
 
       correlation::math::RDFNormalizationParams<real_t> const params{
           .hist_data = h_ij.data(),
@@ -204,9 +204,70 @@ void weightPartials(const correlation::core::Cell &cell,
           g_part_reduced[k] = 0.0;
         } else {
           g_part_reduced[k] =
-              correlation::math::four_pi * settings.rho_0 * r_k * (g_part[k] - weight);
+              correlation::math::FOUR_PI * settings.rho_0 * r_k * (g_part[k] - weight);
         }
       }
+    }
+  }
+}
+
+std::vector<real_t> countCellElements(const correlation::core::Cell &cell) {
+  const size_t num_elements = cell.elements().size();
+  std::vector<real_t> element_counts(num_elements, static_cast<real_t>(0.0));
+  for (const auto &atom : cell.atoms()) {
+    const int elem_id = atom.elementId();
+    if (std::cmp_greater_equal(elem_id, 0) && std::cmp_less(elem_id, num_elements)) {
+      element_counts[static_cast<size_t>(elem_id)] += static_cast<real_t>(1.0);
+    }
+  }
+  return element_counts;
+}
+
+void computeTotalDistributions(correlation::analysis::Histogram &g_r,
+                               correlation::analysis::Histogram &g_r_reduced,
+                               correlation::analysis::Histogram &j_r,
+                               const std::map<std::string, real_t> &ashcroft_weights, real_t rho_0,
+                               size_t num_bins) {
+  auto &total_g = g_r.partials["Total"];
+  total_g.assign(num_bins, 0.0);
+  for (const auto &[key, g_partial] : g_r.partials) {
+    if (key == "Total") {
+      continue;
+    }
+
+    real_t const weight = ashcroft_weights.at(key);
+
+    for (size_t k = 0; k < num_bins; ++k) {
+      total_g[k] += g_partial[k] * weight;
+    }
+  }
+
+  auto &total_j = j_r.partials["Total"];
+  auto &total_g_reduced = g_r_reduced.partials["Total"];
+  total_j.assign(num_bins, 0.0);
+  total_g_reduced.assign(num_bins, 0.0);
+
+  for (size_t k = 0; k < num_bins; ++k) {
+    const real_t r_k = g_r.bins[k];
+    if (r_k < 1e-9) {
+      continue;
+    }
+
+    total_j[k] = correlation::math::FOUR_PI * r_k * r_k * rho_0 * total_g[k];
+    total_g_reduced[k] =
+        correlation::math::FOUR_PI * rho_0 * r_k * (total_g[k] - static_cast<real_t>(1.0));
+  }
+}
+
+void rescaleSupercellCounts(correlation::analysis::Histogram &h_r,
+                            const ActiveCellContext &cell_context) {
+  if (!cell_context.is_expanded || cell_context.replication_factor <= static_cast<real_t>(1.0)) {
+    return;
+  }
+  const real_t inv_scale = static_cast<real_t>(1.0) / cell_context.replication_factor;
+  for (auto &[key, counts] : h_r.partials) {
+    for (auto &val : counts) {
+      val *= inv_scale;
     }
   }
 }
@@ -221,18 +282,25 @@ void RDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
   }
 }
 
-std::map<std::string, correlation::analysis::Histogram> RDFCalculator::calculate(
-    const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors,
-    const std::map<std::string, real_t> &ashcroft_weights, real_t r_max, real_t r_bin_width) {
+std::map<std::string, correlation::analysis::Histogram>
+RDFCalculator::calculate(const correlation::core::Cell &cell,
+                         const correlation::analysis::StructureAnalyzer *neighbors,
+                         const std::map<std::string, real_t> &ashcroft_weights, real_t r_max,
+                         real_t r_bin_width, real_t max_radius) {
   if (r_bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive, got: " + std::to_string(r_bin_width));
   }
   if (r_max <= 0) {
     throw std::invalid_argument("Cutoff radius must be positive, got: " + std::to_string(r_max));
   }
+  if (r_max > max_radius) {
+    throw std::invalid_argument("Cutoff radius r_max (" + std::to_string(r_max) +
+                                " Å) exceeds safe maximum radius of " + std::to_string(max_radius) +
+                                " Å");
+  }
 
   ActiveCellContext cell_context;
-  cell_context.initialize(cell, r_max);
+  cell_context.initialize(cell, r_max, max_radius);
   const auto &active_cell = cell_context.is_expanded ? cell_context.supercell_holder : cell;
 
   const real_t volume = active_cell.volume();
@@ -245,14 +313,7 @@ std::map<std::string, correlation::analysis::Histogram> RDFCalculator::calculate
     return {};
   }
 
-  const size_t num_elements = active_cell.elements().size();
-  std::vector<real_t> element_counts(num_elements, static_cast<real_t>(0.0));
-  for (const auto &atom : active_cell.atoms()) {
-    const int elem_id = atom.elementId();
-    if (std::cmp_greater_equal(elem_id, 0) && std::cmp_less(elem_id, num_elements)) {
-      element_counts[static_cast<size_t>(elem_id)] += static_cast<real_t>(1.0);
-    }
-  }
+  const std::vector<real_t> element_counts = countCellElements(active_cell);
 
   const auto num_bins = static_cast<size_t>(std::floor(r_max / r_bin_width));
   const real_t rho_0 = num_atoms / volume;
@@ -321,35 +382,7 @@ std::map<std::string, correlation::analysis::Histogram> RDFCalculator::calculate
                          },
                          h_r, g_r, g_r_reduced, j_r);
 
-  auto &total_g = g_r.partials["Total"];
-  total_g.assign(num_bins, 0.0);
-  for (const auto &[key, g_partial] : g_r.partials) {
-    if (key == "Total") {
-      continue;
-    }
-
-    real_t const weight = ashcroft_weights.at(key);
-
-    for (size_t k = 0; k < num_bins; ++k) {
-      total_g[k] += g_partial[k] * weight;
-    }
-  }
-
-  auto &total_j = j_r.partials["Total"];
-  auto &total_g_reduced = g_r_reduced.partials["Total"];
-  total_j.assign(num_bins, 0.0);
-  total_g_reduced.assign(num_bins, 0.0);
-
-  for (size_t k = 0; k < num_bins; ++k) {
-    const real_t r_k = g_r.bins[k];
-    if (r_k < 1e-9) {
-      continue;
-    }
-
-    total_j[k] = correlation::math::four_pi * r_k * r_k * rho_0 * total_g[k];
-    total_g_reduced[k] =
-        correlation::math::four_pi * rho_0 * r_k * (total_g[k] - static_cast<real_t>(1.0));
-  }
+  computeTotalDistributions(g_r, g_r_reduced, j_r, ashcroft_weights, rho_0, num_bins);
 
   correlation::analysis::Histogram g_r_unweighted = g_r;
   g_r_unweighted.title = "g(r) — Unweighted Radial Distribution Function";
@@ -362,14 +395,7 @@ std::map<std::string, correlation::analysis::Histogram> RDFCalculator::calculate
                  },
                  g_r, g_r_reduced);
 
-  if (cell_context.is_expanded && cell_context.replication_factor > static_cast<real_t>(1.0)) {
-    const real_t inv_scale = static_cast<real_t>(1.0) / cell_context.replication_factor;
-    for (auto &[key, counts] : h_r.partials) {
-      for (auto &val : counts) {
-        val *= inv_scale;
-      }
-    }
-  }
+  rescaleSupercellCounts(h_r, cell_context);
 
   std::map<std::string, correlation::analysis::Histogram> results;
   results["H_r"] = std::move(h_r);

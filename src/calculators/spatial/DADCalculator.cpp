@@ -78,7 +78,7 @@ void processDihedralAngles(DihedralProcessParameters const &params) {
     return;
   }
   for (const auto &angle_rad : params.angles_rad) {
-    real_t angle_deg = angle_rad * static_cast<real_t>(correlation::math::rad_to_deg);
+    real_t angle_deg = angle_rad * static_cast<real_t>(correlation::math::RAD_TO_DEG);
 
     // clamp angle into [-180, 180]
     while (angle_deg <= static_cast<real_t>(-180.0)) {

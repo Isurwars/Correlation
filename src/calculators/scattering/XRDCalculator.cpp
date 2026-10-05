@@ -257,9 +257,9 @@ XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
           xrd_hist.bins[i] = two_theta;
 
           auto const theta_rad =
-              static_cast<real_t>((two_theta / 2.0) * correlation::math::deg_to_rad);
+              static_cast<real_t>((two_theta / 2.0) * correlation::math::DEG_TO_RAD);
           auto const q_value =
-              static_cast<real_t>(correlation::math::four_pi * std::sin(theta_rad) / lambda_val);
+              static_cast<real_t>(correlation::math::FOUR_PI * std::sin(theta_rad) / lambda_val);
 
           if (q_value < 1e-6) {
             intensities[i] = 0.0;
@@ -287,7 +287,7 @@ XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
             real_t const form_factor_2 = getAtomicFormFactor(partial_xrd.sym2, q_value);
 
             intensity_q.add(static_cast<real_t>(form_factor_1 * form_factor_2 *
-                                                (correlation::math::four_pi * total_rho / q_value) *
+                                                (correlation::math::FOUR_PI * total_rho / q_value) *
                                                 integral));
           }
 
@@ -302,7 +302,7 @@ XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
 
 real_t XRDCalculator::getAtomicFormFactor(const std::string &symbol, real_t q_value) {
   const auto &coeffs = correlation::physics::getAtomicFormFactors(symbol);
-  const auto s_value = static_cast<real_t>(q_value / correlation::math::four_pi);
+  const auto s_value = static_cast<real_t>(q_value / correlation::math::FOUR_PI);
   const real_t s_squared = s_value * s_value;
   auto form_factor = static_cast<real_t>(coeffs.at(8));
   for (size_t i = 0; i < 4; ++i) {
@@ -377,9 +377,9 @@ correlation::analysis::Histogram XRDCalculator::calculateFromSq(
           xrd_hist.bins[i] = two_theta;
 
           auto const theta_rad =
-              static_cast<real_t>((two_theta / 2.0) * correlation::math::deg_to_rad);
+              static_cast<real_t>((two_theta / 2.0) * correlation::math::DEG_TO_RAD);
           auto const q_value =
-              static_cast<real_t>(correlation::math::four_pi * std::sin(theta_rad) / lambda_val);
+              static_cast<real_t>(correlation::math::FOUR_PI * std::sin(theta_rad) / lambda_val);
 
           intensities[i] = calculateIntensityAtQ(q_value, concentrations, partial_sq_list, q_grid);
         }

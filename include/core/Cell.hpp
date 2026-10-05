@@ -9,6 +9,7 @@
 #pragma once
 
 #include "core/Atom.hpp"
+#include "math/Constants.hpp"
 #include "math/LinearAlgebra.hpp"
 #include "math/Precision.hpp"
 
@@ -236,7 +237,7 @@ public:
    * max_replication.
    */
   [[nodiscard]] Cell autoSupercell(real_t r_cut, int max_replication = 10,
-                                   real_t max_radius = static_cast<real_t>(50.0)) const;
+                                   real_t max_radius = correlation::math::MAX_CUTOFF_RADIUS) const;
 
   /**
    * @brief Sets the energy of the cell frame.

@@ -5,6 +5,7 @@
 
 #include "analysis/DistributionFunctions.hpp"
 #include "analysis/TrajectoryAnalyzer.hpp"
+#include "calculators/spatial/RDFCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 
@@ -186,6 +187,20 @@ TEST_F(RDFCalculatorTests, CalculateRDF) {
                    .r_bin_width = 0.1,
                }),
                std::invalid_argument); // Zero r_max
+  EXPECT_THROW(dists.calculateRDF({
+                   .r_max = 51.0,
+                   .r_bin_width = 0.1,
+               }),
+               std::invalid_argument); // r_max > max_cutoff_radius (50.0)
+  EXPECT_THROW(dists.calculateRDF({
+                   .r_max = 16.0,
+                   .r_bin_width = 0.1,
+                   .max_radius = 15.0,
+               }),
+               std::invalid_argument); // Custom max_radius exceeded
+  EXPECT_THROW(static_cast<void>(correlation::calculators::RDFCalculator::calculate(cell_, nullptr,
+                                                                                    {}, 51.0, 0.1)),
+               std::invalid_argument); // Direct calculate exceeding max_cutoff_radius
 
   // Valid calculation with tight bins for numerical accuracy
   dists.calculateRDF({

@@ -10,6 +10,7 @@
 
 #include "analysis/DistributionFunctions.hpp"
 #include "calculators/contracts/ISpatialCalculator.hpp"
+#include "math/Constants.hpp"
 
 #include <map>
 #include <string>
@@ -52,16 +53,18 @@ public:
    * assembling the total `g(r)` from partials.
    * @param[in] r_max The maximum radius to calculate the RDF up to.
    * @param[in] r_bin_width The histogram bin width in Angstroms.
+   * @param[in] max_radius The maximum allowable cutoff radius ceiling (default: 50.0 Angstroms).
    * @return A map containing the `J(r)`, `g(r)`, and `G(r)` histograms, both
    * partial and total.
-   * @throws std::invalid_argument If r_bin_width or r_max is non-positive.
+   * @throws std::invalid_argument If r_bin_width or r_max is non-positive, or if r_max >
+   * max_radius.
    * @throws std::logic_error If cell volume is non-positive.
    */
   static std::map<std::string, correlation::analysis::Histogram>
   calculate(const correlation::core::Cell &cell,
             const correlation::analysis::StructureAnalyzer *neighbors,
-            const std::map<std::string, real_t> &ashcroft_weights, real_t r_max,
-            real_t r_bin_width);
+            const std::map<std::string, real_t> &ashcroft_weights, real_t r_max, real_t r_bin_width,
+            real_t max_radius = correlation::math::MAX_CUTOFF_RADIUS);
 };
 
 } // namespace correlation::calculators

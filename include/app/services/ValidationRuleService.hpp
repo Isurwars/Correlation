@@ -92,6 +92,15 @@ public:
    */
   [[nodiscard]] static std::expected<void, std::string> validateXrdTheta(float theta_min,
                                                                          float theta_max);
+
+  /**
+   * @brief Validates that a cutoff radius does not exceed the safe maximum ceiling.
+   * @param[in] r_max Evaluated cutoff radius in Angstroms.
+   * @param[in] max_ceiling Maximum allowable cutoff radius ceiling in Angstroms (default: 50.0).
+   * @return Void on success, or error message on failure.
+   */
+  [[nodiscard]] static std::expected<void, std::string>
+  validateMaxCutoff(float r_max, float max_ceiling = 50.0F);
 };
 
 } // namespace correlation::app

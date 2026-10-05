@@ -12,6 +12,7 @@
 #include "analysis/StructureAnalyzer.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
+#include "math/Constants.hpp"
 #include "math/Smoothing.hpp"
 
 #include <atomic>
@@ -33,6 +34,8 @@ class TrajectoryAnalyzer;
 struct RDFParams {
   real_t r_max = 20.0;       ///< Maximum radius to calculate up to (Angstroms).
   real_t r_bin_width = 0.05; ///< Width of each bin in Angstroms.
+  real_t max_radius =
+      correlation::math::MAX_CUTOFF_RADIUS; ///< Maximum allowable cutoff radius ceiling.
 };
 
 /**

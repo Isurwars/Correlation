@@ -158,6 +158,13 @@ TEST_F(OptionsSyncServiceTests, ReadFromUIValidationFailsWhenBinWidthExceedsMax)
   res = OptionsSyncService::readFromUI(win, 10);
   EXPECT_FALSE(res.has_value());
   EXPECT_EQ(res.error(), "q_bin_width must be ≤ q_max");
+
+  opts.q_bin_width = "0.05";
+  opts.r_max = "51.0"; // invalid: r_max > 50.0
+  win.set_analysis_options(opts);
+  res = OptionsSyncService::readFromUI(win, 10);
+  EXPECT_FALSE(res.has_value());
+  EXPECT_EQ(res.error(), "r_max must be ≤ 50.0 Å");
 }
 
 TEST_F(OptionsSyncServiceTests, ReadFromUIValidationFailsWhenFramesInverted) {

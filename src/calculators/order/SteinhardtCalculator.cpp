@@ -597,8 +597,8 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
 
   std::vector<AtomHarmonicVectors> all_vecs(num_atoms);
 
-  const auto global_q4_factor = static_cast<real_t>(std::sqrt(correlation::math::four_pi / 9.0));
-  const auto global_q6_factor = static_cast<real_t>(std::sqrt(correlation::math::four_pi / 13.0));
+  const auto global_q4_factor = static_cast<real_t>(std::sqrt(correlation::math::FOUR_PI / 9.0));
+  const auto global_q6_factor = static_cast<real_t>(std::sqrt(correlation::math::FOUR_PI / 13.0));
   GlobalSteinhardtFactors const factors{
       .global_q4_factor = global_q4_factor,
       .global_q6_factor = global_q6_factor,

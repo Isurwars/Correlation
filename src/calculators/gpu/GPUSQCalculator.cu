@@ -93,7 +93,7 @@ CORRELATION_DEVICE CORRELATION_HOST inline void gpuSincos<double>(double val, do
 template <typename T>
 QVectorsData<T> generateQVectors(const correlation::core::Cell &cell, T q_max) {
   const auto &inv = cell.inverseLatticeVectors();
-  const T two_pi = static_cast<T>(correlation::math::two_pi);
+  const T two_pi = static_cast<T>(correlation::math::TWO_PI);
   const T bx_x = two_pi * static_cast<T>(inv(0, 0));
   const T bx_y = two_pi * static_cast<T>(inv(0, 1));
   const T bx_z = two_pi * static_cast<T>(inv(0, 2));

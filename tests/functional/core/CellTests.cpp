@@ -76,7 +76,7 @@ TEST_F(CellFunctionalTests, VerifyWaterMoleculePBCStability) {
   // O at origin, H atoms at typical distance/angle
   // OH distance ~ 0.96 A, HOH angle ~ 104.5
   const real_t oh_dist = 0.9584;
-  const real_t hoh_angle_rad = static_cast<real_t>(104.45 * (correlation::math::pi / 180.0));
+  const real_t hoh_angle_rad = static_cast<real_t>(104.45 * (correlation::math::PI / 180.0));
 
   cell.addAtom("O", {10.0, 10.0, 10.0});
   cell.addAtom("H", correlation::math::Vector3<real_t>(static_cast<real_t>(10.0) + oh_dist,

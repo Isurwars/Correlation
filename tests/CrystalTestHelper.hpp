@@ -272,7 +272,7 @@ inline correlation::core::Cell createWaterMoleculeCell(WaterMoleculeOptions cons
   correlation::core::Cell cell({opts.box_size, opts.box_size, opts.box_size, 90.0, 90.0, 90.0});
   cell.addAtom("O", opts.O_pos);
 
-  real_t const ang_rad = opts.angle_HOH_deg * static_cast<real_t>(correlation::math::deg_to_rad);
+  real_t const ang_rad = opts.angle_HOH_deg * static_cast<real_t>(correlation::math::DEG_TO_RAD);
   // H1 along +X axis from O
   cell.addAtom("H", {opts.O_pos.x() + opts.r_OH, opts.O_pos.y(), opts.O_pos.z()});
   // H2 rotated by ang_rad in XY plane
@@ -302,7 +302,7 @@ createTriatomicAngleCell(TriatomicAngleCellOptions const &opts = {}) {
   cell.addAtom(opts.center_elem, {mid, mid, mid});
   cell.addAtom(opts.arm_elem1, {mid + opts.dist1, mid, mid});
 
-  real_t const ang_rad = opts.angle_deg * static_cast<real_t>(correlation::math::deg_to_rad);
+  real_t const ang_rad = opts.angle_deg * static_cast<real_t>(correlation::math::DEG_TO_RAD);
   cell.addAtom(opts.arm_elem2,
                {mid + opts.dist2 * std::cos(ang_rad), mid + opts.dist2 * std::sin(ang_rad), mid});
   return cell;
@@ -323,7 +323,7 @@ inline correlation::core::Cell createRingCell(RingCellOptions const &opts = {}) 
   real_t const mid = opts.box_size * static_cast<real_t>(0.5);
 
   real_t const d_theta =
-      static_cast<real_t>(correlation::math::two_pi) / static_cast<real_t>(opts.num_atoms);
+      static_cast<real_t>(correlation::math::TWO_PI) / static_cast<real_t>(opts.num_atoms);
   for (size_t i = 0; i < opts.num_atoms; ++i) {
     real_t const theta = static_cast<real_t>(i) * d_theta;
     cell.addAtom(opts.element,

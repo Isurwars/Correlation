@@ -261,8 +261,14 @@ void DistributionFunctions::calculateCoordinationNumber() {
 void DistributionFunctions::calculateRDF(RDFParams params) {
   real_t const r_max = params.r_max;
   real_t const r_bin_width = params.r_bin_width;
+  real_t const max_radius = params.max_radius;
   if (r_max <= 0.0) {
     throw std::invalid_argument("r_max must be strictly positive");
+  }
+  if (r_max > max_radius) {
+    throw std::invalid_argument("r_max (" + std::to_string(r_max) +
+                                " Å) exceeds safe maximum radius of " + std::to_string(max_radius) +
+                                " Å");
   }
   if (r_bin_width <= 0.0) {
     throw std::invalid_argument("r_bin_width must be strictly positive");
@@ -276,7 +282,7 @@ void DistributionFunctions::calculateRDF(RDFParams params) {
     calc->calculateFrame(*this, settings);
   } else {
     auto results = correlation::calculators::RDFCalculator::calculate(
-        cell_, neighbors(), ashcroft_weights_, r_max, r_bin_width);
+        cell_, neighbors(), ashcroft_weights_, r_max, r_bin_width, max_radius);
     for (auto &[name, histogram] : results) {
       histograms_[name] = std::move(histogram);
     }

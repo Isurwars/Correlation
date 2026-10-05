@@ -84,9 +84,9 @@ struct OutmolParser {
     str_stream >> h_three[0] >> h_three[1] >> h_three[2];
 
     for (int i = 0; i < 3; ++i) {
-      h_one.at(i) *= correlation::math::bohr_to_angstrom;
-      h_two.at(i) *= correlation::math::bohr_to_angstrom;
-      h_three.at(i) *= correlation::math::bohr_to_angstrom;
+      h_one.at(i) *= correlation::math::BOHR_TO_ANGSTROM;
+      h_two.at(i) *= correlation::math::BOHR_TO_ANGSTROM;
+      h_three.at(i) *= correlation::math::BOHR_TO_ANGSTROM;
     }
     cell_parsed = true;
     return true;
@@ -108,9 +108,9 @@ struct OutmolParser {
       real_t pos_y = 0.0;
       real_t pos_z = 0.0;
       if (str_stream >> symbol >> pos_x >> pos_y >> pos_z) {
-        temp_cell.addAtom(symbol, {pos_x * correlation::math::bohr_to_angstrom,
-                                   pos_y * correlation::math::bohr_to_angstrom,
-                                   pos_z * correlation::math::bohr_to_angstrom});
+        temp_cell.addAtom(symbol, {pos_x * correlation::math::BOHR_TO_ANGSTROM,
+                                   pos_y * correlation::math::BOHR_TO_ANGSTROM,
+                                   pos_z * correlation::math::BOHR_TO_ANGSTROM});
       }
     }
     if (!temp_cell.isEmpty()) {
@@ -138,9 +138,9 @@ struct OutmolParser {
       real_t pos_z = 0.0;
       if (str_stream >> data_block >> symbol >> pos_x >> pos_y >> pos_z) {
         if (data_block == "df") {
-          temp_cell.addAtom(symbol, {pos_x * correlation::math::bohr_to_angstrom,
-                                     pos_y * correlation::math::bohr_to_angstrom,
-                                     pos_z * correlation::math::bohr_to_angstrom});
+          temp_cell.addAtom(symbol, {pos_x * correlation::math::BOHR_TO_ANGSTROM,
+                                     pos_y * correlation::math::BOHR_TO_ANGSTROM,
+                                     pos_z * correlation::math::BOHR_TO_ANGSTROM});
         }
       }
     }

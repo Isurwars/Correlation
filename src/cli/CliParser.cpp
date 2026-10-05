@@ -8,6 +8,7 @@
  */
 
 #include "cli/CliParser.hpp"
+#include "math/Constants.hpp"
 
 #include <CLI/CLI.hpp>
 #include <algorithm>
@@ -17,7 +18,9 @@
 
 namespace correlation::cli {
 
-void printUsage(const char *program) {
+namespace {
+
+void printGeneralOptions(const char *program) {
   std::cerr
       << "Correlation — Structural Analysis Tool (CLI Mode)\n"
       << "Usage: " << program << " <input_file> [options]\n\n"
@@ -30,25 +33,29 @@ void printUsage(const char *program) {
       << "Calculator Selection:\n"
       << "  -g, --disable-groups <list> Comma-separated groups to disable: radial, scattering,\n"
       << "                            structural, spatial, angular, dynamic, rings,\n"
-      << "                            topology (default: none)\n\n"
+      << "                            topology (default: none)\n\n";
+}
+
+void printParameterOptions() {
+  std::cerr
       << "Simulation / Frame Range:\n"
       << "  --min-frame <int>         Start frame, 1-based (default: 1)\n"
       << "  --max-frame <int>         End frame, -1=all (default: -1)\n"
       << "  --time-step <float>       Simulation time step in fs (default: 1.0)\n\n"
       << "Radial Parameters:\n"
-      << "  --r-max <float>           Max radius for RDF (default: 20.0)\n"
+      << "  --r-max <float>           Max radius RDF (default: 20.0)\n"
       << "  --r-bin <float>           RDF bin width (default: 0.02)\n"
-      << "  --r-int-max <float>       Max radius for g(r) integration (default: 10.0)\n\n"
+      << "  --r-int-max <float>       Max radius g(r) integration (default: 10.0)\n\n"
       << "Scattering Parameters:\n"
-      << "  --q-max <float>           Max q for S(Q) (default: 20.0)\n"
+      << "  --q-max <float>           Max q S(Q) (default: 20.0)\n"
       << "  --q-bin <float>           S(Q) bin width (default: 0.02)\n\n"
       << "Angular Parameters:\n"
       << "  --angle-bin <float>       Angular bin width (default: 1.0)\n"
       << "  --dihedral-bin <float>    Dihedral bin width (default: copy angle-bin)\n\n"
       << "Ring Parameters:\n"
-      << "  --max-ring-size <int>     Max ring size for topology (default: 8)\n\n"
+      << "  --max-ring-size <int>     Max ring size topology (default: 8)\n\n"
       << "Post-Processing & Output Formats:\n"
-      << "  --smoothing-sigma <float> Bandwidth for kernel smoothing (default: 0.1)\n"
+      << "  --smoothing-sigma <float> Bandwidth kernel smoothing (default: 0.1)\n"
       << "  --smoothing-kernel <str>  Kernel type (gaussian, bump, triweight, \n"
       << "                            epanechnikov, cosine, biweight) (default: gaussian)\n"
       << "  --no-smoothing            Disable post-processing smoothing\n"
@@ -59,8 +66,15 @@ void printUsage(const char *program) {
       << "  --parquet                 Enable Parquet output\n"
       << "  --no-parquet              Disable Parquet output\n\n"
       << "Local Entropy Parameters:\n"
-      << "  --lef-cutoff <float>      Cutoff radius for local entropy (default: 5.0)\n"
-      << "  --lef-sigma <float>       Gaussian standard deviation for local entropy (default: 0.2)\n";
+      << "  --lef-cutoff <float>      Cutoff radius local entropy (default: 5.0)\n"
+      << "  --lef-sigma <float>       Gaussian standard deviation local entropy (default: 0.2)\n";
+}
+
+} // namespace
+
+void printUsage(const char *program) {
+  printGeneralOptions(program);
+  printParameterOptions();
 }
 
 namespace {
@@ -101,9 +115,14 @@ void applyMaterialDefaults(const CLI::App &app, CliOptions &opts) {
   }
 }
 
-bool validateOptions(const CliOptions &opts) {
+[[nodiscard]] bool validateRadialAndScatteringOptions(const CliOptions &opts) {
   if (opts.r_max <= 0.0) {
     std::cerr << "Error: --r-max must be strictly positive.\n";
+    return false;
+  }
+  if (opts.r_max > correlation::math::MAX_CUTOFF_RADIUS) {
+    std::cerr << "Error: --r-max (" << opts.r_max << " Å) exceeds safe maximum radius of "
+              << correlation::math::MAX_CUTOFF_RADIUS << " Å.\n";
     return false;
   }
   if (opts.r_bin_width <= 0.0) {
@@ -126,6 +145,14 @@ bool validateOptions(const CliOptions &opts) {
     std::cerr << "Error: --q-bin must be strictly less than --q-max.\n";
     return false;
   }
+  if (opts.r_int_max <= 0.0) {
+    std::cerr << "Error: --r-int-max must be strictly positive.\n";
+    return false;
+  }
+  return true;
+}
+
+[[nodiscard]] bool validateAngularAndRingOptions(const CliOptions &opts) {
   if (opts.angle_bin_width <= 0.0) {
     std::cerr << "Error: --angle-bin must be strictly positive.\n";
     return false;
@@ -142,16 +169,16 @@ bool validateOptions(const CliOptions &opts) {
     std::cerr << "Error: --dihedral-bin must be at most 360.0 degrees.\n";
     return false;
   }
-  if (opts.time_step <= 0.0) {
-    std::cerr << "Error: --time-step must be strictly positive.\n";
-    return false;
-  }
-  if (opts.r_int_max <= 0.0) {
-    std::cerr << "Error: --r-int-max must be strictly positive.\n";
-    return false;
-  }
   if (opts.max_ring_size < 3) {
     std::cerr << "Error: --max-ring-size must be at least 3.\n";
+    return false;
+  }
+  return true;
+}
+
+[[nodiscard]] bool validateSimulationAndOutputOptions(const CliOptions &opts) {
+  if (opts.time_step <= 0.0) {
+    std::cerr << "Error: --time-step must be strictly positive.\n";
     return false;
   }
   if (opts.max_frame < -1) {
@@ -188,6 +215,11 @@ bool validateOptions(const CliOptions &opts) {
     return false;
   }
   return true;
+}
+
+bool validateOptions(const CliOptions &opts) {
+  return validateRadialAndScatteringOptions(opts) && validateAngularAndRingOptions(opts) &&
+         validateSimulationAndOutputOptions(opts);
 }
 } // namespace
 

@@ -74,7 +74,7 @@ TEST_F(AtomTests, AngleFunctionCalculatesNinetyDegrees) {
   const Atom neighbor_a(element, {1.0, 0.0, 0.0}, 1);
   const Atom neighbor_b(element, {0.0, 1.0, 0.0}, 2);
 
-  EXPECT_NEAR(angle(center, neighbor_a, neighbor_b), correlation::math::pi / 2.0,
+  EXPECT_NEAR(angle(center, neighbor_a, neighbor_b), correlation::math::PI / 2.0,
               correlation::is_single_precision ? 1e-6 : 1e-9);
 }
 
@@ -95,7 +95,7 @@ TEST_F(AtomTests, AngleFunctionHandlesCollinearAtoms) {
   const Atom neighbor_a(element, {1.0, 0.0, 0.0}, 1);
   const Atom neighbor_b(element, {-1.0, 0.0, 0.0}, 2); // 180 degrees
 
-  EXPECT_NEAR(angle(center, neighbor_a, neighbor_b), correlation::math::pi,
+  EXPECT_NEAR(angle(center, neighbor_a, neighbor_b), correlation::math::PI,
               correlation::is_single_precision ? 1e-6 : 1e-9);
 }
 

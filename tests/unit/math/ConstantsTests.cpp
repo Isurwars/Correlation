@@ -13,38 +13,38 @@
 namespace correlation::math::testing {
 
 TEST(ConstantsTests, PiValuesAndDerivedMultiples) {
-  EXPECT_NEAR(pi, 3.14159265358979323846, 1e-6);
-  EXPECT_NEAR(two_pi, 2.0 * pi, 1e-6);
-  EXPECT_NEAR(four_pi, 4.0 * pi, 1e-6);
+  EXPECT_NEAR(PI, 3.14159265358979323846, 1e-6);
+  EXPECT_NEAR(TWO_PI, 2.0 * PI, 1e-6);
+  EXPECT_NEAR(FOUR_PI, 4.0 * PI, 1e-6);
 }
 
 TEST(ConstantsTests, AngularConversionsRoundTrip) {
   constexpr auto ANGLE_DEG = static_cast<real_t>(45.0);
-  const real_t angle_rad = ANGLE_DEG * deg_to_rad;
-  EXPECT_NEAR(angle_rad, pi / 4.0, 1e-6);
+  const real_t angle_rad = ANGLE_DEG * DEG_TO_RAD;
+  EXPECT_NEAR(angle_rad, PI / 4.0, 1e-6);
 
-  const real_t back_to_deg = angle_rad * rad_to_deg;
+  const real_t back_to_deg = angle_rad * RAD_TO_DEG;
   EXPECT_NEAR(back_to_deg, ANGLE_DEG, 1e-5);
 }
 
 TEST(ConstantsTests, LengthUnitConversions) {
   constexpr auto LENGTH_ANGSTROM = static_cast<real_t>(1.0);
-  const real_t length_bohr = LENGTH_ANGSTROM * angstrom_to_bohr;
-  const real_t back_to_angstrom = length_bohr * bohr_to_angstrom;
+  const real_t length_bohr = LENGTH_ANGSTROM * ANGSTROM_TO_BOHR;
+  const real_t back_to_angstrom = length_bohr * BOHR_TO_ANGSTROM;
 
   EXPECT_NEAR(back_to_angstrom, LENGTH_ANGSTROM, 1e-6);
-  EXPECT_NEAR(bohr_to_angstrom * angstrom_to_bohr, static_cast<real_t>(1.0), 1e-6);
+  EXPECT_NEAR(BOHR_TO_ANGSTROM * ANGSTROM_TO_BOHR, static_cast<real_t>(1.0), 1e-6);
 }
 
 TEST(ConstantsTests, FrequencyEnergyConversions) {
-  EXPECT_GT(thz_to_cminv, static_cast<real_t>(33.0));
-  EXPECT_LT(thz_to_cminv, static_cast<real_t>(34.0));
+  EXPECT_GT(THZ_TO_CMINV, static_cast<real_t>(33.0));
+  EXPECT_LT(THZ_TO_CMINV, static_cast<real_t>(34.0));
 
-  EXPECT_GT(thz_to_mev, static_cast<real_t>(4.0));
-  EXPECT_LT(thz_to_mev, static_cast<real_t>(4.2));
+  EXPECT_GT(THZ_TO_MEV, static_cast<real_t>(4.0));
+  EXPECT_LT(THZ_TO_MEV, static_cast<real_t>(4.2));
 
-  EXPECT_GT(kb_ev_per_k, static_cast<real_t>(0.0));
-  EXPECT_GT(hbar_ev_ps, static_cast<real_t>(0.0));
+  EXPECT_GT(KB_EV_PER_K, static_cast<real_t>(0.0));
+  EXPECT_GT(HBAR_EV_PS, static_cast<real_t>(0.0));
 }
 
 } // namespace correlation::math::testing

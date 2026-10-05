@@ -88,7 +88,7 @@ TEST(DynamicsAnalyzerTests, CalculatesVDOSCorrectly) {
   std::vector<real_t> vacf(num_frames);
   for (size_t i = 0; i < num_frames; ++i) {
     real_t const time = static_cast<real_t>(i) * time_step;
-    vacf[i] = static_cast<real_t>(std::cos(2.0 * correlation::math::pi * frequency * time * 0.001));
+    vacf[i] = static_cast<real_t>(std::cos(2.0 * correlation::math::PI * frequency * time * 0.001));
   }
 
   // 2. Calculate VDOS

@@ -160,17 +160,17 @@ void CastepMdReader::parseLatticeLine(std::ifstream &myfile, const std::string &
   }
 
   // Convert Bohr to Angstroms
-  lattice_vector_1[0] *= correlation::math::bohr_to_angstrom;
-  lattice_vector_1[1] *= correlation::math::bohr_to_angstrom;
-  lattice_vector_1[2] *= correlation::math::bohr_to_angstrom;
+  lattice_vector_1[0] *= correlation::math::BOHR_TO_ANGSTROM;
+  lattice_vector_1[1] *= correlation::math::BOHR_TO_ANGSTROM;
+  lattice_vector_1[2] *= correlation::math::BOHR_TO_ANGSTROM;
 
-  lattice_vector_2[0] *= correlation::math::bohr_to_angstrom;
-  lattice_vector_2[1] *= correlation::math::bohr_to_angstrom;
-  lattice_vector_2[2] *= correlation::math::bohr_to_angstrom;
+  lattice_vector_2[0] *= correlation::math::BOHR_TO_ANGSTROM;
+  lattice_vector_2[1] *= correlation::math::BOHR_TO_ANGSTROM;
+  lattice_vector_2[2] *= correlation::math::BOHR_TO_ANGSTROM;
 
-  lattice_vector_3[0] *= correlation::math::bohr_to_angstrom;
-  lattice_vector_3[1] *= correlation::math::bohr_to_angstrom;
-  lattice_vector_3[2] *= correlation::math::bohr_to_angstrom;
+  lattice_vector_3[0] *= correlation::math::BOHR_TO_ANGSTROM;
+  lattice_vector_3[1] *= correlation::math::BOHR_TO_ANGSTROM;
+  lattice_vector_3[2] *= correlation::math::BOHR_TO_ANGSTROM;
 
   temp_cell =
       correlation::core::Cell({lattice_vector_1[0], lattice_vector_1[1], lattice_vector_1[2]},
@@ -190,9 +190,9 @@ void CastepMdReader::parseAtomLine(const std::string &line, real_t current_energ
   real_t coord_z = 0.0;
   if (line_stream >> symbol >> atom_id >> coord_x >> coord_y >> coord_z) {
     temp_cell.addAtom(
-        symbol, correlation::math::Vector3<real_t>(coord_x * correlation::math::bohr_to_angstrom,
-                                                   coord_y * correlation::math::bohr_to_angstrom,
-                                                   coord_z * correlation::math::bohr_to_angstrom));
+        symbol, correlation::math::Vector3<real_t>(coord_x * correlation::math::BOHR_TO_ANGSTROM,
+                                                   coord_y * correlation::math::BOHR_TO_ANGSTROM,
+                                                   coord_z * correlation::math::BOHR_TO_ANGSTROM));
     temp_cell.setEnergy(current_energy); // Assign energy once per atom or frame
     cell_has_atoms = true;
   }

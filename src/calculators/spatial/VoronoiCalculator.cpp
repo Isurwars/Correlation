@@ -104,6 +104,108 @@ std::pair<int, std::string> processCellTopology(voro::voronoicell &voro_cell) {
 
   return {significant_faces, std::format("({}, {}, {}, {})", n_3, n_4, n_5, n_6)};
 }
+
+struct AlignedBoxParameters {
+  real_t box_x{0.0};
+  real_t box_xy{0.0};
+  real_t box_y{0.0};
+  real_t box_xz{0.0};
+  real_t box_yz{0.0};
+  real_t box_z{0.0};
+};
+
+[[nodiscard]] AlignedBoxParameters
+extractAlignedBoxParameters(const correlation::math::Matrix3<real_t> &lattice) {
+  AlignedBoxParameters const params{
+      .box_x = lattice[0].x(),
+      .box_xy = lattice[1].x(),
+      .box_y = lattice[1].y(),
+      .box_xz = lattice[2].x(),
+      .box_yz = lattice[2].y(),
+      .box_z = lattice[2].z(),
+  };
+
+  if (params.box_x <= 1e-9 || params.box_y <= 1e-9 || params.box_z <= 1e-9) {
+    throw std::runtime_error(
+        "Invalid or non-orthogonal/skewed cell dimensions for Voronoi calculation.");
+  }
+  return params;
+}
+
+[[nodiscard]] std::array<real_t, 3>
+computeSingleAlignedPosition(const correlation::math::Vector3<real_t> &pos_d,
+                             const correlation::math::Matrix3<real_t> &inv_lattice_d,
+                             const AlignedBoxParameters &box) {
+  auto frac = inv_lattice_d * pos_d;
+  frac.x() -= std::floor(frac.x());
+  frac.y() -= std::floor(frac.y());
+  frac.z() -= std::floor(frac.z());
+  if (frac.x() >= static_cast<real_t>(1.0) || frac.x() < static_cast<real_t>(0.0)) {
+    frac.x() = static_cast<real_t>(0.0);
+  }
+  if (frac.y() >= static_cast<real_t>(1.0) || frac.y() < static_cast<real_t>(0.0)) {
+    frac.y() = static_cast<real_t>(0.0);
+  }
+  if (frac.z() >= static_cast<real_t>(1.0) || frac.z() < static_cast<real_t>(0.0)) {
+    frac.z() = static_cast<real_t>(0.0);
+  }
+
+  real_t const align_x = frac.x() * box.box_x + frac.y() * box.box_xy + frac.z() * box.box_xz;
+  real_t const align_y = frac.y() * box.box_y + frac.z() * box.box_yz;
+  real_t const align_z = frac.z() * box.box_z;
+  return {align_x, align_y, align_z};
+}
+
+[[nodiscard]] std::vector<std::array<real_t, 3>>
+computeAlignedPositions(std::span<const correlation::core::Atom> atoms,
+                        const correlation::math::Matrix3<real_t> &lattice,
+                        const AlignedBoxParameters &box) {
+  correlation::math::Matrix3<real_t> const inv_lattice_d = correlation::math::invert(lattice);
+  std::vector<std::array<real_t, 3>> aligned_positions(atoms.size());
+  for (size_t i = 0; i < atoms.size(); ++i) {
+    aligned_positions[i] =
+        computeSingleAlignedPosition(atoms[i].position(), inv_lattice_d, box);
+  }
+  return aligned_positions;
+}
+
+void extractVoronoiCellData(voro::container_periodic &con, voro::particle_order &order,
+                            size_t num_atoms, std::vector<real_t> &volumes,
+                            std::vector<real_t> &sphericities, std::vector<int> &coordinations,
+                            std::vector<std::string> &signatures) {
+  voro::voronoicell voro_cell;
+  voro::c_loop_order_periodic voro_loop(con, order);
+  if (!voro_loop.start()) {
+    return;
+  }
+
+  for (bool first = true; first || voro_loop.inc(); first = false) {
+    if (!con.compute_cell(voro_cell, voro_loop)) {
+      continue;
+    }
+
+    int const pid = voro_loop.pid();
+    if (pid < 0 || std::cmp_greater_equal(pid, num_atoms)) {
+      continue;
+    }
+
+    const auto vol = static_cast<real_t>(voro_cell.volume());
+    const auto area = static_cast<real_t>(voro_cell.surface_area());
+    real_t const sphericity = (area > static_cast<real_t>(1e-9))
+                                  ? static_cast<real_t>(std::pow(correlation::math::PI, 1.0 / 3.0) *
+                                                        std::pow(6.0 * vol, 2.0 / 3.0)) /
+                                        area
+                                  : static_cast<real_t>(0.0);
+
+    auto [significant_faces, signature] = processCellTopology(voro_cell);
+
+    volumes[pid] = vol;
+    sphericities[pid] = sphericity;
+    coordinations[pid] = significant_faces;
+    signatures[pid] = std::move(signature);
+  }
+}
+
 } // namespace
 
 void VoronoiCalculator::calculateFrame(
@@ -132,62 +234,20 @@ VoronoiCalculator::computeVoronoiCells(const correlation::core::Cell &cell) {
     throw std::logic_error("Cell volume must be positive and finite.");
   }
 
-  // Get aligned box parameters from lattice vectors.
-  // In the aligned frame of reference:
-  // a = (bx, 0, 0)
-  // b = (bxy, by, 0)
-  // c = (bxz, byz, bz)
-  real_t const box_x = lattice[0].x();
-  real_t const box_xy = lattice[1].x();
-  real_t const box_y = lattice[1].y();
-  real_t const box_xz = lattice[2].x();
-  real_t const box_yz = lattice[2].y();
-  real_t const box_z = lattice[2].z();
-
-  if (box_x <= 1e-9 || box_y <= 1e-9 || box_z <= 1e-9) {
-    throw std::runtime_error(
-        "Invalid or non-orthogonal/skewed cell dimensions for Voronoi calculation.");
-  }
-
-  // Map atom positions to aligned Cartesian coordinates via fractional coordinates
-  // Perform the wrapping and aligned position calculations in real_t precision
-  math::Matrix3<real_t> const lattice_d(lattice);
-  math::Matrix3<real_t> const inv_lattice_d = math::invert(lattice_d);
-  std::vector<std::array<real_t, 3>> aligned_positions(num_atoms);
-  for (size_t i = 0; i < num_atoms; ++i) {
-    math::Vector3<real_t> const pos_d(atoms[i].position());
-    auto frac = inv_lattice_d * pos_d;
-    // Wrap to [0, 1) fundamental domain
-    frac.x() -= std::floor(frac.x());
-    frac.y() -= std::floor(frac.y());
-    frac.z() -= std::floor(frac.z());
-    if (frac.x() >= static_cast<real_t>(1.0) || frac.x() < static_cast<real_t>(0.0)) {
-      frac.x() = static_cast<real_t>(0.0);
-    }
-    if (frac.y() >= static_cast<real_t>(1.0) || frac.y() < static_cast<real_t>(0.0)) {
-      frac.y() = static_cast<real_t>(0.0);
-    }
-    if (frac.z() >= static_cast<real_t>(1.0) || frac.z() < static_cast<real_t>(0.0)) {
-      frac.z() = static_cast<real_t>(0.0);
-    }
-
-    real_t const align_x = frac.x() * box_x + frac.y() * box_xy + frac.z() * box_xz;
-    real_t const align_y = frac.y() * box_y + frac.z() * box_yz;
-    real_t const align_z = frac.z() * box_z;
-    aligned_positions[i] = {align_x, align_y, align_z};
-  }
+  const auto box = extractAlignedBoxParameters(lattice);
+  const auto aligned_positions = computeAlignedPositions(atoms, lattice, box);
 
   // Dynamic grid estimator (aim for ~6 particles per grid block)
   const auto optimal_block_vol =
       static_cast<real_t>(6.0 / (static_cast<real_t>(num_atoms) / volume));
   real_t const block_side = std::max(static_cast<real_t>(1.0), std::cbrt(optimal_block_vol));
-  int const block_nx = std::max(1, static_cast<int>(std::round(box_x / block_side)));
-  int const block_ny = std::max(1, static_cast<int>(std::round(box_y / block_side)));
-  int const block_nz = std::max(1, static_cast<int>(std::round(box_z / block_side)));
+  int const block_nx = std::max(1, static_cast<int>(std::round(box.box_x / block_side)));
+  int const block_ny = std::max(1, static_cast<int>(std::round(box.box_y / block_side)));
+  int const block_nz = std::max(1, static_cast<int>(std::round(box.box_z / block_side)));
 
   // Setup periodic container and particle order tracker
-  voro::container_periodic con(box_x, box_xy, box_y, box_xz, box_yz, box_z, block_nx, block_ny,
-                               block_nz, 8);
+  voro::container_periodic con(box.box_x, box.box_xy, box.box_y, box.box_xz, box.box_yz, box.box_z,
+                               block_nx, block_ny, block_nz, 8);
   voro::particle_order order(static_cast<int>(num_atoms));
 
   // Put atoms into container
@@ -203,37 +263,8 @@ VoronoiCalculator::computeVoronoiCells(const correlation::core::Cell &cell) {
   data.coordination_numbers.assign(num_atoms, 0);
   data.signatures.assign(num_atoms, "");
 
-  voro::voronoicell voro_cell;
-  voro::c_loop_order_periodic voro_loop(con, order);
-  if (!voro_loop.start()) {
-    return data;
-  }
-
-  for (bool first = true; first || voro_loop.inc(); first = false) {
-    if (!con.compute_cell(voro_cell, voro_loop)) {
-      continue;
-    }
-
-    int const pid = voro_loop.pid();
-    if (pid < 0 || std::cmp_greater_equal(pid, num_atoms)) {
-      continue;
-    }
-
-    const auto vol = static_cast<real_t>(voro_cell.volume());
-    const auto area = static_cast<real_t>(voro_cell.surface_area());
-    real_t const sphericity = (area > static_cast<real_t>(1e-9))
-                                  ? static_cast<real_t>(std::pow(correlation::math::pi, 1.0 / 3.0) *
-                                                        std::pow(6.0 * vol, 2.0 / 3.0)) /
-                                        area
-                                  : static_cast<real_t>(0.0);
-
-    auto [significant_faces, signature] = processCellTopology(voro_cell);
-
-    data.volumes[pid] = vol;
-    data.sphericities[pid] = sphericity;
-    data.coordination_numbers[pid] = significant_faces;
-    data.signatures[pid] = std::move(signature);
-  }
+  extractVoronoiCellData(con, order, num_atoms, data.volumes, data.sphericities,
+                         data.coordination_numbers, data.signatures);
 
   return data;
 }

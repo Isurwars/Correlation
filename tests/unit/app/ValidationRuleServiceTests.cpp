@@ -132,4 +132,16 @@ TEST(ValidationRuleServiceTests, ValidateXrdTheta) {
   EXPECT_EQ(err3.error(), "Must be > Min 2θ");
 }
 
+TEST(ValidationRuleServiceTests, ValidateMaxCutoff) {
+  EXPECT_TRUE(ValidationRuleService::validateMaxCutoff(20.0F).has_value());
+  EXPECT_TRUE(ValidationRuleService::validateMaxCutoff(50.0F).has_value());
+  auto err = ValidationRuleService::validateMaxCutoff(50.5F);
+  EXPECT_FALSE(err.has_value());
+  EXPECT_EQ(err.error(), "Must be ≤ 50.0 Å");
+
+  auto err_custom = ValidationRuleService::validateMaxCutoff(16.0F, 15.0F);
+  EXPECT_FALSE(err_custom.has_value());
+  EXPECT_EQ(err_custom.error(), "Must be ≤ 15.0 Å");
+}
+
 } // namespace

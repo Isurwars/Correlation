@@ -135,7 +135,7 @@ real_t computeAtomQ6(size_t atom_idx, const correlation::mlip::PeriodicGraphData
     const auto q_val = q6m.at(array_idx) * inv_bonds;
     q6_sq += std::norm(q_val);
   }
-  return std::sqrt((correlation::math::four_pi / static_cast<real_t>(13.0)) * q6_sq);
+  return std::sqrt((correlation::math::FOUR_PI / static_cast<real_t>(13.0)) * q6_sq);
 }
 
 } // anonymous namespace

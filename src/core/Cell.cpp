@@ -30,9 +30,9 @@ void Cell::setLatticeParameters(const std::array<real_t, 6> &params) {
   const real_t len_a = params[0];
   const real_t len_b = params[1];
   const real_t len_c = params[2];
-  const real_t alpha = params[3] * static_cast<real_t>(math::deg_to_rad);
-  const real_t beta = params[4] * static_cast<real_t>(math::deg_to_rad);
-  const real_t gamma = params[5] * static_cast<real_t>(math::deg_to_rad);
+  const real_t alpha = params[3] * static_cast<real_t>(math::DEG_TO_RAD);
+  const real_t beta = params[4] * static_cast<real_t>(math::DEG_TO_RAD);
+  const real_t gamma = params[5] * static_cast<real_t>(math::DEG_TO_RAD);
 
   if (std::isnan(len_a) || std::isnan(len_b) || std::isnan(len_c) || len_a <= 0 || len_b <= 0 ||
       len_c <= 0) {
@@ -105,9 +105,9 @@ void Cell::updateLatticeParametersFromVectors() {
   lattice_parameters_ = {len_a,
                          len_b,
                          len_c,
-                         alpha_rad * static_cast<real_t>(math::rad_to_deg),
-                         beta_rad * static_cast<real_t>(math::rad_to_deg),
-                         gamma_rad * static_cast<real_t>(math::rad_to_deg)};
+                         alpha_rad * static_cast<real_t>(math::RAD_TO_DEG),
+                         beta_rad * static_cast<real_t>(math::RAD_TO_DEG),
+                         gamma_rad * static_cast<real_t>(math::RAD_TO_DEG)};
 }
 
 std::optional<Element> Cell::findElement(std::string_view symbol) const {

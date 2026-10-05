@@ -52,7 +52,7 @@ TEST(VDOSCalculatorTests, PerfectSolidShowsSinglePeak) {
     real_t t_fs = static_cast<real_t>(i) * time_step;
     // 0.001 converts fs to ps for THz frequency
     vacf[i] =
-        static_cast<real_t>(std::cos(2.0 * correlation::math::pi * target_nu_thz * t_fs * 0.001));
+        static_cast<real_t>(std::cos(2.0 * correlation::math::PI * target_nu_thz * t_fs * 0.001));
   }
 
   auto [frequencies, intensities_real, intensities_imag] =
@@ -88,7 +88,7 @@ TEST(VDOSCalculatorTests, IdealGasShowsImaginaryPeak) {
   // is at 10.0 THz.
   real_t target_nu_peak = 10.0;
   auto vec_a =
-      static_cast<real_t>(2.0 * correlation::math::pi * target_nu_peak); // a in THz (ps^-1)
+      static_cast<real_t>(2.0 * correlation::math::PI * target_nu_peak); // a in THz (ps^-1)
 
   for (size_t i = 0; i < num_frames; ++i) {
     auto t_ps = static_cast<real_t>(static_cast<real_t>(i) * time_step * 0.001); // fs to ps

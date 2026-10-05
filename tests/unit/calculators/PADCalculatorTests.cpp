@@ -96,7 +96,7 @@ countAngles(const std::vector<std::vector<std::vector<std::vector<real_t>>>> &an
       for (const auto &t_3 : t_2) {
         for (double const angle : t_3) {
           counts.total_angles++;
-          classifyAngle(angle * 180.0 / correlation::math::pi, counts);
+          classifyAngle(angle * 180.0 / correlation::math::PI, counts);
         }
       }
     }
@@ -222,7 +222,7 @@ TEST_F(PADCalculatorTests_AngleReproduction, MissingAnglesWhenCutoffIsTooSmall) 
       for (const auto &t_2 : t_1) {
         for (const auto &t_3 : t_2) {
           for (real_t const angle : t_3) {
-            if (std::abs(angle * 180.0 / correlation::math::pi - 90.0) < 1.0) {
+            if (std::abs(angle * 180.0 / correlation::math::PI - 90.0) < 1.0) {
               found = true;
             }
           }
@@ -247,7 +247,7 @@ TEST_F(PADCalculatorTests_AngleReproduction, PBCAngleDetection) {
     for (const auto &t_2 : t_1) {
       for (const auto &t_3 : t_2) {
         for (double const angle : t_3) {
-          if (std::abs(angle * 180.0 / correlation::math::pi - 90.0) < 1.0) {
+          if (std::abs(angle * 180.0 / correlation::math::PI - 90.0) < 1.0) {
             found = true;
           }
         }
@@ -279,7 +279,7 @@ TEST_F(PADCalculatorTests_AngleReproduction, SiTetrahedron_4Atoms) {
     for (const auto &t_2 : t_1) {
       for (const auto &t_3 : t_2) {
         for (double const angle : t_3) {
-          double const degrees = angle * 180.0 / correlation::math::pi;
+          double const degrees = angle * 180.0 / correlation::math::PI;
           // std::cout << "Angle: " << degrees << " degrees\n";
           // Expected angle is acos(-1/3) ~ 109.47 degrees
           if (std::abs(degrees - 109.47) < 1.0) {
@@ -637,7 +637,7 @@ TEST_F(PADCalculatorTests, BondDistanceWithinCutoffRangeProducesAngle) {
     for (const auto &t_2 : t_1) {
       for (const auto &t_3 : t_2) {
         for (real_t const angle : t_3) {
-          if (std::abs(angle * 180.0 / correlation::math::pi - 90.0) < 1.0) {
+          if (std::abs(angle * 180.0 / correlation::math::PI - 90.0) < 1.0) {
             found_90 = true;
           }
         }

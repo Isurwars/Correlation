@@ -58,7 +58,7 @@ TEST_F(AtomFunctionalTests, VerifyMethaneTetrahedralGeometry) {
   EXPECT_NEAR(angle_3_c_4, expected_angle_rad, 1e-6);
 
   // Convert to degrees and check
-  EXPECT_NEAR(angle_1_c_2 * 180.0 / correlation::math::pi, expected_angle_deg, 1e-3);
+  EXPECT_NEAR(angle_1_c_2 * 180.0 / correlation::math::PI, expected_angle_deg, 1e-3);
 }
 
 TEST_F(AtomFunctionalTests, VerifyDynamicAttributeModifications) {
@@ -96,7 +96,7 @@ TEST_F(AtomFunctionalTests, VerifyAngleCollinearAndOverlapping) {
   Atom atom_a(element_h, {1.0, 0.0, 0.0}, 1);
   Atom atom_b(element_h, {-1.0, 0.0, 0.0}, 2);
 
-  EXPECT_NEAR(angle(center, atom_a, atom_b), correlation::math::pi, 1e-6);
+  EXPECT_NEAR(angle(center, atom_a, atom_b), correlation::math::PI, 1e-6);
 
   // Overlapping outer atom with center
   Atom overlapping(element_h, {0.0, 0.0, 0.0}, 3);

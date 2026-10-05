@@ -420,7 +420,7 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<real_t> &vacf, real_t time_ste
     // $\omega = 2 * \pi * \nu * 0.001$ (to handle THz to fs
     // scale)
     real_t const theta =
-        correlation::math::two_pi * freq_val * time_step * static_cast<real_t>(0.001);
+        correlation::math::TWO_PI * freq_val * time_step * static_cast<real_t>(0.001);
 
     auto [integral_real, integral_imag] = integrateVdosFrequency(theta, windowed_vacf, time_step);
 

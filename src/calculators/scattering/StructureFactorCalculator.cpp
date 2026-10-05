@@ -99,7 +99,7 @@ struct QBinning {
 
 ReciprocalBasis computeReciprocalBasis(const correlation::core::Cell &cell, real_t q_max) {
   const auto &inv = cell.inverseLatticeVectors();
-  const auto two_pi_val = static_cast<real_t>(correlation::math::two_pi);
+  const auto two_pi_val = static_cast<real_t>(correlation::math::TWO_PI);
   const real_t bx_x = two_pi_val * inv(0, 0);
   const real_t bx_y = two_pi_val * inv(0, 1);
   const real_t bx_z = two_pi_val * inv(0, 2);
