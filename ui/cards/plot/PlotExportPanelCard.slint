@@ -45,19 +45,19 @@ export component PlotExportPanelCard inherits Rectangle {
     callback reset_export_settings();
 
     out property <string> hovered_tooltip_text:
+        comparison_card.hovered_tooltip_text != "" ? comparison_card.hovered_tooltip_text :
         export_settings_card.hovered_tooltip_text != "" ? export_settings_card.hovered_tooltip_text : "";
 
     out property <length> hovered_x:
+        comparison_card.hovered_tooltip_text != "" ? comparison_card.hovered_x :
         export_settings_card.hovered_tooltip_text != "" ? export_settings_card.hovered_x : 0px;
 
     out property <length> hovered_y:
+        comparison_card.hovered_tooltip_text != "" ? comparison_card.hovered_y :
         export_settings_card.hovered_tooltip_text != "" ? export_settings_card.hovered_y : 0px;
 
-    out property <length> hovered_width:
-        export_settings_card.hovered_tooltip_text != "" ? export_settings_card.hovered_width : 0px;
-
-    out property <length> hovered_height:
-        export_settings_card.hovered_tooltip_text != "" ? export_settings_card.hovered_height : 0px;
+    out property <length> hovered_width: 0px;
+    out property <length> hovered_height: 0px;
 
     ScrollView {
         width: 100%;

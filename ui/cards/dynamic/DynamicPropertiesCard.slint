@@ -21,6 +21,27 @@ export component DynamicPropertiesCard inherits OutlinedCard {
 
     out property <bool> has_properties: root.diff_msd != "" || root.diff_vacf != "" || root.relaxation_time != "" || root.deborah_number != "";
 
+    out property <string> hovered_tooltip_text:
+        (msd_area.visible && msd_area.has-hover) ? "Self-diffusion coefficient (D) computed from Mean Squared Displacement slope via Einstein relation: ⟨|r(t)-r(0)|²⟩ = 6Dt.\n\n📏 Units: 10⁻⁹ m²/s." :
+        (vacf_area.visible && vacf_area.has-hover) ? "Self-diffusion coefficient (D) computed from Green-Kubo integral of Velocity Autocorrelation Function: D = (1/3) ∫ ⟨v(t)·v(0)⟩ dt.\n\n📏 Units: 10⁻⁹ m²/s." :
+        (relax_area.visible && relax_area.has-hover) ? "Structural / velocity correlation decay time scale (τ).\n\n📏 Units: femtoseconds (fs)." :
+        (deb_area.visible && deb_area.has-hover) ? "Deborah number (De = τ / t_obs).\n\n🔬 Physics: De ≪ 1 characterizes liquid-like viscous relaxation; De ≫ 1 indicates solid-like elasticity." : "";
+
+    out property <length> hovered_x:
+        (msd_area.visible && msd_area.has-hover) ? msd_area.absolute-position.x + msd_area.mouse-x :
+        (vacf_area.visible && vacf_area.has-hover) ? vacf_area.absolute-position.x + vacf_area.mouse-x :
+        (relax_area.visible && relax_area.has-hover) ? relax_area.absolute-position.x + relax_area.mouse-x :
+        (deb_area.visible && deb_area.has-hover) ? deb_area.absolute-position.x + deb_area.mouse-x : 0px;
+
+    out property <length> hovered_y:
+        (msd_area.visible && msd_area.has-hover) ? msd_area.absolute-position.y + msd_area.mouse-y :
+        (vacf_area.visible && vacf_area.has-hover) ? vacf_area.absolute-position.y + vacf_area.mouse-y :
+        (relax_area.visible && relax_area.has-hover) ? relax_area.absolute-position.y + relax_area.mouse-y :
+        (deb_area.visible && deb_area.has-hover) ? deb_area.absolute-position.y + deb_area.mouse-y : 0px;
+
+    out property <length> hovered_width: 0px;
+    out property <length> hovered_height: 0px;
+
     visible: root.has_properties;
     height: root.has_properties ? self.preferred-height : 0px;
 
@@ -38,21 +59,40 @@ export component DynamicPropertiesCard inherits OutlinedCard {
             padding: 0;
             spacing: MaterialStyleMetrics.spacing_4;
 
-            if root.diff_msd != "": InfoRow {
-                label: "Self-diffusion (MSD):";
-                value: root.diff_msd;
+            msd_area := TouchArea {
+                visible: root.diff_msd != "";
+                height: root.diff_msd != "" ? self.preferred-height : 0px;
+                InfoRow {
+                    label: "Self-diffusion (MSD):";
+                    value: root.diff_msd;
+                }
             }
-            if root.diff_vacf != "": InfoRow {
-                label: "Self-diffusion (VACF):";
-                value: root.diff_vacf;
+
+            vacf_area := TouchArea {
+                visible: root.diff_vacf != "";
+                height: root.diff_vacf != "" ? self.preferred-height : 0px;
+                InfoRow {
+                    label: "Self-diffusion (VACF):";
+                    value: root.diff_vacf;
+                }
             }
-            if root.relaxation_time != "": InfoRow {
-                label: "Relaxation time:";
-                value: root.relaxation_time;
+
+            relax_area := TouchArea {
+                visible: root.relaxation_time != "";
+                height: root.relaxation_time != "" ? self.preferred-height : 0px;
+                InfoRow {
+                    label: "Relaxation time:";
+                    value: root.relaxation_time;
+                }
             }
-            if root.deborah_number != "": InfoRow {
-                label: "Deborah number:";
-                value: root.deborah_number;
+
+            deb_area := TouchArea {
+                visible: root.deborah_number != "";
+                height: root.deborah_number != "" ? self.preferred-height : 0px;
+                InfoRow {
+                    label: "Deborah number:";
+                    value: root.deborah_number;
+                }
             }
         }
     }

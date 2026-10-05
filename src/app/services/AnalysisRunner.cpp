@@ -38,6 +38,65 @@ void AnalysisRunner::updateProgress(float progress, const std::string &msg) {
   });
 }
 
+namespace {
+
+[[nodiscard]] std::string determineStatusMessage(const std::string &err, bool is_cancelled) {
+  if (!err.empty()) {
+    return err;
+  }
+  if (is_cancelled) {
+    return "Analysis Cancelled.";
+  }
+  return {AppDefaults::MSG_ANALYSIS_ENDED};
+}
+
+} // namespace
+
+void AnalysisRunner::joinPreviousThreadAsync() {
+  if (!analysis_thread_.joinable()) {
+    return;
+  }
+
+  std::thread old_thread = std::move(analysis_thread_);
+  std::thread([thread_to_join = std::move(old_thread)]() mutable {
+    if (thread_to_join.joinable()) {
+      thread_to_join.join();
+    }
+  }).detach();
+}
+
+std::string AnalysisRunner::executeAnalysis() {
+  if (loader_.trajectory() == nullptr || loader_.getFrameCount() == 0) {
+    return {AppDefaults::MSG_ANALYSIS_ABORTED};
+  }
+
+  const auto result = dispatcher_.runAnalysis(*loader_.trajectoryMut(), options_);
+  if (!result) {
+    return result.error();
+  }
+  return {};
+}
+
+void AnalysisRunner::handleAnalysisCompletion(const std::string &err) {
+  const bool cancelled = dispatcher_.isCancelled();
+  const bool successful = err.empty() && !cancelled;
+
+  window_.set_analysis_running(false);
+  window_.set_analysis_status_text(slint::SharedString(determineStatusMessage(err, cancelled)));
+  window_.set_analysis_done(successful);
+  window_.set_progress(successful ? 1.0F : 0.0F);
+
+  if (!successful) {
+    return;
+  }
+
+  controller_.getPlotController()->populatePlotList();
+  controller_.populateExportAnalyses();
+  if (!dispatcher_.getAvailableHistogramNames().empty()) {
+    controller_.getPlotController()->requestPlotUpdate(0, true);
+  }
+}
+
 void AnalysisRunner::handleRunAnalysis() {
   if (!controller_.getInputValidator()->validateInputs()) {
     return;
@@ -56,51 +115,12 @@ void AnalysisRunner::handleRunAnalysis() {
       [this](float progress, const std::string &msg) { updateProgress(progress, msg); });
 
   // Run analysis in a separate thread asynchronously without blocking GUI event loop
-  if (analysis_thread_.joinable()) {
-    std::thread old_thread = std::move(analysis_thread_);
-    std::thread([thread_to_join = std::move(old_thread)]() mutable {
-      if (thread_to_join.joinable()) {
-        thread_to_join.join();
-      }
-    }).detach();
-  }
+  joinPreviousThreadAsync();
 
   analysis_thread_ = std::thread([this]() {
-    std::string err;
-    if (loader_.trajectory() == nullptr || loader_.getFrameCount() == 0) {
-      err = AppDefaults::MSG_ANALYSIS_ABORTED;
-    } else {
-      auto result = dispatcher_.runAnalysis(*loader_.trajectoryMut(), options_);
-      if (!result) {
-        err = result.error();
-      }
-    }
-
-    slint::invoke_from_event_loop([this, err]() {
-      window_.set_analysis_running(false);
-      if (err.empty()) {
-        if (dispatcher_.isCancelled()) {
-          window_.set_analysis_status_text(slint::SharedString("Analysis Cancelled."));
-        } else {
-          window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_ANALYSIS_ENDED));
-        }
-      } else {
-        window_.set_analysis_status_text(slint::SharedString(err));
-      }
-      window_.set_analysis_done(true);
-      window_.set_progress(1.0F);
-
-      // Populate the plot dropdown and auto-preview the first histogram
-      controller_.getPlotController()->populatePlotList();
-      controller_.populateExportAnalyses();
-      if (!dispatcher_.getAvailableHistogramNames().empty()) {
-        controller_.getPlotController()->requestPlotUpdate(0, true);
-      }
-    });
+    const std::string err = executeAnalysis();
+    slint::invoke_from_event_loop([this, err]() { handleAnalysisCompletion(err); });
   });
-
-  // Detach or move is not enough, we need to keep the thread object alive.
-  // We keep it as a member variable.
 }
 
 } // namespace correlation::app

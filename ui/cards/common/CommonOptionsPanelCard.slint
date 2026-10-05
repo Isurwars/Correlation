@@ -55,24 +55,25 @@ export component CommonOptionsPanelCard inherits Rectangle {
     callback reset_angle_options();
 
     out property <string> hovered_tooltip_text:
+        dynamic_properties.hovered_tooltip_text != "" ? dynamic_properties.hovered_tooltip_text :
+        bond_cutoffs_card.hovered_tooltip_text != "" ? bond_cutoffs_card.hovered_tooltip_text :
         rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_tooltip_text :
         angle_card.hovered_tooltip_text != "" ? angle_card.hovered_tooltip_text : "";
 
     out property <length> hovered_x:
+        dynamic_properties.hovered_tooltip_text != "" ? dynamic_properties.hovered_x :
+        bond_cutoffs_card.hovered_tooltip_text != "" ? bond_cutoffs_card.hovered_x :
         rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_x :
         angle_card.hovered_tooltip_text != "" ? angle_card.hovered_x : 0px;
 
     out property <length> hovered_y:
+        dynamic_properties.hovered_tooltip_text != "" ? dynamic_properties.hovered_y :
+        bond_cutoffs_card.hovered_tooltip_text != "" ? bond_cutoffs_card.hovered_y :
         rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_y :
         angle_card.hovered_tooltip_text != "" ? angle_card.hovered_y : 0px;
 
-    out property <length> hovered_width:
-        rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_width :
-        angle_card.hovered_tooltip_text != "" ? angle_card.hovered_width : 0px;
-
-    out property <length> hovered_height:
-        rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_height :
-        angle_card.hovered_tooltip_text != "" ? angle_card.hovered_height : 0px;
+    out property <length> hovered_width: 0px;
+    out property <length> hovered_height: 0px;
 
     ScrollView {
         width: 100%;

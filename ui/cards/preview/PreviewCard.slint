@@ -86,6 +86,17 @@ export component PreviewCard inherits FilledCard {
         "#FF006E", "#FB5607", "#FFBE0B", "#FFFFFF"
     ];
 
+    // Workflow properties & callbacks
+    in property <bool> file_loaded: false;
+    in property <bool> analysis_running: false;
+    in property <string> file_basename: "";
+    in property <int> total_atoms: 0;
+    in property <int> num_frames: 0;
+
+    callback browse_file();
+    callback run_analysis();
+    callback open_panel(int);
+
     callback plot_selected(int);
     callback toggle_curve_visibility(int, bool);
     callback toggle_all_curves(bool);
@@ -103,15 +114,47 @@ export component PreviewCard inherits FilledCard {
 
     // Hover state for tooltip
     out property <string> hovered_tooltip_text:
-        plot_dropdown_area.has-hover ? "Select a distribution function to preview.\n\n💡 Tip: Use 'Pin Run' to save the current results, then adjust parameters and re-run. Pinned runs overlay on the plot for direct visual comparison — great for seeing how parameter changes affect your results." :
-        save_results_area.has-hover ? "Export analysis results to files in the selected formats (CSV, HDF5, Parquet).\n\n💡 Tip: Results are written to the same directory as the input file. The output base name matches the input file name." : "";
+        plot_dropdown_area.has-hover ? "Select a distribution function to preview.\n\n💡 Tip: Use 'Pin Run' to save current results, then adjust parameters and re-run to overlay curves." :
+        tab_plot_area.has-hover ? "Plot View\n\n📈 High-resolution vector SVG visualization with interactive zoom, crosshairs, and live coordinates." :
+        tab_data_area.has-hover ? "Data Table View\n\n📄 Tabular numerical coordinates and distribution intensities." :
+        (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? "Remove all pinned runs from the comparison overlay." :
+        (root.active_tab == 0 && root.selected_plot_index >= 0 && home_touch.has-hover) ? "Home (Reset Zoom)\n\n🔄 Restore full coordinate axes limits." :
+        (root.active_tab == 0 && root.selected_plot_index >= 0 && zoom_touch.has-hover) ? "Rubberband Box Zoom\n\n🔍 Click and drag on plot to inspect a specific region of interest." :
+        (root.active_tab == 0 && root.selected_plot_index >= 0 && marker_x_touch.has-hover) ? "Add Vertical Marker (+X)\n\n📍 Click plot to place a vertical guide line at target distance or angle." :
+        (root.active_tab == 0 && root.selected_plot_index >= 0 && marker_y_touch.has-hover) ? "Add Horizontal Marker (+Y)\n\n📍 Click plot to place a horizontal intensity threshold guide." :
+        (root.active_tab == 0 && root.selected_plot_index >= 0 && root.markers_count > 0 && clear_markers_touch.has-hover) ? "Clear Markers\n\n🗑️ Remove all inspection guides from the plot." :
+        (root.active_tab == 0 && toggle_all_true_area.has-hover) ? "Show all curves in the active plot." :
+        (root.active_tab == 0 && toggle_all_false_area.has-hover) ? "Hide all curves in the active plot." :
+        save_results_area.has-hover ? "Export analysis results to files in the selected formats (CSV, HDF5, Parquet, SVG).\n\n💡 Tip: Results are written to the output destination directory." : "";
 
     out property <length> hovered_x:
         plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.x + plot_dropdown_area.mouse-x :
+        tab_plot_area.has-hover ? tab_plot_area.absolute-position.x + tab_plot_area.mouse-x :
+        tab_data_area.has-hover ? tab_data_area.absolute-position.x + tab_data_area.mouse-x :
+        (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? clear_pinned_area.absolute-position.x + clear_pinned_area.mouse-x :
+        (root.active_tab == 0 && root.selected_plot_index >= 0 && home_touch.has-hover) ? home_touch.absolute-position.x + home_touch.mouse-x :
+        (root.active_tab == 0 && root.selected_plot_index >= 0 && zoom_touch.has-hover) ? zoom_touch.absolute-position.x + zoom_touch.mouse-x :
+        (root.active_tab == 0 && root.selected_plot_index >= 0 && marker_x_touch.has-hover) ? marker_x_touch.absolute-position.x + marker_x_touch.mouse-x :
+        (root.active_tab == 0 && root.selected_plot_index >= 0 && marker_y_touch.has-hover) ? marker_y_touch.absolute-position.x + marker_y_touch.mouse-x :
+        (root.active_tab == 0 && root.selected_plot_index >= 0 && root.markers_count > 0 && clear_markers_touch.has-hover) ? clear_markers_touch.absolute-position.x + clear_markers_touch.mouse-x :
+        (root.active_tab == 0 && toggle_all_true_area.has-hover) ? toggle_all_true_area.absolute-position.x + toggle_all_true_area.mouse-x :
+        (root.active_tab == 0 && toggle_all_false_area.has-hover) ? toggle_all_false_area.absolute-position.x + toggle_all_false_area.mouse-x :
         save_results_area.has-hover ? save_results_area.absolute-position.x + save_results_area.mouse-x : 0px;
+
     out property <length> hovered_y:
         plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.y + plot_dropdown_area.mouse-y :
+        tab_plot_area.has-hover ? tab_plot_area.absolute-position.y + tab_plot_area.mouse-y :
+        tab_data_area.has-hover ? tab_data_area.absolute-position.y + tab_data_area.mouse-y :
+        (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? clear_pinned_area.absolute-position.y + clear_pinned_area.mouse-y :
+        (root.active_tab == 0 && root.selected_plot_index >= 0 && home_touch.has-hover) ? home_touch.absolute-position.y + home_touch.mouse-y :
+        (root.active_tab == 0 && root.selected_plot_index >= 0 && zoom_touch.has-hover) ? zoom_touch.absolute-position.y + zoom_touch.mouse-y :
+        (root.active_tab == 0 && root.selected_plot_index >= 0 && marker_x_touch.has-hover) ? marker_x_touch.absolute-position.y + marker_x_touch.mouse-y :
+        (root.active_tab == 0 && root.selected_plot_index >= 0 && marker_y_touch.has-hover) ? marker_y_touch.absolute-position.y + marker_y_touch.mouse-y :
+        (root.active_tab == 0 && root.selected_plot_index >= 0 && root.markers_count > 0 && clear_markers_touch.has-hover) ? clear_markers_touch.absolute-position.y + clear_markers_touch.mouse-y :
+        (root.active_tab == 0 && toggle_all_true_area.has-hover) ? toggle_all_true_area.absolute-position.y + toggle_all_true_area.mouse-y :
+        (root.active_tab == 0 && toggle_all_false_area.has-hover) ? toggle_all_false_area.absolute-position.y + toggle_all_false_area.mouse-y :
         save_results_area.has-hover ? save_results_area.absolute-position.y + save_results_area.mouse-y : 0px;
+
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
 
@@ -142,40 +185,55 @@ export component PreviewCard inherits FilledCard {
                 spacing: MaterialStyleMetrics.spacing_4;
                 height: 100%;
 
-                TabItem {
-                    text: "Plot";
-                    active: root.active_tab == 0;
-                    clicked => { root.active_tab = 0; }
+                tab_plot_area := TouchArea {
+                    width: tab_plot.preferred-width;
+                    height: 100%;
+                    tab_plot := TabItem {
+                        text: "Plot";
+                        active: root.active_tab == 0;
+                        clicked => { root.active_tab = 0; }
+                    }
                 }
 
-                TabItem {
-                    text: "Data";
-                    active: root.active_tab == 1;
-                    clicked => { root.active_tab = 1; }
+                tab_data_area := TouchArea {
+                    width: tab_data.preferred-width;
+                    height: 100%;
+                    tab_data := TabItem {
+                        text: "Data";
+                        active: root.active_tab == 1;
+                        clicked => { root.active_tab = 1; }
+                    }
                 }
             }
         }
 
         // Pinned Runs Info
-        if root.pinned_runs_count > 0: Horizontal {
+        Horizontal {
+            visible: root.pinned_runs_count > 0;
+            height: root.pinned_runs_count > 0 ? MaterialStyleMetrics.size_40 : 0px;
             spacing: MaterialStyleMetrics.spacing_8;
-            height: MaterialStyleMetrics.size_40;
             MaterialText {
                 text: "Comparing with " + root.pinned_runs_count + " pinned run(s)";
                 color: MaterialPalette.on_surface_variant;
                 vertical-alignment: center;
             }
 
-            FilledButton {
+            clear_pinned_area := TouchArea {
+                width: 120px;
                 height: 100%;
-                text: "Clear Pinned";
-                clicked => { root.clear_pinned_runs(); }
+                FilledButton {
+                    width: 100%;
+                    height: 100%;
+                    text: "Clear Pinned";
+                    clicked => { root.clear_pinned_runs(); }
+                }
             }
         }
 
         // BODY: Tab Content Switcher
-        if root.active_tab == 0: HorizontalLayout {
-            vertical-stretch: 1;
+        HorizontalLayout {
+            visible: root.active_tab == 0;
+            vertical-stretch: root.active_tab == 0 ? 1 : 0;
             spacing: MaterialStyleMetrics.spacing_8;
 
             // SVG plot image area — fills remaining space
@@ -226,6 +284,7 @@ export component PreviewCard inherits FilledCard {
                         }
                     }
 
+                    // Dynamic 4-Stage Stepper
                     HorizontalLayout {
                         spacing: 8px;
                         alignment: center;
@@ -233,15 +292,61 @@ export component PreviewCard inherits FilledCard {
                         Rectangle {
                             height: 28px;
                             border-radius: 14px;
-                            background: MaterialPalette.surface_container_high;
+                            background: !root.file_loaded ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
 
                             HorizontalLayout {
                                 padding-left: 12px;
                                 padding-right: 12px;
                                 Text {
-                                    text: "1. Load File";
+                                    text: !root.file_loaded ? "1. Load File (Active)" : "1. File Loaded ✓";
                                     font-size: MaterialTypography.label_medium.font_size;
-                                    color: MaterialPalette.primary;
+                                    color: !root.file_loaded ? MaterialPalette.on_primary_container : MaterialPalette.primary;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+
+                        Text {
+                            text: "➔";
+                            color: MaterialPalette.outline;
+                            vertical-alignment: center;
+                        }
+
+                        Rectangle {
+                            height: 28px;
+                            border-radius: 14px;
+                            background: root.file_loaded && !root.analysis_running ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+
+                            HorizontalLayout {
+                                padding-left: 12px;
+                                padding-right: 12px;
+                                Text {
+                                    text: root.file_loaded && !root.analysis_running ? "2. Options & Analyses" : "2. Configure Options";
+                                    font-size: MaterialTypography.label_medium.font_size;
+                                    color: root.file_loaded && !root.analysis_running ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+
+                        Text {
+                            text: "➔";
+                            color: MaterialPalette.outline;
+                            vertical-alignment: center;
+                        }
+
+                        Rectangle {
+                            height: 28px;
+                            border-radius: 14px;
+                            background: root.analysis_running ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+
+                            HorizontalLayout {
+                                padding-left: 12px;
+                                padding-right: 12px;
+                                Text {
+                                    text: root.analysis_running ? "3. Calculating..." : "3. Run Calculation";
+                                    font-size: MaterialTypography.label_medium.font_size;
+                                    color: root.analysis_running ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
                                     vertical-alignment: center;
                                 }
                             }
@@ -262,30 +367,7 @@ export component PreviewCard inherits FilledCard {
                                 padding-left: 12px;
                                 padding-right: 12px;
                                 Text {
-                                    text: "2. Configure Options";
-                                    font-size: MaterialTypography.label_medium.font_size;
-                                    color: MaterialPalette.on_surface_variant;
-                                    vertical-alignment: center;
-                                }
-                            }
-                        }
-
-                        Text {
-                            text: "➔";
-                            color: MaterialPalette.outline;
-                            vertical-alignment: center;
-                        }
-
-                        Rectangle {
-                            height: 28px;
-                            border-radius: 14px;
-                            background: MaterialPalette.surface_container_high;
-
-                            HorizontalLayout {
-                                padding-left: 12px;
-                                padding-right: 12px;
-                                Text {
-                                    text: "3. Run & View Results";
+                                    text: "4. Preview & Export";
                                     font-size: MaterialTypography.label_medium.font_size;
                                     color: MaterialPalette.on_surface_variant;
                                     vertical-alignment: center;
@@ -293,14 +375,117 @@ export component PreviewCard inherits FilledCard {
                             }
                         }
                     }
+
+                    // Dynamic Call-To-Action (CTA) Cards based on stage
+                    if !root.file_loaded: Vertical {
+                        spacing: MaterialStyleMetrics.spacing_12;
+                        alignment: center;
+
+                        FilledButton {
+                            height: MaterialStyleMetrics.size_40;
+                            text: "Open Trajectory File... (Ctrl+O)";
+                            icon: Icons.folder_open;
+                            clicked => { root.browse_file(); }
+                        }
+
+                        MaterialText {
+                            text: "Supported: VASP (XDATCAR/POSCAR), XYZ, CIF, GROMACS (.gro), LAMMPS, QE, CASTEP, ONETEP";
+                            style: MaterialTypography.body_small;
+                            color: MaterialPalette.on_surface_variant;
+                            horizontal-alignment: center;
+                        }
+
+                        HorizontalLayout {
+                            spacing: 16px;
+                            alignment: center;
+
+                            Text {
+                                text: "⚡ Shortcuts: [Ctrl+O] Open  •  [Ctrl+R] Run  •  [Ctrl+S] Export  •  [Ctrl+D] Theme";
+                                font-size: MaterialTypography.label_small.font_size;
+                                color: MaterialPalette.outline;
+                            }
+                        }
+                    }
+
+                    if root.file_loaded: Vertical {
+                        spacing: MaterialStyleMetrics.spacing_12;
+                        alignment: center;
+
+                        Rectangle {
+                            background: MaterialPalette.surface_container_high;
+                            border-radius: 8px;
+                            border-width: 1px;
+                            border-color: MaterialPalette.outline_variant;
+
+                            HorizontalLayout {
+                                padding-left: 16px;
+                                padding-right: 16px;
+                                padding-top: 8px;
+                                padding-bottom: 8px;
+                                spacing: 16px;
+                                alignment: center;
+
+                                MaterialText {
+                                    text: "📁 " + root.file_basename;
+                                    style: MaterialTypography.label_large;
+                                    color: MaterialPalette.on_surface;
+                                    vertical-alignment: center;
+                                }
+                                MaterialText {
+                                    text: "• " + root.total_atoms + " atoms";
+                                    style: MaterialTypography.body_medium;
+                                    color: MaterialPalette.on_surface_variant;
+                                    vertical-alignment: center;
+                                }
+                                MaterialText {
+                                    text: "• " + root.num_frames + " frames";
+                                    style: MaterialTypography.body_medium;
+                                    color: MaterialPalette.on_surface_variant;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+
+                        HorizontalLayout {
+                            spacing: 12px;
+                            alignment: center;
+
+                            FilledButton {
+                                height: MaterialStyleMetrics.size_40;
+                                text: root.analysis_running ? "Calculation Running..." : "Run Analysis (Ctrl+R)";
+                                icon: Icons.play_arrow;
+                                enabled: !root.analysis_running;
+                                clicked => { root.run_analysis(); }
+                            }
+
+                            FilledButton {
+                                height: MaterialStyleMetrics.size_40;
+                                text: "Configure Options";
+                                icon: Icons.tune;
+                                clicked => { root.open_panel(1); }
+                            }
+                        }
+                    }
                 }
 
                 // Placeholder text when analysis is done but no plot selected
                 if root.analysis_done && root.selected_plot_index < 0: Vertical {
-                    padding: MaterialStyleMetrics.spacing_8;
+                    padding: MaterialStyleMetrics.spacing_16;
+                    spacing: MaterialStyleMetrics.spacing_8;
+                    alignment: center;
+
                     MaterialText {
-                        text: "Select a plot from the dropdown above.";
+                        text: "Analysis completed successfully!";
+                        color: MaterialPalette.primary;
+                        style: MaterialTypography.title_medium;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+
+                    MaterialText {
+                        text: "Select a distribution function from the dropdown above to inspect curves, zoom, or place markers.";
                         color: MaterialPalette.on_surface_variant;
+                        style: MaterialTypography.body_medium;
                         horizontal-alignment: center;
                         vertical-alignment: center;
                         wrap: word-wrap;
@@ -382,7 +567,8 @@ export component PreviewCard inherits FilledCard {
                 }
 
                 // Floating Imaging Toolbar with Buttons and Live Coordinates to the right
-                if root.selected_plot_index >= 0 : Rectangle {
+                Rectangle {
+                    visible: root.selected_plot_index >= 0;
                     x: 12px;
                     y: 12px;
                     width: toolbar_layout.preferred-width + 12px;
@@ -520,8 +706,9 @@ export component PreviewCard inherits FilledCard {
                         }
 
                         // Clear Markers
-                        if root.markers_count > 0 : clear_markers_touch := TouchArea {
-                            width: 26px;
+                        clear_markers_touch := TouchArea {
+                            visible: root.markers_count > 0;
+                            width: root.markers_count > 0 ? 26px : 0px;
                             height: 26px;
                             mouse-cursor: pointer;
                             clicked => { root.clear_markers(); }
@@ -580,8 +767,9 @@ export component PreviewCard inherits FilledCard {
             }
 
             // Curve Visibility Sidebar (Vertical Checklist to the right of the plot)
-            if root.curve_toggle_items.length > 0: Rectangle {
-                width: root.sidebar_width;
+            Rectangle {
+                visible: root.curve_toggle_items.length > 0;
+                width: root.curve_toggle_items.length > 0 ? root.sidebar_width : 0px;
                 background: MaterialPalette.surface_container_low;
                 border-radius: MaterialStyleMetrics.border_radius_2;
 
@@ -601,7 +789,7 @@ export component PreviewCard inherits FilledCard {
                             vertical-alignment: center;
                         }
 
-                        TouchArea {
+                        toggle_all_true_area := TouchArea {
                             width: 24px;
                             height: 20px;
                             mouse-cursor: pointer;
@@ -623,7 +811,7 @@ export component PreviewCard inherits FilledCard {
                             vertical-alignment: center;
                         }
 
-                        TouchArea {
+                        toggle_all_false_area := TouchArea {
                             width: 32px;
                             height: 20px;
                             mouse-cursor: pointer;
@@ -770,8 +958,9 @@ export component PreviewCard inherits FilledCard {
             }
         }
 
-        if root.active_tab == 1: Vertical {
-            vertical-stretch: 1;
+        Vertical {
+            visible: root.active_tab == 1;
+            vertical-stretch: root.active_tab == 1 ? 1 : 0;
             spacing: MaterialStyleMetrics.spacing_4;
 
             // Dataset Values Table (High Density - 28px rows)

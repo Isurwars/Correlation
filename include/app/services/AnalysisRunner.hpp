@@ -62,6 +62,23 @@ private:
   AppController &controller_;
 
   std::thread analysis_thread_; ///< Handle for the background analysis computation.
+
+  /**
+   * @brief Asynchronously joins any running background thread to prevent blocking the UI.
+   */
+  void joinPreviousThreadAsync();
+
+  /**
+   * @brief Executes the analysis workflow synchronously within the worker thread.
+   * @return Error message if analysis failed or was aborted, empty string otherwise.
+   */
+  [[nodiscard]] std::string executeAnalysis();
+
+  /**
+   * @brief Updates the UI state and models once the analysis has completed.
+   * @param[in] err Error message from execution, if any.
+   */
+  void handleAnalysisCompletion(const std::string &err);
 };
 
 } // namespace correlation::app

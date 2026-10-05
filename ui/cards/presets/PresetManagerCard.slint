@@ -43,7 +43,7 @@ export component PresetManagerCard inherits OutlinedCard {
         load_btn_area.has-hover ? load_btn_area.absolute-position.x + load_btn_area.mouse-x :
         delete_btn_area.has-hover ? delete_btn_area.absolute-position.x + delete_btn_area.mouse-x :
         save_input_area.has-hover ? save_input_area.absolute-position.x + save_input_area.mouse-x :
-        save_btn_area.has-hover ? save_btn_area.absolute-position.y + save_btn_area.mouse-y : 0px;
+        save_btn_area.has-hover ? save_btn_area.absolute-position.x + save_btn_area.mouse-x : 0px;
     out property <length> hovered_y:
         preset_dropdown_area.has-hover ? preset_dropdown_area.absolute-position.y + preset_dropdown_area.mouse-y :
         load_btn_area.has-hover ? load_btn_area.absolute-position.y + load_btn_area.mouse-y :

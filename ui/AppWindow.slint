@@ -442,9 +442,11 @@ export component AppWindow inherits Window {
     property <string> preview_hovered_tooltip: preview_card.hovered_tooltip_text;
 
     property <string> hovered_tooltip_text: 
+        mini_sidebar.hovered_tooltip_text != "" ? mini_sidebar.hovered_tooltip_text :
         active_panel_tooltip != "" ? active_panel_tooltip : preview_hovered_tooltip;
 
     property <length> hovered_x:
+        mini_sidebar.hovered_tooltip_text != "" ? mini_sidebar.hovered_x :
         root.active_panel == 0 && panel_operations.hovered_tooltip_text != "" ? panel_operations.hovered_x :
         root.active_panel == 1 && panel_common.hovered_tooltip_text != "" ? panel_common.hovered_x :
         root.active_panel == 2 && panel_advanced.hovered_tooltip_text != "" ? panel_advanced.hovered_x :
@@ -454,6 +456,7 @@ export component AppWindow inherits Window {
         preview_hovered_tooltip != "" ? preview_card.hovered_x : 0px;
 
     property <length> hovered_y:
+        mini_sidebar.hovered_tooltip_text != "" ? mini_sidebar.hovered_y :
         root.active_panel == 0 && panel_operations.hovered_tooltip_text != "" ? panel_operations.hovered_y :
         root.active_panel == 1 && panel_common.hovered_tooltip_text != "" ? panel_common.hovered_y :
         root.active_panel == 2 && panel_advanced.hovered_tooltip_text != "" ? panel_advanced.hovered_y :
@@ -463,6 +466,7 @@ export component AppWindow inherits Window {
         preview_hovered_tooltip != "" ? preview_card.hovered_y : 0px;
 
     property <length> hovered_width:
+        mini_sidebar.hovered_tooltip_text != "" ? mini_sidebar.hovered_width :
         root.active_panel == 0 && panel_operations.hovered_tooltip_text != "" ? panel_operations.hovered_width :
         root.active_panel == 1 && panel_common.hovered_tooltip_text != "" ? panel_common.hovered_width :
         root.active_panel == 2 && panel_advanced.hovered_tooltip_text != "" ? panel_advanced.hovered_width :
@@ -472,6 +476,7 @@ export component AppWindow inherits Window {
         preview_hovered_tooltip != "" ? preview_card.hovered_width : 0px;
 
     property <length> hovered_height:
+        mini_sidebar.hovered_tooltip_text != "" ? mini_sidebar.hovered_height :
         root.active_panel == 0 && panel_operations.hovered_tooltip_text != "" ? panel_operations.hovered_height :
         root.active_panel == 1 && panel_common.hovered_tooltip_text != "" ? panel_common.hovered_height :
         root.active_panel == 2 && panel_advanced.hovered_tooltip_text != "" ? panel_advanced.hovered_height :
@@ -973,6 +978,21 @@ export component AppWindow inherits Window {
                             curve_toggle_items: root.curve_toggle_items;
                             selected_plot_index <=> root.selected_plot_index;
                             pinned_runs_count: root.pinned_runs_count;
+
+                            file_loaded: root.file_loaded;
+                            analysis_running: root.analysis_running;
+                            file_basename: root.file_basename;
+                            total_atoms: root.total_atoms;
+                            num_frames: root.num_frames;
+
+                            browse_file => { root.browse_file(); }
+                            run_analysis => { root.run_analysis(); }
+                            open_panel(id) => {
+                                root.last_active_panel = id;
+                                root.active_panel = id;
+                                root.left_col_width = Math.max(180px, root.last_col_width);
+                                root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
+                            }
 
                             table_headers: root.table_headers;
                             table_rows: root.table_rows;

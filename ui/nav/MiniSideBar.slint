@@ -46,6 +46,10 @@ component RailButton inherits Rectangle {
         animate colorize { duration: 150ms; }
     }
 
+    out property <bool> has_hover: touch.has-hover;
+    out property <length> hover_x: touch.has-hover ? touch.absolute-position.x + touch.mouse-x : 0px;
+    out property <length> hover_y: touch.has-hover ? touch.absolute-position.y + touch.mouse-y : 0px;
+
     touch := TouchArea {
         width: 100%;
         height: 100%;
@@ -70,6 +74,42 @@ export component MiniSideBar inherits Rectangle {
     callback toggle_theme();
     callback toggle_collapse();
 
+    out property <string> hovered_tooltip_text:
+        btn_operations.has_hover ? btn_operations.tooltip :
+        btn_common.has_hover ? btn_common.tooltip :
+        btn_advanced.has_hover ? btn_advanced.tooltip :
+        btn_plot.has_hover ? btn_plot.tooltip :
+        btn_analyses.has_hover ? btn_analyses.tooltip :
+        btn_export.has_hover ? btn_export.tooltip :
+        btn_run.has_hover ? btn_run.tooltip :
+        btn_theme.has_hover ? btn_theme.tooltip :
+        btn_collapse.has_hover ? btn_collapse.tooltip : "";
+
+    out property <length> hovered_x:
+        btn_operations.has_hover ? btn_operations.hover_x :
+        btn_common.has_hover ? btn_common.hover_x :
+        btn_advanced.has_hover ? btn_advanced.hover_x :
+        btn_plot.has_hover ? btn_plot.hover_x :
+        btn_analyses.has_hover ? btn_analyses.hover_x :
+        btn_export.has_hover ? btn_export.hover_x :
+        btn_run.has_hover ? btn_run.hover_x :
+        btn_theme.has_hover ? btn_theme.hover_x :
+        btn_collapse.has_hover ? btn_collapse.hover_x : 0px;
+
+    out property <length> hovered_y:
+        btn_operations.has_hover ? btn_operations.hover_y :
+        btn_common.has_hover ? btn_common.hover_y :
+        btn_advanced.has_hover ? btn_advanced.hover_y :
+        btn_plot.has_hover ? btn_plot.hover_y :
+        btn_analyses.has_hover ? btn_analyses.hover_y :
+        btn_export.has_hover ? btn_export.hover_y :
+        btn_run.has_hover ? btn_run.hover_y :
+        btn_theme.has_hover ? btn_theme.hover_y :
+        btn_collapse.has_hover ? btn_collapse.hover_y : 0px;
+
+    out property <length> hovered_width: 0px;
+    out property <length> hovered_height: 0px;
+
     width: 48px;
     background: MaterialPalette.surface_container_low;
 
@@ -90,60 +130,60 @@ export component MiniSideBar inherits Rectangle {
         spacing: 6px;
 
         // Panel 0: Operations & Trajectory
-        RailButton {
+        btn_operations := RailButton {
             icon: Icons.folder_open;
             active: root.active_panel == 0;
-            tooltip: "Operations & Trajectory (Ctrl+O)";
+            tooltip: "Operations & Trajectory (Ctrl+O)\n\n📁 Load structures, view lattice diagnostics, and configure frame slicing.";
             clicked => {
                 root.select_panel(root.active_panel == 0 ? -1 : 0);
             }
         }
 
         // Panel 1: Common Options (RDF, Cutoffs, Angles)
-        RailButton {
+        btn_common := RailButton {
             icon: Icons.tune;
             active: root.active_panel == 1;
-            tooltip: "Common Options (RDF, Cutoffs, Angles)";
+            tooltip: "Common Options\n\n⚙️ Configure pair bond cutoffs, RDF search radii, and plane angle binning.";
             clicked => {
                 root.select_panel(root.active_panel == 1 ? -1 : 1);
             }
         }
 
         // Panel 2: Advanced Options (S(Q), Rings, Smoothing, Order)
-        RailButton {
+        btn_advanced := RailButton {
             icon: Icons.science;
             active: root.active_panel == 2;
-            tooltip: "Advanced Options (S(Q), Rings, Smoothing)";
+            tooltip: "Advanced Options\n\n🔬 Fine-tune static structure factor S(Q), powder XRD, ring topology, and smoothing.";
             clicked => {
                 root.select_panel(root.active_panel == 2 ? -1 : 2);
             }
         }
 
         // Panel 3: Plot Settings & Comparisons
-        RailButton {
+        btn_plot := RailButton {
             icon: Icons.auto_graph;
             active: root.active_panel == 3;
-            tooltip: "Plot Settings & Comparisons";
+            tooltip: "Plot Settings & Comparisons\n\n📊 Adjust figure styling, publication DPI presets, and pin runs for comparison.";
             clicked => {
                 root.select_panel(root.active_panel == 3 ? -1 : 3);
             }
         }
 
         // Panel 4: Analyses Selection
-        RailButton {
+        btn_analyses := RailButton {
             icon: Icons.analytics;
             active: root.active_panel == 4;
-            tooltip: "Analyses Selection";
+            tooltip: "Analyses Selection\n\n📈 Toggle specific distribution functions, scattering kernels, and order parameters.";
             clicked => {
                 root.select_panel(root.active_panel == 4 ? -1 : 4);
             }
         }
 
         // Panel 5: Save & Export
-        RailButton {
+        btn_export := RailButton {
             icon: Icons.save;
             active: root.active_panel == 5;
-            tooltip: "Save & Export (Ctrl+S)";
+            tooltip: "Save & Export (Ctrl+S)\n\n💾 Export results to CSV, HDF5, Parquet, or publication-quality SVG vector plots.";
             clicked => {
                 root.select_panel(root.active_panel == 5 ? -1 : 5);
             }
@@ -155,14 +195,17 @@ export component MiniSideBar inherits Rectangle {
         }
 
         // Quick Run / Cancel Action
-        RailButton {
+        btn_run := RailButton {
             icon: root.analysis_running ? Icons.stop : Icons.play_arrow;
             active: root.analysis_running;
             active_bg: MaterialPalette.error_container;
             active_fg: MaterialPalette.on_error_container;
             inactive_fg: (root.file_loaded && !root.has_validation_errors) ? MaterialPalette.run : MaterialPalette.outline;
             enabled: root.analysis_running || (root.file_loaded && !root.has_validation_errors);
-            tooltip: root.analysis_running ? "Cancel Analysis (Esc)" : "Run Analysis (Ctrl+R)";
+            tooltip: root.analysis_running ? "Cancel Analysis (Esc)\n\n⏹️ Abort the currently executing parallel trajectory analysis." :
+                     (!root.file_loaded ? "Run Analysis (Ctrl+R)\n\n⚠️ Load a structure file first before running calculations." :
+                     (root.has_validation_errors ? "Run Analysis (Ctrl+R)\n\n⚠️ Fix invalid input parameters before running." :
+                     "Run Analysis (Ctrl+R)\n\n▶️ Execute all selected analyses on the trajectory."));
             clicked => {
                 if (root.analysis_running) {
                     root.cancel_analysis();
@@ -173,18 +216,18 @@ export component MiniSideBar inherits Rectangle {
         }
 
         // Theme Toggle
-        RailButton {
+        btn_theme := RailButton {
             icon: root.is_dark ? Icons.light_mode : Icons.dark_mode;
-            tooltip: "Toggle Color Scheme (Ctrl+D)";
+            tooltip: "Toggle Color Scheme (Ctrl+D)\n\n🌓 Switch between Material Dark and Light themes.";
             clicked => {
                 root.toggle_theme();
             }
         }
 
         // Collapse / Expand Toggle
-        RailButton {
+        btn_collapse := RailButton {
             icon: root.active_panel >= 0 ? Icons.chevron_backward : Icons.chevron_forward;
-            tooltip: root.active_panel >= 0 ? "Collapse Side Panel" : "Expand Side Panel";
+            tooltip: root.active_panel >= 0 ? "Collapse Side Panel\n\n◀️ Hide panel to expand plot workspace." : "Expand Side Panel\n\n▶️ Restore options panel.";
             clicked => {
                 root.toggle_collapse();
             }

@@ -63,6 +63,39 @@ export component BondCutoffsCard inherits OutlinedCard {
         return false;
     }
 
+    out property <string> hovered_tooltip_text:
+        !root.file_loaded ? "" :
+        (min_factor_area.has-hover ? "Minimum bond distance scaling factor (default: 0.6).\n\n🔬 Scales the sum of covalent/vdW radii to reject unphysically close atomic overlaps." :
+        apply_min_area.has-hover ? "Recalculate and apply minimum distance thresholds across all atom pairs." :
+        max_factor_area.has-hover ? "Maximum bond distance scaling factor (default: 1.2).\n\n🔬 Scales the sum of covalent/vdW radii to capture the first coordination shell." :
+        apply_max_area.has-hover ? "Recalculate and apply maximum distance thresholds across all atom pairs." :
+        global_cutoff_area.has-hover ? "Global uniform cutoff in Ångströms (default: 3.5 Å).\n\n🔬 Sets an identical isotropic cutoff across all pairs." :
+        apply_global_area.has-hover ? "Apply the global cutoff distance across all matrix entries." :
+        matrix_legend_area.has-hover ? "Pairwise bond cutoffs matrix in Ångströms.\n\n▲ Upper Triangle: Max distance (bonding cutoff)\n▼ Lower Triangle: Min distance (core exclusion)\n\n✏️ Direct Editing: Click any cell in the table below to customize individual pair limits." : "");
+
+    out property <length> hovered_x:
+        !root.file_loaded ? 0px :
+        (min_factor_area.has-hover ? min_factor_area.absolute-position.x + min_factor_area.mouse-x :
+        apply_min_area.has-hover ? apply_min_area.absolute-position.x + apply_min_area.mouse-x :
+        max_factor_area.has-hover ? max_factor_area.absolute-position.x + max_factor_area.mouse-x :
+        apply_max_area.has-hover ? apply_max_area.absolute-position.x + apply_max_area.mouse-x :
+        global_cutoff_area.has-hover ? global_cutoff_area.absolute-position.x + global_cutoff_area.mouse-x :
+        apply_global_area.has-hover ? apply_global_area.absolute-position.x + apply_global_area.mouse-x :
+        matrix_legend_area.has-hover ? matrix_legend_area.absolute-position.x + matrix_legend_area.mouse-x : 0px);
+
+    out property <length> hovered_y:
+        !root.file_loaded ? 0px :
+        (min_factor_area.has-hover ? min_factor_area.absolute-position.y + min_factor_area.mouse-y :
+        apply_min_area.has-hover ? apply_min_area.absolute-position.y + apply_min_area.mouse-y :
+        max_factor_area.has-hover ? max_factor_area.absolute-position.y + max_factor_area.mouse-y :
+        apply_max_area.has-hover ? apply_max_area.absolute-position.y + apply_max_area.mouse-y :
+        global_cutoff_area.has-hover ? global_cutoff_area.absolute-position.y + global_cutoff_area.mouse-y :
+        apply_global_area.has-hover ? apply_global_area.absolute-position.y + apply_global_area.mouse-y :
+        matrix_legend_area.has-hover ? matrix_legend_area.absolute-position.y + matrix_legend_area.mouse-y : 0px);
+
+    out property <length> hovered_width: 0px;
+    out property <length> hovered_height: 0px;
+
     Vertical {
         padding: MaterialStyleMetrics.spacing_8;
         spacing: MaterialStyleMetrics.spacing_8;
@@ -96,66 +129,77 @@ export component BondCutoffsCard inherits OutlinedCard {
                 color: MaterialPalette.on_surface_variant;
             }
 
-            if (root.file_loaded): HorizontalLayout {
-                spacing: 12px;
-                alignment: start;
-
-                // Upper / Max badge
+            matrix_legend_area := TouchArea {
+                visible: root.file_loaded;
+                height: root.file_loaded ? self.preferred-height : 0px;
                 HorizontalLayout {
-                    spacing: 4px;
-                    alignment: center;
-                    Rectangle {
-                        width: 10px;
-                        height: 10px;
-                        border-radius: 2px;
-                        background: MaterialPalette.primary;
-                    }
-                    MaterialText {
-                        text: "▲ Upper: Max (Å)";
-                        style: MaterialTypography.label_small;
-                        font_size: 11px;
-                        color: MaterialPalette.on_surface_variant;
-                    }
-                }
+                    spacing: 12px;
+                    alignment: start;
 
-                // Lower / Min badge
-                HorizontalLayout {
-                    spacing: 4px;
-                    alignment: center;
-                    Rectangle {
-                        width: 10px;
-                        height: 10px;
-                        border-radius: 2px;
-                        background: MaterialPalette.tertiary;
+                    // Upper / Max badge
+                    HorizontalLayout {
+                        spacing: 4px;
+                        alignment: center;
+                        Rectangle {
+                            width: 10px;
+                            height: 10px;
+                            border-radius: 2px;
+                            background: MaterialPalette.primary;
+                        }
+                        MaterialText {
+                            text: "▲ Upper: Max (Å)";
+                            style: MaterialTypography.label_small;
+                            font_size: 11px;
+                            color: MaterialPalette.on_surface_variant;
+                        }
                     }
-                    MaterialText {
-                        text: "▼ Lower: Min (Å)";
-                        style: MaterialTypography.label_small;
-                        font_size: 11px;
-                        color: MaterialPalette.on_surface_variant;
+
+                    // Lower / Min badge
+                    HorizontalLayout {
+                        spacing: 4px;
+                        alignment: center;
+                        Rectangle {
+                            width: 10px;
+                            height: 10px;
+                            border-radius: 2px;
+                            background: MaterialPalette.tertiary;
+                        }
+                        MaterialText {
+                            text: "▼ Lower: Min (Å)";
+                            style: MaterialTypography.label_small;
+                            font_size: 11px;
+                            color: MaterialPalette.on_surface_variant;
+                        }
                     }
                 }
             }
 
-            if (root.file_loaded): VerticalLayout {
+            VerticalLayout {
+                visible: root.file_loaded;
+                height: root.file_loaded ? self.preferred-height : 0px;
                 spacing: MaterialStyleMetrics.spacing_8;
 
                 // Row 1: Min factor (default 0.6)
                 HorizontalLayout {
                     spacing: 8px;
-                    TextField {
+                    min_factor_area := TouchArea {
                         horizontal-stretch: 1;
                         min-width: 90px;
-                        enabled: root.file_loaded;
-                        label: "Min Factor";
-                        text <=> root.min_factor;
+                        TextField {
+                            width: 100%;
+                            enabled: root.file_loaded;
+                            label: "Min Factor";
+                            text <=> root.min_factor;
+                        }
                     }
-                    FilledButton {
+                    apply_min_area := TouchArea {
                         horizontal-stretch: 0;
-                        enabled: root.file_loaded;
-                        text: "Apply Min";
-                        clicked => {
-                            root.apply_min_factor(root.min_factor.to-float());
+                        FilledButton {
+                            enabled: root.file_loaded;
+                            text: "Apply Min";
+                            clicked => {
+                                root.apply_min_factor(root.min_factor.to-float());
+                            }
                         }
                     }
                 }
@@ -163,19 +207,24 @@ export component BondCutoffsCard inherits OutlinedCard {
                 // Row 2: Max factor (default 1.2)
                 HorizontalLayout {
                     spacing: 8px;
-                    TextField {
+                    max_factor_area := TouchArea {
                         horizontal-stretch: 1;
                         min-width: 90px;
-                        enabled: root.file_loaded;
-                        label: "Max Factor";
-                        text <=> root.max_factor;
+                        TextField {
+                            width: 100%;
+                            enabled: root.file_loaded;
+                            label: "Max Factor";
+                            text <=> root.max_factor;
+                        }
                     }
-                    FilledButton {
+                    apply_max_area := TouchArea {
                         horizontal-stretch: 0;
-                        enabled: root.file_loaded;
-                        text: "Apply Max";
-                        clicked => {
-                            root.apply_max_factor(root.max_factor.to-float());
+                        FilledButton {
+                            enabled: root.file_loaded;
+                            text: "Apply Max";
+                            clicked => {
+                                root.apply_max_factor(root.max_factor.to-float());
+                            }
                         }
                     }
                 }
@@ -183,20 +232,25 @@ export component BondCutoffsCard inherits OutlinedCard {
                 // Row 3: Global cutoff (default 3.5)
                 HorizontalLayout {
                     spacing: 8px;
-                    TextField {
+                    global_cutoff_area := TouchArea {
                         horizontal-stretch: 1;
                         min-width: 90px;
-                        enabled: root.file_loaded;
-                        label: "Global Cutoff";
-                        text <=> root.global_cutoff;
+                        TextField {
+                            width: 100%;
+                            enabled: root.file_loaded;
+                            label: "Global Cutoff";
+                            text <=> root.global_cutoff;
+                        }
                     }
-                    FilledButton {
+                    apply_global_area := TouchArea {
                         horizontal-stretch: 0;
-                        enabled: root.file_loaded;
-                        text: "Set Global";
-                        clicked => {
-                            root.apply_global_cutoff(root.global_cutoff.to-float());
-                            root.set_uniform_cutoff(root.global_cutoff.to-float());
+                        FilledButton {
+                            enabled: root.file_loaded;
+                            text: "Set Global";
+                            clicked => {
+                                root.apply_global_cutoff(root.global_cutoff.to-float());
+                                root.set_uniform_cutoff(root.global_cutoff.to-float());
+                            }
                         }
                     }
                 }
