@@ -37,6 +37,8 @@ CheckOptions:
   readability-identifier-naming.MethodCase: 'camelBack'
   readability-identifier-naming.VariableCase: 'lower_case'
   readability-identifier-naming.ConstantCase: 'UPPER_CASE'
+  readability-identifier-naming.EnumConstantCase: 'CamelCase'
+  readability-identifier-naming.ScopedEnumConstantCase: 'CamelCase'
   readability-identifier-naming.ConstexprVariableCase: 'UPPER_CASE'
   readability-identifier-naming.ClassConstantCase: 'UPPER_CASE'
   readability-identifier-naming.StructConstantCase: 'UPPER_CASE'

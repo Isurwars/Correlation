@@ -73,8 +73,8 @@ struct AnalysisSettings {
   RingType ring_type = RingType::King; ///< Ring topology criterion (King or Franzblau).
   RingProjectionMode ring_projection_mode =
       RingProjectionMode::Direct;         ///< Network glass ring projection strategy.
-  std::string ring_network_former = "";   ///< Network-former element symbol (e.g., "Si").
-  std::string ring_bridging_element = ""; ///< Bridging element symbol (e.g., "O").
+  std::string ring_network_former;        ///< Network-former element symbol (e.g., "Si").
+  std::string ring_bridging_element;      ///< Bridging element symbol (e.g., "O").
   real_t lef_cutoff = 5.0;                ///< Cutoff radius for local entropy integration.
   real_t lef_sigma = 0.2; ///< Standard deviation for Gaussian smoothing in local entropy.
   size_t hyperuniformity_samples = 10000; ///< Number of random sample points for hyperuniformity.

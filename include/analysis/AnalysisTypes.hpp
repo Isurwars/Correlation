@@ -2,6 +2,7 @@
 
 #include "math/Precision.hpp"
 #include <cstddef>
+#include <cstdint>
 #include <vector>
 
 namespace correlation::analysis {
@@ -38,7 +39,7 @@ using BondCutoffMatrix = std::vector<std::vector<BondCutoffRange>>;
  * @enum RingType
  * @brief Ring definition used for cycle topology search.
  */
-enum class RingType {
+enum class RingType : std::uint8_t {
   King,     ///< King ring: geodesic distance in G equals perimeter distance along C.
   Franzblau ///< Franzblau shortest-path primitive ring: sub-paths <= floor(|C|/2) are unique
             ///< geodesics.
@@ -48,7 +49,7 @@ enum class RingType {
  * @enum RingProjectionMode
  * @brief Projection or filtering strategy for network ring tracing.
  */
-enum class RingProjectionMode {
+enum class RingProjectionMode : std::uint8_t {
   Direct,            ///< Direct search on raw atomic neighbor graph.
   BridgedProjection, ///< Contract bridging atoms to project network-former polyhedra connectivity
                      ///< (e.g. Si-O-Si -> Si-Si).
