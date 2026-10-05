@@ -387,11 +387,19 @@
   "385": "DfsStackFrame",
   "386": "PlotController::PlotController",
   "387": "matcorr",
+  "388": "MappedFile.hpp",
   "389": "PlotSize",
   "390": "PeriodicShift",
+  "391": "MappedFileTests",
   "392": "TDOSParams",
+  "393": "MotifSignatureCounts",
   "394": "ZipArchiveWriterTest",
   "395": "createCovalentCutoffRow",
+  "396": "TEST",
   "397": "CNAPairSig",
-  "400": "NumericalParityTests"
+  "398": "XdatcarReaderTests",
+  "399": "OrcaReader.cpp",
+  "400": "NumericalParityTests",
+  "401": "createCovalentCutoffRow",
+  "402": "CellTests"
 }

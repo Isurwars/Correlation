@@ -62,16 +62,21 @@ struct XRDParams {
  * @brief Configuration settings for distribution function analysis.
  */
 struct AnalysisSettings {
-  real_t r_max = 20.0;             ///< Maximum radius for RDF calculations (Angstroms).
-  real_t r_bin_width = 0.02;       ///< Bin width for radial distributions (Angstroms).
-  real_t q_max = 20.0;             ///< Maximum momentum transfer for S(Q) (Angstroms^-1).
-  real_t q_bin_width = 0.02;       ///< Bin width for S(Q) (Angstroms^-1).
-  real_t r_int_max = 10.0;         ///< Cutoff for integration-based properties.
-  real_t angle_bin_width = 1.0;    ///< Bin width for bond angle distributions (degrees).
-  real_t dihedral_bin_width = 1.0; ///< Bin width for dihedral distributions (degrees).
-  size_t max_ring_size = 8;        ///< Maximum size of rings to search for.
-  real_t lef_cutoff = 5.0;         ///< Cutoff radius for local entropy integration.
-  real_t lef_sigma = 0.2;          ///< Standard deviation for Gaussian smoothing in local entropy.
+  real_t r_max = 20.0;                 ///< Maximum radius for RDF calculations (Angstroms).
+  real_t r_bin_width = 0.02;           ///< Bin width for radial distributions (Angstroms).
+  real_t q_max = 20.0;                 ///< Maximum momentum transfer for S(Q) (Angstroms^-1).
+  real_t q_bin_width = 0.02;           ///< Bin width for S(Q) (Angstroms^-1).
+  real_t r_int_max = 10.0;             ///< Cutoff for integration-based properties.
+  real_t angle_bin_width = 1.0;        ///< Bin width for bond angle distributions (degrees).
+  real_t dihedral_bin_width = 1.0;     ///< Bin width for dihedral distributions (degrees).
+  size_t max_ring_size = 8;            ///< Maximum size of rings to search for.
+  RingType ring_type = RingType::King; ///< Ring topology criterion (King or Franzblau).
+  RingProjectionMode ring_projection_mode =
+      RingProjectionMode::Direct;         ///< Network glass ring projection strategy.
+  std::string ring_network_former = "";   ///< Network-former element symbol (e.g., "Si").
+  std::string ring_bridging_element = ""; ///< Bridging element symbol (e.g., "O").
+  real_t lef_cutoff = 5.0;                ///< Cutoff radius for local entropy integration.
+  real_t lef_sigma = 0.2; ///< Standard deviation for Gaussian smoothing in local entropy.
   size_t hyperuniformity_samples = 10000; ///< Number of random sample points for hyperuniformity.
   size_t frame_stride = 1;                ///< Sampling stride between frames (>= 1).
 

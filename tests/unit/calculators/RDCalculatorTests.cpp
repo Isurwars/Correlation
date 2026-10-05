@@ -131,6 +131,112 @@ TEST_F(RDCalculatorTests, CelluloseRingDistribution) {
   EXPECT_NEAR(sum_rings, 1.0, 1e-6);
 }
 
+TEST_F(RDCalculatorTests, ComputesFranzblauAndKingSeparately) {
+  // Graph: 6-cycle 0-1-2-3-4-5-0 plus node 6 connected to 0 and 2.
+  correlation::core::NeighborGraph g(7);
+  for (size_t i = 0; i < 6; ++i) {
+    size_t next = (i + 1) % 6;
+    g.addDirectedEdge(i, next, 1.0, {1.0, 0.0, 0.0});
+    g.addDirectedEdge(next, i, 1.0, {-1.0, 0.0, 0.0});
+  }
+  g.addDirectedEdge(0, 6, 1.0, {0.0, 1.0, 0.0});
+  g.addDirectedEdge(6, 0, 1.0, {0.0, -1.0, 0.0});
+  g.addDirectedEdge(2, 6, 1.0, {0.0, 1.0, 0.0});
+  g.addDirectedEdge(6, 2, 1.0, {0.0, -1.0, 0.0});
+
+  // 1. King calculation: accepts composite 6-ring
+  auto king_hist = correlation::calculators::RDCalculator::calculate(g, 6, RingType::King);
+  auto const &king_raw = king_hist.partials.at("RawCounts");
+  // Bins: 3, 4, 5, 6 (indices 0, 1, 2, 3)
+  EXPECT_EQ(king_raw[1], 1.0); // 4-ring
+  EXPECT_EQ(king_raw[3], 2.0); // 2 composite 6-rings accepted by King
+
+  // 2. Franzblau calculation: rejects composite 6-ring
+  auto franzblau_hist =
+      correlation::calculators::RDCalculator::calculate(g, 6, RingType::Franzblau);
+  auto const &franzblau_raw = franzblau_hist.partials.at("RawCounts");
+  EXPECT_EQ(franzblau_raw[1], 1.0); // 4-ring
+  EXPECT_EQ(franzblau_raw[3], 0.0); // 6-ring rejected
+}
+
+TEST_F(RDCalculatorTests, ComputesBridgedSilicaRingStatistics) {
+  correlation::core::Cell silica_ring(std::array<real_t, 6>{20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
+  silica_ring.addAtom("Si", {0.0, 0.0, 0.0}); // 0
+  silica_ring.addAtom("O", {1.0, 0.0, 0.0});  // 1
+  silica_ring.addAtom("Si", {2.0, 0.0, 0.0}); // 2
+  silica_ring.addAtom("O", {2.0, 1.0, 0.0});  // 3
+  silica_ring.addAtom("Si", {1.0, 2.0, 0.0}); // 4
+  silica_ring.addAtom("O", {0.0, 1.0, 0.0});  // 5
+
+  correlation::core::NeighborGraph g(6);
+  for (size_t i = 0; i < 6; ++i) {
+    size_t next = (i + 1) % 6;
+    g.addDirectedEdge(i, next, 1.0, {1.0, 0.0, 0.0});
+    g.addDirectedEdge(next, i, 1.0, {-1.0, 0.0, 0.0});
+  }
+
+  correlation::calculators::RDCalculator::RDParams params{
+      .max_ring_size = 6,
+      .ring_type = RingType::Franzblau,
+      .projection_mode = RingProjectionMode::BridgedProjection,
+      .network_former = "Si",
+      .bridging_element = "O",
+      .report_polyhedra_size = true,
+  };
+
+  auto hist = correlation::calculators::RDCalculator::calculate(g, silica_ring, params);
+
+  EXPECT_EQ(hist.x_unit, "polyhedra");
+  EXPECT_EQ(hist.bins[0], 3.0); // Bins: 3, 4, 5, 6
+
+  auto const &raw_counts = hist.partials.at("RawCounts");
+  EXPECT_EQ(raw_counts[0], 1.0); // Exactly one 3-former polyhedron ring
+
+  auto const &rings_per_former = hist.partials.at("RingsPerFormer");
+  EXPECT_NEAR(rings_per_former[0], 1.0 / 3.0, 1e-5); // 1 ring / 3 Si atoms
+
+  auto const &node_frequency = hist.partials.at("NodeFrequency");
+  EXPECT_NEAR(node_frequency[0], 1.0, 1e-5); // (3 Si in ring) / 3 Si atoms = 1.0
+}
+
+TEST_F(RDCalculatorTests, ComputesAlternatingSilicaRingStatistics) {
+  correlation::core::Cell silica_ring(std::array<real_t, 6>{20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
+  silica_ring.addAtom("Si", {0.0, 0.0, 0.0}); // 0
+  silica_ring.addAtom("O", {1.0, 0.0, 0.0});  // 1
+  silica_ring.addAtom("Si", {2.0, 0.0, 0.0}); // 2
+  silica_ring.addAtom("O", {2.0, 1.0, 0.0});  // 3
+  silica_ring.addAtom("Si", {1.0, 2.0, 0.0}); // 4
+  silica_ring.addAtom("O", {0.0, 1.0, 0.0});  // 5
+
+  correlation::core::NeighborGraph g(6);
+  for (size_t i = 0; i < 6; ++i) {
+    size_t next = (i + 1) % 6;
+    g.addDirectedEdge(i, next, 1.0, {1.0, 0.0, 0.0});
+    g.addDirectedEdge(next, i, 1.0, {-1.0, 0.0, 0.0});
+  }
+
+  correlation::calculators::RDCalculator::RDParams params{
+      .max_ring_size = 6,
+      .ring_type = RingType::Franzblau,
+      .projection_mode = RingProjectionMode::AlternatingTracing,
+      .network_former = "Si",
+      .bridging_element = "O",
+      .report_polyhedra_size = true,
+  };
+
+  auto hist = correlation::calculators::RDCalculator::calculate(g, silica_ring, params);
+
+  EXPECT_EQ(hist.x_unit, "polyhedra");
+  // In alternating mode with report_polyhedra_size, bins start at 2 (since 4 atoms = 2 tetrahedra)
+  // Bins: 2, 3, 4, 5, 6
+  EXPECT_EQ(hist.bins[0], 2.0);
+  EXPECT_EQ(hist.bins[1], 3.0);
+
+  auto const &raw_counts = hist.partials.at("RawCounts");
+  EXPECT_EQ(raw_counts[0], 0.0); // no 2-former (4-atom) rings
+  EXPECT_EQ(raw_counts[1], 1.0); // exactly one 3-former (6-atom) ring
+}
+
 } // namespace correlation::analysis
 
 // -------------------------------------------------------------------------- //

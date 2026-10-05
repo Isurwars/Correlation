@@ -36,15 +36,16 @@ struct BFSScratch {
   std::vector<size_t> visited;
   std::vector<std::pair<size_t, size_t>> cross_edges;
 
-  // King-ring check state (reused inside isKingRing)
+  // King-ring and Franzblau check state (reused inside isRingValid)
   std::vector<int> dist_king;
+  std::vector<uint32_t> path_counts;
   std::vector<size_t> q_king;
   std::vector<size_t> visited_king;
 
   // Output accumulated by this thread
   std::vector<std::vector<correlation::core::AtomID>> local_cycles;
 
-  explicit BFSScratch(size_t n) : dist(n, -1), parents(n), dist_king(n, -1) {
+  explicit BFSScratch(size_t n) : dist(n, -1), parents(n), dist_king(n, -1), path_counts(n, 0) {
     q.reserve(n);
     q_king.reserve(n);
     visited.reserve(n);
@@ -65,6 +66,7 @@ struct BFSScratch {
   struct RootSearchSettings {
     size_t root;
     size_t max_size;
+    correlation::analysis::RingType ring_type{correlation::analysis::RingType::King};
   };
 };
 
@@ -117,16 +119,20 @@ void getPaths(BFSScratch::PathEndpoints endpoints,
 }
 
 // ---------------------------------------------------------------------------
-// King-ring check.  Uses dist_king / q_king / visited_king from the caller-supplied
-// scratch so no heap allocations occur here (unchanged algorithm, scalar state only).
+// King-ring and Franzblau primitive ring check.
+// Uses dist_king / path_counts / q_king / visited_king from the caller-supplied
+// scratch so no heap allocations occur here.
 // ---------------------------------------------------------------------------
-void runKingBFS(const correlation::core::NeighborGraph &graph, BFSScratch::KingBFSSettings settings,
-                std::vector<int> &dist_king, std::vector<size_t> &q_king,
-                std::vector<size_t> &visited_nodes) {
+void runRingBFS(const correlation::core::NeighborGraph &graph, BFSScratch::KingBFSSettings settings,
+                std::vector<int> &dist_king, std::vector<uint32_t> &path_counts,
+                std::vector<size_t> &q_king, std::vector<size_t> &visited_nodes, bool count_paths) {
   q_king.clear();
   visited_nodes.clear();
 
   dist_king[settings.start_node] = 0;
+  if (count_paths) {
+    path_counts[settings.start_node] = 1;
+  }
   q_king.push_back(settings.start_node);
   visited_nodes.push_back(settings.start_node);
 
@@ -134,6 +140,7 @@ void runKingBFS(const correlation::core::NeighborGraph &graph, BFSScratch::KingB
   while (q_head < q_king.size()) {
     size_t const node = q_king[q_head++];
     int const current_dist = dist_king[node];
+    uint32_t const current_paths = count_paths ? path_counts[node] : 0;
 
     if (current_dist >= settings.max_check_dist) {
       continue;
@@ -143,50 +150,79 @@ void runKingBFS(const correlation::core::NeighborGraph &graph, BFSScratch::KingB
       size_t const neighbor_node = neighbor.index;
       if (dist_king[neighbor_node] == -1) {
         dist_king[neighbor_node] = current_dist + 1;
+        if (count_paths) {
+          path_counts[neighbor_node] = current_paths;
+        }
         q_king.push_back(neighbor_node);
         visited_nodes.push_back(neighbor_node);
+      } else if (count_paths && dist_king[neighbor_node] == current_dist + 1) {
+        path_counts[neighbor_node] += current_paths;
       }
     }
   }
 }
 
-bool isKingRing(const correlation::core::NeighborGraph &graph,
-                const std::vector<correlation::core::AtomID> &cycle, std::vector<int> &dist_king,
-                std::vector<size_t> &q_king, std::vector<size_t> &visited_king) {
+bool checkCyclePairDistances(const std::vector<correlation::core::AtomID> &cycle, size_t source_idx,
+                             const std::vector<int> &dist_king,
+                             const std::vector<uint32_t> &path_counts, bool count_paths) {
+  size_t const size = cycle.size();
+  for (size_t target_idx = 0; target_idx < size; ++target_idx) {
+    if (source_idx == target_idx) {
+      continue;
+    }
+    size_t const target_node = cycle[target_idx];
+    size_t const diff =
+        (target_idx > source_idx) ? (target_idx - source_idx) : (source_idx - target_idx);
+    size_t const dist_in_cycle = std::min(diff, size - diff);
+    int const d_g = dist_king[target_node];
+
+    // 1. King chordless criterion: no shortcut path strictly shorter than cycle perimeter
+    if (d_g != -1 && std::cmp_less(d_g, dist_in_cycle)) {
+      return false;
+    }
+
+    // 2. Franzblau unique-geodesic condition: sub-path must be unique shortest path
+    if (count_paths && std::cmp_equal(dist_in_cycle, d_g)) {
+      uint32_t const expected_paths = (size % 2 == 0 && dist_in_cycle == size / 2) ? 2U : 1U;
+      if (path_counts[target_node] != expected_paths) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+bool isRingValid(const correlation::core::NeighborGraph &graph,
+                 const std::vector<correlation::core::AtomID> &cycle, std::vector<int> &dist_king,
+                 std::vector<uint32_t> &path_counts, std::vector<size_t> &q_king,
+                 std::vector<size_t> &visited_king, correlation::analysis::RingType ring_type) {
   size_t const size = cycle.size();
   if (size < 3) {
     return false;
   }
 
+  bool const count_paths = (ring_type == correlation::analysis::RingType::Franzblau);
+
   for (size_t i = 0; i < size; ++i) {
     size_t const start_node = cycle[i];
 
-    runKingBFS(graph,
+    runRingBFS(graph,
                {
                    .start_node = start_node,
                    .max_check_dist = static_cast<int>(size / 2),
                },
-               dist_king, q_king, visited_king);
+               dist_king, path_counts, q_king, visited_king, count_paths);
 
-    bool is_king = true;
-    for (size_t j = 0; j < size; ++j) {
-      if (i == j) {
-        continue;
-      }
-      size_t const target_node = cycle[j];
-      size_t const diff = (j > i) ? (j - i) : (i - j);
-      size_t const dist_in_cycle = std::min(diff, size - diff);
-      if (dist_king[target_node] != -1 && std::cmp_less(dist_king[target_node], dist_in_cycle)) {
-        is_king = false;
-        break;
-      }
-    }
+    bool const valid = checkCyclePairDistances(cycle, i, dist_king, path_counts, count_paths);
 
     for (size_t const visited_node : visited_king) {
       dist_king[visited_node] = -1;
+      if (count_paths) {
+        path_counts[visited_node] = 0;
+      }
     }
 
-    if (!is_king) {
+    if (!valid) {
       return false;
     }
   }
@@ -316,7 +352,8 @@ void processCrossEdge(const correlation::core::NeighborGraph &graph,
         std::reverse(cycle.begin() + 1, cycle.end());
       }
 
-      if (isKingRing(graph, cycle, bsc.dist_king, bsc.q_king, bsc.visited_king)) {
+      if (isRingValid(graph, cycle, bsc.dist_king, bsc.path_counts, bsc.q_king, bsc.visited_king,
+                      settings.ring_type)) {
         bsc.local_cycles.push_back(std::move(cycle));
       }
     }
@@ -347,10 +384,11 @@ void processRoot(const correlation::core::NeighborGraph &graph,
 }
 
 // ---------------------------------------------------------------------------
-// Main ring-finding function — now parallel over roots.
+// Main ring-finding function — parallel over roots.
 // ---------------------------------------------------------------------------
-std::vector<std::vector<correlation::core::AtomID>>
-getAllShortestRings(const correlation::core::NeighborGraph &graph, size_t max_size) {
+std::vector<std::vector<correlation::core::AtomID>> getAllShortestRings(
+    const correlation::core::NeighborGraph &graph, size_t max_size,
+    correlation::analysis::RingType ring_type = correlation::analysis::RingType::King) {
   std::vector<std::vector<correlation::core::AtomID>> all_cycles;
   if (max_size < 3) {
     return all_cycles;
@@ -367,7 +405,6 @@ getAllShortestRings(const correlation::core::NeighborGraph &graph, size_t max_si
 
   // Grain size 16: balances TBB overhead (~µs per task) against load
   // imbalance (root-0 does far more work than root-N-1).
-  // auto_partitioner further subdivides at runtime if needed.
   tbb::parallel_for(
       tbb::blocked_range<size_t>(0, num_nodes, /*grain=*/16),
       [&](const tbb::blocked_range<size_t> &range) {
@@ -377,6 +414,7 @@ getAllShortestRings(const correlation::core::NeighborGraph &graph, size_t max_si
                       {
                           .root = root,
                           .max_size = max_size,
+                          .ring_type = ring_type,
                       },
                       bsc);
         }
@@ -389,8 +427,7 @@ getAllShortestRings(const correlation::core::NeighborGraph &graph, size_t max_si
                       std::make_move_iterator(bsc.local_cycles.end()));
   }
 
-  // Final deduplication (oriented cycles may still have orientation variants
-  // produced by different paths within the same root's BFS)
+  // Final deduplication
   std::ranges::sort(all_cycles);
   auto const [first, last] = std::ranges::unique(all_cycles);
   all_cycles.erase(first, last);
@@ -401,11 +438,21 @@ getAllShortestRings(const correlation::core::NeighborGraph &graph, size_t max_si
 } // anonymous namespace
 
 // ---------------------------------------------------------------------------
-// Public API — unchanged
+// Public API
 // ---------------------------------------------------------------------------
 std::map<int, size_t> MotifFinder::findRings(const correlation::core::NeighborGraph &graph,
                                              size_t max_size) {
-  auto all_cycles = getAllShortestRings(graph, max_size);
+  return findRings(graph, max_size, RingType::King);
+}
+
+std::map<int, size_t> MotifFinder::findFranzblauRings(const correlation::core::NeighborGraph &graph,
+                                                      size_t max_size) {
+  return findRings(graph, max_size, RingType::Franzblau);
+}
+
+std::map<int, size_t> MotifFinder::findRings(const correlation::core::NeighborGraph &graph,
+                                             size_t max_size, RingType ring_type) {
+  auto all_cycles = getAllShortestRings(graph, max_size, ring_type);
   std::map<int, size_t> ring_counts;
   for (const auto &cycle : all_cycles) {
     ring_counts[static_cast<int>(cycle.size())]++;
@@ -415,7 +462,19 @@ std::map<int, size_t> MotifFinder::findRings(const correlation::core::NeighborGr
 
 std::vector<std::vector<correlation::core::AtomID>>
 MotifFinder::extractCycles(const correlation::core::NeighborGraph &graph, size_t target_size) {
-  auto all_cycles = getAllShortestRings(graph, target_size);
+  return extractCycles(graph, target_size, RingType::King);
+}
+
+std::vector<std::vector<correlation::core::AtomID>>
+MotifFinder::extractFranzblauCycles(const correlation::core::NeighborGraph &graph,
+                                    size_t target_size) {
+  return extractCycles(graph, target_size, RingType::Franzblau);
+}
+
+std::vector<std::vector<correlation::core::AtomID>>
+MotifFinder::extractCycles(const correlation::core::NeighborGraph &graph, size_t target_size,
+                           RingType ring_type) {
+  auto all_cycles = getAllShortestRings(graph, target_size, ring_type);
   std::vector<std::vector<correlation::core::AtomID>> exact_cycles;
   exact_cycles.reserve(all_cycles.size());
   for (auto &cycle : all_cycles) {
@@ -424,6 +483,112 @@ MotifFinder::extractCycles(const correlation::core::NeighborGraph &graph, size_t
     }
   }
   return exact_cycles;
+}
+
+std::vector<std::vector<correlation::core::AtomID>>
+MotifFinder::extractAllCycles(const correlation::core::NeighborGraph &graph, size_t max_size,
+                              RingType ring_type) {
+  return getAllShortestRings(graph, max_size, ring_type);
+}
+
+correlation::core::NeighborGraph
+MotifFinder::buildBridgedGraph(const correlation::core::NeighborGraph &graph,
+                               const correlation::core::Cell &cell, std::string_view former_element,
+                               std::string_view bridging_element) {
+  const auto &atoms = cell.atoms();
+  size_t const num_nodes = graph.nodeCount();
+  correlation::core::NeighborGraph bridged_graph(num_nodes);
+
+  if (former_element.empty() || bridging_element.empty() || num_nodes != atoms.size()) {
+    return bridged_graph;
+  }
+
+  std::vector<bool> connected(num_nodes, false);
+
+  for (size_t i = 0; i < num_nodes; ++i) {
+    if (atoms[i].element().symbol != former_element) {
+      continue;
+    }
+
+    connected.assign(num_nodes, false);
+    connected[i] = true;
+
+    // 1. Second-hop neighbors through bridging element
+    for (const auto &bridge_nbr : graph.getNeighbors(i)) {
+      size_t const bridge_idx = bridge_nbr.index;
+      if (bridge_idx >= num_nodes || atoms[bridge_idx].element().symbol != bridging_element) {
+        continue;
+      }
+
+      for (const auto &second_nbr : graph.getNeighbors(bridge_idx)) {
+        size_t const second_idx = second_nbr.index;
+        if (second_idx < num_nodes && atoms[second_idx].element().symbol == former_element &&
+            !connected[second_idx]) {
+          connected[second_idx] = true;
+          auto const disp = cell.minimumImage(atoms[second_idx].position() - atoms[i].position());
+          real_t const dist =
+              std::sqrt(disp.x() * disp.x() + disp.y() * disp.y() + disp.z() * disp.z());
+          bridged_graph.addDirectedEdge(i, second_idx, dist, disp);
+        }
+      }
+    }
+
+    // 2. Direct homopolar former-former bonds
+    for (const auto &nbr : graph.getNeighbors(i)) {
+      size_t const nbr_idx = nbr.index;
+      if (nbr_idx < num_nodes && atoms[nbr_idx].element().symbol == former_element &&
+          !connected[nbr_idx]) {
+        connected[nbr_idx] = true;
+        bridged_graph.addDirectedEdge(i, nbr_idx, nbr.distance, nbr.r_ij);
+      }
+    }
+  }
+
+  return bridged_graph;
+}
+
+std::vector<std::vector<correlation::core::AtomID>> MotifFinder::filterAlternatingCycles(
+    const std::vector<std::vector<correlation::core::AtomID>> &cycles,
+    const correlation::core::Cell &cell, std::string_view element_a, std::string_view element_b) {
+  const auto &atoms = cell.atoms();
+  std::vector<std::vector<correlation::core::AtomID>> filtered;
+
+  for (const auto &cycle : cycles) {
+    size_t const len = cycle.size();
+    if (len < 4 || len % 2 != 0) {
+      continue;
+    }
+
+    std::string_view const first_sym = atoms[cycle[0]].element().symbol;
+    std::string_view expected_even;
+    std::string_view expected_odd;
+
+    if (first_sym == element_a) {
+      expected_even = element_a;
+      expected_odd = element_b;
+    } else if (first_sym == element_b) {
+      expected_even = element_b;
+      expected_odd = element_a;
+    } else {
+      continue;
+    }
+
+    bool is_alternating = true;
+    for (size_t k = 0; k < len; ++k) {
+      std::string_view const sym = atoms[cycle[k]].element().symbol;
+      std::string_view const expected = (k % 2 == 0) ? expected_even : expected_odd;
+      if (sym != expected) {
+        is_alternating = false;
+        break;
+      }
+    }
+
+    if (is_alternating) {
+      filtered.push_back(cycle);
+    }
+  }
+
+  return filtered;
 }
 
 } // namespace correlation::calculators

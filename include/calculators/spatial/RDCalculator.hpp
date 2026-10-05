@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "calculators/BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/BaseCalculator.hpp"
 
 namespace correlation::calculators {
 
@@ -39,15 +39,47 @@ public:
                       const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
+   * @struct RDParams
+   * @brief Configuration parameters for Ring Distribution calculation.
+   */
+  struct RDParams {
+    size_t max_ring_size = 8; ///< Maximum ring size to search for.
+    correlation::analysis::RingType ring_type =
+        correlation::analysis::RingType::King; ///< Ring criterion (King or Franzblau).
+    correlation::analysis::RingProjectionMode projection_mode =
+        correlation::analysis::RingProjectionMode::Direct; ///< Projection or filtering strategy.
+    std::string network_former;   ///< Network-former element symbol (e.g. "Si").
+    std::string bridging_element; ///< Bridging element symbol (e.g. "O").
+    bool report_polyhedra_size =
+        true; ///< If true in bridged/alternating mode, reports size in former polyhedra.
+  };
+
+  /**
    * @brief High-performance computation of the Ring Distribution (RD).
    *
    * @param[in] graph The pre-computed neighbor graph.
    * @param[in] max_ring_size The maximum number of atoms in a single ring.
+   * @param[in] ring_type Ring criterion (King or Franzblau).
    * @return A histogram representing the ring size distribution.
    * @throws std::invalid_argument If @p max_ring_size is less than 3.
    */
+  static correlation::analysis::Histogram
+  calculate(const correlation::core::NeighborGraph &graph, size_t max_ring_size,
+            correlation::analysis::RingType ring_type = correlation::analysis::RingType::King);
+
+  /**
+   * @brief Comprehensive computation of Ring Distribution with network projections and
+   * normalization.
+   *
+   * @param[in] graph The pre-computed neighbor graph.
+   * @param[in] cell The atomic cell containing elements and geometry.
+   * @param[in] params Ring calculation and network filtering parameters.
+   * @return A histogram containing normalized fractions, raw counts, and per-former statistics.
+   * @throws std::invalid_argument If max_ring_size is less than 3.
+   */
   static correlation::analysis::Histogram calculate(const correlation::core::NeighborGraph &graph,
-                                                    size_t max_ring_size);
+                                                    const correlation::core::Cell &cell,
+                                                    const RDParams &params);
 };
 
 } // namespace correlation::calculators
