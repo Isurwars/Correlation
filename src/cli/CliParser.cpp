@@ -53,7 +53,7 @@ void printParameterOptions() {
       << "  --angle-bin <float>       Angular bin width (default: 1.0)\n"
       << "  --dihedral-bin <float>    Dihedral bin width (default: copy angle-bin)\n\n"
       << "Ring Parameters:\n"
-      << "  --max-ring-size <int>     Max ring size topology (default: 8)\n\n"
+      << "  --max-ring-size <int>     Max ring size topology (default: 12)\n\n"
       << "Post-Processing & Output Formats:\n"
       << "  --smoothing-sigma <float> Bandwidth kernel smoothing (default: 0.1)\n"
       << "  --smoothing-kernel <str>  Kernel type (gaussian, bump, triweight, \n"

@@ -62,6 +62,7 @@ struct AppDefaults {
   static constexpr real_t BOND_MAX_FACTOR =
       1.2; ///< Default factor for maximum bond cutoff distance.
   static constexpr real_t BOND_GLOBAL_CUTOFF = 3.5; ///< Default global uniform bond cutoff in Å.
+  static constexpr size_t MAX_RING_SIZE = 12;       ///< Default max ring size for topology.
 
   // --- Status Messages ---
   static constexpr const char *MSG_RUNNING_ANALYSIS =
@@ -106,7 +107,7 @@ struct ProgramOptions {
   real_t r_int_max = AppDefaults::R_INT_MAX;                ///< Upper limit for g(r) integration.
   real_t angle_bin_width = AppDefaults::ANGLE_BIN_WIDTH;    ///< Step size for ADF.
   real_t dihedral_bin_width = AppDefaults::ANGLE_BIN_WIDTH; ///< Step size for dihedral analysis.
-  size_t max_ring_size = 8; ///< Maximum ring size for topological analysis.
+  size_t max_ring_size = AppDefaults::MAX_RING_SIZE;        ///< Maximum ring size for topological analysis.
 
   /** @brief Map of calculator ID to its enabled state. */
   std::map<std::string, bool> active_calculators;

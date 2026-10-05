@@ -43,7 +43,7 @@ public:
    * @brief Configuration parameters for Ring Distribution calculation.
    */
   struct RDParams {
-    size_t max_ring_size = 8; ///< Maximum ring size to search for.
+    size_t max_ring_size = 12; ///< Maximum ring size to search for.
     correlation::analysis::RingType ring_type =
         correlation::analysis::RingType::King; ///< Ring criterion (King or Franzblau).
     correlation::analysis::RingProjectionMode projection_mode =

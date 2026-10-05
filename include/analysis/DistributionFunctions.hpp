@@ -69,7 +69,7 @@ struct AnalysisSettings {
   real_t r_int_max = 10.0;             ///< Cutoff for integration-based properties.
   real_t angle_bin_width = 1.0;        ///< Bin width for bond angle distributions (degrees).
   real_t dihedral_bin_width = 1.0;     ///< Bin width for dihedral distributions (degrees).
-  size_t max_ring_size = 8;            ///< Maximum size of rings to search for.
+  size_t max_ring_size = 12;           ///< Maximum size of rings to search for.
   RingType ring_type = RingType::King; ///< Ring topology criterion (King or Franzblau).
   RingProjectionMode ring_projection_mode =
       RingProjectionMode::Direct;         ///< Network glass ring projection strategy.

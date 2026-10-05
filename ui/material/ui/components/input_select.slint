@@ -12,11 +12,13 @@ import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
 import { MaterialTypography } from "../styling/material_typography.slint";
 import { MaterialText } from "./material_text.slint";
 import { ScrollView } from "std-widgets.slint";
+import { Elevation } from "./elevation.slint";
 
 component InputSelectItem {
     in property <string> text;
     in property <bool> enabled: true;
     in property <bool> selected: false;
+    in property <bool> highlighted: false;
     in property <bool> is_match: true;
 
     callback clicked();
@@ -28,7 +30,9 @@ component InputSelectItem {
         clip: true;
         width: 100%;
         height: 100%;
-        background: root.selected ? MaterialPalette.surface_container_highest : #00000000;
+        background: root.highlighted ? MaterialPalette.surface_container_highest
+            : root.selected ? MaterialPalette.surface_container_high
+            : #00000000;
 
         state_area := StateLayerArea {
             color: MaterialPalette.on_surface;
@@ -40,10 +44,10 @@ component InputSelectItem {
                 spacing: MaterialStyleMetrics.spacing_8;
                 alignment: center;
 
-                if root.selected: Rectangle {
+                Rectangle {
                     width: 16px;
                     height: 16px;
-                    Image {
+                    if root.selected: Image {
                         width: 16px;
                         height: 16px;
                         source: Icons.check;
@@ -68,6 +72,35 @@ component InputSelectItem {
     }
 }
 
+component InputSelectEmptyItem {
+    in property <string> text: "No matches found";
+
+    height: MaterialStyleMetrics.size_40;
+
+    HorizontalLayout {
+        padding_left: MaterialStyleMetrics.padding_16;
+        padding_right: MaterialStyleMetrics.padding_16;
+        spacing: MaterialStyleMetrics.spacing_8;
+        alignment: center;
+
+        Image {
+            width: 16px;
+            height: 16px;
+            source: Icons.remove;
+            colorize: MaterialPalette.on_surface_variant;
+        }
+
+        MaterialText {
+            horizontal-stretch: 1;
+            text: root.text;
+            style: MaterialTypography.body_medium;
+            color: MaterialPalette.on_surface_variant;
+            vertical-alignment: center;
+            overflow: elide;
+        }
+    }
+}
+
 export component InputSelect {
     in property <string> label: "Select Plot";
     in property <bool> enabled: true;
@@ -80,8 +113,10 @@ export component InputSelect {
 
     property <bool> is_open: false;
     property <bool> filter_active: false;
+    property <int> highlighted_index: -1;
     property <length> item_height: MaterialStyleMetrics.size_40;
     property <int> max_visible_items: 6;
+
     out property <bool> has-hover: touch_area.has-hover && !root.is_open;
     out property <length> mouse-x: touch_area.mouse-x;
     out property <length> mouse-y: touch_area.mouse-y;
@@ -102,39 +137,6 @@ export component InputSelect {
         }
     }
 
-    // Collapsed / Base view: directly editable TextField
-    main_text_field := TextField {
-        width: 100%;
-        height: 100%;
-        label: root.label;
-        placeholder_text: "Filter or select plot...";
-        text <=> root.text;
-        leading_icon: root.leading_icon;
-        trailing_icon: root.text != "" ? Icons.close : (root.is_open ? Icons.arrow_drop_up : Icons.arrow_drop_down);
-        read_only: false;
-        enabled: root.enabled;
-
-        trailing_icon_clicked => {
-            if root.text != "" {
-                root.text = "";
-                root.filter_active = false;
-                root.open_menu();
-            } else {
-                root.toggle_menu();
-            }
-        }
-
-        edited(new_text) => {
-            root.text = new_text;
-            root.filter_active = (new_text != "");
-            root.open_menu();
-        }
-
-        accepted(text) => {
-            root.select_first_match();
-        }
-    }
-
     touch_area := TouchArea {
         width: 100%;
         height: 100%;
@@ -147,143 +149,189 @@ export component InputSelect {
         }
     }
 
+    main_text_field := TextField {
+        width: 100%;
+        height: 100%;
+        label: root.label;
+        placeholder_text: "Filter or select plot...";
+        text <=> root.text;
+        leading_icon: root.leading_icon;
+        trailing_icon: root.text != "" ? Icons.close : (root.is_open ? Icons.arrow_drop_up : Icons.arrow_drop_down);
+        read_only: false;
+        enabled: root.enabled;
+
+        changed has_focus => {
+            if self.has_focus && root.enabled {
+                root.open_menu();
+            }
+        }
+
+        trailing_icon_clicked => {
+            if root.text != "" {
+                root.text = "";
+                root.filter_active = false;
+                root.highlighted_index = -1;
+                root.open_menu();
+            } else {
+                root.toggle_menu();
+            }
+        }
+
+        edited(new_text) => {
+            root.text = new_text;
+            root.filter_active = (new_text != "");
+            root.highlighted_index = -1;
+            root.open_menu();
+        }
+
+        accepted(text) => {
+            root.commit_selection();
+        }
+
+        key_pressed(event) => {
+            if event.text == Key.DownArrow {
+                if !root.is_open {
+                    root.open_menu();
+                    root.highlighted_index = (root.current_index >= 0) ? root.current_index : 0;
+                } else {
+                    root.move_highlight_next();
+                }
+                return accept;
+            }
+            if event.text == Key.UpArrow {
+                if !root.is_open {
+                    root.open_menu();
+                    root.highlighted_index = (root.current_index >= 0) ? root.current_index : max(0, root.items.length - 1);
+                } else {
+                    root.move_highlight_prev();
+                }
+                return accept;
+            }
+            if event.text == Key.Return {
+                if root.is_open {
+                    root.commit_selection();
+                    return accept;
+                }
+            }
+            if event.text == Key.Escape {
+                if root.is_open {
+                    root.is_open = false;
+                    menu.close();
+                    return accept;
+                }
+            }
+            reject
+        }
+    }
+
     menu := PopupWindow {
         x: 0;
-        y: 0;
+        y: root.height + 4px;
         width: root.width;
-        height: popup_container.height;
+        height: popup_elevation.height;
         close_policy: close_on_click_outside;
-        forward_focus: popup_text_field;
+        forward_focus: main_text_field;
 
-        popup_container := Rectangle {
+        popup_elevation := Elevation {
+            level: 2;
             width: root.width;
-            property <length> menu_dropdown_height: min(max(items_layout.preferred-height, root.item_height), root.max_visible_items * root.item_height);
-            height: root.height + self.menu_dropdown_height;
+            property <length> menu_dropdown_height: items_layout.preferred-height > 0px
+                ? min(items_layout.preferred-height, root.max_visible_items * root.item_height)
+                : (root.filter_active ? root.item_height : 0px);
+            height: self.menu_dropdown_height + MaterialStyleMetrics.padding_4 * 2;
             border_radius: MaterialStyleMetrics.border_radius_2;
             background: MaterialPalette.surface_container;
-            border_width: 1px;
-            border_color: MaterialPalette.outline_variant;
-            clip: true;
 
-            VerticalLayout {
-                padding: 0;
-                spacing: 0;
+            dropdown_content := Rectangle {
+                x: 0;
+                y: MaterialStyleMetrics.padding_4;
+                width: parent.width;
+                height: popup_elevation.menu_dropdown_height;
+                clip: true;
 
-                popup_text_field := TextField {
-                    width: root.width;
-                    height: root.height;
-                    label: root.label;
-                    placeholder_text: "Filter or select plot...";
-                    text <=> root.text;
-                    leading_icon: root.leading_icon;
-                    trailing_icon: root.text != "" ? Icons.close : Icons.arrow_drop_up;
-                    read_only: false;
-                    enabled: true;
+                property <bool> has_scroll: items_layout.preferred-height > self.height;
 
-                    trailing_icon_clicked => {
-                        if root.text != "" {
-                            root.text = "";
-                            root.filter_active = false;
-                        } else {
-                            menu.close();
-                            root.is_open = false;
-                        }
-                    }
+                scroll_view := ScrollView {
+                    x: 0;
+                    y: 0;
+                    width: dropdown_content.has_scroll ? parent.width - 16px : parent.width;
+                    height: parent.height;
+                    vertical-stretch: 1;
+                    vertical_scrollbar_policy: ScrollBarPolicy.always_off;
+                    horizontal_scrollbar_policy: ScrollBarPolicy.always_off;
 
-                    edited(new_text) => {
-                        root.text = new_text;
-                        root.filter_active = (new_text != "");
-                    }
+                    content_height: max(parent.height, items_layout.preferred-height);
 
-                    accepted(text) => {
-                        root.select_first_match();
-                    }
-                }
+                    items_layout := VerticalLayout {
+                        padding: 0;
+                        spacing: 0;
 
-                Rectangle {
-                    height: 1px;
-                    background: MaterialPalette.outline_variant;
-                }
+                        for item[index] in root.items: InputSelectItem {
+                            text: item.text;
+                            enabled: item.enabled;
+                            selected: index == root.current_index;
+                            highlighted: index == root.highlighted_index;
+                            is_match: !root.filter_active || root.text == "" || (item.text.to-lowercase().replace-all(root.text.to-lowercase(), "") != item.text.to-lowercase());
 
-                dropdown_content := Rectangle {
-                    height: popup_container.menu_dropdown_height;
-                    property <bool> has_scroll: items_layout.preferred-height > self.height;
-
-                    scroll_view := ScrollView {
-                        x: 0;
-                        y: 0;
-                        width: dropdown_content.has_scroll ? parent.width - 16px : parent.width;
-                        height: parent.height;
-                        vertical-stretch: 1;
-                        vertical_scrollbar_policy: ScrollBarPolicy.always_off;
-                        horizontal_scrollbar_policy: ScrollBarPolicy.always_off;
-
-                        content_height: max(parent.height, items_layout.preferred-height);
-
-                        items_layout := VerticalLayout {
-                            padding: 0;
-                            spacing: 0;
-
-                            for item[index] in root.items: InputSelectItem {
-                                text: item.text;
-                                enabled: item.enabled;
-                                selected: index == root.current_index;
-                                is_match: !root.filter_active || root.text == "" || (item.text.to-lowercase().replace-all(root.text.to-lowercase(), "") != item.text.to-lowercase());
-
-                                clicked => {
-                                    root.choose_item(index);
-                                }
+                            clicked => {
+                                root.choose_item(index);
                             }
                         }
                     }
+                }
 
-                    // High contrast scrollbar: always visible when options exceed viewport
-                    if dropdown_content.has_scroll: scroll_track := Rectangle {
-                        x: parent.width - 12px;
-                        y: 4px;
+                if root.filter_active && items_layout.preferred-height <= 0px: InputSelectEmptyItem {
+                    x: 0;
+                    y: 0;
+                    width: parent.width;
+                }
+
+                // High contrast scrollbar: visible when items exceed viewport
+                if dropdown_content.has_scroll: scroll_track := Rectangle {
+                    x: parent.width - 12px;
+                    y: 4px;
+                    width: 8px;
+                    height: parent.height - 8px;
+                    background: MaterialPalette.surface_container_highest;
+                    border_radius: 4px;
+
+                    thumb := Rectangle {
+                        property <length> track_h: scroll_track.height;
+                        property <length> max_scroll: max(1px, items_layout.preferred-height - scroll_view.height);
+                        property <length> thumb_h: max(28px, track_h * (scroll_view.height / max(1px, items_layout.preferred-height)));
+
+                        x: 0px;
+                        y: clamp((track_h - self.thumb_h) * (-scroll_view.content_y / self.max_scroll), 0px, track_h - self.thumb_h);
                         width: 8px;
-                        height: parent.height - 8px;
-                        background: MaterialPalette.surface_container_highest;
+                        height: self.thumb_h;
                         border_radius: 4px;
+                        background: thumb_touch.pressed ? MaterialPalette.primary.darker(15%) : thumb_touch.has_hover ? MaterialPalette.primary.brighter(15%) : MaterialPalette.primary;
+                    }
 
-                        thumb := Rectangle {
-                            property <length> track_h: scroll_track.height;
-                            property <length> max_scroll: max(1px, items_layout.preferred-height - scroll_view.height);
-                            property <length> thumb_h: max(28px, track_h * (scroll_view.height / max(1px, items_layout.preferred-height)));
+                    thumb_touch := TouchArea {
+                        property <length> press_y;
+                        property <length> start_content_y;
 
-                            x: 0px;
-                            y: clamp((track_h - self.thumb_h) * (-scroll_view.content_y / self.max_scroll), 0px, track_h - self.thumb_h);
-                            width: 8px;
-                            height: self.thumb_h;
-                            border_radius: 4px;
-                            background: thumb_touch.pressed ? MaterialPalette.primary.darker(15%) : thumb_touch.has_hover ? MaterialPalette.primary.brighter(15%) : MaterialPalette.primary;
+                        pointer-event(event) => {
+                            if event.button == PointerEventButton.left && event.kind == PointerEventKind.down {
+                                self.press_y = self.mouse-y;
+                                self.start_content_y = scroll_view.content_y;
+                            }
                         }
 
-                        thumb_touch := TouchArea {
-                            property <length> press_y;
-                            property <length> start_content_y;
-
-                            pointer-event(event) => {
-                                if event.button == PointerEventButton.left && event.kind == PointerEventKind.down {
-                                    self.press_y = self.mouse-y;
-                                    self.start_content_y = scroll_view.content_y;
-                                }
+                        moved => {
+                            if self.pressed && (scroll_track.height > thumb.thumb_h) {
+                                scroll_view.content_y = min(0px, max(-(items_layout.preferred-height - scroll_view.height),
+                                    self.start_content_y - (self.mouse-y - self.press_y) * (items_layout.preferred-height - scroll_view.height) / (scroll_track.height - thumb.thumb_h)));
                             }
+                        }
 
-                            moved => {
-                                if self.pressed && (scroll_track.height > thumb.thumb_h) {
-                                    scroll_view.content_y = min(0px, max(-(items_layout.preferred-height - scroll_view.height),
-                                        self.start_content_y - (self.mouse-y - self.press_y) * (items_layout.preferred-height - scroll_view.height) / (scroll_track.height - thumb.thumb_h)));
-                                }
+                        scroll-event(event) => {
+                            if event.delta-y != 0 {
+                                scroll_view.content_y = min(0px, max(-(items_layout.preferred-height - scroll_view.height), scroll_view.content_y + event.delta-y));
+                                return accept;
                             }
-
-                            scroll-event(event) => {
-                                if event.delta-y != 0 {
-                                    scroll_view.content_y = min(0px, max(-(items_layout.preferred-height - scroll_view.height), scroll_view.content_y + event.delta-y));
-                                    return accept;
-                                }
-                                reject
-                            }
+                            reject
                         }
                     }
                 }
@@ -302,6 +350,7 @@ export component InputSelect {
             root.is_open = false;
         } else {
             root.filter_active = false;
+            root.highlighted_index = root.current_index;
             root.open_menu();
         }
     }
@@ -312,13 +361,44 @@ export component InputSelect {
             root.text = root.items[index].text;
         }
         root.filter_active = false;
+        root.highlighted_index = -1;
         root.is_open = false;
         menu.close();
         root.selected(index);
     }
 
-    function select_first_match() {
-        root.is_open = false;
-        menu.close();
+    function commit_selection() {
+        if root.highlighted_index >= 0 && root.highlighted_index < root.items.length {
+            root.choose_item(root.highlighted_index);
+        } else if root.current_index >= 0 && root.current_index < root.items.length {
+            root.choose_item(root.current_index);
+        } else if root.items.length > 0 {
+            root.choose_item(0);
+        } else {
+            root.is_open = false;
+            menu.close();
+        }
+    }
+
+    function move_highlight_next() {
+        if root.items.length == 0 {
+            return;
+        }
+        if root.highlighted_index < 0 {
+            root.highlighted_index = (root.current_index >= 0) ? root.current_index : 0;
+        } else {
+            root.highlighted_index = min(root.items.length - 1, root.highlighted_index + 1);
+        }
+    }
+
+    function move_highlight_prev() {
+        if root.items.length == 0 {
+            return;
+        }
+        if root.highlighted_index < 0 {
+            root.highlighted_index = (root.current_index >= 0) ? root.current_index : max(0, root.items.length - 1);
+        } else {
+            root.highlighted_index = max(0, root.highlighted_index - 1);
+        }
     }
 }

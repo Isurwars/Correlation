@@ -44,7 +44,7 @@ struct CliOptions {
   std::string disable_groups;    ///< Comma-separated list of analysis groups to disable.
   real_t time_step = 1.0;        ///< Time step between trajectory frames (fs).
   real_t r_int_max = 10.0;       ///< Cutoff radius for integral properties (Å).
-  int max_ring_size = 8;         ///< Maximum ring size for primitive ring statistics.
+  int max_ring_size = 12;        ///< Maximum ring size for primitive ring statistics.
   real_t smoothing_sigma = 0.1;  ///< Gaussian smoothing standard deviation.
   real_t lef_cutoff = 5.0;       ///< Cutoff radius for Local Entropic Fingerprint (Å).
   real_t lef_sigma = 0.2;        ///< Standard deviation for LEF Gaussian kernel (Å).

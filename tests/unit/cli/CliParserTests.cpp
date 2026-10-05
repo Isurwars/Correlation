@@ -61,7 +61,7 @@ TEST_F(CliParserTests, DefaultsWithInputFileOnly) {
   EXPECT_TRUE(opts.disable_groups.empty());
   EXPECT_THAT(opts.time_step, correlation::testing::IsRealEq(1.0));
   EXPECT_THAT(opts.r_int_max, correlation::testing::IsRealEq(10.0));
-  EXPECT_EQ(opts.max_ring_size, 8);
+  EXPECT_EQ(opts.max_ring_size, 12);
   EXPECT_THAT(opts.smoothing_sigma, correlation::testing::IsRealEq(0.1));
   EXPECT_EQ(opts.smoothing_kernel, correlation::math::KernelType::Gaussian);
   EXPECT_FALSE(opts.show_version);

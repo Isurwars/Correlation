@@ -93,6 +93,41 @@ size_t findRootKey(const std::string &json, const std::string &key) {
   return std::string::npos;
 }
 
+std::string unescapeJsonString(std::string_view val) {
+  std::string unescaped;
+  unescaped.reserve(val.size());
+  for (size_t i = 0; i < val.size(); ++i) {
+    if (val[i] == '\\' && i + 1 < val.size()) {
+      char const next = val[i + 1];
+      switch (next) {
+      case '"':
+      case '\\':
+        unescaped += next;
+        i++;
+        break;
+      case 'n':
+        unescaped += '\n';
+        i++;
+        break;
+      case 'r':
+        unescaped += '\r';
+        i++;
+        break;
+      case 't':
+        unescaped += '\t';
+        i++;
+        break;
+      default:
+        unescaped += val[i];
+        break;
+      }
+    } else {
+      unescaped += val[i];
+    }
+  }
+  return unescaped;
+}
+
 std::string parseStringValue(const std::string &json, const std::string &key) {
   size_t pos = findRootKey(json, key);
   if (pos == std::string::npos) {
@@ -120,36 +155,7 @@ std::string parseStringValue(const std::string &json, const std::string &key) {
   if (end == std::string::npos) {
     return "";
   }
-  std::string val = json.substr(start + 1, end - start - 1);
-
-  // Unescape
-  std::string unescaped;
-  for (size_t i = 0; i < val.size(); ++i) {
-    if (val[i] == '\\' && i + 1 < val.size()) {
-      char const next = val[i + 1];
-      if (next == '"') {
-        unescaped += '"';
-        i++;
-      } else if (next == '\\') {
-        unescaped += '\\';
-        i++;
-      } else if (next == 'n') {
-        unescaped += '\n';
-        i++;
-      } else if (next == 'r') {
-        unescaped += '\r';
-        i++;
-      } else if (next == 't') {
-        unescaped += '\t';
-        i++;
-      } else {
-        unescaped += val[i];
-      }
-    } else {
-      unescaped += val[i];
-    }
-  }
-  return unescaped;
+  return unescapeJsonString(json.substr(start + 1, end - start - 1));
 }
 
 real_t parseDoubleValue(const std::string &json, const std::string &key, real_t fallback) {
@@ -425,7 +431,7 @@ Preset PresetManager::fromJson(const std::string &json) {
   preset.options.dihedral_bin_width =
       parseDoubleValue(json, "dihedral_bin_width", AppDefaults::ANGLE_BIN_WIDTH);
 
-  preset.options.max_ring_size = static_cast<size_t>(parseIntValue(json, "max_ring_size", 8));
+  preset.options.max_ring_size = static_cast<size_t>(parseIntValue(json, "max_ring_size", 12));
   preset.options.hyper_samples = static_cast<size_t>(parseIntValue(json, "hyper_samples", 10000));
   preset.options.smoothing_sigma =
       parseDoubleValue(json, "smoothing_sigma", AppDefaults::SMOOTHING_SIGMA);

@@ -8,12 +8,14 @@ using correlation::real_t;
 
 namespace correlation::testing {
 
-#ifdef CORRELATION_USE_SINGLE_PRECISION
-constexpr float kTestTolerance = 1e-4F;
-inline auto IsRealEq(real_t expected) { return ::testing::FloatNear(expected, kTestTolerance); }
-#else
-constexpr double kTestTolerance = 1e-12;
-inline auto IsRealEq(real_t expected) { return ::testing::DoubleNear(expected, kTestTolerance); }
-#endif
+inline constexpr real_t kTestTolerance = correlation::is_single_precision ? 1e-4F : 1e-12;
+
+inline auto IsRealEq(real_t expected) {
+  if constexpr (correlation::is_single_precision) {
+    return ::testing::FloatNear(expected, kTestTolerance);
+  } else {
+    return ::testing::DoubleNear(expected, kTestTolerance);
+  }
+}
 
 } // namespace correlation::testing
