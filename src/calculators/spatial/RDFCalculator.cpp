@@ -229,9 +229,7 @@ std::map<std::string, correlation::analysis::Histogram> RDFCalculator::calculate
   }
 
   const auto num_bins = static_cast<size_t>(std::floor(r_max / r_bin_width));
-  const auto vol = static_cast<real_t>(cell.volume());
-  const real_t d_r = r_bin_width;
-  const real_t rho_0 = num_atoms / vol;
+  const real_t rho_0 = num_atoms / volume;
 
   correlation::analysis::Histogram h_r;
   correlation::analysis::Histogram g_r;
@@ -291,8 +289,8 @@ std::map<std::string, correlation::analysis::Histogram> RDFCalculator::calculate
 
   normalizeDistributions(cell, element_counts,
                          {
-                             .volume = vol,
-                             .bin_width = d_r,
+                             .volume = volume,
+                             .bin_width = r_bin_width,
                              .num_bins = num_bins,
                          },
                          h_r, g_r, g_r_reduced, j_r);

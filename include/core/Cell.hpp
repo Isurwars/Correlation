@@ -233,11 +233,11 @@ private:
   void updateLatticeParametersFromVectors();
 
   /**
-   * @brief Registers an element symbol and returns its ID.
+   * @brief Registers an element symbol if not already present and returns its Element reference.
    * @param symbol Element symbol (e.g. "O").
-   * @return The existing or newly assigned ElementID.
+   * @return Reference to the registered Element.
    */
-  ElementID getOrRegisterElement(std::string_view symbol);
+  const Element &getOrRegisterElement(std::string_view symbol);
 
   math::Matrix3<real_t> lattice_vectors_;         ///< Basis vectors of the box.
   math::Matrix3<real_t> inverse_lattice_vectors_; ///< Inverse matrix for fractional mapping.

@@ -117,26 +117,25 @@ std::optional<Element> Cell::findElement(std::string_view symbol) const {
   return std::nullopt;
 }
 
-ElementID Cell::getOrRegisterElement(std::string_view symbol) {
-  if (auto existing_element = findElement(symbol)) {
-    return existing_element->id;
+const Element &Cell::getOrRegisterElement(std::string_view symbol) {
+  auto iter =
+      std::ranges::find_if(elements_, [&](const Element &elem) { return elem.symbol == symbol; });
+  if (iter != elements_.end()) {
+    return *iter;
   }
   // Register the new element
-  ElementID new_id{static_cast<int>(elements_.size())};
+  ElementID const new_id{static_cast<int>(elements_.size())};
   elements_.push_back({
       .symbol = std::string(symbol),
       .id = new_id,
   });
-  return new_id;
+  return elements_.back();
 }
 
 Atom &Cell::addAtom(std::string_view symbol, const math::Vector3<real_t> &position) {
-  ElementID element_id = getOrRegisterElement(symbol);
-  auto element_it = std::ranges::find_if(
-      elements_, [&](const Element &elem) { return elem.id.value == element_id.value; });
-
+  const Element &element = getOrRegisterElement(symbol);
   AtomID const new_atom_id{static_cast<std::uint32_t>(atoms_.size())};
-  atoms_.emplace_back(*element_it, position, new_atom_id);
+  atoms_.emplace_back(element, position, new_atom_id);
   return atoms_.back();
 }
 
