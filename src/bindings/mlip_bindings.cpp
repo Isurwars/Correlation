@@ -16,6 +16,8 @@
 #include "mlip/MLIPInterface.hpp"
 #include "mlip/PeriodicGraphBuilder.hpp"
 
+#include <span>
+
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -312,8 +314,8 @@ void bindMlipInterface(py::module_ &mod) {
   // ------------------------------------------------------------------
   // MLIPInterface
   // ------------------------------------------------------------------
-  py::class_<MLIPInterface, PyMLIPInterface>(
-      mod, "MLIPInterface", "Abstract interface for MLIP engines.")
+  py::class_<MLIPInterface, PyMLIPInterface>(mod, "MLIPInterface",
+                                             "Abstract interface for MLIP engines.")
       .def(py::init<>())
       .def("get_model_name", &MLIPInterface::getModelName, "Return model descriptor name.")
       .def("evaluate", &MLIPInterface::evaluate, py::arg("cell"),

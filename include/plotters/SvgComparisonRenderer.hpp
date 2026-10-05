@@ -14,6 +14,7 @@
 #include <cstddef>
 #include <format>
 #include <ranges>
+#include <span>
 #include <sstream>
 #include <string>
 #include <tuple>
@@ -78,15 +79,15 @@ struct SvgComparisonRenderer {
 
     kWidth = config->effective_width();
     kHeight = config->effective_height();
-    const real_t kLeft = static_cast<real_t>(100.0);
-    const real_t kRight = static_cast<real_t>(40.0);
-    const real_t kTop = static_cast<real_t>(50.0);
-    const real_t kBot = static_cast<real_t>(90.0);
+    const auto margin_left = static_cast<real_t>(100.0);
+    const auto margin_right = static_cast<real_t>(40.0);
+    const auto margin_top = static_cast<real_t>(50.0);
+    const auto margin_bot = static_cast<real_t>(90.0);
 
-    px0 = kLeft;
-    px1 = kWidth - kRight;
-    py0 = kTop;
-    py1 = kHeight - kBot;
+    px0 = margin_left;
+    px1 = kWidth - margin_right;
+    py0 = margin_top;
+    py1 = kHeight - margin_bot;
   }
 
   void computeGlobalRanges() {
@@ -409,10 +410,9 @@ struct SvgComparisonRenderer {
       if (ref.is_vertical) {
         if (ref.value >= xScale.min && ref.value <= xScale.max) {
           real_t spx = detail::mapValue(ref.value, xScale.min, xScale.max, px0, px1);
-          svg << std::format(
-              "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-              "stroke=\"{}\" stroke-width=\"1.8\" stroke-dasharray=\"4,4\"/>\n",
-              spx, py0, spx, py1, color);
+          svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                             "stroke=\"{}\" stroke-width=\"1.8\" stroke-dasharray=\"4,4\"/>\n",
+                             spx, py0, spx, py1, color);
           if (!ref.label.empty()) {
             svg << renderTextAsPath(ref.label, spx + static_cast<real_t>(5.0),
                                     py0 + static_cast<real_t>(18.0),
@@ -423,10 +423,9 @@ struct SvgComparisonRenderer {
       } else {
         if (ref.value >= yScale.min && ref.value <= yScale.max) {
           real_t spy = detail::mapValue(ref.value, yScale.min, yScale.max, py1, py0);
-          svg << std::format(
-              "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-              "stroke=\"{}\" stroke-width=\"1.8\" stroke-dasharray=\"4,4\"/>\n",
-              px0, spy, px1, spy, color);
+          svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                             "stroke=\"{}\" stroke-width=\"1.8\" stroke-dasharray=\"4,4\"/>\n",
+                             px0, spy, px1, spy, color);
           if (!ref.label.empty()) {
             svg << renderTextAsPath(ref.label, px0 + static_cast<real_t>(8.0),
                                     spy - static_cast<real_t>(5.0),

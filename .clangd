@@ -1,10 +1,13 @@
 CompileFlags:
+  CompilationDatabase: build
   Add:
     - "-std=c++23"
     - "-Iinclude"
     - "-isystembuild/src"
     - "-isystem/usr/include/slint"
     - "-isystem./build/"
+    - "-isystem./.venv/lib/python3.14/site-packages/pybind11/include"
+    - "-isystem/usr/include/python3.14"
   Remove:
     - "-fmodules-ts"
     - "-fdeps-format=p1689r5"

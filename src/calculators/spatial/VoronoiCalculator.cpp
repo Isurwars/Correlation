@@ -18,6 +18,7 @@
 #include <cmath>
 #include <format>
 #include <map>
+#include <span>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -163,8 +164,7 @@ computeAlignedPositions(std::span<const correlation::core::Atom> atoms,
   correlation::math::Matrix3<real_t> const inv_lattice_d = correlation::math::invert(lattice);
   std::vector<std::array<real_t, 3>> aligned_positions(atoms.size());
   for (size_t i = 0; i < atoms.size(); ++i) {
-    aligned_positions[i] =
-        computeSingleAlignedPosition(atoms[i].position(), inv_lattice_d, box);
+    aligned_positions[i] = computeSingleAlignedPosition(atoms[i].position(), inv_lattice_d, box);
   }
   return aligned_positions;
 }

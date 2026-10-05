@@ -95,39 +95,65 @@ protected:
 };
 
 TEST_F(SteinhardtCalculatorTests, SimpleCubic) {
-  auto cell = correlation::testing::crystals::createSimpleCubicCell(1.0, "Ar", 1, 1, 1);
+  // Simple Cubic: Coordination Z = 6
   // Shift atom to center (0.5, 0.5, 0.5) for exact fixture parity
-  cell = correlation::core::Cell({1.0, 1.0, 1.0, 90.0, 90.0, 90.0});
+  correlation::core::Cell cell({1.0, 1.0, 1.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {0.5, 0.5, 0.5});
 
-  // ignore_periodic_self_interactions = false
+  // ignore_periodic_self_interactions = false (captures the 6 periodic face neighbors)
   StructureAnalyzer const analyzer(cell, 1.1, {{{.min_sq = 0.36, .max_sq = 1.1 * 1.1}}}, false);
+  ASSERT_EQ(analyzer.neighborGraph().getNeighbors(0).size(), 6UL);
+
   auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
-  checkOutputs(hists, 0.764, 0.354, 0.013);
-  checkAllOutputs(hists, 0.764, 0.354, 0.155, 0.013, 0.764, 0.354);
+  // Classical values: Z=6, q4=0.7638, q6=0.3536, w4_hat=+0.1593, w6_hat=+0.0132
+  checkOutputs(hists, 0.7638, 0.3536, 0.0132);
+  checkAllOutputs(hists, 0.7638, 0.3536, 0.1593, 0.0132, 0.7638, 0.3536);
 }
 
 TEST_F(SteinhardtCalculatorTests, BCC) {
+  // BCC: Coordination Z = 14 (8 in 1st shell @ dist=sqrt(0.75)~0.866, 6 in 2nd shell @ dist=1.0)
   auto cell = correlation::testing::crystals::createBCCCell(1.0, "Ar", 1, 1, 1);
 
-  StructureAnalyzer const analyzer(cell, 1.1, {{{.min_sq = 0.36, .max_sq = 1.1 * 1.1}}},
-                                   false); // dist = sqrt(0.75) ~ 0.866 and 1.0
+  StructureAnalyzer const analyzer(cell, 1.1, {{{.min_sq = 0.36, .max_sq = 1.1 * 1.1}}}, false);
+  ASSERT_EQ(analyzer.neighborGraph().getNeighbors(0).size(), 14UL);
+
   auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
-  checkOutputs(hists, 0.036, 0.511, 0.013);
-  checkAllOutputs(hists, 0.036, 0.511, 0.155, 0.013, 0.036, 0.511);
+  // Classical values for 14-neighbor BCC: q4=0.0364, q6=0.5107, w4_hat=+0.1593, w6_hat=+0.0131
+  checkOutputs(hists, 0.0364, 0.5107, 0.0131);
+  checkAllOutputs(hists, 0.0364, 0.5107, 0.1593, 0.0131, 0.0364, 0.5107);
+}
+
+TEST_F(SteinhardtCalculatorTests, HCP) {
+  // Hexagonal Close-Packed (ideal c/a = sqrt(8/3)): Coordination Z = 12
+  constexpr real_t LAT_A = 1.0;
+  real_t const lat_c = std::sqrt(static_cast<real_t>(8.0 / 3.0)) * LAT_A;
+  auto cell = correlation::testing::crystals::createHCPCell(LAT_A, lat_c, "Mg", 2, 2, 2);
+
+  // 12 nearest neighbors at distance 1.0
+  StructureAnalyzer const analyzer(cell, 1.1, {{{.min_sq = 0.36, .max_sq = 1.1 * 1.1}}}, false);
+  ASSERT_EQ(analyzer.neighborGraph().getNeighbors(0).size(), 12UL);
+
+  auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
+
+  // Classical values for HCP: Z=12, q4=0.0972, q6=0.4848, w4_hat=+0.1341, w6_hat=-0.0124
+  checkOutputs(hists, 0.0972, 0.4848, -0.0124);
+  checkAllOutputs(hists, 0.0972, 0.4848, 0.1341, -0.0124, 0.0972, 0.4848);
 }
 
 TEST_F(SteinhardtCalculatorTests, FCC) {
+  // Face-Centered Cubic: Coordination Z = 12 (dist = sqrt(0.5) ~ 0.707)
   auto cell = correlation::testing::crystals::createFCCCell(1.0, "Ar", 1, 1, 1);
 
-  StructureAnalyzer const analyzer(cell, 0.8, {{{.min_sq = 0.36, .max_sq = 0.8 * 0.8}}},
-                                   false); // dist = sqrt(0.5) ~ 0.707
+  StructureAnalyzer const analyzer(cell, 0.8, {{{.min_sq = 0.36, .max_sq = 0.8 * 0.8}}}, false);
+  ASSERT_EQ(analyzer.neighborGraph().getNeighbors(0).size(), 12UL);
+
   auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
-  checkOutputs(hists, 0.191, 0.575, -0.013); // W6 for FCC is approx -0.013
-  checkAllOutputs(hists, 0.191, 0.575, -0.155, -0.013, 0.191, 0.575);
+  // Classical values for FCC: Z=12, q4=0.1909, q6=0.5745, w4_hat=-0.1593, w6_hat=-0.0132
+  checkOutputs(hists, 0.1909, 0.5745, -0.0132);
+  checkAllOutputs(hists, 0.1909, 0.5745, -0.1593, -0.0132, 0.1909, 0.5745);
 }
 
 TEST_F(SteinhardtCalculatorTests, DistortedCrystalLechnerDellagoAveraging) {
@@ -156,17 +182,31 @@ TEST_F(SteinhardtCalculatorTests, DistortedCrystalLechnerDellagoAveraging) {
 }
 
 TEST_F(SteinhardtCalculatorTests, Icosahedral) {
+  // 13-atom Icosahedral Cluster: Central atom coordination Z = 12
   auto cell = correlation::testing::crystals::createIcosahedralClusterCell(
       {.center_elem = "Ar", .shell_elem = "Ar", .r_bond = 1.0, .box_size = 10.0});
 
   // Edge length is ~1.05. Using cutoff 1.02 ensures surface atoms only see
-  // center. Thus they will have 1 neighbor, Ql=1.0, and be excluded from
-  // histogram!
+  // center. Thus they will have 1 neighbor, Ql=1.0, and be excluded from histogram!
   StructureAnalyzer const analyzer(cell, 1.02, {{{.min_sq = 0.36, .max_sq = 1.02 * 1.02}}}, true);
+  ASSERT_EQ(analyzer.neighborGraph().getNeighbors(0).size(), 12UL);
+
   auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
-  checkOutputs(hists, 0.000, 0.663,
-               -0.169); // W6_hat for Icosahedral is approx -0.1697
+  // Classical values for Icosahedral: Z=12, q4=0.0000, q6=0.6633, w4_hat=0.0000, w6_hat=-0.1698
+  checkOutputs(hists, 0.0000, 0.6633, -0.1698);
+
+  const auto &hist_w4 = hists.at("W4_hat").partials.at("Total");
+  size_t const w4_bins = 100;
+  real_t const w4_min = -0.5;
+  real_t const d_w4 = 1.0 / w4_bins;
+  real_t w4_val = 0;
+  for (size_t bin = 0; bin < w4_bins; ++bin) {
+    if (hist_w4[bin] > 0) {
+      w4_val = static_cast<real_t>(w4_min + (static_cast<real_t>(bin) + 0.5) * d_w4);
+    }
+  }
+  EXPECT_NEAR(w4_val, 0.0000, 0.02);
 }
 
 TEST_F(SteinhardtCalculatorTests, HandlesAcosNumericalNoiseSafely) {
