@@ -496,25 +496,25 @@ TEST_F(FileWriterTests, WritesSteinhardtHDF5Metadata) {
   // Assert
   ASSERT_TRUE(fileExistsAndIsNotEmpty(prefix + ".h5"));
 
-  HighFive::File file(prefix + ".h5", HighFive::File::ReadOnly);
+  HighFive::File const file(prefix + ".h5", HighFive::File::ReadOnly);
   EXPECT_TRUE(file.exist("Q4"));
   EXPECT_TRUE(file.exist("Q6"));
 
-  HighFive::Group q4_group = file.getGroup("Q4");
+  HighFive::Group const q4_group = file.getGroup("Q4");
   EXPECT_TRUE(q4_group.hasAttribute("description"));
   std::string description;
   q4_group.getAttribute("description").read(description);
   EXPECT_TRUE(description.starts_with("Steinhardt Q4 Bond Orientational Order Parameter"));
 
   EXPECT_TRUE(q4_group.exist("Q4"));
-  HighFive::DataSet bin_ds = q4_group.getDataSet("Q4");
+  HighFive::DataSet const bin_ds = q4_group.getDataSet("Q4");
   EXPECT_TRUE(bin_ds.hasAttribute("units"));
   std::string bin_units;
   bin_ds.getAttribute("units").read(bin_units);
   EXPECT_EQ(bin_units, "dimensionless");
 
   EXPECT_TRUE(q4_group.exist("Total"));
-  HighFive::DataSet val_ds = q4_group.getDataSet("Total");
+  HighFive::DataSet const val_ds = q4_group.getDataSet("Total");
   EXPECT_TRUE(val_ds.hasAttribute("units"));
   std::string data_units;
   val_ds.getAttribute("units").read(data_units);
