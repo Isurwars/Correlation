@@ -505,8 +505,8 @@
     "semantic_hash": ""
   },
   "src/writers/ArrowWriter.cpp": {
-    "mtime": 1790185570.9488838,
-    "ast_hash": "76b1b34dcb05a463d4b864425945757a",
+    "mtime": 1791218713.3332639,
+    "ast_hash": "a38073b270557a05d629e1e6850664bf",
     "semantic_hash": ""
   },
   "src/writers/CSVWriter.cpp": {
@@ -920,8 +920,8 @@
     "semantic_hash": ""
   },
   "tests/unit/writers/WriterTests.cpp": {
-    "mtime": 1791179918.5471475,
-    "ast_hash": "6af347a0bc4d0a81840e01a3e3b2232f",
+    "mtime": 1791219049.2633133,
+    "ast_hash": "025d266866c663baa2dff208cabaa8f2",
     "semantic_hash": ""
   },
   ".github/workflows/ci.yml": {
@@ -1310,8 +1310,8 @@
     "semantic_hash": ""
   },
   "tests/unit/writers/ArrowWriterTests.cpp": {
-    "mtime": 1790181953.063099,
-    "ast_hash": "f613f5fe59154f5e75d0cf53d74688f5",
+    "mtime": 1791218668.8826542,
+    "ast_hash": "1001ac2352d9cacc0d8a328dd627c207",
     "semantic_hash": ""
   },
   "tests/CrystalTestHelper.hpp": {

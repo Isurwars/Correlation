@@ -2345,8 +2345,8 @@
     "semantic_hash": ""
   },
   "src/calculators/order/SteinhardtCalculator.cpp": {
-    "mtime": 1791216765.015376,
-    "ast_hash": "19a8f816c11e9d33c46b3c80447b6fb5",
+    "mtime": 1791218125.2429438,
+    "ast_hash": "d288b6d7fe3e6401ab2ccdae431ecbb8",
     "semantic_hash": ""
   },
   "src/calculators/scattering/StructureFactorCalculator.cpp": {
@@ -2485,8 +2485,8 @@
     "semantic_hash": ""
   },
   "src/calculators/gpu/GPUSteinhardtCalculator.cu": {
-    "mtime": 1791183694.9672408,
-    "ast_hash": "8f677d035eaab73d61ee86a1ccfae4b8",
+    "mtime": 1791218099.7216532,
+    "ast_hash": "f92fa2b36b955b9433cdb8cab39c6f1f",
     "semantic_hash": ""
   },
   "src/calculators/gpu/GPUXRDCalculator.cu": {

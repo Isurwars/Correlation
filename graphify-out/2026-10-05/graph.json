@@ -676,8 +676,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_analysis_analysistypes",
-      "community": 78,
-      "community_name": "StructureAnalyzer",
+      "community": 186,
+      "community_name": "atoms_",
       "norm_label": "analysistypes.hpp"
     },
     {
@@ -962,8 +962,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions",
-      "community": 78,
-      "community_name": "StructureAnalyzer",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "distributionfunctions.hpp"
     },
     {
@@ -973,8 +973,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_trajectoryanalyzer",
-      "community": 78,
-      "community_name": "StructureAnalyzer",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "trajectoryanalyzer"
     },
     {
@@ -984,8 +984,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_rdfparams",
-      "community": 78,
-      "community_name": "StructureAnalyzer",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "rdfparams"
     },
     {
@@ -1006,8 +1006,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_rdfparams_r_max",
-      "community": 78,
-      "community_name": "StructureAnalyzer",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "r_max"
     },
     {
@@ -1017,8 +1017,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_rdfparams_r_bin_width",
-      "community": 78,
-      "community_name": "StructureAnalyzer",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "r_bin_width"
     },
     {
@@ -1028,8 +1028,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_rdfparams_max_radius",
-      "community": 78,
-      "community_name": "StructureAnalyzer",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "max_radius"
     },
     {
@@ -1094,8 +1094,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_xrdparams",
-      "community": 78,
-      "community_name": "StructureAnalyzer",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "xrdparams"
     },
     {
@@ -1105,8 +1105,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_xrdparams_lambda",
-      "community": 78,
-      "community_name": "StructureAnalyzer",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "lambda"
     },
     {
@@ -1116,8 +1116,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_xrdparams_theta_min",
-      "community": 78,
-      "community_name": "StructureAnalyzer",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "theta_min"
     },
     {
@@ -1127,8 +1127,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_xrdparams_theta_max",
-      "community": 78,
-      "community_name": "StructureAnalyzer",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "theta_max"
     },
     {
@@ -1138,8 +1138,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_xrdparams_bin_width",
-      "community": 78,
-      "community_name": "StructureAnalyzer",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "bin_width"
     },
     {
@@ -2623,8 +2623,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_analysis_trajectoryanalyzer",
-      "community": 78,
-      "community_name": "StructureAnalyzer",
+      "community": 186,
+      "community_name": "atoms_",
       "norm_label": "trajectoryanalyzer.hpp"
     },
     {
@@ -11060,8 +11060,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_spatial_distancecalculator",
-      "community": 78,
-      "community_name": "StructureAnalyzer",
+      "community": 186,
+      "community_name": "atoms_",
       "norm_label": "distancecalculator.hpp"
     },
     {
@@ -14217,8 +14217,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_core_trajectory",
-      "community": 78,
-      "community_name": "StructureAnalyzer",
+      "community": 13,
+      "community_name": "DistributionFunctions",
       "norm_label": "trajectory.hpp"
     },
     {
@@ -14228,8 +14228,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "include_core_trajectory_mappedfile",
-      "community": 78,
-      "community_name": "StructureAnalyzer",
+      "community": 13,
+      "community_name": "DistributionFunctions",
       "norm_label": "mappedfile"
     },
     {
@@ -19222,8 +19222,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "include_plotters_plottypes_referenceline",
-      "community": 354,
-      "community_name": "ChgnetParser",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "referenceline"
     },
     {
@@ -19244,8 +19244,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "include_plotters_plottypes_referenceline_value",
-      "community": 354,
-      "community_name": "ChgnetParser",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "value"
     },
     {
@@ -19255,8 +19255,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "include_plotters_plottypes_referenceline_is_vertical",
-      "community": 354,
-      "community_name": "ChgnetParser",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "is_vertical"
     },
     {
@@ -19266,8 +19266,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_plotters_plottypes_hpp_string",
-      "community": 354,
-      "community_name": "ChgnetParser",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "string"
     },
     {
@@ -19277,8 +19277,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "include_plotters_plottypes_referenceline_label",
-      "community": 354,
-      "community_name": "ChgnetParser",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "label"
     },
     {
@@ -19288,8 +19288,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "include_plotters_plottypes_referenceline_color_hex",
-      "community": 354,
-      "community_name": "ChgnetParser",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "color_hex"
     },
     {
@@ -19453,8 +19453,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "palette",
-      "community": 354,
-      "community_name": "ChgnetParser",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "palette"
     },
     {
@@ -19519,8 +19519,8 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "include_plotters_plottypes_plotconfig_bg_color",
-      "community": 354,
-      "community_name": "ChgnetParser",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": ".bg_color()"
     },
     {
@@ -19530,8 +19530,8 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "include_plotters_plottypes_plotconfig_axis_color",
-      "community": 354,
-      "community_name": "ChgnetParser",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": ".axis_color()"
     },
     {
@@ -19541,8 +19541,8 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "include_plotters_plottypes_plotconfig_grid_color",
-      "community": 354,
-      "community_name": "ChgnetParser",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": ".grid_color()"
     },
     {
@@ -19552,8 +19552,8 @@
       "source_location": "L117",
       "_origin": "ast",
       "id": "include_plotters_plottypes_plotconfig_text_color",
-      "community": 354,
-      "community_name": "ChgnetParser",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": ".text_color()"
     },
     {
@@ -19926,8 +19926,8 @@
       "source_location": "L289",
       "_origin": "ast",
       "id": "include_plotters_plottypes_samplecontinuouscolormap",
-      "community": 354,
-      "community_name": "ChgnetParser",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "samplecontinuouscolormap()"
     },
     {
@@ -19937,8 +19937,8 @@
       "source_location": "L361",
       "_origin": "ast",
       "id": "include_plotters_plottypes_color",
-      "community": 354,
-      "community_name": "ChgnetParser",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "color()"
     },
     {
@@ -19948,8 +19948,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_plotters_plottypes_hpp_size_t",
-      "community": 354,
-      "community_name": "ChgnetParser",
+      "community": 68,
+      "community_name": "PlotConfig",
       "norm_label": "size_t"
     },
     {
@@ -20091,8 +20091,8 @@
       "source_location": "L552",
       "_origin": "ast",
       "id": "include_plotters_plottypes_plotviewportgeometry",
-      "community": 68,
-      "community_name": "PlotConfig",
+      "community": 377,
+      "community_name": "TDOSParams",
       "norm_label": "plotviewportgeometry"
     },
     {
@@ -20102,8 +20102,8 @@
       "source_location": "L553",
       "_origin": "ast",
       "id": "include_plotters_plottypes_plotviewportgeometry_kw",
-      "community": 68,
-      "community_name": "PlotConfig",
+      "community": 377,
+      "community_name": "TDOSParams",
       "norm_label": "kw"
     },
     {
@@ -20113,8 +20113,8 @@
       "source_location": "L554",
       "_origin": "ast",
       "id": "include_plotters_plottypes_plotviewportgeometry_kh",
-      "community": 68,
-      "community_name": "PlotConfig",
+      "community": 377,
+      "community_name": "TDOSParams",
       "norm_label": "kh"
     },
     {
@@ -20124,8 +20124,8 @@
       "source_location": "L555",
       "_origin": "ast",
       "id": "include_plotters_plottypes_plotviewportgeometry_px0",
-      "community": 68,
-      "community_name": "PlotConfig",
+      "community": 377,
+      "community_name": "TDOSParams",
       "norm_label": "px0"
     },
     {
@@ -20135,8 +20135,8 @@
       "source_location": "L556",
       "_origin": "ast",
       "id": "include_plotters_plottypes_plotviewportgeometry_px1",
-      "community": 68,
-      "community_name": "PlotConfig",
+      "community": 377,
+      "community_name": "TDOSParams",
       "norm_label": "px1"
     },
     {
@@ -20146,8 +20146,8 @@
       "source_location": "L557",
       "_origin": "ast",
       "id": "include_plotters_plottypes_plotviewportgeometry_py0",
-      "community": 68,
-      "community_name": "PlotConfig",
+      "community": 377,
+      "community_name": "TDOSParams",
       "norm_label": "py0"
     },
     {
@@ -20157,8 +20157,8 @@
       "source_location": "L558",
       "_origin": "ast",
       "id": "include_plotters_plottypes_plotviewportgeometry_py1",
-      "community": 68,
-      "community_name": "PlotConfig",
+      "community": 377,
+      "community_name": "TDOSParams",
       "norm_label": "py1"
     },
     {
@@ -26701,8 +26701,8 @@
       "source_location": "L329",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_calculatexrd",
-      "community": 78,
-      "community_name": "StructureAnalyzer",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "distributionfunctions::calculatexrd()"
     },
     {
@@ -37063,8 +37063,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_calculators_spatial_cncalculator",
-      "community": 83,
-      "community_name": "GPUSQCalculator.cu",
+      "community": 78,
+      "community_name": "StructureAnalyzer",
       "norm_label": "cncalculator.cpp"
     },
     {
@@ -37074,8 +37074,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "src_calculators_spatial_cncalculator_populatecombinationpartials",
-      "community": 83,
-      "community_name": "GPUSQCalculator.cu",
+      "community": 78,
+      "community_name": "StructureAnalyzer",
       "norm_label": "populatecombinationpartials()"
     },
     {
@@ -37085,8 +37085,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "src_calculators_spatial_cncalculator_cncalculator_calculateframe",
-      "community": 83,
-      "community_name": "GPUSQCalculator.cu",
+      "community": 78,
+      "community_name": "StructureAnalyzer",
       "norm_label": "cncalculator::calculateframe()"
     },
     {
@@ -37096,8 +37096,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "src_calculators_spatial_cncalculator_cncalculator_calculate",
-      "community": 83,
-      "community_name": "GPUSQCalculator.cu",
+      "community": 78,
+      "community_name": "StructureAnalyzer",
       "norm_label": "cncalculator::calculate()"
     },
     {
@@ -39670,8 +39670,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_calculators_spatial_voronoicalculator",
-      "community": 186,
-      "community_name": "atoms_",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "voronoicalculator.cpp"
     },
     {
@@ -39813,8 +39813,8 @@
       "source_location": "L118",
       "_origin": "ast",
       "id": "src_calculators_spatial_voronoicalculator_extractalignedboxparameters",
-      "community": 186,
-      "community_name": "atoms_",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "extractalignedboxparameters()"
     },
     {
@@ -39912,8 +39912,8 @@
       "source_location": "L211",
       "_origin": "ast",
       "id": "src_calculators_spatial_voronoicalculator_voronoicalculator_calculateframe",
-      "community": 186,
-      "community_name": "atoms_",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "voronoicalculator::calculateframe()"
     },
     {
@@ -39923,8 +39923,8 @@
       "source_location": "L223",
       "_origin": "ast",
       "id": "src_calculators_spatial_voronoicalculator_voronoicalculator_computevoronoicells",
-      "community": 186,
-      "community_name": "atoms_",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "voronoicalculator::computevoronoicells()"
     },
     {
@@ -39934,8 +39934,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "celldata",
-      "community": 186,
-      "community_name": "atoms_",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "celldata"
     },
     {
@@ -40781,8 +40781,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_main",
-      "community": 9,
-      "community_name": "vector",
+      "community": 253,
+      "community_name": "compute_distances_gpu",
       "norm_label": "main.cpp"
     },
     {
@@ -40792,8 +40792,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "src_main_setupwindowsdebugenvironment",
-      "community": 9,
-      "community_name": "vector",
+      "community": 253,
+      "community_name": "compute_distances_gpu",
       "norm_label": "setupwindowsdebugenvironment()"
     },
     {
@@ -40803,8 +40803,8 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "src_main_handleterminate",
-      "community": 9,
-      "community_name": "vector",
+      "community": 253,
+      "community_name": "compute_distances_gpu",
       "norm_label": "handleterminate()"
     },
     {
@@ -40814,8 +40814,8 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "src_main_createappwindow",
-      "community": 9,
-      "community_name": "vector",
+      "community": 253,
+      "community_name": "compute_distances_gpu",
       "norm_label": "createappwindow()"
     },
     {
@@ -40825,8 +40825,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_main_cpp_componenthandle",
-      "community": 9,
-      "community_name": "vector",
+      "community": 253,
+      "community_name": "compute_distances_gpu",
       "norm_label": "componenthandle"
     },
     {
@@ -40836,8 +40836,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_main_cpp_appwindow",
-      "community": 9,
-      "community_name": "vector",
+      "community": 253,
+      "community_name": "compute_distances_gpu",
       "norm_label": "appwindow"
     },
     {
@@ -40847,8 +40847,8 @@
       "source_location": "L133",
       "_origin": "ast",
       "id": "src_main_main",
-      "community": 9,
-      "community_name": "vector",
+      "community": 253,
+      "community_name": "compute_distances_gpu",
       "norm_label": "main()"
     },
     {
@@ -40858,8 +40858,8 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "src_main_winmain",
-      "community": 9,
-      "community_name": "vector",
+      "community": 253,
+      "community_name": "compute_distances_gpu",
       "norm_label": "winmain()"
     },
     {
@@ -40869,8 +40869,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "hinstance",
-      "community": 9,
-      "community_name": "vector",
+      "community": 253,
+      "community_name": "compute_distances_gpu",
       "norm_label": "hinstance"
     },
     {
@@ -40880,8 +40880,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "lpstr",
-      "community": 9,
-      "community_name": "vector",
+      "community": 253,
+      "community_name": "compute_distances_gpu",
       "norm_label": "lpstr"
     },
     {
@@ -42266,8 +42266,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "src_plotters_pngplotter_renderhistogramaspng",
-      "community": 253,
-      "community_name": "compute_distances_gpu",
+      "community": 354,
+      "community_name": "ChgnetParser",
       "norm_label": "renderhistogramaspng()"
     },
     {
@@ -42277,8 +42277,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_plotters_pngplotter_cpp_string",
-      "community": 253,
-      "community_name": "compute_distances_gpu",
+      "community": 354,
+      "community_name": "ChgnetParser",
       "norm_label": "string"
     },
     {
@@ -42288,8 +42288,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_plotters_pngplotter_cpp_map",
-      "community": 253,
-      "community_name": "compute_distances_gpu",
+      "community": 354,
+      "community_name": "ChgnetParser",
       "norm_label": "map"
     },
     {
@@ -42299,8 +42299,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_plotters_pngplotter_cpp_real_t",
-      "community": 253,
-      "community_name": "compute_distances_gpu",
+      "community": 354,
+      "community_name": "ChgnetParser",
       "norm_label": "real_t"
     },
     {
@@ -42310,8 +42310,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "src_plotters_pngplotter_rendercomparisonpng",
-      "community": 253,
-      "community_name": "compute_distances_gpu",
+      "community": 354,
+      "community_name": "ChgnetParser",
       "norm_label": "rendercomparisonpng()"
     },
     {
@@ -42321,8 +42321,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_plotters_pngplotter_cpp_vector",
-      "community": 253,
-      "community_name": "compute_distances_gpu",
+      "community": 354,
+      "community_name": "ChgnetParser",
       "norm_label": "vector"
     },
     {
@@ -45973,8 +45973,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_readers_gpawreader",
-      "community": 377,
-      "community_name": "TDOSParams",
+      "community": 186,
+      "community_name": "atoms_",
       "norm_label": "gpawreader.cpp"
     },
     {
@@ -46138,8 +46138,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_gpawreader_cpp_string",
-      "community": 377,
-      "community_name": "TDOSParams",
+      "community": 186,
+      "community_name": "atoms_",
       "norm_label": "string"
     },
     {
@@ -46160,8 +46160,8 @@
       "source_location": "L134",
       "_origin": "ast",
       "id": "src_readers_gpawreader_gpawreader_readstructure",
-      "community": 377,
-      "community_name": "TDOSParams",
+      "community": 186,
+      "community_name": "atoms_",
       "norm_label": "gpawreader::readstructure()"
     },
     {
@@ -46171,8 +46171,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_gpawreader_cpp_function",
-      "community": 377,
-      "community_name": "TDOSParams",
+      "community": 186,
+      "community_name": "atoms_",
       "norm_label": "function"
     },
     {
@@ -46182,8 +46182,8 @@
       "source_location": "L144",
       "_origin": "ast",
       "id": "src_readers_gpawreader_gpawreader_readtrajectory",
-      "community": 377,
-      "community_name": "TDOSParams",
+      "community": 186,
+      "community_name": "atoms_",
       "norm_label": "gpawreader::readtrajectory()"
     },
     {
@@ -47579,8 +47579,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_readers_outmolreader",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 382,
+      "community_name": "OutmolReader.cpp",
       "norm_label": "outmolreader.cpp"
     },
     {
@@ -47623,8 +47623,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_outmolreader_cpp_function",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 382,
+      "community_name": "OutmolReader.cpp",
       "norm_label": "function"
     },
     {
@@ -47854,8 +47854,8 @@
       "source_location": "L179",
       "_origin": "ast",
       "id": "src_readers_outmolreader_outmolreader_readstructure",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 382,
+      "community_name": "OutmolReader.cpp",
       "norm_label": "outmolreader::readstructure()"
     },
     {
@@ -47865,8 +47865,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_outmolreader_cpp_string",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 382,
+      "community_name": "OutmolReader.cpp",
       "norm_label": "string"
     },
     {
@@ -47876,8 +47876,8 @@
       "source_location": "L185",
       "_origin": "ast",
       "id": "src_readers_outmolreader_outmolreader_readtrajectory",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 382,
+      "community_name": "OutmolReader.cpp",
       "norm_label": "outmolreader::readtrajectory()"
     },
     {
@@ -47887,8 +47887,8 @@
       "source_location": "L191",
       "_origin": "ast",
       "id": "src_readers_outmolreader_outmolreader_read",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 382,
+      "community_name": "OutmolReader.cpp",
       "norm_label": "outmolreader::read()"
     },
     {
@@ -50131,8 +50131,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_writers_hdf5writer",
-      "community": 9,
-      "community_name": "vector",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "hdf5writer.cpp"
     },
     {
@@ -50142,8 +50142,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "src_writers_hdf5writer_writehistogramtogroup",
-      "community": 9,
-      "community_name": "vector",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "writehistogramtogroup()"
     },
     {
@@ -50153,8 +50153,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_writers_hdf5writer_cpp_file",
-      "community": 9,
-      "community_name": "vector",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "file"
     },
     {
@@ -50164,8 +50164,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_writers_hdf5writer_cpp_string",
-      "community": 9,
-      "community_name": "vector",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "string"
     },
     {
@@ -50175,8 +50175,8 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "src_writers_hdf5writer_hdf5writer_writehdf",
-      "community": 9,
-      "community_name": "vector",
+      "community": 83,
+      "community_name": "GPUSQCalculator.cu",
       "norm_label": "hdf5writer::writehdf()"
     },
     {
@@ -159967,7 +159967,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/order/SteinhardtCalculator.cpp",
-      "source_location": "L745",
+      "source_location": "L747",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_calculators_order_steinhardtcalculator_steinhardtcalculator_calculate",
