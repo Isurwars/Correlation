@@ -64,6 +64,8 @@ private:
    */
   static CommentData parseCommentLine(const std::string &comment);
   static correlation::core::Cell parseXYZFrame(const char *data, size_t size);
+  static void parseAtomLine(const std::string &line, const CommentData &comm_data,
+                            std::vector<std::string_view> &tokens, correlation::core::Cell &cell);
 };
 
 } // namespace correlation::readers

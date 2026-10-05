@@ -16,7 +16,9 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <span>
 #include <stdexcept>
+#include <utility>
 
 namespace correlation::calculators {
 
@@ -95,7 +97,7 @@ struct RDFNormalizationSettings {
 };
 
 void normalizeDistributions(const correlation::core::Cell &cell,
-                            const std::map<std::string, real_t> &element_counts,
+                            std::span<const real_t> element_counts,
                             RDFNormalizationSettings settings,
                             const correlation::analysis::Histogram &h_r,
                             correlation::analysis::Histogram &g_r,
@@ -109,11 +111,8 @@ void normalizeDistributions(const correlation::core::Cell &cell,
       std::string const key = getPartialKey(cell, i, j);
       std::string const inversekey = getInversePartialKey(cell, i, j);
 
-      const std::string &sym_i = elements[i].symbol;
-      const std::string &sym_j = elements[j].symbol;
-
-      const real_t n_i = element_counts.at(sym_i);
-      const real_t n_j = element_counts.at(sym_j);
+      const real_t n_i = element_counts[i];
+      const real_t n_j = element_counts[j];
 
       const auto &h_ij = h_r.partials.at(key);
 
@@ -220,9 +219,13 @@ std::map<std::string, correlation::analysis::Histogram> RDFCalculator::calculate
     return {};
   }
 
-  std::map<std::string, real_t> element_counts;
+  const size_t num_elements = cell.elements().size();
+  std::vector<real_t> element_counts(num_elements, static_cast<real_t>(0.0));
   for (const auto &atom : cell.atoms()) {
-    element_counts[atom.element().symbol]++;
+    const int elem_id = atom.elementId();
+    if (std::cmp_greater_equal(elem_id, 0) && std::cmp_less(elem_id, num_elements)) {
+      element_counts[static_cast<size_t>(elem_id)] += static_cast<real_t>(1.0);
+    }
   }
 
   const auto num_bins = static_cast<size_t>(std::floor(r_max / r_bin_width));

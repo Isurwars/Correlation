@@ -16,6 +16,7 @@
 #include <optional>
 #include <sstream>
 #include <stdexcept>
+#include <string_view>
 #include <utility>
 
 namespace correlation::readers {
@@ -134,12 +135,53 @@ struct XYZParser {
         progress_callback(progress, "Reading XYZ frames...");
       }
     }
-
     return frame_offsets;
   }
 };
 
+void tokenizeAtomLine(std::string_view line_view, std::vector<std::string_view> &tokens) {
+  tokens.clear();
+  size_t tok_start = 0;
+  while (tok_start < line_view.size()) {
+    tok_start = line_view.find_first_not_of(" \t\r\n", tok_start);
+    if (tok_start == std::string_view::npos) {
+      break;
+    }
+    size_t const tok_end = line_view.find_first_of(" \t\r\n", tok_start);
+    tokens.push_back(line_view.substr(tok_start, tok_end == std::string_view::npos
+                                                     ? std::string_view::npos
+                                                     : tok_end - tok_start));
+    if (tok_end == std::string_view::npos) {
+      break;
+    }
+    tok_start = tok_end;
+  }
+}
+
 } // namespace
+
+void XYZReader::parseAtomLine(const std::string &line, const CommentData &comm_data,
+                              std::vector<std::string_view> &tokens,
+                              correlation::core::Cell &cell) {
+  tokenizeAtomLine(line, tokens);
+
+  int const max_idx = (std::max)({comm_data.species_col, comm_data.pos_x_col, comm_data.pos_y_col,
+                                  comm_data.pos_z_col});
+
+  if (std::cmp_less_equal(tokens.size(), max_idx)) {
+    throw std::runtime_error("Invalid XYZ file: malformed atom line: " + line);
+  }
+
+  std::string_view const symbol = tokens[comm_data.species_col];
+  try {
+    const auto pos_x = static_cast<real_t>(std::stod(std::string(tokens[comm_data.pos_x_col])));
+    const auto pos_y = static_cast<real_t>(std::stod(std::string(tokens[comm_data.pos_y_col])));
+    const auto pos_z = static_cast<real_t>(std::stod(std::string(tokens[comm_data.pos_z_col])));
+    cell.addAtom(symbol, correlation::math::Vector3<real_t>(pos_x, pos_y, pos_z));
+  } catch (const std::exception &) {
+    throw std::runtime_error("Invalid XYZ file: invalid coordinates: " + line);
+  }
+}
 
 // ---------------------------------------------------------------------------
 // parseXYZFrame – parses a single frame from memory
@@ -194,35 +236,14 @@ correlation::core::Cell XYZReader::parseXYZFrame(const char *data, size_t size) 
   }
 
   // --- Lines 3..N+2: atom data ---
+  std::vector<std::string_view> tokens;
+  tokens.reserve(16);
   for (int i = 0; i < num_atoms; ++i) {
     if (!std::getline(stream, line)) {
       throw std::runtime_error("Invalid XYZ file: unexpected EOF while reading atom " +
                                std::to_string(i + 1));
     }
-
-    std::istringstream iss(line);
-    std::vector<std::string> tokens;
-    std::string token;
-    while (iss >> token) {
-      tokens.push_back(token);
-    }
-
-    int const max_idx = (std::max)({comm_data.species_col, comm_data.pos_x_col, comm_data.pos_y_col,
-                                    comm_data.pos_z_col});
-
-    if (std::cmp_less_equal(tokens.size(), max_idx)) {
-      throw std::runtime_error("Invalid XYZ file: malformed atom line: " + line);
-    }
-
-    std::string const symbol = tokens[comm_data.species_col];
-    try {
-      const auto pos_x = static_cast<real_t>(std::stod(tokens[comm_data.pos_x_col]));
-      const auto pos_y = static_cast<real_t>(std::stod(tokens[comm_data.pos_y_col]));
-      const auto pos_z = static_cast<real_t>(std::stod(tokens[comm_data.pos_z_col]));
-      cell.addAtom(symbol, correlation::math::Vector3<real_t>(pos_x, pos_y, pos_z));
-    } catch (const std::exception &) {
-      throw std::runtime_error("Invalid XYZ file: invalid coordinates: " + line);
-    }
+    parseAtomLine(line, comm_data, tokens, cell);
   }
 
   return cell;
