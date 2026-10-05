@@ -42,6 +42,28 @@ std::string getInversePartialKey(const correlation::core::Cell &cell, size_t typ
 // Static registration of the calculator in the factory
 const bool REGISTERED = CalculatorFactory::registerTypeSafe<RDFCalculator>("RDFCalculator");
 
+struct ActiveCellContext {
+  correlation::core::Cell supercell_holder;
+  bool is_expanded{false};
+  real_t replication_factor{1.0};
+
+  void initialize(const correlation::core::Cell &original, real_t r_max) {
+    const auto widths = original.perpendicularWidths();
+    const real_t eps = std::numeric_limits<real_t>::epsilon();
+    if (widths[0] > eps && widths[1] > eps && widths[2] > eps) {
+      const real_t target_width = static_cast<real_t>(2.0) * r_max;
+      if (widths[0] < target_width || widths[1] < target_width || widths[2] < target_width) {
+        supercell_holder = original.autoSupercell(r_max);
+        if (supercell_holder.atomCount() > original.atomCount() && original.atomCount() > 0) {
+          is_expanded = true;
+          replication_factor = static_cast<real_t>(supercell_holder.atomCount()) /
+                               static_cast<real_t>(original.atomCount());
+        }
+      }
+    }
+  }
+};
+
 struct RDFSettings {
   real_t r_max;
   real_t r_bin_width;
@@ -209,19 +231,23 @@ std::map<std::string, correlation::analysis::Histogram> RDFCalculator::calculate
     throw std::invalid_argument("Cutoff radius must be positive, got: " + std::to_string(r_max));
   }
 
-  const real_t volume = cell.volume();
+  ActiveCellContext cell_context;
+  cell_context.initialize(cell, r_max);
+  const auto &active_cell = cell_context.is_expanded ? cell_context.supercell_holder : cell;
+
+  const real_t volume = active_cell.volume();
   if (volume <= std::numeric_limits<real_t>::epsilon()) {
     throw std::logic_error("Cell volume must be positive, got: " + std::to_string(volume));
   }
 
-  const auto num_atoms = static_cast<real_t>(cell.atomCount());
+  const auto num_atoms = static_cast<real_t>(active_cell.atomCount());
   if (num_atoms == 0.0) {
     return {};
   }
 
-  const size_t num_elements = cell.elements().size();
+  const size_t num_elements = active_cell.elements().size();
   std::vector<real_t> element_counts(num_elements, static_cast<real_t>(0.0));
-  for (const auto &atom : cell.atoms()) {
+  for (const auto &atom : active_cell.atoms()) {
     const int elem_id = atom.elementId();
     if (std::cmp_greater_equal(elem_id, 0) && std::cmp_less(elem_id, num_elements)) {
       element_counts[static_cast<size_t>(elem_id)] += static_cast<real_t>(1.0);
@@ -279,7 +305,7 @@ std::map<std::string, correlation::analysis::Histogram> RDFCalculator::calculate
     j_r.bins[i] = r_i;
   }
 
-  accumulateRawCounts(cell, neighbors,
+  accumulateRawCounts(active_cell, neighbors,
                       {
                           .r_max = r_max,
                           .r_bin_width = r_bin_width,
@@ -287,7 +313,7 @@ std::map<std::string, correlation::analysis::Histogram> RDFCalculator::calculate
                       },
                       h_r);
 
-  normalizeDistributions(cell, element_counts,
+  normalizeDistributions(active_cell, element_counts,
                          {
                              .volume = volume,
                              .bin_width = r_bin_width,
@@ -329,12 +355,21 @@ std::map<std::string, correlation::analysis::Histogram> RDFCalculator::calculate
   g_r_unweighted.title = "g(r) — Unweighted Radial Distribution Function";
   g_r_unweighted.file_suffix = "_g_unweighted";
 
-  weightPartials(cell, ashcroft_weights,
+  weightPartials(active_cell, ashcroft_weights,
                  {
                      .rho_0 = rho_0,
                      .num_bins = num_bins,
                  },
                  g_r, g_r_reduced);
+
+  if (cell_context.is_expanded && cell_context.replication_factor > static_cast<real_t>(1.0)) {
+    const real_t inv_scale = static_cast<real_t>(1.0) / cell_context.replication_factor;
+    for (auto &[key, counts] : h_r.partials) {
+      for (auto &val : counts) {
+        val *= inv_scale;
+      }
+    }
+  }
 
   std::map<std::string, correlation::analysis::Histogram> results;
   results["H_r"] = std::move(h_r);

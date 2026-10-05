@@ -317,4 +317,87 @@ TEST_F(CellTests, FractionalCartesianRoundTripPrecision) {
   }
 }
 
+TEST_F(CellTests, PerpendicularWidthsOrthogonalAndDegenerate) {
+  const Cell ortho({static_cast<real_t>(10.0), static_cast<real_t>(12.0), static_cast<real_t>(15.0),
+                    static_cast<real_t>(90.0), static_cast<real_t>(90.0),
+                    static_cast<real_t>(90.0)});
+  const auto widths = ortho.perpendicularWidths();
+  EXPECT_NEAR(widths[0], 10.0, 1e-5);
+  EXPECT_NEAR(widths[1], 12.0, 1e-5);
+  EXPECT_NEAR(widths[2], 15.0, 1e-5);
+
+  const Cell empty_cell{};
+  const auto empty_widths = empty_cell.perpendicularWidths();
+  EXPECT_EQ(empty_widths[0], 0.0);
+  EXPECT_EQ(empty_widths[1], 0.0);
+  EXPECT_EQ(empty_widths[2], 0.0);
+}
+
+TEST_F(CellTests, ReplicateExpandsLatticeAndAtoms) {
+  Cell cell({static_cast<real_t>(4.0), static_cast<real_t>(5.0), static_cast<real_t>(6.0),
+             static_cast<real_t>(90.0), static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
+  cell.addAtom("Si",
+               {static_cast<real_t>(0.0), static_cast<real_t>(0.0), static_cast<real_t>(0.0)});
+  cell.addAtom("O", {static_cast<real_t>(1.0), static_cast<real_t>(1.0), static_cast<real_t>(1.0)});
+
+  EXPECT_EQ(cell.atomCount(), 2);
+  const real_t orig_volume = cell.volume();
+
+  // Replicate 2x3x1 -> factor 6 -> 12 atoms
+  const Cell supercell = cell.replicate(2, 3, 1);
+  EXPECT_EQ(supercell.atomCount(), 12);
+  EXPECT_NEAR(supercell.volume(), orig_volume * 6.0, 1e-4);
+
+  const auto &params = supercell.latticeParameters();
+  EXPECT_NEAR(params[0], 8.0, 1e-5);
+  EXPECT_NEAR(params[1], 15.0, 1e-5);
+  EXPECT_NEAR(params[2], 6.0, 1e-5);
+
+  // Identity replication
+  const Cell identity = cell.replicate(1, 1, 1);
+  EXPECT_EQ(identity.atomCount(), 2);
+  EXPECT_NEAR(identity.volume(), orig_volume, 1e-5);
+}
+
+TEST_F(CellTests, ReplicateThrowsOnInvalidFactorsOrExcessiveAtoms) {
+  Cell cell({static_cast<real_t>(10.0), static_cast<real_t>(10.0), static_cast<real_t>(10.0),
+             static_cast<real_t>(90.0), static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
+  cell.addAtom("C", {static_cast<real_t>(1.0), static_cast<real_t>(1.0), static_cast<real_t>(1.0)});
+
+  EXPECT_THROW(cell.replicate(0, 1, 1), std::invalid_argument);
+  EXPECT_THROW(cell.replicate(1, -1, 1), std::invalid_argument);
+  EXPECT_THROW(cell.replicate(1, 1, 0), std::invalid_argument);
+
+  // Replicate 50x50x50 with 1 atom = 125,000 atoms > 50,000 ceiling
+  EXPECT_THROW(cell.replicate(50, 50, 50), std::invalid_argument);
+}
+
+TEST_F(CellTests, AutoSupercellSatisfiesMinimumImageConvention) {
+  Cell cell({static_cast<real_t>(3.0), static_cast<real_t>(4.0), static_cast<real_t>(5.0),
+             static_cast<real_t>(90.0), static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
+  cell.addAtom("Cu",
+               {static_cast<real_t>(0.0), static_cast<real_t>(0.0), static_cast<real_t>(0.0)});
+
+  // For r_cut = 5.0, target width = 10.0
+  // na = ceil(10/3) = 4 -> width_a = 12.0
+  // nb = ceil(10/4) = 3 -> width_b = 12.0
+  // nc = ceil(10/5) = 2 -> width_c = 10.0
+  const Cell supercell = cell.autoSupercell(static_cast<real_t>(5.0));
+  const auto widths = supercell.perpendicularWidths();
+  EXPECT_GE(widths[0], 10.0 - 1e-5);
+  EXPECT_GE(widths[1], 10.0 - 1e-5);
+  EXPECT_GE(widths[2], 10.0 - 1e-5);
+  EXPECT_EQ(supercell.atomCount(), 4 * 3 * 2); // 24 atoms
+
+  // r_cut <= 0 returns *this
+  const Cell same = cell.autoSupercell(static_cast<real_t>(0.0));
+  EXPECT_EQ(same.atomCount(), 1);
+
+  // r_cut > max_radius (50.0) throws
+  EXPECT_THROW(cell.autoSupercell(static_cast<real_t>(51.0)), std::invalid_argument);
+
+  // Requires replication > max_replication (10) throws
+  EXPECT_THROW(cell.autoSupercell(static_cast<real_t>(20.0), 10), std::invalid_argument);
+}
+
 } // namespace correlation::testing

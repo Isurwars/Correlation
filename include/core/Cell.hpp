@@ -201,6 +201,44 @@ public:
   void wrapPositions();
 
   /**
+   * @brief Computes the perpendicular widths (interplanar spacing) between opposing cell faces.
+   *
+   * For lattice vectors a, b, c with volume V, returns {V / ||b x c||, V / ||a x c||, V / ||a x
+   * b||}. If volume is non-positive or vectors are degenerate, returns {0, 0, 0}.
+   *
+   * @return Array containing {w_a, w_b, w_c} in Angstroms.
+   */
+  [[nodiscard]] std::array<real_t, 3> perpendicularWidths() const noexcept;
+
+  /**
+   * @brief Replicates the simulation cell na x nb x nc times along lattice vectors.
+   *
+   * @param rep_a Replication factor along lattice vector a (>= 1).
+   * @param rep_b Replication factor along lattice vector b (>= 1).
+   * @param rep_c Replication factor along lattice vector c (>= 1).
+   * @return Replicated supercell with expanded lattice vectors and translated atoms.
+   * @throws std::invalid_argument If any factor is < 1 or total atom count exceeds 50,000.
+   */
+  [[nodiscard]] Cell replicate(int rep_a, int rep_b, int rep_c) const;
+
+  /**
+   * @brief Automatically expands the cell to satisfy the Minimum Image Convention for cutoff r_cut.
+   *
+   * Computes minimal replication factors along each axis such that every perpendicular width
+   * satisfies w_k >= 2 * r_cut, up to safety limits.
+   *
+   * @param r_cut Interaction or evaluation cutoff radius in Angstroms.
+   * @param max_replication Maximum allowable replication factor per axis (default: 10).
+   * @param max_radius Maximum allowable cutoff radius ceiling (default: 50.0 Angstroms).
+   * @return A minimally replicated supercell satisfying w_perp >= 2 * r_cut, or *this if already
+   * large enough.
+   * @throws std::invalid_argument If r_cut > max_radius or required replication exceeds
+   * max_replication.
+   */
+  [[nodiscard]] Cell autoSupercell(real_t r_cut, int max_replication = 10,
+                                   real_t max_radius = static_cast<real_t>(50.0)) const;
+
+  /**
    * @brief Sets the energy of the cell frame.
    * @param energy The energy value.
    */

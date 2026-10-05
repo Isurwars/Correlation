@@ -13,6 +13,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
+#include <stdexcept>
 
 namespace correlation::core {
 
@@ -160,6 +162,106 @@ void Cell::wrapPositions() {
     frac_pos.z() -= std::floor(frac_pos.z());
     atom.setPosition(lattice_vectors_ * frac_pos);
   }
+}
+
+std::array<real_t, 3> Cell::perpendicularWidths() const noexcept {
+  const real_t eps = std::numeric_limits<real_t>::epsilon();
+  if (volume_ <= eps) {
+    return {0.0, 0.0, 0.0};
+  }
+  const auto &lat_v0 = lattice_vectors_[0];
+  const auto &lat_v1 = lattice_vectors_[1];
+  const auto &lat_v2 = lattice_vectors_[2];
+
+  const real_t norm_bc = math::norm(math::cross(lat_v1, lat_v2));
+  const real_t norm_ac = math::norm(math::cross(lat_v0, lat_v2));
+  const real_t norm_ab = math::norm(math::cross(lat_v0, lat_v1));
+
+  const real_t w_a = (norm_bc > eps) ? (volume_ / norm_bc) : static_cast<real_t>(0.0);
+  const real_t w_b = (norm_ac > eps) ? (volume_ / norm_ac) : static_cast<real_t>(0.0);
+  const real_t w_c = (norm_ab > eps) ? (volume_ / norm_ab) : static_cast<real_t>(0.0);
+
+  return {w_a, w_b, w_c};
+}
+
+Cell Cell::replicate(int rep_a, int rep_b, int rep_c) const {
+  if (rep_a < 1 || rep_b < 1 || rep_c < 1) {
+    throw std::invalid_argument(
+        "Replication factors must each be >= 1, got: " + std::to_string(rep_a) + "x" +
+        std::to_string(rep_b) + "x" + std::to_string(rep_c));
+  }
+  if (rep_a == 1 && rep_b == 1 && rep_c == 1) {
+    return *this;
+  }
+
+  const size_t total_rep =
+      static_cast<size_t>(rep_a) * static_cast<size_t>(rep_b) * static_cast<size_t>(rep_c);
+  const size_t total_atoms = total_rep * atoms_.size();
+  constexpr size_t MAX_SUPERCELL_ATOMS = 50000;
+  if (total_atoms > MAX_SUPERCELL_ATOMS) {
+    throw std::invalid_argument("Supercell atom count (" + std::to_string(total_atoms) +
+                                ") exceeds safety ceiling of " +
+                                std::to_string(MAX_SUPERCELL_ATOMS) + " atoms");
+  }
+
+  const auto &vec_a = lattice_vectors_[0];
+  const auto &vec_b = lattice_vectors_[1];
+  const auto &vec_c = lattice_vectors_[2];
+
+  Cell new_cell(vec_a * static_cast<real_t>(rep_a), vec_b * static_cast<real_t>(rep_b),
+                vec_c * static_cast<real_t>(rep_c));
+  new_cell.reserveAtoms(total_atoms);
+
+  for (int idx_a = 0; idx_a < rep_a; ++idx_a) {
+    for (int idx_b = 0; idx_b < rep_b; ++idx_b) {
+      for (int idx_c = 0; idx_c < rep_c; ++idx_c) {
+        const math::Vector3<real_t> displacement = vec_a * static_cast<real_t>(idx_a) +
+                                                   vec_b * static_cast<real_t>(idx_b) +
+                                                   vec_c * static_cast<real_t>(idx_c);
+
+        for (const auto &atom : atoms_) {
+          new_cell.addAtom(atom.element().symbol, atom.position() + displacement);
+        }
+      }
+    }
+  }
+
+  return new_cell;
+}
+
+Cell Cell::autoSupercell(real_t r_cut, int max_replication, real_t max_radius) const {
+  if (r_cut <= static_cast<real_t>(0.0)) {
+    return *this;
+  }
+  if (r_cut > max_radius) {
+    throw std::invalid_argument("Cutoff radius r_cut (" + std::to_string(r_cut) +
+                                " Å) exceeds safe maximum radius of " + std::to_string(max_radius) +
+                                " Å");
+  }
+
+  const auto widths = perpendicularWidths();
+  const real_t eps = std::numeric_limits<real_t>::epsilon();
+  if (widths[0] <= eps || widths[1] <= eps || widths[2] <= eps) {
+    return *this;
+  }
+
+  const real_t target_width = static_cast<real_t>(2.0) * r_cut;
+  const auto req_a = static_cast<int>(std::ceil(target_width / widths[0]));
+  const auto req_b = static_cast<int>(std::ceil(target_width / widths[1]));
+  const auto req_c = static_cast<int>(std::ceil(target_width / widths[2]));
+
+  if (req_a > max_replication || req_b > max_replication || req_c > max_replication) {
+    throw std::invalid_argument("Required auto-supercell replication (" + std::to_string(req_a) +
+                                "x" + std::to_string(req_b) + "x" + std::to_string(req_c) +
+                                ") exceeds safe ceiling of " + std::to_string(max_replication) +
+                                " per axis");
+  }
+
+  const int rep_a = std::max(1, req_a);
+  const int rep_b = std::max(1, req_b);
+  const int rep_c = std::max(1, req_c);
+
+  return replicate(rep_a, rep_b, rep_c);
 }
 
 } // namespace correlation::core
