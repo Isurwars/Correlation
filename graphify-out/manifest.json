@@ -540,8 +540,8 @@
     "semantic_hash": ""
   },
   "tests/functional/analysis/StructureAnalyzerTests.cpp": {
-    "mtime": 1791183898.3151057,
-    "ast_hash": "cb0edcc21396a5100a4bf76043088770",
+    "mtime": 1791185518.9267745,
+    "ast_hash": "7a62f684fc902e33625a31d57ee891ca",
     "semantic_hash": ""
   },
   "tests/functional/analysis/TrajectoryAnalyzerTests.cpp": {
@@ -745,8 +745,8 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/SteinhardtCalculatorTests.cpp": {
-    "mtime": 1791182069.7012026,
-    "ast_hash": "03e25842690254301882b2c438d73086",
+    "mtime": 1791216868.6874654,
+    "ast_hash": "cf9baddf2449a1e8421581abef03f2bc",
     "semantic_hash": ""
   },
   "tests/unit/calculators/StructureFactorCalculatorTests.cpp": {
@@ -1255,8 +1255,8 @@
     "semantic_hash": ""
   },
   "include/plotters/SvgComparisonRenderer.hpp": {
-    "mtime": 1790634475.44039,
-    "ast_hash": "7db844a699cdc369cc6cf005e1a6b34d",
+    "mtime": 1791215562.5522277,
+    "ast_hash": "b765a979a583c2dd21b236e1530c2b63",
     "semantic_hash": ""
   },
   "include/plotters/SvgHistogramRenderer.hpp": {
@@ -1425,8 +1425,8 @@
     "semantic_hash": ""
   },
   "src/bindings/mlip_bindings.cpp": {
-    "mtime": 1790391314.5054286,
-    "ast_hash": "12bcb9e4c4f50249f752d8c7f65f83c7",
+    "mtime": 1791215368.9663901,
+    "ast_hash": "3552e0b12cfd43f3d4a168ee562e49e9",
     "semantic_hash": ""
   },
   "src/bindings/mlip_bindings.hpp": {
@@ -2345,8 +2345,8 @@
     "semantic_hash": ""
   },
   "src/calculators/order/SteinhardtCalculator.cpp": {
-    "mtime": 1791183651.2439704,
-    "ast_hash": "19a8f816c11e9d33c46b3c80447b6fb5",
+    "mtime": 1791218125.2429438,
+    "ast_hash": "d288b6d7fe3e6401ab2ccdae431ecbb8",
     "semantic_hash": ""
   },
   "src/calculators/scattering/StructureFactorCalculator.cpp": {
@@ -2430,8 +2430,8 @@
     "semantic_hash": ""
   },
   "src/calculators/spatial/VoronoiCalculator.cpp": {
-    "mtime": 1791184211.622145,
-    "ast_hash": "c001be2af2bc6c37898e418f9452e0e6",
+    "mtime": 1791215368.9746459,
+    "ast_hash": "28a06c7ec34368a5496d8daabdff43c9",
     "semantic_hash": ""
   },
   "src/calculators/temporal/MSDCalculator.cpp": {
@@ -2485,8 +2485,8 @@
     "semantic_hash": ""
   },
   "src/calculators/gpu/GPUSteinhardtCalculator.cu": {
-    "mtime": 1791183694.9672408,
-    "ast_hash": "8f677d035eaab73d61ee86a1ccfae4b8",
+    "mtime": 1791218099.7216532,
+    "ast_hash": "f92fa2b36b955b9433cdb8cab39c6f1f",
     "semantic_hash": ""
   },
   "src/calculators/gpu/GPUXRDCalculator.cu": {

@@ -392,7 +392,7 @@ void GPUSteinhardtCalculator::calculateFrame(
   hist_q4.x_label = "Q4";
   hist_q4.title = "Steinhardt Q4 Interface Parameter (GPU)";
   hist_q4.y_label = "Probability";
-  hist_q4.x_unit = "arbitrary units";
+  hist_q4.x_unit = "dimensionless";
   hist_q4.y_unit = "counts";
   hist_q4.description = "Steinhardt Q4 Bond Orientational Order Parameter (GPU)";
   hist_q4.file_suffix = "_Q4_gpu";
@@ -403,7 +403,7 @@ void GPUSteinhardtCalculator::calculateFrame(
   hist_q6.x_label = "Q6";
   hist_q6.title = "Steinhardt Q6 Interface Parameter (GPU)";
   hist_q6.y_label = "Probability";
-  hist_q6.x_unit = "arbitrary units";
+  hist_q6.x_unit = "dimensionless";
   hist_q6.y_unit = "counts";
   hist_q6.description = "Steinhardt Q6 Bond Orientational Order Parameter (GPU)";
   hist_q6.file_suffix = "_Q6_gpu";

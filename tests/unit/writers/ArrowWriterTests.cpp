@@ -13,8 +13,12 @@
 #include "core/Trajectory.hpp"
 #include "writers/ArrowWriter.hpp"
 
+#include <arrow/api.h>
+#include <arrow/io/file.h>
 #include <filesystem>
 #include <gtest/gtest.h>
+#include <parquet/arrow/reader.h>
+#include <parquet/exception.h>
 
 namespace correlation::writers::testing {
 
@@ -49,6 +53,50 @@ TEST(ArrowWriterTests, WriteAllParquetCreatesOutputFile) {
   EXPECT_TRUE(std::filesystem::exists(expected_parquet));
 
   // Clean up
+  std::filesystem::remove_all(temp_dir);
+}
+
+TEST(ArrowWriterTests, ParquetPreservesHistogramMetadataAndUnits) {
+  std::filesystem::path temp_dir =
+      std::filesystem::temp_directory_path() / "correlation_arrow_steinhardt_tests";
+  std::filesystem::create_directories(temp_dir);
+  std::string base_output = (temp_dir / "test_steinhardt").string();
+
+  correlation::core::Cell cell(std::array<real_t, 6>{10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  cell.addAtom("Si", {0.0, 0.0, 0.0});
+  cell.addAtom("Si", {2.0, 0.0, 0.0});
+
+  correlation::analysis::Histogram hist;
+  hist.x_label = "Q4";
+  hist.x_unit = "dimensionless";
+  hist.y_unit = "counts";
+  hist.description = "Steinhardt Q4 Bond Orientational Order Parameter";
+  hist.file_suffix = "_Q4";
+  hist.bins = {0.1, 0.2, 0.3};
+  hist.partials["Total"] = {1.0, 2.0, 3.0};
+
+  correlation::analysis::DistributionFunctions dists(cell, 0.0);
+  dists.addHistogram("Q4", std::move(hist));
+
+  EXPECT_NO_THROW(ArrowWriter::writeAllParquet(base_output, dists, false));
+
+  std::string expected_parquet = base_output + "_Q4.parquet";
+  ASSERT_TRUE(std::filesystem::exists(expected_parquet));
+
+  std::shared_ptr<arrow::io::ReadableFile> infile;
+  PARQUET_ASSIGN_OR_THROW(infile, arrow::io::ReadableFile::Open(expected_parquet));
+  std::unique_ptr<parquet::arrow::FileReader> reader;
+  PARQUET_ASSIGN_OR_THROW(reader, parquet::arrow::OpenFile(infile, arrow::default_memory_pool()));
+  std::shared_ptr<arrow::Schema> schema;
+  PARQUET_THROW_NOT_OK(reader->GetSchema(&schema));
+  auto metadata = schema->metadata();
+  ASSERT_NE(metadata, nullptr);
+  EXPECT_EQ(metadata->Get("dim_label").ValueOrDie(), "Q4");
+  EXPECT_EQ(metadata->Get("bin_unit").ValueOrDie(), "dimensionless");
+  EXPECT_EQ(metadata->Get("data_unit").ValueOrDie(), "counts");
+  EXPECT_EQ(metadata->Get("description").ValueOrDie(),
+            "Steinhardt Q4 Bond Orientational Order Parameter");
+
   std::filesystem::remove_all(temp_dir);
 }
 

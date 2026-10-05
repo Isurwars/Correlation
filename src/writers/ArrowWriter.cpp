@@ -57,9 +57,11 @@ void writeTableToParquet(const std::string &filename, const std::shared_ptr<arro
 
   const std::shared_ptr<parquet::WriterProperties> props =
       parquet::WriterProperties::Builder().build();
+  const std::shared_ptr<parquet::ArrowWriterProperties> arrow_props =
+      parquet::ArrowWriterProperties::Builder().store_schema()->build();
 
   PARQUET_THROW_NOT_OK(parquet::arrow::WriteTable(*table, arrow::default_memory_pool(), outfile,
-                                                  1024LL * 1024LL, props));
+                                                  1024LL * 1024LL, props, arrow_props));
   PARQUET_THROW_NOT_OK(outfile->Close());
 }
 

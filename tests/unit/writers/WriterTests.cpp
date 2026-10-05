@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/order/SteinhardtCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 #include "math/Precision.hpp"
@@ -471,14 +472,64 @@ TEST_F(FileWriterTests, WritesVACFMetadata) {
   vdos_val_ds.getAttribute("units").read(vdos_units);
   EXPECT_EQ(vdos_units, "arbitrary units");
 }
+
+TEST_F(FileWriterTests, WritesSteinhardtHDF5Metadata) {
+  // Arrange
+  std::string const path = getDataDir() + "si_crystal.car";
+  correlation::readers::FileType const type = correlation::readers::determineFileType(path);
+  correlation::core::Cell const si_cell = correlation::readers::readStructure(path, type);
+  correlation::core::Trajectory trajectory;
+  trajectory.addFrame(si_cell);
+  trajectory.precomputeBondCutoffs();
+
+  correlation::analysis::DistributionFunctions dists(si_cell, 5.0, trajectory.getBondCutoffsSQ());
+
+  correlation::calculators::SteinhardtCalculator const steinhardt;
+  steinhardt.calculateFrame(dists, {});
+
+  const std::string prefix = "test_si_steinhardt_h5";
+  cleanPrefix(prefix);
+
+  correlation::writers::FileWriter const writer(dists);
+  writer.write(prefix, false, true, false, false);
+
+  // Assert
+  ASSERT_TRUE(fileExistsAndIsNotEmpty(prefix + ".h5"));
+
+  HighFive::File file(prefix + ".h5", HighFive::File::ReadOnly);
+  EXPECT_TRUE(file.exist("Q4"));
+  EXPECT_TRUE(file.exist("Q6"));
+
+  HighFive::Group q4_group = file.getGroup("Q4");
+  EXPECT_TRUE(q4_group.hasAttribute("description"));
+  std::string description;
+  q4_group.getAttribute("description").read(description);
+  EXPECT_TRUE(description.starts_with("Steinhardt Q4 Bond Orientational Order Parameter"));
+
+  EXPECT_TRUE(q4_group.exist("Q4"));
+  HighFive::DataSet bin_ds = q4_group.getDataSet("Q4");
+  EXPECT_TRUE(bin_ds.hasAttribute("units"));
+  std::string bin_units;
+  bin_ds.getAttribute("units").read(bin_units);
+  EXPECT_EQ(bin_units, "dimensionless");
+
+  EXPECT_TRUE(q4_group.exist("Total"));
+  HighFive::DataSet val_ds = q4_group.getDataSet("Total");
+  EXPECT_TRUE(val_ds.hasAttribute("units"));
+  std::string data_units;
+  val_ds.getAttribute("units").read(data_units);
+  EXPECT_EQ(data_units, "counts");
+
+  cleanPrefix(prefix);
+}
 #endif
 
 #ifdef CORRELATION_USE_ARROW
 TEST_F(FileWriterTests, WritesParquetFiles) {
   // Arrange
   std::string const path = getDataDir() + "si_crystal.car";
-  correlation::readers::FileType type = correlation::readers::determineFileType(path);
-  correlation::core::Cell si_cell = correlation::readers::readStructure(path, type);
+  correlation::readers::FileType const type = correlation::readers::determineFileType(path);
+  correlation::core::Cell const si_cell = correlation::readers::readStructure(path, type);
   correlation::core::Trajectory trajectory;
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
@@ -491,10 +542,13 @@ TEST_F(FileWriterTests, WritesParquetFiles) {
   });
   dists.calculatePAD(2.0);
 
+  correlation::calculators::SteinhardtCalculator const steinhardt;
+  steinhardt.calculateFrame(dists, {});
+
   const std::string prefix = "test_si_parquet";
   cleanPrefix(prefix);
 
-  correlation::writers::FileWriter writer(dists);
+  correlation::writers::FileWriter const writer(dists);
 
   // Act
   // write(base_path, use_csv, use_hdf5, use_parquet, smoothing)
@@ -505,6 +559,8 @@ TEST_F(FileWriterTests, WritesParquetFiles) {
   EXPECT_TRUE(fileExistsAndIsNotEmpty(prefix + "_J.parquet"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty(prefix + "_G_reduced.parquet"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty(prefix + "_PAD.parquet"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty(prefix + "_Q4.parquet"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty(prefix + "_Q6.parquet"));
   EXPECT_FALSE(fileExistsAndIsNotEmpty(prefix + "_S.parquet"));
 
   cleanPrefix(prefix);

@@ -646,78 +646,80 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
   hist_q4.x_label = "Q4";
   hist_q4.title = "Steinhardt Q4 Interface Parameter";
   hist_q4.y_label = "Probability";
-  hist_q4.x_unit = "arbitrary units";
+  hist_q4.x_unit = "dimensionless";
   hist_q4.y_unit = "counts";
   hist_q4.description = "Steinhardt Q4 Bond Orientational Order Parameter";
   hist_q4.file_suffix = "_Q4";
   hist_q4.bins.resize(bins_q);
   for (size_t bin_idx = 0; bin_idx < bins_q; ++bin_idx) {
-    hist_q4.bins[bin_idx] = static_cast<real_t>(static_cast<real_t>(bin_idx) + 0.5 * d_q);
+    hist_q4.bins[bin_idx] = (static_cast<real_t>(bin_idx) + static_cast<real_t>(0.5)) * d_q;
   }
 
   correlation::analysis::Histogram hist_q6;
   hist_q6.x_label = "Q6";
   hist_q6.title = "Steinhardt Q6 Interface Parameter";
   hist_q6.y_label = "Probability";
-  hist_q6.x_unit = "arbitrary units";
+  hist_q6.x_unit = "dimensionless";
   hist_q6.y_unit = "counts";
   hist_q6.description = "Steinhardt Q6 Bond Orientational Order Parameter";
   hist_q6.file_suffix = "_Q6";
   hist_q6.bins.resize(bins_q);
   for (size_t bin_idx = 0; bin_idx < bins_q; ++bin_idx) {
-    hist_q6.bins[bin_idx] = static_cast<real_t>(static_cast<real_t>(bin_idx) + 0.5 * d_q);
+    hist_q6.bins[bin_idx] = (static_cast<real_t>(bin_idx) + static_cast<real_t>(0.5)) * d_q;
   }
 
   correlation::analysis::Histogram hist_w4;
   hist_w4.x_label = "W4_hat";
   hist_w4.title = "Steinhardt W4_hat Parameter";
   hist_w4.y_label = "Probability";
-  hist_w4.x_unit = "arbitrary units";
+  hist_w4.x_unit = "dimensionless";
   hist_w4.y_unit = "counts";
   hist_w4.description = "Steinhardt Normalized W4 Bond Orientational Order Parameter";
   hist_w4.file_suffix = "_W4_hat";
   hist_w4.bins.resize(bins_w4);
   for (size_t bin_idx = 0; bin_idx < bins_w4; ++bin_idx) {
-    hist_w4.bins[bin_idx] = w4_min + static_cast<real_t>(static_cast<real_t>(bin_idx) + 0.5 * d_w4);
+    hist_w4.bins[bin_idx] =
+        w4_min + (static_cast<real_t>(bin_idx) + static_cast<real_t>(0.5)) * d_w4;
   }
 
   correlation::analysis::Histogram hist_w6;
   hist_w6.x_label = "W6_hat";
   hist_w6.title = "Steinhardt W6_hat Parameter";
   hist_w6.y_label = "Probability";
-  hist_w6.x_unit = "arbitrary units";
+  hist_w6.x_unit = "dimensionless";
   hist_w6.y_unit = "counts";
   hist_w6.description = "Steinhardt Normalized W6 Bond Orientational Order Parameter";
   hist_w6.file_suffix = "_W6_hat";
   hist_w6.bins.resize(bins_w6);
   for (size_t bin_idx = 0; bin_idx < bins_w6; ++bin_idx) {
-    hist_w6.bins[bin_idx] = w6_min + static_cast<real_t>(static_cast<real_t>(bin_idx) + 0.5 * d_w6);
+    hist_w6.bins[bin_idx] =
+        w6_min + (static_cast<real_t>(bin_idx) + static_cast<real_t>(0.5)) * d_w6;
   }
 
   correlation::analysis::Histogram hist_q4_bar;
   hist_q4_bar.x_label = "Q4_bar";
   hist_q4_bar.title = "Lechner-Dellago Averaged Q4_bar Parameter";
   hist_q4_bar.y_label = "Probability";
-  hist_q4_bar.x_unit = "arbitrary units";
+  hist_q4_bar.x_unit = "dimensionless";
   hist_q4_bar.y_unit = "counts";
   hist_q4_bar.description = "Lechner-Dellago Locally Averaged Q4 Order Parameter";
   hist_q4_bar.file_suffix = "_Q4_bar";
   hist_q4_bar.bins.resize(bins_q);
   for (size_t bin_idx = 0; bin_idx < bins_q; ++bin_idx) {
-    hist_q4_bar.bins[bin_idx] = static_cast<real_t>(static_cast<real_t>(bin_idx) + 0.5 * d_q);
+    hist_q4_bar.bins[bin_idx] = (static_cast<real_t>(bin_idx) + static_cast<real_t>(0.5)) * d_q;
   }
 
   correlation::analysis::Histogram hist_q6_bar;
   hist_q6_bar.x_label = "Q6_bar";
   hist_q6_bar.title = "Lechner-Dellago Averaged Q6_bar Parameter";
   hist_q6_bar.y_label = "Probability";
-  hist_q6_bar.x_unit = "arbitrary units";
+  hist_q6_bar.x_unit = "dimensionless";
   hist_q6_bar.y_unit = "counts";
   hist_q6_bar.description = "Lechner-Dellago Locally Averaged Q6 Order Parameter";
   hist_q6_bar.file_suffix = "_Q6_bar";
   hist_q6_bar.bins.resize(bins_q);
   for (size_t bin_idx = 0; bin_idx < bins_q; ++bin_idx) {
-    hist_q6_bar.bins[bin_idx] = static_cast<real_t>(static_cast<real_t>(bin_idx) + 0.5 * d_q);
+    hist_q6_bar.bins[bin_idx] = (static_cast<real_t>(bin_idx) + static_cast<real_t>(0.5)) * d_q;
   }
 
   // 4. Populate Histograms
