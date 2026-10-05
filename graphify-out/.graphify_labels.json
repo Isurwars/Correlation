@@ -356,13 +356,10 @@
   "354": "ChgnetParser",
   "355": "MLIPInterface",
   "356": "AbinitReader",
-  "357": "PlotController::requestPlotUpdate",
-  "358": "PrecomputedPhases",
   "359": "ThreadAccumulators",
   "360": "MotifSignatureCounts",
   "361": "CP2KReader",
   "362": "QEReader",
-  "363": "HDF5Writer.cpp",
   "364": "SincIntegralParams",
   "365": "TorchGNNModel.cpp",
   "366": "OptionsResetServiceTests",
@@ -378,7 +375,6 @@
   "387": "matcorr",
   "389": "PlotSize",
   "390": "PeriodicShift",
-  "391": "HDF5Writer.cpp",
   "394": "ZipArchiveWriterTest",
   "397": "CNAPairSig"
 }

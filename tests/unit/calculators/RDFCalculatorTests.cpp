@@ -92,14 +92,14 @@ void verifyHrHistogram(const DistributionFunctions &dists) {
 void verifyGrHistograms(const DistributionFunctions &dists) {
   const auto &g_unw = dists.getHistogram("g_r_unweighted");
   EXPECT_EQ(g_unw.title, "g(r) — Unweighted Radial Distribution Function");
-  EXPECT_EQ(g_unw.y_unit, "Å⁻¹");
+  EXPECT_EQ(g_unw.y_unit, "");
   ASSERT_TRUE(g_unw.partials.contains("Ar-Ar"));
 
   const auto &g_r = dists.getHistogram("g_r");
-  EXPECT_EQ(g_r.y_unit, "Å⁻¹");
+  EXPECT_EQ(g_r.y_unit, "");
 
   const auto &g_r_tot = dists.getHistogram("G_r");
-  EXPECT_EQ(g_r_tot.y_unit, "Å⁻¹");
+  EXPECT_EQ(g_r_tot.y_unit, "Å⁻²");
 }
 } // namespace
 
@@ -540,6 +540,41 @@ TEST_F(RDFCalculatorTests, AddAccumulatesWithMismatchedPartialSizes) {
   EXPECT_DOUBLE_EQ(res.partials.at("Ar-Ar")[0], 11.0);
   EXPECT_DOUBLE_EQ(res.partials.at("Ar-Ar")[1], 22.0);
   EXPECT_DOUBLE_EQ(res.partials.at("Ar-Ar")[2], 3.0);
+}
+
+TEST_F(RDFCalculatorTests, PrimitiveCellRDFComputesSelfImages) {
+  // A primitive FCC cell with 1 atom (e.g., Cu a = 3.615)
+  // Distance to nearest neighbor is a / sqrt(2) ~ 2.556 A
+  const auto lat_a = static_cast<real_t>(3.615);
+  const real_t half_a = lat_a / static_cast<real_t>(2.0);
+  const correlation::math::Vector3<real_t> v_a{static_cast<real_t>(0.0), half_a, half_a};
+  const correlation::math::Vector3<real_t> v_b{half_a, static_cast<real_t>(0.0), half_a};
+  const correlation::math::Vector3<real_t> v_c{half_a, half_a, static_cast<real_t>(0.0)};
+  correlation::core::Cell prim_cell(v_a, v_b, v_c);
+  prim_cell.addAtom("Cu", {0.0, 0.0, 0.0});
+
+  updateTrajectory(prim_cell);
+  DistributionFunctions dists(prim_cell, 5.0, trajectory_.getBondCutoffsSQ());
+  dists.calculateRDF({
+      .r_max = 5.0,
+      .r_bin_width = 0.02,
+  });
+
+  const auto &hist = dists.getHistogram("g_r");
+  ASSERT_TRUE(hist.partials.contains("Cu-Cu"));
+  const auto &cu_cu = hist.partials.at("Cu-Cu");
+
+  const auto [peak_r, max_val] = findPeakInRange(hist.bins, cu_cu, 2.0, 3.0);
+  EXPECT_NEAR(peak_r, lat_a / std::numbers::sqrt2, 0.03);
+  EXPECT_GT(max_val, 1.0);
+
+  const auto &h_r = dists.getHistogram("H_r");
+  ASSERT_TRUE(h_r.partials.contains("Cu-Cu"));
+  real_t total_counts = 0.0;
+  for (const real_t val : h_r.partials.at("Cu-Cu")) {
+    total_counts += val;
+  }
+  EXPECT_GT(total_counts, 0.0);
 }
 
 } // namespace correlation::analysis

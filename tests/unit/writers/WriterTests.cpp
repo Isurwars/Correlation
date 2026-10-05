@@ -339,7 +339,7 @@ TEST_F(FileWriterTests, WritesHDF5File) {
   EXPECT_TRUE(data_ds.hasAttribute("units"));
   std::string data_units;
   data_ds.getAttribute("units").read(data_units);
-  EXPECT_EQ(data_units, "Å⁻¹");
+  EXPECT_EQ(data_units, "");
 
   EXPECT_TRUE(data_ds.hasAttribute("label"));
   std::string data_label;

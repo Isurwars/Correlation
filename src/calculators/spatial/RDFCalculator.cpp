@@ -62,7 +62,7 @@ void accumulateRawCounts(const correlation::core::Cell &cell,
       .r_bin_width = settings.r_bin_width,
       .num_bins = settings.num_bins,
   };
-  DistanceCalculator::compute(cell, cutoff_sq, empty_bonds, true, dummy_graph,
+  DistanceCalculator::compute(cell, cutoff_sq, empty_bonds, false, dummy_graph,
                               &standalone_histograms, hist_config);
 
   for (size_t i = 0; i < num_elements; ++i) {
@@ -250,7 +250,7 @@ std::map<std::string, correlation::analysis::Histogram> RDFCalculator::calculate
   g_r.title = "g(r) — Radial Distribution Function";
   g_r.y_label = "g(r)";
   g_r.x_unit = "Å";
-  g_r.y_unit = "Å⁻¹";
+  g_r.y_unit = "";
   g_r.description = "Radial Distribution Function";
   g_r.file_suffix = "_g";
 
@@ -258,7 +258,7 @@ std::map<std::string, correlation::analysis::Histogram> RDFCalculator::calculate
   g_r_reduced.title = "G(r) — Reduced Pair Distribution Function";
   g_r_reduced.y_label = "G(r)";
   g_r_reduced.x_unit = "Å";
-  g_r_reduced.y_unit = "Å⁻¹";
+  g_r_reduced.y_unit = "Å⁻²";
   g_r_reduced.description = "Radial Distribution Function";
   g_r_reduced.file_suffix = "_G_reduced";
 
