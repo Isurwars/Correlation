@@ -132,7 +132,7 @@ TEST_F(OptionsResetServiceTests, ResetRingsAndSmoothingAndAdvanced) {
 
   OptionsResetService::resetRings(win);
   auto opts = win.get_analysis_options();
-  EXPECT_EQ(opts.max_ring_size, "8");
+  EXPECT_EQ(opts.max_ring_size, "12");
 
   OptionsResetService::resetSmoothing(win);
   opts = win.get_analysis_options();

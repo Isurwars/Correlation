@@ -371,6 +371,7 @@
   "369": "ThreadAccumulators",
   "370": "atoms_",
   "371": "ReciprocalBasis",
+  "372": "BondCutoffService::applyScaledBondCutoffs",
   "373": "TEST",
   "374": "RDFCalculator",
   "375": "TEST",

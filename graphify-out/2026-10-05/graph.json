@@ -684,7 +684,7 @@
       "label": "MaxFrames",
       "file_type": "code",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L9",
+      "source_location": "L10",
       "_origin": "ast",
       "id": "include_analysis_analysistypes_maxframes",
       "community": 62,
@@ -695,7 +695,7 @@
       "label": "value",
       "file_type": "code",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L10",
+      "source_location": "L11",
       "_origin": "ast",
       "id": "include_analysis_analysistypes_maxframes_value",
       "community": 62,
@@ -706,7 +706,7 @@
       "label": "StartFrame",
       "file_type": "code",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L13",
+      "source_location": "L14",
       "_origin": "ast",
       "id": "include_analysis_analysistypes_startframe",
       "community": 62,
@@ -717,7 +717,7 @@
       "label": "value",
       "file_type": "code",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L14",
+      "source_location": "L15",
       "_origin": "ast",
       "id": "include_analysis_analysistypes_startframe_value",
       "community": 62,
@@ -728,7 +728,7 @@
       "label": "EndFrame",
       "file_type": "code",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L17",
+      "source_location": "L18",
       "_origin": "ast",
       "id": "include_analysis_analysistypes_endframe",
       "community": 62,
@@ -739,7 +739,7 @@
       "label": "value",
       "file_type": "code",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L18",
+      "source_location": "L19",
       "_origin": "ast",
       "id": "include_analysis_analysistypes_endframe_value",
       "community": 62,
@@ -750,7 +750,7 @@
       "label": "BondCutoffRange",
       "file_type": "code",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L25",
+      "source_location": "L26",
       "_origin": "ast",
       "id": "include_analysis_analysistypes_bondcutoffrange",
       "community": 248,
@@ -772,7 +772,7 @@
       "label": "min_sq",
       "file_type": "code",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L26",
+      "source_location": "L27",
       "_origin": "ast",
       "id": "include_analysis_analysistypes_bondcutoffrange_min_sq",
       "community": 248,
@@ -783,7 +783,7 @@
       "label": "max_sq",
       "file_type": "code",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L27",
+      "source_location": "L28",
       "_origin": "ast",
       "id": "include_analysis_analysistypes_bondcutoffrange_max_sq",
       "community": 248,
@@ -794,7 +794,7 @@
       "label": ".isValid()",
       "file_type": "code",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L29",
+      "source_location": "L30",
       "_origin": "ast",
       "id": "include_analysis_analysistypes_bondcutoffrange_isvalid",
       "community": 248,
@@ -5428,8 +5428,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "include_app_services_bondcutoffservice_bondcutoffservice_getrecommendedbondcutoffs",
-      "community": 351,
-      "community_name": "AppController.hpp",
+      "community": 372,
+      "community_name": "BondCutoffService::applyScaledBondCutoffs",
       "norm_label": "getrecommendedbondcutoffs"
     },
     {
@@ -6066,8 +6066,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "include_app_services_physicsservice_physicsservice_scalebondcutoffs",
-      "community": 351,
-      "community_name": "AppController.hpp",
+      "community": 372,
+      "community_name": "BondCutoffService::applyScaledBondCutoffs",
       "norm_label": "scalebondcutoffs"
     },
     {
@@ -23864,8 +23864,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "include_readers_outmolreader_outmolreader_readtrajectory",
-      "community": 71,
-      "community_name": "TEST",
+      "community": 36,
+      "community_name": "fuzz_utils.hpp",
       "norm_label": "readtrajectory"
     },
     {
@@ -24458,8 +24458,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "include_readers_xyzreader_xyzreader_readstructure",
-      "community": 36,
-      "community_name": "fuzz_utils.hpp",
+      "community": 161,
+      "community_name": "TEST_F",
       "norm_label": "readstructure"
     },
     {
@@ -24469,8 +24469,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "include_readers_xyzreader_xyzreader_readtrajectory",
-      "community": 253,
-      "community_name": "compute_distances_gpu",
+      "community": 161,
+      "community_name": "TEST_F",
       "norm_label": "readtrajectory"
     },
     {
@@ -28736,8 +28736,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_services_bondcutoffservice",
-      "community": 351,
-      "community_name": "AppController.hpp",
+      "community": 372,
+      "community_name": "BondCutoffService::applyScaledBondCutoffs",
       "norm_label": "bondcutoffservice.cpp"
     },
     {
@@ -28747,8 +28747,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_app_services_bondcutoffservice_bondcutoffservice_getrecommendedbondcutoffs",
-      "community": 351,
-      "community_name": "AppController.hpp",
+      "community": 372,
+      "community_name": "BondCutoffService::applyScaledBondCutoffs",
       "norm_label": "bondcutoffservice::getrecommendedbondcutoffs()"
     },
     {
@@ -28758,8 +28758,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_services_bondcutoffservice_cpp_bondcutoffmatrix",
-      "community": 351,
-      "community_name": "AppController.hpp",
+      "community": 372,
+      "community_name": "BondCutoffService::applyScaledBondCutoffs",
       "norm_label": "bondcutoffmatrix"
     },
     {
@@ -28769,8 +28769,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "src_app_services_bondcutoffservice_bondcutoffservice_applyscaledbondcutoffs",
-      "community": 351,
-      "community_name": "AppController.hpp",
+      "community": 372,
+      "community_name": "BondCutoffService::applyScaledBondCutoffs",
       "norm_label": "bondcutoffservice::applyscaledbondcutoffs()"
     },
     {
@@ -28780,8 +28780,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_services_bondcutoffservice_cpp_real_t",
-      "community": 351,
-      "community_name": "AppController.hpp",
+      "community": 372,
+      "community_name": "BondCutoffService::applyScaledBondCutoffs",
       "norm_label": "real_t"
     },
     {
@@ -28791,8 +28791,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "src_app_services_bondcutoffservice_bondcutoffservice_setuniformbondcutoff",
-      "community": 351,
-      "community_name": "AppController.hpp",
+      "community": 372,
+      "community_name": "BondCutoffService::applyScaledBondCutoffs",
       "norm_label": "bondcutoffservice::setuniformbondcutoff()"
     },
     {
@@ -28802,8 +28802,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "src_app_services_bondcutoffservice_bondcutoffservice_getbondcutoff",
-      "community": 351,
-      "community_name": "AppController.hpp",
+      "community": 372,
+      "community_name": "BondCutoffService::applyScaledBondCutoffs",
       "norm_label": "bondcutoffservice::getbondcutoff()"
     },
     {
@@ -28813,8 +28813,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "src_app_services_bondcutoffservice_bondcutoffservice_getminbondcutoff",
-      "community": 351,
-      "community_name": "AppController.hpp",
+      "community": 372,
+      "community_name": "BondCutoffService::applyScaledBondCutoffs",
       "norm_label": "bondcutoffservice::getminbondcutoff()"
     },
     {
@@ -28824,8 +28824,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "src_app_services_bondcutoffservice_bondcutoffservice_setbondcutoffs",
-      "community": 351,
-      "community_name": "AppController.hpp",
+      "community": 372,
+      "community_name": "BondCutoffService::applyScaledBondCutoffs",
       "norm_label": "bondcutoffservice::setbondcutoffs()"
     },
     {
@@ -53310,8 +53310,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_fuzz_fuzz_outmol",
-      "community": 71,
-      "community_name": "TEST",
+      "community": 36,
+      "community_name": "fuzz_utils.hpp",
       "norm_label": "fuzz_outmol.cpp"
     },
     {
@@ -53321,8 +53321,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_fuzz_fuzz_outmol_llvmfuzzertestoneinput",
-      "community": 71,
-      "community_name": "TEST",
+      "community": 36,
+      "community_name": "fuzz_utils.hpp",
       "norm_label": "llvmfuzzertestoneinput()"
     },
     {
@@ -53497,8 +53497,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_fuzz_fuzz_xyz",
-      "community": 36,
-      "community_name": "fuzz_utils.hpp",
+      "community": 161,
+      "community_name": "TEST_F",
       "norm_label": "fuzz_xyz.cpp"
     },
     {
@@ -53508,8 +53508,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_fuzz_fuzz_xyz_llvmfuzzertestoneinput",
-      "community": 36,
-      "community_name": "fuzz_utils.hpp",
+      "community": 161,
+      "community_name": "TEST_F",
       "norm_label": "llvmfuzzertestoneinput()"
     },
     {
@@ -75998,7 +75998,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L25",
+      "source_location": "L26",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_analysis_analysistypes",
@@ -76009,7 +76009,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_analysis_analysistypes",
@@ -76020,7 +76020,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L9",
+      "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_analysis_analysistypes",
@@ -76031,7 +76031,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L13",
+      "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_analysis_analysistypes",
@@ -76043,7 +76043,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_analysis_analysistypes",
@@ -76198,7 +76198,7 @@
       "relation": "defines",
       "confidence": "EXTRACTED",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L10",
+      "source_location": "L11",
       "weight": 1.0,
       "context": "field",
       "_origin": "ast",
@@ -76282,7 +76282,7 @@
       "relation": "defines",
       "confidence": "EXTRACTED",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0,
       "context": "field",
       "_origin": "ast",
@@ -76378,7 +76378,7 @@
       "relation": "defines",
       "confidence": "EXTRACTED",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0,
       "context": "field",
       "_origin": "ast",
@@ -76474,7 +76474,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_analysis_analysistypes_bondcutoffrange",
@@ -76485,7 +76485,7 @@
       "relation": "defines",
       "confidence": "EXTRACTED",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L27",
+      "source_location": "L28",
       "weight": 1.0,
       "context": "field",
       "_origin": "ast",
@@ -76497,7 +76497,7 @@
       "relation": "defines",
       "confidence": "EXTRACTED",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0,
       "context": "field",
       "_origin": "ast",
@@ -76509,7 +76509,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/analysis/AnalysisTypes.hpp",
-      "source_location": "L27",
+      "source_location": "L28",
       "weight": 1.0,
       "context": "field",
       "_origin": "ast",
@@ -220217,5 +220217,5 @@
       "confidence_score": 1.0
     }
   ],
-  "built_at_commit": "7bd3a6fdfa15a400135a3a7d1181d2f90cd995ce"
+  "built_at_commit": "98c7f02e5d1f24f71f7720a66f24d25a7cc68544"
 }
