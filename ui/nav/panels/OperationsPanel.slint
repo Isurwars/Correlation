@@ -1,0 +1,83 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import { AtomCount, AnalysisOptions, AppErrors } from "../../Types.slint";
+import { OperationsPanelCard } from "../../cards/operations/OperationsPanelCard.slint";
+
+/// Modular Host Component for Panel 0: Operations & Trajectory Setup
+export component OperationsPanel inherits Rectangle {
+    // File loading & status
+    in property <bool> load_enabled: true;
+    in property <bool> file_loading: false;
+    in-out property <string> file_status_text: "";
+    in property <string> file_basename: "";
+    in property <bool> file_loaded: false;
+    in property <int> num_frames: 0;
+    in property <int> total_atoms: 0;
+    in property <int> removed_frames_count: 0;
+    in property <[AtomCount]> atom_counts: [];
+    in property <string> box_volume: "";
+    in property <string> box_density: "";
+    in property <string> box_dimensions: "";
+
+    callback browse_file();
+    callback reload_file();
+
+    // Material & Trajectory Setup
+    in-out property <int> material_type: 0;
+    in-out property <AnalysisOptions> analysis_options;
+    in property <AppErrors> app_errors;
+
+    callback reset_trajectory_options();
+    callback reset_material_type();
+
+    // Execution
+    in property <bool> analysis_running: false;
+    in property <bool> has_validation_errors: false;
+    callback run_analysis();
+    callback cancel_analysis();
+
+    out property <string> hovered_tooltip_text: card.hovered_tooltip_text;
+    out property <length> hovered_x: card.hovered_x;
+    out property <length> hovered_y: card.hovered_y;
+    out property <length> hovered_width: card.hovered_width;
+    out property <length> hovered_height: card.hovered_height;
+
+    card := OperationsPanelCard {
+        width: 100%;
+        height: 100%;
+        load_enabled: root.load_enabled;
+        file_loading: root.file_loading;
+        browse_file => { root.browse_file(); }
+        reload_file => { root.reload_file(); }
+        file_status_text <=> root.file_status_text;
+        file_basename: root.file_basename;
+        file_loaded: root.file_loaded;
+        num_frames: root.num_frames;
+        total_atoms: root.total_atoms;
+        removed_frames_count: root.removed_frames_count;
+        atom_counts: root.atom_counts;
+        box_volume: root.box_volume;
+        box_density: root.box_density;
+        box_dimensions: root.box_dimensions;
+
+        material_type <=> root.material_type;
+        time_step <=> root.analysis_options.time_step;
+        time_step_error: root.app_errors.time_step_error;
+        min_frame <=> root.analysis_options.min_frame;
+        max_frame <=> root.analysis_options.max_frame;
+        min_frame_error: root.app_errors.min_frame_error;
+        max_frame_error: root.app_errors.max_frame_error;
+        frame_stride <=> root.analysis_options.frame_stride;
+        frame_stride_error: root.app_errors.frame_stride_error;
+        reset_trajectory_options => { root.reset_trajectory_options(); }
+        reset_material_type => { root.reset_material_type(); }
+
+        analysis_running: root.analysis_running;
+        has_validation_errors: root.has_validation_errors;
+        run_analysis => { root.run_analysis(); }
+        cancel_analysis => { root.cancel_analysis(); }
+    }
+}

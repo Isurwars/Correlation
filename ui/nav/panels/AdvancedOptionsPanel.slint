@@ -1,0 +1,76 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import { AnalysisOptions, AppErrors } from "../../Types.slint";
+import { AdvancedOptionsPanelCard } from "../../cards/advanced/AdvancedOptionsPanelCard.slint";
+
+/// Modular Host Component for Panel 2: Advanced Options (S(Q), XRD, Rings, Smoothing, LEF)
+export component AdvancedOptionsPanel inherits Rectangle {
+    in property <bool> file_loaded: false;
+    in property <bool> has_scattering_active: true;
+    in property <bool> has_rings_active: true;
+
+    in-out property <AnalysisOptions> analysis_options;
+    in property <AppErrors> app_errors;
+
+    callback reset_sq_options();
+    callback reset_xrd_options();
+    callback xrd_radiation_preset_changed(int);
+    callback reset_rings_options();
+    callback reset_smoothing_options();
+    callback reset_advanced_options();
+
+    out property <string> hovered_tooltip_text: card.hovered_tooltip_text;
+    out property <length> hovered_x: card.hovered_x;
+    out property <length> hovered_y: card.hovered_y;
+    out property <length> hovered_width: card.hovered_width;
+    out property <length> hovered_height: card.hovered_height;
+
+    card := AdvancedOptionsPanelCard {
+        width: 100%;
+        height: 100%;
+        file_loaded: root.file_loaded;
+        has_scattering_active: root.has_scattering_active;
+        has_rings_active: root.has_rings_active;
+
+        q_max <=> root.analysis_options.q_max;
+        q_bin_width <=> root.analysis_options.q_bin_width;
+        r_int_max <=> root.analysis_options.r_int_max;
+        q_max_error: root.app_errors.q_max_error;
+        q_bin_error: root.app_errors.q_bin_error;
+        r_int_max_error: root.app_errors.r_int_max_error;
+        reset_sq_options => { root.reset_sq_options(); }
+
+        xrd_radiation_preset <=> root.analysis_options.xrd_radiation_preset;
+        xrd_lambda <=> root.analysis_options.xrd_lambda;
+        xrd_theta_min <=> root.analysis_options.xrd_theta_min;
+        xrd_theta_max <=> root.analysis_options.xrd_theta_max;
+        xrd_bin_width <=> root.analysis_options.xrd_bin_width;
+        xrd_lambda_error: root.app_errors.xrd_lambda_error;
+        xrd_theta_min_error: root.app_errors.xrd_theta_min_error;
+        xrd_theta_max_error: root.app_errors.xrd_theta_max_error;
+        xrd_bin_width_error: root.app_errors.xrd_bin_width_error;
+        reset_xrd_options => { root.reset_xrd_options(); }
+        xrd_radiation_preset_changed(idx) => { root.xrd_radiation_preset_changed(idx); }
+
+        max_ring_size <=> root.analysis_options.max_ring_size;
+        max_ring_error: root.app_errors.max_ring_error;
+        reset_rings_options => { root.reset_rings_options(); }
+
+        smoothing_enabled <=> root.analysis_options.smoothing_enabled;
+        smoothing_sigma <=> root.analysis_options.smoothing_sigma;
+        smoothing_kernel <=> root.analysis_options.smoothing_kernel;
+        smoothing_sigma_error: root.app_errors.smoothing_sigma_error;
+        reset_smoothing_options => { root.reset_smoothing_options(); }
+
+        lef_cutoff <=> root.analysis_options.lef_cutoff;
+        lef_sigma <=> root.analysis_options.lef_sigma;
+        hyper_samples <=> root.analysis_options.hyper_samples;
+        lef_cutoff_error: root.app_errors.lef_cutoff_error;
+        lef_sigma_error: root.app_errors.lef_sigma_error;
+        hyper_samples_error: root.app_errors.hyper_samples_error;
+        reset_advanced_options => { root.reset_advanced_options(); }
+    }
+}

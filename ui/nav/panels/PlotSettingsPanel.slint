@@ -1,0 +1,62 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import { ComparisonCurveData, ExportConfig } from "../../Types.slint";
+import { PlotExportPanelCard } from "../../cards/plot/PlotExportPanelCard.slint";
+
+/// Modular Host Component for Panel 3: Plot Settings & Comparisons
+export component PlotSettingsPanel inherits Rectangle {
+    in property <bool> enabled: true;
+
+    // Comparison Overlay state
+    in property <[ComparisonCurveData]> comparison_curves: [];
+    in property <bool> show_difference: false;
+    callback pin_run();
+    callback import_comparison_file();
+    callback remove_comparison_curve(int);
+    callback toggle_difference_plot(bool);
+    callback clear_comparison_curves();
+
+    // Export Settings state
+    in-out property <ExportConfig> export_config;
+    in property <string> export_font_scale_error: "";
+    in property <string> export_line_width_error: "";
+    in property <string> export_marker_size_error: "";
+    callback reset_export_settings();
+
+    out property <string> hovered_tooltip_text: card.hovered_tooltip_text;
+    out property <length> hovered_x: card.hovered_x;
+    out property <length> hovered_y: card.hovered_y;
+    out property <length> hovered_width: card.hovered_width;
+    out property <length> hovered_height: card.hovered_height;
+
+    card := PlotExportPanelCard {
+        width: 100%;
+        height: 100%;
+        enabled: root.enabled;
+
+        comparison_curves: root.comparison_curves;
+        show_difference: root.show_difference;
+        pin_current_run => { root.pin_run(); }
+        import_comparison_file => { root.import_comparison_file(); }
+        remove_comparison_curve(id) => { root.remove_comparison_curve(id); }
+        toggle_difference_plot(show) => { root.toggle_difference_plot(show); }
+        clear_comparison_curves => { root.clear_comparison_curves(); }
+
+        export_size_preset <=> root.export_config.size_preset;
+        export_palette <=> root.export_config.palette;
+        export_font_scale <=> root.export_config.font_scale;
+        export_line_width <=> root.export_config.line_width;
+        export_marker_size <=> root.export_config.marker_size;
+        export_show_legend <=> root.export_config.show_legend;
+        export_show_grid <=> root.export_config.show_grid;
+        export_show_markers <=> root.export_config.show_markers;
+        export_fill_area <=> root.export_config.fill_area;
+        export_font_scale_error: root.export_font_scale_error;
+        export_line_width_error: root.export_line_width_error;
+        export_marker_size_error: root.export_marker_size_error;
+        reset_export_settings => { root.reset_export_settings(); }
+    }
+}

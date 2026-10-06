@@ -1,0 +1,78 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import { AtomCount, BondCutoff, AnalysisOptions, AppErrors } from "../../Types.slint";
+import { CommonOptionsPanelCard } from "../../cards/common/CommonOptionsPanelCard.slint";
+
+/// Modular Host Component for Panel 1: Structure & Common Options (Cutoffs, RDF, Angles, Dynamics)
+export component StructurePanel inherits Rectangle {
+    in property <bool> file_loaded: false;
+    in property <bool> has_radial_active: true;
+    in property <bool> has_angular_active: true;
+
+    // Dynamics indicators
+    in property <string> diff_msd: "";
+    in property <string> diff_vacf: "";
+    in property <string> relaxation_time: "";
+    in property <string> deborah_number: "";
+
+    // Bond Cutoffs state
+    in property <[AtomCount]> atom_counts: [];
+    in-out property <[BondCutoff]> bond_cutoffs: [];
+    in property <int> bond_cutoffs_reset_trigger: 0;
+    callback reset_bond_cutoffs();
+    callback apply_min_factor(float);
+    callback apply_max_factor(float);
+    callback apply_global_cutoff(float);
+    callback apply_scaled_cutoffs(float);
+    callback set_uniform_cutoff(float);
+
+    // Analysis options and errors
+    in-out property <AnalysisOptions> analysis_options;
+    in property <AppErrors> app_errors;
+    callback reset_rdf_options();
+    callback reset_angle_options();
+
+    out property <string> hovered_tooltip_text: card.hovered_tooltip_text;
+    out property <length> hovered_x: card.hovered_x;
+    out property <length> hovered_y: card.hovered_y;
+    out property <length> hovered_width: card.hovered_width;
+    out property <length> hovered_height: card.hovered_height;
+
+    card := CommonOptionsPanelCard {
+        width: 100%;
+        height: 100%;
+        file_loaded: root.file_loaded;
+        has_radial_active: root.has_radial_active;
+        has_angular_active: root.has_angular_active;
+
+        diff_msd: root.diff_msd;
+        diff_vacf: root.diff_vacf;
+        relaxation_time: root.relaxation_time;
+        deborah_number: root.deborah_number;
+
+        atom_counts: root.atom_counts;
+        bond_cutoffs <=> root.bond_cutoffs;
+        bond_cutoffs_reset_trigger: root.bond_cutoffs_reset_trigger;
+        reset_bond_cutoffs => { root.reset_bond_cutoffs(); }
+        apply_min_factor(factor) => { root.apply_min_factor(factor); }
+        apply_max_factor(factor) => { root.apply_max_factor(factor); }
+        apply_global_cutoff(cutoff) => { root.apply_global_cutoff(cutoff); }
+        apply_scaled_cutoffs(factor) => { root.apply_scaled_cutoffs(factor); }
+        set_uniform_cutoff(max_val) => { root.set_uniform_cutoff(max_val); }
+
+        r_max <=> root.analysis_options.r_max;
+        r_bin_width <=> root.analysis_options.r_bin_width;
+        r_max_error: root.app_errors.r_max_error;
+        r_bin_error: root.app_errors.r_bin_error;
+        reset_rdf_options => { root.reset_rdf_options(); }
+
+        angle_bin_width <=> root.analysis_options.angle_bin_width;
+        dihedral_bin_width <=> root.analysis_options.dihedral_bin_width;
+        angle_bin_error: root.app_errors.angle_bin_error;
+        dihedral_bin_error: root.app_errors.dihedral_bin_error;
+        reset_angle_options => { root.reset_angle_options(); }
+    }
+}
