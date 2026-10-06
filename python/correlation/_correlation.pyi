@@ -456,6 +456,10 @@ class Cell:
         """
     def add_atom(self, *args, **kwargs):
         ...
+    def from_arrays(self, positions: numpy.typing.NDArray[typing.Any], symbols: collections.abc.Sequence[str]) -> None:
+        """
+        Bulk-add atoms from a (N, 3) positions array and symbols list.
+        """
     def get_element_ids(self) -> numpy.typing.NDArray[numpy.int32]:
         """
         Return element type IDs for all atoms as a NumPy array of shape (N,).

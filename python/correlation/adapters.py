@@ -15,7 +15,7 @@ try:
     import correlation
 except ImportError:  # pragma: no cover
     try:
-        from correlation import _correlation as correlation
+        from correlation import _correlation as correlation  # pyright: ignore[reportMissingModuleSource]
     except ImportError:
         correlation = None  # type: ignore[assignment]
 
