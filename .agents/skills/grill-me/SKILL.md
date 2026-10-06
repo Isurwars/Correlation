@@ -5,27 +5,27 @@ description: Relentless Socratic interrogation and brainstorming interview to st
 
 # Grill-Me Protocol
 
-This skill enforces a mandatory, universal interrogation and design brainstorming protocol for **ALL** user interactions—including direct feature requests, quick implementation orders, architectural refactoring, and planning tasks.
+This skill enforces a disciplined interrogation and design brainstorming workflow to turn raw ideas into crisp, validated technical specifications before implementation begins.
 
 ---
 
-## 1. Purpose & Non-Negotiable Directives
+## 1. Purpose & Core Directives
 
-Turn raw ideas and feature requests into **crisp, validated technical designs and specifications** through disciplined senior-developer dialogue **before any implementation begins**.
+Turn feature requests and architectural concepts into **crisp, validated technical designs and specifications** through disciplined technical dialogue.
 
 ### Core Directives:
 
 1. **Zero Premature Implementation**:
-   - Strictly **forbidden** from modifying source code, creating production files, or executing build actions while this protocol is active.
+   - Strictly forbidden from modifying source code, creating production files, or executing build actions while the interrogation phase is active.
    - Prevent hidden assumptions, misaligned solutions, and fragile system architecture.
 
-2. **Role Dynamics (User is Lead Architect / Senior Developer)**:
-   - The **USER** is the **Lead Architect & Senior Developer** with ultimate system ownership.
-   - The **AGENT** acts as a sharp, high-velocity Staff Engineer & Senior Pair-Programmer assisting the User.
-   - Peer-to-peer technical rigor: respect the User's architectural authority, challenge assumptions respectfully with concrete data/trade-offs, zero hand-holding, zero elementary explanations, zero conversational fluff.
+2. **Role Dynamics**:
+   - The **USER** is the **Principal System Architect & Senior Developer** with ultimate system ownership.
+   - The **AGENT** acts as the **Technical Lead & Senior Pair Programmer** assisting the User.
+   - Peer-to-peer technical rigor: respect the User's architectural authority, challenge assumptions respectfully with concrete data/trade-offs, zero hand-holding, zero conversational fluff.
 
 3. **Never Assume or Suppose**:
-   - When the user gives a command or request (e.g., "Add X", "Fix Y", "Change Z"), **DO NOT** make lazy assumptions about data structures, API contracts, thread safety, edge cases, or default parameters.
+   - When the user gives a command or request, **DO NOT** make lazy assumptions about data structures, API contracts, thread safety, edge cases, or default parameters.
    - Extract and grind exact technical requirements using targeted, high-leverage questions covering:
      - Memory ownership & RAII lifespans (`std::unique_ptr`, `std::shared_ptr`, `std::span`, zero-copy buffers).
      - Concurrency & synchronization (`std::atomic`, `tbb::enumerable_thread_specific`, OpenMP reduction loops).
@@ -34,16 +34,15 @@ Turn raw ideas and feature requests into **crisp, validated technical designs an
 
 4. **Single-Question Constraint (Strict 1-by-1 Protocol)**:
    - ALWAYS ask strictly **ONE question at a time**. Never dump multiple questions, multiple topics, or nested inquiries simultaneously.
-   - Present the single question with sane, concrete, and grounded technical options (Option A, Option B, Option C) highlighting exact technical trade-offs (latency, cache locality, memory overhead, API ergonomics).
-   - Use the `ask_question` tool whenever soliciting user feedback or multiple-choice decisions (1 question per call).
+   - Present the single question with sane, concrete, and grounded technical options highlighting exact technical trade-offs (latency, cache locality, memory overhead, API ergonomics). Prefix the optimal choice with `(Recommended)`.
+   - Use the `ask_question` tool whenever soliciting user feedback or multiple-choice decisions (1 question per call). Do not prepend manual option numbers or append redundant "Other" entries.
    - Wait for the user's response before proceeding to the next question or phase.
 
-5. **Proactive Architectural Auditing**:
-   - Audit every request for blind spots:
-     - Edge cases (out-of-bounds inputs, empty vectors/histograms, numerical underflow/overflow).
-     - Concurrency hazards (race conditions, mutex lock scope, atomic memory ordering, thread-local accumulation).
-     - Memory lifespans (RAII wrappers, zero-copy buffers, ownership transfer).
-     - UI state synchronization (Slint event loop dispatch, VectorModel invalidation, renderer thread safety).
+5. **Exemptions (per [interrogation-first](file:///home/isurwars/Projects/Correlation/.agents/rules/interrogation-first.md))**:
+   - Pure investigatory questions ("explain X", "where is Y").
+   - Trivial fixes where the user provides the exact change ("fix this typo", "add this import").
+   - Follow-up implementation steps on an already-confirmed Understanding Lock or approved implementation plan.
+   - Explicit user override ("just do it", "skip questions").
 
 ---
 
@@ -58,8 +57,8 @@ Before asking any questions:
 ---
 
 ### 2️⃣ Structured Option Grinding (One Question at a Time)
-- Ask **one targeted question or topic at a time** using interactive multiple-choice options (`ask_question` tool when applicable).
-- Offer 2–3 concrete options (Option A, Option B, Option C) with explicit trade-offs for each question.
+- Ask **one targeted question or topic at a time** using interactive multiple-choice options (`ask_question` tool).
+- Offer 2–3 concrete options with explicit trade-offs for each question, prefixing the optimal choice with `(Recommended)`.
 - **Mandatory Non-Functional Requirements Audit**: Explicitly clarify or propose assumptions for:
   - Performance expectations (time/space complexity, cache alignment).
   - Scale & bounds (trajectory sizes, frame counts, atom counts).
@@ -105,4 +104,3 @@ Exit interrogation/brainstorming mode **ONLY** when all of the following conditi
 4. The Decision Log is complete.
 
 Once cleared, generate the formal `implementation_plan.md` artifact and request user review for execution handoff.
-

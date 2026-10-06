@@ -51,9 +51,9 @@ void resize(std::size_t new_size) {
 ```
 
 ### 2. Concise Diagnostics
-When reporting failure loops or compilation issues, use a strict **[File:Line] -> [Error Type] -> [Fix Action]** format.
+When reporting failure loops or compilation issues, use a strict **[File:Line] -> [Error Category] -> [Root Cause] -> [Fix Action]** format.
 
-- **Example**: `[src/buffer.cpp:14] -> Linker Error (Unresolved external symbol) -> Add target_link_libraries in CMakeLists.txt.`
+- **Example**: `[src/buffer.cpp:14] -> Linker Error -> Unresolved external symbol -> Add target_link_libraries in CMakeLists.txt.`
 
 ### 3. Structural Scannability & Progressive Disclosure
 - Avoid paragraphs longer than two sentences.

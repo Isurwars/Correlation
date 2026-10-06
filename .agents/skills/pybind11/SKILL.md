@@ -13,17 +13,19 @@ This skill governs the implementation, optimization, and maintenance of Python C
 2. **Buffer Protocol Interface:** Map C++ `Cell` and `Trajectory` coordinate buffers directly to Python using `py::buffer_info`.
 
 ```cpp
-// GOOD: Zero-copy NumPy array exposure
-m.def("compute_distances", [](py::array_t<double> coords) {
-    py::buffer_info buf = coords.request();
-    if (buf.ndim != 2 || buf.shape[1] != 3) {
-        throw std::runtime_error("Input array must have shape (N, 3)");
+// GOOD: Zero-copy NumPy array exposure via unchecked proxy
+m.def("compute_distances", [](py::array_t<double, py::array::c_style | py::array::forcecast> coords) {
+    if (coords.ndim() != 2 || coords.shape(1) != 3) {
+        throw std::invalid_argument("Input array must have shape (N, 3)");
     }
     
-    std::span<const Vector3D> points(
-        reinterpret_cast<const Vector3D*>(buf.ptr), 
-        buf.shape[0]
-    );
+    auto buf = coords.unchecked<2>();
+    const auto count = static_cast<size_t>(coords.shape(0));
+    std::vector<Vector3D> points;
+    points.reserve(count);
+    for (size_t i = 0; i < count; ++i) {
+        points.emplace_back(buf(i, 0), buf(i, 1), buf(i, 2));
+    }
     return DistanceCalculator::compute(points);
 });
 ```

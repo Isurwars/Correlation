@@ -4,15 +4,15 @@
 
 ## 1. Declarative Architecture & Separation of Concerns (MVVM)
 
-- **Pure Declarative View Layer (`.slint`):** `.slint` files contain layout, visual styling, animations, state declarations (`in`, `out`, `in-out` properties), and user action callbacks (`callback`). No business logic or state computation belongs in `.slint`.
-- **C++ Controller Layer (`.cpp`/`.hpp`):** C++ classes (`AppController`, `PlotController`, `FileIOHandler`) act as ViewModels/Controllers. They handle domain computation, file I/O, trajectory analysis, and expose signals/callbacks to Slint.
+- **Pure Declarative View Layer (`.slint`):** `.slint` files contain layout, visual styling, animations, state declarations (`in`, `out`, `in-out` properties), and user action callbacks (`callback`). No business logic or numerical state computation belongs in `.slint`.
+- **C++ Controller Layer (`.cpp`/`.hpp`):** C++ classes (`AppController`, `PlotController`, `FileIOHandler`) act as ViewModels/Controllers under `src/app/`. They handle domain computation, file I/O, trajectory analysis, and expose signals/callbacks to Slint.
 - **Generated Code Safety:** Never modify auto-generated CMake/Slint headers in `build/`. Always interact via public `slint::ComponentHandle<T>` interfaces.
 - **Callback & Property Contracts:** Use typed `in` / `out` / `in-out` properties for state binding, and `callback` declarations for event emission.
-- **Directory Layout:** Place all `.slint` source markup under `ui/` with logical subdirectories (`ui/options/`, `ui/preview/`, `ui/run/`, `ui/nav/`).
+- **Directory Layout:** Place all `.slint` source markup under `ui/` with logical subdirectories (`ui/cards/`, `ui/material/`, `ui/nav/`).
 
 ## 2. Modern UI/UX Design System & Styling
 
-- **Centralized Design Tokens:** Maintain global design tokens (colors, font sizes, spacing, corner radii, transition durations) in `ui/material/` (`material_palette.slint`, spacing tokens, elevation, typography). Never hardcode hex colors in component files.
+- **Centralized Design Tokens:** Maintain global design tokens (colors, font sizes, spacing, corner radii, transition durations) in `ui/material/material.slint` (`MaterialPalette`, `MaterialStyleMetrics`, elevation, typography). Never hardcode hex colors in component files.
 - **Modern Palette & Aesthetics:** Prefer rich dark modes, high-contrast accessible palettes, subtle gradients, and rounded container borders over default flat controls.
 - **Responsive Layout Containers:** Mandate layout containers (`HorizontalBox`, `VerticalBox`, `GridBox`) with relative constraints (`min-width`, `preferred-width`, `max-width`). Avoid static pixel positioning.
 - **Accessibility:** Annotate all interactive widgets with explicit `accessible-role` (e.g., `button`, `checkbox`, `slider`, `text-input`) and `accessible-label` properties.
@@ -20,7 +20,7 @@
 
 ## 3. Component Decomposition & File Limits
 
-- **Single Responsibility:** Each card or dialog gets its own `.slint` file inside logical subdirectories.
+- **Single Responsibility:** Each card or dialog gets its own `.slint` file inside logical subdirectories (`ui/cards/`, `ui/nav/`).
 - **File Length Limit:** Keep individual `.slint` files under **300 lines**. Split complex components into child components.
 - **Root Entry Point:** `ui/AppWindow.slint` serves strictly as the main window host importing and positioning sub-cards.
 
@@ -34,11 +34,10 @@
 ## 5. C++ Target Integration & Build Safety
 
 - **Target-Centric CMake:** Integrate `.slint` files using `slint_target_sources(target ui/AppWindow.slint)`.
-- **C++20 Type Compatibility:** Bind C++ backends using generated header classes and type-safe `slint::` APIs.
-- **Verification:** Code changes must compile cleanly and pass `correlation_gui_tests`.
+- **C++23 Type Compatibility:** Bind C++ backends using generated header classes and type-safe `slint::` APIs.
+- **Verification:** Code changes must compile cleanly and pass `ctest -R correlation_gui_tests`.
 
 ## References
 - **See skill:** [slint-ui](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-ui/SKILL.md) for modular component patterns, Material Design 3 tokens, and widget styling guidelines.
-- **See skill:** [slint-backend](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-backend/SKILL.md) for C++20 backend binding, async thread safety, and data model patterns.
+- **See skill:** [slint-backend](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-backend/SKILL.md) for C++23 backend binding, async thread safety, and data model patterns.
 - **See skill:** [slint-preview](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-preview/SKILL.md) for live preview and hot-reload workflows.
-

@@ -12,13 +12,13 @@ This skill provides structured diagnostic protocols for interpreting and resolvi
 All error reports must follow the strict format:
 
 ```
-[File:Line] → [Error Category] → [Root Cause] → [Fix Action]
+[File:Line] -> [Error Category] -> [Root Cause] -> [Fix Action]
 ```
 
 **Example:**
 ```
-[src/calculators/RDFCalculator.cpp:142] → Template Instantiation Error →
-  Missing `#include <algorithm>` for `std::ranges::sort` →
+[src/calculators/RDFCalculator.cpp:142] -> Template Instantiation Error ->
+  Missing `#include <algorithm>` for `std::ranges::sort` ->
   Add `#include <algorithm>` to file header
 ```
 

@@ -26,13 +26,15 @@ Group commit entries into standard changelog sections:
 
 | Category | Commit Types | Section Header |
 | :--- | :--- | :--- |
+| **Breaking Changes** | `BREAKING CHANGE:`, `type!:` | `### ⚠️ Breaking Changes` |
 | **Features** | `feat` | `### 🚀 Features` |
 | **Bug Fixes** | `fix` | `### 🐛 Bug Fixes` |
 | **Performance** | `perf` | `### ⚡ Performance Improvements` |
 | **Refactoring** | `refactor` | `### ♻️ Code Refactoring` |
+| **Testing** | `test` | `### 🧪 Testing` |
 | **Build & Dependencies** | `build`, `ci` | `### 🛠️ Build & CI` |
 | **Documentation** | `docs` | `### 📚 Documentation` |
-| **Breaking Changes** | `BREAKING CHANGE:`, `type!:` | `### ⚠️ Breaking Changes` |
+| **Maintenance** | `chore` | `### 🧹 Maintenance` |
 
 ---
 
@@ -49,7 +51,7 @@ Group commit entries into standard changelog sections:
 - **ui:** fix absolute position coordinate calculation in AppWindow ([1a2b3c4](file:///commit/1a2b3c4))
 
 ### ⚡ Performance Improvements
-- **openmp:** align thread-local histogram accumulators to 64 bytes ([5d6e7f8](file:///commit/5d6e7f8))
+- **calculators:** align thread-local histogram accumulators to 64 bytes ([5d6e7f8](file:///commit/5d6e7f8))
 ```
 
 ---

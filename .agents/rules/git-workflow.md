@@ -33,15 +33,19 @@ All commit messages must follow the [Conventional Commits](https://www.conventio
 | `docs` | Documentation only |
 | `build` | Build system or dependency changes (CMake, FetchContent) |
 | `ci` | CI/CD pipeline changes |
-| `chore` | Maintenance tasks (formatting, linting) |
+| `chore` | Maintenance tasks (formatting, linting, agent hooks) |
 
 ### Permitted Scopes
-`rdf`, `pdf`, `sq`, `pad`, `rings`, `msd`, `vacf`, `vdos`, `lef`, `ui`, `slint`, `bindings`, `cmake`, `cli`, `io`, `core`, `tests`, `docs`
+
+- **Calculators / Physics:** `rdf`, `pdf`, `sq`, `pad`, `rings`, `msd`, `vacf`, `vdos`, `lef`, `calculators`, `analysis`, `math`, `physics`, `mlip`
+- **I/O & Formats:** `readers`, `writers`, `io`
+- **UI / Presentation:** `ui`, `slint`, `plotters`
+- **Interfaces & Infrastructure:** `bindings`, `cli`, `core`, `utils`, `cmake`, `tests`, `docs`
 
 ### Breaking Changes
-Append `!` after the type: `feat(api)!: rename DistributionFunction to CorrelationFunction`
+Append `!` after the type: `feat(core)!: rename DistributionFunctions to CorrelationCalculator`
 
 ## 3. Prohibited Actions
 - **Never** force-push to `main`.
-- **Never** commit generated files (`build/`, `*.o`, `compile_commands.json`, `graphify-out/`).
+- **Never** commit generated files (`build/`, `build-*/`, `*.o`, `compile_commands.json`, `graphify-out/`).
 - **Never** commit secrets, API keys, or credentials.

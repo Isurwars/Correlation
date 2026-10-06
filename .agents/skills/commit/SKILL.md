@@ -21,23 +21,25 @@ When asked to generate a commit message:
 | `refactor` | Code restructuring without behavior change |
 | `perf` | Algorithm optimization, cache alignment, SIMD changes |
 | `test` | New or modified test cases |
-| `docs` | Doxygen comments, README, SKILL.md changes |
-| `build` | CMakeLists.txt, FetchContent, compiler flag changes |
-| `chore` | Formatting, linting, dependency bumps |
+| `docs` | Doxygen comments, README, documentation changes |
+| `build` | CMakeLists.txt, dependencies, compiler flag changes |
+| `ci` | CI/CD GitHub workflows and deployment pipelines |
+| `chore` | Formatting, linting, agent hooks, dependency bumps |
 
 3. **Select Scope:** Match modified file paths to project scopes:
 
 | Scope | Path Pattern |
 | :--- | :--- |
-| `rdf`, `pdf`, `sq`, `pad`, `rings`, `msd`, `vacf`, `vdos`, `lef` | `src/calculators/<name>*` |
-| `ui` | `ui/**/*.slint` |
-| `slint` | `ui/material/**` |
-| `bindings` | `src/bindings/**` |
-| `cmake` | `**/CMakeLists.txt`, `cmake/**` |
-| `cli` | `src/cli/**` |
-| `io` | `src/io/**`, `src/parsers/**` |
-| `core` | `src/core/**`, `include/**` |
+| `rdf`, `pdf`, `sq`, `pad`, `rings`, `msd`, `vacf`, `vdos`, `lef` | `src/calculators/<name>*`, `include/calculators/<name>*` |
+| `analysis`, `calculators`, `math`, `physics`, `mlip` | `src/analysis/**`, `src/math/**`, `src/physics/**`, `src/mlip/**` |
+| `readers`, `writers`, `io` | `src/readers/**`, `src/writers/**`, `include/readers/**`, `include/writers/**` |
+| `ui`, `slint`, `plotters` | `ui/**`, `src/app/**`, `src/plotters/**` |
+| `bindings` | `src/bindings/**`, `python/**` |
+| `cli` | `src/cli/**`, `include/cli/**` |
+| `core`, `utils` | `src/core/**`, `src/utils/**`, `include/core/**` |
+| `cmake` | `**/CMakeLists.txt`, `cmake/**`, `CMakePresets.json` |
 | `tests` | `tests/**` |
+| `docs` | `docs/**`, `*.md` |
 
 4. **Format Output:**
 ```
@@ -51,7 +53,7 @@ When asked to generate a commit message:
 - Subject line must be ≤ 72 characters.
 - Subject must use imperative mood ("add", "fix", "remove" — not "added", "fixes", "removed").
 - Body must explain rationale, not repeat the diff.
-- Breaking changes must include `BREAKING CHANGE:` footer or `!` suffix.
+- Breaking changes must include `BREAKING CHANGE:` footer or `!` suffix: `feat(core)!: description`.
 
 ## 3. Anti-Patterns
 

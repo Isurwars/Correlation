@@ -36,10 +36,10 @@ Delegate to MCP **only** when the task matches all of the following criteria:
 When calling `call_mcp_tool` with `ask_model`, format the prompt payload strictly with the following contract wrapper:
 
 ```markdown
-[ROLE: Specialized C++20/C++23 Execution Worker]
+[ROLE: Specialized C++23 Execution Worker]
 [TASK]: <Specific function or kernel to implement/refactor>
 [INVARIANTS]:
-- Modern C++20/C++23, RAII wrappers, zero raw pointers (new/delete).
+- Modern C++23, RAII wrappers, zero raw pointers (new/delete).
 - Cognitive complexity strictly <= 25 (readability-function-cognitive-complexity).
 - Cache-line alignment (alignas(64)) for parallel shared structures; avoid false sharing.
 - Zero suppression comments (no NOLINT, no NOLINTNEXTLINE).
@@ -63,7 +63,7 @@ When calling `call_mcp_tool` with `ask_model`, format the prompt payload strictl
 | Server Name | Available Tools | Primary Use Case |
 | :--- | :--- | :--- |
 | **`llama-cpp-mcp`** | `ask_model`, `analyse_project` | Fast local GGUF model inference for localized C++ routines and project analysis. |
-| **`ollama-local-bridge`** | `ask_model`, `list_models`, `show_model` | Ollama model inference when specific quantized LLMs (e.g., CodeLlama, Qwen-Coder) are active. |
+| **`ollama-local-bridge`** *(Optional)* | `ask_model`, `list_models`, `show_model` | Ollama model inference when external Ollama daemon is active. |
 
 ---
 

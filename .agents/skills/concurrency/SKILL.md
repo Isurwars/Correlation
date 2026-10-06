@@ -48,22 +48,26 @@ void update_shared_state(SharedData& data1, SharedData& data2) {
 ```
 
 ### Rule 2: Thread-Safe Async Slint Dispatch
-Background parallel worker threads MUST dispatch UI progress updates using `slint::invoke_from_event_loop()`:
+Background worker threads MUST dispatch UI progress updates using `slint::invoke_from_event_loop()`, and threads must be managed via RAII (`std::jthread`):
 
 ```cpp
 #include <slint/slint.h>
+#include <thread>
 
-void calculate_async(slint::ComponentHandle<AppWindow> window) {
-    std::thread([window]() {
+std::jthread calculate_async(slint::ComponentHandle<AppWindow> window) {
+    return std::jthread([window](std::stop_token stop_token) {
         // Parallel computation loop
         #pragma omp parallel for
-        for (int i = 0; i < total; ++i) { /* ... */ }
+        for (int i = 0; i < total; ++i) {
+            if (stop_token.stop_requested()) break;
+            /* ... */
+        }
 
         // Async UI update
         slint::invoke_from_event_loop([window]() {
             window->set_progress(1.0f);
         });
-    }).detach();
+    });
 }
 ```
 
@@ -74,3 +78,4 @@ void calculate_async(slint::ComponentHandle<AppWindow> window) {
 - ❌ Modifying shared `std::vector` inside OpenMP loops without thread-local buffers or mutexes (data race).
 - ❌ Using `std::endl` or raw `std::cout` inside parallel loops (interleaved IO streams).
 - ❌ Omitting `alignas(64)` on thread-local reduction arrays (false sharing cache degradation).
+- ❌ Using `std::thread::detach()` with unmanaged raw pointers or uncoordinated lifetimes.

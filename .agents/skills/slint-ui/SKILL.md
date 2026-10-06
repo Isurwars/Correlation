@@ -16,7 +16,7 @@ This skill provides comprehensive standards for constructing modular, accessible
 - **`private property`**: Internal component state encapsulation.
 
 ### Component Decomposition Rules
-- **Single Responsibility**: Each card or dialog gets its own `.slint` file inside logical subdirectories (`ui/options/`, `ui/preview/`, `ui/run/`).
+- **Single Responsibility**: Each card or dialog gets its own `.slint` file inside logical subdirectories (`ui/cards/`, `ui/nav/`).
 - **File Length Limit**: Keep individual `.slint` files under **300 lines**. Split complex components into child components.
 - **Root Entry Point**: `ui/AppWindow.slint` serves strictly as the main window host importing and positioning sub-cards.
 

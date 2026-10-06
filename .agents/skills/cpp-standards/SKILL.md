@@ -1,11 +1,11 @@
 ---
 name: cpp-standards
-description: Enforce modern C++20 standards, RAII resource management, immutability by default, and memory locality. Use when writing, refactoring, or reviewing modern C++ code.
+description: Enforce modern C++23 standards, RAII resource management, immutability by default, and memory locality. Use when writing, refactoring, or reviewing modern C++ code.
 ---
 
-# Modern C++ Standards (C++20/C++23)
+# Modern C++ Standards (C++23)
 
-This skill enforces high-performance, modern C++ (C++20) coding standards across the workspace.
+This skill enforces high-performance, modern C++ (C++23) coding standards across the workspace.
 
 ## Core Operational Directives
 

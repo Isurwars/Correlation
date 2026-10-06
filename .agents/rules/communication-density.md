@@ -19,10 +19,10 @@
 When reporting compilation issues, failures, or code review findings, use:
 
 ```
-[File:Line] → [Error Type] → [Fix Action]
+[File:Line] -> [Error Category] -> [Root Cause] -> [Fix Action]
 ```
 
-**Example:** `[src/buffer.cpp:14] → Linker Error (Unresolved external symbol) → Add target_link_libraries in CMakeLists.txt.`
+**Example:** `[src/buffer.cpp:14] -> Linker Error -> Unresolved external symbol -> Add target_link_libraries in CMakeLists.txt.`
 
 ## 4. Structural Scannability & Progressive Disclosure
 

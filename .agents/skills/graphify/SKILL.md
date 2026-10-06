@@ -27,7 +27,7 @@ graphify update .
 
 ### Step 2: Artifact Validation
 Confirm the following output artifacts exist and are non-empty:
-1. `graphify-out/graph.json`: Machine-readable dependency graph (must contain >4000 nodes).
+1. `graphify-out/graph.json`: Machine-readable dependency graph (must contain non-empty node graph, typically >6000 nodes).
 2. `graphify-out/GRAPH_REPORT.md`: Human-readable community cluster report (must contain navigation hubs).
 
 ### Step 3: Stale Node Verification

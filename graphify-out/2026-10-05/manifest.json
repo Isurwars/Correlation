@@ -5,8 +5,8 @@
     "semantic_hash": ""
   },
   "include/analysis/DistributionFunctions.hpp": {
-    "mtime": 1791222083.9111102,
-    "ast_hash": "50c38bb8a35243eeeeb4afa21368e486",
+    "mtime": 1791239586.8885489,
+    "ast_hash": "aba821af5ca1d4811d68a7851adeebae",
     "semantic_hash": ""
   },
   "include/analysis/DynamicsAnalyzer.hpp": {
@@ -35,8 +35,8 @@
     "semantic_hash": ""
   },
   "include/cli/CliParser.hpp": {
-    "mtime": 1790476968.5106304,
-    "ast_hash": "11e592ba8f882c7c84c35a43352a9d67",
+    "mtime": 1791239618.999012,
+    "ast_hash": "29df09d6a810c35552926049eab218a8",
     "semantic_hash": ""
   },
   "include/core/Atom.hpp": {
@@ -365,8 +365,8 @@
     "semantic_hash": ""
   },
   "src/cli/CliParser.cpp": {
-    "mtime": 1791183519.2881715,
-    "ast_hash": "47e55957c33513116052f918b27c46fa",
+    "mtime": 1791239626.9848785,
+    "ast_hash": "594a1f7c65cc71e841d36707d70df6ae",
     "semantic_hash": ""
   },
   "src/cli/main_cli.cpp": {
@@ -530,8 +530,8 @@
     "semantic_hash": ""
   },
   "tests/PrecisionTestHelper.hpp": {
-    "mtime": 1790181953.051442,
-    "ast_hash": "de8eedaf97649656a4074fe87e84388d",
+    "mtime": 1791240413.6540554,
+    "ast_hash": "fbc54f74dd4337580293755edcd3f731",
     "semantic_hash": ""
   },
   "tests/functional/analysis/DynamicsAnalyzerTests.cpp": {
@@ -550,8 +550,8 @@
     "semantic_hash": ""
   },
   "tests/functional/app/AppControllerTests.cpp": {
-    "mtime": 1790380737.0657828,
-    "ast_hash": "8f0a1b2979d741fc86187d31453dbc34",
+    "mtime": 1791248631.9567716,
+    "ast_hash": "4a24be1abab8b269e14094a0afe95547",
     "semantic_hash": ""
   },
   "tests/functional/app/SlintSvgIntegrationTests.cpp": {
@@ -760,8 +760,8 @@
     "semantic_hash": ""
   },
   "tests/unit/cli/CliParserTests.cpp": {
-    "mtime": 1790477018.2337437,
-    "ast_hash": "0e47bbd9450a5ca89262a978d4c96406",
+    "mtime": 1791239658.5523527,
+    "ast_hash": "09fbf5edc83986eacb2910ff6019afde",
     "semantic_hash": ""
   },
   "tests/unit/core/AtomTests.cpp": {
@@ -1950,8 +1950,8 @@
     "semantic_hash": ""
   },
   "tests/unit/app/OptionsResetServiceTests.cpp": {
-    "mtime": 1790380452.9357958,
-    "ast_hash": "24e2799c0fc47350c65afe56dbed9a71",
+    "mtime": 1791246085.5270925,
+    "ast_hash": "a6ebb6029403d57c378da7262bee2044",
     "semantic_hash": ""
   },
   "tests/unit/app/OptionsSyncServiceTests.cpp": {
@@ -2110,8 +2110,8 @@
     "semantic_hash": ""
   },
   "src/app/services/PresetManager.cpp": {
-    "mtime": 1790380719.7834914,
-    "ast_hash": "ec78229d2f8d3bd9dd40245356ea868a",
+    "mtime": 1791239653.1094432,
+    "ast_hash": "d97861fe8c26da34cb7e9b5a14a6e8c9",
     "semantic_hash": ""
   },
   "src/app/services/UpdateChecker.cpp": {
@@ -2140,8 +2140,8 @@
     "semantic_hash": ""
   },
   "include/app/core/AppOptions.hpp": {
-    "mtime": 1790480396.4709034,
-    "ast_hash": "86df3aa06e0a1cd4d799163d921592cb",
+    "mtime": 1791239605.230242,
+    "ast_hash": "017fef3befa8bf9a5646dd153a1c4648",
     "semantic_hash": ""
   },
   "include/app/services/AnalysisDispatcher.hpp": {
@@ -2295,8 +2295,8 @@
     "semantic_hash": ""
   },
   "include/calculators/spatial/RDCalculator.hpp": {
-    "mtime": 1791220125.5074425,
-    "ast_hash": "c431c93f6aaa4b7c6d267d47901fa825",
+    "mtime": 1791239611.6601346,
+    "ast_hash": "03ca5f0ed612c63d610e4c05b9bc5d18",
     "semantic_hash": ""
   },
   "include/calculators/spatial/RDFCalculator.hpp": {

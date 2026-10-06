@@ -36,7 +36,7 @@ Rigorous technical audit before staging, committing, or merging changes in `Corr
 
 Present review findings using the strict diagnostic format:
 ```
-[File:Line] → [Violation Category] → [Issue Description] → [Required Action]
+[File:Line] -> [Error Category] -> [Root Cause] -> [Fix Action]
 ```
 
 ### Review Decision Verdict
