@@ -37,7 +37,7 @@ try:
     from importlib.metadata import PackageNotFoundError, version
     __version__ = version("matcorr")
 except (PackageNotFoundError, ImportError):
-    __version__ = "4.0.0"
+    __version__ = "3.9.10"
 
 
 def to_torch_geometric(graph_data):

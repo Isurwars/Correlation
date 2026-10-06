@@ -1,14 +1,36 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [4.0.0] - 2026-09-29
+## [3.9.10] - 2026-10-05
+
+### Order Parameter Analysis & Steinhardt Averaged Invariants
+- **Lechner-Dellago Averaged Invariants ($\bar{q}_l, \bar{w}_l$)**: Implemented coarse-grained Steinhardt bond-orientational order parameters averaging complex spherical harmonics over the local coordination shell $N_b(i)$, significantly improving structural discrimination in disordered and amorphous phases.
+- **Normalized $\hat{W}_4$ Metric**: Added $\hat{W}_4 = W_4 / (\sum |q_{4m}|^2)^{3/2}$ invariant computation for cubic and icosahedral symmetry characterization.
+- **Reference Parity Benchmarks**: Validated Steinhardt order parameter accuracy against classical analytical reference values for BCC, FCC, HCP, and icosahedral clusters.
+
+### Core Crystallography & Automatic Supercell Expansion
+- **Automatic Supercell Expansion**: Added auto-supercell generation (`Cell::expandToCutoff`) replicating simulation cells whose minimum perpendicular widths are smaller than the calculation cutoff ($2 \times r_{\text{cut}}$) to preserve the minimum image convention and eliminate finite-box artifacts.
+- **Element Indexing & Direct Lookup**: Refactored `Cell` and `RDFCalculator` to use $O(1)$ direct element lookup arrays, accelerating pairwise histogram binning for multicomponent systems.
+- **XYZ Parsing Throughput**: Optimized line tokenization in `XYZReader` by avoiding heap reallocations during coordinate scanning.
+
+### Material UI & Interactive Accessibility
+- **InputSelect Keyboard Navigation**: Added full keyboard navigation (Up/Down arrow scrolling, Enter/Space selection, Escape dismissal) and item hover highlighting to the Material `InputSelect` drop-down component.
+- **Preset Management**: Updated default ring statistics cutoff and presets across analysis configurations.
+
+### Architecture Modernization & CI Automation
+- **AnalysisRunner Thread Lifecycle**: Decomposed worker thread lifecycle management, progress polling, and task completion handling into modular, single-responsibility methods.
+- **Type-Safe Enums & Code Hygiene**: Added explicit underlying types to analysis and distribution enums, refreshed `clang-tidy` rules, and removed redundant string initializations.
+- **Composite GitHub Actions**: Extracted CI workflows into reusable composite GitHub Actions (`.github/actions/`), standardizing build, test, and release pipelines across Linux, macOS, and Windows.
+- **macOS Build Hardening**: Configured strict build flags and artifact packaging verification checks in release workflows.
+
+## [3.9.9] - 2026-09-29
 
 ### PyPI Distribution & MatCorr Python Suite
 - **PyPI Package Brand (`matcorr`)**: Renamed and registered Python distribution metadata under `matcorr` (Materials Correlation), providing structural and correlation analysis for liquid, amorphous, and nanostructured materials simulations.
 - **Python CLI Suite (`matcorr` / `mcor` / `correlation`)**: Implemented Python command-line interface in `python/matcorr/cli.py` and `python/matcorr/__main__.py` with full material presets (amorphous, liquid, crystalline), simulation frame windowing, kernel smoothing, and automated CSV export.
 - **Automated PyPI Release Pipeline**: Integrated `cibuildwheel` matrix (Linux x86_64/aarch64, macOS Intel/Apple Silicon, Windows AMD64) and PyPI Trusted Publishing via GitHub Actions OIDC (`pypa/gh-action-pypi-publish@release/v1`) directly into `.github/workflows/release.yml`.
 - **Static Structure Ingestion**: Extended Python I/O bindings (`correlation.read()`) with automated `readStructure` fallback for static CAR, CIF, and crystal coordinate files.
-- **C++ Version Milestone**: Bumped core engine project version to `4.0.0`.
+- **C++ Version Milestone**: Bumped core engine project version to `3.9.9`.
 
 ## [3.9.8] - 2026-09-28
 
