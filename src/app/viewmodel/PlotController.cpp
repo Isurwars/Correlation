@@ -759,7 +759,7 @@ void PlotController::handleWheelZoom(float mouse_x, float mouse_y, float delta) 
   const auto x_scale = computeXScale(*hist, config);
   const auto y_scale = computeYScale(*hist, config);
 
-  const auto [cx, cy] = correlation::plotters::detail::screenToData(
+  const auto [c_x, c_y] = correlation::plotters::detail::screenToData(
       mouse_x, mouse_y, last_plot_width_, last_plot_height_, config, x_scale, y_scale);
 
   const real_t zoom_factor = (delta > 0.0F) ? 0.85 : 1.18;
@@ -769,10 +769,10 @@ void PlotController::handleWheelZoom(float mouse_x, float mouse_y, float delta) 
   const real_t cur_y_min = zoom_y_min_.value_or(y_scale.min);
   const real_t cur_y_max = zoom_y_max_.value_or(y_scale.max);
 
-  zoom_x_min_ = cx - (cx - cur_x_min) * zoom_factor;
-  zoom_x_max_ = cx + (cur_x_max - cx) * zoom_factor;
-  zoom_y_min_ = cy - (cy - cur_y_min) * zoom_factor;
-  zoom_y_max_ = cy + (cur_y_max - cy) * zoom_factor;
+  zoom_x_min_ = c_x - (c_x - cur_x_min) * zoom_factor;
+  zoom_x_max_ = c_x + (cur_x_max - c_x) * zoom_factor;
+  zoom_y_min_ = c_y - (c_y - cur_y_min) * zoom_factor;
+  zoom_y_max_ = c_y + (cur_y_max - c_y) * zoom_factor;
 
   window_.set_has_active_zoom(true);
   requestPlotUpdate(current_idx, true);

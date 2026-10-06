@@ -1515,8 +1515,8 @@
     "semantic_hash": ""
   },
   "python/correlation/adapters.py": {
-    "mtime": 1789966422.7028658,
-    "ast_hash": "b99f27b7fa5da42ebd0ac01d7ff5ff5d",
+    "mtime": 1791253743.2707374,
+    "ast_hash": "cfe0dadda21a8105d0740045b45f0604",
     "semantic_hash": ""
   },
   "src/analysis/CorrelationEngine.cpp": {
@@ -2035,8 +2035,8 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/PlotController.hpp": {
-    "mtime": 1790636489.5634377,
-    "ast_hash": "0688a024fdb7d8cf3ac3e75b1a032fd8",
+    "mtime": 1791254936.1155539,
+    "ast_hash": "e261e70c430d1b485641da934b7ee96e",
     "semantic_hash": ""
   },
   "include/app/viewmodel/PresetController.hpp": {
@@ -2045,8 +2045,8 @@
     "semantic_hash": ""
   },
   "src/app/core/AppController.cpp": {
-    "mtime": 1790636371.7866616,
-    "ast_hash": "0501d8cc9987388be1f0ea1c3f39457d",
+    "mtime": 1791255329.5012891,
+    "ast_hash": "49a25adced1290b1047bd4afaaef90d8",
     "semantic_hash": ""
   },
   "src/app/core/SettingsManager.cpp": {
@@ -2125,8 +2125,8 @@
     "semantic_hash": ""
   },
   "src/app/viewmodel/PlotController.cpp": {
-    "mtime": 1790636857.3384604,
-    "ast_hash": "b5f00262f2901737464904b01ef7eda8",
+    "mtime": 1791254958.8131676,
+    "ast_hash": "b9e5f720e1a41e2a3a14af71830072c9",
     "semantic_hash": ""
   },
   "src/app/viewmodel/PresetController.cpp": {
