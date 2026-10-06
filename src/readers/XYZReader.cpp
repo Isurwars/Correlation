@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <array>
+#include <charconv>
 #include <iostream>
 #include <optional>
 #include <sstream>
@@ -70,18 +71,26 @@ struct XYZParser {
     while (line_end < total_size && data[line_end] != '\n' && data[line_end] != '\r') {
       line_end++;
     }
-    std::string const atom_count_str(data + offset, line_end - offset);
+    std::string_view const atom_count_sv(data + offset, line_end - offset);
     offset = skipLineEnding(line_end);
 
+    size_t const start = atom_count_sv.find_first_not_of(" \t\r\n");
+    if (start == std::string_view::npos) {
+      throw std::runtime_error("Invalid XYZ file: expected atom count, got empty line");
+    }
+    size_t const end = atom_count_sv.find_last_not_of(" \t\r\n");
+    std::string_view const trimmed = atom_count_sv.substr(start, end - start + 1);
+
     int num_atoms = 0;
-    try {
-      num_atoms = std::stoi(atom_count_str);
-    } catch (const std::exception &) {
-      throw std::runtime_error("Invalid XYZ file: expected atom count, got: " + atom_count_str);
+    auto [ptr, ec] = std::from_chars(trimmed.data(), trimmed.data() + trimmed.size(), num_atoms);
+    if (ec != std::errc{} || ptr != trimmed.data() + trimmed.size()) {
+      throw std::runtime_error("Invalid XYZ file: expected atom count, got: " +
+                               std::string(trimmed));
     }
 
     if (num_atoms <= 0) {
-      throw std::runtime_error("Invalid XYZ file: non-positive atom count: " + atom_count_str);
+      throw std::runtime_error("Invalid XYZ file: non-positive atom count: " +
+                               std::string(trimmed));
     }
 
     return num_atoms;
@@ -173,14 +182,22 @@ void XYZReader::parseAtomLine(const std::string &line, const CommentData &comm_d
   }
 
   std::string_view const symbol = tokens[comm_data.species_col];
-  try {
-    const auto pos_x = static_cast<real_t>(std::stod(std::string(tokens[comm_data.pos_x_col])));
-    const auto pos_y = static_cast<real_t>(std::stod(std::string(tokens[comm_data.pos_y_col])));
-    const auto pos_z = static_cast<real_t>(std::stod(std::string(tokens[comm_data.pos_z_col])));
-    cell.addAtom(symbol, correlation::math::Vector3<real_t>(pos_x, pos_y, pos_z));
-  } catch (const std::exception &) {
+  real_t pos_x = 0;
+  real_t pos_y = 0;
+  real_t pos_z = 0;
+
+  auto parse_coord = [](std::string_view token, real_t &val) -> bool {
+    auto [ptr, ec] = std::from_chars(token.data(), token.data() + token.size(), val);
+    return ec == std::errc{} && ptr == token.data() + token.size();
+  };
+
+  if (!parse_coord(tokens[comm_data.pos_x_col], pos_x) ||
+      !parse_coord(tokens[comm_data.pos_y_col], pos_y) ||
+      !parse_coord(tokens[comm_data.pos_z_col], pos_z)) {
     throw std::runtime_error("Invalid XYZ file: invalid coordinates: " + line);
   }
+
+  cell.addAtom(symbol, correlation::math::Vector3<real_t>(pos_x, pos_y, pos_z));
 }
 
 // ---------------------------------------------------------------------------
@@ -199,9 +216,16 @@ correlation::core::Cell XYZReader::parseXYZFrame(const char *data, size_t size) 
   }
 
   int num_atoms = 0;
-  try {
-    num_atoms = std::stoi(line);
-  } catch (const std::exception &) {
+  std::string_view const line_sv(line);
+  size_t const start = line_sv.find_first_not_of(" \t\r\n");
+  size_t const end = line_sv.find_last_not_of(" \t\r\n");
+  bool valid_num = false;
+  if (start != std::string_view::npos) {
+    std::string_view const trimmed = line_sv.substr(start, end - start + 1);
+    auto [ptr, ec] = std::from_chars(trimmed.data(), trimmed.data() + trimmed.size(), num_atoms);
+    valid_num = (ec == std::errc{} && ptr == trimmed.data() + trimmed.size());
+  }
+  if (!valid_num) {
     throw std::runtime_error("Invalid XYZ file: expected atom count, got: " + line);
   }
 
@@ -256,15 +280,26 @@ void XYZReader::parseLattice(const std::string &comment, CommentData &data) {
     auto start = pos + lat_key.size();
     auto end = comment.find('"', start);
     if (end != std::string::npos) {
-      std::string const values = comment.substr(start, end - start);
-      std::istringstream iss(values);
+      std::string_view const values(comment.data() + start, end - start);
       std::array<real_t, 9> lattice{};
+      size_t cursor = 0;
       bool flag = true;
       for (int lat_idx = 0; lat_idx < 9; ++lat_idx) {
-        if (!(iss >> lattice.at(lat_idx))) {
+        cursor = values.find_first_not_of(" \t\r\n", cursor);
+        if (cursor == std::string_view::npos) {
           flag = false;
           break;
         }
+        size_t const next_space = values.find_first_of(" \t\r\n", cursor);
+        size_t const tok_len = (next_space == std::string_view::npos) ? (values.size() - cursor)
+                                                                      : (next_space - cursor);
+        std::string_view const tok = values.substr(cursor, tok_len);
+        auto [ptr, ec] = std::from_chars(tok.data(), tok.data() + tok.size(), lattice.at(lat_idx));
+        if (ec != std::errc{} || ptr != tok.data() + tok.size()) {
+          flag = false;
+          break;
+        }
+        cursor = next_space;
       }
       if (flag) {
         data.lattice = lattice;
@@ -287,15 +322,16 @@ void XYZReader::parseEnergy(const std::string &comment, CommentData &data) {
         } else {
           end = comment.find_first_of(" \t\r\n", start);
         }
-        std::string const val_str =
-            comment.substr(start, end == std::string::npos ? std::string::npos : end - start);
-        try {
-          data.energy = static_cast<real_t>(std::stod(val_str));
+        std::string_view const val_view(comment.data() + start,
+                                        (end == std::string::npos ? comment.size() : end) - start);
+        real_t energy_val = 0;
+        auto [ptr, ec] =
+            std::from_chars(val_view.data(), val_view.data() + val_view.size(), energy_val);
+        if (ec == std::errc{} && ptr == val_view.data() + val_view.size()) {
+          data.energy = energy_val;
           break;
-        } catch (const std::exception &err) {
-          std::cerr << "Warning: Failed to parse energy value '" << val_str
-                    << "' in comment line: " << err.what() << '\n';
         }
+        std::cerr << "Warning: Failed to parse energy value '" << val_view << "' in comment line\n";
       }
     }
   }
@@ -341,11 +377,12 @@ void XYZReader::parsePropertiesParts(const std::vector<std::string> &parts, Comm
   for (size_t part_idx = 0; part_idx + 2 < parts.size(); part_idx += 3) {
     const std::string &name = parts.at(part_idx);
     int cols = 1;
-    try {
-      cols = std::stoi(parts.at(part_idx + 2));
-    } catch (const std::exception &err) {
-      std::cerr << "Warning: Failed to parse column count '" << parts.at(part_idx + 2)
-                << "' in Properties header: " << err.what() << '\n';
+    const std::string &cols_str = parts.at(part_idx + 2);
+    auto [ptr, ec] = std::from_chars(cols_str.data(), cols_str.data() + cols_str.size(), cols);
+    if (ec != std::errc{} || ptr != cols_str.data() + cols_str.size()) {
+      std::cerr << "Warning: Failed to parse column count '" << cols_str
+                << "' in Properties header\n";
+      cols = 1;
     }
 
     if (name == "species" || name == "type") {

@@ -13,6 +13,7 @@
 #include "readers/ReaderFactory.hpp"
 
 #include <cctype>
+#include <charconv>
 #include <cmath>
 #include <cstdint>
 #include <fstream>
@@ -54,22 +55,71 @@ struct SymmetryOp {
 };
 
 // Helper to trim whitespace and remove trailing parentheses with uncertainties
-std::string cleanCifValue(std::string str) {
+[[nodiscard]] std::string_view cleanCifValue(std::string_view str_view) {
   // Trim leading whitespace
-  str.erase(0, str.find_first_not_of(" \t\n\r"));
+  size_t const start = str_view.find_first_not_of(" \t\n\r");
+  if (start == std::string_view::npos) {
+    return {};
+  }
+  str_view.remove_prefix(start);
   // Trim trailing whitespace
-  str.erase(str.find_last_not_of(" \t\n\r") + 1);
+  size_t const end = str_view.find_last_not_of(" \t\n\r");
+  str_view = str_view.substr(0, end + 1);
+
   // Remove uncertainty in parentheses, e.g., "1.234(5)" -> "1.234"
-  size_t const p_pos = str.find('(');
-  if (p_pos != std::string::npos) {
-    str.erase(p_pos);
+  size_t const p_pos = str_view.find('(');
+  if (p_pos != std::string_view::npos) {
+    str_view = str_view.substr(0, p_pos);
   }
   // Remove surrounding quotes
-  if (!str.empty() &&
-      ((str.front() == '\'' && str.back() == '\'') || (str.front() == '"' && str.back() == '"'))) {
-    return str.substr(1, str.length() - 2);
+  if (str_view.size() >= 2 && ((str_view.front() == '\'' && str_view.back() == '\'') ||
+                               (str_view.front() == '"' && str_view.back() == '"'))) {
+    return str_view.substr(1, str_view.size() - 2);
   }
-  return str;
+  return str_view;
+}
+
+template <typename T> [[nodiscard]] bool parseCifNumber(std::string_view str_view, T &out) {
+  std::string_view const cleaned = cleanCifValue(str_view);
+  if (cleaned.empty()) {
+    return false;
+  }
+  auto [ptr, ec] = std::from_chars(cleaned.data(), cleaned.data() + cleaned.size(), out);
+  return ec == std::errc{} && ptr == cleaned.data() + cleaned.size();
+}
+
+void parseRotationAxis(char axis_char, int row, real_t sign, SymmetryOp &sym_op) {
+  if (axis_char == 'x' || axis_char == 'X') {
+    sym_op.rotation(row, 0) = sign;
+  } else if (axis_char == 'y' || axis_char == 'Y') {
+    sym_op.rotation(row, 1) = sign;
+  } else if (axis_char == 'z' || axis_char == 'Z') {
+    sym_op.rotation(row, 2) = sign;
+  }
+}
+
+void parseTranslationPart(std::string_view comp_str, size_t &current_pos, int row, real_t sign,
+                          SymmetryOp &sym_op) {
+  real_t num = 0;
+  auto [ptr1, ec1] =
+      std::from_chars(comp_str.data() + current_pos, comp_str.data() + comp_str.size(), num);
+  if (ec1 != std::errc{}) {
+    current_pos++;
+    return;
+  }
+  current_pos = static_cast<size_t>(ptr1 - comp_str.data());
+  if (current_pos < comp_str.length() && comp_str[current_pos] == '/') {
+    current_pos++; // Skip '/'
+    real_t den = 1.0;
+    auto [ptr2, ec2] =
+        std::from_chars(comp_str.data() + current_pos, comp_str.data() + comp_str.size(), den);
+    if (ec2 == std::errc{} && den != 0.0) {
+      current_pos = static_cast<size_t>(ptr2 - comp_str.data());
+      sym_op.translation[row] += sign * (num / den);
+    }
+  } else {
+    sym_op.translation[row] += sign * num;
+  }
 }
 
 // Parses a single component of a symmetry string like "-y+1/2"
@@ -80,40 +130,17 @@ void parseSymmetryComponent(std::string comp_str, int row, SymmetryOp &sym_op) {
   size_t current_pos = 0;
 
   while (current_pos < comp_str.length()) {
-    if (comp_str[current_pos] == '+') {
+    char const current_ch = comp_str[current_pos];
+    if (current_ch == '+') {
       sign = 1.0;
       current_pos++;
-    } else if (comp_str[current_pos] == '-') {
+    } else if (current_ch == '-') {
       sign = -1.0;
       current_pos++;
-    }
-
-    // Check for x, y, z rotation/permutation part
-    if (comp_str[current_pos] == 'x' || comp_str[current_pos] == 'X') {
-      sym_op.rotation(row, 0) = sign;
-      current_pos++;
-    } else if (comp_str[current_pos] == 'y' || comp_str[current_pos] == 'Y') {
-      sym_op.rotation(row, 1) = sign;
-      current_pos++;
-    } else if (comp_str[current_pos] == 'z' || comp_str[current_pos] == 'Z') {
-      sym_op.rotation(row, 2) = sign;
-      current_pos++;
-    }
-    // Check for translation part
-    else if (isdigit(comp_str[current_pos]) != 0) {
-      size_t next_pos = 0;
-      real_t const num = static_cast<real_t>(std::stod(comp_str.substr(current_pos), &next_pos));
-      current_pos += next_pos;
-      if (current_pos < comp_str.length() && comp_str[current_pos] == '/') {
-        current_pos++; // Skip '/'
-        real_t const den = static_cast<real_t>(std::stod(comp_str.substr(current_pos), &next_pos));
-        current_pos += next_pos;
-        sym_op.translation[row] += sign * (num / den);
-      } else {
-        sym_op.translation[row] += sign * num;
-      }
+    } else if (isdigit(static_cast<unsigned char>(current_ch)) != 0) {
+      parseTranslationPart(comp_str, current_pos, row, sign, sym_op);
     } else {
-      // Should not happen with valid CIF
+      parseRotationAxis(current_ch, row, sign, sym_op);
       current_pos++;
     }
   }
@@ -135,16 +162,16 @@ SymmetryOp parseSymmetryString(const std::string &op_str) {
   return sym_op;
 }
 
-enum class TokenizerState : std::uint8_t { OUTSIDE_TOKEN, INSIDE_UNQUOTED, INSIDE_QUOTED };
+enum class TokenizerState : std::uint8_t { OutsideToken, InsideUnquoted, InsideQuoted };
 
 void handleOutsideToken(char chr, char &quote_char, TokenizerState &state,
                         std::string &current_token) {
   if (chr == '\'' || chr == '"') {
     quote_char = chr;
-    state = TokenizerState::INSIDE_QUOTED;
+    state = TokenizerState::InsideQuoted;
   } else if (::isspace(static_cast<unsigned char>(chr)) == 0) {
     current_token += chr;
-    state = TokenizerState::INSIDE_UNQUOTED;
+    state = TokenizerState::InsideUnquoted;
   }
 }
 
@@ -153,7 +180,7 @@ void handleInsideUnquoted(char chr, TokenizerState &state, std::string &current_
   if (::isspace(static_cast<unsigned char>(chr)) != 0) {
     tokens.push_back(current_token);
     current_token.clear();
-    state = TokenizerState::OUTSIDE_TOKEN;
+    state = TokenizerState::OutsideToken;
   } else if (chr != '\'' && chr != '"') {
     current_token += chr;
   }
@@ -163,7 +190,7 @@ void handleInsideQuoted(char chr, char &quote_char, TokenizerState &state,
                         std::string &current_token) {
   if (chr == quote_char) {
     quote_char = '\0';
-    state = TokenizerState::INSIDE_UNQUOTED;
+    state = TokenizerState::InsideUnquoted;
   } else {
     current_token += chr;
   }
@@ -173,23 +200,23 @@ void handleInsideQuoted(char chr, char &quote_char, TokenizerState &state,
 std::vector<std::string> tokenizeCifLine(const std::string &line) {
   std::vector<std::string> tokens;
   std::string current_token;
-  TokenizerState state = TokenizerState::OUTSIDE_TOKEN;
+  TokenizerState state = TokenizerState::OutsideToken;
   char quote_char = '\0';
 
   for (char const chr : line) {
     switch (state) {
-    case TokenizerState::OUTSIDE_TOKEN:
+    case TokenizerState::OutsideToken:
       handleOutsideToken(chr, quote_char, state, current_token);
       break;
-    case TokenizerState::INSIDE_UNQUOTED:
+    case TokenizerState::InsideUnquoted:
       handleInsideUnquoted(chr, state, current_token, tokens);
       break;
-    case TokenizerState::INSIDE_QUOTED:
+    case TokenizerState::InsideQuoted:
       handleInsideQuoted(chr, quote_char, state, current_token);
       break;
     }
   }
-  if (state != TokenizerState::OUTSIDE_TOKEN) {
+  if (state != TokenizerState::OutsideToken) {
     tokens.push_back(current_token);
   }
   return tokens;
@@ -200,7 +227,7 @@ struct AsymmetricAtom {
   correlation::math::Vector3<real_t> frac_pos;
 };
 
-enum class ParseState : std::uint8_t { GLOBAL, LOOP_HEADER, LOOP_DATA };
+enum class ParseState : std::uint8_t { Global, LoopHeader, LoopData };
 
 void processLoopDataLine(const std::string &line, const std::vector<std::string> &loop_headers,
                          std::vector<AsymmetricAtom> &asymmetric_atoms,
@@ -226,16 +253,19 @@ void processLoopDataLine(const std::string &line, const std::vector<std::string>
       return; // Malformed line
     }
     try {
-      std::string element = cleanCifValue(tokens.at(header_map.at("_atom_site_type_symbol")));
+      std::string element(cleanCifValue(tokens.at(header_map.at("_atom_site_type_symbol"))));
       std::erase_if(element, ::isdigit);
 
-      correlation::math::Vector3<real_t> const pos = {
-          static_cast<real_t>(
-              std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_x"))))),
-          static_cast<real_t>(
-              std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_y"))))),
-          static_cast<real_t>(
-              std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_z")))))};
+      real_t x = 0;
+      real_t y = 0;
+      real_t z = 0;
+      if (!parseCifNumber(tokens.at(header_map.at("_atom_site_fract_x")), x) ||
+          !parseCifNumber(tokens.at(header_map.at("_atom_site_fract_y")), y) ||
+          !parseCifNumber(tokens.at(header_map.at("_atom_site_fract_z")), z)) {
+        throw std::runtime_error("CIF Error: Invalid atom site coordinates.");
+      }
+
+      correlation::math::Vector3<real_t> const pos = {x, y, z};
       asymmetric_atoms.push_back({
           .symbol = element,
           .frac_pos = pos,
@@ -260,36 +290,36 @@ void processCifLine(const std::string &line, ParseState &state,
                     std::vector<AsymmetricAtom> &asymmetric_atoms,
                     std::vector<SymmetryOp> &symmetry_ops) {
   // A new global tag or a new loop definition ends a previous loop's data section
-  if (state == ParseState::LOOP_DATA && (line[0] == '_' || line.starts_with("loop_"))) {
-    state = ParseState::GLOBAL;
+  if (state == ParseState::LoopData && (line[0] == '_' || line.starts_with("loop_"))) {
+    state = ParseState::Global;
     loop_headers.clear();
   }
 
   if (line.starts_with("loop_")) {
-    state = ParseState::LOOP_HEADER;
+    state = ParseState::LoopHeader;
     loop_headers.clear();
     return;
   }
 
-  if (state == ParseState::GLOBAL) {
+  if (state == ParseState::Global) {
     if (line[0] == '_') {
       std::stringstream str_stream(line);
       std::string key;
       std::string value;
       str_stream >> key;
       std::getline(str_stream, value); // The rest of the line is the value
-      cif_data[key] = cleanCifValue(value);
+      cif_data[key] = std::string(cleanCifValue(value));
     }
-  } else if (state == ParseState::LOOP_HEADER) {
+  } else if (state == ParseState::LoopHeader) {
     if (line[0] == '_') {
       loop_headers.push_back(line);
     } else {
-      state = ParseState::LOOP_DATA;
+      state = ParseState::LoopData;
       // Fall through to process this line as the first data line
     }
   }
 
-  if (state == ParseState::LOOP_DATA) {
+  if (state == ParseState::LoopData) {
     processLoopDataLine(line, loop_headers, asymmetric_atoms, symmetry_ops);
   }
 }
@@ -298,7 +328,7 @@ void parseCifFile(std::ifstream &file, std::map<std::string, std::string> &cif_d
                   std::vector<AsymmetricAtom> &asymmetric_atoms,
                   std::vector<SymmetryOp> &symmetry_ops) {
   std::string line;
-  ParseState state = ParseState::GLOBAL;
+  ParseState state = ParseState::Global;
   std::vector<std::string> loop_headers;
 
   while (std::getline(file, line)) {
@@ -314,13 +344,16 @@ void parseCifFile(std::ifstream &file, std::map<std::string, std::string> &cif_d
 void setupLatticeParameters(correlation::core::Cell &cell,
                             const std::map<std::string, std::string> &cif_data) {
   try {
-    std::array<real_t, 6> const params = {
-        static_cast<real_t>(std::stod(cif_data.at("_cell_length_a"))),
-        static_cast<real_t>(std::stod(cif_data.at("_cell_length_b"))),
-        static_cast<real_t>(std::stod(cif_data.at("_cell_length_c"))),
-        static_cast<real_t>(std::stod(cif_data.at("_cell_angle_alpha"))),
-        static_cast<real_t>(std::stod(cif_data.at("_cell_angle_beta"))),
-        static_cast<real_t>(std::stod(cif_data.at("_cell_angle_gamma")))};
+    std::array<real_t, 6> params{};
+    const std::array<const char *, 6> keys = {"_cell_length_a",   "_cell_length_b",
+                                              "_cell_length_c",   "_cell_angle_alpha",
+                                              "_cell_angle_beta", "_cell_angle_gamma"};
+
+    for (size_t i = 0; i < 6; ++i) {
+      if (!parseCifNumber(cif_data.at(keys.at(i)), params.at(i))) {
+        throw std::runtime_error("Invalid cell parameter value for " + std::string(keys.at(i)));
+      }
+    }
     cell.setLatticeParameters(params);
   } catch (const std::exception &e) {
     throw std::runtime_error("CIF Error: Missing or invalid cell parameters: " +
