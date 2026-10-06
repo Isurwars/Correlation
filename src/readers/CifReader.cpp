@@ -12,10 +12,13 @@
 #include "math/LinearAlgebra.hpp"
 #include "readers/ReaderFactory.hpp"
 
+#include <array>
 #include <cctype>
-#include <charconv>
+#include <cerrno>
 #include <cmath>
 #include <cstdint>
+#include <cstdlib>
+#include <cstring>
 #include <fstream>
 #include <functional>
 #include <map>
@@ -84,8 +87,25 @@ template <typename T> [[nodiscard]] bool parseCifNumber(std::string_view str_vie
   if (cleaned.empty()) {
     return false;
   }
-  auto [ptr, ec] = std::from_chars(cleaned.data(), cleaned.data() + cleaned.size(), out);
-  return ec == std::errc{} && ptr == cleaned.data() + cleaned.size();
+  std::array<char, 64> buf{};
+  char const *c_str = nullptr;
+  std::string fallback;
+  if (cleaned.size() < buf.size()) {
+    std::memcpy(buf.data(), cleaned.data(), cleaned.size());
+    buf.at(cleaned.size()) = '\0';
+    c_str = buf.data();
+  } else {
+    fallback = std::string(cleaned);
+    c_str = fallback.c_str();
+  }
+  char *end = nullptr;
+  errno = 0;
+  double const val = std::strtod(c_str, &end);
+  if (end != c_str + cleaned.size() || errno == ERANGE) {
+    return false;
+  }
+  out = static_cast<T>(val);
+  return true;
 }
 
 void parseRotationAxis(char axis_char, int row, real_t sign, SymmetryOp &sym_op) {
@@ -100,25 +120,54 @@ void parseRotationAxis(char axis_char, int row, real_t sign, SymmetryOp &sym_op)
 
 void parseTranslationPart(std::string_view comp_str, size_t &current_pos, int row, real_t sign,
                           SymmetryOp &sym_op) {
-  real_t num = 0;
-  auto [ptr1, ec1] =
-      std::from_chars(comp_str.data() + current_pos, comp_str.data() + comp_str.size(), num);
-  if (ec1 != std::errc{}) {
+  std::string_view const remaining = comp_str.substr(current_pos);
+  std::array<char, 64> buf{};
+  char const *c_str = nullptr;
+  std::string fallback;
+  if (remaining.size() < buf.size()) {
+    std::memcpy(buf.data(), remaining.data(), remaining.size());
+    buf.at(remaining.size()) = '\0';
+    c_str = buf.data();
+  } else {
+    fallback = std::string(remaining);
+    c_str = fallback.c_str();
+  }
+
+  char *end1 = nullptr;
+  errno = 0;
+  double const num = std::strtod(c_str, &end1);
+  if (end1 == c_str || errno == ERANGE) {
     current_pos++;
     return;
   }
-  current_pos = static_cast<size_t>(ptr1 - comp_str.data());
+  auto const consumed1 = static_cast<size_t>(end1 - c_str);
+  current_pos += consumed1;
+
   if (current_pos < comp_str.length() && comp_str[current_pos] == '/') {
     current_pos++; // Skip '/'
-    real_t den = 1.0;
-    auto [ptr2, ec2] =
-        std::from_chars(comp_str.data() + current_pos, comp_str.data() + comp_str.size(), den);
-    if (ec2 == std::errc{} && den != 0.0) {
-      current_pos = static_cast<size_t>(ptr2 - comp_str.data());
-      sym_op.translation[row] += sign * (num / den);
+    std::string_view const den_remaining = comp_str.substr(current_pos);
+    std::array<char, 64> den_buf{};
+    char const *den_c_str = nullptr;
+    std::string den_fallback;
+    if (den_remaining.size() < den_buf.size()) {
+      std::memcpy(den_buf.data(), den_remaining.data(), den_remaining.size());
+      den_buf.at(den_remaining.size()) = '\0';
+      den_c_str = den_buf.data();
+    } else {
+      den_fallback = std::string(den_remaining);
+      den_c_str = den_fallback.c_str();
+    }
+
+    char *end2 = nullptr;
+    errno = 0;
+    double const den = std::strtod(den_c_str, &end2);
+    if (end2 != den_c_str && errno != ERANGE && den != 0.0) {
+      auto const consumed2 = static_cast<size_t>(end2 - den_c_str);
+      current_pos += consumed2;
+      sym_op.translation[row] += sign * static_cast<real_t>(num / den);
     }
   } else {
-    sym_op.translation[row] += sign * num;
+    sym_op.translation[row] += sign * static_cast<real_t>(num);
   }
 }
 

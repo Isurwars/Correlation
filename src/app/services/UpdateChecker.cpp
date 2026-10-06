@@ -10,14 +10,14 @@
 
 #if __has_include("AppWindow.h")
 #include "AppWindow.h"
+#include <iostream>
+#include <thread>
 #endif
 
 #include <array>
 #include <cctype>
 #include <cstdio>
 #include <cstdlib>
-#include <iostream>
-#include <thread>
 #include <tuple>
 #include <vector>
 
@@ -265,7 +265,7 @@ void UpdateChecker::openUrlInBrowser(const std::string &url) {
 
 #if __has_include("AppWindow.h")
 void UpdateChecker::checkForUpdatesAsync(AppWindow &window, const std::string &current_version) {
-  std::thread([&window, current_version]() {
+  std::jthread([&window, current_version]() {
     try {
       const auto release = fetchLatestRelease();
       if (release.has_value() && isNewerVersion(release->tag_name, current_version)) {

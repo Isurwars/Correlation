@@ -399,6 +399,26 @@
     "ast_hash": "ada35f1fc2176c654495dacfa7fbdc8c",
     "semantic_hash": ""
   },
+  "src/plotters/RobotoData_ASCII_1.cpp": {
+    "mtime": 1790181953.0410619,
+    "ast_hash": "639e16709b2f7110c2cd727fdb89ff49",
+    "semantic_hash": ""
+  },
+  "src/plotters/RobotoData_ASCII_2.cpp": {
+    "mtime": 1790181953.0407577,
+    "ast_hash": "94ff23fc7481e4df432a8440d4510954",
+    "semantic_hash": ""
+  },
+  "src/plotters/RobotoData_Extended.cpp": {
+    "mtime": 1790181953.0418086,
+    "ast_hash": "3c3b461f1860aff0e7cc8af164487ef9",
+    "semantic_hash": ""
+  },
+  "src/plotters/pdfgen.c": {
+    "mtime": 1781473374.658443,
+    "ast_hash": "f4be1e7eedefebce48ed20bcfda25e1c",
+    "semantic_hash": "f4be1e7eedefebce48ed20bcfda25e1c"
+  },
   "src/readers/ArcReader.cpp": {
     "mtime": 1790184856.6632485,
     "ast_hash": "a572f57b1b29afbca0289c5b7035012a",
@@ -920,8 +940,8 @@
     "semantic_hash": ""
   },
   "CMakeLists.txt": {
-    "mtime": 1791327137.7619307,
-    "ast_hash": "79d9895bb278d20ad6b741b9338ccc60",
+    "mtime": 1791318527.7831647,
+    "ast_hash": "a21b831bcab1a42fcf169fee51ebdac3",
     "semantic_hash": ""
   },
   "README.md": {
@@ -950,8 +970,8 @@
     "semantic_hash": "fa5794c577c54fcf0888468db60e0c22"
   },
   "src/CMakeLists.txt": {
-    "mtime": 1791327118.236178,
-    "ast_hash": "01d4604db32e39e95b3081d07fa58a58",
+    "mtime": 1791319174.8544383,
+    "ast_hash": "9299c964cc1c6095fb83f07b6797f5c5",
     "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
@@ -2602,26 +2622,6 @@
   ".agents/rules/python-standards.md": {
     "mtime": 1791253045.1237664,
     "ast_hash": "1bc3eb41f928fd92925659861229156b",
-    "semantic_hash": ""
-  },
-  "src/plotters/fonts/RobotoData_ASCII_1.cpp": {
-    "mtime": 1790181953.0410619,
-    "ast_hash": "639e16709b2f7110c2cd727fdb89ff49",
-    "semantic_hash": ""
-  },
-  "src/plotters/fonts/RobotoData_ASCII_2.cpp": {
-    "mtime": 1790181953.0407577,
-    "ast_hash": "94ff23fc7481e4df432a8440d4510954",
-    "semantic_hash": ""
-  },
-  "src/plotters/fonts/RobotoData_Extended.cpp": {
-    "mtime": 1790181953.0418086,
-    "ast_hash": "3c3b461f1860aff0e7cc8af164487ef9",
-    "semantic_hash": ""
-  },
-  "src/plotters/vendor/pdfgen.c": {
-    "mtime": 1781473374.658443,
-    "ast_hash": "f4be1e7eedefebce48ed20bcfda25e1c",
     "semantic_hash": ""
   }
 }

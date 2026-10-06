@@ -55,16 +55,16 @@ computeXScale(const correlation::analysis::Histogram &hist,
 correlation::plotters::detail::NiceScale
 computeYScale(const correlation::analysis::Histogram &hist,
               const correlation::plotters::PlotConfig &config) {
-  real_t raw_y_min = static_cast<real_t>(0.0);
-  real_t raw_y_max = static_cast<real_t>(0.0);
+  auto raw_y_min = static_cast<real_t>(0.0);
+  auto raw_y_max = static_cast<real_t>(0.0);
   const auto &partials = hist.smoothed_partials.empty() ? hist.partials : hist.smoothed_partials;
   for (const auto &[key, value] : partials) {
-    for (real_t val : value) {
+    for (const real_t val : value) {
       raw_y_max = std::max(raw_y_max, val);
       raw_y_min = std::min(raw_y_min, val);
     }
   }
-  real_t y_padding = (raw_y_max - raw_y_min) * static_cast<real_t>(0.05);
+  const real_t y_padding = (raw_y_max - raw_y_min) * static_cast<real_t>(0.05);
   raw_y_max += y_padding;
 
   bool strict_y = false;
@@ -308,7 +308,7 @@ void PlotController::handleMouseMove(float mouse_x, float mouse_y, bool hover, f
           auto y_scale = computeYScale(*hist, config);
           auto [d_x, d_y] = correlation::plotters::detail::screenToData(
               mouse_x, mouse_y, width, height, config, x_scale, y_scale);
-          std::string text = std::format("X: {:.4g}  Y: {:.4g}", d_x, d_y);
+          const std::string text = std::format("X: {:.4g}  Y: {:.4g}", d_x, d_y);
           window_.set_hover_coord_text(slint::SharedString(text));
         } else {
           window_.set_hover_coord_text("");
@@ -450,7 +450,7 @@ void PlotController::executePlotRender(RenderTaskData data) {
   if (render_thread_.joinable()) {
     render_thread_.join();
   }
-  render_thread_ = std::thread([this, data = std::move(data)]() mutable {
+  render_thread_ = std::jthread([this, data = std::move(data)]() mutable {
     std::string svg;
     if (data.comparison_hists.size() <= 1) {
       svg = correlation::plotters::renderHistogramAsSvg(
@@ -526,8 +526,8 @@ void PlotController::handleSavePlot() {
     dialog_thread_.join();
   }
 
-  dialog_thread_ = std::thread([this, default_dir = std::move(default_dir),
-                                default_name = std::move(default_name), hist, name]() {
+  dialog_thread_ = std::jthread([this, default_dir = std::move(default_dir),
+                                 default_name = std::move(default_name), hist, name]() {
     std::array<nfdfilteritem_t, 2> filter_list = {{{
                                                        .name = "SVG Image",
                                                        .spec = "svg",

@@ -57,8 +57,8 @@ void AnalysisRunner::joinPreviousThreadAsync() {
     return;
   }
 
-  std::thread old_thread = std::move(analysis_thread_);
-  std::thread([thread_to_join = std::move(old_thread)]() mutable {
+  std::jthread old_thread = std::move(analysis_thread_);
+  std::jthread([thread_to_join = std::move(old_thread)]() mutable {
     if (thread_to_join.joinable()) {
       thread_to_join.join();
     }
@@ -117,7 +117,7 @@ void AnalysisRunner::handleRunAnalysis() {
   // Run analysis in a separate thread asynchronously without blocking GUI event loop
   joinPreviousThreadAsync();
 
-  analysis_thread_ = std::thread([this]() {
+  analysis_thread_ = std::jthread([this]() {
     const std::string err = executeAnalysis();
     slint::invoke_from_event_loop([this, err]() { handleAnalysisCompletion(err); });
   });

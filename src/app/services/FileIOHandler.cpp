@@ -92,7 +92,7 @@ void FileIOHandler::handleWriteFiles() {
 
   const bool is_zip = format_opts.use_zip;
 
-  dialog_thread_ = std::thread([this, is_zip]() {
+  dialog_thread_ = std::jthread([this, is_zip]() {
     nfdchar_t *out_path = nullptr;
     nfdresult_t result = NFD_CANCEL;
 
@@ -143,7 +143,7 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath) {
     load_thread_.join();
   }
 
-  load_thread_ = std::thread([this, filepath]() {
+  load_thread_ = std::jthread([this, filepath]() {
     auto progress_cb = [this](float progress, const std::string &msg) {
       slint::invoke_from_event_loop([progress, msg, this]() {
         window_.set_progress(progress);
@@ -271,7 +271,7 @@ void FileIOHandler::handleBrowseFile() {
     dialog_thread_.join();
   }
 
-  dialog_thread_ = std::thread([this]() {
+  dialog_thread_ = std::jthread([this]() {
     std::array<nfdfilteritem_t, 10> filter_list = {
         {{
              .name = "Supported Structure Files",

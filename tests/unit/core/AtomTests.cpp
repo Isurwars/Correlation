@@ -200,7 +200,7 @@ TEST_F(AtomTests, CopyAndMoveSemanticsWork) {
   original.setVelocity(vel);
 
   // Copy construction
-  Atom copy_constructed(original);
+  const Atom copy_constructed(original);
   EXPECT_EQ(copy_constructed.id(), 42);
   EXPECT_EQ(copy_constructed.element().symbol, "Si");
   EXPECT_NEAR(copy_constructed.position().x(), 1.0, 1e-9);
@@ -212,14 +212,16 @@ TEST_F(AtomTests, CopyAndMoveSemanticsWork) {
   EXPECT_EQ(copy_assigned.id(), 42);
   EXPECT_EQ(copy_assigned.element().symbol, "Si");
 
-  // Move construction
-  const Atom move_constructed(std::move(copy_constructed));
+  // Trivial copyability & move semantics
+  static_assert(std::is_trivially_copyable_v<Atom>);
+  EXPECT_TRUE(std::is_trivially_copyable_v<Atom>);
+
+  const Atom move_constructed = copy_constructed;
   EXPECT_EQ(move_constructed.id(), 42);
   EXPECT_EQ(move_constructed.element().symbol, "Si");
 
-  // Move assignment
   Atom move_assigned;
-  move_assigned = std::move(copy_assigned);
+  move_assigned = copy_assigned;
   EXPECT_EQ(move_assigned.id(), 42);
   EXPECT_EQ(move_assigned.element().symbol, "Si");
 }

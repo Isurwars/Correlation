@@ -179,6 +179,34 @@ if(CORRELATION_ENABLE_LIBTORCH AND Torch_FOUND)
     target_include_directories(mlip_obj PRIVATE ${TORCH_INCLUDE_DIRS})
 endif()
 
+# Vendor: pdfgen C library
+add_library(correlation_pdfgen STATIC
+    plotters/vendor/pdfgen.c
+)
+set_target_properties(correlation_pdfgen PROPERTIES
+    POSITION_INDEPENDENT_CODE ON
+    C_STANDARD 11
+)
+target_include_directories(correlation_pdfgen PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+
+# Plotters as an OBJECT library
+set(PLOTTERS_SOURCES
+    plotters/PathFont.cpp
+    plotters/PngPlotter.cpp
+    plotters/fonts/RobotoData_ASCII_1.cpp
+    plotters/fonts/RobotoData_ASCII_2.cpp
+    plotters/fonts/RobotoData_Extended.cpp
+)
+
+add_library(plotters_obj OBJECT ${PLOTTERS_SOURCES})
+target_include_directories(plotters_obj PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+)
+target_link_libraries(plotters_obj PRIVATE correlation_simd_options correlation_pdfgen)
+
 # Add sources to library
 add_library(correlation_lib STATIC
     core/Cell.cpp
@@ -190,21 +218,17 @@ add_library(correlation_lib STATIC
     analysis/StructureAnalyzer.cpp
     core/Trajectory.cpp
     analysis/TrajectoryAnalyzer.cpp
-    plotters/pdfgen.c
-    plotters/PathFont.cpp
-    plotters/PngPlotter.cpp
-    plotters/RobotoData_ASCII_1.cpp
-    plotters/RobotoData_ASCII_2.cpp
-    plotters/RobotoData_Extended.cpp
     utils/ZipArchiveWriter.cpp
     $<TARGET_OBJECTS:readers_obj>
     $<TARGET_OBJECTS:calculators_obj>
     $<TARGET_OBJECTS:writers_obj>
     $<TARGET_OBJECTS:mlip_obj>
+    $<TARGET_OBJECTS:plotters_obj>
     $<$<OR:$<BOOL:${BUILD_WITH_CUDA}>,$<BOOL:${BUILD_WITH_HIP}>>:$<TARGET_OBJECTS:gpu_calculators_obj>>
 )
 
-target_link_libraries(correlation_lib PRIVATE readers_obj calculators_obj writers_obj mlip_obj miniz)
+target_link_libraries(correlation_lib PRIVATE readers_obj calculators_obj writers_obj mlip_obj plotters_obj miniz)
+target_link_libraries(correlation_lib PUBLIC correlation_pdfgen)
 if(CORRELATION_ENABLE_LIBTORCH AND Torch_FOUND)
     target_link_libraries(correlation_lib PRIVATE "${TORCH_LIBRARIES}")
 endif()

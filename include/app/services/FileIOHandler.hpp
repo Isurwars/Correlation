@@ -90,8 +90,8 @@ private:
   ProgramOptions &options_;
   AppController &controller_;
 
-  std::thread dialog_thread_; ///< Background worker thread for native file dialogs
-  std::thread load_thread_;   ///< Background thread for loading files without blocking UI
+  std::jthread dialog_thread_; ///< Background worker thread for native file dialogs
+  std::jthread load_thread_;   ///< Background thread for loading files without blocking UI
   std::atomic<bool> dialog_active_{
       false}; ///< Concurrency guard preventing duplicate dialog launches
 };

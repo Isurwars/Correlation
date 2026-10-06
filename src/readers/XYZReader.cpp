@@ -12,7 +12,10 @@
 
 #include <algorithm>
 #include <array>
+#include <cerrno>
 #include <charconv>
+#include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <optional>
 #include <sstream>
@@ -167,6 +170,31 @@ void tokenizeAtomLine(std::string_view line_view, std::vector<std::string_view> 
   }
 }
 
+[[nodiscard]] bool parseReal(std::string_view str_view, real_t &out) {
+  if (str_view.empty()) {
+    return false;
+  }
+  std::array<char, 64> buf{};
+  char const *c_str = nullptr;
+  std::string fallback;
+  if (str_view.size() < buf.size()) {
+    std::memcpy(buf.data(), str_view.data(), str_view.size());
+    buf.at(str_view.size()) = '\0';
+    c_str = buf.data();
+  } else {
+    fallback = std::string(str_view);
+    c_str = fallback.c_str();
+  }
+  char *end = nullptr;
+  errno = 0;
+  double const val = std::strtod(c_str, &end);
+  if (end != c_str + str_view.size() || errno == ERANGE) {
+    return false;
+  }
+  out = static_cast<real_t>(val);
+  return true;
+}
+
 } // namespace
 
 void XYZReader::parseAtomLine(const std::string &line, const CommentData &comm_data,
@@ -186,14 +214,9 @@ void XYZReader::parseAtomLine(const std::string &line, const CommentData &comm_d
   real_t pos_y = 0;
   real_t pos_z = 0;
 
-  auto parse_coord = [](std::string_view token, real_t &val) -> bool {
-    auto [ptr, ec] = std::from_chars(token.data(), token.data() + token.size(), val);
-    return ec == std::errc{} && ptr == token.data() + token.size();
-  };
-
-  if (!parse_coord(tokens[comm_data.pos_x_col], pos_x) ||
-      !parse_coord(tokens[comm_data.pos_y_col], pos_y) ||
-      !parse_coord(tokens[comm_data.pos_z_col], pos_z)) {
+  if (!parseReal(tokens[comm_data.pos_x_col], pos_x) ||
+      !parseReal(tokens[comm_data.pos_y_col], pos_y) ||
+      !parseReal(tokens[comm_data.pos_z_col], pos_z)) {
     throw std::runtime_error("Invalid XYZ file: invalid coordinates: " + line);
   }
 
@@ -294,11 +317,12 @@ void XYZReader::parseLattice(const std::string &comment, CommentData &data) {
         size_t const tok_len = (next_space == std::string_view::npos) ? (values.size() - cursor)
                                                                       : (next_space - cursor);
         std::string_view const tok = values.substr(cursor, tok_len);
-        auto [ptr, ec] = std::from_chars(tok.data(), tok.data() + tok.size(), lattice.at(lat_idx));
-        if (ec != std::errc{} || ptr != tok.data() + tok.size()) {
+        real_t lat_val = 0;
+        if (!parseReal(tok, lat_val)) {
           flag = false;
           break;
         }
+        lattice.at(lat_idx) = lat_val;
         cursor = next_space;
       }
       if (flag) {
@@ -325,9 +349,7 @@ void XYZReader::parseEnergy(const std::string &comment, CommentData &data) {
         std::string_view const val_view(comment.data() + start,
                                         (end == std::string::npos ? comment.size() : end) - start);
         real_t energy_val = 0;
-        auto [ptr, ec] =
-            std::from_chars(val_view.data(), val_view.data() + val_view.size(), energy_val);
-        if (ec == std::errc{} && ptr == val_view.data() + val_view.size()) {
+        if (parseReal(val_view, energy_val)) {
           data.energy = energy_val;
           break;
         }

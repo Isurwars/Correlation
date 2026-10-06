@@ -185,7 +185,7 @@ private:
 
   PlotSeriesManager series_manager_;
 
-  std::thread render_thread_;
+  std::jthread render_thread_;
 
   struct RenderTaskData {
     correlation::analysis::Histogram active_hist;
@@ -203,7 +203,7 @@ private:
   RenderTaskData pending_task_data_;
   std::mutex pending_task_mutex_;
 
-  std::thread dialog_thread_; ///< Worker thread for native save dialogs
+  std::jthread dialog_thread_; ///< Worker thread for native save dialogs
   std::atomic<bool> dialog_active_{
       false}; ///< Concurrency guard preventing duplicate dialog launches
 

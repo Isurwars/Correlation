@@ -61,7 +61,7 @@ private:
   ProgramOptions &options_;
   AppController &controller_;
 
-  std::thread analysis_thread_; ///< Handle for the background analysis computation.
+  std::jthread analysis_thread_; ///< Handle for the background analysis computation.
 
   /**
    * @brief Asynchronously joins any running background thread to prevent blocking the UI.

@@ -13,7 +13,11 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <memory>
+#include <mutex>
 #include <string>
+#include <string_view>
+#include <unordered_map>
 
 namespace correlation::core {
 
@@ -52,15 +56,79 @@ struct Element {
 };
 
 /**
+ * @brief Thread-safe flyweight pool for chemical Element instances.
+ */
+class ElementPool {
+public:
+  /**
+   * @brief Returns a shared sentinel empty element instance.
+   * @return Pointer to default element.
+   */
+  [[nodiscard]] static const Element *defaultElement() noexcept {
+    static const Element DEFAULT_ELEM{.symbol = "", .id = ElementID{-1}};
+    return &DEFAULT_ELEM;
+  }
+
+  /**
+   * @brief Interns an Element into the pool or returns an existing instance.
+   * @param elem Element struct to intern.
+   * @return Immutable pointer to shared Element.
+   */
+  [[nodiscard]] static const Element *intern(const Element &elem) {
+    if (elem.symbol.empty() && elem.id.value == -1) {
+      return defaultElement();
+    }
+    return intern(elem.symbol, elem.id);
+  }
+
+  /**
+   * @brief Interns an element by symbol and ID into the pool.
+   * @param symbol Chemical symbol.
+   * @param elem_id Element identifier.
+   * @return Immutable pointer to shared Element.
+   */
+  [[nodiscard]] static const Element *intern(std::string_view symbol, ElementID elem_id) {
+    struct Key {
+      std::string symbol;
+      int id_val;
+      bool operator==(const Key &other) const noexcept {
+        return id_val == other.id_val && symbol == other.symbol;
+      }
+    };
+    struct KeyHash {
+      size_t operator()(const Key &key_obj) const noexcept {
+        return std::hash<std::string_view>{}(key_obj.symbol) ^
+               (std::hash<int>{}(key_obj.id_val) << 1);
+      }
+    };
+
+    static std::mutex pool_mutex;
+    static std::unordered_map<Key, std::unique_ptr<Element>, KeyHash> pool;
+
+    std::scoped_lock lock(pool_mutex);
+    Key const key{std::string(symbol), elem_id.value};
+    auto iter = pool.find(key);
+    if (iter != pool.end()) {
+      return iter->second.get();
+    }
+
+    auto new_element = std::make_unique<Element>(std::string(symbol), elem_id);
+    const Element *ptr = new_element.get();
+    pool.emplace(key, std::move(new_element));
+    return ptr;
+  }
+};
+
+/**
  * @brief Represents an atom in the simulation cell.
  *
- * Stores the element type, position, and unique ID of the atom.
+ * Stores the element type as a flyweight pointer, position, and unique ID of the atom.
  */
 class Atom {
 public:
   /** @name Constructors */
   ///@{
-  explicit Atom() = default;
+  explicit Atom() noexcept : element_(ElementPool::defaultElement()) {}
 
   /**
    * @brief Parameterized constructor.
@@ -68,8 +136,19 @@ public:
    * @param pos The position vector of the atom.
    * @param atom_id The unique ID of the atom.
    */
-  explicit Atom(Element element, const math::Vector3<real_t> &pos, AtomID atom_id) noexcept
-      : element_(std::move(element)), position_(pos), id_(atom_id) {}
+  explicit Atom(const Element &element, const math::Vector3<real_t> &pos, AtomID atom_id) noexcept
+      : element_(ElementPool::intern(element)), position_(pos), id_(atom_id) {}
+
+  /**
+   * @brief Pointer-based flyweight constructor.
+   * @param element_ptr Pointer to the interned element.
+   * @param pos The position vector of the atom.
+   * @param atom_id The unique ID of the atom.
+   */
+  explicit Atom(const Element *element_ptr, const math::Vector3<real_t> &pos,
+                AtomID atom_id) noexcept
+      : element_(element_ptr != nullptr ? element_ptr : ElementPool::defaultElement()),
+        position_(pos), id_(atom_id) {}
 
   ///@}
 
@@ -86,7 +165,7 @@ public:
    * @brief Sets the unique ID of the atom.
    * @param num The new atom ID.
    */
-  void setID(std::uint32_t num) { id_ = num; }
+  void setID(std::uint32_t num) noexcept { id_ = num; }
 
   /**
    * @brief Gets the position of the atom.
@@ -98,7 +177,7 @@ public:
    * @brief Sets the position of the atom.
    * @param pos The new position vector.
    */
-  void setPosition(const math::Vector3<real_t> &pos) { position_ = pos; }
+  void setPosition(const math::Vector3<real_t> &pos) noexcept { position_ = pos; }
 
   /**
    * @brief Gets the velocity of the atom.
@@ -110,25 +189,27 @@ public:
    * @brief Sets the velocity of the atom.
    * @param vel The new velocity vector.
    */
-  void setVelocity(const math::Vector3<real_t> &vel) { velocity_ = vel; }
+  void setVelocity(const math::Vector3<real_t> &vel) noexcept { velocity_ = vel; }
 
   /**
    * @brief Gets the element type of the atom.
    * @return A const reference to the Element struct.
    */
-  [[nodiscard]] const Element &element() const { return element_; }
+  [[nodiscard]] const Element &element() const noexcept {
+    return element_ != nullptr ? *element_ : *ElementPool::defaultElement();
+  }
 
   /**
    * @brief Sets the element type of the atom.
    * @param ele The new Element struct.
    */
-  void setElement(const Element &ele) { element_ = ele; }
+  void setElement(const Element &ele) { element_ = ElementPool::intern(ele); }
 
   /**
    * @brief Gets the integer ID of the element type.
    * @return The element ID value.
    */
-  [[nodiscard]] int elementId() const { return element_.id.value; }
+  [[nodiscard]] int elementId() const noexcept { return element().id.value; }
 
   ///@}
 
@@ -136,7 +217,8 @@ private:
   AtomID id_{0};                   ///< Unique identification number.
   math::Vector3<real_t> position_; ///< Cartesian coordinates in Angstroms.
   math::Vector3<real_t> velocity_; ///< Velocity in Angstroms/fs.
-  Element element_;                ///< Chemical element properties.
+  const Element *element_{
+      ElementPool::defaultElement()}; ///< Flyweight pointer to element metadata.
 };
 
 /**
