@@ -109,6 +109,7 @@ pythonVersion = "3.14"
 venvPath = "."
 venv = ".venv"
 extraPaths = ["python"]
+reportMissingModuleSource = false
 
 [tool.pyright]
 typeCheckingMode = "standard"
@@ -116,4 +117,5 @@ pythonVersion = "3.14"
 venvPath = "."
 venv = ".venv"
 extraPaths = ["python"]
+reportMissingModuleSource = false
 

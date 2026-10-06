@@ -23,7 +23,7 @@ Example usage::
 """
 
 try:
-    from correlation._correlation import *  # noqa: F401,F403
+    from correlation._correlation import *  # pyright: ignore[reportMissingModuleSource] # noqa: F401,F403
 except ImportError:
     try:
         from _correlation import *  # type: ignore[import-not-found] # noqa: F401,F403
@@ -33,10 +33,11 @@ except ImportError:
             "Make sure the package was built correctly with: pip install ."
         ) from e
 
+from importlib.metadata import PackageNotFoundError, version
+
 try:
-    from importlib.metadata import PackageNotFoundError, version
     __version__ = version("matcorr")
-except (PackageNotFoundError, ImportError):
+except PackageNotFoundError:
     __version__ = "3.9.10"
 
 
