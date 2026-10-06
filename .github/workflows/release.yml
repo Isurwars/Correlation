@@ -209,10 +209,9 @@ jobs:
         uses: pypa/cibuildwheel@v2.22.0
         env:
           CIBW_ARCHS: ${{ matrix.cibw_archs }}
+          CIBW_BUILD_VERBOSITY: 1
           CIBW_ENVIRONMENT_MACOS: >
             MACOSX_DEPLOYMENT_TARGET="13.3"
-            CXXFLAGS="-std=c++23"
-            CFLAGS="-std=c2x"
 
       - name: Upload wheel artifact
         uses: actions/upload-artifact@v4

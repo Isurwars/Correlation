@@ -36,6 +36,7 @@ else()
     TBB
     GIT_REPOSITORY https://github.com/uxlfoundation/oneTBB.git
     GIT_TAG v2023.0.0
+    GIT_SHALLOW TRUE
     SYSTEM
     EXCLUDE_FROM_ALL
   )
@@ -373,16 +374,17 @@ endif()
 
 # 7. pybind11
 if(BUILD_PYTHON_BINDINGS)
+  set(PYBIND11_FINDPYTHON ON CACHE BOOL "Use new FindPython discovery")
   find_package(pybind11 QUIET)
   if (pybind11_FOUND)
     message(STATUS "Found pybind11: ${pybind11_DIR} (Version: ${pybind11_VERSION})")
   else()
     message(STATUS "pybind11 not found. Downloading pybind11 from GitHub...")
-    set(PYBIND11_FINDPYTHON NEW CACHE BOOL "Use new FindPython discovery")
     FetchContent_Declare(
       pybind11
       GIT_REPOSITORY https://github.com/pybind/pybind11.git
       GIT_TAG        v3.0.4
+      GIT_SHALLOW    TRUE
       SYSTEM
       EXCLUDE_FROM_ALL
     )
@@ -579,6 +581,7 @@ FetchContent_Declare(
   miniz
   GIT_REPOSITORY https://github.com/richgel999/miniz.git
   GIT_TAG 3.0.2
+  GIT_SHALLOW TRUE
   SYSTEM
   EXCLUDE_FROM_ALL
 )
