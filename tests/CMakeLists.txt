@@ -108,25 +108,12 @@ add_executable(correlation_unit_tests
     unit/app/UpdateCheckerTests.cpp
     unit/app/ValidationRuleServiceTests.cpp
     unit/cli/CliParserTests.cpp
-    ../src/app/services/AnalysisDispatcher.cpp
-    ../src/app/formatters/BondCutoffMapper.cpp
-    ../src/app/services/BondCutoffService.cpp
-    ../src/app/services/PhysicsService.cpp
-    ../src/app/formatters/PlotExportService.cpp
-    ../src/app/services/PresetManager.cpp
-    ../src/app/core/SettingsManager.cpp
-    ../src/app/services/TrajectoryLoader.cpp
-    ../src/app/services/UpdateChecker.cpp
-    ../src/app/services/ValidationRuleService.cpp
 )
 
 target_link_libraries(correlation_unit_tests PRIVATE
-    correlation_lib
-    readers_obj
-    writers_obj
-    calculators_obj
-    mlip_obj
+    "$<LINK_LIBRARY:WHOLE_ARCHIVE,correlation_lib>"
     cli_parser_obj
+    app_services_obj
     miniz
     GTest::gtest
     GTest::gmock
@@ -135,7 +122,7 @@ target_link_libraries(correlation_unit_tests PRIVATE
 if(WIN32)
     target_link_libraries(correlation_unit_tests PRIVATE wininet Shell32)
 endif()
-add_dependencies(correlation_unit_tests readers_obj writers_obj calculators_obj mlip_obj)
+add_dependencies(correlation_unit_tests correlation_lib cli_parser_obj app_services_obj)
 # (Definitions and discovery are configured at the end of the file in a loop)
 
 #-----------------------------------------------------------
@@ -153,24 +140,17 @@ add_executable(correlation_functional_tests
     functional/analysis/NumericalParityTests.cpp
     functional/analysis/ThreadDeterminismTests.cpp
     functional/app/ServiceIntegrationTests.cpp
-    ../src/app/services/AnalysisDispatcher.cpp
-    ../src/app/services/BondCutoffService.cpp
-    ../src/app/services/PhysicsService.cpp
-    ../src/app/services/TrajectoryLoader.cpp
 )
 
 target_link_libraries(correlation_functional_tests PRIVATE
-    correlation_lib
-    readers_obj
-    writers_obj
-    calculators_obj
-    mlip_obj
+    "$<LINK_LIBRARY:WHOLE_ARCHIVE,correlation_lib>"
+    app_services_obj
     TBB::tbb
     GTest::gtest
     GTest::gmock
     GTest::gtest_main
 )
-add_dependencies(correlation_functional_tests readers_obj writers_obj calculators_obj mlip_obj)
+add_dependencies(correlation_functional_tests correlation_lib app_services_obj)
 
 
 #-----------------------------------------------------------
@@ -185,53 +165,22 @@ if(BUILD_GUI)
         unit/app/OptionsSyncServiceTests.cpp
         unit/app/PlotSeriesManagerTests.cpp
         unit/app/PlotTableFormatterTests.cpp
-        ../src/app/services/AnalysisDispatcher.cpp
-        ../src/app/services/AnalysisRunner.cpp
-        ../src/app/core/AppController.cpp
-        ../src/app/viewmodel/BondCutoffController.cpp
-        ../src/app/formatters/BondCutoffMapper.cpp
-        ../src/app/services/BondCutoffService.cpp
-        ../src/app/services/FileIOHandler.cpp
-        ../src/app/services/InputValidator.cpp
-        ../src/app/services/OptionsResetService.cpp
-        ../src/app/services/OptionsSyncService.cpp
-        ../src/app/services/PhysicsService.cpp
-        ../src/app/viewmodel/PlotController.cpp
-        ../src/app/formatters/PlotExportService.cpp
-        ../src/app/formatters/PlotSeriesManager.cpp
-        ../src/app/formatters/PlotTableFormatter.cpp
-        ../src/app/viewmodel/PresetController.cpp
-        ../src/app/services/PresetManager.cpp
-        ../src/app/core/SettingsManager.cpp
-        ../src/app/services/TrajectoryLoader.cpp
-        ../src/app/services/UpdateChecker.cpp
-        ../src/app/services/ValidationRuleService.cpp
     )
 
     target_link_libraries(correlation_gui_tests PRIVATE
-        correlation_lib
-        readers_obj
-        writers_obj
-        calculators_obj
+        "$<LINK_LIBRARY:WHOLE_ARCHIVE,correlation_lib>"
+        app_services_obj
+        app_gui_obj
         GTest::gtest
         GTest::gmock
         GTest::gtest_main
         Slint::Slint
         nfd
     )
-    add_dependencies(correlation_gui_tests readers_obj writers_obj calculators_obj)
+    add_dependencies(correlation_gui_tests correlation_lib app_services_obj app_gui_obj)
 
     # Link platform-specific deps required by a statically-built Slint
     link_slint_platform_deps(correlation_gui_tests)
-
-    # Add slint target sources for AppWindow
-    slint_target_sources(correlation_gui_tests
-        ../ui/AppWindow.slint
-        LIBRARY_PATHS material=${CMAKE_CURRENT_SOURCE_DIR}/../ui/material/material.slint
-    )
-    target_include_directories(correlation_gui_tests SYSTEM PRIVATE
-      ${CMAKE_CURRENT_BINARY_DIR}
-    )
 endif()
 
 # Configure common test target settings and discovery

@@ -246,43 +246,82 @@ if(BUILD_WITH_HIP)
 endif()
 
 #------------------------------------------------------------------
+# Application Services (Headless & GUI)
+#------------------------------------------------------------------
+# Headless Application Services as an OBJECT library (shared across GUI, CLI, and tests)
+add_library(app_services_obj OBJECT
+    app/services/AnalysisDispatcher.cpp
+    app/services/BondCutoffService.cpp
+    app/services/PhysicsService.cpp
+    app/services/TrajectoryLoader.cpp
+    app/services/PresetManager.cpp
+    app/services/UpdateChecker.cpp
+    app/services/ValidationRuleService.cpp
+    app/core/SettingsManager.cpp
+    app/formatters/BondCutoffMapper.cpp
+    app/formatters/PlotExportService.cpp
+)
+target_include_directories(app_services_obj PUBLIC
+    ${PROJECT_SOURCE_DIR}/include
+)
+target_link_libraries(app_services_obj PUBLIC
+    correlation_lib
+    correlation_simd_options
+)
+
+#------------------------------------------------------------------
 # Executable Target (correlation)
 #------------------------------------------------------------------
 if(BUILD_GUI)
-    set(CORRELATION_SOURCES
-        main.cpp
+    # GUI ViewModels & Controllers compiled once
+    add_library(app_gui_obj OBJECT
         app/core/AppController.cpp
-        app/core/SettingsManager.cpp
         app/viewmodel/BondCutoffController.cpp
         app/viewmodel/PlotController.cpp
         app/viewmodel/PresetController.cpp
-        app/services/AnalysisDispatcher.cpp
         app/services/AnalysisRunner.cpp
-        app/services/BondCutoffService.cpp
         app/services/FileIOHandler.cpp
         app/services/InputValidator.cpp
         app/services/OptionsResetService.cpp
         app/services/OptionsSyncService.cpp
-        app/services/PhysicsService.cpp
-        app/services/PresetManager.cpp
-        app/services/TrajectoryLoader.cpp
-        app/services/UpdateChecker.cpp
-        app/services/ValidationRuleService.cpp
-        app/formatters/BondCutoffMapper.cpp
-        app/formatters/PlotExportService.cpp
         app/formatters/PlotSeriesManager.cpp
         app/formatters/PlotTableFormatter.cpp
     )
+    target_include_directories(app_gui_obj PUBLIC
+        ${PROJECT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_BINARY_DIR}
+    )
+    target_link_libraries(app_gui_obj PUBLIC
+        correlation_lib
+        app_services_obj
+        Slint::Slint
+        nfd
+        correlation_simd_options
+    )
+    set_property(TARGET app_gui_obj PROPERTY SLINT_EMBED_RESOURCES "embed-files")
+    slint_target_sources(app_gui_obj
+        ../ui/AppWindow.slint
+        LIBRARY_PATHS material=${CMAKE_CURRENT_SOURCE_DIR}/../ui/material/material.slint
+    )
+
+    set(CORRELATION_SOURCES
+        main.cpp
+    )
 
     if (WIN32)
-        list(APPEND CORRELATION_SOURCES ../packaging/resource.rc)
+        list(APPEND CORRELATION_SOURCES "${PROJECT_BINARY_DIR}/packaging/resource.rc")
         add_executable(correlation WIN32 ${CORRELATION_SOURCES})
     else()
         add_executable(correlation ${CORRELATION_SOURCES})
     endif()
 
-    # Link correlation_lib, readers_obj, writers_obj, and calculators_obj to correlation GUI target
-    set(CORRELATION_LIBS correlation_lib readers_obj writers_obj calculators_obj Slint::Slint nfd)
+    set(CORRELATION_LIBS
+        "$<LINK_LIBRARY:WHOLE_ARCHIVE,correlation_lib>"
+        app_services_obj
+        app_gui_obj
+        Slint::Slint
+        nfd
+    )
 
     target_link_libraries(correlation PRIVATE correlation_simd_options)
 
@@ -293,30 +332,15 @@ if(BUILD_GUI)
     target_link_libraries(correlation PRIVATE ${CORRELATION_LIBS})
 
     # Link platform-specific deps required by a statically-built Slint
-    # Must come AFTER Slint::Slint so fontconfig/frameworks follow the
-    # static lib that references them (GNU ld resolves left-to-right).
     link_slint_platform_deps(correlation)
 
     if (WIN32)
         target_include_directories(correlation PRIVATE ${PROJECT_SOURCE_DIR})
     endif()
 
-    # Add the include directory for the generated slint header
-    target_include_directories(correlation SYSTEM PRIVATE
-      ${CMAKE_CURRENT_BINARY_DIR}
-    )
-
-    slint_target_sources(correlation
-      ../ui/AppWindow.slint
-      LIBRARY_PATHS material=${CMAKE_CURRENT_SOURCE_DIR}/../ui/material/material.slint
-    )
-
-    set_property(TARGET correlation PROPERTY SLINT_EMBED_RESOURCES "embed-files")
-
     # Copy DLLs to the executable directory on Windows
     bundle_windows_dlls(correlation)
     install_windows_dlls(correlation ${CMAKE_INSTALL_BINDIR})
-
 
     if(BUILD_WITH_CUDA)
         set_target_properties(correlation PROPERTIES CUDA_STANDARD 20)
@@ -342,12 +366,12 @@ if(NOT (EMSCRIPTEN OR BUILD_WASM))
     # CLI Executable Target (correlation-cli) — no GUI dependency
     add_executable(correlation-cli
         cli/main_cli.cpp
-        app/services/AnalysisDispatcher.cpp
-        app/services/PhysicsService.cpp
-        app/services/TrajectoryLoader.cpp
     )
     target_link_libraries(correlation-cli PRIVATE
-        correlation_lib readers_obj writers_obj calculators_obj cli_parser_obj
+        "$<LINK_LIBRARY:WHOLE_ARCHIVE,correlation_lib>"
+        cli_parser_obj
+        app_services_obj
+        correlation_simd_options
     )
     target_include_directories(correlation-cli PRIVATE
         ${PROJECT_SOURCE_DIR}/include

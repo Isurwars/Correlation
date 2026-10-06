@@ -14,7 +14,7 @@ if(BUILD_PYTHON_BINDINGS)
     # The Python package python/correlation/__init__.py re-exports via:
     #   from correlation._correlation import *
 
-    target_link_libraries(_correlation PRIVATE correlation_lib readers_obj writers_obj calculators_obj)
+    target_link_libraries(_correlation PRIVATE "$<LINK_LIBRARY:WHOLE_ARCHIVE,correlation_lib>")
 
     # Match the C++ standard used by correlation_lib
     set_target_properties(_correlation PROPERTIES CXX_STANDARD 23)
@@ -39,10 +39,7 @@ if(EMSCRIPTEN OR BUILD_WASM)
     )
 
     target_link_libraries(correlation_wasm PRIVATE
-        correlation_lib
-        readers_obj
-        calculators_obj
-        writers_obj
+        "$<LINK_LIBRARY:WHOLE_ARCHIVE,correlation_lib>"
     )
 
     set_target_properties(correlation_wasm PROPERTIES

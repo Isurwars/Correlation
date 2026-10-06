@@ -4,31 +4,27 @@
 include(FetchContent)
 
 # Enforce CMake policy version minimum to 3.10 for external dependencies
-set(CMAKE_POLICY_VERSION_MINIMUM 3.10 CACHE STRING "" FORCE)
+set(CMAKE_POLICY_VERSION_MINIMUM 3.10)
 
-set(BUILD_SHARED_LIBS ON CACHE BOOL "Force shared libraries")
+# Default to shared libraries unless overridden
+if(NOT DEFINED BUILD_SHARED_LIBS)
+  set(BUILD_SHARED_LIBS ON)
+endif()
 
 # Helpers to manage BUILD_SHARED_LIBS state across third-party dependencies
 macro(correlation_push_shared_libs new_value)
   set(_CORRELATION_SAVED_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
-  set(BUILD_SHARED_LIBS ${new_value} CACHE BOOL "Force shared libraries" FORCE)
+  set(BUILD_SHARED_LIBS ${new_value})
 endmacro()
 
 macro(correlation_pop_shared_libs)
-  set(BUILD_SHARED_LIBS ${_CORRELATION_SAVED_BUILD_SHARED_LIBS} CACHE BOOL "Force shared libraries" FORCE)
+  set(BUILD_SHARED_LIBS ${_CORRELATION_SAVED_BUILD_SHARED_LIBS})
   unset(_CORRELATION_SAVED_BUILD_SHARED_LIBS)
 endmacro()
 
-# Save original BUILD_TESTING cache state if it exists
-get_property(BUILD_TESTING_EXISTS CACHE BUILD_TESTING PROPERTY VALUE SET)
-if(BUILD_TESTING_EXISTS)
-  get_property(ORIG_BUILD_TESTING CACHE BUILD_TESTING PROPERTY VALUE)
-  get_property(ORIG_BUILD_TESTING_TYPE CACHE BUILD_TESTING PROPERTY TYPE)
-  get_property(ORIG_BUILD_TESTING_HELP CACHE BUILD_TESTING PROPERTY HELPSTRING)
-endif()
-
-# Force BUILD_TESTING to OFF for all dependencies to avoid building their tests
-set(BUILD_TESTING OFF CACHE BOOL "Disable testing for dependencies" FORCE)
+# Shadow BUILD_TESTING to OFF for dependencies to avoid building their internal tests
+set(_CORRELATION_BUILD_TESTING_ENABLED ${BUILD_TESTING})
+set(BUILD_TESTING OFF)
 
 # 1. TBB
 find_package(TBB QUIET)
@@ -39,7 +35,9 @@ else()
   FetchContent_Declare(
     TBB
     GIT_REPOSITORY https://github.com/uxlfoundation/oneTBB.git
-    GIT_TAG v2023.0.0  
+    GIT_TAG v2023.0.0
+    SYSTEM
+    EXCLUDE_FROM_ALL
   )
   set(TBB_TEST OFF CACHE BOOL "Disable TBB tests" FORCE)
   set(TBB_STRICT OFF CACHE BOOL "Disable TBB strict mode" FORCE)
@@ -68,6 +66,8 @@ if(BUILD_GUI)
       GIT_REPOSITORY https://github.com/slint-ui/slint.git
       GIT_TAG v1.18.0
       SOURCE_SUBDIR api/cpp
+      SYSTEM
+      EXCLUDE_FROM_ALL
     )
     set(SLINT_FEATURE_JEMALLOC OFF CACHE BOOL "Disable jemalloc for Slint runtime" FORCE)
     FetchContent_MakeAvailable(Slint)
@@ -154,6 +154,8 @@ if(BUILD_WITH_HDF5)
       HDF5
       GIT_REPOSITORY https://github.com/HDFGroup/hdf5.git
       GIT_TAG 2.1.1
+      SYSTEM
+      EXCLUDE_FROM_ALL
     )
     FetchContent_MakeAvailable(HDF5)
   endif()
@@ -208,13 +210,15 @@ if(BUILD_WITH_HDF5)
       HighFive
       GIT_REPOSITORY https://github.com/highfive-devs/highfive.git
       GIT_TAG v3.3.0
+      SYSTEM
+      EXCLUDE_FROM_ALL
     )
     FetchContent_MakeAvailable(HighFive)
   endif()
 endif()
 
 # 5. GoogleTest (only fetch, but don't enable testing here)
-if(ORIG_BUILD_TESTING)
+if(_CORRELATION_BUILD_TESTING_ENABLED)
   find_package(GTest QUIET)
   if(GTest_FOUND)
     message(STATUS "Found GTest: ${GTest_DIR} (Version: ${GTest_VERSION})")
@@ -232,6 +236,8 @@ if(ORIG_BUILD_TESTING)
       googletest
       GIT_REPOSITORY https://github.com/google/googletest.git
       GIT_TAG v1.17.0
+      SYSTEM
+      EXCLUDE_FROM_ALL
     )
     FetchContent_MakeAvailable(googletest)
 
@@ -299,6 +305,8 @@ if(BUILD_WITH_ARROW)
       GIT_REPOSITORY https://github.com/apache/arrow.git
       GIT_TAG        apache-arrow-23.0.1 # Use the latest stable version
       SOURCE_SUBDIR  cpp                 # We only need the C++ source
+      SYSTEM
+      EXCLUDE_FROM_ALL
     )
 
     # Configure Arrow Build Options (Crucial for speed)
@@ -375,6 +383,8 @@ if(BUILD_PYTHON_BINDINGS)
       pybind11
       GIT_REPOSITORY https://github.com/pybind/pybind11.git
       GIT_TAG        v3.0.4
+      SYSTEM
+      EXCLUDE_FROM_ALL
     )
     FetchContent_MakeAvailable(pybind11)
   endif()
@@ -390,6 +400,8 @@ else()
     cli11
     GIT_REPOSITORY https://github.com/CLIUtils/CLI11.git
     GIT_TAG        v2.4.2
+    SYSTEM
+    EXCLUDE_FROM_ALL
   )
   FetchContent_MakeAvailable(cli11)
 endif()
@@ -409,6 +421,8 @@ if(BUILD_GUI)
     nfd
     GIT_REPOSITORY https://github.com/btzy/nativefiledialog-extended.git
     GIT_TAG        v1.2.1
+    SYSTEM
+    EXCLUDE_FROM_ALL
   )
   FetchContent_MakeAvailable(nfd)
 
@@ -487,7 +501,9 @@ endif()
 add_library(correlation_fft INTERFACE)
 if(CORRELATION_USE_FFTW3)
   target_compile_definitions(correlation_fft INTERFACE CORRELATION_USE_FFTW3)
-  if(TARGET PkgConfig::FFTW3)
+  if(TARGET FFTW3::fftw3)
+    target_link_libraries(correlation_fft INTERFACE FFTW3::fftw3)
+  elseif(TARGET PkgConfig::FFTW3)
     target_link_libraries(correlation_fft INTERFACE PkgConfig::FFTW3)
   else()
     if(FFTW3_INCLUDE_DIRS)
@@ -529,6 +545,7 @@ FetchContent_Declare(
   voro
   GIT_REPOSITORY https://github.com/chr1shr/voro.git
   GIT_TAG        b0dac575a47af0f90b5b100e6dc199a493c7cb83
+  SYSTEM
   EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(voro)
@@ -562,6 +579,8 @@ FetchContent_Declare(
   miniz
   GIT_REPOSITORY https://github.com/richgel999/miniz.git
   GIT_TAG 3.0.2
+  SYSTEM
+  EXCLUDE_FROM_ALL
 )
 set(BUILD_EXAMPLES OFF CACHE BOOL "Disable miniz examples" FORCE)
 set(BUILD_FUZZERS OFF CACHE BOOL "Disable miniz fuzzers" FORCE)
@@ -575,9 +594,10 @@ if(TARGET miniz)
   endif()
 endif()
 
-# Restore original BUILD_TESTING cache state
-if(BUILD_TESTING_EXISTS)
-  set(BUILD_TESTING "${ORIG_BUILD_TESTING}" CACHE ${ORIG_BUILD_TESTING_TYPE} "${ORIG_BUILD_TESTING_HELP}" FORCE)
+# Restore BUILD_TESTING to caller scope
+if(DEFINED _CORRELATION_BUILD_TESTING_ENABLED)
+  set(BUILD_TESTING ${_CORRELATION_BUILD_TESTING_ENABLED})
+  unset(_CORRELATION_BUILD_TESTING_ENABLED)
 else()
-  unset(BUILD_TESTING CACHE)
+  unset(BUILD_TESTING)
 endif()

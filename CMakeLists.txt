@@ -3,32 +3,39 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.25)
+
+# -----------------------------------------------------------
+# Out-of-source build guard
+# -----------------------------------------------------------
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+    message(FATAL_ERROR "In-source builds are prohibited. Run cmake -B <build_dir> instead.")
+endif()
+
 project(Correlation VERSION 3.9.10 LANGUAGES CXX C)
 
 # -----------------------------------------------------------
 # Auto-generate packaging files from templates.
-# correlation.iss is the single versioned output — edit
-# packaging/correlation.iss.in, never the .iss directly.
+# Output to build directory to prevent source-tree pollution.
 # -----------------------------------------------------------
 configure_file(
     "${PROJECT_SOURCE_DIR}/packaging/correlation.iss.in"
-    "${PROJECT_SOURCE_DIR}/packaging/correlation.iss"
+    "${PROJECT_BINARY_DIR}/packaging/correlation.iss"
     @ONLY
 )
 configure_file(
     "${PROJECT_SOURCE_DIR}/packaging/resource.rc.in"
-    "${PROJECT_SOURCE_DIR}/packaging/resource.rc"
+    "${PROJECT_BINARY_DIR}/packaging/resource.rc"
     @ONLY
 )
 configure_file(
     "${PROJECT_SOURCE_DIR}/packaging/PKGBUILD.in"
-    "${PROJECT_SOURCE_DIR}/packaging/PKGBUILD"
+    "${PROJECT_BINARY_DIR}/packaging/PKGBUILD"
     @ONLY
 )
 configure_file(
     "${PROJECT_SOURCE_DIR}/recipe/meta.yaml.in"
-    "${PROJECT_SOURCE_DIR}/recipe/meta.yaml"
+    "${PROJECT_BINARY_DIR}/recipe/meta.yaml"
     @ONLY
 )
 
@@ -45,6 +52,25 @@ option(USE_SINGLE_PRECISION "Compile the core using single-precision floats inst
 option(BUILD_PYTHON_BINDINGS "Build pybind11 bindings for Correlation" OFF)
 option(BUILD_WASM "Build the WebAssembly target via Emscripten" OFF)
 option(ENABLE_FIXUP_BUNDLE "Enable BundleUtilities fixup_bundle on macOS for standalone binaries" ON)
+option(BUILD_WITH_CUDA "Enable GPU-accelerated calculators via CUDA" OFF)
+option(BUILD_WITH_HIP "Enable GPU-accelerated calculators via HIP" OFF)
+
+if(BUILD_WITH_CUDA AND BUILD_WITH_HIP)
+    message(FATAL_ERROR "Cannot build with both BUILD_WITH_CUDA and BUILD_WITH_HIP enabled. Choose one GPU backend.")
+endif()
+
+if(BUILD_WITH_CUDA)
+    enable_language(CUDA)
+    find_package(CUDAToolkit REQUIRED)
+    add_compile_definitions(CORRELATION_USE_CUDA CORRELATION_USE_GPU)
+    message(STATUS "CUDA enabled — GPU calculators will be built")
+endif()
+
+if(BUILD_WITH_HIP)
+    enable_language(HIP)
+    add_compile_definitions(CORRELATION_USE_HIP CORRELATION_USE_GPU)
+    message(STATUS "HIP enabled — GPU calculators will be built")
+endif()
 
 if(EMSCRIPTEN OR BUILD_WASM)
     set(BUILD_GUI OFF CACHE BOOL "Disable GUI for WASM" FORCE)
@@ -131,28 +157,6 @@ include(cmake/Dependencies.cmake)
 # -----------------------------------------------------------
 include(cmake/SIMD.cmake)
 
-# -----------------------------------------------------------
-# Optional GPU Acceleration (CUDA or HIP)
-# -----------------------------------------------------------
-option(BUILD_WITH_CUDA "Enable GPU-accelerated calculators via CUDA" OFF)
-option(BUILD_WITH_HIP "Enable GPU-accelerated calculators via HIP" OFF)
-
-if(BUILD_WITH_CUDA AND BUILD_WITH_HIP)
-    message(FATAL_ERROR "Cannot build with both BUILD_WITH_CUDA and BUILD_WITH_HIP enabled. Choose one GPU backend.")
-endif()
-
-if(BUILD_WITH_CUDA)
-    enable_language(CUDA)
-    find_package(CUDAToolkit REQUIRED)
-    add_compile_definitions(CORRELATION_USE_CUDA CORRELATION_USE_GPU)
-    message(STATUS "CUDA enabled — GPU calculators will be built")
-endif()
-
-if(BUILD_WITH_HIP)
-    enable_language(HIP)
-    add_compile_definitions(CORRELATION_USE_HIP CORRELATION_USE_GPU)
-    message(STATUS "HIP enabled — GPU calculators will be built")
-endif()
 # -----------------------------------------------------------
 # Code Coverage
 # -----------------------------------------------------------
