@@ -1,0 +1,426 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialTypography,
+    MaterialText,
+    Horizontal,
+    Vertical,
+    IconButton,
+    Icons,
+    MenuItem,
+} from "../material/material.slint";
+
+import {
+    AtomCount,
+    BondCutoff,
+    CalculatorGroup,
+    AnalysisOptions,
+    AppErrors,
+    ExportConfig,
+    ExportFormatOptions,
+    ExportAnalysisItem,
+    ComparisonCurveData,
+} from "../Types.slint";
+
+import { OperationsPanelCard } from "../cards/operations/OperationsPanelCard.slint";
+import { CommonOptionsPanelCard } from "../cards/common/CommonOptionsPanelCard.slint";
+import { AdvancedOptionsPanelCard } from "../cards/advanced/AdvancedOptionsPanelCard.slint";
+import { PlotExportPanelCard } from "../cards/plot/PlotExportPanelCard.slint";
+import { AnalysesPanelCard } from "../cards/analyses/AnalysesPanelCard.slint";
+import { SaveExportPanelCard } from "../cards/export/SaveExportPanelCard.slint";
+
+/// Container hosting the primary left-hand side activity panels (Column 1)
+export component SidePanelHost inherits Vertical {
+    padding: 0;
+    spacing: 0;
+
+    // Panel control state
+    in-out property <int> active_panel: -1;
+    in-out property <int> last_active_panel: 0;
+
+    // Operations panel state
+    in property <bool> timer_running: false;
+    in property <bool> file_loading: false;
+    in-out property <string> file_status_text: "";
+    in property <string> file_basename: "";
+    in property <bool> file_loaded: false;
+    in property <int> num_frames: 0;
+    in property <int> total_atoms: 0;
+    in property <int> removed_frames_count: 0;
+    in property <[AtomCount]> atom_counts: [];
+    in property <string> box_volume: "";
+    in property <string> box_density: "";
+    in property <string> box_dimensions: "";
+    in-out property <int> material_type: 0;
+    in-out property <AnalysisOptions> analysis_options;
+    in property <AppErrors> app_errors;
+    in property <bool> analysis_running: false;
+    in property <bool> analysis_done: false;
+    in property <bool> has_validation_errors: false;
+
+    // Common options state
+    in property <bool> has_radial_active: false;
+    in property <bool> has_angular_active: false;
+    in property <string> diff_msd: "";
+    in property <string> diff_vacf: "";
+    in property <string> relaxation_time: "";
+    in property <string> deborah_number: "";
+    in-out property <[BondCutoff]> bond_cutoffs: [];
+    in property <int> bond_cutoffs_reset_trigger: 0;
+
+    // Advanced options state
+    in property <bool> has_scattering_active: false;
+    in property <bool> has_rings_active: false;
+
+    // Plot export state
+    in property <[ComparisonCurveData]> comparison_curves: [];
+    in property <bool> show_difference: false;
+    in-out property <ExportConfig> export_config;
+    in property <string> export_font_scale_error: "";
+    in property <string> export_line_width_error: "";
+    in property <string> export_marker_size_error: "";
+
+    // Analyses state
+    in-out property <[CalculatorGroup]> calculator_groups: [];
+    in property <int> total_calculator_count: 0;
+
+    // Save & export state
+    in-out property <ExportFormatOptions> export_format_options;
+    in-out property <[ExportAnalysisItem]> export_analysis_items;
+    in-out property <bool> export_all_analyses: true;
+    in property <[MenuItem]> preset_items: [];
+    in-out property <int> selected_preset: -1;
+
+    // Tooltip reflection properties
+    out property <string> hovered_tooltip_text:
+        root.active_panel == 0 ? panel_operations.hovered_tooltip_text :
+        root.active_panel == 1 ? panel_common.hovered_tooltip_text :
+        root.active_panel == 2 ? panel_advanced.hovered_tooltip_text :
+        root.active_panel == 3 ? panel_plot_export.hovered_tooltip_text :
+        root.active_panel == 4 ? panel_analyses.hovered_tooltip_text :
+        root.active_panel == 5 ? panel_save_export.hovered_tooltip_text : "";
+
+    out property <length> hovered_x:
+        root.active_panel == 0 ? panel_operations.hovered_x :
+        root.active_panel == 1 ? panel_common.hovered_x :
+        root.active_panel == 2 ? panel_advanced.hovered_x :
+        root.active_panel == 3 ? panel_plot_export.hovered_x :
+        root.active_panel == 4 ? panel_analyses.hovered_x :
+        root.active_panel == 5 ? panel_save_export.hovered_x : 0px;
+
+    out property <length> hovered_y:
+        root.active_panel == 0 ? panel_operations.hovered_y :
+        root.active_panel == 1 ? panel_common.hovered_y :
+        root.active_panel == 2 ? panel_advanced.hovered_y :
+        root.active_panel == 3 ? panel_plot_export.hovered_y :
+        root.active_panel == 4 ? panel_analyses.hovered_y :
+        root.active_panel == 5 ? panel_save_export.hovered_y : 0px;
+
+    out property <length> hovered_width:
+        root.active_panel == 0 ? panel_operations.hovered_width :
+        root.active_panel == 1 ? panel_common.hovered_width :
+        root.active_panel == 2 ? panel_advanced.hovered_width :
+        root.active_panel == 3 ? panel_plot_export.hovered_width :
+        root.active_panel == 4 ? panel_analyses.hovered_width :
+        root.active_panel == 5 ? panel_save_export.hovered_width : 0px;
+
+    out property <length> hovered_height:
+        root.active_panel == 0 ? panel_operations.hovered_height :
+        root.active_panel == 1 ? panel_common.hovered_height :
+        root.active_panel == 2 ? panel_advanced.hovered_height :
+        root.active_panel == 3 ? panel_plot_export.hovered_height :
+        root.active_panel == 4 ? panel_analyses.hovered_height :
+        root.active_panel == 5 ? panel_save_export.hovered_height : 0px;
+
+    // Callbacks - Operations
+    callback browse_file();
+    callback reload_file();
+    callback reset_trajectory_options();
+    callback reset_material_type();
+    callback run_analysis();
+    callback cancel_analysis();
+
+    // Callbacks - Common Options
+    callback reset_bond_cutoffs();
+    callback apply_min_factor(float);
+    callback apply_max_factor(float);
+    callback apply_global_cutoff(float);
+    callback apply_scaled_cutoffs(float);
+    callback set_uniform_cutoff(float);
+    callback reset_rdf_options();
+    callback reset_angle_options();
+
+    // Callbacks - Advanced Options
+    callback reset_sq_options();
+    callback reset_xrd_options();
+    callback xrd_radiation_preset_changed(int);
+    callback reset_rings_options();
+    callback reset_smoothing_options();
+    callback reset_advanced_options();
+
+    // Callbacks - Plot Settings
+    callback pin_run();
+    callback import_comparison_file();
+    callback remove_comparison_curve(int);
+    callback toggle_difference_plot(bool);
+    callback clear_comparison_curves();
+    callback reset_export_settings();
+
+    // Callbacks - Analyses
+    callback toggle_calculator(string, bool);
+    callback reset_analyses_selection();
+
+    // Callbacks - Save & Export
+    callback toggle_export_analysis(string, bool);
+    callback toggle_all_export_analyses(bool);
+    callback write_files();
+    callback reset_export_options();
+    callback load_preset(int);
+    callback save_preset(string);
+    callback delete_preset(int);
+    callback reset_presets();
+
+    // Header with Title and Close Button
+    Horizontal {
+        height: 36px;
+        padding-left: 8px;
+        padding-right: 4px;
+        alignment: center;
+
+        MaterialText {
+            text: root.active_panel == 0 ? "Operations" :
+                root.active_panel == 1 ? "Common Options" :
+                root.active_panel == 2 ? "Advanced Options" :
+                root.active_panel == 3 ? "Plot Settings" :
+                root.active_panel == 4 ? "Analyses" : "Save & Export";
+            style: MaterialTypography.title_small;
+            color: MaterialPalette.on_surface;
+            vertical-alignment: center;
+            horizontal-stretch: 1;
+        }
+
+        IconButton {
+            icon: Icons.close;
+            tooltip: "Close Panel";
+            inline: true;
+            clicked => {
+                if (root.active_panel >= 0) {
+                    root.last_active_panel = root.active_panel;
+                }
+                root.active_panel = -1;
+            }
+        }
+    }
+
+    // Panel Content Area
+    Rectangle {
+        vertical-stretch: 1;
+
+        // Panel 0: Operations
+        panel_operations := OperationsPanelCard {
+            x: 0;
+            y: 0;
+            width: 100%;
+            height: 100%;
+            visible: root.active_panel == 0;
+            load_enabled: !root.timer_running;
+            file_loading: root.file_loading;
+            browse_file => { root.browse_file(); }
+            reload_file => { root.reload_file(); }
+            file_status_text <=> root.file_status_text;
+            file_basename: root.file_basename;
+            file_loaded: root.file_loaded;
+            num_frames: root.num_frames;
+            total_atoms: root.total_atoms;
+            removed_frames_count: root.removed_frames_count;
+            atom_counts: root.atom_counts;
+            box_volume: root.box_volume;
+            box_density: root.box_density;
+            box_dimensions: root.box_dimensions;
+
+            material_type <=> root.material_type;
+            time_step <=> root.analysis_options.time_step;
+            time_step_error: root.app_errors.time_step_error;
+            min_frame <=> root.analysis_options.min_frame;
+            max_frame <=> root.analysis_options.max_frame;
+            min_frame_error: root.app_errors.min_frame_error;
+            max_frame_error: root.app_errors.max_frame_error;
+            frame_stride <=> root.analysis_options.frame_stride;
+            frame_stride_error: root.app_errors.frame_stride_error;
+            reset_trajectory_options => { root.reset_trajectory_options(); }
+            reset_material_type => { root.reset_material_type(); }
+
+            analysis_running: root.analysis_running;
+            has_validation_errors: root.has_validation_errors;
+            run_analysis => { root.run_analysis(); }
+            cancel_analysis => { root.cancel_analysis(); }
+        }
+
+        // Panel 1: Common Options
+        panel_common := CommonOptionsPanelCard {
+            x: 0;
+            y: 0;
+            width: 100%;
+            height: 100%;
+            visible: root.active_panel == 1;
+            file_loaded: root.file_loaded;
+            has_radial_active: root.has_radial_active;
+            has_angular_active: root.has_angular_active;
+
+            diff_msd: root.diff_msd;
+            diff_vacf: root.diff_vacf;
+            relaxation_time: root.relaxation_time;
+            deborah_number: root.deborah_number;
+
+            atom_counts: root.atom_counts;
+            bond_cutoffs <=> root.bond_cutoffs;
+            bond_cutoffs_reset_trigger: root.bond_cutoffs_reset_trigger;
+            reset_bond_cutoffs => { root.reset_bond_cutoffs(); }
+            apply_min_factor(factor) => { root.apply_min_factor(factor); }
+            apply_max_factor(factor) => { root.apply_max_factor(factor); }
+            apply_global_cutoff(cutoff) => { root.apply_global_cutoff(cutoff); }
+            apply_scaled_cutoffs(factor) => { root.apply_scaled_cutoffs(factor); }
+            set_uniform_cutoff(max_val) => { root.set_uniform_cutoff(max_val); }
+
+            r_max <=> root.analysis_options.r_max;
+            r_bin_width <=> root.analysis_options.r_bin_width;
+            r_max_error: root.app_errors.r_max_error;
+            r_bin_error: root.app_errors.r_bin_error;
+            reset_rdf_options => { root.reset_rdf_options(); }
+
+            angle_bin_width <=> root.analysis_options.angle_bin_width;
+            dihedral_bin_width <=> root.analysis_options.dihedral_bin_width;
+            angle_bin_error: root.app_errors.angle_bin_error;
+            dihedral_bin_error: root.app_errors.dihedral_bin_error;
+            reset_angle_options => { root.reset_angle_options(); }
+        }
+
+        // Panel 2: Advanced Options
+        panel_advanced := AdvancedOptionsPanelCard {
+            x: 0;
+            y: 0;
+            width: 100%;
+            height: 100%;
+            visible: root.active_panel == 2;
+            file_loaded: root.file_loaded;
+            has_scattering_active: root.has_scattering_active;
+            has_rings_active: root.has_rings_active;
+
+            q_max <=> root.analysis_options.q_max;
+            q_bin_width <=> root.analysis_options.q_bin_width;
+            r_int_max <=> root.analysis_options.r_int_max;
+            q_max_error: root.app_errors.q_max_error;
+            q_bin_error: root.app_errors.q_bin_error;
+            r_int_max_error: root.app_errors.r_int_max_error;
+            reset_sq_options => { root.reset_sq_options(); }
+
+            xrd_radiation_preset <=> root.analysis_options.xrd_radiation_preset;
+            xrd_lambda <=> root.analysis_options.xrd_lambda;
+            xrd_theta_min <=> root.analysis_options.xrd_theta_min;
+            xrd_theta_max <=> root.analysis_options.xrd_theta_max;
+            xrd_bin_width <=> root.analysis_options.xrd_bin_width;
+            xrd_lambda_error: root.app_errors.xrd_lambda_error;
+            xrd_theta_min_error: root.app_errors.xrd_theta_min_error;
+            xrd_theta_max_error: root.app_errors.xrd_theta_max_error;
+            xrd_bin_width_error: root.app_errors.xrd_bin_width_error;
+            reset_xrd_options => { root.reset_xrd_options(); }
+            xrd_radiation_preset_changed(idx) => { root.xrd_radiation_preset_changed(idx); }
+
+            max_ring_size <=> root.analysis_options.max_ring_size;
+            max_ring_error: root.app_errors.max_ring_error;
+            reset_rings_options => { root.reset_rings_options(); }
+
+            smoothing_enabled <=> root.analysis_options.smoothing_enabled;
+            smoothing_sigma <=> root.analysis_options.smoothing_sigma;
+            smoothing_kernel <=> root.analysis_options.smoothing_kernel;
+            smoothing_sigma_error: root.app_errors.smoothing_sigma_error;
+            reset_smoothing_options => { root.reset_smoothing_options(); }
+
+            lef_cutoff <=> root.analysis_options.lef_cutoff;
+            lef_sigma <=> root.analysis_options.lef_sigma;
+            hyper_samples <=> root.analysis_options.hyper_samples;
+            lef_cutoff_error: root.app_errors.lef_cutoff_error;
+            lef_sigma_error: root.app_errors.lef_sigma_error;
+            hyper_samples_error: root.app_errors.hyper_samples_error;
+            reset_advanced_options => { root.reset_advanced_options(); }
+        }
+
+        // Panel 3: Plot Settings
+        panel_plot_export := PlotExportPanelCard {
+            x: 0;
+            y: 0;
+            width: 100%;
+            height: 100%;
+            visible: root.active_panel == 3;
+            enabled: root.file_loaded;
+
+            comparison_curves: root.comparison_curves;
+            show_difference: root.show_difference;
+            pin_current_run => { root.pin_run(); }
+            import_comparison_file => { root.import_comparison_file(); }
+            remove_comparison_curve(id) => { root.remove_comparison_curve(id); }
+            toggle_difference_plot(show) => { root.toggle_difference_plot(show); }
+            clear_comparison_curves => { root.clear_comparison_curves(); }
+
+            export_size_preset <=> root.export_config.size_preset;
+            export_palette <=> root.export_config.palette;
+            export_font_scale <=> root.export_config.font_scale;
+            export_line_width <=> root.export_config.line_width;
+            export_marker_size <=> root.export_config.marker_size;
+            export_show_legend <=> root.export_config.show_legend;
+            export_show_grid <=> root.export_config.show_grid;
+            export_show_markers <=> root.export_config.show_markers;
+            export_fill_area <=> root.export_config.fill_area;
+            export_font_scale_error: root.export_font_scale_error;
+            export_line_width_error: root.export_line_width_error;
+            export_marker_size_error: root.export_marker_size_error;
+            reset_export_settings => { root.reset_export_settings(); }
+        }
+
+        // Panel 4: Analyses
+        panel_analyses := AnalysesPanelCard {
+            x: 0;
+            y: 0;
+            width: 100%;
+            height: 100%;
+            visible: root.active_panel == 4;
+            file_loaded: root.file_loaded;
+
+            calculator_groups: root.calculator_groups;
+            total_calculator_count: root.total_calculator_count;
+            toggle_calculator(id, enabled) => { root.toggle_calculator(id, enabled); }
+            reset_analyses_selection => { root.reset_analyses_selection(); }
+        }
+
+        // Panel 5: Save & Export
+        panel_save_export := SaveExportPanelCard {
+            x: 0;
+            y: 0;
+            width: 100%;
+            height: 100%;
+            visible: root.active_panel == 5;
+            enabled: root.file_loaded;
+            analysis_done: root.analysis_done;
+
+            format_options <=> root.export_format_options;
+            export_analyses <=> root.export_analysis_items;
+            export_all_analyses <=> root.export_all_analyses;
+
+            toggle_analysis(id, val) => { root.toggle_export_analysis(id, val); }
+            toggle_all_analyses(val) => { root.toggle_all_export_analyses(val); }
+            write_files => { root.write_files(); }
+            reset_export_options => { root.reset_export_options(); }
+
+            preset_items: root.preset_items;
+            selected_preset <=> root.selected_preset;
+            load_preset(idx) => { root.load_preset(idx); }
+            save_preset(name) => { root.save_preset(name); }
+            delete_preset(idx) => { root.delete_preset(idx); }
+            reset_presets => { root.reset_presets(); }
+        }
+    }
+}
