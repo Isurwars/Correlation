@@ -25,6 +25,9 @@ namespace correlation::calculators {
 namespace {
 std::string getPartialKey(const correlation::core::Cell &cell, size_t type1, size_t type2) {
   const auto &elements = cell.elements();
+  if (type1 >= elements.size() || type2 >= elements.size()) {
+    return "Unknown-Unknown";
+  }
   if (type1 > type2) {
     std::swap(type1, type2);
   }
@@ -33,6 +36,9 @@ std::string getPartialKey(const correlation::core::Cell &cell, size_t type1, siz
 
 std::string getInversePartialKey(const correlation::core::Cell &cell, size_t type1, size_t type2) {
   const auto &elements = cell.elements();
+  if (type1 >= elements.size() || type2 >= elements.size()) {
+    return "Unknown-Unknown";
+  }
   if (type1 < type2) {
     std::swap(type1, type2);
   }

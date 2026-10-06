@@ -27,6 +27,13 @@ integrateVdosFrequency(real_t theta, const std::vector<real_t> &windowed_vacf, r
   real_t integral_real = 0.0;
   real_t integral_imag = 0.0;
 
+  if (num_frames == 0) {
+    return {0.0, 0.0};
+  }
+  if (num_frames == 1) {
+    return {windowed_vacf[0] * time_step, 0.0};
+  }
+
   if (std::abs(theta) < 1e-6) {
     for (size_t frame_idx = 0; frame_idx < num_frames; ++frame_idx) {
       real_t const val = windowed_vacf[frame_idx];
@@ -54,8 +61,7 @@ integrateVdosFrequency(real_t theta, const std::vector<real_t> &windowed_vacf, r
                                     static_cast<real_t>(2.0) * sin_theta * cos_theta / theta3);
     real_t const gamma = static_cast<real_t>(4.0) * (sin_theta / theta3 - cos_theta / theta2);
 
-    size_t two_n = (num_frames % 2 == 0) ? num_frames - 2 : num_frames - 1;
-    two_n = std::max<size_t>(two_n, 0);
+    const size_t two_n = (num_frames % 2 == 0) ? num_frames - 2 : num_frames - 1;
 
     real_t const f_0 = windowed_vacf[0];
     real_t const f_2_n = windowed_vacf[two_n];
@@ -107,6 +113,41 @@ integrateVdosFrequency(real_t theta, const std::vector<real_t> &windowed_vacf, r
 
   return {integral_real, integral_imag};
 }
+
+std::vector<std::vector<correlation::math::Vector3<real_t>>>
+computeUnwrappedTrajectories(const std::vector<correlation::core::Cell> &frames, size_t start_frame,
+                             size_t num_frames, size_t num_atoms) {
+  std::vector<std::vector<correlation::math::Vector3<real_t>>> unwrapped(
+      num_atoms, std::vector<correlation::math::Vector3<real_t>>(num_frames, {0.0, 0.0, 0.0}));
+
+  std::vector<correlation::KahanAccumulator<real_t>> kahan_x(num_atoms);
+  std::vector<correlation::KahanAccumulator<real_t>> kahan_y(num_atoms);
+  std::vector<correlation::KahanAccumulator<real_t>> kahan_z(num_atoms);
+
+  for (size_t frame_idx = 1; frame_idx < num_frames; ++frame_idx) {
+    const size_t traj_frame = start_frame + frame_idx;
+    const size_t traj_frame_prev = start_frame + frame_idx - 1;
+    const bool use_pbc = (frames[traj_frame].volume() > 1e-9);
+
+    const auto &curr_atoms = frames[traj_frame].atoms();
+    const auto &prev_atoms = frames[traj_frame_prev].atoms();
+
+    for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
+      const math::Vector3<real_t> delta_r =
+          curr_atoms[atom_idx].position() - prev_atoms[atom_idx].position();
+      const math::Vector3<real_t> min_delta_r =
+          use_pbc ? frames[traj_frame].minimumImage(delta_r) : delta_r;
+
+      kahan_x[atom_idx].add(min_delta_r.x());
+      kahan_y[atom_idx].add(min_delta_r.y());
+      kahan_z[atom_idx].add(min_delta_r.z());
+
+      unwrapped[atom_idx][frame_idx] = {kahan_x[atom_idx].value(), kahan_y[atom_idx].value(),
+                                        kahan_z[atom_idx].value()};
+    }
+  }
+  return unwrapped;
+}
 } // namespace
 
 std::vector<real_t> DynamicsAnalyzer::calculateVACF(const correlation::core::Trajectory &traj,
@@ -147,6 +188,10 @@ std::vector<real_t> DynamicsAnalyzer::calculateVACF(const correlation::core::Tra
       masses[atom_idx] = 1.0;
     }
     total_mass += masses[atom_idx];
+  }
+
+  if (total_mass <= 0.0) {
+    return {};
   }
 
   // Create corrected velocities (COM removed) mapped relative to start_frame
@@ -236,6 +281,9 @@ std::vector<real_t> DynamicsAnalyzer::calculateMSD(const correlation::core::Traj
 
   size_t const total_frames = frames.size();
   size_t const num_atoms = frames[0].atoms().size();
+  if (num_atoms == 0) {
+    return {};
+  }
 
   start_frame = std::min(start_frame, total_frames > 0 ? total_frames - 1 : 0);
   end_frame = std::min(end_frame, total_frames);
@@ -254,43 +302,7 @@ std::vector<real_t> DynamicsAnalyzer::calculateMSD(const correlation::core::Traj
   }
 
   // --- Build unwrapped trajectories using minimum image convention ---
-  // For each atom i and frame frame_idx (relative to start_frame):
-  //   unwrapped[i][frame_idx] = sum_{s=0}^{frame_idx-1} min_image( r(s+1) - r(s) )
-  // This correctly handles PBC crossings without needing explicit unwrapping.
-
-  std::vector<std::vector<correlation::math::Vector3<real_t>>> unwrapped(
-      num_atoms, std::vector<correlation::math::Vector3<real_t>>(num_frames, {0.0, 0.0, 0.0}));
-
-  std::vector<correlation::KahanAccumulator<real_t>> kahan_x(num_atoms);
-  std::vector<correlation::KahanAccumulator<real_t>> kahan_y(num_atoms);
-  std::vector<correlation::KahanAccumulator<real_t>> kahan_z(num_atoms);
-
-  for (size_t frame_idx = 1; frame_idx < num_frames; ++frame_idx) {
-    const size_t traj_frame = start_frame + frame_idx;
-    const size_t traj_frame_prev = start_frame + frame_idx - 1;
-
-    // Use Cell::minimumImage() for correct triclinic PBC handling.
-    const bool use_pbc = (frames[traj_frame].volume() > 1e-9);
-
-    const auto &curr_atoms = frames[traj_frame].atoms();
-    const auto &prev_atoms = frames[traj_frame_prev].atoms();
-
-    for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
-      const math::Vector3<real_t> delta_r =
-          curr_atoms[atom_idx].position() - prev_atoms[atom_idx].position();
-
-      // Apply minimum image convention for correct unwrapping across PBC.
-      const math::Vector3<real_t> min_delta_r =
-          use_pbc ? frames[traj_frame].minimumImage(delta_r) : delta_r;
-
-      kahan_x[atom_idx].add(min_delta_r.x());
-      kahan_y[atom_idx].add(min_delta_r.y());
-      kahan_z[atom_idx].add(min_delta_r.z());
-
-      unwrapped[atom_idx][frame_idx] = {kahan_x[atom_idx].value(), kahan_y[atom_idx].value(),
-                                        kahan_z[atom_idx].value()};
-    }
-  }
+  const auto unwrapped = computeUnwrappedTrajectories(frames, start_frame, num_frames, num_atoms);
 
   // --- Compute MSD using Wiener-Khinchin Fast Correlation Algorithm ---
   // MSD(k) = (S1(k) - 2 * S2(k)) / (N - k)
@@ -378,7 +390,7 @@ DynamicsAnalyzer::calculateNormalizedVACF(const correlation::core::Trajectory &t
 
 std::tuple<std::vector<real_t>, std::vector<real_t>, std::vector<real_t>>
 DynamicsAnalyzer::calculateVDOS(const std::vector<real_t> &vacf, real_t time_step) {
-  if (vacf.empty()) {
+  if (vacf.empty() || time_step <= 0.0) {
     return {};
   }
 

@@ -220,6 +220,34 @@ TEST(DynamicsAnalyzerTests, HandlesEmptyAndInvalidTrajectories) {
                   .empty());
   EXPECT_TRUE(
       DynamicsAnalyzer::calculateMSD(trajectory, MaxFrames{1}, StartFrame{1}, EndFrame{1}).empty());
+
+  // Trajectory with 0 atoms per frame
+  correlation::core::Cell zero_atom_cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  correlation::core::Trajectory zero_atom_traj;
+  zero_atom_traj.addFrame(zero_atom_cell);
+  zero_atom_traj.addFrame(zero_atom_cell);
+  EXPECT_TRUE(DynamicsAnalyzer::calculateVACF(zero_atom_traj, MaxFrames{1}).empty());
+  EXPECT_TRUE(DynamicsAnalyzer::calculateMSD(zero_atom_traj, MaxFrames{1}).empty());
+}
+
+TEST(DynamicsAnalyzerTests, HandlesVDOSBoundaryAndEdgeCaseInputs) {
+  // Empty VACF input
+  auto [freqs_empty, vdos_re_empty, vdos_im_empty] = DynamicsAnalyzer::calculateVDOS({}, 0.5);
+  EXPECT_TRUE(freqs_empty.empty());
+
+  // Non-positive time step
+  auto [freqs_neg, vdos_re_neg, vdos_im_neg] =
+      DynamicsAnalyzer::calculateVDOS({1.0, 0.8, 0.5}, -1.0);
+  EXPECT_TRUE(freqs_neg.empty());
+
+  auto [freqs_zero, vdos_re_zero, vdos_im_zero] =
+      DynamicsAnalyzer::calculateVDOS({1.0, 0.8, 0.5}, 0.0);
+  EXPECT_TRUE(freqs_zero.empty());
+
+  // Single-frame VACF: must not crash or underflow
+  auto [freqs_single, vdos_re_single, vdos_im_single] = DynamicsAnalyzer::calculateVDOS({1.0}, 0.5);
+  EXPECT_FALSE(freqs_single.empty());
+  EXPECT_EQ(freqs_single.size(), 2000);
 }
 
 } // namespace correlation::analysis

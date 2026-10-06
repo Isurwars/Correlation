@@ -64,9 +64,9 @@ void checkAcceptorsForHydrogen(const correlation::core::Cell &cell, size_t donor
     if (d_da_sq < criteria.r_cut_sq && d_da_sq >= static_cast<real_t>(1e-12)) {
       const real_t dot_val = v_dh * v_da;
       const real_t cos_alpha = dot_val / (norm_dh * std::sqrt(d_da_sq));
-      const real_t alpha = std::acos(std::max(static_cast<real_t>(-1.0),
-                                              std::min(static_cast<real_t>(1.0), cos_alpha))) *
-                           static_cast<real_t>(correlation::math::RAD_TO_DEG);
+      const real_t alpha =
+          std::acos(std::clamp(cos_alpha, static_cast<real_t>(-1.0), static_cast<real_t>(1.0))) *
+          static_cast<real_t>(correlation::math::RAD_TO_DEG);
 
       if (alpha < criteria.alpha_cut) {
         hbond_counts[donor_idx]++;

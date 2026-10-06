@@ -100,4 +100,24 @@ TEST(CorrelationEngineTests, RunAnalysisSucceedsOnSingleFrameTrajectory) {
   EXPECT_TRUE(result.value()->getAllHistograms().contains("g_r"));
 }
 
+TEST(DistributionFunctionsTests, PartialKeyHandlesValidAndOutOfBoundsIndices) {
+  correlation::core::Cell cell(std::array<real_t, 6>{10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  cell.addAtom("Si", correlation::math::Vector3<real_t>{0.0, 0.0, 0.0});
+  cell.addAtom("O", correlation::math::Vector3<real_t>{1.6, 0.0, 0.0});
+
+  correlation::analysis::DistributionFunctions dists(cell);
+
+  // Valid indices
+  EXPECT_EQ(dists.getPartialKey(0, 1), "Si-O");
+  EXPECT_EQ(dists.getPartialKey(1, 0), "Si-O");
+  EXPECT_EQ(dists.getInversePartialKey(0, 1), "O-Si");
+  EXPECT_EQ(dists.getInversePartialKey(1, 0), "O-Si");
+
+  // Out of bounds / negative indices
+  EXPECT_EQ(dists.getPartialKey(-1, 0), "Unknown-Unknown");
+  EXPECT_EQ(dists.getPartialKey(0, 99), "Unknown-Unknown");
+  EXPECT_EQ(dists.getInversePartialKey(-1, 0), "Unknown-Unknown");
+  EXPECT_EQ(dists.getInversePartialKey(5, 10), "Unknown-Unknown");
+}
+
 } // namespace

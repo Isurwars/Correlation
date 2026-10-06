@@ -132,6 +132,10 @@ std::vector<std::string> DistributionFunctions::getAvailableHistograms() const {
 
 std::string DistributionFunctions::getPartialKey(int type1, int type2) const {
   const auto &elements = cell_.elements();
+  if (type1 < 0 || type2 < 0 || static_cast<size_t>(type1) >= elements.size() ||
+      static_cast<size_t>(type2) >= elements.size()) {
+    return "Unknown-Unknown";
+  }
   // Ensure consistent ordering for pairs (e.g., Si-O is same as O-Si)
   if (type1 > type2) {
     std::swap(type1, type2);
@@ -141,6 +145,10 @@ std::string DistributionFunctions::getPartialKey(int type1, int type2) const {
 
 std::string DistributionFunctions::getInversePartialKey(int type1, int type2) const {
   const auto &elements = cell_.elements();
+  if (type1 < 0 || type2 < 0 || static_cast<size_t>(type1) >= elements.size() ||
+      static_cast<size_t>(type2) >= elements.size()) {
+    return "Unknown-Unknown";
+  }
   // Ensure consistent ordering for pairs (e.g., Si-O is same as O-Si)
   if (type1 < type2) {
     std::swap(type1, type2);

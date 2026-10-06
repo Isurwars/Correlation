@@ -135,7 +135,7 @@ PADCalculator::calculate(const correlation::core::Cell &cell,
 
   f_theta.partials = f_theta_raw.partials;
 
-  if (total_counts >= 1) {
+  if (total_counts > static_cast<real_t>(0.0)) {
     const auto normalization_factor = static_cast<real_t>(1.0 / (total_counts * bin_width));
     for (auto &[key, partial] : f_theta.partials) {
       for (auto &val : partial) {
