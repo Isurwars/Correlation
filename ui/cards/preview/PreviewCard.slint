@@ -60,6 +60,9 @@ export component PreviewCard inherits FilledCard {
     property <length> drag_start_y: 0px;
     property <length> drag_current_x: 0px;
     property <length> drag_current_y: 0px;
+    property <bool> is_panning: false;
+    property <length> pan_last_x: 0px;
+    property <length> pan_last_y: 0px;
 
     // Table data
     in property <[string]> table_headers: [];
@@ -107,6 +110,8 @@ export component PreviewCard inherits FilledCard {
     callback mouse_move(length, length, bool, length, length);
     callback plot_resized(length, length);
     callback zoom_to_rect(float, float, float, float);
+    callback plot_pan(float, float);
+    callback plot_wheel_zoom(float, float, float);
     callback reset_zoom();
     callback add_marker_at(float, float, bool);
     callback add_marker(bool);
@@ -497,24 +502,38 @@ export component PreviewCard inherits FilledCard {
                     width: 100%;
                     height: 100%;
                     visible: root.selected_plot_index >= 0;
-                    mouse-cursor: root.active_tool != 0 ? crosshair : default;
+                    mouse-cursor: root.is_panning ? grabbing : (root.active_tool != 0 ? crosshair : default);
+
+                    scroll-event(event) => {
+                        root.plot_wheel_zoom(self.mouse-x / 1px, self.mouse-y / 1px, event.delta-y / 1px);
+                        accept
+                    }
 
                     pointer-event(event) => {
-                        if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
-                            if (root.active_tool == 2) {
-                                root.add_marker_at(self.mouse-x / 1px, self.mouse-y / 1px, true);
-                                root.active_tool = 0;
-                            } else if (root.active_tool == 3) {
-                                root.add_marker_at(self.mouse-x / 1px, self.mouse-y / 1px, false);
-                                root.active_tool = 0;
-                            } else if (root.active_tool == 1) {
-                                root.drag_start_x = self.mouse-x;
-                                root.drag_start_y = self.mouse-y;
-                                root.drag_current_x = self.mouse-x;
-                                root.drag_current_y = self.mouse-y;
-                                root.is_selecting = true;
+                        if (event.kind == PointerEventKind.down) {
+                            if (event.button == PointerEventButton.right || event.button == PointerEventButton.middle) {
+                                root.is_panning = true;
+                                root.pan_last_x = self.mouse-x;
+                                root.pan_last_y = self.mouse-y;
+                            } else if (event.button == PointerEventButton.left) {
+                                if (root.active_tool == 2) {
+                                    root.add_marker_at(self.mouse-x / 1px, self.mouse-y / 1px, true);
+                                    root.active_tool = 0;
+                                } else if (root.active_tool == 3) {
+                                    root.add_marker_at(self.mouse-x / 1px, self.mouse-y / 1px, false);
+                                    root.active_tool = 0;
+                                } else if (root.active_tool == 1) {
+                                    root.drag_start_x = self.mouse-x;
+                                    root.drag_start_y = self.mouse-y;
+                                    root.drag_current_x = self.mouse-x;
+                                    root.drag_current_y = self.mouse-y;
+                                    root.is_selecting = true;
+                                }
                             }
                         } else if (event.kind == PointerEventKind.up) {
+                            if (event.button == PointerEventButton.right || event.button == PointerEventButton.middle) {
+                                root.is_panning = false;
+                            }
                             if (root.is_selecting) {
                                 root.is_selecting = false;
                                 root.zoom_to_rect(root.drag_start_x / 1px, root.drag_start_y / 1px, root.drag_current_x / 1px, root.drag_current_y / 1px);
@@ -522,17 +541,23 @@ export component PreviewCard inherits FilledCard {
                             }
                         } else if (event.kind == PointerEventKind.cancel) {
                             root.is_selecting = false;
+                            root.is_panning = false;
                         }
                     }
 
                     changed has-hover => {
                         if (!self.has-hover) {
                             root.is_selecting = false;
+                            root.is_panning = false;
                         }
                         root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
                     }
 
                     changed mouse-x => {
+                        if (root.is_panning) {
+                            root.plot_pan((self.mouse-x - root.pan_last_x) / 1px, 0);
+                            root.pan_last_x = self.mouse-x;
+                        }
                         if (root.is_selecting) {
                             root.drag_current_x = self.mouse-x;
                         }
@@ -540,6 +565,10 @@ export component PreviewCard inherits FilledCard {
                     }
 
                     changed mouse-y => {
+                        if (root.is_panning) {
+                            root.plot_pan(0, (self.mouse-y - root.pan_last_y) / 1px);
+                            root.pan_last_y = self.mouse-y;
+                        }
                         if (root.is_selecting) {
                             root.drag_current_y = self.mouse-y;
                         }
@@ -552,6 +581,22 @@ export component PreviewCard inherits FilledCard {
                         source: root.preview_plot;
                         image-fit: contain;
                     }
+                }
+
+                // Hover Crosshairs
+                if plot_touch.has-hover && root.selected_plot_index >= 0 && !root.is_selecting && !root.is_panning : Rectangle {
+                    x: plot_touch.mouse-x;
+                    y: 0px;
+                    width: 1px;
+                    height: 100%;
+                    background: MaterialPalette.outline.with_alpha(35%);
+                }
+                if plot_touch.has-hover && root.selected_plot_index >= 0 && !root.is_selecting && !root.is_panning : Rectangle {
+                    x: 0px;
+                    y: plot_touch.mouse-y;
+                    width: 100%;
+                    height: 1px;
+                    background: MaterialPalette.outline.with_alpha(35%);
                 }
 
                 // Rubberband ROI Box

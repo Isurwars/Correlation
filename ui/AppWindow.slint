@@ -295,6 +295,8 @@ export component AppWindow inherits Window {
     callback mouse_move(length, length, bool, length, length);
     callback plot_resized(length, length);
     callback zoom_to_rect(float, float, float, float);
+    callback plot_pan(float, float);
+    callback plot_wheel_zoom(float, float, float);
     callback reset_zoom();
     callback add_marker_at(float, float, bool);
     callback add_marker(bool);
@@ -775,6 +777,12 @@ export component AppWindow inherits Window {
                             markers_count: root.markers_count;
                             zoom_to_rect(x1, y1, x2, y2) => {
                                 root.zoom_to_rect(x1, y1, x2, y2);
+                            }
+                            plot_pan(dx, dy) => {
+                                root.plot_pan(dx, dy);
+                            }
+                            plot_wheel_zoom(mx, my, delta) => {
+                                root.plot_wheel_zoom(mx, my, delta);
                             }
                             reset_zoom => {
                                 root.reset_zoom();

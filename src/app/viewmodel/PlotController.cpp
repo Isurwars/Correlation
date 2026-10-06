@@ -700,6 +700,84 @@ void PlotController::handleZoomRect(float start_x, float start_y, float end_x, f
   requestPlotUpdate(current_idx, true);
 }
 
+void PlotController::handlePan(float delta_x, float delta_y) {
+  if (std::abs(delta_x) < 0.5F && std::abs(delta_y) < 0.5F) {
+    return;
+  }
+  const int current_idx = window_.get_selected_plot_index();
+  if (current_idx < 0 || std::cmp_greater_equal(current_idx, available_plot_keys_.size())) {
+    return;
+  }
+  const std::string &name = available_plot_keys_[current_idx];
+  const auto *hist = dispatcher_.getHistogram(name);
+  if (hist == nullptr || hist->bins.empty()) {
+    return;
+  }
+
+  const auto config = buildPlotConfigFromUI();
+  const auto x_scale = computeXScale(*hist, config);
+  const auto y_scale = computeYScale(*hist, config);
+
+  const auto [d0_x, d0_y] = correlation::plotters::detail::screenToData(
+      last_mouse_x_, last_mouse_y_, last_plot_width_, last_plot_height_, config, x_scale, y_scale);
+  const auto [d1_x, d1_y] = correlation::plotters::detail::screenToData(
+      last_mouse_x_ + delta_x, last_mouse_y_ + delta_y, last_plot_width_, last_plot_height_, config,
+      x_scale, y_scale);
+
+  const real_t shift_x = d1_x - d0_x;
+  const real_t shift_y = d1_y - d0_y;
+
+  const real_t cur_x_min = zoom_x_min_.value_or(x_scale.min);
+  const real_t cur_x_max = zoom_x_max_.value_or(x_scale.max);
+  const real_t cur_y_min = zoom_y_min_.value_or(y_scale.min);
+  const real_t cur_y_max = zoom_y_max_.value_or(y_scale.max);
+
+  zoom_x_min_ = cur_x_min - shift_x;
+  zoom_x_max_ = cur_x_max - shift_x;
+  zoom_y_min_ = cur_y_min - shift_y;
+  zoom_y_max_ = cur_y_max - shift_y;
+
+  window_.set_has_active_zoom(true);
+  requestPlotUpdate(current_idx, true);
+}
+
+void PlotController::handleWheelZoom(float mouse_x, float mouse_y, float delta) {
+  if (std::abs(delta) < 0.01F) {
+    return;
+  }
+  const int current_idx = window_.get_selected_plot_index();
+  if (current_idx < 0 || std::cmp_greater_equal(current_idx, available_plot_keys_.size())) {
+    return;
+  }
+  const std::string &name = available_plot_keys_[current_idx];
+  const auto *hist = dispatcher_.getHistogram(name);
+  if (hist == nullptr || hist->bins.empty()) {
+    return;
+  }
+
+  const auto config = buildPlotConfigFromUI();
+  const auto x_scale = computeXScale(*hist, config);
+  const auto y_scale = computeYScale(*hist, config);
+
+  const auto [cx, cy] = correlation::plotters::detail::screenToData(
+      mouse_x, mouse_y, last_plot_width_, last_plot_height_, config, x_scale, y_scale);
+
+  const real_t zoom_factor = (delta > 0.0F) ? 0.85 : 1.18;
+
+  const real_t cur_x_min = zoom_x_min_.value_or(x_scale.min);
+  const real_t cur_x_max = zoom_x_max_.value_or(x_scale.max);
+  const real_t cur_y_min = zoom_y_min_.value_or(y_scale.min);
+  const real_t cur_y_max = zoom_y_max_.value_or(y_scale.max);
+
+  zoom_x_min_ = cx - (cx - cur_x_min) * zoom_factor;
+  zoom_x_max_ = cx + (cur_x_max - cx) * zoom_factor;
+  zoom_y_min_ = cy - (cy - cur_y_min) * zoom_factor;
+  zoom_y_max_ = cy + (cur_y_max - cy) * zoom_factor;
+
+  window_.set_has_active_zoom(true);
+  requestPlotUpdate(current_idx, true);
+}
+
 void PlotController::handleResetZoom() {
   zoom_x_min_.reset();
   zoom_x_max_.reset();

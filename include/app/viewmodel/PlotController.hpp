@@ -135,6 +135,21 @@ public:
   void handleZoomRect(float start_x, float start_y, float end_x, float end_y);
 
   /**
+   * @brief Handles continuous panning by screen pixel displacement.
+   * @param[in] delta_x Screen horizontal delta in pixels.
+   * @param[in] delta_y Screen vertical delta in pixels.
+   */
+  void handlePan(float delta_x, float delta_y);
+
+  /**
+   * @brief Handles mouse wheel zooming centered around the mouse cursor.
+   * @param[in] mouse_x Screen cursor X coordinate.
+   * @param[in] mouse_y Screen cursor Y coordinate.
+   * @param[in] delta Mouse wheel vertical displacement delta.
+   */
+  void handleWheelZoom(float mouse_x, float mouse_y, float delta);
+
+  /**
    * @brief Resets zoom to full dataset auto bounds.
    */
   void handleResetZoom();

@@ -151,18 +151,17 @@ void AppController::registerPlotCallbacks() {
   window_.on_zoom_to_rect([this](float start_x, float start_y, float end_x, float end_y) {
     plot_controller_->handleZoomRect(start_x, start_y, end_x, end_y);
   });
-  window_.on_reset_zoom([this]() {
-    plot_controller_->handleResetZoom();
+  window_.on_plot_pan(
+      [this](float delta_x, float delta_y) { plot_controller_->handlePan(delta_x, delta_y); });
+  window_.on_plot_wheel_zoom([this](float mouse_x, float mouse_y, float delta) {
+    plot_controller_->handleWheelZoom(mouse_x, mouse_y, delta);
   });
+  window_.on_reset_zoom([this]() { plot_controller_->handleResetZoom(); });
   window_.on_add_marker_at([this](float click_x, float click_y, bool is_vert) {
     plot_controller_->handleAddMarkerAt(click_x, click_y, is_vert);
   });
-  window_.on_add_marker([this](bool is_vert) {
-    plot_controller_->handleAddMarker(is_vert);
-  });
-  window_.on_clear_markers([this]() {
-    plot_controller_->handleClearMarkers();
-  });
+  window_.on_add_marker([this](bool is_vert) { plot_controller_->handleAddMarker(is_vert); });
+  window_.on_clear_markers([this]() { plot_controller_->handleClearMarkers(); });
 }
 
 void AppController::registerPresetAndOptionCallbacks() {
