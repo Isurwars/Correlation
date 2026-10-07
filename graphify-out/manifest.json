@@ -40,8 +40,8 @@
     "semantic_hash": ""
   },
   "include/core/Atom.hpp": {
-    "mtime": 1791326618.106133,
-    "ast_hash": "f9fde53a84bca41c0cb73b832ee9b298",
+    "mtime": 1791327370.0061376,
+    "ast_hash": "8f2c5ecbf1b31dbb3174f940464144a7",
     "semantic_hash": ""
   },
   "include/core/Cell.hpp": {
@@ -425,8 +425,8 @@
     "semantic_hash": ""
   },
   "src/readers/CifReader.cpp": {
-    "mtime": 1791325337.5573723,
-    "ast_hash": "9fae374b45d916a040def0e16aabed71",
+    "mtime": 1791328351.596857,
+    "ast_hash": "2261eef2d8bdc2c02a772d4ea0b2aef3",
     "semantic_hash": ""
   },
   "src/readers/FileReader.cpp": {
@@ -475,8 +475,8 @@
     "semantic_hash": ""
   },
   "src/readers/XYZReader.cpp": {
-    "mtime": 1791325294.10707,
-    "ast_hash": "47600cd812eea0dd86c33da5b1b89c30",
+    "mtime": 1791328167.103916,
+    "ast_hash": "499964b1db2b75a90be0c6538bbe9bfd",
     "semantic_hash": ""
   },
   "src/readers/XdatcarReader.cpp": {
@@ -920,8 +920,8 @@
     "semantic_hash": ""
   },
   "CMakeLists.txt": {
-    "mtime": 1791327137.7619307,
-    "ast_hash": "79d9895bb278d20ad6b741b9338ccc60",
+    "mtime": 1791351887.595755,
+    "ast_hash": "086ab8502c03d1877625a03954ddb3db",
     "semantic_hash": ""
   },
   "README.md": {
@@ -955,8 +955,8 @@
     "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
-    "mtime": 1791319229.1523626,
-    "ast_hash": "43556978b5e57f5bacce63c4ab086cdb",
+    "mtime": 1791344637.100561,
+    "ast_hash": "6711a43ba1f3aa29437ff74c2ce5125f",
     "semantic_hash": ""
   },
   "tests/CMakeLists.txt": {
@@ -1965,18 +1965,18 @@
     "semantic_hash": ""
   },
   "include/app/services/AnalysisRunner.hpp": {
-    "mtime": 1791326033.891127,
+    "mtime": 1791351704.0055,
     "ast_hash": "89d9f292722871986a83ba0b782f77f3",
     "semantic_hash": ""
   },
   "include/app/services/FileIOHandler.hpp": {
-    "mtime": 1791326001.1743748,
+    "mtime": 1791351704.0055,
     "ast_hash": "6be9c3a7a51d3a7ea3dc09f6e1ec24cc",
     "semantic_hash": ""
   },
   "include/app/services/InputValidator.hpp": {
-    "mtime": 1790370985.5592365,
-    "ast_hash": "13e891c2050db66e41ffebb0ee5d2b84",
+    "mtime": 1791346568.8746674,
+    "ast_hash": "f4dd42ca24077ae63074c2c3740dc660",
     "semantic_hash": ""
   },
   "include/app/services/OptionsResetService.hpp": {
@@ -2015,7 +2015,7 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/PlotController.hpp": {
-    "mtime": 1791325969.1086175,
+    "mtime": 1791351704.0058494,
     "ast_hash": "bed46fdd4e953b4be302232593221177",
     "semantic_hash": ""
   },
@@ -2055,18 +2055,18 @@
     "semantic_hash": ""
   },
   "src/app/services/AnalysisRunner.cpp": {
-    "mtime": 1791326048.3790174,
-    "ast_hash": "8ce447d5c5183d6cb2f8587378c8cdd7",
+    "mtime": 1791351348.2567384,
+    "ast_hash": "71d24def8fce6b404c8ddb78f17c005f",
     "semantic_hash": ""
   },
   "src/app/services/FileIOHandler.cpp": {
-    "mtime": 1791326021.892218,
-    "ast_hash": "329130d4212939a2f2d8c14643cd4117",
+    "mtime": 1791346551.9638774,
+    "ast_hash": "67b1d98abc1113f23281d4910a16183b",
     "semantic_hash": ""
   },
   "src/app/services/InputValidator.cpp": {
-    "mtime": 1791183226.4672952,
-    "ast_hash": "60dfd6115c26ff28d4ee0cf5f0f3769f",
+    "mtime": 1791346624.0249822,
+    "ast_hash": "31cf80d8d641e73643c099c651ba84f0",
     "semantic_hash": ""
   },
   "src/app/services/OptionsResetService.cpp": {
@@ -2090,8 +2090,8 @@
     "semantic_hash": ""
   },
   "src/app/services/UpdateChecker.cpp": {
-    "mtime": 1791326072.613834,
-    "ast_hash": "9a2c60af991b3d0e6811d011d7750b3c",
+    "mtime": 1791351704.0219061,
+    "ast_hash": "a262016459f0c3ba121121e69d11b670",
     "semantic_hash": ""
   },
   "src/app/services/ValidationRuleService.cpp": {
@@ -2105,8 +2105,8 @@
     "semantic_hash": ""
   },
   "src/app/viewmodel/PlotController.cpp": {
-    "mtime": 1791326197.8768845,
-    "ast_hash": "8e40c5868a4d7fb5d88f6d9a15fcda35",
+    "mtime": 1791351939.561867,
+    "ast_hash": "9a94c60209e462e7bca16de5bf5b2417",
     "semantic_hash": ""
   },
   "src/app/viewmodel/PresetController.cpp": {

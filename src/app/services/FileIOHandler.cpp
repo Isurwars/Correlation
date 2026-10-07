@@ -197,18 +197,8 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath) {
           auto opts = window_.get_analysis_options();
           opts.time_step =
               slint::SharedString(std::format("{:.2f}", loader_.getRecommendedTimeStep()));
-          window_.set_analysis_options(opts);
-        }
-
-        // Update Run Analysis Card Frame Info
-        {
-          auto opts = window_.get_analysis_options();
           opts.min_frame = "1";
           opts.frame_stride = "1";
-          window_.set_analysis_options(opts);
-        }
-        {
-          auto opts = window_.get_analysis_options();
           opts.max_frame = slint::SharedString(std::to_string(loader_.getFrameCount()));
           window_.set_analysis_options(opts);
         }

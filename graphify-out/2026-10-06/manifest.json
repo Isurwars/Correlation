@@ -40,8 +40,8 @@
     "semantic_hash": ""
   },
   "include/core/Atom.hpp": {
-    "mtime": 1791326618.106133,
-    "ast_hash": "f9fde53a84bca41c0cb73b832ee9b298",
+    "mtime": 1791327370.0061376,
+    "ast_hash": "8f2c5ecbf1b31dbb3174f940464144a7",
     "semantic_hash": ""
   },
   "include/core/Cell.hpp": {
@@ -399,26 +399,6 @@
     "ast_hash": "ada35f1fc2176c654495dacfa7fbdc8c",
     "semantic_hash": ""
   },
-  "src/plotters/RobotoData_ASCII_1.cpp": {
-    "mtime": 1790181953.0410619,
-    "ast_hash": "639e16709b2f7110c2cd727fdb89ff49",
-    "semantic_hash": ""
-  },
-  "src/plotters/RobotoData_ASCII_2.cpp": {
-    "mtime": 1790181953.0407577,
-    "ast_hash": "94ff23fc7481e4df432a8440d4510954",
-    "semantic_hash": ""
-  },
-  "src/plotters/RobotoData_Extended.cpp": {
-    "mtime": 1790181953.0418086,
-    "ast_hash": "3c3b461f1860aff0e7cc8af164487ef9",
-    "semantic_hash": ""
-  },
-  "src/plotters/pdfgen.c": {
-    "mtime": 1781473374.658443,
-    "ast_hash": "f4be1e7eedefebce48ed20bcfda25e1c",
-    "semantic_hash": "f4be1e7eedefebce48ed20bcfda25e1c"
-  },
   "src/readers/ArcReader.cpp": {
     "mtime": 1790184856.6632485,
     "ast_hash": "a572f57b1b29afbca0289c5b7035012a",
@@ -445,8 +425,8 @@
     "semantic_hash": ""
   },
   "src/readers/CifReader.cpp": {
-    "mtime": 1791325337.5573723,
-    "ast_hash": "9fae374b45d916a040def0e16aabed71",
+    "mtime": 1791328351.596857,
+    "ast_hash": "2261eef2d8bdc2c02a772d4ea0b2aef3",
     "semantic_hash": ""
   },
   "src/readers/FileReader.cpp": {
@@ -495,8 +475,8 @@
     "semantic_hash": ""
   },
   "src/readers/XYZReader.cpp": {
-    "mtime": 1791325294.10707,
-    "ast_hash": "47600cd812eea0dd86c33da5b1b89c30",
+    "mtime": 1791328167.103916,
+    "ast_hash": "499964b1db2b75a90be0c6538bbe9bfd",
     "semantic_hash": ""
   },
   "src/readers/XdatcarReader.cpp": {
@@ -940,8 +920,8 @@
     "semantic_hash": ""
   },
   "CMakeLists.txt": {
-    "mtime": 1791318527.7831647,
-    "ast_hash": "a21b831bcab1a42fcf169fee51ebdac3",
+    "mtime": 1791351661.9566317,
+    "ast_hash": "a2ee3c372416f8c02b0c8d08d7806c0f",
     "semantic_hash": ""
   },
   "README.md": {
@@ -970,13 +950,13 @@
     "semantic_hash": "fa5794c577c54fcf0888468db60e0c22"
   },
   "src/CMakeLists.txt": {
-    "mtime": 1791319174.8544383,
-    "ast_hash": "9299c964cc1c6095fb83f07b6797f5c5",
+    "mtime": 1791327118.236178,
+    "ast_hash": "01d4604db32e39e95b3081d07fa58a58",
     "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
-    "mtime": 1791319229.1523626,
-    "ast_hash": "43556978b5e57f5bacce63c4ab086cdb",
+    "mtime": 1791344637.100561,
+    "ast_hash": "6711a43ba1f3aa29437ff74c2ce5125f",
     "semantic_hash": ""
   },
   "tests/CMakeLists.txt": {
@@ -1985,18 +1965,18 @@
     "semantic_hash": ""
   },
   "include/app/services/AnalysisRunner.hpp": {
-    "mtime": 1791326033.891127,
-    "ast_hash": "89d9f292722871986a83ba0b782f77f3",
+    "mtime": 1791351504.0703702,
+    "ast_hash": "5757fc72a268d96cc2993851dbefaf36",
     "semantic_hash": ""
   },
   "include/app/services/FileIOHandler.hpp": {
-    "mtime": 1791326001.1743748,
-    "ast_hash": "6be9c3a7a51d3a7ea3dc09f6e1ec24cc",
+    "mtime": 1791351514.928181,
+    "ast_hash": "3ccd7d83ecaa795077978e4dc55cf454",
     "semantic_hash": ""
   },
   "include/app/services/InputValidator.hpp": {
-    "mtime": 1790370985.5592365,
-    "ast_hash": "13e891c2050db66e41ffebb0ee5d2b84",
+    "mtime": 1791346568.8746674,
+    "ast_hash": "f4dd42ca24077ae63074c2c3740dc660",
     "semantic_hash": ""
   },
   "include/app/services/OptionsResetService.hpp": {
@@ -2035,8 +2015,8 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/PlotController.hpp": {
-    "mtime": 1791325969.1086175,
-    "ast_hash": "bed46fdd4e953b4be302232593221177",
+    "mtime": 1791351526.5479786,
+    "ast_hash": "ec3e7502edf25469fc0d768e85cb9ff8",
     "semantic_hash": ""
   },
   "include/app/viewmodel/PresetController.hpp": {
@@ -2075,18 +2055,18 @@
     "semantic_hash": ""
   },
   "src/app/services/AnalysisRunner.cpp": {
-    "mtime": 1791326048.3790174,
-    "ast_hash": "8ce447d5c5183d6cb2f8587378c8cdd7",
+    "mtime": 1791351348.2567384,
+    "ast_hash": "71d24def8fce6b404c8ddb78f17c005f",
     "semantic_hash": ""
   },
   "src/app/services/FileIOHandler.cpp": {
-    "mtime": 1791326021.892218,
-    "ast_hash": "329130d4212939a2f2d8c14643cd4117",
+    "mtime": 1791346551.9638774,
+    "ast_hash": "67b1d98abc1113f23281d4910a16183b",
     "semantic_hash": ""
   },
   "src/app/services/InputValidator.cpp": {
-    "mtime": 1791183226.4672952,
-    "ast_hash": "60dfd6115c26ff28d4ee0cf5f0f3769f",
+    "mtime": 1791346624.0249822,
+    "ast_hash": "31cf80d8d641e73643c099c651ba84f0",
     "semantic_hash": ""
   },
   "src/app/services/OptionsResetService.cpp": {
@@ -2110,8 +2090,8 @@
     "semantic_hash": ""
   },
   "src/app/services/UpdateChecker.cpp": {
-    "mtime": 1791326072.613834,
-    "ast_hash": "9a2c60af991b3d0e6811d011d7750b3c",
+    "mtime": 1791351539.3357563,
+    "ast_hash": "e9159f857600099e648cc6cad69e3f3e",
     "semantic_hash": ""
   },
   "src/app/services/ValidationRuleService.cpp": {
@@ -2125,8 +2105,8 @@
     "semantic_hash": ""
   },
   "src/app/viewmodel/PlotController.cpp": {
-    "mtime": 1791326197.8768845,
-    "ast_hash": "8e40c5868a4d7fb5d88f6d9a15fcda35",
+    "mtime": 1791346529.944151,
+    "ast_hash": "dfa42d8be49574c14c7cce77b3cdca23",
     "semantic_hash": ""
   },
   "src/app/viewmodel/PresetController.cpp": {
@@ -2622,6 +2602,31 @@
   ".agents/rules/python-standards.md": {
     "mtime": 1791253045.1237664,
     "ast_hash": "1bc3eb41f928fd92925659861229156b",
+    "semantic_hash": ""
+  },
+  "src/plotters/fonts/RobotoData_ASCII_1.cpp": {
+    "mtime": 1790181953.0410619,
+    "ast_hash": "639e16709b2f7110c2cd727fdb89ff49",
+    "semantic_hash": ""
+  },
+  "src/plotters/fonts/RobotoData_ASCII_2.cpp": {
+    "mtime": 1790181953.0407577,
+    "ast_hash": "94ff23fc7481e4df432a8440d4510954",
+    "semantic_hash": ""
+  },
+  "src/plotters/fonts/RobotoData_Extended.cpp": {
+    "mtime": 1790181953.0418086,
+    "ast_hash": "3c3b461f1860aff0e7cc8af164487ef9",
+    "semantic_hash": ""
+  },
+  "src/plotters/vendor/pdfgen.c": {
+    "mtime": 1781473374.658443,
+    "ast_hash": "f4be1e7eedefebce48ed20bcfda25e1c",
+    "semantic_hash": ""
+  },
+  "include/utils/JThread.hpp": {
+    "mtime": 1791351624.2806318,
+    "ast_hash": "dc62470338ef86087a649f7a9d1d5c59",
     "semantic_hash": ""
   }
 }

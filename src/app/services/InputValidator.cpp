@@ -71,10 +71,9 @@ void resetAppErrors(AppErrors &errs) {
 InputValidator::InputValidator(::AppWindow &window, AppController &controller)
     : window_(&window), controller_(&controller) {}
 
-bool InputValidator::validateRadialAndScattering(AppErrors &errs, float &r_max_val,
-                                                 float &q_max_val) {
+bool InputValidator::validateRadialAndScattering(const AnalysisOptions &opts, AppErrors &errs,
+                                                 float &r_max_val, float &q_max_val) {
   bool valid = true;
-  const auto opts = window_->get_analysis_options();
 
   if (const auto res = ValidationRuleService::parsePositiveFloat(opts.r_max.data()); res) {
     if (const auto check = ValidationRuleService::validateMaxCutoff(*res); !check) {
@@ -127,9 +126,8 @@ bool InputValidator::validateRadialAndScattering(AppErrors &errs, float &r_max_v
   return valid;
 }
 
-bool InputValidator::validateXrdOptions(AppErrors &errs) {
+bool InputValidator::validateXrdOptions(const AnalysisOptions &opts, AppErrors &errs) {
   bool valid = true;
-  const auto opts = window_->get_analysis_options();
 
   if (const auto res = ValidationRuleService::parsePositiveFloat(opts.xrd_lambda.data()); !res) {
     errs.xrd_lambda_error = slint::SharedString(res.error());
@@ -169,9 +167,8 @@ bool InputValidator::validateXrdOptions(AppErrors &errs) {
   return valid;
 }
 
-bool InputValidator::validateAngularAndRings(AppErrors &errs) {
+bool InputValidator::validateAngularAndRings(const AnalysisOptions &opts, AppErrors &errs) {
   bool valid = true;
-  const auto opts = window_->get_analysis_options();
 
   if (const auto res = ValidationRuleService::parsePositiveFloat(opts.angle_bin_width.data());
       res) {
@@ -208,9 +205,8 @@ bool InputValidator::validateAngularAndRings(AppErrors &errs) {
   return valid;
 }
 
-bool InputValidator::validateOtherAnalysisOptions(AppErrors &errs) {
+bool InputValidator::validateOtherAnalysisOptions(const AnalysisOptions &opts, AppErrors &errs) {
   bool valid = true;
-  const auto opts = window_->get_analysis_options();
 
   if (const auto res = ValidationRuleService::parseNonNegativeFloat(opts.smoothing_sigma.data());
       !res) {
@@ -241,10 +237,9 @@ bool InputValidator::validateOtherAnalysisOptions(AppErrors &errs) {
   return valid;
 }
 
-bool InputValidator::validateFrames(AppErrors &errs) {
+bool InputValidator::validateFrames(const AnalysisOptions &opts, AppErrors &errs) {
   bool valid = true;
   const int total_frames = window_->get_num_frames();
-  const auto opts = window_->get_analysis_options();
 
   int min_frame_val = -1;
   int max_frame_val = -1;
@@ -309,22 +304,23 @@ bool InputValidator::validateInputs() {
   auto errs = window_->get_app_errors();
   resetAppErrors(errs);
 
+  const auto opts = window_->get_analysis_options();
   float r_max_val = 0.0F;
   float q_max_val = 0.0F;
 
-  if (!validateRadialAndScattering(errs, r_max_val, q_max_val)) {
+  if (!validateRadialAndScattering(opts, errs, r_max_val, q_max_val)) {
     valid = false;
   }
-  if (!validateXrdOptions(errs)) {
+  if (!validateXrdOptions(opts, errs)) {
     valid = false;
   }
-  if (!validateAngularAndRings(errs)) {
+  if (!validateAngularAndRings(opts, errs)) {
     valid = false;
   }
-  if (!validateOtherAnalysisOptions(errs)) {
+  if (!validateOtherAnalysisOptions(opts, errs)) {
     valid = false;
   }
-  if (!validateFrames(errs)) {
+  if (!validateFrames(opts, errs)) {
     valid = false;
   }
   if (!validateExportConfig(errs)) {

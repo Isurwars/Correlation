@@ -98,6 +98,10 @@ void AnalysisRunner::handleAnalysisCompletion(const std::string &err) {
 }
 
 void AnalysisRunner::handleRunAnalysis() {
+  if (window_.get_analysis_running()) {
+    return;
+  }
+
   if (!controller_.getInputValidator()->validateInputs()) {
     return;
   }

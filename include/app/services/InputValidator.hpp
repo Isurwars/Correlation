@@ -43,36 +43,42 @@ private:
    * @param[out] q_max_val Evaluated maximum reciprocal space momentum.
    * @return true if valid, false otherwise.
    */
-  [[nodiscard]] bool validateRadialAndScattering(AppErrors &errs, float &r_max_val,
-                                                 float &q_max_val);
+  [[nodiscard]] static bool validateRadialAndScattering(const AnalysisOptions &opts,
+                                                        AppErrors &errs, float &r_max_val,
+                                                        float &q_max_val);
 
   /**
    * @brief Validates powder X-ray diffraction options.
+   * @param[in] opts Analysis options from the UI.
    * @param[out] errs AppErrors structure for reporting invalid field states.
    * @return true if valid, false otherwise.
    */
-  [[nodiscard]] bool validateXrdOptions(AppErrors &errs);
+  [[nodiscard]] static bool validateXrdOptions(const AnalysisOptions &opts, AppErrors &errs);
 
   /**
    * @brief Validates angular and ring distribution options.
+   * @param[in] opts Analysis options from the UI.
    * @param[out] errs AppErrors structure for reporting invalid field states.
    * @return true if valid, false otherwise.
    */
-  [[nodiscard]] bool validateAngularAndRings(AppErrors &errs);
+  [[nodiscard]] static bool validateAngularAndRings(const AnalysisOptions &opts, AppErrors &errs);
 
   /**
    * @brief Validates Local Entropy and Hyperuniformity parameters.
+   * @param[in] opts Analysis options from the UI.
    * @param[out] errs AppErrors structure for reporting invalid field states.
    * @return true if valid, false otherwise.
    */
-  [[nodiscard]] bool validateOtherAnalysisOptions(AppErrors &errs);
+  [[nodiscard]] static bool validateOtherAnalysisOptions(const AnalysisOptions &opts,
+                                                         AppErrors &errs);
 
   /**
    * @brief Validates trajectory frame indexing bounds.
+   * @param[in] opts Analysis options from the UI.
    * @param[out] errs AppErrors structure for reporting invalid field states.
    * @return true if valid, false otherwise.
    */
-  [[nodiscard]] bool validateFrames(AppErrors &errs);
+  [[nodiscard]] bool validateFrames(const AnalysisOptions &opts, AppErrors &errs);
 
   /**
    * @brief Validates plot export layout settings.

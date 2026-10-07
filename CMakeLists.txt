@@ -127,6 +127,16 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND NOT CMAKE_CXX_COMPILER_ID STREQUAL 
     add_compile_options(-Wno-builtin-macro-redefined)
 endif()
 
+# Enable experimental C++ library features (needed for libc++ std::jthread starting in LLVM 18)
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    include(CheckCXXCompilerFlag)
+    check_cxx_compiler_flag("-fexperimental-library" COMPILER_SUPPORTS_EXPERIMENTAL_LIBRARY)
+    if(COMPILER_SUPPORTS_EXPERIMENTAL_LIBRARY)
+        add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fexperimental-library>)
+        add_link_options($<$<COMPILE_LANGUAGE:CXX>:-fexperimental-library>)
+    endif()
+endif()
+
 # Configure MSVC debug information format to allow sccache to cache objects
 if(POLICY CMP0141)
     cmake_policy(SET CMP0141 NEW)
