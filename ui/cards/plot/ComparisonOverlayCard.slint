@@ -20,6 +20,7 @@ export component ComparisonOverlayCard inherits OutlinedCard {
     in-out property <bool> expanded: true;
     in property <bool> enabled: true;
     in property <[ComparisonCurveData]> comparison_curves: [];
+    in property <int> pinned_runs_count: 0;
     in property <bool> show_difference: false;
 
     callback import_comparison_file();
@@ -29,18 +30,12 @@ export component ComparisonOverlayCard inherits OutlinedCard {
     callback clear_comparison_curves();
 
     out property <string> hovered_tooltip_text:
-        pin_btn_area.has-hover ? "Pin the currently calculated results to memory for instant visual overlay against future parameter runs." :
-        import_btn_area.has-hover ? "Import external reference curve (.csv or .dat) to overlay directly onto the plot." :
         diff_toggle_area.has-hover ? "Display residual difference curve (Current - Reference) below the distribution function." : "";
 
     out property <length> hovered_x:
-        pin_btn_area.has-hover ? pin_btn_area.absolute-position.x + pin_btn_area.mouse-x :
-        import_btn_area.has-hover ? import_btn_area.absolute-position.x + import_btn_area.mouse-x :
         diff_toggle_area.has-hover ? diff_toggle_area.absolute-position.x + diff_toggle_area.mouse-x : 0px;
 
     out property <length> hovered_y:
-        pin_btn_area.has-hover ? pin_btn_area.absolute-position.y + pin_btn_area.mouse-y :
-        import_btn_area.has-hover ? import_btn_area.absolute-position.y + import_btn_area.mouse-y :
         diff_toggle_area.has-hover ? diff_toggle_area.absolute-position.y + diff_toggle_area.mouse-y : 0px;
 
     out property <length> hovered_width: 0px;
@@ -54,7 +49,7 @@ export component ComparisonOverlayCard inherits OutlinedCard {
             text: "Analysis Comparison Overlay";
             expanded <=> root.expanded;
             show_reset: true;
-            reset_enabled: root.comparison_curves.length > 0;
+            reset_enabled: root.pinned_runs_count > 0 || root.comparison_curves.length > 0;
             reset => { root.clear_comparison_curves(); }
         }
 
@@ -69,26 +64,20 @@ export component ComparisonOverlayCard inherits OutlinedCard {
                 easing: ease-in-out;
             }
 
-            pin_btn_area := TouchArea {
+            FilledButton {
                 height: MaterialStyleMetrics.size_40;
-                FilledButton {
-                    width: 100%;
-                    height: 100%;
-                    text: "Pin Current Run";
-                    icon: Icons.pin;
-                    clicked => { root.pin_current_run(); }
-                }
+                text: "Pin Current Run";
+                icon: Icons.pin;
+                tooltip: "Pin the currently calculated results to memory for instant visual overlay against future parameter runs.";
+                clicked => { root.pin_current_run(); }
             }
 
-            import_btn_area := TouchArea {
+            FilledButton {
                 height: MaterialStyleMetrics.size_40;
-                FilledButton {
-                    width: 100%;
-                    height: 100%;
-                    text: "Import File...";
-                    icon: Icons.edit;
-                    clicked => { root.import_comparison_file(); }
-                }
+                text: "Import File...";
+                icon: Icons.edit;
+                tooltip: "Import external reference curve (.csv or .dat) to overlay directly onto the plot.";
+                clicked => { root.import_comparison_file(); }
             }
 
             // Difference Plot Toggle

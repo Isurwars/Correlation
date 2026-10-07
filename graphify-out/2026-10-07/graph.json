@@ -3539,8 +3539,8 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "include_app_core_appcontroller_appcontroller_savesettings",
-      "community": 185,
-      "community_name": "FileIOHandler.cpp",
+      "community": 120,
+      "community_name": "LammpsFrameParser",
       "norm_label": "savesettings"
     },
     {
@@ -3803,8 +3803,8 @@
       "source_location": "L208",
       "_origin": "ast",
       "id": "include_app_core_appcontroller_appcontroller_populatecalculatorgroups",
-      "community": 185,
-      "community_name": "FileIOHandler.cpp",
+      "community": 120,
+      "community_name": "LammpsFrameParser",
       "norm_label": "populatecalculatorgroups"
     },
     {
@@ -6319,7 +6319,7 @@
       "label": "validateXrdOptions",
       "file_type": "code",
       "source_file": "include/app/services/InputValidator.hpp",
-      "source_location": "L56",
+      "source_location": "L55",
       "_origin": "ast",
       "id": "include_app_services_inputvalidator_inputvalidator_validatexrdoptions",
       "community": 18,
@@ -6330,7 +6330,7 @@
       "label": "validateAngularAndRings",
       "file_type": "code",
       "source_file": "include/app/services/InputValidator.hpp",
-      "source_location": "L64",
+      "source_location": "L63",
       "_origin": "ast",
       "id": "include_app_services_inputvalidator_inputvalidator_validateangularandrings",
       "community": 18,
@@ -6341,7 +6341,7 @@
       "label": "validateOtherAnalysisOptions",
       "file_type": "code",
       "source_file": "include/app/services/InputValidator.hpp",
-      "source_location": "L72",
+      "source_location": "L71",
       "_origin": "ast",
       "id": "include_app_services_inputvalidator_inputvalidator_validateotheranalysisoptions",
       "community": 18,
@@ -6352,7 +6352,7 @@
       "label": "validateFrames",
       "file_type": "code",
       "source_file": "include/app/services/InputValidator.hpp",
-      "source_location": "L81",
+      "source_location": "L79",
       "_origin": "ast",
       "id": "include_app_services_inputvalidator_inputvalidator_validateframes",
       "community": 18,
@@ -6363,7 +6363,7 @@
       "label": "validateExportConfig",
       "file_type": "code",
       "source_file": "include/app/services/InputValidator.hpp",
-      "source_location": "L88",
+      "source_location": "L86",
       "_origin": "ast",
       "id": "include_app_services_inputvalidator_inputvalidator_validateexportconfig",
       "community": 18,
@@ -6374,7 +6374,7 @@
       "label": "window_",
       "file_type": "code",
       "source_file": "include/app/services/InputValidator.hpp",
-      "source_location": "L90",
+      "source_location": "L88",
       "_origin": "ast",
       "id": "include_app_services_inputvalidator_inputvalidator_window",
       "community": 18,
@@ -6385,7 +6385,7 @@
       "label": "controller_",
       "file_type": "code",
       "source_file": "include/app/services/InputValidator.hpp",
-      "source_location": "L91",
+      "source_location": "L89",
       "_origin": "ast",
       "id": "include_app_services_inputvalidator_inputvalidator_controller",
       "community": 18,
@@ -7114,8 +7114,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "include_app_services_updatechecker_updatechecker_parsereleasejson",
-      "community": 250,
-      "community_name": "PositionBlockT",
+      "community": 120,
+      "community_name": "LammpsFrameParser",
       "norm_label": "parsereleasejson"
     },
     {
@@ -28046,8 +28046,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_core_appcontroller",
-      "community": 185,
-      "community_name": "FileIOHandler.cpp",
+      "community": 113,
+      "community_name": "GPUSQCalculator",
       "norm_label": "appcontroller.cpp"
     },
     {
@@ -28101,8 +28101,8 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "src_app_core_appcontroller_appcontroller_registeractioncallbacks",
-      "community": 185,
-      "community_name": "FileIOHandler.cpp",
+      "community": 120,
+      "community_name": "LammpsFrameParser",
       "norm_label": "appcontroller::registeractioncallbacks()"
     },
     {
@@ -28112,8 +28112,8 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "src_app_core_appcontroller_appcontroller_registerplotcallbacks",
-      "community": 185,
-      "community_name": "FileIOHandler.cpp",
+      "community": 113,
+      "community_name": "GPUSQCalculator",
       "norm_label": "appcontroller::registerplotcallbacks()"
     },
     {
@@ -28134,8 +28134,8 @@
       "source_location": "L207",
       "_origin": "ast",
       "id": "src_app_core_appcontroller_appcontroller_registerexportcallbacks",
-      "community": 185,
-      "community_name": "FileIOHandler.cpp",
+      "community": 113,
+      "community_name": "GPUSQCalculator",
       "norm_label": "appcontroller::registerexportcallbacks()"
     },
     {
@@ -28200,8 +28200,8 @@
       "source_location": "L314",
       "_origin": "ast",
       "id": "src_app_core_appcontroller_appcontroller_setbondcutoffs",
-      "community": 185,
-      "community_name": "FileIOHandler.cpp",
+      "community": 113,
+      "community_name": "GPUSQCalculator",
       "norm_label": "appcontroller::setbondcutoffs()"
     },
     {
@@ -28211,8 +28211,8 @@
       "source_location": "L316",
       "_origin": "ast",
       "id": "src_app_core_appcontroller_appcontroller_getbondcutoffs",
-      "community": 185,
-      "community_name": "FileIOHandler.cpp",
+      "community": 113,
+      "community_name": "GPUSQCalculator",
       "norm_label": "appcontroller::getbondcutoffs()"
     },
     {
@@ -28222,8 +28222,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_core_appcontroller_cpp_bondcutoffmatrix",
-      "community": 185,
-      "community_name": "FileIOHandler.cpp",
+      "community": 113,
+      "community_name": "GPUSQCalculator",
       "norm_label": "bondcutoffmatrix"
     },
     {
@@ -28233,8 +28233,8 @@
       "source_location": "L320",
       "_origin": "ast",
       "id": "src_app_core_appcontroller_appcontroller_populatecalculatorgroups",
-      "community": 185,
-      "community_name": "FileIOHandler.cpp",
+      "community": 113,
+      "community_name": "GPUSQCalculator",
       "norm_label": "appcontroller::populatecalculatorgroups()"
     },
     {
@@ -28332,8 +28332,8 @@
       "source_location": "L403",
       "_origin": "ast",
       "id": "src_app_core_appcontroller_appcontroller_handleresetanalysesselection",
-      "community": 185,
-      "community_name": "FileIOHandler.cpp",
+      "community": 120,
+      "community_name": "LammpsFrameParser",
       "norm_label": "appcontroller::handleresetanalysesselection()"
     },
     {
@@ -28354,8 +28354,8 @@
       "source_location": "L415",
       "_origin": "ast",
       "id": "src_app_core_appcontroller_appcontroller_handleclearcomparisoncurves",
-      "community": 185,
-      "community_name": "FileIOHandler.cpp",
+      "community": 113,
+      "community_name": "GPUSQCalculator",
       "norm_label": "appcontroller::handleclearcomparisoncurves()"
     },
     {
@@ -28376,8 +28376,8 @@
       "source_location": "L428",
       "_origin": "ast",
       "id": "src_app_core_appcontroller_appcontroller_handlexrdpresetchanged",
-      "community": 185,
-      "community_name": "FileIOHandler.cpp",
+      "community": 113,
+      "community_name": "GPUSQCalculator",
       "norm_label": "appcontroller::handlexrdpresetchanged()"
     },
     {
@@ -28387,8 +28387,8 @@
       "source_location": "L452",
       "_origin": "ast",
       "id": "src_app_core_appcontroller_appcontroller_handleapplyscaledcutoffs",
-      "community": 185,
-      "community_name": "FileIOHandler.cpp",
+      "community": 113,
+      "community_name": "GPUSQCalculator",
       "norm_label": "appcontroller::handleapplyscaledcutoffs()"
     },
     {
@@ -28398,8 +28398,8 @@
       "source_location": "L456",
       "_origin": "ast",
       "id": "src_app_core_appcontroller_appcontroller_handlesetuniformcutoff",
-      "community": 185,
-      "community_name": "FileIOHandler.cpp",
+      "community": 113,
+      "community_name": "GPUSQCalculator",
       "norm_label": "appcontroller::handlesetuniformcutoff()"
     },
     {
@@ -28409,8 +28409,8 @@
       "source_location": "L460",
       "_origin": "ast",
       "id": "src_app_core_appcontroller_appcontroller_handleapplyminfactor",
-      "community": 185,
-      "community_name": "FileIOHandler.cpp",
+      "community": 113,
+      "community_name": "GPUSQCalculator",
       "norm_label": "appcontroller::handleapplyminfactor()"
     },
     {
@@ -28420,8 +28420,8 @@
       "source_location": "L464",
       "_origin": "ast",
       "id": "src_app_core_appcontroller_appcontroller_handleapplymaxfactor",
-      "community": 185,
-      "community_name": "FileIOHandler.cpp",
+      "community": 113,
+      "community_name": "GPUSQCalculator",
       "norm_label": "appcontroller::handleapplymaxfactor()"
     },
     {
@@ -28431,8 +28431,8 @@
       "source_location": "L468",
       "_origin": "ast",
       "id": "src_app_core_appcontroller_appcontroller_handleapplyglobalcutoff",
-      "community": 185,
-      "community_name": "FileIOHandler.cpp",
+      "community": 113,
+      "community_name": "GPUSQCalculator",
       "norm_label": "appcontroller::handleapplyglobalcutoff()"
     },
     {
@@ -28442,8 +28442,8 @@
       "source_location": "L472",
       "_origin": "ast",
       "id": "src_app_core_appcontroller_appcontroller_populateexportanalyses",
-      "community": 185,
-      "community_name": "FileIOHandler.cpp",
+      "community": 113,
+      "community_name": "GPUSQCalculator",
       "norm_label": "appcontroller::populateexportanalyses()"
     },
     {
@@ -31390,8 +31390,8 @@
       "source_location": "L408",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_plotcontroller_handlesetcurvecolor",
-      "community": 278,
-      "community_name": "MockReader",
+      "community": 367,
+      "community_name": "OptionsSyncServiceTests",
       "norm_label": "plotcontroller::handlesetcurvecolor()"
     },
     {
@@ -95485,7 +95485,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/app/services/InputValidator.hpp",
-      "source_location": "L90",
+      "source_location": "L88",
       "weight": 1.0,
       "context": "field",
       "_origin": "ast",
@@ -95497,7 +95497,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/app/services/InputValidator.hpp",
-      "source_location": "L91",
+      "source_location": "L89",
       "weight": 1.0,
       "context": "field",
       "_origin": "ast",
@@ -95509,7 +95509,7 @@
       "relation": "defines",
       "confidence": "EXTRACTED",
       "source_file": "include/app/services/InputValidator.hpp",
-      "source_location": "L91",
+      "source_location": "L89",
       "weight": 1.0,
       "context": "field",
       "_origin": "ast",
@@ -95521,7 +95521,7 @@
       "relation": "defines",
       "confidence": "EXTRACTED",
       "source_file": "include/app/services/InputValidator.hpp",
-      "source_location": "L64",
+      "source_location": "L63",
       "weight": 1.0,
       "context": "field",
       "_origin": "ast",
@@ -95533,7 +95533,7 @@
       "relation": "defines",
       "confidence": "EXTRACTED",
       "source_file": "include/app/services/InputValidator.hpp",
-      "source_location": "L88",
+      "source_location": "L86",
       "weight": 1.0,
       "context": "field",
       "_origin": "ast",
@@ -95545,7 +95545,7 @@
       "relation": "defines",
       "confidence": "EXTRACTED",
       "source_file": "include/app/services/InputValidator.hpp",
-      "source_location": "L81",
+      "source_location": "L79",
       "weight": 1.0,
       "context": "field",
       "_origin": "ast",
@@ -95569,7 +95569,7 @@
       "relation": "defines",
       "confidence": "EXTRACTED",
       "source_file": "include/app/services/InputValidator.hpp",
-      "source_location": "L72",
+      "source_location": "L71",
       "weight": 1.0,
       "context": "field",
       "_origin": "ast",
@@ -95593,7 +95593,7 @@
       "relation": "defines",
       "confidence": "EXTRACTED",
       "source_file": "include/app/services/InputValidator.hpp",
-      "source_location": "L56",
+      "source_location": "L55",
       "weight": 1.0,
       "context": "field",
       "_origin": "ast",
@@ -95605,7 +95605,7 @@
       "relation": "defines",
       "confidence": "EXTRACTED",
       "source_file": "include/app/services/InputValidator.hpp",
-      "source_location": "L90",
+      "source_location": "L88",
       "weight": 1.0,
       "context": "field",
       "_origin": "ast",
@@ -223281,5 +223281,5 @@
       "confidence_score": 1.0
     }
   ],
-  "built_at_commit": "9bc72915ababe3562641aa1c76a7bddd06e7578a"
+  "built_at_commit": "b58d734a5d4fadb7e704d3bb534b24512c90586b"
 }

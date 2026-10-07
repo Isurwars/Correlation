@@ -21,6 +21,7 @@ export component PlotExportPanelCard inherits Rectangle {
 
     // Comparison Overlay properties & callbacks
     in property <[ComparisonCurveData]> comparison_curves: [];
+    in property <int> pinned_runs_count: 0;
     in property <bool> show_difference: false;
     callback pin_current_run();
     callback import_comparison_file();
@@ -70,6 +71,7 @@ export component PlotExportPanelCard inherits Rectangle {
             comparison_card := ComparisonOverlayCard {
                 enabled: root.enabled;
                 comparison_curves: root.comparison_curves;
+                pinned_runs_count: root.pinned_runs_count;
                 show_difference: root.show_difference;
                 pin_current_run => { root.pin_current_run(); }
                 import_comparison_file => { root.import_comparison_file(); }

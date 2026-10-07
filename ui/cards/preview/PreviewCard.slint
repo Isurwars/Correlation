@@ -553,23 +553,18 @@ export component PreviewCard inherits FilledCard {
                         root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
                     }
 
-                    changed mouse-x => {
+                    moved => {
                         if (root.is_panning) {
-                            root.plot_pan((self.mouse-x - root.pan_last_x) / 1px, 0);
+                            let delta_x = (self.mouse-x - root.pan_last_x) / 1px;
+                            let delta_y = (self.mouse-y - root.pan_last_y) / 1px;
                             root.pan_last_x = self.mouse-x;
+                            root.pan_last_y = self.mouse-y;
+                            if (delta_x != 0 || delta_y != 0) {
+                                root.plot_pan(delta_x, delta_y);
+                            }
                         }
                         if (root.is_selecting) {
                             root.drag_current_x = self.mouse-x;
-                        }
-                        root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
-                    }
-
-                    changed mouse-y => {
-                        if (root.is_panning) {
-                            root.plot_pan(0, (self.mouse-y - root.pan_last_y) / 1px);
-                            root.pan_last_y = self.mouse-y;
-                        }
-                        if (root.is_selecting) {
                             root.drag_current_y = self.mouse-y;
                         }
                         root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);

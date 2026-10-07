@@ -1,7 +1,7 @@
-# Graph Report - Correlation  (2026-10-07)
+# Graph Report - Correlation  (2026-10-06)
 
 ## Corpus Check
-- 470 files · ~5,224,522 words
+- 470 files · ~5,224,518 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `9bc72915`
+- Built from commit: `b58d734a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -896,8 +896,8 @@ Cohesion: 0.10
 Nodes (22): DataRange, max, min, getViewportGeometry(), pair, real_t, vector, NiceScale (+14 more)
 
 ### Community 113 - "GPUSQCalculator"
-Cohesion: 0.11
-Nodes (30): OptionsResetService, resetAdvanced, resetAngle, resetExportSettings, resetMaterialType, resetRDF, resetRings, resetSmoothing (+22 more)
+Cohesion: 0.07
+Nodes (33): OptionsResetService, resetAdvanced, resetAngle, resetExportSettings, resetMaterialType, resetRDF, resetRings, resetSmoothing (+25 more)
 
 ### Community 114 - "XRDCalculator::calculate"
 Cohesion: 0.07
@@ -924,8 +924,8 @@ Cohesion: 0.15
 Nodes (21): BuildUniformBondCutoffs, ComputeRecommendedTimeStepHandlesNullAndEmptyCell, ComputeRecommendedTimeStepWithKnownElements, getRecommendedBondCutoffs, PhysicsService, buildUniformBondCutoffs, computeRecommendedTimeStep, scaleBondCutoffs (+13 more)
 
 ### Community 120 - "LammpsFrameParser"
-Cohesion: 0.10
-Nodes (23): DetectsNewerVersionsCorrectly, HandlesMissingFieldsInReleaseJson, handleOptionstoUI, loadSettings, registerActionCallbacks, registerExportCallbacks, registerPlotCallbacks, registerPresetAndOptionCallbacks (+15 more)
+Cohesion: 0.09
+Nodes (28): DetectsNewerVersionsCorrectly, HandlesMissingFieldsInReleaseJson, handleOptionstoUI, loadSettings, populateCalculatorGroups, registerActionCallbacks, registerExportCallbacks, registerPlotCallbacks (+20 more)
 
 ### Community 121 - "DihedralCalculatorTests"
 Cohesion: 0.08
@@ -1180,8 +1180,8 @@ Cohesion: 0.12
 Nodes (24): BinRange, container_periodic, particle_order, AlignedBoxParameters, box_x, box_xy, box_xz, box_y (+16 more)
 
 ### Community 185 - "FileIOHandler.cpp"
-Cohesion: 0.09
-Nodes (12): populateCalculatorGroups, saveSettings, SettingsManager, load, save, AppController::getBondCutoffs(), AppController::handleResetAnalysesSelection(), AppController::loadSettings() (+4 more)
+Cohesion: 0.47
+Nodes (5): SettingsManager, load, save, AppController::loadSettings(), AppController::saveSettings()
 
 ### Community 186 - "atoms_"
 Cohesion: 0.20
@@ -1276,8 +1276,8 @@ Cohesion: 0.40
 Nodes (4): BondCutoffRange, max_sq, min_sq, real_t
 
 ### Community 250 - "PositionBlockT"
-Cohesion: 0.20
-Nodes (15): string, ReleaseInfo, html_url, tag_name, parseReleaseJson, optional, string, string_view (+7 more)
+Cohesion: 0.22
+Nodes (14): string, ReleaseInfo, html_url, tag_name, optional, string, string_view, vector (+6 more)
 
 ### Community 251 - "CliParserTests"
 Cohesion: 0.18
@@ -1380,8 +1380,8 @@ Cohesion: 0.29
 Nodes (6): 1. Syntax & Markup Validation, 2. Preview Workflows, 3. Responsive Layout Testing, Fallback: CMake Target Verification, Primary: `slint-viewer` (Hot-Reload), Slint Live Preview Loop
 
 ### Community 278 - "MockReader"
-Cohesion: 0.22
-Nodes (21): buildPlotConfigFromUI, requestPlotUpdate, computeXScale(), computeYScale(), PlotController::handleAddMarkerAt(), PlotController::handleClearMarkers(), PlotController::handleClearPinnedRuns(), PlotController::handleMouseMove() (+13 more)
+Cohesion: 0.23
+Nodes (20): buildPlotConfigFromUI, requestPlotUpdate, computeXScale(), computeYScale(), PlotController::handleAddMarkerAt(), PlotController::handleClearMarkers(), PlotController::handleClearPinnedRuns(), PlotController::handleMouseMove() (+12 more)
 
 ### Community 279 - "MockReader"
 Cohesion: 0.33
@@ -1721,7 +1721,7 @@ Nodes (6): AppWindow, ComponentHandle, optional, testing::Test, OptionsResetServ
 
 ### Community 367 - "OptionsSyncServiceTests"
 Cohesion: 0.25
-Nodes (8): executeSavePlot, SharedString, string, T, PlotController::buildPlotConfigFromUI(), PlotController::handleSavePlot(), PlotController::populatePlotList(), safeParse()
+Nodes (9): executeSavePlot, SharedString, string, T, PlotController::buildPlotConfigFromUI(), PlotController::handleSavePlot(), PlotController::handleSetCurveColor(), PlotController::populatePlotList() (+1 more)
 
 ### Community 368 - "DftbReaderTests"
 Cohesion: 0.40

@@ -78,6 +78,7 @@ export component SidePanelHost inherits Vertical {
 
     // Plot export state
     in property <[ComparisonCurveData]> comparison_curves: [];
+    in property <int> pinned_runs_count: 0;
     in property <bool> show_difference: false;
     in-out property <ExportConfig> export_config;
     in property <string> export_font_scale_error: "";
@@ -309,6 +310,7 @@ export component SidePanelHost inherits Vertical {
             enabled: root.file_loaded;
 
             comparison_curves: root.comparison_curves;
+            pinned_runs_count: root.pinned_runs_count;
             show_difference: root.show_difference;
             pin_run => { root.pin_run(); }
             import_comparison_file => { root.import_comparison_file(); }
