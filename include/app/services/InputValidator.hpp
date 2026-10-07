@@ -38,6 +38,7 @@ public:
 private:
   /**
    * @brief Validates radial distribution and scattering options.
+   * @param[in] opts Analysis options from the UI.
    * @param[out] errs AppErrors structure for reporting invalid field states.
    * @param[out] r_max_val Evaluated maximum radial cutoff.
    * @param[out] q_max_val Evaluated maximum reciprocal space momentum.
