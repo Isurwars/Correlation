@@ -85,6 +85,12 @@ if(EMSCRIPTEN OR BUILD_WASM)
         set(EMSCRIPTEN_WITHOUT_PTHREAD ON CACHE BOOL "Disable pthreads for WASM" FORCE)
     endif()
     set(TBB_STRICT OFF CACHE BOOL "Disable TBB strict mode" FORCE)
+    set(CMAKE_CXX_LINK_LIBRARY_USING_WHOLE_ARCHIVE
+        "-Wl,--whole-archive"
+        "<LINK_ITEM>"
+        "-Wl,--no-whole-archive"
+    )
+    set(CMAKE_CXX_LINK_LIBRARY_USING_WHOLE_ARCHIVE_SUPPORTED TRUE)
 endif()
 
 if(USE_SINGLE_PRECISION)

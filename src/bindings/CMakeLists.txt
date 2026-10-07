@@ -39,7 +39,10 @@ if(EMSCRIPTEN OR BUILD_WASM)
     )
 
     target_link_libraries(correlation_wasm PRIVATE
-        "$<LINK_LIBRARY:WHOLE_ARCHIVE,correlation_lib>"
+        correlation_lib
+        readers_obj
+        calculators_obj
+        writers_obj
     )
 
     set_target_properties(correlation_wasm PROPERTIES
