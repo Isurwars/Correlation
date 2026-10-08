@@ -93,8 +93,30 @@ const StructureAnalyzer *DistributionFunctions::neighbors() const {
 const Histogram &DistributionFunctions::getHistogram(const std::string &name) const {
   const std::scoped_lock lock(histogram_mutex_);
   auto iter = histograms_.find(name);
-  if (iter == histograms_.end() && name == "BAD") {
-    iter = histograms_.find("PAD");
+  if (iter == histograms_.end()) {
+    static const std::map<std::string, std::string> ALIASES = {
+        {"BAD", "PAD"},
+        {"Cluster Size", "cluster_size"},
+        {"cluster_size", "Cluster Size"},
+        {"Voronoi Volume", "voronoi_volume"},
+        {"voronoi_volume", "Voronoi Volume"},
+        {"Voronoi Sphericity", "voronoi_sphericity"},
+        {"voronoi_sphericity", "Voronoi Sphericity"},
+        {"Voronoi Coordination Number", "voronoi_cn"},
+        {"voronoi_cn", "Voronoi Coordination Number"},
+        {"Voronoi Signatures", "voronoi_signatures"},
+        {"voronoi_signatures", "Voronoi Signatures"},
+        {"Normalized VACF", "vacf_normalized"},
+        {"vacf_normalized", "Normalized VACF"},
+        {"tdos", "TDOS"},
+        {"TDOS", "tdos"},
+        {"SQ", "S_q"},
+        {"S(Q)", "S_q"},
+        {"vDoS", "VDOS"},
+    };
+    if (const auto alias_it = ALIASES.find(name); alias_it != ALIASES.end()) {
+      iter = histograms_.find(alias_it->second);
+    }
   }
   if (iter == histograms_.end()) {
     throw std::out_of_range("Histogram '" + name + "' not found.");

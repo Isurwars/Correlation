@@ -17,7 +17,7 @@ namespace correlation::calculators {
  */
 class HBondCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string_view getName() const override { return "Hydrogen Bond"; }
+  [[nodiscard]] std::string_view getName() const override { return "Hydrogen Bond Distribution"; }
   [[nodiscard]] std::string_view getShortName() const override { return "HBond"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
   [[nodiscard]] std::string_view getDescription() const override {

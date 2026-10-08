@@ -76,7 +76,7 @@ VACFCalculator::calculate(const correlation::core::Trajectory &traj,
     norm_vacf_hist.file_suffix = "_VACF_norm";
     norm_vacf_hist.bins = results["VACF"].bins;
     norm_vacf_hist.partials["Total"] = norm_vacf;
-    results["Normalized VACF"] = std::move(norm_vacf_hist);
+    results["vacf_normalized"] = std::move(norm_vacf_hist);
   }
 
   return results;

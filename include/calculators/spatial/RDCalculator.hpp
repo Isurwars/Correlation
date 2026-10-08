@@ -19,11 +19,11 @@ namespace correlation::calculators {
  */
 class RDCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string_view getName() const override { return "RD"; }
+  [[nodiscard]] std::string_view getName() const override { return "Ring Size Distribution"; }
   [[nodiscard]] std::string_view getShortName() const override { return "RD"; }
-  [[nodiscard]] std::string_view getGroup() const override { return "Rings"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Topology"; }
   [[nodiscard]] std::string_view getDescription() const override {
-    return "Computes the Ring Distribution (RD).";
+    return "Computes the ring size distribution (King / Franzblau criteria).";
   }
 
   [[nodiscard]] bool isFrameCalculator() const override { return true; }

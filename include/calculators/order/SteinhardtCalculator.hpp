@@ -21,7 +21,7 @@ namespace correlation::calculators {
  */
 class SteinhardtCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string_view getName() const override { return "Steinhardt Parameter"; }
+  [[nodiscard]] std::string_view getName() const override { return "Steinhardt Order Parameters"; }
   [[nodiscard]] std::string_view getShortName() const override { return "Steinhardt"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
   [[nodiscard]] std::string_view getDescription() const override {

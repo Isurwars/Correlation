@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "calculators/BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/BaseCalculator.hpp"
 
 namespace correlation::calculators {
 
@@ -19,11 +19,11 @@ namespace correlation::calculators {
  */
 class CNCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string_view getName() const override { return "CN"; }
+  [[nodiscard]] std::string_view getName() const override { return "Coordination Number"; }
   [[nodiscard]] std::string_view getShortName() const override { return "CN"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
   [[nodiscard]] std::string_view getDescription() const override {
-    return "Computes the Coordination Number (CN).";
+    return "Computes the coordination number distribution.";
   }
 
   [[nodiscard]] bool isFrameCalculator() const override { return true; }

@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include "calculators/BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
 #include "analysis/StructureAnalyzer.hpp"
+#include "calculators/BaseCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/NeighborGraph.hpp"
 
@@ -28,11 +28,11 @@ namespace correlation::calculators {
  */
 class DihedralCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string_view getName() const override { return "Dihedral"; }
+  [[nodiscard]] std::string_view getName() const override { return "Dihedral Angles (Tensor)"; }
   [[nodiscard]] std::string_view getShortName() const override { return "Dihedral"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
   [[nodiscard]] std::string_view getDescription() const override {
-    return "Computes all unique 4-body dihedral (torsion) angles.";
+    return "Computes 4-body dihedral angle tensors for structural analysis.";
   }
 
   [[nodiscard]] bool isFrameCalculator() const override { return true; }

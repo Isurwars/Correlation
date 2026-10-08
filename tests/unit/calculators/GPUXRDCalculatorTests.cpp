@@ -17,11 +17,13 @@ namespace correlation::calculators {
 
 TEST(GPUXRDCalculatorTests, DiscoveryInCalculatorFactory) {
   const auto &factory = CalculatorFactory::instance();
-  const auto *calc = factory.getCalculator("XRD — GPU Accelerated");
+  const auto *calc = factory.getCalculator("X-Ray Diffraction (GPU)");
 
   ASSERT_NE(calc, nullptr);
+  EXPECT_EQ(calc->getName(), "X-Ray Diffraction (GPU)");
   EXPECT_EQ(calc->getShortName(), "XRD_GPU");
   EXPECT_EQ(calc->getGroup(), "Diffraction");
+  EXPECT_EQ(factory.getCalculator("XRD — GPU Accelerated"), calc);
   EXPECT_TRUE(calc->isFrameCalculator());
   EXPECT_FALSE(calc->isTrajectoryCalculator());
 }

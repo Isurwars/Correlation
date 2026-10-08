@@ -52,7 +52,7 @@ struct BinWidth {
  */
 class XRDCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string_view getName() const override { return "XRD"; }
+  [[nodiscard]] std::string_view getName() const override { return "X-Ray Diffraction"; }
   [[nodiscard]] std::string_view getShortName() const override { return "XRD"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Scattering"; }
   [[nodiscard]] std::string_view getDescription() const override {

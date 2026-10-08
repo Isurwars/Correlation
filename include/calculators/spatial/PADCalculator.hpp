@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "calculators/BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/BaseCalculator.hpp"
 
 namespace correlation::calculators {
 
@@ -19,7 +19,7 @@ namespace correlation::calculators {
  */
 class PADCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string_view getName() const override { return "PAD"; }
+  [[nodiscard]] std::string_view getName() const override { return "Plane Angle Distribution"; }
   [[nodiscard]] std::string_view getShortName() const override { return "PAD"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Angular"; }
   [[nodiscard]] std::string_view getDescription() const override {

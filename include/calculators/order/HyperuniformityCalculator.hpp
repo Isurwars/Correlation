@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "calculators/BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/BaseCalculator.hpp"
 
 #include <cstddef>
 #include <map>
@@ -45,11 +45,11 @@ struct HyperuniformityParams {
  */
 class HyperuniformityCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string_view getName() const override { return "σ²_N(R), χ_H(R)"; }
+  [[nodiscard]] std::string_view getName() const override { return "Hyperuniformity Diagnostics"; }
   [[nodiscard]] std::string_view getShortName() const override { return "Hyperuniformity"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Advanced"; }
   [[nodiscard]] std::string_view getDescription() const override {
-    return "Computes local number variance and hyperuniformity index.";
+    return "Computes local number variance sigma2_N(R) and hyperuniformity index chi_H(R).";
   }
 
   [[nodiscard]] bool isFrameCalculator() const override { return true; }

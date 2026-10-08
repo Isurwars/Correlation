@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include "calculators/BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/BaseCalculator.hpp"
 
 namespace correlation::calculators {
 
@@ -26,7 +26,7 @@ public:
   GPUSteinhardtCalculator();
 
   [[nodiscard]] std::string_view getName() const override {
-    return "Steinhardt Parameter — GPU Accelerated";
+    return "Steinhardt Order Parameters (GPU)";
   }
   [[nodiscard]] std::string_view getShortName() const override { return "Steinhardt_GPU"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }

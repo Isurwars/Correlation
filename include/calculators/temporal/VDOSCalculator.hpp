@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "calculators/BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/BaseCalculator.hpp"
 
 namespace correlation::calculators {
 
@@ -32,11 +32,13 @@ struct VDOSParams {
  */
 class VDOSCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string_view getName() const override { return "vDoS"; }
-  [[nodiscard]] std::string_view getShortName() const override { return "vDoS"; }
-  [[nodiscard]] std::string_view getGroup() const override { return "Dynamic"; }
+  [[nodiscard]] std::string_view getName() const override {
+    return "Vibrational Density of States";
+  }
+  [[nodiscard]] std::string_view getShortName() const override { return "VDOS"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Dynamical"; }
   [[nodiscard]] std::string_view getDescription() const override {
-    return "Computes the Vibrational Density of States (vDoS).";
+    return "Computes the Vibrational Density of States (VDOS).";
   }
 
   [[nodiscard]] bool isFrameCalculator() const override { return false; }

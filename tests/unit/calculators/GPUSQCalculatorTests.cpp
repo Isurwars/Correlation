@@ -17,11 +17,13 @@ namespace correlation::calculators {
 
 TEST(GPUSQCalculatorTests, DiscoveryInCalculatorFactory) {
   const auto &factory = CalculatorFactory::instance();
-  const auto *calc = factory.getCalculator("S(Q) — GPU Accelerated");
+  const auto *calc = factory.getCalculator("Static Structure Factor (GPU)");
 
   ASSERT_NE(calc, nullptr);
+  EXPECT_EQ(calc->getName(), "Static Structure Factor (GPU)");
   EXPECT_EQ(calc->getShortName(), "S_Q_GPU");
   EXPECT_EQ(calc->getGroup(), "Scattering");
+  EXPECT_EQ(factory.getCalculator("S(Q) — GPU Accelerated"), calc);
   EXPECT_TRUE(calc->isFrameCalculator());
   EXPECT_FALSE(calc->isTrajectoryCalculator());
 }

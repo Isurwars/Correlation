@@ -117,7 +117,7 @@ void TDOSCalculator::calculateFrame(
   params.model = model_;
   auto hist = calculate(cell, params);
   if (!hist.bins.empty()) {
-    dists.addHistogram("tdos", std::move(hist));
+    dists.addHistogram("TDOS", std::move(hist));
   }
 }
 
@@ -131,7 +131,7 @@ void TDOSCalculator::calculateTrajectory(
   params.model = model_;
   auto hist = calculateTrajectory(traj, params, settings.cancel_flag);
   if (!hist.bins.empty()) {
-    dists.addHistogram("tdos", std::move(hist));
+    dists.addHistogram("TDOS", std::move(hist));
   }
 }
 

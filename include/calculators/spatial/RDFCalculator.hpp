@@ -31,11 +31,11 @@ namespace correlation::calculators {
  */
 class RDFCalculator : public ISpatialCalculator {
 public:
-  [[nodiscard]] std::string_view getName() const override { return "g(r), J(r), G(r)"; }
+  [[nodiscard]] std::string_view getName() const override { return "Radial Distribution Function"; }
   [[nodiscard]] std::string_view getShortName() const override { return "RDF"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Radial"; }
   [[nodiscard]] std::string_view getDescription() const override {
-    return "Computes the Radial Distribution Function g_r, J_r, and G_r.";
+    return "Computes radial distribution functions g(r), J(r), and G(r).";
   }
 
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,

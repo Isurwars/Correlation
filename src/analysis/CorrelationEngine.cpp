@@ -135,8 +135,10 @@ bool requiresVelocities(const AnalysisSettings &settings) {
     bool const is_active =
         settings.isActive(calc->getName()) || settings.isActive(calc->getShortName());
     if (calc->isTrajectoryCalculator() && calc->isConfigured() && is_active) {
-      if (calc->getName() == "VACF" || calc->getShortName() == "VACF" ||
-          calc->getName() == "vDoS" || calc->getShortName() == "vDoS") {
+      if (calc->getShortName() == "VACF" || calc->getName() == "VACF" ||
+          calc->getName() == "Velocity Autocorrelation Function" ||
+          calc->getShortName() == "VDOS" || calc->getShortName() == "vDoS" ||
+          calc->getName() == "Vibrational Density of States" || calc->getName() == "vDoS") {
         return true;
       }
     }
@@ -207,7 +209,10 @@ void CorrelationEngine::calculateDynamicProperties(DistributionFunctions &distri
     }
   }
 
-  auto it_norm = hists.find("Normalized VACF");
+  auto it_norm = hists.find("vacf_normalized");
+  if (it_norm == hists.end()) {
+    it_norm = hists.find("Normalized VACF");
+  }
   if (it_norm != hists.end()) {
     const auto &hist = it_norm->second;
     auto it_total = hist.partials.find("Total");

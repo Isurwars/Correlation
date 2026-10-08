@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "calculators/BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/BaseCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/NeighborGraph.hpp"
 
@@ -35,11 +35,11 @@ using AngleTensor = std::vector<std::vector<std::vector<std::vector<real_t>>>>;
  */
 class AngleCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string_view getName() const override { return "Angle"; }
-  [[nodiscard]] std::string_view getShortName() const override { return "PAD"; }
+  [[nodiscard]] std::string_view getName() const override { return "Bond Angles (Tensor)"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "Angle"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
   [[nodiscard]] std::string_view getDescription() const override {
-    return "Computes the Plane-Angle Distribution (PAD).";
+    return "Computes 3-body plane angle tensors for structural analysis.";
   }
 
   [[nodiscard]] bool isFrameCalculator() const override { return true; }

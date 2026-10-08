@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "calculators/BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/BaseCalculator.hpp"
 #include "core/Cell.hpp"
 
 namespace correlation::calculators {
@@ -54,7 +54,7 @@ class GPUXRDCalculator : public BaseCalculator {
 public:
   GPUXRDCalculator();
 
-  [[nodiscard]] std::string_view getName() const override { return "XRD — GPU Accelerated"; }
+  [[nodiscard]] std::string_view getName() const override { return "X-Ray Diffraction (GPU)"; }
   [[nodiscard]] std::string_view getShortName() const override { return "XRD_GPU"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Diffraction"; }
   [[nodiscard]] std::string_view getDescription() const override {

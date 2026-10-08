@@ -385,7 +385,7 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
   for (size_t i = 0; i < vol_bins; ++i) {
     vol_bin_centers[i] = static_cast<real_t>(static_cast<real_t>(i) + 0.5) * vol_d;
   }
-  results["Voronoi Volume"] =
+  results["voronoi_volume"] =
       makeHistogram("Voronoi Cell Volume Distribution", "Volume", "Probability Density", "Å³",
                     "probability", "Probability distribution of Voronoi cell volumes.", "_vvol",
                     vol_bin_centers, element_symbols);
@@ -398,7 +398,7 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
   for (size_t i = 0; i < sph_bins; ++i) {
     sph_bin_centers[i] = static_cast<real_t>(static_cast<real_t>(i) + 0.5) * sph_d;
   }
-  results["Voronoi Sphericity"] = makeHistogram(
+  results["voronoi_sphericity"] = makeHistogram(
       "Voronoi Cell Sphericity Distribution", "Sphericity", "Probability Density", "dimensionless",
       "probability", "Probability distribution of Voronoi cell sphericities (Psi).", "_vsph",
       sph_bin_centers, element_symbols);
@@ -414,7 +414,7 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
     }
     return values;
   }();
-  results["Voronoi Coordination Number"] = makeHistogram(
+  results["voronoi_cn"] = makeHistogram(
       "Voronoi Coordination Number Distribution", "Coordination Number", "Probability", "faces",
       "probability", "Probability distribution of Voronoi cell face counts.", "_vcn", cn_bin_values,
       element_symbols);
@@ -429,12 +429,12 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
     }
     return values;
   }();
-  results["Voronoi Signatures"] =
+  results["voronoi_signatures"] =
       makeHistogram("Voronoi Polyhedral Signatures", "Signature Index", "Probability", "index",
                     "probability", sig_desc, "_vsig", sig_bin_values, element_symbols);
 
   // 4. Populate histograms
-  populateHistogram(results["Voronoi Volume"],
+  populateHistogram(results["voronoi_volume"],
                     {
                         .bin_width = vol_d,
                         .num_bins = vol_bins,
@@ -442,7 +442,7 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
                         .range_max = max_vol_range,
                     },
                     data.volumes, cell.atoms());
-  populateHistogram(results["Voronoi Sphericity"],
+  populateHistogram(results["voronoi_sphericity"],
                     {
                         .bin_width = sph_d,
                         .num_bins = sph_bins,
@@ -457,7 +457,7 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
   for (int cn_i : data.coordination_numbers) {
     cn_as_real.push_back(static_cast<real_t>(cn_i));
   }
-  populateHistogram(results["Voronoi Coordination Number"],
+  populateHistogram(results["voronoi_cn"],
                     {
                         .bin_width = 1.0,
                         .num_bins = cn_bins,
@@ -467,7 +467,7 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
                     cn_as_real, cell.atoms());
 
   // Signatures — unique lookup logic, kept inline
-  auto &sig_hist = results["Voronoi Signatures"];
+  auto &sig_hist = results["voronoi_signatures"];
   for (size_t i = 0; i < num_atoms; ++i) {
     const std::string &sig = data.signatures[i];
     if (sig.empty() || !signature_indices.contains(sig)) {

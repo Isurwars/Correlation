@@ -129,7 +129,7 @@ void OptionsSyncService::updateActiveGroupFlags(AppWindow &window, const Program
         has_scattering = true;
       } else if (grp == "Angular") {
         has_angular = true;
-      } else if (grp == "Rings") {
+      } else if (grp == "Rings" || grp == "Topology") {
         has_rings = true;
       }
     }

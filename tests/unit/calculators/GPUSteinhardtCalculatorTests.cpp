@@ -19,11 +19,13 @@ namespace correlation::calculators {
 
 TEST(GPUSteinhardtCalculatorTests, DiscoveryInCalculatorFactory) {
   const auto &factory = CalculatorFactory::instance();
-  const auto *calc = factory.getCalculator("Steinhardt Parameter — GPU Accelerated");
+  const auto *calc = factory.getCalculator("Steinhardt Order Parameters (GPU)");
 
   ASSERT_NE(calc, nullptr);
+  EXPECT_EQ(calc->getName(), "Steinhardt Order Parameters (GPU)");
   EXPECT_EQ(calc->getShortName(), "Steinhardt_GPU");
   EXPECT_EQ(calc->getGroup(), "Structural");
+  EXPECT_EQ(factory.getCalculator("Steinhardt Parameter — GPU Accelerated"), calc);
   EXPECT_TRUE(calc->isFrameCalculator());
   EXPECT_FALSE(calc->isTrajectoryCalculator());
 }

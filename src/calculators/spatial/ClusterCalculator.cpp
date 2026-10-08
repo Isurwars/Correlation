@@ -134,7 +134,7 @@ void ClusterCalculator::calculateFrame(
   }
 
   // Add the result safely to the distribution functions manager
-  dists.addHistogram("Cluster Size", std::move(hist));
+  dists.addHistogram("cluster_size", std::move(hist));
 }
 
 } // namespace correlation::calculators

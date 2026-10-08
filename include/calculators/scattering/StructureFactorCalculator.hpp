@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "calculators/BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/BaseCalculator.hpp"
 
 namespace correlation::calculators {
 
@@ -26,11 +26,11 @@ namespace correlation::calculators {
  */
 class StructureFactorCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string_view getName() const override { return "S(K)"; }
-  [[nodiscard]] std::string_view getShortName() const override { return "S_K"; }
+  [[nodiscard]] std::string_view getName() const override { return "Static Structure Factor"; }
+  [[nodiscard]] std::string_view getShortName() const override { return "SQ"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Scattering"; }
   [[nodiscard]] std::string_view getDescription() const override {
-    return "Computes the static structure factor S(K) via plane wave summation "
+    return "Computes the static structure factor S(Q) via plane wave summation "
            "over reciprocal lattice vectors (for periodic systems).";
   }
 

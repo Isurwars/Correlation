@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "calculators/BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/BaseCalculator.hpp"
 #include "core/Trajectory.hpp"
 
 #include <map>
@@ -23,9 +23,11 @@ namespace correlation::calculators {
  */
 class VACFCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string_view getName() const override { return "VACF"; }
+  [[nodiscard]] std::string_view getName() const override {
+    return "Velocity Autocorrelation Function";
+  }
   [[nodiscard]] std::string_view getShortName() const override { return "VACF"; }
-  [[nodiscard]] std::string_view getGroup() const override { return "Dynamic"; }
+  [[nodiscard]] std::string_view getGroup() const override { return "Dynamical"; }
   [[nodiscard]] std::string_view getDescription() const override {
     return "Computes the Velocity Autocorrelation Function (VACF).";
   }

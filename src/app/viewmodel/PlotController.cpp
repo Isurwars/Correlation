@@ -100,11 +100,16 @@ void sortPlotNames(std::vector<std::string> &names) {
       // Coordination, topology & networks
       {"CN", 30},
       {"CNA", 31},
+      {"voronoi_cn", 32},
       {"Voronoi Coordination Number", 32},
+      {"voronoi_volume", 33},
       {"Voronoi Volume", 33},
+      {"voronoi_sphericity", 34},
       {"Voronoi Sphericity", 34},
+      {"voronoi_signatures", 35},
       {"Voronoi Signatures", 35},
       {"RD", 36},
+      {"cluster_size", 37},
       {"Cluster Size", 37},
       {"HBond", 38},
 
@@ -124,12 +129,13 @@ void sortPlotNames(std::vector<std::string> &names) {
       {"MSD", 50},
       {"D_eff", 51},
       {"VACF", 52},
+      {"vacf_normalized", 53},
       {"Normalized VACF", 53},
       {"VDOS", 54},
 
       // Electronic structure & MLIP projections
-      {"tdos", 60},
-      {"TDOS", 61},
+      {"TDOS", 60},
+      {"tdos", 61},
       {"MotifProjectedTDOS_CNA", 62},
       {"MotifProjectedTDOS_Steinhardt", 63},
   };

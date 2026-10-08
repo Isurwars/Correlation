@@ -17,7 +17,7 @@ namespace correlation::calculators {
  */
 class CNACalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string_view getName() const override { return "CNA"; }
+  [[nodiscard]] std::string_view getName() const override { return "Common Neighbor Analysis"; }
   [[nodiscard]] std::string_view getShortName() const override { return "CNA"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
   [[nodiscard]] std::string_view getDescription() const override {

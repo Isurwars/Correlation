@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "calculators/BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/BaseCalculator.hpp"
 
 namespace correlation::calculators {
 
@@ -30,7 +30,7 @@ struct LocalEntropyParams {
  */
 class LocalEntropyCalculator : public BaseCalculator {
 public:
-  [[nodiscard]] std::string_view getName() const override { return "Local Entropy"; }
+  [[nodiscard]] std::string_view getName() const override { return "Local Entropy Fingerprint"; }
   [[nodiscard]] std::string_view getShortName() const override { return "LEF"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
   [[nodiscard]] std::string_view getDescription() const override {

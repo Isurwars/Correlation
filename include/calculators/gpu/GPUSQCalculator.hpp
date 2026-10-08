@@ -13,8 +13,8 @@
 
 #pragma once
 
-#include "calculators/BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/BaseCalculator.hpp"
 
 namespace correlation::calculators {
 
@@ -35,12 +35,14 @@ class GPUSQCalculator : public BaseCalculator {
 public:
   GPUSQCalculator();
 
-  [[nodiscard]] std::string_view getName() const override { return "S(Q) — GPU Accelerated"; }
+  [[nodiscard]] std::string_view getName() const override {
+    return "Static Structure Factor (GPU)";
+  }
   [[nodiscard]] std::string_view getShortName() const override { return "S_Q_GPU"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Scattering"; }
   [[nodiscard]] std::string_view getDescription() const override {
     return "GPU-accelerated static structure factor S(Q). Falls back to CPU "
-           "when no compatible Nvidia GPU is detected.";
+           "when no compatible GPU is detected.";
   }
 
   [[nodiscard]] bool isFrameCalculator() const override { return true; }
