@@ -16,8 +16,11 @@
 
 #include <atomic>
 #include <chrono>
+#include <condition_variable>
 #include <map>
 #include <memory>
+#include <mutex>
+#include <optional>
 #include <string>
 #include <thread>
 #include <vector>
@@ -93,11 +96,6 @@ public:
    * @param[in] size New plot container dimensions.
    */
   void handlePlotResized(PlotSize size);
-
-  /**
-   * @brief Timer callback for periodic plot rendering updates.
-   */
-  void handleUpdateTimer();
 
   /**
    * @brief Handles toggling curve visibility from the Slint preview checklist.
@@ -185,9 +183,8 @@ private:
 
   PlotSeriesManager series_manager_;
 
-  std::jthread render_thread_;
-
   struct RenderTaskData {
+    int index{-1};
     correlation::analysis::Histogram active_hist;
     std::vector<correlation::plotters::LabeledHistogram> comparison_hists;
     correlation::plotters::PlotConfig config;
@@ -197,11 +194,11 @@ private:
     std::map<std::string, std::string> custom_curve_colors;
   };
 
-  std::atomic<bool> is_rendering_{false};
-  std::atomic<bool> render_pending_{false};
-  bool has_pending_task_{false};
-  RenderTaskData pending_task_data_;
-  std::mutex pending_task_mutex_;
+  std::jthread render_worker_;
+  std::mutex render_mutex_;
+  std::condition_variable render_cv_;
+  std::optional<RenderTaskData> pending_task_;
+  bool stop_render_worker_{false};
 
   std::jthread dialog_thread_; ///< Worker thread for native save dialogs
   std::atomic<bool> dialog_active_{
@@ -215,19 +212,12 @@ private:
   float last_plot_width_ = 0.0F;
   float last_plot_height_ = 0.0F;
 
-  std::chrono::steady_clock::time_point last_replot_time_;
-  slint::Timer hover_timer_;
-  slint::Timer update_timer_;
-  bool update_scheduled_ = false;
-  int pending_plot_index_ = -1;
-  bool needs_redraw_ = false;
+  std::shared_ptr<std::atomic<bool>> alive_ = std::make_shared<std::atomic<bool>>(true);
 
   int last_rendered_index_ = -1;
   correlation::plotters::PlotConfig last_config_;
   correlation::plotters::HoverInfo last_hover_;
   std::size_t last_pinned_runs_count_ = 0;
-
-  std::shared_ptr<std::string> current_svg_;
 
   std::optional<real_t> zoom_x_min_;
   std::optional<real_t> zoom_x_max_;
@@ -235,10 +225,10 @@ private:
   std::optional<real_t> zoom_y_max_;
   std::vector<correlation::plotters::ReferenceLine> reference_markers_;
 
+  void renderLoop();
   correlation::plotters::PlotConfig buildPlotConfigFromUI();
   bool isPlotCacheHit(int index, const correlation::plotters::PlotConfig &config,
                       const correlation::plotters::HoverInfo &hover) const;
-  void executePlotRender(RenderTaskData data);
   void updateTableData(const correlation::analysis::Histogram *hist);
   void updateCurveToggleItems(const correlation::analysis::Histogram *hist);
   void executeSavePlot(const std::string &filepath, const correlation::analysis::Histogram *hist,

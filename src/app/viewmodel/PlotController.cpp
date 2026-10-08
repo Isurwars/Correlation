@@ -76,43 +76,149 @@ computeYScale(const correlation::analysis::Histogram &hist,
       correlation::plotters::detail::DataRange{.min = raw_y_min, .max = raw_y_max}, 8, strict_y);
 }
 
+void sortPlotNames(std::vector<std::string> &names) {
+  static const std::map<std::string, int> PRIORITY = {
+      // Real-space pair & radial distributions
+      {"g_r", 0},
+      {"g_r_unweighted", 1},
+      {"H_r", 2},
+      {"G_r", 3},
+      {"J_r", 4},
+      {"SDF", 5},
+
+      // Reciprocal-space & scattering
+      {"S_q", 10},
+      {"XRD", 11},
+
+      // Angular & torsional distributions
+      {"PAD", 20},
+      {"PAD_raw", 21},
+      {"BAD", 22},
+      {"DAD", 23},
+      {"DAD_raw", 24},
+
+      // Coordination, topology & networks
+      {"CN", 30},
+      {"CNA", 31},
+      {"Voronoi Coordination Number", 32},
+      {"Voronoi Volume", 33},
+      {"Voronoi Sphericity", 34},
+      {"Voronoi Signatures", 35},
+      {"RD", 36},
+      {"Cluster Size", 37},
+      {"HBond", 38},
+
+      // Order parameters & local structure
+      {"Q4", 40},
+      {"Q6", 41},
+      {"W4_hat", 42},
+      {"W6_hat", 43},
+      {"Q4_bar", 44},
+      {"Q6_bar", 45},
+      {"COP", 46},
+      {"LEF", 47},
+      {"sigma2_N", 48},
+      {"chi_H", 49},
+
+      // Dynamics & temporal correlations
+      {"MSD", 50},
+      {"D_eff", 51},
+      {"VACF", 52},
+      {"Normalized VACF", 53},
+      {"VDOS", 54},
+
+      // Electronic structure & MLIP projections
+      {"tdos", 60},
+      {"TDOS", 61},
+      {"MotifProjectedTDOS_CNA", 62},
+      {"MotifProjectedTDOS_Steinhardt", 63},
+  };
+
+  std::ranges::sort(names, [](const std::string &lhs, const std::string &rhs) {
+    const auto it_a = PRIORITY.find(lhs);
+    const auto it_b = PRIORITY.find(rhs);
+    const int prio_a = (it_a != PRIORITY.end()) ? it_a->second : 100;
+    const int prio_b = (it_b != PRIORITY.end()) ? it_b->second : 100;
+    if (prio_a != prio_b) {
+      return prio_a < prio_b;
+    }
+    return lhs < rhs;
+  });
+}
+
+std::shared_ptr<slint::VectorModel<MenuItem>>
+buildPlotMenuModel(std::span<const std::string> names, const AnalysisDispatcher &dispatcher) {
+  auto menu_model = std::make_shared<slint::VectorModel<MenuItem>>();
+  for (const auto &name : names) {
+    MenuItem item;
+    const correlation::analysis::Histogram *hist = dispatcher.getHistogram(name);
+    const bool has_custom_title = (hist != nullptr) && (!hist->title.empty());
+    const std::string display_text = has_custom_title ? hist->title : name;
+    item.text = slint::SharedString(display_text);
+    item.enabled = true;
+    menu_model->push_back(item);
+  }
+  return menu_model;
+}
+
+void updateDynamicProperties(
+    ::AppWindow &window,
+    const correlation::analysis::DistributionFunctions *distribution_functions) {
+  if (distribution_functions == nullptr) {
+    window.set_diff_msd("");
+    window.set_diff_vacf("");
+    window.set_relaxation_time("");
+    window.set_deborah_number("");
+    return;
+  }
+
+  const real_t msd = distribution_functions->getDiffusionCoefficientMSD();
+  window.set_diff_msd(msd > 0.0 ? slint::SharedString(std::format("{:.6f} Å²/fs", msd)) : "");
+
+  const real_t vacf = distribution_functions->getDiffusionCoefficientVACF();
+  window.set_diff_vacf(vacf > 0.0 ? slint::SharedString(std::format("{:.6f} Å²/fs", vacf)) : "");
+
+  const real_t tau = distribution_functions->getRelaxationTime();
+  window.set_relaxation_time(tau > 0.0 ? slint::SharedString(std::format("{:.4f} fs", tau)) : "");
+
+  const real_t deb = distribution_functions->getDeborahNumber();
+  window.set_deborah_number(deb > 0.0 ? slint::SharedString(std::format("{:.4f}", deb)) : "");
+}
+
 } // namespace
 
 PlotController::PlotController(::AppWindow &window, AnalysisDispatcher &dispatcher,
                                const ProgramOptions &options)
     : window_(window), dispatcher_(dispatcher), options_(options) {
-  update_timer_.start(slint::TimerMode::Repeated, std::chrono::milliseconds(1000),
-                      [this]() { handleUpdateTimer(); });
+  render_worker_ = std::jthread([this]() { renderLoop(); });
 }
 
 PlotController::~PlotController() {
-  update_timer_.stop();
-  hover_timer_.stop();
+  alive_->store(false);
+  {
+    std::lock_guard lock(render_mutex_);
+    stop_render_worker_ = true;
+    pending_task_.reset();
+  }
+  render_cv_.notify_all();
+  if (render_worker_.joinable()) {
+    render_worker_.join();
+  }
   if (dialog_thread_.joinable()) {
     dialog_thread_.join();
-  }
-  if (render_thread_.joinable()) {
-    render_thread_.join();
   }
 }
 
 void PlotController::handlePlotResized(PlotSize size) {
-  if (std::abs(size.width - last_plot_width_) < 1.0F &&
-      std::abs(size.height - last_plot_height_) < 1.0F) {
+  if (std::abs(size.width - last_plot_width_) < 4.0F &&
+      std::abs(size.height - last_plot_height_) < 4.0F) {
     return;
   }
   last_plot_width_ = size.width;
   last_plot_height_ = size.height;
   const int current_idx = window_.get_selected_plot_index();
   if (current_idx >= 0) {
-    slint::invoke_from_event_loop([this, current_idx] { requestPlotUpdate(current_idx, true); });
-  }
-}
-
-void PlotController::handleUpdateTimer() {
-  const int current_idx = window_.get_selected_plot_index();
-  if (current_idx >= 0) {
-    requestPlotUpdate(current_idx, false);
+    requestPlotUpdate(current_idx, true);
   }
 }
 
@@ -130,10 +236,8 @@ correlation::plotters::PlotConfig PlotController::buildPlotConfigFromUI() {
     config.preset_size = correlation::plotters::PlotConfig::PresetSize::Presentation;
   } else {
     config.preset_size = correlation::plotters::PlotConfig::PresetSize::Default;
-    if (last_plot_width_ > 1.0F && last_plot_height_ > 1.0F) {
-      config.width = static_cast<real_t>(last_plot_width_);
-      config.height = static_cast<real_t>(last_plot_height_);
-    }
+    config.width = 1200.0;
+    config.height = 900.0;
   }
 
   const int palette_val = window_.get_export_config().palette;
@@ -203,73 +307,16 @@ void PlotController::populatePlotList() {
   last_rendered_index_ = -1;
   auto names = dispatcher_.getAvailableHistogramNames();
 
-  std::map<std::string, int> priority = {
-      {"g_r", 0},       {"g_r_unweighted", 1}, {"H_r", 2},      {"G_r", 3},
-      {"J_r", 4},       {"S_q", 10},           {"XRD", 11},     {"PAD", 20},
-      {"PAD_raw", 21},  {"DAD", 22},           {"DAD_raw", 23}, {"CN", 24},
-      {"RD", 25},       {"MSD", 30},           {"VACF", 31},    {"VDOS", 32},
-      {"sigma2_N", 40}, {"chi_H", 41}};
-
-  std::ranges::sort(names, [&](const std::string &lhs, const std::string &rhs) {
-    const int prio_a = priority.contains(lhs) ? priority.at(lhs) : 100;
-    const int prio_b = priority.contains(rhs) ? priority.at(rhs) : 100;
-    if (prio_a != prio_b) {
-      return prio_a < prio_b;
-    }
-    return lhs < rhs;
-  });
-
+  sortPlotNames(names);
   available_plot_keys_ = names;
 
-  auto menu_model = std::make_shared<slint::VectorModel<MenuItem>>();
-  for (const auto &name : names) {
-    MenuItem item;
-    const correlation::analysis::Histogram *hist = dispatcher_.getHistogram(name);
-    const std::string display_text = (hist != nullptr && !hist->title.empty()) ? hist->title : name;
-    item.text = slint::SharedString(display_text);
-    item.enabled = true;
-    menu_model->push_back(item);
-  }
-  window_.set_plot_items(menu_model);
-
-  // Update dynamic properties
-  const auto *distribution_functions = dispatcher_.getDistributionFunctions();
-  if (distribution_functions != nullptr) {
-    real_t msd = distribution_functions->getDiffusionCoefficientMSD();
-    if (msd > 0.0) {
-      window_.set_diff_msd(slint::SharedString(std::format("{:.6f} Å²/fs", msd)));
-    } else {
-      window_.set_diff_msd("");
-    }
-
-    real_t vacf = distribution_functions->getDiffusionCoefficientVACF();
-    if (vacf > 0.0) {
-      window_.set_diff_vacf(slint::SharedString(std::format("{:.6f} Å²/fs", vacf)));
-    } else {
-      window_.set_diff_vacf("");
-    }
-
-    real_t tau = distribution_functions->getRelaxationTime();
-    if (tau > 0.0) {
-      window_.set_relaxation_time(slint::SharedString(std::format("{:.4f} fs", tau)));
-    } else {
-      window_.set_relaxation_time("");
-    }
-
-    real_t deb = distribution_functions->getDeborahNumber();
-    if (deb > 0.0) {
-      window_.set_deborah_number(slint::SharedString(std::format("{:.4f}", deb)));
-    } else {
-      window_.set_deborah_number("");
-    }
-  } else {
-    window_.set_diff_msd("");
-    window_.set_diff_vacf("");
-    window_.set_relaxation_time("");
-    window_.set_deborah_number("");
-  }
+  window_.set_plot_items(buildPlotMenuModel(names, dispatcher_));
+  updateDynamicProperties(window_, dispatcher_.getDistributionFunctions());
 
   window_.set_selected_plot_index(names.empty() ? -1 : 0);
+  if (!names.empty()) {
+    requestPlotUpdate(0, true);
+  }
 }
 
 void PlotController::handleMouseMove(float mouse_x, float mouse_y, bool hover, float width,
@@ -319,11 +366,6 @@ void PlotController::handleMouseMove(float mouse_x, float mouse_y, bool hover, f
       window_.set_hover_coord_text("");
     }
   }
-
-  const int current_idx = window_.get_selected_plot_index();
-  if (current_idx >= 0) {
-    requestPlotUpdate(current_idx, hover_changed || !actual_hover);
-  }
 }
 
 void PlotController::requestPlotUpdate(int index, bool immediate) {
@@ -337,39 +379,31 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
     return;
   }
 
-  updateTableData(hist);
-  updateCurveToggleItems(hist);
-
-  if (immediate) {
-    needs_redraw_ = true;
+  if (index != last_rendered_index_ || immediate) {
+    updateTableData(hist);
+    updateCurveToggleItems(hist);
   }
 
   const correlation::plotters::PlotConfig config = buildPlotConfigFromUI();
   correlation::plotters::HoverInfo hover;
-  hover.active = mouse_hover_;
+  hover.active =
+      false; // Retired in interactive mode: Slint renders hardware-accelerated crosshairs
   hover.mouse_x = last_mouse_x_;
   hover.mouse_y = last_mouse_y_;
   hover.widget_width = last_plot_width_;
   hover.widget_height = last_plot_height_;
 
-  if (isPlotCacheHit(index, config, hover) && !needs_redraw_) {
+  if (!immediate && isPlotCacheHit(index, config, hover)) {
     return;
   }
 
-  if (is_rendering_) {
-    render_pending_ = true;
-    pending_plot_index_ = index;
-    return;
-  }
-
-  is_rendering_ = true;
-  needs_redraw_ = false;
   last_rendered_index_ = index;
   last_pinned_runs_count_ = series_manager_.getPinnedRunsCount();
   last_config_ = config;
   last_hover_ = hover;
 
   RenderTaskData data;
+  data.index = index;
   data.active_hist = *hist;
   data.config = config;
   data.config.show_difference_curve = series_manager_.shouldShowDifference();
@@ -378,7 +412,7 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
   data.curve_visibility = series_manager_.getCurveVisibilityMap();
   data.custom_curve_colors = series_manager_.getCustomColors();
 
-  data.comparison_hists.push_back({.label = "Current", .hist = &data.active_hist});
+  data.comparison_hists.push_back({.label = "Current", .hist = nullptr});
   for (const auto &pinned_run : series_manager_.getPinnedRuns()) {
     auto hist_it = pinned_run.histograms.find(name);
     if (hist_it != pinned_run.histograms.end()) {
@@ -388,15 +422,15 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
     }
   }
 
-  if (render_thread_.joinable()) {
-    render_thread_.join();
-  }
-
   if (window_.get_selected_plot_index() != index) {
     window_.set_selected_plot_index(index);
   }
 
-  executePlotRender(std::move(data));
+  {
+    std::lock_guard lock(render_mutex_);
+    pending_task_ = std::move(data);
+  }
+  render_cv_.notify_one();
 }
 
 void PlotController::updateTableData(const correlation::analysis::Histogram *hist) {
@@ -439,42 +473,57 @@ bool PlotController::isPlotCacheHit(int index, const correlation::plotters::Plot
           config.manual_y_max == last_config_.manual_y_max &&
           config.reference_lines.size() == last_config_.reference_lines.size() &&
           hover.active == last_hover_.active &&
-          std::abs(hover.mouse_x - last_hover_.mouse_x) < 1e-2 &&
-          std::abs(hover.mouse_y - last_hover_.mouse_y) < 1e-2 &&
-          std::abs(hover.widget_width - last_hover_.widget_width) < 1e-2 &&
-          std::abs(hover.widget_height - last_hover_.widget_height) < 1e-2);
+          (!hover.active || (std::abs(hover.mouse_x - last_hover_.mouse_x) < 2.0F &&
+                             std::abs(hover.mouse_y - last_hover_.mouse_y) < 2.0F &&
+                             std::abs(hover.widget_width - last_hover_.widget_width) < 1e-2F &&
+                             std::abs(hover.widget_height - last_hover_.widget_height) < 1e-2F)));
 }
 
-void PlotController::executePlotRender(RenderTaskData data) {
-  if (render_thread_.joinable()) {
-    render_thread_.join();
-  }
-  render_thread_ = std::jthread([this, data = std::move(data)]() mutable {
-    std::string svg;
-    if (data.comparison_hists.size() <= 1) {
-      svg = correlation::plotters::renderHistogramAsSvg(
-          data.active_hist, data.config, data.hover, data.ashcroft_weights, data.curve_visibility,
-          data.custom_curve_colors);
-    } else {
-      const std::string key = PlotExportService::getComparisonKey(&data.active_hist);
-      svg = correlation::plotters::renderComparisonSvg(data.comparison_hists, key, data.config,
-                                                       data.hover);
+void PlotController::renderLoop() {
+  while (true) {
+    RenderTaskData current_task;
+    {
+      std::unique_lock lock(render_mutex_);
+      render_cv_.wait(lock, [this] { return stop_render_worker_ || pending_task_.has_value(); });
+
+      if (stop_render_worker_) {
+        break;
+      }
+
+      current_task = std::move(*pending_task_);
+      pending_task_.reset();
     }
 
-    slint::invoke_from_event_loop([this, svg = std::move(svg)]() {
-      const auto *svg_bytes = reinterpret_cast<const uint8_t *>(svg.data());
-      auto img = slint::private_api::load_image_from_embedded_data(
-          std::span<const uint8_t>(svg_bytes, svg.size()), "svg");
-      window_.set_preview_plot(img);
+    if (!current_task.comparison_hists.empty()) {
+      current_task.comparison_hists[0].hist = &current_task.active_hist;
+    }
 
-      is_rendering_ = false;
+    std::string svg;
+    if (current_task.comparison_hists.size() <= 1) {
+      svg = correlation::plotters::renderHistogramAsSvg(
+          current_task.active_hist, current_task.config, current_task.hover,
+          current_task.ashcroft_weights, current_task.curve_visibility,
+          current_task.custom_curve_colors);
+    } else {
+      const std::string key = PlotExportService::getComparisonKey(&current_task.active_hist);
+      svg = correlation::plotters::renderComparisonSvg(current_task.comparison_hists, key,
+                                                       current_task.config, current_task.hover);
+    }
 
-      if (render_pending_) {
-        render_pending_ = false;
-        requestPlotUpdate(pending_plot_index_, true);
+    if (svg.empty()) {
+      continue;
+    }
+
+    const auto *svg_bytes = reinterpret_cast<const uint8_t *>(svg.data());
+    auto img = slint::Image::load_from_data(std::span<const uint8_t>(svg_bytes, svg.size()), "svg");
+
+    slint::invoke_from_event_loop([this, alive = alive_, img = std::move(img)] {
+      if (!alive->load()) {
+        return;
       }
+      window_.set_preview_plot(img);
     });
-  });
+  }
 }
 
 void PlotController::handleSavePlot() {
@@ -511,14 +560,18 @@ void PlotController::handleSavePlot() {
 
   dialog_thread_ = std::jthread([this, default_dir = std::move(default_dir),
                                  default_name = std::move(default_name), hist, name]() {
-    std::array<nfdfilteritem_t, 2> filter_list = {{{
-                                                       .name = "SVG Image",
-                                                       .spec = "svg",
-                                                   },
-                                                   {
-                                                       .name = "PDF Document",
-                                                       .spec = "pdf",
-                                                   }}};
+    std::array<nfdfilteritem_t, 2> filter_list = {
+        {
+            {
+                .name = "SVG Image",
+                .spec = "svg",
+            },
+            {
+                .name = "PDF Document",
+                .spec = "pdf",
+            },
+        },
+    };
     const nfdfiltersize_t filter_count = filter_list.size();
 
     nfdchar_t *out_path = nullptr;
@@ -597,58 +650,46 @@ void PlotController::handlePinRun() {
   }
 
   series_manager_.pinCurrentRun(hists);
+  window_.set_pinned_runs_count(static_cast<int>(series_manager_.getPinnedRunsCount()));
 
-  slint::invoke_from_event_loop([this]() {
-    window_.set_pinned_runs_count(static_cast<int>(series_manager_.getPinnedRunsCount()));
-
-    const int current_idx = window_.get_selected_plot_index();
-    if (current_idx >= 0) {
-      requestPlotUpdate(current_idx, true);
-    }
-  });
+  const int current_idx = window_.get_selected_plot_index();
+  if (current_idx >= 0) {
+    requestPlotUpdate(current_idx, true);
+  }
 }
 
 void PlotController::handleClearPinnedRuns() {
   series_manager_.clearPinnedRuns();
+  window_.set_pinned_runs_count(0);
 
-  slint::invoke_from_event_loop([this]() {
-    window_.set_pinned_runs_count(0);
-
-    const int current_idx = window_.get_selected_plot_index();
-    if (current_idx >= 0) {
-      requestPlotUpdate(current_idx, true);
-    }
-  });
+  const int current_idx = window_.get_selected_plot_index();
+  if (current_idx >= 0) {
+    requestPlotUpdate(current_idx, true);
+  }
 }
 
 void PlotController::handleToggleCurveVisibility(int curve_id, bool visible) {
   series_manager_.setCurveVisible(curve_id, visible);
-  slint::invoke_from_event_loop([this]() {
-    const int current_idx = window_.get_selected_plot_index();
-    if (current_idx >= 0) {
-      requestPlotUpdate(current_idx, true);
-    }
-  });
+  const int current_idx = window_.get_selected_plot_index();
+  if (current_idx >= 0) {
+    requestPlotUpdate(current_idx, true);
+  }
 }
 
 void PlotController::handleToggleAllCurves(bool visible) {
   series_manager_.setAllCurvesVisible(visible);
-  slint::invoke_from_event_loop([this]() {
-    const int current_idx = window_.get_selected_plot_index();
-    if (current_idx >= 0) {
-      requestPlotUpdate(current_idx, true);
-    }
-  });
+  const int current_idx = window_.get_selected_plot_index();
+  if (current_idx >= 0) {
+    requestPlotUpdate(current_idx, true);
+  }
 }
 
 void PlotController::handleToggleDifferencePlot(bool show_difference) {
   series_manager_.setShowDifference(show_difference);
-  slint::invoke_from_event_loop([this]() {
-    const int current_idx = window_.get_selected_plot_index();
-    if (current_idx >= 0) {
-      requestPlotUpdate(current_idx, true);
-    }
-  });
+  const int current_idx = window_.get_selected_plot_index();
+  if (current_idx >= 0) {
+    requestPlotUpdate(current_idx, true);
+  }
 }
 
 void PlotController::handleZoomRect(float start_x, float start_y, float end_x, float end_y) {

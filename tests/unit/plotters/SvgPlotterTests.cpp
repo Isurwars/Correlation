@@ -154,8 +154,9 @@ TEST(SvgPlotterTests, RendersWithHover2DNearestSnapping) {
   std::string svg = renderHistogramAsSvg(hist, config, hover);
   EXPECT_FALSE(svg.empty());
 
-  // Verify that "Si-O" is identified as the nearest curve
-  EXPECT_NE(svg.find("Si-O: 1.0000 (nearest)"), std::string::npos);
+  // Verify that "Si-O" (y=1.0 -> sy=746.7) is identified and snapped to as nearest curve
+  EXPECT_NE(svg.find("y1=\"746.7\""), std::string::npos);
+  EXPECT_NE(svg.find("y2=\"746.7\""), std::string::npos);
 }
 
 TEST(SvgPlotterTests, RendersShadedCurveCorrectly) {
@@ -193,7 +194,8 @@ TEST(SvgPlotterTests, RendersContinuousColormapsAndCustomColors) {
   // Test custom curve color override
   PlotConfig custom_config;
   std::map<std::string, std::string> custom_colors = {{"Total", "#FF00FF"}};
-  std::string custom_svg = renderHistogramAsSvg(hist, custom_config, {}, {}, {}, custom_colors);
+  std::string custom_svg =
+      renderHistogramAsSvg(hist, custom_config, HoverInfo(), {}, {}, custom_colors);
   EXPECT_NE(custom_svg.find("stroke=\"#FF00FF\""), std::string::npos);
 }
 
@@ -271,17 +273,18 @@ TEST(SvgPlotterTests, ScreenToDataGeometryTransformsAccurately) {
   EXPECT_DOUBLE_EQ(geom.px0, 100.0);
   EXPECT_DOUBLE_EQ(geom.px1, 960.0);
   EXPECT_DOUBLE_EQ(geom.py0, 50.0);
-  EXPECT_DOUBLE_EQ(geom.py1, 530.0);
+  EXPECT_DOUBLE_EQ(geom.py1, 510.0);
 
-  detail::NiceScale xs(detail::DataRange{.min = 0.0, .max = 10.0}, 10, true);
-  detail::NiceScale ys(detail::DataRange{.min = 0.0, .max = 5.0}, 5, true);
+  detail::NiceScale x_scale(detail::DataRange{.min = 0.0, .max = 10.0}, 10, true);
+  detail::NiceScale y_scale(detail::DataRange{.min = 0.0, .max = 5.0}, 5, true);
 
   // Screen matches SVG 1:1 when widget is 1000x600
-  auto [data_x, data_y] = detail::screenToData(100.0, 530.0, 1000.0, 600.0, config, xs, ys);
+  auto [data_x, data_y] =
+      detail::screenToData(100.0, 510.0, 1000.0, 600.0, config, x_scale, y_scale);
   EXPECT_NEAR(data_x, 0.0, 1e-4);
   EXPECT_NEAR(data_y, 0.0, 1e-4);
 
-  auto [top_x, top_y] = detail::screenToData(960.0, 50.0, 1000.0, 600.0, config, xs, ys);
+  auto [top_x, top_y] = detail::screenToData(960.0, 50.0, 1000.0, 600.0, config, x_scale, y_scale);
   EXPECT_NEAR(top_x, 10.0, 1e-4);
   EXPECT_NEAR(top_y, 5.0, 1e-4);
 }

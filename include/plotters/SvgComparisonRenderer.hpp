@@ -77,8 +77,8 @@ struct SvgComparisonRenderer {
       y_label += std::format(" ({})", y_unit);
     }
 
-    kWidth = config->effective_width();
-    kHeight = config->effective_height();
+    kWidth = config->effectiveWidth();
+    kHeight = config->effectiveHeight();
     const auto margin_left = static_cast<real_t>(100.0);
     const auto margin_right = static_cast<real_t>(40.0);
     const auto margin_top = static_cast<real_t>(50.0);
@@ -121,9 +121,9 @@ struct SvgComparisonRenderer {
           "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
           "<text x=\"{3:.1f}\" y=\"{4:.1f}\" font-family=\"'Outfit', 'Plus Jakarta Sans', 'Inter', 'Roboto', 'Helvetica Neue', "
           "sans-serif\" font-size=\"{5:.1f}\" text-anchor=\"middle\" fill=\"{6}\">No comparison data</text></svg>",
-          kWidth, kHeight, config->bg_color(), kWidth / static_cast<real_t>(2.0),
+          kWidth, kHeight, config->bgColor(), kWidth / static_cast<real_t>(2.0),
           kHeight / static_cast<real_t>(2.0) + static_cast<real_t>(8.0),
-          static_cast<real_t>(24.0) * config->font_scale, config->text_color());
+          static_cast<real_t>(24.0) * config->font_scale, config->textColor());
     }
     std::string no_data_path = Roboto::instance().render(TextRenderParameters{
         .text = "No comparison data",
@@ -136,7 +136,7 @@ struct SvgComparisonRenderer {
         "<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
         "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
         "<path d=\"{3}\" fill=\"{4}\" fill-rule=\"evenodd\" stroke=\"none\"/></svg>",
-        kWidth, kHeight, config->bg_color(), no_data_path, config->text_color());
+        kWidth, kHeight, config->bgColor(), no_data_path, config->textColor());
   }
 
   void computeScales() {
@@ -198,7 +198,7 @@ struct SvgComparisonRenderer {
         px0, py0, px1 - px0, py1 - py0);
     svg << "  </defs>\n";
     svg << std::format("  <rect width=\"100%\" height=\"100%\" fill=\"{}\" rx=\"6\"/>\n",
-                       config->bg_color());
+                       config->bgColor());
   }
 
   void drawGridAndAxes() {
@@ -207,15 +207,15 @@ struct SvgComparisonRenderer {
       if (config->show_grid) {
         svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                            "stroke=\"{}\" stroke-width=\"0.8\" stroke-dasharray=\"3,3\"/>\n",
-                           px0, spy, px1, spy, config->grid_color());
+                           px0, spy, px1, spy, config->gridColor());
       }
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                          "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
-                         px0 - static_cast<real_t>(8.0), spy, px0, spy, config->axis_color());
+                         px0 - static_cast<real_t>(8.0), spy, px0, spy, config->axisColor());
       svg << renderTextAsPath(detail::fmtScientific(y_value), px0 - static_cast<real_t>(15.0),
                               spy + static_cast<real_t>(7.0),
                               static_cast<real_t>(20.0) * config->font_scale, TextAnchor::End,
-                              config->text_color(), config->use_native_text);
+                              config->textColor(), config->use_native_text);
     }
 
     for (real_t x_value : xScale.ticks) {
@@ -223,19 +223,19 @@ struct SvgComparisonRenderer {
       if (config->show_grid) {
         svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                            "stroke=\"{}\" stroke-width=\"0.8\" stroke-dasharray=\"3,3\"/>\n",
-                           spx, py0, spx, py1, config->grid_color());
+                           spx, py0, spx, py1, config->gridColor());
       }
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                          "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
-                         spx, py1, spx, py1 + static_cast<real_t>(8.0), config->axis_color());
+                         spx, py1, spx, py1 + static_cast<real_t>(8.0), config->axisColor());
       svg << renderTextAsPath(detail::fmtScientific(x_value), spx, py1 + static_cast<real_t>(25.0),
                               static_cast<real_t>(20.0) * config->font_scale, TextAnchor::Middle,
-                              config->text_color(), config->use_native_text);
+                              config->textColor(), config->use_native_text);
     }
 
     svg << std::format("  <rect x=\"{:.1f}\" y=\"{:.1f}\" width=\"{:.1f}\" height=\"{:.1f}\" "
                        "fill=\"none\" stroke=\"{}\" stroke-width=\"1.5\"/>\n",
-                       px0, py0, px1 - px0, py1 - py0, config->axis_color());
+                       px0, py0, px1 - px0, py1 - py0, config->axisColor());
   }
 
   void drawAreaFills() {
@@ -406,7 +406,8 @@ struct SvgComparisonRenderer {
       return;
     }
     for (const auto &ref : config->reference_lines) {
-      std::string color = ref.color_hex.empty() ? config->axis_color() : ref.color_hex;
+      std::string_view color =
+          ref.color_hex.empty() ? config->axisColor() : std::string_view(ref.color_hex);
       if (ref.is_vertical) {
         if (ref.value >= xScale.min && ref.value <= xScale.max) {
           real_t spx = detail::mapValue(ref.value, xScale.min, xScale.max, px0, px1);
@@ -449,7 +450,7 @@ struct SvgComparisonRenderer {
         svg << renderTextAsPath(label, legend_x - static_cast<real_t>(45.0),
                                 legend_y + static_cast<real_t>(6.0),
                                 static_cast<real_t>(18.0) * config->font_scale, TextAnchor::End,
-                                config->text_color(), config->use_native_text);
+                                config->textColor(), config->use_native_text);
         legend_y += static_cast<real_t>(28.0);
       }
     }
@@ -459,13 +460,13 @@ struct SvgComparisonRenderer {
     svg << renderTextAsPath(x_label, (px0 + px1) / static_cast<real_t>(2.0),
                             py1 + static_cast<real_t>(75.0),
                             static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle,
-                            config->text_color(), config->use_native_text);
+                            config->textColor(), config->use_native_text);
 
     svg << std::format("  <g transform=\"translate({:.1f}, {:.1f}) rotate(-90)\">\n",
                        static_cast<real_t>(40.0), (py0 + py1) / static_cast<real_t>(2.0));
     svg << renderTextAsPath(y_label, static_cast<real_t>(0.0), static_cast<real_t>(0.0),
                             static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle,
-                            config->text_color(), config->use_native_text);
+                            config->textColor(), config->use_native_text);
     svg << "  </g>\n";
   }
 
@@ -530,7 +531,7 @@ struct SvgComparisonRenderer {
 
         svg << std::format(
             "  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"6\" fill=\"{}\" stroke=\"{}\" stroke-width=\"2\"/>\n",
-            sx_data, sy_data, col, config->bg_color());
+            sx_data, sy_data, col, config->bgColor());
 
         hover_values.emplace_back(dataset.label, y_val, col);
       } else {
@@ -646,7 +647,7 @@ struct SvgComparisonRenderer {
 
     svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                        "stroke=\"{}\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n",
-                       sx_data, py0, sx_data, py1, config->axis_color());
+                       sx_data, py0, sx_data, py1, config->axisColor());
 
     real_t snapped_sy_data = static_cast<real_t>(-1.0);
     auto hover_values =
@@ -655,10 +656,8 @@ struct SvgComparisonRenderer {
     if (snapped_sy_data >= py0 && snapped_sy_data <= py1) {
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                          "stroke=\"{}\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n",
-                         px0, snapped_sy_data, sx_data, snapped_sy_data, config->axis_color());
+                         px0, snapped_sy_data, sx_data, snapped_sy_data, config->axisColor());
     }
-
-    drawTooltipBox({sx_data, snapped_sy_data, target_x}, best_label, hover_values);
   }
 
   std::string getResult() {
@@ -674,7 +673,8 @@ struct SvgComparisonRenderer {
  */
 inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &datasets,
                                        const std::string &partial_key = "Total",
-                                       const PlotConfig &config = {}, const HoverInfo &hover = {}) {
+                                       const PlotConfig &config = PlotConfig(),
+                                       const HoverInfo &hover = HoverInfo()) {
   if (datasets.empty()) {
     return "";
   }

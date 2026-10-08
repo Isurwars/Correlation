@@ -198,13 +198,16 @@ std::optional<ReleaseInfo> UpdateChecker::fetchLatestRelease() {
       "User-Agent: Correlation-App",
       "-H",
       "Accept: application/vnd.github.v3+json",
-      "https://api.github.com/repos/Isurwars/Correlation/releases/latest"};
+      "https://api.github.com/repos/Isurwars/Correlation/releases/latest",
+  };
 
-  std::array<char *, 10> args = {arg_strs[0].data(), arg_strs[1].data(),
-                                 arg_strs[2].data(), arg_strs[3].data(),
-                                 arg_strs[4].data(), arg_strs[5].data(),
-                                 arg_strs[6].data(), arg_strs[7].data(),
-                                 arg_strs[8].data(), nullptr};
+  std::array<char *, 10> args = {
+      arg_strs[0].data(), arg_strs[1].data(),
+      arg_strs[2].data(), arg_strs[3].data(),
+      arg_strs[4].data(), arg_strs[5].data(),
+      arg_strs[6].data(), arg_strs[7].data(),
+      arg_strs[8].data(), nullptr,
+  };
 
   pid_t pid = 0;
   const int spawn_res = posix_spawnp(&pid, args[0], &actions, nullptr, args.data(), environ);

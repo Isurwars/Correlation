@@ -535,9 +535,9 @@
     "semantic_hash": ""
   },
   "tests/functional/app/SlintSvgIntegrationTests.cpp": {
-    "mtime": 1790181953.052246,
-    "ast_hash": "c2442c5396f4cc71feff86f8cc3e7a5f",
-    "semantic_hash": "c2442c5396f4cc71feff86f8cc3e7a5f"
+    "mtime": 1791414310.2252285,
+    "ast_hash": "d2e3d1e25ad0d105756b4887cb52d325",
+    "semantic_hash": ""
   },
   "tests/functional/core/AtomTests.cpp": {
     "mtime": 1791183856.8857505,
@@ -800,8 +800,8 @@
     "semantic_hash": "d4bdccb3d0944d2f42d20a4d4e2a031b"
   },
   "tests/unit/plotters/SvgPlotterTests.cpp": {
-    "mtime": 1790635128.4151027,
-    "ast_hash": "5797d4dc83437cbe62036b0ed2209039",
+    "mtime": 1791424487.3024657,
+    "ast_hash": "c3367fe06d9645ebabc11c4688980dc1",
     "semantic_hash": ""
   },
   "tests/unit/readers/ArcReaderTests.cpp": {
@@ -1230,18 +1230,18 @@
     "semantic_hash": ""
   },
   "include/plotters/PlotTypes.hpp": {
-    "mtime": 1790634393.5494416,
-    "ast_hash": "99f550f2fc0ceb98ff876bb32b1ff8a1",
+    "mtime": 1791424525.0677266,
+    "ast_hash": "e6700303dc16f8260f55f7ddc43a62e5",
     "semantic_hash": ""
   },
   "include/plotters/SvgComparisonRenderer.hpp": {
-    "mtime": 1791215562.5522277,
-    "ast_hash": "b765a979a583c2dd21b236e1530c2b63",
+    "mtime": 1791414606.6707861,
+    "ast_hash": "fd23beabab0d006fbf8af1aeedc61d38",
     "semantic_hash": ""
   },
   "include/plotters/SvgHistogramRenderer.hpp": {
-    "mtime": 1790634451.6256998,
-    "ast_hash": "c964ac3a3ca76a0a57fb5c9792ddc778",
+    "mtime": 1791414665.4103954,
+    "ast_hash": "7756d72641647c3b94dd61d49839d124",
     "semantic_hash": ""
   },
   "tests/unit/math/Matrix3Tests.cpp": {
@@ -2015,8 +2015,8 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/PlotController.hpp": {
-    "mtime": 1791351704.0058494,
-    "ast_hash": "bed46fdd4e953b4be302232593221177",
+    "mtime": 1791414224.8416224,
+    "ast_hash": "d435ccfbcfebfdfe4e05b6e83f8750b5",
     "semantic_hash": ""
   },
   "include/app/viewmodel/PresetController.hpp": {
@@ -2025,8 +2025,8 @@
     "semantic_hash": ""
   },
   "src/app/core/AppController.cpp": {
-    "mtime": 1791255329.5012891,
-    "ast_hash": "49a25adced1290b1047bd4afaaef90d8",
+    "mtime": 1791412398.0183997,
+    "ast_hash": "d8eb93d257bdeeb7f6e684d4430be845",
     "semantic_hash": ""
   },
   "src/app/core/SettingsManager.cpp": {
@@ -2090,7 +2090,7 @@
     "semantic_hash": ""
   },
   "src/app/services/UpdateChecker.cpp": {
-    "mtime": 1791351704.0219061,
+    "mtime": 1791412752.8931293,
     "ast_hash": "a262016459f0c3ba121121e69d11b670",
     "semantic_hash": ""
   },
@@ -2105,8 +2105,8 @@
     "semantic_hash": ""
   },
   "src/app/viewmodel/PlotController.cpp": {
-    "mtime": 1791351939.561867,
-    "ast_hash": "9a94c60209e462e7bca16de5bf5b2417",
+    "mtime": 1791424525.08346,
+    "ast_hash": "a57e150c1d02a5838c892e1119593db2",
     "semantic_hash": ""
   },
   "src/app/viewmodel/PresetController.cpp": {

@@ -114,10 +114,7 @@ void AppController::registerActionCallbacks() {
 }
 
 void AppController::registerPlotCallbacks() {
-  window_.on_select_plot([this](int index) {
-    slint::invoke_from_event_loop(
-        [this, index]() { plot_controller_->requestPlotUpdate(index, true); });
-  });
+  window_.on_select_plot([this](int index) { plot_controller_->requestPlotUpdate(index, true); });
 
   window_.on_toggle_curve_visibility([this](int curve_id, bool visible) {
     plot_controller_->handleToggleCurveVisibility(curve_id, visible);

@@ -53,15 +53,33 @@ TEST_F(SlintSvgIntegrationTests, FailsWithDotExtension) {
   EXPECT_EQ(img.size().height, 0);
 }
 
-TEST_F(SlintSvgIntegrationTests, DataUriLoadingFailsAsExpected) {
-  // Data URIs are typically not supported natively by slint_image_load_from_path in this version
-  std::string const b64 =
-      "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgc3Ryb2tlPSJncmVlbiIgc3Ryb2tlLXdpZHRoPSI0IiBmaWxsPSJ5ZWxsb3ciIC8+PC9zdmc+";
-  std::string const uri = "data:image/svg+xml;base64," + b64;
-  auto img = slint::Image::load_from_path(slint::SharedString(uri));
+TEST_F(SlintSvgIntegrationTests, LoadsSvgFromDataWithoutCacheCollision) {
+  std::string svg1 =
+      R"(<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="red"/></svg>)";
+  std::vector<uint8_t> data1(svg1.begin(), svg1.end());
+  auto img1 = slint::Image::load_from_data(data1, "svg");
+  EXPECT_EQ(img1.size().width, 100);
+  EXPECT_EQ(img1.size().height, 100);
 
-  EXPECT_EQ(img.size().width, 0);
-  EXPECT_EQ(img.size().height, 0);
+  std::string svg2 =
+      R"(<svg xmlns="http://www.w3.org/2000/svg" width="200" height="150"><rect width="200" height="150" fill="blue"/></svg>)";
+  std::vector<uint8_t> data2(svg2.begin(), svg2.end());
+  auto img2 = slint::Image::load_from_data(data2, "svg");
+  EXPECT_EQ(img2.size().width, 200);
+  EXPECT_EQ(img2.size().height, 150);
+}
+
+TEST_F(SlintSvgIntegrationTests, LoadsSvgFromDataInSeparateThread) {
+  std::string svg =
+      R"(<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200"><circle cx="150" cy="100" r="50" fill="green"/></svg>)";
+  std::vector<uint8_t> data(svg.begin(), svg.end());
+  slint::Image img;
+
+  std::jthread worker([&]() { img = slint::Image::load_from_data(data, "svg"); });
+  worker.join();
+
+  EXPECT_EQ(img.size().width, 300);
+  EXPECT_EQ(img.size().height, 200);
 }
 
 } // namespace

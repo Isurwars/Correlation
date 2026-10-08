@@ -83,17 +83,17 @@ struct SvgHistogramRenderer {
       y_label += std::format(" ({})", y_unit);
     }
 
-    kW = config->effective_width();
-    kH = config->effective_height();
-    const real_t kLeft = static_cast<real_t>(100.0);
-    const real_t kRight = static_cast<real_t>(40.0);
-    const real_t kTop = static_cast<real_t>(50.0);
-    const real_t kBot = static_cast<real_t>(90.0);
+    kW = config->effectiveWidth();
+    kH = config->effectiveHeight();
+    const auto margin_left = static_cast<real_t>(100.0);
+    const auto margin_right = static_cast<real_t>(40.0);
+    const auto margin_top = static_cast<real_t>(50.0);
+    const auto margin_bot = static_cast<real_t>(90.0);
 
-    px0 = kLeft;
-    px1 = kW - kRight;
-    py0 = kTop;
-    py1 = kH - kBot;
+    px0 = margin_left;
+    px1 = kW - margin_right;
+    py0 = margin_top;
+    py1 = kH - margin_bot;
   }
 
   [[nodiscard]] bool isCurveVisible(const std::string &key) const {
@@ -162,9 +162,9 @@ struct SvgHistogramRenderer {
           "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
           "<text x=\"{3:.1f}\" y=\"{4:.1f}\" font-family=\"'Outfit', 'Plus Jakarta Sans', 'Inter', 'Roboto', 'Helvetica Neue', "
           "sans-serif\" font-size=\"{5:.1f}\" text-anchor=\"middle\" fill=\"{6}\">No data available</text></svg>",
-          kW, kH, config->bg_color(), kW / static_cast<real_t>(2.0),
+          kW, kH, config->bgColor(), kW / static_cast<real_t>(2.0),
           kH / static_cast<real_t>(2.0) + static_cast<real_t>(8.0),
-          static_cast<real_t>(24.0) * config->font_scale, config->text_color());
+          static_cast<real_t>(24.0) * config->font_scale, config->textColor());
     }
     std::string no_data_path = Roboto::instance().render(TextRenderParameters{
         .text = "No data available",
@@ -177,7 +177,7 @@ struct SvgHistogramRenderer {
         "<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
         "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
         "<path d=\"{3}\" fill=\"{4}\" fill-rule=\"evenodd\" stroke=\"none\"/></svg>",
-        kW, kH, config->bg_color(), no_data_path, config->text_color());
+        kW, kH, config->bgColor(), no_data_path, config->textColor());
   }
 
   void computeScales() {
@@ -262,7 +262,7 @@ struct SvgHistogramRenderer {
         px0, py0, px1 - px0, py1 - py0);
     svg << "  </defs>\n";
     svg << std::format("  <rect width=\"100%\" height=\"100%\" fill=\"{}\" rx=\"6\"/>\n",
-                       config->bg_color());
+                       config->bgColor());
   }
 
   void drawGridAndAxes() {
@@ -272,15 +272,15 @@ struct SvgHistogramRenderer {
       if (config->show_grid) {
         svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                            "stroke=\"{}\" stroke-width=\"0.8\" stroke-dasharray=\"3,3\"/>\n",
-                           px0, spy, px1, spy, config->grid_color());
+                           px0, spy, px1, spy, config->gridColor());
       }
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                          "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
-                         px0 - static_cast<real_t>(8.0), spy, px0, spy, config->axis_color());
+                         px0 - static_cast<real_t>(8.0), spy, px0, spy, config->axisColor());
       svg << renderTextAsPath(fmtScientific(y_val), px0 - static_cast<real_t>(15.0),
                               spy + static_cast<real_t>(7.0),
                               static_cast<real_t>(20.0) * config->font_scale, TextAnchor::End,
-                              config->text_color(), config->use_native_text);
+                              config->textColor(), config->use_native_text);
     }
 
     for (real_t x_val : xScale.ticks) {
@@ -288,19 +288,19 @@ struct SvgHistogramRenderer {
       if (config->show_grid) {
         svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                            "stroke=\"{}\" stroke-width=\"0.8\" stroke-dasharray=\"3,3\"/>\n",
-                           spx, py0, spx, py1, config->grid_color());
+                           spx, py0, spx, py1, config->gridColor());
       }
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                          "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
-                         spx, py1, spx, py1 + static_cast<real_t>(8.0), config->axis_color());
+                         spx, py1, spx, py1 + static_cast<real_t>(8.0), config->axisColor());
       svg << renderTextAsPath(fmtScientific(x_val), spx, py1 + static_cast<real_t>(25.0),
                               static_cast<real_t>(20.0) * config->font_scale, TextAnchor::Middle,
-                              config->text_color(), config->use_native_text);
+                              config->textColor(), config->use_native_text);
     }
 
     svg << std::format("  <rect x=\"{:.1f}\" y=\"{:.1f}\" width=\"{:.1f}\" height=\"{:.1f}\" "
                        "fill=\"none\" stroke=\"{}\" stroke-width=\"1.5\"/>\n",
-                       px0, py0, px1 - px0, py1 - py0, config->axis_color());
+                       px0, py0, px1 - px0, py1 - py0, config->axisColor());
   }
 
   void drawEmphasisLines() {
@@ -323,7 +323,7 @@ struct SvgHistogramRenderer {
                 : "";
         svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                            "stroke=\"{}\" stroke-width=\"1.8\"{}/>\n",
-                           px0, spy, px1, spy, config->axis_color(), extra);
+                           px0, spy, px1, spy, config->axisColor(), extra);
       }
     }
   }
@@ -400,14 +400,14 @@ struct SvgHistogramRenderer {
       return;
     }
     for (const auto &ref : config->reference_lines) {
-      std::string color = ref.color_hex.empty() ? config->axis_color() : ref.color_hex;
+      std::string_view color =
+          ref.color_hex.empty() ? config->axisColor() : std::string_view(ref.color_hex);
       if (ref.is_vertical) {
         if (ref.value >= xScale.min && ref.value <= xScale.max) {
           real_t spx = mapValue(ref.value, xScale.min, xScale.max, px0, px1);
-          svg << std::format(
-              "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-              "stroke=\"{}\" stroke-width=\"1.8\" stroke-dasharray=\"4,4\"/>\n",
-              spx, py0, spx, py1, color);
+          svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                             "stroke=\"{}\" stroke-width=\"1.8\" stroke-dasharray=\"4,4\"/>\n",
+                             spx, py0, spx, py1, color);
           if (!ref.label.empty()) {
             svg << renderTextAsPath(ref.label, spx + static_cast<real_t>(5.0),
                                     py0 + static_cast<real_t>(18.0),
@@ -418,10 +418,9 @@ struct SvgHistogramRenderer {
       } else {
         if (ref.value >= yScale.min && ref.value <= yScale.max) {
           real_t spy = mapValue(ref.value, yScale.min, yScale.max, py1, py0);
-          svg << std::format(
-              "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-              "stroke=\"{}\" stroke-width=\"1.8\" stroke-dasharray=\"4,4\"/>\n",
-              px0, spy, px1, spy, color);
+          svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                             "stroke=\"{}\" stroke-width=\"1.8\" stroke-dasharray=\"4,4\"/>\n",
+                             px0, spy, px1, spy, color);
           if (!ref.label.empty()) {
             svg << renderTextAsPath(ref.label, px0 + static_cast<real_t>(8.0),
                                     spy - static_cast<real_t>(5.0),
@@ -447,7 +446,7 @@ struct SvgHistogramRenderer {
       svg << renderTextAsPath(iter.first, legend_x - static_cast<real_t>(45.0),
                               legend_y + static_cast<real_t>(6.0),
                               static_cast<real_t>(18.0) * config->font_scale, TextAnchor::End,
-                              config->text_color(), config->use_native_text);
+                              config->textColor(), config->use_native_text);
       legend_y += static_cast<real_t>(28.0);
     }
   }
@@ -456,13 +455,13 @@ struct SvgHistogramRenderer {
     svg << renderTextAsPath(x_label, (px0 + px1) / static_cast<real_t>(2.0),
                             py1 + static_cast<real_t>(75.0),
                             static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle,
-                            config->text_color(), config->use_native_text);
+                            config->textColor(), config->use_native_text);
 
     svg << std::format("  <g transform=\"translate({:.1f}, {:.1f}) rotate(-90)\">\n",
                        static_cast<real_t>(40.0), (py0 + py1) / static_cast<real_t>(2.0));
     svg << renderTextAsPath(y_label, static_cast<real_t>(0.0), static_cast<real_t>(0.0),
                             static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle,
-                            config->text_color(), config->use_native_text);
+                            config->textColor(), config->use_native_text);
     svg << "  </g>\n";
   }
 
@@ -597,7 +596,7 @@ struct SvgHistogramRenderer {
 
     svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                        "stroke=\"{}\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n",
-                       sx_data, py0, sx_data, py1, config->axis_color());
+                       sx_data, py0, sx_data, py1, config->axisColor());
 
     std::vector<std::tuple<std::string, real_t, std::string>> hover_values;
     std::size_t color_idx = 0;
@@ -614,7 +613,7 @@ struct SvgHistogramRenderer {
 
         svg << std::format(
             "  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"6\" fill=\"{}\" stroke=\"{}\" stroke-width=\"2\"/>\n",
-            sx_data, sy_data, col, config->bg_color());
+            sx_data, sy_data, col, config->bgColor());
 
         hover_values.emplace_back(key, y_val, col);
       }
@@ -623,10 +622,10 @@ struct SvgHistogramRenderer {
     if (snapped_sy_data >= py0 && snapped_sy_data <= py1) {
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                          "stroke=\"{}\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n",
-                         px0, snapped_sy_data, sx_data, snapped_sy_data, config->axis_color());
+                         px0, snapped_sy_data, sx_data, snapped_sy_data, config->axisColor());
     }
 
-    drawTooltipBox({sx_data, snapped_sy_data, target_x}, best.key, hover_values);
+    // Floating tooltip card over image disabled per UI requirements
   }
 
   std::string getResult() {
@@ -641,8 +640,9 @@ struct SvgHistogramRenderer {
  * @brief Renders a `Histogram` as a self-contained SVG string.
  */
 inline std::string
-renderHistogramAsSvg(const correlation::analysis::Histogram &hist, const PlotConfig &config = {},
-                     const HoverInfo &hover = {}, const std::map<std::string, real_t> &weights = {},
+renderHistogramAsSvg(const correlation::analysis::Histogram &hist,
+                     const PlotConfig &config = PlotConfig(), const HoverInfo &hover = HoverInfo(),
+                     const std::map<std::string, real_t> &weights = {},
                      const std::map<std::string, bool> &curve_visibility = {},
                      const std::map<std::string, std::string> &custom_colors = {}) {
   detail::SvgHistogramRenderer renderer(hist, config, hover, weights, curve_visibility,

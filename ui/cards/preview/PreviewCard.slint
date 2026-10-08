@@ -72,21 +72,57 @@ export component PreviewCard inherits FilledCard {
     property <int> active_color_picker_id: -1;
 
     private property <[color]> swatch_colors: [
-        #e69f00, #56b4e9, #009e73, #f0e442,
-        #0072b2, #d55e00, #cc79a7, #000000,
-        #e76f51, #f4a261, #e9c46a, #2a9d8f,
-        #457b9d, #1d3557, #6a0572, #ab1344,
-        #ff4d6d, #70e000, #3a86ff, #8338ec,
-        #ff006e, #fb5607, #ffbe0b, #ffffff
+        #e69f00,
+        #56b4e9,
+        #009e73,
+        #f0e442,
+        #0072b2,
+        #d55e00,
+        #cc79a7,
+        #000000,
+        #e76f51,
+        #f4a261,
+        #e9c46a,
+        #2a9d8f,
+        #457b9d,
+        #1d3557,
+        #6a0572,
+        #ab1344,
+        #ff4d6d,
+        #70e000,
+        #3a86ff,
+        #8338ec,
+        #ff006e,
+        #fb5607,
+        #ffbe0b,
+        #ffffff
     ];
 
     private property <[string]> swatch_hexes: [
-        "#E69F00", "#56B4E9", "#009E73", "#F0E442",
-        "#0072B2", "#D55E00", "#CC79A7", "#000000",
-        "#E76F51", "#F4A261", "#E9C46A", "#2A9D8F",
-        "#457B9D", "#1D3557", "#6A0572", "#AB1344",
-        "#FF4D6D", "#70E000", "#3A86FF", "#8338EC",
-        "#FF006E", "#FB5607", "#FFBE0B", "#FFFFFF"
+        "#E69F00",
+        "#56B4E9",
+        "#009E73",
+        "#F0E442",
+        "#0072B2",
+        "#D55E00",
+        "#CC79A7",
+        "#000000",
+        "#E76F51",
+        "#F4A261",
+        "#E9C46A",
+        "#2A9D8F",
+        "#457B9D",
+        "#1D3557",
+        "#6A0572",
+        "#AB1344",
+        "#FF4D6D",
+        "#70E000",
+        "#3A86FF",
+        "#8338EC",
+        "#FF006E",
+        "#FB5607",
+        "#FFBE0B",
+        "#FFFFFF"
     ];
 
     // Workflow properties & callbacks
@@ -162,7 +198,6 @@ export component PreviewCard inherits FilledCard {
 
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
-
 
     Vertical {
         spacing: MaterialStyleMetrics.spacing_8;
@@ -436,12 +471,14 @@ export component PreviewCard inherits FilledCard {
                                     color: MaterialPalette.on_surface;
                                     vertical-alignment: center;
                                 }
+
                                 MaterialText {
                                     text: "• " + root.total_atoms + " atoms";
                                     style: MaterialTypography.body_medium;
                                     color: MaterialPalette.on_surface_variant;
                                     vertical-alignment: center;
                                 }
+
                                 MaterialText {
                                     text: "• " + root.num_frames + " frames";
                                     style: MaterialTypography.body_medium;
@@ -512,16 +549,18 @@ export component PreviewCard inherits FilledCard {
                     pointer-event(event) => {
                         if (event.kind == PointerEventKind.down) {
                             if (event.button == PointerEventButton.right || event.button == PointerEventButton.middle) {
-                                root.is_panning = true;
-                                root.pan_last_x = self.mouse-x;
-                                root.pan_last_y = self.mouse-y;
+                                if (root.active_tool != 0) {
+                                    root.active_tool = 0;
+                                } else {
+                                    root.is_panning = true;
+                                    root.pan_last_x = self.mouse-x;
+                                    root.pan_last_y = self.mouse-y;
+                                }
                             } else if (event.button == PointerEventButton.left) {
                                 if (root.active_tool == 2) {
                                     root.add_marker_at(self.mouse-x / 1px, self.mouse-y / 1px, true);
-                                    root.active_tool = 0;
                                 } else if (root.active_tool == 3) {
                                     root.add_marker_at(self.mouse-x / 1px, self.mouse-y / 1px, false);
-                                    root.active_tool = 0;
                                 } else if (root.active_tool == 1) {
                                     root.drag_start_x = self.mouse-x;
                                     root.drag_start_y = self.mouse-y;
@@ -542,6 +581,10 @@ export component PreviewCard inherits FilledCard {
                         } else if (event.kind == PointerEventKind.cancel) {
                             root.is_selecting = false;
                             root.is_panning = false;
+                        } else if (event.kind == PointerEventKind.move) {
+                            if (!root.is_panning && !root.is_selecting) {
+                                root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
+                            }
                         }
                     }
 
@@ -551,6 +594,18 @@ export component PreviewCard inherits FilledCard {
                             root.is_panning = false;
                         }
                         root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
+                    }
+
+                    changed mouse-x => {
+                        if (!root.is_panning && !root.is_selecting && self.has-hover) {
+                            root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
+                        }
+                    }
+
+                    changed mouse-y => {
+                        if (!root.is_panning && !root.is_selecting && self.has-hover) {
+                            root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
+                        }
                     }
 
                     moved => {
@@ -578,24 +633,34 @@ export component PreviewCard inherits FilledCard {
                     }
                 }
 
-                // Hover Crosshairs
-                if plot_touch.has-hover && root.selected_plot_index >= 0 && !root.is_selecting && !root.is_panning : Rectangle {
-                    x: plot_touch.mouse-x;
+                // Hover Crosshairs & Reticle
+                if plot_touch.has-hover && root.selected_plot_index >= 0 && !root.is_selecting && !root.is_panning: Rectangle {
+                    x: plot_touch.mouse-x - 1px;
                     y: 0px;
-                    width: 1px;
+                    width: 2px;
                     height: 100%;
-                    background: MaterialPalette.outline.with_alpha(35%);
+                    background: MaterialPalette.primary.with_alpha(76%);
                 }
-                if plot_touch.has-hover && root.selected_plot_index >= 0 && !root.is_selecting && !root.is_panning : Rectangle {
+                if plot_touch.has-hover && root.selected_plot_index >= 0 && !root.is_selecting && !root.is_panning: Rectangle {
                     x: 0px;
-                    y: plot_touch.mouse-y;
+                    y: plot_touch.mouse-y - 1px;
                     width: 100%;
-                    height: 1px;
-                    background: MaterialPalette.outline.with_alpha(35%);
+                    height: 2px;
+                    background: MaterialPalette.primary.with_alpha(60%);
+                }
+                if plot_touch.has-hover && root.selected_plot_index >= 0 && !root.is_selecting && !root.is_panning: Rectangle {
+                    x: plot_touch.mouse-x - 6px;
+                    y: plot_touch.mouse-y - 6px;
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 6px;
+                    border-width: 2px;
+                    border-color: MaterialPalette.primary.with_alpha(90%);
+                    background: transparent;
                 }
 
                 // Rubberband ROI Box
-                if root.is_selecting : Rectangle {
+                if root.is_selecting: Rectangle {
                     x: Math.min(root.drag_start_x, root.drag_current_x);
                     y: Math.min(root.drag_start_y, root.drag_current_y);
                     width: Math.max(root.drag_start_x, root.drag_current_x) - Math.min(root.drag_start_x, root.drag_current_x);
@@ -771,7 +836,7 @@ export component PreviewCard inherits FilledCard {
                         }
 
                         // Divider before coordinates (only if coordinates present)
-                        if root.hover_coord_text != "" : VerticalLayout {
+                        if root.hover_coord_text != "": VerticalLayout {
                             alignment: center;
                             Rectangle {
                                 width: 1px;
@@ -781,7 +846,7 @@ export component PreviewCard inherits FilledCard {
                         }
 
                         // Live HUD Coordinates (to the right of the buttons!)
-                        if root.hover_coord_text != "" : HorizontalLayout {
+                        if root.hover_coord_text != "": HorizontalLayout {
                             padding-left: 6px;
                             padding-right: 6px;
                             alignment: center;
@@ -943,6 +1008,7 @@ export component PreviewCard inherits FilledCard {
                                     color: MaterialPalette.on_surface;
                                     vertical-alignment: center;
                                 }
+
                                 TouchArea {
                                     width: 20px;
                                     height: 20px;

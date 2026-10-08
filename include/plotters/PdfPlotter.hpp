@@ -14,10 +14,13 @@
 #include "plotters/pdfgen.h"
 
 #include <algorithm>
+#include <charconv>
 #include <cmath>
 #include <format>
 #include <map>
+#include <numbers>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace correlation::plotters {
@@ -25,14 +28,17 @@ namespace correlation::plotters {
 namespace detail {
 
 // Constants
-constexpr real_t kPi = static_cast<real_t>(3.14159265358979323846);
+constexpr real_t PI = std::numbers::pi_v<real_t>;
 
 // Extract color from string "#RRGGBB"
-inline uint32_t parseHexColor(const std::string &hex) {
+inline uint32_t parseHexColor(std::string_view hex) {
   if (hex.length() == 7 && hex[0] == '#') {
-    uint32_t red = std::stoul(hex.substr(1, 2), nullptr, 16);
-    uint32_t green = std::stoul(hex.substr(3, 2), nullptr, 16);
-    uint32_t blue = std::stoul(hex.substr(5, 2), nullptr, 16);
+    unsigned int red = 0;
+    unsigned int green = 0;
+    unsigned int blue = 0;
+    std::from_chars(hex.data() + 1, hex.data() + 3, red, 16);
+    std::from_chars(hex.data() + 3, hex.data() + 5, green, 16);
+    std::from_chars(hex.data() + 5, hex.data() + 7, blue, 16);
     return PDF_RGB(red, green, blue);
   }
   return PDF_BLACK;
@@ -92,27 +98,27 @@ inline std::string fmtScientificPdf(real_t value) {
 // Sanitize unit strings to use ASCII superscripts instead of Unicode
 inline std::string sanitizeUnitPdf(const std::string &unit) {
   std::string clean = unit;
-  auto replaceAll = [](std::string &str, const std::string &search_for,
-                       const std::string &replacement) {
+  auto replace_all = [](std::string &str, const std::string &search_for,
+                        const std::string &replacement) {
     size_t start_pos = 0;
     while ((start_pos = str.find(search_for, start_pos)) != std::string::npos) {
       str.replace(start_pos, search_for.length(), replacement);
       start_pos += replacement.length();
     }
   };
-  replaceAll(clean, "⁻¹", "^-1");
-  replaceAll(clean, "⁻", "^-");
-  replaceAll(clean, "⁰", "^0");
-  replaceAll(clean, "¹", "^1");
-  replaceAll(clean, "²", "^2");
-  replaceAll(clean, "³", "^3");
-  replaceAll(clean, "⁴", "^4");
-  replaceAll(clean, "⁵", "^5");
-  replaceAll(clean, "⁶", "^6");
-  replaceAll(clean, "⁷", "^7");
-  replaceAll(clean, "⁸", "^8");
-  replaceAll(clean, "⁹", "^9");
-  replaceAll(clean, "×", "x");
+  replace_all(clean, "⁻¹", "^-1");
+  replace_all(clean, "⁻", "^-");
+  replace_all(clean, "⁰", "^0");
+  replace_all(clean, "¹", "^1");
+  replace_all(clean, "²", "^2");
+  replace_all(clean, "³", "^3");
+  replace_all(clean, "⁴", "^4");
+  replace_all(clean, "⁵", "^5");
+  replace_all(clean, "⁶", "^6");
+  replace_all(clean, "⁷", "^7");
+  replace_all(clean, "⁸", "^8");
+  replace_all(clean, "⁹", "^9");
+  replace_all(clean, "×", "x");
   return clean;
 }
 
@@ -181,13 +187,13 @@ struct PdfHistogramRenderer {
   PdfHistogramRenderer(const correlation::analysis::Histogram &histogram, const PlotConfig &cfg,
                        pdf_doc *pdf_doc_ptr, struct pdf_object *pdf_page)
       : hist(&histogram), config(&cfg), pdf(pdf_doc_ptr), page(pdf_page),
-        canvas_width(cfg.effective_width()), canvas_height(cfg.effective_height()),
-        px0(static_cast<real_t>(100.0)), px1(cfg.effective_width() - static_cast<real_t>(40.0)),
-        py0(static_cast<real_t>(50.0)), py1(cfg.effective_height() - static_cast<real_t>(90.0)),
-        bg_col(detail::parseHexColor(cfg.bg_color())),
-        axis_col(detail::parseHexColor(cfg.axis_color())),
-        grid_col(detail::parseHexColor(cfg.grid_color())),
-        text_col(detail::parseHexColor(cfg.text_color())) {}
+        canvas_width(cfg.effectiveWidth()), canvas_height(cfg.effectiveHeight()),
+        px0(static_cast<real_t>(100.0)), px1(cfg.effectiveWidth() - static_cast<real_t>(40.0)),
+        py0(static_cast<real_t>(50.0)), py1(cfg.effectiveHeight() - static_cast<real_t>(90.0)),
+        bg_col(detail::parseHexColor(cfg.bgColor())),
+        axis_col(detail::parseHexColor(cfg.axisColor())),
+        grid_col(detail::parseHexColor(cfg.gridColor())),
+        text_col(detail::parseHexColor(cfg.textColor())) {}
 
   real_t toPdfY(real_t y_svg) const { return canvas_height - y_svg; }
 
@@ -384,8 +390,10 @@ struct PdfHistogramRenderer {
                      static_cast<float>(legend_x - static_cast<real_t>(10.0)),
                      static_cast<float>(pdf_y), 4.0F, col);
         detail::drawPdfText(pdf, page, label,
-                            {.x = legend_x - static_cast<real_t>(45.0),
-                             .y = pdf_y - static_cast<real_t>(5.0) * config->font_scale},
+                            {
+                                .x = legend_x - static_cast<real_t>(45.0),
+                                .y = pdf_y - static_cast<real_t>(5.0) * config->font_scale,
+                            },
                             static_cast<real_t>(18.0) * config->font_scale, TextAnchor::End,
                             text_col);
         legend_y += static_cast<real_t>(28.0);
@@ -421,7 +429,7 @@ struct PdfHistogramRenderer {
         pdf, page, y_label,
         {.x = static_cast<real_t>(40.0), .y = toPdfY((py0 + py1) / static_cast<real_t>(2.0))},
         static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle, text_col,
-        detail::kPi / static_cast<real_t>(2.0));
+        detail::PI / static_cast<real_t>(2.0));
   }
 };
 
@@ -456,13 +464,13 @@ struct PdfComparisonRenderer {
   PdfComparisonRenderer(const std::vector<LabeledHistogram> &datasets_ref, const std::string &key,
                         const PlotConfig &cfg, pdf_doc *pdf_doc_ptr, struct pdf_object *pdf_page)
       : datasets(&datasets_ref), query_key(&key), config(&cfg), pdf(pdf_doc_ptr), page(pdf_page),
-        canvas_width(cfg.effective_width()), canvas_height(cfg.effective_height()),
-        px0(static_cast<real_t>(100.0)), px1(cfg.effective_width() - static_cast<real_t>(40.0)),
-        py0(static_cast<real_t>(50.0)), py1(cfg.effective_height() - static_cast<real_t>(90.0)),
-        bg_col(detail::parseHexColor(cfg.bg_color())),
-        axis_col(detail::parseHexColor(cfg.axis_color())),
-        grid_col(detail::parseHexColor(cfg.grid_color())),
-        text_col(detail::parseHexColor(cfg.text_color())) {}
+        canvas_width(cfg.effectiveWidth()), canvas_height(cfg.effectiveHeight()),
+        px0(static_cast<real_t>(100.0)), px1(cfg.effectiveWidth() - static_cast<real_t>(40.0)),
+        py0(static_cast<real_t>(50.0)), py1(cfg.effectiveHeight() - static_cast<real_t>(90.0)),
+        bg_col(detail::parseHexColor(cfg.bgColor())),
+        axis_col(detail::parseHexColor(cfg.axisColor())),
+        grid_col(detail::parseHexColor(cfg.gridColor())),
+        text_col(detail::parseHexColor(cfg.textColor())) {}
 
   real_t toPdfY(real_t y_svg) const { return canvas_height - y_svg; }
 
@@ -521,8 +529,10 @@ struct PdfComparisonRenderer {
                    static_cast<float>(pdf_y), static_cast<float>(px0), static_cast<float>(pdf_y),
                    1.5F, axis_col);
       detail::drawPdfText(pdf, page, detail::fmtScientificPdf(y_val),
-                          {.x = px0 - static_cast<real_t>(15.0),
-                           .y = pdf_y - static_cast<real_t>(5.0) * config->font_scale},
+                          {
+                              .x = px0 - static_cast<real_t>(15.0),
+                              .y = pdf_y - static_cast<real_t>(5.0) * config->font_scale,
+                          },
                           static_cast<real_t>(20.0) * config->font_scale, TextAnchor::End,
                           text_col);
     }
@@ -667,8 +677,10 @@ struct PdfComparisonRenderer {
                      static_cast<float>(legend_x - static_cast<real_t>(10.0)),
                      static_cast<float>(pdf_y), 4.0F, col);
         detail::drawPdfText(pdf, page, label,
-                            {legend_x - static_cast<real_t>(45.0),
-                             pdf_y - static_cast<real_t>(5.0) * config->font_scale},
+                            {
+                                .x = legend_x - static_cast<real_t>(45.0),
+                                .y = pdf_y - static_cast<real_t>(5.0) * config->font_scale,
+                            },
                             static_cast<real_t>(18.0) * config->font_scale, TextAnchor::End,
                             text_col);
         legend_y += static_cast<real_t>(28.0);
@@ -705,7 +717,7 @@ struct PdfComparisonRenderer {
         pdf, page, y_label,
         {.x = static_cast<real_t>(40.0), .y = toPdfY((py0 + py1) / static_cast<real_t>(2.0))},
         static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle, text_col,
-        detail::kPi / static_cast<real_t>(2.0));
+        detail::PI / static_cast<real_t>(2.0));
   }
 };
 
@@ -713,8 +725,8 @@ struct PdfComparisonRenderer {
 
 inline void renderHistogramAsPdf(const correlation::analysis::Histogram &hist,
                                  const std::string &filepath, const PlotConfig &config) {
-  real_t canvas_width = config.effective_width();
-  real_t canvas_height = config.effective_height();
+  real_t canvas_width = config.effectiveWidth();
+  real_t canvas_height = config.effectiveHeight();
 
   // Setup pdfgen
   pdf_info info = {};
@@ -722,8 +734,8 @@ inline void renderHistogramAsPdf(const correlation::analysis::Histogram &hist,
       pdf_create(static_cast<float>(canvas_width), static_cast<float>(canvas_height), &info);
   struct pdf_object *page = pdf_append_page(pdf);
 
-  uint32_t bg_col = detail::parseHexColor(config.bg_color());
-  uint32_t text_col = detail::parseHexColor(config.text_color());
+  uint32_t bg_col = detail::parseHexColor(config.bgColor());
+  uint32_t text_col = detail::parseHexColor(config.textColor());
 
   // Background
   pdf_add_filled_rectangle(pdf, page, 0.0F, 0.0F, static_cast<float>(canvas_width),
@@ -731,12 +743,14 @@ inline void renderHistogramAsPdf(const correlation::analysis::Histogram &hist,
 
   pdf_set_font(pdf, "Helvetica");
 
-  auto toPdfY = [&](real_t y_svg) { return canvas_height - y_svg; };
+  const auto to_pdf_y = [&](real_t y_svg) { return canvas_height - y_svg; };
 
   if (hist.bins.empty() || (hist.smoothed_partials.empty() && hist.partials.empty())) {
     detail::drawPdfText(pdf, page, "No data available",
-                        {.x = canvas_width / static_cast<real_t>(2.0),
-                         .y = toPdfY(canvas_height / static_cast<real_t>(2.0))},
+                        {
+                            .x = canvas_width / static_cast<real_t>(2.0),
+                            .y = to_pdf_y(canvas_height / static_cast<real_t>(2.0)),
+                        },
                         static_cast<real_t>(24.0) * config.font_scale, TextAnchor::Middle,
                         text_col);
     pdf_save(pdf, filepath.c_str());
@@ -770,16 +784,16 @@ inline void renderComparisonPdf(const std::vector<LabeledHistogram> &datasets,
     return;
   }
 
-  real_t canvas_width = config.effective_width();
-  real_t canvas_height = config.effective_height();
+  real_t canvas_width = config.effectiveWidth();
+  real_t canvas_height = config.effectiveHeight();
 
   pdf_info info = {};
   pdf_doc *pdf =
       pdf_create(static_cast<float>(canvas_width), static_cast<float>(canvas_height), &info);
   struct pdf_object *page = pdf_append_page(pdf);
 
-  uint32_t bg_col = detail::parseHexColor(config.bg_color());
-  uint32_t text_col = detail::parseHexColor(config.text_color());
+  uint32_t bg_col = detail::parseHexColor(config.bgColor());
+  uint32_t text_col = detail::parseHexColor(config.textColor());
 
   // Background
   pdf_add_filled_rectangle(pdf, page, 0.0F, 0.0F, static_cast<float>(canvas_width),
@@ -787,7 +801,7 @@ inline void renderComparisonPdf(const std::vector<LabeledHistogram> &datasets,
 
   pdf_set_font(pdf, "Helvetica");
 
-  auto toPdfY = [&](real_t y_svg) { return canvas_height - y_svg; };
+  const auto to_pdf_y = [&](real_t y_svg) { return canvas_height - y_svg; };
 
   detail::PdfComparisonRenderer renderer(datasets, query.key, config, pdf, page);
   if (renderer.prepareData()) {
@@ -799,8 +813,10 @@ inline void renderComparisonPdf(const std::vector<LabeledHistogram> &datasets,
     renderer.drawTitlesAndLabels();
   } else {
     detail::drawPdfText(pdf, page, "No comparison data",
-                        {.x = canvas_width / static_cast<real_t>(2.0),
-                         .y = toPdfY(canvas_height / static_cast<real_t>(2.0))},
+                        {
+                            .x = canvas_width / static_cast<real_t>(2.0),
+                            .y = to_pdf_y(canvas_height / static_cast<real_t>(2.0)),
+                        },
                         static_cast<real_t>(24.0) * config.font_scale, TextAnchor::Middle,
                         text_col);
   }
