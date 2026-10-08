@@ -416,7 +416,7 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
   data.hover = hover;
   data.ashcroft_weights = dispatcher_.getAshcroftWeights();
   data.curve_visibility = series_manager_.getCurveVisibilityMap();
-  data.custom_curve_colors = series_manager_.getCustomColors();
+  data.custom_curve_colors = series_manager_.getAssignedCurveColors();
 
   data.comparison_hists.push_back({.label = "Current", .hist = nullptr});
   for (const auto &pinned_run : series_manager_.getPinnedRuns()) {
@@ -433,7 +433,7 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
   }
 
   {
-    std::lock_guard lock(render_mutex_);
+    const std::scoped_lock lock(render_mutex_);
     pending_task_ = std::move(data);
   }
   render_cv_.notify_one();
@@ -455,7 +455,8 @@ void PlotController::handleSetCurveColor(int curve_id, const slint::SharedString
 
 void PlotController::updateCurveToggleItems(const correlation::analysis::Histogram *hist) {
   const auto active_config = buildPlotConfigFromUI();
-  window_.set_curve_toggle_items(series_manager_.generateToggleItems(hist, active_config));
+  window_.set_curve_toggle_items(
+      series_manager_.generateToggleItems(hist, active_config, dispatcher_.getAshcroftWeights()));
 }
 
 bool PlotController::isPlotCacheHit(int index, const correlation::plotters::PlotConfig &config,
@@ -492,7 +493,7 @@ void PlotController::renderLoop() {
       std::unique_lock lock(render_mutex_);
       render_cv_.wait(lock, [this] { return stop_render_worker_ || pending_task_.has_value(); });
 
-      if (stop_render_worker_) {
+      if (stop_render_worker_ || !pending_task_.has_value()) {
         break;
       }
 

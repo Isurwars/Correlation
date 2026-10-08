@@ -136,11 +136,21 @@ public:
    * @brief Generates the Slint VectorModel of CurveToggleItem for UI presentation.
    * @param[in] hist Pointer to the current active analytical histogram.
    * @param[in] config Active plot rendering configuration for default palette colors.
+   * @param[in] ashcroft_weights Map of partial labels to their Ashcroft-Langreth weights.
    * @return Shared pointer to Slint VectorModel of CurveToggleItem.
    */
   [[nodiscard]] std::shared_ptr<slint::VectorModel<CurveToggleItem>>
   generateToggleItems(const correlation::analysis::Histogram *hist,
-                      const correlation::plotters::PlotConfig &config);
+                      const correlation::plotters::PlotConfig &config,
+                      const std::map<std::string, real_t> &ashcroft_weights = {});
+
+  /**
+   * @brief Retrieves the active assigned colors for current histogram curves (defaults + custom).
+   * @return Const reference to assigned colors map.
+   */
+  [[nodiscard]] const std::map<std::string, std::string> &getAssignedCurveColors() const noexcept {
+    return assigned_curve_colors_;
+  }
 
   /**
    * @brief Resets all series state (visibility overrides, custom colors, pinned runs, and flags).
@@ -150,6 +160,7 @@ public:
 private:
   std::map<std::string, bool> curve_visibility_map_;
   std::map<std::string, std::string> custom_curve_colors_;
+  std::map<std::string, std::string> assigned_curve_colors_;
   std::vector<std::string> current_toggle_keys_;
   std::vector<PinnedRun> pinned_runs_;
   bool show_difference_curve_{false};

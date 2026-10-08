@@ -47,7 +47,7 @@ struct SvgHistogramRenderer {
   real_t py0 = static_cast<real_t>(0.0);
   real_t py1 = static_cast<real_t>(0.0);
 
-  std::map<std::string, std::vector<real_t>> partials;
+  std::vector<std::pair<std::string, std::vector<real_t>>> partials;
   const std::vector<real_t> *xs = nullptr;
 
   const std::map<std::string, std::string> *custom_colors = nullptr;
@@ -124,7 +124,7 @@ struct SvgHistogramRenderer {
         hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
     auto total_it = raw_partials.find("Total");
     if (total_it != raw_partials.end() && isCurveVisible("Total")) {
-      partials["Total"] = total_it->second;
+      partials.emplace_back("Total", total_it->second);
     }
 
     std::vector<std::pair<std::string, real_t>> candidates;
@@ -138,17 +138,21 @@ struct SvgHistogramRenderer {
       candidates.emplace_back(key, calculateScore(key, value));
     }
 
-    std::sort(candidates.begin(), candidates.end(),
-              [](const auto &lhs, const auto &rhs) { return lhs.first < rhs.first; });
+    std::sort(candidates.begin(), candidates.end(), [](const auto &lhs, const auto &rhs) {
+      if (std::abs(lhs.second - rhs.second) > static_cast<real_t>(1e-12)) {
+        return lhs.second > rhs.second;
+      }
+      return lhs.first < rhs.first;
+    });
 
-    bool has_custom_vis = curve_visibility != nullptr && !curve_visibility->empty();
-    std::size_t limit =
+    const bool has_custom_vis = curve_visibility != nullptr && !curve_visibility->empty();
+    const std::size_t limit =
         has_custom_vis ? candidates.size() : std::min(candidates.size(), std::size_t(10));
     for (std::size_t i = 0; i < limit; ++i) {
       const std::string &key = candidates.at(i).first;
       auto iter = raw_partials.find(key);
       if (iter != raw_partials.end()) {
-        partials[key] = iter->second;
+        partials.emplace_back(key, iter->second);
       }
     }
   }
@@ -224,14 +228,28 @@ struct SvgHistogramRenderer {
         8, strict_y);
   }
 
-  [[nodiscard]] std::string getColorForKey(const std::string &key, std::size_t color_idx) const {
+  [[nodiscard]] std::size_t getNumPartials() const {
+    std::size_t count = 0;
+    for (const auto &[key, value] : partials) {
+      if (key != "Total") {
+        count++;
+      }
+    }
+    return count > 0 ? count : 1;
+  }
+
+  [[nodiscard]] std::string getColorForKey(const std::string &key, std::size_t partial_idx,
+                                           std::size_t num_partials) const {
     if (custom_colors != nullptr) {
       auto itx = custom_colors->find(key);
       if (itx != custom_colors->end() && !itx->second.empty()) {
         return itx->second;
       }
     }
-    return color(color_idx, partials.size(), config->palette);
+    if (key == "Total") {
+      return (config->theme == PlotConfig::Theme::Light) ? "#000000" : "#FFFFFF";
+    }
+    return color(partial_idx, num_partials, config->palette);
   }
 
   void writeHeader() {
@@ -244,17 +262,18 @@ struct SvgHistogramRenderer {
         << "      <feDropShadow dx=\"2\" dy=\"4\" stdDeviation=\"4\" flood-color=\"#000000\" flood-opacity=\"0.15\"/>\n"
         << "    </filter>\n";
 
-    std::size_t color_idx = 0;
+    std::size_t partial_idx = 0;
+    const std::size_t num_partials = getNumPartials();
+    std::size_t grad_idx = 0;
     for (const auto &[key, value] : partials) {
-      std::string col = getColorForKey(key, color_idx);
-      std::string grad_id = std::format("area-grad-{}", color_idx);
+      std::string col = getColorForKey(key, (key == "Total") ? 0 : partial_idx++, num_partials);
+      std::string grad_id = std::format("area-grad-{}", grad_idx++);
       svg << std::format(
           "    <linearGradient id=\"{}\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n"
           "      <stop offset=\"0%\" stop-color=\"{}\" stop-opacity=\"0.35\"/>\n"
           "      <stop offset=\"100%\" stop-color=\"{}\" stop-opacity=\"0.0\"/>\n"
           "    </linearGradient>\n",
           grad_id, col, col);
-      color_idx++;
     }
     svg << std::format(
         "    <clipPath id=\"plot-area-clip\"><rect x=\"{:.1f}\" y=\"{:.1f}\" width=\"{:.1f}\" "
@@ -359,21 +378,37 @@ struct SvgHistogramRenderer {
     if (xs == nullptr) {
       return legend;
     }
-    std::size_t color_idx = 0;
+    const std::size_t num_partials = getNumPartials();
+    std::size_t partial_idx = 0;
+    std::string total_svg;
+
     for (const auto &[key, value] : partials) {
-      const std::string col = getColorForKey(key, color_idx++);
-      svg << std::format(
+      const std::string col =
+          getColorForKey(key, (key == "Total") ? 0 : partial_idx++, num_partials);
+      legend.emplace_back(key, col);
+
+      std::string line_svg = std::format(
           R"(  <polyline fill="none" stroke="{}" stroke-width="{:.1f}" stroke-linejoin="round" points=")",
           col, config->line_width);
       std::size_t num_points = std::min(xs->size(), value.size());
       for (std::size_t point_idx = 0; point_idx < num_points; ++point_idx) {
         real_t screen_x = mapValue(xs->at(point_idx), xScale.min, xScale.max, px0, px1);
         real_t screen_y = mapValue(value.at(point_idx), yScale.min, yScale.max, py1, py0);
-        svg << std::format("{:.2f},{:.2f} ", screen_x, screen_y);
+        line_svg += std::format("{:.2f},{:.2f} ", screen_x, screen_y);
       }
-      svg << "\" />\n";
-      legend.emplace_back(key, col);
+      line_svg += "\" />\n";
+
+      if (key == "Total") {
+        total_svg = std::move(line_svg);
+      } else {
+        svg << line_svg;
+      }
     }
+
+    if (!total_svg.empty()) {
+      svg << total_svg;
+    }
+
     return legend;
   }
 
@@ -381,9 +416,11 @@ struct SvgHistogramRenderer {
     if (!config->show_markers || xs == nullptr) {
       return;
     }
-    std::size_t marker_ci = 0;
+    std::size_t partial_idx = 0;
+    const std::size_t num_partials = getNumPartials();
     for (const auto &[key, value] : partials) {
-      const std::string col = getColorForKey(key, marker_ci++);
+      const std::string col =
+          getColorForKey(key, (key == "Total") ? 0 : partial_idx++, num_partials);
       std::size_t num_points = std::min(xs->size(), value.size());
       for (std::size_t point_idx = 0; point_idx < num_points; ++point_idx) {
         real_t screen_x = mapValue(xs->at(point_idx), xScale.min, xScale.max, px0, px1);
@@ -438,7 +475,7 @@ struct SvgHistogramRenderer {
     }
     real_t legend_x = px1 - static_cast<real_t>(15.0);
     real_t legend_y = py0 + static_cast<real_t>(25.0);
-    for (const auto &iter : std::views::reverse(legend)) {
+    for (const auto &iter : legend) {
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                          "stroke=\"{}\" stroke-width=\"4.0\"/>\n",
                          legend_x - static_cast<real_t>(40.0), legend_y,
@@ -599,11 +636,13 @@ struct SvgHistogramRenderer {
                        sx_data, py0, sx_data, py1, config->axisColor());
 
     std::vector<std::tuple<std::string, real_t, std::string>> hover_values;
-    std::size_t color_idx = 0;
+    std::size_t partial_idx = 0;
+    const std::size_t num_partials = getNumPartials();
     real_t snapped_sy_data = static_cast<real_t>(-1.0);
     for (const auto &[key, value] : partials) {
       if (idx < value.size()) {
-        const std::string col = getColorForKey(key, color_idx++);
+        const std::string col =
+            getColorForKey(key, (key == "Total") ? 0 : partial_idx++, num_partials);
         real_t y_val = value.at(idx);
         real_t sy_data = mapValue(y_val, yScale.min, yScale.max, py1, py0);
 

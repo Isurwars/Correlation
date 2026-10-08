@@ -260,8 +260,8 @@
     "semantic_hash": ""
   },
   "python/correlation/__init__.py": {
-    "mtime": 1791252031.4733217,
-    "ast_hash": "caa01085e05446ce62373ffe209fdbb0",
+    "mtime": 1791476908.7067723,
+    "ast_hash": "fd9958799143d739d3ef4f15dc127438",
     "semantic_hash": ""
   },
   "python/repair_wheel.py": {
@@ -800,8 +800,8 @@
     "semantic_hash": "d4bdccb3d0944d2f42d20a4d4e2a031b"
   },
   "tests/unit/plotters/SvgPlotterTests.cpp": {
-    "mtime": 1791425664.3024495,
-    "ast_hash": "b6693317d0d60bfdb2470133260ed73e",
+    "mtime": 1791488419.752698,
+    "ast_hash": "50adc24e40c0bb171d231a77a6259b9b",
     "semantic_hash": ""
   },
   "tests/unit/readers/ArcReaderTests.cpp": {
@@ -920,13 +920,13 @@
     "semantic_hash": ""
   },
   "CMakeLists.txt": {
-    "mtime": 1791351887.595755,
-    "ast_hash": "086ab8502c03d1877625a03954ddb3db",
+    "mtime": 1791476864.1731002,
+    "ast_hash": "745774c840740100dcea74ee2602ea4e",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1791251626.3458905,
-    "ast_hash": "e86e2dca9efea14e3ec9a0b29d6eaaac",
+    "mtime": 1791476887.0190635,
+    "ast_hash": "fa292b2d310d5d747773358dcc6e2f5e",
     "semantic_hash": ""
   },
   "docs/CODE_OF_CONDUCT.md": {
@@ -1240,8 +1240,8 @@
     "semantic_hash": ""
   },
   "include/plotters/SvgHistogramRenderer.hpp": {
-    "mtime": 1791460116.0969894,
-    "ast_hash": "f187f0b9ee1512cdd8ddd690bde68aaa",
+    "mtime": 1791488384.3159995,
+    "ast_hash": "b569a4d82f9c076d1650288f1d25d15d",
     "semantic_hash": ""
   },
   "tests/unit/math/Matrix3Tests.cpp": {
@@ -1340,8 +1340,8 @@
     "semantic_hash": ""
   },
   "recipe/meta.yaml": {
-    "mtime": 1791251612.1760852,
-    "ast_hash": "d52b1ac84b150469d86379efc6b6f0a5",
+    "mtime": 1791476915.4799626,
+    "ast_hash": "a475febe6990d9e263e4d088cdb846fd",
     "semantic_hash": ""
   },
   "tests/unit/app/SettingsManagerTests.cpp": {
@@ -1910,8 +1910,8 @@
     "semantic_hash": ""
   },
   "tests/unit/app/PlotSeriesManagerTests.cpp": {
-    "mtime": 1790380719.7964635,
-    "ast_hash": "65626c57e1e6180a8760b6573241e0fe",
+    "mtime": 1791488670.4896903,
+    "ast_hash": "b412a18d771972810a0836c768a81c50",
     "semantic_hash": ""
   },
   "tests/unit/app/PlotTableFormatterTests.cpp": {
@@ -1955,8 +1955,8 @@
     "semantic_hash": ""
   },
   "include/app/formatters/PlotSeriesManager.hpp": {
-    "mtime": 1790294129.3616982,
-    "ast_hash": "465aa3bc6a14042e83aeeda8462aadb4",
+    "mtime": 1791488138.8002615,
+    "ast_hash": "5abbbacd9cdc8da1d77f47d81da42dcf",
     "semantic_hash": ""
   },
   "include/app/formatters/PlotTableFormatter.hpp": {
@@ -2045,8 +2045,8 @@
     "semantic_hash": ""
   },
   "src/app/formatters/PlotSeriesManager.cpp": {
-    "mtime": 1790380719.7822108,
-    "ast_hash": "1f7eb94388136140db83b983af91f404",
+    "mtime": 1791488622.8830569,
+    "ast_hash": "e84f7465bc93ef82e6457da5dee32913",
     "semantic_hash": ""
   },
   "src/app/formatters/PlotTableFormatter.cpp": {
@@ -2105,8 +2105,8 @@
     "semantic_hash": ""
   },
   "src/app/viewmodel/PlotController.cpp": {
-    "mtime": 1791461905.501196,
-    "ast_hash": "5e0f36e4d40ed0a7b8ad96ebc5c0d781",
+    "mtime": 1791488564.9285114,
+    "ast_hash": "3e68c31cbde7bd6356ce1ba6c4bf7750",
     "semantic_hash": ""
   },
   "src/app/viewmodel/PresetController.cpp": {
@@ -2565,8 +2565,8 @@
     "semantic_hash": ""
   },
   "python/matcorr/__init__.py": {
-    "mtime": 1791251603.9521983,
-    "ast_hash": "0e06a821fe9717a093035e763b6c3a8e",
+    "mtime": 1791476898.7174664,
+    "ast_hash": "22e2dc73336cb694fe1d31174917444e",
     "semantic_hash": ""
   },
   "python/matcorr/__main__.py": {

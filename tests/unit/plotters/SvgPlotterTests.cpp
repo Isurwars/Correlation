@@ -63,8 +63,8 @@ TEST(SvgPlotterTests, RendersValidHistogramCorrectly) {
 
   // Verify that the structure draws polylines/lines
   EXPECT_NE(svg.find("<polyline"), std::string::npos);
-  EXPECT_NE(svg.find("stroke=\"#E69F00\""), std::string::npos); // First color Orange
-  EXPECT_NE(svg.find("stroke=\"#56B4E9\""), std::string::npos); // Second color Sky Blue
+  EXPECT_NE(svg.find("stroke=\"#000000\""), std::string::npos); // Total neutral in light mode
+  EXPECT_NE(svg.find("stroke=\"#E69F00\""), std::string::npos); // First partial Orange
 }
 
 TEST(SvgPlotterTests, RendersDarkThemeCorrectly) {
