@@ -16,7 +16,7 @@ except PackageNotFoundError:
     try:
         __version__ = version("correlation-analysis")
     except PackageNotFoundError:
-        __version__ = "3.9.10"
+        __version__ = "3.9.11"
 
 # Import all core capabilities from correlation engine
 import correlation

@@ -737,13 +737,20 @@ export component PreviewCard inherits FilledCard {
                                 width: 100%;
                                 height: 100%;
                                 border-radius: 13px;
-                                background: root.active_tool == 1 ? MaterialPalette.primary_container : (zoom_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
+                                background: root.active_tool == 1 ?
+                                    (zoom_touch.has-hover ? MaterialPalette.primary.darker(8%) : MaterialPalette.primary) :
+                                    (zoom_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
+                                border-width: root.active_tool == 1 ? 1.5px : 0px;
+                                border-color: root.active_tool == 1 ? MaterialPalette.on_primary.with_alpha(35%) : transparent;
+
+                                animate background, border-color { duration: 150ms; easing: ease-out; }
 
                                 Image {
                                     width: 16px;
                                     height: 16px;
                                     source: Icons.zoom_in;
-                                    colorize: root.active_tool == 1 ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
+                                    colorize: root.active_tool == 1 ? MaterialPalette.on_primary : MaterialPalette.on_surface;
+                                    animate colorize { duration: 150ms; }
                                     horizontal-alignment: center;
                                     vertical-alignment: center;
                                 }
@@ -773,12 +780,19 @@ export component PreviewCard inherits FilledCard {
                                 width: 100%;
                                 height: 100%;
                                 border-radius: 13px;
-                                background: root.active_tool == 2 ? MaterialPalette.primary_container : (marker_x_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
+                                background: root.active_tool == 2 ?
+                                    (marker_x_touch.has-hover ? MaterialPalette.primary.darker(8%) : MaterialPalette.primary) :
+                                    (marker_x_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
+                                border-width: root.active_tool == 2 ? 1.5px : 0px;
+                                border-color: root.active_tool == 2 ? MaterialPalette.on_primary.with_alpha(35%) : transparent;
+
+                                animate background, border-color { duration: 150ms; easing: ease-out; }
 
                                 MaterialText {
                                     text: "+X";
-                                    style: MaterialTypography.label_medium;
-                                    color: root.active_tool == 2 ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
+                                    style: root.active_tool == 2 ? MaterialTypography.label_medium_prominent : MaterialTypography.label_medium;
+                                    color: root.active_tool == 2 ? MaterialPalette.on_primary : MaterialPalette.on_surface;
+                                    animate color { duration: 150ms; }
                                     horizontal-alignment: center;
                                     vertical-alignment: center;
                                 }
@@ -798,12 +812,19 @@ export component PreviewCard inherits FilledCard {
                                 width: 100%;
                                 height: 100%;
                                 border-radius: 13px;
-                                background: root.active_tool == 3 ? MaterialPalette.primary_container : (marker_y_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
+                                background: root.active_tool == 3 ?
+                                    (marker_y_touch.has-hover ? MaterialPalette.primary.darker(8%) : MaterialPalette.primary) :
+                                    (marker_y_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
+                                border-width: root.active_tool == 3 ? 1.5px : 0px;
+                                border-color: root.active_tool == 3 ? MaterialPalette.on_primary.with_alpha(35%) : transparent;
+
+                                animate background, border-color { duration: 150ms; easing: ease-out; }
 
                                 MaterialText {
                                     text: "+Y";
-                                    style: MaterialTypography.label_medium;
-                                    color: root.active_tool == 3 ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
+                                    style: root.active_tool == 3 ? MaterialTypography.label_medium_prominent : MaterialTypography.label_medium;
+                                    color: root.active_tool == 3 ? MaterialPalette.on_primary : MaterialPalette.on_surface;
+                                    animate color { duration: 150ms; }
                                     horizontal-alignment: center;
                                     vertical-alignment: center;
                                 }

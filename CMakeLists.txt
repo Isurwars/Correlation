@@ -12,7 +12,7 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
     message(FATAL_ERROR "In-source builds are prohibited. Run cmake -B <build_dir> instead.")
 endif()
 
-project(Correlation VERSION 3.9.10 LANGUAGES CXX C)
+project(Correlation VERSION 3.9.11 LANGUAGES CXX C)
 
 # -----------------------------------------------------------
 # Auto-generate packaging files from templates.

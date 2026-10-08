@@ -1,6 +1,30 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.9.11] - 2026-10-08
+
+### Memory Optimization & High-Throughput I/O
+- **Atom Flyweight Pattern (`ElementPool`)**: Interned chemical `Element` structs through a thread-safe `ElementPool`, transitioning `Atom` to store lightweight immutable pointers (`const Element*`) instead of value copies. Drastically reduces memory footprint and improves cache locality for multi-million atom trajectories.
+- **Zero-Allocation Coordinate & Cell Parsing**: Replaced heap-allocating `std::stod`/`std::stoi` calls in `XYZReader` and `CifReader` with `std::from_chars` and `std::string_view`, accelerating file ingestion throughput and eliminating transient allocations during trajectory parsing.
+
+### Calculator Robustness & Boundary Condition Guards
+- **Partial Key Bounds Protection**: Added defensive index bounds verification to `RDFCalculator` and `DistributionFunctions::getPartialKey`, returning fallback `"Unknown-Unknown"` keys when atom species indices exceed element array boundaries.
+- **Dynamic & Spatial Calculator Edge Cases**:
+  - Clamped angular dot products in `HBondCalculator` via `std::clamp` to strictly avoid NaN results from floating-point roundoff in `std::acos`.
+  - Hardened normalization in `PADCalculator` to ensure non-zero count thresholds.
+  - Guarded `DynamicsAnalyzer::calculateVDOS` against non-positive timesteps ($\le 0.0$) and added zero-atom trajectory protection across VACF and MSD routines.
+
+### Material UI & Interactive Plotting
+- **Modular Side Panel Architecture**: Decomposed monolithic `SidePanelHost.slint` into six isolated single-responsibility panel components under `ui/nav/panels/` (`OperationsPanel`, `StructurePanel`, `AdvancedOptionsPanel`, `PlotSettingsPanel`, `AnalysesPanel`, `SaveExportPanel`), strictly enforcing component granularity and clean model bindings.
+- **Smooth Plot Panning & Mouse Handling**: Consolidated fragmented `mouse-x` and `mouse-y` property change triggers in `PreviewCard.slint` into a unified `moved` event handler, eliminating input lag and redundant redraws during canvas panning.
+- **Comparison Overlay State Synchronization**: Added `pinned_runs_count` tracking and responsive reset controls across comparison overlay panels.
+
+### Build System, Modular Targets & WebAssembly
+- **Modular Plotter Libraries**: Isolated vector font data and embedded PDF generation into dedicated CMake targets (`correlation_pdfgen` C11 library and `plotters_obj` object library).
+- **WebAssembly Whole-Archive Linking**: Configured `--whole-archive` linker flags and explicit target dependencies for Emscripten / WebAssembly builds (`correlation_wasm`).
+- **Extended Roboto Typography**: Integrated extended Roboto vector font glyph definitions supporting international character sets.
+- **Dependency & Release Optimization**: Optimized `FetchContent` dependency configurations in `Dependencies.cmake` and streamlined release workflow matrices.
+
 ## [3.9.10] - 2026-10-05
 
 ### Order Parameter Analysis & Steinhardt Averaged Invariants
