@@ -377,7 +377,7 @@ TEST_F(FileWriterTests, WritesVACFMetadata) {
   trajectory.calculateVelocities();
 
   correlation::analysis::DistributionFunctions dists(frame1, 5.0, trajectory.getBondCutoffsSQ());
-  dists.calculateVACF(trajectory, correlation::analysis::MaxFrames{1});
+  dists.calculateVACF(trajectory, correlation::analysis::MaxFrames{2});
 
   correlation::writers::FileWriter writer(dists);
   std::string base_filename = "test_vacf_new";
@@ -422,8 +422,8 @@ TEST_F(FileWriterTests, WritesVACFMetadata) {
     EXPECT_EQ(data_units, "Å² fs⁻²");
 
     // Check Normalized VACF
-    EXPECT_TRUE(file.exist("Normalized_VACF"));
-    HighFive::Group norm_vacf_group = file.getGroup("Normalized_VACF");
+    EXPECT_TRUE(file.exist("vacf_normalized"));
+    HighFive::Group norm_vacf_group = file.getGroup("vacf_normalized");
 
     // Description
     EXPECT_TRUE(norm_vacf_group.hasAttribute("description"));

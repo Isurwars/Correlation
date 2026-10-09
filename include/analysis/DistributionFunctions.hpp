@@ -22,6 +22,7 @@
 #include <mutex>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 #include <vector>
 
 namespace correlation::analysis {
@@ -93,8 +94,33 @@ struct AnalysisSettings {
     if (active_calculators.empty()) {
       return true; // default: all enabled
     }
-    auto iter = active_calculators.find(std::string(calc_id));
-    return iter != active_calculators.end() && iter->second;
+    const auto iter = active_calculators.find(std::string(calc_id));
+    if (iter != active_calculators.end()) {
+      return iter->second;
+    }
+    static const std::unordered_map<std::string_view, std::string_view> ALIAS_MAP = {
+        {"Radial Distribution Function", "g(r), J(r), G(r)"},
+        {"RDF", "g(r), J(r), G(r)"},
+        {"Plane Angle Distribution", "PAD"},
+        {"Dihedral Angle Distribution", "DAD"},
+        {"Coordination Number", "CN"},
+        {"Common Neighbor Analysis", "CNA"},
+        {"Ring Size Distribution", "RD"},
+        {"Cluster Size Distribution", "Cluster Analysis"},
+        {"Hydrogen Bond Distribution", "Hydrogen Bond"},
+        {"Static Structure Factor", "S(Q)"},
+        {"X-Ray Diffraction", "XRD"},
+        {"Local Entropy Fingerprint", "Local Entropy"},
+        {"Hyperuniformity Diagnostics", "σ²_N(R), χ_H(R)"},
+        {"Vibrational Density of States", "vDoS"},
+    };
+    if (const auto alias_it = ALIAS_MAP.find(calc_id); alias_it != ALIAS_MAP.end()) {
+      if (const auto ait = active_calculators.find(std::string(alias_it->second));
+          ait != active_calculators.end()) {
+        return ait->second;
+      }
+    }
+    return false;
   }
 
   bool smoothing = true;        ///< Whether to apply post-processing smoothing.

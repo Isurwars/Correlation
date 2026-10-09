@@ -104,6 +104,26 @@ void parseFrameSelection(const AnalysisOptions &ui_opts, size_t frame_count, Pro
   }
 }
 
+[[nodiscard]] bool isCalculatorEnabled(const correlation::calculators::BaseCalculator &calc,
+                                       const ProgramOptions &opts) {
+  const auto calc_iter = opts.active_calculators.find(std::string(calc.getName()));
+  if (calc_iter != opts.active_calculators.end()) {
+    return calc_iter->second;
+  }
+  const auto short_iter = opts.active_calculators.find(std::string(calc.getShortName()));
+  if (short_iter != opts.active_calculators.end()) {
+    return short_iter->second;
+  }
+  for (const auto &[key, val] : opts.active_calculators) {
+    const auto *resolved =
+        ::correlation::calculators::CalculatorFactory::instance().getCalculator(key);
+    if (resolved != nullptr && resolved->getName() == calc.getName()) {
+      return val;
+    }
+  }
+  return true;
+}
+
 } // namespace
 
 void OptionsSyncService::updateActiveGroupFlags(AppWindow &window, const ProgramOptions &opts) {
@@ -116,22 +136,18 @@ void OptionsSyncService::updateActiveGroupFlags(AppWindow &window, const Program
   bool has_rings = false;
 
   for (const auto &calc : calculators) {
-    const std::string_view grp = calc->getGroup();
-    bool enabled = true;
-    auto calc_iter = opts.active_calculators.find(std::string(calc->getName()));
-    if (calc_iter != opts.active_calculators.end()) {
-      enabled = calc_iter->second;
+    if (!isCalculatorEnabled(*calc, opts)) {
+      continue;
     }
-    if (enabled) {
-      if (grp == "Radial") {
-        has_radial = true;
-      } else if (grp == "Scattering") {
-        has_scattering = true;
-      } else if (grp == "Angular") {
-        has_angular = true;
-      } else if (grp == "Rings" || grp == "Topology") {
-        has_rings = true;
-      }
+    const std::string_view grp = calc->getGroup();
+    if (grp == "Radial") {
+      has_radial = true;
+    } else if (grp == "Scattering") {
+      has_scattering = true;
+    } else if (grp == "Angular") {
+      has_angular = true;
+    } else if (grp == "Rings" || grp == "Topology") {
+      has_rings = true;
     }
   }
 

@@ -16,6 +16,9 @@ All notable changes to this project will be documented in this file.
 
 ### Material UI & Interactive Plotting
 - **Modular Side Panel Architecture**: Decomposed monolithic `SidePanelHost.slint` into six isolated single-responsibility panel components under `ui/nav/panels/` (`OperationsPanel`, `StructurePanel`, `AdvancedOptionsPanel`, `PlotSettingsPanel`, `AnalysesPanel`, `SaveExportPanel`), strictly enforcing component granularity and clean model bindings.
+- **Ashcroft Weight-Ranked Partial Ordering**: Enforced deterministic series ordering across SVG preview rendering and Slint toggle models where `Total` is permanently anchored at index 0 and partial curves are ranked descending by Ashcroft-Langreth weight (with L1 curve integral magnitude fallback and alphabetical tie-breaking).
+- **Default 10-Curve Visibility Gate**: Configured `PlotSeriesManager` to enable `Total` and a maximum of 10 highest-ranked partial curves by default, ordering remaining partials descending by weight below visible entries in the sidebar checklist.
+- **Stable Palette Engine & SVG Layering**: Decoupled color assignment from visibility toggles to guarantee curve colors remain strictly stable across toggle interactions. `Total` renders in theme-adaptive neutral (`#000000` Light / `#FFFFFF` Dark) physically layered on top of partial polylines in the SVG canvas, with legend entries aligned 1:1 top-to-bottom with the sidebar checklist.
 - **Smooth Plot Panning & Mouse Handling**: Consolidated fragmented `mouse-x` and `mouse-y` property change triggers in `PreviewCard.slint` into a unified `moved` event handler, eliminating input lag and redundant redraws during canvas panning.
 - **Comparison Overlay State Synchronization**: Added `pinned_runs_count` tracking and responsive reset controls across comparison overlay panels.
 
