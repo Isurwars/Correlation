@@ -188,8 +188,6 @@ jobs:
             cibw_archs: "x86_64"
           - os: ubuntu-24.04
             cibw_archs: "aarch64"
-          - os: macos-13
-            cibw_archs: "x86_64"
           - os: macos-14
             cibw_archs: "arm64"
           - os: windows-2022

@@ -218,7 +218,8 @@ private:
   math::Vector3<real_t> position_; ///< Cartesian coordinates in Angstroms.
   math::Vector3<real_t> velocity_; ///< Velocity in Angstroms/fs.
   const Element *element_{
-      ElementPool::defaultElement()}; ///< Flyweight pointer to element metadata.
+      ElementPool::defaultElement(),
+  }; ///< Flyweight pointer to element metadata.
 };
 
 /**
