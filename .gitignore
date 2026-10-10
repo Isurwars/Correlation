@@ -36,3 +36,4 @@ dist/
 
 # Agent transient state
 .agents/.hook_state.json
+.env

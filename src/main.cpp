@@ -146,7 +146,14 @@ int main() {
     correlation::app::ProgramOptions options;
     correlation::app::AppController const controller(*window, loader, dispatcher, options);
 
-    window->run();
+    window->window().on_close_requested([&controller] {
+      controller.saveSettings();
+      slint::quit_event_loop();
+      return slint::CloseRequestResponse::KeepWindowShown;
+    });
+
+    window->show();
+    slint::run_event_loop();
     return 0;
   } catch (const std::exception &err) {
     std::cerr << "Fatal startup error: " << err.what() << "\n";

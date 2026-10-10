@@ -5,8 +5,8 @@
     "semantic_hash": ""
   },
   "include/analysis/DistributionFunctions.hpp": {
-    "mtime": 1791515127.6265,
-    "ast_hash": "5d958e0b95ea3bd22e3ff07fbeb59f72",
+    "mtime": 1791324625.6925738,
+    "ast_hash": "950273ddfa408f7fd4b26d8ab5f53882",
     "semantic_hash": ""
   },
   "include/analysis/DynamicsAnalyzer.hpp": {
@@ -40,8 +40,8 @@
     "semantic_hash": ""
   },
   "include/core/Atom.hpp": {
-    "mtime": 1791515874.2690353,
-    "ast_hash": "8ff4587cdeee861de2372049141c7684",
+    "mtime": 1791327370.0061376,
+    "ast_hash": "8f2c5ecbf1b31dbb3174f940464144a7",
     "semantic_hash": ""
   },
   "include/core/Cell.hpp": {
@@ -390,8 +390,8 @@
     "semantic_hash": ""
   },
   "src/main.cpp": {
-    "mtime": 1791605812.9320366,
-    "ast_hash": "2dc6fe283afca5615032f69b6dbc7d81",
+    "mtime": 1790377347.2274532,
+    "ast_hash": "8ed06ed6534f05f3c8ba18afbb68138d",
     "semantic_hash": ""
   },
   "src/plotters/PathFont.cpp": {
@@ -900,8 +900,8 @@
     "semantic_hash": ""
   },
   "tests/unit/writers/WriterTests.cpp": {
-    "mtime": 1791492507.1054213,
-    "ast_hash": "a445cc3383ed4e892e30e3302d59c72e",
+    "mtime": 1791219049.2633133,
+    "ast_hash": "025d266866c663baa2dff208cabaa8f2",
     "semantic_hash": ""
   },
   ".github/workflows/ci.yml": {
@@ -915,8 +915,8 @@
     "semantic_hash": ""
   },
   ".github/workflows/release.yml": {
-    "mtime": 1791563280.3109038,
-    "ast_hash": "ec42003f2ee910d9acaf081508b77f93",
+    "mtime": 1791321183.758365,
+    "ast_hash": "ec4d11694d19b0bfcd1d069d410f1199",
     "semantic_hash": ""
   },
   "CMakeLists.txt": {
@@ -1240,8 +1240,8 @@
     "semantic_hash": ""
   },
   "include/plotters/SvgHistogramRenderer.hpp": {
-    "mtime": 1791488712.7062955,
-    "ast_hash": "b944464d5d3b9099b5496f28efbae3f3",
+    "mtime": 1791488384.3159995,
+    "ast_hash": "b569a4d82f9c076d1650288f1d25d15d",
     "semantic_hash": ""
   },
   "tests/unit/math/Matrix3Tests.cpp": {
@@ -2045,8 +2045,8 @@
     "semantic_hash": ""
   },
   "src/app/formatters/PlotSeriesManager.cpp": {
-    "mtime": 1791488712.6909745,
-    "ast_hash": "806448f6facdb8ab08d903ebe0df28a4",
+    "mtime": 1791488622.8830569,
+    "ast_hash": "e84f7465bc93ef82e6457da5dee32913",
     "semantic_hash": ""
   },
   "src/app/formatters/PlotTableFormatter.cpp": {
@@ -2075,8 +2075,8 @@
     "semantic_hash": ""
   },
   "src/app/services/OptionsSyncService.cpp": {
-    "mtime": 1791490007.8069315,
-    "ast_hash": "b74ba5327cd0b859f3a537f9f4c978ec",
+    "mtime": 1791461925.0469592,
+    "ast_hash": "3dded937da4e37836c3c849b2970cbc5",
     "semantic_hash": ""
   },
   "src/app/services/PhysicsService.cpp": {
