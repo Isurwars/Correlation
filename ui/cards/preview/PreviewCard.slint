@@ -202,6 +202,122 @@ export component PreviewCard inherits FilledCard {
     Vertical {
         spacing: MaterialStyleMetrics.spacing_8;
 
+        // Workflow Stepper (1. Load File -> 2. Configure Options -> 3. Run Calculation -> 4. Preview & Export)
+        HorizontalLayout {
+            spacing: 8px;
+            alignment: center;
+            height: 28px;
+
+            Rectangle {
+                height: 28px;
+                border-radius: 14px;
+                background: !root.file_loaded ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+
+                HorizontalLayout {
+                    padding-left: 12px;
+                    padding-right: 12px;
+                    Text {
+                        text: !root.file_loaded ? "1. Load File (Active)" : "1. File Loaded ✓";
+                        font-size: MaterialTypography.label_medium.font_size;
+                        color: !root.file_loaded ? MaterialPalette.on_primary_container : MaterialPalette.primary;
+                        vertical-alignment: center;
+                    }
+                }
+
+                TouchArea {
+                    mouse-cursor: pointer;
+                    clicked => { root.browse_file(); }
+                }
+            }
+
+            Text {
+                text: "➔";
+                color: MaterialPalette.outline;
+                vertical-alignment: center;
+            }
+
+            Rectangle {
+                height: 28px;
+                border-radius: 14px;
+                background: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+
+                HorizontalLayout {
+                    padding-left: 12px;
+                    padding-right: 12px;
+                    Text {
+                        text: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? "2. Configure Options (Active)" :
+                              (root.analysis_running || root.analysis_done) ? "2. Options Configured ✓" : "2. Configure Options";
+                        font-size: MaterialTypography.label_medium.font_size;
+                        color: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? MaterialPalette.on_primary_container :
+                               (root.analysis_running || root.analysis_done) ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+                        vertical-alignment: center;
+                    }
+                }
+
+                TouchArea {
+                    mouse-cursor: pointer;
+                    clicked => { root.open_panel(1); }
+                }
+            }
+
+            Text {
+                text: "➔";
+                color: MaterialPalette.outline;
+                vertical-alignment: center;
+            }
+
+            Rectangle {
+                height: 28px;
+                border-radius: 14px;
+                background: root.analysis_running ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+
+                HorizontalLayout {
+                    padding-left: 12px;
+                    padding-right: 12px;
+                    Text {
+                        text: root.analysis_running ? "3. Calculating... (Active)" :
+                              root.analysis_done ? "3. Calculation Complete ✓" : "3. Run Calculation";
+                        font-size: MaterialTypography.label_medium.font_size;
+                        color: root.analysis_running ? MaterialPalette.on_primary_container :
+                               root.analysis_done ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+                        vertical-alignment: center;
+                    }
+                }
+
+                TouchArea {
+                    mouse-cursor: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? pointer : default;
+                    clicked => {
+                        if (root.file_loaded && !root.analysis_running && !root.analysis_done) {
+                            root.run_analysis();
+                        }
+                    }
+                }
+            }
+
+            Text {
+                text: "➔";
+                color: MaterialPalette.outline;
+                vertical-alignment: center;
+            }
+
+            Rectangle {
+                height: 28px;
+                border-radius: 14px;
+                background: root.analysis_done ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+
+                HorizontalLayout {
+                    padding-left: 12px;
+                    padding-right: 12px;
+                    Text {
+                        text: root.analysis_done ? "4. Preview & Export (Active)" : "4. Preview & Export";
+                        font-size: MaterialTypography.label_medium.font_size;
+                        color: root.analysis_done ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+        }
+
         // HEADER: Plot selector dropdown and Tabs
         Horizontal {
             spacing: MaterialStyleMetrics.spacing_8;
@@ -321,98 +437,6 @@ export component PreviewCard inherits FilledCard {
                             horizontal-alignment: center;
                             wrap: word-wrap;
                             style: MaterialTypography.body_medium;
-                        }
-                    }
-
-                    // Dynamic 4-Stage Stepper
-                    HorizontalLayout {
-                        spacing: 8px;
-                        alignment: center;
-
-                        Rectangle {
-                            height: 28px;
-                            border-radius: 14px;
-                            background: !root.file_loaded ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
-
-                            HorizontalLayout {
-                                padding-left: 12px;
-                                padding-right: 12px;
-                                Text {
-                                    text: !root.file_loaded ? "1. Load File (Active)" : "1. File Loaded ✓";
-                                    font-size: MaterialTypography.label_medium.font_size;
-                                    color: !root.file_loaded ? MaterialPalette.on_primary_container : MaterialPalette.primary;
-                                    vertical-alignment: center;
-                                }
-                            }
-                        }
-
-                        Text {
-                            text: "➔";
-                            color: MaterialPalette.outline;
-                            vertical-alignment: center;
-                        }
-
-                        Rectangle {
-                            height: 28px;
-                            border-radius: 14px;
-                            background: root.file_loaded && !root.analysis_running ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
-
-                            HorizontalLayout {
-                                padding-left: 12px;
-                                padding-right: 12px;
-                                Text {
-                                    text: root.file_loaded && !root.analysis_running ? "2. Options & Analyses" : "2. Configure Options";
-                                    font-size: MaterialTypography.label_medium.font_size;
-                                    color: root.file_loaded && !root.analysis_running ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
-                                    vertical-alignment: center;
-                                }
-                            }
-                        }
-
-                        Text {
-                            text: "➔";
-                            color: MaterialPalette.outline;
-                            vertical-alignment: center;
-                        }
-
-                        Rectangle {
-                            height: 28px;
-                            border-radius: 14px;
-                            background: root.analysis_running ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
-
-                            HorizontalLayout {
-                                padding-left: 12px;
-                                padding-right: 12px;
-                                Text {
-                                    text: root.analysis_running ? "3. Calculating..." : "3. Run Calculation";
-                                    font-size: MaterialTypography.label_medium.font_size;
-                                    color: root.analysis_running ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
-                                    vertical-alignment: center;
-                                }
-                            }
-                        }
-
-                        Text {
-                            text: "➔";
-                            color: MaterialPalette.outline;
-                            vertical-alignment: center;
-                        }
-
-                        Rectangle {
-                            height: 28px;
-                            border-radius: 14px;
-                            background: MaterialPalette.surface_container_high;
-
-                            HorizontalLayout {
-                                padding-left: 12px;
-                                padding-right: 12px;
-                                Text {
-                                    text: "4. Preview & Export";
-                                    font-size: MaterialTypography.label_medium.font_size;
-                                    color: MaterialPalette.on_surface_variant;
-                                    vertical-alignment: center;
-                                }
-                            }
                         }
                     }
 
