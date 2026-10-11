@@ -19,13 +19,22 @@ namespace {
 
 class DftbReaderTests : public ::testing::Test {
 protected:
-  std::string test_file{"test_dftb_sample.gen"};
+  [[nodiscard]] const std::string &testFile() const noexcept { return test_file_; }
+
+  void SetUp() override {
+    const auto *test_info = ::testing::UnitTest::GetInstance()->current_test_info();
+    const std::string name = (test_info != nullptr) ? test_info->name() : "dftb";
+    test_file_ = (std::filesystem::temp_directory_path() / ("test_dftb_" + name + ".gen")).string();
+  }
 
   void TearDown() override {
-    if (std::filesystem::exists(test_file)) {
-      std::filesystem::remove(test_file);
+    if (std::filesystem::exists(test_file_)) {
+      std::filesystem::remove(test_file_);
     }
   }
+
+private:
+  std::string test_file_;
 };
 
 TEST_F(DftbReaderTests, DiscoveryInReaderFactory) {
@@ -38,7 +47,7 @@ TEST_F(DftbReaderTests, DiscoveryInReaderFactory) {
 }
 
 TEST_F(DftbReaderTests, ParsesClusterMode) {
-  std::ofstream out(test_file);
+  std::ofstream out(testFile());
   out << "3 C\n";
   out << "C O\n";
   out << "1 1 0.000 0.000 0.000\n";
@@ -47,7 +56,7 @@ TEST_F(DftbReaderTests, ParsesClusterMode) {
   out.close();
 
   DftbReader reader;
-  auto cell = reader.readStructure(test_file);
+  auto cell = reader.readStructure(testFile());
 
   EXPECT_EQ(cell.atomCount(), 3);
   EXPECT_EQ(cell.atoms()[0].element().symbol, "C");
@@ -57,7 +66,7 @@ TEST_F(DftbReaderTests, ParsesClusterMode) {
 }
 
 TEST_F(DftbReaderTests, ParsesPeriodicCartesianMode) {
-  std::ofstream out(test_file);
+  std::ofstream out(testFile());
   out << "2 S\n";
   out << "Si\n";
   out << "1 1 0.000 0.000 0.000\n";
@@ -69,7 +78,7 @@ TEST_F(DftbReaderTests, ParsesPeriodicCartesianMode) {
   out.close();
 
   DftbReader reader;
-  auto cell = reader.readStructure(test_file);
+  auto cell = reader.readStructure(testFile());
 
   EXPECT_EQ(cell.atomCount(), 2);
   EXPECT_EQ(cell.atoms()[0].element().symbol, "Si");

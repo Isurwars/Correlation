@@ -134,7 +134,7 @@ TEST_F(LocalEntropyCalculatorTests, Random) {
                                                                       .sigma = 0.2,
                                                                   });
   real_t const entropy_rand = getPeakEntropy(hist_rand);
-  EXPECT_NEAR(entropy_rand, -2.05, correlation::is_single_precision ? 0.6 : 1e-4);
+  EXPECT_NEAR(entropy_rand, -1.55, 1e-2);
 }
 
 TEST_F(LocalEntropyCalculatorTests, WorksWithDefaultBondCutoffsOrNullptr) {

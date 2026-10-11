@@ -14,27 +14,31 @@
 #include <filesystem>
 #include <fstream>
 #include <string>
-#include <vector>
 
 namespace {
 
 class ZipArchiveWriterTest : public ::testing::Test {
 protected:
   void SetUp() override {
-    test_dir_ = std::filesystem::current_path() / "test_zip_out";
+    const auto *test_info = ::testing::UnitTest::GetInstance()->current_test_info();
+    const std::string name = (test_info != nullptr) ? test_info->name() : "writer";
+    test_dir_ = std::filesystem::temp_directory_path() / ("test_zip_out_" + name);
     std::filesystem::create_directories(test_dir_);
   }
 
   void TearDown() override {
-    std::error_code ec;
-    std::filesystem::remove_all(test_dir_, ec);
+    std::error_code error_code;
+    std::filesystem::remove_all(test_dir_, error_code);
   }
 
+  [[nodiscard]] const std::filesystem::path &testDir() const noexcept { return test_dir_; }
+
+private:
   std::filesystem::path test_dir_;
 };
 
 TEST_F(ZipArchiveWriterTest, BasicCreationAndReadback) {
-  const auto zip_path = test_dir_ / "test_basic.zip";
+  const auto zip_path = testDir() / "test_basic.zip";
 
   {
     correlation::utils::ZipArchiveWriter writer;
@@ -54,7 +58,7 @@ TEST_F(ZipArchiveWriterTest, BasicCreationAndReadback) {
   }
 
   ASSERT_TRUE(std::filesystem::exists(zip_path));
-  EXPECT_GT(std::filesystem::file_size(zip_path), 0u);
+  EXPECT_GT(std::filesystem::file_size(zip_path), 0U);
 
   // Verify using miniz reader API directly
   mz_zip_archive zip;
@@ -63,7 +67,7 @@ TEST_F(ZipArchiveWriterTest, BasicCreationAndReadback) {
   ASSERT_TRUE(init_ok);
 
   mz_uint num_files = mz_zip_reader_get_num_files(&zip);
-  EXPECT_EQ(num_files, 2u);
+  EXPECT_EQ(num_files, 2U);
 
   int hello_idx = mz_zip_reader_locate_file(&zip, "hello.txt", nullptr, 0);
   EXPECT_GE(hello_idx, 0);
@@ -89,13 +93,13 @@ TEST_F(ZipArchiveWriterTest, BasicCreationAndReadback) {
 }
 
 TEST_F(ZipArchiveWriterTest, AddFromDisk) {
-  const auto src_file = test_dir_ / "source.txt";
+  const auto src_file = testDir() / "source.txt";
   {
     std::ofstream out(src_file);
     out << "disk file content\nsecond line";
   }
 
-  const auto zip_path = test_dir_ / "test_disk.zip";
+  const auto zip_path = testDir() / "test_disk.zip";
   {
     correlation::utils::ZipArchiveWriter writer;
     ASSERT_TRUE(writer.open(zip_path).has_value());
@@ -112,10 +116,10 @@ TEST_F(ZipArchiveWriterTest, AddFromDisk) {
   int idx = mz_zip_reader_locate_file(&zip, "from_disk/source.txt", nullptr, 0);
   EXPECT_GE(idx, 0);
 
-  size_t sz = 0;
-  void *buf = mz_zip_reader_extract_to_heap(&zip, idx, &sz, 0);
+  size_t size = 0;
+  void *buf = mz_zip_reader_extract_to_heap(&zip, idx, &size, 0);
   ASSERT_NE(buf, nullptr);
-  std::string content(static_cast<const char *>(buf), sz);
+  std::string content(static_cast<const char *>(buf), size);
   mz_free(buf);
   EXPECT_EQ(content, "disk file content\nsecond line");
 
@@ -123,7 +127,7 @@ TEST_F(ZipArchiveWriterTest, AddFromDisk) {
 }
 
 TEST_F(ZipArchiveWriterTest, RAIIAutoFinalizeDestruction) {
-  const auto zip_path = test_dir_ / "test_raii.zip";
+  const auto zip_path = testDir() / "test_raii.zip";
   {
     correlation::utils::ZipArchiveWriter writer;
     ASSERT_TRUE(writer.open(zip_path).has_value());

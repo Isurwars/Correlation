@@ -19,11 +19,17 @@ namespace {
 
 class GpawReaderTests : public ::testing::Test {
 protected:
-  std::string test_file{"test_gpaw_sample.txt"};
+  std::string test_file_;
+
+  void SetUp() override {
+    const auto *test_info = ::testing::UnitTest::GetInstance()->current_test_info();
+    const std::string name = (test_info != nullptr) ? test_info->name() : "gpaw";
+    test_file_ = (std::filesystem::temp_directory_path() / ("test_gpaw_" + name + ".txt")).string();
+  }
 
   void TearDown() override {
-    if (std::filesystem::exists(test_file)) {
-      std::filesystem::remove(test_file);
+    if (std::filesystem::exists(test_file_)) {
+      std::filesystem::remove(test_file_);
     }
   }
 };
@@ -38,7 +44,7 @@ TEST_F(GpawReaderTests, DiscoveryInReaderFactory) {
 }
 
 TEST_F(GpawReaderTests, ParsesLatticeAndPositions) {
-  std::ofstream out(test_file);
+  std::ofstream out(test_file_);
   out << "  ___ ___ ___ _ _ _  \n";
   out << " |   |   |   | | | | \n";
   out << " | | | | | | | | | | \n";
@@ -58,7 +64,7 @@ TEST_F(GpawReaderTests, ParsesLatticeAndPositions) {
   out.close();
 
   GpawReader reader;
-  auto cell = reader.readStructure(test_file);
+  auto cell = reader.readStructure(test_file_);
 
   EXPECT_EQ(cell.atomCount(), 2);
   EXPECT_EQ(cell.elements().size(), 1);

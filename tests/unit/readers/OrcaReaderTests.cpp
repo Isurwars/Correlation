@@ -19,13 +19,22 @@ namespace {
 
 class OrcaReaderTests : public ::testing::Test {
 protected:
-  std::string test_file{"test_orca_sample.out"};
+  [[nodiscard]] const std::string &testFile() const noexcept { return test_file_; }
+
+  void SetUp() override {
+    const auto *test_info = ::testing::UnitTest::GetInstance()->current_test_info();
+    const std::string name = (test_info != nullptr) ? test_info->name() : "orca";
+    test_file_ = (std::filesystem::temp_directory_path() / ("test_orca_" + name + ".out")).string();
+  }
 
   void TearDown() override {
-    if (std::filesystem::exists(test_file)) {
-      std::filesystem::remove(test_file);
+    if (std::filesystem::exists(test_file_)) {
+      std::filesystem::remove(test_file_);
     }
   }
+
+private:
+  std::string test_file_;
 };
 
 TEST_F(OrcaReaderTests, DiscoveryInReaderFactory) {
@@ -38,7 +47,7 @@ TEST_F(OrcaReaderTests, DiscoveryInReaderFactory) {
 }
 
 TEST_F(OrcaReaderTests, ParsesSingleStructureAngstrom) {
-  std::ofstream out(test_file);
+  std::ofstream out(testFile());
   out << "                                 *****************\n";
   out << "                                 * O   R   C   A *\n";
   out << "                                 *****************\n";
@@ -53,7 +62,7 @@ TEST_F(OrcaReaderTests, ParsesSingleStructureAngstrom) {
   out.close();
 
   OrcaReader reader;
-  auto cell = reader.readStructure(test_file);
+  auto cell = reader.readStructure(testFile());
 
   EXPECT_EQ(cell.atomCount(), 3);
   EXPECT_EQ(cell.atoms()[0].element().symbol, "C");
@@ -62,7 +71,7 @@ TEST_F(OrcaReaderTests, ParsesSingleStructureAngstrom) {
 }
 
 TEST_F(OrcaReaderTests, ParsesOptimizationTrajectory) {
-  std::ofstream out(test_file);
+  std::ofstream out(testFile());
   out << "O   R   C   A\n";
   out << "CARTESIAN COORDINATES (ANGSTROEM)\n";
   out << "---------------------------------\n";
@@ -78,7 +87,7 @@ TEST_F(OrcaReaderTests, ParsesOptimizationTrajectory) {
   out.close();
 
   OrcaReader reader;
-  auto trajectory = reader.readTrajectory(test_file);
+  auto trajectory = reader.readTrajectory(testFile());
 
   EXPECT_EQ(trajectory.getFrameCount(), 2);
   EXPECT_NEAR(trajectory.getFrames()[1].atoms()[1].position().z(), 0.74, 1e-4);

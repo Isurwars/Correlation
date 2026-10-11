@@ -705,8 +705,8 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/LocalEntropyCalculatorTests.cpp": {
-    "mtime": 1790391314.5330162,
-    "ast_hash": "771f04e1726b7b55458cb84e287689a9",
+    "mtime": 1791606910.6871533,
+    "ast_hash": "f84f8b544cc4e67172834e60d9a99fbc",
     "semantic_hash": ""
   },
   "tests/unit/calculators/MSDCalculatorTests.cpp": {
@@ -1450,23 +1450,23 @@
     "semantic_hash": ""
   },
   "tests/unit/readers/AbinitReaderTests.cpp": {
-    "mtime": 1790181953.0649884,
-    "ast_hash": "395b268c35e98adf40f0ce87a5a55b3c",
+    "mtime": 1791607150.8841114,
+    "ast_hash": "a7cebbf7528c7868ee1d3073ed3b14d3",
     "semantic_hash": ""
   },
   "tests/unit/readers/DftbReaderTests.cpp": {
-    "mtime": 1790181953.0685365,
-    "ast_hash": "efb8b84b9920395af5adb5166570b0f7",
+    "mtime": 1791607165.4358656,
+    "ast_hash": "a7524edc99f84d4a09ebedc83b0e79de",
     "semantic_hash": ""
   },
   "tests/unit/readers/GpawReaderTests.cpp": {
-    "mtime": 1790181953.0650544,
-    "ast_hash": "1f45632878f3a9d45b21587d262cd045",
+    "mtime": 1791607179.131634,
+    "ast_hash": "2c53f19cde98ddff4768046b2d904943",
     "semantic_hash": ""
   },
   "tests/unit/readers/OrcaReaderTests.cpp": {
-    "mtime": 1790181953.0646608,
-    "ast_hash": "b2dd4e9ec50d201a4655f680a37704fa",
+    "mtime": 1791607138.1153271,
+    "ast_hash": "0e200b139e42f917878686a7be79db2c",
     "semantic_hash": ""
   },
   ".agents/rules/complexity-gate.md": {
@@ -2505,8 +2505,8 @@
     "semantic_hash": ""
   },
   "tests/unit/utils/ZipArchiveWriterTests.cpp": {
-    "mtime": 1790476705.9123263,
-    "ast_hash": "2565e93d27f846a3b1c549e437130091",
+    "mtime": 1791606709.8934977,
+    "ast_hash": "3fb0a5b473c46775a06eca8c11f749cb",
     "semantic_hash": ""
   },
   ".agents/scripts/hook_runner.py": {
@@ -2530,8 +2530,8 @@
     "semantic_hash": ""
   },
   "CMakePresets.json": {
-    "mtime": 1791318534.4509852,
-    "ast_hash": "b5b3db6c008b74d0ae5292eb126a987c",
+    "mtime": 1791606832.1384661,
+    "ast_hash": "5bb20b99abecf52ef0e899baf7eb16e6",
     "semantic_hash": ""
   },
   "tests/unit/core/GPUPortabilityTests.cpp": {

@@ -19,13 +19,23 @@ namespace {
 
 class AbinitReaderTests : public ::testing::Test {
 protected:
-  std::string test_file{"test_abinit_sample.abi"};
+  [[nodiscard]] const std::string &testFile() const noexcept { return test_file_; }
+
+  void SetUp() override {
+    const auto *test_info = ::testing::UnitTest::GetInstance()->current_test_info();
+    const std::string name = (test_info != nullptr) ? test_info->name() : "abinit";
+    test_file_ =
+        (std::filesystem::temp_directory_path() / ("test_abinit_" + name + ".abi")).string();
+  }
 
   void TearDown() override {
-    if (std::filesystem::exists(test_file)) {
-      std::filesystem::remove(test_file);
+    if (std::filesystem::exists(test_file_)) {
+      std::filesystem::remove(test_file_);
     }
   }
+
+private:
+  std::string test_file_;
 };
 
 TEST_F(AbinitReaderTests, DiscoveryInReaderFactory) {
@@ -38,7 +48,7 @@ TEST_F(AbinitReaderTests, DiscoveryInReaderFactory) {
 }
 
 TEST_F(AbinitReaderTests, ParsesAcellAndXangst) {
-  std::ofstream out(test_file);
+  std::ofstream out(testFile());
   out << "# ABINIT input sample\n";
   out << "acell 10.0 10.0 10.0\n";
   out << "rprim\n";
@@ -53,7 +63,7 @@ TEST_F(AbinitReaderTests, ParsesAcellAndXangst) {
   out.close();
 
   AbinitReader reader;
-  auto cell = reader.readStructure(test_file);
+  auto cell = reader.readStructure(testFile());
 
   EXPECT_EQ(cell.atomCount(), 2);
   EXPECT_NEAR(cell.atoms()[1].position().x(), 1.2, 1e-4);
