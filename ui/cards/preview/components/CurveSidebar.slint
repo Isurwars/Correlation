@@ -1,0 +1,255 @@
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialText,
+    Horizontal,
+    Vertical,
+    ScrollView,
+    SplitterHandle,
+    TextField,
+} from "../../../material/material.slint";
+import { CurveToggleItem } from "../../../Types.slint";
+
+export component CurveSidebar inherits Horizontal {
+    in property <[CurveToggleItem]> curve_toggle_items: [];
+    in-out property <length> sidebar_width: 180px;
+    in-out property <int> active_color_picker_id: -1;
+
+    callback toggle_curve_visibility(int, bool);
+    callback toggle_all_curves(bool);
+    callback set_curve_color(int, string);
+
+    out property <string> tooltip_text:
+        toggle_all_true_area.has-hover ? "Show all curves in the active plot." :
+        toggle_all_false_area.has-hover ? "Hide all curves in the active plot." : "";
+
+    out property <length> tooltip_x:
+        toggle_all_true_area.has-hover ? toggle_all_true_area.absolute-position.x + toggle_all_true_area.mouse-x :
+        toggle_all_false_area.has-hover ? toggle_all_false_area.absolute-position.x + toggle_all_false_area.mouse-x : 0px;
+
+    out property <length> tooltip_y:
+        toggle_all_true_area.has-hover ? toggle_all_true_area.absolute-position.y + toggle_all_true_area.mouse-y :
+        toggle_all_false_area.has-hover ? toggle_all_false_area.absolute-position.y + toggle_all_false_area.mouse-y : 0px;
+
+    private property <[color]> swatch_colors: [
+        #e69f00, #56b4e9, #009e73, #f0e442,
+        #0072b2, #d55e00, #cc79a7, #000000,
+        #1f77b4, #ff7f0e, #2ca02c, #d62728,
+        #9467bd, #8c564b, #e377c2, #7f7f7f,
+        #bcbd22, #17becf, #332288, #117733,
+        #44aa99, #88ccee, #ddcc77, #cc6677
+    ];
+
+    private property <[string]> swatch_hexes: [
+        "#e69f00", "#56b4e9", "#009e73", "#f0e442",
+        "#0072b2", "#d55e00", "#cc79a7", "#000000",
+        "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728",
+        "#9467bd", "#8c564b", "#e377c2", "#7f7f7f",
+        "#bcbd22", "#17becf", "#332288", "#117733",
+        "#44aa99", "#88ccee", "#ddcc77", "#cc6677"
+    ];
+
+    spacing: 0px;
+
+    if root.curve_toggle_items.length > 0: SplitterHandle {
+        moved(delta) => {
+            root.sidebar_width = Math.min(450px, Math.max(120px, root.sidebar_width - delta));
+        }
+        reset => {
+            root.sidebar_width = 180px;
+        }
+    }
+
+    // Curve Visibility Sidebar (Vertical Checklist to the right of the plot)
+    Rectangle {
+        visible: root.curve_toggle_items.length > 0;
+        width: root.curve_toggle_items.length > 0 ? root.sidebar_width : 0px;
+        background: MaterialPalette.surface_container_low;
+        border-radius: MaterialStyleMetrics.border_radius_2;
+
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+
+            HorizontalLayout {
+                spacing: 4px;
+                alignment: center;
+
+                MaterialText {
+                    horizontal-stretch: 1;
+                    text: "Curves (" + root.curve_toggle_items.length + ")";
+                    style: MaterialTypography.label_large;
+                    color: MaterialPalette.on_surface;
+                    vertical-alignment: center;
+                }
+
+                toggle_all_true_area := TouchArea {
+                    width: 24px;
+                    height: 20px;
+                    mouse-cursor: pointer;
+                    clicked => { root.toggle_all_curves(true); }
+
+                    MaterialText {
+                        text: "All";
+                        style: MaterialTypography.label_small;
+                        color: MaterialPalette.primary;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                }
+
+                MaterialText {
+                    text: "/";
+                    style: MaterialTypography.label_small;
+                    color: MaterialPalette.outline;
+                    vertical-alignment: center;
+                }
+
+                toggle_all_false_area := TouchArea {
+                    width: 32px;
+                    height: 20px;
+                    mouse-cursor: pointer;
+                    clicked => { root.toggle_all_curves(false); }
+
+                    MaterialText {
+                        text: "None";
+                        style: MaterialTypography.label_small;
+                        color: MaterialPalette.primary;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+
+            ScrollView {
+                vertical-stretch: 1;
+                content-height: root.curve_toggle_items.length * 30px;
+
+                VerticalLayout {
+                    spacing: 2px;
+                    alignment: start;
+                    for item in root.curve_toggle_items: item_touch := TouchArea {
+                        height: 28px;
+                        mouse-cursor: pointer;
+                        clicked => { root.toggle_curve_visibility(item.id, !item.visible); }
+
+                        Rectangle {
+                            background: item_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+                            border-radius: MaterialStyleMetrics.border_radius_2;
+
+                            HorizontalLayout {
+                                padding-left: 8px;
+                                padding-right: 8px;
+                                spacing: 8px;
+
+                                Vertical {
+                                    alignment: center;
+                                    height: 100%;
+
+                                    color_dot_touch := TouchArea {
+                                        width: 18px;
+                                        height: 18px;
+                                        mouse-cursor: pointer;
+                                        clicked => { root.active_color_picker_id = (root.active_color_picker_id == item.id) ? -1 : item.id; }
+
+                                        Rectangle {
+                                            width: 12px;
+                                            height: 12px;
+                                            border-radius: 6px;
+                                            background: item.visible ? item.color_hex : MaterialPalette.outline;
+                                            border-width: color_dot_touch.has-hover ? 2px : 0px;
+                                            border-color: MaterialPalette.primary;
+                                        }
+                                    }
+                                }
+
+                                MaterialText {
+                                    horizontal-stretch: 1;
+                                    text: item.label;
+                                    style: MaterialTypography.body_small;
+                                    color: item.visible ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
+                                    overflow: elide;
+                                    horizontal-alignment: left;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if root.active_color_picker_id >= 0: Rectangle {
+                background: MaterialPalette.surface_container_high;
+                border-radius: MaterialStyleMetrics.border_radius_2;
+                border-width: 1px;
+                border-color: MaterialPalette.outline;
+
+                VerticalLayout {
+                    padding: 8px;
+                    spacing: 6px;
+
+                    HorizontalLayout {
+                        alignment: center;
+                        MaterialText {
+                            horizontal-stretch: 1;
+                            text: "Color Palette";
+                            style: MaterialTypography.label_medium;
+                            color: MaterialPalette.on_surface;
+                            vertical-alignment: center;
+                        }
+
+                        TouchArea {
+                            width: 20px;
+                            height: 20px;
+                            mouse-cursor: pointer;
+                            clicked => { root.active_color_picker_id = -1; }
+                            MaterialText {
+                                text: "✕";
+                                style: MaterialTypography.label_small;
+                                color: MaterialPalette.on_surface_variant;
+                                horizontal-alignment: center;
+                                vertical-alignment: center;
+                            }
+                        }
+                    }
+
+                    VerticalLayout {
+                        spacing: 4px;
+                        for r_idx in 6: HorizontalLayout {
+                            spacing: 4px;
+                            alignment: center;
+                            for c_idx in 4: swatch_touch := TouchArea {
+                                width: 28px;
+                                height: 24px;
+                                mouse-cursor: pointer;
+                                clicked => {
+                                    root.set_curve_color(root.active_color_picker_id, root.swatch_hexes[r_idx * 4 + c_idx]);
+                                    root.active_color_picker_id = -1;
+                                }
+                                Rectangle {
+                                    width: 20px;
+                                    height: 20px;
+                                    border-radius: 10px;
+                                    background: root.swatch_colors[r_idx * 4 + c_idx];
+                                    border-width: swatch_touch.has-hover ? 2px : 1px;
+                                    border-color: swatch_touch.has-hover ? MaterialPalette.primary : MaterialPalette.outline;
+                                }
+                            }
+                        }
+                    }
+
+                    TextField {
+                        placeholder_text: "#RRGGBB";
+                        accepted(hex) => {
+                            if (hex != "") {
+                                root.set_curve_color(root.active_color_picker_id, hex);
+                                root.active_color_picker_id = -1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

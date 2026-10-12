@@ -1,0 +1,108 @@
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialText,
+    Vertical,
+    ScrollView,
+} from "../../../material/material.slint";
+import { TableRow } from "../../../Types.slint";
+
+export component PlotDataTable inherits Vertical {
+    in property <[string]> table_headers: [];
+    in property <[TableRow]> table_rows: [];
+
+    spacing: MaterialStyleMetrics.spacing_4;
+
+    // Dataset Values Table (High Density - 28px rows)
+    if root.table_rows.length == 0: Rectangle {
+        vertical-stretch: 1;
+        background: MaterialPalette.surface;
+        border-radius: MaterialStyleMetrics.border_radius_2;
+        border-width: 1px;
+        border-color: MaterialPalette.outline_variant;
+
+        MaterialText {
+            text: "No dataset values available.";
+            color: MaterialPalette.on_surface_variant;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+
+    if root.table_rows.length > 0: Rectangle {
+        vertical-stretch: 1;
+        background: MaterialPalette.surface;
+        border-radius: MaterialStyleMetrics.border_radius_2;
+        border-width: 1px;
+        border-color: MaterialPalette.outline_variant;
+        clip: true;
+
+        VerticalLayout {
+            padding: 1px;
+
+            // Header Row
+            Rectangle {
+                background: MaterialPalette.surface_container_high;
+                height: 32px;
+
+                HorizontalLayout {
+                    padding-left: 8px;
+                    padding-right: 8px;
+                    spacing: 8px;
+                    for header_text in root.table_headers: Vertical {
+                        horizontal-stretch: 1;
+                        alignment: center;
+                        MaterialText {
+                            text: header_text;
+                            style: MaterialTypography.label_medium;
+                            font_weight: MaterialTypography.semibold;
+                            color: MaterialPalette.on_surface;
+                        }
+                    }
+                }
+            }
+
+            // Divider line
+            Rectangle {
+                height: 1px;
+                background: MaterialPalette.outline_variant;
+            }
+
+            // Scrollable Rows (High density: 28px height)
+            ScrollView {
+                content-height: root.table_rows.length * 28px;
+
+                VerticalLayout {
+                    for row[row_idx] in root.table_rows: Rectangle {
+                        height: 28px;
+                        background: Math.mod(row_idx, 2) == 0 ? MaterialPalette.surface : MaterialPalette.surface_container_lowest;
+
+                        VerticalLayout {
+                            HorizontalLayout {
+                                padding-left: 8px;
+                                padding-right: 8px;
+                                spacing: 8px;
+                                for val in row.values: Vertical {
+                                    horizontal-stretch: 1;
+                                    alignment: center;
+                                    MaterialText {
+                                        text: val;
+                                        style: MaterialTypography.body_small;
+                                        color: MaterialPalette.on_surface;
+                                    }
+                                }
+                            }
+
+                            // Divider line between rows
+                            Rectangle {
+                                height: 1px;
+                                background: MaterialPalette.outline_variant.with_alpha(10%);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

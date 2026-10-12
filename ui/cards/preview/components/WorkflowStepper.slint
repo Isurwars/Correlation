@@ -1,0 +1,138 @@
+import {
+    MaterialPalette,
+    MaterialTypography,
+} from "../../../material/material.slint";
+
+export component WorkflowStepper inherits Rectangle {
+    in property <bool> file_loaded: false;
+    in property <bool> analysis_running: false;
+    in property <bool> analysis_done: false;
+
+    callback browse_file();
+    callback open_panel(int);
+    callback run_analysis();
+
+    width: 100%;
+    height: 28px;
+    background: transparent;
+
+    HorizontalLayout {
+        width: 100%;
+        height: 100%;
+        spacing: 8px;
+        alignment: center;
+
+        // 1. Load File
+        Rectangle {
+            height: 28px;
+            border-radius: 14px;
+            background: !root.file_loaded ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+
+            HorizontalLayout {
+                padding-left: 12px;
+                padding-right: 12px;
+                Text {
+                    text: !root.file_loaded ? "1. Load File (Active)" : "1. File Loaded ✓";
+                    font-size: MaterialTypography.label_medium.font_size;
+                    color: !root.file_loaded ? MaterialPalette.on_primary_container : MaterialPalette.primary;
+                    vertical-alignment: center;
+                }
+            }
+
+            TouchArea {
+                mouse-cursor: pointer;
+                clicked => { root.browse_file(); }
+            }
+        }
+
+        Text {
+            text: "➔";
+            color: MaterialPalette.outline;
+            vertical-alignment: center;
+        }
+
+        // 2. Configure Options
+        Rectangle {
+            height: 28px;
+            border-radius: 14px;
+            background: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+
+            HorizontalLayout {
+                padding-left: 12px;
+                padding-right: 12px;
+                Text {
+                    text: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? "2. Configure Options (Active)" :
+                          (root.analysis_running || root.analysis_done) ? "2. Options Configured ✓" : "2. Configure Options";
+                    font-size: MaterialTypography.label_medium.font_size;
+                    color: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? MaterialPalette.on_primary_container :
+                           (root.analysis_running || root.analysis_done) ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+                    vertical-alignment: center;
+                }
+            }
+
+            TouchArea {
+                mouse-cursor: pointer;
+                clicked => { root.open_panel(1); }
+            }
+        }
+
+        Text {
+            text: "➔";
+            color: MaterialPalette.outline;
+            vertical-alignment: center;
+        }
+
+        // 3. Run Calculation
+        Rectangle {
+            height: 28px;
+            border-radius: 14px;
+            background: root.analysis_running ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+
+            HorizontalLayout {
+                padding-left: 12px;
+                padding-right: 12px;
+                Text {
+                    text: root.analysis_running ? "3. Calculating... (Active)" :
+                          root.analysis_done ? "3. Calculation Complete ✓" : "3. Run Calculation";
+                    font-size: MaterialTypography.label_medium.font_size;
+                    color: root.analysis_running ? MaterialPalette.on_primary_container :
+                           root.analysis_done ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+                    vertical-alignment: center;
+                }
+            }
+
+            TouchArea {
+                mouse-cursor: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? pointer : default;
+                clicked => {
+                    if (root.file_loaded && !root.analysis_running && !root.analysis_done) {
+                        root.run_analysis();
+                    }
+                }
+            }
+        }
+
+        Text {
+            text: "➔";
+            color: MaterialPalette.outline;
+            vertical-alignment: center;
+        }
+
+        // 4. Preview & Export
+        Rectangle {
+            height: 28px;
+            border-radius: 14px;
+            background: root.analysis_done ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+
+            HorizontalLayout {
+                padding-left: 12px;
+                padding-right: 12px;
+                Text {
+                    text: root.analysis_done ? "4. Preview & Export (Active)" : "4. Preview & Export";
+                    font-size: MaterialTypography.label_medium.font_size;
+                    color: root.analysis_done ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
+                    vertical-alignment: center;
+                }
+            }
+        }
+    }
+}

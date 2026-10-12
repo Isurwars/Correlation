@@ -1,0 +1,128 @@
+import {
+    MaterialPalette,
+    MaterialTypography,
+    MaterialText,
+    Icons,
+} from "../../../material/material.slint";
+
+export component PlotReticleOverlay inherits Rectangle {
+    in property <bool> has_hover: false;
+    in property <length> mouse_x: 0px;
+    in property <length> mouse_y: 0px;
+    in property <int> selected_plot_index: -1;
+    in property <int> active_tool: 0;
+    in property <bool> is_selecting: false;
+    in property <bool> is_panning: false;
+    in property <length> drag_start_x: 0px;
+    in property <length> drag_start_y: 0px;
+    in property <length> drag_current_x: 0px;
+    in property <length> drag_current_y: 0px;
+
+    width: 100%;
+    height: 100%;
+    background: transparent;
+
+    // Hover Crosshairs & Reticle
+    // Vertical Guideline
+    if root.has_hover && root.selected_plot_index >= 0 && !root.is_selecting && !root.is_panning: Rectangle {
+        x: root.mouse_x - (root.active_tool == 2 ? 1px : 0.5px);
+        y: 0px;
+        width: root.active_tool == 2 ? 2.5px : (root.active_tool == 3 ? 1px : 2px);
+        height: 100%;
+        background: (root.active_tool == 1 || root.active_tool == 4) ? MaterialPalette.tertiary.with_alpha(85%) :
+                    (root.active_tool == 2 ? MaterialPalette.primary.with_alpha(95%) :
+                    (root.active_tool == 3 ? MaterialPalette.outline.with_alpha(45%) :
+                    MaterialPalette.primary.with_alpha(76%)));
+    }
+
+    // Horizontal Guideline
+    if root.has_hover && root.selected_plot_index >= 0 && !root.is_selecting && !root.is_panning: Rectangle {
+        x: 0px;
+        y: root.mouse_y - (root.active_tool == 3 ? 1px : 0.5px);
+        width: 100%;
+        height: root.active_tool == 3 ? 2.5px : (root.active_tool == 2 ? 1px : 2px);
+        background: (root.active_tool == 1 || root.active_tool == 4) ? MaterialPalette.tertiary.with_alpha(70%) :
+                    (root.active_tool == 3 ? MaterialPalette.secondary.with_alpha(95%) :
+                    (root.active_tool == 2 ? MaterialPalette.outline.with_alpha(45%) :
+                    MaterialPalette.primary.with_alpha(60%)));
+    }
+
+    // Reticle Center Ring
+    if root.has_hover && root.selected_plot_index >= 0 && !root.is_selecting && !root.is_panning: Rectangle {
+        x: root.mouse_x - 6px;
+        y: root.mouse_y - 6px;
+        width: 12px;
+        height: 12px;
+        border-radius: 6px;
+        border-width: 2px;
+        border-color: (root.active_tool == 1 || root.active_tool == 4) ? MaterialPalette.tertiary.with_alpha(95%) :
+                      (root.active_tool == 2 ? MaterialPalette.primary.with_alpha(95%) :
+                      (root.active_tool == 3 ? MaterialPalette.secondary.with_alpha(95%) :
+                      MaterialPalette.primary.with_alpha(90%)));
+        background: transparent;
+    }
+
+    // Mode Indicator Badge (Zoom In, Zoom Out, +X Marker, +Y Marker)
+    if root.has_hover && root.selected_plot_index >= 0 && root.active_tool != 0 && !root.is_selecting && !root.is_panning: Rectangle {
+        x: root.mouse_x + 14px;
+        y: root.mouse_y - 22px;
+        height: 20px;
+        width: (root.active_tool == 1 || root.active_tool == 4) ? 20px : 26px;
+        border-radius: 10px;
+        background: MaterialPalette.surface_container_highest.with_alpha(92%);
+        border-width: 1.5px;
+        border-color: (root.active_tool == 1 || root.active_tool == 4) ? MaterialPalette.tertiary :
+                      (root.active_tool == 2 ? MaterialPalette.primary :
+                      MaterialPalette.secondary);
+
+        if root.active_tool == 1: Image {
+            x: (parent.width - self.width) / 2;
+            y: (parent.height - self.height) / 2;
+            width: 13px;
+            height: 13px;
+            source: Icons.zoom_in;
+            colorize: MaterialPalette.tertiary;
+        }
+
+        if root.active_tool == 4: Image {
+            x: (parent.width - self.width) / 2;
+            y: (parent.height - self.height) / 2;
+            width: 13px;
+            height: 13px;
+            source: Icons.zoom_out;
+            colorize: MaterialPalette.tertiary;
+        }
+
+        if root.active_tool == 2: MaterialText {
+            width: 100%;
+            height: 100%;
+            text: "+X";
+            style: MaterialTypography.label_small;
+            color: MaterialPalette.primary;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+
+        if root.active_tool == 3: MaterialText {
+            width: 100%;
+            height: 100%;
+            text: "+Y";
+            style: MaterialTypography.label_small;
+            color: MaterialPalette.secondary;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+
+    // Rubberband ROI Box
+    if root.is_selecting: Rectangle {
+        x: Math.min(root.drag_start_x, root.drag_current_x);
+        y: Math.min(root.drag_start_y, root.drag_current_y);
+        width: Math.max(root.drag_start_x, root.drag_current_x) - Math.min(root.drag_start_x, root.drag_current_x);
+        height: Math.max(root.drag_start_y, root.drag_current_y) - Math.min(root.drag_start_y, root.drag_current_y);
+        background: MaterialPalette.tertiary.with_alpha(20%);
+        border-width: 1.5px;
+        border-color: MaterialPalette.tertiary;
+        border-radius: 2px;
+    }
+}

@@ -1,0 +1,189 @@
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialText,
+    Vertical,
+    FilledButton,
+    Horizontal,
+    Icons,
+} from "../../../material/material.slint";
+
+export component HeroEmptyState inherits Rectangle {
+    in property <bool> file_loaded: false;
+    in property <bool> analysis_running: false;
+    in property <bool> analysis_done: false;
+    in property <int> selected_plot_index: -1;
+    in property <string> file_basename: "";
+    in property <string> total_atoms: "";
+    in property <string> num_frames: "";
+
+    callback browse_file();
+    callback run_analysis();
+    callback open_panel(int);
+
+    width: 100%;
+    height: 100%;
+    background: transparent;
+
+    // Empty State when no analysis has been run yet — Branded Hero View
+    if !root.analysis_done: Vertical {
+        width: 100%;
+        height: 100%;
+        padding: MaterialStyleMetrics.spacing_16;
+        spacing: MaterialStyleMetrics.spacing_16;
+        alignment: center;
+
+        HorizontalLayout {
+            alignment: center;
+
+            Image {
+                source: @image-url("../../../../Images/Banner.png");
+                height: 120px;
+                width: 380px;
+                image-fit: contain;
+                horizontal-alignment: center;
+                colorize: MaterialPalette.primary;
+            }
+        }
+
+        Vertical {
+            spacing: MaterialStyleMetrics.spacing_8;
+            alignment: center;
+
+            MaterialText {
+                text: "Liquid & Amorphous Structural Analysis";
+                color: MaterialPalette.on_surface;
+                horizontal-alignment: center;
+                style: MaterialTypography.title_large;
+            }
+
+            MaterialText {
+                text: "Load a structure or trajectory file from the Operations panel to generate pair distribution, scattering, and angular structure functions.";
+                color: MaterialPalette.on_surface_variant;
+                horizontal-alignment: center;
+                wrap: word-wrap;
+                style: MaterialTypography.body_medium;
+            }
+        }
+
+        // Dynamic Call-To-Action (CTA) Cards based on stage
+        if !root.file_loaded: Vertical {
+            spacing: MaterialStyleMetrics.spacing_12;
+            alignment: center;
+
+            FilledButton {
+                height: MaterialStyleMetrics.size_40;
+                text: "Open Trajectory File... (Ctrl+O)";
+                icon: Icons.folder_open;
+                clicked => { root.browse_file(); }
+            }
+
+            MaterialText {
+                text: "Supported: VASP (XDATCAR/POSCAR), XYZ, CIF, GROMACS (.gro), LAMMPS, QE, CASTEP, ONETEP";
+                style: MaterialTypography.body_small;
+                color: MaterialPalette.on_surface_variant;
+                horizontal-alignment: center;
+            }
+
+            HorizontalLayout {
+                spacing: 16px;
+                alignment: center;
+
+                Text {
+                    text: "⚡ Shortcuts: [Ctrl+O] Open  •  [Ctrl+R] Run  •  [Ctrl+S] Export  •  [Ctrl+D] Theme";
+                    font-size: MaterialTypography.label_small.font_size;
+                    color: MaterialPalette.outline;
+                }
+            }
+        }
+
+        if root.file_loaded: Vertical {
+            spacing: MaterialStyleMetrics.spacing_12;
+            alignment: center;
+
+            Rectangle {
+                background: MaterialPalette.surface_container_high;
+                border-radius: 8px;
+                border-width: 1px;
+                border-color: MaterialPalette.outline_variant;
+
+                HorizontalLayout {
+                    padding-left: 16px;
+                    padding-right: 16px;
+                    padding-top: 8px;
+                    padding-bottom: 8px;
+                    spacing: 16px;
+                    alignment: center;
+
+                    MaterialText {
+                        text: "📁 " + root.file_basename;
+                        style: MaterialTypography.label_large;
+                        color: MaterialPalette.on_surface;
+                        vertical-alignment: center;
+                    }
+
+                    MaterialText {
+                        text: "• " + root.total_atoms + " atoms";
+                        style: MaterialTypography.body_medium;
+                        color: MaterialPalette.on_surface_variant;
+                        vertical-alignment: center;
+                    }
+
+                    MaterialText {
+                        text: "• " + root.num_frames + " frames";
+                        style: MaterialTypography.body_medium;
+                        color: MaterialPalette.on_surface_variant;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+
+            HorizontalLayout {
+                spacing: 12px;
+                alignment: center;
+
+                FilledButton {
+                    height: MaterialStyleMetrics.size_40;
+                    text: root.analysis_running ? "Calculation Running..." : "Run Analysis (Ctrl+R)";
+                    icon: Icons.play_arrow;
+                    enabled: !root.analysis_running;
+                    clicked => { root.run_analysis(); }
+                }
+
+                FilledButton {
+                    height: MaterialStyleMetrics.size_40;
+                    text: "Configure Options";
+                    icon: Icons.tune;
+                    clicked => { root.open_panel(1); }
+                }
+            }
+        }
+    }
+
+    // Placeholder text when analysis is done but no plot selected
+    if root.analysis_done && root.selected_plot_index < 0: Vertical {
+        width: 100%;
+        height: 100%;
+        padding: MaterialStyleMetrics.spacing_16;
+        spacing: MaterialStyleMetrics.spacing_8;
+        alignment: center;
+
+        MaterialText {
+            text: "Analysis completed successfully!";
+            color: MaterialPalette.primary;
+            style: MaterialTypography.title_medium;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+
+        MaterialText {
+            text: "Select a distribution function from the dropdown above to inspect curves, zoom, or place markers.";
+            color: MaterialPalette.on_surface_variant;
+            style: MaterialTypography.body_medium;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+            wrap: word-wrap;
+        }
+    }
+}

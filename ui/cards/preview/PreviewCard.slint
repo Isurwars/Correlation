@@ -1,45 +1,27 @@
 import {
     MaterialPalette,
     MaterialStyleMetrics,
-    MaterialTypography,
     FilledCard,
     MaterialText,
-    DropDownMenu,
-    InputSelect,
     MenuItem,
     Vertical,
     FilledButton,
     Horizontal,
-    Icons,
-    InfoRow,
-    ScrollView,
-    SplitterHandle,
-    TabItem,
-    TextField,
 } from "../../material/material.slint";
-import { ExportSettingsCard } from "../plot/ExportSettingsCard.slint";
 import { TableRow, CurveToggleItem } from "../../Types.slint";
-
-// ============================================================================
+import { WorkflowStepper } from "./components/WorkflowStepper.slint";
+import { PreviewHeader } from "./components/PreviewHeader.slint";
+import { HeroEmptyState } from "./components/HeroEmptyState.slint";
+import { PlotReticleOverlay } from "./components/PlotReticleOverlay.slint";
+import { ImagingToolbar } from "./components/ImagingToolbar.slint";
+import { CurveSidebar } from "./components/CurveSidebar.slint";
+import { PlotDataTable } from "./components/PlotDataTable.slint";
 
 // ============================================================================
 // PreviewCard Component
 // ============================================================================
-/// Displays a preview plot of a computed distribution function as a static SVG
-/// image. The rendered image is produced by the C++ backend (`AppController`)
-/// using the `SvgPlotter` utility and pushed via `preview_plot`.
-///
-/// C++ Binding Architecture:
-/// - `plot_items`: populated after analysis finishes with histogram names as
-///   MenuItem structs (e.g., {text: "g(r)", enabled: true}).
-///   The C++ controller builds a VectorModel<MenuItem> from the DF histogram
-///   keys and pushes it via `ui.set_plot_items(model)`.
-/// - `preview_plot`: an `slint::Image` produced from an SVG string by
-///   `slint::Image::load_from_svg_data()` in the controller.
-/// - `plot_selected(index)`: callback invoked when the user changes the dropdown;
-/// - `plot_items`: A list of menu items containing descriptive titles
-/// - `selected_plot_index`: The index of the currently active diagram.
-/// - `preview_plot`: The current generated plot image.
+/// Displays preview plot and dataset inspection views for computed distribution
+/// functions. Coordinated through focused subcomponents under components/.
 // ============================================================================
 export component PreviewCard inherits FilledCard {
     in property <bool> enabled: true;
@@ -71,78 +53,20 @@ export component PreviewCard inherits FilledCard {
     property <int> active_tab: 0;
     property <int> active_color_picker_id: -1;
 
-    private property <[color]> swatch_colors: [
-        #e69f00,
-        #56b4e9,
-        #009e73,
-        #f0e442,
-        #0072b2,
-        #d55e00,
-        #cc79a7,
-        #000000,
-        #e76f51,
-        #f4a261,
-        #e9c46a,
-        #2a9d8f,
-        #457b9d,
-        #1d3557,
-        #6a0572,
-        #ab1344,
-        #ff4d6d,
-        #70e000,
-        #3a86ff,
-        #8338ec,
-        #ff006e,
-        #fb5607,
-        #ffbe0b,
-        #ffffff
-    ];
-
-    private property <[string]> swatch_hexes: [
-        "#E69F00",
-        "#56B4E9",
-        "#009E73",
-        "#F0E442",
-        "#0072B2",
-        "#D55E00",
-        "#CC79A7",
-        "#000000",
-        "#E76F51",
-        "#F4A261",
-        "#E9C46A",
-        "#2A9D8F",
-        "#457B9D",
-        "#1D3557",
-        "#6A0572",
-        "#AB1344",
-        "#FF4D6D",
-        "#70E000",
-        "#3A86FF",
-        "#8338EC",
-        "#FF006E",
-        "#FB5607",
-        "#FFBE0B",
-        "#FFFFFF"
-    ];
-
     // Workflow properties & callbacks
     in property <bool> file_loaded: false;
     in property <bool> analysis_running: false;
     in property <string> file_basename: "";
-    in property <int> total_atoms: 0;
-    in property <int> num_frames: 0;
-
-    callback browse_file();
-    callback run_analysis();
-    callback open_panel(int);
+    in property <string> total_atoms: "";
+    in property <string> num_frames: "";
 
     callback plot_selected(int);
-    callback toggle_curve_visibility(int, bool);
-    callback toggle_all_curves(bool);
-    callback set_curve_color(int, string);
     callback write_files();
     callback pin_run();
     callback clear_pinned_runs();
+    callback toggle_curve_visibility(int, bool);
+    callback toggle_all_curves(bool);
+    callback set_curve_color(int, string);
     callback mouse_move(length, length, bool, length, length);
     callback plot_resized(length, length);
     callback zoom_to_rect(float, float, float, float);
@@ -152,51 +76,30 @@ export component PreviewCard inherits FilledCard {
     callback add_marker_at(float, float, bool);
     callback add_marker(bool);
     callback clear_markers();
+    callback browse_file();
+    callback run_analysis();
+    callback open_panel(int);
 
-    // Hover state for tooltip
+    // Hover state for tooltip (aggregated from child components)
     out property <string> hovered_tooltip_text:
-        plot_dropdown_area.has-hover ? "Select a distribution function to preview.\n\n💡 Tip: Use 'Pin Run' to save current results, then adjust parameters and re-run to overlay curves." :
-        tab_plot_area.has-hover ? "Plot View\n\n📈 High-resolution vector SVG visualization with interactive zoom, crosshairs, and live coordinates." :
-        tab_data_area.has-hover ? "Data Table View\n\n📄 Tabular numerical coordinates and distribution intensities." :
+        imaging_toolbar.tooltip_text != "" ? imaging_toolbar.tooltip_text :
+        curve_sidebar.tooltip_text != "" ? curve_sidebar.tooltip_text :
+        preview_header.tooltip_text != "" ? preview_header.tooltip_text :
         (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? "Remove all pinned runs from the comparison overlay." :
-        (root.active_tab == 0 && root.selected_plot_index >= 0 && home_touch.has-hover) ? "Home (Reset Zoom)\n\n🔄 Restore full coordinate axes limits." :
-        (root.active_tab == 0 && root.selected_plot_index >= 0 && zoom_touch.has-hover) ? "Rubberband Box Zoom\n\n🔍 Click and drag on plot to inspect a specific region of interest." :
-        (root.active_tab == 0 && root.selected_plot_index >= 0 && zoom_out_touch.has-hover) ? "Click to Zoom Out\n\n🔍 Click anywhere on plot to step viewport zoom out centered on click." :
-        (root.active_tab == 0 && root.selected_plot_index >= 0 && marker_x_touch.has-hover) ? "Add Vertical Marker (+X)\n\n📍 Click plot to place a vertical guide line at target distance or angle." :
-        (root.active_tab == 0 && root.selected_plot_index >= 0 && marker_y_touch.has-hover) ? "Add Horizontal Marker (+Y)\n\n📍 Click plot to place a horizontal intensity threshold guide." :
-        (root.active_tab == 0 && root.selected_plot_index >= 0 && root.markers_count > 0 && clear_markers_touch.has-hover) ? "Clear Markers\n\n🗑️ Remove all inspection guides from the plot." :
-        (root.active_tab == 0 && toggle_all_true_area.has-hover) ? "Show all curves in the active plot." :
-        (root.active_tab == 0 && toggle_all_false_area.has-hover) ? "Hide all curves in the active plot." :
         save_results_area.has-hover ? "Export analysis results to files in the selected formats (CSV, HDF5, Parquet, SVG).\n\n💡 Tip: Results are written to the output destination directory." : "";
 
     out property <length> hovered_x:
-        plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.x + plot_dropdown_area.mouse-x :
-        tab_plot_area.has-hover ? tab_plot_area.absolute-position.x + tab_plot_area.mouse-x :
-        tab_data_area.has-hover ? tab_data_area.absolute-position.x + tab_data_area.mouse-x :
+        imaging_toolbar.tooltip_text != "" ? imaging_toolbar.tooltip_x :
+        curve_sidebar.tooltip_text != "" ? curve_sidebar.tooltip_x :
+        preview_header.tooltip_text != "" ? preview_header.tooltip_x :
         (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? clear_pinned_area.absolute-position.x + clear_pinned_area.mouse-x :
-        (root.active_tab == 0 && root.selected_plot_index >= 0 && home_touch.has-hover) ? home_touch.absolute-position.x + home_touch.mouse-x :
-        (root.active_tab == 0 && root.selected_plot_index >= 0 && zoom_touch.has-hover) ? zoom_touch.absolute-position.x + zoom_touch.mouse-x :
-        (root.active_tab == 0 && root.selected_plot_index >= 0 && zoom_out_touch.has-hover) ? zoom_out_touch.absolute-position.x + zoom_out_touch.mouse-x :
-        (root.active_tab == 0 && root.selected_plot_index >= 0 && marker_x_touch.has-hover) ? marker_x_touch.absolute-position.x + marker_x_touch.mouse-x :
-        (root.active_tab == 0 && root.selected_plot_index >= 0 && marker_y_touch.has-hover) ? marker_y_touch.absolute-position.x + marker_y_touch.mouse-x :
-        (root.active_tab == 0 && root.selected_plot_index >= 0 && root.markers_count > 0 && clear_markers_touch.has-hover) ? clear_markers_touch.absolute-position.x + clear_markers_touch.mouse-x :
-        (root.active_tab == 0 && toggle_all_true_area.has-hover) ? toggle_all_true_area.absolute-position.x + toggle_all_true_area.mouse-x :
-        (root.active_tab == 0 && toggle_all_false_area.has-hover) ? toggle_all_false_area.absolute-position.x + toggle_all_false_area.mouse-x :
         save_results_area.has-hover ? save_results_area.absolute-position.x + save_results_area.mouse-x : 0px;
 
     out property <length> hovered_y:
-        plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.y + plot_dropdown_area.mouse-y :
-        tab_plot_area.has-hover ? tab_plot_area.absolute-position.y + tab_plot_area.mouse-y :
-        tab_data_area.has-hover ? tab_data_area.absolute-position.y + tab_data_area.mouse-y :
+        imaging_toolbar.tooltip_text != "" ? imaging_toolbar.tooltip_y :
+        curve_sidebar.tooltip_text != "" ? curve_sidebar.tooltip_y :
+        preview_header.tooltip_text != "" ? preview_header.tooltip_y :
         (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? clear_pinned_area.absolute-position.y + clear_pinned_area.mouse-y :
-        (root.active_tab == 0 && root.selected_plot_index >= 0 && home_touch.has-hover) ? home_touch.absolute-position.y + home_touch.mouse-y :
-        (root.active_tab == 0 && root.selected_plot_index >= 0 && zoom_touch.has-hover) ? zoom_touch.absolute-position.y + zoom_touch.mouse-y :
-        (root.active_tab == 0 && root.selected_plot_index >= 0 && zoom_out_touch.has-hover) ? zoom_out_touch.absolute-position.y + zoom_out_touch.mouse-y :
-        (root.active_tab == 0 && root.selected_plot_index >= 0 && marker_x_touch.has-hover) ? marker_x_touch.absolute-position.y + marker_x_touch.mouse-y :
-        (root.active_tab == 0 && root.selected_plot_index >= 0 && marker_y_touch.has-hover) ? marker_y_touch.absolute-position.y + marker_y_touch.mouse-y :
-        (root.active_tab == 0 && root.selected_plot_index >= 0 && root.markers_count > 0 && clear_markers_touch.has-hover) ? clear_markers_touch.absolute-position.y + clear_markers_touch.mouse-y :
-        (root.active_tab == 0 && toggle_all_true_area.has-hover) ? toggle_all_true_area.absolute-position.y + toggle_all_true_area.mouse-y :
-        (root.active_tab == 0 && toggle_all_false_area.has-hover) ? toggle_all_false_area.absolute-position.y + toggle_all_false_area.mouse-y :
         save_results_area.has-hover ? save_results_area.absolute-position.y + save_results_area.mouse-y : 0px;
 
     out property <length> hovered_width: 0px;
@@ -205,172 +108,32 @@ export component PreviewCard inherits FilledCard {
     Vertical {
         spacing: MaterialStyleMetrics.spacing_8;
 
-        // Workflow Stepper (1. Load File -> 2. Configure Options -> 3. Run Calculation -> 4. Preview & Export)
-        HorizontalLayout {
-            spacing: 8px;
-            alignment: center;
+        // 1. Workflow Stepper
+        WorkflowStepper {
+            width: 100%;
             height: 28px;
-
-            Rectangle {
-                height: 28px;
-                border-radius: 14px;
-                background: !root.file_loaded ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
-
-                HorizontalLayout {
-                    padding-left: 12px;
-                    padding-right: 12px;
-                    Text {
-                        text: !root.file_loaded ? "1. Load File (Active)" : "1. File Loaded ✓";
-                        font-size: MaterialTypography.label_medium.font_size;
-                        color: !root.file_loaded ? MaterialPalette.on_primary_container : MaterialPalette.primary;
-                        vertical-alignment: center;
-                    }
-                }
-
-                TouchArea {
-                    mouse-cursor: pointer;
-                    clicked => { root.browse_file(); }
-                }
-            }
-
-            Text {
-                text: "➔";
-                color: MaterialPalette.outline;
-                vertical-alignment: center;
-            }
-
-            Rectangle {
-                height: 28px;
-                border-radius: 14px;
-                background: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
-
-                HorizontalLayout {
-                    padding-left: 12px;
-                    padding-right: 12px;
-                    Text {
-                        text: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? "2. Configure Options (Active)" :
-                              (root.analysis_running || root.analysis_done) ? "2. Options Configured ✓" : "2. Configure Options";
-                        font-size: MaterialTypography.label_medium.font_size;
-                        color: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? MaterialPalette.on_primary_container :
-                               (root.analysis_running || root.analysis_done) ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
-                        vertical-alignment: center;
-                    }
-                }
-
-                TouchArea {
-                    mouse-cursor: pointer;
-                    clicked => { root.open_panel(1); }
-                }
-            }
-
-            Text {
-                text: "➔";
-                color: MaterialPalette.outline;
-                vertical-alignment: center;
-            }
-
-            Rectangle {
-                height: 28px;
-                border-radius: 14px;
-                background: root.analysis_running ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
-
-                HorizontalLayout {
-                    padding-left: 12px;
-                    padding-right: 12px;
-                    Text {
-                        text: root.analysis_running ? "3. Calculating... (Active)" :
-                              root.analysis_done ? "3. Calculation Complete ✓" : "3. Run Calculation";
-                        font-size: MaterialTypography.label_medium.font_size;
-                        color: root.analysis_running ? MaterialPalette.on_primary_container :
-                               root.analysis_done ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
-                        vertical-alignment: center;
-                    }
-                }
-
-                TouchArea {
-                    mouse-cursor: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? pointer : default;
-                    clicked => {
-                        if (root.file_loaded && !root.analysis_running && !root.analysis_done) {
-                            root.run_analysis();
-                        }
-                    }
-                }
-            }
-
-            Text {
-                text: "➔";
-                color: MaterialPalette.outline;
-                vertical-alignment: center;
-            }
-
-            Rectangle {
-                height: 28px;
-                border-radius: 14px;
-                background: root.analysis_done ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
-
-                HorizontalLayout {
-                    padding-left: 12px;
-                    padding-right: 12px;
-                    Text {
-                        text: root.analysis_done ? "4. Preview & Export (Active)" : "4. Preview & Export";
-                        font-size: MaterialTypography.label_medium.font_size;
-                        color: root.analysis_done ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
-                        vertical-alignment: center;
-                    }
-                }
-            }
+            file_loaded: root.file_loaded;
+            analysis_running: root.analysis_running;
+            analysis_done: root.analysis_done;
+            browse_file => { root.browse_file(); }
+            open_panel(idx) => { root.open_panel(idx); }
+            run_analysis => { root.run_analysis(); }
         }
 
-        // HEADER: Plot selector dropdown and Tabs
-        Horizontal {
-            spacing: MaterialStyleMetrics.spacing_8;
-            height: MaterialStyleMetrics.size_40;
-
-            plot_dropdown_area := InputSelect {
-                horizontal-stretch: 1;
-                height: 100%;
-                label: "Select Plot";
-                enabled: root.plot_items.length > 0;
-                items: root.plot_items;
-                current_index <=> root.selected_plot_index;
-
-                selected(idx) => {
-                    root.plot_selected(idx);
-                }
-            }
-
-            // Tab Buttons
-            Horizontal {
-                spacing: MaterialStyleMetrics.spacing_4;
-                height: 100%;
-
-                tab_plot_area := TouchArea {
-                    width: tab_plot.preferred-width;
-                    height: 100%;
-                    tab_plot := TabItem {
-                        text: "Plot";
-                        active: root.active_tab == 0;
-                        clicked => { root.active_tab = 0; }
-                    }
-                }
-
-                tab_data_area := TouchArea {
-                    width: tab_data.preferred-width;
-                    height: 100%;
-                    tab_data := TabItem {
-                        text: "Data";
-                        active: root.active_tab == 1;
-                        clicked => { root.active_tab = 1; }
-                    }
-                }
-            }
+        // 2. Header: Plot dropdown and Tabs
+        preview_header := PreviewHeader {
+            plot_items: root.plot_items;
+            selected_plot_index <=> root.selected_plot_index;
+            active_tab <=> root.active_tab;
+            plot_selected(idx) => { root.plot_selected(idx); }
         }
 
-        // Pinned Runs Info
+        // 3. Pinned Runs Info
         Horizontal {
             visible: root.pinned_runs_count > 0;
             height: root.pinned_runs_count > 0 ? MaterialStyleMetrics.size_40 : 0px;
             spacing: MaterialStyleMetrics.spacing_8;
+
             MaterialText {
                 text: "Comparing with " + root.pinned_runs_count + " pinned run(s)";
                 color: MaterialPalette.on_surface_variant;
@@ -389,13 +152,13 @@ export component PreviewCard inherits FilledCard {
             }
         }
 
-        // BODY: Tab Content Switcher
+        // 4. Body: Tab Content Switcher
         HorizontalLayout {
             visible: root.active_tab == 0;
             vertical-stretch: root.active_tab == 0 ? 1 : 0;
             spacing: MaterialStyleMetrics.spacing_8;
 
-            // SVG plot image area — fills remaining space
+            // SVG Plot Area
             plot_container := Rectangle {
                 horizontal-stretch: 1;
                 vertical-stretch: 1;
@@ -404,165 +167,28 @@ export component PreviewCard inherits FilledCard {
                 clip: self.width > 1px && self.height > 1px;
                 visible: self.width > 0.1px && self.height > 0.1px;
 
-                // Empty State when no analysis has been run yet — Branded Hero View
-                if !root.analysis_done: Vertical {
-                    padding: MaterialStyleMetrics.spacing_16;
-                    spacing: MaterialStyleMetrics.spacing_16;
-                    alignment: center;
-
-                    HorizontalLayout {
-                        alignment: center;
-
-                        Image {
-                            source: @image-url("../../../Images/Banner.png");
-                            height: 120px;
-                            width: 380px;
-                            image-fit: contain;
-                            horizontal-alignment: center;
-                            colorize: MaterialPalette.primary;
-                        }
-                    }
-
-                    Vertical {
-                        spacing: MaterialStyleMetrics.spacing_8;
-                        alignment: center;
-
-                        MaterialText {
-                            text: "Liquid & Amorphous Structural Analysis";
-                            color: MaterialPalette.on_surface;
-                            horizontal-alignment: center;
-                            style: MaterialTypography.title_large;
-                        }
-
-                        MaterialText {
-                            text: "Load a structure or trajectory file from the Operations panel to generate pair distribution, scattering, and angular structure functions.";
-                            color: MaterialPalette.on_surface_variant;
-                            horizontal-alignment: center;
-                            wrap: word-wrap;
-                            style: MaterialTypography.body_medium;
-                        }
-                    }
-
-                    // Dynamic Call-To-Action (CTA) Cards based on stage
-                    if !root.file_loaded: Vertical {
-                        spacing: MaterialStyleMetrics.spacing_12;
-                        alignment: center;
-
-                        FilledButton {
-                            height: MaterialStyleMetrics.size_40;
-                            text: "Open Trajectory File... (Ctrl+O)";
-                            icon: Icons.folder_open;
-                            clicked => { root.browse_file(); }
-                        }
-
-                        MaterialText {
-                            text: "Supported: VASP (XDATCAR/POSCAR), XYZ, CIF, GROMACS (.gro), LAMMPS, QE, CASTEP, ONETEP";
-                            style: MaterialTypography.body_small;
-                            color: MaterialPalette.on_surface_variant;
-                            horizontal-alignment: center;
-                        }
-
-                        HorizontalLayout {
-                            spacing: 16px;
-                            alignment: center;
-
-                            Text {
-                                text: "⚡ Shortcuts: [Ctrl+O] Open  •  [Ctrl+R] Run  •  [Ctrl+S] Export  •  [Ctrl+D] Theme";
-                                font-size: MaterialTypography.label_small.font_size;
-                                color: MaterialPalette.outline;
-                            }
-                        }
-                    }
-
-                    if root.file_loaded: Vertical {
-                        spacing: MaterialStyleMetrics.spacing_12;
-                        alignment: center;
-
-                        Rectangle {
-                            background: MaterialPalette.surface_container_high;
-                            border-radius: 8px;
-                            border-width: 1px;
-                            border-color: MaterialPalette.outline_variant;
-
-                            HorizontalLayout {
-                                padding-left: 16px;
-                                padding-right: 16px;
-                                padding-top: 8px;
-                                padding-bottom: 8px;
-                                spacing: 16px;
-                                alignment: center;
-
-                                MaterialText {
-                                    text: "📁 " + root.file_basename;
-                                    style: MaterialTypography.label_large;
-                                    color: MaterialPalette.on_surface;
-                                    vertical-alignment: center;
-                                }
-
-                                MaterialText {
-                                    text: "• " + root.total_atoms + " atoms";
-                                    style: MaterialTypography.body_medium;
-                                    color: MaterialPalette.on_surface_variant;
-                                    vertical-alignment: center;
-                                }
-
-                                MaterialText {
-                                    text: "• " + root.num_frames + " frames";
-                                    style: MaterialTypography.body_medium;
-                                    color: MaterialPalette.on_surface_variant;
-                                    vertical-alignment: center;
-                                }
-                            }
-                        }
-
-                        HorizontalLayout {
-                            spacing: 12px;
-                            alignment: center;
-
-                            FilledButton {
-                                height: MaterialStyleMetrics.size_40;
-                                text: root.analysis_running ? "Calculation Running..." : "Run Analysis (Ctrl+R)";
-                                icon: Icons.play_arrow;
-                                enabled: !root.analysis_running;
-                                clicked => { root.run_analysis(); }
-                            }
-
-                            FilledButton {
-                                height: MaterialStyleMetrics.size_40;
-                                text: "Configure Options";
-                                icon: Icons.tune;
-                                clicked => { root.open_panel(1); }
-                            }
-                        }
-                    }
+                HeroEmptyState {
+                    x: 0px;
+                    y: 0px;
+                    width: 100%;
+                    height: 100%;
+                    visible: !root.analysis_done || root.selected_plot_index < 0;
+                    file_loaded: root.file_loaded;
+                    analysis_running: root.analysis_running;
+                    analysis_done: root.analysis_done;
+                    selected_plot_index: root.selected_plot_index;
+                    file_basename: root.file_basename;
+                    total_atoms: root.total_atoms;
+                    num_frames: root.num_frames;
+                    browse_file => { root.browse_file(); }
+                    run_analysis => { root.run_analysis(); }
+                    open_panel(idx) => { root.open_panel(idx); }
                 }
 
-                // Placeholder text when analysis is done but no plot selected
-                if root.analysis_done && root.selected_plot_index < 0: Vertical {
-                    padding: MaterialStyleMetrics.spacing_16;
-                    spacing: MaterialStyleMetrics.spacing_8;
-                    alignment: center;
-
-                    MaterialText {
-                        text: "Analysis completed successfully!";
-                        color: MaterialPalette.primary;
-                        style: MaterialTypography.title_medium;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
-                    }
-
-                    MaterialText {
-                        text: "Select a distribution function from the dropdown above to inspect curves, zoom, or place markers.";
-                        color: MaterialPalette.on_surface_variant;
-                        style: MaterialTypography.body_medium;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
-                        wrap: word-wrap;
-                    }
-                }
-
-                // The rendered SVG plot
+                // Interactive Rendered Plot
                 plot_touch := TouchArea {
+                    x: 0px;
+                    y: 0px;
                     width: 100%;
                     height: 100%;
                     visible: root.selected_plot_index >= 0;
@@ -661,660 +287,61 @@ export component PreviewCard inherits FilledCard {
                     }
                 }
 
-                // Hover Crosshairs & Reticle
-                // Vertical Guideline
-                if plot_touch.has-hover && root.selected_plot_index >= 0 && !root.is_selecting && !root.is_panning: Rectangle {
-                    x: plot_touch.mouse-x - (root.active_tool == 2 ? 1px : 0.5px);
-                    y: 0px;
-                    width: root.active_tool == 2 ? 2.5px : (root.active_tool == 3 ? 1px : 2px);
-                    height: 100%;
-                    background: (root.active_tool == 1 || root.active_tool == 4) ? MaterialPalette.tertiary.with_alpha(85%) :
-                                (root.active_tool == 2 ? MaterialPalette.primary.with_alpha(95%) :
-                                (root.active_tool == 3 ? MaterialPalette.outline.with_alpha(45%) :
-                                MaterialPalette.primary.with_alpha(76%)));
-                }
-
-                // Horizontal Guideline
-                if plot_touch.has-hover && root.selected_plot_index >= 0 && !root.is_selecting && !root.is_panning: Rectangle {
+                // Hover Crosshairs, Reticle, and Mode Badge Overlay
+                PlotReticleOverlay {
                     x: 0px;
-                    y: plot_touch.mouse-y - (root.active_tool == 3 ? 1px : 0.5px);
+                    y: 0px;
                     width: 100%;
-                    height: root.active_tool == 3 ? 2.5px : (root.active_tool == 2 ? 1px : 2px);
-                    background: (root.active_tool == 1 || root.active_tool == 4) ? MaterialPalette.tertiary.with_alpha(70%) :
-                                (root.active_tool == 3 ? MaterialPalette.secondary.with_alpha(95%) :
-                                (root.active_tool == 2 ? MaterialPalette.outline.with_alpha(45%) :
-                                MaterialPalette.primary.with_alpha(60%)));
+                    height: 100%;
+                    has_hover: plot_touch.has-hover;
+                    mouse_x: plot_touch.mouse-x;
+                    mouse_y: plot_touch.mouse-y;
+                    selected_plot_index: root.selected_plot_index;
+                    active_tool: root.active_tool;
+                    is_selecting: root.is_selecting;
+                    is_panning: root.is_panning;
+                    drag_start_x: root.drag_start_x;
+                    drag_start_y: root.drag_start_y;
+                    drag_current_x: root.drag_current_x;
+                    drag_current_y: root.drag_current_y;
                 }
 
-                // Reticle Center Ring
-                if plot_touch.has-hover && root.selected_plot_index >= 0 && !root.is_selecting && !root.is_panning: Rectangle {
-                    x: plot_touch.mouse-x - 6px;
-                    y: plot_touch.mouse-y - 6px;
-                    width: 12px;
-                    height: 12px;
-                    border-radius: 6px;
-                    border-width: 2px;
-                    border-color: (root.active_tool == 1 || root.active_tool == 4) ? MaterialPalette.tertiary.with_alpha(95%) :
-                                  (root.active_tool == 2 ? MaterialPalette.primary.with_alpha(95%) :
-                                  (root.active_tool == 3 ? MaterialPalette.secondary.with_alpha(95%) :
-                                  MaterialPalette.primary.with_alpha(90%)));
-                    background: transparent;
-                }
-
-                // Mode Indicator Badge (Zoom In, Zoom Out, +X Marker, +Y Marker)
-                if plot_touch.has-hover && root.selected_plot_index >= 0 && root.active_tool != 0 && !root.is_selecting && !root.is_panning: Rectangle {
-                    x: plot_touch.mouse-x + 14px;
-                    y: plot_touch.mouse-y - 22px;
-                    height: 20px;
-                    width: (root.active_tool == 1 || root.active_tool == 4) ? 20px : 26px;
-                    border-radius: 10px;
-                    background: MaterialPalette.surface_container_highest.with_alpha(92%);
-                    border-width: 1.5px;
-                    border-color: (root.active_tool == 1 || root.active_tool == 4) ? MaterialPalette.tertiary :
-                                  (root.active_tool == 2 ? MaterialPalette.primary :
-                                  MaterialPalette.secondary);
-
-                    if root.active_tool == 1: Image {
-                        x: (parent.width - self.width) / 2;
-                        y: (parent.height - self.height) / 2;
-                        width: 13px;
-                        height: 13px;
-                        source: Icons.zoom_in;
-                        colorize: MaterialPalette.tertiary;
-                    }
-
-                    if root.active_tool == 4: Image {
-                        x: (parent.width - self.width) / 2;
-                        y: (parent.height - self.height) / 2;
-                        width: 13px;
-                        height: 13px;
-                        source: Icons.zoom_out;
-                        colorize: MaterialPalette.tertiary;
-                    }
-
-                    if root.active_tool == 2: MaterialText {
-                        width: 100%;
-                        height: 100%;
-                        text: "+X";
-                        style: MaterialTypography.label_small;
-                        color: MaterialPalette.primary;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
-                    }
-
-                    if root.active_tool == 3: MaterialText {
-                        width: 100%;
-                        height: 100%;
-                        text: "+Y";
-                        style: MaterialTypography.label_small;
-                        color: MaterialPalette.secondary;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
-                    }
-                }
-
-                // Rubberband ROI Box
-                if root.is_selecting: Rectangle {
-                    x: Math.min(root.drag_start_x, root.drag_current_x);
-                    y: Math.min(root.drag_start_y, root.drag_current_y);
-                    width: Math.max(root.drag_start_x, root.drag_current_x) - Math.min(root.drag_start_x, root.drag_current_x);
-                    height: Math.max(root.drag_start_y, root.drag_current_y) - Math.min(root.drag_start_y, root.drag_current_y);
-                    background: MaterialPalette.tertiary.with_alpha(20%);
-                    border-width: 1.5px;
-                    border-color: MaterialPalette.tertiary;
-                    border-radius: 2px;
-                }
-
-                // Floating Imaging Toolbar with Buttons and Live Coordinates to the right
-                Rectangle {
+                // Floating Imaging Toolbar
+                imaging_toolbar := ImagingToolbar {
                     visible: root.selected_plot_index >= 0;
                     x: 12px;
                     y: 12px;
-                    width: toolbar_layout.preferred-width + 12px;
-                    height: 32px;
-                    border-radius: 16px;
-                    background: MaterialPalette.surface_container_highest.with_alpha(85%);
-                    border-width: 1px;
-                    border-color: MaterialPalette.outline_variant.with_alpha(50%);
-
-                    toolbar_layout := HorizontalLayout {
-                        padding-left: 6px;
-                        padding-right: 6px;
-                        spacing: 4px;
-                        alignment: start;
-
-                        // Home (Reset Zoom)
-                        home_touch := TouchArea {
-                            width: 26px;
-                            height: 26px;
-                            enabled: root.has_active_zoom;
-                            mouse-cursor: self.enabled ? pointer : default;
-                            clicked => { root.reset_zoom(); }
-
-                            Rectangle {
-                                width: 100%;
-                                height: 100%;
-                                border-radius: 13px;
-                                background: home_touch.has-hover && home_touch.enabled ? MaterialPalette.surface_container_high : transparent;
-
-                                Image {
-                                    width: 16px;
-                                    height: 16px;
-                                    source: Icons.home;
-                                    colorize: home_touch.enabled ? MaterialPalette.on_surface : MaterialPalette.outline;
-                                    horizontal-alignment: center;
-                                    vertical-alignment: center;
-                                }
-                            }
-                        }
-
-                        // Divider
-                        VerticalLayout {
-                            alignment: center;
-                            Rectangle {
-                                width: 1px;
-                                height: 16px;
-                                background: MaterialPalette.outline_variant.with_alpha(50%);
-                            }
-                        }
-
-                        // Box Zoom Toggle
-                        zoom_touch := TouchArea {
-                            width: 26px;
-                            height: 26px;
-                            mouse-cursor: pointer;
-                            clicked => {
-                                root.active_tool = (root.active_tool == 1 ? 0 : 1);
-                            }
-
-                            Rectangle {
-                                width: 100%;
-                                height: 100%;
-                                border-radius: 13px;
-                                background: root.active_tool == 1 ?
-                                    (zoom_touch.has-hover ? MaterialPalette.tertiary.darker(8%) : MaterialPalette.tertiary) :
-                                    (zoom_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
-                                border-width: root.active_tool == 1 ? 1.5px : 0px;
-                                border-color: root.active_tool == 1 ? MaterialPalette.on_tertiary.with_alpha(35%) : transparent;
-
-                                animate background, border-color { duration: 150ms; easing: ease-out; }
-
-                                Image {
-                                    width: 16px;
-                                    height: 16px;
-                                    source: Icons.zoom_in;
-                                    colorize: root.active_tool == 1 ? MaterialPalette.on_tertiary : MaterialPalette.on_surface;
-                                    animate colorize { duration: 150ms; }
-                                    horizontal-alignment: center;
-                                    vertical-alignment: center;
-                                }
-                            }
-                        }
-
-                        // Click to Zoom Out Toggle
-                        zoom_out_touch := TouchArea {
-                            width: 26px;
-                            height: 26px;
-                            mouse-cursor: pointer;
-                            clicked => {
-                                root.active_tool = (root.active_tool == 4 ? 0 : 4);
-                            }
-
-                            Rectangle {
-                                width: 100%;
-                                height: 100%;
-                                border-radius: 13px;
-                                background: root.active_tool == 4 ?
-                                    (zoom_out_touch.has-hover ? MaterialPalette.tertiary.darker(8%) : MaterialPalette.tertiary) :
-                                    (zoom_out_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
-                                border-width: root.active_tool == 4 ? 1.5px : 0px;
-                                border-color: root.active_tool == 4 ? MaterialPalette.on_tertiary.with_alpha(35%) : transparent;
-
-                                animate background, border-color { duration: 150ms; easing: ease-out; }
-
-                                Image {
-                                    width: 16px;
-                                    height: 16px;
-                                    source: Icons.zoom_out;
-                                    colorize: root.active_tool == 4 ? MaterialPalette.on_tertiary : MaterialPalette.on_surface;
-                                    animate colorize { duration: 150ms; }
-                                    horizontal-alignment: center;
-                                    vertical-alignment: center;
-                                }
-                            }
-                        }
-
-                        // Divider
-                        VerticalLayout {
-                            alignment: center;
-                            Rectangle {
-                                width: 1px;
-                                height: 16px;
-                                background: MaterialPalette.outline_variant.with_alpha(50%);
-                            }
-                        }
-
-                        // Add Vertical X Marker (+X)
-                        marker_x_touch := TouchArea {
-                            width: 26px;
-                            height: 26px;
-                            mouse-cursor: pointer;
-                            clicked => {
-                                root.active_tool = (root.active_tool == 2 ? 0 : 2);
-                            }
-
-                            Rectangle {
-                                width: 100%;
-                                height: 100%;
-                                border-radius: 13px;
-                                background: root.active_tool == 2 ?
-                                    (marker_x_touch.has-hover ? MaterialPalette.primary.darker(8%) : MaterialPalette.primary) :
-                                    (marker_x_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
-                                border-width: root.active_tool == 2 ? 1.5px : 0px;
-                                border-color: root.active_tool == 2 ? MaterialPalette.on_primary.with_alpha(35%) : transparent;
-
-                                animate background, border-color { duration: 150ms; easing: ease-out; }
-
-                                MaterialText {
-                                    text: "+X";
-                                    style: root.active_tool == 2 ? MaterialTypography.label_medium_prominent : MaterialTypography.label_medium;
-                                    color: root.active_tool == 2 ? MaterialPalette.on_primary : MaterialPalette.on_surface;
-                                    animate color { duration: 150ms; }
-                                    horizontal-alignment: center;
-                                    vertical-alignment: center;
-                                }
-                            }
-                        }
-
-                        // Add Horizontal Y Marker (+Y)
-                        marker_y_touch := TouchArea {
-                            width: 26px;
-                            height: 26px;
-                            mouse-cursor: pointer;
-                            clicked => {
-                                root.active_tool = (root.active_tool == 3 ? 0 : 3);
-                            }
-
-                            Rectangle {
-                                width: 100%;
-                                height: 100%;
-                                border-radius: 13px;
-                                background: root.active_tool == 3 ?
-                                    (marker_y_touch.has-hover ? MaterialPalette.secondary.darker(8%) : MaterialPalette.secondary) :
-                                    (marker_y_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
-                                border-width: root.active_tool == 3 ? 1.5px : 0px;
-                                border-color: root.active_tool == 3 ? MaterialPalette.on_secondary.with_alpha(35%) : transparent;
-
-                                animate background, border-color { duration: 150ms; easing: ease-out; }
-
-                                MaterialText {
-                                    text: "+Y";
-                                    style: root.active_tool == 3 ? MaterialTypography.label_medium_prominent : MaterialTypography.label_medium;
-                                    color: root.active_tool == 3 ? MaterialPalette.on_secondary : MaterialPalette.on_surface;
-                                    animate color { duration: 150ms; }
-                                    horizontal-alignment: center;
-                                    vertical-alignment: center;
-                                }
-                            }
-                        }
-
-                        // Clear Markers
-                        clear_markers_touch := TouchArea {
-                            visible: root.markers_count > 0;
-                            width: root.markers_count > 0 ? 26px : 0px;
-                            height: 26px;
-                            mouse-cursor: pointer;
-                            clicked => { root.clear_markers(); }
-
-                            Rectangle {
-                                width: 100%;
-                                height: 100%;
-                                border-radius: 13px;
-                                background: clear_markers_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
-
-                                Image {
-                                    width: 16px;
-                                    height: 16px;
-                                    source: Icons.delete_sweep;
-                                    colorize: MaterialPalette.error;
-                                    horizontal-alignment: center;
-                                    vertical-alignment: center;
-                                }
-                            }
-                        }
-
-                        // Divider before coordinates (only if coordinates present)
-                        if root.hover_coord_text != "": VerticalLayout {
-                            alignment: center;
-                            Rectangle {
-                                width: 1px;
-                                height: 16px;
-                                background: MaterialPalette.outline_variant.with_alpha(50%);
-                            }
-                        }
-
-                        // Live HUD Coordinates (to the right of the buttons!)
-                        if root.hover_coord_text != "": HorizontalLayout {
-                            padding-left: 6px;
-                            padding-right: 6px;
-                            alignment: center;
-
-                            MaterialText {
-                                text: root.hover_coord_text;
-                                style: MaterialTypography.label_medium;
-                                color: MaterialPalette.on_surface;
-                                vertical-alignment: center;
-                            }
-                        }
-                    }
+                    has_active_zoom: root.has_active_zoom;
+                    active_tool <=> root.active_tool;
+                    markers_count: root.markers_count;
+                    hover_coord_text: root.hover_coord_text;
+                    reset_zoom => { root.reset_zoom(); }
+                    clear_markers => { root.clear_markers(); }
                 }
             }
 
-            if root.curve_toggle_items.length > 0: SplitterHandle {
-                moved(delta) => {
-                    root.sidebar_width = Math.min(450px, Math.max(120px, root.sidebar_width - delta));
-                }
-                reset => {
-                    root.sidebar_width = 180px;
-                }
-            }
-
-            // Curve Visibility Sidebar (Vertical Checklist to the right of the plot)
-            Rectangle {
-                visible: root.curve_toggle_items.length > 0;
-                width: root.curve_toggle_items.length > 0 ? root.sidebar_width : 0px;
-                background: MaterialPalette.surface_container_low;
-                border-radius: MaterialStyleMetrics.border_radius_2;
-
-                VerticalLayout {
-                    padding: 8px;
-                    spacing: 6px;
-
-                    HorizontalLayout {
-                        spacing: 4px;
-                        alignment: center;
-
-                        MaterialText {
-                            horizontal-stretch: 1;
-                            text: "Curves (" + root.curve_toggle_items.length + ")";
-                            style: MaterialTypography.label_large;
-                            color: MaterialPalette.on_surface;
-                            vertical-alignment: center;
-                        }
-
-                        toggle_all_true_area := TouchArea {
-                            width: 24px;
-                            height: 20px;
-                            mouse-cursor: pointer;
-                            clicked => { root.toggle_all_curves(true); }
-
-                            MaterialText {
-                                text: "All";
-                                style: MaterialTypography.label_small;
-                                color: MaterialPalette.primary;
-                                horizontal-alignment: center;
-                                vertical-alignment: center;
-                            }
-                        }
-
-                        MaterialText {
-                            text: "/";
-                            style: MaterialTypography.label_small;
-                            color: MaterialPalette.outline;
-                            vertical-alignment: center;
-                        }
-
-                        toggle_all_false_area := TouchArea {
-                            width: 32px;
-                            height: 20px;
-                            mouse-cursor: pointer;
-                            clicked => { root.toggle_all_curves(false); }
-
-                            MaterialText {
-                                text: "None";
-                                style: MaterialTypography.label_small;
-                                color: MaterialPalette.primary;
-                                horizontal-alignment: center;
-                                vertical-alignment: center;
-                            }
-                        }
-                    }
-
-                    ScrollView {
-                        vertical-stretch: 1;
-                        content-height: root.curve_toggle_items.length * 30px;
-
-                        VerticalLayout {
-                            spacing: 2px;
-                            alignment: start;
-                            for item in root.curve_toggle_items: item_touch := TouchArea {
-                                height: 28px;
-                                mouse-cursor: pointer;
-                                clicked => { root.toggle_curve_visibility(item.id, !item.visible); }
-
-                                Rectangle {
-                                    background: item_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
-                                    border-radius: MaterialStyleMetrics.border_radius_2;
-
-                                    HorizontalLayout {
-                                        padding-left: 8px;
-                                        padding-right: 8px;
-                                        spacing: 8px;
-
-                                        Vertical {
-                                            alignment: center;
-                                            height: 100%;
-
-                                            color_dot_touch := TouchArea {
-                                                width: 18px;
-                                                height: 18px;
-                                                mouse-cursor: pointer;
-                                                clicked => { root.active_color_picker_id = (root.active_color_picker_id == item.id) ? -1 : item.id; }
-
-                                                Rectangle {
-                                                    width: 12px;
-                                                    height: 12px;
-                                                    border-radius: 6px;
-                                                    background: item.visible ? item.color_hex : MaterialPalette.outline;
-                                                    border-width: color_dot_touch.has-hover ? 2px : 0px;
-                                                    border-color: MaterialPalette.primary;
-                                                }
-                                            }
-                                        }
-
-                                        MaterialText {
-                                            horizontal-stretch: 1;
-                                            text: item.label;
-                                            style: MaterialTypography.body_small;
-                                            color: item.visible ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
-                                            overflow: elide;
-                                            horizontal-alignment: left;
-                                            vertical-alignment: center;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if root.active_color_picker_id >= 0: Rectangle {
-                        background: MaterialPalette.surface_container_high;
-                        border-radius: MaterialStyleMetrics.border_radius_2;
-                        border-width: 1px;
-                        border-color: MaterialPalette.outline;
-
-                        VerticalLayout {
-                            padding: 8px;
-                            spacing: 6px;
-
-                            HorizontalLayout {
-                                alignment: center;
-                                MaterialText {
-                                    horizontal-stretch: 1;
-                                    text: "Color Palette";
-                                    style: MaterialTypography.label_medium;
-                                    color: MaterialPalette.on_surface;
-                                    vertical-alignment: center;
-                                }
-
-                                TouchArea {
-                                    width: 20px;
-                                    height: 20px;
-                                    mouse-cursor: pointer;
-                                    clicked => { root.active_color_picker_id = -1; }
-                                    MaterialText {
-                                        text: "✕";
-                                        style: MaterialTypography.label_small;
-                                        color: MaterialPalette.on_surface_variant;
-                                        horizontal-alignment: center;
-                                        vertical-alignment: center;
-                                    }
-                                }
-                            }
-
-                            VerticalLayout {
-                                spacing: 4px;
-                                for r_idx in 6: HorizontalLayout {
-                                    spacing: 4px;
-                                    alignment: center;
-                                    for c_idx in 4: swatch_touch := TouchArea {
-                                        width: 28px;
-                                        height: 24px;
-                                        mouse-cursor: pointer;
-                                        clicked => {
-                                            root.set_curve_color(root.active_color_picker_id, root.swatch_hexes[r_idx * 4 + c_idx]);
-                                            root.active_color_picker_id = -1;
-                                        }
-                                        Rectangle {
-                                            width: 20px;
-                                            height: 20px;
-                                            border-radius: 10px;
-                                            background: root.swatch_colors[r_idx * 4 + c_idx];
-                                            border-width: swatch_touch.has-hover ? 2px : 1px;
-                                            border-color: swatch_touch.has-hover ? MaterialPalette.primary : MaterialPalette.outline;
-                                        }
-                                    }
-                                }
-                            }
-
-                            TextField {
-                                placeholder_text: "#RRGGBB";
-                                accepted(hex) => {
-                                    if (hex != "") {
-                                        root.set_curve_color(root.active_color_picker_id, hex);
-                                        root.active_color_picker_id = -1;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+            // Curve Visibility Sidebar
+            curve_sidebar := CurveSidebar {
+                curve_toggle_items: root.curve_toggle_items;
+                sidebar_width <=> root.sidebar_width;
+                active_color_picker_id <=> root.active_color_picker_id;
+                toggle_curve_visibility(id, v) => { root.toggle_curve_visibility(id, v); }
+                toggle_all_curves(v) => { root.toggle_all_curves(v); }
+                set_curve_color(id, c) => { root.set_curve_color(id, c); }
             }
         }
 
-        Vertical {
+        // Tab 1: Dataset Values Table View
+        PlotDataTable {
             visible: root.active_tab == 1;
             vertical-stretch: root.active_tab == 1 ? 1 : 0;
-            spacing: MaterialStyleMetrics.spacing_4;
-
-            // Dataset Values Table (High Density - 28px rows)
-            if root.table_rows.length == 0: Rectangle {
-                vertical-stretch: 1;
-                background: MaterialPalette.surface;
-                border-radius: MaterialStyleMetrics.border_radius_2;
-                border-width: 1px;
-                border-color: MaterialPalette.outline_variant;
-
-                MaterialText {
-                    text: "No dataset values available.";
-                    color: MaterialPalette.on_surface_variant;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
-                }
-            }
-
-            if root.table_rows.length > 0: Rectangle {
-                vertical-stretch: 1;
-                background: MaterialPalette.surface;
-                border-radius: MaterialStyleMetrics.border_radius_2;
-                border-width: 1px;
-                border-color: MaterialPalette.outline_variant;
-                clip: true;
-
-                VerticalLayout {
-                    padding: 1px;
-
-                    // Header Row
-                    Rectangle {
-                        background: MaterialPalette.surface_container_high;
-                        height: 32px;
-
-                        HorizontalLayout {
-                            padding-left: 8px;
-                            padding-right: 8px;
-                            spacing: 8px;
-                            for header_text in root.table_headers: Vertical {
-                                horizontal-stretch: 1;
-                                alignment: center;
-                                MaterialText {
-                                    text: header_text;
-                                    style: MaterialTypography.label_medium;
-                                    font_weight: MaterialTypography.semibold;
-                                    color: MaterialPalette.on_surface;
-                                }
-                            }
-                        }
-                    }
-
-                    // Divider line
-                    Rectangle {
-                        height: 1px;
-                        background: MaterialPalette.outline_variant;
-                    }
-
-                    // Scrollable Rows (High density: 28px height)
-                    ScrollView {
-                        content-height: root.table_rows.length * 28px;
-
-                        VerticalLayout {
-                            for row[row_idx] in root.table_rows: Rectangle {
-                                height: 28px;
-                                background: Math.mod(row_idx, 2) == 0 ? MaterialPalette.surface : MaterialPalette.surface_container_lowest;
-
-                                VerticalLayout {
-                                    HorizontalLayout {
-                                        padding-left: 8px;
-                                        padding-right: 8px;
-                                        spacing: 8px;
-                                        for val in row.values: Vertical {
-                                            horizontal-stretch: 1;
-                                            alignment: center;
-                                            MaterialText {
-                                                text: val;
-                                                style: MaterialTypography.body_small;
-                                                color: MaterialPalette.on_surface;
-                                            }
-                                        }
-                                    }
-
-                                    // Divider line between rows
-                                    Rectangle {
-                                        height: 1px;
-                                        background: MaterialPalette.outline_variant.with_alpha(10%);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            table_headers: root.table_headers;
+            table_rows: root.table_rows;
         }
 
-        // FOOTER: Save Results Action Bar
+        // 5. Footer: Save Results
         Horizontal {
             height: MaterialStyleMetrics.size_40;
-
-            // Save Results Button (Primary Action Highlighted)
             save_results_area := TouchArea {
                 accessible-role: button;
                 accessible-label: "Save Analysis Results";
@@ -1327,9 +354,7 @@ export component PreviewCard inherits FilledCard {
                     enabled: root.analysis_done;
                     background: MaterialPalette.primary;
                     text_color: MaterialPalette.on_primary;
-                    clicked => {
-                        root.write_files();
-                    }
+                    clicked => { root.write_files(); }
                 }
             }
         }

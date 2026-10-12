@@ -1,0 +1,70 @@
+import {
+    MaterialStyleMetrics,
+    InputSelect,
+    MenuItem,
+    Horizontal,
+    TabItem,
+} from "../../../material/material.slint";
+
+export component PreviewHeader inherits Horizontal {
+    in property <[MenuItem]> plot_items: [];
+    in-out property <int> selected_plot_index: -1;
+    in-out property <int> active_tab: 0;
+
+    callback plot_selected(int);
+
+    out property <string> tooltip_text:
+        tab_data_area.has-hover ? "Data Table View\n\n📄 Tabular numerical coordinates and distribution intensities." : "";
+
+    out property <length> tooltip_x:
+        plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.x + plot_dropdown_area.mouse-x :
+        tab_plot_area.has-hover ? tab_plot_area.absolute-position.x + tab_plot_area.mouse-x :
+        tab_data_area.has-hover ? tab_data_area.absolute-position.x + tab_data_area.mouse-x : 0px;
+
+    out property <length> tooltip_y:
+        plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.y + plot_dropdown_area.mouse-y :
+        tab_plot_area.has-hover ? tab_plot_area.absolute-position.y + tab_plot_area.mouse-y :
+        tab_data_area.has-hover ? tab_data_area.absolute-position.y + tab_data_area.mouse-y : 0px;
+
+    spacing: MaterialStyleMetrics.spacing_8;
+    height: MaterialStyleMetrics.size_40;
+
+    plot_dropdown_area := InputSelect {
+        horizontal-stretch: 1;
+        height: 100%;
+        label: "Select Plot";
+        enabled: root.plot_items.length > 0;
+        items: root.plot_items;
+        current_index <=> root.selected_plot_index;
+
+        selected(idx) => {
+            root.plot_selected(idx);
+        }
+    }
+
+    // Tab Buttons
+    Horizontal {
+        spacing: MaterialStyleMetrics.spacing_4;
+        height: 100%;
+
+        tab_plot_area := TouchArea {
+            width: tab_plot.preferred-width;
+            height: 100%;
+            tab_plot := TabItem {
+                text: "Plot";
+                active: root.active_tab == 0;
+                clicked => { root.active_tab = 0; }
+            }
+        }
+
+        tab_data_area := TouchArea {
+            width: tab_data.preferred-width;
+            height: 100%;
+            tab_data := TabItem {
+                text: "Data";
+                active: root.active_tab == 1;
+                clicked => { root.active_tab = 1; }
+            }
+        }
+    }
+}

@@ -1,0 +1,278 @@
+import {
+    MaterialPalette,
+    MaterialTypography,
+    MaterialText,
+    Icons,
+} from "../../../material/material.slint";
+
+export component ImagingToolbar inherits Rectangle {
+    in property <bool> has_active_zoom: false;
+    in-out property <int> active_tool: 0;
+    in property <int> markers_count: 0;
+    in property <string> hover_coord_text: "";
+
+    callback reset_zoom();
+    callback clear_markers();
+
+    out property <string> tooltip_text:
+        home_touch.has-hover ? "Home (Reset Zoom)\n\n🔄 Restore full coordinate axes limits." :
+        zoom_touch.has-hover ? "Rubberband Box Zoom\n\n🔍 Click and drag on plot to inspect a specific region of interest." :
+        zoom_out_touch.has-hover ? "Click to Zoom Out\n\n🔍 Click anywhere on plot to step viewport zoom out centered on click." :
+        marker_x_touch.has-hover ? "Add Vertical Marker (+X)\n\n📍 Click plot to place a vertical guide line at target distance or angle." :
+        marker_y_touch.has-hover ? "Add Horizontal Marker (+Y)\n\n📍 Click plot to place a horizontal intensity threshold guide." :
+        (root.markers_count > 0 && clear_markers_touch.has-hover) ? "Clear Markers\n\n🗑️ Remove all inspection guides from the plot." : "";
+
+    out property <length> tooltip_x:
+        home_touch.has-hover ? home_touch.absolute-position.x + home_touch.mouse-x :
+        zoom_touch.has-hover ? zoom_touch.absolute-position.x + zoom_touch.mouse-x :
+        zoom_out_touch.has-hover ? zoom_out_touch.absolute-position.x + zoom_out_touch.mouse-x :
+        marker_x_touch.has-hover ? marker_x_touch.absolute-position.x + marker_x_touch.mouse-x :
+        marker_y_touch.has-hover ? marker_y_touch.absolute-position.x + marker_y_touch.mouse-x :
+        (root.markers_count > 0 && clear_markers_touch.has-hover) ? clear_markers_touch.absolute-position.x + clear_markers_touch.mouse-x : 0px;
+
+    out property <length> tooltip_y:
+        home_touch.has-hover ? home_touch.absolute-position.y + home_touch.mouse-y :
+        zoom_touch.has-hover ? zoom_touch.absolute-position.y + zoom_touch.mouse-y :
+        zoom_out_touch.has-hover ? zoom_out_touch.absolute-position.y + zoom_out_touch.mouse-y :
+        marker_x_touch.has-hover ? marker_x_touch.absolute-position.y + marker_x_touch.mouse-y :
+        marker_y_touch.has-hover ? marker_y_touch.absolute-position.y + marker_y_touch.mouse-y :
+        (root.markers_count > 0 && clear_markers_touch.has-hover) ? clear_markers_touch.absolute-position.y + clear_markers_touch.mouse-y : 0px;
+
+    width: toolbar_layout.preferred-width + 12px;
+    height: 32px;
+    border-radius: 16px;
+    background: MaterialPalette.surface_container_highest.with_alpha(85%);
+    border-width: 1px;
+    border-color: MaterialPalette.outline_variant.with_alpha(50%);
+
+    toolbar_layout := HorizontalLayout {
+        padding-left: 6px;
+        padding-right: 6px;
+        spacing: 4px;
+        alignment: start;
+
+        // Home (Reset Zoom)
+        home_touch := TouchArea {
+            width: 26px;
+            height: 26px;
+            enabled: root.has_active_zoom;
+            mouse-cursor: self.enabled ? pointer : default;
+            clicked => { root.reset_zoom(); }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 13px;
+                background: home_touch.has-hover && home_touch.enabled ? MaterialPalette.surface_container_high : transparent;
+
+                Image {
+                    width: 16px;
+                    height: 16px;
+                    source: Icons.home;
+                    colorize: home_touch.enabled ? MaterialPalette.on_surface : MaterialPalette.outline;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        // Divider
+        VerticalLayout {
+            alignment: center;
+            Rectangle {
+                width: 1px;
+                height: 16px;
+                background: MaterialPalette.outline_variant.with_alpha(50%);
+            }
+        }
+
+        // Box Zoom Toggle
+        zoom_touch := TouchArea {
+            width: 26px;
+            height: 26px;
+            mouse-cursor: pointer;
+            clicked => {
+                root.active_tool = (root.active_tool == 1 ? 0 : 1);
+            }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 13px;
+                background: root.active_tool == 1 ?
+                    (zoom_touch.has-hover ? MaterialPalette.tertiary.darker(8%) : MaterialPalette.tertiary) :
+                    (zoom_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
+                border-width: root.active_tool == 1 ? 1.5px : 0px;
+                border-color: root.active_tool == 1 ? MaterialPalette.on_tertiary.with_alpha(35%) : transparent;
+
+                animate background, border-color { duration: 150ms; easing: ease-out; }
+
+                Image {
+                    width: 16px;
+                    height: 16px;
+                    source: Icons.zoom_in;
+                    colorize: root.active_tool == 1 ? MaterialPalette.on_tertiary : MaterialPalette.on_surface;
+                    animate colorize { duration: 150ms; }
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        // Click to Zoom Out Toggle
+        zoom_out_touch := TouchArea {
+            width: 26px;
+            height: 26px;
+            mouse-cursor: pointer;
+            clicked => {
+                root.active_tool = (root.active_tool == 4 ? 0 : 4);
+            }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 13px;
+                background: root.active_tool == 4 ?
+                    (zoom_out_touch.has-hover ? MaterialPalette.tertiary.darker(8%) : MaterialPalette.tertiary) :
+                    (zoom_out_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
+                border-width: root.active_tool == 4 ? 1.5px : 0px;
+                border-color: root.active_tool == 4 ? MaterialPalette.on_tertiary.with_alpha(35%) : transparent;
+
+                animate background, border-color { duration: 150ms; easing: ease-out; }
+
+                Image {
+                    width: 16px;
+                    height: 16px;
+                    source: Icons.zoom_out;
+                    colorize: root.active_tool == 4 ? MaterialPalette.on_tertiary : MaterialPalette.on_surface;
+                    animate colorize { duration: 150ms; }
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        // Divider
+        VerticalLayout {
+            alignment: center;
+            Rectangle {
+                width: 1px;
+                height: 16px;
+                background: MaterialPalette.outline_variant.with_alpha(50%);
+            }
+        }
+
+        // Add Vertical X Marker (+X)
+        marker_x_touch := TouchArea {
+            width: 26px;
+            height: 26px;
+            mouse-cursor: pointer;
+            clicked => {
+                root.active_tool = (root.active_tool == 2 ? 0 : 2);
+            }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 13px;
+                background: root.active_tool == 2 ?
+                    (marker_x_touch.has-hover ? MaterialPalette.primary.darker(8%) : MaterialPalette.primary) :
+                    (marker_x_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
+                border-width: root.active_tool == 2 ? 1.5px : 0px;
+                border-color: root.active_tool == 2 ? MaterialPalette.on_primary.with_alpha(35%) : transparent;
+
+                animate background, border-color { duration: 150ms; easing: ease-out; }
+
+                MaterialText {
+                    text: "+X";
+                    style: root.active_tool == 2 ? MaterialTypography.label_medium_prominent : MaterialTypography.label_medium;
+                    color: root.active_tool == 2 ? MaterialPalette.on_primary : MaterialPalette.on_surface;
+                    animate color { duration: 150ms; }
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        // Add Horizontal Y Marker (+Y)
+        marker_y_touch := TouchArea {
+            width: 26px;
+            height: 26px;
+            mouse-cursor: pointer;
+            clicked => {
+                root.active_tool = (root.active_tool == 3 ? 0 : 3);
+            }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 13px;
+                background: root.active_tool == 3 ?
+                    (marker_y_touch.has-hover ? MaterialPalette.secondary.darker(8%) : MaterialPalette.secondary) :
+                    (marker_y_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
+                border-width: root.active_tool == 3 ? 1.5px : 0px;
+                border-color: root.active_tool == 3 ? MaterialPalette.on_secondary.with_alpha(35%) : transparent;
+
+                animate background, border-color { duration: 150ms; easing: ease-out; }
+
+                MaterialText {
+                    text: "+Y";
+                    style: root.active_tool == 3 ? MaterialTypography.label_medium_prominent : MaterialTypography.label_medium;
+                    color: root.active_tool == 3 ? MaterialPalette.on_secondary : MaterialPalette.on_surface;
+                    animate color { duration: 150ms; }
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        // Clear Markers
+        clear_markers_touch := TouchArea {
+            visible: root.markers_count > 0;
+            width: root.markers_count > 0 ? 26px : 0px;
+            height: 26px;
+            mouse-cursor: pointer;
+            clicked => { root.clear_markers(); }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 13px;
+                background: clear_markers_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                Image {
+                    width: 16px;
+                    height: 16px;
+                    source: Icons.delete_sweep;
+                    colorize: MaterialPalette.error;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        // Divider before coordinates (only if coordinates present)
+        if root.hover_coord_text != "": VerticalLayout {
+            alignment: center;
+            Rectangle {
+                width: 1px;
+                height: 16px;
+                background: MaterialPalette.outline_variant.with_alpha(50%);
+            }
+        }
+
+        // Live HUD Coordinates (to the right of the buttons!)
+        if root.hover_coord_text != "": HorizontalLayout {
+            padding-left: 6px;
+            padding-right: 6px;
+            alignment: center;
+
+            MaterialText {
+                text: root.hover_coord_text;
+                style: MaterialTypography.label_medium;
+                color: MaterialPalette.on_surface;
+                vertical-alignment: center;
+            }
+        }
+    }
+}
