@@ -920,13 +920,13 @@
     "semantic_hash": ""
   },
   "CMakeLists.txt": {
-    "mtime": 1791476864.1731002,
-    "ast_hash": "745774c840740100dcea74ee2602ea4e",
+    "mtime": 1791841226.1153522,
+    "ast_hash": "00d32c0a291b616bbff56bad99baefa9",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1791476887.0190635,
-    "ast_hash": "fa292b2d310d5d747773358dcc6e2f5e",
+    "mtime": 1791841293.342492,
+    "ast_hash": "8af3237b5d8910fd539d10cb9feb4ff6",
     "semantic_hash": ""
   },
   "docs/CODE_OF_CONDUCT.md": {
@@ -1340,8 +1340,8 @@
     "semantic_hash": ""
   },
   "recipe/meta.yaml": {
-    "mtime": 1791476915.4799626,
-    "ast_hash": "a475febe6990d9e263e4d088cdb846fd",
+    "mtime": 1791841301.1013968,
+    "ast_hash": "be63319edc67dd55e0fff7bef9ed1dff",
     "semantic_hash": ""
   },
   "tests/unit/app/SettingsManagerTests.cpp": {
@@ -2565,8 +2565,8 @@
     "semantic_hash": ""
   },
   "python/matcorr/__init__.py": {
-    "mtime": 1791476898.7174664,
-    "ast_hash": "22e2dc73336cb694fe1d31174917444e",
+    "mtime": 1791841312.2162595,
+    "ast_hash": "caad07acfc4b07d0034e006a91499fb8",
     "semantic_hash": ""
   },
   "python/matcorr/__main__.py": {

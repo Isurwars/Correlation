@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.9.12] - 2026-10-12
+
+### Interactive Plotting & Imaging Toolbar
+- **Continuous Box Zoom**: Preserved active zoom mode (`active_tool = 1`) across sequential selection box releases, allowing consecutive ROI box zoom operations without having to re-engage the toolbar button between drags.
+- **Dedicated Click-to-Zoom-Out Tool**: Added an interactive Zoom Out tool (`active_tool = 4`) and custom Material Design `zoom_out.svg` icon to the floating imaging toolbar, allowing users to step viewport limits out (~1.18x) centered on clicked coordinates.
+- **Mode-Aware Dynamic Reticle & Axis Guidelines**: Enhanced plot hover crosshairs to dynamically highlight the relevant measurement axis (high-contrast 2.5px vertical guideline for +X markers, high-contrast 2.5px horizontal guideline for +Y markers) and styled dual guidelines in cohesive tertiary amber tint during zoom modes.
+- **Precision Floating Mode Indicator Badges**: Implemented mathematically centered cursor-adjacent badge pills (`+14px, -22px`) displaying active mode glyphs (`Icons.zoom_in`, `Icons.zoom_out`, `+X`, `+Y`) with mode-specific accent styling.
+- **Workflow Stepper Relocation**: Streamlined `PreviewCard` UI layout by elevating and polishing the workflow step indicator above the main visualization area.
+
+### Build & Platform Modernization
+- **CI Matrix Cleanup**: Removed legacy macOS 13 x86_64 runner configurations from packaging and automated build workflows.
+- **Atom Pointer Formatting**: Cleaned up element pointer initialization formatting in `Atom.hpp`.
+- **Project Version Milestone**: Bumped core engine project version to `3.9.12`.
+
 ## [3.9.11] - 2026-10-08
 
 ### Memory Optimization & High-Throughput I/O
