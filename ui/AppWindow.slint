@@ -155,64 +155,7 @@ export component AppWindow inherits Window {
         fill_area: false
     };
 
-    property <string> min_frame <=> analysis_options.min_frame;
-    property <string> max_frame <=> analysis_options.max_frame;
-    property <string> r_max <=> analysis_options.r_max;
-    property <string> r_bin_width <=> analysis_options.r_bin_width;
-    property <string> q_max <=> analysis_options.q_max;
-    property <string> q_bin_width <=> analysis_options.q_bin_width;
-    property <string> r_int_max <=> analysis_options.r_int_max;
-    property <string> angle_bin_width <=> analysis_options.angle_bin_width;
-    property <string> dihedral_bin_width <=> analysis_options.dihedral_bin_width;
-    property <string> max_ring_size <=> analysis_options.max_ring_size;
-    property <bool> smoothing <=> analysis_options.smoothing_enabled;
-    property <string> smoothing_sigma <=> analysis_options.smoothing_sigma;
-    property <int> smoothing_kernel <=> analysis_options.smoothing_kernel;
-    property <string> time_step <=> analysis_options.time_step;
-    property <string> frame_stride <=> analysis_options.frame_stride;
-    property <int> material_type <=> analysis_options.material_type;
-    property <string> lef_cutoff <=> analysis_options.lef_cutoff;
-    property <string> lef_sigma <=> analysis_options.lef_sigma;
-    property <string> hyper_samples <=> analysis_options.hyper_samples;
-    property <int> xrd_radiation_preset <=> analysis_options.xrd_radiation_preset;
-    property <string> xrd_lambda <=> analysis_options.xrd_lambda;
-    property <string> xrd_theta_min <=> analysis_options.xrd_theta_min;
-    property <string> xrd_theta_max <=> analysis_options.xrd_theta_max;
-    property <string> xrd_bin_width <=> analysis_options.xrd_bin_width;
-
-    property <string> r_max_error <=> app_errors.r_max_error;
-    property <string> r_bin_error <=> app_errors.r_bin_error;
-    property <string> q_max_error <=> app_errors.q_max_error;
-    property <string> q_bin_error <=> app_errors.q_bin_error;
-    property <string> r_int_max_error <=> app_errors.r_int_max_error;
-    property <string> angle_bin_error <=> app_errors.angle_bin_error;
-    property <string> dihedral_bin_error <=> app_errors.dihedral_bin_error;
-    property <string> max_ring_error <=> app_errors.max_ring_error;
-    property <string> smoothing_sigma_error <=> app_errors.smoothing_sigma_error;
-    property <string> min_frame_error <=> app_errors.min_frame_error;
-    property <string> max_frame_error <=> app_errors.max_frame_error;
-    property <string> time_step_error <=> app_errors.time_step_error;
-    property <string> frame_stride_error <=> app_errors.frame_stride_error;
-    property <string> lef_cutoff_error <=> app_errors.lef_cutoff_error;
-    property <string> lef_sigma_error <=> app_errors.lef_sigma_error;
-    property <string> hyper_samples_error <=> app_errors.hyper_samples_error;
-    property <string> xrd_lambda_error <=> app_errors.xrd_lambda_error;
-    property <string> xrd_theta_min_error <=> app_errors.xrd_theta_min_error;
-    property <string> xrd_theta_max_error <=> app_errors.xrd_theta_max_error;
-    property <string> xrd_bin_width_error <=> app_errors.xrd_bin_width_error;
-
-    property <int> export_size_preset <=> export_config.size_preset;
-    property <int> export_palette <=> export_config.palette;
-    property <string> export_font_scale <=> export_config.font_scale;
-    property <string> export_line_width <=> export_config.line_width;
-    property <string> export_marker_size <=> export_config.marker_size;
-    property <bool> export_show_legend <=> export_config.show_legend;
-    property <bool> export_show_grid <=> export_config.show_grid;
-    property <bool> export_show_markers <=> export_config.show_markers;
-    property <bool> export_fill_area <=> export_config.fill_area;
-    property <string> export_font_scale_error <=> app_errors.export_font_scale_error;
-    property <string> export_line_width_error <=> app_errors.export_line_width_error;
-    property <string> export_marker_size_error <=> app_errors.export_marker_size_error;
+    in-out property <int> material_type <=> analysis_options.material_type;
 
     // Global: any validation error prevents running analysis
     in-out property <bool> has_validation_errors: false;
@@ -334,86 +277,14 @@ export component AppWindow inherits Window {
     // ============================================================================
     
 
-    changed r_max => {
-        root.validate_inputs();
-    }
-    changed r_bin_width => {
-        root.validate_inputs();
-    }
-    changed q_max => {
-        root.validate_inputs();
-    }
-    changed q_bin_width => {
-        root.validate_inputs();
-    }
-    changed r_int_max => {
-        root.validate_inputs();
-    }
-    changed angle_bin_width => {
-        root.validate_inputs();
-    }
-    changed dihedral_bin_width => {
-        root.validate_inputs();
-    }
-    changed max_ring_size => {
-        root.validate_inputs();
-    }
-    changed smoothing => {
-        root.validate_inputs();
-    }
-    changed smoothing_sigma => {
-        root.validate_inputs();
-    }
-    changed min_frame => {
-        root.validate_inputs();
-    }
-    changed max_frame => {
-        root.validate_inputs();
-    }
-    changed time_step => {
-        root.validate_inputs();
-    }
-    changed lef_cutoff => {
-        root.validate_inputs();
-    }
-    changed lef_sigma => {
-        root.validate_inputs();
-    }
-    changed hyper_samples => {
+    changed analysis_options => {
         root.validate_inputs();
     }
     changed material_type => {
         root.material_type_changed(root.material_type);
     }
-
-    changed export_size_preset => {
-        root.select_plot(root.selected_plot_index);
-    }
-    changed export_palette => {
-        root.select_plot(root.selected_plot_index);
-    }
-    changed export_font_scale => {
+    changed export_config => {
         root.validate_inputs();
-        root.select_plot(root.selected_plot_index);
-    }
-    changed export_line_width => {
-        root.validate_inputs();
-        root.select_plot(root.selected_plot_index);
-    }
-    changed export_marker_size => {
-        root.validate_inputs();
-        root.select_plot(root.selected_plot_index);
-    }
-    changed export_show_legend => {
-        root.select_plot(root.selected_plot_index);
-    }
-    changed export_show_grid => {
-        root.select_plot(root.selected_plot_index);
-    }
-    changed export_show_markers => {
-        root.select_plot(root.selected_plot_index);
-    }
-    changed export_fill_area => {
         root.select_plot(root.selected_plot_index);
     }
     changed is_dark => {
@@ -614,9 +485,9 @@ export component AppWindow inherits Window {
                     pinned_runs_count: root.pinned_runs_count;
                     show_difference: root.show_difference;
                     export_config <=> root.export_config;
-                    export_font_scale_error: root.export_font_scale_error;
-                    export_line_width_error: root.export_line_width_error;
-                    export_marker_size_error: root.export_marker_size_error;
+                    export_font_scale_error: root.app_errors.export_font_scale_error;
+                    export_line_width_error: root.app_errors.export_line_width_error;
+                    export_marker_size_error: root.app_errors.export_marker_size_error;
 
                     calculator_groups <=> root.calculator_groups;
                     total_calculator_count: root.total_calculator_count;
