@@ -54,7 +54,7 @@ export component PreviewCard inherits FilledCard {
     in property <string> hover_coord_text: "";
     in property <bool> has_active_zoom: false;
     in property <int> markers_count: 0;
-    property <int> active_tool: 0; // 0: None, 1: Zoom Box, 2: +X Marker, 3: +Y Marker
+    property <int> active_tool: 0; // 0: None, 1: Zoom Box, 2: +X Marker, 3: +Y Marker, 4: Zoom Out
     property <bool> is_selecting: false;
     property <length> drag_start_x: 0px;
     property <length> drag_start_y: 0px;
@@ -161,6 +161,7 @@ export component PreviewCard inherits FilledCard {
         (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? "Remove all pinned runs from the comparison overlay." :
         (root.active_tab == 0 && root.selected_plot_index >= 0 && home_touch.has-hover) ? "Home (Reset Zoom)\n\n🔄 Restore full coordinate axes limits." :
         (root.active_tab == 0 && root.selected_plot_index >= 0 && zoom_touch.has-hover) ? "Rubberband Box Zoom\n\n🔍 Click and drag on plot to inspect a specific region of interest." :
+        (root.active_tab == 0 && root.selected_plot_index >= 0 && zoom_out_touch.has-hover) ? "Click to Zoom Out\n\n🔍 Click anywhere on plot to step viewport zoom out centered on click." :
         (root.active_tab == 0 && root.selected_plot_index >= 0 && marker_x_touch.has-hover) ? "Add Vertical Marker (+X)\n\n📍 Click plot to place a vertical guide line at target distance or angle." :
         (root.active_tab == 0 && root.selected_plot_index >= 0 && marker_y_touch.has-hover) ? "Add Horizontal Marker (+Y)\n\n📍 Click plot to place a horizontal intensity threshold guide." :
         (root.active_tab == 0 && root.selected_plot_index >= 0 && root.markers_count > 0 && clear_markers_touch.has-hover) ? "Clear Markers\n\n🗑️ Remove all inspection guides from the plot." :
@@ -175,6 +176,7 @@ export component PreviewCard inherits FilledCard {
         (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? clear_pinned_area.absolute-position.x + clear_pinned_area.mouse-x :
         (root.active_tab == 0 && root.selected_plot_index >= 0 && home_touch.has-hover) ? home_touch.absolute-position.x + home_touch.mouse-x :
         (root.active_tab == 0 && root.selected_plot_index >= 0 && zoom_touch.has-hover) ? zoom_touch.absolute-position.x + zoom_touch.mouse-x :
+        (root.active_tab == 0 && root.selected_plot_index >= 0 && zoom_out_touch.has-hover) ? zoom_out_touch.absolute-position.x + zoom_out_touch.mouse-x :
         (root.active_tab == 0 && root.selected_plot_index >= 0 && marker_x_touch.has-hover) ? marker_x_touch.absolute-position.x + marker_x_touch.mouse-x :
         (root.active_tab == 0 && root.selected_plot_index >= 0 && marker_y_touch.has-hover) ? marker_y_touch.absolute-position.x + marker_y_touch.mouse-x :
         (root.active_tab == 0 && root.selected_plot_index >= 0 && root.markers_count > 0 && clear_markers_touch.has-hover) ? clear_markers_touch.absolute-position.x + clear_markers_touch.mouse-x :
@@ -189,6 +191,7 @@ export component PreviewCard inherits FilledCard {
         (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? clear_pinned_area.absolute-position.y + clear_pinned_area.mouse-y :
         (root.active_tab == 0 && root.selected_plot_index >= 0 && home_touch.has-hover) ? home_touch.absolute-position.y + home_touch.mouse-y :
         (root.active_tab == 0 && root.selected_plot_index >= 0 && zoom_touch.has-hover) ? zoom_touch.absolute-position.y + zoom_touch.mouse-y :
+        (root.active_tab == 0 && root.selected_plot_index >= 0 && zoom_out_touch.has-hover) ? zoom_out_touch.absolute-position.y + zoom_out_touch.mouse-y :
         (root.active_tab == 0 && root.selected_plot_index >= 0 && marker_x_touch.has-hover) ? marker_x_touch.absolute-position.y + marker_x_touch.mouse-y :
         (root.active_tab == 0 && root.selected_plot_index >= 0 && marker_y_touch.has-hover) ? marker_y_touch.absolute-position.y + marker_y_touch.mouse-y :
         (root.active_tab == 0 && root.selected_plot_index >= 0 && root.markers_count > 0 && clear_markers_touch.has-hover) ? clear_markers_touch.absolute-position.y + clear_markers_touch.mouse-y :
@@ -591,6 +594,8 @@ export component PreviewCard inherits FilledCard {
                                     root.drag_current_x = self.mouse-x;
                                     root.drag_current_y = self.mouse-y;
                                     root.is_selecting = true;
+                                } else if (root.active_tool == 4) {
+                                    root.plot_wheel_zoom(self.mouse-x / 1px, self.mouse-y / 1px, -1.0);
                                 }
                             }
                         } else if (event.kind == PointerEventKind.up) {
@@ -600,7 +605,6 @@ export component PreviewCard inherits FilledCard {
                             if (root.is_selecting) {
                                 root.is_selecting = false;
                                 root.zoom_to_rect(root.drag_start_x / 1px, root.drag_start_y / 1px, root.drag_current_x / 1px, root.drag_current_y / 1px);
-                                root.active_tool = 0;
                             }
                         } else if (event.kind == PointerEventKind.cancel) {
                             root.is_selecting = false;
@@ -658,20 +662,31 @@ export component PreviewCard inherits FilledCard {
                 }
 
                 // Hover Crosshairs & Reticle
+                // Vertical Guideline
                 if plot_touch.has-hover && root.selected_plot_index >= 0 && !root.is_selecting && !root.is_panning: Rectangle {
-                    x: plot_touch.mouse-x - 1px;
+                    x: plot_touch.mouse-x - (root.active_tool == 2 ? 1px : 0.5px);
                     y: 0px;
-                    width: 2px;
+                    width: root.active_tool == 2 ? 2.5px : (root.active_tool == 3 ? 1px : 2px);
                     height: 100%;
-                    background: MaterialPalette.primary.with_alpha(76%);
+                    background: (root.active_tool == 1 || root.active_tool == 4) ? MaterialPalette.tertiary.with_alpha(85%) :
+                                (root.active_tool == 2 ? MaterialPalette.primary.with_alpha(95%) :
+                                (root.active_tool == 3 ? MaterialPalette.outline.with_alpha(45%) :
+                                MaterialPalette.primary.with_alpha(76%)));
                 }
+
+                // Horizontal Guideline
                 if plot_touch.has-hover && root.selected_plot_index >= 0 && !root.is_selecting && !root.is_panning: Rectangle {
                     x: 0px;
-                    y: plot_touch.mouse-y - 1px;
+                    y: plot_touch.mouse-y - (root.active_tool == 3 ? 1px : 0.5px);
                     width: 100%;
-                    height: 2px;
-                    background: MaterialPalette.primary.with_alpha(60%);
+                    height: root.active_tool == 3 ? 2.5px : (root.active_tool == 2 ? 1px : 2px);
+                    background: (root.active_tool == 1 || root.active_tool == 4) ? MaterialPalette.tertiary.with_alpha(70%) :
+                                (root.active_tool == 3 ? MaterialPalette.secondary.with_alpha(95%) :
+                                (root.active_tool == 2 ? MaterialPalette.outline.with_alpha(45%) :
+                                MaterialPalette.primary.with_alpha(60%)));
                 }
+
+                // Reticle Center Ring
                 if plot_touch.has-hover && root.selected_plot_index >= 0 && !root.is_selecting && !root.is_panning: Rectangle {
                     x: plot_touch.mouse-x - 6px;
                     y: plot_touch.mouse-y - 6px;
@@ -679,8 +694,63 @@ export component PreviewCard inherits FilledCard {
                     height: 12px;
                     border-radius: 6px;
                     border-width: 2px;
-                    border-color: MaterialPalette.primary.with_alpha(90%);
+                    border-color: (root.active_tool == 1 || root.active_tool == 4) ? MaterialPalette.tertiary.with_alpha(95%) :
+                                  (root.active_tool == 2 ? MaterialPalette.primary.with_alpha(95%) :
+                                  (root.active_tool == 3 ? MaterialPalette.secondary.with_alpha(95%) :
+                                  MaterialPalette.primary.with_alpha(90%)));
                     background: transparent;
+                }
+
+                // Mode Indicator Badge (Zoom In, Zoom Out, +X Marker, +Y Marker)
+                if plot_touch.has-hover && root.selected_plot_index >= 0 && root.active_tool != 0 && !root.is_selecting && !root.is_panning: Rectangle {
+                    x: plot_touch.mouse-x + 14px;
+                    y: plot_touch.mouse-y - 22px;
+                    height: 20px;
+                    width: (root.active_tool == 1 || root.active_tool == 4) ? 20px : 26px;
+                    border-radius: 10px;
+                    background: MaterialPalette.surface_container_highest.with_alpha(92%);
+                    border-width: 1.5px;
+                    border-color: (root.active_tool == 1 || root.active_tool == 4) ? MaterialPalette.tertiary :
+                                  (root.active_tool == 2 ? MaterialPalette.primary :
+                                  MaterialPalette.secondary);
+
+                    if root.active_tool == 1: Image {
+                        x: (parent.width - self.width) / 2;
+                        y: (parent.height - self.height) / 2;
+                        width: 13px;
+                        height: 13px;
+                        source: Icons.zoom_in;
+                        colorize: MaterialPalette.tertiary;
+                    }
+
+                    if root.active_tool == 4: Image {
+                        x: (parent.width - self.width) / 2;
+                        y: (parent.height - self.height) / 2;
+                        width: 13px;
+                        height: 13px;
+                        source: Icons.zoom_out;
+                        colorize: MaterialPalette.tertiary;
+                    }
+
+                    if root.active_tool == 2: MaterialText {
+                        width: 100%;
+                        height: 100%;
+                        text: "+X";
+                        style: MaterialTypography.label_small;
+                        color: MaterialPalette.primary;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+
+                    if root.active_tool == 3: MaterialText {
+                        width: 100%;
+                        height: 100%;
+                        text: "+Y";
+                        style: MaterialTypography.label_small;
+                        color: MaterialPalette.secondary;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
                 }
 
                 // Rubberband ROI Box
@@ -689,9 +759,9 @@ export component PreviewCard inherits FilledCard {
                     y: Math.min(root.drag_start_y, root.drag_current_y);
                     width: Math.max(root.drag_start_x, root.drag_current_x) - Math.min(root.drag_start_x, root.drag_current_x);
                     height: Math.max(root.drag_start_y, root.drag_current_y) - Math.min(root.drag_start_y, root.drag_current_y);
-                    background: MaterialPalette.primary.with_alpha(20%);
+                    background: MaterialPalette.tertiary.with_alpha(20%);
                     border-width: 1.5px;
-                    border-color: MaterialPalette.primary;
+                    border-color: MaterialPalette.tertiary;
                     border-radius: 2px;
                 }
 
@@ -762,10 +832,10 @@ export component PreviewCard inherits FilledCard {
                                 height: 100%;
                                 border-radius: 13px;
                                 background: root.active_tool == 1 ?
-                                    (zoom_touch.has-hover ? MaterialPalette.primary.darker(8%) : MaterialPalette.primary) :
+                                    (zoom_touch.has-hover ? MaterialPalette.tertiary.darker(8%) : MaterialPalette.tertiary) :
                                     (zoom_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
                                 border-width: root.active_tool == 1 ? 1.5px : 0px;
-                                border-color: root.active_tool == 1 ? MaterialPalette.on_primary.with_alpha(35%) : transparent;
+                                border-color: root.active_tool == 1 ? MaterialPalette.on_tertiary.with_alpha(35%) : transparent;
 
                                 animate background, border-color { duration: 150ms; easing: ease-out; }
 
@@ -773,7 +843,40 @@ export component PreviewCard inherits FilledCard {
                                     width: 16px;
                                     height: 16px;
                                     source: Icons.zoom_in;
-                                    colorize: root.active_tool == 1 ? MaterialPalette.on_primary : MaterialPalette.on_surface;
+                                    colorize: root.active_tool == 1 ? MaterialPalette.on_tertiary : MaterialPalette.on_surface;
+                                    animate colorize { duration: 150ms; }
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+
+                        // Click to Zoom Out Toggle
+                        zoom_out_touch := TouchArea {
+                            width: 26px;
+                            height: 26px;
+                            mouse-cursor: pointer;
+                            clicked => {
+                                root.active_tool = (root.active_tool == 4 ? 0 : 4);
+                            }
+
+                            Rectangle {
+                                width: 100%;
+                                height: 100%;
+                                border-radius: 13px;
+                                background: root.active_tool == 4 ?
+                                    (zoom_out_touch.has-hover ? MaterialPalette.tertiary.darker(8%) : MaterialPalette.tertiary) :
+                                    (zoom_out_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
+                                border-width: root.active_tool == 4 ? 1.5px : 0px;
+                                border-color: root.active_tool == 4 ? MaterialPalette.on_tertiary.with_alpha(35%) : transparent;
+
+                                animate background, border-color { duration: 150ms; easing: ease-out; }
+
+                                Image {
+                                    width: 16px;
+                                    height: 16px;
+                                    source: Icons.zoom_out;
+                                    colorize: root.active_tool == 4 ? MaterialPalette.on_tertiary : MaterialPalette.on_surface;
                                     animate colorize { duration: 150ms; }
                                     horizontal-alignment: center;
                                     vertical-alignment: center;
@@ -837,17 +940,17 @@ export component PreviewCard inherits FilledCard {
                                 height: 100%;
                                 border-radius: 13px;
                                 background: root.active_tool == 3 ?
-                                    (marker_y_touch.has-hover ? MaterialPalette.primary.darker(8%) : MaterialPalette.primary) :
+                                    (marker_y_touch.has-hover ? MaterialPalette.secondary.darker(8%) : MaterialPalette.secondary) :
                                     (marker_y_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
                                 border-width: root.active_tool == 3 ? 1.5px : 0px;
-                                border-color: root.active_tool == 3 ? MaterialPalette.on_primary.with_alpha(35%) : transparent;
+                                border-color: root.active_tool == 3 ? MaterialPalette.on_secondary.with_alpha(35%) : transparent;
 
                                 animate background, border-color { duration: 150ms; easing: ease-out; }
 
                                 MaterialText {
                                     text: "+Y";
                                     style: root.active_tool == 3 ? MaterialTypography.label_medium_prominent : MaterialTypography.label_medium;
-                                    color: root.active_tool == 3 ? MaterialPalette.on_primary : MaterialPalette.on_surface;
+                                    color: root.active_tool == 3 ? MaterialPalette.on_secondary : MaterialPalette.on_surface;
                                     animate color { duration: 150ms; }
                                     horizontal-alignment: center;
                                     vertical-alignment: center;

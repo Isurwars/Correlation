@@ -1450,13 +1450,13 @@
     "semantic_hash": ""
   },
   "tests/unit/readers/AbinitReaderTests.cpp": {
-    "mtime": 1791607150.8841114,
-    "ast_hash": "a7cebbf7528c7868ee1d3073ed3b14d3",
+    "mtime": 1791686918.5299537,
+    "ast_hash": "3ac76c514b213474b9c58e8aaa5bf0c5",
     "semantic_hash": ""
   },
   "tests/unit/readers/DftbReaderTests.cpp": {
-    "mtime": 1791607165.4358656,
-    "ast_hash": "a7524edc99f84d4a09ebedc83b0e79de",
+    "mtime": 1791758715.5452561,
+    "ast_hash": "6a0946e91a40ad5e6d8ab1bf3b23f0b0",
     "semantic_hash": ""
   },
   "tests/unit/readers/GpawReaderTests.cpp": {
@@ -1465,8 +1465,8 @@
     "semantic_hash": ""
   },
   "tests/unit/readers/OrcaReaderTests.cpp": {
-    "mtime": 1791607138.1153271,
-    "ast_hash": "0e200b139e42f917878686a7be79db2c",
+    "mtime": 1791758646.728542,
+    "ast_hash": "2808f7f1ab11a134ab59b28400d982a6",
     "semantic_hash": ""
   },
   ".agents/rules/complexity-gate.md": {
@@ -2505,8 +2505,8 @@
     "semantic_hash": ""
   },
   "tests/unit/utils/ZipArchiveWriterTests.cpp": {
-    "mtime": 1791606709.8934977,
-    "ast_hash": "3fb0a5b473c46775a06eca8c11f749cb",
+    "mtime": 1791758852.3398004,
+    "ast_hash": "c8bce20a344abb3d5aabe1a76bc077b0",
     "semantic_hash": ""
   },
   ".agents/scripts/hook_runner.py": {
@@ -2622,6 +2622,11 @@
   "src/plotters/vendor/pdfgen.c": {
     "mtime": 1781473374.658443,
     "ast_hash": "f4be1e7eedefebce48ed20bcfda25e1c",
+    "semantic_hash": ""
+  },
+  "ui/material/ui/icons/zoom_out.svg": {
+    "mtime": 1791840293.3751802,
+    "ast_hash": "de60d772ea6ee8ea389e6639e67eda94",
     "semantic_hash": ""
   }
 }
