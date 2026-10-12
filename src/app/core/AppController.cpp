@@ -90,14 +90,14 @@ AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
 }
 
 void AppController::registerActionCallbacks() {
-  window_.on_run_analysis([this]() { analysis_runner_->handleRunAnalysis(); });
-  window_.on_cancel_analysis([this]() { dispatcher_.cancelAnalysis(); });
-  window_.on_browse_file([this]() { file_io_handler_->handleBrowseFile(); });
-  window_.on_reload_file([this]() { file_io_handler_->handleReloadFile(); });
-  window_.on_write_files([this]() { file_io_handler_->handleWriteFiles(); });
-  window_.on_validate_inputs([this]() {
+  window_.on_run_analysis([this] { analysis_runner_->handleRunAnalysis(); });
+  window_.on_cancel_analysis([this] { dispatcher_.cancelAnalysis(); });
+  window_.on_browse_file([this] { file_io_handler_->handleBrowseFile(); });
+  window_.on_reload_file([this] { file_io_handler_->handleReloadFile(); });
+  window_.on_write_files([this] { file_io_handler_->handleWriteFiles(); });
+  window_.on_validate_inputs([this] {
     slint::invoke_from_event_loop(
-        [this]() { static_cast<void>(input_validator_->validateInputs()); });
+        [this] { static_cast<void>(input_validator_->validateInputs()); });
   });
 
   window_.on_toggle_calculator([this](const slint::SharedString &calc_id, bool enabled) {
@@ -132,9 +132,9 @@ void AppController::registerPlotCallbacks() {
         plot_controller_->handleMouseMove(mouse_x, mouse_y, hover, width, height);
       });
 
-  window_.on_save_plot([this]() { plot_controller_->handleSavePlot(); });
-  window_.on_pin_run([this]() { plot_controller_->handlePinRun(); });
-  window_.on_clear_pinned_runs([this]() { plot_controller_->handleClearPinnedRuns(); });
+  window_.on_save_plot([this] { plot_controller_->handleSavePlot(); });
+  window_.on_pin_run([this] { plot_controller_->handlePinRun(); });
+  window_.on_clear_pinned_runs([this] { plot_controller_->handleClearPinnedRuns(); });
   window_.on_toggle_difference_plot(
       [this](bool show) { plot_controller_->handleToggleDifferencePlot(show); });
 
@@ -153,57 +153,108 @@ void AppController::registerPlotCallbacks() {
   window_.on_plot_wheel_zoom([this](float mouse_x, float mouse_y, float delta) {
     plot_controller_->handleWheelZoom(mouse_x, mouse_y, delta);
   });
-  window_.on_reset_zoom([this]() { plot_controller_->handleResetZoom(); });
+  window_.on_reset_zoom([this] { plot_controller_->handleResetZoom(); });
   window_.on_add_marker_at([this](float click_x, float click_y, bool is_vert) {
     plot_controller_->handleAddMarkerAt(click_x, click_y, is_vert);
   });
   window_.on_add_marker([this](bool is_vert) { plot_controller_->handleAddMarker(is_vert); });
-  window_.on_clear_markers([this]() { plot_controller_->handleClearMarkers(); });
+  window_.on_clear_markers([this] { plot_controller_->handleClearMarkers(); });
 }
 
 void AppController::registerPresetAndOptionCallbacks() {
   window_.on_load_preset([this](int index) {
-    slint::invoke_from_event_loop([this, index]() { preset_controller_->handleLoadPreset(index); });
+    slint::invoke_from_event_loop([this, index] { preset_controller_->handleLoadPreset(index); });
   });
   window_.on_save_preset([this](const slint::SharedString &name) {
-    slint::invoke_from_event_loop([this, sname = std::string(name.data())]() {
-      preset_controller_->handleSavePreset(sname);
-    });
+    slint::invoke_from_event_loop(
+        [this, sname = std::string(name.data())] { preset_controller_->handleSavePreset(sname); });
   });
   window_.on_delete_preset([this](int index) {
-    slint::invoke_from_event_loop(
-        [this, index]() { preset_controller_->handleDeletePreset(index); });
+    slint::invoke_from_event_loop([this, index] { preset_controller_->handleDeletePreset(index); });
   });
   window_.on_material_type_changed([this](int type) {
     slint::invoke_from_event_loop(
-        [this, type]() { preset_controller_->handleMaterialTypeChanged(type); });
+        [this, type] { preset_controller_->handleMaterialTypeChanged(type); });
   });
 
-  window_.on_reset_bond_cutoffs([this]() { setBondCutoffs(); });
-  window_.on_reset_rdf_options([this]() { handleResetRDFOptions(); });
-  window_.on_reset_angle_options([this]() { handleResetAngleOptions(); });
-  window_.on_reset_sq_options([this]() { handleResetSQOptions(); });
-  window_.on_reset_xrd_options([this]() { handleResetXRDOptions(); });
-  window_.on_xrd_radiation_preset_changed([this](int idx) { handleXRDPresetChanged(idx); });
-  window_.on_apply_scaled_cutoffs([this](float factor) { handleApplyScaledCutoffs(factor); });
-  window_.on_set_uniform_cutoff([this](float max_val) { handleSetUniformCutoff(max_val); });
-  window_.on_apply_min_factor([this](float factor) { handleApplyMinFactor(factor); });
-  window_.on_apply_max_factor([this](float factor) { handleApplyMaxFactor(factor); });
-  window_.on_apply_global_cutoff([this](float cutoff) { handleApplyGlobalCutoff(cutoff); });
-  window_.on_reset_rings_options([this]() { handleResetRingsOptions(); });
-  window_.on_reset_smoothing_options([this]() { handleResetSmoothingOptions(); });
-  window_.on_reset_advanced_options([this]() { handleResetAdvancedOptions(); });
-  window_.on_reset_trajectory_options([this]() { handleResetTrajectoryOptions(); });
-  window_.on_reset_export_settings([this]() { handleResetExportSettings(); });
-  window_.on_reset_material_type([this]() { handleResetMaterialType(); });
-  window_.on_reset_analyses_selection([this]() { handleResetAnalysesSelection(); });
-  window_.on_reset_presets([this]() { window_.set_selected_preset(-1); });
-  window_.on_clear_comparison_curves([this]() { handleClearComparisonCurves(); });
+  window_.on_reset_bond_cutoffs([this] { setBondCutoffs(); });
+  window_.on_reset_rdf_options([this] {
+    OptionsResetService::resetRDF(window_);
+    static_cast<void>(input_validator_->validateInputs());
+  });
+  window_.on_reset_angle_options([this] {
+    OptionsResetService::resetAngle(window_);
+    static_cast<void>(input_validator_->validateInputs());
+  });
+  window_.on_reset_sq_options([this] {
+    OptionsResetService::resetSQ(window_);
+    static_cast<void>(input_validator_->validateInputs());
+  });
+  window_.on_reset_xrd_options([this] {
+    OptionsResetService::resetXRD(window_);
+    static_cast<void>(input_validator_->validateInputs());
+  });
+  window_.on_xrd_radiation_preset_changed([this](int idx) {
+    OptionsResetService::setXRDPreset(window_, idx);
+    static_cast<void>(input_validator_->validateInputs());
+  });
+  window_.on_apply_scaled_cutoffs(
+      [this](float factor) { bond_cutoff_controller_.applyScaledCutoffs(factor); });
+  window_.on_set_uniform_cutoff(
+      [this](float max_val) { bond_cutoff_controller_.setUniformCutoff(max_val); });
+  window_.on_apply_min_factor([this](float factor) {
+    bond_cutoff_controller_.applyCovalentFactor(factor, FactorBound::Min);
+  });
+  window_.on_apply_max_factor([this](float factor) {
+    bond_cutoff_controller_.applyCovalentFactor(factor, FactorBound::Max);
+  });
+  window_.on_apply_global_cutoff(
+      [this](float cutoff) { bond_cutoff_controller_.applyGlobalCutoff(cutoff); });
+  window_.on_reset_rings_options([this] {
+    OptionsResetService::resetRings(window_);
+    static_cast<void>(input_validator_->validateInputs());
+  });
+  window_.on_reset_smoothing_options([this] {
+    OptionsResetService::resetSmoothing(window_);
+    static_cast<void>(input_validator_->validateInputs());
+  });
+  window_.on_reset_advanced_options([this] {
+    OptionsResetService::resetAdvanced(window_);
+    static_cast<void>(input_validator_->validateInputs());
+  });
+  window_.on_reset_trajectory_options([this] {
+    OptionsResetService::resetTrajectory(window_, loader_);
+    static_cast<void>(input_validator_->validateInputs());
+  });
+  window_.on_reset_export_settings([this] {
+    OptionsResetService::resetExportSettings(window_);
+    if (plot_controller_) {
+      plot_controller_->requestPlotUpdate(window_.get_selected_plot_index(), true);
+    }
+  });
+  window_.on_reset_material_type([this] {
+    OptionsResetService::resetMaterialType(window_);
+    if (preset_controller_) {
+      preset_controller_->handleMaterialTypeChanged(0);
+    }
+  });
+  window_.on_reset_analyses_selection([this] {
+    populateCalculatorGroups();
+    updateActiveGroupFlags();
+  });
+  window_.on_reset_presets([this] { window_.set_selected_preset(-1); });
+  window_.on_clear_comparison_curves([this] {
+    const auto empty_model = std::make_shared<slint::VectorModel<ComparisonCurveData>>();
+    window_.set_comparison_curves(empty_model);
+    if (plot_controller_) {
+      plot_controller_->handleClearPinnedRuns();
+    }
+  });
 }
 
 void AppController::registerExportCallbacks() {
   window_.on_toggle_export_analysis([this](const slint::SharedString &analysis_id, bool enabled) {
-    auto model = window_.get_export_analysis_items();
+    const auto model = window_.get_export_analysis_items();
     if (!model) {
       return;
     }
@@ -219,7 +270,7 @@ void AppController::registerExportCallbacks() {
   });
 
   window_.on_toggle_all_export_analyses([this](bool enabled) {
-    auto model = window_.get_export_analysis_items();
+    const auto model = window_.get_export_analysis_items();
     if (!model) {
       return;
     }
@@ -233,7 +284,7 @@ void AppController::registerExportCallbacks() {
     }
   });
 
-  window_.on_reset_export_options([this]() {
+  window_.on_reset_export_options([this] {
     ExportFormatOptions opts{};
     opts.export_csv = true;
     opts.export_images = true;
@@ -242,7 +293,7 @@ void AppController::registerExportCallbacks() {
     opts.use_zip = false;
     window_.set_export_format_options(opts);
     window_.set_export_all_analyses(true);
-    auto model = window_.get_export_analysis_items();
+    const auto model = window_.get_export_analysis_items();
     if (model) {
       for (size_t i = 0; i < model->row_count(); ++i) {
         auto maybe_item = model->row_data(i);
@@ -330,12 +381,12 @@ void AppController::populateCalculatorGroups() {
     groups_map[grp].push_back(calc.get());
   }
 
-  auto groups_model = std::make_shared<slint::VectorModel<CalculatorGroup>>();
+  const auto groups_model = std::make_shared<slint::VectorModel<CalculatorGroup>>();
   for (const auto &grp_name : group_order) {
-    auto calcs_model = std::make_shared<slint::VectorModel<CalculatorInfo>>();
+    const auto calcs_model = std::make_shared<slint::VectorModel<CalculatorInfo>>();
     for (const auto *calc : groups_map.at(grp_name)) {
       bool enabled = true; // default on
-      auto calc_it = opts.active_calculators.find(std::string(calc->getName()));
+      const auto calc_it = opts.active_calculators.find(std::string(calc->getName()));
       if (calc_it != opts.active_calculators.end()) {
         enabled = calc_it->second;
       }
@@ -355,120 +406,9 @@ void AppController::populateCalculatorGroups() {
   window_.set_total_calculator_count(static_cast<int>(calculators.size()));
 }
 
-void AppController::handleResetRDFOptions() {
-  OptionsResetService::resetRDF(window_);
-  static_cast<void>(input_validator_->validateInputs());
-}
-
-void AppController::handleResetAngleOptions() {
-  OptionsResetService::resetAngle(window_);
-  static_cast<void>(input_validator_->validateInputs());
-}
-
-void AppController::handleResetSQOptions() {
-  OptionsResetService::resetSQ(window_);
-  static_cast<void>(input_validator_->validateInputs());
-}
-
-void AppController::handleResetRingsOptions() {
-  OptionsResetService::resetRings(window_);
-  static_cast<void>(input_validator_->validateInputs());
-}
-
-void AppController::handleResetSmoothingOptions() {
-  OptionsResetService::resetSmoothing(window_);
-  static_cast<void>(input_validator_->validateInputs());
-}
-
-void AppController::handleResetAdvancedOptions() {
-  OptionsResetService::resetAdvanced(window_);
-  static_cast<void>(input_validator_->validateInputs());
-}
-
-void AppController::handleResetTrajectoryOptions() {
-  OptionsResetService::resetTrajectory(window_, loader_);
-  static_cast<void>(input_validator_->validateInputs());
-}
-
-void AppController::handleResetExportSettings() {
-  OptionsResetService::resetExportSettings(window_);
-  if (plot_controller_) {
-    plot_controller_->requestPlotUpdate(window_.get_selected_plot_index(), true);
-  }
-}
-
-void AppController::handleResetAnalysesSelection() {
-  populateCalculatorGroups();
-  updateActiveGroupFlags();
-}
-
-void AppController::handleResetMaterialType() {
-  OptionsResetService::resetMaterialType(window_);
-  if (preset_controller_) {
-    preset_controller_->handleMaterialTypeChanged(0);
-  }
-}
-
-void AppController::handleClearComparisonCurves() {
-  auto empty_model = std::make_shared<slint::VectorModel<ComparisonCurveData>>();
-  window_.set_comparison_curves(empty_model);
-  if (plot_controller_) {
-    plot_controller_->handleClearPinnedRuns();
-  }
-}
-
-void AppController::handleResetXRDOptions() {
-  OptionsResetService::resetXRD(window_);
-  static_cast<void>(input_validator_->validateInputs());
-}
-
-void AppController::handleXRDPresetChanged(int preset_idx) {
-  auto opts = window_.get_analysis_options();
-  opts.xrd_radiation_preset = preset_idx;
-  switch (preset_idx) {
-  case 0: // Cu-Ka
-    opts.xrd_lambda = "1.5406";
-    break;
-  case 1: // Mo-Ka
-    opts.xrd_lambda = "0.7107";
-    break;
-  case 2: // Co-Ka
-    opts.xrd_lambda = "1.7890";
-    break;
-  case 3: // Cr-Ka
-    opts.xrd_lambda = "2.2897";
-    break;
-  case 4: // Custom
-  default:
-    break;
-  }
-  window_.set_analysis_options(opts);
-  static_cast<void>(input_validator_->validateInputs());
-}
-
-void AppController::handleApplyScaledCutoffs(float scale_factor) {
-  bond_cutoff_controller_.applyScaledCutoffs(scale_factor);
-}
-
-void AppController::handleSetUniformCutoff(float max_cutoff) {
-  bond_cutoff_controller_.setUniformCutoff(max_cutoff);
-}
-
-void AppController::handleApplyMinFactor(float min_factor) {
-  bond_cutoff_controller_.applyCovalentFactor(min_factor, FactorBound::Min);
-}
-
-void AppController::handleApplyMaxFactor(float max_factor) {
-  bond_cutoff_controller_.applyCovalentFactor(max_factor, FactorBound::Max);
-}
-
-void AppController::handleApplyGlobalCutoff(float global_cutoff) {
-  bond_cutoff_controller_.applyGlobalCutoff(global_cutoff);
-}
-
 void AppController::populateExportAnalyses() {
   const auto names = dispatcher_.getAvailableHistogramNames();
-  auto model = std::make_shared<slint::VectorModel<ExportAnalysisItem>>();
+  const auto model = std::make_shared<slint::VectorModel<ExportAnalysisItem>>();
   for (const auto &name : names) {
     if (name.ends_with("_raw")) {
       continue;

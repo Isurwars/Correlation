@@ -153,7 +153,7 @@ TEST_F(OptionsResetServiceTests, ResetTrajectoryWithZeroAndNonZeroFrames) {
 
   // Frame count 0
   OptionsResetService::resetTrajectory(win, loader);
-  auto opts = win.get_analysis_options();
+  const auto opts = win.get_analysis_options();
   EXPECT_EQ(opts.min_frame, "1");
   EXPECT_EQ(opts.max_frame, "End");
   EXPECT_EQ(opts.frame_stride, "1");
@@ -177,6 +177,22 @@ TEST_F(OptionsResetServiceTests, ResetExportSettingsAndMaterialType) {
   OptionsResetService::resetMaterialType(win);
   opts = win.get_analysis_options();
   EXPECT_EQ(opts.material_type, 0);
+}
+
+TEST_F(OptionsResetServiceTests, SetXRDPresetAppliesCorrectWavelengths) {
+  auto &win = window();
+
+  OptionsResetService::setXRDPreset(win, 0); // Cu-Ka
+  EXPECT_EQ(win.get_analysis_options().xrd_lambda, "1.5406");
+
+  OptionsResetService::setXRDPreset(win, 1); // Mo-Ka
+  EXPECT_EQ(win.get_analysis_options().xrd_lambda, "0.7107");
+
+  OptionsResetService::setXRDPreset(win, 2); // Co-Ka
+  EXPECT_EQ(win.get_analysis_options().xrd_lambda, "1.7890");
+
+  OptionsResetService::setXRDPreset(win, 3); // Cr-Ka
+  EXPECT_EQ(win.get_analysis_options().xrd_lambda, "2.2897");
 }
 
 } // namespace

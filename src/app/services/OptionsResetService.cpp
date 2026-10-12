@@ -137,4 +137,27 @@ void OptionsResetService::resetMaterialType(AppWindow &window) {
   window.set_analysis_options(opts);
 }
 
+void OptionsResetService::setXRDPreset(AppWindow &window, int preset_idx) {
+  auto opts = window.get_analysis_options();
+  opts.xrd_radiation_preset = preset_idx;
+  switch (preset_idx) {
+  case 0: // Cu-Ka
+    opts.xrd_lambda = "1.5406";
+    break;
+  case 1: // Mo-Ka
+    opts.xrd_lambda = "0.7107";
+    break;
+  case 2: // Co-Ka
+    opts.xrd_lambda = "1.7890";
+    break;
+  case 3: // Cr-Ka
+    opts.xrd_lambda = "2.2897";
+    break;
+  case 4: // Custom
+  default:
+    break;
+  }
+  window.set_analysis_options(opts);
+}
+
 } // namespace correlation::app

@@ -80,6 +80,13 @@ public:
    * @param[in,out] window Target UI window.
    */
   static void resetMaterialType(AppWindow &window);
+
+  /**
+   * @brief Sets XRD wavelength based on radiation source preset index.
+   * @param[in,out] window Target UI window.
+   * @param[in] preset_idx Selected radiation source preset index.
+   */
+  static void setXRDPreset(AppWindow &window, int preset_idx);
 };
 
 } // namespace correlation::app

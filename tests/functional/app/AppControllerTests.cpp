@@ -587,3 +587,145 @@ TEST_F(AppControllerTests, MiniSideBarPanelNavigationAndCollapse) {
   window->set_active_panel(-1);
   EXPECT_EQ(window->get_active_panel(), -1);
 }
+
+namespace {
+[[nodiscard]] auto findPdSiExample() -> std::string {
+  for (const auto *path : {
+           "../../examples/a-PdSi/a-PdSi.car",
+           "../examples/a-PdSi/a-PdSi.car",
+           "examples/a-PdSi/a-PdSi.car",
+       }) {
+    if (std::filesystem::exists(path)) {
+      return path;
+    }
+  }
+  return "";
+}
+} // namespace
+
+TEST_F(AppControllerTests, ResetRdfAndAngleCallbacksIntegration) {
+  auto window = AppWindow::create();
+  const correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+
+  auto opts = window->get_analysis_options();
+  opts.r_max = "99.00";
+  opts.r_bin_width = "1.00";
+  opts.angle_bin_width = "99.00";
+  window->set_analysis_options(opts);
+
+  window->invoke_reset_rdf_options();
+  EXPECT_EQ(window->get_analysis_options().r_max, "20.00");
+  EXPECT_EQ(window->get_analysis_options().r_bin_width, "0.02");
+
+  window->invoke_reset_angle_options();
+  EXPECT_EQ(window->get_analysis_options().angle_bin_width, "0.25");
+}
+
+TEST_F(AppControllerTests, ResetSqRingsAndSmoothingCallbacksIntegration) {
+  auto window = AppWindow::create();
+  const correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+
+  auto opts = window->get_analysis_options();
+  opts.q_max = "99.00";
+  opts.max_ring_size = "99";
+  opts.smoothing_sigma = "99.00";
+  opts.material_type = 2;
+  window->set_analysis_options(opts);
+
+  window->invoke_reset_sq_options();
+  EXPECT_EQ(window->get_analysis_options().q_max, "20.00");
+
+  window->invoke_reset_rings_options();
+  EXPECT_EQ(window->get_analysis_options().max_ring_size, "12");
+
+  window->invoke_reset_material_type();
+  EXPECT_EQ(window->get_analysis_options().material_type, 0);
+
+  window->invoke_reset_smoothing_options();
+  EXPECT_EQ(window->get_analysis_options().smoothing_sigma, "0.10");
+}
+
+TEST_F(AppControllerTests, XRDRadiationPresetCallbackIntegration) {
+  auto window = AppWindow::create();
+  const correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+
+  window->invoke_xrd_radiation_preset_changed(1);
+  EXPECT_EQ(window->get_analysis_options().xrd_lambda, "0.7107");
+}
+
+TEST_F(AppControllerTests, BondCutoffsUniformCallbackIntegration) {
+  auto window = AppWindow::create();
+  const auto file_path = findPdSiExample();
+  ASSERT_FALSE(file_path.empty());
+  ASSERT_TRUE(loader().loadFile(file_path).has_value());
+
+  correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+  controller.setBondCutoffs();
+
+  window->invoke_set_uniform_cutoff(3.5F);
+  const auto cutoffs_uniform = window->get_bond_cutoffs();
+  ASSERT_GT(cutoffs_uniform->row_count(), 0);
+  for (size_t idx = 0; idx < cutoffs_uniform->row_count(); ++idx) {
+    const auto item = cutoffs_uniform->row_data(idx);
+    ASSERT_TRUE(item.has_value());
+    EXPECT_EQ(item->max_distance, "3.50");
+  }
+}
+
+TEST_F(AppControllerTests, BondCutoffsGlobalCallbackIntegration) {
+  auto window = AppWindow::create();
+  const auto file_path = findPdSiExample();
+  ASSERT_FALSE(file_path.empty());
+  ASSERT_TRUE(loader().loadFile(file_path).has_value());
+
+  correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+  controller.setBondCutoffs();
+
+  window->invoke_apply_global_cutoff(4.0F);
+  const auto cutoffs_global = window->get_bond_cutoffs();
+  ASSERT_GT(cutoffs_global->row_count(), 0);
+  for (size_t idx = 0; idx < cutoffs_global->row_count(); ++idx) {
+    const auto item = cutoffs_global->row_data(idx);
+    ASSERT_TRUE(item.has_value());
+    EXPECT_EQ(item->max_distance, "4.00");
+  }
+}
+
+TEST_F(AppControllerTests, ExportAnalysesToggleCallbackIntegration) {
+  auto window = AppWindow::create();
+  const correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+
+  const auto model = std::make_shared<slint::VectorModel<ExportAnalysisItem>>();
+  ExportAnalysisItem item;
+  item.id = "rdf";
+  item.name = "RDF";
+  item.enabled = true;
+  model->push_back(item);
+  window->set_export_analysis_items(model);
+
+  window->invoke_toggle_all_export_analyses(false);
+  const auto export_model = window->get_export_analysis_items();
+  ASSERT_TRUE(export_model != nullptr);
+  ASSERT_GT(export_model->row_count(), 0);
+  auto row = export_model->row_data(0);
+  ASSERT_TRUE(row.has_value());
+  EXPECT_FALSE(row->enabled);
+
+  window->invoke_toggle_export_analysis("rdf", true);
+  row = export_model->row_data(0);
+  ASSERT_TRUE(row.has_value());
+  EXPECT_TRUE(row->enabled);
+}
+
+TEST_F(AppControllerTests, ExportFormatAndLayoutCallbacksIntegration) {
+  auto window = AppWindow::create();
+  const correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+
+  window->invoke_reset_export_options();
+  const auto export_config = window->get_export_format_options();
+  EXPECT_TRUE(export_config.export_csv);
+  EXPECT_TRUE(export_config.export_images);
+  EXPECT_FALSE(export_config.export_hdf5);
+
+  EXPECT_NO_THROW(window->invoke_layout_geometry_changed(280.0F, 380.0F));
+}
