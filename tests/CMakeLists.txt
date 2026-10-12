@@ -163,8 +163,11 @@ if(BUILD_GUI)
         unit/app/BondCutoffControllerTests.cpp
         unit/app/OptionsResetServiceTests.cpp
         unit/app/OptionsSyncServiceTests.cpp
+        unit/app/PlotMarkerManagerTests.cpp
+        unit/app/PlotRenderPipelineTests.cpp
         unit/app/PlotSeriesManagerTests.cpp
         unit/app/PlotTableFormatterTests.cpp
+        unit/app/PlotViewportNavigatorTests.cpp
     )
 
     target_link_libraries(correlation_gui_tests PRIVATE

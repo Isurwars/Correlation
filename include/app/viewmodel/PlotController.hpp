@@ -11,16 +11,13 @@
 #include "app/core/AppOptions.hpp"
 #include "app/formatters/PlotSeriesManager.hpp"
 #include "app/services/AnalysisDispatcher.hpp"
+#include "app/viewmodel/PlotMarkerManager.hpp"
+#include "app/viewmodel/PlotRenderPipeline.hpp"
+#include "app/viewmodel/PlotViewportNavigator.hpp"
 #include "plotters/SvgPlotter.hpp"
 #include <slint.h>
 
 #include <atomic>
-#include <chrono>
-#include <condition_variable>
-#include <map>
-#include <memory>
-#include <mutex>
-#include <optional>
 #include <string>
 #include <thread>
 #include <vector>
@@ -183,22 +180,9 @@ private:
 
   PlotSeriesManager series_manager_;
 
-  struct RenderTaskData {
-    int index{-1};
-    correlation::analysis::Histogram active_hist;
-    std::vector<correlation::plotters::LabeledHistogram> comparison_hists;
-    correlation::plotters::PlotConfig config;
-    correlation::plotters::HoverInfo hover;
-    std::map<std::string, real_t> ashcroft_weights;
-    std::map<std::string, bool> curve_visibility;
-    std::map<std::string, std::string> custom_curve_colors;
-  };
-
-  std::jthread render_worker_;
-  std::mutex render_mutex_;
-  std::condition_variable render_cv_;
-  std::optional<RenderTaskData> pending_task_;
-  bool stop_render_worker_{false};
+  PlotViewportNavigator viewport_navigator_;
+  PlotMarkerManager marker_manager_;
+  PlotRenderPipeline pipeline_;
 
   std::jthread dialog_thread_; ///< Worker thread for native save dialogs
   std::atomic<bool> dialog_active_{
@@ -212,23 +196,7 @@ private:
   float last_plot_width_ = 0.0F;
   float last_plot_height_ = 0.0F;
 
-  std::shared_ptr<std::atomic<bool>> alive_ = std::make_shared<std::atomic<bool>>(true);
-
-  int last_rendered_index_ = -1;
-  correlation::plotters::PlotConfig last_config_;
-  correlation::plotters::HoverInfo last_hover_;
-  std::size_t last_pinned_runs_count_ = 0;
-
-  std::optional<real_t> zoom_x_min_;
-  std::optional<real_t> zoom_x_max_;
-  std::optional<real_t> zoom_y_min_;
-  std::optional<real_t> zoom_y_max_;
-  std::vector<correlation::plotters::ReferenceLine> reference_markers_;
-
-  void renderLoop();
   correlation::plotters::PlotConfig buildPlotConfigFromUI();
-  bool isPlotCacheHit(int index, const correlation::plotters::PlotConfig &config,
-                      const correlation::plotters::HoverInfo &hover) const;
   void updateTableData(const correlation::analysis::Histogram *hist);
   void updateCurveToggleItems(const correlation::analysis::Histogram *hist);
   void executeSavePlot(const std::string &filepath, const correlation::analysis::Histogram *hist,
