@@ -1537,8 +1537,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_rdfparams",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "rdfparams"
     },
     {
@@ -1548,8 +1548,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_hpp_real_t",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "real_t"
     },
     {
@@ -1559,8 +1559,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_rdfparams_r_max",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "r_max"
     },
     {
@@ -1570,8 +1570,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_rdfparams_r_bin_width",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "r_bin_width"
     },
     {
@@ -1581,8 +1581,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_rdfparams_max_radius",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "max_radius"
     },
     {
@@ -1592,8 +1592,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_dynamicproperties",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "dynamicproperties"
     },
     {
@@ -1603,8 +1603,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_dynamicproperties_diffusion_coefficient_msd",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "diffusion_coefficient_msd"
     },
     {
@@ -1614,8 +1614,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_dynamicproperties_diffusion_coefficient_vacf",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "diffusion_coefficient_vacf"
     },
     {
@@ -1625,8 +1625,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_dynamicproperties_relaxation_time",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "relaxation_time"
     },
     {
@@ -1636,8 +1636,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_dynamicproperties_deborah_number",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "deborah_number"
     },
     {
@@ -1944,8 +1944,8 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_analysissettings_isactive",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": ".isactive()"
     },
     {
@@ -2186,8 +2186,8 @@
       "source_location": "L172",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions"
     },
     {
@@ -2197,8 +2197,8 @@
       "source_location": "L203",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_distributionfunctions",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": ".~distributionfunctions()"
     },
     {
@@ -2219,8 +2219,8 @@
       "source_location": "L261",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_neighbors",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "neighbors"
     },
     {
@@ -2241,8 +2241,8 @@
       "source_location": "L287",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_setdynamicproperties",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": ".setdynamicproperties()"
     },
     {
@@ -2252,8 +2252,8 @@
       "source_location": "L295",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_getdiffusioncoefficientmsd",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": ".getdiffusioncoefficientmsd()"
     },
     {
@@ -2263,8 +2263,8 @@
       "source_location": "L303",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_setdiffusioncoefficientmsd",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": ".setdiffusioncoefficientmsd()"
     },
     {
@@ -2274,8 +2274,8 @@
       "source_location": "L312",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_getdiffusioncoefficientvacf",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": ".getdiffusioncoefficientvacf()"
     },
     {
@@ -2285,8 +2285,8 @@
       "source_location": "L321",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_setdiffusioncoefficientvacf",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": ".setdiffusioncoefficientvacf()"
     },
     {
@@ -2296,8 +2296,8 @@
       "source_location": "L329",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_getrelaxationtime",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": ".getrelaxationtime()"
     },
     {
@@ -2307,8 +2307,8 @@
       "source_location": "L337",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_setrelaxationtime",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": ".setrelaxationtime()"
     },
     {
@@ -2318,8 +2318,8 @@
       "source_location": "L345",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_getdeborahnumber",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": ".getdeborahnumber()"
     },
     {
@@ -2329,8 +2329,8 @@
       "source_location": "L353",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_setdeborahnumber",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": ".setdeborahnumber()"
     },
     {
@@ -2351,8 +2351,8 @@
       "source_location": "L373",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_calculaterdf",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "calculaterdf"
     },
     {
@@ -2406,8 +2406,8 @@
       "source_location": "L409",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_calculatexrd",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "calculatexrd"
     },
     {
@@ -2417,8 +2417,8 @@
       "source_location": "L417",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_smooth",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "smooth"
     },
     {
@@ -2450,8 +2450,8 @@
       "source_location": "L438",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_setstructureanalyzerowned",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "setstructureanalyzerowned"
     },
     {
@@ -2494,8 +2494,8 @@
       "source_location": "L480",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_getpartialkey",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "getpartialkey"
     },
     {
@@ -2505,8 +2505,8 @@
       "source_location": "L488",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_getinversepartialkey",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "getinversepartialkey"
     },
     {
@@ -2516,8 +2516,8 @@
       "source_location": "L494",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_processsingleframe",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "processsingleframe"
     },
     {
@@ -2527,8 +2527,8 @@
       "source_location": "L498",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_normalizehistograms",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "normalizehistograms"
     },
     {
@@ -2538,8 +2538,8 @@
       "source_location": "L504",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_ensureneighborscomputed",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "ensureneighborscomputed"
     },
     {
@@ -2549,8 +2549,8 @@
       "source_location": "L509",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_calculateashcroftweights",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "calculateashcroftweights"
     },
     {
@@ -2571,8 +2571,8 @@
       "source_location": "L512",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_neighbors_ref",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "neighbors_ref_"
     },
     {
@@ -2582,8 +2582,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_hpp_unique_ptr",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "unique_ptr"
     },
     {
@@ -2593,8 +2593,8 @@
       "source_location": "L513",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_neighbors_owned",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "neighbors_owned_"
     },
     {
@@ -2604,8 +2604,8 @@
       "source_location": "L514",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_current_cutoff",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "current_cutoff_"
     },
     {
@@ -2615,8 +2615,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_hpp_bondcutoffmatrix",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "bondcutoffmatrix"
     },
     {
@@ -2626,8 +2626,8 @@
       "source_location": "L515",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_bond_cutoffs",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "bond_cutoffs_"
     },
     {
@@ -2637,8 +2637,8 @@
       "source_location": "L517",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_histograms",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "histograms_"
     },
     {
@@ -2648,8 +2648,8 @@
       "source_location": "L518",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_ashcroft_weights",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "ashcroft_weights_"
     },
     {
@@ -2659,8 +2659,8 @@
       "source_location": "L519",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_histogram_mutex",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "histogram_mutex_"
     },
     {
@@ -2670,8 +2670,8 @@
       "source_location": "L521",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_distributionfunctions_dynamic_properties",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "dynamic_properties_"
     },
     {
@@ -9721,8 +9721,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_gpu_gpudistancecalculator",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "gpudistancecalculator.hpp"
     },
     {
@@ -9886,8 +9886,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "include_calculators_gpu_gpusqcalculator_gpusqcalculator_calculateframe",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "calculateframe"
     },
     {
@@ -10249,8 +10249,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_gpu_syclanglecalculator",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "syclanglecalculator.hpp"
     },
     {
@@ -10315,8 +10315,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_gpu_sycldistancecalculator",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "sycldistancecalculator.hpp"
     },
     {
@@ -10326,8 +10326,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_gpu_syclsqcalculator",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "syclsqcalculator.hpp"
     },
     {
@@ -10403,8 +10403,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_gpu_syclxrdcalculator",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "syclxrdcalculator.hpp"
     },
     {
@@ -10414,8 +10414,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "include_calculators_gpu_syclxrdcalculator_syclxrdparams",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "syclxrdparams"
     },
     {
@@ -10425,8 +10425,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_calculators_gpu_syclxrdcalculator_hpp_real_t",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "real_t"
     },
     {
@@ -10436,8 +10436,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "include_calculators_gpu_syclxrdcalculator_syclxrdparams_lambda",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "lambda"
     },
     {
@@ -10447,8 +10447,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "include_calculators_gpu_syclxrdcalculator_syclxrdparams_theta_min",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "theta_min"
     },
     {
@@ -10458,8 +10458,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "include_calculators_gpu_syclxrdcalculator_syclxrdparams_theta_max",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "theta_max"
     },
     {
@@ -10469,8 +10469,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "include_calculators_gpu_syclxrdcalculator_syclxrdparams_bin_width",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "bin_width"
     },
     {
@@ -11382,8 +11382,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "include_calculators_scattering_tdoscalculator_tdosparams",
-      "community": 100,
-      "community_name": "ArrowWriter.cpp",
+      "community": 324,
+      "community_name": "VDOSParams",
       "norm_label": "tdosparams"
     },
     {
@@ -11393,8 +11393,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_calculators_scattering_tdoscalculator_hpp_real_t",
-      "community": 100,
-      "community_name": "ArrowWriter.cpp",
+      "community": 324,
+      "community_name": "VDOSParams",
       "norm_label": "real_t"
     },
     {
@@ -11404,8 +11404,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "include_calculators_scattering_tdoscalculator_tdosparams_e_min",
-      "community": 100,
-      "community_name": "ArrowWriter.cpp",
+      "community": 324,
+      "community_name": "VDOSParams",
       "norm_label": "e_min"
     },
     {
@@ -11415,8 +11415,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "include_calculators_scattering_tdoscalculator_tdosparams_e_max",
-      "community": 100,
-      "community_name": "ArrowWriter.cpp",
+      "community": 324,
+      "community_name": "VDOSParams",
       "norm_label": "e_max"
     },
     {
@@ -11426,8 +11426,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "include_calculators_scattering_tdoscalculator_tdosparams_model",
-      "community": 100,
-      "community_name": "ArrowWriter.cpp",
+      "community": 324,
+      "community_name": "VDOSParams",
       "norm_label": "model"
     },
     {
@@ -11822,8 +11822,8 @@
       "source_location": "L86",
       "_origin": "ast",
       "id": "include_calculators_scattering_xrdcalculator_xrdcalculator_calculate",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "calculate"
     },
     {
@@ -14869,8 +14869,8 @@
       "source_location": "L258",
       "_origin": "ast",
       "id": "include_core_cell_cell_reserveatoms",
-      "community": 345,
-      "community_name": "ICalculator",
+      "community": 373,
+      "community_name": "AngleClassification",
       "norm_label": ".reserveatoms()"
     },
     {
@@ -14880,8 +14880,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_core_cell_hpp_size_t",
-      "community": 345,
-      "community_name": "ICalculator",
+      "community": 373,
+      "community_name": "AngleClassification",
       "norm_label": "size_t"
     },
     {
@@ -14913,8 +14913,8 @@
       "source_location": "L281",
       "_origin": "ast",
       "id": "include_core_cell_cell_lattice_vectors",
-      "community": 167,
-      "community_name": "PartialInfo",
+      "community": 353,
+      "community_name": "Histogram",
       "norm_label": "lattice_vectors_"
     },
     {
@@ -14946,8 +14946,8 @@
       "source_location": "L284",
       "_origin": "ast",
       "id": "include_core_cell_cell_volume",
-      "community": 353,
-      "community_name": "Histogram",
+      "community": 359,
+      "community_name": "ThreadAccumulators",
       "norm_label": "volume_"
     },
     {
@@ -16816,8 +16816,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_math_precision",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "precision.hpp"
     },
     {
@@ -17454,8 +17454,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_math_simd_simdnormalization",
-      "community": 324,
-      "community_name": "VDOSParams",
+      "community": 173,
+      "community_name": "AnalysisRunner",
       "norm_label": "simdnormalization.hpp"
     },
     {
@@ -17465,8 +17465,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "include_math_simd_simdnormalization_sinc_integral",
-      "community": 324,
-      "community_name": "VDOSParams",
+      "community": 173,
+      "community_name": "AnalysisRunner",
       "norm_label": "sinc_integral()"
     },
     {
@@ -17476,8 +17476,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_math_simd_simdnormalization_hpp_t",
-      "community": 324,
-      "community_name": "VDOSParams",
+      "community": 173,
+      "community_name": "AnalysisRunner",
       "norm_label": "t"
     },
     {
@@ -17487,8 +17487,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_math_simd_simdnormalization_hpp_size_t",
-      "community": 324,
-      "community_name": "VDOSParams",
+      "community": 173,
+      "community_name": "AnalysisRunner",
       "norm_label": "size_t"
     },
     {
@@ -17498,8 +17498,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "include_math_simd_simdnormalization_normalize_rdf_bins",
-      "community": 324,
-      "community_name": "VDOSParams",
+      "community": 173,
+      "community_name": "AnalysisRunner",
       "norm_label": "normalize_rdf_bins()"
     },
     {
@@ -17509,8 +17509,8 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "include_math_simd_simdnormalization_scale_bins",
-      "community": 324,
-      "community_name": "VDOSParams",
+      "community": 173,
+      "community_name": "AnalysisRunner",
       "norm_label": "scale_bins()"
     },
     {
@@ -17762,8 +17762,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "include_math_simd_simdtypes_sincintegralparams",
-      "community": 324,
-      "community_name": "VDOSParams",
+      "community": 181,
+      "community_name": "File Reader Tests",
       "norm_label": "sincintegralparams"
     },
     {
@@ -17773,8 +17773,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "include_math_simd_simdtypes_sincintegralparams_q_magnitude",
-      "community": 324,
-      "community_name": "VDOSParams",
+      "community": 181,
+      "community_name": "File Reader Tests",
       "norm_label": "q_magnitude"
     },
     {
@@ -17784,8 +17784,8 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "include_math_simd_simdtypes_sincintegralparams_correlation_restrict",
-      "community": 324,
-      "community_name": "VDOSParams",
+      "community": 181,
+      "community_name": "File Reader Tests",
       "norm_label": "correlation_restrict"
     },
     {
@@ -17795,8 +17795,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "include_math_simd_simdtypes_sincintegralparams_count",
-      "community": 324,
-      "community_name": "VDOSParams",
+      "community": 181,
+      "community_name": "File Reader Tests",
       "norm_label": "count"
     },
     {
@@ -17883,8 +17883,8 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "include_math_simd_simdtypes_scalebinsparams",
-      "community": 150,
-      "community_name": "ClusterCalculator",
+      "community": 398,
+      "community_name": "BinningConfig",
       "norm_label": "scalebinsparams"
     },
     {
@@ -17894,8 +17894,8 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "include_math_simd_simdtypes_scalebinsparams_arr",
-      "community": 150,
-      "community_name": "ClusterCalculator",
+      "community": 398,
+      "community_name": "BinningConfig",
       "norm_label": "arr"
     },
     {
@@ -17905,8 +17905,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "include_math_simd_simdtypes_scalebinsparams_scale_factor",
-      "community": 150,
-      "community_name": "ClusterCalculator",
+      "community": 398,
+      "community_name": "BinningConfig",
       "norm_label": "scale_factor"
     },
     {
@@ -17916,8 +17916,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "include_math_simd_simdtypes_scalebinsparams_count",
-      "community": 150,
-      "community_name": "ClusterCalculator",
+      "community": 398,
+      "community_name": "BinningConfig",
       "norm_label": "count"
     },
     {
@@ -18279,8 +18279,8 @@
       "source_location": "L354",
       "_origin": "ast",
       "id": "include_math_simd_detail_avx2kernels_scale_bins",
-      "community": 150,
-      "community_name": "ClusterCalculator",
+      "community": 398,
+      "community_name": "BinningConfig",
       "norm_label": "scale_bins()"
     },
     {
@@ -18411,8 +18411,8 @@
       "source_location": "L318",
       "_origin": "ast",
       "id": "include_math_simd_detail_avx512kernels_miller_phase_sum",
-      "community": 398,
-      "community_name": "BinningConfig",
+      "community": 135,
+      "community_name": "TEST_F",
       "norm_label": "miller_phase_sum()"
     },
     {
@@ -18422,8 +18422,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_math_simd_detail_avx512kernels_hpp_millerphasesumresult",
-      "community": 398,
-      "community_name": "BinningConfig",
+      "community": 135,
+      "community_name": "TEST_F",
       "norm_label": "millerphasesumresult"
     },
     {
@@ -18521,8 +18521,8 @@
       "source_location": "L192",
       "_origin": "ast",
       "id": "include_math_simd_detail_scalarkernels_scale_bins",
-      "community": 150,
-      "community_name": "ClusterCalculator",
+      "community": 398,
+      "community_name": "BinningConfig",
       "norm_label": "scale_bins()"
     },
     {
@@ -18532,8 +18532,8 @@
       "source_location": "L204",
       "_origin": "ast",
       "id": "include_math_simd_detail_scalarkernels_miller_phase_sum",
-      "community": 398,
-      "community_name": "BinningConfig",
+      "community": 150,
+      "community_name": "ClusterCalculator",
       "norm_label": "miller_phase_sum()"
     },
     {
@@ -18543,8 +18543,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_math_simd_detail_scalarkernels_hpp_millerphasesumresult",
-      "community": 398,
-      "community_name": "BinningConfig",
+      "community": 150,
+      "community_name": "ClusterCalculator",
       "norm_label": "millerphasesumresult"
     },
     {
@@ -18554,8 +18554,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_mlip_graphdescriptors",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "graphdescriptors.hpp"
     },
     {
@@ -28574,8 +28574,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions.cpp"
     },
     {
@@ -28585,8 +28585,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_distributionfunctions",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::distributionfunctions()"
     },
     {
@@ -28596,8 +28596,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_cpp_real_t",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "real_t"
     },
     {
@@ -28607,8 +28607,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_cpp_bondcutoffmatrix",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "bondcutoffmatrix"
     },
     {
@@ -28618,8 +28618,8 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_setstructureanalyzer",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::setstructureanalyzer()"
     },
     {
@@ -28629,8 +28629,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_setstructureanalyzerowned",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::setstructureanalyzerowned()"
     },
     {
@@ -28640,8 +28640,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_cpp_unique_ptr",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "unique_ptr"
     },
     {
@@ -28651,8 +28651,8 @@
       "source_location": "L86",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_neighbors",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::neighbors()"
     },
     {
@@ -28662,8 +28662,8 @@
       "source_location": "L127",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_ensureneighborscomputed",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::ensureneighborscomputed()"
     },
     {
@@ -28673,8 +28673,8 @@
       "source_location": "L139",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_addhistogram",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::addhistogram()"
     },
     {
@@ -28684,8 +28684,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_cpp_string",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "string"
     },
     {
@@ -28695,8 +28695,8 @@
       "source_location": "L144",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_getavailablehistograms",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::getavailablehistograms()"
     },
     {
@@ -28706,8 +28706,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_cpp_vector",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "vector"
     },
     {
@@ -28717,8 +28717,8 @@
       "source_location": "L155",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_getpartialkey",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::getpartialkey()"
     },
     {
@@ -28728,8 +28728,8 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_getinversepartialkey",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::getinversepartialkey()"
     },
     {
@@ -28739,8 +28739,8 @@
       "source_location": "L181",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_calculateashcroftweights",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::calculateashcroftweights()"
     },
     {
@@ -28750,8 +28750,8 @@
       "source_location": "L222",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_smooth",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::smooth()"
     },
     {
@@ -28761,8 +28761,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_cpp_kerneltype",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "kerneltype"
     },
     {
@@ -28772,8 +28772,8 @@
       "source_location": "L281",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_smoothall",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::smoothall()"
     },
     {
@@ -28783,8 +28783,8 @@
       "source_location": "L287",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_calculatecoordinationnumber",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::calculatecoordinationnumber()"
     },
     {
@@ -28794,8 +28794,8 @@
       "source_location": "L291",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_calculaterdf",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::calculaterdf()"
     },
     {
@@ -28805,8 +28805,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "rdfparams",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "rdfparams"
     },
     {
@@ -28816,8 +28816,8 @@
       "source_location": "L322",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_calculatepad",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::calculatepad()"
     },
     {
@@ -28827,8 +28827,8 @@
       "source_location": "L332",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_calculatedad",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::calculatedad()"
     },
     {
@@ -28849,8 +28849,8 @@
       "source_location": "L352",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_calculatevdos",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::calculatevdos()"
     },
     {
@@ -28871,8 +28871,8 @@
       "source_location": "L387",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_add",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::add()"
     },
     {
@@ -28882,8 +28882,8 @@
       "source_location": "L426",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_scale",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::scale()"
     },
     {
@@ -28893,8 +28893,8 @@
       "source_location": "L443",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_processsingleframe",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::processsingleframe()"
     },
     {
@@ -28904,8 +28904,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "trajectoryanalyzer",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 200,
+      "community_name": "ComparisonQuery",
       "norm_label": "trajectoryanalyzer"
     },
     {
@@ -28915,8 +28915,8 @@
       "source_location": "L488",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_normalizehistograms",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::normalizehistograms()"
     },
     {
@@ -28926,8 +28926,8 @@
       "source_location": "L506",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_computemean",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "distributionfunctions::computemean()"
     },
     {
@@ -28937,8 +28937,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_cpp_function",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "function"
     },
     {
@@ -29377,8 +29377,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_analysis_trajectoryanalyzer",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 200,
+      "community_name": "ComparisonQuery",
       "norm_label": "trajectoryanalyzer.cpp"
     },
     {
@@ -29432,8 +29432,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "src_analysis_trajectoryanalyzer_trajectoryanalyzer_createanalyzer",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 200,
+      "community_name": "ComparisonQuery",
       "norm_label": "trajectoryanalyzer::createanalyzer()"
     },
     {
@@ -29443,8 +29443,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_analysis_trajectoryanalyzer_cpp_unique_ptr",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 200,
+      "community_name": "ComparisonQuery",
       "norm_label": "unique_ptr"
     },
     {
@@ -30727,7 +30727,7 @@
       "label": "AnalysisRunner::handleRunAnalysis()",
       "file_type": "code",
       "source_file": "src/app/services/AnalysisRunner.cpp",
-      "source_location": "L100",
+      "source_location": "L101",
       "_origin": "ast",
       "id": "src_app_services_analysisrunner_analysisrunner_handlerunanalysis",
       "community": 258,
@@ -30947,7 +30947,7 @@
       "label": "FileIOHandler::handleReloadFile()",
       "file_type": "code",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L221",
+      "source_location": "L223",
       "_origin": "ast",
       "id": "src_app_services_fileiohandler_fileiohandler_handlereloadfile",
       "community": 61,
@@ -30958,7 +30958,7 @@
       "label": "FileIOHandler::updateBoxDiagnostics()",
       "file_type": "code",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L228",
+      "source_location": "L230",
       "_origin": "ast",
       "id": "src_app_services_fileiohandler_fileiohandler_updateboxdiagnostics",
       "community": 61,
@@ -30969,7 +30969,7 @@
       "label": "FileIOHandler::updateFileMetadata()",
       "file_type": "code",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L257",
+      "source_location": "L259",
       "_origin": "ast",
       "id": "src_app_services_fileiohandler_fileiohandler_updatefilemetadata",
       "community": 61,
@@ -30980,7 +30980,7 @@
       "label": "FileIOHandler::handleBrowseFile()",
       "file_type": "code",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L265",
+      "source_location": "L267",
       "_origin": "ast",
       "id": "src_app_services_fileiohandler_fileiohandler_handlebrowsefile",
       "community": 61,
@@ -36967,8 +36967,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_calculators_gpu_syclxrdcalculator",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "syclxrdcalculator.cpp"
     },
     {
@@ -36978,8 +36978,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_calculators_gpu_syclxrdcalculator_compute_xrd_sycl",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "compute_xrd_sycl()"
     },
     {
@@ -40421,8 +40421,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "src_calculators_spatial_dadcalculator_dihedralpopulationparams_neighbors",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "neighbors"
     },
     {
@@ -40597,8 +40597,8 @@
       "source_location": "L176",
       "_origin": "ast",
       "id": "src_calculators_spatial_dadcalculator_dadcalculator_calculateframe",
-      "community": 4,
-      "community_name": "TrajectoryAnalyzer",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "dadcalculator::calculateframe()"
     },
     {
@@ -42973,8 +42973,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_calculators_spatial_sdfcalculator",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "sdfcalculator.cpp"
     },
     {
@@ -42984,8 +42984,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "src_calculators_spatial_sdfcalculator_sdfcalculator_calculateframe",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "sdfcalculator::calculateframe()"
     },
     {
@@ -43336,8 +43336,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_calculators_temporal_msdcalculator",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "msdcalculator.cpp"
     },
     {
@@ -43347,8 +43347,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "src_calculators_temporal_msdcalculator_msdcalculator_calculatetrajectory",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "msdcalculator::calculatetrajectory()"
     },
     {
@@ -47956,8 +47956,8 @@
       "source_location": "L628",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_flexarray_get_bin",
-      "community": 58,
-      "community_name": "dstr_printf",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "flexarray_get_bin()"
     },
     {
@@ -47967,8 +47967,8 @@
       "source_location": "L637",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_flexarray_get_bin_size",
-      "community": 58,
-      "community_name": "dstr_printf",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "flexarray_get_bin_size()"
     },
     {
@@ -47978,8 +47978,8 @@
       "source_location": "L647",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_flexarray_get_bin_offset",
-      "community": 58,
-      "community_name": "dstr_printf",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "flexarray_get_bin_offset()"
     },
     {
@@ -48011,8 +48011,8 @@
       "source_location": "L668",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_flexarray_set",
-      "community": 58,
-      "community_name": "dstr_printf",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "flexarray_set()"
     },
     {
@@ -48022,8 +48022,8 @@
       "source_location": "L699",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_flexarray_append",
-      "community": 31,
-      "community_name": "Trajectory",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "flexarray_append()"
     },
     {
@@ -48033,8 +48033,8 @@
       "source_location": "L704",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_flexarray_get",
-      "community": 58,
-      "community_name": "dstr_printf",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "flexarray_get()"
     },
     {
@@ -48198,8 +48198,8 @@
       "source_location": "L903",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_pdf_append_object",
-      "community": 31,
-      "community_name": "Trajectory",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "pdf_append_object()"
     },
     {
@@ -48407,8 +48407,8 @@
       "source_location": "L1556",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_pdf_get_bookmark_count",
-      "community": 58,
-      "community_name": "dstr_printf",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "pdf_get_bookmark_count()"
     },
     {
@@ -48616,8 +48616,8 @@
       "source_location": "L2555",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_pdf_add_link",
-      "community": 31,
-      "community_name": "Trajectory",
+      "community": 69,
+      "community_name": "TEST",
       "norm_label": "pdf_add_link()"
     },
     {
@@ -49276,8 +49276,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_readers_abinitreader",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "abinitreader.cpp"
     },
     {
@@ -51476,8 +51476,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_readers_gpawreader",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "gpawreader.cpp"
     },
     {
@@ -51641,8 +51641,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_gpawreader_cpp_string",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "string"
     },
     {
@@ -51663,8 +51663,8 @@
       "source_location": "L134",
       "_origin": "ast",
       "id": "src_readers_gpawreader_gpawreader_readstructure",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "gpawreader::readstructure()"
     },
     {
@@ -51674,8 +51674,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_gpawreader_cpp_function",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "function"
     },
     {
@@ -51685,8 +51685,8 @@
       "source_location": "L144",
       "_origin": "ast",
       "id": "src_readers_gpawreader_gpawreader_readtrajectory",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "gpawreader::readtrajectory()"
     },
     {
@@ -52884,8 +52884,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_readers_orcareader",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "orcareader.cpp"
     },
     {
@@ -53005,8 +53005,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_orcareader_cpp_string",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "string"
     },
     {
@@ -53049,8 +53049,8 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "src_readers_orcareader_orcareader_readstructure",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "orcareader::readstructure()"
     },
     {
@@ -53060,8 +53060,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_orcareader_cpp_function",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "function"
     },
     {
@@ -53071,8 +53071,8 @@
       "source_location": "L134",
       "_origin": "ast",
       "id": "src_readers_orcareader_orcareader_readtrajectory",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "orcareader::readtrajectory()"
     },
     {
@@ -57185,8 +57185,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_precisiontesthelper",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "precisiontesthelper.hpp"
     },
     {
@@ -57196,8 +57196,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "tests_precisiontesthelper_isrealeq",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "isrealeq()"
     },
     {
@@ -57207,8 +57207,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_precisiontesthelper_hpp_real_t",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "real_t"
     },
     {
@@ -63543,8 +63543,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_calculators_dadcalculatortests",
-      "community": 76,
-      "community_name": "GPUBond",
+      "community": 78,
+      "community_name": "StructureAnalyzer",
       "norm_label": "dadcalculatortests.cpp"
     },
     {
@@ -63554,8 +63554,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "tests_unit_calculators_dadcalculatortests_dadcalculatortests",
-      "community": 76,
-      "community_name": "GPUBond",
+      "community": 78,
+      "community_name": "StructureAnalyzer",
       "norm_label": "dadcalculatortests"
     },
     {
@@ -63565,8 +63565,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_calculators_dadcalculatortests_cpp_testing_test",
-      "community": 76,
-      "community_name": "GPUBond",
+      "community": 78,
+      "community_name": "StructureAnalyzer",
       "norm_label": "testing::test"
     },
     {
@@ -63576,8 +63576,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "tests_unit_calculators_dadcalculatortests_dadcalculatortests_cell",
-      "community": 76,
-      "community_name": "GPUBond",
+      "community": 78,
+      "community_name": "StructureAnalyzer",
       "norm_label": "cell_"
     },
     {
@@ -63587,8 +63587,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_unit_calculators_dadcalculatortests_dadcalculatortests_setup",
-      "community": 76,
-      "community_name": "GPUBond",
+      "community": 78,
+      "community_name": "StructureAnalyzer",
       "norm_label": ".setup()"
     },
     {
@@ -63598,8 +63598,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "tests_unit_calculators_dadcalculatortests_test_f",
-      "community": 76,
-      "community_name": "GPUBond",
+      "community": 78,
+      "community_name": "StructureAnalyzer",
       "norm_label": "test_f()"
     },
     {
@@ -63609,8 +63609,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "basiccalculation",
-      "community": 76,
-      "community_name": "GPUBond",
+      "community": 78,
+      "community_name": "StructureAnalyzer",
       "norm_label": "basiccalculation"
     },
     {
@@ -63620,8 +63620,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "icosahedronanglesdad",
-      "community": 76,
-      "community_name": "GPUBond",
+      "community": 78,
+      "community_name": "StructureAnalyzer",
       "norm_label": "icosahedronanglesdad"
     },
     {
@@ -63631,8 +63631,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_calculators_dadcalculatortests_cpp_nullneighborsthrows",
-      "community": 76,
-      "community_name": "GPUBond",
+      "community": 78,
+      "community_name": "StructureAnalyzer",
       "norm_label": "nullneighborsthrows"
     },
     {
@@ -64038,8 +64038,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_calculators_gpusqcalculatortests",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "gpusqcalculatortests.cpp"
     },
     {
@@ -64049,8 +64049,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "tests_unit_calculators_gpusqcalculatortests_test",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "test()"
     },
     {
@@ -64060,8 +64060,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "gpusqcalculatortests",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "gpusqcalculatortests"
     },
     {
@@ -64071,8 +64071,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_calculators_gpusqcalculatortests_cpp_discoveryincalculatorfactory",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "discoveryincalculatorfactory"
     },
     {
@@ -64082,8 +64082,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_calculators_gpusqcalculatortests_cpp_fallbackorgpuexecution",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "fallbackorgpuexecution"
     },
     {
@@ -64170,8 +64170,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_calculators_gpuxrdcalculatortests",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 53,
+      "community_name": "TEST_F",
       "norm_label": "gpuxrdcalculatortests.cpp"
     },
     {
@@ -67734,8 +67734,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_calculators_voronoicalculatortests",
-      "community": 13,
-      "community_name": "DistributionFunctions",
+      "community": 4,
+      "community_name": "TrajectoryAnalyzer",
       "norm_label": "voronoicalculatortests.cpp"
     },
     {
@@ -67921,8 +67921,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "tests_unit_calculators_xrdcalculatortests_test_f",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "test_f()"
     },
     {
@@ -67932,8 +67932,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "calculatexrd",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "calculatexrd"
     },
     {
@@ -67943,8 +67943,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "calculatexrd_throwsifnordf",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "calculatexrd_throwsifnordf"
     },
     {
@@ -67954,8 +67954,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "calculatexrd_invalidbinwidth",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "calculatexrd_invalidbinwidth"
     },
     {
@@ -67965,8 +67965,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "calculatexrd_intensityiszeroatthetazero",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "calculatexrd_intensityiszeroatthetazero"
     },
     {
@@ -67976,8 +67976,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "calculatexrdcubiccell",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "calculatexrdcubiccell"
     },
     {
@@ -67987,8 +67987,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "calculatexrd_invalidinputsthrow",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "calculatexrd_invalidinputsthrow"
     },
     {
@@ -67998,8 +67998,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "calculatefromsq",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "calculatefromsq"
     },
     {
@@ -68009,8 +68009,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "fcc_copper_xrd",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "fcc_copper_xrd"
     },
     {
@@ -68020,8 +68020,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "bcc_iron_xrd",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "bcc_iron_xrd"
     },
     {
@@ -68031,8 +68031,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "diamond_silicon_xrd",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "diamond_silicon_xrd"
     },
     {
@@ -68042,8 +68042,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "nacl_rocksalt_xrd",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "nacl_rocksalt_xrd"
     },
     {
@@ -101663,7 +101663,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/AnalysisRunner.cpp",
-      "source_location": "L122",
+      "source_location": "L123",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_analysisrunner_analysisrunner_handlerunanalysis",
@@ -101675,7 +101675,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/AnalysisRunner.cpp",
-      "source_location": "L125",
+      "source_location": "L126",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_analysisrunner_analysisrunner_handlerunanalysis",
@@ -101687,7 +101687,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/AnalysisRunner.cpp",
-      "source_location": "L126",
+      "source_location": "L127",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_analysisrunner_analysisrunner_handlerunanalysis",
@@ -102175,7 +102175,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L331",
+      "source_location": "L333",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_handlebrowsefile",
@@ -102187,7 +102187,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L224",
+      "source_location": "L226",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_handlereloadfile",
@@ -120053,7 +120053,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L228",
+      "source_location": "L230",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -162296,7 +162296,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/AnalysisRunner.cpp",
-      "source_location": "L100",
+      "source_location": "L101",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_analysisrunner",
@@ -162656,7 +162656,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L265",
+      "source_location": "L267",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler",
@@ -162667,7 +162667,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L221",
+      "source_location": "L223",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler",
@@ -162700,7 +162700,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L228",
+      "source_location": "L230",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler",
@@ -162711,7 +162711,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L257",
+      "source_location": "L259",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler",
@@ -162795,7 +162795,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L257",
+      "source_location": "L259",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_updatefilemetadata",

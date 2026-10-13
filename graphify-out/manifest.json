@@ -2710,8 +2710,8 @@
     "semantic_hash": ""
   },
   "include/render3d/ElementColors.hpp": {
-    "mtime": 1791913265.6931648,
-    "ast_hash": "43a1a3a972b740cb7ea5a0bdd5c892ab",
+    "mtime": 1791923497.115547,
+    "ast_hash": "c06acd86876f90503115630a46ecbea6",
     "semantic_hash": ""
   },
   "include/render3d/Math3D.hpp": {
@@ -2745,8 +2745,8 @@
     "semantic_hash": ""
   },
   "tests/unit/render3d/Scene3DTests.cpp": {
-    "mtime": 1791913265.7174878,
-    "ast_hash": "b026c88b9020b91dbb40bc751a2ef3ef",
+    "mtime": 1791923509.9823625,
+    "ast_hash": "1707ecc1142008a8d188e02a63b5d459",
     "semantic_hash": ""
   },
   "include/render3d/cpu/SoftwareFramebuffer.hpp": {
