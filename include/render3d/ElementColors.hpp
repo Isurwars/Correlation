@@ -9,7 +9,6 @@
 #pragma once
 
 #include "physics/PhysicalData.hpp"
-#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <cstdint>
@@ -232,11 +231,10 @@ inline constexpr std::array<SymbolZMapping, 118> SYMBOL_Z_TABLE = {
  * @return Atomic number Z in [1, 118], or 0 if unknown.
  */
 [[nodiscard]] constexpr int getAtomicNumber(std::string_view symbol) noexcept {
-  const auto *const found_iter = std::ranges::find_if(
-      detail::SYMBOL_Z_TABLE,
-      [symbol](const detail::SymbolZMapping &entry) noexcept { return entry.symbol == symbol; });
-  if (found_iter != detail::SYMBOL_Z_TABLE.end()) {
-    return found_iter->z;
+  for (const auto &entry : detail::SYMBOL_Z_TABLE) {
+    if (entry.symbol == symbol) {
+      return entry.z;
+    }
   }
   return 0;
 }

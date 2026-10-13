@@ -21,8 +21,7 @@ constexpr float K_MAX_ELEVATION = 89.0F;
 constexpr float K_MIN_DISTANCE = 0.5F;
 constexpr float K_MAX_DISTANCE = 5000.0F;
 
-[[nodiscard]] constexpr math::Vector3<float>
-safeNormalize(const math::Vector3<float> &vec) noexcept {
+[[nodiscard]] math::Vector3<float> safeNormalize(const math::Vector3<float> &vec) noexcept {
   const float len = math::norm(vec);
   if (len < 1e-6F) {
     return {0.0F, 0.0F, 1.0F};

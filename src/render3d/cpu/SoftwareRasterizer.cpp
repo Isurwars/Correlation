@@ -17,8 +17,7 @@ namespace {
 
 constexpr float K_DEG_TO_RAD = std::numbers::pi_v<float> / 180.0F;
 
-[[nodiscard]] constexpr math::Vector3<float>
-safeNormalize(const math::Vector3<float> &vec) noexcept {
+[[nodiscard]] math::Vector3<float> safeNormalize(const math::Vector3<float> &vec) noexcept {
   const float len = math::norm(vec);
   if (len < 1e-6F) {
     return {0.0F, 0.0F, 1.0F};
