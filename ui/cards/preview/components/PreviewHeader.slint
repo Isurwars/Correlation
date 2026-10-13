@@ -14,17 +14,20 @@ export component PreviewHeader inherits Horizontal {
     callback plot_selected(int);
 
     out property <string> tooltip_text:
-        tab_data_area.has-hover ? "Data Table View\n\n📄 Tabular numerical coordinates and distribution intensities." : "";
+        tab_data_area.has-hover ? "Data Table View\n\n📄 Tabular numerical coordinates and distribution intensities." :
+        tab_3d_area.has-hover ? "3D Structure View\n\n🌐 Interactive atomic visualizer with orbit camera, bonds, and unit cell wireframe." : "";
 
     out property <length> tooltip_x:
         plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.x + plot_dropdown_area.mouse-x :
         tab_plot_area.has-hover ? tab_plot_area.absolute-position.x + tab_plot_area.mouse-x :
-        tab_data_area.has-hover ? tab_data_area.absolute-position.x + tab_data_area.mouse-x : 0px;
+        tab_data_area.has-hover ? tab_data_area.absolute-position.x + tab_data_area.mouse-x :
+        tab_3d_area.has-hover ? tab_3d_area.absolute-position.x + tab_3d_area.mouse-x : 0px;
 
     out property <length> tooltip_y:
         plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.y + plot_dropdown_area.mouse-y :
         tab_plot_area.has-hover ? tab_plot_area.absolute-position.y + tab_plot_area.mouse-y :
-        tab_data_area.has-hover ? tab_data_area.absolute-position.y + tab_data_area.mouse-y : 0px;
+        tab_data_area.has-hover ? tab_data_area.absolute-position.y + tab_data_area.mouse-y :
+        tab_3d_area.has-hover ? tab_3d_area.absolute-position.y + tab_3d_area.mouse-y : 0px;
 
     spacing: MaterialStyleMetrics.spacing_8;
     height: MaterialStyleMetrics.size_40;
@@ -64,6 +67,16 @@ export component PreviewHeader inherits Horizontal {
                 text: "Data";
                 active: root.active_tab == 1;
                 clicked => { root.active_tab = 1; }
+            }
+        }
+
+        tab_3d_area := TouchArea {
+            width: tab_3d.preferred-width;
+            height: 100%;
+            tab_3d := TabItem {
+                text: "3D";
+                active: root.active_tab == 2;
+                clicked => { root.active_tab = 2; }
             }
         }
     }

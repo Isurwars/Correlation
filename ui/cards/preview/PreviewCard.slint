@@ -16,6 +16,7 @@ import { PlotReticleOverlay } from "./components/PlotReticleOverlay.slint";
 import { ImagingToolbar } from "./components/ImagingToolbar.slint";
 import { CurveSidebar } from "./components/CurveSidebar.slint";
 import { PlotDataTable } from "./components/PlotDataTable.slint";
+import { Structure3DViewport } from "./components/Structure3DViewport.slint";
 
 // ============================================================================
 // PreviewCard Component
@@ -50,8 +51,14 @@ export component PreviewCard inherits FilledCard {
     in property <[string]> table_headers: [];
     in property <[TableRow]> table_rows: [];
 
-    property <int> active_tab: 0;
+    in-out property <int> active_tab: 0;
     property <int> active_color_picker_id: -1;
+
+    changed file_loaded => {
+        if (root.file_loaded && !root.analysis_done) {
+            root.active_tab = 2;
+        }
+    }
 
     // Workflow properties & callbacks
     in property <bool> file_loaded: false;
@@ -79,6 +86,26 @@ export component PreviewCard inherits FilledCard {
     callback browse_file();
     callback run_analysis();
     callback open_panel(int);
+
+    // 3D Viewport properties & callbacks
+    in property <image> structure_3d_image;
+    in property <int> structure_3d_current_frame: 0;
+    in property <int> structure_3d_total_frames: 0;
+    in property <bool> structure_3d_bonds_enabled: true;
+    in property <bool> structure_3d_wireframe_enabled: true;
+
+    callback rotate_3d(float, float);
+    callback pan_3d(float, float);
+    callback zoom_3d(float);
+    callback reset_view_3d();
+    callback toggle_bonds_3d(bool);
+    callback toggle_wireframe_3d(bool);
+    callback seek_frame_3d(int);
+    callback step_frame_3d(bool);
+    callback viewport_3d_resized(length, length);
+    callback tab_changed(int);
+
+    changed active_tab => { root.tab_changed(root.active_tab); }
 
     // Hover state for tooltip (aggregated from child components)
     out property <string> hovered_tooltip_text:
@@ -337,6 +364,35 @@ export component PreviewCard inherits FilledCard {
             vertical-stretch: root.active_tab == 1 ? 1 : 0;
             table_headers: root.table_headers;
             table_rows: root.table_rows;
+        }
+
+        // Tab 2: 3D Molecular Structure Viewport
+        Structure3DViewport {
+            visible: root.active_tab == 2;
+            vertical-stretch: root.active_tab == 2 ? 1 : 0;
+            structure_3d_image: root.structure_3d_image;
+            current_frame: root.structure_3d_current_frame;
+            total_frames: root.structure_3d_total_frames;
+            bonds_enabled: root.structure_3d_bonds_enabled;
+            wireframe_enabled: root.structure_3d_wireframe_enabled;
+            file_loaded: root.file_loaded;
+            analysis_running: root.analysis_running;
+            analysis_done: root.analysis_done;
+            file_basename: root.file_basename;
+            total_atoms: root.total_atoms;
+            num_frames: root.num_frames;
+            run_analysis => { root.run_analysis(); }
+            open_panel(idx) => { root.open_panel(idx); }
+            browse_file => { root.browse_file(); }
+            rotate_3d(dx, dy) => { root.rotate_3d(dx, dy); }
+            pan_3d(dx, dy) => { root.pan_3d(dx, dy); }
+            zoom_3d(delta) => { root.zoom_3d(delta); }
+            reset_view => { root.reset_view_3d(); }
+            toggle_bonds(enabled) => { root.toggle_bonds_3d(enabled); }
+            toggle_wireframe(enabled) => { root.toggle_wireframe_3d(enabled); }
+            seek_frame(idx) => { root.seek_frame_3d(idx); }
+            step_frame(fwd) => { root.step_frame_3d(fwd); }
+            resized(w, h) => { root.viewport_3d_resized(w, h); }
         }
 
         // 5. Footer: Save Results

@@ -105,6 +105,7 @@ export component AppWindow inherits Window {
     in property <string> box_volume: "";
     in property <string> box_density: "";
     in property <string> box_dimensions: "";
+    in-out property <int> preview_active_tab: 0;
     callback reload_file();
 
     /// Analysis execution state
@@ -200,6 +201,13 @@ export component AppWindow inherits Window {
     in property <[ComparisonCurveData]> comparison_curves: [];
     in property <bool> show_difference: false;
 
+    // 3D Viewport properties
+    in property <image> structure_3d_image;
+    in property <int> structure_3d_current_frame: 0;
+    in property <int> structure_3d_total_frames: 0;
+    in property <bool> structure_3d_bonds_enabled: true;
+    in property <bool> structure_3d_wireframe_enabled: true;
+
     // Resizable layout geometry properties
     in-out property <length> left_col_width: 220px;
     in-out property <length> last_col_width: 220px;
@@ -248,6 +256,18 @@ export component AppWindow inherits Window {
     callback add_marker_at(float, float, bool);
     callback add_marker(bool);
     callback clear_markers();
+
+    // 3D Viewport callbacks
+    callback rotate_3d(float, float);
+    callback pan_3d(float, float);
+    callback zoom_3d(float);
+    callback reset_view_3d();
+    callback toggle_bonds_3d(bool);
+    callback toggle_wireframe_3d(bool);
+    callback seek_frame_3d(int);
+    callback step_frame_3d(bool);
+    callback viewport_3d_resized(length, length);
+    callback preview_tab_changed(int);
 
     // Presets callbacks
     callback export_config_changed();
@@ -593,6 +613,7 @@ export component AppWindow inherits Window {
                         padding: 0;
 
                         preview_card := PreviewCard {
+                            active_tab <=> root.preview_active_tab;
                             analysis_done: root.analysis_done;
                             vertical-stretch: 1;
                             horizontal-stretch: 1;
@@ -671,6 +692,23 @@ export component AppWindow inherits Window {
                             clear_markers => {
                                 root.clear_markers();
                             }
+
+                            structure_3d_image: root.structure_3d_image;
+                            structure_3d_current_frame: root.structure_3d_current_frame;
+                            structure_3d_total_frames: root.structure_3d_total_frames;
+                            structure_3d_bonds_enabled: root.structure_3d_bonds_enabled;
+                            structure_3d_wireframe_enabled: root.structure_3d_wireframe_enabled;
+
+                            rotate_3d(dx, dy) => { root.rotate_3d(dx, dy); }
+                            pan_3d(dx, dy) => { root.pan_3d(dx, dy); }
+                            zoom_3d(delta) => { root.zoom_3d(delta); }
+                            reset_view_3d => { root.reset_view_3d(); }
+                            toggle_bonds_3d(enabled) => { root.toggle_bonds_3d(enabled); }
+                            toggle_wireframe_3d(enabled) => { root.toggle_wireframe_3d(enabled); }
+                            seek_frame_3d(idx) => { root.seek_frame_3d(idx); }
+                            step_frame_3d(fwd) => { root.step_frame_3d(fwd); }
+                            viewport_3d_resized(w, h) => { root.viewport_3d_resized(w, h); }
+                            tab_changed(tab) => { root.preview_tab_changed(tab); }
                         }
                     }
                 }

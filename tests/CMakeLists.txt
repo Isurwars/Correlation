@@ -95,6 +95,13 @@ add_executable(correlation_unit_tests
     unit/math/SmoothingTests.cpp
     unit/math/FFTUtilsTests.cpp
     unit/math/ConstantsTests.cpp
+    unit/render3d/Math3DTests.cpp
+    unit/render3d/Camera3DTests.cpp
+    unit/render3d/Scene3DTests.cpp
+    unit/render3d/SoftwareRasterizerTests.cpp
+    unit/render3d/RenderEngineFactoryTests.cpp
+    unit/render3d/LodControllerTests.cpp
+    unit/render3d/TrajectoryStreamerTests.cpp
     unit/analysis/CorrelationEngineTests.cpp
     unit/analysis/StructuralElectronicCorrelationTests.cpp
     unit/app/AnalysisDispatcherTests.cpp
@@ -169,6 +176,7 @@ if(BUILD_GUI)
         unit/app/PlotSeriesManagerTests.cpp
         unit/app/PlotTableFormatterTests.cpp
         unit/app/PlotViewportNavigatorTests.cpp
+        unit/app/Structure3DControllerTests.cpp
     )
 
     target_link_libraries(correlation_gui_tests PRIVATE

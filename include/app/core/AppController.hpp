@@ -29,6 +29,7 @@ class FileIOHandler;
 class InputValidator;
 class PlotController;
 class PresetController;
+class Structure3DController;
 
 /**
  * @class AppController
@@ -136,6 +137,13 @@ public:
    */
   const BondCutoffController &getBondCutoffController() const { return bond_cutoff_controller_; }
 
+  /**
+   * @brief Returns the Structure3DController instance.
+   */
+  [[nodiscard]] Structure3DController *getStructure3DController() noexcept {
+    return structure_3d_controller_.get();
+  }
+
   ///@}
 
 private:
@@ -151,10 +159,12 @@ private:
   std::unique_ptr<InputValidator> input_validator_;
   std::unique_ptr<PlotController> plot_controller_;
   std::unique_ptr<PresetController> preset_controller_;
+  std::unique_ptr<Structure3DController> structure_3d_controller_;
   AppSettings settings_;
 
   void registerActionCallbacks();
   void registerPlotCallbacks();
+  void registerStructure3DCallbacks();
   void registerPresetAndOptionCallbacks();
   void registerExportCallbacks();
 };

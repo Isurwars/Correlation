@@ -10,6 +10,7 @@
 #include "AppWindow.h"
 #include "app/core/AppController.hpp"
 #include "app/services/InputValidator.hpp"
+#include "app/viewmodel/Structure3DController.hpp"
 #include "physics/PhysicalData.hpp"
 #include <filesystem>
 #include <format>
@@ -54,7 +55,7 @@ void FileIOHandler::executeWriteFiles(const std::string &filepath) {
     }
   }
 
-  options_ = opts;
+  options_ = std::move(opts);
 
   const auto write_res = dispatcher_.writeFiles(options_);
   if (write_res) {
@@ -97,10 +98,14 @@ void FileIOHandler::handleWriteFiles() {
     nfdresult_t result = NFD_CANCEL;
 
     if (is_zip) {
-      std::array<nfdfilteritem_t, 1> filter_list = {{{
-          .name = "Consolidated ZIP Bundle",
-          .spec = "zip",
-      }}};
+      std::array<nfdfilteritem_t, 1> filter_list = {
+          {
+              {
+                  .name = "Consolidated ZIP Bundle",
+                  .spec = "zip",
+              },
+          },
+      };
       result = NFD_SaveDialogU8(&out_path, filter_list.data(), filter_list.size(), nullptr,
                                 "correlation_export.zip");
     } else {
@@ -202,6 +207,13 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath) {
           opts.max_frame = slint::SharedString(std::to_string(loader_.getFrameCount()));
           window_.set_analysis_options(opts);
         }
+
+        if (controller_.getStructure3DController() != nullptr) {
+          controller_.getStructure3DController()->setCell(*loader_.cell());
+          controller_.getStructure3DController()->set3DModeActive(true);
+        }
+        window_.set_preview_active_tab(2);
+
         static_cast<void>(controller_.getInputValidator()->validateInputs());
       }
     });
@@ -263,46 +275,49 @@ void FileIOHandler::handleBrowseFile() {
 
   dialog_thread_ = std::jthread([this]() {
     std::array<nfdfilteritem_t, 10> filter_list = {
-        {{
-             .name = "Supported Structure Files",
-             .spec = "arc,car,cell,cif,dat,md,outmol,poscar,contcar,vasp,xdatcar",
-         },
-         {
-             .name = "Materials Studio CAR",
-             .spec = "car",
-         },
-         {
-             .name = "Materials Studio ARC",
-             .spec = "arc",
-         },
-         {
-             .name = "CASTEP CELL",
-             .spec = "cell",
-         },
-         {
-             .name = "CASTEP MD",
-             .spec = "md",
-         },
-         {
-             .name = "CIF files",
-             .spec = "cif",
-         },
-         {
-             .name = "ONETEP DAT",
-             .spec = "dat",
-         },
-         {
-             .name = "DMol3 Outmol",
-             .spec = "outmol",
-         },
-         {
-             .name = "VASP POSCAR/CONTCAR",
-             .spec = "poscar,contcar,vasp",
-         },
-         {
-             .name = "VASP XDATCAR",
-             .spec = "xdatcar",
-         }}};
+        {
+            {
+                .name = "Supported Structure Files",
+                .spec = "arc,car,cell,cif,dat,md,outmol,poscar,contcar,vasp,xdatcar",
+            },
+            {
+                .name = "Materials Studio CAR",
+                .spec = "car",
+            },
+            {
+                .name = "Materials Studio ARC",
+                .spec = "arc",
+            },
+            {
+                .name = "CASTEP CELL",
+                .spec = "cell",
+            },
+            {
+                .name = "CASTEP MD",
+                .spec = "md",
+            },
+            {
+                .name = "CIF files",
+                .spec = "cif",
+            },
+            {
+                .name = "ONETEP DAT",
+                .spec = "dat",
+            },
+            {
+                .name = "DMol3 Outmol",
+                .spec = "outmol",
+            },
+            {
+                .name = "VASP POSCAR/CONTCAR",
+                .spec = "poscar,contcar,vasp",
+            },
+            {
+                .name = "VASP XDATCAR",
+                .spec = "xdatcar",
+            },
+        },
+    };
     const nfdfiltersize_t filter_count = filter_list.size();
 
     nfdchar_t *out_path = nullptr;

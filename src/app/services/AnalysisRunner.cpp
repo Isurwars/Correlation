@@ -90,6 +90,7 @@ void AnalysisRunner::handleAnalysisCompletion(const std::string &err) {
     return;
   }
 
+  window_.set_preview_active_tab(0);
   controller_.getPlotController()->populatePlotList();
   controller_.populateExportAnalyses();
   if (!dispatcher_.getAvailableHistogramNames().empty()) {

@@ -210,6 +210,24 @@ target_include_directories(plotters_obj PRIVATE
 )
 target_link_libraries(plotters_obj PRIVATE correlation_simd_options correlation_pdfgen)
 
+# 3D Render Engine as an OBJECT library
+set(RENDER3D_SOURCES
+    render3d/Camera3D.cpp
+    render3d/Scene3D.cpp
+    render3d/cpu/SoftwareRasterizer.cpp
+    render3d/cpu/CpuRenderEngine.cpp
+    render3d/vulkan/VulkanRenderEngine.cpp
+    render3d/RenderEngineFactory.cpp
+    render3d/LodController.cpp
+    render3d/TrajectoryStreamer.cpp
+)
+
+add_library(render3d_obj OBJECT ${RENDER3D_SOURCES})
+target_include_directories(render3d_obj PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+)
+target_link_libraries(render3d_obj PRIVATE correlation_simd_options)
+
 # Add sources to library
 add_library(correlation_lib STATIC
     core/Cell.cpp
@@ -227,10 +245,11 @@ add_library(correlation_lib STATIC
     $<TARGET_OBJECTS:writers_obj>
     $<TARGET_OBJECTS:mlip_obj>
     $<TARGET_OBJECTS:plotters_obj>
+    $<TARGET_OBJECTS:render3d_obj>
     $<$<OR:$<BOOL:${BUILD_WITH_CUDA}>,$<BOOL:${BUILD_WITH_HIP}>>:$<TARGET_OBJECTS:gpu_calculators_obj>>
 )
 
-target_link_libraries(correlation_lib PRIVATE readers_obj calculators_obj writers_obj mlip_obj plotters_obj miniz)
+target_link_libraries(correlation_lib PRIVATE readers_obj calculators_obj writers_obj mlip_obj plotters_obj render3d_obj miniz)
 target_link_libraries(correlation_lib PUBLIC correlation_pdfgen)
 if(CORRELATION_ENABLE_LIBTORCH AND Torch_FOUND)
     target_link_libraries(correlation_lib PRIVATE "${TORCH_LIBRARIES}")
@@ -310,6 +329,7 @@ if(BUILD_GUI)
         app/viewmodel/PlotRenderPipeline.cpp
         app/viewmodel/PlotViewportNavigator.cpp
         app/viewmodel/PresetController.cpp
+        app/viewmodel/Structure3DController.cpp
         app/services/AnalysisRunner.cpp
         app/services/FileIOHandler.cpp
         app/services/InputValidator.cpp

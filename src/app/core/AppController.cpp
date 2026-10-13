@@ -23,6 +23,7 @@
 #include "app/viewmodel/BondCutoffController.hpp"
 #include "app/viewmodel/PlotController.hpp"
 #include "app/viewmodel/PresetController.hpp"
+#include "app/viewmodel/Structure3DController.hpp"
 #include "calculators/CalculatorFactory.hpp"
 
 #include <cstdlib>
@@ -65,14 +66,15 @@ AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
   input_validator_ = std::make_unique<InputValidator>(window_, *this);
   plot_controller_ = std::make_unique<PlotController>(window_, dispatcher_, options_);
   preset_controller_ = std::make_unique<PresetController>(window_, options_, *this);
+  structure_3d_controller_ = std::make_unique<Structure3DController>(window_, options_);
 
-  // default options to UI
   // default options to UI
   handleOptionstoUI();
 
   // Connect the UI signals to the controller's member functions.
   registerActionCallbacks();
   registerPlotCallbacks();
+  registerStructure3DCallbacks();
   registerPresetAndOptionCallbacks();
   registerExportCallbacks();
 
@@ -159,6 +161,45 @@ void AppController::registerPlotCallbacks() {
   });
   window_.on_add_marker([this](bool is_vert) { plot_controller_->handleAddMarker(is_vert); });
   window_.on_clear_markers([this] { plot_controller_->handleClearMarkers(); });
+}
+
+void AppController::registerStructure3DCallbacks() {
+  if (!structure_3d_controller_) {
+    return;
+  }
+
+  window_.on_rotate_3d([this](float delta_x, float delta_y) {
+    structure_3d_controller_->handleRotate(delta_x, delta_y);
+  });
+
+  window_.on_pan_3d([this](float delta_x, float delta_y) {
+    structure_3d_controller_->handlePan(delta_x, delta_y);
+  });
+
+  window_.on_zoom_3d([this](float delta) { structure_3d_controller_->handleZoom(delta); });
+
+  window_.on_reset_view_3d([this] { structure_3d_controller_->handleResetView(); });
+
+  window_.on_toggle_bonds_3d(
+      [this](bool enabled) { structure_3d_controller_->handleToggleBonds(enabled); });
+
+  window_.on_toggle_wireframe_3d(
+      [this](bool enabled) { structure_3d_controller_->handleToggleWireframe(enabled); });
+
+  window_.on_seek_frame_3d(
+      [this](int frame_idx) { structure_3d_controller_->handleSeekFrame(frame_idx); });
+
+  window_.on_step_frame_3d(
+      [this](bool forward) { structure_3d_controller_->handleStepFrame(forward); });
+
+  window_.on_viewport_3d_resized([this](float width, float height) {
+    structure_3d_controller_->handleViewportResized(width, height);
+  });
+
+  window_.on_preview_tab_changed([this](int tab) {
+    const bool is_3d = (tab == 2);
+    structure_3d_controller_->set3DModeActive(is_3d);
+  });
 }
 
 void AppController::registerPresetAndOptionCallbacks() {
