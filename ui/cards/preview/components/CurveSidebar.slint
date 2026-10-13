@@ -34,7 +34,7 @@ export component CurveSidebar inherits Horizontal {
 
     private property <[color]> swatch_colors: [
         #e69f00, #56b4e9, #009e73, #f0e442,
-        #0072b2, #d55e00, #cc79a7, #000000,
+        #0072b2, #d55e00, #cc79a7, #00c49f,
         #1f77b4, #ff7f0e, #2ca02c, #d62728,
         #9467bd, #8c564b, #e377c2, #7f7f7f,
         #bcbd22, #17becf, #332288, #117733,
@@ -43,7 +43,7 @@ export component CurveSidebar inherits Horizontal {
 
     private property <[string]> swatch_hexes: [
         "#e69f00", "#56b4e9", "#009e73", "#f0e442",
-        "#0072b2", "#d55e00", "#cc79a7", "#000000",
+        "#0072b2", "#d55e00", "#cc79a7", "#00c49f",
         "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728",
         "#9467bd", "#8c564b", "#e377c2", "#7f7f7f",
         "#bcbd22", "#17becf", "#332288", "#117733",
@@ -129,49 +129,64 @@ export component CurveSidebar inherits Horizontal {
                 VerticalLayout {
                     spacing: 2px;
                     alignment: start;
-                    for item in root.curve_toggle_items: item_touch := TouchArea {
-                        height: 28px;
-                        mouse-cursor: pointer;
-                        clicked => { root.toggle_curve_visibility(item.id, !item.visible); }
+                    for item in root.curve_toggle_items: VerticalLayout {
+                        spacing: 2px;
 
-                        Rectangle {
-                            background: item_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
-                            border-radius: MaterialStyleMetrics.border_radius_2;
+                        if item.id == 1 && root.curve_toggle_items.length > 1 : HorizontalLayout {
+                            padding-top: 6px;
+                            padding-bottom: 2px;
+                            padding-left: 6px;
+                            MaterialText {
+                                text: "Partials:";
+                                style: MaterialTypography.label_small;
+                                color: MaterialPalette.primary;
+                            }
+                        }
 
-                            HorizontalLayout {
-                                padding-left: 8px;
-                                padding-right: 8px;
-                                spacing: 8px;
+                        item_touch := TouchArea {
+                            height: 28px;
+                            mouse-cursor: pointer;
+                            clicked => { root.toggle_curve_visibility(item.id, !item.visible); }
 
-                                Vertical {
-                                    alignment: center;
-                                    height: 100%;
+                            Rectangle {
+                                background: item_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+                                border-radius: MaterialStyleMetrics.border_radius_2;
 
-                                    color_dot_touch := TouchArea {
-                                        width: 18px;
-                                        height: 18px;
-                                        mouse-cursor: pointer;
-                                        clicked => { root.active_color_picker_id = (root.active_color_picker_id == item.id) ? -1 : item.id; }
+                                HorizontalLayout {
+                                    padding-left: (item.label == "Total") ? 8px : 14px;
+                                    padding-right: 8px;
+                                    spacing: 8px;
 
-                                        Rectangle {
-                                            width: 12px;
-                                            height: 12px;
-                                            border-radius: 6px;
-                                            background: item.visible ? item.color_hex : MaterialPalette.outline;
-                                            border-width: color_dot_touch.has-hover ? 2px : 0px;
-                                            border-color: MaterialPalette.primary;
+                                    Vertical {
+                                        alignment: center;
+                                        height: 100%;
+
+                                        color_dot_touch := TouchArea {
+                                            width: 18px;
+                                            height: 18px;
+                                            mouse-cursor: pointer;
+                                            clicked => { root.active_color_picker_id = (root.active_color_picker_id == item.id) ? -1 : item.id; }
+
+                                            Rectangle {
+                                                width: 12px;
+                                                height: 12px;
+                                                border-radius: 6px;
+                                                background: item.visible ? item.color_hex : MaterialPalette.outline;
+                                                border-width: color_dot_touch.has-hover ? 2px : 0px;
+                                                border-color: MaterialPalette.primary;
+                                            }
                                         }
                                     }
-                                }
 
-                                MaterialText {
-                                    horizontal-stretch: 1;
-                                    text: item.label;
-                                    style: MaterialTypography.body_small;
-                                    color: item.visible ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
-                                    overflow: elide;
-                                    horizontal-alignment: left;
-                                    vertical-alignment: center;
+                                    MaterialText {
+                                        horizontal-stretch: 1;
+                                        text: item.label;
+                                        style: (item.label == "Total") ? MaterialTypography.label_medium_prominent : MaterialTypography.body_small;
+                                        color: item.visible ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
+                                        overflow: elide;
+                                        horizontal-alignment: left;
+                                        vertical-alignment: center;
+                                    }
                                 }
                             }
                         }

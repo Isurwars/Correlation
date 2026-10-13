@@ -12,6 +12,7 @@
 #include "app/services/AnalysisDispatcher.hpp"
 #include "app/services/TrajectoryLoader.hpp"
 #include <atomic>
+#include <functional>
 #include <string>
 #include <thread>
 
@@ -59,13 +60,15 @@ public:
    */
   void handleWriteFiles();
 
-private:
   /**
    * @brief Initiates asynchronous trajectory loading on the background worker thread.
    * @param[in] filepath Absolute path to structure or trajectory file.
+   * @param[in] on_complete Optional callback invoked on event loop when loading finishes.
    */
-  void startLoadingTrajectory(const std::string &filepath);
+  void startLoadingTrajectory(const std::string &filepath,
+                              std::function<void(bool)> on_complete = nullptr);
 
+private:
   /**
    * @brief Updates simulation cell diagnostics (volume, dimensions, density) on the UI.
    * @param[in] cell Pointer to the simulation cell, or nullptr if unavailable.

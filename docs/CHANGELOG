@@ -1,6 +1,30 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.0.0] - 2026-10-13
+
+### Interactive 3D Molecular Viewport & Material MVVM Integration
+- **Real-Time 3D Molecular Viewport (`Structure3DViewport`)**: Integrated an interactive 3D molecular and crystal structure viewer into the modern Slint MVVM architecture, featuring intuitive mouse arcball orbit, lateral panning, smooth wheel zoom, coordinate centering, and dynamic camera reset.
+- **CPU Software Rasterization Pipeline**: Implemented a standalone multi-threaded CPU software rasterizer (`SoftwareRasterizer`, `SoftwareFramebuffer`) featuring:
+  - Subpixel triangle rasterization and z-buffer depth testing.
+  - Multi-threaded tile and scanline rendering scaling across CPU cores via oneTBB / OpenMP fallbacks.
+  - Depth-sorted sphere impostors and cylinder bond geometry generation.
+- **Hardware Abstraction & Engine Factory**: Designed an extensible rendering abstraction layer (`IRenderEngine`, `RenderEngineFactory`) supporting `CpuRenderEngine` and an initial `VulkanRenderEngine` skeleton with automated runtime fallback.
+- **Comprehensive 118-Element CPK Color & Radius Engine (`ElementColors`)**: Implemented full periodic table elemental mapping adhering to Jmol and ASE standards with elemental covalent and van der Waals radii.
+- **Dynamic Camera & Level-of-Detail (LOD)**: Implemented `Camera3D` supporting perspective and orthographic projections, and `LodController` for adaptive geometric tessellation and rendering fidelity based on atom count and viewport distance.
+- **Trajectory Streaming Support**: Built `TrajectoryStreamer` for frame-by-frame 3D coordinate streaming and real-time visualization of trajectory dynamics.
+- **Self-Contained 3D Linear Algebra (`Math3D`)**: Engineered a self-contained, header-only SIMD-friendly 3D mathematics library providing `Vector4`, `Matrix4`, and `Quaternion` transformations without external rendering dependencies.
+
+### Unified Slint UI/UX Architecture
+- **Unified Workflow Card Layout**: Refactored `PreviewCard.slint` into a tab host layout uniting the 3D Structure Viewport with the analytical Plot View, enabling instant structure inspection upon file loading and automatic transition to results upon analysis execution.
+- **Floating 3D Viewport Controls & Hover Effects**: Added floating interactive toolbar overlay controls with Material Design 3 hover states, smooth transitions, camera perspective toggles, and responsive canvas sizing.
+- **Single Non-Frequency Partial Optimization**: Streamlined plotting presentation by omitting redundant single partial curves when non-frequency distributions contain only a single species pair, cleanly displaying the `Total` distribution.
+
+### Core Quality & Const-Correctness
+- **Const-Correctness Hardening**: Enforced strict const-correctness across `PlotTableFormatter` table row construction and viewmodel rendering routines.
+- **Unit Test Suite**: Added comprehensive unit test coverage for 3D mathematics, camera transformations, software rasterizer, element color lookups, trajectory streaming, and `Structure3DController`.
+- **Project Milestone**: Bumped project version to `4.0.0`.
+
 ## [3.10.0] - 2026-10-12
 
 ### Vector PDF Plotting & Modular Visualization Architecture

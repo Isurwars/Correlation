@@ -369,6 +369,10 @@ TEST_F(AppControllerTests, ResetsOptionBlocksToDefaultsWhenInvoked) {
   cfg.show_grid = false;
   cfg.show_markers = true;
   cfg.fill_area = true;
+  cfg.manual_ticks = true;
+  cfg.x_major_step = "2.0";
+  cfg.y_major_step = "1.0";
+  cfg.minor_subdivisions = 5;
   window->set_export_config(cfg);
   window->invoke_reset_export_settings();
   auto restored_cfg = window->get_export_config();
@@ -381,6 +385,10 @@ TEST_F(AppControllerTests, ResetsOptionBlocksToDefaultsWhenInvoked) {
   EXPECT_TRUE(restored_cfg.show_grid);
   EXPECT_FALSE(restored_cfg.show_markers);
   EXPECT_FALSE(restored_cfg.fill_area);
+  EXPECT_FALSE(restored_cfg.manual_ticks);
+  EXPECT_EQ(restored_cfg.x_major_step, "1.0");
+  EXPECT_EQ(restored_cfg.y_major_step, "0.5");
+  EXPECT_EQ(restored_cfg.minor_subdivisions, 0);
 
   // 9. Reset Material Type
   opts.material_type = 2;

@@ -383,6 +383,20 @@ void AppController::saveSettings() const {
   }
   SettingsManager::save(settings);
 }
+
+void AppController::loadTrajectory(const std::string &filepath,
+                                   std::function<void(bool)> on_complete) {
+  if (file_io_handler_) {
+    file_io_handler_->startLoadingTrajectory(filepath, std::move(on_complete));
+  }
+}
+
+void AppController::runAnalysis() {
+  if (analysis_runner_) {
+    analysis_runner_->handleRunAnalysis();
+  }
+}
+
 void AppController::handleOptionstoUI() { OptionsSyncService::writeToUI(window_, options_); }
 
 void AppController::updateActiveGroupFlags() {

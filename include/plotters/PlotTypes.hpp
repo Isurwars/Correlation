@@ -118,7 +118,7 @@ struct PlotConfig {
   }
   /** @return Hex color string for axes and ticks. */
   [[nodiscard]] std::string_view axisColor() const {
-    return (theme == Theme::Light) ? "#000000" : "#cdd6f4";
+    return (theme == Theme::Light) ? "#000000" : "#e2e8f0";
   }
   /** @return Hex color string for grid lines. */
   [[nodiscard]] std::string_view gridColor() const {
@@ -126,7 +126,7 @@ struct PlotConfig {
   }
   /** @return Hex color string for labels and titles. */
   [[nodiscard]] std::string_view textColor() const {
-    return (theme == Theme::Light) ? "#333333" : "#a6adc8";
+    return (theme == Theme::Light) ? "#333333" : "#FFFFFF";
   }
 
   // Manual Zoom Bounds
@@ -134,6 +134,15 @@ struct PlotConfig {
   std::optional<real_t> manual_x_max;
   std::optional<real_t> manual_y_min;
   std::optional<real_t> manual_y_max;
+
+  // Manual Axis Ticks & Grid Placement
+  bool manual_ticks = false;
+  real_t x_major_step = static_cast<real_t>(0.0);
+  real_t y_major_step = static_cast<real_t>(0.0);
+  int minor_subdivisions = 0;
+
+  // Analytical Annotations
+  bool show_peak_callouts = true;
 
   // Reference lines
   std::vector<ReferenceLine> reference_lines;
@@ -244,7 +253,7 @@ inline std::string renderTextAsPath(const std::string &text, real_t x_pos, real_
 
 namespace detail {
 
-/// Okabe-Ito colorblind-safe palette.
+/// Okabe-Ito colorblind-safe palette (calibrated for high contrast on dark and light).
 constexpr std::array<std::string_view, 8> K_COLORS = {
     "#E69F00", // Orange
     "#56B4E9", // Sky Blue
@@ -253,7 +262,7 @@ constexpr std::array<std::string_view, 8> K_COLORS = {
     "#0072B2", // Blue
     "#D55E00", // Vermillion
     "#CC79A7", // Reddish Purple
-    "#000000", // Black
+    "#00C49F", // High-contrast Teal (replaces invisible black)
 };
 
 /// Grayscale palette for B&W printing.
@@ -419,13 +428,28 @@ struct NiceScale {
 
   NiceScale() = default;
 
-  explicit NiceScale(const DataRange &range, int max_ticks = 6, bool strict_bounds = false) {
+  explicit NiceScale(const DataRange &range, int max_ticks = 6, bool strict_bounds = false,
+                     real_t custom_step = static_cast<real_t>(0.0)) {
     real_t actual_min = range.min;
     real_t actual_max = range.max;
     if (actual_max < actual_min) {
       std::swap(actual_min, actual_max);
     }
-    if (std::abs(actual_max - actual_min) < static_cast<real_t>(1e-12)) {
+    if (custom_step > static_cast<real_t>(0.0)) {
+      spacing = custom_step;
+      min = actual_min;
+      max = actual_max;
+      const auto first_tick = std::ceil(min / spacing) * spacing;
+      const auto num_ticks =
+          (max >= first_tick)
+              ? static_cast<int>(std::floor(
+                    (max - first_tick + static_cast<real_t>(1e-6) * spacing) / spacing)) +
+                    1
+              : 0;
+      for (int idx = 0; idx < num_ticks; ++idx) {
+        ticks.push_back(first_tick + static_cast<real_t>(idx) * spacing);
+      }
+    } else if (std::abs(actual_max - actual_min) < static_cast<real_t>(1e-12)) {
       min = actual_min - static_cast<real_t>(0.5);
       max = actual_min + static_cast<real_t>(0.5);
       spacing = static_cast<real_t>(0.1);

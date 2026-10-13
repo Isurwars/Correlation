@@ -128,6 +128,10 @@ void OptionsResetService::resetExportSettings(AppWindow &window) {
   cfg.show_grid = true;
   cfg.show_markers = false;
   cfg.fill_area = false;
+  cfg.manual_ticks = false;
+  cfg.x_major_step = "1.0";
+  cfg.y_major_step = "0.5";
+  cfg.minor_subdivisions = 0;
   window.set_export_config(cfg);
 }
 

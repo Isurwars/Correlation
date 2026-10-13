@@ -130,7 +130,7 @@ slint::ComponentHandle<AppWindow> createAppWindow() {
  *
  * @return Exit code (0 for success, 1 on fatal error).
  */
-int main() {
+int main(int argc, char *argv[]) {
   std::set_terminate(handleTerminate);
 
 #ifdef _WIN32
@@ -144,13 +144,35 @@ int main() {
     correlation::app::TrajectoryLoader loader;
     correlation::app::AnalysisDispatcher dispatcher;
     correlation::app::ProgramOptions options;
-    correlation::app::AppController const controller(*window, loader, dispatcher, options);
+    correlation::app::AppController controller(*window, loader, dispatcher, options);
 
     window->window().on_close_requested([&controller] {
       controller.saveSettings();
       slint::quit_event_loop();
       return slint::CloseRequestResponse::KeepWindowShown;
     });
+
+    std::string initial_file;
+    bool autorun = false;
+    for (int i = 1; i < argc; ++i) {
+      if (argv[i] == nullptr) {
+        continue;
+      }
+      const std::string_view arg(argv[i]);
+      if (arg == "--run" || arg == "--autorun") {
+        autorun = true;
+      } else if (!arg.starts_with('-')) {
+        initial_file = arg;
+      }
+    }
+
+    if (!initial_file.empty()) {
+      controller.loadTrajectory(initial_file, [&controller, autorun](bool success) {
+        if (success && autorun) {
+          controller.runAnalysis();
+        }
+      });
+    }
 
     window->show();
     slint::run_event_loop();
@@ -173,6 +195,6 @@ int main() {
 
 #ifdef _WIN32
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-  return main();
+  return main(__argc, __argv);
 }
 #endif

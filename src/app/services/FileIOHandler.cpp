@@ -136,7 +136,8 @@ void FileIOHandler::handleWriteFiles() {
   });
 }
 
-void FileIOHandler::startLoadingTrajectory(const std::string &filepath) {
+void FileIOHandler::startLoadingTrajectory(const std::string &filepath,
+                                           std::function<void(bool)> on_complete) {
   window_.set_in_file_text(slint::SharedString(filepath));
   window_.set_file_status_text(slint::SharedString("Loading file..."));
   window_.set_file_loading(true);
@@ -148,7 +149,7 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath) {
     load_thread_.join();
   }
 
-  load_thread_ = std::jthread([this, filepath]() {
+  load_thread_ = std::jthread([this, filepath, on_complete = std::move(on_complete)]() {
     auto progress_cb = [this](float progress, const std::string &msg) {
       slint::invoke_from_event_loop([progress, msg, this]() {
         window_.set_progress(progress);
@@ -169,7 +170,7 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath) {
       message = std::string(AppDefaults::MSG_ERROR_LOADING) + load_res.error();
     }
 
-    slint::invoke_from_event_loop([this, filepath, message, success]() {
+    slint::invoke_from_event_loop([this, filepath, message, success, on_complete]() {
       window_.set_file_status_text(slint::SharedString(message));
       window_.set_file_loading(false);
       window_.set_timer_running(false);
@@ -215,6 +216,10 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath) {
         window_.set_preview_active_tab(2);
 
         static_cast<void>(controller_.getInputValidator()->validateInputs());
+      }
+
+      if (on_complete) {
+        on_complete(success);
       }
     });
   });

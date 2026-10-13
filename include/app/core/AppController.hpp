@@ -17,6 +17,7 @@
 #include "app/viewmodel/BondCutoffController.hpp"
 #include <nfd.h>
 
+#include <functional>
 #include <memory>
 
 class AppControllerTests;
@@ -79,6 +80,18 @@ public:
    * @brief Saves current layout settings and window geometry to disk.
    */
   void saveSettings() const;
+
+  /**
+   * @brief Loads a structure or trajectory file asynchronously.
+   * @param filepath Path to the structure or trajectory file.
+   * @param on_complete Optional callback invoked on event loop when loading finishes.
+   */
+  void loadTrajectory(const std::string &filepath, std::function<void(bool)> on_complete = nullptr);
+
+  /**
+   * @brief Executes configured analyses on the active trajectory.
+   */
+  void runAnalysis();
 
   /**
    * @brief Retrieves the current user-selected options from the UI.

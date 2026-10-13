@@ -254,6 +254,11 @@ correlation::plotters::PlotConfig PlotController::buildPlotConfigFromUI() {
   config.show_markers = window_.get_export_config().show_markers;
   config.fill_area = window_.get_export_config().fill_area;
 
+  config.manual_ticks = window_.get_export_config().manual_ticks;
+  config.x_major_step = safeParse(window_.get_export_config().x_major_step, 0.0F);
+  config.y_major_step = safeParse(window_.get_export_config().y_major_step, 0.0F);
+  config.minor_subdivisions = window_.get_export_config().minor_subdivisions;
+
   viewport_navigator_.applyToConfig(config);
   marker_manager_.applyToConfig(config);
 

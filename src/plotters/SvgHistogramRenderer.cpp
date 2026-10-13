@@ -16,12 +16,13 @@
 #include <cmath>
 #include <cstddef>
 #include <format>
+#include <iterator>
 #include <map>
+#include <optional>
 #include <ranges>
-#include <sstream>
+#include <span>
 #include <string>
 #include <string_view>
-#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -31,116 +32,185 @@ namespace {
 
 using namespace detail;
 
+// ============================================================================
+// Layout Metrics & Constants
+// ============================================================================
+namespace layout {
+inline constexpr real_t MARGIN_LEFT = static_cast<real_t>(100.0);
+inline constexpr real_t MARGIN_RIGHT = static_cast<real_t>(40.0);
+inline constexpr real_t MARGIN_TOP = static_cast<real_t>(50.0);
+inline constexpr real_t MARGIN_BOTTOM = static_cast<real_t>(90.0);
+
+inline constexpr real_t MINOR_TICK_LENGTH = static_cast<real_t>(4.0);
+inline constexpr real_t MAJOR_TICK_LENGTH = static_cast<real_t>(8.0);
+inline constexpr real_t Y_TICK_LABEL_OFFSET = static_cast<real_t>(15.0);
+inline constexpr real_t Y_TICK_LABEL_Y_SHIFT = static_cast<real_t>(7.0);
+inline constexpr real_t X_TICK_LABEL_OFFSET = static_cast<real_t>(25.0);
+inline constexpr real_t X_AXIS_TITLE_OFFSET = static_cast<real_t>(75.0);
+inline constexpr real_t Y_AXIS_TITLE_OFFSET = static_cast<real_t>(40.0);
+
+inline constexpr real_t LEGEND_RIGHT_MARGIN = static_cast<real_t>(15.0);
+inline constexpr real_t LEGEND_TOP_MARGIN = static_cast<real_t>(25.0);
+inline constexpr real_t LEGEND_LINE_RIGHT_PAD = static_cast<real_t>(10.0);
+inline constexpr real_t LEGEND_LINE_LEFT_PAD = static_cast<real_t>(40.0);
+inline constexpr real_t LEGEND_TEXT_PAD = static_cast<real_t>(45.0);
+inline constexpr real_t LEGEND_TOTAL_STEP = static_cast<real_t>(26.0);
+inline constexpr real_t LEGEND_HEADER_STEP = static_cast<real_t>(22.0);
+inline constexpr real_t LEGEND_ITEM_STEP = static_cast<real_t>(24.0);
+
+inline constexpr real_t PEAK_THRESHOLD = static_cast<real_t>(0.5);
+inline constexpr real_t PEAK_MIN_SEPARATION = static_cast<real_t>(0.4);
+inline constexpr real_t SCORE_EPSILON = static_cast<real_t>(1e-12);
+inline constexpr std::size_t DEFAULT_PARTIALS_LIMIT = 10;
+inline constexpr std::size_t DEFAULT_BUFFER_CAPACITY = 32768;
+} // namespace layout
+
+// ============================================================================
+// Value Types & Render Context
+// ============================================================================
+
 /**
- * @struct SvgHistogramRenderer
- * @brief Internal state and rendering logic for single-histogram SVG generation.
+ * @struct RenderContext
+ * @brief Aggregate of non-owning pointers passed across pipeline stages.
  */
-struct SvgHistogramRenderer {
-  const correlation::analysis::Histogram *hist = nullptr;
-  const PlotConfig *config = nullptr;
-  const HoverInfo *hover = nullptr;
-  const std::map<std::string, real_t> *weights = nullptr;
-  const std::map<std::string, bool> *curve_visibility = nullptr;
+struct RenderContext {
+  const correlation::analysis::Histogram *hist{nullptr};
+  const PlotConfig *config{nullptr};
+  const HoverInfo *hover{nullptr};
+  const std::map<std::string, real_t> *weights{nullptr};
+  const std::map<std::string, bool> *curve_visibility{nullptr};
+  const std::map<std::string, std::string> *custom_colors{nullptr};
+};
 
-  std::string title;
-  std::string x_label;
-  std::string y_label;
+/**
+ * @struct RenderSeries
+ * @brief Processed single curve series with assigned styling color.
+ */
+struct RenderSeries {
+  std::string key;
+  std::vector<real_t> values;
+  std::string color;
+};
 
-  real_t kW = static_cast<real_t>(0.0);
-  real_t kH = static_cast<real_t>(0.0);
-  real_t px0 = static_cast<real_t>(0.0);
-  real_t px1 = static_cast<real_t>(0.0);
-  real_t py0 = static_cast<real_t>(0.0);
-  real_t py1 = static_cast<real_t>(0.0);
+/**
+ * @struct PeakCallout
+ * @brief Formatted peak annotation ready for visual projection.
+ */
+struct PeakCallout {
+  std::string label;
+  real_t x{0.0};
+  real_t y{0.0};
+};
 
-  std::vector<std::pair<std::string, std::vector<real_t>>> partials;
-  const std::vector<real_t> *xs = nullptr;
+/**
+ * @struct CanvasViewport
+ * @brief Encapsulates SVG dimension bounds and coordinate projection math.
+ */
+struct CanvasViewport {
+  real_t width{0.0};
+  real_t height{0.0};
+  real_t px0{0.0};
+  real_t px1{0.0};
+  real_t py0{0.0};
+  real_t py1{0.0};
 
-  const std::map<std::string, std::string> *custom_colors = nullptr;
-
-  detail::NiceScale xScale;
-  detail::NiceScale yScale;
-
-  std::ostringstream svg;
-
-  SvgHistogramRenderer(const correlation::analysis::Histogram &histogram, const PlotConfig &cfg,
-                       const HoverInfo &hov, const std::map<std::string, real_t> &component_weights,
-                       const std::map<std::string, bool> &visibility = {},
-                       const std::map<std::string, std::string> &colors = {})
-      : hist(&histogram), config(&cfg), hover(&hov), weights(&component_weights),
-        curve_visibility(&visibility), custom_colors(&colors), xs(&histogram.bins) {
-    initializeLayoutAndLabels();
-    filterPartials();
+  static CanvasViewport create(const PlotConfig &config) noexcept {
+    const real_t canvas_w = config.effectiveWidth();
+    const real_t canvas_h = config.effectiveHeight();
+    return CanvasViewport{
+        .width = canvas_w,
+        .height = canvas_h,
+        .px0 = layout::MARGIN_LEFT,
+        .px1 = canvas_w - layout::MARGIN_RIGHT,
+        .py0 = layout::MARGIN_TOP,
+        .py1 = canvas_h - layout::MARGIN_BOTTOM,
+    };
   }
 
-  void initializeLayoutAndLabels() {
-    title = hist->title.empty() ? "Histogram" : hist->title;
-    x_label = hist->x_label.empty() ? "x" : hist->x_label;
-    y_label = hist->y_label.empty() ? "y" : hist->y_label;
+  [[nodiscard]] constexpr real_t plotWidth() const noexcept { return px1 - px0; }
+  [[nodiscard]] constexpr real_t plotHeight() const noexcept { return py1 - py0; }
 
-    if (!hist->x_unit.empty()) {
-      x_label += std::format(" ({})", hist->x_unit);
-    }
-    if (!hist->y_unit.empty()) {
-      std::string y_unit = hist->y_unit;
-      if (y_unit == "Å^-1") {
-        y_unit = "Å⁻¹";
-      }
-      y_label += std::format(" ({})", y_unit);
-    }
-
-    kW = config->effectiveWidth();
-    kH = config->effectiveHeight();
-    const auto margin_left = static_cast<real_t>(100.0);
-    const auto margin_right = static_cast<real_t>(40.0);
-    const auto margin_top = static_cast<real_t>(50.0);
-    const auto margin_bot = static_cast<real_t>(90.0);
-
-    px0 = margin_left;
-    px1 = kW - margin_right;
-    py0 = margin_top;
-    py1 = kH - margin_bot;
+  [[nodiscard]] real_t mapX(real_t val, const detail::NiceScale &x_scale) const noexcept {
+    return mapValue(val, x_scale.min, x_scale.max, px0, px1);
   }
 
-  [[nodiscard]] bool isCurveVisible(const std::string &key) const {
-    if (curve_visibility == nullptr) {
+  [[nodiscard]] real_t mapY(real_t val, const detail::NiceScale &y_scale) const noexcept {
+    return mapValue(val, y_scale.min, y_scale.max, py1, py0);
+  }
+
+  [[nodiscard]] bool containsPixel(real_t pixel_x, real_t pixel_y) const noexcept {
+    return (pixel_x >= px0 && pixel_x <= px1 && pixel_y >= py0 && pixel_y <= py1);
+  }
+};
+
+// ============================================================================
+// Stage 1: Data Preparation & Filtering (SeriesFilter)
+// ============================================================================
+class SeriesFilter {
+public:
+  [[nodiscard]] static bool isCurveVisible(const std::string &key,
+                                           const std::map<std::string, bool> *visibility) noexcept {
+    if (visibility == nullptr) {
       return true;
     }
-    auto const iterator = curve_visibility->find(key);
-    return (iterator != curve_visibility->end()) ? iterator->second : true;
+    const auto found_it = visibility->find(key);
+    return (found_it != visibility->end()) ? found_it->second : true;
   }
 
-  [[nodiscard]] real_t calculateScore(const std::string &key,
-                                      const std::vector<real_t> &value) const {
+  [[nodiscard]] static real_t
+  calculateScore(const std::string &key, const std::vector<real_t> &values,
+                 const std::map<std::string, real_t> *weights) noexcept {
     if (weights != nullptr && !weights->empty()) {
-      auto const wit = weights->find(key);
+      const auto wit = weights->find(key);
       if (wit != weights->end()) {
         return wit->second;
       }
     }
-    auto score = static_cast<real_t>(0.0);
-    for (real_t const val : value) {
+    real_t score = 0.0;
+    for (const real_t val : values) {
       score += std::abs(val);
     }
     return score;
   }
 
-  void filterPartials() {
+  [[nodiscard]] static std::string
+  resolveColor(const std::string &key, std::size_t partial_idx, std::size_t num_partials,
+               const std::map<std::string, std::string> *custom_colors, const PlotConfig &config) {
+    if (custom_colors != nullptr) {
+      const auto itx = custom_colors->find(key);
+      if (itx != custom_colors->end() && !itx->second.empty()) {
+        return itx->second;
+      }
+    }
+    if (key == "Total") {
+      return (config.theme == PlotConfig::Theme::Light) ? "#000000" : "#FFFFFF";
+    }
+    return color(partial_idx, num_partials, config.palette);
+  }
+
+  [[nodiscard]] static std::vector<RenderSeries> filterSeries(const RenderContext &ctx) {
+    if (ctx.hist == nullptr || ctx.config == nullptr) {
+      return {};
+    }
     const auto &raw_partials =
-        hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
-    auto const total_it = raw_partials.find("Total");
-    if (total_it != raw_partials.end() && isCurveVisible("Total")) {
-      partials.emplace_back("Total", total_it->second);
+        ctx.hist->smoothed_partials.empty() ? ctx.hist->partials : ctx.hist->smoothed_partials;
+    std::vector<std::pair<std::string, std::vector<real_t>>> selected;
+
+    const auto total_it = raw_partials.find("Total");
+    if (total_it != raw_partials.end() && isCurveVisible("Total", ctx.curve_visibility)) {
+      selected.emplace_back("Total", total_it->second);
     }
 
     std::size_t non_total_count = 0;
-    for (const auto &[key, value] : raw_partials) {
+    for (const auto &[key, ignored_val] : raw_partials) {
       if (key != "Total" && !key.starts_with("Frequency_")) {
         ++non_total_count;
       }
     }
+
+    // Single partial dataset with Total renders only Total
     if (total_it != raw_partials.end() && non_total_count == 1) {
-      return;
+      return buildStyledSeries(selected, ctx);
     }
 
     std::vector<std::pair<std::string, real_t>> candidates;
@@ -148,199 +218,250 @@ struct SvgHistogramRenderer {
       if (key == "Total" || key.starts_with("Frequency_")) {
         continue;
       }
-      if (!isCurveVisible(key)) {
+      if (!isCurveVisible(key, ctx.curve_visibility)) {
         continue;
       }
-      candidates.emplace_back(key, calculateScore(key, value));
+      candidates.emplace_back(key, calculateScore(key, value, ctx.weights));
     }
 
     std::ranges::sort(candidates, [](const auto &lhs, const auto &rhs) {
-      if (std::abs(lhs.second - rhs.second) > static_cast<real_t>(1e-12)) {
+      if (std::abs(lhs.second - rhs.second) > layout::SCORE_EPSILON) {
         return lhs.second > rhs.second;
       }
       return lhs.first < rhs.first;
     });
 
-    const bool has_custom_vis = curve_visibility != nullptr && !curve_visibility->empty();
+    const bool has_custom_vis = ctx.curve_visibility != nullptr && !ctx.curve_visibility->empty();
     const std::size_t limit = has_custom_vis
                                   ? candidates.size()
-                                  : std::min(candidates.size(), static_cast<std::size_t>(10));
+                                  : std::min(candidates.size(), layout::DEFAULT_PARTIALS_LIMIT);
+
     for (std::size_t i = 0; i < limit; ++i) {
-      const std::string &key = candidates.at(i).first;
-      auto const iter = raw_partials.find(key);
+      const std::string &key = candidates[i].first;
+      const auto iter = raw_partials.find(key);
       if (iter != raw_partials.end()) {
-        partials.emplace_back(key, iter->second);
+        selected.emplace_back(key, iter->second);
       }
     }
+
+    return buildStyledSeries(selected, ctx);
   }
 
-  [[nodiscard]] bool hasNoData() const { return xs == nullptr || xs->empty() || partials.empty(); }
-
-  std::string renderNoData() const {
-    if (config->use_native_text) {
-      return std::format(
-          "<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
-          "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
-          "<text x=\"{3:.1f}\" y=\"{4:.1f}\" font-family=\"'Outfit', 'Plus Jakarta Sans', 'Inter', 'Roboto', 'Helvetica Neue', "
-          "sans-serif\" font-size=\"{5:.1f}\" text-anchor=\"middle\" fill=\"{6}\">No data available</text></svg>",
-          kW, kH, config->bgColor(), kW / static_cast<real_t>(2.0),
-          kH / static_cast<real_t>(2.0) + static_cast<real_t>(8.0),
-          static_cast<real_t>(24.0) * config->font_scale, config->textColor());
+private:
+  [[nodiscard]] static std::vector<RenderSeries>
+  buildStyledSeries(const std::vector<std::pair<std::string, std::vector<real_t>>> &raw,
+                    const RenderContext &ctx) {
+    std::size_t non_total_count = 0;
+    for (const auto &[key, ignored_val] : raw) {
+      if (key != "Total") {
+        ++non_total_count;
+      }
     }
-    std::string no_data_path = Roboto::instance().render(TextRenderParameters{
-        .text = "No data available",
-        .start_x = kW / static_cast<real_t>(2.0),
-        .start_y = kH / static_cast<real_t>(2.0) + static_cast<real_t>(8.0),
-        .font_size = static_cast<real_t>(24.0) * config->font_scale,
-        .anchor = "middle",
-    });
-    return std::format(
-        "<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
-        "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
-        "<path d=\"{3}\" fill=\"{4}\" fill-rule=\"evenodd\" stroke=\"none\"/></svg>",
-        kW, kH, config->bgColor(), no_data_path, config->textColor());
+    const std::size_t num_partials = (non_total_count > 0) ? non_total_count : 1;
+
+    std::vector<RenderSeries> styled;
+    styled.reserve(raw.size());
+    std::size_t partial_idx = 0;
+    for (const auto &[key, vals] : raw) {
+      const std::size_t idx = (key == "Total") ? 0 : partial_idx++;
+      styled.push_back(RenderSeries{
+          .key = key,
+          .values = vals,
+          .color = resolveColor(key, idx, num_partials, ctx.custom_colors, *ctx.config),
+      });
+    }
+    return styled;
   }
+};
 
-  void computeScales() {
-    if (xs == nullptr || xs->empty()) {
-      return;
-    }
-    real_t raw_x_min = xs->front();
-    real_t raw_x_max = xs->back();
-    auto raw_y_min = static_cast<real_t>(0.0);
-    auto raw_y_max = static_cast<real_t>(0.0);
-    for (const auto &[key, value] : partials) {
-      for (real_t const val : value) {
+// ============================================================================
+// Stage 2: Analytics & Peak Detection (PlotAnalytics)
+// ============================================================================
+class PlotAnalytics {
+public:
+  [[nodiscard]] static std::pair<detail::NiceScale, detail::NiceScale>
+  computeScales(std::span<const real_t> x_coords, std::span<const RenderSeries> series,
+                const PlotConfig &config) {
+    real_t raw_x_min = x_coords.empty() ? 0.0 : x_coords.front();
+    real_t raw_x_max = x_coords.empty() ? 1.0 : x_coords.back();
+    real_t raw_y_min = 0.0;
+    real_t raw_y_max = 0.0;
+
+    for (const auto &series_item : series) {
+      for (const real_t val : series_item.values) {
         raw_y_max = std::max(raw_y_max, val);
         raw_y_min = std::min(raw_y_min, val);
       }
     }
 
-    real_t const y_padding = (raw_y_max - raw_y_min) * static_cast<real_t>(0.05);
+    const real_t y_padding = (raw_y_max - raw_y_min) * static_cast<real_t>(0.05);
     raw_y_max += y_padding;
 
     bool strict_x = false;
     bool strict_y = false;
-    if (config->manual_x_min.has_value() && config->manual_x_max.has_value()) {
-      raw_x_min = *config->manual_x_min;
-      raw_x_max = *config->manual_x_max;
+    if (config.manual_x_min.has_value() && config.manual_x_max.has_value()) {
+      raw_x_min = *config.manual_x_min;
+      raw_x_max = *config.manual_x_max;
       strict_x = true;
     }
-    if (config->manual_y_min.has_value() && config->manual_y_max.has_value()) {
-      raw_y_min = *config->manual_y_min;
-      raw_y_max = *config->manual_y_max;
+    if (config.manual_y_min.has_value() && config.manual_y_max.has_value()) {
+      raw_y_min = *config.manual_y_min;
+      raw_y_max = *config.manual_y_max;
       strict_y = true;
     }
 
-    xScale = detail::NiceScale(
-        detail::DataRange{
-            .min = raw_x_min,
-            .max = raw_x_max,
-        },
-        11, strict_x);
-    yScale = detail::NiceScale(
-        detail::DataRange{
-            .min = raw_y_min,
-            .max = raw_y_max,
-        },
-        8, strict_y);
+    const real_t x_step = (config.manual_ticks && config.x_major_step > static_cast<real_t>(0.0))
+                              ? config.x_major_step
+                              : static_cast<real_t>(0.0);
+    const real_t y_step = (config.manual_ticks && config.y_major_step > static_cast<real_t>(0.0))
+                              ? config.y_major_step
+                              : static_cast<real_t>(0.0);
+
+    return {
+        detail::NiceScale(detail::DataRange{.min = raw_x_min, .max = raw_x_max}, 11, strict_x,
+                          x_step),
+        detail::NiceScale(detail::DataRange{.min = raw_y_min, .max = raw_y_max}, 8, strict_y,
+                          y_step),
+    };
   }
 
-  [[nodiscard]] std::size_t getNumPartials() const {
-    std::size_t count = 0;
-    for (const auto &[key, value] : partials) {
-      if (key != "Total") {
-        count++;
+  [[nodiscard]] static std::vector<PeakCallout> detectPeaks(std::span<const real_t> x_coords,
+                                                            std::span<const RenderSeries> series) {
+    const auto total_it =
+        std::ranges::find_if(series, [](const auto &item) { return item.key == "Total"; });
+    if (total_it == series.end()) {
+      return {};
+    }
+    const auto &y_values = total_it->values;
+    const std::size_t num_pts = std::min(x_coords.size(), y_values.size());
+    if (num_pts < 3) {
+      return {};
+    }
+
+    std::vector<std::pair<real_t, real_t>> candidates;
+    for (std::size_t i = 1; i < num_pts - 1; ++i) {
+      if (y_values[i] > y_values[i - 1] && y_values[i] > y_values[i + 1] &&
+          y_values[i] > layout::PEAK_THRESHOLD) {
+        candidates.emplace_back(x_coords[i], y_values[i]);
       }
     }
-    return count > 0 ? count : 1;
-  }
 
-  [[nodiscard]] std::string getColorForKey(const std::string &key, std::size_t partial_idx,
-                                           std::size_t num_partials) const {
-    if (custom_colors != nullptr) {
-      auto const itx = custom_colors->find(key);
-      if (itx != custom_colors->end() && !itx->second.empty()) {
-        return itx->second;
+    if (candidates.empty()) {
+      return {};
+    }
+
+    std::ranges::sort(candidates,
+                      [](const auto &lhs, const auto &rhs) { return lhs.second > rhs.second; });
+
+    std::vector<PeakCallout> peaks;
+    peaks.push_back(PeakCallout{
+        .label = "r₁",
+        .x = candidates[0].first,
+        .y = candidates[0].second,
+    });
+    for (std::size_t i = 1; i < candidates.size(); ++i) {
+      if (std::abs(candidates[i].first - peaks[0].x) >= layout::PEAK_MIN_SEPARATION) {
+        peaks.push_back(PeakCallout{
+            .label = "r₂",
+            .x = candidates[i].first,
+            .y = candidates[i].second,
+        });
+        break;
       }
     }
-    if (key == "Total") {
-      return (config->theme == PlotConfig::Theme::Light) ? "#000000" : "#FFFFFF";
-    }
-    return color(partial_idx, num_partials, config->palette);
+    return peaks;
   }
 
-  void writeHeader() {
-    svg << std::format(
+  struct NearestPointHit {
+    std::size_t index{0};
+    std::string key;
+  };
+
+  [[nodiscard]] static std::optional<NearestPointHit>
+  findNearestPoint(real_t mouse_sx, real_t mouse_sy, const CanvasViewport &viewport,
+                   std::span<const real_t> x_coords, std::span<const RenderSeries> series,
+                   const detail::NiceScale &x_scale, const detail::NiceScale &y_scale) {
+    if (x_coords.empty() || series.empty()) {
+      return std::nullopt;
+    }
+    auto min_dist_sq = static_cast<real_t>(1e30);
+    NearestPointHit best;
+
+    for (const auto &series_item : series) {
+      const std::size_t num_points = std::min(x_coords.size(), series_item.values.size());
+      for (std::size_t i = 0; i < num_points; ++i) {
+        const real_t sx_i = viewport.mapX(x_coords[i], x_scale);
+        const real_t sy_i = viewport.mapY(series_item.values[i], y_scale);
+        const real_t dx_i = sx_i - mouse_sx;
+        const real_t dy_i = sy_i - mouse_sy;
+        const real_t dist_sq = dx_i * dx_i + dy_i * dy_i;
+        if (dist_sq < min_dist_sq) {
+          min_dist_sq = dist_sq;
+          best.index = i;
+          best.key = series_item.key;
+        }
+      }
+    }
+    return best;
+  }
+};
+
+// ============================================================================
+// Stage 3 & 4: SVG Emission (SvgEmitter)
+// ============================================================================
+class SvgEmitter {
+public:
+  explicit SvgEmitter(std::size_t capacity = layout::DEFAULT_BUFFER_CAPACITY) {
+    buffer_.reserve(capacity);
+  }
+
+  void emitDefsAndHeader(const CanvasViewport &viewport, const PlotConfig &config,
+                         std::span<const RenderSeries> series) {
+    std::format_to(
+        std::back_inserter(buffer_),
         "<svg width='{:.0f}' height='{:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {} {}\" "
-        "shape-rendering=\"geometricPrecision\" text-rendering=\"geometricPrecision\">\n",
-        kW, kH, kW, kH);
-    svg << "  <defs>\n"
-        << "    <filter id=\"tooltip-shadow\" x=\"-10%\" y=\"-10%\" width=\"120%\" height=\"120%\">\n"
-        << "      <feDropShadow dx=\"2\" dy=\"4\" stdDeviation=\"4\" flood-color=\"#000000\" flood-opacity=\"0.15\"/>\n"
-        << "    </filter>\n";
+        "shape-rendering=\"geometricPrecision\" text-rendering=\"geometricPrecision\">\n"
+        "  <defs>\n"
+        "    <filter id=\"tooltip-shadow\" x=\"-10%\" y=\"-10%\" width=\"120%\" height=\"120%\">\n"
+        "      <feDropShadow dx=\"2\" dy=\"4\" stdDeviation=\"4\" flood-color=\"#000000\" flood-opacity=\"0.15\"/>\n"
+        "    </filter>\n",
+        viewport.width, viewport.height, viewport.width, viewport.height);
 
-    std::size_t partial_idx = 0;
-    const std::size_t num_partials = getNumPartials();
-    std::size_t grad_idx = 0;
-    for (const auto &[key, value] : partials) {
-      std::string col = getColorForKey(key, (key == "Total") ? 0 : partial_idx++, num_partials);
-      std::string grad_id = std::format("area-grad-{}", grad_idx++);
-      svg << std::format(
-          "    <linearGradient id=\"{}\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n"
+    for (std::size_t i = 0; i < series.size(); ++i) {
+      std::format_to(
+          std::back_inserter(buffer_),
+          "    <linearGradient id=\"area-grad-{}\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n"
           "      <stop offset=\"0%\" stop-color=\"{}\" stop-opacity=\"0.35\"/>\n"
           "      <stop offset=\"100%\" stop-color=\"{}\" stop-opacity=\"0.0\"/>\n"
           "    </linearGradient>\n",
-          grad_id, col, col);
+          i, series[i].color, series[i].color);
     }
-    svg << std::format(
+
+    std::format_to(
+        std::back_inserter(buffer_),
         "    <clipPath id=\"plot-area-clip\"><rect x=\"{:.1f}\" y=\"{:.1f}\" width=\"{:.1f}\" "
-        "height=\"{:.1f}\"/></clipPath>\n",
-        px0, py0, px1 - px0, py1 - py0);
-    svg << "  </defs>\n";
-    svg << std::format("  <rect width=\"100%\" height=\"100%\" fill=\"{}\" rx=\"6\"/>\n",
-                       config->bgColor());
+        "height=\"{:.1f}\"/></clipPath>\n"
+        "  </defs>\n"
+        "  <rect width=\"100%\" height=\"100%\" fill=\"{}\" rx=\"6\"/>\n",
+        viewport.px0, viewport.py0, viewport.plotWidth(), viewport.plotHeight(), config.bgColor());
   }
 
-  void drawGridAndAxes() {
-    svg << "  <!-- Grid & Ticks -->\n";
-    for (real_t const y_val : yScale.ticks) {
-      real_t spy = mapValue(y_val, yScale.min, yScale.max, py1, py0);
-      if (config->show_grid) {
-        svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-                           "stroke=\"{}\" stroke-width=\"0.8\" stroke-dasharray=\"3,3\"/>\n",
-                           px0, spy, px1, spy, config->gridColor());
-      }
-      svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-                         "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
-                         px0 - static_cast<real_t>(8.0), spy, px0, spy, config->axisColor());
-      svg << renderTextAsPath(fmtScientific(y_val), px0 - static_cast<real_t>(15.0),
-                              spy + static_cast<real_t>(7.0),
-                              static_cast<real_t>(20.0) * config->font_scale, TextAnchor::End,
-                              config->textColor(), config->use_native_text);
-    }
+  void emitGridAndAxes(const CanvasViewport &viewport, const detail::NiceScale &x_scale,
+                       const detail::NiceScale &y_scale, const PlotConfig &config) {
+    buffer_.append("  <!-- Grid & Ticks -->\n");
+    emitYTicks(viewport, y_scale, config);
+    emitXTicks(viewport, x_scale, config);
+    emitMinorTicks(viewport, x_scale, y_scale, config);
 
-    for (real_t const x_val : xScale.ticks) {
-      real_t spx = mapValue(x_val, xScale.min, xScale.max, px0, px1);
-      if (config->show_grid) {
-        svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-                           "stroke=\"{}\" stroke-width=\"0.8\" stroke-dasharray=\"3,3\"/>\n",
-                           spx, py0, spx, py1, config->gridColor());
-      }
-      svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-                         "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
-                         spx, py1, spx, py1 + static_cast<real_t>(8.0), config->axisColor());
-      svg << renderTextAsPath(fmtScientific(x_val), spx, py1 + static_cast<real_t>(25.0),
-                              static_cast<real_t>(20.0) * config->font_scale, TextAnchor::Middle,
-                              config->textColor(), config->use_native_text);
-    }
-
-    svg << std::format("  <rect x=\"{:.1f}\" y=\"{:.1f}\" width=\"{:.1f}\" height=\"{:.1f}\" "
-                       "fill=\"none\" stroke=\"{}\" stroke-width=\"1.5\"/>\n",
-                       px0, py0, px1 - px0, py1 - py0, config->axisColor());
+    std::format_to(std::back_inserter(buffer_),
+                   "  <rect x=\"{:.1f}\" y=\"{:.1f}\" width=\"{:.1f}\" height=\"{:.1f}\" "
+                   "fill=\"none\" stroke=\"{}\" stroke-width=\"1.5\"/>\n",
+                   viewport.px0, viewport.py0, viewport.plotWidth(), viewport.plotHeight(),
+                   config.axisColor());
   }
 
-  void drawEmphasisLines() {
+  void emitEmphasisLines(const CanvasViewport &viewport, const detail::NiceScale &y_scale,
+                         std::string_view title, const PlotConfig &config) {
     std::vector<real_t> emphasis_values;
     if (title.contains("g(r)")) {
       emphasis_values.push_back(static_cast<real_t>(1.0));
@@ -351,301 +472,517 @@ struct SvgHistogramRenderer {
       emphasis_values.push_back(static_cast<real_t>(1.0));
     }
 
-    for (real_t const focus_y : emphasis_values) {
-      if (focus_y >= yScale.min && focus_y <= yScale.max) {
-        real_t spy = mapValue(focus_y, yScale.min, yScale.max, py1, py0);
-        std::string extra =
+    for (const real_t focus_y : emphasis_values) {
+      if (focus_y >= y_scale.min && focus_y <= y_scale.max) {
+        const real_t spy = viewport.mapY(focus_y, y_scale);
+        const std::string_view extra =
             (std::abs(focus_y - static_cast<real_t>(1.0)) < static_cast<real_t>(1e-6))
                 ? " stroke-dasharray=\"5,5\""
                 : "";
-        svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-                           "stroke=\"{}\" stroke-width=\"1.8\"{}/>\n",
-                           px0, spy, px1, spy, config->axisColor(), extra);
+        std::format_to(std::back_inserter(buffer_),
+                       "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                       "stroke=\"{}\" stroke-width=\"1.8\"{}/>\n",
+                       viewport.px0, spy, viewport.px1, spy, config.axisColor(), extra);
       }
     }
   }
 
-  void drawAreaFills() {
-    if (config == nullptr || !config->fill_area || xs == nullptr) {
+  void emitAreaFills(const CanvasViewport &viewport, std::span<const real_t> x_coords,
+                     std::span<const RenderSeries> series, const detail::NiceScale &x_scale,
+                     const detail::NiceScale &y_scale, const PlotConfig &config) {
+    if (!config.fill_area || x_coords.empty()) {
       return;
     }
-    std::size_t fill_ci = 0;
-    for (const auto &[key, value] : partials) {
-      std::string grad_id = std::format("area-grad-{}", fill_ci);
-      std::size_t const num_points = std::min(xs->size(), value.size());
-      if (num_points > 1) {
-        svg << std::format("  <polygon fill=\"url(#{})\" stroke=\"none\" points=\"", grad_id);
-        real_t sx_start = mapValue(xs->at(0), xScale.min, xScale.max, px0, px1);
-        svg << std::format("{:.2f},{:.2f} ", sx_start, py1);
-        for (std::size_t point_idx = 0; point_idx < num_points; ++point_idx) {
-          real_t screen_x = mapValue(xs->at(point_idx), xScale.min, xScale.max, px0, px1);
-          real_t const screen_y = mapValue(value.at(point_idx), yScale.min, yScale.max, py1, py0);
-          real_t sy_clamped = std::min(screen_y, py1);
-          svg << std::format("{:.2f},{:.2f} ", screen_x, sy_clamped);
-        }
-        real_t sx_end = mapValue(xs->at(num_points - 1), xScale.min, xScale.max, px0, px1);
-        svg << std::format("{:.2f},{:.2f}", sx_end, py1);
-        svg << "\" />\n";
+    for (std::size_t i = 0; i < series.size(); ++i) {
+      const auto &series_item = series[i];
+      const std::size_t num_points = std::min(x_coords.size(), series_item.values.size());
+      if (num_points <= 1) {
+        continue;
       }
-      fill_ci++;
+
+      std::format_to(std::back_inserter(buffer_),
+                     "  <polygon fill=\"url(#area-grad-{})\" stroke=\"none\" points=\"", i);
+      const real_t sx_start = viewport.mapX(x_coords.front(), x_scale);
+      std::format_to(std::back_inserter(buffer_), "{:.2f},{:.2f} ", sx_start, viewport.py1);
+
+      for (std::size_t pt = 0; pt < num_points; ++pt) {
+        const real_t screen_x = viewport.mapX(x_coords[pt], x_scale);
+        const real_t screen_y = viewport.mapY(series_item.values[pt], y_scale);
+        const real_t sy_clamped = std::min(screen_y, viewport.py1);
+        std::format_to(std::back_inserter(buffer_), "{:.2f},{:.2f} ", screen_x, sy_clamped);
+      }
+
+      const real_t sx_end = viewport.mapX(x_coords[num_points - 1], x_scale);
+      std::format_to(std::back_inserter(buffer_), "{:.2f},{:.2f}\" />\n", sx_end, viewport.py1);
     }
   }
 
-  std::vector<std::pair<std::string, std::string>> drawPolylines() {
-    std::vector<std::pair<std::string, std::string>> legend;
-    if (xs == nullptr) {
-      return legend;
+  void emitPolylines(const CanvasViewport &viewport, std::span<const real_t> x_coords,
+                     std::span<const RenderSeries> series, const detail::NiceScale &x_scale,
+                     const detail::NiceScale &y_scale, const PlotConfig &config) {
+    if (x_coords.empty()) {
+      return;
     }
-    const std::size_t num_partials = getNumPartials();
-    std::size_t partial_idx = 0;
     std::string total_svg;
 
-    for (const auto &[key, value] : partials) {
-      const std::string col =
-          getColorForKey(key, (key == "Total") ? 0 : partial_idx++, num_partials);
-      legend.emplace_back(key, col);
-
+    for (const auto &series_item : series) {
       std::string line_svg = std::format(
           R"(  <polyline fill="none" stroke="{}" stroke-width="{:.1f}" stroke-linejoin="round" points=")",
-          col, config->line_width);
-      std::size_t const num_points = std::min(xs->size(), value.size());
-      for (std::size_t point_idx = 0; point_idx < num_points; ++point_idx) {
-        real_t screen_x = mapValue(xs->at(point_idx), xScale.min, xScale.max, px0, px1);
-        real_t screen_y = mapValue(value.at(point_idx), yScale.min, yScale.max, py1, py0);
+          series_item.color, config.line_width);
+      const std::size_t num_points = std::min(x_coords.size(), series_item.values.size());
+      for (std::size_t pt = 0; pt < num_points; ++pt) {
+        const real_t screen_x = viewport.mapX(x_coords[pt], x_scale);
+        const real_t screen_y = viewport.mapY(series_item.values[pt], y_scale);
         line_svg += std::format("{:.2f},{:.2f} ", screen_x, screen_y);
       }
       line_svg += "\" />\n";
 
-      if (key == "Total") {
+      if (series_item.key == "Total") {
         total_svg = std::move(line_svg);
       } else {
-        svg << line_svg;
+        buffer_.append(line_svg);
       }
     }
 
     if (!total_svg.empty()) {
-      svg << total_svg;
+      buffer_.append(total_svg);
     }
-
-    return legend;
   }
 
-  void drawMarkers() {
-    if (!config->show_markers || xs == nullptr) {
+  void emitMarkers(const CanvasViewport &viewport, std::span<const real_t> x_coords,
+                   std::span<const RenderSeries> series, const detail::NiceScale &x_scale,
+                   const detail::NiceScale &y_scale, const PlotConfig &config) {
+    if (!config.show_markers || x_coords.empty()) {
       return;
     }
-    std::size_t partial_idx = 0;
-    const std::size_t num_partials = getNumPartials();
-    for (const auto &[key, value] : partials) {
-      const std::string col =
-          getColorForKey(key, (key == "Total") ? 0 : partial_idx++, num_partials);
-      std::size_t const num_points = std::min(xs->size(), value.size());
-      for (std::size_t point_idx = 0; point_idx < num_points; ++point_idx) {
-        real_t screen_x = mapValue(xs->at(point_idx), xScale.min, xScale.max, px0, px1);
-        real_t screen_y = mapValue(value.at(point_idx), yScale.min, yScale.max, py1, py0);
-        svg << std::format(
-            "  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"{:.1f}\" fill=\"{}\" stroke=\"none\"/>\n",
-            screen_x, screen_y, config->marker_size, col);
+    for (const auto &series_item : series) {
+      const std::size_t num_points = std::min(x_coords.size(), series_item.values.size());
+      for (std::size_t pt = 0; pt < num_points; ++pt) {
+        const real_t screen_x = viewport.mapX(x_coords[pt], x_scale);
+        const real_t screen_y = viewport.mapY(series_item.values[pt], y_scale);
+        std::format_to(std::back_inserter(buffer_),
+                       "  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"{:.1f}\" fill=\"{}\" "
+                       "stroke=\"none\"/>\n",
+                       screen_x, screen_y, config.marker_size, series_item.color);
       }
     }
   }
 
-  void drawReferenceLines() {
-    if (config == nullptr || config->reference_lines.empty()) {
+  void emitReferenceLines(const CanvasViewport &viewport, const detail::NiceScale &x_scale,
+                          const detail::NiceScale &y_scale, const PlotConfig &config) {
+    if (config.reference_lines.empty()) {
       return;
     }
-    for (const auto &ref : config->reference_lines) {
-      std::string_view color =
-          ref.color_hex.empty() ? config->axisColor() : std::string_view(ref.color_hex);
+    for (const auto &ref : config.reference_lines) {
+      const std::string_view color =
+          ref.color_hex.empty() ? config.axisColor() : std::string_view(ref.color_hex);
       if (ref.is_vertical) {
-        if (ref.value >= xScale.min && ref.value <= xScale.max) {
-          real_t spx = mapValue(ref.value, xScale.min, xScale.max, px0, px1);
-          svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-                             "stroke=\"{}\" stroke-width=\"1.8\" stroke-dasharray=\"4,4\"/>\n",
-                             spx, py0, spx, py1, color);
+        if (ref.value >= x_scale.min && ref.value <= x_scale.max) {
+          const real_t spx = viewport.mapX(ref.value, x_scale);
+          std::format_to(std::back_inserter(buffer_),
+                         "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                         "stroke=\"{}\" stroke-width=\"1.8\" stroke-dasharray=\"4,4\"/>\n",
+                         spx, viewport.py0, spx, viewport.py1, color);
           if (!ref.label.empty()) {
-            svg << renderTextAsPath(ref.label, spx + static_cast<real_t>(5.0),
-                                    py0 + static_cast<real_t>(18.0),
-                                    static_cast<real_t>(14.0) * config->font_scale,
-                                    TextAnchor::Start, color, config->use_native_text);
+            buffer_.append(renderTextAsPath(ref.label, spx + static_cast<real_t>(5.0),
+                                            viewport.py0 + static_cast<real_t>(18.0),
+                                            static_cast<real_t>(14.0) * config.font_scale,
+                                            TextAnchor::Start, color, config.use_native_text));
           }
         }
       } else {
-        if (ref.value >= yScale.min && ref.value <= yScale.max) {
-          real_t spy = mapValue(ref.value, yScale.min, yScale.max, py1, py0);
-          svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-                             "stroke=\"{}\" stroke-width=\"1.8\" stroke-dasharray=\"4,4\"/>\n",
-                             px0, spy, px1, spy, color);
+        if (ref.value >= y_scale.min && ref.value <= y_scale.max) {
+          const real_t spy = viewport.mapY(ref.value, y_scale);
+          std::format_to(std::back_inserter(buffer_),
+                         "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                         "stroke=\"{}\" stroke-width=\"1.8\" stroke-dasharray=\"4,4\"/>\n",
+                         viewport.px0, spy, viewport.px1, spy, color);
           if (!ref.label.empty()) {
-            svg << renderTextAsPath(ref.label, px0 + static_cast<real_t>(8.0),
-                                    spy - static_cast<real_t>(5.0),
-                                    static_cast<real_t>(14.0) * config->font_scale,
-                                    TextAnchor::Start, color, config->use_native_text);
+            buffer_.append(renderTextAsPath(ref.label, viewport.px0 + static_cast<real_t>(8.0),
+                                            spy - static_cast<real_t>(5.0),
+                                            static_cast<real_t>(14.0) * config.font_scale,
+                                            TextAnchor::Start, color, config.use_native_text));
           }
         }
       }
     }
   }
 
-  void drawLegend(const std::vector<std::pair<std::string, std::string>> &legend) {
-    if (!config->show_legend) {
+  void emitPeakCallouts(const CanvasViewport &viewport, const detail::NiceScale &x_scale,
+                        const detail::NiceScale &y_scale, std::span<const PeakCallout> peaks,
+                        const PlotConfig &config) {
+    if (!config.show_peak_callouts || peaks.empty()) {
       return;
     }
-    real_t const legend_x = px1 - static_cast<real_t>(15.0);
-    real_t legend_y = py0 + static_cast<real_t>(25.0);
-    for (const auto &iter : legend) {
-      svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-                         "stroke=\"{}\" stroke-width=\"4.0\"/>\n",
-                         legend_x - static_cast<real_t>(40.0), legend_y,
-                         legend_x - static_cast<real_t>(10.0), legend_y, iter.second);
-      svg << renderTextAsPath(iter.first, legend_x - static_cast<real_t>(45.0),
-                              legend_y + static_cast<real_t>(6.0),
-                              static_cast<real_t>(18.0) * config->font_scale, TextAnchor::End,
-                              config->textColor(), config->use_native_text);
-      legend_y += static_cast<real_t>(28.0);
-    }
-  }
-
-  void drawTitlesAndLabels() {
-    svg << renderTextAsPath(x_label, (px0 + px1) / static_cast<real_t>(2.0),
-                            py1 + static_cast<real_t>(75.0),
-                            static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle,
-                            config->textColor(), config->use_native_text);
-
-    svg << std::format("  <g transform=\"translate({:.1f}, {:.1f}) rotate(-90)\">\n",
-                       static_cast<real_t>(40.0), (py0 + py1) / static_cast<real_t>(2.0));
-    svg << renderTextAsPath(y_label, static_cast<real_t>(0.0), static_cast<real_t>(0.0),
-                            static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle,
-                            config->textColor(), config->use_native_text);
-    svg << "  </g>\n";
-  }
-
-  /**
-   * @struct NearestPoint
-   * @brief Holds index and partial key for the nearest hover point in single-histogram rendering.
-   */
-  struct NearestPoint {
-    std::size_t index = 0; ///< Bin index of nearest data point.
-    std::string key;       ///< Partial key of nearest dataset line.
-  };
-
-  NearestPoint findNearestPoint(real_t mouse_sx, real_t mouse_sy) const {
-    auto min_dist_sq = static_cast<real_t>(1e30);
-    NearestPoint best;
-    for (const auto &[key, value] : partials) {
-      std::size_t const num_points = std::min(xs->size(), value.size());
-      for (std::size_t point_idx = 0; point_idx < num_points; ++point_idx) {
-        real_t const sx_i = mapValue(xs->at(point_idx), xScale.min, xScale.max, px0, px1);
-        real_t const sy_i = mapValue(value.at(point_idx), yScale.min, yScale.max, py1, py0);
-        real_t const dx_i = sx_i - mouse_sx;
-        real_t const dy_i = sy_i - mouse_sy;
-        real_t const dist_sq = dx_i * dx_i + dy_i * dy_i;
-        if (dist_sq < min_dist_sq) {
-          min_dist_sq = dist_sq;
-          best.index = point_idx;
-          best.key = key;
-        }
+    for (const auto &peak : peaks) {
+      const real_t screen_x = viewport.mapX(peak.x, x_scale);
+      const real_t screen_y = viewport.mapY(peak.y, y_scale);
+      if (!viewport.containsPixel(screen_x, screen_y)) {
+        continue;
       }
+
+      std::format_to(
+          std::back_inserter(buffer_),
+          "  <polygon points=\"{:.1f},{:.1f} {:.1f},{:.1f} {:.1f},{:.1f} {:.1f},{:.1f}\" "
+          "fill=\"#ffffff\" stroke=\"#70b0ff\" stroke-width=\"2.0\"/>\n",
+          screen_x, screen_y - static_cast<real_t>(6.0), screen_x + static_cast<real_t>(6.0),
+          screen_y, screen_x, screen_y + static_cast<real_t>(6.0),
+          screen_x - static_cast<real_t>(6.0), screen_y);
+
+      const std::string text = std::format("{} {:.2f} ({:.2f})", peak.label, peak.x, peak.y);
+      const real_t badge_y =
+          std::max(viewport.py0 + static_cast<real_t>(20.0), screen_y - static_cast<real_t>(18.0));
+
+      std::format_to(std::back_inserter(buffer_),
+                     "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                     "stroke=\"#70b0ff\" stroke-width=\"1.0\" stroke-dasharray=\"2,2\"/>\n",
+                     screen_x, screen_y - static_cast<real_t>(6.0), screen_x,
+                     badge_y + static_cast<real_t>(6.0));
+      buffer_.append(renderTextAsPath(
+          text, screen_x, badge_y, static_cast<real_t>(14.0) * config.font_scale,
+          TextAnchor::Middle, (config.theme == PlotConfig::Theme::Light) ? "#0072b2" : "#70b0ff",
+          config.use_native_text));
     }
-    return best;
   }
 
-  void drawHoverTooltip() {
-    if (hover == nullptr || !hover->active || hover->widget_width <= static_cast<real_t>(0.0) ||
-        hover->widget_height <= static_cast<real_t>(0.0) || xs == nullptr) {
+  void emitLegend(const CanvasViewport &viewport, std::span<const RenderSeries> series,
+                  const PlotConfig &config) {
+    if (!config.show_legend || series.empty()) {
       return;
     }
-    real_t const svg_aspect = kW / kH;
-    real_t const widget_aspect = hover->widget_width / hover->widget_height;
-    auto scale = static_cast<real_t>(1.0);
-    auto offset_x = static_cast<real_t>(0.0);
-    auto offset_y = static_cast<real_t>(0.0);
+    const real_t legend_x = viewport.px1 - layout::LEGEND_RIGHT_MARGIN;
+    real_t legend_y = viewport.py0 + layout::LEGEND_TOP_MARGIN;
+
+    // 1. Total entry
+    const auto total_it =
+        std::ranges::find_if(series, [](const auto &item) { return item.key == "Total"; });
+    if (total_it != series.end()) {
+      std::format_to(std::back_inserter(buffer_),
+                     "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                     "stroke=\"{}\" stroke-width=\"4.0\"/>\n",
+                     legend_x - layout::LEGEND_LINE_LEFT_PAD, legend_y,
+                     legend_x - layout::LEGEND_LINE_RIGHT_PAD, legend_y, total_it->color);
+      buffer_.append(renderTextAsPath("Total", legend_x - layout::LEGEND_TEXT_PAD,
+                                      legend_y + static_cast<real_t>(6.0),
+                                      static_cast<real_t>(18.0) * config.font_scale,
+                                      TextAnchor::End, config.textColor(), config.use_native_text));
+      legend_y += layout::LEGEND_TOTAL_STEP;
+    }
+
+    // 2. Partials
+    const bool has_partials =
+        std::ranges::any_of(series, [](const auto &item) { return item.key != "Total"; });
+    if (!has_partials) {
+      return;
+    }
+
+    buffer_.append(renderTextAsPath(
+        "Partials:", legend_x - layout::LEGEND_LINE_RIGHT_PAD, legend_y + static_cast<real_t>(4.0),
+        static_cast<real_t>(14.0) * config.font_scale, TextAnchor::End,
+        (config.theme == PlotConfig::Theme::Light) ? "#555555" : "#cbd5e1",
+        config.use_native_text));
+    legend_y += layout::LEGEND_HEADER_STEP;
+
+    for (const auto &series_item : series) {
+      if (series_item.key == "Total") {
+        continue;
+      }
+      std::format_to(std::back_inserter(buffer_),
+                     "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                     "stroke=\"{}\" stroke-width=\"3.0\"/>\n",
+                     legend_x - layout::LEGEND_LINE_LEFT_PAD, legend_y,
+                     legend_x - layout::LEGEND_LINE_RIGHT_PAD, legend_y, series_item.color);
+      buffer_.append(renderTextAsPath(series_item.key, legend_x - layout::LEGEND_TEXT_PAD,
+                                      legend_y + static_cast<real_t>(5.0),
+                                      static_cast<real_t>(16.0) * config.font_scale,
+                                      TextAnchor::End, config.textColor(), config.use_native_text));
+      legend_y += layout::LEGEND_ITEM_STEP;
+    }
+  }
+
+  void emitTitlesAndLabels(const CanvasViewport &viewport, const std::string &x_label,
+                           const std::string &y_label, const PlotConfig &config) {
+    buffer_.append(renderTextAsPath(
+        x_label, (viewport.px0 + viewport.px1) / static_cast<real_t>(2.0),
+        viewport.py1 + layout::X_AXIS_TITLE_OFFSET, static_cast<real_t>(28.0) * config.font_scale,
+        TextAnchor::Middle, config.textColor(), config.use_native_text));
+
+    std::format_to(
+        std::back_inserter(buffer_), "  <g transform=\"translate({:.1f}, {:.1f}) rotate(-90)\">\n",
+        layout::Y_AXIS_TITLE_OFFSET, (viewport.py0 + viewport.py1) / static_cast<real_t>(2.0));
+    buffer_.append(renderTextAsPath(y_label, static_cast<real_t>(0.0), static_cast<real_t>(0.0),
+                                    static_cast<real_t>(28.0) * config.font_scale,
+                                    TextAnchor::Middle, config.textColor(),
+                                    config.use_native_text));
+    buffer_.append("  </g>\n");
+  }
+
+  void emitHover(const CanvasViewport &viewport, const HoverInfo &hover,
+                 std::span<const real_t> x_coords, std::span<const RenderSeries> series,
+                 const detail::NiceScale &x_scale, const detail::NiceScale &y_scale,
+                 const PlotConfig &config) {
+    if (!hover.active || hover.widget_width <= static_cast<real_t>(0.0) ||
+        hover.widget_height <= static_cast<real_t>(0.0) || x_coords.empty()) {
+      return;
+    }
+
+    const real_t svg_aspect = viewport.width / viewport.height;
+    const real_t widget_aspect = hover.widget_width / hover.widget_height;
+    real_t scale = 1.0;
+    real_t offset_x = 0.0;
+    real_t offset_y = 0.0;
 
     if (widget_aspect > svg_aspect) {
-      scale = hover->widget_height / kH;
-      offset_x = (hover->widget_width - kW * scale) / static_cast<real_t>(2.0);
+      scale = hover.widget_height / viewport.height;
+      offset_x = (hover.widget_width - viewport.width * scale) / static_cast<real_t>(2.0);
     } else {
-      scale = hover->widget_width / kW;
-      offset_y = (hover->widget_height - kH * scale) / static_cast<real_t>(2.0);
+      scale = hover.widget_width / viewport.width;
+      offset_y = (hover.widget_height - viewport.height * scale) / static_cast<real_t>(2.0);
     }
 
-    real_t const mouse_sx = (hover->mouse_x - offset_x) / scale;
-    real_t const mouse_sy = (hover->mouse_y - offset_y) / scale;
+    const real_t mouse_sx = (hover.mouse_x - offset_x) / scale;
+    const real_t mouse_sy = (hover.mouse_y - offset_y) / scale;
 
-    if (mouse_sx < px0 || mouse_sx > px1 || mouse_sy < py0 || mouse_sy > py1) {
+    if (!viewport.containsPixel(mouse_sx, mouse_sy)) {
       return;
     }
 
-    NearestPoint const best = findNearestPoint(mouse_sx, mouse_sy);
+    const auto hit = PlotAnalytics::findNearestPoint(mouse_sx, mouse_sy, viewport, x_coords, series,
+                                                     x_scale, y_scale);
+    if (!hit) {
+      return;
+    }
 
-    std::size_t const idx = best.index;
-    real_t const target_x = xs->at(idx);
-    real_t sx_data = mapValue(target_x, xScale.min, xScale.max, px0, px1);
+    const std::size_t idx = hit->index;
+    const real_t sx_data = viewport.mapX(x_coords[idx], x_scale);
 
-    svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-                       "stroke=\"{}\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n",
-                       sx_data, py0, sx_data, py1, config->axisColor());
+    std::format_to(std::back_inserter(buffer_),
+                   "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                   "stroke=\"{}\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n",
+                   sx_data, viewport.py0, sx_data, viewport.py1, config.axisColor());
 
-    std::size_t partial_idx = 0;
-    const std::size_t num_partials = getNumPartials();
     auto snapped_sy_data = static_cast<real_t>(-1.0);
-    for (const auto &[key, value] : partials) {
-      if (idx < value.size()) {
-        const std::string col =
-            getColorForKey(key, (key == "Total") ? 0 : partial_idx++, num_partials);
-        real_t const y_val = value.at(idx);
-        real_t sy_data = mapValue(y_val, yScale.min, yScale.max, py1, py0);
-
-        if (key == best.key) {
+    for (const auto &series_item : series) {
+      if (idx < series_item.values.size()) {
+        const real_t sy_data = viewport.mapY(series_item.values[idx], y_scale);
+        if (series_item.key == hit->key) {
           snapped_sy_data = sy_data;
         }
-
-        svg << std::format(
+        std::format_to(
+            std::back_inserter(buffer_),
             "  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"6\" fill=\"{}\" stroke=\"{}\" stroke-width=\"2\"/>\n",
-            sx_data, sy_data, col, config->bgColor());
+            sx_data, sy_data, series_item.color, config.bgColor());
       }
     }
 
-    if (snapped_sy_data >= py0 && snapped_sy_data <= py1) {
-      svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-                         "stroke=\"{}\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n",
-                         px0, snapped_sy_data, sx_data, snapped_sy_data, config->axisColor());
+    if (snapped_sy_data >= viewport.py0 && snapped_sy_data <= viewport.py1) {
+      std::format_to(std::back_inserter(buffer_),
+                     "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                     "stroke=\"{}\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n",
+                     viewport.px0, snapped_sy_data, sx_data, snapped_sy_data, config.axisColor());
     }
   }
 
-  std::string getResult() {
-    svg << "</svg>\n";
-    return svg.str();
+  void appendRaw(std::string_view str) { buffer_.append(str); }
+
+  [[nodiscard]] std::string finalize() {
+    buffer_.append("</svg>\n");
+    return std::move(buffer_);
+  }
+
+private:
+  std::string buffer_;
+
+  void emitYTicks(const CanvasViewport &viewport, const detail::NiceScale &y_scale,
+                  const PlotConfig &config) {
+    for (const real_t y_val : y_scale.ticks) {
+      const real_t spy = viewport.mapY(y_val, y_scale);
+      if (config.show_grid) {
+        std::format_to(std::back_inserter(buffer_),
+                       "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                       "stroke=\"{}\" stroke-width=\"0.8\" stroke-dasharray=\"3,3\"/>\n",
+                       viewport.px0, spy, viewport.px1, spy, config.gridColor());
+      }
+      std::format_to(std::back_inserter(buffer_),
+                     "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                     "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
+                     viewport.px0 - layout::MAJOR_TICK_LENGTH, spy, viewport.px0, spy,
+                     config.axisColor());
+      buffer_.append(renderTextAsPath(
+          fmtScientific(y_val), viewport.px0 - layout::Y_TICK_LABEL_OFFSET,
+          spy + layout::Y_TICK_LABEL_Y_SHIFT, static_cast<real_t>(20.0) * config.font_scale,
+          TextAnchor::End, config.textColor(), config.use_native_text));
+    }
+  }
+
+  void emitXTicks(const CanvasViewport &viewport, const detail::NiceScale &x_scale,
+                  const PlotConfig &config) {
+    for (const real_t x_val : x_scale.ticks) {
+      const real_t spx = viewport.mapX(x_val, x_scale);
+      if (config.show_grid) {
+        std::format_to(std::back_inserter(buffer_),
+                       "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                       "stroke=\"{}\" stroke-width=\"0.8\" stroke-dasharray=\"3,3\"/>\n",
+                       spx, viewport.py0, spx, viewport.py1, config.gridColor());
+      }
+      std::format_to(std::back_inserter(buffer_),
+                     "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                     "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
+                     spx, viewport.py1, spx, viewport.py1 + layout::MAJOR_TICK_LENGTH,
+                     config.axisColor());
+      buffer_.append(
+          renderTextAsPath(fmtScientific(x_val), spx, viewport.py1 + layout::X_TICK_LABEL_OFFSET,
+                           static_cast<real_t>(20.0) * config.font_scale, TextAnchor::Middle,
+                           config.textColor(), config.use_native_text));
+    }
+  }
+
+  void emitMinorTicks(const CanvasViewport &viewport, const detail::NiceScale &x_scale,
+                      const detail::NiceScale &y_scale, const PlotConfig &config) {
+    if (config.minor_subdivisions <= 1) {
+      return;
+    }
+    const auto subs = static_cast<real_t>(config.minor_subdivisions);
+
+    // Minor Y
+    if (y_scale.ticks.size() >= 2) {
+      for (std::size_t i = 0; i < y_scale.ticks.size() - 1; ++i) {
+        const real_t tick_start = y_scale.ticks[i];
+        const real_t delta = (y_scale.ticks[i + 1] - tick_start) / subs;
+        for (int sub_idx = 1; sub_idx < config.minor_subdivisions; ++sub_idx) {
+          const real_t spy =
+              viewport.mapY(tick_start + static_cast<real_t>(sub_idx) * delta, y_scale);
+          if (spy >= viewport.py0 && spy <= viewport.py1) {
+            std::format_to(std::back_inserter(buffer_),
+                           "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                           "stroke=\"{}\" stroke-width=\"1.0\"/>\n",
+                           viewport.px0 - layout::MINOR_TICK_LENGTH, spy, viewport.px0, spy,
+                           config.axisColor());
+          }
+        }
+      }
+    }
+
+    // Minor X
+    if (x_scale.ticks.size() >= 2) {
+      for (std::size_t i = 0; i < x_scale.ticks.size() - 1; ++i) {
+        const real_t tick_start = x_scale.ticks[i];
+        const real_t delta = (x_scale.ticks[i + 1] - tick_start) / subs;
+        for (int sub_idx = 1; sub_idx < config.minor_subdivisions; ++sub_idx) {
+          const real_t spx =
+              viewport.mapX(tick_start + static_cast<real_t>(sub_idx) * delta, x_scale);
+          if (spx >= viewport.px0 && spx <= viewport.px1) {
+            std::format_to(std::back_inserter(buffer_),
+                           "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                           "stroke=\"{}\" stroke-width=\"1.0\"/>\n",
+                           spx, viewport.py1, spx, viewport.py1 + layout::MINOR_TICK_LENGTH,
+                           config.axisColor());
+          }
+        }
+      }
+    }
   }
 };
 
+[[nodiscard]] std::string renderNoDataPlaceholder(const CanvasViewport &viewport,
+                                                  const PlotConfig &config) {
+  if (config.use_native_text) {
+    return std::format(
+        "<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
+        "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
+        "<text x=\"{3:.1f}\" y=\"{4:.1f}\" font-family=\"'Outfit', 'Plus Jakarta Sans', 'Inter', 'Roboto', 'Helvetica Neue', "
+        "sans-serif\" font-size=\"{5:.1f}\" text-anchor=\"middle\" fill=\"{6}\">No data available</text></svg>",
+        viewport.width, viewport.height, config.bgColor(),
+        viewport.width / static_cast<real_t>(2.0),
+        viewport.height / static_cast<real_t>(2.0) + static_cast<real_t>(8.0),
+        static_cast<real_t>(24.0) * config.font_scale, config.textColor());
+  }
+
+  const std::string no_data_path = Roboto::instance().render(TextRenderParameters{
+      .text = "No data available",
+      .start_x = viewport.width / static_cast<real_t>(2.0),
+      .start_y = viewport.height / static_cast<real_t>(2.0) + static_cast<real_t>(8.0),
+      .font_size = static_cast<real_t>(24.0) * config.font_scale,
+      .anchor = "middle",
+  });
+
+  return std::format(
+      "<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
+      "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
+      "<path d=\"{3}\" fill=\"{4}\" fill-rule=\"evenodd\" stroke=\"none\"/></svg>",
+      viewport.width, viewport.height, config.bgColor(), no_data_path, config.textColor());
+}
+
+[[nodiscard]] std::pair<std::string, std::string>
+formatAxisLabels(const correlation::analysis::Histogram &hist) {
+  std::string x_label = hist.x_label.empty() ? "x" : hist.x_label;
+  std::string y_label = hist.y_label.empty() ? "y" : hist.y_label;
+
+  if (!hist.x_unit.empty()) {
+    x_label += std::format(" ({})", hist.x_unit);
+  }
+  if (!hist.y_unit.empty()) {
+    std::string y_unit = hist.y_unit;
+    if (y_unit == "Å^-1") {
+      y_unit = "Å⁻¹";
+    }
+    y_label += std::format(" ({})", y_unit);
+  }
+  return {x_label, y_label};
+}
+
 } // namespace
 
+// ============================================================================
+// Public Entry Point
+// ============================================================================
 std::string renderHistogramAsSvg(const correlation::analysis::Histogram &hist,
                                  const PlotConfig &config, const HoverInfo &hover,
                                  const std::map<std::string, real_t> &weights,
                                  const std::map<std::string, bool> &curve_visibility,
                                  const std::map<std::string, std::string> &custom_colors) {
-  SvgHistogramRenderer renderer(hist, config, hover, weights, curve_visibility, custom_colors);
-  if (renderer.hasNoData()) {
-    return renderer.renderNoData();
+  const RenderContext ctx{
+      .hist = &hist,
+      .config = &config,
+      .hover = &hover,
+      .weights = &weights,
+      .curve_visibility = &curve_visibility,
+      .custom_colors = &custom_colors,
+  };
+
+  const CanvasViewport viewport = CanvasViewport::create(config);
+
+  // Stage 1: Filter & prepare series
+  const std::vector<RenderSeries> series = SeriesFilter::filterSeries(ctx);
+  if (hist.bins.empty() || series.empty()) {
+    return renderNoDataPlaceholder(viewport, config);
   }
-  renderer.computeScales();
-  renderer.writeHeader();
-  renderer.drawGridAndAxes();
-  renderer.drawEmphasisLines();
 
-  renderer.svg << "  <g clip-path=\"url(#plot-area-clip)\">\n";
-  renderer.drawAreaFills();
-  auto const legend = renderer.drawPolylines();
-  renderer.drawMarkers();
-  renderer.drawReferenceLines();
-  renderer.svg << "  </g>\n";
+  // Stage 2: Analytics, scales & peak detection
+  const auto [x_scale, y_scale] = PlotAnalytics::computeScales(hist.bins, series, config);
+  const std::vector<PeakCallout> peaks = PlotAnalytics::detectPeaks(hist.bins, series);
+  const auto [x_label, y_label] = formatAxisLabels(hist);
+  const std::string_view title = hist.title.empty() ? "Histogram" : std::string_view(hist.title);
 
-  renderer.drawLegend(legend);
-  renderer.drawTitlesAndLabels();
-  renderer.drawHoverTooltip();
-  return renderer.getResult();
+  // Stage 3 & 4: SVG Emission
+  SvgEmitter emitter;
+  emitter.emitDefsAndHeader(viewport, config, series);
+  emitter.emitGridAndAxes(viewport, x_scale, y_scale, config);
+  emitter.emitEmphasisLines(viewport, y_scale, title, config);
+
+  emitter.appendRaw("  <g clip-path=\"url(#plot-area-clip)\">\n");
+  emitter.emitAreaFills(viewport, hist.bins, series, x_scale, y_scale, config);
+  emitter.emitPolylines(viewport, hist.bins, series, x_scale, y_scale, config);
+  emitter.emitMarkers(viewport, hist.bins, series, x_scale, y_scale, config);
+  emitter.emitPeakCallouts(viewport, x_scale, y_scale, peaks, config);
+  emitter.emitReferenceLines(viewport, x_scale, y_scale, config);
+  emitter.appendRaw("  </g>\n");
+
+  emitter.emitLegend(viewport, series, config);
+  emitter.emitTitlesAndLabels(viewport, x_label, y_label, config);
+  emitter.emitHover(viewport, hover, hist.bins, series, x_scale, y_scale, config);
+
+  return emitter.finalize();
 }
 
 } // namespace correlation::plotters

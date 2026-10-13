@@ -32,6 +32,10 @@ export component ExportSettingsCard inherits OutlinedCard {
     in-out property <bool> export_show_grid: true;
     in-out property <bool> export_show_markers: false;
     in-out property <bool> export_fill_area: false;
+    in-out property <bool> export_manual_ticks: false;
+    in-out property <string> export_x_major_step: "1.0";
+    in-out property <string> export_y_major_step: "0.5";
+    in-out property <int> export_minor_subdivisions: 0;
 
     in property <string> export_font_scale_error: "";
     in property <string> export_line_width_error: "";
@@ -202,6 +206,49 @@ export component ExportSettingsCard inherits OutlinedCard {
                 check_state_bool: root.export_fill_area;
                 checked_state_changed(s) => {
                     root.export_fill_area = s;
+                }
+            }
+
+            // Axes & Major Ticks Section
+            Rectangle {
+                height: 1px;
+                background: MaterialPalette.outline_variant.with_alpha(50%);
+            }
+
+            MaterialText {
+                text: "Axes & Major Ticks";
+                style: MaterialTypography.label_medium_prominent;
+                color: MaterialPalette.primary;
+            }
+
+            manual_ticks_area := CheckBoxRow {
+                text: "Manual Tick Spacing";
+                enabled: root.enabled;
+                check_state_bool: root.export_manual_ticks;
+                checked_state_changed(s) => {
+                    root.export_manual_ticks = s;
+                }
+            }
+
+            if root.export_manual_ticks : VerticalLayout {
+                spacing: 8px;
+
+                TouchArea {
+                    TextField {
+                        width: 100%;
+                        label: "Major X Step (e.g. 1.0 Å)";
+                        enabled: root.enabled;
+                        text <=> root.export_x_major_step;
+                    }
+                }
+
+                TouchArea {
+                    TextField {
+                        width: 100%;
+                        label: "Major Y Step (e.g. 0.5)";
+                        enabled: root.enabled;
+                        text <=> root.export_y_major_step;
+                    }
                 }
             }
         }

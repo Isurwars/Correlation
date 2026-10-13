@@ -2,11 +2,11 @@
 
 # `Correlation`: Advanced Atomistic Structural & Dynamic Analysis Suite
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5514113.svg)](https://doi.org/10.5281/zenodo.5514113) [![Version](https://img.shields.io/badge/version-3.10.0-green)](https://img.shields.io/badge/version-3.10.0-green) [![C++ Standard](https://img.shields.io/badge/C%2B%2B-23-blue.svg)](https://en.cppreference.com/w/cpp/23) [![Conda-Forge](https://img.shields.io/conda/vn/conda-forge/correlation.svg)](https://anaconda.org/conda-forge/correlation) [![License](https://img.shields.io/badge/license-AGPLv3-brightgreen)](https://img.shields.io/badge/license-AGPLv3-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](docs/CODE_OF_CONDUCT.md) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02976/status.svg)](https://doi.org/10.21105/joss.02976)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5514113.svg)](https://doi.org/10.5281/zenodo.5514113) [![Version](https://img.shields.io/badge/version-4.0.0-green)](https://img.shields.io/badge/version-4.0.0-green) [![C++ Standard](https://img.shields.io/badge/C%2B%2B-23-blue.svg)](https://en.cppreference.com/w/cpp/23) [![Conda-Forge](https://img.shields.io/conda/vn/conda-forge/correlation.svg)](https://anaconda.org/conda-forge/correlation) [![License](https://img.shields.io/badge/license-AGPLv3-brightgreen)](https://img.shields.io/badge/license-AGPLv3-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](docs/CODE_OF_CONDUCT.md) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02976/status.svg)](https://doi.org/10.21105/joss.02976)
 
 `Correlation` is a high-performance C++23 structural and dynamic analysis engine for atomistic simulations of **liquids, amorphous solids, crystals, disordered networks, and soft-matter systems**. 
 
-Built for modern HPC clusters and workstations, `Correlation` delivers multi-vendor GPU acceleration (**CUDA, HIP, Intel oneAPI/SYCL**), dynamic SIMD vectorization (**AVX2, AVX-512**), multi-threaded oneTBB scaling, memory-mapped multi-gigabyte trajectory parsing, a modern Slint GUI with multi-curve comparison overlays, and direct Python/PyTorch Geometric interoperability.
+Built for modern HPC clusters and workstations, `Correlation` delivers multi-vendor GPU acceleration (**CUDA, HIP, Intel oneAPI/SYCL**), dynamic SIMD vectorization (**AVX2, AVX-512**), multi-threaded oneTBB scaling, memory-mapped multi-gigabyte trajectory parsing, an interactive 3D molecular structure viewer, a modern Slint GUI with multi-curve comparison overlays, and direct Python/PyTorch Geometric interoperability.
 
 ---
 
@@ -147,13 +147,20 @@ ctest --test-dir build --output-on-failure
 ### 1. Graphical User Interface (GUI)
 Launch the modern Slint-based interface:
 ```bash
-./build/src/correlation
+# Launch interactive GUI (optionally pass structure file or --autorun)
+./build/src/correlation [trajectory.car] [--autorun]
 ```
 
-![Correlation Demo](Images/demo.gif)
+![Correlation v4.0 Analytical Distribution Function Plotting](Images/preview_v4.png)
+
+![Correlation v4.0 Interactive 3D Molecular Viewport](Images/preview_v4_3d.png)
 
 #### Key GUI Highlights:
-* **Interactive 3-Column Layout:** Seamlessly navigate between structure setup, parameter cards, bond cutoff matrices, and live plot rendering.
+* **Interactive 3D Molecular Viewport:** Inspect atomic networks and crystal lattices with real-time multi-threaded CPU software rasterization, intuitive mouse arcball orbit, lateral panning, smooth wheel zoom, unit cell bounds, and perspective/orthographic toggling.
+* **Analytical 2D Curve Hierarchy & Peak Callouts:** Publication-ready pair distribution functions ($g(r)$) with prominent Total curves, automatic coordination shell peak badges ($r_1, r_2$), and structured, collapsible partial hierarchies with calibrated high-contrast WCAG palettes.
+* **Floating High-Visibility Toolbars & Fine Axis Controls:** Instant-access viewport navigation tools, precision zoom/pan, custom major tick steps, and minor grid subdivisions.
+* **Unified Workflow Card:** Seamlessly switch between the 3D Structure Viewport, 2D distribution function plots, and raw tabular data within an integrated Material Design 3 tab host layout.
+* **Periodic CPK Elemental Shading:** Native 118-element Jmol/ASE periodic table color lookup and covalent/van der Waals radii mapping.
 * **Multi-Curve Comparison Overlay:** Load and overlay multiple datasets or trajectories simultaneously, compute dynamic difference plots ($Y_{Diff} = Y_1 - Y_2$), and customize individual styles, dashes, and color palettes.
 * **Vector Publication Export:** Export high-resolution plots directly to **SVG**, **PNG**, or native **PDF** with embedded normalized vector fonts and Greek character glyphs.
 * **Preset Configuration Manager:** Save and load custom analysis presets for liquid, crystalline, or amorphous simulations.
