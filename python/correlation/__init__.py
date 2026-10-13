@@ -27,18 +27,21 @@ try:
 except ImportError:
     try:
         from _correlation import *  # type: ignore[import-not-found] # noqa: F401,F403
-    except ImportError as e:
-        raise ImportError(
-            "Failed to import the Correlation C++ extension module. "
-            "Make sure the package was built correctly with: pip install ."
-        ) from e
+    except ImportError:
+        try:
+            from matcorr._correlation import *  # type: ignore[import-not-found] # noqa: F401,F403
+        except ImportError as e:
+            raise ImportError(
+                "Failed to import the Correlation C++ extension module. "
+                "Make sure the package was built correctly with: pip install ."
+            ) from e
 
 from importlib.metadata import PackageNotFoundError, version
 
 try:
     __version__ = version("matcorr")
 except PackageNotFoundError:
-    __version__ = "3.9.11"
+    __version__ = "3.9.12"
 
 
 def to_torch_geometric(graph_data):

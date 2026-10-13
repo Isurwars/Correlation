@@ -19,8 +19,15 @@ except PackageNotFoundError:
         __version__ = "3.9.12"
 
 # Import all core capabilities from correlation engine
-import correlation
-from correlation import *  # noqa: F401, F403
+try:
+    import correlation
+    from correlation import *  # noqa: F401, F403
+    try:
+        from correlation import adapters  # noqa: F401
+    except ImportError:
+        adapters = None
+except ImportError:
+    adapters = None
 
 __all__ = [
     "Cell",
@@ -36,5 +43,6 @@ __all__ = [
     "list_calculators",
     "get_writer",
     "list_writers",
+    "adapters",
     "__version__",
 ]

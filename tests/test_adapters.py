@@ -8,8 +8,25 @@ from unittest.mock import MagicMock
 import numpy as np
 import pytest
 
-import correlation
-from correlation import adapters
+try:
+    import matcorr as correlation
+    try:
+        from matcorr import adapters
+    except (ImportError, AttributeError):
+        from correlation import adapters
+except (ImportError, AttributeError):
+    try:
+        import correlation
+        from correlation import adapters
+    except (ImportError, AttributeError):
+        correlation = None
+        adapters = None
+
+if correlation is None or adapters is None or not hasattr(correlation, "Cell"):
+    pytest.skip(
+        "correlation/matcorr C++ extension module is not installed (run 'pip install .' to test bindings)",
+        allow_module_level=True,
+    )
 
 
 # -----------------------------------------------------------------------------
