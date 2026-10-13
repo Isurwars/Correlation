@@ -97,7 +97,7 @@ void PlotExportManager::exportPlotAsync(const std::string &default_base_path,
                                  default_name = std::move(default_name), plot_name, hist,
                                  config = std::move(config), pinned_runs = std::move(pinned_runs),
                                  ashcroft_weights = std::move(ashcroft_weights),
-                                 on_status = std::move(on_status)]() mutable {
+                                 on_status = std::move(on_status)] mutable {
     std::array<nfdfilteritem_t, 2> filter_list = {
         {
             {

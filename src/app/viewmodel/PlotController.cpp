@@ -415,9 +415,9 @@ void PlotController::handleSavePlot() {
   const std::vector<PinnedRun> pinned_vec(pinned_runs.begin(), pinned_runs.end());
 
   export_manager_.exportPlotAsync(options_.output_file_base, name, hist, config, pinned_vec,
-                                  dispatcher_.getAshcroftWeights(), [this](std::string status) {
-                                    window_.set_analysis_status_text(
-                                        slint::SharedString(std::move(status)));
+                                  dispatcher_.getAshcroftWeights(),
+                                  [this](const std::string &status) {
+                                    window_.set_analysis_status_text(slint::SharedString(status));
                                   });
 }
 

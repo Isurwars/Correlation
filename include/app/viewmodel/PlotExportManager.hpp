@@ -32,7 +32,7 @@ public:
   /**
    * @brief Callback type for reporting export results or user cancellations.
    */
-  using StatusCallback = std::function<void(std::string)>;
+  using StatusCallback = std::function<void(const std::string &)>;
 
   /**
    * @brief Default constructor.
