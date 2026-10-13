@@ -1,5 +1,5 @@
-# {% set name = "correlation" %}
-# {% set version = "3.10.0" %}
+{% set name = "correlation" %}
+{% set version = "3.10.0" %}
 
 package:
   name: "{{ name|lower }}"
@@ -18,12 +18,14 @@ requirements:
   build:
     - "{{ compiler('c') }}"
     - "{{ compiler('cxx') }}"
-    - cmake >=3.24
+    - cmake >=3.25
     - ninja
     - pkg-config
   host:
     - python
-    - pybind11 >=2.10
+    - pip
+    - scikit-build-core >=0.11
+    - pybind11 >=2.12
     - tbb-devel
     - hdf5
     - fftw
@@ -37,8 +39,10 @@ requirements:
 test:
   imports:
     - correlation
+    - matcorr
   commands:
     - correlation-cli --version
+    - matcorr --version
 
 about:
   home: https://github.com/Isurwars/Correlation

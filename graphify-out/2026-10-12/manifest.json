@@ -5,8 +5,8 @@
     "semantic_hash": ""
   },
   "include/analysis/DistributionFunctions.hpp": {
-    "mtime": 1791515127.6265,
-    "ast_hash": "5d958e0b95ea3bd22e3ff07fbeb59f72",
+    "mtime": 1791864333.3810909,
+    "ast_hash": "5bfe0986ce4895db9ccf1e354d9e9f65",
     "semantic_hash": ""
   },
   "include/analysis/DynamicsAnalyzer.hpp": {
@@ -30,8 +30,8 @@
     "semantic_hash": ""
   },
   "include/calculators/CalculatorFactory.hpp": {
-    "mtime": 1790389589.7742732,
-    "ast_hash": "f20ff30f28db6125351252643751d007",
+    "mtime": 1791864118.3699353,
+    "ast_hash": "a49b2c3a4270dd87f18e8fe598b6f835",
     "semantic_hash": ""
   },
   "include/cli/CliParser.hpp": {
@@ -75,8 +75,8 @@
     "semantic_hash": ""
   },
   "include/math/FFTUtils.hpp": {
-    "mtime": 1790446220.3320713,
-    "ast_hash": "643e8488bc7a920dc5ce8d6e18a618f0",
+    "mtime": 1791864894.3874757,
+    "ast_hash": "985e2cdd6e80a14d3722d113687e9a1c",
     "semantic_hash": ""
   },
   "include/math/LinearAlgebra.hpp": {
@@ -120,8 +120,8 @@
     "semantic_hash": ""
   },
   "include/plotters/PdfPlotter.hpp": {
-    "mtime": 1791460417.956016,
-    "ast_hash": "3f0145ff98297ec333982d1f43fa20e9",
+    "mtime": 1791865611.8071182,
+    "ast_hash": "367c8ad5f3b10c7b80a0f79c928de850",
     "semantic_hash": ""
   },
   "include/plotters/SvgPlotter.hpp": {
@@ -260,8 +260,8 @@
     "semantic_hash": ""
   },
   "python/correlation/__init__.py": {
-    "mtime": 1791476908.7067723,
-    "ast_hash": "fd9958799143d739d3ef4f15dc127438",
+    "mtime": 1791861982.1551313,
+    "ast_hash": "d5d4e489928cc937688db6b7d2f3c886",
     "semantic_hash": ""
   },
   "python/repair_wheel.py": {
@@ -530,8 +530,8 @@
     "semantic_hash": ""
   },
   "tests/functional/app/AppControllerTests.cpp": {
-    "mtime": 1791248631.9567716,
-    "ast_hash": "4a24be1abab8b269e14094a0afe95547",
+    "mtime": 1791848955.1737742,
+    "ast_hash": "5d6ccc7f57291f38494c2c13bd5c21ce",
     "semantic_hash": ""
   },
   "tests/functional/app/SlintSvgIntegrationTests.cpp": {
@@ -645,8 +645,8 @@
     "semantic_hash": ""
   },
   "tests/test_bindings.py": {
-    "mtime": 1789594100.2781844,
-    "ast_hash": "98f2bedea807a73713d7cd0d5af030f7",
+    "mtime": 1791862046.4627228,
+    "ast_hash": "18b8b6ce50ea283e2efa1082a4203388",
     "semantic_hash": ""
   },
   "tests/unit/app/PresetManagerTests.cpp": {
@@ -680,8 +680,8 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/ClusterCalculatorTests.cpp": {
-    "mtime": 1791461990.2991436,
-    "ast_hash": "cff5e60935bc2d52fc0ed8c403a8930a",
+    "mtime": 1791864452.5010679,
+    "ast_hash": "6a5f4348862c2d631ecea06ede7bb858",
     "semantic_hash": ""
   },
   "tests/unit/calculators/DihedralCalculatorTests.cpp": {
@@ -730,8 +730,8 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/StructureFactorCalculatorTests.cpp": {
-    "mtime": 1790391314.534719,
-    "ast_hash": "233a4385045755203e408243f7f3d2f7",
+    "mtime": 1791865024.241128,
+    "ast_hash": "dd065f8c2fee6c65d08268eee0fbf47c",
     "semantic_hash": ""
   },
   "tests/unit/calculators/VoronoiCalculatorTests.cpp": {
@@ -950,8 +950,8 @@
     "semantic_hash": "fa5794c577c54fcf0888468db60e0c22"
   },
   "src/CMakeLists.txt": {
-    "mtime": 1791327118.236178,
-    "ast_hash": "01d4604db32e39e95b3081d07fa58a58",
+    "mtime": 1791865567.4774199,
+    "ast_hash": "9520fd3d7c7687b0f88c55efe3165cfa",
     "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
@@ -960,8 +960,8 @@
     "semantic_hash": ""
   },
   "tests/CMakeLists.txt": {
-    "mtime": 1791319199.5619469,
-    "ast_hash": "f4582a12d4022dcfbf6e646455483407",
+    "mtime": 1791862718.2517188,
+    "ast_hash": "bfba208774c7bbed729bd13a44bde081",
     "semantic_hash": ""
   },
   "tests/fuzz/CMakeLists.txt": {
@@ -1235,13 +1235,13 @@
     "semantic_hash": ""
   },
   "include/plotters/SvgComparisonRenderer.hpp": {
-    "mtime": 1791459965.703967,
-    "ast_hash": "3186f6b8c22c1467838a561475eed089",
+    "mtime": 1791865654.4558759,
+    "ast_hash": "847494345169ee3a8c66dfc7975b6236",
     "semantic_hash": ""
   },
   "include/plotters/SvgHistogramRenderer.hpp": {
-    "mtime": 1791488712.7062955,
-    "ast_hash": "b944464d5d3b9099b5496f28efbae3f3",
+    "mtime": 1791865611.8284714,
+    "ast_hash": "0129e9d827c5dde6c4eb2d05000aecda",
     "semantic_hash": ""
   },
   "tests/unit/math/Matrix3Tests.cpp": {
@@ -1520,8 +1520,8 @@
     "semantic_hash": ""
   },
   "tests/test_adapters.py": {
-    "mtime": 1789966510.8615603,
-    "ast_hash": "b3da3ec21aef6b5cc586e58cf1ad7cb6",
+    "mtime": 1791862061.4383976,
+    "ast_hash": "fad9317793e8ea1e82ab0238e016b293",
     "semantic_hash": ""
   },
   "tests/unit/analysis/CorrelationEngineTests.cpp": {
@@ -1545,13 +1545,13 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/RDFCalculatorTests.cpp": {
-    "mtime": 1791183139.5000849,
-    "ast_hash": "c39e87adf06789b320dddb362f234e4a",
+    "mtime": 1791864569.33844,
+    "ast_hash": "78537ff7d99aa9846552e30e2da0b45f",
     "semantic_hash": ""
   },
   "tests/unit/calculators/VACFCalculatorTests.cpp": {
-    "mtime": 1790181953.0577772,
-    "ast_hash": "7007f7c0152c8b171d2bb14227e6d51b",
+    "mtime": 1791865137.782086,
+    "ast_hash": "293f7dbba47ddedd8a307a0bff00442a",
     "semantic_hash": ""
   },
   "tests/unit/calculators/VDOSCalculatorTests.cpp": {
@@ -1560,8 +1560,8 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/XRDCalculatorTests.cpp": {
-    "mtime": 1790627345.8954096,
-    "ast_hash": "91f8b01e96045873ea40f6fd4ff411b4",
+    "mtime": 1791864462.4994392,
+    "ast_hash": "29096e7868e3a4084e842b4c5c53b0d3",
     "semantic_hash": ""
   },
   "tests/unit/mlip/TorchGNNModelTests.cpp": {
@@ -1760,8 +1760,8 @@
     "semantic_hash": ""
   },
   "include/analysis/StructuralElectronicCorrelation.hpp": {
-    "mtime": 1790391314.4875422,
-    "ast_hash": "275bd171c2023ec902f7ebadee2d0d4d",
+    "mtime": 1791864088.6264555,
+    "ast_hash": "080cdd5e80c3832587318379d67e5d08",
     "semantic_hash": ""
   },
   "include/mlip/GraphDescriptors.hpp": {
@@ -1925,8 +1925,8 @@
     "semantic_hash": ""
   },
   "tests/unit/app/OptionsResetServiceTests.cpp": {
-    "mtime": 1791246085.5270925,
-    "ast_hash": "a6ebb6029403d57c378da7262bee2044",
+    "mtime": 1791848702.601449,
+    "ast_hash": "99666bc409aba19de56e6b2f076a0ef2",
     "semantic_hash": ""
   },
   "tests/unit/app/OptionsSyncServiceTests.cpp": {
@@ -1935,8 +1935,8 @@
     "semantic_hash": ""
   },
   "include/app/core/AppController.hpp": {
-    "mtime": 1790634775.090281,
-    "ast_hash": "97a64109734f7c54ff493a7fe89b968b",
+    "mtime": 1791848296.9843554,
+    "ast_hash": "43a2d7f8769b07188f3e8ec0b967144f",
     "semantic_hash": ""
   },
   "include/app/core/SettingsManager.hpp": {
@@ -1980,8 +1980,8 @@
     "semantic_hash": ""
   },
   "include/app/services/OptionsResetService.hpp": {
-    "mtime": 1790370985.5603628,
-    "ast_hash": "84cbe1e4de4c86771d154531d42c3e4d",
+    "mtime": 1791848227.2753718,
+    "ast_hash": "1995d907bc57fb4db0e250b3939c3392",
     "semantic_hash": ""
   },
   "include/app/services/OptionsSyncService.hpp": {
@@ -2015,8 +2015,8 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/PlotController.hpp": {
-    "mtime": 1791414224.8416224,
-    "ast_hash": "d435ccfbcfebfdfe4e05b6e83f8750b5",
+    "mtime": 1791862755.7782588,
+    "ast_hash": "46009993cdc3f615e4228b24f5f1240b",
     "semantic_hash": ""
   },
   "include/app/viewmodel/PresetController.hpp": {
@@ -2025,8 +2025,8 @@
     "semantic_hash": ""
   },
   "src/app/core/AppController.cpp": {
-    "mtime": 1791412398.0183997,
-    "ast_hash": "d8eb93d257bdeeb7f6e684d4430be845",
+    "mtime": 1791848869.3620226,
+    "ast_hash": "efd72028df128aa11872c0f763ca194d",
     "semantic_hash": ""
   },
   "src/app/core/SettingsManager.cpp": {
@@ -2070,8 +2070,8 @@
     "semantic_hash": ""
   },
   "src/app/services/OptionsResetService.cpp": {
-    "mtime": 1790380737.0131035,
-    "ast_hash": "b59fb8dbe8c9c20867e3c764c1ef18ea",
+    "mtime": 1791848243.8261304,
+    "ast_hash": "4f344e2c35e70fd3ec5da139c7dee419",
     "semantic_hash": ""
   },
   "src/app/services/OptionsSyncService.cpp": {
@@ -2105,8 +2105,8 @@
     "semantic_hash": ""
   },
   "src/app/viewmodel/PlotController.cpp": {
-    "mtime": 1791488564.9285114,
-    "ast_hash": "3e68c31cbde7bd6356ce1ba6c4bf7750",
+    "mtime": 1791864736.2033596,
+    "ast_hash": "b5d13ff28f943da487cee096cb290eef",
     "semantic_hash": ""
   },
   "src/app/viewmodel/PresetController.cpp": {
@@ -2185,8 +2185,8 @@
     "semantic_hash": ""
   },
   "include/calculators/order/ChiralityCalculator.hpp": {
-    "mtime": 1790389589.776148,
-    "ast_hash": "93f512be5490390898665f6e169ef2e0",
+    "mtime": 1791864333.3868032,
+    "ast_hash": "345ce9ba6939ee22c87431c52b74fc9c",
     "semantic_hash": ""
   },
   "include/calculators/order/HyperuniformityCalculator.hpp": {
@@ -2200,13 +2200,13 @@
     "semantic_hash": ""
   },
   "include/calculators/order/SteinhardtCalculator.hpp": {
-    "mtime": 1791462399.8554142,
-    "ast_hash": "a35a5b9f78d46e944d2299b7c267e230",
+    "mtime": 1791864333.3855822,
+    "ast_hash": "a3650632169da5ca86be3159f4a19c77",
     "semantic_hash": ""
   },
   "include/calculators/scattering/StructureFactorCalculator.hpp": {
-    "mtime": 1791462399.8564665,
-    "ast_hash": "ce6e63869ecf19b5bf72290be4e2c7c7",
+    "mtime": 1791864134.7646708,
+    "ast_hash": "22e4e623b2b9e20eaa00d85400e38a02",
     "semantic_hash": ""
   },
   "include/calculators/scattering/TDOSCalculator.hpp": {
@@ -2215,8 +2215,8 @@
     "semantic_hash": ""
   },
   "include/calculators/scattering/XRDCalculator.hpp": {
-    "mtime": 1791461630.3800647,
-    "ast_hash": "c839a93633104a554bf537abc4e4f715",
+    "mtime": 1791864145.8074827,
+    "ast_hash": "2dad1e92aed5909ca64cb5a2d564888f",
     "semantic_hash": ""
   },
   "include/calculators/spatial/AngleCalculator.hpp": {
@@ -2225,13 +2225,13 @@
     "semantic_hash": ""
   },
   "include/calculators/spatial/CNACalculator.hpp": {
-    "mtime": 1791462399.8603835,
-    "ast_hash": "9e7e45425d4658940c749611659756b7",
+    "mtime": 1791864251.1214805,
+    "ast_hash": "380dcb46d3c5320060a5634aa97ab23d",
     "semantic_hash": ""
   },
   "include/calculators/spatial/CNCalculator.hpp": {
-    "mtime": 1791462399.8614507,
-    "ast_hash": "490dd391272da0d3ca8a75e06d8a3e67",
+    "mtime": 1791864238.246731,
+    "ast_hash": "81ed41df5417671f0f50cf69ab57b075",
     "semantic_hash": ""
   },
   "include/calculators/spatial/ClusterCalculator.hpp": {
@@ -2240,8 +2240,8 @@
     "semantic_hash": ""
   },
   "include/calculators/spatial/DADCalculator.hpp": {
-    "mtime": 1791462399.863554,
-    "ast_hash": "b845f0f05345ad188db7cf5751cd921b",
+    "mtime": 1791864226.928952,
+    "ast_hash": "c64899f08de5f5e670c97dc6931a3bd4",
     "semantic_hash": ""
   },
   "include/calculators/spatial/DihedralCalculator.hpp": {
@@ -2260,23 +2260,23 @@
     "semantic_hash": ""
   },
   "include/calculators/spatial/MotifFinder.hpp": {
-    "mtime": 1791220125.5057597,
-    "ast_hash": "30928ebbc02970b72b579c05f1ba85b9",
+    "mtime": 1791864185.9217565,
+    "ast_hash": "2b0612e3203ee9740d6cc75595ef5a29",
     "semantic_hash": ""
   },
   "include/calculators/spatial/PADCalculator.hpp": {
-    "mtime": 1791462399.8687186,
-    "ast_hash": "17b22fe816a67a2873b6499cffce4e05",
+    "mtime": 1791864214.205201,
+    "ast_hash": "423a0b5f9167e603c1213c1595dbce2f",
     "semantic_hash": ""
   },
   "include/calculators/spatial/RDCalculator.hpp": {
-    "mtime": 1791461557.3346405,
-    "ast_hash": "baf77053af269193d0af5c372e3fd0dc",
+    "mtime": 1791864266.0361907,
+    "ast_hash": "bd8570ecebb161c3d9aadc8caf2283c2",
     "semantic_hash": ""
   },
   "include/calculators/spatial/RDFCalculator.hpp": {
-    "mtime": 1791462399.8712842,
-    "ast_hash": "145db58bc6dd8876a2060b09738199a9",
+    "mtime": 1791864200.2434747,
+    "ast_hash": "ded68ffbe6d46d6a99f25006091ec04c",
     "semantic_hash": ""
   },
   "include/calculators/spatial/SDFCalculator.hpp": {
@@ -2285,18 +2285,18 @@
     "semantic_hash": ""
   },
   "include/calculators/spatial/VoronoiCalculator.hpp": {
-    "mtime": 1790389589.7756948,
-    "ast_hash": "5d947ab46696b67da744a8a2f790fab1",
+    "mtime": 1791864333.391355,
+    "ast_hash": "25cf0711aeaf62504b27ec1a3285af12",
     "semantic_hash": ""
   },
   "include/calculators/temporal/MSDCalculator.hpp": {
-    "mtime": 1791462399.8725533,
-    "ast_hash": "910fac81916e7d87c107631dea11cacc",
+    "mtime": 1791864307.3353925,
+    "ast_hash": "9e0b904168e2afa46c9007ff52fccc9f",
     "semantic_hash": ""
   },
   "include/calculators/temporal/VACFCalculator.hpp": {
-    "mtime": 1791462399.8739142,
-    "ast_hash": "90acfb2c97e2ebb9b184fece2ae4acfe",
+    "mtime": 1791864278.2359543,
+    "ast_hash": "4b07f4b832f1f92851745e9568c203a5",
     "semantic_hash": ""
   },
   "include/calculators/temporal/VDOSCalculator.hpp": {
@@ -2565,8 +2565,8 @@
     "semantic_hash": ""
   },
   "python/matcorr/__init__.py": {
-    "mtime": 1791841312.2162595,
-    "ast_hash": "caad07acfc4b07d0034e006a91499fb8",
+    "mtime": 1791861989.971959,
+    "ast_hash": "e8b2cf02b9754cf762db2b059156bc3b",
     "semantic_hash": ""
   },
   "python/matcorr/__main__.py": {
@@ -2627,6 +2627,81 @@
   "ui/material/ui/icons/zoom_out.svg": {
     "mtime": 1791840293.3751802,
     "ast_hash": "de60d772ea6ee8ea389e6639e67eda94",
+    "semantic_hash": ""
+  },
+  "include/app/viewmodel/PlotExportManager.hpp": {
+    "mtime": 1791864716.7217171,
+    "ast_hash": "3bad6edf2ddc4c23195c62e4ac81b251",
+    "semantic_hash": ""
+  },
+  "include/app/viewmodel/PlotMarkerManager.hpp": {
+    "mtime": 1791847984.1619194,
+    "ast_hash": "dc15765a0cf10badd498bcf9087746a3",
+    "semantic_hash": ""
+  },
+  "include/app/viewmodel/PlotRenderPipeline.hpp": {
+    "mtime": 1791847578.2053065,
+    "ast_hash": "8a16042a5646cdc50279f85cc94614fb",
+    "semantic_hash": ""
+  },
+  "include/app/viewmodel/PlotViewportNavigator.hpp": {
+    "mtime": 1791846468.2043598,
+    "ast_hash": "c732c51f077073822a06e4070e24a9b0",
+    "semantic_hash": ""
+  },
+  "src/app/viewmodel/PlotExportManager.cpp": {
+    "mtime": 1791864723.7165887,
+    "ast_hash": "d503880c21052eea1326cd6b408074c3",
+    "semantic_hash": ""
+  },
+  "src/app/viewmodel/PlotMarkerManager.cpp": {
+    "mtime": 1791846704.3660984,
+    "ast_hash": "0e3454993157d832f37e9544b09bea39",
+    "semantic_hash": ""
+  },
+  "src/app/viewmodel/PlotRenderPipeline.cpp": {
+    "mtime": 1791847578.2091057,
+    "ast_hash": "e0c79a0002d7f9756c0284be2b13c357",
+    "semantic_hash": ""
+  },
+  "src/app/viewmodel/PlotViewportNavigator.cpp": {
+    "mtime": 1791847738.3175156,
+    "ast_hash": "773086b2cadc694ffce26832828a9191",
+    "semantic_hash": ""
+  },
+  "src/plotters/PdfPlotter.cpp": {
+    "mtime": 1791865875.3289626,
+    "ast_hash": "4f4e1a10ebe25ad3783209933aac0fa3",
+    "semantic_hash": ""
+  },
+  "src/plotters/SvgComparisonRenderer.cpp": {
+    "mtime": 1791865949.1316566,
+    "ast_hash": "cc9c64b9b4b677e5b68b6205a002bd5c",
+    "semantic_hash": ""
+  },
+  "src/plotters/SvgHistogramRenderer.cpp": {
+    "mtime": 1791865826.173044,
+    "ast_hash": "7ac5b82e0f2b6f471a9be864156e526c",
+    "semantic_hash": ""
+  },
+  "tests/unit/app/PlotExportManagerTests.cpp": {
+    "mtime": 1791863734.1124225,
+    "ast_hash": "f24b3a2422c81a70ff570cd12f8736b5",
+    "semantic_hash": ""
+  },
+  "tests/unit/app/PlotMarkerManagerTests.cpp": {
+    "mtime": 1791847751.2493262,
+    "ast_hash": "20547d797f98c1532a828bea04d24abd",
+    "semantic_hash": ""
+  },
+  "tests/unit/app/PlotRenderPipelineTests.cpp": {
+    "mtime": 1791847968.8061438,
+    "ast_hash": "d76d3297ec0e511dbee69688abd98d96",
+    "semantic_hash": ""
+  },
+  "tests/unit/app/PlotViewportNavigatorTests.cpp": {
+    "mtime": 1791847822.425284,
+    "ast_hash": "5939b04d6ab2b7bf683294a474ea905c",
     "semantic_hash": ""
   }
 }
