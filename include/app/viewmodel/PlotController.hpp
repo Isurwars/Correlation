@@ -11,15 +11,14 @@
 #include "app/core/AppOptions.hpp"
 #include "app/formatters/PlotSeriesManager.hpp"
 #include "app/services/AnalysisDispatcher.hpp"
+#include "app/viewmodel/PlotExportManager.hpp"
 #include "app/viewmodel/PlotMarkerManager.hpp"
 #include "app/viewmodel/PlotRenderPipeline.hpp"
 #include "app/viewmodel/PlotViewportNavigator.hpp"
 #include "plotters/SvgPlotter.hpp"
 #include <slint.h>
 
-#include <atomic>
 #include <string>
-#include <thread>
 #include <vector>
 
 class AppWindow;
@@ -183,10 +182,7 @@ private:
   PlotViewportNavigator viewport_navigator_;
   PlotMarkerManager marker_manager_;
   PlotRenderPipeline pipeline_;
-
-  std::jthread dialog_thread_; ///< Worker thread for native save dialogs
-  std::atomic<bool> dialog_active_{
-      false}; ///< Concurrency guard preventing duplicate dialog launches
+  PlotExportManager export_manager_;
 
   std::vector<std::string> available_plot_keys_;
 
@@ -199,8 +195,6 @@ private:
   correlation::plotters::PlotConfig buildPlotConfigFromUI();
   void updateTableData(const correlation::analysis::Histogram *hist);
   void updateCurveToggleItems(const correlation::analysis::Histogram *hist);
-  void executeSavePlot(const std::string &filepath, const correlation::analysis::Histogram *hist,
-                       const std::string &name);
 };
 
 } // namespace correlation::app

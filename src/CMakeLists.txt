@@ -302,6 +302,7 @@ if(BUILD_GUI)
         app/core/AppController.cpp
         app/viewmodel/BondCutoffController.cpp
         app/viewmodel/PlotController.cpp
+        app/viewmodel/PlotExportManager.cpp
         app/viewmodel/PlotMarkerManager.cpp
         app/viewmodel/PlotRenderPipeline.cpp
         app/viewmodel/PlotViewportNavigator.cpp

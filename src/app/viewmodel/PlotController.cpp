@@ -8,12 +8,9 @@
 
 #include "app/viewmodel/PlotController.hpp"
 #include "AppWindow.h"
-#include "app/formatters/PlotExportService.hpp"
 #include "app/formatters/PlotTableFormatter.hpp"
-#include <nfd.h>
 
 #include <algorithm>
-#include <filesystem>
 #include <format>
 #include <map>
 #include <span>
@@ -170,11 +167,7 @@ PlotController::PlotController(::AppWindow &window, AnalysisDispatcher &dispatch
     : window_(window), dispatcher_(dispatcher), options_(options),
       pipeline_([this](const slint::Image &img) { window_.set_preview_plot(img); }) {}
 
-PlotController::~PlotController() {
-  if (dialog_thread_.joinable()) {
-    dialog_thread_.join();
-  }
-}
+PlotController::~PlotController() = default;
 
 void PlotController::handlePlotResized(PlotSize size) {
   if (std::abs(size.width - last_plot_width_) < 4.0F &&
@@ -407,120 +400,25 @@ void PlotController::updateCurveToggleItems(const correlation::analysis::Histogr
 }
 
 void PlotController::handleSavePlot() {
-  if (dialog_active_.exchange(true)) {
-    return;
-  }
-
   const int index = window_.get_selected_plot_index();
   if (index < 0 || std::cmp_greater_equal(index, available_plot_keys_.size())) {
-    dialog_active_.store(false);
     return;
   }
   const std::string name = available_plot_keys_[index];
   const correlation::analysis::Histogram *hist = dispatcher_.getHistogram(name);
   if (hist == nullptr) {
-    dialog_active_.store(false);
     return;
   }
 
-  std::string default_path = options_.output_file_base;
-  if (!default_path.empty()) {
-    default_path += "_" + name;
-  } else {
-    default_path = name;
-  }
+  const auto config = buildPlotConfigFromUI();
+  const auto pinned_runs = series_manager_.getPinnedRuns();
+  const std::vector<PinnedRun> pinned_vec(pinned_runs.begin(), pinned_runs.end());
 
-  const std::filesystem::path def_path(default_path);
-  std::string default_dir = def_path.parent_path().string();
-  std::string default_name = def_path.filename().string();
-
-  if (dialog_thread_.joinable()) {
-    dialog_thread_.join();
-  }
-
-  dialog_thread_ = std::jthread([this, default_dir = std::move(default_dir),
-                                 default_name = std::move(default_name), hist, name] {
-    std::array<nfdfilteritem_t, 2> filter_list = {
-        {
-            {
-                .name = "SVG Image",
-                .spec = "svg",
-            },
-            {
-                .name = "PDF Document",
-                .spec = "pdf",
-            },
-        },
-    };
-    const nfdfiltersize_t filter_count = filter_list.size();
-
-    nfdchar_t *out_path = nullptr;
-    const nfdresult_t result =
-        NFD_SaveDialogU8(&out_path, filter_list.data(), filter_count,
-                         default_dir.empty() ? nullptr : default_dir.c_str(),
-                         default_name.empty() ? nullptr : default_name.c_str());
-
-    if (result == NFD_OKAY) {
-      std::string filepath(out_path);
-      NFD_FreePathU8(out_path);
-      slint::invoke_from_event_loop([this, filepath = std::move(filepath), hist, name] {
-        dialog_active_.store(false);
-        executeSavePlot(filepath, hist, name);
-      });
-    } else if (result == NFD_CANCEL) {
-      slint::invoke_from_event_loop([this] {
-        dialog_active_.store(false);
-        window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
-      });
-    } else {
-      std::string error_msg = "Error: ";
-      error_msg += NFD_GetError();
-      slint::invoke_from_event_loop([this, error_msg = std::move(error_msg)] {
-        dialog_active_.store(false);
-        window_.set_analysis_status_text(slint::SharedString(error_msg));
-      });
-    }
-  });
-}
-
-void PlotController::executeSavePlot(const std::string &filepath,
-                                     const correlation::analysis::Histogram *hist,
-                                     const std::string &name) {
-  if (hist == nullptr) {
-    return;
-  }
-
-  correlation::plotters::PlotConfig config = buildPlotConfigFromUI();
-  config.use_native_text = true;
-
-  if (config.preset_size == correlation::plotters::PlotConfig::PresetSize::Default) {
-    config.width = 1200.0;
-    config.height = 900.0;
-  }
-
-  std::expected<void, std::string> result;
-  if (series_manager_.getPinnedRuns().empty()) {
-    result = PlotExportService::exportHistogram(filepath, *hist, config,
-                                                dispatcher_.getAshcroftWeights());
-  } else {
-    std::vector<correlation::plotters::LabeledHistogram> datasets;
-    datasets.reserve(series_manager_.getPinnedRunsCount() + 1);
-    datasets.push_back({.label = "Current", .hist = hist});
-    for (const auto &pinned_run : series_manager_.getPinnedRuns()) {
-      const auto hist_it = pinned_run.histograms.find(name);
-      if (hist_it != pinned_run.histograms.end()) {
-        datasets.push_back({.label = pinned_run.label, .hist = &hist_it->second});
-      }
-    }
-    const std::string comp_key = PlotExportService::getComparisonKey(hist);
-    result = PlotExportService::exportComparison(filepath, datasets, comp_key, config);
-  }
-
-  if (result.has_value()) {
-    window_.set_analysis_status_text(slint::SharedString(name + " plot saved successfully."));
-  } else {
-    window_.set_analysis_status_text(slint::SharedString("Failed to save plot: " + result.error()));
-  }
+  export_manager_.exportPlotAsync(options_.output_file_base, name, hist, config, pinned_vec,
+                                  dispatcher_.getAshcroftWeights(), [this](std::string status) {
+                                    window_.set_analysis_status_text(
+                                        slint::SharedString(std::move(status)));
+                                  });
 }
 
 void PlotController::handlePinRun() {

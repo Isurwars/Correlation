@@ -163,6 +163,7 @@ if(BUILD_GUI)
         unit/app/BondCutoffControllerTests.cpp
         unit/app/OptionsResetServiceTests.cpp
         unit/app/OptionsSyncServiceTests.cpp
+        unit/app/PlotExportManagerTests.cpp
         unit/app/PlotMarkerManagerTests.cpp
         unit/app/PlotRenderPipelineTests.cpp
         unit/app/PlotSeriesManagerTests.cpp
