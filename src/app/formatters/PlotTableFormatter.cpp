@@ -45,12 +45,12 @@ buildRows(const correlation::analysis::Histogram *hist,
   const size_t num_bins = hist->bins.size();
   for (size_t i = 0; i < num_bins; ++i) {
     TableRow row;
-    auto row_values = std::make_shared<slint::VectorModel<slint::SharedString>>();
+    const auto row_values = std::make_shared<slint::VectorModel<slint::SharedString>>();
     row_values->push_back(slint::SharedString(std::format("{:.4f}", hist->bins[i])));
 
     for (const auto &key : keys) {
       real_t val = 0.0;
-      auto iter = partials.find(key);
+      const auto iter = partials.find(key);
       if (iter != partials.end() && i < iter->second.size()) {
         val = iter->second[i];
       }
