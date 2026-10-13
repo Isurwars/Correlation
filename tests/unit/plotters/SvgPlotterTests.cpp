@@ -43,6 +43,7 @@ TEST(SvgPlotterTests, RendersValidHistogramCorrectly) {
   hist.bins = {1.0, 2.0, 3.0, 4.0, 5.0};
   hist.partials["Total"] = {0.1, 0.5, 1.2, 0.8, 0.2};
   hist.partials["Si-O"] = {0.0, 0.3, 0.9, 0.4, 0.1};
+  hist.partials["O-O"] = {0.1, 0.4, 0.8, 0.5, 0.1};
 
   // Act
   PlotConfig config;
@@ -138,6 +139,7 @@ TEST(SvgPlotterTests, RendersWithHover2DNearestSnapping) {
   hist.bins = {1.0, 2.0, 3.0};
   hist.partials["Total"] = {10.0, 10.0, 10.0};
   hist.partials["Si-O"] = {1.0, 1.0, 1.0};
+  hist.partials["O-O"] = {5.0, 5.0, 5.0};
 
   PlotConfig config;
   config.use_native_text = true;
@@ -183,6 +185,7 @@ TEST(SvgPlotterTests, RendersContinuousColormapsAndCustomColors) {
   hist.bins = {1.0, 2.0, 3.0};
   hist.partials["Total"] = {1.0, 2.0, 1.5};
   hist.partials["O-O"] = {0.5, 0.8, 1.0};
+  hist.partials["Si-O"] = {0.2, 0.4, 0.6};
 
   // Test Magma continuous palette
   PlotConfig magma_config;
@@ -287,6 +290,25 @@ TEST(SvgPlotterTests, ScreenToDataGeometryTransformsAccurately) {
   auto [top_x, top_y] = detail::screenToData(960.0, 50.0, 1000.0, 600.0, config, x_scale, y_scale);
   EXPECT_NEAR(top_x, 10.0, 1e-4);
   EXPECT_NEAR(top_y, 5.0, 1e-4);
+}
+
+TEST(SvgPlotterTests, SinglePartialRendersOnlyTotal) {
+  Histogram hist;
+  hist.title = "Monoatomic pure silicon";
+  hist.bins = {1.0, 2.0, 3.0};
+  hist.partials["Total"] = {0.1, 0.5, 1.2};
+  hist.partials["Si-Si"] = {0.1, 0.5, 1.2};
+
+  PlotConfig config;
+  config.theme = PlotConfig::Theme::Light;
+  config.use_native_text = true;
+  std::string svg = renderHistogramAsSvg(hist, config);
+
+  EXPECT_FALSE(svg.empty());
+  // Total is drawn (neutral color in light mode)
+  EXPECT_NE(svg.find("stroke=\"#000000\""), std::string::npos);
+  // Redundant single partial is omitted from plot (no OkabeIto first-partial orange #E69F00)
+  EXPECT_EQ(svg.find("stroke=\"#E69F00\""), std::string::npos);
 }
 
 } // namespace correlation::testing
