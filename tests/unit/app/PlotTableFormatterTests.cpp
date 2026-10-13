@@ -110,5 +110,24 @@ TEST(PlotTableFormatterTests, SmoothedPartialsTakesPrecedence) {
   EXPECT_EQ(requireValue(row.values->row_data(1)), slint::SharedString("20"));
 }
 
+TEST(PlotTableFormatterTests, SinglePartialReportsOnlyTotal) {
+  correlation::analysis::Histogram hist;
+  hist.x_label = "r";
+  hist.x_unit = "Å";
+  hist.bins = {1.0, 2.0};
+  hist.partials["Total"] = {1.0, 2.0};
+  hist.partials["Si-Si"] = {1.0, 2.0};
+
+  const auto keys = PlotTableFormatter::extractSortedPartialKeys(&hist);
+  ASSERT_EQ(keys.size(), 1);
+  EXPECT_EQ(keys[0], "Total");
+
+  const auto model = PlotTableFormatter::formatTable(&hist);
+  ASSERT_NE(model.headers, nullptr);
+  EXPECT_EQ(model.headers->row_count(), 2);
+  EXPECT_EQ(requireValue(model.headers->row_data(0)), slint::SharedString("r (Å)"));
+  EXPECT_EQ(requireValue(model.headers->row_data(1)), slint::SharedString("Total"));
+}
+
 } // namespace
 } // namespace correlation::app

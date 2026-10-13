@@ -133,6 +133,16 @@ struct SvgHistogramRenderer {
       partials.emplace_back("Total", total_it->second);
     }
 
+    std::size_t non_total_count = 0;
+    for (const auto &[key, value] : raw_partials) {
+      if (key != "Total" && !key.starts_with("Frequency_")) {
+        ++non_total_count;
+      }
+    }
+    if (total_it != raw_partials.end() && non_total_count == 1) {
+      return;
+    }
+
     std::vector<std::pair<std::string, real_t>> candidates;
     for (const auto &[key, value] : raw_partials) {
       if (key == "Total" || key.starts_with("Frequency_")) {

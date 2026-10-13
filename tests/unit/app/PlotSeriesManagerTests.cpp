@@ -47,15 +47,17 @@ TEST(PlotSeriesManagerTests, ToggleCurveVisibilityModifiesState) {
   correlation::analysis::Histogram hist;
   hist.partials["Total"] = {1.0, 2.0};
   hist.partials["Si-O"] = {0.5, 1.0};
+  hist.partials["O-O"] = {0.2, 0.4};
 
   const auto items = manager.generateToggleItems(&hist, config);
   ASSERT_NE(items, nullptr);
-  ASSERT_EQ(items->row_count(), 2);
-  EXPECT_EQ(manager.getCurrentToggleKeys().size(), 2);
+  ASSERT_EQ(items->row_count(), 3);
+  EXPECT_EQ(manager.getCurrentToggleKeys().size(), 3);
 
   // Default is visible
   EXPECT_TRUE(manager.isCurveVisible("Total"));
   EXPECT_TRUE(manager.isCurveVisible("Si-O"));
+  EXPECT_TRUE(manager.isCurveVisible("O-O"));
 
   // Toggle Total (id 0) to false
   manager.setCurveVisible(0, false);
@@ -66,11 +68,28 @@ TEST(PlotSeriesManagerTests, ToggleCurveVisibilityModifiesState) {
   manager.setAllCurvesVisible(false);
   EXPECT_FALSE(manager.isCurveVisible("Total"));
   EXPECT_FALSE(manager.isCurveVisible("Si-O"));
+  EXPECT_FALSE(manager.isCurveVisible("O-O"));
 
   // Toggle all curves to true
   manager.setAllCurvesVisible(true);
   EXPECT_TRUE(manager.isCurveVisible("Total"));
   EXPECT_TRUE(manager.isCurveVisible("Si-O"));
+  EXPECT_TRUE(manager.isCurveVisible("O-O"));
+}
+
+TEST(PlotSeriesManagerTests, SinglePartialOmitsRedundantCurveAndReportsOnlyTotal) {
+  PlotSeriesManager manager;
+  const correlation::plotters::PlotConfig config;
+
+  correlation::analysis::Histogram hist;
+  hist.partials["Total"] = {1.0, 2.0};
+  hist.partials["Si-Si"] = {1.0, 2.0};
+
+  const auto items = manager.generateToggleItems(&hist, config);
+  ASSERT_NE(items, nullptr);
+  ASSERT_EQ(items->row_count(), 1);
+  EXPECT_EQ(manager.getCurrentToggleKeys().size(), 1);
+  EXPECT_EQ(std::string(requireValue(items->row_data(0)).label.data()), "Total");
 }
 
 TEST(PlotSeriesManagerTests, CustomColorAssignment) {
@@ -189,10 +208,11 @@ TEST(PlotSeriesManagerTests, ToggleItemsMatchSvgOrderAndColors) {
   hist.bins = {1.0, 2.0, 3.0, 4.0, 5.0};
   hist.partials["Total"] = {0.1, 0.5, 1.2, 0.8, 0.2};
   hist.partials["Si-O"] = {0.0, 0.3, 0.9, 0.4, 0.1};
+  hist.partials["O-O"] = {0.0, 0.2, 0.3, 0.4, 0.1};
 
   const auto items = manager.generateToggleItems(&hist, config);
   ASSERT_NE(items, nullptr);
-  ASSERT_EQ(items->row_count(), 2);
+  ASSERT_EQ(items->row_count(), 3);
 
   const auto item0 = requireValue(items->row_data(0));
   EXPECT_EQ(std::string(item0.label.data()), "Total");

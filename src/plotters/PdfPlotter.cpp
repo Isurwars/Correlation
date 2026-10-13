@@ -214,6 +214,19 @@ struct PdfHistogramRenderer {
     max_y = static_cast<real_t>(0.0);
 
     partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
+    if (partials.contains("Total")) {
+      std::size_t non_total_count = 0;
+      for (const auto &[key, vals] : partials) {
+        if (key != "Total" && !key.starts_with("Frequency_")) {
+          ++non_total_count;
+        }
+      }
+      if (non_total_count == 1) {
+        std::erase_if(partials, [](const auto &item) {
+          return item.first != "Total" && !item.first.starts_with("Frequency_");
+        });
+      }
+    }
 
     for (const auto &[key, vals] : partials) {
       for (real_t const val : vals) {

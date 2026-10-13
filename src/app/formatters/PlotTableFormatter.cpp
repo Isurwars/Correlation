@@ -75,9 +75,12 @@ PlotTableFormatter::extractSortedPartialKeys(const correlation::analysis::Histog
 
   std::vector<std::string> keys;
   for (const auto &pair : partials) {
-    if (pair.first != "Total") {
+    if (pair.first != "Total" && !pair.first.starts_with("Frequency_")) {
       keys.push_back(pair.first);
     }
+  }
+  if (partials.contains("Total") && keys.size() == 1) {
+    return {"Total"};
   }
   std::ranges::sort(keys);
   if (partials.contains("Total")) {

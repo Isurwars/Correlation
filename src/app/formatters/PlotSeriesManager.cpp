@@ -57,6 +57,9 @@ rankPartials(const std::map<std::string, std::vector<real_t>> &partials,
     }
     candidates.push_back({.key = key, .score = computePartialScore(key, values, weights)});
   }
+  if (partials.contains("Total") && candidates.size() == 1) {
+    return {};
+  }
   std::ranges::sort(candidates, [](const auto &lhs, const auto &rhs) {
     if (std::abs(lhs.score - rhs.score) > static_cast<real_t>(1e-12)) {
       return lhs.score > rhs.score;
