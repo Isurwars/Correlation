@@ -800,8 +800,8 @@
     "semantic_hash": "d4bdccb3d0944d2f42d20a4d4e2a031b"
   },
   "tests/unit/plotters/SvgPlotterTests.cpp": {
-    "mtime": 1791488419.752698,
-    "ast_hash": "50adc24e40c0bb171d231a77a6259b9b",
+    "mtime": 1791924752.5697117,
+    "ast_hash": "c105388d30d4ddcec0a807f9fd8ddc1e",
     "semantic_hash": ""
   },
   "tests/unit/readers/ArcReaderTests.cpp": {
@@ -1910,13 +1910,13 @@
     "semantic_hash": ""
   },
   "tests/unit/app/PlotSeriesManagerTests.cpp": {
-    "mtime": 1791488670.4896903,
-    "ast_hash": "b412a18d771972810a0836c768a81c50",
+    "mtime": 1791924706.8084335,
+    "ast_hash": "3180d88afbc273d3c423632216d54b9e",
     "semantic_hash": ""
   },
   "tests/unit/app/PlotTableFormatterTests.cpp": {
-    "mtime": 1790380719.7972994,
-    "ast_hash": "2bba9d20bdf336f949fd0fa78ecd2d54",
+    "mtime": 1791924721.1312072,
+    "ast_hash": "6addbac027b76749fe55648b45f35f54",
     "semantic_hash": ""
   },
   "tests/unit/app/BondCutoffControllerTests.cpp": {
@@ -2045,13 +2045,13 @@
     "semantic_hash": ""
   },
   "src/app/formatters/PlotSeriesManager.cpp": {
-    "mtime": 1791488712.6909745,
-    "ast_hash": "806448f6facdb8ab08d903ebe0df28a4",
+    "mtime": 1791924632.0156188,
+    "ast_hash": "8ac05acf8515849514be52a4c8df5b8c",
     "semantic_hash": ""
   },
   "src/app/formatters/PlotTableFormatter.cpp": {
-    "mtime": 1790380719.7815938,
-    "ast_hash": "9f9fe0419dac5465eb1bbc0aee949f31",
+    "mtime": 1791924857.473066,
+    "ast_hash": "f721b0ba7bb3d5c8501049488735b2eb",
     "semantic_hash": ""
   },
   "src/app/services/AnalysisRunner.cpp": {
@@ -2670,8 +2670,8 @@
     "semantic_hash": ""
   },
   "src/plotters/PdfPlotter.cpp": {
-    "mtime": 1791865875.3289626,
-    "ast_hash": "4f4e1a10ebe25ad3783209933aac0fa3",
+    "mtime": 1791924672.7109728,
+    "ast_hash": "e56c79ca32f85915d082dcfef9021064",
     "semantic_hash": ""
   },
   "src/plotters/SvgComparisonRenderer.cpp": {
@@ -2680,8 +2680,8 @@
     "semantic_hash": ""
   },
   "src/plotters/SvgHistogramRenderer.cpp": {
-    "mtime": 1791865826.173044,
-    "ast_hash": "7ac5b82e0f2b6f471a9be864156e526c",
+    "mtime": 1791924659.5461814,
+    "ast_hash": "cc79ae3b87e6a67c5dcc4489bb074832",
     "semantic_hash": ""
   },
   "tests/unit/app/PlotExportManagerTests.cpp": {
@@ -2710,8 +2710,8 @@
     "semantic_hash": ""
   },
   "include/render3d/ElementColors.hpp": {
-    "mtime": 1791923497.115547,
-    "ast_hash": "c06acd86876f90503115630a46ecbea6",
+    "mtime": 1791924083.6278431,
+    "ast_hash": "a0e0d5b2f224edc19c8a889362583f99",
     "semantic_hash": ""
   },
   "include/render3d/Math3D.hpp": {
