@@ -44,7 +44,7 @@ public:
    * @return A histogram of CNA indices.
    * @throws std::logic_error If @p neighbors is nullptr.
    */
-  static correlation::analysis::Histogram
+  [[nodiscard]] static correlation::analysis::Histogram
   calculate(const correlation::core::Cell &cell,
             const correlation::analysis::StructureAnalyzer *neighbors);
 };

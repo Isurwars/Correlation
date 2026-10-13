@@ -55,7 +55,7 @@ public:
    * @param[in] end_frame Index of the last frame to include.
    * @return A map of histograms (VACF per element).
    */
-  static std::map<std::string, correlation::analysis::Histogram>
+  [[nodiscard]] static std::map<std::string, correlation::analysis::Histogram>
   calculate(const correlation::core::Trajectory &traj,
             correlation::analysis::MaxFrames max_correlation_frames,
             correlation::analysis::StartFrame start_frame,

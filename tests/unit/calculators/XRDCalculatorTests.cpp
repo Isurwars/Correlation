@@ -62,7 +62,7 @@ TEST_F(XRDCalculatorTests, CalculateXRD) {
       .bin_width = 0.5,
   });
 
-  EXPECT_NO_THROW(dists.getHistogram("XRD"));
+  EXPECT_NO_THROW((void)dists.getHistogram("XRD"));
   const auto &hist = dists.getHistogram("XRD");
   EXPECT_FALSE(hist.bins.empty());
 
@@ -129,7 +129,7 @@ TEST_F(XRDCalculatorTests, CalculateXRD_IntensityIsZeroAtThetaZero) {
       .bin_width = 0.5,
   });
 
-  EXPECT_NO_THROW(dists.getHistogram("XRD"));
+  EXPECT_NO_THROW((void)dists.getHistogram("XRD"));
   const auto &hist = dists.getHistogram("XRD");
   const auto &intensities = hist.partials.at("Total");
 
@@ -170,7 +170,7 @@ TEST_F(XRDCalculatorTests, CalculateXRDCubicCell) {
       .bin_width = 0.1,
   });
 
-  EXPECT_NO_THROW(dists.getHistogram("XRD"));
+  EXPECT_NO_THROW((void)dists.getHistogram("XRD"));
   const auto &hist = dists.getHistogram("XRD");
   EXPECT_FALSE(hist.bins.empty());
 

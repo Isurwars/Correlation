@@ -48,7 +48,7 @@ public:
    * @throws std::invalid_argument If @p bin_width is less than or equal to zero.
    * @throws std::logic_error If @p neighbors is nullptr.
    */
-  static std::map<std::string, correlation::analysis::Histogram>
+  [[nodiscard]] static std::map<std::string, correlation::analysis::Histogram>
   calculate(const correlation::core::Cell &cell,
             const correlation::analysis::StructureAnalyzer *neighbors, real_t bin_width);
 };

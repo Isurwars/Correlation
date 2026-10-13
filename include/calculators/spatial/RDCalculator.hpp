@@ -63,7 +63,7 @@ public:
    * @return A histogram representing the ring size distribution.
    * @throws std::invalid_argument If @p max_ring_size is less than 3.
    */
-  static correlation::analysis::Histogram
+  [[nodiscard]] static correlation::analysis::Histogram
   calculate(const correlation::core::NeighborGraph &graph, size_t max_ring_size,
             correlation::analysis::RingType ring_type = correlation::analysis::RingType::King);
 
@@ -77,9 +77,9 @@ public:
    * @return A histogram containing normalized fractions, raw counts, and per-former statistics.
    * @throws std::invalid_argument If max_ring_size is less than 3.
    */
-  static correlation::analysis::Histogram calculate(const correlation::core::NeighborGraph &graph,
-                                                    const correlation::core::Cell &cell,
-                                                    const RDParams &params);
+  [[nodiscard]] static correlation::analysis::Histogram
+  calculate(const correlation::core::NeighborGraph &graph, const correlation::core::Cell &cell,
+            const RDParams &params);
 };
 
 } // namespace correlation::calculators

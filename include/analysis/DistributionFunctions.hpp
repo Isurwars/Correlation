@@ -221,7 +221,7 @@ public:
    * @brief Access the underlying simulation cell.
    * @return Constant reference to the Cell object.
    */
-  const correlation::core::Cell &cell() const { return cell_; }
+  [[nodiscard]] const correlation::core::Cell &cell() const { return cell_; }
 
   /**
    * @brief Access a specific calculated histogram by name.
@@ -229,19 +229,23 @@ public:
    * @return A const reference to the Histogram data.
    * @throws std::out_of_range if the name is not found.
    */
-  const Histogram &getHistogram(const std::string &name) const;
+  [[nodiscard]] const Histogram &getHistogram(const std::string &name) const;
 
   /**
    * @brief Access all calculated histograms.
    * @return A map of histogram names to Histogram objects.
    */
-  const std::map<std::string, Histogram> &getAllHistograms() const { return histograms_; }
+  [[nodiscard]] const std::map<std::string, Histogram> &getAllHistograms() const {
+    return histograms_;
+  }
 
   /**
    * @brief Gets the Ashcroft-Langreth weights used for S(Q) partials.
    * @return A map of element pair strings to weight values.
    */
-  const std::map<std::string, real_t> &getAshcroftWeights() const { return ashcroft_weights_; }
+  [[nodiscard]] const std::map<std::string, real_t> &getAshcroftWeights() const {
+    return ashcroft_weights_;
+  }
 
   /**
    * @brief Manually add a histogram to the collection.
@@ -254,13 +258,13 @@ public:
    * @brief Returns the structure analyzer providing neighbor information.
    * @return Pointer to the current StructureAnalyzer.
    */
-  const StructureAnalyzer *neighbors() const;
+  [[nodiscard]] const StructureAnalyzer *neighbors() const;
 
   /**
    * @brief Gets a list of names for all currently available histograms.
    * @return Vector of histogram name strings.
    */
-  std::vector<std::string> getAvailableHistograms() const;
+  [[nodiscard]] std::vector<std::string> getAvailableHistograms() const;
 
   /**
    * @brief Gets the trajectory-wide dynamic properties.
@@ -462,7 +466,7 @@ public:
    * @param progress_callback Optional callback to report completion progress.
    * @return A unique_ptr to the newly created and populated DistributionFunctions object.
    */
-  static std::unique_ptr<DistributionFunctions>
+  [[nodiscard]] static std::unique_ptr<DistributionFunctions>
   computeMean(correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
               size_t start_frame, const AnalysisSettings &settings,
               std::function<void(float, const std::string &)> progress_callback = nullptr);

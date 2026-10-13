@@ -95,7 +95,8 @@ public:
    * @param angles Structure containing the theta and phi angles.
    * @return The complex value of the spherical harmonic.
    */
-  static std::complex<real_t> sphericalHarmonic(int degree, int order, SphericalAngles angles);
+  [[nodiscard]] static std::complex<real_t> sphericalHarmonic(int degree, int order,
+                                                              SphericalAngles angles);
 
   /**
    * @struct Wigner3jParams
@@ -116,7 +117,7 @@ public:
    * @param params Wigner 3-j symbol quantum numbers.
    * @return The scalar value of the 3-j symbol.
    */
-  static real_t wigner3j(Wigner3jParams params);
+  [[nodiscard]] static real_t wigner3j(Wigner3jParams params);
 };
 
 } // namespace correlation::calculators

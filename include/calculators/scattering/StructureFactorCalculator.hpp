@@ -34,8 +34,8 @@ public:
            "over reciprocal lattice vectors (for periodic systems).";
   }
 
-  bool isFrameCalculator() const override { return true; }
-  bool isTrajectoryCalculator() const override { return false; }
+  [[nodiscard]] bool isFrameCalculator() const override { return true; }
+  [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
   /**
    * @brief Computes static structure factor S(Q) for a single frame.

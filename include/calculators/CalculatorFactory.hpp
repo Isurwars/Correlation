@@ -12,7 +12,6 @@
 
 #include <iostream>
 #include <memory>
-#include <string>
 #include <string_view>
 #include <vector>
 
@@ -31,7 +30,7 @@ public:
    * @param[in] calculator Unique pointer to the calculator instance.
    * @return true if registration was successful.
    */
-  bool registerCalculator(std::unique_ptr<BaseCalculator> calculator);
+  [[nodiscard]] bool registerCalculator(std::unique_ptr<BaseCalculator> calculator);
 
   /**
    * @brief Exception-safe template helper for static auto-registration.

@@ -119,7 +119,7 @@ TEST_F(RDFCalculatorTests, MoveConstructorWorks) {
 
   DistributionFunctions const df_dest(std::move(df_source));
 
-  EXPECT_NO_THROW(df_dest.getHistogram("g_r"));
+  EXPECT_NO_THROW((void)df_dest.getHistogram("g_r"));
   EXPECT_EQ(df_dest.cell().atomCount(), 2);
 }
 
@@ -134,7 +134,7 @@ TEST_F(RDFCalculatorTests, MoveAssignmentWorks) {
   DistributionFunctions df_dest(cell_);
   df_dest = std::move(df_source);
 
-  EXPECT_NO_THROW(df_dest.getHistogram("g_r"));
+  EXPECT_NO_THROW((void)df_dest.getHistogram("g_r"));
   EXPECT_EQ(df_dest.cell().atomCount(), 2);
 }
 
@@ -159,8 +159,8 @@ TEST_F(RDFCalculatorTests, AccessorsWork) {
   EXPECT_NE(std::ranges::find(hist_names, "g_r"), hist_names.end());
 
   // getHistogram()
-  EXPECT_NO_THROW(dists.getHistogram("g_r"));
-  EXPECT_THROW(dists.getHistogram("NonExistent"), std::out_of_range);
+  EXPECT_NO_THROW((void)dists.getHistogram("g_r"));
+  EXPECT_THROW((void)dists.getHistogram("NonExistent"), std::out_of_range);
 
   // getAllHistograms()
   const auto &all_hists = dists.getAllHistograms();
@@ -281,7 +281,7 @@ TEST_F(RDFCalculatorTests, SetStructureAnalyzer) {
       .r_max = 5.0,
       .r_bin_width = 0.1,
   });
-  EXPECT_NO_THROW(dists.getHistogram("g_r"));
+  EXPECT_NO_THROW((void)dists.getHistogram("g_r"));
   EXPECT_FALSE(dists.getHistogram("g_r").partials.empty());
 }
 
@@ -341,7 +341,7 @@ TEST_F(RDFCalculatorTests, ComputeMean) {
 
   auto df_mean = DistributionFunctions::computeMean(trajectory_, analyzer, 0, settings);
   ASSERT_TRUE(df_mean != nullptr);
-  EXPECT_NO_THROW(df_mean->getHistogram("g_r"));
+  EXPECT_NO_THROW((void)df_mean->getHistogram("g_r"));
 }
 
 TEST_F(RDFCalculatorTests, HandlesMissingPartialInAdd) {

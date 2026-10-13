@@ -106,7 +106,7 @@ TEST_F(StructureFactorCalculatorTests, DimerProducesValidSQ) {
 
   calc.calculateFrame(dists, settings);
 
-  EXPECT_NO_THROW(dists.getHistogram("S_q"));
+  EXPECT_NO_THROW((void)dists.getHistogram("S_q"));
   const auto &hist = dists.getHistogram("S_q");
   EXPECT_FALSE(hist.bins.empty());
   EXPECT_TRUE(hist.partials.count("Total"));

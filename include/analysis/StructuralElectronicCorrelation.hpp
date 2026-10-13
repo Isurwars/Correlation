@@ -55,9 +55,10 @@ public:
    * @param[in] cancel_flag Optional atomic flag to abort computation prematurely.
    * @return Generated MotifProjectedTDOS structure.
    */
-  static MotifProjectedTDOS correlateCNA(DistributionFunctions &dists, const core::Trajectory &traj,
-                                         const calculators::TDOSParams &params,
-                                         const std::atomic<bool> *cancel_flag = nullptr);
+  [[nodiscard]] static MotifProjectedTDOS
+  correlateCNA(DistributionFunctions &dists, const core::Trajectory &traj,
+               const calculators::TDOSParams &params,
+               const std::atomic<bool> *cancel_flag = nullptr);
 
   /**
    * @brief Correlates trajectory LDoS with Steinhardt bond-orientational order parameters.
@@ -68,10 +69,10 @@ public:
    * @param[in] cancel_flag Optional atomic flag to abort computation prematurely.
    * @return Generated MotifProjectedTDOS structure.
    */
-  static MotifProjectedTDOS correlateSteinhardt(DistributionFunctions &dists,
-                                                const core::Trajectory &traj,
-                                                const calculators::TDOSParams &params,
-                                                const std::atomic<bool> *cancel_flag = nullptr);
+  [[nodiscard]] static MotifProjectedTDOS
+  correlateSteinhardt(DistributionFunctions &dists, const core::Trajectory &traj,
+                      const calculators::TDOSParams &params,
+                      const std::atomic<bool> *cancel_flag = nullptr);
 };
 
 } // namespace correlation::analysis

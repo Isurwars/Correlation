@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "calculators/BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/BaseCalculator.hpp"
 #include "core/Cell.hpp"
 #include <map>
 #include <string>
@@ -82,14 +82,14 @@ private:
   };
 
   /// Build the Voronoi tessellation and extract per-atom cell data.
-  static CellData computeVoronoiCells(const correlation::core::Cell &cell);
+  [[nodiscard]] static CellData computeVoronoiCells(const correlation::core::Cell &cell);
 
   /// Build the signature frequency map and return sorted signatures + description.
-  static std::pair<std::vector<std::pair<std::string, int>>, std::string>
+  [[nodiscard]] static std::pair<std::vector<std::pair<std::string, int>>, std::string>
   buildSignatureMap(const std::vector<std::string> &signatures);
 
   /// Create an initialized histogram with bins and empty partials.
-  static correlation::analysis::Histogram
+  [[nodiscard]] static correlation::analysis::Histogram
   makeHistogram(const std::string &title, const std::string &x_label, const std::string &y_label,
                 const std::string &x_unit, const std::string &y_unit,
                 const std::string &description, const std::string &file_suffix,

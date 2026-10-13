@@ -31,7 +31,7 @@ TEST_F(VACFCalculatorTests, CalculateVACF_and_VDOS) {
   DistributionFunctions dists(cell);
 
   dists.calculateVACF(trajectory, correlation::analysis::MaxFrames{1});
-  EXPECT_NO_THROW(dists.getHistogram("VACF"));
+  EXPECT_NO_THROW((void)dists.getHistogram("VACF"));
   const auto &vacf = dists.getHistogram("VACF").partials.at("Total");
 
   correlation::core::Trajectory tMoving;
@@ -60,7 +60,7 @@ TEST_F(VACFCalculatorTests, CalculateVACF_and_VDOS) {
 
   // VDOS
   dists.calculateVDOS();
-  EXPECT_NO_THROW(dists.getHistogram("VDOS"));
+  EXPECT_NO_THROW((void)dists.getHistogram("VDOS"));
   const auto &vdos_hist = dists.getHistogram("VDOS");
   EXPECT_TRUE(vdos_hist.partials.count("Frequency_cm_1"));
 }
@@ -86,7 +86,7 @@ TEST_F(VACFCalculatorTests, CalculateVACF_WithFrameRange) {
   dists.calculateVACF(tRange, correlation::analysis::MaxFrames{3},
                       correlation::analysis::StartFrame{2}, correlation::analysis::EndFrame{7});
 
-  EXPECT_NO_THROW(dists.getHistogram("VACF"));
+  EXPECT_NO_THROW((void)dists.getHistogram("VACF"));
   const auto &vacf = dists.getHistogram("VACF").partials.at("Total");
 
   // Since we requested max correlation frames = 3, size should be 4 (includes
@@ -133,7 +133,7 @@ TEST_F(VACFCalculatorTests, CalculateVACF_GasLike) {
   DistributionFunctions dists(base_cell);
 
   dists.calculateVACF(tGas, correlation::analysis::MaxFrames{4}); // Calculate up to 4 lags
-  EXPECT_NO_THROW(dists.getHistogram("Normalized VACF"));
+  EXPECT_NO_THROW((void)dists.getHistogram("Normalized VACF"));
 
   const auto &vacf = dists.getHistogram("Normalized VACF").partials.at("Total");
 

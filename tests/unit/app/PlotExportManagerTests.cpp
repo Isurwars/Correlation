@@ -12,7 +12,6 @@
 #include <gtest/gtest.h>
 
 #include <filesystem>
-#include <fstream>
 
 namespace correlation::app {
 namespace {

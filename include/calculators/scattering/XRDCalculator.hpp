@@ -112,7 +112,7 @@ public:
    * @param[in] q_value Magnitude of scattering vector Q in 1/Angstrom.
    * @return Atomic form factor value.
    */
-  static real_t getAtomicFormFactor(const std::string &symbol, real_t q_value);
+  [[nodiscard]] static real_t getAtomicFormFactor(const std::string &symbol, real_t q_value);
 
 private:
   static std::map<std::string, real_t> calculateConcentrations(const correlation::core::Cell &cell);

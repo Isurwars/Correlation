@@ -40,7 +40,7 @@ TEST(ClusterCalculatorTests, BasicClustering) {
   calc.calculateFrame(dists, settings);
 
   const auto &hist = dists.getHistogram("cluster_size");
-  EXPECT_NO_THROW(dists.getHistogram("Cluster Size")); // Verify backward compatibility alias
+  EXPECT_NO_THROW((void)dists.getHistogram("Cluster Size"));
   // Max size is 3, so bins should be [1, 2, 3]
   ASSERT_EQ(hist.bins.size(), 3);
   EXPECT_DOUBLE_EQ(hist.bins[0], 1.0);
@@ -78,7 +78,7 @@ TEST(ClusterCalculatorTests, SingleGiantCluster) {
   calc.calculateFrame(dists, settings);
 
   const auto &hist = dists.getHistogram("cluster_size");
-  EXPECT_NO_THROW(dists.getHistogram("Cluster Size"));
+  EXPECT_NO_THROW((void)dists.getHistogram("Cluster Size"));
   EXPECT_EQ(hist.bins.size(), 10);
   const auto &total = hist.partials.at("Total");
 

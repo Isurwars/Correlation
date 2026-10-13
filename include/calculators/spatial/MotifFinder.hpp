@@ -38,8 +38,8 @@ public:
    * @param[in] max_size The maximum ring size (number of atoms) to search for.
    * @return A map where the key is the ring size and the value is the total count.
    */
-  static std::map<int, size_t> findRings(const correlation::core::NeighborGraph &graph,
-                                         size_t max_size = 6);
+  [[nodiscard]] static std::map<int, size_t>
+  findRings(const correlation::core::NeighborGraph &graph, size_t max_size = 6);
 
   /**
    * @brief Finds and counts all Franzblau shortest-path primitive rings up to a maximum size.
@@ -48,8 +48,8 @@ public:
    * @param[in] max_size The maximum ring size (number of atoms) to search for.
    * @return A map where the key is the ring size and the value is the total count.
    */
-  static std::map<int, size_t> findFranzblauRings(const correlation::core::NeighborGraph &graph,
-                                                  size_t max_size = 6);
+  [[nodiscard]] static std::map<int, size_t>
+  findFranzblauRings(const correlation::core::NeighborGraph &graph, size_t max_size = 6);
 
   /**
    * @brief Finds and counts all rings according to the specified ring criterion.
@@ -59,8 +59,8 @@ public:
    * @param[in] ring_type The ring criterion (King or Franzblau).
    * @return A map where the key is the ring size and the value is the total count.
    */
-  static std::map<int, size_t> findRings(const correlation::core::NeighborGraph &graph,
-                                         size_t max_size, RingType ring_type);
+  [[nodiscard]] static std::map<int, size_t>
+  findRings(const correlation::core::NeighborGraph &graph, size_t max_size, RingType ring_type);
 
   /**
    * @brief Extracts all exact cycles of a specific target size using King's criterion.
@@ -69,7 +69,7 @@ public:
    * @param[in] target_size The exact size of the rings to extract.
    * @return A vector of rings, where each ring is represented as a vector of AtomIDs in order.
    */
-  static std::vector<std::vector<correlation::core::AtomID>>
+  [[nodiscard]] static std::vector<std::vector<correlation::core::AtomID>>
   extractCycles(const correlation::core::NeighborGraph &graph, size_t target_size);
 
   /**
@@ -79,7 +79,7 @@ public:
    * @param[in] target_size The exact size of the rings to extract.
    * @return A vector of rings, where each ring is represented as a vector of AtomIDs in order.
    */
-  static std::vector<std::vector<correlation::core::AtomID>>
+  [[nodiscard]] static std::vector<std::vector<correlation::core::AtomID>>
   extractFranzblauCycles(const correlation::core::NeighborGraph &graph, size_t target_size);
 
   /**
@@ -90,7 +90,7 @@ public:
    * @param[in] ring_type The ring criterion (King or Franzblau).
    * @return A vector of rings.
    */
-  static std::vector<std::vector<correlation::core::AtomID>>
+  [[nodiscard]] static std::vector<std::vector<correlation::core::AtomID>>
   extractCycles(const correlation::core::NeighborGraph &graph, size_t target_size,
                 RingType ring_type);
 
@@ -102,7 +102,7 @@ public:
    * @param[in] ring_type The ring criterion (King or Franzblau).
    * @return A vector of all detected rings.
    */
-  static std::vector<std::vector<correlation::core::AtomID>>
+  [[nodiscard]] static std::vector<std::vector<correlation::core::AtomID>>
   extractAllCycles(const correlation::core::NeighborGraph &graph, size_t max_size,
                    RingType ring_type = RingType::King);
 
@@ -118,7 +118,7 @@ public:
    * @param[in] bridging_element Chemical symbol of bridging species (e.g. "O").
    * @return A new NeighborGraph linking former atoms.
    */
-  static correlation::core::NeighborGraph
+  [[nodiscard]] static correlation::core::NeighborGraph
   buildBridgedGraph(const correlation::core::NeighborGraph &graph,
                     const correlation::core::Cell &cell, std::string_view former_element,
                     std::string_view bridging_element);
@@ -134,7 +134,7 @@ public:
    * @param[in] element_b Second element in alternating sequence.
    * @return Filtered vector of alternating cycles.
    */
-  static std::vector<std::vector<correlation::core::AtomID>>
+  [[nodiscard]] static std::vector<std::vector<correlation::core::AtomID>>
   filterAlternatingCycles(const std::vector<std::vector<correlation::core::AtomID>> &cycles,
                           const correlation::core::Cell &cell, std::string_view element_a,
                           std::string_view element_b);

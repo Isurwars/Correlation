@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "calculators/BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/BaseCalculator.hpp"
 
 namespace correlation::calculators {
 
@@ -50,7 +50,7 @@ public:
    * @return The normalized scalar triple product chirality value.
    * @throws std::logic_error If @p neighbors is nullptr.
    */
-  static real_t
+  [[nodiscard]] static real_t
   computeSingleAtomChirality(size_t atom_idx, const correlation::core::Cell &cell,
                              const correlation::analysis::StructureAnalyzer *neighbors);
 
@@ -62,7 +62,7 @@ public:
    * @return A histogram of chirality values in the range [-1.0, 1.0].
    * @throws std::logic_error If @p neighbors is nullptr.
    */
-  static correlation::analysis::Histogram
+  [[nodiscard]] static correlation::analysis::Histogram
   calculate(const correlation::core::Cell &cell,
             const correlation::analysis::StructureAnalyzer *neighbors);
 };

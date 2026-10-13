@@ -31,7 +31,7 @@ namespace correlation::math {
  * @brief Helper to check if a size is a product of small prime factors (2, 3, 5).
  * Highly optimized for FFTW3 and MKL.
  */
-inline bool isGoodFFTSize(size_t n) {
+[[nodiscard]] inline bool isGoodFFTSize(size_t n) {
   if (n == 0) {
     return false;
   }
@@ -50,7 +50,7 @@ inline bool isGoodFFTSize(size_t n) {
 /**
  * @brief Finds the next "good" FFT size >= target.
  */
-inline size_t findNextGoodFFTSize(size_t target) {
+[[nodiscard]] inline size_t findNextGoodFFTSize(size_t target) {
 #if defined(CORRELATION_USE_FFTW3) || defined(CORRELATION_USE_MKL)
   while (!isGoodFFTSize(target)) {
     target++;
@@ -260,8 +260,8 @@ inline void computeFFT(std::vector<std::complex<T>> &data, bool invert) {
  * @return          Autocorrelation sequence of length N equal to signal.size().
  */
 template <typename T = real_t>
-inline std::vector<T> autocorrelate(const std::vector<T> &signal,
-                                    std::vector<std::complex<T>> &workspace) {
+[[nodiscard]] inline std::vector<T> autocorrelate(const std::vector<T> &signal,
+                                                  std::vector<std::complex<T>> &workspace) {
   const size_t size = signal.size();
   if (size == 0) {
     return {};
@@ -309,7 +309,8 @@ inline std::vector<T> autocorrelate(const std::vector<T> &signal,
  * @param signal Input signal vector.
  * @return The autocorrelation vector.
  */
-template <typename T = real_t> inline std::vector<T> autocorrelate(const std::vector<T> &signal) {
+template <typename T = real_t>
+[[nodiscard]] inline std::vector<T> autocorrelate(const std::vector<T> &signal) {
   std::vector<std::complex<T>> workspace;
   return autocorrelate(signal, workspace);
 }
