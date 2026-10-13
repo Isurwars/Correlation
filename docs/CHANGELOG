@@ -1,6 +1,30 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.10.0] - 2026-10-12
+
+### Vector PDF Plotting & Modular Visualization Architecture
+- **Vector PDF Export Engine**: Implemented high-fidelity vector PDF plotting (`PdfPlotter`, `correlation_pdfgen`) for single histogram and multi-dataset comparison overlay plots with embedded vector typography, precise grid clipping, custom styling, and legends.
+- **PlotController Subsystem Decomposition**: Refactored monolithic `PlotController` into focused single-responsibility services adhering to SOLID principles:
+  - `PlotViewportNavigator`: Decoupled pan, continuous ROI box zoom, wheel zoom, and manual axis limits.
+  - `PlotMarkerManager`: Thread-safe lifecycle and layout management for custom measurement markers.
+  - `PlotRenderPipeline`: Asynchronous background rendering with LRU cache eviction and cancellation.
+  - `PlotExportManager`: Thread-safe export pipeline coordinating SVG, PNG, and PDF disk writes with status notification callbacks.
+- **Plotter Internal Linkage**: Enclosed SVG rendering state (`SvgComparisonRenderer`, `SvgHistogramRenderer`) in anonymous namespaces to guarantee internal linkage, preventing ODR symbol leakage and enabling compiler optimizations.
+
+### Material Slint UI Architecture & Modularization
+- **PreviewCard Component Decomposition**: Refactored `PreviewCard.slint` into seven focused subcomponents (`WorkflowStepper`, `PreviewHeader`, `HeroEmptyState`, `PlotReticleOverlay`, `ImagingToolbar`, `CurveSidebar`, `PlotDataTable`) under `ui/cards/preview/components/` with explicit layout bounds.
+- **Property Aggregation & Event Streamlining**: Consolidated 59 redundant property aliases in `AppWindow.slint` into domain model structs (`FileMetadata`, `WorkflowState`) and streamlined property change listeners.
+- **Controller Decoupling & Direct Routing**: Removed 18 trivial passthrough trampoline methods from `AppController`, binding UI callbacks directly to `OptionsResetService` and `BondCutoffController`.
+
+### Analytical Engine & C++23 Safety
+- **Mandatory `[[nodiscard]]` Enforcement**: Enforced `[[nodiscard]]` attributes across pure analytical calculators and mathematical utilities (`DistributionFunctions`, `StructuralElectronicCorrelation`, `FFTUtils`, `ChiralityCalculator`, `SteinhardtCalculator`, `StructureFactorCalculator`, `XRDCalculator`, `CNACalculator`, `CNCalculator`, `DADCalculator`, `MotifFinder`, `PADCalculator`, `RDCalculator`, `RDFCalculator`, `VoronoiCalculator`, `MSDCalculator`, `VACFCalculator`).
+
+### Python Ecosystem & Packaging
+- **Import Resolution & Dual Packaging**: Aligned import resolution between `matcorr` and `correlation`, re-exporting adapters and handling graceful pytest skips when the C++ extension is unbuilt.
+- **PyPI Trove Classifiers Compliance**: Corrected package metadata in `pyproject.toml` by removing invalid `Materials Science` classifier and adhering to PyPI Trove standards.
+- **Project Version Milestone**: Bumped core engine project version to `3.10.0`.
+
 ## [3.9.12] - 2026-10-12
 
 ### Interactive Plotting & Imaging Toolbar
