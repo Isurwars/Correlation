@@ -46,10 +46,11 @@ export component ImagingToolbar inherits Rectangle {
     border-color: MaterialPalette.outline_variant.with_alpha(50%);
 
     toolbar_layout := HorizontalLayout {
+        height: 100%;
         padding-left: 6px;
         padding-right: 6px;
         spacing: 4px;
-        alignment: start;
+        alignment: center;
 
         // Home (Reset Zoom)
         home_touch := TouchArea {
@@ -66,12 +67,12 @@ export component ImagingToolbar inherits Rectangle {
                 background: home_touch.has-hover && home_touch.enabled ? MaterialPalette.surface_container_high : transparent;
 
                 Image {
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
                     width: 16px;
                     height: 16px;
                     source: Icons.home;
                     colorize: home_touch.enabled ? MaterialPalette.on_surface : MaterialPalette.outline;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
                 }
             }
         }
@@ -108,13 +109,13 @@ export component ImagingToolbar inherits Rectangle {
                 animate background, border-color { duration: 150ms; easing: ease-out; }
 
                 Image {
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
                     width: 16px;
                     height: 16px;
                     source: Icons.zoom_in;
                     colorize: root.active_tool == 1 ? MaterialPalette.on_tertiary : MaterialPalette.on_surface;
                     animate colorize { duration: 150ms; }
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
                 }
             }
         }
@@ -141,13 +142,13 @@ export component ImagingToolbar inherits Rectangle {
                 animate background, border-color { duration: 150ms; easing: ease-out; }
 
                 Image {
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
                     width: 16px;
                     height: 16px;
                     source: Icons.zoom_out;
                     colorize: root.active_tool == 4 ? MaterialPalette.on_tertiary : MaterialPalette.on_surface;
                     animate colorize { duration: 150ms; }
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
                 }
             }
         }
@@ -184,6 +185,8 @@ export component ImagingToolbar inherits Rectangle {
                 animate background, border-color { duration: 150ms; easing: ease-out; }
 
                 MaterialText {
+                    width: 100%;
+                    height: 100%;
                     text: "+X";
                     style: root.active_tool == 2 ? MaterialTypography.label_medium_prominent : MaterialTypography.label_medium;
                     color: root.active_tool == 2 ? MaterialPalette.on_primary : MaterialPalette.on_surface;
@@ -216,6 +219,8 @@ export component ImagingToolbar inherits Rectangle {
                 animate background, border-color { duration: 150ms; easing: ease-out; }
 
                 MaterialText {
+                    width: 100%;
+                    height: 100%;
                     text: "+Y";
                     style: root.active_tool == 3 ? MaterialTypography.label_medium_prominent : MaterialTypography.label_medium;
                     color: root.active_tool == 3 ? MaterialPalette.on_secondary : MaterialPalette.on_surface;
@@ -241,12 +246,12 @@ export component ImagingToolbar inherits Rectangle {
                 background: clear_markers_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
 
                 Image {
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
                     width: 16px;
                     height: 16px;
                     source: Icons.delete_sweep;
                     colorize: MaterialPalette.error;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
                 }
             }
         }

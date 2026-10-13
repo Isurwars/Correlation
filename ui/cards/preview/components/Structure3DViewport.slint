@@ -152,6 +152,7 @@ export component Structure3DViewport inherits Rectangle {
             width: tools_layout.preferred-width + 16px;
 
             tools_layout := HorizontalLayout {
+                height: 100%;
                 padding-left: 8px;
                 padding-right: 8px;
                 spacing: 6px;
@@ -164,12 +165,21 @@ export component Structure3DViewport inherits Rectangle {
                     mouse-cursor: pointer;
                     clicked => { root.reset_view(); }
 
-                    MaterialText {
-                        text: "⟲";
-                        font-size: 14px;
-                        color: MaterialPalette.on_surface_variant;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
+                    Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 13px;
+                        background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                        MaterialText {
+                            width: 100%;
+                            height: 100%;
+                            text: "⟲";
+                            font-size: 14px;
+                            color: MaterialPalette.on_surface_variant;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
                     }
                 }
 
@@ -180,12 +190,21 @@ export component Structure3DViewport inherits Rectangle {
                     mouse-cursor: pointer;
                     clicked => { root.toggle_bonds(!root.bonds_enabled); }
 
-                    MaterialText {
-                        text: root.bonds_enabled ? "🔗" : "⛓";
-                        font-size: 12px;
-                        color: root.bonds_enabled ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
+                    Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 13px;
+                        background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                        MaterialText {
+                            width: 100%;
+                            height: 100%;
+                            text: root.bonds_enabled ? "🔗" : "⛓";
+                            font-size: 12px;
+                            color: root.bonds_enabled ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
                     }
                 }
 
@@ -196,30 +215,50 @@ export component Structure3DViewport inherits Rectangle {
                     mouse-cursor: pointer;
                     clicked => { root.toggle_wireframe(!root.wireframe_enabled); }
 
-                    MaterialText {
-                        text: "⬡";
-                        font-size: 14px;
-                        color: root.wireframe_enabled ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
+                    Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 13px;
+                        background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                        MaterialText {
+                            width: 100%;
+                            height: 100%;
+                            text: "⬡";
+                            font-size: 14px;
+                            color: root.wireframe_enabled ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
                     }
                 }
 
                 // Trajectory Stepper controls (visible when multi-frame)
                 if (root.total_frames > 1) : HorizontalLayout {
                     spacing: 4px;
+                    alignment: center;
 
                     TouchArea {
                         width: 22px;
                         height: 26px;
                         mouse-cursor: pointer;
                         clicked => { root.step_frame(false); }
-                        MaterialText {
-                            text: "◀";
-                            font-size: 10px;
-                            color: MaterialPalette.on_surface_variant;
-                            horizontal-alignment: center;
-                            vertical-alignment: center;
+
+                        Rectangle {
+                            width: 100%;
+                            height: 100%;
+                            border-radius: 11px;
+                            background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                            MaterialText {
+                                width: 100%;
+                                height: 100%;
+                                text: "◀";
+                                font-size: 10px;
+                                color: MaterialPalette.on_surface_variant;
+                                horizontal-alignment: center;
+                                vertical-alignment: center;
+                            }
                         }
                     }
 
@@ -235,12 +274,22 @@ export component Structure3DViewport inherits Rectangle {
                         height: 26px;
                         mouse-cursor: pointer;
                         clicked => { root.step_frame(true); }
-                        MaterialText {
-                            text: "▶";
-                            font-size: 10px;
-                            color: MaterialPalette.on_surface_variant;
-                            horizontal-alignment: center;
-                            vertical-alignment: center;
+
+                        Rectangle {
+                            width: 100%;
+                            height: 100%;
+                            border-radius: 11px;
+                            background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                            MaterialText {
+                                width: 100%;
+                                height: 100%;
+                                text: "▶";
+                                font-size: 10px;
+                                color: MaterialPalette.on_surface_variant;
+                                horizontal-alignment: center;
+                                vertical-alignment: center;
+                            }
                         }
                     }
                 }
@@ -257,6 +306,7 @@ export component Structure3DViewport inherits Rectangle {
             width: workflow_layout.preferred-width + 16px;
 
             workflow_layout := HorizontalLayout {
+                height: 100%;
                 padding-left: 8px;
                 padding-right: 8px;
                 spacing: 8px;
@@ -270,28 +320,71 @@ export component Structure3DViewport inherits Rectangle {
                     vertical-alignment: center;
                 }
 
-                // Run Analysis Button
-                FilledButton {
+                // Run Analysis Button (Compact pill with centered icon and label)
+                run_btn_touch := TouchArea {
                     height: 28px;
-                    text: root.analysis_running ? "Running..." : "Run Analysis";
-                    icon: Icons.play_arrow;
+                    width: run_btn_layout.preferred-width + 20px;
                     enabled: !root.analysis_running;
+                    mouse-cursor: self.enabled ? pointer : default;
                     clicked => { root.run_analysis(); }
+
+                    Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 14px;
+                        background: !run_btn_touch.enabled ? MaterialPalette.surface_container_high :
+                            run_btn_touch.has-hover ? MaterialPalette.primary.darker(8%) : MaterialPalette.primary;
+
+                        animate background { duration: 150ms; }
+
+                        run_btn_layout := HorizontalLayout {
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            spacing: 6px;
+                            alignment: center;
+
+                            Image {
+                                width: 14px;
+                                height: 14px;
+                                y: (parent.height - self.height) / 2;
+                                source: Icons.play_arrow;
+                                colorize: !run_btn_touch.enabled ? MaterialPalette.outline : MaterialPalette.on_primary;
+                            }
+
+                            MaterialText {
+                                text: root.analysis_running ? "Running..." : "Run Analysis";
+                                font-size: 12px;
+                                font-weight: 600;
+                                color: !run_btn_touch.enabled ? MaterialPalette.outline : MaterialPalette.on_primary;
+                                vertical-alignment: center;
+                                horizontal-alignment: center;
+                            }
+                        }
+                    }
                 }
 
                 // Options Button
-                TouchArea {
+                options_touch := TouchArea {
                     width: 28px;
                     height: 28px;
                     mouse-cursor: pointer;
                     clicked => { root.open_panel(1); }
 
-                    MaterialText {
-                        text: "⚙";
-                        font-size: 14px;
-                        color: MaterialPalette.on_surface_variant;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
+                    Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 14px;
+                        background: options_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                        MaterialText {
+                            width: 100%;
+                            height: 100%;
+                            text: "⚙";
+                            font-size: 14px;
+                            color: MaterialPalette.on_surface_variant;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
                     }
                 }
             }
