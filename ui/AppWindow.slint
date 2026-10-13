@@ -602,26 +602,18 @@ export component AppWindow inherits Window {
                 }
 
                 // 2. Right column: Visual Preview Card (Column 2)
-                Rectangle {
+                preview_card := PreviewCard {
                     horizontal-stretch: 1;
+                    vertical-stretch: 1;
                     min-width: 200px;
                     visible: root.active_panel == -1 || root.width >= 500px;
-
-                    Vertical {
-                        width: 100%;
-                        height: 100%;
-                        padding: 0;
-
-                        preview_card := PreviewCard {
-                            active_tab <=> root.preview_active_tab;
-                            analysis_done: root.analysis_done;
-                            vertical-stretch: 1;
-                            horizontal-stretch: 1;
-                            preview_plot <=> root.preview_plot;
-                            plot_items <=> root.plot_items;
-                            curve_toggle_items: root.curve_toggle_items;
-                            selected_plot_index <=> root.selected_plot_index;
-                            pinned_runs_count: root.pinned_runs_count;
+                    active_tab <=> root.preview_active_tab;
+                    analysis_done: root.analysis_done;
+                    preview_plot <=> root.preview_plot;
+                    plot_items <=> root.plot_items;
+                    curve_toggle_items: root.curve_toggle_items;
+                    selected_plot_index <=> root.selected_plot_index;
+                    pinned_runs_count: root.pinned_runs_count;
 
                             file_loaded: root.file_loaded;
                             analysis_running: root.analysis_running;
@@ -709,8 +701,6 @@ export component AppWindow inherits Window {
                             step_frame_3d(fwd) => { root.step_frame_3d(fwd); }
                             viewport_3d_resized(w, h) => { root.viewport_3d_resized(w, h); }
                             tab_changed(tab) => { root.preview_tab_changed(tab); }
-                        }
-                    }
                 }
             }
 

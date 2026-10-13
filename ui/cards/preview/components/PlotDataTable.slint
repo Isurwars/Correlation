@@ -12,10 +12,13 @@ export component PlotDataTable inherits Vertical {
     in property <[string]> table_headers: [];
     in property <[TableRow]> table_rows: [];
 
+    padding: 0;
     spacing: MaterialStyleMetrics.spacing_4;
 
     // Dataset Values Table (High Density - 28px rows)
     if root.table_rows.length == 0: Rectangle {
+        width: 100%;
+        height: 100%;
         vertical-stretch: 1;
         background: MaterialPalette.surface;
         border-radius: MaterialStyleMetrics.border_radius_2;
@@ -31,6 +34,8 @@ export component PlotDataTable inherits Vertical {
     }
 
     if root.table_rows.length > 0: Rectangle {
+        width: 100%;
+        height: 100%;
         vertical-stretch: 1;
         background: MaterialPalette.surface;
         border-radius: MaterialStyleMetrics.border_radius_2;
@@ -39,6 +44,8 @@ export component PlotDataTable inherits Vertical {
         clip: true;
 
         VerticalLayout {
+            width: 100%;
+            height: 100%;
             padding: 1px;
 
             // Header Row
@@ -71,6 +78,7 @@ export component PlotDataTable inherits Vertical {
 
             // Scrollable Rows (High density: 28px height)
             ScrollView {
+                vertical-stretch: 1;
                 content-height: root.table_rows.length * 28px;
 
                 VerticalLayout {

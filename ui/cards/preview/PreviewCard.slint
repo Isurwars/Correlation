@@ -133,6 +133,8 @@ export component PreviewCard inherits FilledCard {
     out property <length> hovered_height: 0px;
 
     Vertical {
+        width: 100%;
+        height: 100%;
         spacing: MaterialStyleMetrics.spacing_8;
 
         // 1. Workflow Stepper
@@ -179,220 +181,242 @@ export component PreviewCard inherits FilledCard {
             }
         }
 
-        // 4. Body: Tab Content Switcher
-        HorizontalLayout {
-            visible: root.active_tab == 0;
-            vertical-stretch: root.active_tab == 0 ? 1 : 0;
-            spacing: MaterialStyleMetrics.spacing_8;
+        // 4. Body: Tab Host Container (occupies 100% of remaining vertical card height)
+        tab_host := Rectangle {
+            vertical-stretch: 1;
+            horizontal-stretch: 1;
+            clip: true;
 
-            // SVG Plot Area
-            plot_container := Rectangle {
-                horizontal-stretch: 1;
-                vertical-stretch: 1;
-                background: MaterialPalette.surface;
-                border-radius: MaterialStyleMetrics.border_radius_2;
-                clip: self.width > 1px && self.height > 1px;
-                visible: self.width > 0.1px && self.height > 0.1px;
+            // Tab 0: 2D Plot View
+            tab_plot := HorizontalLayout {
+                width: 100%;
+                height: 100%;
+                visible: root.active_tab == 0;
+                spacing: MaterialStyleMetrics.spacing_8;
 
-                HeroEmptyState {
-                    x: 0px;
-                    y: 0px;
-                    width: 100%;
-                    height: 100%;
-                    visible: !root.analysis_done || root.selected_plot_index < 0;
-                    file_loaded: root.file_loaded;
-                    analysis_running: root.analysis_running;
-                    analysis_done: root.analysis_done;
-                    selected_plot_index: root.selected_plot_index;
-                    file_basename: root.file_basename;
-                    total_atoms: root.total_atoms;
-                    num_frames: root.num_frames;
-                    browse_file => { root.browse_file(); }
-                    run_analysis => { root.run_analysis(); }
-                    open_panel(idx) => { root.open_panel(idx); }
-                }
+                // SVG Plot Area
+                plot_container := Rectangle {
+                    horizontal-stretch: 1;
+                    vertical-stretch: 1;
+                    min-height: 120px;
+                    background: MaterialPalette.surface;
+                    border-radius: MaterialStyleMetrics.border_radius_2;
+                    clip: self.width > 1px && self.height > 1px;
+                    visible: self.width > 0.1px && self.height > 0.1px;
 
-                // Interactive Rendered Plot
-                plot_touch := TouchArea {
-                    x: 0px;
-                    y: 0px;
-                    width: 100%;
-                    height: 100%;
-                    visible: root.selected_plot_index >= 0;
-                    mouse-cursor: root.is_panning ? grabbing : (root.active_tool != 0 ? crosshair : default);
-
-                    scroll-event(event) => {
-                        root.plot_wheel_zoom(self.mouse-x / 1px, self.mouse-y / 1px, event.delta-y / 1px);
-                        accept
+                    changed width => {
+                        if (self.width > 10px && self.height > 10px) {
+                            root.plot_resized(self.width, self.height);
+                        }
+                    }
+                    changed height => {
+                        if (self.width > 10px && self.height > 10px) {
+                            root.plot_resized(self.width, self.height);
+                        }
                     }
 
-                    pointer-event(event) => {
-                        if (event.kind == PointerEventKind.down) {
-                            if (event.button == PointerEventButton.right || event.button == PointerEventButton.middle) {
-                                if (root.active_tool != 0) {
-                                    root.active_tool = 0;
-                                } else {
-                                    root.is_panning = true;
-                                    root.pan_last_x = self.mouse-x;
-                                    root.pan_last_y = self.mouse-y;
+                    HeroEmptyState {
+                        x: 0px;
+                        y: 0px;
+                        width: 100%;
+                        height: 100%;
+                        visible: !root.analysis_done || root.selected_plot_index < 0;
+                        file_loaded: root.file_loaded;
+                        analysis_running: root.analysis_running;
+                        analysis_done: root.analysis_done;
+                        selected_plot_index: root.selected_plot_index;
+                        file_basename: root.file_basename;
+                        total_atoms: root.total_atoms;
+                        num_frames: root.num_frames;
+                        browse_file => { root.browse_file(); }
+                        run_analysis => { root.run_analysis(); }
+                        open_panel(idx) => { root.open_panel(idx); }
+                    }
+
+                    // Interactive Rendered Plot
+                    plot_touch := TouchArea {
+                        x: 0px;
+                        y: 0px;
+                        width: 100%;
+                        height: 100%;
+                        visible: root.selected_plot_index >= 0;
+                        mouse-cursor: root.is_panning ? grabbing : (root.active_tool != 0 ? crosshair : default);
+
+                        scroll-event(event) => {
+                            root.plot_wheel_zoom(self.mouse-x / 1px, self.mouse-y / 1px, event.delta-y / 1px);
+                            accept
+                        }
+
+                        pointer-event(event) => {
+                            if (event.kind == PointerEventKind.down) {
+                                if (event.button == PointerEventButton.right || event.button == PointerEventButton.middle) {
+                                    if (root.active_tool != 0) {
+                                        root.active_tool = 0;
+                                    } else {
+                                        root.is_panning = true;
+                                        root.pan_last_x = self.mouse-x;
+                                        root.pan_last_y = self.mouse-y;
+                                    }
+                                } else if (event.button == PointerEventButton.left) {
+                                    if (root.active_tool == 2) {
+                                        root.add_marker_at(self.mouse-x / 1px, self.mouse-y / 1px, true);
+                                    } else if (root.active_tool == 3) {
+                                        root.add_marker_at(self.mouse-x / 1px, self.mouse-y / 1px, false);
+                                    } else if (root.active_tool == 1) {
+                                        root.drag_start_x = self.mouse-x;
+                                        root.drag_start_y = self.mouse-y;
+                                        root.drag_current_x = self.mouse-x;
+                                        root.drag_current_y = self.mouse-y;
+                                        root.is_selecting = true;
+                                    } else if (root.active_tool == 4) {
+                                        root.plot_wheel_zoom(self.mouse-x / 1px, self.mouse-y / 1px, -1.0);
+                                    }
                                 }
-                            } else if (event.button == PointerEventButton.left) {
-                                if (root.active_tool == 2) {
-                                    root.add_marker_at(self.mouse-x / 1px, self.mouse-y / 1px, true);
-                                } else if (root.active_tool == 3) {
-                                    root.add_marker_at(self.mouse-x / 1px, self.mouse-y / 1px, false);
-                                } else if (root.active_tool == 1) {
-                                    root.drag_start_x = self.mouse-x;
-                                    root.drag_start_y = self.mouse-y;
-                                    root.drag_current_x = self.mouse-x;
-                                    root.drag_current_y = self.mouse-y;
-                                    root.is_selecting = true;
-                                } else if (root.active_tool == 4) {
-                                    root.plot_wheel_zoom(self.mouse-x / 1px, self.mouse-y / 1px, -1.0);
+                            } else if (event.kind == PointerEventKind.up) {
+                                if (event.button == PointerEventButton.right || event.button == PointerEventButton.middle) {
+                                    root.is_panning = false;
+                                }
+                                if (root.is_selecting) {
+                                    root.is_selecting = false;
+                                    root.zoom_to_rect(root.drag_start_x / 1px, root.drag_start_y / 1px, root.drag_current_x / 1px, root.drag_current_y / 1px);
+                                }
+                            } else if (event.kind == PointerEventKind.cancel) {
+                                root.is_selecting = false;
+                                root.is_panning = false;
+                            } else if (event.kind == PointerEventKind.move) {
+                                if (!root.is_panning && !root.is_selecting) {
+                                    root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
                                 }
                             }
-                        } else if (event.kind == PointerEventKind.up) {
-                            if (event.button == PointerEventButton.right || event.button == PointerEventButton.middle) {
+                        }
+
+                        changed has-hover => {
+                            if (!self.has-hover) {
+                                root.is_selecting = false;
                                 root.is_panning = false;
                             }
-                            if (root.is_selecting) {
-                                root.is_selecting = false;
-                                root.zoom_to_rect(root.drag_start_x / 1px, root.drag_start_y / 1px, root.drag_current_x / 1px, root.drag_current_y / 1px);
-                            }
-                        } else if (event.kind == PointerEventKind.cancel) {
-                            root.is_selecting = false;
-                            root.is_panning = false;
-                        } else if (event.kind == PointerEventKind.move) {
-                            if (!root.is_panning && !root.is_selecting) {
+                            root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
+                        }
+
+                        changed mouse-x => {
+                            if (!root.is_panning && !root.is_selecting && self.has-hover) {
                                 root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
                             }
                         }
-                    }
 
-                    changed has-hover => {
-                        if (!self.has-hover) {
-                            root.is_selecting = false;
-                            root.is_panning = false;
-                        }
-                        root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
-                    }
-
-                    changed mouse-x => {
-                        if (!root.is_panning && !root.is_selecting && self.has-hover) {
-                            root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
-                        }
-                    }
-
-                    changed mouse-y => {
-                        if (!root.is_panning && !root.is_selecting && self.has-hover) {
-                            root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
-                        }
-                    }
-
-                    moved => {
-                        if (root.is_panning) {
-                            let delta_x = (self.mouse-x - root.pan_last_x) / 1px;
-                            let delta_y = (self.mouse-y - root.pan_last_y) / 1px;
-                            root.pan_last_x = self.mouse-x;
-                            root.pan_last_y = self.mouse-y;
-                            if (delta_x != 0 || delta_y != 0) {
-                                root.plot_pan(delta_x, delta_y);
+                        changed mouse-y => {
+                            if (!root.is_panning && !root.is_selecting && self.has-hover) {
+                                root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
                             }
                         }
-                        if (root.is_selecting) {
-                            root.drag_current_x = self.mouse-x;
-                            root.drag_current_y = self.mouse-y;
+
+                        moved => {
+                            if (root.is_panning) {
+                                let delta_x = (self.mouse-x - root.pan_last_x) / 1px;
+                                let delta_y = (self.mouse-y - root.pan_last_y) / 1px;
+                                root.pan_last_x = self.mouse-x;
+                                root.pan_last_y = self.mouse-y;
+                                if (delta_x != 0 || delta_y != 0) {
+                                    root.plot_pan(delta_x, delta_y);
+                                }
+                            }
+                            if (root.is_selecting) {
+                                root.drag_current_x = self.mouse-x;
+                                root.drag_current_y = self.mouse-y;
+                            }
+                            root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
                         }
-                        root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
+
+                        Image {
+                            width: 100%;
+                            height: 100%;
+                            source: root.preview_plot;
+                            image-fit: contain;
+                        }
                     }
 
-                    Image {
+                    // Hover Crosshairs, Reticle, and Mode Badge Overlay
+                    PlotReticleOverlay {
+                        x: 0px;
+                        y: 0px;
                         width: 100%;
                         height: 100%;
-                        source: root.preview_plot;
-                        image-fit: contain;
+                        has_hover: plot_touch.has-hover;
+                        mouse_x: plot_touch.mouse-x;
+                        mouse_y: plot_touch.mouse-y;
+                        selected_plot_index: root.selected_plot_index;
+                        active_tool: root.active_tool;
+                        is_selecting: root.is_selecting;
+                        is_panning: root.is_panning;
+                        drag_start_x: root.drag_start_x;
+                        drag_start_y: root.drag_start_y;
+                        drag_current_x: root.drag_current_x;
+                        drag_current_y: root.drag_current_y;
+                    }
+
+                    // Floating Imaging Toolbar
+                    imaging_toolbar := ImagingToolbar {
+                        visible: root.selected_plot_index >= 0;
+                        x: 12px;
+                        y: 12px;
+                        has_active_zoom: root.has_active_zoom;
+                        active_tool <=> root.active_tool;
+                        markers_count: root.markers_count;
+                        hover_coord_text: root.hover_coord_text;
+                        reset_zoom => { root.reset_zoom(); }
+                        clear_markers => { root.clear_markers(); }
                     }
                 }
 
-                // Hover Crosshairs, Reticle, and Mode Badge Overlay
-                PlotReticleOverlay {
-                    x: 0px;
-                    y: 0px;
-                    width: 100%;
-                    height: 100%;
-                    has_hover: plot_touch.has-hover;
-                    mouse_x: plot_touch.mouse-x;
-                    mouse_y: plot_touch.mouse-y;
-                    selected_plot_index: root.selected_plot_index;
-                    active_tool: root.active_tool;
-                    is_selecting: root.is_selecting;
-                    is_panning: root.is_panning;
-                    drag_start_x: root.drag_start_x;
-                    drag_start_y: root.drag_start_y;
-                    drag_current_x: root.drag_current_x;
-                    drag_current_y: root.drag_current_y;
-                }
-
-                // Floating Imaging Toolbar
-                imaging_toolbar := ImagingToolbar {
-                    visible: root.selected_plot_index >= 0;
-                    x: 12px;
-                    y: 12px;
-                    has_active_zoom: root.has_active_zoom;
-                    active_tool <=> root.active_tool;
-                    markers_count: root.markers_count;
-                    hover_coord_text: root.hover_coord_text;
-                    reset_zoom => { root.reset_zoom(); }
-                    clear_markers => { root.clear_markers(); }
+                // Curve Visibility Sidebar
+                curve_sidebar := CurveSidebar {
+                    curve_toggle_items: root.curve_toggle_items;
+                    sidebar_width <=> root.sidebar_width;
+                    active_color_picker_id <=> root.active_color_picker_id;
+                    toggle_curve_visibility(id, v) => { root.toggle_curve_visibility(id, v); }
+                    toggle_all_curves(v) => { root.toggle_all_curves(v); }
+                    set_curve_color(id, c) => { root.set_curve_color(id, c); }
                 }
             }
 
-            // Curve Visibility Sidebar
-            curve_sidebar := CurveSidebar {
-                curve_toggle_items: root.curve_toggle_items;
-                sidebar_width <=> root.sidebar_width;
-                active_color_picker_id <=> root.active_color_picker_id;
-                toggle_curve_visibility(id, v) => { root.toggle_curve_visibility(id, v); }
-                toggle_all_curves(v) => { root.toggle_all_curves(v); }
-                set_curve_color(id, c) => { root.set_curve_color(id, c); }
+            // Tab 1: Dataset Values Table View
+            tab_table := PlotDataTable {
+                width: 100%;
+                height: 100%;
+                visible: root.active_tab == 1;
+                table_headers: root.table_headers;
+                table_rows: root.table_rows;
             }
-        }
 
-        // Tab 1: Dataset Values Table View
-        PlotDataTable {
-            visible: root.active_tab == 1;
-            vertical-stretch: root.active_tab == 1 ? 1 : 0;
-            table_headers: root.table_headers;
-            table_rows: root.table_rows;
-        }
-
-        // Tab 2: 3D Molecular Structure Viewport
-        Structure3DViewport {
-            visible: root.active_tab == 2;
-            vertical-stretch: root.active_tab == 2 ? 1 : 0;
-            structure_3d_image: root.structure_3d_image;
-            current_frame: root.structure_3d_current_frame;
-            total_frames: root.structure_3d_total_frames;
-            bonds_enabled: root.structure_3d_bonds_enabled;
-            wireframe_enabled: root.structure_3d_wireframe_enabled;
-            file_loaded: root.file_loaded;
-            analysis_running: root.analysis_running;
-            analysis_done: root.analysis_done;
-            file_basename: root.file_basename;
-            total_atoms: root.total_atoms;
-            num_frames: root.num_frames;
-            run_analysis => { root.run_analysis(); }
-            open_panel(idx) => { root.open_panel(idx); }
-            browse_file => { root.browse_file(); }
-            rotate_3d(dx, dy) => { root.rotate_3d(dx, dy); }
-            pan_3d(dx, dy) => { root.pan_3d(dx, dy); }
-            zoom_3d(delta) => { root.zoom_3d(delta); }
-            reset_view => { root.reset_view_3d(); }
-            toggle_bonds(enabled) => { root.toggle_bonds_3d(enabled); }
-            toggle_wireframe(enabled) => { root.toggle_wireframe_3d(enabled); }
-            seek_frame(idx) => { root.seek_frame_3d(idx); }
-            step_frame(fwd) => { root.step_frame_3d(fwd); }
-            resized(w, h) => { root.viewport_3d_resized(w, h); }
+            // Tab 2: 3D Molecular Structure Viewport
+            tab_structure := Structure3DViewport {
+                width: 100%;
+                height: 100%;
+                visible: root.active_tab == 2;
+                structure_3d_image: root.structure_3d_image;
+                current_frame: root.structure_3d_current_frame;
+                total_frames: root.structure_3d_total_frames;
+                bonds_enabled: root.structure_3d_bonds_enabled;
+                wireframe_enabled: root.structure_3d_wireframe_enabled;
+                file_loaded: root.file_loaded;
+                analysis_running: root.analysis_running;
+                analysis_done: root.analysis_done;
+                file_basename: root.file_basename;
+                total_atoms: root.total_atoms;
+                num_frames: root.num_frames;
+                run_analysis => { root.run_analysis(); }
+                open_panel(idx) => { root.open_panel(idx); }
+                browse_file => { root.browse_file(); }
+                rotate_3d(dx, dy) => { root.rotate_3d(dx, dy); }
+                pan_3d(dx, dy) => { root.pan_3d(dx, dy); }
+                zoom_3d(delta) => { root.zoom_3d(delta); }
+                reset_view => { root.reset_view_3d(); }
+                toggle_bonds(enabled) => { root.toggle_bonds_3d(enabled); }
+                toggle_wireframe(enabled) => { root.toggle_wireframe_3d(enabled); }
+                seek_frame(idx) => { root.seek_frame_3d(idx); }
+                step_frame(fwd) => { root.step_frame_3d(fwd); }
+                resized(w, h) => { root.viewport_3d_resized(w, h); }
+            }
         }
 
         // 5. Footer: Save Results
