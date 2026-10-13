@@ -390,6 +390,13 @@
   "388": "PlotController::PlotController",
   "389": "PlotSize",
   "390": "compute_distances_gpu",
+  "391": "TEST",
+  "392": "SYCLXRDParams",
+  "393": "CarReader.cpp",
   "394": "ZipArchiveWriterTest",
-  "397": "CNAPairSig"
+  "395": "TDOSParams",
+  "396": "ComparisonQuery",
+  "397": "CNAPairSig",
+  "398": "BinningConfig",
+  "399": "NumericalParityTests"
 }

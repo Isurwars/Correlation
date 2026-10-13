@@ -34,7 +34,7 @@ TEST_F(VACFCalculatorTests, CalculateVACF_and_VDOS) {
   EXPECT_NO_THROW((void)dists.getHistogram("VACF"));
   const auto &vacf = dists.getHistogram("VACF").partials.at("Total");
 
-  correlation::core::Trajectory tMoving;
+  correlation::core::Trajectory t_moving;
   correlation::core::Cell c_1({10, 10, 10, 90, 90, 90});
   c_1.addAtom("Ar", {0.0, 0.0, 0.0});
   c_1.addAtom("Ar", {0.0, 0.0, 0.0});
@@ -47,13 +47,13 @@ TEST_F(VACFCalculatorTests, CalculateVACF_and_VDOS) {
   c_3.addAtom("Ar", {2.0, 0.0, 0.0});
   c_3.addAtom("Ar", {-2.0, 0.0, 0.0});
 
-  tMoving.addFrame(c_1);
-  tMoving.addFrame(c_2);
-  tMoving.addFrame(c_3);
-  tMoving.setTimeStep(1.0);
-  tMoving.calculateVelocities();
+  t_moving.addFrame(c_1);
+  t_moving.addFrame(c_2);
+  t_moving.addFrame(c_3);
+  t_moving.setTimeStep(1.0);
+  t_moving.calculateVelocities();
 
-  dists.calculateVACF(tMoving, correlation::analysis::MaxFrames{1});
+  dists.calculateVACF(t_moving, correlation::analysis::MaxFrames{1});
   const auto &vacf2 = dists.getHistogram("Normalized VACF").partials.at("Total");
   EXPECT_NEAR(vacf2[0], 1.0, 1e-6); // t=0
   EXPECT_NEAR(vacf2[1], 1.0, 1e-6); // t=1, const velocity
@@ -66,16 +66,16 @@ TEST_F(VACFCalculatorTests, CalculateVACF_and_VDOS) {
 }
 
 TEST_F(VACFCalculatorTests, CalculateVACF_WithFrameRange) {
-  correlation::core::Trajectory tRange;
-  tRange.setTimeStep(1.0);
+  correlation::core::Trajectory t_range;
+  t_range.setTimeStep(1.0);
 
   for (int i = 0; i < 10; ++i) {
     correlation::core::Cell cell({10, 10, 10, 90, 90, 90});
     cell.addAtom("Ar", {static_cast<real_t>(i), 0.0, 0.0});
     cell.addAtom("Ar", {-static_cast<real_t>(i), 0.0, 0.0});
-    tRange.addFrame(cell);
+    t_range.addFrame(cell);
   }
-  tRange.calculateVelocities();
+  t_range.calculateVelocities();
 
   correlation::core::Cell base_cell({10, 10, 10, 90, 90, 90});
   base_cell.addAtom("Ar", {0, 0, 0});
@@ -83,7 +83,7 @@ TEST_F(VACFCalculatorTests, CalculateVACF_WithFrameRange) {
   DistributionFunctions dists(base_cell);
 
   // Restrict VACF to frames 2 through 7 (5 frames total)
-  dists.calculateVACF(tRange, correlation::analysis::MaxFrames{3},
+  dists.calculateVACF(t_range, correlation::analysis::MaxFrames{3},
                       correlation::analysis::StartFrame{2}, correlation::analysis::EndFrame{7});
 
   EXPECT_NO_THROW((void)dists.getHistogram("VACF"));
@@ -103,8 +103,8 @@ TEST_F(VACFCalculatorTests, CalculateVACF_WithFrameRange) {
 }
 
 TEST_F(VACFCalculatorTests, CalculateVACF_GasLike) {
-  correlation::core::Trajectory tGas;
-  tGas.setTimeStep(1.0);
+  correlation::core::Trajectory t_gas;
+  t_gas.setTimeStep(1.0);
 
   // We want to simulate a gas-like behavior where VACF decays exponentially
   // without negative regions. We'll provide a sequence of positions such that
@@ -123,16 +123,16 @@ TEST_F(VACFCalculatorTests, CalculateVACF_GasLike) {
     correlation::core::Cell cell({10, 10, 10, 90, 90, 90});
     cell.addAtom("Ar", {pos, 0.0, 0.0});
     cell.addAtom("Ar", {-pos, 0.0, 0.0}); // To balance COM
-    tGas.addFrame(cell);
+    t_gas.addFrame(cell);
   }
-  tGas.calculateVelocities();
+  t_gas.calculateVelocities();
 
   correlation::core::Cell base_cell({10, 10, 10, 90, 90, 90});
   base_cell.addAtom("Ar", {0, 0, 0});
   base_cell.addAtom("Ar", {0, 0, 0});
   DistributionFunctions dists(base_cell);
 
-  dists.calculateVACF(tGas, correlation::analysis::MaxFrames{4}); // Calculate up to 4 lags
+  dists.calculateVACF(t_gas, correlation::analysis::MaxFrames{4}); // Calculate up to 4 lags
   EXPECT_NO_THROW((void)dists.getHistogram("Normalized VACF"));
 
   const auto &vacf = dists.getHistogram("Normalized VACF").partials.at("Total");

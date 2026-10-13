@@ -12,7 +12,6 @@
 
 #include <cmath>
 #include <gtest/gtest.h>
-#include <numbers>
 
 namespace correlation::analysis {
 namespace {
@@ -27,9 +26,14 @@ protected:
 TEST_F(StructureFactorCalculatorTests, CalculatesSimpleCubicBraggPeak) {
   // Build a 2x2x2 simple cubic supercell with lattice constant a=3.0 Å
   const real_t vec_a = 3.0;
-  correlation::core::Cell cell(
-      std::array<real_t, 6>{static_cast<real_t>(2 * vec_a), static_cast<real_t>(2 * vec_a),
-                            static_cast<real_t>(2 * vec_a), 90.0, 90.0, 90.0});
+  correlation::core::Cell cell(std::array<real_t, 6>{
+      static_cast<real_t>(2 * vec_a),
+      static_cast<real_t>(2 * vec_a),
+      static_cast<real_t>(2 * vec_a),
+      90.0,
+      90.0,
+      90.0,
+  });
 
   // 8 atoms at corners of a 2x2x2 supercell
   for (int ix = 0; ix < 2; ++ix) {
@@ -51,7 +55,7 @@ TEST_F(StructureFactorCalculatorTests, CalculatesSimpleCubicBraggPeak) {
 
   const auto &hist = dists.getHistogram("S_q");
   EXPECT_FALSE(hist.bins.empty());
-  EXPECT_TRUE(hist.partials.count("Total"));
+  EXPECT_TRUE(hist.partials.contains("Total"));
   EXPECT_EQ(hist.y_unit, "Å");
 
   // The first Bragg peak for a SC lattice at a=3 is at Q = 2*pi/3 ≈ 2.094
@@ -109,7 +113,7 @@ TEST_F(StructureFactorCalculatorTests, DimerProducesValidSQ) {
   EXPECT_NO_THROW((void)dists.getHistogram("S_q"));
   const auto &hist = dists.getHistogram("S_q");
   EXPECT_FALSE(hist.bins.empty());
-  EXPECT_TRUE(hist.partials.count("Total"));
+  EXPECT_TRUE(hist.partials.contains("Total"));
 
   // For a homonuclear dimer of 2 atoms at distance d=1.5 A, S(Q) = 1 +
   // sin(Q*d)/(Q*d)
@@ -151,10 +155,10 @@ TEST_F(StructureFactorCalculatorTests, VerifiesPartialsExistForMulticomponent) {
   const auto &hist = dists.getHistogram("S_q");
 
   // Verify all expected partials are present
-  EXPECT_TRUE(hist.partials.count("C-C"));
-  EXPECT_TRUE(hist.partials.count("O-O"));
-  EXPECT_TRUE(hist.partials.count("C-O"));
-  EXPECT_TRUE(hist.partials.count("Total"));
+  EXPECT_TRUE(hist.partials.contains("C-C"));
+  EXPECT_TRUE(hist.partials.contains("O-O"));
+  EXPECT_TRUE(hist.partials.contains("C-O"));
+  EXPECT_TRUE(hist.partials.contains("Total"));
 
   EXPECT_FALSE(hist.bins.empty());
 }
@@ -176,8 +180,8 @@ TEST_F(StructureFactorCalculatorTests, HomonuclearClusterPartialsPresent) {
   calc.calculateFrame(dists, settings);
   const auto &hist = dists.getHistogram("S_q");
 
-  EXPECT_TRUE(hist.partials.count("Si-Si"));
-  EXPECT_TRUE(hist.partials.count("Total"));
+  EXPECT_TRUE(hist.partials.contains("Si-Si"));
+  EXPECT_TRUE(hist.partials.contains("Total"));
 }
 
 TEST_F(StructureFactorCalculatorTests, CalculateSF_InvalidInputsThrow) {
@@ -292,10 +296,10 @@ TEST_F(StructureFactorCalculatorTests, NaCl_RockSalt_SQ) {
   calc.calculateFrame(dists, settings);
   const auto &hist = dists.getHistogram("S_q");
 
-  EXPECT_TRUE(hist.partials.count("Na-Na"));
-  EXPECT_TRUE(hist.partials.count("Cl-Cl"));
-  EXPECT_TRUE(hist.partials.count("Cl-Na") || hist.partials.count("Na-Cl"));
-  EXPECT_TRUE(hist.partials.count("Total"));
+  EXPECT_TRUE(hist.partials.contains("Na-Na"));
+  EXPECT_TRUE(hist.partials.contains("Cl-Cl"));
+  EXPECT_TRUE(hist.partials.contains("Cl-Na") || hist.partials.contains("Na-Cl"));
+  EXPECT_TRUE(hist.partials.contains("Total"));
 
   const auto &sq_total = hist.partials.at("Total");
 

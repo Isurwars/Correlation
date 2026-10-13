@@ -195,7 +195,10 @@ target_include_directories(correlation_pdfgen PUBLIC
 # Plotters as an OBJECT library
 set(PLOTTERS_SOURCES
     plotters/PathFont.cpp
+    plotters/PdfPlotter.cpp
     plotters/PngPlotter.cpp
+    plotters/SvgHistogramRenderer.cpp
+    plotters/SvgComparisonRenderer.cpp
     plotters/fonts/RobotoData_ASCII_1.cpp
     plotters/fonts/RobotoData_ASCII_2.cpp
     plotters/fonts/RobotoData_Extended.cpp
