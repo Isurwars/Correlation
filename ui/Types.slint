@@ -139,4 +139,25 @@ export struct ComparisonCurveData {
     file_path: string,
 }
 
+export struct FileMetadata {
+    loaded: bool,
+    loading: bool,
+    status_text: string,
+    basename: string,
+    num_frames: int,
+    total_atoms: int,
+    removed_frames_count: int,
+    atom_counts: [AtomCount],
+    box_volume: string,
+    box_density: string,
+    box_dimensions: string,
+}
+
+export struct WorkflowState {
+    analysis_running: bool,
+    analysis_done: bool,
+    has_validation_errors: bool,
+}
+
+
 

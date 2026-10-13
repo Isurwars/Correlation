@@ -34,6 +34,8 @@ import {
     TableRow,
     CurveToggleItem,
     ComparisonCurveData,
+    FileMetadata,
+    WorkflowState,
 } from "Types.slint";
 
 import { MiniSideBar } from "nav/MiniSideBar.slint";
@@ -54,6 +56,8 @@ export {
     TableRow,
     CurveToggleItem,
     ComparisonCurveData,
+    FileMetadata,
+    WorkflowState,
 }
 
 // ============================================================================
@@ -451,23 +455,28 @@ export component AppWindow inherits Window {
                     last_active_panel <=> root.last_active_panel;
 
                     timer_running: root.timer_running;
-                    file_loading: root.file_loading;
-                    file_status_text <=> root.file_status_text;
-                    file_basename: root.file_basename;
-                    file_loaded: root.file_loaded;
-                    num_frames: root.num_frames;
-                    total_atoms: root.total_atoms;
-                    removed_frames_count: root.removed_frames_count;
-                    atom_counts: root.atom_counts;
-                    box_volume: root.box_volume;
-                    box_density: root.box_density;
-                    box_dimensions: root.box_dimensions;
+                    file_metadata: {
+                        loaded: root.file_loaded,
+                        loading: root.file_loading,
+                        status_text: root.file_status_text,
+                        basename: root.file_basename,
+                        num_frames: root.num_frames,
+                        total_atoms: root.total_atoms,
+                        removed_frames_count: root.removed_frames_count,
+                        atom_counts: root.atom_counts,
+                        box_volume: root.box_volume,
+                        box_density: root.box_density,
+                        box_dimensions: root.box_dimensions,
+                    };
+                    workflow_state: {
+                        analysis_running: root.analysis_running,
+                        analysis_done: root.analysis_done,
+                        has_validation_errors: root.has_validation_errors,
+                    };
+
                     material_type <=> root.material_type;
                     analysis_options <=> root.analysis_options;
                     app_errors: root.app_errors;
-                    analysis_running: root.analysis_running;
-                    analysis_done: root.analysis_done;
-                    has_validation_errors: root.has_validation_errors;
 
                     has_radial_active: root.has_radial_active;
                     has_angular_active: root.has_angular_active;
@@ -485,9 +494,6 @@ export component AppWindow inherits Window {
                     pinned_runs_count: root.pinned_runs_count;
                     show_difference: root.show_difference;
                     export_config <=> root.export_config;
-                    export_font_scale_error: root.app_errors.export_font_scale_error;
-                    export_line_width_error: root.app_errors.export_line_width_error;
-                    export_marker_size_error: root.app_errors.export_marker_size_error;
 
                     calculator_groups <=> root.calculator_groups;
                     total_calculator_count: root.total_calculator_count;

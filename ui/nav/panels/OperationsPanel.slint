@@ -3,24 +3,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-import { AtomCount, AnalysisOptions, AppErrors } from "../../Types.slint";
+import { FileMetadata, WorkflowState, AnalysisOptions, AppErrors } from "../../Types.slint";
 import { OperationsPanelCard } from "../../cards/operations/OperationsPanelCard.slint";
 
 /// Modular Host Component for Panel 0: Operations & Trajectory Setup
 export component OperationsPanel inherits Rectangle {
     // File loading & status
     in property <bool> load_enabled: true;
-    in property <bool> file_loading: false;
-    in-out property <string> file_status_text: "";
-    in property <string> file_basename: "";
-    in property <bool> file_loaded: false;
-    in property <int> num_frames: 0;
-    in property <int> total_atoms: 0;
-    in property <int> removed_frames_count: 0;
-    in property <[AtomCount]> atom_counts: [];
-    in property <string> box_volume: "";
-    in property <string> box_density: "";
-    in property <string> box_dimensions: "";
+    in property <FileMetadata> file_metadata;
 
     callback browse_file();
     callback reload_file();
@@ -34,8 +24,7 @@ export component OperationsPanel inherits Rectangle {
     callback reset_material_type();
 
     // Execution
-    in property <bool> analysis_running: false;
-    in property <bool> has_validation_errors: false;
+    in property <WorkflowState> workflow_state;
     callback run_analysis();
     callback cancel_analysis();
 
@@ -49,19 +38,19 @@ export component OperationsPanel inherits Rectangle {
         width: 100%;
         height: 100%;
         load_enabled: root.load_enabled;
-        file_loading: root.file_loading;
+        file_loading: root.file_metadata.loading;
         browse_file => { root.browse_file(); }
         reload_file => { root.reload_file(); }
-        file_status_text <=> root.file_status_text;
-        file_basename: root.file_basename;
-        file_loaded: root.file_loaded;
-        num_frames: root.num_frames;
-        total_atoms: root.total_atoms;
-        removed_frames_count: root.removed_frames_count;
-        atom_counts: root.atom_counts;
-        box_volume: root.box_volume;
-        box_density: root.box_density;
-        box_dimensions: root.box_dimensions;
+        file_status_text: root.file_metadata.status_text;
+        file_basename: root.file_metadata.basename;
+        file_loaded: root.file_metadata.loaded;
+        num_frames: root.file_metadata.num_frames;
+        total_atoms: root.file_metadata.total_atoms;
+        removed_frames_count: root.file_metadata.removed_frames_count;
+        atom_counts: root.file_metadata.atom_counts;
+        box_volume: root.file_metadata.box_volume;
+        box_density: root.file_metadata.box_density;
+        box_dimensions: root.file_metadata.box_dimensions;
 
         material_type <=> root.material_type;
         time_step <=> root.analysis_options.time_step;
@@ -75,8 +64,8 @@ export component OperationsPanel inherits Rectangle {
         reset_trajectory_options => { root.reset_trajectory_options(); }
         reset_material_type => { root.reset_material_type(); }
 
-        analysis_running: root.analysis_running;
-        has_validation_errors: root.has_validation_errors;
+        analysis_running: root.workflow_state.analysis_running;
+        has_validation_errors: root.workflow_state.has_validation_errors;
         run_analysis => { root.run_analysis(); }
         cancel_analysis => { root.cancel_analysis(); }
     }

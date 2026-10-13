@@ -24,6 +24,8 @@ import {
     ExportFormatOptions,
     ExportAnalysisItem,
     ComparisonCurveData,
+    FileMetadata,
+    WorkflowState,
 } from "../Types.slint";
 
 import { OperationsPanel } from "panels/OperationsPanel.slint";
@@ -42,25 +44,15 @@ export component SidePanelHost inherits Vertical {
     in-out property <int> active_panel: -1;
     in-out property <int> last_active_panel: 0;
 
-    // Operations panel state
+    // File metadata & workflow state
     in property <bool> timer_running: false;
-    in property <bool> file_loading: false;
-    in-out property <string> file_status_text: "";
-    in property <string> file_basename: "";
-    in property <bool> file_loaded: false;
-    in property <int> num_frames: 0;
-    in property <int> total_atoms: 0;
-    in property <int> removed_frames_count: 0;
-    in property <[AtomCount]> atom_counts: [];
-    in property <string> box_volume: "";
-    in property <string> box_density: "";
-    in property <string> box_dimensions: "";
+    in property <FileMetadata> file_metadata;
+    in property <WorkflowState> workflow_state;
+
+    // Material & analysis setup
     in-out property <int> material_type: 0;
     in-out property <AnalysisOptions> analysis_options;
     in property <AppErrors> app_errors;
-    in property <bool> analysis_running: false;
-    in property <bool> analysis_done: false;
-    in property <bool> has_validation_errors: false;
 
     // Common options / Structure state
     in property <bool> has_radial_active: false;
@@ -81,9 +73,6 @@ export component SidePanelHost inherits Vertical {
     in property <int> pinned_runs_count: 0;
     in property <bool> show_difference: false;
     in-out property <ExportConfig> export_config;
-    in property <string> export_font_scale_error: "";
-    in property <string> export_line_width_error: "";
-    in property <string> export_marker_size_error: "";
 
     // Analyses state
     in-out property <[CalculatorGroup]> calculator_groups: [];
@@ -227,28 +216,16 @@ export component SidePanelHost inherits Vertical {
             height: 100%;
             visible: root.active_panel == 0;
             load_enabled: !root.timer_running;
-            file_loading: root.file_loading;
-            browse_file => { root.browse_file(); }
-            reload_file => { root.reload_file(); }
-            file_status_text <=> root.file_status_text;
-            file_basename: root.file_basename;
-            file_loaded: root.file_loaded;
-            num_frames: root.num_frames;
-            total_atoms: root.total_atoms;
-            removed_frames_count: root.removed_frames_count;
-            atom_counts: root.atom_counts;
-            box_volume: root.box_volume;
-            box_density: root.box_density;
-            box_dimensions: root.box_dimensions;
+            file_metadata: root.file_metadata;
+            workflow_state: root.workflow_state;
 
             material_type <=> root.material_type;
             analysis_options <=> root.analysis_options;
             app_errors: root.app_errors;
+            browse_file => { root.browse_file(); }
+            reload_file => { root.reload_file(); }
             reset_trajectory_options => { root.reset_trajectory_options(); }
             reset_material_type => { root.reset_material_type(); }
-
-            analysis_running: root.analysis_running;
-            has_validation_errors: root.has_validation_errors;
             run_analysis => { root.run_analysis(); }
             cancel_analysis => { root.cancel_analysis(); }
         }
@@ -258,7 +235,7 @@ export component SidePanelHost inherits Vertical {
             width: 100%;
             height: 100%;
             visible: root.active_panel == 1;
-            file_loaded: root.file_loaded;
+            file_loaded: root.file_metadata.loaded;
             has_radial_active: root.has_radial_active;
             has_angular_active: root.has_angular_active;
 
@@ -267,7 +244,7 @@ export component SidePanelHost inherits Vertical {
             relaxation_time: root.relaxation_time;
             deborah_number: root.deborah_number;
 
-            atom_counts: root.atom_counts;
+            atom_counts: root.file_metadata.atom_counts;
             bond_cutoffs <=> root.bond_cutoffs;
             bond_cutoffs_reset_trigger: root.bond_cutoffs_reset_trigger;
             reset_bond_cutoffs => { root.reset_bond_cutoffs(); }
@@ -288,7 +265,7 @@ export component SidePanelHost inherits Vertical {
             width: 100%;
             height: 100%;
             visible: root.active_panel == 2;
-            file_loaded: root.file_loaded;
+            file_loaded: root.file_metadata.loaded;
             has_scattering_active: root.has_scattering_active;
             has_rings_active: root.has_rings_active;
 
@@ -307,7 +284,7 @@ export component SidePanelHost inherits Vertical {
             width: 100%;
             height: 100%;
             visible: root.active_panel == 3;
-            enabled: root.file_loaded;
+            enabled: root.file_metadata.loaded;
 
             comparison_curves: root.comparison_curves;
             pinned_runs_count: root.pinned_runs_count;
@@ -319,9 +296,9 @@ export component SidePanelHost inherits Vertical {
             clear_comparison_curves => { root.clear_comparison_curves(); }
 
             export_config <=> root.export_config;
-            export_font_scale_error: root.export_font_scale_error;
-            export_line_width_error: root.export_line_width_error;
-            export_marker_size_error: root.export_marker_size_error;
+            export_font_scale_error: root.app_errors.export_font_scale_error;
+            export_line_width_error: root.app_errors.export_line_width_error;
+            export_marker_size_error: root.app_errors.export_marker_size_error;
             reset_export_settings => { root.reset_export_settings(); }
         }
 
@@ -330,7 +307,7 @@ export component SidePanelHost inherits Vertical {
             width: 100%;
             height: 100%;
             visible: root.active_panel == 4;
-            file_loaded: root.file_loaded;
+            file_loaded: root.file_metadata.loaded;
 
             calculator_groups <=> root.calculator_groups;
             total_calculator_count: root.total_calculator_count;
@@ -343,8 +320,8 @@ export component SidePanelHost inherits Vertical {
             width: 100%;
             height: 100%;
             visible: root.active_panel == 5;
-            enabled: root.file_loaded;
-            analysis_done: root.analysis_done;
+            enabled: root.file_metadata.loaded;
+            analysis_done: root.workflow_state.analysis_done;
 
             export_format_options <=> root.export_format_options;
             export_analysis_items <=> root.export_analysis_items;
