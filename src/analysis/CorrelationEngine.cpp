@@ -13,6 +13,9 @@
 #include "math/Constants.hpp"
 
 #include <iostream>
+#if defined(_OPENMP)
+#include <omp.h>
+#endif
 #include <stdexcept>
 #include <string>
 
@@ -249,6 +252,10 @@ std::expected<std::unique_ptr<DistributionFunctions>, std::string>
 CorrelationEngine::runAnalysis(correlation::core::Trajectory &trajectory,
                                const CorrelationEngineConfig &config,
                                std::function<void(float, const std::string &)> progress_callback) {
+#if defined(_OPENMP)
+  omp_set_max_active_levels(1);
+#endif
+
   if (trajectory.getFrameCount() == 0) {
     return std::unexpected("Analysis aborted: No trajectory loaded.");
   }

@@ -11,22 +11,27 @@
 #include "math/Precision.hpp"
 #include <cstdint>
 #include <map>
+#include <span>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace correlation::plotters {
+
+using Point2D = std::pair<real_t, real_t>;
 
 /**
  * @struct Glyph
  * @brief Represents a single vector character glyph.
  *
- * Contains the spacing information (left/right bounds) and a collection
- * of strokes defined as a series of (x,y) point pairs.
+ * Contains the spacing information (left/right bounds) and non-owning views
+ * over contiguous point coordinates and stroke slice lengths.
  */
 struct Glyph {
-  real_t left{static_cast<real_t>(0.0)};                       ///< Left side bearing.
-  real_t right{static_cast<real_t>(0.0)};                      ///< Right side bearing.
-  std::vector<std::vector<std::pair<real_t, real_t>>> strokes; ///< Vector paths for the character.
+  real_t left{static_cast<real_t>(0.0)};  ///< Left side bearing.
+  real_t right{static_cast<real_t>(0.0)}; ///< Right side bearing.
+  std::span<const Point2D> points;        ///< Contiguous point coordinates.
+  std::span<const size_t> stroke_lengths; ///< Number of points per stroke.
 };
 
 /**
@@ -49,7 +54,8 @@ struct GlyphParameters {
   uint32_t code_point{0};
   real_t left_bearing{static_cast<real_t>(0.0)};
   real_t right_bearing{static_cast<real_t>(0.0)};
-  std::vector<std::vector<std::pair<real_t, real_t>>> stroke_paths;
+  std::span<const Point2D> points;
+  std::span<const size_t> stroke_lengths;
 };
 
 /**
@@ -75,12 +81,12 @@ private:
 
   void add(GlyphParameters const &params);
   void add(uint32_t code_point, real_t left_bearing, real_t right_bearing,
-           std::vector<std::vector<std::pair<real_t, real_t>>> stroke_paths);
+           std::span<const Point2D> points, std::span<const size_t> stroke_lengths);
 
   static std::vector<uint32_t> utf8ToUnicode(const std::string &utf8_string);
 
-  void registerBasic_1();
-  void registerBasic_2();
+  void registerBasic1();
+  void registerBasic2();
   void registerExtended();
 };
 

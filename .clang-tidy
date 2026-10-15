@@ -17,7 +17,8 @@ Checks: >
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   -misc-include-cleaner,
   -readability-math-missing-parentheses,
-  -cppcoreguidelines-pro-type-reinterpret-cast
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -modernize-use-std-numbers
 
 HeaderFilterRegex: '^(?!.*(build/|build-fuzz/|/usr/|/opt/|pdfgen|RobotoData)).*$'
 FormatStyle: file

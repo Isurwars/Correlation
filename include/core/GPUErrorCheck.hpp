@@ -13,7 +13,6 @@
 #include <format>
 #include <source_location>
 #include <stdexcept>
-#include <string>
 
 namespace correlation::core::gpu {
 

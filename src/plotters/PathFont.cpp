@@ -18,8 +18,8 @@ Roboto &Roboto::instance() {
 }
 
 Roboto::Roboto() {
-  registerBasic_1();
-  registerBasic_2();
+  registerBasic1();
+  registerBasic2();
   registerExtended();
 }
 
@@ -27,17 +27,19 @@ void Roboto::add(GlyphParameters const &params) {
   glyphs_[params.code_point] = Glyph{
       .left = params.left_bearing,
       .right = params.right_bearing,
-      .strokes = params.stroke_paths,
+      .points = params.points,
+      .stroke_lengths = params.stroke_lengths,
   };
 }
 
 void Roboto::add(uint32_t code_point, real_t left_bearing, real_t right_bearing,
-                 std::vector<std::vector<std::pair<real_t, real_t>>> stroke_paths) {
+                 std::span<const Point2D> points, std::span<const size_t> stroke_lengths) {
   add(GlyphParameters{
       .code_point = code_point,
       .left_bearing = left_bearing,
       .right_bearing = right_bearing,
-      .stroke_paths = std::move(stroke_paths),
+      .points = points,
+      .stroke_lengths = stroke_lengths,
   });
 }
 
@@ -64,21 +66,24 @@ std::string Roboto::render(TextRenderParameters const &params) {
     if (glyphs_.contains(code_point)) {
       const auto &glyph = glyphs_.at(code_point);
       const real_t offset_x = cur_x; // since left is 0.0, offset_x is just cur_x
-      for (const auto &stroke : glyph.strokes) {
-        for (size_t idx = 0; idx < stroke.size(); ++idx) {
-          const real_t point_x = offset_x + stroke[idx].first * scale;
+      size_t pt_offset = 0;
+      for (const size_t stroke_len : glyph.stroke_lengths) {
+        for (size_t idx = 0; idx < stroke_len; ++idx) {
+          const auto &point = glyph.points[pt_offset + idx];
+          const real_t point_x = offset_x + point.first * scale;
           const real_t point_y =
               params.start_y -
-              stroke[idx].second * scale; // Flip Y direction (TTF Y is up, SVG Y is down)
+              point.second * scale; // Flip Y direction (TTF Y is up, SVG Y is down)
           if (idx == 0) {
             path_data += std::format("M {:.2f} {:.2f} ", point_x, point_y);
           } else {
             path_data += std::format("L {:.2f} {:.2f} ", point_x, point_y);
           }
         }
-        if (!stroke.empty()) {
+        if (stroke_len > 0) {
           path_data += "Z ";
         }
+        pt_offset += stroke_len;
       }
       cur_x += glyph.right * scale; // Advance by the width
     }

@@ -407,10 +407,12 @@ void init_analysis(py::module_ &mod) {
           "calculate_xrd",
           [](DistributionFunctions &dists, real_t wave_length, real_t theta_min, real_t theta_max,
              real_t bin_width) {
-            dists.calculateXRD(XRDParams{.lambda = wave_length,
-                                         .theta_min = theta_min,
-                                         .theta_max = theta_max,
-                                         .bin_width = bin_width});
+            dists.calculateXRD(XRDParams{
+                .lambda = wave_length,
+                .theta_min = theta_min,
+                .theta_max = theta_max,
+                .bin_width = bin_width,
+            });
           },
           py::arg("lambda") = 1.5406, py::arg("theta_min") = 5.0, py::arg("theta_max") = 90.0,
           py::arg("bin_width") = 1.0,
@@ -462,7 +464,7 @@ void init_analysis(py::module_ &mod) {
                                                       std::move(progress_callback));
           },
           py::arg("trajectory"), py::arg("analyzer"), py::arg("start_frame") = 0,
-          py::arg("settings") = AnalysisSettings{}, py::arg("progress_callback") = nullptr,
+          py::arg("settings") = AnalysisSettings(), py::arg("progress_callback") = nullptr,
           "Compute trajectory-averaged distribution functions in parallel.\n\n"
           "Parameters\n----------\n"
           "trajectory : Trajectory\n"
