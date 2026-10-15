@@ -36,34 +36,59 @@ using namespace correlation::core;
 using namespace correlation::math;
 
 namespace {
-BondCutoffMatrix parseBondCutoffMatrix(const py::object &bond_cutoffs_obj) {
-  BondCutoffMatrix cutoffs;
-  if (bond_cutoffs_obj.is_none()) {
-    return cutoffs;
+[[nodiscard]] BondCutoffRange parseCutoffRange(const py::handle &cell) {
+  if (py::isinstance<BondCutoffRange>(cell)) {
+    return cell.cast<BondCutoffRange>();
   }
-  if (py::isinstance<py::list>(bond_cutoffs_obj)) {
-    const auto list_2d = bond_cutoffs_obj.cast<py::list>();
-    cutoffs.resize(list_2d.size());
-    for (size_t i = 0; i < list_2d.size(); ++i) {
-      const auto row = list_2d[i].cast<py::list>();
-      cutoffs[i].resize(row.size());
-      for (size_t j = 0; j < row.size(); ++j) {
-        if (py::isinstance<BondCutoffRange>(row[j])) {
-          cutoffs[i][j] = row[j].cast<BondCutoffRange>();
-        } else if (py::isinstance<py::tuple>(row[j]) || py::isinstance<py::list>(row[j])) {
-          auto pair = row[j].cast<std::pair<real_t, real_t>>();
-          cutoffs[i][j] = BondCutoffRange{.min_sq = pair.first, .max_sq = pair.second};
-        } else {
-          const auto max_val = row[j].cast<real_t>();
-          cutoffs[i][j] = BondCutoffRange{.min_sq = static_cast<real_t>(0.0), .max_sq = max_val};
-        }
-        if (cutoffs[i][j].min_sq < 0.0 || cutoffs[i][j].max_sq < 0.0) {
-          throw py::value_error("Bond cutoff bounds cannot be negative.");
-        }
-        if (cutoffs[i][j].min_sq > cutoffs[i][j].max_sq) {
-          throw py::value_error("Minimum bond cutoff cannot be greater than maximum bond cutoff.");
-        }
+  if (py::isinstance<py::tuple>(cell) || py::isinstance<py::list>(cell)) {
+    const auto pair = cell.cast<std::pair<real_t, real_t>>();
+    return BondCutoffRange{.min_sq = pair.first, .max_sq = pair.second};
+  }
+  const auto max_val = cell.cast<real_t>();
+  return BondCutoffRange{.min_sq = static_cast<real_t>(0.0), .max_sq = max_val};
+}
+
+BondCutoffMatrix parseBondCutoffMatrix(const py::object &bond_cutoffs_obj) {
+  if (bond_cutoffs_obj.is_none()) {
+    return BondCutoffMatrix{};
+  }
+  if (!py::isinstance<py::sequence>(bond_cutoffs_obj)) {
+    throw py::type_error("Bond cutoff matrix must be a 2D sequence of cutoff ranges or numbers.");
+  }
+
+  const auto list_2d = bond_cutoffs_obj.cast<py::sequence>();
+  const size_t num_rows = list_2d.size();
+  if (num_rows == 0) {
+    return BondCutoffMatrix{};
+  }
+
+  if (!py::isinstance<py::sequence>(list_2d[0])) {
+    throw py::type_error("Bond cutoff matrix must be a 2D sequence of cutoff ranges or numbers.");
+  }
+  const auto first_row = list_2d[0].cast<py::sequence>();
+  const size_t num_cols = first_row.size();
+
+  BondCutoffMatrix cutoffs(num_rows, num_cols);
+
+  for (size_t i = 0; i < num_rows; ++i) {
+    const auto &row_obj = list_2d[i];
+    if (!py::isinstance<py::sequence>(row_obj)) {
+      throw py::type_error("Bond cutoff matrix must be a 2D sequence of cutoff ranges or numbers.");
+    }
+    const auto row_seq = row_obj.cast<py::sequence>();
+    if (row_seq.size() != num_cols) {
+      throw py::value_error("All rows in bond cutoff matrix must have identical length.");
+    }
+
+    for (size_t j = 0; j < num_cols; ++j) {
+      const auto range = parseCutoffRange(row_seq[j]);
+      if (range.min_sq < 0.0 || range.max_sq < 0.0) {
+        throw py::value_error("Bond cutoff bounds cannot be negative.");
       }
+      if (range.min_sq > range.max_sq) {
+        throw py::value_error("Minimum bond cutoff cannot be greater than maximum bond cutoff.");
+      }
+      cutoffs[i][j] = range;
     }
   }
   return cutoffs;

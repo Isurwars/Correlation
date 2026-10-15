@@ -10,6 +10,7 @@
 
 #include "core/GPUPortability.hpp"
 
+#include <format>
 #include <source_location>
 #include <stdexcept>
 #include <string>
@@ -33,8 +34,8 @@ public:
 inline void hipCheck(hipError_t result,
                      std::source_location loc = std::source_location::current()) {
   if (result != hipSuccess) {
-    throw GPUError(std::string("GPU error in ") + loc.file_name() + ":" +
-                   std::to_string(loc.line()) + " — " + hipGetErrorString(result));
+    throw GPUError(std::format("GPU error in {}:{} — {}", loc.file_name(), loc.line(),
+                               hipGetErrorString(result)));
   }
 }
 

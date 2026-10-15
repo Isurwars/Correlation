@@ -76,8 +76,8 @@ public:
     [[nodiscard]] size_t row() const noexcept { return row_; }
     [[nodiscard]] const BondCutoffMatrix *matrix() const noexcept { return matrix_; }
 
-    operator std::span<BondCutoffRange>() const noexcept;
-    operator std::span<const BondCutoffRange>() const noexcept;
+    explicit operator std::span<BondCutoffRange>() const noexcept;
+    explicit operator std::span<const BondCutoffRange>() const noexcept;
 
     [[nodiscard]] BondCutoffRange *begin() const noexcept;
     [[nodiscard]] BondCutoffRange *end() const noexcept;
@@ -114,7 +114,7 @@ public:
     [[nodiscard]] size_t row() const noexcept { return row_; }
     [[nodiscard]] const BondCutoffMatrix *matrix() const noexcept { return matrix_; }
 
-    operator std::span<const BondCutoffRange>() const noexcept;
+    explicit operator std::span<const BondCutoffRange>() const noexcept;
 
     [[nodiscard]] const BondCutoffRange *begin() const noexcept;
     [[nodiscard]] const BondCutoffRange *end() const noexcept;
@@ -241,16 +241,14 @@ public:
    * @param[in] row Zero-based row index.
    * @return RowProxy over the row's elements.
    */
-  [[nodiscard]] RowProxy operator[](size_t row) noexcept { return RowProxy(*this, row); }
+  [[nodiscard]] RowProxy operator[](size_t row) noexcept { return {*this, row}; }
 
   /**
    * @brief Accesses row via immutable ConstRowProxy.
    * @param[in] row Zero-based row index.
    * @return ConstRowProxy over the row's elements.
    */
-  [[nodiscard]] ConstRowProxy operator[](size_t row) const noexcept {
-    return ConstRowProxy(*this, row);
-  }
+  [[nodiscard]] ConstRowProxy operator[](size_t row) const noexcept { return {*this, row}; }
 
   /**
    * @brief Direct 2D mutable element accessor.
@@ -348,10 +346,10 @@ public:
   using iterator = RowIterator<false>;
   using const_iterator = RowIterator<true>;
 
-  [[nodiscard]] iterator begin() noexcept { return iterator(this, 0); }
-  [[nodiscard]] iterator end() noexcept { return iterator(this, rows_); }
-  [[nodiscard]] const_iterator begin() const noexcept { return const_iterator(this, 0); }
-  [[nodiscard]] const_iterator end() const noexcept { return const_iterator(this, rows_); }
+  [[nodiscard]] iterator begin() noexcept { return {this, 0}; }
+  [[nodiscard]] iterator end() noexcept { return {this, rows_}; }
+  [[nodiscard]] const_iterator begin() const noexcept { return {this, 0}; }
+  [[nodiscard]] const_iterator end() const noexcept { return {this, rows_}; }
   [[nodiscard]] const_iterator cbegin() const noexcept { return begin(); }
   [[nodiscard]] const_iterator cend() const noexcept { return end(); }
 
@@ -385,11 +383,11 @@ inline void BondCutoffMatrix::RowProxy::resize(size_t new_cols) {
 }
 
 inline BondCutoffMatrix::RowProxy::operator std::span<BondCutoffRange>() const noexcept {
-  return std::span<BondCutoffRange>(matrix_->rowData(row_), matrix_->cols());
+  return {matrix_->rowData(row_), matrix_->cols()};
 }
 
 inline BondCutoffMatrix::RowProxy::operator std::span<const BondCutoffRange>() const noexcept {
-  return std::span<const BondCutoffRange>(matrix_->rowData(row_), matrix_->cols());
+  return {matrix_->rowData(row_), matrix_->cols()};
 }
 
 inline BondCutoffRange *BondCutoffMatrix::RowProxy::begin() const noexcept {
@@ -410,7 +408,7 @@ inline size_t BondCutoffMatrix::ConstRowProxy::size() const noexcept { return ma
 inline bool BondCutoffMatrix::ConstRowProxy::empty() const noexcept { return matrix_->cols() == 0; }
 
 inline BondCutoffMatrix::ConstRowProxy::operator std::span<const BondCutoffRange>() const noexcept {
-  return std::span<const BondCutoffRange>(matrix_->rowData(row_), matrix_->cols());
+  return {matrix_->rowData(row_), matrix_->cols()};
 }
 
 inline const BondCutoffRange *BondCutoffMatrix::ConstRowProxy::begin() const noexcept {
