@@ -14,7 +14,6 @@
 #include "readers/BaseReader.hpp"
 
 #include <cstdint>
-#include <functional>
 #include <string>
 
 // The correlation::readers namespace encapsulates all functionality related to
@@ -43,7 +42,7 @@ enum class FileType : std::uint8_t {
   Chgnet,     ///< CHGNet Extended XYZ format (.chgnet)
   Gap,        ///< GAP Extended XYZ format (.gap, .quip)
   Nequip,     ///< NequIP Extended XYZ format (.nequip)
-  Unknown     ///< Unrecognized or unsupported file format
+  Unknown,    ///< Unrecognized or unsupported file format
 };
 
 /**

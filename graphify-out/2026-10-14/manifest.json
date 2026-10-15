@@ -1,12 +1,12 @@
 {
   "include/analysis/AnalysisTypes.hpp": {
-    "mtime": 1791222347.2715716,
-    "ast_hash": "b7b2a57987fc2adfee82491cffa126d8",
+    "mtime": 1792034610.71698,
+    "ast_hash": "2dec22092c15c04f2150d5a5daf692fe",
     "semantic_hash": ""
   },
   "include/analysis/DistributionFunctions.hpp": {
-    "mtime": 1791864333.3810909,
-    "ast_hash": "5bfe0986ce4895db9ccf1e354d9e9f65",
+    "mtime": 1792034377.9514751,
+    "ast_hash": "cff24781908d3ee2288c6e9506f65c0d",
     "semantic_hash": ""
   },
   "include/analysis/DynamicsAnalyzer.hpp": {
@@ -35,18 +35,18 @@
     "semantic_hash": ""
   },
   "include/cli/CliParser.hpp": {
-    "mtime": 1791239618.999012,
-    "ast_hash": "29df09d6a810c35552926049eab218a8",
+    "mtime": 1792034229.838746,
+    "ast_hash": "865cf9b828fbbed2ae35965ede2e7508",
     "semantic_hash": ""
   },
   "include/core/Atom.hpp": {
-    "mtime": 1791515874.2690353,
-    "ast_hash": "8ff4587cdeee861de2372049141c7684",
+    "mtime": 1792034866.4632626,
+    "ast_hash": "7aedea6f05a8bd012170be433f148a79",
     "semantic_hash": ""
   },
   "include/core/Cell.hpp": {
-    "mtime": 1791183433.4856024,
-    "ast_hash": "a1d2f9227a45f13385064e1cee116d84",
+    "mtime": 1792034796.2467885,
+    "ast_hash": "cb112a8f3ed2cf027b8cb9059613b0a8",
     "semantic_hash": ""
   },
   "include/core/GPUPortability.hpp": {
@@ -65,8 +65,8 @@
     "semantic_hash": ""
   },
   "include/core/Trajectory.hpp": {
-    "mtime": 1789591639.137254,
-    "ast_hash": "9e82fa948b89f7e7f85893f2f19ffda1",
+    "mtime": 1792034816.490456,
+    "ast_hash": "3c3d20a230121af93b8934f31fb26b8f",
     "semantic_hash": ""
   },
   "include/math/Constants.hpp": {
@@ -75,7 +75,7 @@
     "semantic_hash": ""
   },
   "include/math/FFTUtils.hpp": {
-    "mtime": 1791864894.3874757,
+    "mtime": 1792033648.0093699,
     "ast_hash": "985e2cdd6e80a14d3722d113687e9a1c",
     "semantic_hash": ""
   },
@@ -140,8 +140,8 @@
     "semantic_hash": ""
   },
   "include/readers/BaseReader.hpp": {
-    "mtime": 1784581481.2364569,
-    "ast_hash": "3689eb0152953f4a4dda6a5bd3fb828b",
+    "mtime": 1792035072.726955,
+    "ast_hash": "a65269fc7e58a086a356e1436d813e0f",
     "semantic_hash": ""
   },
   "include/readers/CP2KReader.hpp": {
@@ -170,8 +170,8 @@
     "semantic_hash": ""
   },
   "include/readers/FileReader.hpp": {
-    "mtime": 1789966255.5533555,
-    "ast_hash": "dfb45cd765a22e1924621ecede8e6354",
+    "mtime": 1792035072.7285633,
+    "ast_hash": "938bf83828218d20818921a52096ffc3",
     "semantic_hash": ""
   },
   "include/readers/GromacsReader.hpp": {
@@ -385,8 +385,8 @@
     "semantic_hash": ""
   },
   "src/core/Trajectory.cpp": {
-    "mtime": 1790182259.3307674,
-    "ast_hash": "df02c612b5870f2ef8f554493f5fd10d",
+    "mtime": 1792034830.7832227,
+    "ast_hash": "3e8e74b361a3993a32de4cb7f8b95af9",
     "semantic_hash": ""
   },
   "src/main.cpp": {
@@ -430,18 +430,18 @@
     "semantic_hash": ""
   },
   "src/readers/FileReader.cpp": {
-    "mtime": 1790182953.5663445,
-    "ast_hash": "e77ea6ff918f0d8a15b76fa50eb8c46c",
+    "mtime": 1792035072.7324693,
+    "ast_hash": "cb9a58a7e106d1929f088831b06767a7",
     "semantic_hash": ""
   },
   "src/readers/GromacsReader.cpp": {
-    "mtime": 1790185002.4171395,
-    "ast_hash": "7de79b8b5b269aaf0d33a820a5ddf152",
+    "mtime": 1791953679.2132263,
+    "ast_hash": "35ad0b248a2eb2f27c19b85f94e02b53",
     "semantic_hash": ""
   },
   "src/readers/LammpsDumpReader.cpp": {
-    "mtime": 1790185108.4486701,
-    "ast_hash": "b28fe92bbe988ff543c1aca265223f22",
+    "mtime": 1791953679.2144856,
+    "ast_hash": "9eeccdcfe8c3bead153423a7302b61bd",
     "semantic_hash": ""
   },
   "src/readers/OnetepDatReader.cpp": {
@@ -460,8 +460,8 @@
     "semantic_hash": ""
   },
   "src/readers/QEReader.cpp": {
-    "mtime": 1790185269.1799884,
-    "ast_hash": "f37a03e8f382b632250022a55aa3faaa",
+    "mtime": 1791953679.2104747,
+    "ast_hash": "febcaecbd674d8d2ffe1bf72393ad363",
     "semantic_hash": ""
   },
   "src/readers/ReaderFactory.cpp": {
@@ -470,18 +470,18 @@
     "semantic_hash": ""
   },
   "src/readers/VaspReader.cpp": {
-    "mtime": 1790185304.7135236,
-    "ast_hash": "997573330191fa6575e73b904c133fc3",
+    "mtime": 1791953679.21185,
+    "ast_hash": "0aaf9acc7e71c24336019096c5e030b7",
     "semantic_hash": ""
   },
   "src/readers/XYZReader.cpp": {
-    "mtime": 1791328167.103916,
-    "ast_hash": "499964b1db2b75a90be0c6538bbe9bfd",
+    "mtime": 1791953679.2092106,
+    "ast_hash": "35ff630ad052d7848e24c5bc5deb6f05",
     "semantic_hash": ""
   },
   "src/readers/XdatcarReader.cpp": {
-    "mtime": 1790185345.1527836,
-    "ast_hash": "c0941c29f66cf1009ad7b69f24cab3db",
+    "mtime": 1792033572.181176,
+    "ast_hash": "80a124f2dc2b3822c1df21c6a5a16707",
     "semantic_hash": ""
   },
   "src/writers/ArrowWriter.cpp": {
@@ -1130,8 +1130,8 @@
     "semantic_hash": ""
   },
   "include/mlip/MLIPInterface.hpp": {
-    "mtime": 1789591639.0971653,
-    "ast_hash": "a56eb01ef19ae9de3e00fd49b8548963",
+    "mtime": 1792034383.7993536,
+    "ast_hash": "7bfd29aea9ec45d9e6dae803e7843f6c",
     "semantic_hash": ""
   },
   "tests/unit/calculators/GPUSteinhardtCalculatorTests.cpp": {
@@ -1350,8 +1350,8 @@
     "semantic_hash": ""
   },
   "include/mlip/PeriodicGraphBuilder.hpp": {
-    "mtime": 1789591639.0946507,
-    "ast_hash": "218b28a84f95c255746faaa5f9cd70cd",
+    "mtime": 1792034390.2542198,
+    "ast_hash": "e28afe6b13542794c155f4fa1512a2f2",
     "semantic_hash": ""
   },
   "include/mlip/TorchGNNModel.hpp": {
@@ -1365,8 +1365,8 @@
     "semantic_hash": ""
   },
   "src/mlip/TorchGNNModel.cpp": {
-    "mtime": 1790181953.0466316,
-    "ast_hash": "6d22fb95fa251a348bcd1c59c9e1d54e",
+    "mtime": 1792029545.4987168,
+    "ast_hash": "dba0757d17dd03c573da9eea19132a5a",
     "semantic_hash": ""
   },
   "tests/unit/mlip/PeriodicGraphBuilderTests.cpp": {
@@ -1405,8 +1405,8 @@
     "semantic_hash": ""
   },
   "src/bindings/mlip_bindings.cpp": {
-    "mtime": 1791215368.9663901,
-    "ast_hash": "3552e0b12cfd43f3d4a168ee562e49e9",
+    "mtime": 1792031042.736255,
+    "ast_hash": "5225d060aada6ef920da83c47c269b3d",
     "semantic_hash": ""
   },
   "src/bindings/mlip_bindings.hpp": {
@@ -1445,8 +1445,8 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/TDOSCalculatorTests.cpp": {
-    "mtime": 1790391314.5348694,
-    "ast_hash": "1657605f48212002a623872b63c9678e",
+    "mtime": 1792029617.7938423,
+    "ast_hash": "c5bbca3b6ff04192b5326776e2be5e5f",
     "semantic_hash": ""
   },
   "tests/unit/readers/AbinitReaderTests.cpp": {
@@ -1475,8 +1475,8 @@
     "semantic_hash": ""
   },
   "include/analysis/CorrelationEngine.hpp": {
-    "mtime": 1789591638.7320945,
-    "ast_hash": "63ad688bbe005c568f81a2e8e1b842c8",
+    "mtime": 1792034111.9766629,
+    "ast_hash": "ba66c4f6157bee9ec98ec631124d16e6",
     "semantic_hash": ""
   },
   "include/readers/ChgnetReader.hpp": {
@@ -1500,23 +1500,23 @@
     "semantic_hash": ""
   },
   "src/analysis/CorrelationEngine.cpp": {
-    "mtime": 1791461854.0168018,
-    "ast_hash": "dd5c96b606978e91c087fa9d84670d8c",
+    "mtime": 1792034137.100014,
+    "ast_hash": "68de67adb8e1847ccb8f2d7f393be846",
     "semantic_hash": ""
   },
   "src/readers/ChgnetReader.cpp": {
-    "mtime": 1790184931.1768198,
-    "ast_hash": "7c766c21842874ea4472641c5822bf8f",
+    "mtime": 1791953679.2019491,
+    "ast_hash": "167a4a078a37e48373dcb9a47cee4c79",
     "semantic_hash": ""
   },
   "src/readers/GapReader.cpp": {
-    "mtime": 1790184979.876533,
-    "ast_hash": "7587bdb4ae94dbedb914513a5733a20a",
+    "mtime": 1791953679.2087197,
+    "ast_hash": "d53fd02308bf3d30bde95e6e13f94917",
     "semantic_hash": ""
   },
   "src/readers/MaceReader.cpp": {
-    "mtime": 1790185121.204964,
-    "ast_hash": "ae03f675e1e03881d4ab0b392ba7870b",
+    "mtime": 1791953679.2089174,
+    "ast_hash": "5b90882cbe5a082d7f27af3fede8af76",
     "semantic_hash": ""
   },
   "tests/test_adapters.py": {
@@ -1525,23 +1525,23 @@
     "semantic_hash": ""
   },
   "tests/unit/analysis/CorrelationEngineTests.cpp": {
-    "mtime": 1791324424.3079684,
-    "ast_hash": "33bf7bc28f0fe00fdf81c7c7726a1962",
+    "mtime": 1792034150.982662,
+    "ast_hash": "1a890dc7c5e4da6f5e08416b1262121f",
     "semantic_hash": ""
   },
   "tests/unit/calculators/DADCalculatorTests.cpp": {
-    "mtime": 1790391314.535104,
-    "ast_hash": "287d6360bb54544c4ef08fe15c26ac9a",
+    "mtime": 1791953709.2095416,
+    "ast_hash": "8e5e2b0d97f4251b48592957bee10f26",
     "semantic_hash": ""
   },
   "tests/unit/calculators/PADCalculatorTests.cpp": {
-    "mtime": 1791183775.8290017,
-    "ast_hash": "7d0627895ab7919676452c4099aeb5ab",
+    "mtime": 1791953709.2192369,
+    "ast_hash": "bbebba82ab48d863358033ca5879a908",
     "semantic_hash": ""
   },
   "tests/unit/calculators/RDCalculatorTests.cpp": {
-    "mtime": 1791220056.545261,
-    "ast_hash": "432e02d6f9cd798c02d6206792bc6236",
+    "mtime": 1791953709.195731,
+    "ast_hash": "a6c966ae4467796303e7c5027653bc13",
     "semantic_hash": ""
   },
   "tests/unit/calculators/RDFCalculatorTests.cpp": {
@@ -1780,8 +1780,8 @@
     "semantic_hash": ""
   },
   "src/analysis/StructuralElectronicCorrelation.cpp": {
-    "mtime": 1791183556.1585567,
-    "ast_hash": "da9a742a77a0164ae0e1046845aaa0de",
+    "mtime": 1792029591.3121543,
+    "ast_hash": "d98754943742e559ae85f555c95ae326",
     "semantic_hash": ""
   },
   "src/mlip/GraphDescriptors.cpp": {
@@ -1790,8 +1790,8 @@
     "semantic_hash": ""
   },
   "src/readers/NequipReader.cpp": {
-    "mtime": 1790185121.205058,
-    "ast_hash": "38bbc9ebbeddd3c63b99c9b2f9e319ce",
+    "mtime": 1791953679.2089922,
+    "ast_hash": "f9d9964913d4aaf1cba8f163cc8a41c5",
     "semantic_hash": ""
   },
   "tests/fuzz/fuzz_nequip.cpp": {
@@ -1800,8 +1800,8 @@
     "semantic_hash": ""
   },
   "tests/unit/analysis/StructuralElectronicCorrelationTests.cpp": {
-    "mtime": 1790181953.054996,
-    "ast_hash": "7d61b00dc131c5601152542ed4c5858f",
+    "mtime": 1792031042.751498,
+    "ast_hash": "8bb7d5065cb0a6a003aefe1e555d4a57",
     "semantic_hash": ""
   },
   "tests/unit/mlip/GraphDescriptorsTests.cpp": {
@@ -2120,8 +2120,8 @@
     "semantic_hash": ""
   },
   "include/app/services/AnalysisDispatcher.hpp": {
-    "mtime": 1790371040.1301513,
-    "ast_hash": "e9a02bfd6f7ac3749425239c63d7814b",
+    "mtime": 1792034166.215281,
+    "ast_hash": "16855df3c13563c7c38bf70e1e95bbf8",
     "semantic_hash": ""
   },
   "include/app/services/BondCutoffService.hpp": {
@@ -2135,8 +2135,8 @@
     "semantic_hash": ""
   },
   "src/app/services/AnalysisDispatcher.cpp": {
-    "mtime": 1790480396.5017352,
-    "ast_hash": "4c7552d61dcb68c39adf4869a9a00697",
+    "mtime": 1792034177.6669981,
+    "ast_hash": "795e21fa9e6bd00ec4ade02a587ae76b",
     "semantic_hash": ""
   },
   "src/app/services/BondCutoffService.cpp": {
@@ -2155,8 +2155,8 @@
     "semantic_hash": ""
   },
   "tests/unit/app/AnalysisDispatcherTests.cpp": {
-    "mtime": 1790478787.9888997,
-    "ast_hash": "5ec610d1189eacfa2859f8330f0b3283",
+    "mtime": 1792034207.001287,
+    "ast_hash": "8be937f3524385b459238478276eebcd",
     "semantic_hash": ""
   },
   "tests/unit/app/BondCutoffServiceTests.cpp": {
@@ -2310,8 +2310,8 @@
     "semantic_hash": ""
   },
   "src/calculators/order/HyperuniformityCalculator.cpp": {
-    "mtime": 1791953459.852894,
-    "ast_hash": "0d1c3af7fe77b1804b51ac372972a3ff",
+    "mtime": 1792027024.6184468,
+    "ast_hash": "c0cabb90ed8ed5853daee7923d0a6a24",
     "semantic_hash": ""
   },
   "src/calculators/order/LocalEntropyCalculator.cpp": {
@@ -2330,8 +2330,8 @@
     "semantic_hash": ""
   },
   "src/calculators/scattering/TDOSCalculator.cpp": {
-    "mtime": 1791461872.9355824,
-    "ast_hash": "81ecd35eb330478f23cf9b0878e12c6c",
+    "mtime": 1792029566.4714556,
+    "ast_hash": "6514188b104ccd7f4d630ba881f5b824",
     "semantic_hash": ""
   },
   "src/calculators/scattering/XRDCalculator.cpp": {
@@ -2495,8 +2495,8 @@
     "semantic_hash": ""
   },
   "src/utils/ZipArchiveWriter.cpp": {
-    "mtime": 1790477124.650101,
-    "ast_hash": "1f5da892e244381e8cceede6792fd6e2",
+    "mtime": 1792031042.7462716,
+    "ast_hash": "c9acbc2aa48f5e942b2d557390e3a4aa",
     "semantic_hash": ""
   },
   "src/writers/ExportBundleWriter.cpp": {
@@ -2505,8 +2505,8 @@
     "semantic_hash": ""
   },
   "tests/unit/utils/ZipArchiveWriterTests.cpp": {
-    "mtime": 1791758852.3398004,
-    "ast_hash": "c8bce20a344abb3d5aabe1a76bc077b0",
+    "mtime": 1792030929.56106,
+    "ast_hash": "26f6433ab4edc68ca4406d84ee659f0b",
     "semantic_hash": ""
   },
   ".agents/scripts/hook_runner.py": {
@@ -2675,8 +2675,8 @@
     "semantic_hash": ""
   },
   "src/plotters/SvgComparisonRenderer.cpp": {
-    "mtime": 1791866075.0434303,
-    "ast_hash": "f638f484f56bbf0530ad90eaa8f81175",
+    "mtime": 1791953693.121503,
+    "ast_hash": "41adac746b1d087a845d6c854a899f45",
     "semantic_hash": ""
   },
   "src/plotters/SvgHistogramRenderer.cpp": {
