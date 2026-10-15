@@ -44,17 +44,18 @@ bool ZipArchiveWriter::isOpen() const noexcept { return impl_ && impl_->is_open;
 
 std::expected<void, std::string> ZipArchiveWriter::open(const std::filesystem::path &archive_path) {
   if (!impl_) {
-    impl_ = std::make_unique<Impl>();
+    return std::unexpected("ZipArchiveWriter is in a moved-from state");
   }
   if (impl_->is_open) {
     return std::unexpected("ZipArchiveWriter is already open");
   }
 
-  mz_bool status = mz_zip_writer_init_file(&impl_->archive, archive_path.string().c_str(), 0);
+  const std::string path_str = archive_path.string();
+  mz_bool status = mz_zip_writer_init_file(&impl_->archive, path_str.c_str(), 0);
   if (!status) {
     const char *err = mz_zip_get_error_string(mz_zip_get_last_error(&impl_->archive));
-    return std::unexpected(std::format("Failed to initialize zip file '{}': {}",
-                                       archive_path.string(), err ? err : "unknown error"));
+    return std::unexpected(std::format("Failed to initialize zip file '{}': {}", path_str,
+                                       err ? err : "unknown error"));
   }
 
   impl_->is_open = true;

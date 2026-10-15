@@ -52,19 +52,19 @@ void populateHistogramMetadata(correlation::analysis::Histogram &hist, std::vect
  * @brief Accumulates per-atom LDOS into total and species-resolved double-precision accumulators.
  */
 void accumulateFrameLdos(const correlation::core::Cell &cell,
-                         const std::vector<std::vector<real_t>> &ldos, size_t num_bins,
+                         const correlation::mlip::MLIPOutput &output, size_t num_bins,
                          std::vector<double> &acc_total,
                          std::map<std::string, std::vector<double>> &acc_species) {
   const auto &atoms = cell.atoms();
   const size_t num_atoms = atoms.size();
-  if (num_atoms == 0 || ldos.size() < num_atoms) {
+  if (num_atoms == 0) {
     return;
   }
 
   const double norm_factor = 1.0 / static_cast<double>(num_atoms);
 
   for (size_t i = 0; i < num_atoms; ++i) {
-    const auto &atom_ldos = ldos[i];
+    const auto atom_ldos = output.getLdos(i);
     if (atom_ldos.size() < num_bins) {
       continue;
     }
@@ -154,7 +154,7 @@ correlation::analysis::Histogram TDOSCalculator::calculate(const correlation::co
   std::vector<double> acc_total(num_bins, 0.0);
   std::map<std::string, std::vector<double>> acc_species;
 
-  accumulateFrameLdos(cell, output.ldos, num_bins, acc_total, acc_species);
+  accumulateFrameLdos(cell, output, num_bins, acc_total, acc_species);
   finalizeHistogram(hist, 1.0, acc_total, acc_species);
 
   return hist;
@@ -195,7 +195,7 @@ TDOSCalculator::calculateTrajectory(const correlation::core::Trajectory &traj,
       acc_total.assign(num_bins, 0.0);
     }
 
-    accumulateFrameLdos(cell, output.ldos, num_bins, acc_total, acc_species);
+    accumulateFrameLdos(cell, output, num_bins, acc_total, acc_species);
     ++processed_frames;
   }
 

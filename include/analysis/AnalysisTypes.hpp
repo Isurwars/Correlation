@@ -28,7 +28,7 @@ struct BondCutoffRange {
   real_t max_sq{static_cast<real_t>(0.0)}; ///< Squared maximum bond distance (Å²).
 
   [[nodiscard]] constexpr bool isValid() const noexcept {
-    return min_sq >= 0.0 && max_sq >= 0.0 && min_sq <= max_sq;
+    return min_sq >= 0.0 && max_sq > 0.0 && min_sq <= max_sq;
   }
 };
 

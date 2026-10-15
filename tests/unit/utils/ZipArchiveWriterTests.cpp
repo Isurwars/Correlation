@@ -136,4 +136,14 @@ TEST_F(ZipArchiveWriterTest, RAIIAutoFinalizeDestruction) {
   }
 }
 
+TEST_F(ZipArchiveWriterTest, MovedFromStateReturnsError) {
+  const auto zip_path = testDir() / "test_moved_from.zip";
+  correlation::utils::ZipArchiveWriter writer;
+  correlation::utils::ZipArchiveWriter moved_to = std::move(writer);
+
+  auto res = writer.open(zip_path);
+  EXPECT_FALSE(res.has_value());
+  EXPECT_EQ(res.error(), "ZipArchiveWriter is in a moved-from state");
+}
+
 } // namespace

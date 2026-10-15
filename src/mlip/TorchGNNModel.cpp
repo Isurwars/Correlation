@@ -162,14 +162,10 @@ MLIPOutput TorchGNNModel::evaluate(const correlation::core::Cell &cell) const {
       const auto sizes = ldos_t.sizes();
       if (sizes.size() == 2 && sizes[0] == static_cast<int64_t>(number_atoms)) {
         const size_t n_bins = static_cast<size_t>(sizes[1]);
+        const size_t total_elements = number_atoms * n_bins;
         output.ldos_bins = n_bins;
-        output.ldos.resize(number_atoms, std::vector<real_t>(n_bins, static_cast<real_t>(0.0)));
         const auto *ldos_ptr = ldos_t.data_ptr<real_t>();
-        for (size_t i = 0; i < number_atoms; ++i) {
-          for (size_t b = 0; b < n_bins; ++b) {
-            output.ldos[i][b] = ldos_ptr[i * n_bins + b];
-          }
-        }
+        output.ldos.assign(ldos_ptr, ldos_ptr + total_elements);
       }
     }
 

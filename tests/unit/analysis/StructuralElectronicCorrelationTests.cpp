@@ -30,12 +30,12 @@ public:
     correlation::mlip::MLIPOutput out;
     const size_t n_atoms = cell.atomCount();
     out.ldos_bins = bins_;
-    out.ldos.resize(n_atoms, std::vector<real_t>(bins_, static_cast<real_t>(0.0)));
+    out.ldos.resize(n_atoms * bins_, static_cast<real_t>(0.0));
 
     for (size_t i = 0; i < n_atoms; ++i) {
       for (size_t bin_idx = 0; bin_idx < bins_; ++bin_idx) {
-        out.ldos[i][bin_idx] = static_cast<real_t>(1.0 + static_cast<double>(i) * 0.2 +
-                                                   static_cast<double>(bin_idx) * 0.05);
+        out.ldos[i * bins_ + bin_idx] = static_cast<real_t>(1.0 + static_cast<double>(i) * 0.2 +
+                                                            static_cast<double>(bin_idx) * 0.05);
       }
     }
     return out;

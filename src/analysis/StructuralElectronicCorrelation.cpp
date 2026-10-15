@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <cmath>
 #include <complex>
+#include <span>
 #include <string_view>
 #include <vector>
 
@@ -63,7 +64,7 @@ std::string_view classifySteinhardt(real_t q6_val) noexcept {
   return "Ordered";
 }
 
-void accumulateVector(const std::vector<real_t> &src, std::vector<real_t> &dst) {
+void accumulateVector(std::span<const real_t> src, std::vector<real_t> &dst) {
   const size_t num_elements = src.size();
   if (dst.size() < num_elements) {
     dst.resize(num_elements, 0.0);
@@ -184,11 +185,15 @@ MotifProjectedTDOS StructuralElectronicCorrelation::correlateCNA(
     const auto cna_labels = correlation::mlip::GraphDescriptors::computeCNADescriptor(graph);
 
     const size_t n_atoms = cell.atomCount();
-    for (size_t i = 0; i < n_atoms && i < mlip_out.ldos.size(); ++i) {
+    for (size_t i = 0; i < n_atoms; ++i) {
+      const auto atom_ldos = mlip_out.getLdos(i);
+      if (atom_ldos.empty()) {
+        continue;
+      }
       const auto motif_name =
           std::string(cnaLabelToString(i < cna_labels.size() ? cna_labels[i] : 0));
-      accumulateVector(mlip_out.ldos[i], result.motif_tdos[motif_name]);
-      accumulateVector(mlip_out.ldos[i], result.total_tdos);
+      accumulateVector(atom_ldos, result.motif_tdos[motif_name]);
+      accumulateVector(atom_ldos, result.total_tdos);
       ++total_atoms;
     }
     ++result.frame_count;
@@ -229,11 +234,15 @@ MotifProjectedTDOS StructuralElectronicCorrelation::correlateSteinhardt(
     const auto atom_edges = buildAtomEdgeLists(graph);
 
     const size_t n_atoms = cell.atomCount();
-    for (size_t i = 0; i < n_atoms && i < mlip_out.ldos.size(); ++i) {
+    for (size_t i = 0; i < n_atoms; ++i) {
+      const auto atom_ldos = mlip_out.getLdos(i);
+      if (atom_ldos.empty()) {
+        continue;
+      }
       const real_t q6_val = computeAtomQ6(i, graph, atom_edges);
       const auto motif_name = std::string(classifySteinhardt(q6_val));
-      accumulateVector(mlip_out.ldos[i], result.motif_tdos[motif_name]);
-      accumulateVector(mlip_out.ldos[i], result.total_tdos);
+      accumulateVector(atom_ldos, result.motif_tdos[motif_name]);
+      accumulateVector(atom_ldos, result.total_tdos);
       ++total_atoms;
     }
     ++result.frame_count;

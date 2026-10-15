@@ -65,14 +65,13 @@ struct XdatcarParser {
   const char *data = nullptr;
   size_t total_size = 0;
   size_t offset = 0;
-  size_t line_end = 0;
 
   XdatcarParser(const char *data_ptr, size_t data_size) : data(data_ptr), total_size(data_size) {}
 
   std::string nextLine() {
-    line_end = findLineEnd(data, total_size, offset);
-    std::string line = extractLine(data, offset, line_end);
-    offset = skipLineEnding(data, total_size, line_end);
+    size_t const cur_line_end = findLineEnd(data, total_size, offset);
+    std::string line = extractLine(data, offset, cur_line_end);
+    offset = skipLineEnding(data, total_size, cur_line_end);
     return line;
   }
 
@@ -131,13 +130,13 @@ struct XdatcarParser {
 
     while (offset < total_size) {
       // Skip empty lines
-      size_t const blank_end = findLineEnd(data, total_size, offset);
-      std::string trimmed = extractLine(data, offset, blank_end);
+      size_t const cur_line_end = findLineEnd(data, total_size, offset);
+      std::string trimmed = extractLine(data, offset, cur_line_end);
 
       // Trim leading whitespace
       size_t const start = trimmed.find_first_not_of(" \t");
       if (start == std::string::npos) {
-        offset = skipLineEnding(data, total_size, blank_end);
+        offset = skipLineEnding(data, total_size, cur_line_end);
         continue;
       }
       trimmed = trimmed.substr(start);
@@ -153,7 +152,7 @@ struct XdatcarParser {
         }
       }
 
-      offset = skipLineEnding(data, total_size, line_end);
+      offset = skipLineEnding(data, total_size, cur_line_end);
 
       // Report progress
       if (progress_callback && total_size > 0) {
@@ -234,7 +233,7 @@ correlation::core::Cell parseXdatcarFrame(const std::shared_ptr<XdatcarHeader> &
   size_t offset = 0;
   size_t line_end = 0;
 
-  auto next_ln = [&]() -> std::string {
+  const auto next_ln = [&] -> std::string {
     line_end = findLineEnd(frame_data, frame_size, offset);
     std::string line = extractLine(frame_data, offset, line_end);
     offset = skipLineEnding(frame_data, frame_size, line_end);
@@ -285,7 +284,7 @@ correlation::core::Cell parseXdatcarFrame(const std::shared_ptr<XdatcarHeader> &
 correlation::core::Cell
 XdatcarReader::readStructure(const std::string &filename,
                              std::function<void(float, const std::string &)> progress_callback) {
-  auto traj = readTrajectory(filename, progress_callback);
+  const auto traj = readTrajectory(filename, progress_callback);
   if (traj.getFrameCount() == 0) {
     throw std::runtime_error("XDATCAR: no frames found in file.");
   }
@@ -303,13 +302,13 @@ XdatcarReader::readTrajectory(const std::string &filename,
     progress_callback(0.0F, "Reading XDATCAR file...");
   }
 
-  auto mapped_file = std::make_shared<correlation::core::MappedFile>(filename);
+  const auto mapped_file = std::make_shared<correlation::core::MappedFile>(filename);
   const char *data = mapped_file->data();
   const size_t total_size = mapped_file->size();
 
   XdatcarParser parser(data, total_size);
 
-  auto header = parser.parseHeader();
+  const auto header = parser.parseHeader();
   std::vector<size_t> frame_offsets = parser.findFrameOffsets(progress_callback);
 
   if (frame_offsets.empty()) {
@@ -324,8 +323,8 @@ XdatcarReader::readTrajectory(const std::string &filename,
   }
 
   // Build the parser lambda that captures the shared header.
-  auto frame_parser = [header](const char *data_begin,
-                               size_t data_size) -> correlation::core::Cell {
+  const auto frame_parser = [header](const char *data_begin,
+                                     size_t data_size) -> correlation::core::Cell {
     return parseXdatcarFrame(header, data_begin, data_size);
   };
 

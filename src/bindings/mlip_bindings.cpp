@@ -330,8 +330,37 @@ void bindMlipInterface(py::module_ &mod) {
       .def_readwrite("total_energy", &MLIPOutput::total_energy, "Total predicted potential energy.")
       .def_readwrite("per_atom_energy", &MLIPOutput::per_atom_energy,
                      "Site-resolved per-atom energy.")
-      .def_readwrite("ldos", &MLIPOutput::ldos,
-                     "Local Density of States matrix [N_atoms x N_bins].")
+      .def_property(
+          "ldos",
+          [](const MLIPOutput &out) -> py::array_t<real_t> {
+            if (out.ldos_bins == 0 || out.ldos.empty()) {
+              return py::array_t<real_t>();
+            }
+            const size_t n_atoms = out.ldos.size() / out.ldos_bins;
+            py::array_t<real_t> arr(
+                {static_cast<py::ssize_t>(n_atoms), static_cast<py::ssize_t>(out.ldos_bins)});
+            auto buf = arr.mutable_unchecked<2>();
+            for (size_t i = 0; i < n_atoms; ++i) {
+              for (size_t b = 0; b < out.ldos_bins; ++b) {
+                buf(i, b) = out.ldos[i * out.ldos_bins + b];
+              }
+            }
+            return arr;
+          },
+          [](MLIPOutput &out, py::array_t<real_t> arr) {
+            auto buf = arr.unchecked<2>();
+            const size_t n_atoms = static_cast<size_t>(buf.shape(0));
+            const size_t n_bins = static_cast<size_t>(buf.shape(1));
+            out.ldos_bins = n_bins;
+            out.ldos.resize(n_atoms * n_bins);
+            for (size_t i = 0; i < n_atoms; ++i) {
+              for (size_t b = 0; b < n_bins; ++b) {
+                out.ldos[i * n_bins + b] =
+                    buf(static_cast<py::ssize_t>(i), static_cast<py::ssize_t>(b));
+              }
+            }
+          },
+          "Local Density of States matrix [N_atoms x N_bins].")
       .def_readwrite("ldos_bins", &MLIPOutput::ldos_bins, "Number of LDOS energy bins.")
       .def_property_readonly(
           "forces",

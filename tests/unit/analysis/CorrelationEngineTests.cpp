@@ -120,4 +120,31 @@ TEST(DistributionFunctionsTests, PartialKeyHandlesValidAndOutOfBoundsIndices) {
   EXPECT_EQ(dists.getInversePartialKey(5, 10), "Unknown-Unknown");
 }
 
+TEST(BondCutoffRangeTests, ValidRangeAcceptsPositiveBounds) {
+  correlation::analysis::BondCutoffRange range{.min_sq = 0.0, .max_sq = 10.0};
+  EXPECT_TRUE(range.isValid());
+}
+
+TEST(BondCutoffRangeTests, ValidRangeAcceptsEqualPositiveBounds) {
+  correlation::analysis::BondCutoffRange range{.min_sq = 5.0, .max_sq = 5.0};
+  EXPECT_TRUE(range.isValid());
+}
+
+TEST(BondCutoffRangeTests, InvalidRangeRejectsZeroUpperBound) {
+  correlation::analysis::BondCutoffRange range{.min_sq = 0.0, .max_sq = 0.0};
+  EXPECT_FALSE(range.isValid());
+}
+
+TEST(BondCutoffRangeTests, InvalidRangeRejectsInvertedBounds) {
+  correlation::analysis::BondCutoffRange range{.min_sq = 10.0, .max_sq = 4.0};
+  EXPECT_FALSE(range.isValid());
+}
+
+TEST(BondCutoffRangeTests, InvalidRangeRejectsNegativeBounds) {
+  correlation::analysis::BondCutoffRange range1{.min_sq = -1.0, .max_sq = 4.0};
+  correlation::analysis::BondCutoffRange range2{.min_sq = 0.0, .max_sq = -2.0};
+  EXPECT_FALSE(range1.isValid());
+  EXPECT_FALSE(range2.isValid());
+}
+
 } // namespace

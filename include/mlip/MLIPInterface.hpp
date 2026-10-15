@@ -11,6 +11,7 @@
 #include "core/Cell.hpp"
 #include "math/LinearAlgebra.hpp"
 
+#include <span>
 #include <string>
 #include <vector>
 
@@ -25,8 +26,32 @@ struct MLIPOutput {
   std::vector<real_t> per_atom_energy;                    /**< Site-resolved per-atom energy. */
   std::vector<correlation::math::Vector3<real_t>> forces; /**< Atomic forces acting on each atom. */
   correlation::math::Matrix3<real_t> stress;              /**< Virial stress tensor. */
-  std::vector<std::vector<real_t>> ldos; /**< Local Density of States [N_atoms x N_bins]. */
-  size_t ldos_bins{0};                   /**< Number of energy bins in LDOS spectrum. */
+  std::vector<real_t> ldos; /**< Contiguous Local Density of States [N_atoms * N_bins]. */
+  size_t ldos_bins{0};      /**< Number of energy bins in LDOS spectrum. */
+
+  /**
+   * @brief Returns a const span over the LDOS spectrum for a specific atom.
+   * @param atom_idx Index of the target atom.
+   * @return Const span over the energy bins.
+   */
+  [[nodiscard]] std::span<const real_t> getLdos(size_t atom_idx) const noexcept {
+    if (ldos_bins == 0 || (atom_idx + 1) * ldos_bins > ldos.size()) {
+      return {};
+    }
+    return std::span<const real_t>(ldos.data() + atom_idx * ldos_bins, ldos_bins);
+  }
+
+  /**
+   * @brief Returns a mutable span over the LDOS spectrum for a specific atom.
+   * @param atom_idx Index of the target atom.
+   * @return Mutable span over the energy bins.
+   */
+  [[nodiscard]] std::span<real_t> getLdos(size_t atom_idx) noexcept {
+    if (ldos_bins == 0 || (atom_idx + 1) * ldos_bins > ldos.size()) {
+      return {};
+    }
+    return std::span<real_t>(ldos.data() + atom_idx * ldos_bins, ldos_bins);
+  }
 };
 
 /**

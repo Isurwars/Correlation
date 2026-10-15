@@ -43,7 +43,7 @@ public:
     correlation::mlip::MLIPOutput out;
     const size_t n_atoms = cell.atoms().size();
     out.ldos_bins = bins_;
-    out.ldos.resize(n_atoms, std::vector<real_t>(bins_, static_cast<real_t>(0.0)));
+    out.ldos.resize(n_atoms * bins_, static_cast<real_t>(0.0));
 
     for (size_t i = 0; i < n_atoms; ++i) {
       const std::string &symbol = cell.atoms()[i].element().symbol;
@@ -57,7 +57,7 @@ public:
       }
 
       for (size_t bin_idx = 0; bin_idx < bins_; ++bin_idx) {
-        out.ldos[i][bin_idx] =
+        out.ldos[i * bins_ + bin_idx] =
             base_val_ * multiplier + static_cast<real_t>(bin_idx) * static_cast<real_t>(0.1);
       }
     }
