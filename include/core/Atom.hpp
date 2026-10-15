@@ -30,7 +30,8 @@ using AtomID = std::uint32_t;
  * @brief Represents a unique integer ID for an element type.
  */
 struct ElementID {
-  int value; ///< Unique integer value representing the element type.
+  std::int32_t value{
+      -1}; ///< Unique integer value representing the element type (-1 for unassigned).
 
   /**
    * @brief Equality operator for ElementID.

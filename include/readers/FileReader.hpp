@@ -11,6 +11,8 @@
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 
+#include "readers/BaseReader.hpp"
+
 #include <cstdint>
 #include <functional>
 #include <string>
@@ -55,9 +57,8 @@ enum class FileType : std::uint8_t {
  * structure.
  * @throws std::runtime_error if the file cannot be opened or is malformed.
  */
-correlation::core::Cell
-readStructure(const std::string &filename, FileType type,
-              std::function<void(float, const std::string &)> progress_callback = nullptr);
+correlation::core::Cell readStructure(const std::string &filename, FileType type,
+                                      const ProgressCallback &progress_callback = nullptr);
 
 /**
  * @brief Reads a trajectory from a file.
@@ -69,9 +70,8 @@ readStructure(const std::string &filename, FileType type,
  * @return A correlation::core::Trajectory object.
  * @throws std::runtime_error if the file cannot be opened or is malformed.
  */
-correlation::core::Trajectory
-readTrajectory(const std::string &filename, FileType type,
-               const std::function<void(float, const std::string &)> &progress_callback = nullptr);
+correlation::core::Trajectory readTrajectory(const std::string &filename, FileType type,
+                                             const ProgressCallback &progress_callback = nullptr);
 
 /**
  * @brief Determines the FileType from a given filename extension.

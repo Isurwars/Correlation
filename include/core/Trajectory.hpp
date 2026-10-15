@@ -15,6 +15,7 @@
 #include <memory>
 #include <mutex>
 #include <optional>
+#include <span>
 #include <vector>
 
 namespace correlation::core {
@@ -75,6 +76,18 @@ public:
    * @return A vector of Cell objects representing the frames.
    */
   [[nodiscard]] const std::vector<Cell> &getFrames() const;
+
+  /**
+   * @brief Gets a mutable span view over the trajectory frames.
+   * @return Mutable span of Cell objects.
+   */
+  [[nodiscard]] std::span<Cell> frameSpan();
+
+  /**
+   * @brief Gets an immutable span view over the trajectory frames.
+   * @return Const span of Cell objects.
+   */
+  [[nodiscard]] std::span<const Cell> frameSpan() const;
 
   /**
    * @brief Gets the total number of frames in the trajectory.

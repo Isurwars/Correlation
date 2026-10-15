@@ -149,9 +149,8 @@ BaseReader *findReaderForType(FileType type) {
 
 } // namespace
 
-correlation::core::Cell
-readStructure(const std::string &filename, FileType type,
-              std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell readStructure(const std::string &filename, FileType type,
+                                      const ProgressCallback &progress_callback) {
 
   BaseReader *reader = nullptr;
   if (type != FileType::Unknown) {
@@ -162,15 +161,14 @@ readStructure(const std::string &filename, FileType type,
   }
 
   if (reader != nullptr) {
-    return reader->readStructure(filename, std::move(progress_callback));
+    return reader->readStructure(filename, progress_callback);
   }
 
   throw std::runtime_error("No reader found for file: " + filename);
 }
 
-correlation::core::Trajectory
-readTrajectory(const std::string &filename, FileType type,
-               const std::function<void(float, const std::string &)> &progress_callback) {
+correlation::core::Trajectory readTrajectory(const std::string &filename, FileType type,
+                                             const ProgressCallback &progress_callback) {
 
   BaseReader *reader = nullptr;
   if (type != FileType::Unknown) {

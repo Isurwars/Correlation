@@ -15,6 +15,7 @@
 
 #include <array>
 #include <optional>
+#include <span>
 #include <string_view>
 #include <vector>
 
@@ -141,12 +142,30 @@ public:
    */
   [[nodiscard]] std::vector<Atom> &atoms() noexcept { return atoms_; }
 
+  /**
+   * @brief Gets an immutable span view over the atoms in the cell.
+   * @return Const span of Atom elements.
+   */
+  [[nodiscard]] std::span<const Atom> atomSpan() const noexcept { return atoms_; }
+
+  /**
+   * @brief Gets a mutable span view over the atoms in the cell.
+   * @return Mutable span of Atom elements.
+   */
+  [[nodiscard]] std::span<Atom> atomSpan() noexcept { return atoms_; }
+
   // Elements
   /**
    * @brief Gets the list of unique chemical elements in the cell.
    * @return Constant reference to the vector of elements.
    */
   [[nodiscard]] const std::vector<Element> &elements() const noexcept { return elements_; }
+
+  /**
+   * @brief Gets an immutable span view over unique chemical elements in the cell.
+   * @return Const span of Element instances.
+   */
+  [[nodiscard]] std::span<const Element> elementSpan() const noexcept { return elements_; }
 
   /**
    * @brief Gets the total number of atoms in the cell.

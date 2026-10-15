@@ -49,6 +49,16 @@ const std::vector<Cell> &Trajectory::getFrames() const {
   return frames_;
 }
 
+std::span<Cell> Trajectory::frameSpan() {
+  ensureMaterialized();
+  return frames_;
+}
+
+std::span<const Cell> Trajectory::frameSpan() const {
+  ensureMaterialized();
+  return frames_;
+}
+
 size_t Trajectory::getFrameCount() const noexcept {
   if (mapped_file_) {
     return frame_offsets_.size() - 1;

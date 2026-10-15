@@ -18,6 +18,12 @@
 namespace correlation::readers {
 
 /**
+ * @brief Progress report callback function type.
+ * Invoked with normalized progress in [0.0, 1.0] and a status message.
+ */
+using ProgressCallback = std::function<void(float, const std::string &)>;
+
+/**
  * @brief Base class for all file readers.
  */
 class BaseReader {
@@ -53,9 +59,8 @@ public:
    * @param progress_callback Optional callback to report progress [0.0, 1.0].
    * @return A Cell object containing the loaded structure.
    */
-  virtual correlation::core::Cell
-  readStructure(const std::string &filename,
-                std::function<void(float, const std::string &)> progress_callback = nullptr) = 0;
+  virtual correlation::core::Cell readStructure(const std::string &filename,
+                                                ProgressCallback progress_callback = nullptr) = 0;
 
   /**
    * @brief Reads a trajectory from a file.
@@ -64,8 +69,7 @@ public:
    * @return A Trajectory object containing all loaded frames.
    */
   virtual correlation::core::Trajectory
-  readTrajectory(const std::string &filename,
-                 std::function<void(float, const std::string &)> progress_callback = nullptr) = 0;
+  readTrajectory(const std::string &filename, ProgressCallback progress_callback = nullptr) = 0;
 };
 
 } // namespace correlation::readers
