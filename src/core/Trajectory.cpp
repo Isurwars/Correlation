@@ -106,7 +106,9 @@ void Trajectory::ensureMaterialized() const {
 const correlation::analysis::BondCutoffRange &Trajectory::getBondCutoffRange(size_t type1,
                                                                              size_t type2) const {
   static const correlation::analysis::BondCutoffRange DEFAULT_RANGE{
-      .min_sq = static_cast<real_t>(0.0), .max_sq = static_cast<real_t>(0.0)};
+      .min_sq = static_cast<real_t>(0.0),
+      .max_sq = static_cast<real_t>(0.0),
+  };
   if (bond_cutoffs_.empty()) {
     precomputeBondCutoffs();
   }

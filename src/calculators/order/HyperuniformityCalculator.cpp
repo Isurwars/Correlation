@@ -69,7 +69,7 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell,
 
   // Half the minimum box length is the maximum window radius
   const real_t l_min = std::min({l_x, l_y, l_z});
-  const auto r_max = static_cast<real_t>(l_min / static_cast<real_t>(2.0));
+  const auto r_max = (l_min / static_cast<real_t>(2.0));
   constexpr auto R_MIN = static_cast<real_t>(2.0); // Minimum window radius in Angstroms
 
   if (r_max <= R_MIN) {
@@ -84,8 +84,7 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell,
   // Pre-compute bin radii
   std::vector<real_t> radii(num_bins);
   for (size_t k = 0; k < num_bins; ++k) {
-    radii[k] = static_cast<real_t>(R_MIN + (static_cast<real_t>(k) + static_cast<real_t>(0.5)) *
-                                               r_bin_width);
+    radii[k] = (R_MIN + (static_cast<real_t>(k) + static_cast<real_t>(0.5)) * r_bin_width);
   }
 
   // Squared radii for distance comparison
