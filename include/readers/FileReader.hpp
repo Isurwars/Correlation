@@ -14,6 +14,7 @@
 #include "readers/BaseReader.hpp"
 
 #include <cstdint>
+#include <expected>
 #include <string>
 
 // The correlation::readers namespace encapsulates all functionality related to
@@ -71,6 +72,30 @@ correlation::core::Cell readStructure(const std::string &filename, FileType type
  */
 correlation::core::Trajectory readTrajectory(const std::string &filename, FileType type,
                                              const ProgressCallback &progress_callback = nullptr);
+
+/**
+ * @brief Reads a structure from the given file, returning Cell or diagnostic error string.
+ *
+ * @param[in] filename Path to the file containing the structure.
+ * @param[in] type File format type used to decode the file.
+ * @param[in] progress_callback Optional callback invoked during reading.
+ * @return Expected containing the parsed Cell on success, or diagnostic string on failure.
+ */
+[[nodiscard]] std::expected<correlation::core::Cell, std::string>
+readStructureExpected(const std::string &filename, FileType type = FileType::Unknown,
+                      const ProgressCallback &progress_callback = nullptr);
+
+/**
+ * @brief Reads a trajectory from the given file, returning Trajectory or diagnostic error string.
+ *
+ * @param[in] filename Path to the file containing the trajectory.
+ * @param[in] type File format type used to decode the file.
+ * @param[in] progress_callback Optional callback invoked during reading.
+ * @return Expected containing the parsed Trajectory on success, or diagnostic string on failure.
+ */
+[[nodiscard]] std::expected<correlation::core::Trajectory, std::string>
+readTrajectoryExpected(const std::string &filename, FileType type = FileType::Unknown,
+                       const ProgressCallback &progress_callback = nullptr);
 
 /**
  * @brief Determines the FileType from a given filename extension.

@@ -511,3 +511,31 @@ TEST_F(FileReaderTests, ReadGapThroughFileReader) {
   std::error_code err;
   std::filesystem::remove(temp_file, err);
 }
+
+TEST_F(FileReaderTests, ReadStructureExpectedSuccessAndFailure) {
+  using correlation::readers::FileType;
+  using correlation::readers::readStructureExpected;
+
+  std::string const valid_path = data_dir_ + "car/test.car";
+  auto const valid_result = readStructureExpected(valid_path, FileType::Car);
+  ASSERT_TRUE(valid_result.has_value());
+  EXPECT_EQ(valid_result->atoms().size(), 2);
+
+  auto const invalid_result = readStructureExpected("/nonexistent/file.car", FileType::Car);
+  EXPECT_FALSE(invalid_result.has_value());
+  EXPECT_FALSE(invalid_result.error().empty());
+}
+
+TEST_F(FileReaderTests, ReadTrajectoryExpectedSuccessAndFailure) {
+  using correlation::readers::FileType;
+  using correlation::readers::readTrajectoryExpected;
+
+  std::string const valid_path = data_dir_ + "car/test.car";
+  auto const valid_result = readTrajectoryExpected(valid_path, FileType::Car);
+  ASSERT_TRUE(valid_result.has_value());
+  EXPECT_GE(valid_result->getFrameCount(), 1);
+
+  auto const invalid_result = readTrajectoryExpected("/nonexistent/file.xyz", FileType::Xyz);
+  EXPECT_FALSE(invalid_result.has_value());
+  EXPECT_FALSE(invalid_result.error().empty());
+}

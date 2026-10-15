@@ -203,4 +203,28 @@ correlation::core::Trajectory readTrajectory(const std::string &filename, FileTy
   throw std::runtime_error("No reader found for file: " + filename);
 }
 
+std::expected<correlation::core::Cell, std::string>
+readStructureExpected(const std::string &filename, FileType type,
+                      const ProgressCallback &progress_callback) {
+  try {
+    return readStructure(filename, type, progress_callback);
+  } catch (const std::exception &err) {
+    return std::unexpected(std::string(err.what()));
+  } catch (...) {
+    return std::unexpected("Unknown error occurred while reading structure from: " + filename);
+  }
+}
+
+std::expected<correlation::core::Trajectory, std::string>
+readTrajectoryExpected(const std::string &filename, FileType type,
+                       const ProgressCallback &progress_callback) {
+  try {
+    return readTrajectory(filename, type, progress_callback);
+  } catch (const std::exception &err) {
+    return std::unexpected(std::string(err.what()));
+  } catch (...) {
+    return std::unexpected("Unknown error occurred while reading trajectory from: " + filename);
+  }
+}
+
 } // namespace correlation::readers
