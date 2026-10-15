@@ -20,7 +20,7 @@ namespace correlation::analysis {
 
 namespace {
 
-[[nodiscard]] std::string validateHistogramSettings(const AnalysisSettings &settings) {
+[[nodiscard]] std::string_view validateHistogramSettings(const AnalysisSettings &settings) {
   if (settings.r_max <= 0.0) {
     return "Error: r_max must be strictly positive.";
   }
@@ -45,10 +45,10 @@ namespace {
   if (settings.r_int_max <= 0.0) {
     return "Error: r_int_max must be strictly positive.";
   }
-  return "";
+  return {};
 }
 
-[[nodiscard]] std::string validateAngularSettings(const AnalysisSettings &settings) {
+[[nodiscard]] std::string_view validateAngularSettings(const AnalysisSettings &settings) {
   if (settings.angle_bin_width <= 0.0) {
     return "Error: angle_bin_width must be strictly positive.";
   }
@@ -61,10 +61,10 @@ namespace {
   if (settings.dihedral_bin_width > 360.0) {
     return "Error: dihedral_bin_width must be at most 360.0 degrees.";
   }
-  return "";
+  return {};
 }
 
-[[nodiscard]] std::string validateSimulationSettings(const CorrelationEngineConfig &config) {
+[[nodiscard]] std::string_view validateSimulationSettings(const CorrelationEngineConfig &config) {
   if (config.time_step <= 0.0) {
     return "Error: time_step must be strictly positive.";
   }
@@ -80,10 +80,10 @@ namespace {
   if (config.max_frame >= 0 && config.min_frame > config.max_frame) {
     return "Error: min_frame cannot be greater than max_frame.";
   }
-  return "";
+  return {};
 }
 
-[[nodiscard]] std::string validateSmoothingSettings(const AnalysisSettings &settings) {
+[[nodiscard]] std::string_view validateSmoothingSettings(const AnalysisSettings &settings) {
   if (settings.smoothing && settings.smoothing_sigma <= 0.0) {
     return "Error: smoothing_sigma must be strictly positive when smoothing is enabled.";
   }
@@ -96,10 +96,10 @@ namespace {
   if (settings.lef_sigma <= 0.0) {
     return "Error: lef_sigma must be strictly positive.";
   }
-  return "";
+  return {};
 }
 
-[[nodiscard]] std::string validateBondCutoffs(const BondCutoffMatrix &cutoffs) {
+[[nodiscard]] std::string_view validateBondCutoffs(const BondCutoffMatrix &cutoffs) {
   for (const auto &row : cutoffs) {
     for (const auto &range : row) {
       if (range.min_sq < 0.0 || range.max_sq < 0.0) {
@@ -110,7 +110,7 @@ namespace {
       }
     }
   }
-  return "";
+  return {};
 }
 
 void configureTrajectory(correlation::core::Trajectory &trajectory,
@@ -132,15 +132,14 @@ bool requiresVelocities(const AnalysisSettings &settings) {
   const auto &factory_calcs =
       ::correlation::calculators::CalculatorFactory::instance().getCalculators();
   for (const auto &calc : factory_calcs) {
-    bool const is_active =
+    const bool is_active =
         settings.isActive(calc->getName()) || settings.isActive(calc->getShortName());
-    if (calc->isTrajectoryCalculator() && calc->isConfigured() && is_active) {
-      if (calc->getShortName() == "VACF" || calc->getName() == "VACF" ||
-          calc->getName() == "Velocity Autocorrelation Function" ||
-          calc->getShortName() == "VDOS" || calc->getShortName() == "vDoS" ||
-          calc->getName() == "Vibrational Density of States" || calc->getName() == "vDoS") {
-        return true;
-      }
+    if (calc->isTrajectoryCalculator() && calc->isConfigured() && is_active &&
+        (calc->getShortName() == "VACF" || calc->getName() == "VACF" ||
+         calc->getName() == "Velocity Autocorrelation Function" || calc->getShortName() == "VDOS" ||
+         calc->getShortName() == "vDoS" || calc->getName() == "Vibrational Density of States" ||
+         calc->getName() == "vDoS")) {
+      return true;
     }
   }
   return false;
@@ -150,20 +149,20 @@ bool requiresVelocities(const AnalysisSettings &settings) {
 
 std::expected<void, std::string>
 CorrelationEngine::validateConfig(const CorrelationEngineConfig &config) {
-  if (std::string const err = validateHistogramSettings(config.settings); !err.empty()) {
-    return std::unexpected(err);
+  if (const auto err = validateHistogramSettings(config.settings); !err.empty()) {
+    return std::unexpected(std::string(err));
   }
-  if (std::string const err = validateAngularSettings(config.settings); !err.empty()) {
-    return std::unexpected(err);
+  if (const auto err = validateAngularSettings(config.settings); !err.empty()) {
+    return std::unexpected(std::string(err));
   }
-  if (std::string const err = validateSimulationSettings(config); !err.empty()) {
-    return std::unexpected(err);
+  if (const auto err = validateSimulationSettings(config); !err.empty()) {
+    return std::unexpected(std::string(err));
   }
-  if (std::string const err = validateSmoothingSettings(config.settings); !err.empty()) {
-    return std::unexpected(err);
+  if (const auto err = validateSmoothingSettings(config.settings); !err.empty()) {
+    return std::unexpected(std::string(err));
   }
-  if (std::string const err = validateBondCutoffs(config.bond_cutoffs); !err.empty()) {
-    return std::unexpected(err);
+  if (const auto err = validateBondCutoffs(config.bond_cutoffs); !err.empty()) {
+    return std::unexpected(std::string(err));
   }
   return {};
 }
@@ -191,10 +190,10 @@ void CorrelationEngine::runTrajectoryCalculators(DistributionFunctions &distribu
 void CorrelationEngine::calculateDynamicProperties(DistributionFunctions &distribution_functions) {
   const auto &hists = distribution_functions.getAllHistograms();
 
-  auto it_msd = hists.find("MSD");
+  const auto it_msd = hists.find("MSD");
   if (it_msd != hists.end()) {
     const auto &hist = it_msd->second;
-    auto it_total = hist.partials.find("Total");
+    const auto it_total = hist.partials.find("Total");
     if (it_total != hist.partials.end()) {
       real_t const d_msd =
           DynamicsAnalyzer::computeDiffusionCoefficientMSD(hist.bins, it_total->second);
@@ -202,10 +201,10 @@ void CorrelationEngine::calculateDynamicProperties(DistributionFunctions &distri
     }
   }
 
-  auto it_vacf = hists.find("VACF");
+  const auto it_vacf = hists.find("VACF");
   if (it_vacf != hists.end()) {
     const auto &hist = it_vacf->second;
-    auto it_total = hist.partials.find("Total");
+    const auto it_total = hist.partials.find("Total");
     if (it_total != hist.partials.end()) {
       real_t const d_vacf =
           DynamicsAnalyzer::computeDiffusionCoefficientVACF(hist.bins, it_total->second);
@@ -219,7 +218,7 @@ void CorrelationEngine::calculateDynamicProperties(DistributionFunctions &distri
   }
   if (it_norm != hists.end()) {
     const auto &hist = it_norm->second;
-    auto it_total = hist.partials.find("Total");
+    const auto it_total = hist.partials.find("Total");
     if (it_total != hist.partials.end()) {
       real_t const tau = DynamicsAnalyzer::computeRelaxationTime(hist.bins, it_total->second);
       distribution_functions.setRelaxationTime(tau);
@@ -269,13 +268,13 @@ CorrelationEngine::runAnalysis(correlation::core::Trajectory &trajectory,
       progress_callback(0.0F, "Starting analysis...");
     }
 
-    auto cb_structure = [&progress_callback](float /*p*/, const std::string &msg) {
+    const auto cb_structure = [&progress_callback](float /*p*/, const std::string &msg) {
       if (progress_callback) {
         progress_callback(0.0F, msg);
       }
     };
 
-    auto cb_dist = [&progress_callback](float progress, const std::string &msg) {
+    const auto cb_dist = [&progress_callback](float progress, const std::string &msg) {
       if (progress_callback) {
         progress_callback(progress, msg);
       }

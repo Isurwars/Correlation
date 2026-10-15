@@ -271,7 +271,11 @@ bool parseArgs(std::span<const char *const> argv, CliOptions &opts) {
   app.add_option("--smoothing-kernel", k_str);
 
   std::map<std::string, int> const mat_map = {
-      {"amorphous", 0}, {"liquid", 1}, {"crystalline", 2}, {"crystal", 2}};
+      {"amorphous", 0},
+      {"liquid", 1},
+      {"crystalline", 2},
+      {"crystal", 2},
+  };
   app.add_option("--material", opts.material_type, "Material type (amorphous, liquid, crystalline)")
       ->transform(CLI::CheckedTransformer(mat_map, CLI::ignore_case));
 

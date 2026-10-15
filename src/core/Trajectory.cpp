@@ -187,7 +187,7 @@ void Trajectory::precomputeBondCutoffs() const {
   bond_cutoffs_.resize(num_elements,
                        std::vector<correlation::analysis::BondCutoffRange>(num_elements));
 
-  auto safe_get_radius = [](const std::string &symbol) -> real_t {
+  const auto safe_get_radius = [](const std::string &symbol) -> real_t {
     try {
       return physics::getCovalentRadius(symbol);
     } catch (const std::out_of_range &) {
@@ -284,8 +284,9 @@ void Trajectory::calculateVelocities() {
 
     // Minimum-image displacement: delegates to Cell::minimumImage() which
     // correctly handles both orthogonal and triclinic cells.
-    auto displacement = [&](const math::Vector3<real_t> &target_pos,
-                            const math::Vector3<real_t> &source_pos) -> math::Vector3<real_t> {
+    const auto displacement =
+        [&](const math::Vector3<real_t> &target_pos,
+            const math::Vector3<real_t> &source_pos) -> math::Vector3<real_t> {
       const math::Vector3<real_t> delta_r = target_pos - source_pos;
       return use_pbc ? frames_[frame_idx].minimumImage(delta_r) : delta_r;
     };
@@ -339,7 +340,7 @@ void Trajectory::validateFrame(const Cell &new_frame) const {
   // Map new element IDs to reference element IDs for fast comparison
   std::vector<int> new_to_ref(new_elements.size(), -1);
   for (size_t i = 0; i < new_elements.size(); ++i) {
-    auto element_iterator = std::ranges::find(ref_elements, new_elements[i]);
+    const auto element_iterator = std::ranges::find(ref_elements, new_elements[i]);
     if (element_iterator == ref_elements.end()) {
       throw std::runtime_error("Frame validation failed: Element symbol mismatch at index " +
                                std::to_string(i) + ". Expected " + ref_elements[i].symbol +

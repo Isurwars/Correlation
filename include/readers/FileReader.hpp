@@ -49,9 +49,9 @@ enum class FileType : std::uint8_t {
 /**
  * @brief Reads an atomic structure from a file.
  *
- * @param filename The path to the structure file.
- * @param type The format of the file.
- * @param progress_callback Optional callback invoked with progress (0.0–1.0)
+ * @param[in] filename The path to the structure file.
+ * @param[in] type The format of the file.
+ * @param[in] progress_callback Optional callback invoked with progress (0.0–1.0)
  * and a status message.
  * @return A correlation::core::Cell object containing the parsed atomic
  * structure.
@@ -63,9 +63,9 @@ correlation::core::Cell readStructure(const std::string &filename, FileType type
 /**
  * @brief Reads a trajectory from a file.
  *
- * @param filename The path to the trajectory file.
- * @param type The format of the file.
- * @param progress_callback Optional callback invoked with progress (0.0–1.0)
+ * @param[in] filename The path to the trajectory file.
+ * @param[in] type The format of the file.
+ * @param[in] progress_callback Optional callback invoked with progress (0.0–1.0)
  * and a status message.
  * @return A correlation::core::Trajectory object.
  * @throws std::runtime_error if the file cannot be opened or is malformed.
@@ -75,7 +75,7 @@ correlation::core::Trajectory readTrajectory(const std::string &filename, FileTy
 
 /**
  * @brief Determines the FileType from a given filename extension.
- * @param filename The full path of the file.
+ * @param[in] filename The full path of the file.
  * @return The corresponding FileType enum value.
  * @throws std::runtime_error if the file has no extension or an unsupported
  * one.

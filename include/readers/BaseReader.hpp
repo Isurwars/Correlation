@@ -55,8 +55,8 @@ public:
 
   /**
    * @brief Reads an atomic structure from a file.
-   * @param filename Path to the file to be read.
-   * @param progress_callback Optional callback to report progress [0.0, 1.0].
+   * @param[in] filename Path to the file to be read.
+   * @param[in] progress_callback Optional callback to report progress [0.0, 1.0].
    * @return A Cell object containing the loaded structure.
    */
   virtual correlation::core::Cell readStructure(const std::string &filename,
@@ -64,8 +64,8 @@ public:
 
   /**
    * @brief Reads a trajectory from a file.
-   * @param filename Path to the file to be read.
-   * @param progress_callback Optional callback to report progress [0.0, 1.0].
+   * @param[in] filename Path to the file to be read.
+   * @param[in] progress_callback Optional callback to report progress [0.0, 1.0].
    * @return A Trajectory object containing all loaded frames.
    */
   virtual correlation::core::Trajectory
