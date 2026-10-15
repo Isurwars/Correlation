@@ -149,9 +149,8 @@ public:
    */
   BondCutoffMatrix(size_t rows, const std::vector<BondCutoffRange> &initial_row)
       : rows_(rows), cols_(initial_row.size()), data_(rows * initial_row.size()) {
-    for (size_t r = 0; r < rows; ++r) {
-      std::copy(initial_row.begin(), initial_row.end(),
-                data_.begin() + static_cast<std::ptrdiff_t>(r * cols_));
+    for (size_t row = 0; row < rows; ++row) {
+      std::ranges::copy(initial_row, data_.begin() + static_cast<std::ptrdiff_t>(row * cols_));
     }
   }
 
@@ -159,13 +158,11 @@ public:
    * @brief Initializer-list constructor for 2D row initializers.
    * @param[in] list Initializer list of vector rows.
    */
-  BondCutoffMatrix(std::initializer_list<std::vector<BondCutoffRange>> list) {
-    rows_ = list.size();
-    cols_ = rows_ > 0 ? list.begin()->size() : 0;
-    data_.resize(rows_ * cols_);
+  BondCutoffMatrix(std::initializer_list<std::vector<BondCutoffRange>> list)
+      : rows_(list.size()), cols_(rows_ > 0 ? list.begin()->size() : 0), data_(rows_ * cols_) {
     size_t r = 0;
     for (const auto &row : list) {
-      std::copy(row.begin(), row.end(), data_.begin() + static_cast<std::ptrdiff_t>(r * cols_));
+      std::ranges::copy(row, data_.begin() + static_cast<std::ptrdiff_t>(r * cols_));
       ++r;
     }
   }
@@ -210,9 +207,8 @@ public:
     cols_ = initial_row.size();
     rows_ = rows;
     data_.resize(rows_ * cols_);
-    for (size_t r = 0; r < rows_; ++r) {
-      std::copy(initial_row.begin(), initial_row.end(),
-                data_.begin() + static_cast<std::ptrdiff_t>(r * cols_));
+    for (size_t row = 0; row < rows_; ++row) {
+      std::ranges::copy(initial_row, data_.begin() + static_cast<std::ptrdiff_t>(row * cols_));
     }
   }
 
