@@ -41,9 +41,9 @@ TEST(AnalysisDispatcherTests, ValidateOptionsRejectsInvalidMaxRingSize) {
   correlation::app::ProgramOptions opts;
   opts.max_ring_size = 2;
 
-  std::string err = correlation::app::AnalysisDispatcher::validateOptions(opts);
-  EXPECT_FALSE(err.empty());
-  EXPECT_EQ(err, "Error: max_ring_size must be an integer >= 3.");
+  const auto res = correlation::app::AnalysisDispatcher::validateOptions(opts);
+  EXPECT_FALSE(res.has_value());
+  EXPECT_EQ(res.error(), "Error: max_ring_size must be an integer >= 3.");
 }
 
 TEST(AnalysisDispatcherTests, RunsAnalysisOnLoadedTrajectory) {
@@ -105,4 +105,3 @@ TEST(AnalysisDispatcherTests, WriteFilesZipBundle) {
 }
 
 } // namespace
-

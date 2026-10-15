@@ -33,22 +33,23 @@ struct CliOptions {
   real_t angle_bin_width = 0.25;    ///< Bin width for bond angle distributions (degrees).
   real_t dihedral_bin_width = 0.25; ///< Bin width for dihedral distributions (degrees).
   bool has_dihedral_bin = false; ///< Flag indicating if dihedral bin width was explicitly passed.
-  int min_frame = 0;             ///< Starting frame index for trajectory processing.
-  int max_frame = -1;            ///< Ending frame index for trajectory processing (-1 for all).
-  bool csv = true;               ///< Flag to enable CSV output format.
-  bool hdf5 = false;             ///< Flag to enable HDF5 output format.
-  bool parquet = false;          ///< Flag to enable Parquet output format.
-  bool zip = false;              ///< Flag to export a consolidated ZIP bundle.
-  bool smoothing = true;         ///< Flag to enable post-processing curve smoothing.
-  bool quiet = false;            ///< Suppress non-error console output.
-  std::string disable_groups;    ///< Comma-separated list of analysis groups to disable.
-  real_t time_step = 1.0;        ///< Time step between trajectory frames (fs).
-  real_t r_int_max = 10.0;       ///< Cutoff radius for integral properties (Å).
-  int max_ring_size = 12;        ///< Maximum ring size for primitive ring statistics.
-  real_t smoothing_sigma = 0.1;  ///< Gaussian smoothing standard deviation.
-  real_t lef_cutoff = 5.0;       ///< Cutoff radius for Local Entropic Fingerprint (Å).
-  real_t lef_sigma = 0.2;        ///< Standard deviation for LEF Gaussian kernel (Å).
-  int hyper_samples = 10000;     ///< Sample count for hyperuniformity number variance.
+  int min_frame =
+      0; ///< Starting frame index for trajectory processing (0-based internal, 1-based on CLI).
+  int max_frame = -1;           ///< Ending frame index for trajectory processing (-1 for all).
+  bool csv = true;              ///< Flag to enable CSV output format.
+  bool hdf5 = false;            ///< Flag to enable HDF5 output format.
+  bool parquet = false;         ///< Flag to enable Parquet output format.
+  bool zip = false;             ///< Flag to export a consolidated ZIP bundle.
+  bool smoothing = true;        ///< Flag to enable post-processing curve smoothing.
+  bool quiet = false;           ///< Suppress non-error console output.
+  std::string disable_groups;   ///< Comma-separated list of analysis groups to disable.
+  real_t time_step = 1.0;       ///< Time step between trajectory frames (fs).
+  real_t r_int_max = 10.0;      ///< Cutoff radius for integral properties (Å).
+  int max_ring_size = 12;       ///< Maximum ring size for primitive ring statistics.
+  real_t smoothing_sigma = 0.1; ///< Gaussian smoothing standard deviation.
+  real_t lef_cutoff = 5.0;      ///< Cutoff radius for Local Entropic Fingerprint (Å).
+  real_t lef_sigma = 0.2;       ///< Standard deviation for LEF Gaussian kernel (Å).
+  int hyper_samples = 10000;    ///< Sample count for hyperuniformity number variance.
   correlation::math::KernelType smoothing_kernel =
       correlation::math::KernelType::Gaussian; ///< Kernel function.
   int material_type = 0;                       ///< Material type preset index.

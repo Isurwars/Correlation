@@ -41,9 +41,10 @@ public:
   /**
    * @brief Validates analysis configuration parameters.
    * @param config The configuration to validate.
-   * @return Error message, or empty string if configuration is valid.
+   * @return Success (void) or error message string.
    */
-  [[nodiscard]] static std::string validateConfig(const CorrelationEngineConfig &config);
+  [[nodiscard]] static std::expected<void, std::string>
+  validateConfig(const CorrelationEngineConfig &config);
 
   /**
    * @brief Executes the complete analysis pipeline on a trajectory.

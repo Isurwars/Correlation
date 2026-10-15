@@ -16,42 +16,42 @@ using correlation::analysis::CorrelationEngineConfig;
 
 TEST(CorrelationEngineTests, ValidateConfigAcceptsValidDefaults) {
   CorrelationEngineConfig const config;
-  std::string const err = CorrelationEngine::validateConfig(config);
-  EXPECT_TRUE(err.empty()) << "Unexpected error: " << err;
+  const auto res = CorrelationEngine::validateConfig(config);
+  EXPECT_TRUE(res.has_value()) << "Unexpected error: " << (res ? "" : res.error());
 }
 
 TEST(CorrelationEngineTests, ValidateConfigRejectsInvalidRMax) {
   CorrelationEngineConfig config;
   config.settings.r_max = -1.0;
-  std::string const err = CorrelationEngine::validateConfig(config);
-  EXPECT_FALSE(err.empty());
-  EXPECT_NE(err.find("r_max"), std::string::npos);
+  const auto res = CorrelationEngine::validateConfig(config);
+  EXPECT_FALSE(res.has_value());
+  EXPECT_NE(res.error().find("r_max"), std::string::npos);
 }
 
 TEST(CorrelationEngineTests, ValidateConfigRejectsInvalidRBinWidth) {
   CorrelationEngineConfig config;
   config.settings.r_max = 10.0;
   config.settings.r_bin_width = 10.0;
-  std::string const err = CorrelationEngine::validateConfig(config);
-  EXPECT_FALSE(err.empty());
-  EXPECT_NE(err.find("r_bin_width"), std::string::npos);
+  const auto res = CorrelationEngine::validateConfig(config);
+  EXPECT_FALSE(res.has_value());
+  EXPECT_NE(res.error().find("r_bin_width"), std::string::npos);
 }
 
 TEST(CorrelationEngineTests, ValidateConfigRejectsInvalidRingSize) {
   CorrelationEngineConfig config;
   config.settings.max_ring_size = 2;
-  std::string const err = CorrelationEngine::validateConfig(config);
-  EXPECT_FALSE(err.empty());
-  EXPECT_NE(err.find("max_ring_size"), std::string::npos);
+  const auto res = CorrelationEngine::validateConfig(config);
+  EXPECT_FALSE(res.has_value());
+  EXPECT_NE(res.error().find("max_ring_size"), std::string::npos);
 }
 
 TEST(CorrelationEngineTests, ValidateConfigRejectsInvertedFrames) {
   CorrelationEngineConfig config;
   config.min_frame = 10;
   config.max_frame = 5;
-  std::string const err = CorrelationEngine::validateConfig(config);
-  EXPECT_FALSE(err.empty());
-  EXPECT_NE(err.find("min_frame"), std::string::npos);
+  const auto res = CorrelationEngine::validateConfig(config);
+  EXPECT_FALSE(res.has_value());
+  EXPECT_NE(res.error().find("min_frame"), std::string::npos);
 }
 
 TEST(CorrelationEngineTests, RunAnalysisAbortsOnEmptyTrajectory) {

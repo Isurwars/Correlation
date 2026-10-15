@@ -21,7 +21,7 @@ namespace correlation::mlip {
  * @struct MLIPOutput
  * @brief Output container for machine learning interatomic potential calculations.
  */
-struct MLIPOutput {
+struct alignas(64) MLIPOutput {
   real_t total_energy{static_cast<real_t>(0.0)};          /**< Total energy of the system. */
   std::vector<real_t> per_atom_energy;                    /**< Site-resolved per-atom energy. */
   std::vector<correlation::math::Vector3<real_t>> forces; /**< Atomic forces acting on each atom. */

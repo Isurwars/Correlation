@@ -60,9 +60,10 @@ public:
   /**
    * @brief Validates analysis configuration before execution.
    * @param[in] options Options to validate.
-   * @return Empty string if valid, error message otherwise.
+   * @return Success (void) or error message string.
    */
-  [[nodiscard]] static std::string validateOptions(const ProgramOptions &options);
+  [[nodiscard]] static std::expected<void, std::string>
+  validateOptions(const ProgramOptions &options);
 
   /**
    * @brief Writes analytical results to disk (CSV, HDF5, Parquet).

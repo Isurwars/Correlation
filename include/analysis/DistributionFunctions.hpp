@@ -42,7 +42,7 @@ struct RDFParams {
 /**
  * @brief Trajectory-wide dynamic properties computed from time-series correlation functions.
  */
-struct DynamicProperties {
+struct alignas(64) DynamicProperties {
   real_t diffusion_coefficient_msd{0.0};  ///< Self-diffusion coefficient from MSD (Å²/fs).
   real_t diffusion_coefficient_vacf{0.0}; ///< Self-diffusion coefficient from VACF (Å²/fs).
   real_t relaxation_time{0.0};            ///< Relaxation time from normalized VACF (fs).

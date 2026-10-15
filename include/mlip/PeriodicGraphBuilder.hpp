@@ -24,7 +24,7 @@ namespace correlation::mlip {
  * @struct PeriodicGraphData
  * @brief Extracted graph tensor buffers for GNN model inference.
  */
-struct PeriodicGraphData {
+struct alignas(64) PeriodicGraphData {
   std::vector<real_t> positions_flat;  /**< [N * 3] Cartesian atomic coordinates in Angstroms. */
   std::vector<int64_t> atomic_numbers; /**< [N] Atomic numbers (Z). */
   std::vector<int64_t>

@@ -26,7 +26,7 @@ namespace correlation::core {
  * This class handles the lattice vectors, periodic boundary conditions, and
  * stores the atoms contained within the cell.
  */
-class Cell {
+class alignas(64) Cell {
 
 public:
   /** @name Constructors */

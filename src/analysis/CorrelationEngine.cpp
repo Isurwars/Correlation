@@ -148,20 +148,24 @@ bool requiresVelocities(const AnalysisSettings &settings) {
 
 } // namespace
 
-std::string CorrelationEngine::validateConfig(const CorrelationEngineConfig &config) {
+std::expected<void, std::string>
+CorrelationEngine::validateConfig(const CorrelationEngineConfig &config) {
   if (std::string const err = validateHistogramSettings(config.settings); !err.empty()) {
-    return err;
+    return std::unexpected(err);
   }
   if (std::string const err = validateAngularSettings(config.settings); !err.empty()) {
-    return err;
+    return std::unexpected(err);
   }
   if (std::string const err = validateSimulationSettings(config); !err.empty()) {
-    return err;
+    return std::unexpected(err);
   }
   if (std::string const err = validateSmoothingSettings(config.settings); !err.empty()) {
-    return err;
+    return std::unexpected(err);
   }
-  return validateBondCutoffs(config.bond_cutoffs);
+  if (std::string const err = validateBondCutoffs(config.bond_cutoffs); !err.empty()) {
+    return std::unexpected(err);
+  }
+  return {};
 }
 
 void CorrelationEngine::runTrajectoryCalculators(DistributionFunctions &distribution_functions,
@@ -250,9 +254,8 @@ CorrelationEngine::runAnalysis(correlation::core::Trajectory &trajectory,
     return std::unexpected("Analysis aborted: No trajectory loaded.");
   }
 
-  std::string const validation_error = validateConfig(config);
-  if (!validation_error.empty()) {
-    return std::unexpected(validation_error);
+  if (const auto validation_res = validateConfig(config); !validation_res.has_value()) {
+    return std::unexpected(validation_res.error());
   }
 
   try {

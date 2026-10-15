@@ -23,7 +23,7 @@ struct EndFrame {
  * @struct BondCutoffRange
  * @brief Represents the squared minimum and maximum bond distance bounds for an element pair.
  */
-struct BondCutoffRange {
+struct alignas(64) BondCutoffRange {
   real_t min_sq{static_cast<real_t>(0.0)}; ///< Squared minimum bond distance (Å²).
   real_t max_sq{static_cast<real_t>(0.0)}; ///< Squared maximum bond distance (Å²).
 

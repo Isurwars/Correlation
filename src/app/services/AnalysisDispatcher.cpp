@@ -48,7 +48,8 @@ toEngineConfig(const ProgramOptions &options, std::atomic<bool> *cancel_flag) {
 
 } // namespace
 
-std::string AnalysisDispatcher::validateOptions(const ProgramOptions &options) {
+std::expected<void, std::string>
+AnalysisDispatcher::validateOptions(const ProgramOptions &options) {
   const auto config = toEngineConfig(options, nullptr);
   return correlation::analysis::CorrelationEngine::validateConfig(config);
 }
@@ -64,9 +65,8 @@ AnalysisDispatcher::runAnalysis(correlation::core::Trajectory *trajectory,
 
   cancel_flag_ = false;
 
-  std::string const validation_error = validateOptions(options);
-  if (!validation_error.empty()) {
-    return std::unexpected(validation_error);
+  if (const auto validation_res = validateOptions(options); !validation_res.has_value()) {
+    return std::unexpected(validation_res.error());
   }
 
   const auto config = toEngineConfig(options, &cancel_flag_);
