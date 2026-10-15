@@ -13,6 +13,7 @@
 #include <iostream>
 #include <memory>
 #include <string_view>
+#include <unordered_map>
 #include <vector>
 
 namespace correlation::calculators {
@@ -68,6 +69,8 @@ public:
 private:
   CalculatorFactory() = default;
   std::vector<std::unique_ptr<BaseCalculator>> calculators_; ///< Storage for calculator instances.
+  std::unordered_map<std::string_view, const BaseCalculator *>
+      index_; ///< O(1) name and alias lookup cache.
 };
 
 } // namespace correlation::calculators

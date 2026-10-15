@@ -105,6 +105,73 @@ struct SearchBoundaries {
   return is_same_atom && is_zero_shift && edge.dist_sq < 1e-12;
 }
 
+/// @brief Evaluates a single periodic replica shift for a pair of atoms, appending valid edges.
+inline void processPeriodicShift(size_t atom_i, size_t atom_j, int shift_nx, int shift_ny,
+                                 int shift_nz, const correlation::math::Vector3<real_t> &pos_i,
+                                 const correlation::math::Vector3<real_t> &pos_j,
+                                 const correlation::math::Vector3<real_t> &lat_a,
+                                 const correlation::math::Vector3<real_t> &lat_b,
+                                 const correlation::math::Vector3<real_t> &lat_c, real_t cutoff_sq,
+                                 bool include_self_loops, std::vector<EdgeTuple> &edges_out) {
+  const auto shift_vec = lat_a * static_cast<real_t>(shift_nx) +
+                         lat_b * static_cast<real_t>(shift_ny) +
+                         lat_c * static_cast<real_t>(shift_nz);
+  const auto r_ij = pos_j + shift_vec - pos_i;
+  const real_t dist_sq = correlation::math::dot(r_ij, r_ij);
+
+  if (dist_sq > cutoff_sq) {
+    return;
+  }
+
+  const real_t dist = std::sqrt(dist_sq);
+  const CandidateEdge candidate{
+      .atom_i = atom_i,
+      .atom_j = atom_j,
+      .nx = shift_nx,
+      .ny = shift_ny,
+      .nz = shift_nz,
+      .vec_x = r_ij.x(),
+      .vec_y = r_ij.y(),
+      .vec_z = r_ij.z(),
+      .dist_sq = dist_sq,
+      .distance = dist,
+  };
+  if (isSelfInteraction(candidate, include_self_loops)) {
+    return;
+  }
+
+  edges_out.push_back(EdgeTuple{
+      .src = static_cast<int64_t>(candidate.atom_i),
+      .dst = static_cast<int64_t>(candidate.atom_j),
+      .shift_x = static_cast<real_t>(candidate.nx),
+      .shift_y = static_cast<real_t>(candidate.ny),
+      .shift_z = static_cast<real_t>(candidate.nz),
+      .vec_x = candidate.vec_x,
+      .vec_y = candidate.vec_y,
+      .vec_z = candidate.vec_z,
+      .distance = candidate.distance,
+  });
+}
+
+/// @brief Scans all periodic replica shifts for an atom pair within search boundaries.
+inline void scanPeriodicShiftsForPair(size_t atom_i, size_t atom_j,
+                                      const correlation::math::Vector3<real_t> &pos_i,
+                                      const correlation::math::Vector3<real_t> &pos_j,
+                                      const correlation::math::Vector3<real_t> &lat_a,
+                                      const correlation::math::Vector3<real_t> &lat_b,
+                                      const correlation::math::Vector3<real_t> &lat_c,
+                                      const SearchBoundaries &bounds, real_t cutoff_sq,
+                                      bool include_self_loops, std::vector<EdgeTuple> &edges_out) {
+  for (int nx = -bounds.max_nx; nx <= bounds.max_nx; ++nx) {
+    for (int ny = -bounds.max_ny; ny <= bounds.max_ny; ++ny) {
+      for (int nz = -bounds.max_nz; nz <= bounds.max_nz; ++nz) {
+        processPeriodicShift(atom_i, atom_j, nx, ny, nz, pos_i, pos_j, lat_a, lat_b, lat_c,
+                             cutoff_sq, include_self_loops, edges_out);
+      }
+    }
+  }
+}
+
 /// @brief Collects all periodic neighbor edges for atom @p atom_i within @p cutoff_sq.
 void collectEdgesForAtom(size_t atom_i, const std::vector<correlation::core::Atom> &atoms,
                          const correlation::math::Vector3<real_t> &lat_a,
@@ -115,50 +182,10 @@ void collectEdgesForAtom(size_t atom_i, const std::vector<correlation::core::Ato
   const auto &pos_i = atoms[atom_i].position();
   const size_t number_atoms = atoms.size();
 
-  for (size_t j = 0; j < number_atoms; ++j) {
-    const auto &pos_j = atoms[j].position();
-
-    for (int nx = -bounds.max_nx; nx <= bounds.max_nx; ++nx) {
-      for (int ny = -bounds.max_ny; ny <= bounds.max_ny; ++ny) {
-        for (int nz = -bounds.max_nz; nz <= bounds.max_nz; ++nz) {
-          const auto shift_vec = lat_a * static_cast<real_t>(nx) + lat_b * static_cast<real_t>(ny) +
-                                 lat_c * static_cast<real_t>(nz);
-          const auto r_ij = pos_j + shift_vec - pos_i;
-          const real_t dist_sq = correlation::math::dot(r_ij, r_ij);
-
-          if (dist_sq > cutoff_sq) {
-            continue;
-          }
-
-          const real_t dist = std::sqrt(dist_sq);
-          const CandidateEdge candidate{.atom_i = atom_i,
-                                        .atom_j = j,
-                                        .nx = nx,
-                                        .ny = ny,
-                                        .nz = nz,
-                                        .vec_x = r_ij.x(),
-                                        .vec_y = r_ij.y(),
-                                        .vec_z = r_ij.z(),
-                                        .dist_sq = dist_sq,
-                                        .distance = dist};
-          if (isSelfInteraction(candidate, include_self_loops)) {
-            continue;
-          }
-
-          edges_out.push_back(EdgeTuple{
-              .src = static_cast<int64_t>(candidate.atom_i),
-              .dst = static_cast<int64_t>(candidate.atom_j),
-              .shift_x = static_cast<real_t>(candidate.nx),
-              .shift_y = static_cast<real_t>(candidate.ny),
-              .shift_z = static_cast<real_t>(candidate.nz),
-              .vec_x = candidate.vec_x,
-              .vec_y = candidate.vec_y,
-              .vec_z = candidate.vec_z,
-              .distance = candidate.distance,
-          });
-        }
-      }
-    }
+  for (size_t atom_j = 0; atom_j < number_atoms; ++atom_j) {
+    const auto &pos_j = atoms[atom_j].position();
+    scanPeriodicShiftsForPair(atom_i, atom_j, pos_i, pos_j, lat_a, lat_b, lat_c, bounds, cutoff_sq,
+                              include_self_loops, edges_out);
   }
 }
 
@@ -439,9 +466,10 @@ int64_t PeriodicGraphBuilder::getAtomicNumber(std::string_view symbol) noexcept 
       {"U", 92},   {"Np", 93},  {"Pu", 94},  {"Am", 95},  {"Cm", 96},  {"Bk", 97},  {"Cf", 98},
       {"Es", 99},  {"Fm", 100}, {"Md", 101}, {"No", 102}, {"Lr", 103}, {"Rf", 104}, {"Db", 105},
       {"Sg", 106}, {"Bh", 107}, {"Hs", 108}, {"Mt", 109}, {"Ds", 110}, {"Rg", 111}, {"Cn", 112},
-      {"Nh", 113}, {"Fl", 114}, {"Mc", 115}, {"Lv", 116}, {"Ts", 117}, {"Og", 118}};
+      {"Nh", 113}, {"Fl", 114}, {"Mc", 115}, {"Lv", 116}, {"Ts", 117}, {"Og", 118},
+  };
 
-  auto itx = SYMBOL_TO_Z.find(symbol);
+  const auto itx = SYMBOL_TO_Z.find(symbol);
   if (itx != SYMBOL_TO_Z.end()) {
     return itx->second;
   }
@@ -474,8 +502,10 @@ PeriodicGraphData PeriodicGraphBuilder::buildGraph(const correlation::core::Cell
 
   // Populate cell lattice matrix
   const auto &lat = cell.latticeVectors();
-  data.cell_flat = {lat[0][0], lat[0][1], lat[0][2], lat[1][0], lat[1][1],
-                    lat[1][2], lat[2][0], lat[2][1], lat[2][2]};
+  data.cell_flat = {
+      lat[0][0], lat[0][1], lat[0][2], lat[1][0], lat[1][1],
+      lat[1][2], lat[2][0], lat[2][1], lat[2][2],
+  };
 
   const auto lat_a = correlation::math::Vector3<real_t>{lat[0][0], lat[0][1], lat[0][2]};
   const auto lat_b = correlation::math::Vector3<real_t>{lat[1][0], lat[1][1], lat[1][2]};
@@ -532,7 +562,6 @@ std::vector<real_t> PeriodicGraphBuilder::computeBesselBasis(real_t distance, re
     return basis;
   }
 
-  constexpr real_t PI_VAL = std::numbers::pi_v<real_t>;
   const real_t norm_factor = std::sqrt(static_cast<real_t>(2.0) / cutoff_radius);
 
   for (size_t idx_basis = 0; idx_basis < num_basis; ++idx_basis) {
@@ -731,7 +760,6 @@ std::vector<real_t> PeriodicGraphBuilder::computeOrbBesselBasis(real_t distance,
     return basis;
   }
 
-  constexpr real_t PI_VAL = std::numbers::pi_v<real_t>;
   const real_t prefactor = std::sqrt(static_cast<real_t>(2.0) / cutoff_radius);
 
   for (size_t idx_basis = 0; idx_basis < num_basis; ++idx_basis) {
@@ -771,7 +799,6 @@ PeriodicGraphData PeriodicGraphBuilder::buildOrbGraph(const correlation::core::C
     data.edge_orb_features_flat.clear();
   }
 
-  constexpr real_t PI_VAL = std::numbers::pi_v<real_t>;
   const real_t cutoff_radius = config.r_max;
   const real_t bessel_prefactor = (cutoff_radius > static_cast<real_t>(0.0))
                                       ? std::sqrt(static_cast<real_t>(2.0) / cutoff_radius)

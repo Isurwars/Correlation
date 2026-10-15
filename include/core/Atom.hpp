@@ -36,7 +36,7 @@ struct ElementID {
 
   /**
    * @brief Equality operator for ElementID.
-   * @param other The other ID to compare against.
+   * @param[in] other The other ID to compare against.
    * @return True if values are equal.
    */
   constexpr bool operator==(const ElementID &other) const = default;
@@ -51,7 +51,7 @@ struct Element {
 
   /**
    * @brief Equality operator for Element.
-   * @param other The other element to compare against.
+   * @param[in] other The other element to compare against.
    * @return True if symbols are identical.
    */
   constexpr bool operator==(const Element &other) const { return symbol == other.symbol; }
@@ -73,7 +73,7 @@ public:
 
   /**
    * @brief Interns an Element into the pool or returns an existing instance.
-   * @param elem Element struct to intern.
+   * @param[in] elem Element struct to intern.
    * @return Immutable pointer to shared Element.
    */
   [[nodiscard]] static const Element *intern(const Element &elem) {
@@ -85,14 +85,14 @@ public:
 
   /**
    * @brief Interns an element by symbol and ID into the pool.
-   * @param symbol Chemical symbol.
-   * @param elem_id Element identifier.
+   * @param[in] symbol Chemical symbol.
+   * @param[in] elem_id Element identifier.
    * @return Immutable pointer to shared Element.
    */
   [[nodiscard]] static const Element *intern(std::string_view symbol, ElementID elem_id) {
     struct Key {
       std::string symbol;
-      int id_val;
+      std::int32_t id_val;
       bool operator==(const Key &other) const noexcept {
         return id_val == other.id_val && symbol == other.symbol;
       }
@@ -100,7 +100,7 @@ public:
     struct KeyHash {
       size_t operator()(const Key &key_obj) const noexcept {
         return std::hash<std::string_view>{}(key_obj.symbol) ^
-               (std::hash<int>{}(key_obj.id_val) << 1);
+               (std::hash<std::int32_t>{}(key_obj.id_val) << 1);
       }
     };
 
@@ -114,7 +114,7 @@ public:
       return iter->second.get();
     }
 
-    auto new_element = std::unique_ptr<Element>(new Element{std::string(symbol), elem_id});
+    auto new_element = std::make_unique<Element>(std::string(symbol), elem_id);
     const Element *ptr = new_element.get();
     pool.emplace(key, std::move(new_element));
     return ptr;
@@ -134,18 +134,18 @@ public:
 
   /**
    * @brief Parameterized constructor.
-   * @param element The element type of the atom.
-   * @param pos The position vector of the atom.
-   * @param atom_id The unique ID of the atom.
+   * @param[in] element The element type of the atom.
+   * @param[in] pos The position vector of the atom.
+   * @param[in] atom_id The unique ID of the atom.
    */
   explicit Atom(const Element &element, const math::Vector3<real_t> &pos, AtomID atom_id) noexcept
       : id_(atom_id), position_(pos), element_(ElementPool::intern(element)) {}
 
   /**
    * @brief Pointer-based flyweight constructor.
-   * @param element_ptr Pointer to the interned element.
-   * @param pos The position vector of the atom.
-   * @param atom_id The unique ID of the atom.
+   * @param[in] element_ptr Pointer to the interned element.
+   * @param[in] pos The position vector of the atom.
+   * @param[in] atom_id The unique ID of the atom.
    */
   explicit Atom(const Element *element_ptr, const math::Vector3<real_t> &pos,
                 AtomID atom_id) noexcept
@@ -165,7 +165,7 @@ public:
 
   /**
    * @brief Sets the unique ID of the atom.
-   * @param num The new atom ID.
+   * @param[in] num The new atom ID.
    */
   void setID(std::uint32_t num) noexcept { id_ = num; }
 
@@ -177,7 +177,7 @@ public:
 
   /**
    * @brief Sets the position of the atom.
-   * @param pos The new position vector.
+   * @param[in] pos The new position vector.
    */
   void setPosition(const math::Vector3<real_t> &pos) noexcept { position_ = pos; }
 
@@ -189,7 +189,7 @@ public:
 
   /**
    * @brief Sets the velocity of the atom.
-   * @param vel The new velocity vector.
+   * @param[in] vel The new velocity vector.
    */
   void setVelocity(const math::Vector3<real_t> &vel) noexcept { velocity_ = vel; }
 
@@ -203,7 +203,7 @@ public:
 
   /**
    * @brief Sets the element type of the atom.
-   * @param ele The new Element struct.
+   * @param[in] ele The new Element struct.
    */
   void setElement(const Element &ele) { element_ = ElementPool::intern(ele); }
 
@@ -211,7 +211,7 @@ public:
    * @brief Gets the integer ID of the element type.
    * @return The element ID value.
    */
-  [[nodiscard]] int elementId() const noexcept { return element().id.value; }
+  [[nodiscard]] std::int32_t elementId() const noexcept { return element().id.value; }
 
   ///@}
 
@@ -226,8 +226,8 @@ private:
 
 /**
  * @brief Calculates the Euclidean distance between two atoms.
- * @param atom_a The first atom.
- * @param atom_b The second atom.
+ * @param[in] atom_a The first atom.
+ * @param[in] atom_b The second atom.
  * @return The straight-line distance between atoms (not accounting for PBC).
  */
 [[nodiscard]] inline real_t distance(const Atom &atom_a, const Atom &atom_b) noexcept {
@@ -236,9 +236,9 @@ private:
 
 /**
  * @brief Calculates the angle (in radians) formed by three atoms.
- * @param center The atom at the vertex of the angle.
- * @param atom_a One of the outer atoms.
- * @param atom_b The other outer atom.
+ * @param[in] center The atom at the vertex of the angle.
+ * @param[in] atom_a One of the outer atoms.
+ * @param[in] atom_b The other outer atom.
  * @return The angle in radians, or 0.0 if vectors are collinear or zero.
  */
 [[nodiscard]] inline real_t angle(const Atom &center, const Atom &atom_a,

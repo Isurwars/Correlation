@@ -39,8 +39,6 @@ configure_file(
     @ONLY
 )
 
-add_compile_definitions(CORRELATION_VERSION_STRING="${PROJECT_VERSION}")
-
 # -----------------------------------------------------------
 # Build Options
 # -----------------------------------------------------------

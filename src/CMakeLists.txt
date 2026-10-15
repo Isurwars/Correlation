@@ -264,6 +264,10 @@ target_include_directories(correlation_lib PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
+target_compile_definitions(correlation_lib PUBLIC
+    CORRELATION_VERSION_STRING="${PROJECT_VERSION}"
+)
+
 target_compile_definitions(correlation_lib PUBLIC _PSTL_PAR_BACKEND_TBB)
 if(BUILD_WITH_HDF5)
     target_compile_definitions(correlation_lib PUBLIC CORRELATION_USE_HDF5)
