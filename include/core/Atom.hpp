@@ -137,7 +137,7 @@ public:
    * @param atom_id The unique ID of the atom.
    */
   explicit Atom(const Element &element, const math::Vector3<real_t> &pos, AtomID atom_id) noexcept
-      : element_(ElementPool::intern(element)), position_(pos), id_(atom_id) {}
+      : id_(atom_id), position_(pos), element_(ElementPool::intern(element)) {}
 
   /**
    * @brief Pointer-based flyweight constructor.
@@ -147,8 +147,8 @@ public:
    */
   explicit Atom(const Element *element_ptr, const math::Vector3<real_t> &pos,
                 AtomID atom_id) noexcept
-      : element_(element_ptr != nullptr ? element_ptr : ElementPool::defaultElement()),
-        position_(pos), id_(atom_id) {}
+      : id_(atom_id), position_(pos),
+        element_(element_ptr != nullptr ? element_ptr : ElementPool::defaultElement()) {}
 
   ///@}
 

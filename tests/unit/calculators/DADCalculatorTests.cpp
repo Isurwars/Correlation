@@ -125,7 +125,9 @@ TEST_F(DADCalculatorTests, IcosahedronAnglesDAD) {
 
 TEST_F(DADCalculatorTests, NullNeighborsThrows) {
   EXPECT_THROW(
-      { correlation::calculators::DADCalculator::calculate(cell_, nullptr, 10.0); },
+      {
+        static_cast<void>(correlation::calculators::DADCalculator::calculate(cell_, nullptr, 10.0));
+      },
       std::logic_error);
 }
 

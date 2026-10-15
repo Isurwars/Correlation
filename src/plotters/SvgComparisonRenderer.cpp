@@ -188,8 +188,7 @@ struct SvgComparisonRenderer {
         << "      <feDropShadow dx=\"2\" dy=\"4\" stdDeviation=\"4\" flood-color=\"#000000\" flood-opacity=\"0.15\"/>\n"
         << "    </filter>\n";
 
-    std::size_t color_idx = 0;
-    for (const auto &dataset : *datasets) {
+    for (std::size_t color_idx = 0; color_idx < datasets->size(); ++color_idx) {
       std::string col = detail::color(color_idx, config->palette);
       std::string grad_id = std::format("area-grad-{}", color_idx);
       svg << std::format(
@@ -198,7 +197,6 @@ struct SvgComparisonRenderer {
           "      <stop offset=\"100%\" stop-color=\"{}\" stop-opacity=\"0.0\"/>\n"
           "    </linearGradient>\n",
           grad_id, col, col);
-      color_idx++;
     }
     svg << std::format(
         "    <clipPath id=\"comparison-plot-clip\"><rect x=\"{:.1f}\" y=\"{:.1f}\" width=\"{:.1f}\" "

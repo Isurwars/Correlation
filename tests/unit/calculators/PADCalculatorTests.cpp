@@ -338,7 +338,9 @@ TEST_F(PADCalculatorTests, SingleAtomNoAngles) {
 TEST_F(PADCalculatorTests, NullNeighborsThrows) {
   cell_.addAtom("Si", {10.0, 10.0, 10.0});
   EXPECT_THROW(
-      { correlation::calculators::PADCalculator::calculate(cell_, nullptr, 1.0); },
+      {
+        static_cast<void>(correlation::calculators::PADCalculator::calculate(cell_, nullptr, 1.0));
+      },
       std::logic_error);
 }
 

@@ -44,14 +44,12 @@
   - [git-workflow](file:///home/isurwars/Projects/Correlation/.agents/rules/git-workflow.md) for trunk-based development and Conventional Commits.
 
 ## 5. Communication & Token Economy
-- Zero conversational fluff. Drop introductory descriptions or post-generation explanations.
-- **Single-Question Rule:** ALWAYS ask questions strictly **1 by 1** with sane, structured multiple-choice options and explicit technical trade-offs, prefixing the optimal choice with `(Recommended)`. Never batch multiple questions simultaneously.
+- **Zero Conversational Fluff:** Omit preambles, postambles, and meta-commentary; jump directly into technical solutions or diagnoses.
+- **Single-Question Rule:** Ask questions strictly **1 by 1** with structured multiple-choice options (`ask_question` tool) and explicit trade-offs, prefixing the optimal choice with `(Recommended)`.
 - **Progressive Disclosure:** Offload detailed analyses, audits, or implementation plans exceeding **30 lines** into markdown artifacts (`brain/.../*.md`). Present only clickable file links and dense summary tables in chat responses.
-- **Telemetry Formats:** Report multi-step status using compact tables and log MCP usage as `[MCP: <Server>] -> [Task: <Action>] -> [Status: OK | FALLBACK] -> [Audit: PASS | REJECTED]`.
-- Use `// ...` placeholders extensively. Never print untouched structural logic or boilerplate code blocks.
-- Prefer tables for multi-variable comparisons. Bold the primary technical anchor word in every bullet point.
-- Use strict **[File:Line] -> [Error Category] -> [Root Cause] -> [Fix Action]** format for diagnostics.
-- See [caveman](file:///home/isurwars/Projects/Correlation/.agents/skills/caveman/SKILL.md), [interrogation-first](file:///home/isurwars/Projects/Correlation/.agents/rules/interrogation-first.md), and [grill-me](file:///home/isurwars/Projects/Correlation/.agents/skills/grill-me/SKILL.md).
+- **Minimal Code Packaging:** Output targeted diffs with `// ...` context placeholders; never print untouched class definitions or boilerplate.
+- **Diagnostics & Telemetry:** Adhere to strict `[File:Line] -> [Error Category] -> [Root Cause] -> [Fix Action]` diagnostics and standardized MCP telemetry logs.
+- **See rules & skills:** [communication-density](file:///home/isurwars/Projects/Correlation/.agents/rules/communication-density.md), [caveman](file:///home/isurwars/Projects/Correlation/.agents/skills/caveman/SKILL.md), [interrogation-first](file:///home/isurwars/Projects/Correlation/.agents/rules/interrogation-first.md), and [grill-me](file:///home/isurwars/Projects/Correlation/.agents/skills/grill-me/SKILL.md).
 
 ## 6. Verification & Quality Gates
 1. **Compilation:** Code must compile cleanly with modern C++23 standards.

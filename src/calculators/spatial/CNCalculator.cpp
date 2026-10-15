@@ -84,7 +84,7 @@ CNCalculator::calculate(const correlation::core::Cell &cell,
 
     for (const auto &[neighbor_symbol, count] : neighbor_counts_for_this_atom) {
       std::string key = central_symbol;
-      key += "-";
+      key += '-';
       key += neighbor_symbol;
 
       if (count >= partial_dists[key].size()) {

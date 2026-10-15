@@ -44,14 +44,14 @@ Group commit entries into standard changelog sections:
 ## [vX.Y.Z] - YYYY-MM-DD
 
 ### 🚀 Features
-- **rdf:** add Lorch windowing function for Fourier transform smoothing ([a1b2c3d](file:///commit/a1b2c3d))
-- **ui:** implement responsive DropDownMenu scrollbar policy ([e5f6g7h](file:///commit/e5f6g7h))
+- **rdf:** add Lorch windowing function for Fourier transform smoothing (`a1b2c3d`)
+- **ui:** implement responsive DropDownMenu scrollbar policy (`e5f6g7h`)
 
 ### 🐛 Bug Fixes
-- **ui:** fix absolute position coordinate calculation in AppWindow ([1a2b3c4](file:///commit/1a2b3c4))
+- **ui:** fix absolute position coordinate calculation in AppWindow (`1a2b3c4`)
 
 ### ⚡ Performance Improvements
-- **calculators:** align thread-local histogram accumulators to 64 bytes ([5d6e7f8](file:///commit/5d6e7f8))
+- **calculators:** align thread-local histogram accumulators to 64 bytes (`5d6e7f8`)
 ```
 
 ---

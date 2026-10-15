@@ -89,23 +89,26 @@ std::string Roboto::render(TextRenderParameters const &params) {
 
 std::vector<uint32_t> Roboto::utf8ToUnicode(const std::string &utf8_string) {
   std::vector<uint32_t> unicode_points;
+  const auto byte_at = [&utf8_string](size_t pos) -> uint32_t {
+    return static_cast<unsigned char>(utf8_string[pos]);
+  };
   for (size_t index = 0; index < utf8_string.length();) {
-    const unsigned char byte_val = utf8_string[index];
-    if (byte_val < 0x80) {
+    const uint32_t byte_val = byte_at(index);
+    if (byte_val < 0x80U) {
       unicode_points.push_back(byte_val);
       index++;
-    } else if ((byte_val & 0xE0) == 0xC0) {
+    } else if ((byte_val & 0xE0U) == 0xC0U) {
       if (index + 1 < utf8_string.length()) {
-        unicode_points.push_back(((byte_val & 0x1F) << 6) | (utf8_string[index + 1] & 0x3F));
+        unicode_points.push_back(((byte_val & 0x1FU) << 6U) | (byte_at(index + 1) & 0x3FU));
         index += 2;
       } else {
         index++;
       }
-    } else if ((byte_val & 0xF0) == 0xE0) {
+    } else if ((byte_val & 0xF0U) == 0xE0U) {
       if (index + 2 < utf8_string.length()) {
-        const uint32_t code_point = ((byte_val & 0x0F) << 12) |
-                                    ((utf8_string[index + 1] & 0x3F) << 6) |
-                                    (utf8_string[index + 2] & 0x3F);
+        const uint32_t code_point = ((byte_val & 0x0FU) << 12U) |
+                                    ((byte_at(index + 1) & 0x3FU) << 6U) |
+                                    (byte_at(index + 2) & 0x3FU);
         unicode_points.push_back(code_point);
         index += 3;
       } else {

@@ -59,6 +59,11 @@ class TestHookSafety(unittest.TestCase):
                 "rm -r graphify-out",
                 "rmdir graphify-out/",
                 "rm build/CMakeCache.txt",
+                "rm -r build-asan",
+                "rm -r build-tsan",
+                "rm build/foo.o",
+                "rm build-asan/tests/unit",
+                "rm -r .git/objects",
             ]
         )
 
@@ -201,6 +206,22 @@ class TestCodeQualityAudits(unittest.TestCase):
     def test_slint_export_block(self) -> None:
         violations = self.audit(".slint", "export {}\n", audit_slint_file)
         self.assertTrue(any("Slint Anti-Pattern" in v for v in violations))
+
+    def test_multiline_macro_does_not_skew_complexity(self) -> None:
+        code = """
+        #define MACRO_HELPER(x) \\
+            if (x) {            \\
+                do_work();      \\
+            }
+
+        void legitimate_func(int a) {
+            if (a > 0) { return; }
+        }
+        """
+        results = estimate_cognitive_complexity(code)
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0][1], "legitimate_func")
+        self.assertEqual(results[0][2], 1)
 
 
 if __name__ == "__main__":

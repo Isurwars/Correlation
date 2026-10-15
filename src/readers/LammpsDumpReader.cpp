@@ -314,7 +314,7 @@ correlation::core::Trajectory LammpsDumpReader::readTrajectory(
     progress_callback(1.0F, "LAMMPS dump file loaded.");
   }
 
-  auto parser = [](const char *data, size_t size) { return parseDumpFrame(data, size); };
+  auto parser = [](const char *buf, size_t size) { return parseDumpFrame(buf, size); };
 
   return {mapped_file, std::move(frame_offsets), parser, 1.0};
 }

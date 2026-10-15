@@ -12,6 +12,7 @@
 #include "math/Constants.hpp"
 
 #include <stdexcept>
+#include <utility>
 
 namespace correlation::calculators {
 
@@ -93,7 +94,7 @@ VDOSCalculator::calculate(const correlation::analysis::Histogram &vacf_hist,
   vdos_hist.y_label = "f(ω)";
   vdos_hist.x_unit = "THz";
   vdos_hist.y_unit = "arbitrary units";
-  vdos_hist.bins = combined_frequencies;
+  vdos_hist.bins = std::move(combined_frequencies);
   vdos_hist.partials["Total"] = combined_intensities;
   vdos_hist.partials["Frequency_cm_1"] = combined_frequencies_cm_inv;
   vdos_hist.partials["Frequency_meV"] = combined_frequencies_me_v;

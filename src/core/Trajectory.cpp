@@ -32,8 +32,8 @@ Trajectory::Trajectory(std::vector<Cell> frames, real_t time_step)
 
 Trajectory::Trajectory(std::shared_ptr<MappedFile> mapped_file, std::vector<size_t> frame_offsets,
                        FrameParser parser, real_t time_step)
-    : mapped_file_(std::move(mapped_file)), frame_offsets_(std::move(frame_offsets)),
-      parser_(std::move(parser)), time_step_(time_step) {
+    : time_step_(time_step), mapped_file_(std::move(mapped_file)),
+      frame_offsets_(std::move(frame_offsets)), parser_(std::move(parser)) {
   if (getFrameCount() > 0) {
     precomputeBondCutoffs();
   }

@@ -30,7 +30,7 @@ const bool REGISTERED = ReaderFactory::registerTypeSafe<VaspReader>("VaspReader"
 struct VaspParser {
   std::ifstream *file = nullptr;
 
-  explicit VaspParser(std::ifstream &file) : file(&file) {}
+  explicit VaspParser(std::ifstream &stream) : file(&stream) {}
 
   [[nodiscard]] correlation::core::Cell parse() const {
     std::string line;

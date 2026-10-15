@@ -49,3 +49,8 @@ Append `!` after the type: `feat(core)!: rename DistributionFunctions to Correla
 - **Never** force-push to `main`.
 - **Never** commit generated files (`build/`, `build-*/`, `*.o`, `compile_commands.json`, `graphify-out/`).
 - **Never** commit secrets, API keys, or credentials.
+
+## Reference
+- **See skill:** [commit](file:///home/isurwars/Projects/Correlation/.agents/skills/commit/SKILL.md) for automated diff classification, subject line validation, and path-to-scope lookup tables.
+- **See skill:** [changelog](file:///home/isurwars/Projects/Correlation/.agents/skills/changelog/SKILL.md) for generating release notes and milestone documentation from Conventional Commits.
+

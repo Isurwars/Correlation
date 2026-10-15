@@ -166,6 +166,7 @@ endif()
 # Utils & Dependencies
 # -----------------------------------------------------------
 include(cmake/Utils.cmake)
+include(cmake/Warnings.cmake)
 include(cmake/Dependencies.cmake)
 
 # -----------------------------------------------------------

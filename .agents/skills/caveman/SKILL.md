@@ -5,42 +5,27 @@ description: Enforce hyper-dense communication protocols and strict token econom
 
 # Caveman Communication Protocol
 
-This skill governs the agent's linguistic style and structural density. It treats tokens as a finite, expensive resource. The goal is to maximize information density per token while maintaining total technical precision.
+This skill directs the agent's procedural communication style and code packaging efficiency. It treats tokens as a finite, expensive budget, maximizing information density per token while maintaining total technical precision.
 
-## The Caveman Rule
+## 1. Linguistic Directness & Style Guide
 
-When communicating, thinking, or generating text, strip all conversational pleasantries, preambles, and postambles. Jump directly into the solution.
+Strip all conversational pleasantries, preambles, and postambles. Jump directly into the solution.
 
-### DO NOT USE (Filler Phrases)
-- "Certainly, I can help with that."
-- "Here is the code you requested:"
-- "As per the C++ Core Guidelines we discussed earlier..."
-- "I hope this helps! Let me know if you have questions."
-
-### DO USE (Direct Answers)
-- Exact file paths immediately followed by code blocks.
-- Single-sentence problem diagnoses.
-- Bulleted lists of short, punchy technical facts.
+- **Prohibited Conversational Filler:** Preambles ("Certainly, I can help with that.", "Here is the code you requested:"), postambles ("I hope this helps!"), and self-referential meta-commentary.
+- **Mandatory Direct Phrasing:** Exact file paths immediately followed by targeted code blocks; single-sentence technical diagnoses; dense bulleted facts.
+- **Paragraph Length:** Maintain $\le 2$ sentences per paragraph. Bold the primary technical anchor word in every bullet.
+- **Diagnostic Format:** Always use `[File:Line] -> [Error Category] -> [Root Cause] -> [Fix Action]` format.
 
 ---
 
-## Token Economy Metrics
+## 2. Minimal Code Packaging Runbook
 
-| Resource Type      | Waste Vector                   | Mitigation Rule                                                                                    |
-| :----------------- | :----------------------------- | :------------------------------------------------------------------------------------------------- |
-| **Output Tokens**  | Code repetition / Explanations | Never repeat unchanged code context. Use `// ... unchanged code ...` placeholders.                 |
-| **Input Tokens**   | Bloated error logs             | When reading terminal logs, extract only the specific file, line, and compiler diagnostic message. |
-| **Context Window** | Keeping outdated design drafts | Overwrite or purge old conversational history chunks when a file draft reaches absolute finality.  |
-
----
-
-## Behavioral Blueprint
-
-### 1. Minimal Code Modifications
-When modifying existing code blocks, do not output the entire class or file unless requested. Only output the target function or modified lines with tight context anchors.
+When presenting or modifying code:
+1. **Targeted Diffs Only:** Output only the modified function or changed lines with tight context anchors. Never output unchanged class definitions, files, or boilerplate.
+2. **Context Placeholders:** Extensively use `// ... unchanged code ...` placeholders around edited sections.
 
 ```cpp
-// GOOD: Minimal change block
+// GOOD: Minimal change block with tight anchor
 // ... inside class Buffer ...
 void resize(std::size_t new_size) {
     auto new_data = std::make_unique<char[]>(new_size);
@@ -50,24 +35,18 @@ void resize(std::size_t new_size) {
 }
 ```
 
-### 2. Concise Diagnostics
-When reporting failure loops or compilation issues, use a strict **[File:Line] -> [Error Category] -> [Root Cause] -> [Fix Action]** format.
+---
 
-- **Example**: `[src/buffer.cpp:14] -> Linker Error -> Unresolved external symbol -> Add target_link_libraries in CMakeLists.txt.`
+## 3. Token Budget Management
 
-### 3. Structural Scannability & Progressive Disclosure
-- Avoid paragraphs longer than two sentences.
-- Prefer tables for multi-variable comparisons.
-- **Bold** the primary technical anchor word in every bullet point.
-- **Progressive Disclosure:** Offload detailed analyses, audits, or implementation plans exceeding **30 lines** into markdown artifacts (`brain/.../*.md`). Present only clickable file links and dense summary tables in the chat response.
-
-### 4. Progress & MCP Telemetry
-- **Progress Checkpoints:** For multi-step tasks, emit compact tables (`| Phase | Action | Status | Notes |`).
-- **MCP Delegation Log:** When using local MCP workers, emit:
-  `[MCP: <ServerName>] -> [Task: <Action>] -> [Status: OK | FALLBACK] -> [Audit: PASS | REJECTED]`
+- **Progressive Disclosure:** Any audit, diagnosis, or implementation plan exceeding **30 lines** must be offloaded to an artifact in `brain/.../*.md`. Chat responses must contain only clickable links and compact summary tables.
+- **Terminal Log Compression:** Never quote raw terminal spew; extract only compiler error category, file, line, and root cause.
+- **Telemetry Specifications:** Emit execution status tables and MCP delegation logs following the exact schema in [communication-density](file:///home/isurwars/Projects/Correlation/.agents/rules/communication-density.md).
 
 ---
 
-## Limitations
-- Do not compress code variable names or cryptographic identifiers; the rule applies to human language and code packaging, not the logic itself.
-- Switch back to explicit precision if structural ambiguity could cause compilation faults.
+## 4. Operational Boundaries
+
+- **Preserve Semantic Precision:** Do not abbreviate code variable names, domain types, or mathematical symbols. Token economy applies strictly to natural language and code packaging, never to code correctness.
+- **Disambiguation Exception:** If technical ambiguity could introduce compilation errors or race conditions, expand precision over brevity.
+

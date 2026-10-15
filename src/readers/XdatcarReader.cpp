@@ -67,7 +67,7 @@ struct XdatcarParser {
   size_t offset = 0;
   size_t line_end = 0;
 
-  XdatcarParser(const char *data, size_t total_size) : data(data), total_size(total_size) {}
+  XdatcarParser(const char *data_ptr, size_t data_size) : data(data_ptr), total_size(data_size) {}
 
   std::string nextLine() {
     line_end = findLineEnd(data, total_size, offset);
@@ -131,13 +131,13 @@ struct XdatcarParser {
 
     while (offset < total_size) {
       // Skip empty lines
-      size_t const line_end = findLineEnd(data, total_size, offset);
-      std::string trimmed = extractLine(data, offset, line_end);
+      size_t const blank_end = findLineEnd(data, total_size, offset);
+      std::string trimmed = extractLine(data, offset, blank_end);
 
       // Trim leading whitespace
       size_t const start = trimmed.find_first_not_of(" \t");
       if (start == std::string::npos) {
-        offset = skipLineEnding(data, total_size, line_end);
+        offset = skipLineEnding(data, total_size, blank_end);
         continue;
       }
       trimmed = trimmed.substr(start);

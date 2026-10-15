@@ -5,7 +5,7 @@ description: Comprehensive pre-commit and pre-merge code review checklist. Use w
 
 # Code Review
 
-Rigorous technical audit before staging, committing, or merging changes in `Correlation`. Ensures zero regressions in C++20 standards, thread safety, cognitive complexity, and build integrity.
+Rigorous technical audit before staging, committing, or merging changes in `Correlation`. Ensures zero regressions in C++23 standards, thread safety, cognitive complexity, and build integrity.
 
 ## Phase 1: Context & Diff Inspection
 

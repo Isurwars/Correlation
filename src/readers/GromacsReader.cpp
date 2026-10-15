@@ -292,7 +292,7 @@ GromacsReader::readTrajectory(const std::string &filename,
     progress_callback(1.0F, "GROMACS file loaded.");
   }
 
-  auto parser = [](const char *data, size_t size) { return parseGroFrame(data, size); };
+  auto parser = [](const char *buf, size_t size) { return parseGroFrame(buf, size); };
 
   return {mapped_file, std::move(frame_offsets), parser, 1.0};
 }

@@ -20,8 +20,9 @@ This skill maintains the structural dependency graph (`graphify-out/`) for the C
 ## 2. Execution Protocol
 
 ### Step 1: Run Graphify Update
-Execute the codebase graph update command from the project root:
+Execute the codebase graph update command from the project root (sourcing environment secrets for semantic LLM extraction if running in a non-interactive shell):
 ```bash
+[ -f ~/.secrets ] && { set -a; source ~/.secrets; set +a; }
 graphify update .
 ```
 

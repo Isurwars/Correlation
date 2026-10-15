@@ -55,7 +55,8 @@ TEST_F(RDCalculatorTests, ComputeMotif) {
 }
 
 TEST_F(RDCalculatorTests, InvalidMaxRingSize) {
-  EXPECT_THROW(correlation::calculators::RDCalculator::calculate(graph, 2), std::invalid_argument);
+  EXPECT_THROW(static_cast<void>(correlation::calculators::RDCalculator::calculate(graph, 2)),
+               std::invalid_argument);
 }
 
 TEST_F(RDCalculatorTests, CelluloseRingDistribution) {

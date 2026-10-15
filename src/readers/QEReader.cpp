@@ -29,7 +29,7 @@ struct QETrajectoryParser {
   bool parsing_atoms = false;
   bool has_box = false;
 
-  QETrajectoryParser(std::ifstream &file) : file(&file) {}
+  QETrajectoryParser(std::ifstream &stream) : file(&stream) {}
 
   void parseCellParameters() {
     std::array<std::array<real_t, 3>, 3> lat_vec = {};

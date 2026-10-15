@@ -441,6 +441,13 @@ if(NOT (EMSCRIPTEN OR BUILD_WASM))
 endif()
 
 #------------------------------------------------------------------
+# Strict warning policy for first-party targets
+#------------------------------------------------------------------
+correlation_enable_warnings(
+    readers_obj calculators_obj writers_obj mlip_obj plotters_obj render3d_obj
+    app_services_obj app_gui_obj cli_parser_obj correlation_lib)
+
+#------------------------------------------------------------------
 # Language & Platform Bindings (Python / WebAssembly)
 #------------------------------------------------------------------
 if(BUILD_PYTHON_BINDINGS OR EMSCRIPTEN OR BUILD_WASM)

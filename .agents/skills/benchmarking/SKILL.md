@@ -29,7 +29,7 @@ struct alignas(64) ThreadLocalHistogram {
 
 1. **Vector-Friendly Loops:** Keep inner distance/histogram computation loops free of conditional branching (`if`/`else`), virtual function calls, or complex control flow.
 2. **Contiguous Access:** Ensure pointer reads inside inner loops process contiguous memory blocks without strided pointer indirection.
-3. **Use SIMD Intrinsics / Wrappers:** Prefer vectorized SIMD wrappers (`Vector3SIMD`, `dot_block`) or standard C++20 `std::span` over custom assembly instructions unless profiling explicitly demonstrates auto-vectorization failure.
+3. **Use SIMD Intrinsics / Wrappers:** Prefer vectorized SIMD wrappers (`Vector3SIMD`, `dot_block`) or standard C++23 `std::span` over custom assembly instructions unless profiling explicitly demonstrates auto-vectorization failure.
 
 ---
 

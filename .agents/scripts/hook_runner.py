@@ -43,6 +43,8 @@ WRAPPER_COMMANDS = {"sudo", "env", "nohup", "time", "xargs", "command", "exec", 
 NESTED_SHELLS = {"sh", "bash", "zsh", "dash"}
 OPERATOR_TOKENS = {";", "&&", "||", "|", "&", "|&", ";;", "(", ")", "\n"}
 REDIRECT_TOKENS = {">", ">>", ">|", "&>", "&>>"}
+_BUILD_DIR_RE = re.compile(r"^build(-[a-zA-Z0-9_-]+)?(/|$)")
+_NON_BUILD_EXTS = {".py", ".sh", ".cpp", ".hpp", ".h", ".cmake", ".md", ".txt", ".json"}
 
 
 def _tokenize_command(cmd: str) -> list[str]:
@@ -96,7 +98,15 @@ def _normalize_path(arg: str) -> str:
 
 def _is_protected(arg: str) -> bool:
     norm = _normalize_path(arg)
-    return norm in PROTECTED_FILES or norm in PROTECTED_DIRS or norm.endswith("/cmakecache.txt")
+    if norm in PROTECTED_FILES or norm.endswith("/cmakecache.txt"):
+        return True
+    if any(norm == d or norm.startswith(d + "/") or norm.startswith(d + "\\") for d in PROTECTED_DIRS):
+        return True
+    if _BUILD_DIR_RE.match(norm):
+        if "/" in norm or "\\" in norm:
+            return True
+        return not any(norm.endswith(ext) for ext in _NON_BUILD_EXTS)
+    return False
 
 
 def _rm_flags(args: list[str]) -> tuple[bool, bool]:
@@ -152,9 +162,9 @@ def _check_special_deleters(cmd: str, args: list[str]) -> str:
 def _check_redirects(tokens: list[str]) -> str:
     for idx, tok in enumerate(tokens[:-1]):
         if tok in REDIRECT_TOKENS:
-            target = _normalize_path(tokens[idx + 1])
-            if any(target == f or target.endswith("/" + f) for f in PROTECTED_FILES):
-                return f"Blocked file truncation/overwrite of protected file: '{tokens[idx + 1]}'."
+            target = tokens[idx + 1]
+            if _is_protected(target):
+                return f"Blocked file truncation/overwrite of protected target: '{target}'."
     return ""
 
 
@@ -204,7 +214,7 @@ def evaluate_command_safety(command_line: str) -> tuple[bool, str]:
 
 _NOLINT_RE = re.compile(r"(//|/\*).*?\bNOLINT(NEXTLINE|BEGIN|END)?\b")
 _STRIP_RE = re.compile(
-    r"//[^\n]*|/\*.*?\*/|\"(?:\\.|[^\"\\\n])*\"|'(?:\\.|[^'\\\n])*'|^[ \t]*#[^\n]*",
+    r"//[^\n]*|/\*.*?\*/|\"(?:\\.|[^\"\\\n])*\"|'(?:\\.|[^'\\\n])*'|^[ \t]*#(?:[^\n\\]|\\.)*",
     re.DOTALL | re.MULTILINE,
 )
 _TOKEN_RE = re.compile(r"\b(?:if|else|for|while|switch|catch)\b|&&|\|\||[?{}();]")

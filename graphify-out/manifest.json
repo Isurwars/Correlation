@@ -395,8 +395,8 @@
     "semantic_hash": ""
   },
   "src/plotters/PathFont.cpp": {
-    "mtime": 1790185634.1958287,
-    "ast_hash": "ada35f1fc2176c654495dacfa7fbdc8c",
+    "mtime": 1791953457.7677095,
+    "ast_hash": "bcdb4d02b014cba7095b25bee9b6dace",
     "semantic_hash": ""
   },
   "src/readers/ArcReader.cpp": {
@@ -920,8 +920,8 @@
     "semantic_hash": ""
   },
   "CMakeLists.txt": {
-    "mtime": 1791925486.213365,
-    "ast_hash": "46a1d91d98425797b41ec165da9bdead",
+    "mtime": 1791953476.329859,
+    "ast_hash": "f170fa54f1496bf846e3f8db566c3d1a",
     "semantic_hash": ""
   },
   "README.md": {
@@ -950,8 +950,8 @@
     "semantic_hash": "fa5794c577c54fcf0888468db60e0c22"
   },
   "src/CMakeLists.txt": {
-    "mtime": 1791916405.218783,
-    "ast_hash": "23aac1842e125f22204b691707244f31",
+    "mtime": 1791953483.5909183,
+    "ast_hash": "8bf5a2cf4c7f849b011632c13cf38923",
     "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
@@ -1115,8 +1115,8 @@
     "semantic_hash": "d33dd3a82cfd7f01825b5c82a23dee17"
   },
   ".agents/AGENTS.md": {
-    "mtime": 1791253052.2026396,
-    "ast_hash": "6be1b8cd1b3cb8724f28142c6d56d2d1",
+    "mtime": 1791952741.0773773,
+    "ast_hash": "a208dc6e03482e73f83c15889ce13e75",
     "semantic_hash": ""
   },
   ".agents/rules/caveman-navigation.md": {
@@ -1265,8 +1265,8 @@
     "semantic_hash": ""
   },
   ".agents/rules/git-workflow.md": {
-    "mtime": 1791252743.7553391,
-    "ast_hash": "ba0f557e412cb5ccab47fe403ecf8fb2",
+    "mtime": 1791952755.6989937,
+    "ast_hash": "e603aa12f248837441de0b0bc66ee4c5",
     "semantic_hash": ""
   },
   ".agents/rules/slint-standards.md": {
@@ -1585,23 +1585,23 @@
     "semantic_hash": ""
   },
   ".agents/skills/benchmarking/SKILL.md": {
-    "mtime": 1789102321.0186534,
-    "ast_hash": "4dc80f89bf20d3649f5a5ba3f246fc01",
+    "mtime": 1791952814.8507273,
+    "ast_hash": "05d8e23836db541e02febc34ddc38e85",
     "semantic_hash": ""
   },
   ".agents/skills/caveman/SKILL.md": {
-    "mtime": 1791253009.4654078,
-    "ast_hash": "c92be3219b590c0e314dc8f96dd45f99",
+    "mtime": 1791952727.0277758,
+    "ast_hash": "ad189c2007a6d4b385e77c610fbcf9dd",
     "semantic_hash": ""
   },
   ".agents/skills/changelog/SKILL.md": {
-    "mtime": 1791252766.8068986,
-    "ast_hash": "8731b0b34cb96651af027bcbb8656ace",
+    "mtime": 1791952768.969671,
+    "ast_hash": "7adf3169e5757b22c5e59a50dd3fb2c8",
     "semantic_hash": ""
   },
   ".agents/skills/code-review/SKILL.md": {
-    "mtime": 1791252936.741729,
-    "ast_hash": "3fc61502de323da88f7f41bfbc781435",
+    "mtime": 1791952793.0291445,
+    "ast_hash": "af7814b52c0aa79bd48788291a3fc21d",
     "semantic_hash": ""
   },
   ".agents/skills/commit/SKILL.md": {
@@ -1640,8 +1640,8 @@
     "semantic_hash": ""
   },
   ".agents/skills/graphify/SKILL.md": {
-    "mtime": 1791252895.985478,
-    "ast_hash": "a9b3b088c79b3cc7cc51f78e70e67c59",
+    "mtime": 1791953044.499819,
+    "ast_hash": "0a25bd4ebe25c16a0f6a43901a81f358",
     "semantic_hash": ""
   },
   ".agents/skills/grill-me/SKILL.md": {
@@ -1665,8 +1665,8 @@
     "semantic_hash": ""
   },
   ".agents/skills/pybind11/SKILL.md": {
-    "mtime": 1791252846.141403,
-    "ast_hash": "61f6d35734e431f6a0f825e452ac981b",
+    "mtime": 1791952780.7014053,
+    "ast_hash": "f767ab01437b281e07309a3ac7627e7d",
     "semantic_hash": ""
   },
   ".agents/skills/refactor-complexity/SKILL.md": {
@@ -1700,8 +1700,8 @@
     "semantic_hash": ""
   },
   ".agents/skills/to-spec/SKILL.md": {
-    "mtime": 1789102265.3215618,
-    "ast_hash": "61637413aee5f2988d887a5a51aec9f8",
+    "mtime": 1791952804.1409252,
+    "ast_hash": "75d47ead506a3880afa508db1c290908",
     "semantic_hash": ""
   },
   ".github/actions/setup-rust/action.yml": {
@@ -2310,8 +2310,8 @@
     "semantic_hash": ""
   },
   "src/calculators/order/HyperuniformityCalculator.cpp": {
-    "mtime": 1790391314.522119,
-    "ast_hash": "6da5c4840cae6569ebabe1df5fc74233",
+    "mtime": 1791953459.852894,
+    "ast_hash": "0d1c3af7fe77b1804b51ac372972a3ff",
     "semantic_hash": ""
   },
   "src/calculators/order/LocalEntropyCalculator.cpp": {
@@ -2350,8 +2350,8 @@
     "semantic_hash": ""
   },
   "src/calculators/spatial/CNCalculator.cpp": {
-    "mtime": 1790391314.5158427,
-    "ast_hash": "a344ad6e684f8ec1b52f9496c4f96675",
+    "mtime": 1791953495.0100124,
+    "ast_hash": "20f419fb9ce9ccfe7eb8e192847d4316",
     "semantic_hash": ""
   },
   "src/calculators/spatial/ClusterCalculator.cpp": {
@@ -2420,8 +2420,8 @@
     "semantic_hash": ""
   },
   "src/calculators/temporal/VDOSCalculator.cpp": {
-    "mtime": 1791183630.4593172,
-    "ast_hash": "11c0dce2fc36d8f3ad930e8a30b7c635",
+    "mtime": 1791953599.6784782,
+    "ast_hash": "39466bb50012f943b4b00f3990ad679f",
     "semantic_hash": ""
   },
   "include/calculators/gpu/GPUAngleCalculator.hpp": {
@@ -2510,13 +2510,13 @@
     "semantic_hash": ""
   },
   ".agents/scripts/hook_runner.py": {
-    "mtime": 1791252636.7494242,
-    "ast_hash": "caf07c8f5ca30813941aee8fd78a8cc3",
+    "mtime": 1791952883.8217337,
+    "ast_hash": "f45d898aa32a8a194e1196fbe74b6426",
     "semantic_hash": ""
   },
   ".agents/scripts/test_hooks.py": {
-    "mtime": 1791252573.001702,
-    "ast_hash": "e9a0243fb2be84305bb04edf3b2ade6c",
+    "mtime": 1791952913.8534331,
+    "ast_hash": "5eb250958700669cfd644b80daa88ada",
     "semantic_hash": ""
   },
   "tests/functional/analysis/NumericalParityTests.cpp": {
@@ -2710,8 +2710,8 @@
     "semantic_hash": ""
   },
   "include/render3d/ElementColors.hpp": {
-    "mtime": 1791924083.6278431,
-    "ast_hash": "a0e0d5b2f224edc19c8a889362583f99",
+    "mtime": 1791933235.7530112,
+    "ast_hash": "7e361fc1b3123e8cf5e95944529c0b93",
     "semantic_hash": ""
   },
   "include/render3d/Math3D.hpp": {
@@ -2725,8 +2725,8 @@
     "semantic_hash": ""
   },
   "src/render3d/Camera3D.cpp": {
-    "mtime": 1791913433.5841978,
-    "ast_hash": "bf1e477c84372d9bd9aa51212f7d2181",
+    "mtime": 1791933316.2402904,
+    "ast_hash": "1550be06eba2c9fc77f18e32bcd8eae3",
     "semantic_hash": ""
   },
   "src/render3d/Scene3D.cpp": {
@@ -2760,8 +2760,8 @@
     "semantic_hash": ""
   },
   "src/render3d/cpu/SoftwareRasterizer.cpp": {
-    "mtime": 1791913783.5628972,
-    "ast_hash": "1c04c65fcd0cbae11d9b828a3f4989a4",
+    "mtime": 1791933316.2458432,
+    "ast_hash": "7f5923d877afbf76a3c58725eb068372",
     "semantic_hash": ""
   },
   "tests/unit/render3d/SoftwareRasterizerTests.cpp": {

@@ -30,7 +30,7 @@ struct GapParser {
   size_t total_size = 0;
   size_t offset = 0;
 
-  GapParser(const char *data, size_t total_size) : data(data), total_size(total_size) {}
+  GapParser(const char *data_ptr, size_t data_size) : data(data_ptr), total_size(data_size) {}
 
   void skipBlankLines() {
     while (offset < total_size) {

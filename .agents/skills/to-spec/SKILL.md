@@ -27,7 +27,7 @@ Generate a structured technical specification using the following schema:
 
 ## 2. API Contract & Modern C++ Interfaces
 - **Header:** `include/path/to/Header.hpp`
-- **Class / Struct Definitions:** (Follow C++20 concepts, RAII, immutable by default)
+- **Class / Struct Definitions:** (Follow C++23 concepts, RAII, immutable by default)
 - **Error Handling:** Use `std::expected<T, ErrorCode>` or clear exception boundaries.
 
 ## 3. Data Flow & Algorithmic Design
