@@ -40,9 +40,9 @@ using BondCutoffMatrix = std::vector<std::vector<BondCutoffRange>>;
  * @brief Ring definition used for cycle topology search.
  */
 enum class RingType : std::uint8_t {
-  King,     ///< King ring: geodesic distance in G equals perimeter distance along C.
-  Franzblau ///< Franzblau shortest-path primitive ring: sub-paths <= floor(|C|/2) are unique
-            ///< geodesics.
+  King,      ///< King ring: geodesic distance in G equals perimeter distance along C.
+  Franzblau, ///< Franzblau shortest-path primitive ring: sub-paths <= floor(|C|/2) are unique
+             ///< geodesics.
 };
 
 /**
@@ -50,11 +50,11 @@ enum class RingType : std::uint8_t {
  * @brief Projection or filtering strategy for network ring tracing.
  */
 enum class RingProjectionMode : std::uint8_t {
-  Direct,            ///< Direct search on raw atomic neighbor graph.
-  BridgedProjection, ///< Contract bridging atoms to project network-former polyhedra connectivity
-                     ///< (e.g. Si-O-Si -> Si-Si).
-  AlternatingTracing ///< Trace bipartite cycles strictly alternating former and bridging elements
-                     ///< (e.g. Si-O-Si-O).
+  Direct,             ///< Direct search on raw atomic neighbor graph.
+  BridgedProjection,  ///< Contract bridging atoms to project network-former polyhedra connectivity
+                      ///< (e.g. Si-O-Si -> Si-Si).
+  AlternatingTracing, ///< Trace bipartite cycles strictly alternating former and bridging elements
+                      ///< (e.g. Si-O-Si-O).
 };
 
 } // namespace correlation::analysis
