@@ -54,6 +54,7 @@ add_executable(correlation_unit_tests
     unit/calculators/DADCalculatorTests.cpp
     unit/calculators/RDCalculatorTests.cpp
     unit/calculators/RingCellTests.cpp
+    unit/calculators/BaselineRegressionTests.cpp
     unit/calculators/StructureFactorCalculatorTests.cpp
     unit/calculators/SteinhardtCalculatorTests.cpp
     unit/calculators/CNACalculatorTests.cpp
@@ -239,4 +240,11 @@ if(BUILD_PYTHON_BINDINGS)
         DEPENDS      _correlation
         LABELS       "python;bindings"
     )
+endif()
+
+#-----------------------------------------------------------
+# Microbenchmarks (Google Benchmark)
+#-----------------------------------------------------------
+if(BUILD_BENCHMARKS)
+    add_subdirectory(benchmarks)
 endif()

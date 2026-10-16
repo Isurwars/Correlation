@@ -266,6 +266,28 @@ if(_CORRELATION_BUILD_TESTING_ENABLED)
   endif()
 endif()
 
+# 6. Google Benchmark
+if(BUILD_BENCHMARKS)
+  find_package(benchmark QUIET)
+  if(benchmark_FOUND)
+    message(STATUS "Found Google Benchmark: ${benchmark_DIR} (Version: ${benchmark_VERSION})")
+  else()
+    message(STATUS "Google Benchmark not found. Downloading from GitHub...")
+    set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "Disable benchmark tests" FORCE)
+    set(BENCHMARK_ENABLE_INSTALL OFF CACHE BOOL "Disable benchmark installation" FORCE)
+    set(BENCHMARK_ENABLE_WERROR OFF CACHE BOOL "Disable warnings as errors" FORCE)
+
+    FetchContent_Declare(
+      googlebenchmark
+      GIT_REPOSITORY https://github.com/google/benchmark.git
+      GIT_TAG v1.9.1
+      SYSTEM
+      EXCLUDE_FROM_ALL
+    )
+    FetchContent_MakeAvailable(googlebenchmark)
+  endif()
+endif()
+
 # Helper to create ALIAS targets for Arrow and Parquet
 function(correlation_create_arrow_aliases)
   if (NOT TARGET arrow_shared)
