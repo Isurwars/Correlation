@@ -41,6 +41,7 @@ struct SearchGridConfig {
   int max_dy;
   int max_dz;
   bool is_small_cell;
+  std::vector<correlation::math::Vector3<real_t>> small_cell_shifts;
 };
 
 /**
@@ -172,8 +173,7 @@ struct ThreadLocalDistances {
    */
   void collectSmallCellCandidates(size_t atom_idx, const SoACoordinates &coords,
                                   const FlatCellList &cell_list,
-                                  const correlation::math::Matrix3<real_t> &lattice,
-                                  SearchGridConfig grid_config,
+                                  const SearchGridConfig &grid_config,
                                   bool ignore_periodic_self_interactions, size_t &c_count);
 
   /**
@@ -182,7 +182,7 @@ struct ThreadLocalDistances {
   void collectPartitionedCandidates(size_t atom_idx, const SoACoordinates &coords,
                                     const std::vector<int> &atom_bin, const FlatCellList &cell_list,
                                     const correlation::math::Matrix3<real_t> &lattice,
-                                    SearchGridConfig grid_config,
+                                    const SearchGridConfig &grid_config,
                                     bool ignore_periodic_self_interactions, size_t &c_count);
 
   /**
@@ -191,7 +191,8 @@ struct ThreadLocalDistances {
   void collectCandidates(size_t atom_idx, const SoACoordinates &coords,
                          const std::vector<int> &atom_bin, const FlatCellList &cell_list,
                          const correlation::math::Matrix3<real_t> &lattice,
-                         SearchGridConfig grid_config, bool ignore_periodic_self_interactions);
+                         const SearchGridConfig &grid_config,
+                         bool ignore_periodic_self_interactions);
 
   /**
    * @brief Gathers candidate atoms from a specific bin.
@@ -230,48 +231,27 @@ struct ThreadLocalDistances {
                         const correlation::analysis::BondCutoffMatrix &bond_cutoffs);
 };
 
-void ThreadLocalDistances::collectSmallCellCandidates(
-    size_t atom_idx, const SoACoordinates &coords, const FlatCellList &cell_list,
-    const correlation::math::Matrix3<real_t> &lattice, SearchGridConfig grid_config,
-    bool ignore_periodic_self_interactions, size_t &c_count) {
+void ThreadLocalDistances::collectSmallCellCandidates(size_t atom_idx, const SoACoordinates &coords,
+                                                      const FlatCellList &cell_list,
+                                                      const SearchGridConfig &grid_config,
+                                                      bool ignore_periodic_self_interactions,
+                                                      size_t &c_count) {
   // 1. Primary unit cell (zero displacement)
   collectCandidatesFromBin(atom_idx, {0.0, 0.0, 0.0}, 0, cell_list,
                            CandidateGatherMode::PrimaryCellOnly, coords,
                            ignore_periodic_self_interactions, c_count);
 
-  // 2. Lexicographically positive multi-image shifts (n > 0)
-  for (int dx = -grid_config.max_dx; dx <= grid_config.max_dx; ++dx) {
-    for (int dy = -grid_config.max_dy; dy <= grid_config.max_dy; ++dy) {
-      for (int dz = -grid_config.max_dz; dz <= grid_config.max_dz; ++dz) {
-        const bool is_positive_shift =
-            (dx > 0) || (dx == 0 && dy > 0) || (dx == 0 && dy == 0 && dz > 0);
-        if (!is_positive_shift) {
-          continue;
-        }
-
-        real_t const disp_x = std::fma(static_cast<real_t>(dz), lattice[2].x(),
-                                       std::fma(static_cast<real_t>(dy), lattice[1].x(),
-                                                static_cast<real_t>(dx) * lattice[0].x()));
-        real_t const disp_y = std::fma(static_cast<real_t>(dz), lattice[2].y(),
-                                       std::fma(static_cast<real_t>(dy), lattice[1].y(),
-                                                static_cast<real_t>(dx) * lattice[0].y()));
-        real_t const disp_z = std::fma(static_cast<real_t>(dz), lattice[2].z(),
-                                       std::fma(static_cast<real_t>(dy), lattice[1].z(),
-                                                static_cast<real_t>(dx) * lattice[0].z()));
-        correlation::math::Vector3<real_t> const disp = {disp_x, disp_y, disp_z};
-
-        collectCandidatesFromBin(atom_idx, disp, 0, cell_list,
-                                 CandidateGatherMode::PeriodicImageShift, coords,
-                                 ignore_periodic_self_interactions, c_count);
-      }
-    }
+  // 2. Precomputed lexicographically positive multi-image shifts (n > 0)
+  for (const auto &disp : grid_config.small_cell_shifts) {
+    collectCandidatesFromBin(atom_idx, disp, 0, cell_list, CandidateGatherMode::PeriodicImageShift,
+                             coords, ignore_periodic_self_interactions, c_count);
   }
 }
 
 void ThreadLocalDistances::collectPartitionedCandidates(
     size_t atom_idx, const SoACoordinates &coords, const std::vector<int> &atom_bin,
     const FlatCellList &cell_list, const correlation::math::Matrix3<real_t> &lattice,
-    SearchGridConfig grid_config, bool ignore_periodic_self_interactions, size_t &c_count) {
+    const SearchGridConfig &grid_config, bool ignore_periodic_self_interactions, size_t &c_count) {
   int const c_x = atom_bin[atom_idx] / (grid_config.k_y * grid_config.k_z);
   int const c_y = (atom_bin[atom_idx] / grid_config.k_z) % grid_config.k_y;
   int const c_z = atom_bin[atom_idx] % grid_config.k_z;
@@ -320,11 +300,11 @@ void ThreadLocalDistances::collectCandidates(size_t atom_idx, const SoACoordinat
                                              const std::vector<int> &atom_bin,
                                              const FlatCellList &cell_list,
                                              const correlation::math::Matrix3<real_t> &lattice,
-                                             SearchGridConfig grid_config,
+                                             const SearchGridConfig &grid_config,
                                              bool ignore_periodic_self_interactions) {
   size_t c_count = 0;
   if (grid_config.is_small_cell) {
-    collectSmallCellCandidates(atom_idx, coords, cell_list, lattice, grid_config,
+    collectSmallCellCandidates(atom_idx, coords, cell_list, grid_config,
                                ignore_periodic_self_interactions, c_count);
   } else {
     collectPartitionedCandidates(atom_idx, coords, atom_bin, cell_list, lattice, grid_config,
@@ -501,6 +481,52 @@ void validateInputs(real_t cutoff_sq, const correlation::analysis::BondCutoffMat
     }
   }
 }
+struct ShiftBounds {
+  int max_dx;
+  int max_dy;
+  int max_dz;
+  real_t width_x;
+  real_t width_y;
+  real_t width_z;
+  real_t cutoff;
+};
+
+std::vector<correlation::math::Vector3<real_t>>
+computeSmallCellShifts(const correlation::math::Matrix3<real_t> &lattice,
+                       const ShiftBounds &bounds) {
+  std::vector<correlation::math::Vector3<real_t>> shifts;
+  for (int dx = -bounds.max_dx; dx <= bounds.max_dx; ++dx) {
+    for (int dy = -bounds.max_dy; dy <= bounds.max_dy; ++dy) {
+      for (int dz = -bounds.max_dz; dz <= bounds.max_dz; ++dz) {
+        const bool is_positive_shift =
+            (dx > 0) || (dx == 0 && dy > 0) || (dx == 0 && dy == 0 && dz > 0);
+        if (!is_positive_shift) {
+          continue;
+        }
+
+        const real_t gap_x = static_cast<real_t>(std::max(0, std::abs(dx) - 1)) * bounds.width_x;
+        const real_t gap_y = static_cast<real_t>(std::max(0, std::abs(dy) - 1)) * bounds.width_y;
+        const real_t gap_z = static_cast<real_t>(std::max(0, std::abs(dz) - 1)) * bounds.width_z;
+        if (std::max({gap_x, gap_y, gap_z}) > bounds.cutoff) {
+          continue;
+        }
+
+        const real_t disp_x = std::fma(static_cast<real_t>(dz), lattice[2].x(),
+                                       std::fma(static_cast<real_t>(dy), lattice[1].x(),
+                                                static_cast<real_t>(dx) * lattice[0].x()));
+        const real_t disp_y = std::fma(static_cast<real_t>(dz), lattice[2].y(),
+                                       std::fma(static_cast<real_t>(dy), lattice[1].y(),
+                                                static_cast<real_t>(dx) * lattice[0].y()));
+        const real_t disp_z = std::fma(static_cast<real_t>(dz), lattice[2].z(),
+                                       std::fma(static_cast<real_t>(dy), lattice[1].z(),
+                                                static_cast<real_t>(dx) * lattice[0].z()));
+        shifts.emplace_back(disp_x, disp_y, disp_z);
+      }
+    }
+  }
+  return shifts;
+}
+
 /**
  * @brief Computes search grid dimensions and cutoff parameters with numerical degeneracy guards.
  */
@@ -517,6 +543,7 @@ SearchGridConfig buildSearchGridConfig(const correlation::core::Cell &cell, real
         .max_dy = 1,
         .max_dz = 1,
         .is_small_cell = true,
+        .small_cell_shifts = {},
     };
   }
 
@@ -542,6 +569,7 @@ SearchGridConfig buildSearchGridConfig(const correlation::core::Cell &cell, real
         .max_dy = 1,
         .max_dz = 1,
         .is_small_cell = true,
+        .small_cell_shifts = {},
     };
   }
 
@@ -561,6 +589,19 @@ SearchGridConfig buildSearchGridConfig(const correlation::core::Cell &cell, real
   const int max_dy = (k_y == 1) ? std::max(1, static_cast<int>(std::ceil(cutoff / width_y))) : 1;
   const int max_dz = (k_z == 1) ? std::max(1, static_cast<int>(std::ceil(cutoff / width_z))) : 1;
 
+  std::vector<correlation::math::Vector3<real_t>> small_cell_shifts;
+  if (is_small_cell) {
+    small_cell_shifts = computeSmallCellShifts(lattice, ShiftBounds{
+                                                            .max_dx = max_dx,
+                                                            .max_dy = max_dy,
+                                                            .max_dz = max_dz,
+                                                            .width_x = width_x,
+                                                            .width_y = width_y,
+                                                            .width_z = width_z,
+                                                            .cutoff = cutoff,
+                                                        });
+  }
+
   return SearchGridConfig{
       .k_x = k_x,
       .k_y = k_y,
@@ -569,6 +610,7 @@ SearchGridConfig buildSearchGridConfig(const correlation::core::Cell &cell, real
       .max_dy = max_dy,
       .max_dz = max_dz,
       .is_small_cell = is_small_cell,
+      .small_cell_shifts = std::move(small_cell_shifts),
   };
 }
 
@@ -624,7 +666,7 @@ struct WrappedPositions {
  * @brief Computes wrapped positions and bins for all atoms in the cell.
  */
 WrappedPositions buildWrappedPositionsAndBins(const correlation::core::Cell &cell,
-                                              SearchGridConfig grid_config) {
+                                              const SearchGridConfig &grid_config) {
   const auto &atoms = cell.atoms();
   const size_t atom_count = atoms.size();
   const auto &lattice = cell.latticeVectors();
