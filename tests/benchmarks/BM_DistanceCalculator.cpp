@@ -7,7 +7,6 @@
  */
 
 #include "CrystalTestHelper.hpp"
-#include "analysis/DistributionFunctions.hpp"
 #include "calculators/spatial/DistanceCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/NeighborGraph.hpp"
@@ -28,7 +27,7 @@ correlation::analysis::BondCutoffMatrix makeCutoffMatrix(real_t min_sq, real_t m
   return matrix;
 }
 
-void BM_Distance_SmallCell(benchmark::State &state) {
+void benchDistanceSmallCell(benchmark::State &state) {
   // 3x3x3 SC cell (27 atoms) with large cutoff triggering small-cell multi-image branch (k=1)
   const auto cell = testing::crystals::createSimpleCubicCell(4.0, "Ar", 3, 3, 3);
   const real_t cutoff = 6.0;
@@ -40,7 +39,7 @@ void BM_Distance_SmallCell(benchmark::State &state) {
       .num_bins = static_cast<size_t>(cutoff / 0.05),
   };
 
-  for (auto _ : state) {
+  for ([[maybe_unused]] auto iter : state) {
     core::NeighborGraph graph(cell.atomCount());
     calculators::RawHistogramTensor histograms;
     calculators::DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, graph,
@@ -52,7 +51,7 @@ void BM_Distance_SmallCell(benchmark::State &state) {
   state.SetItemsProcessed(state.iterations() * static_cast<int64_t>(cell.atomCount()));
 }
 
-void BM_Distance_MidCell(benchmark::State &state) {
+void benchDistanceMidCell(benchmark::State &state) {
   // 6x6x6 FCC supercell (864 atoms)
   const auto cell = testing::crystals::createFCCCell(3.61, "Cu", 6, 6, 6);
   const real_t cutoff = 5.0;
@@ -64,7 +63,7 @@ void BM_Distance_MidCell(benchmark::State &state) {
       .num_bins = static_cast<size_t>(cutoff / 0.05),
   };
 
-  for (auto _ : state) {
+  for ([[maybe_unused]] auto iter : state) {
     core::NeighborGraph graph(cell.atomCount());
     calculators::RawHistogramTensor histograms;
     calculators::DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, graph,
@@ -76,7 +75,7 @@ void BM_Distance_MidCell(benchmark::State &state) {
   state.SetItemsProcessed(state.iterations() * static_cast<int64_t>(cell.atomCount()));
 }
 
-void BM_Distance_LargeCell(benchmark::State &state) {
+void benchDistanceLargeCell(benchmark::State &state) {
   // 14x14x14 FCC supercell (10,976 atoms)
   const auto cell = testing::crystals::createFCCCell(3.61, "Cu", 14, 14, 14);
   const real_t cutoff = 5.0;
@@ -88,7 +87,7 @@ void BM_Distance_LargeCell(benchmark::State &state) {
       .num_bins = static_cast<size_t>(cutoff / 0.05),
   };
 
-  for (auto _ : state) {
+  for ([[maybe_unused]] auto iter : state) {
     core::NeighborGraph graph(cell.atomCount());
     calculators::RawHistogramTensor histograms;
     calculators::DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, graph,
@@ -102,8 +101,8 @@ void BM_Distance_LargeCell(benchmark::State &state) {
 
 } // namespace
 
-BENCHMARK(BM_Distance_SmallCell);
-BENCHMARK(BM_Distance_MidCell);
-BENCHMARK(BM_Distance_LargeCell);
+BENCHMARK(benchDistanceSmallCell);
+BENCHMARK(benchDistanceMidCell);
+BENCHMARK(benchDistanceLargeCell);
 
 } // namespace correlation::benchmarks

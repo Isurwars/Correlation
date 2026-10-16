@@ -388,7 +388,7 @@ void DistributionFunctions::add(const DistributionFunctions &other) {
   // Iterate over all histograms in the other object
   for (const auto &[name, other_hist] : other.histograms_) {
     // Check if this object has the corresponding histogram
-    auto iter = histograms_.find(name);
+    const auto iter = histograms_.find(name);
     if (iter == histograms_.end()) {
       // If not found, copy it entirely (e.g. if this is the first accumulation
       // but it shouldn't happen if we initialize with one frame)
@@ -470,7 +470,7 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::processSingleFrame
       continue;
     }
     calc_group.run(
-        [&calc, df_ptr = frame_df.get(), &settings]() { calc->calculateFrame(*df_ptr, settings); });
+        [&calc, df_ptr = frame_df.get(), &settings] { calc->calculateFrame(*df_ptr, settings); });
   }
   calc_group.wait();
 
@@ -488,7 +488,7 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::processSingleFrame
 void DistributionFunctions::normalizeHistograms(DistributionFunctions &dist_funcs) {
   for (auto &[name, hist] : dist_funcs.histograms_) {
     if (hist.compute_count > 1) {
-      auto factor = static_cast<real_t>(hist.compute_count);
+      const auto factor = static_cast<real_t>(hist.compute_count);
       for (auto &[key, partial] : hist.partials) {
         for (real_t &row : partial) {
           row /= factor;

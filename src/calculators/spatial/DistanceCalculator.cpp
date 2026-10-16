@@ -29,8 +29,8 @@ void DistanceCalculator::calculateFrame(
 namespace {
 enum class CandidateGatherMode : uint8_t {
   PARTITIONED,
-  PRIMARY_CELL_ONLY,
-  PERIODIC_IMAGE_SHIFT,
+  PrimaryCellOnly,
+  PeriodicImageShift,
 };
 
 struct SearchGridConfig {
@@ -107,7 +107,7 @@ struct ThreadLocalConfig {
                                                  const correlation::math::Vector3<real_t> &disp,
                                                  bool ignore_periodic_self_interactions) noexcept {
   switch (mode) {
-  case CandidateGatherMode::PRIMARY_CELL_ONLY:
+  case CandidateGatherMode::PrimaryCellOnly:
     return j_idx <= atom_idx;
   case CandidateGatherMode::PARTITIONED: {
     if (j_idx < atom_idx) {
@@ -119,7 +119,7 @@ struct ThreadLocalConfig {
     }
     return false;
   }
-  case CandidateGatherMode::PERIODIC_IMAGE_SHIFT:
+  case CandidateGatherMode::PeriodicImageShift:
     return atom_idx == j_idx && ignore_periodic_self_interactions;
   }
   return false;
@@ -236,7 +236,7 @@ void ThreadLocalDistances::collectSmallCellCandidates(
     bool ignore_periodic_self_interactions, size_t &c_count) {
   // 1. Primary unit cell (zero displacement)
   collectCandidatesFromBin(atom_idx, {0.0, 0.0, 0.0}, 0, cell_list,
-                           CandidateGatherMode::PRIMARY_CELL_ONLY, coords,
+                           CandidateGatherMode::PrimaryCellOnly, coords,
                            ignore_periodic_self_interactions, c_count);
 
   // 2. Lexicographically positive multi-image shifts (n > 0)
@@ -261,7 +261,7 @@ void ThreadLocalDistances::collectSmallCellCandidates(
         correlation::math::Vector3<real_t> const disp = {disp_x, disp_y, disp_z};
 
         collectCandidatesFromBin(atom_idx, disp, 0, cell_list,
-                                 CandidateGatherMode::PERIODIC_IMAGE_SHIFT, coords,
+                                 CandidateGatherMode::PeriodicImageShift, coords,
                                  ignore_periodic_self_interactions, c_count);
       }
     }
@@ -510,7 +510,14 @@ SearchGridConfig buildSearchGridConfig(const correlation::core::Cell &cell, real
 
   if (cutoff_sq <= K_ZERO || volume <= K_ZERO) {
     return SearchGridConfig{
-        .k_x = 1, .k_y = 1, .k_z = 1, .max_dx = 1, .max_dy = 1, .max_dz = 1, .is_small_cell = true};
+        .k_x = 1,
+        .k_y = 1,
+        .k_z = 1,
+        .max_dx = 1,
+        .max_dy = 1,
+        .max_dz = 1,
+        .is_small_cell = true,
+    };
   }
 
   const auto &lattice = cell.latticeVectors();
@@ -528,7 +535,14 @@ SearchGridConfig buildSearchGridConfig(const correlation::core::Cell &cell, real
 
   if (norm_bc <= K_ZERO || norm_ca <= K_ZERO || norm_ab <= K_ZERO) {
     return SearchGridConfig{
-        .k_x = 1, .k_y = 1, .k_z = 1, .max_dx = 1, .max_dy = 1, .max_dz = 1, .is_small_cell = true};
+        .k_x = 1,
+        .k_y = 1,
+        .k_z = 1,
+        .max_dx = 1,
+        .max_dy = 1,
+        .max_dz = 1,
+        .is_small_cell = true,
+    };
   }
 
   const real_t width_x = volume / norm_bc;

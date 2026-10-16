@@ -401,7 +401,7 @@ void copyAllPartials(const SteinhardtHistograms &hists, const ThreadLocalHist &a
 void populateHistograms(const correlation::core::Cell &cell,
                         const correlation::analysis::StructureAnalyzer *neighbors,
                         const SteinhardtParams &params, HistogramConfigs configs,
-                        SteinhardtHistograms &hists) {
+                        const SteinhardtHistograms &hists) {
   const auto &atoms = cell.atoms();
   const auto &neighbor_graph = neighbors->neighborGraph();
   size_t const num_atoms = atoms.size();
@@ -428,7 +428,7 @@ void populateHistograms(const correlation::core::Cell &cell,
       .d_val = configs.step_w6,
   };
 
-  tbb::enumerable_thread_specific<ThreadLocalHist> ets([&]() {
+  tbb::enumerable_thread_specific<ThreadLocalHist> ets([&] {
     ThreadLocalHist local;
     initAllPartials(local, element_symbols, configs);
     return local;

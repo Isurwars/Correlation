@@ -7,7 +7,6 @@
  */
 
 #include "CrystalTestHelper.hpp"
-#include "analysis/DistributionFunctions.hpp"
 #include "calculators/spatial/DistanceCalculator.hpp"
 #include "calculators/spatial/MotifFinder.hpp"
 #include "core/Cell.hpp"
@@ -44,12 +43,12 @@ core::NeighborGraph buildDiamondGraph(int n_cells) {
   return graph;
 }
 
-void BM_MotifFinder_KingRings_Diamond(benchmark::State &state) {
+void bmMotifFinderKingRingsDiamond(benchmark::State &state) {
   // Diamond supercell with 8 * 4^3 = 512 atoms
   const auto graph = buildDiamondGraph(4);
   const size_t max_ring_size = 6;
 
-  for (auto _ : state) {
+  for ([[maybe_unused]] auto iter : state) {
     auto rings =
         calculators::MotifFinder::findRings(graph, max_ring_size, analysis::RingType::King);
     benchmark::DoNotOptimize(rings.size());
@@ -58,12 +57,12 @@ void BM_MotifFinder_KingRings_Diamond(benchmark::State &state) {
   state.SetItemsProcessed(state.iterations() * static_cast<int64_t>(graph.nodeCount()));
 }
 
-void BM_MotifFinder_FranzblauRings_Diamond(benchmark::State &state) {
+void bmMotifFinderFranzblauRingsDiamond(benchmark::State &state) {
   // Diamond supercell with 8 * 4^3 = 512 atoms
   const auto graph = buildDiamondGraph(4);
   const size_t max_ring_size = 6;
 
-  for (auto _ : state) {
+  for ([[maybe_unused]] auto iter : state) {
     auto rings =
         calculators::MotifFinder::findRings(graph, max_ring_size, analysis::RingType::Franzblau);
     benchmark::DoNotOptimize(rings.size());
@@ -72,12 +71,12 @@ void BM_MotifFinder_FranzblauRings_Diamond(benchmark::State &state) {
   state.SetItemsProcessed(state.iterations() * static_cast<int64_t>(graph.nodeCount()));
 }
 
-void BM_MotifFinder_ExtractCycles_Diamond(benchmark::State &state) {
+void bmMotifFinderExtractCyclesDiamond(benchmark::State &state) {
   // Extracts exact cycle paths
   const auto graph = buildDiamondGraph(4);
   const size_t target_size = 6;
 
-  for (auto _ : state) {
+  for ([[maybe_unused]] auto iter : state) {
     auto cycles =
         calculators::MotifFinder::extractCycles(graph, target_size, analysis::RingType::King);
     benchmark::DoNotOptimize(cycles.size());
@@ -88,8 +87,8 @@ void BM_MotifFinder_ExtractCycles_Diamond(benchmark::State &state) {
 
 } // namespace
 
-BENCHMARK(BM_MotifFinder_KingRings_Diamond);
-BENCHMARK(BM_MotifFinder_FranzblauRings_Diamond);
-BENCHMARK(BM_MotifFinder_ExtractCycles_Diamond);
+BENCHMARK(bmMotifFinderKingRingsDiamond)->Name("BM_MotifFinder_KingRings_Diamond");
+BENCHMARK(bmMotifFinderFranzblauRingsDiamond)->Name("BM_MotifFinder_FranzblauRings_Diamond");
+BENCHMARK(bmMotifFinderExtractCyclesDiamond)->Name("BM_MotifFinder_ExtractCycles_Diamond");
 
 } // namespace correlation::benchmarks

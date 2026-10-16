@@ -102,16 +102,18 @@ void Cell::updateLatticeParametersFromVectors() {
   const real_t gamma_rad =
       std::acos(std::clamp(cos_gamma, static_cast<real_t>(-1.0), static_cast<real_t>(1.0)));
 
-  lattice_parameters_ = {len_a,
-                         len_b,
-                         len_c,
-                         alpha_rad * static_cast<real_t>(math::RAD_TO_DEG),
-                         beta_rad * static_cast<real_t>(math::RAD_TO_DEG),
-                         gamma_rad * static_cast<real_t>(math::RAD_TO_DEG)};
+  lattice_parameters_ = {
+      len_a,
+      len_b,
+      len_c,
+      alpha_rad * static_cast<real_t>(math::RAD_TO_DEG),
+      beta_rad * static_cast<real_t>(math::RAD_TO_DEG),
+      gamma_rad * static_cast<real_t>(math::RAD_TO_DEG),
+  };
 }
 
 std::optional<Element> Cell::findElement(std::string_view symbol) const {
-  auto iter =
+  const auto iter =
       std::ranges::find_if(elements_, [&](const Element &elem) { return elem.symbol == symbol; });
   if (iter != elements_.end()) {
     return *iter;
@@ -120,7 +122,7 @@ std::optional<Element> Cell::findElement(std::string_view symbol) const {
 }
 
 const Element &Cell::getOrRegisterElement(std::string_view symbol) {
-  auto iter =
+  const auto iter =
       std::ranges::find_if(elements_, [&](const Element &elem) { return elem.symbol == symbol; });
   if (iter != elements_.end()) {
     return *iter;

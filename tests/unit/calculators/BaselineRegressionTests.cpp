@@ -7,7 +7,6 @@
  */
 
 #include "../../CrystalTestHelper.hpp"
-#include "analysis/DistributionFunctions.hpp"
 #include "calculators/spatial/DistanceCalculator.hpp"
 #include "calculators/spatial/MotifFinder.hpp"
 #include "core/Cell.hpp"
@@ -17,7 +16,6 @@
 #include "mlip/PeriodicGraphBuilder.hpp"
 
 #include <gtest/gtest.h>
-#include <numeric>
 
 namespace correlation::calculators {
 namespace {
@@ -156,8 +154,8 @@ TEST(BaselineRegressionTests, GraphDescriptorsRingBaseline) {
   ASSERT_EQ(desc.size(), graph.atom_count * max_size);
 
   real_t total_ring_desc = 0.0;
-  for (real_t v : desc) {
-    total_ring_desc += v;
+  for (real_t value : desc) {
+    total_ring_desc += value;
   }
   EXPECT_DOUBLE_EQ(total_ring_desc, 768.0);
 }
