@@ -381,7 +381,7 @@ void ThreadLocalDistances::updateBonds(const BondCandidate &cand,
   real_t max_bond_dist_sq = 0.0;
   if (static_cast<size_t>(cand.type_a) < bond_cutoffs.size() &&
       static_cast<size_t>(cand.type_b) < bond_cutoffs[cand.type_a].size()) {
-    const auto &range = bond_cutoffs[cand.type_a][cand.type_b];
+    const auto &range = bond_cutoffs(cand.type_a, cand.type_b);
     min_bond_dist_sq = range.min_sq;
     max_bond_dist_sq = range.max_sq;
   }

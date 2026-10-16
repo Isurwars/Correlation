@@ -17,12 +17,6 @@ target_include_directories(correlation_benchmarks PRIVATE
 
 target_compile_definitions(correlation_benchmarks PRIVATE _USE_MATH_DEFINES)
 
-if(MSVC)
-    target_compile_options(correlation_benchmarks PRIVATE /FI "${CMAKE_CURRENT_SOURCE_DIR}/../PrecisionTestHelper.hpp")
-else()
-    target_compile_options(correlation_benchmarks PRIVATE -include "${CMAKE_CURRENT_SOURCE_DIR}/../PrecisionTestHelper.hpp")
-endif()
-
 target_link_libraries(correlation_benchmarks PRIVATE
     correlation_lib
     benchmark::benchmark
