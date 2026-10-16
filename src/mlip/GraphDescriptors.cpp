@@ -290,14 +290,16 @@ GraphDescriptors::computeRingStatisticsDescriptor(const PeriodicGraphData &graph
   std::vector<real_t> ring_desc(graph.atom_count * max_size, static_cast<real_t>(0.0));
   const auto neighbor_graph = buildNeighborGraphFromBuffers(graph);
 
-  for (size_t size = 3; size <= max_size; ++size) {
-    const auto cycles = correlation::calculators::MotifFinder::extractCycles(neighbor_graph, size);
-    for (const auto &cycle : cycles) {
-      for (const auto atom_id : cycle) {
-        if (static_cast<size_t>(atom_id) < graph.atom_count) {
-          ring_desc[static_cast<size_t>(atom_id) * max_size + (size - 1)] +=
-              static_cast<real_t>(1.0);
-        }
+  const auto cycles = correlation::calculators::MotifFinder::extractAllCycles(
+      neighbor_graph, max_size, correlation::analysis::RingType::King);
+  for (const auto &cycle : cycles) {
+    const size_t size = cycle.size();
+    if (size < 3 || size > max_size) {
+      continue;
+    }
+    for (const auto atom_id : cycle) {
+      if (static_cast<size_t>(atom_id) < graph.atom_count) {
+        ring_desc[static_cast<size_t>(atom_id) * max_size + (size - 1)] += static_cast<real_t>(1.0);
       }
     }
   }

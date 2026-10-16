@@ -6,7 +6,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+#include "calculators/spatial/MotifFinder.hpp"
 #include "core/Cell.hpp"
+#include "core/NeighborGraph.hpp"
 #include "mlip/GraphDescriptors.hpp"
 #include "mlip/PeriodicGraphBuilder.hpp"
 
@@ -24,6 +26,40 @@ correlation::core::Cell makeFccCell(real_t lattice_a = static_cast<real_t>(3.615
 
 correlation::core::Cell makeBccCell(real_t lattice_a = static_cast<real_t>(2.866)) {
   return correlation::testing::crystals::createBCCCell(lattice_a, "Fe", 3, 3, 3);
+}
+
+/// Legacy reference: one King ring search per ring size (pre-optimization behavior).
+std::vector<real_t> referenceRingDescriptor(const PeriodicGraphData &graph, size_t max_size) {
+  std::vector<real_t> desc(graph.atom_count * max_size, static_cast<real_t>(0.0));
+  correlation::core::NeighborGraph neighbor_graph(graph.atom_count);
+  for (size_t edge = 0; edge < graph.edge_count; ++edge) {
+    neighbor_graph.addDirectedEdge(
+        static_cast<correlation::core::AtomID>(graph.edge_index_flat[edge]),
+        static_cast<correlation::core::AtomID>(graph.edge_index_flat[graph.edge_count + edge]),
+        graph.edge_distances.size() == graph.edge_count ? graph.edge_distances[edge]
+                                                        : static_cast<real_t>(0.0),
+        correlation::math::Vector3<real_t>{0.0, 0.0, 0.0});
+  }
+  for (size_t size = 3; size <= max_size; ++size) {
+    for (const auto &cycle :
+         correlation::calculators::MotifFinder::extractCycles(neighbor_graph, size)) {
+      for (const auto atom_id : cycle) {
+        desc[static_cast<size_t>(atom_id) * max_size + (size - 1)] += static_cast<real_t>(1.0);
+      }
+    }
+  }
+  return desc;
+}
+
+void expectRingDescriptorMatchesReference(const correlation::core::Cell &cell, real_t cutoff,
+                                          size_t max_size) {
+  const auto graph = PeriodicGraphBuilder::buildGraph(cell, cutoff);
+  const auto actual = GraphDescriptors::computeRingStatisticsDescriptor(graph, max_size);
+  const auto expected = referenceRingDescriptor(graph, max_size);
+  ASSERT_EQ(actual.size(), expected.size());
+  for (size_t i = 0; i < actual.size(); ++i) {
+    EXPECT_DOUBLE_EQ(actual[i], expected[i]) << "index " << i;
+  }
 }
 
 } // anonymous namespace
@@ -90,6 +126,19 @@ TEST(GraphDescriptorsTests, RingStatisticsDescriptorExtraction) {
   for (size_t i = 0; i < graph.atom_count; ++i) {
     EXPECT_GT(rings[i * max_ring_size + 2], 0.0);
   }
+}
+
+TEST(GraphDescriptorsTests, RingDescriptorMatchesPerSizeReferenceFcc) {
+  expectRingDescriptorMatchesReference(makeFccCell(), static_cast<real_t>(2.8), 6);
+}
+
+TEST(GraphDescriptorsTests, RingDescriptorMatchesPerSizeReferenceDiamond) {
+  const auto cell = correlation::testing::crystals::createDiamondCell(5.43, "Si", 2, 2, 2);
+  expectRingDescriptorMatchesReference(cell, static_cast<real_t>(2.8), 8);
+}
+
+TEST(GraphDescriptorsTests, RingDescriptorMatchesPerSizeReferenceBcc) {
+  expectRingDescriptorMatchesReference(makeBccCell(), static_cast<real_t>(3.2), 5);
 }
 
 TEST(GraphDescriptorsTests, GraphSpectrumReturnsSortedEigenvalues) {
