@@ -42,26 +42,17 @@ struct SearchGridConfig {
   int max_dz;
   bool is_small_cell;
   std::vector<correlation::math::Vector3<real_t>> small_cell_shifts;
+  std::array<int, 27> interior_bin_deltas;
 };
 
 /**
  * @struct SoACoordinates
- * @brief Structure of Arrays (SoA) view of wrapped Cartesian positions to prevent parameter
- * swapping.
+ * @brief Structure of Arrays (SoA) view of Cartesian positions.
  */
 struct SoACoordinates {
   const real_t *x;
   const real_t *y;
   const real_t *z;
-};
-
-/**
- * @struct FlatCellList
- * @brief Reference view of the contiguous flat cell list offsets and indices.
- */
-struct FlatCellList {
-  const size_t *offsets;
-  const size_t *indices;
 };
 
 /**
@@ -129,9 +120,6 @@ struct ThreadLocalConfig {
 /**
  * @struct ThreadLocalDistances
  * @brief Thread-local storage for parallel distance calculations and inline histogramming.
- *
- * Contains local raw histogram results, flat bond list, and pre-allocated scratch buffers
- * for SoA (Structure of Arrays) SIMD operations.
  */
 struct ThreadLocalDistances {
   RawHistogramTensor local_histograms; ///< Local fixed-size raw histogram bins [e1][e2][bin].
@@ -140,18 +128,21 @@ struct ThreadLocalDistances {
   real_t r_bin_width = 0.0;
   size_t num_bins = 0;
 
-  // Per-thread SoA scratch buffers (reused and pre-reserved to avoid allocations)
-  std::vector<real_t> soa_x;       ///< Scratch for x-coordinates.
-  std::vector<real_t> soa_y;       ///< Scratch for y-coordinates.
-  std::vector<real_t> soa_z;       ///< Scratch for z-coordinates.
+  std::vector<real_t> soa_x;       ///< Scratch for candidate x-coordinates.
+  std::vector<real_t> soa_y;       ///< Scratch for candidate y-coordinates.
+  std::vector<real_t> soa_z;       ///< Scratch for candidate z-coordinates.
   std::vector<real_t> dsq_scratch; ///< Scratch for squared distance results.
-  std::vector<size_t> candidate_j; ///< Scratch for candidate indices.
+  std::vector<size_t> candidate_j; ///< Scratch for candidate original atom indices.
   size_t candidate_count = 0;      ///< Count of candidates populated in scratch buffers.
 
-  /**
-   * @brief Constructs thread-local storage.
-   * @param config The configuration parameters.
-   */
+  void growScratchBuffers(size_t new_cap) {
+    soa_x.resize(new_cap);
+    soa_y.resize(new_cap);
+    soa_z.resize(new_cap);
+    candidate_j.resize(new_cap);
+    dsq_scratch.resize(new_cap);
+  }
+
   explicit ThreadLocalDistances(ThreadLocalConfig config)
       : r_max(config.r_max), r_bin_width(config.r_bin_width), num_bins(config.num_bins) {
     if (config.num_bins > 0) {
@@ -159,120 +150,122 @@ struct ThreadLocalDistances {
                               std::vector<std::vector<real_t>>(
                                   config.num_elements, std::vector<real_t>(config.num_bins, 0.0)));
     }
-    // Pre-reserve capacities to avoid resizing checks in hot loops
-    soa_x.reserve(1024);
-    soa_y.reserve(1024);
-    soa_z.reserve(1024);
-    candidate_j.reserve(1024);
-    dsq_scratch.reserve(1024);
+    growScratchBuffers(1024);
     bonds.reserve(2048);
   }
 
-  /**
-   * @brief Gathers candidate atoms using multi-image expansion for small crystal unit cells.
-   */
-  void collectSmallCellCandidates(size_t atom_idx, const SoACoordinates &coords,
-                                  const FlatCellList &cell_list,
+  void collectSmallCellCandidates(size_t orig_atom_idx, const SoACoordinates &sorted_coords,
+                                  const size_t *orig_indices, const size_t *bin_offsets,
                                   const SearchGridConfig &grid_config,
                                   bool ignore_periodic_self_interactions, size_t &c_count);
 
-  /**
-   * @brief Gathers candidate atoms using 27-cell spatial stencils for partitioned cells.
-   */
-  void collectPartitionedCandidates(size_t atom_idx, const SoACoordinates &coords,
-                                    const std::vector<int> &atom_bin, const FlatCellList &cell_list,
+  void collectPartitionedInterior(size_t orig_atom_idx, int current_bin,
+                                  const SoACoordinates &sorted_coords, const size_t *orig_indices,
+                                  const size_t *bin_offsets, const SearchGridConfig &grid_config,
+                                  bool ignore_periodic_self_interactions, size_t &c_count);
+
+  void collectPartitionedBoundary(size_t orig_atom_idx, int current_bin,
+                                  const SoACoordinates &sorted_coords, const size_t *orig_indices,
+                                  const size_t *bin_offsets,
+                                  const correlation::math::Matrix3<real_t> &lattice,
+                                  const SearchGridConfig &grid_config,
+                                  bool ignore_periodic_self_interactions, size_t &c_count);
+
+  void collectPartitionedCandidates(size_t orig_atom_idx, int current_bin,
+                                    const SoACoordinates &sorted_coords, const size_t *orig_indices,
+                                    const size_t *bin_offsets,
                                     const correlation::math::Matrix3<real_t> &lattice,
                                     const SearchGridConfig &grid_config,
                                     bool ignore_periodic_self_interactions, size_t &c_count);
 
-  /**
-   * @brief Gathers candidate atoms from neighboring bins.
-   */
-  void collectCandidates(size_t atom_idx, const SoACoordinates &coords,
-                         const std::vector<int> &atom_bin, const FlatCellList &cell_list,
+  void collectCandidates(size_t orig_atom_idx, int current_bin, const SoACoordinates &sorted_coords,
+                         const size_t *orig_indices, const size_t *bin_offsets,
                          const correlation::math::Matrix3<real_t> &lattice,
                          const SearchGridConfig &grid_config,
                          bool ignore_periodic_self_interactions);
 
-  /**
-   * @brief Gathers candidate atoms from a specific bin.
-   */
-  void collectCandidatesFromBin(size_t atom_idx, const correlation::math::Vector3<real_t> &disp,
-                                int n_bin_idx, const FlatCellList &cell_list,
-                                CandidateGatherMode mode, const SoACoordinates &coords,
+  void collectCandidatesFromBin(size_t orig_atom_idx,
+                                const correlation::math::Vector3<real_t> &disp, size_t bin_start,
+                                size_t bin_end, CandidateGatherMode mode,
+                                const SoACoordinates &sorted_coords, const size_t *orig_indices,
                                 bool ignore_periodic_self_interactions, size_t &c_count);
 
-  /**
-   * @brief Appends or updates a candidate in the thread-local scratch buffers.
-   * @param shifted_pos Shifted 3D coordinate vector of the candidate atom.
-   * @param j_idx Atom index of the candidate.
-   * @param c_count Current candidate count accumulator reference.
-   */
-  void appendCandidate(const correlation::math::Vector3<real_t> &shifted_pos, size_t j_idx,
-                       size_t &c_count);
-
-  /**
-   * @brief Updates pair distribution histograms for a candidate pair.
-   */
   void updateHistogram(const BondCandidate &cand);
 
-  /**
-   * @brief Evaluates and records bond connections for a candidate pair within cutoff ranges.
-   */
-  void updateBonds(const BondCandidate &cand, const SoACoordinates &coords,
+  void updateBonds(const BondCandidate &cand,
                    const correlation::analysis::BondCutoffMatrix &bond_cutoffs,
                    const correlation::math::Vector3<real_t> &atom_pos);
 
-  /**
-   * @brief Computes SIMD pairwise distances and updates local structures.
-   */
-  void computeDistances(size_t atom_idx, const std::vector<correlation::core::Atom> &atoms,
-                        const SoACoordinates &coords, real_t cutoff_sq,
+  void computeDistances(size_t orig_atom_idx, const correlation::math::Vector3<real_t> &atom_pos,
+                        const std::vector<correlation::core::Atom> &atoms, real_t cutoff_sq,
                         const correlation::analysis::BondCutoffMatrix &bond_cutoffs);
 };
 
-void ThreadLocalDistances::collectSmallCellCandidates(size_t atom_idx, const SoACoordinates &coords,
-                                                      const FlatCellList &cell_list,
-                                                      const SearchGridConfig &grid_config,
-                                                      bool ignore_periodic_self_interactions,
-                                                      size_t &c_count) {
+void ThreadLocalDistances::collectSmallCellCandidates(
+    size_t orig_atom_idx, const SoACoordinates &sorted_coords, const size_t *orig_indices,
+    const size_t *bin_offsets, const SearchGridConfig &grid_config,
+    bool ignore_periodic_self_interactions, size_t &c_count) {
+  size_t const bin_start = bin_offsets[0];
+  size_t const bin_end = bin_offsets[1];
+
   // 1. Primary unit cell (zero displacement)
-  collectCandidatesFromBin(atom_idx, {0.0, 0.0, 0.0}, 0, cell_list,
-                           CandidateGatherMode::PrimaryCellOnly, coords,
+  collectCandidatesFromBin(orig_atom_idx, {0.0, 0.0, 0.0}, bin_start, bin_end,
+                           CandidateGatherMode::PrimaryCellOnly, sorted_coords, orig_indices,
                            ignore_periodic_self_interactions, c_count);
 
   // 2. Precomputed lexicographically positive multi-image shifts (n > 0)
   for (const auto &disp : grid_config.small_cell_shifts) {
-    collectCandidatesFromBin(atom_idx, disp, 0, cell_list, CandidateGatherMode::PeriodicImageShift,
-                             coords, ignore_periodic_self_interactions, c_count);
+    collectCandidatesFromBin(orig_atom_idx, disp, bin_start, bin_end,
+                             CandidateGatherMode::PeriodicImageShift, sorted_coords, orig_indices,
+                             ignore_periodic_self_interactions, c_count);
   }
 }
 
-void ThreadLocalDistances::collectPartitionedCandidates(
-    size_t atom_idx, const SoACoordinates &coords, const std::vector<int> &atom_bin,
-    const FlatCellList &cell_list, const correlation::math::Matrix3<real_t> &lattice,
-    const SearchGridConfig &grid_config, bool ignore_periodic_self_interactions, size_t &c_count) {
-  int const c_x = atom_bin[atom_idx] / (grid_config.k_y * grid_config.k_z);
-  int const c_y = (atom_bin[atom_idx] / grid_config.k_z) % grid_config.k_y;
-  int const c_z = atom_bin[atom_idx] % grid_config.k_z;
+constexpr void computePeriodicShiftAndBin(int coord, int delta, int dim_k, int &shift,
+                                          int &wrap) noexcept {
+  int const shifted_coord = coord + delta;
+  shift = (shifted_coord >= 0) ? (shifted_coord / dim_k) : ((shifted_coord - dim_k + 1) / dim_k);
+  wrap = shifted_coord - shift * dim_k;
+}
+
+void ThreadLocalDistances::collectPartitionedInterior(
+    size_t orig_atom_idx, int current_bin, const SoACoordinates &sorted_coords,
+    const size_t *orig_indices, const size_t *bin_offsets, const SearchGridConfig &grid_config,
+    bool ignore_periodic_self_interactions, size_t &c_count) {
+  const correlation::math::Vector3<real_t> zero_disp{0.0, 0.0, 0.0};
+  for (int const delta : grid_config.interior_bin_deltas) {
+    int const neighbor_bin = current_bin + delta;
+    size_t const bin_start = bin_offsets[neighbor_bin];
+    size_t const bin_end = bin_offsets[neighbor_bin + 1];
+    collectCandidatesFromBin(orig_atom_idx, zero_disp, bin_start, bin_end,
+                             CandidateGatherMode::PARTITIONED, sorted_coords, orig_indices,
+                             ignore_periodic_self_interactions, c_count);
+  }
+}
+
+void ThreadLocalDistances::collectPartitionedBoundary(
+    size_t orig_atom_idx, int current_bin, const SoACoordinates &sorted_coords,
+    const size_t *orig_indices, const size_t *bin_offsets,
+    const correlation::math::Matrix3<real_t> &lattice, const SearchGridConfig &grid_config,
+    bool ignore_periodic_self_interactions, size_t &c_count) {
+  int const c_x = current_bin / (grid_config.k_y * grid_config.k_z);
+  int const c_y = (current_bin / grid_config.k_z) % grid_config.k_y;
+  int const c_z = current_bin % grid_config.k_z;
 
   for (int dx = -grid_config.max_dx; dx <= grid_config.max_dx; ++dx) {
-    int const nx_bin = c_x + dx;
-    int const shift_x = (nx_bin >= 0) ? (nx_bin / grid_config.k_x)
-                                      : ((nx_bin - grid_config.k_x + 1) / grid_config.k_x);
-    int const wrap_x = nx_bin - shift_x * grid_config.k_x;
+    int shift_x = 0;
+    int wrap_x = 0;
+    computePeriodicShiftAndBin(c_x, dx, grid_config.k_x, shift_x, wrap_x);
 
     for (int dy = -grid_config.max_dy; dy <= grid_config.max_dy; ++dy) {
-      int const ny_bin = c_y + dy;
-      int const shift_y = (ny_bin >= 0) ? (ny_bin / grid_config.k_y)
-                                        : ((ny_bin - grid_config.k_y + 1) / grid_config.k_y);
-      int const wrap_y = ny_bin - shift_y * grid_config.k_y;
+      int shift_y = 0;
+      int wrap_y = 0;
+      computePeriodicShiftAndBin(c_y, dy, grid_config.k_y, shift_y, wrap_y);
 
       for (int dz = -grid_config.max_dz; dz <= grid_config.max_dz; ++dz) {
-        int const nz_bin = c_z + dz;
-        int const shift_z = (nz_bin >= 0) ? (nz_bin / grid_config.k_z)
-                                          : ((nz_bin - grid_config.k_z + 1) / grid_config.k_z);
-        int const wrap_z = nz_bin - shift_z * grid_config.k_z;
+        int shift_z = 0;
+        int wrap_z = 0;
+        computePeriodicShiftAndBin(c_z, dz, grid_config.k_z, shift_z, wrap_z);
 
         int const n_bin_idx =
             wrap_x * (grid_config.k_y * grid_config.k_z) + wrap_y * grid_config.k_z + wrap_z;
@@ -288,66 +281,77 @@ void ThreadLocalDistances::collectPartitionedCandidates(
                                                 static_cast<real_t>(shift_x) * lattice[0].z()));
         correlation::math::Vector3<real_t> const disp = {disp_x, disp_y, disp_z};
 
-        collectCandidatesFromBin(atom_idx, disp, n_bin_idx, cell_list,
-                                 CandidateGatherMode::PARTITIONED, coords,
+        size_t const bin_start = bin_offsets[n_bin_idx];
+        size_t const bin_end = bin_offsets[n_bin_idx + 1];
+
+        collectCandidatesFromBin(orig_atom_idx, disp, bin_start, bin_end,
+                                 CandidateGatherMode::PARTITIONED, sorted_coords, orig_indices,
                                  ignore_periodic_self_interactions, c_count);
       }
     }
   }
 }
 
-void ThreadLocalDistances::collectCandidates(size_t atom_idx, const SoACoordinates &coords,
-                                             const std::vector<int> &atom_bin,
-                                             const FlatCellList &cell_list,
+void ThreadLocalDistances::collectPartitionedCandidates(
+    size_t orig_atom_idx, int current_bin, const SoACoordinates &sorted_coords,
+    const size_t *orig_indices, const size_t *bin_offsets,
+    const correlation::math::Matrix3<real_t> &lattice, const SearchGridConfig &grid_config,
+    bool ignore_periodic_self_interactions, size_t &c_count) {
+  int const c_x = current_bin / (grid_config.k_y * grid_config.k_z);
+  int const c_y = (current_bin / grid_config.k_z) % grid_config.k_y;
+  int const c_z = current_bin % grid_config.k_z;
+
+  bool const is_interior = (c_x > 0 && c_x < grid_config.k_x - 1) &&
+                           (c_y > 0 && c_y < grid_config.k_y - 1) &&
+                           (c_z > 0 && c_z < grid_config.k_z - 1);
+
+  if (is_interior) {
+    collectPartitionedInterior(orig_atom_idx, current_bin, sorted_coords, orig_indices, bin_offsets,
+                               grid_config, ignore_periodic_self_interactions, c_count);
+  } else {
+    collectPartitionedBoundary(orig_atom_idx, current_bin, sorted_coords, orig_indices, bin_offsets,
+                               lattice, grid_config, ignore_periodic_self_interactions, c_count);
+  }
+}
+
+void ThreadLocalDistances::collectCandidates(size_t orig_atom_idx, int current_bin,
+                                             const SoACoordinates &sorted_coords,
+                                             const size_t *orig_indices, const size_t *bin_offsets,
                                              const correlation::math::Matrix3<real_t> &lattice,
                                              const SearchGridConfig &grid_config,
                                              bool ignore_periodic_self_interactions) {
   size_t c_count = 0;
   if (grid_config.is_small_cell) {
-    collectSmallCellCandidates(atom_idx, coords, cell_list, grid_config,
+    collectSmallCellCandidates(orig_atom_idx, sorted_coords, orig_indices, bin_offsets, grid_config,
                                ignore_periodic_self_interactions, c_count);
   } else {
-    collectPartitionedCandidates(atom_idx, coords, atom_bin, cell_list, lattice, grid_config,
+    collectPartitionedCandidates(orig_atom_idx, current_bin, sorted_coords, orig_indices,
+                                 bin_offsets, lattice, grid_config,
                                  ignore_periodic_self_interactions, c_count);
   }
   candidate_count = c_count;
 }
 
-void ThreadLocalDistances::appendCandidate(const correlation::math::Vector3<real_t> &shifted_pos,
-                                           size_t j_idx, size_t &c_count) {
-  if (soa_x.size() <= c_count) {
-    soa_x.push_back(shifted_pos.x());
-    soa_y.push_back(shifted_pos.y());
-    soa_z.push_back(shifted_pos.z());
-    candidate_j.push_back(j_idx);
-    dsq_scratch.push_back(0.0);
-  } else {
-    soa_x[c_count] = shifted_pos.x();
-    soa_y[c_count] = shifted_pos.y();
-    soa_z[c_count] = shifted_pos.z();
-    candidate_j[c_count] = j_idx;
-  }
-  c_count++;
-}
-
 void ThreadLocalDistances::collectCandidatesFromBin(
-    size_t atom_idx, const correlation::math::Vector3<real_t> &disp, int n_bin_idx,
-    const FlatCellList &cell_list, CandidateGatherMode mode, const SoACoordinates &coords,
-    bool ignore_periodic_self_interactions, size_t &c_count) {
+    size_t orig_atom_idx, const correlation::math::Vector3<real_t> &disp, size_t bin_start,
+    size_t bin_end, CandidateGatherMode mode, const SoACoordinates &sorted_coords,
+    const size_t *orig_indices, bool ignore_periodic_self_interactions, size_t &c_count) {
 
-  size_t const start = cell_list.offsets[n_bin_idx];
-  size_t const end = cell_list.offsets[n_bin_idx + 1];
-
-  for (size_t offset = start; offset < end; ++offset) {
-    size_t const j_idx = cell_list.indices[offset];
-    if (shouldSkipCandidate(mode, atom_idx, j_idx, disp, ignore_periodic_self_interactions)) {
+  for (size_t slot = bin_start; slot < bin_end; ++slot) {
+    size_t const j_idx = orig_indices[slot];
+    if (shouldSkipCandidate(mode, orig_atom_idx, j_idx, disp, ignore_periodic_self_interactions)) {
       continue;
     }
 
-    correlation::math::Vector3<real_t> const shifted_pos{
-        coords.x[j_idx] + disp.x(), coords.y[j_idx] + disp.y(), coords.z[j_idx] + disp.z()};
+    if (c_count >= soa_x.size()) {
+      growScratchBuffers(soa_x.size() * 2);
+    }
 
-    appendCandidate(shifted_pos, j_idx, c_count);
+    soa_x[c_count] = sorted_coords.x[slot] + disp.x();
+    soa_y[c_count] = sorted_coords.y[slot] + disp.y();
+    soa_z[c_count] = sorted_coords.z[slot] + disp.z();
+    candidate_j[c_count] = j_idx;
+    c_count++;
   }
 }
 
@@ -370,7 +374,7 @@ void ThreadLocalDistances::updateHistogram(const BondCandidate &cand) {
   }
 }
 
-void ThreadLocalDistances::updateBonds(const BondCandidate &cand, const SoACoordinates &coords,
+void ThreadLocalDistances::updateBonds(const BondCandidate &cand,
                                        const correlation::analysis::BondCutoffMatrix &bond_cutoffs,
                                        const correlation::math::Vector3<real_t> &atom_pos) {
   real_t min_bond_dist_sq = 0.0;
@@ -386,16 +390,10 @@ void ThreadLocalDistances::updateBonds(const BondCandidate &cand, const SoACoord
     return;
   }
 
-  // Recover displacement vector coordinates precisely to minimize rounding/cancellation errors
-  real_t const disp_x = soa_x[cand.scratch_idx] - coords.x[cand.j_idx];
-  real_t const disp_y = soa_y[cand.scratch_idx] - coords.y[cand.j_idx];
-  real_t const disp_z = soa_z[cand.scratch_idx] - coords.z[cand.j_idx];
+  real_t const r_x = soa_x[cand.scratch_idx] - atom_pos.x();
+  real_t const r_y = soa_y[cand.scratch_idx] - atom_pos.y();
+  real_t const r_z = soa_z[cand.scratch_idx] - atom_pos.z();
 
-  real_t const r_x = (coords.x[cand.j_idx] - atom_pos.x()) + disp_x;
-  real_t const r_y = (coords.y[cand.j_idx] - atom_pos.y()) + disp_y;
-  real_t const r_z = (coords.z[cand.j_idx] - atom_pos.z()) + disp_z;
-
-  // Recompute consistent distance directly from the exact relative vector
   real_t const precise_dist = std::sqrt(r_x * r_x + r_y * r_y + r_z * r_z);
   correlation::math::Vector3<real_t> const r_ij = {r_x, r_y, r_z};
 
@@ -415,8 +413,8 @@ void ThreadLocalDistances::updateBonds(const BondCandidate &cand, const SoACoord
 }
 
 void ThreadLocalDistances::computeDistances(
-    size_t atom_idx, const std::vector<correlation::core::Atom> &atoms,
-    const SoACoordinates &coords, real_t cutoff_sq,
+    size_t orig_atom_idx, const correlation::math::Vector3<real_t> &atom_pos,
+    const std::vector<correlation::core::Atom> &atoms, real_t cutoff_sq,
     const correlation::analysis::BondCutoffMatrix &bond_cutoffs) {
 
   size_t const c_count = candidate_count;
@@ -424,12 +422,10 @@ void ThreadLocalDistances::computeDistances(
     return;
   }
 
-  const auto &atom_a = atoms[atom_idx];
-  const int type_a = atom_a.elementId();
-  const real_t a_x = coords.x[atom_idx];
-  const real_t a_y = coords.y[atom_idx];
-  const real_t a_z = coords.z[atom_idx];
-  correlation::math::Vector3<real_t> const atom_pos{a_x, a_y, a_z};
+  const int type_a = atoms[orig_atom_idx].elementId();
+  const real_t a_x = atom_pos.x();
+  const real_t a_y = atom_pos.y();
+  const real_t a_z = atom_pos.z();
 
   const correlation::math::PositionBlock block{
       .x = soa_x.data(),
@@ -449,7 +445,7 @@ void ThreadLocalDistances::computeDistances(
     int const type_b = atoms[j_idx].elementId();
 
     const BondCandidate cand{
-        .atom_idx = atom_idx,
+        .atom_idx = orig_atom_idx,
         .j_idx = j_idx,
         .scratch_idx = k,
         .type_a = type_a,
@@ -458,7 +454,7 @@ void ThreadLocalDistances::computeDistances(
     };
 
     updateHistogram(cand);
-    updateBonds(cand, coords, bond_cutoffs, atom_pos);
+    updateBonds(cand, bond_cutoffs, atom_pos);
   }
 }
 /**
@@ -544,6 +540,7 @@ SearchGridConfig buildSearchGridConfig(const correlation::core::Cell &cell, real
         .max_dz = 1,
         .is_small_cell = true,
         .small_cell_shifts = {},
+        .interior_bin_deltas = {},
     };
   }
 
@@ -570,6 +567,7 @@ SearchGridConfig buildSearchGridConfig(const correlation::core::Cell &cell, real
         .max_dz = 1,
         .is_small_cell = true,
         .small_cell_shifts = {},
+        .interior_bin_deltas = {},
     };
   }
 
@@ -602,6 +600,18 @@ SearchGridConfig buildSearchGridConfig(const correlation::core::Cell &cell, real
                                                         });
   }
 
+  std::array<int, 27> interior_bin_deltas{};
+  if (!is_small_cell) {
+    size_t d_idx = 0;
+    for (int dx = -1; dx <= 1; ++dx) {
+      for (int dy = -1; dy <= 1; ++dy) {
+        for (int dz = -1; dz <= 1; ++dz) {
+          interior_bin_deltas.at(d_idx++) = dx * (k_y * k_z) + dy * k_z + dz;
+        }
+      }
+    }
+  }
+
   return SearchGridConfig{
       .k_x = k_x,
       .k_y = k_y,
@@ -611,6 +621,7 @@ SearchGridConfig buildSearchGridConfig(const correlation::core::Cell &cell, real
       .max_dz = max_dz,
       .is_small_cell = is_small_cell,
       .small_cell_shifts = std::move(small_cell_shifts),
+      .interior_bin_deltas = interior_bin_deltas,
   };
 }
 
@@ -651,98 +662,122 @@ bool tryComputeGpu(const correlation::core::Cell &cell, real_t cutoff_sq,
 #endif
 
 /**
- * @struct WrappedPositions
- * @brief Wrapped atom coordinates and spatial bin partitioning data.
+ * @brief Computes wrapped Cartesian coordinates and 3D grid bin for a single atom.
  */
-struct WrappedPositions {
-  std::vector<real_t> wrapped_x;
-  std::vector<real_t> wrapped_y;
-  std::vector<real_t> wrapped_z;
-  std::vector<int> atom_bin;
-  std::vector<size_t> bin_counts;
-};
+inline void wrapAtomCoordinates(const correlation::math::Vector3<real_t> &pos,
+                                const correlation::math::Matrix3<real_t> &inv_lattice,
+                                const correlation::math::Matrix3<real_t> &lattice,
+                                const SearchGridConfig &grid_config, real_t &wrapped_x,
+                                real_t &wrapped_y, real_t &wrapped_z, int &bin_idx) noexcept {
+  const correlation::math::Vector3<real_t> frac = inv_lattice * pos;
+  const real_t f_x = frac.x() - std::floor(frac.x());
+  const real_t f_y = frac.y() - std::floor(frac.y());
+  const real_t f_z = frac.z() - std::floor(frac.z());
 
-/**
- * @brief Computes wrapped positions and bins for all atoms in the cell.
- */
-WrappedPositions buildWrappedPositionsAndBins(const correlation::core::Cell &cell,
-                                              const SearchGridConfig &grid_config) {
-  const auto &atoms = cell.atoms();
-  const size_t atom_count = atoms.size();
-  const auto &lattice = cell.latticeVectors();
-  const auto num_bins = static_cast<size_t>(grid_config.k_x) *
-                        static_cast<size_t>(grid_config.k_y) * static_cast<size_t>(grid_config.k_z);
+  wrapped_x = std::fma(f_z, lattice[2].x(), std::fma(f_y, lattice[1].x(), f_x * lattice[0].x()));
+  wrapped_y = std::fma(f_z, lattice[2].y(), std::fma(f_y, lattice[1].y(), f_x * lattice[0].y()));
+  wrapped_z = std::fma(f_z, lattice[2].z(), std::fma(f_y, lattice[1].z(), f_x * lattice[0].z()));
 
-  WrappedPositions pos{
-      .wrapped_x = std::vector<real_t>(atom_count),
-      .wrapped_y = std::vector<real_t>(atom_count),
-      .wrapped_z = std::vector<real_t>(atom_count),
-      .atom_bin = std::vector<int>(atom_count),
-      .bin_counts = std::vector<size_t>(num_bins, 0),
-  };
+  const int c_x =
+      std::clamp(static_cast<int>(std::floor(f_x * static_cast<real_t>(grid_config.k_x))), 0,
+                 grid_config.k_x - 1);
+  const int c_y =
+      std::clamp(static_cast<int>(std::floor(f_y * static_cast<real_t>(grid_config.k_y))), 0,
+                 grid_config.k_y - 1);
+  const int c_z =
+      std::clamp(static_cast<int>(std::floor(f_z * static_cast<real_t>(grid_config.k_z))), 0,
+                 grid_config.k_z - 1);
 
-  for (size_t i = 0; i < atom_count; ++i) {
-    const correlation::math::Vector3<real_t> frac =
-        cell.inverseLatticeVectors() * atoms[i].position();
-    const real_t f_x = frac.x() - std::floor(frac.x());
-    const real_t f_y = frac.y() - std::floor(frac.y());
-    const real_t f_z = frac.z() - std::floor(frac.z());
-
-    pos.wrapped_x[i] =
-        std::fma(f_z, lattice[2].x(), std::fma(f_y, lattice[1].x(), f_x * lattice[0].x()));
-    pos.wrapped_y[i] =
-        std::fma(f_z, lattice[2].y(), std::fma(f_y, lattice[1].y(), f_x * lattice[0].y()));
-    pos.wrapped_z[i] =
-        std::fma(f_z, lattice[2].z(), std::fma(f_y, lattice[1].z(), f_x * lattice[0].z()));
-
-    const int c_x =
-        std::clamp(static_cast<int>(std::floor(f_x * static_cast<real_t>(grid_config.k_x))), 0,
-                   grid_config.k_x - 1);
-    const int c_y =
-        std::clamp(static_cast<int>(std::floor(f_y * static_cast<real_t>(grid_config.k_y))), 0,
-                   grid_config.k_y - 1);
-    const int c_z =
-        std::clamp(static_cast<int>(std::floor(f_z * static_cast<real_t>(grid_config.k_z))), 0,
-                   grid_config.k_z - 1);
-
-    const int bin_idx = c_x * (grid_config.k_y * grid_config.k_z) + c_y * grid_config.k_z + c_z;
-    pos.atom_bin[i] = bin_idx;
-    pos.bin_counts[bin_idx]++;
-  }
-
-  return pos;
+  bin_idx = c_x * (grid_config.k_y * grid_config.k_z) + c_y * grid_config.k_z + c_z;
 }
 
 /**
- * @struct FlatCellListData
- * @brief Storage for flat cell list index offsets and flattened indices.
+ * @struct BinSortedPositions
+ * @brief Contiguous SoA coordinates, atom mapping, and bin slices sorted by spatial bin.
  */
-struct FlatCellListData {
-  std::vector<size_t> bin_offsets;
-  std::vector<size_t> bin_indices;
+struct BinSortedPositions {
+  std::vector<real_t> x_sorted;     ///< Contiguous bin-sorted x coordinates.
+  std::vector<real_t> y_sorted;     ///< Contiguous bin-sorted y coordinates.
+  std::vector<real_t> z_sorted;     ///< Contiguous bin-sorted z coordinates.
+  std::vector<size_t> orig_indices; ///< Maps sorted slot to original atom index.
+  std::vector<int> sorted_atom_bin; ///< Spatial bin index for each sorted atom slot.
+  std::vector<size_t> bin_offsets;  ///< Slices [bin_offsets[b], bin_offsets[b+1]) per bin.
 };
 
 /**
- * @brief Constructs flattened cell list prefix sum and index buffer.
+ * @brief Constructs bin-sorted SoA positions and bin slice offsets.
  */
-FlatCellListData buildFlatCellList(const std::vector<size_t> &bin_counts,
-                                   const std::vector<int> &atom_bin, size_t atom_count) {
-  const size_t num_bins = bin_counts.size();
+BinSortedPositions buildBinSortedPositions(const correlation::core::Cell &cell,
+                                           const SearchGridConfig &grid_config) {
+  const auto &atoms = cell.atoms();
+  const size_t atom_count = atoms.size();
+  const auto &lattice = cell.latticeVectors();
+  const auto &inv_lattice = cell.inverseLatticeVectors();
+  const auto num_bins = static_cast<size_t>(grid_config.k_x) *
+                        static_cast<size_t>(grid_config.k_y) * static_cast<size_t>(grid_config.k_z);
+
+  std::vector<real_t> wrapped_x(atom_count);
+  std::vector<real_t> wrapped_y(atom_count);
+  std::vector<real_t> wrapped_z(atom_count);
+  std::vector<int> atom_bin(atom_count);
+  std::vector<size_t> bin_counts(num_bins, 0);
+
+  if (atom_count < 2048) {
+    for (size_t i = 0; i < atom_count; ++i) {
+      wrapAtomCoordinates(atoms[i].position(), inv_lattice, lattice, grid_config, wrapped_x[i],
+                          wrapped_y[i], wrapped_z[i], atom_bin[i]);
+      bin_counts[atom_bin[i]]++;
+    }
+  } else {
+    tbb::enumerable_thread_specific<std::vector<size_t>> local_counts(
+        [num_bins] { return std::vector<size_t>(num_bins, 0); });
+
+    tbb::parallel_for(
+        tbb::blocked_range<size_t>(0, atom_count), [&](const tbb::blocked_range<size_t> &range) {
+          auto &counts = local_counts.local();
+          for (size_t i = range.begin(); i != range.end(); ++i) {
+            wrapAtomCoordinates(atoms[i].position(), inv_lattice, lattice, grid_config,
+                                wrapped_x[i], wrapped_y[i], wrapped_z[i], atom_bin[i]);
+            counts[atom_bin[i]]++;
+          }
+        });
+
+    for (const auto &local_thread_counts : local_counts) {
+      for (size_t bin_idx = 0; bin_idx < num_bins; ++bin_idx) {
+        bin_counts[bin_idx] += local_thread_counts[bin_idx];
+      }
+    }
+  }
+
   std::vector<size_t> bin_offsets(num_bins + 1, 0);
   for (size_t bin_idx = 0; bin_idx < num_bins; ++bin_idx) {
     bin_offsets[bin_idx + 1] = bin_offsets[bin_idx] + bin_counts[bin_idx];
   }
 
-  std::vector<size_t> bin_indices(atom_count);
-  std::vector<size_t> insertion_cursors = bin_offsets;
+  std::vector<real_t> x_sorted(atom_count);
+  std::vector<real_t> y_sorted(atom_count);
+  std::vector<real_t> z_sorted(atom_count);
+  std::vector<size_t> orig_indices(atom_count);
+  std::vector<int> sorted_atom_bin(atom_count);
+
+  std::vector<size_t> cursors = bin_offsets;
   for (size_t i = 0; i < atom_count; ++i) {
     const int bin_idx = atom_bin[i];
-    bin_indices[insertion_cursors[bin_idx]++] = i;
+    const size_t slot = cursors[bin_idx]++;
+    x_sorted[slot] = wrapped_x[i];
+    y_sorted[slot] = wrapped_y[i];
+    z_sorted[slot] = wrapped_z[i];
+    orig_indices[slot] = i;
+    sorted_atom_bin[slot] = bin_idx;
   }
 
-  return {
+  return BinSortedPositions{
+      .x_sorted = std::move(x_sorted),
+      .y_sorted = std::move(y_sorted),
+      .z_sorted = std::move(z_sorted),
+      .orig_indices = std::move(orig_indices),
+      .sorted_atom_bin = std::move(sorted_atom_bin),
       .bin_offsets = std::move(bin_offsets),
-      .bin_indices = std::move(bin_indices),
   };
 }
 
@@ -803,19 +838,12 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cut
     return;
   }
 #endif
-  const WrappedPositions wrapped = buildWrappedPositionsAndBins(cell, grid_config);
-  const FlatCellListData cell_list_data =
-      buildFlatCellList(wrapped.bin_counts, wrapped.atom_bin, atom_count);
+  const BinSortedPositions bin_sorted = buildBinSortedPositions(cell, grid_config);
 
-  const SoACoordinates coords{
-      .x = wrapped.wrapped_x.data(),
-      .y = wrapped.wrapped_y.data(),
-      .z = wrapped.wrapped_z.data(),
-  };
-
-  const FlatCellList cell_list{
-      .offsets = cell_list_data.bin_offsets.data(),
-      .indices = cell_list_data.bin_indices.data(),
+  const SoACoordinates sorted_coords{
+      .x = bin_sorted.x_sorted.data(),
+      .y = bin_sorted.y_sorted.data(),
+      .z = bin_sorted.z_sorted.data(),
   };
 
   tbb::enumerable_thread_specific<ThreadLocalDistances> ets(ThreadLocalConfig{
@@ -829,10 +857,17 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cut
   tbb::parallel_for(
       tbb::blocked_range<size_t>(0, atom_count), [&](const tbb::blocked_range<size_t> &range) {
         ThreadLocalDistances &local_results = ets.local();
-        for (size_t i = range.begin(); i != range.end(); ++i) {
-          local_results.collectCandidates(i, coords, wrapped.atom_bin, cell_list, lattice,
-                                          grid_config, ignore_periodic_self_interactions);
-          local_results.computeDistances(i, atoms, coords, cutoff_sq, bond_cutoffs);
+        for (size_t slot = range.begin(); slot != range.end(); ++slot) {
+          size_t const orig_idx = bin_sorted.orig_indices[slot];
+          int const current_bin = bin_sorted.sorted_atom_bin[slot];
+          correlation::math::Vector3<real_t> const atom_pos{
+              bin_sorted.x_sorted[slot], bin_sorted.y_sorted[slot], bin_sorted.z_sorted[slot]};
+
+          local_results.collectCandidates(orig_idx, current_bin, sorted_coords,
+                                          bin_sorted.orig_indices.data(),
+                                          bin_sorted.bin_offsets.data(), lattice, grid_config,
+                                          ignore_periodic_self_interactions);
+          local_results.computeDistances(orig_idx, atom_pos, atoms, cutoff_sq, bond_cutoffs);
         }
       });
 
