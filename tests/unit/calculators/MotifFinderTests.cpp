@@ -13,12 +13,7 @@ namespace correlation::calculators {
 namespace {
 class MotifFinderTests : public ::testing::Test {
 public:
-  correlation::core::Cell cell;
   correlation::core::NeighborGraph graph;
-
-  void SetUp() override {
-    cell = correlation::core::Cell({20.0, 0.0, 0.0}, {0.0, 20.0, 0.0}, {0.0, 0.0, 20.0});
-  }
 };
 } // namespace
 
