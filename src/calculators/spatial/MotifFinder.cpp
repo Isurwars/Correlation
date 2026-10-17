@@ -28,6 +28,15 @@ namespace {
 // and grow no further; they are reset selectively (only visited nodes) after
 // each root iteration so reset cost is O(visited) rather than O(num_nodes).
 // ---------------------------------------------------------------------------
+struct StackFrame {
+  size_t node;
+  size_t parent_idx;
+};
+
+/// Maximum number of shortest geodesic paths enumerated between any two nodes
+/// to prevent combinatorial explosion on hyper-symmetric or dense subgraphs.
+constexpr size_t DEFAULT_MAX_GEODESICS = 1024;
+
 struct BFSScratch {
   // BFS state
   std::vector<int> dist;
@@ -42,15 +51,41 @@ struct BFSScratch {
   std::vector<size_t> q_king;
   std::vector<size_t> visited_king;
 
+  // Reusable path finding and intersection scratch (Phase 5)
+  std::vector<StackFrame> path_stack;
+  std::vector<std::vector<correlation::core::AtomID>> paths_u;
+  std::vector<std::vector<correlation::core::AtomID>> paths_v;
+  std::vector<correlation::core::AtomID> cur_u;
+  std::vector<correlation::core::AtomID> cur_v;
+  std::vector<correlation::core::AtomID> candidate_cycle;
+  std::vector<uint32_t> node_stamp;
+  uint32_t current_stamp{0};
+
+  // Reusable candidate deduplication per root (Phase 5)
+  std::vector<uint64_t> seen_hashes;
+  std::vector<uint32_t> seen_offsets;
+  std::vector<correlation::core::AtomID> seen_pool;
+
   // Output accumulated by this thread
   std::vector<std::vector<correlation::core::AtomID>> local_cycles;
 
-  explicit BFSScratch(size_t n) : dist(n, -1), parents(n), dist_king(n, -1), path_counts(n, 0) {
+  explicit BFSScratch(size_t n)
+      : dist(n, -1), parents(n), dist_king(n, -1), path_counts(n, 0), node_stamp(n, 0) {
     q.reserve(n);
     q_king.reserve(n);
     visited.reserve(n);
     visited_king.reserve(n);
     cross_edges.reserve(1024);
+    path_stack.reserve(32);
+    paths_u.reserve(64);
+    paths_v.reserve(64);
+    cur_u.reserve(32);
+    cur_v.reserve(32);
+    candidate_cycle.reserve(32);
+    seen_hashes.reserve(128);
+    seen_offsets.reserve(129);
+    seen_offsets.push_back(0);
+    seen_pool.reserve(1024);
   }
 
   struct PathEndpoints {
@@ -71,19 +106,17 @@ struct BFSScratch {
 };
 
 // ---------------------------------------------------------------------------
-// Reconstruct paths from a BFS node back to root (unchanged from original).
+// Reconstruct paths from a BFS node back to root using reusable stack scratch.
+// Caps enumeration at max_paths to protect against combinatorial explosion.
 // ---------------------------------------------------------------------------
 void getPaths(BFSScratch::PathEndpoints endpoints,
               const std::vector<std::vector<correlation::core::AtomID>> &parents,
               std::vector<correlation::core::AtomID> &current_path,
-              std::vector<std::vector<correlation::core::AtomID>> &all_paths) {
-  struct StackFrame {
-    size_t node;
-    size_t parent_idx;
-  };
+              std::vector<std::vector<correlation::core::AtomID>> &all_paths,
+              std::vector<StackFrame> &stack, size_t max_paths = DEFAULT_MAX_GEODESICS) {
+  stack.clear();
+  current_path.clear();
 
-  std::vector<StackFrame> stack;
-  stack.reserve(parents.empty() ? 16 : std::min<size_t>(parents.size(), 32));
   stack.push_back({
       .node = endpoints.start,
       .parent_idx = 0,
@@ -96,6 +129,11 @@ void getPaths(BFSScratch::PathEndpoints endpoints,
 
     if (node == endpoints.root) {
       all_paths.push_back(current_path);
+      if (all_paths.size() >= max_paths) {
+        current_path.clear();
+        stack.clear();
+        return;
+      }
       stack.pop_back();
       current_path.pop_back();
       continue;
@@ -230,14 +268,8 @@ bool isRingValid(const correlation::core::NeighborGraph &graph,
 }
 
 // ---------------------------------------------------------------------------
-// BFS from a single root.  All state lives in `sc`; found rings are appended
-// to `sc.local_cycles`.
-//
-// Safety note: the `v >= root` guard in the edge-exploration loop ensures each
-// ring is discoverable ONLY from its minimum-index node.  Different threads
-// therefore cannot produce the same ring — no shared deduplication set is
-// needed during the parallel section.  A final sort+unique after the
-// parallel_for handles any remaining orientation duplicates.
+// BFS from a single root. All state lives in `bsc`; found rings are appended
+// to `bsc.local_cycles`.
 // ---------------------------------------------------------------------------
 void processNeighbor(size_t curr_node, size_t neighbor_node,
                      BFSScratch::RootSearchSettings settings, BFSScratch &bsc) {
@@ -252,13 +284,12 @@ void processNeighbor(size_t curr_node, size_t neighbor_node,
     if (curr_node < neighbor_node) {
       bsc.cross_edges.emplace_back(curr_node, neighbor_node);
     }
-  } else if (bsc.dist[neighbor_node] == bsc.dist[curr_node] + 1) {
-    if (std::find(bsc.parents[neighbor_node].begin(), bsc.parents[neighbor_node].end(),
-                  static_cast<correlation::core::AtomID>(curr_node)) ==
-        bsc.parents[neighbor_node].end()) {
-      bsc.parents[neighbor_node].push_back(static_cast<correlation::core::AtomID>(curr_node));
-      bsc.cross_edges.emplace_back(curr_node, neighbor_node);
-    }
+  } else if (bsc.dist[neighbor_node] == bsc.dist[curr_node] + 1 &&
+             std::find(bsc.parents[neighbor_node].begin(), bsc.parents[neighbor_node].end(),
+                       static_cast<correlation::core::AtomID>(curr_node)) ==
+                 bsc.parents[neighbor_node].end()) {
+    bsc.parents[neighbor_node].push_back(static_cast<correlation::core::AtomID>(curr_node));
+    bsc.cross_edges.emplace_back(curr_node, neighbor_node);
   }
 }
 
@@ -282,16 +313,141 @@ void findCrossEdges(const correlation::core::NeighborGraph &graph,
   }
 }
 
-bool pathsIntersect(const std::vector<correlation::core::AtomID> &path_u,
-                    const std::vector<correlation::core::AtomID> &path_v) {
-  for (size_t i = 0; i < path_u.size() - 1; ++i) {
-    for (size_t j = 0; j < path_v.size() - 1; ++j) {
-      if (path_u[i] == path_v[j]) {
+// ---------------------------------------------------------------------------
+// O(L) path intersection check using generation-stamped visited array.
+// ---------------------------------------------------------------------------
+[[nodiscard]] bool pathsIntersect(const std::vector<correlation::core::AtomID> &path_u,
+                                  const std::vector<correlation::core::AtomID> &path_v,
+                                  std::vector<uint32_t> &node_stamp,
+                                  uint32_t &current_stamp) noexcept {
+  if (path_u.size() < 2 || path_v.size() < 2) {
+    return false;
+  }
+  ++current_stamp;
+  if (current_stamp == 0) {
+    std::ranges::fill(node_stamp, 0);
+    current_stamp = 1;
+  }
+
+  const size_t limit_u = path_u.size() - 1;
+  for (size_t i = 0; i < limit_u; ++i) {
+    node_stamp[path_u[i]] = current_stamp;
+  }
+
+  const size_t limit_v = path_v.size() - 1;
+  for (size_t j = 0; j < limit_v; ++j) {
+    if (node_stamp[path_v[j]] == current_stamp) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// ---------------------------------------------------------------------------
+// 64-bit FNV-1a hash of a candidate cycle sequence.
+// ---------------------------------------------------------------------------
+[[nodiscard]] constexpr uint64_t
+hashCycle(std::span<const correlation::core::AtomID> cycle) noexcept {
+  uint64_t hash_val = 14695981039346656037ULL;
+  for (const auto node_id : cycle) {
+    hash_val ^= static_cast<uint64_t>(node_id);
+    hash_val *= 1099511628211ULL;
+  }
+  return hash_val;
+}
+
+// ---------------------------------------------------------------------------
+// Per-root candidate deduplication using hash matching with flat buffer verification.
+// Completely avoids heap allocations by reusing BFSScratch pre-allocated vectors.
+// ---------------------------------------------------------------------------
+[[nodiscard]] bool isDuplicateCandidate(BFSScratch &bsc,
+                                        std::span<const correlation::core::AtomID> cycle) {
+  const uint64_t cycle_hash = hashCycle(cycle);
+  for (size_t idx = 0; idx < bsc.seen_hashes.size(); ++idx) {
+    if (bsc.seen_hashes[idx] == cycle_hash) {
+      const size_t off = bsc.seen_offsets[idx];
+      const size_t len = bsc.seen_offsets[idx + 1] - off;
+      if (len == cycle.size() &&
+          std::equal(cycle.begin(), cycle.end(),
+                     bsc.seen_pool.begin() + static_cast<std::ptrdiff_t>(off))) {
+        return true;
+      }
+    }
+  }
+  bsc.seen_hashes.push_back(cycle_hash);
+  bsc.seen_pool.insert(bsc.seen_pool.end(), cycle.begin(), cycle.end());
+  bsc.seen_offsets.push_back(static_cast<uint32_t>(bsc.seen_pool.size()));
+  return false;
+}
+
+// ---------------------------------------------------------------------------
+// Fast chord pre-filter: rejects cycles where any non-consecutive pair is adjacent.
+// Checks each unordered non-consecutive pair exactly once via binary search.
+// ---------------------------------------------------------------------------
+[[nodiscard]] bool hasChord(const correlation::core::NeighborGraph &graph,
+                            std::span<const correlation::core::AtomID> cycle) noexcept {
+  const size_t size = cycle.size();
+  if (size <= 3) {
+    return false;
+  }
+  for (size_t i = 0; i < size; ++i) {
+    for (size_t j = i + 2; j < size; ++j) {
+      if (i == 0 && j == size - 1) {
+        continue;
+      }
+      if (graph.areConnected(correlation::core::AtomIndex{.id = cycle[i]},
+                             correlation::core::AtomIndex{.id = cycle[j]})) {
         return true;
       }
     }
   }
   return false;
+}
+
+void assembleCandidateCycle(const std::vector<correlation::core::AtomID> &path_u,
+                            const std::vector<correlation::core::AtomID> &path_v, size_t root,
+                            std::vector<correlation::core::AtomID> &cycle) {
+  cycle.clear();
+  cycle.reserve(path_u.size() + path_v.size() - 1);
+  cycle.push_back(static_cast<correlation::core::AtomID>(root));
+  for (int i = static_cast<int>(path_u.size()) - 2; i >= 0; --i) {
+    cycle.push_back(path_u[i]);
+  }
+  for (size_t i = 0; i < path_v.size() - 1; ++i) {
+    cycle.push_back(path_v[i]);
+  }
+  if (cycle[1] > cycle.back()) {
+    std::reverse(cycle.begin() + 1, cycle.end());
+  }
+}
+
+void evaluatePathPair(const correlation::core::NeighborGraph &graph,
+                      const std::vector<correlation::core::AtomID> &path_u,
+                      const std::vector<correlation::core::AtomID> &path_v,
+                      BFSScratch::RootSearchSettings settings, BFSScratch &bsc) {
+  if (pathsIntersect(path_u, path_v, bsc.node_stamp, bsc.current_stamp)) {
+    return;
+  }
+
+  const size_t cycle_size = path_u.size() + path_v.size() - 1;
+  if (cycle_size < 3 || cycle_size > settings.max_size) {
+    return;
+  }
+
+  assembleCandidateCycle(path_u, path_v, settings.root, bsc.candidate_cycle);
+
+  if (isDuplicateCandidate(bsc, bsc.candidate_cycle)) {
+    return;
+  }
+
+  if (hasChord(graph, bsc.candidate_cycle)) {
+    return;
+  }
+
+  if (isRingValid(graph, bsc.candidate_cycle, bsc.dist_king, bsc.path_counts, bsc.q_king,
+                  bsc.visited_king, settings.ring_type)) {
+    bsc.local_cycles.push_back(bsc.candidate_cycle);
+  }
 }
 
 void processCrossEdge(const correlation::core::NeighborGraph &graph,
@@ -304,55 +460,25 @@ void processCrossEdge(const correlation::core::NeighborGraph &graph,
     return;
   }
 
-  std::vector<std::vector<correlation::core::AtomID>> paths_u;
-  std::vector<std::vector<correlation::core::AtomID>> paths_v;
-  std::vector<correlation::core::AtomID> cur_u;
-  std::vector<correlation::core::AtomID> cur_v;
-  cur_u.reserve(settings.max_size);
-  cur_v.reserve(settings.max_size);
+  bsc.paths_u.clear();
+  bsc.paths_v.clear();
 
   getPaths(
       {
           .start = first_node,
           .root = settings.root,
       },
-      bsc.parents, cur_u, paths_u);
+      bsc.parents, bsc.cur_u, bsc.paths_u, bsc.path_stack, DEFAULT_MAX_GEODESICS);
   getPaths(
       {
           .start = second_node,
           .root = settings.root,
       },
-      bsc.parents, cur_v, paths_v);
+      bsc.parents, bsc.cur_v, bsc.paths_v, bsc.path_stack, DEFAULT_MAX_GEODESICS);
 
-  for (const auto &path_u : paths_u) {
-    for (const auto &path_v : paths_v) {
-      if (pathsIntersect(path_u, path_v)) {
-        continue;
-      }
-
-      std::vector<correlation::core::AtomID> cycle;
-      cycle.reserve(path_u.size() + path_v.size() - 1);
-      cycle.push_back(static_cast<correlation::core::AtomID>(settings.root));
-      for (int i = static_cast<int>(path_u.size()) - 2; i >= 0; --i) {
-        cycle.push_back(path_u[i]);
-      }
-      for (size_t i = 0; i < path_v.size() - 1; ++i) {
-        cycle.push_back(path_v[i]);
-      }
-
-      if (cycle.size() < 3 || cycle.size() > settings.max_size) {
-        continue;
-      }
-
-      // Normalise direction
-      if (cycle[1] > cycle.back()) {
-        std::reverse(cycle.begin() + 1, cycle.end());
-      }
-
-      if (isRingValid(graph, cycle, bsc.dist_king, bsc.path_counts, bsc.q_king, bsc.visited_king,
-                      settings.ring_type)) {
-        bsc.local_cycles.push_back(std::move(cycle));
-      }
+  for (const auto &path_u : bsc.paths_u) {
+    for (const auto &path_v : bsc.paths_v) {
+      evaluatePathPair(graph, path_u, path_v, settings, bsc);
     }
   }
 }
@@ -362,12 +488,21 @@ void processRoot(const correlation::core::NeighborGraph &graph,
   bsc.visited.clear();
   bsc.cross_edges.clear();
   bsc.q.clear();
+  bsc.seen_hashes.clear();
+  bsc.seen_offsets.clear();
+  bsc.seen_offsets.push_back(0);
+  bsc.seen_pool.clear();
 
   bsc.dist[settings.root] = 0;
   bsc.q.push_back(settings.root);
   bsc.visited.push_back(settings.root);
 
   findCrossEdges(graph, settings, bsc);
+
+  // Deduplicate cross edges (multi-edges)
+  std::ranges::sort(bsc.cross_edges);
+  auto const [last_uniq, end_edges] = std::ranges::unique(bsc.cross_edges);
+  bsc.cross_edges.erase(last_uniq, end_edges);
 
   for (const auto &edge : bsc.cross_edges) {
     processCrossEdge(graph, edge, settings, bsc);
@@ -449,7 +584,7 @@ std::map<int, size_t> MotifFinder::findFranzblauRings(const correlation::core::N
 
 std::map<int, size_t> MotifFinder::findRings(const correlation::core::NeighborGraph &graph,
                                              size_t max_size, RingType ring_type) {
-  auto all_cycles = getAllShortestRings(graph, max_size, ring_type);
+  const auto all_cycles = getAllShortestRings(graph, max_size, ring_type);
   std::map<int, size_t> ring_counts;
   for (const auto &cycle : all_cycles) {
     ring_counts[static_cast<int>(cycle.size())]++;

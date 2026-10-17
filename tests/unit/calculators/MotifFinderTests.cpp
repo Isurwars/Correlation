@@ -232,12 +232,12 @@ TEST_F(MotifFinderTests, BuildBridgedGraphContractsOxygenBridges) {
   graph = correlation::core::NeighborGraph(6);
   // Add bonds along the 6-cycle
   for (size_t i = 0; i < 6; ++i) {
-    size_t next = (i + 1) % 6;
+    const size_t next = (i + 1) % 6;
     graph.addDirectedEdge(i, next, 1.0, {1.0, 0.0, 0.0});
     graph.addDirectedEdge(next, i, 1.0, {-1.0, 0.0, 0.0});
   }
 
-  auto bridged = MotifFinder::buildBridgedGraph(graph, silica_ring, "Si", "O");
+  const auto bridged = MotifFinder::buildBridgedGraph(graph, silica_ring, "Si", "O");
   EXPECT_EQ(bridged.nodeCount(), 6U);
 
   // In the bridged graph, Si0 (node 0) should be connected to Si2 (node 2) and Si4 (node 4)
@@ -250,8 +250,8 @@ TEST_F(MotifFinderTests, BuildBridgedGraphContractsOxygenBridges) {
   EXPECT_EQ(bridged.getNeighbors(5).size(), 0U);
 
   // Cycle search on bridged graph finds exactly 1 ring of size 3 (3 Si polyhedra)
-  auto rings = MotifFinder::findRings(bridged, 6);
-  EXPECT_EQ(rings[3], 1U);
+  const auto rings = MotifFinder::findRings(bridged, 6);
+  EXPECT_EQ(rings.at(3), 1U);
 }
 
 TEST_F(MotifFinderTests, FilterAlternatingCyclesValidatesSequence) {
@@ -263,15 +263,98 @@ TEST_F(MotifFinderTests, FilterAlternatingCyclesValidatesSequence) {
   test_cell.addAtom("Si", {4.0, 0.0, 0.0}); // 4
   test_cell.addAtom("O", {5.0, 0.0, 0.0});  // 5
 
-  std::vector<std::vector<correlation::core::AtomID>> cycles = {
+  const std::vector<std::vector<correlation::core::AtomID>> cycles = {
       {0, 1, 2, 3, 4, 5}, // strictly alternating: Si-O-Si-O-Si-O
       {0, 2, 1, 3, 4, 5}, // non-alternating: Si-Si-O-O-Si-O
-      {0, 1, 2}           // odd length (3)
+      {0, 1, 2},          // odd length (3)
   };
 
-  auto filtered = MotifFinder::filterAlternatingCycles(cycles, test_cell, "Si", "O");
+  const auto filtered = MotifFinder::filterAlternatingCycles(cycles, test_cell, "Si", "O");
   ASSERT_EQ(filtered.size(), 1U);
   EXPECT_EQ(filtered[0], (std::vector<correlation::core::AtomID>{0, 1, 2, 3, 4, 5}));
+}
+
+TEST_F(MotifFinderTests, ChordedRingExcludedByPreFilter) {
+  // Graph: 4-cycle 0-1-2-3-0 with a diagonal chord 0-2
+  graph = correlation::core::NeighborGraph(4);
+  auto const add_edge = [this](size_t src_node, size_t dst_node) {
+    graph.addDirectedEdge(src_node, dst_node, 1.0, {0.0, 0.0, 0.0});
+    graph.addDirectedEdge(dst_node, src_node, 1.0, {0.0, 0.0, 0.0});
+  };
+  add_edge(0, 1);
+  add_edge(1, 2);
+  add_edge(2, 3);
+  add_edge(3, 0);
+  add_edge(0, 2); // Chord splitting square into triangles (0-1-2) and (0-2-3)
+
+  const auto king_rings = MotifFinder::findRings(graph, 6, RingType::King);
+  // King rings should identify the two triangles and reject the chorded 4-ring
+  EXPECT_EQ(king_rings.at(3), 2U);
+  EXPECT_EQ(king_rings.count(4), 0U);
+
+  const auto franzblau_rings = MotifFinder::findFranzblauRings(graph, 6);
+  EXPECT_EQ(franzblau_rings.at(3), 2U);
+  EXPECT_EQ(franzblau_rings.count(4), 0U);
+}
+
+TEST_F(MotifFinderTests, MultiEdgeGraphDeduplication) {
+  // Graph: triangle 0-1-2 with duplicate multi-edges
+  graph = correlation::core::NeighborGraph(3);
+  auto const add_edge = [this](size_t src_node, size_t dst_node) {
+    graph.addDirectedEdge(src_node, dst_node, 1.0, {0.0, 0.0, 0.0});
+    graph.addDirectedEdge(dst_node, src_node, 1.0, {0.0, 0.0, 0.0});
+  };
+  add_edge(0, 1);
+  add_edge(0, 1); // duplicate
+  add_edge(1, 2);
+  add_edge(1, 2); // duplicate
+  add_edge(2, 0);
+
+  const auto rings = MotifFinder::findRings(graph, 6, RingType::King);
+  EXPECT_EQ(rings.at(3), 1U);
+  EXPECT_EQ(rings.count(4), 0U);
+}
+
+namespace {
+correlation::core::NeighborGraph buildCubeGraph() {
+  correlation::core::NeighborGraph cube(8);
+  auto const add_edge = [&cube](size_t src_node, size_t dst_node) {
+    cube.addDirectedEdge(src_node, dst_node, 1.0, {0.0, 0.0, 0.0});
+    cube.addDirectedEdge(dst_node, src_node, 1.0, {0.0, 0.0, 0.0});
+  };
+  add_edge(0, 1);
+  add_edge(1, 2);
+  add_edge(2, 3);
+  add_edge(3, 0);
+
+  add_edge(4, 5);
+  add_edge(5, 6);
+  add_edge(6, 7);
+  add_edge(7, 4);
+
+  add_edge(0, 4);
+  add_edge(1, 5);
+  add_edge(2, 6);
+  add_edge(3, 7);
+  return cube;
+}
+} // namespace
+
+TEST_F(MotifFinderTests, DenseCubeGraphKingRings) {
+  const auto cube = buildCubeGraph();
+  const auto king_rings = MotifFinder::findRings(cube, 6, RingType::King);
+  EXPECT_EQ(king_rings.count(3), 0U);
+  EXPECT_EQ(king_rings.at(4), 6U);
+  EXPECT_EQ(king_rings.count(5), 0U);
+  EXPECT_EQ(king_rings.at(6), 4U);
+}
+
+TEST_F(MotifFinderTests, DenseCubeGraphFranzblauRings) {
+  const auto cube = buildCubeGraph();
+  const auto franzblau_rings = MotifFinder::findFranzblauRings(cube, 6);
+  EXPECT_EQ(franzblau_rings.count(3), 0U);
+  EXPECT_EQ(franzblau_rings.at(4), 6U);
+  EXPECT_EQ(franzblau_rings.count(6), 0U);
 }
 
 } // namespace correlation::calculators
