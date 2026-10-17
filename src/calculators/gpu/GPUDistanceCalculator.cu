@@ -514,9 +514,12 @@ void executeTwoPassBonds(const TwoPassExecutionContext<T> &ctx,
 } // namespace
 
 bool hasGpuDevice() {
-  int device_count = 0;
-  hipError_t const err = hipGetDeviceCount(&device_count);
-  return (err == hipSuccess && device_count > 0);
+  static const bool has_device = []() {
+    int device_count = 0;
+    hipError_t const err = hipGetDeviceCount(&device_count);
+    return (err == hipSuccess && device_count > 0);
+  }();
+  return has_device;
 }
 
 template <typename T>

@@ -261,5 +261,11 @@ TEST_F(NeighborGraphTests, AssignCSRDirectly) {
   EXPECT_EQ(indices_0[1], 2);
 }
 
+TEST_F(NeighborGraphTests, ThrowsWhenDenseAdjacencyMatrixExceedsSafeLimit) {
+  // Safe limit is 20,000 nodes; 20,001 should throw std::runtime_error
+  NeighborGraph const large_graph(20001);
+  EXPECT_THROW((void)large_graph.getDenseAdjacencyMatrix(), std::runtime_error);
+}
+
 } // namespace
 } // namespace correlation::testing

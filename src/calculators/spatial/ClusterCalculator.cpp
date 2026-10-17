@@ -93,7 +93,7 @@ void ClusterCalculator::calculateFrame(
   // Identify root sizes
   std::vector<size_t> root_sizes(n_atoms, 0);
   for (size_t i = 0; i < n_atoms; ++i) {
-    // We only count sizes for actual roots to avoid real_t counting
+    // We only count sizes for actual roots to avoid double counting
     if (union_find.find(i) == i) {
       root_sizes[i] = union_find.getSize(i);
     }

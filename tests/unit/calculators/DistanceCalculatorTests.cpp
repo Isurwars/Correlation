@@ -214,6 +214,18 @@ TEST(DistanceCalculatorTests, ThrowsWhenCutoffBoundsAreNegative) {
                std::invalid_argument);
 }
 
+TEST(DistanceCalculatorTests, ThrowsWhenBondCutoffExceedsSearchCutoff) {
+  Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
+  cell.addAtom("Si", {0.0, 0.0, 0.0});
+
+  NeighborGraph out_graph(1);
+
+  // max_sq (16.0) > cutoff_sq (9.0)
+  BondCutoffMatrix const exceeds_cutoff = {{{.min_sq = 0.5, .max_sq = 16.0}}};
+  EXPECT_THROW(DistanceCalculator::compute(cell, 9.0, exceeds_cutoff, true, out_graph),
+               std::invalid_argument);
+}
+
 TEST(DistanceCalculatorTests, EnforcesMinimumAndMaximumBondCutoffs) {
   Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
   cell.addAtom("Si", {0.0, 0.0, 0.0});
@@ -808,13 +820,21 @@ void verifyDistanceEquivalence(const Cell &cell, real_t cutoff,
                                const BondCutoffMatrix &bond_cutoffs,
                                const DistanceCalculationConfig &config) {
   const real_t cutoff_sq = cutoff * cutoff;
+  BondCutoffMatrix effective_cutoffs = bond_cutoffs;
+  for (auto &row : effective_cutoffs) {
+    for (auto &range : row) {
+      if (range.max_sq > cutoff_sq) {
+        range.max_sq = cutoff_sq;
+      }
+    }
+  }
   NeighborGraph actual_graph(cell.atomCount());
   RawHistogramTensor actual_histograms;
 
-  DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, actual_graph, &actual_histograms,
-                              config);
+  DistanceCalculator::compute(cell, cutoff_sq, effective_cutoffs, true, actual_graph,
+                              &actual_histograms, config);
 
-  const auto ref = computeBruteForceReference(cell, cutoff_sq, bond_cutoffs, true, config);
+  const auto ref = computeBruteForceReference(cell, cutoff_sq, effective_cutoffs, true, config);
 
   std::vector<real_t> actual_distances;
   verifyBonds(cell, actual_graph, ref, actual_distances);

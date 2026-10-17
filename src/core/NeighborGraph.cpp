@@ -167,6 +167,13 @@ bool NeighborGraph::areConnected(AtomIndex first_atom, AtomIndex second_atom) co
 std::vector<bool> NeighborGraph::getDenseAdjacencyMatrix() const {
   ensureFinalized();
   const size_t num_nodes = node_count_;
+  constexpr size_t K_MAX_DENSE_NODES = 20000;
+  if (num_nodes > K_MAX_DENSE_NODES) {
+    throw std::runtime_error("NeighborGraph::getDenseAdjacencyMatrix: graph size (" +
+                             std::to_string(num_nodes) +
+                             ") exceeds maximum safe limit for dense matrix allocation (" +
+                             std::to_string(K_MAX_DENSE_NODES) + ").");
+  }
   std::vector<bool> matrix(num_nodes * num_nodes, false);
   for (size_t i = 0; i < num_nodes; ++i) {
     const size_t start = offsets_[i];

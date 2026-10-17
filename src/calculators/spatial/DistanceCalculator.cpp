@@ -16,7 +16,9 @@
 #include "calculators/gpu/GPUDistanceCalculator.hpp"
 #endif
 
+#include <atomic>
 #include <cmath>
+#include <span>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for_each.h>
 
@@ -80,6 +82,15 @@ struct ThreadLocalBond {
 };
 
 /**
+ * @struct FlatBondCutoff
+ * @brief Flat lookup entry for species-pair bond distance cutoffs.
+ */
+struct FlatBondCutoff {
+  real_t min_sq = 0.0;
+  real_t max_sq = 0.0;
+};
+
+/**
  * @struct ThreadLocalConfig
  * @brief Thread-local configuration parameters.
  */
@@ -122,11 +133,15 @@ struct ThreadLocalConfig {
  * @brief Thread-local storage for parallel distance calculations and inline histogramming.
  */
 struct ThreadLocalDistances {
-  RawHistogramTensor local_histograms; ///< Local fixed-size raw histogram bins [e1][e2][bin].
-  std::vector<ThreadLocalBond> bonds;  ///< Local flat bond/neighbor lists.
+  std::vector<real_t>
+      flat_histograms; ///< Flat raw histogram bins [(e1 * num_elements + e2) * num_bins + bin].
+  std::vector<ThreadLocalBond> bonds; ///< Local flat bond/neighbor lists.
   real_t r_max = 0.0;
+  real_t r_max_sq = 0.0;
   real_t r_bin_width = 0.0;
   size_t num_bins = 0;
+  size_t num_elements = 0;
+  uint64_t last_epoch = 0;
 
   std::vector<real_t> soa_x;       ///< Scratch for candidate x-coordinates.
   std::vector<real_t> soa_y;       ///< Scratch for candidate y-coordinates.
@@ -143,13 +158,25 @@ struct ThreadLocalDistances {
     dsq_scratch.resize(new_cap);
   }
 
-  explicit ThreadLocalDistances(ThreadLocalConfig config)
-      : r_max(config.r_max), r_bin_width(config.r_bin_width), num_bins(config.num_bins) {
-    if (config.num_bins > 0) {
-      local_histograms.resize(config.num_elements,
-                              std::vector<std::vector<real_t>>(
-                                  config.num_elements, std::vector<real_t>(config.num_bins, 0.0)));
+  void reset(ThreadLocalConfig config) {
+    r_max = config.r_max;
+    r_max_sq = config.r_max * config.r_max;
+    r_bin_width = config.r_bin_width;
+    num_bins = config.num_bins;
+    num_elements = config.num_elements;
+    candidate_count = 0;
+    bonds.clear();
+
+    const size_t total_bins = num_elements * num_elements * num_bins;
+    if (flat_histograms.size() != total_bins) {
+      flat_histograms.assign(total_bins, 0.0);
+    } else {
+      std::ranges::fill(flat_histograms, 0.0);
     }
+  }
+
+  explicit ThreadLocalDistances(ThreadLocalConfig config = {}) {
+    reset(config);
     growScratchBuffers(1024);
     bonds.reserve(2048);
   }
@@ -192,13 +219,12 @@ struct ThreadLocalDistances {
 
   void updateHistogram(const BondCandidate &cand);
 
-  void updateBonds(const BondCandidate &cand,
-                   const correlation::analysis::BondCutoffMatrix &bond_cutoffs,
+  void updateBonds(const BondCandidate &cand, std::span<const FlatBondCutoff> flat_cutoffs,
                    const correlation::math::Vector3<real_t> &atom_pos);
 
   void computeDistances(size_t orig_atom_idx, const correlation::math::Vector3<real_t> &atom_pos,
                         const std::vector<correlation::core::Atom> &atoms, real_t cutoff_sq,
-                        const correlation::analysis::BondCutoffMatrix &bond_cutoffs);
+                        std::span<const FlatBondCutoff> flat_cutoffs);
 };
 
 void ThreadLocalDistances::collectSmallCellCandidates(
@@ -356,37 +382,38 @@ void ThreadLocalDistances::collectCandidatesFromBin(
 }
 
 void ThreadLocalDistances::updateHistogram(const BondCandidate &cand) {
-  if (num_bins == 0 || r_bin_width <= 0.0) {
+  if (num_bins == 0 || r_bin_width <= 0.0 || cand.d_sq >= r_max_sq) {
     return;
   }
 
   auto const dist = static_cast<real_t>(std::sqrt(cand.d_sq));
-  if (dist >= r_max) {
-    return;
-  }
-
   auto const bin_idx = static_cast<size_t>(dist / r_bin_width);
   if (bin_idx < num_bins) {
-    local_histograms[cand.type_a][cand.type_b][bin_idx] += 1.0;
+    const size_t offset_ab =
+        (static_cast<size_t>(cand.type_a) * num_elements + static_cast<size_t>(cand.type_b)) *
+            num_bins +
+        bin_idx;
+    flat_histograms[offset_ab] += 1.0;
     if (cand.atom_idx != cand.j_idx && cand.type_a != cand.type_b) {
-      local_histograms[cand.type_b][cand.type_a][bin_idx] += 1.0;
+      const size_t offset_ba =
+          (static_cast<size_t>(cand.type_b) * num_elements + static_cast<size_t>(cand.type_a)) *
+              num_bins +
+          bin_idx;
+      flat_histograms[offset_ba] += 1.0;
     }
   }
 }
 
 void ThreadLocalDistances::updateBonds(const BondCandidate &cand,
-                                       const correlation::analysis::BondCutoffMatrix &bond_cutoffs,
+                                       std::span<const FlatBondCutoff> flat_cutoffs,
                                        const correlation::math::Vector3<real_t> &atom_pos) {
-  real_t min_bond_dist_sq = 0.0;
-  real_t max_bond_dist_sq = 0.0;
-  if (static_cast<size_t>(cand.type_a) < bond_cutoffs.size() &&
-      static_cast<size_t>(cand.type_b) < bond_cutoffs[cand.type_a].size()) {
-    const auto &range = bond_cutoffs(cand.type_a, cand.type_b);
-    min_bond_dist_sq = range.min_sq;
-    max_bond_dist_sq = range.max_sq;
+  const size_t cutoff_idx =
+      static_cast<size_t>(cand.type_a) * num_elements + static_cast<size_t>(cand.type_b);
+  if (cutoff_idx >= flat_cutoffs.size()) {
+    return;
   }
-
-  if (cand.d_sq < min_bond_dist_sq || cand.d_sq > max_bond_dist_sq) {
+  const auto &range = flat_cutoffs[cutoff_idx];
+  if (cand.d_sq < range.min_sq || cand.d_sq > range.max_sq) {
     return;
   }
 
@@ -412,10 +439,11 @@ void ThreadLocalDistances::updateBonds(const BondCandidate &cand,
   });
 }
 
-void ThreadLocalDistances::computeDistances(
-    size_t orig_atom_idx, const correlation::math::Vector3<real_t> &atom_pos,
-    const std::vector<correlation::core::Atom> &atoms, real_t cutoff_sq,
-    const correlation::analysis::BondCutoffMatrix &bond_cutoffs) {
+void ThreadLocalDistances::computeDistances(size_t orig_atom_idx,
+                                            const correlation::math::Vector3<real_t> &atom_pos,
+                                            const std::vector<correlation::core::Atom> &atoms,
+                                            real_t cutoff_sq,
+                                            std::span<const FlatBondCutoff> flat_cutoffs) {
 
   size_t const c_count = candidate_count;
   if (c_count == 0) {
@@ -454,8 +482,24 @@ void ThreadLocalDistances::computeDistances(
     };
 
     updateHistogram(cand);
-    updateBonds(cand, bond_cutoffs, atom_pos);
+    updateBonds(cand, flat_cutoffs, atom_pos);
   }
+}
+
+[[nodiscard]] std::vector<FlatBondCutoff>
+buildFlatBondCutoffs(const correlation::analysis::BondCutoffMatrix &bond_cutoffs,
+                     size_t num_elements) {
+  std::vector<FlatBondCutoff> flat_cutoffs(num_elements * num_elements, FlatBondCutoff{});
+  for (size_t i = 0; i < num_elements && i < bond_cutoffs.size(); ++i) {
+    for (size_t j = 0; j < num_elements && j < bond_cutoffs[i].size(); ++j) {
+      const auto &range = bond_cutoffs(i, j);
+      flat_cutoffs[i * num_elements + j] = FlatBondCutoff{
+          .min_sq = range.min_sq,
+          .max_sq = range.max_sq,
+      };
+    }
+  }
+  return flat_cutoffs;
 }
 /**
  * @brief Validates input parameters for distance computation.
@@ -473,6 +517,11 @@ void validateInputs(real_t cutoff_sq, const correlation::analysis::BondCutoffMat
       if (range.min_sq > range.max_sq) {
         throw std::invalid_argument(
             "Minimum bond cutoff cannot be greater than maximum bond cutoff.");
+      }
+      constexpr auto K_EPSILON = static_cast<real_t>(1e-4);
+      if (range.max_sq > cutoff_sq + K_EPSILON) {
+        throw std::invalid_argument(
+            "Maximum bond cutoff squared cannot exceed search cutoff squared.");
       }
     }
   }
@@ -785,26 +834,30 @@ BinSortedPositions buildBinSortedPositions(const correlation::core::Cell &cell,
  * @brief Merges thread-local distance histograms into the output tensor.
  */
 void mergeHistograms(const tbb::enumerable_thread_specific<ThreadLocalDistances> &ets,
-                     size_t num_elements, size_t num_bins, RawHistogramTensor &out_histograms) {
+                     uint64_t current_epoch, size_t num_elements, size_t num_bins,
+                     RawHistogramTensor &out_histograms) {
   for (const auto &local_results : ets) {
+    if (local_results.last_epoch != current_epoch || local_results.flat_histograms.empty()) {
+      continue;
+    }
     for (size_t i = 0; i < num_elements; ++i) {
       for (size_t j_idx = 0; j_idx < num_elements; ++j_idx) {
+        const size_t base_offset = (i * num_elements + j_idx) * num_bins;
         for (size_t bin_idx = 0; bin_idx < num_bins; ++bin_idx) {
-          out_histograms[i][j_idx][bin_idx] += local_results.local_histograms[i][j_idx][bin_idx];
+          out_histograms[i][j_idx][bin_idx] += local_results.flat_histograms[base_offset + bin_idx];
         }
       }
     }
   }
 }
 
-/**
- * @brief Builds a deterministic CSR NeighborGraph from thread-local bonds.
- */
-void buildDeterministicCSR(const tbb::enumerable_thread_specific<ThreadLocalDistances> &ets,
-                           size_t atom_count, correlation::core::NeighborGraph &out_graph) {
-  std::vector<size_t> row_counts(atom_count, 0);
-  size_t total_bonds = 0;
+void countRowBonds(const tbb::enumerable_thread_specific<ThreadLocalDistances> &ets,
+                   uint64_t current_epoch, size_t atom_count, std::span<size_t> row_counts,
+                   size_t &total_bonds) {
   for (const auto &local_results : ets) {
+    if (local_results.last_epoch != current_epoch) {
+      continue;
+    }
     total_bonds += local_results.bonds.size();
     for (const auto &bond : local_results.bonds) {
       if (bond.from < atom_count) {
@@ -812,17 +865,15 @@ void buildDeterministicCSR(const tbb::enumerable_thread_specific<ThreadLocalDist
       }
     }
   }
+}
 
-  std::vector<size_t> offsets(atom_count + 1, 0);
-  for (size_t i = 0; i < atom_count; ++i) {
-    offsets[i + 1] = offsets[i] + row_counts[i];
-  }
-
-  std::vector<correlation::core::Neighbor> neighbors(total_bonds);
-  std::vector<correlation::core::AtomID> targets(total_bonds);
-  std::vector<size_t> write_pos = offsets;
-
+void populateCSRBonds(const tbb::enumerable_thread_specific<ThreadLocalDistances> &ets,
+                      uint64_t current_epoch, size_t atom_count, std::span<size_t> write_pos,
+                      std::span<correlation::core::Neighbor> neighbors) {
   for (const auto &local_results : ets) {
+    if (local_results.last_epoch != current_epoch) {
+      continue;
+    }
     for (const auto &bond : local_results.bonds) {
       if (bond.from < atom_count) {
         const size_t slot = write_pos[bond.from]++;
@@ -834,34 +885,61 @@ void buildDeterministicCSR(const tbb::enumerable_thread_specific<ThreadLocalDist
       }
     }
   }
+}
 
-  tbb::parallel_for(
-      tbb::blocked_range<size_t>(0, atom_count), [&](const tbb::blocked_range<size_t> &range) {
-        for (size_t u = range.begin(); u != range.end(); ++u) {
-          const size_t start = offsets[u];
-          const size_t end = offsets[u + 1];
-          std::sort(neighbors.begin() + static_cast<std::ptrdiff_t>(start),
-                    neighbors.begin() + static_cast<std::ptrdiff_t>(end),
-                    [](const correlation::core::Neighbor &a, const correlation::core::Neighbor &b) {
-                      if (a.index != b.index) {
-                        return a.index < b.index;
+void sortCSRRows(size_t atom_count, std::span<const size_t> offsets,
+                 std::span<correlation::core::Neighbor> neighbors,
+                 std::span<correlation::core::AtomID> targets) {
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, atom_count),
+                    [&](const tbb::blocked_range<size_t> &range) {
+                      for (size_t node_idx = range.begin(); node_idx != range.end(); ++node_idx) {
+                        const size_t start = offsets[node_idx];
+                        const size_t end = offsets[node_idx + 1];
+                        std::sort(neighbors.begin() + static_cast<std::ptrdiff_t>(start),
+                                  neighbors.begin() + static_cast<std::ptrdiff_t>(end),
+                                  [](const correlation::core::Neighbor &nbr_a,
+                                     const correlation::core::Neighbor &nbr_b) {
+                                    if (nbr_a.index != nbr_b.index) {
+                                      return nbr_a.index < nbr_b.index;
+                                    }
+                                    if (nbr_a.distance != nbr_b.distance) {
+                                      return nbr_a.distance < nbr_b.distance;
+                                    }
+                                    if (nbr_a.r_ij.x() != nbr_b.r_ij.x()) {
+                                      return nbr_a.r_ij.x() < nbr_b.r_ij.x();
+                                    }
+                                    if (nbr_a.r_ij.y() != nbr_b.r_ij.y()) {
+                                      return nbr_a.r_ij.y() < nbr_b.r_ij.y();
+                                    }
+                                    return nbr_a.r_ij.z() < nbr_b.r_ij.z();
+                                  });
+                        for (size_t k = start; k < end; ++k) {
+                          targets[k] = neighbors[k].index;
+                        }
                       }
-                      if (a.distance != b.distance) {
-                        return a.distance < b.distance;
-                      }
-                      if (a.r_ij.x() != b.r_ij.x()) {
-                        return a.r_ij.x() < b.r_ij.x();
-                      }
-                      if (a.r_ij.y() != b.r_ij.y()) {
-                        return a.r_ij.y() < b.r_ij.y();
-                      }
-                      return a.r_ij.z() < b.r_ij.z();
                     });
-          for (size_t k = start; k < end; ++k) {
-            targets[k] = neighbors[k].index;
-          }
-        }
-      });
+}
+
+/**
+ * @brief Builds a deterministic CSR NeighborGraph from thread-local bonds.
+ */
+void buildDeterministicCSR(const tbb::enumerable_thread_specific<ThreadLocalDistances> &ets,
+                           uint64_t current_epoch, size_t atom_count,
+                           correlation::core::NeighborGraph &out_graph) {
+  std::vector<size_t> row_counts(atom_count, 0);
+  size_t total_bonds = 0;
+  countRowBonds(ets, current_epoch, atom_count, row_counts, total_bonds);
+
+  std::vector<size_t> offsets(atom_count + 1, 0);
+  for (size_t i = 0; i < atom_count; ++i) {
+    offsets[i + 1] = offsets[i] + row_counts[i];
+  }
+
+  std::vector<correlation::core::Neighbor> neighbors(total_bonds);
+  std::vector<correlation::core::AtomID> targets(total_bonds);
+  std::vector<size_t> write_pos = offsets;
+  populateCSRBonds(ets, current_epoch, atom_count, write_pos, neighbors);
+  sortCSRRows(atom_count, offsets, neighbors, targets);
 
   out_graph.assignCSR(atom_count, std::move(offsets), std::move(neighbors), std::move(targets));
 }
@@ -870,12 +948,24 @@ void buildDeterministicCSR(const tbb::enumerable_thread_specific<ThreadLocalDist
  * @brief Merges thread-local distance calculations into output containers.
  */
 void mergeThreadResults(const tbb::enumerable_thread_specific<ThreadLocalDistances> &ets,
-                        size_t num_elements, RawHistogramTensor *out_histograms, size_t num_bins,
+                        uint64_t current_epoch, size_t num_elements,
+                        RawHistogramTensor *out_histograms, size_t num_bins,
                         correlation::core::NeighborGraph &out_graph, size_t atom_count) {
   if (out_histograms != nullptr && num_bins > 0) {
-    mergeHistograms(ets, num_elements, num_bins, *out_histograms);
+    mergeHistograms(ets, current_epoch, num_elements, num_bins, *out_histograms);
   }
-  buildDeterministicCSR(ets, atom_count, out_graph);
+  buildDeterministicCSR(ets, current_epoch, atom_count, out_graph);
+}
+
+uint64_t getNextQueryEpoch() {
+  static std::atomic<uint64_t> s_distance_query_epoch{1};
+  return s_distance_query_epoch.fetch_add(1, std::memory_order_relaxed);
+}
+
+tbb::enumerable_thread_specific<ThreadLocalDistances> &getDistanceCalculatorWorkspace() {
+  static tbb::enumerable_thread_specific<ThreadLocalDistances> workspace(
+      [] { return ThreadLocalDistances(); });
+  return workspace;
 }
 
 } // namespace
@@ -919,17 +1009,26 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cut
       .z = bin_sorted.z_sorted.data(),
   };
 
-  tbb::enumerable_thread_specific<ThreadLocalDistances> ets(ThreadLocalConfig{
+  const auto flat_cutoffs = buildFlatBondCutoffs(bond_cutoffs, num_elements);
+  const uint64_t epoch = getNextQueryEpoch();
+  auto &ets = getDistanceCalculatorWorkspace();
+
+  const ThreadLocalConfig tl_config{
       .num_elements = num_elements,
       .atom_count = atom_count,
       .r_max = hist_config.r_max,
       .r_bin_width = hist_config.r_bin_width,
       .num_bins = hist_config.num_bins,
-  });
+  };
 
   tbb::parallel_for(
       tbb::blocked_range<size_t>(0, atom_count), [&](const tbb::blocked_range<size_t> &range) {
         ThreadLocalDistances &local_results = ets.local();
+        if (local_results.last_epoch != epoch) {
+          local_results.reset(tl_config);
+          local_results.last_epoch = epoch;
+        }
+
         for (size_t slot = range.begin(); slot != range.end(); ++slot) {
           size_t const orig_idx = bin_sorted.orig_indices[slot];
           int const current_bin = bin_sorted.sorted_atom_bin[slot];
@@ -940,11 +1039,11 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cut
                                           bin_sorted.orig_indices.data(),
                                           bin_sorted.bin_offsets.data(), lattice, grid_config,
                                           ignore_periodic_self_interactions);
-          local_results.computeDistances(orig_idx, atom_pos, atoms, cutoff_sq, bond_cutoffs);
+          local_results.computeDistances(orig_idx, atom_pos, atoms, cutoff_sq, flat_cutoffs);
         }
       });
 
-  mergeThreadResults(ets, num_elements, out_histograms, hist_config.num_bins, out_graph,
+  mergeThreadResults(ets, epoch, num_elements, out_histograms, hist_config.num_bins, out_graph,
                      atom_count);
 }
 

@@ -70,6 +70,11 @@ public:
    * @param[in,out] out_histograms Optional 3D tensor populated with raw pairwise distance histogram
    * bins [e1][e2][bin].
    * @param[in] hist_config Optional histogram grid configuration (r_max, r_bin_width, num_bins).
+   * @note Pairwise distance histogram normalization contract:
+   * Same-species pairs (A == B) are accumulated once in out_histograms[A][A].
+   * Cross-species pairs (A != B) are accumulated symmetrically in both out_histograms[A][B] and
+   * out_histograms[B][A]. Downstream distribution calculators (e.g. RDFCalculator) scale [A][A]
+   * bins by 2.0 to account for A_1 -> A_2 and A_2 -> A_1 interactions.
    * @throws std::invalid_argument If @p cutoff_sq is negative or if bond cutoffs are invalid.
    */
   static void compute(const correlation::core::Cell &cell, real_t cutoff_sq,
