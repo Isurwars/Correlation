@@ -10,7 +10,6 @@
 #include "calculators/CalculatorFactory.hpp"
 
 #include <algorithm>
-#include <numeric>
 #include <vector>
 
 namespace correlation::calculators {

@@ -5,6 +5,7 @@
 
 #include "../../CrystalTestHelper.hpp"
 
+#include <algorithm>
 #include <gtest/gtest.h>
 #include <numbers>
 #include <random>
@@ -823,9 +824,7 @@ void verifyDistanceEquivalence(const Cell &cell, real_t cutoff,
   BondCutoffMatrix effective_cutoffs = bond_cutoffs;
   for (auto &row : effective_cutoffs) {
     for (auto &range : row) {
-      if (range.max_sq > cutoff_sq) {
-        range.max_sq = cutoff_sq;
-      }
+      range.max_sq = std::min(range.max_sq, cutoff_sq);
     }
   }
   NeighborGraph actual_graph(cell.atomCount());

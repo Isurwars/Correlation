@@ -398,12 +398,15 @@ SpatialPartitionData<T> buildSpatialPartition(const correlation::core::Cell &cel
   }
 
   return SpatialPartitionData<T>{
-      .grid = {.K_x = k_x,
-               .K_y = k_y,
-               .K_z = k_z,
-               .max_dx = max_dx,
-               .max_dy = max_dy,
-               .max_dz = max_dz},
+      .grid =
+          {
+              .K_x = k_x,
+              .K_y = k_y,
+              .K_z = k_z,
+              .max_dx = max_dx,
+              .max_dy = max_dy,
+              .max_dz = max_dz,
+          },
       .wrapped_x = std::move(wrapped_x),
       .wrapped_y = std::move(wrapped_y),
       .wrapped_z = std::move(wrapped_z),
@@ -514,12 +517,12 @@ void executeTwoPassBonds(const TwoPassExecutionContext<T> &ctx,
 } // namespace
 
 bool hasGpuDevice() {
-  static const bool has_device = []() {
+  static const bool HAS_DEVICE = []() {
     int device_count = 0;
     hipError_t const err = hipGetDeviceCount(&device_count);
     return (err == hipSuccess && device_count > 0);
   }();
-  return has_device;
+  return HAS_DEVICE;
 }
 
 template <typename T>
@@ -590,13 +593,17 @@ void computeDistancesGpu(const correlation::core::Cell &cell, T cutoff_sq,
     d_histograms.copyFromHost(zero_hist.data(), hist_tensor_size);
   }
 
-  GPULattice<T> const gpu_lattice{static_cast<T>(lattice[0].x()), static_cast<T>(lattice[0].y()),
-                                  static_cast<T>(lattice[0].z()), static_cast<T>(lattice[1].x()),
-                                  static_cast<T>(lattice[1].y()), static_cast<T>(lattice[1].z()),
-                                  static_cast<T>(lattice[2].x()), static_cast<T>(lattice[2].y()),
-                                  static_cast<T>(lattice[2].z())};
-  GPUAtomData<T> const gpu_atoms{d_wrapped_x.get(), d_wrapped_y.get(), d_wrapped_z.get(),
-                                 d_element_ids.get(), d_atom_bin.get()};
+  GPULattice<T> const gpu_lattice{
+      static_cast<T>(lattice[0].x()), static_cast<T>(lattice[0].y()),
+      static_cast<T>(lattice[0].z()), static_cast<T>(lattice[1].x()),
+      static_cast<T>(lattice[1].y()), static_cast<T>(lattice[1].z()),
+      static_cast<T>(lattice[2].x()), static_cast<T>(lattice[2].y()),
+      static_cast<T>(lattice[2].z()),
+  };
+  GPUAtomData<T> const gpu_atoms{
+      d_wrapped_x.get(),   d_wrapped_y.get(), d_wrapped_z.get(),
+      d_element_ids.get(), d_atom_bin.get(),
+  };
   GPUBinData const gpu_bins{.offsets = d_bin_offsets.get(), .indices = d_bin_indices.get()};
 
   int const block_size = 256;

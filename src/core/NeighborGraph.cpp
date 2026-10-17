@@ -37,7 +37,7 @@ namespace {
 } // namespace
 
 NeighborGraph::NeighborGraph(size_t node_count)
-    : node_count_(node_count), is_finalized_(true), offsets_(node_count + 1, 0) {}
+    : node_count_(node_count), offsets_(node_count + 1, 0) {}
 
 void NeighborGraph::addDirectedEdge(const Edge &edge) {
   assert(edge.source < node_count_ &&
@@ -47,12 +47,12 @@ void NeighborGraph::addDirectedEdge(const Edge &edge) {
   }
 
   if (is_finalized_ && !neighbors_.empty()) {
-    for (size_t u = 0; u < node_count_; ++u) {
-      const size_t start = offsets_[u];
-      const size_t end = offsets_[u + 1];
+    for (size_t count = 0; count < node_count_; ++count) {
+      const size_t start = offsets_[count];
+      const size_t end = offsets_[count + 1];
       for (size_t k = start; k < end; ++k) {
         unfinalized_edges_.push_back(Edge{
-            .source = static_cast<AtomID>(u),
+            .source = static_cast<AtomID>(count),
             .target = neighbors_[k].index,
             .distance = neighbors_[k].distance,
             .r_ij = neighbors_[k].r_ij,
@@ -100,9 +100,9 @@ void NeighborGraph::finalize() const {
     }
   }
 
-  for (size_t u = 0; u < node_count_; ++u) {
-    const size_t start = offsets_[u];
-    const size_t end = offsets_[u + 1];
+  for (size_t count = 0; count < node_count_; ++count) {
+    const size_t start = offsets_[count];
+    const size_t end = offsets_[count + 1];
     std::sort(neighbors_.begin() + static_cast<std::ptrdiff_t>(start),
               neighbors_.begin() + static_cast<std::ptrdiff_t>(end), compareNeighbors);
     for (size_t k = start; k < end; ++k) {
