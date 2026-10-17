@@ -32,7 +32,7 @@ runs:
       if: runner.os == 'macOS'
       shell: bash
       run: |
-        brew install ninja tbb hdf5 llvm@18 fftw
+        brew install ninja tbb hdf5 llvm fftw
 
     - name: Set up MSVC (Windows)
       if: runner.os == 'Windows'

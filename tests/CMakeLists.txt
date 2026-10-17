@@ -123,6 +123,7 @@ target_link_libraries(correlation_unit_tests PRIVATE
     cli_parser_obj
     app_services_obj
     miniz
+    TBB::tbb
     GTest::gtest
     GTest::gmock
     GTest::gtest_main
@@ -184,6 +185,7 @@ if(BUILD_GUI)
         "$<LINK_LIBRARY:WHOLE_ARCHIVE,correlation_lib>"
         app_services_obj
         app_gui_obj
+        TBB::tbb
         GTest::gtest
         GTest::gmock
         GTest::gtest_main

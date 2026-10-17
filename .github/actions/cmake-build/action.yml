@@ -18,8 +18,8 @@ runs:
         if [ "${{ runner.os }}" = "Linux" ]; then
           EXTRA_FLAGS+=("-DCMAKE_INSTALL_PREFIX=/usr" "-DCMAKE_INSTALL_LIBDIR=lib")
         elif [ "${{ runner.os }}" = "macOS" ]; then
-          export CC="$(brew --prefix llvm@18)/bin/clang"
-          export CXX="$(brew --prefix llvm@18)/bin/clang++"
+          export CC="$(brew --prefix llvm)/bin/clang"
+          export CXX="$(brew --prefix llvm)/bin/clang++"
           export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
           EXTRA_FLAGS+=("-DCMAKE_OSX_SYSROOT=${SDKROOT}")
         fi
