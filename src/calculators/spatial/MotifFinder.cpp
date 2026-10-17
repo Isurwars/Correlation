@@ -146,8 +146,7 @@ void runRingBFS(const correlation::core::NeighborGraph &graph, BFSScratch::KingB
       continue;
     }
 
-    for (const auto &neighbor : graph.getNeighbors(node)) {
-      size_t const neighbor_node = neighbor.index;
+    for (const auto neighbor_node : graph.getNeighborIndices(node)) {
       if (dist_king[neighbor_node] == -1) {
         dist_king[neighbor_node] = current_dist + 1;
         if (count_paths) {
@@ -270,9 +269,7 @@ void findCrossEdges(const correlation::core::NeighborGraph &graph,
   while (q_head < bsc.q.size()) {
     size_t const curr_node = bsc.q[q_head++];
 
-    for (const auto &neighbor : graph.getNeighbors(curr_node)) {
-      size_t const neighbor_node = neighbor.index;
-
+    for (const auto neighbor_node : graph.getNeighborIndices(curr_node)) {
       if (neighbor_node == curr_node) {
         continue;
       }
@@ -514,14 +511,12 @@ MotifFinder::buildBridgedGraph(const correlation::core::NeighborGraph &graph,
     connected[i] = true;
 
     // 1. Second-hop neighbors through bridging element
-    for (const auto &bridge_nbr : graph.getNeighbors(i)) {
-      size_t const bridge_idx = bridge_nbr.index;
+    for (const auto bridge_idx : graph.getNeighborIndices(i)) {
       if (bridge_idx >= num_nodes || atoms[bridge_idx].element().symbol != bridging_element) {
         continue;
       }
 
-      for (const auto &second_nbr : graph.getNeighbors(bridge_idx)) {
-        size_t const second_idx = second_nbr.index;
+      for (const auto second_idx : graph.getNeighborIndices(bridge_idx)) {
         if (second_idx < num_nodes && atoms[second_idx].element().symbol == former_element &&
             !connected[second_idx]) {
           connected[second_idx] = true;
@@ -544,6 +539,7 @@ MotifFinder::buildBridgedGraph(const correlation::core::NeighborGraph &graph,
     }
   }
 
+  bridged_graph.finalize();
   return bridged_graph;
 }
 

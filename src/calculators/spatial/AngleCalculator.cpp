@@ -43,8 +43,8 @@ struct AngleScratch {
 
 void computeTriadAngles(int type_central, const std::vector<correlation::core::Atom> &atoms,
                         size_t neighbor_count,
-                        const std::vector<correlation::core::Neighbor> &neighbors,
-                        size_t num_elements, AngleScratch &scratch, AngleTensor &local_tensor) {
+                        std::span<const correlation::core::Neighbor> neighbors, size_t num_elements,
+                        AngleScratch &scratch, AngleTensor &local_tensor) {
   for (size_t j_idx = 0; j_idx < neighbor_count - 1; ++j_idx) {
     const size_t k_count = neighbor_count - j_idx - 1; // number of k's for this j
 

@@ -77,8 +77,8 @@ CNCalculator::calculate(const correlation::core::Cell &cell,
     const std::string &central_symbol = central_atom.element().symbol;
 
     std::map<std::string, size_t> neighbor_counts_for_this_atom;
-    for (const auto &neighbor : neighbor_graph.getNeighbors(i)) {
-      const auto &neighbor_atom = atoms[neighbor.index];
+    for (const auto neighbor_idx : neighbor_graph.getNeighborIndices(i)) {
+      const auto &neighbor_atom = atoms[neighbor_idx];
       neighbor_counts_for_this_atom[neighbor_atom.element().symbol]++;
     }
 

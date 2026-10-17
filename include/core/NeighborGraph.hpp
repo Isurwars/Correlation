@@ -1,6 +1,6 @@
 /**
  * @file NeighborGraph.hpp
- * @brief Neighbor graph representation of atomic bonds and adjacency.
+ * @brief Compressed Sparse Row (CSR) neighbor graph of atomic bonds and adjacency.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -11,6 +11,7 @@
 #include "core/Atom.hpp"
 #include "math/LinearAlgebra.hpp"
 
+#include <span>
 #include <vector>
 
 namespace correlation::core {
@@ -43,11 +44,11 @@ struct Edge {
 
 /**
  * @class NeighborGraph
- * @brief Adjacency-list based graph representing atomic connectivity and proximity.
+ * @brief Compressed Sparse Row (CSR) based graph representing atomic connectivity.
  *
- * This class stores bonds and neighbor interactions as directed edges.
- * It is primarily used by calculators that require topological information,
- * such as Ring Statistics (RD) or Steinhardt Order Parameters.
+ * Stores bonds and neighbor interactions as directed edges with deterministic
+ * row sorting by (target_index, distance). Eliminates per-row vector allocations
+ * and provides lightweight index-only views for high-throughput traversals.
  */
 class NeighborGraph {
 public:
@@ -84,14 +85,39 @@ public:
   }
 
   /**
-   * @brief Retrieves the neighbor list for a specific atom.
-   * @param atom_index Index of the atom.
-   * @return Constant reference to the vector of Neighbor objects.
+   * @brief Finalizes the graph into Compressed Sparse Row (CSR) storage.
+   *
+   * Sorts all neighbor rows by (index, distance) deterministically.
+   * Automatically invoked before queries if edges have been modified.
    */
-  [[nodiscard]] const std::vector<Neighbor> &getNeighbors(size_t atom_index) const;
+  void finalize() const;
 
   /**
-   * @brief Checks if two atoms are connected by an edge.
+   * @brief Directly assigns Compressed Sparse Row (CSR) storage.
+   * @param node_count Number of nodes.
+   * @param offsets Row offsets array of size node_count + 1.
+   * @param neighbors Flat neighbors array of size offsets.back().
+   * @param targets Flat target indices array of size offsets.back().
+   */
+  void assignCSR(size_t node_count, std::vector<size_t> offsets, std::vector<Neighbor> neighbors,
+                 std::vector<AtomID> targets);
+
+  /**
+   * @brief Retrieves the neighbor list for a specific atom.
+   * @param atom_index Index of the atom.
+   * @return Contiguous span of Neighbor objects.
+   */
+  [[nodiscard]] std::span<const Neighbor> getNeighbors(size_t atom_index) const;
+
+  /**
+   * @brief Retrieves a lightweight index-only view of neighbors for a specific atom.
+   * @param atom_index Index of the atom.
+   * @return Contiguous span of AtomID indices.
+   */
+  [[nodiscard]] std::span<const AtomID> getNeighborIndices(size_t atom_index) const;
+
+  /**
+   * @brief Checks if two atoms are connected by an edge using binary search.
    * @param first_atom First atom index.
    * @param second_atom Second atom index.
    * @return True if second_atom is a neighbor of first_atom.
@@ -107,8 +133,27 @@ public:
   /** @return Total number of nodes in the graph. */
   [[nodiscard]] size_t nodeCount() const noexcept;
 
+  /** @return Total number of directed edges in the graph. */
+  [[nodiscard]] size_t edgeCount() const noexcept;
+
+  /** @return CSR row offsets span of size nodeCount() + 1. */
+  [[nodiscard]] std::span<const size_t> offsets() const noexcept;
+
+  /** @return CSR flat target indices span of size edgeCount(). */
+  [[nodiscard]] std::span<const AtomID> targets() const noexcept;
+
+  /** @return CSR flat neighbors span of size edgeCount(). */
+  [[nodiscard]] std::span<const Neighbor> neighbors() const noexcept;
+
 private:
-  std::vector<std::vector<Neighbor>> adj_list_; ///< Internal adjacency list.
+  void ensureFinalized() const;
+
+  size_t node_count_{0};
+  mutable bool is_finalized_{true};
+  mutable std::vector<Edge> unfinalized_edges_;
+  mutable std::vector<size_t> offsets_{0};
+  mutable std::vector<Neighbor> neighbors_;
+  mutable std::vector<AtomID> targets_;
 };
 
 } // namespace correlation::core

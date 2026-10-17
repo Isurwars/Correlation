@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 #include <numbers>
 #include <random>
+#include <tbb/global_control.h>
 #include <vector>
 
 namespace correlation::testing {
@@ -926,9 +927,58 @@ TEST(DistanceCalculatorTests, BruteForceEquivalenceRandomAmorphousCell) {
   });
   const BondCutoffMatrix bonds = {{{.min_sq = 0.0, .max_sq = 50.0}}};
   const DistanceCalculationConfig config{.r_max = 5.0, .r_bin_width = 0.05, .num_bins = 100};
-
   for (const real_t cutoff : {static_cast<real_t>(2.5), static_cast<real_t>(4.8)}) {
     verifyDistanceEquivalence(cell, cutoff, bonds, config);
+  }
+}
+
+TEST(DistanceCalculatorTests, DeterministicNeighborGraphAcrossThreadCounts) {
+  const auto cell = makeRandomAmorphousCell(RandomAmorphousCellConfig{
+      .num_atoms = 150,
+      .box_len = static_cast<real_t>(18.0),
+      .seed = 12345,
+  });
+  const real_t cutoff = 4.5;
+  const real_t cutoff_sq = cutoff * cutoff;
+  const BondCutoffMatrix bonds = {{{.min_sq = 0.0, .max_sq = cutoff_sq}}};
+  const DistanceCalculationConfig config{.r_max = cutoff, .r_bin_width = 0.05, .num_bins = 90};
+
+  NeighborGraph graph_1thread(cell.atomCount());
+  {
+    tbb::global_control global_control_1thread(tbb::global_control::max_allowed_parallelism, 1);
+    DistanceCalculator::compute(cell, cutoff_sq, bonds, true, graph_1thread, nullptr, config);
+  }
+
+  NeighborGraph graph_multithread(cell.atomCount());
+  {
+    tbb::global_control global_control_multithread(tbb::global_control::max_allowed_parallelism, 8);
+    DistanceCalculator::compute(cell, cutoff_sq, bonds, true, graph_multithread, nullptr, config);
+  }
+
+  ASSERT_EQ(graph_1thread.nodeCount(), graph_multithread.nodeCount());
+  ASSERT_EQ(graph_1thread.edgeCount(), graph_multithread.edgeCount());
+
+  for (size_t i = 0; i < cell.atomCount(); ++i) {
+    auto nbrs1 = graph_1thread.getNeighbors(i);
+    auto nbrs2 = graph_multithread.getNeighbors(i);
+    ASSERT_EQ(nbrs1.size(), nbrs2.size()) << "Mismatch in neighbor count for atom " << i;
+
+    for (size_t k = 0; k < nbrs1.size(); ++k) {
+      EXPECT_EQ(nbrs1[k].index, nbrs2[k].index)
+          << "Index mismatch for atom " << i << " at neighbor " << k;
+      EXPECT_DOUBLE_EQ(nbrs1[k].distance, nbrs2[k].distance)
+          << "Distance mismatch for atom " << i << " at neighbor " << k;
+      EXPECT_DOUBLE_EQ(nbrs1[k].r_ij.x(), nbrs2[k].r_ij.x());
+      EXPECT_DOUBLE_EQ(nbrs1[k].r_ij.y(), nbrs2[k].r_ij.y());
+      EXPECT_DOUBLE_EQ(nbrs1[k].r_ij.z(), nbrs2[k].r_ij.z());
+    }
+
+    auto indices1 = graph_1thread.getNeighborIndices(i);
+    auto indices2 = graph_multithread.getNeighborIndices(i);
+    ASSERT_EQ(indices1.size(), indices2.size());
+    for (size_t k = 0; k < indices1.size(); ++k) {
+      EXPECT_EQ(indices1[k], indices2[k]);
+    }
   }
 }
 

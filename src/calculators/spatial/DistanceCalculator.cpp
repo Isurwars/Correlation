@@ -782,31 +782,100 @@ BinSortedPositions buildBinSortedPositions(const correlation::core::Cell &cell,
 }
 
 /**
+ * @brief Merges thread-local distance histograms into the output tensor.
+ */
+void mergeHistograms(const tbb::enumerable_thread_specific<ThreadLocalDistances> &ets,
+                     size_t num_elements, size_t num_bins, RawHistogramTensor &out_histograms) {
+  for (const auto &local_results : ets) {
+    for (size_t i = 0; i < num_elements; ++i) {
+      for (size_t j_idx = 0; j_idx < num_elements; ++j_idx) {
+        for (size_t bin_idx = 0; bin_idx < num_bins; ++bin_idx) {
+          out_histograms[i][j_idx][bin_idx] += local_results.local_histograms[i][j_idx][bin_idx];
+        }
+      }
+    }
+  }
+}
+
+/**
+ * @brief Builds a deterministic CSR NeighborGraph from thread-local bonds.
+ */
+void buildDeterministicCSR(const tbb::enumerable_thread_specific<ThreadLocalDistances> &ets,
+                           size_t atom_count, correlation::core::NeighborGraph &out_graph) {
+  std::vector<size_t> row_counts(atom_count, 0);
+  size_t total_bonds = 0;
+  for (const auto &local_results : ets) {
+    total_bonds += local_results.bonds.size();
+    for (const auto &bond : local_results.bonds) {
+      if (bond.from < atom_count) {
+        row_counts[bond.from]++;
+      }
+    }
+  }
+
+  std::vector<size_t> offsets(atom_count + 1, 0);
+  for (size_t i = 0; i < atom_count; ++i) {
+    offsets[i + 1] = offsets[i] + row_counts[i];
+  }
+
+  std::vector<correlation::core::Neighbor> neighbors(total_bonds);
+  std::vector<correlation::core::AtomID> targets(total_bonds);
+  std::vector<size_t> write_pos = offsets;
+
+  for (const auto &local_results : ets) {
+    for (const auto &bond : local_results.bonds) {
+      if (bond.from < atom_count) {
+        const size_t slot = write_pos[bond.from]++;
+        neighbors[slot] = correlation::core::Neighbor{
+            .index = static_cast<correlation::core::AtomID>(bond.to),
+            .distance = bond.distance,
+            .r_ij = bond.r_ij,
+        };
+      }
+    }
+  }
+
+  tbb::parallel_for(
+      tbb::blocked_range<size_t>(0, atom_count), [&](const tbb::blocked_range<size_t> &range) {
+        for (size_t u = range.begin(); u != range.end(); ++u) {
+          const size_t start = offsets[u];
+          const size_t end = offsets[u + 1];
+          std::sort(neighbors.begin() + static_cast<std::ptrdiff_t>(start),
+                    neighbors.begin() + static_cast<std::ptrdiff_t>(end),
+                    [](const correlation::core::Neighbor &a, const correlation::core::Neighbor &b) {
+                      if (a.index != b.index) {
+                        return a.index < b.index;
+                      }
+                      if (a.distance != b.distance) {
+                        return a.distance < b.distance;
+                      }
+                      if (a.r_ij.x() != b.r_ij.x()) {
+                        return a.r_ij.x() < b.r_ij.x();
+                      }
+                      if (a.r_ij.y() != b.r_ij.y()) {
+                        return a.r_ij.y() < b.r_ij.y();
+                      }
+                      return a.r_ij.z() < b.r_ij.z();
+                    });
+          for (size_t k = start; k < end; ++k) {
+            targets[k] = neighbors[k].index;
+          }
+        }
+      });
+
+  out_graph.assignCSR(atom_count, std::move(offsets), std::move(neighbors), std::move(targets));
+}
+
+/**
  * @brief Merges thread-local distance calculations into output containers.
  */
 void mergeThreadResults(const tbb::enumerable_thread_specific<ThreadLocalDistances> &ets,
                         size_t num_elements, RawHistogramTensor *out_histograms, size_t num_bins,
-                        correlation::core::NeighborGraph &out_graph) {
-  for (const auto &local_results : ets) {
-    if (out_histograms != nullptr && num_bins > 0) {
-      for (size_t i = 0; i < num_elements; ++i) {
-        for (size_t j_idx = 0; j_idx < num_elements; ++j_idx) {
-          for (size_t bin_idx = 0; bin_idx < num_bins; ++bin_idx) {
-            (*out_histograms)[i][j_idx][bin_idx] +=
-                local_results.local_histograms[i][j_idx][bin_idx];
-          }
-        }
-      }
-    }
-    for (const auto &bond : local_results.bonds) {
-      out_graph.addDirectedEdge({
-          .source = static_cast<correlation::core::AtomID>(bond.from),
-          .target = static_cast<correlation::core::AtomID>(bond.to),
-          .distance = bond.distance,
-          .r_ij = bond.r_ij,
-      });
-    }
+                        correlation::core::NeighborGraph &out_graph, size_t atom_count) {
+  if (out_histograms != nullptr && num_bins > 0) {
+    mergeHistograms(ets, num_elements, num_bins, *out_histograms);
   }
+  buildDeterministicCSR(ets, atom_count, out_graph);
 }
 
 } // namespace
@@ -823,6 +892,10 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cut
   const size_t atom_count = atoms.size();
   const size_t num_elements = cell.elements().size();
   const auto &lattice = cell.latticeVectors();
+
+  if (out_graph.nodeCount() != atom_count) {
+    out_graph = correlation::core::NeighborGraph(atom_count);
+  }
 
   if (out_histograms != nullptr && hist_config.num_bins > 0) {
     out_histograms->assign(num_elements,
@@ -871,7 +944,8 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cut
         }
       });
 
-  mergeThreadResults(ets, num_elements, out_histograms, hist_config.num_bins, out_graph);
+  mergeThreadResults(ets, num_elements, out_histograms, hist_config.num_bins, out_graph,
+                     atom_count);
 }
 
 } // namespace correlation::calculators

@@ -85,8 +85,8 @@ void ClusterCalculator::calculateFrame(
 
   // Traverse the graph and union connected atoms
   for (size_t i = 0; i < n_atoms; ++i) {
-    for (const auto &neighbor : graph.getNeighbors(i)) {
-      union_find.unite(i, neighbor.index);
+    for (const auto neighbor_idx : graph.getNeighborIndices(i)) {
+      union_find.unite(i, neighbor_idx);
     }
   }
 

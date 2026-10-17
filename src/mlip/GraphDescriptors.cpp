@@ -42,6 +42,7 @@ correlation::core::NeighborGraph buildNeighborGraphFromBuffers(const PeriodicGra
     }
     neighbor_graph.addDirectedEdge(src, dst, dist, r_ij);
   }
+  neighbor_graph.finalize();
   return neighbor_graph;
 }
 

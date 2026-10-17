@@ -181,5 +181,85 @@ TEST_F(NeighborGraphTests, LargeGraphPerformance) {
   EXPECT_EQ(matrix.size(), num_nodes * num_nodes);
 }
 
+TEST_F(NeighborGraphTests, CSRStorageOffsetsAndIndices) {
+  NeighborGraph graph(4);
+  const Vector3<real_t> r_ij{1.0, 0.0, 0.0};
+
+  // Node 0 has neighbors 2 and 1 (added out of order)
+  graph.addDirectedEdge(0, 2, 2.5, r_ij);
+  graph.addDirectedEdge(0, 1, 1.5, r_ij);
+  // Node 1 has no neighbors
+  // Node 2 has neighbor 3
+  graph.addDirectedEdge(2, 3, 1.0, r_ij);
+  // Node 3 has neighbor 0
+  graph.addDirectedEdge(3, 0, 3.0, r_ij);
+
+  graph.finalize();
+
+  EXPECT_EQ(graph.nodeCount(), 4);
+  EXPECT_EQ(graph.edgeCount(), 4);
+
+  auto offsets = graph.offsets();
+  ASSERT_EQ(offsets.size(), 5);
+  EXPECT_EQ(offsets[0], 0);
+  EXPECT_EQ(offsets[1], 2);
+  EXPECT_EQ(offsets[2], 2);
+  EXPECT_EQ(offsets[3], 3);
+  EXPECT_EQ(offsets[4], 4);
+
+  // Targets must be sorted per row by (index, distance)
+  auto targets = graph.targets();
+  ASSERT_EQ(targets.size(), 4);
+  EXPECT_EQ(targets[0], 1);
+  EXPECT_EQ(targets[1], 2);
+  EXPECT_EQ(targets[2], 3);
+  EXPECT_EQ(targets[3], 0);
+
+  // Lightweight neighbor indices view
+  auto nbr_indices_0 = graph.getNeighborIndices(0);
+  ASSERT_EQ(nbr_indices_0.size(), 2);
+  EXPECT_EQ(nbr_indices_0[0], 1);
+  EXPECT_EQ(nbr_indices_0[1], 2);
+
+  auto nbr_indices_1 = graph.getNeighborIndices(1);
+  EXPECT_TRUE(nbr_indices_1.empty());
+
+  // Binary search connectivity
+  EXPECT_TRUE(graph.areConnected(AtomIndex{0}, AtomIndex{1}));
+  EXPECT_TRUE(graph.areConnected(AtomIndex{0}, AtomIndex{2}));
+  EXPECT_FALSE(graph.areConnected(AtomIndex{0}, AtomIndex{3}));
+}
+
+TEST_F(NeighborGraphTests, AssignCSRDirectly) {
+  NeighborGraph graph;
+  std::vector<size_t> offsets = {0, 2, 3};
+  std::vector<Neighbor> neighbors = {
+      Neighbor{.index = 1, .distance = 1.0, .r_ij = {1.0, 0.0, 0.0}},
+      Neighbor{.index = 2, .distance = 2.0, .r_ij = {2.0, 0.0, 0.0}},
+      Neighbor{.index = 0, .distance = 1.5, .r_ij = {-1.5, 0.0, 0.0}},
+  };
+  std::vector<AtomID> targets = {1, 2, 0};
+
+  graph.assignCSR(2, std::move(offsets), std::move(neighbors), std::move(targets));
+
+  EXPECT_EQ(graph.nodeCount(), 2);
+  EXPECT_EQ(graph.edgeCount(), 3);
+  EXPECT_TRUE(graph.areConnected(AtomIndex{0}, AtomIndex{1}));
+  EXPECT_TRUE(graph.areConnected(AtomIndex{0}, AtomIndex{2}));
+  EXPECT_FALSE(graph.areConnected(AtomIndex{0}, AtomIndex{0}));
+
+  auto nbrs_0 = graph.getNeighbors(0);
+  ASSERT_EQ(nbrs_0.size(), 2);
+  EXPECT_EQ(nbrs_0[0].index, 1);
+  EXPECT_DOUBLE_EQ(nbrs_0[0].distance, 1.0);
+  EXPECT_EQ(nbrs_0[1].index, 2);
+  EXPECT_DOUBLE_EQ(nbrs_0[1].distance, 2.0);
+
+  auto indices_0 = graph.getNeighborIndices(0);
+  ASSERT_EQ(indices_0.size(), 2);
+  EXPECT_EQ(indices_0[0], 1);
+  EXPECT_EQ(indices_0[1], 2);
+}
+
 } // namespace
 } // namespace correlation::testing
