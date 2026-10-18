@@ -280,11 +280,17 @@ if(BUILD_BENCHMARKS)
     FetchContent_Declare(
       googlebenchmark
       GIT_REPOSITORY https://github.com/google/benchmark.git
-      GIT_TAG v1.9.1
+      GIT_TAG v1.9.5
       SYSTEM
       EXCLUDE_FROM_ALL
     )
     FetchContent_MakeAvailable(googlebenchmark)
+    if(TARGET benchmark)
+      target_compile_options(benchmark PRIVATE $<$<CXX_COMPILER_ID:Clang>:-Wno-c2y-extensions>)
+    endif()
+    if(TARGET benchmark_main)
+      target_compile_options(benchmark_main PRIVATE $<$<CXX_COMPILER_ID:Clang>:-Wno-c2y-extensions>)
+    endif()
   endif()
 endif()
 

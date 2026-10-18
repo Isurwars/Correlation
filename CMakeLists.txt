@@ -134,6 +134,10 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fexperimental-library>)
         add_link_options($<$<COMPILE_LANGUAGE:CXX>:-fexperimental-library>)
     endif()
+    check_cxx_compiler_flag("-Wno-c2y-extensions" COMPILER_SUPPORTS_WNO_C2Y_EXTENSIONS)
+    if(COMPILER_SUPPORTS_WNO_C2Y_EXTENSIONS)
+        add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Wno-c2y-extensions>)
+    endif()
 endif()
 
 # Configure MSVC debug information format to allow sccache to cache objects
