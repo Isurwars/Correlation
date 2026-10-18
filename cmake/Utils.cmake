@@ -23,6 +23,11 @@ endfunction()
 # every target that links Slint::Slint.
 function(link_slint_platform_deps target_name)
     if (APPLE)
+        get_target_property(_target_link_dirs ${target_name} LINK_DIRECTORIES)
+        if(_target_link_dirs)
+            list(FILTER _target_link_dirs EXCLUDE REGEX "CommandLineTools")
+            set_target_properties(${target_name} PROPERTIES LINK_DIRECTORIES "${_target_link_dirs}")
+        endif()
         foreach(_fw IN ITEMS
             OpenGL CoreVideo Cocoa Carbon IOKit QuartzCore
             AppKit CoreGraphics Metal CoreFoundation Foundation Security)

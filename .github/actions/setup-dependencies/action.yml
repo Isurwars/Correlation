@@ -33,6 +33,10 @@ runs:
       shell: bash
       run: |
         brew install ninja tbb hdf5 llvm fftw
+        if compgen -G "/Library/Developer/CommandLineTools/SDKs/MacOSX27*.sdk" > /dev/null; then
+          sudo rm -rf /Library/Developer/CommandLineTools/SDKs/MacOSX27*.sdk
+          sudo ln -sfn "$(xcrun --sdk macosx --show-sdk-path)" /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
+        fi
 
     - name: Set up MSVC (Windows)
       if: runner.os == 'Windows'

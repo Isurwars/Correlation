@@ -2595,8 +2595,8 @@
     "semantic_hash": ""
   },
   ".github/actions/setup-dependencies/action.yml": {
-    "mtime": 1792264817.3085425,
-    "ast_hash": "332a841645d5d2ed55920908fcd6b038",
+    "mtime": 1792288286.6993194,
+    "ast_hash": "7076757d463c38dfbaf5265c2a4e4258",
     "semantic_hash": ""
   },
   ".agents/rules/python-standards.md": {

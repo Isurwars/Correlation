@@ -92,7 +92,7 @@ if(BUILD_GUI)
   endif()
 
   # Transitively propagate platform dependencies for statically built Slint
-  foreach(_target IN ITEMS Slint::Slint Slint slint_cpp slint_cpp-static)
+  foreach(_target IN ITEMS Slint::Slint Slint slint_cpp slint_cpp-static slint-cpp slint-cpp-static)
     if(TARGET ${_target})
       set(_real_target "${_target}")
       get_target_property(_aliased_target ${_target} ALIASED_TARGET)
@@ -103,6 +103,16 @@ if(BUILD_GUI)
       get_target_property(_target_type ${_real_target} TYPE)
       if(NOT "${_target_type}" STREQUAL "UTILITY")
         if(APPLE)
+          # Strip hardcoded CommandLineTools SDK link directory injected by Corrosion on macOS.
+          # Subverting CMAKE_OSX_SYSROOT with an incompatible CLT SDK causes tapi malformed file errors.
+          get_target_property(_link_dirs ${_real_target} INTERFACE_LINK_DIRECTORIES)
+          if(_link_dirs)
+            list(FILTER _link_dirs EXCLUDE REGEX "CommandLineTools")
+            set_property(TARGET ${_real_target} PROPERTY INTERFACE_LINK_DIRECTORIES "${_link_dirs}")
+          else()
+            set_property(TARGET ${_real_target} PROPERTY INTERFACE_LINK_DIRECTORIES "")
+          endif()
+
           foreach(_fw IN ITEMS
               OpenGL CoreVideo Cocoa Carbon IOKit QuartzCore
               AppKit CoreGraphics Metal CoreFoundation Foundation Security)
