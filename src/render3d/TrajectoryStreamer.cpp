@@ -26,46 +26,49 @@ std::size_t TrajectoryStreamer::totalFrames() const noexcept {
   return trajectory_->getFrameCount();
 }
 
-bool TrajectoryStreamer::seekFrame(std::size_t frame_index, Scene3D &scene, bool recompute_bonds) {
+bool TrajectoryStreamer::seekFrame(std::size_t frame_index, Scene3D &scene, bool recompute_bonds,
+                                   double bond_cutoff_scale) {
   if (trajectory_ == nullptr || frame_index >= trajectory_->getFrameCount()) {
     return false;
   }
 
   const core::Cell frame = trajectory_->getFrame(frame_index);
-  scene.updateFromCell(frame, recompute_bonds);
+  scene.updateFromCell(frame, recompute_bonds, bond_cutoff_scale);
   current_frame_ = frame_index;
   return true;
 }
 
-bool TrajectoryStreamer::stepNext(Scene3D &scene, bool loop, bool recompute_bonds) {
+bool TrajectoryStreamer::stepNext(Scene3D &scene, bool loop, bool recompute_bonds,
+                                  double bond_cutoff_scale) {
   const std::size_t total = totalFrames();
   if (total == 0) {
     return false;
   }
 
   if (current_frame_ + 1 < total) {
-    return seekFrame(current_frame_ + 1, scene, recompute_bonds);
+    return seekFrame(current_frame_ + 1, scene, recompute_bonds, bond_cutoff_scale);
   }
 
   if (loop) {
-    return seekFrame(0, scene, recompute_bonds);
+    return seekFrame(0, scene, recompute_bonds, bond_cutoff_scale);
   }
 
   return false;
 }
 
-bool TrajectoryStreamer::stepPrev(Scene3D &scene, bool loop, bool recompute_bonds) {
+bool TrajectoryStreamer::stepPrev(Scene3D &scene, bool loop, bool recompute_bonds,
+                                  double bond_cutoff_scale) {
   const std::size_t total = totalFrames();
   if (total == 0) {
     return false;
   }
 
   if (current_frame_ > 0) {
-    return seekFrame(current_frame_ - 1, scene, recompute_bonds);
+    return seekFrame(current_frame_ - 1, scene, recompute_bonds, bond_cutoff_scale);
   }
 
   if (loop) {
-    return seekFrame(total - 1, scene, recompute_bonds);
+    return seekFrame(total - 1, scene, recompute_bonds, bond_cutoff_scale);
   }
 
   return false;

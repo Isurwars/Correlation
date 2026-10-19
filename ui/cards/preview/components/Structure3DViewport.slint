@@ -6,10 +6,11 @@ import {
     FilledButton,
     Icons,
 } from "../../../material/material.slint";
+import { TrajectoryPlaybackBar } from "./TrajectoryPlaybackBar.slint";
 
 export component Structure3DViewport inherits Rectangle {
     in property <image> structure_3d_image;
-    in property <int> current_frame: 0;
+    in-out property <int> current_frame: 0;
     in property <int> total_frames: 0;
     in property <bool> bonds_enabled: true;
     in property <bool> wireframe_enabled: true;
@@ -162,6 +163,7 @@ export component Structure3DViewport inherits Rectangle {
                 TouchArea {
                     width: 30px;
                     height: 30px;
+                    y: (parent.height - self.height) / 2;
                     mouse-cursor: pointer;
                     clicked => { root.reset_view(); }
 
@@ -187,6 +189,7 @@ export component Structure3DViewport inherits Rectangle {
                 TouchArea {
                     width: 30px;
                     height: 30px;
+                    y: (parent.height - self.height) / 2;
                     mouse-cursor: pointer;
                     clicked => { root.toggle_bonds(!root.bonds_enabled); }
 
@@ -215,6 +218,7 @@ export component Structure3DViewport inherits Rectangle {
                 TouchArea {
                     width: 30px;
                     height: 30px;
+                    y: (parent.height - self.height) / 2;
                     mouse-cursor: pointer;
                     clicked => { root.toggle_wireframe(!root.wireframe_enabled); }
 
@@ -235,67 +239,6 @@ export component Structure3DViewport inherits Rectangle {
                             color: root.wireframe_enabled ? MaterialPalette.primary : MaterialPalette.on_surface;
                             horizontal-alignment: center;
                             vertical-alignment: center;
-                        }
-                    }
-                }
-
-                // Trajectory Stepper controls (visible when multi-frame)
-                if (root.total_frames > 1) : HorizontalLayout {
-                    spacing: 4px;
-                    alignment: center;
-
-                    TouchArea {
-                        width: 22px;
-                        height: 26px;
-                        mouse-cursor: pointer;
-                        clicked => { root.step_frame(false); }
-
-                        Rectangle {
-                            width: 100%;
-                            height: 100%;
-                            border-radius: 11px;
-                            background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
-
-                            MaterialText {
-                                width: 100%;
-                                height: 100%;
-                                text: "◀";
-                                font-size: 10px;
-                                color: MaterialPalette.on_surface_variant;
-                                horizontal-alignment: center;
-                                vertical-alignment: center;
-                            }
-                        }
-                    }
-
-                    MaterialText {
-                        text: (root.current_frame + 1) + " / " + root.total_frames;
-                        font-size: 11px;
-                        color: MaterialPalette.on_surface_variant;
-                        vertical-alignment: center;
-                    }
-
-                    TouchArea {
-                        width: 22px;
-                        height: 26px;
-                        mouse-cursor: pointer;
-                        clicked => { root.step_frame(true); }
-
-                        Rectangle {
-                            width: 100%;
-                            height: 100%;
-                            border-radius: 11px;
-                            background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
-
-                            MaterialText {
-                                width: 100%;
-                                height: 100%;
-                                text: "▶";
-                                font-size: 10px;
-                                color: MaterialPalette.on_surface_variant;
-                                horizontal-alignment: center;
-                                vertical-alignment: center;
-                            }
                         }
                     }
                 }
@@ -320,6 +263,7 @@ export component Structure3DViewport inherits Rectangle {
 
                 // File metadata pill
                 MaterialText {
+                    y: (parent.height - self.height) / 2;
                     text: "📁 " + root.file_basename + " (" + root.total_atoms + " atoms)";
                     font-size: 11px;
                     color: MaterialPalette.on_surface_variant;
@@ -329,6 +273,7 @@ export component Structure3DViewport inherits Rectangle {
                 // Run Analysis Button (Compact pill with centered icon and label)
                 run_btn_touch := TouchArea {
                     height: 28px;
+                    y: (parent.height - self.height) / 2;
                     width: run_btn_layout.preferred-width + 20px;
                     enabled: !root.analysis_running;
                     mouse-cursor: self.enabled ? pointer : default;
@@ -373,6 +318,7 @@ export component Structure3DViewport inherits Rectangle {
                 options_touch := TouchArea {
                     width: 28px;
                     height: 28px;
+                    y: (parent.height - self.height) / 2;
                     mouse-cursor: pointer;
                     clicked => { root.open_panel(1); }
 
@@ -397,13 +343,24 @@ export component Structure3DViewport inherits Rectangle {
         }
     }
 
+    // Trajectory Playback & Scrub Bar (visible when multi-frame trajectory is loaded)
+    if (root.file_loaded && root.total_frames > 1) : TrajectoryPlaybackBar {
+        x: (root.width - self.width) / 2;
+        y: root.height - self.height - 12px;
+        width: Math.min(root.width - 48px, 620px);
+        current_frame <=> root.current_frame;
+        total_frames: root.total_frames;
+        seek_frame(idx) => { root.seek_frame(idx); }
+        step_frame(fwd) => { root.step_frame(fwd); }
+    }
+
     // Subtle bottom navigation hint
     if (root.file_loaded) : Rectangle {
         x: (root.width - self.width) / 2;
-        y: root.height - self.height - 8px;
+        y: root.height - self.height - (root.total_frames > 1 ? 66px : 10px);
         width: hint_text.preferred-width + 16px;
-        height: 22px;
-        border-radius: 11px;
+        height: 20px;
+        border-radius: 10px;
         background: MaterialPalette.surface_container_highest.with_alpha(60%);
 
         hint_text := MaterialText {

@@ -89,7 +89,7 @@ export component PreviewCard inherits FilledCard {
 
     // 3D Viewport properties & callbacks
     in property <image> structure_3d_image;
-    in property <int> structure_3d_current_frame: 0;
+    in-out property <int> structure_3d_current_frame: 0;
     in property <int> structure_3d_total_frames: 0;
     in property <bool> structure_3d_bonds_enabled: true;
     in property <bool> structure_3d_wireframe_enabled: true;
@@ -394,7 +394,7 @@ export component PreviewCard inherits FilledCard {
                 height: 100%;
                 visible: root.active_tab == 2;
                 structure_3d_image: root.structure_3d_image;
-                current_frame: root.structure_3d_current_frame;
+                current_frame <=> root.structure_3d_current_frame;
                 total_frames: root.structure_3d_total_frames;
                 bonds_enabled: root.structure_3d_bonds_enabled;
                 wireframe_enabled: root.structure_3d_wireframe_enabled;

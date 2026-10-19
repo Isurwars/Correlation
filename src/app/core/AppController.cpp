@@ -218,7 +218,12 @@ void AppController::registerPresetAndOptionCallbacks() {
         [this, type] { preset_controller_->handleMaterialTypeChanged(type); });
   });
 
-  window_.on_reset_bond_cutoffs([this] { setBondCutoffs(); });
+  window_.on_reset_bond_cutoffs([this] {
+    setBondCutoffs();
+    if (structure_3d_controller_) {
+      structure_3d_controller_->updateBondCutoffScale(1.15);
+    }
+  });
   window_.on_reset_rdf_options([this] {
     OptionsResetService::resetRDF(window_);
     static_cast<void>(input_validator_->validateInputs());
@@ -239,8 +244,12 @@ void AppController::registerPresetAndOptionCallbacks() {
     OptionsResetService::setXRDPreset(window_, idx);
     static_cast<void>(input_validator_->validateInputs());
   });
-  window_.on_apply_scaled_cutoffs(
-      [this](float factor) { bond_cutoff_controller_.applyScaledCutoffs(factor); });
+  window_.on_apply_scaled_cutoffs([this](float factor) {
+    bond_cutoff_controller_.applyScaledCutoffs(factor);
+    if (structure_3d_controller_ && factor > 0.0F) {
+      structure_3d_controller_->updateBondCutoffScale(static_cast<double>(factor));
+    }
+  });
   window_.on_set_uniform_cutoff(
       [this](float max_val) { bond_cutoff_controller_.setUniformCutoff(max_val); });
   window_.on_apply_min_factor([this](float factor) {

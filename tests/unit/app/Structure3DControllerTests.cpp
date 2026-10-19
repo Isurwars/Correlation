@@ -142,15 +142,31 @@ TEST_F(Structure3DControllerTests, TrajectoryNavigation) {
   controller.setTrajectory(traj);
   EXPECT_EQ(window().get_structure_3d_total_frames(), 2);
   EXPECT_EQ(window().get_structure_3d_current_frame(), 0);
+  ASSERT_NE(controller.scene(), nullptr);
+  ASSERT_FALSE(controller.scene()->bonds().empty());
+  EXPECT_NEAR(controller.scene()->bonds()[0].start.x(), 0.0F, 1e-4F);
 
+  // Stepping forward updates both frame index and bond positions to frame 1
   controller.handleStepFrame(true);
   EXPECT_EQ(window().get_structure_3d_current_frame(), 1);
+  ASSERT_FALSE(controller.scene()->bonds().empty());
+  EXPECT_NEAR(controller.scene()->bonds()[0].start.x(), 0.5F, 1e-4F);
 
+  // Stepping backward restores frame 0 and updates bonds back to frame 0
   controller.handleStepFrame(false);
   EXPECT_EQ(window().get_structure_3d_current_frame(), 0);
+  ASSERT_FALSE(controller.scene()->bonds().empty());
+  EXPECT_NEAR(controller.scene()->bonds()[0].start.x(), 0.0F, 1e-4F);
 
+  // Seeking directly to frame 1 updates bond positions
   controller.handleSeekFrame(1);
   EXPECT_EQ(window().get_structure_3d_current_frame(), 1);
+  ASSERT_FALSE(controller.scene()->bonds().empty());
+  EXPECT_NEAR(controller.scene()->bonds()[0].start.x(), 0.5F, 1e-4F);
+
+  // Scaling cutoff updates bonds in scene
+  controller.updateBondCutoffScale(1.5);
+  ASSERT_FALSE(controller.scene()->bonds().empty());
 }
 
 TEST_F(Structure3DControllerTests, ActivationAndRendering) {

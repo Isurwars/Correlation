@@ -203,7 +203,7 @@ export component AppWindow inherits Window {
 
     // 3D Viewport properties
     in property <image> structure_3d_image;
-    in property <int> structure_3d_current_frame: 0;
+    in-out property <int> structure_3d_current_frame: 0;
     in property <int> structure_3d_total_frames: 0;
     in property <bool> structure_3d_bonds_enabled: true;
     in property <bool> structure_3d_wireframe_enabled: true;
@@ -686,7 +686,7 @@ export component AppWindow inherits Window {
                             }
 
                             structure_3d_image: root.structure_3d_image;
-                            structure_3d_current_frame: root.structure_3d_current_frame;
+                            structure_3d_current_frame <=> root.structure_3d_current_frame;
                             structure_3d_total_frames: root.structure_3d_total_frames;
                             structure_3d_bonds_enabled: root.structure_3d_bonds_enabled;
                             structure_3d_wireframe_enabled: root.structure_3d_wireframe_enabled;

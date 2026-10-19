@@ -62,6 +62,15 @@ public:
   }
 
   /**
+   * @brief Gets a shared pointer to the loaded trajectory.
+   * @return Shared pointer to const Trajectory, or nullptr if none loaded.
+   */
+  [[nodiscard]] std::shared_ptr<const correlation::core::Trajectory>
+  trajectoryShared() const noexcept {
+    return trajectory_;
+  }
+
+  /**
    * @brief Gets a pointer to the first cell frame.
    * @return Const pointer to Cell, or nullptr if none loaded.
    */
@@ -118,7 +127,7 @@ public:
    * @brief Injects an existing trajectory instance.
    * @param[in] traj Trajectory instance to own.
    */
-  void setTrajectory(std::unique_ptr<correlation::core::Trajectory> traj) noexcept {
+  void setTrajectory(std::shared_ptr<correlation::core::Trajectory> traj) noexcept {
     trajectory_ = std::move(traj);
   }
 
@@ -128,7 +137,7 @@ public:
   void clear() noexcept { trajectory_.reset(); }
 
 private:
-  std::unique_ptr<correlation::core::Trajectory> trajectory_;
+  std::shared_ptr<correlation::core::Trajectory> trajectory_;
 };
 
 } // namespace correlation::app

@@ -180,8 +180,8 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath,
         window_.set_file_loaded(true);
 
         // Atom Counts
-        auto atom_counts_map = loader_.getAtomCounts();
-        auto slint_atom_counts = std::make_shared<slint::VectorModel<AtomCount>>();
+        const auto atom_counts_map = loader_.getAtomCounts();
+        const auto slint_atom_counts = std::make_shared<slint::VectorModel<AtomCount>>();
         for (const auto &[symbol, count] : atom_counts_map) {
           slint_atom_counts->push_back({
               .symbol = slint::SharedString(symbol),
@@ -209,10 +209,7 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath,
           window_.set_analysis_options(opts);
         }
 
-        if (controller_.getStructure3DController() != nullptr) {
-          controller_.getStructure3DController()->setCell(*loader_.cell());
-          controller_.getStructure3DController()->set3DModeActive(true);
-        }
+        updateStructure3DView();
         window_.set_preview_active_tab(2);
 
         static_cast<void>(controller_.getInputValidator()->validateInputs());
@@ -230,6 +227,18 @@ void FileIOHandler::handleReloadFile() {
   if (!path.empty()) {
     startLoadingTrajectory(path);
   }
+}
+
+void FileIOHandler::updateStructure3DView() {
+  if (controller_.getStructure3DController() == nullptr) {
+    return;
+  }
+  if (loader_.trajectoryShared() != nullptr) {
+    controller_.getStructure3DController()->setTrajectory(loader_.trajectoryShared());
+  } else if (loader_.cell() != nullptr) {
+    controller_.getStructure3DController()->setCell(*loader_.cell());
+  }
+  controller_.getStructure3DController()->set3DModeActive(true);
 }
 
 void FileIOHandler::updateBoxDiagnostics(const core::Cell *cell) {

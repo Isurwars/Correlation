@@ -53,7 +53,7 @@ TrajectoryLoader::loadFile(const std::string &path, const ProgressCallback &prog
     bool is_trajectory = false;
     std::string const ext = std::filesystem::path(path).extension().string();
     if (!ext.empty()) {
-      auto *reader = correlation::readers::ReaderFactory::instance().getReaderForExtension(
+      const auto *reader = correlation::readers::ReaderFactory::instance().getReaderForExtension(
           {.extension = ext, .filename = path});
       if (reader != nullptr) {
         is_trajectory = reader->isTrajectory();
@@ -63,10 +63,10 @@ TrajectoryLoader::loadFile(const std::string &path, const ProgressCallback &prog
     }
 
     if (is_trajectory) {
-      trajectory_ = std::make_unique<correlation::core::Trajectory>(
+      trajectory_ = std::make_shared<correlation::core::Trajectory>(
           correlation::readers::readTrajectory(path, type, progress));
     } else {
-      trajectory_ = std::make_unique<correlation::core::Trajectory>();
+      trajectory_ = std::make_shared<correlation::core::Trajectory>();
       trajectory_->addFrame(correlation::readers::readStructure(path, type, progress));
     }
 

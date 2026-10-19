@@ -1970,8 +1970,8 @@
     "semantic_hash": ""
   },
   "include/app/services/FileIOHandler.hpp": {
-    "mtime": 1791928227.151385,
-    "ast_hash": "411dd3284a54d306ba02ac52c1dfe05a",
+    "mtime": 1792386107.731911,
+    "ast_hash": "5d568ba0c0e4f930afed2ca2a7b6d134",
     "semantic_hash": ""
   },
   "include/app/services/InputValidator.hpp": {
@@ -2025,8 +2025,8 @@
     "semantic_hash": ""
   },
   "src/app/core/AppController.cpp": {
-    "mtime": 1791927861.299485,
-    "ast_hash": "846360d260238443c5270cbf096f7c5e",
+    "mtime": 1792388049.9476113,
+    "ast_hash": "da7695c574c958a95d4aaed142e260fe",
     "semantic_hash": ""
   },
   "src/app/core/SettingsManager.cpp": {
@@ -2060,8 +2060,8 @@
     "semantic_hash": ""
   },
   "src/app/services/FileIOHandler.cpp": {
-    "mtime": 1791927819.5231833,
-    "ast_hash": "24c179030debb777028ea5c0b33e0978",
+    "mtime": 1792386135.384486,
+    "ast_hash": "cbae7ef3c31431140f2d660a5cfaaca5",
     "semantic_hash": ""
   },
   "src/app/services/InputValidator.cpp": {
@@ -2130,8 +2130,8 @@
     "semantic_hash": ""
   },
   "include/app/services/TrajectoryLoader.hpp": {
-    "mtime": 1790369990.542003,
-    "ast_hash": "eec2b625b96344ede07c2e48191b9456",
+    "mtime": 1792385749.3155925,
+    "ast_hash": "7f0f204c4ff998c8375e34e5ae9092c0",
     "semantic_hash": ""
   },
   "src/app/services/AnalysisDispatcher.cpp": {
@@ -2145,8 +2145,8 @@
     "semantic_hash": ""
   },
   "src/app/services/TrajectoryLoader.cpp": {
-    "mtime": 1790369924.3188376,
-    "ast_hash": "e936742daac1c54feda5e2eb0d993382",
+    "mtime": 1792386145.5303304,
+    "ast_hash": "3fcbf26f7206cb2478b0cf566abfca4a",
     "semantic_hash": ""
   },
   "tests/functional/app/ServiceIntegrationTests.cpp": {
@@ -2720,8 +2720,8 @@
     "semantic_hash": ""
   },
   "include/render3d/Scene3D.hpp": {
-    "mtime": 1791915871.3705392,
-    "ast_hash": "6a5abbf8833e7595884f358898f3f87e",
+    "mtime": 1792387850.7463539,
+    "ast_hash": "9fcefe46caf5a048b8d1162c42d03ab7",
     "semantic_hash": ""
   },
   "src/render3d/Camera3D.cpp": {
@@ -2730,8 +2730,8 @@
     "semantic_hash": ""
   },
   "src/render3d/Scene3D.cpp": {
-    "mtime": 1791915871.3805206,
-    "ast_hash": "17e015139b6e772eddb914eb71432083",
+    "mtime": 1792389761.629371,
+    "ast_hash": "7b96b4c354ba9ff8cd72f287dd7e2a1a",
     "semantic_hash": ""
   },
   "tests/unit/render3d/Camera3DTests.cpp": {
@@ -2820,8 +2820,8 @@
     "semantic_hash": ""
   },
   "include/render3d/TrajectoryStreamer.hpp": {
-    "mtime": 1791915871.3717377,
-    "ast_hash": "779a732f6805a63cecabd8b98232860d",
+    "mtime": 1792387880.3007867,
+    "ast_hash": "45af10bd4f7f85e0d72edd9c79054d73",
     "semantic_hash": ""
   },
   "src/render3d/LodController.cpp": {
@@ -2830,8 +2830,8 @@
     "semantic_hash": ""
   },
   "src/render3d/TrajectoryStreamer.cpp": {
-    "mtime": 1791915871.3819184,
-    "ast_hash": "da9777a7e6dffa4a3a826e7d38d24615",
+    "mtime": 1792387896.756473,
+    "ast_hash": "72ccd3846710d058ea2ad7ec5cf1bc17",
     "semantic_hash": ""
   },
   "tests/unit/render3d/LodControllerTests.cpp": {
@@ -2845,18 +2845,18 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/Structure3DController.hpp": {
-    "mtime": 1791918263.829357,
-    "ast_hash": "4a7dec0c0e3aa6df8643531fafef856a",
+    "mtime": 1792387932.8317897,
+    "ast_hash": "0c223fa03f374ad69926fd5cc2fbe2e2",
     "semantic_hash": ""
   },
   "src/app/viewmodel/Structure3DController.cpp": {
-    "mtime": 1791917731.6231992,
-    "ast_hash": "3f31e54fd37573bd6c65745cee519bbd",
+    "mtime": 1792387975.1239965,
+    "ast_hash": "a9b4ed596b993838f506a0ffd64216e1",
     "semantic_hash": ""
   },
   "tests/unit/app/Structure3DControllerTests.cpp": {
-    "mtime": 1791917433.899798,
-    "ast_hash": "af25ffb3d9eaa3bd1a48f049bf050354",
+    "mtime": 1792388368.8569093,
+    "ast_hash": "d222d050d5bef2a62181d975ba102fe3",
     "semantic_hash": ""
   },
   "Images/preview_v4.png": {
@@ -2907,6 +2907,11 @@
   "tests/benchmarks/CMakeLists.txt": {
     "mtime": 1792153083.376526,
     "ast_hash": "195a69545528612b92f5243c08b0a5ec",
+    "semantic_hash": ""
+  },
+  "ui/material/ui/icons/pause.svg": {
+    "mtime": 1792385793.1678758,
+    "ast_hash": "a554d260913f43a1f7bf6d8c64b39047",
     "semantic_hash": ""
   }
 }

@@ -39,27 +39,33 @@ public:
    * @param frame_index Zero-based frame index.
    * @param scene Target scene to update.
    * @param recompute_bonds If true, recalculates bond pairs for this frame.
+   * @param bond_cutoff_scale Multiplier for covalent radius bond cutoff.
    * @return True if frame exists and scene was updated.
    */
-  bool seekFrame(std::size_t frame_index, Scene3D &scene, bool recompute_bonds = false);
+  bool seekFrame(std::size_t frame_index, Scene3D &scene, bool recompute_bonds = false,
+                 double bond_cutoff_scale = 1.15);
 
   /**
    * @brief Advances to the next frame.
    * @param scene Target scene.
    * @param loop If true, loops back to frame 0 upon reaching the end.
    * @param recompute_bonds Whether to re-evaluate bonds.
+   * @param bond_cutoff_scale Multiplier for covalent radius bond cutoff.
    * @return True if advance succeeded.
    */
-  bool stepNext(Scene3D &scene, bool loop = true, bool recompute_bonds = false);
+  bool stepNext(Scene3D &scene, bool loop = true, bool recompute_bonds = false,
+                double bond_cutoff_scale = 1.15);
 
   /**
    * @brief Steps backward to the previous frame.
    * @param scene Target scene.
    * @param loop If true, wraps to the last frame from frame 0.
    * @param recompute_bonds Whether to re-evaluate bonds.
+   * @param bond_cutoff_scale Multiplier for covalent radius bond cutoff.
    * @return True if step succeeded.
    */
-  bool stepPrev(Scene3D &scene, bool loop = true, bool recompute_bonds = false);
+  bool stepPrev(Scene3D &scene, bool loop = true, bool recompute_bonds = false,
+                double bond_cutoff_scale = 1.15);
 
   [[nodiscard]] std::size_t currentFrameIndex() const noexcept { return current_frame_; }
   [[nodiscard]] std::size_t totalFrames() const noexcept;

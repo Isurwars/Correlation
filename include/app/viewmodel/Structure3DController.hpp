@@ -126,6 +126,12 @@ public:
    */
   void set3DModeActive(bool active);
 
+  /**
+   * @brief Updates the covalent radius scaling factor used for bond generation.
+   * @param cutoff_scale Multiplier for covalent radius bond cutoff.
+   */
+  void updateBondCutoffScale(double cutoff_scale);
+
   [[nodiscard]] bool is3DModeActive() const noexcept { return is_active_; }
   [[nodiscard]] const render3d::Camera3D &camera() const noexcept { return camera_; }
   [[nodiscard]] std::shared_ptr<const render3d::Scene3D> scene() const noexcept { return scene_; }
@@ -148,6 +154,7 @@ private:
   bool render_bonds_{true};
   bool render_wireframe_{true};
   bool is_interacting_{false};
+  double bond_cutoff_scale_{1.15};
 
   std::mutex mutex_;
   std::condition_variable cv_;

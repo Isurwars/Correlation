@@ -10,9 +10,7 @@
 
 #include "core/Cell.hpp"
 #include "render3d/ElementColors.hpp"
-#include "render3d/Math3D.hpp"
 #include <memory>
-#include <string>
 #include <vector>
 
 namespace correlation::render3d {
@@ -23,8 +21,8 @@ namespace correlation::render3d {
  */
 struct AtomInstance {
   math::Vector3<float> position; ///< World coordinates (Angstroms).
-  float radius{0.5f};            ///< Visualization radius (Angstroms).
-  float covalent_radius{0.75f};  ///< Physical covalent radius for bonding (Angstroms).
+  float radius{0.5F};            ///< Visualization radius (Angstroms).
+  float covalent_radius{0.75F};  ///< Physical covalent radius for bonding (Angstroms).
   RgbaColor color;               ///< CPK element color.
   uint32_t id{0};                ///< Atom index or identifier.
   int atomic_number{0};          ///< Atomic number (Z).
@@ -37,7 +35,7 @@ struct AtomInstance {
 struct BondInstance {
   math::Vector3<float> start; ///< Starting atom position.
   math::Vector3<float> end;   ///< Ending atom position.
-  float radius{0.12f};        ///< Cylinder visual radius.
+  float radius{0.12F};        ///< Cylinder visual radius.
   RgbaColor color;            ///< Bond color (interpolated or neutral).
 };
 
@@ -98,6 +96,12 @@ public:
                       double bond_cutoff_scale = 1.15);
 
   /**
+   * @brief Recomputes covalent bonds for current atomic coordinates.
+   * @param bond_cutoff_scale Scaling multiplier for covalent radius cutoff.
+   */
+  void recomputeBonds(double bond_cutoff_scale = 1.15);
+
+  /**
    * @brief Fast in-place update of atom coordinates from Cell atoms vector.
    * @param cell_atoms Source atom list.
    */
@@ -112,8 +116,8 @@ private:
   std::vector<AtomInstance> atoms_;
   std::vector<BondInstance> bonds_;
   std::vector<LineSegment> unit_cell_lines_;
-  math::Vector3<float> bounds_min_{0.0f, 0.0f, 0.0f};
-  math::Vector3<float> bounds_max_{0.0f, 0.0f, 0.0f};
+  math::Vector3<float> bounds_min_{0.0F, 0.0F, 0.0F};
+  math::Vector3<float> bounds_max_{0.0F, 0.0F, 0.0F};
 };
 
 } // namespace correlation::render3d

@@ -1,0 +1,248 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialTypography,
+    MaterialStyleMetrics,
+    MaterialText,
+    Icons,
+} from "../../../material/material.slint";
+
+export component TrajectoryPlaybackBar inherits Rectangle {
+    in-out property <int> current_frame: 0;
+    in property <int> total_frames: 0;
+    in-out property <bool> is_playing: false;
+    in property <duration> playback_interval: 50ms;
+
+    callback seek_frame(int);
+    callback step_frame(bool);
+
+    playback_timer := Timer {
+        interval: root.playback_interval;
+        running: root.is_playing && root.total_frames > 1;
+        triggered() => {
+            root.step_frame(true);
+        }
+    }
+
+    height: 46px;
+    border-radius: 23px;
+    background: MaterialPalette.surface_container_highest.with_alpha(92%);
+    border-width: 1.5px;
+    border-color: MaterialPalette.outline_variant.with_alpha(60%);
+    clip: false;
+
+    HorizontalLayout {
+        height: 100%;
+        padding-left: 12px;
+        padding-right: 14px;
+        spacing: 10px;
+
+        // Step Previous Button
+        TouchArea {
+            width: 30px;
+            height: 30px;
+            y: (parent.height - self.height) / 2;
+            mouse-cursor: pointer;
+            accessible-role: button;
+            accessible-label: "Previous Frame";
+            clicked => { root.step_frame(false); }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 15px;
+                background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
+                animate background { duration: 150ms; }
+
+                MaterialText {
+                    width: 100%;
+                    height: 100%;
+                    text: "⏮";
+                    font-size: 13px;
+                    color: MaterialPalette.on_surface;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        // Play / Pause Button
+        play_btn := TouchArea {
+            width: 32px;
+            height: 32px;
+            y: (parent.height - self.height) / 2;
+            mouse-cursor: pointer;
+            accessible-role: button;
+            accessible-label: root.is_playing ? "Pause Trajectory" : "Play Trajectory";
+            clicked => { root.is_playing = !root.is_playing; }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 16px;
+                background: play_btn.has-hover ? MaterialPalette.primary.darker(8%) : MaterialPalette.primary;
+                animate background { duration: 150ms; }
+
+                Image {
+                    width: 16px;
+                    height: 16px;
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
+                    source: root.is_playing ? Icons.pause : Icons.play_arrow;
+                    colorize: MaterialPalette.on_primary;
+                }
+            }
+        }
+
+        // Step Next Button
+        TouchArea {
+            width: 30px;
+            height: 30px;
+            y: (parent.height - self.height) / 2;
+            mouse-cursor: pointer;
+            accessible-role: button;
+            accessible-label: "Next Frame";
+            clicked => { root.step_frame(true); }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 15px;
+                background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
+                animate background { duration: 150ms; }
+
+                MaterialText {
+                    width: 100%;
+                    height: 100%;
+                    text: "⏭";
+                    font-size: 13px;
+                    color: MaterialPalette.on_surface;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        // Scrub Slider Container
+        slider_container := Rectangle {
+            horizontal-stretch: 1;
+            min-width: 100px;
+            height: 100%;
+            clip: false;
+
+            property <float> progress_ratio: root.total_frames > 1
+                ? Math.max(0.0, Math.min(1.0, root.current_frame / (root.total_frames - 1.0)))
+                : 0.0;
+
+            // Track background
+            track := Rectangle {
+                x: 0px;
+                y: (parent.height - self.height) / 2;
+                width: parent.width;
+                height: 6px;
+                border-radius: 3px;
+                background: MaterialPalette.surface_container_high;
+
+                // Active fill track
+                fill_bar := Rectangle {
+                    x: 0px;
+                    y: 0px;
+                    width: Math.max(0px, parent.width * slider_container.progress_ratio);
+                    height: 100%;
+                    border-radius: 3px;
+                    background: MaterialPalette.primary;
+                }
+            }
+
+            // Draggable Thumb
+            thumb := Rectangle {
+                property <length> thumb_size: slider_touch.has-hover || slider_touch.is_scrubbing || slider_touch.pressed ? 16px : 14px;
+                width: self.thumb_size;
+                height: self.thumb_size;
+                border-radius: self.thumb_size / 2;
+                x: Math.max(0px, Math.min(slider_container.width - self.width,
+                    slider_container.width * slider_container.progress_ratio - (self.width / 2)));
+                y: (slider_container.height - self.height) / 2;
+                background: MaterialPalette.primary;
+                border-width: 2px;
+                border-color: MaterialPalette.surface_container_lowest;
+
+                animate width { duration: 100ms; }
+                animate height { duration: 100ms; }
+                animate border-radius { duration: 100ms; }
+            }
+
+            // Slider Touch Area (on top of track and thumb)
+            slider_touch := TouchArea {
+                width: 100%;
+                height: 100%;
+                mouse-cursor: pointer;
+                accessible-role: slider;
+                accessible-label: "Trajectory Frame Slider";
+
+                property <bool> is_scrubbing: false;
+
+                function update_from_touch() {
+                    let w = self.width / 1px;
+                    if (w <= 0.0) {
+                        return;
+                    }
+                    let mx = self.mouse-x / 1px;
+                    let ratio = Math.max(0.0, Math.min(1.0, mx / w));
+                    let max_idx = root.total_frames > 1 ? (root.total_frames - 1) : 0;
+                    let target = Math.round(ratio * max_idx);
+                    root.current_frame = target;
+                    root.seek_frame(target);
+                }
+
+                pointer-event(event) => {
+                    if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                        self.is_scrubbing = true;
+                        self.update_from_touch();
+                    }
+                    if (event.kind == PointerEventKind.up || event.kind == PointerEventKind.cancel) {
+                        self.is_scrubbing = false;
+                    }
+                }
+
+                moved => {
+                    if (self.is_scrubbing || self.pressed) {
+                        self.update_from_touch();
+                    }
+                }
+
+                clicked => {
+                    self.update_from_touch();
+                }
+            }
+        }
+
+        // Frame Counter Badge
+        Rectangle {
+            height: 26px;
+            y: (parent.height - self.height) / 2;
+            width: counter_layout.preferred-width + 16px;
+            border-radius: 13px;
+            background: MaterialPalette.surface_container_high.with_alpha(80%);
+
+            counter_layout := HorizontalLayout {
+                padding-left: 8px;
+                padding-right: 8px;
+                alignment: center;
+
+                MaterialText {
+                    text: (root.current_frame + 1) + " / " + root.total_frames;
+                    font-size: 11px;
+                    font-weight: 500;
+                    color: MaterialPalette.on_surface_variant;
+                    vertical-alignment: center;
+                    horizontal-alignment: center;
+                }
+            }
+        }
+    }
+}

@@ -120,6 +120,9 @@ void Structure3DController::handleToggleBonds(bool enabled) {
   {
     const std::scoped_lock lock(mutex_);
     render_bonds_ = enabled;
+    if (render_bonds_ && scene_ != nullptr) {
+      scene_->recomputeBonds(bond_cutoff_scale_);
+    }
     render_pending_ = true;
   }
   window_.set_structure_3d_bonds_enabled(enabled);
@@ -140,14 +143,17 @@ void Structure3DController::handleSeekFrame(int frame_index) {
   if (frame_index < 0) {
     return;
   }
+  int actual_frame = frame_index;
   {
     const std::scoped_lock lock(mutex_);
     if (streamer_.totalFrames() > 0 && scene_ != nullptr) {
-      static_cast<void>(streamer_.seekFrame(static_cast<size_t>(frame_index), *scene_));
+      const auto target = std::min(static_cast<size_t>(frame_index), streamer_.totalFrames() - 1);
+      static_cast<void>(streamer_.seekFrame(target, *scene_, render_bonds_, bond_cutoff_scale_));
+      actual_frame = static_cast<int>(streamer_.currentFrameIndex());
       render_pending_ = true;
     }
   }
-  window_.set_structure_3d_current_frame(frame_index);
+  window_.set_structure_3d_current_frame(actual_frame);
   cv_.notify_one();
 }
 
@@ -157,9 +163,9 @@ void Structure3DController::handleStepFrame(bool forward) {
     const std::scoped_lock lock(mutex_);
     if (streamer_.totalFrames() > 0 && scene_ != nullptr) {
       if (forward) {
-        static_cast<void>(streamer_.stepNext(*scene_));
+        static_cast<void>(streamer_.stepNext(*scene_, true, render_bonds_, bond_cutoff_scale_));
       } else {
-        static_cast<void>(streamer_.stepPrev(*scene_));
+        static_cast<void>(streamer_.stepPrev(*scene_, true, render_bonds_, bond_cutoff_scale_));
       }
       current_idx = static_cast<int>(streamer_.currentFrameIndex());
       render_pending_ = true;
@@ -169,8 +175,23 @@ void Structure3DController::handleStepFrame(bool forward) {
   cv_.notify_one();
 }
 
+void Structure3DController::updateBondCutoffScale(double cutoff_scale) {
+  if (cutoff_scale <= 0.0) {
+    return;
+  }
+  {
+    const std::scoped_lock lock(mutex_);
+    bond_cutoff_scale_ = cutoff_scale;
+    if (scene_ != nullptr && render_bonds_) {
+      scene_->recomputeBonds(bond_cutoff_scale_);
+      render_pending_ = true;
+    }
+  }
+  cv_.notify_one();
+}
+
 void Structure3DController::setCell(const core::Cell &cell) {
-  auto new_scene = render3d::Scene3D::fromCell(cell);
+  auto new_scene = render3d::Scene3D::fromCell(cell, bond_cutoff_scale_, render_bonds_);
   {
     const std::scoped_lock lock(mutex_);
     scene_ = std::move(new_scene);
@@ -196,7 +217,7 @@ void Structure3DController::setTrajectory(std::shared_ptr<const core::Trajectory
     const std::scoped_lock lock(mutex_);
     if (total_frames > 0) {
       const auto &first_cell = trajectory->firstFrame();
-      scene_ = render3d::Scene3D::fromCell(first_cell);
+      scene_ = render3d::Scene3D::fromCell(first_cell, bond_cutoff_scale_, render_bonds_);
       if (scene_ != nullptr) {
         camera_.fitToBox(scene_->boundsMin(), scene_->boundsMax());
         if (engine_ != nullptr) {

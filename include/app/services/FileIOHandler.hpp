@@ -82,6 +82,11 @@ private:
   void updateFileMetadata(const std::string &filepath);
 
   /**
+   * @brief Updates 3D structure/trajectory view with loaded cell or trajectory.
+   */
+  void updateStructure3DView();
+
+  /**
    * @brief Executes export of active structural datasets based on the selected file path extension.
    * @param[in] filepath Absolute base path for writing files.
    */

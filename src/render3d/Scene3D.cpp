@@ -50,9 +50,15 @@ void generateBoxEdges(const std::array<math::Vector3<float>, 8> &vertices,
 
 void extractUnitCellLines(const math::Matrix3<real_t> &lattice,
                           std::vector<LineSegment> &out_lines) {
-  const math::Vector3<float> a_vec(lattice[0].x(), lattice[0].y(), lattice[0].z());
-  const math::Vector3<float> b_vec(lattice[1].x(), lattice[1].y(), lattice[1].z());
-  const math::Vector3<float> c_vec(lattice[2].x(), lattice[2].y(), lattice[2].z());
+  const math::Vector3<float> a_vec(static_cast<float>(lattice[0].x()),
+                                   static_cast<float>(lattice[0].y()),
+                                   static_cast<float>(lattice[0].z()));
+  const math::Vector3<float> b_vec(static_cast<float>(lattice[1].x()),
+                                   static_cast<float>(lattice[1].y()),
+                                   static_cast<float>(lattice[1].z()));
+  const math::Vector3<float> c_vec(static_cast<float>(lattice[2].x()),
+                                   static_cast<float>(lattice[2].y()),
+                                   static_cast<float>(lattice[2].z()));
 
   // Only generate unit cell wireframe if vectors are non-zero
   if (math::norm(a_vec) < 1e-4F && math::norm(b_vec) < 1e-4F && math::norm(c_vec) < 1e-4F) {
@@ -82,7 +88,8 @@ void extractAtoms(const std::vector<core::Atom> &cell_atoms, std::vector<AtomIns
     const auto pos = atom.position();
 
     out_atoms.push_back(AtomInstance{
-        .position = math::Vector3<float>(pos.x(), pos.y(), pos.z()),
+        .position = math::Vector3<float>(static_cast<float>(pos.x()), static_cast<float>(pos.y()),
+                                         static_cast<float>(pos.z())),
         .radius = getElementDisplayRadius(symbol, 0.35F),
         .covalent_radius = getElementDisplayRadius(symbol, 1.0F),
         .color = getElementColor(symbol),
@@ -174,8 +181,14 @@ void Scene3D::updateAtomPositions(const std::vector<core::Atom> &cell_atoms) {
   const auto update_count = std::min(atoms_.size(), cell_atoms.size());
   for (std::size_t i = 0; i < update_count; ++i) {
     const auto pos = cell_atoms[i].position();
-    atoms_[i].position = math::Vector3<float>(pos.x(), pos.y(), pos.z());
+    atoms_[i].position = math::Vector3<float>(
+        static_cast<float>(pos.x()), static_cast<float>(pos.y()), static_cast<float>(pos.z()));
   }
+}
+
+void Scene3D::recomputeBonds(double bond_cutoff_scale) {
+  bonds_.clear();
+  extractBonds(atoms_, bond_cutoff_scale, bonds_);
 }
 
 bool Scene3D::updateFromCell(const core::Cell &cell, bool recompute_bonds,
@@ -188,7 +201,7 @@ bool Scene3D::updateFromCell(const core::Cell &cell, bool recompute_bonds,
     extractUnitCellLines(cell.latticeVectors(), unit_cell_lines_);
     extractAtoms(cell_atoms, atoms_);
     if (recompute_bonds) {
-      extractBonds(atoms_, bond_cutoff_scale, bonds_);
+      recomputeBonds(bond_cutoff_scale);
     }
     updateBounds();
     return false;
@@ -200,8 +213,7 @@ bool Scene3D::updateFromCell(const core::Cell &cell, bool recompute_bonds,
   extractUnitCellLines(cell.latticeVectors(), unit_cell_lines_);
 
   if (recompute_bonds) {
-    bonds_.clear();
-    extractBonds(atoms_, bond_cutoff_scale, bonds_);
+    recomputeBonds(bond_cutoff_scale);
   }
 
   updateBounds();
