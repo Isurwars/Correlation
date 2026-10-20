@@ -141,6 +141,11 @@ void DistributionFunctions::addHistogram(const std::string &name, Histogram &&hi
   histograms_[name] = std::move(histogram);
 }
 
+bool DistributionFunctions::removeHistogram(const std::string &name) {
+  const std::scoped_lock lock(histogram_mutex_);
+  return histograms_.erase(name) > 0;
+}
+
 std::vector<std::string> DistributionFunctions::getAvailableHistograms() const {
   const std::scoped_lock lock(histogram_mutex_);
   std::vector<std::string> keys;
