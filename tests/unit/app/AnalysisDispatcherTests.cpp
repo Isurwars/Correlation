@@ -160,9 +160,9 @@ TEST(AnalysisDispatcherTests, DistributionFunctionsRemoveHistogram) {
   correlation::analysis::DistributionFunctions dist_funcs(cell);
 
   correlation::analysis::Histogram hist;
-  hist.name = "TestHist";
+  hist.title = "TestHist";
   dist_funcs.addHistogram("TestHist", std::move(hist));
-  EXPECT_NE(dist_funcs.getHistogram("TestHist").name.empty(), true);
+  EXPECT_FALSE(dist_funcs.getHistogram("TestHist").title.empty());
 
   EXPECT_TRUE(dist_funcs.removeHistogram("TestHist"));
   EXPECT_FALSE(dist_funcs.removeHistogram("TestHist"));
@@ -203,8 +203,8 @@ TEST(AnalysisDispatcherTests, SelectiveRecalculationPreservesInvariantHistograms
   opts.active_calculators["PAD"] = true;
 
   // First full run with bonding cutoff permitting Si-Si bonds (e.g. 0 to 3.0 Å)
-  opts.bond_cutoffs[0][0] = {0.0, 3.0};
-  auto run_res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);
+  opts.bond_cutoffs = {{{.min_sq = 0.0, .max_sq = 3.0 * 3.0}}};
+  const auto run_res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);
   ASSERT_TRUE(run_res.has_value()) << (run_res ? "" : run_res.error());
 
   const auto *initial_gr = dispatcher.getHistogram("g_r");
@@ -216,10 +216,10 @@ TEST(AnalysisDispatcherTests, SelectiveRecalculationPreservesInvariantHistograms
   const auto initial_pad_partials = initial_pad->partials;
 
   // Now change cutoffs to cut off all bonds (0 to 1.0 Å, shorter than Si-Si 2.35 Å)
-  opts.bond_cutoffs[0][0] = {0.0, 1.0};
+  opts.bond_cutoffs = {{{.min_sq = 0.0, .max_sq = 1.0 * 1.0}}};
 
   // Perform selective recalculation
-  auto recalc_res = dispatcher.runSelectiveRecalculation(*loader.trajectoryMut(), opts);
+  const auto recalc_res = dispatcher.runSelectiveRecalculation(*loader.trajectoryMut(), opts);
   ASSERT_TRUE(recalc_res.has_value()) << (recalc_res ? "" : recalc_res.error());
 
   // Verify distance-based g_r is intact and unchanged
@@ -249,7 +249,7 @@ TEST(AnalysisDispatcherTests, SelectiveRecalculationNoOpWhenNoBondDependentCalcu
   // Selective recalculation with only distance-based active calculator should be a no-op
   opts.active_calculators.clear();
   opts.active_calculators["RDF"] = true;
-  auto recalc_res = dispatcher.runSelectiveRecalculation(*loader.trajectoryMut(), opts);
+  const auto recalc_res = dispatcher.runSelectiveRecalculation(*loader.trajectoryMut(), opts);
   EXPECT_TRUE(recalc_res.has_value());
 }
 

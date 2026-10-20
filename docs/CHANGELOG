@@ -1,6 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.0.1] - 2026-10-20
+
+### Interactive Cutoff Calibration & Domain Presets
+- **Interactive Cutoff Calibration UI (`CutoffCalibrationBar`, `CutoffCalibrationOverlay`)**: Added interactive visual calibration overlay on RDF plots in Slint UI with draggable threshold sliders, live preview markers, and species-pair selectors (`1bd8f285`).
+- **Cutoff Sanity Verification (`CutoffSanityChecker`, `SanityBadge`)**: Introduced real-time physical validation checking bond cutoff thresholds against covalent radii bounds, overlapping atomic core radii, and coordination extremes with visual status badges (`0f58f6c5`).
+- **Domain-Specific Preset System (`DomainPresetRegistry`)**: Added curated domain presets (Silicates, Borates, Metallic Glasses, MOFs, Zeolites, Chalcogenides, and Aqueous Solutions) providing standard cutoff envelopes and recommended calculator configurations (`0f58f6c5`).
+- **Automated Coordination Shell Detection (`FirstMinimumDetector`)**: Implemented hybrid curvature zero-crossing and trough search algorithm with peak onset detection to automatically calculate coordination shell cutoffs directly from RDF partials (`3310d8aa`).
+
+### High-Performance Analysis Engine & Workflow
+- **Selective Recalculation Engine (`AnalysisDispatcher`)**: Added `runSelectiveRecalculation` for bond-dependent calculators (`PAD`, `BAD`, `DAD`, `CN`, `RD`, `CNA`, `Cluster Analysis`, `Hydrogen Bond Distribution`), preserving cached distance-based distributions (`g(r)`, `S(Q)`, `XRD`, dynamic properties) when cutoffs are adjusted (`6ac7abc9`).
+- **Bond-Dependent Calculator Classification**: Added `isBondDependentCalculator` and `getBondDependentCalculatorNames` classification queries in `AnalysisDispatcher` (`6ac7abc9`).
+
+### Bug Fixes & Portability
+- **AppleClang Aggregate Initialization**: Fixed `ElementPool` struct allocation in `Atom.hpp` using brace initialization to resolve AppleClang / macOS ARM64 compilation failures without C++20 aggregate parenthesis initialization (P0960R3) (`65701e60`).
+- **Unit Test Stability**: Fixed `Histogram::title` member access in `DistributionFunctionsRemoveHistogram` and properly initialized `BondCutoffMatrix` dimensions in `SelectiveRecalculationPreservesInvariantHistograms` tests.
+- **Project Milestone**: Bumped project version to `4.0.1`.
+
 ## [4.0.0] - 2026-10-19
 
 ### Interactive 3D Molecular Viewport & Material MVVM Integration
