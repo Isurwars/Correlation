@@ -596,21 +596,119 @@ TEST_F(RDFCalculatorTests, PrimitiveCellRDFComputesSelfImages) {
   EXPECT_GT(total_counts, 0.0);
 }
 
-TEST_F(RDFCalculatorTests, MultiCalculatorFullAnalysisAsymptotesToOne) {
-  std::string filepath;
+[[nodiscard]] std::string resolveExamplePath(std::string_view relative_subpath) {
   for (const auto &prefix : {"../../", "../", "./"}) {
-    const std::string candidate = prefix + std::string("examples/a-PdSi/a-PdSi.car");
+    const std::string candidate = prefix + std::string(relative_subpath);
     if (std::filesystem::exists(candidate)) {
-      filepath = candidate;
-      break;
+      return candidate;
     }
   }
+  return {};
+}
+
+[[nodiscard]] real_t computeTailAverage(std::span<const real_t> values, size_t tail_bins = 10) {
+  if (values.empty()) {
+    return 0.0;
+  }
+  const size_t check_start = values.size() > tail_bins ? values.size() - tail_bins : 0;
+  real_t sum = 0.0;
+  for (size_t i = check_start; i < values.size(); ++i) {
+    sum += values[i];
+  }
+  return sum / static_cast<real_t>(values.size() - check_start);
+}
+
+TEST_F(RDFCalculatorTests, AmorphousPalladiumSingleFrameAsymptotesToOneAt20A) {
+  const std::string filepath = resolveExamplePath("examples/a-Pd/a-Pd.car");
+  if (filepath.empty()) {
+    GTEST_SKIP() << "Example file a-Pd.car not found";
+  }
+
+  correlation::app::TrajectoryLoader loader;
+  ASSERT_TRUE(loader.loadFile(filepath).has_value()) << "Failed to load " << filepath;
+  ASSERT_EQ(loader.getFrameCount(), 1);
+
+  correlation::app::AnalysisDispatcher dispatcher;
+  correlation::app::ProgramOptions opts;
+  opts.input_file = filepath;
+  opts.r_max = 20.0;
+  opts.r_bin_width = 0.05;
+  opts.smoothing = true;
+  opts.smoothing_sigma = 0.1;
+  opts.active_calculators["RDF"] = true;
+
+  auto res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);
+  ASSERT_TRUE(res.has_value()) << "Analysis failed for " << filepath;
+
+  const auto *dist_functions = dispatcher.getDistributionFunctions();
+  ASSERT_NE(dist_functions, nullptr);
+
+  const auto &g_r = dist_functions->getHistogram("g_r");
+  ASSERT_TRUE(g_r.partials.contains("Total"));
+  const auto &total_vals = g_r.partials.at("Total");
+  ASSERT_FALSE(total_vals.empty());
+
+  const real_t avg_tail = computeTailAverage(total_vals, 10);
+  EXPECT_NEAR(avg_tail, 1.0, 0.05);
+
+  const auto &g_unw = dist_functions->getHistogram("g_r_unweighted");
+  ASSERT_TRUE(g_unw.partials.contains("Pd-Pd"));
+  const real_t unw_avg = computeTailAverage(g_unw.partials.at("Pd-Pd"), 10);
+  EXPECT_NEAR(unw_avg, 1.0, 0.05);
+}
+
+TEST_F(RDFCalculatorTests, LiquidBismuthLast100FramesMeanAsymptotesToOneAt20A) {
+  const std::string filepath = resolveExamplePath("examples/l-Bi/l-Bi.arc");
+  if (filepath.empty()) {
+    GTEST_SKIP() << "Example file l-Bi.arc not found";
+  }
+
+  correlation::app::TrajectoryLoader loader;
+  ASSERT_TRUE(loader.loadFile(filepath).has_value()) << "Failed to load " << filepath;
+  ASSERT_GE(loader.getFrameCount(), 100);
+
+  correlation::app::AnalysisDispatcher dispatcher;
+  correlation::app::ProgramOptions opts;
+  opts.input_file = filepath;
+  opts.min_frame = static_cast<int>(loader.getFrameCount()) - 100;
+  opts.max_frame = -1;
+  opts.r_max = 20.0;
+  opts.r_bin_width = 0.05;
+  opts.smoothing = true;
+  opts.smoothing_sigma = 0.1;
+  opts.active_calculators["RDF"] = true;
+
+  auto res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);
+  ASSERT_TRUE(res.has_value()) << "Analysis failed for " << filepath;
+
+  const auto *dist_functions = dispatcher.getDistributionFunctions();
+  ASSERT_NE(dist_functions, nullptr);
+
+  const auto &g_r = dist_functions->getHistogram("g_r");
+  ASSERT_TRUE(g_r.partials.contains("Total"));
+  const auto &total_vals = g_r.partials.at("Total");
+  ASSERT_FALSE(total_vals.empty());
+
+  // Liquid Bi has L ~ 19.55 A; at r = 20 A finite-size PBC density fluctuations yield ~1.07
+  const real_t avg_tail = computeTailAverage(total_vals, 10);
+  EXPECT_NEAR(avg_tail, 1.0, 0.08);
+
+  const auto &g_unw = dist_functions->getHistogram("g_r_unweighted");
+  ASSERT_TRUE(g_unw.partials.contains("Bi-Bi"));
+  const real_t unw_avg = computeTailAverage(g_unw.partials.at("Bi-Bi"), 10);
+  EXPECT_NEAR(unw_avg, 1.0, 0.08);
+}
+
+TEST_F(RDFCalculatorTests,
+       AmorphousPdSiAlloyPartialsMatchAshcroftWeightsAndTotalAsymptotesToOneAt20A) {
+  const std::string filepath = resolveExamplePath("examples/a-PdSi/a-PdSi.car");
   if (filepath.empty()) {
     GTEST_SKIP() << "Example file a-PdSi.car not found";
   }
 
   correlation::app::TrajectoryLoader loader;
   ASSERT_TRUE(loader.loadFile(filepath).has_value()) << "Failed to load " << filepath;
+  ASSERT_EQ(loader.getFrameCount(), 1);
 
   correlation::app::AnalysisDispatcher dispatcher;
   correlation::app::ProgramOptions opts;
@@ -636,23 +734,28 @@ TEST_F(RDFCalculatorTests, MultiCalculatorFullAnalysisAsymptotesToOne) {
   const auto &total_vals = g_r.partials.at("Total");
   ASSERT_FALSE(total_vals.empty());
 
-  // Check that at large r (last 10 bins, r ~ 19.5 - 20.0 A), Total g(r) asymptotes close to 1.0
-  const size_t check_start = total_vals.size() > 10 ? total_vals.size() - 10 : 0;
-  real_t sum_tail = 0.0;
-  for (size_t i = check_start; i < total_vals.size(); ++i) {
-    sum_tail += total_vals[i];
-  }
-  const real_t avg_tail = sum_tail / static_cast<real_t>(total_vals.size() - check_start);
-  EXPECT_NEAR(avg_tail, 1.0, 0.05);
+  // 1. Check Total tends to 1 at r = 20 A
+  const real_t total_avg = computeTailAverage(total_vals, 10);
+  EXPECT_NEAR(total_avg, 1.0, 0.05);
 
+  // 2. Check each weighted partial in g_r tends to its corresponding Ashcroft weight
+  const auto &ashcroft_weights = dist_functions->getAshcroftWeights();
+  ASSERT_FALSE(ashcroft_weights.empty());
+
+  for (const auto &[key, expected_weight] : ashcroft_weights) {
+    ASSERT_TRUE(g_r.partials.contains(key)) << "Missing partial: " << key;
+    const real_t partial_avg = computeTailAverage(g_r.partials.at(key), 10);
+    EXPECT_NEAR(partial_avg, expected_weight, 0.05)
+        << "Weighted partial " << key << " does not asymptote to Ashcroft weight "
+        << expected_weight;
+  }
+
+  // 3. Check each unweighted partial in g_r_unweighted tends to 1.0
   const auto &g_unw = dist_functions->getHistogram("g_r_unweighted");
-  for (const auto &[key, partial_vals] : g_unw.partials) {
-    real_t partial_sum = 0.0;
-    for (size_t i = check_start; i < partial_vals.size(); ++i) {
-      partial_sum += partial_vals[i];
-    }
-    const real_t partial_avg = partial_sum / static_cast<real_t>(partial_vals.size() - check_start);
-    EXPECT_NEAR(partial_avg, 1.0, 0.10) << "Unweighted partial " << key << " does not tend to 1.0";
+  for (const auto &[key, expected_weight] : ashcroft_weights) {
+    ASSERT_TRUE(g_unw.partials.contains(key)) << "Missing unweighted partial: " << key;
+    const real_t unw_avg = computeTailAverage(g_unw.partials.at(key), 10);
+    EXPECT_NEAR(unw_avg, 1.0, 0.10) << "Unweighted partial " << key << " does not asymptote to 1.0";
   }
 }
 
