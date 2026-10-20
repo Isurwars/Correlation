@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.0.2] - 2026-10-20
+
+### ♻️ Code Refactoring & Concurrency Safety
+- **Thread-Isolated Distance Calculation (`DistanceCalculator`, `DistributionFunctions`)**: Eliminated thread-local / global distance computation workspace state, guaranteeing pure re-entrancy and thread isolation during concurrent multi-calculator runs (`8cca35cd`).
+
+### 🧪 Testing & Validation
+- **Asymptotic RDF Long-Range Verification (`RDFCalculatorTests`)**: Added automated validation tests across amorphous and liquid trajectories (`a-Pd`, `l-Bi`, `a-PdSi`), ensuring that total and unweighted pair distribution functions converge to unity ($g(r) \to 1.0$) and weighted partials asymptote to their theoretical Ashcroft weights (`a39fc5fc`).
+- **Crystal Lattice RDF Baselines (`RDFCalculatorTests`)**: Added comprehensive RDF verification tests for canonical crystal structures (FCC Cu, BCC Fe, Diamond Si, Rock-salt NaCl) (`798ddcd4`).
+- **Internal Linkage & Code Quality Hardening**: Enforced internal linkage via anonymous namespaces for test-local helper utilities (`resolveExamplePath`, `computeTailAverage`), resolving `clang-tidy` `misc-use-internal-linkage` gates.
+
+### 🧹 Maintenance
+- **Project Milestone**: Bumped project version to `4.0.2` across build targets, packages, documentation, and UI metadata.
+
 ## [4.0.1] - 2026-10-20
 
 ### Interactive Cutoff Calibration & Domain Presets
