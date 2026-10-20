@@ -114,7 +114,8 @@ public:
       return iter->second.get();
     }
 
-    auto new_element = std::make_unique<Element>(std::string(symbol), elem_id);
+    auto new_element =
+        std::unique_ptr<Element>(new Element{.symbol = std::string(symbol), .id = elem_id});
     const Element *ptr = new_element.get();
     pool.emplace(key, std::move(new_element));
     return ptr;
