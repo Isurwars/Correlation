@@ -50,15 +50,9 @@ void generateBoxEdges(const std::array<math::Vector3<float>, 8> &vertices,
 
 void extractUnitCellLines(const math::Matrix3<real_t> &lattice,
                           std::vector<LineSegment> &out_lines) {
-  const math::Vector3<float> a_vec(static_cast<float>(lattice[0].x()),
-                                   static_cast<float>(lattice[0].y()),
-                                   static_cast<float>(lattice[0].z()));
-  const math::Vector3<float> b_vec(static_cast<float>(lattice[1].x()),
-                                   static_cast<float>(lattice[1].y()),
-                                   static_cast<float>(lattice[1].z()));
-  const math::Vector3<float> c_vec(static_cast<float>(lattice[2].x()),
-                                   static_cast<float>(lattice[2].y()),
-                                   static_cast<float>(lattice[2].z()));
+  const math::Vector3<float> a_vec(lattice[0]);
+  const math::Vector3<float> b_vec(lattice[1]);
+  const math::Vector3<float> c_vec(lattice[2]);
 
   // Only generate unit cell wireframe if vectors are non-zero
   if (math::norm(a_vec) < 1e-4F && math::norm(b_vec) < 1e-4F && math::norm(c_vec) < 1e-4F) {
@@ -81,15 +75,24 @@ void extractUnitCellLines(const math::Matrix3<real_t> &lattice,
   generateBoxEdges(vertices, out_lines);
 }
 
-void extractAtoms(const std::vector<core::Atom> &cell_atoms, std::vector<AtomInstance> &out_atoms) {
+void extractAtoms(const std::vector<core::Atom> &cell_atoms, const math::Matrix3<real_t> &lattice,
+                  const math::Matrix3<real_t> &inv_lattice, bool has_lattice, bool in_cell,
+                  std::vector<AtomInstance> &out_atoms) {
   out_atoms.reserve(cell_atoms.size());
   for (const auto &atom : cell_atoms) {
     const std::string_view symbol = atom.element().symbol;
-    const auto pos = atom.position();
+    auto pos = atom.position();
+
+    if (in_cell && has_lattice) {
+      math::Vector3<real_t> frac_pos = inv_lattice * pos;
+      frac_pos.x() -= std::floor(frac_pos.x());
+      frac_pos.y() -= std::floor(frac_pos.y());
+      frac_pos.z() -= std::floor(frac_pos.z());
+      pos = lattice * frac_pos;
+    }
 
     out_atoms.push_back(AtomInstance{
-        .position = math::Vector3<float>(static_cast<float>(pos.x()), static_cast<float>(pos.y()),
-                                         static_cast<float>(pos.z())),
+        .position = math::Vector3<float>(pos),
         .radius = getElementDisplayRadius(symbol, 0.35F),
         .covalent_radius = getElementDisplayRadius(symbol, 1.0F),
         .color = getElementColor(symbol),
@@ -125,6 +128,145 @@ void extractBonds(const std::vector<AtomInstance> &atoms, double cutoff_scale,
   }
 }
 
+bool clipTest(float param_p, float param_q, float &t_min, float &t_max) noexcept {
+  if (param_p < 0.0F) {
+    const float ratio = param_q / param_p;
+    if (ratio > t_max) {
+      return false;
+    }
+    t_min = std::max(ratio, t_min);
+  } else if (param_p > 0.0F) {
+    const float ratio = param_q / param_p;
+    if (ratio < t_min) {
+      return false;
+    }
+    t_max = std::min(ratio, t_max);
+  } else if (param_q < 0.0F) {
+    return false;
+  }
+  return true;
+}
+
+bool clipSegmentToUnitBox(const math::Vector3<float> &seg_start,
+                          const math::Vector3<float> &seg_end, math::Vector3<float> &out_start,
+                          math::Vector3<float> &out_end) noexcept {
+  float t_min = 0.0F;
+  float t_max = 1.0F;
+  const float delta_x = seg_end.x() - seg_start.x();
+  const float delta_y = seg_end.y() - seg_start.y();
+  const float delta_z = seg_end.z() - seg_start.z();
+
+  const bool inside = clipTest(-delta_x, seg_start.x(), t_min, t_max) &&
+                      clipTest(delta_x, 1.0F - seg_start.x(), t_min, t_max) &&
+                      clipTest(-delta_y, seg_start.y(), t_min, t_max) &&
+                      clipTest(delta_y, 1.0F - seg_start.y(), t_min, t_max) &&
+                      clipTest(-delta_z, seg_start.z(), t_min, t_max) &&
+                      clipTest(delta_z, 1.0F - seg_start.z(), t_min, t_max) && (t_min <= t_max);
+
+  if (!inside) {
+    return false;
+  }
+
+  out_start = math::Vector3<float>(seg_start.x() + t_min * delta_x, seg_start.y() + t_min * delta_y,
+                                   seg_start.z() + t_min * delta_z);
+  out_end = math::Vector3<float>(seg_start.x() + t_max * delta_x, seg_start.y() + t_max * delta_y,
+                                 seg_start.z() + t_max * delta_z);
+  return true;
+}
+
+math::Vector3<float> toCartesian(const math::Vector3<float> &frac,
+                                 const math::Matrix3<real_t> &lattice) noexcept {
+  return math::Vector3<float>(lattice[0] * frac.x() + lattice[1] * frac.y() +
+                              lattice[2] * frac.z());
+}
+
+void appendInCellBonds(const AtomInstance &atom_i, const AtomInstance &atom_j,
+                       const math::Vector3<float> &frac_i, const math::Vector3<float> &frac_j,
+                       const math::Matrix3<real_t> &lattice, double cutoff_scale,
+                       std::vector<BondInstance> &out_bonds) {
+  const auto max_cutoff =
+      static_cast<float>((atom_i.covalent_radius + atom_j.covalent_radius) * cutoff_scale);
+
+  const math::Vector3<float> delta = frac_j - frac_i;
+  const float shift_x = -std::round(delta.x());
+  const float shift_y = -std::round(delta.y());
+  const float shift_z = -std::round(delta.z());
+  const math::Vector3<float> shift_vec(shift_x, shift_y, shift_z);
+
+  const math::Vector3<float> mic_delta = delta + shift_vec;
+  const math::Vector3<float> cart_diff = toCartesian(mic_delta, lattice);
+
+  const float dist = math::norm(cart_diff);
+  if (dist < K_MIN_BOND_DISTANCE || dist > max_cutoff) {
+    return;
+  }
+
+  // Intra-cell bond (no periodic boundary crossing)
+  if (std::abs(shift_x) < 0.5F && std::abs(shift_y) < 0.5F && std::abs(shift_z) < 0.5F) {
+    out_bonds.push_back(BondInstance{
+        .start = atom_i.position,
+        .end = atom_j.position,
+        .radius = 0.08F,
+        .color = K_DEFAULT_BOND_COLOR,
+    });
+    return;
+  }
+
+  // Crossing bond: create boundary-clipped stubs
+  math::Vector3<float> clipped_start;
+  math::Vector3<float> clipped_end;
+  if (clipSegmentToUnitBox(frac_i, frac_j + shift_vec, clipped_start, clipped_end)) {
+    out_bonds.push_back(BondInstance{
+        .start = atom_i.position,
+        .end = toCartesian(clipped_end, lattice),
+        .radius = 0.08F,
+        .color = K_DEFAULT_BOND_COLOR,
+    });
+  }
+
+  if (clipSegmentToUnitBox(frac_j, frac_i - shift_vec, clipped_start, clipped_end)) {
+    out_bonds.push_back(BondInstance{
+        .start = atom_j.position,
+        .end = toCartesian(clipped_end, lattice),
+        .radius = 0.08F,
+        .color = K_DEFAULT_BOND_COLOR,
+    });
+  }
+}
+
+void extractInCellBonds(const std::vector<AtomInstance> &atoms,
+                        const math::Matrix3<real_t> &lattice,
+                        const math::Matrix3<real_t> &inv_lattice, double cutoff_scale,
+                        std::vector<BondInstance> &out_bonds) {
+  if (atoms.size() > K_MAX_ATOMS_FOR_FULL_BONDS) {
+    return;
+  }
+
+  const auto num_atoms = atoms.size();
+  std::vector<math::Vector3<float>> frac_coords;
+  frac_coords.reserve(num_atoms);
+
+  for (const auto &atom : atoms) {
+    const math::Vector3<real_t> cart(atom.position.x(), atom.position.y(), atom.position.z());
+    math::Vector3<real_t> frac_raw = inv_lattice * cart;
+    frac_raw.x() -= std::floor(frac_raw.x());
+    frac_raw.y() -= std::floor(frac_raw.y());
+    frac_raw.z() -= std::floor(frac_raw.z());
+    const auto frac_float = math::Vector3<float>(frac_raw);
+    const float clamped_x = std::clamp(frac_float.x(), 0.0F, 0.999999F);
+    const float clamped_y = std::clamp(frac_float.y(), 0.0F, 0.999999F);
+    const float clamped_z = std::clamp(frac_float.z(), 0.0F, 0.999999F);
+    frac_coords.emplace_back(clamped_x, clamped_y, clamped_z);
+  }
+
+  for (std::size_t i = 0; i < num_atoms; ++i) {
+    for (std::size_t j = i + 1; j < num_atoms; ++j) {
+      appendInCellBonds(atoms[i], atoms[j], frac_coords[i], frac_coords[j], lattice, cutoff_scale,
+                        out_bonds);
+    }
+  }
+}
+
 } // namespace
 
 void Scene3D::clear() noexcept {
@@ -133,6 +275,8 @@ void Scene3D::clear() noexcept {
   unit_cell_lines_.clear();
   bounds_min_ = math::Vector3<float>(0.0F, 0.0F, 0.0F);
   bounds_max_ = math::Vector3<float>(0.0F, 0.0F, 0.0F);
+  has_lattice_ = false;
+  in_cell_ = false;
 }
 
 void Scene3D::addAtom(const AtomInstance &atom) { atoms_.push_back(atom); }
@@ -177,43 +321,61 @@ void Scene3D::updateBounds() noexcept {
   bounds_max_ = math::Vector3<float>(max_x, max_y, max_z);
 }
 
-void Scene3D::updateAtomPositions(const std::vector<core::Atom> &cell_atoms) {
+void Scene3D::updateAtomPositions(const std::vector<core::Atom> &cell_atoms, bool in_cell) {
+  in_cell_ = in_cell;
   const auto update_count = std::min(atoms_.size(), cell_atoms.size());
   for (std::size_t i = 0; i < update_count; ++i) {
-    const auto pos = cell_atoms[i].position();
-    atoms_[i].position = math::Vector3<float>(
-        static_cast<float>(pos.x()), static_cast<float>(pos.y()), static_cast<float>(pos.z()));
+    auto pos = cell_atoms[i].position();
+    if (in_cell_ && has_lattice_) {
+      math::Vector3<real_t> frac_pos = inv_lattice_vectors_ * pos;
+      frac_pos.x() -= std::floor(frac_pos.x());
+      frac_pos.y() -= std::floor(frac_pos.y());
+      frac_pos.z() -= std::floor(frac_pos.z());
+      pos = lattice_vectors_ * frac_pos;
+    }
+    atoms_[i].position = math::Vector3<float>(pos);
   }
 }
 
-void Scene3D::recomputeBonds(double bond_cutoff_scale) {
+void Scene3D::recomputeBonds(double bond_cutoff_scale, bool in_cell) {
+  in_cell_ = in_cell;
   bonds_.clear();
-  extractBonds(atoms_, bond_cutoff_scale, bonds_);
+  if (in_cell_ && has_lattice_) {
+    extractInCellBonds(atoms_, lattice_vectors_, inv_lattice_vectors_, bond_cutoff_scale, bonds_);
+  } else {
+    extractBonds(atoms_, bond_cutoff_scale, bonds_);
+  }
 }
 
-bool Scene3D::updateFromCell(const core::Cell &cell, bool recompute_bonds,
-                             double bond_cutoff_scale) {
+bool Scene3D::updateFromCell(const core::Cell &cell, bool recompute_bonds, double bond_cutoff_scale,
+                             bool in_cell) {
+  lattice_vectors_ = cell.latticeVectors();
+  inv_lattice_vectors_ = cell.inverseLatticeVectors();
+  has_lattice_ = (cell.volume() > 1e-4);
+  in_cell_ = in_cell;
+
   const auto &cell_atoms = cell.atoms();
   if (atoms_.size() != cell_atoms.size()) {
     unit_cell_lines_.clear();
     atoms_.clear();
     bonds_.clear();
-    extractUnitCellLines(cell.latticeVectors(), unit_cell_lines_);
-    extractAtoms(cell_atoms, atoms_);
+    extractUnitCellLines(lattice_vectors_, unit_cell_lines_);
+    extractAtoms(cell_atoms, lattice_vectors_, inv_lattice_vectors_, has_lattice_, in_cell_,
+                 atoms_);
     if (recompute_bonds) {
-      recomputeBonds(bond_cutoff_scale);
+      recomputeBonds(bond_cutoff_scale, in_cell_);
     }
     updateBounds();
     return false;
   }
 
-  updateAtomPositions(cell_atoms);
+  updateAtomPositions(cell_atoms, in_cell_);
 
   unit_cell_lines_.clear();
-  extractUnitCellLines(cell.latticeVectors(), unit_cell_lines_);
+  extractUnitCellLines(lattice_vectors_, unit_cell_lines_);
 
   if (recompute_bonds) {
-    recomputeBonds(bond_cutoff_scale);
+    recomputeBonds(bond_cutoff_scale, in_cell_);
   }
 
   updateBounds();
@@ -221,14 +383,19 @@ bool Scene3D::updateFromCell(const core::Cell &cell, bool recompute_bonds,
 }
 
 std::shared_ptr<Scene3D> Scene3D::fromCell(const core::Cell &cell, double bond_cutoff_scale,
-                                           bool generate_bonds) {
+                                           bool generate_bonds, bool in_cell) {
   auto scene = std::make_shared<Scene3D>();
+  scene->lattice_vectors_ = cell.latticeVectors();
+  scene->inv_lattice_vectors_ = cell.inverseLatticeVectors();
+  scene->has_lattice_ = (cell.volume() > 1e-4);
+  scene->in_cell_ = in_cell;
 
-  extractUnitCellLines(cell.latticeVectors(), scene->unit_cell_lines_);
-  extractAtoms(cell.atoms(), scene->atoms_);
+  extractUnitCellLines(scene->lattice_vectors_, scene->unit_cell_lines_);
+  extractAtoms(cell.atoms(), scene->lattice_vectors_, scene->inv_lattice_vectors_,
+               scene->has_lattice_, scene->in_cell_, scene->atoms_);
 
   if (generate_bonds) {
-    extractBonds(scene->atoms_, bond_cutoff_scale, scene->bonds_);
+    scene->recomputeBonds(bond_cutoff_scale, scene->in_cell_);
   }
 
   scene->updateBounds();

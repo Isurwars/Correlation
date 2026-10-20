@@ -105,4 +105,63 @@ TEST(Scene3DTests, BuildSceneFromCell) {
   EXPECT_GE(scene->boundsMax().x(), 10.0F);
 }
 
+TEST(Scene3DTests, BuildSceneInCellFoldAtoms) {
+  core::Cell cell;
+  const math::Matrix3<real_t> lattice(math::Vector3<real_t>(10.0, 0.0, 0.0),
+                                      math::Vector3<real_t>(0.0, 10.0, 0.0),
+                                      math::Vector3<real_t>(0.0, 0.0, 10.0));
+  cell.updateLattice(lattice);
+
+  // Add atom outside unit cell
+  cell.addAtom("C", math::Vector3<real_t>(12.5, -2.5, 23.5));
+
+  // In Standard mode (in_cell = false), coordinates remain unwrapped
+  const auto standard_scene = Scene3D::fromCell(cell, 1.2, false, false);
+  ASSERT_NE(standard_scene, nullptr);
+  EXPECT_FLOAT_EQ(standard_scene->atoms()[0].position.x(), 12.5F);
+  EXPECT_FLOAT_EQ(standard_scene->atoms()[0].position.y(), -2.5F);
+  EXPECT_FLOAT_EQ(standard_scene->atoms()[0].position.z(), 23.5F);
+
+  // In In-Cell mode (in_cell = true), coordinates are folded into [0, 10)
+  const auto in_cell_scene = Scene3D::fromCell(cell, 1.2, false, true);
+  ASSERT_NE(in_cell_scene, nullptr);
+  EXPECT_NEAR(in_cell_scene->atoms()[0].position.x(), 2.5F, 1e-4F);
+  EXPECT_NEAR(in_cell_scene->atoms()[0].position.y(), 7.5F, 1e-4F);
+  EXPECT_NEAR(in_cell_scene->atoms()[0].position.z(), 3.5F, 1e-4F);
+}
+
+TEST(Scene3DTests, BuildSceneInCellPeriodicBondsAndClipping) {
+  core::Cell cell;
+  const math::Matrix3<real_t> lattice(math::Vector3<real_t>(10.0, 0.0, 0.0),
+                                      math::Vector3<real_t>(0.0, 10.0, 0.0),
+                                      math::Vector3<real_t>(0.0, 0.0, 10.0));
+  cell.updateLattice(lattice);
+
+  // Two C atoms near opposite x faces: x=0.5 and x=9.5.
+  // Direct Euclidean distance is 9.0 A (no bond without PBC).
+  // Under PBC, distance is 1.0 A (well within covalent bond cutoff).
+  cell.addAtom("C", math::Vector3<real_t>(0.5, 5.0, 5.0));
+  cell.addAtom("C", math::Vector3<real_t>(9.5, 5.0, 5.0));
+
+  // Standard mode: no bond
+  const auto standard_scene = Scene3D::fromCell(cell, 1.2, true, false);
+  ASSERT_NE(standard_scene, nullptr);
+  EXPECT_EQ(standard_scene->bonds().size(), 0);
+
+  // In-Cell mode: bond crosses x=0 and x=10 boundary faces, resulting in 2 boundary stubs
+  const auto in_cell_scene = Scene3D::fromCell(cell, 1.2, true, true);
+  ASSERT_NE(in_cell_scene, nullptr);
+  EXPECT_EQ(in_cell_scene->bonds().size(), 2);
+
+  // Verify stub 1 goes from x=0.5 to x=0.0
+  const auto &bond_stub1 = in_cell_scene->bonds()[0];
+  EXPECT_NEAR(bond_stub1.start.x(), 0.5F, 1e-4F);
+  EXPECT_NEAR(bond_stub1.end.x(), 0.0F, 1e-4F);
+
+  // Verify stub 2 goes from x=9.5 to x=10.0
+  const auto &bond_stub2 = in_cell_scene->bonds()[1];
+  EXPECT_NEAR(bond_stub2.start.x(), 9.5F, 1e-4F);
+  EXPECT_NEAR(bond_stub2.end.x(), 10.0F, 1e-4F);
+}
+
 } // namespace correlation::render3d

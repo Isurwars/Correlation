@@ -15,7 +15,14 @@ export component TrajectoryPlaybackBar inherits Rectangle {
     in-out property <int> current_frame: 0;
     in property <int> total_frames: 0;
     in-out property <bool> is_playing: false;
-    in property <duration> playback_interval: 50ms;
+    in-out property <int> playback_mode: 0; // 0: Loop (🔁), 1: Ping-Pong (🔀), 2: Play-Once (➡️)
+    in-out property <int> speed_index: 1; // 0: 0.5x, 1: 1.0x, 2: 2.0x, 3: 5.0x
+    property <bool> play_forward: true;
+
+    out property <duration> playback_interval:
+        root.speed_index == 0 ? 100ms :
+        root.speed_index == 1 ? 50ms :
+        root.speed_index == 2 ? 25ms : 10ms;
 
     callback seek_frame(int);
     callback step_frame(bool);
@@ -24,7 +31,31 @@ export component TrajectoryPlaybackBar inherits Rectangle {
         interval: root.playback_interval;
         running: root.is_playing && root.total_frames > 1;
         triggered() => {
-            root.step_frame(true);
+            if (root.playback_mode == 0) {
+                root.step_frame(true);
+            } else if (root.playback_mode == 1) {
+                if (root.play_forward) {
+                    if (root.current_frame + 1 >= root.total_frames) {
+                        root.play_forward = false;
+                        root.step_frame(false);
+                    } else {
+                        root.step_frame(true);
+                    }
+                } else {
+                    if (root.current_frame <= 0) {
+                        root.play_forward = true;
+                        root.step_frame(true);
+                    } else {
+                        root.step_frame(false);
+                    }
+                }
+            } else {
+                if (root.current_frame + 1 >= root.total_frames) {
+                    root.is_playing = false;
+                } else {
+                    root.step_frame(true);
+                }
+            }
         }
     }
 
@@ -78,7 +109,12 @@ export component TrajectoryPlaybackBar inherits Rectangle {
             mouse-cursor: pointer;
             accessible-role: button;
             accessible-label: root.is_playing ? "Pause Trajectory" : "Play Trajectory";
-            clicked => { root.is_playing = !root.is_playing; }
+            clicked => {
+                if (!root.is_playing && root.playback_mode == 2 && root.current_frame + 1 >= root.total_frames) {
+                    root.seek_frame(0);
+                }
+                root.is_playing = !root.is_playing;
+            }
 
             Rectangle {
                 width: 100%;
@@ -241,6 +277,82 @@ export component TrajectoryPlaybackBar inherits Rectangle {
                     color: MaterialPalette.on_surface_variant;
                     vertical-alignment: center;
                     horizontal-alignment: center;
+                }
+            }
+        }
+
+        // Playback Mode Button (Loop / Ping-Pong / Play-Once)
+        mode_btn := TouchArea {
+            width: 30px;
+            height: 30px;
+            y: (parent.height - self.height) / 2;
+            mouse-cursor: pointer;
+            accessible-role: button;
+            accessible-label: root.playback_mode == 0 ? "Playback Mode: Loop" :
+                root.playback_mode == 1 ? "Playback Mode: Ping-Pong" : "Playback Mode: Play Once";
+            clicked => {
+                root.playback_mode = (root.playback_mode + 1 >= 3) ? 0 : root.playback_mode + 1;
+            }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 15px;
+                background: mode_btn.has-hover ? MaterialPalette.surface_container_high : transparent;
+                animate background { duration: 150ms; }
+
+                MaterialText {
+                    width: 100%;
+                    height: 100%;
+                    text: root.playback_mode == 0 ? "🔁" :
+                        root.playback_mode == 1 ? "🔀" : "➡️";
+                    font-size: 13px;
+                    color: root.playback_mode == 0 ? MaterialPalette.primary : MaterialPalette.on_surface;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        // Playback Speed Selector Pill (0.5x, 1x, 2x, 5x)
+        speed_btn := TouchArea {
+            width: speed_layout.preferred-width + 16px;
+            height: 26px;
+            y: (parent.height - self.height) / 2;
+            mouse-cursor: pointer;
+            accessible-role: button;
+            accessible-label: "Playback Speed: " + (root.speed_index == 0 ? "0.5x" :
+                root.speed_index == 1 ? "1.0x" :
+                root.speed_index == 2 ? "2.0x" : "5.0x");
+            clicked => {
+                root.speed_index = (root.speed_index + 1 >= 4) ? 0 : root.speed_index + 1;
+            }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 13px;
+                background: speed_btn.has-hover ? MaterialPalette.surface_container_high :
+                    MaterialPalette.surface_container_high.with_alpha(80%);
+                border-width: 1px;
+                border-color: MaterialPalette.outline_variant.with_alpha(40%);
+                animate background { duration: 150ms; }
+
+                speed_layout := HorizontalLayout {
+                    padding-left: 6px;
+                    padding-right: 6px;
+                    alignment: center;
+
+                    MaterialText {
+                        text: root.speed_index == 0 ? "0.5x" :
+                            root.speed_index == 1 ? "1.0x" :
+                            root.speed_index == 2 ? "2.0x" : "5.0x";
+                        font-size: 11px;
+                        font-weight: 600;
+                        color: MaterialPalette.primary;
+                        vertical-alignment: center;
+                        horizontal-alignment: center;
+                    }
                 }
             }
         }

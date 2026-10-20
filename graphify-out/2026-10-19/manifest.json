@@ -2025,8 +2025,8 @@
     "semantic_hash": ""
   },
   "src/app/core/AppController.cpp": {
-    "mtime": 1792388049.9476113,
-    "ast_hash": "da7695c574c958a95d4aaed142e260fe",
+    "mtime": 1792433244.4889147,
+    "ast_hash": "5b830502034ce706c764a2d9559aa702",
     "semantic_hash": ""
   },
   "src/app/core/SettingsManager.cpp": {
@@ -2720,8 +2720,8 @@
     "semantic_hash": ""
   },
   "include/render3d/Scene3D.hpp": {
-    "mtime": 1792387850.7463539,
-    "ast_hash": "9fcefe46caf5a048b8d1162c42d03ab7",
+    "mtime": 1792433391.5124166,
+    "ast_hash": "c674ecad8612dcf436b80d853c20e5d8",
     "semantic_hash": ""
   },
   "src/render3d/Camera3D.cpp": {
@@ -2730,8 +2730,8 @@
     "semantic_hash": ""
   },
   "src/render3d/Scene3D.cpp": {
-    "mtime": 1792388555.8536704,
-    "ast_hash": "0235fea6dd65831358ea1f3690a02c7c",
+    "mtime": 1792433459.592803,
+    "ast_hash": "3195ceed9ac39d5072a0a994f4d4c994",
     "semantic_hash": ""
   },
   "tests/unit/render3d/Camera3DTests.cpp": {
@@ -2745,8 +2745,8 @@
     "semantic_hash": ""
   },
   "tests/unit/render3d/Scene3DTests.cpp": {
-    "mtime": 1791923509.9823625,
-    "ast_hash": "1707ecc1142008a8d188e02a63b5d459",
+    "mtime": 1792433315.5109491,
+    "ast_hash": "3ff4f6ab90bfa46487c6790caac6cdb3",
     "semantic_hash": ""
   },
   "include/render3d/cpu/SoftwareFramebuffer.hpp": {
@@ -2820,8 +2820,8 @@
     "semantic_hash": ""
   },
   "include/render3d/TrajectoryStreamer.hpp": {
-    "mtime": 1792387880.3007867,
-    "ast_hash": "45af10bd4f7f85e0d72edd9c79054d73",
+    "mtime": 1792433126.5065217,
+    "ast_hash": "3120f975f3c44f408cec4ba5af7d9466",
     "semantic_hash": ""
   },
   "src/render3d/LodController.cpp": {
@@ -2830,8 +2830,8 @@
     "semantic_hash": ""
   },
   "src/render3d/TrajectoryStreamer.cpp": {
-    "mtime": 1792387896.756473,
-    "ast_hash": "72ccd3846710d058ea2ad7ec5cf1bc17",
+    "mtime": 1792433145.0442688,
+    "ast_hash": "c7c7992ea3bcde204107f8bd817346d2",
     "semantic_hash": ""
   },
   "tests/unit/render3d/LodControllerTests.cpp": {
@@ -2840,18 +2840,18 @@
     "semantic_hash": ""
   },
   "tests/unit/render3d/TrajectoryStreamerTests.cpp": {
-    "mtime": 1791917510.0462964,
-    "ast_hash": "e06d67bcfc4e752b9b7bfb9e8f52638f",
+    "mtime": 1792433334.5496907,
+    "ast_hash": "53d0dc14084ebde88b4f590c989b3ef0",
     "semantic_hash": ""
   },
   "include/app/viewmodel/Structure3DController.hpp": {
-    "mtime": 1792387932.8317897,
-    "ast_hash": "0c223fa03f374ad69926fd5cc2fbe2e2",
+    "mtime": 1792433187.233694,
+    "ast_hash": "1e23dc0113d2644f2c7ba316e3206b82",
     "semantic_hash": ""
   },
   "src/app/viewmodel/Structure3DController.cpp": {
-    "mtime": 1792387975.1239965,
-    "ast_hash": "a9b4ed596b993838f506a0ffd64216e1",
+    "mtime": 1792433391.5326145,
+    "ast_hash": "57a1aec40ad2f68625e23d7281888d01",
     "semantic_hash": ""
   },
   "tests/unit/app/Structure3DControllerTests.cpp": {

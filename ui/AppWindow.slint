@@ -207,6 +207,7 @@ export component AppWindow inherits Window {
     in property <int> structure_3d_total_frames: 0;
     in property <bool> structure_3d_bonds_enabled: true;
     in property <bool> structure_3d_wireframe_enabled: true;
+    in-out property <bool> structure_3d_in_cell: false;
 
     // Resizable layout geometry properties
     in-out property <length> left_col_width: 220px;
@@ -264,6 +265,7 @@ export component AppWindow inherits Window {
     callback reset_view_3d();
     callback toggle_bonds_3d(bool);
     callback toggle_wireframe_3d(bool);
+    callback toggle_in_cell_3d(bool);
     callback seek_frame_3d(int);
     callback step_frame_3d(bool);
     callback viewport_3d_resized(length, length);
@@ -615,92 +617,97 @@ export component AppWindow inherits Window {
                     selected_plot_index <=> root.selected_plot_index;
                     pinned_runs_count: root.pinned_runs_count;
 
-                            file_loaded: root.file_loaded;
-                            analysis_running: root.analysis_running;
-                            file_basename: root.file_basename;
-                            total_atoms: root.total_atoms;
-                            num_frames: root.num_frames;
+                    file_loaded: root.file_loaded;
+                    analysis_running: root.analysis_running;
+                    file_basename: root.file_basename;
+                    total_atoms: root.total_atoms;
+                    num_frames: root.num_frames;
 
-                            browse_file => { root.browse_file(); }
-                            run_analysis => { root.run_analysis(); }
-                            open_panel(id) => {
-                                root.last_active_panel = id;
-                                root.active_panel = id;
-                                root.left_col_width = Math.max(180px, root.last_col_width);
-                                root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
-                            }
+                    browse_file => { root.browse_file(); }
+                    run_analysis => { root.run_analysis(); }
+                    open_panel(id) => {
+                        root.last_active_panel = id;
+                        root.active_panel = id;
+                        root.left_col_width = Math.max(180px, root.last_col_width);
+                        root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
+                    }
 
-                            table_headers: root.table_headers;
-                            table_rows: root.table_rows;
+                    table_headers: root.table_headers;
+                    table_rows: root.table_rows;
 
-                            plot_selected(idx) => {
-                                root.select_plot(idx);
-                            }
-                            toggle_curve_visibility(id, vis) => {
-                                root.toggle_curve_visibility(id, vis);
-                            }
-                            toggle_all_curves(vis) => {
-                                root.toggle_all_curves(vis);
-                            }
-                            set_curve_color(id, col) => {
-                                root.set_curve_color(id, col);
-                            }
-                            write_files => {
-                                root.write_files();
-                            }
-                            pin_run => {
-                                root.pin_run();
-                            }
-                            clear_pinned_runs => {
-                                root.clear_pinned_runs();
-                            }
-                            mouse_move(mx, my, hover, w, h) => {
-                                root.mouse_move(mx, my, hover, w, h);
-                            }
-                            plot_resized(w, h) => {
-                                root.plot_resized(w, h);
-                            }
-                            hover_coord_text: root.hover_coord_text;
-                            has_active_zoom: root.has_active_zoom;
-                            markers_count: root.markers_count;
-                            zoom_to_rect(x1, y1, x2, y2) => {
-                                root.zoom_to_rect(x1, y1, x2, y2);
-                            }
-                            plot_pan(dx, dy) => {
-                                root.plot_pan(dx, dy);
-                            }
-                            plot_wheel_zoom(mx, my, delta) => {
-                                root.plot_wheel_zoom(mx, my, delta);
-                            }
-                            reset_zoom => {
-                                root.reset_zoom();
-                            }
-                            add_marker_at(x, y, is_vert) => {
-                                root.add_marker_at(x, y, is_vert);
-                            }
-                            add_marker(is_vert) => {
-                                root.add_marker(is_vert);
-                            }
-                            clear_markers => {
-                                root.clear_markers();
-                            }
+                    plot_selected(idx) => {
+                        root.select_plot(idx);
+                    }
+                    toggle_curve_visibility(id, vis) => {
+                        root.toggle_curve_visibility(id, vis);
+                    }
+                    toggle_all_curves(vis) => {
+                        root.toggle_all_curves(vis);
+                    }
+                    set_curve_color(id, col) => {
+                        root.set_curve_color(id, col);
+                    }
+                    write_files => {
+                        root.write_files();
+                    }
+                    pin_run => {
+                        root.pin_run();
+                    }
+                    clear_pinned_runs => {
+                        root.clear_pinned_runs();
+                    }
+                    mouse_move(mx, my, hover, w, h) => {
+                        root.mouse_move(mx, my, hover, w, h);
+                    }
+                    plot_resized(w, h) => {
+                        root.plot_resized(w, h);
+                    }
+                    hover_coord_text: root.hover_coord_text;
+                    has_active_zoom: root.has_active_zoom;
+                    markers_count: root.markers_count;
+                    zoom_to_rect(x1, y1, x2, y2) => {
+                        root.zoom_to_rect(x1, y1, x2, y2);
+                    }
+                    plot_pan(dx, dy) => {
+                        root.plot_pan(dx, dy);
+                    }
+                    plot_wheel_zoom(mx, my, delta) => {
+                        root.plot_wheel_zoom(mx, my, delta);
+                    }
+                    reset_zoom => {
+                        root.reset_zoom();
+                    }
+                    add_marker_at(x, y, is_vert) => {
+                        root.add_marker_at(x, y, is_vert);
+                    }
+                    add_marker(is_vert) => {
+                        root.add_marker(is_vert);
+                    }
+                    clear_markers => {
+                        root.clear_markers();
+                    }
 
-                            structure_3d_image: root.structure_3d_image;
-                            structure_3d_current_frame <=> root.structure_3d_current_frame;
-                            structure_3d_total_frames: root.structure_3d_total_frames;
-                            structure_3d_bonds_enabled: root.structure_3d_bonds_enabled;
-                            structure_3d_wireframe_enabled: root.structure_3d_wireframe_enabled;
+                    structure_3d_image: root.structure_3d_image;
+                    structure_3d_current_frame <=> root.structure_3d_current_frame;
+                    structure_3d_total_frames: root.structure_3d_total_frames;
+                    structure_3d_bonds_enabled: root.structure_3d_bonds_enabled;
+                    structure_3d_wireframe_enabled: root.structure_3d_wireframe_enabled;
+                    structure_3d_in_cell: root.structure_3d_in_cell;
 
-                            rotate_3d(dx, dy) => { root.rotate_3d(dx, dy); }
-                            pan_3d(dx, dy) => { root.pan_3d(dx, dy); }
-                            zoom_3d(delta) => { root.zoom_3d(delta); }
-                            reset_view_3d => { root.reset_view_3d(); }
-                            toggle_bonds_3d(enabled) => { root.toggle_bonds_3d(enabled); }
-                            toggle_wireframe_3d(enabled) => { root.toggle_wireframe_3d(enabled); }
-                            seek_frame_3d(idx) => { root.seek_frame_3d(idx); }
-                            step_frame_3d(fwd) => { root.step_frame_3d(fwd); }
-                            viewport_3d_resized(w, h) => { root.viewport_3d_resized(w, h); }
-                            tab_changed(tab) => { root.preview_tab_changed(tab); }
+                    rotate_3d(dx, dy) => { root.rotate_3d(dx, dy); }
+                    pan_3d(dx, dy) => { root.pan_3d(dx, dy); }
+                    zoom_3d(delta) => { root.zoom_3d(delta); }
+                    reset_view_3d => { root.reset_view_3d(); }
+                    toggle_bonds_3d(enabled) => { root.toggle_bonds_3d(enabled); }
+                    toggle_wireframe_3d(enabled) => { root.toggle_wireframe_3d(enabled); }
+                    toggle_in_cell_3d(enabled) => {
+                        root.structure_3d_in_cell = enabled;
+                        root.toggle_in_cell_3d(enabled);
+                    }
+                    seek_frame_3d(idx) => { root.seek_frame_3d(idx); }
+                    step_frame_3d(fwd) => { root.step_frame_3d(fwd); }
+                    viewport_3d_resized(w, h) => { root.viewport_3d_resized(w, h); }
+                    tab_changed(tab) => { root.preview_tab_changed(tab); }
                 }
             }
 

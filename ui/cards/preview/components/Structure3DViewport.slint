@@ -14,6 +14,7 @@ export component Structure3DViewport inherits Rectangle {
     in property <int> total_frames: 0;
     in property <bool> bonds_enabled: true;
     in property <bool> wireframe_enabled: true;
+    in property <bool> in_cell_enabled: false;
 
     // Workflow properties & callbacks
     in property <bool> file_loaded: false;
@@ -33,6 +34,7 @@ export component Structure3DViewport inherits Rectangle {
     callback reset_view();
     callback toggle_bonds(bool);
     callback toggle_wireframe(bool);
+    callback toggle_in_cell(bool);
     callback seek_frame(int);
     callback step_frame(bool);
     callback resized(length, length);
@@ -96,7 +98,7 @@ export component Structure3DViewport inherits Rectangle {
     }
 
     // Centered Empty State when no structure file is loaded
-    if (!root.file_loaded) : Rectangle {
+    if (!root.file_loaded): Rectangle {
         width: 340px;
         height: 150px;
         x: (root.width - self.width) / 2;
@@ -198,7 +200,7 @@ export component Structure3DViewport inherits Rectangle {
                         height: 100%;
                         border-radius: 15px;
                         background: root.bonds_enabled ? MaterialPalette.primary.with_alpha(20%) :
-                                    (parent.has-hover ? MaterialPalette.surface_container_high : transparent);
+                            (parent.has-hover ? MaterialPalette.surface_container_high : transparent);
                         border-width: root.bonds_enabled ? 1.5px : 0px;
                         border-color: root.bonds_enabled ? MaterialPalette.primary : transparent;
 
@@ -227,7 +229,7 @@ export component Structure3DViewport inherits Rectangle {
                         height: 100%;
                         border-radius: 15px;
                         background: root.wireframe_enabled ? MaterialPalette.primary.with_alpha(20%) :
-                                    (parent.has-hover ? MaterialPalette.surface_container_high : transparent);
+                            (parent.has-hover ? MaterialPalette.surface_container_high : transparent);
                         border-width: root.wireframe_enabled ? 1.5px : 0px;
                         border-color: root.wireframe_enabled ? MaterialPalette.primary : transparent;
 
@@ -242,11 +244,42 @@ export component Structure3DViewport inherits Rectangle {
                         }
                     }
                 }
+
+                // Toggle In-Cell PBC
+                TouchArea {
+                    width: 30px;
+                    height: 30px;
+                    y: (parent.height - self.height) / 2;
+                    mouse-cursor: pointer;
+                    accessible-role: button;
+                    accessible-label: root.in_cell_enabled ? "In-Cell PBC Active (Folded & Boundary-Clipped)" : "Standard Non-Forced Coordinates";
+                    clicked => { root.toggle_in_cell(!root.in_cell_enabled); }
+
+                    Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 15px;
+                        background: root.in_cell_enabled ? MaterialPalette.primary.with_alpha(20%) :
+                            (parent.has-hover ? MaterialPalette.surface_container_high : transparent);
+                        border-width: root.in_cell_enabled ? 1.5px : 0px;
+                        border-color: root.in_cell_enabled ? MaterialPalette.primary : transparent;
+
+                        MaterialText {
+                            width: 100%;
+                            height: 100%;
+                            text: "⊞";
+                            font-size: 15px;
+                            color: root.in_cell_enabled ? MaterialPalette.primary : MaterialPalette.on_surface;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
             }
         }
 
         // 2. Right: Unified Workflow Action Bar (Visible when file loaded)
-        if (root.file_loaded) : Rectangle {
+        if (root.file_loaded): Rectangle {
             height: 36px;
             border-radius: 18px;
             background: MaterialPalette.surface_container_highest.with_alpha(85%);
@@ -344,10 +377,10 @@ export component Structure3DViewport inherits Rectangle {
     }
 
     // Trajectory Playback & Scrub Bar (visible when multi-frame trajectory is loaded)
-    if (root.file_loaded && root.total_frames > 1) : TrajectoryPlaybackBar {
+    if (root.file_loaded && root.total_frames > 1): TrajectoryPlaybackBar {
         x: (root.width - self.width) / 2;
         y: root.height - self.height - 12px;
-        width: Math.min(root.width - 48px, 620px);
+        width: Math.min(root.width - 48px, 680px);
         current_frame <=> root.current_frame;
         total_frames: root.total_frames;
         seek_frame(idx) => { root.seek_frame(idx); }
@@ -355,7 +388,7 @@ export component Structure3DViewport inherits Rectangle {
     }
 
     // Subtle bottom navigation hint
-    if (root.file_loaded) : Rectangle {
+    if (root.file_loaded): Rectangle {
         x: (root.width - self.width) / 2;
         y: root.height - self.height - (root.total_frames > 1 ? 66px : 10px);
         width: hint_text.preferred-width + 16px;

@@ -93,6 +93,7 @@ export component PreviewCard inherits FilledCard {
     in property <int> structure_3d_total_frames: 0;
     in property <bool> structure_3d_bonds_enabled: true;
     in property <bool> structure_3d_wireframe_enabled: true;
+    in property <bool> structure_3d_in_cell: false;
 
     callback rotate_3d(float, float);
     callback pan_3d(float, float);
@@ -100,6 +101,7 @@ export component PreviewCard inherits FilledCard {
     callback reset_view_3d();
     callback toggle_bonds_3d(bool);
     callback toggle_wireframe_3d(bool);
+    callback toggle_in_cell_3d(bool);
     callback seek_frame_3d(int);
     callback step_frame_3d(bool);
     callback viewport_3d_resized(length, length);
@@ -398,6 +400,7 @@ export component PreviewCard inherits FilledCard {
                 total_frames: root.structure_3d_total_frames;
                 bonds_enabled: root.structure_3d_bonds_enabled;
                 wireframe_enabled: root.structure_3d_wireframe_enabled;
+                in_cell_enabled: root.structure_3d_in_cell;
                 file_loaded: root.file_loaded;
                 analysis_running: root.analysis_running;
                 analysis_done: root.analysis_done;
@@ -413,6 +416,7 @@ export component PreviewCard inherits FilledCard {
                 reset_view => { root.reset_view_3d(); }
                 toggle_bonds(enabled) => { root.toggle_bonds_3d(enabled); }
                 toggle_wireframe(enabled) => { root.toggle_wireframe_3d(enabled); }
+                toggle_in_cell(enabled) => { root.toggle_in_cell_3d(enabled); }
                 seek_frame(idx) => { root.seek_frame_3d(idx); }
                 step_frame(fwd) => { root.step_frame_3d(fwd); }
                 resized(w, h) => { root.viewport_3d_resized(w, h); }

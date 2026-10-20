@@ -186,6 +186,9 @@ void AppController::registerStructure3DCallbacks() {
   window_.on_toggle_wireframe_3d(
       [this](bool enabled) { structure_3d_controller_->handleToggleWireframe(enabled); });
 
+  window_.on_toggle_in_cell_3d(
+      [this](bool enabled) { structure_3d_controller_->handleToggleInCell(enabled); });
+
   window_.on_seek_frame_3d(
       [this](int frame_idx) { structure_3d_controller_->handleSeekFrame(frame_idx); });
 
