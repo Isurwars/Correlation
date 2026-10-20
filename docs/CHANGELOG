@@ -1,10 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [4.0.0] - 2026-10-13
+## [4.0.0] - 2026-10-19
 
 ### Interactive 3D Molecular Viewport & Material MVVM Integration
 - **Real-Time 3D Molecular Viewport (`Structure3DViewport`)**: Integrated an interactive 3D molecular and crystal structure viewer into the modern Slint MVVM architecture, featuring intuitive mouse arcball orbit, lateral panning, smooth wheel zoom, coordinate centering, and dynamic camera reset.
+- **Trajectory Playback Controls & Frame Scrubbing**: Added `TrajectoryPlaybackBar.slint` component supporting play/pause, step forward/backward, direct frame seeking, and dynamic frame indicator bound to `TrajectoryStreamer`.
+- **In-Cell Coordinate Wrapping & Unit Cell Clipping**: Implemented unit-cell atom coordinate folding (`structure_3d_in_cell`) and periodic boundary bond clipping for crystal lattice visualization.
 - **CPU Software Rasterization Pipeline**: Implemented a standalone multi-threaded CPU software rasterizer (`SoftwareRasterizer`, `SoftwareFramebuffer`) featuring:
   - Subpixel triangle rasterization and z-buffer depth testing.
   - Multi-threaded tile and scanline rendering scaling across CPU cores via oneTBB / OpenMP fallbacks.
@@ -12,7 +14,7 @@ All notable changes to this project will be documented in this file.
 - **Hardware Abstraction & Engine Factory**: Designed an extensible rendering abstraction layer (`IRenderEngine`, `RenderEngineFactory`) supporting `CpuRenderEngine` and an initial `VulkanRenderEngine` skeleton with automated runtime fallback.
 - **Comprehensive 118-Element CPK Color & Radius Engine (`ElementColors`)**: Implemented full periodic table elemental mapping adhering to Jmol and ASE standards with elemental covalent and van der Waals radii.
 - **Dynamic Camera & Level-of-Detail (LOD)**: Implemented `Camera3D` supporting perspective and orthographic projections, and `LodController` for adaptive geometric tessellation and rendering fidelity based on atom count and viewport distance.
-- **Trajectory Streaming Support**: Built `TrajectoryStreamer` for frame-by-frame 3D coordinate streaming and real-time visualization of trajectory dynamics.
+- **Trajectory Streaming Architecture**: Built `TrajectoryStreamer` for frame-by-frame 3D coordinate streaming and real-time visualization of trajectory dynamics.
 - **Self-Contained 3D Linear Algebra (`Math3D`)**: Engineered a self-contained, header-only SIMD-friendly 3D mathematics library providing `Vector4`, `Matrix4`, and `Quaternion` transformations without external rendering dependencies.
 
 ### Unified Slint UI/UX Architecture
@@ -20,9 +22,25 @@ All notable changes to this project will be documented in this file.
 - **Floating 3D Viewport Controls & Hover Effects**: Added floating interactive toolbar overlay controls with Material Design 3 hover states, smooth transitions, camera perspective toggles, and responsive canvas sizing.
 - **Single Non-Frequency Partial Optimization**: Streamlined plotting presentation by omitting redundant single partial curves when non-frequency distributions contain only a single species pair, cleanly displaying the `Total` distribution.
 
-### Core Quality & Const-Correctness
-- **Const-Correctness Hardening**: Enforced strict const-correctness across `PlotTableFormatter` table row construction and viewmodel rendering routines.
-- **Unit Test Suite**: Added comprehensive unit test coverage for 3D mathematics, camera transformations, software rasterizer, element color lookups, trajectory streaming, and `Structure3DController`.
+### High-Performance Computational Engine & Spatial Pruning
+- **Spatial Gather & Interior Fast-Paths**: Implemented bin-sorted Structure-of-Arrays (SoA) atom gather and stencil fast-paths in `DistanceCalculator`, bypassing boundary shifts for bulk atoms.
+- **Periodic Shift Precomputation**: Precalculated cell shift vectors for small periodic supercells to eliminate redundant transformation overhead in hot distance loops.
+- **Ring Search & Motif Acceleration**: Streamlined `MotifFinder` with scratch buffer reuse, chord filtering, and candidate deduplication; refactored `computeRingStatisticsDescriptor` to single-pass ring search.
+- **Deterministic CSR Neighbor Graph**: Re-engineered `NeighborGraph` with deterministic Compressed Sparse Row (CSR) storage and explicit finalization semantics.
+- **Benchmarking Baseline Harness**: Established Phase 0 Google Benchmark suite for regression testing and throughput profiling across core calculators.
+
+### Modern C++23 & Memory Safety Infrastructure
+- **Cache-Line Alignment & Anti-False-Sharing**: Decorated `BondCutoffRange`, `DynamicProperties`, `MLIPOutput`, `PeriodicGraphData`, and `Cell` with `alignas(64)` to maximize cache locality and prevent false sharing across threads.
+- **Cache-Aligned Contiguous `BondCutoffMatrix`**: Replaced nested containers with a cache-aligned contiguous 2D class using member initializer lists and `std::ranges::copy`.
+- **Modern Error Handling via `std::expected`**: Modernized configuration validation (`CorrelationEngine::validateConfig`, `AnalysisDispatcher::validateOptions`) and structure/trajectory reader APIs (`readStructureExpected`, `readTrajectoryExpected`) to return `std::expected`.
+- **Non-Owning `std::span` Views**: Replaced heap copies with non-owning `std::span` accessors in trajectory I/O readers, `MLIPOutput` LDOS storage, and `PathFont` glyph rendering.
+- **O(1) Calculator Dispatch**: Upgraded calculator factory registry to O(1) lookup tables and decomposed graph builder complexity.
+- **Const-Correctness & Doxygen Hardening**: Enforced strict const-correctness across viewmodels and formatters, and validated `@param[in]` Doxygen tags and `clang-tidy` invariants across all headers.
+
+### Bug Fixes & Portability
+- **macOS Build Compatibility**: Resolved Slint C++ linkage and CMake CLT link directory issues across macOS SDK versions.
+- **Configuration Parser Safety**: Fixed null pointer exception during parsing of empty configuration files.
+- **Strict Warning Policies**: Enabled rigorous compiler warning gates in `cmake/Warnings.cmake` across GCC, Clang, and MSVC.
 - **Project Milestone**: Bumped project version to `4.0.0`.
 
 ## [3.10.0] - 2026-10-12
