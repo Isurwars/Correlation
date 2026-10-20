@@ -233,6 +233,7 @@ add_library(correlation_lib STATIC
     core/Cell.cpp
     analysis/DistributionFunctions.cpp
     analysis/DynamicsAnalyzer.cpp
+    analysis/FirstMinimumDetector.cpp
     analysis/CorrelationEngine.cpp
     analysis/StructuralElectronicCorrelation.cpp
     core/NeighborGraph.cpp
