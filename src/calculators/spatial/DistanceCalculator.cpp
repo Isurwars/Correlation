@@ -16,7 +16,6 @@
 #include "calculators/gpu/GPUDistanceCalculator.hpp"
 #endif
 
-#include <atomic>
 #include <cmath>
 #include <span>
 #include <tbb/enumerable_thread_specific.h>
@@ -957,17 +956,6 @@ void mergeThreadResults(const tbb::enumerable_thread_specific<ThreadLocalDistanc
   buildDeterministicCSR(ets, current_epoch, atom_count, out_graph);
 }
 
-uint64_t getNextQueryEpoch() {
-  static std::atomic<uint64_t> s_distance_query_epoch{1};
-  return s_distance_query_epoch.fetch_add(1, std::memory_order_relaxed);
-}
-
-tbb::enumerable_thread_specific<ThreadLocalDistances> &getDistanceCalculatorWorkspace() {
-  static tbb::enumerable_thread_specific<ThreadLocalDistances> workspace(
-      [] { return ThreadLocalDistances(); });
-  return workspace;
-}
-
 } // namespace
 
 void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cutoff_sq,
@@ -1010,8 +998,8 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cut
   };
 
   const auto flat_cutoffs = buildFlatBondCutoffs(bond_cutoffs, num_elements);
-  const uint64_t epoch = getNextQueryEpoch();
-  auto &ets = getDistanceCalculatorWorkspace();
+  const uint64_t epoch = 1;
+  tbb::enumerable_thread_specific<ThreadLocalDistances> ets([] { return ThreadLocalDistances(); });
 
   const ThreadLocalConfig tl_config{
       .num_elements = num_elements,

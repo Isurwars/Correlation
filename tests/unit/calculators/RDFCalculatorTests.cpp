@@ -5,6 +5,9 @@
 
 #include "analysis/DistributionFunctions.hpp"
 #include "analysis/TrajectoryAnalyzer.hpp"
+#include "app/services/AnalysisDispatcher.hpp"
+#include "app/services/TrajectoryLoader.hpp"
+#include "calculators/CalculatorFactory.hpp"
 #include "calculators/spatial/RDFCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
@@ -13,6 +16,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <filesystem>
 #include <gtest/gtest.h>
 #include <iterator>
 #include <numbers>
@@ -590,6 +594,66 @@ TEST_F(RDFCalculatorTests, PrimitiveCellRDFComputesSelfImages) {
     total_counts += val;
   }
   EXPECT_GT(total_counts, 0.0);
+}
+
+TEST_F(RDFCalculatorTests, MultiCalculatorFullAnalysisAsymptotesToOne) {
+  std::string filepath;
+  for (const auto &prefix : {"../../", "../", "./"}) {
+    const std::string candidate = prefix + std::string("examples/a-PdSi/a-PdSi.car");
+    if (std::filesystem::exists(candidate)) {
+      filepath = candidate;
+      break;
+    }
+  }
+  if (filepath.empty()) {
+    GTEST_SKIP() << "Example file a-PdSi.car not found";
+  }
+
+  correlation::app::TrajectoryLoader loader;
+  ASSERT_TRUE(loader.loadFile(filepath).has_value()) << "Failed to load " << filepath;
+
+  correlation::app::AnalysisDispatcher dispatcher;
+  correlation::app::ProgramOptions opts;
+  opts.input_file = filepath;
+  opts.r_max = 20.0;
+  opts.r_bin_width = 0.05;
+  opts.smoothing = true;
+  opts.smoothing_sigma = 0.1;
+  // Enable all registered calculators to stress concurrent DistanceCalculator execution
+  for (const auto &calc :
+       ::correlation::calculators::CalculatorFactory::instance().getCalculators()) {
+    opts.active_calculators[std::string(calc->getName())] = true;
+  }
+
+  auto res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);
+  ASSERT_TRUE(res.has_value()) << "Analysis failed for " << filepath;
+
+  const auto *dist_functions = dispatcher.getDistributionFunctions();
+  ASSERT_NE(dist_functions, nullptr);
+
+  const auto &g_r = dist_functions->getHistogram("g_r");
+  ASSERT_TRUE(g_r.partials.contains("Total"));
+  const auto &total_vals = g_r.partials.at("Total");
+  ASSERT_FALSE(total_vals.empty());
+
+  // Check that at large r (last 10 bins, r ~ 19.5 - 20.0 A), Total g(r) asymptotes close to 1.0
+  const size_t check_start = total_vals.size() > 10 ? total_vals.size() - 10 : 0;
+  real_t sum_tail = 0.0;
+  for (size_t i = check_start; i < total_vals.size(); ++i) {
+    sum_tail += total_vals[i];
+  }
+  const real_t avg_tail = sum_tail / static_cast<real_t>(total_vals.size() - check_start);
+  EXPECT_NEAR(avg_tail, 1.0, 0.05);
+
+  const auto &g_unw = dist_functions->getHistogram("g_r_unweighted");
+  for (const auto &[key, partial_vals] : g_unw.partials) {
+    real_t partial_sum = 0.0;
+    for (size_t i = check_start; i < partial_vals.size(); ++i) {
+      partial_sum += partial_vals[i];
+    }
+    const real_t partial_avg = partial_sum / static_cast<real_t>(partial_vals.size() - check_start);
+    EXPECT_NEAR(partial_avg, 1.0, 0.10) << "Unweighted partial " << key << " does not tend to 1.0";
+  }
 }
 
 } // namespace correlation::analysis

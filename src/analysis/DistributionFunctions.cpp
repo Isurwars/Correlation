@@ -469,8 +469,9 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::processSingleFrame
     if (!settings.isActive(calc->getName()) && !settings.isActive(calc->getShortName())) {
       continue;
     }
-    calc_group.run(
-        [&calc, df_ptr = frame_df.get(), &settings] { calc->calculateFrame(*df_ptr, settings); });
+    calc_group.run([calc = calc.get(), df_ptr = frame_df.get(), &settings] {
+      calc->calculateFrame(*df_ptr, settings);
+    });
   }
   calc_group.wait();
 
