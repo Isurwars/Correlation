@@ -71,6 +71,21 @@ public:
                const correlation::plotters::PlotConfig &config);
 
   /**
+   * @brief Projects data-space coordinates to screen-space coordinates.
+   * @param[in] data_x Data horizontal coordinate.
+   * @param[in] data_y Data vertical coordinate.
+   * @param[in] canvas_w Total canvas width in pixels.
+   * @param[in] canvas_h Total canvas height in pixels.
+   * @param[in] hist Active histogram data.
+   * @param[in] config Base plotting configuration.
+   * @return Pair containing (screen_x, screen_y) in pixels.
+   */
+  [[nodiscard]] static std::pair<real_t, real_t>
+  dataToScreen(real_t data_x, real_t data_y, float canvas_w, float canvas_h,
+               const correlation::analysis::Histogram &hist,
+               const correlation::plotters::PlotConfig &config);
+
+  /**
    * @brief Checks if a custom zoom window is currently active.
    * @return True if any zoom coordinate boundary is set.
    */

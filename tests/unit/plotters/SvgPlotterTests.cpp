@@ -270,7 +270,7 @@ TEST(SvgPlotterTests, ScreenToDataGeometryTransformsAccurately) {
   config.width = 1000.0;
   config.height = 600.0;
 
-  auto geom = detail::getViewportGeometry(config);
+  const auto geom = detail::getViewportGeometry(config);
   EXPECT_DOUBLE_EQ(geom.kw, 1000.0);
   EXPECT_DOUBLE_EQ(geom.kh, 600.0);
   EXPECT_DOUBLE_EQ(geom.px0, 100.0);
@@ -278,18 +278,39 @@ TEST(SvgPlotterTests, ScreenToDataGeometryTransformsAccurately) {
   EXPECT_DOUBLE_EQ(geom.py0, 50.0);
   EXPECT_DOUBLE_EQ(geom.py1, 510.0);
 
-  detail::NiceScale x_scale(detail::DataRange{.min = 0.0, .max = 10.0}, 10, true);
-  detail::NiceScale y_scale(detail::DataRange{.min = 0.0, .max = 5.0}, 5, true);
+  const detail::NiceScale x_scale(detail::DataRange{.min = 0.0, .max = 10.0}, 10, true);
+  const detail::NiceScale y_scale(detail::DataRange{.min = 0.0, .max = 5.0}, 5, true);
 
   // Screen matches SVG 1:1 when widget is 1000x600
-  auto [data_x, data_y] =
+  const auto [data_x, data_y] =
       detail::screenToData(100.0, 510.0, 1000.0, 600.0, config, x_scale, y_scale);
   EXPECT_NEAR(data_x, 0.0, 1e-4);
   EXPECT_NEAR(data_y, 0.0, 1e-4);
 
-  auto [top_x, top_y] = detail::screenToData(960.0, 50.0, 1000.0, 600.0, config, x_scale, y_scale);
+  const auto [top_x, top_y] =
+      detail::screenToData(960.0, 50.0, 1000.0, 600.0, config, x_scale, y_scale);
   EXPECT_NEAR(top_x, 10.0, 1e-4);
   EXPECT_NEAR(top_y, 5.0, 1e-4);
+
+  // Inversion round-trip tests: dataToScreen -> screenToData
+  const auto [s_origin_x, s_origin_y] =
+      detail::dataToScreen(0.0, 0.0, 1000.0, 600.0, config, x_scale, y_scale);
+  EXPECT_NEAR(s_origin_x, 100.0, 1e-4);
+  EXPECT_NEAR(s_origin_y, 510.0, 1e-4);
+
+  const auto [s_top_x, s_top_y] =
+      detail::dataToScreen(10.0, 5.0, 1000.0, 600.0, config, x_scale, y_scale);
+  EXPECT_NEAR(s_top_x, 960.0, 1e-4);
+  EXPECT_NEAR(s_top_y, 50.0, 1e-4);
+
+  const real_t test_x = 3.75;
+  const real_t test_y = 2.15;
+  const auto [s_mid_x, s_mid_y] =
+      detail::dataToScreen(test_x, test_y, 1000.0, 600.0, config, x_scale, y_scale);
+  const auto [rec_x, rec_y] =
+      detail::screenToData(s_mid_x, s_mid_y, 1000.0, 600.0, config, x_scale, y_scale);
+  EXPECT_NEAR(rec_x, test_x, 1e-4);
+  EXPECT_NEAR(rec_y, test_y, 1e-4);
 }
 
 TEST(SvgPlotterTests, SinglePartialRendersOnlyTotal) {

@@ -639,5 +639,41 @@ inline std::pair<real_t, real_t> screenToData(real_t screen_x, real_t screen_y, 
   return {data_x, data_y};
 }
 
+inline std::pair<real_t, real_t> svgToScreen(real_t svg_x, real_t svg_y, real_t widget_w,
+                                             real_t widget_h, const PlotConfig &config) {
+  const real_t eff_w = config.effectiveWidth();
+  const real_t eff_h = config.effectiveHeight();
+  const real_t widget_aspect = (widget_h > 0) ? (widget_w / widget_h) : (eff_w / eff_h);
+  const real_t plot_aspect = eff_w / eff_h;
+  auto scale = static_cast<real_t>(1.0);
+  auto offset_x = static_cast<real_t>(0.0);
+  auto offset_y = static_cast<real_t>(0.0);
+  if (widget_aspect > plot_aspect) {
+    scale = (widget_h > 0) ? (widget_h / eff_h) : static_cast<real_t>(1.0);
+    offset_x = (widget_w - eff_w * scale) / static_cast<real_t>(2.0);
+  } else {
+    scale = (widget_w > 0) ? (widget_w / eff_w) : static_cast<real_t>(1.0);
+    offset_y = (widget_h - eff_h * scale) / static_cast<real_t>(2.0);
+  }
+  const real_t screen_x = offset_x + svg_x * scale;
+  const real_t screen_y = offset_y + svg_y * scale;
+  return {screen_x, screen_y};
+}
+
+inline std::pair<real_t, real_t> dataToScreen(real_t data_x, real_t data_y, real_t widget_w,
+                                              real_t widget_h, const PlotConfig &config,
+                                              const NiceScale &x_scale, const NiceScale &y_scale) {
+  const auto geom = getViewportGeometry(config);
+  const real_t x_denom =
+      (x_scale.max != x_scale.min) ? (x_scale.max - x_scale.min) : static_cast<real_t>(1.0);
+  const real_t y_denom =
+      (y_scale.max != y_scale.min) ? (y_scale.max - y_scale.min) : static_cast<real_t>(1.0);
+
+  const real_t svg_x = geom.px0 + (data_x - x_scale.min) / x_denom * (geom.px1 - geom.px0);
+  const real_t svg_y = geom.py1 - (data_y - y_scale.min) / y_denom * (geom.py1 - geom.py0);
+
+  return svgToScreen(svg_x, svg_y, widget_w, widget_h, config);
+}
+
 } // namespace detail
 } // namespace correlation::plotters

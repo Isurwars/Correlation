@@ -63,6 +63,16 @@ PlotViewportNavigator::screenToData(float screen_x, float screen_y, float canvas
                                                      x_scale, y_scale);
 }
 
+std::pair<real_t, real_t>
+PlotViewportNavigator::dataToScreen(real_t data_x, real_t data_y, float canvas_w, float canvas_h,
+                                    const correlation::analysis::Histogram &hist,
+                                    const correlation::plotters::PlotConfig &config) {
+  const auto x_scale = computeXScale(hist, config);
+  const auto y_scale = computeYScale(hist, config);
+  return correlation::plotters::detail::dataToScreen(data_x, data_y, canvas_w, canvas_h, config,
+                                                     x_scale, y_scale);
+}
+
 bool PlotViewportNavigator::hasActiveZoom() const noexcept {
   return zoom_x_min_.has_value() || zoom_x_max_.has_value() || zoom_y_min_.has_value() ||
          zoom_y_max_.has_value();

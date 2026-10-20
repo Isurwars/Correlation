@@ -58,6 +58,15 @@ public:
                                                const ProgramOptions &options);
 
   /**
+   * @brief Executes a rapid single-frame RDF calculation for fast live calibration preview.
+   * @param[in] trajectory Source trajectory reference with structures to analyze.
+   * @param[in] options Analytical configuration parameters.
+   * @return Success or error message.
+   */
+  std::expected<void, std::string> runFastPreviewRDF(correlation::core::Trajectory *trajectory,
+                                                     const ProgramOptions &options);
+
+  /**
    * @brief Validates analysis configuration before execution.
    * @param[in] options Options to validate.
    * @return Success (void) or error message string.

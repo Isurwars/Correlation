@@ -88,6 +88,24 @@ AnalysisDispatcher::runAnalysis(correlation::core::Trajectory &trajectory,
 }
 
 std::expected<void, std::string>
+AnalysisDispatcher::runFastPreviewRDF(correlation::core::Trajectory *trajectory,
+                                      const ProgramOptions &options) {
+  if (trajectory == nullptr || trajectory->getFrameCount() == 0) {
+    return std::unexpected(AppDefaults::MSG_ANALYSIS_ABORTED);
+  }
+
+  ProgramOptions preview_opts = options;
+  preview_opts.min_frame = 1;
+  preview_opts.max_frame = 1;
+  preview_opts.frame_stride = 1;
+  preview_opts.active_calculators.clear();
+  preview_opts.active_calculators["RDF"] = true;
+  preview_opts.active_calculators["Radial Distribution Function"] = true;
+
+  return runAnalysis(trajectory, preview_opts);
+}
+
+std::expected<void, std::string>
 AnalysisDispatcher::writeFiles(const ProgramOptions &options) const {
   if (!df_) {
     std::string const err = AppDefaults::MSG_NO_DATA_TO_WRITE;
