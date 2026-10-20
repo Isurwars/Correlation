@@ -69,6 +69,17 @@ public:
    */
   void handleMaterialTypeChanged(int type);
 
+  /**
+   * @brief Initializes the domain presets list in the UI.
+   */
+  void initDomainPresets();
+
+  /**
+   * @brief Applies a scientific domain preset by ID.
+   * @param[in] id Domain preset ID.
+   */
+  void handleApplyDomainPreset(int id);
+
 private:
   ::AppWindow &window_;
   ProgramOptions &options_;

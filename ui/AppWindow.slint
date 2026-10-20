@@ -37,6 +37,8 @@ import {
     ComparisonCurveData,
     FileMetadata,
     WorkflowState,
+    SanityBadgeState,
+    DomainPresetItem,
 } from "Types.slint";
 
 import { MiniSideBar } from "nav/MiniSideBar.slint";
@@ -193,6 +195,15 @@ export component AppWindow inherits Window {
     in-out property <int> markers_count: 0;
     in-out property <[CalibrationPair]> calibration_pairs: [];
     in-out property <int> active_calibration_pair_index: 0;
+    in-out property <SanityBadgeState> sanity_badge_state: {
+        severity: 0,
+        title: "Optimal Cutoffs",
+        message: "All bond cutoffs satisfy PBC and covalent bounds.",
+        has_fix: false,
+        fix_action: 0,
+        fix_label: "",
+    };
+    in property <[DomainPresetItem]> domain_presets: [];
 
     // Table data and calculated scalar properties
     in property <[string]> table_headers: [];
@@ -305,6 +316,8 @@ export component AppWindow inherits Window {
     callback auto_detect_cutoff(int);
     callback reset_calibration_pair(int);
     callback drag_cutoff_handle(int, bool, length);
+    callback fix_sanity_issue(int);
+    callback apply_domain_preset(int);
 
     // ============================================================================
     // Core Layout Logic
@@ -516,6 +529,7 @@ export component AppWindow inherits Window {
                     deborah_number: root.deborah_number;
                     bond_cutoffs <=> root.bond_cutoffs;
                     bond_cutoffs_reset_trigger: root.bond_cutoffs_reset_trigger;
+                    sanity_badge_state: root.sanity_badge_state;
 
                     has_scattering_active: root.has_scattering_active;
                     has_rings_active: root.has_rings_active;
@@ -542,6 +556,7 @@ export component AppWindow inherits Window {
                     cancel_analysis => { root.cancel_analysis(); }
 
                     reset_bond_cutoffs => { root.reset_bond_cutoffs(); }
+                    fix_sanity_issue(action) => { root.fix_sanity_issue(action); }
                     apply_min_factor(factor) => { root.apply_min_factor(factor); }
                     apply_max_factor(factor) => { root.apply_max_factor(factor); }
                     apply_global_cutoff(cutoff) => { root.apply_global_cutoff(cutoff); }
@@ -701,6 +716,8 @@ export component AppWindow inherits Window {
                     auto_detect_cutoff(idx) => { root.auto_detect_cutoff(idx); }
                     reset_calibration_pair(idx) => { root.reset_calibration_pair(idx); }
                     drag_cutoff_handle(idx, is_max, mx) => { root.drag_cutoff_handle(idx, is_max, mx); }
+                    sanity_badge_state: root.sanity_badge_state;
+                    fix_sanity_issue(action) => { root.fix_sanity_issue(action); }
 
                     structure_3d_image: root.structure_3d_image;
                     structure_3d_current_frame <=> root.structure_3d_current_frame;

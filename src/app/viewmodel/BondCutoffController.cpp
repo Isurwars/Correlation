@@ -7,6 +7,7 @@
  */
 
 #include "app/viewmodel/BondCutoffController.hpp"
+#include "analysis/CutoffSanityChecker.hpp"
 #include "analysis/FirstMinimumDetector.hpp"
 #include "app/formatters/BondCutoffMapper.hpp"
 #include "app/services/AnalysisDispatcher.hpp"
@@ -89,56 +90,18 @@ void BondCutoffController::applyScaledCutoffs(float scale_factor) {
   if (loader_.cell() == nullptr || scale_factor <= 0.0F) {
     return;
   }
-  const auto scaled_cutoffs = BondCutoffService::applyScaledBondCutoffs(
+  options_.bond_cutoffs = BondCutoffService::applyScaledBondCutoffs(
       loader_.trajectoryMut(), static_cast<real_t>(scale_factor));
-  const auto &elements = loader_.cell()->elements();
-  const auto num_elements = elements.size();
-
-  const auto slint_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
-  for (size_t i = 0; i < num_elements; ++i) {
-    for (size_t j = i; j < num_elements; ++j) {
-      const real_t min_d = std::sqrt(scaled_cutoffs[i][j].min_sq);
-      const real_t max_d = std::sqrt(scaled_cutoffs[i][j].max_sq);
-      slint_cutoffs->push_back(BondCutoff{
-          .element1 = slint::SharedString(elements[i].symbol),
-          .element2 = slint::SharedString(elements[j].symbol),
-          .min_distance = slint::SharedString(std::format("{:.2f}", min_d)),
-          .max_distance = slint::SharedString(std::format("{:.2f}", max_d)),
-      });
-    }
-  }
-
-  window_.set_bond_cutoffs(slint_cutoffs);
-  window_.set_bond_cutoffs_reset_trigger(window_.get_bond_cutoffs_reset_trigger() + 1);
-  options_.bond_cutoffs = getBondCutoffs();
+  syncCutoffsToUI();
 }
 
 void BondCutoffController::setUniformCutoff(float max_cutoff) {
   if (loader_.cell() == nullptr || max_cutoff <= 0.0F) {
     return;
   }
-  const auto uniform_cutoffs = BondCutoffService::setUniformBondCutoff(
+  options_.bond_cutoffs = BondCutoffService::setUniformBondCutoff(
       loader_.cell(), loader_.trajectoryMut(), 0.0, static_cast<real_t>(max_cutoff));
-  const auto &elements = loader_.cell()->elements();
-  const auto num_elements = elements.size();
-
-  const auto slint_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
-  for (size_t i = 0; i < num_elements; ++i) {
-    for (size_t j = i; j < num_elements; ++j) {
-      const real_t min_d = std::sqrt(uniform_cutoffs[i][j].min_sq);
-      const real_t max_d = std::sqrt(uniform_cutoffs[i][j].max_sq);
-      slint_cutoffs->push_back(BondCutoff{
-          .element1 = slint::SharedString(elements[i].symbol),
-          .element2 = slint::SharedString(elements[j].symbol),
-          .min_distance = slint::SharedString(std::format("{:.2f}", min_d)),
-          .max_distance = slint::SharedString(std::format("{:.2f}", max_d)),
-      });
-    }
-  }
-
-  window_.set_bond_cutoffs(slint_cutoffs);
-  window_.set_bond_cutoffs_reset_trigger(window_.get_bond_cutoffs_reset_trigger() + 1);
-  options_.bond_cutoffs = getBondCutoffs();
+  syncCutoffsToUI();
 }
 
 namespace {
@@ -302,6 +265,7 @@ void BondCutoffController::applyCovalentFactor(float factor, FactorBound bound) 
   window_.set_bond_cutoffs_reset_trigger(window_.get_bond_cutoffs_reset_trigger() + 1);
   options_.bond_cutoffs = getBondCutoffs();
   BondCutoffService::setBondCutoffs(loader_.trajectoryMut(), options_.bond_cutoffs);
+  syncCutoffsToUI();
 }
 
 void BondCutoffController::applyGlobalCutoff(float global_cutoff) {
@@ -334,6 +298,7 @@ void BondCutoffController::initializeCalibrationPairs() {
 
   window_.set_calibration_pairs(calib_pairs);
   updateCalibrationPixels(last_canvas_w_, last_canvas_h_);
+  evaluateSanityState();
 }
 
 void BondCutoffController::setCutoffRange(int pair_index, float r_min, float r_max) {
@@ -358,6 +323,7 @@ void BondCutoffController::setCutoffRange(int pair_index, float r_min, float r_m
   options_.bond_cutoffs = getBondCutoffs();
   BondCutoffService::setBondCutoffs(loader_.trajectoryMut(), options_.bond_cutoffs);
   updateCalibrationPixels(last_canvas_w_, last_canvas_h_);
+  evaluateSanityState();
 }
 
 void BondCutoffController::resetCalibrationPair(int pair_index) {
@@ -389,6 +355,7 @@ void BondCutoffController::resetCalibrationPair(int pair_index) {
   options_.bond_cutoffs = getBondCutoffs();
   BondCutoffService::setBondCutoffs(loader_.trajectoryMut(), options_.bond_cutoffs);
   updateCalibrationPixels(last_canvas_w_, last_canvas_h_);
+  evaluateSanityState();
 }
 
 void BondCutoffController::autoDetectCutoffs(int pair_index) {
@@ -432,6 +399,7 @@ void BondCutoffController::autoDetectCutoffs(int pair_index) {
     options_.bond_cutoffs = getBondCutoffs();
     BondCutoffService::setBondCutoffs(loader_.trajectoryMut(), options_.bond_cutoffs);
     updateCalibrationPixels(last_canvas_w_, last_canvas_h_);
+    evaluateSanityState();
   }
 }
 
@@ -554,6 +522,107 @@ void BondCutoffController::updateCalibrationPixels(float canvas_w, float canvas_
 
     calib_pairs->set_row_data(k, pair);
   }
+}
+
+void BondCutoffController::syncCutoffsToUI() {
+  if (loader_.cell() == nullptr) {
+    evaluateSanityState();
+    return;
+  }
+
+  const auto &elements = loader_.cell()->elements();
+  const auto num_elements = elements.size();
+  const auto slint_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
+  const auto calib_pairs = std::make_shared<slint::VectorModel<CalibrationPair>>();
+
+  int pair_idx = 0;
+  for (size_t i = 0; i < num_elements; ++i) {
+    for (size_t j = i; j < num_elements; ++j) {
+      const real_t min_d = std::sqrt(options_.bond_cutoffs[i][j].min_sq);
+      const real_t max_d = std::sqrt(options_.bond_cutoffs[i][j].max_sq);
+      const auto min_str = std::format("{:.2f}", min_d);
+      const auto max_str = std::format("{:.2f}", max_d);
+
+      slint_cutoffs->push_back(BondCutoff{
+          .element1 = slint::SharedString(elements[i].symbol),
+          .element2 = slint::SharedString(elements[j].symbol),
+          .min_distance = slint::SharedString(min_str),
+          .max_distance = slint::SharedString(max_str),
+      });
+
+      calib_pairs->push_back(CalibrationPair{
+          .pair_index = pair_idx,
+          .label =
+              slint::SharedString(std::format("{}-{}", elements[i].symbol, elements[j].symbol)),
+          .r_min = slint::SharedString(min_str),
+          .r_max = slint::SharedString(max_str),
+          .r_peak = slint::SharedString("—"),
+          .r_min_px = 0.0F,
+          .r_max_px = 0.0F,
+          .r_peak_px = 0.0F,
+          .is_valid = true,
+      });
+      ++pair_idx;
+    }
+  }
+
+  window_.set_bond_cutoffs(slint_cutoffs);
+  window_.set_bond_cutoffs_reset_trigger(window_.get_bond_cutoffs_reset_trigger() + 1);
+  window_.set_calibration_pairs(calib_pairs);
+  updateCalibrationPixels(last_canvas_w_, last_canvas_h_);
+  evaluateSanityState();
+}
+
+void BondCutoffController::evaluateSanityState() {
+  if (loader_.cell() == nullptr) {
+    window_.set_sanity_badge_state({
+        .severity = 0,
+        .title = slint::SharedString("No Structure"),
+        .message = slint::SharedString("Load a structure or trajectory to validate bond cutoffs."),
+        .has_fix = false,
+        .fix_action = 0,
+        .fix_label = slint::SharedString(""),
+    });
+    return;
+  }
+
+  const auto &elements = loader_.cell()->elements();
+  const auto report = correlation::analysis::CutoffSanityChecker::checkCutoffs(
+      options_.bond_cutoffs, elements, loader_.cell());
+
+  window_.set_sanity_badge_state({
+      .severity = static_cast<int>(report.severity),
+      .title = slint::SharedString(report.title),
+      .message = slint::SharedString(report.message),
+      .has_fix = report.has_fix,
+      .fix_action = static_cast<int>(report.fix_action),
+      .fix_label = slint::SharedString(report.fix_label),
+  });
+}
+
+void BondCutoffController::handleFixSanityIssue(int fix_action) {
+  if (loader_.cell() == nullptr) {
+    return;
+  }
+
+  const auto action = static_cast<correlation::analysis::SanityFixAction>(fix_action);
+  if (action == correlation::analysis::SanityFixAction::AutoDetectFirstMin) {
+    int active_idx = window_.get_active_calibration_pair_index();
+    const auto calib_pairs = window_.get_calibration_pairs();
+    if (calib_pairs != nullptr && calib_pairs->row_count() > 0) {
+      if (active_idx < 0 || static_cast<size_t>(active_idx) >= calib_pairs->row_count()) {
+        active_idx = 0;
+      }
+      autoDetectCutoffs(active_idx);
+    }
+    return;
+  }
+
+  correlation::analysis::CutoffSanityChecker::applyFix(
+      options_.bond_cutoffs, loader_.cell()->elements(), loader_.cell(), action);
+  BondCutoffService::setBondCutoffs(loader_.trajectoryMut(), options_.bond_cutoffs);
+
+  syncCutoffsToUI();
 }
 
 } // namespace correlation::app

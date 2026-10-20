@@ -8,7 +8,7 @@ import {
     FilledButton,
     Horizontal,
 } from "../../material/material.slint";
-import { TableRow, CurveToggleItem, CalibrationPair } from "../../Types.slint";
+import { TableRow, CurveToggleItem, CalibrationPair, SanityBadgeState } from "../../Types.slint";
 import { WorkflowStepper } from "./components/WorkflowStepper.slint";
 import { PreviewHeader } from "./components/PreviewHeader.slint";
 import { HeroEmptyState } from "./components/HeroEmptyState.slint";
@@ -96,6 +96,8 @@ export component PreviewCard inherits FilledCard {
     callback auto_detect_cutoff(int);
     callback reset_calibration_pair(int);
     callback drag_cutoff_handle(int, bool, length);
+    in property <SanityBadgeState> sanity_badge_state;
+    callback fix_sanity_issue(int);
 
     // 3D Viewport properties & callbacks
     in property <image> structure_3d_image;
@@ -169,7 +171,9 @@ export component PreviewCard inherits FilledCard {
             plot_items: root.plot_items;
             selected_plot_index <=> root.selected_plot_index;
             active_tab <=> root.active_tab;
+            sanity_badge_state: root.sanity_badge_state;
             plot_selected(idx) => { root.plot_selected(idx); }
+            fix_sanity_issue(action) => { root.fix_sanity_issue(action); }
         }
 
         // 3. Pinned Runs Info

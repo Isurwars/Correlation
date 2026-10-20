@@ -91,6 +91,8 @@ AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
   // Initial load of settings and preset list
   loadSettings();
   preset_controller_->refreshPresetList();
+  preset_controller_->initDomainPresets();
+  bond_cutoff_controller_.evaluateSanityState();
 
   // Asynchronously check for GitHub releases in the background without interrupting the user
   UpdateChecker::checkForUpdatesAsync(window_, CORRELATION_VERSION_STRING);
@@ -241,6 +243,16 @@ void AppController::registerPresetAndOptionCallbacks() {
     slint::invoke_from_event_loop(
         [this, type] { preset_controller_->handleMaterialTypeChanged(type); });
   });
+
+  window_.on_apply_domain_preset([this](int id) {
+    slint::invoke_from_event_loop([this, id] {
+      preset_controller_->handleApplyDomainPreset(id);
+      bond_cutoff_controller_.evaluateSanityState();
+    });
+  });
+
+  window_.on_fix_sanity_issue(
+      [this](int action) { bond_cutoff_controller_.handleFixSanityIssue(action); });
 
   window_.on_reset_bond_cutoffs([this] {
     setBondCutoffs();

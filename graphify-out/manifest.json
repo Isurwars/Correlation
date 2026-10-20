@@ -950,8 +950,8 @@
     "semantic_hash": "fa5794c577c54fcf0888468db60e0c22"
   },
   "src/CMakeLists.txt": {
-    "mtime": 1792461556.8148756,
-    "ast_hash": "5252be6b05bab312562ad7a1031ba5cc",
+    "mtime": 1792468132.6013033,
+    "ast_hash": "3658b5d3750c2428d72f7b403aa713f9",
     "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
@@ -960,8 +960,8 @@
     "semantic_hash": ""
   },
   "tests/CMakeLists.txt": {
-    "mtime": 1792461590.7953584,
-    "ast_hash": "884f5f2069796f3eee795c5fb0d843a3",
+    "mtime": 1792468690.1883523,
+    "ast_hash": "b47eb7c92c3b191a73b2b1e7573ba956",
     "semantic_hash": ""
   },
   "tests/fuzz/CMakeLists.txt": {
@@ -2010,8 +2010,8 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/BondCutoffController.hpp": {
-    "mtime": 1792465871.6066413,
-    "ast_hash": "dce3e576ae251eb9d0342dd5ecc57cf6",
+    "mtime": 1792468397.4232473,
+    "ast_hash": "0236fd221d2755966b033ae653c20599",
     "semantic_hash": ""
   },
   "include/app/viewmodel/PlotController.hpp": {
@@ -2020,13 +2020,13 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/PresetController.hpp": {
-    "mtime": 1790380736.9755123,
-    "ast_hash": "590baf27653fdfa938aa1535b2d8d9cb",
+    "mtime": 1792468514.950215,
+    "ast_hash": "723cf66bf25afaaec4e6314d2665ccb4",
     "semantic_hash": ""
   },
   "src/app/core/AppController.cpp": {
-    "mtime": 1792466226.0434523,
-    "ast_hash": "610520db70ffae30ba9d429e771ee933",
+    "mtime": 1792468866.811327,
+    "ast_hash": "b40dac2fe39a333811e4ba5b273aa970",
     "semantic_hash": ""
   },
   "src/app/core/SettingsManager.cpp": {
@@ -2100,8 +2100,8 @@
     "semantic_hash": ""
   },
   "src/app/viewmodel/BondCutoffController.cpp": {
-    "mtime": 1792466279.9597313,
-    "ast_hash": "4b1899852bd5e49f161cc2d6b9ffae3f",
+    "mtime": 1792468609.1886542,
+    "ast_hash": "0c52fd6e0296b42d64505c2cc9771f99",
     "semantic_hash": ""
   },
   "src/app/viewmodel/PlotController.cpp": {
@@ -2110,8 +2110,8 @@
     "semantic_hash": ""
   },
   "src/app/viewmodel/PresetController.cpp": {
-    "mtime": 1790380719.7823412,
-    "ast_hash": "e0db44c5a3f304500ea15ef170f30b6a",
+    "mtime": 1792468600.4487967,
+    "ast_hash": "d28fea07823688906907dbf013f73865",
     "semantic_hash": ""
   },
   "include/app/core/AppOptions.hpp": {
@@ -2927,6 +2927,36 @@
   "tests/unit/analysis/FirstMinimumDetectorTests.cpp": {
     "mtime": 1792461643.7334666,
     "ast_hash": "51a706dd6477842aea8633563c31c336",
+    "semantic_hash": ""
+  },
+  "include/analysis/CutoffSanityChecker.hpp": {
+    "mtime": 1792468866.7704494,
+    "ast_hash": "b2234f3ad0e33eb2ca38aa97b280bb90",
+    "semantic_hash": ""
+  },
+  "include/app/services/DomainPresetRegistry.hpp": {
+    "mtime": 1792468943.1524692,
+    "ast_hash": "32a9f1d945e4a47167a0cee42c6cb4bc",
+    "semantic_hash": ""
+  },
+  "src/analysis/CutoffSanityChecker.cpp": {
+    "mtime": 1792468973.9180117,
+    "ast_hash": "c27727db490cb344f962a2b0c2cfcc79",
+    "semantic_hash": ""
+  },
+  "src/app/services/DomainPresetRegistry.cpp": {
+    "mtime": 1792468866.782728,
+    "ast_hash": "d2386fb12bee5e290f3e5056cd35f8e0",
+    "semantic_hash": ""
+  },
+  "tests/unit/analysis/CutoffSanityCheckerTests.cpp": {
+    "mtime": 1792469051.5968678,
+    "ast_hash": "e88343f9f6ecbd4c4c954cecaea097e5",
+    "semantic_hash": ""
+  },
+  "tests/unit/app/DomainPresetRegistryTests.cpp": {
+    "mtime": 1792468970.7500587,
+    "ast_hash": "42ff312056c1d30ca61a6da92cab63c1",
     "semantic_hash": ""
   }
 }

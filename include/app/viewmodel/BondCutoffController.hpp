@@ -142,7 +142,20 @@ public:
    */
   void setCutoffRange(int pair_index, float r_min, float r_max);
 
+  /**
+   * @brief Evaluates current bond cutoffs with CutoffSanityChecker and updates UI badge state.
+   */
+  void evaluateSanityState();
+
+  /**
+   * @brief Executes automated repair action for sanity issues.
+   * @param[in] fix_action Integer corresponding to SanityFixAction enum.
+   */
+  void handleFixSanityIssue(int fix_action);
+
 private:
+  void syncCutoffsToUI();
+
   AppWindow &window_;
   TrajectoryLoader &loader_;
   ProgramOptions &options_;

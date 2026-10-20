@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-import { AtomCount, BondCutoff, AnalysisOptions, AppErrors } from "../../Types.slint";
+import { AtomCount, BondCutoff, AnalysisOptions, AppErrors, SanityBadgeState } from "../../Types.slint";
 import { CommonOptionsPanelCard } from "../../cards/common/CommonOptionsPanelCard.slint";
 
 /// Modular Host Component for Panel 1: Structure & Common Options (Cutoffs, RDF, Angles, Dynamics)
@@ -22,6 +22,8 @@ export component StructurePanel inherits Rectangle {
     in property <[AtomCount]> atom_counts: [];
     in-out property <[BondCutoff]> bond_cutoffs: [];
     in property <int> bond_cutoffs_reset_trigger: 0;
+    in property <SanityBadgeState> sanity_badge_state;
+    callback fix_sanity_issue(int);
     callback reset_bond_cutoffs();
     callback apply_min_factor(float);
     callback apply_max_factor(float);
@@ -56,6 +58,8 @@ export component StructurePanel inherits Rectangle {
         atom_counts: root.atom_counts;
         bond_cutoffs <=> root.bond_cutoffs;
         bond_cutoffs_reset_trigger: root.bond_cutoffs_reset_trigger;
+        sanity_badge_state: root.sanity_badge_state;
+        fix_sanity_issue(action) => { root.fix_sanity_issue(action); }
         reset_bond_cutoffs => { root.reset_bond_cutoffs(); }
         apply_min_factor(factor) => { root.apply_min_factor(factor); }
         apply_max_factor(factor) => { root.apply_max_factor(factor); }

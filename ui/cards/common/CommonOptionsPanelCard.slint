@@ -9,7 +9,7 @@ import {
     ScrollView,
     Vertical,
 } from "../../material/material.slint";
-import { AtomCount, BondCutoff } from "../../Types.slint";
+import { AtomCount, BondCutoff, SanityBadgeState } from "../../Types.slint";
 import { DynamicPropertiesCard } from "../dynamic/DynamicPropertiesCard.slint";
 import { BondCutoffsCard } from "BondCutoffsCard.slint";
 import { RDFOptionsCard } from "RDFOptionsCard.slint";
@@ -33,6 +33,8 @@ export component CommonOptionsPanelCard inherits Rectangle {
     in property <[AtomCount]> atom_counts: [];
     in-out property <[BondCutoff]> bond_cutoffs: [];
     in property <int> bond_cutoffs_reset_trigger: 0;
+    in property <SanityBadgeState> sanity_badge_state;
+    callback fix_sanity_issue(int);
     callback reset_bond_cutoffs();
     callback apply_min_factor(float);
     callback apply_max_factor(float);
@@ -97,6 +99,10 @@ export component CommonOptionsPanelCard inherits Rectangle {
                 bond_cutoffs <=> root.bond_cutoffs;
                 atom_counts: root.atom_counts;
                 bond_cutoffs_reset_trigger: root.bond_cutoffs_reset_trigger;
+                sanity_badge_state: root.sanity_badge_state;
+                fix_sanity_issue(action) => {
+                    root.fix_sanity_issue(action);
+                }
                 reset_bond_cutoffs => {
                     root.reset_bond_cutoffs();
                 }

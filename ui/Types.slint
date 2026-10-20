@@ -175,5 +175,21 @@ export struct WorkflowState {
     has_validation_errors: bool,
 }
 
+export struct SanityBadgeState {
+    severity: int,
+    title: string,
+    message: string,
+    has_fix: bool,
+    fix_action: int,
+    fix_label: string,
+}
+
+export struct DomainPresetItem {
+    id: int,
+    name: string,
+    description: string,
+    badge_text: string,
+}
+
 
 

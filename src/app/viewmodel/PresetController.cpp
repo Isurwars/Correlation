@@ -9,6 +9,7 @@
 #include "app/viewmodel/PresetController.hpp"
 #include "AppWindow.h"
 #include "app/core/AppController.hpp"
+#include "app/services/DomainPresetRegistry.hpp"
 #include "app/services/InputValidator.hpp"
 #include "app/services/PresetManager.hpp"
 #include <format>
@@ -121,6 +122,39 @@ void PresetController::handleMaterialTypeChanged(int type) {
 
   // Force re-validation and update the CLI equivalent
   static_cast<void>(controller_.getInputValidator()->validateInputs());
+}
+
+void PresetController::initDomainPresets() {
+  const auto &presets = DomainPresetRegistry::getPresets();
+  auto slint_presets = std::make_shared<slint::VectorModel<DomainPresetItem>>();
+  for (const auto &preset : presets) {
+    slint_presets->push_back(DomainPresetItem{
+        .id = static_cast<int>(preset.id),
+        .name = slint::SharedString(preset.name),
+        .description = slint::SharedString(preset.description),
+        .badge_text = slint::SharedString(preset.badge_text),
+    });
+  }
+  window_.set_domain_presets(slint_presets);
+}
+
+void PresetController::handleApplyDomainPreset(int id) {
+  const auto preset_id = static_cast<DomainPresetId>(id);
+  if (!DomainPresetRegistry::applyPreset(preset_id, options_)) {
+    return;
+  }
+
+  // Update UI components with the new options
+  controller_.handleOptionstoUI();
+  controller_.populateCalculatorGroups();
+  controller_.updateActiveGroupFlags();
+  static_cast<void>(controller_.getInputValidator()->validateInputs());
+
+  const auto *preset = DomainPresetRegistry::getPreset(preset_id);
+  if (preset != nullptr) {
+    window_.set_analysis_status_text(
+        slint::SharedString(std::string("Applied template: ") + preset->name));
+  }
 }
 
 } // namespace correlation::app

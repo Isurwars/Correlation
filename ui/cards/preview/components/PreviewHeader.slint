@@ -5,25 +5,32 @@ import {
     Horizontal,
     TabItem,
 } from "../../../material/material.slint";
+import { SanityBadgeState } from "../../../Types.slint";
+import { SanityBadge } from "../../common/SanityBadge.slint";
 
 export component PreviewHeader inherits Horizontal {
     in property <[MenuItem]> plot_items: [];
     in-out property <int> selected_plot_index: -1;
     in-out property <int> active_tab: 0;
+    in property <SanityBadgeState> sanity_badge_state;
 
     callback plot_selected(int);
+    callback fix_sanity_issue(int);
 
     out property <string> tooltip_text:
+        badge_area.has-hover ? root.sanity_badge_state.message :
         tab_data_area.has-hover ? "Data Table View\n\n📄 Tabular numerical coordinates and distribution intensities." :
         tab_3d_area.has-hover ? "3D Structure View\n\n🌐 Interactive atomic visualizer with orbit camera, bonds, and unit cell wireframe." : "";
 
     out property <length> tooltip_x:
+        badge_area.has-hover ? badge_area.absolute-position.x + badge_area.mouse-x :
         plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.x + plot_dropdown_area.mouse-x :
         tab_plot_area.has-hover ? tab_plot_area.absolute-position.x + tab_plot_area.mouse-x :
         tab_data_area.has-hover ? tab_data_area.absolute-position.x + tab_data_area.mouse-x :
         tab_3d_area.has-hover ? tab_3d_area.absolute-position.x + tab_3d_area.mouse-x : 0px;
 
     out property <length> tooltip_y:
+        badge_area.has-hover ? badge_area.absolute-position.y + badge_area.mouse-y :
         plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.y + plot_dropdown_area.mouse-y :
         tab_plot_area.has-hover ? tab_plot_area.absolute-position.y + tab_plot_area.mouse-y :
         tab_data_area.has-hover ? tab_data_area.absolute-position.y + tab_data_area.mouse-y :
@@ -42,6 +49,21 @@ export component PreviewHeader inherits Horizontal {
 
         selected(idx) => {
             root.plot_selected(idx);
+        }
+    }
+
+    // Cutoff Sanity Validation Badge
+    badge_area := TouchArea {
+        visible: root.sanity_badge_state.title != "";
+        width: root.sanity_badge_state.title != "" ? badge.preferred-width : 0px;
+        height: 100%;
+        badge := SanityBadge {
+            visible: root.sanity_badge_state.title != "";
+            y: (parent.height - self.height) / 2;
+            state: root.sanity_badge_state;
+            fix_clicked(action) => {
+                root.fix_sanity_issue(action);
+            }
         }
     }
 
