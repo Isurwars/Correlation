@@ -596,6 +596,8 @@ TEST_F(RDFCalculatorTests, PrimitiveCellRDFComputesSelfImages) {
   EXPECT_GT(total_counts, 0.0);
 }
 
+namespace {
+
 [[nodiscard]] std::string resolveExamplePath(std::string_view relative_subpath) {
   for (const auto &prefix : {"../../", "../", "./"}) {
     const std::string candidate = prefix + std::string(relative_subpath);
@@ -617,6 +619,9 @@ TEST_F(RDFCalculatorTests, PrimitiveCellRDFComputesSelfImages) {
   }
   return sum / static_cast<real_t>(values.size() - check_start);
 }
+
+} // namespace
+
 
 TEST_F(RDFCalculatorTests, AmorphousPalladiumSingleFrameAsymptotesToOneAt20A) {
   const std::string filepath = resolveExamplePath("examples/a-Pd/a-Pd.car");
