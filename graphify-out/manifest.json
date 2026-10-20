@@ -40,8 +40,8 @@
     "semantic_hash": ""
   },
   "include/core/Atom.hpp": {
-    "mtime": 1792036789.1135855,
-    "ast_hash": "e4a6bd9aac5fe99309c1a8536a8de229",
+    "mtime": 1792461990.7063124,
+    "ast_hash": "f1e69bce9cbf1e0a4c6b2d1ac5a316a2",
     "semantic_hash": ""
   },
   "include/core/Cell.hpp": {
@@ -950,8 +950,8 @@
     "semantic_hash": "fa5794c577c54fcf0888468db60e0c22"
   },
   "src/CMakeLists.txt": {
-    "mtime": 1792036905.2575777,
-    "ast_hash": "ea010fea8beb754b8a32591cab3852ed",
+    "mtime": 1792461556.8148756,
+    "ast_hash": "5252be6b05bab312562ad7a1031ba5cc",
     "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
@@ -960,8 +960,8 @@
     "semantic_hash": ""
   },
   "tests/CMakeLists.txt": {
-    "mtime": 1792265038.1458833,
-    "ast_hash": "63ceca1cf2508d789184bc48ed2974b2",
+    "mtime": 1792461590.7953584,
+    "ast_hash": "884f5f2069796f3eee795c5fb0d843a3",
     "semantic_hash": ""
   },
   "tests/fuzz/CMakeLists.txt": {
@@ -2720,8 +2720,8 @@
     "semantic_hash": ""
   },
   "include/render3d/Scene3D.hpp": {
-    "mtime": 1792434881.1746037,
-    "ast_hash": "3b54b07deccebee3fb78e510befdd483",
+    "mtime": 1792437372.934199,
+    "ast_hash": "858d7a9c3ff057b2bdbaee849426e0ed",
     "semantic_hash": ""
   },
   "src/render3d/Camera3D.cpp": {
@@ -2730,8 +2730,8 @@
     "semantic_hash": ""
   },
   "src/render3d/Scene3D.cpp": {
-    "mtime": 1792433459.592803,
-    "ast_hash": "3195ceed9ac39d5072a0a994f4d4c994",
+    "mtime": 1792437570.4591608,
+    "ast_hash": "b4963a771e0fe1581be4399b97467cbe",
     "semantic_hash": ""
   },
   "tests/unit/render3d/Camera3DTests.cpp": {
@@ -2840,13 +2840,13 @@
     "semantic_hash": ""
   },
   "tests/unit/render3d/TrajectoryStreamerTests.cpp": {
-    "mtime": 1792434961.7503703,
-    "ast_hash": "7eeff7e08ea5ed046721e9f28b63ae59",
+    "mtime": 1792440216.1411676,
+    "ast_hash": "fa5d9d523335b0203e99bb3bf42c6fe7",
     "semantic_hash": ""
   },
   "include/app/viewmodel/Structure3DController.hpp": {
-    "mtime": 1792434865.0380585,
-    "ast_hash": "9f504aed145d40078110e930606d041b",
+    "mtime": 1792440121.1175961,
+    "ast_hash": "6163a0c9efeb9d2fb8735c088e464979",
     "semantic_hash": ""
   },
   "src/app/viewmodel/Structure3DController.cpp": {
@@ -2912,6 +2912,21 @@
   "ui/material/ui/icons/pause.svg": {
     "mtime": 1792385793.1678758,
     "ast_hash": "a554d260913f43a1f7bf6d8c64b39047",
+    "semantic_hash": ""
+  },
+  "include/analysis/FirstMinimumDetector.hpp": {
+    "mtime": 1792461643.726554,
+    "ast_hash": "4acc28cba7ed92e08446d88fccf0b0f8",
+    "semantic_hash": ""
+  },
+  "src/analysis/FirstMinimumDetector.cpp": {
+    "mtime": 1792461691.7318258,
+    "ast_hash": "3acc947ccdf9f8b90c4810f384623fdc",
+    "semantic_hash": ""
+  },
+  "tests/unit/analysis/FirstMinimumDetectorTests.cpp": {
+    "mtime": 1792461643.7334666,
+    "ast_hash": "51a706dd6477842aea8633563c31c336",
     "semantic_hash": ""
   }
 }
