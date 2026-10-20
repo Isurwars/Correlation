@@ -176,6 +176,9 @@ void PlotController::handlePlotResized(PlotSize size) {
   }
   last_plot_width_ = size.width;
   last_plot_height_ = size.height;
+  if (on_plot_geometry_changed_) {
+    on_plot_geometry_changed_(last_plot_width_, last_plot_height_);
+  }
   const int current_idx = window_.get_selected_plot_index();
   if (current_idx >= 0) {
     requestPlotUpdate(current_idx, true);
@@ -367,13 +370,18 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
   task.custom_curve_colors = series_manager_.getAssignedCurveColors();
   task.pinned_runs_count = pinned_runs_count;
 
-  task.comparison_hists.push_back({.label = "Current", .hist = nullptr});
+  correlation::plotters::LabeledHistogram current_entry;
+  current_entry.label = "Current";
+  task.comparison_hists.push_back(std::move(current_entry));
   for (const auto &pinned_run : series_manager_.getPinnedRuns()) {
     const auto hist_it = pinned_run.histograms.find(name);
     if (hist_it != pinned_run.histograms.end()) {
       const bool vis = series_manager_.isCurveVisible(pinned_run.label, true);
-      task.comparison_hists.push_back(
-          {.label = pinned_run.label, .hist = &hist_it->second, .style = {.visible = vis}});
+      correlation::plotters::LabeledHistogram pinned_entry;
+      pinned_entry.label = pinned_run.label;
+      pinned_entry.hist = &hist_it->second;
+      pinned_entry.style.visible = vis;
+      task.comparison_hists.push_back(std::move(pinned_entry));
     }
   }
 

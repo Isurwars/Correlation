@@ -26,6 +26,18 @@ export struct BondCutoff {
     max_distance: string,
 }
 
+export struct CalibrationPair {
+    pair_index: int,
+    label: string,
+    r_min: string,
+    r_max: string,
+    r_peak: string,
+    r_min_px: length,
+    r_max_px: length,
+    r_peak_px: length,
+    is_valid: bool,
+}
+
 export struct CalculatorInfo {
     id: string,
     name: string,
@@ -161,6 +173,22 @@ export struct WorkflowState {
     analysis_running: bool,
     analysis_done: bool,
     has_validation_errors: bool,
+}
+
+export struct SanityBadgeState {
+    severity: int,
+    title: string,
+    message: string,
+    has_fix: bool,
+    fix_action: int,
+    fix_label: string,
+}
+
+export struct DomainPresetItem {
+    id: int,
+    name: string,
+    description: string,
+    badge_text: string,
 }
 
 

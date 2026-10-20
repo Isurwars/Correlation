@@ -233,6 +233,8 @@ add_library(correlation_lib STATIC
     core/Cell.cpp
     analysis/DistributionFunctions.cpp
     analysis/DynamicsAnalyzer.cpp
+    analysis/FirstMinimumDetector.cpp
+    analysis/CutoffSanityChecker.cpp
     analysis/CorrelationEngine.cpp
     analysis/StructuralElectronicCorrelation.cpp
     core/NeighborGraph.cpp
@@ -305,6 +307,7 @@ add_library(app_services_obj OBJECT
     app/services/PhysicsService.cpp
     app/services/TrajectoryLoader.cpp
     app/services/PresetManager.cpp
+    app/services/DomainPresetRegistry.cpp
     app/services/UpdateChecker.cpp
     app/services/ValidationRuleService.cpp
     app/core/SettingsManager.cpp

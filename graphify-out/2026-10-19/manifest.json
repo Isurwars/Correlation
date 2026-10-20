@@ -40,8 +40,8 @@
     "semantic_hash": ""
   },
   "include/core/Atom.hpp": {
-    "mtime": 1792036789.1135855,
-    "ast_hash": "e4a6bd9aac5fe99309c1a8536a8de229",
+    "mtime": 1792461990.7063124,
+    "ast_hash": "f1e69bce9cbf1e0a4c6b2d1ac5a316a2",
     "semantic_hash": ""
   },
   "include/core/Cell.hpp": {
@@ -800,8 +800,8 @@
     "semantic_hash": "d4bdccb3d0944d2f42d20a4d4e2a031b"
   },
   "tests/unit/plotters/SvgPlotterTests.cpp": {
-    "mtime": 1791924752.5697117,
-    "ast_hash": "c105388d30d4ddcec0a807f9fd8ddc1e",
+    "mtime": 1792466349.0541446,
+    "ast_hash": "3d57e9163d92f8b1fef0959d3a2a2ee7",
     "semantic_hash": ""
   },
   "tests/unit/readers/ArcReaderTests.cpp": {
@@ -950,8 +950,8 @@
     "semantic_hash": "fa5794c577c54fcf0888468db60e0c22"
   },
   "src/CMakeLists.txt": {
-    "mtime": 1792036905.2575777,
-    "ast_hash": "ea010fea8beb754b8a32591cab3852ed",
+    "mtime": 1792461556.8148756,
+    "ast_hash": "5252be6b05bab312562ad7a1031ba5cc",
     "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
@@ -960,8 +960,8 @@
     "semantic_hash": ""
   },
   "tests/CMakeLists.txt": {
-    "mtime": 1792265038.1458833,
-    "ast_hash": "63ceca1cf2508d789184bc48ed2974b2",
+    "mtime": 1792461590.7953584,
+    "ast_hash": "884f5f2069796f3eee795c5fb0d843a3",
     "semantic_hash": ""
   },
   "tests/fuzz/CMakeLists.txt": {
@@ -1230,8 +1230,8 @@
     "semantic_hash": ""
   },
   "include/plotters/PlotTypes.hpp": {
-    "mtime": 1791926637.5055325,
-    "ast_hash": "413d923ed72bc78f9a7b82495d25a71f",
+    "mtime": 1792465871.6239119,
+    "ast_hash": "9cd1ab68c91e19b8c704635f2dade9d0",
     "semantic_hash": ""
   },
   "include/plotters/SvgComparisonRenderer.hpp": {
@@ -1920,8 +1920,8 @@
     "semantic_hash": ""
   },
   "tests/unit/app/BondCutoffControllerTests.cpp": {
-    "mtime": 1790380737.0696323,
-    "ast_hash": "90dea85ea1a074fefc30f57ea5855ec4",
+    "mtime": 1792466419.7619474,
+    "ast_hash": "ee0cd18bde71077a4f2f584c371b1674",
     "semantic_hash": ""
   },
   "tests/unit/app/OptionsResetServiceTests.cpp": {
@@ -1970,8 +1970,8 @@
     "semantic_hash": ""
   },
   "include/app/services/FileIOHandler.hpp": {
-    "mtime": 1792386107.731911,
-    "ast_hash": "5d568ba0c0e4f930afed2ca2a7b6d134",
+    "mtime": 1792466435.9177482,
+    "ast_hash": "e9e9a5f48840dad096e688ed4689d5d4",
     "semantic_hash": ""
   },
   "include/app/services/InputValidator.hpp": {
@@ -2010,13 +2010,13 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/BondCutoffController.hpp": {
-    "mtime": 1790380736.972248,
-    "ast_hash": "70b65dd1ca916d9d4e30dbb402e31864",
+    "mtime": 1792465871.6066413,
+    "ast_hash": "dce3e576ae251eb9d0342dd5ecc57cf6",
     "semantic_hash": ""
   },
   "include/app/viewmodel/PlotController.hpp": {
-    "mtime": 1791862755.7782588,
-    "ast_hash": "46009993cdc3f615e4228b24f5f1240b",
+    "mtime": 1792465380.6218636,
+    "ast_hash": "e1d5aee1c3eced1a5ad624d64f4359fc",
     "semantic_hash": ""
   },
   "include/app/viewmodel/PresetController.hpp": {
@@ -2025,8 +2025,8 @@
     "semantic_hash": ""
   },
   "src/app/core/AppController.cpp": {
-    "mtime": 1792433244.4889147,
-    "ast_hash": "5b830502034ce706c764a2d9559aa702",
+    "mtime": 1792466226.0434523,
+    "ast_hash": "610520db70ffae30ba9d429e771ee933",
     "semantic_hash": ""
   },
   "src/app/core/SettingsManager.cpp": {
@@ -2060,8 +2060,8 @@
     "semantic_hash": ""
   },
   "src/app/services/FileIOHandler.cpp": {
-    "mtime": 1792386135.384486,
-    "ast_hash": "cbae7ef3c31431140f2d660a5cfaaca5",
+    "mtime": 1792466460.4321592,
+    "ast_hash": "feebde4de769c9e3d019b075cb2366c3",
     "semantic_hash": ""
   },
   "src/app/services/InputValidator.cpp": {
@@ -2100,13 +2100,13 @@
     "semantic_hash": ""
   },
   "src/app/viewmodel/BondCutoffController.cpp": {
-    "mtime": 1790380719.7827044,
-    "ast_hash": "3571750865dc925b8858c22b0008b069",
+    "mtime": 1792466279.9597313,
+    "ast_hash": "4b1899852bd5e49f161cc2d6b9ffae3f",
     "semantic_hash": ""
   },
   "src/app/viewmodel/PlotController.cpp": {
-    "mtime": 1791927213.9587214,
-    "ast_hash": "20e79e06b70b7093e3709aed6a6954c8",
+    "mtime": 1792466606.0387204,
+    "ast_hash": "a5e330cc4e3dfb8d73669baf73f0e2e0",
     "semantic_hash": ""
   },
   "src/app/viewmodel/PresetController.cpp": {
@@ -2120,8 +2120,8 @@
     "semantic_hash": ""
   },
   "include/app/services/AnalysisDispatcher.hpp": {
-    "mtime": 1792034166.215281,
-    "ast_hash": "16855df3c13563c7c38bf70e1e95bbf8",
+    "mtime": 1792465871.6049232,
+    "ast_hash": "f29e2edcfdc97a80501f9771ab550437",
     "semantic_hash": ""
   },
   "include/app/services/BondCutoffService.hpp": {
@@ -2135,8 +2135,8 @@
     "semantic_hash": ""
   },
   "src/app/services/AnalysisDispatcher.cpp": {
-    "mtime": 1792034177.6669981,
-    "ast_hash": "795e21fa9e6bd00ec4ade02a587ae76b",
+    "mtime": 1792465871.639772,
+    "ast_hash": "180a8f006f2c4d6706106e158803cd89",
     "semantic_hash": ""
   },
   "src/app/services/BondCutoffService.cpp": {
@@ -2645,8 +2645,8 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/PlotViewportNavigator.hpp": {
-    "mtime": 1791846468.2043598,
-    "ast_hash": "c732c51f077073822a06e4070e24a9b0",
+    "mtime": 1792465160.6748903,
+    "ast_hash": "70ea4c00afd4c0fbad2a335f841484c5",
     "semantic_hash": ""
   },
   "src/app/viewmodel/PlotExportManager.cpp": {
@@ -2665,8 +2665,8 @@
     "semantic_hash": ""
   },
   "src/app/viewmodel/PlotViewportNavigator.cpp": {
-    "mtime": 1791847738.3175156,
-    "ast_hash": "773086b2cadc694ffce26832828a9191",
+    "mtime": 1792465173.537771,
+    "ast_hash": "32a1e3f5c55cd27a48c24002cbb32b14",
     "semantic_hash": ""
   },
   "src/plotters/PdfPlotter.cpp": {
@@ -2720,8 +2720,8 @@
     "semantic_hash": ""
   },
   "include/render3d/Scene3D.hpp": {
-    "mtime": 1792433391.5124166,
-    "ast_hash": "c674ecad8612dcf436b80d853c20e5d8",
+    "mtime": 1792437372.934199,
+    "ast_hash": "858d7a9c3ff057b2bdbaee849426e0ed",
     "semantic_hash": ""
   },
   "src/render3d/Camera3D.cpp": {
@@ -2730,8 +2730,8 @@
     "semantic_hash": ""
   },
   "src/render3d/Scene3D.cpp": {
-    "mtime": 1792433459.592803,
-    "ast_hash": "3195ceed9ac39d5072a0a994f4d4c994",
+    "mtime": 1792437570.4591608,
+    "ast_hash": "b4963a771e0fe1581be4399b97467cbe",
     "semantic_hash": ""
   },
   "tests/unit/render3d/Camera3DTests.cpp": {
@@ -2745,8 +2745,8 @@
     "semantic_hash": ""
   },
   "tests/unit/render3d/Scene3DTests.cpp": {
-    "mtime": 1792433315.5109491,
-    "ast_hash": "3ff4f6ab90bfa46487c6790caac6cdb3",
+    "mtime": 1792434945.069819,
+    "ast_hash": "2c684daadc7a90401f8d3df4509886b7",
     "semantic_hash": ""
   },
   "include/render3d/cpu/SoftwareFramebuffer.hpp": {
@@ -2820,8 +2820,8 @@
     "semantic_hash": ""
   },
   "include/render3d/TrajectoryStreamer.hpp": {
-    "mtime": 1792433126.5065217,
-    "ast_hash": "3120f975f3c44f408cec4ba5af7d9466",
+    "mtime": 1792434806.5987937,
+    "ast_hash": "145e3d000e493247b994587426eaa151",
     "semantic_hash": ""
   },
   "src/render3d/LodController.cpp": {
@@ -2840,13 +2840,13 @@
     "semantic_hash": ""
   },
   "tests/unit/render3d/TrajectoryStreamerTests.cpp": {
-    "mtime": 1792433334.5496907,
-    "ast_hash": "53d0dc14084ebde88b4f590c989b3ef0",
+    "mtime": 1792440216.1411676,
+    "ast_hash": "fa5d9d523335b0203e99bb3bf42c6fe7",
     "semantic_hash": ""
   },
   "include/app/viewmodel/Structure3DController.hpp": {
-    "mtime": 1792433187.233694,
-    "ast_hash": "1e23dc0113d2644f2c7ba316e3206b82",
+    "mtime": 1792440121.1175961,
+    "ast_hash": "6163a0c9efeb9d2fb8735c088e464979",
     "semantic_hash": ""
   },
   "src/app/viewmodel/Structure3DController.cpp": {
@@ -2912,6 +2912,21 @@
   "ui/material/ui/icons/pause.svg": {
     "mtime": 1792385793.1678758,
     "ast_hash": "a554d260913f43a1f7bf6d8c64b39047",
+    "semantic_hash": ""
+  },
+  "include/analysis/FirstMinimumDetector.hpp": {
+    "mtime": 1792464786.2333357,
+    "ast_hash": "9e2b180505ee9ded3079bfe53dff8fc2",
+    "semantic_hash": ""
+  },
+  "src/analysis/FirstMinimumDetector.cpp": {
+    "mtime": 1792461691.7318258,
+    "ast_hash": "3acc947ccdf9f8b90c4810f384623fdc",
+    "semantic_hash": ""
+  },
+  "tests/unit/analysis/FirstMinimumDetectorTests.cpp": {
+    "mtime": 1792461643.7334666,
+    "ast_hash": "51a706dd6477842aea8633563c31c336",
     "semantic_hash": ""
   }
 }

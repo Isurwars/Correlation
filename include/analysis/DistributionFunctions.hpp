@@ -255,6 +255,13 @@ public:
   void addHistogram(const std::string &name, Histogram &&histogram);
 
   /**
+   * @brief Removes a histogram from the collection if present.
+   * @param name Name of the histogram to remove.
+   * @return True if the histogram existed and was removed, false otherwise.
+   */
+  bool removeHistogram(const std::string &name);
+
+  /**
    * @brief Returns the structure analyzer providing neighbor information.
    * @return Pointer to the current StructureAnalyzer.
    */

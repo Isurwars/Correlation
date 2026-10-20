@@ -16,6 +16,9 @@
 
 namespace correlation::app {
 
+class AnalysisDispatcher;
+class PlotController;
+
 /**
  * @enum FactorBound
  * @brief Specifies which cutoff bound (Min or Max) to adjust by a covalent factor.
@@ -33,8 +36,10 @@ public:
    * @param[in,out] window Target UI window.
    * @param[in,out] loader Trajectory loader providing cell and trajectory.
    * @param[in,out] options Program options holding bond cutoffs.
+   * @param[in] dispatcher Optional analysis dispatcher providing computed histograms.
    */
-  BondCutoffController(AppWindow &window, TrajectoryLoader &loader, ProgramOptions &options);
+  BondCutoffController(AppWindow &window, TrajectoryLoader &loader, ProgramOptions &options,
+                       AnalysisDispatcher *dispatcher = nullptr);
 
   /**
    * @brief Constructs a BondCutoffController with injected services (transitional).
@@ -45,6 +50,20 @@ public:
    */
   BondCutoffController(AppWindow &window, TrajectoryLoader &loader,
                        BondCutoffService &cutoff_service, ProgramOptions &options);
+
+  /**
+   * @brief Injects the AnalysisDispatcher service.
+   * @param[in] dispatcher AnalysisDispatcher instance pointer.
+   */
+  void setDispatcher(AnalysisDispatcher *dispatcher) noexcept { dispatcher_ = dispatcher; }
+
+  /**
+   * @brief Injects the PlotController service.
+   * @param[in] plot_controller PlotController instance pointer.
+   */
+  void setPlotController(PlotController *plot_controller) noexcept {
+    plot_controller_ = plot_controller;
+  }
 
   /**
    * @brief Populates the UI model with default recommended bond cutoffs based on atomic elements.
@@ -82,10 +101,68 @@ public:
    */
   void applyGlobalCutoff(float global_cutoff);
 
+  /**
+   * @brief Initializes and populates the UI CalibrationPair list from loaded elements.
+   */
+  void initializeCalibrationPairs();
+
+  /**
+   * @brief Automatically detects first coordination shell peak onset and minimum for a pair.
+   * @param[in] pair_index Index of the calibration pair.
+   */
+  void autoDetectCutoffs(int pair_index);
+
+  /**
+   * @brief Resets specified calibration pair to standard covalent radii bounds.
+   * @param[in] pair_index Index of the calibration pair.
+   */
+  void resetCalibrationPair(int pair_index);
+
+  /**
+   * @brief Handles dragging of r_min or r_max handles on the calibration overlay.
+   * @param[in] pair_index Index of the calibration pair.
+   * @param[in] is_max True if dragging r_max handle, false if dragging r_min handle.
+   * @param[in] mouse_x Cursor X position in screen pixels.
+   */
+  void dragCutoffHandle(int pair_index, bool is_max, float mouse_x);
+
+  /**
+   * @brief Recomputes screen pixel coordinates (r_min_px, r_max_px, r_peak_px) for calibration
+   * pairs.
+   * @param[in] canvas_w Width of preview plot container in pixels.
+   * @param[in] canvas_h Height of preview plot container in pixels.
+   */
+  void updateCalibrationPixels(float canvas_w, float canvas_h);
+
+  /**
+   * @brief Sets explicit cutoff range for a pair and synchronizes UI and trajectory.
+   * @param[in] pair_index Index of the calibration pair.
+   * @param[in] r_min Lower cutoff bound in Å.
+   * @param[in] r_max Upper cutoff bound in Å.
+   */
+  void setCutoffRange(int pair_index, float r_min, float r_max);
+
+  /**
+   * @brief Evaluates current bond cutoffs with CutoffSanityChecker and updates UI badge state.
+   */
+  void evaluateSanityState();
+
+  /**
+   * @brief Executes automated repair action for sanity issues.
+   * @param[in] fix_action Integer corresponding to SanityFixAction enum.
+   */
+  void handleFixSanityIssue(int fix_action);
+
 private:
+  void syncCutoffsToUI();
+
   AppWindow &window_;
   TrajectoryLoader &loader_;
   ProgramOptions &options_;
+  AnalysisDispatcher *dispatcher_{nullptr};
+  PlotController *plot_controller_{nullptr};
+  float last_canvas_w_{1000.0F};
+  float last_canvas_h_{600.0F};
 };
 
 } // namespace correlation::app

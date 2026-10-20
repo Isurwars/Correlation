@@ -36,7 +36,7 @@ namespace correlation::app {
 AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
                              AnalysisDispatcher &dispatcher, ProgramOptions &options)
     : window_(window), loader_(loader), dispatcher_(dispatcher), options_(options),
-      bond_cutoff_controller_(window, loader, options) {
+      bond_cutoff_controller_(window, loader, options, &dispatcher) {
   // Initialize Native File Dialog
   NFD_Init();
 
@@ -68,6 +68,11 @@ AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
   preset_controller_ = std::make_unique<PresetController>(window_, options_, *this);
   structure_3d_controller_ = std::make_unique<Structure3DController>(window_, options_);
 
+  bond_cutoff_controller_.setPlotController(plot_controller_.get());
+  plot_controller_->setOnPlotGeometryChanged([this](float width, float height) {
+    bond_cutoff_controller_.updateCalibrationPixels(width, height);
+  });
+
   // default options to UI
   handleOptionstoUI();
 
@@ -86,6 +91,8 @@ AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
   // Initial load of settings and preset list
   loadSettings();
   preset_controller_->refreshPresetList();
+  preset_controller_->initDomainPresets();
+  bond_cutoff_controller_.evaluateSanityState();
 
   // Asynchronously check for GitHub releases in the background without interrupting the user
   UpdateChecker::checkForUpdatesAsync(window_, CORRELATION_VERSION_STRING);
@@ -161,6 +168,22 @@ void AppController::registerPlotCallbacks() {
   });
   window_.on_add_marker([this](bool is_vert) { plot_controller_->handleAddMarker(is_vert); });
   window_.on_clear_markers([this] { plot_controller_->handleClearMarkers(); });
+
+  window_.on_select_calibration_pair([this](int idx) {
+    window_.set_active_calibration_pair_index(idx);
+    bond_cutoff_controller_.updateCalibrationPixels(plot_controller_->getLastPlotWidth(),
+                                                    plot_controller_->getLastPlotHeight());
+  });
+
+  window_.on_auto_detect_cutoff(
+      [this](int idx) { bond_cutoff_controller_.autoDetectCutoffs(idx); });
+
+  window_.on_reset_calibration_pair(
+      [this](int idx) { bond_cutoff_controller_.resetCalibrationPair(idx); });
+
+  window_.on_drag_cutoff_handle([this](int idx, bool is_max, float mouse_x) {
+    bond_cutoff_controller_.dragCutoffHandle(idx, is_max, mouse_x);
+  });
 }
 
 void AppController::registerStructure3DCallbacks() {
@@ -220,6 +243,16 @@ void AppController::registerPresetAndOptionCallbacks() {
     slint::invoke_from_event_loop(
         [this, type] { preset_controller_->handleMaterialTypeChanged(type); });
   });
+
+  window_.on_apply_domain_preset([this](int id) {
+    slint::invoke_from_event_loop([this, id] {
+      preset_controller_->handleApplyDomainPreset(id);
+      bond_cutoff_controller_.evaluateSanityState();
+    });
+  });
+
+  window_.on_fix_sanity_issue(
+      [this](int action) { bond_cutoff_controller_.handleFixSanityIssue(action); });
 
   window_.on_reset_bond_cutoffs([this] {
     setBondCutoffs();

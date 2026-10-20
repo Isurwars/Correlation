@@ -7,7 +7,9 @@
  */
 
 #include "AppWindow.h"
+#include "analysis/DistributionFunctions.hpp"
 #include "app/core/AppOptions.hpp"
+#include "app/services/AnalysisDispatcher.hpp"
 #include "app/services/TrajectoryLoader.hpp"
 #include "app/viewmodel/BondCutoffController.hpp"
 
@@ -92,7 +94,7 @@ TEST_F(BondCutoffControllerTests, IgnoresInvalidScaleAndCutoffFactors) {
   TrajectoryLoader loader;
   ProgramOptions options;
   const std::string filepath = getTestDataDir() + "xyz/clean.xyz";
-  auto res = loader.loadFile(filepath);
+  const auto res = loader.loadFile(filepath);
   ASSERT_TRUE(res.has_value());
   ASSERT_NE(loader.cell(), nullptr);
 
@@ -114,7 +116,7 @@ TEST_F(BondCutoffControllerTests, PopulatesAndParsesCutoffsWithLoadedCell) {
   TrajectoryLoader loader;
   ProgramOptions options;
   const std::string filepath = getTestDataDir() + "xyz/clean.xyz";
-  auto res = loader.loadFile(filepath);
+  const auto res = loader.loadFile(filepath);
   ASSERT_TRUE(res.has_value());
   ASSERT_NE(loader.cell(), nullptr);
 
@@ -138,7 +140,7 @@ TEST_F(BondCutoffControllerTests, SetUniformCutoffAndGlobalCutoff) {
   TrajectoryLoader loader;
   ProgramOptions options;
   const std::string filepath = getTestDataDir() + "xyz/clean.xyz";
-  auto res = loader.loadFile(filepath);
+  const auto res = loader.loadFile(filepath);
   ASSERT_TRUE(res.has_value());
   ASSERT_NE(loader.cell(), nullptr);
 
@@ -165,7 +167,7 @@ TEST_F(BondCutoffControllerTests, ApplyCovalentFactorMinAndMax) {
   TrajectoryLoader loader;
   ProgramOptions options;
   const std::string filepath = getTestDataDir() + "xyz/clean.xyz";
-  auto res = loader.loadFile(filepath);
+  const auto res = loader.loadFile(filepath);
   ASSERT_TRUE(res.has_value());
   ASSERT_NE(loader.cell(), nullptr);
 
@@ -184,6 +186,93 @@ TEST_F(BondCutoffControllerTests, ApplyCovalentFactorMinAndMax) {
   cutoffs_model = win.get_bond_cutoffs();
   row = requireValue(cutoffs_model->row_data(0));
   EXPECT_FALSE(row.max_distance.empty());
+}
+
+TEST_F(BondCutoffControllerTests, InitializesCalibrationPairsOnSetBondCutoffs) {
+  auto &win = window();
+  TrajectoryLoader loader;
+  ProgramOptions options;
+  const std::string filepath = getTestDataDir() + "xyz/clean.xyz";
+  const auto res = loader.loadFile(filepath);
+  ASSERT_TRUE(res.has_value());
+
+  BondCutoffController controller(win, loader, options);
+  controller.setBondCutoffs();
+
+  const auto calib_pairs = win.get_calibration_pairs();
+  ASSERT_NE(calib_pairs, nullptr);
+  EXPECT_GT(calib_pairs->row_count(), 0);
+
+  const auto pair0 = requireValue(calib_pairs->row_data(0));
+  EXPECT_EQ(pair0.pair_index, 0);
+  EXPECT_FALSE(pair0.label.empty());
+  EXPECT_FALSE(pair0.r_min.empty());
+  EXPECT_FALSE(pair0.r_max.empty());
+  EXPECT_TRUE(pair0.is_valid);
+}
+
+TEST_F(BondCutoffControllerTests, AutoDetectCutoffsUpdatesBoundsAndPeak) {
+  auto &win = window();
+  TrajectoryLoader loader;
+  ProgramOptions options;
+  const std::string filepath = getTestDataDir() + "xyz/clean.xyz";
+  const auto res = loader.loadFile(filepath);
+  ASSERT_TRUE(res.has_value());
+
+  AnalysisDispatcher dispatcher;
+  auto distribution_funcs =
+      std::make_unique<correlation::analysis::DistributionFunctions>(*loader.cell());
+  correlation::analysis::Histogram hist;
+  hist.title = "Radial Distribution Function";
+  hist.bins = {1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0};
+  hist.partials["Total"] = {0.0, 0.2, 1.0, 3.5, 1.8, 0.4, 0.6, 1.2, 1.1};
+  hist.partials["Si-Si"] = {0.0, 0.2, 1.0, 3.5, 1.8, 0.4, 0.6, 1.2, 1.1};
+  const std::string title = hist.title;
+  distribution_funcs->addHistogram(title, std::move(hist));
+  dispatcher.setDistributionFunctions(std::move(distribution_funcs));
+
+  BondCutoffController controller(win, loader, options, &dispatcher);
+  controller.setBondCutoffs();
+
+  controller.autoDetectCutoffs(0);
+
+  const auto calib_pairs = win.get_calibration_pairs();
+  ASSERT_NE(calib_pairs, nullptr);
+  const auto updated_pair = requireValue(calib_pairs->row_data(0));
+  EXPECT_NE(updated_pair.r_peak, "—");
+  EXPECT_NE(updated_pair.r_min, updated_pair.r_max);
+
+  // Check sync with bond_cutoffs table
+  const auto cutoffs_model = win.get_bond_cutoffs();
+  ASSERT_NE(cutoffs_model, nullptr);
+  const auto cutoff_row = requireValue(cutoffs_model->row_data(0));
+  EXPECT_EQ(cutoff_row.min_distance, updated_pair.r_min);
+  EXPECT_EQ(cutoff_row.max_distance, updated_pair.r_max);
+}
+
+TEST_F(BondCutoffControllerTests, ResetCalibrationPairRestoresDefaults) {
+  auto &win = window();
+  TrajectoryLoader loader;
+  ProgramOptions options;
+  const std::string filepath = getTestDataDir() + "xyz/clean.xyz";
+  const auto res = loader.loadFile(filepath);
+  ASSERT_TRUE(res.has_value());
+
+  BondCutoffController controller(win, loader, options);
+  controller.setBondCutoffs();
+
+  controller.setCutoffRange(0, 1.80F, 4.20F);
+  auto calib_pairs = win.get_calibration_pairs();
+  const auto modified = requireValue(calib_pairs->row_data(0));
+  EXPECT_EQ(modified.r_min, "1.80");
+  EXPECT_EQ(modified.r_max, "4.20");
+
+  controller.resetCalibrationPair(0);
+  calib_pairs = win.get_calibration_pairs();
+  const auto restored = requireValue(calib_pairs->row_data(0));
+  EXPECT_NE(restored.r_min, "1.80");
+  EXPECT_NE(restored.r_max, "4.20");
+  EXPECT_EQ(restored.r_peak, "—");
 }
 
 } // namespace

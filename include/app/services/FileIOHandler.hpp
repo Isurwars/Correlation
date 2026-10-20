@@ -76,6 +76,12 @@ private:
   void updateBoxDiagnostics(const core::Cell *cell);
 
   /**
+   * @brief Updates UI components and analysis options after successful trajectory loading.
+   * @param[in] filepath Path to the loaded structure or trajectory file.
+   */
+  void onTrajectoryLoadSuccess(const std::string &filepath);
+
+  /**
    * @brief Updates loaded file metadata (basename, frame counts, atom counts) on the UI.
    * @param[in] filepath Path to the loaded structure or trajectory file.
    */

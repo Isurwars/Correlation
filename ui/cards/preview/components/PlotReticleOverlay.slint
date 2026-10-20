@@ -62,17 +62,17 @@ export component PlotReticleOverlay inherits Rectangle {
         background: transparent;
     }
 
-    // Mode Indicator Badge (Zoom In, Zoom Out, +X Marker, +Y Marker)
+    // Mode Indicator Badge (Zoom In, Zoom Out, +X Marker, +Y Marker, Calibrate)
     if root.has_hover && root.selected_plot_index >= 0 && root.active_tool != 0 && !root.is_selecting && !root.is_panning: Rectangle {
         x: root.mouse_x + 14px;
         y: root.mouse_y - 22px;
         height: 20px;
-        width: (root.active_tool == 1 || root.active_tool == 4) ? 20px : 26px;
+        width: (root.active_tool == 1 || root.active_tool == 4 || root.active_tool == 5) ? 20px : 26px;
         border-radius: 10px;
         background: MaterialPalette.surface_container_highest.with_alpha(92%);
         border-width: 1.5px;
         border-color: (root.active_tool == 1 || root.active_tool == 4) ? MaterialPalette.tertiary :
-                      (root.active_tool == 2 ? MaterialPalette.primary :
+                      (root.active_tool == 2 || root.active_tool == 5 ? MaterialPalette.primary :
                       MaterialPalette.secondary);
 
         if root.active_tool == 1: Image {
@@ -91,6 +91,15 @@ export component PlotReticleOverlay inherits Rectangle {
             height: 13px;
             source: Icons.zoom_out;
             colorize: MaterialPalette.tertiary;
+        }
+
+        if root.active_tool == 5: Image {
+            x: (parent.width - self.width) / 2;
+            y: (parent.height - self.height) / 2;
+            width: 13px;
+            height: 13px;
+            source: Icons.tune;
+            colorize: MaterialPalette.primary;
         }
 
         if root.active_tool == 2: MaterialText {

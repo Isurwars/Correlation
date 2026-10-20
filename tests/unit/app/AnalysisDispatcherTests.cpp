@@ -104,4 +104,153 @@ TEST(AnalysisDispatcherTests, WriteFilesZipBundle) {
   std::filesystem::remove(zip_file, error_code);
 }
 
+TEST(AnalysisDispatcherTests, BondDependentCalculatorClassification) {
+  // Positive classifications (bond-dependent)
+  EXPECT_TRUE(correlation::app::AnalysisDispatcher::isBondDependentCalculator("PAD"));
+  EXPECT_TRUE(
+      correlation::app::AnalysisDispatcher::isBondDependentCalculator("Plane Angle Distribution"));
+  EXPECT_TRUE(correlation::app::AnalysisDispatcher::isBondDependentCalculator("BAD"));
+  EXPECT_TRUE(correlation::app::AnalysisDispatcher::isBondDependentCalculator("DAD"));
+  EXPECT_TRUE(correlation::app::AnalysisDispatcher::isBondDependentCalculator(
+      "Dihedral Angle Distribution"));
+  EXPECT_TRUE(correlation::app::AnalysisDispatcher::isBondDependentCalculator("CN"));
+  EXPECT_TRUE(
+      correlation::app::AnalysisDispatcher::isBondDependentCalculator("Coordination Number"));
+  EXPECT_TRUE(correlation::app::AnalysisDispatcher::isBondDependentCalculator("RD"));
+  EXPECT_TRUE(
+      correlation::app::AnalysisDispatcher::isBondDependentCalculator("Ring Size Distribution"));
+  EXPECT_TRUE(
+      correlation::app::AnalysisDispatcher::isBondDependentCalculator("Common Neighbor Analysis"));
+  EXPECT_TRUE(correlation::app::AnalysisDispatcher::isBondDependentCalculator("CNA"));
+  EXPECT_TRUE(
+      correlation::app::AnalysisDispatcher::isBondDependentCalculator("Cluster Size Distribution"));
+  EXPECT_TRUE(correlation::app::AnalysisDispatcher::isBondDependentCalculator("Cluster Analysis"));
+  EXPECT_TRUE(correlation::app::AnalysisDispatcher::isBondDependentCalculator(
+      "Hydrogen Bond Distribution"));
+  EXPECT_TRUE(correlation::app::AnalysisDispatcher::isBondDependentCalculator("Hydrogen Bond"));
+
+  // Negative classifications (distance-based or dynamic)
+  EXPECT_FALSE(correlation::app::AnalysisDispatcher::isBondDependentCalculator("RDF"));
+  EXPECT_FALSE(correlation::app::AnalysisDispatcher::isBondDependentCalculator(
+      "Radial Distribution Function"));
+  EXPECT_FALSE(correlation::app::AnalysisDispatcher::isBondDependentCalculator("g_r"));
+  EXPECT_FALSE(correlation::app::AnalysisDispatcher::isBondDependentCalculator("SQ"));
+  EXPECT_FALSE(correlation::app::AnalysisDispatcher::isBondDependentCalculator("S(Q)"));
+  EXPECT_FALSE(
+      correlation::app::AnalysisDispatcher::isBondDependentCalculator("Static Structure Factor"));
+  EXPECT_FALSE(correlation::app::AnalysisDispatcher::isBondDependentCalculator("XRD"));
+  EXPECT_FALSE(correlation::app::AnalysisDispatcher::isBondDependentCalculator("MSD"));
+  EXPECT_FALSE(correlation::app::AnalysisDispatcher::isBondDependentCalculator("VACF"));
+  EXPECT_FALSE(correlation::app::AnalysisDispatcher::isBondDependentCalculator("VDOS"));
+  EXPECT_FALSE(
+      correlation::app::AnalysisDispatcher::isBondDependentCalculator("Local Entropy Fingerprint"));
+  EXPECT_FALSE(correlation::app::AnalysisDispatcher::isBondDependentCalculator("Hyperuniformity"));
+
+  const auto names = correlation::app::AnalysisDispatcher::getBondDependentCalculatorNames();
+  EXPECT_GE(names.size(), 7);
+}
+
+TEST(AnalysisDispatcherTests, DistributionFunctionsRemoveHistogram) {
+  correlation::app::TrajectoryLoader loader;
+  std::string const filepath = getTestDataDir() + "car/clean.car";
+  ASSERT_TRUE(loader.loadFile(filepath).has_value());
+
+  correlation::core::Cell const cell =
+      loader.cell() != nullptr ? *loader.cell() : correlation::core::Cell{};
+  correlation::analysis::DistributionFunctions dist_funcs(cell);
+
+  correlation::analysis::Histogram hist;
+  hist.title = "TestHist";
+  dist_funcs.addHistogram("TestHist", std::move(hist));
+  EXPECT_FALSE(dist_funcs.getHistogram("TestHist").title.empty());
+
+  EXPECT_TRUE(dist_funcs.removeHistogram("TestHist"));
+  EXPECT_FALSE(dist_funcs.removeHistogram("TestHist"));
+  EXPECT_THROW(static_cast<void>(dist_funcs.getHistogram("TestHist")), std::out_of_range);
+}
+
+TEST(AnalysisDispatcherTests, SelectiveRecalculationFallbackWhenNoPriorRun) {
+  correlation::app::TrajectoryLoader loader;
+  std::string const filepath = getTestDataDir() + "car/clean.car";
+  ASSERT_TRUE(loader.loadFile(filepath).has_value());
+
+  correlation::app::AnalysisDispatcher dispatcher;
+  correlation::app::ProgramOptions opts;
+  opts.r_max = 5.0;
+  opts.r_bin_width = 0.1;
+  opts.active_calculators["RDF"] = true;
+
+  EXPECT_EQ(dispatcher.getDistributionFunctions(), nullptr);
+
+  // Calling runSelectiveRecalculation with no cached df_ should fall back to full runAnalysis
+  auto res = dispatcher.runSelectiveRecalculation(*loader.trajectoryMut(), opts);
+  ASSERT_TRUE(res.has_value()) << (res ? "" : res.error());
+  EXPECT_NE(dispatcher.getDistributionFunctions(), nullptr);
+  EXPECT_NE(dispatcher.getHistogram("g_r"), nullptr);
+}
+
+TEST(AnalysisDispatcherTests, SelectiveRecalculationPreservesInvariantHistograms) {
+  correlation::app::TrajectoryLoader loader;
+  std::string const filepath = getTestDataDir() + "car/si_crystal.car";
+  ASSERT_TRUE(loader.loadFile(filepath).has_value());
+
+  correlation::app::AnalysisDispatcher dispatcher;
+  correlation::app::ProgramOptions opts;
+  opts.r_max = 5.0;
+  opts.r_bin_width = 0.05;
+  opts.angle_bin_width = 1.0;
+  opts.active_calculators["RDF"] = true;
+  opts.active_calculators["PAD"] = true;
+
+  // First full run with bonding cutoff permitting Si-Si bonds (e.g. 0 to 3.0 Å)
+  opts.bond_cutoffs = {{{.min_sq = 0.0, .max_sq = 3.0 * 3.0}}};
+  const auto run_res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);
+  ASSERT_TRUE(run_res.has_value()) << (run_res ? "" : run_res.error());
+
+  const auto *initial_gr = dispatcher.getHistogram("g_r");
+  ASSERT_NE(initial_gr, nullptr);
+  const auto initial_gr_partials = initial_gr->partials;
+
+  const auto *initial_pad = dispatcher.getHistogram("PAD");
+  ASSERT_NE(initial_pad, nullptr);
+  const auto initial_pad_partials = initial_pad->partials;
+
+  // Now change cutoffs to cut off all bonds (0 to 1.0 Å, shorter than Si-Si 2.35 Å)
+  opts.bond_cutoffs = {{{.min_sq = 0.0, .max_sq = 1.0 * 1.0}}};
+
+  // Perform selective recalculation
+  const auto recalc_res = dispatcher.runSelectiveRecalculation(*loader.trajectoryMut(), opts);
+  ASSERT_TRUE(recalc_res.has_value()) << (recalc_res ? "" : recalc_res.error());
+
+  // Verify distance-based g_r is intact and unchanged
+  const auto *cached_gr = dispatcher.getHistogram("g_r");
+  ASSERT_NE(cached_gr, nullptr);
+  EXPECT_EQ(cached_gr->partials, initial_gr_partials);
+
+  // Verify bond-dependent PAD was recalculated and updated with the new cutoff
+  const auto *recalculated_pad = dispatcher.getHistogram("PAD");
+  ASSERT_NE(recalculated_pad, nullptr);
+  EXPECT_NE(recalculated_pad->partials, initial_pad_partials);
+}
+
+TEST(AnalysisDispatcherTests, SelectiveRecalculationNoOpWhenNoBondDependentCalculators) {
+  correlation::app::TrajectoryLoader loader;
+  std::string const filepath = getTestDataDir() + "car/si_crystal.car";
+  ASSERT_TRUE(loader.loadFile(filepath).has_value());
+
+  correlation::app::AnalysisDispatcher dispatcher;
+  correlation::app::ProgramOptions opts;
+  opts.r_max = 5.0;
+  opts.r_bin_width = 0.05;
+  opts.active_calculators["RDF"] = true;
+
+  ASSERT_TRUE(dispatcher.runAnalysis(*loader.trajectoryMut(), opts).has_value());
+
+  // Selective recalculation with only distance-based active calculator should be a no-op
+  opts.active_calculators.clear();
+  opts.active_calculators["RDF"] = true;
+  const auto recalc_res = dispatcher.runSelectiveRecalculation(*loader.trajectoryMut(), opts);
+  EXPECT_TRUE(recalc_res.has_value());
+}
+
 } // namespace

@@ -10,6 +10,7 @@
 #include "AppWindow.h"
 #include "app/core/AppController.hpp"
 #include "app/services/InputValidator.hpp"
+#include "app/viewmodel/PlotController.hpp"
 #include "app/viewmodel/Structure3DController.hpp"
 #include "physics/PhysicalData.hpp"
 #include <filesystem>
@@ -93,7 +94,7 @@ void FileIOHandler::handleWriteFiles() {
 
   const bool is_zip = format_opts.use_zip;
 
-  dialog_thread_ = std::jthread([this, is_zip]() {
+  dialog_thread_ = std::jthread([this, is_zip] {
     nfdchar_t *out_path = nullptr;
     nfdresult_t result = NFD_CANCEL;
 
@@ -116,19 +117,19 @@ void FileIOHandler::handleWriteFiles() {
       std::string filepath(out_path);
       NFD_FreePathU8(out_path);
 
-      slint::invoke_from_event_loop([this, filepath = std::move(filepath)]() {
+      slint::invoke_from_event_loop([this, filepath = std::move(filepath)] {
         dialog_active_.store(false);
         executeWriteFiles(filepath);
       });
     } else if (result == NFD_CANCEL) {
-      slint::invoke_from_event_loop([this]() {
+      slint::invoke_from_event_loop([this] {
         dialog_active_.store(false);
         window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
       });
     } else {
       std::string error_msg = "Error: ";
       error_msg += NFD_GetError();
-      slint::invoke_from_event_loop([this, error_msg = std::move(error_msg)]() {
+      slint::invoke_from_event_loop([this, error_msg = std::move(error_msg)] {
         dialog_active_.store(false);
         window_.set_analysis_status_text(slint::SharedString(error_msg));
       });
@@ -149,9 +150,9 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath,
     load_thread_.join();
   }
 
-  load_thread_ = std::jthread([this, filepath, on_complete = std::move(on_complete)]() {
-    auto progress_cb = [this](float progress, const std::string &msg) {
-      slint::invoke_from_event_loop([progress, msg, this]() {
+  load_thread_ = std::jthread([this, filepath, on_complete = std::move(on_complete)] {
+    const auto progress_cb = [this](float progress, const std::string &msg) {
+      slint::invoke_from_event_loop([progress, msg, this] {
         window_.set_progress(progress);
         if (!msg.empty()) {
           window_.set_file_status_text(slint::SharedString(msg));
@@ -166,53 +167,22 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath,
       message = *load_res;
       success = true;
       options_.input_file = filepath;
+      const auto preview_res = dispatcher_.runFastPreviewRDF(loader_.trajectoryMut(), options_);
+      if (!preview_res) {
+        // Fast preview RDF is non-fatal for file loading.
+      }
     } else {
       message = std::string(AppDefaults::MSG_ERROR_LOADING) + load_res.error();
     }
 
-    slint::invoke_from_event_loop([this, filepath, message, success, on_complete]() {
+    slint::invoke_from_event_loop([this, filepath, message, success, on_complete] {
       window_.set_file_status_text(slint::SharedString(message));
       window_.set_file_loading(false);
       window_.set_timer_running(false);
       window_.set_text_opacity(false);
 
-      if (success && loader_.cell() != nullptr) {
-        window_.set_file_loaded(true);
-
-        // Atom Counts
-        const auto atom_counts_map = loader_.getAtomCounts();
-        const auto slint_atom_counts = std::make_shared<slint::VectorModel<AtomCount>>();
-        for (const auto &[symbol, count] : atom_counts_map) {
-          slint_atom_counts->push_back({
-              .symbol = slint::SharedString(symbol),
-              .count = count,
-          });
-        }
-        window_.set_atom_counts(slint_atom_counts);
-
-        // Bond Cutoffs
-        controller_.setBondCutoffs();
-
-        // File Info & Basename
-        updateFileMetadata(filepath);
-
-        // Box Diagnostics
-        updateBoxDiagnostics(loader_.cell());
-
-        {
-          auto opts = window_.get_analysis_options();
-          opts.time_step =
-              slint::SharedString(std::format("{:.2f}", loader_.getRecommendedTimeStep()));
-          opts.min_frame = "1";
-          opts.frame_stride = "1";
-          opts.max_frame = slint::SharedString(std::to_string(loader_.getFrameCount()));
-          window_.set_analysis_options(opts);
-        }
-
-        updateStructure3DView();
-        window_.set_preview_active_tab(2);
-
-        static_cast<void>(controller_.getInputValidator()->validateInputs());
+      if (success) {
+        onTrajectoryLoadSuccess(filepath);
       }
 
       if (on_complete) {
@@ -220,6 +190,53 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath,
       }
     });
   });
+}
+
+void FileIOHandler::onTrajectoryLoadSuccess(const std::string &filepath) {
+  if (loader_.cell() == nullptr) {
+    return;
+  }
+
+  window_.set_file_loaded(true);
+
+  // Atom Counts
+  const auto atom_counts_map = loader_.getAtomCounts();
+  const auto slint_atom_counts = std::make_shared<slint::VectorModel<AtomCount>>();
+  for (const auto &[symbol, count] : atom_counts_map) {
+    slint_atom_counts->push_back({
+        .symbol = slint::SharedString(symbol),
+        .count = count,
+    });
+  }
+  window_.set_atom_counts(slint_atom_counts);
+
+  // Bond Cutoffs
+  controller_.setBondCutoffs();
+
+  // File Info & Basename
+  updateFileMetadata(filepath);
+
+  // Box Diagnostics
+  updateBoxDiagnostics(loader_.cell());
+
+  {
+    auto opts = window_.get_analysis_options();
+    opts.time_step = slint::SharedString(std::format("{:.2f}", loader_.getRecommendedTimeStep()));
+    opts.min_frame = "1";
+    opts.frame_stride = "1";
+    opts.max_frame = slint::SharedString(std::to_string(loader_.getFrameCount()));
+    window_.set_analysis_options(opts);
+  }
+
+  updateStructure3DView();
+  window_.set_preview_active_tab(2);
+
+  if (controller_.getPlotController() != nullptr) {
+    controller_.getPlotController()->populatePlotList();
+    controller_.getPlotController()->requestPlotUpdate(0, true);
+  }
+
+  static_cast<void>(controller_.getInputValidator()->validateInputs());
 }
 
 void FileIOHandler::handleReloadFile() {
@@ -287,7 +304,7 @@ void FileIOHandler::handleBrowseFile() {
     dialog_thread_.join();
   }
 
-  dialog_thread_ = std::jthread([this]() {
+  dialog_thread_ = std::jthread([this] {
     std::array<nfdfilteritem_t, 10> filter_list = {
         {
             {
@@ -342,12 +359,12 @@ void FileIOHandler::handleBrowseFile() {
       std::string filepath(out_path);
       NFD_FreePathU8(out_path);
 
-      slint::invoke_from_event_loop([this, filepath = std::move(filepath)]() {
+      slint::invoke_from_event_loop([this, filepath = std::move(filepath)] {
         dialog_active_.store(false);
         startLoadingTrajectory(filepath);
       });
     } else if (result == NFD_CANCEL) {
-      slint::invoke_from_event_loop([this]() {
+      slint::invoke_from_event_loop([this] {
         dialog_active_.store(false);
         const std::string message = AppDefaults::MSG_FILE_SELECTION_CANCELLED;
         window_.set_file_status_text(slint::SharedString(message));
@@ -357,7 +374,7 @@ void FileIOHandler::handleBrowseFile() {
     } else {
       std::string error_msg = "Error opening file dialog: ";
       error_msg += NFD_GetError();
-      slint::invoke_from_event_loop([this, error_msg = std::move(error_msg)]() {
+      slint::invoke_from_event_loop([this, error_msg = std::move(error_msg)] {
         dialog_active_.store(false);
         window_.set_file_status_text(slint::SharedString(error_msg));
         window_.set_timer_running(false);

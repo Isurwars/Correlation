@@ -1,0 +1,107 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialText,
+    Icons,
+    Horizontal,
+} from "../../material/material.slint";
+import { SanityBadgeState } from "../../Types.slint";
+
+export component SanityBadge inherits Rectangle {
+    in property <SanityBadgeState> state: {
+        severity: 0,
+        title: "Optimal Cutoffs",
+        message: "All bond cutoffs satisfy PBC and covalent bounds.",
+        has_fix: false,
+        fix_action: 0,
+        fix_label: "",
+    };
+
+    callback fix_clicked(int);
+
+    // Color definitions based on severity: 0: Success, 1: Warning, 2: Error
+    property <color> badge_bg:
+        state.severity == 0 ? #10B981.with-alpha(0.12) :
+        state.severity == 1 ? #F59E0B.with-alpha(0.15) :
+        #EF4444.with-alpha(0.15);
+
+    property <color> badge_border:
+        state.severity == 0 ? #10B981 :
+        state.severity == 1 ? #F59E0B :
+        #EF4444;
+
+    property <color> badge_text:
+        state.severity == 0 ? #10B981 :
+        state.severity == 1 ? #F59E0B :
+        #EF4444;
+
+    property <image> badge_icon:
+        state.severity == 0 ? Icons.check :
+        state.severity == 1 ? Icons.tune :
+        Icons.close;
+
+    height: 26px;
+    border-radius: 13px;
+    background: root.badge_bg;
+    border-width: 1px;
+    border-color: root.badge_border;
+
+    Horizontal {
+        padding-left: MaterialStyleMetrics.padding_8;
+        padding-right: MaterialStyleMetrics.padding_8;
+        spacing: MaterialStyleMetrics.spacing_6;
+        alignment: center;
+
+        // Status Icon
+        Image {
+            source: root.badge_icon;
+            width: MaterialStyleMetrics.size_14;
+            height: MaterialStyleMetrics.size_14;
+            colorize: root.badge_text;
+            vertical-alignment: center;
+        }
+
+        // Title / Status Label
+        MaterialText {
+            text: root.state.title;
+            style: MaterialTypography.label_medium_prominent;
+            color: root.badge_text;
+            vertical-alignment: center;
+        }
+
+        // Action Fix Button (If available)
+        if root.state.has_fix: Rectangle {
+            height: 18px;
+            border-radius: 9px;
+            background: fix_touch.has-hover ? root.badge_text.with-alpha(0.30) : root.badge_text.with-alpha(0.18);
+            border-width: 1px;
+            border-color: root.badge_text;
+
+            Horizontal {
+                padding-left: MaterialStyleMetrics.padding_6;
+                padding-right: MaterialStyleMetrics.padding_6;
+                alignment: center;
+
+                MaterialText {
+                    text: root.state.fix_label != "" ? root.state.fix_label : "Fix";
+                    style: MaterialTypography.label_small;
+                    color: root.badge_text;
+                    vertical-alignment: center;
+                }
+            }
+
+            fix_touch := TouchArea {
+                mouse-cursor: pointer;
+                clicked => {
+                    root.fix_clicked(root.state.fix_action);
+                }
+            }
+        }
+    }
+}

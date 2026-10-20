@@ -18,6 +18,7 @@
 #include "plotters/SvgPlotter.hpp"
 #include <slint.h>
 
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -172,6 +173,30 @@ public:
    */
   void resetPlotState() noexcept;
 
+  /**
+   * @brief Returns the last cached plot canvas width.
+   */
+  [[nodiscard]] float getLastPlotWidth() const noexcept { return last_plot_width_; }
+
+  /**
+   * @brief Returns the last cached plot canvas height.
+   */
+  [[nodiscard]] float getLastPlotHeight() const noexcept { return last_plot_height_; }
+
+  /**
+   * @brief Builds and returns the active plot configuration from current UI state.
+   */
+  [[nodiscard]] correlation::plotters::PlotConfig getActivePlotConfig() {
+    return buildPlotConfigFromUI();
+  }
+
+  /**
+   * @brief Registers a callback invoked whenever plot canvas dimensions change.
+   */
+  void setOnPlotGeometryChanged(std::function<void(float, float)> callback) {
+    on_plot_geometry_changed_ = std::move(callback);
+  }
+
 private:
   ::AppWindow &window_;
   AnalysisDispatcher &dispatcher_;
@@ -195,6 +220,8 @@ private:
   correlation::plotters::PlotConfig buildPlotConfigFromUI();
   void updateTableData(const correlation::analysis::Histogram *hist);
   void updateCurveToggleItems(const correlation::analysis::Histogram *hist);
+
+  std::function<void(float, float)> on_plot_geometry_changed_;
 };
 
 } // namespace correlation::app

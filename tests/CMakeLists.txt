@@ -104,10 +104,13 @@ add_executable(correlation_unit_tests
     unit/render3d/LodControllerTests.cpp
     unit/render3d/TrajectoryStreamerTests.cpp
     unit/analysis/CorrelationEngineTests.cpp
+    unit/analysis/CutoffSanityCheckerTests.cpp
+    unit/analysis/FirstMinimumDetectorTests.cpp
     unit/analysis/StructuralElectronicCorrelationTests.cpp
     unit/app/AnalysisDispatcherTests.cpp
     unit/app/BondCutoffMapperTests.cpp
     unit/app/BondCutoffServiceTests.cpp
+    unit/app/DomainPresetRegistryTests.cpp
     unit/app/PhysicsServiceTests.cpp
     unit/app/PlotExportServiceTests.cpp
     unit/app/PresetManagerTests.cpp

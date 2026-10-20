@@ -58,6 +58,50 @@ public:
                                                const ProgramOptions &options);
 
   /**
+   * @brief Executes a rapid single-frame RDF calculation for fast live calibration preview.
+   * @param[in] trajectory Source trajectory reference with structures to analyze.
+   * @param[in] options Analytical configuration parameters.
+   * @return Success or error message.
+   */
+  std::expected<void, std::string> runFastPreviewRDF(correlation::core::Trajectory *trajectory,
+                                                     const ProgramOptions &options);
+
+  /**
+   * @brief Selectively recalculates only bond-dependent algorithms when bond cutoffs change.
+   * Preserves already calculated distance-based distributions (RDF, S(Q), XRD) and dynamic
+   * properties. If no previous results exist, falls back to full analysis.
+   * @param[in] trajectory Source trajectory with structures to analyze.
+   * @param[in] options Analytical configuration parameters with updated bond cutoffs.
+   * @return Success or error message.
+   */
+  std::expected<void, std::string>
+  runSelectiveRecalculation(correlation::core::Trajectory *trajectory,
+                            const ProgramOptions &options);
+
+  /**
+   * @brief Selectively recalculates only bond-dependent algorithms when bond cutoffs change.
+   * @param[in] trajectory Source trajectory reference with structures to analyze.
+   * @param[in] options Analytical configuration parameters with updated bond cutoffs.
+   * @return Success or error message.
+   */
+  std::expected<void, std::string>
+  runSelectiveRecalculation(correlation::core::Trajectory &trajectory,
+                            const ProgramOptions &options);
+
+  /**
+   * @brief Queries whether a calculator depends on bond cutoffs.
+   * @param[in] calc_id Name or abbreviation of calculator.
+   * @return True if calculator depends on bond cutoffs, false otherwise.
+   */
+  [[nodiscard]] static bool isBondDependentCalculator(std::string_view calc_id) noexcept;
+
+  /**
+   * @brief Gets all canonical calculator names that depend on bond cutoffs.
+   * @return Vector of canonical calculator name strings.
+   */
+  [[nodiscard]] static std::vector<std::string> getBondDependentCalculatorNames();
+
+  /**
    * @brief Validates analysis configuration before execution.
    * @param[in] options Options to validate.
    * @return Success (void) or error message string.
@@ -118,10 +162,11 @@ public:
 
   /**
    * @brief Injects an existing DistributionFunctions container (useful for testing).
+   * @param distribution_functions Container to inject.
    */
-  void setDistributionFunctions(
-      std::unique_ptr<correlation::analysis::DistributionFunctions> df) noexcept {
-    df_ = std::move(df);
+  void setDistributionFunctions(std::unique_ptr<correlation::analysis::DistributionFunctions>
+                                    distribution_functions) noexcept {
+    df_ = std::move(distribution_functions);
   }
 
   /**

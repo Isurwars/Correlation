@@ -11,11 +11,36 @@
 #include "writers/FileWriter.hpp"
 
 #include <algorithm>
+#include <array>
 #include <iostream>
 
 namespace correlation::app {
 
 namespace {
+
+[[nodiscard]] std::map<std::string, bool>
+extractBondDependentCalculators(const std::map<std::string, bool> &active_calculators) {
+  std::map<std::string, bool> filtered;
+  if (active_calculators.empty()) {
+    for (const auto &name : AnalysisDispatcher::getBondDependentCalculatorNames()) {
+      filtered[name] = true;
+    }
+  } else {
+    for (const auto &[calc_name, is_active] : active_calculators) {
+      if (is_active && AnalysisDispatcher::isBondDependentCalculator(calc_name)) {
+        filtered[calc_name] = true;
+      }
+    }
+  }
+  return filtered;
+}
+
+void mergeCalculatedHistograms(correlation::analysis::DistributionFunctions &target,
+                               const correlation::analysis::DistributionFunctions &source) {
+  for (const auto &[name, hist] : source.getAllHistograms()) {
+    target.addHistogram(name, correlation::analysis::Histogram(hist));
+  }
+}
 
 [[nodiscard]] correlation::analysis::CorrelationEngineConfig
 toEngineConfig(const ProgramOptions &options, std::atomic<bool> *cancel_flag) {
@@ -85,6 +110,108 @@ std::expected<void, std::string>
 AnalysisDispatcher::runAnalysis(correlation::core::Trajectory &trajectory,
                                 const ProgramOptions &options) {
   return runAnalysis(&trajectory, options);
+}
+
+std::expected<void, std::string>
+AnalysisDispatcher::runFastPreviewRDF(correlation::core::Trajectory *trajectory,
+                                      const ProgramOptions &options) {
+  if (trajectory == nullptr || trajectory->getFrameCount() == 0) {
+    return std::unexpected(AppDefaults::MSG_ANALYSIS_ABORTED);
+  }
+
+  ProgramOptions preview_opts = options;
+  preview_opts.min_frame = 1;
+  preview_opts.max_frame = 1;
+  preview_opts.frame_stride = 1;
+  preview_opts.active_calculators.clear();
+  preview_opts.active_calculators["RDF"] = true;
+  preview_opts.active_calculators["Radial Distribution Function"] = true;
+
+  return runAnalysis(trajectory, preview_opts);
+}
+
+bool AnalysisDispatcher::isBondDependentCalculator(std::string_view calc_id) noexcept {
+  static constexpr std::array<std::string_view, 19> BOND_DEPENDENT = {
+      "Plane Angle Distribution",
+      "PAD",
+      "BAD",
+      "Dihedral Angle Distribution",
+      "DAD",
+      "Coordination Number",
+      "CN",
+      "Coordination",
+      "Ring Size Distribution",
+      "RD",
+      "Rings",
+      "Ring Statistics",
+      "Common Neighbor Analysis",
+      "CNA",
+      "Cluster Size Distribution",
+      "Cluster Analysis",
+      "Hydrogen Bond Distribution",
+      "Hydrogen Bond",
+      "Motif",
+  };
+  return std::ranges::any_of(BOND_DEPENDENT,
+                             [calc_id](std::string_view name) { return name == calc_id; });
+}
+
+std::vector<std::string> AnalysisDispatcher::getBondDependentCalculatorNames() {
+  return {
+      "Plane Angle Distribution",   "Dihedral Angle Distribution", "Coordination Number",
+      "Ring Size Distribution",     "Common Neighbor Analysis",    "Cluster Size Distribution",
+      "Hydrogen Bond Distribution",
+  };
+}
+
+std::expected<void, std::string>
+AnalysisDispatcher::runSelectiveRecalculation(correlation::core::Trajectory *trajectory,
+                                              const ProgramOptions &options) {
+  if (trajectory == nullptr || trajectory->getFrameCount() == 0) {
+    std::string const err = AppDefaults::MSG_ANALYSIS_ABORTED;
+    std::cerr << err << '\n';
+    return std::unexpected(err);
+  }
+
+  // Fall back to complete analysis if no previous results are cached
+  if (!df_) {
+    return runAnalysis(trajectory, options);
+  }
+
+  cancel_flag_ = false;
+
+  ProgramOptions selective_opts = options;
+  selective_opts.active_calculators = extractBondDependentCalculators(options.active_calculators);
+
+  // If no bond-dependent calculators are requested, return without recomputing
+  if (selective_opts.active_calculators.empty()) {
+    return {};
+  }
+
+  if (const auto validation_res = validateOptions(selective_opts); !validation_res.has_value()) {
+    return std::unexpected(validation_res.error());
+  }
+
+  const auto config = toEngineConfig(selective_opts, &cancel_flag_);
+  auto result = correlation::analysis::CorrelationEngine::runAnalysis(*trajectory, config,
+                                                                      progress_callback_);
+  if (!result) {
+    std::cerr << "Selective Recalculation Exception: " << result.error() << '\n';
+    return std::unexpected(result.error());
+  }
+
+  const auto &new_df = result.value();
+  if (new_df) {
+    mergeCalculatedHistograms(*df_, *new_df);
+  }
+
+  return {};
+}
+
+std::expected<void, std::string>
+AnalysisDispatcher::runSelectiveRecalculation(correlation::core::Trajectory &trajectory,
+                                              const ProgramOptions &options) {
+  return runSelectiveRecalculation(&trajectory, options);
 }
 
 std::expected<void, std::string>
