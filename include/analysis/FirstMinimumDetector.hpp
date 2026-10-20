@@ -12,11 +12,10 @@
 #include "analysis/DistributionFunctions.hpp"
 #include "math/Precision.hpp"
 
+#include <cstdint>
 #include <expected>
 #include <span>
-#include <string>
 #include <string_view>
-#include <vector>
 
 namespace correlation::analysis {
 
@@ -24,13 +23,13 @@ namespace correlation::analysis {
  * @enum class DetectionError
  * @brief Error categories encountered during first minimum or peak detection.
  */
-enum class DetectionError {
+enum class DetectionError : std::uint8_t {
   InsufficientData, ///< Bins or intensities array has fewer than required points.
   MismatchedSizes,  ///< Bins and intensities spans have different lengths.
   NoPeakFound,      ///< No primary coordination peak detected above noise threshold.
   NoMinimumFound,   ///< No inflection point or trough detected following primary peak.
   InvalidRange,     ///< Minimum distance exceeds maximum distance or window is unphysical.
-  PartialNotFound   ///< Requested partial key was not found in Histogram container.
+  PartialNotFound,  ///< Requested partial key was not found in Histogram container.
 };
 
 /**

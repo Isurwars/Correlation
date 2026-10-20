@@ -1,0 +1,212 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialTypography,
+    MaterialText,
+} from "../../../material/material.slint";
+import { CalibrationPair } from "../../../Types.slint";
+
+export component CutoffCalibrationOverlay inherits Rectangle {
+    in property <bool> active: false;
+    in property <CalibrationPair> pair;
+    in property <bool> visible_in_view: true;
+
+    callback drag_min(length);
+    callback drag_max(length);
+
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    visible: root.active && root.pair.is_valid && root.visible_in_view;
+
+    // Shaded Region Representing First Coordination Shell (Bonded Domain)
+    if root.pair.r_max_px > root.pair.r_min_px: Rectangle {
+        x: root.pair.r_min_px;
+        y: 0px;
+        width: root.pair.r_max_px - root.pair.r_min_px;
+        height: 100%;
+        background: MaterialPalette.primary.with_alpha(15%);
+        border-width: 0px;
+    }
+
+    // Primary Coordination Peak Indicator
+    if root.pair.r_peak_px > 0px: Rectangle {
+        x: root.pair.r_peak_px - 0.5px;
+        y: 35px;
+        width: 1px;
+        height: root.height - 70px;
+        background: MaterialPalette.outline.with_alpha(45%);
+
+        // Peak Badge
+        Rectangle {
+            x: (parent.width - self.width) / 2;
+            y: 0px;
+            width: peak_text.preferred-width + 10px;
+            height: 18px;
+            border-radius: 9px;
+            background: MaterialPalette.surface_container_highest.with_alpha(90%);
+            border-width: 1px;
+            border-color: MaterialPalette.outline_variant;
+
+            peak_text := MaterialText {
+                width: 100%;
+                height: 100%;
+                text: "Peak: " + root.pair.r_peak + " Å";
+                style: MaterialTypography.label_small;
+                color: MaterialPalette.on_surface_variant;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+        }
+    }
+
+    // Lower Cutoff Bound (r_min) Handle Line & Grip
+    if root.pair.r_min_px > 0px: Rectangle {
+        x: root.pair.r_min_px - 1px;
+        y: 0px;
+        width: 2px;
+        height: 100%;
+        background: MaterialPalette.primary.with_alpha(85%);
+
+        // Distance Tag Badge
+        Rectangle {
+            x: (parent.width - self.width) / 2;
+            y: 12px;
+            width: min_text.preferred-width + 12px;
+            height: 22px;
+            border-radius: 11px;
+            background: MaterialPalette.primary;
+            drop-shadow-blur: 4px;
+            drop-shadow-color: #00000040;
+
+            min_text := MaterialText {
+                width: 100%;
+                height: 100%;
+                text: "r_min: " + root.pair.r_min + " Å";
+                style: MaterialTypography.label_small;
+                color: MaterialPalette.on_primary;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+        }
+
+        // Center Grip Handle
+        Rectangle {
+            x: (parent.width - self.width) / 2;
+            y: (parent.height - self.height) / 2;
+            width: 14px;
+            height: 28px;
+            border-radius: 7px;
+            background: min_touch.has-hover ? MaterialPalette.primary.darker(10%) : MaterialPalette.primary;
+            border-width: 1.5px;
+            border-color: MaterialPalette.on_primary.with_alpha(60%);
+            animate background { duration: 120ms; }
+
+            // Vertical grip ridges
+            Rectangle {
+                x: 4px;
+                y: 6px;
+                width: 2px;
+                height: 16px;
+                background: MaterialPalette.on_primary.with_alpha(70%);
+            }
+            Rectangle {
+                x: 8px;
+                y: 6px;
+                width: 2px;
+                height: 16px;
+                background: MaterialPalette.on_primary.with_alpha(70%);
+            }
+        }
+
+        // Expanded Interactive Touch Area
+        min_touch := TouchArea {
+            x: -14px;
+            y: 0px;
+            width: 30px;
+            height: 100%;
+            mouse-cursor: ew-resize;
+
+            moved => {
+                root.drag_min(self.mouse-x + root.pair.r_min_px);
+            }
+        }
+    }
+
+    // Upper Cutoff Bound (r_max / First Minimum) Handle Line & Grip
+    if root.pair.r_max_px > 0px: Rectangle {
+        x: root.pair.r_max_px - 1px;
+        y: 0px;
+        width: 2.5px;
+        height: 100%;
+        background: MaterialPalette.tertiary.with_alpha(90%);
+
+        // Distance Tag Badge
+        Rectangle {
+            x: (parent.width - self.width) / 2;
+            y: 12px;
+            width: max_text.preferred-width + 12px;
+            height: 22px;
+            border-radius: 11px;
+            background: MaterialPalette.tertiary;
+            drop-shadow-blur: 4px;
+            drop-shadow-color: #00000040;
+
+            max_text := MaterialText {
+                width: 100%;
+                height: 100%;
+                text: "r_max: " + root.pair.r_max + " Å";
+                style: MaterialTypography.label_small;
+                color: MaterialPalette.on_tertiary;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+        }
+
+        // Center Grip Handle
+        Rectangle {
+            x: (parent.width - self.width) / 2;
+            y: (parent.height - self.height) / 2;
+            width: 14px;
+            height: 28px;
+            border-radius: 7px;
+            background: max_touch.has-hover ? MaterialPalette.tertiary.darker(10%) : MaterialPalette.tertiary;
+            border-width: 1.5px;
+            border-color: MaterialPalette.on_tertiary.with_alpha(60%);
+            animate background { duration: 120ms; }
+
+            // Vertical grip ridges
+            Rectangle {
+                x: 4px;
+                y: 6px;
+                width: 2px;
+                height: 16px;
+                background: MaterialPalette.on_tertiary.with_alpha(70%);
+            }
+            Rectangle {
+                x: 8px;
+                y: 6px;
+                width: 2px;
+                height: 16px;
+                background: MaterialPalette.on_tertiary.with_alpha(70%);
+            }
+        }
+
+        // Expanded Interactive Touch Area
+        max_touch := TouchArea {
+            x: -14px;
+            y: 0px;
+            width: 30px;
+            height: 100%;
+            mouse-cursor: ew-resize;
+
+            moved => {
+                root.drag_max(self.mouse-x + root.pair.r_max_px);
+            }
+        }
+    }
+}

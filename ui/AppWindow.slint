@@ -24,6 +24,7 @@ import { Palette } from "std-widgets.slint";
 import {
     AtomCount,
     BondCutoff,
+    CalibrationPair,
     CalculatorInfo,
     CalculatorGroup,
     AnalysisOptions,
@@ -46,6 +47,7 @@ import { PreviewCard } from "cards/preview/PreviewCard.slint";
 export {
     AtomCount,
     BondCutoff,
+    CalibrationPair,
     CalculatorInfo,
     CalculatorGroup,
     AnalysisOptions,
@@ -189,6 +191,8 @@ export component AppWindow inherits Window {
     in-out property <string> hover_coord_text: "";
     in-out property <bool> has_active_zoom: false;
     in-out property <int> markers_count: 0;
+    in-out property <[CalibrationPair]> calibration_pairs: [];
+    in-out property <int> active_calibration_pair_index: 0;
 
     // Table data and calculated scalar properties
     in property <[string]> table_headers: [];
@@ -297,6 +301,10 @@ export component AppWindow inherits Window {
     callback reset_analyses_selection();
     callback reset_material_type();
     callback clear_comparison_curves();
+    callback select_calibration_pair(int);
+    callback auto_detect_cutoff(int);
+    callback reset_calibration_pair(int);
+    callback drag_cutoff_handle(int, bool, length);
 
     // ============================================================================
     // Core Layout Logic
@@ -686,6 +694,13 @@ export component AppWindow inherits Window {
                     clear_markers => {
                         root.clear_markers();
                     }
+
+                    calibration_pairs: root.calibration_pairs;
+                    active_calibration_pair_index <=> root.active_calibration_pair_index;
+                    select_calibration_pair(idx) => { root.select_calibration_pair(idx); }
+                    auto_detect_cutoff(idx) => { root.auto_detect_cutoff(idx); }
+                    reset_calibration_pair(idx) => { root.reset_calibration_pair(idx); }
+                    drag_cutoff_handle(idx, is_max, mx) => { root.drag_cutoff_handle(idx, is_max, mx); }
 
                     structure_3d_image: root.structure_3d_image;
                     structure_3d_current_frame <=> root.structure_3d_current_frame;

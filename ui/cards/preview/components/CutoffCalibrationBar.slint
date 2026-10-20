@@ -1,0 +1,213 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialTypography,
+    MaterialText,
+    Icons,
+} from "../../../material/material.slint";
+import { CalibrationPair } from "../../../Types.slint";
+
+export component CutoffCalibrationBar inherits Rectangle {
+    in property <[CalibrationPair]> pairs: [];
+    in-out property <int> active_pair_index: 0;
+    in property <bool> is_detecting: false;
+
+    callback select_pair(int);
+    callback auto_detect(int);
+    callback reset_pair(int);
+    callback close();
+
+    out property <string> hovered_tooltip_text:
+        btn_close.has-hover ? "Exit Calibration\n\n✖ Return to normal plot inspection mode." :
+        btn_auto.has-hover ? "Auto-detect 1st Minimum\n\n✨ Run mathematical curvature detector to locate peak onset and first trough." :
+        btn_reset.has-hover ? "Reset to Covalent\n\n🔄 Restore standard covalent radii bounds for this pair." : "";
+
+    out property <length> hovered_x:
+        btn_close.has-hover ? btn_close.absolute-position.x + btn_close.mouse-x :
+        btn_auto.has-hover ? btn_auto.absolute-position.x + btn_auto.mouse-x :
+        btn_reset.has-hover ? btn_reset.absolute-position.x + btn_reset.mouse-x : 0px;
+
+    out property <length> hovered_y:
+        btn_close.has-hover ? btn_close.absolute-position.y + btn_close.mouse-y :
+        btn_auto.has-hover ? btn_auto.absolute-position.y + btn_auto.mouse-y :
+        btn_reset.has-hover ? btn_reset.absolute-position.y + btn_reset.mouse-y : 0px;
+
+    height: 42px;
+    border-radius: 21px;
+    background: MaterialPalette.surface_container_high.with_alpha(95%);
+    border-width: 1.5px;
+    border-color: MaterialPalette.outline.with_alpha(80%);
+    clip: true;
+
+    HorizontalLayout {
+        padding-left: 12px;
+        padding-right: 8px;
+        spacing: 8px;
+        alignment: center;
+
+        // Leading Header with Tune Icon
+        HorizontalLayout {
+            spacing: 6px;
+            alignment: center;
+
+            Image {
+                width: 16px;
+                height: 16px;
+                source: Icons.tune;
+                colorize: MaterialPalette.primary;
+            }
+
+            MaterialText {
+                text: "Cutoff Wizard";
+                style: MaterialTypography.label_medium_prominent;
+                color: MaterialPalette.primary;
+                vertical-alignment: center;
+            }
+        }
+
+        // Vertical Separator
+        Rectangle {
+            width: 1px;
+            height: 20px;
+            background: MaterialPalette.outline_variant.with_alpha(60%);
+        }
+
+        // Pair Selection Chips
+        HorizontalLayout {
+            spacing: 4px;
+            alignment: center;
+
+            for pair[idx] in root.pairs: Rectangle {
+                property <bool> is_active: idx == root.active_pair_index;
+                height: 28px;
+                border-radius: 14px;
+                background: is_active ? MaterialPalette.primary :
+                            chip_touch.has-hover ? MaterialPalette.surface_container_highest : transparent;
+                border-width: is_active ? 0px : 1px;
+                border-color: MaterialPalette.outline_variant;
+                animate background { duration: 120ms; }
+
+                chip_touch := TouchArea {
+                    width: 100%;
+                    height: 100%;
+                    mouse-cursor: pointer;
+                    clicked => {
+                        root.active_pair_index = idx;
+                        root.select_pair(idx);
+                    }
+                }
+
+                HorizontalLayout {
+                    padding-left: 10px;
+                    padding-right: 10px;
+                    alignment: center;
+
+                    MaterialText {
+                        text: pair.label;
+                        style: is_active ? MaterialTypography.label_medium_prominent : MaterialTypography.label_medium;
+                        color: is_active ? MaterialPalette.on_primary : MaterialPalette.on_surface_variant;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+        }
+
+        // Vertical Separator
+        Rectangle {
+            width: 1px;
+            height: 20px;
+            background: MaterialPalette.outline_variant.with_alpha(60%);
+        }
+
+        // Auto-Detect 1st Minimum Action Button
+        btn_auto := TouchArea {
+            height: 30px;
+            width: auto_content.preferred-width + 20px;
+            mouse-cursor: pointer;
+            clicked => { root.auto_detect(root.active_pair_index); }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 15px;
+                background: btn_auto.has-hover ? MaterialPalette.tertiary_container.darker(5%) : MaterialPalette.tertiary_container;
+                border-width: 1px;
+                border-color: MaterialPalette.tertiary.with_alpha(40%);
+                animate background { duration: 150ms; }
+
+                auto_content := HorizontalLayout {
+                    padding-left: 10px;
+                    padding-right: 10px;
+                    spacing: 6px;
+                    alignment: center;
+
+                    Image {
+                        width: 14px;
+                        height: 14px;
+                        source: Icons.auto_graph;
+                        colorize: MaterialPalette.on_tertiary_container;
+                    }
+
+                    MaterialText {
+                        text: "Auto-detect Min";
+                        style: MaterialTypography.label_medium_prominent;
+                        color: MaterialPalette.on_tertiary_container;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+        }
+
+        // Reset to Covalent Heuristic Button
+        btn_reset := TouchArea {
+            width: 28px;
+            height: 28px;
+            mouse-cursor: pointer;
+            clicked => { root.reset_pair(root.active_pair_index); }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 14px;
+                background: btn_reset.has-hover ? MaterialPalette.surface_container_highest : transparent;
+
+                Image {
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
+                    width: 15px;
+                    height: 15px;
+                    source: Icons.restart_alt;
+                    colorize: MaterialPalette.on_surface_variant;
+                }
+            }
+        }
+
+        // Close / Exit Calibration Button
+        btn_close := TouchArea {
+            width: 28px;
+            height: 28px;
+            mouse-cursor: pointer;
+            clicked => { root.close(); }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 14px;
+                background: btn_close.has-hover ? MaterialPalette.error_container : transparent;
+
+                Image {
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
+                    width: 15px;
+                    height: 15px;
+                    source: Icons.close;
+                    colorize: btn_close.has-hover ? MaterialPalette.on_error_container : MaterialPalette.on_surface_variant;
+                }
+            }
+        }
+    }
+}

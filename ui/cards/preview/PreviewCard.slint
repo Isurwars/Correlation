@@ -8,11 +8,13 @@ import {
     FilledButton,
     Horizontal,
 } from "../../material/material.slint";
-import { TableRow, CurveToggleItem } from "../../Types.slint";
+import { TableRow, CurveToggleItem, CalibrationPair } from "../../Types.slint";
 import { WorkflowStepper } from "./components/WorkflowStepper.slint";
 import { PreviewHeader } from "./components/PreviewHeader.slint";
 import { HeroEmptyState } from "./components/HeroEmptyState.slint";
 import { PlotReticleOverlay } from "./components/PlotReticleOverlay.slint";
+import { CutoffCalibrationOverlay } from "./components/CutoffCalibrationOverlay.slint";
+import { CutoffCalibrationBar } from "./components/CutoffCalibrationBar.slint";
 import { ImagingToolbar } from "./components/ImagingToolbar.slint";
 import { CurveSidebar } from "./components/CurveSidebar.slint";
 import { PlotDataTable } from "./components/PlotDataTable.slint";
@@ -87,6 +89,14 @@ export component PreviewCard inherits FilledCard {
     callback run_analysis();
     callback open_panel(int);
 
+    // Cutoff Calibration properties & callbacks
+    in property <[CalibrationPair]> calibration_pairs: [];
+    in-out property <int> active_calibration_pair_index: 0;
+    callback select_calibration_pair(int);
+    callback auto_detect_cutoff(int);
+    callback reset_calibration_pair(int);
+    callback drag_cutoff_handle(int, bool, length);
+
     // 3D Viewport properties & callbacks
     in property <image> structure_3d_image;
     in-out property <int> structure_3d_current_frame: 0;
@@ -111,6 +121,7 @@ export component PreviewCard inherits FilledCard {
 
     // Hover state for tooltip (aggregated from child components)
     out property <string> hovered_tooltip_text:
+        (root.active_tool == 5 && calibration_bar.hovered_tooltip_text != "") ? calibration_bar.hovered_tooltip_text :
         imaging_toolbar.tooltip_text != "" ? imaging_toolbar.tooltip_text :
         curve_sidebar.tooltip_text != "" ? curve_sidebar.tooltip_text :
         preview_header.tooltip_text != "" ? preview_header.tooltip_text :
@@ -118,6 +129,7 @@ export component PreviewCard inherits FilledCard {
         save_results_area.has-hover ? "Export analysis results to files in the selected formats (CSV, HDF5, Parquet, SVG).\n\n💡 Tip: Results are written to the output destination directory." : "";
 
     out property <length> hovered_x:
+        (root.active_tool == 5 && calibration_bar.hovered_tooltip_text != "") ? calibration_bar.hovered_x :
         imaging_toolbar.tooltip_text != "" ? imaging_toolbar.tooltip_x :
         curve_sidebar.tooltip_text != "" ? curve_sidebar.tooltip_x :
         preview_header.tooltip_text != "" ? preview_header.tooltip_x :
@@ -125,6 +137,7 @@ export component PreviewCard inherits FilledCard {
         save_results_area.has-hover ? save_results_area.absolute-position.x + save_results_area.mouse-x : 0px;
 
     out property <length> hovered_y:
+        (root.active_tool == 5 && calibration_bar.hovered_tooltip_text != "") ? calibration_bar.hovered_y :
         imaging_toolbar.tooltip_text != "" ? imaging_toolbar.tooltip_y :
         curve_sidebar.tooltip_text != "" ? curve_sidebar.tooltip_y :
         preview_header.tooltip_text != "" ? preview_header.tooltip_y :
@@ -354,6 +367,31 @@ export component PreviewCard inherits FilledCard {
                         drag_start_y: root.drag_start_y;
                         drag_current_x: root.drag_current_x;
                         drag_current_y: root.drag_current_y;
+                    }
+
+                    // Cutoff Calibration Overlay (Handles, Shaded Region, and Onset Indicators)
+                    calibration_overlay := CutoffCalibrationOverlay {
+                        x: 0px;
+                        y: 0px;
+                        width: 100%;
+                        height: 100%;
+                        active: root.active_tool == 5;
+                        pair: root.calibration_pairs[root.active_calibration_pair_index];
+                        drag_min(mx) => { root.drag_cutoff_handle(root.active_calibration_pair_index, false, mx); }
+                        drag_max(mx) => { root.drag_cutoff_handle(root.active_calibration_pair_index, true, mx); }
+                    }
+
+                    // Floating Cutoff Calibration Wizard Bar (when Tool 5 is active)
+                    calibration_bar := CutoffCalibrationBar {
+                        visible: root.active_tool == 5 && root.selected_plot_index >= 0;
+                        x: parent.width - self.preferred-width - 12px;
+                        y: 10px;
+                        pairs: root.calibration_pairs;
+                        active_pair_index <=> root.active_calibration_pair_index;
+                        select_pair(idx) => { root.select_calibration_pair(idx); }
+                        auto_detect(idx) => { root.auto_detect_cutoff(idx); }
+                        reset_pair(idx) => { root.reset_calibration_pair(idx); }
+                        close => { root.active_tool = 0; }
                     }
 
                     // Floating Imaging Toolbar

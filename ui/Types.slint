@@ -26,6 +26,18 @@ export struct BondCutoff {
     max_distance: string,
 }
 
+export struct CalibrationPair {
+    pair_index: int,
+    label: string,
+    r_min: string,
+    r_max: string,
+    r_peak: string,
+    r_min_px: length,
+    r_max_px: length,
+    r_peak_px: length,
+    is_valid: bool,
+}
+
 export struct CalculatorInfo {
     id: string,
     name: string,

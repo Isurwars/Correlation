@@ -20,6 +20,7 @@ export component ImagingToolbar inherits Rectangle {
         zoom_out_touch.has-hover ? "Click to Zoom Out\n\n🔍 Click anywhere on plot to step viewport zoom out centered on click." :
         marker_x_touch.has-hover ? "Add Vertical Marker (+X)\n\n📍 Click plot to place a vertical guide line at target distance or angle." :
         marker_y_touch.has-hover ? "Add Horizontal Marker (+Y)\n\n📍 Click plot to place a horizontal intensity threshold guide." :
+        calibrate_touch.has-hover ? "Calibrate Cutoffs\n\n🎯 Interactively adjust and auto-detect first coordination shell bond cutoffs on g(r)." :
         (root.markers_count > 0 && clear_markers_touch.has-hover) ? "Clear Markers\n\n🗑️ Remove all inspection guides from the plot." : "";
 
     out property <length> tooltip_x:
@@ -28,6 +29,7 @@ export component ImagingToolbar inherits Rectangle {
         zoom_out_touch.has-hover ? zoom_out_touch.absolute-position.x + zoom_out_touch.mouse-x :
         marker_x_touch.has-hover ? marker_x_touch.absolute-position.x + marker_x_touch.mouse-x :
         marker_y_touch.has-hover ? marker_y_touch.absolute-position.x + marker_y_touch.mouse-x :
+        calibrate_touch.has-hover ? calibrate_touch.absolute-position.x + calibrate_touch.mouse-x :
         (root.markers_count > 0 && clear_markers_touch.has-hover) ? clear_markers_touch.absolute-position.x + clear_markers_touch.mouse-x : 0px;
 
     out property <length> tooltip_y:
@@ -36,6 +38,7 @@ export component ImagingToolbar inherits Rectangle {
         zoom_out_touch.has-hover ? zoom_out_touch.absolute-position.y + zoom_out_touch.mouse-y :
         marker_x_touch.has-hover ? marker_x_touch.absolute-position.y + marker_x_touch.mouse-y :
         marker_y_touch.has-hover ? marker_y_touch.absolute-position.y + marker_y_touch.mouse-y :
+        calibrate_touch.has-hover ? calibrate_touch.absolute-position.y + calibrate_touch.mouse-y :
         (root.markers_count > 0 && clear_markers_touch.has-hover) ? clear_markers_touch.absolute-position.y + clear_markers_touch.mouse-y : 0px;
 
     width: toolbar_layout.preferred-width + 16px;
@@ -252,6 +255,49 @@ export component ImagingToolbar inherits Rectangle {
                     height: 16px;
                     source: Icons.delete_sweep;
                     colorize: MaterialPalette.error;
+                }
+            }
+        }
+
+        // Divider
+        VerticalLayout {
+            alignment: center;
+            Rectangle {
+                width: 1px;
+                height: 16px;
+                background: MaterialPalette.outline_variant.with_alpha(50%);
+            }
+        }
+
+        // Calibrate Cutoffs Toggle (Tool 5)
+        calibrate_touch := TouchArea {
+            width: 30px;
+            height: 30px;
+            mouse-cursor: pointer;
+            clicked => {
+                root.active_tool = (root.active_tool == 5 ? 0 : 5);
+            }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 15px;
+                background: root.active_tool == 5 ?
+                    (calibrate_touch.has-hover ? MaterialPalette.primary.darker(8%) : MaterialPalette.primary) :
+                    (calibrate_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
+                border-width: root.active_tool == 5 ? 1.5px : 0px;
+                border-color: root.active_tool == 5 ? MaterialPalette.on_primary.with_alpha(35%) : transparent;
+
+                animate background, border-color { duration: 150ms; easing: ease-out; }
+
+                Image {
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
+                    width: 16px;
+                    height: 16px;
+                    source: Icons.tune;
+                    colorize: root.active_tool == 5 ? MaterialPalette.on_primary : MaterialPalette.on_surface;
+                    animate colorize { duration: 150ms; }
                 }
             }
         }
