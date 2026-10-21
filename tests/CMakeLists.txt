@@ -84,6 +84,7 @@ add_executable(correlation_unit_tests
     unit/readers/ReaderFactoryTests.cpp
     unit/writers/WriterFactoryTests.cpp
     unit/writers/ArrowWriterTests.cpp
+    unit/plotters/ColormapServiceTests.cpp
     unit/plotters/SvgPlotterTests.cpp
     unit/plotters/PdfPlotterTests.cpp
     unit/plotters/PathFontTests.cpp

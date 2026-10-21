@@ -194,6 +194,7 @@ target_include_directories(correlation_pdfgen PUBLIC
 
 # Plotters as an OBJECT library
 set(PLOTTERS_SOURCES
+    plotters/ColormapService.cpp
     plotters/PathFont.cpp
     plotters/PdfPlotter.cpp
     plotters/PngPlotter.cpp
