@@ -1,0 +1,120 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialText,
+} from "../../../material/material.slint";
+
+export component PhaseSlider inherits Rectangle {
+    in property <string> label: "";
+    in property <float> value: 0.5;
+    in property <float> min_val: 0.0;
+    in property <float> max_val: 1.0;
+    in property <string> display_text: "" + (Math.round(root.value * 100) / 100);
+
+    callback value_changed(float);
+
+    height: 38px;
+    background: transparent;
+
+    VerticalLayout {
+        spacing: 2px;
+        alignment: center;
+
+        // Label and value readout
+        HorizontalLayout {
+            alignment: space-between;
+            MaterialText {
+                text: root.label;
+                font-size: 11px;
+                color: MaterialPalette.on_surface_variant;
+            }
+            MaterialText {
+                text: root.display_text;
+                font-size: 11px;
+                font-weight: 600;
+                color: MaterialPalette.primary;
+            }
+        }
+
+        // Track & thumb touch area
+        track_box := Rectangle {
+            height: 18px;
+            property <float> norm_ratio: (root.max_val > root.min_val)
+                ? Math.max(0.0, Math.min(1.0, (root.value - root.min_val) / (root.max_val - root.min_val)))
+                : 0.0;
+
+            // Track background
+            Rectangle {
+                x: 0px;
+                y: (parent.height - self.height) / 2;
+                width: parent.width;
+                height: 4px;
+                border-radius: 2px;
+                background: MaterialPalette.surface_container_highest;
+
+                // Active track
+                Rectangle {
+                    x: 0px;
+                    y: 0px;
+                    width: Math.max(0px, parent.width * track_box.norm_ratio);
+                    height: 100%;
+                    border-radius: 2px;
+                    background: MaterialPalette.primary;
+                }
+            }
+
+            // Thumb
+            thumb := Rectangle {
+                property <length> size: slider_touch.has-hover || slider_touch.pressed ? 14px : 12px;
+                width: self.size;
+                height: self.size;
+                border-radius: self.size / 2;
+                x: Math.max(0px, Math.min(parent.width - self.width, parent.width * track_box.norm_ratio - (self.width / 2)));
+                y: (parent.height - self.height) / 2;
+                background: MaterialPalette.primary;
+                border-width: 2px;
+                border-color: MaterialPalette.surface_container_lowest;
+
+                animate width { duration: 100ms; }
+                animate height { duration: 100ms; }
+                animate border-radius { duration: 100ms; }
+            }
+
+            slider_touch := TouchArea {
+                width: 100%;
+                height: 100%;
+                mouse-cursor: pointer;
+                accessible-role: slider;
+                accessible-label: root.label;
+
+                function dispatch_from_pos() {
+                    let w = self.width / 1px;
+                    if (w <= 0.0) {
+                        return;
+                    }
+                    let mx = self.mouse-x / 1px;
+                    let ratio = Math.max(0.0, Math.min(1.0, mx / w));
+                    let new_val = root.min_val + ratio * (root.max_val - root.min_val);
+                    root.value_changed(new_val);
+                }
+
+                pointer-event(event) => {
+                    if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                        self.dispatch_from_pos();
+                    }
+                }
+
+                moved => {
+                    if (self.pressed) {
+                        self.dispatch_from_pos();
+                    }
+                }
+            }
+        }
+    }
+}

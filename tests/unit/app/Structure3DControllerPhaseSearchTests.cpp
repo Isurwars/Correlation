@@ -214,5 +214,26 @@ TEST_F(Structure3DControllerPhaseSearchTests, TelemetryHistogramGeneration) {
   EXPECT_LE(hist.matching_atom_count, hist.total_atom_count);
 }
 
+TEST_F(Structure3DControllerPhaseSearchTests, SlintWindowBindingSynchronization) {
+  const ProgramOptions options;
+  Structure3DController controller(window(), options);
+
+  controller.setPhaseSearchEnabled(true);
+  controller.setCrystalPreset(CrystalPreset::FCC);
+  controller.setPhaseHaloIntensity(0.92F);
+  controller.setPhaseHaloRadiusRatio(1.65F);
+  controller.setPhaseDimNonMatching(true);
+
+  EXPECT_TRUE(window().get_structure_3d_phase_enabled());
+  EXPECT_EQ(window().get_structure_3d_phase_preset(), static_cast<int>(CrystalPreset::FCC));
+  EXPECT_EQ(window().get_structure_3d_phase_descriptor(), static_cast<int>(PhaseDescriptor::Q6Bar));
+  EXPECT_FLOAT_EQ(window().get_structure_3d_phase_min_threshold(), 0.46F);
+  EXPECT_FLOAT_EQ(window().get_structure_3d_phase_max_threshold(), 0.58F);
+  EXPECT_NEAR(window().get_structure_3d_phase_halo_intensity(), 0.92F, 1e-4F);
+  EXPECT_NEAR(window().get_structure_3d_phase_halo_radius_ratio(), 1.65F, 1e-4F);
+  EXPECT_TRUE(window().get_structure_3d_phase_dim_non_matching());
+  EXPECT_EQ(window().get_structure_3d_phase_descriptor_name(), "q̄₆");
+}
+
 } // namespace
 } // namespace correlation::app

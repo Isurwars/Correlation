@@ -281,6 +281,12 @@ public:
   [[nodiscard]] PhaseHistogram phaseHistogram() const;
 
   /**
+   * @brief Pushes current phase search settings, colormap texture, and histogram telemetry to Slint
+   * UI.
+   */
+  void syncPhaseSearchToWindow();
+
+  /**
    * @brief Accesses reference to the frame Steinhardt LRU cache.
    * @return SteinhardtLRUCache reference.
    */
@@ -349,6 +355,7 @@ private:
   bool render_pending_{false};
   std::atomic<bool> stop_worker_{false};
   std::shared_ptr<std::atomic<bool>> alive_;
+  std::thread::id main_thread_id_{std::this_thread::get_id()};
   std::jthread phase_worker_;
   std::jthread render_worker_;
 };

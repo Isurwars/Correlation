@@ -107,6 +107,34 @@ export component PreviewCard inherits FilledCard {
     in property <bool> structure_3d_wireframe_enabled: true;
     in property <bool> structure_3d_in_cell: false;
 
+    // Phase Search properties & callbacks
+    in-out property <bool> structure_3d_phase_panel_open: false;
+    in property <bool> structure_3d_phase_enabled: false;
+    in property <int> structure_3d_phase_preset: 0;
+    in property <int> structure_3d_phase_descriptor: 0;
+    in property <int> structure_3d_phase_colormap: 0;
+    in property <float> structure_3d_phase_min_threshold: 0.46;
+    in property <float> structure_3d_phase_max_threshold: 0.58;
+    in property <float> structure_3d_phase_domain_min: 0.0;
+    in property <float> structure_3d_phase_domain_max: 1.0;
+    in property <float> structure_3d_phase_halo_intensity: 0.85;
+    in property <float> structure_3d_phase_halo_radius_ratio: 1.35;
+    in property <bool> structure_3d_phase_dim_non_matching: false;
+    in property <[float]> structure_3d_phase_histogram_counts: [];
+    in property <int> structure_3d_phase_matching_atoms: 0;
+    in property <int> structure_3d_phase_total_atoms: 0;
+    in property <string> structure_3d_phase_descriptor_name: "q̄₆";
+    in property <image> structure_3d_phase_colorbar_image;
+
+    callback toggle_phase_search_3d(bool);
+    callback set_phase_preset_3d(int);
+    callback set_phase_descriptor_3d(int);
+    callback set_phase_colormap_3d(int);
+    callback set_phase_thresholds_3d(float, float);
+    callback set_phase_intensity_3d(float);
+    callback set_phase_radius_ratio_3d(float);
+    callback set_phase_dim_non_matching_3d(bool);
+
     callback rotate_3d(float, float);
     callback pan_3d(float, float);
     callback zoom_3d(float);
@@ -462,6 +490,33 @@ export component PreviewCard inherits FilledCard {
                 seek_frame(idx) => { root.seek_frame_3d(idx); }
                 step_frame(fwd) => { root.step_frame_3d(fwd); }
                 resized(w, h) => { root.viewport_3d_resized(w, h); }
+
+                phase_panel_open <=> root.structure_3d_phase_panel_open;
+                phase_enabled: root.structure_3d_phase_enabled;
+                phase_preset: root.structure_3d_phase_preset;
+                phase_descriptor: root.structure_3d_phase_descriptor;
+                phase_colormap: root.structure_3d_phase_colormap;
+                phase_min_threshold: root.structure_3d_phase_min_threshold;
+                phase_max_threshold: root.structure_3d_phase_max_threshold;
+                phase_domain_min: root.structure_3d_phase_domain_min;
+                phase_domain_max: root.structure_3d_phase_domain_max;
+                phase_halo_intensity: root.structure_3d_phase_halo_intensity;
+                phase_halo_radius_ratio: root.structure_3d_phase_halo_radius_ratio;
+                phase_dim_non_matching: root.structure_3d_phase_dim_non_matching;
+                phase_histogram_counts: root.structure_3d_phase_histogram_counts;
+                phase_matching_atoms: root.structure_3d_phase_matching_atoms;
+                phase_total_atoms: root.structure_3d_phase_total_atoms;
+                phase_descriptor_name: root.structure_3d_phase_descriptor_name;
+                phase_colorbar_image: root.structure_3d_phase_colorbar_image;
+
+                toggle_phase_search(en) => { root.toggle_phase_search_3d(en); }
+                set_phase_preset(idx) => { root.set_phase_preset_3d(idx); }
+                set_phase_descriptor(idx) => { root.set_phase_descriptor_3d(idx); }
+                set_phase_colormap(idx) => { root.set_phase_colormap_3d(idx); }
+                set_phase_thresholds(min, max) => { root.set_phase_thresholds_3d(min, max); }
+                set_phase_intensity(val) => { root.set_phase_intensity_3d(val); }
+                set_phase_radius_ratio(val) => { root.set_phase_radius_ratio_3d(val); }
+                set_phase_dim_non_matching(dim) => { root.set_phase_dim_non_matching_3d(dim); }
             }
         }
 

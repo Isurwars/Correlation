@@ -1,0 +1,96 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialTypography,
+    MaterialText,
+} from "../../../material/material.slint";
+
+export component PhaseMiniHistogram inherits Rectangle {
+    in property <[float]> counts: [];
+    in property <float> min_threshold: 0.46;
+    in property <float> max_threshold: 0.58;
+    in property <float> domain_min: 0.0;
+    in property <float> domain_max: 1.0;
+    in property <int> matching_atoms: 0;
+    in property <int> total_atoms: 0;
+
+    height: 74px;
+    border-radius: 8px;
+    background: MaterialPalette.surface_container_lowest;
+    border-width: 1px;
+    border-color: MaterialPalette.outline_variant.with_alpha(50%);
+    clip: true;
+
+    VerticalLayout {
+        padding-left: 8px;
+        padding-right: 8px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        spacing: 4px;
+
+        // Telemetry header
+        HorizontalLayout {
+            alignment: space-between;
+            MaterialText {
+                text: "Distribution";
+                font-size: 10px;
+                font-weight: 600;
+                color: MaterialPalette.on_surface_variant;
+            }
+            MaterialText {
+                text: root.total_atoms > 0
+                    ? ("" + root.matching_atoms + " / " + root.total_atoms + " (" + (Math.round(root.matching_atoms * 1000.0 / root.total_atoms) / 10.0) + "%)")
+                    : "No Data";
+                font-size: 10px;
+                color: root.matching_atoms > 0 ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+                font-weight: 600;
+            }
+        }
+
+        // Bins container
+        bars_rect := Rectangle {
+            height: 38px;
+            clip: true;
+
+            HorizontalLayout {
+                spacing: 1px;
+                alignment: stretch;
+
+                for count[idx] in root.counts: Rectangle {
+                    horizontal-stretch: 1;
+                    height: 100%;
+
+                    property <float> bin_val: root.domain_min + ((idx + 0.5) * (root.domain_max - root.domain_min) / 50.0);
+                    property <bool> is_in_range: bin_val >= root.min_threshold && bin_val <= root.max_threshold;
+
+                    Rectangle {
+                        y: parent.height - self.height;
+                        width: 100%;
+                        height: Math.max(1px, parent.height * count);
+                        border-radius: 1px;
+                        background: parent.is_in_range ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(40%);
+                    }
+                }
+            }
+        }
+
+        // Domain bounds footer
+        HorizontalLayout {
+            alignment: space-between;
+            MaterialText {
+                text: "" + (Math.round(root.domain_min * 100) / 100);
+                font-size: 9px;
+                color: MaterialPalette.on_surface_variant;
+            }
+            MaterialText {
+                text: "" + (Math.round(root.domain_max * 100) / 100);
+                font-size: 9px;
+                color: MaterialPalette.on_surface_variant;
+            }
+        }
+    }
+}

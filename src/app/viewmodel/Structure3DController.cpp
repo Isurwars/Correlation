@@ -96,6 +96,8 @@ Structure3DController::Structure3DController(::AppWindow &window, const ProgramO
   camera_.fitToBox(math::Vector3<float>{-10.0F, -10.0F, -10.0F},
                    math::Vector3<float>{10.0F, 10.0F, 10.0F});
 
+  syncPhaseSearchToWindow();
+
   phase_worker_ = std::jthread([this] { phaseWorkerLoop(); });
   render_worker_ = std::jthread([this] { renderLoop(); });
 }
@@ -314,6 +316,7 @@ void Structure3DController::setCell(const core::Cell &cell) {
   window_.set_structure_3d_current_frame(0);
   window_.set_structure_3d_total_frames(1);
   cv_.notify_one();
+  syncPhaseSearchToWindow();
 }
 
 void Structure3DController::setTrajectory(std::shared_ptr<const core::Trajectory> trajectory) {
@@ -344,6 +347,7 @@ void Structure3DController::setTrajectory(std::shared_ptr<const core::Trajectory
   window_.set_structure_3d_current_frame(0);
   window_.set_structure_3d_total_frames(total_frames);
   cv_.notify_one();
+  syncPhaseSearchToWindow();
 }
 
 void Structure3DController::set3DModeActive(bool active) {
@@ -369,6 +373,7 @@ void Structure3DController::setPhaseSearchEnabled(bool enabled) {
     updateScenePhaseVisuals();
   }
   cv_.notify_one();
+  syncPhaseSearchToWindow();
 }
 
 bool Structure3DController::isPhaseSearchEnabled() const noexcept {
@@ -384,6 +389,7 @@ void Structure3DController::setPhaseDescriptor(PhaseDescriptor descriptor) {
     updateScenePhaseVisuals();
   }
   cv_.notify_one();
+  syncPhaseSearchToWindow();
 }
 
 PhaseDescriptor Structure3DController::phaseDescriptor() const noexcept {
@@ -404,6 +410,7 @@ void Structure3DController::setCrystalPreset(CrystalPreset preset) {
     updateScenePhaseVisuals();
   }
   cv_.notify_one();
+  syncPhaseSearchToWindow();
 }
 
 CrystalPreset Structure3DController::crystalPreset() const noexcept {
@@ -420,6 +427,7 @@ void Structure3DController::setPhaseThresholds(float min_threshold, float max_th
     updateScenePhaseVisuals();
   }
   cv_.notify_one();
+  syncPhaseSearchToWindow();
 }
 
 float Structure3DController::phaseMinThreshold() const noexcept {
@@ -439,6 +447,7 @@ void Structure3DController::setPhaseColormap(plotters::ColormapType colormap) {
     updateScenePhaseVisuals();
   }
   cv_.notify_one();
+  syncPhaseSearchToWindow();
 }
 
 plotters::ColormapType Structure3DController::phaseColormap() const noexcept {
@@ -453,6 +462,7 @@ void Structure3DController::setPhaseHaloIntensity(float intensity) {
     updateScenePhaseVisuals();
   }
   cv_.notify_one();
+  syncPhaseSearchToWindow();
 }
 
 float Structure3DController::phaseHaloIntensity() const noexcept {
@@ -467,6 +477,7 @@ void Structure3DController::setPhaseHaloRadiusRatio(float ratio) {
     updateScenePhaseVisuals();
   }
   cv_.notify_one();
+  syncPhaseSearchToWindow();
 }
 
 float Structure3DController::phaseHaloRadiusRatio() const noexcept {
@@ -481,6 +492,7 @@ void Structure3DController::setPhaseDimNonMatching(bool dim) {
     updateScenePhaseVisuals();
   }
   cv_.notify_one();
+  syncPhaseSearchToWindow();
 }
 
 bool Structure3DController::isPhaseDimNonMatching() const noexcept {
@@ -496,6 +508,74 @@ PhaseSearchSettings Structure3DController::phaseSearchSettings() const noexcept 
 PhaseHistogram Structure3DController::phaseHistogram() const {
   const std::scoped_lock lock(phase_mutex_);
   return latest_histogram_;
+}
+
+void Structure3DController::syncPhaseSearchToWindow() {
+  PhaseSearchSettings settings_copy;
+  PhaseHistogram hist_copy;
+  {
+    const std::scoped_lock lock(phase_mutex_);
+    settings_copy = phase_settings_;
+    hist_copy = latest_histogram_;
+  }
+
+  const auto lut = plotters::ColormapService::getLut(settings_copy.colormap);
+  std::array<slint::Rgba8Pixel, 256> pixels{};
+  std::size_t pixel_idx = 0;
+  for (const auto &lut_entry : lut) {
+    if (pixel_idx < pixels.size()) {
+      pixels.at(pixel_idx++) =
+          slint::Rgba8Pixel{.r = lut_entry.r, .g = lut_entry.g, .b = lut_entry.b, .a = 255};
+    }
+  }
+  const slint::SharedPixelBuffer<slint::Rgba8Pixel> pixel_buffer(256, 1, pixels.data());
+  slint::Image colorbar_img(pixel_buffer);
+
+  auto counts_model = std::make_shared<slint::VectorModel<float>>();
+  if (!hist_copy.counts.empty()) {
+    uint32_t max_count = 0;
+    for (const auto c : hist_copy.counts) {
+      max_count = std::max(max_count, c);
+    }
+    const float norm_factor = (max_count > 0) ? (1.0F / static_cast<float>(max_count)) : 0.0F;
+    for (const auto c : hist_copy.counts) {
+      counts_model->push_back(static_cast<float>(c) * norm_factor);
+    }
+  }
+
+  auto apply_to_window = [this, settings = settings_copy, hist = hist_copy,
+                          colorbar_img = std::move(colorbar_img),
+                          counts_model = std::move(counts_model)] mutable {
+    window_.set_structure_3d_phase_enabled(settings.enabled);
+    window_.set_structure_3d_phase_preset(static_cast<int>(settings.preset));
+    window_.set_structure_3d_phase_descriptor(static_cast<int>(settings.descriptor));
+    window_.set_structure_3d_phase_colormap(static_cast<int>(settings.colormap));
+    window_.set_structure_3d_phase_min_threshold(settings.min_threshold);
+    window_.set_structure_3d_phase_max_threshold(settings.max_threshold);
+    window_.set_structure_3d_phase_domain_min(hist.min_val);
+    window_.set_structure_3d_phase_domain_max(hist.max_val);
+    window_.set_structure_3d_phase_halo_intensity(settings.halo_intensity);
+    window_.set_structure_3d_phase_halo_radius_ratio(settings.halo_radius_ratio);
+    window_.set_structure_3d_phase_dim_non_matching(settings.dim_non_matching);
+    window_.set_structure_3d_phase_matching_atoms(static_cast<int>(hist.matching_atom_count));
+    window_.set_structure_3d_phase_total_atoms(static_cast<int>(hist.total_atom_count));
+    window_.set_structure_3d_phase_descriptor_name(
+        slint::SharedString(descriptorToString(settings.descriptor)));
+    window_.set_structure_3d_phase_colorbar_image(colorbar_img);
+    window_.set_structure_3d_phase_histogram_counts(counts_model);
+  };
+
+  if (std::this_thread::get_id() == main_thread_id_) {
+    apply_to_window();
+  } else {
+    slint::invoke_from_event_loop(
+        [alive = alive_, sync_action = std::move(apply_to_window)] mutable {
+          if (!alive->load()) {
+            return;
+          }
+          sync_action();
+        });
+  }
 }
 
 std::shared_ptr<const calculators::SteinhardtCalculator::SteinhardtParams>
@@ -697,6 +777,7 @@ void Structure3DController::processTargetPhaseFrame(int64_t target_frame) {
   }
   if (need_render) {
     cv_.notify_one();
+    syncPhaseSearchToWindow();
   }
 }
 

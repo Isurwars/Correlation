@@ -2025,8 +2025,8 @@
     "semantic_hash": ""
   },
   "src/app/core/AppController.cpp": {
-    "mtime": 1792529151.1107836,
-    "ast_hash": "b40dac2fe39a333811e4ba5b273aa970",
+    "mtime": 1792613033.7057664,
+    "ast_hash": "6c7a4cbb44316969d327f15cfdde5142",
     "semantic_hash": ""
   },
   "src/app/core/SettingsManager.cpp": {
@@ -2845,13 +2845,13 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/Structure3DController.hpp": {
-    "mtime": 1792606135.6780658,
-    "ast_hash": "e394f6160b38c403a6ac1eb2d27d3b75",
+    "mtime": 1792613241.4174485,
+    "ast_hash": "3797d606c17fc30c1462a3b483fb0b3b",
     "semantic_hash": ""
   },
   "src/app/viewmodel/Structure3DController.cpp": {
-    "mtime": 1792606135.688737,
-    "ast_hash": "c90ccfc54a74cd8882d73d7b975ab4e0",
+    "mtime": 1792613334.2849653,
+    "ast_hash": "fa94330b0414e05fb697059ec305c339",
     "semantic_hash": ""
   },
   "tests/unit/app/Structure3DControllerTests.cpp": {
@@ -2975,23 +2975,23 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/PhaseSearchTypes.hpp": {
-    "mtime": 1792606135.672838,
-    "ast_hash": "42f6788e4f365a9ae31b1599cc02df8d",
+    "mtime": 1792608523.7921565,
+    "ast_hash": "404548dcb1879498b3bf8845feb33f46",
     "semantic_hash": ""
   },
   "include/app/viewmodel/SteinhardtLRUCache.hpp": {
-    "mtime": 1792606135.675057,
-    "ast_hash": "78eb1263f0ea284ab6e314f929f417b6",
+    "mtime": 1792608081.182732,
+    "ast_hash": "c2d94fc08508cb18e6fa2b1464034647",
     "semantic_hash": ""
   },
   "tests/unit/app/SteinhardtLRUCacheTests.cpp": {
-    "mtime": 1792605960.5494082,
-    "ast_hash": "cbcc885a9bdafa92855c9c3fda26f680",
+    "mtime": 1792608461.4147336,
+    "ast_hash": "3393b8789966897e6b91698f24534f30",
     "semantic_hash": ""
   },
   "tests/unit/app/Structure3DControllerPhaseSearchTests.cpp": {
-    "mtime": 1792606033.5660918,
-    "ast_hash": "6080610b98a935588d6b49c74b866221",
+    "mtime": 1792613122.9873405,
+    "ast_hash": "831de04dfdc3ec07c27b1eb85e66e9f6",
     "semantic_hash": ""
   }
 }

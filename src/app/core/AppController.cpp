@@ -226,6 +226,34 @@ void AppController::registerStructure3DCallbacks() {
     const bool is_3d = (tab == 2);
     structure_3d_controller_->set3DModeActive(is_3d);
   });
+
+  window_.on_toggle_phase_search_3d(
+      [this](bool enabled) { structure_3d_controller_->setPhaseSearchEnabled(enabled); });
+
+  window_.on_set_phase_preset_3d([this](int preset_idx) {
+    structure_3d_controller_->setCrystalPreset(static_cast<CrystalPreset>(preset_idx));
+  });
+
+  window_.on_set_phase_descriptor_3d([this](int desc_idx) {
+    structure_3d_controller_->setPhaseDescriptor(static_cast<PhaseDescriptor>(desc_idx));
+  });
+
+  window_.on_set_phase_colormap_3d([this](int cmap_idx) {
+    structure_3d_controller_->setPhaseColormap(static_cast<plotters::ColormapType>(cmap_idx));
+  });
+
+  window_.on_set_phase_thresholds_3d([this](float min_val, float max_val) {
+    structure_3d_controller_->setPhaseThresholds(min_val, max_val);
+  });
+
+  window_.on_set_phase_intensity_3d(
+      [this](float intensity) { structure_3d_controller_->setPhaseHaloIntensity(intensity); });
+
+  window_.on_set_phase_radius_ratio_3d(
+      [this](float ratio) { structure_3d_controller_->setPhaseHaloRadiusRatio(ratio); });
+
+  window_.on_set_phase_dim_non_matching_3d(
+      [this](bool dim) { structure_3d_controller_->setPhaseDimNonMatching(dim); });
 }
 
 void AppController::registerPresetAndOptionCallbacks() {
@@ -244,9 +272,9 @@ void AppController::registerPresetAndOptionCallbacks() {
         [this, type] { preset_controller_->handleMaterialTypeChanged(type); });
   });
 
-  window_.on_apply_domain_preset([this](int id) {
-    slint::invoke_from_event_loop([this, id] {
-      preset_controller_->handleApplyDomainPreset(id);
+  window_.on_apply_domain_preset([this](int preset_id) {
+    slint::invoke_from_event_loop([this, preset_id] {
+      preset_controller_->handleApplyDomainPreset(preset_id);
       bond_cutoff_controller_.evaluateSanityState();
     });
   });

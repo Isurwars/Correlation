@@ -7,6 +7,8 @@ import {
     Icons,
 } from "../../../material/material.slint";
 import { TrajectoryPlaybackBar } from "./TrajectoryPlaybackBar.slint";
+import { PhaseSearchCard } from "./PhaseSearchCard.slint";
+import { ViewportColorbar } from "./ViewportColorbar.slint";
 
 export component Structure3DViewport inherits Rectangle {
     in property <image> structure_3d_image;
@@ -15,6 +17,34 @@ export component Structure3DViewport inherits Rectangle {
     in property <bool> bonds_enabled: true;
     in property <bool> wireframe_enabled: true;
     in property <bool> in_cell_enabled: false;
+
+    // Phase Search & Halos
+    in-out property <bool> phase_panel_open: false;
+    in property <bool> phase_enabled: false;
+    in property <int> phase_preset: 0;
+    in property <int> phase_descriptor: 0;
+    in property <int> phase_colormap: 0;
+    in property <float> phase_min_threshold: 0.46;
+    in property <float> phase_max_threshold: 0.58;
+    in property <float> phase_domain_min: 0.0;
+    in property <float> phase_domain_max: 1.0;
+    in property <float> phase_halo_intensity: 0.85;
+    in property <float> phase_halo_radius_ratio: 1.35;
+    in property <bool> phase_dim_non_matching: false;
+    in property <[float]> phase_histogram_counts: [];
+    in property <int> phase_matching_atoms: 0;
+    in property <int> phase_total_atoms: 0;
+    in property <string> phase_descriptor_name: "q̄₆";
+    in property <image> phase_colorbar_image;
+
+    callback toggle_phase_search(bool);
+    callback set_phase_preset(int);
+    callback set_phase_descriptor(int);
+    callback set_phase_colormap(int);
+    callback set_phase_thresholds(float, float);
+    callback set_phase_intensity(float);
+    callback set_phase_radius_ratio(float);
+    callback set_phase_dim_non_matching(bool);
 
     // Workflow properties & callbacks
     in property <bool> file_loaded: false;
@@ -275,6 +305,36 @@ export component Structure3DViewport inherits Rectangle {
                         }
                     }
                 }
+
+                // Toggle Phase Search Panel
+                TouchArea {
+                    width: 30px;
+                    height: 30px;
+                    y: (parent.height - self.height) / 2;
+                    mouse-cursor: pointer;
+                    accessible-role: button;
+                    accessible-label: root.phase_panel_open ? "Hide Phase Search" : "Show Phase Search";
+                    clicked => { root.phase_panel_open = !root.phase_panel_open; }
+
+                    Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 15px;
+                        background: (root.phase_panel_open || root.phase_enabled) ? MaterialPalette.primary.with_alpha(20%) :
+                            (parent.has-hover ? MaterialPalette.surface_container_high : transparent);
+                        border-width: (root.phase_panel_open || root.phase_enabled) ? 1.5px : 0px;
+                        border-color: (root.phase_panel_open || root.phase_enabled) ? MaterialPalette.primary : transparent;
+
+                        MaterialText {
+                            width: 100%;
+                            height: 100%;
+                            text: "🔮";
+                            font-size: 14px;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
             }
         }
 
@@ -403,5 +463,45 @@ export component Structure3DViewport inherits Rectangle {
             horizontal-alignment: center;
             vertical-alignment: center;
         }
+    }
+
+    // Floating Viewport Colorbar (bottom-right when phase search is enabled)
+    if (root.phase_enabled): ViewportColorbar {
+        x: root.width - self.width - 16px;
+        y: root.height - self.height - (root.total_frames > 1 ? 66px : 16px);
+        descriptor_name: root.phase_descriptor_name;
+        min_val: root.phase_min_threshold;
+        max_val: root.phase_max_threshold;
+        colorbar_image: root.phase_colorbar_image;
+    }
+
+    // Floating Phase Search Control Card (top-right, collapsible)
+    if (root.phase_panel_open): PhaseSearchCard {
+        x: root.width - self.width - 16px;
+        y: 56px;
+        phase_enabled: root.phase_enabled;
+        preset_index: root.phase_preset;
+        descriptor_index: root.phase_descriptor;
+        colormap_index: root.phase_colormap;
+        min_threshold: root.phase_min_threshold;
+        max_threshold: root.phase_max_threshold;
+        domain_min: root.phase_domain_min;
+        domain_max: root.phase_domain_max;
+        halo_intensity: root.phase_halo_intensity;
+        halo_radius_ratio: root.phase_halo_radius_ratio;
+        dim_non_matching: root.phase_dim_non_matching;
+        histogram_counts: root.phase_histogram_counts;
+        matching_atoms: root.phase_matching_atoms;
+        total_atoms: root.phase_total_atoms;
+
+        toggle_enabled(en) => { root.toggle_phase_search(en); }
+        set_preset(idx) => { root.set_phase_preset(idx); }
+        set_descriptor(idx) => { root.set_phase_descriptor(idx); }
+        set_colormap(idx) => { root.set_phase_colormap(idx); }
+        set_thresholds(min, max) => { root.set_phase_thresholds(min, max); }
+        set_intensity(val) => { root.set_phase_intensity(val); }
+        set_radius_ratio(val) => { root.set_phase_radius_ratio(val); }
+        set_dim_non_matching(dim) => { root.set_phase_dim_non_matching(dim); }
+        close => { root.phase_panel_open = false; }
     }
 }
