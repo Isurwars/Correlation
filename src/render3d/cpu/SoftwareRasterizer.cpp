@@ -114,6 +114,53 @@ void drawLineSegment(math::Vector3<float> start_pt, math::Vector3<float> end_pt,
   }
 }
 
+struct CoreSphereParams {
+  math::Vector3<float> screen_center;
+  float inv_r{0.0F};
+  float z_offset_factor{0.0F};
+  RgbaColor base_color;
+};
+
+struct HaloParams {
+  math::Vector3<float> screen_center;
+  float screen_r{0.0F};
+  float halo_thickness{0.0F};
+  RgbaColor halo_color;
+};
+
+void rasterizeCoreSpherePixel(uint32_t pixel_x, uint32_t pixel_y, float diff_x, float diff_y,
+                              const CoreSphereParams &params, const RasterizerOptions &options,
+                              SoftwareFramebuffer &framebuffer) noexcept {
+  const float norm_x = diff_x * params.inv_r;
+  const float norm_y = -diff_y * params.inv_r;
+  const float norm_z = std::sqrt(std::max(0.0F, 1.0F - norm_x * norm_x - norm_y * norm_y));
+
+  const float z_offset = norm_z * params.z_offset_factor;
+  const float depth = params.screen_center.z() - z_offset;
+
+  const RgbaColor lit_color = shadeColor(params.base_color, norm_x, norm_y, norm_z, options);
+  framebuffer.testAndSetPixel(pixel_x, pixel_y, depth, lit_color);
+}
+
+void rasterizeHaloPixel(uint32_t pixel_x, uint32_t pixel_y, float dist_sq, const HaloParams &params,
+                        SoftwareFramebuffer &framebuffer) noexcept {
+  const float dist = std::sqrt(dist_sq);
+  const float param_t = (dist - params.screen_r) / params.halo_thickness;
+  const float falloff = std::max(0.0F, 1.0F - param_t);
+  const float alpha = static_cast<float>(params.halo_color.a) * (falloff * falloff);
+  const auto alpha_u8 = static_cast<uint8_t>(std::clamp(alpha, 0.0F, 255.0F));
+
+  if (alpha_u8 > 0) {
+    const RgbaColor halo_pixel{
+        .r = params.halo_color.r,
+        .g = params.halo_color.g,
+        .b = params.halo_color.b,
+        .a = alpha_u8,
+    };
+    framebuffer.blendAdditivePixel(pixel_x, pixel_y, params.screen_center.z(), halo_pixel);
+  }
+}
+
 void rasterizeSphere(const AtomInstance &atom, const Matrix4<float> &view,
                      const Matrix4<float> &view_proj, float fov_rad,
                      const RasterizerOptions &options, SoftwareFramebuffer &framebuffer) noexcept {
@@ -136,20 +183,50 @@ void rasterizeSphere(const AtomInstance &atom, const Matrix4<float> &view,
     return;
   }
 
+  const bool has_halo = atom.halo_color.a > 0 && atom.halo_radius_ratio > 1.0F;
+  const float halo_r = has_halo ? screen_r * atom.halo_radius_ratio : screen_r;
+  const float max_screen_r = halo_r;
+
   const auto width_bound = static_cast<int>(framebuffer.width());
   const auto height_bound = static_cast<int>(framebuffer.height());
 
-  const auto min_x =
-      std::clamp(static_cast<int>(std::floor(screen_center.x() - screen_r)), 0, width_bound - 1);
+  const auto min_x = std::clamp(static_cast<int>(std::floor(screen_center.x() - max_screen_r)), 0,
+                                width_bound - 1);
   const auto max_x =
-      std::clamp(static_cast<int>(std::ceil(screen_center.x() + screen_r)), 0, width_bound - 1);
-  const auto min_y =
-      std::clamp(static_cast<int>(std::floor(screen_center.y() - screen_r)), 0, height_bound - 1);
-  const auto max_y =
-      std::clamp(static_cast<int>(std::ceil(screen_center.y() + screen_r)), 0, height_bound - 1);
+      std::clamp(static_cast<int>(std::ceil(screen_center.x() + max_screen_r)), 0, width_bound - 1);
+  const auto min_y = std::clamp(static_cast<int>(std::floor(screen_center.y() - max_screen_r)), 0,
+                                height_bound - 1);
+  const auto max_y = std::clamp(static_cast<int>(std::ceil(screen_center.y() + max_screen_r)), 0,
+                                height_bound - 1);
 
   const float r_squared = screen_r * screen_r;
+  const float halo_r_squared = halo_r * halo_r;
   const float inv_r = 1.0F / screen_r;
+  const float halo_thickness = halo_r - screen_r;
+  const float z_offset_factor = (atom.radius / view_dist) * 0.5F;
+
+  // Apply dim_factor to core atom color
+  const float dim = std::clamp(atom.dim_factor, 0.0F, 1.0F);
+  const RgbaColor base_color{
+      .r = static_cast<uint8_t>(std::clamp(static_cast<float>(atom.color.r) * dim, 0.0F, 255.0F)),
+      .g = static_cast<uint8_t>(std::clamp(static_cast<float>(atom.color.g) * dim, 0.0F, 255.0F)),
+      .b = static_cast<uint8_t>(std::clamp(static_cast<float>(atom.color.b) * dim, 0.0F, 255.0F)),
+      .a = atom.color.a,
+  };
+
+  const CoreSphereParams sphere_params{
+      .screen_center = screen_center,
+      .inv_r = inv_r,
+      .z_offset_factor = z_offset_factor,
+      .base_color = base_color,
+  };
+
+  const HaloParams halo_params{
+      .screen_center = screen_center,
+      .screen_r = screen_r,
+      .halo_thickness = halo_thickness,
+      .halo_color = atom.halo_color,
+  };
 
   for (int pixel_y = min_y; pixel_y <= max_y; ++pixel_y) {
     const float diff_y = static_cast<float>(pixel_y) - screen_center.y();
@@ -160,16 +237,11 @@ void rasterizeSphere(const AtomInstance &atom, const Matrix4<float> &view,
       const float dist_sq = diff_x * diff_x + diff_y_sq;
 
       if (dist_sq <= r_squared) {
-        const float norm_x = diff_x * inv_r;
-        const float norm_y = -diff_y * inv_r;
-        const float norm_z = std::sqrt(std::max(0.0F, 1.0F - norm_x * norm_x - norm_y * norm_y));
-
-        const float z_offset = norm_z * (atom.radius / view_dist) * 0.5F;
-        const float depth = screen_center.z() - z_offset;
-
-        const RgbaColor lit_color = shadeColor(atom.color, norm_x, norm_y, norm_z, options);
-        framebuffer.testAndSetPixel(static_cast<uint32_t>(pixel_x), static_cast<uint32_t>(pixel_y),
-                                    depth, lit_color);
+        rasterizeCoreSpherePixel(static_cast<uint32_t>(pixel_x), static_cast<uint32_t>(pixel_y),
+                                 diff_x, diff_y, sphere_params, options, framebuffer);
+      } else if (has_halo && dist_sq <= halo_r_squared) {
+        rasterizeHaloPixel(static_cast<uint32_t>(pixel_x), static_cast<uint32_t>(pixel_y), dist_sq,
+                           halo_params, framebuffer);
       }
     }
   }

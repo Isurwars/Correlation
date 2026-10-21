@@ -2720,8 +2720,8 @@
     "semantic_hash": ""
   },
   "include/render3d/Scene3D.hpp": {
-    "mtime": 1792437372.934199,
-    "ast_hash": "858d7a9c3ff057b2bdbaee849426e0ed",
+    "mtime": 1792603151.643193,
+    "ast_hash": "b42016e99fe75815d35ff4e59fb101b0",
     "semantic_hash": ""
   },
   "src/render3d/Camera3D.cpp": {
@@ -2750,8 +2750,8 @@
     "semantic_hash": ""
   },
   "include/render3d/cpu/SoftwareFramebuffer.hpp": {
-    "mtime": 1791913783.555953,
-    "ast_hash": "09fa20e51faaa0dbe927ca30e61e1be8",
+    "mtime": 1792603309.4629948,
+    "ast_hash": "826bef16769074840037b5b562205570",
     "semantic_hash": ""
   },
   "include/render3d/cpu/SoftwareRasterizer.hpp": {
@@ -2760,13 +2760,13 @@
     "semantic_hash": ""
   },
   "src/render3d/cpu/SoftwareRasterizer.cpp": {
-    "mtime": 1791933316.2458432,
-    "ast_hash": "7f5923d877afbf76a3c58725eb068372",
+    "mtime": 1792603301.28574,
+    "ast_hash": "d8d3b16d8403e794b3b6a399868e3442",
     "semantic_hash": ""
   },
   "tests/unit/render3d/SoftwareRasterizerTests.cpp": {
-    "mtime": 1791913783.5664215,
-    "ast_hash": "dc338740b6bd5a889f1c99c30edca60b",
+    "mtime": 1792603469.461872,
+    "ast_hash": "86181702cc4bd3b81d4c6c774f55dc58",
     "semantic_hash": ""
   },
   "include/render3d/IRenderEngine.hpp": {
@@ -2970,8 +2970,8 @@
     "semantic_hash": ""
   },
   "tests/unit/plotters/ColormapServiceTests.cpp": {
-    "mtime": 1792600043.1343982,
-    "ast_hash": "a85864ac49b65433efbc5f7fff0661fa",
+    "mtime": 1792602805.9134152,
+    "ast_hash": "2437660e445e8769abda6ea2dc5a9ec9",
     "semantic_hash": ""
   }
 }
