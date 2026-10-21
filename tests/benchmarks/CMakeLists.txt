@@ -8,6 +8,7 @@ add_executable(correlation_benchmarks
     BM_DistanceCalculator.cpp
     BM_MotifFinder.cpp
     BM_GraphDescriptors.cpp
+    BM_SteinhardtPerAtom.cpp
 )
 
 target_include_directories(correlation_benchmarks PRIVATE
