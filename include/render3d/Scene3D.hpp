@@ -82,6 +82,12 @@ public:
   void clear() noexcept;
 
   /**
+   * @brief Gets mutable collection of atom visualization instances in the scene.
+   * @return Mutable reference to atom instances.
+   */
+  [[nodiscard]] std::vector<AtomInstance> &atoms() noexcept { return atoms_; }
+
+  /**
    * @brief Gets the collection of atom visualization instances in the scene.
    * @return Immutable reference to atom instances.
    */

@@ -9,8 +9,11 @@
 #pragma once
 
 #include "app/core/AppOptions.hpp"
+#include "app/viewmodel/PhaseSearchTypes.hpp"
+#include "app/viewmodel/SteinhardtLRUCache.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
+#include "plotters/ColormapService.hpp"
 #include "render3d/Camera3D.hpp"
 #include "render3d/IRenderEngine.hpp"
 #include "render3d/LodController.hpp"
@@ -162,8 +165,156 @@ public:
    */
   [[nodiscard]] std::shared_ptr<const render3d::Scene3D> scene() const noexcept { return scene_; }
 
+  /**
+   * @brief Enables or disables phase search halo visualization.
+   * @param[in] enabled True to activate phase halos and non-matching dimming.
+   */
+  void setPhaseSearchEnabled(bool enabled);
+
+  /**
+   * @brief Queries whether phase search halo visualization is active.
+   * @return True if phase halos are enabled.
+   */
+  [[nodiscard]] bool isPhaseSearchEnabled() const noexcept;
+
+  /**
+   * @brief Sets the active Steinhardt order parameter descriptor.
+   * @param[in] descriptor Active descriptor (e.g. Q6Bar, W6Hat).
+   */
+  void setPhaseDescriptor(PhaseDescriptor descriptor);
+
+  /**
+   * @brief Gets current active Steinhardt order parameter descriptor.
+   * @return Active descriptor enum value.
+   */
+  [[nodiscard]] PhaseDescriptor phaseDescriptor() const noexcept;
+
+  /**
+   * @brief Applies a crystal structure preset and auto-configures thresholds.
+   * @param[in] preset Preset enum value (Liquid, FCC, HCP, BCC, Icosahedral).
+   */
+  void setCrystalPreset(CrystalPreset preset);
+
+  /**
+   * @brief Gets current crystal preset mode.
+   * @return Preset enum value.
+   */
+  [[nodiscard]] CrystalPreset crystalPreset() const noexcept;
+
+  /**
+   * @brief Sets filtering threshold boundaries.
+   * @param[in] min_threshold Lower scalar threshold.
+   * @param[in] max_threshold Upper scalar threshold.
+   */
+  void setPhaseThresholds(float min_threshold, float max_threshold);
+
+  /**
+   * @brief Gets current lower scalar threshold.
+   * @return Min threshold.
+   */
+  [[nodiscard]] float phaseMinThreshold() const noexcept;
+
+  /**
+   * @brief Gets current upper scalar threshold.
+   * @return Max threshold.
+   */
+  [[nodiscard]] float phaseMaxThreshold() const noexcept;
+
+  /**
+   * @brief Sets scientific colormap for halo gradient.
+   * @param[in] colormap Colormap enum value (Viridis, Plasma, Coolwarm, Turbo).
+   */
+  void setPhaseColormap(plotters::ColormapType colormap);
+
+  /**
+   * @brief Gets active colormap type.
+   * @return Colormap type.
+   */
+  [[nodiscard]] plotters::ColormapType phaseColormap() const noexcept;
+
+  /**
+   * @brief Sets halo alpha glow intensity [0.1, 1.0].
+   * @param[in] intensity Halo alpha factor.
+   */
+  void setPhaseHaloIntensity(float intensity);
+
+  /**
+   * @brief Gets current halo intensity factor.
+   * @return Halo intensity.
+   */
+  [[nodiscard]] float phaseHaloIntensity() const noexcept;
+
+  /**
+   * @brief Sets halo radius multiplier ratio [1.1, 2.0].
+   * @param[in] ratio Ratio of halo radius over visual sphere radius.
+   */
+  void setPhaseHaloRadiusRatio(float ratio);
+
+  /**
+   * @brief Gets current halo radius ratio.
+   * @return Radius ratio.
+   */
+  [[nodiscard]] float phaseHaloRadiusRatio() const noexcept;
+
+  /**
+   * @brief Toggles ghosting/dimming of atoms outside threshold boundaries.
+   * @param[in] dim True to apply dimming to non-matching atoms.
+   */
+  void setPhaseDimNonMatching(bool dim);
+
+  /**
+   * @brief Queries whether non-matching atom dimming is enabled.
+   * @return True if dimming is enabled.
+   */
+  [[nodiscard]] bool isPhaseDimNonMatching() const noexcept;
+
+  /**
+   * @brief Gets snapshot copy of entire phase search configuration bundle.
+   * @return PhaseSearchSettings struct.
+   */
+  [[nodiscard]] PhaseSearchSettings phaseSearchSettings() const noexcept;
+
+  /**
+   * @brief Retrieves latest computed 50-bin histogram of the active descriptor.
+   * @return PhaseHistogram telemetry struct.
+   */
+  [[nodiscard]] PhaseHistogram phaseHistogram() const;
+
+  /**
+   * @brief Accesses reference to the frame Steinhardt LRU cache.
+   * @return SteinhardtLRUCache reference.
+   */
+  [[nodiscard]] SteinhardtLRUCache &lruCache() noexcept { return lru_cache_; }
+
+  /**
+   * @brief Accesses const reference to the frame Steinhardt LRU cache.
+   * @return Const SteinhardtLRUCache reference.
+   */
+  [[nodiscard]] const SteinhardtLRUCache &lruCache() const noexcept { return lru_cache_; }
+
+  /**
+   * @brief Synchronously computes or retrieves Steinhardt parameters for a frame.
+   * @param[in] frame_index Zero-based frame index.
+   * @return Shared pointer to SteinhardtParams, or nullptr if unavailable.
+   */
+  [[nodiscard]] std::shared_ptr<const calculators::SteinhardtCalculator::SteinhardtParams>
+  getOrComputeSteinhardt(std::size_t frame_index);
+
 private:
   void renderLoop();
+  void phaseWorkerLoop();
+  [[nodiscard]] int64_t waitForNextPhaseFrame();
+  void processTargetPhaseFrame(int64_t target_frame);
+  void prewarmAdjacentFrames(int64_t target_frame);
+  void requestPhaseCalculation(std::size_t frame_index);
+  void updateScenePhaseVisuals();
+  void
+  applyPhaseVisualsToScene(render3d::Scene3D &target_scene,
+                           const calculators::SteinhardtCalculator::SteinhardtParams *params) const;
+  [[nodiscard]] PhaseHistogram
+  computePhaseHistogram(const calculators::SteinhardtCalculator::SteinhardtParams *params) const;
+  [[nodiscard]] std::shared_ptr<const calculators::SteinhardtCalculator::SteinhardtParams>
+  computeSteinhardtSync(std::size_t frame_index);
   void dispatchFrame(const uint8_t *pixel_data, uint32_t width, uint32_t height);
 
   ::AppWindow &window_;
@@ -183,12 +334,22 @@ private:
   bool is_interacting_{false};
   double bond_cutoff_scale_{1.15};
   core::Cell current_cell_;
+  std::shared_ptr<const core::Trajectory> current_trajectory_;
+
+  PhaseSearchSettings phase_settings_;
+  mutable std::mutex phase_mutex_;
+  SteinhardtLRUCache lru_cache_{32};
+  PhaseHistogram latest_histogram_;
+  std::condition_variable phase_cv_;
+  std::atomic<bool> stop_phase_worker_{false};
+  std::atomic<int64_t> requested_phase_frame_{-1};
 
   std::mutex mutex_;
   std::condition_variable cv_;
   bool render_pending_{false};
   std::atomic<bool> stop_worker_{false};
   std::shared_ptr<std::atomic<bool>> alive_;
+  std::jthread phase_worker_;
   std::jthread render_worker_;
 };
 

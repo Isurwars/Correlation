@@ -8,13 +8,81 @@
 
 #include "app/viewmodel/Structure3DController.hpp"
 #include "AppWindow.h"
+#include "analysis/StructureAnalyzer.hpp"
+#include "calculators/order/SteinhardtCalculator.hpp"
+#include "physics/PhysicalData.hpp"
+#include "plotters/ColormapService.hpp"
 #include "render3d/RenderEngineFactory.hpp"
 
+#include <algorithm>
+#include <array>
 #include <chrono>
 #include <cmath>
 #include <utility>
 
 namespace correlation::app {
+
+namespace {
+
+real_t getElementCovalentRadius(const std::string &symbol) {
+  try {
+    return physics::getCovalentRadius(symbol);
+  } catch (const std::out_of_range &) {
+    return static_cast<real_t>(1.5);
+  }
+}
+
+analysis::BondCutoffMatrix buildCellBondCutoffs(const core::Cell &cell) {
+  const auto &elements = cell.elements();
+  const std::size_t num_elements = elements.size();
+  analysis::BondCutoffMatrix matrix(num_elements);
+
+  for (std::size_t i = 0; i < num_elements; ++i) {
+    const real_t radius_a = getElementCovalentRadius(elements[i].symbol);
+    for (std::size_t j = i; j < num_elements; ++j) {
+      const real_t radius_b = getElementCovalentRadius(elements[j].symbol);
+      const real_t sum_radii = radius_a + radius_b;
+      const real_t min_bond_dist = sum_radii * static_cast<real_t>(0.6);
+      const real_t max_bond_dist = sum_radii * static_cast<real_t>(1.3);
+      matrix[i][j] = analysis::BondCutoffRange{
+          .min_sq = min_bond_dist * min_bond_dist,
+          .max_sq = max_bond_dist * max_bond_dist,
+      };
+      matrix[j][i] = matrix[i][j];
+    }
+  }
+  return matrix;
+}
+
+real_t computeMaxBondDistance(const analysis::BondCutoffMatrix &matrix, std::size_t num_elements) {
+  real_t max_dist = 0.0;
+  for (std::size_t i = 0; i < num_elements; ++i) {
+    for (std::size_t j = i; j < num_elements; ++j) {
+      max_dist = std::max(max_dist, static_cast<real_t>(std::sqrt(matrix[i][j].max_sq)));
+    }
+  }
+  return max_dist;
+}
+
+std::span<const real_t>
+extractDescriptorValues(const calculators::SteinhardtCalculator::SteinhardtParams &params,
+                        PhaseDescriptor descriptor) noexcept {
+  switch (descriptor) {
+  case PhaseDescriptor::Q6Bar:
+    return params.Q6_bar;
+  case PhaseDescriptor::Q4Bar:
+    return params.Q4_bar;
+  case PhaseDescriptor::Q6:
+    return params.Q6;
+  case PhaseDescriptor::Q4:
+    return params.Q4;
+  case PhaseDescriptor::W6Hat:
+    return params.W6_hat;
+  }
+  return {};
+}
+
+} // namespace
 
 Structure3DController::Structure3DController(::AppWindow &window, const ProgramOptions &options)
     : window_(window), options_(options),
@@ -28,6 +96,7 @@ Structure3DController::Structure3DController(::AppWindow &window, const ProgramO
   camera_.fitToBox(math::Vector3<float>{-10.0F, -10.0F, -10.0F},
                    math::Vector3<float>{10.0F, 10.0F, 10.0F});
 
+  phase_worker_ = std::jthread([this] { phaseWorkerLoop(); });
   render_worker_ = std::jthread([this] { renderLoop(); });
 }
 
@@ -35,6 +104,12 @@ Structure3DController::~Structure3DController() {
   if (alive_ != nullptr) {
     alive_->store(false);
   }
+  stop_phase_worker_.store(true);
+  phase_cv_.notify_all();
+  if (phase_worker_.joinable()) {
+    phase_worker_.join();
+  }
+
   {
     const std::scoped_lock lock(mutex_);
     stop_worker_.store(true);
@@ -141,7 +216,7 @@ void Structure3DController::handleToggleWireframe(bool enabled) {
 
 void Structure3DController::handleToggleInCell(bool enabled) {
   {
-    const std::scoped_lock lock(mutex_);
+    const std::scoped_lock lock(phase_mutex_, mutex_);
     in_cell_mode_ = enabled;
     if (scene_ != nullptr) {
       if (streamer_.hasTrajectory() && streamer_.totalFrames() > 0) {
@@ -154,6 +229,7 @@ void Structure3DController::handleToggleInCell(bool enabled) {
           engine_->setScene(scene_);
         }
       }
+      updateScenePhaseVisuals();
       render_pending_ = true;
     }
   }
@@ -167,12 +243,13 @@ void Structure3DController::handleSeekFrame(int frame_index) {
   }
   int actual_frame = frame_index;
   {
-    const std::scoped_lock lock(mutex_);
+    const std::scoped_lock lock(phase_mutex_, mutex_);
     if (streamer_.totalFrames() > 0 && scene_ != nullptr) {
       const auto target = std::min(static_cast<size_t>(frame_index), streamer_.totalFrames() - 1);
       static_cast<void>(
           streamer_.seekFrame(target, *scene_, render_bonds_, bond_cutoff_scale_, in_cell_mode_));
       actual_frame = static_cast<int>(streamer_.currentFrameIndex());
+      updateScenePhaseVisuals();
       render_pending_ = true;
     }
   }
@@ -183,7 +260,7 @@ void Structure3DController::handleSeekFrame(int frame_index) {
 void Structure3DController::handleStepFrame(bool forward) {
   int current_idx = 0;
   {
-    const std::scoped_lock lock(mutex_);
+    const std::scoped_lock lock(phase_mutex_, mutex_);
     if (streamer_.totalFrames() > 0 && scene_ != nullptr) {
       if (forward) {
         static_cast<void>(
@@ -193,6 +270,7 @@ void Structure3DController::handleStepFrame(bool forward) {
             streamer_.stepPrev(*scene_, true, render_bonds_, bond_cutoff_scale_, in_cell_mode_));
       }
       current_idx = static_cast<int>(streamer_.currentFrameIndex());
+      updateScenePhaseVisuals();
       render_pending_ = true;
     }
   }
@@ -220,13 +298,16 @@ void Structure3DController::setCell(const core::Cell &cell) {
   auto new_scene =
       render3d::Scene3D::fromCell(cell, bond_cutoff_scale_, render_bonds_, in_cell_mode_);
   {
-    const std::scoped_lock lock(mutex_);
+    const std::scoped_lock lock(phase_mutex_, mutex_);
+    current_trajectory_.reset();
+    lru_cache_.clear();
     scene_ = std::move(new_scene);
     if (scene_ != nullptr) {
       camera_.fitToBox(scene_->boundsMin(), scene_->boundsMax());
       if (engine_ != nullptr) {
         engine_->setScene(scene_);
       }
+      updateScenePhaseVisuals();
     }
     render_pending_ = true;
   }
@@ -241,7 +322,9 @@ void Structure3DController::setTrajectory(std::shared_ptr<const core::Trajectory
   }
   const auto total_frames = static_cast<int>(trajectory->getFrameCount());
   {
-    const std::scoped_lock lock(mutex_);
+    const std::scoped_lock lock(phase_mutex_, mutex_);
+    current_trajectory_ = trajectory;
+    lru_cache_.clear();
     if (total_frames > 0) {
       const auto &first_cell = trajectory->firstFrame();
       current_cell_ = first_cell;
@@ -255,6 +338,7 @@ void Structure3DController::setTrajectory(std::shared_ptr<const core::Trajectory
       }
     }
     streamer_.setTrajectory(std::move(trajectory));
+    updateScenePhaseVisuals();
     render_pending_ = true;
   }
   window_.set_structure_3d_current_frame(0);
@@ -275,6 +359,381 @@ void Structure3DController::set3DModeActive(bool active) {
   }
   if (active) {
     cv_.notify_one();
+  }
+}
+
+void Structure3DController::setPhaseSearchEnabled(bool enabled) {
+  {
+    const std::scoped_lock lock(phase_mutex_, mutex_);
+    phase_settings_.enabled = enabled;
+    updateScenePhaseVisuals();
+  }
+  cv_.notify_one();
+}
+
+bool Structure3DController::isPhaseSearchEnabled() const noexcept {
+  const std::scoped_lock lock(phase_mutex_);
+  return phase_settings_.enabled;
+}
+
+void Structure3DController::setPhaseDescriptor(PhaseDescriptor descriptor) {
+  {
+    const std::scoped_lock lock(phase_mutex_, mutex_);
+    phase_settings_.descriptor = descriptor;
+    phase_settings_.preset = CrystalPreset::Custom;
+    updateScenePhaseVisuals();
+  }
+  cv_.notify_one();
+}
+
+PhaseDescriptor Structure3DController::phaseDescriptor() const noexcept {
+  const std::scoped_lock lock(phase_mutex_);
+  return phase_settings_.descriptor;
+}
+
+void Structure3DController::setCrystalPreset(CrystalPreset preset) {
+  {
+    const std::scoped_lock lock(phase_mutex_, mutex_);
+    phase_settings_.preset = preset;
+    if (preset != CrystalPreset::Custom) {
+      const auto config = getPresetConfig(preset);
+      phase_settings_.descriptor = config.descriptor;
+      phase_settings_.min_threshold = config.min_threshold;
+      phase_settings_.max_threshold = config.max_threshold;
+    }
+    updateScenePhaseVisuals();
+  }
+  cv_.notify_one();
+}
+
+CrystalPreset Structure3DController::crystalPreset() const noexcept {
+  const std::scoped_lock lock(phase_mutex_);
+  return phase_settings_.preset;
+}
+
+void Structure3DController::setPhaseThresholds(float min_threshold, float max_threshold) {
+  {
+    const std::scoped_lock lock(phase_mutex_, mutex_);
+    phase_settings_.preset = CrystalPreset::Custom;
+    phase_settings_.min_threshold = std::min(min_threshold, max_threshold);
+    phase_settings_.max_threshold = std::max(min_threshold, max_threshold);
+    updateScenePhaseVisuals();
+  }
+  cv_.notify_one();
+}
+
+float Structure3DController::phaseMinThreshold() const noexcept {
+  const std::scoped_lock lock(phase_mutex_);
+  return phase_settings_.min_threshold;
+}
+
+float Structure3DController::phaseMaxThreshold() const noexcept {
+  const std::scoped_lock lock(phase_mutex_);
+  return phase_settings_.max_threshold;
+}
+
+void Structure3DController::setPhaseColormap(plotters::ColormapType colormap) {
+  {
+    const std::scoped_lock lock(phase_mutex_, mutex_);
+    phase_settings_.colormap = colormap;
+    updateScenePhaseVisuals();
+  }
+  cv_.notify_one();
+}
+
+plotters::ColormapType Structure3DController::phaseColormap() const noexcept {
+  const std::scoped_lock lock(phase_mutex_);
+  return phase_settings_.colormap;
+}
+
+void Structure3DController::setPhaseHaloIntensity(float intensity) {
+  {
+    const std::scoped_lock lock(phase_mutex_, mutex_);
+    phase_settings_.halo_intensity = std::clamp(intensity, 0.1F, 1.0F);
+    updateScenePhaseVisuals();
+  }
+  cv_.notify_one();
+}
+
+float Structure3DController::phaseHaloIntensity() const noexcept {
+  const std::scoped_lock lock(phase_mutex_);
+  return phase_settings_.halo_intensity;
+}
+
+void Structure3DController::setPhaseHaloRadiusRatio(float ratio) {
+  {
+    const std::scoped_lock lock(phase_mutex_, mutex_);
+    phase_settings_.halo_radius_ratio = std::clamp(ratio, 1.0F, 3.0F);
+    updateScenePhaseVisuals();
+  }
+  cv_.notify_one();
+}
+
+float Structure3DController::phaseHaloRadiusRatio() const noexcept {
+  const std::scoped_lock lock(phase_mutex_);
+  return phase_settings_.halo_radius_ratio;
+}
+
+void Structure3DController::setPhaseDimNonMatching(bool dim) {
+  {
+    const std::scoped_lock lock(phase_mutex_, mutex_);
+    phase_settings_.dim_non_matching = dim;
+    updateScenePhaseVisuals();
+  }
+  cv_.notify_one();
+}
+
+bool Structure3DController::isPhaseDimNonMatching() const noexcept {
+  const std::scoped_lock lock(phase_mutex_);
+  return phase_settings_.dim_non_matching;
+}
+
+PhaseSearchSettings Structure3DController::phaseSearchSettings() const noexcept {
+  const std::scoped_lock lock(phase_mutex_);
+  return phase_settings_;
+}
+
+PhaseHistogram Structure3DController::phaseHistogram() const {
+  const std::scoped_lock lock(phase_mutex_);
+  return latest_histogram_;
+}
+
+std::shared_ptr<const calculators::SteinhardtCalculator::SteinhardtParams>
+Structure3DController::getOrComputeSteinhardt(std::size_t frame_index) {
+  auto cached = lru_cache_.get(frame_index);
+  if (cached) {
+    return cached;
+  }
+  auto computed = computeSteinhardtSync(frame_index);
+  if (computed) {
+    lru_cache_.put(frame_index, computed);
+  }
+  return computed;
+}
+
+void Structure3DController::requestPhaseCalculation(std::size_t frame_index) {
+  requested_phase_frame_.store(static_cast<int64_t>(frame_index));
+  phase_cv_.notify_one();
+}
+
+void Structure3DController::updateScenePhaseVisuals() {
+  if (scene_ == nullptr) {
+    return;
+  }
+  const auto active_frame = streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
+  const auto params = lru_cache_.peek(active_frame);
+  if (phase_settings_.enabled && !params) {
+    requestPhaseCalculation(active_frame);
+  }
+  applyPhaseVisualsToScene(*scene_, params.get());
+  latest_histogram_ = computePhaseHistogram(params.get());
+  render_pending_ = true;
+}
+
+void Structure3DController::applyPhaseVisualsToScene(
+    render3d::Scene3D &target_scene,
+    const calculators::SteinhardtCalculator::SteinhardtParams *params) const {
+  auto &atoms = target_scene.atoms();
+  if (!phase_settings_.enabled || params == nullptr) {
+    for (auto &atom : atoms) {
+      atom.halo_color = render3d::RgbaColor{.r = 0, .g = 0, .b = 0, .a = 0};
+      atom.dim_factor = 1.0F;
+    }
+    return;
+  }
+
+  const auto values = extractDescriptorValues(*params, phase_settings_.descriptor);
+  if (values.size() != atoms.size()) {
+    return;
+  }
+
+  const float min_thresh = phase_settings_.min_threshold;
+  const float max_thresh = phase_settings_.max_threshold;
+  const float diff = max_thresh - min_thresh;
+  const float halo_alpha = std::clamp(phase_settings_.halo_intensity, 0.0F, 1.0F);
+  const auto alpha_byte = static_cast<uint8_t>(std::round(halo_alpha * 255.0F));
+
+  for (std::size_t i = 0; i < atoms.size(); ++i) {
+    const auto val = static_cast<float>(values[i]);
+    if (val >= min_thresh && val <= max_thresh) {
+      const double norm_t =
+          (diff > 1e-6F) ? std::clamp(static_cast<double>((val - min_thresh) / diff), 0.0, 1.0)
+                         : 0.5;
+      const auto sampled = plotters::ColormapService::sample(norm_t, phase_settings_.colormap);
+      atoms[i].halo_color = render3d::RgbaColor{
+          .r = sampled.r,
+          .g = sampled.g,
+          .b = sampled.b,
+          .a = alpha_byte,
+      };
+      atoms[i].halo_radius_ratio = phase_settings_.halo_radius_ratio;
+      atoms[i].dim_factor = 1.0F;
+    } else {
+      atoms[i].halo_color = render3d::RgbaColor{.r = 0, .g = 0, .b = 0, .a = 0};
+      atoms[i].dim_factor = phase_settings_.dim_non_matching ? phase_settings_.dim_factor : 1.0F;
+    }
+  }
+}
+
+PhaseHistogram Structure3DController::computePhaseHistogram(
+    const calculators::SteinhardtCalculator::SteinhardtParams *params) const {
+  PhaseHistogram hist;
+  constexpr std::size_t K_BIN_COUNT = 50;
+  hist.counts.assign(K_BIN_COUNT, 0);
+  hist.bin_centers.resize(K_BIN_COUNT);
+
+  const auto [domain_min, domain_max] = getDescriptorDomain(phase_settings_.descriptor);
+  hist.min_val = domain_min;
+  hist.max_val = domain_max;
+  hist.bin_width = (domain_max - domain_min) / static_cast<float>(K_BIN_COUNT);
+
+  for (std::size_t i = 0; i < K_BIN_COUNT; ++i) {
+    hist.bin_centers[i] = domain_min + (static_cast<float>(i) + 0.5F) * hist.bin_width;
+  }
+
+  if (params == nullptr) {
+    return hist;
+  }
+
+  const auto values = extractDescriptorValues(*params, phase_settings_.descriptor);
+  hist.total_atom_count = static_cast<uint32_t>(values.size());
+
+  const float min_thresh = phase_settings_.min_threshold;
+  const float max_thresh = phase_settings_.max_threshold;
+
+  for (const auto val_raw : values) {
+    const auto val = static_cast<float>(val_raw);
+    if (val >= min_thresh && val <= max_thresh) {
+      ++hist.matching_atom_count;
+    }
+    const auto bin_idx =
+        static_cast<std::size_t>(std::clamp(std::floor((val - domain_min) / hist.bin_width), 0.0F,
+                                            static_cast<float>(K_BIN_COUNT - 1)));
+    ++hist.counts[bin_idx];
+  }
+
+  return hist;
+}
+
+std::shared_ptr<const calculators::SteinhardtCalculator::SteinhardtParams>
+Structure3DController::computeSteinhardtSync(std::size_t frame_index) {
+  core::Cell target_cell;
+  analysis::BondCutoffMatrix cutoffs;
+  {
+    const std::scoped_lock lock(mutex_);
+    if (current_trajectory_ && streamer_.totalFrames() > 0) {
+      if (frame_index >= current_trajectory_->getFrameCount()) {
+        return nullptr;
+      }
+      target_cell = current_trajectory_->getFrame(frame_index);
+      if (!current_trajectory_->getBondCutoffs().empty()) {
+        cutoffs = current_trajectory_->getBondCutoffs();
+      }
+    } else {
+      if (frame_index != 0 || current_cell_.isEmpty()) {
+        return nullptr;
+      }
+      target_cell = current_cell_;
+    }
+  }
+
+  if (target_cell.isEmpty() || target_cell.atomCount() == 0) {
+    return nullptr;
+  }
+
+  if (cutoffs.empty() || cutoffs.size() != target_cell.elements().size()) {
+    cutoffs = buildCellBondCutoffs(target_cell);
+  }
+
+  const real_t max_dist = computeMaxBondDistance(cutoffs, target_cell.elements().size());
+  try {
+    const analysis::StructureAnalyzer analyzer(target_cell, max_dist, cutoffs, false);
+    auto params = calculators::SteinhardtCalculator::calculatePerAtom(target_cell, &analyzer);
+    return std::make_shared<const calculators::SteinhardtCalculator::SteinhardtParams>(
+        std::move(params));
+  } catch (const std::exception &) {
+    return nullptr;
+  }
+}
+
+int64_t Structure3DController::waitForNextPhaseFrame() {
+  std::unique_lock lock(phase_mutex_);
+  phase_cv_.wait_for(lock, std::chrono::milliseconds(50), [this] {
+    return stop_phase_worker_.load(std::memory_order_relaxed) ||
+           (requested_phase_frame_.load(std::memory_order_relaxed) >= 0);
+  });
+
+  if (stop_phase_worker_.load(std::memory_order_relaxed)) {
+    return -1;
+  }
+
+  return requested_phase_frame_.exchange(-1);
+}
+
+void Structure3DController::processTargetPhaseFrame(int64_t target_frame) {
+  const auto frame_idx = static_cast<std::size_t>(target_frame);
+  auto params = lru_cache_.get(frame_idx);
+  if (!params) {
+    params = computeSteinhardtSync(frame_idx);
+    if (params) {
+      lru_cache_.put(frame_idx, params);
+    }
+  }
+
+  if (!params) {
+    return;
+  }
+
+  bool need_render = false;
+  {
+    const std::scoped_lock lock(phase_mutex_, mutex_);
+    const auto active_frame = streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
+    if (active_frame == frame_idx && scene_ != nullptr) {
+      applyPhaseVisualsToScene(*scene_, params.get());
+      latest_histogram_ = computePhaseHistogram(params.get());
+      render_pending_ = true;
+      need_render = true;
+    }
+  }
+  if (need_render) {
+    cv_.notify_one();
+  }
+}
+
+void Structure3DController::prewarmAdjacentFrames(int64_t target_frame) {
+  const std::size_t total_frames = streamer_.hasTrajectory() ? streamer_.totalFrames() : 1UL;
+  if (total_frames <= 1) {
+    return;
+  }
+
+  constexpr std::array<int64_t, 4> K_NEIGHBOR_OFFSETS = {-1, 1, -2, 2};
+  for (const auto offset : K_NEIGHBOR_OFFSETS) {
+    if (stop_phase_worker_.load(std::memory_order_relaxed) ||
+        requested_phase_frame_.load(std::memory_order_relaxed) >= 0) {
+      break;
+    }
+    const int64_t candidate = target_frame + offset;
+    if (std::cmp_greater_equal(candidate, 0) && std::cmp_less(candidate, total_frames)) {
+      const auto cand_idx = static_cast<std::size_t>(candidate);
+      if (!lru_cache_.contains(cand_idx)) {
+        auto pre_params = computeSteinhardtSync(cand_idx);
+        if (pre_params) {
+          lru_cache_.put(cand_idx, std::move(pre_params));
+        }
+      }
+    }
+  }
+}
+
+void Structure3DController::phaseWorkerLoop() {
+  while (!stop_phase_worker_.load(std::memory_order_relaxed)) {
+    const int64_t target_frame = waitForNextPhaseFrame();
+    if (target_frame < 0) {
+      continue;
+    }
+
+    processTargetPhaseFrame(target_frame);
+    prewarmAdjacentFrames(target_frame);
   }
 }
 

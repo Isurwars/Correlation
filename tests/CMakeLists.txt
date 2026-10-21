@@ -182,6 +182,8 @@ if(BUILD_GUI)
         unit/app/PlotSeriesManagerTests.cpp
         unit/app/PlotTableFormatterTests.cpp
         unit/app/PlotViewportNavigatorTests.cpp
+        unit/app/SteinhardtLRUCacheTests.cpp
+        unit/app/Structure3DControllerPhaseSearchTests.cpp
         unit/app/Structure3DControllerTests.cpp
     )
 
