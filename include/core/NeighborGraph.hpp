@@ -11,6 +11,8 @@
 #include "core/Atom.hpp"
 #include "math/LinearAlgebra.hpp"
 
+#include <atomic>
+#include <mutex>
 #include <span>
 #include <vector>
 
@@ -60,6 +62,35 @@ public:
    * @param node_count The total number of atoms/nodes in the graph.
    */
   explicit NeighborGraph(size_t node_count);
+
+  /**
+   * @brief Copy constructor.
+   * @param other The graph instance to copy from.
+   */
+  NeighborGraph(const NeighborGraph &other);
+
+  /**
+   * @brief Move constructor.
+   * @param other The graph instance to move from.
+   */
+  NeighborGraph(NeighborGraph &&other) noexcept;
+
+  /**
+   * @brief Copy assignment operator.
+   * @param other The graph instance to copy from.
+   * @return Reference to this graph.
+   */
+  NeighborGraph &operator=(const NeighborGraph &other);
+
+  /**
+   * @brief Move assignment operator.
+   * @param other The graph instance to move from.
+   * @return Reference to this graph.
+   */
+  NeighborGraph &operator=(NeighborGraph &&other) noexcept;
+
+  /** @brief Destructor. */
+  ~NeighborGraph() = default;
 
   /**
    * @brief Adds a directed edge between two atoms.
@@ -146,10 +177,14 @@ public:
   [[nodiscard]] std::span<const Neighbor> neighbors() const noexcept;
 
 private:
+  NeighborGraph(const std::scoped_lock<std::mutex> & /*lock*/, const NeighborGraph &other);
+  NeighborGraph(const std::scoped_lock<std::mutex> & /*lock*/, NeighborGraph &other) noexcept;
+
   void ensureFinalized() const;
 
   size_t node_count_{0};
-  mutable bool is_finalized_{true};
+  mutable std::atomic<bool> is_finalized_{true};
+  mutable std::mutex finalize_mutex_;
   mutable std::vector<Edge> unfinalized_edges_;
   mutable std::vector<size_t> offsets_{0};
   mutable std::vector<Neighbor> neighbors_;

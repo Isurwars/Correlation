@@ -39,6 +39,65 @@ namespace {
 NeighborGraph::NeighborGraph(size_t node_count)
     : node_count_(node_count), offsets_(node_count + 1, 0) {}
 
+NeighborGraph::NeighborGraph(const std::scoped_lock<std::mutex> & /*lock*/,
+                             const NeighborGraph &other)
+    : node_count_(other.node_count_),
+      is_finalized_(other.is_finalized_.load(std::memory_order_relaxed)),
+      unfinalized_edges_(other.unfinalized_edges_), offsets_(other.offsets_),
+      neighbors_(other.neighbors_), targets_(other.targets_) {}
+
+NeighborGraph::NeighborGraph(const std::scoped_lock<std::mutex> & /*lock*/,
+                             NeighborGraph &other) noexcept
+    : node_count_(other.node_count_),
+      is_finalized_(other.is_finalized_.load(std::memory_order_relaxed)),
+      unfinalized_edges_(std::move(other.unfinalized_edges_)), offsets_(std::move(other.offsets_)),
+      neighbors_(std::move(other.neighbors_)), targets_(std::move(other.targets_)) {
+  other.node_count_ = 0;
+}
+
+NeighborGraph::NeighborGraph(const NeighborGraph &other)
+    : NeighborGraph(
+          [&] {
+            other.ensureFinalized();
+            return std::scoped_lock{other.finalize_mutex_};
+          }(),
+          other) {}
+
+NeighborGraph::NeighborGraph(NeighborGraph &&other) noexcept
+    : NeighborGraph(std::scoped_lock{other.finalize_mutex_}, other) {}
+
+NeighborGraph &NeighborGraph::operator=(const NeighborGraph &other) {
+  if (this == &other) {
+    return *this;
+  }
+  other.ensureFinalized();
+  const std::scoped_lock lock(finalize_mutex_, other.finalize_mutex_);
+  node_count_ = other.node_count_;
+  is_finalized_.store(other.is_finalized_.load(std::memory_order_relaxed),
+                      std::memory_order_relaxed);
+  unfinalized_edges_ = other.unfinalized_edges_;
+  offsets_ = other.offsets_;
+  neighbors_ = other.neighbors_;
+  targets_ = other.targets_;
+  return *this;
+}
+
+NeighborGraph &NeighborGraph::operator=(NeighborGraph &&other) noexcept {
+  if (this == &other) {
+    return *this;
+  }
+  const std::scoped_lock lock(finalize_mutex_, other.finalize_mutex_);
+  node_count_ = other.node_count_;
+  is_finalized_.store(other.is_finalized_.load(std::memory_order_relaxed),
+                      std::memory_order_relaxed);
+  unfinalized_edges_ = std::move(other.unfinalized_edges_);
+  offsets_ = std::move(other.offsets_);
+  neighbors_ = std::move(other.neighbors_);
+  targets_ = std::move(other.targets_);
+  other.node_count_ = 0;
+  return *this;
+}
+
 void NeighborGraph::addDirectedEdge(const Edge &edge) {
   assert(edge.source < node_count_ &&
          "Source node index out of bounds in NeighborGraph::addDirectedEdge");
@@ -46,7 +105,8 @@ void NeighborGraph::addDirectedEdge(const Edge &edge) {
     return;
   }
 
-  if (is_finalized_ && !neighbors_.empty()) {
+  const std::scoped_lock lock(finalize_mutex_);
+  if (is_finalized_.load(std::memory_order_relaxed) && !neighbors_.empty()) {
     for (size_t count = 0; count < node_count_; ++count) {
       const size_t start = offsets_[count];
       const size_t end = offsets_[count + 1];
@@ -63,12 +123,17 @@ void NeighborGraph::addDirectedEdge(const Edge &edge) {
     targets_.clear();
   }
 
-  is_finalized_ = false;
+  is_finalized_.store(false, std::memory_order_release);
   unfinalized_edges_.push_back(edge);
 }
 
 void NeighborGraph::finalize() const {
-  if (is_finalized_) {
+  if (is_finalized_.load(std::memory_order_acquire)) {
+    return;
+  }
+
+  const std::scoped_lock lock(finalize_mutex_);
+  if (is_finalized_.load(std::memory_order_relaxed)) {
     return;
   }
 
@@ -112,24 +177,25 @@ void NeighborGraph::finalize() const {
 
   unfinalized_edges_.clear();
   unfinalized_edges_.shrink_to_fit();
-  is_finalized_ = true;
+  is_finalized_.store(true, std::memory_order_release);
 }
 
 void NeighborGraph::ensureFinalized() const {
-  if (!is_finalized_) {
+  if (!is_finalized_.load(std::memory_order_acquire)) {
     finalize();
   }
 }
 
 void NeighborGraph::assignCSR(size_t node_count, std::vector<size_t> offsets,
                               std::vector<Neighbor> neighbors, std::vector<AtomID> targets) {
+  const std::scoped_lock lock(finalize_mutex_);
   node_count_ = node_count;
   offsets_ = std::move(offsets);
   neighbors_ = std::move(neighbors);
   targets_ = std::move(targets);
   unfinalized_edges_.clear();
   unfinalized_edges_.shrink_to_fit();
-  is_finalized_ = true;
+  is_finalized_.store(true, std::memory_order_release);
 }
 
 std::span<const Neighbor> NeighborGraph::getNeighbors(size_t atom_index) const {
@@ -139,7 +205,7 @@ std::span<const Neighbor> NeighborGraph::getNeighbors(size_t atom_index) const {
   }
   const size_t start = offsets_[atom_index];
   const size_t count = offsets_[atom_index + 1] - start;
-  return std::span<const Neighbor>(neighbors_.data() + start, count);
+  return {neighbors_.data() + start, count};
 }
 
 std::span<const AtomID> NeighborGraph::getNeighborIndices(size_t atom_index) const {
@@ -149,7 +215,7 @@ std::span<const AtomID> NeighborGraph::getNeighborIndices(size_t atom_index) con
   }
   const size_t start = offsets_[atom_index];
   const size_t count = offsets_[atom_index + 1] - start;
-  return std::span<const AtomID>(targets_.data() + start, count);
+  return {targets_.data() + start, count};
 }
 
 bool NeighborGraph::areConnected(AtomIndex first_atom, AtomIndex second_atom) const {

@@ -40,6 +40,7 @@ std::vector<real_t> referenceRingDescriptor(const PeriodicGraphData &graph, size
                                                         : static_cast<real_t>(0.0),
         correlation::math::Vector3<real_t>{0.0, 0.0, 0.0});
   }
+  neighbor_graph.finalize();
   for (size_t size = 3; size <= max_size; ++size) {
     for (const auto &cycle :
          correlation::calculators::MotifFinder::extractCycles(neighbor_graph, size)) {
