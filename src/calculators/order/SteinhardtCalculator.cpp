@@ -574,9 +574,9 @@ void SteinhardtCalculator::calculateFrame(
   }
 }
 
-std::map<std::string, correlation::analysis::Histogram>
-SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
-                                const correlation::analysis::StructureAnalyzer *neighbors) {
+SteinhardtCalculator::SteinhardtParams
+SteinhardtCalculator::calculatePerAtom(const correlation::core::Cell &cell,
+                                       const correlation::analysis::StructureAnalyzer *neighbors) {
   if (neighbors == nullptr) {
     throw std::logic_error("Cannot calculate Steinhardt Parameters. Neighbor list has not been "
                            "computed.");
@@ -626,6 +626,14 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
                         params.Q6_bar[i] = q6_bar;
                       }
                     });
+
+  return params;
+}
+
+std::map<std::string, correlation::analysis::Histogram>
+SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
+                                const correlation::analysis::StructureAnalyzer *neighbors) {
+  SteinhardtParams const params = calculatePerAtom(cell, neighbors);
 
   // 3. Initialize Histograms
   size_t const bins_q = 100;
@@ -736,7 +744,7 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
       .w6_max = w6_max,
       .step_w6 = d_w6,
   };
-  SteinhardtHistograms hists_bundle{
+  SteinhardtHistograms const hists_bundle{
       .hist_q4 = &hist_q4,
       .hist_q6 = &hist_q6,
       .hist_w4 = &hist_w4,

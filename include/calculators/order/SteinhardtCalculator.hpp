@@ -88,6 +88,18 @@ public:
   };
 
   /**
+   * @brief High-performance computation of per-atom Steinhardt parameters.
+   *
+   * @param[in] cell The periodic cell.
+   * @param[in] neighbors Structural analyzer containing the neighbor graph.
+   * @return SteinhardtParams containing arrays of per-atom order parameters.
+   * @throws std::logic_error If @p neighbors is nullptr.
+   */
+  [[nodiscard]] static SteinhardtParams
+  calculatePerAtom(const correlation::core::Cell &cell,
+                   const correlation::analysis::StructureAnalyzer *neighbors);
+
+  /**
    * @brief Computes the complex spherical harmonic @f$ Y_l^m(\theta, \phi) @f$.
    *
    * @param degree Degree of the harmonic.

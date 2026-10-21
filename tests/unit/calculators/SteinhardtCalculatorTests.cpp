@@ -375,5 +375,36 @@ TEST_F(SteinhardtCalculatorTests, Wigner3j) {
               -1.0 / std::sqrt(30.0), 1e-8);
 }
 
+TEST_F(SteinhardtCalculatorTests, CalculatePerAtomDirectEvaluation) {
+  // Test null neighbors throws logic_error
+  correlation::core::Cell dummy_cell({1.0, 1.0, 1.0, 90.0, 90.0, 90.0});
+  EXPECT_THROW(
+      (void)correlation::calculators::SteinhardtCalculator::calculatePerAtom(dummy_cell, nullptr),
+      std::logic_error);
+
+  // Test FCC per-atom values
+  auto cell = correlation::testing::crystals::createFCCCell(1.0, "Ar", 1, 1, 1);
+  StructureAnalyzer const analyzer(cell, 0.8, {{{.min_sq = 0.36, .max_sq = 0.8 * 0.8}}}, false);
+  const size_t num_atoms = cell.atoms().size();
+
+  auto params = correlation::calculators::SteinhardtCalculator::calculatePerAtom(cell, &analyzer);
+
+  EXPECT_EQ(params.Q4.size(), num_atoms);
+  EXPECT_EQ(params.Q6.size(), num_atoms);
+  EXPECT_EQ(params.W4_hat.size(), num_atoms);
+  EXPECT_EQ(params.W6_hat.size(), num_atoms);
+  EXPECT_EQ(params.Q4_bar.size(), num_atoms);
+  EXPECT_EQ(params.Q6_bar.size(), num_atoms);
+
+  for (size_t i = 0; i < num_atoms; ++i) {
+    EXPECT_NEAR(params.Q4[i], 0.1909, 0.015);
+    EXPECT_NEAR(params.Q6[i], 0.5745, 0.015);
+    EXPECT_NEAR(params.W4_hat[i], -0.1593, 0.015);
+    EXPECT_NEAR(params.W6_hat[i], -0.0132, 0.015);
+    EXPECT_NEAR(params.Q4_bar[i], 0.1909, 0.015);
+    EXPECT_NEAR(params.Q6_bar[i], 0.5745, 0.015);
+  }
+}
+
 } // namespace
 } // namespace correlation::analysis
