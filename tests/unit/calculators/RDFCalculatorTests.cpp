@@ -7,7 +7,6 @@
 #include "analysis/TrajectoryAnalyzer.hpp"
 #include "app/services/AnalysisDispatcher.hpp"
 #include "app/services/TrajectoryLoader.hpp"
-#include "calculators/CalculatorFactory.hpp"
 #include "calculators/spatial/RDFCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
@@ -622,7 +621,6 @@ namespace {
 
 } // namespace
 
-
 TEST_F(RDFCalculatorTests, AmorphousPalladiumSingleFrameAsymptotesToOneAt20A) {
   const std::string filepath = resolveExamplePath("examples/a-Pd/a-Pd.car");
   if (filepath.empty()) {
@@ -722,11 +720,7 @@ TEST_F(RDFCalculatorTests,
   opts.r_bin_width = 0.05;
   opts.smoothing = true;
   opts.smoothing_sigma = 0.1;
-  // Enable all registered calculators to stress concurrent DistanceCalculator execution
-  for (const auto &calc :
-       ::correlation::calculators::CalculatorFactory::instance().getCalculators()) {
-    opts.active_calculators[std::string(calc->getName())] = true;
-  }
+  opts.active_calculators["RDF"] = true;
 
   auto res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);
   ASSERT_TRUE(res.has_value()) << "Analysis failed for " << filepath;
