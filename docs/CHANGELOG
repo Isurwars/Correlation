@@ -1,6 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.0.3] - 2026-10-22
+
+### 🚀 Features & Interactive 3D Analysis
+- **3D Phase Search & Order Parameter UI (`PhaseSearchCard`, `PhaseSlider`, `PhaseMiniHistogram`, `ViewportColorbar`)**: Added interactive Phase Search card overlay for the 3D structure viewport with real-time Steinhardt order parameter ($q_4$, $q_6$, $w_4$, $w_6$) mini-histograms, dual-threshold range sliders, preset buttons, and dynamic colorbars (`97db1473`).
+- **Steinhardt Order Parameter Evaluation & LRU Caching (`Structure3DController`, `SteinhardtLRUCache`, `PhaseSearchTypes`)**: Implemented per-atom Steinhardt order parameter calculation with multi-level LRU caching and canonical crystal phase presets (FCC, HCP, BCC, Icosahedral, Liquid/Amorphous) (`5a4c3621`).
+- **Atom Halos & Color Dimming (`SoftwareRasterizer`, `SoftwareFramebuffer`, `Scene3D`)**: Added support for atom halos (selection and classification highlight rings) and color dimming of non-matching phase atoms in the software rasterizer (`e360b764`).
+- **Scientific Colormapping Service (`ColormapService`)**: Introduced comprehensive colormapping utility supporting perceptually uniform palettes (Viridis, Plasma, Inferno, Magma, Turbo, Cividis, Coolwarm) for plotters and 3D phase visualization (`56d9037c`).
+- **Trajectory Frame Metadata & UI Controls**: Added frame metadata inspection in the Structure panel and trajectory option reset handlers across UI cards (`e5b7e425`).
+
+### ⚡ Performance & Benchmarking
+- **Order Parameter & Rasterizer Microbenchmarks (`BM_SteinhardtPerAtom`)**: Added Google Benchmark suites for per-atom Steinhardt order parameter calculations across crystal structures and halo sphere rasterization throughput (`5c716897`).
+
+### ♻️ Code Refactoring & Build System
+- **Steinhardt Calculation Decomposition (`SteinhardtCalculator`)**: Extracted per-atom Steinhardt parameter calculation into dedicated public method with unit test suite (`af14d107`).
+- **CMake Presets & Compiler Warning Hardening**: Updated CMake presets and suppressed shadow warnings on Slint-generated GUI compilation targets (`1845c8a7`).
+- **Codebase Graph Maintenance**: Synchronized code community structure and dependency graphs across analysis components (`2b2e997b`).
+
+### 🧹 Maintenance
+- **Project Milestone**: Bumped project version to `4.0.3` across build targets, packages, documentation, and UI metadata.
+
 ## [4.0.2] - 2026-10-20
 
 ### ♻️ Code Refactoring & Concurrency Safety
