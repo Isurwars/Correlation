@@ -18,26 +18,26 @@ export component PhaseMiniHistogram inherits Rectangle {
     in property <int> matching_atoms: 0;
     in property <int> total_atoms: 0;
 
-    height: 74px;
-    border-radius: 8px;
+    height: 52px;
+    border-radius: 6px;
     background: MaterialPalette.surface_container_lowest;
     border-width: 1px;
     border-color: MaterialPalette.outline_variant.with_alpha(50%);
     clip: true;
 
     VerticalLayout {
-        padding-left: 8px;
-        padding-right: 8px;
-        padding-top: 6px;
-        padding-bottom: 6px;
-        spacing: 4px;
+        padding-left: 6px;
+        padding-right: 6px;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        spacing: 2px;
 
         // Telemetry header
         HorizontalLayout {
             alignment: space-between;
             MaterialText {
                 text: "Distribution";
-                font-size: 10px;
+                font-size: 10.5px;
                 font-weight: 600;
                 color: MaterialPalette.on_surface_variant;
             }
@@ -45,7 +45,7 @@ export component PhaseMiniHistogram inherits Rectangle {
                 text: root.total_atoms > 0
                     ? ("" + root.matching_atoms + " / " + root.total_atoms + " (" + (Math.round(root.matching_atoms * 1000.0 / root.total_atoms) / 10.0) + "%)")
                     : "No Data";
-                font-size: 10px;
+                font-size: 10.5px;
                 color: root.matching_atoms > 0 ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
                 font-weight: 600;
             }
@@ -53,7 +53,7 @@ export component PhaseMiniHistogram inherits Rectangle {
 
         // Bins container
         bars_rect := Rectangle {
-            height: 38px;
+            height: 22px;
             clip: true;
 
             HorizontalLayout {
@@ -83,12 +83,12 @@ export component PhaseMiniHistogram inherits Rectangle {
             alignment: space-between;
             MaterialText {
                 text: "" + (Math.round(root.domain_min * 100) / 100);
-                font-size: 9px;
+                font-size: 9.5px;
                 color: MaterialPalette.on_surface_variant;
             }
             MaterialText {
                 text: "" + (Math.round(root.domain_max * 100) / 100);
-                font-size: 9px;
+                font-size: 9.5px;
                 color: MaterialPalette.on_surface_variant;
             }
         }

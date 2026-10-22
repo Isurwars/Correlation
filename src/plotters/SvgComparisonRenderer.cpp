@@ -219,8 +219,8 @@ struct SvgComparisonRenderer {
                          "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
                          px0 - static_cast<real_t>(8.0), spy, px0, spy, config->axisColor());
       svg << renderTextAsPath(detail::fmtScientific(y_value), px0 - static_cast<real_t>(15.0),
-                              spy + static_cast<real_t>(7.0),
-                              static_cast<real_t>(20.0) * config->font_scale, TextAnchor::End,
+                              spy + static_cast<real_t>(8.0),
+                              static_cast<real_t>(23.0) * config->font_scale, TextAnchor::End,
                               config->textColor(), config->use_native_text);
     }
 
@@ -234,8 +234,8 @@ struct SvgComparisonRenderer {
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                          "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
                          spx, py1, spx, py1 + static_cast<real_t>(8.0), config->axisColor());
-      svg << renderTextAsPath(detail::fmtScientific(x_value), spx, py1 + static_cast<real_t>(25.0),
-                              static_cast<real_t>(20.0) * config->font_scale, TextAnchor::Middle,
+      svg << renderTextAsPath(detail::fmtScientific(x_value), spx, py1 + static_cast<real_t>(26.0),
+                              static_cast<real_t>(23.0) * config->font_scale, TextAnchor::Middle,
                               config->textColor(), config->use_native_text);
     }
 
@@ -455,7 +455,7 @@ struct SvgComparisonRenderer {
                            legend_x - static_cast<real_t>(10.0), legend_y, color);
         svg << renderTextAsPath(label, legend_x - static_cast<real_t>(45.0),
                                 legend_y + static_cast<real_t>(6.0),
-                                static_cast<real_t>(18.0) * config->font_scale, TextAnchor::End,
+                                static_cast<real_t>(20.0) * config->font_scale, TextAnchor::End,
                                 config->textColor(), config->use_native_text);
         legend_y += static_cast<real_t>(28.0);
       }
@@ -464,14 +464,14 @@ struct SvgComparisonRenderer {
 
   void drawTitlesAndLabels() {
     svg << renderTextAsPath(x_label, (px0 + px1) / static_cast<real_t>(2.0),
-                            py1 + static_cast<real_t>(75.0),
-                            static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle,
+                            py1 + static_cast<real_t>(78.0),
+                            static_cast<real_t>(32.0) * config->font_scale, TextAnchor::Middle,
                             config->textColor(), config->use_native_text);
 
     svg << std::format("  <g transform=\"translate({:.1f}, {:.1f}) rotate(-90)\">\n",
-                       static_cast<real_t>(40.0), (py0 + py1) / static_cast<real_t>(2.0));
+                       static_cast<real_t>(38.0), (py0 + py1) / static_cast<real_t>(2.0));
     svg << renderTextAsPath(y_label, static_cast<real_t>(0.0), static_cast<real_t>(0.0),
-                            static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle,
+                            static_cast<real_t>(32.0) * config->font_scale, TextAnchor::Middle,
                             config->textColor(), config->use_native_text);
     svg << "  </g>\n";
   }

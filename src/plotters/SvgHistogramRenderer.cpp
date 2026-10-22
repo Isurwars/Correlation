@@ -44,10 +44,10 @@ inline constexpr real_t MARGIN_BOTTOM = static_cast<real_t>(90.0);
 inline constexpr real_t MINOR_TICK_LENGTH = static_cast<real_t>(4.0);
 inline constexpr real_t MAJOR_TICK_LENGTH = static_cast<real_t>(8.0);
 inline constexpr real_t Y_TICK_LABEL_OFFSET = static_cast<real_t>(15.0);
-inline constexpr real_t Y_TICK_LABEL_Y_SHIFT = static_cast<real_t>(7.0);
+inline constexpr real_t Y_TICK_LABEL_Y_SHIFT = static_cast<real_t>(8.0);
 inline constexpr real_t X_TICK_LABEL_OFFSET = static_cast<real_t>(25.0);
-inline constexpr real_t X_AXIS_TITLE_OFFSET = static_cast<real_t>(75.0);
-inline constexpr real_t Y_AXIS_TITLE_OFFSET = static_cast<real_t>(40.0);
+inline constexpr real_t X_AXIS_TITLE_OFFSET = static_cast<real_t>(70.0);
+inline constexpr real_t Y_AXIS_TITLE_OFFSET = static_cast<real_t>(35.0);
 
 inline constexpr real_t LEGEND_RIGHT_MARGIN = static_cast<real_t>(15.0);
 inline constexpr real_t LEGEND_TOP_MARGIN = static_cast<real_t>(25.0);
@@ -586,7 +586,7 @@ public:
           if (!ref.label.empty()) {
             buffer_.append(renderTextAsPath(ref.label, spx + static_cast<real_t>(5.0),
                                             viewport.py0 + static_cast<real_t>(18.0),
-                                            static_cast<real_t>(14.0) * config.font_scale,
+                                            static_cast<real_t>(16.0) * config.font_scale,
                                             TextAnchor::Start, color, config.use_native_text));
           }
         }
@@ -600,7 +600,7 @@ public:
           if (!ref.label.empty()) {
             buffer_.append(renderTextAsPath(ref.label, viewport.px0 + static_cast<real_t>(8.0),
                                             spy - static_cast<real_t>(5.0),
-                                            static_cast<real_t>(14.0) * config.font_scale,
+                                            static_cast<real_t>(16.0) * config.font_scale,
                                             TextAnchor::Start, color, config.use_native_text));
           }
         }
@@ -639,7 +639,7 @@ public:
                      screen_x, screen_y - static_cast<real_t>(6.0), screen_x,
                      badge_y + static_cast<real_t>(6.0));
       buffer_.append(renderTextAsPath(
-          text, screen_x, badge_y, static_cast<real_t>(14.0) * config.font_scale,
+          text, screen_x, badge_y, static_cast<real_t>(16.0) * config.font_scale,
           TextAnchor::Middle, (config.theme == PlotConfig::Theme::Light) ? "#0072b2" : "#70b0ff",
           config.use_native_text));
     }
@@ -664,7 +664,7 @@ public:
                      legend_x - layout::LEGEND_LINE_RIGHT_PAD, legend_y, total_it->color);
       buffer_.append(renderTextAsPath("Total", legend_x - layout::LEGEND_TEXT_PAD,
                                       legend_y + static_cast<real_t>(6.0),
-                                      static_cast<real_t>(18.0) * config.font_scale,
+                                      static_cast<real_t>(20.0) * config.font_scale,
                                       TextAnchor::End, config.textColor(), config.use_native_text));
       legend_y += layout::LEGEND_TOTAL_STEP;
     }
@@ -678,7 +678,7 @@ public:
 
     buffer_.append(renderTextAsPath(
         "Partials:", legend_x - layout::LEGEND_LINE_RIGHT_PAD, legend_y + static_cast<real_t>(4.0),
-        static_cast<real_t>(14.0) * config.font_scale, TextAnchor::End,
+        static_cast<real_t>(16.0) * config.font_scale, TextAnchor::End,
         (config.theme == PlotConfig::Theme::Light) ? "#555555" : "#cbd5e1",
         config.use_native_text));
     legend_y += layout::LEGEND_HEADER_STEP;
@@ -694,7 +694,7 @@ public:
                      legend_x - layout::LEGEND_LINE_RIGHT_PAD, legend_y, series_item.color);
       buffer_.append(renderTextAsPath(series_item.key, legend_x - layout::LEGEND_TEXT_PAD,
                                       legend_y + static_cast<real_t>(5.0),
-                                      static_cast<real_t>(16.0) * config.font_scale,
+                                      static_cast<real_t>(18.0) * config.font_scale,
                                       TextAnchor::End, config.textColor(), config.use_native_text));
       legend_y += layout::LEGEND_ITEM_STEP;
     }
@@ -704,14 +704,14 @@ public:
                            const std::string &y_label, const PlotConfig &config) {
     buffer_.append(renderTextAsPath(
         x_label, (viewport.px0 + viewport.px1) / static_cast<real_t>(2.0),
-        viewport.py1 + layout::X_AXIS_TITLE_OFFSET, static_cast<real_t>(28.0) * config.font_scale,
+        viewport.py1 + layout::X_AXIS_TITLE_OFFSET, static_cast<real_t>(32.0) * config.font_scale,
         TextAnchor::Middle, config.textColor(), config.use_native_text));
 
     std::format_to(
         std::back_inserter(buffer_), "  <g transform=\"translate({:.1f}, {:.1f}) rotate(-90)\">\n",
         layout::Y_AXIS_TITLE_OFFSET, (viewport.py0 + viewport.py1) / static_cast<real_t>(2.0));
     buffer_.append(renderTextAsPath(y_label, static_cast<real_t>(0.0), static_cast<real_t>(0.0),
-                                    static_cast<real_t>(28.0) * config.font_scale,
+                                    static_cast<real_t>(32.0) * config.font_scale,
                                     TextAnchor::Middle, config.textColor(),
                                     config.use_native_text));
     buffer_.append("  </g>\n");
@@ -810,7 +810,7 @@ private:
                      config.axisColor());
       buffer_.append(renderTextAsPath(
           fmtScientific(y_val), viewport.px0 - layout::Y_TICK_LABEL_OFFSET,
-          spy + layout::Y_TICK_LABEL_Y_SHIFT, static_cast<real_t>(20.0) * config.font_scale,
+          spy + layout::Y_TICK_LABEL_Y_SHIFT, static_cast<real_t>(23.0) * config.font_scale,
           TextAnchor::End, config.textColor(), config.use_native_text));
     }
   }
@@ -832,7 +832,7 @@ private:
                      config.axisColor());
       buffer_.append(
           renderTextAsPath(fmtScientific(x_val), spx, viewport.py1 + layout::X_TICK_LABEL_OFFSET,
-                           static_cast<real_t>(20.0) * config.font_scale, TextAnchor::Middle,
+                           static_cast<real_t>(23.0) * config.font_scale, TextAnchor::Middle,
                            config.textColor(), config.use_native_text));
     }
   }

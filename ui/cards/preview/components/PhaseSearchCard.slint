@@ -8,7 +8,6 @@ import {
     MaterialTypography,
     MaterialStyleMetrics,
     MaterialText,
-    CheckBoxRow,
 } from "../../../material/material.slint";
 import { PhaseSlider } from "./PhaseSlider.slint";
 import { PhaseMiniHistogram } from "./PhaseMiniHistogram.slint";
@@ -28,6 +27,8 @@ export component PhaseSearchCard inherits Rectangle {
     in property <[float]> histogram_counts: [];
     in property <int> matching_atoms: 0;
     in property <int> total_atoms: 0;
+    in property <image> colorbar_image;
+    in property <string> descriptor_name: "q̄₆";
 
     callback toggle_enabled(bool);
     callback set_preset(int);
@@ -39,33 +40,38 @@ export component PhaseSearchCard inherits Rectangle {
     callback set_dim_non_matching(bool);
     callback close();
 
-    width: 310px;
-    border-radius: 16px;
-    background: MaterialPalette.surface_container_high.with_alpha(95%);
+    width: 330px;
+    preferred-height: card_layout.preferred-height;
+    height: self.preferred-height;
+    border-radius: 14px;
+    background: MaterialPalette.surface_container_high.with_alpha(96%);
     border-width: 1.5px;
     border-color: MaterialPalette.outline.with_alpha(70%);
     clip: true;
 
-    VerticalLayout {
-        padding: 12px;
-        spacing: 8px;
+    card_layout := VerticalLayout {
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        spacing: 5px;
 
         // 1. Header with Master Toggle and Close Button
         HorizontalLayout {
             alignment: space-between;
 
             HorizontalLayout {
-                spacing: 8px;
+                spacing: 6px;
                 alignment: center;
 
                 MaterialText {
                     text: "🔮";
-                    font-size: 16px;
+                    font-size: 15px;
                     vertical-alignment: center;
                 }
 
                 MaterialText {
-                    text: "Phase Search";
+                    text: "Halo Options";
                     font-size: 14px;
                     font-weight: 700;
                     color: MaterialPalette.on_surface;
@@ -79,8 +85,8 @@ export component PhaseSearchCard inherits Rectangle {
 
                 // Master Toggle Pill
                 toggle_touch := TouchArea {
-                    width: 72px;
-                    height: 26px;
+                    width: 64px;
+                    height: 22px;
                     mouse-cursor: pointer;
                     accessible-role: button;
                     accessible-label: root.phase_enabled ? "Disable Halos" : "Enable Halos";
@@ -89,7 +95,7 @@ export component PhaseSearchCard inherits Rectangle {
                     Rectangle {
                         width: 100%;
                         height: 100%;
-                        border-radius: 13px;
+                        border-radius: 11px;
                         background: root.phase_enabled
                             ? MaterialPalette.primary
                             : (toggle_touch.has-hover ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_lowest);
@@ -113,24 +119,24 @@ export component PhaseSearchCard inherits Rectangle {
 
                 // Close Button
                 close_touch := TouchArea {
-                    width: 24px;
-                    height: 24px;
+                    width: 20px;
+                    height: 20px;
                     mouse-cursor: pointer;
                     accessible-role: button;
-                    accessible-label: "Close Phase Panel";
+                    accessible-label: "Close Halo Panel";
                     clicked => { root.close(); }
 
                     Rectangle {
                         width: 100%;
                         height: 100%;
-                        border-radius: 12px;
+                        border-radius: 10px;
                         background: close_touch.has-hover ? MaterialPalette.surface_container_highest : transparent;
 
                         MaterialText {
                             width: 100%;
                             height: 100%;
                             text: "✕";
-                            font-size: 12px;
+                            font-size: 11px;
                             color: MaterialPalette.on_surface_variant;
                             horizontal-alignment: center;
                             vertical-alignment: center;
@@ -140,7 +146,7 @@ export component PhaseSearchCard inherits Rectangle {
             }
         }
 
-        // 2. Crystal Presets Row
+        // 2. Crystal Presets (Two clean rows to eliminate compression)
         VerticalLayout {
             spacing: 3px;
 
@@ -151,13 +157,13 @@ export component PhaseSearchCard inherits Rectangle {
                 color: MaterialPalette.on_surface_variant;
             }
 
+            // Row 1: Custom, Liquid, FCC
             HorizontalLayout {
-                spacing: 3px;
+                spacing: 4px;
                 height: 24px;
+                property <[string]> row1_labels: ["Custom", "Liquid", "FCC"];
 
-                property <[string]> preset_labels: ["Custom", "Liquid", "FCC", "HCP", "BCC", "Ico"];
-
-                for label[idx] in self.preset_labels: TouchArea {
+                for label[idx] in self.row1_labels: TouchArea {
                     horizontal-stretch: 1;
                     height: 100%;
                     mouse-cursor: pointer;
@@ -177,9 +183,45 @@ export component PhaseSearchCard inherits Rectangle {
                             width: 100%;
                             height: 100%;
                             text: label;
-                            font-size: 10px;
+                            font-size: 11px;
                             font-weight: root.preset_index == idx ? 700 : 400;
                             color: root.preset_index == idx ? MaterialPalette.primary : MaterialPalette.on_surface;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+
+            // Row 2: HCP, BCC, Ico
+            HorizontalLayout {
+                spacing: 4px;
+                height: 24px;
+                property <[string]> row2_labels: ["HCP", "BCC", "Ico"];
+
+                for label[idx] in self.row2_labels: TouchArea {
+                    horizontal-stretch: 1;
+                    height: 100%;
+                    mouse-cursor: pointer;
+                    clicked => { root.set_preset(idx + 3); }
+
+                    Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 12px;
+                        background: root.preset_index == (idx + 3)
+                            ? MaterialPalette.primary.with_alpha(25%)
+                            : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
+                        border-width: root.preset_index == (idx + 3) ? 1.5px : 1px;
+                        border-color: root.preset_index == (idx + 3) ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(40%);
+
+                        MaterialText {
+                            width: 100%;
+                            height: 100%;
+                            text: label;
+                            font-size: 11px;
+                            font-weight: root.preset_index == (idx + 3) ? 700 : 400;
+                            color: root.preset_index == (idx + 3) ? MaterialPalette.primary : MaterialPalette.on_surface;
                             horizontal-alignment: center;
                             vertical-alignment: center;
                         }
@@ -190,12 +232,12 @@ export component PhaseSearchCard inherits Rectangle {
 
         // 3. Order Descriptor & Colormap Selectors
         HorizontalLayout {
-            spacing: 8px;
+            spacing: 6px;
 
             // Descriptor Pills
             VerticalLayout {
                 horizontal-stretch: 1;
-                spacing: 3px;
+                spacing: 2px;
 
                 MaterialText {
                     text: "Descriptor";
@@ -206,7 +248,7 @@ export component PhaseSearchCard inherits Rectangle {
 
                 HorizontalLayout {
                     spacing: 2px;
-                    height: 24px;
+                    height: 22px;
                     property <[string]> desc_labels: ["q̄₆", "q̄₄", "q₆", "q₄", "ŵ₆"];
 
                     for d_label[d_idx] in self.desc_labels: TouchArea {
@@ -218,7 +260,7 @@ export component PhaseSearchCard inherits Rectangle {
                         Rectangle {
                             width: 100%;
                             height: 100%;
-                            border-radius: 12px;
+                            border-radius: 10px;
                             background: root.descriptor_index == d_idx
                                 ? MaterialPalette.secondary.with_alpha(25%)
                                 : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
@@ -229,7 +271,7 @@ export component PhaseSearchCard inherits Rectangle {
                                 width: 100%;
                                 height: 100%;
                                 text: d_label;
-                                font-size: 10px;
+                                font-size: 10.5px;
                                 font-weight: root.descriptor_index == d_idx ? 700 : 400;
                                 color: root.descriptor_index == d_idx ? MaterialPalette.secondary : MaterialPalette.on_surface;
                                 horizontal-alignment: center;
@@ -243,7 +285,7 @@ export component PhaseSearchCard inherits Rectangle {
             // Colormap Pills
             VerticalLayout {
                 horizontal-stretch: 1;
-                spacing: 3px;
+                spacing: 2px;
 
                 MaterialText {
                     text: "Colormap";
@@ -254,7 +296,7 @@ export component PhaseSearchCard inherits Rectangle {
 
                 HorizontalLayout {
                     spacing: 2px;
-                    height: 24px;
+                    height: 22px;
                     property <[string]> cmap_labels: ["Viridis", "Plasma", "Cool", "Turbo"];
 
                     for c_label[c_idx] in self.cmap_labels: TouchArea {
@@ -266,7 +308,7 @@ export component PhaseSearchCard inherits Rectangle {
                         Rectangle {
                             width: 100%;
                             height: 100%;
-                            border-radius: 12px;
+                            border-radius: 10px;
                             background: root.colormap_index == c_idx
                                 ? MaterialPalette.tertiary.with_alpha(25%)
                                 : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
@@ -277,7 +319,7 @@ export component PhaseSearchCard inherits Rectangle {
                                 width: 100%;
                                 height: 100%;
                                 text: c_label;
-                                font-size: 10px;
+                                font-size: 10.5px;
                                 font-weight: root.colormap_index == c_idx ? 700 : 400;
                                 color: root.colormap_index == c_idx ? MaterialPalette.tertiary : MaterialPalette.on_surface;
                                 horizontal-alignment: center;
@@ -289,13 +331,57 @@ export component PhaseSearchCard inherits Rectangle {
             }
         }
 
-        // 4. Threshold Range Sliders
+        // 4. Color Palette Gradient & Dynamic Threshold Bounds (inside the card)
+        VerticalLayout {
+            spacing: 2px;
+
+            Rectangle {
+                height: 8px;
+                border-radius: 4px;
+                clip: true;
+                background: MaterialPalette.surface_container_high;
+                border-width: 0.5px;
+                border-color: MaterialPalette.outline_variant.with_alpha(40%);
+
+                Image {
+                    width: 100%;
+                    height: 100%;
+                    source: root.colorbar_image;
+                    image-fit: fill;
+                }
+            }
+
+            HorizontalLayout {
+                alignment: space-between;
+
+                MaterialText {
+                    text: "" + (Math.round(root.min_threshold * 100) / 100);
+                    font-size: 10px;
+                    color: MaterialPalette.on_surface_variant;
+                }
+
+                MaterialText {
+                    text: root.descriptor_name + " Scalar Palette";
+                    font-size: 10px;
+                    font-weight: 600;
+                    color: MaterialPalette.primary;
+                }
+
+                MaterialText {
+                    text: "" + (Math.round(root.max_threshold * 100) / 100);
+                    font-size: 10px;
+                    color: MaterialPalette.on_surface_variant;
+                }
+            }
+        }
+
+        // 5. Threshold Range Sliders
         HorizontalLayout {
-            spacing: 8px;
+            spacing: 6px;
 
             PhaseSlider {
                 horizontal-stretch: 1;
-                label: "Min Threshold";
+                label: "Min Cutoff";
                 value: root.min_threshold;
                 min_val: root.domain_min;
                 max_val: root.max_threshold;
@@ -305,7 +391,7 @@ export component PhaseSearchCard inherits Rectangle {
 
             PhaseSlider {
                 horizontal-stretch: 1;
-                label: "Max Threshold";
+                label: "Max Cutoff";
                 value: root.max_threshold;
                 min_val: root.min_threshold;
                 max_val: root.domain_max;
@@ -314,9 +400,9 @@ export component PhaseSearchCard inherits Rectangle {
             }
         }
 
-        // 5. Visual Controls: Halo Intensity & Radius Ratio
+        // 6. Visual Controls: Halo Intensity & Radius Ratio
         HorizontalLayout {
-            spacing: 8px;
+            spacing: 6px;
 
             PhaseSlider {
                 horizontal-stretch: 1;
@@ -339,14 +425,47 @@ export component PhaseSearchCard inherits Rectangle {
             }
         }
 
-        // 6. Dim Non-Matching Atoms Checkbox
-        CheckBoxRow {
-            text: "Dim non-matching core atoms";
-            check_state_bool: root.dim_non_matching;
-            checked_state_changed(checked) => { root.set_dim_non_matching(checked); }
+        // 7. Dim Non-Matching Atoms Checkbox
+        TouchArea {
+            height: 18px;
+            mouse-cursor: pointer;
+            clicked => { root.set_dim_non_matching(!root.dim_non_matching); }
+
+            HorizontalLayout {
+                spacing: 6px;
+                alignment: start;
+
+                Rectangle {
+                    width: 14px;
+                    height: 14px;
+                    y: (parent.height - self.height) / 2;
+                    border-radius: 3px;
+                    background: root.dim_non_matching ? MaterialPalette.primary : transparent;
+                    border-width: 1.5px;
+                    border-color: root.dim_non_matching ? MaterialPalette.primary : MaterialPalette.outline;
+
+                    if (root.dim_non_matching): MaterialText {
+                        width: 100%;
+                        height: 100%;
+                        text: "✓";
+                        font-size: 10px;
+                        font-weight: 700;
+                        color: MaterialPalette.on_primary;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                }
+
+                MaterialText {
+                    text: "Dim non-matching core atoms";
+                    font-size: 11.5px;
+                    color: MaterialPalette.on_surface;
+                    vertical-alignment: center;
+                }
+            }
         }
 
-        // 7. Mini-Histogram Distribution
+        // 8. Mini-Histogram Distribution
         PhaseMiniHistogram {
             counts: root.histogram_counts;
             min_threshold: root.min_threshold;

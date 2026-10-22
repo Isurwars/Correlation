@@ -18,11 +18,11 @@ export component PhaseSlider inherits Rectangle {
 
     callback value_changed(float);
 
-    height: 38px;
+    height: 30px;
     background: transparent;
 
     VerticalLayout {
-        spacing: 2px;
+        spacing: 1px;
         alignment: center;
 
         // Label and value readout
@@ -30,12 +30,12 @@ export component PhaseSlider inherits Rectangle {
             alignment: space-between;
             MaterialText {
                 text: root.label;
-                font-size: 11px;
+                font-size: 11.5px;
                 color: MaterialPalette.on_surface_variant;
             }
             MaterialText {
                 text: root.display_text;
-                font-size: 11px;
+                font-size: 11.5px;
                 font-weight: 600;
                 color: MaterialPalette.primary;
             }
@@ -43,7 +43,7 @@ export component PhaseSlider inherits Rectangle {
 
         // Track & thumb touch area
         track_box := Rectangle {
-            height: 18px;
+            height: 14px;
             property <float> norm_ratio: (root.max_val > root.min_val)
                 ? Math.max(0.0, Math.min(1.0, (root.value - root.min_val) / (root.max_val - root.min_val)))
                 : 0.0;
@@ -53,8 +53,8 @@ export component PhaseSlider inherits Rectangle {
                 x: 0px;
                 y: (parent.height - self.height) / 2;
                 width: parent.width;
-                height: 4px;
-                border-radius: 2px;
+                height: 3px;
+                border-radius: 1.5px;
                 background: MaterialPalette.surface_container_highest;
 
                 // Active track
@@ -63,21 +63,21 @@ export component PhaseSlider inherits Rectangle {
                     y: 0px;
                     width: Math.max(0px, parent.width * track_box.norm_ratio);
                     height: 100%;
-                    border-radius: 2px;
+                    border-radius: 1.5px;
                     background: MaterialPalette.primary;
                 }
             }
 
             // Thumb
             thumb := Rectangle {
-                property <length> size: slider_touch.has-hover || slider_touch.pressed ? 14px : 12px;
+                property <length> size: slider_touch.has-hover || slider_touch.pressed ? 12px : 10px;
                 width: self.size;
                 height: self.size;
                 border-radius: self.size / 2;
                 x: Math.max(0px, Math.min(parent.width - self.width, parent.width * track_box.norm_ratio - (self.width / 2)));
                 y: (parent.height - self.height) / 2;
                 background: MaterialPalette.primary;
-                border-width: 2px;
+                border-width: 1.5px;
                 border-color: MaterialPalette.surface_container_lowest;
 
                 animate width { duration: 100ms; }

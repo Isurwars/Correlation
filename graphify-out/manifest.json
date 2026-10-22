@@ -370,8 +370,8 @@
     "semantic_hash": ""
   },
   "src/cli/main_cli.cpp": {
-    "mtime": 1792640687.6539195,
-    "ast_hash": "3657ae2ebcc9d3e0fe4cf03f6e79a766",
+    "mtime": 1792641098.668782,
+    "ast_hash": "038248c58bc407a6c42131cb38cda332",
     "semantic_hash": ""
   },
   "src/core/Cell.cpp": {
@@ -2675,13 +2675,13 @@
     "semantic_hash": ""
   },
   "src/plotters/SvgComparisonRenderer.cpp": {
-    "mtime": 1791953693.121503,
-    "ast_hash": "41adac746b1d087a845d6c854a899f45",
+    "mtime": 1792643422.055859,
+    "ast_hash": "3fa01c803c88f1b7a0ddcaf3146b218e",
     "semantic_hash": ""
   },
   "src/plotters/SvgHistogramRenderer.cpp": {
-    "mtime": 1791929830.835548,
-    "ast_hash": "3142990cefced1146d6f8cf7760c66f3",
+    "mtime": 1792643880.0035145,
+    "ast_hash": "5d311ec51fed9a9dc83aaf1415519fcb",
     "semantic_hash": ""
   },
   "tests/unit/app/PlotExportManagerTests.cpp": {

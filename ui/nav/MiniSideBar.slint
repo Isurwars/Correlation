@@ -16,7 +16,9 @@ component RailButton inherits Rectangle {
     in property <bool> enabled: true;
     in property <color> active_bg: MaterialPalette.secondary_container.brighter(35%);
     in property <color> active_fg: MaterialPalette.on_secondary_container;
+    in property <color> inactive_bg: transparent;
     in property <color> inactive_fg: MaterialPalette.on_surface_variant;
+    in property <bool> show_indicator: root.active;
 
     callback clicked();
 
@@ -24,11 +26,12 @@ component RailButton inherits Rectangle {
     height: 40px;
     border-radius: 8px;
     background: !root.enabled ? transparent :
-                root.active ? root.active_bg :
+                root.active ? (touch.has-hover ? root.active_bg.darker(8%) : root.active_bg) :
+                root.inactive_bg != transparent ? (touch.has-hover ? root.inactive_bg.darker(8%) : root.inactive_bg) :
                 touch.has-hover ? MaterialPalette.surface_container_high : transparent;
     animate background { duration: 150ms; }
 
-    if root.active: Rectangle {
+    if root.show_indicator: Rectangle {
         x: -2px;
         y: 8px;
         width: 3px;
@@ -200,7 +203,9 @@ export component MiniSideBar inherits Rectangle {
             active: root.analysis_running;
             active_bg: MaterialPalette.error_container;
             active_fg: MaterialPalette.on_error_container;
-            inactive_fg: (root.file_loaded && !root.has_validation_errors) ? MaterialPalette.run : MaterialPalette.outline;
+            inactive_bg: (root.file_loaded && !root.has_validation_errors) ? MaterialPalette.run : transparent;
+            inactive_fg: (root.file_loaded && !root.has_validation_errors) ? MaterialPalette.on_run : MaterialPalette.outline;
+            show_indicator: false;
             enabled: root.analysis_running || (root.file_loaded && !root.has_validation_errors);
             tooltip: root.analysis_running ? "Cancel Analysis (Esc)\n\n⏹️ Abort the currently executing parallel trajectory analysis." :
                      (!root.file_loaded ? "Run Analysis (Ctrl+R)\n\n⚠️ Load a structure file first before running calculations." :

@@ -358,7 +358,7 @@ export component Structure3DViewport inherits Rectangle {
                 MaterialText {
                     y: (parent.height - self.height) / 2;
                     text: "📁 " + root.file_basename + " (" + root.total_atoms + " atoms)";
-                    font-size: 11px;
+                    font-size: 13px;
                     color: MaterialPalette.on_surface_variant;
                     vertical-alignment: center;
                 }
@@ -397,7 +397,7 @@ export component Structure3DViewport inherits Rectangle {
 
                             MaterialText {
                                 text: root.analysis_running ? "Running..." : "Run Analysis";
-                                font-size: 12px;
+                                font-size: 13px;
                                 font-weight: 600;
                                 color: !run_btn_touch.enabled ? MaterialPalette.outline : MaterialPalette.on_primary;
                                 vertical-alignment: center;
@@ -451,22 +451,22 @@ export component Structure3DViewport inherits Rectangle {
     if (root.file_loaded): Rectangle {
         x: (root.width - self.width) / 2;
         y: root.height - self.height - (root.total_frames > 1 ? 66px : 10px);
-        width: hint_text.preferred-width + 16px;
-        height: 20px;
-        border-radius: 10px;
+        width: hint_text.preferred-width + 20px;
+        height: 24px;
+        border-radius: 12px;
         background: MaterialPalette.surface_container_highest.with_alpha(60%);
 
         hint_text := MaterialText {
             text: "🖱 Left-drag: Orbit  •  Right-drag: Pan  •  Scroll: Zoom";
-            font-size: 10px;
+            font-size: 12px;
             color: MaterialPalette.on_surface_variant.with_alpha(80%);
             horizontal-alignment: center;
             vertical-alignment: center;
         }
     }
 
-    // Floating Viewport Colorbar (bottom-right when phase search is enabled)
-    if (root.phase_enabled): ViewportColorbar {
+    // Floating Viewport Colorbar (bottom-right when halos enabled and panel closed)
+    if (root.phase_enabled && !root.phase_panel_open): ViewportColorbar {
         x: root.width - self.width - 16px;
         y: root.height - self.height - (root.total_frames > 1 ? 66px : 16px);
         descriptor_name: root.phase_descriptor_name;
@@ -475,10 +475,11 @@ export component Structure3DViewport inherits Rectangle {
         colorbar_image: root.phase_colorbar_image;
     }
 
-    // Floating Phase Search Control Card (top-right, collapsible)
+    // Floating Halo Options Control Card (top-right, collapsible)
     if (root.phase_panel_open): PhaseSearchCard {
         x: root.width - self.width - 16px;
-        y: 56px;
+        y: 52px;
+        height: self.preferred-height;
         phase_enabled: root.phase_enabled;
         preset_index: root.phase_preset;
         descriptor_index: root.phase_descriptor;
@@ -493,6 +494,8 @@ export component Structure3DViewport inherits Rectangle {
         histogram_counts: root.phase_histogram_counts;
         matching_atoms: root.phase_matching_atoms;
         total_atoms: root.phase_total_atoms;
+        colorbar_image: root.phase_colorbar_image;
+        descriptor_name: root.phase_descriptor_name;
 
         toggle_enabled(en) => { root.toggle_phase_search(en); }
         set_preset(idx) => { root.set_phase_preset(idx); }

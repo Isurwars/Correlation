@@ -259,10 +259,10 @@ export component TrajectoryPlaybackBar inherits Rectangle {
 
         // Frame Counter Badge
         Rectangle {
-            height: 26px;
+            height: 28px;
             y: (parent.height - self.height) / 2;
             width: counter_layout.preferred-width + 16px;
-            border-radius: 13px;
+            border-radius: 14px;
             background: MaterialPalette.surface_container_high.with_alpha(80%);
 
             counter_layout := HorizontalLayout {
@@ -272,7 +272,7 @@ export component TrajectoryPlaybackBar inherits Rectangle {
 
                 MaterialText {
                     text: (root.current_frame + 1) + " / " + root.total_frames;
-                    font-size: 11px;
+                    font-size: 13px;
                     font-weight: 500;
                     color: MaterialPalette.on_surface_variant;
                     vertical-alignment: center;
@@ -317,7 +317,7 @@ export component TrajectoryPlaybackBar inherits Rectangle {
         // Playback Speed Selector Pill (0.5x, 1x, 2x, 5x)
         speed_btn := TouchArea {
             width: speed_layout.preferred-width + 16px;
-            height: 26px;
+            height: 28px;
             y: (parent.height - self.height) / 2;
             mouse-cursor: pointer;
             accessible-role: button;
@@ -331,7 +331,7 @@ export component TrajectoryPlaybackBar inherits Rectangle {
             Rectangle {
                 width: 100%;
                 height: 100%;
-                border-radius: 13px;
+                border-radius: 14px;
                 background: speed_btn.has-hover ? MaterialPalette.surface_container_high :
                     MaterialPalette.surface_container_high.with_alpha(80%);
                 border-width: 1px;
@@ -347,7 +347,7 @@ export component TrajectoryPlaybackBar inherits Rectangle {
                         text: root.speed_index == 0 ? "0.5x" :
                             root.speed_index == 1 ? "1.0x" :
                             root.speed_index == 2 ? "2.0x" : "5.0x";
-                        font-size: 11px;
+                        font-size: 12.5px;
                         font-weight: 600;
                         color: MaterialPalette.primary;
                         vertical-alignment: center;

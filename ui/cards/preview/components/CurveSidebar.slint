@@ -85,14 +85,15 @@ export component CurveSidebar inherits Horizontal {
                 }
 
                 toggle_all_true_area := TouchArea {
-                    width: 24px;
+                    width: 26px;
                     height: 20px;
                     mouse-cursor: pointer;
                     clicked => { root.toggle_all_curves(true); }
 
                     MaterialText {
                         text: "All";
-                        style: MaterialTypography.label_small;
+                        font-size: 11px;
+                        font-weight: 600;
                         color: MaterialPalette.primary;
                         horizontal-alignment: center;
                         vertical-alignment: center;
@@ -101,20 +102,21 @@ export component CurveSidebar inherits Horizontal {
 
                 MaterialText {
                     text: "/";
-                    style: MaterialTypography.label_small;
+                    font-size: 11px;
                     color: MaterialPalette.outline;
                     vertical-alignment: center;
                 }
 
                 toggle_all_false_area := TouchArea {
-                    width: 32px;
+                    width: 36px;
                     height: 20px;
                     mouse-cursor: pointer;
                     clicked => { root.toggle_all_curves(false); }
 
                     MaterialText {
                         text: "None";
-                        style: MaterialTypography.label_small;
+                        font-size: 11px;
+                        font-weight: 600;
                         color: MaterialPalette.primary;
                         horizontal-alignment: center;
                         vertical-alignment: center;
@@ -138,7 +140,8 @@ export component CurveSidebar inherits Horizontal {
                             padding-left: 6px;
                             MaterialText {
                                 text: "Partials:";
-                                style: MaterialTypography.label_small;
+                                font-size: 11.5px;
+                                font-weight: 600;
                                 color: MaterialPalette.primary;
                             }
                         }
@@ -181,7 +184,7 @@ export component CurveSidebar inherits Horizontal {
                                     MaterialText {
                                         horizontal-stretch: 1;
                                         text: item.label;
-                                        style: (item.label == "Total") ? MaterialTypography.label_medium_prominent : MaterialTypography.body_small;
+                                        style: (item.label == "Total") ? MaterialTypography.label_large : MaterialTypography.body_medium;
                                         color: item.visible ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
                                         overflow: elide;
                                         horizontal-alignment: left;

@@ -16,7 +16,7 @@ export component ViewportColorbar inherits Rectangle {
     in property <image> colorbar_image;
 
     width: 190px;
-    height: 46px;
+    height: 50px;
     border-radius: 12px;
     background: MaterialPalette.surface_container_highest.with_alpha(88%);
     border-width: 1px;
@@ -35,14 +35,14 @@ export component ViewportColorbar inherits Rectangle {
             alignment: space-between;
             MaterialText {
                 text: root.descriptor_name;
-                font-size: 11px;
+                font-size: 12.5px;
                 font-weight: 700;
                 color: MaterialPalette.on_surface;
                 vertical-alignment: center;
             }
             MaterialText {
                 text: "Scalar Halo";
-                font-size: 9px;
+                font-size: 10.5px;
                 color: MaterialPalette.on_surface_variant;
                 vertical-alignment: center;
             }
@@ -68,12 +68,12 @@ export component ViewportColorbar inherits Rectangle {
             alignment: space-between;
             MaterialText {
                 text: "" + (Math.round(root.min_val * 100) / 100);
-                font-size: 9px;
+                font-size: 10.5px;
                 color: MaterialPalette.on_surface_variant;
             }
             MaterialText {
                 text: "" + (Math.round(root.max_val * 100) / 100);
-                font-size: 9px;
+                font-size: 10.5px;
                 color: MaterialPalette.on_surface_variant;
             }
         }
