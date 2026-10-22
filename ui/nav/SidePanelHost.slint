@@ -261,8 +261,10 @@ export component SidePanelHost inherits Vertical {
 
             analysis_options <=> root.analysis_options;
             app_errors: root.app_errors;
+            num_frames: root.file_metadata.num_frames;
             reset_rdf_options => { root.reset_rdf_options(); }
             reset_angle_options => { root.reset_angle_options(); }
+            reset_trajectory_options => { root.reset_trajectory_options(); }
         }
 
         // Panel 2: Advanced Options

@@ -43,11 +43,6 @@ export component SaveExportPanel inherits Rectangle {
         analysis_done: root.analysis_done;
 
         format_options <=> root.export_format_options;
-        export_analyses <=> root.export_analysis_items;
-        export_all_analyses <=> root.export_all_analyses;
-
-        toggle_analysis(id, val) => { root.toggle_export_analysis(id, val); }
-        toggle_all_analyses(val) => { root.toggle_all_export_analyses(val); }
         write_files => { root.write_files(); }
         reset_export_options => { root.reset_export_options(); }
 

@@ -493,6 +493,26 @@ correlation::analysis::BondCutoffMatrix AppController::getBondCutoffs() {
   return bond_cutoff_controller_.getBondCutoffs();
 }
 
+namespace {
+bool isDefaultDisabledCalculator(const correlation::calculators::BaseCalculator *calc) noexcept {
+  if (calc == nullptr) {
+    return false;
+  }
+  const auto name = calc->getName();
+  const auto short_name = calc->getShortName();
+  if (short_name == "RD" || name == "Ring Size Distribution") {
+    return true;
+  }
+  if (short_name == "DAD" || name == "Dihedral Angle Distribution") {
+    return true;
+  }
+  if (name.contains("(GPU)") || short_name.ends_with("_GPU")) {
+    return true;
+  }
+  return false;
+}
+} // namespace
+
 void AppController::populateCalculatorGroups() {
   const auto &calculators =
       ::correlation::calculators::CalculatorFactory::instance().getCalculators();
@@ -513,10 +533,14 @@ void AppController::populateCalculatorGroups() {
   for (const auto &grp_name : group_order) {
     const auto calcs_model = std::make_shared<slint::VectorModel<CalculatorInfo>>();
     for (const auto *calc : groups_map.at(grp_name)) {
-      bool enabled = true; // default on
-      const auto calc_it = opts.active_calculators.find(std::string(calc->getName()));
-      if (calc_it != opts.active_calculators.end()) {
+      bool enabled = !isDefaultDisabledCalculator(calc);
+      if (const auto calc_it = opts.active_calculators.find(std::string(calc->getName()));
+          calc_it != opts.active_calculators.end()) {
         enabled = calc_it->second;
+      } else if (const auto short_it =
+                     opts.active_calculators.find(std::string(calc->getShortName()));
+                 short_it != opts.active_calculators.end()) {
+        enabled = short_it->second;
       }
       CalculatorInfo info;
       info.id = slint::SharedString(calc->getName());

@@ -370,8 +370,8 @@
     "semantic_hash": ""
   },
   "src/cli/main_cli.cpp": {
-    "mtime": 1790477005.7889655,
-    "ast_hash": "b5bdaab566a488ce37ab59f9060e85a3",
+    "mtime": 1792640687.6539195,
+    "ast_hash": "3657ae2ebcc9d3e0fe4cf03f6e79a766",
     "semantic_hash": ""
   },
   "src/core/Cell.cpp": {
@@ -2025,8 +2025,8 @@
     "semantic_hash": ""
   },
   "src/app/core/AppController.cpp": {
-    "mtime": 1792613033.7057664,
-    "ast_hash": "6c7a4cbb44316969d327f15cfdde5142",
+    "mtime": 1792640874.3586688,
+    "ast_hash": "0d02289a5409947bf60e242f7fc2f084",
     "semantic_hash": ""
   },
   "src/app/core/SettingsManager.cpp": {
@@ -2055,13 +2055,13 @@
     "semantic_hash": ""
   },
   "src/app/services/AnalysisRunner.cpp": {
-    "mtime": 1791918984.4013124,
-    "ast_hash": "8a4fe6a5e041eebf62483315d4ac2673",
+    "mtime": 1792640556.661212,
+    "ast_hash": "bb40d0c1b64af291d1bc9e686ccc2221",
     "semantic_hash": ""
   },
   "src/app/services/FileIOHandler.cpp": {
-    "mtime": 1792529151.1107836,
-    "ast_hash": "feebde4de769c9e3d019b075cb2366c3",
+    "mtime": 1792640813.8407207,
+    "ast_hash": "1ee80efd916d8928886ee85d7062b15d",
     "semantic_hash": ""
   },
   "src/app/services/InputValidator.cpp": {

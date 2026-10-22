@@ -45,16 +45,8 @@ void FileIOHandler::executeWriteFiles(const std::string &filepath) {
   opts.use_parquet = format_opts.export_arrow;
   opts.export_images = format_opts.export_images;
 
+  // Export all available distributions without algorithmic filtering
   opts.export_algorithms.clear();
-  const auto export_algos_model = window_.get_export_analysis_items();
-  if (export_algos_model) {
-    for (size_t i = 0; i < export_algos_model->row_count(); ++i) {
-      const auto maybe_item = export_algos_model->row_data(i);
-      if (maybe_item && maybe_item->enabled) {
-        opts.export_algorithms.emplace_back(maybe_item->id.data());
-      }
-    }
-  }
 
   options_ = std::move(opts);
 
@@ -226,6 +218,12 @@ void FileIOHandler::onTrajectoryLoadSuccess(const std::string &filepath) {
     opts.frame_stride = "1";
     opts.max_frame = slint::SharedString(std::to_string(loader_.getFrameCount()));
     window_.set_analysis_options(opts);
+  }
+
+  window_.set_active_panel(1);
+  if (window_.get_left_col_width() < 180.0F) {
+    const float last_w = window_.get_last_col_width();
+    window_.set_left_col_width(last_w >= 180.0F ? last_w : 220.0F);
   }
 
   updateStructure3DView();

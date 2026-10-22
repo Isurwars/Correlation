@@ -91,6 +91,11 @@ void AnalysisRunner::handleAnalysisCompletion(const std::string &err) {
   }
 
   window_.set_preview_active_tab(0);
+  window_.set_active_panel(3);
+  if (window_.get_left_col_width() < 180.0F) {
+    const float last_w = window_.get_last_col_width();
+    window_.set_left_col_width(last_w >= 180.0F ? last_w : 220.0F);
+  }
   controller_.getPlotController()->populatePlotList();
   controller_.populateExportAnalyses();
   if (!dispatcher_.getAvailableHistogramNames().empty()) {

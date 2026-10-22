@@ -53,15 +53,6 @@ export component OperationsPanel inherits Rectangle {
         box_dimensions: root.file_metadata.box_dimensions;
 
         material_type <=> root.material_type;
-        time_step <=> root.analysis_options.time_step;
-        time_step_error: root.app_errors.time_step_error;
-        min_frame <=> root.analysis_options.min_frame;
-        max_frame <=> root.analysis_options.max_frame;
-        min_frame_error: root.app_errors.min_frame_error;
-        max_frame_error: root.app_errors.max_frame_error;
-        frame_stride <=> root.analysis_options.frame_stride;
-        frame_stride_error: root.app_errors.frame_stride_error;
-        reset_trajectory_options => { root.reset_trajectory_options(); }
         reset_material_type => { root.reset_material_type(); }
 
         analysis_running: root.workflow_state.analysis_running;

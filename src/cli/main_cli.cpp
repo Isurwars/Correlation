@@ -23,6 +23,66 @@
 #include <sstream>
 #include <string>
 
+namespace {
+
+[[nodiscard]] bool
+isDefaultDisabledCalculator(const correlation::calculators::BaseCalculator *calc) noexcept {
+  if (calc == nullptr) {
+    return false;
+  }
+  const auto name = calc->getName();
+  const auto short_name = calc->getShortName();
+  if (short_name == "RD" || name == "Ring Size Distribution") {
+    return true;
+  }
+  if (short_name == "DAD" || name == "Dihedral Angle Distribution") {
+    return true;
+  }
+  if (name.contains("(GPU)") || short_name.ends_with("_GPU")) {
+    return true;
+  }
+  return false;
+}
+
+auto trim(std::string str) -> std::string {
+  str.erase(0, str.find_first_not_of(" \t"));
+  str.erase(str.find_last_not_of(" \t") + 1);
+  return str;
+}
+
+auto toLower(std::string str) -> std::string {
+  std::ranges::transform(str, str.begin(), ::tolower);
+  return str;
+}
+
+void populateActiveCalculators(const correlation::cli::CliOptions &cli,
+                               correlation::app::ProgramOptions &opts) {
+  const auto &factory_calcs =
+      correlation::calculators::CalculatorFactory::instance().getCalculators();
+
+  std::set<std::string> disabled_groups;
+  if (!cli.disable_groups.empty()) {
+    std::istringstream str_stream(cli.disable_groups);
+    std::string group_name;
+    while (std::getline(str_stream, group_name, ',')) {
+      group_name = toLower(trim(group_name));
+      if (!group_name.empty()) {
+        disabled_groups.insert(group_name);
+      }
+    }
+  }
+
+  for (const auto &calc : factory_calcs) {
+    std::string const calc_group = toLower(std::string(calc->getGroup()));
+    bool const active = (!disabled_groups.contains(calc_group)) &&
+                        (!isDefaultDisabledCalculator(calc.get())) && calc->isConfigured();
+    opts.active_calculators[std::string(calc->getName())] = active;
+    opts.active_calculators[std::string(calc->getShortName())] = active;
+  }
+}
+
+} // namespace
+
 int main(int argc, char *argv[]) {
   correlation::cli::CliOptions cli;
   if (!correlation::cli::parseArgs(argc, argv, cli)) {
@@ -65,40 +125,8 @@ int main(int argc, char *argv[]) {
   opts.smoothing_kernel = cli.smoothing_kernel;
   opts.material_type = cli.material_type;
 
-  // Helper lambdas for string cleanup
-  auto trim = [](std::string str) {
-    str.erase(0, str.find_first_not_of(" \t"));
-    str.erase(str.find_last_not_of(" \t") + 1);
-    return str;
-  };
-
-  auto to_lower = [](std::string str) {
-    std::ranges::transform(str, str.begin(), ::tolower);
-    return str;
-  };
-
-  const auto &factory_calcs =
-      correlation::calculators::CalculatorFactory::instance().getCalculators();
-
-  // Parse disabled groups
-  std::set<std::string> disabled_groups;
-  if (!cli.disable_groups.empty()) {
-    std::istringstream str_stream(cli.disable_groups);
-    std::string group_name;
-    while (std::getline(str_stream, group_name, ',')) {
-      group_name = to_lower(trim(group_name));
-      if (!group_name.empty()) {
-        disabled_groups.insert(group_name);
-      }
-    }
-  }
-
-  for (const auto &calc : factory_calcs) {
-    std::string const calc_group = to_lower(std::string(calc->getGroup()));
-    bool const active = (!disabled_groups.contains(calc_group)) && calc->isConfigured();
-    opts.active_calculators[std::string(calc->getName())] = active;
-    opts.active_calculators[std::string(calc->getShortName())] = active;
-  }
+  // Initialize active calculators
+  populateActiveCalculators(cli, opts);
 
   // Create decoupled services
   correlation::app::TrajectoryLoader loader;

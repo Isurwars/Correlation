@@ -34,8 +34,10 @@ export component StructurePanel inherits Rectangle {
     // Analysis options and errors
     in-out property <AnalysisOptions> analysis_options;
     in property <AppErrors> app_errors;
+    in property <int> num_frames: 0;
     callback reset_rdf_options();
     callback reset_angle_options();
+    callback reset_trajectory_options();
 
     out property <string> hovered_tooltip_text: card.hovered_tooltip_text;
     out property <length> hovered_x: card.hovered_x;
@@ -78,5 +80,16 @@ export component StructurePanel inherits Rectangle {
         angle_bin_error: root.app_errors.angle_bin_error;
         dihedral_bin_error: root.app_errors.dihedral_bin_error;
         reset_angle_options => { root.reset_angle_options(); }
+
+        num_frames: root.num_frames;
+        time_step <=> root.analysis_options.time_step;
+        time_step_error: root.app_errors.time_step_error;
+        min_frame <=> root.analysis_options.min_frame;
+        max_frame <=> root.analysis_options.max_frame;
+        min_frame_error: root.app_errors.min_frame_error;
+        max_frame_error: root.app_errors.max_frame_error;
+        frame_stride <=> root.analysis_options.frame_stride;
+        frame_stride_error: root.app_errors.frame_stride_error;
+        reset_trajectory_options => { root.reset_trajectory_options(); }
     }
 }

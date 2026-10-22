@@ -2905,8 +2905,8 @@
     "semantic_hash": ""
   },
   "tests/benchmarks/CMakeLists.txt": {
-    "mtime": 1792153083.376526,
-    "ast_hash": "195a69545528612b92f5243c08b0a5ec",
+    "mtime": 1792618723.480926,
+    "ast_hash": "b34cf36805f03453e1809918f38921ea",
     "semantic_hash": ""
   },
   "ui/material/ui/icons/pause.svg": {
@@ -2992,6 +2992,11 @@
   "tests/unit/app/Structure3DControllerPhaseSearchTests.cpp": {
     "mtime": 1792613122.9873405,
     "ast_hash": "831de04dfdc3ec07c27b1eb85e66e9f6",
+    "semantic_hash": ""
+  },
+  "tests/benchmarks/BM_SteinhardtPerAtom.cpp": {
+    "mtime": 1792618785.2608194,
+    "ast_hash": "966f41c4263bcdd4be7bcd4ac7f80883",
     "semantic_hash": ""
   }
 }

@@ -10,7 +10,7 @@ import {
     Vertical,
     MenuItem,
 } from "../../material/material.slint";
-import { ExportFormatOptions, ExportAnalysisItem } from "../../Types.slint";
+import { ExportFormatOptions } from "../../Types.slint";
 import { ExportOptionsCard } from "ExportOptionsCard.slint";
 import { PresetManagerCard } from "../presets/PresetManagerCard.slint";
 
@@ -29,11 +29,7 @@ export component SaveExportPanelCard inherits Rectangle {
         export_images: true,
         use_zip: false,
     };
-    in-out property <[ExportAnalysisItem]> export_analyses: [];
-    in-out property <bool> export_all_analyses: true;
 
-    callback toggle_analysis(string, bool);
-    callback toggle_all_analyses(bool);
     callback write_files();
     callback reset_export_options();
 
@@ -78,11 +74,6 @@ export component SaveExportPanelCard inherits Rectangle {
                 enabled: root.enabled;
                 analysis_done: root.analysis_done;
                 format_options <=> root.format_options;
-                export_analyses <=> root.export_analyses;
-                export_all_analyses <=> root.export_all_analyses;
-
-                toggle_analysis(id, val) => { root.toggle_analysis(id, val); }
-                toggle_all_analyses(val) => { root.toggle_all_analyses(val); }
                 write_files => { root.write_files(); }
                 reset => { root.reset_export_options(); }
             }
