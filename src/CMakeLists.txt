@@ -453,7 +453,16 @@ endif()
 #------------------------------------------------------------------
 correlation_enable_warnings(
     readers_obj calculators_obj writers_obj mlip_obj plotters_obj render3d_obj
-    app_services_obj app_gui_obj cli_parser_obj correlation_lib)
+    app_services_obj cli_parser_obj correlation_lib)
+
+# Suppress shadow warnings on Slint-generated AppWindow C++ code by omitting -Wshadow
+if(TARGET app_gui_obj)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+        target_compile_options(app_gui_obj PRIVATE -Wall -Wextra -Wpedantic)
+    elseif(MSVC)
+        target_compile_options(app_gui_obj PRIVATE /W4)
+    endif()
+endif()
 
 #------------------------------------------------------------------
 # Language & Platform Bindings (Python / WebAssembly)

@@ -10,40 +10,34 @@
       "name": "base",
       "hidden": true,
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build-${presetName}",
+      "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "BUILD_TESTING": "ON"
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
     },
     {
-      "name": "dev-single",
-      "displayName": "Development (Single Precision, GUI, Release)",
-      "description": "Default fast development build with float precision and Slint GUI enabled",
+      "name": "dev",
+      "displayName": "Development (Single Precision, GUI, Tests)",
+      "description": "Default development build with single-precision float, Slint GUI, and tests enabled in build/",
       "inherits": "base",
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "USE_SINGLE_PRECISION": "ON",
-        "BUILD_GUI": "ON"
+        "BUILD_GUI": "ON",
+        "BUILD_TESTING": "ON"
       }
     },
     {
-      "name": "dev-double",
-      "displayName": "Development (Double Precision, GUI, Release)",
-      "description": "High-precision validation build with double precision and Slint GUI enabled",
-      "inherits": "base",
-      "binaryDir": "${sourceDir}/build-double",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release",
-        "USE_SINGLE_PRECISION": "OFF",
-        "BUILD_GUI": "ON"
-      }
+      "name": "dev-single",
+      "displayName": "Development (Single Precision, GUI, Tests) [Alias]",
+      "description": "Backward-compatible alias for dev preset",
+      "inherits": "dev"
     },
     {
       "name": "release",
       "displayName": "Release Packaging Build (No Tests)",
-      "description": "Fully optimized release build with GUI and packaging targets, testing disabled",
+      "description": "Fully optimized release build with Slint GUI and packaging enabled, tests disabled in build-release/",
       "inherits": "base",
       "binaryDir": "${sourceDir}/build-release",
       "cacheVariables": {
@@ -56,12 +50,12 @@
   ],
   "buildPresets": [
     {
-      "name": "dev-single",
-      "configurePreset": "dev-single"
+      "name": "dev",
+      "configurePreset": "dev"
     },
     {
-      "name": "dev-double",
-      "configurePreset": "dev-double"
+      "name": "dev-single",
+      "configurePreset": "dev-single"
     },
     {
       "name": "release",
@@ -70,8 +64,8 @@
   ],
   "testPresets": [
     {
-      "name": "dev-single",
-      "configurePreset": "dev-single",
+      "name": "dev",
+      "configurePreset": "dev",
       "output": {
         "outputOnFailure": true
       },
@@ -80,8 +74,8 @@
       }
     },
     {
-      "name": "dev-double",
-      "configurePreset": "dev-double",
+      "name": "dev-single",
+      "configurePreset": "dev-single",
       "output": {
         "outputOnFailure": true
       },
