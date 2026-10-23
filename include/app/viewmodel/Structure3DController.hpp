@@ -260,6 +260,10 @@ public:
    * @brief Toggles ghosting/dimming of atoms outside threshold boundaries.
    * @param[in] dim True to apply dimming to non-matching atoms.
    */
+  /**
+   * @brief Toggles ghosting/dimming of atoms outside threshold boundaries.
+   * @param[in] dim True to apply dimming to non-matching atoms.
+   */
   void setPhaseDimNonMatching(bool dim);
 
   /**
@@ -267,6 +271,18 @@ public:
    * @return True if dimming is enabled.
    */
   [[nodiscard]] bool isPhaseDimNonMatching() const noexcept;
+
+  /**
+   * @brief Toggles hiding/culling of atoms outside threshold boundaries.
+   * @param[in] hide True to cull non-matching atoms.
+   */
+  void setPhaseHideNonMatching(bool hide);
+
+  /**
+   * @brief Queries whether non-matching atom hiding is enabled.
+   * @return True if hiding is enabled.
+   */
+  [[nodiscard]] bool isPhaseHideNonMatching() const noexcept;
 
   /**
    * @brief Gets snapshot copy of entire phase search configuration bundle.
@@ -287,16 +303,24 @@ public:
   void syncPhaseSearchToWindow();
 
   /**
-   * @brief Accesses reference to the frame Steinhardt LRU cache.
-   * @return SteinhardtLRUCache reference.
+   * @brief Accesses reference to the frame phase descriptors LRU cache.
+   * @return PhaseDescriptorsLRUCache reference.
    */
-  [[nodiscard]] SteinhardtLRUCache &lruCache() noexcept { return lru_cache_; }
+  [[nodiscard]] PhaseDescriptorsLRUCache &lruCache() noexcept { return lru_cache_; }
 
   /**
-   * @brief Accesses const reference to the frame Steinhardt LRU cache.
-   * @return Const SteinhardtLRUCache reference.
+   * @brief Accesses const reference to the frame phase descriptors LRU cache.
+   * @return Const PhaseDescriptorsLRUCache reference.
    */
-  [[nodiscard]] const SteinhardtLRUCache &lruCache() const noexcept { return lru_cache_; }
+  [[nodiscard]] const PhaseDescriptorsLRUCache &lruCache() const noexcept { return lru_cache_; }
+
+  /**
+   * @brief Synchronously computes or retrieves phase descriptors for a frame.
+   * @param[in] frame_index Zero-based frame index.
+   * @return Shared pointer to FramePhaseDescriptors, or nullptr if unavailable.
+   */
+  [[nodiscard]] std::shared_ptr<const FramePhaseDescriptors>
+  getOrComputeDescriptors(std::size_t frame_index);
 
   /**
    * @brief Synchronously computes or retrieves Steinhardt parameters for a frame.
@@ -314,13 +338,12 @@ private:
   void prewarmAdjacentFrames(int64_t target_frame);
   void requestPhaseCalculation(std::size_t frame_index);
   void updateScenePhaseVisuals();
-  void
-  applyPhaseVisualsToScene(render3d::Scene3D &target_scene,
-                           const calculators::SteinhardtCalculator::SteinhardtParams *params) const;
+  void applyPhaseVisualsToScene(render3d::Scene3D &target_scene,
+                                const FramePhaseDescriptors *descriptors) const;
   [[nodiscard]] PhaseHistogram
-  computePhaseHistogram(const calculators::SteinhardtCalculator::SteinhardtParams *params) const;
-  [[nodiscard]] std::shared_ptr<const calculators::SteinhardtCalculator::SteinhardtParams>
-  computeSteinhardtSync(std::size_t frame_index);
+  computePhaseHistogram(const FramePhaseDescriptors *descriptors) const;
+  [[nodiscard]] std::shared_ptr<const FramePhaseDescriptors>
+  computeDescriptorsSync(std::size_t frame_index);
   void dispatchFrame(const uint8_t *pixel_data, uint32_t width, uint32_t height);
 
   ::AppWindow &window_;
@@ -344,7 +367,7 @@ private:
 
   PhaseSearchSettings phase_settings_;
   mutable std::mutex phase_mutex_;
-  SteinhardtLRUCache lru_cache_{32};
+  PhaseDescriptorsLRUCache lru_cache_{32};
   PhaseHistogram latest_histogram_;
   std::condition_variable phase_cv_;
   std::atomic<bool> stop_phase_worker_{false};

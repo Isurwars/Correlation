@@ -184,6 +184,9 @@ void rasterizeSphere(const AtomInstance &atom, const Matrix4<float> &view,
   }
 
   const bool has_halo = atom.halo_color.a > 0 && atom.halo_radius_ratio > 1.0F;
+  if (atom.dim_factor <= 0.0F && !has_halo) {
+    return;
+  }
   const float halo_r = has_halo ? screen_r * atom.halo_radius_ratio : screen_r;
   const float max_screen_r = halo_r;
 

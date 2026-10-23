@@ -9,6 +9,7 @@
 #include "app/viewmodel/Structure3DController.hpp"
 #include "AppWindow.h"
 #include "analysis/StructureAnalyzer.hpp"
+#include "calculators/order/LocalEntropyCalculator.hpp"
 #include "calculators/order/SteinhardtCalculator.hpp"
 #include "physics/PhysicalData.hpp"
 #include "plotters/ColormapService.hpp"
@@ -64,20 +65,23 @@ real_t computeMaxBondDistance(const analysis::BondCutoffMatrix &matrix, std::siz
   return max_dist;
 }
 
-std::span<const real_t>
-extractDescriptorValues(const calculators::SteinhardtCalculator::SteinhardtParams &params,
-                        PhaseDescriptor descriptor) noexcept {
+std::span<const real_t> extractDescriptorValues(const FramePhaseDescriptors &descriptors,
+                                                PhaseDescriptor descriptor) noexcept {
   switch (descriptor) {
   case PhaseDescriptor::Q6Bar:
-    return params.Q6_bar;
+    return descriptors.steinhardt ? descriptors.steinhardt->Q6_bar : std::span<const real_t>{};
   case PhaseDescriptor::Q4Bar:
-    return params.Q4_bar;
+    return descriptors.steinhardt ? descriptors.steinhardt->Q4_bar : std::span<const real_t>{};
   case PhaseDescriptor::Q6:
-    return params.Q6;
+    return descriptors.steinhardt ? descriptors.steinhardt->Q6 : std::span<const real_t>{};
   case PhaseDescriptor::Q4:
-    return params.Q4;
+    return descriptors.steinhardt ? descriptors.steinhardt->Q4 : std::span<const real_t>{};
   case PhaseDescriptor::W6Hat:
-    return params.W6_hat;
+    return descriptors.steinhardt ? descriptors.steinhardt->W6_hat : std::span<const real_t>{};
+  case PhaseDescriptor::W4Hat:
+    return descriptors.steinhardt ? descriptors.steinhardt->W4_hat : std::span<const real_t>{};
+  case PhaseDescriptor::LocalEntropy:
+    return descriptors.local_entropy;
   }
   return {};
 }
@@ -500,6 +504,20 @@ bool Structure3DController::isPhaseDimNonMatching() const noexcept {
   return phase_settings_.dim_non_matching;
 }
 
+void Structure3DController::setPhaseHideNonMatching(bool hide) {
+  {
+    const std::scoped_lock lock(phase_mutex_);
+    phase_settings_.hide_non_matching = hide;
+  }
+  updateScenePhaseVisuals();
+  syncPhaseSearchToWindow();
+}
+
+bool Structure3DController::isPhaseHideNonMatching() const noexcept {
+  const std::scoped_lock lock(phase_mutex_);
+  return phase_settings_.hide_non_matching;
+}
+
 PhaseSearchSettings Structure3DController::phaseSearchSettings() const noexcept {
   const std::scoped_lock lock(phase_mutex_);
   return phase_settings_;
@@ -557,6 +575,7 @@ void Structure3DController::syncPhaseSearchToWindow() {
     window_.set_structure_3d_phase_halo_intensity(settings.halo_intensity);
     window_.set_structure_3d_phase_halo_radius_ratio(settings.halo_radius_ratio);
     window_.set_structure_3d_phase_dim_non_matching(settings.dim_non_matching);
+    window_.set_structure_3d_phase_hide_non_matching(settings.hide_non_matching);
     window_.set_structure_3d_phase_matching_atoms(static_cast<int>(hist.matching_atom_count));
     window_.set_structure_3d_phase_total_atoms(static_cast<int>(hist.total_atom_count));
     window_.set_structure_3d_phase_descriptor_name(
@@ -578,17 +597,23 @@ void Structure3DController::syncPhaseSearchToWindow() {
   }
 }
 
-std::shared_ptr<const calculators::SteinhardtCalculator::SteinhardtParams>
-Structure3DController::getOrComputeSteinhardt(std::size_t frame_index) {
+std::shared_ptr<const FramePhaseDescriptors>
+Structure3DController::getOrComputeDescriptors(std::size_t frame_index) {
   auto cached = lru_cache_.get(frame_index);
   if (cached) {
     return cached;
   }
-  auto computed = computeSteinhardtSync(frame_index);
+  auto computed = computeDescriptorsSync(frame_index);
   if (computed) {
     lru_cache_.put(frame_index, computed);
   }
   return computed;
+}
+
+std::shared_ptr<const calculators::SteinhardtCalculator::SteinhardtParams>
+Structure3DController::getOrComputeSteinhardt(std::size_t frame_index) {
+  const auto descriptors = getOrComputeDescriptors(frame_index);
+  return descriptors ? descriptors->steinhardt : nullptr;
 }
 
 void Structure3DController::requestPhaseCalculation(std::size_t frame_index) {
@@ -601,20 +626,19 @@ void Structure3DController::updateScenePhaseVisuals() {
     return;
   }
   const auto active_frame = streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
-  const auto params = lru_cache_.peek(active_frame);
-  if (phase_settings_.enabled && !params) {
+  const auto descriptors = lru_cache_.peek(active_frame);
+  if (phase_settings_.enabled && !descriptors) {
     requestPhaseCalculation(active_frame);
   }
-  applyPhaseVisualsToScene(*scene_, params.get());
-  latest_histogram_ = computePhaseHistogram(params.get());
+  applyPhaseVisualsToScene(*scene_, descriptors.get());
+  latest_histogram_ = computePhaseHistogram(descriptors.get());
   render_pending_ = true;
 }
 
 void Structure3DController::applyPhaseVisualsToScene(
-    render3d::Scene3D &target_scene,
-    const calculators::SteinhardtCalculator::SteinhardtParams *params) const {
+    render3d::Scene3D &target_scene, const FramePhaseDescriptors *descriptors) const {
   auto &atoms = target_scene.atoms();
-  if (!phase_settings_.enabled || params == nullptr) {
+  if (!phase_settings_.enabled || descriptors == nullptr) {
     for (auto &atom : atoms) {
       atom.halo_color = render3d::RgbaColor{.r = 0, .g = 0, .b = 0, .a = 0};
       atom.dim_factor = 1.0F;
@@ -622,7 +646,7 @@ void Structure3DController::applyPhaseVisualsToScene(
     return;
   }
 
-  const auto values = extractDescriptorValues(*params, phase_settings_.descriptor);
+  const auto values = extractDescriptorValues(*descriptors, phase_settings_.descriptor);
   if (values.size() != atoms.size()) {
     return;
   }
@@ -650,13 +674,17 @@ void Structure3DController::applyPhaseVisualsToScene(
       atoms[i].dim_factor = 1.0F;
     } else {
       atoms[i].halo_color = render3d::RgbaColor{.r = 0, .g = 0, .b = 0, .a = 0};
-      atoms[i].dim_factor = phase_settings_.dim_non_matching ? phase_settings_.dim_factor : 1.0F;
+      if (phase_settings_.hide_non_matching) {
+        atoms[i].dim_factor = 0.0F;
+      } else {
+        atoms[i].dim_factor = phase_settings_.dim_non_matching ? phase_settings_.dim_factor : 1.0F;
+      }
     }
   }
 }
 
-PhaseHistogram Structure3DController::computePhaseHistogram(
-    const calculators::SteinhardtCalculator::SteinhardtParams *params) const {
+PhaseHistogram
+Structure3DController::computePhaseHistogram(const FramePhaseDescriptors *descriptors) const {
   PhaseHistogram hist;
   constexpr std::size_t K_BIN_COUNT = 50;
   hist.counts.assign(K_BIN_COUNT, 0);
@@ -671,11 +699,11 @@ PhaseHistogram Structure3DController::computePhaseHistogram(
     hist.bin_centers[i] = domain_min + (static_cast<float>(i) + 0.5F) * hist.bin_width;
   }
 
-  if (params == nullptr) {
+  if (descriptors == nullptr) {
     return hist;
   }
 
-  const auto values = extractDescriptorValues(*params, phase_settings_.descriptor);
+  const auto values = extractDescriptorValues(*descriptors, phase_settings_.descriptor);
   hist.total_atom_count = static_cast<uint32_t>(values.size());
 
   const float min_thresh = phase_settings_.min_threshold;
@@ -695,8 +723,8 @@ PhaseHistogram Structure3DController::computePhaseHistogram(
   return hist;
 }
 
-std::shared_ptr<const calculators::SteinhardtCalculator::SteinhardtParams>
-Structure3DController::computeSteinhardtSync(std::size_t frame_index) {
+std::shared_ptr<const FramePhaseDescriptors>
+Structure3DController::computeDescriptorsSync(std::size_t frame_index) {
   core::Cell target_cell;
   analysis::BondCutoffMatrix cutoffs;
   {
@@ -728,9 +756,16 @@ Structure3DController::computeSteinhardtSync(std::size_t frame_index) {
   const real_t max_dist = computeMaxBondDistance(cutoffs, target_cell.elements().size());
   try {
     const analysis::StructureAnalyzer analyzer(target_cell, max_dist, cutoffs, false);
-    auto params = calculators::SteinhardtCalculator::calculatePerAtom(target_cell, &analyzer);
-    return std::make_shared<const calculators::SteinhardtCalculator::SteinhardtParams>(
-        std::move(params));
+    auto steinhardt_params =
+        calculators::SteinhardtCalculator::calculatePerAtom(target_cell, &analyzer);
+    auto lef_values = calculators::LocalEntropyCalculator::calculatePerAtom(target_cell, &analyzer);
+
+    auto descriptors = std::make_shared<FramePhaseDescriptors>();
+    descriptors->steinhardt =
+        std::make_shared<const calculators::SteinhardtCalculator::SteinhardtParams>(
+            std::move(steinhardt_params));
+    descriptors->local_entropy = std::move(lef_values);
+    return descriptors;
   } catch (const std::exception &) {
     return nullptr;
   }
@@ -752,15 +787,15 @@ int64_t Structure3DController::waitForNextPhaseFrame() {
 
 void Structure3DController::processTargetPhaseFrame(int64_t target_frame) {
   const auto frame_idx = static_cast<std::size_t>(target_frame);
-  auto params = lru_cache_.get(frame_idx);
-  if (!params) {
-    params = computeSteinhardtSync(frame_idx);
-    if (params) {
-      lru_cache_.put(frame_idx, params);
+  auto descriptors = lru_cache_.get(frame_idx);
+  if (!descriptors) {
+    descriptors = computeDescriptorsSync(frame_idx);
+    if (descriptors) {
+      lru_cache_.put(frame_idx, descriptors);
     }
   }
 
-  if (!params) {
+  if (!descriptors) {
     return;
   }
 
@@ -769,8 +804,8 @@ void Structure3DController::processTargetPhaseFrame(int64_t target_frame) {
     const std::scoped_lock lock(phase_mutex_, mutex_);
     const auto active_frame = streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
     if (active_frame == frame_idx && scene_ != nullptr) {
-      applyPhaseVisualsToScene(*scene_, params.get());
-      latest_histogram_ = computePhaseHistogram(params.get());
+      applyPhaseVisualsToScene(*scene_, descriptors.get());
+      latest_histogram_ = computePhaseHistogram(descriptors.get());
       render_pending_ = true;
       need_render = true;
     }
@@ -797,9 +832,9 @@ void Structure3DController::prewarmAdjacentFrames(int64_t target_frame) {
     if (std::cmp_greater_equal(candidate, 0) && std::cmp_less(candidate, total_frames)) {
       const auto cand_idx = static_cast<std::size_t>(candidate);
       if (!lru_cache_.contains(cand_idx)) {
-        auto pre_params = computeSteinhardtSync(cand_idx);
-        if (pre_params) {
-          lru_cache_.put(cand_idx, std::move(pre_params));
+        auto pre_descriptors = computeDescriptorsSync(cand_idx);
+        if (pre_descriptors) {
+          lru_cache_.put(cand_idx, std::move(pre_descriptors));
         }
       }
     }

@@ -19,28 +19,38 @@
 namespace correlation::app {
 
 /**
- * @class SteinhardtLRUCache
- * @brief Thread-safe LRU cache storing per-atom Steinhardt parameters for up to N trajectory
+ * @struct FramePhaseDescriptors
+ * @brief Unified container holding computed per-atom phase order parameters for a frame.
+ */
+struct FramePhaseDescriptors {
+  std::shared_ptr<const calculators::SteinhardtCalculator::SteinhardtParams> steinhardt;
+  std::vector<real_t> local_entropy;
+};
+
+/**
+ * @class ThreadSafeLRUCache
+ * @brief Thread-safe LRU cache storing per-atom parameters or descriptors for up to N trajectory
  * frames.
  *
  * Utilizes std::shared_mutex to permit concurrent read queries while synchronizing LRU mutations
  * and evictions under write locks.
  */
-class SteinhardtLRUCache {
+template <typename ValueType = calculators::SteinhardtCalculator::SteinhardtParams>
+class ThreadSafeLRUCache {
 public:
-  using ParamsPtr = std::shared_ptr<const calculators::SteinhardtCalculator::SteinhardtParams>;
+  using ParamsPtr = std::shared_ptr<const ValueType>;
 
   /**
    * @brief Constructs cache with specified maximum capacity.
    * @param[in] max_capacity Maximum number of frames cached simultaneously (default 32).
    */
-  explicit SteinhardtLRUCache(std::size_t max_capacity = 32) noexcept : capacity_(max_capacity) {}
+  explicit ThreadSafeLRUCache(std::size_t max_capacity = 32) noexcept : capacity_(max_capacity) {}
 
-  ~SteinhardtLRUCache() = default;
-  SteinhardtLRUCache(const SteinhardtLRUCache &) = delete;
-  SteinhardtLRUCache &operator=(const SteinhardtLRUCache &) = delete;
-  SteinhardtLRUCache(SteinhardtLRUCache &&) noexcept = delete;
-  SteinhardtLRUCache &operator=(SteinhardtLRUCache &&) noexcept = delete;
+  ~ThreadSafeLRUCache() = default;
+  ThreadSafeLRUCache(const ThreadSafeLRUCache &) = delete;
+  ThreadSafeLRUCache &operator=(const ThreadSafeLRUCache &) = delete;
+  ThreadSafeLRUCache(ThreadSafeLRUCache &&) noexcept = delete;
+  ThreadSafeLRUCache &operator=(ThreadSafeLRUCache &&) noexcept = delete;
 
   /**
    * @brief Retrieves cached parameters and marks frame as most recently used.
@@ -74,9 +84,9 @@ public:
   }
 
   /**
-   * @brief Inserts or updates cached Steinhardt parameters for a frame.
+   * @brief Inserts or updates cached parameters for a frame.
    * @param[in] frame_index Trajectory frame index.
-   * @param[in] params Computed Steinhardt parameters.
+   * @param[in] params Computed parameters.
    */
   void put(std::size_t frame_index, ParamsPtr params) {
     if (!params) {
@@ -150,5 +160,8 @@ private:
   std::list<std::size_t> lru_order_;
   std::unordered_map<std::size_t, CacheEntry> map_;
 };
+
+using SteinhardtLRUCache = ThreadSafeLRUCache<calculators::SteinhardtCalculator::SteinhardtParams>;
+using PhaseDescriptorsLRUCache = ThreadSafeLRUCache<FramePhaseDescriptors>;
 
 } // namespace correlation::app

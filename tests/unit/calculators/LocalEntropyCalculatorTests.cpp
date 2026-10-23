@@ -165,5 +165,30 @@ TEST_F(LocalEntropyCalculatorTests, WorksWithDefaultBondCutoffsOrNullptr) {
   EXPECT_NEAR(entropy_null, -6.15, 1e-4);
 }
 
+TEST_F(LocalEntropyCalculatorTests, CalculatePerAtom) {
+  correlation::core::Cell cell_sc({12.0, 12.0, 12.0, 90.0, 90.0, 90.0});
+  for (int i = 0; i < 3; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      for (int k = 0; k < 3; ++k) {
+        cell_sc.addAtom("Ar", {static_cast<real_t>(i * 4.0), static_cast<real_t>(j * 4.0),
+                               static_cast<real_t>(k * 4.0)});
+      }
+    }
+  }
+
+  const auto per_atom = correlation::calculators::LocalEntropyCalculator::calculatePerAtom(
+      cell_sc, nullptr, {.cutoff = 6.0, .sigma = 0.2});
+
+  ASSERT_EQ(per_atom.size(), 27UL);
+  for (const auto val : per_atom) {
+    EXPECT_NEAR(val, -6.15, 0.05);
+  }
+
+  correlation::core::Cell const empty_cell;
+  const auto empty_res = correlation::calculators::LocalEntropyCalculator::calculatePerAtom(
+      empty_cell, nullptr, {.cutoff = 6.0, .sigma = 0.2});
+  EXPECT_TRUE(empty_res.empty());
+}
+
 } // namespace
 } // namespace correlation::analysis

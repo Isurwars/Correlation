@@ -31,6 +31,7 @@ export component Structure3DViewport inherits Rectangle {
     in property <float> phase_halo_intensity: 0.85;
     in property <float> phase_halo_radius_ratio: 1.35;
     in property <bool> phase_dim_non_matching: false;
+    in property <bool> phase_hide_non_matching: false;
     in property <[float]> phase_histogram_counts: [];
     in property <int> phase_matching_atoms: 0;
     in property <int> phase_total_atoms: 0;
@@ -45,6 +46,7 @@ export component Structure3DViewport inherits Rectangle {
     callback set_phase_intensity(float);
     callback set_phase_radius_ratio(float);
     callback set_phase_dim_non_matching(bool);
+    callback set_phase_hide_non_matching(bool);
 
     // Workflow properties & callbacks
     in property <bool> file_loaded: false;
@@ -491,6 +493,7 @@ export component Structure3DViewport inherits Rectangle {
         halo_intensity: root.phase_halo_intensity;
         halo_radius_ratio: root.phase_halo_radius_ratio;
         dim_non_matching: root.phase_dim_non_matching;
+        hide_non_matching: root.phase_hide_non_matching;
         histogram_counts: root.phase_histogram_counts;
         matching_atoms: root.phase_matching_atoms;
         total_atoms: root.phase_total_atoms;
@@ -505,6 +508,7 @@ export component Structure3DViewport inherits Rectangle {
         set_intensity(val) => { root.set_phase_intensity(val); }
         set_radius_ratio(val) => { root.set_phase_radius_ratio(val); }
         set_dim_non_matching(dim) => { root.set_phase_dim_non_matching(dim); }
+        set_hide_non_matching(hide) => { root.set_phase_hide_non_matching(hide); }
         close => { root.phase_panel_open = false; }
     }
 }

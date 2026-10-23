@@ -162,6 +162,8 @@ TEST(PhaseSearchTypesTests, CanonicalPresetConfigurations) {
 TEST(PhaseSearchTypesTests, StringConversionsAndDomains) {
   EXPECT_EQ(descriptorToString(PhaseDescriptor::Q6Bar), "q̄₆");
   EXPECT_EQ(descriptorToString(PhaseDescriptor::W6Hat), "ŵ₆");
+  EXPECT_EQ(descriptorToString(PhaseDescriptor::W4Hat), "ŵ₄");
+  EXPECT_EQ(descriptorToString(PhaseDescriptor::LocalEntropy), "s₂ (LEF)");
 
   EXPECT_EQ(presetToString(CrystalPreset::FCC), "FCC");
   EXPECT_EQ(presetToString(CrystalPreset::Icosahedral), "Icosahedral");
@@ -173,6 +175,30 @@ TEST(PhaseSearchTypesTests, StringConversionsAndDomains) {
   const auto [w_min, w_max] = getDescriptorDomain(PhaseDescriptor::W6Hat);
   EXPECT_FLOAT_EQ(w_min, -0.2F);
   EXPECT_FLOAT_EQ(w_max, 0.2F);
+
+  const auto [w4_min, w4_max] = getDescriptorDomain(PhaseDescriptor::W4Hat);
+  EXPECT_FLOAT_EQ(w4_min, -0.2F);
+  EXPECT_FLOAT_EQ(w4_max, 0.2F);
+
+  const auto [s2_min, s2_max] = getDescriptorDomain(PhaseDescriptor::LocalEntropy);
+  EXPECT_FLOAT_EQ(s2_min, -15.0F);
+  EXPECT_FLOAT_EQ(s2_max, 0.0F);
+}
+
+TEST(PhaseDescriptorsLRUCacheTests, StoreAndRetrieveUnifiedDescriptors) {
+  PhaseDescriptorsLRUCache cache(4);
+  auto desc = std::make_shared<FramePhaseDescriptors>();
+  desc->steinhardt = makeDummyParams(10, 0.55);
+  desc->local_entropy = {-6.15, -6.10, -6.20};
+
+  cache.put(0, desc);
+  EXPECT_TRUE(cache.contains(0));
+  const auto retrieved = cache.get(0);
+  ASSERT_NE(retrieved, nullptr);
+  ASSERT_NE(retrieved->steinhardt, nullptr);
+  EXPECT_EQ(retrieved->steinhardt->Q6_bar.size(), 10UL);
+  EXPECT_EQ(retrieved->local_entropy.size(), 3UL);
+  EXPECT_NEAR(retrieved->local_entropy[0], -6.15, 1e-5);
 }
 
 } // namespace

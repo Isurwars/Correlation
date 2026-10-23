@@ -24,6 +24,7 @@ export component PhaseSearchCard inherits Rectangle {
     in property <float> halo_intensity: 0.85;
     in property <float> halo_radius_ratio: 1.35;
     in property <bool> dim_non_matching: false;
+    in property <bool> hide_non_matching: false;
     in property <[float]> histogram_counts: [];
     in property <int> matching_atoms: 0;
     in property <int> total_atoms: 0;
@@ -38,6 +39,7 @@ export component PhaseSearchCard inherits Rectangle {
     callback set_intensity(float);
     callback set_radius_ratio(float);
     callback set_dim_non_matching(bool);
+    callback set_hide_non_matching(bool);
     callback close();
 
     width: 330px;
@@ -249,7 +251,7 @@ export component PhaseSearchCard inherits Rectangle {
                 HorizontalLayout {
                     spacing: 2px;
                     height: 22px;
-                    property <[string]> desc_labels: ["q̄₆", "q̄₄", "q₆", "q₄", "ŵ₆"];
+                    property <[string]> desc_labels: ["q̄₆", "q̄₄", "q₆", "q₄", "ŵ₆", "ŵ₄", "s₂"];
 
                     for d_label[d_idx] in self.desc_labels: TouchArea {
                         horizontal-stretch: 1;
@@ -458,6 +460,46 @@ export component PhaseSearchCard inherits Rectangle {
 
                 MaterialText {
                     text: "Dim non-matching core atoms";
+                    font-size: 11.5px;
+                    color: MaterialPalette.on_surface;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        // 8. Hide Non-Matching Atoms Checkbox
+        TouchArea {
+            height: 18px;
+            mouse-cursor: pointer;
+            clicked => { root.set_hide_non_matching(!root.hide_non_matching); }
+
+            HorizontalLayout {
+                spacing: 6px;
+                alignment: start;
+
+                Rectangle {
+                    width: 14px;
+                    height: 14px;
+                    y: (parent.height - self.height) / 2;
+                    border-radius: 3px;
+                    background: root.hide_non_matching ? MaterialPalette.primary : transparent;
+                    border-width: 1.5px;
+                    border-color: root.hide_non_matching ? MaterialPalette.primary : MaterialPalette.outline;
+
+                    if (root.hide_non_matching): MaterialText {
+                        width: 100%;
+                        height: 100%;
+                        text: "✓";
+                        font-size: 10px;
+                        font-weight: 700;
+                        color: MaterialPalette.on_primary;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                }
+
+                MaterialText {
+                    text: "Hide non-matching core atoms";
                     font-size: 11.5px;
                     color: MaterialPalette.on_surface;
                     vertical-alignment: center;

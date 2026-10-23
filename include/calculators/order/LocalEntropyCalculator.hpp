@@ -44,6 +44,19 @@ public:
                       const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
+   * @brief Computes the per-atom Local Entropic Fingerprint for all atoms in the cell.
+   *
+   * @param[in] cell The periodic cell.
+   * @param[in] neighbors Optional structural analyzer (for backwards compatibility).
+   * @param[in] params Integration cutoff and Gaussian smoothing parameters.
+   * @return A vector of local entropy values per atom.
+   */
+  [[nodiscard]] static std::vector<real_t>
+  calculatePerAtom(const correlation::core::Cell &cell,
+                   const correlation::analysis::StructureAnalyzer *neighbors = nullptr,
+                   LocalEntropyParams params = {});
+
+  /**
    * @brief Computes the Local Entropic Fingerprint for all atoms in the cell.
    *
    * @param[in] cell The periodic cell.

@@ -337,10 +337,10 @@ void LocalEntropyCalculator::calculateFrame(
   dists.addHistogram("LEF", std::move(hist));
 }
 
-correlation::analysis::Histogram
-LocalEntropyCalculator::calculate(const correlation::core::Cell &cell,
-                                  const correlation::analysis::StructureAnalyzer *neighbors,
-                                  LocalEntropyParams params) {
+std::vector<real_t>
+LocalEntropyCalculator::calculatePerAtom(const correlation::core::Cell &cell,
+                                         const correlation::analysis::StructureAnalyzer *neighbors,
+                                         LocalEntropyParams params) {
   const auto &atoms = cell.atoms();
   size_t const num_atoms = atoms.size();
   if (num_atoms == 0) {
@@ -359,7 +359,6 @@ LocalEntropyCalculator::calculate(const correlation::core::Cell &cell,
 
   tbb::enumerable_thread_specific<ThreadLocalScratch> thread_scratch;
 
-  // Compute local entropy for all atoms
   std::vector<real_t> entropies(num_atoms, 0.0);
   tbb::parallel_for(
       tbb::blocked_range<size_t>(0, num_atoms), [&](const tbb::blocked_range<size_t> &range) {
@@ -369,6 +368,24 @@ LocalEntropyCalculator::calculate(const correlation::core::Cell &cell,
           entropies[i] = computeSingleAtomEntropy(scratch.distances, cell, params);
         }
       });
+
+  return entropies;
+}
+
+correlation::analysis::Histogram
+LocalEntropyCalculator::calculate(const correlation::core::Cell &cell,
+                                  const correlation::analysis::StructureAnalyzer *neighbors,
+                                  LocalEntropyParams params) {
+  const auto &atoms = cell.atoms();
+  size_t const num_atoms = atoms.size();
+  if (num_atoms == 0) {
+    return {};
+  }
+
+  const std::vector<real_t> entropies = calculatePerAtom(cell, neighbors, params);
+  if (entropies.empty()) {
+    return {};
+  }
 
   // Setup histogram configuration
   size_t const bins = 150;
@@ -400,7 +417,7 @@ LocalEntropyCalculator::calculate(const correlation::core::Cell &cell,
     real_t num_atoms_f = 0.0;
   };
 
-  tbb::enumerable_thread_specific<ThreadLocalHist> ets([&]() {
+  tbb::enumerable_thread_specific<ThreadLocalHist> ets([&] {
     ThreadLocalHist local;
     initHistogramMap(local.partials, element_symbols, bins);
     return local;

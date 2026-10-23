@@ -21,11 +21,13 @@ namespace correlation::app {
  * @brief Bond-orientational order parameter descriptors available for phase filtering.
  */
 enum class PhaseDescriptor : std::uint8_t {
-  Q6Bar, ///< Lechner-Dellago averaged q̄₆ (primary crystal symmetry descriptor).
-  Q4Bar, ///< Lechner-Dellago averaged q̄₄.
-  Q6,    ///< Standard single-atom q₆.
-  Q4,    ///< Standard single-atom q₄.
-  W6Hat, ///< Normalized third-order invariant ŵ₆ (distinguishes icosahedral symmetry).
+  Q6Bar,        ///< Lechner-Dellago averaged q̄₆ (primary crystal symmetry descriptor).
+  Q4Bar,        ///< Lechner-Dellago averaged q̄₄.
+  Q6,           ///< Standard single-atom q₆.
+  Q4,           ///< Standard single-atom q₄.
+  W6Hat,        ///< Normalized third-order invariant ŵ₆ (distinguishes icosahedral symmetry).
+  W4Hat,        ///< Normalized third-order invariant ŵ₄.
+  LocalEntropy, ///< Local Entropic Fingerprint (s_i / k_B).
 };
 
 /**
@@ -68,6 +70,7 @@ struct PhaseSearchSettings {
   float halo_intensity{0.85F};    ///< Alpha glow strength [0.1, 1.0].
   float halo_radius_ratio{1.35F}; ///< Outer glow radius multiplier.
   bool dim_non_matching{false};   ///< Dim core atoms outside threshold.
+  bool hide_non_matching{false};  ///< Hide/cull core atoms outside threshold.
   float dim_factor{0.3F};         ///< Luminance factor for non-matches.
 };
 
@@ -102,6 +105,10 @@ struct PhaseHistogram {
     return "q₄";
   case PhaseDescriptor::W6Hat:
     return "ŵ₆";
+  case PhaseDescriptor::W4Hat:
+    return "ŵ₄";
+  case PhaseDescriptor::LocalEntropy:
+    return "s₂ (LEF)";
   }
   return "Unknown";
 }
@@ -165,7 +172,10 @@ struct PhaseHistogram {
 getDescriptorDomain(PhaseDescriptor descriptor) noexcept {
   switch (descriptor) {
   case PhaseDescriptor::W6Hat:
+  case PhaseDescriptor::W4Hat:
     return {-0.2F, 0.2F};
+  case PhaseDescriptor::LocalEntropy:
+    return {-15.0F, 0.0F};
   case PhaseDescriptor::Q6Bar:
   case PhaseDescriptor::Q4Bar:
   case PhaseDescriptor::Q6:

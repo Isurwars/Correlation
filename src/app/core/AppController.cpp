@@ -254,6 +254,9 @@ void AppController::registerStructure3DCallbacks() {
 
   window_.on_set_phase_dim_non_matching_3d(
       [this](bool dim) { structure_3d_controller_->setPhaseDimNonMatching(dim); });
+
+  window_.on_set_phase_hide_non_matching_3d(
+      [this](bool hide) { structure_3d_controller_->setPhaseHideNonMatching(hide); });
 }
 
 void AppController::registerPresetAndOptionCallbacks() {
