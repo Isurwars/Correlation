@@ -153,6 +153,11 @@ TEST(PhaseSearchTypesTests, CanonicalPresetConfigurations) {
   EXPECT_FLOAT_EQ(ico_cfg.min_threshold, -0.17F);
   EXPECT_FLOAT_EQ(ico_cfg.max_threshold, -0.14F);
 
+  const auto dia_cfg = getPresetConfig(CrystalPreset::Diamond);
+  EXPECT_EQ(dia_cfg.descriptor, PhaseDescriptor::QTet);
+  EXPECT_FLOAT_EQ(dia_cfg.min_threshold, 0.85F);
+  EXPECT_FLOAT_EQ(dia_cfg.max_threshold, 1.00F);
+
   const auto custom_cfg = getPresetConfig(CrystalPreset::Custom);
   EXPECT_EQ(custom_cfg.descriptor, PhaseDescriptor::Q6Bar);
   EXPECT_FLOAT_EQ(custom_cfg.min_threshold, 0.0F);
@@ -164,10 +169,12 @@ TEST(PhaseSearchTypesTests, StringConversionsAndDomains) {
   EXPECT_EQ(descriptorToString(PhaseDescriptor::W6Hat), "ŵ₆");
   EXPECT_EQ(descriptorToString(PhaseDescriptor::W4Hat), "ŵ₄");
   EXPECT_EQ(descriptorToString(PhaseDescriptor::LocalEntropy), "s₂ (LEF)");
-  EXPECT_EQ(descriptorToString(PhaseDescriptor::TWF_Nconn), "N_conn (TWF)");
+  EXPECT_EQ(descriptorToString(PhaseDescriptor::TwfNconn), "N_conn (TWF)");
+  EXPECT_EQ(descriptorToString(PhaseDescriptor::QTet), "q_tet (Tetrahedral)");
 
   EXPECT_EQ(presetToString(CrystalPreset::FCC), "FCC");
   EXPECT_EQ(presetToString(CrystalPreset::Icosahedral), "Icosahedral");
+  EXPECT_EQ(presetToString(CrystalPreset::Diamond), "Diamond");
 
   const auto [q_min, q_max] = getDescriptorDomain(PhaseDescriptor::Q6Bar);
   EXPECT_FLOAT_EQ(q_min, 0.0F);
@@ -185,17 +192,22 @@ TEST(PhaseSearchTypesTests, StringConversionsAndDomains) {
   EXPECT_FLOAT_EQ(s2_min, -15.0F);
   EXPECT_FLOAT_EQ(s2_max, 0.0F);
 
-  const auto [nconn_min, nconn_max] = getDescriptorDomain(PhaseDescriptor::TWF_Nconn);
+  const auto [nconn_min, nconn_max] = getDescriptorDomain(PhaseDescriptor::TwfNconn);
   EXPECT_FLOAT_EQ(nconn_min, 0.0F);
   EXPECT_FLOAT_EQ(nconn_max, 16.0F);
+
+  const auto [qtet_min, qtet_max] = getDescriptorDomain(PhaseDescriptor::QTet);
+  EXPECT_FLOAT_EQ(qtet_min, 0.0F);
+  EXPECT_FLOAT_EQ(qtet_max, 1.0F);
 }
 
 TEST(PhaseDescriptorsLRUCacheTests, StoreAndRetrieveUnifiedDescriptors) {
   PhaseDescriptorsLRUCache cache(4);
-  auto desc = std::make_shared<FramePhaseDescriptors>();
+  const auto desc = std::make_shared<FramePhaseDescriptors>();
   desc->steinhardt = makeDummyParams(10, 0.55);
   desc->local_entropy = {-6.15, -6.10, -6.20};
   desc->twf_nconn = {12.0, 11.0, 12.0};
+  desc->q_tet = {0.99, 0.98, 1.00};
 
   cache.put(0, desc);
   EXPECT_TRUE(cache.contains(0));

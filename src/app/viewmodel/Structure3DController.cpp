@@ -12,6 +12,7 @@
 #include "calculators/order/LocalEntropyCalculator.hpp"
 #include "calculators/order/SteinhardtCalculator.hpp"
 #include "calculators/order/TenWoldeFrenkelCalculator.hpp"
+#include "calculators/order/TetrahedralCalculator.hpp"
 #include "physics/PhysicalData.hpp"
 #include "plotters/ColormapService.hpp"
 #include "render3d/RenderEngineFactory.hpp"
@@ -83,8 +84,10 @@ std::span<const real_t> extractDescriptorValues(const FramePhaseDescriptors &des
     return descriptors.steinhardt ? descriptors.steinhardt->W4_hat : std::span<const real_t>{};
   case PhaseDescriptor::LocalEntropy:
     return descriptors.local_entropy;
-  case PhaseDescriptor::TWF_Nconn:
+  case PhaseDescriptor::TwfNconn:
     return descriptors.twf_nconn;
+  case PhaseDescriptor::QTet:
+    return descriptors.q_tet;
   }
   return {};
 }
@@ -771,6 +774,8 @@ Structure3DController::computeDescriptorsSync(std::size_t frame_index) {
     const calculators::TenWoldeFrenkelParams twf_params{};
     auto twf_values = calculators::TenWoldeFrenkelCalculator::calculatePerAtom(
         target_cell, &analyzer, twf_params, &steinhardt_params);
+    auto q_tet_values =
+        calculators::TetrahedralCalculator::calculatePerAtom(target_cell, &analyzer);
 
     auto descriptors = std::make_shared<FramePhaseDescriptors>();
     descriptors->steinhardt =
@@ -778,6 +783,7 @@ Structure3DController::computeDescriptorsSync(std::size_t frame_index) {
             std::move(steinhardt_params));
     descriptors->local_entropy = std::move(lef_values);
     descriptors->twf_nconn = std::move(twf_values);
+    descriptors->q_tet = std::move(q_tet_values);
     return descriptors;
   } catch (const std::exception &) {
     return nullptr;

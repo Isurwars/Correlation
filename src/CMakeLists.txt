@@ -66,6 +66,7 @@ add_library(calculators_obj OBJECT
     calculators/order/LocalEntropyCalculator.cpp
     calculators/order/SteinhardtCalculator.cpp
     calculators/order/TenWoldeFrenkelCalculator.cpp
+    calculators/order/TetrahedralCalculator.cpp
 
     # Temporal / dynamic calculators
     calculators/temporal/MSDCalculator.cpp

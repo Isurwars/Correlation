@@ -26,6 +26,7 @@ struct FramePhaseDescriptors {
   std::shared_ptr<const calculators::SteinhardtCalculator::SteinhardtParams> steinhardt;
   std::vector<real_t> local_entropy;
   std::vector<real_t> twf_nconn;
+  std::vector<real_t> q_tet;
 };
 
 /**

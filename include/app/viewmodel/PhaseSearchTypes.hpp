@@ -28,7 +28,8 @@ enum class PhaseDescriptor : std::uint8_t {
   W6Hat,        ///< Normalized third-order invariant ŵ₆ (distinguishes icosahedral symmetry).
   W4Hat,        ///< Normalized third-order invariant ŵ₄.
   LocalEntropy, ///< Local Entropic Fingerprint (s_i / k_B).
-  TWF_Nconn,    ///< Ten Wolde-Frenkel coherent bond count (N_conn).
+  TwfNconn,     ///< Ten Wolde-Frenkel coherent bond count (N_conn).
+  QTet,         ///< Chau-Hardwick tetrahedral order parameter (q_tet).
 };
 
 /**
@@ -42,6 +43,7 @@ enum class CrystalPreset : std::uint8_t {
   HCP,         ///< Hexagonal Close-Packed lattice.
   BCC,         ///< Body-Centered Cubic lattice.
   Icosahedral, ///< Icosahedral quasi-crystalline / cluster symmetry.
+  Diamond,     ///< Diamond / tetrahedral network lattice.
 };
 
 /**
@@ -110,8 +112,10 @@ struct PhaseHistogram {
     return "ŵ₄";
   case PhaseDescriptor::LocalEntropy:
     return "s₂ (LEF)";
-  case PhaseDescriptor::TWF_Nconn:
+  case PhaseDescriptor::TwfNconn:
     return "N_conn (TWF)";
+  case PhaseDescriptor::QTet:
+    return "q_tet (Tetrahedral)";
   }
   return "Unknown";
 }
@@ -135,6 +139,8 @@ struct PhaseHistogram {
     return "BCC";
   case CrystalPreset::Icosahedral:
     return "Icosahedral";
+  case CrystalPreset::Diamond:
+    return "Diamond";
   }
   return "Unknown";
 }
@@ -160,6 +166,12 @@ struct PhaseHistogram {
         .min_threshold = -0.17F,
         .max_threshold = -0.14F,
     };
+  case CrystalPreset::Diamond:
+    return {
+        .descriptor = PhaseDescriptor::QTet,
+        .min_threshold = 0.85F,
+        .max_threshold = 1.00F,
+    };
   case CrystalPreset::Custom:
   default:
     return {.descriptor = PhaseDescriptor::Q6Bar, .min_threshold = 0.0F, .max_threshold = 1.0F};
@@ -179,8 +191,9 @@ getDescriptorDomain(PhaseDescriptor descriptor) noexcept {
     return {-0.2F, 0.2F};
   case PhaseDescriptor::LocalEntropy:
     return {-15.0F, 0.0F};
-  case PhaseDescriptor::TWF_Nconn:
+  case PhaseDescriptor::TwfNconn:
     return {0.0F, 16.0F};
+  case PhaseDescriptor::QTet:
   case PhaseDescriptor::Q6Bar:
   case PhaseDescriptor::Q4Bar:
   case PhaseDescriptor::Q6:
