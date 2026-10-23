@@ -77,7 +77,9 @@ struct AnalysisSettings {
   std::string ring_network_former;   ///< Network-former element symbol (e.g., "Si").
   std::string ring_bridging_element; ///< Bridging element symbol (e.g., "O").
   real_t lef_cutoff = 5.0;           ///< Cutoff radius for local entropy integration.
-  real_t lef_sigma = 0.2; ///< Standard deviation for Gaussian smoothing in local entropy.
+  real_t lef_sigma = 0.2;   ///< Standard deviation for Gaussian smoothing in local entropy.
+  real_t twf_chi_cut = 0.7; ///< Coherence threshold for Ten Wolde-Frenkel bonds.
+  size_t twf_nconn_min = 7; ///< Minimum coherent bonds for solid-like classification.
   size_t hyperuniformity_samples = 10000; ///< Number of random sample points for hyperuniformity.
   size_t frame_stride = 1;                ///< Sampling stride between frames (>= 1).
 
@@ -111,6 +113,8 @@ struct AnalysisSettings {
         {"Static Structure Factor", "S(Q)"},
         {"X-Ray Diffraction", "XRD"},
         {"Local Entropy Fingerprint", "Local Entropy"},
+        {"Ten Wolde-Frenkel", "TWF"},
+        {"TWF", "TWF"},
         {"Hyperuniformity Diagnostics", "σ²_N(R), χ_H(R)"},
         {"Vibrational Density of States", "vDoS"},
     };

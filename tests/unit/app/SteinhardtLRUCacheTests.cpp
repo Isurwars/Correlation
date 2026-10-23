@@ -164,6 +164,7 @@ TEST(PhaseSearchTypesTests, StringConversionsAndDomains) {
   EXPECT_EQ(descriptorToString(PhaseDescriptor::W6Hat), "ŵ₆");
   EXPECT_EQ(descriptorToString(PhaseDescriptor::W4Hat), "ŵ₄");
   EXPECT_EQ(descriptorToString(PhaseDescriptor::LocalEntropy), "s₂ (LEF)");
+  EXPECT_EQ(descriptorToString(PhaseDescriptor::TWF_Nconn), "N_conn (TWF)");
 
   EXPECT_EQ(presetToString(CrystalPreset::FCC), "FCC");
   EXPECT_EQ(presetToString(CrystalPreset::Icosahedral), "Icosahedral");
@@ -183,6 +184,10 @@ TEST(PhaseSearchTypesTests, StringConversionsAndDomains) {
   const auto [s2_min, s2_max] = getDescriptorDomain(PhaseDescriptor::LocalEntropy);
   EXPECT_FLOAT_EQ(s2_min, -15.0F);
   EXPECT_FLOAT_EQ(s2_max, 0.0F);
+
+  const auto [nconn_min, nconn_max] = getDescriptorDomain(PhaseDescriptor::TWF_Nconn);
+  EXPECT_FLOAT_EQ(nconn_min, 0.0F);
+  EXPECT_FLOAT_EQ(nconn_max, 16.0F);
 }
 
 TEST(PhaseDescriptorsLRUCacheTests, StoreAndRetrieveUnifiedDescriptors) {
@@ -190,6 +195,7 @@ TEST(PhaseDescriptorsLRUCacheTests, StoreAndRetrieveUnifiedDescriptors) {
   auto desc = std::make_shared<FramePhaseDescriptors>();
   desc->steinhardt = makeDummyParams(10, 0.55);
   desc->local_entropy = {-6.15, -6.10, -6.20};
+  desc->twf_nconn = {12.0, 11.0, 12.0};
 
   cache.put(0, desc);
   EXPECT_TRUE(cache.contains(0));
@@ -199,6 +205,8 @@ TEST(PhaseDescriptorsLRUCacheTests, StoreAndRetrieveUnifiedDescriptors) {
   EXPECT_EQ(retrieved->steinhardt->Q6_bar.size(), 10UL);
   EXPECT_EQ(retrieved->local_entropy.size(), 3UL);
   EXPECT_NEAR(retrieved->local_entropy[0], -6.15, 1e-5);
+  ASSERT_EQ(retrieved->twf_nconn.size(), 3UL);
+  EXPECT_FLOAT_EQ(static_cast<float>(retrieved->twf_nconn[0]), 12.0F);
 }
 
 } // namespace

@@ -28,6 +28,7 @@ enum class PhaseDescriptor : std::uint8_t {
   W6Hat,        ///< Normalized third-order invariant ŵ₆ (distinguishes icosahedral symmetry).
   W4Hat,        ///< Normalized third-order invariant ŵ₄.
   LocalEntropy, ///< Local Entropic Fingerprint (s_i / k_B).
+  TWF_Nconn,    ///< Ten Wolde-Frenkel coherent bond count (N_conn).
 };
 
 /**
@@ -109,6 +110,8 @@ struct PhaseHistogram {
     return "ŵ₄";
   case PhaseDescriptor::LocalEntropy:
     return "s₂ (LEF)";
+  case PhaseDescriptor::TWF_Nconn:
+    return "N_conn (TWF)";
   }
   return "Unknown";
 }
@@ -176,6 +179,8 @@ getDescriptorDomain(PhaseDescriptor descriptor) noexcept {
     return {-0.2F, 0.2F};
   case PhaseDescriptor::LocalEntropy:
     return {-15.0F, 0.0F};
+  case PhaseDescriptor::TWF_Nconn:
+    return {0.0F, 16.0F};
   case PhaseDescriptor::Q6Bar:
   case PhaseDescriptor::Q4Bar:
   case PhaseDescriptor::Q6:

@@ -16,11 +16,21 @@
 namespace correlation::calculators {
 
 /**
+ * @struct SteinhardtOptions
+ * @brief Fine-grained execution options for Steinhardt parameter evaluations.
+ */
+struct SteinhardtOptions {
+  bool keep_q6m{false}; ///< Retain normalized q6m vectors (size N * 13) for TWF and g6(r).
+};
+
+/**
  * @class SteinhardtCalculator
  * @brief Computes Steinhardt Bond-Orientational Parameters (Q4, Q6, W6).
  */
 class SteinhardtCalculator : public BaseCalculator {
 public:
+  using SteinhardtOptions = correlation::calculators::SteinhardtOptions;
+
   [[nodiscard]] std::string_view getName() const override { return "Steinhardt Order Parameters"; }
   [[nodiscard]] std::string_view getShortName() const override { return "Steinhardt"; }
   [[nodiscard]] std::string_view getGroup() const override { return "Structural"; }
@@ -85,6 +95,8 @@ public:
     std::vector<real_t> W6_hat; ///< Per-atom W6_hat values.
     std::vector<real_t> Q4_bar; ///< Per-atom Q4_bar values.
     std::vector<real_t> Q6_bar; ///< Per-atom Q6_bar values.
+    std::optional<std::vector<std::complex<real_t>>>
+        q6m_normalized; ///< Flattened N * 13 unit vectors.
   };
 
   /**
@@ -92,12 +104,14 @@ public:
    *
    * @param[in] cell The periodic cell.
    * @param[in] neighbors Structural analyzer containing the neighbor graph.
+   * @param[in] options Options specifying optional vector retention.
    * @return SteinhardtParams containing arrays of per-atom order parameters.
    * @throws std::logic_error If @p neighbors is nullptr.
    */
   [[nodiscard]] static SteinhardtParams
   calculatePerAtom(const correlation::core::Cell &cell,
-                   const correlation::analysis::StructureAnalyzer *neighbors);
+                   const correlation::analysis::StructureAnalyzer *neighbors,
+                   SteinhardtOptions options = {});
 
   /**
    * @brief Computes the complex spherical harmonic @f$ Y_l^m(\theta, \phi) @f$.

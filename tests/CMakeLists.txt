@@ -62,6 +62,7 @@ add_executable(correlation_unit_tests
     unit/calculators/SDFCalculatorTests.cpp
     unit/calculators/ClusterCalculatorTests.cpp
     unit/calculators/LocalEntropyCalculatorTests.cpp
+    unit/calculators/TenWoldeFrenkelCalculatorTests.cpp
     unit/calculators/VoronoiCalculatorTests.cpp
     unit/calculators/ChiralityCalculatorTests.cpp
     unit/calculators/HyperuniformityCalculatorTests.cpp

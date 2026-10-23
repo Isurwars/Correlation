@@ -576,7 +576,8 @@ void SteinhardtCalculator::calculateFrame(
 
 SteinhardtCalculator::SteinhardtParams
 SteinhardtCalculator::calculatePerAtom(const correlation::core::Cell &cell,
-                                       const correlation::analysis::StructureAnalyzer *neighbors) {
+                                       const correlation::analysis::StructureAnalyzer *neighbors,
+                                       SteinhardtOptions options) {
   if (neighbors == nullptr) {
     throw std::logic_error("Cannot calculate Steinhardt Parameters. Neighbor list has not been "
                            "computed.");
@@ -594,6 +595,11 @@ SteinhardtCalculator::calculatePerAtom(const correlation::core::Cell &cell,
   params.W6_hat.resize(num_atoms, static_cast<real_t>(0.0));
   params.Q4_bar.resize(num_atoms, static_cast<real_t>(0.0));
   params.Q6_bar.resize(num_atoms, static_cast<real_t>(0.0));
+
+  if (options.keep_q6m) {
+    params.q6m_normalized = std::vector<std::complex<real_t>>(
+        num_atoms * 13, {static_cast<real_t>(0.0), static_cast<real_t>(0.0)});
+  }
 
   std::vector<AtomHarmonicVectors> all_vecs(num_atoms);
 
@@ -613,6 +619,21 @@ SteinhardtCalculator::calculatePerAtom(const correlation::core::Cell &cell,
                         params.Q6[i] = res.Q6;
                         params.W4_hat[i] = res.W4_hat;
                         params.W6_hat[i] = res.W6_hat;
+
+                        if (options.keep_q6m && params.q6m_normalized.has_value()) {
+                          auto &q6m_norm = *params.q6m_normalized;
+                          real_t sum_sq = static_cast<real_t>(0.0);
+                          for (size_t m_idx = 0; m_idx < 13; ++m_idx) {
+                            sum_sq += std::norm(all_vecs[i].q6m.at(m_idx));
+                          }
+                          const real_t norm = std::sqrt(sum_sq);
+                          const real_t inv_norm = (norm > static_cast<real_t>(1e-12))
+                                                      ? (static_cast<real_t>(1.0) / norm)
+                                                      : static_cast<real_t>(0.0);
+                          for (size_t m_idx = 0; m_idx < 13; ++m_idx) {
+                            q6m_norm[i * 13 + m_idx] = all_vecs[i].q6m.at(m_idx) * inv_norm;
+                          }
+                        }
                       }
                     });
 

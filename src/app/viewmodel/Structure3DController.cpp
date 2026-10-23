@@ -11,6 +11,7 @@
 #include "analysis/StructureAnalyzer.hpp"
 #include "calculators/order/LocalEntropyCalculator.hpp"
 #include "calculators/order/SteinhardtCalculator.hpp"
+#include "calculators/order/TenWoldeFrenkelCalculator.hpp"
 #include "physics/PhysicalData.hpp"
 #include "plotters/ColormapService.hpp"
 #include "render3d/RenderEngineFactory.hpp"
@@ -82,6 +83,8 @@ std::span<const real_t> extractDescriptorValues(const FramePhaseDescriptors &des
     return descriptors.steinhardt ? descriptors.steinhardt->W4_hat : std::span<const real_t>{};
   case PhaseDescriptor::LocalEntropy:
     return descriptors.local_entropy;
+  case PhaseDescriptor::TWF_Nconn:
+    return descriptors.twf_nconn;
   }
   return {};
 }
@@ -390,6 +393,9 @@ void Structure3DController::setPhaseDescriptor(PhaseDescriptor descriptor) {
     const std::scoped_lock lock(phase_mutex_, mutex_);
     phase_settings_.descriptor = descriptor;
     phase_settings_.preset = CrystalPreset::Custom;
+    const auto [domain_min, domain_max] = getDescriptorDomain(descriptor);
+    phase_settings_.min_threshold = domain_min;
+    phase_settings_.max_threshold = domain_max;
     updateScenePhaseVisuals();
   }
   cv_.notify_one();
@@ -756,15 +762,22 @@ Structure3DController::computeDescriptorsSync(std::size_t frame_index) {
   const real_t max_dist = computeMaxBondDistance(cutoffs, target_cell.elements().size());
   try {
     const analysis::StructureAnalyzer analyzer(target_cell, max_dist, cutoffs, false);
-    auto steinhardt_params =
-        calculators::SteinhardtCalculator::calculatePerAtom(target_cell, &analyzer);
+    const calculators::SteinhardtCalculator::SteinhardtOptions steinhardt_opts{
+        .keep_q6m = true,
+    };
+    auto steinhardt_params = calculators::SteinhardtCalculator::calculatePerAtom(
+        target_cell, &analyzer, steinhardt_opts);
     auto lef_values = calculators::LocalEntropyCalculator::calculatePerAtom(target_cell, &analyzer);
+    const calculators::TenWoldeFrenkelParams twf_params{};
+    auto twf_values = calculators::TenWoldeFrenkelCalculator::calculatePerAtom(
+        target_cell, &analyzer, twf_params, &steinhardt_params);
 
     auto descriptors = std::make_shared<FramePhaseDescriptors>();
     descriptors->steinhardt =
         std::make_shared<const calculators::SteinhardtCalculator::SteinhardtParams>(
             std::move(steinhardt_params));
     descriptors->local_entropy = std::move(lef_values);
+    descriptors->twf_nconn = std::move(twf_values);
     return descriptors;
   } catch (const std::exception &) {
     return nullptr;
