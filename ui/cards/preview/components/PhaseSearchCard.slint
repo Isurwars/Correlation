@@ -11,6 +11,7 @@ import {
 } from "../../../material/material.slint";
 import { PhaseSlider } from "./PhaseSlider.slint";
 import { PhaseMiniHistogram } from "./PhaseMiniHistogram.slint";
+import { PhaseHeatmapView, CrystalMarker } from "./PhaseHeatmapView.slint";
 
 export component PhaseSearchCard inherits Rectangle {
     in property <bool> phase_enabled: false;
@@ -31,6 +32,17 @@ export component PhaseSearchCard inherits Rectangle {
     in property <image> colorbar_image;
     in property <string> descriptor_name: "q̄₆";
 
+    // 2D Heatmap Mode properties
+    in property <bool> is_2d_mode: false;
+    in property <int> descriptor_y_index: 0;
+    in property <float> min_threshold_y: 0.46;
+    in property <float> max_threshold_y: 0.58;
+    in property <float> domain_min_y: 0.0;
+    in property <float> domain_max_y: 1.0;
+    in property <string> descriptor_name_y: "q̄₆";
+    in property <image> heatmap_image;
+    in property <[CrystalMarker]> crystal_markers: [];
+
     callback toggle_enabled(bool);
     callback set_preset(int);
     callback set_descriptor(int);
@@ -41,6 +53,12 @@ export component PhaseSearchCard inherits Rectangle {
     callback set_dim_non_matching(bool);
     callback set_hide_non_matching(bool);
     callback close();
+
+    // 2D Heatmap callbacks
+    callback set_2d_mode(bool);
+    callback set_descriptor_y(int);
+    callback set_thresholds_2d(float, float, float, float);
+    callback export_heatmap_png();
 
     width: 330px;
     preferred-height: card_layout.preferred-height;
@@ -148,8 +166,100 @@ export component PhaseSearchCard inherits Rectangle {
             }
         }
 
-        // 2. Crystal Presets (Two clean rows to eliminate compression)
-        VerticalLayout {
+        // 2. Mode Switcher (1D Histogram vs 2D Heatmap)
+        HorizontalLayout {
+            spacing: 4px;
+            height: 22px;
+
+            mode_1d_touch := TouchArea {
+                horizontal-stretch: 1;
+                mouse-cursor: pointer;
+                clicked => { root.set_2d_mode(false); }
+
+                Rectangle {
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 11px;
+                    background: !root.is_2d_mode
+                        ? MaterialPalette.primary.with_alpha(25%)
+                        : (mode_1d_touch.has-hover ? MaterialPalette.surface_container_highest : transparent);
+                    border-width: !root.is_2d_mode ? 1.5px : 1px;
+                    border-color: !root.is_2d_mode ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(40%);
+
+                    MaterialText {
+                        width: 100%;
+                        height: 100%;
+                        text: "1D Histogram";
+                        font-size: 10.5px;
+                        font-weight: !root.is_2d_mode ? 700 : 400;
+                        color: !root.is_2d_mode ? MaterialPalette.primary : MaterialPalette.on_surface;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+
+            mode_2d_touch := TouchArea {
+                horizontal-stretch: 1;
+                mouse-cursor: pointer;
+                clicked => { root.set_2d_mode(true); }
+
+                Rectangle {
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 11px;
+                    background: root.is_2d_mode
+                        ? MaterialPalette.primary.with_alpha(25%)
+                        : (mode_2d_touch.has-hover ? MaterialPalette.surface_container_highest : transparent);
+                    border-width: root.is_2d_mode ? 1.5px : 1px;
+                    border-color: root.is_2d_mode ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(40%);
+
+                    MaterialText {
+                        width: 100%;
+                        height: 100%;
+                        text: "2D Heatmap";
+                        font-size: 10.5px;
+                        font-weight: root.is_2d_mode ? 700 : 400;
+                        color: root.is_2d_mode ? MaterialPalette.primary : MaterialPalette.on_surface;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+        }
+
+        // 3. 2D Heatmap View
+        if (root.is_2d_mode): PhaseHeatmapView {
+            heatmap_image: root.heatmap_image;
+            descriptor_x: root.descriptor_index;
+            descriptor_y: root.descriptor_y_index;
+            descriptor_name_x: root.descriptor_name;
+            descriptor_name_y: root.descriptor_name_y;
+            min_x: root.domain_min;
+            max_x: root.domain_max;
+            min_y: root.domain_min_y;
+            max_y: root.domain_max_y;
+            sel_min_x: root.min_threshold;
+            sel_max_x: root.max_threshold;
+            sel_min_y: root.min_threshold_y;
+            sel_max_y: root.max_threshold_y;
+            matching_atoms: root.matching_atoms;
+            total_atoms: root.total_atoms;
+            crystal_markers: root.crystal_markers;
+
+            set_descriptor_x(idx) => { root.set_descriptor(idx); }
+            set_descriptor_y(idx) => { root.set_descriptor_y(idx); }
+            set_selection_2d(min_x, max_x, min_y, max_y) => {
+                root.set_thresholds_2d(min_x, max_x, min_y, max_y);
+            }
+            export_png => { root.export_heatmap_png(); }
+            reset_selection => {
+                root.set_thresholds_2d(root.domain_min, root.domain_max, root.domain_min_y, root.domain_max_y);
+            }
+        }
+
+        // 4. 1D Crystal Presets
+        if (!root.is_2d_mode): VerticalLayout {
             spacing: 3px;
 
             MaterialText {
@@ -232,8 +342,8 @@ export component PhaseSearchCard inherits Rectangle {
             }
         }
 
-        // 3. Order Descriptor & Colormap Selectors
-        HorizontalLayout {
+        // 5. 1D Order Descriptor Selector
+        if (!root.is_2d_mode): HorizontalLayout {
             spacing: 6px;
 
             // Descriptor Pills
@@ -377,8 +487,8 @@ export component PhaseSearchCard inherits Rectangle {
             }
         }
 
-        // 5. Threshold Range Sliders
-        HorizontalLayout {
+        // 6. 1D Threshold Range Sliders
+        if (!root.is_2d_mode): HorizontalLayout {
             spacing: 6px;
 
             PhaseSlider {
@@ -507,8 +617,8 @@ export component PhaseSearchCard inherits Rectangle {
             }
         }
 
-        // 8. Mini-Histogram Distribution
-        PhaseMiniHistogram {
+        // 9. 1D Mini-Histogram Distribution
+        if (!root.is_2d_mode): PhaseMiniHistogram {
             counts: root.histogram_counts;
             min_threshold: root.min_threshold;
             max_threshold: root.max_threshold;

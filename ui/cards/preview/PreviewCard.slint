@@ -19,6 +19,9 @@ import { ImagingToolbar } from "./components/ImagingToolbar.slint";
 import { CurveSidebar } from "./components/CurveSidebar.slint";
 import { PlotDataTable } from "./components/PlotDataTable.slint";
 import { Structure3DViewport } from "./components/Structure3DViewport.slint";
+import { CrystalMarker } from "./components/PhaseHeatmapView.slint";
+
+export { CrystalMarker }
 
 // ============================================================================
 // PreviewCard Component
@@ -125,6 +128,17 @@ export component PreviewCard inherits FilledCard {
     in property <string> structure_3d_phase_descriptor_name: "q̄₆";
     in property <image> structure_3d_phase_colorbar_image;
 
+    // 2D Phase Search & Heatmap
+    in property <bool> structure_3d_phase_is_2d_mode: false;
+    in property <int> structure_3d_phase_descriptor_y: 0;
+    in property <float> structure_3d_phase_min_threshold_y: 0.46;
+    in property <float> structure_3d_phase_max_threshold_y: 0.58;
+    in property <float> structure_3d_phase_domain_min_y: 0.0;
+    in property <float> structure_3d_phase_domain_max_y: 1.0;
+    in property <string> structure_3d_phase_descriptor_name_y: "q̄₆";
+    in property <image> structure_3d_phase_heatmap_image;
+    in property <[CrystalMarker]> structure_3d_phase_crystal_markers: [];
+
     callback toggle_phase_search_3d(bool);
     callback set_phase_preset_3d(int);
     callback set_phase_descriptor_3d(int);
@@ -134,6 +148,11 @@ export component PreviewCard inherits FilledCard {
     callback set_phase_radius_ratio_3d(float);
     callback set_phase_dim_non_matching_3d(bool);
     callback set_phase_hide_non_matching_3d(bool);
+
+    callback set_phase_2d_mode_3d(bool);
+    callback set_phase_descriptor_y_3d(int);
+    callback set_phase_thresholds_2d_3d(float, float, float, float);
+    callback export_phase_heatmap_png_3d();
 
     callback rotate_3d(float, float);
     callback pan_3d(float, float);
@@ -508,6 +527,16 @@ export component PreviewCard inherits FilledCard {
                 phase_descriptor_name: root.structure_3d_phase_descriptor_name;
                 phase_colorbar_image: root.structure_3d_phase_colorbar_image;
 
+                phase_is_2d_mode: root.structure_3d_phase_is_2d_mode;
+                phase_descriptor_y: root.structure_3d_phase_descriptor_y;
+                phase_min_threshold_y: root.structure_3d_phase_min_threshold_y;
+                phase_max_threshold_y: root.structure_3d_phase_max_threshold_y;
+                phase_domain_min_y: root.structure_3d_phase_domain_min_y;
+                phase_domain_max_y: root.structure_3d_phase_domain_max_y;
+                phase_descriptor_name_y: root.structure_3d_phase_descriptor_name_y;
+                phase_heatmap_image: root.structure_3d_phase_heatmap_image;
+                phase_crystal_markers: root.structure_3d_phase_crystal_markers;
+
                 toggle_phase_search(en) => { root.toggle_phase_search_3d(en); }
                 set_phase_preset(idx) => { root.set_phase_preset_3d(idx); }
                 set_phase_descriptor(idx) => { root.set_phase_descriptor_3d(idx); }
@@ -517,6 +546,10 @@ export component PreviewCard inherits FilledCard {
                 set_phase_radius_ratio(val) => { root.set_phase_radius_ratio_3d(val); }
                 set_phase_dim_non_matching(dim) => { root.set_phase_dim_non_matching_3d(dim); }
                 set_phase_hide_non_matching(hide) => { root.set_phase_hide_non_matching_3d(hide); }
+                set_phase_2d_mode(is_2d) => { root.set_phase_2d_mode_3d(is_2d); }
+                set_phase_descriptor_y(idx) => { root.set_phase_descriptor_y_3d(idx); }
+                set_phase_thresholds_2d(min_x, max_x, min_y, max_y) => { root.set_phase_thresholds_2d_3d(min_x, max_x, min_y, max_y); }
+                export_phase_heatmap_png() => { root.export_phase_heatmap_png_3d(); }
             }
         }
 

@@ -44,7 +44,9 @@ import {
 import { MiniSideBar } from "nav/MiniSideBar.slint";
 import { SidePanelHost } from "nav/SidePanelHost.slint";
 import { AppFooter } from "nav/AppFooter.slint";
-import { PreviewCard } from "cards/preview/PreviewCard.slint";
+import { PreviewCard, CrystalMarker } from "cards/preview/PreviewCard.slint";
+
+export { CrystalMarker }
 
 export {
     AtomCount,
@@ -242,6 +244,15 @@ export component AppWindow inherits Window {
     in property <int> structure_3d_phase_total_atoms: 0;
     in property <string> structure_3d_phase_descriptor_name: "q̄₆";
     in property <image> structure_3d_phase_colorbar_image;
+    in property <bool> structure_3d_phase_is_2d_mode: false;
+    in property <int> structure_3d_phase_descriptor_y: 1;
+    in property <float> structure_3d_phase_min_threshold_y: 0.0;
+    in property <float> structure_3d_phase_max_threshold_y: 0.3;
+    in property <float> structure_3d_phase_domain_min_y: 0.0;
+    in property <float> structure_3d_phase_domain_max_y: 1.0;
+    in property <string> structure_3d_phase_descriptor_name_y: "q̄₄";
+    in property <image> structure_3d_phase_heatmap_image;
+    in property <[CrystalMarker]> structure_3d_phase_crystal_markers: [];
 
     // Resizable layout geometry properties
     in-out property <length> left_col_width: 220px;
@@ -313,6 +324,10 @@ export component AppWindow inherits Window {
     callback set_phase_radius_ratio_3d(float);
     callback set_phase_dim_non_matching_3d(bool);
     callback set_phase_hide_non_matching_3d(bool);
+    callback set_phase_2d_mode_3d(bool);
+    callback set_phase_descriptor_y_3d(int);
+    callback set_phase_thresholds_2d_3d(float, float, float, float);
+    callback export_phase_heatmap_png_3d();
 
     // Presets callbacks
     callback export_config_changed();
@@ -785,6 +800,16 @@ export component AppWindow inherits Window {
                     structure_3d_phase_descriptor_name: root.structure_3d_phase_descriptor_name;
                     structure_3d_phase_colorbar_image: root.structure_3d_phase_colorbar_image;
 
+                    structure_3d_phase_is_2d_mode: root.structure_3d_phase_is_2d_mode;
+                    structure_3d_phase_descriptor_y: root.structure_3d_phase_descriptor_y;
+                    structure_3d_phase_min_threshold_y: root.structure_3d_phase_min_threshold_y;
+                    structure_3d_phase_max_threshold_y: root.structure_3d_phase_max_threshold_y;
+                    structure_3d_phase_domain_min_y: root.structure_3d_phase_domain_min_y;
+                    structure_3d_phase_domain_max_y: root.structure_3d_phase_domain_max_y;
+                    structure_3d_phase_descriptor_name_y: root.structure_3d_phase_descriptor_name_y;
+                    structure_3d_phase_heatmap_image: root.structure_3d_phase_heatmap_image;
+                    structure_3d_phase_crystal_markers: root.structure_3d_phase_crystal_markers;
+
                     toggle_phase_search_3d(en) => { root.toggle_phase_search_3d(en); }
                     set_phase_preset_3d(idx) => { root.set_phase_preset_3d(idx); }
                     set_phase_descriptor_3d(idx) => { root.set_phase_descriptor_3d(idx); }
@@ -794,6 +819,10 @@ export component AppWindow inherits Window {
                     set_phase_radius_ratio_3d(val) => { root.set_phase_radius_ratio_3d(val); }
                     set_phase_dim_non_matching_3d(dim) => { root.set_phase_dim_non_matching_3d(dim); }
                     set_phase_hide_non_matching_3d(hide) => { root.set_phase_hide_non_matching_3d(hide); }
+                    set_phase_2d_mode_3d(is_2d) => { root.set_phase_2d_mode_3d(is_2d); }
+                    set_phase_descriptor_y_3d(idx) => { root.set_phase_descriptor_y_3d(idx); }
+                    set_phase_thresholds_2d_3d(min_x, max_x, min_y, max_y) => { root.set_phase_thresholds_2d_3d(min_x, max_x, min_y, max_y); }
+                    export_phase_heatmap_png_3d() => { root.export_phase_heatmap_png_3d(); }
                 }
             }
 

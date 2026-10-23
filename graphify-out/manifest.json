@@ -950,8 +950,8 @@
     "semantic_hash": "fa5794c577c54fcf0888468db60e0c22"
   },
   "src/CMakeLists.txt": {
-    "mtime": 1792730762.846538,
-    "ast_hash": "12f01070cf0e1905726c1275514e42ee",
+    "mtime": 1792768348.3157673,
+    "ast_hash": "5f6c71bae81fb63ac01a469b972427de",
     "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
@@ -2025,8 +2025,8 @@
     "semantic_hash": ""
   },
   "src/app/core/AppController.cpp": {
-    "mtime": 1792717368.0397887,
-    "ast_hash": "7df20b1f564528d05d201a6a98d3a71c",
+    "mtime": 1792768741.6408582,
+    "ast_hash": "f8cf21aad62dafd5cac8343c90e3cb40",
     "semantic_hash": ""
   },
   "src/app/core/SettingsManager.cpp": {
@@ -2845,13 +2845,13 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/Structure3DController.hpp": {
-    "mtime": 1792717679.5722675,
-    "ast_hash": "d7e435e886ef39b014a8437710b4a4ba",
+    "mtime": 1792769064.0607123,
+    "ast_hash": "885dcef3ffb894257ee01bbfddf6cc75",
     "semantic_hash": ""
   },
   "src/app/viewmodel/Structure3DController.cpp": {
-    "mtime": 1792730944.783692,
-    "ast_hash": "7962045993b6d0470230c3162350194c",
+    "mtime": 1792769103.9330723,
+    "ast_hash": "75d94493528398abd63340f1c251315e",
     "semantic_hash": ""
   },
   "tests/unit/app/Structure3DControllerTests.cpp": {
@@ -2975,8 +2975,8 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/PhaseSearchTypes.hpp": {
-    "mtime": 1792730833.2973378,
-    "ast_hash": "bcf15f5aa448ad9cf501023d23a514d8",
+    "mtime": 1792769255.9588997,
+    "ast_hash": "07570f5247045c5898a390134a478b3a",
     "semantic_hash": ""
   },
   "include/app/viewmodel/SteinhardtLRUCache.hpp": {
@@ -2985,13 +2985,13 @@
     "semantic_hash": ""
   },
   "tests/unit/app/SteinhardtLRUCacheTests.cpp": {
-    "mtime": 1792731240.6633778,
-    "ast_hash": "060edb37ed75a42e2a4872b5988222e3",
+    "mtime": 1792731430.4361281,
+    "ast_hash": "3ba0f5035036140c7757ce4cab2f28a1",
     "semantic_hash": ""
   },
   "tests/unit/app/Structure3DControllerPhaseSearchTests.cpp": {
-    "mtime": 1792613122.9873405,
-    "ast_hash": "831de04dfdc3ec07c27b1eb85e66e9f6",
+    "mtime": 1792769237.3451476,
+    "ast_hash": "24ba65c47246a774e5d79961c3559875",
     "semantic_hash": ""
   },
   "tests/benchmarks/BM_SteinhardtPerAtom.cpp": {

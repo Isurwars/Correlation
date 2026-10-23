@@ -257,6 +257,22 @@ void AppController::registerStructure3DCallbacks() {
 
   window_.on_set_phase_hide_non_matching_3d(
       [this](bool hide) { structure_3d_controller_->setPhaseHideNonMatching(hide); });
+
+  window_.on_set_phase_2d_mode_3d(
+      [this](bool is_2d) { structure_3d_controller_->setPhase2DMode(is_2d); });
+
+  window_.on_set_phase_descriptor_y_3d([this](int desc_idx) {
+    structure_3d_controller_->setPhaseDescriptorY(static_cast<PhaseDescriptor>(desc_idx));
+  });
+
+  window_.on_set_phase_thresholds_2d_3d([this](float min_x, float max_x, float min_y, float max_y) {
+    structure_3d_controller_->setPhaseThresholds2D(min_x, max_x, min_y, max_y);
+  });
+
+  window_.on_export_phase_heatmap_png_3d([this]() {
+    // Generate default export filename in current directory or user pictures
+    structure_3d_controller_->exportHeatmapPng("phase_heatmap_2d.png");
+  });
 }
 
 void AppController::registerPresetAndOptionCallbacks() {

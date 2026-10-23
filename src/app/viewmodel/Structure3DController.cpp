@@ -21,6 +21,8 @@
 #include <array>
 #include <chrono>
 #include <cmath>
+#include <fstream>
+#include <miniz.h>
 #include <utility>
 
 namespace correlation::app {
@@ -537,13 +539,224 @@ PhaseHistogram Structure3DController::phaseHistogram() const {
   return latest_histogram_;
 }
 
+void Structure3DController::setPhase2DMode(bool is_2d) {
+  {
+    const std::scoped_lock lock(phase_mutex_, mutex_);
+    phase_settings_.is_2d_mode = is_2d;
+    updateScenePhaseVisuals();
+  }
+  cv_.notify_one();
+  syncPhaseSearchToWindow();
+}
+
+bool Structure3DController::isPhase2DMode() const noexcept {
+  const std::scoped_lock lock(phase_mutex_);
+  return phase_settings_.is_2d_mode;
+}
+
+void Structure3DController::setPhaseDescriptorY(PhaseDescriptor desc_y) {
+  {
+    const std::scoped_lock lock(phase_mutex_, mutex_);
+    phase_settings_.descriptor_y = desc_y;
+    const auto [dmin, dmax] = getDescriptorDomain(desc_y);
+    phase_settings_.min_threshold_y = dmin;
+    phase_settings_.max_threshold_y = dmax;
+    updateScenePhaseVisuals();
+  }
+  cv_.notify_one();
+  syncPhaseSearchToWindow();
+}
+
+PhaseDescriptor Structure3DController::phaseDescriptorY() const noexcept {
+  const std::scoped_lock lock(phase_mutex_);
+  return phase_settings_.descriptor_y;
+}
+
+void Structure3DController::setPhaseThresholds2D(float min_x, float max_x, float min_y, float max_y) {
+  {
+    const std::scoped_lock lock(phase_mutex_, mutex_);
+    phase_settings_.min_threshold = std::min(min_x, max_x);
+    phase_settings_.max_threshold = std::max(min_x, max_x);
+    phase_settings_.min_threshold_y = std::min(min_y, max_y);
+    phase_settings_.max_threshold_y = std::max(min_y, max_y);
+    updateScenePhaseVisuals();
+  }
+  cv_.notify_one();
+  syncPhaseSearchToWindow();
+}
+
+float Structure3DController::phaseMinThresholdY() const noexcept {
+  const std::scoped_lock lock(phase_mutex_);
+  return phase_settings_.min_threshold_y;
+}
+
+float Structure3DController::phaseMaxThresholdY() const noexcept {
+  const std::scoped_lock lock(phase_mutex_);
+  return phase_settings_.max_threshold_y;
+}
+
+PhaseHeatmap2D Structure3DController::phaseHeatmap() const {
+  const std::scoped_lock lock(phase_mutex_);
+  return latest_heatmap_;
+}
+
+PhaseHeatmap2D
+Structure3DController::computePhaseHeatmap(const FramePhaseDescriptors *descriptors) const {
+  PhaseHeatmap2D heatmap;
+  constexpr std::size_t K_GRID = 64;
+  heatmap.counts.assign(K_GRID * K_GRID, 0);
+
+  const auto [domain_min_x, domain_max_x] = getDescriptorDomain(phase_settings_.descriptor);
+  const auto [domain_min_y, domain_max_y] = getDescriptorDomain(phase_settings_.descriptor_y);
+
+  heatmap.min_x = domain_min_x;
+  heatmap.max_x = domain_max_x;
+  heatmap.min_y = domain_min_y;
+  heatmap.max_y = domain_max_y;
+  heatmap.bin_width_x = (domain_max_x - domain_min_x) / static_cast<float>(K_GRID);
+  heatmap.bin_width_y = (domain_max_y - domain_min_y) / static_cast<float>(K_GRID);
+
+  if (descriptors == nullptr) {
+    return heatmap;
+  }
+
+  const auto values_x = extractDescriptorValues(*descriptors, phase_settings_.descriptor);
+  const auto values_y = extractDescriptorValues(*descriptors, phase_settings_.descriptor_y);
+  if (values_x.size() != values_y.size()) {
+    return heatmap;
+  }
+
+  heatmap.total_atom_count = static_cast<uint32_t>(values_x.size());
+  const float min_x_thresh = phase_settings_.min_threshold;
+  const float max_x_thresh = phase_settings_.max_threshold;
+  const float min_y_thresh = phase_settings_.min_threshold_y;
+  const float max_y_thresh = phase_settings_.max_threshold_y;
+
+  for (std::size_t i = 0; i < values_x.size(); ++i) {
+    const auto vx = static_cast<float>(values_x[i]);
+    const auto vy = static_cast<float>(values_y[i]);
+
+    if (vx >= min_x_thresh && vx <= max_x_thresh && vy >= min_y_thresh && vy <= max_y_thresh) {
+      ++heatmap.matching_atom_count;
+    }
+
+    const auto bin_x = static_cast<std::size_t>(std::clamp(
+        std::floor((vx - domain_min_x) / heatmap.bin_width_x), 0.0F, static_cast<float>(K_GRID - 1)));
+    const auto bin_y = static_cast<std::size_t>(std::clamp(
+        std::floor((vy - domain_min_y) / heatmap.bin_width_y), 0.0F, static_cast<float>(K_GRID - 1)));
+
+    const std::size_t cell_idx = bin_y * K_GRID + bin_x;
+    if (cell_idx < heatmap.counts.size()) {
+      ++heatmap.counts[cell_idx];
+      heatmap.max_count = std::max(heatmap.max_count, heatmap.counts[cell_idx]);
+    }
+  }
+
+  return heatmap;
+}
+
+slint::Image Structure3DController::renderHeatmapImage(const PhaseHeatmap2D &heatmap,
+                                                      plotters::ColormapType colormap) const {
+  constexpr uint32_t K_DIMS = 128;
+  constexpr std::size_t K_BINS = 64;
+  std::vector<slint::Rgba8Pixel> pixels(K_DIMS * K_DIMS);
+
+  const double log_max = (heatmap.max_count > 0)
+                             ? std::log1p(static_cast<double>(heatmap.max_count))
+                             : 1.0;
+
+  for (uint32_t py = 0; py < K_DIMS; ++py) {
+    // Invert Y so 0 is at bottom
+    const std::size_t bin_y = (K_DIMS - 1 - py) * K_BINS / K_DIMS;
+    for (uint32_t px = 0; px < K_DIMS; ++px) {
+      const std::size_t bin_x = px * K_BINS / K_DIMS;
+      const std::size_t cell_idx = bin_y * K_BINS + bin_x;
+      const uint32_t count = (cell_idx < heatmap.counts.size()) ? heatmap.counts[cell_idx] : 0U;
+
+      if (count == 0) {
+        pixels[py * K_DIMS + px] = slint::Rgba8Pixel{.r = 20, .g = 22, .b = 28, .a = 255};
+      } else {
+        const double log_c = std::log1p(static_cast<double>(count));
+        const double norm = std::clamp(log_c / log_max, 0.0, 1.0);
+        const auto c = plotters::ColormapService::sample(norm, colormap);
+        pixels[py * K_DIMS + px] = slint::Rgba8Pixel{.r = c.r, .g = c.g, .b = c.b, .a = 255};
+      }
+    }
+  }
+
+  const slint::SharedPixelBuffer<slint::Rgba8Pixel> buffer(K_DIMS, K_DIMS, pixels.data());
+  return slint::Image(buffer);
+}
+
+bool Structure3DController::exportHeatmapPng(const std::string &filepath) {
+  const std::string out_path = filepath.empty() ? "phase_heatmap_2d.png" : filepath;
+  PhaseHeatmap2D heatmap_copy;
+  plotters::ColormapType cmap;
+  {
+    const std::scoped_lock lock(phase_mutex_);
+    heatmap_copy = latest_heatmap_;
+    cmap = phase_settings_.colormap;
+  }
+
+  constexpr uint32_t K_OUT_SIZE = 256;
+  constexpr std::size_t K_BINS = 64;
+  std::vector<uint8_t> raw_rgba(K_OUT_SIZE * K_OUT_SIZE * 4);
+
+  const double log_max = (heatmap_copy.max_count > 0)
+                             ? std::log1p(static_cast<double>(heatmap_copy.max_count))
+                             : 1.0;
+
+  for (uint32_t py = 0; py < K_OUT_SIZE; ++py) {
+    const std::size_t bin_y = (K_OUT_SIZE - 1 - py) * K_BINS / K_OUT_SIZE;
+    for (uint32_t px = 0; px < K_OUT_SIZE; ++px) {
+      const std::size_t bin_x = px * K_BINS / K_OUT_SIZE;
+      const std::size_t cell_idx = bin_y * K_BINS + bin_x;
+      const uint32_t count = (cell_idx < heatmap_copy.counts.size()) ? heatmap_copy.counts[cell_idx] : 0U;
+
+      const std::size_t offset = (py * K_OUT_SIZE + px) * 4;
+      if (count == 0) {
+        raw_rgba[offset + 0] = 20;
+        raw_rgba[offset + 1] = 22;
+        raw_rgba[offset + 2] = 28;
+        raw_rgba[offset + 3] = 255;
+      } else {
+        const double log_c = std::log1p(static_cast<double>(count));
+        const double norm = std::clamp(log_c / log_max, 0.0, 1.0);
+        const auto c = plotters::ColormapService::sample(norm, cmap);
+        raw_rgba[offset + 0] = c.r;
+        raw_rgba[offset + 1] = c.g;
+        raw_rgba[offset + 2] = c.b;
+        raw_rgba[offset + 3] = 255;
+      }
+    }
+  }
+
+  size_t png_len = 0;
+  void *png_mem = tdefl_write_image_to_png_file_in_memory(raw_rgba.data(), K_OUT_SIZE, K_OUT_SIZE, 4, &png_len);
+  if (png_mem == nullptr || png_len == 0) {
+    return false;
+  }
+
+  std::ofstream out(out_path, std::ios::binary);
+  if (!out.is_open()) {
+    mz_free(png_mem);
+    return false;
+  }
+
+  out.write(reinterpret_cast<const char *>(png_mem), static_cast<std::streamsize>(png_len));
+  mz_free(png_mem);
+  return out.good();
+}
+
 void Structure3DController::syncPhaseSearchToWindow() {
   PhaseSearchSettings settings_copy;
   PhaseHistogram hist_copy;
+  PhaseHeatmap2D heatmap_copy;
   {
     const std::scoped_lock lock(phase_mutex_);
     settings_copy = phase_settings_;
     hist_copy = latest_histogram_;
+    heatmap_copy = latest_heatmap_;
   }
 
   const auto lut = plotters::ColormapService::getLut(settings_copy.colormap);
@@ -570,9 +783,24 @@ void Structure3DController::syncPhaseSearchToWindow() {
     }
   }
 
+  slint::Image heatmap_img = renderHeatmapImage(heatmap_copy, settings_copy.colormap);
+
+  auto markers_model = std::make_shared<slint::VectorModel<CrystalMarker>>();
+  const auto ref_markers = getCrystalReferenceMarkers(settings_copy.descriptor, settings_copy.descriptor_y);
+  for (const auto &ref : ref_markers) {
+    markers_model->push_back(CrystalMarker{
+        .label = slint::SharedString(ref.label),
+        .x_ratio = ref.x_ratio,
+        .y_ratio = ref.y_ratio,
+    });
+  }
+
   auto apply_to_window = [this, settings = settings_copy, hist = hist_copy,
+                          heatmap = heatmap_copy,
                           colorbar_img = std::move(colorbar_img),
-                          counts_model = std::move(counts_model)] mutable {
+                          counts_model = std::move(counts_model),
+                          heatmap_img = std::move(heatmap_img),
+                          markers_model = std::move(markers_model)] mutable {
     window_.set_structure_3d_phase_enabled(settings.enabled);
     window_.set_structure_3d_phase_preset(static_cast<int>(settings.preset));
     window_.set_structure_3d_phase_descriptor(static_cast<int>(settings.descriptor));
@@ -585,12 +813,25 @@ void Structure3DController::syncPhaseSearchToWindow() {
     window_.set_structure_3d_phase_halo_radius_ratio(settings.halo_radius_ratio);
     window_.set_structure_3d_phase_dim_non_matching(settings.dim_non_matching);
     window_.set_structure_3d_phase_hide_non_matching(settings.hide_non_matching);
-    window_.set_structure_3d_phase_matching_atoms(static_cast<int>(hist.matching_atom_count));
-    window_.set_structure_3d_phase_total_atoms(static_cast<int>(hist.total_atom_count));
+    window_.set_structure_3d_phase_matching_atoms(
+        static_cast<int>(settings.is_2d_mode ? heatmap.matching_atom_count : hist.matching_atom_count));
+    window_.set_structure_3d_phase_total_atoms(
+        static_cast<int>(settings.is_2d_mode ? heatmap.total_atom_count : hist.total_atom_count));
     window_.set_structure_3d_phase_descriptor_name(
         slint::SharedString(descriptorToString(settings.descriptor)));
     window_.set_structure_3d_phase_colorbar_image(colorbar_img);
     window_.set_structure_3d_phase_histogram_counts(counts_model);
+
+    window_.set_structure_3d_phase_is_2d_mode(settings.is_2d_mode);
+    window_.set_structure_3d_phase_descriptor_y(static_cast<int>(settings.descriptor_y));
+    window_.set_structure_3d_phase_min_threshold_y(settings.min_threshold_y);
+    window_.set_structure_3d_phase_max_threshold_y(settings.max_threshold_y);
+    window_.set_structure_3d_phase_domain_min_y(heatmap.min_y);
+    window_.set_structure_3d_phase_domain_max_y(heatmap.max_y);
+    window_.set_structure_3d_phase_descriptor_name_y(
+        slint::SharedString(descriptorToString(settings.descriptor_y)));
+    window_.set_structure_3d_phase_heatmap_image(heatmap_img);
+    window_.set_structure_3d_phase_crystal_markers(markers_model);
   };
 
   if (std::this_thread::get_id() == main_thread_id_) {
@@ -641,6 +882,7 @@ void Structure3DController::updateScenePhaseVisuals() {
   }
   applyPhaseVisualsToScene(*scene_, descriptors.get());
   latest_histogram_ = computePhaseHistogram(descriptors.get());
+  latest_heatmap_ = computePhaseHeatmap(descriptors.get());
   render_pending_ = true;
 }
 
@@ -655,23 +897,36 @@ void Structure3DController::applyPhaseVisualsToScene(
     return;
   }
 
-  const auto values = extractDescriptorValues(*descriptors, phase_settings_.descriptor);
-  if (values.size() != atoms.size()) {
+  const auto values_x = extractDescriptorValues(*descriptors, phase_settings_.descriptor);
+  if (values_x.size() != atoms.size()) {
     return;
   }
 
-  const float min_thresh = phase_settings_.min_threshold;
-  const float max_thresh = phase_settings_.max_threshold;
-  const float diff = max_thresh - min_thresh;
+  const bool is_2d = phase_settings_.is_2d_mode;
+  const auto values_y = is_2d ? extractDescriptorValues(*descriptors, phase_settings_.descriptor_y)
+                              : std::span<const real_t>{};
+
+  const float min_x = phase_settings_.min_threshold;
+  const float max_x = phase_settings_.max_threshold;
+  const float min_y = phase_settings_.min_threshold_y;
+  const float max_y = phase_settings_.max_threshold_y;
+  const float diff_x = max_x - min_x;
   const float halo_alpha = std::clamp(phase_settings_.halo_intensity, 0.0F, 1.0F);
   const auto alpha_byte = static_cast<uint8_t>(std::round(halo_alpha * 255.0F));
 
   for (std::size_t i = 0; i < atoms.size(); ++i) {
-    const auto val = static_cast<float>(values[i]);
-    if (val >= min_thresh && val <= max_thresh) {
+    const auto vx = static_cast<float>(values_x[i]);
+    const bool match_x = (vx >= min_x && vx <= max_x);
+    bool match_y = true;
+    if (is_2d && !values_y.empty()) {
+      const auto vy = static_cast<float>(values_y[i]);
+      match_y = (vy >= min_y && vy <= max_y);
+    }
+
+    if (match_x && match_y) {
       const double norm_t =
-          (diff > 1e-6F) ? std::clamp(static_cast<double>((val - min_thresh) / diff), 0.0, 1.0)
-                         : 0.5;
+          (diff_x > 1e-6F) ? std::clamp(static_cast<double>((vx - min_x) / diff_x), 0.0, 1.0)
+                           : 0.5;
       const auto sampled = plotters::ColormapService::sample(norm_t, phase_settings_.colormap);
       atoms[i].halo_color = render3d::RgbaColor{
           .r = sampled.r,
@@ -825,6 +1080,7 @@ void Structure3DController::processTargetPhaseFrame(int64_t target_frame) {
     if (active_frame == frame_idx && scene_ != nullptr) {
       applyPhaseVisualsToScene(*scene_, descriptors.get());
       latest_histogram_ = computePhaseHistogram(descriptors.get());
+      latest_heatmap_ = computePhaseHeatmap(descriptors.get());
       render_pending_ = true;
       need_render = true;
     }

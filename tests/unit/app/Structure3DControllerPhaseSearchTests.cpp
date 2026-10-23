@@ -13,6 +13,8 @@
 
 #include "../../CrystalTestHelper.hpp"
 
+#include <filesystem>
+#include <fstream>
 #include <gtest/gtest.h>
 #include <optional>
 #include <stdexcept>
@@ -233,6 +235,83 @@ TEST_F(Structure3DControllerPhaseSearchTests, SlintWindowBindingSynchronization)
   EXPECT_NEAR(window().get_structure_3d_phase_halo_radius_ratio(), 1.65F, 1e-4F);
   EXPECT_TRUE(window().get_structure_3d_phase_dim_non_matching());
   EXPECT_EQ(window().get_structure_3d_phase_descriptor_name(), "q̄₆");
+}
+
+TEST_F(Structure3DControllerPhaseSearchTests, Phase2DModeAndThresholdConfiguration) {
+  const ProgramOptions options;
+  Structure3DController controller(window(), options);
+
+  EXPECT_FALSE(controller.isPhase2DMode());
+  EXPECT_EQ(controller.phaseDescriptorY(), PhaseDescriptor::Q4Bar);
+
+  controller.setPhase2DMode(true);
+  EXPECT_TRUE(controller.isPhase2DMode());
+  EXPECT_TRUE(window().get_structure_3d_phase_is_2d_mode());
+
+  controller.setPhaseDescriptorY(PhaseDescriptor::QTet);
+  EXPECT_EQ(controller.phaseDescriptorY(), PhaseDescriptor::QTet);
+  EXPECT_EQ(window().get_structure_3d_phase_descriptor_y(),
+            static_cast<int>(PhaseDescriptor::QTet));
+  EXPECT_EQ(window().get_structure_3d_phase_descriptor_name_y(), "q_tet (Tetrahedral)");
+
+  controller.setPhaseThresholds2D(0.40F, 0.60F, 0.20F, 0.80F);
+  EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), 0.40F);
+  EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), 0.60F);
+  EXPECT_FLOAT_EQ(controller.phaseMinThresholdY(), 0.20F);
+  EXPECT_FLOAT_EQ(controller.phaseMaxThresholdY(), 0.80F);
+  EXPECT_FLOAT_EQ(window().get_structure_3d_phase_min_threshold_y(), 0.20F);
+  EXPECT_FLOAT_EQ(window().get_structure_3d_phase_max_threshold_y(), 0.80F);
+}
+
+TEST_F(Structure3DControllerPhaseSearchTests, PhaseHeatmap2DAndPngExport) {
+  const ProgramOptions options;
+  Structure3DController controller(window(), options);
+
+  const auto cell = testing::crystals::createFCCCell(3.61, "Cu", 2, 2, 2);
+  controller.setCell(cell);
+  controller.setPhaseSearchEnabled(true);
+  controller.setPhase2DMode(true);
+  controller.setPhaseDescriptor(PhaseDescriptor::Q6Bar);
+  controller.setPhaseDescriptorY(PhaseDescriptor::Q4Bar);
+
+  // Compute descriptors and 2D heatmap
+  static_cast<void>(controller.getOrComputeSteinhardt(0));
+  controller.setPhaseThresholds2D(0.45F, 0.60F, 0.10F, 0.25F);
+
+  const auto heatmap = controller.phaseHeatmap();
+  EXPECT_EQ(heatmap.counts.size(), 64UL * 64UL);
+  EXPECT_EQ(heatmap.total_atom_count, cell.atoms().size());
+  EXPECT_GT(heatmap.matching_atom_count, 0UL);
+  EXPECT_LE(heatmap.matching_atom_count, heatmap.total_atom_count);
+
+  // Check crystal markers for q6bar vs q4bar
+  const auto markers = getCrystalReferenceMarkers(PhaseDescriptor::Q6Bar, PhaseDescriptor::Q4Bar);
+  EXPECT_FALSE(markers.empty());
+  bool has_fcc = false;
+  for (const auto &marker : markers) {
+    if (marker.label == "FCC") {
+      has_fcc = true;
+      EXPECT_GT(marker.x_ratio, 0.4F);
+      EXPECT_LT(marker.x_ratio, 0.7F);
+    }
+  }
+  EXPECT_TRUE(has_fcc);
+
+  // Verify PNG export to temporary test path
+  const auto test_png = std::filesystem::temp_directory_path() / "test_heatmap_export.png";
+  std::error_code error_code;
+  std::filesystem::remove(test_png, error_code);
+
+  const bool exported = controller.exportHeatmapPng(test_png.string());
+  EXPECT_TRUE(exported);
+
+  std::ifstream check_file(test_png, std::ios::binary | std::ios::ate);
+  EXPECT_TRUE(check_file.is_open());
+  if (check_file.is_open()) {
+    EXPECT_GT(check_file.tellg(), 0);
+    check_file.close();
+  }
+  EXPECT_TRUE(std::filesystem::remove(test_png, error_code));
 }
 
 } // namespace

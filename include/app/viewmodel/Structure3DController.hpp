@@ -291,10 +291,68 @@ public:
   [[nodiscard]] PhaseSearchSettings phaseSearchSettings() const noexcept;
 
   /**
-   * @brief Retrieves latest computed 50-bin histogram of the active descriptor.
+   * @brief Retrieves latest computed 1D distribution histogram.
    * @return PhaseHistogram telemetry struct.
    */
   [[nodiscard]] PhaseHistogram phaseHistogram() const;
+
+  /**
+   * @brief Enables or disables 2D joint distribution filtering mode.
+   * @param[in] is_2d True to activate 2D bounding box phase search.
+   */
+  void setPhase2DMode(bool is_2d);
+
+  /**
+   * @brief Queries whether 2D phase search mode is active.
+   * @return True if 2D mode is enabled.
+   */
+  [[nodiscard]] bool isPhase2DMode() const noexcept;
+
+  /**
+   * @brief Sets active Y-axis descriptor for 2D mode.
+   * @param[in] desc_y Y-axis order descriptor.
+   */
+  void setPhaseDescriptorY(PhaseDescriptor desc_y);
+
+  /**
+   * @brief Gets active Y-axis order descriptor.
+   * @return Active Y descriptor enum value.
+   */
+  [[nodiscard]] PhaseDescriptor phaseDescriptorY() const noexcept;
+
+  /**
+   * @brief Sets 2D bounding box thresholds [Xmin, Xmax] x [Ymin, Ymax].
+   * @param[in] min_x Lower scalar threshold on X.
+   * @param[in] max_x Upper scalar threshold on X.
+   * @param[in] min_y Lower scalar threshold on Y.
+   * @param[in] max_y Upper scalar threshold on Y.
+   */
+  void setPhaseThresholds2D(float min_x, float max_x, float min_y, float max_y);
+
+  /**
+   * @brief Gets current lower scalar threshold on Y.
+   * @return Min Y threshold.
+   */
+  [[nodiscard]] float phaseMinThresholdY() const noexcept;
+
+  /**
+   * @brief Gets current upper scalar threshold on Y.
+   * @return Max Y threshold.
+   */
+  [[nodiscard]] float phaseMaxThresholdY() const noexcept;
+
+  /**
+   * @brief Retrieves latest computed 64x64 2D joint distribution heatmap.
+   * @return PhaseHeatmap2D telemetry struct.
+   */
+  [[nodiscard]] PhaseHeatmap2D phaseHeatmap() const;
+
+  /**
+   * @brief Exports the active 2D heatmap to a PNG image file.
+   * @param[in] filepath Destination file path (defaults to heatmap_snapshot.png if empty).
+   * @return True if image file was successfully written.
+   */
+  bool exportHeatmapPng(const std::string &filepath = "");
 
   /**
    * @brief Pushes current phase search settings, colormap texture, and histogram telemetry to Slint
@@ -342,6 +400,10 @@ private:
                                 const FramePhaseDescriptors *descriptors) const;
   [[nodiscard]] PhaseHistogram
   computePhaseHistogram(const FramePhaseDescriptors *descriptors) const;
+  [[nodiscard]] PhaseHeatmap2D
+  computePhaseHeatmap(const FramePhaseDescriptors *descriptors) const;
+  [[nodiscard]] slint::Image
+  renderHeatmapImage(const PhaseHeatmap2D &heatmap, plotters::ColormapType colormap) const;
   [[nodiscard]] std::shared_ptr<const FramePhaseDescriptors>
   computeDescriptorsSync(std::size_t frame_index);
   void dispatchFrame(const uint8_t *pixel_data, uint32_t width, uint32_t height);
@@ -369,6 +431,7 @@ private:
   mutable std::mutex phase_mutex_;
   PhaseDescriptorsLRUCache lru_cache_{32};
   PhaseHistogram latest_histogram_;
+  PhaseHeatmap2D latest_heatmap_;
   std::condition_variable phase_cv_;
   std::atomic<bool> stop_phase_worker_{false};
   std::atomic<int64_t> requested_phase_frame_{-1};

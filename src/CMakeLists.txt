@@ -357,6 +357,7 @@ if(BUILD_GUI)
         app_services_obj
         Slint::Slint
         nfd
+        miniz
         correlation_simd_options
     )
     set_property(TARGET app_gui_obj PROPERTY SLINT_EMBED_RESOURCES "embed-files")

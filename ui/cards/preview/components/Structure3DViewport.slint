@@ -9,6 +9,7 @@ import {
 import { TrajectoryPlaybackBar } from "./TrajectoryPlaybackBar.slint";
 import { PhaseSearchCard } from "./PhaseSearchCard.slint";
 import { ViewportColorbar } from "./ViewportColorbar.slint";
+import { CrystalMarker } from "./PhaseHeatmapView.slint";
 
 export component Structure3DViewport inherits Rectangle {
     in property <image> structure_3d_image;
@@ -38,6 +39,17 @@ export component Structure3DViewport inherits Rectangle {
     in property <string> phase_descriptor_name: "q̄₆";
     in property <image> phase_colorbar_image;
 
+    // 2D Phase Search & Heatmap
+    in property <bool> phase_is_2d_mode: false;
+    in property <int> phase_descriptor_y: 0;
+    in property <float> phase_min_threshold_y: 0.46;
+    in property <float> phase_max_threshold_y: 0.58;
+    in property <float> phase_domain_min_y: 0.0;
+    in property <float> phase_domain_max_y: 1.0;
+    in property <string> phase_descriptor_name_y: "q̄₆";
+    in property <image> phase_heatmap_image;
+    in property <[CrystalMarker]> phase_crystal_markers: [];
+
     callback toggle_phase_search(bool);
     callback set_phase_preset(int);
     callback set_phase_descriptor(int);
@@ -47,6 +59,11 @@ export component Structure3DViewport inherits Rectangle {
     callback set_phase_radius_ratio(float);
     callback set_phase_dim_non_matching(bool);
     callback set_phase_hide_non_matching(bool);
+
+    callback set_phase_2d_mode(bool);
+    callback set_phase_descriptor_y(int);
+    callback set_phase_thresholds_2d(float, float, float, float);
+    callback export_phase_heatmap_png();
 
     // Workflow properties & callbacks
     in property <bool> file_loaded: false;
@@ -500,6 +517,17 @@ export component Structure3DViewport inherits Rectangle {
         colorbar_image: root.phase_colorbar_image;
         descriptor_name: root.phase_descriptor_name;
 
+        // 2D Heatmap Mode properties
+        is_2d_mode: root.phase_is_2d_mode;
+        descriptor_y_index: root.phase_descriptor_y;
+        min_threshold_y: root.phase_min_threshold_y;
+        max_threshold_y: root.phase_max_threshold_y;
+        domain_min_y: root.phase_domain_min_y;
+        domain_max_y: root.phase_domain_max_y;
+        descriptor_name_y: root.phase_descriptor_name_y;
+        heatmap_image: root.phase_heatmap_image;
+        crystal_markers: root.phase_crystal_markers;
+
         toggle_enabled(en) => { root.toggle_phase_search(en); }
         set_preset(idx) => { root.set_phase_preset(idx); }
         set_descriptor(idx) => { root.set_phase_descriptor(idx); }
@@ -510,5 +538,12 @@ export component Structure3DViewport inherits Rectangle {
         set_dim_non_matching(dim) => { root.set_phase_dim_non_matching(dim); }
         set_hide_non_matching(hide) => { root.set_phase_hide_non_matching(hide); }
         close => { root.phase_panel_open = false; }
+
+        set_2d_mode(is_2d) => { root.set_phase_2d_mode(is_2d); }
+        set_descriptor_y(idx) => { root.set_phase_descriptor_y(idx); }
+        set_thresholds_2d(min_x, max_x, min_y, max_y) => {
+            root.set_phase_thresholds_2d(min_x, max_x, min_y, max_y);
+        }
+        export_heatmap_png => { root.export_phase_heatmap_png(); }
     }
 }

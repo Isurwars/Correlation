@@ -1,0 +1,427 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialTypography,
+    MaterialText,
+} from "../../../material/material.slint";
+
+export struct CrystalMarker {
+    label: string,
+    x_ratio: float,
+    y_ratio: float,
+}
+
+export component PhaseHeatmapView inherits Rectangle {
+    in property <image> heatmap_image;
+    in property <int> descriptor_x: 1; // Default Q4Bar
+    in property <int> descriptor_y: 0; // Default Q6Bar
+    in property <string> descriptor_name_x: "q̄₄";
+    in property <string> descriptor_name_y: "q̄₆";
+    in property <float> min_x: 0.0;
+    in property <float> max_x: 1.0;
+    in property <float> min_y: 0.0;
+    in property <float> max_y: 1.0;
+    in property <float> sel_min_x: 0.0;
+    in property <float> sel_max_x: 1.0;
+    in property <float> sel_min_y: 0.0;
+    in property <float> sel_max_y: 1.0;
+    in property <int> matching_atoms: 0;
+    in property <int> total_atoms: 0;
+    in property <[CrystalMarker]> crystal_markers: [];
+
+    callback set_descriptor_x(int);
+    callback set_descriptor_y(int);
+    callback set_selection_2d(float, float, float, float); // min_x, max_x, min_y, max_y
+    callback export_png();
+    callback reset_selection();
+
+    // Internal interactive drag tracking
+    property <bool> is_dragging: false;
+    property <length> drag_start_x: 0px;
+    property <length> drag_start_y: 0px;
+    property <length> drag_curr_x: 0px;
+    property <length> drag_curr_y: 0px;
+
+    background: transparent;
+
+    VerticalLayout {
+        spacing: 5px;
+
+        // 1. Telemetry & Snapshot Export Header
+        HorizontalLayout {
+            alignment: space-between;
+
+            MaterialText {
+                text: "2D Density Map";
+                font-size: 11px;
+                font-weight: 700;
+                color: MaterialPalette.on_surface;
+                vertical-alignment: center;
+            }
+
+            HorizontalLayout {
+                spacing: 6px;
+                alignment: center;
+
+                // Reset Selection Button
+                reset_btn := TouchArea {
+                    width: 22px;
+                    height: 20px;
+                    mouse-cursor: pointer;
+                    accessible-role: button;
+                    accessible-label: "Reset 2D Selection Box";
+                    clicked => { root.reset_selection(); }
+
+                    Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 4px;
+                        background: reset_btn.has-hover ? MaterialPalette.surface_container_highest : transparent;
+
+                        MaterialText {
+                            width: 100%;
+                            height: 100%;
+                            text: "↺";
+                            font-size: 12px;
+                            color: MaterialPalette.on_surface_variant;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+
+                // Export PNG Snapshot Button
+                export_btn := TouchArea {
+                    height: 20px;
+                    mouse-cursor: pointer;
+                    accessible-role: button;
+                    accessible-label: "Export Heatmap PNG";
+                    clicked => { root.export_png(); }
+
+                    Rectangle {
+                        border-radius: 4px;
+                        background: export_btn.has-hover ? MaterialPalette.primary.with_alpha(25%) : MaterialPalette.surface_container_highest;
+                        border-width: 1px;
+                        border-color: export_btn.has-hover ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(40%);
+
+                        HorizontalLayout {
+                            padding-left: 6px;
+                            padding-right: 6px;
+                            spacing: 4px;
+                            alignment: center;
+
+                            MaterialText {
+                                text: "📸 PNG";
+                                font-size: 10px;
+                                font-weight: 600;
+                                color: MaterialPalette.primary;
+                                vertical-alignment: center;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 2. Axis Selection Rows
+        VerticalLayout {
+            spacing: 3px;
+
+            // X Axis Selector
+            HorizontalLayout {
+                spacing: 3px;
+                alignment: center;
+
+                MaterialText {
+                    width: 32px;
+                    text: "X:";
+                    font-size: 10px;
+                    font-weight: 700;
+                    color: MaterialPalette.on_surface_variant;
+                    vertical-alignment: center;
+                }
+
+                property <[string]> x_labels: ["q̄₆", "q̄₄", "q₆", "q₄", "ŵ₆", "ŵ₄", "s₂", "N_conn", "q_tet"];
+
+                for label[idx] in self.x_labels: TouchArea {
+                    horizontal-stretch: 1;
+                    height: 18px;
+                    mouse-cursor: pointer;
+                    clicked => { root.set_descriptor_x(idx); }
+
+                    Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 4px;
+                        background: root.descriptor_x == idx
+                            ? MaterialPalette.primary.with_alpha(30%)
+                            : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
+                        border-width: root.descriptor_x == idx ? 1px : 0.5px;
+                        border-color: root.descriptor_x == idx ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(30%);
+
+                        MaterialText {
+                            width: 100%;
+                            height: 100%;
+                            text: label;
+                            font-size: 9px;
+                            font-weight: root.descriptor_x == idx ? 700 : 400;
+                            color: root.descriptor_x == idx ? MaterialPalette.primary : MaterialPalette.on_surface;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+
+            // Y Axis Selector
+            HorizontalLayout {
+                spacing: 3px;
+                alignment: center;
+
+                MaterialText {
+                    width: 32px;
+                    text: "Y:";
+                    font-size: 10px;
+                    font-weight: 700;
+                    color: MaterialPalette.on_surface_variant;
+                    vertical-alignment: center;
+                }
+
+                property <[string]> y_labels: ["q̄₆", "q̄₄", "q₆", "q₄", "ŵ₆", "ŵ₄", "s₂", "N_conn", "q_tet"];
+
+                for label[idx] in self.y_labels: TouchArea {
+                    horizontal-stretch: 1;
+                    height: 18px;
+                    mouse-cursor: pointer;
+                    clicked => { root.set_descriptor_y(idx); }
+
+                    Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 4px;
+                        background: root.descriptor_y == idx
+                            ? MaterialPalette.secondary.with_alpha(30%)
+                            : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
+                        border-width: root.descriptor_y == idx ? 1px : 0.5px;
+                        border-color: root.descriptor_y == idx ? MaterialPalette.secondary : MaterialPalette.outline_variant.with_alpha(30%);
+
+                        MaterialText {
+                            width: 100%;
+                            height: 100%;
+                            text: label;
+                            font-size: 9px;
+                            font-weight: root.descriptor_y == idx ? 700 : 400;
+                            color: root.descriptor_y == idx ? MaterialPalette.secondary : MaterialPalette.on_surface;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 3. Heatmap Canvas with Coordinate Overlays
+        HorizontalLayout {
+            spacing: 4px;
+
+            // Y-Axis Label and Bounds
+            VerticalLayout {
+                width: 24px;
+                alignment: space-between;
+
+                MaterialText {
+                    text: "" + (Math.round(root.max_y * 100) / 100);
+                    font-size: 8px;
+                    color: MaterialPalette.on_surface_variant;
+                    horizontal-alignment: right;
+                }
+
+                MaterialText {
+                    text: root.descriptor_name_y;
+                    font-size: 9.5px;
+                    font-weight: 700;
+                    color: MaterialPalette.secondary;
+                    horizontal-alignment: right;
+                }
+
+                MaterialText {
+                    text: "" + (Math.round(root.min_y * 100) / 100);
+                    font-size: 8px;
+                    color: MaterialPalette.on_surface_variant;
+                    horizontal-alignment: right;
+                }
+            }
+
+            // Central Square Canvas
+            canvas_box := Rectangle {
+                horizontal-stretch: 1;
+                height: 190px;
+                border-radius: 6px;
+                background: #14171c;
+                border-width: 1.5px;
+                border-color: MaterialPalette.outline_variant.with_alpha(60%);
+                clip: true;
+
+                // Heatmap Image
+                Image {
+                    width: 100%;
+                    height: 100%;
+                    source: root.heatmap_image;
+                    image-fit: fill;
+                }
+
+                // Canonical Crystal Reference Markers
+                for marker in root.crystal_markers: Rectangle {
+                    x: Math.max(2px, Math.min(parent.width - 24px, parent.width * marker.x_ratio - 11px));
+                    y: Math.max(2px, Math.min(parent.height - 13px, parent.height * marker.y_ratio - 6px));
+                    width: 22px;
+                    height: 12px;
+                    border-radius: 3px;
+                    background: #111419.with_alpha(88%);
+                    border-width: 1px;
+                    border-color: MaterialPalette.primary;
+
+                    MaterialText {
+                        width: 100%;
+                        height: 100%;
+                        text: marker.label;
+                        font-size: 8px;
+                        font-weight: 700;
+                        color: MaterialPalette.primary;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                }
+
+                // Selection Box Geometry calculation
+                property <float> norm_min_x: Math.max(0.0, Math.min(1.0, (root.sel_min_x - root.min_x) / Math.max(0.0001, root.max_x - root.min_x)));
+                property <float> norm_max_x: Math.max(0.0, Math.min(1.0, (root.sel_max_x - root.min_x) / Math.max(0.0001, root.max_x - root.min_x)));
+                property <float> norm_min_y: Math.max(0.0, Math.min(1.0, (root.max_y - root.sel_max_y) / Math.max(0.0001, root.max_y - root.min_y)));
+                property <float> norm_max_y: Math.max(0.0, Math.min(1.0, (root.max_y - root.sel_min_y) / Math.max(0.0001, root.max_y - root.min_y)));
+
+                // 2D Selection Box Highlight
+                Rectangle {
+                    x: root.is_dragging
+                        ? Math.min(root.drag_start_x, root.drag_curr_x)
+                        : (parent.width * parent.norm_min_x);
+                    y: root.is_dragging
+                        ? Math.min(root.drag_start_y, root.drag_curr_y)
+                        : (parent.height * parent.norm_min_y);
+                    width: root.is_dragging
+                        ? Math.abs(root.drag_curr_x - root.drag_start_x)
+                        : (parent.width * Math.max(0.01, parent.norm_max_x - parent.norm_min_x));
+                    height: root.is_dragging
+                        ? Math.abs(root.drag_curr_y - root.drag_start_y)
+                        : (parent.height * Math.max(0.01, parent.norm_max_y - parent.norm_min_y));
+
+                    background: MaterialPalette.primary.with_alpha(22%);
+                    border-width: 1.5px;
+                    border-color: MaterialPalette.primary;
+                    border-radius: 2px;
+                }
+
+                // Interactive TouchArea for Drag-to-Select
+                canvas_touch := TouchArea {
+                    width: 100%;
+                    height: 100%;
+                    mouse-cursor: crosshair;
+
+                    pointer-event(event) => {
+                        if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                            root.drag_start_x = self.mouse-x;
+                            root.drag_start_y = self.mouse-y;
+                            root.drag_curr_x = self.mouse-x;
+                            root.drag_curr_y = self.mouse-y;
+                            root.is_dragging = true;
+                        }
+                        if (event.kind == PointerEventKind.up && event.button == PointerEventButton.left && root.is_dragging) {
+                            root.is_dragging = false;
+                            let w = self.width / 1px;
+                            let h = self.height / 1px;
+                            if (w > 0.0 && h > 0.0) {
+                                let x1 = Math.max(0.0, Math.min(1.0, (root.drag_start_x / 1px) / w));
+                                let x2 = Math.max(0.0, Math.min(1.0, (root.drag_curr_x / 1px) / w));
+                                let y1 = Math.max(0.0, Math.min(1.0, (root.drag_start_y / 1px) / h));
+                                let y2 = Math.max(0.0, Math.min(1.0, (root.drag_curr_y / 1px) / h));
+
+                                let rx_min = Math.min(x1, x2);
+                                let rx_max = Math.max(x1, x2);
+                                let ry_top = Math.min(y1, y2);
+                                let ry_bottom = Math.max(y1, y2);
+
+                                // Commit only if user actually dragged (>= 4px)
+                                if ((rx_max - rx_min) * w >= 4.0 && (ry_bottom - ry_top) * h >= 4.0) {
+                                    let calc_min_x = root.min_x + rx_min * (root.max_x - root.min_x);
+                                    let calc_max_x = root.min_x + rx_max * (root.max_x - root.min_x);
+                                    let calc_max_y = root.max_y - ry_top * (root.max_y - root.min_y);
+                                    let calc_min_y = root.max_y - ry_bottom * (root.max_y - root.min_y);
+                                    root.set_selection_2d(calc_min_x, calc_max_x, calc_min_y, calc_max_y);
+                                }
+                            }
+                        }
+                    }
+
+                    moved => {
+                        if (self.pressed && root.is_dragging) {
+                            root.drag_curr_x = Math.max(0px, Math.min(self.width, self.mouse-x));
+                            root.drag_curr_y = Math.max(0px, Math.min(self.height, self.mouse-y));
+                        }
+                    }
+
+                    double-clicked => {
+                        root.reset_selection();
+                    }
+                }
+            }
+        }
+
+        // X-Axis Label and Bounds Footer
+        HorizontalLayout {
+            padding-left: 28px;
+            alignment: space-between;
+
+            MaterialText {
+                text: "" + (Math.round(root.min_x * 100) / 100);
+                font-size: 8px;
+                color: MaterialPalette.on_surface_variant;
+            }
+
+            MaterialText {
+                text: root.descriptor_name_x;
+                font-size: 9.5px;
+                font-weight: 700;
+                color: MaterialPalette.primary;
+            }
+
+            MaterialText {
+                text: "" + (Math.round(root.max_x * 100) / 100);
+                font-size: 8px;
+                color: MaterialPalette.on_surface_variant;
+            }
+        }
+
+        // 4. Selection Telemetry Summary
+        HorizontalLayout {
+            alignment: space-between;
+
+            MaterialText {
+                text: "Selection Box:";
+                font-size: 9.5px;
+                color: MaterialPalette.on_surface_variant;
+            }
+
+            MaterialText {
+                text: root.total_atoms > 0
+                    ? ("" + root.matching_atoms + " / " + root.total_atoms + " (" + (Math.round(root.matching_atoms * 1000.0 / root.total_atoms) / 10.0) + "%)")
+                    : "0 Atoms";
+                font-size: 9.5px;
+                font-weight: 700;
+                color: root.matching_atoms > 0 ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+            }
+        }
+    }
+}

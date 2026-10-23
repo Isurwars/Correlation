@@ -75,6 +75,10 @@ struct PhaseSearchSettings {
   bool dim_non_matching{false};   ///< Dim core atoms outside threshold.
   bool hide_non_matching{false};  ///< Hide/cull core atoms outside threshold.
   float dim_factor{0.3F};         ///< Luminance factor for non-matches.
+  bool is_2d_mode{false};         ///< True if 2D joint distribution filtering is active.
+  PhaseDescriptor descriptor_y{PhaseDescriptor::Q4Bar}; ///< Y-axis order descriptor for 2D mode.
+  float min_threshold_y{0.0F};                          ///< Y-axis lower scalar bound.
+  float max_threshold_y{0.3F};                          ///< Y-axis upper scalar bound.
 };
 
 /**
@@ -89,6 +93,34 @@ struct PhaseHistogram {
   float bin_width{0.02F};          ///< Bin delta spacing.
   uint32_t matching_atom_count{0}; ///< Number of atoms within [min_threshold, max_threshold].
   uint32_t total_atom_count{0};    ///< Total atom count in configuration.
+};
+
+/**
+ * @struct PhaseHeatmap2D
+ * @brief 64x64 joint distribution histogram across two order parameters (X and Y).
+ */
+struct PhaseHeatmap2D {
+  static constexpr std::size_t K_GRID_SIZE = 64;
+  std::vector<uint32_t> counts;    ///< 64x64 grid cells (row 0 is max_y, row 63 is min_y).
+  float min_x{0.0F};               ///< Domain minimum on X-axis.
+  float max_x{1.0F};               ///< Domain maximum on X-axis.
+  float min_y{0.0F};               ///< Domain minimum on Y-axis.
+  float max_y{1.0F};               ///< Domain maximum on Y-axis.
+  float bin_width_x{0.015625F};    ///< Bin width along X.
+  float bin_width_y{0.015625F};    ///< Bin width along Y.
+  uint32_t max_count{0};           ///< Peak bin count across the 64x64 grid.
+  uint32_t matching_atom_count{0}; ///< Atoms falling inside 2D bounding box [Xmin, Xmax] x [Ymin, Ymax].
+  uint32_t total_atom_count{0};    ///< Total atom count.
+};
+
+/**
+ * @struct CrystalMarkerData
+ * @brief Canonical crystal reference coordinate normalized to [0, 1] on 2D heatmap.
+ */
+struct CrystalMarkerData {
+  std::string_view label; ///< Crystal phase abbreviation (FCC, HCP, BCC, Ico, Liq).
+  float x_ratio{0.0F};    ///< Normalized X position [0.0, 1.0].
+  float y_ratio{0.0F};    ///< Normalized Y position [0.0, 1.0] (0 = top, 1 = bottom).
 };
 
 /**
@@ -201,6 +233,70 @@ getDescriptorDomain(PhaseDescriptor descriptor) noexcept {
   default:
     return {0.0F, 1.0F};
   }
+}
+
+/**
+ * @brief Computes normalized reference coordinates for canonical crystal phases in 2D space.
+ * @param[in] desc_x X-axis order parameter descriptor.
+ * @param[in] desc_y Y-axis order parameter descriptor.
+ * @return Vector of CrystalMarkerData coordinates normalized to canvas [0, 1].
+ */
+[[nodiscard]] inline std::vector<CrystalMarkerData>
+getCrystalReferenceMarkers(PhaseDescriptor desc_x, PhaseDescriptor desc_y) noexcept {
+  const bool is_x_q4 = (desc_x == PhaseDescriptor::Q4Bar || desc_x == PhaseDescriptor::Q4);
+  const bool is_y_q6 = (desc_y == PhaseDescriptor::Q6Bar || desc_y == PhaseDescriptor::Q6);
+  if (is_x_q4 && is_y_q6) {
+    return {
+        CrystalMarkerData{.label = "FCC", .x_ratio = 0.191F, .y_ratio = 0.425F},
+        CrystalMarkerData{.label = "HCP", .x_ratio = 0.097F, .y_ratio = 0.515F},
+        CrystalMarkerData{.label = "BCC", .x_ratio = 0.036F, .y_ratio = 0.489F},
+        CrystalMarkerData{.label = "Ico", .x_ratio = 0.000F, .y_ratio = 0.801F},
+        CrystalMarkerData{.label = "Liq", .x_ratio = 0.025F, .y_ratio = 0.880F},
+    };
+  }
+
+  const bool is_x_q6 = (desc_x == PhaseDescriptor::Q6Bar || desc_x == PhaseDescriptor::Q6);
+  const bool is_y_q4 = (desc_y == PhaseDescriptor::Q4Bar || desc_y == PhaseDescriptor::Q4);
+  if (is_x_q6 && is_y_q4) {
+    return {
+        CrystalMarkerData{.label = "FCC", .x_ratio = 0.575F, .y_ratio = 0.809F},
+        CrystalMarkerData{.label = "HCP", .x_ratio = 0.485F, .y_ratio = 0.903F},
+        CrystalMarkerData{.label = "BCC", .x_ratio = 0.511F, .y_ratio = 0.964F},
+        CrystalMarkerData{.label = "Ico", .x_ratio = 0.199F, .y_ratio = 1.000F},
+        CrystalMarkerData{.label = "Liq", .x_ratio = 0.120F, .y_ratio = 0.975F},
+    };
+  }
+
+  if (is_x_q6 && desc_y == PhaseDescriptor::W6Hat) {
+    return {
+        CrystalMarkerData{.label = "FCC", .x_ratio = 0.575F, .y_ratio = 0.500F},
+        CrystalMarkerData{.label = "HCP", .x_ratio = 0.485F, .y_ratio = 0.530F},
+        CrystalMarkerData{.label = "BCC", .x_ratio = 0.511F, .y_ratio = 0.467F},
+        CrystalMarkerData{.label = "Ico", .x_ratio = 0.199F, .y_ratio = 0.923F},
+        CrystalMarkerData{.label = "Liq", .x_ratio = 0.120F, .y_ratio = 0.500F},
+    };
+  }
+
+  if (desc_x == PhaseDescriptor::W6Hat && is_y_q6) {
+    return {
+        CrystalMarkerData{.label = "FCC", .x_ratio = 0.500F, .y_ratio = 0.425F},
+        CrystalMarkerData{.label = "HCP", .x_ratio = 0.470F, .y_ratio = 0.515F},
+        CrystalMarkerData{.label = "BCC", .x_ratio = 0.533F, .y_ratio = 0.489F},
+        CrystalMarkerData{.label = "Ico", .x_ratio = 0.077F, .y_ratio = 0.801F},
+        CrystalMarkerData{.label = "Liq", .x_ratio = 0.500F, .y_ratio = 0.880F},
+    };
+  }
+
+  if (is_x_q4 && desc_y == PhaseDescriptor::W4Hat) {
+    return {
+        CrystalMarkerData{.label = "FCC", .x_ratio = 0.191F, .y_ratio = 0.898F},
+        CrystalMarkerData{.label = "HCP", .x_ratio = 0.097F, .y_ratio = 0.165F},
+        CrystalMarkerData{.label = "BCC", .x_ratio = 0.036F, .y_ratio = 0.332F},
+        CrystalMarkerData{.label = "Ico", .x_ratio = 0.000F, .y_ratio = 0.500F},
+    };
+  }
+
+  return {};
 }
 
 } // namespace correlation::app
