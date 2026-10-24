@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-import { AtomCount, BondCutoff, AnalysisOptions, AppErrors, SanityBadgeState } from "../../Types.slint";
+import { AtomCount, BondCutoff, AnalysisOptions, AppErrors, SanityBadgeState, WorkflowState } from "../../Types.slint";
 import { CommonOptionsPanelCard } from "../../cards/common/CommonOptionsPanelCard.slint";
 
 /// Modular Host Component for Panel 1: Structure & Common Options (Cutoffs, RDF, Angles, Dynamics)
@@ -11,6 +11,9 @@ export component StructurePanel inherits Rectangle {
     in property <bool> file_loaded: false;
     in property <bool> has_radial_active: true;
     in property <bool> has_angular_active: true;
+    in property <WorkflowState> workflow_state;
+    callback run_analysis();
+    callback cancel_analysis();
 
     // Dynamics indicators
     in property <string> diff_msd: "";
@@ -91,5 +94,10 @@ export component StructurePanel inherits Rectangle {
         frame_stride <=> root.analysis_options.frame_stride;
         frame_stride_error: root.app_errors.frame_stride_error;
         reset_trajectory_options => { root.reset_trajectory_options(); }
+
+        analysis_running: root.workflow_state.analysis_running;
+        has_validation_errors: root.workflow_state.has_validation_errors;
+        run_analysis => { root.run_analysis(); }
+        cancel_analysis => { root.cancel_analysis(); }
     }
 }

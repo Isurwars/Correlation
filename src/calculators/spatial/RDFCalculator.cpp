@@ -229,11 +229,23 @@ std::vector<real_t> countCellElements(const correlation::core::Cell &cell) {
   return element_counts;
 }
 
-void computeTotalDistributions(correlation::analysis::Histogram &g_r,
+void computeTotalDistributions(correlation::analysis::Histogram &h_r,
+                               correlation::analysis::Histogram &g_r,
                                correlation::analysis::Histogram &g_r_reduced,
                                correlation::analysis::Histogram &j_r,
                                const std::map<std::string, real_t> &ashcroft_weights, real_t rho_0,
                                size_t num_bins) {
+  auto &total_h = h_r.partials["Total"];
+  total_h.assign(num_bins, 0.0);
+  for (const auto &[key, h_partial] : h_r.partials) {
+    if (key == "Total") {
+      continue;
+    }
+    for (size_t k = 0; k < num_bins; ++k) {
+      total_h[k] += h_partial[k];
+    }
+  }
+
   auto &total_g = g_r.partials["Total"];
   total_g.assign(num_bins, 0.0);
   for (const auto &[key, g_partial] : g_r.partials) {
@@ -388,7 +400,7 @@ RDFCalculator::calculate(const correlation::core::Cell &cell,
                          },
                          h_r, g_r, g_r_reduced, j_r);
 
-  computeTotalDistributions(g_r, g_r_reduced, j_r, ashcroft_weights, rho_0, num_bins);
+  computeTotalDistributions(h_r, g_r, g_r_reduced, j_r, ashcroft_weights, rho_0, num_bins);
 
   correlation::analysis::Histogram g_r_unweighted = g_r;
   g_r_unweighted.title = "g(r) — Unweighted Radial Distribution Function";

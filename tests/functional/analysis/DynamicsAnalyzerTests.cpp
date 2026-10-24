@@ -228,6 +228,12 @@ TEST(DynamicsAnalyzerTests, HandlesEmptyAndInvalidTrajectories) {
   zero_atom_traj.addFrame(zero_atom_cell);
   EXPECT_TRUE(DynamicsAnalyzer::calculateVACF(zero_atom_traj, MaxFrames{1}).empty());
   EXPECT_TRUE(DynamicsAnalyzer::calculateMSD(zero_atom_traj, MaxFrames{1}).empty());
+
+  // Single-frame trajectory: invalid for temporal autocorrelation
+  correlation::core::Trajectory single_frame_traj;
+  single_frame_traj.addFrame(cell);
+  EXPECT_TRUE(DynamicsAnalyzer::calculateVACF(single_frame_traj, MaxFrames{1}).empty());
+  EXPECT_TRUE(DynamicsAnalyzer::calculateMSD(single_frame_traj, MaxFrames{1}).empty());
 }
 
 TEST(DynamicsAnalyzerTests, HandlesVDOSBoundaryAndEdgeCaseInputs) {

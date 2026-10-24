@@ -148,36 +148,10 @@ computeUnwrappedTrajectories(const std::vector<correlation::core::Cell> &frames,
   }
   return unwrapped;
 }
-} // namespace
 
-std::vector<real_t> DynamicsAnalyzer::calculateVACF(const correlation::core::Trajectory &traj,
-                                                    MaxFrames max_correlation_frames_arg,
-                                                    StartFrame start_frame_arg,
-                                                    EndFrame end_frame_arg) {
-  int max_correlation_frames = max_correlation_frames_arg.value;
-  size_t start_frame = start_frame_arg.value;
-  size_t end_frame = end_frame_arg.value;
-  if (traj.getFrameCount() == 0) {
-    return {};
-  }
-  const auto &frames = traj.getFrames(); // materialises lazy trajectory for computation
-
-  size_t const total_frames = frames.size();
-  size_t const num_atoms = frames[0].atoms().size();
-
-  start_frame = std::min(start_frame, total_frames > 0 ? total_frames - 1 : 0);
-  end_frame = std::min(end_frame, total_frames);
-  if (start_frame >= end_frame) {
-    return {};
-  }
-
-  size_t num_frames = end_frame - start_frame;
-
-  if (max_correlation_frames < 0 || std::cmp_greater_equal(max_correlation_frames, num_frames)) {
-    max_correlation_frames = static_cast<int>(num_frames) - 1;
-  }
-
-  // Get masses for COM removal
+std::vector<std::vector<correlation::math::Vector3<real_t>>>
+computeCorrectedVelocities(const std::vector<correlation::core::Cell> &frames, size_t start_frame,
+                           size_t num_frames, size_t num_atoms) {
   const auto &atoms = frames[start_frame].atoms();
   std::vector<real_t> masses(num_atoms);
   real_t total_mass = 0.0;
@@ -194,7 +168,6 @@ std::vector<real_t> DynamicsAnalyzer::calculateVACF(const correlation::core::Tra
     return {};
   }
 
-  // Create corrected velocities (COM removed) mapped relative to start_frame
   std::vector<std::vector<correlation::math::Vector3<real_t>>> atom_velocities(
       num_atoms, std::vector<correlation::math::Vector3<real_t>>(num_frames));
 
@@ -209,6 +182,53 @@ std::vector<real_t> DynamicsAnalyzer::calculateVACF(const correlation::core::Tra
     for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
       atom_velocities[atom_idx][frame_idx] = frames[traj_t].atoms()[atom_idx].velocity() - v_com;
     }
+  }
+
+  return atom_velocities;
+}
+} // namespace
+
+std::vector<real_t> DynamicsAnalyzer::calculateVACF(const correlation::core::Trajectory &traj,
+                                                    MaxFrames max_correlation_frames_arg,
+                                                    StartFrame start_frame_arg,
+                                                    EndFrame end_frame_arg) {
+  int max_correlation_frames = max_correlation_frames_arg.value;
+  size_t start_frame = start_frame_arg.value;
+  size_t end_frame = end_frame_arg.value;
+  if (traj.getFrameCount() < 2) {
+    return {};
+  }
+  const auto &frames = traj.getFrames(); // materialises lazy trajectory for computation
+
+  size_t const total_frames = frames.size();
+  if (total_frames < 2 || frames[0].atoms().empty()) {
+    return {};
+  }
+  size_t const num_atoms = frames[0].atoms().size();
+
+  start_frame = std::min(start_frame, total_frames - 1);
+  end_frame = std::min(end_frame, total_frames);
+  if (start_frame >= end_frame) {
+    return {};
+  }
+
+  size_t const num_frames = end_frame - start_frame;
+  if (num_frames < 2) {
+    return {};
+  }
+
+  if (max_correlation_frames < 0 || std::cmp_greater_equal(max_correlation_frames, num_frames)) {
+    max_correlation_frames = static_cast<int>(num_frames) - 1;
+  }
+  if (max_correlation_frames <= 0) {
+    return {};
+  }
+
+  // Create corrected velocities (COM removed) mapped relative to start_frame
+  const auto atom_velocities =
+      computeCorrectedVelocities(frames, start_frame, num_frames, num_atoms);
+  if (atom_velocities.empty()) {
+    return {};
   }
 
   std::vector<real_t> vacf(max_correlation_frames + 1, 0.0);

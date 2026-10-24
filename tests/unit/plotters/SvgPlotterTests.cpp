@@ -332,4 +332,47 @@ TEST(SvgPlotterTests, SinglePartialRendersOnlyTotal) {
   EXPECT_EQ(svg.find("stroke=\"#E69F00\""), std::string::npos);
 }
 
+TEST(SvgPlotterTests, DetectsMainPeakOnNormalizedDistribution) {
+  Histogram hist;
+  hist.title = "Plane Angle Distribution";
+  hist.x_label = "θ";
+  hist.y_label = "P(θ)";
+  hist.bins = {10.0, 20.0, 30.0, 40.0, 50.0, 60.0};
+  // Small normalized values well below the old 0.5 threshold
+  hist.partials["Total"] = {0.005, 0.012, 0.038, 0.021, 0.009, 0.002};
+
+  PlotConfig config;
+  config.use_native_text = true;
+  config.show_peak_callouts = true;
+  std::string svg = renderHistogramAsSvg(hist, config);
+
+  EXPECT_FALSE(svg.empty());
+  // Peak indicator polygon and callout line should be present
+  EXPECT_NE(svg.find("<polygon points="), std::string::npos);
+  // Label for non-"r" axis should be "Peak", identifying the main peak at 30.00
+  EXPECT_NE(svg.find("Peak 30.00"), std::string::npos);
+  // No secondary peak callouts should be present
+  EXPECT_EQ(svg.find("r₂"), std::string::npos);
+}
+
+TEST(SvgPlotterTests, DetectsMainPeakForRadialHistogram) {
+  Histogram hist;
+  hist.title = "Radial Distribution Function";
+  hist.x_label = "r";
+  hist.y_label = "g(r)";
+  hist.bins = {1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0};
+  hist.partials["Total"] = {0.0, 0.2, 2.8, 0.5, 1.2, 0.8, 1.0};
+
+  PlotConfig config;
+  config.use_native_text = true;
+  config.show_peak_callouts = true;
+  std::string svg = renderHistogramAsSvg(hist, config);
+
+  EXPECT_FALSE(svg.empty());
+  // Radial histogram uses "r₁" for main peak at 2.00
+  EXPECT_NE(svg.find("r₁ 2.00"), std::string::npos);
+  // No secondary peak callout
+  EXPECT_EQ(svg.find("r₂"), std::string::npos);
+}
+
 } // namespace correlation::testing

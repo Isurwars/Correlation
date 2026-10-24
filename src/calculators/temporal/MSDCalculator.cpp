@@ -21,6 +21,9 @@ const bool REGISTERED = CalculatorFactory::registerTypeSafe<MSDCalculator>("MSDC
 void MSDCalculator::calculateTrajectory(
     correlation::analysis::DistributionFunctions &dists, const correlation::core::Trajectory &traj,
     const correlation::analysis::AnalysisSettings & /*settings*/) const {
+  if (traj.getFrameCount() < 2) {
+    return;
+  }
   auto results = calculate(traj, {-1}, {0}, {static_cast<size_t>(-1)});
   for (auto &[name, histogram] : results) {
     dists.addHistogram(name, std::move(histogram));
@@ -34,23 +37,20 @@ MSDCalculator::calculate(const correlation::core::Trajectory &traj,
                          correlation::analysis::EndFrame end_frame) {
   std::map<std::string, correlation::analysis::Histogram> results;
 
-  // MSD requires positional data only (frames), not velocity data
-  // Use getFrameCount() to avoid materialising a memory-mapped trajectory.
-  if (traj.getFrameCount() == 0) {
+  if (traj.getFrameCount() < 2) {
     return results;
   }
 
   std::vector<real_t> raw_msd = correlation::analysis::DynamicsAnalyzer::calculateMSD(
       traj, max_correlation_frames, start_frame, end_frame);
 
-  if (raw_msd.empty()) {
+  if (raw_msd.size() < 2) {
     return results;
   }
 
   const size_t num_frames = raw_msd.size();
   const real_t time_step = traj.getTimeStep();
 
-  // --- MSD histogram: bins = time (fs), partials["Total"] = MSD (Å²) ---
   correlation::analysis::Histogram msd_hist;
   msd_hist.x_label = "t";
   msd_hist.title = "Mean Squared Displacement";
@@ -66,8 +66,6 @@ MSDCalculator::calculate(const correlation::core::Trajectory &traj,
   msd_hist.partials["Total"] = raw_msd;
   results["MSD"] = std::move(msd_hist);
 
-  // --- Running D(t) = MSD(t) / (6 * t): skip lag=0 (division by zero) ---
-  // We store D_eff starting from lag=1; lag=0 gets D=0 by convention.
   correlation::analysis::Histogram deff_hist;
   deff_hist.x_label = "t";
   deff_hist.title = "Running Diffusion Coefficient";

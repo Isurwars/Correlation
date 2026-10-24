@@ -13,7 +13,7 @@
 #include "math/Constants.hpp"
 
 #include <iostream>
-#if defined(_OPENMP)
+#ifdef _OPENMP
 #include <omp.h>
 #endif
 #include <stdexcept>
@@ -177,7 +177,9 @@ void CorrelationEngine::runTrajectoryCalculators(DistributionFunctions &distribu
     if (trajectory.getFrameCount() == 0) {
       throw std::runtime_error("VACF requires a trajectory with frames");
     }
-    trajectory.calculateVelocities();
+    if (trajectory.getFrameCount() >= 2) {
+      trajectory.calculateVelocities();
+    }
   }
 
   const auto &factory_calcs =
@@ -252,7 +254,7 @@ std::expected<std::unique_ptr<DistributionFunctions>, std::string>
 CorrelationEngine::runAnalysis(correlation::core::Trajectory &trajectory,
                                const CorrelationEngineConfig &config,
                                std::function<void(float, const std::string &)> progress_callback) {
-#if defined(_OPENMP)
+#ifdef _OPENMP
   omp_set_max_active_levels(1);
 #endif
 

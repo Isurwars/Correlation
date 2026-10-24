@@ -58,8 +58,6 @@ inline constexpr real_t LEGEND_TOTAL_STEP = static_cast<real_t>(26.0);
 inline constexpr real_t LEGEND_HEADER_STEP = static_cast<real_t>(22.0);
 inline constexpr real_t LEGEND_ITEM_STEP = static_cast<real_t>(24.0);
 
-inline constexpr real_t PEAK_THRESHOLD = static_cast<real_t>(0.5);
-inline constexpr real_t PEAK_MIN_SEPARATION = static_cast<real_t>(0.4);
 inline constexpr real_t SCORE_EPSILON = static_cast<real_t>(1e-12);
 inline constexpr std::size_t DEFAULT_PARTIALS_LIMIT = 10;
 inline constexpr std::size_t DEFAULT_BUFFER_CAPACITY = 32768;
@@ -326,50 +324,51 @@ public:
   }
 
   [[nodiscard]] static std::vector<PeakCallout> detectPeaks(std::span<const real_t> x_coords,
-                                                            std::span<const RenderSeries> series) {
-    const auto total_it =
-        std::ranges::find_if(series, [](const auto &item) { return item.key == "Total"; });
-    if (total_it == series.end()) {
+                                                            std::span<const RenderSeries> series,
+                                                            std::string_view x_label = "") {
+    if (series.empty()) {
       return {};
     }
-    const auto &y_values = total_it->values;
+    const auto total_it = std::ranges::find_if(
+        series, [](const auto &item) { return item.key == "Total" || item.key == "total"; });
+    const auto &target_series = (total_it != series.end()) ? *total_it : series.front();
+    const auto &y_values = target_series.values;
     const std::size_t num_pts = std::min(x_coords.size(), y_values.size());
     if (num_pts < 3) {
       return {};
     }
 
+    const std::span<const real_t> y_span(y_values.data(), num_pts);
+    const auto max_it = std::ranges::max_element(y_span);
+    if (max_it == y_span.end() || *max_it <= static_cast<real_t>(0.0)) {
+      return {};
+    }
+    const real_t max_val = *max_it;
+    const real_t threshold = max_val * static_cast<real_t>(0.05);
+
     std::vector<std::pair<real_t, real_t>> candidates;
     for (std::size_t i = 1; i < num_pts - 1; ++i) {
-      if (y_values[i] > y_values[i - 1] && y_values[i] > y_values[i + 1] &&
-          y_values[i] > layout::PEAK_THRESHOLD) {
+      if (y_values[i] > y_values[i - 1] && y_values[i] >= y_values[i + 1] &&
+          y_values[i] > threshold) {
         candidates.emplace_back(x_coords[i], y_values[i]);
       }
     }
 
     if (candidates.empty()) {
-      return {};
+      const auto idx = static_cast<std::size_t>(std::distance(y_span.begin(), max_it));
+      candidates.emplace_back(x_coords[idx], max_val);
     }
 
     std::ranges::sort(candidates,
                       [](const auto &lhs, const auto &rhs) { return lhs.second > rhs.second; });
 
-    std::vector<PeakCallout> peaks;
-    peaks.push_back(PeakCallout{
-        .label = "r₁",
-        .x = candidates[0].first,
-        .y = candidates[0].second,
-    });
-    for (std::size_t i = 1; i < candidates.size(); ++i) {
-      if (std::abs(candidates[i].first - peaks[0].x) >= layout::PEAK_MIN_SEPARATION) {
-        peaks.push_back(PeakCallout{
-            .label = "r₂",
-            .x = candidates[i].first,
-            .y = candidates[i].second,
-        });
-        break;
-      }
-    }
-    return peaks;
+    return {
+        PeakCallout{
+            .label = (x_label == "r") ? "r₁" : "Peak",
+            .x = candidates[0].first,
+            .y = candidates[0].second,
+        },
+    };
   }
 
   struct NearestPointHit {
@@ -960,7 +959,8 @@ std::string renderHistogramAsSvg(const correlation::analysis::Histogram &hist,
 
   // Stage 2: Analytics, scales & peak detection
   const auto [x_scale, y_scale] = PlotAnalytics::computeScales(hist.bins, series, config);
-  const std::vector<PeakCallout> peaks = PlotAnalytics::detectPeaks(hist.bins, series);
+  const std::vector<PeakCallout> peaks =
+      PlotAnalytics::detectPeaks(hist.bins, series, hist.x_label);
   const auto [x_label, y_label] = formatAxisLabels(hist);
   const std::string_view title = hist.title.empty() ? "Histogram" : std::string_view(hist.title);
 

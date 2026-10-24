@@ -5,6 +5,7 @@
 
 #include "analysis/DistributionFunctions.hpp"
 #include "analysis/DynamicsAnalyzer.hpp"
+#include "calculators/temporal/VACFCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 
@@ -287,6 +288,23 @@ TEST_F(VACFCalculatorTests, DistributionFunctionsNonPhysicalOptions) {
                    .bin_width = -1.0,
                }),
                std::invalid_argument);
+}
+
+TEST_F(VACFCalculatorTests, SingleFrameTrajectoryExcludesVACF) {
+  correlation::core::Cell cell({10, 10, 10, 90, 90, 90});
+  cell.addAtom("Ar", {0, 0, 0});
+  correlation::core::Trajectory trajectory;
+  trajectory.addFrame(cell);
+
+  DistributionFunctions dists(cell);
+  dists.calculateVACF(trajectory, correlation::analysis::MaxFrames{1});
+  EXPECT_FALSE(dists.getAllHistograms().contains("VACF"));
+  EXPECT_FALSE(dists.getAllHistograms().contains("vacf_normalized"));
+
+  correlation::calculators::VACFCalculator calc;
+  calc.calculateTrajectory(dists, trajectory, {});
+  EXPECT_FALSE(dists.getAllHistograms().contains("VACF"));
+  EXPECT_FALSE(dists.getAllHistograms().contains("vacf_normalized"));
 }
 
 } // namespace correlation::analysis

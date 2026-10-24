@@ -91,6 +91,8 @@ void verifyHrHistogram(const DistributionFunctions &dists) {
   EXPECT_EQ(h_r.y_unit, "counts");
   EXPECT_EQ(h_r.title, "H(r) — Distance Histogram");
   ASSERT_TRUE(h_r.partials.contains("Ar-Ar"));
+  ASSERT_TRUE(h_r.partials.contains("Total"));
+  EXPECT_EQ(h_r.partials.at("Total"), h_r.partials.at("Ar-Ar"));
 }
 
 void verifyGrHistograms(const DistributionFunctions &dists) {

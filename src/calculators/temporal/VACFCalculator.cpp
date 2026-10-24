@@ -20,6 +20,9 @@ const bool REGISTERED = CalculatorFactory::registerTypeSafe<VACFCalculator>("VAC
 void VACFCalculator::calculateTrajectory(
     correlation::analysis::DistributionFunctions &dists, const correlation::core::Trajectory &traj,
     const correlation::analysis::AnalysisSettings & /*settings*/) const {
+  if (traj.getFrameCount() < 2) {
+    return;
+  }
   auto results = calculate(traj, {-1}, {0}, {static_cast<size_t>(-1)});
   for (auto &[name, histogram] : results) {
     dists.addHistogram(name, std::move(histogram));
@@ -33,13 +36,14 @@ VACFCalculator::calculate(const correlation::core::Trajectory &traj,
                           correlation::analysis::EndFrame end_frame) {
   std::map<std::string, correlation::analysis::Histogram> results;
   // Use getFrameCount() to avoid materialising a memory-mapped trajectory.
-  if (traj.getFrameCount() == 0) {
+  // VACF requires temporal evolution across at least 2 frames.
+  if (traj.getFrameCount() < 2) {
     return results;
   }
 
   std::vector<real_t> const raw_vacf = correlation::analysis::DynamicsAnalyzer::calculateVACF(
       traj, max_correlation_frames, start_frame, end_frame);
-  if (raw_vacf.empty()) {
+  if (raw_vacf.size() < 2) {
     return results;
   }
 
@@ -65,7 +69,7 @@ VACFCalculator::calculate(const correlation::core::Trajectory &traj,
   std::vector<real_t> const norm_vacf =
       correlation::analysis::DynamicsAnalyzer::calculateNormalizedVACF(traj, max_correlation_frames,
                                                                        start_frame, end_frame);
-  if (!norm_vacf.empty()) {
+  if (norm_vacf.size() >= 2) {
     correlation::analysis::Histogram norm_vacf_hist;
     norm_vacf_hist.x_label = "t";
     norm_vacf_hist.title = "Normalized Velocity Autocorrelation";
