@@ -418,9 +418,18 @@ void Structure3DController::setCrystalPreset(CrystalPreset preset) {
     phase_settings_.preset = preset;
     if (preset != CrystalPreset::Custom) {
       const auto config = getPresetConfig(preset);
-      phase_settings_.descriptor = config.descriptor;
-      phase_settings_.min_threshold = config.min_threshold;
-      phase_settings_.max_threshold = config.max_threshold;
+      if (phase_settings_.is_2d_mode && config.is_2d) {
+        phase_settings_.descriptor = config.descriptor_2d_x;
+        phase_settings_.min_threshold = config.min_threshold_2d_x;
+        phase_settings_.max_threshold = config.max_threshold_2d_x;
+        phase_settings_.descriptor_y = config.descriptor_2d_y;
+        phase_settings_.min_threshold_y = config.min_threshold_2d_y;
+        phase_settings_.max_threshold_y = config.max_threshold_2d_y;
+      } else {
+        phase_settings_.descriptor = config.descriptor;
+        phase_settings_.min_threshold = config.min_threshold;
+        phase_settings_.max_threshold = config.max_threshold;
+      }
     }
     updateScenePhaseVisuals();
   }
@@ -572,9 +581,11 @@ PhaseDescriptor Structure3DController::phaseDescriptorY() const noexcept {
   return phase_settings_.descriptor_y;
 }
 
-void Structure3DController::setPhaseThresholds2D(float min_x, float max_x, float min_y, float max_y) {
+void Structure3DController::setPhaseThresholds2D(float min_x, float max_x, float min_y,
+                                                 float max_y) {
   {
     const std::scoped_lock lock(phase_mutex_, mutex_);
+    phase_settings_.preset = CrystalPreset::Custom;
     phase_settings_.min_threshold = std::min(min_x, max_x);
     phase_settings_.max_threshold = std::max(min_x, max_x);
     phase_settings_.min_threshold_y = std::min(min_y, max_y);
@@ -633,17 +644,19 @@ Structure3DController::computePhaseHeatmap(const FramePhaseDescriptors *descript
   const float max_y_thresh = phase_settings_.max_threshold_y;
 
   for (std::size_t i = 0; i < values_x.size(); ++i) {
-    const auto vx = static_cast<float>(values_x[i]);
-    const auto vy = static_cast<float>(values_y[i]);
+    const auto v_x = static_cast<float>(values_x[i]);
+    const auto v_y = static_cast<float>(values_y[i]);
 
-    if (vx >= min_x_thresh && vx <= max_x_thresh && vy >= min_y_thresh && vy <= max_y_thresh) {
+    if (v_x >= min_x_thresh && v_x <= max_x_thresh && v_y >= min_y_thresh && v_y <= max_y_thresh) {
       ++heatmap.matching_atom_count;
     }
 
-    const auto bin_x = static_cast<std::size_t>(std::clamp(
-        std::floor((vx - domain_min_x) / heatmap.bin_width_x), 0.0F, static_cast<float>(K_GRID - 1)));
-    const auto bin_y = static_cast<std::size_t>(std::clamp(
-        std::floor((vy - domain_min_y) / heatmap.bin_width_y), 0.0F, static_cast<float>(K_GRID - 1)));
+    const auto bin_x =
+        static_cast<std::size_t>(std::clamp(std::floor((v_x - domain_min_x) / heatmap.bin_width_x),
+                                            0.0F, static_cast<float>(K_GRID - 1)));
+    const auto bin_y =
+        static_cast<std::size_t>(std::clamp(std::floor((v_y - domain_min_y) / heatmap.bin_width_y),
+                                            0.0F, static_cast<float>(K_GRID - 1)));
 
     const std::size_t cell_idx = bin_y * K_GRID + bin_x;
     if (cell_idx < heatmap.counts.size()) {
@@ -656,19 +669,18 @@ Structure3DController::computePhaseHeatmap(const FramePhaseDescriptors *descript
 }
 
 slint::Image Structure3DController::renderHeatmapImage(const PhaseHeatmap2D &heatmap,
-                                                      plotters::ColormapType colormap) const {
-  constexpr uint32_t K_DIMS = 128;
+                                                       plotters::ColormapType colormap) {
+  constexpr std::size_t K_DIMS = 128;
   constexpr std::size_t K_BINS = 64;
   std::vector<slint::Rgba8Pixel> pixels(K_DIMS * K_DIMS);
 
-  const double log_max = (heatmap.max_count > 0)
-                             ? std::log1p(static_cast<double>(heatmap.max_count))
-                             : 1.0;
+  const double log_max =
+      (heatmap.max_count > 0) ? std::log1p(static_cast<double>(heatmap.max_count)) : 1.0;
 
-  for (uint32_t py = 0; py < K_DIMS; ++py) {
+  for (std::size_t py = 0; py < K_DIMS; ++py) {
     // Invert Y so 0 is at bottom
     const std::size_t bin_y = (K_DIMS - 1 - py) * K_BINS / K_DIMS;
-    for (uint32_t px = 0; px < K_DIMS; ++px) {
+    for (std::size_t px = 0; px < K_DIMS; ++px) {
       const std::size_t bin_x = px * K_BINS / K_DIMS;
       const std::size_t cell_idx = bin_y * K_BINS + bin_x;
       const uint32_t count = (cell_idx < heatmap.counts.size()) ? heatmap.counts[cell_idx] : 0U;
@@ -684,34 +696,35 @@ slint::Image Structure3DController::renderHeatmapImage(const PhaseHeatmap2D &hea
     }
   }
 
-  const slint::SharedPixelBuffer<slint::Rgba8Pixel> buffer(K_DIMS, K_DIMS, pixels.data());
-  return slint::Image(buffer);
+  const slint::SharedPixelBuffer<slint::Rgba8Pixel> buffer(
+      static_cast<uint32_t>(K_DIMS), static_cast<uint32_t>(K_DIMS), pixels.data());
+  return slint::Image{buffer};
 }
 
 bool Structure3DController::exportHeatmapPng(const std::string &filepath) {
   const std::string out_path = filepath.empty() ? "phase_heatmap_2d.png" : filepath;
   PhaseHeatmap2D heatmap_copy;
-  plotters::ColormapType cmap;
+  plotters::ColormapType cmap = plotters::ColormapType::Viridis;
   {
     const std::scoped_lock lock(phase_mutex_);
     heatmap_copy = latest_heatmap_;
     cmap = phase_settings_.colormap;
   }
 
-  constexpr uint32_t K_OUT_SIZE = 256;
+  constexpr std::size_t K_OUT_SIZE = 256;
   constexpr std::size_t K_BINS = 64;
   std::vector<uint8_t> raw_rgba(K_OUT_SIZE * K_OUT_SIZE * 4);
 
-  const double log_max = (heatmap_copy.max_count > 0)
-                             ? std::log1p(static_cast<double>(heatmap_copy.max_count))
-                             : 1.0;
+  const double log_max =
+      (heatmap_copy.max_count > 0) ? std::log1p(static_cast<double>(heatmap_copy.max_count)) : 1.0;
 
-  for (uint32_t py = 0; py < K_OUT_SIZE; ++py) {
+  for (std::size_t py = 0; py < K_OUT_SIZE; ++py) {
     const std::size_t bin_y = (K_OUT_SIZE - 1 - py) * K_BINS / K_OUT_SIZE;
-    for (uint32_t px = 0; px < K_OUT_SIZE; ++px) {
+    for (std::size_t px = 0; px < K_OUT_SIZE; ++px) {
       const std::size_t bin_x = px * K_BINS / K_OUT_SIZE;
       const std::size_t cell_idx = bin_y * K_BINS + bin_x;
-      const uint32_t count = (cell_idx < heatmap_copy.counts.size()) ? heatmap_copy.counts[cell_idx] : 0U;
+      const uint32_t count =
+          (cell_idx < heatmap_copy.counts.size()) ? heatmap_copy.counts[cell_idx] : 0U;
 
       const std::size_t offset = (py * K_OUT_SIZE + px) * 4;
       if (count == 0) {
@@ -732,7 +745,8 @@ bool Structure3DController::exportHeatmapPng(const std::string &filepath) {
   }
 
   size_t png_len = 0;
-  void *png_mem = tdefl_write_image_to_png_file_in_memory(raw_rgba.data(), K_OUT_SIZE, K_OUT_SIZE, 4, &png_len);
+  void *png_mem = tdefl_write_image_to_png_file_in_memory(
+      raw_rgba.data(), static_cast<int>(K_OUT_SIZE), static_cast<int>(K_OUT_SIZE), 4, &png_len);
   if (png_mem == nullptr || png_len == 0) {
     return false;
   }
@@ -786,7 +800,8 @@ void Structure3DController::syncPhaseSearchToWindow() {
   slint::Image heatmap_img = renderHeatmapImage(heatmap_copy, settings_copy.colormap);
 
   auto markers_model = std::make_shared<slint::VectorModel<CrystalMarker>>();
-  const auto ref_markers = getCrystalReferenceMarkers(settings_copy.descriptor, settings_copy.descriptor_y);
+  const auto ref_markers =
+      getCrystalReferenceMarkers(settings_copy.descriptor, settings_copy.descriptor_y);
   for (const auto &ref : ref_markers) {
     markers_model->push_back(CrystalMarker{
         .label = slint::SharedString(ref.label),
@@ -795,8 +810,7 @@ void Structure3DController::syncPhaseSearchToWindow() {
     });
   }
 
-  auto apply_to_window = [this, settings = settings_copy, hist = hist_copy,
-                          heatmap = heatmap_copy,
+  auto apply_to_window = [this, settings = settings_copy, hist = hist_copy, heatmap = heatmap_copy,
                           colorbar_img = std::move(colorbar_img),
                           counts_model = std::move(counts_model),
                           heatmap_img = std::move(heatmap_img),
@@ -813,8 +827,8 @@ void Structure3DController::syncPhaseSearchToWindow() {
     window_.set_structure_3d_phase_halo_radius_ratio(settings.halo_radius_ratio);
     window_.set_structure_3d_phase_dim_non_matching(settings.dim_non_matching);
     window_.set_structure_3d_phase_hide_non_matching(settings.hide_non_matching);
-    window_.set_structure_3d_phase_matching_atoms(
-        static_cast<int>(settings.is_2d_mode ? heatmap.matching_atom_count : hist.matching_atom_count));
+    window_.set_structure_3d_phase_matching_atoms(static_cast<int>(
+        settings.is_2d_mode ? heatmap.matching_atom_count : hist.matching_atom_count));
     window_.set_structure_3d_phase_total_atoms(
         static_cast<int>(settings.is_2d_mode ? heatmap.total_atom_count : hist.total_atom_count));
     window_.set_structure_3d_phase_descriptor_name(
@@ -886,14 +900,77 @@ void Structure3DController::updateScenePhaseVisuals() {
   render_pending_ = true;
 }
 
+namespace {
+
+void resetPhaseVisuals(std::span<render3d::AtomInstance> atoms) noexcept {
+  for (auto &atom : atoms) {
+    atom.halo_color = render3d::RgbaColor{.r = 0, .g = 0, .b = 0, .a = 0};
+    atom.dim_factor = 1.0F;
+  }
+}
+
+struct PhaseVisualContext {
+  float min_x{0.0F};
+  float max_x{0.0F};
+  float min_y{0.0F};
+  float max_y{0.0F};
+  float diff_x{0.0F};
+  uint8_t alpha_byte{0};
+  float halo_radius_ratio{1.0F};
+  float non_matching_dim{1.0F};
+  plotters::ColormapType colormap{plotters::ColormapType::Viridis};
+  bool is_2d{false};
+};
+
+[[nodiscard]] float computeNonMatchingDimFactor(const PhaseSearchSettings &settings) noexcept {
+  if (settings.hide_non_matching) {
+    return 0.0F;
+  }
+  return settings.dim_non_matching ? settings.dim_factor : 1.0F;
+}
+
+[[nodiscard]] bool isPhaseMatch(float val_x, const PhaseVisualContext &ctx,
+                                std::span<const real_t> values_y, std::size_t index) noexcept {
+  const bool match_x = (val_x >= ctx.min_x && val_x <= ctx.max_x);
+  if (!match_x) {
+    return false;
+  }
+  if (ctx.is_2d && !values_y.empty()) {
+    const auto val_y = static_cast<float>(values_y[index]);
+    return (val_y >= ctx.min_y && val_y <= ctx.max_y);
+  }
+  return true;
+}
+
+void applyAtomVisual(render3d::AtomInstance &atom, float val_x, bool matches,
+                     const PhaseVisualContext &ctx) {
+  if (matches) {
+    const double norm_t =
+        (ctx.diff_x > 1e-6F)
+            ? std::clamp(static_cast<double>((val_x - ctx.min_x) / ctx.diff_x), 0.0, 1.0)
+            : 0.5;
+    const auto sampled = plotters::ColormapService::sample(norm_t, ctx.colormap);
+    atom.halo_color = render3d::RgbaColor{
+        .r = sampled.r,
+        .g = sampled.g,
+        .b = sampled.b,
+        .a = ctx.alpha_byte,
+    };
+    atom.halo_radius_ratio = ctx.halo_radius_ratio;
+    atom.dim_factor = 1.0F;
+  } else {
+    atom.halo_color = render3d::RgbaColor{.r = 0, .g = 0, .b = 0, .a = 0};
+    atom.dim_factor = ctx.non_matching_dim;
+  }
+}
+
+} // namespace
+
 void Structure3DController::applyPhaseVisualsToScene(
     render3d::Scene3D &target_scene, const FramePhaseDescriptors *descriptors) const {
   auto &atoms = target_scene.atoms();
   if (!phase_settings_.enabled || descriptors == nullptr) {
-    for (auto &atom : atoms) {
-      atom.halo_color = render3d::RgbaColor{.r = 0, .g = 0, .b = 0, .a = 0};
-      atom.dim_factor = 1.0F;
-    }
+    resetPhaseVisuals(atoms);
     return;
   }
 
@@ -906,44 +983,26 @@ void Structure3DController::applyPhaseVisualsToScene(
   const auto values_y = is_2d ? extractDescriptorValues(*descriptors, phase_settings_.descriptor_y)
                               : std::span<const real_t>{};
 
-  const float min_x = phase_settings_.min_threshold;
-  const float max_x = phase_settings_.max_threshold;
-  const float min_y = phase_settings_.min_threshold_y;
-  const float max_y = phase_settings_.max_threshold_y;
-  const float diff_x = max_x - min_x;
   const float halo_alpha = std::clamp(phase_settings_.halo_intensity, 0.0F, 1.0F);
   const auto alpha_byte = static_cast<uint8_t>(std::round(halo_alpha * 255.0F));
 
-  for (std::size_t i = 0; i < atoms.size(); ++i) {
-    const auto vx = static_cast<float>(values_x[i]);
-    const bool match_x = (vx >= min_x && vx <= max_x);
-    bool match_y = true;
-    if (is_2d && !values_y.empty()) {
-      const auto vy = static_cast<float>(values_y[i]);
-      match_y = (vy >= min_y && vy <= max_y);
-    }
+  const PhaseVisualContext ctx{
+      .min_x = phase_settings_.min_threshold,
+      .max_x = phase_settings_.max_threshold,
+      .min_y = phase_settings_.min_threshold_y,
+      .max_y = phase_settings_.max_threshold_y,
+      .diff_x = phase_settings_.max_threshold - phase_settings_.min_threshold,
+      .alpha_byte = alpha_byte,
+      .halo_radius_ratio = phase_settings_.halo_radius_ratio,
+      .non_matching_dim = computeNonMatchingDimFactor(phase_settings_),
+      .colormap = phase_settings_.colormap,
+      .is_2d = is_2d,
+  };
 
-    if (match_x && match_y) {
-      const double norm_t =
-          (diff_x > 1e-6F) ? std::clamp(static_cast<double>((vx - min_x) / diff_x), 0.0, 1.0)
-                           : 0.5;
-      const auto sampled = plotters::ColormapService::sample(norm_t, phase_settings_.colormap);
-      atoms[i].halo_color = render3d::RgbaColor{
-          .r = sampled.r,
-          .g = sampled.g,
-          .b = sampled.b,
-          .a = alpha_byte,
-      };
-      atoms[i].halo_radius_ratio = phase_settings_.halo_radius_ratio;
-      atoms[i].dim_factor = 1.0F;
-    } else {
-      atoms[i].halo_color = render3d::RgbaColor{.r = 0, .g = 0, .b = 0, .a = 0};
-      if (phase_settings_.hide_non_matching) {
-        atoms[i].dim_factor = 0.0F;
-      } else {
-        atoms[i].dim_factor = phase_settings_.dim_non_matching ? phase_settings_.dim_factor : 1.0F;
-      }
-    }
+  for (std::size_t i = 0; i < atoms.size(); ++i) {
+    const auto val_x = static_cast<float>(values_x[i]);
+    const bool matches = isPhaseMatch(val_x, ctx, values_y, i);
+    applyAtomVisual(atoms[i], val_x, matches, ctx);
   }
 }
 

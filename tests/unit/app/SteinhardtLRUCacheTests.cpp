@@ -132,6 +132,37 @@ TEST(PhaseSearchTypesTests, CanonicalPresetConfigurations) {
   EXPECT_EQ(liquid_cfg.descriptor, PhaseDescriptor::Q6Bar);
   EXPECT_FLOAT_EQ(liquid_cfg.min_threshold, 0.10F);
   EXPECT_FLOAT_EQ(liquid_cfg.max_threshold, 0.28F);
+  EXPECT_TRUE(liquid_cfg.is_2d);
+  EXPECT_EQ(liquid_cfg.descriptor_2d_x, PhaseDescriptor::Q6Bar);
+  EXPECT_FLOAT_EQ(liquid_cfg.min_threshold_2d_x, 0.05F);
+  EXPECT_FLOAT_EQ(liquid_cfg.max_threshold_2d_x, 0.28F);
+  EXPECT_EQ(liquid_cfg.descriptor_2d_y, PhaseDescriptor::LocalEntropy);
+  EXPECT_FLOAT_EQ(liquid_cfg.min_threshold_2d_y, -3.5F);
+  EXPECT_FLOAT_EQ(liquid_cfg.max_threshold_2d_y, -1.0F);
+
+  const auto glass_cfg = getPresetConfig(CrystalPreset::AmorphousGlass);
+  EXPECT_EQ(glass_cfg.descriptor, PhaseDescriptor::LocalEntropy);
+  EXPECT_FLOAT_EQ(glass_cfg.min_threshold, -8.0F);
+  EXPECT_FLOAT_EQ(glass_cfg.max_threshold, -4.5F);
+  EXPECT_TRUE(glass_cfg.is_2d);
+  EXPECT_EQ(glass_cfg.descriptor_2d_x, PhaseDescriptor::Q6Bar);
+  EXPECT_FLOAT_EQ(glass_cfg.min_threshold_2d_x, 0.05F);
+  EXPECT_FLOAT_EQ(glass_cfg.max_threshold_2d_x, 0.32F);
+  EXPECT_EQ(glass_cfg.descriptor_2d_y, PhaseDescriptor::LocalEntropy);
+  EXPECT_FLOAT_EQ(glass_cfg.min_threshold_2d_y, -8.0F);
+  EXPECT_FLOAT_EQ(glass_cfg.max_threshold_2d_y, -4.5F);
+
+  const auto net_cfg = getPresetConfig(CrystalPreset::AmorphousNetwork);
+  EXPECT_EQ(net_cfg.descriptor, PhaseDescriptor::QTet);
+  EXPECT_FLOAT_EQ(net_cfg.min_threshold, 0.75F);
+  EXPECT_FLOAT_EQ(net_cfg.max_threshold, 1.00F);
+  EXPECT_TRUE(net_cfg.is_2d);
+  EXPECT_EQ(net_cfg.descriptor_2d_x, PhaseDescriptor::QTet);
+  EXPECT_FLOAT_EQ(net_cfg.min_threshold_2d_x, 0.75F);
+  EXPECT_FLOAT_EQ(net_cfg.max_threshold_2d_x, 1.00F);
+  EXPECT_EQ(net_cfg.descriptor_2d_y, PhaseDescriptor::LocalEntropy);
+  EXPECT_FLOAT_EQ(net_cfg.min_threshold_2d_y, -7.5F);
+  EXPECT_FLOAT_EQ(net_cfg.max_threshold_2d_y, -4.0F);
 
   const auto fcc_cfg = getPresetConfig(CrystalPreset::FCC);
   EXPECT_EQ(fcc_cfg.descriptor, PhaseDescriptor::Q6Bar);
@@ -172,9 +203,25 @@ TEST(PhaseSearchTypesTests, StringConversionsAndDomains) {
   EXPECT_EQ(descriptorToString(PhaseDescriptor::TwfNconn), "N_conn (TWF)");
   EXPECT_EQ(descriptorToString(PhaseDescriptor::QTet), "q_tet (Tetrahedral)");
 
+  EXPECT_EQ(presetToString(CrystalPreset::Liquid), "Liquid");
+  EXPECT_EQ(presetToString(CrystalPreset::AmorphousGlass), "Glass");
+  EXPECT_EQ(presetToString(CrystalPreset::AmorphousNetwork), "a-Net");
   EXPECT_EQ(presetToString(CrystalPreset::FCC), "FCC");
   EXPECT_EQ(presetToString(CrystalPreset::Icosahedral), "Icosahedral");
   EXPECT_EQ(presetToString(CrystalPreset::Diamond), "Diamond");
+
+  const auto markers_q6_s2 =
+      getCrystalReferenceMarkers(PhaseDescriptor::Q6Bar, PhaseDescriptor::LocalEntropy);
+  EXPECT_EQ(markers_q6_s2.size(), 6UL);
+  EXPECT_EQ(markers_q6_s2[4].label, "Gl");
+  EXPECT_EQ(markers_q6_s2[5].label, "Liq");
+
+  const auto markers_qtet_s2 =
+      getCrystalReferenceMarkers(PhaseDescriptor::QTet, PhaseDescriptor::LocalEntropy);
+  EXPECT_EQ(markers_qtet_s2.size(), 3UL);
+  EXPECT_EQ(markers_qtet_s2[0].label, "Dia");
+  EXPECT_EQ(markers_qtet_s2[1].label, "a-Net");
+  EXPECT_EQ(markers_qtet_s2[2].label, "Liq");
 
   const auto [q_min, q_max] = getDescriptorDomain(PhaseDescriptor::Q6Bar);
   EXPECT_FLOAT_EQ(q_min, 0.0F);

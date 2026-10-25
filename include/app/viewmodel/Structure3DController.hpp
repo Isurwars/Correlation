@@ -400,10 +400,9 @@ private:
                                 const FramePhaseDescriptors *descriptors) const;
   [[nodiscard]] PhaseHistogram
   computePhaseHistogram(const FramePhaseDescriptors *descriptors) const;
-  [[nodiscard]] PhaseHeatmap2D
-  computePhaseHeatmap(const FramePhaseDescriptors *descriptors) const;
-  [[nodiscard]] slint::Image
-  renderHeatmapImage(const PhaseHeatmap2D &heatmap, plotters::ColormapType colormap) const;
+  [[nodiscard]] PhaseHeatmap2D computePhaseHeatmap(const FramePhaseDescriptors *descriptors) const;
+  [[nodiscard]] static slint::Image renderHeatmapImage(const PhaseHeatmap2D &heatmap,
+                                                       plotters::ColormapType colormap);
   [[nodiscard]] std::shared_ptr<const FramePhaseDescriptors>
   computeDescriptorsSync(std::size_t frame_index);
   void dispatchFrame(const uint8_t *pixel_data, uint32_t width, uint32_t height);

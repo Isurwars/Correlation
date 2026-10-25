@@ -263,17 +263,17 @@ export component PhaseSearchCard inherits Rectangle {
             spacing: 3px;
 
             MaterialText {
-                text: "Crystal Preset";
+                text: "Phase Presets";
                 font-size: 11px;
                 font-weight: 600;
                 color: MaterialPalette.on_surface_variant;
             }
 
-            // Row 1: Custom, Liquid, FCC
+            // Row 1: Custom, Liquid, Glass
             HorizontalLayout {
                 spacing: 4px;
                 height: 24px;
-                property <[string]> row1_labels: ["Custom", "Liquid", "FCC"];
+                property <[string]> row1_labels: ["Custom", "Liquid", "Glass"];
 
                 for label[idx] in self.row1_labels: TouchArea {
                     horizontal-stretch: 1;
@@ -305,11 +305,11 @@ export component PhaseSearchCard inherits Rectangle {
                 }
             }
 
-            // Row 2: HCP, BCC, Ico
+            // Row 2: a-Net, FCC, HCP
             HorizontalLayout {
                 spacing: 4px;
                 height: 24px;
-                property <[string]> row2_labels: ["HCP", "BCC", "Ico"];
+                property <[string]> row2_labels: ["a-Net", "FCC", "HCP"];
 
                 for label[idx] in self.row2_labels: TouchArea {
                     horizontal-stretch: 1;
@@ -340,6 +340,42 @@ export component PhaseSearchCard inherits Rectangle {
                     }
                 }
             }
+
+            // Row 3: BCC, Ico, Diamond
+            HorizontalLayout {
+                spacing: 4px;
+                height: 24px;
+                property <[string]> row3_labels: ["BCC", "Ico", "Diamond"];
+
+                for label[idx] in self.row3_labels: TouchArea {
+                    horizontal-stretch: 1;
+                    height: 100%;
+                    mouse-cursor: pointer;
+                    clicked => { root.set_preset(idx + 6); }
+
+                    Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 12px;
+                        background: root.preset_index == (idx + 6)
+                            ? MaterialPalette.primary.with_alpha(25%)
+                            : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
+                        border-width: root.preset_index == (idx + 6) ? 1.5px : 1px;
+                        border-color: root.preset_index == (idx + 6) ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(40%);
+
+                        MaterialText {
+                            width: 100%;
+                            height: 100%;
+                            text: label;
+                            font-size: 11px;
+                            font-weight: root.preset_index == (idx + 6) ? 700 : 400;
+                            color: root.preset_index == (idx + 6) ? MaterialPalette.primary : MaterialPalette.on_surface;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
         }
 
         // 5. 1D Order Descriptor Selector
@@ -361,7 +397,7 @@ export component PhaseSearchCard inherits Rectangle {
                 HorizontalLayout {
                     spacing: 2px;
                     height: 22px;
-                    property <[string]> desc_labels: ["q̄₆", "q̄₄", "q₆", "q₄", "ŵ₆", "ŵ₄", "s₂", "N_conn"];
+                    property <[string]> desc_labels: ["q̄₆", "q̄₄", "q₆", "q₄", "ŵ₆", "ŵ₄", "s₂", "N_c", "q_tet"];
 
                     for d_label[d_idx] in self.desc_labels: TouchArea {
                         horizontal-stretch: 1;
