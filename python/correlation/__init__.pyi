@@ -68,6 +68,15 @@ from correlation._correlation import list_writers
 from correlation._correlation import populate_descriptors
 from correlation._correlation import read
 from correlation._correlation import write_csv
+from correlation._correlation import CorrelationLengthFit
+from correlation._correlation import LocalEntropyParams
+from correlation._correlation import TenWoldeFrenkelParams
+from correlation._correlation import TetrahedralParams
+from correlation._correlation import compute_g6
+from correlation._correlation import compute_local_entropy
+from correlation._correlation import compute_ten_wolde_frenkel
+from correlation._correlation import compute_tetrahedral_order
+from correlation._correlation import fit_correlation_length
 from correlation.adapters import from_ase
 from correlation.adapters import from_ase_trajectory
 from correlation.adapters import from_pymatgen
@@ -76,7 +85,7 @@ from correlation.adapters import to_ase_trajectory
 from correlation.adapters import to_pymatgen
 from . import _correlation
 from . import adapters
-__all__: list[str] = ['AnalysisSettings', 'Atom', 'AtomShim', 'BCC', 'BaseCalculator', 'BaseWriter', 'Biweight', 'BondCutoffRange', 'Bump', 'CNALabel', 'CSVWriter', 'Cell', 'Cosine', 'DistributionFunctions', 'Element', 'Epanechnikov', 'FCC', 'Gaussian', 'GaussianRBFConfig', 'GraphDescriptors', 'HCP', 'Histogram', 'ICO', 'KernelType', 'MLIPCalculator', 'MLIPInterface', 'MLIPOutput', 'MotifProjectedTDOS', 'OTHER', 'OrbDescriptorConfig', 'PeriodicGraphBuilder', 'PeriodicGraphData', 'RDFParams', 'StructuralElectronicCorrelation', 'StructureAnalyzer', 'TDOSCalculator', 'TDOSParams', 'Trajectory', 'TrajectoryAnalyzer', 'Triweight', 'adapters', 'build_orb_graph', 'build_periodic_graph', 'compute_cna_descriptor', 'compute_coordination_embedding', 'compute_graph_spectrum', 'compute_ring_statistics_descriptor', 'correlate_cna', 'correlate_steinhardt', 'from_ase', 'from_ase_trajectory', 'from_pymatgen', 'get_all_calculators', 'get_calculator', 'get_registered_calculators', 'get_writer', 'get_writer_for_extension', 'list_calculators', 'list_writers', 'populate_descriptors', 'read', 'to_ase', 'to_ase_trajectory', 'to_pyg', 'to_pymatgen', 'to_torch_geometric', 'write_csv']
+__all__: list[str] = ['AnalysisSettings', 'Atom', 'AtomShim', 'BCC', 'BaseCalculator', 'BaseWriter', 'Biweight', 'BondCutoffRange', 'Bump', 'CNALabel', 'CSVWriter', 'Cell', 'CorrelationLengthFit', 'Cosine', 'DistributionFunctions', 'Element', 'Epanechnikov', 'FCC', 'Gaussian', 'GaussianRBFConfig', 'GraphDescriptors', 'HCP', 'Histogram', 'ICO', 'KernelType', 'LocalEntropyParams', 'MLIPCalculator', 'MLIPInterface', 'MLIPOutput', 'MotifProjectedTDOS', 'OTHER', 'OrbDescriptorConfig', 'PeriodicGraphBuilder', 'PeriodicGraphData', 'RDFParams', 'StructuralElectronicCorrelation', 'StructureAnalyzer', 'TDOSCalculator', 'TDOSParams', 'TenWoldeFrenkelParams', 'TetrahedralParams', 'Trajectory', 'TrajectoryAnalyzer', 'Triweight', 'adapters', 'build_orb_graph', 'build_periodic_graph', 'compute_cna_descriptor', 'compute_coordination_embedding', 'compute_g6', 'compute_graph_spectrum', 'compute_local_entropy', 'compute_ring_statistics_descriptor', 'compute_ten_wolde_frenkel', 'compute_tetrahedral_order', 'correlate_cna', 'correlate_steinhardt', 'fit_correlation_length', 'from_ase', 'from_ase_trajectory', 'from_pymatgen', 'get_all_calculators', 'get_calculator', 'get_registered_calculators', 'get_writer', 'get_writer_for_extension', 'list_calculators', 'list_writers', 'populate_descriptors', 'read', 'to_ase', 'to_ase_trajectory', 'to_pyg', 'to_pymatgen', 'to_torch_geometric', 'write_csv']
 class AtomShim:
     """
     Ergonomic container for atom specifications.

@@ -8,19 +8,25 @@ from unittest.mock import MagicMock
 import numpy as np
 import pytest
 
-try:
-    import matcorr as correlation
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import correlation
+    from correlation import adapters
+else:
     try:
-        from matcorr import adapters
+        import matcorr as correlation
+        try:
+            from matcorr import adapters
+        except (ImportError, AttributeError):
+            from correlation import adapters
     except (ImportError, AttributeError):
-        from correlation import adapters
-except (ImportError, AttributeError):
-    try:
-        import correlation
-        from correlation import adapters
-    except (ImportError, AttributeError):
-        correlation = None
-        adapters = None
+        try:
+            import correlation
+            from correlation import adapters
+        except (ImportError, AttributeError):
+            correlation = None
+            adapters = None
 
 if correlation is None or adapters is None or not hasattr(correlation, "Cell"):
     pytest.skip(

@@ -1001,4 +1001,61 @@ TEST(DistanceCalculatorTests, DeterministicNeighborGraphAcrossThreadCounts) {
   }
 }
 
+TEST(DistanceCalculatorTests, ForEachPairWithinVisitsExpectedPairs) {
+  Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
+  cell.addAtom("Si", {0.0, 0.0, 0.0});
+  cell.addAtom("O", {2.0, 0.0, 0.0});
+  cell.addAtom("O", {0.0, 5.0, 0.0});
+
+  std::atomic<size_t> pair_count{0};
+  DistanceCalculator::forEachPairWithin(cell, 3.0, true,
+                                        [&](size_t atom_i, size_t atom_j, real_t d_sq,
+                                            const correlation::math::Vector3<real_t> &r_ij) {
+                                          pair_count.fetch_add(1, std::memory_order_relaxed);
+                                          EXPECT_NE(atom_i, atom_j);
+                                          EXPECT_LE(d_sq, 9.0);
+                                          EXPECT_NEAR(std::sqrt(d_sq), 2.0, 1e-5);
+                                          EXPECT_NEAR(std::abs(r_ij.x()), 2.0, 1e-5);
+                                        });
+
+  EXPECT_EQ(pair_count.load(), 1);
+
+  // With r_max = 6.0, (0, 1) at 2.0 and (0, 2) at 5.0 are within cutoff
+  pair_count.store(0);
+  DistanceCalculator::forEachPairWithin(cell, 6.0, true,
+                                        [&](size_t atom_i, size_t atom_j, real_t d_sq,
+                                            const correlation::math::Vector3<real_t> &r_ij) {
+                                          pair_count.fetch_add(1, std::memory_order_relaxed);
+                                          EXPECT_NE(atom_i, atom_j);
+                                          EXPECT_LE(d_sq, 36.0);
+                                          EXPECT_GT(d_sq, 0.0);
+                                          EXPECT_TRUE(r_ij.x() != 0.0 || r_ij.y() != 0.0 ||
+                                                      r_ij.z() != 0.0);
+                                        });
+
+  EXPECT_GE(pair_count.load(), 2);
+}
+
+TEST(DistanceCalculatorTests, ForEachPairWithinHandlesEmptyAndSingleAtomCell) {
+  const Cell empty_cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
+  size_t count = 0;
+  DistanceCalculator::forEachPairWithin(empty_cell, 5.0, true,
+                                        [&](size_t, size_t, real_t, const auto &) { ++count; });
+  EXPECT_EQ(count, 0);
+
+  Cell single_atom_cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
+  single_atom_cell.addAtom("Si", {5.0, 5.0, 5.0});
+  DistanceCalculator::forEachPairWithin(single_atom_cell, 5.0, true,
+                                        [&](size_t, size_t, real_t, const auto &) { ++count; });
+  EXPECT_EQ(count, 0);
+
+  // Negative cutoff
+  Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
+  cell.addAtom("Si", {1.0, 0.0, 0.0});
+  cell.addAtom("Si", {2.0, 0.0, 0.0});
+  DistanceCalculator::forEachPairWithin(cell, -1.0, true,
+                                        [&](size_t, size_t, real_t, const auto &) { ++count; });
+  EXPECT_EQ(count, 0);
+}
+
 } // namespace correlation::testing

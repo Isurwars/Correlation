@@ -16,7 +16,7 @@ except PackageNotFoundError:
     try:
         __version__ = version("correlation-analysis")
     except PackageNotFoundError:
-        __version__ = "4.0.3"
+        __version__ = "4.1.0"
 
 # Import all core capabilities from correlation engine
 try:
@@ -43,6 +43,15 @@ __all__ = [
     "list_calculators",
     "get_writer",
     "list_writers",
+    "compute_ten_wolde_frenkel",
+    "compute_tetrahedral_order",
+    "compute_local_entropy",
+    "compute_g6",
+    "fit_correlation_length",
+    "TenWoldeFrenkelParams",
+    "TetrahedralParams",
+    "LocalEntropyParams",
+    "CorrelationLengthFit",
     "adapters",
     "__version__",
 ]

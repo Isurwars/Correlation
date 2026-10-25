@@ -16,7 +16,11 @@
 #include "analysis/StructuralElectronicCorrelation.hpp"
 #include "analysis/StructureAnalyzer.hpp"
 #include "analysis/TrajectoryAnalyzer.hpp"
+#include "calculators/order/LocalEntropyCalculator.hpp"
+#include "calculators/order/TenWoldeFrenkelCalculator.hpp"
+#include "calculators/order/TetrahedralCalculator.hpp"
 #include "calculators/scattering/TDOSCalculator.hpp"
+#include "calculators/spatial/G6Calculator.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 #include "math/Smoothing.hpp"
@@ -199,7 +203,7 @@ void init_analysis(py::module_ &mod) {
       .def(
           "get_partial_numpy",
           [](const Histogram &hist, const std::string &key) -> py::array_t<real_t> {
-            auto iter = hist.partials.find(key);
+            const auto iter = hist.partials.find(key);
             if (iter == hist.partials.end()) {
               throw std::runtime_error("Partial key not found: " + key);
             }
@@ -210,7 +214,7 @@ void init_analysis(py::module_ &mod) {
       .def(
           "get_smoothed_partial_numpy",
           [](const Histogram &hist, const std::string &key) -> py::array_t<real_t> {
-            auto iter = hist.smoothed_partials.find(key);
+            const auto iter = hist.smoothed_partials.find(key);
             if (iter == hist.smoothed_partials.end()) {
               throw std::runtime_error("Smoothed partial key not found: " + key);
             }
@@ -425,6 +429,55 @@ void init_analysis(py::module_ &mod) {
       .def("calculate_cn", &DistributionFunctions::calculateCoordinationNumber,
            "Calculate the Coordination Number (CN) distribution.\n"
            "Requires neighbors to have been computed (non-zero cutoff).")
+      .def(
+          "calculate_twf",
+          [](DistributionFunctions &dists, real_t chi_cut, size_t nconn_min) {
+            const auto params = correlation::calculators::TenWoldeFrenkelParams{
+                .chi_cut = chi_cut,
+                .nconn_min = nconn_min,
+            };
+            auto hist = correlation::calculators::TenWoldeFrenkelCalculator::calculate(
+                dists.cell(), dists.neighbors(), params);
+            dists.addHistogram("TWF_Nconn", std::move(hist));
+          },
+          py::arg("chi_cut") = 0.7, py::arg("nconn_min") = 7,
+          "Calculate Ten Wolde-Frenkel bond coherence distribution (TWF_Nconn).")
+      .def(
+          "calculate_tetrahedral_order",
+          [](DistributionFunctions &dists, size_t num_bins, real_t min_domain, real_t max_domain) {
+            const auto params = correlation::calculators::TetrahedralParams{
+                .num_bins = num_bins,
+                .min_domain = min_domain,
+                .max_domain = max_domain,
+            };
+            auto hist = correlation::calculators::TetrahedralCalculator::calculate(
+                dists.cell(), dists.neighbors(), params);
+            dists.addHistogram("Q_tet", std::move(hist));
+          },
+          py::arg("num_bins") = 50, py::arg("min_domain") = 0.0, py::arg("max_domain") = 1.0,
+          "Calculate Chau-Hardwick tetrahedral order parameter distribution (Q_tet).")
+      .def(
+          "calculate_local_entropy",
+          [](DistributionFunctions &dists, real_t cutoff, real_t sigma) {
+            const auto params = correlation::calculators::LocalEntropyParams{
+                .cutoff = cutoff,
+                .sigma = sigma,
+            };
+            auto hist = correlation::calculators::LocalEntropyCalculator::calculate(
+                dists.cell(), dists.neighbors(), params);
+            dists.addHistogram("s2", std::move(hist));
+          },
+          py::arg("cutoff") = 5.0, py::arg("sigma") = 0.2,
+          "Calculate Local Entropic Fingerprint distribution (s2).")
+      .def(
+          "calculate_g6",
+          [](DistributionFunctions &dists, real_t r_max, real_t r_bin_width) {
+            auto hist = correlation::calculators::G6Calculator::calculate(
+                dists.cell(), dists.neighbors(), r_max, r_bin_width);
+            dists.addHistogram("G6_r", std::move(hist));
+          },
+          py::arg("r_max") = 10.0, py::arg("r_bin_width") = 0.05,
+          "Calculate radial bond-orientational correlation function (G6_r).")
 
       // Smoothing
       .def(

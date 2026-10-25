@@ -11,6 +11,7 @@
 #include "analysis/AnalysisTypes.hpp"
 #include "analysis/DistributionFunctions.hpp"
 #include "calculators/BaseCalculator.hpp"
+#include "calculators/spatial/CellListTraversal.hpp"
 #include "core/Cell.hpp"
 #include "core/NeighborGraph.hpp"
 
@@ -83,6 +84,28 @@ public:
                       correlation::core::NeighborGraph &out_graph,
                       RawHistogramTensor *out_histograms = nullptr,
                       DistanceCalculationConfig hist_config = {});
+
+  /**
+   * @brief High-performance parallel traversal of all unique atomic pairs within @p r_max.
+   *
+   * Traverses pairs (i, j) within cutoff distance @p r_max using bin-sorted cell lists
+   * and SIMD distance filtering.
+   *
+   * @tparam Visitor Invocable with signature:
+   *   void(size_t atom_i, size_t atom_j, real_t d_sq, const correlation::math::Vector3<real_t>
+   * &r_ij)
+   * @param[in] cell The periodic cell container.
+   * @param[in] r_max Maximum interaction distance.
+   * @param[in] ignore_periodic_self_interactions If true, ignores self-interactions in periodic
+   * images.
+   * @param[in] visitor Callable executed for each pair within cutoff.
+   */
+  template <typename Visitor>
+  static void forEachPairWithin(const correlation::core::Cell &cell, real_t r_max,
+                                bool ignore_periodic_self_interactions, Visitor &&visitor) {
+    detail::forEachPairWithin(cell, r_max, ignore_periodic_self_interactions,
+                              std::forward<Visitor>(visitor));
+  }
 };
 
 } // namespace correlation::calculators

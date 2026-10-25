@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-4.0.3-green)](https://img.shields.io/badge/version-4.0.3-green) [![License](https://img.shields.io/badge/license-AGPLv3-brightgreen)](https://img.shields.io/badge/license-AGPLv3-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
+[![Version](https://img.shields.io/badge/version-4.1.0-green)](https://img.shields.io/badge/version-4.1.0-green) [![License](https://img.shields.io/badge/license-AGPLv3-brightgreen)](https://img.shields.io/badge/license-AGPLv3-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
 # Correlation: Contributing Guidelines
 

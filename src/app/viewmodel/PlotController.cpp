@@ -89,10 +89,13 @@ void sortPlotNames(std::vector<std::string> &names) {
       {"W6_hat", 43},
       {"Q4_bar", 44},
       {"Q6_bar", 45},
-      {"COP", 46},
-      {"LEF", 47},
-      {"sigma2_N", 48},
-      {"chi_H", 49},
+      {"G6_r", 46},
+      {"TWF_Nconn", 47},
+      {"Q_tet", 48},
+      {"COP", 49},
+      {"LEF", 50},
+      {"sigma2_N", 51},
+      {"chi_H", 52},
 
       // Dynamics & temporal correlations
       {"MSD", 50},

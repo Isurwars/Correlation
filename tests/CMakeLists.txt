@@ -64,6 +64,7 @@ add_executable(correlation_unit_tests
     unit/calculators/LocalEntropyCalculatorTests.cpp
     unit/calculators/TenWoldeFrenkelCalculatorTests.cpp
     unit/calculators/TetrahedralCalculatorTests.cpp
+    unit/calculators/G6CalculatorTests.cpp
     unit/calculators/VoronoiCalculatorTests.cpp
     unit/calculators/ChiralityCalculatorTests.cpp
     unit/calculators/HyperuniformityCalculatorTests.cpp
@@ -244,9 +245,14 @@ if(BUILD_PYTHON_BINDINGS)
         COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/test_bindings.py"
     )
 
+    add_test(
+        NAME PythonDisorderDescriptors
+        COMMAND "${Python3_EXECUTABLE}" -m pytest "${CMAKE_CURRENT_SOURCE_DIR}/test_disorder_descriptors.py"
+    )
+
     # Make the .so importable without installing.
-    set_tests_properties(PythonBindings PROPERTIES
-        ENVIRONMENT  "PYTHONPATH=${CORRELATION_PY_DIR}"
+    set_tests_properties(PythonBindings PythonDisorderDescriptors PROPERTIES
+        ENVIRONMENT  "PYTHONPATH=${CORRELATION_PY_DIR}:${PROJECT_SOURCE_DIR}/python"
         DEPENDS      _correlation
         LABELS       "python;bindings"
     )

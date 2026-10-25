@@ -113,6 +113,9 @@ const Histogram &DistributionFunctions::getHistogram(const std::string &name) co
         {"SQ", "S_q"},
         {"S(Q)", "S_q"},
         {"vDoS", "VDOS"},
+        {"G6", "G6_r"},
+        {"g6", "G6_r"},
+        {"g6_r", "G6_r"},
     };
     if (const auto alias_it = ALIASES.find(name); alias_it != ALIASES.end()) {
       iter = histograms_.find(alias_it->second);

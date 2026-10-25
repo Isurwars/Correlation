@@ -52,6 +52,7 @@ add_library(calculators_obj OBJECT
     calculators/spatial/DADCalculator.cpp
     calculators/spatial/DihedralCalculator.cpp
     calculators/spatial/DistanceCalculator.cpp
+    calculators/spatial/G6Calculator.cpp
     calculators/spatial/HBondCalculator.cpp
     calculators/spatial/MotifFinder.cpp
     calculators/spatial/PADCalculator.cpp

@@ -22,7 +22,7 @@ import collections.abc
 import numpy
 import numpy.typing
 import typing
-__all__: list[str] = ['AnalysisSettings', 'Atom', 'BCC', 'BaseCalculator', 'BaseWriter', 'Biweight', 'BondCutoffRange', 'Bump', 'CNALabel', 'CSVWriter', 'Cell', 'Cosine', 'DistributionFunctions', 'Element', 'Epanechnikov', 'FCC', 'Gaussian', 'GaussianRBFConfig', 'GraphDescriptors', 'HCP', 'Histogram', 'ICO', 'KernelType', 'MLIPCalculator', 'MLIPInterface', 'MLIPOutput', 'MotifProjectedTDOS', 'OTHER', 'OrbDescriptorConfig', 'PeriodicGraphBuilder', 'PeriodicGraphData', 'StructuralElectronicCorrelation', 'StructureAnalyzer', 'TDOSCalculator', 'TDOSParams', 'Trajectory', 'TrajectoryAnalyzer', 'Triweight', 'build_orb_graph', 'build_periodic_graph', 'compute_cna_descriptor', 'compute_coordination_embedding', 'compute_graph_spectrum', 'compute_ring_statistics_descriptor', 'correlate_cna', 'correlate_steinhardt', 'get_all_calculators', 'get_calculator', 'get_writer', 'get_writer_for_extension', 'list_calculators', 'list_writers', 'populate_descriptors', 'read', 'write_csv']
+__all__: list[str] = ['AnalysisSettings', 'Atom', 'BCC', 'BaseCalculator', 'BaseWriter', 'Biweight', 'BondCutoffRange', 'Bump', 'CNALabel', 'CSVWriter', 'Cell', 'CorrelationLengthFit', 'Cosine', 'DistributionFunctions', 'Element', 'Epanechnikov', 'FCC', 'Gaussian', 'GaussianRBFConfig', 'GraphDescriptors', 'HCP', 'Histogram', 'ICO', 'KernelType', 'LocalEntropyParams', 'MLIPCalculator', 'MLIPInterface', 'MLIPOutput', 'MotifProjectedTDOS', 'OTHER', 'OrbDescriptorConfig', 'PeriodicGraphBuilder', 'PeriodicGraphData', 'StructuralElectronicCorrelation', 'StructureAnalyzer', 'TDOSCalculator', 'TDOSParams', 'TenWoldeFrenkelParams', 'TetrahedralParams', 'Trajectory', 'TrajectoryAnalyzer', 'Triweight', 'build_orb_graph', 'build_periodic_graph', 'compute_cna_descriptor', 'compute_coordination_embedding', 'compute_g6', 'compute_graph_spectrum', 'compute_local_entropy', 'compute_ring_statistics_descriptor', 'compute_ten_wolde_frenkel', 'compute_tetrahedral_order', 'correlate_cna', 'correlate_steinhardt', 'fit_correlation_length', 'get_all_calculators', 'get_calculator', 'get_writer', 'get_writer_for_extension', 'list_calculators', 'list_writers', 'populate_descriptors', 'read', 'write_csv']
 class AnalysisSettings:
     """
     Configuration bag for all distribution-function calculations.
@@ -343,6 +343,31 @@ class CSVWriter(BaseWriter):
         """
         Write all available histograms to individual CSV files.
         """
+        ...
+class CorrelationLengthFit:
+    """
+    Fitted correlation length results from g6(r) profile.
+    """
+    def __init__(self) -> None:
+        ...
+    @property
+    def is_plateau(self) -> bool:
+        ...
+    @is_plateau.setter
+    def is_plateau(self, arg0: bool) -> None:
+        ...
+    @property
+    def r_squared(self) -> float:
+        ...
+    @r_squared.setter
+    def r_squared(self, arg0: typing.SupportsFloat | typing.SupportsIndex) -> None:
+        ...
+    @property
+    def xi_6(self) -> float:
+        ...
+    @xi_6.setter
+    def xi_6(self, arg0: typing.SupportsFloat | typing.SupportsIndex) -> None:
+        ...
 class Cell:
     """
     Simulation cell containing atomic coordinates and periodic box geometry.
@@ -606,6 +631,22 @@ class DistributionFunctions:
         bin_width : float
             2θ bin width (°). Default 1.0.
         """
+    def calculate_g6(self, r_max: typing.SupportsFloat | typing.SupportsIndex = 10.0, r_bin_width: typing.SupportsFloat | typing.SupportsIndex = 0.05) -> None:
+        """
+        Calculate radial bond-orientational correlation function (G6_r).
+        """
+    def calculate_local_entropy(self, cutoff: typing.SupportsFloat | typing.SupportsIndex = 5.0, sigma: typing.SupportsFloat | typing.SupportsIndex = 0.2) -> None:
+        """
+        Calculate Local Entropic Fingerprint distribution (s2).
+        """
+    def calculate_tetrahedral_order(self, num_bins: typing.SupportsInt | typing.SupportsIndex = 50, min_domain: typing.SupportsFloat | typing.SupportsIndex = 0.0, max_domain: typing.SupportsFloat | typing.SupportsIndex = 1.0) -> None:
+        """
+        Calculate Chau-Hardwick tetrahedral order parameter distribution (Q_tet).
+        """
+    def calculate_twf(self, chi_cut: typing.SupportsFloat | typing.SupportsIndex = 0.7, nconn_min: typing.SupportsInt | typing.SupportsIndex = 7) -> None:
+        """
+        Calculate Ten Wolde-Frenkel bond coherence distribution (TWF_Nconn).
+        """
     def get_all_histograms(self) -> dict[str, Histogram]:
         """
         Return a dict of all calculated histograms.
@@ -866,6 +907,24 @@ class KernelType:
         ...
     @property
     def value(self) -> int:
+        ...
+class LocalEntropyParams:
+    """
+    Parameters for Local Entropic Fingerprint (s2) calculation.
+    """
+    def __init__(self, cutoff: typing.SupportsFloat | typing.SupportsIndex = 5.0, sigma: typing.SupportsFloat | typing.SupportsIndex = 0.2) -> None:
+        ...
+    @property
+    def cutoff(self) -> float:
+        ...
+    @cutoff.setter
+    def cutoff(self, arg0: typing.SupportsFloat | typing.SupportsIndex) -> None:
+        ...
+    @property
+    def sigma(self) -> float:
+        ...
+    @sigma.setter
+    def sigma(self, arg0: typing.SupportsFloat | typing.SupportsIndex) -> None:
         ...
 class MLIPCalculator(BaseCalculator):
     """
@@ -1279,6 +1338,48 @@ class TDOSParams:
     @model.setter
     def model(self, arg0: MLIPInterface) -> None:
         ...
+class TenWoldeFrenkelParams:
+    """
+    Parameters for Ten Wolde-Frenkel bond coherence analysis.
+    """
+    def __init__(self, chi_cut: typing.SupportsFloat | typing.SupportsIndex = 0.7, nconn_min: typing.SupportsInt | typing.SupportsIndex = 7) -> None:
+        ...
+    @property
+    def chi_cut(self) -> float:
+        ...
+    @chi_cut.setter
+    def chi_cut(self, arg0: typing.SupportsFloat | typing.SupportsIndex) -> None:
+        ...
+    @property
+    def nconn_min(self) -> int:
+        ...
+    @nconn_min.setter
+    def nconn_min(self, arg0: typing.SupportsInt | typing.SupportsIndex) -> None:
+        ...
+class TetrahedralParams:
+    """
+    Parameters for tetrahedral order parameter q_tet calculation.
+    """
+    def __init__(self, num_bins: typing.SupportsInt | typing.SupportsIndex = 50, min_domain: typing.SupportsFloat | typing.SupportsIndex = 0.0, max_domain: typing.SupportsFloat | typing.SupportsIndex = 1.0) -> None:
+        ...
+    @property
+    def max_domain(self) -> float:
+        ...
+    @max_domain.setter
+    def max_domain(self, arg0: typing.SupportsFloat | typing.SupportsIndex) -> None:
+        ...
+    @property
+    def min_domain(self) -> float:
+        ...
+    @min_domain.setter
+    def min_domain(self, arg0: typing.SupportsFloat | typing.SupportsIndex) -> None:
+        ...
+    @property
+    def num_bins(self) -> int:
+        ...
+    @num_bins.setter
+    def num_bins(self, arg0: typing.SupportsInt | typing.SupportsIndex) -> None:
+        ...
 class Trajectory:
     """
     Time-series collection of Cell simulation snapshots.
@@ -1425,6 +1526,26 @@ def compute_graph_spectrum(graph: PeriodicGraphData, k: typing.SupportsInt | typ
 def compute_ring_statistics_descriptor(graph: PeriodicGraphData, max_size: typing.SupportsInt | typing.SupportsIndex = 6) -> list[float]:
     """
     Compute per-atom ring statistics embedding using cycle basis detection.
+    """
+def compute_g6(cell: Cell, neighbors: StructureAnalyzer, r_max: typing.SupportsFloat | typing.SupportsIndex = 10.0, r_bin_width: typing.SupportsFloat | typing.SupportsIndex = 0.05) -> Histogram:
+    """
+    Computes radial bond-orientational correlation function g6(r).
+    """
+def compute_local_entropy(cell: Cell, neighbors: StructureAnalyzer | None = None, params: LocalEntropyParams = ...) -> numpy.typing.NDArray[numpy.float32]:
+    """
+    Computes per-atom Local Entropic Fingerprint (s2).
+    """
+def compute_ten_wolde_frenkel(cell: Cell, neighbors: StructureAnalyzer | None = None, params: TenWoldeFrenkelParams = ...) -> numpy.typing.NDArray[numpy.float32]:
+    """
+    Computes per-atom Ten Wolde-Frenkel coherent neighbor count (N_conn).
+    """
+def compute_tetrahedral_order(cell: Cell, neighbors: StructureAnalyzer | None = None, params: TetrahedralParams = ...) -> numpy.typing.NDArray[numpy.float32]:
+    """
+    Computes per-atom Chau-Hardwick tetrahedral order parameter (q_tet).
+    """
+def fit_correlation_length(r_bins: numpy.typing.NDArray[typing.Any], g6_values: numpy.typing.NDArray[typing.Any]) -> CorrelationLengthFit:
+    """
+    Fits the correlation length xi_6 from radial profile g6(r).
     """
 def correlate_cna(dists: DistributionFunctions, traj: Trajectory, params: TDOSParams) -> MotifProjectedTDOS:
     """

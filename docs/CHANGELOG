@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.1.0] - 2026-10-24
+
+### 🚀 Features & Scientific Analysis
+- **Ten Wolde–Frenkel Bond Coherence (`TenWoldeFrenkelCalculator`)**: Implemented mutual bond coherence analysis $\chi_{ij} = \sum_{m=-6}^6 \hat{q}_{6m}(i) \cdot \hat{q}_{6m}^*(j)$, per-atom coherent neighbor count $N_{\text{conn}}$, and solid-like nuclei detection emitting 1D histogram `TWF_Nconn`.
+- **Tetrahedrality Descriptor (`TetrahedralCalculator`)**: Implemented Chau-Hardwick and Errington-Debenedetti tetrahedral order parameter $q_{\text{tet}}$ for network glasses ($\text{SiO}_2$, amorphous silicon, tetrahedral liquids) and 1D histogram `Q_tet`.
+- **Bond-Orientational Correlation Function $g_6(r)$ (`G6Calculator`)**: Added distance-resolved bond correlation calculator computing $g_6(r)$ and fitting correlation length $\xi_6$ via log-linear regression, isolating liquid decay from crystalline plateaus ($\xi_6 \to \infty$).
+- **Interactive 2D Joint Heatmap (`HeatmapRasterizer`, `PhaseHeatmapCard`, `PhaseSearchCard`)**: Introduced real-time $64 \times 64$ 2D density distribution inspector ($P(\bar{q}_4, \bar{q}_6)$, $P(\bar{q}_6, \hat{w}_6)$, $P(q_{\text{tet}}, \text{CN})$) with interactive drag-to-select bounding boxes driving 3D halos and viewport highlighting.
+- **Enhanced 3D Phase Filtering (`Structure3DController`)**: Added per-atom Local Entropic Fingerprints ($s_2$), $\hat{w}_4$, $N_{\text{conn}}$, and $q_{\text{tet}}$ scalar fields, along with "Hide Non-Matching Atoms" matrix culling.
+- **Zero-Copy Python Bindings (`calculator_bindings`, `analysis_bindings`)**: Exposed `compute_ten_wolde_frenkel`, `compute_tetrahedral_order`, `compute_local_entropy`, `compute_g6`, and `fit_correlation_length` to Python with zero-copy NumPy buffers and thread-safe GIL management.
+
+### ⚡ Performance & Optimization
+- **Pair-Visitor Cell-List Traversal (`CellListTraversal.hpp`, `DistanceCalculator`)**: Extracted bin-sorted cell-list traversal into high-performance header-only template `forEachPairWithin` with SoA candidate gathering and SIMD `compute_dsq_block`, preserving RDF throughput with zero regression.
+
+### 🧹 Maintenance
+- **Project Milestone**: Bumped project version to `4.1.0` across build targets, packages, documentation, and UI metadata.
+
 ## [4.0.3] - 2026-10-22
 
 ### 🚀 Features & Interactive 3D Analysis
