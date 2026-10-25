@@ -23,6 +23,7 @@
 
 #include <atomic>
 #include <condition_variable>
+#include <cstdint>
 #include <memory>
 #include <mutex>
 #include <thread>
@@ -405,7 +406,19 @@ private:
                                                        plotters::ColormapType colormap);
   [[nodiscard]] std::shared_ptr<const FramePhaseDescriptors>
   computeDescriptorsSync(std::size_t frame_index);
-  void dispatchFrame(const uint8_t *pixel_data, uint32_t width, uint32_t height);
+  void dispatchFrame(const std::uint8_t *pixel_data, std::uint32_t width, std::uint32_t height);
+
+  template <typename F> void safeInvokeOnWindow(F &&action) {
+    if (std::this_thread::get_id() == main_thread_id_) {
+      action();
+    } else {
+      slint::invoke_from_event_loop([alive = alive_, callback = std::forward<F>(action)] mutable {
+        if (alive && alive->load()) {
+          callback();
+        }
+      });
+    }
+  }
 
   ::AppWindow &window_;
   const ProgramOptions &options_;

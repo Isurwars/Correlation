@@ -355,5 +355,54 @@ TEST_F(Structure3DControllerPhaseSearchTests, PhaseHeatmap2DAndPngExport) {
   EXPECT_TRUE(std::filesystem::remove(test_png, error_code));
 }
 
+TEST_F(Structure3DControllerPhaseSearchTests, SetPhaseDescriptorYResetsPresetToCustom) {
+  const ProgramOptions options;
+  Structure3DController controller(window(), options);
+
+  controller.setCrystalPreset(CrystalPreset::FCC);
+  EXPECT_EQ(controller.crystalPreset(), CrystalPreset::FCC);
+
+  // Changing Y descriptor must reset preset to Custom
+  controller.setPhaseDescriptorY(PhaseDescriptor::W6Hat);
+  EXPECT_EQ(controller.crystalPreset(), CrystalPreset::Custom);
+  EXPECT_EQ(controller.phaseDescriptorY(), PhaseDescriptor::W6Hat);
+}
+
+TEST_F(Structure3DControllerPhaseSearchTests, CrystalPreset2DConfigurationConsistency) {
+  const ProgramOptions options;
+  Structure3DController controller(window(), options);
+
+  // Configure FCC preset while in 1D mode
+  controller.setPhase2DMode(false);
+  controller.setCrystalPreset(CrystalPreset::FCC);
+
+  // Switch to 2D mode, verify Y descriptor and bounds were calibrated by the preset
+  controller.setPhase2DMode(true);
+  const auto settings = controller.phaseSearchSettings();
+  EXPECT_EQ(settings.descriptor, PhaseDescriptor::Q6Bar);
+  EXPECT_EQ(settings.descriptor_y, PhaseDescriptor::Q4Bar);
+  EXPECT_FLOAT_EQ(settings.min_threshold_y, 0.15F);
+  EXPECT_FLOAT_EQ(settings.max_threshold_y, 0.24F);
+}
+
+TEST_F(Structure3DControllerPhaseSearchTests, OffThreadSetCellAndTrajectorySafety) {
+  const ProgramOptions options;
+  Structure3DController controller(window(), options);
+
+  const auto cell = testing::crystals::createFCCCell(3.61, "Cu", 1, 1, 1);
+
+  // Call setCell from a background thread
+  {
+    std::jthread bg_thread([&controller, &cell] { controller.setCell(cell); });
+  }
+
+  // Pump Slint event loop to process queued property mutations
+  slint::invoke_from_event_loop([] { slint::quit_event_loop(); });
+  slint::run_event_loop();
+
+  EXPECT_EQ(window().get_structure_3d_total_frames(), 1);
+  EXPECT_EQ(window().get_structure_3d_current_frame(), 0);
+}
+
 } // namespace
 } // namespace correlation::app

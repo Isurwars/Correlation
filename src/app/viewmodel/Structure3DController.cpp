@@ -21,6 +21,7 @@
 #include <array>
 #include <chrono>
 #include <cmath>
+#include <cstdint>
 #include <fstream>
 #include <miniz.h>
 #include <utility>
@@ -214,7 +215,7 @@ void Structure3DController::handleToggleBonds(bool enabled) {
     }
     render_pending_ = true;
   }
-  window_.set_structure_3d_bonds_enabled(enabled);
+  safeInvokeOnWindow([this, enabled] { window_.set_structure_3d_bonds_enabled(enabled); });
   cv_.notify_one();
 }
 
@@ -224,7 +225,7 @@ void Structure3DController::handleToggleWireframe(bool enabled) {
     render_wireframe_ = enabled;
     render_pending_ = true;
   }
-  window_.set_structure_3d_wireframe_enabled(enabled);
+  safeInvokeOnWindow([this, enabled] { window_.set_structure_3d_wireframe_enabled(enabled); });
   cv_.notify_one();
 }
 
@@ -247,7 +248,7 @@ void Structure3DController::handleToggleInCell(bool enabled) {
       render_pending_ = true;
     }
   }
-  window_.set_structure_3d_in_cell(enabled);
+  safeInvokeOnWindow([this, enabled] { window_.set_structure_3d_in_cell(enabled); });
   cv_.notify_one();
 }
 
@@ -267,7 +268,8 @@ void Structure3DController::handleSeekFrame(int frame_index) {
       render_pending_ = true;
     }
   }
-  window_.set_structure_3d_current_frame(actual_frame);
+  safeInvokeOnWindow(
+      [this, actual_frame] { window_.set_structure_3d_current_frame(actual_frame); });
   cv_.notify_one();
 }
 
@@ -288,7 +290,7 @@ void Structure3DController::handleStepFrame(bool forward) {
       render_pending_ = true;
     }
   }
-  window_.set_structure_3d_current_frame(current_idx);
+  safeInvokeOnWindow([this, current_idx] { window_.set_structure_3d_current_frame(current_idx); });
   cv_.notify_one();
 }
 
@@ -325,8 +327,10 @@ void Structure3DController::setCell(const core::Cell &cell) {
     }
     render_pending_ = true;
   }
-  window_.set_structure_3d_current_frame(0);
-  window_.set_structure_3d_total_frames(1);
+  safeInvokeOnWindow([this] {
+    window_.set_structure_3d_current_frame(0);
+    window_.set_structure_3d_total_frames(1);
+  });
   cv_.notify_one();
   syncPhaseSearchToWindow();
 }
@@ -356,8 +360,10 @@ void Structure3DController::setTrajectory(std::shared_ptr<const core::Trajectory
     updateScenePhaseVisuals();
     render_pending_ = true;
   }
-  window_.set_structure_3d_current_frame(0);
-  window_.set_structure_3d_total_frames(total_frames);
+  safeInvokeOnWindow([this, total_frames] {
+    window_.set_structure_3d_current_frame(0);
+    window_.set_structure_3d_total_frames(total_frames);
+  });
   cv_.notify_one();
   syncPhaseSearchToWindow();
 }
@@ -429,6 +435,11 @@ void Structure3DController::setCrystalPreset(CrystalPreset preset) {
         phase_settings_.descriptor = config.descriptor;
         phase_settings_.min_threshold = config.min_threshold;
         phase_settings_.max_threshold = config.max_threshold;
+        if (config.is_2d) {
+          phase_settings_.descriptor_y = config.descriptor_2d_y;
+          phase_settings_.min_threshold_y = config.min_threshold_2d_y;
+          phase_settings_.max_threshold_y = config.max_threshold_2d_y;
+        }
       }
     }
     updateScenePhaseVisuals();
@@ -566,6 +577,7 @@ bool Structure3DController::isPhase2DMode() const noexcept {
 void Structure3DController::setPhaseDescriptorY(PhaseDescriptor desc_y) {
   {
     const std::scoped_lock lock(phase_mutex_, mutex_);
+    phase_settings_.preset = CrystalPreset::Custom;
     phase_settings_.descriptor_y = desc_y;
     const auto [dmin, dmax] = getDescriptorDomain(desc_y);
     phase_settings_.min_threshold_y = dmin;
@@ -624,8 +636,10 @@ Structure3DController::computePhaseHeatmap(const FramePhaseDescriptors *descript
   heatmap.max_x = domain_max_x;
   heatmap.min_y = domain_min_y;
   heatmap.max_y = domain_max_y;
-  heatmap.bin_width_x = (domain_max_x - domain_min_x) / static_cast<float>(K_GRID);
-  heatmap.bin_width_y = (domain_max_y - domain_min_y) / static_cast<float>(K_GRID);
+  const float span_x = std::max(domain_max_x - domain_min_x, 1e-6F);
+  const float span_y = std::max(domain_max_y - domain_min_y, 1e-6F);
+  heatmap.bin_width_x = span_x / static_cast<float>(K_GRID);
+  heatmap.bin_width_y = span_y / static_cast<float>(K_GRID);
 
   if (descriptors == nullptr) {
     return heatmap;
@@ -848,17 +862,7 @@ void Structure3DController::syncPhaseSearchToWindow() {
     window_.set_structure_3d_phase_crystal_markers(markers_model);
   };
 
-  if (std::this_thread::get_id() == main_thread_id_) {
-    apply_to_window();
-  } else {
-    slint::invoke_from_event_loop(
-        [alive = alive_, sync_action = std::move(apply_to_window)] mutable {
-          if (!alive->load()) {
-            return;
-          }
-          sync_action();
-        });
-  }
+  safeInvokeOnWindow(std::move(apply_to_window));
 }
 
 std::shared_ptr<const FramePhaseDescriptors>
@@ -1016,7 +1020,8 @@ Structure3DController::computePhaseHistogram(const FramePhaseDescriptors *descri
   const auto [domain_min, domain_max] = getDescriptorDomain(phase_settings_.descriptor);
   hist.min_val = domain_min;
   hist.max_val = domain_max;
-  hist.bin_width = (domain_max - domain_min) / static_cast<float>(K_BIN_COUNT);
+  const float domain_span = std::max(domain_max - domain_min, 1e-6F);
+  hist.bin_width = domain_span / static_cast<float>(K_BIN_COUNT);
 
   for (std::size_t i = 0; i < K_BIN_COUNT; ++i) {
     hist.bin_centers[i] = domain_min + (static_cast<float>(i) + 0.5F) * hist.bin_width;
@@ -1187,8 +1192,8 @@ void Structure3DController::phaseWorkerLoop() {
   }
 }
 
-void Structure3DController::dispatchFrame(const uint8_t *pixel_data, uint32_t width,
-                                          uint32_t height) {
+void Structure3DController::dispatchFrame(const std::uint8_t *pixel_data, std::uint32_t width,
+                                          std::uint32_t height) {
   if (pixel_data == nullptr || width == 0 || height == 0) {
     return;
   }
