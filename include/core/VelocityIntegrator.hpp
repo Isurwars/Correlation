@@ -11,22 +11,24 @@
 #include "core/Cell.hpp"
 
 #include <span>
-#include <vector>
 
 namespace correlation::core {
 
 class Trajectory;
 
 /**
- * @brief Domain calculator responsible for finite-difference velocity calculation under periodic boundary conditions.
+ * @brief Domain calculator responsible for finite-difference velocity calculation under periodic
+ * boundary conditions.
  */
 class VelocityIntegrator {
 public:
   /**
-   * @brief Calculates velocities for all atoms across the provided sequence of frames using finite differences.
+   * @brief Calculates velocities for all atoms across the provided sequence of frames using finite
+   * differences.
    *
    * Utilizes forward difference on the first frame, backward difference on the last frame,
-   * and central differences on all interior frames under minimum-image periodic boundary conditions.
+   * and central differences on all interior frames under minimum-image periodic boundary
+   * conditions.
    *
    * @param[in,out] frames Span of mutable cell snapshots.
    * @param[in] time_step Constant time step between adjacent frames in femtoseconds.

@@ -12,7 +12,6 @@
 #include "core/Cell.hpp"
 
 #include <span>
-#include <vector>
 
 namespace correlation::core {
 
@@ -83,8 +82,8 @@ public:
    * @param[in] type2 ID of second element type.
    * @return The maximum bond cutoff distance.
    */
-  [[nodiscard]] static real_t
-  getBondCutoff(const correlation::analysis::BondCutoffMatrix &cutoffs, size_t type1, size_t type2);
+  [[nodiscard]] static real_t getBondCutoff(const correlation::analysis::BondCutoffMatrix &cutoffs,
+                                            size_t type1, size_t type2);
 
   /**
    * @brief Gets the minimum bond cutoff distance for two given element types.

@@ -25,8 +25,8 @@
     "semantic_hash": ""
   },
   "include/calculators/BaseCalculator.hpp": {
-    "mtime": 1790389582.064848,
-    "ast_hash": "ebe2951750b58010dce0150305b59610",
+    "mtime": 1793017797.8001382,
+    "ast_hash": "75a86f83f021ee7f05de67d67cc7c442",
     "semantic_hash": ""
   },
   "include/calculators/CalculatorFactory.hpp": {
@@ -140,8 +140,8 @@
     "semantic_hash": ""
   },
   "include/readers/BaseReader.hpp": {
-    "mtime": 1792035329.7006826,
-    "ast_hash": "406c05d9181161006ad34f0f14301113",
+    "mtime": 1793017842.4593532,
+    "ast_hash": "0fcbb458a164b9dc6897320403c193ae",
     "semantic_hash": ""
   },
   "include/readers/CP2KReader.hpp": {
@@ -670,8 +670,8 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/CalculatorFactoryTests.cpp": {
-    "mtime": 1790181953.058514,
-    "ast_hash": "999b70d25e6018d7e7a52800ee56064b",
+    "mtime": 1793018168.0990238,
+    "ast_hash": "7f258e9a7da68e409a230693a24a38f5",
     "semantic_hash": ""
   },
   "tests/unit/calculators/ChiralityCalculatorTests.cpp": {
@@ -870,8 +870,8 @@
     "semantic_hash": ""
   },
   "tests/unit/readers/ReaderFactoryTests.cpp": {
-    "mtime": 1790181953.0653286,
-    "ast_hash": "6fc32e8797fdc259371b782ba55fabb1",
+    "mtime": 1793018129.3396347,
+    "ast_hash": "d83ce601ec579579659dada0bb878b4e",
     "semantic_hash": ""
   },
   "tests/unit/readers/VaspReaderTests.cpp": {
@@ -3112,6 +3112,26 @@
   "include/readers/contracts/IReaderRegistry.hpp": {
     "mtime": 1793016994.7261505,
     "ast_hash": "3a49db7c4d1e1e6d8107a3ae463bf3b2",
+    "semantic_hash": ""
+  },
+  "include/calculators/contracts/IFrameCalculator.hpp": {
+    "mtime": 1793017747.0640562,
+    "ast_hash": "b10e27cfa40e4958ed2dfc510c80c3a6",
+    "semantic_hash": ""
+  },
+  "include/calculators/contracts/ITrajectoryCalculator.hpp": {
+    "mtime": 1793017768.1266713,
+    "ast_hash": "ddce1ede190d302f054cc4d8a3daefe8",
+    "semantic_hash": ""
+  },
+  "include/readers/contracts/IStructureReader.hpp": {
+    "mtime": 1793017813.049868,
+    "ast_hash": "0ffb4a4cfc40e0ea3b7aad6daff937c8",
+    "semantic_hash": ""
+  },
+  "include/readers/contracts/ITrajectoryReader.hpp": {
+    "mtime": 1793017822.5487008,
+    "ast_hash": "75c4c2b09e9e16a24ba44f15b45526ef",
     "semantic_hash": ""
   }
 }
