@@ -202,8 +202,12 @@ void XYZReader::parseAtomLine(const std::string &line, const CommentData &comm_d
                               correlation::core::Cell &cell) {
   tokenizeAtomLine(line, tokens);
 
-  int const max_idx = (std::max)({comm_data.species_col, comm_data.pos_x_col, comm_data.pos_y_col,
-                                  comm_data.pos_z_col});
+  int const max_idx = (std::max)({
+      comm_data.species_col,
+      comm_data.pos_x_col,
+      comm_data.pos_y_col,
+      comm_data.pos_z_col,
+  });
 
   if (std::cmp_less_equal(tokens.size(), max_idx)) {
     throw std::runtime_error("Invalid XYZ file: malformed atom line: " + line);

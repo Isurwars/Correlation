@@ -147,7 +147,8 @@ void parseAtomLine(const std::string &line, const ChgnetReader::CommentData &com
   }
 
   int const max_idx = (std::max)({comm_data.species_col, comm_data.pos_x_col, comm_data.pos_y_col,
-                                  comm_data.pos_z_col});
+                                  comm_data.pos_z_col,},
+                                 [](const auto MIN, const auto MAX) { return std::cmp_less(MIN, MAX); });
 
   if (std::cmp_less_equal(tokens.size(), max_idx)) {
     throw std::runtime_error("Invalid CHGNet file: malformed atom line: " + line);
@@ -260,7 +261,8 @@ void ChgnetReader::parseLattice(const std::string &comment, CommentData &data) {
 
 void ChgnetReader::parseEnergy(const std::string &comment, CommentData &data) {
   const std::vector<std::string> energy_keys = {
-      "chgnet_energy=", "CHGNet_energy=", "free_energy=", "energy=", "dft_energy=", "Energy="};
+      "chgnet_energy=", "CHGNet_energy=", "free_energy=", "energy=", "dft_energy=", "Energy=",
+  };
 
   for (const auto &key : energy_keys) {
     auto pos = comment.find(key);

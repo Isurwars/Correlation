@@ -144,8 +144,12 @@ void parseAtomLine(const std::string &line, const GapReader::CommentData &comm_d
     tokens.push_back(token);
   }
 
-  int const max_idx = (std::max)({comm_data.species_col, comm_data.pos_x_col, comm_data.pos_y_col,
-                                  comm_data.pos_z_col});
+  int const max_idx = (std::max)({
+      comm_data.species_col,
+      comm_data.pos_x_col,
+      comm_data.pos_y_col,
+      comm_data.pos_z_col,
+  });
 
   if (std::cmp_less_equal(tokens.size(), max_idx)) {
     throw std::runtime_error("Invalid GAP file: malformed atom line: " + line);
@@ -264,7 +268,8 @@ void GapReader::parseLattice(const std::string &comment, CommentData &data) {
 
 void GapReader::parseEnergy(const std::string &comment, CommentData &data) {
   const std::vector<std::string> energy_keys = {
-      "gap_energy=", "GAP_energy=", "energy=", "free_energy=", "dft_energy=", "Energy="};
+      "gap_energy=", "GAP_energy=", "energy=", "free_energy=", "dft_energy=", "Energy=",
+  };
 
   for (const auto &key : energy_keys) {
     auto pos = comment.find(key);

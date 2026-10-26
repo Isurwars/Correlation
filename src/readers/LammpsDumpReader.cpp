@@ -83,7 +83,7 @@ struct LammpsFrameParser {
 
   correlation::core::Cell parseBoxBounds() {
     const std::string line = nextLine(); // "ITEM: BOX BOUNDS ..."
-    const bool triclinic = (line.contains("xy"));
+    const bool triclinic = line.contains("xy");
 
     real_t xlo = 0.0;
     real_t xhi = 0.0;

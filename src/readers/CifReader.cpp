@@ -394,9 +394,10 @@ void setupLatticeParameters(correlation::core::Cell &cell,
                             const std::map<std::string, std::string> &cif_data) {
   try {
     std::array<real_t, 6> params{};
-    const std::array<const char *, 6> keys = {"_cell_length_a",   "_cell_length_b",
-                                              "_cell_length_c",   "_cell_angle_alpha",
-                                              "_cell_angle_beta", "_cell_angle_gamma"};
+    const std::array<const char *, 6> keys = {
+        "_cell_length_a",    "_cell_length_b",   "_cell_length_c",
+        "_cell_angle_alpha", "_cell_angle_beta", "_cell_angle_gamma",
+    };
 
     for (size_t i = 0; i < 6; ++i) {
       if (!parseCifNumber(cif_data.at(keys.at(i)), params.at(i))) {

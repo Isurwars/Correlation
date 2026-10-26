@@ -9,7 +9,6 @@
 #include "readers/CP2KReader.hpp"
 
 #include "readers/ReaderFactory.hpp"
-#include <cmath>
 
 #include <cctype>
 #include <fstream>

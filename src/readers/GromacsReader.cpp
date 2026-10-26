@@ -216,10 +216,14 @@ correlation::core::Cell GromacsReader::parseGroFrame(const char *data, size_t si
     real_t box_y = 0.0;
     real_t box_z = 0.0;
     if (str_stream >> box_x >> box_y >> box_z) {
-      cell.setLatticeParameters({static_cast<real_t>(box_x * 10.0),
-                                 static_cast<real_t>(box_y * 10.0),
-                                 static_cast<real_t>(box_z * 10.0), static_cast<real_t>(90.0),
-                                 static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
+      cell.setLatticeParameters({
+          static_cast<real_t>(box_x * 10.0),
+          static_cast<real_t>(box_y * 10.0),
+          static_cast<real_t>(box_z * 10.0),
+          static_cast<real_t>(90.0),
+          static_cast<real_t>(90.0),
+          static_cast<real_t>(90.0),
+      });
     }
   }
 

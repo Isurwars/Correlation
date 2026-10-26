@@ -146,8 +146,12 @@ void parseAtomLine(const std::string &line, const NequipReader::CommentData &com
     tokens.push_back(token);
   }
 
-  int const max_idx = (std::max)({comm_data.species_col, comm_data.pos_x_col, comm_data.pos_y_col,
-                                  comm_data.pos_z_col});
+  int const max_idx = (std::max)({
+      comm_data.species_col,
+      comm_data.pos_x_col,
+      comm_data.pos_y_col,
+      comm_data.pos_z_col,
+  });
 
   if (std::cmp_less_equal(tokens.size(), max_idx)) {
     throw std::runtime_error("Invalid NequIP file: malformed atom line: " + line);
@@ -264,7 +268,8 @@ void NequipReader::parseLattice(const std::string &comment, CommentData &data) {
 
 void NequipReader::parseEnergy(const std::string &comment, CommentData &data) {
   const std::vector<std::string> energy_keys = {
-      "nequip_energy=", "NequIP_energy=", "free_energy=", "energy=", "dft_energy=", "Energy="};
+      "nequip_energy=", "NequIP_energy=", "free_energy=", "energy=", "dft_energy=", "Energy=",
+  };
 
   for (const auto &key : energy_keys) {
     auto pos = comment.find(key);
