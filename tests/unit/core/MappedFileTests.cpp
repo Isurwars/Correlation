@@ -17,6 +17,11 @@ namespace {
 class MappedFileTests : public ::testing::Test {
 protected:
   void SetUp() override {
+    const auto *test_info = ::testing::UnitTest::GetInstance()->current_test_info();
+    const std::string test_name = test_info != nullptr ? test_info->name() : "default";
+    test_dir_ = "mapped_file_test_data_" + test_name;
+    valid_file_path_ = test_dir_ + "/valid_test.txt";
+
     std::filesystem::create_directory(test_dir_);
     std::ofstream out(valid_file_path_);
     out << file_content_;
@@ -30,8 +35,8 @@ protected:
   [[nodiscard]] const std::string &fileContent() const { return file_content_; }
 
 private:
-  std::string test_dir_ = "mapped_file_test_data";
-  std::string valid_file_path_ = test_dir_ + "/valid_test.txt";
+  std::string test_dir_;
+  std::string valid_file_path_;
   std::string file_content_ =
       "Hello, memory-mapped world! This is a test file for MappedFile RAII class.";
 };

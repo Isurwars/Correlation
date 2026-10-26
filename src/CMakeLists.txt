@@ -242,6 +242,9 @@ add_library(correlation_lib STATIC
     analysis/CorrelationEngine.cpp
     analysis/StructuralElectronicCorrelation.cpp
     core/NeighborGraph.cpp
+    core/BondCutoffEngine.cpp
+    core/VelocityIntegrator.cpp
+    core/TrajectoryFilter.cpp
     analysis/StructureAnalyzer.cpp
     core/Trajectory.cpp
     analysis/TrajectoryAnalyzer.cpp

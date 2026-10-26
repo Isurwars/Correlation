@@ -16,6 +16,9 @@ add_executable(correlation_unit_tests
     unit/core/AtomTests.cpp
     unit/core/CellTests.cpp
     unit/core/TrajectoryTests.cpp
+    unit/core/BondCutoffEngineTests.cpp
+    unit/core/VelocityIntegratorTests.cpp
+    unit/core/TrajectoryFilterTests.cpp
     unit/core/NeighborGraphTests.cpp
     unit/core/MappedFileTests.cpp
     unit/core/GPUPortabilityTests.cpp

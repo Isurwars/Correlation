@@ -174,8 +174,9 @@ public:
    * @brief Removes consecutive duplicated frames from the trajectory.
    * Frames are considered duplicates if all atom positions are identical
    * (within a small tolerance).
+   * @param tolerance Euclidean distance threshold in Angstroms for position equivalence.
    */
-  void removeDuplicatedFrames();
+  void removeDuplicatedFrames(real_t tolerance = static_cast<real_t>(1e-5));
 
   /**
    * @brief Pre-calculates the squared bond cutoff distances for every pair of

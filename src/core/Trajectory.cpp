@@ -7,7 +7,10 @@
  */
 
 #include "core/Trajectory.hpp"
+#include "core/BondCutoffEngine.hpp"
 #include "core/MappedFile.hpp"
+#include "core/TrajectoryFilter.hpp"
+#include "core/VelocityIntegrator.hpp"
 #include "math/LinearAlgebra.hpp"
 #include "physics/PhysicalData.hpp"
 
@@ -115,49 +118,30 @@ void Trajectory::ensureMaterialized() const {
 
 const correlation::analysis::BondCutoffRange &Trajectory::getBondCutoffRange(size_t type1,
                                                                              size_t type2) const {
-  static const correlation::analysis::BondCutoffRange DEFAULT_RANGE{
-      .min_sq = static_cast<real_t>(0.0),
-      .max_sq = static_cast<real_t>(0.0),
-  };
   if (bond_cutoffs_.empty()) {
     precomputeBondCutoffs();
   }
-
-  if (type1 >= bond_cutoffs_.size() || type2 >= bond_cutoffs_.size()) {
-    return DEFAULT_RANGE;
-  }
-
-  return bond_cutoffs_[type1][type2];
+  return BondCutoffEngine::getBondCutoffRange(bond_cutoffs_, type1, type2);
 }
 
 real_t Trajectory::getBondCutoffSQ(size_t type1, size_t type2) const {
-  return getBondCutoffRange(type1, type2).max_sq;
+  return BondCutoffEngine::getBondCutoffSQ(bond_cutoffs_, type1, type2);
 }
 
 real_t Trajectory::getMinBondCutoffSQ(size_t type1, size_t type2) const {
-  return getBondCutoffRange(type1, type2).min_sq;
+  return BondCutoffEngine::getMinBondCutoffSQ(bond_cutoffs_, type1, type2);
 }
 
 real_t Trajectory::getBondCutoff(size_t type1, size_t type2) const {
-  return std::sqrt(getBondCutoffSQ(type1, type2));
+  return BondCutoffEngine::getBondCutoff(bond_cutoffs_, type1, type2);
 }
 
 real_t Trajectory::getMinBondCutoff(size_t type1, size_t type2) const {
-  return std::sqrt(getMinBondCutoffSQ(type1, type2));
+  return BondCutoffEngine::getMinBondCutoff(bond_cutoffs_, type1, type2);
 }
 
 void Trajectory::setBondCutoffs(const correlation::analysis::BondCutoffMatrix &cutoffs) {
-  for (const auto &row : cutoffs) {
-    for (const auto &range : row) {
-      if (range.min_sq < 0.0 || range.max_sq < 0.0) {
-        throw std::invalid_argument("Bond cutoff bounds cannot be negative.");
-      }
-      if (range.min_sq > range.max_sq) {
-        throw std::invalid_argument(
-            "Minimum bond cutoff cannot be greater than maximum bond cutoff.");
-      }
-    }
-  }
+  BondCutoffEngine::validate(cutoffs);
   bond_cutoffs_ = cutoffs;
 }
 
@@ -180,40 +164,10 @@ void Trajectory::precomputeBondCutoffs() const {
   if (getFrameCount() == 0) {
     return;
   }
-
-  Cell const first_frame = getFrame(0);
-  const auto &elements = first_frame.elements();
-  const size_t num_elements = elements.size();
-  bond_cutoffs_.resize(num_elements,
-                       std::vector<correlation::analysis::BondCutoffRange>(num_elements));
-
-  const auto safe_get_radius = [](const std::string &symbol) -> real_t {
-    try {
-      return physics::getCovalentRadius(symbol);
-    } catch (const std::out_of_range &) {
-      return static_cast<real_t>(1.5); // Default covalent radius for unknown elements
-    }
-  };
-
-  for (size_t i = 0; i < num_elements; ++i) {
-    const real_t radius_a = safe_get_radius(elements[i].symbol);
-    for (size_t j = i; j < num_elements; ++j) {
-      const real_t radius_b = safe_get_radius(elements[j].symbol);
-      const real_t sum_radii = radius_a + radius_b;
-      const real_t min_bond_dist = sum_radii * static_cast<real_t>(0.6);
-      const real_t min_bond_dist_sq = min_bond_dist * min_bond_dist;
-      const real_t max_bond_dist = sum_radii * static_cast<real_t>(1.3);
-      const real_t max_bond_dist_sq = max_bond_dist * max_bond_dist;
-      bond_cutoffs_[i][j] = correlation::analysis::BondCutoffRange{
-          .min_sq = min_bond_dist_sq,
-          .max_sq = max_bond_dist_sq,
-      };
-      bond_cutoffs_[j][i] = bond_cutoffs_[i][j];
-    }
-  }
+  bond_cutoffs_ = BondCutoffEngine::compute(getFrame(0));
 }
 
-void Trajectory::removeDuplicatedFrames() {
+void Trajectory::removeDuplicatedFrames(real_t tolerance) {
   ensureMaterialized();
   mapped_file_.reset();
   frame_offsets_.clear();
@@ -223,39 +177,7 @@ void Trajectory::removeDuplicatedFrames() {
     return;
   }
 
-  std::vector<Cell> unique_frames;
-  unique_frames.reserve(frames_.size());
-  unique_frames.push_back(frames_[0]);
-
-  const auto epsilon = static_cast<real_t>(1e-5); // Tolerance for position comparison
-
-  for (size_t i = 1; i < frames_.size(); ++i) {
-    const auto &current_frame = frames_[i];
-    const auto &last_unique_frame = unique_frames.back();
-
-    bool is_duplicate = true;
-
-    // Check atom count
-    if (current_frame.atomCount() != last_unique_frame.atomCount()) {
-      is_duplicate = false;
-    } else {
-      // Check positions
-      const auto &current_atoms = current_frame.atoms();
-      const auto &last_atoms = last_unique_frame.atoms();
-
-      for (size_t j = 0; j < current_atoms.size(); ++j) {
-        if (math::norm(current_atoms[j].position() - last_atoms[j].position()) > epsilon) {
-          is_duplicate = false;
-          break;
-        }
-      }
-    }
-
-    if (!is_duplicate) {
-      unique_frames.push_back(current_frame);
-    }
-  }
-
+  auto unique_frames = TrajectoryFilter::filterConsecutiveDuplicates(frames_, tolerance);
   if (unique_frames.size() < frames_.size()) {
     removed_frames_count_ = frames_.size() - unique_frames.size();
     frames_ = std::move(unique_frames);
@@ -268,51 +190,7 @@ void Trajectory::calculateVelocities() {
   frame_offsets_.clear();
   parser_ = nullptr;
 
-  if (frames_.size() < 2) {
-    return;
-  }
-  size_t const num_frames = frames_.size();
-  size_t const num_atoms = frames_[0].atoms().size();
-
-  if (time_step_ <= 0.0) {
-    return; // Cannot calculate valid velocities
-  }
-
-  for (size_t frame_idx = 0; frame_idx < num_frames; ++frame_idx) {
-    // Check if the frame has a valid periodic cell (volume > 0).
-    const bool use_pbc = (frames_[frame_idx].volume() > 1e-9);
-
-    // Minimum-image displacement: delegates to Cell::minimumImage() which
-    // correctly handles both orthogonal and triclinic cells.
-    const auto displacement =
-        [&](const math::Vector3<real_t> &target_pos,
-            const math::Vector3<real_t> &source_pos) -> math::Vector3<real_t> {
-      const math::Vector3<real_t> delta_r = target_pos - source_pos;
-      return use_pbc ? frames_[frame_idx].minimumImage(delta_r) : delta_r;
-    };
-    if (frame_idx == 0) {
-      for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
-        const auto &pos0 = frames_[0].atoms()[atom_idx].position();
-        const auto &pos1 = frames_[1].atoms()[atom_idx].position();
-        frames_[frame_idx].atoms()[atom_idx].setVelocity(displacement(pos1, pos0) / time_step_);
-      }
-    } else if (frame_idx == num_frames - 1) {
-      for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
-        const auto &pos_n = frames_[num_frames - 1].atoms()[atom_idx].position();
-        const auto &pos_n_1 = frames_[num_frames - 2].atoms()[atom_idx].position();
-        frames_[frame_idx].atoms()[atom_idx].setVelocity(displacement(pos_n, pos_n_1) / time_step_);
-      }
-    } else {
-      for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
-        // Central difference for internal frames
-        // v(t) = (r(t+1) - r(t-1)) / (2 * dt)
-        const auto &pos_next = frames_[frame_idx + 1].atoms()[atom_idx].position();
-        const auto &pos_prev = frames_[frame_idx - 1].atoms()[atom_idx].position();
-        frames_[frame_idx].atoms()[atom_idx].setVelocity(displacement(pos_next, pos_prev) /
-                                                         (static_cast<real_t>(2.0) * time_step_));
-      }
-    }
-  }
+  VelocityIntegrator::calculateVelocities(frames_, time_step_);
 }
 
 void Trajectory::validateFrame(const Cell &new_frame) const {
