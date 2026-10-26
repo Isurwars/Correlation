@@ -334,6 +334,8 @@ if(BUILD_GUI)
     add_library(app_gui_obj OBJECT
         app/core/AppController.cpp
         app/viewmodel/BondCutoffController.cpp
+        app/viewmodel/PhaseExportManager.cpp
+        app/viewmodel/PhaseSearchService.cpp
         app/viewmodel/PlotController.cpp
         app/viewmodel/PlotExportManager.cpp
         app/viewmodel/PlotMarkerManager.cpp
@@ -341,6 +343,7 @@ if(BUILD_GUI)
         app/viewmodel/PlotViewportNavigator.cpp
         app/viewmodel/PresetController.cpp
         app/viewmodel/Structure3DController.cpp
+        app/viewmodel/Structure3DRenderPipeline.cpp
         app/services/AnalysisRunner.cpp
         app/services/FileIOHandler.cpp
         app/services/InputValidator.cpp

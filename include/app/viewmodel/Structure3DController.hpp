@@ -9,14 +9,14 @@
 #pragma once
 
 #include "app/core/AppOptions.hpp"
+#include "app/viewmodel/PhaseSearchService.hpp"
 #include "app/viewmodel/PhaseSearchTypes.hpp"
 #include "app/viewmodel/SteinhardtLRUCache.hpp"
+#include "app/viewmodel/Structure3DRenderPipeline.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 #include "plotters/ColormapService.hpp"
 #include "render3d/Camera3D.hpp"
-#include "render3d/IRenderEngine.hpp"
-#include "render3d/LodController.hpp"
 #include "render3d/Scene3D.hpp"
 #include "render3d/TrajectoryStreamer.hpp"
 #include <slint.h>
@@ -365,13 +365,15 @@ public:
    * @brief Accesses reference to the frame phase descriptors LRU cache.
    * @return PhaseDescriptorsLRUCache reference.
    */
-  [[nodiscard]] PhaseDescriptorsLRUCache &lruCache() noexcept { return lru_cache_; }
+  [[nodiscard]] PhaseDescriptorsLRUCache &lruCache() noexcept { return phase_service_->lruCache(); }
 
   /**
    * @brief Accesses const reference to the frame phase descriptors LRU cache.
    * @return Const PhaseDescriptorsLRUCache reference.
    */
-  [[nodiscard]] const PhaseDescriptorsLRUCache &lruCache() const noexcept { return lru_cache_; }
+  [[nodiscard]] const PhaseDescriptorsLRUCache &lruCache() const noexcept {
+    return phase_service_->lruCache();
+  }
 
   /**
    * @brief Synchronously computes or retrieves phase descriptors for a frame.
@@ -390,23 +392,8 @@ public:
   getOrComputeSteinhardt(std::size_t frame_index);
 
 private:
-  void renderLoop();
-  void phaseWorkerLoop();
-  [[nodiscard]] int64_t waitForNextPhaseFrame();
-  void processTargetPhaseFrame(int64_t target_frame);
-  void prewarmAdjacentFrames(int64_t target_frame);
   void requestPhaseCalculation(std::size_t frame_index);
   void updateScenePhaseVisuals();
-  void applyPhaseVisualsToScene(render3d::Scene3D &target_scene,
-                                const FramePhaseDescriptors *descriptors) const;
-  [[nodiscard]] PhaseHistogram
-  computePhaseHistogram(const FramePhaseDescriptors *descriptors) const;
-  [[nodiscard]] PhaseHeatmap2D computePhaseHeatmap(const FramePhaseDescriptors *descriptors) const;
-  [[nodiscard]] static slint::Image renderHeatmapImage(const PhaseHeatmap2D &heatmap,
-                                                       plotters::ColormapType colormap);
-  [[nodiscard]] std::shared_ptr<const FramePhaseDescriptors>
-  computeDescriptorsSync(std::size_t frame_index);
-  void dispatchFrame(const std::uint8_t *pixel_data, std::uint32_t width, std::uint32_t height);
 
   template <typename F> void safeInvokeOnWindow(F &&action) {
     if (std::this_thread::get_id() == main_thread_id_) {
@@ -421,12 +408,13 @@ private:
   }
 
   ::AppWindow &window_;
-  const ProgramOptions &options_;
+  [[maybe_unused]] const ProgramOptions &options_;
 
-  std::unique_ptr<render3d::IRenderEngine> engine_;
+  std::shared_ptr<std::atomic<bool>> alive_;
+  std::unique_ptr<Structure3DRenderPipeline> render_pipeline_;
+  std::unique_ptr<PhaseSearchService> phase_service_;
   std::shared_ptr<render3d::Scene3D> scene_;
   render3d::Camera3D camera_;
-  render3d::LodController lod_controller_;
   render3d::TrajectoryStreamer streamer_;
   render3d::ViewportDimensions viewport_dims_{.width = 800, .height = 600};
 
@@ -439,23 +427,8 @@ private:
   core::Cell current_cell_;
   std::shared_ptr<const core::Trajectory> current_trajectory_;
 
-  PhaseSearchSettings phase_settings_;
-  mutable std::mutex phase_mutex_;
-  PhaseDescriptorsLRUCache lru_cache_{32};
-  PhaseHistogram latest_histogram_;
-  PhaseHeatmap2D latest_heatmap_;
-  std::condition_variable phase_cv_;
-  std::atomic<bool> stop_phase_worker_{false};
-  std::atomic<int64_t> requested_phase_frame_{-1};
-
-  std::mutex mutex_;
-  std::condition_variable cv_;
-  bool render_pending_{false};
-  std::atomic<bool> stop_worker_{false};
-  std::shared_ptr<std::atomic<bool>> alive_;
+  mutable std::mutex mutex_;
   std::thread::id main_thread_id_{std::this_thread::get_id()};
-  std::jthread phase_worker_;
-  std::jthread render_worker_;
 };
 
 } // namespace correlation::app
