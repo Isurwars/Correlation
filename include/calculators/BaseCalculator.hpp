@@ -9,7 +9,6 @@
 #pragma once
 
 #include "analysis/DistributionFunctions.hpp"
-#include "calculators/contracts/ICalculator.hpp"
 #include "calculators/contracts/IFrameCalculator.hpp"
 #include "calculators/contracts/ITrajectoryCalculator.hpp"
 #include "core/Trajectory.hpp"
