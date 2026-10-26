@@ -26,25 +26,20 @@ public:
 };
 } // namespace
 TEST(CalculatorFactoryTests, SingletonInstanceIsUnique) {
-  auto &factory1 = CalculatorFactory::instance();
-  auto &factory2 = CalculatorFactory::instance();
+  const auto &factory1 = CalculatorFactory::instance();
+  const auto &factory2 = CalculatorFactory::instance();
   EXPECT_EQ(&factory1, &factory2);
 }
 
 TEST(CalculatorFactoryTests, GetRegisteredCalculators) {
-  auto &factory = CalculatorFactory::instance();
+  const auto &factory = CalculatorFactory::instance();
   const auto &calculators = factory.getCalculators();
   // There should be some default calculators registered automatically
   EXPECT_GT(calculators.size(), 0);
 }
 
 TEST(CalculatorFactoryTests, LookupStandardCalculators) {
-  auto &factory = CalculatorFactory::instance();
-  // "RDF" is a standard calculator registered under calculators_obj
-  // Wait, let's make sure the name matches. RDFCalculator name is "RDF" or "Radial Distribution
-  // Function"? Let's verify RDFCalculator::getName() or short name. Actually, let's look up by the
-  // name. Let's find one standard calculator. We know RDFCalculator is registered. Let's check
-  // getCalculator with different potential names or just use any from getCalculators()
+  const auto &factory = CalculatorFactory::instance();
   const auto &calculators = factory.getCalculators();
   ASSERT_FALSE(calculators.empty());
   std::string_view const first_calc_name = calculators[0]->getName();
@@ -71,15 +66,39 @@ TEST(CalculatorFactoryTests, RegisterAndLookupCustomCalculator) {
 }
 
 TEST(CalculatorFactoryTests, LookupNonExistentReturnsNullptr) {
-  auto &factory = CalculatorFactory::instance();
+  const auto &factory = CalculatorFactory::instance();
   const BaseCalculator *retrieved = factory.getCalculator("NonExistentCalculatorName");
   EXPECT_EQ(retrieved, nullptr);
 }
 
 TEST(CalculatorFactoryTests, EmptyNameLookupReturnsNullptr) {
-  auto &factory = CalculatorFactory::instance();
+  const auto &factory = CalculatorFactory::instance();
   const BaseCalculator *retrieved = factory.getCalculator("");
   EXPECT_EQ(retrieved, nullptr);
+}
+
+TEST(CalculatorFactoryTests, BaseCalculatorSatisfiesSegregatedContracts) {
+  const MockCalculator mock;
+
+  correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  cell.addAtom("Si", {0.0, 0.0, 0.0});
+
+  // Polymorphic binding to IFrameCalculator role interface
+  const IFrameCalculator &frame_calc = mock;
+  EXPECT_NO_THROW({
+    correlation::analysis::DistributionFunctions dists(cell);
+    correlation::analysis::AnalysisSettings const settings;
+    frame_calc.calculateFrame(dists, settings);
+  });
+
+  // Polymorphic binding to ITrajectoryCalculator role interface
+  const ITrajectoryCalculator &traj_calc = mock;
+  EXPECT_NO_THROW({
+    correlation::analysis::DistributionFunctions dists(cell);
+    correlation::core::Trajectory const traj;
+    correlation::analysis::AnalysisSettings const settings;
+    traj_calc.calculateTrajectory(dists, traj, settings);
+  });
 }
 
 } // namespace correlation::testing

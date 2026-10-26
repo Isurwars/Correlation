@@ -10,6 +10,8 @@
 
 #include "analysis/DistributionFunctions.hpp"
 #include "calculators/contracts/ICalculator.hpp"
+#include "calculators/contracts/IFrameCalculator.hpp"
+#include "calculators/contracts/ITrajectoryCalculator.hpp"
 #include "core/Trajectory.hpp"
 
 #include <string_view>
@@ -19,7 +21,7 @@ namespace correlation::calculators {
 /**
  * @brief Base class for all analysis calculators.
  */
-class BaseCalculator : public ICalculator {
+class BaseCalculator : public IFrameCalculator, public ITrajectoryCalculator {
 public:
   BaseCalculator() = default;
   ~BaseCalculator() override = default;
@@ -81,8 +83,8 @@ public:
    * @param[in,out] dists The DistributionFunctions object to store the results.
    * @param[in] settings The analysis settings and parameters.
    */
-  virtual void calculateFrame(correlation::analysis::DistributionFunctions &dists,
-                              const correlation::analysis::AnalysisSettings &settings) const {
+  void calculateFrame(correlation::analysis::DistributionFunctions &dists,
+                      const correlation::analysis::AnalysisSettings &settings) const override {
     (void)dists;
     (void)settings;
   }
@@ -94,9 +96,9 @@ public:
    * @param[in] traj The complete trajectory data.
    * @param[in] settings The analysis settings and parameters.
    */
-  virtual void calculateTrajectory(correlation::analysis::DistributionFunctions &dists,
-                                   const correlation::core::Trajectory &traj,
-                                   const correlation::analysis::AnalysisSettings &settings) const {
+  void calculateTrajectory(correlation::analysis::DistributionFunctions &dists,
+                           const correlation::core::Trajectory &traj,
+                           const correlation::analysis::AnalysisSettings &settings) const override {
     (void)dists;
     (void)traj;
     (void)settings;
