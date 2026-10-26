@@ -1,7 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### ♻️ Architecture & SOLID Refactoring
+- **Phase 1: Factory Registry Abstractions (DIP)**: Introduced `IReaderRegistry` and `ICalculatorRegistry` pure abstract interfaces, decoupling `TrajectoryLoader` and `OptionsSyncService` from concrete singleton registries via constructor-based dependency injection.
+- **Phase 2: Calculator & Reader Contract Segregation (ISP/LSP)**: Segregated monolithic calculator and reader contracts into fine-grained role interfaces (`IFrameCalculator`, `ITrajectoryCalculator`, `IStructureReader`, `ITrajectoryReader`), ensuring calculators and readers implement only the contracts relevant to their operational capabilities.
+- **Phase 3: Trajectory Domain Decomposition (SRP)**: Decomposed `Trajectory` God Object by extracting distinct domain responsibilities into dedicated single-responsibility services:
+  - `BondCutoffEngine`: Pairwise covalent and van der Waals bond cutoff evaluation and caching.
+  - `VelocityIntegrator`: Numerical velocity differentiation (central and boundary differences) across trajectory frames.
+  - `TrajectoryFilter`: Dynamic frame filtering, sub-sampling, and duplicate frame suppression.
+- **Phase 4: Distribution Functions Decoupling (SRP/OCP)**: Extracted mathematical kernel smoothing and domain scaling from `DistributionFunctions` into dedicated `DistributionPostProcessor` service with multi-threaded TBB parallelization and robust alias resolution (`hasHistogram()`, `getMutableHistogram()`).
+
 ## [4.1.0] - 2026-10-25
+
 
 ### 🚀 Features & Scientific Analysis
 - **Ten Wolde–Frenkel Bond Coherence (`TenWoldeFrenkelCalculator`)**: Implemented mutual bond coherence analysis $\chi_{ij} = \sum_{m=-6}^6 \hat{q}_{6m}(i) \cdot \hat{q}_{6m}^*(j)$, per-atom coherent neighbor count $N_{\text{conn}}$, and solid-like nuclei detection emitting 1D histogram `TWF_Nconn`.

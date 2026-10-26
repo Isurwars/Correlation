@@ -112,6 +112,7 @@ add_executable(correlation_unit_tests
     unit/render3d/TrajectoryStreamerTests.cpp
     unit/analysis/CorrelationEngineTests.cpp
     unit/analysis/CutoffSanityCheckerTests.cpp
+    unit/analysis/DistributionPostProcessorTests.cpp
     unit/analysis/FirstMinimumDetectorTests.cpp
     unit/analysis/StructuralElectronicCorrelationTests.cpp
     unit/app/AnalysisDispatcherTests.cpp

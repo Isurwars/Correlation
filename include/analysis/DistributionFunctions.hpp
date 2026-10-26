@@ -236,10 +236,33 @@ public:
   [[nodiscard]] const Histogram &getHistogram(const std::string &name) const;
 
   /**
+   * @brief Access a mutable calculated histogram by name.
+   * @param name The name of the distribution function.
+   * @return A mutable reference to the Histogram data.
+   * @throws std::out_of_range if the name is not found.
+   */
+  [[nodiscard]] Histogram &getMutableHistogram(const std::string &name);
+
+  /**
+   * @brief Checks if a calculated histogram exists by name or alias.
+   * @param name The name or alias to query.
+   * @return True if present, false otherwise.
+   */
+  [[nodiscard]] bool hasHistogram(const std::string &name) const;
+
+  /**
    * @brief Access all calculated histograms.
    * @return A map of histogram names to Histogram objects.
    */
   [[nodiscard]] const std::map<std::string, Histogram> &getAllHistograms() const {
+    return histograms_;
+  }
+
+  /**
+   * @brief Access mutable collection of all calculated histograms.
+   * @return Mutable reference to map of histogram names to Histogram objects.
+   */
+  [[nodiscard]] std::map<std::string, Histogram> &getAllHistograms() noexcept {
     return histograms_;
   }
 

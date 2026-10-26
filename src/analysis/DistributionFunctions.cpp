@@ -7,6 +7,7 @@
  */
 
 #include "analysis/DistributionFunctions.hpp"
+#include "analysis/DistributionPostProcessor.hpp"
 #include "analysis/TrajectoryAnalyzer.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "calculators/scattering/XRDCalculator.hpp"
@@ -90,35 +91,69 @@ const StructureAnalyzer *DistributionFunctions::neighbors() const {
   return neighbors_owned_.get();
 }
 
+namespace {
+
+[[nodiscard]] std::string_view resolveAlias(std::string_view name) {
+  static const std::map<std::string_view, std::string_view> ALIASES = {
+      {"BAD", "PAD"},
+      {"Cluster Size", "cluster_size"},
+      {"cluster_size", "Cluster Size"},
+      {"Voronoi Volume", "voronoi_volume"},
+      {"voronoi_volume", "Voronoi Volume"},
+      {"Voronoi Sphericity", "voronoi_sphericity"},
+      {"voronoi_sphericity", "Voronoi Sphericity"},
+      {"Voronoi Coordination Number", "voronoi_cn"},
+      {"voronoi_cn", "Voronoi Coordination Number"},
+      {"Voronoi Signatures", "voronoi_signatures"},
+      {"voronoi_signatures", "Voronoi Signatures"},
+      {"Normalized VACF", "vacf_normalized"},
+      {"vacf_normalized", "Normalized VACF"},
+      {"tdos", "TDOS"},
+      {"TDOS", "tdos"},
+      {"SQ", "S_q"},
+      {"S(Q)", "S_q"},
+      {"vDoS", "VDOS"},
+      {"G6", "G6_r"},
+      {"g6", "G6_r"},
+      {"g6_r", "G6_r"},
+  };
+  const auto alias_iter = ALIASES.find(name);
+  return (alias_iter != ALIASES.end()) ? alias_iter->second : name;
+}
+
+} // namespace
+
+bool DistributionFunctions::hasHistogram(const std::string &name) const {
+  const std::scoped_lock lock(histogram_mutex_);
+  if (histograms_.contains(name)) {
+    return true;
+  }
+  const auto resolved = std::string(resolveAlias(name));
+  return resolved != name && histograms_.contains(resolved);
+}
+
 const Histogram &DistributionFunctions::getHistogram(const std::string &name) const {
   const std::scoped_lock lock(histogram_mutex_);
   auto iter = histograms_.find(name);
   if (iter == histograms_.end()) {
-    static const std::map<std::string, std::string> ALIASES = {
-        {"BAD", "PAD"},
-        {"Cluster Size", "cluster_size"},
-        {"cluster_size", "Cluster Size"},
-        {"Voronoi Volume", "voronoi_volume"},
-        {"voronoi_volume", "Voronoi Volume"},
-        {"Voronoi Sphericity", "voronoi_sphericity"},
-        {"voronoi_sphericity", "Voronoi Sphericity"},
-        {"Voronoi Coordination Number", "voronoi_cn"},
-        {"voronoi_cn", "Voronoi Coordination Number"},
-        {"Voronoi Signatures", "voronoi_signatures"},
-        {"voronoi_signatures", "Voronoi Signatures"},
-        {"Normalized VACF", "vacf_normalized"},
-        {"vacf_normalized", "Normalized VACF"},
-        {"tdos", "TDOS"},
-        {"TDOS", "tdos"},
-        {"SQ", "S_q"},
-        {"S(Q)", "S_q"},
-        {"vDoS", "VDOS"},
-        {"G6", "G6_r"},
-        {"g6", "G6_r"},
-        {"g6_r", "G6_r"},
-    };
-    if (const auto alias_it = ALIASES.find(name); alias_it != ALIASES.end()) {
-      iter = histograms_.find(alias_it->second);
+    const auto resolved = std::string(resolveAlias(name));
+    if (resolved != name) {
+      iter = histograms_.find(resolved);
+    }
+  }
+  if (iter == histograms_.end()) {
+    throw std::out_of_range("Histogram '" + name + "' not found.");
+  }
+  return iter->second;
+}
+
+Histogram &DistributionFunctions::getMutableHistogram(const std::string &name) {
+  const std::scoped_lock lock(histogram_mutex_);
+  auto iter = histograms_.find(name);
+  if (iter == histograms_.end()) {
+    const auto resolved = std::string(resolveAlias(name));
+    if (resolved != name) {
+      iter = histograms_.find(resolved);
     }
   }
   if (iter == histograms_.end()) {
@@ -229,67 +264,11 @@ void DistributionFunctions::calculateAshcroftWeights() {
 
 void DistributionFunctions::smooth(const std::string &name, real_t sigma,
                                    correlation::math::KernelType kernel) {
-  if (!histograms_.contains(name)) {
-    throw std::runtime_error("Histogram '" + name + "' not found for smoothing.");
-  }
-
-  auto &hist = histograms_.at(name);
-  hist.smoothed_partials.clear();
-
-  if (hist.bins.size() < 2) {
-    return;
-  }
-
-  // Constants are the same for every partial of this histogram.
-  const real_t bin_dx = hist.bins[1] - hist.bins[0];
-  if (bin_dx <= 0.0) {
-    return;
-  }
-
-  real_t effective_sigma = sigma;
-  if (name == "BAD" || name == "PAD" || name == "PAD_raw" || name == "DAD" || name == "DAD_raw") {
-    // Angular distributions operate on [0, 180] or [0, 360] degrees instead of [0, 20] Angstroms.
-    // Domain ratio between angular space (~180 deg) and spatial r_max (~20 Å) is ~9.0x.
-    // Scale sigma proportionally so that angular smoothing spans an enhanced smoothing window (~15x
-    // spatial sigma, e.g. 0.1 -> 1.5 deg).
-    constexpr auto ANGULAR_DOMAIN_SCALE = static_cast<real_t>(15.0);
-    effective_sigma = sigma * ANGULAR_DOMAIN_SCALE;
-  }
-  const real_t min_sigma = std::max(bin_dx, effective_sigma);
-
-  // Flatten partials into a read-only list so we can access them safely from
-  // parallel tasks (std::map is not thread-safe for concurrent reads + writes).
-  using PartialEntry = std::pair<const std::string *, const std::vector<real_t> *>;
-  std::vector<PartialEntry> entries;
-  entries.reserve(hist.partials.size());
-  for (const auto &[key, vals] : hist.partials) {
-    entries.emplace_back(&key, &vals);
-  }
-
-  // Compute each partial's smoothed values in parallel.
-  std::vector<std::vector<real_t>> results(entries.size());
-  tbb::parallel_for(
-      tbb::blocked_range<size_t>(0, entries.size()), [&](const tbb::blocked_range<size_t> &range) {
-        for (size_t i = range.begin(); i != range.end(); ++i) {
-          results[i] =
-              correlation::math::KernelSmoothing(*entries[i].second, {
-                                                                         .bin_width = bin_dx,
-                                                                         .sigma = min_sigma,
-                                                                         .type = kernel,
-                                                                     });
-        }
-      });
-
-  // Serial writeback — map insertions are not thread-safe.
-  for (size_t i = 0; i < entries.size(); ++i) {
-    hist.smoothed_partials[*entries[i].first] = std::move(results[i]);
-  }
+  DistributionPostProcessor::smooth(*this, name, sigma, kernel);
 }
 
 void DistributionFunctions::smoothAll(real_t sigma, correlation::math::KernelType kernel) {
-  for (const auto &[name, histogram] : histograms_) {
-    smooth(name, sigma, kernel);
-  }
+  DistributionPostProcessor::smoothAll(*this, sigma, kernel);
 }
 
 void DistributionFunctions::calculateCoordinationNumber() {

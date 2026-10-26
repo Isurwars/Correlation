@@ -236,6 +236,7 @@ target_link_libraries(render3d_obj PRIVATE correlation_simd_options)
 add_library(correlation_lib STATIC
     core/Cell.cpp
     analysis/DistributionFunctions.cpp
+    analysis/DistributionPostProcessor.cpp
     analysis/DynamicsAnalyzer.cpp
     analysis/FirstMinimumDetector.cpp
     analysis/CutoffSanityChecker.cpp
