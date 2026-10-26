@@ -489,5 +489,18 @@
   "487": "forEachPairWithin",
   "488": "SteinhardtCalculator::calculateFrame",
   "489": "DADCalculator::calculateFrame",
-  "490": "resolveExampleFilePath"
+  "490": "resolveExampleFilePath",
+  "491": "MillerExpSumParams",
+  "492": "RDCalculator.cpp",
+  "493": "renderHistogramAsPng",
+  "494": "TDOSParams",
+  "495": "CorrelationLengthFit",
+  "496": "MLIPCalculator::calculate",
+  "497": "QVector",
+  "498": "RegressionResult",
+  "499": "OrbUnitCutoffResult",
+  "500": "RDFParams",
+  "501": "BondCutoffController::BondCutoffController",
+  "502": "G6Calculator::calculateFrame",
+  "503": "VoronoiCalculator::calculateFrame"
 }

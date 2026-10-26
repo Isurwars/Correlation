@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include "analysis/AnalysisTypes.hpp"
 #include "analysis/DistributionFunctions.hpp"
 #include "math/Smoothing.hpp"
 
