@@ -1,0 +1,153 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialTypography,
+    MaterialText,
+} from "../../../material/material.slint";
+import { CrystalMarker } from "./PhaseHeatmapTypes.slint";
+
+export component PhaseHeatmapCanvas inherits Rectangle {
+    in property <image> heatmap_image;
+    in property <float> min_x: 0.0;
+    in property <float> max_x: 1.0;
+    in property <float> min_y: 0.0;
+    in property <float> max_y: 1.0;
+    in property <float> sel_min_x: 0.0;
+    in property <float> sel_max_x: 1.0;
+    in property <float> sel_min_y: 0.0;
+    in property <float> sel_max_y: 1.0;
+    in property <[CrystalMarker]> crystal_markers: [];
+
+    callback set_selection_2d(float, float, float, float);
+    callback reset_selection();
+
+    // Internal interactive drag tracking
+    property <bool> is_dragging: false;
+    property <length> drag_start_x: 0px;
+    property <length> drag_start_y: 0px;
+    property <length> drag_curr_x: 0px;
+    property <length> drag_curr_y: 0px;
+
+    horizontal-stretch: 1;
+    height: 190px;
+    border-radius: 6px;
+    background: #14171c;
+    border-width: 1.5px;
+    border-color: MaterialPalette.outline_variant.with_alpha(60%);
+    clip: true;
+
+    // Heatmap Image
+    Image {
+        width: 100%;
+        height: 100%;
+        source: root.heatmap_image;
+        image-fit: fill;
+    }
+
+    // Canonical Crystal Reference Markers
+    for marker in root.crystal_markers: Rectangle {
+        x: Math.max(2px, Math.min(parent.width - 24px, parent.width * marker.x_ratio - 11px));
+        y: Math.max(2px, Math.min(parent.height - 13px, parent.height * marker.y_ratio - 6px));
+        width: 22px;
+        height: 12px;
+        border-radius: 3px;
+        background: #111419.with_alpha(88%);
+        border-width: 1px;
+        border-color: MaterialPalette.primary;
+
+        MaterialText {
+            width: 100%;
+            height: 100%;
+            text: marker.label;
+            font-size: 8px;
+            font-weight: 700;
+            color: MaterialPalette.primary;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+
+    // Selection Box Geometry calculation
+    property <float> norm_min_x: Math.max(0.0, Math.min(1.0, (root.sel_min_x - root.min_x) / Math.max(0.0001, root.max_x - root.min_x)));
+    property <float> norm_max_x: Math.max(0.0, Math.min(1.0, (root.sel_max_x - root.min_x) / Math.max(0.0001, root.max_x - root.min_x)));
+    property <float> norm_min_y: Math.max(0.0, Math.min(1.0, (root.max_y - root.sel_max_y) / Math.max(0.0001, root.max_y - root.min_y)));
+    property <float> norm_max_y: Math.max(0.0, Math.min(1.0, (root.max_y - root.sel_min_y) / Math.max(0.0001, root.max_y - root.min_y)));
+
+    // 2D Selection Box Highlight
+    Rectangle {
+        x: root.is_dragging
+            ? Math.min(root.drag_start_x, root.drag_curr_x)
+            : (parent.width * root.norm_min_x);
+        y: root.is_dragging
+            ? Math.min(root.drag_start_y, root.drag_curr_y)
+            : (parent.height * root.norm_min_y);
+        width: root.is_dragging
+            ? Math.abs(root.drag_curr_x - root.drag_start_x)
+            : (parent.width * Math.max(0.01, root.norm_max_x - root.norm_min_x));
+        height: root.is_dragging
+            ? Math.abs(root.drag_curr_y - root.drag_start_y)
+            : (parent.height * Math.max(0.01, root.norm_max_y - root.norm_min_y));
+
+        background: MaterialPalette.primary.with_alpha(22%);
+        border-width: 1.5px;
+        border-color: MaterialPalette.primary;
+        border-radius: 2px;
+    }
+
+    // Interactive TouchArea for Drag-to-Select
+    canvas_touch := TouchArea {
+        width: 100%;
+        height: 100%;
+        mouse-cursor: crosshair;
+
+        pointer-event(event) => {
+            if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                root.drag_start_x = self.mouse-x;
+                root.drag_start_y = self.mouse-y;
+                root.drag_curr_x = self.mouse-x;
+                root.drag_curr_y = self.mouse-y;
+                root.is_dragging = true;
+            }
+            if (event.kind == PointerEventKind.up && event.button == PointerEventButton.left && root.is_dragging) {
+                root.is_dragging = false;
+                let w = self.width / 1px;
+                let h = self.height / 1px;
+                if (w > 0.0 && h > 0.0) {
+                    let x1 = Math.max(0.0, Math.min(1.0, (root.drag_start_x / 1px) / w));
+                    let x2 = Math.max(0.0, Math.min(1.0, (root.drag_curr_x / 1px) / w));
+                    let y1 = Math.max(0.0, Math.min(1.0, (root.drag_start_y / 1px) / h));
+                    let y2 = Math.max(0.0, Math.min(1.0, (root.drag_curr_y / 1px) / h));
+
+                    let rx_min = Math.min(x1, x2);
+                    let rx_max = Math.max(x1, x2);
+                    let ry_top = Math.min(y1, y2);
+                    let ry_bottom = Math.max(y1, y2);
+
+                    // Commit only if user actually dragged (>= 4px)
+                    if ((rx_max - rx_min) * w >= 4.0 && (ry_bottom - ry_top) * h >= 4.0) {
+                        let calc_min_x = root.min_x + rx_min * (root.max_x - root.min_x);
+                        let calc_max_x = root.min_x + rx_max * (root.max_x - root.min_x);
+                        let calc_max_y = root.max_y - ry_top * (root.max_y - root.min_y);
+                        let calc_min_y = root.max_y - ry_bottom * (root.max_y - root.min_y);
+                        root.set_selection_2d(calc_min_x, calc_max_x, calc_min_y, calc_max_y);
+                    }
+                }
+            }
+        }
+
+        moved => {
+            if (self.pressed && root.is_dragging) {
+                root.drag_curr_x = Math.max(0px, Math.min(self.width, self.mouse-x));
+                root.drag_curr_y = Math.max(0px, Math.min(self.height, self.mouse-y));
+            }
+        }
+
+        double-clicked => {
+            root.reset_selection();
+        }
+    }
+}

@@ -12,6 +12,10 @@ import {
 import { PhaseSlider } from "./PhaseSlider.slint";
 import { PhaseMiniHistogram } from "./PhaseMiniHistogram.slint";
 import { PhaseHeatmapView, CrystalMarker } from "./PhaseHeatmapView.slint";
+import { PhasePresetsGrid } from "./PhasePresetsGrid.slint";
+import { PhaseDescriptorSelector } from "./PhaseDescriptorSelector.slint";
+import { PhaseColorbar } from "./PhaseColorbar.slint";
+import { PhaseVisualControls } from "./PhaseVisualControls.slint";
 
 export component PhaseSearchCard inherits Rectangle {
     in property <bool> phase_enabled: false;
@@ -258,272 +262,29 @@ export component PhaseSearchCard inherits Rectangle {
             }
         }
 
-        // 4. 1D Crystal Presets
-        if (!root.is_2d_mode): VerticalLayout {
-            spacing: 3px;
-
-            MaterialText {
-                text: "Phase Presets";
-                font-size: 11px;
-                font-weight: 600;
-                color: MaterialPalette.on_surface_variant;
-            }
-
-            // Row 1: Custom, Liquid, Glass
-            HorizontalLayout {
-                spacing: 4px;
-                height: 24px;
-                property <[string]> row1_labels: ["Custom", "Liquid", "Glass"];
-
-                for label[idx] in self.row1_labels: TouchArea {
-                    horizontal-stretch: 1;
-                    height: 100%;
-                    mouse-cursor: pointer;
-                    clicked => { root.set_preset(idx); }
-
-                    Rectangle {
-                        width: 100%;
-                        height: 100%;
-                        border-radius: 12px;
-                        background: root.preset_index == idx
-                            ? MaterialPalette.primary.with_alpha(25%)
-                            : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
-                        border-width: root.preset_index == idx ? 1.5px : 1px;
-                        border-color: root.preset_index == idx ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(40%);
-
-                        MaterialText {
-                            width: 100%;
-                            height: 100%;
-                            text: label;
-                            font-size: 11px;
-                            font-weight: root.preset_index == idx ? 700 : 400;
-                            color: root.preset_index == idx ? MaterialPalette.primary : MaterialPalette.on_surface;
-                            horizontal-alignment: center;
-                            vertical-alignment: center;
-                        }
-                    }
-                }
-            }
-
-            // Row 2: a-Net, FCC, HCP
-            HorizontalLayout {
-                spacing: 4px;
-                height: 24px;
-                property <[string]> row2_labels: ["a-Net", "FCC", "HCP"];
-
-                for label[idx] in self.row2_labels: TouchArea {
-                    horizontal-stretch: 1;
-                    height: 100%;
-                    mouse-cursor: pointer;
-                    clicked => { root.set_preset(idx + 3); }
-
-                    Rectangle {
-                        width: 100%;
-                        height: 100%;
-                        border-radius: 12px;
-                        background: root.preset_index == (idx + 3)
-                            ? MaterialPalette.primary.with_alpha(25%)
-                            : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
-                        border-width: root.preset_index == (idx + 3) ? 1.5px : 1px;
-                        border-color: root.preset_index == (idx + 3) ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(40%);
-
-                        MaterialText {
-                            width: 100%;
-                            height: 100%;
-                            text: label;
-                            font-size: 11px;
-                            font-weight: root.preset_index == (idx + 3) ? 700 : 400;
-                            color: root.preset_index == (idx + 3) ? MaterialPalette.primary : MaterialPalette.on_surface;
-                            horizontal-alignment: center;
-                            vertical-alignment: center;
-                        }
-                    }
-                }
-            }
-
-            // Row 3: BCC, Ico, Diamond
-            HorizontalLayout {
-                spacing: 4px;
-                height: 24px;
-                property <[string]> row3_labels: ["BCC", "Ico", "Diamond"];
-
-                for label[idx] in self.row3_labels: TouchArea {
-                    horizontal-stretch: 1;
-                    height: 100%;
-                    mouse-cursor: pointer;
-                    clicked => { root.set_preset(idx + 6); }
-
-                    Rectangle {
-                        width: 100%;
-                        height: 100%;
-                        border-radius: 12px;
-                        background: root.preset_index == (idx + 6)
-                            ? MaterialPalette.primary.with_alpha(25%)
-                            : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
-                        border-width: root.preset_index == (idx + 6) ? 1.5px : 1px;
-                        border-color: root.preset_index == (idx + 6) ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(40%);
-
-                        MaterialText {
-                            width: 100%;
-                            height: 100%;
-                            text: label;
-                            font-size: 11px;
-                            font-weight: root.preset_index == (idx + 6) ? 700 : 400;
-                            color: root.preset_index == (idx + 6) ? MaterialPalette.primary : MaterialPalette.on_surface;
-                            horizontal-alignment: center;
-                            vertical-alignment: center;
-                        }
-                    }
-                }
-            }
+        // 4. 1D Crystal Presets Grid
+        if (!root.is_2d_mode): PhasePresetsGrid {
+            preset_index: root.preset_index;
+            set_preset(idx) => { root.set_preset(idx); }
         }
 
-        // 5. 1D Order Descriptor Selector
-        if (!root.is_2d_mode): HorizontalLayout {
-            spacing: 6px;
-
-            // Descriptor Pills
-            VerticalLayout {
-                horizontal-stretch: 1;
-                spacing: 2px;
-
-                MaterialText {
-                    text: "Descriptor";
-                    font-size: 11px;
-                    font-weight: 600;
-                    color: MaterialPalette.on_surface_variant;
-                }
-
-                HorizontalLayout {
-                    spacing: 2px;
-                    height: 22px;
-                    property <[string]> desc_labels: ["q̄₆", "q̄₄", "q₆", "q₄", "ŵ₆", "ŵ₄", "s₂", "N_c", "q_tet"];
-
-                    for d_label[d_idx] in self.desc_labels: TouchArea {
-                        horizontal-stretch: 1;
-                        height: 100%;
-                        mouse-cursor: pointer;
-                        clicked => { root.set_descriptor(d_idx); }
-
-                        Rectangle {
-                            width: 100%;
-                            height: 100%;
-                            border-radius: 10px;
-                            background: root.descriptor_index == d_idx
-                                ? MaterialPalette.secondary.with_alpha(25%)
-                                : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
-                            border-width: root.descriptor_index == d_idx ? 1.5px : 1px;
-                            border-color: root.descriptor_index == d_idx ? MaterialPalette.secondary : MaterialPalette.outline_variant.with_alpha(40%);
-
-                            MaterialText {
-                                width: 100%;
-                                height: 100%;
-                                text: d_label;
-                                font-size: 10.5px;
-                                font-weight: root.descriptor_index == d_idx ? 700 : 400;
-                                color: root.descriptor_index == d_idx ? MaterialPalette.secondary : MaterialPalette.on_surface;
-                                horizontal-alignment: center;
-                                vertical-alignment: center;
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Colormap Pills
-            VerticalLayout {
-                horizontal-stretch: 1;
-                spacing: 2px;
-
-                MaterialText {
-                    text: "Colormap";
-                    font-size: 11px;
-                    font-weight: 600;
-                    color: MaterialPalette.on_surface_variant;
-                }
-
-                HorizontalLayout {
-                    spacing: 2px;
-                    height: 22px;
-                    property <[string]> cmap_labels: ["Viridis", "Plasma", "Cool", "Turbo"];
-
-                    for c_label[c_idx] in self.cmap_labels: TouchArea {
-                        horizontal-stretch: 1;
-                        height: 100%;
-                        mouse-cursor: pointer;
-                        clicked => { root.set_colormap(c_idx); }
-
-                        Rectangle {
-                            width: 100%;
-                            height: 100%;
-                            border-radius: 10px;
-                            background: root.colormap_index == c_idx
-                                ? MaterialPalette.tertiary.with_alpha(25%)
-                                : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
-                            border-width: root.colormap_index == c_idx ? 1.5px : 1px;
-                            border-color: root.colormap_index == c_idx ? MaterialPalette.tertiary : MaterialPalette.outline_variant.with_alpha(40%);
-
-                            MaterialText {
-                                width: 100%;
-                                height: 100%;
-                                text: c_label;
-                                font-size: 10.5px;
-                                font-weight: root.colormap_index == c_idx ? 700 : 400;
-                                color: root.colormap_index == c_idx ? MaterialPalette.tertiary : MaterialPalette.on_surface;
-                                horizontal-alignment: center;
-                                vertical-alignment: center;
-                            }
-                        }
-                    }
-                }
-            }
+        // 5. 1D Order Descriptor & Colormap Selector
+        if (!root.is_2d_mode): PhaseDescriptorSelector {
+            descriptor_index: root.descriptor_index;
+            colormap_index: root.colormap_index;
+            set_descriptor(idx) => { root.set_descriptor(idx); }
+            set_colormap(idx) => { root.set_colormap(idx); }
         }
 
-        // 4. Color Palette Gradient & Dynamic Threshold Bounds (inside the card)
-        VerticalLayout {
-            spacing: 2px;
-
-            Rectangle {
-                height: 8px;
-                border-radius: 4px;
-                clip: true;
-                background: MaterialPalette.surface_container_high;
-                border-width: 0.5px;
-                border-color: MaterialPalette.outline_variant.with_alpha(40%);
-
-                Image {
-                    width: 100%;
-                    height: 100%;
-                    source: root.colorbar_image;
-                    image-fit: fill;
-                }
-            }
-
-            HorizontalLayout {
-                alignment: space-between;
-
-                MaterialText {
-                    text: "" + (Math.round(root.min_threshold * 100) / 100);
-                    font-size: 10px;
-                    color: MaterialPalette.on_surface_variant;
-                }
-
-                MaterialText {
-                    text: root.descriptor_name + " Scalar Palette";
-                    font-size: 10px;
-                    font-weight: 600;
-                    color: MaterialPalette.primary;
-                }
-
-                MaterialText {
-                    text: "" + (Math.round(root.max_threshold * 100) / 100);
-                    font-size: 10px;
-                    color: MaterialPalette.on_surface_variant;
-                }
-            }
+        // 6. Color Palette Gradient & Dynamic Threshold Bounds
+        PhaseColorbar {
+            colorbar_image: root.colorbar_image;
+            min_threshold: root.min_threshold;
+            max_threshold: root.max_threshold;
+            descriptor_name: root.descriptor_name;
         }
 
-        // 6. 1D Threshold Range Sliders
+        // 7. 1D Threshold Range Sliders
         if (!root.is_2d_mode): HorizontalLayout {
             spacing: 6px;
 
@@ -548,109 +309,17 @@ export component PhaseSearchCard inherits Rectangle {
             }
         }
 
-        // 6. Visual Controls: Halo Intensity & Radius Ratio
-        HorizontalLayout {
-            spacing: 6px;
+        // 8. Visual Controls (Halo Intensity, Radius, Dim & Hide Checkboxes)
+        PhaseVisualControls {
+            halo_intensity: root.halo_intensity;
+            halo_radius_ratio: root.halo_radius_ratio;
+            dim_non_matching: root.dim_non_matching;
+            hide_non_matching: root.hide_non_matching;
 
-            PhaseSlider {
-                horizontal-stretch: 1;
-                label: "Glow Intensity";
-                value: root.halo_intensity;
-                min_val: 0.1;
-                max_val: 1.0;
-                display_text: "" + (Math.round(root.halo_intensity * 100) / 100);
-                value_changed(val) => { root.set_intensity(val); }
-            }
-
-            PhaseSlider {
-                horizontal-stretch: 1;
-                label: "Glow Radius";
-                value: root.halo_radius_ratio;
-                min_val: 1.1;
-                max_val: 2.0;
-                display_text: "" + (Math.round(root.halo_radius_ratio * 100) / 100) + "x";
-                value_changed(val) => { root.set_radius_ratio(val); }
-            }
-        }
-
-        // 7. Dim Non-Matching Atoms Checkbox
-        TouchArea {
-            height: 18px;
-            mouse-cursor: pointer;
-            clicked => { root.set_dim_non_matching(!root.dim_non_matching); }
-
-            HorizontalLayout {
-                spacing: 6px;
-                alignment: start;
-
-                Rectangle {
-                    width: 14px;
-                    height: 14px;
-                    y: (parent.height - self.height) / 2;
-                    border-radius: 3px;
-                    background: root.dim_non_matching ? MaterialPalette.primary : transparent;
-                    border-width: 1.5px;
-                    border-color: root.dim_non_matching ? MaterialPalette.primary : MaterialPalette.outline;
-
-                    if (root.dim_non_matching): MaterialText {
-                        width: 100%;
-                        height: 100%;
-                        text: "✓";
-                        font-size: 10px;
-                        font-weight: 700;
-                        color: MaterialPalette.on_primary;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
-                    }
-                }
-
-                MaterialText {
-                    text: "Dim non-matching core atoms";
-                    font-size: 11.5px;
-                    color: MaterialPalette.on_surface;
-                    vertical-alignment: center;
-                }
-            }
-        }
-
-        // 8. Hide Non-Matching Atoms Checkbox
-        TouchArea {
-            height: 18px;
-            mouse-cursor: pointer;
-            clicked => { root.set_hide_non_matching(!root.hide_non_matching); }
-
-            HorizontalLayout {
-                spacing: 6px;
-                alignment: start;
-
-                Rectangle {
-                    width: 14px;
-                    height: 14px;
-                    y: (parent.height - self.height) / 2;
-                    border-radius: 3px;
-                    background: root.hide_non_matching ? MaterialPalette.primary : transparent;
-                    border-width: 1.5px;
-                    border-color: root.hide_non_matching ? MaterialPalette.primary : MaterialPalette.outline;
-
-                    if (root.hide_non_matching): MaterialText {
-                        width: 100%;
-                        height: 100%;
-                        text: "✓";
-                        font-size: 10px;
-                        font-weight: 700;
-                        color: MaterialPalette.on_primary;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
-                    }
-                }
-
-                MaterialText {
-                    text: "Hide non-matching core atoms";
-                    font-size: 11.5px;
-                    color: MaterialPalette.on_surface;
-                    vertical-alignment: center;
-                }
-            }
+            set_intensity(val) => { root.set_intensity(val); }
+            set_radius_ratio(val) => { root.set_radius_ratio(val); }
+            set_dim_non_matching(dim) => { root.set_dim_non_matching(dim); }
+            set_hide_non_matching(hide) => { root.set_hide_non_matching(hide); }
         }
 
         // 9. 1D Mini-Histogram Distribution

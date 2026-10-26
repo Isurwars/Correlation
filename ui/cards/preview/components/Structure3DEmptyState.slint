@@ -1,0 +1,51 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialTypography,
+    MaterialText,
+    FilledButton,
+    Icons,
+} from "../../../material/material.slint";
+
+export component Structure3DEmptyState inherits Rectangle {
+    callback browse_file();
+
+    width: 340px;
+    height: 150px;
+    background: MaterialPalette.surface_container_high.with_alpha(92%);
+    border-radius: 16px;
+    border-width: 1px;
+    border-color: MaterialPalette.outline_variant;
+
+    VerticalLayout {
+        padding: 16px;
+        spacing: 10px;
+        alignment: center;
+
+        MaterialText {
+            text: "No Structure Loaded";
+            font-size: 15px;
+            color: MaterialPalette.on_surface;
+            horizontal-alignment: center;
+        }
+
+        MaterialText {
+            text: "Open a trajectory or structure file to inspect 3D atomic coordinates.";
+            font-size: 12px;
+            color: MaterialPalette.on_surface_variant;
+            horizontal-alignment: center;
+            wrap: word-wrap;
+        }
+
+        FilledButton {
+            height: 36px;
+            text: "Open Trajectory File... (Ctrl+O)";
+            icon: Icons.folder_open;
+            clicked => { root.browse_file(); }
+        }
+    }
+}

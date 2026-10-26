@@ -1,0 +1,115 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialTypography,
+    MaterialText,
+} from "../../../material/material.slint";
+
+export component PhaseDescriptorSelector inherits HorizontalLayout {
+    in property <int> descriptor_index: 0;
+    in property <int> colormap_index: 0;
+    callback set_descriptor(int);
+    callback set_colormap(int);
+
+    spacing: 6px;
+
+    // Descriptor Pills
+    VerticalLayout {
+        horizontal-stretch: 1;
+        spacing: 2px;
+
+        MaterialText {
+            text: "Descriptor";
+            font-size: 11px;
+            font-weight: 600;
+            color: MaterialPalette.on_surface_variant;
+        }
+
+        HorizontalLayout {
+            spacing: 2px;
+            height: 22px;
+            property <[string]> desc_labels: ["q̄₆", "q̄₄", "q₆", "q₄", "ŵ₆", "ŵ₄", "s₂", "N_c", "q_tet"];
+
+            for d_label[d_idx] in self.desc_labels: TouchArea {
+                horizontal-stretch: 1;
+                height: 100%;
+                mouse-cursor: pointer;
+                clicked => { root.set_descriptor(d_idx); }
+
+                Rectangle {
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 10px;
+                    background: root.descriptor_index == d_idx
+                        ? MaterialPalette.secondary.with_alpha(25%)
+                        : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
+                    border-width: root.descriptor_index == d_idx ? 1.5px : 1px;
+                    border-color: root.descriptor_index == d_idx ? MaterialPalette.secondary : MaterialPalette.outline_variant.with_alpha(40%);
+
+                    MaterialText {
+                        width: 100%;
+                        height: 100%;
+                        text: d_label;
+                        font-size: 10.5px;
+                        font-weight: root.descriptor_index == d_idx ? 700 : 400;
+                        color: root.descriptor_index == d_idx ? MaterialPalette.secondary : MaterialPalette.on_surface;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+        }
+    }
+
+    // Colormap Pills
+    VerticalLayout {
+        horizontal-stretch: 1;
+        spacing: 2px;
+
+        MaterialText {
+            text: "Colormap";
+            font-size: 11px;
+            font-weight: 600;
+            color: MaterialPalette.on_surface_variant;
+        }
+
+        HorizontalLayout {
+            spacing: 2px;
+            height: 22px;
+            property <[string]> cmap_labels: ["Viridis", "Plasma", "Cool", "Turbo"];
+
+            for c_label[c_idx] in self.cmap_labels: TouchArea {
+                horizontal-stretch: 1;
+                height: 100%;
+                mouse-cursor: pointer;
+                clicked => { root.set_colormap(c_idx); }
+
+                Rectangle {
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 10px;
+                    background: root.colormap_index == c_idx
+                        ? MaterialPalette.tertiary.with_alpha(25%)
+                        : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
+                    border-width: root.colormap_index == c_idx ? 1.5px : 1px;
+                    border-color: root.colormap_index == c_idx ? MaterialPalette.tertiary : MaterialPalette.outline_variant.with_alpha(40%);
+
+                    MaterialText {
+                        width: 100%;
+                        height: 100%;
+                        text: c_label;
+                        font-size: 10.5px;
+                        font-weight: root.colormap_index == c_idx ? 700 : 400;
+                        color: root.colormap_index == c_idx ? MaterialPalette.tertiary : MaterialPalette.on_surface;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+        }
+    }
+}

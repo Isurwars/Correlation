@@ -1,0 +1,112 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialTypography,
+    MaterialText,
+} from "../../../material/material.slint";
+
+export component PhaseHeatmapAxisSelector inherits VerticalLayout {
+    in property <int> descriptor_x: 1;
+    in property <int> descriptor_y: 0;
+
+    callback set_descriptor_x(int);
+    callback set_descriptor_y(int);
+
+    spacing: 3px;
+
+    // X Axis Selector
+    HorizontalLayout {
+        spacing: 3px;
+        alignment: center;
+
+        MaterialText {
+            width: 32px;
+            text: "X:";
+            font-size: 10px;
+            font-weight: 700;
+            color: MaterialPalette.on_surface_variant;
+            vertical-alignment: center;
+        }
+
+        property <[string]> x_labels: ["q̄₆", "q̄₄", "q₆", "q₄", "ŵ₆", "ŵ₄", "s₂", "N_conn", "q_tet"];
+
+        for label[idx] in self.x_labels: TouchArea {
+            horizontal-stretch: 1;
+            height: 18px;
+            mouse-cursor: pointer;
+            clicked => { root.set_descriptor_x(idx); }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 4px;
+                background: root.descriptor_x == idx
+                    ? MaterialPalette.primary.with_alpha(30%)
+                    : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
+                border-width: root.descriptor_x == idx ? 1px : 0.5px;
+                border-color: root.descriptor_x == idx ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(30%);
+
+                MaterialText {
+                    width: 100%;
+                    height: 100%;
+                    text: label;
+                    font-size: 9px;
+                    font-weight: root.descriptor_x == idx ? 700 : 400;
+                    color: root.descriptor_x == idx ? MaterialPalette.primary : MaterialPalette.on_surface;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+        }
+    }
+
+    // Y Axis Selector
+    HorizontalLayout {
+        spacing: 3px;
+        alignment: center;
+
+        MaterialText {
+            width: 32px;
+            text: "Y:";
+            font-size: 10px;
+            font-weight: 700;
+            color: MaterialPalette.on_surface_variant;
+            vertical-alignment: center;
+        }
+
+        property <[string]> y_labels: ["q̄₆", "q̄₄", "q₆", "q₄", "ŵ₆", "ŵ₄", "s₂", "N_conn", "q_tet"];
+
+        for label[idx] in self.y_labels: TouchArea {
+            horizontal-stretch: 1;
+            height: 18px;
+            mouse-cursor: pointer;
+            clicked => { root.set_descriptor_y(idx); }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 4px;
+                background: root.descriptor_y == idx
+                    ? MaterialPalette.secondary.with_alpha(30%)
+                    : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
+                border-width: root.descriptor_y == idx ? 1px : 0.5px;
+                border-color: root.descriptor_y == idx ? MaterialPalette.secondary : MaterialPalette.outline_variant.with_alpha(30%);
+
+                MaterialText {
+                    width: 100%;
+                    height: 100%;
+                    text: label;
+                    font-size: 9px;
+                    font-weight: root.descriptor_y == idx ? 700 : 400;
+                    color: root.descriptor_y == idx ? MaterialPalette.secondary : MaterialPalette.on_surface;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+        }
+    }
+}
