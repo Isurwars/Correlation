@@ -286,7 +286,8 @@ target_link_libraries(correlation_lib PUBLIC correlation_simd_options correlatio
 
 # Pybind11 creates a shared module and requires PIC (handled globally via CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-target_link_libraries(correlation_lib PRIVATE TBB::tbb TBB::tbbmalloc)
+target_link_libraries(correlation_lib PUBLIC TBB::tbb)
+target_link_libraries(correlation_lib PRIVATE TBB::tbbmalloc)
 if(BUILD_WITH_HDF5)
     target_link_libraries(correlation_lib PUBLIC HighFive HDF5::HDF5 HDF5::HDF5_HL)
 endif()

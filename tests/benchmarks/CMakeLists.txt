@@ -21,6 +21,7 @@ target_compile_definitions(correlation_benchmarks PRIVATE _USE_MATH_DEFINES)
 target_link_libraries(correlation_benchmarks PRIVATE
     correlation_lib
     benchmark::benchmark
+    TBB::tbb
 )
 
 if(BUILD_WITH_CUDA)
