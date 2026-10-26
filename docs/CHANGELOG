@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [4.1.0] - 2026-10-24
+## [4.1.0] - 2026-10-25
 
 ### 🚀 Features & Scientific Analysis
 - **Ten Wolde–Frenkel Bond Coherence (`TenWoldeFrenkelCalculator`)**: Implemented mutual bond coherence analysis $\chi_{ij} = \sum_{m=-6}^6 \hat{q}_{6m}(i) \cdot \hat{q}_{6m}^*(j)$, per-atom coherent neighbor count $N_{\text{conn}}$, and solid-like nuclei detection emitting 1D histogram `TWF_Nconn`.
@@ -11,11 +11,16 @@ All notable changes to this project will be documented in this file.
 - **Enhanced 3D Phase Filtering (`Structure3DController`)**: Added per-atom Local Entropic Fingerprints ($s_2$), $\hat{w}_4$, $N_{\text{conn}}$, and $q_{\text{tet}}$ scalar fields, along with "Hide Non-Matching Atoms" matrix culling.
 - **Zero-Copy Python Bindings (`calculator_bindings`, `analysis_bindings`)**: Exposed `compute_ten_wolde_frenkel`, `compute_tetrahedral_order`, `compute_local_entropy`, `compute_g6`, and `fit_correlation_length` to Python with zero-copy NumPy buffers and thread-safe GIL management.
 
+### 🏛️ Architecture & Governance
+- **Global SOLID Architectural Framework (`solid-principles.md`, `solid-design`)**: Codified repository-wide SOLID design principles tailored for modern C++23 scientific computing, mandating static polymorphism (concepts, templates) for high-throughput compute kernels and pure abstract interfaces with constructor dependency injection at subsystem boundaries.
+- **Agent Governance & Quality Gates (`AGENTS.md`, `code-style-guide.md`, `code-review`)**: Integrated Gate 4: SOLID Architecture into pre-commit and pre-merge review checklists, prohibiting virtual dispatch in parallel inner loops and enforcing zero-cost abstractions across all modules.
+- **Global Architectural SOLID Audit**: Completed repository-wide architectural inspection across Core, Calculators, I/O, Services, and Python Bindings, establishing prioritized remediation roadmaps for God Object decomposition and contract segregation.
+
 ### ⚡ Performance & Optimization
 - **Pair-Visitor Cell-List Traversal (`CellListTraversal.hpp`, `DistanceCalculator`)**: Extracted bin-sorted cell-list traversal into high-performance header-only template `forEachPairWithin` with SoA candidate gathering and SIMD `compute_dsq_block`, preserving RDF throughput with zero regression.
 
 ### 🧹 Maintenance
-- **Project Milestone**: Bumped project version to `4.1.0` across build targets, packages, documentation, and UI metadata.
+- **Project Milestone**: Released version `4.1.0` across build targets, packages, documentation, and UI metadata.
 
 ## [4.0.3] - 2026-10-22
 
