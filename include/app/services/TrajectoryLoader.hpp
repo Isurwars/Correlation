@@ -18,6 +18,10 @@
 #include <memory>
 #include <string>
 
+namespace correlation::readers {
+class IReaderRegistry;
+}
+
 namespace correlation::app {
 
 /**
@@ -28,7 +32,17 @@ class TrajectoryLoader {
 public:
   using ProgressCallback = std::function<void(float, const std::string &)>;
 
-  TrajectoryLoader() = default;
+  /**
+   * @brief Constructs a TrajectoryLoader using the global default ReaderFactory singleton.
+   */
+  TrajectoryLoader();
+
+  /**
+   * @brief Constructs a TrajectoryLoader with an injected IReaderRegistry dependency.
+   * @param[in] registry Injected reader registry for format querying.
+   */
+  explicit TrajectoryLoader(const correlation::readers::IReaderRegistry &registry);
+
   ~TrajectoryLoader() = default;
 
   TrajectoryLoader(const TrajectoryLoader &) = delete;
@@ -138,6 +152,7 @@ public:
 
 private:
   std::shared_ptr<correlation::core::Trajectory> trajectory_;
+  const correlation::readers::IReaderRegistry *registry_{nullptr};
 };
 
 } // namespace correlation::app

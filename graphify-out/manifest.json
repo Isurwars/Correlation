@@ -30,8 +30,8 @@
     "semantic_hash": ""
   },
   "include/calculators/CalculatorFactory.hpp": {
-    "mtime": 1792036404.5767574,
-    "ast_hash": "2b37b3a326a690f2e6861d1ab41980e3",
+    "mtime": 1793017092.0241141,
+    "ast_hash": "7acc7b266f7186bc906cfe354fa57e67",
     "semantic_hash": ""
   },
   "include/cli/CliParser.hpp": {
@@ -205,8 +205,8 @@
     "semantic_hash": ""
   },
   "include/readers/ReaderFactory.hpp": {
-    "mtime": 1789591639.1073601,
-    "ast_hash": "d9537d13db2accde6ddd0053743d65a7",
+    "mtime": 1793017040.7620695,
+    "ast_hash": "4d82e62c313eea97adab9c959c6be059",
     "semantic_hash": ""
   },
   "include/readers/VaspReader.hpp": {
@@ -465,8 +465,8 @@
     "semantic_hash": ""
   },
   "src/readers/ReaderFactory.cpp": {
-    "mtime": 1790181953.0469115,
-    "ast_hash": "f0b05732b3739b91a8588d08ca00c8f6",
+    "mtime": 1793017504.5948827,
+    "ast_hash": "e61657fd54638f9c6f35e68770774368",
     "semantic_hash": ""
   },
   "src/readers/VaspReader.cpp": {
@@ -1985,8 +1985,8 @@
     "semantic_hash": ""
   },
   "include/app/services/OptionsSyncService.hpp": {
-    "mtime": 1790380719.771022,
-    "ast_hash": "bc2a2b28c197625b9f1ece0d70176c21",
+    "mtime": 1793017198.8134212,
+    "ast_hash": "620fd7a8963bb97ce776abd6e79b8cdc",
     "semantic_hash": ""
   },
   "include/app/services/PhysicsService.hpp": {
@@ -2075,8 +2075,8 @@
     "semantic_hash": ""
   },
   "src/app/services/OptionsSyncService.cpp": {
-    "mtime": 1791490007.8069315,
-    "ast_hash": "b74ba5327cd0b859f3a537f9f4c978ec",
+    "mtime": 1793017216.001158,
+    "ast_hash": "2f6d834905995e31fea8ae55e9488837",
     "semantic_hash": ""
   },
   "src/app/services/PhysicsService.cpp": {
@@ -2130,8 +2130,8 @@
     "semantic_hash": ""
   },
   "include/app/services/TrajectoryLoader.hpp": {
-    "mtime": 1792385749.3155925,
-    "ast_hash": "7f0f204c4ff998c8375e34e5ae9092c0",
+    "mtime": 1793017141.1613123,
+    "ast_hash": "599ce23061117f4d3adc411bcb1c8764",
     "semantic_hash": ""
   },
   "src/app/services/AnalysisDispatcher.cpp": {
@@ -2145,8 +2145,8 @@
     "semantic_hash": ""
   },
   "src/app/services/TrajectoryLoader.cpp": {
-    "mtime": 1792386145.5303304,
-    "ast_hash": "3fcbf26f7206cb2478b0cf566abfca4a",
+    "mtime": 1793017375.0467815,
+    "ast_hash": "59f317b98299ec72d5d64ec6e00bd4d8",
     "semantic_hash": ""
   },
   "tests/functional/app/ServiceIntegrationTests.cpp": {
@@ -2165,8 +2165,8 @@
     "semantic_hash": ""
   },
   "tests/unit/app/TrajectoryLoaderTests.cpp": {
-    "mtime": 1790367516.8873134,
-    "ast_hash": "510e8795fe684f2220d335e863c1dbb2",
+    "mtime": 1793017556.5131252,
+    "ast_hash": "caa4ac75dd62285412b8f472b596a990",
     "semantic_hash": ""
   },
   "include/calculators/contracts/ICalculator.hpp": {
@@ -3102,6 +3102,16 @@
   ".agents/skills/solid-design/SKILL.md": {
     "mtime": 1792988929.4915702,
     "ast_hash": "48282883a0d5e84c57369ecc66977709",
+    "semantic_hash": ""
+  },
+  "include/calculators/contracts/ICalculatorRegistry.hpp": {
+    "mtime": 1793017073.5144398,
+    "ast_hash": "c11131e892ca57de177d6f9abeeb2c7e",
+    "semantic_hash": ""
+  },
+  "include/readers/contracts/IReaderRegistry.hpp": {
+    "mtime": 1793016994.7261505,
+    "ast_hash": "3a49db7c4d1e1e6d8107a3ae463bf3b2",
     "semantic_hash": ""
   }
 }

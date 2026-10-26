@@ -15,7 +15,7 @@ namespace correlation::readers {
 
 namespace {
 
-std::string sniffFormatFromLine(const std::string &uline) {
+std::string_view sniffFormatFromLine(std::string_view uline) {
   if (uline.contains("CELL_PARAMETERS") || uline.contains("ATOMIC_POSITIONS") ||
       uline.contains("QUANTUM ESPRESSO") || uline.contains("PWSCF") || uline.contains("&CONTROL") ||
       uline.contains("&SYSTEM")) {
@@ -59,9 +59,9 @@ std::string sniffFormatFromOutFile(std::string_view filename) {
       chr = static_cast<char>(std::toupper(static_cast<unsigned char>(chr)));
     }
 
-    std::string const format = sniffFormatFromLine(uline);
+    const std::string_view format = sniffFormatFromLine(uline);
     if (!format.empty()) {
-      return format;
+      return std::string(format);
     }
   }
 
@@ -96,7 +96,7 @@ bool ReaderFactory::registerReader(std::unique_ptr<BaseReader> reader) {
   return true;
 }
 
-BaseReader *ReaderFactory::getReaderForExtension(const ReaderExtensionQuery &query) {
+BaseReader *ReaderFactory::getReaderForExtension(const ReaderExtensionQuery &query) const {
   std::string lower_ext = std::string(query.extension);
   if (lower_ext.empty()) {
     return nullptr;
@@ -109,21 +109,21 @@ BaseReader *ReaderFactory::getReaderForExtension(const ReaderExtensionQuery &que
   if ((lower_ext == ".out" || lower_ext == ".in") && !query.filename.empty()) {
     const std::string sniffed = sniffFormatFromOutFile(query.filename);
     if (!sniffed.empty()) {
-      auto iter = extension_map_.find(sniffed);
+      const auto iter = extension_map_.find(sniffed);
       if (iter != extension_map_.end()) {
         return iter->second;
       }
     }
   }
 
-  auto iter = extension_map_.find(lower_ext);
+  const auto iter = extension_map_.find(lower_ext);
   if (iter != extension_map_.end()) {
     return iter->second;
   }
   return nullptr;
 }
 
-BaseReader *ReaderFactory::getReaderForExtension(std::string_view extension) {
+BaseReader *ReaderFactory::getReaderForExtension(std::string_view extension) const {
   return getReaderForExtension(ReaderExtensionQuery{.extension = extension, .filename = {}});
 }
 

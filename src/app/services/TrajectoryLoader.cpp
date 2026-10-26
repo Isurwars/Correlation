@@ -17,6 +17,12 @@
 
 namespace correlation::app {
 
+TrajectoryLoader::TrajectoryLoader()
+    : TrajectoryLoader(correlation::readers::ReaderFactory::instance()) {}
+
+TrajectoryLoader::TrajectoryLoader(const correlation::readers::IReaderRegistry &registry)
+    : registry_(&registry) {}
+
 std::map<std::string, int> TrajectoryLoader::getAtomCounts() const {
   std::map<std::string, int> counts;
   const correlation::core::Cell *current_cell = cell();
@@ -51,10 +57,13 @@ TrajectoryLoader::loadFile(const std::string &path, const ProgressCallback &prog
     correlation::readers::FileType const type = correlation::readers::determineFileType(path);
 
     bool is_trajectory = false;
+    correlation::readers::BaseReader *reader = nullptr;
     std::string const ext = std::filesystem::path(path).extension().string();
     if (!ext.empty()) {
-      const auto *reader = correlation::readers::ReaderFactory::instance().getReaderForExtension(
-          {.extension = ext, .filename = path});
+      reader = (registry_ != nullptr)
+                   ? registry_->getReaderForExtension({.extension = ext, .filename = path})
+                   : correlation::readers::ReaderFactory::instance().getReaderForExtension(
+                         {.extension = ext, .filename = path});
       if (reader != nullptr) {
         is_trajectory = reader->isTrajectory();
       }
@@ -62,12 +71,22 @@ TrajectoryLoader::loadFile(const std::string &path, const ProgressCallback &prog
       is_trajectory = (type == correlation::readers::FileType::Xdatcar);
     }
 
-    if (is_trajectory) {
-      trajectory_ = std::make_shared<correlation::core::Trajectory>(
-          correlation::readers::readTrajectory(path, type, progress));
+    if (reader != nullptr) {
+      if (is_trajectory) {
+        trajectory_ = std::make_shared<correlation::core::Trajectory>(
+            reader->readTrajectory(path, progress));
+      } else {
+        trajectory_ = std::make_shared<correlation::core::Trajectory>();
+        trajectory_->addFrame(reader->readStructure(path, progress));
+      }
     } else {
-      trajectory_ = std::make_shared<correlation::core::Trajectory>();
-      trajectory_->addFrame(correlation::readers::readStructure(path, type, progress));
+      if (is_trajectory) {
+        trajectory_ = std::make_shared<correlation::core::Trajectory>(
+            correlation::readers::readTrajectory(path, type, progress));
+      } else {
+        trajectory_ = std::make_shared<correlation::core::Trajectory>();
+        trajectory_->addFrame(correlation::readers::readStructure(path, type, progress));
+      }
     }
 
     return "File loaded: " + display_path;

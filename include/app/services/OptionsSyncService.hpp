@@ -15,6 +15,10 @@
 #include <expected>
 #include <string>
 
+namespace correlation::calculators {
+class ICalculatorRegistry;
+}
+
 namespace correlation::app {
 
 /**
@@ -45,8 +49,11 @@ public:
    * @brief Updates boolean UI visibility/active flags for calculator groups.
    * @param[in,out] window Target UI window.
    * @param[in] opts Source program options containing active calculators.
+   * @param[in] registry Injected calculator registry for metadata queries.
    */
-  static void updateActiveGroupFlags(AppWindow &window, const ProgramOptions &opts);
+  static void updateActiveGroupFlags(
+      AppWindow &window, const ProgramOptions &opts,
+      const correlation::calculators::ICalculatorRegistry *registry = nullptr);
 };
 
 } // namespace correlation::app

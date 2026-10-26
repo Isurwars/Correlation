@@ -9,6 +9,7 @@
 #pragma once
 
 #include "calculators/BaseCalculator.hpp"
+#include "calculators/contracts/ICalculatorRegistry.hpp"
 
 #include <iostream>
 #include <memory>
@@ -21,7 +22,7 @@ namespace correlation::calculators {
 /**
  * @brief Registry for all calculators, enabling automatic discovery.
  */
-class CalculatorFactory {
+class CalculatorFactory : public ICalculatorRegistry {
 public:
   /** @return Singleton instance of the CalculatorFactory. */
   [[nodiscard]] static CalculatorFactory &instance();
@@ -57,14 +58,14 @@ public:
    * @brief Returns all registered calculators.
    * @return Constant reference to the internal vector of calculators.
    */
-  [[nodiscard]] const std::vector<std::unique_ptr<BaseCalculator>> &getCalculators() const;
+  [[nodiscard]] const std::vector<std::unique_ptr<BaseCalculator>> &getCalculators() const override;
 
   /**
    * @brief Gets a calculator by its name.
    * @param[in] name The name of the calculator.
    * @return Pointer to the calculator, or nullptr if not found.
    */
-  [[nodiscard]] const BaseCalculator *getCalculator(std::string_view name) const;
+  [[nodiscard]] const BaseCalculator *getCalculator(std::string_view name) const override;
 
 private:
   CalculatorFactory() = default;

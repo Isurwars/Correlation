@@ -9,6 +9,7 @@
 #pragma once
 
 #include "BaseReader.hpp"
+#include "readers/contracts/IReaderRegistry.hpp"
 
 #include <iostream>
 #include <map>
@@ -20,17 +21,9 @@
 namespace correlation::readers {
 
 /**
- * @brief Parameters for querying a reader by extension and optional filename.
- */
-struct ReaderExtensionQuery {
-  std::string_view extension;
-  std::string_view filename;
-};
-
-/**
  * @brief Registry for all file readers, enabling automatic discovery.
  */
-class ReaderFactory {
+class ReaderFactory : public IReaderRegistry {
 public:
   /** @return Singleton instance of the ReaderFactory. */
   static ReaderFactory &instance();
@@ -67,26 +60,26 @@ public:
    * @param query The reader extension query parameters.
    * @return A pointer to the reader instance, or nullptr if not found.
    */
-  [[nodiscard]] BaseReader *getReaderForExtension(const ReaderExtensionQuery &query);
+  [[nodiscard]] BaseReader *getReaderForExtension(const ReaderExtensionQuery &query) const override;
 
   /**
    * @brief Finds a reader that supports the given file extension.
    * @param extension The file extension (e.g., ".car", ".cif").
    * @return A pointer to the reader instance, or nullptr if not found.
    */
-  [[nodiscard]] BaseReader *getReaderForExtension(std::string_view extension);
+  [[nodiscard]] BaseReader *getReaderForExtension(std::string_view extension) const override;
 
   /**
    * @brief Returns all registered extensions.
    * @return A vector of extension strings (e.g., {".car", ".arc"}).
    */
-  [[nodiscard]] std::vector<std::string> getAllExtensions() const;
+  [[nodiscard]] std::vector<std::string> getAllExtensions() const override;
 
   /**
    * @brief Returns all registered readers.
    * @return Constant reference to the internal vector of readers.
    */
-  [[nodiscard]] const std::vector<std::unique_ptr<BaseReader>> &getReaders() const;
+  [[nodiscard]] const std::vector<std::unique_ptr<BaseReader>> &getReaders() const override;
 
 private:
   ReaderFactory() = default;

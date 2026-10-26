@@ -104,8 +104,10 @@ void parseFrameSelection(const AnalysisOptions &ui_opts, size_t frame_count, Pro
   }
 }
 
-[[nodiscard]] bool isCalculatorEnabled(const correlation::calculators::BaseCalculator &calc,
-                                       const ProgramOptions &opts) {
+[[nodiscard]] bool
+isCalculatorEnabled(const correlation::calculators::BaseCalculator &calc,
+                    const ProgramOptions &opts,
+                    const correlation::calculators::ICalculatorRegistry &registry) {
   const auto calc_iter = opts.active_calculators.find(std::string(calc.getName()));
   if (calc_iter != opts.active_calculators.end()) {
     return calc_iter->second;
@@ -115,8 +117,7 @@ void parseFrameSelection(const AnalysisOptions &ui_opts, size_t frame_count, Pro
     return short_iter->second;
   }
   for (const auto &[key, val] : opts.active_calculators) {
-    const auto *resolved =
-        ::correlation::calculators::CalculatorFactory::instance().getCalculator(key);
+    const auto *resolved = registry.getCalculator(key);
     if (resolved != nullptr && resolved->getName() == calc.getName()) {
       return val;
     }
@@ -126,9 +127,14 @@ void parseFrameSelection(const AnalysisOptions &ui_opts, size_t frame_count, Pro
 
 } // namespace
 
-void OptionsSyncService::updateActiveGroupFlags(AppWindow &window, const ProgramOptions &opts) {
-  const auto &calculators =
-      ::correlation::calculators::CalculatorFactory::instance().getCalculators();
+void OptionsSyncService::updateActiveGroupFlags(
+    AppWindow &window, const ProgramOptions &opts,
+    const correlation::calculators::ICalculatorRegistry *registry) {
+  const auto &active_registry =
+      (registry != nullptr) ? *registry
+                            : static_cast<const correlation::calculators::ICalculatorRegistry &>(
+                                  ::correlation::calculators::CalculatorFactory::instance());
+  const auto &calculators = active_registry.getCalculators();
 
   bool has_radial = false;
   bool has_scattering = false;
@@ -136,7 +142,7 @@ void OptionsSyncService::updateActiveGroupFlags(AppWindow &window, const Program
   bool has_rings = false;
 
   for (const auto &calc : calculators) {
-    if (!isCalculatorEnabled(*calc, opts)) {
+    if (!isCalculatorEnabled(*calc, opts, active_registry)) {
       continue;
     }
     const std::string_view grp = calc->getGroup();
