@@ -27,10 +27,11 @@ Rigorous technical audit before staging, committing, or merging changes in `Corr
 | **1. Compilation** | Strict compiler flags | `cmake --build build -j$(nproc)` | 0 warnings with `-Wall -Wextra -Wpedantic -Werror` |
 | **2. Clang-Tidy** | Static analysis | `clang-tidy -p build <modified_files>` | 0 warnings. **Zero** `NOLINT` comments allowed. |
 | **3. Complexity** | Cognitive complexity threshold | `clang-tidy -checks="readability-function-cognitive-complexity"` | Cognitive complexity $\le 25$ per function. |
-| **4. Concurrency** | Thread safety & alignment | Code inspection | No shared mutable state without lock/reduction; `alignas(64)` on thread-local accumulators. |
-| **5. RAII & Ownership** | Memory safety | Code inspection | No raw `new`/`delete`; proper use of `std::span`, `std::unique_ptr`, `std::shared_ptr`. |
-| **6. Documentation** | Doxygen completeness | Check public headers | `@param`, `@return`, `@throws` present on all public API methods. |
-| **7. Testing** | Unit & Functional tests | `ctest --test-dir build --output-on-failure` | 100% passing tests across all test suites. |
+| **4. SOLID Architecture** | SRP, OCP, LSP, ISP, DIP & Zero-cost | Architectural inspection | Clean separation of concerns, no virtual calls in hot loops, concepts for math, DI at boundaries (see [solid-design](file:///home/isurwars/Projects/Correlation/.agents/skills/solid-design/SKILL.md)). |
+| **5. Concurrency** | Thread safety & alignment | Code inspection | No shared mutable state without lock/reduction; `alignas(64)` on thread-local accumulators. |
+| **6. RAII & Ownership** | Memory safety | Code inspection | No raw `new`/`delete`; proper use of `std::span`, `std::unique_ptr`, `std::shared_ptr`. |
+| **7. Documentation** | Doxygen completeness | Check public headers | `@param`, `@return`, `@throws` present on all public API methods. |
+| **8. Testing** | Unit & Functional tests | `ctest --test-dir build --output-on-failure` | 100% passing tests across all test suites. |
 
 ## Phase 3: Diagnostic Output
 

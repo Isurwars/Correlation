@@ -33,8 +33,10 @@
 ## 4. C++ Development Invariants
 - **Standards:** Leverage C++23 features (`std::span`, `std::ranges`, concepts, `std::expected`, `constexpr`, `std::jthread`). Avoid raw allocations (`new`/`delete`); mandate RAII wrappers.
 - **Parallel Computing:** Ensure TBB and OpenMP loops maintain cache-locality (`alignas(64)`), avoid false sharing, and mark loop indices as thread-private.
+- **SOLID Architecture:** Enforce SOLID paradigms across all subsystems: static polymorphism (C++20 concepts) for compute loops, and pure abstract interfaces/DI at system boundaries (see [solid-principles](file:///home/isurwars/Projects/Correlation/.agents/rules/solid-principles.md)).
 - **Cognitive Complexity Gate:** Cognitive complexity must remain $\le 25$ (`readability-function-cognitive-complexity`) per function.
 - **See rules:**
+  - [solid-principles](file:///home/isurwars/Projects/Correlation/.agents/rules/solid-principles.md) for C++23 SOLID architecture standards.
   - [code-style-guide](file:///home/isurwars/Projects/Correlation/.agents/rules/code-style-guide.md) for clang-tidy, formatting, and Doxygen gates.
   - [complexity-gate](file:///home/isurwars/Projects/Correlation/.agents/rules/complexity-gate.md) for complexity decomposition.
   - [cmake-architecture-rule](file:///home/isurwars/Projects/Correlation/.agents/rules/cmake-architecture-rule.md) for target-centric CMake design.
@@ -55,7 +57,8 @@
 1. **Compilation:** Code must compile cleanly with modern C++23 standards.
 2. **Static Analysis:** Run `clang-tidy` against `compile_commands.json` on all modified files. Zero `NOLINT` suppressions permitted.
 3. **Cognitive Complexity:** All functions must maintain Cognitive Complexity $\le 25$ (see [refactor-complexity](file:///home/isurwars/Projects/Correlation/.agents/skills/refactor-complexity/SKILL.md)).
-4. **Testing:** Execute `ctest --test-dir build --output-on-failure` and `pytest tests/test_*.py` (see [testing-standards](file:///home/isurwars/Projects/Correlation/.agents/rules/testing-standards.md) and [tdd](file:///home/isurwars/Projects/Correlation/.agents/skills/tdd/SKILL.md)).
-5. **Documentation:** Verify Doxygen blocks on all public/protected interfaces in header files (see [doc-generator](file:///home/isurwars/Projects/Correlation/.agents/skills/doc-generator/SKILL.md)).
-6. **Code Review:** Execute [code-review](file:///home/isurwars/Projects/Correlation/.agents/skills/code-review/SKILL.md) audit prior to staging or committing changes.
-7. **Graph Maintenance:** Execute `graphify update .` immediately upon completing an implementation plan and passing verification tests to keep dependency graphs and community clusters synchronized.
+4. **SOLID Architecture:** Verify adherence to SOLID paradigms and zero-cost abstraction guardrails (see [solid-design](file:///home/isurwars/Projects/Correlation/.agents/skills/solid-design/SKILL.md)).
+5. **Testing:** Execute `ctest --test-dir build --output-on-failure` and `pytest tests/test_*.py` (see [testing-standards](file:///home/isurwars/Projects/Correlation/.agents/rules/testing-standards.md) and [tdd](file:///home/isurwars/Projects/Correlation/.agents/skills/tdd/SKILL.md)).
+6. **Documentation:** Verify Doxygen blocks on all public/protected interfaces in header files (see [doc-generator](file:///home/isurwars/Projects/Correlation/.agents/skills/doc-generator/SKILL.md)).
+7. **Code Review:** Execute [code-review](file:///home/isurwars/Projects/Correlation/.agents/skills/code-review/SKILL.md) audit prior to staging or committing changes.
+8. **Graph Maintenance:** Execute `graphify update .` immediately upon completing an implementation plan and passing verification tests to keep dependency graphs and community clusters synchronized.

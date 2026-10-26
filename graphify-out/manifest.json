@@ -1115,8 +1115,8 @@
     "semantic_hash": "d33dd3a82cfd7f01825b5c82a23dee17"
   },
   ".agents/AGENTS.md": {
-    "mtime": 1791952741.0773773,
-    "ast_hash": "a208dc6e03482e73f83c15889ce13e75",
+    "mtime": 1792988954.4451659,
+    "ast_hash": "26615cdd18d9796b4ed7b87494aa6f03",
     "semantic_hash": ""
   },
   ".agents/rules/caveman-navigation.md": {
@@ -1125,8 +1125,8 @@
     "semantic_hash": ""
   },
   ".agents/rules/code-style-guide.md": {
-    "mtime": 1789102408.5122116,
-    "ast_hash": "740a5395097e7299cd5913bb544fafa6",
+    "mtime": 1792988970.997802,
+    "ast_hash": "b4362fd4fd79d74f13cc7922f2da8cfe",
     "semantic_hash": ""
   },
   "include/mlip/MLIPInterface.hpp": {
@@ -1600,8 +1600,8 @@
     "semantic_hash": ""
   },
   ".agents/skills/code-review/SKILL.md": {
-    "mtime": 1791952793.0291445,
-    "ast_hash": "af7814b52c0aa79bd48788291a3fc21d",
+    "mtime": 1792988983.3415198,
+    "ast_hash": "0f07123f380c24f1039e38e8086508c3",
     "semantic_hash": ""
   },
   ".agents/skills/commit/SKILL.md": {
@@ -3092,6 +3092,16 @@
   "src/app/viewmodel/Structure3DRenderPipeline.cpp": {
     "mtime": 1792974562.6188986,
     "ast_hash": "4fc0eb6829c93c0aa644c037124ebe7b",
+    "semantic_hash": ""
+  },
+  ".agents/rules/solid-principles.md": {
+    "mtime": 1792988910.8908715,
+    "ast_hash": "40712d38f2a18050f7a21fa99b9f71d7",
+    "semantic_hash": ""
+  },
+  ".agents/skills/solid-design/SKILL.md": {
+    "mtime": 1792988929.4915702,
+    "ast_hash": "48282883a0d5e84c57369ecc66977709",
     "semantic_hash": ""
   }
 }

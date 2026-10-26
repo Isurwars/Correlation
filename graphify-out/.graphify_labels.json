@@ -464,5 +464,10 @@
   "462": "HDF5Writer.cpp",
   "463": "ThreadLocalBond",
   "464": "PlotSize",
-  "467": "mcp_worker.py"
+  "465": "BondCutoffController::BondCutoffController",
+  "466": "BinningConfig",
+  "467": "mcp_worker.py",
+  "468": "DfsStackFrame",
+  "469": "PlotController::requestPlotUpdate",
+  "470": "handleAddMarkerAt"
 }

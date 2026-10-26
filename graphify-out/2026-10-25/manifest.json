@@ -950,8 +950,8 @@
     "semantic_hash": "fa5794c577c54fcf0888468db60e0c22"
   },
   "src/CMakeLists.txt": {
-    "mtime": 1792886935.5163603,
-    "ast_hash": "fcbbd9f7fa9465afbf3933a5327a0bd1",
+    "mtime": 1792980799.4010527,
+    "ast_hash": "a174dc23ebb13609ec9609ba79c521d3",
     "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
@@ -2845,13 +2845,13 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/Structure3DController.hpp": {
-    "mtime": 1792970141.6303806,
-    "ast_hash": "d87124728558f84e44a267e5eb0dbf4a",
+    "mtime": 1792974520.3036265,
+    "ast_hash": "542f6d4a8a8d4795362cf021c82807b1",
     "semantic_hash": ""
   },
   "src/app/viewmodel/Structure3DController.cpp": {
-    "mtime": 1792969997.8110926,
-    "ast_hash": "bb8d65f73d0af3a7572d5bb24c28648e",
+    "mtime": 1792974590.0394583,
+    "ast_hash": "f23d49190d6ba080d821ab84f7a3c29a",
     "semantic_hash": ""
   },
   "tests/unit/app/Structure3DControllerTests.cpp": {
@@ -2905,8 +2905,8 @@
     "semantic_hash": ""
   },
   "tests/benchmarks/CMakeLists.txt": {
-    "mtime": 1792618723.480926,
-    "ast_hash": "b34cf36805f03453e1809918f38921ea",
+    "mtime": 1792980806.8539057,
+    "ast_hash": "f6b77c7d57f71e260346f4da17e46051",
     "semantic_hash": ""
   },
   "ui/material/ui/icons/pause.svg": {
@@ -3062,6 +3062,36 @@
   "tests/test_disorder_descriptors.py": {
     "mtime": 1792891724.4582462,
     "ast_hash": "c9729264c65cb8e57f5d18dbbaf33861",
+    "semantic_hash": ""
+  },
+  "include/app/viewmodel/PhaseExportManager.hpp": {
+    "mtime": 1792973260.453159,
+    "ast_hash": "55b7c0345531b846b7b6c531536a6c46",
+    "semantic_hash": ""
+  },
+  "include/app/viewmodel/PhaseSearchService.hpp": {
+    "mtime": 1792974218.9033995,
+    "ast_hash": "ca1b73d2da131eac56b292cb620236a7",
+    "semantic_hash": ""
+  },
+  "include/app/viewmodel/Structure3DRenderPipeline.hpp": {
+    "mtime": 1792973760.605539,
+    "ast_hash": "25438ccafd8fa068fff94b96e27ef226",
+    "semantic_hash": ""
+  },
+  "src/app/viewmodel/PhaseExportManager.cpp": {
+    "mtime": 1792973334.8235416,
+    "ast_hash": "37d776fb8f2b48485ef8489981777502",
+    "semantic_hash": ""
+  },
+  "src/app/viewmodel/PhaseSearchService.cpp": {
+    "mtime": 1792974576.23668,
+    "ast_hash": "cf0ae8edebaeb01b2a167658fcc50cd5",
+    "semantic_hash": ""
+  },
+  "src/app/viewmodel/Structure3DRenderPipeline.cpp": {
+    "mtime": 1792974562.6188986,
+    "ast_hash": "4fc0eb6829c93c0aa644c037124ebe7b",
     "semantic_hash": ""
   }
 }

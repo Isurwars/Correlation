@@ -32,4 +32,6 @@
 
 ## Reference
 
+- **See rule:** [solid-principles](file:///home/isurwars/Projects/Correlation/.agents/rules/solid-principles.md) for C++23 SOLID architectural standards (concepts vs interfaces, Single Responsibility, Dependency Inversion).
+- **See skill:** [solid-design](file:///home/isurwars/Projects/Correlation/.agents/skills/solid-design/SKILL.md) for practical C++23 SOLID patterns, anti-pattern catalogs, and refactoring guidelines.
 - **See skill:** [cpp-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-standards/SKILL.md) for comprehensive C++ coding standards and guidelines (RAII, smart pointers, modern C++20/23 architecture, const correctness, move semantics, concurrency patterns).
