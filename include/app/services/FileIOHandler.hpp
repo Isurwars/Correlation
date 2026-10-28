@@ -61,6 +61,11 @@ public:
   void handleWriteFiles();
 
   /**
+   * @brief Displays file save dialog asynchronously and exports/converts the active structure to POSCAR, CELL, CIF, or CAR format.
+   */
+  void handleExportStructure();
+
+  /**
    * @brief Initiates asynchronous trajectory loading on the background worker thread.
    * @param[in] filepath Absolute path to structure or trajectory file.
    * @param[in] on_complete Optional callback invoked on event loop when loading finishes.

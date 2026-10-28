@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include "cli/ConvertCommand.hpp"
 #include "math/Smoothing.hpp"
 
 #include <span>
@@ -55,6 +56,8 @@ struct CliOptions {
   int material_type = 0;                       ///< Material type preset index.
   bool show_version = false;                   ///< Flag indicating if version info was requested.
   bool show_help = false;                      ///< Flag indicating if help usage was requested.
+  bool is_convert_command = false;             ///< Flag indicating convert subcommand was invoked.
+  ConvertOptions convert_options{};            ///< Options for convert subcommand.
 };
 
 /**

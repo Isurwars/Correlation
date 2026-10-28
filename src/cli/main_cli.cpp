@@ -98,6 +98,10 @@ int main(int argc, char *argv[]) {
     return 0;
   }
 
+  if (cli.is_convert_command) {
+    return correlation::cli::executeConvert(cli.convert_options);
+  }
+
   // Map CLI options to ProgramOptions
   correlation::app::ProgramOptions opts;
   opts.input_file = cli.input_file;

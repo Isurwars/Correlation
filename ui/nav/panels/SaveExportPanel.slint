@@ -20,6 +20,7 @@ export component SaveExportPanel inherits Rectangle {
     callback toggle_export_analysis(string, bool);
     callback toggle_all_export_analyses(bool);
     callback write_files();
+    callback export_structure();
     callback reset_export_options();
 
     // Presets state
@@ -44,6 +45,7 @@ export component SaveExportPanel inherits Rectangle {
 
         format_options <=> root.export_format_options;
         write_files => { root.write_files(); }
+        export_structure => { root.export_structure(); }
         reset_export_options => { root.reset_export_options(); }
 
         preset_items: root.preset_items;

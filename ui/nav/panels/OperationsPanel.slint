@@ -14,6 +14,7 @@ export component OperationsPanel inherits Rectangle {
 
     callback browse_file();
     callback reload_file();
+    callback export_structure();
 
     // Material & Trajectory Setup
     in-out property <int> material_type: 0;
@@ -41,6 +42,7 @@ export component OperationsPanel inherits Rectangle {
         file_loading: root.file_metadata.loading;
         browse_file => { root.browse_file(); }
         reload_file => { root.reload_file(); }
+        export_structure => { root.export_structure(); }
         file_status_text: root.file_metadata.status_text;
         file_basename: root.file_metadata.basename;
         file_loaded: root.file_metadata.loaded;

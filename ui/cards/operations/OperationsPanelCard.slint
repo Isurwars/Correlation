@@ -31,6 +31,7 @@ export component OperationsPanelCard inherits Rectangle {
     in property <bool> file_loading: false;
     callback browse_file();
     callback reload_file();
+    callback export_structure();
 
     // File Status & Metadata
     in property <string> file_basename: "";
@@ -59,6 +60,7 @@ export component OperationsPanelCard inherits Rectangle {
     out property <string> hovered_tooltip_text:
         load_area.has-hover ? "Load a structure or trajectory file" :
         reload_area.has-hover ? "Reload the currently loaded file from disk.\n\n🔄 Useful when the trajectory is updated by an active external simulation." :
+        export_area.has-hover ? "Convert or export the currently loaded structure into POSCAR, CELL, CIF, or CAR format." :
         file_header_area.has-hover ? ("Loaded File: " + (root.file_status_text != "" ? root.file_status_text : "None")) :
         diagnostics_header.has-hover ? "System Diagnostics & Composition.\n\n🔬 Details lattice dimensions, cell volume, macroscopic density, and atomic species counts." :
         (material_card.hovered_tooltip_text != "" ? material_card.hovered_tooltip_text :
@@ -67,6 +69,7 @@ export component OperationsPanelCard inherits Rectangle {
     out property <length> hovered_x:
         load_area.has-hover ? load_area.absolute-position.x + load_area.mouse-x :
         reload_area.has-hover ? reload_area.absolute-position.x + reload_area.mouse-x :
+        export_area.has-hover ? export_area.absolute-position.x + export_area.mouse-x :
         file_header_area.has-hover ? file_header_area.absolute-position.x + file_header_area.mouse-x :
         diagnostics_header.has-hover ? diagnostics_header.absolute-position.x + diagnostics_header.mouse-x :
         (material_card.hovered_tooltip_text != "" ? material_card.hovered_x :
@@ -74,6 +77,7 @@ export component OperationsPanelCard inherits Rectangle {
     out property <length> hovered_y:
         load_area.has-hover ? load_area.absolute-position.y + load_area.mouse-y :
         reload_area.has-hover ? reload_area.absolute-position.y + reload_area.mouse-y :
+        export_area.has-hover ? export_area.absolute-position.y + export_area.mouse-y :
         file_header_area.has-hover ? file_header_area.absolute-position.y + file_header_area.mouse-y :
         diagnostics_header.has-hover ? diagnostics_header.absolute-position.y + diagnostics_header.mouse-y :
         (material_card.hovered_tooltip_text != "" ? material_card.hovered_y :
@@ -135,6 +139,23 @@ export component OperationsPanelCard inherits Rectangle {
                                     enabled: root.load_enabled && root.file_loaded && !root.analysis_running;
                                     clicked => {
                                         root.reload_file();
+                                    }
+                                }
+                            }
+
+                            export_area := TouchArea {
+                                accessible-role: button;
+                                accessible-label: "Export or Convert Structure";
+                                height: MaterialStyleMetrics.size_40;
+                                width: MaterialStyleMetrics.size_40;
+                                horizontal-stretch: 0;
+                                IconButton {
+                                    width: 100%;
+                                    height: 100%;
+                                    icon: Icons.save;
+                                    enabled: root.load_enabled && root.file_loaded && !root.analysis_running;
+                                    clicked => {
+                                        root.export_structure();
                                     }
                                 }
                             }

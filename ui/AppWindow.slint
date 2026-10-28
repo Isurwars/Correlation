@@ -281,6 +281,7 @@ export component AppWindow inherits Window {
     callback run_analysis();
     callback cancel_analysis();
     callback write_files();
+    callback export_structure();
     callback select_plot(int);
     callback toggle_curve_visibility(int, bool);
     callback toggle_all_curves(bool);
@@ -437,6 +438,12 @@ export component AppWindow inherits Window {
         key-pressed(event) => {
             if (event.modifiers.control && (event.text == "o" || event.text == "O")) {
                 root.browse_file();
+                return accept;
+            }
+            if (event.modifiers.control && (event.text == "e" || event.text == "E")) {
+                if (root.file_loaded) {
+                    root.export_structure();
+                }
                 return accept;
             }
             if (event.modifiers.control && (event.text == "r" || event.text == "R")) {
@@ -628,6 +635,7 @@ export component AppWindow inherits Window {
                     toggle_export_analysis(id, val) => { root.toggle_export_analysis(id, val); }
                     toggle_all_export_analyses(val) => { root.toggle_all_export_analyses(val); }
                     write_files => { root.write_files(); }
+                    export_structure => { root.export_structure(); }
                     reset_export_options => { root.reset_export_options(); }
                     load_preset(idx) => { root.load_preset(idx); }
                     save_preset(name) => { root.save_preset(name); }

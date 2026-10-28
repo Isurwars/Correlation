@@ -13,6 +13,8 @@
 #include "app/viewmodel/PlotController.hpp"
 #include "app/viewmodel/Structure3DController.hpp"
 #include "physics/PhysicalData.hpp"
+#include "writers/structure/BaseStructureWriter.hpp"
+#include "writers/structure/StructureWriterFactory.hpp"
 #include <filesystem>
 #include <format>
 #include <nfd.h>
@@ -125,6 +127,68 @@ void FileIOHandler::handleWriteFiles() {
         dialog_active_.store(false);
         window_.set_analysis_status_text(slint::SharedString(error_msg));
       });
+    }
+  });
+}
+
+void FileIOHandler::handleExportStructure() {
+  const auto *cell = loader_.cell();
+  if (cell == nullptr) {
+    window_.set_analysis_status_text("Error: No structure loaded to export or convert.");
+    return;
+  }
+
+  if (dialog_active_.exchange(true)) {
+    return;
+  }
+
+  if (dialog_thread_.joinable()) {
+    dialog_thread_.join();
+  }
+
+  const correlation::core::Cell cell_copy = *cell;
+
+  dialog_thread_ = std::jthread([this, cell_copy] {
+    nfdchar_t *out_path = nullptr;
+    std::array<nfdfilteritem_t, 4> const filter_list = {{
+        {.name = "VASP POSCAR", .spec = "vasp,poscar"},
+        {.name = "CASTEP Cell", .spec = "cell"},
+        {.name = "Crystallographic Information File", .spec = "cif"},
+        {.name = "Accelrys CAR", .spec = "car"},
+    }};
+
+    nfdresult_t const result = NFD_SaveDialogU8(&out_path, filter_list.data(), filter_list.size(),
+                                                nullptr, "structure.vasp");
+
+    if (result == NFD_OKAY) {
+      std::string const filepath(out_path);
+      NFD_FreePathU8(out_path);
+
+      slint::invoke_from_event_loop([this, filepath, cell_copy] {
+        dialog_active_.store(false);
+        try {
+          const std::filesystem::path p(filepath);
+          std::string ext = p.extension().string();
+          if (ext.empty()) {
+            ext = p.filename().string();
+          }
+          auto *writer =
+              writers::structure::StructureWriterFactory::instance().getWriterForExtension(ext);
+          if (writer == nullptr) {
+            window_.set_analysis_status_text("Error: Unsupported export format for " +
+                                             slint::SharedString(filepath));
+            return;
+          }
+          writer->write(filepath, cell_copy);
+          window_.set_analysis_status_text("Successfully exported structure to " +
+                                           slint::SharedString(filepath));
+        } catch (const std::exception &e) {
+          window_.set_analysis_status_text(
+              slint::SharedString(std::string("Error exporting structure: ") + e.what()));
+        }
+      });
+    } else {
+      slint::invoke_from_event_loop([this] { dialog_active_.store(false); });
     }
   });
 }

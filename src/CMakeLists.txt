@@ -145,6 +145,12 @@ set(WRITERS_SOURCES
     writers/ExportBundleWriter.cpp
     writers/FileWriter.cpp
     writers/WriterFactory.cpp
+    writers/structure/StructureWriterFactory.cpp
+    writers/structure/PoscarWriter.cpp
+    writers/structure/CellWriter.cpp
+    writers/structure/CifWriter.cpp
+    writers/structure/CarWriter.cpp
+    writers/structure/StructureConverter.cpp
 )
 if(BUILD_WITH_ARROW)
     list(APPEND WRITERS_SOURCES writers/ArrowWriter.cpp)
@@ -428,6 +434,7 @@ if(NOT (EMSCRIPTEN OR BUILD_WASM))
     # CLI Parser (OBJECT library — shared with tests)
     add_library(cli_parser_obj OBJECT
         cli/CliParser.cpp
+        cli/ConvertCommand.cpp
     )
     target_include_directories(cli_parser_obj PUBLIC
         ${PROJECT_SOURCE_DIR}/include

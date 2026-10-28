@@ -23,7 +23,8 @@ namespace {
 void printGeneralOptions(const char *program) {
   std::cerr
       << "Correlation — Structural Analysis Tool (CLI Mode)\n"
-      << "Usage: " << program << " <input_file> [options]\n\n"
+      << "Usage: " << program << " <input_file> [options]\n"
+      << "       " << program << " convert <input_file> <output_file> [options]\n\n"
       << "General Options:\n"
       << "  -o, --output <path>       Output base path (default: input stem)\n"
       << "  -q, --quiet               Suppress progress output\n"
@@ -234,6 +235,25 @@ bool parseArgs(std::span<const char *const> argv, CliOptions &opts) {
   app.set_help_flag("-h,--help");
   app.set_version_flag("-v,--version");
 
+  // Configure convert subcommand
+  auto *convert_cmd =
+      app.add_subcommand("convert", "Convert between atomic structure and cell formats");
+  convert_cmd
+      ->add_option("input_file", opts.convert_options.input_file, "Source structure file path")
+      ->required();
+  convert_cmd
+      ->add_option("output_file", opts.convert_options.output_file,
+                   "Destination structure file path")
+      ->required();
+  convert_cmd->add_option("--from", opts.convert_options.from_format,
+                          "Source format override (e.g. car, poscar, cif, cell)");
+  convert_cmd->add_option("--to", opts.convert_options.to_format,
+                          "Destination format override (e.g. poscar, cell, cif, car)");
+  convert_cmd->add_flag("--direct,!--cartesian", opts.convert_options.fractional,
+                        "Use direct/fractional (default) or Cartesian coordinates");
+  convert_cmd->add_flag("-q,--quiet", opts.convert_options.quiet,
+                        "Suppress non-error console output");
+
   // Parse positional input file
   app.add_option("input_file", opts.input_file, "Input structure/trajectory file");
 
@@ -297,6 +317,11 @@ bool parseArgs(std::span<const char *const> argv, CliOptions &opts) {
   } catch (const CLI::ParseError &e) {
     printUsage(argv[0]);
     return false;
+  }
+
+  if (convert_cmd->parsed()) {
+    opts.is_convert_command = true;
+    return true;
   }
 
   // Check if dihedral-bin was explicitly set

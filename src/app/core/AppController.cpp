@@ -104,6 +104,7 @@ void AppController::registerActionCallbacks() {
   window_.on_browse_file([this] { file_io_handler_->handleBrowseFile(); });
   window_.on_reload_file([this] { file_io_handler_->handleReloadFile(); });
   window_.on_write_files([this] { file_io_handler_->handleWriteFiles(); });
+  window_.on_export_structure([this] { file_io_handler_->handleExportStructure(); });
   window_.on_validate_inputs([this] {
     slint::invoke_from_event_loop(
         [this] { static_cast<void>(input_validator_->validateInputs()); });

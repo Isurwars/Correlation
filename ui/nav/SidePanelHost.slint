@@ -171,6 +171,7 @@ export component SidePanelHost inherits Vertical {
     callback toggle_export_analysis(string, bool);
     callback toggle_all_export_analyses(bool);
     callback write_files();
+    callback export_structure();
     callback reset_export_options();
     callback load_preset(int);
     callback save_preset(string);
@@ -227,6 +228,7 @@ export component SidePanelHost inherits Vertical {
             app_errors: root.app_errors;
             browse_file => { root.browse_file(); }
             reload_file => { root.reload_file(); }
+            export_structure => { root.export_structure(); }
             reset_trajectory_options => { root.reset_trajectory_options(); }
             reset_material_type => { root.reset_material_type(); }
             run_analysis => { root.run_analysis(); }
@@ -340,6 +342,7 @@ export component SidePanelHost inherits Vertical {
             toggle_export_analysis(id, val) => { root.toggle_export_analysis(id, val); }
             toggle_all_export_analyses(val) => { root.toggle_all_export_analyses(val); }
             write_files => { root.write_files(); }
+            export_structure => { root.export_structure(); }
             reset_export_options => { root.reset_export_options(); }
 
             preset_items: root.preset_items;

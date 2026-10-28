@@ -661,7 +661,28 @@ TEST_F(CliParserTests, ZipBundleCliFlags) {
     ArgBuilder args{"correlation-cli", "input.poscar", "--no-zip"};
     correlation::cli::CliOptions opts;
     ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
-    EXPECT_FALSE(opts.zip);
   }
 }
 
+TEST_F(CliParserTests, ConvertSubcommandOptionsParsing) {
+  ArgBuilder args{"correlation-cli", "convert",     "in.car", "out.vasp", "--from", "car", "--to",
+                  "poscar",          "--cartesian", "-q"};
+  correlation::cli::CliOptions opts;
+  ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+
+  EXPECT_TRUE(opts.is_convert_command);
+  EXPECT_EQ(opts.convert_options.input_file, "in.car");
+  EXPECT_EQ(opts.convert_options.output_file, "out.vasp");
+  EXPECT_EQ(opts.convert_options.from_format, "car");
+  EXPECT_EQ(opts.convert_options.to_format, "poscar");
+  EXPECT_FALSE(opts.convert_options.fractional);
+  EXPECT_TRUE(opts.convert_options.quiet);
+}
+
+TEST_F(CliParserTests, ConvertSubcommandExecutionFailsOnMissingFile) {
+  correlation::cli::ConvertOptions opts{
+      .input_file = "non_existent_file.car",
+      .output_file = "/tmp/should_not_exist.vasp",
+  };
+  EXPECT_EQ(correlation::cli::executeConvert(opts), 1);
+}

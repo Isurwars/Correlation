@@ -24,6 +24,7 @@ add_executable(correlation_unit_tests
     unit/core/GPUPortabilityTests.cpp
     unit/readers/FileReaderTests.cpp
     unit/writers/WriterTests.cpp
+    unit/writers/StructureWriterTests.cpp
     unit/readers/VaspReaderTests.cpp
     unit/readers/XdatcarReaderTests.cpp
     unit/readers/XYZReaderTests.cpp

@@ -31,6 +31,7 @@ export component SaveExportPanelCard inherits Rectangle {
     };
 
     callback write_files();
+    callback export_structure();
     callback reset_export_options();
 
     // Preset Manager Properties
@@ -75,6 +76,7 @@ export component SaveExportPanelCard inherits Rectangle {
                 analysis_done: root.analysis_done;
                 format_options <=> root.format_options;
                 write_files => { root.write_files(); }
+                export_structure => { root.export_structure(); }
                 reset => { root.reset_export_options(); }
             }
 

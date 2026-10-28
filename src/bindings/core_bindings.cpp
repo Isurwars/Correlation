@@ -2,6 +2,9 @@
 #include "core/Atom.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
+#include "writers/structure/BaseStructureWriter.hpp"
+#include "writers/structure/StructureWriterFactory.hpp"
+#include <filesystem>
 
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
@@ -192,7 +195,34 @@ void bindCell(py::module_ &mod) {
             }
             return arr;
           },
-          "Lattice vectors as a (3, 3) NumPy array where rows are vectors a, b, and c.");
+          "Lattice vectors as a (3, 3) NumPy array where rows are vectors a, b, and c.")
+      .def(
+          "to_file",
+          [](const Cell &cell, const std::string &filepath, const std::string &format,
+             bool fractional) {
+            auto &factory = correlation::writers::structure::StructureWriterFactory::instance();
+            correlation::writers::structure::BaseStructureWriter *writer = nullptr;
+            if (!format.empty()) {
+              writer = factory.getWriterForFormat(format);
+              if (writer == nullptr) {
+                writer = factory.getWriterForExtension(format);
+              }
+            }
+            if (writer == nullptr) {
+              const std::filesystem::path path(filepath);
+              std::string ext = path.extension().string();
+              if (ext.empty()) {
+                ext = path.filename().string();
+              }
+              writer = factory.getWriterForExtension(ext);
+            }
+            if (writer == nullptr) {
+              throw std::runtime_error("No structure writer found for filepath: " + filepath);
+            }
+            writer->write(filepath, cell, {.fractional = fractional});
+          },
+          py::arg("filepath"), py::arg("format") = "", py::arg("fractional") = true,
+          "Serialize the cell to an atomic structure file (e.g. POSCAR, .cell, .cif, .car).");
 }
 
 void bindTrajectory(py::module_ &mod) {
