@@ -420,23 +420,25 @@ TEST_F(CliParserTests, KernelUnknownDefaultsToGaussian) {
 // ===== Combined options =====
 
 TEST_F(CliParserTests, MultipleOptionsCombined) {
-  ArgBuilder args{"correlation-cli",
-                  "sim.xyz",
-                  "--r-max",
-                  "30.0",
-                  "--r-bin",
-                  "0.05",
-                  "--q-max",
-                  "25.0",
-                  "--no-csv",
-                  "--hdf5",
-                  "--quiet",
-                  "--smoothing-kernel",
-                  "bump",
-                  "--disable-groups",
-                  "scattering,rings",
-                  "-o",
-                  "/results/out"};
+  ArgBuilder args{
+      "correlation-cli",
+      "sim.xyz",
+      "--r-max",
+      "30.0",
+      "--r-bin",
+      "0.05",
+      "--q-max",
+      "25.0",
+      "--no-csv",
+      "--hdf5",
+      "--quiet",
+      "--smoothing-kernel",
+      "bump",
+      "--disable-groups",
+      "scattering,rings",
+      "-o",
+      "/results/out",
+  };
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
@@ -632,8 +634,10 @@ TEST_F(CliParserTests, CrystallineMaterialDefaults) {
 }
 
 TEST_F(CliParserTests, MaterialDefaultsWithOverrides) {
-  ArgBuilder args{"correlation-cli", "input.poscar", "--material",        "crystalline",
-                  "--r-bin",         "0.01",         "--smoothing-sigma", "0.05"};
+  ArgBuilder args{
+      "correlation-cli", "input.poscar", "--material",        "crystalline",
+      "--r-bin",         "0.01",         "--smoothing-sigma", "0.05",
+  };
   correlation::cli::CliOptions opts;
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
   EXPECT_EQ(opts.material_type, 2);
@@ -665,8 +669,10 @@ TEST_F(CliParserTests, ZipBundleCliFlags) {
 }
 
 TEST_F(CliParserTests, ConvertSubcommandOptionsParsing) {
-  ArgBuilder args{"correlation-cli", "convert",     "in.car", "out.vasp", "--from", "car", "--to",
-                  "poscar",          "--cartesian", "-q"};
+  ArgBuilder args{
+      "correlation-cli", "convert",     "in.car", "out.vasp", "--from", "car", "--to",
+      "poscar",          "--cartesian", "-q",
+  };
   correlation::cli::CliOptions opts;
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
 

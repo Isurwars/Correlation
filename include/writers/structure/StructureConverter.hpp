@@ -16,9 +16,9 @@ namespace correlation::writers::structure {
  * @brief Options for converting between atomic structure files.
  */
 struct StructureConvertOptions {
-  std::string from_format{}; ///< Optional explicit source format name or extension.
-  std::string to_format{};   ///< Optional explicit destination format name or extension.
-  bool fractional{true};     ///< Coordinate convention (fractional vs Cartesian).
+  std::string from_format; ///< Optional explicit source format name or extension.
+  std::string to_format;   ///< Optional explicit destination format name or extension.
+  bool fractional{true};   ///< Coordinate convention (fractional vs Cartesian).
 };
 
 /**

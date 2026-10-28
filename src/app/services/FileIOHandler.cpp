@@ -150,12 +150,14 @@ void FileIOHandler::handleExportStructure() {
 
   dialog_thread_ = std::jthread([this, cell_copy] {
     nfdchar_t *out_path = nullptr;
-    std::array<nfdfilteritem_t, 4> const filter_list = {{
-        {.name = "VASP POSCAR", .spec = "vasp,poscar"},
-        {.name = "CASTEP Cell", .spec = "cell"},
-        {.name = "Crystallographic Information File", .spec = "cif"},
-        {.name = "Accelrys CAR", .spec = "car"},
-    }};
+    std::array<nfdfilteritem_t, 4> const filter_list = {
+        {
+            {.name = "VASP POSCAR", .spec = "vasp,poscar"},
+            {.name = "CASTEP Cell", .spec = "cell"},
+            {.name = "Crystallographic Information File", .spec = "cif"},
+            {.name = "Accelrys CAR", .spec = "car"},
+        },
+    };
 
     nfdresult_t const result = NFD_SaveDialogU8(&out_path, filter_list.data(), filter_list.size(),
                                                 nullptr, "structure.vasp");
@@ -167,10 +169,10 @@ void FileIOHandler::handleExportStructure() {
       slint::invoke_from_event_loop([this, filepath, cell_copy] {
         dialog_active_.store(false);
         try {
-          const std::filesystem::path p(filepath);
-          std::string ext = p.extension().string();
+          const std::filesystem::path path(filepath);
+          std::string ext = path.extension().string();
           if (ext.empty()) {
-            ext = p.filename().string();
+            ext = path.filename().string();
           }
           auto *writer =
               writers::structure::StructureWriterFactory::instance().getWriterForExtension(ext);

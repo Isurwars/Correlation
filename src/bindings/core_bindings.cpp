@@ -39,6 +39,140 @@ void bindAtom(py::module_ &mod) {
       .def_property("element", &Atom::element, &Atom::setElement, "Chemical element metadata.");
 }
 
+py::array_t<real_t> cellGetPositions(const Cell &cell) {
+  const py::module_ warnings = py::module_::import("warnings");
+  warnings.attr("warn")(
+      "get_positions() is deprecated, use the zero-copy .positions property instead.",
+      warnings.attr("DeprecationWarning"));
+  const auto &atoms = cell.atoms();
+  const size_t num_atoms = atoms.size();
+  py::array_t<real_t> arr({static_cast<py::ssize_t>(num_atoms), static_cast<py::ssize_t>(3)});
+  auto buf = arr.mutable_unchecked<2>();
+  for (size_t idx = 0; idx < num_atoms; ++idx) {
+    const auto &position = atoms[idx].position();
+    buf(idx, 0) = position[0];
+    buf(idx, 1) = position[1];
+    buf(idx, 2) = position[2];
+  }
+  return arr;
+}
+
+py::array_t<real_t> cellPositionsZeroCopy(const py::object &obj) {
+  const auto &cell = obj.cast<const Cell &>();
+  const auto &atoms = cell.atoms();
+  if (atoms.empty()) {
+    return {};
+  }
+
+  const py::ssize_t stride_row = sizeof(Atom);
+  const py::ssize_t stride_col = sizeof(real_t);
+  const auto rows = static_cast<py::ssize_t>(atoms.size());
+  const py::ssize_t cols = 3;
+
+  const real_t *ptr = atoms[0].position().begin();
+
+  return py::array_t<real_t>({rows, cols}, {stride_row, stride_col}, ptr, obj);
+}
+
+py::array_t<real_t> cellVelocitiesZeroCopy(const py::object &obj) {
+  const auto &cell = obj.cast<const Cell &>();
+  const auto &atoms = cell.atoms();
+  if (atoms.empty()) {
+    return {};
+  }
+
+  const py::ssize_t stride_row = sizeof(Atom);
+  const py::ssize_t stride_col = sizeof(real_t);
+  const auto rows = static_cast<py::ssize_t>(atoms.size());
+  const py::ssize_t cols = 3;
+
+  const real_t *ptr = atoms[0].velocity().begin();
+
+  return py::array_t<real_t>({rows, cols}, {stride_row, stride_col}, ptr, obj);
+}
+
+void cellFromArrays(Cell &cell,
+                    const py::array_t<real_t, py::array::c_style | py::array::forcecast> &positions,
+                    const std::vector<std::string> &symbols) {
+  if (positions.ndim() != 2 || positions.shape(1) != 3) {
+    throw std::invalid_argument("Positions array must have shape (N, 3)");
+  }
+  if (static_cast<size_t>(positions.shape(0)) != symbols.size()) {
+    throw std::invalid_argument("Positions count does not match symbols count");
+  }
+
+  const auto count = static_cast<size_t>(positions.shape(0));
+  cell.reserveAtoms(count);
+  const auto buf = positions.unchecked<2>();
+
+  for (size_t i = 0; i < count; ++i) {
+    cell.addAtom(symbols[i], correlation::math::Vector3<real_t>(buf(i, 0), buf(i, 1), buf(i, 2)));
+  }
+}
+
+py::array_t<int> cellGetElementIds(const Cell &cell) {
+  const auto &atoms = cell.atoms();
+  const size_t num_atoms = atoms.size();
+  py::array_t<int> arr(static_cast<py::ssize_t>(num_atoms));
+  auto buf = arr.mutable_unchecked<1>();
+  for (size_t idx = 0; idx < num_atoms; ++idx) {
+    buf(idx) = atoms[idx].elementId();
+  }
+  return arr;
+}
+
+py::array_t<real_t> cellGetLatticeParameters(const Cell &cell) {
+  const auto &lattice_parameters = cell.latticeParameters();
+  py::array_t<real_t> arr(6);
+  auto buf = arr.mutable_unchecked<1>();
+  for (int idx = 0; idx < 6; ++idx) {
+    buf(idx) = lattice_parameters.at(idx);
+  }
+  return arr;
+}
+
+py::array_t<real_t> cellGetLatticeVectors(const Cell &cell) {
+  const auto &lattice_matrix = cell.latticeVectors();
+  py::array_t<real_t> arr({static_cast<py::ssize_t>(3), static_cast<py::ssize_t>(3)});
+  auto buf = arr.mutable_unchecked<2>();
+  for (py::ssize_t row_idx = 0; row_idx < 3; ++row_idx) {
+    for (py::ssize_t col_idx = 0; col_idx < 3; ++col_idx) {
+      buf(row_idx, col_idx) = lattice_matrix[row_idx][col_idx];
+    }
+  }
+  return arr;
+}
+
+const correlation::writers::structure::BaseStructureWriter *
+resolveStructureWriter(const std::string &filepath, const std::string &format) {
+  const auto &factory = correlation::writers::structure::StructureWriterFactory::instance();
+  const correlation::writers::structure::BaseStructureWriter *writer = nullptr;
+  if (!format.empty()) {
+    writer = factory.getWriterForFormat(format);
+    if (writer == nullptr) {
+      writer = factory.getWriterForExtension(format);
+    }
+  }
+  if (writer == nullptr) {
+    const std::filesystem::path path(filepath);
+    std::string ext = path.extension().string();
+    if (ext.empty()) {
+      ext = path.filename().string();
+    }
+    writer = factory.getWriterForExtension(ext);
+  }
+  return writer;
+}
+
+void cellToFile(const Cell &cell, const std::string &filepath, const std::string &format,
+                bool fractional) {
+  const auto *const writer = resolveStructureWriter(filepath, format);
+  if (writer == nullptr) {
+    throw std::runtime_error("No structure writer found for filepath: " + filepath);
+  }
+  writer->write(filepath, cell, {.fractional = fractional});
+}
+
 void bindCell(py::module_ &mod) {
   py::class_<Cell>(mod, "Cell",
                    "Simulation cell containing atomic coordinates and periodic box geometry.")
@@ -75,154 +209,24 @@ void bindCell(py::module_ &mod) {
       .def_property_readonly(
           "atoms", [](const Cell &cell) -> const std::vector<Atom> & { return cell.atoms(); },
           py::return_value_policy::reference_internal, "List of atoms contained in this cell.")
-      .def(
-          "get_positions",
-          [](const Cell &cell) -> py::array_t<real_t> {
-            const py::module_ warnings = py::module_::import("warnings");
-            warnings.attr("warn")(
-                "get_positions() is deprecated, use the zero-copy .positions property instead.",
-                warnings.attr("DeprecationWarning"));
-            const auto &atoms = cell.atoms();
-            const size_t num_atoms = atoms.size();
-            py::array_t<real_t> arr(
-                {static_cast<py::ssize_t>(num_atoms), static_cast<py::ssize_t>(3)});
-            auto buf = arr.mutable_unchecked<2>();
-            for (size_t idx = 0; idx < num_atoms; ++idx) {
-              const auto &position = atoms[idx].position();
-              buf(idx, 0) = position[0];
-              buf(idx, 1) = position[1];
-              buf(idx, 2) = position[2];
-            }
-            return arr;
-          },
-          "Deprecated: Return all atom positions as a NumPy array. Use .positions instead.")
+      .def("get_positions", &cellGetPositions,
+           "Deprecated: Return all atom positions as a NumPy array. Use .positions instead.")
+      .def_property_readonly("positions", &cellPositionsZeroCopy,
+                             "Zero-copy access to atom positions as a (N, 3) NumPy array.")
+      .def_property_readonly("velocities", &cellVelocitiesZeroCopy,
+                             "Zero-copy access to atom velocities as a (N, 3) NumPy array.")
+      .def("from_arrays", &cellFromArrays, py::arg("positions"), py::arg("symbols"),
+           "Bulk-add atoms from a (N, 3) positions array and symbols list.")
+      .def("get_element_ids", &cellGetElementIds,
+           "Return element type IDs for all atoms as a NumPy array of shape (N,).")
+      .def("get_lattice_parameters", &cellGetLatticeParameters,
+           "Return lattice parameters [a, b, c, alpha, beta, gamma] as a NumPy array.")
       .def_property_readonly(
-          "positions",
-          [](py::object &obj) -> py::array_t<real_t> {
-            const auto &cell = obj.cast<const Cell &>();
-            const auto &atoms = cell.atoms();
-            if (atoms.empty()) {
-              return {};
-            }
-
-            const py::ssize_t stride_row = sizeof(Atom);
-            const py::ssize_t stride_col = sizeof(real_t);
-            const auto rows = static_cast<py::ssize_t>(atoms.size());
-            const py::ssize_t cols = 3;
-
-            const real_t *ptr = atoms[0].position().begin();
-
-            return py::array_t<real_t>({rows, cols}, {stride_row, stride_col}, ptr, obj);
-          },
-          "Zero-copy access to atom positions as a (N, 3) NumPy array.")
-      .def_property_readonly(
-          "velocities",
-          [](py::object &obj) -> py::array_t<real_t> {
-            const auto &cell = obj.cast<const Cell &>();
-            const auto &atoms = cell.atoms();
-            if (atoms.empty()) {
-              return {};
-            }
-
-            const py::ssize_t stride_row = sizeof(Atom);
-            const py::ssize_t stride_col = sizeof(real_t);
-            const auto rows = static_cast<py::ssize_t>(atoms.size());
-            const py::ssize_t cols = 3;
-
-            const real_t *ptr = atoms[0].velocity().begin();
-
-            return py::array_t<real_t>({rows, cols}, {stride_row, stride_col}, ptr, obj);
-          },
-          "Zero-copy access to atom velocities as a (N, 3) NumPy array.")
-      .def(
-          "from_arrays",
-          [](Cell &cell,
-             const py::array_t<real_t, py::array::c_style | py::array::forcecast> &positions,
-             const std::vector<std::string> &symbols) {
-            if (positions.ndim() != 2 || positions.shape(1) != 3) {
-              throw std::invalid_argument("Positions array must have shape (N, 3)");
-            }
-            if (static_cast<size_t>(positions.shape(0)) != symbols.size()) {
-              throw std::invalid_argument("Positions count does not match symbols count");
-            }
-
-            const auto count = static_cast<size_t>(positions.shape(0));
-            cell.reserveAtoms(count);
-            auto buf = positions.unchecked<2>();
-
-            for (size_t i = 0; i < count; ++i) {
-              cell.addAtom(symbols[i],
-                           correlation::math::Vector3<real_t>(buf(i, 0), buf(i, 1), buf(i, 2)));
-            }
-          },
-          py::arg("positions"), py::arg("symbols"),
-          "Bulk-add atoms from a (N, 3) positions array and symbols list.")
-      .def(
-          "get_element_ids",
-          [](const Cell &cell) -> py::array_t<int> {
-            const auto &atoms = cell.atoms();
-            const size_t num_atoms = atoms.size();
-            py::array_t<int> arr(static_cast<py::ssize_t>(num_atoms));
-            auto buf = arr.mutable_unchecked<1>();
-            for (size_t idx = 0; idx < num_atoms; ++idx) {
-              buf(idx) = atoms[idx].elementId();
-            }
-            return arr;
-          },
-          "Return element type IDs for all atoms as a NumPy array of shape (N,).")
-      .def(
-          "get_lattice_parameters",
-          [](const Cell &cell) -> py::array_t<real_t> {
-            const auto &lattice_parameters = cell.latticeParameters();
-            py::array_t<real_t> arr(6);
-            auto buf = arr.mutable_unchecked<1>();
-            for (int idx = 0; idx < 6; ++idx) {
-              buf(idx) = lattice_parameters.at(idx);
-            }
-            return arr;
-          },
-          "Return lattice parameters [a, b, c, alpha, beta, gamma] as a NumPy array.")
-      .def_property_readonly(
-          "lattice_vectors",
-          [](const Cell &cell) -> py::array_t<real_t> {
-            const auto &lattice_matrix = cell.latticeVectors();
-            py::array_t<real_t> arr({static_cast<py::ssize_t>(3), static_cast<py::ssize_t>(3)});
-            auto buf = arr.mutable_unchecked<2>();
-            for (py::ssize_t row_idx = 0; row_idx < 3; ++row_idx) {
-              for (py::ssize_t col_idx = 0; col_idx < 3; ++col_idx) {
-                buf(row_idx, col_idx) = lattice_matrix[row_idx][col_idx];
-              }
-            }
-            return arr;
-          },
+          "lattice_vectors", &cellGetLatticeVectors,
           "Lattice vectors as a (3, 3) NumPy array where rows are vectors a, b, and c.")
-      .def(
-          "to_file",
-          [](const Cell &cell, const std::string &filepath, const std::string &format,
-             bool fractional) {
-            auto &factory = correlation::writers::structure::StructureWriterFactory::instance();
-            correlation::writers::structure::BaseStructureWriter *writer = nullptr;
-            if (!format.empty()) {
-              writer = factory.getWriterForFormat(format);
-              if (writer == nullptr) {
-                writer = factory.getWriterForExtension(format);
-              }
-            }
-            if (writer == nullptr) {
-              const std::filesystem::path path(filepath);
-              std::string ext = path.extension().string();
-              if (ext.empty()) {
-                ext = path.filename().string();
-              }
-              writer = factory.getWriterForExtension(ext);
-            }
-            if (writer == nullptr) {
-              throw std::runtime_error("No structure writer found for filepath: " + filepath);
-            }
-            writer->write(filepath, cell, {.fractional = fractional});
-          },
-          py::arg("filepath"), py::arg("format") = "", py::arg("fractional") = true,
-          "Serialize the cell to an atomic structure file (e.g. POSCAR, .cell, .cif, .car).");
+      .def("to_file", &cellToFile, py::arg("filepath"), py::arg("format") = "",
+           py::arg("fractional") = true,
+           "Serialize the cell to an atomic structure file (e.g. POSCAR, .cell, .cif, .car).");
 }
 
 void bindTrajectory(py::module_ &mod) {
