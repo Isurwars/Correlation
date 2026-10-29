@@ -229,6 +229,7 @@ set(RENDER3D_SOURCES
     render3d/vulkan/VulkanContext.cpp
     render3d/vulkan/VulkanDevice.cpp
     render3d/vulkan/VulkanBuffer.cpp
+    render3d/vulkan/VulkanOffscreenTarget.cpp
     render3d/vulkan/VulkanRenderEngine.cpp
     render3d/RenderEngineFactory.cpp
     render3d/LodController.cpp
