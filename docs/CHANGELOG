@@ -1,16 +1,29 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [4.1.1] - 2026-10-28
+
+### 🚀 Features & File I/O
+- **LAMMPS Dump Natural Sorting & Glob Expansion (`NaturalSort.hpp`, `FileReader`, `LammpsDumpReader`)**: Implemented natural alphanumeric filename sorting for numbered trajectory dumps, wildcard glob pattern expansion (`*.dump`), and duplicate timestep deduplication across multi-file series (`b6c7cf5e`).
+- **Atomic Structure File Writers (`StructureWriterFactory`, `BaseStructureWriter`, `PoscarWriter`, `CellWriter`, `CifWriter`, `CarWriter`, `StructureConverter`)**: Added structure file serialization engine supporting POSCAR, CASTEP `.cell`, CIF, and Accelrys `.car` file formats with fractional and Cartesian coordinate export (`ed601ba9`).
+- **CLI Structure Conversion (`correlation convert`, `ConvertCommand`, `CliParser`)**: Introduced `convert` CLI subcommand to transform atomic structure files between supported formats directly from the command line (`ed601ba9`).
+- **Zero-Copy Python Bindings for Structure Writing & Cell Views (`core_bindings`, `io_bindings`)**: Added `Cell.to_file()`, `Cell.from_arrays()`, `convert_structure()`, and exposed zero-copy NumPy array views for `Cell.positions` and `Cell.velocities`, alongside `get_element_ids` and `get_lattice_parameters` (`89003ac9`, `ed601ba9`).
+- **UI Structure Export Controls (`ExportOptionsCard`, `SaveExportPanelCard`, `OperationsPanelCard`)**: Integrated structure format selection, fractional coordinate toggles, and conversion actions into Slint navigation panels (`ed601ba9`).
 
 ### ♻️ Architecture & SOLID Refactoring
-- **Phase 1: Factory Registry Abstractions (DIP)**: Introduced `IReaderRegistry` and `ICalculatorRegistry` pure abstract interfaces, decoupling `TrajectoryLoader` and `OptionsSyncService` from concrete singleton registries via constructor-based dependency injection.
-- **Phase 2: Calculator & Reader Contract Segregation (ISP/LSP)**: Segregated monolithic calculator and reader contracts into fine-grained role interfaces (`IFrameCalculator`, `ITrajectoryCalculator`, `IStructureReader`, `ITrajectoryReader`), ensuring calculators and readers implement only the contracts relevant to their operational capabilities.
-- **Phase 3: Trajectory Domain Decomposition (SRP)**: Decomposed `Trajectory` God Object by extracting distinct domain responsibilities into dedicated single-responsibility services:
+- **Phase 1: Factory Registry Abstractions (DIP)**: Introduced `IReaderRegistry` and `ICalculatorRegistry` pure abstract interfaces, decoupling `TrajectoryLoader` and `OptionsSyncService` from concrete singleton registries via constructor-based dependency injection (`82cca0a1`).
+- **Phase 2: Calculator & Reader Contract Segregation (ISP/LSP)**: Segregated monolithic calculator and reader contracts into fine-grained role interfaces (`IFrameCalculator`, `ITrajectoryCalculator`, `IStructureReader`, `ITrajectoryReader`), ensuring calculators and readers implement only the contracts relevant to their operational capabilities (`5dbc714d`).
+- **Phase 3: Trajectory Domain Decomposition (SRP)**: Decomposed `Trajectory` God Object by extracting distinct domain responsibilities into dedicated single-responsibility services (`c068a96e`):
   - `BondCutoffEngine`: Pairwise covalent and van der Waals bond cutoff evaluation and caching.
-  - `VelocityIntegrator`: Numerical velocity differentiation (central and boundary differences) across trajectory frames.
-  - `TrajectoryFilter`: Dynamic frame filtering, sub-sampling, and duplicate frame suppression.
-- **Phase 4: Distribution Functions Decoupling (SRP/OCP)**: Extracted mathematical kernel smoothing and domain scaling from `DistributionFunctions` into dedicated `DistributionPostProcessor` service with multi-threaded TBB parallelization and robust alias resolution (`hasHistogram()`, `getMutableHistogram()`).
+  - `VelocityIntegrator`: Numerical velocity differentiation (central and boundary differences) across trajectory frames under periodic boundary conditions.
+  - `TrajectoryFilter`: Dynamic frame filtering, sub-sampling, and consecutive duplicate frame suppression.
+- **Phase 4: Distribution Functions Decoupling (SRP/OCP)**: Extracted mathematical kernel smoothing and domain scaling from `DistributionFunctions` into dedicated `DistributionPostProcessor` service with multi-threaded TBB parallelization and robust alias resolution (`hasHistogram()`, `getMutableHistogram()`) (`ae9f70bb`).
+- **Reader Initialization & Code Formatting**: Streamlined list initializations and braced uniform syntax across all readers (`CP2KReader`, `ChgnetReader`, `CifReader`, `GapReader`, `GromacsReader`, `LammpsDumpReader`, `MaceReader`, `NequipReader`, `XYZReader`) (`2b942ebd`).
+
+### 🧪 Testing & Validation
+- **LAMMPS Dump Multi-File & Glob Tests (`LammpsDumpReaderTests`, `test_structure_io.py`)**: Added unit tests validating natural sorting, glob expansion, and timestep deduplication for multi-file dump series (`b6c7cf5e`).
+- **Structure Writer & Conversion Verification (`StructureWriterTests`, `CliParserTests`)**: Added test coverage validating format serialization round-trips for POSCAR, `.cell`, CIF, and `.car` files, as well as `convert` CLI option parsing (`ed601ba9`, `89003ac9`).
+- **SOLID Subsystem Test Coverage**: Added dedicated unit test suites for `DistributionPostProcessorTests`, `BondCutoffEngineTests`, `VelocityIntegratorTests`, `TrajectoryFilterTests`, `CalculatorFactoryTests`, and `ReaderFactoryTests` (`82cca0a1`, `5dbc714d`, `c068a96e`, `ae9f70bb`).
 
 ## [4.1.0] - 2026-10-25
 
