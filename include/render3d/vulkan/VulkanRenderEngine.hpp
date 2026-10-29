@@ -33,7 +33,7 @@ public:
   [[nodiscard]] bool isHardwareAccelerated() const noexcept override;
 
 private:
-  ViewportDimensions dimensions_{800, 600};
+  ViewportDimensions dimensions_{.width = 800, .height = 600};
   std::shared_ptr<const Scene3D> scene_;
   Camera3D camera_;
   std::vector<uint8_t> frame_pixels_;

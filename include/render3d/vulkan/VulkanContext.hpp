@@ -23,7 +23,7 @@ public:
    * @return True if headless Vulkan offscreen rendering is supported.
    */
   [[nodiscard]] static bool isSupported() noexcept {
-#if defined(CORRELATION_USE_VULKAN)
+#ifdef CORRELATION_USE_VULKAN
     return probeVulkanDevice();
 #else
     return false;
@@ -35,7 +35,7 @@ public:
    * @return Status description string.
    */
   [[nodiscard]] static std::string_view statusMessage() noexcept {
-#if defined(CORRELATION_USE_VULKAN)
+#ifdef CORRELATION_USE_VULKAN
     return probeVulkanDevice() ? "Vulkan headless GPU available"
                                : "Vulkan drivers found but no compatible physical device";
 #else
@@ -44,7 +44,7 @@ public:
   }
 
 private:
-#if defined(CORRELATION_USE_VULKAN)
+#ifdef CORRELATION_USE_VULKAN
   [[nodiscard]] static bool probeVulkanDevice() noexcept;
 #endif
 };
