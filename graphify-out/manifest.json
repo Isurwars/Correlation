@@ -65,8 +65,8 @@
     "semantic_hash": ""
   },
   "include/core/Trajectory.hpp": {
-    "mtime": 1793018623.0670316,
-    "ast_hash": "11b3998cb859f5681fe3ec0e9465b822",
+    "mtime": 1793211543.843563,
+    "ast_hash": "a23a488270bbc0d0ec608aec9c0df91b",
     "semantic_hash": ""
   },
   "include/math/Constants.hpp": {
@@ -140,8 +140,8 @@
     "semantic_hash": ""
   },
   "include/readers/BaseReader.hpp": {
-    "mtime": 1793017842.4593532,
-    "ast_hash": "0fcbb458a164b9dc6897320403c193ae",
+    "mtime": 1793210862.6480026,
+    "ast_hash": "5963581056aa63c5e183343db1fe23ed",
     "semantic_hash": ""
   },
   "include/readers/CP2KReader.hpp": {
@@ -170,8 +170,8 @@
     "semantic_hash": ""
   },
   "include/readers/FileReader.hpp": {
-    "mtime": 1792037639.0476835,
-    "ast_hash": "dbf998cdf4f58348769b465261dc5f80",
+    "mtime": 1793211543.8464768,
+    "ast_hash": "d72bb7df12fd32d6cc981316a5a8edf8",
     "semantic_hash": ""
   },
   "include/readers/GromacsReader.hpp": {
@@ -180,8 +180,8 @@
     "semantic_hash": ""
   },
   "include/readers/LammpsDumpReader.hpp": {
-    "mtime": 1789591639.1058888,
-    "ast_hash": "ff73193a6dfd6810351e1f1bbc304eb8",
+    "mtime": 1793210877.1708043,
+    "ast_hash": "fb624c67bce80a740d5353a724d5df78",
     "semantic_hash": ""
   },
   "include/readers/OnetepDatReader.hpp": {
@@ -310,8 +310,8 @@
     "semantic_hash": "3a33c7333f4849de34c011caa485de09"
   },
   "src/bindings/core_bindings.cpp": {
-    "mtime": 1793132577.9384322,
-    "ast_hash": "33e0a15b53cd2b6e9a63b94dc489cc07",
+    "mtime": 1793158933.519185,
+    "ast_hash": "a5bbf11ff61cf8c7a168c2fb97c7f017",
     "semantic_hash": ""
   },
   "src/bindings/core_bindings.hpp": {
@@ -320,8 +320,8 @@
     "semantic_hash": "7d804a4091bd6e63acb51898f0f65b09"
   },
   "src/bindings/io_bindings.cpp": {
-    "mtime": 1793133372.5186937,
-    "ast_hash": "b9a64806d56abf9c9093c67466c856ef",
+    "mtime": 1793211778.9612615,
+    "ast_hash": "893c52753b0d1ebd3be2686eee21f7be",
     "semantic_hash": ""
   },
   "src/bindings/io_bindings.hpp": {
@@ -385,8 +385,8 @@
     "semantic_hash": ""
   },
   "src/core/Trajectory.cpp": {
-    "mtime": 1793018653.0755763,
-    "ast_hash": "c579485a38cee8fd537a7c68d83839e5",
+    "mtime": 1793211591.6831713,
+    "ast_hash": "053ae305c8b24ff54e3dd0732d3e102f",
     "semantic_hash": ""
   },
   "src/main.cpp": {
@@ -430,8 +430,8 @@
     "semantic_hash": ""
   },
   "src/readers/FileReader.cpp": {
-    "mtime": 1792037649.6215177,
-    "ast_hash": "66dcc3702009b1fdcaf82070a8481d08",
+    "mtime": 1793211769.1834562,
+    "ast_hash": "f4625f6d1b633feed0a946820aed750d",
     "semantic_hash": ""
   },
   "src/readers/GromacsReader.cpp": {
@@ -440,8 +440,8 @@
     "semantic_hash": ""
   },
   "src/readers/LammpsDumpReader.cpp": {
-    "mtime": 1793019995.749172,
-    "ast_hash": "6f7e8d91ac366c938a02f6056f3cf6c3",
+    "mtime": 1793211646.5529833,
+    "ast_hash": "3700ef1332c5682af1401319a6c064eb",
     "semantic_hash": ""
   },
   "src/readers/OnetepDatReader.cpp": {
@@ -740,8 +740,8 @@
     "semantic_hash": ""
   },
   "tests/unit/cli/CliParserTests.cpp": {
-    "mtime": 1793133372.579096,
-    "ast_hash": "87c6c396111433452511302ee8115c0b",
+    "mtime": 1793157656.7285118,
+    "ast_hash": "5f671448d66509457ceedfa171c45a27",
     "semantic_hash": ""
   },
   "tests/unit/core/AtomTests.cpp": {
@@ -845,8 +845,8 @@
     "semantic_hash": ""
   },
   "tests/unit/readers/LammpsDumpReaderTests.cpp": {
-    "mtime": 1790181953.064601,
-    "ast_hash": "a6af87904397ce5f96cda401948eadf0",
+    "mtime": 1793211543.8842397,
+    "ast_hash": "12eee45f9501d1f82944e433d07b13ee",
     "semantic_hash": ""
   },
   "tests/unit/readers/OnetepDatReaderTests.cpp": {
@@ -1970,8 +1970,8 @@
     "semantic_hash": ""
   },
   "include/app/services/FileIOHandler.hpp": {
-    "mtime": 1793132899.2056298,
-    "ast_hash": "949fadb8ee2e95bef10be428164cf38f",
+    "mtime": 1793211543.8393612,
+    "ast_hash": "6c973775ce231d969e3708130aadc637",
     "semantic_hash": ""
   },
   "include/app/services/InputValidator.hpp": {
@@ -2060,8 +2060,8 @@
     "semantic_hash": ""
   },
   "src/app/services/FileIOHandler.cpp": {
-    "mtime": 1793133269.9976923,
-    "ast_hash": "be59544f4b3fa921451a4f431228516c",
+    "mtime": 1793211773.8823626,
+    "ast_hash": "fe36f6b6ebe29df0e1fb94980a20713b",
     "semantic_hash": ""
   },
   "src/app/services/InputValidator.cpp": {
@@ -2130,8 +2130,8 @@
     "semantic_hash": ""
   },
   "include/app/services/TrajectoryLoader.hpp": {
-    "mtime": 1793017141.1613123,
-    "ast_hash": "599ce23061117f4d3adc411bcb1c8764",
+    "mtime": 1793211054.8794067,
+    "ast_hash": "46f2dc11b122b3a711bb37c757d60d06",
     "semantic_hash": ""
   },
   "src/app/services/AnalysisDispatcher.cpp": {
@@ -2145,8 +2145,8 @@
     "semantic_hash": ""
   },
   "src/app/services/TrajectoryLoader.cpp": {
-    "mtime": 1793017375.0467815,
-    "ast_hash": "59f317b98299ec72d5d64ec6e00bd4d8",
+    "mtime": 1793211543.8621764,
+    "ast_hash": "6bcaaeeceaef91b0de5ad4c284488ef4",
     "semantic_hash": ""
   },
   "tests/functional/app/ServiceIntegrationTests.cpp": {
@@ -3130,8 +3130,8 @@
     "semantic_hash": ""
   },
   "include/readers/contracts/ITrajectoryReader.hpp": {
-    "mtime": 1793017822.5487008,
-    "ast_hash": "75c4c2b09e9e16a24ba44f15b45526ef",
+    "mtime": 1793210851.2871583,
+    "ast_hash": "6246f539d34979f3f5d90157e29b2ee8",
     "semantic_hash": ""
   },
   "include/core/BondCutoffEngine.hpp": {
@@ -3225,8 +3225,8 @@
     "semantic_hash": ""
   },
   "include/writers/structure/StructureConverter.hpp": {
-    "mtime": 1793132634.2441728,
-    "ast_hash": "118258154bc0c01ba06debf76b7dd48e",
+    "mtime": 1793157555.2934194,
+    "ast_hash": "ce586eae420e28a4bcd656aab416147d",
     "semantic_hash": ""
   },
   "include/writers/structure/StructureWriterFactory.hpp": {
@@ -3270,13 +3270,18 @@
     "semantic_hash": ""
   },
   "tests/test_structure_io.py": {
-    "mtime": 1793132756.218532,
-    "ast_hash": "eb7cced443b1785be2f78c24ed646533",
+    "mtime": 1793211517.6378407,
+    "ast_hash": "383b723d442d29770090b24275ed27c2",
     "semantic_hash": ""
   },
   "tests/unit/writers/StructureWriterTests.cpp": {
     "mtime": 1793132223.1887398,
     "ast_hash": "9c3bac6d6e9b7cbc53cc09047e4a7790",
+    "semantic_hash": ""
+  },
+  "include/readers/NaturalSort.hpp": {
+    "mtime": 1793210819.5445943,
+    "ast_hash": "365ac1acdddc028c2a6adcdc73c645ed",
     "semantic_hash": ""
   }
 }

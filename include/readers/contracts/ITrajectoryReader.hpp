@@ -11,7 +11,9 @@
 #include "core/Trajectory.hpp"
 
 #include <functional>
+#include <stdexcept>
 #include <string>
+#include <vector>
 
 namespace correlation::readers {
 
@@ -42,6 +44,24 @@ public:
    */
   [[nodiscard]] virtual correlation::core::Trajectory
   readTrajectory(const std::string &filename, ProgressCallback progress_callback = nullptr) = 0;
+
+  /**
+   * @brief Reads a trajectory concatenated across multiple files.
+   * @param[in] filenames List of paths to files to be read.
+   * @param[in] progress_callback Optional callback to report progress [0.0, 1.0].
+   * @return A Trajectory object containing all loaded frames.
+   */
+  [[nodiscard]] virtual correlation::core::Trajectory
+  readTrajectory(const std::vector<std::string> &filenames,
+                 ProgressCallback progress_callback = nullptr) {
+    if (filenames.empty()) {
+      throw std::runtime_error("No files provided for trajectory reading.");
+    }
+    if (filenames.size() == 1) {
+      return readTrajectory(filenames.front(), progress_callback);
+    }
+    throw std::runtime_error("Multi-file trajectory reading is not supported for this format.");
+  }
 };
 
 } // namespace correlation::readers

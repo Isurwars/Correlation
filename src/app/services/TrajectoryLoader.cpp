@@ -73,8 +73,8 @@ TrajectoryLoader::loadFile(const std::string &path, const ProgressCallback &prog
 
     if (reader != nullptr) {
       if (is_trajectory) {
-        trajectory_ = std::make_shared<correlation::core::Trajectory>(
-            reader->readTrajectory(path, progress));
+        trajectory_ =
+            std::make_shared<correlation::core::Trajectory>(reader->readTrajectory(path, progress));
       } else {
         trajectory_ = std::make_shared<correlation::core::Trajectory>();
         trajectory_->addFrame(reader->readStructure(path, progress));
@@ -92,6 +92,26 @@ TrajectoryLoader::loadFile(const std::string &path, const ProgressCallback &prog
     return "File loaded: " + display_path;
   } catch (const std::exception &e) {
     return std::unexpected(std::string("Error loading file: ") + e.what());
+  }
+}
+
+std::expected<std::string, std::string>
+TrajectoryLoader::loadFiles(const std::vector<std::string> &paths,
+                            const ProgressCallback &progress) {
+  try {
+    if (paths.empty()) {
+      return std::unexpected("No files provided to load.");
+    }
+    if (paths.size() == 1) {
+      return loadFile(paths.front(), progress);
+    }
+    const auto &first_path = paths.front();
+    correlation::readers::FileType const type = correlation::readers::determineFileType(first_path);
+    trajectory_ = std::make_shared<correlation::core::Trajectory>(
+        correlation::readers::readTrajectory(paths, type, progress));
+    return "Loaded " + std::to_string(paths.size()) + " files.";
+  } catch (const std::exception &e) {
+    return std::unexpected(std::string("Error loading files: ") + e.what());
   }
 }
 

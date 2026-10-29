@@ -16,6 +16,7 @@
 #include <cstdint>
 #include <expected>
 #include <string>
+#include <vector>
 
 // The correlation::readers namespace encapsulates all functionality related to
 // reading structure and trajectory files. It delegates to specialized readers.
@@ -74,6 +75,20 @@ correlation::core::Trajectory readTrajectory(const std::string &filename, FileTy
                                              const ProgressCallback &progress_callback = nullptr);
 
 /**
+ * @brief Reads a trajectory concatenated across multiple files.
+ *
+ * @param[in] filenames Vector of paths to trajectory files.
+ * @param[in] type The format of the files.
+ * @param[in] progress_callback Optional callback invoked with progress (0.0–1.0) and status
+ * message.
+ * @return A correlation::core::Trajectory object.
+ * @throws std::runtime_error if files cannot be opened or are malformed.
+ */
+correlation::core::Trajectory readTrajectory(const std::vector<std::string> &filenames,
+                                             FileType type = FileType::Unknown,
+                                             const ProgressCallback &progress_callback = nullptr);
+
+/**
  * @brief Reads a structure from the given file, returning Cell or diagnostic error string.
  *
  * @param[in] filename Path to the file containing the structure.
@@ -95,6 +110,18 @@ readStructureExpected(const std::string &filename, FileType type = FileType::Unk
  */
 [[nodiscard]] std::expected<correlation::core::Trajectory, std::string>
 readTrajectoryExpected(const std::string &filename, FileType type = FileType::Unknown,
+                       const ProgressCallback &progress_callback = nullptr);
+
+/**
+ * @brief Reads a trajectory from multiple files, returning Trajectory or diagnostic error string.
+ *
+ * @param[in] filenames Paths to the files containing the trajectory.
+ * @param[in] type File format type used to decode the files.
+ * @param[in] progress_callback Optional callback invoked during reading.
+ * @return Expected containing the parsed Trajectory on success, or diagnostic string on failure.
+ */
+[[nodiscard]] std::expected<correlation::core::Trajectory, std::string>
+readTrajectoryExpected(const std::vector<std::string> &filenames, FileType type = FileType::Unknown,
                        const ProgressCallback &progress_callback = nullptr);
 
 /**

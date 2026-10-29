@@ -68,6 +68,8 @@ public:
   [[nodiscard]] correlation::core::Trajectory
   readTrajectory(const std::string &filename,
                  ProgressCallback progress_callback = nullptr) override = 0;
+
+  using ITrajectoryReader::readTrajectory;
 };
 
 } // namespace correlation::readers

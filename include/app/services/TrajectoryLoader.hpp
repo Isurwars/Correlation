@@ -60,6 +60,15 @@ public:
                                                    const ProgressCallback &progress = nullptr);
 
   /**
+   * @brief Loads a multi-file trajectory from a collection of paths.
+   * @param[in] paths Collection of file paths making up the trajectory.
+   * @param[in] progress Optional progress reporting callback.
+   * @return Success message string or error description string.
+   */
+  std::expected<std::string, std::string> loadFiles(const std::vector<std::string> &paths,
+                                                    const ProgressCallback &progress = nullptr);
+
+  /**
    * @brief Gets a pointer to the loaded trajectory.
    * @return Const pointer to Trajectory, or nullptr if none loaded.
    */

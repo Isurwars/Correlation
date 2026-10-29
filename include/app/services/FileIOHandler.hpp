@@ -61,7 +61,8 @@ public:
   void handleWriteFiles();
 
   /**
-   * @brief Displays file save dialog asynchronously and exports/converts the active structure to POSCAR, CELL, CIF, or CAR format.
+   * @brief Displays file save dialog asynchronously and exports/converts the active structure to
+   * POSCAR, CELL, CIF, or CAR format.
    */
   void handleExportStructure();
 
@@ -72,6 +73,15 @@ public:
    */
   void startLoadingTrajectory(const std::string &filepath,
                               std::function<void(bool)> on_complete = nullptr);
+
+  /**
+   * @brief Initiates asynchronous trajectory loading for multiple files on the background worker
+   * thread.
+   * @param[in] filepaths Collection of paths to trajectory files.
+   * @param[in] on_complete Optional callback invoked on event loop when loading finishes.
+   */
+  void startLoadingTrajectories(const std::vector<std::string> &filepaths,
+                                std::function<void(bool)> on_complete = nullptr);
 
 private:
   /**

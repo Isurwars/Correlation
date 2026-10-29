@@ -57,3 +57,34 @@ def test_convert_pipeline(tmp_path):
 
     cell = correlation.read_structure(str(out_cif))
     assert len(cell) == 8
+
+
+def test_read_multi_file_lammps_trajectory(tmp_path):
+    f1 = tmp_path / "dump.1.lammpstrj"
+    f2 = tmp_path / "dump.2.lammpstrj"
+    f10 = tmp_path / "dump.10.lammpstrj"
+
+    def write_frame(p, step, x):
+        content = (
+            f"ITEM: TIMESTEP\n{step}\n"
+            "ITEM: NUMBER OF ATOMS\n1\n"
+            "ITEM: BOX BOUNDS pp pp pp\n0.0 10.0\n0.0 10.0\n0.0 10.0\n"
+            f"ITEM: ATOMS id type x y z\n1 1 {x} 0.0 0.0\n"
+        )
+        p.write_text(content)
+
+    write_frame(f1, 100, 1.0)
+    write_frame(f2, 200, 2.0)
+    write_frame(f10, 1000, 10.0)
+
+    # Test list of files (order independent due to natural sort)
+    traj = correlation.read([str(f10), str(f1), str(f2)])
+    assert len(traj) == 3
+    assert abs(traj[0].atoms[0].position[0] - 1.0) < 1e-4
+    assert abs(traj[1].atoms[0].position[0] - 2.0) < 1e-4
+    assert abs(traj[2].atoms[0].position[0] - 10.0) < 1e-4
+
+    # Test read_trajectory with wildcard pattern
+    traj_glob = correlation.read_trajectory(str(tmp_path / "dump.*.lammpstrj"))
+    assert len(traj_glob) == 3
+

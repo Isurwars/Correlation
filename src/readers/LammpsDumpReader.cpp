@@ -8,9 +8,12 @@
  */
 #include "readers/LammpsDumpReader.hpp"
 #include "core/MappedFile.hpp"
+#include "readers/NaturalSort.hpp"
 #include "readers/ReaderFactory.hpp"
 
+#include <charconv>
 #include <cstring>
+#include <optional>
 #include <sstream>
 #include <stdexcept>
 
@@ -241,7 +244,7 @@ correlation::core::Cell LammpsDumpReader::parseDumpFrame(const char *data, size_
   correlation::core::Cell frame = parser.parseBoxBounds();
 
   // --- ATOMS header — discover column layout ---
-  auto layout = parser.parseAtomsHeader();
+  const auto layout = parser.parseAtomsHeader();
 
   // --- Atom lines ---
   parser.parseAtomLines(frame, num_atoms, layout);
@@ -255,68 +258,171 @@ correlation::core::Cell LammpsDumpReader::parseDumpFrame(const char *data, size_
 correlation::core::Cell
 LammpsDumpReader::readStructure(const std::string &filename,
                                 std::function<void(float, const std::string &)> progress_callback) {
-  auto traj = readTrajectory(filename, progress_callback);
+  const auto traj = readTrajectory(filename, progress_callback);
   if (traj.getFrameCount() == 0) {
     throw std::runtime_error("No frames found in LAMMPS dump file: " + filename);
   }
   return traj.getFrame(0);
 }
 
-// ---------------------------------------------------------------------------
-// readTrajectory — memory-mapped lazy loading
-// ---------------------------------------------------------------------------
-correlation::core::Trajectory LammpsDumpReader::readTrajectory(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
+namespace {
 
-  if (progress_callback) {
-    progress_callback(0.0F, "Reading LAMMPS dump file...");
+// ---------------------------------------------------------------------------
+// Helper: extract integer timestep value from frame starting at frame_start
+// ---------------------------------------------------------------------------
+inline std::optional<int64_t> parseTimestepValue(const char *data, size_t total_size,
+                                                 size_t frame_start) {
+  const size_t line1_end = findLineEnd(data, total_size, frame_start);
+  const size_t val_start = skipLineEnding(data, total_size, line1_end);
+  if (val_start >= total_size) {
+    return std::nullopt;
   }
+  const size_t val_end = findLineEnd(data, total_size, val_start);
+  std::string_view val_str(data + val_start, val_end - val_start);
+  while (!val_str.empty() && std::isspace(static_cast<unsigned char>(val_str.front())) != 0) {
+    val_str.remove_prefix(1);
+  }
+  while (!val_str.empty() && std::isspace(static_cast<unsigned char>(val_str.back())) != 0) {
+    val_str.remove_suffix(1);
+  }
+  int64_t step = 0;
+  const auto [ptr, ec] = std::from_chars(val_str.data(), val_str.data() + val_str.size(), step);
+  if (ec == std::errc()) {
+    return step;
+  }
+  return std::nullopt;
+}
 
-  auto mapped_file = std::make_shared<correlation::core::MappedFile>(filename);
-  const char *data = mapped_file->data();
-  const size_t total_size = mapped_file->size();
-
-  // First pass: scan for "ITEM: TIMESTEP" to find frame byte offsets.
+// ---------------------------------------------------------------------------
+// Helper: find byte offsets of all frame starts in a memory-mapped file
+// ---------------------------------------------------------------------------
+inline std::vector<size_t> findFrameStarts(const char *data, size_t total_size) {
   std::vector<size_t> frame_offsets;
-
-  // We search for the pattern "ITEM: TIMESTEP" at the start of a line.
   const char *needle = "ITEM: TIMESTEP";
   const size_t needle_len = std::strlen(needle);
 
   size_t pos = 0;
   while (pos < total_size) {
-    // Check if current position starts with the needle
     const bool at_line_start = (pos == 0) || (pos > 0 && (data[pos - 1] == '\n'));
     if (at_line_start && pos + needle_len <= total_size &&
         std::memcmp(data + pos, needle, needle_len) == 0) {
       frame_offsets.push_back(pos);
-
-      // Report progress.
-      if (progress_callback && total_size > 0) {
-        const float progress = static_cast<float>(pos) / static_cast<float>(total_size);
-        progress_callback(progress, "Scanning LAMMPS dump frames...");
-      }
     }
-    // Advance to the next line
     pos = findLineEnd(data, total_size, pos);
     pos = skipLineEnding(data, total_size, pos);
   }
+  return frame_offsets;
+}
+
+// ---------------------------------------------------------------------------
+// Helper: process frame slices in a single mapped file, checking timesteps
+// ---------------------------------------------------------------------------
+inline void processFileFrames(const std::shared_ptr<correlation::core::MappedFile> &mapped,
+                              uint32_t file_idx, const std::string &filename,
+                              std::vector<correlation::core::Trajectory::MappedFrameSlice> &slices,
+                              std::optional<int64_t> &last_timestep) {
+  const char *data = mapped->data();
+  const size_t total_size = mapped->size();
+  std::vector<size_t> frame_offsets = findFrameStarts(data, total_size);
 
   if (frame_offsets.empty()) {
     throw std::runtime_error("No frames found in LAMMPS dump file: " + filename);
   }
 
-  // Add sentinel offset for the last frame's end
   frame_offsets.push_back(total_size);
 
-  if (progress_callback) {
-    progress_callback(1.0F, "LAMMPS dump file loaded.");
+  for (size_t i = 0; i + 1 < frame_offsets.size(); ++i) {
+    const size_t frame_start = frame_offsets[i];
+    const size_t frame_end = frame_offsets[i + 1];
+    const auto step_opt = parseTimestepValue(data, total_size, frame_start);
+
+    if (step_opt.has_value()) {
+      const int64_t step = *step_opt;
+      if (last_timestep.has_value()) {
+        if (step < *last_timestep) {
+          throw std::runtime_error("LAMMPS frames out of chronological order: timestep " +
+                                   std::to_string(step) + " preceded by " +
+                                   std::to_string(*last_timestep) + " in file: " + filename);
+        }
+        if (step == *last_timestep) {
+          // Deduplicate consecutive identical timesteps (restart checkpoint boundary)
+          continue;
+        }
+      }
+      last_timestep = step;
+    }
+
+    slices.push_back({
+        .file_index = file_idx,
+        .offset = frame_start,
+        .size = frame_end - frame_start,
+    });
+  }
+}
+
+} // namespace
+
+// ---------------------------------------------------------------------------
+// readTrajectory — multi-file memory-mapped lazy loading
+// ---------------------------------------------------------------------------
+correlation::core::Trajectory LammpsDumpReader::readTrajectory(
+    const std::vector<std::string> &filenames,
+    std::function<void(float, const std::string &)> progress_callback) {
+
+  if (filenames.empty()) {
+    throw std::runtime_error("No files provided for LAMMPS dump trajectory reading.");
   }
 
-  auto parser = [](const char *buf, size_t size) { return parseDumpFrame(buf, size); };
+  std::vector<std::string> sorted_files = filenames;
+  naturalSort(sorted_files);
 
-  return {mapped_file, std::move(frame_offsets), parser, 1.0};
+  if (progress_callback) {
+    progress_callback(0.0F, "Opening LAMMPS dump files...");
+  }
+
+  std::vector<std::shared_ptr<correlation::core::MappedFile>> mapped_files;
+  mapped_files.reserve(sorted_files.size());
+  std::vector<correlation::core::Trajectory::MappedFrameSlice> frame_slices;
+  std::optional<int64_t> last_timestep;
+
+  for (size_t f_idx = 0; f_idx < sorted_files.size(); ++f_idx) {
+    const auto &file_path = sorted_files[f_idx];
+    const auto mapped_file = std::make_shared<correlation::core::MappedFile>(file_path);
+    mapped_files.push_back(mapped_file);
+
+    processFileFrames(mapped_file, static_cast<uint32_t>(f_idx), file_path, frame_slices,
+                      last_timestep);
+
+    if (progress_callback && !sorted_files.empty()) {
+      const float progress =
+          static_cast<float>(f_idx + 1) / static_cast<float>(sorted_files.size());
+      progress_callback(progress, "Processed " + file_path);
+    }
+  }
+
+  if (frame_slices.empty()) {
+    throw std::runtime_error("No frames found across LAMMPS dump files.");
+  }
+
+  if (progress_callback) {
+    progress_callback(1.0F, "LAMMPS dump files loaded.");
+  }
+
+  const auto parser = [](const char *buf, size_t size) { return parseDumpFrame(buf, size); };
+  return {std::move(mapped_files), std::move(frame_slices), parser, 1.0};
+}
+
+// ---------------------------------------------------------------------------
+// readTrajectory — single file or wildcard pattern
+// ---------------------------------------------------------------------------
+correlation::core::Trajectory LammpsDumpReader::readTrajectory(
+    const std::string &filename,
+    std::function<void(float, const std::string &)> progress_callback) {
+  if (filename.contains('*') || filename.contains('?')) {
+    const auto files = expandWildcards(filename);
+    return readTrajectory(files, std::move(progress_callback));
+  }
+  return readTrajectory(std::vector<std::string>{filename}, std::move(progress_callback));
 }
 
 } // namespace correlation::readers

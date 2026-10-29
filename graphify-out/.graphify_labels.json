@@ -504,11 +504,6 @@
   "502": "core_bindings.cpp",
   "503": "OutmolReader.cpp",
   "504": "TEST",
-  "505": "ScaleBinsParams",
-  "506": "WaterMoleculeOptions",
-  "507": "TDOSParams",
-  "508": "PhysicsService.cpp",
-  "509": "QVector",
   "510": "ThreadLocalBond",
   "511": "RDFParams",
   "512": "SteinhardtOptions"

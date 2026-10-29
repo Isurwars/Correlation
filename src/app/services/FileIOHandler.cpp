@@ -174,7 +174,7 @@ void FileIOHandler::handleExportStructure() {
           if (ext.empty()) {
             ext = path.filename().string();
           }
-          auto *writer =
+          const auto *const writer =
               writers::structure::StructureWriterFactory::instance().getWriterForExtension(ext);
           if (writer == nullptr) {
             window_.set_analysis_status_text("Error: Unsupported export format for " +
@@ -241,6 +241,71 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath,
 
       if (success) {
         onTrajectoryLoadSuccess(filepath);
+      }
+
+      if (on_complete) {
+        on_complete(success);
+      }
+    });
+  });
+}
+
+void FileIOHandler::startLoadingTrajectories(const std::vector<std::string> &filepaths,
+                                             std::function<void(bool)> on_complete) {
+  if (filepaths.empty()) {
+    return;
+  }
+  if (filepaths.size() == 1) {
+    startLoadingTrajectory(filepaths.front(), std::move(on_complete));
+    return;
+  }
+
+  const std::string display_name =
+      filepaths.front() + " (+" + std::to_string(filepaths.size() - 1) + " files)";
+  window_.set_in_file_text(slint::SharedString(display_name));
+  window_.set_file_status_text(slint::SharedString("Loading multi-file trajectory..."));
+  window_.set_file_loading(true);
+  window_.set_timer_running(true);
+  window_.set_text_opacity(true);
+  window_.set_progress(0.0F);
+
+  if (load_thread_.joinable()) {
+    load_thread_.join();
+  }
+
+  load_thread_ = std::jthread([this, filepaths, on_complete = std::move(on_complete)] {
+    const auto progress_cb = [this](float progress, const std::string &msg) {
+      slint::invoke_from_event_loop([progress, msg, this] {
+        window_.set_progress(progress);
+        if (!msg.empty()) {
+          window_.set_file_status_text(slint::SharedString(msg));
+        }
+      });
+    };
+
+    std::string message;
+    bool success = false;
+    const auto load_res = loader_.loadFiles(filepaths, progress_cb);
+    if (load_res) {
+      message = *load_res;
+      success = true;
+      options_.input_file = filepaths.front();
+      const auto preview_res = dispatcher_.runFastPreviewRDF(loader_.trajectoryMut(), options_);
+      if (!preview_res) {
+        // Fast preview RDF is non-fatal for file loading.
+      }
+    } else {
+      message = std::string(AppDefaults::MSG_ERROR_LOADING) + load_res.error();
+    }
+
+    slint::invoke_from_event_loop([this, filepaths, message, success, on_complete] {
+      window_.set_file_status_text(slint::SharedString(message));
+      window_.set_file_loading(false);
+      window_.set_timer_running(false);
+      window_.set_text_opacity(false);
+
+      if (success) {
+        onTrajectoryLoadSuccess(filepaths.front());
       }
 
       if (on_complete) {
@@ -369,11 +434,11 @@ void FileIOHandler::handleBrowseFile() {
   }
 
   dialog_thread_ = std::jthread([this] {
-    std::array<nfdfilteritem_t, 10> filter_list = {
+    std::array<nfdfilteritem_t, 11> filter_list = {
         {
             {
                 .name = "Supported Structure Files",
-                .spec = "arc,car,cell,cif,dat,md,outmol,poscar,contcar,vasp,xdatcar",
+                .spec = "arc,car,cell,cif,dat,dump,lammpstrj,md,outmol,poscar,contcar,vasp,xdatcar",
             },
             {
                 .name = "Materials Studio CAR",
@@ -396,6 +461,10 @@ void FileIOHandler::handleBrowseFile() {
                 .spec = "cif",
             },
             {
+                .name = "LAMMPS Dump",
+                .spec = "dump,lammpstrj",
+            },
+            {
                 .name = "ONETEP DAT",
                 .spec = "dat",
             },
@@ -415,17 +484,31 @@ void FileIOHandler::handleBrowseFile() {
     };
     const nfdfiltersize_t filter_count = filter_list.size();
 
-    nfdchar_t *out_path = nullptr;
+    const nfdpathset_t *path_set = nullptr;
     const nfdresult_t result =
-        NFD_OpenDialogU8(&out_path, filter_list.data(), filter_count, nullptr);
+        NFD_OpenDialogMultipleU8(&path_set, filter_list.data(), filter_count, nullptr);
 
     if (result == NFD_OKAY) {
-      std::string filepath(out_path);
-      NFD_FreePathU8(out_path);
+      nfdpathsetsize_t num_paths = 0;
+      NFD_PathSet_GetCount(path_set, &num_paths);
+      std::vector<std::string> filepaths;
+      filepaths.reserve(num_paths);
+      for (nfdpathsetsize_t i = 0; i < num_paths; ++i) {
+        nfdchar_t *out_path = nullptr;
+        if (NFD_PathSet_GetPathU8(path_set, i, &out_path) == NFD_OKAY && out_path != nullptr) {
+          filepaths.emplace_back(out_path);
+          NFD_PathSet_FreePathU8(out_path);
+        }
+      }
+      NFD_PathSet_Free(path_set);
 
-      slint::invoke_from_event_loop([this, filepath = std::move(filepath)] {
+      slint::invoke_from_event_loop([this, filepaths = std::move(filepaths)] {
         dialog_active_.store(false);
-        startLoadingTrajectory(filepath);
+        if (filepaths.size() == 1) {
+          startLoadingTrajectory(filepaths.front());
+        } else if (!filepaths.empty()) {
+          startLoadingTrajectories(filepaths);
+        }
       });
     } else if (result == NFD_CANCEL) {
       slint::invoke_from_event_loop([this] {

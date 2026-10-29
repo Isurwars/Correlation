@@ -43,6 +43,12 @@ public:
    */
   Trajectory(std::vector<Cell> frames, real_t time_step);
 
+  struct MappedFrameSlice {
+    uint32_t file_index{0};
+    size_t offset{0};
+    size_t size{0};
+  };
+
   using FrameParser = std::function<Cell(const char *data, size_t size)>;
 
   /**
@@ -54,6 +60,16 @@ public:
    */
   Trajectory(std::shared_ptr<MappedFile> mapped_file, std::vector<size_t> frame_offsets,
              FrameParser parser, real_t time_step);
+
+  /**
+   * @brief Constructs a lazy-loading trajectory from multiple memory-mapped files.
+   * @param mapped_files Vector of shared pointers to mapped files.
+   * @param frame_slices Slice descriptors locating each frame across the mapped files.
+   * @param parser Function to parse a frame from a slice of memory.
+   * @param time_step The time interval between consecutive frames.
+   */
+  Trajectory(std::vector<std::shared_ptr<MappedFile>> mapped_files,
+             std::vector<MappedFrameSlice> frame_slices, FrameParser parser, real_t time_step);
 
   /**
    * @brief Appends a new frame to the trajectory.
@@ -234,8 +250,8 @@ private:
   real_t time_step_;                                             ///< Time between snapshots.
   size_t removed_frames_count_{0}; ///< Counter for deduplicated frames.
 
-  std::shared_ptr<MappedFile> mapped_file_;
-  std::vector<size_t> frame_offsets_;
+  std::vector<std::shared_ptr<MappedFile>> mapped_files_;
+  std::vector<MappedFrameSlice> frame_slices_;
   FrameParser parser_;
 };
 

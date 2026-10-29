@@ -37,8 +37,14 @@ public:
       const std::string &filename,
       std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
+  using BaseReader::readTrajectory;
+
   correlation::core::Trajectory readTrajectory(
       const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback = nullptr) override;
+
+  correlation::core::Trajectory readTrajectory(
+      const std::vector<std::string> &filenames,
       std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
   /**

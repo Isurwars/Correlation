@@ -82,3 +82,134 @@ TEST(LammpsDumpReaderTests, ThrowsOnInvalidFile) {
   LammpsDumpReader reader;
   EXPECT_THROW(reader.readTrajectory("nonexistent_file.dump"), std::runtime_error);
 }
+
+#include "readers/NaturalSort.hpp"
+#include <fstream>
+
+TEST(LammpsDumpReaderTests, NaturalSortOrdering) {
+  std::vector<std::string> files = {
+      "dump.10.lammpstrj",
+      "dump.2.lammpstrj",
+      "dump.1.lammpstrj",
+      "dump.20.lammpstrj",
+  };
+  naturalSort(files);
+
+  EXPECT_EQ(files[0], "dump.1.lammpstrj");
+  EXPECT_EQ(files[1], "dump.2.lammpstrj");
+  EXPECT_EQ(files[2], "dump.10.lammpstrj");
+  EXPECT_EQ(files[3], "dump.20.lammpstrj");
+}
+
+namespace {
+
+void writeDumpFrame(const std::string &path, int64_t timestep, float x_coord) {
+  std::ofstream out(path);
+  out << "ITEM: TIMESTEP\n"
+      << timestep << "\n"
+      << "ITEM: NUMBER OF ATOMS\n"
+      << 1 << "\n"
+      << "ITEM: BOX BOUNDS pp pp pp\n"
+      << "0.0 10.0\n0.0 10.0\n0.0 10.0\n"
+      << "ITEM: ATOMS id type x y z\n"
+      << "1 1 " << x_coord << " 0.0 0.0\n";
+}
+
+} // namespace
+
+TEST(LammpsDumpReaderTests, MultiFileReadAndNaturalOrder) {
+  const std::string temp_dir =
+      std::filesystem::temp_directory_path().string() + "/lammps_multi_test";
+  std::filesystem::create_directories(temp_dir);
+
+  const std::string file1 = temp_dir + "/dump.1.lammpstrj";
+  const std::string file2 = temp_dir + "/dump.2.lammpstrj";
+  const std::string file10 = temp_dir + "/dump.10.lammpstrj";
+
+  writeDumpFrame(file1, 100, 1.0F);
+  writeDumpFrame(file2, 200, 2.0F);
+  writeDumpFrame(file10, 1000, 10.0F);
+
+  LammpsDumpReader reader;
+  // Pass in unsorted order to verify natural sorting
+  auto traj = reader.readTrajectory(std::vector<std::string>{file10, file1, file2});
+
+  EXPECT_EQ(traj.getFrameCount(), 3);
+  EXPECT_NEAR(traj.getFrame(0).atoms()[0].position().x(), 1.0, 1e-4);
+  EXPECT_NEAR(traj.getFrame(1).atoms()[0].position().x(), 2.0, 1e-4);
+  EXPECT_NEAR(traj.getFrame(2).atoms()[0].position().x(), 10.0, 1e-4);
+
+  std::filesystem::remove_all(temp_dir);
+}
+
+TEST(LammpsDumpReaderTests, WildcardPatternExpansion) {
+  const std::string temp_dir =
+      std::filesystem::temp_directory_path().string() + "/lammps_glob_test";
+  std::filesystem::create_directories(temp_dir);
+
+  writeDumpFrame(temp_dir + "/chunk_01.dump", 10, 1.0F);
+  writeDumpFrame(temp_dir + "/chunk_02.dump", 20, 2.0F);
+
+  LammpsDumpReader reader;
+  auto traj = reader.readTrajectory(temp_dir + "/chunk_*.dump");
+
+  EXPECT_EQ(traj.getFrameCount(), 2);
+  EXPECT_NEAR(traj.getFrame(0).atoms()[0].position().x(), 1.0, 1e-4);
+  EXPECT_NEAR(traj.getFrame(1).atoms()[0].position().x(), 2.0, 1e-4);
+
+  std::filesystem::remove_all(temp_dir);
+}
+
+TEST(LammpsDumpReaderTests, DeduplicatesConsecutiveRestartTimesteps) {
+  const std::string temp_dir =
+      std::filesystem::temp_directory_path().string() + "/lammps_restart_test";
+  std::filesystem::create_directories(temp_dir);
+
+  const std::string file1 = temp_dir + "/run1.dump";
+  const std::string file2 = temp_dir + "/run2.dump";
+
+  // File 1 has steps 100, 200
+  {
+    std::ofstream out(file1);
+    out << "ITEM: TIMESTEP\n100\nITEM: NUMBER OF ATOMS\n1\nITEM: BOX BOUNDS pp pp pp\n"
+        << "0.0 10.0\n0.0 10.0\n0.0 10.0\nITEM: ATOMS id type x y z\n1 1 1.0 0.0 0.0\n"
+        << "ITEM: TIMESTEP\n200\nITEM: NUMBER OF ATOMS\n1\nITEM: BOX BOUNDS pp pp pp\n"
+        << "0.0 10.0\n0.0 10.0\n0.0 10.0\nITEM: ATOMS id type x y z\n1 1 2.0 0.0 0.0\n";
+  }
+
+  // File 2 restarts at 200 (duplicate), continues to 300
+  {
+    std::ofstream out(file2);
+    out << "ITEM: TIMESTEP\n200\nITEM: NUMBER OF ATOMS\n1\nITEM: BOX BOUNDS pp pp pp\n"
+        << "0.0 10.0\n0.0 10.0\n0.0 10.0\nITEM: ATOMS id type x y z\n1 1 2.0 0.0 0.0\n"
+        << "ITEM: TIMESTEP\n300\nITEM: NUMBER OF ATOMS\n1\nITEM: BOX BOUNDS pp pp pp\n"
+        << "0.0 10.0\n0.0 10.0\n0.0 10.0\nITEM: ATOMS id type x y z\n1 1 3.0 0.0 0.0\n";
+  }
+
+  LammpsDumpReader reader;
+  auto traj = reader.readTrajectory(std::vector<std::string>{file1, file2});
+
+  // Step 200 in file 2 should be deduplicated
+  EXPECT_EQ(traj.getFrameCount(), 3);
+  EXPECT_NEAR(traj.getFrame(0).atoms()[0].position().x(), 1.0, 1e-4);
+  EXPECT_NEAR(traj.getFrame(1).atoms()[0].position().x(), 2.0, 1e-4);
+  EXPECT_NEAR(traj.getFrame(2).atoms()[0].position().x(), 3.0, 1e-4);
+
+  std::filesystem::remove_all(temp_dir);
+}
+
+TEST(LammpsDumpReaderTests, ThrowsOnDecreasingTimesteps) {
+  const std::string temp_dir = std::filesystem::temp_directory_path().string() + "/lammps_oor_test";
+  std::filesystem::create_directories(temp_dir);
+
+  const std::string file1 = temp_dir + "/part1.dump";
+  const std::string file2 = temp_dir + "/part2.dump";
+
+  writeDumpFrame(file1, 500, 1.0F);
+  writeDumpFrame(file2, 100, 2.0F);
+
+  LammpsDumpReader reader;
+  EXPECT_THROW(reader.readTrajectory(std::vector<std::string>{file1, file2}), std::runtime_error);
+
+  std::filesystem::remove_all(temp_dir);
+}

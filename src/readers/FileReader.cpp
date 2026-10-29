@@ -7,6 +7,7 @@
  */
 #include "readers/FileReader.hpp"
 #include "core/MappedFile.hpp"
+#include "readers/NaturalSort.hpp"
 #include "readers/ReaderFactory.hpp"
 
 #include <algorithm>
@@ -147,6 +148,41 @@ BaseReader *findReaderForType(FileType type) {
   }
 }
 
+correlation::core::Trajectory readSingleTrajectory(const std::string &filename, FileType type,
+                                                   const ProgressCallback &progress_callback) {
+  BaseReader *reader = nullptr;
+  if (type != FileType::Unknown) {
+    reader = findReaderForType(type);
+  }
+  if (reader == nullptr) {
+    reader = findReaderForFile(filename);
+  }
+
+  if (reader != nullptr) {
+    // Enforce 4 GiB trajectory file size limit.
+    const auto file_size = std::filesystem::file_size(filename);
+    if (static_cast<std::uint64_t>(file_size) > correlation::core::K_MAX_TRAJECTORY_BYTES) {
+      throw std::runtime_error("Trajectory file exceeds the 4 GiB memory limit: " + filename);
+    }
+
+    if (reader->isTrajectory()) {
+      return reader->readTrajectory(filename, progress_callback);
+    }
+    // wrap a single structure in a one-frame trajectory.
+    try {
+      correlation::core::Cell cell = reader->readStructure(filename, progress_callback);
+      std::vector<correlation::core::Cell> frames;
+      frames.push_back(std::move(cell));
+      return {frames, 1.0};
+    } catch (const std::exception &) {
+      throw std::runtime_error("Reader for \"" + filename +
+                               "\" does not support trajectory reading.");
+    }
+  }
+
+  throw std::runtime_error("No reader found for file: " + filename);
+}
+
 } // namespace
 
 correlation::core::Cell readStructure(const std::string &filename, FileType type,
@@ -169,38 +205,41 @@ correlation::core::Cell readStructure(const std::string &filename, FileType type
 
 correlation::core::Trajectory readTrajectory(const std::string &filename, FileType type,
                                              const ProgressCallback &progress_callback) {
+  if (filename.contains('*') || filename.contains('?')) {
+    const auto files = expandWildcards(filename);
+    return readTrajectory(files, type, progress_callback);
+  }
+
+  return readSingleTrajectory(filename, type, progress_callback);
+}
+
+correlation::core::Trajectory readTrajectory(const std::vector<std::string> &filenames,
+                                             FileType type,
+                                             const ProgressCallback &progress_callback) {
+  if (filenames.empty()) {
+    throw std::runtime_error("No files provided for trajectory reading.");
+  }
+  if (filenames.size() == 1) {
+    return readSingleTrajectory(filenames.front(), type, progress_callback);
+  }
 
   BaseReader *reader = nullptr;
   if (type != FileType::Unknown) {
     reader = findReaderForType(type);
   }
   if (reader == nullptr) {
-    reader = findReaderForFile(filename);
+    reader = findReaderForFile(filenames.front());
   }
 
   if (reader != nullptr) {
-    // Enforce 4 GiB trajectory file size limit.
-    auto file_size = std::filesystem::file_size(filename);
-    if (static_cast<std::uint64_t>(file_size) > correlation::core::K_MAX_TRAJECTORY_BYTES) {
-      throw std::runtime_error("Trajectory file exceeds the 4 GiB memory limit: " + filename);
-    }
-
     if (reader->isTrajectory()) {
-      return reader->readTrajectory(filename, progress_callback);
+      return reader->readTrajectory(filenames, progress_callback);
     }
-    // wrap a single structure in a one-frame trajectory.
-    try {
-      correlation::core::Cell cell = reader->readStructure(filename, progress_callback);
-      std::vector<correlation::core::Cell> frames;
-      frames.push_back(std::move(cell));
-      return {frames, 1.0};
-    } catch (const std::exception &) {
-      throw std::runtime_error("Reader for \"" + filename +
-                               "\" does not support trajectory reading.");
-    }
+    throw std::runtime_error("Reader for \"" + filenames.front() +
+                             "\" does not support multi-file trajectory reading.");
   }
 
-  throw std::runtime_error("No reader found for file: " + filename);
+  throw std::runtime_error("No reader found for multi-file trajectory.");
 }
 
 std::expected<correlation::core::Cell, std::string>
@@ -224,6 +263,18 @@ readTrajectoryExpected(const std::string &filename, FileType type,
     return std::unexpected(std::string(err.what()));
   } catch (...) {
     return std::unexpected("Unknown error occurred while reading trajectory from: " + filename);
+  }
+}
+
+std::expected<correlation::core::Trajectory, std::string>
+readTrajectoryExpected(const std::vector<std::string> &filenames, FileType type,
+                       const ProgressCallback &progress_callback) {
+  try {
+    return readTrajectory(filenames, type, progress_callback);
+  } catch (const std::exception &err) {
+    return std::unexpected(std::string(err.what()));
+  } catch (...) {
+    return std::unexpected("Unknown error occurred while reading trajectory from files.");
   }
 }
 

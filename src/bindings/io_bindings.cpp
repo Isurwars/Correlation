@@ -8,6 +8,7 @@
 
 #include <filesystem>
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include <stdexcept>
 #include <string>
 
@@ -19,7 +20,7 @@ using namespace correlation::writers::structure;
 namespace {
 
 BaseStructureWriter *resolveWriter(const std::string &filepath, const std::string &format) {
-  auto &factory = StructureWriterFactory::instance();
+  const auto &factory = StructureWriterFactory::instance();
   if (!format.empty()) {
     auto *writer = factory.getWriterForFormat(format);
     if (writer != nullptr) {
@@ -46,7 +47,7 @@ void init_io(py::module_ &mod) {
       "read",
       [](const std::string &filepath) -> Trajectory {
         const std::filesystem::path path(filepath);
-        auto extension = path.extension().string();
+        const auto extension = path.extension().string();
 
         auto *reader = ReaderFactory::instance().getReaderForExtension(
             {.extension = extension, .filename = filepath});
@@ -70,7 +71,7 @@ void init_io(py::module_ &mod) {
       "Automatically detects format from file extension (e.g. .car, .arc, .lammps, .xyz).\n\n"
       "Parameters\n----------\n"
       "filepath : str\n"
-      "    Path to the input structure or trajectory file.\n\n"
+      "    Path to the input structure or trajectory file, or wildcard pattern.\n\n"
       "Returns\n-------\n"
       "Trajectory\n"
       "    Parsed trajectory containing one or more simulation Cell frames.\n\n"
@@ -79,10 +80,72 @@ void init_io(py::module_ &mod) {
       "    If no reader is available for the given file extension or parsing fails.");
 
   mod.def(
+      "read",
+      [](const std::vector<std::string> &filepaths) -> Trajectory {
+        if (filepaths.empty()) {
+          throw std::runtime_error("No files provided to read.");
+        }
+        const std::filesystem::path path(filepaths.front());
+        const auto extension = path.extension().string();
+
+        auto *reader = ReaderFactory::instance().getReaderForExtension(
+            {.extension = extension, .filename = filepaths.front()});
+        if (reader == nullptr) {
+          throw std::runtime_error("No reader found for file extension: " + extension);
+        }
+
+        return reader->readTrajectory(filepaths, nullptr);
+      },
+      py::arg("filepaths"),
+      "Read multiple atomic trajectory files into a single continuous Trajectory object.\n\n"
+      "Parameters\n----------\n"
+      "filepaths : list of str\n"
+      "    List of paths to trajectory chunk files.\n\n"
+      "Returns\n-------\n"
+      "Trajectory\n"
+      "    Parsed trajectory containing all frames concatenated in chronological order.");
+
+  mod.def(
+      "read_trajectory",
+      [](const std::string &filepath) -> Trajectory {
+        const std::filesystem::path path(filepath);
+        const auto extension = path.extension().string();
+
+        auto *reader = ReaderFactory::instance().getReaderForExtension(
+            {.extension = extension, .filename = filepath});
+        if (reader == nullptr) {
+          throw std::runtime_error("No reader found for file extension: " + extension);
+        }
+
+        return reader->readTrajectory(filepath, nullptr);
+      },
+      py::arg("filepath"), "Read a trajectory file or wildcard pattern into a Trajectory object.");
+
+  mod.def(
+      "read_trajectory",
+      [](const std::vector<std::string> &filepaths) -> Trajectory {
+        if (filepaths.empty()) {
+          throw std::runtime_error("No files provided to read.");
+        }
+        const std::filesystem::path path(filepaths.front());
+        const auto extension = path.extension().string();
+
+        auto *reader = ReaderFactory::instance().getReaderForExtension(
+            {.extension = extension, .filename = filepaths.front()});
+        if (reader == nullptr) {
+          throw std::runtime_error("No reader found for file extension: " + extension);
+        }
+
+        return reader->readTrajectory(filepaths, nullptr);
+      },
+      py::arg("filepaths"),
+      "Read multiple trajectory files into a single continuous Trajectory object.");
+
+  mod.def(
       "read_structure",
       [](const std::string &filepath) -> Cell {
         const std::filesystem::path path(filepath);
-        auto extension = path.extension().string();
+        const auto extension = path.extension().string();
 
         auto *reader = ReaderFactory::instance().getReaderForExtension(
             {.extension = extension, .filename = filepath});
@@ -105,7 +168,7 @@ void init_io(py::module_ &mod) {
       "write",
       [](const Cell &cell, const std::string &filepath, const std::string &format, bool fractional,
          const std::string &title) {
-        auto *writer = resolveWriter(filepath, format);
+        const auto *const writer = resolveWriter(filepath, format);
         if (writer == nullptr) {
           throw std::runtime_error("No structure writer found for filepath: " + filepath);
         }

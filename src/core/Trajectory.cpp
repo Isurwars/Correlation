@@ -35,8 +35,26 @@ Trajectory::Trajectory(std::vector<Cell> frames, real_t time_step)
 
 Trajectory::Trajectory(std::shared_ptr<MappedFile> mapped_file, std::vector<size_t> frame_offsets,
                        FrameParser parser, real_t time_step)
-    : time_step_(time_step), mapped_file_(std::move(mapped_file)),
-      frame_offsets_(std::move(frame_offsets)), parser_(std::move(parser)) {
+    : time_step_(time_step), parser_(std::move(parser)) {
+  if (mapped_file && frame_offsets.size() > 1) {
+    mapped_files_.push_back(std::move(mapped_file));
+    frame_slices_.reserve(frame_offsets.size() - 1);
+    for (size_t i = 0; i + 1 < frame_offsets.size(); ++i) {
+      frame_slices_.push_back({.file_index = 0,
+                               .offset = frame_offsets[i],
+                               .size = frame_offsets[i + 1] - frame_offsets[i],});
+    }
+  }
+  if (getFrameCount() > 0) {
+    precomputeBondCutoffs();
+  }
+}
+
+Trajectory::Trajectory(std::vector<std::shared_ptr<MappedFile>> mapped_files,
+                       std::vector<MappedFrameSlice> frame_slices, FrameParser parser,
+                       real_t time_step)
+    : time_step_(time_step), mapped_files_(std::move(mapped_files)),
+      frame_slices_(std::move(frame_slices)), parser_(std::move(parser)) {
   if (getFrameCount() > 0) {
     precomputeBondCutoffs();
   }
@@ -63,8 +81,8 @@ std::span<const Cell> Trajectory::frameSpan() const {
 }
 
 size_t Trajectory::getFrameCount() const noexcept {
-  if (mapped_file_) {
-    return frame_offsets_.size() - 1;
+  if (!mapped_files_.empty()) {
+    return frame_slices_.size();
   }
   return frames_.size();
 }
@@ -76,9 +94,12 @@ Cell Trajectory::getFrame(size_t index) const {
   if (!frames_.empty()) {
     return frames_[index];
   }
-  if (mapped_file_) {
-    return parser_(mapped_file_->data() + frame_offsets_[index],
-                   frame_offsets_[index + 1] - frame_offsets_[index]);
+  if (!mapped_files_.empty()) {
+    const auto &slice = frame_slices_[index];
+    if (slice.file_index >= mapped_files_.size() || !mapped_files_[slice.file_index]) {
+      throw std::runtime_error("Trajectory::getFrame: invalid mapped file index");
+    }
+    return parser_(mapped_files_[slice.file_index]->data() + slice.offset, slice.size);
   }
   throw std::runtime_error("Trajectory::getFrame: trajectory is empty");
 }
@@ -101,16 +122,16 @@ const Cell &Trajectory::firstFrame() const {
 }
 
 void Trajectory::ensureMaterialized() const {
-  if (mapped_file_) {
+  if (!mapped_files_.empty()) {
     std::scoped_lock const lock(*init_mutex_);
-    if (!mapped_file_ || !frames_.empty()) {
+    if (mapped_files_.empty() || !frames_.empty()) {
       return;
     }
     size_t const count = getFrameCount();
     frames_.resize(count);
     for (size_t i = 0; i < count; ++i) {
-      frames_[i] = parser_(mapped_file_->data() + frame_offsets_[i],
-                           frame_offsets_[i + 1] - frame_offsets_[i]);
+      const auto &slice = frame_slices_[i];
+      frames_[i] = parser_(mapped_files_[slice.file_index]->data() + slice.offset, slice.size);
     }
     first_frame_.reset();
   }
@@ -147,8 +168,8 @@ void Trajectory::setBondCutoffs(const correlation::analysis::BondCutoffMatrix &c
 
 void Trajectory::addFrame(const Cell &frame) {
   ensureMaterialized();
-  mapped_file_.reset();
-  frame_offsets_.clear();
+  mapped_files_.clear();
+  frame_slices_.clear();
   parser_ = nullptr;
 
   if (!frames_.empty()) {
@@ -169,8 +190,8 @@ void Trajectory::precomputeBondCutoffs() const {
 
 void Trajectory::removeDuplicatedFrames(real_t tolerance) {
   ensureMaterialized();
-  mapped_file_.reset();
-  frame_offsets_.clear();
+  mapped_files_.clear();
+  frame_slices_.clear();
   parser_ = nullptr;
 
   if (frames_.size() < 2) {
@@ -186,8 +207,8 @@ void Trajectory::removeDuplicatedFrames(real_t tolerance) {
 
 void Trajectory::calculateVelocities() {
   ensureMaterialized();
-  mapped_file_.reset();
-  frame_offsets_.clear();
+  mapped_files_.clear();
+  frame_slices_.clear();
   parser_ = nullptr;
 
   VelocityIntegrator::calculateVelocities(frames_, time_step_);
