@@ -635,6 +635,9 @@ if(TARGET miniz)
   endif()
 endif()
 
+# 14. Vulkan (Hardware Accelerated 3D Viewport)
+include(${PROJECT_SOURCE_DIR}/cmake/FindOrFetchVulkan.cmake)
+
 # Restore BUILD_TESTING to caller scope
 if(DEFINED _CORRELATION_BUILD_TESTING_ENABLED)
   set(BUILD_TESTING ${_CORRELATION_BUILD_TESTING_ENABLED})

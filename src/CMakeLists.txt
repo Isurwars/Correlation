@@ -237,6 +237,9 @@ target_include_directories(render3d_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
 target_link_libraries(render3d_obj PRIVATE correlation_simd_options)
+if(TARGET Vulkan::Vulkan)
+    target_link_libraries(render3d_obj PRIVATE Vulkan::Vulkan)
+endif()
 
 # Add sources to library
 add_library(correlation_lib STATIC
@@ -269,6 +272,9 @@ target_link_libraries(correlation_lib PRIVATE readers_obj calculators_obj writer
 target_link_libraries(correlation_lib PUBLIC correlation_pdfgen)
 if(CORRELATION_ENABLE_LIBTORCH AND Torch_FOUND)
     target_link_libraries(correlation_lib PRIVATE "${TORCH_LIBRARIES}")
+endif()
+if(TARGET Vulkan::Vulkan)
+    target_link_libraries(correlation_lib PUBLIC Vulkan::Vulkan)
 endif()
 if(BUILD_WITH_CUDA OR BUILD_WITH_HIP)
     target_link_libraries(correlation_lib PRIVATE gpu_calculators_obj)
