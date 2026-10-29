@@ -13,6 +13,8 @@
 #include "render3d/vulkan/VulkanRenderEngine.hpp"
 #include <gtest/gtest.h>
 
+#ifdef CORRELATION_USE_VULKAN
+
 namespace correlation::render3d {
 namespace {
 
@@ -140,3 +142,5 @@ TEST_F(VulkanRenderEngineTests, FactoryAutoSelection) {
 
 } // namespace
 } // namespace correlation::render3d
+
+#endif // CORRELATION_USE_VULKAN

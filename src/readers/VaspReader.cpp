@@ -13,11 +13,11 @@
 #include <array>
 #include <cerrno>
 #include <cmath>
-#include <cstring>
 #include <fstream>
 #include <functional>
 #include <sstream>
 #include <stdexcept>
+#include <system_error>
 #include <utility>
 
 namespace correlation::readers {
@@ -280,8 +280,8 @@ VaspReader::readTrajectory(const std::string & /*filename*/,
 correlation::core::Cell VaspReader::read(const std::string &file_name) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
-    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) +
-                             ").");
+    throw std::runtime_error("Unable to read file: " + file_name + " (" +
+                             std::generic_category().message(errno) + ").");
   }
 
   const VaspParser parser(myfile);

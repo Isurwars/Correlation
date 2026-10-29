@@ -12,11 +12,11 @@
 
 #include <array>
 #include <cerrno>
-#include <cstring>
 #include <fstream>
 #include <functional>
 #include <sstream>
 #include <stdexcept>
+#include <system_error>
 #include <utility>
 
 namespace correlation::readers {
@@ -41,8 +41,8 @@ ArcReader::read(const std::string &file_name,
                 const std::function<void(float, const std::string &)> &progress_callback) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
-    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) +
-                             ").");
+    throw std::runtime_error("Unable to read file: " + file_name + " (" +
+                             std::generic_category().message(errno) + ").");
   }
 
   std::vector<correlation::core::Cell> frames;

@@ -35,7 +35,7 @@ else()
   FetchContent_Declare(
     TBB
     GIT_REPOSITORY https://github.com/uxlfoundation/oneTBB.git
-    GIT_TAG v2023.0.0
+    GIT_TAG v2023.2.0
     GIT_SHALLOW TRUE
     SYSTEM
     EXCLUDE_FROM_ALL

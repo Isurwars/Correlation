@@ -14,11 +14,11 @@
 #include <array>
 #include <cctype>
 #include <cerrno>
-#include <cstring>
 #include <fstream>
 #include <functional>
 #include <sstream>
 #include <stdexcept>
+#include <system_error>
 
 namespace correlation::readers {
 
@@ -116,8 +116,8 @@ void parsePositionsFrac(std::stringstream &line_stream, correlation::core::Cell 
 correlation::core::Cell CellReader::read(const std::string &file_name) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
-    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) +
-                             ").");
+    throw std::runtime_error("Unable to read file: " + file_name + " (" +
+                             std::generic_category().message(errno) + ").");
   }
 
   correlation::core::Cell temp_cell;

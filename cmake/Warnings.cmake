@@ -10,8 +10,10 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
         $<$<AND:$<BOOL:${CORRELATION_WARNINGS_AS_ERRORS}>,$<COMPILE_LANGUAGE:CXX>>:-Werror>)
 elseif(MSVC)
     target_compile_options(correlation_warnings INTERFACE
-        $<$<COMPILE_LANGUAGE:CXX>:/W4>
+        $<$<COMPILE_LANGUAGE:CXX>:/W4 /wd4324>
         $<$<AND:$<BOOL:${CORRELATION_WARNINGS_AS_ERRORS}>,$<COMPILE_LANGUAGE:CXX>>:/WX>)
+    target_compile_definitions(correlation_warnings INTERFACE
+        _CRT_SECURE_NO_WARNINGS)
 endif()
 
 # Link the warning policy into every first-party compile unit target.

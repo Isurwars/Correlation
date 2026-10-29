@@ -1,16 +1,16 @@
 # Graph Report - Correlation  (2026-10-29)
 
 ## Corpus Check
-- 616 files · ~5,347,681 words
+- 616 files · ~5,347,703 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 9690 nodes · 17294 edges · 510 communities (465 shown, 45 thin omitted)
+- 9690 nodes · 17294 edges · 507 communities (462 shown, 45 thin omitted)
 - Extraction: 94% EXTRACTED · 6% INFERRED · 0% AMBIGUOUS · INFERRED: 1114 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2fc25a34`
+- Built from commit: `cc9e8252`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -483,7 +483,6 @@
 - XdatcarReader.cpp
 - FFTWPlanCache
 - ConvertOptions
-- IFrameCalculator
 - real_t
 - CNCalculator::calculate
 - XdatcarReaderTests
@@ -510,9 +509,7 @@
 - RDFParams
 - CifWriter
 - core_bindings.cpp
-- OutmolReader.cpp
 - TEST
-- BondCutoffController::BondCutoffController
 - SDFCalculator.cpp
 - forEachPairWithin
 - ThreadLocalBond
@@ -561,7 +558,7 @@
 - **Core Analysis Architecture** — src_readers_obj, src_calculators_obj, src_writers_obj, src_correlation_lib [EXTRACTED 1.00]
 - **Structural Distribution Functions** — concept_pdf, concept_pad, concept_rdf [EXTRACTED 1.00]
 
-## Communities (510 total, 45 thin omitted)
+## Communities (507 total, 45 thin omitted)
 
 ### Community 0 - "PDF Generation Utilities"
 Cohesion: 0.07
@@ -725,7 +722,7 @@ Nodes (24): string, StructureWriterOptions, fractional, sort_by_element, title, 
 
 ### Community 40 - "PDF Comparison Renderer"
 Cohesion: 0.07
-Nodes (49): blendColor(), BlendParams, bg, fg, pair, real_t, string, string_view (+41 more)
+Nodes (47): blendColor(), BlendParams, bg, fg, pair, real_t, string, string_view (+39 more)
 
 ### Community 41 - "Histogram Metadata"
 Cohesion: 0.14
@@ -796,8 +793,8 @@ Cohesion: 0.09
 Nodes (39): CorrelationLengthFit, is_plateau, r_squared, xi_6, real_t, AccumulatedG6Data, g6_values, pair_counts (+31 more)
 
 ### Community 58 - "dstr_printf"
-Cohesion: 0.09
-Nodes (48): determine_image_format(), dgets(), find_128_encoding(), find_39_encoding(), find_font_widths(), find_word_break(), get_file(), get_img_display_dimensions() (+40 more)
+Cohesion: 0.08
+Nodes (53): determine_image_format(), dgets(), find_128_encoding(), find_39_encoding(), find_font_widths(), find_word_break(), get_file(), get_img_display_dimensions() (+45 more)
 
 ### Community 59 - "SvgComparisonRenderer"
 Cohesion: 0.09
@@ -1260,8 +1257,8 @@ Cohesion: 0.25
 Nodes (8): normalize_rdf_bins(), RDFNormalizationParams, CORRELATION_RESTRICT, count, g_norm, inv_Ni_dr, inv_Nj_dr, pi4_rho_j
 
 ### Community 174 - "pdf_add_image_data"
-Cohesion: 0.11
-Nodes (37): FILE, flexarray_append(), flexarray_clear(), flexarray_get(), flexarray_get_bin(), flexarray_get_bin_offset(), flexarray_get_bin_size(), flexarray_set() (+29 more)
+Cohesion: 0.13
+Nodes (34): FILE, flexarray_append(), flexarray_clear(), flexarray_get(), flexarray_get_bin(), flexarray_get_bin_offset(), flexarray_get_bin_size(), flexarray_set() (+26 more)
 
 ### Community 175 - "AnalysisRunner.cpp"
 Cohesion: 0.29
@@ -2000,8 +1997,8 @@ Cohesion: 0.25
 Nodes (8): BondCandidate, atom_idx, d_sq, j_idx, scratch_idx, type_a, type_b, updateHistogram
 
 ### Community 405 - "TEST"
-Cohesion: 0.11
-Nodes (25): calculateAshcroftWeights, ensureNeighborsComputed, RDFParams, real_t, string, string_view, vector, DistributionFunctions::addHistogram() (+17 more)
+Cohesion: 0.10
+Nodes (28): calculateAshcroftWeights, ensureNeighborsComputed, RDFParams, real_t, string, string_view, vector, DistributionFunctions::addHistogram() (+20 more)
 
 ### Community 406 - "ShiftBounds"
 Cohesion: 0.25
@@ -2016,8 +2013,8 @@ Cohesion: 0.13
 Nodes (20): size_t, parseNequipFrame, CommentData, function, string, Trajectory, vector, NequipParser (+12 more)
 
 ### Community 409 - "OrbUnitCutoffResult"
-Cohesion: 0.25
-Nodes (10): BondCutoffService, applyScaledBondCutoffs, getBondCutoff, getMinBondCutoff, setUniformBondCutoff, autoDetectCutoffs, syncCutoffsToUI, BondCutoffController::applyScaledCutoffs() (+2 more)
+Cohesion: 0.17
+Nodes (14): BondCutoffService, applyScaledBondCutoffs, getBondCutoff, getMinBondCutoff, setUniformBondCutoff, autoDetectCutoffs, syncCutoffsToUI, BondCutoffController::applyScaledCutoffs() (+6 more)
 
 ### Community 410 - "PlotSize"
 Cohesion: 0.20
@@ -2084,8 +2081,8 @@ Cohesion: 0.22
 Nodes (8): BondCutoffControllerTests, window_, AppWindow, ComponentHandle, optional, T, testing::Test, requireValue()
 
 ### Community 428 - "parseDistanceValue"
-Cohesion: 0.19
-Nodes (9): BaseWriter, getExtensions, getName, write, string, unique_ptr, WriterFactory::getWriter(), WriterFactory::getWriterForExtension() (+1 more)
+Cohesion: 0.11
+Nodes (16): BaseWriter, getExtensions, getName, write, CSVWriter, writeAllCSVs, DistributionFunctions, string (+8 more)
 
 ### Community 429 - "compute_distances_gpu"
 Cohesion: 0.18
@@ -2263,10 +2260,6 @@ Nodes (6): BasicClustering, ClusterCalculatorTests, calculateFrame, SingleGiantC
 Cohesion: 0.18
 Nodes (9): ConvertOptions, fractional, from_format, input_file, output_file, quiet, to_format, string (+1 more)
 
-### Community 476 - "IFrameCalculator"
-Cohesion: 0.25
-Nodes (7): CSVWriter, writeAllCSVs, DistributionFunctions, string, vector, module_, init_writers()
-
 ### Community 477 - "real_t"
 Cohesion: 0.31
 Nodes (9): FiltersConsecutiveDuplicates, TrajectoryFilter, filterConsecutiveDuplicates, removeDuplicatedFrames, PreservesUniqueFrames, RemovesDuplicatesInTrajectory, Trajectory::removeDuplicatedFrames(), TEST() (+1 more)
@@ -2367,17 +2360,9 @@ Nodes (11): BaseStructureWriter, getExtensions, getName, write, CarWriter, write
 Cohesion: 0.24
 Nodes (17): bindAtom(), bindCell(), bindElement(), bindTrajectory(), cellFromArrays(), cellGetElementIds(), cellGetLatticeParameters(), cellGetLatticeVectors() (+9 more)
 
-### Community 503 - "OutmolReader.cpp"
-Cohesion: 0.67
-Nodes (3): AnalysisSettings, DistributionFunctions, DADCalculator::calculateFrame()
-
 ### Community 504 - "TEST"
 Cohesion: 0.33
 Nodes (6): BasicUsage, CreateAnalyzerOutOfBoundsReturnsNullptr, ProgressCallbackIsCalled, StartAndEndFrameLimits, TEST(), TrajectoryAnalyzerTests
-
-### Community 505 - "BondCutoffController::BondCutoffController"
-Cohesion: 0.50
-Nodes (4): BondCutoffController::BondCutoffController(), AnalysisDispatcher, AppWindow, TrajectoryLoader
 
 ### Community 506 - "SDFCalculator.cpp"
 Cohesion: 0.50

@@ -12,6 +12,8 @@
 #include "render3d/vulkan/VulkanPipelineManager.hpp"
 #include <gtest/gtest.h>
 
+#ifdef CORRELATION_USE_VULKAN
+
 namespace correlation::render3d::vulkan {
 namespace {
 
@@ -81,3 +83,5 @@ TEST_F(VulkanPipelineManagerTests, MoveSemantics) {
 
 } // namespace
 } // namespace correlation::render3d::vulkan
+
+#endif // CORRELATION_USE_VULKAN

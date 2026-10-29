@@ -111,10 +111,6 @@ add_executable(correlation_unit_tests
     unit/render3d/RenderEngineFactoryTests.cpp
     unit/render3d/LodControllerTests.cpp
     unit/render3d/TrajectoryStreamerTests.cpp
-    unit/render3d/VulkanOffscreenTargetTests.cpp
-    unit/render3d/VulkanPipelineManagerTests.cpp
-    unit/render3d/VulkanBufferManagerTests.cpp
-    unit/render3d/VulkanRenderEngineTests.cpp
     unit/analysis/CorrelationEngineTests.cpp
     unit/analysis/CutoffSanityCheckerTests.cpp
     unit/analysis/DistributionPostProcessorTests.cpp
@@ -148,6 +144,14 @@ if(WIN32)
     target_link_libraries(correlation_unit_tests PRIVATE wininet Shell32)
 endif()
 add_dependencies(correlation_unit_tests correlation_lib cli_parser_obj app_services_obj)
+if(CORRELATION_HAS_VULKAN)
+    target_sources(correlation_unit_tests PRIVATE
+        unit/render3d/VulkanOffscreenTargetTests.cpp
+        unit/render3d/VulkanPipelineManagerTests.cpp
+        unit/render3d/VulkanBufferManagerTests.cpp
+        unit/render3d/VulkanRenderEngineTests.cpp
+    )
+endif()
 # (Definitions and discovery are configured at the end of the file in a loop)
 
 #-----------------------------------------------------------

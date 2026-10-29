@@ -45,7 +45,7 @@ struct alignas(64) BondCutoffRange {
  * providing RowProxy and std::span row views for seamless operator[i][j] indexing
  * with zero heap fragmentation.
  */
-class alignas(64) BondCutoffMatrix {
+class BondCutoffMatrix {
 public:
   /**
    * @class RowProxy
