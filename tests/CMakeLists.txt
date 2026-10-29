@@ -112,6 +112,9 @@ add_executable(correlation_unit_tests
     unit/render3d/LodControllerTests.cpp
     unit/render3d/TrajectoryStreamerTests.cpp
     unit/render3d/VulkanOffscreenTargetTests.cpp
+    unit/render3d/VulkanPipelineManagerTests.cpp
+    unit/render3d/VulkanBufferManagerTests.cpp
+    unit/render3d/VulkanRenderEngineTests.cpp
     unit/analysis/CorrelationEngineTests.cpp
     unit/analysis/CutoffSanityCheckerTests.cpp
     unit/analysis/DistributionPostProcessorTests.cpp

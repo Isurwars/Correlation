@@ -8,10 +8,24 @@
 
 #pragma once
 
+#include "render3d/Camera3D.hpp"
 #include "render3d/IRenderEngine.hpp"
+#include "render3d/Scene3D.hpp"
+#include <memory>
 #include <vector>
 
+#ifdef CORRELATION_USE_VULKAN
+#include <vulkan/vulkan.h>
+#endif
+
 namespace correlation::render3d {
+
+namespace vulkan {
+class VulkanDevice;
+class VulkanOffscreenTarget;
+class VulkanPipelineManager;
+class VulkanBufferManager;
+} // namespace vulkan
 
 /**
  * @class VulkanRenderEngine
@@ -19,8 +33,13 @@ namespace correlation::render3d {
  */
 class VulkanRenderEngine final : public IRenderEngine {
 public:
-  VulkanRenderEngine() = default;
+  VulkanRenderEngine();
   ~VulkanRenderEngine() override;
+
+  VulkanRenderEngine(const VulkanRenderEngine &) = delete;
+  VulkanRenderEngine &operator=(const VulkanRenderEngine &) = delete;
+  VulkanRenderEngine(VulkanRenderEngine &&) noexcept = default;
+  VulkanRenderEngine &operator=(VulkanRenderEngine &&) noexcept = default;
 
   [[nodiscard]] bool initialize(const ViewportDimensions &dimensions) override;
   void resize(const ViewportDimensions &dimensions) override;
@@ -33,11 +52,31 @@ public:
   [[nodiscard]] bool isHardwareAccelerated() const noexcept override;
 
 private:
+  void cleanup() noexcept;
+  void recordRenderCommands();
+  void bindViewportAndDescriptors();
+  void drawWireframe();
+  void drawBonds();
+  void drawAtoms();
+
   ViewportDimensions dimensions_{.width = 800, .height = 600};
   std::shared_ptr<const Scene3D> scene_;
   Camera3D camera_;
-  std::vector<uint8_t> frame_pixels_;
+  bool render_bonds_{true};
+  bool render_wireframe_{true};
   bool initialized_{false};
+  uint32_t active_staging_index_{0};
+
+#ifdef CORRELATION_USE_VULKAN
+  std::unique_ptr<vulkan::VulkanDevice> device_;
+  std::unique_ptr<vulkan::VulkanOffscreenTarget> target_;
+  std::unique_ptr<vulkan::VulkanPipelineManager> pipeline_manager_;
+  std::unique_ptr<vulkan::VulkanBufferManager> buffer_manager_;
+  VkCommandBuffer render_command_buffer_{VK_NULL_HANDLE};
+  VkFence render_fence_{VK_NULL_HANDLE};
+#endif
+
+  std::vector<uint8_t> fallback_pixels_;
 };
 
 } // namespace correlation::render3d

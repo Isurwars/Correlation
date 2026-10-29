@@ -504,7 +504,9 @@
   "502": "core_bindings.cpp",
   "503": "OutmolReader.cpp",
   "504": "TEST",
+  "505": "BondCutoffController::BondCutoffController",
+  "506": "SDFCalculator.cpp",
+  "507": "forEachPairWithin",
   "510": "ThreadLocalBond",
-  "511": "RDFParams",
-  "512": "SteinhardtOptions"
+  "511": "RDFParams"
 }
