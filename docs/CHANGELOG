@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.1.2] - 2026-10-29
+
+### 🚀 Features & Hardware Acceleration
+- **Vulkan 3D Viewport Engine (`VulkanRenderEngine`, `RenderEngineFactory`)**: Implemented headless hardware-accelerated Vulkan offscreen rendering pipeline conforming to `IRenderEngine`, delivering high-throughput 3D molecular visualization with automatic hardware probing and transparent fallback to `CpuRenderEngine`.
+- **Analytical Impostor Pipelines (`VulkanPipelineManager`)**: Engineered graphics pipelines using analytical ray-sphere and ray-cylinder intersection shaders with perspective-correct `gl_FragDepth` modification, Blinn-Phong lighting, atom halo highlight rings, selection dimming, alpha blending, and unit cell wireframe line rendering (`f7295b3f`).
+- **Dynamic GPU Memory & Instance Buffering (`VulkanBufferManager`, `VulkanBuffer`)**: Implemented host-coherent uniform buffers (`SceneUboData`) for view/projection matrices and directional lighting, static billboard quad geometry buffers, and geometric $2\times$ power-of-two growth for atom, bond, and lattice wireframe instances (`f7295b3f`, `5ec34fe6`).
+- **Headless Offscreen Target & Asynchronous Staging Readout (`VulkanOffscreenTarget`)**: Designed RGBA8 offscreen framebuffer with dynamic depth format negotiation (`VK_FORMAT_D32_SFLOAT`/`D24`), image layout transitions, and double-buffered host-visible staging readbacks (`STAGING_BUFFER_COUNT = 2`) for zero-stall pixel streaming to Slint UI (`2fc25a34`).
+- **Embedded SPIR-V Bytecode & Fallback Shaders (`SphereImpostorSpv`, `CylinderImpostorSpv`, `LineWireframeSpv`)**: Integrated ahead-of-time SPIR-V shader compilation via `glslc` with embedded pre-compiled C++ fallback arrays, ensuring deterministic builds across environments lacking local Vulkan SDK installations (`2034d0ba`).
+
+### 🧪 Testing & Verification
+- **Vulkan Subsystem Test Suite (`VulkanPipelineManagerTests`, `VulkanBufferManagerTests`, `VulkanRenderEngineTests`, `VulkanOffscreenTargetTests`)**: Added comprehensive Google Test suites verifying device capability probing, pipeline handle generation, dynamic geometric buffer growth, offscreen clear-color and foreground atom pixel readbacks, dynamic viewport resizing, and factory backend selection (`2fc25a34`, `f7295b3f`).
+
 ## [4.1.1] - 2026-10-28
 
 ### 🚀 Features & File I/O
