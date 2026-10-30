@@ -420,4 +420,43 @@ TEST_F(TrajectoryTests, FirstFrameConcurrentThreadSafe) {
   }
 }
 
+TEST_F(TrajectoryTests, TracksLatticeParametersAndVolumePerCell) {
+  Cell frame_0({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+  frame_0.addAtom("H", {1.0, 1.0, 1.0});
+
+  Cell frame_1({{12.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+  frame_1.addAtom("H", {1.0, 1.0, 1.0}); // Same atom coordinates, different box
+
+  Trajectory traj({frame_0, frame_1}, 1.0);
+
+  // Even though atom coordinates are identical, box parameters differ so neither is removed
+  EXPECT_EQ(traj.getFrameCount(), 2);
+  EXPECT_EQ(traj.getRemovedFrameCount(), 0);
+
+  EXPECT_DOUBLE_EQ(traj.getLatticeParameters(0)[0], 10.0);
+  EXPECT_DOUBLE_EQ(traj.getLatticeParameters(1)[0], 12.0);
+  EXPECT_NEAR(traj.getVolume(0), 1000.0, 1e-6);
+  EXPECT_NEAR(traj.getVolume(1), 1200.0, 1e-6);
+
+  const auto &all_params = traj.getFrameLatticeParameters();
+  const auto &all_volumes = traj.getFrameVolumes();
+  ASSERT_EQ(all_params.size(), 2);
+  ASSERT_EQ(all_volumes.size(), 2);
+  EXPECT_DOUBLE_EQ(all_params[0][0], 10.0);
+  EXPECT_DOUBLE_EQ(all_params[1][0], 12.0);
+  EXPECT_NEAR(all_volumes[0], 1000.0, 1e-6);
+  EXPECT_NEAR(all_volumes[1], 1200.0, 1e-6);
+
+  // Add a third frame via addFrame
+  Cell frame_2({{8.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+  frame_2.addAtom("H", {2.0, 1.0, 1.0});
+  traj.addFrame(frame_2);
+
+  EXPECT_EQ(traj.getFrameCount(), 3);
+  EXPECT_DOUBLE_EQ(traj.getLatticeParameters(2)[0], 8.0);
+  EXPECT_NEAR(traj.getVolume(2), 800.0, 1e-6);
+  EXPECT_THROW((void)traj.getLatticeParameters(3), std::out_of_range);
+  EXPECT_THROW((void)traj.getVolume(3), std::out_of_range);
+}
+
 } // namespace correlation::testing

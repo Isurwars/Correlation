@@ -9,6 +9,7 @@
 #include "readers/ReaderFactory.hpp"
 
 #include <algorithm>
+#include <filesystem>
 #include <fstream>
 
 namespace correlation::readers {
@@ -16,6 +17,10 @@ namespace correlation::readers {
 namespace {
 
 std::string_view sniffFormatFromLine(std::string_view uline) {
+  if (uline.contains("ITEM: TIMESTEP") || uline.contains("ITEM: NUMBER OF ATOMS") ||
+      uline.contains("ITEM: BOX BOUNDS") || uline.contains("ITEM: ATOMS")) {
+    return ".dump";
+  }
   if (uline.contains("CELL_PARAMETERS") || uline.contains("ATOMIC_POSITIONS") ||
       uline.contains("QUANTUM ESPRESSO") || uline.contains("PWSCF") || uline.contains("&CONTROL") ||
       uline.contains("&SYSTEM")) {
@@ -66,6 +71,16 @@ std::string sniffFormatFromOutFile(std::string_view filename) {
   }
 
   return "";
+}
+
+bool isLammpsDumpFilenamePattern(std::string_view filename) {
+  if (filename.empty()) {
+    return false;
+  }
+  std::string basename = std::filesystem::path(filename).filename().string();
+  std::ranges::transform(basename, basename.begin(), ::tolower);
+  return basename.starts_with("dump.") || basename.contains(".dump.") ||
+         basename.contains(".lammpstrj.");
 }
 
 } // namespace
@@ -119,6 +134,22 @@ BaseReader *ReaderFactory::getReaderForExtension(const ReaderExtensionQuery &que
   const auto iter = extension_map_.find(lower_ext);
   if (iter != extension_map_.end()) {
     return iter->second;
+  }
+
+  if (!query.filename.empty()) {
+    if (isLammpsDumpFilenamePattern(query.filename)) {
+      const auto dump_iter = extension_map_.find(".dump");
+      if (dump_iter != extension_map_.end()) {
+        return dump_iter->second;
+      }
+    }
+    const std::string sniffed = sniffFormatFromOutFile(query.filename);
+    if (!sniffed.empty()) {
+      const auto sniff_iter = extension_map_.find(sniffed);
+      if (sniff_iter != extension_map_.end()) {
+        return sniff_iter->second;
+      }
+    }
   }
   return nullptr;
 }

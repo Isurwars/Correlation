@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <filesystem>
+#include <fstream>
 #include <stdexcept>
 #include <utility>
 
@@ -29,6 +30,28 @@ FileType getExtensionlessVaspType(const std::filesystem::path &filepath) {
     return FileType::Xdatcar;
   }
   return FileType::Unknown;
+}
+
+bool isLammpsDumpBasename(const std::filesystem::path &filepath) {
+  std::string basename = filepath.filename().string();
+  std::ranges::transform(basename, basename.begin(), ::tolower);
+  return basename.starts_with("dump.") || basename.contains(".dump.") ||
+         basename.contains(".lammpstrj.");
+}
+
+bool hasLammpsDumpHeader(const std::filesystem::path &filepath) {
+  std::ifstream file(filepath);
+  if (!file.is_open()) {
+    return false;
+  }
+  std::string line;
+  for (int i = 0; i < 10 && std::getline(file, line); ++i) {
+    if (line.contains("ITEM: TIMESTEP") || line.contains("ITEM: NUMBER OF ATOMS") ||
+        line.contains("ITEM: BOX BOUNDS")) {
+      return true;
+    }
+  }
+  return false;
 }
 
 const std::unordered_map<std::string, FileType> &getExtensionTypeMap() {
@@ -62,9 +85,20 @@ FileType determineFileType(const std::string &filename) {
     return iter->second;
   }
 
+  if (isLammpsDumpBasename(filepath)) {
+    return FileType::LammpsDump;
+  }
+
   // Check basename for extensionless VASP files (POSCAR, CONTCAR, XDATCAR)
   if (ext.empty() || ext == ".") {
-    return getExtensionlessVaspType(filepath);
+    const FileType vasp_type = getExtensionlessVaspType(filepath);
+    if (vasp_type != FileType::Unknown) {
+      return vasp_type;
+    }
+  }
+
+  if (hasLammpsDumpHeader(filepath)) {
+    return FileType::LammpsDump;
   }
 
   return FileType::Unknown;
@@ -102,6 +136,9 @@ BaseReader *findReaderForFile(const std::string &filename) {
   }
   if (basename == "xdatcar") {
     return ReaderFactory::instance().getReaderForExtension(".xdatcar");
+  }
+  if (isLammpsDumpBasename(filename) || hasLammpsDumpHeader(filename)) {
+    return ReaderFactory::instance().getReaderForExtension(".dump");
   }
 
   return nullptr;

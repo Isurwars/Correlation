@@ -11,11 +11,14 @@
 #include "readers/NaturalSort.hpp"
 #include "readers/ReaderFactory.hpp"
 
+#include <algorithm>
 #include <charconv>
 #include <cstring>
 #include <optional>
+#include <span>
 #include <sstream>
 #include <stdexcept>
+#include <string_view>
 
 namespace correlation::readers {
 
@@ -54,6 +57,48 @@ inline std::string extractLine(const char *data, size_t pos, size_t line_end) {
   return {data + pos, line_end - pos};
 }
 
+inline void tokenizeLine(std::string_view line, std::vector<std::string_view> &fields) {
+  fields.clear();
+  size_t idx = 0;
+  const size_t len = line.size();
+  while (idx < len) {
+    while (idx < len && std::isspace(static_cast<unsigned char>(line[idx])) != 0) {
+      ++idx;
+    }
+    if (idx >= len) {
+      break;
+    }
+    const size_t start = idx;
+    while (idx < len && std::isspace(static_cast<unsigned char>(line[idx])) == 0) {
+      ++idx;
+    }
+    fields.emplace_back(line.data() + start, idx - start);
+  }
+}
+
+[[nodiscard]] inline bool parseRealField(std::string_view token, real_t &out) noexcept {
+  double val = 0.0;
+  const auto [ptr, ec] = std::from_chars(token.data(), token.data() + token.size(), val);
+  if (ec != std::errc()) {
+    return false;
+  }
+  out = static_cast<real_t>(val);
+  return true;
+}
+
+[[nodiscard]] inline int64_t parseAtomIdOrDefault(std::string_view token,
+                                                  int64_t fallback) noexcept {
+  int64_t parsed_id = fallback;
+  const auto [ptr, ec] = std::from_chars(token.data(), token.data() + token.size(), parsed_id);
+  return (ec == std::errc()) ? parsed_id : fallback;
+}
+
+struct ParsedAtomRecord {
+  int64_t id{0};
+  std::string symbol;
+  correlation::math::Vector3<real_t> pos;
+};
+
 // Struct to encapsulate parsing a single LAMMPS dump frame.
 struct LammpsFrameParser {
   const char *data = nullptr;
@@ -68,8 +113,15 @@ struct LammpsFrameParser {
     return line;
   }
 
+  std::string_view nextLineView() {
+    line_end = findLineEnd(data, size, offset);
+    const std::string_view line(data + offset, line_end - offset);
+    offset = skipLineEnding(data, size, line_end);
+    return line;
+  }
+
   int parseAtomCount() {
-    nextLine(); // "ITEM: NUMBER OF ATOMS"
+    nextLineView(); // "ITEM: NUMBER OF ATOMS"
     const std::string line = nextLine();
     int num_atoms = 0;
     try {
@@ -84,7 +136,7 @@ struct LammpsFrameParser {
     return num_atoms;
   }
 
-  correlation::core::Cell parseBoxBounds() {
+  correlation::core::Cell parseBoxBounds(correlation::math::Vector3<real_t> &origin) {
     const std::string line = nextLine(); // "ITEM: BOX BOUNDS ..."
     const bool triclinic = line.contains("xy");
 
@@ -102,6 +154,7 @@ struct LammpsFrameParser {
       std::stringstream(nextLine()) >> xlo >> xhi >> x_y;
       std::stringstream(nextLine()) >> ylo >> yhi >> x_z;
       std::stringstream(nextLine()) >> zlo >> zhi >> y_z;
+      origin = {xlo, ylo, zlo};
       const real_t l_x = xhi - xlo;
       const real_t l_y = yhi - ylo;
       const real_t l_z = zhi - zlo;
@@ -110,6 +163,7 @@ struct LammpsFrameParser {
     std::stringstream(nextLine()) >> xlo >> xhi;
     std::stringstream(nextLine()) >> ylo >> yhi;
     std::stringstream(nextLine()) >> zlo >> zhi;
+    origin = {xlo, ylo, zlo};
     return correlation::core::Cell({xhi - xlo, 0.0, 0.0}, {0.0, yhi - ylo, 0.0},
                                    {0.0, 0.0, zhi - zlo});
   }
@@ -124,103 +178,121 @@ struct LammpsFrameParser {
     bool scaled_coords = false;
   };
 
-  ColumnLayout parseAtomsHeader() {
-    const std::string line = nextLine(); // "ITEM: ATOMS ..."
-
-    std::istringstream header_ss(line);
-    std::string token;
-    header_ss >> token >> token; // consume "ITEM:" and "ATOMS"
-
-    std::vector<std::string> col_names;
-    while (header_ss >> token) {
-      col_names.push_back(token);
+  static void assignColumnRole(std::string_view col_name, int col_idx, ColumnLayout &layout) {
+    if (col_name == "id") {
+      layout.col_id = col_idx;
+    } else if (col_name == "type") {
+      layout.col_type = col_idx;
+    } else if (col_name == "element") {
+      layout.col_element = col_idx;
+    } else if (col_name == "x" || col_name == "xu") {
+      layout.col_x = col_idx;
+    } else if (col_name == "y" || col_name == "yu") {
+      layout.col_y = col_idx;
+    } else if (col_name == "z" || col_name == "zu") {
+      layout.col_z = col_idx;
+    } else if (col_name == "xs" || col_name == "xsu") {
+      layout.col_x = col_idx;
+      layout.scaled_coords = true;
+    } else if (col_name == "ys" || col_name == "ysu") {
+      layout.col_y = col_idx;
+      layout.scaled_coords = true;
+    } else if (col_name == "zs" || col_name == "zsu") {
+      layout.col_z = col_idx;
+      layout.scaled_coords = true;
     }
+  }
+
+  ColumnLayout parseAtomsHeader() {
+    const std::string_view line = nextLineView(); // "ITEM: ATOMS ..."
+    std::vector<std::string_view> tokens;
+    tokenizeLine(line, tokens);
 
     ColumnLayout layout;
-    for (size_t i = 0; i < col_names.size(); ++i) {
-      const std::string &col_name = col_names[i];
-      if (col_name == "id") {
-        layout.col_id = static_cast<int>(i);
-      } else if (col_name == "type") {
-        layout.col_type = static_cast<int>(i);
-      } else if (col_name == "element") {
-        layout.col_element = static_cast<int>(i);
-      } else if (col_name == "x") {
-        layout.col_x = static_cast<int>(i);
-      } else if (col_name == "y") {
-        layout.col_y = static_cast<int>(i);
-      } else if (col_name == "z") {
-        layout.col_z = static_cast<int>(i);
-      } else if (col_name == "xs" || col_name == "xsu") {
-        layout.col_x = static_cast<int>(i);
-        layout.scaled_coords = true;
-      } else if (col_name == "ys" || col_name == "ysu") {
-        layout.col_y = static_cast<int>(i);
-        layout.scaled_coords = true;
-      } else if (col_name == "zs" || col_name == "zsu") {
-        layout.col_z = static_cast<int>(i);
-        layout.scaled_coords = true;
-      }
+    for (size_t i = 2; i < tokens.size(); ++i) {
+      assignColumnRole(tokens[i], static_cast<int>(i - 2), layout);
     }
     return layout;
   }
 
-  void parseAtomLines(correlation::core::Cell &frame, int num_atoms, const ColumnLayout &layout) {
+  static std::string resolveElementSymbol(std::span<const std::string_view> fields, int row_idx,
+                                          const ColumnLayout &layout) {
+    const int num_fields = static_cast<int>(fields.size());
+    if (layout.col_element >= 0 && layout.col_element < num_fields) {
+      return std::string(fields[layout.col_element]);
+    }
+    if (layout.col_type >= 0 && layout.col_type < num_fields) {
+      return std::string(fields[layout.col_type]);
+    }
+    if (layout.col_id >= 0 && layout.col_id < num_fields) {
+      return std::string(fields[layout.col_id]);
+    }
+    return std::to_string(row_idx + 1);
+  }
+
+  static std::optional<ParsedAtomRecord>
+  parseSingleAtomRecord(std::span<const std::string_view> fields, int row_idx,
+                        const ColumnLayout &layout,
+                        const correlation::math::Matrix3<real_t> &lattice_vector,
+                        const correlation::math::Vector3<real_t> &origin) {
+    const int num_fields = static_cast<int>(fields.size());
+    if (layout.col_x >= num_fields || layout.col_y >= num_fields || layout.col_z >= num_fields) {
+      return std::nullopt;
+    }
+
+    real_t raw_x = 0.0;
+    real_t raw_y = 0.0;
+    real_t raw_z = 0.0;
+    if (!parseRealField(fields[layout.col_x], raw_x) ||
+        !parseRealField(fields[layout.col_y], raw_y) ||
+        !parseRealField(fields[layout.col_z], raw_z)) {
+      return std::nullopt;
+    }
+
+    const int64_t fallback_id = static_cast<int64_t>(row_idx) + 1;
+    const int64_t atom_id = (layout.col_id >= 0 && layout.col_id < num_fields)
+                                ? parseAtomIdOrDefault(fields[layout.col_id], fallback_id)
+                                : fallback_id;
+
+    const correlation::math::Vector3<real_t> pos =
+        layout.scaled_coords
+            ? (lattice_vector * correlation::math::Vector3<real_t>{raw_x, raw_y, raw_z})
+            : correlation::math::Vector3<real_t>{raw_x - origin.x(), raw_y - origin.y(),
+                                                 raw_z - origin.z()};
+
+    return ParsedAtomRecord{
+        .id = atom_id,
+        .symbol = resolveElementSymbol(fields, row_idx, layout),
+        .pos = pos,
+    };
+  }
+
+  void parseAtomLines(correlation::core::Cell &frame, int num_atoms, const ColumnLayout &layout,
+                      const correlation::math::Vector3<real_t> &origin) {
     if (layout.col_x == -1 || layout.col_y == -1 || layout.col_z == -1) {
       return; // Cannot parse positions — return empty frame
     }
 
     const auto &lattice_vector = frame.latticeVectors();
-    std::string token;
+    std::vector<std::string_view> fields;
+    fields.reserve(12);
+    std::vector<ParsedAtomRecord> records;
+    records.reserve(static_cast<size_t>(num_atoms));
 
-    for (int i = 0; i < num_atoms; ++i) {
-      if (offset >= size) {
-        break;
+    for (int i = 0; i < num_atoms && offset < size; ++i) {
+      tokenizeLine(nextLineView(), fields);
+      if (auto rec = parseSingleAtomRecord(fields, i, layout, lattice_vector, origin)) {
+        records.push_back(std::move(*rec));
       }
-      const std::string line = nextLine();
+    }
 
-      std::istringstream atom_ss(line);
-      std::vector<std::string> fields;
-      while (atom_ss >> token) {
-        fields.push_back(token);
-      }
+    if (layout.col_id >= 0) {
+      std::ranges::stable_sort(records, {}, &ParsedAtomRecord::id);
+    }
 
-      const int num_fields = static_cast<int>(fields.size());
-      if (layout.col_x >= num_fields || layout.col_y >= num_fields || layout.col_z >= num_fields) {
-        continue;
-      }
-
-      real_t frac_x = 0.0;
-      real_t frac_y = 0.0;
-      real_t frac_z = 0.0;
-      try {
-        frac_x = static_cast<real_t>(std::stod(fields[layout.col_x]));
-        frac_y = static_cast<real_t>(std::stod(fields[layout.col_y]));
-        frac_z = static_cast<real_t>(std::stod(fields[layout.col_z]));
-      } catch (const std::exception &) {
-        continue;
-      }
-
-      // Determine element symbol.
-      std::string element_symbol;
-      if (layout.col_element >= 0 && layout.col_element < num_fields) {
-        element_symbol = fields[layout.col_element];
-      } else if (layout.col_type >= 0 && layout.col_type < num_fields) {
-        element_symbol = fields[layout.col_type];
-      } else {
-        element_symbol = (layout.col_id >= 0 && layout.col_id < num_fields) ? fields[layout.col_id]
-                                                                            : std::to_string(i + 1);
-      }
-
-      // Convert scaled (fractional) coordinates to Cartesian if needed.
-      correlation::math::Vector3<real_t> pos;
-      if (layout.scaled_coords) {
-        pos = lattice_vector * correlation::math::Vector3<real_t>{frac_x, frac_y, frac_z};
-      } else {
-        pos = {frac_x, frac_y, frac_z};
-      }
-
-      frame.addAtom(element_symbol, pos);
+    frame.reserveAtoms(records.size());
+    for (const auto &rec : records) {
+      frame.addAtom(rec.symbol, rec.pos);
     }
   }
 };
@@ -234,20 +306,21 @@ correlation::core::Cell LammpsDumpReader::parseDumpFrame(const char *data, size_
   LammpsFrameParser parser{.data = data, .size = size, .offset = 0, .line_end = 0};
 
   // --- ITEM: TIMESTEP ---
-  parser.nextLine(); // "ITEM: TIMESTEP"
-  parser.nextLine(); // timestep value (ignored)
+  parser.nextLineView(); // "ITEM: TIMESTEP"
+  parser.nextLineView(); // timestep value (ignored)
 
   // --- NUMBER OF ATOMS ---
   const int num_atoms = parser.parseAtomCount();
 
   // --- BOX BOUNDS & Build the Cell ---
-  correlation::core::Cell frame = parser.parseBoxBounds();
+  correlation::math::Vector3<real_t> origin{0.0, 0.0, 0.0};
+  correlation::core::Cell frame = parser.parseBoxBounds(origin);
 
   // --- ATOMS header — discover column layout ---
   const auto layout = parser.parseAtomsHeader();
 
   // --- Atom lines ---
-  parser.parseAtomLines(frame, num_atoms, layout);
+  parser.parseAtomLines(frame, num_atoms, layout, origin);
 
   return frame;
 }

@@ -17,6 +17,16 @@ namespace {
   if (current.atomCount() != last.atomCount()) {
     return false;
   }
+  if (std::abs(current.volume() - last.volume()) > tolerance) {
+    return false;
+  }
+  const auto &curr_params = current.latticeParameters();
+  const auto &last_params = last.latticeParameters();
+  for (size_t k = 0; k < curr_params.size(); ++k) {
+    if (std::abs(curr_params.at(k) - last_params.at(k)) > tolerance) {
+      return false;
+    }
+  }
   const auto &current_atoms = current.atoms();
   const auto &last_atoms = last.atoms();
 
@@ -31,7 +41,7 @@ namespace {
 } // namespace
 
 std::vector<Cell> TrajectoryFilter::filterConsecutiveDuplicates(std::span<const Cell> frames,
-                                                               real_t tolerance) {
+                                                                real_t tolerance) {
   if (frames.size() < 2) {
     return {frames.begin(), frames.end()};
   }

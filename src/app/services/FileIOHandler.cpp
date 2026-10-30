@@ -13,6 +13,7 @@
 #include "app/viewmodel/PlotController.hpp"
 #include "app/viewmodel/Structure3DController.hpp"
 #include "physics/PhysicalData.hpp"
+#include "readers/NaturalSort.hpp"
 #include "writers/structure/BaseStructureWriter.hpp"
 #include "writers/structure/StructureWriterFactory.hpp"
 #include <filesystem>
@@ -197,6 +198,7 @@ void FileIOHandler::handleExportStructure() {
 
 void FileIOHandler::startLoadingTrajectory(const std::string &filepath,
                                            std::function<void(bool)> on_complete) {
+  loaded_filepaths_ = {filepath};
   window_.set_in_file_text(slint::SharedString(filepath));
   window_.set_file_status_text(slint::SharedString("Loading file..."));
   window_.set_file_loading(true);
@@ -260,8 +262,12 @@ void FileIOHandler::startLoadingTrajectories(const std::vector<std::string> &fil
     return;
   }
 
+  std::vector<std::string> sorted_paths = filepaths;
+  readers::naturalSort(sorted_paths);
+  loaded_filepaths_ = sorted_paths;
+
   const std::string display_name =
-      filepaths.front() + " (+" + std::to_string(filepaths.size() - 1) + " files)";
+      sorted_paths.front() + " (+" + std::to_string(sorted_paths.size() - 1) + " files)";
   window_.set_in_file_text(slint::SharedString(display_name));
   window_.set_file_status_text(slint::SharedString("Loading multi-file trajectory..."));
   window_.set_file_loading(true);
@@ -273,46 +279,47 @@ void FileIOHandler::startLoadingTrajectories(const std::vector<std::string> &fil
     load_thread_.join();
   }
 
-  load_thread_ = std::jthread([this, filepaths, on_complete = std::move(on_complete)] {
-    const auto progress_cb = [this](float progress, const std::string &msg) {
-      slint::invoke_from_event_loop([progress, msg, this] {
-        window_.set_progress(progress);
-        if (!msg.empty()) {
-          window_.set_file_status_text(slint::SharedString(msg));
+  load_thread_ = std::jthread(
+      [this, sorted_paths = std::move(sorted_paths), on_complete = std::move(on_complete)] {
+        const auto progress_cb = [this](float progress, const std::string &msg) {
+          slint::invoke_from_event_loop([progress, msg, this] {
+            window_.set_progress(progress);
+            if (!msg.empty()) {
+              window_.set_file_status_text(slint::SharedString(msg));
+            }
+          });
+        };
+
+        std::string message;
+        bool success = false;
+        const auto load_res = loader_.loadFiles(sorted_paths, progress_cb);
+        if (load_res) {
+          message = *load_res;
+          success = true;
+          options_.input_file = sorted_paths.front();
+          const auto preview_res = dispatcher_.runFastPreviewRDF(loader_.trajectoryMut(), options_);
+          if (!preview_res) {
+            // Fast preview RDF is non-fatal for file loading.
+          }
+        } else {
+          message = std::string(AppDefaults::MSG_ERROR_LOADING) + load_res.error();
         }
+
+        slint::invoke_from_event_loop([this, sorted_paths, message, success, on_complete] {
+          window_.set_file_status_text(slint::SharedString(message));
+          window_.set_file_loading(false);
+          window_.set_timer_running(false);
+          window_.set_text_opacity(false);
+
+          if (success) {
+            onTrajectoryLoadSuccess(sorted_paths.front());
+          }
+
+          if (on_complete) {
+            on_complete(success);
+          }
+        });
       });
-    };
-
-    std::string message;
-    bool success = false;
-    const auto load_res = loader_.loadFiles(filepaths, progress_cb);
-    if (load_res) {
-      message = *load_res;
-      success = true;
-      options_.input_file = filepaths.front();
-      const auto preview_res = dispatcher_.runFastPreviewRDF(loader_.trajectoryMut(), options_);
-      if (!preview_res) {
-        // Fast preview RDF is non-fatal for file loading.
-      }
-    } else {
-      message = std::string(AppDefaults::MSG_ERROR_LOADING) + load_res.error();
-    }
-
-    slint::invoke_from_event_loop([this, filepaths, message, success, on_complete] {
-      window_.set_file_status_text(slint::SharedString(message));
-      window_.set_file_loading(false);
-      window_.set_timer_running(false);
-      window_.set_text_opacity(false);
-
-      if (success) {
-        onTrajectoryLoadSuccess(filepaths.front());
-      }
-
-      if (on_complete) {
-        on_complete(success);
-      }
-    });
-  });
 }
 
 void FileIOHandler::onTrajectoryLoadSuccess(const std::string &filepath) {
@@ -369,6 +376,10 @@ void FileIOHandler::onTrajectoryLoadSuccess(const std::string &filepath) {
 }
 
 void FileIOHandler::handleReloadFile() {
+  if (loaded_filepaths_.size() > 1) {
+    startLoadingTrajectories(loaded_filepaths_);
+    return;
+  }
   const std::string &path = options_.input_file;
   if (!path.empty()) {
     startLoadingTrajectory(path);
@@ -385,6 +396,16 @@ void FileIOHandler::updateStructure3DView() {
     controller_.getStructure3DController()->setCell(*loader_.cell());
   }
   controller_.getStructure3DController()->set3DModeActive(true);
+}
+
+void FileIOHandler::updateBoxDiagnosticsForFrame(size_t frame_index) {
+  const auto *traj = loader_.trajectory();
+  if (traj == nullptr || traj->getFrameCount() == 0) {
+    return;
+  }
+  const size_t clamped_index = std::min(frame_index, traj->getFrameCount() - 1);
+  const core::Cell frame_cell = traj->getFrame(clamped_index);
+  updateBoxDiagnostics(&frame_cell);
 }
 
 void FileIOHandler::updateBoxDiagnostics(const core::Cell *cell) {
@@ -417,7 +438,10 @@ void FileIOHandler::updateBoxDiagnostics(const core::Cell *cell) {
 }
 
 void FileIOHandler::updateFileMetadata(const std::string &filepath) {
-  const std::string basename = std::filesystem::path(filepath).filename().string();
+  std::string basename = std::filesystem::path(filepath).filename().string();
+  if (loaded_filepaths_.size() > 1) {
+    basename += " (+" + std::to_string(loaded_filepaths_.size() - 1) + " files)";
+  }
   window_.set_file_basename(slint::SharedString(basename));
   window_.set_num_frames(static_cast<int>(loader_.getFrameCount()));
   window_.set_total_atoms(static_cast<int>(loader_.getTotalAtomCount()));
@@ -438,7 +462,8 @@ void FileIOHandler::handleBrowseFile() {
         {
             {
                 .name = "Supported Structure Files",
-                .spec = "arc,car,cell,cif,dat,dump,lammpstrj,md,outmol,poscar,contcar,vasp,xdatcar",
+                .spec = "arc,car,cell,cif,dat,dump,lammpstrj,md,outmol,poscar,contcar,vasp,xdatcar,"
+                        "xyz,exyz,extxyz,mace,chgnet,gap,quip,nequip,gro,pdb,ent,*",
             },
             {
                 .name = "Materials Studio CAR",
@@ -462,7 +487,7 @@ void FileIOHandler::handleBrowseFile() {
             },
             {
                 .name = "LAMMPS Dump",
-                .spec = "dump,lammpstrj",
+                .spec = "dump,lammpstrj,*",
             },
             {
                 .name = "ONETEP DAT",

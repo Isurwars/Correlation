@@ -9,6 +9,7 @@
 #include "app/services/TrajectoryLoader.hpp"
 #include "app/services/PhysicsService.hpp"
 #include "readers/FileReader.hpp"
+#include "readers/NaturalSort.hpp"
 #include "readers/ReaderFactory.hpp"
 
 #include <algorithm>
@@ -66,9 +67,13 @@ TrajectoryLoader::loadFile(const std::string &path, const ProgressCallback &prog
                          {.extension = ext, .filename = path});
       if (reader != nullptr) {
         is_trajectory = reader->isTrajectory();
+      } else {
+        is_trajectory = (type == correlation::readers::FileType::Xdatcar ||
+                         type == correlation::readers::FileType::LammpsDump);
       }
     } else {
-      is_trajectory = (type == correlation::readers::FileType::Xdatcar);
+      is_trajectory = (type == correlation::readers::FileType::Xdatcar ||
+                       type == correlation::readers::FileType::LammpsDump);
     }
 
     if (reader != nullptr) {
@@ -105,11 +110,13 @@ TrajectoryLoader::loadFiles(const std::vector<std::string> &paths,
     if (paths.size() == 1) {
       return loadFile(paths.front(), progress);
     }
-    const auto &first_path = paths.front();
+    std::vector<std::string> sorted_paths = paths;
+    correlation::readers::naturalSort(sorted_paths);
+    const auto &first_path = sorted_paths.front();
     correlation::readers::FileType const type = correlation::readers::determineFileType(first_path);
     trajectory_ = std::make_shared<correlation::core::Trajectory>(
-        correlation::readers::readTrajectory(paths, type, progress));
-    return "Loaded " + std::to_string(paths.size()) + " files.";
+        correlation::readers::readTrajectory(sorted_paths, type, progress));
+    return "Loaded " + std::to_string(sorted_paths.size()) + " files.";
   } catch (const std::exception &e) {
     return std::unexpected(std::string("Error loading files: ") + e.what());
   }

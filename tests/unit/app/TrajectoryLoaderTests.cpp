@@ -112,9 +112,7 @@ public:
     }
     return nullptr;
   }
-  [[nodiscard]] std::vector<std::string> getAllExtensions() const override {
-    return {".mockext"};
-  }
+  [[nodiscard]] std::vector<std::string> getAllExtensions() const override { return {".mockext"}; }
   [[nodiscard]] const std::vector<std::unique_ptr<correlation::readers::BaseReader>> &
   getReaders() const override {
     static const std::vector<std::unique_ptr<correlation::readers::BaseReader>> EMPTY;
@@ -134,6 +132,45 @@ TEST(TrajectoryLoaderTests, InjectedReaderRegistryIsUsed) {
   ASSERT_NE(loader.cell(), nullptr);
   EXPECT_EQ(loader.getTotalAtomCount(), 1);
   EXPECT_EQ(loader.cell()->atoms()[0].element().symbol, "Si");
+}
+
+std::filesystem::path findPlasticExamplesDir() {
+  for (const auto &candidate :
+       {"examples/plastic", "../examples/plastic", "../../examples/plastic"}) {
+    if (std::filesystem::exists(std::filesystem::path(candidate) / "dump.compresion.0")) {
+      return candidate;
+    }
+  }
+  return {};
+}
+
+void verifyLoadedPlasticCellMetrics(const correlation::core::Trajectory &traj) {
+  EXPECT_NEAR(traj.getLatticeParameters(0)[0], 70.6508, 1e-3);
+  EXPECT_NEAR(traj.getLatticeParameters(1)[0], 69.9443, 1e-3);
+  EXPECT_NEAR(traj.getVolume(0), 352656.30, 1.0);
+}
+
+TEST(TrajectoryLoaderTests, LoadsPlasticCompressionMultiFileSeriesInOrder) {
+  const std::filesystem::path plastic_dir = findPlasticExamplesDir();
+  EXPECT_FALSE(plastic_dir.empty());
+
+  // Pass a subset in reverse/unsorted order to verify natural sort in TrajectoryLoader::loadFiles
+  std::vector<std::string> const paths = {
+      (plastic_dir / "dump.compresion.100000").string(),
+      (plastic_dir / "dump.compresion.0").string(),
+      (plastic_dir / "dump.compresion.20000").string(),
+      (plastic_dir / "dump.compresion.10000").string(),
+  };
+
+  correlation::app::TrajectoryLoader loader;
+  const auto res = loader.loadFiles(paths);
+  EXPECT_TRUE(res.has_value());
+  EXPECT_EQ(loader.getFrameCount(), 4U);
+  EXPECT_EQ(loader.getTotalAtomCount(), 16000U);
+
+  if (const auto *traj = loader.trajectory(); traj != nullptr) {
+    verifyLoadedPlasticCellMetrics(*traj);
+  }
 }
 
 } // namespace

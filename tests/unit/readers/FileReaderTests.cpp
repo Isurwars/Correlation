@@ -539,3 +539,13 @@ TEST_F(FileReaderTests, ReadTrajectoryExpectedSuccessAndFailure) {
   EXPECT_FALSE(invalid_result.has_value());
   EXPECT_FALSE(invalid_result.error().empty());
 }
+
+TEST_F(FileReaderTests, DetermineFileTypeLammpsPrefixAndStepSuffix) {
+  using correlation::readers::determineFileType;
+  using correlation::readers::FileType;
+
+  EXPECT_EQ(determineFileType("dump.compresion.0"), FileType::LammpsDump);
+  EXPECT_EQ(determineFileType("/path/to/dump.compresion.800000"), FileType::LammpsDump);
+  EXPECT_EQ(determineFileType("traj.dump.100"), FileType::LammpsDump);
+  EXPECT_EQ(determineFileType("sim.lammpstrj.500"), FileType::LammpsDump);
+}

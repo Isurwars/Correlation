@@ -30,6 +30,7 @@ Trajectory::Trajectory(std::vector<Cell> frames, real_t time_step)
       validateFrame(frames_[i]);
     }
     removeDuplicatedFrames();
+    syncCellMetricsUnlocked();
   }
 }
 
@@ -40,9 +41,11 @@ Trajectory::Trajectory(std::shared_ptr<MappedFile> mapped_file, std::vector<size
     mapped_files_.push_back(std::move(mapped_file));
     frame_slices_.reserve(frame_offsets.size() - 1);
     for (size_t i = 0; i + 1 < frame_offsets.size(); ++i) {
-      frame_slices_.push_back({.file_index = 0,
-                               .offset = frame_offsets[i],
-                               .size = frame_offsets[i + 1] - frame_offsets[i],});
+      frame_slices_.push_back({
+          .file_index = 0,
+          .offset = frame_offsets[i],
+          .size = frame_offsets[i + 1] - frame_offsets[i],
+      });
     }
   }
   if (getFrameCount() > 0) {
@@ -104,6 +107,63 @@ Cell Trajectory::getFrame(size_t index) const {
   throw std::runtime_error("Trajectory::getFrame: trajectory is empty");
 }
 
+std::array<real_t, 6> Trajectory::getLatticeParameters(size_t index) const {
+  if (index >= getFrameCount()) {
+    throw std::out_of_range("Trajectory::getLatticeParameters: index out of range");
+  }
+  if (!frames_.empty()) {
+    return frames_[index].latticeParameters();
+  }
+  if (index < frame_lattice_parameters_.size()) {
+    return frame_lattice_parameters_[index];
+  }
+  return getFrame(index).latticeParameters();
+}
+
+real_t Trajectory::getVolume(size_t index) const {
+  if (index >= getFrameCount()) {
+    throw std::out_of_range("Trajectory::getVolume: index out of range");
+  }
+  if (!frames_.empty()) {
+    return frames_[index].volume();
+  }
+  if (index < frame_volumes_.size()) {
+    return frame_volumes_[index];
+  }
+  return getFrame(index).volume();
+}
+
+const std::vector<std::array<real_t, 6>> &Trajectory::getFrameLatticeParameters() const {
+  std::scoped_lock const lock(*init_mutex_);
+  syncCellMetricsUnlocked();
+  return frame_lattice_parameters_;
+}
+
+const std::vector<real_t> &Trajectory::getFrameVolumes() const {
+  std::scoped_lock const lock(*init_mutex_);
+  syncCellMetricsUnlocked();
+  return frame_volumes_;
+}
+
+void Trajectory::syncCellMetricsUnlocked() const {
+  const size_t count = getFrameCount();
+  if (frame_lattice_parameters_.size() == count && frame_volumes_.size() == count) {
+    return;
+  }
+  frame_lattice_parameters_.resize(count);
+  frame_volumes_.resize(count);
+  for (size_t i = 0; i < count; ++i) {
+    if (!frames_.empty()) {
+      frame_lattice_parameters_[i] = frames_[i].latticeParameters();
+      frame_volumes_[i] = frames_[i].volume();
+    } else {
+      const Cell cell = getFrame(i);
+      frame_lattice_parameters_[i] = cell.latticeParameters();
+      frame_volumes_[i] = cell.volume();
+    }
+  }
+}
+
 const Cell &Trajectory::firstFrame() const {
   if (!frames_.empty()) {
     return frames_[0];
@@ -129,9 +189,13 @@ void Trajectory::ensureMaterialized() const {
     }
     size_t const count = getFrameCount();
     frames_.resize(count);
+    frame_lattice_parameters_.resize(count);
+    frame_volumes_.resize(count);
     for (size_t i = 0; i < count; ++i) {
       const auto &slice = frame_slices_[i];
       frames_[i] = parser_(mapped_files_[slice.file_index]->data() + slice.offset, slice.size);
+      frame_lattice_parameters_[i] = frames_[i].latticeParameters();
+      frame_volumes_[i] = frames_[i].volume();
     }
     first_frame_.reset();
   }
@@ -176,6 +240,8 @@ void Trajectory::addFrame(const Cell &frame) {
     validateFrame(frame);
   }
   frames_.push_back(frame);
+  frame_lattice_parameters_.push_back(frame.latticeParameters());
+  frame_volumes_.push_back(frame.volume());
   if (frames_.size() == 1) {
     precomputeBondCutoffs();
   }
@@ -202,6 +268,9 @@ void Trajectory::removeDuplicatedFrames(real_t tolerance) {
   if (unique_frames.size() < frames_.size()) {
     removed_frames_count_ = frames_.size() - unique_frames.size();
     frames_ = std::move(unique_frames);
+    frame_lattice_parameters_.clear();
+    frame_volumes_.clear();
+    syncCellMetricsUnlocked();
   }
 }
 

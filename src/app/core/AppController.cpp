@@ -213,11 +213,21 @@ void AppController::registerStructure3DCallbacks() {
   window_.on_toggle_in_cell_3d(
       [this](bool enabled) { structure_3d_controller_->handleToggleInCell(enabled); });
 
-  window_.on_seek_frame_3d(
-      [this](int frame_idx) { structure_3d_controller_->handleSeekFrame(frame_idx); });
+  window_.on_seek_frame_3d([this](int frame_idx) {
+    structure_3d_controller_->handleSeekFrame(frame_idx);
+    if (file_io_handler_) {
+      file_io_handler_->updateBoxDiagnosticsForFrame(
+          static_cast<size_t>(std::max(0, window_.get_structure_3d_current_frame())));
+    }
+  });
 
-  window_.on_step_frame_3d(
-      [this](bool forward) { structure_3d_controller_->handleStepFrame(forward); });
+  window_.on_step_frame_3d([this](bool forward) {
+    structure_3d_controller_->handleStepFrame(forward);
+    if (file_io_handler_) {
+      file_io_handler_->updateBoxDiagnosticsForFrame(
+          static_cast<size_t>(std::max(0, window_.get_structure_3d_current_frame())));
+    }
+  });
 
   window_.on_viewport_3d_resized([this](float width, float height) {
     structure_3d_controller_->handleViewportResized(width, height);
@@ -270,7 +280,7 @@ void AppController::registerStructure3DCallbacks() {
     structure_3d_controller_->setPhaseThresholds2D(min_x, max_x, min_y, max_y);
   });
 
-  window_.on_export_phase_heatmap_png_3d([this]() {
+  window_.on_export_phase_heatmap_png_3d([this] {
     // Generate default export filename in current directory or user pictures
     structure_3d_controller_->exportHeatmapPng("phase_heatmap_2d.png");
   });

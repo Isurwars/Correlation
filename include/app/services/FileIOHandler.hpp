@@ -83,13 +83,19 @@ public:
   void startLoadingTrajectories(const std::vector<std::string> &filepaths,
                                 std::function<void(bool)> on_complete = nullptr);
 
-private:
   /**
    * @brief Updates simulation cell diagnostics (volume, dimensions, density) on the UI.
    * @param[in] cell Pointer to the simulation cell, or nullptr if unavailable.
    */
   void updateBoxDiagnostics(const core::Cell *cell);
 
+  /**
+   * @brief Updates simulation cell diagnostics on the UI for a specific trajectory frame.
+   * @param[in] frame_index Zero-based trajectory frame index.
+   */
+  void updateBoxDiagnosticsForFrame(size_t frame_index);
+
+private:
   /**
    * @brief Updates UI components and analysis options after successful trajectory loading.
    * @param[in] filepath Path to the loaded structure or trajectory file.
@@ -121,6 +127,7 @@ private:
 
   std::jthread dialog_thread_; ///< Background worker thread for native file dialogs
   std::jthread load_thread_;   ///< Background thread for loading files without blocking UI
+  std::vector<std::string> loaded_filepaths_; ///< Active single or multi-file trajectory paths
   std::atomic<bool> dialog_active_{
       false}; ///< Concurrency guard preventing duplicate dialog launches
 };

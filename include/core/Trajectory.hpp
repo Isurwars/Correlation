@@ -127,6 +127,34 @@ public:
   [[nodiscard]] Cell getFrame(size_t index) const;
 
   /**
+   * @brief Gets the lattice parameters [a, b, c, alpha, beta, gamma] for a specific frame.
+   * @param index The index of the frame to query.
+   * @return Array of 6 lattice parameters (lengths in Angstroms, angles in degrees).
+   * @throws std::out_of_range if the index is invalid.
+   */
+  [[nodiscard]] std::array<real_t, 6> getLatticeParameters(size_t index) const;
+
+  /**
+   * @brief Gets the simulation cell volume for a specific frame.
+   * @param index The index of the frame to query.
+   * @return Volume of the cell in cubic Angstroms.
+   * @throws std::out_of_range if the index is invalid.
+   */
+  [[nodiscard]] real_t getVolume(size_t index) const;
+
+  /**
+   * @brief Gets the tracked lattice parameters [a, b, c, alpha, beta, gamma] for all frames.
+   * @return Const reference to the per-cell lattice parameters vector.
+   */
+  [[nodiscard]] const std::vector<std::array<real_t, 6>> &getFrameLatticeParameters() const;
+
+  /**
+   * @brief Gets the tracked cell volumes for all frames.
+   * @return Const reference to the per-cell volumes vector.
+   */
+  [[nodiscard]] const std::vector<real_t> &getFrameVolumes() const;
+
+  /**
    * @brief Gets the time step between frames.
    * @return The time step in simulation units.
    */
@@ -241,11 +269,15 @@ private:
    */
   void validateFrame(const Cell &new_frame) const;
   void ensureMaterialized() const;
+  void syncCellMetricsUnlocked() const;
 
   mutable std::unique_ptr<std::mutex> init_mutex_{std::make_unique<std::mutex>()};
 
   mutable std::vector<Cell> frames_; ///< Collection of simulation snapshots.
   mutable std::optional<Cell> first_frame_;
+  mutable std::vector<std::array<real_t, 6>>
+      frame_lattice_parameters_;              ///< Tracked lattice parameters per cell.
+  mutable std::vector<real_t> frame_volumes_; ///< Tracked volume per cell.
   mutable correlation::analysis::BondCutoffMatrix bond_cutoffs_; ///< Cached bond cutoff ranges.
   real_t time_step_;                                             ///< Time between snapshots.
   size_t removed_frames_count_{0}; ///< Counter for deduplicated frames.
