@@ -51,18 +51,18 @@ TEST(NaturalSortTests, ExpandWildcardsNoWildcardPassthrough) {
 }
 
 TEST(NaturalSortTests, ExpandWildcardsFilesystemMatching) {
-  const std::string temp_dir =
-      std::filesystem::temp_directory_path().string() + "/naturalsort_test_fs";
+  const std::filesystem::path temp_dir =
+      std::filesystem::temp_directory_path() / "naturalsort_test_fs";
   std::filesystem::create_directories(temp_dir);
 
-  const std::string f_1 = temp_dir + "/sample_10.txt";
-  const std::string f_2 = temp_dir + "/sample_2.txt";
+  const std::string f_1 = (temp_dir / "sample_10.txt").string();
+  const std::string f_2 = (temp_dir / "sample_2.txt").string();
   {
     std::ofstream(f_1) << "10\n";
     std::ofstream(f_2) << "2\n";
   }
 
-  auto matches = detail::expandWildcardsFilesystem(temp_dir + "/sample_*.txt");
+  auto matches = detail::expandWildcardsFilesystem((temp_dir / "sample_*.txt").string());
   ASSERT_EQ(matches.size(), 2);
   naturalSort(matches);
 

@@ -118,13 +118,13 @@ void writeDumpFrame(const std::string &path, int64_t timestep, float x_coord) {
 } // namespace
 
 TEST(LammpsDumpReaderTests, MultiFileReadAndNaturalOrder) {
-  const std::string temp_dir =
-      std::filesystem::temp_directory_path().string() + "/lammps_multi_test";
+  const std::filesystem::path temp_dir =
+      std::filesystem::temp_directory_path() / "lammps_multi_test";
   std::filesystem::create_directories(temp_dir);
 
-  const std::string file1 = temp_dir + "/dump.1.lammpstrj";
-  const std::string file2 = temp_dir + "/dump.2.lammpstrj";
-  const std::string file10 = temp_dir + "/dump.10.lammpstrj";
+  const std::string file1 = (temp_dir / "dump.1.lammpstrj").string();
+  const std::string file2 = (temp_dir / "dump.2.lammpstrj").string();
+  const std::string file10 = (temp_dir / "dump.10.lammpstrj").string();
 
   writeDumpFrame(file1, 100, 1.0F);
   writeDumpFrame(file2, 200, 2.0F);
@@ -143,15 +143,15 @@ TEST(LammpsDumpReaderTests, MultiFileReadAndNaturalOrder) {
 }
 
 TEST(LammpsDumpReaderTests, WildcardPatternExpansion) {
-  const std::string temp_dir =
-      std::filesystem::temp_directory_path().string() + "/lammps_glob_test";
+  const std::filesystem::path temp_dir =
+      std::filesystem::temp_directory_path() / "lammps_glob_test";
   std::filesystem::create_directories(temp_dir);
 
-  writeDumpFrame(temp_dir + "/chunk_01.dump", 10, 1.0F);
-  writeDumpFrame(temp_dir + "/chunk_02.dump", 20, 2.0F);
+  writeDumpFrame((temp_dir / "chunk_01.dump").string(), 10, 1.0F);
+  writeDumpFrame((temp_dir / "chunk_02.dump").string(), 20, 2.0F);
 
   LammpsDumpReader reader;
-  auto traj = reader.readTrajectory(temp_dir + "/chunk_*.dump");
+  auto traj = reader.readTrajectory((temp_dir / "chunk_*.dump").string());
 
   EXPECT_EQ(traj.getFrameCount(), 2);
   EXPECT_NEAR(traj.getFrame(0).atoms()[0].position().x(), 1.0, 1e-4);
@@ -161,12 +161,12 @@ TEST(LammpsDumpReaderTests, WildcardPatternExpansion) {
 }
 
 TEST(LammpsDumpReaderTests, DeduplicatesConsecutiveRestartTimesteps) {
-  const std::string temp_dir =
-      std::filesystem::temp_directory_path().string() + "/lammps_restart_test";
+  const std::filesystem::path temp_dir =
+      std::filesystem::temp_directory_path() / "lammps_restart_test";
   std::filesystem::create_directories(temp_dir);
 
-  const std::string file1 = temp_dir + "/run1.dump";
-  const std::string file2 = temp_dir + "/run2.dump";
+  const std::string file1 = (temp_dir / "run1.dump").string();
+  const std::string file2 = (temp_dir / "run2.dump").string();
 
   // File 1 has steps 100, 200
   {
@@ -199,11 +199,11 @@ TEST(LammpsDumpReaderTests, DeduplicatesConsecutiveRestartTimesteps) {
 }
 
 TEST(LammpsDumpReaderTests, ThrowsOnDecreasingTimesteps) {
-  const std::string temp_dir = std::filesystem::temp_directory_path().string() + "/lammps_oor_test";
+  const std::filesystem::path temp_dir = std::filesystem::temp_directory_path() / "lammps_oor_test";
   std::filesystem::create_directories(temp_dir);
 
-  const std::string file1 = temp_dir + "/part1.dump";
-  const std::string file2 = temp_dir + "/part2.dump";
+  const std::string file1 = (temp_dir / "part1.dump").string();
+  const std::string file2 = (temp_dir / "part2.dump").string();
 
   writeDumpFrame(file1, 500, 1.0F);
   writeDumpFrame(file2, 100, 2.0F);
