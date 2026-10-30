@@ -46,6 +46,7 @@ add_executable(correlation_unit_tests
     unit/readers/CifReaderTests.cpp
     unit/readers/CastepMdReaderTests.cpp
     unit/readers/LammpsDumpReaderTests.cpp
+    unit/readers/NaturalSortTests.cpp
     unit/readers/OnetepDatReaderTests.cpp
     unit/readers/OutmolReaderTests.cpp
     unit/calculators/DihedralCalculatorTests.cpp

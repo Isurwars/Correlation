@@ -39,7 +39,8 @@ CellReader::readTrajectory(const std::string & /*filename*/,
 
 namespace {
 void toLower(std::string &str) {
-  std::ranges::transform(str, str.begin(), [](unsigned char chr) { return std::tolower(chr); });
+  std::ranges::transform(str, str.begin(),
+                         [](unsigned char chr) { return static_cast<char>(std::tolower(chr)); });
 }
 
 void parseLatticeCart(std::stringstream &line_stream, int &lattice_row_count,

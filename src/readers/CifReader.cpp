@@ -319,7 +319,7 @@ void processLoopDataLine(const std::string &line, const std::vector<std::string>
           .symbol = element,
           .frac_pos = pos,
       });
-    } catch (const std::out_of_range &oor) {
+    } catch (const std::out_of_range &) {
       throw std::runtime_error("CIF Error: Missing required atom site data "
                                "(e.g., _atom_site_fract_x).");
     }
@@ -438,7 +438,7 @@ generateSymmetryAtoms(const std::vector<AsymmetricAtom> &asymmetric_atoms,
   }
 
   std::vector<AsymmetricAtom> final_atoms;
-  const real_t tolerance = 1e-4;
+  const real_t tolerance = static_cast<real_t>(1e-4);
 
   for (const auto &atom : asymmetric_atoms) {
     for (const auto &sym_op : symmetry_ops) {

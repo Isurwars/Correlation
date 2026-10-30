@@ -28,7 +28,8 @@ namespace {
 const bool REGISTERED = ReaderFactory::registerTypeSafe<OnetepDatReader>("OnetepDatReader");
 
 void toLower(std::string &str) {
-  std::ranges::transform(str, str.begin(), [](unsigned char chr) { return std::tolower(chr); });
+  std::ranges::transform(str, str.begin(),
+                         [](unsigned char chr) { return static_cast<char>(std::tolower(chr)); });
 }
 
 struct OnetepDatParser {
