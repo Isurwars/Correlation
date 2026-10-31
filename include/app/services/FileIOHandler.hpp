@@ -95,7 +95,18 @@ public:
    */
   void updateBoxDiagnosticsForFrame(size_t frame_index);
 
+  /**
+   * @brief Renames an element species across the loaded trajectory and refreshes UI models.
+   * @param[in] old_symbol Existing element symbol (e.g., "1").
+   * @param[in] new_symbol Replacement element symbol (e.g., "Cu").
+   */
+  void handleRenameElement(const std::string &old_symbol, const std::string &new_symbol);
+
 private:
+  /**
+   * @brief Populates UI AtomCount vector model with species counts, CPK colors, and unknown flags.
+   */
+  void refreshAtomCountsUI();
   /**
    * @brief Updates UI components and analysis options after successful trajectory loading.
    * @param[in] filepath Path to the loaded structure or trajectory file.

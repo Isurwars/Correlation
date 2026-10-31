@@ -402,4 +402,29 @@ TEST_F(CellTests, AutoSupercellSatisfiesMinimumImageConvention) {
                std::invalid_argument);
 }
 
+TEST_F(CellTests, RenameElementNormalizesSymbolAndUpdatesAtomsInPlace) {
+  const std::array<real_t, 6> params = {
+      static_cast<real_t>(10.0), static_cast<real_t>(10.0), static_cast<real_t>(10.0),
+      static_cast<real_t>(90.0), static_cast<real_t>(90.0), static_cast<real_t>(90.0),
+  };
+  Cell cell(params);
+  cell.addAtom("1", {static_cast<real_t>(1.0), static_cast<real_t>(1.0), static_cast<real_t>(1.0)});
+  cell.addAtom("2", {static_cast<real_t>(3.0), static_cast<real_t>(3.0), static_cast<real_t>(3.0)});
+  cell.addAtom("1", {static_cast<real_t>(5.0), static_cast<real_t>(5.0), static_cast<real_t>(5.0)});
+
+  // Rename numeric LAMMPS type "1" to lowercase "cu" -> normalized to "Cu"
+  EXPECT_TRUE(cell.renameElement("1", "cu"));
+  EXPECT_EQ(cell.elements()[0].symbol, "Cu");
+  EXPECT_EQ(cell.atoms()[0].element().symbol, "Cu");
+  EXPECT_EQ(cell.atoms()[1].element().symbol, "2");
+  EXPECT_EQ(cell.atoms()[2].element().symbol, "Cu");
+  EXPECT_EQ(cell.atoms()[0].elementId(), 0);
+  EXPECT_EQ(cell.atoms()[1].elementId(), 1);
+
+  // Reject collision with existing element "2" or empty target
+  EXPECT_FALSE(cell.renameElement("Cu", "2"));
+  EXPECT_FALSE(cell.renameElement("Cu", "   "));
+  EXPECT_FALSE(cell.renameElement("NonExistent", "Zr"));
+}
+
 } // namespace correlation::testing

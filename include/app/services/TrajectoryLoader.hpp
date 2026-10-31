@@ -17,6 +17,9 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
 
 namespace correlation::readers {
 class IReaderRegistry;
@@ -109,6 +112,20 @@ public:
    * @return Map of element symbol to count.
    */
   [[nodiscard]] std::map<std::string, int> getAtomCounts() const;
+
+  /**
+   * @brief Computes atomic species counts in cell element-registration order.
+   * @return Ordered list of (element symbol, count) pairs.
+   */
+  [[nodiscard]] std::vector<std::pair<std::string, int>> getOrderedAtomCounts() const;
+
+  /**
+   * @brief Renames an element species across the loaded trajectory.
+   * @param[in] old_symbol Existing element symbol (e.g., "1").
+   * @param[in] new_symbol Replacement element symbol (e.g., "Cu").
+   * @return True if renamed successfully, false otherwise.
+   */
+  bool renameElement(std::string_view old_symbol, std::string_view new_symbol);
 
   /**
    * @brief Total number of frames in the loaded trajectory.

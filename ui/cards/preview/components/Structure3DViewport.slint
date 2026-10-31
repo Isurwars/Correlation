@@ -37,6 +37,7 @@ export component Structure3DViewport inherits Rectangle {
     in property <float> phase_domain_max: 1.0;
     in property <float> phase_halo_intensity: 0.85;
     in property <float> phase_halo_radius_ratio: 1.35;
+    in property <float> atom_scale: 0.35;
     in property <bool> phase_dim_non_matching: false;
     in property <bool> phase_hide_non_matching: false;
     in property <[float]> phase_histogram_counts: [];
@@ -63,6 +64,7 @@ export component Structure3DViewport inherits Rectangle {
     callback set_phase_thresholds(float, float);
     callback set_phase_intensity(float);
     callback set_phase_radius_ratio(float);
+    callback set_atom_scale(float);
     callback set_phase_dim_non_matching(bool);
     callback set_phase_hide_non_matching(bool);
 
@@ -174,12 +176,14 @@ export component Structure3DViewport inherits Rectangle {
             in_cell_enabled: root.in_cell_enabled;
             phase_panel_open: root.phase_panel_open;
             phase_enabled: root.phase_enabled;
+            atom_scale: root.atom_scale;
 
             reset_view => { root.reset_view(); }
             toggle_bonds(en) => { root.toggle_bonds(en); }
             toggle_wireframe(en) => { root.toggle_wireframe(en); }
             toggle_in_cell(en) => { root.toggle_in_cell(en); }
             toggle_phase_panel => { root.phase_panel_open = !root.phase_panel_open; }
+            set_atom_scale(val) => { root.set_atom_scale(val); }
         }
 
         // 2. Right: Unified Workflow Action Bar (Visible when file loaded)
@@ -247,6 +251,7 @@ export component Structure3DViewport inherits Rectangle {
         domain_max: root.phase_domain_max;
         halo_intensity: root.phase_halo_intensity;
         halo_radius_ratio: root.phase_halo_radius_ratio;
+        atom_scale: root.atom_scale;
         dim_non_matching: root.phase_dim_non_matching;
         hide_non_matching: root.phase_hide_non_matching;
         histogram_counts: root.phase_histogram_counts;
@@ -273,6 +278,7 @@ export component Structure3DViewport inherits Rectangle {
         set_thresholds(min, max) => { root.set_phase_thresholds(min, max); }
         set_intensity(val) => { root.set_phase_intensity(val); }
         set_radius_ratio(val) => { root.set_phase_radius_ratio(val); }
+        set_atom_scale(val) => { root.set_atom_scale(val); }
         set_dim_non_matching(dim) => { root.set_phase_dim_non_matching(dim); }
         set_hide_non_matching(hide) => { root.set_phase_hide_non_matching(hide); }
         close => { root.phase_panel_open = false; }

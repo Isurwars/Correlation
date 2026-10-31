@@ -173,4 +173,39 @@ TEST(TrajectoryLoaderTests, LoadsPlasticCompressionMultiFileSeriesInOrder) {
   }
 }
 
+TEST(TrajectoryLoaderTests, RenamesPlasticLammpsTypesAndPreservesOrder) {
+  const std::filesystem::path plastic_dir = findPlasticExamplesDir();
+  EXPECT_FALSE(plastic_dir.empty());
+
+  std::vector<std::string> const paths = {
+      (plastic_dir / "dump.compresion.0").string(),
+      (plastic_dir / "dump.compresion.10000").string(),
+  };
+
+  correlation::app::TrajectoryLoader loader;
+  const auto res = loader.loadFiles(paths);
+  EXPECT_TRUE(res.has_value());
+
+  const auto initial_counts = loader.getOrderedAtomCounts();
+  EXPECT_EQ(initial_counts.size(), 4U);
+  EXPECT_EQ(initial_counts[0].first, "1");
+  EXPECT_EQ(initial_counts[0].second, 7895);
+  EXPECT_EQ(initial_counts[1].first, "3");
+  EXPECT_EQ(initial_counts[2].first, "4");
+  EXPECT_EQ(initial_counts[3].first, "2");
+
+  EXPECT_TRUE(loader.renameElement("1", "Cu"));
+  EXPECT_TRUE(loader.renameElement("2", "Zr"));
+  EXPECT_TRUE(loader.renameElement("3", "Al"));
+  EXPECT_TRUE(loader.renameElement("4", "Ti"));
+
+  // Slot order in elements() is preserved in-place so UI rows do not jump when renamed
+  const auto updated_counts = loader.getOrderedAtomCounts();
+  EXPECT_EQ(updated_counts.size(), 4U);
+  EXPECT_EQ(updated_counts[0].first, "Cu");
+  EXPECT_EQ(updated_counts[1].first, "Al");
+  EXPECT_EQ(updated_counts[2].first, "Ti");
+  EXPECT_EQ(updated_counts[3].first, "Zr");
+}
+
 } // namespace

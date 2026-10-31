@@ -151,8 +151,36 @@ TEST_F(Structure3DControllerPhaseSearchTests, ColormapAndIntensityConfiguration)
   controller.setPhaseHaloIntensity(0.5F);
   EXPECT_FLOAT_EQ(controller.phaseHaloIntensity(), 0.5F);
 
-  controller.setPhaseHaloRadiusRatio(1.6F);
-  EXPECT_FLOAT_EQ(controller.phaseHaloRadiusRatio(), 1.6F);
+  controller.setPhaseHaloRadiusRatio(3.8F);
+  EXPECT_FLOAT_EQ(controller.phaseHaloRadiusRatio(), 3.8F);
+
+  controller.setAtomScale(0.75F);
+  EXPECT_FLOAT_EQ(controller.atomScale(), 0.75F);
+  EXPECT_FLOAT_EQ(window().get_structure_3d_atom_scale(), 0.75F);
+}
+
+TEST_F(Structure3DControllerPhaseSearchTests, LargeCellAdaptiveHaloRadiusBoostAndAtomScale) {
+  const ProgramOptions options;
+  Structure3DController controller(window(), options);
+
+  // 8x8x8 FCC cell of Cu (a = 3.61 * 8 = 28.88 A, diagonal ~50.0 A > 40.0 A threshold)
+  const auto large_cell = testing::crystals::createFCCCell(3.61, "Cu", 8, 8, 8);
+  controller.setCell(large_cell);
+  controller.setAtomScale(0.60F);
+  ASSERT_NE(controller.scene(), nullptr);
+  ASSERT_FALSE(controller.scene()->atoms().empty());
+
+  const auto &first_atom = controller.scene()->atoms().front();
+  EXPECT_NEAR(first_atom.radius, first_atom.covalent_radius * 0.60F, 1e-4F);
+
+  controller.setCrystalPreset(CrystalPreset::FCC);
+  controller.setPhaseHaloRadiusRatio(2.5F);
+  controller.setPhaseSearchEnabled(true);
+  static_cast<void>(controller.getOrComputeSteinhardt(0));
+  controller.setPhaseThresholds(0.46F, 0.58F);
+
+  // Large cell diagonal > 40 A receives an adaptive halo radius boost > 1.0x
+  EXPECT_GT(controller.scene()->atoms().front().halo_radius_ratio, 2.5F);
 }
 
 void assertFCCQ6BarValues(const std::vector<real_t> &q6_bar) {
@@ -304,6 +332,33 @@ TEST_F(Structure3DControllerPhaseSearchTests, Phase2DModeAndThresholdConfigurati
   EXPECT_FLOAT_EQ(window().get_structure_3d_phase_max_threshold_y(), 0.80F);
 }
 
+void verifyCrystalMarkersQ6Q4(const std::vector<CrystalMarkerData> &markers) {
+  EXPECT_FALSE(markers.empty());
+  float fcc_x_ratio = -1.0F;
+  for (const auto &marker : markers) {
+    if (marker.label == "FCC") {
+      fcc_x_ratio = marker.x_ratio;
+    }
+  }
+  EXPECT_GT(fcc_x_ratio, 0.4F);
+  EXPECT_LT(fcc_x_ratio, 0.7F);
+}
+
+void verifyHeatmapPngExport(Structure3DController &controller) {
+  const auto test_png = std::filesystem::temp_directory_path() / "test_heatmap_export.png";
+  std::error_code error_code;
+  std::filesystem::remove(test_png, error_code);
+
+  const bool exported = controller.exportHeatmapPng(test_png.string());
+  EXPECT_TRUE(exported);
+
+  std::ifstream check_file(test_png, std::ios::binary | std::ios::ate);
+  ASSERT_TRUE(check_file.is_open());
+  EXPECT_GT(check_file.tellg(), 0);
+  check_file.close();
+  EXPECT_TRUE(std::filesystem::remove(test_png, error_code));
+}
+
 TEST_F(Structure3DControllerPhaseSearchTests, PhaseHeatmap2DAndPngExport) {
   const ProgramOptions options;
   Structure3DController controller(window(), options);
@@ -325,34 +380,9 @@ TEST_F(Structure3DControllerPhaseSearchTests, PhaseHeatmap2DAndPngExport) {
   EXPECT_GT(heatmap.matching_atom_count, 0UL);
   EXPECT_LE(heatmap.matching_atom_count, heatmap.total_atom_count);
 
-  // Check crystal markers for q6bar vs q4bar
   const auto markers = getCrystalReferenceMarkers(PhaseDescriptor::Q6Bar, PhaseDescriptor::Q4Bar);
-  EXPECT_FALSE(markers.empty());
-  bool has_fcc = false;
-  for (const auto &marker : markers) {
-    if (marker.label == "FCC") {
-      has_fcc = true;
-      EXPECT_GT(marker.x_ratio, 0.4F);
-      EXPECT_LT(marker.x_ratio, 0.7F);
-    }
-  }
-  EXPECT_TRUE(has_fcc);
-
-  // Verify PNG export to temporary test path
-  const auto test_png = std::filesystem::temp_directory_path() / "test_heatmap_export.png";
-  std::error_code error_code;
-  std::filesystem::remove(test_png, error_code);
-
-  const bool exported = controller.exportHeatmapPng(test_png.string());
-  EXPECT_TRUE(exported);
-
-  std::ifstream check_file(test_png, std::ios::binary | std::ios::ate);
-  EXPECT_TRUE(check_file.is_open());
-  if (check_file.is_open()) {
-    EXPECT_GT(check_file.tellg(), 0);
-    check_file.close();
-  }
-  EXPECT_TRUE(std::filesystem::remove(test_png, error_code));
+  verifyCrystalMarkersQ6Q4(markers);
+  verifyHeatmapPngExport(controller);
 }
 
 TEST_F(Structure3DControllerPhaseSearchTests, SetPhaseDescriptorYResetsPresetToCustom) {
@@ -393,7 +423,7 @@ TEST_F(Structure3DControllerPhaseSearchTests, OffThreadSetCellAndTrajectorySafet
 
   // Call setCell from a background thread
   {
-    std::jthread bg_thread([&controller, &cell] { controller.setCell(cell); });
+    const std::jthread bg_thread([&controller, &cell] { controller.setCell(cell); });
   }
 
   // Pump Slint event loop to process queued property mutations

@@ -237,6 +237,7 @@ export component AppWindow inherits Window {
     in property <float> structure_3d_phase_domain_max: 1.0;
     in property <float> structure_3d_phase_halo_intensity: 0.85;
     in property <float> structure_3d_phase_halo_radius_ratio: 1.35;
+    in property <float> structure_3d_atom_scale: 0.35;
     in property <bool> structure_3d_phase_dim_non_matching: false;
     in property <bool> structure_3d_phase_hide_non_matching: false;
     in property <[float]> structure_3d_phase_histogram_counts: [];
@@ -278,6 +279,7 @@ export component AppWindow inherits Window {
     // Callbacks (Bound to AppController.cpp)
     callback layout_geometry_changed(length, length);
     callback browse_file();
+    callback rename_element(string, string);
     callback run_analysis();
     callback cancel_analysis();
     callback write_files();
@@ -323,6 +325,7 @@ export component AppWindow inherits Window {
     callback set_phase_thresholds_3d(float, float);
     callback set_phase_intensity_3d(float);
     callback set_phase_radius_ratio_3d(float);
+    callback set_atom_scale_3d(float);
     callback set_phase_dim_non_matching_3d(bool);
     callback set_phase_hide_non_matching_3d(bool);
     callback set_phase_2d_mode_3d(bool);
@@ -600,6 +603,7 @@ export component AppWindow inherits Window {
 
                     browse_file => { root.browse_file(); }
                     reload_file => { root.reload_file(); }
+                    rename_element(old_sym, new_sym) => { root.rename_element(old_sym, new_sym); }
                     reset_trajectory_options => { root.reset_trajectory_options(); }
                     reset_material_type => { root.reset_material_type(); }
                     run_analysis => { root.run_analysis(); }
@@ -800,6 +804,7 @@ export component AppWindow inherits Window {
                     structure_3d_phase_domain_max: root.structure_3d_phase_domain_max;
                     structure_3d_phase_halo_intensity: root.structure_3d_phase_halo_intensity;
                     structure_3d_phase_halo_radius_ratio: root.structure_3d_phase_halo_radius_ratio;
+                    structure_3d_atom_scale: root.structure_3d_atom_scale;
                     structure_3d_phase_dim_non_matching: root.structure_3d_phase_dim_non_matching;
                     structure_3d_phase_hide_non_matching: root.structure_3d_phase_hide_non_matching;
                     structure_3d_phase_histogram_counts: root.structure_3d_phase_histogram_counts;
@@ -825,6 +830,7 @@ export component AppWindow inherits Window {
                     set_phase_thresholds_3d(min, max) => { root.set_phase_thresholds_3d(min, max); }
                     set_phase_intensity_3d(val) => { root.set_phase_intensity_3d(val); }
                     set_phase_radius_ratio_3d(val) => { root.set_phase_radius_ratio_3d(val); }
+                    set_atom_scale_3d(val) => { root.set_atom_scale_3d(val); }
                     set_phase_dim_non_matching_3d(dim) => { root.set_phase_dim_non_matching_3d(dim); }
                     set_phase_hide_non_matching_3d(hide) => { root.set_phase_hide_non_matching_3d(hide); }
                     set_phase_2d_mode_3d(is_2d) => { root.set_phase_2d_mode_3d(is_2d); }

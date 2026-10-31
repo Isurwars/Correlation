@@ -9,6 +9,7 @@ import {
     MaterialText,
     Icons,
 } from "../../../material/material.slint";
+import { PhaseSlider } from "./PhaseSlider.slint";
 
 export component Structure3DToolBar inherits Rectangle {
     in property <bool> bonds_enabled: true;
@@ -16,12 +17,14 @@ export component Structure3DToolBar inherits Rectangle {
     in property <bool> in_cell_enabled: false;
     in property <bool> phase_panel_open: false;
     in property <bool> phase_enabled: false;
+    in property <float> atom_scale: 0.35;
 
     callback reset_view();
     callback toggle_bonds(bool);
     callback toggle_wireframe(bool);
     callback toggle_in_cell(bool);
     callback toggle_phase_panel();
+    callback set_atom_scale(float);
 
     height: 38px;
     border-radius: 19px;
@@ -181,6 +184,26 @@ export component Structure3DToolBar inherits Rectangle {
                     vertical-alignment: center;
                 }
             }
+        }
+
+        // Divider
+        Rectangle {
+            width: 1px;
+            height: 20px;
+            y: (parent.height - self.height) / 2;
+            background: MaterialPalette.outline_variant;
+        }
+
+        // Ball Radius Slider
+        PhaseSlider {
+            width: 92px;
+            y: (parent.height - self.height) / 2;
+            label: "Ball";
+            value: root.atom_scale;
+            min_val: 0.1;
+            max_val: 1.5;
+            display_text: "" + (Math.round(root.atom_scale * 100) / 100) + "x";
+            value_changed(val) => { root.set_atom_scale(val); }
         }
     }
 }

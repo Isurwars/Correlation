@@ -32,6 +32,7 @@ export component OperationsPanelCard inherits Rectangle {
     callback browse_file();
     callback reload_file();
     callback export_structure();
+    callback rename_element(string, string);
 
     // File Status & Metadata
     in property <string> file_basename: "";
@@ -237,13 +238,73 @@ export component OperationsPanelCard inherits Rectangle {
                             }
 
                             if (root.atom_counts.length > 0): MaterialText {
-                                text: "Composition Breakdown:";
+                                text: "Composition Breakdown (Click species to remap):";
                                 style: MaterialTypography.label_small;
                                 color: MaterialPalette.on_surface_variant;
                             }
-                            for info in root.atom_counts: InfoRow {
-                                label: "  " + info.symbol + ":";
-                                value: info.count;
+                            for info in root.atom_counts: Horizontal {
+                                spacing: MaterialStyleMetrics.spacing_6;
+                                alignment: space-between;
+                                padding-left: MaterialStyleMetrics.spacing_4;
+                                padding-right: MaterialStyleMetrics.spacing_4;
+                                height: 26px;
+
+                                Horizontal {
+                                    spacing: MaterialStyleMetrics.spacing_6;
+                                    vertical-stretch: 0;
+
+                                    Rectangle {
+                                        width: 10px;
+                                        height: 10px;
+                                        y: (parent.height - self.height) / 2;
+                                        border-radius: 5px;
+                                        background: info.color;
+                                        border-width: 1px;
+                                        border-color: MaterialPalette.outline_variant;
+                                    }
+
+                                    Rectangle {
+                                        width: 54px;
+                                        height: 22px;
+                                        y: (parent.height - self.height) / 2;
+                                        border-radius: 4px;
+                                        background: MaterialPalette.surface_container_highest;
+                                        border-width: 1px;
+                                        border-color: species_input.has-focus ? MaterialPalette.primary :
+                                            (info.is_unknown ? MaterialPalette.tertiary : MaterialPalette.outline_variant);
+
+                                        species_input := TextInput {
+                                            width: 100%;
+                                            height: 100%;
+                                            text: info.symbol;
+                                            horizontal-alignment: center;
+                                            vertical-alignment: center;
+                                            color: MaterialPalette.on_surface;
+                                            font-size: MaterialTypography.label_medium.font_size;
+                                            font-weight: MaterialTypography.label_medium.font_weight;
+                                            single-line: true;
+                                            accepted => {
+                                                if (self.text != "" && self.text != info.symbol) {
+                                                    root.rename_element(info.symbol, self.text);
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    if info.is_unknown: MaterialText {
+                                        text: "Set element";
+                                        style: MaterialTypography.label_small;
+                                        color: MaterialPalette.tertiary;
+                                        vertical-alignment: center;
+                                    }
+                                }
+
+                                MaterialText {
+                                    text: "" + info.count;
+                                    style: MaterialTypography.body_small;
+                                    color: MaterialPalette.on_surface;
+                                    vertical-alignment: center;
+                                }
                             }
 
                             if (root.num_frames > 1 && root.removed_frames_count > 0): InfoRow {

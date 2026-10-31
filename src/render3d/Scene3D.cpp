@@ -77,7 +77,7 @@ void extractUnitCellLines(const math::Matrix3<real_t> &lattice,
 
 void extractAtoms(const std::vector<core::Atom> &cell_atoms, const math::Matrix3<real_t> &lattice,
                   const math::Matrix3<real_t> &inv_lattice, bool has_lattice, bool in_cell,
-                  std::vector<AtomInstance> &out_atoms) {
+                  float atom_scale, std::vector<AtomInstance> &out_atoms) {
   out_atoms.reserve(cell_atoms.size());
   for (const auto &atom : cell_atoms) {
     const std::string_view symbol = atom.element().symbol;
@@ -91,10 +91,11 @@ void extractAtoms(const std::vector<core::Atom> &cell_atoms, const math::Matrix3
       pos = lattice * frac_pos;
     }
 
+    const float cov_radius = getElementDisplayRadius(symbol, 1.0F);
     out_atoms.push_back(AtomInstance{
         .position = math::Vector3<float>(pos),
-        .radius = getElementDisplayRadius(symbol, 0.35F),
-        .covalent_radius = getElementDisplayRadius(symbol, 1.0F),
+        .radius = cov_radius * atom_scale,
+        .covalent_radius = cov_radius,
         .color = getElementColor(symbol),
         .id = static_cast<uint32_t>(atom.id()),
         .atomic_number = 0,
@@ -285,6 +286,13 @@ void Scene3D::addBond(const BondInstance &bond) { bonds_.push_back(bond); }
 
 void Scene3D::addUnitCellLine(const LineSegment &line) { unit_cell_lines_.push_back(line); }
 
+void Scene3D::setAtomScale(float atom_scale) noexcept {
+  atom_scale_ = std::clamp(atom_scale, 0.05F, 2.0F);
+  for (auto &atom : atoms_) {
+    atom.radius = atom.covalent_radius * atom_scale_;
+  }
+}
+
 void Scene3D::updateBounds() noexcept {
   if (atoms_.empty() && unit_cell_lines_.empty()) {
     bounds_min_ = math::Vector3<float>(-5.0F, -5.0F, -5.0F);
@@ -361,7 +369,7 @@ bool Scene3D::updateFromCell(const core::Cell &cell, bool recompute_bonds, doubl
     bonds_.clear();
     extractUnitCellLines(lattice_vectors_, unit_cell_lines_);
     extractAtoms(cell_atoms, lattice_vectors_, inv_lattice_vectors_, has_lattice_, in_cell_,
-                 atoms_);
+                 atom_scale_, atoms_);
     if (recompute_bonds) {
       recomputeBonds(bond_cutoff_scale, in_cell_);
     }
@@ -392,7 +400,7 @@ std::shared_ptr<Scene3D> Scene3D::fromCell(const core::Cell &cell, double bond_c
 
   extractUnitCellLines(scene->lattice_vectors_, scene->unit_cell_lines_);
   extractAtoms(cell.atoms(), scene->lattice_vectors_, scene->inv_lattice_vectors_,
-               scene->has_lattice_, scene->in_cell_, scene->atoms_);
+               scene->has_lattice_, scene->in_cell_, scene->atom_scale_, scene->atoms_);
 
   if (generate_bonds) {
     scene->recomputeBonds(bond_cutoff_scale, scene->in_cell_);

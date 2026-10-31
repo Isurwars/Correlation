@@ -65,8 +65,8 @@
     "semantic_hash": ""
   },
   "include/core/Trajectory.hpp": {
-    "mtime": 1793211543.843563,
-    "ast_hash": "a23a488270bbc0d0ec608aec9c0df91b",
+    "mtime": 1793393126.412443,
+    "ast_hash": "e26c4e97daef2fc8aa61a5df02af8d2f",
     "semantic_hash": ""
   },
   "include/math/Constants.hpp": {
@@ -110,8 +110,8 @@
     "semantic_hash": ""
   },
   "include/physics/PhysicalData.hpp": {
-    "mtime": 1789591639.0815387,
-    "ast_hash": "b25e925dc8ab7f529a25458b4ac11ca1",
+    "mtime": 1793330454.062492,
+    "ast_hash": "3bb1d6129fe74a82e22c5f7838a559b9",
     "semantic_hash": ""
   },
   "include/plotters/PathFont.hpp": {
@@ -365,8 +365,8 @@
     "semantic_hash": ""
   },
   "src/cli/CliParser.cpp": {
-    "mtime": 1793133372.5116754,
-    "ast_hash": "636bac26e0bcd9f740e0809bfd084568",
+    "mtime": 1793327094.3041055,
+    "ast_hash": "e33c015963ed5e0e8bed72146b06db56",
     "semantic_hash": ""
   },
   "src/cli/main_cli.cpp": {
@@ -385,8 +385,8 @@
     "semantic_hash": ""
   },
   "src/core/Trajectory.cpp": {
-    "mtime": 1793211591.6831713,
-    "ast_hash": "053ae305c8b24ff54e3dd0732d3e102f",
+    "mtime": 1793393126.4168618,
+    "ast_hash": "923db470a0a5566e7955353a8b0cc1fe",
     "semantic_hash": ""
   },
   "src/main.cpp": {
@@ -420,18 +420,18 @@
     "semantic_hash": ""
   },
   "src/readers/CellReader.cpp": {
-    "mtime": 1793314717.9523613,
-    "ast_hash": "108cf617ad56ed39fc3d173225a0a3f4",
+    "mtime": 1793326927.590744,
+    "ast_hash": "f486be22d7bce03e756cd0463bf5cc8e",
     "semantic_hash": ""
   },
   "src/readers/CifReader.cpp": {
-    "mtime": 1793019924.7455952,
-    "ast_hash": "57ecbd6bffc43a2db8408604e6e383d5",
+    "mtime": 1793326903.7869291,
+    "ast_hash": "77543bde0d06af8b27264ce8ae01b090",
     "semantic_hash": ""
   },
   "src/readers/FileReader.cpp": {
-    "mtime": 1793211769.1834562,
-    "ast_hash": "f4625f6d1b633feed0a946820aed750d",
+    "mtime": 1793393157.3944335,
+    "ast_hash": "f55ae6cd7329fc739a3da3bf97563d1e",
     "semantic_hash": ""
   },
   "src/readers/GromacsReader.cpp": {
@@ -440,13 +440,13 @@
     "semantic_hash": ""
   },
   "src/readers/LammpsDumpReader.cpp": {
-    "mtime": 1793211646.5529833,
-    "ast_hash": "3700ef1332c5682af1401319a6c064eb",
+    "mtime": 1793393126.4271114,
+    "ast_hash": "ce36a28ed393d673acacc5106e655c26",
     "semantic_hash": ""
   },
   "src/readers/OnetepDatReader.cpp": {
-    "mtime": 1793314735.4080598,
-    "ast_hash": "83e224eb8dae8a07687e6e7aae9c6c3a",
+    "mtime": 1793326912.910861,
+    "ast_hash": "520c8071c05a601763c3a94cde909e35",
     "semantic_hash": ""
   },
   "src/readers/OutmolReader.cpp": {
@@ -465,8 +465,8 @@
     "semantic_hash": ""
   },
   "src/readers/ReaderFactory.cpp": {
-    "mtime": 1793017504.5948827,
-    "ast_hash": "e61657fd54638f9c6f35e68770774368",
+    "mtime": 1793392536.0181756,
+    "ast_hash": "0e82f001c46c7a9b2f936850c0021ad8",
     "semantic_hash": ""
   },
   "src/readers/VaspReader.cpp": {
@@ -765,8 +765,8 @@
     "semantic_hash": ""
   },
   "tests/unit/core/TrajectoryTests.cpp": {
-    "mtime": 1790222211.9869611,
-    "ast_hash": "3cfc89805885beed9dfe87d4a3fc5829",
+    "mtime": 1793392832.9089315,
+    "ast_hash": "5242a7d2d41e54341ef82bc46557da06",
     "semantic_hash": ""
   },
   "tests/unit/math/FFTUtilsTests.cpp": {
@@ -835,8 +835,8 @@
     "semantic_hash": ""
   },
   "tests/unit/readers/FileReaderTests.cpp": {
-    "mtime": 1792037670.1581962,
-    "ast_hash": "8d43f1629b5ee8a5cbf89385276903db",
+    "mtime": 1793392835.7848814,
+    "ast_hash": "dcd175154a892422f2ec91c17341a040",
     "semantic_hash": ""
   },
   "tests/unit/readers/GromacsReaderTests.cpp": {
@@ -845,8 +845,8 @@
     "semantic_hash": ""
   },
   "tests/unit/readers/LammpsDumpReaderTests.cpp": {
-    "mtime": 1793211543.8842397,
-    "ast_hash": "12eee45f9501d1f82944e433d07b13ee",
+    "mtime": 1793393459.5781834,
+    "ast_hash": "562704f0dc896551daad94d3119aa9a7",
     "semantic_hash": ""
   },
   "tests/unit/readers/OnetepDatReaderTests.cpp": {
@@ -915,8 +915,8 @@
     "semantic_hash": ""
   },
   ".github/workflows/release.yml": {
-    "mtime": 1791563280.3109038,
-    "ast_hash": "ec42003f2ee910d9acaf081508b77f93",
+    "mtime": 1793335912.2676547,
+    "ast_hash": "d48b31e8ef3e5fd878c38511c14273c4",
     "semantic_hash": ""
   },
   "CMakeLists.txt": {
@@ -960,8 +960,8 @@
     "semantic_hash": ""
   },
   "tests/CMakeLists.txt": {
-    "mtime": 1793315458.5831096,
-    "ast_hash": "481942fc51f48335731556b311dc00fa",
+    "mtime": 1793326953.7675178,
+    "ast_hash": "fb97b7f3062967440957a064b62802a8",
     "semantic_hash": ""
   },
   "tests/fuzz/CMakeLists.txt": {
@@ -1970,8 +1970,8 @@
     "semantic_hash": ""
   },
   "include/app/services/FileIOHandler.hpp": {
-    "mtime": 1793211543.8393612,
-    "ast_hash": "6c973775ce231d969e3708130aadc637",
+    "mtime": 1793393156.7893414,
+    "ast_hash": "5b1836ebc2ae2259ef04005328c24db3",
     "semantic_hash": ""
   },
   "include/app/services/InputValidator.hpp": {
@@ -2025,8 +2025,8 @@
     "semantic_hash": ""
   },
   "src/app/core/AppController.cpp": {
-    "mtime": 1793132953.0251722,
-    "ast_hash": "9d6c4cb06d4d19191352d5b16bc9f5e8",
+    "mtime": 1793394562.4738808,
+    "ast_hash": "bf21548d485713b27069abe467d11f09",
     "semantic_hash": ""
   },
   "src/app/core/SettingsManager.cpp": {
@@ -2060,8 +2060,8 @@
     "semantic_hash": ""
   },
   "src/app/services/FileIOHandler.cpp": {
-    "mtime": 1793211773.8823626,
-    "ast_hash": "fe36f6b6ebe29df0e1fb94980a20713b",
+    "mtime": 1793393126.4483826,
+    "ast_hash": "9fe49c24da2a38c132b95c0959ed6c22",
     "semantic_hash": ""
   },
   "src/app/services/InputValidator.cpp": {
@@ -2145,8 +2145,8 @@
     "semantic_hash": ""
   },
   "src/app/services/TrajectoryLoader.cpp": {
-    "mtime": 1793211543.8621764,
-    "ast_hash": "6bcaaeeceaef91b0de5ad4c284488ef4",
+    "mtime": 1793393157.319021,
+    "ast_hash": "28ed288fbd79b9a10a19ad56b675983a",
     "semantic_hash": ""
   },
   "tests/functional/app/ServiceIntegrationTests.cpp": {
@@ -2165,8 +2165,8 @@
     "semantic_hash": ""
   },
   "tests/unit/app/TrajectoryLoaderTests.cpp": {
-    "mtime": 1793017556.5131252,
-    "ast_hash": "caa4ac75dd62285412b8f472b596a990",
+    "mtime": 1793393453.636284,
+    "ast_hash": "9c5a2f4bb1aefdc973ce061f5bd2d2ac",
     "semantic_hash": ""
   },
   "include/calculators/contracts/ICalculator.hpp": {
@@ -2720,8 +2720,8 @@
     "semantic_hash": ""
   },
   "include/render3d/Scene3D.hpp": {
-    "mtime": 1792605582.9176264,
-    "ast_hash": "c6c9496cc74a4982b0afabd85d7ad2dc",
+    "mtime": 1793394501.163793,
+    "ast_hash": "77df3241e0090187c15eebf00a323d72",
     "semantic_hash": ""
   },
   "src/render3d/Camera3D.cpp": {
@@ -2730,8 +2730,8 @@
     "semantic_hash": ""
   },
   "src/render3d/Scene3D.cpp": {
-    "mtime": 1792437570.4591608,
-    "ast_hash": "b4963a771e0fe1581be4399b97467cbe",
+    "mtime": 1793394506.8777084,
+    "ast_hash": "74b9b781be67eee5536bf1c98b3cbe96",
     "semantic_hash": ""
   },
   "tests/unit/render3d/Camera3DTests.cpp": {
@@ -2745,8 +2745,8 @@
     "semantic_hash": ""
   },
   "tests/unit/render3d/Scene3DTests.cpp": {
-    "mtime": 1792434945.069819,
-    "ast_hash": "2c684daadc7a90401f8d3df4509886b7",
+    "mtime": 1793394695.6528692,
+    "ast_hash": "4ef86a1f1293b79eee35a55dbee75c4f",
     "semantic_hash": ""
   },
   "include/render3d/cpu/SoftwareFramebuffer.hpp": {
@@ -2845,13 +2845,13 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/Structure3DController.hpp": {
-    "mtime": 1792974520.3036265,
-    "ast_hash": "542f6d4a8a8d4795362cf021c82807b1",
+    "mtime": 1793394559.0279322,
+    "ast_hash": "b3bc0abaeec8a48227c726a2a5cda5ab",
     "semantic_hash": ""
   },
   "src/app/viewmodel/Structure3DController.cpp": {
-    "mtime": 1792974590.0394583,
-    "ast_hash": "f23d49190d6ba080d821ab84f7a3c29a",
+    "mtime": 1793394561.2748985,
+    "ast_hash": "647992bb991274b2aa81afb6ab4eaa2b",
     "semantic_hash": ""
   },
   "tests/unit/app/Structure3DControllerTests.cpp": {
@@ -2975,8 +2975,8 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/PhaseSearchTypes.hpp": {
-    "mtime": 1792963153.6298192,
-    "ast_hash": "dc66fe732d6516ee144603a6af85729f",
+    "mtime": 1793394534.7912939,
+    "ast_hash": "1c267fc51014877cb2ab6847dc1717ab",
     "semantic_hash": ""
   },
   "include/app/viewmodel/SteinhardtLRUCache.hpp": {
@@ -2990,8 +2990,8 @@
     "semantic_hash": ""
   },
   "tests/unit/app/Structure3DControllerPhaseSearchTests.cpp": {
-    "mtime": 1792970111.724077,
-    "ast_hash": "0bd50ef266aace78966d0b6caf16e3b7",
+    "mtime": 1793395160.5806339,
+    "ast_hash": "782eb262955ce1783e5ea9170ace1d09",
     "semantic_hash": ""
   },
   "tests/benchmarks/BM_SteinhardtPerAtom.cpp": {
@@ -3070,8 +3070,8 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/PhaseSearchService.hpp": {
-    "mtime": 1792974218.9033995,
-    "ast_hash": "ca1b73d2da131eac56b292cb620236a7",
+    "mtime": 1793394536.1632733,
+    "ast_hash": "22aff151e9d88fcfd54c6ceedb6df858",
     "semantic_hash": ""
   },
   "include/app/viewmodel/Structure3DRenderPipeline.hpp": {
@@ -3085,8 +3085,8 @@
     "semantic_hash": ""
   },
   "src/app/viewmodel/PhaseSearchService.cpp": {
-    "mtime": 1792974576.23668,
-    "ast_hash": "cf0ae8edebaeb01b2a167658fcc50cd5",
+    "mtime": 1793394540.559208,
+    "ast_hash": "5026f7f0287c5474b587ce0d7c5ccc7e",
     "semantic_hash": ""
   },
   "src/app/viewmodel/Structure3DRenderPipeline.cpp": {
@@ -3155,8 +3155,8 @@
     "semantic_hash": ""
   },
   "src/core/TrajectoryFilter.cpp": {
-    "mtime": 1793018666.3093758,
-    "ast_hash": "05138c0bac774f96c419bac20af453dd",
+    "mtime": 1793393299.525904,
+    "ast_hash": "5cac357c33c03263e88efcf40eb8f9af",
     "semantic_hash": ""
   },
   "src/core/VelocityIntegrator.cpp": {
@@ -3280,8 +3280,8 @@
     "semantic_hash": ""
   },
   "include/readers/NaturalSort.hpp": {
-    "mtime": 1793210819.5445943,
-    "ast_hash": "365ac1acdddc028c2a6adcdc73c645ed",
+    "mtime": 1793327715.8404748,
+    "ast_hash": "9b4178618a2dac15815dd44dedf15e7a",
     "semantic_hash": ""
   },
   "include/render3d/vulkan/VulkanBuffer.hpp": {
@@ -3325,8 +3325,8 @@
     "semantic_hash": ""
   },
   "include/render3d/vulkan/shaders/SphereImpostorSpv.hpp": {
-    "mtime": 1793252102.1676745,
-    "ast_hash": "2309354091eec56b8b7d72a3f6ba0b78",
+    "mtime": 1793394361.5648303,
+    "ast_hash": "2381492f573605ee6b669d600063ddc2",
     "semantic_hash": ""
   },
   "src/render3d/vulkan/VulkanBuffer.cpp": {
@@ -3377,6 +3377,11 @@
   "tests/unit/render3d/VulkanRenderEngineTests.cpp": {
     "mtime": 1793315582.96483,
     "ast_hash": "4b1e2bfc907578bd83b2a51b7b3962bd",
+    "semantic_hash": ""
+  },
+  "tests/unit/readers/NaturalSortTests.cpp": {
+    "mtime": 1793329070.3895106,
+    "ast_hash": "a91b9f88ecfc5c678e180df7c7a4fa2f",
     "semantic_hash": ""
   }
 }

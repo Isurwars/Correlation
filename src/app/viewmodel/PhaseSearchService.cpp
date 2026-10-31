@@ -118,6 +118,14 @@ struct PhaseVisualContext {
   return settings.dim_non_matching ? settings.dim_factor : 1.0F;
 }
 
+[[nodiscard]] float computeLargeCellHaloBoost(const render3d::Scene3D &scene) noexcept {
+  const float box_diag = math::norm(scene.boundsMax() - scene.boundsMin());
+  if (box_diag <= 40.0F) {
+    return 1.0F;
+  }
+  return std::clamp(1.0F + 0.35F * std::log2(box_diag / 40.0F), 1.0F, 2.0F);
+}
+
 [[nodiscard]] bool isPhaseMatch(float val_x, const PhaseVisualContext &ctx,
                                 std::span<const real_t> values_y, std::size_t index) noexcept {
   const bool match_x = (val_x >= ctx.min_x && val_x <= ctx.max_x);
@@ -268,12 +276,22 @@ float PhaseSearchService::haloIntensity() const noexcept {
 
 void PhaseSearchService::setHaloRadiusRatio(float ratio) {
   const std::scoped_lock lock(phase_mutex_);
-  phase_settings_.halo_radius_ratio = std::clamp(ratio, 1.0F, 3.0F);
+  phase_settings_.halo_radius_ratio = std::clamp(ratio, 1.0F, 5.0F);
 }
 
 float PhaseSearchService::haloRadiusRatio() const noexcept {
   const std::scoped_lock lock(phase_mutex_);
   return phase_settings_.halo_radius_ratio;
+}
+
+void PhaseSearchService::setAtomScale(float scale) {
+  const std::scoped_lock lock(phase_mutex_);
+  phase_settings_.atom_scale = std::clamp(scale, 0.05F, 2.0F);
+}
+
+float PhaseSearchService::atomScale() const noexcept {
+  const std::scoped_lock lock(phase_mutex_);
+  return phase_settings_.atom_scale;
 }
 
 void PhaseSearchService::setDimNonMatching(bool dim) {
@@ -378,6 +396,7 @@ void PhaseSearchService::applyVisualsToScene(render3d::Scene3D &scene, std::size
 
 void PhaseSearchService::applyPhaseVisualsToSceneInternal(
     render3d::Scene3D &scene, const FramePhaseDescriptors *descriptors) {
+  scene.setAtomScale(phase_settings_.atom_scale);
   auto &atoms = scene.atoms();
   if (!phase_settings_.enabled || descriptors == nullptr) {
     resetPhaseVisuals(atoms);
@@ -395,6 +414,8 @@ void PhaseSearchService::applyPhaseVisualsToSceneInternal(
 
   const float halo_alpha = std::clamp(phase_settings_.halo_intensity, 0.0F, 1.0F);
   const auto alpha_byte = static_cast<std::uint8_t>(std::round(halo_alpha * 255.0F));
+  const float effective_halo_ratio =
+      phase_settings_.halo_radius_ratio * computeLargeCellHaloBoost(scene);
 
   const PhaseVisualContext ctx{
       .min_x = phase_settings_.min_threshold,
@@ -403,7 +424,7 @@ void PhaseSearchService::applyPhaseVisualsToSceneInternal(
       .max_y = phase_settings_.max_threshold_y,
       .diff_x = phase_settings_.max_threshold - phase_settings_.min_threshold,
       .alpha_byte = alpha_byte,
-      .halo_radius_ratio = phase_settings_.halo_radius_ratio,
+      .halo_radius_ratio = effective_halo_ratio,
       .non_matching_dim = computeNonMatchingDimFactor(phase_settings_),
       .colormap = phase_settings_.colormap,
       .is_2d = is_2d,

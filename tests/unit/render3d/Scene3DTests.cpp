@@ -66,6 +66,16 @@ TEST(Scene3DTests, ElementColoringPalette) {
   const float r_c = getElementDisplayRadius("C");
   EXPECT_GT(r_c, 0.1F);
   EXPECT_LT(r_c, 2.0F);
+
+  // Numeric LAMMPS type strings ("1".."4") receive distinct categorical colors
+  const auto c_t1 = getElementColor("1");
+  const auto c_t2 = getElementColor("2");
+  const auto c_t3 = getElementColor("3");
+  const auto c_t4 = getElementColor("4");
+  EXPECT_NE(c_t1, c_unknown);
+  EXPECT_NE(c_t1, c_t2);
+  EXPECT_NE(c_t2, c_t3);
+  EXPECT_NE(c_t3, c_t4);
 }
 
 TEST(Scene3DTests, EmptySceneBounds) {
@@ -162,6 +172,29 @@ TEST(Scene3DTests, BuildSceneInCellPeriodicBondsAndClipping) {
   const auto &bond_stub2 = in_cell_scene->bonds()[1];
   EXPECT_NEAR(bond_stub2.start.x(), 9.5F, 1e-4F);
   EXPECT_NEAR(bond_stub2.end.x(), 10.0F, 1e-4F);
+}
+
+TEST(Scene3DTests, SetAtomScaleUpdatesRadiiAndClamps) {
+  core::Cell cell;
+  cell.addAtom("C", math::Vector3<real_t>(1.0, 2.0, 3.0));
+
+  const auto scene = Scene3D::fromCell(cell, 1.15, false, false);
+  ASSERT_NE(scene, nullptr);
+  ASSERT_EQ(scene->atoms().size(), 1UL);
+  EXPECT_FLOAT_EQ(scene->atomScale(), 0.35F);
+
+  const float cov_r = scene->atoms()[0].covalent_radius;
+  EXPECT_NEAR(scene->atoms()[0].radius, cov_r * 0.35F, 1e-5F);
+
+  scene->setAtomScale(0.85F);
+  EXPECT_FLOAT_EQ(scene->atomScale(), 0.85F);
+  EXPECT_NEAR(scene->atoms()[0].radius, cov_r * 0.85F, 1e-5F);
+
+  // Clamp upper bound to 2.0F and lower bound to 0.05F
+  scene->setAtomScale(5.0F);
+  EXPECT_FLOAT_EQ(scene->atomScale(), 2.0F);
+  scene->setAtomScale(0.01F);
+  EXPECT_FLOAT_EQ(scene->atomScale(), 0.05F);
 }
 
 } // namespace correlation::render3d

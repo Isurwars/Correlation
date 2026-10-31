@@ -120,6 +120,7 @@ export component PreviewCard inherits FilledCard {
     in property <float> structure_3d_phase_domain_max: 1.0;
     in property <float> structure_3d_phase_halo_intensity: 0.85;
     in property <float> structure_3d_phase_halo_radius_ratio: 1.35;
+    in property <float> structure_3d_atom_scale: 0.35;
     in property <bool> structure_3d_phase_dim_non_matching: false;
     in property <bool> structure_3d_phase_hide_non_matching: false;
     in property <[float]> structure_3d_phase_histogram_counts: [];
@@ -146,6 +147,7 @@ export component PreviewCard inherits FilledCard {
     callback set_phase_thresholds_3d(float, float);
     callback set_phase_intensity_3d(float);
     callback set_phase_radius_ratio_3d(float);
+    callback set_atom_scale_3d(float);
     callback set_phase_dim_non_matching_3d(bool);
     callback set_phase_hide_non_matching_3d(bool);
 
@@ -519,6 +521,7 @@ export component PreviewCard inherits FilledCard {
                 phase_domain_max: root.structure_3d_phase_domain_max;
                 phase_halo_intensity: root.structure_3d_phase_halo_intensity;
                 phase_halo_radius_ratio: root.structure_3d_phase_halo_radius_ratio;
+                atom_scale: root.structure_3d_atom_scale;
                 phase_dim_non_matching: root.structure_3d_phase_dim_non_matching;
                 phase_hide_non_matching: root.structure_3d_phase_hide_non_matching;
                 phase_histogram_counts: root.structure_3d_phase_histogram_counts;
@@ -544,6 +547,7 @@ export component PreviewCard inherits FilledCard {
                 set_phase_thresholds(min, max) => { root.set_phase_thresholds_3d(min, max); }
                 set_phase_intensity(val) => { root.set_phase_intensity_3d(val); }
                 set_phase_radius_ratio(val) => { root.set_phase_radius_ratio_3d(val); }
+                set_atom_scale(val) => { root.set_atom_scale_3d(val); }
                 set_phase_dim_non_matching(dim) => { root.set_phase_dim_non_matching_3d(dim); }
                 set_phase_hide_non_matching(hide) => { root.set_phase_hide_non_matching_3d(hide); }
                 set_phase_2d_mode(is_2d) => { root.set_phase_2d_mode_3d(is_2d); }

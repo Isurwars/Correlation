@@ -10,13 +10,42 @@
 #include "core/Atom.hpp"
 #include "math/Constants.hpp"
 #include "math/LinearAlgebra.hpp"
+#include "physics/PhysicalData.hpp"
 
 #include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <limits>
 #include <stdexcept>
 
 namespace correlation::core {
+
+namespace {
+
+[[nodiscard]] std::string normalizeElementSymbol(std::string_view raw) {
+  while (!raw.empty() && std::isspace(static_cast<unsigned char>(raw.front())) != 0) {
+    raw.remove_prefix(1);
+  }
+  while (!raw.empty() && std::isspace(static_cast<unsigned char>(raw.back())) != 0) {
+    raw.remove_suffix(1);
+  }
+  if (raw.empty()) {
+    return {};
+  }
+  if (raw.size() <= 2 && std::isalpha(static_cast<unsigned char>(raw[0])) != 0) {
+    std::string candidate(raw);
+    candidate[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(candidate[0])));
+    if (candidate.size() == 2 && std::isalpha(static_cast<unsigned char>(candidate[1])) != 0) {
+      candidate[1] = static_cast<char>(std::tolower(static_cast<unsigned char>(candidate[1])));
+    }
+    if (physics::detail::find(candidate) != nullptr) {
+      return candidate;
+    }
+  }
+  return std::string(raw);
+}
+
+} // namespace
 
 Cell::Cell(const math::Vector3<real_t> &vec_a, const math::Vector3<real_t> &vec_b,
            const math::Vector3<real_t> &vec_c) {
@@ -119,6 +148,34 @@ std::optional<Element> Cell::findElement(std::string_view symbol) const {
     return *iter;
   }
   return std::nullopt;
+}
+
+bool Cell::renameElement(std::string_view old_symbol, std::string_view new_symbol) {
+  const std::string normalized_new = normalizeElementSymbol(new_symbol);
+  if (normalized_new.empty() || normalized_new == old_symbol) {
+    return false;
+  }
+
+  const auto target_it = std::ranges::find_if(
+      elements_, [&](const Element &elem) { return elem.symbol == old_symbol; });
+  if (target_it == elements_.end()) {
+    return false;
+  }
+
+  const auto collision_it = std::ranges::find_if(
+      elements_, [&](const Element &elem) { return elem.symbol == normalized_new; });
+  if (collision_it != elements_.end()) {
+    return false;
+  }
+
+  target_it->symbol = normalized_new;
+  const Element &updated_elem = *target_it;
+  for (auto &atom : atoms_) {
+    if (atom.elementId() == updated_elem.id.value) {
+      atom.setElement(updated_elem);
+    }
+  }
+  return true;
 }
 
 const Element &Cell::getOrRegisterElement(std::string_view symbol) {

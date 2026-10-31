@@ -13,19 +13,31 @@ import { PhaseSlider } from "./PhaseSlider.slint";
 export component PhaseVisualControls inherits VerticalLayout {
     in property <float> halo_intensity: 0.85;
     in property <float> halo_radius_ratio: 1.35;
+    in property <float> atom_scale: 0.35;
     in property <bool> dim_non_matching: false;
     in property <bool> hide_non_matching: false;
 
     callback set_intensity(float);
     callback set_radius_ratio(float);
+    callback set_atom_scale(float);
     callback set_dim_non_matching(bool);
     callback set_hide_non_matching(bool);
 
     spacing: 5px;
 
-    // Visual Controls: Halo Intensity & Radius Ratio
+    // Visual Controls: Ball Radius, Halo Intensity & Halo Radius Ratio
     HorizontalLayout {
         spacing: 6px;
+
+        PhaseSlider {
+            horizontal-stretch: 1;
+            label: "Ball Radius";
+            value: root.atom_scale;
+            min_val: 0.1;
+            max_val: 1.5;
+            display_text: "" + (Math.round(root.atom_scale * 100) / 100) + "x";
+            value_changed(val) => { root.set_atom_scale(val); }
+        }
 
         PhaseSlider {
             horizontal-stretch: 1;
@@ -42,7 +54,7 @@ export component PhaseVisualControls inherits VerticalLayout {
             label: "Glow Radius";
             value: root.halo_radius_ratio;
             min_val: 1.1;
-            max_val: 2.0;
+            max_val: 4.5;
             display_text: "" + (Math.round(root.halo_radius_ratio * 100) / 100) + "x";
             value_changed(val) => { root.set_radius_ratio(val); }
         }

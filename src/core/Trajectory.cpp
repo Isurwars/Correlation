@@ -102,7 +102,9 @@ Cell Trajectory::getFrame(size_t index) const {
     if (slice.file_index >= mapped_files_.size() || !mapped_files_[slice.file_index]) {
       throw std::runtime_error("Trajectory::getFrame: invalid mapped file index");
     }
-    return parser_(mapped_files_[slice.file_index]->data() + slice.offset, slice.size);
+    Cell parsed = parser_(mapped_files_[slice.file_index]->data() + slice.offset, slice.size);
+    applyElementRemap(parsed);
+    return parsed;
   }
   throw std::runtime_error("Trajectory::getFrame: trajectory is empty");
 }
@@ -194,11 +196,80 @@ void Trajectory::ensureMaterialized() const {
     for (size_t i = 0; i < count; ++i) {
       const auto &slice = frame_slices_[i];
       frames_[i] = parser_(mapped_files_[slice.file_index]->data() + slice.offset, slice.size);
+      applyElementRemap(frames_[i]);
       frame_lattice_parameters_[i] = frames_[i].latticeParameters();
       frame_volumes_[i] = frames_[i].volume();
     }
     first_frame_.reset();
   }
+}
+
+void Trajectory::applyElementRemap(Cell &cell) const {
+  for (const auto &[from_sym, to_sym] : element_remap_) {
+    static_cast<void>(cell.renameElement(from_sym, to_sym));
+  }
+}
+
+bool Trajectory::renameElementMaterialized(std::string_view old_symbol,
+                                           std::string_view new_symbol) {
+  if (!frames_[0].renameElement(old_symbol, new_symbol)) {
+    return false;
+  }
+  for (size_t i = 1; i < frames_.size(); ++i) {
+    static_cast<void>(frames_[i].renameElement(old_symbol, new_symbol));
+  }
+  if (first_frame_) {
+    static_cast<void>(first_frame_->renameElement(old_symbol, new_symbol));
+  }
+  return true;
+}
+
+bool Trajectory::renameElementMapped(std::string_view old_symbol, std::string_view new_symbol) {
+  if (!first_frame_) {
+    const auto &slice = frame_slices_[0];
+    Cell parsed = parser_(mapped_files_[slice.file_index]->data() + slice.offset, slice.size);
+    applyElementRemap(parsed);
+    first_frame_ = std::move(parsed);
+  }
+  const auto old_elems = first_frame_->elements();
+  if (!first_frame_->renameElement(old_symbol, new_symbol)) {
+    return false;
+  }
+  std::string resolved_new_symbol;
+  const auto &new_elems = first_frame_->elements();
+  for (size_t i = 0; i < new_elems.size() && i < old_elems.size(); ++i) {
+    if (old_elems[i].symbol == old_symbol) {
+      resolved_new_symbol = new_elems[i].symbol;
+      break;
+    }
+  }
+  for (auto &[orig_sym, mapped_sym] : element_remap_) {
+    if (mapped_sym == old_symbol) {
+      mapped_sym = resolved_new_symbol;
+      return true;
+    }
+  }
+  element_remap_.emplace_back(std::string(old_symbol), resolved_new_symbol);
+  return true;
+}
+
+bool Trajectory::renameElement(std::string_view old_symbol, std::string_view new_symbol) {
+  if (getFrameCount() == 0) {
+    return false;
+  }
+
+  bool renamed = false;
+  {
+    std::scoped_lock const lock(*init_mutex_);
+    renamed = !frames_.empty() ? renameElementMaterialized(old_symbol, new_symbol)
+                               : renameElementMapped(old_symbol, new_symbol);
+  }
+  if (!renamed) {
+    return false;
+  }
+
+  precomputeBondCutoffs();
+  return true;
 }
 
 const correlation::analysis::BondCutoffRange &Trajectory::getBondCutoffRange(size_t type1,

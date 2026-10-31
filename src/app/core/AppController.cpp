@@ -103,6 +103,10 @@ void AppController::registerActionCallbacks() {
   window_.on_cancel_analysis([this] { dispatcher_.cancelAnalysis(); });
   window_.on_browse_file([this] { file_io_handler_->handleBrowseFile(); });
   window_.on_reload_file([this] { file_io_handler_->handleReloadFile(); });
+  window_.on_rename_element([this](const slint::SharedString &old_sym,
+                                   const slint::SharedString &new_sym) {
+    file_io_handler_->handleRenameElement(std::string(old_sym.data()), std::string(new_sym.data()));
+  });
   window_.on_write_files([this] { file_io_handler_->handleWriteFiles(); });
   window_.on_export_structure([this] { file_io_handler_->handleExportStructure(); });
   window_.on_validate_inputs([this] {
@@ -262,6 +266,9 @@ void AppController::registerStructure3DCallbacks() {
 
   window_.on_set_phase_radius_ratio_3d(
       [this](float ratio) { structure_3d_controller_->setPhaseHaloRadiusRatio(ratio); });
+
+  window_.on_set_atom_scale_3d(
+      [this](float scale) { structure_3d_controller_->setAtomScale(scale); });
 
   window_.on_set_phase_dim_non_matching_3d(
       [this](bool dim) { structure_3d_controller_->setPhaseDimNonMatching(dim); });

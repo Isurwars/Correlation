@@ -14,6 +14,7 @@
 #include "app/viewmodel/Structure3DController.hpp"
 #include "physics/PhysicalData.hpp"
 #include "readers/NaturalSort.hpp"
+#include "render3d/ElementColors.hpp"
 #include "writers/structure/BaseStructureWriter.hpp"
 #include "writers/structure/StructureWriterFactory.hpp"
 #include <filesystem>
@@ -322,6 +323,64 @@ void FileIOHandler::startLoadingTrajectories(const std::vector<std::string> &fil
       });
 }
 
+void FileIOHandler::refreshAtomCountsUI() {
+  const auto ordered_counts = loader_.getOrderedAtomCounts();
+  const auto slint_atom_counts = std::make_shared<slint::VectorModel<AtomCount>>();
+  for (const auto &[symbol, count] : ordered_counts) {
+    const auto rgba = render3d::getElementColor(symbol);
+    const bool is_unknown = (physics::detail::find(symbol) == nullptr);
+    slint_atom_counts->push_back({
+        .symbol = slint::SharedString(symbol),
+        .count = count,
+        .color = slint::Color::from_rgb_uint8(rgba.r, rgba.g, rgba.b),
+        .is_unknown = is_unknown,
+    });
+  }
+  window_.set_atom_counts(slint_atom_counts);
+}
+
+void FileIOHandler::handleRenameElement(const std::string &old_symbol,
+                                        const std::string &new_symbol) {
+  if (!loader_.renameElement(old_symbol, new_symbol)) {
+    refreshAtomCountsUI();
+    window_.set_analysis_status_text(slint::SharedString(
+        std::format("Error: Cannot rename species '{}' to '{}'.", old_symbol, new_symbol)));
+    return;
+  }
+
+  const auto preview_res = dispatcher_.runFastPreviewRDF(loader_.trajectoryMut(), options_);
+  if (!preview_res) {
+    // Fast preview RDF is non-fatal for species remapping.
+  }
+
+  refreshAtomCountsUI();
+  controller_.setBondCutoffs();
+
+  const int current_frame = std::max(0, window_.get_structure_3d_current_frame());
+  updateBoxDiagnosticsForFrame(static_cast<size_t>(current_frame));
+
+  {
+    auto opts = window_.get_analysis_options();
+    opts.time_step = slint::SharedString(std::format("{:.2f}", loader_.getRecommendedTimeStep()));
+    window_.set_analysis_options(opts);
+  }
+
+  updateStructure3DView();
+  if (current_frame > 0 && controller_.getStructure3DController() != nullptr) {
+    controller_.getStructure3DController()->handleSeekFrame(current_frame);
+  }
+
+  if (controller_.getPlotController() != nullptr) {
+    controller_.getPlotController()->populatePlotList();
+    const int plot_idx = std::max(0, window_.get_selected_plot_index());
+    controller_.getPlotController()->requestPlotUpdate(plot_idx, true);
+  }
+
+  static_cast<void>(controller_.getInputValidator()->validateInputs());
+  window_.set_analysis_status_text(
+      slint::SharedString(std::format("Mapped species '{}' → '{}'.", old_symbol, new_symbol)));
+}
+
 void FileIOHandler::onTrajectoryLoadSuccess(const std::string &filepath) {
   if (loader_.cell() == nullptr) {
     return;
@@ -330,15 +389,7 @@ void FileIOHandler::onTrajectoryLoadSuccess(const std::string &filepath) {
   window_.set_file_loaded(true);
 
   // Atom Counts
-  const auto atom_counts_map = loader_.getAtomCounts();
-  const auto slint_atom_counts = std::make_shared<slint::VectorModel<AtomCount>>();
-  for (const auto &[symbol, count] : atom_counts_map) {
-    slint_atom_counts->push_back({
-        .symbol = slint::SharedString(symbol),
-        .count = count,
-    });
-  }
-  window_.set_atom_counts(slint_atom_counts);
+  refreshAtomCountsUI();
 
   // Bond Cutoffs
   controller_.setBondCutoffs();

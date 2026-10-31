@@ -89,6 +89,9 @@ public:
   void setHaloRadiusRatio(float ratio);
   [[nodiscard]] float haloRadiusRatio() const noexcept;
 
+  void setAtomScale(float scale);
+  [[nodiscard]] float atomScale() const noexcept;
+
   void setDimNonMatching(bool dim);
   [[nodiscard]] bool isDimNonMatching() const noexcept;
 

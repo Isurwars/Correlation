@@ -258,6 +258,15 @@ public:
    */
   [[nodiscard]] size_t getRemovedFrameCount() const noexcept { return removed_frames_count_; }
 
+  /**
+   * @brief Renames an element species across all frames (both materialized and lazy-mapped)
+   *        and recomputes bond cutoffs.
+   * @param old_symbol Existing element symbol (e.g., "1").
+   * @param new_symbol Replacement element symbol (e.g., "Cu").
+   * @return True if the element was renamed, false otherwise.
+   */
+  bool renameElement(std::string_view old_symbol, std::string_view new_symbol);
+
   ///@}
 
 private:
@@ -270,6 +279,9 @@ private:
   void validateFrame(const Cell &new_frame) const;
   void ensureMaterialized() const;
   void syncCellMetricsUnlocked() const;
+  void applyElementRemap(Cell &cell) const;
+  bool renameElementMaterialized(std::string_view old_symbol, std::string_view new_symbol);
+  bool renameElementMapped(std::string_view old_symbol, std::string_view new_symbol);
 
   mutable std::unique_ptr<std::mutex> init_mutex_{std::make_unique<std::mutex>()};
 
@@ -285,6 +297,7 @@ private:
   std::vector<std::shared_ptr<MappedFile>> mapped_files_;
   std::vector<MappedFrameSlice> frame_slices_;
   FrameParser parser_;
+  std::vector<std::pair<std::string, std::string>> element_remap_;
 };
 
 } // namespace correlation::core

@@ -223,6 +223,24 @@ inline constexpr std::array<SymbolZMapping, 118> SYMBOL_Z_TABLE = {
     },
 };
 
+/**
+ * @brief High-contrast categorical palette for numeric LAMMPS atom types ("1", "2", "3", ...).
+ */
+inline constexpr std::array<RgbaColor, 10> NUMERIC_TYPE_COLORS = {
+    {
+        {.r = 56, .g = 189, .b = 248},  // Type 1: Sky Blue (#38BDF8)
+        {.r = 251, .g = 146, .b = 60},  // Type 2: Warm Orange (#FB923C)
+        {.r = 52, .g = 211, .b = 153},  // Type 3: Emerald Green (#34D399)
+        {.r = 250, .g = 204, .b = 21},  // Type 4: Gold Yellow (#FACC15)
+        {.r = 167, .g = 139, .b = 250}, // Type 5: Soft Violet (#A78BFA)
+        {.r = 248, .g = 113, .b = 113}, // Type 6: Coral Red (#F87171)
+        {.r = 45, .g = 212, .b = 191},  // Type 7: Teal (#2DD4BF)
+        {.r = 244, .g = 114, .b = 182}, // Type 8: Rose Pink (#F472B6)
+        {.r = 163, .g = 230, .b = 53},  // Type 9: Lime (#A3E635)
+        {.r = 96, .g = 165, .b = 250},  // Type 10: Cobalt Blue (#60A5FA)
+    },
+};
+
 } // namespace detail
 
 /**
@@ -252,12 +270,31 @@ inline constexpr std::array<SymbolZMapping, 118> SYMBOL_Z_TABLE = {
 }
 
 /**
- * @brief Retrieves standard CPK color for a chemical symbol.
- * @param symbol Element symbol (e.g. "H", "Fe", "Si").
+ * @brief Retrieves standard CPK color for a chemical symbol, or a categorical color for numeric
+ *        LAMMPS atom types ("1", "2", ...).
+ * @param symbol Element symbol (e.g. "H", "Fe", "Si", or "1").
  * @return RGBA color representation.
  */
 [[nodiscard]] constexpr RgbaColor getElementColor(std::string_view symbol) noexcept {
-  return getElementColor(getAtomicNumber(symbol));
+  const int z = getAtomicNumber(symbol);
+  if (z != 0) {
+    return getElementColor(z);
+  }
+  if (!symbol.empty()) {
+    size_t numeric_val = 0;
+    bool all_digits = true;
+    for (const char chr : symbol) {
+      if (chr < '0' || chr > '9') {
+        all_digits = false;
+        break;
+      }
+      numeric_val = numeric_val * 10 + static_cast<size_t>(chr - '0');
+    }
+    if (all_digits && numeric_val >= 1) {
+      return detail::NUMERIC_TYPE_COLORS.at((numeric_val - 1) % detail::NUMERIC_TYPE_COLORS.size());
+    }
+  }
+  return ELEMENT_COLORS[0];
 }
 
 /**
@@ -271,7 +308,7 @@ inline constexpr std::array<SymbolZMapping, 118> SYMBOL_Z_TABLE = {
     const auto r = correlation::physics::getCovalentRadius(symbol);
     return static_cast<float>(r) * scale;
   } catch (...) {
-    return 0.5F * scale;
+    return 1.25F * scale;
   }
 }
 

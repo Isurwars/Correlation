@@ -419,6 +419,19 @@ float Structure3DController::phaseHaloRadiusRatio() const noexcept {
   return phase_service_ ? phase_service_->haloRadiusRatio() : 1.5F;
 }
 
+void Structure3DController::setAtomScale(float scale) {
+  if (phase_service_ != nullptr) {
+    phase_service_->setAtomScale(scale);
+    updateScenePhaseVisuals();
+  }
+  requestRender();
+  syncPhaseSearchToWindow();
+}
+
+float Structure3DController::atomScale() const noexcept {
+  return phase_service_ ? phase_service_->atomScale() : 0.35F;
+}
+
 void Structure3DController::setPhaseDimNonMatching(bool dim) {
   if (phase_service_ != nullptr) {
     phase_service_->setDimNonMatching(dim);
@@ -573,6 +586,7 @@ void Structure3DController::syncPhaseSearchToWindow() {
     window_.set_structure_3d_phase_domain_max(hist.max_val);
     window_.set_structure_3d_phase_halo_intensity(settings.halo_intensity);
     window_.set_structure_3d_phase_halo_radius_ratio(settings.halo_radius_ratio);
+    window_.set_structure_3d_atom_scale(settings.atom_scale);
     window_.set_structure_3d_phase_dim_non_matching(settings.dim_non_matching);
     window_.set_structure_3d_phase_hide_non_matching(settings.hide_non_matching);
     window_.set_structure_3d_phase_matching_atoms(static_cast<int>(

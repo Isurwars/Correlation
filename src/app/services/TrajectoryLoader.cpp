@@ -26,6 +26,14 @@ TrajectoryLoader::TrajectoryLoader(const correlation::readers::IReaderRegistry &
 
 std::map<std::string, int> TrajectoryLoader::getAtomCounts() const {
   std::map<std::string, int> counts;
+  for (const auto &[symbol, count] : getOrderedAtomCounts()) {
+    counts[symbol] = count;
+  }
+  return counts;
+}
+
+std::vector<std::pair<std::string, int>> TrajectoryLoader::getOrderedAtomCounts() const {
+  std::vector<std::pair<std::string, int>> counts;
   const correlation::core::Cell *current_cell = cell();
   if (current_cell == nullptr) {
     return counts;
@@ -38,13 +46,21 @@ std::map<std::string, int> TrajectoryLoader::getAtomCounts() const {
     id_counts[atom.elementId()]++;
   }
 
+  counts.reserve(elements.size());
   for (size_t i = 0; i < elements.size(); ++i) {
     if (id_counts[i] > 0) {
-      counts[elements[i].symbol] = id_counts[i];
+      counts.emplace_back(elements[i].symbol, id_counts[i]);
     }
   }
 
   return counts;
+}
+
+bool TrajectoryLoader::renameElement(std::string_view old_symbol, std::string_view new_symbol) {
+  if (!trajectory_) {
+    return false;
+  }
+  return trajectory_->renameElement(old_symbol, new_symbol);
 }
 
 real_t TrajectoryLoader::getRecommendedTimeStep() const {

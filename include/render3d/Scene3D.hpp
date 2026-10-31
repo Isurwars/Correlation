@@ -198,6 +198,18 @@ public:
   void updateAtomPositions(const std::vector<core::Atom> &cell_atoms, bool in_cell = false);
 
   /**
+   * @brief Sets the uniform scaling factor applied to covalent radii for ball visualization.
+   * @param[in] atom_scale Multiplier in [0.05, 2.0] (default 0.35).
+   */
+  void setAtomScale(float atom_scale) noexcept;
+
+  /**
+   * @brief Gets the current uniform scaling factor for atom visualization radii.
+   * @return Active atom radius scale multiplier.
+   */
+  [[nodiscard]] float atomScale() const noexcept { return atom_scale_; }
+
+  /**
    * @brief Recomputes axis-aligned bounding box from atoms and unit cell vertices.
    */
   void updateBounds() noexcept;
@@ -211,6 +223,7 @@ private:
 
   math::Matrix3<real_t> lattice_vectors_;
   math::Matrix3<real_t> inv_lattice_vectors_;
+  float atom_scale_{0.35F};
   bool has_lattice_{false};
   bool in_cell_{false};
 };

@@ -22,8 +22,6 @@
 #include <slint.h>
 
 #include <atomic>
-#include <condition_variable>
-#include <cstdint>
 #include <memory>
 #include <mutex>
 #include <thread>
@@ -246,7 +244,7 @@ public:
   [[nodiscard]] float phaseHaloIntensity() const noexcept;
 
   /**
-   * @brief Sets halo radius multiplier ratio [1.1, 2.0].
+   * @brief Sets halo radius multiplier ratio [1.0, 5.0].
    * @param[in] ratio Ratio of halo radius over visual sphere radius.
    */
   void setPhaseHaloRadiusRatio(float ratio);
@@ -258,9 +256,17 @@ public:
   [[nodiscard]] float phaseHaloRadiusRatio() const noexcept;
 
   /**
-   * @brief Toggles ghosting/dimming of atoms outside threshold boundaries.
-   * @param[in] dim True to apply dimming to non-matching atoms.
+   * @brief Sets uniform atom ball radius scaling multiplier [0.05, 2.0].
+   * @param[in] scale Atom radius scale multiplier.
    */
+  void setAtomScale(float scale);
+
+  /**
+   * @brief Gets current uniform atom ball radius scaling multiplier.
+   * @return Atom radius scale multiplier.
+   */
+  [[nodiscard]] float atomScale() const noexcept;
+
   /**
    * @brief Toggles ghosting/dimming of atoms outside threshold boundaries.
    * @param[in] dim True to apply dimming to non-matching atoms.

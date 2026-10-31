@@ -132,6 +132,7 @@ export component SidePanelHost inherits Vertical {
     // Callbacks - Operations
     callback browse_file();
     callback reload_file();
+    callback rename_element(string, string);
     callback reset_trajectory_options();
     callback reset_material_type();
     callback run_analysis();
@@ -229,6 +230,7 @@ export component SidePanelHost inherits Vertical {
             browse_file => { root.browse_file(); }
             reload_file => { root.reload_file(); }
             export_structure => { root.export_structure(); }
+            rename_element(old_sym, new_sym) => { root.rename_element(old_sym, new_sym); }
             reset_trajectory_options => { root.reset_trajectory_options(); }
             reset_material_type => { root.reset_material_type(); }
             run_analysis => { root.run_analysis(); }

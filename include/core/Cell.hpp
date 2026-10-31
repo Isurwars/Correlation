@@ -187,6 +187,14 @@ public:
    */
   [[nodiscard]] std::optional<Element> findElement(std::string_view symbol) const;
 
+  /**
+   * @brief Renames an existing element species in-place across all atoms in the cell.
+   * @param old_symbol Existing element symbol (e.g., "1").
+   * @param new_symbol Replacement element symbol (e.g., "Cu").
+   * @return True if the element was found and renamed, false otherwise.
+   */
+  bool renameElement(std::string_view old_symbol, std::string_view new_symbol);
+
   ///@}
 
   /** @name Methods */

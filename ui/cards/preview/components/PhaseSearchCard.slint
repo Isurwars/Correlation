@@ -28,6 +28,7 @@ export component PhaseSearchCard inherits Rectangle {
     in property <float> domain_max: 1.0;
     in property <float> halo_intensity: 0.85;
     in property <float> halo_radius_ratio: 1.35;
+    in property <float> atom_scale: 0.35;
     in property <bool> dim_non_matching: false;
     in property <bool> hide_non_matching: false;
     in property <[float]> histogram_counts: [];
@@ -54,6 +55,7 @@ export component PhaseSearchCard inherits Rectangle {
     callback set_thresholds(float, float);
     callback set_intensity(float);
     callback set_radius_ratio(float);
+    callback set_atom_scale(float);
     callback set_dim_non_matching(bool);
     callback set_hide_non_matching(bool);
     callback close();
@@ -309,15 +311,17 @@ export component PhaseSearchCard inherits Rectangle {
             }
         }
 
-        // 8. Visual Controls (Halo Intensity, Radius, Dim & Hide Checkboxes)
+        // 8. Visual Controls (Ball Radius, Halo Intensity, Radius, Dim & Hide Checkboxes)
         PhaseVisualControls {
             halo_intensity: root.halo_intensity;
             halo_radius_ratio: root.halo_radius_ratio;
+            atom_scale: root.atom_scale;
             dim_non_matching: root.dim_non_matching;
             hide_non_matching: root.hide_non_matching;
 
             set_intensity(val) => { root.set_intensity(val); }
             set_radius_ratio(val) => { root.set_radius_ratio(val); }
+            set_atom_scale(val) => { root.set_atom_scale(val); }
             set_dim_non_matching(dim) => { root.set_dim_non_matching(dim); }
             set_hide_non_matching(hide) => { root.set_hide_non_matching(hide); }
         }

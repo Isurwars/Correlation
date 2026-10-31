@@ -35,7 +35,7 @@ void main() {
     vec3 view_pos = view_center.xyz + vec3(in_corner * bounding_radius, 0.0);
     gl_Position = ubo.proj * vec4(view_pos, 1.0);
 
-    out_corner = in_corner * halo_multiplier * 1.15;
+    out_corner = in_corner * bounding_radius;
     out_view_center = view_center.xyz;
     out_radius = in_radius;
     out_color = in_color;

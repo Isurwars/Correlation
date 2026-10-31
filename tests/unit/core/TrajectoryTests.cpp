@@ -459,4 +459,37 @@ TEST_F(TrajectoryTests, TracksLatticeParametersAndVolumePerCell) {
   EXPECT_THROW((void)traj.getVolume(3), std::out_of_range);
 }
 
+TEST_F(TrajectoryTests, RenameElementUpdatesMaterializedAndLazyFramesAndBondCutoffs) {
+  std::string const filename = "test_data/lazy_rename.xyz";
+  std::ofstream out(filename);
+  out << "2\nLattice=\"10 0 0 0 10 0 0 0 10\"\n1 1.0 1.0 1.0\n2 4.0 4.0 4.0\n";
+  out << "2\nLattice=\"10 0 0 0 10 0 0 0 10\"\n1 1.2 1.0 1.0\n2 4.2 4.0 4.0\n";
+  out.close();
+
+  auto lazy_traj =
+      correlation::readers::readTrajectory(filename, correlation::readers::FileType::Xyz);
+  EXPECT_EQ(lazy_traj.getFrameCount(), 2);
+  EXPECT_EQ(lazy_traj.firstFrame().elements()[0].symbol, "1");
+
+  EXPECT_TRUE(lazy_traj.renameElement("1", "Cu"));
+  EXPECT_TRUE(lazy_traj.renameElement("2", "Zr"));
+  EXPECT_EQ(lazy_traj.firstFrame().elements()[0].symbol, "Cu");
+  EXPECT_EQ(lazy_traj.firstFrame().elements()[1].symbol, "Zr");
+
+  // Lazy frame retrieval applies remap
+  const Cell frame_1 = lazy_traj.getFrame(1);
+  EXPECT_EQ(frame_1.atoms()[0].element().symbol, "Cu");
+  EXPECT_EQ(frame_1.atoms()[1].element().symbol, "Zr");
+
+  // Bond cutoffs recomputed with Cu and Zr covalent radii
+  const real_t r_cu = correlation::physics::getCovalentRadius("Cu");
+  const real_t r_zr = correlation::physics::getCovalentRadius("Zr");
+  EXPECT_NEAR(lazy_traj.getBondCutoff(0, 1), (r_cu + r_zr) * static_cast<real_t>(1.3), 1e-4);
+
+  // Materialized frames also retain remapped species
+  EXPECT_EQ(lazy_traj.getFrames()[1].atoms()[0].element().symbol, "Cu");
+  EXPECT_TRUE(lazy_traj.renameElement("Cu", "Al"));
+  EXPECT_EQ(lazy_traj.getFrames()[1].atoms()[0].element().symbol, "Al");
+}
+
 } // namespace correlation::testing
