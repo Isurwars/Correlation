@@ -120,7 +120,7 @@ AnalysisDispatcher::runFastPreviewRDF(correlation::core::Trajectory *trajectory,
   }
 
   ProgramOptions preview_opts = options;
-  preview_opts.min_frame = 1;
+  preview_opts.min_frame = 0;
   preview_opts.max_frame = 1;
   preview_opts.frame_stride = 1;
   preview_opts.active_calculators.clear();

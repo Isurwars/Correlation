@@ -17,7 +17,6 @@
 
 #include <algorithm>
 #include <array>
-#include <chrono>
 #include <cmath>
 #include <cstdint>
 #include <utility>
@@ -163,12 +162,12 @@ void applyAtomVisual(render3d::AtomInstance &atom, float val_x, bool matches,
 
 } // namespace
 
-PhaseSearchService::PhaseSearchService(CellProvider cell_provider, SceneAccessor scene_accessor,
+PhaseSearchService::PhaseSearchService(CellProvider cell_provider,
                                        ActiveFrameProvider active_frame_provider,
                                        TotalFramesProvider total_frames_provider,
                                        UpdateCallback on_phase_updated,
                                        std::shared_ptr<std::atomic<bool>> alive)
-    : cell_provider_(std::move(cell_provider)), scene_accessor_(std::move(scene_accessor)),
+    : cell_provider_(std::move(cell_provider)),
       active_frame_provider_(std::move(active_frame_provider)),
       total_frames_provider_(std::move(total_frames_provider)),
       on_phase_updated_(std::move(on_phase_updated)), alive_(std::move(alive)) {
@@ -357,17 +356,17 @@ float PhaseSearchService::maxThresholdY() const noexcept {
   return phase_settings_.max_threshold_y;
 }
 
-const PhaseSearchSettings &PhaseSearchService::settings() const noexcept {
+PhaseSearchSettings PhaseSearchService::settings() const noexcept {
   const std::scoped_lock lock(phase_mutex_);
   return phase_settings_;
 }
 
-const PhaseHistogram &PhaseSearchService::latestHistogram() const noexcept {
+PhaseHistogram PhaseSearchService::latestHistogram() const {
   const std::scoped_lock lock(phase_mutex_);
   return latest_histogram_;
 }
 
-const PhaseHeatmap2D &PhaseSearchService::latestHeatmap() const noexcept {
+PhaseHeatmap2D PhaseSearchService::latestHeatmap() const {
   const std::scoped_lock lock(phase_mutex_);
   return latest_heatmap_;
 }
@@ -627,23 +626,11 @@ void PhaseSearchService::processTargetPhaseFrame(int64_t target_frame) {
     }
   }
 
-  bool need_update = false;
-  {
-    const std::scoped_lock lock(phase_mutex_);
+  if (descriptors) {
     const auto active_frame = active_frame_provider_ ? active_frame_provider_() : 0UL;
-    if (active_frame == frame_idx && scene_accessor_) {
-      const auto scene = scene_accessor_();
-      if (scene != nullptr) {
-        applyPhaseVisualsToSceneInternal(*scene, descriptors.get());
-        latest_histogram_ = computePhaseHistogram(descriptors.get());
-        latest_heatmap_ = computePhaseHeatmap(descriptors.get());
-        need_update = true;
-      }
+    if (active_frame == frame_idx && on_phase_updated_) {
+      on_phase_updated_();
     }
-  }
-
-  if (need_update && on_phase_updated_) {
-    on_phase_updated_();
   }
 
   prewarmAdjacentFrames(frame_idx);

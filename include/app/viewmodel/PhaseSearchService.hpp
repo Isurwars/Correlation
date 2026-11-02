@@ -37,7 +37,6 @@ class PhaseSearchService {
 public:
   using CellProvider =
       std::function<std::optional<std::pair<core::Cell, analysis::BondCutoffMatrix>>(std::size_t)>;
-  using SceneAccessor = std::function<std::shared_ptr<render3d::Scene3D>()>;
   using ActiveFrameProvider = std::function<std::size_t()>;
   using TotalFramesProvider = std::function<std::size_t()>;
   using UpdateCallback = std::function<void()>;
@@ -45,14 +44,12 @@ public:
   /**
    * @brief Constructs PhaseSearchService and spawns the background worker.
    * @param cell_provider Callback returning a cell and its bond cutoffs for a frame.
-   * @param scene_accessor Callback returning the current 3D scene.
    * @param active_frame_provider Callback returning the active frame index.
    * @param total_frames_provider Callback returning the total number of frames.
    * @param on_phase_updated Callback invoked when asynchronous calculation updates active scene.
    * @param alive Shared cancellation token indicating controller lifecycle.
    */
-  PhaseSearchService(CellProvider cell_provider, SceneAccessor scene_accessor,
-                     ActiveFrameProvider active_frame_provider,
+  PhaseSearchService(CellProvider cell_provider, ActiveFrameProvider active_frame_provider,
                      TotalFramesProvider total_frames_provider, UpdateCallback on_phase_updated,
                      std::shared_ptr<std::atomic<bool>> alive);
 
@@ -108,9 +105,9 @@ public:
   [[nodiscard]] float minThresholdY() const noexcept;
   [[nodiscard]] float maxThresholdY() const noexcept;
 
-  [[nodiscard]] const PhaseSearchSettings &settings() const noexcept;
-  [[nodiscard]] const PhaseHistogram &latestHistogram() const noexcept;
-  [[nodiscard]] const PhaseHeatmap2D &latestHeatmap() const noexcept;
+  [[nodiscard]] PhaseSearchSettings settings() const noexcept;
+  [[nodiscard]] PhaseHistogram latestHistogram() const;
+  [[nodiscard]] PhaseHeatmap2D latestHeatmap() const;
   [[nodiscard]] const PhaseDescriptorsLRUCache &lruCache() const noexcept;
   [[nodiscard]] PhaseDescriptorsLRUCache &lruCache() noexcept;
 
@@ -139,7 +136,6 @@ private:
                                         const FramePhaseDescriptors *descriptors);
 
   CellProvider cell_provider_;
-  SceneAccessor scene_accessor_;
   ActiveFrameProvider active_frame_provider_;
   TotalFramesProvider total_frames_provider_;
   UpdateCallback on_phase_updated_;

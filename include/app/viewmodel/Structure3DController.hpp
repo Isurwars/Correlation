@@ -162,7 +162,10 @@ public:
    * @brief Gets shared pointer to the active render scene.
    * @return Shared pointer to const Scene3D instance.
    */
-  [[nodiscard]] std::shared_ptr<const render3d::Scene3D> scene() const noexcept { return scene_; }
+  [[nodiscard]] std::shared_ptr<const render3d::Scene3D> scene() const noexcept {
+    const std::scoped_lock lock(mutex_);
+    return scene_;
+  }
 
   /**
    * @brief Enables or disables phase search halo visualization.
@@ -400,6 +403,7 @@ public:
 private:
   void requestPhaseCalculation(std::size_t frame_index);
   void updateScenePhaseVisuals();
+  void updateScenePhaseVisualsLocked();
 
   template <typename F> void safeInvokeOnWindow(F &&action) {
     if (std::this_thread::get_id() == main_thread_id_) {

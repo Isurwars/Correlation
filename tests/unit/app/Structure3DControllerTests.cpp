@@ -188,5 +188,29 @@ TEST_F(Structure3DControllerTests, ActivationAndRendering) {
   EXPECT_FALSE(controller.is3DModeActive());
 }
 
+TEST_F(Structure3DControllerTests, ConcurrentResizeAndTrajectoryRenderDoesNotCrash) {
+  const ProgramOptions options;
+  Structure3DController controller(window(), options);
+
+  const auto cell1 = createTestCell(0.0F);
+  const auto cell2 = createTestCell(0.5F);
+  const auto traj = std::make_shared<core::Trajectory>(std::vector<core::Cell>{cell1, cell2}, 1.0F);
+
+  controller.setTrajectory(traj);
+  controller.set3DModeActive(true);
+
+  for (int i = 0; i < 20; ++i) {
+    const float width = 640.0F + static_cast<float>((i % 5) * 32);
+    const float height = 480.0F + static_cast<float>((i % 5) * 24);
+    controller.handleViewportResized(width, height);
+    controller.handleSeekFrame(i % 2);
+    controller.requestRender(true);
+    std::this_thread::sleep_for(std::chrono::milliseconds(2));
+  }
+
+  controller.set3DModeActive(false);
+  EXPECT_FALSE(controller.is3DModeActive());
+}
+
 } // namespace
 } // namespace correlation::app

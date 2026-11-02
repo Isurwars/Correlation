@@ -39,20 +39,21 @@ Structure3DRenderPipeline::~Structure3DRenderPipeline() {
 }
 
 void Structure3DRenderPipeline::initialize(const render3d::ViewportDimensions &dimensions) {
-  const std::scoped_lock lock(mutex_);
-  viewport_dims_ = dimensions;
-  if (engine_ != nullptr) {
-    static_cast<void>(engine_->initialize(viewport_dims_));
+  {
+    const std::scoped_lock lock(mutex_);
+    viewport_dims_ = dimensions;
+    reinit_pending_ = true;
+    render_pending_ = true;
   }
+  cv_.notify_one();
 }
 
 void Structure3DRenderPipeline::resize(const render3d::ViewportDimensions &dimensions) {
-  const std::scoped_lock lock(mutex_);
-  viewport_dims_ = dimensions;
-  if (engine_ != nullptr) {
-    engine_->resize(viewport_dims_);
+  {
+    const std::scoped_lock lock(mutex_);
+    viewport_dims_ = dimensions;
+    render_pending_ = true;
   }
-  render_pending_ = true;
   cv_.notify_one();
 }
 
@@ -119,6 +120,8 @@ void Structure3DRenderPipeline::dispatchFrame(const std::uint8_t *pixel_data, st
 void Structure3DRenderPipeline::renderLoop() {
   while (!stop_worker_.load(std::memory_order_relaxed)) {
     RenderPipelineSnapshot snapshot;
+    render3d::ViewportDimensions target_dims{};
+    bool need_reinit = false;
 
     {
       std::unique_lock lock(mutex_);
@@ -132,11 +135,22 @@ void Structure3DRenderPipeline::renderLoop() {
       }
 
       render_pending_ = false;
+      need_reinit = std::exchange(reinit_pending_, false);
+      target_dims = viewport_dims_;
       snapshot = current_snapshot_;
     }
 
     if (!snapshot.is_active || snapshot.scene == nullptr || engine_ == nullptr) {
       continue;
+    }
+
+    if (need_reinit) {
+      static_cast<void>(engine_->initialize(target_dims));
+    } else {
+      const auto current_dims = engine_->dimensions();
+      if (current_dims.width != target_dims.width || current_dims.height != target_dims.height) {
+        engine_->resize(target_dims);
+      }
     }
 
     const auto lod_policy =

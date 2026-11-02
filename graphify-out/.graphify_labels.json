@@ -534,10 +534,7 @@
   "532": "IFrameCalculator",
   "533": "SYCLXRDParams",
   "534": "PhysicsService.cpp",
-  "535": "DfsStackFrame",
-  "536": "RandomAmorphousCellConfig",
   "537": "forEachPairWithin",
-  "538": "G6Calculator::calculateFrame",
   "539": "resolveExampleFilePath",
   "540": "CliParserTests"
 }

@@ -124,6 +124,7 @@ private:
   std::condition_variable cv_;
   RenderPipelineSnapshot current_snapshot_;
   bool render_pending_{false};
+  bool reinit_pending_{false};
   std::atomic<bool> stop_worker_{false};
   std::jthread render_worker_;
 };

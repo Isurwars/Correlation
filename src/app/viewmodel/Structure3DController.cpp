@@ -47,11 +47,6 @@ Structure3DController::Structure3DController(::AppWindow &window, const ProgramO
     return std::make_pair(current_cell_, analysis::BondCutoffMatrix{});
   };
 
-  auto scene_accessor = [this] -> std::shared_ptr<render3d::Scene3D> {
-    const std::scoped_lock lock(mutex_);
-    return scene_;
-  };
-
   auto active_frame_provider = [this] -> std::size_t {
     const std::scoped_lock lock(mutex_);
     return streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
@@ -66,13 +61,14 @@ Structure3DController::Structure3DController(::AppWindow &window, const ProgramO
   };
 
   auto on_phase_updated = [this] {
+    updateScenePhaseVisuals();
     requestRender();
     syncPhaseSearchToWindow();
   };
 
   phase_service_ = std::make_unique<PhaseSearchService>(
-      std::move(cell_provider), std::move(scene_accessor), std::move(active_frame_provider),
-      std::move(total_frames_provider), std::move(on_phase_updated), alive_);
+      std::move(cell_provider), std::move(active_frame_provider), std::move(total_frames_provider),
+      std::move(on_phase_updated), alive_);
 
   syncPhaseSearchToWindow();
 }
@@ -92,7 +88,7 @@ void Structure3DController::requestRender(bool immediate) {
   const std::scoped_lock lock(mutex_);
   const RenderPipelineSnapshot snapshot{
       .camera = camera_,
-      .scene = scene_,
+      .scene = scene_ ? std::make_shared<render3d::Scene3D>(*scene_) : nullptr,
       .is_active = is_active_,
       .render_bonds = render_bonds_,
       .render_wireframe = render_wireframe_,
@@ -192,7 +188,7 @@ void Structure3DController::handleToggleInCell(bool enabled) {
         scene_ = render3d::Scene3D::fromCell(current_cell_, bond_cutoff_scale_, render_bonds_,
                                              in_cell_mode_);
       }
-      updateScenePhaseVisuals();
+      updateScenePhaseVisualsLocked();
     }
   }
   safeInvokeOnWindow([this, enabled] { window_.set_structure_3d_in_cell(enabled); });
@@ -211,7 +207,7 @@ void Structure3DController::handleSeekFrame(int frame_index) {
       static_cast<void>(
           streamer_.seekFrame(target, *scene_, render_bonds_, bond_cutoff_scale_, in_cell_mode_));
       actual_frame = static_cast<int>(streamer_.currentFrameIndex());
-      updateScenePhaseVisuals();
+      updateScenePhaseVisualsLocked();
     }
   }
   safeInvokeOnWindow(
@@ -232,7 +228,7 @@ void Structure3DController::handleStepFrame(bool forward) {
             streamer_.stepPrev(*scene_, true, render_bonds_, bond_cutoff_scale_, in_cell_mode_));
       }
       current_idx = static_cast<int>(streamer_.currentFrameIndex());
-      updateScenePhaseVisuals();
+      updateScenePhaseVisualsLocked();
     }
   }
   safeInvokeOnWindow([this, current_idx] { window_.set_structure_3d_current_frame(current_idx); });
@@ -254,19 +250,17 @@ void Structure3DController::updateBondCutoffScale(double cutoff_scale) {
 }
 
 void Structure3DController::setCell(const core::Cell &cell) {
-  current_cell_ = cell;
-  auto new_scene =
-      render3d::Scene3D::fromCell(cell, bond_cutoff_scale_, render_bonds_, in_cell_mode_);
   {
     const std::scoped_lock lock(mutex_);
+    current_cell_ = cell;
     current_trajectory_.reset();
     if (phase_service_ != nullptr) {
       phase_service_->clearCache();
     }
-    scene_ = std::move(new_scene);
+    scene_ = render3d::Scene3D::fromCell(cell, bond_cutoff_scale_, render_bonds_, in_cell_mode_);
     if (scene_ != nullptr) {
       camera_.fitToBox(scene_->boundsMin(), scene_->boundsMax());
-      updateScenePhaseVisuals();
+      updateScenePhaseVisualsLocked();
     }
   }
   safeInvokeOnWindow([this] {
@@ -286,9 +280,9 @@ void Structure3DController::setTrajectory(std::shared_ptr<const core::Trajectory
     return;
   }
 
-  current_trajectory_ = trajectory;
   {
     const std::scoped_lock lock(mutex_);
+    current_trajectory_ = trajectory;
     if (phase_service_ != nullptr) {
       phase_service_->clearCache();
     }
@@ -300,7 +294,7 @@ void Structure3DController::setTrajectory(std::shared_ptr<const core::Trajectory
       camera_.fitToBox(scene_->boundsMin(), scene_->boundsMax());
     }
     streamer_.setTrajectory(std::move(trajectory));
-    updateScenePhaseVisuals();
+    updateScenePhaseVisualsLocked();
   }
   safeInvokeOnWindow([this, total_frames] {
     window_.set_structure_3d_current_frame(0);
@@ -630,6 +624,11 @@ void Structure3DController::requestPhaseCalculation(std::size_t frame_index) {
 }
 
 void Structure3DController::updateScenePhaseVisuals() {
+  const std::scoped_lock lock(mutex_);
+  updateScenePhaseVisualsLocked();
+}
+
+void Structure3DController::updateScenePhaseVisualsLocked() {
   if (scene_ == nullptr || phase_service_ == nullptr) {
     return;
   }

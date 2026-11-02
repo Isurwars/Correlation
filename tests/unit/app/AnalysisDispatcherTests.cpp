@@ -28,7 +28,7 @@ std::string getTestDataDir() {
 }
 
 TEST(AnalysisDispatcherTests, InitialStateIsEmpty) {
-  correlation::app::AnalysisDispatcher dispatcher;
+  const correlation::app::AnalysisDispatcher dispatcher;
 
   EXPECT_FALSE(dispatcher.isCancelled());
   EXPECT_TRUE(dispatcher.getAvailableHistogramNames().empty());
@@ -50,7 +50,7 @@ TEST(AnalysisDispatcherTests, RunsAnalysisOnLoadedTrajectory) {
   correlation::app::TrajectoryLoader loader;
   std::string const filepath = getTestDataDir() + "car/clean.car";
 
-  auto load_res = loader.loadFile(filepath);
+  const auto load_res = loader.loadFile(filepath);
   ASSERT_TRUE(load_res.has_value());
 
   correlation::app::AnalysisDispatcher dispatcher;
@@ -62,7 +62,7 @@ TEST(AnalysisDispatcherTests, RunsAnalysisOnLoadedTrajectory) {
   auto run_res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);
   ASSERT_TRUE(run_res.has_value()) << "runAnalysis failed: " << (run_res ? "" : run_res.error());
 
-  auto names = dispatcher.getAvailableHistogramNames();
+  const auto names = dispatcher.getAvailableHistogramNames();
   EXPECT_FALSE(names.empty());
   EXPECT_NE(dispatcher.getHistogram("g_r"), nullptr);
   EXPECT_NE(dispatcher.getDistributionFunctions(), nullptr);
@@ -251,6 +251,27 @@ TEST(AnalysisDispatcherTests, SelectiveRecalculationNoOpWhenNoBondDependentCalcu
   opts.active_calculators["RDF"] = true;
   const auto recalc_res = dispatcher.runSelectiveRecalculation(*loader.trajectoryMut(), opts);
   EXPECT_TRUE(recalc_res.has_value());
+}
+
+TEST(AnalysisDispatcherTests, FastPreviewRDFWorksOnMultiFrameTrajectory) {
+  correlation::core::Cell frame0(correlation::math::Vector3<real_t>{10.0, 0.0, 0.0},
+                                 correlation::math::Vector3<real_t>{0.0, 10.0, 0.0},
+                                 correlation::math::Vector3<real_t>{0.0, 0.0, 10.0});
+  frame0.addAtom("Cu", {1.0, 1.0, 1.0});
+  frame0.addAtom("Cu", {3.5, 1.0, 1.0});
+  const correlation::core::Cell frame1 = frame0;
+
+  correlation::core::Trajectory traj(std::vector<correlation::core::Cell>{frame0, frame1}, 1.0);
+  traj.precomputeBondCutoffs();
+
+  correlation::app::AnalysisDispatcher dispatcher;
+  correlation::app::ProgramOptions opts;
+  opts.r_max = 4.5;
+  opts.r_bin_width = 0.1;
+
+  const auto res = dispatcher.runFastPreviewRDF(&traj, opts);
+  ASSERT_TRUE(res.has_value()) << (res ? "" : res.error());
+  EXPECT_NE(dispatcher.getHistogram("g_r"), nullptr);
 }
 
 } // namespace
