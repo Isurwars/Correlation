@@ -533,6 +533,10 @@
   "531": "SettingsManager",
   "532": "IFrameCalculator",
   "533": "SYCLXRDParams",
+  "534": "BinningConfig",
+  "535": "PeriodicShift",
   "536": "DADCalculator::calculateFrame",
+  "537": "RandomAmorphousCellConfig",
+  "538": "LocalEntropyCalculator::calculateFrame",
   "540": "CliParserTests"
 }
