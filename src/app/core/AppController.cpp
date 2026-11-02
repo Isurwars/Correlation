@@ -585,7 +585,7 @@ struct GroupedCalculators {
   const auto &calculators =
       ::correlation::calculators::CalculatorFactory::instance().getCalculators();
   for (const auto &calc : calculators) {
-    std::string grp(calc->getGroup());
+    const std::string grp(calc->getGroup());
     if (!grouped.members.contains(grp)) {
       grouped.order.push_back(grp);
     }
@@ -650,9 +650,9 @@ struct GroupedCalculators {
 
 bool AppController::isCalculatorGroupExpanded(std::string_view group_name,
                                               size_t group_index) const {
-  if (const auto it = calculator_group_expanded_.find(group_name);
-      it != calculator_group_expanded_.end()) {
-    return it->second;
+  if (const auto found_it = calculator_group_expanded_.find(group_name);
+      found_it != calculator_group_expanded_.end()) {
+    return found_it->second;
   }
   return group_name == "Radial" || group_index == 0;
 }
@@ -682,8 +682,8 @@ void AppController::populateCalculatorGroups() {
     }
   } else {
     const auto groups_model = std::make_shared<slint::VectorModel<CalculatorGroup>>();
-    for (auto &group : groups) {
-      groups_model->push_back(std::move(group));
+    for (const auto &group : groups) {
+      groups_model->push_back(group);
     }
     window_.set_calculator_groups(groups_model);
   }
