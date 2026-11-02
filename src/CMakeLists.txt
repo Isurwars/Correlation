@@ -227,17 +227,22 @@ set(RENDER3D_SOURCES
     render3d/Scene3D.cpp
     render3d/cpu/SoftwareRasterizer.cpp
     render3d/cpu/CpuRenderEngine.cpp
-    render3d/vulkan/VulkanContext.cpp
-    render3d/vulkan/VulkanDevice.cpp
-    render3d/vulkan/VulkanBuffer.cpp
-    render3d/vulkan/VulkanOffscreenTarget.cpp
-    render3d/vulkan/VulkanPipelineManager.cpp
-    render3d/vulkan/VulkanBufferManager.cpp
-    render3d/vulkan/VulkanRenderEngine.cpp
     render3d/RenderEngineFactory.cpp
     render3d/LodController.cpp
     render3d/TrajectoryStreamer.cpp
 )
+
+if(CORRELATION_HAS_VULKAN)
+    list(APPEND RENDER3D_SOURCES
+        render3d/vulkan/VulkanContext.cpp
+        render3d/vulkan/VulkanDevice.cpp
+        render3d/vulkan/VulkanBuffer.cpp
+        render3d/vulkan/VulkanOffscreenTarget.cpp
+        render3d/vulkan/VulkanPipelineManager.cpp
+        render3d/vulkan/VulkanBufferManager.cpp
+        render3d/vulkan/VulkanRenderEngine.cpp
+    )
+endif()
 
 add_library(render3d_obj OBJECT ${RENDER3D_SOURCES})
 target_include_directories(render3d_obj PRIVATE

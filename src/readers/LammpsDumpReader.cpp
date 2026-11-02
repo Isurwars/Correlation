@@ -12,7 +12,10 @@
 #include "readers/ReaderFactory.hpp"
 
 #include <algorithm>
+#include <array>
+#include <cerrno>
 #include <charconv>
+#include <cstdlib>
 #include <cstring>
 #include <optional>
 #include <span>
@@ -77,9 +80,24 @@ inline void tokenizeLine(std::string_view line, std::vector<std::string_view> &f
 }
 
 [[nodiscard]] inline bool parseRealField(std::string_view token, real_t &out) noexcept {
-  double val = 0.0;
-  const auto [ptr, ec] = std::from_chars(token.data(), token.data() + token.size(), val);
-  if (ec != std::errc()) {
+  if (token.empty()) {
+    return false;
+  }
+  std::array<char, 64> buf{};
+  const char *c_str = nullptr;
+  std::string fallback;
+  if (token.size() < buf.size()) {
+    std::memcpy(buf.data(), token.data(), token.size());
+    buf.at(token.size()) = '\0';
+    c_str = buf.data();
+  } else {
+    fallback = std::string(token);
+    c_str = fallback.c_str();
+  }
+  char *end_ptr = nullptr;
+  errno = 0;
+  const double val = std::strtod(c_str, &end_ptr);
+  if (end_ptr != c_str + token.size() || errno == ERANGE) {
     return false;
   }
   out = static_cast<real_t>(val);

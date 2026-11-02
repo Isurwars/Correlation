@@ -8,13 +8,17 @@
 
 #include "render3d/RenderEngineFactory.hpp"
 #include "render3d/cpu/CpuRenderEngine.hpp"
+
+#ifdef CORRELATION_USE_VULKAN
 #include "render3d/vulkan/VulkanRenderEngine.hpp"
+#endif
 
 namespace correlation::render3d {
 
 std::unique_ptr<IRenderEngine>
 RenderEngineFactory::createEngine(BackendPreference preference,
                                   const ViewportDimensions &dimensions) {
+#ifdef CORRELATION_USE_VULKAN
   if (preference == BackendPreference::Auto || preference == BackendPreference::VulkanOnly) {
     auto vulkan_engine = std::make_unique<VulkanRenderEngine>();
     if (vulkan_engine->initialize(dimensions)) {
@@ -24,6 +28,11 @@ RenderEngineFactory::createEngine(BackendPreference preference,
       return nullptr;
     }
   }
+#else
+  if (preference == BackendPreference::VulkanOnly) {
+    return nullptr;
+  }
+#endif
 
   auto cpu_engine = std::make_unique<CpuRenderEngine>();
   [[maybe_unused]] const bool initialized = cpu_engine->initialize(dimensions);
