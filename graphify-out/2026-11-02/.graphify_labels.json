@@ -533,9 +533,6 @@
   "531": "SettingsManager",
   "532": "IFrameCalculator",
   "533": "SYCLXRDParams",
-  "534": "PhysicsService.cpp",
-  "535": "SDFCalculator.cpp",
   "536": "DADCalculator::calculateFrame",
-  "539": "resolveExampleFilePath",
   "540": "CliParserTests"
 }
