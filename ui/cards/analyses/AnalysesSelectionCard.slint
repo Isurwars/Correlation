@@ -1,22 +1,73 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
 import {
     MaterialStyleMetrics,
     MaterialTypography,
     MaterialPalette,
     OutlinedCard,
     ExpandableHeader,
+    CheckBox,
+    CheckState,
     CheckBoxRow,
     MaterialText,
+    Icon,
+    Icons,
     Vertical,
     Horizontal,
 } from "../../material/material.slint";
 import { CalculatorGroup } from "../../Types.slint";
 
+component TreeToolbarChip inherits TouchArea {
+    in property <string> label;
+    in property <bool> active: false;
+    in property <bool> chip_enabled: true;
+    enabled: root.chip_enabled;
+    mouse-cursor: root.chip_enabled ? pointer : default;
+    height: 22px;
+    width: chip_label.preferred-width + 14px;
+    accessible-role: button;
+    accessible-label: root.label;
+
+    Rectangle {
+        width: 100%;
+        height: 100%;
+        border-radius: 4px;
+        border-width: 1px;
+        border-color: root.active ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(60%);
+        background: !root.chip_enabled ? transparent :
+            root.active ? MaterialPalette.primary.with_alpha(18%) :
+            root.has-hover ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_low;
+        animate background { duration: 150ms; }
+
+        chip_label := MaterialText {
+            text: root.label;
+            style: MaterialTypography.label_small;
+            font_size: 10.5px;
+            font_weight: 600;
+            color: !root.chip_enabled ? MaterialPalette.outline :
+                root.active ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+}
+
 export component AnalysesSelectionCard inherits OutlinedCard {
     in-out property <bool> expanded: true;
+    in-out property <bool> compact_mode: false;
     in property <bool> file_loaded;
     in property <[CalculatorGroup]> calculator_groups: [];
     in property <int> total_calculator_count: 0;
+    in property <int> enabled_calculator_count: 0;
+
     callback toggle_calculator(string, bool);
+    callback toggle_calculator_group(string, bool);
+    callback toggle_all_calculators(bool);
+    callback set_calculator_group_expanded(string, bool);
+    callback set_all_calculator_groups_expanded(bool);
     callback reset();
 
     out property <string> hovered_calculator_description: "";
@@ -37,7 +88,9 @@ export component AnalysesSelectionCard inherits OutlinedCard {
         spacing: MaterialStyleMetrics.spacing_8;
 
         ExpandableHeader {
-            text: "Analyses Selection";
+            text: root.total_calculator_count > 0 ?
+                "Analyses (" + root.enabled_calculator_count + "/" + root.total_calculator_count + ")" :
+                "Analyses Selection";
             expanded <=> root.expanded;
             show_reset: true;
             reset_enabled: root.file_loaded;
@@ -55,6 +108,50 @@ export component AnalysesSelectionCard inherits OutlinedCard {
                 easing: ease-in-out;
             }
 
+            // Tree Action Toolbar: Select All / Select None | Compact | Expand / Collapse All
+            HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_4;
+                alignment: space-between;
+
+                HorizontalLayout {
+                    spacing: MaterialStyleMetrics.spacing_4;
+
+                    TreeToolbarChip {
+                        label: "All";
+                        chip_enabled: root.file_loaded;
+                        active: root.total_calculator_count > 0 && root.enabled_calculator_count == root.total_calculator_count;
+                        clicked => { root.toggle_all_calculators(true); }
+                    }
+
+                    TreeToolbarChip {
+                        label: "None";
+                        chip_enabled: root.file_loaded;
+                        active: root.total_calculator_count > 0 && root.enabled_calculator_count == 0;
+                        clicked => { root.toggle_all_calculators(false); }
+                    }
+                }
+
+                HorizontalLayout {
+                    spacing: MaterialStyleMetrics.spacing_4;
+
+                    TreeToolbarChip {
+                        label: "Compact";
+                        active: root.compact_mode;
+                        clicked => { root.compact_mode = !root.compact_mode; }
+                    }
+
+                    TreeToolbarChip {
+                        label: "Expand";
+                        clicked => { root.set_all_calculator_groups_expanded(true); }
+                    }
+
+                    TreeToolbarChip {
+                        label: "Collapse";
+                        clicked => { root.set_all_calculator_groups_expanded(false); }
+                    }
+                }
+            }
+
             bg_touch_area := TouchArea {
                 width: 100%;
 
@@ -65,7 +162,6 @@ export component AnalysesSelectionCard inherits OutlinedCard {
                     alignment: start;
 
                     for group[gi] in root.calculator_groups: Vertical {
-                        property <bool> group_expanded: group.name == "Radial" || gi == 0;
                         spacing: MaterialStyleMetrics.spacing_2;
 
                         if gi > 0: Rectangle {
@@ -73,35 +169,212 @@ export component AnalysesSelectionCard inherits OutlinedCard {
                             background: MaterialPalette.outline_variant;
                         }
 
-                        ExpandableHeader {
-                            text: group.name;
-                            expanded <=> group_expanded;
+                        // Category Sub-Tree Header: Decoupled Tri-State CheckBox + Expand/Collapse Header
+                        HorizontalLayout {
                             height: 32px;
-                        }
-
-                        if group_expanded: Vertical {
                             spacing: MaterialStyleMetrics.spacing_2;
-                            padding-left: MaterialStyleMetrics.spacing_4;
+                            alignment: stretch;
 
-                            for calc[ci] in group.calculators: Horizontal {
-                                height: 28px;
-                                padding-left: MaterialStyleMetrics.spacing_2;
+                            // 1. Independent Tri-State Group CheckBox (does NOT collapse/expand sub-tree)
+                            VerticalLayout {
+                                width: 28px;
+                                alignment: center;
 
-                                CheckBoxRow {
+                                CheckBox {
+                                    width: 24px;
+                                    height: 24px;
                                     enabled: root.file_loaded;
-                                    check_state_bool: calc.enabled;
-                                    text: calc.name;
-                                    horizontal-stretch: 1;
+                                    tristate: true;
+                                    check_state: group.enabled_count == 0 ? CheckState.unchecked :
+                                        (group.enabled_count == group.total_count ? CheckState.checked : CheckState.partially_checked);
+                                    checked_state_changed => {
+                                        root.toggle_calculator_group(group.name, group.enabled_count < group.total_count);
+                                    }
+                                }
+                            }
 
-                                    property <bool> _hover: self.has-hover;
-                                    changed _hover => {
-                                        if (self.has-hover) {
-                                            root.hovered_calculator_description = calc.description;
+                            // 2. Expand/Collapse Click Zone (Chevron + Title + Active Count Pill)
+                            group_header_touch := TouchArea {
+                                horizontal-stretch: 1;
+                                mouse-cursor: pointer;
+                                accessible-role: button;
+                                accessible-label: group.name;
+                                clicked => {
+                                    root.set_calculator_group_expanded(group.name, !group.expanded);
+                                }
+
+                                Rectangle {
+                                    width: 100%;
+                                    height: 100%;
+                                    border-radius: MaterialStyleMetrics.border_radius_2;
+                                    background: group_header_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                                    HorizontalLayout {
+                                        padding-left: 2px;
+                                        padding-right: 6px;
+                                        spacing: MaterialStyleMetrics.spacing_4;
+                                        alignment: space-between;
+
+                                        HorizontalLayout {
+                                            spacing: 2px;
+
+                                            VerticalLayout {
+                                                alignment: center;
+                                                Icon {
+                                                    colorize: MaterialPalette.on_surface_variant;
+                                                    width: 20px;
+                                                    height: 20px;
+                                                    source: group.expanded ? Icons.arrow_drop_down : Icons.arrow_right;
+                                                }
+                                            }
+
+                                            MaterialText {
+                                                text: group.name;
+                                                style: MaterialTypography.title_small;
+                                                vertical-alignment: center;
+                                                color: MaterialPalette.on_surface;
+                                            }
+                                        }
+
+                                        VerticalLayout {
+                                            alignment: center;
+                                            Rectangle {
+                                                height: 18px;
+                                                width: count_text.preferred-width + 10px;
+                                                border-radius: 9px;
+                                                background: group.enabled_count > 0 ?
+                                                    MaterialPalette.primary.with_alpha(18%) :
+                                                    MaterialPalette.surface_container_low;
+
+                                                count_text := MaterialText {
+                                                    text: group.enabled_count + "/" + group.total_count;
+                                                    style: MaterialTypography.label_small;
+                                                    font_size: 10px;
+                                                    color: group.enabled_count > 0 ?
+                                                        MaterialPalette.primary :
+                                                        MaterialPalette.on_surface_variant;
+                                                    horizontal-alignment: center;
+                                                    vertical-alignment: center;
+                                                }
+                                            }
                                         }
                                     }
+                                }
+                            }
+                        }
 
-                                    checked_state_changed(s) => {
-                                        root.toggle_calculator(calc.id, s);
+                        // Sub-Tree Body: Standard Tree Rows vs. Compact Chip Grid
+                        if group.expanded && !root.compact_mode: HorizontalLayout {
+                            padding-left: 11px;
+                            spacing: 8px;
+
+                            // Vertical tree guide line
+                            Rectangle {
+                                width: 1px;
+                                background: MaterialPalette.outline_variant;
+                            }
+
+                            Vertical {
+                                horizontal-stretch: 1;
+                                spacing: MaterialStyleMetrics.spacing_2;
+                                padding: 0;
+
+                                for calc[ci] in group.calculators: Horizontal {
+                                    height: 28px;
+                                    padding-left: MaterialStyleMetrics.spacing_2;
+
+                                    CheckBoxRow {
+                                        enabled: root.file_loaded;
+                                        check_state_bool: calc.enabled;
+                                        text: calc.name;
+                                        horizontal-stretch: 1;
+
+                                        property <bool> _hover: self.has-hover;
+                                        changed _hover => {
+                                            if (self.has-hover) {
+                                                root.hovered_calculator_description = calc.description;
+                                            }
+                                        }
+
+                                        checked_state_changed(s) => {
+                                            root.toggle_calculator(calc.id, s);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if group.expanded && root.compact_mode: VerticalLayout {
+                            padding-left: 12px;
+                            padding-top: 2px;
+                            padding-bottom: 2px;
+                            spacing: 4px;
+
+                            for calc[ci] in group.calculators: compact_chip := TouchArea {
+                                height: 24px;
+                                enabled: root.file_loaded;
+                                mouse-cursor: root.file_loaded ? pointer : default;
+                                accessible-role: checkbox;
+                                accessible-label: calc.name;
+
+                                property <bool> _hover: self.has-hover;
+                                changed _hover => {
+                                    if (self.has-hover) {
+                                        root.hovered_calculator_description = calc.name + "\n" + calc.description;
+                                    }
+                                }
+
+                                clicked => {
+                                    root.toggle_calculator(calc.id, !calc.enabled);
+                                }
+
+                                Rectangle {
+                                    width: 100%;
+                                    height: 100%;
+                                    border-radius: 6px;
+                                    border-width: 1px;
+                                    border-color: calc.enabled ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(60%);
+                                    background: calc.enabled ?
+                                        MaterialPalette.primary.with_alpha(16%) :
+                                        (compact_chip.has-hover ? MaterialPalette.surface_container_high : MaterialPalette.surface_container_low);
+
+                                    HorizontalLayout {
+                                        padding-left: 8px;
+                                        padding-right: 8px;
+                                        spacing: 6px;
+                                        alignment: space-between;
+
+                                        HorizontalLayout {
+                                            spacing: 6px;
+                                            VerticalLayout {
+                                                alignment: center;
+                                                Rectangle {
+                                                    width: 8px;
+                                                    height: 8px;
+                                                    border-radius: 4px;
+                                                    background: calc.enabled ? MaterialPalette.primary : MaterialPalette.outline;
+                                                }
+                                            }
+
+                                            MaterialText {
+                                                text: calc.short_name != "" ? calc.short_name : calc.name;
+                                                style: MaterialTypography.label_medium;
+                                                font_weight: 600;
+                                                color: calc.enabled ? MaterialPalette.primary : MaterialPalette.on_surface;
+                                                vertical-alignment: center;
+                                            }
+                                        }
+
+                                        MaterialText {
+                                            text: calc.name;
+                                            style: MaterialTypography.body_small;
+                                            font_size: 10.5px;
+                                            color: MaterialPalette.on_surface_variant;
+                                            overflow: elide;
+                                            vertical-alignment: center;
+                                            horizontal-alignment: right;
+                                            horizontal-stretch: 1;
+                                        }
                                     }
                                 }
                             }

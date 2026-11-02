@@ -18,7 +18,10 @@
 #include <nfd.h>
 
 #include <functional>
+#include <map>
 #include <memory>
+#include <string>
+#include <string_view>
 
 class AppControllerTests;
 class AppWindow;
@@ -122,8 +125,27 @@ public:
 
   /**
    * @brief Populates the UI calculator groups from CalculatorFactory.
+   *
+   * Rebuilds the calculator selection tree (per-group enabled counts, short symbols, and
+   * persisted sub-tree expansion state). When the existing Slint group model has the same
+   * group layout, rows are updated in place so that open sub-trees and scroll position are
+   * preserved across selection changes.
    */
   void populateCalculatorGroups();
+
+  /**
+   * @brief Enables or disables every calculator, optionally restricted to a single group.
+   * @param enabled Target activation state.
+   * @param group_filter Group name to restrict the operation to; empty applies to all groups.
+   */
+  void setCalculatorsEnabled(bool enabled, std::string_view group_filter = {});
+
+  /**
+   * @brief Sets the expansion state of calculator selection sub-trees.
+   * @param expanded Target expansion state.
+   * @param group_filter Group name to restrict the operation to; empty applies to all groups.
+   */
+  void setCalculatorGroupsExpanded(bool expanded, std::string_view group_filter = {});
 
   /**
    * @brief Updates active group flags in the UI based on active calculators.
@@ -174,8 +196,13 @@ private:
   std::unique_ptr<PresetController> preset_controller_;
   std::unique_ptr<Structure3DController> structure_3d_controller_;
   AppSettings settings_;
+  std::map<std::string, bool, std::less<>> calculator_group_expanded_;
+
+  [[nodiscard]] bool isCalculatorGroupExpanded(std::string_view group_name,
+                                               size_t group_index) const;
 
   void registerActionCallbacks();
+  void registerAnalysesCallbacks();
   void registerPlotCallbacks();
   void registerStructure3DCallbacks();
   void registerPresetAndOptionCallbacks();

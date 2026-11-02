@@ -1,6 +1,36 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.2.0] - 2026-11-02
+
+### 🚀 Features & Machine Learning Potentials
+- **Native C++23 ORB-v3 GNN & Electronic DOS Engine (`OrbV3GNNModel`, `PeriodicGraphBuilder`, `TDOSCalculator`, `MLIPCalculator`)**:
+  - Implemented zero-dependency native C++23 GNN inference engine running pretrained ORB-v3 potential weights directly via memory-mapped binary weights (`core::MappedFile`, `models/cellulose_ldos.bin`).
+  - Evaluates system and site-resolved energies, forces (with net-force zero-mean removal), $3\times 3$ symmetric stress tensors, and atom-projected electronic density of states (LDOS/eDoS) via 2-block residual LayerNorm MLP head with Softplus activation across $[-30.0, +15.0]\text{ eV}$ (`256` bins).
+  - Validated exact numerical parity against Python ASE/PyTorch Cellulose model to $< 10^{-4}$ for LDOS, $< 10^{-3}\text{ eV/\AA}$ for forces, and $< 10^{-2}\text{ eV}$ for total energy in under 50 ms.
+  - Added `ScopedMLIPModelBinder` in `CorrelationEngine` to dynamically bind `OrbV3GNNModel` when `TDOS` (eDoS) or `MLIP` calculators are active, outputting total and element-projected eDoS curves plus force distributions (`MLIP_Forces`).
+  - Added periodic graph neighbor capping (`max_num_neighbors = 120`) and element compatibility validation (`validateElementCompatibility`) rejecting unmapped numeric species ($Z=0$) and providing out-of-domain calibration warnings.
+  - Added `--mlip-model <PATH>` CLI option and Python bindings in `_correlation_core.mlip`.
+
+### 🖥️ User Interface & Selection Tree
+- **Hierarchical Analyses Selection Tree (`AnalysesSelectionCard`, `AnalysesPanelCard`, `AnalysesPanel`)**:
+  - Re-architected distribution function and structural calculator selection into an expandable hierarchical tree with decoupled tri-state category checkboxes (`Radial`, `Scattering`, `Angular`, `Coordination`, `Topology`, `Dynamic`, `Electronic`, `Machine Learning`).
+  - Added top-level toolbar with **Select All**, **Select None**, **Reset Defaults**, active counter badges (`enabled / total`), and sub-tree **Expand All** / **Collapse All** actions.
+  - **Sub-Tree Non-Collapse Guarantee**: Decoupled group checkbox selection from expansion state and transitioned Slint `VectorModel` updates to in-place row mutation (`set_row_data`), preventing sub-trees from collapsing on click or selection toggle.
+  - **Compact Mode**: Introduced dual display mode supporting standard vertical checkbox tree rows and a dense 2-column short-symbol chip grid (`g(r)`, `G(r)`, `S(Q)`, `PAD`, `CN`, `TDOS`, `MLIP`).
+
+### 🔬 3D Visualizer & Trajectory Robustness
+- **Decoupled Phase Search Architecture (`PhaseSearchService`, `Structure3DController`)**:
+  - Extracted order parameter evaluation, crystal presets, and 2D histogram rasterization into `PhaseSearchService`.
+  - Added 3D phase highlight halo rings, atom scaling, and non-matching atom dimming/culling in the viewport.
+- **LAMMPS Dump Compression & Variable Cell Support**:
+  - Enhanced trajectory parsing and frame tracking for multi-file compression dumps with variable volume and lattice parameters (`examples/plastic/dump.compresion.*`).
+  - Fixed concurrent offscreen rendering and viewport resize race conditions.
+
+### 🛠️ Build & CI
+- **Multi-Platform CI**: Updated GitHub Actions runner matrix to native ARM runners for `aarch64` builds.
+- **Version Bump**: Bumped release version to `4.2.0` across CMake, Vulkan application metadata, Slint UI, Python bindings, and packaging specifications.
+
 ## [4.1.2] - 2026-10-29
 
 ### 🚀 Features & Hardware Acceleration

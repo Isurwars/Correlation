@@ -91,7 +91,7 @@ export component AppWindow inherits Window {
     in property <bool> timer_running: false;
 
     /// Application version string
-    in-out property <string> app_version: "v4.1.0";
+    in-out property <string> app_version: "v4.2.0";
 
     /// GitHub Update Check status
     in-out property <bool> update_available: false;
@@ -178,6 +178,7 @@ export component AppWindow inherits Window {
     /// Dynamic calculator groups from CalculatorFactory via C++
     in-out property <[CalculatorGroup]> calculator_groups: [];
     in property <int> total_calculator_count: 0;
+    in property <int> enabled_calculator_count: 0;
 
     /// Active group flags for auto-hiding option cards
     in property <bool> has_radial_active: false;
@@ -289,6 +290,10 @@ export component AppWindow inherits Window {
     callback toggle_all_curves(bool);
     callback set_curve_color(int, string);
     callback toggle_calculator(string, bool);
+    callback toggle_calculator_group(string, bool);
+    callback toggle_all_calculators(bool);
+    callback set_calculator_group_expanded(string, bool);
+    callback set_all_calculator_groups_expanded(bool);
     callback save_plot();
     callback pin_run();
     callback clear_pinned_runs();
@@ -594,6 +599,7 @@ export component AppWindow inherits Window {
 
                     calculator_groups <=> root.calculator_groups;
                     total_calculator_count: root.total_calculator_count;
+                    enabled_calculator_count: root.enabled_calculator_count;
 
                     export_format_options <=> root.export_format_options;
                     export_analysis_items <=> root.export_analysis_items;
@@ -634,6 +640,10 @@ export component AppWindow inherits Window {
                     reset_export_settings => { root.reset_export_settings(); }
 
                     toggle_calculator(id, enabled) => { root.toggle_calculator(id, enabled); }
+                    toggle_calculator_group(grp, enabled) => { root.toggle_calculator_group(grp, enabled); }
+                    toggle_all_calculators(enabled) => { root.toggle_all_calculators(enabled); }
+                    set_calculator_group_expanded(grp, exp) => { root.set_calculator_group_expanded(grp, exp); }
+                    set_all_calculator_groups_expanded(exp) => { root.set_all_calculator_groups_expanded(exp); }
                     reset_analyses_selection => { root.reset_analyses_selection(); }
 
                     toggle_export_analysis(id, val) => { root.toggle_export_analysis(id, val); }

@@ -10,6 +10,9 @@
 #include "app/services/TrajectoryLoader.hpp"
 #include "app/viewmodel/PlotController.hpp"
 #include <filesystem>
+#include <optional>
+#include <stdexcept>
+#include <string_view>
 
 #include <gtest/gtest.h>
 
@@ -736,4 +739,96 @@ TEST_F(AppControllerTests, ExportFormatAndLayoutCallbacksIntegration) {
   EXPECT_FALSE(export_config.export_hdf5);
 
   EXPECT_NO_THROW(window->invoke_layout_geometry_changed(280.0F, 380.0F));
+}
+
+namespace {
+/// Finds the row index of a calculator group by name in the window's group model.
+[[nodiscard]] std::optional<size_t> findGroupRow(AppWindow &window, std::string_view name) {
+  const auto groups = window.get_calculator_groups();
+  for (size_t idx = 0; groups != nullptr && idx < groups->row_count(); ++idx) {
+    const auto row = groups->row_data(idx);
+    if (row.has_value() && std::string_view(row->name.data()) == name) {
+      return idx;
+    }
+  }
+  return std::nullopt;
+}
+
+[[nodiscard]] CalculatorGroup groupAt(AppWindow &window, size_t idx) {
+  const auto row = window.get_calculator_groups()->row_data(idx);
+  if (!row.has_value()) {
+    throw std::runtime_error("Calculator group row missing");
+  }
+  return *row;
+}
+} // namespace
+
+TEST_F(AppControllerTests, CalculatorToggleDoesNotCollapseExpandedSubTree) {
+  auto window = AppWindow::create();
+  const correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+
+  const auto scattering = findGroupRow(*window, "Scattering");
+  ASSERT_TRUE(scattering.has_value());
+  const auto model_before = window->get_calculator_groups();
+
+  window->invoke_set_calculator_group_expanded("Scattering", true);
+  ASSERT_TRUE(groupAt(*window, *scattering).expanded);
+
+  const auto group = groupAt(*window, *scattering);
+  ASSERT_GT(group.calculators->row_count(), 0U);
+  const auto calc = group.calculators->row_data(0).value();
+  window->invoke_toggle_calculator(calc.id, !calc.enabled);
+
+  // Sub-tree stays open and the root model is updated in place (not replaced).
+  EXPECT_TRUE(groupAt(*window, *scattering).expanded);
+  EXPECT_EQ(window->get_calculator_groups(), model_before);
+}
+
+TEST_F(AppControllerTests, GroupTriStateToggleKeepsExpansionAndUpdatesCounts) {
+  auto window = AppWindow::create();
+  const correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+
+  const auto radial = findGroupRow(*window, "Radial");
+  ASSERT_TRUE(radial.has_value());
+  window->invoke_set_calculator_group_expanded("Radial", true);
+
+  window->invoke_toggle_calculator_group("Radial", false);
+  auto group = groupAt(*window, *radial);
+  EXPECT_TRUE(group.expanded);
+  EXPECT_EQ(group.enabled_count, 0);
+
+  window->invoke_toggle_calculator_group("Radial", true);
+  group = groupAt(*window, *radial);
+  EXPECT_TRUE(group.expanded);
+  EXPECT_EQ(group.enabled_count, group.total_count);
+}
+
+TEST_F(AppControllerTests, SelectAllAndSelectNoneCalculators) {
+  auto window = AppWindow::create();
+  const correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+
+  window->invoke_toggle_all_calculators(false);
+  EXPECT_EQ(window->get_enabled_calculator_count(), 0);
+
+  window->invoke_toggle_all_calculators(true);
+  EXPECT_EQ(window->get_enabled_calculator_count(), window->get_total_calculator_count());
+  EXPECT_GT(window->get_total_calculator_count(), 0);
+}
+
+TEST_F(AppControllerTests, ExpandAndCollapseAllCalculatorGroups) {
+  auto window = AppWindow::create();
+  const correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+
+  const auto groups = window->get_calculator_groups();
+  ASSERT_GT(groups->row_count(), 0U);
+
+  window->invoke_set_all_calculator_groups_expanded(true);
+  for (size_t idx = 0; idx < groups->row_count(); ++idx) {
+    EXPECT_TRUE(groupAt(*window, idx).expanded);
+  }
+
+  window->invoke_set_all_calculator_groups_expanded(false);
+  for (size_t idx = 0; idx < groups->row_count(); ++idx) {
+    EXPECT_FALSE(groupAt(*window, idx).expanded);
+  }
 }

@@ -43,12 +43,16 @@ export struct CalibrationPair {
 export struct CalculatorInfo {
     id: string,
     name: string,
+    short_name: string,
     description: string,
     enabled: bool,
 }
 
 export struct CalculatorGroup {
     name: string,
+    expanded: bool,
+    enabled_count: int,
+    total_count: int,
     calculators: [CalculatorInfo],
 }
 

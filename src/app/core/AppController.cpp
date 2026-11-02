@@ -120,11 +120,29 @@ void AppController::registerActionCallbacks() {
     updateActiveGroupFlags();
   });
 
+  registerAnalysesCallbacks();
+
   window_.on_layout_geometry_changed([this](float left_w, float mid_w) {
     settings_.left_col_width = left_w;
     settings_.middle_col_width = mid_w;
     saveSettings();
   });
+}
+
+void AppController::registerAnalysesCallbacks() {
+  window_.on_toggle_calculator_group([this](const slint::SharedString &group_name, bool enabled) {
+    setCalculatorsEnabled(enabled, std::string_view(group_name.data()));
+  });
+
+  window_.on_toggle_all_calculators([this](bool enabled) { setCalculatorsEnabled(enabled); });
+
+  window_.on_set_calculator_group_expanded(
+      [this](const slint::SharedString &group_name, bool expanded) {
+        setCalculatorGroupsExpanded(expanded, std::string_view(group_name.data()));
+      });
+
+  window_.on_set_all_calculator_groups_expanded(
+      [this](bool expanded) { setCalculatorGroupsExpanded(expanded); });
 }
 
 void AppController::registerPlotCallbacks() {
@@ -390,6 +408,7 @@ void AppController::registerPresetAndOptionCallbacks() {
     }
   });
   window_.on_reset_analyses_selection([this] {
+    options_.active_calculators.clear();
     populateCalculatorGroups();
     updateActiveGroupFlags();
   });
@@ -552,51 +571,148 @@ bool isDefaultDisabledCalculator(const correlation::calculators::BaseCalculator 
   }
   return false;
 }
-} // namespace
 
-void AppController::populateCalculatorGroups() {
+using CalculatorPtrList = std::vector<const correlation::calculators::BaseCalculator *>;
+
+/// Calculators bucketed by group, preserving factory registration order of groups.
+struct GroupedCalculators {
+  std::vector<std::string> order;
+  std::map<std::string, CalculatorPtrList, std::less<>> members;
+};
+
+[[nodiscard]] GroupedCalculators groupRegisteredCalculators() {
+  GroupedCalculators grouped;
   const auto &calculators =
       ::correlation::calculators::CalculatorFactory::instance().getCalculators();
-  const auto &opts = options_;
-
-  // Collect group names in insertion order
-  std::vector<std::string> group_order;
-  std::map<std::string, std::vector<const correlation::calculators::BaseCalculator *>> groups_map;
   for (const auto &calc : calculators) {
-    std::string const grp = std::string(calc->getGroup());
-    if (!groups_map.contains(grp)) {
-      group_order.push_back(grp);
+    std::string grp(calc->getGroup());
+    if (!grouped.members.contains(grp)) {
+      grouped.order.push_back(grp);
     }
-    groups_map[grp].push_back(calc.get());
+    grouped.members[grp].push_back(calc.get());
+  }
+  return grouped;
+}
+
+[[nodiscard]] bool resolveCalculatorEnabled(const correlation::calculators::BaseCalculator &calc,
+                                            const ProgramOptions &opts) {
+  if (const auto calc_it = opts.active_calculators.find(std::string(calc.getName()));
+      calc_it != opts.active_calculators.end()) {
+    return calc_it->second;
+  }
+  if (const auto short_it = opts.active_calculators.find(std::string(calc.getShortName()));
+      short_it != opts.active_calculators.end()) {
+    return short_it->second;
+  }
+  return !isDefaultDisabledCalculator(&calc);
+}
+
+[[nodiscard]] CalculatorGroup buildCalculatorGroup(const std::string &group_name,
+                                                   const CalculatorPtrList &calcs,
+                                                   const ProgramOptions &opts, bool expanded) {
+  const auto calcs_model = std::make_shared<slint::VectorModel<CalculatorInfo>>();
+  int enabled_count = 0;
+  for (const auto *calc : calcs) {
+    const bool enabled = resolveCalculatorEnabled(*calc, opts);
+    enabled_count += enabled ? 1 : 0;
+    CalculatorInfo info;
+    info.id = slint::SharedString(calc->getName());
+    info.name = slint::SharedString(calc->getName());
+    info.short_name = slint::SharedString(calc->getShortName());
+    info.description = slint::SharedString(calc->getDescription());
+    info.enabled = enabled;
+    calcs_model->push_back(info);
+  }
+  CalculatorGroup group;
+  group.name = slint::SharedString(group_name);
+  group.expanded = expanded;
+  group.enabled_count = enabled_count;
+  group.total_count = static_cast<int>(calcs.size());
+  group.calculators = calcs_model;
+  return group;
+}
+
+/// True when @p model already holds exactly the groups in @p order (same names, same order).
+[[nodiscard]] bool hasSameGroupLayout(const std::shared_ptr<slint::Model<CalculatorGroup>> &model,
+                                      const std::vector<std::string> &order) {
+  if (model == nullptr || model->row_count() != order.size()) {
+    return false;
+  }
+  for (size_t idx = 0; idx < order.size(); ++idx) {
+    const auto row = model->row_data(idx);
+    if (!row.has_value() || std::string_view(row->name.data()) != order[idx]) {
+      return false;
+    }
+  }
+  return true;
+}
+} // namespace
+
+bool AppController::isCalculatorGroupExpanded(std::string_view group_name,
+                                              size_t group_index) const {
+  if (const auto it = calculator_group_expanded_.find(group_name);
+      it != calculator_group_expanded_.end()) {
+    return it->second;
+  }
+  return group_name == "Radial" || group_index == 0;
+}
+
+void AppController::populateCalculatorGroups() {
+  const auto grouped = groupRegisteredCalculators();
+
+  std::vector<CalculatorGroup> groups;
+  groups.reserve(grouped.order.size());
+  int total_count = 0;
+  int total_enabled = 0;
+  for (size_t idx = 0; idx < grouped.order.size(); ++idx) {
+    const auto &grp_name = grouped.order[idx];
+    auto group = buildCalculatorGroup(grp_name, grouped.members.at(grp_name), options_,
+                                      isCalculatorGroupExpanded(grp_name, idx));
+    total_count += group.total_count;
+    total_enabled += group.enabled_count;
+    groups.push_back(std::move(group));
   }
 
-  const auto groups_model = std::make_shared<slint::VectorModel<CalculatorGroup>>();
-  for (const auto &grp_name : group_order) {
-    const auto calcs_model = std::make_shared<slint::VectorModel<CalculatorInfo>>();
-    for (const auto *calc : groups_map.at(grp_name)) {
-      bool enabled = !isDefaultDisabledCalculator(calc);
-      if (const auto calc_it = opts.active_calculators.find(std::string(calc->getName()));
-          calc_it != opts.active_calculators.end()) {
-        enabled = calc_it->second;
-      } else if (const auto short_it =
-                     opts.active_calculators.find(std::string(calc->getShortName()));
-                 short_it != opts.active_calculators.end()) {
-        enabled = short_it->second;
-      }
-      CalculatorInfo info;
-      info.id = slint::SharedString(calc->getName());
-      info.name = slint::SharedString(calc->getName());
-      info.description = slint::SharedString(calc->getDescription());
-      info.enabled = enabled;
-      calcs_model->push_back(info);
+  // Update rows in place when the layout is unchanged so that Slint keeps the existing
+  // delegates (open sub-trees, scroll offset) instead of rebuilding the whole tree.
+  const auto existing = window_.get_calculator_groups();
+  if (hasSameGroupLayout(existing, grouped.order)) {
+    for (size_t idx = 0; idx < groups.size(); ++idx) {
+      existing->set_row_data(idx, groups[idx]);
     }
-    CalculatorGroup group;
-    group.name = slint::SharedString(grp_name);
-    group.calculators = calcs_model;
-    groups_model->push_back(group);
+  } else {
+    const auto groups_model = std::make_shared<slint::VectorModel<CalculatorGroup>>();
+    for (auto &group : groups) {
+      groups_model->push_back(std::move(group));
+    }
+    window_.set_calculator_groups(groups_model);
   }
-  window_.set_calculator_groups(groups_model);
-  window_.set_total_calculator_count(static_cast<int>(calculators.size()));
+  window_.set_total_calculator_count(total_count);
+  window_.set_enabled_calculator_count(total_enabled);
+}
+
+void AppController::setCalculatorsEnabled(bool enabled, std::string_view group_filter) {
+  const auto &calculators =
+      ::correlation::calculators::CalculatorFactory::instance().getCalculators();
+  for (const auto &calc : calculators) {
+    if (!group_filter.empty() && calc->getGroup() != group_filter) {
+      continue;
+    }
+    options_.active_calculators[std::string(calc->getName())] = enabled;
+  }
+  populateCalculatorGroups();
+  updateActiveGroupFlags();
+}
+
+void AppController::setCalculatorGroupsExpanded(bool expanded, std::string_view group_filter) {
+  if (!group_filter.empty()) {
+    calculator_group_expanded_.insert_or_assign(std::string(group_filter), expanded);
+  } else {
+    for (const auto &grp_name : groupRegisteredCalculators().order) {
+      calculator_group_expanded_.insert_or_assign(grp_name, expanded);
+    }
+  }
+  populateCalculatorGroups();
 }
 
 void AppController::populateExportAnalyses() {
