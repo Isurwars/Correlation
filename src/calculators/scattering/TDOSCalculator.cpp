@@ -8,12 +8,17 @@
 
 #include "calculators/scattering/TDOSCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
+#include "mlip/OrbV3GNNModel.hpp"
 
 #include <map>
 #include <string>
 #include <vector>
 
 namespace correlation::calculators {
+
+bool TDOSCalculator::isConfigured() const {
+  return model_ != nullptr || !correlation::mlip::OrbV3GNNModel::findDefaultModelPath().empty();
+}
 
 namespace {
 
@@ -149,6 +154,13 @@ correlation::analysis::Histogram TDOSCalculator::calculate(const correlation::co
   }
 
   populateHistogramMetadata(hist, buildEnergyGrid(params.e_min, params.e_max, num_bins));
+  const bool use_model_grid = (output.ldos_e_min < output.ldos_e_max) &&
+                              (params.e_min == static_cast<real_t>(-30.0)) &&
+                              (params.e_max == static_cast<real_t>(15.0));
+  const real_t grid_min = use_model_grid ? output.ldos_e_min : params.e_min;
+  const real_t grid_max = use_model_grid ? output.ldos_e_max : params.e_max;
+
+  populateHistogramMetadata(hist, buildEnergyGrid(grid_min, grid_max, num_bins));
   hist.compute_count = 1;
 
   std::vector<double> acc_total(num_bins, 0.0);
@@ -171,6 +183,8 @@ TDOSCalculator::calculateTrajectory(const correlation::core::Trajectory &traj,
   }
 
   size_t num_bins = 0;
+  real_t grid_min = params.e_min;
+  real_t grid_max = params.e_max;
   std::vector<double> acc_total;
   std::map<std::string, std::vector<double>> acc_species;
   size_t processed_frames = 0;
@@ -193,6 +207,11 @@ TDOSCalculator::calculateTrajectory(const correlation::core::Trajectory &traj,
     if (num_bins == 0) {
       num_bins = output.ldos_bins;
       acc_total.assign(num_bins, 0.0);
+      if ((output.ldos_e_min < output.ldos_e_max) && (params.e_min == static_cast<real_t>(-30.0)) &&
+          (params.e_max == static_cast<real_t>(15.0))) {
+        grid_min = output.ldos_e_min;
+        grid_max = output.ldos_e_max;
+      }
     }
 
     accumulateFrameLdos(cell, output, num_bins, acc_total, acc_species);
@@ -204,6 +223,7 @@ TDOSCalculator::calculateTrajectory(const correlation::core::Trajectory &traj,
   }
 
   populateHistogramMetadata(hist, buildEnergyGrid(params.e_min, params.e_max, num_bins));
+  populateHistogramMetadata(hist, buildEnergyGrid(grid_min, grid_max, num_bins));
   hist.compute_count = static_cast<int>(processed_frames);
 
   const double frame_scale = 1.0 / static_cast<double>(processed_frames);

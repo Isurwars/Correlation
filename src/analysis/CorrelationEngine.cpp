@@ -10,7 +10,10 @@
 #include "analysis/DynamicsAnalyzer.hpp"
 #include "analysis/TrajectoryAnalyzer.hpp"
 #include "calculators/CalculatorFactory.hpp"
+#include "calculators/ml/MLIPCalculator.hpp"
+#include "calculators/scattering/TDOSCalculator.hpp"
 #include "math/Constants.hpp"
+#include "mlip/OrbV3GNNModel.hpp"
 
 #include <iostream>
 #ifdef _OPENMP
@@ -148,6 +151,64 @@ bool requiresVelocities(const AnalysisSettings &settings) {
   return false;
 }
 
+class ScopedMLIPModelBinder {
+public:
+  explicit ScopedMLIPModelBinder(const AnalysisSettings &settings) {
+    const bool wants_tdos =
+        settings.isActive("TDOS") || settings.isActive("Total Density of States (TDOS)");
+    const bool wants_mlip =
+        settings.isActive("MLIP") || settings.isActive("ML Interatomic Potential (ORB-v3)");
+    if (!wants_tdos && !wants_mlip) {
+      return;
+    }
+
+    const auto &calcs = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
+    for (const auto &calc : calcs) {
+      if (auto *tdos = dynamic_cast<::correlation::calculators::TDOSCalculator *>(calc.get());
+          tdos != nullptr && tdos->getModel() == nullptr) {
+        ensureModelLoaded(settings.mlip_model_path);
+        if (owned_model_ && owned_model_->isLoaded()) {
+          tdos_calc_ = tdos;
+          tdos_calc_->setModel(owned_model_.get());
+        }
+      } else if (auto *mlip =
+                     dynamic_cast<::correlation::calculators::MLIPCalculator *>(calc.get());
+                 mlip != nullptr && mlip->getModel() == nullptr) {
+        ensureModelLoaded(settings.mlip_model_path);
+        if (owned_model_ && owned_model_->isLoaded()) {
+          mlip_calc_ = mlip;
+          mlip_calc_->setModel(owned_model_.get());
+        }
+      }
+    }
+  }
+
+  ~ScopedMLIPModelBinder() {
+    if (tdos_calc_ != nullptr) {
+      tdos_calc_->setModel(nullptr);
+    }
+    if (mlip_calc_ != nullptr) {
+      mlip_calc_->setModel(nullptr);
+    }
+  }
+
+  ScopedMLIPModelBinder(const ScopedMLIPModelBinder &) = delete;
+  ScopedMLIPModelBinder &operator=(const ScopedMLIPModelBinder &) = delete;
+  ScopedMLIPModelBinder(ScopedMLIPModelBinder &&) = delete;
+  ScopedMLIPModelBinder &operator=(ScopedMLIPModelBinder &&) = delete;
+
+private:
+  void ensureModelLoaded(const std::string &model_path) {
+    if (!owned_model_) {
+      owned_model_ = std::make_unique<::correlation::mlip::OrbV3GNNModel>(model_path);
+    }
+  }
+
+  std::unique_ptr<::correlation::mlip::OrbV3GNNModel> owned_model_;
+  ::correlation::calculators::TDOSCalculator *tdos_calc_{nullptr};
+  ::correlation::calculators::MLIPCalculator *mlip_calc_{nullptr};
+};
+
 } // namespace
 
 std::expected<void, std::string>
@@ -185,7 +246,7 @@ void CorrelationEngine::runTrajectoryCalculators(DistributionFunctions &distribu
   const auto &factory_calcs =
       ::correlation::calculators::CalculatorFactory::instance().getCalculators();
   for (const auto &calc : factory_calcs) {
-    if (calc->isTrajectoryCalculator() && calc->isConfigured() &&
+    if (calc->isTrajectoryCalculator() && !calc->isFrameCalculator() && calc->isConfigured() &&
         (settings.isActive(calc->getName()) || settings.isActive(calc->getShortName()))) {
       calc->calculateTrajectory(distribution_functions, trajectory, settings);
     }
@@ -292,6 +353,8 @@ CorrelationEngine::runAnalysis(correlation::core::Trajectory &trajectory,
     const TrajectoryAnalyzer trajectory_analyzer(
         trajectory, config.settings.r_max, active_cutoffs, StartFrame{start_f},
         EndFrame{static_cast<size_t>(config.max_frame)}, true, cb_structure);
+
+    const ScopedMLIPModelBinder mlip_binder(config.settings);
 
     auto dist_funcs = DistributionFunctions::computeMean(trajectory, trajectory_analyzer, start_f,
                                                          config.settings, cb_dist);

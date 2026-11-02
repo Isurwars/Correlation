@@ -52,12 +52,12 @@ rankPartials(const std::map<std::string, std::vector<real_t>> &partials,
              const std::map<std::string, real_t> &weights) {
   std::vector<RankedPartial> candidates;
   for (const auto &[key, values] : partials) {
-    if (key == "Total" || key.starts_with("Frequency_")) {
+    if (key == "Total" || key == "total" || key.starts_with("Frequency_")) {
       continue;
     }
     candidates.push_back({.key = key, .score = computePartialScore(key, values, weights)});
   }
-  if (partials.contains("Total") && candidates.size() == 1) {
+  if ((partials.contains("Total") || partials.contains("total")) && candidates.size() == 1) {
     return {};
   }
   std::ranges::sort(candidates, [](const auto &lhs, const auto &rhs) {
@@ -75,6 +75,9 @@ void initDefaultVisibilities(const std::map<std::string, std::vector<real_t>> &p
   if (partials.contains("Total") && !curve_visibility_map.contains("Total")) {
     curve_visibility_map["Total"] = true;
   }
+  if (partials.contains("total") && !curve_visibility_map.contains("total")) {
+    curve_visibility_map["total"] = true;
+  }
   std::size_t rank = 0;
   for (const auto &partial : ranked_partials) {
     if (!curve_visibility_map.contains(partial.key)) {
@@ -90,12 +93,15 @@ assignStableCurveColors(const std::map<std::string, std::vector<real_t>> &partia
                         const std::map<std::string, std::string> &custom_colors,
                         const correlation::plotters::PlotConfig &config) {
   std::map<std::string, std::string> assigned;
-  if (partials.contains("Total")) {
-    if (custom_colors.contains("Total") && !custom_colors.at("Total").empty()) {
-      assigned["Total"] = custom_colors.at("Total");
-    } else {
-      assigned["Total"] =
-          (config.theme == correlation::plotters::PlotConfig::Theme::Light) ? "#000000" : "#FFFFFF";
+  for (const auto *total_key : {"Total", "total"}) {
+    if (partials.contains(total_key)) {
+      if (custom_colors.contains(total_key) && !custom_colors.at(total_key).empty()) {
+        assigned[total_key] = custom_colors.at(total_key);
+      } else {
+        assigned[total_key] = (config.theme == correlation::plotters::PlotConfig::Theme::Light)
+                                  ? "#000000"
+                                  : "#FFFFFF";
+      }
     }
   }
   const std::size_t count = ranked_partials.size();
@@ -113,14 +119,19 @@ assignStableCurveColors(const std::map<std::string, std::vector<real_t>> &partia
 void appendTotalItem(slint::VectorModel<CurveToggleItem> &model, std::vector<std::string> &keys,
                      const std::map<std::string, std::string> &assigned_colors,
                      const std::map<std::string, bool> &visibility_map) {
-  const auto iter = assigned_colors.find("Total");
+  auto iter = assigned_colors.find("Total");
+  std::string total_key = "Total";
+  if (iter == assigned_colors.end()) {
+    iter = assigned_colors.find("total");
+    total_key = "total";
+  }
   if (iter == assigned_colors.end()) {
     return;
   }
-  const auto vis_it = visibility_map.find("Total");
+  const auto vis_it = visibility_map.find(total_key);
   const bool visible = (vis_it != visibility_map.end()) ? vis_it->second : true;
   const auto curve_id = static_cast<int>(keys.size());
-  keys.emplace_back("Total");
+  keys.emplace_back(total_key);
   model.push_back(CurveToggleItem{
       .id = curve_id,
       .label = slint::SharedString("Total"),

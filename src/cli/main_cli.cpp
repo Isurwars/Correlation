@@ -38,6 +38,10 @@ isDefaultDisabledCalculator(const correlation::calculators::BaseCalculator *calc
   if (short_name == "DAD" || name == "Dihedral Angle Distribution") {
     return true;
   }
+  if (short_name == "TDOS" || name == "Total Density of States (TDOS)" || short_name == "MLIP" ||
+      name == "ML Interatomic Potential (ORB-v3)") {
+    return true;
+  }
   if (name.contains("(GPU)") || short_name.ends_with("_GPU")) {
     return true;
   }
@@ -128,6 +132,7 @@ int main(int argc, char *argv[]) {
   opts.hyper_samples = cli.hyper_samples;
   opts.smoothing_kernel = cli.smoothing_kernel;
   opts.material_type = cli.material_type;
+  opts.mlip_model_path = cli.mlip_model_path;
 
   // Initialize active calculators
   populateActiveCalculators(cli, opts);

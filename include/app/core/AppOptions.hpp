@@ -107,7 +107,8 @@ struct ProgramOptions {
   real_t r_int_max = AppDefaults::R_INT_MAX;                ///< Upper limit for g(r) integration.
   real_t angle_bin_width = AppDefaults::ANGLE_BIN_WIDTH;    ///< Step size for ADF.
   real_t dihedral_bin_width = AppDefaults::ANGLE_BIN_WIDTH; ///< Step size for dihedral analysis.
-  size_t max_ring_size = AppDefaults::MAX_RING_SIZE;        ///< Maximum ring size for topological analysis.
+  size_t max_ring_size =
+      AppDefaults::MAX_RING_SIZE; ///< Maximum ring size for topological analysis.
 
   /** @brief Map of calculator ID to its enabled state. */
   std::map<std::string, bool> active_calculators;
@@ -135,6 +136,9 @@ struct ProgramOptions {
 
   /** @brief Bond cutoff ranges for neighbor & topological calculations. */
   correlation::analysis::BondCutoffMatrix bond_cutoffs;
+
+  /** @brief Optional path to MLIP/LDOS binary model weights. */
+  std::string mlip_model_path;
 };
 
 } // namespace correlation::app

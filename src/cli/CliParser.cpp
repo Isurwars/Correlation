@@ -68,7 +68,8 @@ void printParameterOptions() {
       << "  --no-parquet              Disable Parquet output\n\n"
       << "Local Entropy Parameters:\n"
       << "  --lef-cutoff <float>      Cutoff radius local entropy (default: 5.0)\n"
-      << "  --lef-sigma <float>       Gaussian standard deviation local entropy (default: 0.2)\n";
+      << "  --lef-sigma <float>       Gaussian standard deviation local entropy (default: 0.2)\n"
+      << "  --mlip-model <path>       Path to ORB-v3 + LDOS binary weights (default: auto)\n";
 }
 
 } // namespace
@@ -284,6 +285,7 @@ bool parseArgs(std::span<const char *const> argv, CliOptions &opts) {
 
   app.add_option("--lef-cutoff", opts.lef_cutoff);
   app.add_option("--lef-sigma", opts.lef_sigma);
+  app.add_option("--mlip-model", opts.mlip_model_path);
 
   app.add_option("--hyper-samples", opts.hyper_samples);
 

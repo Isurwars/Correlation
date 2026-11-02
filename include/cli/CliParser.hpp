@@ -58,6 +58,7 @@ struct CliOptions {
   bool show_help = false;                      ///< Flag indicating if help usage was requested.
   bool is_convert_command = false;             ///< Flag indicating convert subcommand was invoked.
   ConvertOptions convert_options{};            ///< Options for convert subcommand.
+  std::string mlip_model_path;                 ///< Optional path to MLIP/LDOS binary weight file.
 };
 
 /**

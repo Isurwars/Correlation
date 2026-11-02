@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "calculators/BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/BaseCalculator.hpp"
 #include "mlip/MLIPInterface.hpp"
 
 #include <string>
@@ -38,10 +38,10 @@ public:
   [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
   /**
-   * @brief Checks if a valid MLIP evaluation model is attached.
-   * @return True if model is non-null; false otherwise.
+   * @brief Checks if a valid MLIP evaluation model is attached or discoverable.
+   * @return True if model is attached or default ORB-v3 weights exist.
    */
-  [[nodiscard]] bool isConfigured() const override { return model_ != nullptr; }
+  [[nodiscard]] bool isConfigured() const override;
 
   /**
    * @brief Sets or updates the attached MLIP model engine.

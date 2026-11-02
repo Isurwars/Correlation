@@ -175,6 +175,7 @@ endif()
 set(MLIP_SOURCES
     mlip/PeriodicGraphBuilder.cpp
     mlip/TorchGNNModel.cpp
+    mlip/OrbV3GNNModel.cpp
     mlip/GraphDescriptors.cpp
 )
 

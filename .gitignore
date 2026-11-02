@@ -5,6 +5,7 @@
 .obsidian/
 compile_commands.json
 build*/
+models/*.bin
 installers
 Testing/
 clang_tidy_output.txt

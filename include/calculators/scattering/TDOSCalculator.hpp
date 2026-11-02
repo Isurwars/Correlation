@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "calculators/BaseCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/BaseCalculator.hpp"
 #include "mlip/MLIPInterface.hpp"
 
 #include <atomic>
@@ -22,8 +22,8 @@ namespace correlation::calculators {
  * @brief Parameter configuration for Total Density of States evaluation.
  */
 struct TDOSParams {
-  real_t e_min = static_cast<real_t>(-15.0); /**< Lower energy boundary in eV (relative to E_F). */
-  real_t e_max = static_cast<real_t>(5.0);   /**< Upper energy boundary in eV (relative to E_F). */
+  real_t e_min = static_cast<real_t>(-30.0); /**< Lower energy boundary in eV (relative to E_F). */
+  real_t e_max = static_cast<real_t>(15.0);  /**< Upper energy boundary in eV (relative to E_F). */
   const correlation::mlip::MLIPInterface *model{
       nullptr}; /**< Pointer to MLIP evaluation model engine. */
 };
@@ -51,10 +51,10 @@ public:
   [[nodiscard]] bool isTrajectoryCalculator() const override { return true; }
 
   /**
-   * @brief Checks if a valid MLIP evaluation model is attached.
-   * @return True if model is non-null; false otherwise.
+   * @brief Checks if a valid MLIP evaluation model is attached or discoverable.
+   * @return True if model is attached or default ORB-v3 weights exist.
    */
-  [[nodiscard]] bool isConfigured() const override { return model_ != nullptr; }
+  [[nodiscard]] bool isConfigured() const override;
 
   /**
    * @brief Sets or updates the attached MLIP model engine.

@@ -178,18 +178,34 @@ void collectEdgesForAtom(size_t atom_i, const std::vector<correlation::core::Ato
                          const correlation::math::Vector3<real_t> &lat_b,
                          const correlation::math::Vector3<real_t> &lat_c,
                          const SearchBoundaries &bounds, real_t cutoff_sq, bool include_self_loops,
-                         std::vector<EdgeTuple> &edges_out) {
+                         size_t max_num_neighbors, std::vector<EdgeTuple> &edges_out) {
   const auto &pos_i = atoms[atom_i].position();
   const size_t number_atoms = atoms.size();
+  const size_t start_offset = edges_out.size();
 
   for (size_t atom_j = 0; atom_j < number_atoms; ++atom_j) {
     const auto &pos_j = atoms[atom_j].position();
     scanPeriodicShiftsForPair(atom_i, atom_j, pos_i, pos_j, lat_a, lat_b, lat_c, bounds, cutoff_sq,
                               include_self_loops, edges_out);
   }
+
+  const size_t added_count = edges_out.size() - start_offset;
+  if (max_num_neighbors > 0 && added_count > max_num_neighbors) {
+    const auto begin_it = edges_out.begin() + static_cast<std::ptrdiff_t>(start_offset);
+    const auto mid_it = begin_it + static_cast<std::ptrdiff_t>(max_num_neighbors);
+    std::partial_sort(begin_it, mid_it, edges_out.end(),
+                      [](const EdgeTuple &lhs, const EdgeTuple &rhs) noexcept {
+                        if (lhs.distance != rhs.distance) {
+                          return lhs.distance < rhs.distance;
+                        }
+                        return lhs.dst < rhs.dst;
+                      });
+    edges_out.resize(start_offset + max_num_neighbors);
+  }
 }
 
-// Precomputed constants for real orthonormal spherical harmonics Y_lm up to l=3
+// Precomputed constants for real orthonormal spherical harmonics Y_lm up
+// to l=3
 constexpr real_t PI_VAL = std::numbers::pi_v<real_t>;
 
 // l=0: sqrt(1 / (4 * pi))
@@ -395,7 +411,8 @@ inline void evaluateOrbEdge(size_t idx_edge, const PeriodicGraphData &data_in,
   }
 }
 
-/// @brief Flattens thread-local edge buffers into COO-format output arrays.
+/// @brief Flattens thread-local edge buffers into COO-format output
+/// arrays.
 void flattenEdges(const tbb::enumerable_thread_specific<std::vector<EdgeTuple>> &local_edges,
                   PeriodicGraphData &data, size_t l_max) {
   size_t total_edges = 0;
@@ -476,9 +493,31 @@ int64_t PeriodicGraphBuilder::getAtomicNumber(std::string_view symbol) noexcept 
   return 0;
 }
 
+ElementCompatibilityReport
+PeriodicGraphBuilder::validateElementCompatibility(const correlation::core::Cell &cell) {
+  ElementCompatibilityReport report;
+  for (const auto &elem : cell.elements()) {
+    const int64_t z_val = getAtomicNumber(elem.symbol);
+    if (z_val <= 0 || z_val > 118) {
+      report.has_unmapped_elements = true;
+      if (std::ranges::find(report.unmapped_symbols, elem.symbol) ==
+          report.unmapped_symbols.end()) {
+        report.unmapped_symbols.push_back(elem.symbol);
+      }
+    } else if (z_val != 1 && z_val != 6 && z_val != 8) {
+      report.has_out_of_domain_elements = true;
+      if (std::ranges::find(report.out_of_domain_symbols, elem.symbol) ==
+          report.out_of_domain_symbols.end()) {
+        report.out_of_domain_symbols.push_back(elem.symbol);
+      }
+    }
+  }
+  return report;
+}
+
 PeriodicGraphData PeriodicGraphBuilder::buildGraph(const correlation::core::Cell &cell,
                                                    real_t cutoff_radius, bool include_self_loops,
-                                                   size_t l_max) {
+                                                   size_t l_max, size_t max_num_neighbors) {
   PeriodicGraphData data;
   const auto &atoms = cell.atoms();
   const size_t number_atoms = atoms.size();
@@ -522,7 +561,7 @@ PeriodicGraphData PeriodicGraphBuilder::buildGraph(const correlation::core::Cell
                       auto &my_edges = local_edges.local();
                       for (size_t i = range.begin(); i < range.end(); ++i) {
                         collectEdgesForAtom(i, atoms, lat_a, lat_b, lat_c, bounds, cutoff_sq,
-                                            include_self_loops, my_edges);
+                                            include_self_loops, max_num_neighbors, my_edges);
                       }
                     });
 
@@ -542,7 +581,8 @@ real_t PeriodicGraphBuilder::computeCutoffEnvelope(real_t distance, real_t cutof
   if (scaled_distance <= static_cast<real_t>(0.0)) {
     return static_cast<real_t>(1.0);
   }
-  // Smooth 5th-order polynomial cutoff envelope: 1 - 6u^5 + 15u^4 - 10u^3
+  // Smooth 5th-order polynomial cutoff envelope:
+  // 1 - 6u^5 + 15u^4 - 10u^3
   const real_t dist_cubed = scaled_distance * scaled_distance * scaled_distance;
   const real_t dist_fourth = dist_cubed * scaled_distance;
   const real_t dist_fifth = dist_fourth * scaled_distance;
@@ -781,7 +821,8 @@ PeriodicGraphData PeriodicGraphBuilder::buildOrbGraph(const correlation::core::C
   const bool include_self_loops = config.include_self_loops;
   const size_t effective_l_max = std::min(config.l_max, size_t{3});
 
-  PeriodicGraphData data = buildGraph(cell, cutoff, include_self_loops, 0);
+  PeriodicGraphData data =
+      buildGraph(cell, cutoff, include_self_loops, 0, config.max_num_neighbors);
   const size_t total_edges = data.edge_count;
 
   const size_t num_rbf = config.num_rbf;

@@ -14,6 +14,7 @@
 #include "core/Trajectory.hpp"
 #include "mlip/GraphDescriptors.hpp"
 #include "mlip/MLIPInterface.hpp"
+#include "mlip/OrbV3GNNModel.hpp"
 #include "mlip/PeriodicGraphBuilder.hpp"
 
 #include <span>
@@ -221,13 +222,19 @@ void bindPeriodicGraphBuilder(py::module_ &mod) {
       mod, "OrbDescriptorConfig",
       "Configuration parameters for ORB-v3 graph and descriptor extraction.")
       .def(py::init<real_t, size_t, size_t, bool, bool>(),
-           py::arg("r_max") = static_cast<real_t>(6.0), py::arg("num_rbf") = static_cast<size_t>(8),
-           py::arg("l_max") = static_cast<size_t>(3), py::arg("include_self_loops") = false,
-           py::arg("compute_orb_features") = true)
+           .def(py::init<real_t, size_t, size_t, size_t, bool, bool>(),
+                py::arg("r_max") = static_cast<real_t>(6.0),
+                py::arg("num_rbf") = static_cast<size_t>(8),
+                py::arg("l_max") = static_cast<size_t>(3), py::arg("include_self_loops") = false,
+                py::arg("compute_orb_features") = true) py::arg("l_max") = static_cast<size_t>(3),
+           py::arg("max_num_neighbors") = static_cast<size_t>(120),
+           py::arg("include_self_loops") = false, py::arg("compute_orb_features") = true)
       .def_readwrite("r_max", &OrbDescriptorConfig::r_max, "Radial cutoff distance in Angstroms.")
       .def_readwrite("num_rbf", &OrbDescriptorConfig::num_rbf,
                      "Number of Bessel radial basis functions.")
       .def_readwrite("l_max", &OrbDescriptorConfig::l_max, "Maximum spherical harmonics degree l.")
+      .def_readwrite("max_num_neighbors", &OrbDescriptorConfig::max_num_neighbors,
+                     "Maximum nearest periodic neighbors per atom.")
       .def_readwrite("include_self_loops", &OrbDescriptorConfig::include_self_loops,
                      "Whether to include self loops.")
       .def_readwrite("compute_orb_features", &OrbDescriptorConfig::compute_orb_features,
@@ -362,6 +369,11 @@ void bindMlipInterface(py::module_ &mod) {
           },
           "Local Density of States matrix [N_atoms x N_bins].")
       .def_readwrite("ldos_bins", &MLIPOutput::ldos_bins, "Number of LDOS energy bins.")
+      .def_readwrite("ldos_e_min", &MLIPOutput::ldos_e_min,
+                     "Lower bound of LDOS energy grid in eV.")
+      .def_readwrite("ldos_e_max", &MLIPOutput::ldos_e_max,
+                     "Upper bound of LDOS energy grid in eV.")
+      .def_readwrite("ldos_sigma", &MLIPOutput::ldos_sigma, "Gaussian broadening sigma in eV.")
       .def_property_readonly(
           "forces",
           [](const MLIPOutput &out) -> py::array_t<real_t> {
@@ -377,6 +389,18 @@ void bindMlipInterface(py::module_ &mod) {
             return arr;
           },
           "Predicted atomic forces as a (N, 3) NumPy array.");
+
+  // ------------------------------------------------------------------
+  // OrbV3GNNModel
+  // ------------------------------------------------------------------
+  py::class_<OrbV3GNNModel, MLIPInterface>(
+      mod, "OrbV3GNNModel", "Native C++23 ORB-v3 Graph Neural Network + LDOSHead inference engine.")
+      .def(py::init<std::string>(), py::arg("model_path") = "",
+           "Construct OrbV3GNNModel from binary weight file (auto-discovers default if empty).")
+      .def_static("find_default_model_path", &OrbV3GNNModel::findDefaultModelPath,
+                  py::arg("preferred_path") = "", "Find default cellulose_ldos.bin model path.")
+      .def("is_loaded", &OrbV3GNNModel::isLoaded, "Check if model weights are loaded.")
+      .def("model_path", &OrbV3GNNModel::modelPath, "Return resolved path to loaded weight file.");
 
   // ------------------------------------------------------------------
   // MLIPCalculator
@@ -401,6 +425,8 @@ void bindTdos(py::module_ &mod) {
       .def(py::init<real_t, real_t, const MLIPInterface *>(),
            py::arg("e_min") = static_cast<real_t>(-15.0),
            py::arg("e_max") = static_cast<real_t>(5.0), py::arg("model") = nullptr)
+           py::arg("e_min") = static_cast<real_t>(-30.0),
+           py::arg("e_max") = static_cast<real_t>(15.0), py::arg("model") = nullptr)
       .def_readwrite("e_min", &TDOSParams::e_min, "Lower energy bound in eV (relative to E_F).")
       .def_readwrite("e_max", &TDOSParams::e_max, "Upper energy bound in eV (relative to E_F).")
       .def_readwrite("model", &TDOSParams::model, "MLIPInterface model pointer.");

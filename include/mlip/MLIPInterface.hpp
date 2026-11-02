@@ -28,6 +28,9 @@ struct alignas(64) MLIPOutput {
   correlation::math::Matrix3<real_t> stress;              /**< Virial stress tensor. */
   std::vector<real_t> ldos; /**< Contiguous Local Density of States [N_atoms * N_bins]. */
   size_t ldos_bins{0};      /**< Number of energy bins in LDOS spectrum. */
+  real_t ldos_e_min{static_cast<real_t>(-30.0)}; /**< Lower energy bound of LDOS grid (eV). */
+  real_t ldos_e_max{static_cast<real_t>(15.0)};  /**< Upper energy bound of LDOS grid (eV). */
+  real_t ldos_sigma{static_cast<real_t>(0.2)}; /**< Gaussian broadening width of LDOS grid (eV). */
 
   /**
    * @brief Returns a const span over the LDOS spectrum for a specific atom.

@@ -77,6 +77,7 @@ add_executable(correlation_unit_tests
     unit/calculators/TDOSCalculatorTests.cpp
     unit/mlip/PeriodicGraphBuilderTests.cpp
     unit/mlip/TorchGNNModelTests.cpp
+    unit/mlip/OrbV3GNNModelTests.cpp
     unit/mlip/GraphDescriptorsTests.cpp
     unit/calculators/GPUSteinhardtCalculatorTests.cpp
     unit/calculators/GPUDistanceCalculatorTests.cpp

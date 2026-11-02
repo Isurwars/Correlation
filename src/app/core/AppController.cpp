@@ -543,6 +543,10 @@ bool isDefaultDisabledCalculator(const correlation::calculators::BaseCalculator 
   if (short_name == "DAD" || name == "Dihedral Angle Distribution") {
     return true;
   }
+  if (short_name == "TDOS" || name == "Total Density of States (TDOS)" || short_name == "MLIP" ||
+      name == "ML Interatomic Potential (ORB-v3)") {
+    return true;
+  }
   if (name.contains("(GPU)") || short_name.ends_with("_GPU")) {
     return true;
   }

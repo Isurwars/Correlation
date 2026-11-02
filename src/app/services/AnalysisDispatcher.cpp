@@ -62,6 +62,7 @@ toEngineConfig(const ProgramOptions &options, std::atomic<bool> *cancel_flag) {
   config.settings.hyperuniformity_samples = options.hyper_samples;
   config.settings.cancel_flag = cancel_flag;
   config.settings.xrd_params = options.xrd_params;
+  config.settings.mlip_model_path = options.mlip_model_path;
 
   config.bond_cutoffs = options.bond_cutoffs;
   config.min_frame = options.min_frame;

@@ -63,6 +63,9 @@ const std::unordered_map<std::string_view, std::string_view> &getLegacyAliases()
       {"σ²_N(R), χ_H(R)", "Hyperuniformity Diagnostics"},
       {"Dynamic", "Dynamical"},
       {"vDoS", "Vibrational Density of States"},
+      {"eDoS", "Total Density of States (TDOS)"},
+      {"EDOS", "Total Density of States (TDOS)"},
+      {"tdos", "Total Density of States (TDOS)"},
   };
   return LEGACY_ALIASES;
 }

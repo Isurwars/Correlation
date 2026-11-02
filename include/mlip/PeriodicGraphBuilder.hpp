@@ -70,8 +70,22 @@ struct OrbDescriptorConfig {
   real_t r_max{static_cast<real_t>(6.0)}; /**< Cutoff sphere radius in Angstroms. */
   size_t num_rbf{8};                      /**< Number of Bessel radial basis functions. */
   size_t l_max{3};                        /**< Maximum spherical harmonics degree (0..3). */
+  size_t max_num_neighbors{120};          /**< Maximum nearest periodic neighbors per atom. */
   bool include_self_loops{false};         /**< Whether to include zero-displacement self-loops. */
   bool compute_orb_features{true}; /**< Whether to compute fused outer-product descriptors. */
+};
+
+/**
+ * @struct ElementCompatibilityReport
+ * @brief Validation summary of atomic species compatibility with the Cellulose ORB-v3 + LDOS model.
+ */
+struct ElementCompatibilityReport {
+  bool has_unmapped_elements{false}; /**< True if any atom has unknown atomic number Z == 0. */
+  bool has_out_of_domain_elements{
+      false,
+  }; /**< True if any atom has Z outside {1 (H), 6 (C), 8 (O)}. */
+  std::vector<std::string> unmapped_symbols;      /**< Distinct unmapped element symbols. */
+  std::vector<std::string> out_of_domain_symbols; /**< Distinct non-{H, C, O} element symbols. */
 };
 
 /**
@@ -87,12 +101,22 @@ public:
    * @param[in] include_self_loops Whether to include zero-displacement self-loops (default: false).
    * @param[in] l_max Maximum spherical harmonics degree (0..3) to embed (default: 0, no harmonics
    * computed).
+   * @param[in] max_num_neighbors Optional cap on nearest neighbors per atom (0 = unlimited).
    * @return Extracted flat PeriodicGraphData buffers.
    */
   [[nodiscard]] static PeriodicGraphData buildGraph(const correlation::core::Cell &cell,
                                                     real_t cutoff_radius = static_cast<real_t>(5.0),
                                                     bool include_self_loops = false,
-                                                    size_t l_max = 0);
+                                                    size_t l_max = 0, size_t max_num_neighbors = 0);
+
+  /**
+   * @brief Validates whether all elements in a Cell map to valid atomic numbers and Cellulose LDOS
+   * training species ({H, C, O}).
+   * @param[in] cell Simulation cell to inspect.
+   * @return ElementCompatibilityReport detailing any unmapped (Z=0) or out-of-domain species.
+   */
+  [[nodiscard]] static ElementCompatibilityReport
+  validateElementCompatibility(const correlation::core::Cell &cell);
 
   /**
    * @brief Constructs a periodic atomic graph and extracts complete ORB-v3 descriptors.
@@ -119,8 +143,8 @@ public:
   [[nodiscard]] static real_t computeCutoffEnvelope(real_t distance, real_t cutoff_radius) noexcept;
 
   /**
-   * @brief Computes ORB-v3 polynomial cutoff envelope f_c(d) of order p=4 decaying smoothly to 0 at
-   * cutoff_radius.
+   * @brief Computes ORB-v3 polynomial cutoff envelope f_c(d) of order p=4 decaying smoothly to 0
+   * at cutoff_radius.
    * @param[in] distance Interatomic distance d.
    * @param[in] cutoff_radius Cutoff radius.
    * @return Envelope value in range [0, 1].

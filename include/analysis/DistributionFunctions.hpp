@@ -117,6 +117,10 @@ struct AnalysisSettings {
         {"TWF", "TWF"},
         {"Hyperuniformity Diagnostics", "σ²_N(R), χ_H(R)"},
         {"Vibrational Density of States", "vDoS"},
+        {"Total Density of States (TDOS)", "TDOS"},
+        {"eDoS", "TDOS"},
+        {"EDOS", "TDOS"},
+        {"ML Interatomic Potential (ORB-v3)", "MLIP"},
     };
     if (const auto alias_it = ALIAS_MAP.find(calc_id); alias_it != ALIAS_MAP.end()) {
       if (const auto ait = active_calculators.find(std::string(alias_it->second));
@@ -134,6 +138,7 @@ struct AnalysisSettings {
 
   std::atomic<bool> *cancel_flag = nullptr; ///< Pointer to a cancellation flag.
   XRDParams xrd_params{};                   ///< Parameters for XRD calculation.
+  std::string mlip_model_path;              ///< Optional path to MLIP/LDOS binary weight file.
 };
 
 // A structure to hold all data related to a single histogram.
