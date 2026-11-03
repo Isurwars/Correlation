@@ -221,12 +221,9 @@ void bindPeriodicGraphBuilder(py::module_ &mod) {
   py::class_<OrbDescriptorConfig>(
       mod, "OrbDescriptorConfig",
       "Configuration parameters for ORB-v3 graph and descriptor extraction.")
-      .def(py::init<real_t, size_t, size_t, bool, bool>(),
-           .def(py::init<real_t, size_t, size_t, size_t, bool, bool>(),
-                py::arg("r_max") = static_cast<real_t>(6.0),
-                py::arg("num_rbf") = static_cast<size_t>(8),
-                py::arg("l_max") = static_cast<size_t>(3), py::arg("include_self_loops") = false,
-                py::arg("compute_orb_features") = true) py::arg("l_max") = static_cast<size_t>(3),
+      .def(py::init<real_t, size_t, size_t, size_t, bool, bool>(),
+           py::arg("r_max") = static_cast<real_t>(6.0), py::arg("num_rbf") = static_cast<size_t>(8),
+           py::arg("l_max") = static_cast<size_t>(3),
            py::arg("max_num_neighbors") = static_cast<size_t>(120),
            py::arg("include_self_loops") = false, py::arg("compute_orb_features") = true)
       .def_readwrite("r_max", &OrbDescriptorConfig::r_max, "Radial cutoff distance in Angstroms.")
@@ -248,6 +245,7 @@ void bindPeriodicGraphBuilder(py::module_ &mod) {
       .def_static("build_graph", &PeriodicGraphBuilder::buildGraph, py::arg("cell"),
                   py::arg("cutoff_radius") = static_cast<real_t>(5.0),
                   py::arg("include_self_loops") = false, py::arg("l_max") = static_cast<size_t>(0),
+                  py::arg("max_num_neighbors") = static_cast<size_t>(0),
                   "Build periodic neighbor graph data for a unit cell.")
       .def_static("build_orb_graph", &PeriodicGraphBuilder::buildOrbGraph, py::arg("cell"),
                   py::arg("config") = OrbDescriptorConfig{},
@@ -297,6 +295,7 @@ void bindPeriodicGraphBuilder(py::module_ &mod) {
   mod.def("build_periodic_graph", &PeriodicGraphBuilder::buildGraph, py::arg("cell"),
           py::arg("cutoff_radius") = static_cast<real_t>(5.0),
           py::arg("include_self_loops") = false, py::arg("l_max") = static_cast<size_t>(0),
+          py::arg("max_num_neighbors") = static_cast<size_t>(0),
           "Convenience helper to construct periodic neighbor graph for GNN evaluation.");
   mod.def(
       "build_orb_graph", &PeriodicGraphBuilder::buildOrbGraph, py::arg("cell"),
@@ -423,8 +422,6 @@ void bindTdos(py::module_ &mod) {
   py::class_<TDOSParams>(mod, "TDOSParams",
                          "Configuration parameters for Total Density of States (TDOS) calculation.")
       .def(py::init<real_t, real_t, const MLIPInterface *>(),
-           py::arg("e_min") = static_cast<real_t>(-15.0),
-           py::arg("e_max") = static_cast<real_t>(5.0), py::arg("model") = nullptr)
            py::arg("e_min") = static_cast<real_t>(-30.0),
            py::arg("e_max") = static_cast<real_t>(15.0), py::arg("model") = nullptr)
       .def_readwrite("e_min", &TDOSParams::e_min, "Lower energy bound in eV (relative to E_F).")

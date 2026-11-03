@@ -246,7 +246,7 @@ jobs:
 
   publish-pypi:
     name: Publish to PyPI
-    needs: [build-macos, build-wheels, build-sdist]
+    needs: [build-wheels, build-sdist]
     runs-on: ubuntu-latest
     environment:
       name: pypi
