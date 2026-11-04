@@ -48,8 +48,8 @@ computeTetrahedrality(const std::array<math::Vector3<real_t>, 4> &displacements)
 
   for (size_t j = 0; j < 3; ++j) {
     for (size_t k = j + 1; k < 4; ++k) {
-      const real_t cos_psi = std::clamp(unit_vecs.at(j) * unit_vecs.at(k), static_cast<real_t>(-1.0),
-                                        static_cast<real_t>(1.0));
+      const real_t cos_psi = std::clamp(unit_vecs.at(j) * unit_vecs.at(k),
+                                        static_cast<real_t>(-1.0), static_cast<real_t>(1.0));
       const real_t dev = cos_psi + K_ONE_THIRD;
       term_sum += dev * dev;
     }

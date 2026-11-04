@@ -51,9 +51,9 @@ public:
    * @param[in] opts Source program options containing active calculators.
    * @param[in] registry Injected calculator registry for metadata queries.
    */
-  static void updateActiveGroupFlags(
-      AppWindow &window, const ProgramOptions &opts,
-      const correlation::calculators::ICalculatorRegistry *registry = nullptr);
+  static void
+  updateActiveGroupFlags(AppWindow &window, const ProgramOptions &opts,
+                         const correlation::calculators::ICalculatorRegistry *registry = nullptr);
 };
 
 } // namespace correlation::app

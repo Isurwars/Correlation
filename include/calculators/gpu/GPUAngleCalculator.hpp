@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "calculators/spatial/AngleCalculator.hpp"
 #include "calculators/gpu/SYCLAngleCalculator.hpp"
+#include "calculators/spatial/AngleCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/NeighborGraph.hpp"
 

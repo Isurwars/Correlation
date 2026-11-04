@@ -13,9 +13,9 @@ namespace correlation::core {
 
 namespace {
 
-[[nodiscard]] math::Vector3<real_t>
-computeDisplacement(const Cell &frame, const math::Vector3<real_t> &target_pos,
-                    const math::Vector3<real_t> &source_pos) {
+[[nodiscard]] math::Vector3<real_t> computeDisplacement(const Cell &frame,
+                                                        const math::Vector3<real_t> &target_pos,
+                                                        const math::Vector3<real_t> &source_pos) {
   const math::Vector3<real_t> delta_r = target_pos - source_pos;
   const bool use_pbc = (frame.volume() > static_cast<real_t>(1e-9));
   return use_pbc ? frame.minimumImage(delta_r) : delta_r;

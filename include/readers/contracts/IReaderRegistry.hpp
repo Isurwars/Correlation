@@ -26,7 +26,8 @@ struct ReaderExtensionQuery {
 };
 
 /**
- * @brief Abstract interface defining lookup capabilities for file reader discovery and instantiation.
+ * @brief Abstract interface defining lookup capabilities for file reader discovery and
+ * instantiation.
  */
 class IReaderRegistry {
 public:

@@ -45,8 +45,7 @@ void benchRasterizerHaloGlow(benchmark::State &state) {
   const render3d::SoftwareRasterizer rasterizer;
 
   render3d::Camera3D camera;
-  camera.setViewport(static_cast<float>(FRAMEBUFFER_WIDTH),
-                     static_cast<float>(FRAMEBUFFER_HEIGHT));
+  camera.setViewport(static_cast<float>(FRAMEBUFFER_WIDTH), static_cast<float>(FRAMEBUFFER_HEIGHT));
 
   // 6x6x6 FCC supercell = 864 atoms
   const auto cell = testing::crystals::createFCCCell(3.61, "Cu", 6, 6, 6);

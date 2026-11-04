@@ -242,7 +242,7 @@ public:
 
 private:
   CORRELATION_ALIGN(32)
-  std::array<double, 4> data_ {}; ///< Padded to 4 doubles for 256-bit SIMD alignment.
+  std::array<double, 4> data_{}; ///< Padded to 4 doubles for 256-bit SIMD alignment.
 };
 
 /**
@@ -446,7 +446,7 @@ public:
 
 private:
   CORRELATION_ALIGN(16)
-  std::array<float, 4> data_ {}; ///< Padded to 4 floats for 128-bit SSE alignment.
+  std::array<float, 4> data_{}; ///< Padded to 4 floats for 128-bit SSE alignment.
 };
 
 #endif // SIMD Specialized Vector3<float>

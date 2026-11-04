@@ -18,7 +18,8 @@ namespace correlation::core {
 class Trajectory;
 
 /**
- * @brief Domain filter responsible for removing duplicate or invalid frames from a trajectory sequence.
+ * @brief Domain filter responsible for removing duplicate or invalid frames from a trajectory
+ * sequence.
  */
 class TrajectoryFilter {
 public:

@@ -14,7 +14,8 @@ namespace correlation::calculators {
 
 /**
  * @brief Abstract contract for calculators operating across multi-frame trajectories over time.
- * Enforces isFrameCalculator() = false, isTrajectoryCalculator() = true, and provides pure virtual calculateTrajectory.
+ * Enforces isFrameCalculator() = false, isTrajectoryCalculator() = true, and provides pure virtual
+ * calculateTrajectory.
  */
 class ITemporalCalculator : public BaseCalculator {
 public:
@@ -29,9 +30,10 @@ public:
    * @param[in] traj The complete trajectory data.
    * @param[in] settings The analysis settings and parameters.
    */
-  void calculateTrajectory(correlation::analysis::DistributionFunctions &dists,
-                           const correlation::core::Trajectory &traj,
-                           const correlation::analysis::AnalysisSettings &settings) const override = 0;
+  void
+  calculateTrajectory(correlation::analysis::DistributionFunctions &dists,
+                      const correlation::core::Trajectory &traj,
+                      const correlation::analysis::AnalysisSettings &settings) const override = 0;
 };
 
 } // namespace correlation::calculators

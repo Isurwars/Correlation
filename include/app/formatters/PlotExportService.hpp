@@ -25,7 +25,8 @@ namespace correlation::app {
 class PlotExportService {
 public:
   /**
-   * @brief Determines the comparison curve key for a given histogram (e.g. "Total" or first partial).
+   * @brief Determines the comparison curve key for a given histogram (e.g. "Total" or first
+   * partial).
    * @param[in] hist Histogram to inspect.
    * @return Key string.
    */

@@ -85,22 +85,22 @@ BondCutoffEngine::getBondCutoffRange(const correlation::analysis::BondCutoffMatr
 }
 
 real_t BondCutoffEngine::getBondCutoffSQ(const correlation::analysis::BondCutoffMatrix &cutoffs,
-                                        size_t type1, size_t type2) {
+                                         size_t type1, size_t type2) {
   return getBondCutoffRange(cutoffs, type1, type2).max_sq;
 }
 
 real_t BondCutoffEngine::getMinBondCutoffSQ(const correlation::analysis::BondCutoffMatrix &cutoffs,
-                                           size_t type1, size_t type2) {
+                                            size_t type1, size_t type2) {
   return getBondCutoffRange(cutoffs, type1, type2).min_sq;
 }
 
 real_t BondCutoffEngine::getBondCutoff(const correlation::analysis::BondCutoffMatrix &cutoffs,
-                                      size_t type1, size_t type2) {
+                                       size_t type1, size_t type2) {
   return std::sqrt(getBondCutoffSQ(cutoffs, type1, type2));
 }
 
 real_t BondCutoffEngine::getMinBondCutoff(const correlation::analysis::BondCutoffMatrix &cutoffs,
-                                         size_t type1, size_t type2) {
+                                          size_t type1, size_t type2) {
   return std::sqrt(getMinBondCutoffSQ(cutoffs, type1, type2));
 }
 

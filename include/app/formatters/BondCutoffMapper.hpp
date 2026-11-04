@@ -67,7 +67,7 @@ private:
    * @return Index if found, or -1 if not found.
    */
   [[nodiscard]] static int findElementIndex(std::span<const correlation::core::Element> elements,
-                                           const std::string &symbol);
+                                            const std::string &symbol);
 };
 
 } // namespace correlation::app

@@ -34,9 +34,10 @@ public:
    * @param[in] traj Source trajectory data spanning multiple time steps.
    * @param[in] settings Configuration parameters for analysis execution.
    */
-  virtual void calculateTrajectory(correlation::analysis::DistributionFunctions &dists,
-                                   const correlation::core::Trajectory &traj,
-                                   const correlation::analysis::AnalysisSettings &settings) const = 0;
+  virtual void
+  calculateTrajectory(correlation::analysis::DistributionFunctions &dists,
+                      const correlation::core::Trajectory &traj,
+                      const correlation::analysis::AnalysisSettings &settings) const = 0;
 };
 
 } // namespace correlation::calculators

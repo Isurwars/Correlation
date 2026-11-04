@@ -59,9 +59,9 @@ public:
    * @param hist The Histogram data structure.
    * @param raw_companion Optional raw companion histogram.
    */
-  static void writeHistogramToStream(std::ostream &os,
-                                     const correlation::analysis::Histogram &hist,
-                                     const correlation::analysis::Histogram *raw_companion = nullptr);
+  static void
+  writeHistogramToStream(std::ostream &os, const correlation::analysis::Histogram &hist,
+                         const correlation::analysis::Histogram *raw_companion = nullptr);
 
 private:
   /**

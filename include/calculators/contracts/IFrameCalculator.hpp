@@ -26,7 +26,8 @@ public:
 
   /**
    * @brief Calculates properties for a single structure frame.
-   * @param[in,out] dists DistributionFunctions container to accumulate partial and total distributions.
+   * @param[in,out] dists DistributionFunctions container to accumulate partial and total
+   * distributions.
    * @param[in] settings Configuration parameters for analysis execution.
    */
   virtual void calculateFrame(correlation::analysis::DistributionFunctions &dists,
