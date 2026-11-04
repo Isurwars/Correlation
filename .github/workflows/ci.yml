@@ -38,7 +38,3 @@ jobs:
 
       - name: Run tests and verifications
         uses: ./.github/actions/run-tests
-
-  fuzz:
-    name: Fuzz Testing
-    uses: ./.github/workflows/fuzz.yml

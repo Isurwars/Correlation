@@ -1,6 +1,30 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.2.1] - 2026-11-04
+
+### 🐛 Bug Fixes & Spatial Calculators
+- **Radial Distribution Function PBC Artifact Elimination (`RDFCalculator`, `DistanceCalculator`)**:
+  - Eliminated artificial periodic boundary condition (PBC) replica spikes at $r = L$ (and integer box multiples) in $g(r)$, $G(r)$, and $J(r)$ for multi-atom disordered and amorphous simulation supercells (such as `a-Pd`, `l-Bi`, `a-PdSi`) by setting `ignore_periodic_self_interactions = true` in `DistanceCalculator` for cells exceeding crystal unit cell limits.
+  - Added `MAX_CRYSTAL_UNIT_CELL_ATOMS = 8` threshold enabling crystalline unit cells of up to 8 atoms (e.g., primitive FCC copper, BCC iron, conventional diamond silicon, and rock-salt NaCl) to retain periodic self-image interactions and expand via `autoSupercell`, ensuring complete calculation of crystal neighbor shells up to $r_{\text{max}}$.
+  - Resolved compiler warning regarding unused variable `h_1` in `RDFCalculatorTests.cpp` by validating additive scaling expectations.
+
+### 🖥️ User Interface & UX Polish
+- **InputSelect Component Ergonomics (`input_select.slint`)**:
+  - Decoupled dropdown trigger click handling from the inner text editor cursor to prevent unwanted text selection highlighting and focus locking during option selection.
+  - Added mouse-wheel quick-cycling support over collapsed selectors with an ephemeral `[i/N]` position indicator bubble.
+  - Fixed collapsed selector text horizontal clipping by removing restrictive centering and allowing full $100\%$ width utilization.
+  - Scaled popup menu dynamically up to 420px with sticky search filtering and active row ripple feedback.
+- **2D Plot Preview Floating Toolbar (`ImagingToolbar.slint`)**:
+  - Corrected vertical button and icon alignment within floating 2D plot toolbars using explicit parent centering geometry.
+
+### 🧪 Testing
+- **Crystal Unit Cell Neighbor Shell Verification (`RDFCalculatorTests`)**:
+  - Added regression test suites for 2-atom BCC iron (confirming the $r = a$ self-lattice translation shell), 8-atom conventional diamond silicon ($r_{\text{max}} = 10.0\text{ \AA}$), and 8-atom conventional NaCl rock salt ($r_{\text{max}} = 8.0\text{ \AA}$).
+
+### 🛠️ Build & CI
+- **Version Bump**: Bumped release version to `4.2.1` across CMake, Vulkan application metadata, Slint UI, Python bindings, and packaging specifications.
+
 ## [4.2.0] - 2026-11-02
 
 ### 🚀 Features & Machine Learning Potentials

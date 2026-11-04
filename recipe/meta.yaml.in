@@ -17,6 +17,7 @@ build:
 requirements:
   build:
     - "{{ compiler('c') }}"
+    - "{{ stdlib('c') }}"
     - "{{ compiler('cxx') }}"
     - cmake >=3.25
     - ninja
@@ -26,6 +27,7 @@ requirements:
     - pip
     - scikit-build-core >=0.11
     - pybind11 >=2.12
+    - numpy
     - tbb-devel
     - hdf5
     - fftw
@@ -34,19 +36,23 @@ requirements:
     - tbb
     - hdf5
     - fftw
-    - "{{ pin_compatible('numpy') }}"
+    - numpy >=1.20
 
 test:
+  requires:
+    - pip
   imports:
     - correlation
     - matcorr
   commands:
+    - pip check
     - correlation-cli --version
     - matcorr --version
 
 about:
   home: https://github.com/Isurwars/Correlation
   license: AGPL-3.0-only
+  license_family: AGPL
   license_file: LICENSE
   summary: "High-performance liquid and amorphous solid structural analysis tool"
   description: |

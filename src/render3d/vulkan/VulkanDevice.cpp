@@ -115,6 +115,7 @@ bool VulkanDevice::createInstance() {
       .pNext = nullptr,
       .pApplicationName = "Correlation",
       .applicationVersion = VK_MAKE_VERSION(4, 2, 0),
+      .applicationVersion = VK_MAKE_VERSION(4, 2, 1),
       .pEngineName = "CorrelationRender3D",
       .engineVersion = VK_MAKE_VERSION(1, 0, 0),
       .apiVersion = VK_API_VERSION_1_2,
