@@ -307,10 +307,7 @@ TEST_F(RDFCalculatorTests, AddAndScale) {
   // Add
   df1.add(df2);
   const auto &h_1 = df1.getHistogram("g_r").partials.at("Ar-Ar");
-
-  // Peak should be doubled roughly (since they are identical)
-  // Actually add() sums the bins.
-  // If both have 1 count at peak, sum is 2.
+  real_t const added_peak = *std::ranges::max_element(h_1);
 
   // Scale
   df1.scale(0.5);
@@ -331,6 +328,7 @@ TEST_F(RDFCalculatorTests, AddAndScale) {
   real_t const ref_peak =
       *std::ranges::max_element(df_ref.getHistogram("g_r").partials.at("Ar-Ar"));
 
+  EXPECT_NEAR(added_peak, 2.0 * ref_peak, 1e-4);
   EXPECT_NEAR(peak, ref_peak, 1e-4);
 }
 
@@ -597,6 +595,98 @@ TEST_F(RDFCalculatorTests, PrimitiveCellRDFComputesSelfImages) {
   EXPECT_GT(total_counts, 0.0);
 }
 
+TEST_F(RDFCalculatorTests, CrystalUnitCell_BCCIron_2Atoms_ComputesSelfLatticeTranslationPeak) {
+  // Conventional BCC unit cell has 2 atoms. The 2nd neighbor shell at r = a is
+  // a pure lattice translation of identical atoms (self-image across periodic boundary).
+  const auto lat_a = static_cast<real_t>(2.866);
+  auto cell = correlation::testing::crystals::createBCCCell(lat_a, "Fe", 1, 1, 1);
+  ASSERT_EQ(cell.atomCount(), 2);
+
+  updateTrajectory(cell);
+  DistributionFunctions dists(cell, 6.0, trajectory_.getBondCutoffsSQ());
+  dists.calculateRDF({
+      .r_max = 6.0,
+      .r_bin_width = 0.02,
+  });
+
+  const auto &hist = dists.getHistogram("g_r");
+  ASSERT_TRUE(hist.partials.contains("Fe-Fe"));
+  const auto &fe_fe = hist.partials.at("Fe-Fe");
+
+  // 1st neighbor shell: 8 atoms at a * sqrt(3) / 2 ~ 2.482 A
+  const auto [peak_r1, max_val1] = findPeakInRange(hist.bins, fe_fe, 2.2, 2.7);
+  EXPECT_NEAR(peak_r1, lat_a * std::sqrt(3.0) / 2.0, 0.03);
+  EXPECT_GT(max_val1, 1.0);
+
+  // 2nd neighbor shell: 6 atoms at r = a ~ 2.866 A (periodic self-image translation)
+  const auto [peak_r2, max_val2] = findPeakInRange(hist.bins, fe_fe, 2.7, 3.1);
+  EXPECT_NEAR(peak_r2, lat_a, 0.03);
+  EXPECT_GT(max_val2, 1.0);
+}
+
+TEST_F(RDFCalculatorTests, CrystalUnitCell_DiamondSilicon_8Atoms_ComputesPeriodicImages) {
+  // Conventional Diamond Cubic unit cell has 8 atoms and lattice constant a = 5.431 A.
+  const auto lat_a = static_cast<real_t>(5.431);
+  auto cell = correlation::testing::crystals::createDiamondCell(lat_a, "Si", 1, 1, 1);
+  ASSERT_EQ(cell.atomCount(), 8);
+
+  updateTrajectory(cell);
+  DistributionFunctions dists(cell, 10.0, trajectory_.getBondCutoffsSQ());
+  dists.calculateRDF({
+      .r_max = 10.0,
+      .r_bin_width = 0.02,
+  });
+
+  const auto &hist = dists.getHistogram("g_r");
+  ASSERT_TRUE(hist.partials.contains("Si-Si"));
+  const auto &si_si = hist.partials.at("Si-Si");
+
+  // 1st neighbor shell: 4 atoms at a * sqrt(3) / 4 ~ 2.351 A
+  const auto [peak_r1, max_val1] = findPeakInRange(hist.bins, si_si, 2.1, 2.6);
+  EXPECT_NEAR(peak_r1, lat_a * std::sqrt(3.0) / 4.0, 0.03);
+  EXPECT_GT(max_val1, 1.0);
+
+  // 2nd neighbor shell: 12 atoms at a / sqrt(2) ~ 3.840 A
+  const auto [peak_r2, max_val2] = findPeakInRange(hist.bins, si_si, 3.6, 4.1);
+  EXPECT_NEAR(peak_r2, lat_a / std::numbers::sqrt2, 0.03);
+  EXPECT_GT(max_val2, 1.0);
+
+  // Distant neighbor shell beyond the unit cell length (r > 5.431 A), e.g. at a * sqrt(2) ~ 7.68 A
+  const auto [peak_r_dist, max_val_dist] = findPeakInRange(hist.bins, si_si, 7.4, 8.0);
+  EXPECT_NEAR(peak_r_dist, lat_a * std::numbers::sqrt2, 0.05);
+  EXPECT_GT(max_val_dist, 0.5);
+}
+
+TEST_F(RDFCalculatorTests, CrystalUnitCell_NaCl_8Atoms_ComputesPeriodicImages) {
+  // Conventional Rock Salt unit cell has 8 atoms (4 Na + 4 Cl) and lattice constant a = 5.64 A.
+  const auto lat_a = static_cast<real_t>(5.64);
+  auto cell = correlation::testing::crystals::createNaClCell(lat_a, "Na", "Cl", 1, 1, 1);
+  ASSERT_EQ(cell.atomCount(), 8);
+
+  updateTrajectory(cell);
+  DistributionFunctions dists(cell, 8.0, trajectory_.getBondCutoffsSQ());
+  dists.calculateRDF({
+      .r_max = 8.0,
+      .r_bin_width = 0.02,
+  });
+
+  const auto &hist = dists.getHistogram("g_r");
+  ASSERT_TRUE(hist.partials.contains("Na-Cl"));
+  ASSERT_TRUE(hist.partials.contains("Na-Na"));
+
+  // Na-Cl 1st neighbor shell at a / 2 ~ 2.82 A
+  const auto [peak_nacl, max_nacl] =
+      findPeakInRange(hist.bins, hist.partials.at("Na-Cl"), 2.6, 3.1);
+  EXPECT_NEAR(peak_nacl, lat_a / 2.0, 0.03);
+  EXPECT_GT(max_nacl, 1.0);
+
+  // Na-Na 2nd neighbor shell at a / sqrt(2) ~ 3.988 A
+  const auto [peak_nana, max_nana] =
+      findPeakInRange(hist.bins, hist.partials.at("Na-Na"), 3.7, 4.2);
+  EXPECT_NEAR(peak_nana, lat_a / std::numbers::sqrt2, 0.03);
+  EXPECT_GT(max_nana, 1.0);
+}
+
 namespace {
 
 [[nodiscard]] std::string resolveExamplePath(std::string_view relative_subpath) {
@@ -656,6 +746,11 @@ TEST_F(RDFCalculatorTests, AmorphousPalladiumSingleFrameAsymptotesToOneAt20A) {
   const real_t avg_tail = computeTailAverage(total_vals, 10);
   EXPECT_NEAR(avg_tail, 1.0, 0.05);
 
+  // Verify no PBC distance periodic artifact peak around L = 14.7058 A
+  const auto pbc_bin = static_cast<size_t>(14.7058 / 0.05);
+  ASSERT_LT(pbc_bin, total_vals.size());
+  EXPECT_NEAR(total_vals[pbc_bin], 1.0, 0.10);
+
   const auto &g_unw = dist_functions->getHistogram("g_r_unweighted");
   ASSERT_TRUE(g_unw.partials.contains("Pd-Pd"));
   const real_t unw_avg = computeTailAverage(g_unw.partials.at("Pd-Pd"), 10);
@@ -694,7 +789,11 @@ TEST_F(RDFCalculatorTests, LiquidBismuthLast100FramesMeanAsymptotesToOneAt20A) {
   const auto &total_vals = g_r.partials.at("Total");
   ASSERT_FALSE(total_vals.empty());
 
-  // Liquid Bi has L ~ 19.55 A; at r = 20 A finite-size PBC density fluctuations yield ~1.07
+  // Liquid Bi has L ~ 19.55 A; verify no PBC artifact peak at L and proper asymptote
+  const auto pbc_bin_bi = static_cast<size_t>(19.5516 / 0.05);
+  ASSERT_LT(pbc_bin_bi, total_vals.size());
+  EXPECT_NEAR(total_vals[pbc_bin_bi], 1.0, 0.10);
+
   const real_t avg_tail = computeTailAverage(total_vals, 10);
   EXPECT_NEAR(avg_tail, 1.0, 0.08);
 

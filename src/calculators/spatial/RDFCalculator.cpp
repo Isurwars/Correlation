@@ -48,12 +48,28 @@ std::string getInversePartialKey(const correlation::core::Cell &cell, size_t typ
 // Static registration of the calculator in the factory
 const bool REGISTERED = CalculatorFactory::registerTypeSafe<RDFCalculator>("RDFCalculator");
 
+// Maximum number of atoms for a crystal unit cell.
+// Cells with atom count <= MAX_CRYSTAL_UNIT_CELL_ATOMS (e.g. primitive FCC/BCC,
+// diamond cubic (8 atoms), rock-salt (8 atoms)) are treated as crystal unit cells
+// eligible for periodic replication via autoSupercell and periodic self-image interactions.
+// Disordered simulation cells (atomCount > MAX_CRYSTAL_UNIT_CELL_ATOMS) are guarded
+// against artificial periodic self-interaction spikes at r = L.
+constexpr size_t MAX_CRYSTAL_UNIT_CELL_ATOMS = 8;
+
 struct ActiveCellContext {
   correlation::core::Cell supercell_holder;
   bool is_expanded{false};
   real_t replication_factor{1.0};
 
   void initialize(const correlation::core::Cell &original, real_t r_max, real_t max_radius) {
+    // Only replicate if the cell is a crystal unit cell (atomCount <= MAX_CRYSTAL_UNIT_CELL_ATOMS).
+    // For larger simulation cells and supercells (e.g. a-Pd, l-Bi),
+    // replication duplicates disordered atoms and creates artificial periodic
+    // boundary artifact peaks at integer multiples of lattice vectors.
+    if (original.atomCount() > MAX_CRYSTAL_UNIT_CELL_ATOMS) {
+      return;
+    }
+
     const auto widths = original.perpendicularWidths();
     const real_t eps = std::numeric_limits<real_t>::epsilon();
     if (widths[0] > eps && widths[1] > eps && widths[2] > eps) {
@@ -78,7 +94,8 @@ struct RDFSettings {
 
 void accumulateRawCounts(const correlation::core::Cell &cell,
                          const correlation::analysis::StructureAnalyzer * /*neighbors*/,
-                         RDFSettings settings, correlation::analysis::Histogram &h_r) {
+                         RDFSettings settings, bool ignore_self,
+                         correlation::analysis::Histogram &h_r) {
   const auto &elements = cell.elements();
   const size_t num_elements = elements.size();
 
@@ -92,7 +109,7 @@ void accumulateRawCounts(const correlation::core::Cell &cell,
       .r_bin_width = settings.r_bin_width,
       .num_bins = settings.num_bins,
   };
-  DistanceCalculator::compute(cell, cutoff_sq, empty_bonds, false, dummy_graph,
+  DistanceCalculator::compute(cell, cutoff_sq, empty_bonds, ignore_self, dummy_graph,
                               &standalone_histograms, hist_config);
 
   for (size_t i = 0; i < num_elements; ++i) {
@@ -384,13 +401,16 @@ RDFCalculator::calculate(const correlation::core::Cell &cell,
     j_r.bins[i] = r_i;
   }
 
+  const bool is_crystal = (cell.atomCount() <= MAX_CRYSTAL_UNIT_CELL_ATOMS);
+  const bool ignore_self = !is_crystal;
+
   accumulateRawCounts(active_cell, neighbors,
                       {
                           .r_max = r_max,
                           .r_bin_width = r_bin_width,
                           .num_bins = num_bins,
                       },
-                      h_r);
+                      ignore_self, h_r);
 
   normalizeDistributions(active_cell, element_counts,
                          {
