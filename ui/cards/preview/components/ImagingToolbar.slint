@@ -59,6 +59,7 @@ export component ImagingToolbar inherits Rectangle {
         home_touch := TouchArea {
             width: 30px;
             height: 30px;
+            y: (parent.height - self.height) / 2;
             enabled: root.has_active_zoom;
             mouse-cursor: self.enabled ? pointer : default;
             clicked => { root.reset_zoom(); }
@@ -94,6 +95,7 @@ export component ImagingToolbar inherits Rectangle {
         zoom_touch := TouchArea {
             width: 30px;
             height: 30px;
+            y: (parent.height - self.height) / 2;
             mouse-cursor: pointer;
             clicked => {
                 root.active_tool = (root.active_tool == 1 ? 0 : 1);
@@ -127,6 +129,7 @@ export component ImagingToolbar inherits Rectangle {
         zoom_out_touch := TouchArea {
             width: 30px;
             height: 30px;
+            y: (parent.height - self.height) / 2;
             mouse-cursor: pointer;
             clicked => {
                 root.active_tool = (root.active_tool == 4 ? 0 : 4);
@@ -170,6 +173,7 @@ export component ImagingToolbar inherits Rectangle {
         marker_x_touch := TouchArea {
             width: 30px;
             height: 30px;
+            y: (parent.height - self.height) / 2;
             mouse-cursor: pointer;
             clicked => {
                 root.active_tool = (root.active_tool == 2 ? 0 : 2);
@@ -204,6 +208,7 @@ export component ImagingToolbar inherits Rectangle {
         marker_y_touch := TouchArea {
             width: 30px;
             height: 30px;
+            y: (parent.height - self.height) / 2;
             mouse-cursor: pointer;
             clicked => {
                 root.active_tool = (root.active_tool == 3 ? 0 : 3);
@@ -239,6 +244,7 @@ export component ImagingToolbar inherits Rectangle {
             visible: root.markers_count > 0;
             width: root.markers_count > 0 ? 30px : 0px;
             height: 30px;
+            y: (parent.height - self.height) / 2;
             mouse-cursor: pointer;
             clicked => { root.clear_markers(); }
 
@@ -273,6 +279,7 @@ export component ImagingToolbar inherits Rectangle {
         calibrate_touch := TouchArea {
             width: 30px;
             height: 30px;
+            y: (parent.height - self.height) / 2;
             mouse-cursor: pointer;
             clicked => {
                 root.active_tool = (root.active_tool == 5 ? 0 : 5);
@@ -313,10 +320,10 @@ export component ImagingToolbar inherits Rectangle {
         }
 
         // Live HUD Coordinates (to the right of the buttons!)
-        if root.hover_coord_text != "": HorizontalLayout {
+        if root.hover_coord_text != "": VerticalLayout {
+            alignment: center;
             padding-left: 6px;
             padding-right: 6px;
-            alignment: center;
 
             MaterialText {
                 text: root.hover_coord_text;

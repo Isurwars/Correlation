@@ -23,6 +23,8 @@ component InputSelectItem {
 
     callback clicked();
 
+    property <bool> flash_active: false;
+
     visible: root.is_match;
     height: root.is_match ? MaterialStyleMetrics.size_40 : 0px;
 
@@ -30,9 +32,11 @@ component InputSelectItem {
         clip: true;
         width: 100%;
         height: 100%;
-        background: root.highlighted ? MaterialPalette.surface_container_highest
+        background: root.flash_active ? MaterialPalette.primary_container
+            : root.highlighted ? MaterialPalette.surface_container_highest
             : root.selected ? MaterialPalette.surface_container_high
             : #00000000;
+        animate background { duration: 150ms; }
 
         state_area := StateLayerArea {
             color: MaterialPalette.on_surface;
@@ -66,6 +70,7 @@ component InputSelectItem {
             }
 
             clicked => {
+                root.flash_active = true;
                 root.clicked();
             }
         }
@@ -113,9 +118,15 @@ export component InputSelect {
 
     property <bool> is_open: false;
     property <bool> filter_active: false;
+    property <string> search_text: "";
     property <int> highlighted_index: -1;
     property <length> item_height: MaterialStyleMetrics.size_40;
     property <int> max_visible_items: 6;
+    property <bool> wheel_cycling: false;
+
+    property <string> selected_text: (root.current_index >= 0 && root.current_index < root.items.length)
+        ? root.items[root.current_index].text
+        : root.text;
 
     out property <bool> has-hover: touch_area.has-hover && !root.is_open;
     out property <length> mouse-x: touch_area.mouse-x;
@@ -125,10 +136,10 @@ export component InputSelect {
     preferred_width: 280px;
     min_height: MaterialStyleMetrics.size_40;
     preferred_height: MaterialStyleMetrics.size_40;
-    forward_focus: main_text_field;
+    forward_focus: focus_scope;
     accessible-role: combobox;
     accessible-enabled: root.enabled;
-    accessible-value: root.text;
+    accessible-value: root.selected_text;
 
     changed current_index => {
         if root.current_index >= 0 && root.current_index < root.items.length {
@@ -137,201 +148,299 @@ export component InputSelect {
         }
     }
 
-    touch_area := TouchArea {
-        width: 100%;
-        height: 100%;
-        mouse-cursor: root.enabled ? pointer : default;
-
-        clicked => {
-            if root.enabled {
-                root.open_menu();
-            }
+    changed has-hover => {
+        if !root.has-hover {
+            root.wheel_cycling = false;
         }
     }
 
-    main_text_field := TextField {
+    trigger_container := Rectangle {
         width: 100%;
         height: 100%;
-        label: root.label;
-        placeholder_text: "Filter or select plot...";
-        text <=> root.text;
-        leading_icon: root.leading_icon;
-        trailing_icon: root.text != "" ? Icons.close : (root.is_open ? Icons.arrow_drop_up : Icons.arrow_drop_down);
-        read_only: false;
-        enabled: root.enabled;
+        border-radius: MaterialStyleMetrics.border_radius_2;
+        background: !root.enabled ? MaterialPalette.surface_container_highest.with-alpha(0.38)
+            : touch_area.has-hover ? MaterialPalette.surface_container_high
+            : MaterialPalette.surface_container_highest;
+        border-width: (root.is_open || root.wheel_cycling) ? 2px : 1px;
+        border-color: (root.is_open || root.wheel_cycling) ? MaterialPalette.primary
+            : touch_area.has-hover ? MaterialPalette.on_surface
+            : MaterialPalette.outline_variant;
 
-        changed has_focus => {
-            if self.has_focus && root.enabled {
-                root.open_menu();
-            }
-        }
+        animate background, border-color { duration: 150ms; }
 
-        trailing_icon_clicked => {
-            if root.text != "" {
-                root.text = "";
-                root.filter_active = false;
-                root.highlighted_index = -1;
-                root.open_menu();
-            } else {
-                root.toggle_menu();
-            }
-        }
+        focus_scope := FocusScope {
+            width: 100%;
+            height: 100%;
+            enabled: root.enabled;
 
-        edited(new_text) => {
-            root.text = new_text;
-            root.filter_active = (new_text != "");
-            root.highlighted_index = -1;
-            root.open_menu();
-        }
-
-        accepted(text) => {
-            root.commit_selection();
-        }
-
-        key_pressed(event) => {
-            if event.text == Key.DownArrow {
-                if !root.is_open {
-                    root.open_menu();
-                    root.highlighted_index = (root.current_index >= 0) ? root.current_index : 0;
-                } else {
-                    root.move_highlight_next();
+            key_pressed(event) => {
+                if !root.enabled {
+                    return reject;
                 }
-                return accept;
-            }
-            if event.text == Key.UpArrow {
-                if !root.is_open {
-                    root.open_menu();
-                    root.highlighted_index = (root.current_index >= 0) ? root.current_index : max(0, root.items.length - 1);
-                } else {
-                    root.move_highlight_prev();
-                }
-                return accept;
-            }
-            if event.text == Key.Return {
-                if root.is_open {
-                    root.commit_selection();
+                if event.text == Key.DownArrow || event.text == Key.UpArrow || event.text == " " || event.text == "\n" {
+                    root.toggle_menu();
                     return accept;
                 }
-            }
-            if event.text == Key.Escape {
-                if root.is_open {
-                    root.is_open = false;
-                    menu.close();
+                if event.text != "" && event.text != Key.Escape && event.text != Key.Tab {
+                    root.open_menu();
+                    root.search_text = event.text;
+                    root.filter_active = true;
                     return accept;
                 }
+                reject
             }
-            reject
+
+            touch_area := TouchArea {
+                width: 100%;
+                height: 100%;
+                enabled: root.enabled;
+                mouse-cursor: root.enabled ? pointer : default;
+
+                clicked => {
+                    if root.enabled {
+                        root.toggle_menu();
+                    }
+                }
+
+                scroll-event(event) => {
+                    if !root.enabled || root.items.length <= 1 {
+                        return reject;
+                    }
+                    if event.delta-y < 0px {
+                        root.cycle_next();
+                        return accept;
+                    } else if event.delta-y > 0px {
+                        root.cycle_prev();
+                        return accept;
+                    }
+                    reject
+                }
+
+                HorizontalLayout {
+                    width: 100%;
+                    height: 100%;
+                    padding_left: MaterialStyleMetrics.padding_12;
+                    padding_right: MaterialStyleMetrics.padding_12;
+                    spacing: MaterialStyleMetrics.spacing_8;
+
+                    if root.leading_icon.width > 0: Image {
+                        width: 18px;
+                        height: 18px;
+                        source: root.leading_icon;
+                        colorize: root.enabled ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+                    }
+
+                    VerticalLayout {
+                        horizontal-stretch: 1;
+                        alignment: center;
+                        spacing: 0px;
+
+                        if root.label != "" && root.selected_text != "": MaterialText {
+                            width: 100%;
+                            text: root.label;
+                            style: MaterialTypography.label_small;
+                            color: (root.is_open || root.wheel_cycling) ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+                            overflow: elide;
+                        }
+
+                        MaterialText {
+                            width: 100%;
+                            text: root.selected_text != "" ? root.selected_text : root.label;
+                            style: MaterialTypography.body_medium;
+                            color: root.enabled ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant.with-alpha(0.38);
+                            overflow: elide;
+                        }
+                    }
+
+                    if root.wheel_cycling && root.items.length > 0: Rectangle {
+                        height: 20px;
+                        background: MaterialPalette.primary_container;
+                        border-radius: 10px;
+
+                        HorizontalLayout {
+                            padding_left: 8px;
+                            padding_right: 8px;
+                            alignment: center;
+                            MaterialText {
+                                text: "\{root.current_index + 1} / \{root.items.length}";
+                                style: MaterialTypography.label_small;
+                                color: MaterialPalette.on_primary_container;
+                                vertical-alignment: center;
+                            }
+                        }
+                    }
+
+                    Image {
+                        width: 20px;
+                        height: 20px;
+                        source: root.is_open ? Icons.arrow_drop_up : Icons.arrow_drop_down;
+                        colorize: (root.is_open || touch_area.has-hover) ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+                        animate colorize { duration: 150ms; }
+                    }
+                }
+            }
         }
     }
 
     menu := PopupWindow {
         x: 0;
         y: root.height + 4px;
-        width: root.width;
-        height: popup_elevation.height;
+        width: max(root.width, min(420px, items_layout.preferred-width + 32px));
         close_policy: close_on_click_outside;
-        forward_focus: main_text_field;
+        forward_focus: search_field;
 
         popup_elevation := Elevation {
             level: 2;
-            width: root.width;
+            width: 100%;
             property <length> menu_dropdown_height: items_layout.preferred-height > 0px
                 ? min(items_layout.preferred-height, root.max_visible_items * root.item_height)
-                : (root.filter_active ? root.item_height : 0px);
-            height: self.menu_dropdown_height + MaterialStyleMetrics.padding_4 * 2;
+                : root.item_height;
+            height: search_box.preferred-height + self.menu_dropdown_height + MaterialStyleMetrics.padding_8 * 2;
             border_radius: MaterialStyleMetrics.border_radius_2;
             background: MaterialPalette.surface_container;
 
-            dropdown_content := Rectangle {
-                x: 0;
-                y: MaterialStyleMetrics.padding_4;
-                width: parent.width;
-                height: popup_elevation.menu_dropdown_height;
-                clip: true;
+            VerticalLayout {
+                padding: MaterialStyleMetrics.padding_4;
+                spacing: MaterialStyleMetrics.spacing_4;
 
-                property <bool> has_scroll: items_layout.preferred-height > self.height;
+                search_box := Rectangle {
+                    height: MaterialStyleMetrics.size_40;
 
-                scroll_view := ScrollView {
-                    x: 0;
-                    y: 0;
-                    width: dropdown_content.has_scroll ? parent.width - 16px : parent.width;
-                    height: parent.height;
-                    vertical-stretch: 1;
-                    vertical_scrollbar_policy: ScrollBarPolicy.always_off;
-                    horizontal_scrollbar_policy: ScrollBarPolicy.always_off;
+                    search_field := TextField {
+                        width: 100%;
+                        height: 100%;
+                        placeholder_text: "Filter plots...";
+                        text <=> root.search_text;
+                        leading_icon: Icons.tune;
+                        trailing_icon: root.search_text != "" ? Icons.close : @image-url("");
 
-                    content_height: max(parent.height, items_layout.preferred-height);
-
-                    items_layout := VerticalLayout {
-                        padding: 0;
-                        spacing: 0;
-
-                        for item[index] in root.items: InputSelectItem {
-                            text: item.text;
-                            enabled: item.enabled;
-                            selected: index == root.current_index;
-                            highlighted: index == root.highlighted_index;
-                            is_match: !root.filter_active || root.text == "" || (item.text.to-lowercase().replace-all(root.text.to-lowercase(), "") != item.text.to-lowercase());
-
-                            clicked => {
-                                root.choose_item(index);
-                            }
-                        }
-                    }
-                }
-
-                if root.filter_active && items_layout.preferred-height <= 0px: InputSelectEmptyItem {
-                    x: 0;
-                    y: 0;
-                    width: parent.width;
-                }
-
-                // High contrast scrollbar: visible when items exceed viewport
-                if dropdown_content.has_scroll: scroll_track := Rectangle {
-                    x: parent.width - 12px;
-                    y: 4px;
-                    width: 8px;
-                    height: parent.height - 8px;
-                    background: MaterialPalette.surface_container_highest;
-                    border_radius: 4px;
-
-                    thumb := Rectangle {
-                        property <length> track_h: scroll_track.height;
-                        property <length> max_scroll: max(1px, items_layout.preferred-height - scroll_view.height);
-                        property <length> thumb_h: max(28px, track_h * (scroll_view.height / max(1px, items_layout.preferred-height)));
-
-                        x: 0px;
-                        y: clamp((track_h - self.thumb_h) * (-scroll_view.content_y / self.max_scroll), 0px, track_h - self.thumb_h);
-                        width: 8px;
-                        height: self.thumb_h;
-                        border_radius: 4px;
-                        background: thumb_touch.pressed ? MaterialPalette.primary.darker(15%) : thumb_touch.has_hover ? MaterialPalette.primary.brighter(15%) : MaterialPalette.primary;
-                    }
-
-                    thumb_touch := TouchArea {
-                        property <length> press_y;
-                        property <length> start_content_y;
-
-                        pointer-event(event) => {
-                            if event.button == PointerEventButton.left && event.kind == PointerEventKind.down {
-                                self.press_y = self.mouse-y;
-                                self.start_content_y = scroll_view.content_y;
-                            }
+                        trailing_icon_clicked => {
+                            root.search_text = "";
+                            root.filter_active = false;
+                            root.highlighted_index = -1;
                         }
 
-                        moved => {
-                            if self.pressed && (scroll_track.height > thumb.thumb_h) {
-                                scroll_view.content_y = min(0px, max(-(items_layout.preferred-height - scroll_view.height),
-                                    self.start_content_y - (self.mouse-y - self.press_y) * (items_layout.preferred-height - scroll_view.height) / (scroll_track.height - thumb.thumb_h)));
-                            }
+                        edited(new_text) => {
+                            root.search_text = new_text;
+                            root.filter_active = (new_text != "");
+                            root.highlighted_index = -1;
                         }
 
-                        scroll-event(event) => {
-                            if event.delta-y != 0 {
-                                scroll_view.content_y = min(0px, max(-(items_layout.preferred-height - scroll_view.height), scroll_view.content_y + event.delta-y));
+                        accepted(text) => {
+                            root.commit_selection();
+                        }
+
+                        key_pressed(event) => {
+                            if event.text == Key.DownArrow {
+                                root.move_highlight_next();
+                                return accept;
+                            }
+                            if event.text == Key.UpArrow {
+                                root.move_highlight_prev();
+                                return accept;
+                            }
+                            if event.text == Key.Return {
+                                root.commit_selection();
+                                return accept;
+                            }
+                            if event.text == Key.Escape {
+                                root.close_menu();
                                 return accept;
                             }
                             reject
+                        }
+                    }
+                }
+
+                dropdown_content := Rectangle {
+                    width: 100%;
+                    height: popup_elevation.menu_dropdown_height;
+                    clip: true;
+
+                    property <bool> has_scroll: items_layout.preferred-height > self.height;
+
+                    scroll_view := ScrollView {
+                        x: 0;
+                        y: 0;
+                        width: dropdown_content.has_scroll ? parent.width - 16px : parent.width;
+                        height: parent.height;
+                        vertical-stretch: 1;
+                        vertical_scrollbar_policy: ScrollBarPolicy.always_off;
+                        horizontal_scrollbar_policy: ScrollBarPolicy.always_off;
+
+                        content_height: max(parent.height, items_layout.preferred-height);
+
+                        items_layout := VerticalLayout {
+                            padding: 0;
+                            spacing: 0;
+
+                            for item[index] in root.items: InputSelectItem {
+                                text: item.text;
+                                enabled: item.enabled;
+                                selected: index == root.current_index;
+                                highlighted: index == root.highlighted_index;
+                                is_match: !root.filter_active || root.search_text == "" || (item.text.to-lowercase().replace-all(root.search_text.to-lowercase(), "") != item.text.to-lowercase());
+
+                                clicked => {
+                                    root.choose_item(index);
+                                }
+                            }
+                        }
+                    }
+
+                    if items_layout.preferred-height <= 0px: InputSelectEmptyItem {
+                        x: 0;
+                        y: 0;
+                        width: parent.width;
+                        text: root.filter_active ? "No matches found" : "No plots available";
+                    }
+
+                    if dropdown_content.has_scroll: scroll_track := Rectangle {
+                        x: parent.width - 12px;
+                        y: 4px;
+                        width: 8px;
+                        height: parent.height - 8px;
+                        background: MaterialPalette.surface_container_highest;
+                        border_radius: 4px;
+
+                        thumb := Rectangle {
+                            property <length> track_h: scroll_track.height;
+                            property <length> max_scroll: max(1px, items_layout.preferred-height - scroll_view.height);
+                            property <length> thumb_h: max(28px, track_h * (scroll_view.height / max(1px, items_layout.preferred-height)));
+
+                            x: 0px;
+                            y: clamp((track_h - self.thumb_h) * (-scroll_view.content_y / self.max_scroll), 0px, track_h - self.thumb_h);
+                            width: 8px;
+                            height: self.thumb_h;
+                            border_radius: 4px;
+                            background: thumb_touch.pressed ? MaterialPalette.primary.darker(15%) : thumb_touch.has_hover ? MaterialPalette.primary.brighter(15%) : MaterialPalette.primary;
+                        }
+
+                        thumb_touch := TouchArea {
+                            property <length> press_y;
+                            property <length> start_content_y;
+
+                            pointer-event(event) => {
+                                if event.button == PointerEventButton.left && event.kind == PointerEventKind.down {
+                                    self.press_y = self.mouse-y;
+                                    self.start_content_y = scroll_view.content_y;
+                                }
+                            }
+
+                            moved => {
+                                if self.pressed && (scroll_track.height > thumb.thumb_h) {
+                                    scroll_view.content_y = min(0px, max(-(items_layout.preferred-height - scroll_view.height),
+                                        self.start_content_y - (self.mouse-y - self.press_y) * (items_layout.preferred-height - scroll_view.height) / (scroll_track.height - thumb.thumb_h)));
+                                }
+                            }
+
+                            scroll-event(event) => {
+                                if event.delta-y != 0 {
+                                    scroll_view.content_y = min(0px, max(-(items_layout.preferred-height - scroll_view.height), scroll_view.content_y + event.delta-y));
+                                    return accept;
+                                }
+                                reject
+                            }
                         }
                     }
                 }
@@ -344,11 +453,16 @@ export component InputSelect {
         menu.show();
     }
 
+    function close_menu() {
+        root.is_open = false;
+        menu.close();
+    }
+
     function toggle_menu() {
         if root.is_open {
-            menu.close();
-            root.is_open = false;
+            root.close_menu();
         } else {
+            root.search_text = "";
             root.filter_active = false;
             root.highlighted_index = root.current_index;
             root.open_menu();
@@ -360,11 +474,33 @@ export component InputSelect {
         if index >= 0 && index < root.items.length {
             root.text = root.items[index].text;
         }
+        root.search_text = "";
         root.filter_active = false;
         root.highlighted_index = -1;
-        root.is_open = false;
-        menu.close();
+        root.close_menu();
         root.selected(index);
+    }
+
+    function cycle_next() {
+        if root.items.length <= 1 || !root.enabled {
+            return;
+        }
+        let next_idx = min(root.items.length - 1, root.current_index + 1);
+        if next_idx != root.current_index {
+            root.choose_item(next_idx);
+            root.wheel_cycling = true;
+        }
+    }
+
+    function cycle_prev() {
+        if root.items.length <= 1 || !root.enabled {
+            return;
+        }
+        let prev_idx = max(0, root.current_index - 1);
+        if prev_idx != root.current_index {
+            root.choose_item(prev_idx);
+            root.wheel_cycling = true;
+        }
     }
 
     function commit_selection() {
@@ -375,8 +511,7 @@ export component InputSelect {
         } else if root.items.length > 0 {
             root.choose_item(0);
         } else {
-            root.is_open = false;
-            menu.close();
+            root.close_menu();
         }
     }
 
