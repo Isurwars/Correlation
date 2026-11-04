@@ -129,7 +129,7 @@ correlation::core::Cell GromacsReader::parseGroFrame(const char *data, size_t si
   size_t offset = 0;
   size_t line_end = 0;
 
-  auto next_line = [&]() -> std::string {
+  auto next_line = [&] -> std::string {
     line_end = findLineEnd(data, size, offset);
     std::string line = extractLine(data, offset, line_end);
     offset = skipLineEnding(data, size, line_end);

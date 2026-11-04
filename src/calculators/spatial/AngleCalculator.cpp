@@ -131,7 +131,7 @@ void AngleCalculator::compute(const correlation::core::Cell &cell,
   }
 
   // Thread-local AngleTensor accumulator
-  tbb::enumerable_thread_specific<AngleTensor> ets([&]() {
+  tbb::enumerable_thread_specific<AngleTensor> ets([&] {
     return AngleTensor(num_elements,
                        std::vector<std::vector<std::vector<real_t>>>(
                            num_elements, std::vector<std::vector<real_t>>(num_elements)));

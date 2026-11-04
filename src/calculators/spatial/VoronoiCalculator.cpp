@@ -407,7 +407,7 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
   const int max_cn = *std::ranges::max_element(data.coordination_numbers);
   size_t const cn_bins = std::max(25, max_cn + 2);
 
-  const auto cn_bin_values = [&]() {
+  const auto cn_bin_values = [&] {
     std::vector<real_t> values(cn_bins);
     for (size_t i = 0; i < cn_bins; ++i) {
       values[i] = static_cast<real_t>(i);
@@ -422,7 +422,7 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
   // 3d. Signatures histogram
   size_t const sig_bins = std::max(size_t{1}, sorted_sigs.size());
 
-  const auto sig_bin_values = [&]() {
+  const auto sig_bin_values = [&] {
     std::vector<real_t> values(sig_bins);
     for (size_t i = 0; i < sig_bins; ++i) {
       values[i] = static_cast<real_t>(i);

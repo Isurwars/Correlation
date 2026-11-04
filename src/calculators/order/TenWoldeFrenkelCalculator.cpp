@@ -31,8 +31,9 @@ const bool REGISTERED =
 [[nodiscard]] inline real_t computePairCoherence(const std::complex<real_t> *q6m_i,
                                                  const std::complex<real_t> *q6m_j) noexcept {
   real_t chi = static_cast<real_t>(0.0);
-  for (size_t m = 0; m < 13; ++m) {
-    chi += q6m_i[m].real() * q6m_j[m].real() + q6m_i[m].imag() * q6m_j[m].imag();
+  for (size_t m_order = 0; m_order < 13; ++m_order) {
+    chi += q6m_i[m_order].real() * q6m_j[m_order].real() +
+           q6m_i[m_order].imag() * q6m_j[m_order].imag();
   }
   return chi;
 }
@@ -98,11 +99,11 @@ std::vector<real_t> TenWoldeFrenkelCalculator::calculatePerAtom(
                         const auto *q6m_i = &q6m_norm[i * 13];
                         size_t coherent_count = 0;
                         for (const auto &neighbor : atom_neighbors) {
-                          const size_t j = neighbor.index;
-                          if (j >= num_atoms) {
+                          const size_t neighbor_idx = neighbor.index;
+                          if (neighbor_idx >= num_atoms) {
                             continue;
                           }
-                          const auto *q6m_j = &q6m_norm[j * 13];
+                          const auto *q6m_j = &q6m_norm[neighbor_idx * 13];
                           const real_t chi_ij = computePairCoherence(q6m_i, q6m_j);
                           if (chi_ij >= params.chi_cut) {
                             ++coherent_count;

@@ -97,7 +97,7 @@ std::vector<std::string> StructureWriterFactory::getSupportedFormats() const {
 std::vector<std::string> StructureWriterFactory::getSupportedExtensions() const {
   std::vector<std::string> extensions;
   extensions.reserve(extension_map_.size());
-  for (const auto &[ext, _] : extension_map_) {
+  for (const auto &[ext, unused_writer] : extension_map_) {
     extensions.push_back(ext);
   }
   return extensions;

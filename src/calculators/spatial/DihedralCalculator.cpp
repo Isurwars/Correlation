@@ -155,7 +155,7 @@ void DihedralCalculator::compute(
 
   // Initialize thread-local storage
   tbb::enumerable_thread_specific<correlation::analysis::StructureAnalyzer::DihedralTensor> ets(
-      [&]() {
+      [&] {
         return correlation::analysis::StructureAnalyzer::DihedralTensor(
             num_elements,
             std::vector<std::vector<std::vector<std::vector<real_t>>>>(

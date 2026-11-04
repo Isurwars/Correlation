@@ -187,7 +187,7 @@ ChiralityCalculator::calculate(const correlation::core::Cell &cell,
     real_t num_atoms_f = 0.0;
   };
 
-  tbb::enumerable_thread_specific<ThreadLocalHist> ets([&]() {
+  tbb::enumerable_thread_specific<ThreadLocalHist> ets([&] {
     ThreadLocalHist local;
     initHistogramMap(local.partials, element_symbols, bins);
     return local;
