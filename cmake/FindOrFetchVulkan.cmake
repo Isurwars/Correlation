@@ -24,9 +24,8 @@ if(CORRELATION_ENABLE_VULKAN AND BUILD_GUI AND NOT (BUILD_WASM OR EMSCRIPTEN))
     correlation_push_shared_libs(OFF)
     FetchContent_Declare(
       vulkan_headers
-      GIT_REPOSITORY https://github.com/KhronosGroup/Vulkan-Headers.git
-      GIT_TAG v1.4.304
-      GIT_SHALLOW TRUE
+      URL https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/v1.4.304.tar.gz
+      DOWNLOAD_EXTRACT_TIMESTAMP TRUE
       SYSTEM
       EXCLUDE_FROM_ALL
     )
