@@ -260,8 +260,8 @@
     "semantic_hash": ""
   },
   "python/correlation/__init__.py": {
-    "mtime": 1793646731.6139379,
-    "ast_hash": "59f6cfd8a8574e94a2252c24fd425ae8",
+    "mtime": 1793938969.4678833,
+    "ast_hash": "d57de9a145deaddd3f6d89a33044ceaa",
     "semantic_hash": ""
   },
   "python/repair_wheel.py": {
@@ -905,8 +905,8 @@
     "semantic_hash": ""
   },
   ".github/workflows/ci.yml": {
-    "mtime": 1790907617.7996721,
-    "ast_hash": "46ba3fd97ff7588d52e20f77580310e0",
+    "mtime": 1793813366.1343439,
+    "ast_hash": "63cccfb548834ac762bcf3360d7b0629",
     "semantic_hash": ""
   },
   ".github/workflows/docs.yml": {
@@ -915,18 +915,18 @@
     "semantic_hash": ""
   },
   ".github/workflows/release.yml": {
-    "mtime": 1793723862.7159305,
-    "ast_hash": "c8b909af6c6cfd311703a0c512e45d8e",
+    "mtime": 1793982821.008184,
+    "ast_hash": "d9751ca28b61488f58df7504b12c53eb",
     "semantic_hash": ""
   },
   "CMakeLists.txt": {
-    "mtime": 1793646730.7673678,
-    "ast_hash": "c7e4abcf58f19a20dec82e6cf3de526d",
+    "mtime": 1793812591.0650861,
+    "ast_hash": "861f8d6c28d1f43fb89646d711b1667e",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1793646730.9789255,
-    "ast_hash": "c7041b289c0ee64fd282d6ab5e8387c3",
+    "mtime": 1793812644.4322555,
+    "ast_hash": "1f1f185db196419cdbad618ada82ecdf",
     "semantic_hash": ""
   },
   "docs/CODE_OF_CONDUCT.md": {
@@ -935,8 +935,8 @@
     "semantic_hash": "78fb49271fe3aa5197ae5d6fabdd0087"
   },
   "docs/CONTRIBUTING.md": {
-    "mtime": 1793646731.255931,
-    "ast_hash": "39872ce81debdee88a9891fa440d3757",
+    "mtime": 1793812716.1043494,
+    "ast_hash": "02f3fe74c5fa23ae2d4c0421c030cae8",
     "semantic_hash": ""
   },
   "examples/Cellulose/Cellulose.md": {
@@ -950,8 +950,8 @@
     "semantic_hash": "fa5794c577c54fcf0888468db60e0c22"
   },
   "src/CMakeLists.txt": {
-    "mtime": 1793656891.439647,
-    "ast_hash": "11b14f8357cc19d1fe6fa8902ec428f9",
+    "mtime": 1793939158.253709,
+    "ast_hash": "9c453ae2e0b4739aae7e1d1f4aa7484d",
     "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
@@ -960,8 +960,8 @@
     "semantic_hash": ""
   },
   "tests/CMakeLists.txt": {
-    "mtime": 1793586435.3873096,
-    "ast_hash": "f3b5172f52f45ab8db171f306d3c0c17",
+    "mtime": 1793939371.7027998,
+    "ast_hash": "00a128b10e05e0a1ecd5747ebfb95f9b",
     "semantic_hash": ""
   },
   "tests/fuzz/CMakeLists.txt": {
@@ -1130,8 +1130,8 @@
     "semantic_hash": ""
   },
   "include/mlip/MLIPInterface.hpp": {
-    "mtime": 1793634392.7415566,
-    "ast_hash": "b8111743d0f130148d6fe2dfca57bdc5",
+    "mtime": 1793939419.8067138,
+    "ast_hash": "3af09afa167f6926155df609a551e0b4",
     "semantic_hash": ""
   },
   "tests/unit/calculators/GPUSteinhardtCalculatorTests.cpp": {
@@ -1340,8 +1340,8 @@
     "semantic_hash": ""
   },
   "recipe/meta.yaml": {
-    "mtime": 1793646731.6095343,
-    "ast_hash": "e5fca23e6cc433f77ebf81d2db8fef43",
+    "mtime": 1793813114.8712864,
+    "ast_hash": "6b3d5dadf9228a05f8d9b812952f05e4",
     "semantic_hash": ""
   },
   "tests/unit/app/SettingsManagerTests.cpp": {
@@ -1405,8 +1405,8 @@
     "semantic_hash": ""
   },
   "src/bindings/mlip_bindings.cpp": {
-    "mtime": 1793723862.823508,
-    "ast_hash": "c555b28eaab84ee8bbba5c9868359aca",
+    "mtime": 1793950694.5921338,
+    "ast_hash": "b49c50921bd0afec1c8bf7f7616befb7",
     "semantic_hash": ""
   },
   "src/bindings/mlip_bindings.hpp": {
@@ -1495,8 +1495,8 @@
     "semantic_hash": ""
   },
   "python/correlation/adapters.py": {
-    "mtime": 1791253743.2707374,
-    "ast_hash": "cfe0dadda21a8105d0740045b45f0604",
+    "mtime": 1793938428.5285618,
+    "ast_hash": "5d4896d2586bacc9160ea58f02d966fa",
     "semantic_hash": ""
   },
   "src/analysis/CorrelationEngine.cpp": {
@@ -1715,8 +1715,8 @@
     "semantic_hash": ""
   },
   ".github/workflows/fuzz.yml": {
-    "mtime": 1788800278.9685318,
-    "ast_hash": "17586fb7e09a8f10d8e90036612d8e5a",
+    "mtime": 1793813366.2185035,
+    "ast_hash": "ac0a8f0e18b838933ac4d060fcc82144",
     "semantic_hash": ""
   },
   ".github/workflows/wasm.yml": {
@@ -2395,7 +2395,7 @@
     "semantic_hash": ""
   },
   "src/calculators/spatial/RDFCalculator.cpp": {
-    "mtime": 1793809276.0456717,
+    "mtime": 1793809920.7620504,
     "ast_hash": "915fb347b389c54e3ec15157ce9f55db",
     "semantic_hash": ""
   },
@@ -2565,8 +2565,8 @@
     "semantic_hash": ""
   },
   "python/matcorr/__init__.py": {
-    "mtime": 1793646731.612938,
-    "ast_hash": "0f2e9e51f211e12ef959346c6559dcf3",
+    "mtime": 1793812695.0218208,
+    "ast_hash": "27adcfbe7c211ab47386099a7c130eaf",
     "semantic_hash": ""
   },
   "python/matcorr/__main__.py": {
@@ -3345,8 +3345,8 @@
     "semantic_hash": ""
   },
   "src/render3d/vulkan/VulkanDevice.cpp": {
-    "mtime": 1793646731.7529407,
-    "ast_hash": "2d1fa2d320c25511297139c220a48c91",
+    "mtime": 1793816502.9134328,
+    "ast_hash": "5b4e8501c01058479e5ba18a1316c1dd",
     "semantic_hash": ""
   },
   "src/render3d/vulkan/VulkanOffscreenTarget.cpp": {
@@ -3397,6 +3397,61 @@
   "tests/unit/mlip/OrbV3GNNModelTests.cpp": {
     "mtime": 1793639677.6064277,
     "ast_hash": "15dbeec6fe6dc6db62b23b871358f87f",
+    "semantic_hash": ""
+  },
+  "include/mlip/MaceGNNModel.hpp": {
+    "mtime": 1793938612.8850164,
+    "ast_hash": "922f225adfd042ba9cbd05da9392a4f2",
+    "semantic_hash": ""
+  },
+  "python/correlation/ase_bridge.py": {
+    "mtime": 1793950694.4821284,
+    "ast_hash": "53c6133977a9a6ee7a03f1dc18f766e8",
+    "semantic_hash": ""
+  },
+  "src/mlip/MaceGNNModel.cpp": {
+    "mtime": 1793938969.7143493,
+    "ast_hash": "0f97c2c6de879787b82179fafe524cfc",
+    "semantic_hash": ""
+  },
+  "tests/test_ase_bridge.py": {
+    "mtime": 1793939346.314249,
+    "ast_hash": "093c5588d4c0c01ea4efd6c70aca11ac",
+    "semantic_hash": ""
+  },
+  "tests/unit/mlip/MaceGNNModelTests.cpp": {
+    "mtime": 1793938613.5364525,
+    "ast_hash": "8de56e069f34479979eca0603908bac2",
+    "semantic_hash": ""
+  },
+  "include/calculators/ml/ChargeCorrelationCalculator.hpp": {
+    "mtime": 1793950693.456021,
+    "ast_hash": "dbb0d251ab0cf1bf09251d907dbb3ec5",
+    "semantic_hash": ""
+  },
+  "include/calculators/ml/SpinCorrelationCalculator.hpp": {
+    "mtime": 1793950693.5550191,
+    "ast_hash": "a3ace98ea17ffda1f80c319855c097d3",
+    "semantic_hash": ""
+  },
+  "src/calculators/ml/ChargeCorrelationCalculator.cpp": {
+    "mtime": 1793950694.671504,
+    "ast_hash": "52f3e30278ab3c8cb680304e0882ca2c",
+    "semantic_hash": ""
+  },
+  "src/calculators/ml/SpinCorrelationCalculator.cpp": {
+    "mtime": 1793950694.737996,
+    "ast_hash": "686ca8e2ffe8418fbb4fb2a8f8dbc1eb",
+    "semantic_hash": ""
+  },
+  "tests/unit/calculators/SpinChargeCorrelationTests.cpp": {
+    "mtime": 1793950694.8489938,
+    "ast_hash": "7d7153262faa2b789eb79fe623b4fb42",
+    "semantic_hash": ""
+  },
+  "docs/SIGNPATH_SETUP.md": {
+    "mtime": 1793982821.1246684,
+    "ast_hash": "bf0ae07872692a10601954abf669db82",
     "semantic_hash": ""
   }
 }

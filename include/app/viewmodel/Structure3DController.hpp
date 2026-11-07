@@ -12,11 +12,13 @@
 #include "app/viewmodel/PhaseSearchService.hpp"
 #include "app/viewmodel/PhaseSearchTypes.hpp"
 #include "app/viewmodel/SteinhardtLRUCache.hpp"
+#include "analysis/PerFrameDistributionStore.hpp"
 #include "app/viewmodel/Structure3DRenderPipeline.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 #include "plotters/ColormapService.hpp"
 #include "render3d/Camera3D.hpp"
+#include "render3d/MiniPlotRenderer.hpp"
 #include "render3d/Scene3D.hpp"
 #include "render3d/TrajectoryStreamer.hpp"
 #include <slint.h>
@@ -133,6 +135,29 @@ public:
    * @param[in] trajectory Shared pointer to loaded trajectory.
    */
   void setTrajectory(std::shared_ptr<const core::Trajectory> trajectory);
+
+  /**
+   * @brief Sets or updates the trajectory-wide per-frame distribution store.
+   * @param[in] store Shared pointer to PerFrameDistributionStore.
+   */
+  void setDistributionStore(std::shared_ptr<const analysis::PerFrameDistributionStore> store);
+
+  /**
+   * @brief Selects active distribution metric displayed in 3D viewer mini-chart HUD.
+   * @param[in] metric_index 0 = RDF g(r), 1 = PAD θ, 2 = S(Q).
+   */
+  void handleSelectDistributionMetric(int metric_index);
+
+  /**
+   * @brief Toggles visibility of the distribution mini-chart HUD.
+   * @param[in] visible True to display mini-chart HUD overlay.
+   */
+  void handleToggleDistributionHUD(bool visible);
+
+  /**
+   * @brief Renders and synchronizes the active frame mini-chart with the Slint UI.
+   */
+  void syncDistributionHUDToWindow();
 
   /**
    * @brief Sets whether the 3D Structure tab is currently active.
@@ -436,6 +461,10 @@ private:
   double bond_cutoff_scale_{1.15};
   core::Cell current_cell_;
   std::shared_ptr<const core::Trajectory> current_trajectory_;
+
+  std::shared_ptr<const analysis::PerFrameDistributionStore> distribution_store_;
+  analysis::DistributionMetric active_dist_metric_{analysis::DistributionMetric::RDF};
+  bool dist_hud_visible_{true};
 
   mutable std::mutex mutex_;
   std::thread::id main_thread_id_{std::this_thread::get_id()};

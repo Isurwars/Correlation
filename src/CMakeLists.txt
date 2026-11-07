@@ -43,6 +43,8 @@ add_library(calculators_obj OBJECT
 
     # Machine learning calculators
     calculators/ml/MLIPCalculator.cpp
+    calculators/ml/SpinCorrelationCalculator.cpp
+    calculators/ml/ChargeCorrelationCalculator.cpp
 
     # Spatial calculators
     calculators/spatial/AngleCalculator.cpp
@@ -175,6 +177,7 @@ endif()
 set(MLIP_SOURCES
     mlip/PeriodicGraphBuilder.cpp
     mlip/TorchGNNModel.cpp
+    mlip/MaceGNNModel.cpp
     mlip/OrbV3GNNModel.cpp
     mlip/GraphDescriptors.cpp
 )
@@ -230,6 +233,7 @@ set(RENDER3D_SOURCES
     render3d/RenderEngineFactory.cpp
     render3d/LodController.cpp
     render3d/TrajectoryStreamer.cpp
+    render3d/MiniPlotRenderer.cpp
 )
 
 if(CORRELATION_HAS_VULKAN)
@@ -257,6 +261,7 @@ endif()
 add_library(correlation_lib STATIC
     core/Cell.cpp
     analysis/DistributionFunctions.cpp
+    analysis/PerFrameDistributionStore.cpp
     analysis/DistributionPostProcessor.cpp
     analysis/DynamicsAnalyzer.cpp
     analysis/FirstMinimumDetector.cpp

@@ -406,6 +406,48 @@ def to_atom_graphs(
 
 
 # -----------------------------------------------------------------------------
+# MLIP Evaluation Helpers
+# -----------------------------------------------------------------------------
+
+def evaluate_cell_mlip(cell: Any, model_or_calculator: Any) -> Any:
+    """
+    Evaluate a machine learning potential on this Cell.
+
+    Accepts either a native C++ MLIPInterface (such as MaceGNNModel or OrbV3GNNModel)
+    or any ASE-compatible Calculator (such as MACE, SevenNet, CHGNet, MatterSim).
+    """
+    from correlation.ase_bridge import ASEMLIPBridge
+
+    if hasattr(model_or_calculator, "evaluate"):
+        return model_or_calculator.evaluate(cell)
+    bridge = ASEMLIPBridge(model_or_calculator)
+    return bridge.evaluate(cell)
+
+
+def evaluate_trajectory_mlip(traj: Any, model_or_calculator: Any, on_progress: Any = None) -> List[Any]:
+    """
+    Evaluate a machine learning potential across all frames of this Trajectory.
+
+    Parameters
+    ----------
+    traj : correlation.Trajectory
+        Input multi-frame trajectory.
+    model_or_calculator : correlation.MLIPInterface or ase.calculators.calculator.Calculator
+        Target ML potential engine.
+    on_progress : Callable[[float, str], None], optional
+        Progress tracking callback.
+    """
+    from correlation.ase_bridge import ASEMLIPBridge
+
+    if hasattr(model_or_calculator, "evaluate_trajectory"):
+        return model_or_calculator.evaluate_trajectory(traj, on_progress)
+    elif hasattr(model_or_calculator, "evaluate"):
+        return [model_or_calculator.evaluate(traj[i]) for i in range(len(traj))]
+    bridge = ASEMLIPBridge(model_or_calculator)
+    return bridge.evaluate_trajectory(traj, on_progress)
+
+
+# -----------------------------------------------------------------------------
 # Dynamic Class Registration
 # -----------------------------------------------------------------------------
 
@@ -422,7 +464,9 @@ def _register_adapters() -> None:
         setattr(correlation.Cell, "to_pymatgen", to_pymatgen)
         setattr(correlation.Cell, "from_pymatgen", staticmethod(from_pymatgen))
         setattr(correlation.Cell, "to_atom_graphs", to_atom_graphs)
+        setattr(correlation.Cell, "evaluate_mlip", evaluate_cell_mlip)
 
     if hasattr(correlation, "Trajectory"):
         setattr(correlation.Trajectory, "to_ase", to_ase_trajectory)
         setattr(correlation.Trajectory, "from_ase", staticmethod(from_ase_trajectory))
+        setattr(correlation.Trajectory, "evaluate_mlip", evaluate_trajectory_mlip)

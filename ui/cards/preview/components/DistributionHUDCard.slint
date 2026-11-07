@@ -1,0 +1,192 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialTypography,
+    MaterialText,
+} from "../../../material/material.slint";
+
+export component DistributionHUDCard inherits Rectangle {
+    in property <image> chart_image;
+    in property <int> active_metric: 0; // 0 = g(r), 1 = PAD, 2 = S(Q)
+    in property <string> peak_text: "";
+    in property <int> current_frame: 0;
+
+    callback set_metric(int);
+    callback close_hud();
+
+    width: 276px;
+    height: 184px;
+    border-radius: 12px;
+    background: MaterialPalette.surface_container_highest.with_alpha(92%);
+    border-width: 1px;
+    border-color: MaterialPalette.outline_variant.with_alpha(55%);
+    clip: true;
+
+    VerticalLayout {
+        padding-left: 8px;
+        padding-right: 8px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        spacing: 4px;
+
+        // Header: metric pills & close button
+        HorizontalLayout {
+            alignment: space-between;
+            spacing: 6px;
+
+            // Metric Switcher Pills
+            HorizontalLayout {
+                spacing: 4px;
+
+                // Pill 0: g(r)
+                Rectangle {
+                    width: 38px;
+                    height: 20px;
+                    border-radius: 10px;
+                    background: root.active_metric == 0 ? MaterialPalette.primary : MaterialPalette.surface_container_high;
+                    TouchArea {
+                        clicked => { root.set_metric(0); }
+                        MaterialText {
+                            text: "g(r)";
+                            font-size: 10.5px;
+                            font-weight: root.active_metric == 0 ? 700 : 500;
+                            color: root.active_metric == 0 ? MaterialPalette.on_primary : MaterialPalette.on_surface_variant;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+
+                // Pill 1: PAD
+                Rectangle {
+                    width: 40px;
+                    height: 20px;
+                    border-radius: 10px;
+                    background: root.active_metric == 1 ? MaterialPalette.primary : MaterialPalette.surface_container_high;
+                    TouchArea {
+                        clicked => { root.set_metric(1); }
+                        MaterialText {
+                            text: "PAD";
+                            font-size: 10.5px;
+                            font-weight: root.active_metric == 1 ? 700 : 500;
+                            color: root.active_metric == 1 ? MaterialPalette.on_primary : MaterialPalette.on_surface_variant;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+
+                // Pill 2: S(Q)
+                Rectangle {
+                    width: 38px;
+                    height: 20px;
+                    border-radius: 10px;
+                    background: root.active_metric == 2 ? MaterialPalette.primary : MaterialPalette.surface_container_high;
+                    TouchArea {
+                        clicked => { root.set_metric(2); }
+                        MaterialText {
+                            text: "S(Q)";
+                            font-size: 10.5px;
+                            font-weight: root.active_metric == 2 ? 700 : 500;
+                            color: root.active_metric == 2 ? MaterialPalette.on_primary : MaterialPalette.on_surface_variant;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+
+            // Close button
+            Rectangle {
+                width: 20px;
+                height: 20px;
+                border-radius: 10px;
+                background: MaterialPalette.surface_container_low;
+
+                TouchArea {
+                    clicked => { root.close_hud(); }
+                    MaterialText {
+                        text: "✕";
+                        font-size: 10px;
+                        color: MaterialPalette.on_surface_variant;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+        }
+
+        // Rendered Mini-Plot Image
+        Rectangle {
+            width: 260px;
+            height: 126px;
+            border-radius: 6px;
+            clip: true;
+            background: #12151a;
+
+            Image {
+                width: 100%;
+                height: 100%;
+                source: root.chart_image;
+                image-fit: fill;
+            }
+        }
+
+        // Footer Legend & Peak Info
+        HorizontalLayout {
+            alignment: space-between;
+
+            HorizontalLayout {
+                spacing: 8px;
+
+                // Mean indicator (dashed/muted)
+                HorizontalLayout {
+                    spacing: 4px;
+                    Rectangle {
+                        y: (parent.height - self.height) / 2;
+                        width: 10px;
+                        height: 2px;
+                        background: #879baf;
+                    }
+                    MaterialText {
+                        text: "Mean";
+                        font-size: 9.5px;
+                        color: MaterialPalette.on_surface_variant;
+                        vertical-alignment: center;
+                    }
+                }
+
+                // Current Frame indicator (vibrant teal)
+                HorizontalLayout {
+                    spacing: 4px;
+                    Rectangle {
+                        y: (parent.height - self.height) / 2;
+                        width: 10px;
+                        height: 3px;
+                        border-radius: 1px;
+                        background: #40d7d7;
+                    }
+                    MaterialText {
+                        text: "Frame " + (root.current_frame + 1);
+                        font-size: 9.5px;
+                        font-weight: 600;
+                        color: MaterialPalette.on_surface;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+
+            if (root.peak_text != ""): MaterialText {
+                text: root.peak_text;
+                font-size: 9.5px;
+                font-weight: 600;
+                color: #ffd700;
+                vertical-alignment: center;
+            }
+        }
+    }
+}

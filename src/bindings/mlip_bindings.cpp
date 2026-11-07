@@ -8,12 +8,15 @@
  */
 
 #include "mlip_bindings.hpp"
+#include "calculators/ml/ChargeCorrelationCalculator.hpp"
 #include "calculators/ml/MLIPCalculator.hpp"
+#include "calculators/ml/SpinCorrelationCalculator.hpp"
 #include "calculators/scattering/TDOSCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 #include "mlip/GraphDescriptors.hpp"
 #include "mlip/MLIPInterface.hpp"
+#include "mlip/MaceGNNModel.hpp"
 #include "mlip/OrbV3GNNModel.hpp"
 #include "mlip/PeriodicGraphBuilder.hpp"
 
@@ -373,7 +376,7 @@ void bindMlipInterface(py::module_ &mod) {
       .def_readwrite("ldos_e_max", &MLIPOutput::ldos_e_max,
                      "Upper bound of LDOS energy grid in eV.")
       .def_readwrite("ldos_sigma", &MLIPOutput::ldos_sigma, "Gaussian broadening sigma in eV.")
-      .def_property_readonly(
+      .def_property(
           "forces",
           [](const MLIPOutput &out) -> py::array_t<real_t> {
             const size_t n_atoms = out.forces.size();
@@ -387,7 +390,93 @@ void bindMlipInterface(py::module_ &mod) {
             }
             return arr;
           },
-          "Predicted atomic forces as a (N, 3) NumPy array.");
+          [](MLIPOutput &out, py::array_t<real_t> arr) {
+            auto buf = arr.unchecked<2>();
+            const size_t n_atoms = static_cast<size_t>(buf.shape(0));
+            out.forces.resize(n_atoms);
+            for (size_t idx = 0; idx < n_atoms; ++idx) {
+              out.forces[idx] = correlation::math::Vector3<real_t>{
+                  buf(static_cast<py::ssize_t>(idx), 0), buf(static_cast<py::ssize_t>(idx), 1),
+                  buf(static_cast<py::ssize_t>(idx), 2)};
+            }
+          },
+          "Predicted atomic forces as a (N, 3) NumPy array.")
+      .def_property(
+          "stress",
+          [](const MLIPOutput &out) -> py::array_t<real_t> {
+            py::array_t<real_t> arr({3, 3});
+            auto buf = arr.mutable_unchecked<2>();
+            for (size_t r = 0; r < 3; ++r) {
+              for (size_t c = 0; c < 3; ++c) {
+                buf(r, c) = out.stress(r, c);
+              }
+            }
+            return arr;
+          },
+          [](MLIPOutput &out, py::array_t<real_t> arr) {
+            auto buf = arr.unchecked<2>();
+            for (size_t r = 0; r < 3; ++r) {
+              for (size_t c = 0; c < 3; ++c) {
+                out.stress(r, c) = buf(static_cast<py::ssize_t>(r), static_cast<py::ssize_t>(c));
+              }
+            }
+          },
+          "Virial stress tensor as a (3, 3) NumPy array.")
+      .def_property(
+          "charges",
+          [](const MLIPOutput &out) -> py::array_t<real_t> {
+            return py::array_t<real_t>(out.charges.size(), out.charges.data());
+          },
+          [](MLIPOutput &out, py::array_t<real_t> arr) {
+            auto buf = arr.unchecked<1>();
+            out.charges.resize(static_cast<size_t>(buf.shape(0)));
+            for (size_t i = 0; i < out.charges.size(); ++i) {
+              out.charges[i] = buf(static_cast<py::ssize_t>(i));
+            }
+          },
+          "Per-atom partial or Born effective charges (e).")
+      .def_property(
+          "magmoms",
+          [](const MLIPOutput &out) -> py::array_t<real_t> {
+            const size_t n_atoms = out.magmoms.size();
+            py::array_t<real_t> arr(
+                {static_cast<py::ssize_t>(n_atoms), static_cast<py::ssize_t>(3)});
+            auto buf = arr.mutable_unchecked<2>();
+            for (size_t idx = 0; idx < n_atoms; ++idx) {
+              buf(idx, 0) = out.magmoms[idx].x();
+              buf(idx, 1) = out.magmoms[idx].y();
+              buf(idx, 2) = out.magmoms[idx].z();
+            }
+            return arr;
+          },
+          [](MLIPOutput &out, py::array_t<real_t> arr) {
+            auto buf = arr.unchecked<2>();
+            const size_t n_atoms = static_cast<size_t>(buf.shape(0));
+            out.magmoms.resize(n_atoms);
+            for (size_t idx = 0; idx < n_atoms; ++idx) {
+              out.magmoms[idx] = correlation::math::Vector3<real_t>{
+                  buf(static_cast<py::ssize_t>(idx), 0), buf(static_cast<py::ssize_t>(idx), 1),
+                  buf(static_cast<py::ssize_t>(idx), 2)};
+            }
+          },
+          "Per-atom site magnetic moment vectors (mu_B).")
+      .def_readwrite("energy_variance", &MLIPOutput::energy_variance,
+                     "Committee or ensemble energy prediction variance (eV^2).")
+      .def_readwrite("force_variances", &MLIPOutput::force_variances,
+                     "Committee or ensemble per-atom force variances ((eV/A)^2).");
+
+  // ------------------------------------------------------------------
+  // MaceGNNModel
+  // ------------------------------------------------------------------
+  py::class_<MaceGNNModel, MLIPInterface>(
+      mod, "MaceGNNModel",
+      "Native LibTorch MACE (Higher-Order Equivariant Message Passing) inference engine.")
+      .def(py::init<std::string, std::string, real_t>(), py::arg("model_path"),
+           py::arg("device") = "cpu", py::arg("cutoff") = static_cast<real_t>(5.0),
+           "Construct MaceGNNModel from TorchScript .pt or .model file.")
+      .def("is_loaded", &MaceGNNModel::isLoaded, "Check if model weights are loaded.")
+      .def_property("cutoff", &MaceGNNModel::cutoff, &MaceGNNModel::setCutoff,
+                    "Neighbor cutoff radius in Angstroms.");
 
   // ------------------------------------------------------------------
   // OrbV3GNNModel
@@ -413,6 +502,123 @@ void bindMlipInterface(py::module_ &mod) {
             return MLIPCalculator::calculate(cell, model);
           },
           py::arg("cell"), py::arg("model") = nullptr, "Evaluate MLIP on a given cell.");
+
+  // ------------------------------------------------------------------
+  // SpinCorrelationResult & SpinCorrelationCalculator
+  // ------------------------------------------------------------------
+  py::class_<SpinCorrelationResult>(
+      mod, "SpinCorrelationResult",
+      "Result of spatial spin-spin and magnetic moment correlation analysis.")
+      .def(py::init<>())
+      .def_property_readonly(
+          "r_bins",
+          [](const SpinCorrelationResult &res) -> py::array_t<real_t> {
+            return py::array_t<real_t>(res.r_bins.size(), res.r_bins.data());
+          },
+          "Radial distance bin centers in Angstroms.")
+      .def_property_readonly(
+          "spin_correlation",
+          [](const SpinCorrelationResult &res) -> py::array_t<real_t> {
+            return py::array_t<real_t>(res.spin_correlation.size(), res.spin_correlation.data());
+          },
+          "Normalized spatial spin-spin alignment <S_i · S_j>(r) in [-1, 1].")
+      .def_property_readonly(
+          "magnetic_moment_corr",
+          [](const SpinCorrelationResult &res) -> py::array_t<real_t> {
+            return py::array_t<real_t>(res.magnetic_moment_corr.size(),
+                                       res.magnetic_moment_corr.data());
+          },
+          "Unnormalized magnetic moment correlation <m_i · m_j>(r) in mu_B^2.")
+      .def_property_readonly(
+          "pair_counts",
+          [](const SpinCorrelationResult &res) -> py::array_t<uint64_t> {
+            return py::array_t<uint64_t>(res.pair_counts.size(), res.pair_counts.data());
+          },
+          "Pair observation counts per radial bin.");
+
+  py::class_<SpinCorrelationCalculator, BaseCalculator>(
+      mod, "SpinCorrelationCalculator",
+      "Calculates spatial spin-spin correlation <S_i · S_j>(r) and magnetic RDF.")
+      .def(py::init<>())
+      .def_static(
+          "calculate",
+          [](const correlation::core::Cell &cell, py::array_t<real_t> magmoms_arr, real_t r_max,
+             real_t r_bin_width) {
+            auto buf = magmoms_arr.unchecked<2>();
+            const size_t n = static_cast<size_t>(buf.shape(0));
+            std::vector<correlation::math::Vector3<real_t>> vecs(n);
+            for (size_t i = 0; i < n; ++i) {
+              vecs[i] = correlation::math::Vector3<real_t>{buf(static_cast<py::ssize_t>(i), 0),
+                                                           buf(static_cast<py::ssize_t>(i), 1),
+                                                           buf(static_cast<py::ssize_t>(i), 2)};
+            }
+            return SpinCorrelationCalculator::calculate(cell, vecs, r_max, r_bin_width);
+          },
+          py::arg("cell"), py::arg("magmoms"), py::arg("r_max") = static_cast<real_t>(10.0),
+          py::arg("r_bin_width") = static_cast<real_t>(0.05),
+          "Compute spatial spin correlation from Cell and (N, 3) magnetic moments array.")
+      .def_static("calculate_from_mlip", &SpinCorrelationCalculator::calculateFromMLIP,
+                  py::arg("cell"), py::arg("mlip_out"),
+                  py::arg("r_max") = static_cast<real_t>(10.0),
+                  py::arg("r_bin_width") = static_cast<real_t>(0.05),
+                  "Compute spatial spin correlation from Cell and MLIPOutput.");
+
+  // ------------------------------------------------------------------
+  // ChargeCorrelationResult & ChargeCorrelationCalculator
+  // ------------------------------------------------------------------
+  py::class_<ChargeCorrelationResult>(
+      mod, "ChargeCorrelationResult",
+      "Result of charge-weighted pair distribution and screening analysis.")
+      .def(py::init<>())
+      .def_property_readonly(
+          "r_bins",
+          [](const ChargeCorrelationResult &res) -> py::array_t<real_t> {
+            return py::array_t<real_t>(res.r_bins.size(), res.r_bins.data());
+          },
+          "Radial distance bin centers in Angstroms.")
+      .def_property_readonly(
+          "g_qq",
+          [](const ChargeCorrelationResult &res) -> py::array_t<real_t> {
+            return py::array_t<real_t>(res.g_qq.size(), res.g_qq.data());
+          },
+          "Charge-weighted pair distribution function g_qq(r).")
+      .def_property_readonly(
+          "charge_integral",
+          [](const ChargeCorrelationResult &res) -> py::array_t<real_t> {
+            return py::array_t<real_t>(res.charge_integral.size(), res.charge_integral.data());
+          },
+          "Running cumulative charge neutrality screening integral Q(r).")
+      .def_property_readonly(
+          "pair_counts",
+          [](const ChargeCorrelationResult &res) -> py::array_t<uint64_t> {
+            return py::array_t<uint64_t>(res.pair_counts.size(), res.pair_counts.data());
+          },
+          "Pair observation counts per radial bin.");
+
+  py::class_<ChargeCorrelationCalculator, BaseCalculator>(
+      mod, "ChargeCorrelationCalculator",
+      "Calculates charge-weighted pair distribution g_qq(r) and screening integral Q(r).")
+      .def(py::init<>())
+      .def_static(
+          "calculate",
+          [](const correlation::core::Cell &cell, py::array_t<real_t> charges_arr, real_t r_max,
+             real_t r_bin_width) {
+            auto buf = charges_arr.unchecked<1>();
+            const size_t n = static_cast<size_t>(buf.shape(0));
+            std::vector<real_t> charges(n);
+            for (size_t i = 0; i < n; ++i) {
+              charges[i] = buf(static_cast<py::ssize_t>(i));
+            }
+            return ChargeCorrelationCalculator::calculate(cell, charges, r_max, r_bin_width);
+          },
+          py::arg("cell"), py::arg("charges"), py::arg("r_max") = static_cast<real_t>(10.0),
+          py::arg("r_bin_width") = static_cast<real_t>(0.05),
+          "Compute charge pair distribution g_qq(r) from Cell and 1D charges array.")
+      .def_static("calculate_from_mlip", &ChargeCorrelationCalculator::calculateFromMLIP,
+                  py::arg("cell"), py::arg("mlip_out"),
+                  py::arg("r_max") = static_cast<real_t>(10.0),
+                  py::arg("r_bin_width") = static_cast<real_t>(0.05),
+                  "Compute charge pair distribution g_qq(r) from Cell and MLIPOutput.");
 }
 
 void bindTdos(py::module_ &mod) {

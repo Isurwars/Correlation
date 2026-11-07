@@ -17,6 +17,7 @@ export component Structure3DToolBar inherits Rectangle {
     in property <bool> in_cell_enabled: false;
     in property <bool> phase_panel_open: false;
     in property <bool> phase_enabled: false;
+    in property <bool> dist_hud_enabled: true;
     in property <float> atom_scale: 0.35;
 
     callback reset_view();
@@ -24,6 +25,7 @@ export component Structure3DToolBar inherits Rectangle {
     callback toggle_wireframe(bool);
     callback toggle_in_cell(bool);
     callback toggle_phase_panel();
+    callback toggle_dist_hud();
     callback set_atom_scale(float);
 
     height: 38px;
@@ -180,6 +182,36 @@ export component Structure3DToolBar inherits Rectangle {
                     height: 100%;
                     text: "🔮";
                     font-size: 14px;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        // Toggle Distribution Mini-Graph HUD
+        TouchArea {
+            width: 30px;
+            height: 30px;
+            y: (parent.height - self.height) / 2;
+            mouse-cursor: pointer;
+            accessible-role: button;
+            accessible-label: root.dist_hud_enabled ? "Hide Distribution Graph" : "Show Distribution Graph";
+            clicked => { root.toggle_dist_hud(); }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 15px;
+                background: root.dist_hud_enabled ? MaterialPalette.primary.with_alpha(20%) :
+                    (parent.has-hover ? MaterialPalette.surface_container_high : transparent);
+                border-width: root.dist_hud_enabled ? 1.5px : 0px;
+                border-color: root.dist_hud_enabled ? MaterialPalette.primary : transparent;
+
+                MaterialText {
+                    width: 100%;
+                    height: 100%;
+                    text: "📊";
+                    font-size: 13px;
                     horizontal-alignment: center;
                     vertical-alignment: center;
                 }

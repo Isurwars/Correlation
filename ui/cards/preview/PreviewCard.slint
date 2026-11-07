@@ -140,6 +140,16 @@ export component PreviewCard inherits FilledCard {
     in property <image> structure_3d_phase_heatmap_image;
     in property <[CrystalMarker]> structure_3d_phase_crystal_markers: [];
 
+    // Distribution Mini-Graph HUD
+    in property <bool> structure_3d_dist_hud_visible: true;
+    in property <bool> structure_3d_dist_has_data: false;
+    in property <image> structure_3d_dist_image;
+    in property <int> structure_3d_dist_metric: 0;
+    in property <string> structure_3d_dist_peak_text: "";
+
+    callback set_structure_3d_dist_metric(int);
+    callback toggle_structure_3d_dist_hud(bool);
+
     callback toggle_phase_search_3d(bool);
     callback set_phase_preset_3d(int);
     callback set_phase_descriptor_3d(int);
@@ -539,6 +549,14 @@ export component PreviewCard inherits FilledCard {
                 phase_descriptor_name_y: root.structure_3d_phase_descriptor_name_y;
                 phase_heatmap_image: root.structure_3d_phase_heatmap_image;
                 phase_crystal_markers: root.structure_3d_phase_crystal_markers;
+
+                dist_hud_visible: root.structure_3d_dist_hud_visible;
+                dist_has_data: root.structure_3d_dist_has_data;
+                dist_chart_image: root.structure_3d_dist_image;
+                dist_active_metric: root.structure_3d_dist_metric;
+                dist_peak_text: root.structure_3d_dist_peak_text;
+                set_dist_metric(m) => { root.set_structure_3d_dist_metric(m); }
+                toggle_dist_hud(v) => { root.toggle_structure_3d_dist_hud(v); }
 
                 toggle_phase_search(en) => { root.toggle_phase_search_3d(en); }
                 set_phase_preset(idx) => { root.set_phase_preset_3d(idx); }

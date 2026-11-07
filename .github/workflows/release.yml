@@ -10,6 +10,7 @@ permissions:
   contents: write
   pages: write
   id-token: write
+  actions: read
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -65,6 +66,50 @@ jobs:
 
       - name: Package desktop artifacts
         uses: ./.github/actions/package-desktop
+
+      - name: Check SignPath configuration
+        id: check-signpath
+        shell: pwsh
+        run: |
+          $apiToken = "${{ secrets.SIGNPATH_API_TOKEN }}"
+          $orgId = "${{ secrets.SIGNPATH_ORGANIZATION_ID }}"
+          if ($apiToken -ne "" -and $orgId -ne "") {
+            "enabled=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+            Write-Host "::notice::SignPath credentials detected. Submitting Windows installer for Authenticode signing."
+          } else {
+            "enabled=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+            Write-Host "::warning::SignPath credentials not configured. Installer will remain unsigned until SignPath onboarding is complete."
+          }
+
+      - name: Upload unsigned installer for SignPath
+        if: steps.check-signpath.outputs.enabled == 'true'
+        id: upload-unsigned
+        uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-installer
+          path: build/correlation-*-win64.exe
+          if-no-files-found: error
+
+      - name: Submit signing request to SignPath
+        if: steps.check-signpath.outputs.enabled == 'true'
+        uses: signpath/github-action-submit-signing-request@v3
+        with:
+          api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
+          organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
+          project-slug: '${{ vars.SIGNPATH_PROJECT_SLUG || "correlation" }}'
+          signing-policy-slug: '${{ vars.SIGNPATH_SIGNING_POLICY_SLUG || "release-signing" }}'
+          github-artifact-id: '${{ steps.upload-unsigned.outputs.artifact-id }}'
+          wait-for-completion: true
+          output-artifact-directory: 'build/signed'
+
+      - name: Replace installer with signed artifact
+        if: steps.check-signpath.outputs.enabled == 'true'
+        shell: pwsh
+        run: |
+          Copy-Item -Path "build\signed\*.exe" -Destination "build\" -Force
+          Get-ChildItem -Path "build\correlation-*-win64.exe" | ForEach-Object {
+            Write-Host "Verified signed artifact: $($_.FullName) ($($_.Length) bytes)"
+          }
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v3
@@ -260,4 +305,117 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           files: dist/*
+
+  publish-release-summary:
+    name: Publish Release Summary
+    needs: [build-linux, build-windows, build-macos]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Generate Ordered Release Notes & Checksums
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          mkdir -p release-assets
+          cd release-assets
+
+          # Download all assets uploaded for this release tag
+          gh release download "$TAG" --repo "$REPO" --dir . || true
+
+          # Generate SHA-256 Checksums
+          rm -f SHA256SUMS.txt
+          if compgen -G "*" > /dev/null; then
+            sha256sum * > SHA256SUMS.txt || true
+          fi
+
+          VERSION="${TAG#v}"
+          BASE_URL="https://github.com/${REPO}/releases/download/${TAG}"
+
+          WIN_EXE=$(ls correlation-*-win64.exe 2>/dev/null | head -n 1 || echo "")
+          MAC_DMG=$(ls correlation-*-macOS.dmg 2>/dev/null | head -n 1 || echo "")
+          LINUX_APPIMAGE=$(ls Correlation*.AppImage 2>/dev/null | head -n 1 || echo "")
+          LINUX_DEB=$(ls correlation-*-Linux.deb 2>/dev/null | head -n 1 || echo "")
+          LINUX_RPM=$(ls correlation-*-Linux.rpm 2>/dev/null | head -n 1 || echo "")
+          LINUX_TGZ=$(ls correlation-*-Linux.tar.gz 2>/dev/null | head -n 1 || echo "")
+
+          cat <<EOF > ../RELEASE_NOTES.md
+          # Correlation ${TAG}
+
+          Official release binaries organized by operating system.
+
+          ---
+
+          ### 🪟 Windows
+          | File | Type | Description |
+          | :--- | :--- | :--- |
+          EOF
+
+          if [ -n "$WIN_EXE" ]; then
+            echo "| [**${WIN_EXE}**](${BASE_URL}/${WIN_EXE}) | Installer | Windows 64-bit NSIS Setup |" >> ../RELEASE_NOTES.md
+          else
+            echo "| [**correlation-${VERSION}-win64.exe**](${BASE_URL}/correlation-${VERSION}-win64.exe) | Installer | Windows 64-bit NSIS Setup |" >> ../RELEASE_NOTES.md
+          fi
+
+          cat <<EOF >> ../RELEASE_NOTES.md
+
+          ### 🍎 macOS
+          | File | Type | Description |
+          | :--- | :--- | :--- |
+          EOF
+
+          if [ -n "$MAC_DMG" ]; then
+            echo "| [**${MAC_DMG}**](${BASE_URL}/${MAC_DMG}) | Disk Image | macOS Drag & Drop DMG (Apple Silicon / Intel) |" >> ../RELEASE_NOTES.md
+          else
+            echo "| [**correlation-${VERSION}-macOS.dmg**](${BASE_URL}/correlation-${VERSION}-macOS.dmg) | Disk Image | macOS Drag & Drop DMG (Apple Silicon / Intel) |" >> ../RELEASE_NOTES.md
+          fi
+
+          cat <<EOF >> ../RELEASE_NOTES.md
+
+          ### 🐧 Linux
+          | File | Type | Distribution / Details |
+          | :--- | :--- | :--- |
+          EOF
+
+          if [ -n "$LINUX_APPIMAGE" ]; then
+            echo "| [**${LINUX_APPIMAGE}**](${BASE_URL}/${LINUX_APPIMAGE}) | AppImage | Standalone Portable Executable (x86_64) |" >> ../RELEASE_NOTES.md
+          fi
+          if [ -n "$LINUX_DEB" ]; then
+            echo "| [**${LINUX_DEB}**](${BASE_URL}/${LINUX_DEB}) | DEB | Debian, Ubuntu, Linux Mint |" >> ../RELEASE_NOTES.md
+          fi
+          if [ -n "$LINUX_RPM" ]; then
+            echo "| [**${LINUX_RPM}**](${BASE_URL}/${LINUX_RPM}) | RPM | Fedora, RHEL, openSUSE |" >> ../RELEASE_NOTES.md
+          fi
+          if [ -n "$LINUX_TGZ" ]; then
+            echo "| [**${LINUX_TGZ}**](${BASE_URL}/${LINUX_TGZ}) | Tarball | Precompiled Standalone Binaries |" >> ../RELEASE_NOTES.md
+          fi
+          echo "| [**Arch Linux (AUR)**](https://aur.archlinux.org/packages/correlation) | AUR Package | \`yay -S correlation\` |" >> ../RELEASE_NOTES.md
+
+          cat <<EOF >> ../RELEASE_NOTES.md
+
+          ### 🐍 Python (PyPI)
+          \`\`\`bash
+          pip install --upgrade matcorr
+          \`\`\`
+
+          ---
+
+          ### 🔐 Integrity Checksums (SHA-256)
+          \`\`\`text
+          $(cat SHA256SUMS.txt 2>/dev/null || echo "SHA256 checksums available in SHA256SUMS.txt asset.")
+          \`\`\`
+          EOF
+          cd ..
+
+      - name: Update GitHub Release Summary
+        uses: softprops/action-gh-release@v3
+        with:
+          body_path: RELEASE_NOTES.md
+          files: release-assets/SHA256SUMS.txt
 

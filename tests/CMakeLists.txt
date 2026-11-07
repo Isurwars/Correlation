@@ -74,9 +74,11 @@ add_executable(correlation_unit_tests
     unit/calculators/ChiralityCalculatorTests.cpp
     unit/calculators/HyperuniformityCalculatorTests.cpp
     unit/calculators/MLIPCalculatorTests.cpp
+    unit/calculators/SpinChargeCorrelationTests.cpp
     unit/calculators/TDOSCalculatorTests.cpp
     unit/mlip/PeriodicGraphBuilderTests.cpp
     unit/mlip/TorchGNNModelTests.cpp
+    unit/mlip/MaceGNNModelTests.cpp
     unit/mlip/OrbV3GNNModelTests.cpp
     unit/mlip/GraphDescriptorsTests.cpp
     unit/calculators/GPUSteinhardtCalculatorTests.cpp
@@ -113,10 +115,12 @@ add_executable(correlation_unit_tests
     unit/render3d/RenderEngineFactoryTests.cpp
     unit/render3d/LodControllerTests.cpp
     unit/render3d/TrajectoryStreamerTests.cpp
+    unit/render3d/MiniPlotRendererTests.cpp
     unit/analysis/CorrelationEngineTests.cpp
     unit/analysis/CutoffSanityCheckerTests.cpp
     unit/analysis/DistributionPostProcessorTests.cpp
     unit/analysis/FirstMinimumDetectorTests.cpp
+    unit/analysis/PerFrameDistributionStoreTests.cpp
     unit/analysis/StructuralElectronicCorrelationTests.cpp
     unit/app/AnalysisDispatcherTests.cpp
     unit/app/BondCutoffMapperTests.cpp
@@ -203,6 +207,7 @@ if(BUILD_GUI)
         unit/app/SteinhardtLRUCacheTests.cpp
         unit/app/Structure3DControllerPhaseSearchTests.cpp
         unit/app/Structure3DControllerTests.cpp
+        unit/app/Structure3DControllerDistributionTests.cpp
     )
 
     target_link_libraries(correlation_gui_tests PRIVATE

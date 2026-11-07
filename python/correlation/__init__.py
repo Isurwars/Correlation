@@ -119,7 +119,7 @@ def to_torch_geometric(graph_data):
 
 to_pyg = to_torch_geometric
 
-# Register ecosystem adapters (ASE, Pymatgen)
+# Register ecosystem adapters (ASE, Pymatgen) and MLIP bridges
 try:
     from correlation.adapters import (
         from_ase,
@@ -132,6 +132,11 @@ try:
     )
 
     _register_adapters()
+except ImportError:
+    pass
+
+try:
+    from correlation.ase_bridge import ASEMLIPBridge, create_correlation_ase_calculator
 except ImportError:
     pass
 

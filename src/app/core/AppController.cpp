@@ -251,6 +251,18 @@ void AppController::registerStructure3DCallbacks() {
     }
   });
 
+  window_.on_set_structure_3d_dist_metric([this](int metric_idx) {
+    if (structure_3d_controller_) {
+      structure_3d_controller_->handleSelectDistributionMetric(metric_idx);
+    }
+  });
+
+  window_.on_toggle_structure_3d_dist_hud([this](bool visible) {
+    if (structure_3d_controller_) {
+      structure_3d_controller_->handleToggleDistributionHUD(visible);
+    }
+  });
+
   window_.on_viewport_3d_resized([this](float width, float height) {
     structure_3d_controller_->handleViewportResized(width, height);
   });

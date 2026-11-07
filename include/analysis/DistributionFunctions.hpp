@@ -9,6 +9,7 @@
 #pragma once
 
 #include "analysis/AnalysisTypes.hpp"
+#include "analysis/PerFrameDistributionStore.hpp"
 #include "analysis/StructureAnalyzer.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
@@ -526,6 +527,22 @@ public:
    */
   [[nodiscard]] std::string getInversePartialKey(int type1, int type2) const;
 
+  /**
+   * @brief Accesses the per-frame distribution store (if computed).
+   * @return Const shared pointer to PerFrameDistributionStore, or nullptr.
+   */
+  [[nodiscard]] std::shared_ptr<const PerFrameDistributionStore> getPerFrameStore() const noexcept {
+    return per_frame_store_;
+  }
+
+  /**
+   * @brief Sets or updates the per-frame distribution store.
+   * @param[in] store Shared pointer to PerFrameDistributionStore.
+   */
+  void setPerFrameStore(std::shared_ptr<PerFrameDistributionStore> store) noexcept {
+    per_frame_store_ = std::move(store);
+  }
+
   ///@}
 
 private:
@@ -558,6 +575,7 @@ private:
   mutable std::mutex histogram_mutex_;             ///< Protects concurrent access to histograms_.
 
   DynamicProperties dynamic_properties_{}; ///< Trajectory-wide dynamic properties.
+  std::shared_ptr<PerFrameDistributionStore> per_frame_store_; ///< Per-frame 1D distribution curves.
 };
 
 } // namespace correlation::analysis

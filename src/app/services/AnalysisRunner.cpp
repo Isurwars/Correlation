@@ -12,6 +12,7 @@
 #include "app/services/AnalysisDispatcher.hpp"
 #include "app/services/InputValidator.hpp"
 #include "app/viewmodel/PlotController.hpp"
+#include "app/viewmodel/Structure3DController.hpp"
 #include <algorithm>
 
 namespace correlation::app {
@@ -100,6 +101,11 @@ void AnalysisRunner::handleAnalysisCompletion(const std::string &err) {
   controller_.populateExportAnalyses();
   if (!dispatcher_.getAvailableHistogramNames().empty()) {
     controller_.getPlotController()->requestPlotUpdate(0, true);
+  }
+  if (const auto *df = dispatcher_.getDistributionFunctions(); df != nullptr) {
+    if (auto *s3d = controller_.getStructure3DController(); s3d != nullptr) {
+      s3d->setDistributionStore(df->getPerFrameStore());
+    }
   }
 }
 

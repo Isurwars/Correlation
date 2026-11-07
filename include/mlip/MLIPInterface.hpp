@@ -32,6 +32,16 @@ struct alignas(64) MLIPOutput {
   real_t ldos_e_max{static_cast<real_t>(15.0)};  /**< Upper energy bound of LDOS grid (eV). */
   real_t ldos_sigma{static_cast<real_t>(0.2)}; /**< Gaussian broadening width of LDOS grid (eV). */
 
+  std::vector<real_t>
+      charges; /**< Per-atom partial or Born effective charges (elementary charges e). */
+  std::vector<correlation::math::Vector3<real_t>>
+      magmoms; /**< Per-atom site magnetic moment vectors (Bohr magnetons mu_B). */
+  real_t energy_variance{
+      static_cast<real_t>(0.0),
+  }; /**< Committee or ensemble energy prediction variance (eV^2). */
+  std::vector<real_t>
+      force_variances; /**< Committee or ensemble per-atom force variance ((eV/A)^2). */
+
   /**
    * @brief Returns a const span over the LDOS spectrum for a specific atom.
    * @param atom_idx Index of the target atom.

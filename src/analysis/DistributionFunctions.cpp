@@ -491,6 +491,88 @@ void DistributionFunctions::normalizeHistograms(DistributionFunctions &dist_func
   }
 }
 
+namespace {
+
+void extractFrameCurves(const DistributionFunctions &frame_df,
+                        size_t frame_idx,
+                        PerFrameDistributionStore &store) {
+  const auto &hists = frame_df.getAllHistograms();
+  if (const auto it_gr = hists.find("g_r"); it_gr != hists.end()) {
+    if (const auto it_tot = it_gr->second.partials.find("Total"); it_tot != it_gr->second.partials.end()) {
+      store.setFrameCurve(DistributionMetric::RDF, frame_idx, it_tot->second);
+    }
+  }
+  if (const auto it_pad = hists.find("PAD"); it_pad != hists.end()) {
+    if (const auto it_tot = it_pad->second.partials.find("Total"); it_tot != it_pad->second.partials.end()) {
+      store.setFrameCurve(DistributionMetric::PAD, frame_idx, it_tot->second);
+    }
+  }
+  if (const auto it_sq = hists.find("S_q"); it_sq != hists.end()) {
+    if (const auto it_tot = it_sq->second.partials.find("Total"); it_tot != it_sq->second.partials.end()) {
+      store.setFrameCurve(DistributionMetric::SQ, frame_idx, it_tot->second);
+    }
+  }
+}
+
+void computeSingleFrameMiniCurves(correlation::core::Trajectory &trajectory,
+                                  size_t frame_idx,
+                                  const AnalysisSettings &settings,
+                                  const BondCutoffMatrix &bond_cutoffs,
+                                  PerFrameDistributionStore &store) {
+  if (frame_idx >= trajectory.getFrameCount()) {
+    return;
+  }
+  const correlation::core::Cell frame = trajectory.getFrame(frame_idx);
+  DistributionFunctions frame_df(frame, static_cast<real_t>(0.0), bond_cutoffs);
+  frame_df.setStructureAnalyzerOwned(
+      std::make_unique<StructureAnalyzer>(frame, settings.r_max, bond_cutoffs));
+
+  const auto *rdf_calc =
+      ::correlation::calculators::CalculatorFactory::instance().getCalculator("Radial Distribution Function");
+  if (rdf_calc != nullptr && rdf_calc->isConfigured()) {
+    rdf_calc->calculateFrame(frame_df, settings);
+  }
+
+  const auto *pad_calc =
+      ::correlation::calculators::CalculatorFactory::instance().getCalculator("Plane Angle Distribution");
+  if (pad_calc != nullptr && pad_calc->isConfigured()) {
+    pad_calc->calculateFrame(frame_df, settings);
+  }
+
+  const auto *sq_calc =
+      ::correlation::calculators::CalculatorFactory::instance().getCalculator("Static Structure Factor");
+  if (sq_calc != nullptr && sq_calc->isConfigured()) {
+    sq_calc->calculateFrame(frame_df, settings);
+  }
+
+  extractFrameCurves(frame_df, frame_idx, store);
+}
+
+void populateMeanStoreCurves(const DistributionFunctions &final_df,
+                             PerFrameDistributionStore &store) {
+  const auto &final_hists = final_df.getAllHistograms();
+  if (const auto it_gr = final_hists.find("g_r"); it_gr != final_hists.end()) {
+    store.setBins(DistributionMetric::RDF, it_gr->second.bins);
+    if (const auto it_tot = it_gr->second.partials.find("Total"); it_tot != it_gr->second.partials.end()) {
+      store.setMeanCurve(DistributionMetric::RDF, it_tot->second);
+    }
+  }
+  if (const auto it_pad = final_hists.find("PAD"); it_pad != final_hists.end()) {
+    store.setBins(DistributionMetric::PAD, it_pad->second.bins);
+    if (const auto it_tot = it_pad->second.partials.find("Total"); it_tot != it_pad->second.partials.end()) {
+      store.setMeanCurve(DistributionMetric::PAD, it_tot->second);
+    }
+  }
+  if (const auto it_sq = final_hists.find("S_q"); it_sq != final_hists.end()) {
+    store.setBins(DistributionMetric::SQ, it_sq->second.bins);
+    if (const auto it_tot = it_sq->second.partials.find("Total"); it_tot != it_sq->second.partials.end()) {
+      store.setMeanCurve(DistributionMetric::SQ, it_tot->second);
+    }
+  }
+}
+
+} // namespace
+
 std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
     correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
     size_t start_frame, const AnalysisSettings &settings,
@@ -500,6 +582,9 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
   if (num_frames == 0) {
     return nullptr;
   }
+
+  const size_t total_trajectory_frames = trajectory.getFrameCount();
+  auto per_frame_store = std::make_shared<PerFrameDistributionStore>(total_trajectory_frames);
 
   const size_t stride = std::max<size_t>(1, settings.frame_stride);
   const size_t sample_count = (num_frames + stride - 1) / stride;
@@ -527,6 +612,8 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
             continue;
           }
 
+          extractFrameCurves(*results[sample_idx], frame_idx, *per_frame_store);
+
           const size_t current_completed = ++completed_frames;
           if (progress_callback) {
             const std::scoped_lock lock(callback_mutex);
@@ -537,6 +624,29 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
           }
         }
       });
+
+  // Calculate lightweight mini-curves (g(r), PAD, S(Q)) for all remaining trajectory frames
+  std::vector<size_t> remainder_frames;
+  remainder_frames.reserve(total_trajectory_frames);
+  for (size_t f = 0; f < total_trajectory_frames; ++f) {
+    if (!per_frame_store->hasFrame(DistributionMetric::RDF, f)) {
+      remainder_frames.push_back(f);
+    }
+  }
+
+  if (!remainder_frames.empty()) {
+    tbb::parallel_for(
+        tbb::blocked_range<size_t>(0, remainder_frames.size()),
+        [&](const tbb::blocked_range<size_t> &range) {
+          for (size_t i = range.begin(); i != range.end(); ++i) {
+            if (settings.cancel_flag && settings.cancel_flag->load()) {
+              continue;
+            }
+            computeSingleFrameMiniCurves(trajectory, remainder_frames[i], settings, bond_cutoffs,
+                                        *per_frame_store);
+          }
+        });
+  }
 
   // Accumulate results
   if (results.empty() || !results[0]) {
@@ -555,6 +665,9 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
   if (settings.smoothing) {
     final_df->smoothAll(settings.smoothing_sigma, settings.smoothing_kernel);
   }
+
+  populateMeanStoreCurves(*final_df, *per_frame_store);
+  final_df->setPerFrameStore(std::move(per_frame_store));
 
   return std::move(final_df);
 }

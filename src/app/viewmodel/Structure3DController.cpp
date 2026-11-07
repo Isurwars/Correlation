@@ -71,6 +71,7 @@ Structure3DController::Structure3DController(::AppWindow &window, const ProgramO
       std::move(on_phase_updated), alive_);
 
   syncPhaseSearchToWindow();
+  syncDistributionHUDToWindow();
 }
 
 Structure3DController::~Structure3DController() {
@@ -212,6 +213,7 @@ void Structure3DController::handleSeekFrame(int frame_index) {
   }
   safeInvokeOnWindow(
       [this, actual_frame] { window_.set_structure_3d_current_frame(actual_frame); });
+  syncDistributionHUDToWindow();
   requestRender();
 }
 
@@ -232,6 +234,7 @@ void Structure3DController::handleStepFrame(bool forward) {
     }
   }
   safeInvokeOnWindow([this, current_idx] { window_.set_structure_3d_current_frame(current_idx); });
+  syncDistributionHUDToWindow();
   requestRender();
 }
 
@@ -634,6 +637,78 @@ void Structure3DController::updateScenePhaseVisualsLocked() {
   }
   const auto active_frame = streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
   phase_service_->applyVisualsToScene(*scene_, active_frame);
+}
+
+void Structure3DController::setDistributionStore(
+    std::shared_ptr<const analysis::PerFrameDistributionStore> store) {
+  {
+    const std::scoped_lock lock(mutex_);
+    distribution_store_ = std::move(store);
+  }
+  syncDistributionHUDToWindow();
+}
+
+void Structure3DController::handleSelectDistributionMetric(int metric_index) {
+  if (metric_index < 0 || metric_index > 2) {
+    return;
+  }
+  {
+    const std::scoped_lock lock(mutex_);
+    active_dist_metric_ = static_cast<analysis::DistributionMetric>(metric_index);
+  }
+  syncDistributionHUDToWindow();
+}
+
+void Structure3DController::handleToggleDistributionHUD(bool visible) {
+  {
+    const std::scoped_lock lock(mutex_);
+    dist_hud_visible_ = visible;
+  }
+  syncDistributionHUDToWindow();
+}
+
+void Structure3DController::syncDistributionHUDToWindow() {
+  safeInvokeOnWindow([this] {
+    std::shared_ptr<const analysis::PerFrameDistributionStore> store;
+    analysis::DistributionMetric metric = analysis::DistributionMetric::RDF;
+    bool visible = false;
+    std::size_t active_frame = 0;
+
+    {
+      const std::scoped_lock lock(mutex_);
+      store = distribution_store_;
+      metric = active_dist_metric_;
+      visible = dist_hud_visible_;
+      active_frame = streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
+    }
+
+    if (!store || !visible || !store->hasData(metric)) {
+      window_.set_structure_3d_dist_has_data(false);
+      return;
+    }
+
+    const auto &metric_data = store->getMetricData(metric);
+    const auto buf = render3d::MiniPlotRenderer::render(metric_data, active_frame, 260, 126);
+
+    const slint::SharedPixelBuffer<slint::Rgba8Pixel> pixel_buffer(
+        buf.width, buf.height, reinterpret_cast<const slint::Rgba8Pixel *>(buf.pixels.data()));
+    const slint::Image chart_img(pixel_buffer);
+
+    window_.set_structure_3d_dist_image(chart_img);
+    window_.set_structure_3d_dist_metric(static_cast<int>(metric));
+    window_.set_structure_3d_dist_hud_visible(visible);
+    window_.set_structure_3d_dist_has_data(true);
+
+    const auto peak = render3d::MiniPlotRenderer::findPeak(
+        store->getBins(metric), store->getFrameCurve(metric, active_frame));
+    if (peak.valid) {
+      char buf_str[32];
+      std::snprintf(buf_str, sizeof(buf_str), "Peak: %.2f %s", peak.x, metric_data.x_unit.c_str());
+      window_.set_structure_3d_dist_peak_text(slint::SharedString(buf_str));
+    } else {
+      window_.set_structure_3d_dist_peak_text(slint::SharedString(""));
+    }
+  });
 }
 
 } // namespace correlation::app

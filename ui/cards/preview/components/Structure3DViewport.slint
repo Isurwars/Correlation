@@ -13,6 +13,7 @@ import { TrajectoryPlaybackBar } from "./TrajectoryPlaybackBar.slint";
 import { PhaseSearchCard } from "./PhaseSearchCard.slint";
 import { ViewportColorbar } from "./ViewportColorbar.slint";
 import { CrystalMarker } from "./PhaseHeatmapTypes.slint";
+import { DistributionHUDCard } from "./DistributionHUDCard.slint";
 import { Structure3DEmptyState } from "./Structure3DEmptyState.slint";
 import { Structure3DToolBar } from "./Structure3DToolBar.slint";
 import { Structure3DWorkflowBar } from "./Structure3DWorkflowBar.slint";
@@ -56,6 +57,16 @@ export component Structure3DViewport inherits Rectangle {
     in property <string> phase_descriptor_name_y: "q̄₆";
     in property <image> phase_heatmap_image;
     in property <[CrystalMarker]> phase_crystal_markers: [];
+
+    // Distribution Mini-Graph HUD
+    in-out property <bool> dist_hud_visible: true;
+    in property <bool> dist_has_data: false;
+    in property <image> dist_chart_image;
+    in-out property <int> dist_active_metric: 0;
+    in property <string> dist_peak_text: "";
+
+    callback set_dist_metric(int);
+    callback toggle_dist_hud(bool);
 
     callback toggle_phase_search(bool);
     callback set_phase_preset(int);
@@ -176,6 +187,7 @@ export component Structure3DViewport inherits Rectangle {
             in_cell_enabled: root.in_cell_enabled;
             phase_panel_open: root.phase_panel_open;
             phase_enabled: root.phase_enabled;
+            dist_hud_enabled: root.dist_hud_visible;
             atom_scale: root.atom_scale;
 
             reset_view => { root.reset_view(); }
@@ -183,6 +195,10 @@ export component Structure3DViewport inherits Rectangle {
             toggle_wireframe(en) => { root.toggle_wireframe(en); }
             toggle_in_cell(en) => { root.toggle_in_cell(en); }
             toggle_phase_panel => { root.phase_panel_open = !root.phase_panel_open; }
+            toggle_dist_hud => {
+                root.dist_hud_visible = !root.dist_hud_visible;
+                root.toggle_dist_hud(root.dist_hud_visible);
+            }
             set_atom_scale(val) => { root.set_atom_scale(val); }
         }
 
@@ -223,6 +239,24 @@ export component Structure3DViewport inherits Rectangle {
             color: MaterialPalette.on_surface_variant.with_alpha(80%);
             horizontal-alignment: center;
             vertical-alignment: center;
+        }
+    }
+
+    // Floating Distribution HUD Card (bottom-left, visible when analysis data exists & HUD active)
+    if (root.file_loaded && root.dist_has_data && root.dist_hud_visible): DistributionHUDCard {
+        x: 16px;
+        y: root.height - self.height - (root.total_frames > 1 ? 66px : 16px);
+        chart_image: root.dist_chart_image;
+        active_metric: root.dist_active_metric;
+        peak_text: root.dist_peak_text;
+        current_frame: root.current_frame;
+        set_metric(m) => {
+            root.dist_active_metric = m;
+            root.set_dist_metric(m);
+        }
+        close_hud => {
+            root.dist_hud_visible = false;
+            root.toggle_dist_hud(false);
         }
     }
 
