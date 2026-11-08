@@ -75,3 +75,17 @@ TEST_F(MiniPlotRendererTests, RendersWithNullOptFrameIndex) {
   EXPECT_EQ(buf.pixels.size(), 260U * 130U);
 }
 
+TEST_F(MiniPlotRendererTests, RendersWithManualBoundsAndLogScale) {
+  const auto data = createMockData();
+  const MiniPlotConfig config{
+      .manual_x_min = 2.0,
+      .manual_x_max = 4.0,
+      .manual_y_min = 0.5,
+      .manual_y_max = 5.0,
+      .y_log_scale = true,
+  };
+  const auto buf = MiniPlotRenderer::render(data, 1, config, 260, 130);
+  EXPECT_EQ(buf.width, 260U);
+  EXPECT_EQ(buf.height, 130U);
+  EXPECT_EQ(buf.pixels.size(), 260U * 130U);
+}

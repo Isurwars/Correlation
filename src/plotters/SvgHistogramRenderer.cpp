@@ -111,6 +111,7 @@ struct CanvasViewport {
   real_t px1{0.0};
   real_t py0{0.0};
   real_t py1{0.0};
+  bool y_log_scale{false};
 
   static CanvasViewport create(const PlotConfig &config) noexcept {
     const real_t canvas_w = config.effectiveWidth();
@@ -122,6 +123,7 @@ struct CanvasViewport {
         .px1 = canvas_w - layout::MARGIN_RIGHT,
         .py0 = layout::MARGIN_TOP,
         .py1 = canvas_h - layout::MARGIN_BOTTOM,
+        .y_log_scale = config.y_log_scale,
     };
   }
 
@@ -133,6 +135,14 @@ struct CanvasViewport {
   }
 
   [[nodiscard]] real_t mapY(real_t val, const detail::NiceScale &y_scale) const noexcept {
+    if (y_log_scale) {
+      constexpr real_t kFloor = static_cast<real_t>(1e-4);
+      const real_t log_val = std::log10(std::max(val, kFloor));
+      const real_t log_min = std::log10(std::max(y_scale.min, kFloor));
+      const real_t log_max = std::log10(std::max(y_scale.max, kFloor));
+      const real_t denom = (log_max > log_min) ? (log_max - log_min) : static_cast<real_t>(1.0);
+      return py1 - static_cast<real_t>((log_val - log_min) / denom) * (py1 - py0);
+    }
     return mapValue(val, y_scale.min, y_scale.max, py1, py0);
   }
 
@@ -297,15 +307,28 @@ public:
 
     bool strict_x = false;
     bool strict_y = false;
-    if (config.manual_x_min.has_value() && config.manual_x_max.has_value()) {
+    if (config.manual_x_min.has_value()) {
       raw_x_min = *config.manual_x_min;
+      strict_x = true;
+    }
+    if (config.manual_x_max.has_value()) {
       raw_x_max = *config.manual_x_max;
       strict_x = true;
     }
-    if (config.manual_y_min.has_value() && config.manual_y_max.has_value()) {
+    if (config.manual_y_min.has_value()) {
       raw_y_min = *config.manual_y_min;
+      strict_y = true;
+    }
+    if (config.manual_y_max.has_value()) {
       raw_y_max = *config.manual_y_max;
       strict_y = true;
+    }
+
+    if (config.y_log_scale) {
+      raw_y_min = std::max(raw_y_min, static_cast<real_t>(1e-4));
+      if (raw_y_max <= raw_y_min) {
+        raw_y_max = raw_y_min * static_cast<real_t>(100.0);
+      }
     }
 
     const real_t x_step = (config.manual_ticks && config.x_major_step > static_cast<real_t>(0.0))
@@ -315,11 +338,23 @@ public:
                               ? config.y_major_step
                               : static_cast<real_t>(0.0);
 
+    detail::NiceScale y_scale(detail::DataRange{.min = raw_y_min, .max = raw_y_max}, 8, strict_y,
+                              y_step);
+    if (config.y_log_scale && !config.manual_ticks) {
+      y_scale.ticks.clear();
+      const int min_exp = static_cast<int>(
+          std::floor(std::log10(std::max(raw_y_min, static_cast<real_t>(1e-6)))));
+      const int max_exp = static_cast<int>(
+          std::ceil(std::log10(std::max(raw_y_max, static_cast<real_t>(1e-6)))));
+      for (int exp = min_exp; exp <= max_exp; ++exp) {
+        y_scale.ticks.push_back(std::pow(static_cast<real_t>(10.0), exp));
+      }
+    }
+
     return {
         detail::NiceScale(detail::DataRange{.min = raw_x_min, .max = raw_x_max}, 11, strict_x,
                           x_step),
-        detail::NiceScale(detail::DataRange{.min = raw_y_min, .max = raw_y_max}, 8, strict_y,
-                          y_step),
+        std::move(y_scale),
     };
   }
 
@@ -836,50 +871,72 @@ private:
     }
   }
 
+  void emitMinorYTicks(const CanvasViewport &viewport, const detail::NiceScale &y_scale,
+                       const PlotConfig &config, real_t subs) {
+    if (y_scale.ticks.size() < 2) {
+      return;
+    }
+    for (std::size_t i = 0; i < y_scale.ticks.size() - 1; ++i) {
+      const real_t tick_start = y_scale.ticks[i];
+      const real_t delta = (y_scale.ticks[i + 1] - tick_start) / subs;
+      for (int sub_idx = 1; sub_idx < config.minor_subdivisions; ++sub_idx) {
+        const real_t spy =
+            viewport.mapY(tick_start + static_cast<real_t>(sub_idx) * delta, y_scale);
+        if (spy >= viewport.py0 && spy <= viewport.py1) {
+          if (config.show_minor_grid) {
+            std::format_to(
+                std::back_inserter(buffer_),
+                "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                "stroke=\"{}\" stroke-width=\"0.5\" stroke-dasharray=\"2,4\" opacity=\"0.5\"/>\n",
+                viewport.px0, spy, viewport.px1, spy, config.gridColor());
+          }
+          std::format_to(std::back_inserter(buffer_),
+                         "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                         "stroke=\"{}\" stroke-width=\"1.0\"/>\n",
+                         viewport.px0 - layout::MINOR_TICK_LENGTH, spy, viewport.px0, spy,
+                         config.axisColor());
+        }
+      }
+    }
+  }
+
+  void emitMinorXTicks(const CanvasViewport &viewport, const detail::NiceScale &x_scale,
+                       const PlotConfig &config, real_t subs) {
+    if (x_scale.ticks.size() < 2) {
+      return;
+    }
+    for (std::size_t i = 0; i < x_scale.ticks.size() - 1; ++i) {
+      const real_t tick_start = x_scale.ticks[i];
+      const real_t delta = (x_scale.ticks[i + 1] - tick_start) / subs;
+      for (int sub_idx = 1; sub_idx < config.minor_subdivisions; ++sub_idx) {
+        const real_t spx =
+            viewport.mapX(tick_start + static_cast<real_t>(sub_idx) * delta, x_scale);
+        if (spx >= viewport.px0 && spx <= viewport.px1) {
+          if (config.show_minor_grid) {
+            std::format_to(
+                std::back_inserter(buffer_),
+                "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                "stroke=\"{}\" stroke-width=\"0.5\" stroke-dasharray=\"2,4\" opacity=\"0.5\"/>\n",
+                spx, viewport.py0, spx, viewport.py1, config.gridColor());
+          }
+          std::format_to(std::back_inserter(buffer_),
+                         "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                         "stroke=\"{}\" stroke-width=\"1.0\"/>\n",
+                         spx, viewport.py1, spx, viewport.py1 + layout::MINOR_TICK_LENGTH,
+                         config.axisColor());
+        }
+      }
+    }
+  }
+
   void emitMinorTicks(const CanvasViewport &viewport, const detail::NiceScale &x_scale,
                       const detail::NiceScale &y_scale, const PlotConfig &config) {
     if (config.minor_subdivisions <= 1) {
       return;
     }
     const auto subs = static_cast<real_t>(config.minor_subdivisions);
-
-    // Minor Y
-    if (y_scale.ticks.size() >= 2) {
-      for (std::size_t i = 0; i < y_scale.ticks.size() - 1; ++i) {
-        const real_t tick_start = y_scale.ticks[i];
-        const real_t delta = (y_scale.ticks[i + 1] - tick_start) / subs;
-        for (int sub_idx = 1; sub_idx < config.minor_subdivisions; ++sub_idx) {
-          const real_t spy =
-              viewport.mapY(tick_start + static_cast<real_t>(sub_idx) * delta, y_scale);
-          if (spy >= viewport.py0 && spy <= viewport.py1) {
-            std::format_to(std::back_inserter(buffer_),
-                           "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-                           "stroke=\"{}\" stroke-width=\"1.0\"/>\n",
-                           viewport.px0 - layout::MINOR_TICK_LENGTH, spy, viewport.px0, spy,
-                           config.axisColor());
-          }
-        }
-      }
-    }
-
-    // Minor X
-    if (x_scale.ticks.size() >= 2) {
-      for (std::size_t i = 0; i < x_scale.ticks.size() - 1; ++i) {
-        const real_t tick_start = x_scale.ticks[i];
-        const real_t delta = (x_scale.ticks[i + 1] - tick_start) / subs;
-        for (int sub_idx = 1; sub_idx < config.minor_subdivisions; ++sub_idx) {
-          const real_t spx =
-              viewport.mapX(tick_start + static_cast<real_t>(sub_idx) * delta, x_scale);
-          if (spx >= viewport.px0 && spx <= viewport.px1) {
-            std::format_to(std::back_inserter(buffer_),
-                           "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-                           "stroke=\"{}\" stroke-width=\"1.0\"/>\n",
-                           spx, viewport.py1, spx, viewport.py1 + layout::MINOR_TICK_LENGTH,
-                           config.axisColor());
-          }
-        }
-      }
-    }
+    emitMinorYTicks(viewport, y_scale, config, subs);
+    emitMinorXTicks(viewport, x_scale, config, subs);
   }
 };
 

@@ -161,6 +161,23 @@ export struct ComparisonCurveData {
     file_path: string,
 }
 
+export struct PlotAxisSettings {
+    auto_x: bool,
+    x_min: string,
+    x_max: string,
+    auto_y: bool,
+    y_min: string,
+    y_max: string,
+    auto_ticks: bool,
+    x_major_step: string,
+    y_major_step: string,
+    minor_subdivisions: int,
+    y_log_scale: bool,
+    show_major_grid: bool,
+    show_minor_grid: bool,
+    line_width: string,
+}
+
 export struct FileMetadata {
     loaded: bool,
     loading: bool,

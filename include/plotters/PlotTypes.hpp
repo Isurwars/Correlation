@@ -50,10 +50,12 @@ struct PlotConfig {
   real_t width = static_cast<real_t>(1200.0); ///< SVG canvas width (px).
   real_t height = static_cast<real_t>(900.0); ///< SVG canvas height (px).
   bool show_grid = true;                      ///< Whether to render background grid lines.
+  bool show_minor_grid = false;               ///< Whether to render minor subdivision grid lines.
   bool show_markers = false;                  ///< Whether to render data point markers (dots).
   bool fill_area = false; ///< Whether to render matching gradient fills under the curves.
   bool show_difference_curve =
       false; ///< Toggle overlaid absolute difference curve Y_diff = Y_ref - Y_target.
+  bool y_log_scale = false; ///< Whether Y-axis uses logarithmic (log10) scale.
 
   // Publication settings
   real_t font_scale = static_cast<real_t>(1.0);  ///< Multiplier for all font sizes
@@ -146,6 +148,26 @@ struct PlotConfig {
 
   // Reference lines
   std::vector<ReferenceLine> reference_lines;
+};
+
+/**
+ * @brief User-configured axis limits, ticks, and scaling for a specific plot metric.
+ */
+struct MetricPlotSettings {
+  bool auto_x{true};
+  std::optional<real_t> manual_x_min;
+  std::optional<real_t> manual_x_max;
+  bool auto_y{true};
+  std::optional<real_t> manual_y_min;
+  std::optional<real_t> manual_y_max;
+  bool auto_ticks{true};
+  real_t x_major_step{static_cast<real_t>(0.0)};
+  real_t y_major_step{static_cast<real_t>(0.0)};
+  int minor_subdivisions{0};
+  bool y_log_scale{false};
+  bool show_major_grid{true};
+  bool show_minor_grid{false};
+  real_t line_width{static_cast<real_t>(3.0)};
 };
 
 /**

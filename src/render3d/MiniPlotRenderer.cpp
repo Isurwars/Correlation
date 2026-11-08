@@ -36,22 +36,28 @@ void blendPixel(PlotImageBuffer &buf, int x, int y, RgbaPixel color, float alpha
   const float src_a = (static_cast<float>(color.a) / 255.0F) * std::clamp(alpha_mult, 0.0F, 1.0F);
   const float inv_a = 1.0F - src_a;
 
-  dst.r = static_cast<uint8_t>(static_cast<float>(color.r) * src_a + static_cast<float>(dst.r) * inv_a);
-  dst.g = static_cast<uint8_t>(static_cast<float>(color.g) * src_a + static_cast<float>(dst.g) * inv_a);
-  dst.b = static_cast<uint8_t>(static_cast<float>(color.b) * src_a + static_cast<float>(dst.b) * inv_a);
-  dst.a = static_cast<uint8_t>(std::clamp((src_a + (static_cast<float>(dst.a) / 255.0F) * inv_a) * 255.0F, 0.0F, 255.0F));
+  dst.r =
+      static_cast<uint8_t>(static_cast<float>(color.r) * src_a + static_cast<float>(dst.r) * inv_a);
+  dst.g =
+      static_cast<uint8_t>(static_cast<float>(color.g) * src_a + static_cast<float>(dst.g) * inv_a);
+  dst.b =
+      static_cast<uint8_t>(static_cast<float>(color.b) * src_a + static_cast<float>(dst.b) * inv_a);
+  dst.a = static_cast<uint8_t>(
+      std::clamp((src_a + (static_cast<float>(dst.a) / 255.0F) * inv_a) * 255.0F, 0.0F, 255.0F));
 }
 
 void clearCanvas(PlotImageBuffer &buf, RgbaPixel bg_color) {
   std::fill(buf.pixels.begin(), buf.pixels.end(), bg_color);
 }
 
-void drawLineAA(PlotImageBuffer &buf, float x0, float y0, float x1, float y1, RgbaPixel color, float thickness) {
+void drawLineAA(PlotImageBuffer &buf, float x0, float y0, float x1, float y1, RgbaPixel color,
+                float thickness) {
   const float dx = x1 - x0;
   const float dy = y1 - y0;
   const float len = std::sqrt(dx * dx + dy * dy);
   if (len < 0.001F) {
-    blendPixel(buf, static_cast<int>(std::round(x0)), static_cast<int>(std::round(y0)), color, 1.0F);
+    blendPixel(buf, static_cast<int>(std::round(x0)), static_cast<int>(std::round(y0)), color,
+               1.0F);
     return;
   }
 
@@ -93,13 +99,18 @@ void drawGridLines(PlotImageBuffer &buf, const ViewportBox &box) {
   drawLineAA(buf, box.left, mid_y, box.right, mid_y, grid_color, 0.8F);
 }
 
-Bounds2D computeBounds(std::span<const real_t> bins,
-                       std::span<const real_t> mean,
-                       std::span<const real_t> frame) {
+Bounds2D computeBounds(std::span<const real_t> bins, std::span<const real_t> mean,
+                       std::span<const real_t> frame, const MiniPlotConfig &config) {
   Bounds2D bounds{};
   if (!bins.empty()) {
     bounds.x_min = bins.front();
     bounds.x_max = bins.back();
+  }
+  if (config.manual_x_min.has_value()) {
+    bounds.x_min = *config.manual_x_min;
+  }
+  if (config.manual_x_max.has_value()) {
+    bounds.x_max = *config.manual_x_max;
   }
 
   real_t max_val = 0.0;
@@ -112,6 +123,12 @@ Bounds2D computeBounds(std::span<const real_t> bins,
 
   bounds.y_min = 0.0;
   bounds.y_max = (max_val > 0.0) ? (max_val * 1.15) : 1.0;
+  if (config.manual_y_min.has_value()) {
+    bounds.y_min = *config.manual_y_min;
+  }
+  if (config.manual_y_max.has_value()) {
+    bounds.y_max = *config.manual_y_max;
+  }
   return bounds;
 }
 
@@ -121,19 +138,25 @@ float mapX(real_t val, const Bounds2D &b, const ViewportBox &box) {
   return box.left + norm * (box.right - box.left);
 }
 
-float mapY(real_t val, const Bounds2D &b, const ViewportBox &box) {
+float mapY(real_t val, const Bounds2D &b, const ViewportBox &box, bool log_scale) {
+  if (log_scale) {
+    constexpr real_t kFloor = 1e-4;
+    const real_t log_val = std::log10(std::max(val, kFloor));
+    const real_t log_min = std::log10(std::max(b.y_min, kFloor));
+    const real_t log_max = std::log10(std::max(b.y_max, kFloor));
+    const real_t denom = (log_max > log_min) ? (log_max - log_min) : static_cast<real_t>(1.0);
+    const auto norm = static_cast<float>((log_val - log_min) / denom);
+    return box.bottom - norm * (box.bottom - box.top);
+  }
+
   const auto denom = (b.y_max > b.y_min) ? (b.y_max - b.y_min) : static_cast<real_t>(1.0);
   const auto norm = static_cast<float>((val - b.y_min) / denom);
   return box.bottom - norm * (box.bottom - box.top);
 }
 
-void renderPolyline(PlotImageBuffer &buf,
-                    std::span<const real_t> bins,
-                    std::span<const real_t> values,
-                    const Bounds2D &bounds,
-                    const ViewportBox &box,
-                    RgbaPixel color,
-                    float thickness) {
+void renderPolyline(PlotImageBuffer &buf, std::span<const real_t> bins,
+                    std::span<const real_t> values, const Bounds2D &bounds, const ViewportBox &box,
+                    bool log_scale, RgbaPixel color, float thickness) {
   const std::size_t n = std::min(bins.size(), values.size());
   if (n < 2) {
     return;
@@ -141,22 +164,20 @@ void renderPolyline(PlotImageBuffer &buf,
 
   for (std::size_t i = 0; i + 1 < n; ++i) {
     const float x0 = mapX(bins[i], bounds, box);
-    const float y0 = mapY(values[i], bounds, box);
+    const float y0 = mapY(values[i], bounds, box, log_scale);
     const float x1 = mapX(bins[i + 1], bounds, box);
-    const float y1 = mapY(values[i + 1], bounds, box);
+    const float y1 = mapY(values[i + 1], bounds, box, log_scale);
     drawLineAA(buf, x0, y0, x1, y1, color, thickness);
   }
 }
 
-void drawPeakMarker(PlotImageBuffer &buf,
-                    const PeakInfo &peak,
-                    const Bounds2D &bounds,
-                    const ViewportBox &box) {
+void drawPeakMarker(PlotImageBuffer &buf, const PeakInfo &peak, const Bounds2D &bounds,
+                    const ViewportBox &box, bool log_scale) {
   if (!peak.valid) {
     return;
   }
   const float px = mapX(peak.x, bounds, box);
-  const float py = mapY(peak.y, bounds, box);
+  const float py = mapY(peak.y, bounds, box, log_scale);
 
   const RgbaPixel marker_color{.r = 255, .g = 215, .b = 0, .a = 255};
   const RgbaPixel halo_color{.r = 255, .g = 215, .b = 0, .a = 90};
@@ -201,21 +222,20 @@ PeakInfo MiniPlotRenderer::findPeak(std::span<const real_t> bins,
 
 PlotImageBuffer MiniPlotRenderer::render(const analysis::MetricCurveData &metric_data,
                                          std::optional<std::size_t> frame_idx,
-                                         uint32_t width,
+                                         const MiniPlotConfig &config, uint32_t width,
                                          uint32_t height) {
-  PlotImageBuffer buffer{
-      .width = width,
-      .height = height,
-      .pixels = std::vector<RgbaPixel>(static_cast<std::size_t>(width * height))};
+  PlotImageBuffer buffer{.width = width,
+                         .height = height,
+                         .pixels =
+                             std::vector<RgbaPixel>(static_cast<std::size_t>(width * height))};
 
   const RgbaPixel bg_color{.r = 18, .g = 21, .b = 26, .a = 230};
   clearCanvas(buffer, bg_color);
 
-  const ViewportBox box{
-      .left = 14.0F,
-      .right = static_cast<float>(width) - 14.0F,
-      .top = 16.0F,
-      .bottom = static_cast<float>(height) - 16.0F};
+  const ViewportBox box{.left = 14.0F,
+                        .right = static_cast<float>(width) - 14.0F,
+                        .top = 16.0F,
+                        .bottom = static_cast<float>(height) - 16.0F};
 
   drawGridLines(buffer, box);
 
@@ -231,28 +251,27 @@ PlotImageBuffer MiniPlotRenderer::render(const analysis::MetricCurveData &metric
     return buffer;
   }
 
-  const Bounds2D bounds = computeBounds(bins, mean, frame_span);
+  const Bounds2D bounds = computeBounds(bins, mean, frame_span, config);
 
   // 1. Draw Ensemble Mean Curve (Muted Cyan/Gray, dashed effect through thinner width)
   if (!mean.empty()) {
     const RgbaPixel mean_color{.r = 135, .g = 155, .b = 175, .a = 150};
-    renderPolyline(buffer, bins, mean, bounds, box, mean_color, 1.0F);
+    renderPolyline(buffer, bins, mean, bounds, box, config.y_log_scale, mean_color, 1.0F);
   }
 
   // 2. Draw Active Frame Curve (Vibrant Teal / Primary Accent)
   if (!frame_span.empty()) {
     const RgbaPixel frame_color{.r = 64, .g = 215, .b = 215, .a = 255};
-    renderPolyline(buffer, bins, frame_span, bounds, box, frame_color, 1.8F);
+    renderPolyline(buffer, bins, frame_span, bounds, box, config.y_log_scale, frame_color, 1.8F);
 
     const PeakInfo peak = findPeak(bins, frame_span);
-    drawPeakMarker(buffer, peak, bounds, box);
+    drawPeakMarker(buffer, peak, bounds, box, config.y_log_scale);
   } else if (!mean.empty()) {
     const PeakInfo peak = findPeak(bins, mean);
-    drawPeakMarker(buffer, peak, bounds, box);
+    drawPeakMarker(buffer, peak, bounds, box, config.y_log_scale);
   }
 
   return buffer;
 }
 
 } // namespace correlation::render3d
-

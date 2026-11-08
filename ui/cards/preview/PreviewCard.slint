@@ -8,7 +8,7 @@ import {
     FilledButton,
     Horizontal,
 } from "../../material/material.slint";
-import { TableRow, CurveToggleItem, CalibrationPair } from "../../Types.slint";
+import { TableRow, CurveToggleItem, CalibrationPair, PlotAxisSettings } from "../../Types.slint";
 import { WorkflowStepper } from "./components/WorkflowStepper.slint";
 import { PreviewHeader } from "./components/PreviewHeader.slint";
 import { HeroEmptyState } from "./components/HeroEmptyState.slint";
@@ -91,6 +91,15 @@ export component PreviewCard inherits FilledCard {
     callback browse_file();
     callback run_analysis();
     callback open_panel(int);
+
+    // Plot Viewport Settings properties & callbacks
+    in-out property <bool> plot_settings_open: false;
+    in-out property <bool> plot_sidebar_collapsed: false;
+    in-out property <PlotAxisSettings> axis_settings;
+    in-out property <int> selected_curve_id: 0;
+    callback apply_axis_settings();
+    callback reset_axis_settings();
+    callback set_curve_width(string);
 
     // Cutoff Calibration properties & callbacks
     in property <[CalibrationPair]> calibration_pairs: [];
@@ -464,19 +473,33 @@ export component PreviewCard inherits FilledCard {
                         active_tool <=> root.active_tool;
                         markers_count: root.markers_count;
                         hover_coord_text: root.hover_coord_text;
+                        settings_open: !root.plot_sidebar_collapsed;
                         reset_zoom => { root.reset_zoom(); }
                         clear_markers => { root.clear_markers(); }
+                        toggle_settings => {
+                            root.plot_sidebar_collapsed = !root.plot_sidebar_collapsed;
+                            if (!root.plot_sidebar_collapsed) {
+                                curve_sidebar.active_tab = 1;
+                            }
+                        }
+                        update_plot => { root.apply_axis_settings(); }
                     }
                 }
 
-                // Curve Visibility Sidebar
+                // Unified Plot Control Sidebar
                 curve_sidebar := CurveSidebar {
                     curve_toggle_items: root.curve_toggle_items;
                     sidebar_width <=> root.sidebar_width;
+                    sidebar_collapsed <=> root.plot_sidebar_collapsed;
+                    axis_settings <=> root.axis_settings;
                     active_color_picker_id <=> root.active_color_picker_id;
                     toggle_curve_visibility(id, v) => { root.toggle_curve_visibility(id, v); }
                     toggle_all_curves(v) => { root.toggle_all_curves(v); }
                     set_curve_color(id, c) => { root.set_curve_color(id, c); }
+                    set_curve_width(w) => { root.set_curve_width(w); }
+                    apply_axis_settings => { root.apply_axis_settings(); }
+                    reset_axis_settings => { root.reset_axis_settings(); }
+                    toggle_collapse => { root.plot_sidebar_collapsed = true; }
                 }
             }
 

@@ -832,3 +832,47 @@ TEST_F(AppControllerTests, ExpandAndCollapseAllCalculatorGroups) {
     EXPECT_FALSE(groupAt(*window, idx).expanded);
   }
 }
+
+TEST_F(AppControllerTests, PlotZoomLimitsSynchronizeToUIAndReset) {
+  auto window = AppWindow::create();
+
+  std::filesystem::path sample_file = "examples/a-PdSi/a-PdSi.car";
+  if (!std::filesystem::exists(sample_file)) {
+    sample_file = "../examples/a-PdSi/a-PdSi.car";
+  }
+  ASSERT_TRUE(std::filesystem::exists(sample_file));
+  ASSERT_TRUE(loader().loadFile(sample_file).has_value());
+
+  options().active_calculators["g(r), J(r), G(r)"] = true;
+  correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+  EXPECT_TRUE(dispatcher().runAnalysis(loader().trajectoryMut(), options()).has_value());
+
+  auto* plot_ctrl = controller.getPlotController();
+  ASSERT_NE(plot_ctrl, nullptr);
+  plot_ctrl->populatePlotList();
+  window->set_selected_plot_index(0);
+  plot_ctrl->requestPlotUpdate(0, true);
+
+  // Initial axis settings are auto
+  const auto initial_settings = window->get_axis_settings();
+  EXPECT_TRUE(initial_settings.auto_x);
+  EXPECT_TRUE(initial_settings.auto_y);
+
+  // Apply a zoom rect (x: 100->300, y: 100->300)
+  plot_ctrl->handleZoomRect(100.0F, 100.0F, 300.0F, 300.0F);
+
+  // Viewport should have synced into axis_settings
+  const auto zoomed_settings = window->get_axis_settings();
+  EXPECT_FALSE(zoomed_settings.auto_x);
+  EXPECT_FALSE(zoomed_settings.auto_y);
+  EXPECT_FALSE(zoomed_settings.x_min.empty());
+  EXPECT_FALSE(zoomed_settings.x_max.empty());
+
+  // Reset zoom
+  plot_ctrl->handleResetZoom();
+  const auto reset_settings = window->get_axis_settings();
+  EXPECT_TRUE(reset_settings.auto_x);
+  EXPECT_TRUE(reset_settings.auto_y);
+  EXPECT_TRUE(reset_settings.x_min.empty());
+  EXPECT_TRUE(reset_settings.x_max.empty());
+}

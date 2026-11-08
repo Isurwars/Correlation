@@ -69,6 +69,7 @@ AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
   structure_3d_controller_ = std::make_unique<Structure3DController>(window_, options_);
 
   bond_cutoff_controller_.setPlotController(plot_controller_.get());
+  plot_controller_->setStructure3DController(structure_3d_controller_.get());
   plot_controller_->setOnPlotGeometryChanged([this](float width, float height) {
     bond_cutoff_controller_.updateCalibrationPixels(width, height);
   });
@@ -191,6 +192,11 @@ void AppController::registerPlotCallbacks() {
   });
   window_.on_add_marker([this](bool is_vert) { plot_controller_->handleAddMarker(is_vert); });
   window_.on_clear_markers([this] { plot_controller_->handleClearMarkers(); });
+
+  window_.on_apply_axis_settings([this] { plot_controller_->handleApplyAxisSettings(); });
+  window_.on_reset_axis_settings([this] { plot_controller_->handleResetAxisSettings(); });
+  window_.on_set_curve_width(
+      [this](const slint::SharedString &w) { plot_controller_->handleSetCurveWidth(w); });
 
   window_.on_select_calibration_pair([this](int idx) {
     window_.set_active_calibration_pair_index(idx);

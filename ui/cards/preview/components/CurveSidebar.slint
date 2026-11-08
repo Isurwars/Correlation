@@ -1,3 +1,8 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
 import {
     MaterialPalette,
     MaterialStyleMetrics,
@@ -7,30 +12,84 @@ import {
     Vertical,
     ScrollView,
     SplitterHandle,
-    TextField,
+    CheckBoxRow,
+    FilledButton,
 } from "../../../material/material.slint";
-import { CurveToggleItem } from "../../../Types.slint";
+import { CurveToggleItem, PlotAxisSettings } from "../../../Types.slint";
+
+component CompactInputField inherits Rectangle {
+    in-out property <string> text <=> input.text;
+    in property <string> placeholder_text: "";
+    in property <bool> enabled: true;
+    callback accepted(string);
+    callback edited(string);
+
+    height: 28px;
+    border-radius: MaterialStyleMetrics.border_radius_4;
+    background: root.enabled ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_highest.with_alpha(38%);
+    border-width: 1px;
+    border-color: input.has-focus ? MaterialPalette.primary : MaterialPalette.outline_variant;
+
+    HorizontalLayout {
+        padding-left: 8px;
+        padding-right: 8px;
+
+        Rectangle {
+            horizontal-stretch: 1;
+
+            if root.text == "" && !input.has-focus: MaterialText {
+                width: 100%;
+                height: 100%;
+                text: root.placeholder_text;
+                style: MaterialTypography.body_small;
+                color: MaterialPalette.on_surface_variant.with_alpha(60%);
+                vertical-alignment: center;
+            }
+
+            input := TextInput {
+                width: 100%;
+                height: 100%;
+                enabled: root.enabled;
+                single-line: true;
+                color: root.enabled ? MaterialPalette.on_surface : MaterialPalette.on_surface.with_alpha(38%);
+                font-size: MaterialTypography.body_small.font_size;
+                vertical-alignment: center;
+
+                accepted => {
+                    root.accepted(self.text);
+                }
+                edited => {
+                    root.edited(self.text);
+                }
+            }
+        }
+    }
+}
 
 export component CurveSidebar inherits Horizontal {
     in property <[CurveToggleItem]> curve_toggle_items: [];
-    in-out property <length> sidebar_width: 180px;
+    in-out property <length> sidebar_width: 250px;
+    in-out property <bool> sidebar_collapsed: false;
+    in-out property <PlotAxisSettings> axis_settings;
+    in-out property <int> active_tab: 0; // 0: Curves, 1: Axes & Grid
     in-out property <int> active_color_picker_id: -1;
 
     callback toggle_curve_visibility(int, bool);
     callback toggle_all_curves(bool);
     callback set_curve_color(int, string);
+    callback set_curve_width(string);
+    callback apply_axis_settings();
+    callback reset_axis_settings();
+    callback toggle_collapse();
 
     out property <string> tooltip_text:
-        toggle_all_true_area.has-hover ? "Show all curves in the active plot." :
-        toggle_all_false_area.has-hover ? "Hide all curves in the active plot." : "";
+        collapse_touch.has-hover ? "Collapse sidebar\n\n⇥ Hide this panel to expand the plot canvas." : "";
 
     out property <length> tooltip_x:
-        toggle_all_true_area.has-hover ? toggle_all_true_area.absolute-position.x + toggle_all_true_area.mouse-x :
-        toggle_all_false_area.has-hover ? toggle_all_false_area.absolute-position.x + toggle_all_false_area.mouse-x : 0px;
+        collapse_touch.has-hover ? collapse_touch.absolute-position.x + collapse_touch.mouse-x : 0px;
 
     out property <length> tooltip_y:
-        toggle_all_true_area.has-hover ? toggle_all_true_area.absolute-position.y + toggle_all_true_area.mouse-y :
-        toggle_all_false_area.has-hover ? toggle_all_false_area.absolute-position.y + toggle_all_false_area.mouse-y : 0px;
+        collapse_touch.has-hover ? collapse_touch.absolute-position.y + collapse_touch.mouse-y : 0px;
 
     private property <[color]> swatch_colors: [
         #e69f00, #56b4e9, #009e73, #f0e442,
@@ -52,217 +111,646 @@ export component CurveSidebar inherits Horizontal {
 
     spacing: 0px;
 
-    if root.curve_toggle_items.length > 0: SplitterHandle {
+    if !root.sidebar_collapsed && root.curve_toggle_items.length > 0: SplitterHandle {
         moved(delta) => {
-            root.sidebar_width = Math.min(450px, Math.max(120px, root.sidebar_width - delta));
+            root.sidebar_width = Math.min(480px, Math.max(180px, root.sidebar_width - delta));
         }
         reset => {
-            root.sidebar_width = 180px;
+            root.sidebar_width = 250px;
         }
     }
 
-    // Curve Visibility Sidebar (Vertical Checklist to the right of the plot)
+    // Unified Collapsible Plot Control Sidebar
     Rectangle {
-        visible: root.curve_toggle_items.length > 0;
-        width: root.curve_toggle_items.length > 0 ? root.sidebar_width : 0px;
+        visible: !root.sidebar_collapsed && root.curve_toggle_items.length > 0;
+        width: (!root.sidebar_collapsed && root.curve_toggle_items.length > 0) ? root.sidebar_width : 0px;
         background: MaterialPalette.surface_container_low;
         border-radius: MaterialStyleMetrics.border_radius_2;
+        clip: true;
 
         VerticalLayout {
             padding: 8px;
-            spacing: 6px;
+            spacing: 8px;
 
+            // 1. Header with Tab Switcher and Collapse Button
             HorizontalLayout {
-                spacing: 4px;
+                spacing: 6px;
                 alignment: center;
+                height: 32px;
 
-                MaterialText {
+                // Segmented Tabs
+                Rectangle {
                     horizontal-stretch: 1;
-                    text: "Curves (" + root.curve_toggle_items.length + ")";
-                    style: MaterialTypography.label_large;
-                    color: MaterialPalette.on_surface;
-                    vertical-alignment: center;
-                }
+                    height: 30px;
+                    background: MaterialPalette.surface_container_high;
+                    border-radius: MaterialStyleMetrics.border_radius_4;
 
-                toggle_all_true_area := TouchArea {
-                    width: 26px;
-                    height: 20px;
-                    mouse-cursor: pointer;
-                    clicked => { root.toggle_all_curves(true); }
+                    HorizontalLayout {
+                        padding: 2px;
+                        spacing: 2px;
 
-                    MaterialText {
-                        text: "All";
-                        font-size: 11px;
-                        font-weight: 600;
-                        color: MaterialPalette.primary;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
+                        curves_tab_btn := TouchArea {
+                            horizontal-stretch: 1;
+                            mouse-cursor: pointer;
+                            clicked => { root.active_tab = 0; }
+
+                            Rectangle {
+                                background: (root.active_tab == 0) ? MaterialPalette.primary_container :
+                                            curves_tab_btn.has-hover ? MaterialPalette.surface_container_highest : transparent;
+                                border-radius: MaterialStyleMetrics.border_radius_2;
+
+                                MaterialText {
+                                    text: "Curves (" + root.curve_toggle_items.length + ")";
+                                    style: MaterialTypography.label_small;
+                                    font-weight: (root.active_tab == 0) ? 600 : 400;
+                                    color: (root.active_tab == 0) ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+
+                        axes_tab_btn := TouchArea {
+                            horizontal-stretch: 1;
+                            mouse-cursor: pointer;
+                            clicked => { root.active_tab = 1; }
+
+                            Rectangle {
+                                background: (root.active_tab == 1) ? MaterialPalette.primary_container :
+                                            axes_tab_btn.has-hover ? MaterialPalette.surface_container_highest : transparent;
+                                border-radius: MaterialStyleMetrics.border_radius_2;
+
+                                MaterialText {
+                                    text: "Axes & Grid";
+                                    style: MaterialTypography.label_small;
+                                    font-weight: (root.active_tab == 1) ? 600 : 400;
+                                    color: (root.active_tab == 1) ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
                     }
                 }
 
-                MaterialText {
-                    text: "/";
-                    font-size: 11px;
-                    color: MaterialPalette.outline;
-                    vertical-alignment: center;
-                }
-
-                toggle_all_false_area := TouchArea {
-                    width: 36px;
-                    height: 20px;
+                // Collapse Panel Button
+                collapse_touch := TouchArea {
+                    width: 26px;
+                    height: 26px;
                     mouse-cursor: pointer;
-                    clicked => { root.toggle_all_curves(false); }
+                    clicked => {
+                        root.sidebar_collapsed = true;
+                        root.toggle_collapse();
+                    }
 
-                    MaterialText {
-                        text: "None";
-                        font-size: 11px;
-                        font-weight: 600;
-                        color: MaterialPalette.primary;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
+                    Rectangle {
+                        border-radius: MaterialStyleMetrics.border_radius_4;
+                        background: collapse_touch.has-hover ? MaterialPalette.surface_container_highest : transparent;
+
+                        MaterialText {
+                            text: "⇥";
+                            font-size: 15px;
+                            font-weight: 600;
+                            color: collapse_touch.has-hover ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
                     }
                 }
             }
 
-            ScrollView {
+            // ================================================================
+            // Tab 0: Curves & Styling
+            // ================================================================
+            if root.active_tab == 0: VerticalLayout {
+                spacing: 6px;
                 vertical-stretch: 1;
-                content-height: root.curve_toggle_items.length * 30px;
 
-                VerticalLayout {
-                    spacing: 2px;
-                    alignment: start;
-                    for item in root.curve_toggle_items: VerticalLayout {
-                        spacing: 2px;
+                // All / None Batch Visibility Row
+                HorizontalLayout {
+                    spacing: 4px;
+                    alignment: center;
 
-                        if item.id == 1 && root.curve_toggle_items.length > 1 : HorizontalLayout {
-                            padding-top: 6px;
-                            padding-bottom: 2px;
-                            padding-left: 6px;
-                            MaterialText {
-                                text: "Partials:";
-                                font-size: 11.5px;
-                                font-weight: 600;
-                                color: MaterialPalette.primary;
-                            }
+                    MaterialText {
+                        horizontal-stretch: 1;
+                        text: "Visibility";
+                        style: MaterialTypography.label_small;
+                        color: MaterialPalette.on_surface_variant;
+                        vertical-alignment: center;
+                    }
+
+                    toggle_all_true_area := TouchArea {
+                        width: 28px;
+                        height: 20px;
+                        mouse-cursor: pointer;
+                        clicked => { root.toggle_all_curves(true); }
+
+                        MaterialText {
+                            text: "All";
+                            font-size: 11px;
+                            font-weight: 600;
+                            color: MaterialPalette.primary;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
                         }
+                    }
 
-                        item_touch := TouchArea {
-                            height: 28px;
-                            mouse-cursor: pointer;
-                            clicked => { root.toggle_curve_visibility(item.id, !item.visible); }
+                    MaterialText {
+                        text: "/";
+                        font-size: 11px;
+                        color: MaterialPalette.outline;
+                        vertical-alignment: center;
+                    }
 
-                            Rectangle {
-                                background: item_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
-                                border-radius: MaterialStyleMetrics.border_radius_2;
+                    toggle_all_false_area := TouchArea {
+                        width: 36px;
+                        height: 20px;
+                        mouse-cursor: pointer;
+                        clicked => { root.toggle_all_curves(false); }
 
-                                HorizontalLayout {
-                                    padding-left: (item.label == "Total") ? 8px : 14px;
-                                    padding-right: 8px;
-                                    spacing: 8px;
+                        MaterialText {
+                            text: "None";
+                            font-size: 11px;
+                            font-weight: 600;
+                            color: MaterialPalette.primary;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
 
-                                    Vertical {
-                                        alignment: center;
-                                        height: 100%;
+                // Curves Scrollable List
+                ScrollView {
+                    vertical-stretch: 1;
+                    content-height: root.curve_toggle_items.length * 30px;
 
-                                        color_dot_touch := TouchArea {
-                                            width: 18px;
-                                            height: 18px;
-                                            mouse-cursor: pointer;
-                                            clicked => { root.active_color_picker_id = (root.active_color_picker_id == item.id) ? -1 : item.id; }
+                    VerticalLayout {
+                        spacing: 2px;
+                        alignment: start;
 
-                                            Rectangle {
-                                                width: 12px;
-                                                height: 12px;
-                                                border-radius: 6px;
-                                                background: item.visible ? item.color_hex : MaterialPalette.outline;
-                                                border-width: color_dot_touch.has-hover ? 2px : 0px;
-                                                border-color: MaterialPalette.primary;
+                        for item in root.curve_toggle_items: VerticalLayout {
+                            spacing: 2px;
+
+                            if item.id == 1 && root.curve_toggle_items.length > 1 : HorizontalLayout {
+                                padding-top: 6px;
+                                padding-bottom: 2px;
+                                padding-left: 4px;
+                                MaterialText {
+                                    text: "Partials:";
+                                    font-size: 11px;
+                                    font-weight: 600;
+                                    color: MaterialPalette.primary;
+                                }
+                            }
+
+                            item_touch := TouchArea {
+                                height: 28px;
+                                mouse-cursor: pointer;
+                                clicked => { root.toggle_curve_visibility(item.id, !item.visible); }
+
+                                Rectangle {
+                                    background: item_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+                                    border-radius: MaterialStyleMetrics.border_radius_2;
+
+                                    HorizontalLayout {
+                                        padding-left: (item.label == "Total") ? 6px : 12px;
+                                        padding-right: 6px;
+                                        spacing: 8px;
+
+                                        Vertical {
+                                            alignment: center;
+                                            height: 100%;
+
+                                            color_dot_touch := TouchArea {
+                                                width: 18px;
+                                                height: 18px;
+                                                mouse-cursor: pointer;
+                                                clicked => { root.active_color_picker_id = (root.active_color_picker_id == item.id) ? -1 : item.id; }
+
+                                                Rectangle {
+                                                    width: 12px;
+                                                    height: 12px;
+                                                    border-radius: 6px;
+                                                    background: item.visible ? item.color_hex : MaterialPalette.outline;
+                                                    border-width: color_dot_touch.has-hover ? 2px : 0px;
+                                                    border-color: MaterialPalette.primary;
+                                                }
                                             }
                                         }
-                                    }
 
-                                    MaterialText {
-                                        horizontal-stretch: 1;
-                                        text: item.label;
-                                        style: (item.label == "Total") ? MaterialTypography.label_large : MaterialTypography.body_medium;
-                                        color: item.visible ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
-                                        overflow: elide;
-                                        horizontal-alignment: left;
-                                        vertical-alignment: center;
+                                        MaterialText {
+                                            horizontal-stretch: 1;
+                                            text: item.label;
+                                            style: (item.label == "Total") ? MaterialTypography.label_large : MaterialTypography.body_medium;
+                                            color: item.visible ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
+                                            overflow: elide;
+                                            horizontal-alignment: left;
+                                            vertical-alignment: center;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
+
+                // In-Place Color Palette Picker
+                if root.active_color_picker_id >= 0: Rectangle {
+                    background: MaterialPalette.surface_container_high;
+                    border-radius: MaterialStyleMetrics.border_radius_4;
+                    border-width: 1px;
+                    border-color: MaterialPalette.outline;
+
+                    VerticalLayout {
+                        padding: 8px;
+                        spacing: 6px;
+
+                        HorizontalLayout {
+                            alignment: center;
+                            MaterialText {
+                                horizontal-stretch: 1;
+                                text: "Select Color";
+                                style: MaterialTypography.label_medium;
+                                color: MaterialPalette.on_surface;
+                                vertical-alignment: center;
+                            }
+
+                            TouchArea {
+                                width: 20px;
+                                height: 20px;
+                                mouse-cursor: pointer;
+                                clicked => { root.active_color_picker_id = -1; }
+                                MaterialText {
+                                    text: "✕";
+                                    style: MaterialTypography.label_small;
+                                    color: MaterialPalette.on_surface_variant;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+
+                        VerticalLayout {
+                            spacing: 4px;
+                            for r_idx in 6: HorizontalLayout {
+                                spacing: 4px;
+                                alignment: center;
+                                for c_idx in 4: swatch_touch := TouchArea {
+                                    width: 28px;
+                                    height: 24px;
+                                    mouse-cursor: pointer;
+                                    clicked => {
+                                        root.set_curve_color(root.active_color_picker_id, root.swatch_hexes[r_idx * 4 + c_idx]);
+                                        root.active_color_picker_id = -1;
+                                    }
+                                    Rectangle {
+                                        width: 20px;
+                                        height: 20px;
+                                        border-radius: 10px;
+                                        background: root.swatch_colors[r_idx * 4 + c_idx];
+                                        border-width: swatch_touch.has-hover ? 2px : 1px;
+                                        border-color: swatch_touch.has-hover ? MaterialPalette.primary : MaterialPalette.outline;
+                                    }
+                                }
+                            }
+                        }
+
+                        CompactInputField {
+                            placeholder_text: "#RRGGBB";
+                            accepted(hex) => {
+                                if (hex != "") {
+                                    root.set_curve_color(root.active_color_picker_id, hex);
+                                    root.active_color_picker_id = -1;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Line Width Configuration
+                HorizontalLayout {
+                    spacing: 8px;
+                    alignment: center;
+
+                    MaterialText {
+                        text: "Line Width:";
+                        style: MaterialTypography.label_small;
+                        color: MaterialPalette.on_surface_variant;
+                        vertical-alignment: center;
+                    }
+
+                    CompactInputField {
+                        horizontal-stretch: 1;
+                        placeholder_text: "1.5";
+                        text <=> root.axis_settings.line_width;
+                        accepted(w) => {
+                            root.set_curve_width(w);
+                            root.apply_axis_settings();
+                        }
+                    }
+
+                    MaterialText {
+                        text: "pt";
+                        style: MaterialTypography.body_small;
+                        color: MaterialPalette.on_surface_variant;
+                        vertical-alignment: center;
+                    }
+                }
             }
 
-            if root.active_color_picker_id >= 0: Rectangle {
-                background: MaterialPalette.surface_container_high;
-                border-radius: MaterialStyleMetrics.border_radius_2;
-                border-width: 1px;
-                border-color: MaterialPalette.outline;
+            // ================================================================
+            // Tab 1: Axes, Scaling & Gridlines
+            // ================================================================
+            if root.active_tab == 1: ScrollView {
+                vertical-stretch: 1;
+                content-height: 480px;
 
                 VerticalLayout {
-                    padding: 8px;
-                    spacing: 6px;
+                    spacing: 10px;
+                    padding-right: 2px;
 
+                    // X-Axis Section
+                    VerticalLayout {
+                        spacing: 4px;
+
+                        HorizontalLayout {
+                            alignment: center;
+                            MaterialText {
+                                horizontal-stretch: 1;
+                                text: "X-Axis Range";
+                                style: MaterialTypography.label_medium;
+                                color: MaterialPalette.on_surface;
+                                vertical-alignment: center;
+                            }
+                            CheckBoxRow {
+                                text: "Auto";
+                                check_state_bool: root.axis_settings.auto_x;
+                                checked_state_changed(checked) => {
+                                    root.axis_settings.auto_x = checked;
+                                    if (checked) {
+                                        root.apply_axis_settings();
+                                    }
+                                }
+                            }
+                        }
+
+                        HorizontalLayout {
+                            spacing: 6px;
+                            CompactInputField {
+                                horizontal-stretch: 1;
+                                placeholder_text: "X Min";
+                                text <=> root.axis_settings.x_min;
+                                enabled: !root.axis_settings.auto_x;
+                                accepted(_) => {
+                                    root.axis_settings.auto_x = false;
+                                    root.apply_axis_settings();
+                                }
+                            }
+                            CompactInputField {
+                                horizontal-stretch: 1;
+                                placeholder_text: "X Max";
+                                text <=> root.axis_settings.x_max;
+                                enabled: !root.axis_settings.auto_x;
+                                accepted(_) => {
+                                    root.axis_settings.auto_x = false;
+                                    root.apply_axis_settings();
+                                }
+                            }
+                        }
+                    }
+
+                    // Y-Axis Section
+                    VerticalLayout {
+                        spacing: 4px;
+
+                        HorizontalLayout {
+                            alignment: center;
+                            MaterialText {
+                                horizontal-stretch: 1;
+                                text: "Y-Axis Range";
+                                style: MaterialTypography.label_medium;
+                                color: MaterialPalette.on_surface;
+                                vertical-alignment: center;
+                            }
+                            CheckBoxRow {
+                                text: "Auto";
+                                check_state_bool: root.axis_settings.auto_y;
+                                checked_state_changed(checked) => {
+                                    root.axis_settings.auto_y = checked;
+                                    if (checked) {
+                                        root.apply_axis_settings();
+                                    }
+                                }
+                            }
+                        }
+
+                        HorizontalLayout {
+                            spacing: 6px;
+                            CompactInputField {
+                                horizontal-stretch: 1;
+                                placeholder_text: "Y Min";
+                                text <=> root.axis_settings.y_min;
+                                enabled: !root.axis_settings.auto_y;
+                                accepted(_) => {
+                                    root.axis_settings.auto_y = false;
+                                    root.apply_axis_settings();
+                                }
+                            }
+                            CompactInputField {
+                                horizontal-stretch: 1;
+                                placeholder_text: "Y Max";
+                                text <=> root.axis_settings.y_max;
+                                enabled: !root.axis_settings.auto_y;
+                                accepted(_) => {
+                                    root.axis_settings.auto_y = false;
+                                    root.apply_axis_settings();
+                                }
+                            }
+                        }
+                    }
+
+                    // Tick Steps Section
+                    VerticalLayout {
+                        spacing: 4px;
+
+                        HorizontalLayout {
+                            alignment: center;
+                            MaterialText {
+                                horizontal-stretch: 1;
+                                text: "Major Tick Steps";
+                                style: MaterialTypography.label_medium;
+                                color: MaterialPalette.on_surface;
+                                vertical-alignment: center;
+                            }
+                            CheckBoxRow {
+                                text: "Auto";
+                                check_state_bool: root.axis_settings.auto_ticks;
+                                checked_state_changed(checked) => {
+                                    root.axis_settings.auto_ticks = checked;
+                                    if (checked) {
+                                        root.apply_axis_settings();
+                                    }
+                                }
+                            }
+                        }
+
+                        HorizontalLayout {
+                            spacing: 6px;
+                            CompactInputField {
+                                horizontal-stretch: 1;
+                                placeholder_text: "ΔX Step";
+                                text <=> root.axis_settings.x_major_step;
+                                enabled: !root.axis_settings.auto_ticks;
+                                accepted(_) => {
+                                    root.axis_settings.auto_ticks = false;
+                                    root.apply_axis_settings();
+                                }
+                            }
+                            CompactInputField {
+                                horizontal-stretch: 1;
+                                placeholder_text: "ΔY Step";
+                                text <=> root.axis_settings.y_major_step;
+                                enabled: !root.axis_settings.auto_ticks;
+                                accepted(_) => {
+                                    root.axis_settings.auto_ticks = false;
+                                    root.apply_axis_settings();
+                                }
+                            }
+                        }
+                    }
+
+                    // Minor Subdivisions
                     HorizontalLayout {
+                        spacing: 6px;
                         alignment: center;
+
                         MaterialText {
                             horizontal-stretch: 1;
-                            text: "Color Palette";
-                            style: MaterialTypography.label_medium;
+                            text: "Minor Subdivisions (0-5):";
+                            style: MaterialTypography.label_small;
+                            color: MaterialPalette.on_surface_variant;
+                            vertical-alignment: center;
+                        }
+
+                        TouchArea {
+                            width: 24px;
+                            height: 24px;
+                            mouse-cursor: pointer;
+                            clicked => {
+                                if (root.axis_settings.minor_subdivisions > 0) {
+                                    root.axis_settings.minor_subdivisions -= 1;
+                                    root.apply_axis_settings();
+                                }
+                            }
+                            Rectangle {
+                                background: parent.has-hover ? MaterialPalette.surface_container_highest : transparent;
+                                border-radius: MaterialStyleMetrics.border_radius_2;
+                                border-width: 1px;
+                                border-color: MaterialPalette.outline;
+                                MaterialText {
+                                    text: "-";
+                                    style: MaterialTypography.label_medium;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+
+                        MaterialText {
+                            text: "\{root.axis_settings.minor_subdivisions}";
+                            style: MaterialTypography.label_large;
                             color: MaterialPalette.on_surface;
                             vertical-alignment: center;
                         }
 
                         TouchArea {
-                            width: 20px;
-                            height: 20px;
+                            width: 24px;
+                            height: 24px;
                             mouse-cursor: pointer;
-                            clicked => { root.active_color_picker_id = -1; }
-                            MaterialText {
-                                text: "✕";
-                                style: MaterialTypography.label_small;
-                                color: MaterialPalette.on_surface_variant;
-                                horizontal-alignment: center;
-                                vertical-alignment: center;
+                            clicked => {
+                                if (root.axis_settings.minor_subdivisions < 5) {
+                                    root.axis_settings.minor_subdivisions += 1;
+                                    root.apply_axis_settings();
+                                }
+                            }
+                            Rectangle {
+                                background: parent.has-hover ? MaterialPalette.surface_container_highest : transparent;
+                                border-radius: MaterialStyleMetrics.border_radius_2;
+                                border-width: 1px;
+                                border-color: MaterialPalette.outline;
+                                MaterialText {
+                                    text: "+";
+                                    style: MaterialTypography.label_medium;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
                             }
                         }
                     }
 
+                    // Scaling & Grid Options
                     VerticalLayout {
-                        spacing: 4px;
-                        for r_idx in 6: HorizontalLayout {
-                            spacing: 4px;
-                            alignment: center;
-                            for c_idx in 4: swatch_touch := TouchArea {
-                                width: 28px;
-                                height: 24px;
-                                mouse-cursor: pointer;
-                                clicked => {
-                                    root.set_curve_color(root.active_color_picker_id, root.swatch_hexes[r_idx * 4 + c_idx]);
-                                    root.active_color_picker_id = -1;
-                                }
-                                Rectangle {
-                                    width: 20px;
-                                    height: 20px;
-                                    border-radius: 10px;
-                                    background: root.swatch_colors[r_idx * 4 + c_idx];
-                                    border-width: swatch_touch.has-hover ? 2px : 1px;
-                                    border-color: swatch_touch.has-hover ? MaterialPalette.primary : MaterialPalette.outline;
-                                }
+                        spacing: 2px;
+
+                        CheckBoxRow {
+                            text: "Y Log₁₀ Scale";
+                            check_state_bool: root.axis_settings.y_log_scale;
+                            checked_state_changed(s) => {
+                                root.axis_settings.y_log_scale = s;
+                                root.apply_axis_settings();
+                            }
+                        }
+                        CheckBoxRow {
+                            text: "Show Major Grid";
+                            check_state_bool: root.axis_settings.show_major_grid;
+                            checked_state_changed(s) => {
+                                root.axis_settings.show_major_grid = s;
+                                root.apply_axis_settings();
+                            }
+                        }
+                        CheckBoxRow {
+                            text: "Show Minor Grid";
+                            check_state_bool: root.axis_settings.show_minor_grid;
+                            checked_state_changed(s) => {
+                                root.axis_settings.show_minor_grid = s;
+                                root.apply_axis_settings();
                             }
                         }
                     }
 
-                    TextField {
-                        placeholder_text: "#RRGGBB";
-                        accepted(hex) => {
-                            if (hex != "") {
-                                root.set_curve_color(root.active_color_picker_id, hex);
-                                root.active_color_picker_id = -1;
+                    // Action Buttons (Update & Defaults)
+                    HorizontalLayout {
+                        spacing: 8px;
+                        padding-top: 6px;
+
+                        FilledButton {
+                            horizontal-stretch: 1;
+                            height: 32px;
+                            text: "Update";
+                            clicked => {
+                                root.apply_axis_settings();
+                            }
+                        }
+
+                        TouchArea {
+                            horizontal-stretch: 1;
+                            height: 32px;
+                            mouse-cursor: pointer;
+                            clicked => {
+                                root.reset_axis_settings();
+                            }
+                            Rectangle {
+                                background: parent.has-hover ? MaterialPalette.surface_container_highest : transparent;
+                                border-radius: MaterialStyleMetrics.border_radius_4;
+                                border-width: 1px;
+                                border-color: MaterialPalette.outline;
+                                MaterialText {
+                                    text: "Defaults";
+                                    style: MaterialTypography.label_medium;
+                                    color: MaterialPalette.on_surface_variant;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
                             }
                         }
                     }

@@ -10,11 +10,16 @@ export component ImagingToolbar inherits Rectangle {
     in-out property <int> active_tool: 0;
     in property <int> markers_count: 0;
     in property <string> hover_coord_text: "";
+    in property <bool> settings_open: false;
 
     callback reset_zoom();
     callback clear_markers();
+    callback toggle_settings();
+    callback update_plot();
 
     out property <string> tooltip_text:
+        update_touch.has-hover ? "Update Plot\n\n🔄 Apply current axis bounds, ticks, log scaling, and refresh visualization." :
+        settings_touch.has-hover ? "Plot Settings & Styling\n\n⚙️ Configure axis bounds (X/Y limits), tick intervals, log scale, and curve styling." :
         home_touch.has-hover ? "Home (Reset Zoom)\n\n🔄 Restore full coordinate axes limits." :
         zoom_touch.has-hover ? "Rubberband Box Zoom\n\n🔍 Click and drag on plot to inspect a specific region of interest." :
         zoom_out_touch.has-hover ? "Click to Zoom Out\n\n🔍 Click anywhere on plot to step viewport zoom out centered on click." :
@@ -24,15 +29,19 @@ export component ImagingToolbar inherits Rectangle {
         (root.markers_count > 0 && clear_markers_touch.has-hover) ? "Clear Markers\n\n🗑️ Remove all inspection guides from the plot." : "";
 
     out property <length> tooltip_x:
+        update_touch.has-hover ? update_touch.absolute-position.x + update_touch.mouse-x :
+        settings_touch.has-hover ? settings_touch.absolute-position.x + settings_touch.mouse-x :
         home_touch.has-hover ? home_touch.absolute-position.x + home_touch.mouse-x :
         zoom_touch.has-hover ? zoom_touch.absolute-position.x + zoom_touch.mouse-x :
         zoom_out_touch.has-hover ? zoom_out_touch.absolute-position.x + zoom_out_touch.mouse-x :
         marker_x_touch.has-hover ? marker_x_touch.absolute-position.x + marker_x_touch.mouse-x :
-        marker_y_touch.has-hover ? marker_y_touch.absolute-position.x + marker_y_touch.mouse-x :
+        marker_y_touch.has-hover ? marker_y_touch.absolute-position.y + marker_y_touch.mouse-x :
         calibrate_touch.has-hover ? calibrate_touch.absolute-position.x + calibrate_touch.mouse-x :
         (root.markers_count > 0 && clear_markers_touch.has-hover) ? clear_markers_touch.absolute-position.x + clear_markers_touch.mouse-x : 0px;
 
     out property <length> tooltip_y:
+        update_touch.has-hover ? update_touch.absolute-position.y + update_touch.mouse-y :
+        settings_touch.has-hover ? settings_touch.absolute-position.y + settings_touch.mouse-y :
         home_touch.has-hover ? home_touch.absolute-position.y + home_touch.mouse-y :
         zoom_touch.has-hover ? zoom_touch.absolute-position.y + zoom_touch.mouse-y :
         zoom_out_touch.has-hover ? zoom_out_touch.absolute-position.y + zoom_out_touch.mouse-y :
@@ -305,6 +314,75 @@ export component ImagingToolbar inherits Rectangle {
                     source: Icons.tune;
                     colorize: root.active_tool == 5 ? MaterialPalette.on_primary : MaterialPalette.on_surface;
                     animate colorize { duration: 150ms; }
+                }
+            }
+        }
+
+        // Divider
+        VerticalLayout {
+            alignment: center;
+            Rectangle {
+                width: 1px;
+                height: 16px;
+                background: MaterialPalette.outline_variant.with_alpha(50%);
+            }
+        }
+
+        // Settings / Customization Popover Toggle
+        settings_touch := TouchArea {
+            width: 30px;
+            height: 30px;
+            y: (parent.height - self.height) / 2;
+            mouse-cursor: pointer;
+            clicked => {
+                root.toggle_settings();
+            }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 15px;
+                background: root.settings_open ?
+                    (settings_touch.has-hover ? MaterialPalette.secondary.darker(8%) : MaterialPalette.secondary) :
+                    (settings_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
+                border-width: root.settings_open ? 1.5px : 0px;
+                border-color: root.settings_open ? MaterialPalette.on_secondary.with_alpha(35%) : transparent;
+
+                animate background, border-color { duration: 150ms; easing: ease-out; }
+
+                MaterialText {
+                    text: "⚙";
+                    font-size: 15px;
+                    color: root.settings_open ? MaterialPalette.on_secondary : MaterialPalette.on_surface;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        // Update Plot (Refresh) Button
+        update_touch := TouchArea {
+            width: 30px;
+            height: 30px;
+            y: (parent.height - self.height) / 2;
+            mouse-cursor: pointer;
+            clicked => {
+                root.update_plot();
+            }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 15px;
+                background: update_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                Image {
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
+                    width: 16px;
+                    height: 16px;
+                    source: Icons.restart_alt;
+                    colorize: MaterialPalette.on_surface;
                 }
             }
         }

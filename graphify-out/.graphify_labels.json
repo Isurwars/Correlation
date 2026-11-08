@@ -542,14 +542,5 @@
   "540": "CliParserTests",
   "541": "ThreadLocalBond",
   "542": "G6Calculator::calculateFrame",
-  "543": "resolveExampleFilePath",
-  "544": "WaterMoleculeOptions",
-  "545": "QVector",
-  "546": "handleAddMarkerAt",
-  "547": "MockORBv3Model",
-  "548": "toNumpyVector",
-  "549": "SDFCalculator.cpp",
-  "550": "ParsedAtomRecord",
-  "551": "DADCalculator::calculateFrame",
-  "552": "Structure3DController::Structure3DController"
+  "543": "resolveExampleFilePath"
 }

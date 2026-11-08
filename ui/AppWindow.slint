@@ -39,6 +39,7 @@ import {
     WorkflowState,
     SanityBadgeState,
     DomainPresetItem,
+    PlotAxisSettings,
 } from "Types.slint";
 
 import { MiniSideBar } from "nav/MiniSideBar.slint";
@@ -316,6 +317,14 @@ export component AppWindow inherits Window {
     callback add_marker_at(float, float, bool);
     callback add_marker(bool);
     callback clear_markers();
+
+    // Plot Viewport Axis & Styling
+    in-out property <bool> plot_settings_open: false;
+    in-out property <PlotAxisSettings> axis_settings;
+    in-out property <int> selected_curve_id: 0;
+    callback apply_axis_settings();
+    callback reset_axis_settings();
+    callback set_curve_width(string);
 
     // 3D Viewport callbacks
     callback rotate_3d(float, float);
@@ -782,6 +791,13 @@ export component AppWindow inherits Window {
                     clear_markers => {
                         root.clear_markers();
                     }
+
+                    plot_settings_open <=> root.plot_settings_open;
+                    axis_settings <=> root.axis_settings;
+                    selected_curve_id <=> root.selected_curve_id;
+                    apply_axis_settings => { root.apply_axis_settings(); }
+                    reset_axis_settings => { root.reset_axis_settings(); }
+                    set_curve_width(w) => { root.set_curve_width(w); }
 
                     calibration_pairs: root.calibration_pairs;
                     active_calibration_pair_index <=> root.active_calibration_pair_index;

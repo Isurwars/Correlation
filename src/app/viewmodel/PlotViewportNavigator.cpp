@@ -19,13 +19,19 @@ PlotViewportNavigator::computeXScale(const correlation::analysis::Histogram &his
   real_t raw_x_min = hist.bins.empty() ? static_cast<real_t>(0.0) : hist.bins.front();
   real_t raw_x_max = hist.bins.empty() ? static_cast<real_t>(1.0) : hist.bins.back();
   bool strict_x = false;
-  if (config.manual_x_min.has_value() && config.manual_x_max.has_value()) {
+  if (config.manual_x_min.has_value()) {
     raw_x_min = *config.manual_x_min;
+    strict_x = true;
+  }
+  if (config.manual_x_max.has_value()) {
     raw_x_max = *config.manual_x_max;
     strict_x = true;
   }
+  const real_t step = (config.manual_ticks && config.x_major_step > 0.0) ? config.x_major_step
+                                                                         : static_cast<real_t>(0.0);
   return correlation::plotters::detail::NiceScale(
-      correlation::plotters::detail::DataRange{.min = raw_x_min, .max = raw_x_max}, 11, strict_x);
+      correlation::plotters::detail::DataRange{.min = raw_x_min, .max = raw_x_max}, 11, strict_x,
+      step);
 }
 
 correlation::plotters::detail::NiceScale
@@ -44,13 +50,19 @@ PlotViewportNavigator::computeYScale(const correlation::analysis::Histogram &his
   raw_y_max += y_padding;
 
   bool strict_y = false;
-  if (config.manual_y_min.has_value() && config.manual_y_max.has_value()) {
+  if (config.manual_y_min.has_value()) {
     raw_y_min = *config.manual_y_min;
+    strict_y = true;
+  }
+  if (config.manual_y_max.has_value()) {
     raw_y_max = *config.manual_y_max;
     strict_y = true;
   }
+  const real_t step = (config.manual_ticks && config.y_major_step > 0.0) ? config.y_major_step
+                                                                         : static_cast<real_t>(0.0);
   return correlation::plotters::detail::NiceScale(
-      correlation::plotters::detail::DataRange{.min = raw_y_min, .max = raw_y_max}, 8, strict_y);
+      correlation::plotters::detail::DataRange{.min = raw_y_min, .max = raw_y_max}, 8, strict_y,
+      step);
 }
 
 std::pair<real_t, real_t>
@@ -184,12 +196,16 @@ void PlotViewportNavigator::setLimits(ViewportLimits limits) noexcept {
 
 void PlotViewportNavigator::applyToConfig(
     correlation::plotters::PlotConfig &config) const noexcept {
-  if (zoom_x_min_.has_value() && zoom_x_max_.has_value()) {
+  if (zoom_x_min_.has_value()) {
     config.manual_x_min = zoom_x_min_;
+  }
+  if (zoom_x_max_.has_value()) {
     config.manual_x_max = zoom_x_max_;
   }
-  if (zoom_y_min_.has_value() && zoom_y_max_.has_value()) {
+  if (zoom_y_min_.has_value()) {
     config.manual_y_min = zoom_y_min_;
+  }
+  if (zoom_y_max_.has_value()) {
     config.manual_y_max = zoom_y_max_;
   }
 }

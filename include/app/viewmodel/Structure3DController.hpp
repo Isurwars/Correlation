@@ -8,11 +8,11 @@
 
 #pragma once
 
+#include "analysis/PerFrameDistributionStore.hpp"
 #include "app/core/AppOptions.hpp"
 #include "app/viewmodel/PhaseSearchService.hpp"
 #include "app/viewmodel/PhaseSearchTypes.hpp"
 #include "app/viewmodel/SteinhardtLRUCache.hpp"
-#include "analysis/PerFrameDistributionStore.hpp"
 #include "app/viewmodel/Structure3DRenderPipeline.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
@@ -153,6 +153,14 @@ public:
    * @param[in] visible True to display mini-chart HUD overlay.
    */
   void handleToggleDistributionHUD(bool visible);
+
+  /**
+   * @brief Sets custom plot configuration / limits for a distribution metric on the HUD.
+   * @param[in] metric Target distribution metric.
+   * @param[in] config Custom mini-plot configuration.
+   */
+  void setMetricPlotLimits(analysis::DistributionMetric metric,
+                           const render3d::MiniPlotConfig &config);
 
   /**
    * @brief Renders and synchronizes the active frame mini-chart with the Slint UI.
@@ -464,6 +472,7 @@ private:
 
   std::shared_ptr<const analysis::PerFrameDistributionStore> distribution_store_;
   analysis::DistributionMetric active_dist_metric_{analysis::DistributionMetric::RDF};
+  std::array<render3d::MiniPlotConfig, 3> metric_plot_configs_{};
   bool dist_hud_visible_{true};
 
   mutable std::mutex mutex_;

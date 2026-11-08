@@ -667,10 +667,23 @@ void Structure3DController::handleToggleDistributionHUD(bool visible) {
   syncDistributionHUDToWindow();
 }
 
+void Structure3DController::setMetricPlotLimits(analysis::DistributionMetric metric,
+                                                const render3d::MiniPlotConfig &config) {
+  const auto idx = static_cast<std::size_t>(metric);
+  if (idx < metric_plot_configs_.size()) {
+    {
+      const std::scoped_lock lock(mutex_);
+      metric_plot_configs_[idx] = config;
+    }
+    syncDistributionHUDToWindow();
+  }
+}
+
 void Structure3DController::syncDistributionHUDToWindow() {
   safeInvokeOnWindow([this] {
     std::shared_ptr<const analysis::PerFrameDistributionStore> store;
     analysis::DistributionMetric metric = analysis::DistributionMetric::RDF;
+    render3d::MiniPlotConfig plot_cfg{};
     bool visible = false;
     std::size_t active_frame = 0;
 
@@ -679,6 +692,10 @@ void Structure3DController::syncDistributionHUDToWindow() {
       store = distribution_store_;
       metric = active_dist_metric_;
       visible = dist_hud_visible_;
+      const auto idx = static_cast<std::size_t>(metric);
+      if (idx < metric_plot_configs_.size()) {
+        plot_cfg = metric_plot_configs_[idx];
+      }
       active_frame = streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
     }
 
@@ -688,7 +705,8 @@ void Structure3DController::syncDistributionHUDToWindow() {
     }
 
     const auto &metric_data = store->getMetricData(metric);
-    const auto buf = render3d::MiniPlotRenderer::render(metric_data, active_frame, 260, 126);
+    const auto buf =
+        render3d::MiniPlotRenderer::render(metric_data, active_frame, plot_cfg, 260, 126);
 
     const slint::SharedPixelBuffer<slint::Rgba8Pixel> pixel_buffer(
         buf.width, buf.height, reinterpret_cast<const slint::Rgba8Pixel *>(buf.pixels.data()));

@@ -26,6 +26,8 @@ class AppWindow;
 
 namespace correlation::app {
 
+class Structure3DController;
+
 struct PlotSize {
   float width;
   float height;
@@ -174,6 +176,30 @@ public:
   void resetPlotState() noexcept;
 
   /**
+   * @brief Applies manual axis range, ticks, and scaling from the floating popover.
+   */
+  void handleApplyAxisSettings();
+
+  /**
+   * @brief Resets axis limits, ticks, and scaling to automatic dataset extents.
+   */
+  void handleResetAxisSettings();
+
+  /**
+   * @brief Sets custom curve line width from the styling popover.
+   * @param[in] width_str Stroke line width string in pixels.
+   */
+  void handleSetCurveWidth(const slint::SharedString &width_str);
+
+  /**
+   * @brief Connects reference to Structure3DController to synchronize distribution limits.
+   * @param[in] s3d Pointer to Structure3DController.
+   */
+  void setStructure3DController(Structure3DController *s3d) noexcept {
+    structure_3d_controller_ = s3d;
+  }
+
+  /**
    * @brief Returns the last cached plot canvas width.
    */
   [[nodiscard]] float getLastPlotWidth() const noexcept { return last_plot_width_; }
@@ -222,6 +248,19 @@ private:
   void updateCurveToggleItems(const correlation::analysis::Histogram *hist);
 
   std::function<void(float, float)> on_plot_geometry_changed_;
+
+  Structure3DController *structure_3d_controller_{nullptr};
+  int active_plot_index_{-1};
+  std::unordered_map<int, correlation::plotters::MetricPlotSettings> metric_settings_;
+
+  void syncMetricSettingsToUI(int index);
+  void syncSettingsTo3DHUD(int index, const correlation::plotters::MetricPlotSettings &settings);
+
+  /**
+   * @brief Synchronizes active zoom viewport limits to metric plot settings and UI.
+   * @param[in] current_idx Target metric plot selection index.
+   */
+  void syncZoomLimitsToSettings(int current_idx);
 };
 
 } // namespace correlation::app

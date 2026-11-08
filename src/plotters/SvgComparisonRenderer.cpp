@@ -153,15 +153,37 @@ struct SvgComparisonRenderer {
 
     bool strict_x = false;
     bool strict_y = false;
-    if (config->manual_x_min.has_value() && config->manual_x_max.has_value()) {
+    if (config->manual_x_min.has_value()) {
       raw_x_min = *config->manual_x_min;
+      strict_x = true;
+    }
+    if (config->manual_x_max.has_value()) {
       raw_x_max = *config->manual_x_max;
       strict_x = true;
     }
-    if (config->manual_y_min.has_value() && config->manual_y_max.has_value()) {
+    if (config->manual_y_min.has_value()) {
       raw_y_min = *config->manual_y_min;
+      strict_y = true;
+    }
+    if (config->manual_y_max.has_value()) {
       raw_y_max = *config->manual_y_max;
       strict_y = true;
+    }
+
+    const real_t x_step =
+        (config->manual_ticks && config->x_major_step > static_cast<real_t>(0.0))
+            ? config->x_major_step
+            : static_cast<real_t>(0.0);
+    const real_t y_step =
+        (config->manual_ticks && config->y_major_step > static_cast<real_t>(0.0))
+            ? config->y_major_step
+            : static_cast<real_t>(0.0);
+
+    if (config->y_log_scale) {
+      raw_y_min = std::max(raw_y_min, static_cast<real_t>(1e-4));
+      if (raw_y_max <= raw_y_min) {
+        raw_y_max = raw_y_min * static_cast<real_t>(100.0);
+      }
     }
 
     xScale = detail::NiceScale(
@@ -169,13 +191,35 @@ struct SvgComparisonRenderer {
             .min = raw_x_min,
             .max = raw_x_max,
         },
-        11, strict_x);
+        11, strict_x, x_step);
     yScale = detail::NiceScale(
         detail::DataRange{
             .min = raw_y_min,
             .max = raw_y_max,
         },
-        8, strict_y);
+        8, strict_y, y_step);
+    if (config->y_log_scale && !config->manual_ticks) {
+      yScale.ticks.clear();
+      const int min_exp = static_cast<int>(
+          std::floor(std::log10(std::max(raw_y_min, static_cast<real_t>(1e-6)))));
+      const int max_exp = static_cast<int>(
+          std::ceil(std::log10(std::max(raw_y_max, static_cast<real_t>(1e-6)))));
+      for (int exp = min_exp; exp <= max_exp; ++exp) {
+        yScale.ticks.push_back(static_cast<real_t>(std::pow(10.0, exp)));
+      }
+    }
+  }
+
+  [[nodiscard]] real_t mapY(real_t val) const noexcept {
+    if (config->y_log_scale) {
+      constexpr auto K_FLOOR = static_cast<real_t>(1e-4);
+      const real_t log_val = std::log10(std::max(val, K_FLOOR));
+      const real_t log_min = std::log10(std::max(yScale.min, K_FLOOR));
+      const real_t log_max = std::log10(std::max(yScale.max, K_FLOOR));
+      const real_t denom = (log_max > log_min) ? (log_max - log_min) : static_cast<real_t>(1.0);
+      return py1 - ((log_val - log_min) / denom) * (py1 - py0);
+    }
+    return detail::mapValue(val, yScale.min, yScale.max, py1, py0);
   }
 
   void writeHeaderAndDefs() {
@@ -209,7 +253,7 @@ struct SvgComparisonRenderer {
 
   void drawGridAndAxes() {
     for (real_t const y_value : yScale.ticks) {
-      real_t spy = detail::mapValue(y_value, yScale.min, yScale.max, py1, py0);
+      real_t spy = mapY(y_value);
       if (config->show_grid) {
         svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                            "stroke=\"{}\" stroke-width=\"0.8\" stroke-dasharray=\"3,3\"/>\n",
@@ -263,7 +307,7 @@ struct SvgComparisonRenderer {
             svg << std::format("{:.2f},{:.2f} ", sp_x_start, py1);
             for (std::size_t i = 0; i < n_points; ++i) {
               real_t sp_x = detail::mapValue(x_values[i], xScale.min, xScale.max, px0, px1);
-              real_t const sp_y = detail::mapValue(y_values[i], yScale.min, yScale.max, py1, py0);
+              real_t const sp_y = mapY(y_values[i]);
               real_t sp_y_clamped = std::min(sp_y, py1);
               svg << std::format("{:.2f},{:.2f} ", sp_x, sp_y_clamped);
             }
@@ -342,7 +386,7 @@ struct SvgComparisonRenderer {
     const std::size_t n_points = std::min(x_values.size(), y_values.size());
     for (std::size_t i = 0; i < n_points; ++i) {
       real_t sp_x = detail::mapValue(x_values[i], xScale.min, xScale.max, px0, px1);
-      real_t sp_y = detail::mapValue(y_values[i], yScale.min, yScale.max, py1, py0);
+      real_t sp_y = mapY(y_values[i]);
       svg << std::format("{:.2f},{:.2f} ", sp_x, sp_y);
     }
     svg << "\" />\n";
@@ -357,7 +401,7 @@ struct SvgComparisonRenderer {
     const std::size_t n_points = std::min(diff_x.size(), diff_y.size());
     for (std::size_t i = 0; i < n_points; ++i) {
       real_t sp_x = detail::mapValue(diff_x[i], xScale.min, xScale.max, px0, px1);
-      real_t sp_y = detail::mapValue(diff_y[i], yScale.min, yScale.max, py1, py0);
+      real_t sp_y = mapY(diff_y[i]);
       svg << std::format("{:.2f},{:.2f} ", sp_x, sp_y);
     }
     svg << "\" />\n";
@@ -395,7 +439,7 @@ struct SvgComparisonRenderer {
           std::size_t const n_points = std::min(x_values.size(), y_values.size());
           for (std::size_t i = 0; i < n_points; ++i) {
             real_t sp_x = detail::mapValue(x_values[i], xScale.min, xScale.max, px0, px1);
-            real_t sp_y = detail::mapValue(y_values[i], yScale.min, yScale.max, py1, py0);
+            real_t sp_y = mapY(y_values[i]);
             svg << std::format(
                 "  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"{:.1f}\" fill=\"{}\" stroke=\"none\"/>\n",
                 sp_x, sp_y, config->marker_size, col);
@@ -429,7 +473,7 @@ struct SvgComparisonRenderer {
         }
       } else {
         if (ref.value >= yScale.min && ref.value <= yScale.max) {
-          real_t spy = detail::mapValue(ref.value, yScale.min, yScale.max, py1, py0);
+          real_t spy = mapY(ref.value);
           svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                              "stroke=\"{}\" stroke-width=\"1.8\" stroke-dasharray=\"4,4\"/>\n",
                              px0, spy, px1, spy, color);
@@ -502,7 +546,7 @@ struct SvgComparisonRenderer {
       std::size_t const n_points = std::min(x_values.size(), y_values.size());
       for (std::size_t i = 0; i < n_points; ++i) {
         real_t const sp_x_i = detail::mapValue(x_values[i], xScale.min, xScale.max, px0, px1);
-        real_t const sp_y_i = detail::mapValue(y_values[i], yScale.min, yScale.max, py1, py0);
+        real_t const sp_y_i = mapY(y_values[i]);
         real_t const dx_i = sp_x_i - sp_x;
         real_t const dy_i = sp_y_i - sp_y;
         real_t const dist_sq = dx_i * dx_i + dy_i * dy_i;
@@ -529,7 +573,7 @@ struct SvgComparisonRenderer {
       if (pit != partials.end() && idx < pit->second.size()) {
         const std::string col = detail::color(color_idx++, config->palette);
         real_t const y_val = pit->second[idx];
-        real_t sy_data = detail::mapValue(y_val, yScale.min, yScale.max, py1, py0);
+        real_t sy_data = mapY(y_val);
 
         if (dataset.label == best_label) {
           snapped_sy_data = sy_data;

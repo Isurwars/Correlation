@@ -40,6 +40,11 @@ namespace {
          lhs.palette == rhs.palette && std::abs(lhs.font_scale - rhs.font_scale) < 1e-4 &&
          std::abs(lhs.line_width - rhs.line_width) < 1e-4 &&
          std::abs(lhs.marker_size - rhs.marker_size) < 1e-4 && lhs.show_grid == rhs.show_grid &&
+         lhs.show_minor_grid == rhs.show_minor_grid && lhs.y_log_scale == rhs.y_log_scale &&
+         lhs.manual_ticks == rhs.manual_ticks &&
+         std::abs(lhs.x_major_step - rhs.x_major_step) < 1e-4 &&
+         std::abs(lhs.y_major_step - rhs.y_major_step) < 1e-4 &&
+         lhs.minor_subdivisions == rhs.minor_subdivisions &&
          lhs.show_legend == rhs.show_legend && lhs.show_markers == rhs.show_markers &&
          lhs.fill_area == rhs.fill_area && lhs.manual_x_min == rhs.manual_x_min &&
          lhs.manual_x_max == rhs.manual_x_max && lhs.manual_y_min == rhs.manual_y_min &&
