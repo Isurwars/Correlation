@@ -1,0 +1,534 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialText,
+    Horizontal,
+    Vertical,
+    ScrollView,
+    SplitterHandle,
+    CheckBoxRow,
+    FilledButton,
+} from "../../../material/material.slint";
+import { PhaseSlider } from "./PhaseSlider.slint";
+import { PhaseMiniHistogram } from "./PhaseMiniHistogram.slint";
+import { PhaseHeatmapView, CrystalMarker } from "./PhaseHeatmapView.slint";
+import { PhasePresetsGrid } from "./PhasePresetsGrid.slint";
+import { PhaseDescriptorSelector } from "./PhaseDescriptorSelector.slint";
+import { PhaseColorbar } from "./PhaseColorbar.slint";
+import { PhaseVisualControls } from "./PhaseVisualControls.slint";
+
+export component Structure3DSidebar inherits Horizontal {
+    in-out property <length> sidebar_width: 330px;
+    in-out property <bool> sidebar_collapsed: false;
+    in-out property <int> active_tab: 0; // 0: Phase & Halos, 1: Display & Scene
+
+    // Phase Search & Halos properties
+    in property <bool> phase_enabled: false;
+    in property <int> preset_index: 0;
+    in property <int> descriptor_index: 0;
+    in property <int> colormap_index: 0;
+    in property <float> min_threshold: 0.46;
+    in property <float> max_threshold: 0.58;
+    in property <float> domain_min: 0.0;
+    in property <float> domain_max: 1.0;
+    in property <float> halo_intensity: 0.85;
+    in property <float> halo_radius_ratio: 1.35;
+    in property <float> atom_scale: 0.35;
+    in property <bool> dim_non_matching: false;
+    in property <bool> hide_non_matching: false;
+    in property <[float]> histogram_counts: [];
+    in property <int> matching_atoms: 0;
+    in property <int> total_atoms: 0;
+    in property <image> colorbar_image;
+    in property <string> descriptor_name: "q̄₆";
+
+    // 2D Heatmap Mode properties
+    in property <bool> is_2d_mode: false;
+    in property <int> descriptor_y_index: 0;
+    in property <float> min_threshold_y: 0.46;
+    in property <float> max_threshold_y: 0.58;
+    in property <float> domain_min_y: 0.0;
+    in property <float> domain_max_y: 1.0;
+    in property <string> descriptor_name_y: "q̄₆";
+    in property <image> heatmap_image;
+    in property <[CrystalMarker]> crystal_markers: [];
+
+    // Scene / Render properties
+    in property <bool> bonds_enabled: true;
+    in property <bool> wireframe_enabled: true;
+    in property <bool> in_cell_enabled: false;
+    in property <bool> dist_hud_visible: true;
+
+    // Callbacks
+    callback toggle_collapse();
+    callback toggle_phase_enabled(bool);
+    callback set_preset(int);
+    callback set_descriptor(int);
+    callback set_colormap(int);
+    callback set_thresholds(float, float);
+    callback set_intensity(float);
+    callback set_radius_ratio(float);
+    callback set_atom_scale(float);
+    callback set_dim_non_matching(bool);
+    callback set_hide_non_matching(bool);
+
+    // 2D Heatmap callbacks
+    callback set_2d_mode(bool);
+    callback set_descriptor_y(int);
+    callback set_thresholds_2d(float, float, float, float);
+    callback export_heatmap_png();
+
+    // Scene & Camera callbacks
+    callback reset_view();
+    callback toggle_bonds(bool);
+    callback toggle_wireframe(bool);
+    callback toggle_in_cell(bool);
+    callback toggle_dist_hud(bool);
+
+    out property <string> tooltip_text:
+        collapse_touch.has-hover ? "Collapse sidebar\n\n⇥ Hide this inspector to expand the 3D molecular canvas." : "";
+
+    out property <length> tooltip_x:
+        collapse_touch.has-hover ? collapse_touch.absolute-position.x + collapse_touch.mouse-x : 0px;
+
+    out property <length> tooltip_y:
+        collapse_touch.has-hover ? collapse_touch.absolute-position.y + collapse_touch.mouse-y : 0px;
+
+    spacing: 0px;
+
+    if !root.sidebar_collapsed: SplitterHandle {
+        moved(delta) => {
+            root.sidebar_width = Math.min(520px, Math.max(260px, root.sidebar_width - delta));
+        }
+        reset => {
+            root.sidebar_width = 330px;
+        }
+    }
+
+    // Unified Collapsible 3D Control Sidebar
+    Rectangle {
+        visible: !root.sidebar_collapsed;
+        width: !root.sidebar_collapsed ? root.sidebar_width : 0px;
+        background: MaterialPalette.surface_container_low;
+        border-radius: MaterialStyleMetrics.border_radius_2;
+        clip: true;
+
+        VerticalLayout {
+            padding: 8px;
+            spacing: 8px;
+
+            // 1. Header with Segmented Tab Switcher and Collapse Button
+            HorizontalLayout {
+                spacing: 6px;
+                alignment: center;
+                height: 32px;
+
+                // Segmented Tabs
+                Rectangle {
+                    horizontal-stretch: 1;
+                    height: 30px;
+                    background: MaterialPalette.surface_container_high;
+                    border-radius: MaterialStyleMetrics.border_radius_4;
+
+                    HorizontalLayout {
+                        padding: 2px;
+                        spacing: 2px;
+
+                        phase_tab_btn := TouchArea {
+                            horizontal-stretch: 1;
+                            mouse-cursor: pointer;
+                            clicked => { root.active_tab = 0; }
+
+                            Rectangle {
+                                background: (root.active_tab == 0) ? MaterialPalette.primary_container :
+                                            phase_tab_btn.has-hover ? MaterialPalette.surface_container_highest : transparent;
+                                border-radius: MaterialStyleMetrics.border_radius_2;
+
+                                MaterialText {
+                                    text: "Phase & Halos";
+                                    style: MaterialTypography.label_small;
+                                    font-weight: (root.active_tab == 0) ? 600 : 400;
+                                    color: (root.active_tab == 0) ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+
+                        scene_tab_btn := TouchArea {
+                            horizontal-stretch: 1;
+                            mouse-cursor: pointer;
+                            clicked => { root.active_tab = 1; }
+
+                            Rectangle {
+                                background: (root.active_tab == 1) ? MaterialPalette.primary_container :
+                                            scene_tab_btn.has-hover ? MaterialPalette.surface_container_highest : transparent;
+                                border-radius: MaterialStyleMetrics.border_radius_2;
+
+                                MaterialText {
+                                    text: "Display & Scene";
+                                    style: MaterialTypography.label_small;
+                                    font-weight: (root.active_tab == 1) ? 600 : 400;
+                                    color: (root.active_tab == 1) ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Collapse Panel Button
+                collapse_touch := TouchArea {
+                    width: 26px;
+                    height: 26px;
+                    mouse-cursor: pointer;
+                    clicked => {
+                        root.sidebar_collapsed = true;
+                        root.toggle_collapse();
+                    }
+
+                    Rectangle {
+                        border-radius: MaterialStyleMetrics.border_radius_4;
+                        background: collapse_touch.has-hover ? MaterialPalette.surface_container_highest : transparent;
+
+                        MaterialText {
+                            text: "⇥";
+                            font-size: 15px;
+                            font-weight: 600;
+                            color: collapse_touch.has-hover ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+
+            // ================================================================
+            // Tab 0: Phase Search & Order Parameters
+            // ================================================================
+            if root.active_tab == 0: ScrollView {
+                vertical-stretch: 1;
+
+                VerticalLayout {
+                    spacing: 8px;
+                    padding-right: 2px;
+
+                    // Master Toggle Row
+                    HorizontalLayout {
+                        alignment: space-between;
+
+                        HorizontalLayout {
+                            spacing: 6px;
+                            alignment: center;
+
+                            MaterialText {
+                                text: "🔮";
+                                font-size: 14px;
+                                vertical-alignment: center;
+                            }
+
+                            MaterialText {
+                                text: "Halo Highlighting";
+                                style: MaterialTypography.label_medium;
+                                font-weight: 700;
+                                color: MaterialPalette.on_surface;
+                                vertical-alignment: center;
+                            }
+                        }
+
+                        // Master Toggle Pill
+                        toggle_touch := TouchArea {
+                            width: 64px;
+                            height: 22px;
+                            mouse-cursor: pointer;
+                            accessible-role: button;
+                            accessible-label: root.phase_enabled ? "Disable Halos" : "Enable Halos";
+                            clicked => { root.toggle_phase_enabled(!root.phase_enabled); }
+
+                            Rectangle {
+                                width: 100%;
+                                height: 100%;
+                                border-radius: 11px;
+                                background: root.phase_enabled
+                                    ? MaterialPalette.primary
+                                    : (toggle_touch.has-hover ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_lowest);
+                                border-width: 1px;
+                                border-color: root.phase_enabled ? MaterialPalette.primary : MaterialPalette.outline;
+
+                                animate background { duration: 150ms; }
+
+                                MaterialText {
+                                    width: 100%;
+                                    height: 100%;
+                                    text: root.phase_enabled ? "Active" : "Off";
+                                    font-size: 11px;
+                                    font-weight: 600;
+                                    color: root.phase_enabled ? MaterialPalette.on_primary : MaterialPalette.on_surface_variant;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+                    }
+
+                    // Mode Switcher (1D Histogram vs 2D Heatmap)
+                    HorizontalLayout {
+                        spacing: 4px;
+                        height: 22px;
+
+                        mode_1d_touch := TouchArea {
+                            horizontal-stretch: 1;
+                            mouse-cursor: pointer;
+                            clicked => { root.set_2d_mode(false); }
+
+                            Rectangle {
+                                width: 100%;
+                                height: 100%;
+                                border-radius: 11px;
+                                background: !root.is_2d_mode
+                                    ? MaterialPalette.primary.with_alpha(25%)
+                                    : (mode_1d_touch.has-hover ? MaterialPalette.surface_container_highest : transparent);
+                                border-width: !root.is_2d_mode ? 1.5px : 1px;
+                                border-color: !root.is_2d_mode ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(40%);
+
+                                MaterialText {
+                                    width: 100%;
+                                    height: 100%;
+                                    text: "1D Histogram";
+                                    font-size: 10.5px;
+                                    font-weight: !root.is_2d_mode ? 700 : 400;
+                                    color: !root.is_2d_mode ? MaterialPalette.primary : MaterialPalette.on_surface;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+
+                        mode_2d_touch := TouchArea {
+                            horizontal-stretch: 1;
+                            mouse-cursor: pointer;
+                            clicked => { root.set_2d_mode(true); }
+
+                            Rectangle {
+                                width: 100%;
+                                height: 100%;
+                                border-radius: 11px;
+                                background: root.is_2d_mode
+                                    ? MaterialPalette.primary.with_alpha(25%)
+                                    : (mode_2d_touch.has-hover ? MaterialPalette.surface_container_highest : transparent);
+                                border-width: root.is_2d_mode ? 1.5px : 1px;
+                                border-color: root.is_2d_mode ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(40%);
+
+                                MaterialText {
+                                    width: 100%;
+                                    height: 100%;
+                                    text: "2D Heatmap";
+                                    font-size: 10.5px;
+                                    font-weight: root.is_2d_mode ? 700 : 400;
+                                    color: root.is_2d_mode ? MaterialPalette.primary : MaterialPalette.on_surface;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+                    }
+
+                    // 2D Heatmap View
+                    if (root.is_2d_mode): PhaseHeatmapView {
+                        heatmap_image: root.heatmap_image;
+                        descriptor_x: root.descriptor_index;
+                        descriptor_y: root.descriptor_y_index;
+                        descriptor_name_x: root.descriptor_name;
+                        descriptor_name_y: root.descriptor_name_y;
+                        min_x: root.domain_min;
+                        max_x: root.domain_max;
+                        min_y: root.domain_min_y;
+                        max_y: root.domain_max_y;
+                        sel_min_x: root.min_threshold;
+                        sel_max_x: root.max_threshold;
+                        sel_min_y: root.min_threshold_y;
+                        sel_max_y: root.max_threshold_y;
+                        matching_atoms: root.matching_atoms;
+                        total_atoms: root.total_atoms;
+                        crystal_markers: root.crystal_markers;
+
+                        set_descriptor_x(idx) => { root.set_descriptor(idx); }
+                        set_descriptor_y(idx) => { root.set_descriptor_y(idx); }
+                        set_selection_2d(min_x, max_x, min_y, max_y) => {
+                            root.set_thresholds_2d(min_x, max_x, min_y, max_y);
+                        }
+                        export_png => { root.export_heatmap_png(); }
+                        reset_selection => {
+                            root.set_thresholds_2d(root.domain_min, root.domain_max, root.domain_min_y, root.domain_max_y);
+                        }
+                    }
+
+                    // 1D Crystal Presets Grid
+                    if (!root.is_2d_mode): PhasePresetsGrid {
+                        preset_index: root.preset_index;
+                        set_preset(idx) => { root.set_preset(idx); }
+                    }
+
+                    // 1D Order Descriptor & Colormap Selector
+                    if (!root.is_2d_mode): PhaseDescriptorSelector {
+                        descriptor_index: root.descriptor_index;
+                        colormap_index: root.colormap_index;
+                        set_descriptor(idx) => { root.set_descriptor(idx); }
+                        set_colormap(idx) => { root.set_colormap(idx); }
+                    }
+
+                    // Color Palette Gradient & Dynamic Threshold Bounds
+                    PhaseColorbar {
+                        colorbar_image: root.colorbar_image;
+                        min_threshold: root.min_threshold;
+                        max_threshold: root.max_threshold;
+                        descriptor_name: root.descriptor_name;
+                    }
+
+                    // 1D Threshold Range Sliders
+                    if (!root.is_2d_mode): HorizontalLayout {
+                        spacing: 6px;
+
+                        PhaseSlider {
+                            horizontal-stretch: 1;
+                            label: "Min Cutoff";
+                            value: root.min_threshold;
+                            min_val: root.domain_min;
+                            max_val: root.max_threshold;
+                            display_text: "" + (Math.round(root.min_threshold * 100) / 100);
+                            value_changed(val) => { root.set_thresholds(val, root.max_threshold); }
+                        }
+
+                        PhaseSlider {
+                            horizontal-stretch: 1;
+                            label: "Max Cutoff";
+                            value: root.max_threshold;
+                            min_val: root.min_threshold;
+                            max_val: root.domain_max;
+                            display_text: "" + (Math.round(root.max_threshold * 100) / 100);
+                            value_changed(val) => { root.set_thresholds(root.min_threshold, val); }
+                        }
+                    }
+
+                    // Visual Controls (Ball Radius, Halo Intensity, Radius, Dim & Hide Checkboxes)
+                    PhaseVisualControls {
+                        halo_intensity: root.halo_intensity;
+                        halo_radius_ratio: root.halo_radius_ratio;
+                        atom_scale: root.atom_scale;
+                        dim_non_matching: root.dim_non_matching;
+                        hide_non_matching: root.hide_non_matching;
+
+                        set_intensity(val) => { root.set_intensity(val); }
+                        set_radius_ratio(val) => { root.set_radius_ratio(val); }
+                        set_atom_scale(val) => { root.set_atom_scale(val); }
+                        set_dim_non_matching(dim) => { root.set_dim_non_matching(dim); }
+                        set_hide_non_matching(hide) => { root.set_hide_non_matching(hide); }
+                    }
+
+                    // 1D Mini-Histogram Distribution
+                    if (!root.is_2d_mode): PhaseMiniHistogram {
+                        counts: root.histogram_counts;
+                        min_threshold: root.min_threshold;
+                        max_threshold: root.max_threshold;
+                        domain_min: root.domain_min;
+                        domain_max: root.domain_max;
+                        matching_atoms: root.matching_atoms;
+                        total_atoms: root.total_atoms;
+                    }
+                }
+            }
+
+            // ================================================================
+            // Tab 1: Display & Scene Configuration
+            // ================================================================
+            if root.active_tab == 1: ScrollView {
+                vertical-stretch: 1;
+
+                VerticalLayout {
+                    spacing: 12px;
+                    padding-right: 2px;
+
+                    // Camera Controls Section
+                    VerticalLayout {
+                        spacing: 6px;
+
+                        MaterialText {
+                            text: "Camera & Orientation";
+                            style: MaterialTypography.label_medium;
+                            color: MaterialPalette.on_surface;
+                        }
+
+                        FilledButton {
+                            height: 32px;
+                            text: "Reset Camera View";
+                            clicked => { root.reset_view(); }
+                        }
+                    }
+
+                    // Atomic Representation Section
+                    VerticalLayout {
+                        spacing: 8px;
+
+                        MaterialText {
+                            text: "Atomic Representation";
+                            style: MaterialTypography.label_medium;
+                            color: MaterialPalette.on_surface;
+                        }
+
+                        PhaseSlider {
+                            label: "Ball Scale";
+                            value: root.atom_scale;
+                            min_val: 0.1;
+                            max_val: 1.5;
+                            display_text: "" + (Math.round(root.atom_scale * 100) / 100) + "x";
+                            value_changed(val) => { root.set_atom_scale(val); }
+                        }
+
+                        CheckBoxRow {
+                            text: "Render Bonds";
+                            check_state_bool: root.bonds_enabled;
+                            checked_state_changed(en) => { root.toggle_bonds(en); }
+                        }
+
+                        CheckBoxRow {
+                            text: "Unit Cell Wireframe";
+                            check_state_bool: root.wireframe_enabled;
+                            checked_state_changed(en) => { root.toggle_wireframe(en); }
+                        }
+
+                        CheckBoxRow {
+                            text: "In-Cell PBC Coordinates";
+                            check_state_bool: root.in_cell_enabled;
+                            checked_state_changed(en) => { root.toggle_in_cell(en); }
+                        }
+                    }
+
+                    // Viewport Overlays Section
+                    VerticalLayout {
+                        spacing: 8px;
+
+                        MaterialText {
+                            text: "Overlays";
+                            style: MaterialTypography.label_medium;
+                            color: MaterialPalette.on_surface;
+                        }
+
+                        CheckBoxRow {
+                            text: "Distribution Mini-HUD";
+                            check_state_bool: root.dist_hud_visible;
+                            checked_state_changed(v) => { root.toggle_dist_hud(v); }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+

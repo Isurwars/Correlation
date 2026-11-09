@@ -915,7 +915,7 @@
     "semantic_hash": ""
   },
   ".github/workflows/release.yml": {
-    "mtime": 1794235967.6498775,
+    "mtime": 1794237096.600838,
     "ast_hash": "da7996950766136b66baf116dc6d4060",
     "semantic_hash": ""
   },
@@ -3447,11 +3447,6 @@
   "tests/unit/calculators/SpinChargeCorrelationTests.cpp": {
     "mtime": 1793950694.8489938,
     "ast_hash": "7d7153262faa2b789eb79fe623b4fb42",
-    "semantic_hash": ""
-  },
-  "docs/SIGNPATH_SETUP.md": {
-    "mtime": 1793982821.1246684,
-    "ast_hash": "bf0ae07872692a10601954abf669db82",
     "semantic_hash": ""
   },
   "include/analysis/PerFrameDistributionStore.hpp": {

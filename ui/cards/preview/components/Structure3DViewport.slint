@@ -10,7 +10,7 @@ import {
     MaterialText,
 } from "../../../material/material.slint";
 import { TrajectoryPlaybackBar } from "./TrajectoryPlaybackBar.slint";
-import { PhaseSearchCard } from "./PhaseSearchCard.slint";
+import { Structure3DSidebar } from "./Structure3DSidebar.slint";
 import { ViewportColorbar } from "./ViewportColorbar.slint";
 import { CrystalMarker } from "./PhaseHeatmapTypes.slint";
 import { DistributionHUDCard } from "./DistributionHUDCard.slint";
@@ -65,6 +65,9 @@ export component Structure3DViewport inherits Rectangle {
     in-out property <int> dist_active_metric: 0;
     in property <string> dist_peak_text: "";
 
+    // Sidebar sizing
+    in-out property <length> sidebar_width: 330px;
+
     callback set_dist_metric(int);
     callback toggle_dist_hud(bool);
 
@@ -112,216 +115,251 @@ export component Structure3DViewport inherits Rectangle {
     property <bool> is_dragging: false;
     property <bool> is_panning: false;
 
-    background: MaterialPalette.surface_container_lowest;
-    border-radius: 8px;
-    clip: true;
+    background: transparent;
 
-    changed width => { root.resized(root.width, root.height); }
-    changed height => { root.resized(root.width, root.height); }
-
-    viewport_touch := TouchArea {
+    HorizontalLayout {
         width: 100%;
         height: 100%;
-        mouse-cursor: root.is_dragging ? grabbing : grab;
+        spacing: MaterialStyleMetrics.spacing_8;
 
-        pointer-event(event) => {
-            if (event.kind == PointerEventKind.down) {
-                root.last_mouse_x = self.mouse-x;
-                root.last_mouse_y = self.mouse-y;
-                root.is_dragging = true;
-                root.is_panning = (event.button == PointerEventButton.right);
-            }
-            if (event.kind == PointerEventKind.up || event.kind == PointerEventKind.cancel) {
-                root.is_dragging = false;
-                root.is_panning = false;
-            }
-        }
+        // Main 3D Viewport Area
+        viewport_container := Rectangle {
+            horizontal-stretch: 1;
+            vertical-stretch: 1;
+            background: MaterialPalette.surface_container_lowest;
+            border-radius: 8px;
+            clip: true;
 
-        moved => {
-            if (root.is_dragging) {
-                let line_dx = (self.mouse-x - root.last_mouse_x) / 1px;
-                let line_dy = (self.mouse-y - root.last_mouse_y) / 1px;
-                root.last_mouse_x = self.mouse-x;
-                root.last_mouse_y = self.mouse-y;
-
-                if (root.is_panning) {
-                    root.pan_3d(line_dx, line_dy);
-                } else {
-                    root.rotate_3d(line_dx, line_dy);
+            changed width => {
+                if (self.width > 10px && self.height > 10px) {
+                    root.resized(self.width, self.height);
                 }
             }
+            changed height => {
+                if (self.width > 10px && self.height > 10px) {
+                    root.resized(self.width, self.height);
+                }
+            }
+
+            viewport_touch := TouchArea {
+                width: 100%;
+                height: 100%;
+                mouse-cursor: root.is_dragging ? grabbing : grab;
+
+                pointer-event(event) => {
+                    if (event.kind == PointerEventKind.down) {
+                        root.last_mouse_x = self.mouse-x;
+                        root.last_mouse_y = self.mouse-y;
+                        root.is_dragging = true;
+                        root.is_panning = (event.button == PointerEventButton.right);
+                    }
+                    if (event.kind == PointerEventKind.up || event.kind == PointerEventKind.cancel) {
+                        root.is_dragging = false;
+                        root.is_panning = false;
+                    }
+                }
+
+                moved => {
+                    if (root.is_dragging) {
+                        let line_dx = (self.mouse-x - root.last_mouse_x) / 1px;
+                        let line_dy = (self.mouse-y - root.last_mouse_y) / 1px;
+                        root.last_mouse_x = self.mouse-x;
+                        root.last_mouse_y = self.mouse-y;
+
+                        if (root.is_panning) {
+                            root.pan_3d(line_dx, line_dy);
+                        } else {
+                            root.rotate_3d(line_dx, line_dy);
+                        }
+                    }
+                }
+
+                scroll-event(event) => {
+                    root.zoom_3d(event.delta-y / 60px);
+                    accept
+                }
+
+                Image {
+                    width: 100%;
+                    height: 100%;
+                    source: root.structure_3d_image;
+                    image-fit: contain;
+                }
+            }
+
+            // Centered Empty State when no structure file is loaded
+            if (!root.file_loaded): Structure3DEmptyState {
+                x: (parent.width - self.width) / 2;
+                y: (parent.height - self.height) / 2;
+                browse_file => { root.browse_file(); }
+            }
+
+            // Top Floating Bar (3D tools on left, workflow actions on right)
+            HorizontalLayout {
+                x: 12px;
+                y: 12px;
+                width: parent.width - 24px;
+                spacing: 8px;
+                alignment: space-between;
+
+                // 1. Left: 3D Visualization Tools
+                Structure3DToolBar {
+                    bonds_enabled: root.bonds_enabled;
+                    wireframe_enabled: root.wireframe_enabled;
+                    in_cell_enabled: root.in_cell_enabled;
+                    phase_panel_open: root.phase_panel_open;
+                    phase_enabled: root.phase_enabled;
+                    dist_hud_enabled: root.dist_hud_visible;
+                    atom_scale: root.atom_scale;
+
+                    reset_view => { root.reset_view(); }
+                    toggle_bonds(en) => { root.toggle_bonds(en); }
+                    toggle_wireframe(en) => { root.toggle_wireframe(en); }
+                    toggle_in_cell(en) => { root.toggle_in_cell(en); }
+                    toggle_phase_panel => { root.phase_panel_open = !root.phase_panel_open; }
+                    toggle_dist_hud => {
+                        root.dist_hud_visible = !root.dist_hud_visible;
+                        root.toggle_dist_hud(root.dist_hud_visible);
+                    }
+                    set_atom_scale(val) => { root.set_atom_scale(val); }
+                }
+
+                // 2. Right: Unified Workflow Action Bar (Visible when file loaded)
+                if (root.file_loaded): Structure3DWorkflowBar {
+                    file_basename: root.file_basename;
+                    total_atoms: root.total_atoms;
+                    analysis_running: root.analysis_running;
+
+                    run_analysis => { root.run_analysis(); }
+                    open_panel(id) => { root.open_panel(id); }
+                }
+            }
+
+            // Trajectory Playback & Scrub Bar (visible when multi-frame trajectory is loaded)
+            if (root.file_loaded && root.total_frames > 1): TrajectoryPlaybackBar {
+                x: (parent.width - self.width) / 2;
+                y: parent.height - self.height - 12px;
+                width: Math.min(parent.width - 48px, 680px);
+                current_frame <=> root.current_frame;
+                total_frames: root.total_frames;
+                seek_frame(idx) => { root.seek_frame(idx); }
+                step_frame(fwd) => { root.step_frame(fwd); }
+            }
+
+            // Subtle bottom navigation hint
+            if (root.file_loaded): Rectangle {
+                x: (parent.width - self.width) / 2;
+                y: parent.height - self.height - (root.total_frames > 1 ? 66px : 10px);
+                width: hint_text.preferred-width + 20px;
+                height: 24px;
+                border-radius: 12px;
+                background: MaterialPalette.surface_container_highest.with_alpha(60%);
+
+                hint_text := MaterialText {
+                    text: "🖱 Left-drag: Orbit  •  Right-drag: Pan  •  Scroll: Zoom";
+                    font-size: 12px;
+                    color: MaterialPalette.on_surface_variant.with_alpha(80%);
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+
+            // Floating Distribution HUD Card (bottom-left, visible when analysis data exists & HUD active)
+            if (root.file_loaded && root.dist_has_data && root.dist_hud_visible): DistributionHUDCard {
+                x: 16px;
+                y: parent.height - self.height - (root.total_frames > 1 ? 66px : 16px);
+                chart_image: root.dist_chart_image;
+                active_metric: root.dist_active_metric;
+                peak_text: root.dist_peak_text;
+                current_frame: root.current_frame;
+                set_metric(m) => {
+                    root.dist_active_metric = m;
+                    root.set_dist_metric(m);
+                }
+                close_hud => {
+                    root.dist_hud_visible = false;
+                    root.toggle_dist_hud(false);
+                }
+            }
+
+            // Floating Viewport Colorbar (bottom-right when halos enabled and sidebar collapsed)
+            if (root.phase_enabled && !root.phase_panel_open): ViewportColorbar {
+                x: parent.width - self.width - 16px;
+                y: parent.height - self.height - (root.total_frames > 1 ? 66px : 16px);
+                descriptor_name: root.phase_descriptor_name;
+                min_val: root.phase_min_threshold;
+                max_val: root.phase_max_threshold;
+                colorbar_image: root.phase_colorbar_image;
+            }
         }
 
-        scroll-event(event) => {
-            root.zoom_3d(event.delta-y / 60px);
-            accept
-        }
+        // Docked Resizable Collapsible 3D Inspector Sidebar
+        structure_sidebar := Structure3DSidebar {
+            sidebar_width <=> root.sidebar_width;
+            sidebar_collapsed: !root.phase_panel_open;
+            phase_enabled: root.phase_enabled;
+            preset_index: root.phase_preset;
+            descriptor_index: root.phase_descriptor;
+            colormap_index: root.phase_colormap;
+            min_threshold: root.phase_min_threshold;
+            max_threshold: root.phase_max_threshold;
+            domain_min: root.phase_domain_min;
+            domain_max: root.phase_domain_max;
+            halo_intensity: root.phase_halo_intensity;
+            halo_radius_ratio: root.phase_halo_radius_ratio;
+            atom_scale: root.atom_scale;
+            dim_non_matching: root.phase_dim_non_matching;
+            hide_non_matching: root.phase_hide_non_matching;
+            histogram_counts: root.phase_histogram_counts;
+            matching_atoms: root.phase_matching_atoms;
+            total_atoms: root.phase_total_atoms;
+            colorbar_image: root.phase_colorbar_image;
+            descriptor_name: root.phase_descriptor_name;
 
-        Image {
-            width: 100%;
-            height: 100%;
-            source: root.structure_3d_image;
-            image-fit: contain;
-        }
-    }
+            // 2D Heatmap Mode properties
+            is_2d_mode: root.phase_is_2d_mode;
+            descriptor_y_index: root.phase_descriptor_y;
+            min_threshold_y: root.phase_min_threshold_y;
+            max_threshold_y: root.phase_max_threshold_y;
+            domain_min_y: root.phase_domain_min_y;
+            domain_max_y: root.phase_domain_max_y;
+            descriptor_name_y: root.phase_descriptor_name_y;
+            heatmap_image: root.phase_heatmap_image;
+            crystal_markers: root.phase_crystal_markers;
 
-    // Centered Empty State when no structure file is loaded
-    if (!root.file_loaded): Structure3DEmptyState {
-        x: (root.width - self.width) / 2;
-        y: (root.height - self.height) / 2;
-        browse_file => { root.browse_file(); }
-    }
-
-    // Top Floating Bar (3D tools on left, workflow actions on right)
-    HorizontalLayout {
-        x: 12px;
-        y: 12px;
-        width: root.width - 24px;
-        spacing: 8px;
-        alignment: space-between;
-
-        // 1. Left: 3D Visualization Tools
-        Structure3DToolBar {
+            // Scene / Render properties
             bonds_enabled: root.bonds_enabled;
             wireframe_enabled: root.wireframe_enabled;
             in_cell_enabled: root.in_cell_enabled;
-            phase_panel_open: root.phase_panel_open;
-            phase_enabled: root.phase_enabled;
-            dist_hud_enabled: root.dist_hud_visible;
-            atom_scale: root.atom_scale;
+            dist_hud_visible: root.dist_hud_visible;
+
+            toggle_collapse => { root.phase_panel_open = false; }
+            toggle_phase_enabled(en) => { root.toggle_phase_search(en); }
+            set_preset(idx) => { root.set_phase_preset(idx); }
+            set_descriptor(idx) => { root.set_phase_descriptor(idx); }
+            set_colormap(idx) => { root.set_phase_colormap(idx); }
+            set_thresholds(min, max) => { root.set_phase_thresholds(min, max); }
+            set_intensity(val) => { root.set_phase_intensity(val); }
+            set_radius_ratio(val) => { root.set_phase_radius_ratio(val); }
+            set_atom_scale(val) => { root.set_atom_scale(val); }
+            set_dim_non_matching(dim) => { root.set_phase_dim_non_matching(dim); }
+            set_hide_non_matching(hide) => { root.set_phase_hide_non_matching(hide); }
+
+            set_2d_mode(is_2d) => { root.set_phase_2d_mode(is_2d); }
+            set_descriptor_y(idx) => { root.set_phase_descriptor_y(idx); }
+            set_thresholds_2d(min_x, max_x, min_y, max_y) => {
+                root.set_phase_thresholds_2d(min_x, max_x, min_y, max_y);
+            }
+            export_heatmap_png => { root.export_phase_heatmap_png(); }
 
             reset_view => { root.reset_view(); }
             toggle_bonds(en) => { root.toggle_bonds(en); }
             toggle_wireframe(en) => { root.toggle_wireframe(en); }
             toggle_in_cell(en) => { root.toggle_in_cell(en); }
-            toggle_phase_panel => { root.phase_panel_open = !root.phase_panel_open; }
-            toggle_dist_hud => {
-                root.dist_hud_visible = !root.dist_hud_visible;
-                root.toggle_dist_hud(root.dist_hud_visible);
+            toggle_dist_hud(v) => {
+                root.dist_hud_visible = v;
+                root.toggle_dist_hud(v);
             }
-            set_atom_scale(val) => { root.set_atom_scale(val); }
         }
-
-        // 2. Right: Unified Workflow Action Bar (Visible when file loaded)
-        if (root.file_loaded): Structure3DWorkflowBar {
-            file_basename: root.file_basename;
-            total_atoms: root.total_atoms;
-            analysis_running: root.analysis_running;
-
-            run_analysis => { root.run_analysis(); }
-            open_panel(id) => { root.open_panel(id); }
-        }
-    }
-
-    // Trajectory Playback & Scrub Bar (visible when multi-frame trajectory is loaded)
-    if (root.file_loaded && root.total_frames > 1): TrajectoryPlaybackBar {
-        x: (root.width - self.width) / 2;
-        y: root.height - self.height - 12px;
-        width: Math.min(root.width - 48px, 680px);
-        current_frame <=> root.current_frame;
-        total_frames: root.total_frames;
-        seek_frame(idx) => { root.seek_frame(idx); }
-        step_frame(fwd) => { root.step_frame(fwd); }
-    }
-
-    // Subtle bottom navigation hint
-    if (root.file_loaded): Rectangle {
-        x: (root.width - self.width) / 2;
-        y: root.height - self.height - (root.total_frames > 1 ? 66px : 10px);
-        width: hint_text.preferred-width + 20px;
-        height: 24px;
-        border-radius: 12px;
-        background: MaterialPalette.surface_container_highest.with_alpha(60%);
-
-        hint_text := MaterialText {
-            text: "🖱 Left-drag: Orbit  •  Right-drag: Pan  •  Scroll: Zoom";
-            font-size: 12px;
-            color: MaterialPalette.on_surface_variant.with_alpha(80%);
-            horizontal-alignment: center;
-            vertical-alignment: center;
-        }
-    }
-
-    // Floating Distribution HUD Card (bottom-left, visible when analysis data exists & HUD active)
-    if (root.file_loaded && root.dist_has_data && root.dist_hud_visible): DistributionHUDCard {
-        x: 16px;
-        y: root.height - self.height - (root.total_frames > 1 ? 66px : 16px);
-        chart_image: root.dist_chart_image;
-        active_metric: root.dist_active_metric;
-        peak_text: root.dist_peak_text;
-        current_frame: root.current_frame;
-        set_metric(m) => {
-            root.dist_active_metric = m;
-            root.set_dist_metric(m);
-        }
-        close_hud => {
-            root.dist_hud_visible = false;
-            root.toggle_dist_hud(false);
-        }
-    }
-
-    // Floating Viewport Colorbar (bottom-right when halos enabled and panel closed)
-    if (root.phase_enabled && !root.phase_panel_open): ViewportColorbar {
-        x: root.width - self.width - 16px;
-        y: root.height - self.height - (root.total_frames > 1 ? 66px : 16px);
-        descriptor_name: root.phase_descriptor_name;
-        min_val: root.phase_min_threshold;
-        max_val: root.phase_max_threshold;
-        colorbar_image: root.phase_colorbar_image;
-    }
-
-    // Floating Halo Options Control Card (top-right, collapsible)
-    if (root.phase_panel_open): PhaseSearchCard {
-        x: root.width - self.width - 16px;
-        y: 52px;
-        height: self.preferred-height;
-        phase_enabled: root.phase_enabled;
-        preset_index: root.phase_preset;
-        descriptor_index: root.phase_descriptor;
-        colormap_index: root.phase_colormap;
-        min_threshold: root.phase_min_threshold;
-        max_threshold: root.phase_max_threshold;
-        domain_min: root.phase_domain_min;
-        domain_max: root.phase_domain_max;
-        halo_intensity: root.phase_halo_intensity;
-        halo_radius_ratio: root.phase_halo_radius_ratio;
-        atom_scale: root.atom_scale;
-        dim_non_matching: root.phase_dim_non_matching;
-        hide_non_matching: root.phase_hide_non_matching;
-        histogram_counts: root.phase_histogram_counts;
-        matching_atoms: root.phase_matching_atoms;
-        total_atoms: root.phase_total_atoms;
-        colorbar_image: root.phase_colorbar_image;
-        descriptor_name: root.phase_descriptor_name;
-
-        // 2D Heatmap Mode properties
-        is_2d_mode: root.phase_is_2d_mode;
-        descriptor_y_index: root.phase_descriptor_y;
-        min_threshold_y: root.phase_min_threshold_y;
-        max_threshold_y: root.phase_max_threshold_y;
-        domain_min_y: root.phase_domain_min_y;
-        domain_max_y: root.phase_domain_max_y;
-        descriptor_name_y: root.phase_descriptor_name_y;
-        heatmap_image: root.phase_heatmap_image;
-        crystal_markers: root.phase_crystal_markers;
-
-        toggle_enabled(en) => { root.toggle_phase_search(en); }
-        set_preset(idx) => { root.set_phase_preset(idx); }
-        set_descriptor(idx) => { root.set_phase_descriptor(idx); }
-        set_colormap(idx) => { root.set_phase_colormap(idx); }
-        set_thresholds(min, max) => { root.set_phase_thresholds(min, max); }
-        set_intensity(val) => { root.set_phase_intensity(val); }
-        set_radius_ratio(val) => { root.set_phase_radius_ratio(val); }
-        set_atom_scale(val) => { root.set_atom_scale(val); }
-        set_dim_non_matching(dim) => { root.set_phase_dim_non_matching(dim); }
-        set_hide_non_matching(hide) => { root.set_phase_hide_non_matching(hide); }
-        close => { root.phase_panel_open = false; }
-
-        set_2d_mode(is_2d) => { root.set_phase_2d_mode(is_2d); }
-        set_descriptor_y(idx) => { root.set_phase_descriptor_y(idx); }
-        set_thresholds_2d(min_x, max_x, min_y, max_y) => {
-            root.set_phase_thresholds_2d(min_x, max_x, min_y, max_y);
-        }
-        export_heatmap_png => { root.export_phase_heatmap_png(); }
     }
 }
