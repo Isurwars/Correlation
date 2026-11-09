@@ -25,6 +25,7 @@ export component Structure3DViewport inherits Rectangle {
     in property <bool> bonds_enabled: true;
     in property <bool> wireframe_enabled: true;
     in property <bool> in_cell_enabled: false;
+    in-out property <bool> is_playing: false;
 
     // Phase Search & Halos
     in-out property <bool> phase_panel_open: false;
@@ -242,6 +243,7 @@ export component Structure3DViewport inherits Rectangle {
                 width: Math.min(parent.width - 48px, 680px);
                 current_frame <=> root.current_frame;
                 total_frames: root.total_frames;
+                is_playing <=> root.is_playing;
                 seek_frame(idx) => { root.seek_frame(idx); }
                 step_frame(fwd) => { root.step_frame(fwd); }
             }
@@ -256,7 +258,7 @@ export component Structure3DViewport inherits Rectangle {
                 background: MaterialPalette.surface_container_highest.with_alpha(60%);
 
                 hint_text := MaterialText {
-                    text: "🖱 Left-drag: Orbit  •  Right-drag: Pan  •  Scroll: Zoom";
+                    text: "🖱 Left: Orbit  •  Right: Pan  •  Scroll: Zoom  •  Space: Play/Pause  •  ←/→: Step  •  H: Home";
                     font-size: 12px;
                     color: MaterialPalette.on_surface_variant.with_alpha(80%);
                     horizontal-alignment: center;

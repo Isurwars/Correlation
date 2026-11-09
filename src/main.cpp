@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
   std::set_terminate(handleTerminate);
 
 #ifndef _WIN32
-  std::signal(SIGPIPE, SIG_IGN);
+  [[maybe_unused]] const bool sig_res = (std::signal(SIGPIPE, SIG_IGN) != SIG_ERR);
 #endif
 
 #ifdef _WIN32

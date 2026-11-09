@@ -334,6 +334,7 @@ export component AppWindow inherits Window {
     callback set_curve_width(string);
 
     // 3D Viewport callbacks
+    in-out property <bool> structure_3d_is_playing: false;
     callback rotate_3d(float, float);
     callback pan_3d(float, float);
     callback zoom_3d(float);
@@ -516,6 +517,52 @@ export component AppWindow inherits Window {
                 if (root.plot_items.length > 0) {
                     root.select_plot(Math.max(root.selected_plot_index - 1, 0));
                 }
+                return accept;
+            }
+            if (event.modifiers.control && (event.text == "c" || event.text == "C")) {
+                if (root.preview_active_tab == 0 && root.selected_plot_index >= 0) {
+                    root.copy_plot_clipboard();
+                    return accept;
+                }
+            }
+            if (event.text == " ") {
+                if (root.preview_active_tab == 2 && root.structure_3d_total_frames > 1) {
+                    root.structure_3d_is_playing = !root.structure_3d_is_playing;
+                    return accept;
+                }
+            }
+            if (event.text == Key.LeftArrow) {
+                if (root.preview_active_tab == 2 && root.structure_3d_total_frames > 1) {
+                    root.step_frame_3d(false);
+                    return accept;
+                }
+            }
+            if (event.text == Key.RightArrow) {
+                if (root.preview_active_tab == 2 && root.structure_3d_total_frames > 1) {
+                    root.step_frame_3d(true);
+                    return accept;
+                }
+            }
+            if (event.text == "h" || event.text == "H") {
+                if (root.preview_active_tab == 0) {
+                    root.reset_zoom();
+                    return accept;
+                }
+                if (root.preview_active_tab == 2) {
+                    root.reset_view_3d();
+                    return accept;
+                }
+            }
+            if (event.text == "1" || ((event.modifiers.alt || event.modifiers.control) && event.text == "1")) {
+                root.preview_active_tab = 0;
+                return accept;
+            }
+            if (event.text == "2" || ((event.modifiers.alt || event.modifiers.control) && event.text == "2")) {
+                root.preview_active_tab = 1;
+                return accept;
+            }
+            if (event.text == "3" || ((event.modifiers.alt || event.modifiers.control) && event.text == "3")) {
+                root.preview_active_tab = 2;
                 return accept;
             }
             return reject;
@@ -825,6 +872,7 @@ export component AppWindow inherits Window {
                     structure_3d_bonds_enabled: root.structure_3d_bonds_enabled;
                     structure_3d_wireframe_enabled: root.structure_3d_wireframe_enabled;
                     structure_3d_in_cell: root.structure_3d_in_cell;
+                    structure_3d_is_playing <=> root.structure_3d_is_playing;
 
                     rotate_3d(dx, dy) => { root.rotate_3d(dx, dy); }
                     pan_3d(dx, dy) => { root.pan_3d(dx, dy); }

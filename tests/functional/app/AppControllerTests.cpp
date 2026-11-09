@@ -45,10 +45,10 @@ protected:
     // Ensure Slint uses the software backend during tests to avoid OpenGL
     // requirements in headless CI/Xvfb environments
 #ifndef _WIN32
-    setenv("SLINT_BACKEND", "software", 1);
-    std::signal(SIGPIPE, SIG_IGN);
+    [[maybe_unused]] const int setenv_res = setenv("SLINT_BACKEND", "software", 1);
+    [[maybe_unused]] const bool sig_res = (std::signal(SIGPIPE, SIG_IGN) != SIG_ERR);
 #else
-    _putenv_s("SLINT_BACKEND", "software");
+    [[maybe_unused]] const errno_t putenv_res = _putenv_s("SLINT_BACKEND", "software");
 #endif
   }
 
