@@ -836,9 +836,12 @@ TEST_F(AppControllerTests, ExpandAndCollapseAllCalculatorGroups) {
 TEST_F(AppControllerTests, PlotZoomLimitsSynchronizeToUIAndReset) {
   auto window = AppWindow::create();
 
-  std::filesystem::path sample_file = "examples/a-PdSi/a-PdSi.car";
+  std::filesystem::path sample_file = "../../examples/a-PdSi/a-PdSi.car";
   if (!std::filesystem::exists(sample_file)) {
     sample_file = "../examples/a-PdSi/a-PdSi.car";
+  }
+  if (!std::filesystem::exists(sample_file)) {
+    sample_file = "examples/a-PdSi/a-PdSi.car";
   }
   ASSERT_TRUE(std::filesystem::exists(sample_file));
   ASSERT_TRUE(loader().loadFile(sample_file).has_value());
@@ -847,7 +850,7 @@ TEST_F(AppControllerTests, PlotZoomLimitsSynchronizeToUIAndReset) {
   correlation::app::AppController controller(*window, loader(), dispatcher(), options());
   EXPECT_TRUE(dispatcher().runAnalysis(loader().trajectoryMut(), options()).has_value());
 
-  auto* plot_ctrl = controller.getPlotController();
+  auto *plot_ctrl = controller.getPlotController();
   ASSERT_NE(plot_ctrl, nullptr);
   plot_ctrl->populatePlotList();
   window->set_selected_plot_index(0);
