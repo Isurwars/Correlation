@@ -81,6 +81,11 @@ public:
   void handleSavePlot();
 
   /**
+   * @brief Copies SVG vector markup of the active plot to the system clipboard.
+   */
+  void handleCopyPlotToClipboard();
+
+  /**
    * @brief Pins the current analysis run for comparison overlay.
    */
   void handlePinRun();

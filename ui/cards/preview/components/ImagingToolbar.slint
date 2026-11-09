@@ -16,8 +16,12 @@ export component ImagingToolbar inherits Rectangle {
     callback clear_markers();
     callback toggle_settings();
     callback update_plot();
+    callback copy_clipboard();
+    callback export_plot();
 
     out property <string> tooltip_text:
+        copy_touch.has-hover ? "Copy Plot to Clipboard\n\n📋 Copy SVG vector image markup to system clipboard for instant pasting." :
+        export_touch.has-hover ? "Export Plot\n\n💾 Quick export current plot visualization directly to SVG or PDF file." :
         update_touch.has-hover ? "Update Plot\n\n🔄 Apply current axis bounds, ticks, log scaling, and refresh visualization." :
         settings_touch.has-hover ? "Plot Settings & Styling\n\n⚙️ Configure axis bounds (X/Y limits), tick intervals, log scale, and curve styling." :
         home_touch.has-hover ? "Home (Reset Zoom)\n\n🔄 Restore full coordinate axes limits." :
@@ -29,6 +33,8 @@ export component ImagingToolbar inherits Rectangle {
         (root.markers_count > 0 && clear_markers_touch.has-hover) ? "Clear Markers\n\n🗑️ Remove all inspection guides from the plot." : "";
 
     out property <length> tooltip_x:
+        copy_touch.has-hover ? copy_touch.absolute-position.x + copy_touch.mouse-x :
+        export_touch.has-hover ? export_touch.absolute-position.x + export_touch.mouse-x :
         update_touch.has-hover ? update_touch.absolute-position.x + update_touch.mouse-x :
         settings_touch.has-hover ? settings_touch.absolute-position.x + settings_touch.mouse-x :
         home_touch.has-hover ? home_touch.absolute-position.x + home_touch.mouse-x :
@@ -40,6 +46,8 @@ export component ImagingToolbar inherits Rectangle {
         (root.markers_count > 0 && clear_markers_touch.has-hover) ? clear_markers_touch.absolute-position.x + clear_markers_touch.mouse-x : 0px;
 
     out property <length> tooltip_y:
+        copy_touch.has-hover ? copy_touch.absolute-position.y + copy_touch.mouse-y :
+        export_touch.has-hover ? export_touch.absolute-position.y + export_touch.mouse-y :
         update_touch.has-hover ? update_touch.absolute-position.y + update_touch.mouse-y :
         settings_touch.has-hover ? settings_touch.absolute-position.y + settings_touch.mouse-y :
         home_touch.has-hover ? home_touch.absolute-position.y + home_touch.mouse-y :
@@ -382,6 +390,68 @@ export component ImagingToolbar inherits Rectangle {
                     width: 16px;
                     height: 16px;
                     source: Icons.restart_alt;
+                    colorize: MaterialPalette.on_surface;
+                }
+            }
+        }
+
+        // Divider
+        VerticalLayout {
+            alignment: center;
+            Rectangle {
+                width: 1px;
+                height: 16px;
+                background: MaterialPalette.outline_variant.with_alpha(50%);
+            }
+        }
+
+        // Copy Plot SVG to Clipboard
+        copy_touch := TouchArea {
+            width: 30px;
+            height: 30px;
+            y: (parent.height - self.height) / 2;
+            mouse-cursor: pointer;
+            clicked => {
+                root.copy_clipboard();
+            }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 15px;
+                background: copy_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                MaterialText {
+                    text: "📋";
+                    font-size: 14px;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        // Export Plot File (SVG / PDF)
+        export_touch := TouchArea {
+            width: 30px;
+            height: 30px;
+            y: (parent.height - self.height) / 2;
+            mouse-cursor: pointer;
+            clicked => {
+                root.export_plot();
+            }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: 15px;
+                background: export_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                Image {
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
+                    width: 16px;
+                    height: 16px;
+                    source: Icons.save;
                     colorize: MaterialPalette.on_surface;
                 }
             }

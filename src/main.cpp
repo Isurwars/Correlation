@@ -6,6 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+#include <csignal>
 #include <cstdlib>
 #include <exception>
 #include <iostream>
@@ -132,6 +133,10 @@ slint::ComponentHandle<AppWindow> createAppWindow() {
  */
 int main(int argc, char *argv[]) {
   std::set_terminate(handleTerminate);
+
+#ifndef _WIN32
+  std::signal(SIGPIPE, SIG_IGN);
+#endif
 
 #ifdef _WIN32
   setupWindowsDebugEnvironment();

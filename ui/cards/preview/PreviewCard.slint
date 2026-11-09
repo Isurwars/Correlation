@@ -91,6 +91,8 @@ export component PreviewCard inherits FilledCard {
     callback browse_file();
     callback run_analysis();
     callback open_panel(int);
+    callback copy_plot_clipboard();
+    callback export_plot();
 
     // Plot Viewport Settings properties & callbacks
     in-out property <bool> plot_settings_open: false;
@@ -483,6 +485,8 @@ export component PreviewCard inherits FilledCard {
                             }
                         }
                         update_plot => { root.apply_axis_settings(); }
+                        copy_clipboard => { root.copy_plot_clipboard(); }
+                        export_plot => { root.export_plot(); }
                     }
                 }
 

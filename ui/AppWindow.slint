@@ -302,6 +302,13 @@ export component AppWindow inherits Window {
     callback set_calculator_group_expanded(string, bool);
     callback set_all_calculator_groups_expanded(bool);
     callback save_plot();
+    callback copy_plot_clipboard();
+    in-out property <string> clipboard_payload: "";
+    callback copy_clipboard_to_system();
+    copy_clipboard_to_system => {
+        clipboard_transfer.select-all();
+        clipboard_transfer.copy();
+    }
     callback pin_run();
     callback clear_pinned_runs();
     callback import_comparison_file();
@@ -755,6 +762,12 @@ export component AppWindow inherits Window {
                     write_files => {
                         root.write_files();
                     }
+                    export_plot => {
+                        root.save_plot();
+                    }
+                    copy_plot_clipboard => {
+                        root.copy_plot_clipboard();
+                    }
                     pin_run => {
                         root.pin_run();
                     }
@@ -896,6 +909,14 @@ export component AppWindow inherits Window {
                 }
             }
         }
+    }
+
+    clipboard_transfer := TextInput {
+        x: -2000px;
+        y: -2000px;
+        width: 0px;
+        height: 0px;
+        text <=> root.clipboard_payload;
     }
 
     ToolTip {

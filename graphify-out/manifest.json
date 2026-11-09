@@ -390,8 +390,8 @@
     "semantic_hash": ""
   },
   "src/main.cpp": {
-    "mtime": 1791928419.3704476,
-    "ast_hash": "94809cc243c66d48cb805adab7c42790",
+    "mtime": 1794255319.7210112,
+    "ast_hash": "8aeba57d2cd6ff9b762ae04ce09fd287",
     "semantic_hash": ""
   },
   "src/plotters/PathFont.cpp": {
@@ -530,8 +530,8 @@
     "semantic_hash": ""
   },
   "tests/functional/app/AppControllerTests.cpp": {
-    "mtime": 1794235825.7958589,
-    "ast_hash": "0f9822b3df6995f448e7aab9dcea900e",
+    "mtime": 1794255303.7582762,
+    "ast_hash": "7851b8229d6f484178ff9b211fc353b2",
     "semantic_hash": ""
   },
   "tests/functional/app/SlintSvgIntegrationTests.cpp": {
@@ -2015,8 +2015,8 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/PlotController.hpp": {
-    "mtime": 1794085970.757825,
-    "ast_hash": "502b1233ff9974417eb8123628a60342",
+    "mtime": 1794253675.4488204,
+    "ast_hash": "6297cdf2db9a8d547a2d839e30b67193",
     "semantic_hash": ""
   },
   "include/app/viewmodel/PresetController.hpp": {
@@ -2025,8 +2025,8 @@
     "semantic_hash": ""
   },
   "src/app/core/AppController.cpp": {
-    "mtime": 1794079782.7411127,
-    "ast_hash": "8b1755667486996040e9f1abcc93aa98",
+    "mtime": 1794254248.5210333,
+    "ast_hash": "fc2effaf9d120dc8eb5511f329f526ff",
     "semantic_hash": ""
   },
   "src/app/core/SettingsManager.cpp": {
@@ -2105,8 +2105,8 @@
     "semantic_hash": ""
   },
   "src/app/viewmodel/PlotController.cpp": {
-    "mtime": 1794085996.665341,
-    "ast_hash": "b8bfb23a3dc005e45f6b98cac06f4776",
+    "mtime": 1794254202.6182177,
+    "ast_hash": "3b47df84f24f5fa88134e5a5f92aae59",
     "semantic_hash": ""
   },
   "src/app/viewmodel/PresetController.cpp": {

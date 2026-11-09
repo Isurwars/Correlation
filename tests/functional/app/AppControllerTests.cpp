@@ -9,6 +9,7 @@
 #include "app/services/AnalysisDispatcher.hpp"
 #include "app/services/TrajectoryLoader.hpp"
 #include "app/viewmodel/PlotController.hpp"
+#include <csignal>
 #include <filesystem>
 #include <optional>
 #include <stdexcept>
@@ -45,6 +46,7 @@ protected:
     // requirements in headless CI/Xvfb environments
 #ifndef _WIN32
     setenv("SLINT_BACKEND", "software", 1);
+    std::signal(SIGPIPE, SIG_IGN);
 #else
     _putenv_s("SLINT_BACKEND", "software");
 #endif
@@ -878,4 +880,36 @@ TEST_F(AppControllerTests, PlotZoomLimitsSynchronizeToUIAndReset) {
   EXPECT_TRUE(reset_settings.auto_y);
   EXPECT_TRUE(reset_settings.x_min.empty());
   EXPECT_TRUE(reset_settings.x_max.empty());
+}
+
+TEST_F(AppControllerTests, PlotCopyToClipboardSetsPayloadAndStatus) {
+  auto window = AppWindow::create();
+
+  std::string sample_file = "../../examples/a-PdSi/a-PdSi.car";
+  if (!std::filesystem::exists(sample_file)) {
+    sample_file = "../examples/a-PdSi/a-PdSi.car";
+  }
+  if (!std::filesystem::exists(sample_file)) {
+    sample_file = "examples/a-PdSi/a-PdSi.car";
+  }
+  ASSERT_TRUE(std::filesystem::exists(sample_file));
+  ASSERT_TRUE(loader().loadFile(sample_file).has_value());
+
+  options().active_calculators["g(r), J(r), G(r)"] = true;
+  correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+  EXPECT_TRUE(dispatcher().runAnalysis(loader().trajectoryMut(), options()).has_value());
+
+  auto *plot_ctrl = controller.getPlotController();
+  ASSERT_NE(plot_ctrl, nullptr);
+  plot_ctrl->populatePlotList();
+  window->set_selected_plot_index(0);
+  plot_ctrl->requestPlotUpdate(0, true);
+
+  plot_ctrl->handleCopyPlotToClipboard();
+
+  const std::string payload = std::string(window->get_clipboard_payload());
+  EXPECT_FALSE(payload.empty());
+  EXPECT_NE(payload.find("<svg"), std::string::npos);
+  EXPECT_NE(std::string(window->get_analysis_status_text()).find("copied to clipboard"),
+            std::string::npos);
 }

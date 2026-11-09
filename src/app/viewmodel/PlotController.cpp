@@ -8,8 +8,10 @@
 
 #include "app/viewmodel/PlotController.hpp"
 #include "AppWindow.h"
+#include "app/formatters/PlotExportService.hpp"
 #include "app/formatters/PlotTableFormatter.hpp"
 #include "app/viewmodel/Structure3DController.hpp"
+#include "plotters/SvgPlotter.hpp"
 
 #include <algorithm>
 #include <format>
@@ -485,6 +487,47 @@ void PlotController::handleSavePlot() {
                                   });
 }
 
+void PlotController::handleCopyPlotToClipboard() {
+  const int index = window_.get_selected_plot_index();
+  if (index < 0 || std::cmp_greater_equal(index, available_plot_keys_.size())) {
+    return;
+  }
+  const std::string name = available_plot_keys_[index];
+  const correlation::analysis::Histogram *hist = dispatcher_.getHistogram(name);
+  if (hist == nullptr) {
+    return;
+  }
+
+  const auto config = buildPlotConfigFromUI();
+  const auto pinned_runs = series_manager_.getPinnedRuns();
+
+  std::string svg_markup;
+  if (pinned_runs.empty()) {
+    svg_markup = correlation::plotters::renderHistogramAsSvg(
+        *hist, config, correlation::plotters::HoverInfo(), dispatcher_.getAshcroftWeights(),
+        series_manager_.getCurveVisibilityMap(), series_manager_.getCustomColors());
+  } else {
+    std::vector<correlation::plotters::LabeledHistogram> datasets;
+    datasets.reserve(pinned_runs.size() + 1);
+    datasets.push_back({.label = "Current", .hist = hist});
+    for (const auto &pinned_run : pinned_runs) {
+      const auto hist_it = pinned_run.histograms.find(name);
+      if (hist_it != pinned_run.histograms.end()) {
+        datasets.push_back({.label = pinned_run.label, .hist = &hist_it->second});
+      }
+    }
+    const std::string key = PlotExportService::getComparisonKey(hist);
+    svg_markup = correlation::plotters::renderComparisonSvg(datasets, key, config,
+                                                            correlation::plotters::HoverInfo{});
+  }
+
+  if (!svg_markup.empty()) {
+    window_.set_clipboard_payload(slint::SharedString(svg_markup));
+    window_.invoke_copy_clipboard_to_system();
+    window_.set_analysis_status_text("Plot SVG vector markup copied to clipboard.");
+  }
+}
+
 void PlotController::handlePinRun() {
   const auto &hists = dispatcher_.getHistograms();
   if (hists.empty()) {
@@ -820,16 +863,16 @@ void parseYAxisSettings(const ::PlotAxisSettings &ui_settings,
 
 void parseTickAndGridSettings(const ::PlotAxisSettings &ui_settings,
                               correlation::plotters::MetricPlotSettings &settings) {
-  const std::string_view x_step_sv(ui_settings.x_major_step.data(),
-                                   ui_settings.x_major_step.data() != nullptr
-                                       ? std::char_traits<char>::length(
-                                             ui_settings.x_major_step.data())
-                                       : 0);
-  const std::string_view y_step_sv(ui_settings.y_major_step.data(),
-                                   ui_settings.y_major_step.data() != nullptr
-                                       ? std::char_traits<char>::length(
-                                             ui_settings.y_major_step.data())
-                                       : 0);
+  const std::string_view x_step_sv(
+      ui_settings.x_major_step.data(),
+      ui_settings.x_major_step.data() != nullptr
+          ? std::char_traits<char>::length(ui_settings.x_major_step.data())
+          : 0);
+  const std::string_view y_step_sv(
+      ui_settings.y_major_step.data(),
+      ui_settings.y_major_step.data() != nullptr
+          ? std::char_traits<char>::length(ui_settings.y_major_step.data())
+          : 0);
   const bool has_manual_steps = !x_step_sv.empty() || !y_step_sv.empty();
   settings.auto_ticks = has_manual_steps ? false : ui_settings.auto_ticks;
 

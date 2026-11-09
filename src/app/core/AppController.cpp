@@ -166,6 +166,7 @@ void AppController::registerPlotCallbacks() {
       });
 
   window_.on_save_plot([this] { plot_controller_->handleSavePlot(); });
+  window_.on_copy_plot_clipboard([this] { plot_controller_->handleCopyPlotToClipboard(); });
   window_.on_pin_run([this] { plot_controller_->handlePinRun(); });
   window_.on_clear_pinned_runs([this] { plot_controller_->handleClearPinnedRuns(); });
   window_.on_toggle_difference_plot(
@@ -195,8 +196,9 @@ void AppController::registerPlotCallbacks() {
 
   window_.on_apply_axis_settings([this] { plot_controller_->handleApplyAxisSettings(); });
   window_.on_reset_axis_settings([this] { plot_controller_->handleResetAxisSettings(); });
-  window_.on_set_curve_width(
-      [this](const slint::SharedString &w) { plot_controller_->handleSetCurveWidth(w); });
+  window_.on_set_curve_width([this](const slint::SharedString &shared_str) {
+    plot_controller_->handleSetCurveWidth(shared_str);
+  });
 
   window_.on_select_calibration_pair([this](int idx) {
     window_.set_active_calibration_pair_index(idx);
