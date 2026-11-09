@@ -530,8 +530,8 @@
     "semantic_hash": ""
   },
   "tests/functional/app/AppControllerTests.cpp": {
-    "mtime": 1794232530.2541783,
-    "ast_hash": "e0361e931d571cac30dd1002d81db388",
+    "mtime": 1794235373.3843117,
+    "ast_hash": "0f9822b3df6995f448e7aab9dcea900e",
     "semantic_hash": ""
   },
   "tests/functional/app/SlintSvgIntegrationTests.cpp": {
@@ -2595,7 +2595,7 @@
     "semantic_hash": ""
   },
   ".github/actions/setup-dependencies/action.yml": {
-    "mtime": 1794232648.0857756,
+    "mtime": 1794232748.5704253,
     "ast_hash": "868eafdba1d660fd4b38b55bca08e7b1",
     "semantic_hash": ""
   },

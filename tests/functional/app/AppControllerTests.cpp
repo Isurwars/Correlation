@@ -836,7 +836,7 @@ TEST_F(AppControllerTests, ExpandAndCollapseAllCalculatorGroups) {
 TEST_F(AppControllerTests, PlotZoomLimitsSynchronizeToUIAndReset) {
   auto window = AppWindow::create();
 
-  std::filesystem::path sample_file = "../../examples/a-PdSi/a-PdSi.car";
+  std::string sample_file = "../../examples/a-PdSi/a-PdSi.car";
   if (!std::filesystem::exists(sample_file)) {
     sample_file = "../examples/a-PdSi/a-PdSi.car";
   }
