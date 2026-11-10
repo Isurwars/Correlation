@@ -9,6 +9,7 @@
 #include "app/services/AnalysisDispatcher.hpp"
 #include "app/services/TrajectoryLoader.hpp"
 #include "app/viewmodel/PlotController.hpp"
+#include "app/viewmodel/Structure3DController.hpp"
 #include <csignal>
 #include <filesystem>
 #include <optional>
@@ -1059,4 +1060,41 @@ TEST_F(AppControllerTests, ConsolidatedPlotSettingsSynchronizationIntegration) {
   EXPECT_EQ(reset_cfg.size_preset, 0);
   EXPECT_EQ(reset_cfg.palette, 0);
   EXPECT_FALSE(reset_cfg.show_markers);
+}
+
+TEST_F(AppControllerTests, DualViewAndTabOrderLifecycleIntegration) {
+  auto window = AppWindow::create();
+  correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+
+  auto *structure_ctrl = controller.getStructure3DController();
+  ASSERT_NE(structure_ctrl, nullptr);
+
+  // Tab 0: 2D Plot (is3DModeActive == false)
+  window->set_preview_active_tab(0);
+  window->invoke_preview_tab_changed(0);
+  EXPECT_EQ(window->get_preview_active_tab(), 0);
+  EXPECT_FALSE(structure_ctrl->is3DModeActive());
+
+  // Tab 1: 3D View (is3DModeActive == true)
+  window->set_preview_active_tab(1);
+  window->invoke_preview_tab_changed(1);
+  EXPECT_EQ(window->get_preview_active_tab(), 1);
+  EXPECT_TRUE(structure_ctrl->is3DModeActive());
+
+  // Tab 2: Dual View (is3DModeActive == true)
+  window->set_preview_active_tab(2);
+  window->invoke_preview_tab_changed(2);
+  EXPECT_EQ(window->get_preview_active_tab(), 2);
+  EXPECT_TRUE(structure_ctrl->is3DModeActive());
+  EXPECT_FLOAT_EQ(window->get_preview_dual_split_ratio(), 0.5F);
+
+  // Modify dual split ratio (e.g. user drags SplitterHandle)
+  window->set_preview_dual_split_ratio(0.65F);
+  EXPECT_FLOAT_EQ(window->get_preview_dual_split_ratio(), 0.65F);
+
+  // Tab 3: Data Explorer (is3DModeActive == false)
+  window->set_preview_active_tab(3);
+  window->invoke_preview_tab_changed(3);
+  EXPECT_EQ(window->get_preview_active_tab(), 3);
+  EXPECT_FALSE(structure_ctrl->is3DModeActive());
 }

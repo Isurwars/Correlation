@@ -290,8 +290,11 @@ void AppController::registerStructure3DCallbacks() {
   });
 
   window_.on_preview_tab_changed([this](int tab) {
-    const bool is_3d = (tab == 2);
+    const bool is_3d = (tab == 1 || tab == 2);
     structure_3d_controller_->set3DModeActive(is_3d);
+    if ((tab == 0 || tab == 2) && plot_controller_ != nullptr) {
+      plot_controller_->requestPlotUpdate(0, false);
+    }
   });
 
   window_.on_toggle_phase_search_3d(

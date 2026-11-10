@@ -113,6 +113,7 @@ export component AppWindow inherits Window {
     in property <string> box_density: "";
     in property <string> box_dimensions: "";
     in-out property <int> preview_active_tab: 0;
+    in-out property <float> preview_dual_split_ratio: 0.5;
     callback reload_file();
 
     /// Analysis execution state
@@ -532,25 +533,25 @@ export component AppWindow inherits Window {
                 return accept;
             }
             if (event.modifiers.control && (event.text == "c" || event.text == "C")) {
-                if (root.preview_active_tab == 0 && root.selected_plot_index >= 0) {
+                if ((root.preview_active_tab == 0 || root.preview_active_tab == 2) && root.selected_plot_index >= 0) {
                     root.copy_plot_clipboard();
                     return accept;
                 }
             }
             if (event.text == " ") {
-                if (root.preview_active_tab == 2 && root.structure_3d_total_frames > 1) {
+                if ((root.preview_active_tab == 1 || root.preview_active_tab == 2) && root.structure_3d_total_frames > 1) {
                     root.structure_3d_is_playing = !root.structure_3d_is_playing;
                     return accept;
                 }
             }
             if (event.text == Key.LeftArrow) {
-                if (root.preview_active_tab == 2 && root.structure_3d_total_frames > 1) {
+                if ((root.preview_active_tab == 1 || root.preview_active_tab == 2) && root.structure_3d_total_frames > 1) {
                     root.step_frame_3d(false);
                     return accept;
                 }
             }
             if (event.text == Key.RightArrow) {
-                if (root.preview_active_tab == 2 && root.structure_3d_total_frames > 1) {
+                if ((root.preview_active_tab == 1 || root.preview_active_tab == 2) && root.structure_3d_total_frames > 1) {
                     root.step_frame_3d(true);
                     return accept;
                 }
@@ -560,7 +561,12 @@ export component AppWindow inherits Window {
                     root.reset_zoom();
                     return accept;
                 }
+                if (root.preview_active_tab == 1) {
+                    root.reset_view_3d();
+                    return accept;
+                }
                 if (root.preview_active_tab == 2) {
+                    root.reset_zoom();
                     root.reset_view_3d();
                     return accept;
                 }
@@ -575,6 +581,10 @@ export component AppWindow inherits Window {
             }
             if (event.text == "3" || ((event.modifiers.alt || event.modifiers.control) && event.text == "3")) {
                 root.preview_active_tab = 2;
+                return accept;
+            }
+            if (event.text == "4" || ((event.modifiers.alt || event.modifiers.control) && event.text == "4")) {
+                root.preview_active_tab = 3;
                 return accept;
             }
             return reject;
@@ -917,6 +927,7 @@ export component AppWindow inherits Window {
                     step_frame_3d(fwd) => { root.step_frame_3d(fwd); }
                     viewport_3d_resized(w, h) => { root.viewport_3d_resized(w, h); }
                     tab_changed(tab) => { root.preview_tab_changed(tab); }
+                    dual_split_ratio <=> root.preview_dual_split_ratio;
                     structure_3d_phase_panel_open <=> root.structure_3d_phase_panel_open;
                     structure_3d_phase_enabled: root.structure_3d_phase_enabled;
                     structure_3d_phase_preset: root.structure_3d_phase_preset;

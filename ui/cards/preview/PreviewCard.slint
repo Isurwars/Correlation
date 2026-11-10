@@ -7,6 +7,7 @@ import {
     Vertical,
     FilledButton,
     Horizontal,
+    SplitterHandle,
 } from "../../material/material.slint";
 import { TableRow, CurveToggleItem, CalibrationPair, PlotAxisSettings, TaggedPeakRecord, ExportConfig } from "../../Types.slint";
 import { WorkflowStepper } from "./components/WorkflowStepper.slint";
@@ -57,11 +58,12 @@ export component PreviewCard inherits FilledCard {
     in property <[TableRow]> table_rows: [];
 
     in-out property <int> active_tab: 0;
+    in-out property <float> dual_split_ratio: 0.5;
     property <int> active_color_picker_id: -1;
 
     changed file_loaded => {
         if (root.file_loaded && !root.analysis_done) {
-            root.active_tab = 2;
+            root.active_tab = 1;
         }
     }
 
@@ -286,11 +288,17 @@ export component PreviewCard inherits FilledCard {
             horizontal-stretch: 1;
             clip: true;
 
-            // Tab 0: 2D Plot View
+            property <length> dual_plot_width: (parent.width > 340px)
+                ? Math.max(160px, Math.min(parent.width - 160px, parent.width * root.dual_split_ratio - 3px))
+                : parent.width * 0.5;
+
+            // Tab 0 (2D Plot) & Tab 2 (Dual View Left Pane)
             tab_plot := HorizontalLayout {
-                width: 100%;
+                x: 0px;
+                y: 0px;
+                width: root.active_tab == 2 ? parent.dual_plot_width : parent.width;
                 height: 100%;
-                visible: root.active_tab == 0;
+                visible: root.active_tab == 0 || root.active_tab == 2;
                 spacing: MaterialStyleMetrics.spacing_8;
 
                 // SVG Plot Area
@@ -542,20 +550,31 @@ export component PreviewCard inherits FilledCard {
                 }
             }
 
-            // Tab 1: Dataset Values Table View
-            tab_table := PlotDataTable {
-                width: 100%;
-                height: 100%;
-                visible: root.active_tab == 1;
-                table_headers: root.table_headers;
-                table_rows: root.table_rows;
-            }
-
-            // Tab 2: 3D Molecular Structure Viewport
-            tab_structure := Structure3DViewport {
-                width: 100%;
+            // Splitter Handle between 2D Plot and 3D Viewport in Dual View (Tab 2)
+            tab_splitter := SplitterHandle {
+                x: tab_plot.width;
+                y: 0px;
+                width: 6px;
                 height: 100%;
                 visible: root.active_tab == 2;
+                moved(delta) => {
+                    if (parent.width > 0px) {
+                        let proposed = (tab_plot.width + delta) / parent.width;
+                        root.dual_split_ratio = Math.max(0.15, Math.min(0.85, proposed));
+                    }
+                }
+                reset => {
+                    root.dual_split_ratio = 0.5;
+                }
+            }
+
+            // Tab 1 (3D View) & Tab 2 (Dual View Right Pane)
+            tab_structure := Structure3DViewport {
+                x: root.active_tab == 2 ? tab_plot.width + 6px : 0px;
+                y: 0px;
+                width: root.active_tab == 2 ? Math.max(0px, parent.width - tab_plot.width - 6px) : parent.width;
+                height: 100%;
+                visible: root.active_tab == 1 || root.active_tab == 2;
                 structure_3d_image: root.structure_3d_image;
                 current_frame <=> root.structure_3d_current_frame;
                 total_frames: root.structure_3d_total_frames;
@@ -635,6 +654,17 @@ export component PreviewCard inherits FilledCard {
                 set_phase_descriptor_y(idx) => { root.set_phase_descriptor_y_3d(idx); }
                 set_phase_thresholds_2d(min_x, max_x, min_y, max_y) => { root.set_phase_thresholds_2d_3d(min_x, max_x, min_y, max_y); }
                 export_phase_heatmap_png() => { root.export_phase_heatmap_png_3d(); }
+            }
+
+            // Tab 3: Dataset Values Table View (Data Explorer)
+            tab_table := PlotDataTable {
+                x: 0px;
+                y: 0px;
+                width: 100%;
+                height: 100%;
+                visible: root.active_tab == 3;
+                table_headers: root.table_headers;
+                table_rows: root.table_rows;
             }
         }
 

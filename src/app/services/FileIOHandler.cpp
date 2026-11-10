@@ -416,7 +416,7 @@ void FileIOHandler::onTrajectoryLoadSuccess(const std::string &filepath) {
   }
 
   updateStructure3DView();
-  window_.set_preview_active_tab(2);
+  window_.set_preview_active_tab(1);
 
   if (controller_.getPlotController() != nullptr) {
     controller_.getPlotController()->populatePlotList();

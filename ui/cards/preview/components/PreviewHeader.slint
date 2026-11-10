@@ -13,20 +13,24 @@ export component PreviewHeader inherits Horizontal {
     callback plot_selected(int);
 
     out property <string> tooltip_text:
-        tab_data_area.has-hover ? "Data Table View\n\n📄 Tabular numerical coordinates and distribution intensities." :
-        tab_3d_area.has-hover ? "3D Structure View\n\n🌐 Interactive atomic visualizer with orbit camera, bonds, and unit cell wireframe." : "";
+        tab_plot_area.has-hover ? "2D Plot View\n\n📈 Interactive curve visualizer with zoom, pan, peak tagging, and calibration." :
+        tab_3d_area.has-hover ? "3D Structure View\n\n🌐 Interactive atomic visualizer with orbit camera, bonds, and unit cell wireframe." :
+        tab_dual_area.has-hover ? "Dual Split-Screen View\n\n◫ Side-by-side synchronized 2D plot and 3D molecular viewport." :
+        tab_data_area.has-hover ? "Data Explorer View\n\n📄 Tabular numerical coordinates and distribution intensities." : "";
 
     out property <length> tooltip_x:
         plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.x + plot_dropdown_area.mouse-x :
         tab_plot_area.has-hover ? tab_plot_area.absolute-position.x + tab_plot_area.mouse-x :
-        tab_data_area.has-hover ? tab_data_area.absolute-position.x + tab_data_area.mouse-x :
-        tab_3d_area.has-hover ? tab_3d_area.absolute-position.x + tab_3d_area.mouse-x : 0px;
+        tab_3d_area.has-hover ? tab_3d_area.absolute-position.x + tab_3d_area.mouse-x :
+        tab_dual_area.has-hover ? tab_dual_area.absolute-position.x + tab_dual_area.mouse-x :
+        tab_data_area.has-hover ? tab_data_area.absolute-position.x + tab_data_area.mouse-x : 0px;
 
     out property <length> tooltip_y:
         plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.y + plot_dropdown_area.mouse-y :
         tab_plot_area.has-hover ? tab_plot_area.absolute-position.y + tab_plot_area.mouse-y :
-        tab_data_area.has-hover ? tab_data_area.absolute-position.y + tab_data_area.mouse-y :
-        tab_3d_area.has-hover ? tab_3d_area.absolute-position.y + tab_3d_area.mouse-y : 0px;
+        tab_3d_area.has-hover ? tab_3d_area.absolute-position.y + tab_3d_area.mouse-y :
+        tab_dual_area.has-hover ? tab_dual_area.absolute-position.y + tab_dual_area.mouse-y :
+        tab_data_area.has-hover ? tab_data_area.absolute-position.y + tab_data_area.mouse-y : 0px;
 
     spacing: MaterialStyleMetrics.spacing_8;
     height: MaterialStyleMetrics.size_40;
@@ -53,19 +57,9 @@ export component PreviewHeader inherits Horizontal {
             width: tab_plot.preferred-width;
             height: 100%;
             tab_plot := TabItem {
-                text: "Plot";
+                text: "2D Plot";
                 active: root.active_tab == 0;
                 clicked => { root.active_tab = 0; }
-            }
-        }
-
-        tab_data_area := TouchArea {
-            width: tab_data.preferred-width;
-            height: 100%;
-            tab_data := TabItem {
-                text: "Data";
-                active: root.active_tab == 1;
-                clicked => { root.active_tab = 1; }
             }
         }
 
@@ -73,9 +67,29 @@ export component PreviewHeader inherits Horizontal {
             width: tab_3d.preferred-width;
             height: 100%;
             tab_3d := TabItem {
-                text: "3D";
+                text: "3D View";
+                active: root.active_tab == 1;
+                clicked => { root.active_tab = 1; }
+            }
+        }
+
+        tab_dual_area := TouchArea {
+            width: tab_dual.preferred-width;
+            height: 100%;
+            tab_dual := TabItem {
+                text: "Dual View";
                 active: root.active_tab == 2;
                 clicked => { root.active_tab = 2; }
+            }
+        }
+
+        tab_data_area := TouchArea {
+            width: tab_data.preferred-width;
+            height: 100%;
+            tab_data := TabItem {
+                text: "Data Explorer";
+                active: root.active_tab == 3;
+                clicked => { root.active_tab = 3; }
             }
         }
     }

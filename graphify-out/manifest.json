@@ -530,8 +530,8 @@
     "semantic_hash": ""
   },
   "tests/functional/app/AppControllerTests.cpp": {
-    "mtime": 1794282449.3370738,
-    "ast_hash": "8dc855c121386dc32267bc98b99403e1",
+    "mtime": 1794284858.1064785,
+    "ast_hash": "0e32cb436c61203688c4761a933e1dde",
     "semantic_hash": ""
   },
   "tests/functional/app/SlintSvgIntegrationTests.cpp": {
@@ -2015,8 +2015,8 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/PlotController.hpp": {
-    "mtime": 1794282460.4277961,
-    "ast_hash": "97a612e07104715c78ba3b8fe6525c0b",
+    "mtime": 1794282799.5673966,
+    "ast_hash": "edbca1456e8cb74f9bb14c470184abc8",
     "semantic_hash": ""
   },
   "include/app/viewmodel/PresetController.hpp": {
@@ -2025,8 +2025,8 @@
     "semantic_hash": ""
   },
   "src/app/core/AppController.cpp": {
-    "mtime": 1794281587.9351597,
-    "ast_hash": "57977f4f4c120a9b2a2966b0c2444feb",
+    "mtime": 1794283357.297423,
+    "ast_hash": "6472d759b0d12268863bee727b17dec9",
     "semantic_hash": ""
   },
   "src/app/core/SettingsManager.cpp": {
@@ -2060,8 +2060,8 @@
     "semantic_hash": ""
   },
   "src/app/services/FileIOHandler.cpp": {
-    "mtime": 1793423886.209354,
-    "ast_hash": "7844cb701fad900e19d9901f77313150",
+    "mtime": 1794283349.3535736,
+    "ast_hash": "fe8b1fc9c359167757f6811773737aec",
     "semantic_hash": ""
   },
   "src/app/services/InputValidator.cpp": {
