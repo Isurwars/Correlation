@@ -75,7 +75,10 @@ export component CurveSidebar inherits Horizontal {
     in-out property <int> active_tab: 0; // 0: Curves, 1: Axes & Grid, 2: Peaks
     in-out property <int> active_color_picker_id: -1;
     in property <[TaggedPeakRecord]> tagged_peaks: [];
+    in-out property <string> curve_filter: "";
 
+    callback filter_curves(string);
+    callback invert_curves();
     callback toggle_curve_visibility(int, bool);
     callback toggle_all_curves(bool);
     callback set_curve_color(int, string);
@@ -255,14 +258,92 @@ export component CurveSidebar inherits Horizontal {
                 spacing: 6px;
                 vertical-stretch: 1;
 
-                // All / None Batch Visibility Row
+                // 1. Search Filter Box
+                HorizontalLayout {
+                    height: 28px;
+
+                    search_container := Rectangle {
+                        horizontal-stretch: 1;
+                        height: 28px;
+                        border-radius: MaterialStyleMetrics.border_radius_4;
+                        background: MaterialPalette.surface_container_highest;
+                        border-width: 1px;
+                        border-color: search_input.has-focus ? MaterialPalette.primary : MaterialPalette.outline_variant;
+
+                        HorizontalLayout {
+                            padding-left: 8px;
+                            padding-right: 6px;
+                            spacing: 6px;
+                            alignment: center;
+
+                            MaterialText {
+                                text: "🔍";
+                                font-size: 11px;
+                                color: MaterialPalette.on_surface_variant;
+                                vertical-alignment: center;
+                            }
+
+                            Rectangle {
+                                horizontal-stretch: 1;
+
+                                if root.curve_filter == "" && !search_input.has-focus: MaterialText {
+                                    width: 100%;
+                                    height: 100%;
+                                    text: "Filter curves (e.g. Fe, O-H)...";
+                                    style: MaterialTypography.body_small;
+                                    color: MaterialPalette.on_surface_variant.with_alpha(60%);
+                                    vertical-alignment: center;
+                                }
+
+                                search_input := TextInput {
+                                    width: 100%;
+                                    height: 100%;
+                                    single-line: true;
+                                    text <=> root.curve_filter;
+                                    color: MaterialPalette.on_surface;
+                                    font-size: MaterialTypography.body_small.font_size;
+                                    vertical-alignment: center;
+
+                                    edited => {
+                                        root.filter_curves(self.text);
+                                    }
+                                }
+                            }
+
+                            if root.curve_filter != "": clear_search_touch := TouchArea {
+                                width: 18px;
+                                height: 18px;
+                                mouse-cursor: pointer;
+                                clicked => {
+                                    root.curve_filter = "";
+                                    root.filter_curves("");
+                                }
+
+                                Rectangle {
+                                    border-radius: 9px;
+                                    background: clear_search_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                                    MaterialText {
+                                        text: "✕";
+                                        font-size: 10px;
+                                        color: MaterialPalette.on_surface_variant;
+                                        horizontal-alignment: center;
+                                        vertical-alignment: center;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // 2. All / None / Invert Batch Visibility Row
                 HorizontalLayout {
                     spacing: 4px;
                     alignment: center;
 
                     MaterialText {
                         horizontal-stretch: 1;
-                        text: "Visibility";
+                        text: (root.curve_filter == "") ? "Visibility" : "Matching";
                         style: MaterialTypography.label_small;
                         color: MaterialPalette.on_surface_variant;
                         vertical-alignment: center;
@@ -306,6 +387,29 @@ export component CurveSidebar inherits Horizontal {
                             vertical-alignment: center;
                         }
                     }
+
+                    MaterialText {
+                        text: "/";
+                        font-size: 11px;
+                        color: MaterialPalette.outline;
+                        vertical-alignment: center;
+                    }
+
+                    invert_curves_area := TouchArea {
+                        width: 38px;
+                        height: 20px;
+                        mouse-cursor: pointer;
+                        clicked => { root.invert_curves(); }
+
+                        MaterialText {
+                            text: "Invert";
+                            font-size: 11px;
+                            font-weight: 600;
+                            color: MaterialPalette.primary;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
                 }
 
                 // Curves Scrollable List
@@ -318,63 +422,68 @@ export component CurveSidebar inherits Horizontal {
                         alignment: start;
 
                         for item in root.curve_toggle_items: VerticalLayout {
-                            spacing: 2px;
+                            spacing: 0px;
+                            padding: 0px;
 
-                            if item.id == 1 && root.curve_toggle_items.length > 1 : HorizontalLayout {
-                                padding-top: 6px;
-                                padding-bottom: 2px;
-                                padding-left: 4px;
-                                MaterialText {
-                                    text: "Partials:";
-                                    font-size: 11px;
-                                    font-weight: 600;
-                                    color: MaterialPalette.primary;
+                            if item.matches_filter: VerticalLayout {
+                                spacing: 2px;
+
+                                if item.id == 1 && root.curve_toggle_items.length > 1 && root.curve_filter == "" : HorizontalLayout {
+                                    padding-top: 6px;
+                                    padding-bottom: 2px;
+                                    padding-left: 4px;
+                                    MaterialText {
+                                        text: "Partials:";
+                                        font-size: 11px;
+                                        font-weight: 600;
+                                        color: MaterialPalette.primary;
+                                    }
                                 }
-                            }
 
-                            item_touch := TouchArea {
-                                height: 28px;
-                                mouse-cursor: pointer;
-                                clicked => { root.toggle_curve_visibility(item.id, !item.visible); }
+                                item_touch := TouchArea {
+                                    height: 28px;
+                                    mouse-cursor: pointer;
+                                    clicked => { root.toggle_curve_visibility(item.id, !item.visible); }
 
-                                Rectangle {
-                                    background: item_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
-                                    border-radius: MaterialStyleMetrics.border_radius_2;
+                                    Rectangle {
+                                        background: item_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+                                        border-radius: MaterialStyleMetrics.border_radius_2;
 
-                                    HorizontalLayout {
-                                        padding-left: (item.label == "Total") ? 6px : 12px;
-                                        padding-right: 6px;
-                                        spacing: 8px;
+                                        HorizontalLayout {
+                                            padding-left: (item.label == "Total") ? 6px : 12px;
+                                            padding-right: 6px;
+                                            spacing: 8px;
 
-                                        Vertical {
-                                            alignment: center;
-                                            height: 100%;
+                                            Vertical {
+                                                alignment: center;
+                                                height: 100%;
 
-                                            color_dot_touch := TouchArea {
-                                                width: 18px;
-                                                height: 18px;
-                                                mouse-cursor: pointer;
-                                                clicked => { root.active_color_picker_id = (root.active_color_picker_id == item.id) ? -1 : item.id; }
+                                                color_dot_touch := TouchArea {
+                                                    width: 18px;
+                                                    height: 18px;
+                                                    mouse-cursor: pointer;
+                                                    clicked => { root.active_color_picker_id = (root.active_color_picker_id == item.id) ? -1 : item.id; }
 
-                                                Rectangle {
-                                                    width: 12px;
-                                                    height: 12px;
-                                                    border-radius: 6px;
-                                                    background: item.visible ? item.color_hex : MaterialPalette.outline;
-                                                    border-width: color_dot_touch.has-hover ? 2px : 0px;
-                                                    border-color: MaterialPalette.primary;
+                                                    Rectangle {
+                                                        width: 12px;
+                                                        height: 12px;
+                                                        border-radius: 6px;
+                                                        background: item.visible ? item.color_hex : MaterialPalette.outline;
+                                                        border-width: color_dot_touch.has-hover ? 2px : 0px;
+                                                        border-color: MaterialPalette.primary;
+                                                    }
                                                 }
                                             }
-                                        }
 
-                                        MaterialText {
-                                            horizontal-stretch: 1;
-                                            text: item.label;
-                                            style: (item.label == "Total") ? MaterialTypography.label_large : MaterialTypography.body_medium;
-                                            color: item.visible ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
-                                            overflow: elide;
-                                            horizontal-alignment: left;
-                                            vertical-alignment: center;
+                                            MaterialText {
+                                                horizontal-stretch: 1;
+                                                text: item.label;
+                                                style: (item.label == "Total") ? MaterialTypography.label_large : MaterialTypography.body_medium;
+                                                color: item.visible ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
+                                                overflow: elide;
+                                                horizontal-alignment: left;
+                                                vertical-alignment: center;
+                                            }
                                         }
                                     }
                                 }

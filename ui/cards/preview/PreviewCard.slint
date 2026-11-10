@@ -78,6 +78,8 @@ export component PreviewCard inherits FilledCard {
     callback clear_pinned_runs();
     callback toggle_curve_visibility(int, bool);
     callback toggle_all_curves(bool);
+    callback filter_curves(string);
+    callback invert_curves();
     callback set_curve_color(int, string);
     callback mouse_move(length, length, bool, length, length);
     callback plot_resized(length, length);
@@ -523,6 +525,8 @@ export component PreviewCard inherits FilledCard {
                     tagged_peaks: root.tagged_peaks;
                     toggle_curve_visibility(id, v) => { root.toggle_curve_visibility(id, v); }
                     toggle_all_curves(v) => { root.toggle_all_curves(v); }
+                    filter_curves(f) => { root.filter_curves(f); }
+                    invert_curves => { root.invert_curves(); }
                     set_curve_color(id, c) => { root.set_curve_color(id, c); }
                     set_curve_width(w) => { root.set_curve_width(w); }
                     apply_axis_settings => { root.apply_axis_settings(); }

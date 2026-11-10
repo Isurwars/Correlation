@@ -952,3 +952,56 @@ TEST_F(AppControllerTests, PlotPeakTaggingAndCoordinationNumberIntegration) {
   window->invoke_clear_tagged_peaks();
   EXPECT_EQ(window->get_tagged_peaks()->row_count(), 0u);
 }
+
+TEST_F(AppControllerTests, CurveFilterAndInvertSelectionIntegration) {
+  auto window = AppWindow::create();
+
+  std::string sample_file = "../../examples/a-PdSi/a-PdSi.car";
+  if (!std::filesystem::exists(sample_file)) {
+    sample_file = "../examples/a-PdSi/a-PdSi.car";
+  }
+  if (!std::filesystem::exists(sample_file)) {
+    sample_file = "examples/a-PdSi/a-PdSi.car";
+  }
+  ASSERT_TRUE(std::filesystem::exists(sample_file));
+  ASSERT_TRUE(loader().loadFile(sample_file).has_value());
+
+  options().active_calculators["g(r), J(r), G(r)"] = true;
+  correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+  EXPECT_TRUE(dispatcher().runAnalysis(loader().trajectoryMut(), options()).has_value());
+
+  auto *plot_ctrl = controller.getPlotController();
+  ASSERT_NE(plot_ctrl, nullptr);
+  plot_ctrl->populatePlotList();
+  window->set_selected_plot_index(0);
+  plot_ctrl->requestPlotUpdate(0, true);
+
+  auto curves = window->get_curve_toggle_items();
+  ASSERT_GT(curves->row_count(), 1u);
+
+  // Apply search filter "Si"
+  window->invoke_filter_curves(slint::SharedString("Si"));
+  curves = window->get_curve_toggle_items();
+  for (std::size_t i = 0; i < curves->row_count(); ++i) {
+    const auto item = curves->row_data(i);
+    ASSERT_TRUE(item.has_value());
+    const std::string label = std::string(item->label);
+    if (label.find("Si") != std::string::npos) {
+      EXPECT_TRUE(item->matches_filter);
+    } else {
+      EXPECT_FALSE(item->matches_filter);
+    }
+  }
+
+  // Invert matching curves
+  window->invoke_invert_curves();
+  curves = window->get_curve_toggle_items();
+  ASSERT_TRUE(curves->row_data(0).has_value());
+
+  // Clear filter
+  window->invoke_filter_curves(slint::SharedString(""));
+  curves = window->get_curve_toggle_items();
+  for (std::size_t i = 0; i < curves->row_count(); ++i) {
+    EXPECT_TRUE(curves->row_data(i)->matches_filter);
+  }
+}

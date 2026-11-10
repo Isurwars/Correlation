@@ -157,6 +157,11 @@ void AppController::registerPlotCallbacks() {
   window_.on_toggle_all_curves(
       [this](bool visible) { plot_controller_->handleToggleAllCurves(visible); });
 
+  window_.on_filter_curves(
+      [this](const slint::SharedString &filter) { plot_controller_->handleFilterCurves(filter); });
+
+  window_.on_invert_curves([this] { plot_controller_->handleInvertCurveVisibility(); });
+
   window_.on_set_curve_color([this](int curve_id, const slint::SharedString &color_hex) {
     plot_controller_->handleSetCurveColor(curve_id, color_hex);
   });
@@ -195,10 +200,11 @@ void AppController::registerPlotCallbacks() {
   window_.on_add_marker([this](bool is_vert) { plot_controller_->handleAddMarker(is_vert); });
   window_.on_clear_markers([this] { plot_controller_->handleClearMarkers(); });
 
-  window_.on_tag_peak_at([this](float x, float y) { plot_controller_->handleTagPeakAt(x, y); });
+  window_.on_tag_peak_at(
+      [this](float peak_x, float peak_y) { plot_controller_->handleTagPeakAt(peak_x, peak_y); });
   window_.on_tag_peak_range(
-      [this](float x1, float x2) { plot_controller_->handleTagPeakRange(x1, x2); });
-  window_.on_remove_tagged_peak([this](int id) { plot_controller_->handleRemoveTaggedPeak(id); });
+      [this](float x_start, float x_end) { plot_controller_->handleTagPeakRange(x_start, x_end); });
+  window_.on_remove_tagged_peak([this](int idx) { plot_controller_->handleRemoveTaggedPeak(idx); });
   window_.on_clear_tagged_peaks([this] { plot_controller_->handleClearTaggedPeaks(); });
   window_.on_export_tagged_peaks([this] { plot_controller_->handleExportTaggedPeaks(); });
 

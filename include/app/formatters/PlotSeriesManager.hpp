@@ -52,9 +52,30 @@ public:
 
   /**
    * @brief Sets the visibility for all currently tracked toggle curves.
-   * @param[in] visible Target visibility state for all curves.
+   * If a filter is specified or active, sets visibility only for matching curves.
+   * @param[in] visible Target visibility state for curves.
+   * @param[in] filter Optional substring filter to restrict which curves are modified.
    */
-  void setAllCurvesVisible(bool visible);
+  void setAllCurvesVisible(bool visible, std::string_view filter = "");
+
+  /**
+   * @brief Inverts the visibility of curves.
+   * If a filter is specified or active, inverts only matching curves.
+   * @param[in] filter Optional substring filter to restrict which curves are inverted.
+   */
+  void invertCurveVisibility(std::string_view filter = "");
+
+  /**
+   * @brief Sets the active substring search filter for curve toggles.
+   * @param[in] filter Substring filter (e.g. "Fe", "O-H", "Total").
+   */
+  void setFilterText(std::string_view filter);
+
+  /**
+   * @brief Retrieves the active substring search filter.
+   * @return Current filter string view.
+   */
+  [[nodiscard]] std::string_view getFilterText() const noexcept { return filter_text_; }
 
   /**
    * @brief Checks if a specific curve key is visible.
@@ -163,6 +184,7 @@ private:
   std::map<std::string, std::string> assigned_curve_colors_;
   std::vector<std::string> current_toggle_keys_;
   std::vector<PinnedRun> pinned_runs_;
+  std::string filter_text_;
   bool show_difference_curve_{false};
 };
 

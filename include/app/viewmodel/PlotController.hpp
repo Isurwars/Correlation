@@ -134,6 +134,17 @@ public:
   void handleToggleAllCurves(bool visible);
 
   /**
+   * @brief Handles real-time curve name filtering from the curve sidebar.
+   * @param[in] filter_text Substring query to filter visible curve items.
+   */
+  void handleFilterCurves(const slint::SharedString &filter_text);
+
+  /**
+   * @brief Handles inverting visibility of tracked curves (scoped to filter if active).
+   */
+  void handleInvertCurveVisibility();
+
+  /**
    * @brief Handles toggling overlaid absolute difference curve Y_diff rendering.
    * @param[in] show_difference Target visibility state for Y_diff.
    */

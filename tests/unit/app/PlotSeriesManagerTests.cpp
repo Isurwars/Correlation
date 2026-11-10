@@ -279,5 +279,75 @@ TEST(PlotSeriesManagerTests, ColorsRemainStableAcrossVisibilityToggles) {
   EXPECT_FALSE(assigned_colors_after.at("O-O").empty());
 }
 
+TEST(PlotSeriesManagerTests, FilterCurvesSubstringCaseInsensitive) {
+  PlotSeriesManager manager;
+  const correlation::plotters::PlotConfig config;
+
+  correlation::analysis::Histogram hist;
+  hist.partials["Total"] = {1.0};
+  hist.partials["Fe-Fe"] = {2.0};
+  hist.partials["Fe-Si"] = {1.5};
+  hist.partials["Si-Si"] = {0.8};
+
+  manager.setFilterText("fe");
+  EXPECT_EQ(manager.getFilterText(), "fe");
+
+  const auto items = manager.generateToggleItems(&hist, config);
+  ASSERT_NE(items, nullptr);
+  ASSERT_EQ(items->row_count(), 4);
+
+  // Total should not match "fe"
+  EXPECT_FALSE(requireValue(items->row_data(0)).matches_filter);
+  // Fe-Fe and Fe-Si should match "fe" case-insensitively
+  EXPECT_TRUE(requireValue(items->row_data(1)).matches_filter);
+  EXPECT_TRUE(requireValue(items->row_data(2)).matches_filter);
+  // Si-Si should not match "fe"
+  EXPECT_FALSE(requireValue(items->row_data(3)).matches_filter);
+
+  // Clear filter
+  manager.setFilterText("");
+  const auto items_cleared = manager.generateToggleItems(&hist, config);
+  for (std::size_t i = 0; i < items_cleared->row_count(); ++i) {
+    EXPECT_TRUE(requireValue(items_cleared->row_data(i)).matches_filter);
+  }
+}
+
+TEST(PlotSeriesManagerTests, InvertCurveVisibilityGlobalAndFilterScoped) {
+  PlotSeriesManager manager;
+  const correlation::plotters::PlotConfig config;
+
+  correlation::analysis::Histogram hist;
+  hist.partials["Total"] = {1.0};
+  hist.partials["Fe-Fe"] = {2.0};
+  hist.partials["Si-Si"] = {1.5};
+
+  [[maybe_unused]] const auto items = manager.generateToggleItems(&hist, config);
+  EXPECT_TRUE(manager.isCurveVisible("Total"));
+  EXPECT_TRUE(manager.isCurveVisible("Fe-Fe"));
+  EXPECT_TRUE(manager.isCurveVisible("Si-Si"));
+
+  // Global Invert: all true become false
+  manager.invertCurveVisibility();
+  EXPECT_FALSE(manager.isCurveVisible("Total"));
+  EXPECT_FALSE(manager.isCurveVisible("Fe-Fe"));
+  EXPECT_FALSE(manager.isCurveVisible("Si-Si"));
+
+  // Turn Fe-Fe on
+  manager.setCurveVisible(1, true);
+  EXPECT_TRUE(manager.isCurveVisible("Fe-Fe"));
+
+  // Filter-scoped Invert on "Fe": only Fe-Fe inverts (to false)
+  manager.setFilterText("Fe");
+  manager.invertCurveVisibility();
+  EXPECT_FALSE(manager.isCurveVisible("Fe-Fe"));
+  EXPECT_FALSE(manager.isCurveVisible("Si-Si")); // remains false
+  EXPECT_FALSE(manager.isCurveVisible("Total")); // remains false
+
+  // Filter-scoped setAllCurvesVisible(true) on "Fe": only Fe-Fe turns true
+  manager.setAllCurvesVisible(true);
+  EXPECT_TRUE(manager.isCurveVisible("Fe-Fe"));
+  EXPECT_FALSE(manager.isCurveVisible("Si-Si")); // untouched
+}
+
 } // namespace
 } // namespace correlation::app

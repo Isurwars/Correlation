@@ -605,6 +605,26 @@ void PlotController::handleToggleAllCurves(bool visible) {
   }
 }
 
+void PlotController::handleFilterCurves(const slint::SharedString &filter_text) {
+  series_manager_.setFilterText(std::string_view(filter_text.data(), filter_text.size()));
+  const int current_idx = window_.get_selected_plot_index();
+  if (current_idx >= 0 && std::cmp_less(current_idx, available_plot_keys_.size())) {
+    const std::string &name = available_plot_keys_[current_idx];
+    const correlation::analysis::Histogram *hist = dispatcher_.getHistogram(name);
+    if (hist != nullptr) {
+      updateCurveToggleItems(hist);
+    }
+  }
+}
+
+void PlotController::handleInvertCurveVisibility() {
+  series_manager_.invertCurveVisibility();
+  const int current_idx = window_.get_selected_plot_index();
+  if (current_idx >= 0) {
+    requestPlotUpdate(current_idx, true);
+  }
+}
+
 void PlotController::handleToggleDifferencePlot(bool show_difference) {
   series_manager_.setShowDifference(show_difference);
   const int current_idx = window_.get_selected_plot_index();
@@ -1099,8 +1119,8 @@ void PlotController::handleTagPeakRange(float start_x, float end_x) {
   }
 }
 
-void PlotController::handleRemoveTaggedPeak(int id) {
-  std::erase_if(tagged_peaks_, [id](const auto &p) { return p.id == id; });
+void PlotController::handleRemoveTaggedPeak(int idx) {
+  std::erase_if(tagged_peaks_, [idx](const auto &tagged_peak) { return tagged_peak.id == idx; });
   updateTaggedPeakPixels();
 }
 
@@ -1125,12 +1145,14 @@ void PlotController::handleExportTaggedPeaks() {
   }
 
   out << "ID,Curve,r_peak,r_min,r_max,Peak_Height,Area,CN,FWHM,Centroid\n";
-  for (const auto &p : tagged_peaks_) {
-    const std::string cn_str =
-        p.coordination_number.has_value() ? std::format("{:.4f}", *p.coordination_number) : "N/A";
-    out << std::format("{},{},{:.4f},{:.4f},{:.4f},{:.4f},{:.4f},{},{:.4f},{:.4f}\n", p.id,
-                       p.curve_name, p.r_peak, p.r_min, p.r_max, p.peak_height, p.area, cn_str,
-                       p.fwhm, p.centroid);
+  for (const auto &tagged_peak : tagged_peaks_) {
+    const std::string cn_str = tagged_peak.coordination_number.has_value()
+                                   ? std::format("{:.4f}", *tagged_peak.coordination_number)
+                                   : "N/A";
+    out << std::format("{},{},{:.4f},{:.4f},{:.4f},{:.4f},{:.4f},{},{:.4f},{:.4f}\n",
+                       tagged_peak.id, tagged_peak.curve_name, tagged_peak.r_peak,
+                       tagged_peak.r_min, tagged_peak.r_max, tagged_peak.peak_height,
+                       tagged_peak.area, cn_str, tagged_peak.fwhm, tagged_peak.centroid);
   }
   window_.set_analysis_status_text(slint::SharedString(
       std::format("Exported {} tagged peaks to {}", tagged_peaks_.size(), out_path)));

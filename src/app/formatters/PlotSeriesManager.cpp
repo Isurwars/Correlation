@@ -10,12 +10,28 @@
 #include "plotters/SvgPlotter.hpp"
 
 #include <algorithm>
+#include <cctype>
 #include <cmath>
+#include <string_view>
 #include <utility>
 
 namespace correlation::app {
 
 namespace {
+
+[[nodiscard]] std::string toLowerAscii(std::string_view str_view) {
+  std::string lower(str_view);
+  std::ranges::transform(lower, lower.begin(),
+                         [](unsigned char chr) { return static_cast<char>(std::tolower(chr)); });
+  return lower;
+}
+
+[[nodiscard]] bool checkMatchesFilter(std::string_view label, std::string_view filter) {
+  if (filter.empty()) {
+    return true;
+  }
+  return toLowerAscii(label).contains(toLowerAscii(filter));
+}
 
 struct RankedPartial {
   std::string key;
@@ -118,7 +134,8 @@ assignStableCurveColors(const std::map<std::string, std::vector<real_t>> &partia
 
 void appendTotalItem(slint::VectorModel<CurveToggleItem> &model, std::vector<std::string> &keys,
                      const std::map<std::string, std::string> &assigned_colors,
-                     const std::map<std::string, bool> &visibility_map) {
+                     const std::map<std::string, bool> &visibility_map,
+                     std::string_view filter_text) {
   auto iter = assigned_colors.find("Total");
   std::string total_key = "Total";
   if (iter == assigned_colors.end()) {
@@ -139,6 +156,7 @@ void appendTotalItem(slint::VectorModel<CurveToggleItem> &model, std::vector<std
       .visible = visible,
       .is_partial = false,
       .is_pinned = false,
+      .matches_filter = checkMatchesFilter("Total", filter_text),
   });
 }
 
@@ -146,7 +164,8 @@ void appendRankedPartials(slint::VectorModel<CurveToggleItem> &model,
                           std::vector<std::string> &keys,
                           const std::vector<RankedPartial> &ranked_partials,
                           const std::map<std::string, std::string> &assigned_colors,
-                          const std::map<std::string, bool> &visibility_map, bool target_visible) {
+                          const std::map<std::string, bool> &visibility_map, bool target_visible,
+                          std::string_view filter_text) {
   for (const auto &partial : ranked_partials) {
     const auto vis_it = visibility_map.find(partial.key);
     const bool visible = (vis_it != visibility_map.end()) ? vis_it->second : true;
@@ -164,6 +183,7 @@ void appendRankedPartials(slint::VectorModel<CurveToggleItem> &model,
         .visible = visible,
         .is_partial = true,
         .is_pinned = false,
+        .matches_filter = checkMatchesFilter(partial.key, filter_text),
     });
   }
 }
@@ -172,7 +192,8 @@ void appendPinnedRuns(slint::VectorModel<CurveToggleItem> &model, std::vector<st
                       const std::vector<PinnedRun> &pinned_runs,
                       std::map<std::string, bool> &visibility_map,
                       const std::map<std::string, std::string> &custom_colors,
-                      const correlation::plotters::PlotConfig &config) {
+                      const correlation::plotters::PlotConfig &config,
+                      std::string_view filter_text) {
   std::size_t pin_idx = 0;
   for (const auto &pinned_run : pinned_runs) {
     const std::string &pin_label = pinned_run.label;
@@ -195,6 +216,7 @@ void appendPinnedRuns(slint::VectorModel<CurveToggleItem> &model, std::vector<st
         .visible = vis,
         .is_partial = false,
         .is_pinned = true,
+        .matches_filter = checkMatchesFilter(pin_label, filter_text),
     });
     pin_idx++;
   }
@@ -209,10 +231,29 @@ void PlotSeriesManager::setCurveVisible(int curve_id, bool visible) {
   }
 }
 
-void PlotSeriesManager::setAllCurvesVisible(bool visible) {
+void PlotSeriesManager::setAllCurvesVisible(bool visible, std::string_view filter) {
+  const std::string_view effective_filter =
+      filter.empty() ? std::string_view(filter_text_) : filter;
   for (const auto &key : current_toggle_keys_) {
-    curve_visibility_map_[key] = visible;
+    if (checkMatchesFilter(key, effective_filter)) {
+      curve_visibility_map_[key] = visible;
+    }
   }
+}
+
+void PlotSeriesManager::invertCurveVisibility(std::string_view filter) {
+  const std::string_view effective_filter =
+      filter.empty() ? std::string_view(filter_text_) : filter;
+  for (const auto &key : current_toggle_keys_) {
+    if (checkMatchesFilter(key, effective_filter)) {
+      const bool current_vis = isCurveVisible(key, true);
+      curve_visibility_map_[key] = !current_vis;
+    }
+  }
+}
+
+void PlotSeriesManager::setFilterText(std::string_view filter) {
+  filter_text_ = std::string(filter);
 }
 
 bool PlotSeriesManager::isCurveVisible(const std::string &key, bool default_val) const {
@@ -249,6 +290,7 @@ void PlotSeriesManager::reset() noexcept {
   assigned_curve_colors_.clear();
   current_toggle_keys_.clear();
   pinned_runs_.clear();
+  filter_text_.clear();
   show_difference_curve_ = false;
 }
 
@@ -272,14 +314,14 @@ PlotSeriesManager::generateToggleItems(const correlation::analysis::Histogram *h
       assignStableCurveColors(partials, ranked_partials, custom_curve_colors_, config);
 
   appendTotalItem(*toggle_model, current_toggle_keys_, assigned_curve_colors_,
-                  curve_visibility_map_);
+                  curve_visibility_map_, filter_text_);
   appendRankedPartials(*toggle_model, current_toggle_keys_, ranked_partials, assigned_curve_colors_,
-                       curve_visibility_map_, true);
+                       curve_visibility_map_, true, filter_text_);
   appendRankedPartials(*toggle_model, current_toggle_keys_, ranked_partials, assigned_curve_colors_,
-                       curve_visibility_map_, false);
+                       curve_visibility_map_, false, filter_text_);
 
   appendPinnedRuns(*toggle_model, current_toggle_keys_, pinned_runs_, curve_visibility_map_,
-                   custom_curve_colors_, config);
+                   custom_curve_colors_, config, filter_text_);
 
   return toggle_model;
 }

@@ -400,6 +400,8 @@ export component AppWindow inherits Window {
     callback remove_tagged_peak(int);
     callback clear_tagged_peaks();
     callback export_tagged_peaks();
+    callback filter_curves(string);
+    callback invert_curves();
     callback fix_sanity_issue(int);
     callback apply_domain_preset(int);
 
@@ -814,6 +816,12 @@ export component AppWindow inherits Window {
                     }
                     toggle_all_curves(vis) => {
                         root.toggle_all_curves(vis);
+                    }
+                    filter_curves(f) => {
+                        root.filter_curves(f);
+                    }
+                    invert_curves => {
+                        root.invert_curves();
                     }
                     set_curve_color(id, col) => {
                         root.set_curve_color(id, col);
