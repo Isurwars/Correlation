@@ -44,11 +44,10 @@ namespace {
          lhs.manual_ticks == rhs.manual_ticks &&
          std::abs(lhs.x_major_step - rhs.x_major_step) < 1e-4 &&
          std::abs(lhs.y_major_step - rhs.y_major_step) < 1e-4 &&
-         lhs.minor_subdivisions == rhs.minor_subdivisions &&
-         lhs.show_legend == rhs.show_legend && lhs.show_markers == rhs.show_markers &&
-         lhs.fill_area == rhs.fill_area && lhs.manual_x_min == rhs.manual_x_min &&
-         lhs.manual_x_max == rhs.manual_x_max && lhs.manual_y_min == rhs.manual_y_min &&
-         lhs.manual_y_max == rhs.manual_y_max &&
+         lhs.minor_subdivisions == rhs.minor_subdivisions && lhs.show_legend == rhs.show_legend &&
+         lhs.show_markers == rhs.show_markers && lhs.fill_area == rhs.fill_area &&
+         lhs.manual_x_min == rhs.manual_x_min && lhs.manual_x_max == rhs.manual_x_max &&
+         lhs.manual_y_min == rhs.manual_y_min && lhs.manual_y_max == rhs.manual_y_max &&
          lhs.reference_lines.size() == rhs.reference_lines.size();
 }
 
@@ -79,16 +78,19 @@ void PlotRenderPipeline::invalidateCache() noexcept {
   const std::scoped_lock lock(cache_mutex_);
   last_rendered_index_ = -1;
   last_pinned_runs_count_ = 0;
+  last_rendered_frame_ = std::numeric_limits<std::size_t>::max();
   last_config_ = {};
   last_hover_ = {};
 }
 
 bool PlotRenderPipeline::isCacheHit(int index, const correlation::plotters::PlotConfig &config,
                                     const correlation::plotters::HoverInfo &hover,
-                                    std::size_t pinned_runs_count) const noexcept {
+                                    std::size_t pinned_runs_count,
+                                    std::size_t active_frame) const noexcept {
   const std::scoped_lock lock(cache_mutex_);
   return (index == last_rendered_index_ && pinned_runs_count == last_pinned_runs_count_ &&
-          isConfigEqual(config, last_config_) && isHoverEqual(hover, last_hover_));
+          active_frame == last_rendered_frame_ && isConfigEqual(config, last_config_) &&
+          isHoverEqual(hover, last_hover_));
 }
 
 void PlotRenderPipeline::submitTask(RenderTask task) {
@@ -96,6 +98,7 @@ void PlotRenderPipeline::submitTask(RenderTask task) {
     const std::scoped_lock lock(cache_mutex_);
     last_rendered_index_ = task.index;
     last_pinned_runs_count_ = task.pinned_runs_count;
+    last_rendered_frame_ = task.active_frame;
     last_config_ = task.config;
     last_hover_ = task.hover;
   }

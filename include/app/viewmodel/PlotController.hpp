@@ -334,6 +334,8 @@ private:
 
   void updateTableData(const correlation::analysis::Histogram *hist);
   void updateCurveToggleItems(const correlation::analysis::Histogram *hist);
+  void applyDualViewOverlay(RenderTask &task, const std::string &name,
+                            std::size_t current_frame) const;
 
   std::function<void(float, float)> on_plot_geometry_changed_;
 

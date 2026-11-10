@@ -92,6 +92,12 @@ public:
   void loadTrajectory(const std::string &filepath, std::function<void(bool)> on_complete = nullptr);
 
   /**
+   * @brief Appends a path to MRU recent files and updates UI.
+   * @param filepath Loaded file path.
+   */
+  void addRecentFile(const std::string &filepath);
+
+  /**
    * @brief Executes configured analyses on the active trajectory.
    */
   void runAnalysis();

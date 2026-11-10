@@ -17,10 +17,13 @@ export component HeroEmptyState inherits Rectangle {
     in property <string> file_basename: "";
     in property <string> total_atoms: "";
     in property <string> num_frames: "";
+    in property <[string]> recent_files: [];
 
     callback browse_file();
     callback run_analysis();
     callback open_panel(int);
+    callback load_sample(string);
+    callback load_recent(string);
 
     width: 100%;
     height: 100%;
@@ -77,6 +80,120 @@ export component HeroEmptyState inherits Rectangle {
                 text: "Open Trajectory File... (Ctrl+O)";
                 icon: Icons.folder_open;
                 clicked => { root.browse_file(); }
+            }
+
+            // Quick Demo Samples
+            HorizontalLayout {
+                spacing: 8px;
+                alignment: center;
+
+                MaterialText {
+                    text: "Quick Samples:";
+                    font-size: MaterialTypography.label_small.font_size;
+                    color: MaterialPalette.on_surface_variant;
+                    vertical-alignment: center;
+                }
+
+                touch_pdsi := TouchArea {
+                    width: btn_pdsi.preferred-width + 12px;
+                    height: 28px;
+                    mouse-cursor: pointer;
+                    clicked => { root.load_sample("a-PdSi"); }
+                    btn_pdsi := Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 14px;
+                        background: touch_pdsi.has-hover ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+                        border-width: 1px;
+                        border-color: MaterialPalette.outline_variant;
+                        MaterialText {
+                            text: "🔬 a-PdSi (Glass)";
+                            font-size: 11.5px;
+                            color: touch_pdsi.has-hover ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+
+                touch_cell := TouchArea {
+                    width: btn_cell.preferred-width + 12px;
+                    height: 28px;
+                    mouse-cursor: pointer;
+                    clicked => { root.load_sample("Cellulose"); }
+                    btn_cell := Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 14px;
+                        background: touch_cell.has-hover ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+                        border-width: 1px;
+                        border-color: MaterialPalette.outline_variant;
+                        MaterialText {
+                            text: "🌿 Cellulose (Polymer)";
+                            font-size: 11.5px;
+                            color: touch_cell.has-hover ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+
+                touch_si := TouchArea {
+                    width: btn_si.preferred-width + 12px;
+                    height: 28px;
+                    mouse-cursor: pointer;
+                    clicked => { root.load_sample("Si"); }
+                    btn_si := Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 14px;
+                        background: touch_si.has-hover ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+                        border-width: 1px;
+                        border-color: MaterialPalette.outline_variant;
+                        MaterialText {
+                            text: "💎 Silicon (Crystal)";
+                            font-size: 11.5px;
+                            color: touch_si.has-hover ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+
+            // MRU Recent Files Row (if any)
+            if root.recent_files.length > 0: HorizontalLayout {
+                spacing: 6px;
+                alignment: center;
+
+                MaterialText {
+                    text: "Recent:";
+                    font-size: MaterialTypography.label_small.font_size;
+                    color: MaterialPalette.on_surface_variant;
+                    vertical-alignment: center;
+                }
+
+                for file[idx] in root.recent_files: touch_rec := TouchArea {
+                    width: rec_chip.preferred-width + 12px;
+                    height: 26px;
+                    mouse-cursor: pointer;
+                    clicked => { root.load_recent(file); }
+                    rec_chip := Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 13px;
+                        background: touch_rec.has-hover ? MaterialPalette.primary_container : MaterialPalette.surface_container_lowest;
+                        border-width: 1px;
+                        border-color: MaterialPalette.outline_variant.with_alpha(50%);
+                        MaterialText {
+                            text: "📄 " + file;
+                            font-size: 11px;
+                            color: touch_rec.has-hover ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
             }
 
             MaterialText {

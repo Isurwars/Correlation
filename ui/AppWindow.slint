@@ -114,7 +114,10 @@ export component AppWindow inherits Window {
     in property <string> box_dimensions: "";
     in-out property <int> preview_active_tab: 0;
     in-out property <float> preview_dual_split_ratio: 0.5;
+    in property <[string]> recent_files: [];
     callback reload_file();
+    callback load_sample(string);
+    callback load_recent_file(string);
 
     /// Analysis execution state
     in property <bool> analysis_running: false;
@@ -342,6 +345,7 @@ export component AppWindow inherits Window {
     callback pan_3d(float, float);
     callback zoom_3d(float);
     callback reset_view_3d();
+    callback set_camera_preset_3d(int);
     callback toggle_bonds_3d(bool);
     callback toggle_wireframe_3d(bool);
     callback toggle_in_cell_3d(bool);
@@ -817,6 +821,10 @@ export component AppWindow inherits Window {
 
                     table_headers: root.table_headers;
                     table_rows: root.table_rows;
+                    recent_files: root.recent_files;
+
+                    load_sample(s) => { root.load_sample(s); }
+                    load_recent(r) => { root.load_recent_file(r); }
 
                     plot_selected(idx) => {
                         root.select_plot(idx);
@@ -917,6 +925,7 @@ export component AppWindow inherits Window {
                     pan_3d(dx, dy) => { root.pan_3d(dx, dy); }
                     zoom_3d(delta) => { root.zoom_3d(delta); }
                     reset_view_3d => { root.reset_view_3d(); }
+                    set_camera_preset_3d(p) => { root.set_camera_preset_3d(p); }
                     toggle_bonds_3d(enabled) => { root.toggle_bonds_3d(enabled); }
                     toggle_wireframe_3d(enabled) => { root.toggle_wireframe_3d(enabled); }
                     toggle_in_cell_3d(enabled) => {

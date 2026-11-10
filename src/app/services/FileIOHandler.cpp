@@ -386,6 +386,9 @@ void FileIOHandler::onTrajectoryLoadSuccess(const std::string &filepath) {
   // Bond Cutoffs
   controller_.setBondCutoffs();
 
+  // MRU Recent Files
+  controller_.addRecentFile(filepath);
+
   // File Info & Basename
   updateFileMetadata(filepath);
 

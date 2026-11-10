@@ -95,15 +95,19 @@ export component Structure3DViewport inherits Rectangle {
     in property <string> file_basename: "";
     in property <string> total_atoms: "";
     in property <string> num_frames: "";
+    in property <[string]> recent_files: [];
 
     callback run_analysis();
     callback open_panel(int);
     callback browse_file();
+    callback load_sample(string);
+    callback load_recent(string);
 
     callback rotate_3d(float, float);
     callback pan_3d(float, float);
     callback zoom_3d(float);
     callback reset_view();
+    callback set_camera_preset(int);
     callback toggle_bonds(bool);
     callback toggle_wireframe(bool);
     callback toggle_in_cell(bool);
@@ -192,7 +196,10 @@ export component Structure3DViewport inherits Rectangle {
             if (!root.file_loaded): Structure3DEmptyState {
                 x: (parent.width - self.width) / 2;
                 y: (parent.height - self.height) / 2;
+                recent_files: root.recent_files;
                 browse_file => { root.browse_file(); }
+                load_sample(s) => { root.load_sample(s); }
+                load_recent(r) => { root.load_recent(r); }
             }
 
             // Top Floating Bar (3D tools on left, workflow actions on right)
@@ -214,6 +221,7 @@ export component Structure3DViewport inherits Rectangle {
                     atom_scale: root.atom_scale;
 
                     reset_view => { root.reset_view(); }
+                    set_camera_preset(p) => { root.set_camera_preset(p); }
                     toggle_bonds(en) => { root.toggle_bonds(en); }
                     toggle_wireframe(en) => { root.toggle_wireframe(en); }
                     toggle_in_cell(en) => { root.toggle_in_cell(en); }

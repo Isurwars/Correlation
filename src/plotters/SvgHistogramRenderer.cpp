@@ -88,6 +88,10 @@ struct RenderSeries {
   std::string key;
   std::vector<real_t> values;
   std::string color;
+  real_t stroke_width{0.0};
+  real_t opacity{1.0};
+  bool is_faded{false};
+  bool is_accented{false};
 };
 
 /**
@@ -136,12 +140,12 @@ struct CanvasViewport {
 
   [[nodiscard]] real_t mapY(real_t val, const detail::NiceScale &y_scale) const noexcept {
     if (y_log_scale) {
-      constexpr real_t kFloor = static_cast<real_t>(1e-4);
-      const real_t log_val = std::log10(std::max(val, kFloor));
-      const real_t log_min = std::log10(std::max(y_scale.min, kFloor));
-      const real_t log_max = std::log10(std::max(y_scale.max, kFloor));
+      constexpr auto K_FLOOR = static_cast<real_t>(1e-4);
+      const real_t log_val = std::log10(std::max(val, K_FLOOR));
+      const real_t log_min = std::log10(std::max(y_scale.min, K_FLOOR));
+      const real_t log_max = std::log10(std::max(y_scale.max, K_FLOOR));
       const real_t denom = (log_max > log_min) ? (log_max - log_min) : static_cast<real_t>(1.0);
-      return py1 - static_cast<real_t>((log_val - log_min) / denom) * (py1 - py0);
+      return py1 - ((log_val - log_min) / denom) * (py1 - py0);
     }
     return mapValue(val, y_scale.min, y_scale.max, py1, py0);
   }
@@ -192,6 +196,9 @@ public:
     }
     if (key == "Total") {
       return (config.theme == PlotConfig::Theme::Light) ? "#000000" : "#FFFFFF";
+    }
+    if (key == "Ensemble Mean" || key.starts_with("Frame ") || key == "Frame") {
+      return (config.theme == PlotConfig::Theme::Light) ? "#0284c7" : "#38bdf8";
     }
     return color(partial_idx, num_partials, config.palette);
   }
@@ -272,10 +279,32 @@ private:
     std::size_t partial_idx = 0;
     for (const auto &[key, vals] : raw) {
       const std::size_t idx = (key == "Total") ? 0 : partial_idx++;
+      const std::string color_str =
+          resolveColor(key, idx, num_partials, ctx.custom_colors, *ctx.config);
+
+      real_t stroke_w = 0.0;
+      auto opacity = static_cast<real_t>(1.0);
+      bool is_faded = false;
+      bool is_accented = false;
+
+      if (key == "Ensemble Mean") {
+        is_accented = true;
+        stroke_w = ctx.config->line_width * static_cast<real_t>(1.35);
+      } else if (key.starts_with("Frame ") || key == "Frame") {
+        is_faded = true;
+        stroke_w =
+            std::max(static_cast<real_t>(1.5), ctx.config->line_width * static_cast<real_t>(0.75));
+        opacity = static_cast<real_t>(0.35);
+      }
+
       styled.push_back(RenderSeries{
           .key = key,
           .values = vals,
-          .color = resolveColor(key, idx, num_partials, ctx.custom_colors, *ctx.config),
+          .color = color_str,
+          .stroke_width = stroke_w,
+          .opacity = opacity,
+          .is_faded = is_faded,
+          .is_accented = is_accented,
       });
     }
     return styled;
@@ -342,12 +371,12 @@ public:
                               y_step);
     if (config.y_log_scale && !config.manual_ticks) {
       y_scale.ticks.clear();
-      const int min_exp = static_cast<int>(
-          std::floor(std::log10(std::max(raw_y_min, static_cast<real_t>(1e-6)))));
-      const int max_exp = static_cast<int>(
-          std::ceil(std::log10(std::max(raw_y_max, static_cast<real_t>(1e-6)))));
+      const int min_exp =
+          static_cast<int>(std::floor(std::log10(std::max(raw_y_min, static_cast<real_t>(1e-6)))));
+      const int max_exp =
+          static_cast<int>(std::ceil(std::log10(std::max(raw_y_max, static_cast<real_t>(1e-6)))));
       for (int exp = min_exp; exp <= max_exp; ++exp) {
-        y_scale.ticks.push_back(std::pow(static_cast<real_t>(10.0), exp));
+        y_scale.ticks.push_back(static_cast<real_t>(std::pow(10.0, exp)));
       }
     }
 
@@ -364,8 +393,9 @@ public:
     if (series.empty()) {
       return {};
     }
-    const auto total_it = std::ranges::find_if(
-        series, [](const auto &item) { return item.key == "Total" || item.key == "total"; });
+    const auto total_it = std::ranges::find_if(series, [](const auto &item) {
+      return item.key == "Total" || item.key == "total" || item.is_accented;
+    });
     const auto &target_series = (total_it != series.end()) ? *total_it : series.front();
     const auto &y_values = target_series.values;
     const std::size_t num_pts = std::min(x_coords.size(), y_values.size());
@@ -529,6 +559,9 @@ public:
     }
     for (std::size_t i = 0; i < series.size(); ++i) {
       const auto &series_item = series[i];
+      if (series_item.is_faded) {
+        continue;
+      }
       const std::size_t num_points = std::min(x_coords.size(), series_item.values.size());
       if (num_points <= 1) {
         continue;
@@ -560,9 +593,19 @@ public:
     std::string total_svg;
 
     for (const auto &series_item : series) {
-      std::string line_svg = std::format(
-          R"(  <polyline fill="none" stroke="{}" stroke-width="{:.1f}" stroke-linejoin="round" points=")",
-          series_item.color, config.line_width);
+      const real_t stroke_w = (series_item.stroke_width > static_cast<real_t>(0.0))
+                                  ? series_item.stroke_width
+                                  : config.line_width;
+      std::string line_svg;
+      if (series_item.opacity < static_cast<real_t>(0.99)) {
+        line_svg = std::format(
+            R"(  <polyline fill="none" stroke="{}" stroke-width="{:.1f}" opacity="{:.2f}" stroke-linejoin="round" points=")",
+            series_item.color, stroke_w, series_item.opacity);
+      } else {
+        line_svg = std::format(
+            R"(  <polyline fill="none" stroke="{}" stroke-width="{:.1f}" stroke-linejoin="round" points=")",
+            series_item.color, stroke_w);
+      }
       const std::size_t num_points = std::min(x_coords.size(), series_item.values.size());
       for (std::size_t pt = 0; pt < num_points; ++pt) {
         const real_t screen_x = viewport.mapX(x_coords[pt], x_scale);
@@ -571,7 +614,7 @@ public:
       }
       line_svg += "\" />\n";
 
-      if (series_item.key == "Total") {
+      if (series_item.key == "Total" || series_item.is_accented) {
         total_svg = std::move(line_svg);
       } else {
         buffer_.append(line_svg);
@@ -590,6 +633,9 @@ public:
       return;
     }
     for (const auto &series_item : series) {
+      if (series_item.is_faded) {
+        continue;
+      }
       const std::size_t num_points = std::min(x_coords.size(), series_item.values.size());
       for (std::size_t pt = 0; pt < num_points; ++pt) {
         const real_t screen_x = viewport.mapX(x_coords[pt], x_scale);
@@ -687,45 +733,64 @@ public:
     const real_t legend_x = viewport.px1 - layout::LEGEND_RIGHT_MARGIN;
     real_t legend_y = viewport.py0 + layout::LEGEND_TOP_MARGIN;
 
-    // 1. Total entry
-    const auto total_it =
-        std::ranges::find_if(series, [](const auto &item) { return item.key == "Total"; });
-    if (total_it != series.end()) {
+    // 1. Accented / Total entry
+    const auto accented_it = std::ranges::find_if(
+        series, [](const auto &item) { return item.key == "Total" || item.is_accented; });
+    if (accented_it != series.end()) {
       std::format_to(std::back_inserter(buffer_),
                      "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                      "stroke=\"{}\" stroke-width=\"4.0\"/>\n",
                      legend_x - layout::LEGEND_LINE_LEFT_PAD, legend_y,
-                     legend_x - layout::LEGEND_LINE_RIGHT_PAD, legend_y, total_it->color);
-      buffer_.append(renderTextAsPath("Total", legend_x - layout::LEGEND_TEXT_PAD,
+                     legend_x - layout::LEGEND_LINE_RIGHT_PAD, legend_y, accented_it->color);
+      buffer_.append(renderTextAsPath(accented_it->key, legend_x - layout::LEGEND_TEXT_PAD,
                                       legend_y + static_cast<real_t>(6.0),
                                       static_cast<real_t>(20.0) * config.font_scale,
                                       TextAnchor::End, config.textColor(), config.use_native_text));
       legend_y += layout::LEGEND_TOTAL_STEP;
     }
 
-    // 2. Partials
-    const bool has_partials =
-        std::ranges::any_of(series, [](const auto &item) { return item.key != "Total"; });
-    if (!has_partials) {
+    // 2. Partials and per-frame entries
+    const bool has_other_items = std::ranges::any_of(
+        series, [](const auto &item) { return item.key != "Total" && !item.is_accented; });
+    if (!has_other_items) {
       return;
     }
 
-    buffer_.append(renderTextAsPath(
-        "Partials:", legend_x - layout::LEGEND_LINE_RIGHT_PAD, legend_y + static_cast<real_t>(4.0),
-        static_cast<real_t>(16.0) * config.font_scale, TextAnchor::End,
-        (config.theme == PlotConfig::Theme::Light) ? "#555555" : "#cbd5e1",
-        config.use_native_text));
-    legend_y += layout::LEGEND_HEADER_STEP;
+    const bool has_real_partials = std::ranges::any_of(series, [](const auto &item) {
+      return item.key != "Total" && !item.is_accented && !item.is_faded;
+    });
+
+    if (has_real_partials) {
+      buffer_.append(renderTextAsPath(
+          "Partials:", legend_x - layout::LEGEND_LINE_RIGHT_PAD,
+          legend_y + static_cast<real_t>(4.0), static_cast<real_t>(16.0) * config.font_scale,
+          TextAnchor::End, (config.theme == PlotConfig::Theme::Light) ? "#555555" : "#cbd5e1",
+          config.use_native_text));
+      legend_y += layout::LEGEND_HEADER_STEP;
+    }
 
     for (const auto &series_item : series) {
-      if (series_item.key == "Total") {
+      if (series_item.key == "Total" || series_item.is_accented) {
         continue;
       }
-      std::format_to(std::back_inserter(buffer_),
-                     "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-                     "stroke=\"{}\" stroke-width=\"3.0\"/>\n",
-                     legend_x - layout::LEGEND_LINE_LEFT_PAD, legend_y,
-                     legend_x - layout::LEGEND_LINE_RIGHT_PAD, legend_y, series_item.color);
+      const real_t line_w = (series_item.stroke_width > static_cast<real_t>(0.0))
+                                ? series_item.stroke_width
+                                : static_cast<real_t>(3.0);
+      if (series_item.opacity < static_cast<real_t>(0.99)) {
+        std::format_to(std::back_inserter(buffer_),
+                       "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                       "stroke=\"{}\" stroke-width=\"{:.1f}\" opacity=\"{:.2f}\"/>\n",
+                       legend_x - layout::LEGEND_LINE_LEFT_PAD, legend_y,
+                       legend_x - layout::LEGEND_LINE_RIGHT_PAD, legend_y, series_item.color,
+                       line_w, series_item.opacity);
+      } else {
+        std::format_to(std::back_inserter(buffer_),
+                       "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                       "stroke=\"{}\" stroke-width=\"{:.1f}\"/>\n",
+                       legend_x - layout::LEGEND_LINE_LEFT_PAD, legend_y,
+                       legend_x - layout::LEGEND_LINE_RIGHT_PAD, legend_y, series_item.color,
+                       line_w);
+      }
       buffer_.append(renderTextAsPath(series_item.key, legend_x - layout::LEGEND_TEXT_PAD,
                                       legend_y + static_cast<real_t>(5.0),
                                       static_cast<real_t>(18.0) * config.font_scale,

@@ -46,6 +46,14 @@ void Camera3D::orbit(float delta_azimuth_deg, float delta_elevation_deg) noexcep
       std::clamp(elevation_deg_ + delta_elevation_deg, K_MIN_ELEVATION, K_MAX_ELEVATION);
 }
 
+void Camera3D::setOrientation(float azimuth_deg, float elevation_deg) noexcept {
+  azimuth_deg_ = std::fmod(azimuth_deg, 360.0F);
+  if (azimuth_deg_ < 0.0F) {
+    azimuth_deg_ += 360.0F;
+  }
+  elevation_deg_ = std::clamp(elevation_deg, K_MIN_ELEVATION, K_MAX_ELEVATION);
+}
+
 void Camera3D::pan(float delta_x, float delta_y) noexcept {
   const math::Vector3<float> eye = eyePosition();
   const math::Vector3<float> forward = safeNormalize(target_ - eye);

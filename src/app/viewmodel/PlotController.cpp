@@ -135,6 +135,22 @@ void sortPlotNames(std::vector<std::string> &names) {
   });
 }
 
+[[nodiscard]] std::optional<correlation::analysis::DistributionMetric>
+histogramKeyToMetric(std::string_view name) noexcept {
+  if (name == "g_r" || name == "RDF" || name == "g(r)" || name == "Radial Distribution Function" ||
+      name == "J_r" || name == "G_r") {
+    return correlation::analysis::DistributionMetric::RDF;
+  }
+  if (name == "PAD" || name == "Plane Angle Distribution" || name == "Planar Angle Distribution" ||
+      name == "theta") {
+    return correlation::analysis::DistributionMetric::PAD;
+  }
+  if (name == "S_q" || name == "SQ" || name == "S(Q)" || name == "Static Structure Factor") {
+    return correlation::analysis::DistributionMetric::SQ;
+  }
+  return std::nullopt;
+}
+
 std::shared_ptr<slint::VectorModel<MenuItem>>
 buildPlotMenuModel(std::span<const std::string> names, const AnalysisDispatcher &dispatcher) {
   auto menu_model = std::make_shared<slint::VectorModel<MenuItem>>();
@@ -441,15 +457,15 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
   hover.widget_height = last_plot_height_;
 
   const std::size_t pinned_runs_count = series_manager_.getPinnedRunsCount();
-  if (!immediate && pipeline_.isCacheHit(index, config, hover, pinned_runs_count)) {
+  const std::size_t current_frame =
+      static_cast<std::size_t>(std::max(0, window_.get_structure_3d_current_frame()));
+  if (!immediate && pipeline_.isCacheHit(index, config, hover, pinned_runs_count, current_frame)) {
     return;
   }
 
-  updateTableData(hist);
-  updateCurveToggleItems(hist);
-
   RenderTask task;
   task.index = index;
+  task.active_frame = current_frame;
   task.active_hist = *hist;
   task.config = config;
   task.config.show_difference_curve = series_manager_.shouldShowDifference();
@@ -458,6 +474,11 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
   task.curve_visibility = series_manager_.getCurveVisibilityMap();
   task.custom_curve_colors = series_manager_.getAssignedCurveColors();
   task.pinned_runs_count = pinned_runs_count;
+
+  applyDualViewOverlay(task, name, current_frame);
+
+  updateTableData(&task.active_hist);
+  updateCurveToggleItems(&task.active_hist);
 
   correlation::plotters::LabeledHistogram current_entry;
   current_entry.label = "Current";
@@ -479,6 +500,53 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
   }
 
   pipeline_.submitTask(std::move(task));
+}
+
+void PlotController::applyDualViewOverlay(RenderTask &task, const std::string &name,
+                                          std::size_t current_frame) const {
+  if (window_.get_preview_active_tab() != 2) {
+    return;
+  }
+
+  std::shared_ptr<const analysis::PerFrameDistributionStore> store;
+  if (structure_3d_controller_ != nullptr) {
+    store = structure_3d_controller_->distributionStore();
+  }
+  if (!store && dispatcher_.getDistributionFunctions() != nullptr) {
+    store = dispatcher_.getDistributionFunctions()->getPerFrameStore();
+  }
+  if (!store) {
+    return;
+  }
+
+  const auto metric_opt = histogramKeyToMetric(name);
+  if (!metric_opt.has_value() || !store->hasData(*metric_opt)) {
+    return;
+  }
+
+  const auto metric = *metric_opt;
+  const auto &bins = store->getBins(metric);
+  const auto &mean_curve = store->getMeanCurve(metric);
+  const auto &frame_curve = store->getFrameCurve(metric, current_frame);
+
+  if (bins.empty() || mean_curve.empty() || frame_curve.empty()) {
+    return;
+  }
+
+  task.active_frame = current_frame;
+  task.active_hist.bins = bins;
+  task.active_hist.partials.clear();
+  task.active_hist.smoothed_partials.clear();
+
+  const std::string mean_label = "Ensemble Mean";
+  const std::string frame_label = std::format("Frame {}", current_frame + 1);
+
+  task.active_hist.partials[mean_label] = mean_curve;
+  task.active_hist.partials[frame_label] = frame_curve;
+
+  task.curve_visibility.clear();
+  task.curve_visibility[mean_label] = true;
+  task.curve_visibility[frame_label] = true;
 }
 
 void PlotController::updateTableData(const correlation::analysis::Histogram *hist) {
@@ -1053,9 +1121,6 @@ void PlotController::handleTagPeakAt(float click_x, float click_y) {
       .centroid = detected->centroid,
       .color_hex = "#0072b2",
   };
-  tagged_peaks_.push_back(std::move(peak_data));
-  updateTaggedPeakPixels();
-
   if (detected->coordination_number.has_value()) {
     window_.set_analysis_status_text(slint::SharedString(
         std::format("Tagged Peak #{}: {:.2f} {} (CN: {:.2f})", peak_data.id, peak_data.r_peak,
@@ -1065,6 +1130,9 @@ void PlotController::handleTagPeakAt(float click_x, float click_y) {
         slint::SharedString(std::format("Tagged Peak #{}: {:.2f} {} (Area: {:.2f})", peak_data.id,
                                         peak_data.r_peak, hist->x_unit, detected->area)));
   }
+
+  tagged_peaks_.push_back(std::move(peak_data));
+  updateTaggedPeakPixels();
 }
 
 void PlotController::handleTagPeakRange(float start_x, float end_x) {
@@ -1111,9 +1179,6 @@ void PlotController::handleTagPeakRange(float start_x, float end_x) {
       .centroid = res.centroid,
       .color_hex = "#0072b2",
   };
-  tagged_peaks_.push_back(std::move(peak_data));
-  updateTaggedPeakPixels();
-
   if (res.coordination_number.has_value()) {
     window_.set_analysis_status_text(slint::SharedString(
         std::format("Integrated Range [{:.2f} - {:.2f}]: CN = {:.2f}", peak_data.r_min,
@@ -1123,6 +1188,9 @@ void PlotController::handleTagPeakRange(float start_x, float end_x) {
         slint::SharedString(std::format("Integrated Range [{:.2f} - {:.2f}]: Area = {:.2f}",
                                         peak_data.r_min, peak_data.r_max, res.area)));
   }
+
+  tagged_peaks_.push_back(std::move(peak_data));
+  updateTaggedPeakPixels();
 }
 
 void PlotController::handleRemoveTaggedPeak(int idx) {

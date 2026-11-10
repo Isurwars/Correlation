@@ -89,6 +89,12 @@ public:
   void handleResetView();
 
   /**
+   * @brief Sets camera orientation to a standard orthographic or isometric preset.
+   * @param[in] preset_idx 0: Top (XY), 1: Front (XZ), 2: Side (YZ), 3: Isometric.
+   */
+  void handleSetCameraPreset(int preset_idx);
+
+  /**
    * @brief Toggles rendering of covalent bonds.
    * @param[in] enabled True to render bonds.
    */
@@ -141,6 +147,16 @@ public:
    * @param[in] store Shared pointer to PerFrameDistributionStore.
    */
   void setDistributionStore(std::shared_ptr<const analysis::PerFrameDistributionStore> store);
+
+  /**
+   * @brief Returns active per-frame distribution store if available.
+   * @return Shared pointer to const PerFrameDistributionStore, or nullptr.
+   */
+  [[nodiscard]] std::shared_ptr<const analysis::PerFrameDistributionStore>
+  distributionStore() const noexcept {
+    const std::scoped_lock lock(mutex_);
+    return distribution_store_;
+  }
 
   /**
    * @brief Selects active distribution metric displayed in 3D viewer mini-chart HUD.

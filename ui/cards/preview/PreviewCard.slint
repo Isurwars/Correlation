@@ -93,6 +93,9 @@ export component PreviewCard inherits FilledCard {
     callback add_marker(bool);
     callback clear_markers();
     callback browse_file();
+    callback load_sample(string);
+    callback load_recent(string);
+    in property <[string]> recent_files: [];
     callback run_analysis();
     callback open_panel(int);
     callback copy_plot_clipboard();
@@ -194,6 +197,7 @@ export component PreviewCard inherits FilledCard {
     callback pan_3d(float, float);
     callback zoom_3d(float);
     callback reset_view_3d();
+    callback set_camera_preset_3d(int);
     callback toggle_bonds_3d(bool);
     callback toggle_wireframe_3d(bool);
     callback toggle_in_cell_3d(bool);
@@ -335,7 +339,10 @@ export component PreviewCard inherits FilledCard {
                         file_basename: root.file_basename;
                         total_atoms: root.total_atoms;
                         num_frames: root.num_frames;
+                        recent_files: root.recent_files;
                         browse_file => { root.browse_file(); }
+                        load_sample(s) => { root.load_sample(s); }
+                        load_recent(r) => { root.load_recent(r); }
                         run_analysis => { root.run_analysis(); }
                         open_panel(idx) => { root.open_panel(idx); }
                     }
@@ -588,13 +595,17 @@ export component PreviewCard inherits FilledCard {
                 file_basename: root.file_basename;
                 total_atoms: root.total_atoms;
                 num_frames: root.num_frames;
+                recent_files: root.recent_files;
                 run_analysis => { root.run_analysis(); }
                 open_panel(idx) => { root.open_panel(idx); }
                 browse_file => { root.browse_file(); }
+                load_sample(s) => { root.load_sample(s); }
+                load_recent(r) => { root.load_recent(r); }
                 rotate_3d(dx, dy) => { root.rotate_3d(dx, dy); }
                 pan_3d(dx, dy) => { root.pan_3d(dx, dy); }
                 zoom_3d(delta) => { root.zoom_3d(delta); }
                 reset_view => { root.reset_view_3d(); }
+                set_camera_preset(p) => { root.set_camera_preset_3d(p); }
                 toggle_bonds(enabled) => { root.toggle_bonds_3d(enabled); }
                 toggle_wireframe(enabled) => { root.toggle_wireframe_3d(enabled); }
                 toggle_in_cell(enabled) => { root.toggle_in_cell_3d(enabled); }

@@ -104,6 +104,26 @@ void AppController::registerActionCallbacks() {
   window_.on_run_analysis([this] { analysis_runner_->handleRunAnalysis(); });
   window_.on_cancel_analysis([this] { dispatcher_.cancelAnalysis(); });
   window_.on_browse_file([this] { file_io_handler_->handleBrowseFile(); });
+  window_.on_load_sample([this](const slint::SharedString &sample_name) {
+    std::string path;
+    const std::string_view name(sample_name.data());
+    if (name == "a-PdSi") {
+      path = "examples/a-PdSi/a-PdSi.car";
+    } else if (name == "Cellulose") {
+      path = "examples/Cellulose/Cellulose.car";
+    } else if (name == "Si") {
+      path = "examples/Si/Si.car";
+    }
+    if (!path.empty() && std::filesystem::exists(path)) {
+      loadTrajectory(path);
+    }
+  });
+  window_.on_load_recent_file([this](const slint::SharedString &recent_path) {
+    const std::string path(recent_path.data());
+    if (std::filesystem::exists(path)) {
+      loadTrajectory(path);
+    }
+  });
   window_.on_reload_file([this] { file_io_handler_->handleReloadFile(); });
   window_.on_rename_element([this](const slint::SharedString &old_sym,
                                    const slint::SharedString &new_sym) {
@@ -248,6 +268,9 @@ void AppController::registerStructure3DCallbacks() {
 
   window_.on_reset_view_3d([this] { structure_3d_controller_->handleResetView(); });
 
+  window_.on_set_camera_preset_3d(
+      [this](int preset_idx) { structure_3d_controller_->handleSetCameraPreset(preset_idx); });
+
   window_.on_toggle_bonds_3d(
       [this](bool enabled) { structure_3d_controller_->handleToggleBonds(enabled); });
 
@@ -263,6 +286,9 @@ void AppController::registerStructure3DCallbacks() {
       file_io_handler_->updateBoxDiagnosticsForFrame(
           static_cast<size_t>(std::max(0, window_.get_structure_3d_current_frame())));
     }
+    if (window_.get_preview_active_tab() == 2 && plot_controller_ != nullptr) {
+      plot_controller_->requestPlotUpdate(window_.get_selected_plot_index(), false);
+    }
   });
 
   window_.on_step_frame_3d([this](bool forward) {
@@ -270,6 +296,9 @@ void AppController::registerStructure3DCallbacks() {
     if (file_io_handler_) {
       file_io_handler_->updateBoxDiagnosticsForFrame(
           static_cast<size_t>(std::max(0, window_.get_structure_3d_current_frame())));
+    }
+    if (window_.get_preview_active_tab() == 2 && plot_controller_ != nullptr) {
+      plot_controller_->requestPlotUpdate(window_.get_selected_plot_index(), false);
     }
   });
 
@@ -293,7 +322,7 @@ void AppController::registerStructure3DCallbacks() {
     const bool is_3d = (tab == 1 || tab == 2);
     structure_3d_controller_->set3DModeActive(is_3d);
     if ((tab == 0 || tab == 2) && plot_controller_ != nullptr) {
-      plot_controller_->requestPlotUpdate(0, false);
+      plot_controller_->requestPlotUpdate(window_.get_selected_plot_index(), true);
     }
   });
 
@@ -535,6 +564,32 @@ void AppController::loadSettings() {
     window_.window().set_size(
         slint::PhysicalSize({.width = settings_.window_width, .height = settings_.window_height}));
   }
+
+  const auto recent_model = std::make_shared<slint::VectorModel<slint::SharedString>>();
+  for (const auto &file : settings_.recent_files) {
+    recent_model->push_back(slint::SharedString(file));
+  }
+  window_.set_recent_files(recent_model);
+}
+
+void AppController::addRecentFile(const std::string &filepath) {
+  if (filepath.empty()) {
+    return;
+  }
+  auto &recents = settings_.recent_files;
+  const auto [first, last] = std::ranges::remove(recents, filepath);
+  recents.erase(first, last);
+  recents.insert(recents.begin(), filepath);
+  if (recents.size() > 5) {
+    recents.resize(5);
+  }
+  saveSettings();
+
+  const auto recent_model = std::make_shared<slint::VectorModel<slint::SharedString>>();
+  for (const auto &file : recents) {
+    recent_model->push_back(slint::SharedString(file));
+  }
+  window_.set_recent_files(recent_model);
 }
 
 void AppController::saveSettings() const {

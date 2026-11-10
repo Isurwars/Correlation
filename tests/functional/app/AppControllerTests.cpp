@@ -1098,3 +1098,120 @@ TEST_F(AppControllerTests, DualViewAndTabOrderLifecycleIntegration) {
   EXPECT_EQ(window->get_preview_active_tab(), 3);
   EXPECT_FALSE(structure_ctrl->is3DModeActive());
 }
+
+TEST_F(AppControllerTests, CameraPresetsOrientationIntegration) {
+  auto window = AppWindow::create();
+  correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+
+  auto *structure_ctrl = controller.getStructure3DController();
+  ASSERT_NE(structure_ctrl, nullptr);
+
+  // Preset 0: Top (XY)
+  window->invoke_set_camera_preset_3d(0);
+  EXPECT_FLOAT_EQ(structure_ctrl->camera().azimuth(), 0.0F);
+  EXPECT_FLOAT_EQ(structure_ctrl->camera().elevation(), 89.0F);
+
+  // Preset 1: Front (XZ)
+  window->invoke_set_camera_preset_3d(1);
+  EXPECT_FLOAT_EQ(structure_ctrl->camera().azimuth(), 0.0F);
+  EXPECT_FLOAT_EQ(structure_ctrl->camera().elevation(), 0.0F);
+
+  // Preset 2: Side (YZ)
+  window->invoke_set_camera_preset_3d(2);
+  EXPECT_FLOAT_EQ(structure_ctrl->camera().azimuth(), 90.0F);
+  EXPECT_FLOAT_EQ(structure_ctrl->camera().elevation(), 0.0F);
+
+  // Preset 3: Isometric
+  window->invoke_set_camera_preset_3d(3);
+  EXPECT_FLOAT_EQ(structure_ctrl->camera().azimuth(), 45.0F);
+  EXPECT_NEAR(structure_ctrl->camera().elevation(), 35.26F, 0.01F);
+}
+
+TEST_F(AppControllerTests, SampleDatasetAndRecentFilesIntegration) {
+  auto window = AppWindow::create();
+  correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+
+  // Verify recent files recording and UI sync
+  controller.addRecentFile("test_path_1.car");
+  controller.addRecentFile("test_path_2.car");
+  auto recents = window->get_recent_files();
+  ASSERT_EQ(recents->row_count(), 2);
+  EXPECT_EQ(recents->row_data(0).value(), slint::SharedString("test_path_2.car"));
+  EXPECT_EQ(recents->row_data(1).value(), slint::SharedString("test_path_1.car"));
+
+  // Verify adding duplicate file promotes it to front without duplicating
+  controller.addRecentFile("test_path_1.car");
+  recents = window->get_recent_files();
+  ASSERT_EQ(recents->row_count(), 2);
+  EXPECT_EQ(recents->row_data(0).value(), slint::SharedString("test_path_1.car"));
+  EXPECT_EQ(recents->row_data(1).value(), slint::SharedString("test_path_2.car"));
+}
+
+TEST_F(AppControllerTests, DualViewPerFrameOverlayIntegration) {
+  auto window = AppWindow::create();
+
+  std::string file_path = "../../examples/a-PdSi/a-PdSi.car";
+  if (!std::filesystem::exists(file_path)) {
+    file_path = "../examples/a-PdSi/a-PdSi.car";
+  }
+  if (!std::filesystem::exists(file_path)) {
+    file_path = "examples/a-PdSi/a-PdSi.car";
+  }
+  ASSERT_TRUE(loader().loadFile(file_path).has_value());
+
+  options().active_calculators["g(r), J(r), G(r)"] = true;
+
+  correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+  EXPECT_TRUE(dispatcher().runAnalysis(loader().trajectoryMut(), options()).has_value());
+
+  auto *plot_ctrl = controller.getPlotController();
+  auto *structure_ctrl = controller.getStructure3DController();
+  ASSERT_NE(plot_ctrl, nullptr);
+  ASSERT_NE(structure_ctrl, nullptr);
+
+  const auto *df = dispatcher().getDistributionFunctions();
+  ASSERT_NE(df, nullptr);
+
+  // Set up 2-frame distribution store
+  auto store = std::make_shared<correlation::analysis::PerFrameDistributionStore>(2);
+  const auto &bins = df->getAllHistograms().at("g_r").bins;
+  const auto &mean_curve = df->getAllHistograms().at("g_r").partials.at("Total");
+  store->setBins(correlation::analysis::DistributionMetric::RDF, bins);
+  store->setMeanCurve(correlation::analysis::DistributionMetric::RDF, mean_curve);
+  store->setFrameCurve(correlation::analysis::DistributionMetric::RDF, 0, mean_curve);
+  store->setFrameCurve(correlation::analysis::DistributionMetric::RDF, 1, mean_curve);
+  structure_ctrl->setDistributionStore(store);
+
+  plot_ctrl->populatePlotList();
+
+  // Tab 0: Standard 2D Plot view with Total and partials
+  window->set_preview_active_tab(0);
+  plot_ctrl->requestPlotUpdate(0, true);
+  auto toggle_items_tab0 = window->get_curve_toggle_items();
+  ASSERT_GT(toggle_items_tab0->row_count(), 1);
+  EXPECT_EQ(toggle_items_tab0->row_data(0).value().label, slint::SharedString("Total"));
+
+  // Tab 2: Dual View with Ensemble Mean (accented) and Frame 1 (faded)
+  window->set_preview_active_tab(2);
+  window->set_structure_3d_current_frame(0);
+  plot_ctrl->requestPlotUpdate(0, true);
+  auto toggle_items_tab2 = window->get_curve_toggle_items();
+  ASSERT_EQ(toggle_items_tab2->row_count(), 2);
+  EXPECT_EQ(toggle_items_tab2->row_data(0).value().label, slint::SharedString("Ensemble Mean"));
+  EXPECT_EQ(toggle_items_tab2->row_data(1).value().label, slint::SharedString("Frame 1"));
+
+  // Seek to frame 1 in 3D viewport -> updates Dual View to Frame 2
+  window->invoke_seek_frame_3d(1);
+  plot_ctrl->requestPlotUpdate(0, true);
+  auto toggle_items_frame1 = window->get_curve_toggle_items();
+  ASSERT_EQ(toggle_items_frame1->row_count(), 2);
+  EXPECT_EQ(toggle_items_frame1->row_data(0).value().label, slint::SharedString("Ensemble Mean"));
+  EXPECT_EQ(toggle_items_frame1->row_data(1).value().label, slint::SharedString("Frame 2"));
+
+  // Switching back to Tab 0 restores standard partials
+  window->set_preview_active_tab(0);
+  window->invoke_preview_tab_changed(0);
+  auto restored_items = window->get_curve_toggle_items();
+  ASSERT_GT(restored_items->row_count(), 1);
+  EXPECT_EQ(restored_items->row_data(0).value().label, slint::SharedString("Total"));
+}

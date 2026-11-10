@@ -32,6 +32,13 @@ public:
   void orbit(float delta_azimuth_deg, float delta_elevation_deg) noexcept;
 
   /**
+   * @brief Sets camera orbit orientation directly in degrees.
+   * @param azimuth_deg Horizontal azimuth angle in degrees.
+   * @param elevation_deg Vertical elevation angle in degrees.
+   */
+  void setOrientation(float azimuth_deg, float elevation_deg) noexcept;
+
+  /**
    * @brief Pans the camera target along the view-aligned screen plane.
    * @param delta_x Horizontal translation delta.
    * @param delta_y Vertical translation delta.

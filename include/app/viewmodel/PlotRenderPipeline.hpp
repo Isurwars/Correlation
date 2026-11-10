@@ -30,8 +30,9 @@ namespace correlation::app {
  * @brief Self-contained payload consumed by the background SVG render worker.
  */
 struct RenderTask {
-  int index{-1};                                                         ///< Target plot index
-  correlation::analysis::Histogram active_hist;                          ///< Active histogram data
+  int index{-1};                                ///< Target plot index
+  std::size_t active_frame{0};                  ///< Active trajectory frame
+  correlation::analysis::Histogram active_hist; ///< Active histogram data
   std::vector<correlation::plotters::LabeledHistogram> comparison_hists; ///< Comparison histograms
   correlation::plotters::PlotConfig config;                              ///< Output styling config
   correlation::plotters::HoverInfo hover;                                ///< Cursor hover metadata
@@ -73,11 +74,13 @@ public:
    * @param[in] config Target plot configuration.
    * @param[in] hover Target hover info.
    * @param[in] pinned_runs_count Current pinned comparison runs count.
+   * @param[in] active_frame Current active trajectory frame index.
    * @return True if previous frame exactly matches and re-render is unnecessary.
    */
   [[nodiscard]] bool isCacheHit(int index, const correlation::plotters::PlotConfig &config,
                                 const correlation::plotters::HoverInfo &hover,
-                                std::size_t pinned_runs_count) const noexcept;
+                                std::size_t pinned_runs_count,
+                                std::size_t active_frame = 0) const noexcept;
 
   /**
    * @brief Invalidates cached parameters to force re-rendering on the next request.
@@ -112,6 +115,7 @@ private:
 
   mutable std::mutex cache_mutex_;
   int last_rendered_index_{-1};
+  std::size_t last_rendered_frame_{0};
   correlation::plotters::PlotConfig last_config_;
   correlation::plotters::HoverInfo last_hover_;
   std::size_t last_pinned_runs_count_{0};

@@ -15,6 +15,7 @@
 #include <array>
 #include <cmath>
 #include <cstdint>
+#include <format>
 #include <utility>
 
 namespace correlation::app {
@@ -151,6 +152,28 @@ void Structure3DController::handleResetView() {
     } else {
       camera_.fitToBox(math::Vector3<float>{-10.0F, -10.0F, -10.0F},
                        math::Vector3<float>{10.0F, 10.0F, 10.0F});
+    }
+  }
+  requestRender();
+}
+
+void Structure3DController::handleSetCameraPreset(int preset_idx) {
+  {
+    const std::scoped_lock lock(mutex_);
+    switch (preset_idx) {
+    case 0: // Top (XY)
+      camera_.setOrientation(0.0F, 89.0F);
+      break;
+    case 1: // Front (XZ)
+      camera_.setOrientation(0.0F, 0.0F);
+      break;
+    case 2: // Side (YZ)
+      camera_.setOrientation(90.0F, 0.0F);
+      break;
+    case 3: // Isometric
+    default:
+      camera_.setOrientation(45.0F, 35.26F);
+      break;
     }
   }
   requestRender();
@@ -673,7 +696,7 @@ void Structure3DController::setMetricPlotLimits(analysis::DistributionMetric met
   if (idx < metric_plot_configs_.size()) {
     {
       const std::scoped_lock lock(mutex_);
-      metric_plot_configs_[idx] = config;
+      metric_plot_configs_.at(idx) = config;
     }
     syncDistributionHUDToWindow();
   }
@@ -694,7 +717,7 @@ void Structure3DController::syncDistributionHUDToWindow() {
       visible = dist_hud_visible_;
       const auto idx = static_cast<std::size_t>(metric);
       if (idx < metric_plot_configs_.size()) {
-        plot_cfg = metric_plot_configs_[idx];
+        plot_cfg = metric_plot_configs_.at(idx);
       }
       active_frame = streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
     }
@@ -720,9 +743,8 @@ void Structure3DController::syncDistributionHUDToWindow() {
     const auto peak = render3d::MiniPlotRenderer::findPeak(
         store->getBins(metric), store->getFrameCurve(metric, active_frame));
     if (peak.valid) {
-      char buf_str[32];
-      std::snprintf(buf_str, sizeof(buf_str), "Peak: %.2f %s", peak.x, metric_data.x_unit.c_str());
-      window_.set_structure_3d_dist_peak_text(slint::SharedString(buf_str));
+      window_.set_structure_3d_dist_peak_text(
+          slint::SharedString(std::format("Peak: {:.2f} {}", peak.x, metric_data.x_unit)));
     } else {
       window_.set_structure_3d_dist_peak_text(slint::SharedString(""));
     }
