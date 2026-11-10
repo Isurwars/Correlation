@@ -14,9 +14,11 @@ import {
     SplitterHandle,
     CheckBoxRow,
     FilledButton,
+    DropDownMenu,
+    MenuItem,
     Icons,
 } from "../../../material/material.slint";
-import { CurveToggleItem, PlotAxisSettings, TaggedPeakRecord } from "../../../Types.slint";
+import { CurveToggleItem, PlotAxisSettings, TaggedPeakRecord, ExportConfig } from "../../../Types.slint";
 
 component CompactInputField inherits Rectangle {
     in-out property <string> text <=> input.text;
@@ -72,7 +74,8 @@ export component CurveSidebar inherits Horizontal {
     in-out property <length> sidebar_width: 250px;
     in-out property <bool> sidebar_collapsed: false;
     in-out property <PlotAxisSettings> axis_settings;
-    in-out property <int> active_tab: 0; // 0: Curves, 1: Axes & Grid, 2: Peaks
+    in-out property <ExportConfig> export_config;
+    in-out property <int> active_tab: 0; // 0: Curves, 1: Style & Axes, 2: Peaks
     in-out property <int> active_color_picker_id: -1;
     in property <[TaggedPeakRecord]> tagged_peaks: [];
     in-out property <string> curve_filter: "";
@@ -85,6 +88,7 @@ export component CurveSidebar inherits Horizontal {
     callback set_curve_width(string);
     callback apply_axis_settings();
     callback reset_axis_settings();
+    callback reset_export_settings();
     callback toggle_collapse();
     callback remove_tagged_peak(int);
     callback clear_tagged_peaks();
@@ -98,6 +102,19 @@ export component CurveSidebar inherits Horizontal {
 
     out property <length> tooltip_y:
         collapse_touch.has-hover ? collapse_touch.absolute-position.y + collapse_touch.mouse-y : 0px;
+
+    private property <[MenuItem]> palette_menu_items: [
+        { text: "Okabe-Ito (Colorblind)", enabled: true },
+        { text: "Grayscale (B&W)", enabled: true },
+        { text: "Viridis", enabled: true },
+        { text: "Magma (Continuous)", enabled: true },
+        { text: "Heatmap (Continuous)", enabled: true },
+        { text: "Rainbow (Continuous)", enabled: true },
+        { text: "Turbo (Continuous)", enabled: true },
+        { text: "Plasma (Continuous)", enabled: true },
+        { text: "Inferno (Continuous)", enabled: true },
+        { text: "Cividis (Continuous)", enabled: true }
+    ];
 
     private property <[color]> swatch_colors: [
         #e69f00, #56b4e9, #009e73, #f0e442,
@@ -192,7 +209,7 @@ export component CurveSidebar inherits Horizontal {
                                 border-radius: MaterialStyleMetrics.border_radius_2;
 
                                 MaterialText {
-                                    text: "Axes & Grid";
+                                    text: "Style & Axes";
                                     style: MaterialTypography.label_small;
                                     font-weight: (root.active_tab == 1) ? 600 : 400;
                                     color: (root.active_tab == 1) ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
@@ -597,17 +614,260 @@ export component CurveSidebar inherits Horizontal {
             }
 
             // ================================================================
-            // Tab 1: Axes, Scaling & Gridlines
+            // Tab 1: Style, Presets, Axes & Gridlines
             // ================================================================
             if root.active_tab == 1: ScrollView {
                 vertical-stretch: 1;
-                content-height: 480px;
+                content-height: 820px;
 
                 VerticalLayout {
-                    spacing: 10px;
+                    spacing: 12px;
                     padding-right: 2px;
 
-                    // X-Axis Section
+                    // 1. Publication Sizing Preset (Segmented 4-way Pill Bar)
+                    VerticalLayout {
+                        spacing: 4px;
+
+                        MaterialText {
+                            text: "Publication Preset";
+                            style: MaterialTypography.label_medium;
+                            color: MaterialPalette.on_surface;
+                        }
+
+                        Rectangle {
+                            height: 30px;
+                            background: MaterialPalette.surface_container_high;
+                            border-radius: MaterialStyleMetrics.border_radius_4;
+
+                            HorizontalLayout {
+                                padding: 2px;
+                                spacing: 2px;
+
+                                preset_btn_0 := TouchArea {
+                                    horizontal-stretch: 1;
+                                    mouse-cursor: pointer;
+                                    clicked => {
+                                        root.export_config.size_preset = 0;
+                                        root.apply_axis_settings();
+                                    }
+                                    Rectangle {
+                                        background: (root.export_config.size_preset == 0) ? MaterialPalette.primary_container :
+                                                    preset_btn_0.has-hover ? MaterialPalette.surface_container_highest : transparent;
+                                        border-radius: MaterialStyleMetrics.border_radius_2;
+                                        MaterialText {
+                                            text: "Default";
+                                            font-size: 10px;
+                                            font-weight: (root.export_config.size_preset == 0) ? 600 : 400;
+                                            color: (root.export_config.size_preset == 0) ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
+                                            horizontal-alignment: center;
+                                            vertical-alignment: center;
+                                        }
+                                    }
+                                }
+
+                                preset_btn_1 := TouchArea {
+                                    horizontal-stretch: 1;
+                                    mouse-cursor: pointer;
+                                    clicked => {
+                                        root.export_config.size_preset = 1;
+                                        root.apply_axis_settings();
+                                    }
+                                    Rectangle {
+                                        background: (root.export_config.size_preset == 1) ? MaterialPalette.primary_container :
+                                                    preset_btn_1.has-hover ? MaterialPalette.surface_container_highest : transparent;
+                                        border-radius: MaterialStyleMetrics.border_radius_2;
+                                        MaterialText {
+                                            text: "1-Col";
+                                            font-size: 10px;
+                                            font-weight: (root.export_config.size_preset == 1) ? 600 : 400;
+                                            color: (root.export_config.size_preset == 1) ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
+                                            horizontal-alignment: center;
+                                            vertical-alignment: center;
+                                        }
+                                    }
+                                }
+
+                                preset_btn_2 := TouchArea {
+                                    horizontal-stretch: 1;
+                                    mouse-cursor: pointer;
+                                    clicked => {
+                                        root.export_config.size_preset = 2;
+                                        root.apply_axis_settings();
+                                    }
+                                    Rectangle {
+                                        background: (root.export_config.size_preset == 2) ? MaterialPalette.primary_container :
+                                                    preset_btn_2.has-hover ? MaterialPalette.surface_container_highest : transparent;
+                                        border-radius: MaterialStyleMetrics.border_radius_2;
+                                        MaterialText {
+                                            text: "2-Col";
+                                            font-size: 10px;
+                                            font-weight: (root.export_config.size_preset == 2) ? 600 : 400;
+                                            color: (root.export_config.size_preset == 2) ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
+                                            horizontal-alignment: center;
+                                            vertical-alignment: center;
+                                        }
+                                    }
+                                }
+
+                                preset_btn_3 := TouchArea {
+                                    horizontal-stretch: 1;
+                                    mouse-cursor: pointer;
+                                    clicked => {
+                                        root.export_config.size_preset = 3;
+                                        root.apply_axis_settings();
+                                    }
+                                    Rectangle {
+                                        background: (root.export_config.size_preset == 3) ? MaterialPalette.primary_container :
+                                                    preset_btn_3.has-hover ? MaterialPalette.surface_container_highest : transparent;
+                                        border-radius: MaterialStyleMetrics.border_radius_2;
+                                        MaterialText {
+                                            text: "Slide";
+                                            font-size: 10px;
+                                            font-weight: (root.export_config.size_preset == 3) ? 600 : 400;
+                                            color: (root.export_config.size_preset == 3) ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
+                                            horizontal-alignment: center;
+                                            vertical-alignment: center;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // 2. Publication Color Palette
+                    VerticalLayout {
+                        spacing: 4px;
+
+                        MaterialText {
+                            text: "Color Palette";
+                            style: MaterialTypography.label_medium;
+                            color: MaterialPalette.on_surface;
+                        }
+
+                        DropDownMenu {
+                            width: 100%;
+                            items: root.palette_menu_items;
+                            current_index <=> root.export_config.palette;
+                        }
+                    }
+
+                    // 3. Typography & Stroke Metrics
+                    VerticalLayout {
+                        spacing: 4px;
+
+                        MaterialText {
+                            text: "Typography & Strokes";
+                            style: MaterialTypography.label_medium;
+                            color: MaterialPalette.on_surface;
+                        }
+
+                        HorizontalLayout {
+                            spacing: 6px;
+
+                            VerticalLayout {
+                                horizontal-stretch: 1;
+                                spacing: 2px;
+                                MaterialText {
+                                    text: "Font Scale:";
+                                    style: MaterialTypography.label_small;
+                                    color: MaterialPalette.on_surface_variant;
+                                }
+                                CompactInputField {
+                                    placeholder_text: "1.0";
+                                    text <=> root.export_config.font_scale;
+                                    accepted(_) => { root.apply_axis_settings(); }
+                                }
+                            }
+
+                            VerticalLayout {
+                                horizontal-stretch: 1;
+                                spacing: 2px;
+                                MaterialText {
+                                    text: "Line (pt):";
+                                    style: MaterialTypography.label_small;
+                                    color: MaterialPalette.on_surface_variant;
+                                }
+                                CompactInputField {
+                                    placeholder_text: "3.0";
+                                    text <=> root.export_config.line_width;
+                                    accepted(_) => { root.apply_axis_settings(); }
+                                }
+                            }
+
+                            VerticalLayout {
+                                horizontal-stretch: 1;
+                                spacing: 2px;
+                                MaterialText {
+                                    text: "Marker (px):";
+                                    style: MaterialTypography.label_small;
+                                    color: MaterialPalette.on_surface_variant;
+                                }
+                                CompactInputField {
+                                    placeholder_text: "3.5";
+                                    text <=> root.export_config.marker_size;
+                                    accepted(_) => { root.apply_axis_settings(); }
+                                }
+                            }
+                        }
+                    }
+
+                    // 4. Display Toggles
+                    VerticalLayout {
+                        spacing: 4px;
+
+                        MaterialText {
+                            text: "Display Elements";
+                            style: MaterialTypography.label_medium;
+                            color: MaterialPalette.on_surface;
+                        }
+
+                        HorizontalLayout {
+                            spacing: 6px;
+                            CheckBoxRow {
+                                horizontal-stretch: 1;
+                                text: "Legend";
+                                check_state_bool: root.export_config.show_legend;
+                                checked_state_changed(s) => {
+                                    root.export_config.show_legend = s;
+                                    root.apply_axis_settings();
+                                }
+                            }
+                            CheckBoxRow {
+                                horizontal-stretch: 1;
+                                text: "Markers";
+                                check_state_bool: root.export_config.show_markers;
+                                checked_state_changed(s) => {
+                                    root.export_config.show_markers = s;
+                                    root.apply_axis_settings();
+                                }
+                            }
+                        }
+
+                        HorizontalLayout {
+                            spacing: 6px;
+                            CheckBoxRow {
+                                horizontal-stretch: 1;
+                                text: "Major Grid";
+                                check_state_bool: root.axis_settings.show_major_grid;
+                                checked_state_changed(s) => {
+                                    root.axis_settings.show_major_grid = s;
+                                    root.export_config.show_grid = s;
+                                    root.apply_axis_settings();
+                                }
+                            }
+                            CheckBoxRow {
+                                horizontal-stretch: 1;
+                                text: "Fill Area";
+                                check_state_bool: root.export_config.fill_area;
+                                checked_state_changed(s) => {
+                                    root.export_config.fill_area = s;
+                                    root.apply_axis_settings();
+                                }
+                            }
+                        }
+                    }
+
+                    // 5. X-Axis Section
                     VerticalLayout {
                         spacing: 4px;
 
@@ -657,7 +917,7 @@ export component CurveSidebar inherits Horizontal {
                         }
                     }
 
-                    // Y-Axis Section
+                    // 6. Y-Axis Section
                     VerticalLayout {
                         spacing: 4px;
 
@@ -707,7 +967,7 @@ export component CurveSidebar inherits Horizontal {
                         }
                     }
 
-                    // Tick Steps Section
+                    // 7. Tick Steps Section
                     VerticalLayout {
                         spacing: 4px;
 
@@ -757,7 +1017,7 @@ export component CurveSidebar inherits Horizontal {
                         }
                     }
 
-                    // Minor Subdivisions
+                    // 8. Minor Subdivisions & Log Scale
                     HorizontalLayout {
                         spacing: 6px;
                         alignment: center;
@@ -839,14 +1099,6 @@ export component CurveSidebar inherits Horizontal {
                             }
                         }
                         CheckBoxRow {
-                            text: "Show Major Grid";
-                            check_state_bool: root.axis_settings.show_major_grid;
-                            checked_state_changed(s) => {
-                                root.axis_settings.show_major_grid = s;
-                                root.apply_axis_settings();
-                            }
-                        }
-                        CheckBoxRow {
                             text: "Show Minor Grid";
                             check_state_bool: root.axis_settings.show_minor_grid;
                             checked_state_changed(s) => {
@@ -876,6 +1128,7 @@ export component CurveSidebar inherits Horizontal {
                             mouse-cursor: pointer;
                             clicked => {
                                 root.reset_axis_settings();
+                                root.reset_export_settings();
                             }
                             Rectangle {
                                 background: parent.has-hover ? MaterialPalette.surface_container_highest : transparent;

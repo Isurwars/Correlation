@@ -881,9 +881,11 @@ export component AppWindow inherits Window {
 
                     plot_settings_open <=> root.plot_settings_open;
                     axis_settings <=> root.axis_settings;
+                    export_config <=> root.export_config;
                     selected_curve_id <=> root.selected_curve_id;
                     apply_axis_settings => { root.apply_axis_settings(); }
                     reset_axis_settings => { root.reset_axis_settings(); }
+                    reset_export_settings => { root.reset_export_settings(); }
                     set_curve_width(w) => { root.set_curve_width(w); }
 
                     calibration_pairs: root.calibration_pairs;

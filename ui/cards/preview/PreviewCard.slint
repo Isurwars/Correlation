@@ -8,7 +8,7 @@ import {
     FilledButton,
     Horizontal,
 } from "../../material/material.slint";
-import { TableRow, CurveToggleItem, CalibrationPair, PlotAxisSettings, TaggedPeakRecord } from "../../Types.slint";
+import { TableRow, CurveToggleItem, CalibrationPair, PlotAxisSettings, TaggedPeakRecord, ExportConfig } from "../../Types.slint";
 import { WorkflowStepper } from "./components/WorkflowStepper.slint";
 import { PreviewHeader } from "./components/PreviewHeader.slint";
 import { HeroEmptyState } from "./components/HeroEmptyState.slint";
@@ -106,9 +106,11 @@ export component PreviewCard inherits FilledCard {
     in-out property <bool> plot_settings_open: false;
     in-out property <bool> plot_sidebar_collapsed: false;
     in-out property <PlotAxisSettings> axis_settings;
+    in-out property <ExportConfig> export_config;
     in-out property <int> selected_curve_id: 0;
     callback apply_axis_settings();
     callback reset_axis_settings();
+    callback reset_export_settings();
     callback set_curve_width(string);
 
     // Cutoff Calibration properties & callbacks
@@ -521,6 +523,7 @@ export component PreviewCard inherits FilledCard {
                     sidebar_width <=> root.sidebar_width;
                     sidebar_collapsed <=> root.plot_sidebar_collapsed;
                     axis_settings <=> root.axis_settings;
+                    export_config <=> root.export_config;
                     active_color_picker_id <=> root.active_color_picker_id;
                     tagged_peaks: root.tagged_peaks;
                     toggle_curve_visibility(id, v) => { root.toggle_curve_visibility(id, v); }
@@ -531,6 +534,7 @@ export component PreviewCard inherits FilledCard {
                     set_curve_width(w) => { root.set_curve_width(w); }
                     apply_axis_settings => { root.apply_axis_settings(); }
                     reset_axis_settings => { root.reset_axis_settings(); }
+                    reset_export_settings => { root.reset_export_settings(); }
                     toggle_collapse => { root.plot_sidebar_collapsed = true; }
                     remove_tagged_peak(id) => { root.remove_tagged_peak(id); }
                     clear_tagged_peaks => { root.clear_tagged_peaks(); }
