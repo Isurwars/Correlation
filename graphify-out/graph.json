@@ -4650,8 +4650,8 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_structureanalyzer_raw_histograms",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "raw_histograms_"
     },
     {
@@ -23284,8 +23284,8 @@
       "source_location": "L188",
       "_origin": "ast",
       "id": "include_core_cell_cell_findelement",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "findelement"
     },
     {
@@ -31215,8 +31215,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "include_readers_basereader_basereader",
-      "community": 9,
-      "community_name": "vector",
+      "community": 349,
+      "community_name": "_CallableInt",
       "norm_label": "basereader"
     },
     {
@@ -31226,8 +31226,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "include_readers_basereader_basereader_basereader",
-      "community": 9,
-      "community_name": "vector",
+      "community": 349,
+      "community_name": "_CallableInt",
       "norm_label": ".basereader()"
     },
     {
@@ -31237,8 +31237,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "include_readers_basereader_basereader_getname",
-      "community": 9,
-      "community_name": "vector",
+      "community": 349,
+      "community_name": "_CallableInt",
       "norm_label": "getname"
     },
     {
@@ -31248,8 +31248,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "include_readers_basereader_basereader_getextensions",
-      "community": 9,
-      "community_name": "vector",
+      "community": 349,
+      "community_name": "_CallableInt",
       "norm_label": "getextensions"
     },
     {
@@ -31259,8 +31259,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "include_readers_basereader_basereader_istrajectory",
-      "community": 9,
-      "community_name": "vector",
+      "community": 349,
+      "community_name": "_CallableInt",
       "norm_label": "istrajectory"
     },
     {
@@ -31270,8 +31270,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "include_readers_basereader_basereader_readstructure",
-      "community": 9,
-      "community_name": "vector",
+      "community": 349,
+      "community_name": "_CallableInt",
       "norm_label": "readstructure"
     },
     {
@@ -31281,8 +31281,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "include_readers_basereader_basereader_readtrajectory",
-      "community": 9,
-      "community_name": "vector",
+      "community": 349,
+      "community_name": "_CallableInt",
       "norm_label": "readtrajectory"
     },
     {
@@ -34471,8 +34471,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "include_readers_contracts_ireaderregistry_ireaderregistry",
-      "community": 531,
-      "community_name": "SettingsManager",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "ireaderregistry"
     },
     {
@@ -34482,8 +34482,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "include_readers_contracts_ireaderregistry_ireaderregistry_ireaderregistry",
-      "community": 531,
-      "community_name": "SettingsManager",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": ".ireaderregistry()"
     },
     {
@@ -34493,8 +34493,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "include_readers_contracts_ireaderregistry_ireaderregistry_getreaderforextension",
-      "community": 531,
-      "community_name": "SettingsManager",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "getreaderforextension"
     },
     {
@@ -34504,8 +34504,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "include_readers_contracts_ireaderregistry_ireaderregistry_getallextensions",
-      "community": 531,
-      "community_name": "SettingsManager",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "getallextensions"
     },
     {
@@ -34515,8 +34515,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_readers_contracts_istructurereader",
-      "community": 9,
-      "community_name": "vector",
+      "community": 349,
+      "community_name": "_CallableInt",
       "norm_label": "istructurereader.hpp"
     },
     {
@@ -34526,8 +34526,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "include_readers_contracts_istructurereader_istructurereader",
-      "community": 9,
-      "community_name": "vector",
+      "community": 349,
+      "community_name": "_CallableInt",
       "norm_label": "istructurereader"
     },
     {
@@ -34537,8 +34537,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "include_readers_contracts_istructurereader_istructurereader_istructurereader",
-      "community": 9,
-      "community_name": "vector",
+      "community": 349,
+      "community_name": "_CallableInt",
       "norm_label": ".istructurereader()"
     },
     {
@@ -34548,8 +34548,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "include_readers_contracts_istructurereader_istructurereader_readstructure",
-      "community": 9,
-      "community_name": "vector",
+      "community": 349,
+      "community_name": "_CallableInt",
       "norm_label": "readstructure"
     },
     {
@@ -34559,8 +34559,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_readers_contracts_itrajectoryreader",
-      "community": 9,
-      "community_name": "vector",
+      "community": 349,
+      "community_name": "_CallableInt",
       "norm_label": "itrajectoryreader.hpp"
     },
     {
@@ -34570,8 +34570,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "include_readers_contracts_itrajectoryreader_itrajectoryreader",
-      "community": 9,
-      "community_name": "vector",
+      "community": 349,
+      "community_name": "_CallableInt",
       "norm_label": "itrajectoryreader"
     },
     {
@@ -34581,8 +34581,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "include_readers_contracts_itrajectoryreader_itrajectoryreader_itrajectoryreader",
-      "community": 9,
-      "community_name": "vector",
+      "community": 349,
+      "community_name": "_CallableInt",
       "norm_label": ".itrajectoryreader()"
     },
     {
@@ -41313,8 +41313,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_writers_structure_basestructurewriter",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "basestructurewriter.hpp"
     },
     {
@@ -41324,8 +41324,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "include_writers_structure_basestructurewriter_structurewriteroptions",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "structurewriteroptions"
     },
     {
@@ -41335,8 +41335,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "include_writers_structure_basestructurewriter_structurewriteroptions_fractional",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "fractional"
     },
     {
@@ -41346,8 +41346,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "include_writers_structure_basestructurewriter_structurewriteroptions_sort_by_element",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "sort_by_element"
     },
     {
@@ -41357,8 +41357,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_writers_structure_basestructurewriter_hpp_string",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "string"
     },
     {
@@ -41368,8 +41368,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "include_writers_structure_basestructurewriter_structurewriteroptions_title",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "title"
     },
     {
@@ -47084,7 +47084,7 @@
       "label": "FileIOHandler::startLoadingTrajectories()",
       "file_type": "code",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L256",
+      "source_location": "L252",
       "_origin": "ast",
       "id": "src_app_services_fileiohandler_fileiohandler_startloadingtrajectories",
       "community": 61,
@@ -47106,7 +47106,7 @@
       "label": "FileIOHandler::refreshAtomCountsUI()",
       "file_type": "code",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L326",
+      "source_location": "L318",
       "_origin": "ast",
       "id": "src_app_services_fileiohandler_fileiohandler_refreshatomcountsui",
       "community": 61,
@@ -47117,7 +47117,7 @@
       "label": "FileIOHandler::handleRenameElement()",
       "file_type": "code",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L342",
+      "source_location": "L334",
       "_origin": "ast",
       "id": "src_app_services_fileiohandler_fileiohandler_handlerenameelement",
       "community": 61,
@@ -47128,7 +47128,7 @@
       "label": "FileIOHandler::onTrajectoryLoadSuccess()",
       "file_type": "code",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L384",
+      "source_location": "L376",
       "_origin": "ast",
       "id": "src_app_services_fileiohandler_fileiohandler_ontrajectoryloadsuccess",
       "community": 61,
@@ -47139,7 +47139,7 @@
       "label": "FileIOHandler::handleReloadFile()",
       "file_type": "code",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L429",
+      "source_location": "L423",
       "_origin": "ast",
       "id": "src_app_services_fileiohandler_fileiohandler_handlereloadfile",
       "community": 61,
@@ -47150,7 +47150,7 @@
       "label": "FileIOHandler::updateStructure3DView()",
       "file_type": "code",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L440",
+      "source_location": "L434",
       "_origin": "ast",
       "id": "src_app_services_fileiohandler_fileiohandler_updatestructure3dview",
       "community": 61,
@@ -47161,7 +47161,7 @@
       "label": "FileIOHandler::updateBoxDiagnosticsForFrame()",
       "file_type": "code",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L452",
+      "source_location": "L446",
       "_origin": "ast",
       "id": "src_app_services_fileiohandler_fileiohandler_updateboxdiagnosticsforframe",
       "community": 61,
@@ -47172,7 +47172,7 @@
       "label": "FileIOHandler::updateBoxDiagnostics()",
       "file_type": "code",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L462",
+      "source_location": "L456",
       "_origin": "ast",
       "id": "src_app_services_fileiohandler_fileiohandler_updateboxdiagnostics",
       "community": 61,
@@ -47183,7 +47183,7 @@
       "label": "FileIOHandler::updateFileMetadata()",
       "file_type": "code",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L491",
+      "source_location": "L485",
       "_origin": "ast",
       "id": "src_app_services_fileiohandler_fileiohandler_updatefilemetadata",
       "community": 61,
@@ -47194,7 +47194,7 @@
       "label": "FileIOHandler::handleBrowseFile()",
       "file_type": "code",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L502",
+      "source_location": "L496",
       "_origin": "ast",
       "id": "src_app_services_fileiohandler_fileiohandler_handlebrowsefile",
       "community": 61,
@@ -82551,8 +82551,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_writers_structure_carwriter",
-      "community": 519,
-      "community_name": "CarWriter::write",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "carwriter.cpp"
     },
     {
@@ -82562,8 +82562,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_writers_structure_carwriter_validatecell",
-      "community": 519,
-      "community_name": "CarWriter::write",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "validatecell()"
     },
     {
@@ -82573,8 +82573,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_writers_structure_carwriter_cpp_string",
-      "community": 519,
-      "community_name": "CarWriter::write",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "string"
     },
     {
@@ -82584,8 +82584,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "src_writers_structure_carwriter_writepbcheader",
-      "community": 519,
-      "community_name": "CarWriter::write",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "writepbcheader()"
     },
     {
@@ -82595,8 +82595,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_writers_structure_carwriter_cpp_ostream",
-      "community": 519,
-      "community_name": "CarWriter::write",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "ostream"
     },
     {
@@ -82606,8 +82606,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "src_writers_structure_carwriter_writeatomrecords",
-      "community": 519,
-      "community_name": "CarWriter::write",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "writeatomrecords()"
     },
     {
@@ -82617,8 +82617,8 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "src_writers_structure_carwriter_carwriter_write",
-      "community": 519,
-      "community_name": "CarWriter::write",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "carwriter::write()"
     },
     {
@@ -82628,8 +82628,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_writers_structure_cellwriter",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "cellwriter.cpp"
     },
     {
@@ -82639,8 +82639,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_writers_structure_cellwriter_validatecell",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "validatecell()"
     },
     {
@@ -82650,8 +82650,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_writers_structure_cellwriter_cpp_string",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "string"
     },
     {
@@ -82661,8 +82661,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "src_writers_structure_cellwriter_writelatticeblock",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "writelatticeblock()"
     },
     {
@@ -82672,8 +82672,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_writers_structure_cellwriter_cpp_ostream",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "ostream"
     },
     {
@@ -82683,8 +82683,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "src_writers_structure_cellwriter_writepositionsblock",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "writepositionsblock()"
     },
     {
@@ -82694,8 +82694,8 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "src_writers_structure_cellwriter_cellwriter_write",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 492,
+      "community_name": "RDCalculator.cpp",
       "norm_label": "cellwriter::write()"
     },
     {
@@ -84322,8 +84322,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_functional_analysis_structureanalyzertests",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "structureanalyzertests.cpp"
     },
     {
@@ -84333,8 +84333,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "tests_functional_analysis_structureanalyzertests_getelementid",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "getelementid()"
     },
     {
@@ -84344,8 +84344,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_functional_analysis_structureanalyzertests_cpp_string",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "string"
     },
     {
@@ -84355,8 +84355,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "tests_functional_analysis_structureanalyzertests_structureanalyzertests",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "structureanalyzertests"
     },
     {
@@ -84366,8 +84366,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_functional_analysis_structureanalyzertests_cpp_testing_test",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "testing::test"
     },
     {
@@ -84377,8 +84377,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "tests_functional_analysis_structureanalyzertests_structureanalyzertests_updatetrajectory",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": ".updatetrajectory()"
     },
     {
@@ -84388,8 +84388,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_functional_analysis_structureanalyzertests_cpp_trajectory",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "trajectory"
     },
     {
@@ -84399,8 +84399,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "tests_functional_analysis_structureanalyzertests_structureanalyzertests_trajectory",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "trajectory_"
     },
     {
@@ -84410,8 +84410,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "tests_functional_analysis_structureanalyzertests_test_f",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "test_f()"
     },
     {
@@ -84421,8 +84421,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "findscorrectneighborsforsilicon",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "findscorrectneighborsforsilicon"
     },
     {
@@ -84432,8 +84432,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "distancestensoriscorrect",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "distancestensoriscorrect"
     },
     {
@@ -84443,8 +84443,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "calculatescorrectanglesforwater",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "calculatescorrectanglesforwater"
     },
     {
@@ -84454,8 +84454,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "calculatescorrectanglewithpbc",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "calculatescorrectanglewithpbc"
     },
     {
@@ -84465,8 +84465,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "findsnoneighborsforisolatedatom",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "findsnoneighborsforisolatedatom"
     },
     {
@@ -84476,8 +84476,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "findsneighborsbasedonbondcutoff",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "findsneighborsbasedonbondcutoff"
     },
     {
@@ -84487,8 +84487,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "enforcesneighborsymmetry",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "enforcesneighborsymmetry"
     },
     {
@@ -84498,8 +84498,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "handlesperiodicselfinteractions",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "handlesperiodicselfinteractions"
     },
     {
@@ -84509,8 +84509,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "trianglemoleculeconnectivity",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "trianglemoleculeconnectivity"
     },
     {
@@ -84520,8 +84520,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "calculatescorrectdihedralangles",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "calculatescorrectdihedralangles"
     },
     {
@@ -84531,8 +84531,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_functional_analysis_structureanalyzertests_cpp_throwsoninvalidcutoff",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "throwsoninvalidcutoff"
     },
     {
@@ -84542,8 +84542,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_functional_analysis_structureanalyzertests_cpp_handlesemptycellgracefully",
-      "community": 299,
-      "community_name": "SIMDNormalization.hpp",
+      "community": 145,
+      "community_name": "PADCalculator.cpp",
       "norm_label": "handlesemptycellgracefully"
     },
     {
@@ -141911,7 +141911,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L584",
+      "source_location": "L578",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_handlebrowsefile",
@@ -141923,7 +141923,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L436",
+      "source_location": "L430",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_handlereloadfile",
@@ -141935,7 +141935,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L262",
+      "source_location": "L258",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_startloadingtrajectories",
@@ -141947,7 +141947,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L586",
+      "source_location": "L580",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_handlebrowsefile",
@@ -141959,7 +141959,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L431",
+      "source_location": "L425",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_handlereloadfile",
@@ -141971,7 +141971,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L401",
+      "source_location": "L393",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_ontrajectoryloadsuccess",
@@ -141983,7 +141983,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L459",
+      "source_location": "L453",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_updateboxdiagnosticsforframe",
@@ -141995,7 +141995,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L360",
+      "source_location": "L352",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_handlerenameelement",
@@ -142007,7 +142007,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L345",
+      "source_location": "L337",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_handlerenameelement",
@@ -142019,7 +142019,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L392",
+      "source_location": "L384",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_ontrajectoryloadsuccess",
@@ -142031,7 +142031,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L316",
+      "source_location": "L308",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_startloadingtrajectories",
@@ -142043,7 +142043,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L246",
+      "source_location": "L242",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_startloadingtrajectory",
@@ -142055,7 +142055,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L398",
+      "source_location": "L390",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_ontrajectoryloadsuccess",
@@ -142067,7 +142067,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L368",
+      "source_location": "L360",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_handlerenameelement",
@@ -142079,7 +142079,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L418",
+      "source_location": "L410",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_ontrajectoryloadsuccess",
@@ -171764,7 +171764,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L462",
+      "source_location": "L456",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -229587,7 +229587,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L502",
+      "source_location": "L496",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler",
@@ -229609,7 +229609,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L429",
+      "source_location": "L423",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler",
@@ -229620,7 +229620,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L342",
+      "source_location": "L334",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler",
@@ -229642,7 +229642,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L384",
+      "source_location": "L376",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler",
@@ -229653,7 +229653,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L326",
+      "source_location": "L318",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler",
@@ -229664,7 +229664,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L256",
+      "source_location": "L252",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler",
@@ -229686,7 +229686,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L462",
+      "source_location": "L456",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler",
@@ -229697,7 +229697,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L452",
+      "source_location": "L446",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler",
@@ -229708,7 +229708,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L491",
+      "source_location": "L485",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler",
@@ -229719,7 +229719,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L440",
+      "source_location": "L434",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler",
@@ -229814,7 +229814,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L342",
+      "source_location": "L334",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -229826,7 +229826,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L384",
+      "source_location": "L376",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -229839,7 +229839,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L256",
+      "source_location": "L252",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_startloadingtrajectories",
@@ -229863,7 +229863,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L491",
+      "source_location": "L485",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_fileiohandler_fileiohandler_updatefilemetadata",
@@ -229886,7 +229886,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L256",
+      "source_location": "L252",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -229898,7 +229898,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/FileIOHandler.cpp",
-      "source_location": "L256",
+      "source_location": "L252",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -337318,5 +337318,5 @@
       "confidence_score": 1.0
     }
   ],
-  "built_at_commit": "24597c70e1f2b4e105c28f615b3a728945dbf35d"
+  "built_at_commit": "f274daccec56a523efc1cf724e72fd3f2f9a9a72"
 }

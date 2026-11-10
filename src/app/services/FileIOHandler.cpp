@@ -228,10 +228,6 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath,
       message = *load_res;
       success = true;
       options_.input_file = filepath;
-      const auto preview_res = dispatcher_.runFastPreviewRDF(loader_.trajectoryMut(), options_);
-      if (!preview_res) {
-        // Fast preview RDF is non-fatal for file loading.
-      }
     } else {
       message = std::string(AppDefaults::MSG_ERROR_LOADING) + load_res.error();
     }
@@ -298,10 +294,6 @@ void FileIOHandler::startLoadingTrajectories(const std::vector<std::string> &fil
           message = *load_res;
           success = true;
           options_.input_file = sorted_paths.front();
-          const auto preview_res = dispatcher_.runFastPreviewRDF(loader_.trajectoryMut(), options_);
-          if (!preview_res) {
-            // Fast preview RDF is non-fatal for file loading.
-          }
         } else {
           message = std::string(AppDefaults::MSG_ERROR_LOADING) + load_res.error();
         }
@@ -420,7 +412,9 @@ void FileIOHandler::onTrajectoryLoadSuccess(const std::string &filepath) {
 
   if (controller_.getPlotController() != nullptr) {
     controller_.getPlotController()->populatePlotList();
-    controller_.getPlotController()->requestPlotUpdate(0, true);
+    if (!dispatcher_.getAvailableHistogramNames().empty()) {
+      controller_.getPlotController()->requestPlotUpdate(0, true);
+    }
   }
 
   static_cast<void>(controller_.getInputValidator()->validateInputs());
