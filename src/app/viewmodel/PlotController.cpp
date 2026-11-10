@@ -965,6 +965,12 @@ void PlotController::handleApplyAxisSettings() {
   parseYAxisSettings(ui_settings, settings);
   parseTickAndGridSettings(ui_settings, settings);
 
+  const auto export_cfg = window_.get_export_config();
+  const auto export_lw = safeParse<real_t>(export_cfg.line_width, static_cast<real_t>(0.0));
+  if (export_lw > static_cast<real_t>(0.0)) {
+    settings.line_width = export_lw;
+  }
+
   viewport_navigator_.setLimits({
       .x_min = settings.manual_x_min,
       .x_max = settings.manual_x_max,

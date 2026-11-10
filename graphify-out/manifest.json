@@ -530,8 +530,8 @@
     "semantic_hash": ""
   },
   "tests/functional/app/AppControllerTests.cpp": {
-    "mtime": 1794281290.7822483,
-    "ast_hash": "d823725c0e2ba8184f3a629abf8db9a8",
+    "mtime": 1794282449.3370738,
+    "ast_hash": "8dc855c121386dc32267bc98b99403e1",
     "semantic_hash": ""
   },
   "tests/functional/app/SlintSvgIntegrationTests.cpp": {
@@ -2015,8 +2015,8 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/PlotController.hpp": {
-    "mtime": 1794280874.9128237,
-    "ast_hash": "bb4b5655309560345557ecb56c87ee63",
+    "mtime": 1794282460.4277961,
+    "ast_hash": "97a612e07104715c78ba3b8fe6525c0b",
     "semantic_hash": ""
   },
   "include/app/viewmodel/PresetController.hpp": {
@@ -2025,8 +2025,8 @@
     "semantic_hash": ""
   },
   "src/app/core/AppController.cpp": {
-    "mtime": 1794281407.905627,
-    "ast_hash": "84862025087f7b73a6e2cc1ae7479a11",
+    "mtime": 1794281587.9351597,
+    "ast_hash": "57977f4f4c120a9b2a2966b0c2444feb",
     "semantic_hash": ""
   },
   "src/app/core/SettingsManager.cpp": {
@@ -2105,8 +2105,8 @@
     "semantic_hash": ""
   },
   "src/app/viewmodel/PlotController.cpp": {
-    "mtime": 1794280882.677705,
-    "ast_hash": "9bff66c43ca4151622ecb8387c597815",
+    "mtime": 1794282397.8992672,
+    "ast_hash": "5ce4be9cfc50023dda968b0ad4f25c95",
     "semantic_hash": ""
   },
   "src/app/viewmodel/PresetController.cpp": {

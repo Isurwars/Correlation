@@ -216,6 +216,12 @@ public:
   void handleApplyAxisSettings();
 
   /**
+   * @brief Constructs the consolidated plot rendering configuration from active UI state.
+   * @return PlotConfig populated from active window settings, palettes, and axis overrides.
+   */
+  [[nodiscard]] correlation::plotters::PlotConfig buildPlotConfigFromUI();
+
+  /**
    * @brief Resets axis limits, ticks, and scaling to automatic dataset extents.
    */
   void handleResetAxisSettings();
@@ -258,7 +264,7 @@ public:
    * @brief Removes a tagged peak by its identifier.
    * @param[in] id Peak identifier.
    */
-  void handleRemoveTaggedPeak(int id);
+  void handleRemoveTaggedPeak(int idx);
 
   /**
    * @brief Clears all tagged peak annotations.
@@ -326,7 +332,6 @@ private:
   float last_plot_width_ = 0.0F;
   float last_plot_height_ = 0.0F;
 
-  correlation::plotters::PlotConfig buildPlotConfigFromUI();
   void updateTableData(const correlation::analysis::Histogram *hist);
   void updateCurveToggleItems(const correlation::analysis::Histogram *hist);
 
