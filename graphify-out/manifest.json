@@ -530,8 +530,8 @@
     "semantic_hash": ""
   },
   "tests/functional/app/AppControllerTests.cpp": {
-    "mtime": 1794284858.1064785,
-    "ast_hash": "0e32cb436c61203688c4761a933e1dde",
+    "mtime": 1794304362.0632436,
+    "ast_hash": "d0a55e915d180f22e12c1174dde47892",
     "semantic_hash": ""
   },
   "tests/functional/app/SlintSvgIntegrationTests.cpp": {
@@ -1935,8 +1935,8 @@
     "semantic_hash": ""
   },
   "include/app/core/AppController.hpp": {
-    "mtime": 1793644543.8201573,
-    "ast_hash": "9b6ffc32bf75a2178dc497a5e715bf28",
+    "mtime": 1794286226.7786617,
+    "ast_hash": "e7a18fd097ceeb6ac276391f8fb46a83",
     "semantic_hash": ""
   },
   "include/app/core/SettingsManager.hpp": {
@@ -2015,8 +2015,8 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/PlotController.hpp": {
-    "mtime": 1794282799.5673966,
-    "ast_hash": "edbca1456e8cb74f9bb14c470184abc8",
+    "mtime": 1794304048.7683954,
+    "ast_hash": "32dbde7d31511c43f75e5161d295c3c6",
     "semantic_hash": ""
   },
   "include/app/viewmodel/PresetController.hpp": {
@@ -2025,8 +2025,8 @@
     "semantic_hash": ""
   },
   "src/app/core/AppController.cpp": {
-    "mtime": 1794283357.297423,
-    "ast_hash": "6472d759b0d12268863bee727b17dec9",
+    "mtime": 1794304109.5101995,
+    "ast_hash": "652316bc1cf8dde0bfc5d4769731bc53",
     "semantic_hash": ""
   },
   "src/app/core/SettingsManager.cpp": {
@@ -2060,8 +2060,8 @@
     "semantic_hash": ""
   },
   "src/app/services/FileIOHandler.cpp": {
-    "mtime": 1794285722.591048,
-    "ast_hash": "33e9c4f38125e3c9f622c1d5b8a84529",
+    "mtime": 1794286257.8060858,
+    "ast_hash": "fad8a618b7fc4eb1f1743a9a5dd3d50e",
     "semantic_hash": ""
   },
   "src/app/services/InputValidator.cpp": {
@@ -2105,8 +2105,8 @@
     "semantic_hash": ""
   },
   "src/app/viewmodel/PlotController.cpp": {
-    "mtime": 1794282397.8992672,
-    "ast_hash": "5ce4be9cfc50023dda968b0ad4f25c95",
+    "mtime": 1794304467.3601832,
+    "ast_hash": "5c3d2ae76991f1b791bbfc1c3705cd0b",
     "semantic_hash": ""
   },
   "src/app/viewmodel/PresetController.cpp": {
@@ -2640,8 +2640,8 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/PlotRenderPipeline.hpp": {
-    "mtime": 1791847578.2053065,
-    "ast_hash": "8a16042a5646cdc50279f85cc94614fb",
+    "mtime": 1794304392.8057654,
+    "ast_hash": "20b1a0ea42ea38f5cc3790176d6b57e0",
     "semantic_hash": ""
   },
   "include/app/viewmodel/PlotViewportNavigator.hpp": {
@@ -2660,8 +2660,8 @@
     "semantic_hash": ""
   },
   "src/app/viewmodel/PlotRenderPipeline.cpp": {
-    "mtime": 1794084495.2947836,
-    "ast_hash": "f37889fcb1227997102a96869852ebbc",
+    "mtime": 1794304392.8096156,
+    "ast_hash": "0d30734b7de727e473ea59b5d67ba4de",
     "semantic_hash": ""
   },
   "src/app/viewmodel/PlotViewportNavigator.cpp": {
@@ -2680,8 +2680,8 @@
     "semantic_hash": ""
   },
   "src/plotters/SvgHistogramRenderer.cpp": {
-    "mtime": 1794085536.692948,
-    "ast_hash": "9303bc1900192a5b9ddc938766645929",
+    "mtime": 1794304497.854587,
+    "ast_hash": "de904f3155a843cb433094c0af8c3569",
     "semantic_hash": ""
   },
   "tests/unit/app/PlotExportManagerTests.cpp": {
@@ -2705,8 +2705,8 @@
     "semantic_hash": ""
   },
   "include/render3d/Camera3D.hpp": {
-    "mtime": 1791917779.9462097,
-    "ast_hash": "185c4e782f76543f401a9a41f72d93fa",
+    "mtime": 1794285935.9560683,
+    "ast_hash": "4ca4f09bdecbe95f0a1b2747d3688d7e",
     "semantic_hash": ""
   },
   "include/render3d/ElementColors.hpp": {
@@ -2725,8 +2725,8 @@
     "semantic_hash": ""
   },
   "src/render3d/Camera3D.cpp": {
-    "mtime": 1791933316.2402904,
-    "ast_hash": "1550be06eba2c9fc77f18e32bcd8eae3",
+    "mtime": 1794285941.0069742,
+    "ast_hash": "de1c03020e957a76fc088ae003aea9c7",
     "semantic_hash": ""
   },
   "src/render3d/Scene3D.cpp": {
@@ -2845,13 +2845,13 @@
     "semantic_hash": ""
   },
   "include/app/viewmodel/Structure3DController.hpp": {
-    "mtime": 1794080271.870063,
-    "ast_hash": "e8cfba157478d968ab51228d52b1af6f",
+    "mtime": 1794303905.313228,
+    "ast_hash": "2e790c6dd79ce0d550a5336608421085",
     "semantic_hash": ""
   },
   "src/app/viewmodel/Structure3DController.cpp": {
-    "mtime": 1794080271.9268293,
-    "ast_hash": "4764cdad54686bbb12cb6933a4a00b05",
+    "mtime": 1794286736.8483045,
+    "ast_hash": "08aa163911c753f8ad40cc415e3cbfb0",
     "semantic_hash": ""
   },
   "tests/unit/app/Structure3DControllerTests.cpp": {
