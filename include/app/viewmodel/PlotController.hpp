@@ -27,6 +27,25 @@ class AppWindow;
 namespace correlation::app {
 
 class Structure3DController;
+class TrajectoryLoader;
+
+/**
+ * @struct TaggedPeakData
+ * @brief Internal representation of a user-tagged or auto-detected peak with integration metrics.
+ */
+struct TaggedPeakData {
+  int id{0};
+  std::string curve_name;
+  real_t r_peak{0.0};
+  real_t r_min{0.0};
+  real_t r_max{0.0};
+  real_t peak_height{0.0};
+  real_t area{0.0};
+  std::optional<real_t> coordination_number;
+  real_t fwhm{0.0};
+  real_t centroid{0.0};
+  std::string color_hex{"#0072b2"};
+};
 
 struct PlotSize {
   float width;
@@ -205,6 +224,54 @@ public:
   }
 
   /**
+   * @brief Associates TrajectoryLoader for density calculations in CN integration.
+   * @param[in] loader Pointer to active TrajectoryLoader.
+   */
+  void setTrajectoryLoader(const TrajectoryLoader *loader) noexcept { trajectory_loader_ = loader; }
+
+  /**
+   * @brief Detects and tags the peak near clicked screen coordinates.
+   * @param[in] click_x Screen horizontal pixel coordinate.
+   * @param[in] click_y Screen vertical pixel coordinate.
+   */
+  void handleTagPeakAt(float click_x, float click_y);
+
+  /**
+   * @brief Integrates and tags peak within screen coordinate range [start_x, end_x].
+   * @param[in] start_x Starting screen pixel coordinate.
+   * @param[in] end_x Ending screen pixel coordinate.
+   */
+  void handleTagPeakRange(float start_x, float end_x);
+
+  /**
+   * @brief Removes a tagged peak by its identifier.
+   * @param[in] id Peak identifier.
+   */
+  void handleRemoveTaggedPeak(int id);
+
+  /**
+   * @brief Clears all tagged peak annotations.
+   */
+  void handleClearTaggedPeaks();
+
+  /**
+   * @brief Exports tagged peaks to CSV.
+   */
+  void handleExportTaggedPeaks();
+
+  /**
+   * @brief Recomputes screen projection coordinates for all tagged peaks.
+   */
+  void updateTaggedPeakPixels();
+
+  /**
+   * @brief Returns a read-only view of active tagged peaks.
+   */
+  [[nodiscard]] std::span<const TaggedPeakData> getTaggedPeaks() const noexcept {
+    return tagged_peaks_;
+  }
+
+  /**
    * @brief Returns the last cached plot canvas width.
    */
   [[nodiscard]] float getLastPlotWidth() const noexcept { return last_plot_width_; }
@@ -260,6 +327,10 @@ private:
 
   void syncMetricSettingsToUI(int index);
   void syncSettingsTo3DHUD(int index, const correlation::plotters::MetricPlotSettings &settings);
+
+  std::vector<TaggedPeakData> tagged_peaks_;
+  int next_peak_id_{1};
+  const TrajectoryLoader *trajectory_loader_{nullptr};
 
   /**
    * @brief Synchronizes active zoom viewport limits to metric plot settings and UI.

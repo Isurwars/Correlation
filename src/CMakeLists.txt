@@ -265,6 +265,7 @@ add_library(correlation_lib STATIC
     analysis/DistributionPostProcessor.cpp
     analysis/DynamicsAnalyzer.cpp
     analysis/FirstMinimumDetector.cpp
+    analysis/PeakIntegrationService.cpp
     analysis/CutoffSanityChecker.cpp
     analysis/CorrelationEngine.cpp
     analysis/StructuralElectronicCorrelation.cpp

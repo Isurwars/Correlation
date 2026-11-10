@@ -8,7 +8,7 @@ import {
     FilledButton,
     Horizontal,
 } from "../../material/material.slint";
-import { TableRow, CurveToggleItem, CalibrationPair, PlotAxisSettings } from "../../Types.slint";
+import { TableRow, CurveToggleItem, CalibrationPair, PlotAxisSettings, TaggedPeakRecord } from "../../Types.slint";
 import { WorkflowStepper } from "./components/WorkflowStepper.slint";
 import { PreviewHeader } from "./components/PreviewHeader.slint";
 import { HeroEmptyState } from "./components/HeroEmptyState.slint";
@@ -93,6 +93,12 @@ export component PreviewCard inherits FilledCard {
     callback open_panel(int);
     callback copy_plot_clipboard();
     callback export_plot();
+    in-out property <[TaggedPeakRecord]> tagged_peaks: [];
+    callback tag_peak_at(float, float);
+    callback tag_peak_range(float, float);
+    callback remove_tagged_peak(int);
+    callback clear_tagged_peaks();
+    callback export_tagged_peaks();
 
     // Plot Viewport Settings properties & callbacks
     in-out property <bool> plot_settings_open: false;
@@ -271,6 +277,7 @@ export component PreviewCard inherits FilledCard {
 
         // 4. Body: Tab Host Container (occupies 100% of remaining vertical card height)
         tab_host := Rectangle {
+            width: 100%;
             vertical-stretch: 1;
             horizontal-stretch: 1;
             clip: true;
@@ -330,6 +337,10 @@ export component PreviewCard inherits FilledCard {
                         visible: root.selected_plot_index >= 0;
                         mouse-cursor: root.is_panning ? grabbing : (root.active_tool != 0 ? crosshair : default);
 
+                        double-clicked => {
+                            root.tag_peak_at(self.mouse-x / 1px, self.mouse-y / 1px);
+                        }
+
                         scroll-event(event) => {
                             root.plot_wheel_zoom(self.mouse-x / 1px, self.mouse-y / 1px, event.delta-y / 1px);
                             accept
@@ -350,7 +361,7 @@ export component PreviewCard inherits FilledCard {
                                         root.add_marker_at(self.mouse-x / 1px, self.mouse-y / 1px, true);
                                     } else if (root.active_tool == 3) {
                                         root.add_marker_at(self.mouse-x / 1px, self.mouse-y / 1px, false);
-                                    } else if (root.active_tool == 1) {
+                                    } else if (root.active_tool == 1 || root.active_tool == 6) {
                                         root.drag_start_x = self.mouse-x;
                                         root.drag_start_y = self.mouse-y;
                                         root.drag_current_x = self.mouse-x;
@@ -366,7 +377,16 @@ export component PreviewCard inherits FilledCard {
                                 }
                                 if (root.is_selecting) {
                                     root.is_selecting = false;
-                                    root.zoom_to_rect(root.drag_start_x / 1px, root.drag_start_y / 1px, root.drag_current_x / 1px, root.drag_current_y / 1px);
+                                    if (root.active_tool == 6) {
+                                        let drag_dist = Math.abs(root.drag_current_x - root.drag_start_x);
+                                        if (drag_dist > 6px) {
+                                            root.tag_peak_range(root.drag_start_x / 1px, root.drag_current_x / 1px);
+                                        } else {
+                                            root.tag_peak_at(self.mouse-x / 1px, self.mouse-y / 1px);
+                                        }
+                                    } else {
+                                        root.zoom_to_rect(root.drag_start_x / 1px, root.drag_start_y / 1px, root.drag_current_x / 1px, root.drag_current_y / 1px);
+                                    }
                                 }
                             } else if (event.kind == PointerEventKind.cancel) {
                                 root.is_selecting = false;
@@ -440,6 +460,8 @@ export component PreviewCard inherits FilledCard {
                         drag_start_y: root.drag_start_y;
                         drag_current_x: root.drag_current_x;
                         drag_current_y: root.drag_current_y;
+                        tagged_peaks: root.tagged_peaks;
+                        remove_peak(id) => { root.remove_tagged_peak(id); }
                     }
 
                     // Cutoff Calibration Overlay (Handles, Shaded Region, and Onset Indicators)
@@ -498,6 +520,7 @@ export component PreviewCard inherits FilledCard {
                     sidebar_collapsed <=> root.plot_sidebar_collapsed;
                     axis_settings <=> root.axis_settings;
                     active_color_picker_id <=> root.active_color_picker_id;
+                    tagged_peaks: root.tagged_peaks;
                     toggle_curve_visibility(id, v) => { root.toggle_curve_visibility(id, v); }
                     toggle_all_curves(v) => { root.toggle_all_curves(v); }
                     set_curve_color(id, c) => { root.set_curve_color(id, c); }
@@ -505,6 +528,9 @@ export component PreviewCard inherits FilledCard {
                     apply_axis_settings => { root.apply_axis_settings(); }
                     reset_axis_settings => { root.reset_axis_settings(); }
                     toggle_collapse => { root.plot_sidebar_collapsed = true; }
+                    remove_tagged_peak(id) => { root.remove_tagged_peak(id); }
+                    clear_tagged_peaks => { root.clear_tagged_peaks(); }
+                    export_tagged_peaks => { root.export_tagged_peaks(); }
                 }
             }
 

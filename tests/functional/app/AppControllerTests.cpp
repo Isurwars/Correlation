@@ -913,3 +913,42 @@ TEST_F(AppControllerTests, PlotCopyToClipboardSetsPayloadAndStatus) {
   EXPECT_NE(std::string(window->get_analysis_status_text()).find("copied to clipboard"),
             std::string::npos);
 }
+
+TEST_F(AppControllerTests, PlotPeakTaggingAndCoordinationNumberIntegration) {
+  auto window = AppWindow::create();
+
+  std::string sample_file = "../../examples/a-PdSi/a-PdSi.car";
+  if (!std::filesystem::exists(sample_file)) {
+    sample_file = "../examples/a-PdSi/a-PdSi.car";
+  }
+  if (!std::filesystem::exists(sample_file)) {
+    sample_file = "examples/a-PdSi/a-PdSi.car";
+  }
+  ASSERT_TRUE(std::filesystem::exists(sample_file));
+  ASSERT_TRUE(loader().loadFile(sample_file).has_value());
+
+  options().active_calculators["g(r), J(r), G(r)"] = true;
+  correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+  EXPECT_TRUE(dispatcher().runAnalysis(loader().trajectoryMut(), options()).has_value());
+
+  auto *plot_ctrl = controller.getPlotController();
+  ASSERT_NE(plot_ctrl, nullptr);
+  plot_ctrl->populatePlotList();
+  window->set_selected_plot_index(0);
+  plot_ctrl->requestPlotUpdate(0, true);
+
+  // Simulate range tagging across the first coordination shell
+  window->invoke_tag_peak_range(120.0f, 240.0f);
+
+  auto peaks_model = window->get_tagged_peaks();
+  ASSERT_EQ(peaks_model->row_count(), 1u);
+  auto peak_opt = peaks_model->row_data(0);
+  ASSERT_TRUE(peak_opt.has_value());
+  EXPECT_FALSE(std::string(peak_opt->r_peak).empty());
+  EXPECT_FALSE(std::string(peak_opt->coordination_num).empty());
+  EXPECT_GE(peak_opt->screen_r_peak, 0.0f);
+
+  // Clear peaks
+  window->invoke_clear_tagged_peaks();
+  EXPECT_EQ(window->get_tagged_peaks()->row_count(), 0u);
+}

@@ -69,6 +69,7 @@ AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
   structure_3d_controller_ = std::make_unique<Structure3DController>(window_, options_);
 
   bond_cutoff_controller_.setPlotController(plot_controller_.get());
+  plot_controller_->setTrajectoryLoader(&loader_);
   plot_controller_->setStructure3DController(structure_3d_controller_.get());
   plot_controller_->setOnPlotGeometryChanged([this](float width, float height) {
     bond_cutoff_controller_.updateCalibrationPixels(width, height);
@@ -193,6 +194,13 @@ void AppController::registerPlotCallbacks() {
   });
   window_.on_add_marker([this](bool is_vert) { plot_controller_->handleAddMarker(is_vert); });
   window_.on_clear_markers([this] { plot_controller_->handleClearMarkers(); });
+
+  window_.on_tag_peak_at([this](float x, float y) { plot_controller_->handleTagPeakAt(x, y); });
+  window_.on_tag_peak_range(
+      [this](float x1, float x2) { plot_controller_->handleTagPeakRange(x1, x2); });
+  window_.on_remove_tagged_peak([this](int id) { plot_controller_->handleRemoveTaggedPeak(id); });
+  window_.on_clear_tagged_peaks([this] { plot_controller_->handleClearTaggedPeaks(); });
+  window_.on_export_tagged_peaks([this] { plot_controller_->handleExportTaggedPeaks(); });
 
   window_.on_apply_axis_settings([this] { plot_controller_->handleApplyAxisSettings(); });
   window_.on_reset_axis_settings([this] { plot_controller_->handleResetAxisSettings(); });

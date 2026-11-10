@@ -14,8 +14,9 @@ import {
     SplitterHandle,
     CheckBoxRow,
     FilledButton,
+    Icons,
 } from "../../../material/material.slint";
-import { CurveToggleItem, PlotAxisSettings } from "../../../Types.slint";
+import { CurveToggleItem, PlotAxisSettings, TaggedPeakRecord } from "../../../Types.slint";
 
 component CompactInputField inherits Rectangle {
     in-out property <string> text <=> input.text;
@@ -71,8 +72,9 @@ export component CurveSidebar inherits Horizontal {
     in-out property <length> sidebar_width: 250px;
     in-out property <bool> sidebar_collapsed: false;
     in-out property <PlotAxisSettings> axis_settings;
-    in-out property <int> active_tab: 0; // 0: Curves, 1: Axes & Grid
+    in-out property <int> active_tab: 0; // 0: Curves, 1: Axes & Grid, 2: Peaks
     in-out property <int> active_color_picker_id: -1;
+    in property <[TaggedPeakRecord]> tagged_peaks: [];
 
     callback toggle_curve_visibility(int, bool);
     callback toggle_all_curves(bool);
@@ -81,6 +83,9 @@ export component CurveSidebar inherits Horizontal {
     callback apply_axis_settings();
     callback reset_axis_settings();
     callback toggle_collapse();
+    callback remove_tagged_peak(int);
+    callback clear_tagged_peaks();
+    callback export_tagged_peaks();
 
     out property <string> tooltip_text:
         collapse_touch.has-hover ? "Collapse sidebar\n\n⇥ Hide this panel to expand the plot canvas." : "";
@@ -124,11 +129,14 @@ export component CurveSidebar inherits Horizontal {
     Rectangle {
         visible: !root.sidebar_collapsed && root.curve_toggle_items.length > 0;
         width: (!root.sidebar_collapsed && root.curve_toggle_items.length > 0) ? root.sidebar_width : 0px;
+        height: 100%;
         background: MaterialPalette.surface_container_low;
         border-radius: MaterialStyleMetrics.border_radius_2;
         clip: true;
 
         VerticalLayout {
+            width: 100%;
+            height: 100%;
             padding: 8px;
             spacing: 8px;
 
@@ -185,6 +193,27 @@ export component CurveSidebar inherits Horizontal {
                                     style: MaterialTypography.label_small;
                                     font-weight: (root.active_tab == 1) ? 600 : 400;
                                     color: (root.active_tab == 1) ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                }
+                            }
+                        }
+
+                        peaks_tab_btn := TouchArea {
+                            horizontal-stretch: 1;
+                            mouse-cursor: pointer;
+                            clicked => { root.active_tab = 2; }
+
+                            Rectangle {
+                                background: (root.active_tab == 2) ? MaterialPalette.primary_container :
+                                            peaks_tab_btn.has-hover ? MaterialPalette.surface_container_highest : transparent;
+                                border-radius: MaterialStyleMetrics.border_radius_2;
+
+                                MaterialText {
+                                    text: "Peaks (" + root.tagged_peaks.length + ")";
+                                    style: MaterialTypography.label_small;
+                                    font-weight: (root.active_tab == 2) ? 600 : 400;
+                                    color: (root.active_tab == 2) ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
                                     horizontal-alignment: center;
                                     vertical-alignment: center;
                                 }
@@ -750,6 +779,136 @@ export component CurveSidebar inherits Horizontal {
                                     color: MaterialPalette.on_surface_variant;
                                     horizontal-alignment: center;
                                     vertical-alignment: center;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 4. Tab 2: Tagged Peaks & CN Table
+            if root.active_tab == 2: VerticalLayout {
+                spacing: 6px;
+
+                if root.tagged_peaks.length == 0: Rectangle {
+                    height: 160px;
+                    background: MaterialPalette.surface_container;
+                    border-radius: MaterialStyleMetrics.border_radius_4;
+                    VerticalLayout {
+                        alignment: center;
+                        padding: 12px;
+                        spacing: 8px;
+                        Image {
+                            width: 24px;
+                            height: 24px;
+                            source: Icons.analytics;
+                            colorize: MaterialPalette.outline;
+                            horizontal-alignment: center;
+                        }
+                        MaterialText {
+                            text: "No peaks tagged yet.\n\nDouble-click a peak on the plot or use tool (🔬) to inspect shell & coordination number.";
+                            style: MaterialTypography.body_small;
+                            color: MaterialPalette.on_surface_variant;
+                            horizontal-alignment: center;
+                            wrap: word-wrap;
+                        }
+                    }
+                }
+
+                if root.tagged_peaks.length > 0: HorizontalLayout {
+                    spacing: 6px;
+                    height: 28px;
+                    FilledButton {
+                        horizontal-stretch: 1;
+                        height: 28px;
+                        text: "Export CSV";
+                        clicked => { root.export_tagged_peaks(); }
+                    }
+                    clear_all_touch := TouchArea {
+                        horizontal-stretch: 1;
+                        height: 28px;
+                        mouse-cursor: pointer;
+                        clicked => { root.clear_tagged_peaks(); }
+                        Rectangle {
+                            background: clear_all_touch.has-hover ? MaterialPalette.error_container : MaterialPalette.surface_container_high;
+                            border-radius: MaterialStyleMetrics.border_radius_4;
+                            border-width: 1px;
+                            border-color: MaterialPalette.outline_variant;
+                            MaterialText {
+                                text: "Clear All";
+                                style: MaterialTypography.label_medium;
+                                color: clear_all_touch.has-hover ? MaterialPalette.on_error_container : MaterialPalette.error;
+                                horizontal-alignment: center;
+                                vertical-alignment: center;
+                            }
+                        }
+                    }
+                }
+
+                if root.tagged_peaks.length > 0: ScrollView {
+                    vertical-stretch: 1;
+                    VerticalLayout {
+                        spacing: 6px;
+                        for peak in root.tagged_peaks: Rectangle {
+                            background: MaterialPalette.surface_container;
+                            border-radius: MaterialStyleMetrics.border_radius_4;
+                            border-width: 1px;
+                            border-color: peak.color_hex;
+
+                            VerticalLayout {
+                                padding: 6px;
+                                spacing: 4px;
+                                HorizontalLayout {
+                                    alignment: space-between;
+                                    MaterialText {
+                                        text: peak.curve_name + " @ " + peak.r_peak;
+                                        style: MaterialTypography.label_medium_prominent;
+                                        color: MaterialPalette.on_surface;
+                                        vertical-alignment: center;
+                                    }
+                                    del_btn := TouchArea {
+                                        width: 18px;
+                                        height: 18px;
+                                        mouse-cursor: pointer;
+                                        clicked => { root.remove_tagged_peak(peak.id); }
+                                        Image {
+                                            x: (parent.width - self.width) / 2;
+                                            y: (parent.height - self.height) / 2;
+                                            width: 12px;
+                                            height: 12px;
+                                            source: Icons.close;
+                                            colorize: del_btn.has-hover ? MaterialPalette.error : MaterialPalette.outline;
+                                        }
+                                    }
+                                }
+
+                                HorizontalLayout {
+                                    spacing: 8px;
+                                    MaterialText {
+                                        text: peak.coordination_num != "—" ? ("CN: " + peak.coordination_num) : ("Area: " + peak.area);
+                                        style: MaterialTypography.label_small;
+                                        font-weight: 600;
+                                        color: MaterialPalette.primary;
+                                    }
+                                    MaterialText {
+                                        text: "Shell: [" + peak.r_min + " - " + peak.r_max + "]";
+                                        style: MaterialTypography.label_small;
+                                        color: MaterialPalette.on_surface_variant;
+                                    }
+                                }
+
+                                HorizontalLayout {
+                                    spacing: 8px;
+                                    MaterialText {
+                                        text: "Height: " + peak.peak_height;
+                                        style: MaterialTypography.label_small;
+                                        color: MaterialPalette.outline;
+                                    }
+                                    MaterialText {
+                                        text: "FWHM: " + peak.fwhm;
+                                        style: MaterialTypography.label_small;
+                                        color: MaterialPalette.outline;
+                                    }
                                 }
                             }
                         }

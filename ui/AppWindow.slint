@@ -40,6 +40,7 @@ import {
     SanityBadgeState,
     DomainPresetItem,
     PlotAxisSettings,
+    TaggedPeakRecord,
 } from "Types.slint";
 
 import { MiniSideBar } from "nav/MiniSideBar.slint";
@@ -196,6 +197,7 @@ export component AppWindow inherits Window {
     in-out property <string> hover_coord_text: "";
     in-out property <bool> has_active_zoom: false;
     in-out property <int> markers_count: 0;
+    in-out property <[TaggedPeakRecord]> tagged_peaks: [];
     in-out property <[CalibrationPair]> calibration_pairs: [];
     in-out property <int> active_calibration_pair_index: 0;
     in-out property <SanityBadgeState> sanity_badge_state: {
@@ -393,6 +395,11 @@ export component AppWindow inherits Window {
     callback auto_detect_cutoff(int);
     callback reset_calibration_pair(int);
     callback drag_cutoff_handle(int, bool, length);
+    callback tag_peak_at(float, float);
+    callback tag_peak_range(float, float);
+    callback remove_tagged_peak(int);
+    callback clear_tagged_peaks();
+    callback export_tagged_peaks();
     callback fix_sanity_issue(int);
     callback apply_domain_preset(int);
 
@@ -468,6 +475,9 @@ export component AppWindow inherits Window {
     // Main UI structure
     // ============================================================================
     main_focus := FocusScope {
+        width: 100%;
+        height: 100%;
+
         key-pressed(event) => {
             if (event.modifiers.control && (event.text == "o" || event.text == "O")) {
                 root.browse_file();
@@ -569,6 +579,8 @@ export component AppWindow inherits Window {
         }
 
         VerticalLayout {
+            width: 100%;
+            height: 100%;
             padding: 0;
             spacing: 0;
 
@@ -851,6 +863,13 @@ export component AppWindow inherits Window {
                     clear_markers => {
                         root.clear_markers();
                     }
+
+                    tagged_peaks: root.tagged_peaks;
+                    tag_peak_at(x, y) => { root.tag_peak_at(x, y); }
+                    tag_peak_range(x1, x2) => { root.tag_peak_range(x1, x2); }
+                    remove_tagged_peak(id) => { root.remove_tagged_peak(id); }
+                    clear_tagged_peaks => { root.clear_tagged_peaks(); }
+                    export_tagged_peaks => { root.export_tagged_peaks(); }
 
                     plot_settings_open <=> root.plot_settings_open;
                     axis_settings <=> root.axis_settings;

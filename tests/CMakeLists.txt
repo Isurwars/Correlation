@@ -120,6 +120,7 @@ add_executable(correlation_unit_tests
     unit/analysis/CutoffSanityCheckerTests.cpp
     unit/analysis/DistributionPostProcessorTests.cpp
     unit/analysis/FirstMinimumDetectorTests.cpp
+    unit/analysis/PeakIntegrationTests.cpp
     unit/analysis/PerFrameDistributionStoreTests.cpp
     unit/analysis/StructuralElectronicCorrelationTests.cpp
     unit/app/AnalysisDispatcherTests.cpp

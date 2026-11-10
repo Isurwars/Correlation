@@ -8,13 +8,16 @@
 
 #include "app/viewmodel/PlotController.hpp"
 #include "AppWindow.h"
+#include "analysis/PeakIntegrationService.hpp"
 #include "app/formatters/PlotExportService.hpp"
 #include "app/formatters/PlotTableFormatter.hpp"
+#include "app/services/TrajectoryLoader.hpp"
 #include "app/viewmodel/Structure3DController.hpp"
 #include "plotters/SvgPlotter.hpp"
 
 #include <algorithm>
 #include <format>
+#include <fstream>
 #include <map>
 #include <span>
 #include <utility>
@@ -171,12 +174,45 @@ void updateDynamicProperties(
   window.set_deborah_number(deb > 0.0 ? slint::SharedString(std::format("{:.4f}", deb)) : "");
 }
 
+[[nodiscard]] std::pair<std::string, std::span<const real_t>>
+getActiveCurveData(const correlation::analysis::Histogram &hist) {
+  if (hist.partials.contains("Total")) {
+    return {"Total", hist.partials.at("Total")};
+  }
+  if (hist.partials.contains("total")) {
+    return {"Total", hist.partials.at("total")};
+  }
+  if (!hist.partials.empty()) {
+    const auto &first = *hist.partials.begin();
+    return {first.first, first.second};
+  }
+  return {"", {}};
+}
+
+[[nodiscard]] std::optional<real_t> getNumberDensity(const TrajectoryLoader *loader,
+                                                     const correlation::analysis::Histogram &hist,
+                                                     std::string_view name) {
+  const bool is_radial = (hist.x_label == "r" || hist.x_unit == "Å" || name.starts_with("g_") ||
+                          name.starts_with("H_"));
+  if (!is_radial || loader == nullptr || loader->cell() == nullptr) {
+    return std::nullopt;
+  }
+  const auto &cell = *loader->cell();
+  if (cell.volume() <= static_cast<real_t>(1e-6) || cell.atomCount() == 0) {
+    return std::nullopt;
+  }
+  return static_cast<real_t>(cell.atomCount()) / cell.volume();
+}
+
 } // namespace
 
 PlotController::PlotController(::AppWindow &window, AnalysisDispatcher &dispatcher,
                                const ProgramOptions &options)
     : window_(window), dispatcher_(dispatcher), options_(options),
-      pipeline_([this](const slint::Image &img) { window_.set_preview_plot(img); }) {}
+      pipeline_([this](const slint::Image &img) {
+        window_.set_preview_plot(img);
+        updateTaggedPeakPixels();
+      }) {}
 
 PlotController::~PlotController() = default;
 
@@ -715,12 +751,15 @@ void PlotController::resetPlotState() noexcept {
   series_manager_.reset();
   viewport_navigator_.resetZoom();
   marker_manager_.clearMarkers();
+  tagged_peaks_.clear();
+  next_peak_id_ = 1;
   pipeline_.invalidateCache();
   slint::invoke_from_event_loop([this] {
     window_.set_pinned_runs_count(0);
     window_.set_has_active_zoom(false);
     window_.set_markers_count(0);
     window_.set_hover_coord_text("");
+    updateTaggedPeakPixels();
     const int current_idx = window_.get_selected_plot_index();
     if (current_idx >= 0) {
       requestPlotUpdate(current_idx, true);
@@ -943,6 +982,212 @@ void PlotController::handleSetCurveWidth(const slint::SharedString &width_str) {
   if (active_plot_index_ >= 0) {
     requestPlotUpdate(active_plot_index_, true);
   }
+}
+
+void PlotController::handleTagPeakAt(float click_x, float click_y) {
+  const int current_idx = window_.get_selected_plot_index();
+  if (current_idx < 0 || std::cmp_greater_equal(current_idx, available_plot_keys_.size())) {
+    return;
+  }
+  const std::string &name = available_plot_keys_[current_idx];
+  const auto *hist = dispatcher_.getHistogram(name);
+  if (hist == nullptr) {
+    return;
+  }
+
+  const auto config = buildPlotConfigFromUI();
+  const auto [data_x, data_y] = PlotViewportNavigator::screenToData(
+      click_x, click_y, last_plot_width_, last_plot_height_, *hist, config);
+
+  const auto [curve_name, y_vals] = getActiveCurveData(*hist);
+  if (y_vals.empty() || hist->bins.empty()) {
+    return;
+  }
+
+  const auto number_density = getNumberDensity(trajectory_loader_, *hist, name);
+  const bool is_radial = number_density.has_value();
+
+  const auto detected = correlation::analysis::PeakIntegrationService::autoDetectPeakNear(
+      hist->bins, y_vals, data_x, number_density, is_radial);
+  if (!detected.has_value()) {
+    window_.set_analysis_status_text("No peak detected near clicked position.");
+    return;
+  }
+
+  TaggedPeakData peak_data{
+      .id = next_peak_id_++,
+      .curve_name = curve_name,
+      .r_peak = detected->r_peak,
+      .r_min = detected->r_min,
+      .r_max = detected->r_max,
+      .peak_height = detected->peak_height,
+      .area = detected->area,
+      .coordination_number = detected->coordination_number,
+      .fwhm = detected->fwhm,
+      .centroid = detected->centroid,
+      .color_hex = "#0072b2",
+  };
+  tagged_peaks_.push_back(std::move(peak_data));
+  updateTaggedPeakPixels();
+
+  if (detected->coordination_number.has_value()) {
+    window_.set_analysis_status_text(slint::SharedString(
+        std::format("Tagged Peak #{}: {:.2f} {} (CN: {:.2f})", peak_data.id, peak_data.r_peak,
+                    hist->x_unit, *detected->coordination_number)));
+  } else {
+    window_.set_analysis_status_text(
+        slint::SharedString(std::format("Tagged Peak #{}: {:.2f} {} (Area: {:.2f})", peak_data.id,
+                                        peak_data.r_peak, hist->x_unit, detected->area)));
+  }
+}
+
+void PlotController::handleTagPeakRange(float start_x, float end_x) {
+  const int current_idx = window_.get_selected_plot_index();
+  if (current_idx < 0 || std::cmp_greater_equal(current_idx, available_plot_keys_.size())) {
+    return;
+  }
+  const std::string &name = available_plot_keys_[current_idx];
+  const auto *hist = dispatcher_.getHistogram(name);
+  if (hist == nullptr) {
+    return;
+  }
+
+  const auto config = buildPlotConfigFromUI();
+  const auto [d_start, unused1] = PlotViewportNavigator::screenToData(
+      start_x, 0.0F, last_plot_width_, last_plot_height_, *hist, config);
+  const auto [d_end, unused2] = PlotViewportNavigator::screenToData(
+      end_x, 0.0F, last_plot_width_, last_plot_height_, *hist, config);
+
+  const auto [curve_name, y_vals] = getActiveCurveData(*hist);
+  if (y_vals.empty() || hist->bins.empty()) {
+    return;
+  }
+
+  const auto number_density = getNumberDensity(trajectory_loader_, *hist, name);
+  const bool is_radial = number_density.has_value();
+
+  const auto res = correlation::analysis::PeakIntegrationService::integrateRange(
+      hist->bins, y_vals, d_start, d_end, number_density, is_radial);
+  if (res.area <= static_cast<real_t>(1e-6)) {
+    return;
+  }
+
+  TaggedPeakData peak_data{
+      .id = next_peak_id_++,
+      .curve_name = curve_name,
+      .r_peak = res.r_peak,
+      .r_min = res.r_min,
+      .r_max = res.r_max,
+      .peak_height = res.peak_height,
+      .area = res.area,
+      .coordination_number = res.coordination_number,
+      .fwhm = res.fwhm,
+      .centroid = res.centroid,
+      .color_hex = "#0072b2",
+  };
+  tagged_peaks_.push_back(std::move(peak_data));
+  updateTaggedPeakPixels();
+
+  if (res.coordination_number.has_value()) {
+    window_.set_analysis_status_text(slint::SharedString(
+        std::format("Integrated Range [{:.2f} - {:.2f}]: CN = {:.2f}", peak_data.r_min,
+                    peak_data.r_max, *res.coordination_number)));
+  } else {
+    window_.set_analysis_status_text(
+        slint::SharedString(std::format("Integrated Range [{:.2f} - {:.2f}]: Area = {:.2f}",
+                                        peak_data.r_min, peak_data.r_max, res.area)));
+  }
+}
+
+void PlotController::handleRemoveTaggedPeak(int id) {
+  std::erase_if(tagged_peaks_, [id](const auto &p) { return p.id == id; });
+  updateTaggedPeakPixels();
+}
+
+void PlotController::handleClearTaggedPeaks() {
+  tagged_peaks_.clear();
+  updateTaggedPeakPixels();
+  window_.set_analysis_status_text("Cleared all tagged peaks.");
+}
+
+void PlotController::handleExportTaggedPeaks() {
+  if (tagged_peaks_.empty()) {
+    window_.set_analysis_status_text("No tagged peaks to export.");
+    return;
+  }
+
+  const std::string out_path = options_.output_file_base + "_tagged_peaks.csv";
+  std::ofstream out(out_path);
+  if (!out) {
+    window_.set_analysis_status_text(
+        slint::SharedString(std::format("Failed to open {} for writing.", out_path)));
+    return;
+  }
+
+  out << "ID,Curve,r_peak,r_min,r_max,Peak_Height,Area,CN,FWHM,Centroid\n";
+  for (const auto &p : tagged_peaks_) {
+    const std::string cn_str =
+        p.coordination_number.has_value() ? std::format("{:.4f}", *p.coordination_number) : "N/A";
+    out << std::format("{},{},{:.4f},{:.4f},{:.4f},{:.4f},{:.4f},{},{:.4f},{:.4f}\n", p.id,
+                       p.curve_name, p.r_peak, p.r_min, p.r_max, p.peak_height, p.area, cn_str,
+                       p.fwhm, p.centroid);
+  }
+  window_.set_analysis_status_text(slint::SharedString(
+      std::format("Exported {} tagged peaks to {}", tagged_peaks_.size(), out_path)));
+}
+
+void PlotController::updateTaggedPeakPixels() {
+  if (tagged_peaks_.empty()) {
+    window_.set_tagged_peaks(std::make_shared<slint::VectorModel<TaggedPeakRecord>>());
+    return;
+  }
+
+  const int index = window_.get_selected_plot_index();
+  if (index < 0 || std::cmp_greater_equal(index, available_plot_keys_.size())) {
+    return;
+  }
+  const std::string &name = available_plot_keys_[index];
+  const auto *hist = dispatcher_.getHistogram(name);
+  if (hist == nullptr) {
+    return;
+  }
+
+  const auto config = buildPlotConfigFromUI();
+  const auto model = std::make_shared<slint::VectorModel<TaggedPeakRecord>>();
+
+  for (const auto &data : tagged_peaks_) {
+    const auto [screen_r_peak, screen_y_peak] = PlotViewportNavigator::dataToScreen(
+        data.r_peak, data.peak_height, last_plot_width_, last_plot_height_, *hist, config);
+    const auto [screen_r_min, unused_y_min] = PlotViewportNavigator::dataToScreen(
+        data.r_min, 0.0, last_plot_width_, last_plot_height_, *hist, config);
+    const auto [screen_r_max, unused_y_max] = PlotViewportNavigator::dataToScreen(
+        data.r_max, 0.0, last_plot_width_, last_plot_height_, *hist, config);
+
+    TaggedPeakRecord rec;
+    rec.id = data.id;
+    rec.curve_name = slint::SharedString(data.curve_name);
+    rec.r_peak = slint::SharedString(std::format("{:.2f} {}", data.r_peak, hist->x_unit));
+    rec.r_min = slint::SharedString(std::format("{:.2f}", data.r_min));
+    rec.r_max = slint::SharedString(std::format("{:.2f}", data.r_max));
+    rec.peak_height = slint::SharedString(std::format("{:.2f}", data.peak_height));
+    rec.area = slint::SharedString(std::format("{:.2f}", data.area));
+    if (data.coordination_number.has_value()) {
+      rec.coordination_num = slint::SharedString(std::format("{:.2f}", *data.coordination_number));
+    } else {
+      rec.coordination_num = slint::SharedString("—");
+    }
+    rec.fwhm = slint::SharedString(std::format("{:.2f} {}", data.fwhm, hist->x_unit));
+    rec.color_hex = slint::Color::from_argb_encoded(0xFF0072B2);
+    rec.screen_r_peak = static_cast<float>(screen_r_peak);
+    rec.screen_r_min = static_cast<float>(screen_r_min);
+    rec.screen_r_max = static_cast<float>(screen_r_max);
+    rec.screen_y_peak = static_cast<float>(screen_y_peak);
+    rec.is_active = true;
+
+    model->push_back(rec);
+  }
+
+  window_.set_tagged_peaks(model);
 }
 
 } // namespace correlation::app
