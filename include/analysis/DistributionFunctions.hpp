@@ -105,6 +105,11 @@ struct AnalysisSettings {
         {"Radial Distribution Function", "g(r), J(r), G(r)"},
         {"RDF", "g(r), J(r), G(r)"},
         {"Plane Angle Distribution", "PAD"},
+        {"Plane-Angle Distribution", "PAD"},
+        {"PAD(θ) Normalized", "PAD"},
+        {"PAD(θ) RAW", "PAD"},
+        {"PAD(Theta) Normalized", "PAD"},
+        {"PAD(Theta) RAW", "PAD"},
         {"Dihedral Angle Distribution", "DAD"},
         {"Coordination Number", "CN"},
         {"Common Neighbor Analysis", "CNA"},
@@ -575,7 +580,8 @@ private:
   mutable std::mutex histogram_mutex_;             ///< Protects concurrent access to histograms_.
 
   DynamicProperties dynamic_properties_{}; ///< Trajectory-wide dynamic properties.
-  std::shared_ptr<PerFrameDistributionStore> per_frame_store_; ///< Per-frame 1D distribution curves.
+  std::shared_ptr<PerFrameDistributionStore>
+      per_frame_store_; ///< Per-frame 1D distribution curves.
 };
 
 } // namespace correlation::analysis

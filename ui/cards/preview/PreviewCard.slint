@@ -70,6 +70,7 @@ export component PreviewCard inherits FilledCard {
     // Workflow properties & callbacks
     in property <bool> file_loaded: false;
     in property <bool> analysis_running: false;
+    in property <bool> has_validation_errors: false;
     in property <string> file_basename: "";
     in property <string> total_atoms: "";
     in property <string> num_frames: "";
@@ -97,6 +98,7 @@ export component PreviewCard inherits FilledCard {
     callback load_recent(string);
     in property <[string]> recent_files: [];
     callback run_analysis();
+    callback cancel_analysis();
     callback open_panel(int);
     callback copy_plot_clipboard();
     callback export_plot();
@@ -591,12 +593,14 @@ export component PreviewCard inherits FilledCard {
                 is_playing <=> root.structure_3d_is_playing;
                 file_loaded: root.file_loaded;
                 analysis_running: root.analysis_running;
+                has_validation_errors: root.has_validation_errors;
                 analysis_done: root.analysis_done;
                 file_basename: root.file_basename;
                 total_atoms: root.total_atoms;
                 num_frames: root.num_frames;
                 recent_files: root.recent_files;
                 run_analysis => { root.run_analysis(); }
+                cancel_analysis => { root.cancel_analysis(); }
                 open_panel(idx) => { root.open_panel(idx); }
                 browse_file => { root.browse_file(); }
                 load_sample(s) => { root.load_sample(s); }

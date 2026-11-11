@@ -116,6 +116,20 @@ namespace {
       {"G6", "G6_r"},
       {"g6", "G6_r"},
       {"g6_r", "G6_r"},
+      {"Plane Angle Distribution", "PAD"},
+      {"Plane-Angle Distribution", "PAD"},
+      {"PAD(θ) Normalized", "PAD"},
+      {"PAD(Theta) Normalized", "PAD"},
+      {"PAD(Theta) normalized", "PAD"},
+      {"PAD (Raw Counts)", "PAD_raw"},
+      {"PAD RAW", "PAD_raw"},
+      {"PAD Raw", "PAD_raw"},
+      {"PAD raw", "PAD_raw"},
+      {"PAD(θ) RAW", "PAD_raw"},
+      {"PAD(θ) Raw", "PAD_raw"},
+      {"PAD(Theta) RAW", "PAD_raw"},
+      {"PAD(Theta) Raw", "PAD_raw"},
+      {"PAD(Theta) raw", "PAD_raw"},
   };
   const auto alias_iter = ALIASES.find(name);
   return (alias_iter != ALIASES.end()) ? alias_iter->second : name;
@@ -493,29 +507,30 @@ void DistributionFunctions::normalizeHistograms(DistributionFunctions &dist_func
 
 namespace {
 
-void extractFrameCurves(const DistributionFunctions &frame_df,
-                        size_t frame_idx,
+void extractFrameCurves(const DistributionFunctions &frame_df, size_t frame_idx,
                         PerFrameDistributionStore &store) {
   const auto &hists = frame_df.getAllHistograms();
   if (const auto it_gr = hists.find("g_r"); it_gr != hists.end()) {
-    if (const auto it_tot = it_gr->second.partials.find("Total"); it_tot != it_gr->second.partials.end()) {
+    if (const auto it_tot = it_gr->second.partials.find("Total");
+        it_tot != it_gr->second.partials.end()) {
       store.setFrameCurve(DistributionMetric::RDF, frame_idx, it_tot->second);
     }
   }
   if (const auto it_pad = hists.find("PAD"); it_pad != hists.end()) {
-    if (const auto it_tot = it_pad->second.partials.find("Total"); it_tot != it_pad->second.partials.end()) {
+    if (const auto it_tot = it_pad->second.partials.find("Total");
+        it_tot != it_pad->second.partials.end()) {
       store.setFrameCurve(DistributionMetric::PAD, frame_idx, it_tot->second);
     }
   }
   if (const auto it_sq = hists.find("S_q"); it_sq != hists.end()) {
-    if (const auto it_tot = it_sq->second.partials.find("Total"); it_tot != it_sq->second.partials.end()) {
+    if (const auto it_tot = it_sq->second.partials.find("Total");
+        it_tot != it_sq->second.partials.end()) {
       store.setFrameCurve(DistributionMetric::SQ, frame_idx, it_tot->second);
     }
   }
 }
 
-void computeSingleFrameMiniCurves(correlation::core::Trajectory &trajectory,
-                                  size_t frame_idx,
+void computeSingleFrameMiniCurves(correlation::core::Trajectory &trajectory, size_t frame_idx,
                                   const AnalysisSettings &settings,
                                   const BondCutoffMatrix &bond_cutoffs,
                                   PerFrameDistributionStore &store) {
@@ -527,20 +542,20 @@ void computeSingleFrameMiniCurves(correlation::core::Trajectory &trajectory,
   frame_df.setStructureAnalyzerOwned(
       std::make_unique<StructureAnalyzer>(frame, settings.r_max, bond_cutoffs));
 
-  const auto *rdf_calc =
-      ::correlation::calculators::CalculatorFactory::instance().getCalculator("Radial Distribution Function");
+  const auto *rdf_calc = ::correlation::calculators::CalculatorFactory::instance().getCalculator(
+      "Radial Distribution Function");
   if (rdf_calc != nullptr && rdf_calc->isConfigured()) {
     rdf_calc->calculateFrame(frame_df, settings);
   }
 
-  const auto *pad_calc =
-      ::correlation::calculators::CalculatorFactory::instance().getCalculator("Plane Angle Distribution");
+  const auto *pad_calc = ::correlation::calculators::CalculatorFactory::instance().getCalculator(
+      "Plane Angle Distribution");
   if (pad_calc != nullptr && pad_calc->isConfigured()) {
     pad_calc->calculateFrame(frame_df, settings);
   }
 
-  const auto *sq_calc =
-      ::correlation::calculators::CalculatorFactory::instance().getCalculator("Static Structure Factor");
+  const auto *sq_calc = ::correlation::calculators::CalculatorFactory::instance().getCalculator(
+      "Static Structure Factor");
   if (sq_calc != nullptr && sq_calc->isConfigured()) {
     sq_calc->calculateFrame(frame_df, settings);
   }
@@ -553,19 +568,22 @@ void populateMeanStoreCurves(const DistributionFunctions &final_df,
   const auto &final_hists = final_df.getAllHistograms();
   if (const auto it_gr = final_hists.find("g_r"); it_gr != final_hists.end()) {
     store.setBins(DistributionMetric::RDF, it_gr->second.bins);
-    if (const auto it_tot = it_gr->second.partials.find("Total"); it_tot != it_gr->second.partials.end()) {
+    if (const auto it_tot = it_gr->second.partials.find("Total");
+        it_tot != it_gr->second.partials.end()) {
       store.setMeanCurve(DistributionMetric::RDF, it_tot->second);
     }
   }
   if (const auto it_pad = final_hists.find("PAD"); it_pad != final_hists.end()) {
     store.setBins(DistributionMetric::PAD, it_pad->second.bins);
-    if (const auto it_tot = it_pad->second.partials.find("Total"); it_tot != it_pad->second.partials.end()) {
+    if (const auto it_tot = it_pad->second.partials.find("Total");
+        it_tot != it_pad->second.partials.end()) {
       store.setMeanCurve(DistributionMetric::PAD, it_tot->second);
     }
   }
   if (const auto it_sq = final_hists.find("S_q"); it_sq != final_hists.end()) {
     store.setBins(DistributionMetric::SQ, it_sq->second.bins);
-    if (const auto it_tot = it_sq->second.partials.find("Total"); it_tot != it_sq->second.partials.end()) {
+    if (const auto it_tot = it_sq->second.partials.find("Total");
+        it_tot != it_sq->second.partials.end()) {
       store.setMeanCurve(DistributionMetric::SQ, it_tot->second);
     }
   }
@@ -635,17 +653,16 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
   }
 
   if (!remainder_frames.empty()) {
-    tbb::parallel_for(
-        tbb::blocked_range<size_t>(0, remainder_frames.size()),
-        [&](const tbb::blocked_range<size_t> &range) {
-          for (size_t i = range.begin(); i != range.end(); ++i) {
-            if (settings.cancel_flag && settings.cancel_flag->load()) {
-              continue;
-            }
-            computeSingleFrameMiniCurves(trajectory, remainder_frames[i], settings, bond_cutoffs,
-                                        *per_frame_store);
-          }
-        });
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, remainder_frames.size()),
+                      [&](const tbb::blocked_range<size_t> &range) {
+                        for (size_t i = range.begin(); i != range.end(); ++i) {
+                          if (settings.cancel_flag && settings.cancel_flag->load()) {
+                            continue;
+                          }
+                          computeSingleFrameMiniCurves(trajectory, remainder_frames[i], settings,
+                                                       bond_cutoffs, *per_frame_store);
+                        }
+                      });
   }
 
   // Accumulate results

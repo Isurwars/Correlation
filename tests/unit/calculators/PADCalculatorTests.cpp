@@ -661,9 +661,16 @@ TEST_F(PADCalculatorTests, VerifyPADRawHistogram) {
 
   ASSERT_TRUE(dists.getAllHistograms().contains("PAD_raw"));
   const auto &raw_hist = dists.getHistogram("PAD_raw");
+  EXPECT_EQ(raw_hist.title, "PAD(θ) RAW");
+  EXPECT_EQ(raw_hist.description, "Plane-Angle Distribution (Raw Counts)");
   EXPECT_EQ(raw_hist.y_unit, "counts");
   ASSERT_TRUE(raw_hist.partials.contains("O-Si-O"));
   EXPECT_DOUBLE_EQ(sumHistogram(raw_hist.partials.at("O-Si-O")), 1.0);
   EXPECT_DOUBLE_EQ(sumHistogram(raw_hist.partials.at("Total")), 1.0);
+
+  ASSERT_TRUE(dists.getAllHistograms().contains("PAD"));
+  const auto &norm_hist = dists.getHistogram("PAD");
+  EXPECT_EQ(norm_hist.title, "PAD(θ) Normalized");
+  EXPECT_EQ(norm_hist.description, "Plane-Angle Distribution (Normalized)");
 }
 } // namespace correlation::analysis

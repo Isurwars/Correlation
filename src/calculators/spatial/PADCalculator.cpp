@@ -77,21 +77,21 @@ PADCalculator::calculate(const correlation::core::Cell &cell,
 
   correlation::analysis::Histogram f_theta_raw;
   f_theta_raw.x_label = "θ";
-  f_theta_raw.title = "PAD (Raw Counts)";
+  f_theta_raw.title = "PAD(θ) RAW";
   f_theta_raw.y_label = "Counts";
   f_theta_raw.x_unit = "°";
   f_theta_raw.y_unit = "counts";
-  f_theta_raw.description = "Plane-Angle Distribution";
+  f_theta_raw.description = "Plane-Angle Distribution (Raw Counts)";
   f_theta_raw.file_suffix = "_PAD_raw";
   f_theta_raw.bins.resize(num_bins);
 
   correlation::analysis::Histogram f_theta;
   f_theta.x_label = "θ";
-  f_theta.title = "Plane-Angle Distribution";
+  f_theta.title = "PAD(θ) Normalized";
   f_theta.y_label = "P(θ)";
   f_theta.x_unit = "°";
   f_theta.y_unit = "°⁻¹";
-  f_theta.description = "Plane-Angle Distribution";
+  f_theta.description = "Plane-Angle Distribution (Normalized)";
   f_theta.file_suffix = "_PAD";
   f_theta.bins.resize(num_bins);
 

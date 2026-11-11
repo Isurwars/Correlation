@@ -91,6 +91,7 @@ export component Structure3DViewport inherits Rectangle {
     // Workflow properties & callbacks
     in property <bool> file_loaded: false;
     in property <bool> analysis_running: false;
+    in property <bool> has_validation_errors: false;
     in property <bool> analysis_done: false;
     in property <string> file_basename: "";
     in property <string> total_atoms: "";
@@ -98,6 +99,7 @@ export component Structure3DViewport inherits Rectangle {
     in property <[string]> recent_files: [];
 
     callback run_analysis();
+    callback cancel_analysis();
     callback open_panel(int);
     callback browse_file();
     callback load_sample(string);
@@ -238,8 +240,10 @@ export component Structure3DViewport inherits Rectangle {
                     file_basename: root.file_basename;
                     total_atoms: root.total_atoms;
                     analysis_running: root.analysis_running;
+                    has_validation_errors: root.has_validation_errors;
 
                     run_analysis => { root.run_analysis(); }
+                    cancel_analysis => { root.cancel_analysis(); }
                     open_panel(id) => { root.open_panel(id); }
                 }
             }

@@ -15,32 +15,32 @@ const std::vector<real_t> PerFrameDistributionStore::empty_curve_{};
 PerFrameDistributionStore::PerFrameDistributionStore(std::size_t total_frames)
     : total_frames_(total_frames) {
   // Initialize descriptors for the 3 supported 1D metrics
-  metrics_[toIndex(DistributionMetric::RDF)] = {
-      .bins = {},
-      .mean_curve = {},
-      .frame_curves = std::vector<std::vector<real_t>>(total_frames_),
-      .name = "g(r)",
-      .title = "Radial Distribution Function",
-      .x_unit = "Å",
-      .y_unit = ""};
+  metrics_[toIndex(DistributionMetric::RDF)] = {.bins = {},
+                                                .mean_curve = {},
+                                                .frame_curves =
+                                                    std::vector<std::vector<real_t>>(total_frames_),
+                                                .name = "g(r)",
+                                                .title = "Radial Distribution Function",
+                                                .x_unit = "Å",
+                                                .y_unit = ""};
 
-  metrics_[toIndex(DistributionMetric::PAD)] = {
-      .bins = {},
-      .mean_curve = {},
-      .frame_curves = std::vector<std::vector<real_t>>(total_frames_),
-      .name = "PAD",
-      .title = "Planar Angle Distribution",
-      .x_unit = "deg",
-      .y_unit = "deg⁻¹"};
+  metrics_[toIndex(DistributionMetric::PAD)] = {.bins = {},
+                                                .mean_curve = {},
+                                                .frame_curves =
+                                                    std::vector<std::vector<real_t>>(total_frames_),
+                                                .name = "PAD",
+                                                .title = "PAD(θ) Normalized",
+                                                .x_unit = "deg",
+                                                .y_unit = "deg⁻¹"};
 
-  metrics_[toIndex(DistributionMetric::SQ)] = {
-      .bins = {},
-      .mean_curve = {},
-      .frame_curves = std::vector<std::vector<real_t>>(total_frames_),
-      .name = "S(Q)",
-      .title = "Structure Factor",
-      .x_unit = "Å⁻¹",
-      .y_unit = ""};
+  metrics_[toIndex(DistributionMetric::SQ)] = {.bins = {},
+                                               .mean_curve = {},
+                                               .frame_curves =
+                                                   std::vector<std::vector<real_t>>(total_frames_),
+                                               .name = "S(Q)",
+                                               .title = "Structure Factor",
+                                               .x_unit = "Å⁻¹",
+                                               .y_unit = ""};
 }
 
 std::size_t PerFrameDistributionStore::toIndex(DistributionMetric metric) noexcept {
@@ -64,9 +64,7 @@ void PerFrameDistributionStore::setFrameCurve(DistributionMetric metric, std::si
   }
 }
 
-std::size_t PerFrameDistributionStore::getTotalFrames() const noexcept {
-  return total_frames_;
-}
+std::size_t PerFrameDistributionStore::getTotalFrames() const noexcept { return total_frames_; }
 
 bool PerFrameDistributionStore::hasData(DistributionMetric metric) const noexcept {
   const auto &data = metrics_[toIndex(metric)];
@@ -82,8 +80,7 @@ bool PerFrameDistributionStore::hasFrame(DistributionMetric metric,
   return !frame_curves[frame_idx].empty();
 }
 
-const std::vector<real_t> &
-PerFrameDistributionStore::getBins(DistributionMetric metric) const {
+const std::vector<real_t> &PerFrameDistributionStore::getBins(DistributionMetric metric) const {
   return metrics_[toIndex(metric)].bins;
 }
 
@@ -92,9 +89,8 @@ PerFrameDistributionStore::getMeanCurve(DistributionMetric metric) const {
   return metrics_[toIndex(metric)].mean_curve;
 }
 
-const std::vector<real_t> &
-PerFrameDistributionStore::getFrameCurve(DistributionMetric metric,
-                                         std::size_t frame_idx) const {
+const std::vector<real_t> &PerFrameDistributionStore::getFrameCurve(DistributionMetric metric,
+                                                                    std::size_t frame_idx) const {
   const auto &frame_curves = metrics_[toIndex(metric)].frame_curves;
   if (frame_idx >= frame_curves.size() || frame_curves[frame_idx].empty()) {
     return empty_curve_;
@@ -102,8 +98,7 @@ PerFrameDistributionStore::getFrameCurve(DistributionMetric metric,
   return frame_curves[frame_idx];
 }
 
-const MetricCurveData &
-PerFrameDistributionStore::getMetricData(DistributionMetric metric) const {
+const MetricCurveData &PerFrameDistributionStore::getMetricData(DistributionMetric metric) const {
   return metrics_[toIndex(metric)];
 }
 
@@ -112,4 +107,3 @@ MetricCurveData &PerFrameDistributionStore::getMetricData(DistributionMetric met
 }
 
 } // namespace correlation::analysis
-

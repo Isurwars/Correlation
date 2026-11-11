@@ -14,8 +14,10 @@ export component Structure3DWorkflowBar inherits Rectangle {
     in property <string> file_basename: "";
     in property <string> total_atoms: "";
     in property <bool> analysis_running: false;
+    in property <bool> has_validation_errors: false;
 
     callback run_analysis();
+    callback cancel_analysis();
     callback open_panel(int);
 
     height: 36px;
@@ -41,21 +43,30 @@ export component Structure3DWorkflowBar inherits Rectangle {
             vertical-alignment: center;
         }
 
-        // Run Analysis Button (Compact pill with centered icon and label)
+        // Run / Cancel Analysis Button (Compact pill with centered icon and label)
         run_btn_touch := TouchArea {
+            accessible-role: button;
+            accessible-label: root.analysis_running ? "Cancel Analysis" : "Run Analysis";
             height: 28px;
             y: (parent.height - self.height) / 2;
             width: run_btn_layout.preferred-width + 20px;
-            enabled: !root.analysis_running;
+            enabled: root.analysis_running || !root.has_validation_errors;
             mouse-cursor: self.enabled ? pointer : default;
-            clicked => { root.run_analysis(); }
+            clicked => {
+                if (root.analysis_running) {
+                    root.cancel_analysis();
+                } else {
+                    root.run_analysis();
+                }
+            }
 
             Rectangle {
                 width: 100%;
                 height: 100%;
                 border-radius: 14px;
                 background: !run_btn_touch.enabled ? MaterialPalette.surface_container_high :
-                    run_btn_touch.has-hover ? MaterialPalette.primary.darker(8%) : MaterialPalette.primary;
+                    root.analysis_running ? (run_btn_touch.has-hover ? MaterialPalette.error.darker(8%) : MaterialPalette.error) :
+                    (run_btn_touch.has-hover ? MaterialPalette.run.darker(8%) : MaterialPalette.run);
 
                 animate background { duration: 150ms; }
 
@@ -69,15 +80,17 @@ export component Structure3DWorkflowBar inherits Rectangle {
                         width: 14px;
                         height: 14px;
                         y: (parent.height - self.height) / 2;
-                        source: Icons.play_arrow;
-                        colorize: !run_btn_touch.enabled ? MaterialPalette.outline : MaterialPalette.on_primary;
+                        source: root.analysis_running ? Icons.close : Icons.play_arrow;
+                        colorize: !run_btn_touch.enabled ? MaterialPalette.outline :
+                            root.analysis_running ? MaterialPalette.on_error : MaterialPalette.on_run;
                     }
 
                     MaterialText {
-                        text: root.analysis_running ? "Running..." : "Run Analysis";
+                        text: root.analysis_running ? "Cancel Analysis" : "Run Analysis";
                         font-size: 13px;
                         font-weight: 600;
-                        color: !run_btn_touch.enabled ? MaterialPalette.outline : MaterialPalette.on_primary;
+                        color: !run_btn_touch.enabled ? MaterialPalette.outline :
+                            root.analysis_running ? MaterialPalette.on_error : MaterialPalette.on_run;
                         vertical-alignment: center;
                         horizontal-alignment: center;
                     }

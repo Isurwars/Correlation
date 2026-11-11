@@ -50,8 +50,52 @@ TEST(DistributionPostProcessorTests, AngularDistributionsScaleEffectiveSigma) {
   DistributionPostProcessor::smooth(hist_spatial, "RDF", static_cast<real_t>(0.1));
   DistributionPostProcessor::smooth(hist_angular, "PAD", static_cast<real_t>(0.1));
 
-  // Angular smoothing with 15x domain scale flattens the peak more than spatial smoothing
+  // Angular smoothing with 20x domain scale flattens the peak more than spatial smoothing
   EXPECT_LT(hist_angular.smoothed_partials["Total"][2], hist_spatial.smoothed_partials["Total"][2]);
+}
+
+TEST(DistributionPostProcessorTests, StructureFactorScalesEffectiveSigma) {
+  Histogram hist_spatial;
+  hist_spatial.bins = {
+      static_cast<real_t>(0.00), static_cast<real_t>(0.05), static_cast<real_t>(0.10),
+      static_cast<real_t>(0.15), static_cast<real_t>(0.20),
+  };
+  hist_spatial.partials["Total"] = {
+      static_cast<real_t>(0.0),  static_cast<real_t>(10.0), static_cast<real_t>(20.0),
+      static_cast<real_t>(10.0), static_cast<real_t>(0.0),
+  };
+
+  Histogram hist_sq = hist_spatial;
+
+  DistributionPostProcessor::smooth(hist_spatial, "RDF", static_cast<real_t>(0.1));
+  DistributionPostProcessor::smooth(hist_sq, "S_q", static_cast<real_t>(0.1));
+
+  // S(Q) smoothing with 2.0x domain scale flattens the peak more than spatial smoothing
+  EXPECT_LT(hist_sq.smoothed_partials["Total"][2], hist_spatial.smoothed_partials["Total"][2]);
+}
+
+TEST(DistributionPostProcessorTests, MatchesAliasedAndFormattedNamesForScaling) {
+  Histogram base_hist;
+  base_hist.bins = {
+      static_cast<real_t>(0.00), static_cast<real_t>(0.05), static_cast<real_t>(0.10),
+      static_cast<real_t>(0.15), static_cast<real_t>(0.20),
+  };
+  base_hist.partials["Total"] = {
+      static_cast<real_t>(0.0),  static_cast<real_t>(10.0), static_cast<real_t>(20.0),
+      static_cast<real_t>(10.0), static_cast<real_t>(0.0),
+  };
+
+  Histogram h_pad_raw = base_hist;
+  Histogram h_pad_norm = base_hist;
+  Histogram h_sq_alias = base_hist;
+
+  DistributionPostProcessor::smooth(h_pad_raw, "PAD(θ) RAW", static_cast<real_t>(0.1));
+  DistributionPostProcessor::smooth(h_pad_norm, "PAD(θ) Normalized", static_cast<real_t>(0.1));
+  DistributionPostProcessor::smooth(h_sq_alias, "S(Q)", static_cast<real_t>(0.1));
+
+  EXPECT_LT(h_pad_raw.smoothed_partials["Total"][2], base_hist.partials["Total"][2]);
+  EXPECT_LT(h_pad_norm.smoothed_partials["Total"][2], base_hist.partials["Total"][2]);
+  EXPECT_LT(h_sq_alias.smoothed_partials["Total"][2], base_hist.partials["Total"][2]);
 }
 
 TEST(DistributionPostProcessorTests, SmoothAllOperatesOnHistogramMap) {

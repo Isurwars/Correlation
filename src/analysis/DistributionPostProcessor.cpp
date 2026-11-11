@@ -20,15 +20,25 @@ namespace correlation::analysis {
 namespace {
 
 [[nodiscard]] constexpr bool isAngularDistribution(std::string_view name) noexcept {
-  return name == "BAD" || name == "PAD" || name == "PAD_raw" || name == "DAD" || name == "DAD_raw";
+  return name == "BAD" || name == "PAD" || name == "PAD_raw" || name == "DAD" ||
+         name == "DAD_raw" || name.contains("PAD") || name.contains("BAD") ||
+         name.contains("DAD") || name.contains("Plane-Angle") || name.contains("Plane Angle");
+}
+
+[[nodiscard]] constexpr bool isStructureFactor(std::string_view name) noexcept {
+  return name == "S_q" || name == "SQ" || name == "S(Q)" || name.contains("S(Q)") ||
+         name.contains("Structure Factor") || name == "Static Structure Factor";
 }
 
 [[nodiscard]] real_t computeEffectiveSigma(std::string_view name, real_t sigma,
                                            real_t bin_dx) noexcept {
   real_t effective_sigma = sigma;
   if (isAngularDistribution(name)) {
-    constexpr auto ANGULAR_DOMAIN_SCALE = static_cast<real_t>(15.0);
+    constexpr auto ANGULAR_DOMAIN_SCALE = static_cast<real_t>(20.0);
     effective_sigma = sigma * ANGULAR_DOMAIN_SCALE;
+  } else if (isStructureFactor(name)) {
+    constexpr auto SQ_DOMAIN_SCALE = static_cast<real_t>(2.0);
+    effective_sigma = sigma * SQ_DOMAIN_SCALE;
   }
   return std::max(bin_dx, effective_sigma);
 }

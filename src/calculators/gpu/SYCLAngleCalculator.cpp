@@ -37,7 +37,7 @@ correlation::analysis::Histogram compute_angles_sycl(const correlation::core::Ce
   compute_angle_tensor_sycl(cell, graph, angles);
 
   correlation::analysis::Histogram hist;
-  hist.title = "Plane-Angle Distribution";
+  hist.title = "PAD(θ) Normalized";
   hist.x_label = "Angle";
   hist.y_label = "P(θ)";
   hist.x_unit = "deg";
