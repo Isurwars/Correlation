@@ -890,8 +890,8 @@
     "semantic_hash": ""
   },
   "tests/unit/utils/SIMDUtilsTests.cpp": {
-    "mtime": 1794399932.7969432,
-    "ast_hash": "c499cccb794b592ee65e543c1c7a8aa6",
+    "mtime": 1794400617.4063852,
+    "ast_hash": "7ab74900c2656081c10666aa296ad8d5",
     "semantic_hash": ""
   },
   "tests/unit/writers/WriterFactoryTests.cpp": {
@@ -1195,38 +1195,38 @@
     "semantic_hash": ""
   },
   "include/math/simd/SIMDDistance.hpp": {
-    "mtime": 1789591638.9001765,
-    "ast_hash": "14ee023e1b9304f91e8651414b798537",
+    "mtime": 1794400521.4447603,
+    "ast_hash": "4fcb2e93ea2ba079779d593801e56a8e",
     "semantic_hash": ""
   },
   "include/math/simd/SIMDNormalization.hpp": {
-    "mtime": 1789591638.897551,
-    "ast_hash": "9fe7cd5f6bc3863a30931692ee94baf7",
+    "mtime": 1794400521.4489853,
+    "ast_hash": "f1e390fd87b7afb1be91381b619cd735",
     "semantic_hash": ""
   },
   "include/math/simd/SIMDScattering.hpp": {
-    "mtime": 1789591638.9316275,
-    "ast_hash": "614c5dd9d25033b63734c1853e71ece5",
+    "mtime": 1794400521.4542716,
+    "ast_hash": "f75b82bfd83c770e139441916bf73aaa",
     "semantic_hash": ""
   },
   "include/math/simd/SIMDTypes.hpp": {
-    "mtime": 1789591638.9023612,
-    "ast_hash": "f8ac3720dd2fb168715f62468bceb937",
+    "mtime": 1794400615.0764308,
+    "ast_hash": "e0203d7640947900f132ff3bc54fe926",
     "semantic_hash": ""
   },
   "include/math/simd/detail/AVX2Kernels.hpp": {
-    "mtime": 1789591638.915264,
-    "ast_hash": "aa227a53f2acb6b58dde0693a0d7baf8",
+    "mtime": 1794400521.469266,
+    "ast_hash": "78ceb4f04ec2350a70f16da3bc0ca792",
     "semantic_hash": ""
   },
   "include/math/simd/detail/AVX512Kernels.hpp": {
-    "mtime": 1789591638.9223835,
-    "ast_hash": "895c2ebe58fc278c42f52a4809cb381f",
+    "mtime": 1794400521.476356,
+    "ast_hash": "5a9b601f8766a4994ce7c35f8499c2e9",
     "semantic_hash": ""
   },
   "include/math/simd/detail/ScalarKernels.hpp": {
-    "mtime": 1789591638.9266803,
-    "ast_hash": "c18edf917bd969f481a14aaa7742067e",
+    "mtime": 1794400521.4805596,
+    "ast_hash": "645e7a6b857682a143527a5e2a7b2a33",
     "semantic_hash": ""
   },
   "include/plotters/PlotTypes.hpp": {
@@ -2325,8 +2325,8 @@
     "semantic_hash": ""
   },
   "src/calculators/scattering/StructureFactorCalculator.cpp": {
-    "mtime": 1791183661.3188024,
-    "ast_hash": "bf4c06b50a93eae83927b09fa446ef3a",
+    "mtime": 1794400996.13399,
+    "ast_hash": "0456a87b7f2f29a5749bc35972c25132",
     "semantic_hash": ""
   },
   "src/calculators/scattering/TDOSCalculator.cpp": {
@@ -2335,13 +2335,13 @@
     "semantic_hash": ""
   },
   "src/calculators/scattering/XRDCalculator.cpp": {
-    "mtime": 1791183678.3175187,
-    "ast_hash": "1c0dc7700e5e7cf95db33a2737359eb6",
+    "mtime": 1794401005.438809,
+    "ast_hash": "44a968ec72d6c07e227aa274e0fc79f2",
     "semantic_hash": ""
   },
   "src/calculators/spatial/AngleCalculator.cpp": {
-    "mtime": 1793767040.3097956,
-    "ast_hash": "a8089a7b420513e41a7dafc673877483",
+    "mtime": 1794400616.200932,
+    "ast_hash": "25efb987a2bb4109f39053eeacfd4839",
     "semantic_hash": ""
   },
   "src/calculators/spatial/CNACalculator.cpp": {
@@ -2370,8 +2370,8 @@
     "semantic_hash": ""
   },
   "src/calculators/spatial/DistanceCalculator.cpp": {
-    "mtime": 1792529130.9031394,
-    "ast_hash": "bf1e6e478a0952c1075b61b4203938f7",
+    "mtime": 1794400616.5874012,
+    "ast_hash": "9e3151d9f15a14607f46969a11fec06c",
     "semantic_hash": ""
   },
   "src/calculators/spatial/HBondCalculator.cpp": {
@@ -2395,8 +2395,8 @@
     "semantic_hash": ""
   },
   "src/calculators/spatial/RDFCalculator.cpp": {
-    "mtime": 1793809920.7620504,
-    "ast_hash": "915fb347b389c54e3ec15157ce9f55db",
+    "mtime": 1794400616.9303944,
+    "ast_hash": "5310e05a774dcc75a3911d73562b54c6",
     "semantic_hash": ""
   },
   "src/calculators/spatial/SDFCalculator.cpp": {
@@ -3040,8 +3040,8 @@
     "semantic_hash": ""
   },
   "include/calculators/spatial/CellListTraversal.hpp": {
-    "mtime": 1792887204.2409391,
-    "ast_hash": "f7ecc69b8e89bb9fff6afb068c75b2df",
+    "mtime": 1794400521.4946418,
+    "ast_hash": "6788eebab9b8f3733f3b2478f1543458",
     "semantic_hash": ""
   },
   "include/calculators/spatial/G6Calculator.hpp": {

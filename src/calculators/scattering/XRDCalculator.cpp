@@ -54,7 +54,7 @@ real_t sampleSq(const QGrid &q_grid, const std::vector<real_t> &sq_data, real_t 
     return sq_data.back();
   }
   const auto &bins = *q_grid.bins;
-  auto iterator = std::ranges::lower_bound(bins, q_val);
+  const auto iterator = std::ranges::lower_bound(bins, q_val);
   const auto idx = static_cast<size_t>(std::distance(bins.begin(), iterator));
   if (idx == 0) {
     return sq_data[0];
@@ -215,8 +215,8 @@ XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
   xrd_hist.bins.resize(num_bins);
   std::vector<real_t> intensities(num_bins, 0.0);
 
-  auto partial_integrands = calculatePartialIntegrands(g_r_hist, ashcroft_weights, delta_r);
-  auto concentrations = calculateConcentrations(cell);
+  const auto partial_integrands = calculatePartialIntegrands(g_r_hist, ashcroft_weights, delta_r);
+  const auto concentrations = calculateConcentrations(cell);
 
   // Collect partials as a flat vector for parallel access (avoids map iteration
   // inside the parallel region)

@@ -3880,8 +3880,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_analysis_peakintegrationservice",
-      "community": 9,
-      "community_name": "vector",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "peakintegrationservice.hpp"
     },
     {
@@ -3968,8 +3968,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_analysis_peakintegrationservice_hpp_optional",
-      "community": 9,
-      "community_name": "vector",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "optional"
     },
     {
@@ -4496,8 +4496,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_structureanalyzer",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "structureanalyzer"
     },
     {
@@ -4507,8 +4507,8 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_structureanalyzer_structureanalyzer",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": ".~structureanalyzer()"
     },
     {
@@ -4518,8 +4518,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_structureanalyzer_cellptr",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": ".cellptr()"
     },
     {
@@ -4529,8 +4529,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_hpp_shared_ptr",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "shared_ptr"
     },
     {
@@ -4540,8 +4540,8 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_structureanalyzer_getignoreperiodicselfinteractions",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": ".getignoreperiodicselfinteractions()"
     },
     {
@@ -4551,8 +4551,8 @@
       "source_location": "L136",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_structureanalyzer_ensureanglescomputed",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "ensureanglescomputed"
     },
     {
@@ -4562,8 +4562,8 @@
       "source_location": "L137",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_structureanalyzer_ensuredihedralscomputed",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "ensuredihedralscomputed"
     },
     {
@@ -4573,8 +4573,8 @@
       "source_location": "L139",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_structureanalyzer_cell",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "cell_"
     },
     {
@@ -4584,8 +4584,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_hpp_real_t",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "real_t"
     },
     {
@@ -4595,8 +4595,8 @@
       "source_location": "L140",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_structureanalyzer_cutoff_sq",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "cutoff_sq_"
     },
     {
@@ -4606,8 +4606,8 @@
       "source_location": "L141",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_structureanalyzer_bond_cutoffs",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "bond_cutoffs_"
     },
     {
@@ -4617,8 +4617,8 @@
       "source_location": "L143",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_structureanalyzer_ignore_periodic_self_interactions",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "ignore_periodic_self_interactions_"
     },
     {
@@ -4639,8 +4639,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_hpp_rawhistogramtensor",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "rawhistogramtensor"
     },
     {
@@ -4661,8 +4661,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_hpp_angletensor",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "angletensor"
     },
     {
@@ -4672,8 +4672,8 @@
       "source_location": "L147",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_structureanalyzer_angle_tensor",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "angle_tensor_"
     },
     {
@@ -4683,8 +4683,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_hpp_dihedraltensor",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "dihedraltensor"
     },
     {
@@ -4694,8 +4694,8 @@
       "source_location": "L148",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_structureanalyzer_dihedral_tensor",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "dihedral_tensor_"
     },
     {
@@ -4705,8 +4705,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_hpp_mutex",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "mutex"
     },
     {
@@ -4716,8 +4716,8 @@
       "source_location": "L150",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_structureanalyzer_compute_mutex",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "compute_mutex_"
     },
     {
@@ -4727,8 +4727,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_hpp_atomic",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "atomic"
     },
     {
@@ -4738,8 +4738,8 @@
       "source_location": "L151",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_structureanalyzer_angles_computed",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "angles_computed_"
     },
     {
@@ -4749,8 +4749,8 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "include_analysis_structureanalyzer_structureanalyzer_dihedrals_computed",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "dihedrals_computed_"
     },
     {
@@ -9083,8 +9083,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_app_services_updatechecker",
-      "community": 9,
-      "community_name": "vector",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "updatechecker.hpp"
     },
     {
@@ -9094,8 +9094,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "include_app_services_updatechecker_appwindow",
-      "community": 9,
-      "community_name": "vector",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "appwindow"
     },
     {
@@ -15716,8 +15716,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_contracts_iframecalculator",
-      "community": 448,
-      "community_name": "ZipArchiveWriter::Impl",
+      "community": 539,
+      "community_name": "IFrameCalculator",
       "norm_label": "iframecalculator.hpp"
     },
     {
@@ -15727,8 +15727,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "include_calculators_contracts_iframecalculator_distributionfunctions",
-      "community": 448,
-      "community_name": "ZipArchiveWriter::Impl",
+      "community": 539,
+      "community_name": "IFrameCalculator",
       "norm_label": "distributionfunctions"
     },
     {
@@ -15738,8 +15738,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "include_calculators_contracts_iframecalculator_analysissettings",
-      "community": 448,
-      "community_name": "ZipArchiveWriter::Impl",
+      "community": 539,
+      "community_name": "IFrameCalculator",
       "norm_label": "analysissettings"
     },
     {
@@ -15749,8 +15749,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "include_calculators_contracts_iframecalculator_iframecalculator",
-      "community": 448,
-      "community_name": "ZipArchiveWriter::Impl",
+      "community": 539,
+      "community_name": "IFrameCalculator",
       "norm_label": "iframecalculator"
     },
     {
@@ -15760,8 +15760,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "include_calculators_contracts_iframecalculator_iframecalculator_iframecalculator",
-      "community": 448,
-      "community_name": "ZipArchiveWriter::Impl",
+      "community": 539,
+      "community_name": "IFrameCalculator",
       "norm_label": ".~iframecalculator()"
     },
     {
@@ -15771,8 +15771,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "include_calculators_contracts_iframecalculator_iframecalculator_calculateframe",
-      "community": 448,
-      "community_name": "ZipArchiveWriter::Impl",
+      "community": 539,
+      "community_name": "IFrameCalculator",
       "norm_label": "calculateframe"
     },
     {
@@ -16046,8 +16046,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_gpu_gpudistancecalculator",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "gpudistancecalculator.hpp"
     },
     {
@@ -16607,8 +16607,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_gpu_syclanglecalculator",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "syclanglecalculator.hpp"
     },
     {
@@ -16673,8 +16673,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_gpu_sycldistancecalculator",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "sycldistancecalculator.hpp"
     },
     {
@@ -16684,8 +16684,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_gpu_syclsqcalculator",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "syclsqcalculator.hpp"
     },
     {
@@ -16761,8 +16761,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_gpu_syclxrdcalculator",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "syclxrdcalculator.hpp"
     },
     {
@@ -18004,8 +18004,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "include_calculators_order_steinhardtcalculator_steinhardtoptions",
-      "community": 514,
-      "community_name": "TEST",
+      "community": 449,
+      "community_name": "renderHistogramAsPng",
       "norm_label": "steinhardtoptions"
     },
     {
@@ -18015,8 +18015,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "include_calculators_order_steinhardtcalculator_steinhardtoptions_keep_q6m",
-      "community": 514,
-      "community_name": "TEST",
+      "community": 449,
+      "community_name": "renderHistogramAsPng",
       "norm_label": "keep_q6m"
     },
     {
@@ -18125,8 +18125,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "include_calculators_order_steinhardtcalculator_steinhardtcalculator_calculateframe",
-      "community": 155,
-      "community_name": "XRDCalculator.cpp",
+      "community": 381,
+      "community_name": "RobotoData_Extended.cpp",
       "norm_label": "calculateframe"
     },
     {
@@ -18147,8 +18147,8 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "include_calculators_order_steinhardtcalculator_steinhardtcalculator_calculateperatom",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 456,
+      "community_name": "MockElectronicModel",
       "norm_label": "calculateperatom"
     },
     {
@@ -18191,8 +18191,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "include_calculators_order_tenwoldefrenkelcalculator_tenwoldefrenkelparams",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 456,
+      "community_name": "MockElectronicModel",
       "norm_label": "tenwoldefrenkelparams"
     },
     {
@@ -18202,8 +18202,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_calculators_order_tenwoldefrenkelcalculator_hpp_real_t",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 456,
+      "community_name": "MockElectronicModel",
       "norm_label": "real_t"
     },
     {
@@ -18213,8 +18213,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "include_calculators_order_tenwoldefrenkelcalculator_tenwoldefrenkelparams_chi_cut",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 456,
+      "community_name": "MockElectronicModel",
       "norm_label": "chi_cut"
     },
     {
@@ -18224,8 +18224,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "include_calculators_order_tenwoldefrenkelcalculator_tenwoldefrenkelparams_nconn_min",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 456,
+      "community_name": "MockElectronicModel",
       "norm_label": "nconn_min"
     },
     {
@@ -18345,8 +18345,8 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "include_calculators_order_tenwoldefrenkelcalculator_tenwoldefrenkelcalculator_calculateperatom",
-      "community": 106,
-      "community_name": "PyBaseCalculator",
+      "community": 73,
+      "community_name": "Constants.hpp",
       "norm_label": "calculateperatom"
     },
     {
@@ -18543,8 +18543,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "include_calculators_order_tetrahedralcalculator_tetrahedralcalculator_calculateperatom",
-      "community": 73,
-      "community_name": "Constants.hpp",
+      "community": 430,
+      "community_name": "pdf_destroy",
       "norm_label": "calculateperatom"
     },
     {
@@ -23251,8 +23251,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_core_cell",
-      "community": 9,
-      "community_name": "vector",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "cell.hpp"
     },
     {
@@ -23427,8 +23427,8 @@
       "source_location": "L273",
       "_origin": "ast",
       "id": "include_core_cell_cell_setenergy",
-      "community": 390,
-      "community_name": "TDOSCalculator::calculateTrajectory",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": ".setenergy()"
     },
     {
@@ -23526,8 +23526,8 @@
       "source_location": "L310",
       "_origin": "ast",
       "id": "include_core_cell_cell_lattice_parameters",
-      "community": 390,
-      "community_name": "TDOSCalculator::calculateTrajectory",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "lattice_parameters_"
     },
     {
@@ -23977,8 +23977,8 @@
       "source_location": "L141",
       "_origin": "ast",
       "id": "include_core_gpuportability_hipdevicesynchronize",
-      "community": 155,
-      "community_name": "XRDCalculator.cpp",
+      "community": 84,
+      "community_name": "QETrajectoryParser",
       "norm_label": "hipdevicesynchronize()"
     },
     {
@@ -25814,8 +25814,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_math_precision",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "precision.hpp"
     },
     {
@@ -26391,15 +26391,15 @@
       "norm_label": "simddistance.hpp"
     },
     {
-      "label": "compute_dsq_block()",
+      "label": "computeDsqBlock()",
       "file_type": "code",
       "source_file": "include/math/simd/SIMDDistance.hpp",
       "source_location": "L23",
       "_origin": "ast",
-      "id": "include_math_simd_simddistance_compute_dsq_block",
+      "id": "include_math_simd_simddistance_computedsqblock",
       "community": 512,
       "community_name": "MockElectronicModel",
-      "norm_label": "compute_dsq_block()"
+      "norm_label": "computedsqblock()"
     },
     {
       "label": "T",
@@ -26413,15 +26413,15 @@
       "norm_label": "t"
     },
     {
-      "label": "fill_position_block()",
+      "label": "fillPositionBlock()",
       "file_type": "code",
       "source_file": "include/math/simd/SIMDDistance.hpp",
       "source_location": "L40",
       "_origin": "ast",
-      "id": "include_math_simd_simddistance_fill_position_block",
+      "id": "include_math_simd_simddistance_fillpositionblock",
       "community": 51,
       "community_name": "renderComparisonSvg",
-      "norm_label": "fill_position_block()"
+      "norm_label": "fillpositionblock()"
     },
     {
       "label": "size_t",
@@ -26457,15 +26457,15 @@
       "norm_label": "simdnormalization.hpp"
     },
     {
-      "label": "sinc_integral()",
+      "label": "sincIntegral()",
       "file_type": "code",
       "source_file": "include/math/simd/SIMDNormalization.hpp",
       "source_location": "L22",
       "_origin": "ast",
-      "id": "include_math_simd_simdnormalization_sinc_integral",
+      "id": "include_math_simd_simdnormalization_sincintegral",
       "community": 181,
       "community_name": "File Reader Tests",
-      "norm_label": "sinc_integral()"
+      "norm_label": "sincintegral()"
     },
     {
       "label": "T",
@@ -26490,26 +26490,26 @@
       "norm_label": "size_t"
     },
     {
-      "label": "normalize_rdf_bins()",
+      "label": "normalizeRdfBins()",
       "file_type": "code",
       "source_file": "include/math/simd/SIMDNormalization.hpp",
-      "source_location": "L68",
+      "source_location": "L67",
       "_origin": "ast",
-      "id": "include_math_simd_simdnormalization_normalize_rdf_bins",
+      "id": "include_math_simd_simdnormalization_normalizerdfbins",
       "community": 181,
       "community_name": "File Reader Tests",
-      "norm_label": "normalize_rdf_bins()"
+      "norm_label": "normalizerdfbins()"
     },
     {
-      "label": "scale_bins()",
+      "label": "scaleBins()",
       "file_type": "code",
       "source_file": "include/math/simd/SIMDNormalization.hpp",
-      "source_location": "L82",
+      "source_location": "L81",
       "_origin": "ast",
-      "id": "include_math_simd_simdnormalization_scale_bins",
+      "id": "include_math_simd_simdnormalization_scalebins",
       "community": 181,
       "community_name": "File Reader Tests",
-      "norm_label": "scale_bins()"
+      "norm_label": "scalebins()"
     },
     {
       "label": "SIMDScattering.hpp",
@@ -26523,15 +26523,15 @@
       "norm_label": "simdscattering.hpp"
     },
     {
-      "label": "simd_dot()",
+      "label": "simdDot()",
       "file_type": "code",
       "source_file": "include/math/simd/SIMDScattering.hpp",
       "source_location": "L26",
       "_origin": "ast",
-      "id": "include_math_simd_simdscattering_simd_dot",
+      "id": "include_math_simd_simdscattering_simddot",
       "community": 140,
       "community_name": "renderTextAsPath",
-      "norm_label": "simd_dot()"
+      "norm_label": "simddot()"
     },
     {
       "label": "T",
@@ -26556,37 +26556,37 @@
       "norm_label": "size_t"
     },
     {
-      "label": "dot_block()",
+      "label": "dotBlock()",
       "file_type": "code",
       "source_file": "include/math/simd/SIMDScattering.hpp",
       "source_location": "L42",
       "_origin": "ast",
-      "id": "include_math_simd_simdscattering_dot_block",
+      "id": "include_math_simd_simdscattering_dotblock",
       "community": 140,
       "community_name": "renderTextAsPath",
-      "norm_label": "dot_block()"
+      "norm_label": "dotblock()"
     },
     {
-      "label": "debye_sum()",
+      "label": "debyeSum()",
       "file_type": "code",
       "source_file": "include/math/simd/SIMDScattering.hpp",
       "source_location": "L59",
       "_origin": "ast",
-      "id": "include_math_simd_simdscattering_debye_sum",
+      "id": "include_math_simd_simdscattering_debyesum",
       "community": 140,
       "community_name": "renderTextAsPath",
-      "norm_label": "debye_sum()"
+      "norm_label": "debyesum()"
     },
     {
-      "label": "complex_exp_sum()",
+      "label": "complexExpSum()",
       "file_type": "code",
       "source_file": "include/math/simd/SIMDScattering.hpp",
       "source_location": "L75",
       "_origin": "ast",
-      "id": "include_math_simd_simdscattering_complex_exp_sum",
+      "id": "include_math_simd_simdscattering_complexexpsum",
       "community": 140,
       "community_name": "renderTextAsPath",
-      "norm_label": "complex_exp_sum()"
+      "norm_label": "complexexpsum()"
     },
     {
       "label": "ComplexExpSumParams",
@@ -26600,15 +26600,15 @@
       "norm_label": "complexexpsumparams"
     },
     {
-      "label": "miller_phase_sum()",
+      "label": "millerPhaseSum()",
       "file_type": "code",
       "source_file": "include/math/simd/SIMDScattering.hpp",
       "source_location": "L116",
       "_origin": "ast",
-      "id": "include_math_simd_simdscattering_miller_phase_sum",
+      "id": "include_math_simd_simdscattering_millerphasesum",
       "community": 140,
       "community_name": "renderTextAsPath",
-      "norm_label": "miller_phase_sum()"
+      "norm_label": "millerphasesum()"
     },
     {
       "label": "MillerPhaseSumResult",
@@ -27150,15 +27150,15 @@
       "norm_label": "z_s"
     },
     {
-      "label": "dist_sq_scalar()",
+      "label": "distSqScalar()",
       "file_type": "code",
       "source_file": "include/math/simd/SIMDTypes.hpp",
       "source_location": "L162",
       "_origin": "ast",
-      "id": "include_math_simd_simdtypes_dist_sq_scalar",
+      "id": "include_math_simd_simdtypes_distsqscalar",
       "community": 55,
       "community_name": "RDFCalculator.cpp",
-      "norm_label": "dist_sq_scalar()"
+      "norm_label": "distsqscalar()"
     },
     {
       "label": "real_t",
@@ -27194,26 +27194,26 @@
       "norm_label": "avx2kernels.hpp"
     },
     {
-      "label": "compute_dsq_block()",
+      "label": "computeDsqBlock()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
       "source_location": "L21",
       "_origin": "ast",
-      "id": "include_math_simd_detail_avx2kernels_compute_dsq_block",
+      "id": "include_math_simd_detail_avx2kernels_computedsqblock",
       "community": 512,
       "community_name": "MockElectronicModel",
-      "norm_label": "compute_dsq_block()"
+      "norm_label": "computedsqblock()"
     },
     {
-      "label": "simd_dot()",
+      "label": "simdDot()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
       "source_location": "L93",
       "_origin": "ast",
-      "id": "include_math_simd_detail_avx2kernels_simd_dot",
+      "id": "include_math_simd_detail_avx2kernels_simddot",
       "community": 181,
       "community_name": "File Reader Tests",
-      "norm_label": "simd_dot()"
+      "norm_label": "simddot()"
     },
     {
       "label": "size_t",
@@ -27227,70 +27227,70 @@
       "norm_label": "size_t"
     },
     {
-      "label": "dot_block()",
+      "label": "dotBlock()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
       "source_location": "L145",
       "_origin": "ast",
-      "id": "include_math_simd_detail_avx2kernels_dot_block",
+      "id": "include_math_simd_detail_avx2kernels_dotblock",
       "community": 181,
       "community_name": "File Reader Tests",
-      "norm_label": "dot_block()"
+      "norm_label": "dotblock()"
     },
     {
-      "label": "sinc_integral()",
+      "label": "sincIntegral()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
-      "source_location": "L198",
+      "source_location": "L197",
       "_origin": "ast",
-      "id": "include_math_simd_detail_avx2kernels_sinc_integral",
+      "id": "include_math_simd_detail_avx2kernels_sincintegral",
       "community": 181,
       "community_name": "File Reader Tests",
-      "norm_label": "sinc_integral()"
+      "norm_label": "sincintegral()"
     },
     {
-      "label": "debye_sum()",
+      "label": "debyeSum()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
-      "source_location": "L212",
+      "source_location": "L211",
       "_origin": "ast",
-      "id": "include_math_simd_detail_avx2kernels_debye_sum",
+      "id": "include_math_simd_detail_avx2kernels_debyesum",
       "community": 181,
       "community_name": "File Reader Tests",
-      "norm_label": "debye_sum()"
+      "norm_label": "debyesum()"
     },
     {
-      "label": "normalize_rdf_bins()",
+      "label": "normalizeRdfBins()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
-      "source_location": "L270",
+      "source_location": "L269",
       "_origin": "ast",
-      "id": "include_math_simd_detail_avx2kernels_normalize_rdf_bins",
+      "id": "include_math_simd_detail_avx2kernels_normalizerdfbins",
       "community": 173,
       "community_name": "AnalysisRunner",
-      "norm_label": "normalize_rdf_bins()"
+      "norm_label": "normalizerdfbins()"
     },
     {
-      "label": "scale_bins()",
+      "label": "scaleBins()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
-      "source_location": "L354",
+      "source_location": "L353",
       "_origin": "ast",
-      "id": "include_math_simd_detail_avx2kernels_scale_bins",
+      "id": "include_math_simd_detail_avx2kernels_scalebins",
       "community": 181,
       "community_name": "File Reader Tests",
-      "norm_label": "scale_bins()"
+      "norm_label": "scalebins()"
     },
     {
-      "label": "miller_phase_sum()",
+      "label": "millerPhaseSum()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
-      "source_location": "L376",
+      "source_location": "L375",
       "_origin": "ast",
-      "id": "include_math_simd_detail_avx2kernels_miller_phase_sum",
+      "id": "include_math_simd_detail_avx2kernels_millerphasesum",
       "community": 486,
       "community_name": "RandomAmorphousCellConfig",
-      "norm_label": "miller_phase_sum()"
+      "norm_label": "millerphasesum()"
     },
     {
       "label": "MillerPhaseSumResult",
@@ -27315,26 +27315,26 @@
       "norm_label": "avx512kernels.hpp"
     },
     {
-      "label": "compute_dsq_block()",
+      "label": "computeDsqBlock()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
       "source_location": "L19",
       "_origin": "ast",
-      "id": "include_math_simd_detail_avx512kernels_compute_dsq_block",
+      "id": "include_math_simd_detail_avx512kernels_computedsqblock",
       "community": 135,
       "community_name": "TEST_F",
-      "norm_label": "compute_dsq_block()"
+      "norm_label": "computedsqblock()"
     },
     {
-      "label": "simd_dot()",
+      "label": "simdDot()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
       "source_location": "L71",
       "_origin": "ast",
-      "id": "include_math_simd_detail_avx512kernels_simd_dot",
+      "id": "include_math_simd_detail_avx512kernels_simddot",
       "community": 135,
       "community_name": "TEST_F",
-      "norm_label": "simd_dot()"
+      "norm_label": "simddot()"
     },
     {
       "label": "size_t",
@@ -27348,70 +27348,70 @@
       "norm_label": "size_t"
     },
     {
-      "label": "dot_block()",
+      "label": "dotBlock()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
       "source_location": "L108",
       "_origin": "ast",
-      "id": "include_math_simd_detail_avx512kernels_dot_block",
+      "id": "include_math_simd_detail_avx512kernels_dotblock",
       "community": 135,
       "community_name": "TEST_F",
-      "norm_label": "dot_block()"
+      "norm_label": "dotblock()"
     },
     {
-      "label": "sinc_integral()",
+      "label": "sincIntegral()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
-      "source_location": "L147",
+      "source_location": "L146",
       "_origin": "ast",
-      "id": "include_math_simd_detail_avx512kernels_sinc_integral",
+      "id": "include_math_simd_detail_avx512kernels_sincintegral",
       "community": 135,
       "community_name": "TEST_F",
-      "norm_label": "sinc_integral()"
+      "norm_label": "sincintegral()"
     },
     {
-      "label": "debye_sum()",
+      "label": "debyeSum()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
-      "source_location": "L161",
+      "source_location": "L160",
       "_origin": "ast",
-      "id": "include_math_simd_detail_avx512kernels_debye_sum",
+      "id": "include_math_simd_detail_avx512kernels_debyesum",
       "community": 135,
       "community_name": "TEST_F",
-      "norm_label": "debye_sum()"
+      "norm_label": "debyesum()"
     },
     {
-      "label": "normalize_rdf_bins()",
+      "label": "normalizeRdfBins()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
-      "source_location": "L212",
+      "source_location": "L211",
       "_origin": "ast",
-      "id": "include_math_simd_detail_avx512kernels_normalize_rdf_bins",
+      "id": "include_math_simd_detail_avx512kernels_normalizerdfbins",
       "community": 135,
       "community_name": "TEST_F",
-      "norm_label": "normalize_rdf_bins()"
+      "norm_label": "normalizerdfbins()"
     },
     {
-      "label": "scale_bins()",
+      "label": "scaleBins()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
-      "source_location": "L296",
+      "source_location": "L295",
       "_origin": "ast",
-      "id": "include_math_simd_detail_avx512kernels_scale_bins",
+      "id": "include_math_simd_detail_avx512kernels_scalebins",
       "community": 135,
       "community_name": "TEST_F",
-      "norm_label": "scale_bins()"
+      "norm_label": "scalebins()"
     },
     {
-      "label": "miller_phase_sum()",
+      "label": "millerPhaseSum()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
-      "source_location": "L318",
+      "source_location": "L317",
       "_origin": "ast",
-      "id": "include_math_simd_detail_avx512kernels_miller_phase_sum",
+      "id": "include_math_simd_detail_avx512kernels_millerphasesum",
       "community": 135,
       "community_name": "TEST_F",
-      "norm_label": "miller_phase_sum()"
+      "norm_label": "millerphasesum()"
     },
     {
       "label": "MillerPhaseSumResult",
@@ -27436,26 +27436,26 @@
       "norm_label": "scalarkernels.hpp"
     },
     {
-      "label": "compute_dsq_block()",
+      "label": "computeDsqBlock()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
       "source_location": "L17",
       "_origin": "ast",
-      "id": "include_math_simd_detail_scalarkernels_compute_dsq_block",
+      "id": "include_math_simd_detail_scalarkernels_computedsqblock",
       "community": 505,
       "community_name": "ReciprocalBasis",
-      "norm_label": "compute_dsq_block()"
+      "norm_label": "computedsqblock()"
     },
     {
-      "label": "simd_dot()",
+      "label": "simdDot()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
       "source_location": "L53",
       "_origin": "ast",
-      "id": "include_math_simd_detail_scalarkernels_simd_dot",
+      "id": "include_math_simd_detail_scalarkernels_simddot",
       "community": 505,
       "community_name": "ReciprocalBasis",
-      "norm_label": "simd_dot()"
+      "norm_label": "simddot()"
     },
     {
       "label": "size_t",
@@ -27469,70 +27469,70 @@
       "norm_label": "size_t"
     },
     {
-      "label": "dot_block()",
+      "label": "dotBlock()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
       "source_location": "L76",
       "_origin": "ast",
-      "id": "include_math_simd_detail_scalarkernels_dot_block",
+      "id": "include_math_simd_detail_scalarkernels_dotblock",
       "community": 505,
       "community_name": "ReciprocalBasis",
-      "norm_label": "dot_block()"
+      "norm_label": "dotblock()"
     },
     {
-      "label": "sinc_integral()",
+      "label": "sincIntegral()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
-      "source_location": "L93",
+      "source_location": "L92",
       "_origin": "ast",
-      "id": "include_math_simd_detail_scalarkernels_sinc_integral",
+      "id": "include_math_simd_detail_scalarkernels_sincintegral",
       "community": 505,
       "community_name": "ReciprocalBasis",
-      "norm_label": "sinc_integral()"
+      "norm_label": "sincintegral()"
     },
     {
-      "label": "debye_sum()",
+      "label": "debyeSum()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
-      "source_location": "L107",
+      "source_location": "L106",
       "_origin": "ast",
-      "id": "include_math_simd_detail_scalarkernels_debye_sum",
+      "id": "include_math_simd_detail_scalarkernels_debyesum",
       "community": 505,
       "community_name": "ReciprocalBasis",
-      "norm_label": "debye_sum()"
+      "norm_label": "debyesum()"
     },
     {
-      "label": "normalize_rdf_bins()",
+      "label": "normalizeRdfBins()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
-      "source_location": "L144",
+      "source_location": "L143",
       "_origin": "ast",
-      "id": "include_math_simd_detail_scalarkernels_normalize_rdf_bins",
+      "id": "include_math_simd_detail_scalarkernels_normalizerdfbins",
       "community": 505,
       "community_name": "ReciprocalBasis",
-      "norm_label": "normalize_rdf_bins()"
+      "norm_label": "normalizerdfbins()"
     },
     {
-      "label": "scale_bins()",
+      "label": "scaleBins()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
-      "source_location": "L192",
+      "source_location": "L191",
       "_origin": "ast",
-      "id": "include_math_simd_detail_scalarkernels_scale_bins",
+      "id": "include_math_simd_detail_scalarkernels_scalebins",
       "community": 505,
       "community_name": "ReciprocalBasis",
-      "norm_label": "scale_bins()"
+      "norm_label": "scalebins()"
     },
     {
-      "label": "miller_phase_sum()",
+      "label": "millerPhaseSum()",
       "file_type": "code",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
-      "source_location": "L204",
+      "source_location": "L203",
       "_origin": "ast",
-      "id": "include_math_simd_detail_scalarkernels_miller_phase_sum",
+      "id": "include_math_simd_detail_scalarkernels_millerphasesum",
       "community": 505,
       "community_name": "ReciprocalBasis",
-      "norm_label": "miller_phase_sum()"
+      "norm_label": "millerphasesum()"
     },
     {
       "label": "MillerPhaseSumResult",
@@ -27552,8 +27552,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_mlip_graphdescriptors",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "graphdescriptors.hpp"
     },
     {
@@ -29213,8 +29213,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_plotters_colormapservice",
-      "community": 9,
-      "community_name": "vector",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "colormapservice.hpp"
     },
     {
@@ -31039,8 +31039,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_readers_abinitreader_hpp_basereader",
-      "community": 9,
-      "community_name": "vector",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "basereader"
     },
     {
@@ -31875,8 +31875,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_readers_chgnetreader",
-      "community": 9,
-      "community_name": "vector",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "chgnetreader.hpp"
     },
     {
@@ -32282,8 +32282,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_readers_filereader",
-      "community": 9,
-      "community_name": "vector",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "filereader.hpp"
     },
     {
@@ -32293,8 +32293,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_readers_gapreader",
-      "community": 9,
-      "community_name": "vector",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "gapreader.hpp"
     },
     {
@@ -32821,8 +32821,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_readers_macereader",
-      "community": 9,
-      "community_name": "vector",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "macereader.hpp"
     },
     {
@@ -33140,8 +33140,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_readers_nequipreader",
-      "community": 9,
-      "community_name": "vector",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "nequipreader.hpp"
     },
     {
@@ -35989,8 +35989,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_render3d_miniplotrenderer",
-      "community": 9,
-      "community_name": "vector",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "miniplotrenderer.hpp"
     },
     {
@@ -55095,8 +55095,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "src_calculators_gpu_gpusteinhardtcalculator_hasgpudevice",
-      "community": 23,
-      "community_name": "AnalysisSettings",
+      "community": 381,
+      "community_name": "RobotoData_Extended.cpp",
       "norm_label": "hasgpudevice()"
     },
     {
@@ -55436,8 +55436,8 @@
       "source_location": "L296",
       "_origin": "ast",
       "id": "src_calculators_gpu_gpusteinhardtcalculator_gpusteinhardtcalculator_calculateframe",
-      "community": 155,
-      "community_name": "XRDCalculator.cpp",
+      "community": 381,
+      "community_name": "RobotoData_Extended.cpp",
       "norm_label": "gpusteinhardtcalculator::calculateframe()"
     },
     {
@@ -55447,8 +55447,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_calculators_gpu_gpusteinhardtcalculator_cu_distributionfunctions",
-      "community": 155,
-      "community_name": "XRDCalculator.cpp",
+      "community": 381,
+      "community_name": "RobotoData_Extended.cpp",
       "norm_label": "distributionfunctions"
     },
     {
@@ -55458,8 +55458,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_calculators_gpu_gpusteinhardtcalculator_cu_analysissettings",
-      "community": 155,
-      "community_name": "XRDCalculator.cpp",
+      "community": 381,
+      "community_name": "RobotoData_Extended.cpp",
       "norm_label": "analysissettings"
     },
     {
@@ -57493,8 +57493,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "src_calculators_order_steinhardtcalculator_wigner4table",
-      "community": 449,
-      "community_name": "renderHistogramAsPng",
+      "community": 293,
+      "community_name": "HDF5Writer.cpp",
       "norm_label": "wigner4table"
     },
     {
@@ -57504,8 +57504,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "src_calculators_order_steinhardtcalculator_wigner4table_table",
-      "community": 449,
-      "community_name": "renderHistogramAsPng",
+      "community": 293,
+      "community_name": "HDF5Writer.cpp",
       "norm_label": "table"
     },
     {
@@ -57526,8 +57526,8 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "src_calculators_order_steinhardtcalculator_wigner6table",
-      "community": 293,
-      "community_name": "HDF5Writer.cpp",
+      "community": 449,
+      "community_name": "renderHistogramAsPng",
       "norm_label": "wigner6table"
     },
     {
@@ -57537,8 +57537,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "src_calculators_order_steinhardtcalculator_wigner6table_table",
-      "community": 293,
-      "community_name": "HDF5Writer.cpp",
+      "community": 449,
+      "community_name": "renderHistogramAsPng",
       "norm_label": "table"
     },
     {
@@ -58142,8 +58142,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_calculators_order_tenwoldefrenkelcalculator",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 456,
+      "community_name": "MockElectronicModel",
       "norm_label": "tenwoldefrenkelcalculator.cpp"
     },
     {
@@ -58153,8 +58153,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "src_calculators_order_tenwoldefrenkelcalculator_computepaircoherence",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 456,
+      "community_name": "MockElectronicModel",
       "norm_label": "computepaircoherence()"
     },
     {
@@ -58164,8 +58164,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_calculators_order_tenwoldefrenkelcalculator_cpp_real_t",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 456,
+      "community_name": "MockElectronicModel",
       "norm_label": "real_t"
     },
     {
@@ -58175,8 +58175,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_calculators_order_tenwoldefrenkelcalculator_cpp_complex",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 456,
+      "community_name": "MockElectronicModel",
       "norm_label": "complex"
     },
     {
@@ -58186,8 +58186,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "src_calculators_order_tenwoldefrenkelcalculator_tenwoldefrenkelcalculator_calculateframe",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 456,
+      "community_name": "MockElectronicModel",
       "norm_label": "tenwoldefrenkelcalculator::calculateframe()"
     },
     {
@@ -58197,8 +58197,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_calculators_order_tenwoldefrenkelcalculator_cpp_distributionfunctions",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 456,
+      "community_name": "MockElectronicModel",
       "norm_label": "distributionfunctions"
     },
     {
@@ -58208,8 +58208,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_calculators_order_tenwoldefrenkelcalculator_cpp_analysissettings",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 456,
+      "community_name": "MockElectronicModel",
       "norm_label": "analysissettings"
     },
     {
@@ -58219,8 +58219,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "src_calculators_order_tenwoldefrenkelcalculator_tenwoldefrenkelcalculator_calculateperatom",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 456,
+      "community_name": "MockElectronicModel",
       "norm_label": "tenwoldefrenkelcalculator::calculateperatom()"
     },
     {
@@ -58230,8 +58230,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_calculators_order_tenwoldefrenkelcalculator_cpp_vector",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 456,
+      "community_name": "MockElectronicModel",
       "norm_label": "vector"
     },
     {
@@ -58241,8 +58241,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_calculators_order_tenwoldefrenkelcalculator_cpp_steinhardtparams",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 456,
+      "community_name": "MockElectronicModel",
       "norm_label": "steinhardtparams"
     },
     {
@@ -58252,8 +58252,8 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "src_calculators_order_tenwoldefrenkelcalculator_tenwoldefrenkelcalculator_calculate",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 456,
+      "community_name": "MockElectronicModel",
       "norm_label": "tenwoldefrenkelcalculator::calculate()"
     },
     {
@@ -59657,7 +59657,7 @@
       "label": "XRDCalculator::getAtomicFormFactor()",
       "file_type": "code",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L303",
+      "source_location": "L302",
       "_origin": "ast",
       "id": "src_calculators_scattering_xrdcalculator_xrdcalculator_getatomicformfactor",
       "community": 212,
@@ -59668,7 +59668,7 @@
       "label": "XRDCalculator::calculateConcentrations()",
       "file_type": "code",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L315",
+      "source_location": "L314",
       "_origin": "ast",
       "id": "src_calculators_scattering_xrdcalculator_xrdcalculator_calculateconcentrations",
       "community": 212,
@@ -59679,7 +59679,7 @@
       "label": "XRDCalculator::calculateFromSq()",
       "file_type": "code",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L334",
+      "source_location": "L333",
       "_origin": "ast",
       "id": "src_calculators_scattering_xrdcalculator_xrdcalculator_calculatefromsq",
       "community": 212,
@@ -59690,7 +59690,7 @@
       "label": "XRDCalculator::calculatePartialIntegrands()",
       "file_type": "code",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L392",
+      "source_location": "L391",
       "_origin": "ast",
       "id": "src_calculators_scattering_xrdcalculator_xrdcalculator_calculatepartialintegrands",
       "community": 212,
@@ -71617,8 +71617,8 @@
       "source_location": "L628",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_flexarray_get_bin",
-      "community": 174,
-      "community_name": "pdf_add_image_data",
+      "community": 58,
+      "community_name": "dstr_printf",
       "norm_label": "flexarray_get_bin()"
     },
     {
@@ -71628,8 +71628,8 @@
       "source_location": "L637",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_flexarray_get_bin_size",
-      "community": 174,
-      "community_name": "pdf_add_image_data",
+      "community": 58,
+      "community_name": "dstr_printf",
       "norm_label": "flexarray_get_bin_size()"
     },
     {
@@ -71639,8 +71639,8 @@
       "source_location": "L647",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_flexarray_get_bin_offset",
-      "community": 174,
-      "community_name": "pdf_add_image_data",
+      "community": 58,
+      "community_name": "dstr_printf",
       "norm_label": "flexarray_get_bin_offset()"
     },
     {
@@ -71672,8 +71672,8 @@
       "source_location": "L668",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_flexarray_set",
-      "community": 174,
-      "community_name": "pdf_add_image_data",
+      "community": 58,
+      "community_name": "dstr_printf",
       "norm_label": "flexarray_set()"
     },
     {
@@ -71694,8 +71694,8 @@
       "source_location": "L704",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_flexarray_get",
-      "community": 174,
-      "community_name": "pdf_add_image_data",
+      "community": 58,
+      "community_name": "dstr_printf",
       "norm_label": "flexarray_get()"
     },
     {
@@ -72068,8 +72068,8 @@
       "source_location": "L1556",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_pdf_get_bookmark_count",
-      "community": 174,
-      "community_name": "pdf_add_image_data",
+      "community": 58,
+      "community_name": "dstr_printf",
       "norm_label": "pdf_get_bookmark_count()"
     },
     {
@@ -72123,8 +72123,8 @@
       "source_location": "L2043",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_pdf_md5",
-      "community": 58,
-      "community_name": "dstr_printf",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_md5()"
     },
     {
@@ -72134,8 +72134,8 @@
       "source_location": "L2129",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_pdf_rc4",
-      "community": 58,
-      "community_name": "dstr_printf",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_rc4()"
     },
     {
@@ -72145,8 +72145,8 @@
       "source_location": "L2158",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_pdf_crypt_pad_password",
-      "community": 58,
-      "community_name": "dstr_printf",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_crypt_pad_password()"
     },
     {
@@ -72156,8 +72156,8 @@
       "source_location": "L2178",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_pdf_crypt_compute_keys",
-      "community": 58,
-      "community_name": "dstr_printf",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_crypt_compute_keys()"
     },
     {
@@ -72167,8 +72167,8 @@
       "source_location": "L2218",
       "_origin": "ast",
       "id": "src_plotters_vendor_pdfgen_pdf_crypt_object_key",
-      "community": 58,
-      "community_name": "dstr_printf",
+      "community": 174,
+      "community_name": "pdf_add_image_data",
       "norm_label": "pdf_crypt_object_key()"
     },
     {
@@ -73223,8 +73223,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_readers_arcreader",
-      "community": 390,
-      "community_name": "TDOSCalculator::calculateTrajectory",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "arcreader.cpp"
     },
     {
@@ -73234,8 +73234,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "src_readers_arcreader_arcreader_readstructure",
-      "community": 390,
-      "community_name": "TDOSCalculator::calculateTrajectory",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "arcreader::readstructure()"
     },
     {
@@ -73245,8 +73245,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_arcreader_cpp_string",
-      "community": 390,
-      "community_name": "TDOSCalculator::calculateTrajectory",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "string"
     },
     {
@@ -73256,8 +73256,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_arcreader_cpp_function",
-      "community": 390,
-      "community_name": "TDOSCalculator::calculateTrajectory",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "function"
     },
     {
@@ -73267,8 +73267,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "src_readers_arcreader_arcreader_readtrajectory",
-      "community": 390,
-      "community_name": "TDOSCalculator::calculateTrajectory",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "arcreader::readtrajectory()"
     },
     {
@@ -73278,8 +73278,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_arcreader_cpp_trajectory",
-      "community": 390,
-      "community_name": "TDOSCalculator::calculateTrajectory",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "trajectory"
     },
     {
@@ -73289,8 +73289,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "src_readers_arcreader_arcreader_read",
-      "community": 390,
-      "community_name": "TDOSCalculator::calculateTrajectory",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "arcreader::read()"
     },
     {
@@ -73300,8 +73300,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_arcreader_cpp_vector",
-      "community": 390,
-      "community_name": "TDOSCalculator::calculateTrajectory",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "vector"
     },
     {
@@ -73311,8 +73311,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "src_readers_arcreader_arcreader_updateprogress",
-      "community": 390,
-      "community_name": "TDOSCalculator::calculateTrajectory",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "arcreader::updateprogress()"
     },
     {
@@ -73322,8 +73322,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_arcreader_cpp_streampos",
-      "community": 390,
-      "community_name": "TDOSCalculator::calculateTrajectory",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "streampos"
     },
     {
@@ -73333,8 +73333,8 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "src_readers_arcreader_arcreader_parseline",
-      "community": 390,
-      "community_name": "TDOSCalculator::calculateTrajectory",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "arcreader::parseline()"
     },
     {
@@ -73630,8 +73630,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_castepmdreader_cpp_vector",
-      "community": 390,
-      "community_name": "TDOSCalculator::calculateTrajectory",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "vector"
     },
     {
@@ -73663,8 +73663,8 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "src_readers_castepmdreader_castepmdreader_parseenergyline",
-      "community": 390,
-      "community_name": "TDOSCalculator::calculateTrajectory",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "castepmdreader::parseenergyline()"
     },
     {
@@ -73674,8 +73674,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_castepmdreader_cpp_real_t",
-      "community": 390,
-      "community_name": "TDOSCalculator::calculateTrajectory",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "real_t"
     },
     {
@@ -73707,8 +73707,8 @@
       "source_location": "L181",
       "_origin": "ast",
       "id": "src_readers_castepmdreader_castepmdreader_parseatomline",
-      "community": 390,
-      "community_name": "TDOSCalculator::calculateTrajectory",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "castepmdreader::parseatomline()"
     },
     {
@@ -75830,8 +75830,8 @@
       "source_location": "L114",
       "_origin": "ast",
       "id": "src_readers_lammpsdumpreader_parsedatomrecord",
-      "community": 513,
-      "community_name": "Structure3DControllerPhaseSearchTests",
+      "community": 306,
+      "community_name": "HBondCalculator",
       "norm_label": "parsedatomrecord"
     },
     {
@@ -75841,8 +75841,8 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "src_readers_lammpsdumpreader_parsedatomrecord_id",
-      "community": 513,
-      "community_name": "Structure3DControllerPhaseSearchTests",
+      "community": 306,
+      "community_name": "HBondCalculator",
       "norm_label": "id"
     },
     {
@@ -75852,8 +75852,8 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "src_readers_lammpsdumpreader_parsedatomrecord_symbol",
-      "community": 513,
-      "community_name": "Structure3DControllerPhaseSearchTests",
+      "community": 306,
+      "community_name": "HBondCalculator",
       "norm_label": "symbol"
     },
     {
@@ -75874,8 +75874,8 @@
       "source_location": "L117",
       "_origin": "ast",
       "id": "src_readers_lammpsdumpreader_parsedatomrecord_pos",
-      "community": 513,
-      "community_name": "Structure3DControllerPhaseSearchTests",
+      "community": 306,
+      "community_name": "HBondCalculator",
       "norm_label": "pos"
     },
     {
@@ -76171,8 +76171,8 @@
       "source_location": "L459",
       "_origin": "ast",
       "id": "src_readers_lammpsdumpreader_lammpsdumpreader_readtrajectory",
-      "community": 306,
-      "community_name": "HBondCalculator",
+      "community": 417,
+      "community_name": "EdgeTuple",
       "norm_label": "lammpsdumpreader::readtrajectory()"
     },
     {
@@ -76182,8 +76182,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_lammpsdumpreader_cpp_trajectory",
-      "community": 306,
-      "community_name": "HBondCalculator",
+      "community": 417,
+      "community_name": "EdgeTuple",
       "norm_label": "trajectory"
     },
     {
@@ -77073,8 +77073,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_readers_orcareader",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "orcareader.cpp"
     },
     {
@@ -77238,8 +77238,8 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "src_readers_orcareader_orcareader_readstructure",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "orcareader::readstructure()"
     },
     {
@@ -82749,8 +82749,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_writers_structure_carwriter",
-      "community": 250,
-      "community_name": "TEST",
+      "community": 532,
+      "community_name": "CarWriter::write",
       "norm_label": "carwriter.cpp"
     },
     {
@@ -82760,8 +82760,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_writers_structure_carwriter_validatecell",
-      "community": 250,
-      "community_name": "TEST",
+      "community": 532,
+      "community_name": "CarWriter::write",
       "norm_label": "validatecell()"
     },
     {
@@ -82771,8 +82771,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_writers_structure_carwriter_cpp_string",
-      "community": 250,
-      "community_name": "TEST",
+      "community": 532,
+      "community_name": "CarWriter::write",
       "norm_label": "string"
     },
     {
@@ -82782,8 +82782,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "src_writers_structure_carwriter_writepbcheader",
-      "community": 250,
-      "community_name": "TEST",
+      "community": 532,
+      "community_name": "CarWriter::write",
       "norm_label": "writepbcheader()"
     },
     {
@@ -82793,8 +82793,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_writers_structure_carwriter_cpp_ostream",
-      "community": 250,
-      "community_name": "TEST",
+      "community": 532,
+      "community_name": "CarWriter::write",
       "norm_label": "ostream"
     },
     {
@@ -82804,8 +82804,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "src_writers_structure_carwriter_writeatomrecords",
-      "community": 250,
-      "community_name": "TEST",
+      "community": 532,
+      "community_name": "CarWriter::write",
       "norm_label": "writeatomrecords()"
     },
     {
@@ -82815,8 +82815,8 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "src_writers_structure_carwriter_carwriter_write",
-      "community": 250,
-      "community_name": "TEST",
+      "community": 532,
+      "community_name": "CarWriter::write",
       "norm_label": "carwriter::write()"
     },
     {
@@ -82826,8 +82826,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_writers_structure_cellwriter",
-      "community": 250,
-      "community_name": "TEST",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "cellwriter.cpp"
     },
     {
@@ -82837,8 +82837,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_writers_structure_cellwriter_validatecell",
-      "community": 250,
-      "community_name": "TEST",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "validatecell()"
     },
     {
@@ -82848,8 +82848,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_writers_structure_cellwriter_cpp_string",
-      "community": 250,
-      "community_name": "TEST",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "string"
     },
     {
@@ -82859,8 +82859,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "src_writers_structure_cellwriter_writelatticeblock",
-      "community": 250,
-      "community_name": "TEST",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "writelatticeblock()"
     },
     {
@@ -82870,8 +82870,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_writers_structure_cellwriter_cpp_ostream",
-      "community": 250,
-      "community_name": "TEST",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "ostream"
     },
     {
@@ -82881,8 +82881,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "src_writers_structure_cellwriter_writepositionsblock",
-      "community": 250,
-      "community_name": "TEST",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "writepositionsblock()"
     },
     {
@@ -82892,8 +82892,8 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "src_writers_structure_cellwriter_cellwriter_write",
-      "community": 250,
-      "community_name": "TEST",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "cellwriter::write()"
     },
     {
@@ -82903,8 +82903,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_writers_structure_cifwriter",
-      "community": 456,
-      "community_name": "MockElectronicModel",
+      "community": 250,
+      "community_name": "TEST",
       "norm_label": "cifwriter.cpp"
     },
     {
@@ -82914,8 +82914,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "src_writers_structure_cifwriter_validatecell",
-      "community": 456,
-      "community_name": "MockElectronicModel",
+      "community": 250,
+      "community_name": "TEST",
       "norm_label": "validatecell()"
     },
     {
@@ -82925,8 +82925,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_writers_structure_cifwriter_cpp_string",
-      "community": 456,
-      "community_name": "MockElectronicModel",
+      "community": 250,
+      "community_name": "TEST",
       "norm_label": "string"
     },
     {
@@ -82936,8 +82936,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "src_writers_structure_cifwriter_writecellparameters",
-      "community": 456,
-      "community_name": "MockElectronicModel",
+      "community": 250,
+      "community_name": "TEST",
       "norm_label": "writecellparameters()"
     },
     {
@@ -82947,8 +82947,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_writers_structure_cifwriter_cpp_ostream",
-      "community": 456,
-      "community_name": "MockElectronicModel",
+      "community": 250,
+      "community_name": "TEST",
       "norm_label": "ostream"
     },
     {
@@ -82958,8 +82958,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "src_writers_structure_cifwriter_writesymmetryblock",
-      "community": 456,
-      "community_name": "MockElectronicModel",
+      "community": 250,
+      "community_name": "TEST",
       "norm_label": "writesymmetryblock()"
     },
     {
@@ -82969,8 +82969,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "src_writers_structure_cifwriter_writeatomsitesloop",
-      "community": 456,
-      "community_name": "MockElectronicModel",
+      "community": 250,
+      "community_name": "TEST",
       "norm_label": "writeatomsitesloop()"
     },
     {
@@ -82980,8 +82980,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "src_writers_structure_cifwriter_cifwriter_write",
-      "community": 456,
-      "community_name": "MockElectronicModel",
+      "community": 250,
+      "community_name": "TEST",
       "norm_label": "cifwriter::write()"
     },
     {
@@ -83970,8 +83970,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_benchmarks_bm_graphdescriptors",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "bm_graphdescriptors.cpp"
     },
     {
@@ -83981,8 +83981,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "tests_benchmarks_bm_graphdescriptors_bmgraphdescriptorsringstatistics",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "bmgraphdescriptorsringstatistics()"
     },
     {
@@ -83992,8 +83992,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_benchmarks_bm_graphdescriptors_cpp_state",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "state"
     },
     {
@@ -93914,8 +93914,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_calculators_chiralitycalculatortests",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "chiralitycalculatortests.cpp"
     },
     {
@@ -94024,8 +94024,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_calculators_clustercalculatortests",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "clustercalculatortests.cpp"
     },
     {
@@ -95344,8 +95344,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_calculators_gpusteinhardtcalculatortests",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "gpusteinhardtcalculatortests.cpp"
     },
     {
@@ -95795,8 +95795,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_calculators_hyperuniformitycalculatortests",
-      "community": 464,
-      "community_name": "PlotSize",
+      "community": 513,
+      "community_name": "Structure3DControllerPhaseSearchTests",
       "norm_label": "hyperuniformitycalculatortests.cpp"
     },
     {
@@ -95806,8 +95806,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "tests_unit_calculators_hyperuniformitycalculatortests_createrandomcellparams",
-      "community": 464,
-      "community_name": "PlotSize",
+      "community": 513,
+      "community_name": "Structure3DControllerPhaseSearchTests",
       "norm_label": "createrandomcellparams"
     },
     {
@@ -95817,8 +95817,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "tests_unit_calculators_hyperuniformitycalculatortests_createrandomcellparams_box_length",
-      "community": 464,
-      "community_name": "PlotSize",
+      "community": 513,
+      "community_name": "Structure3DControllerPhaseSearchTests",
       "norm_label": "box_length"
     },
     {
@@ -95828,8 +95828,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "tests_unit_calculators_hyperuniformitycalculatortests_createrandomcellparams_num_atoms",
-      "community": 464,
-      "community_name": "PlotSize",
+      "community": 513,
+      "community_name": "Structure3DControllerPhaseSearchTests",
       "norm_label": "num_atoms"
     },
     {
@@ -95839,8 +95839,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "tests_unit_calculators_hyperuniformitycalculatortests_generatecanonicalportable",
-      "community": 464,
-      "community_name": "PlotSize",
+      "community": 513,
+      "community_name": "Structure3DControllerPhaseSearchTests",
       "norm_label": "generatecanonicalportable()"
     },
     {
@@ -95850,8 +95850,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_calculators_hyperuniformitycalculatortests_cpp_mt19937_64",
-      "community": 464,
-      "community_name": "PlotSize",
+      "community": 513,
+      "community_name": "Structure3DControllerPhaseSearchTests",
       "norm_label": "mt19937_64"
     },
     {
@@ -95861,8 +95861,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "tests_unit_calculators_hyperuniformitycalculatortests_fitslope",
-      "community": 464,
-      "community_name": "PlotSize",
+      "community": 513,
+      "community_name": "Structure3DControllerPhaseSearchTests",
       "norm_label": "fitslope()"
     },
     {
@@ -95872,8 +95872,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_calculators_hyperuniformitycalculatortests_cpp_vector",
-      "community": 464,
-      "community_name": "PlotSize",
+      "community": 513,
+      "community_name": "Structure3DControllerPhaseSearchTests",
       "norm_label": "vector"
     },
     {
@@ -95883,8 +95883,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_calculators_hyperuniformitycalculatortests_cpp_t",
-      "community": 464,
-      "community_name": "PlotSize",
+      "community": 513,
+      "community_name": "Structure3DControllerPhaseSearchTests",
       "norm_label": "t"
     },
     {
@@ -95894,8 +95894,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_calculators_hyperuniformitycalculatortests_cpp_u",
-      "community": 464,
-      "community_name": "PlotSize",
+      "community": 513,
+      "community_name": "Structure3DControllerPhaseSearchTests",
       "norm_label": "u"
     },
     {
@@ -95905,8 +95905,8 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "tests_unit_calculators_hyperuniformitycalculatortests_createsclattice",
-      "community": 464,
-      "community_name": "PlotSize",
+      "community": 513,
+      "community_name": "Structure3DControllerPhaseSearchTests",
       "norm_label": "createsclattice()"
     },
     {
@@ -95916,8 +95916,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_calculators_hyperuniformitycalculatortests_cpp_real_t",
-      "community": 464,
-      "community_name": "PlotSize",
+      "community": 513,
+      "community_name": "Structure3DControllerPhaseSearchTests",
       "norm_label": "real_t"
     },
     {
@@ -95927,8 +95927,8 @@
       "source_location": "L103",
       "_origin": "ast",
       "id": "tests_unit_calculators_hyperuniformitycalculatortests_createrandomcell",
-      "community": 464,
-      "community_name": "PlotSize",
+      "community": 513,
+      "community_name": "Structure3DControllerPhaseSearchTests",
       "norm_label": "createrandomcell()"
     },
     {
@@ -95993,8 +95993,8 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "tests_unit_calculators_hyperuniformitycalculatortests_verifyvariancenonnegative",
-      "community": 464,
-      "community_name": "PlotSize",
+      "community": 513,
+      "community_name": "Structure3DControllerPhaseSearchTests",
       "norm_label": "verifyvariancenonnegative()"
     },
     {
@@ -99953,8 +99953,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_calculators_voronoicalculatortests",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "voronoicalculatortests.cpp"
     },
     {
@@ -101570,8 +101570,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_core_celltests",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "unit/core/celltests.cpp"
     },
     {
@@ -101581,8 +101581,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "tests_unit_core_celltests_celltests",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "celltests"
     },
     {
@@ -101592,8 +101592,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_core_celltests_cpp_testing_test",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "testing::test"
     },
     {
@@ -101603,8 +101603,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "tests_unit_core_celltests_celltests_orthogonal_cell",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "orthogonal_cell_"
     },
     {
@@ -107972,8 +107972,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "tests_unit_readers_naturalsorttests_test",
-      "community": 417,
-      "community_name": "EdgeTuple",
+      "community": 514,
+      "community_name": "TEST",
       "norm_label": "test()"
     },
     {
@@ -107983,8 +107983,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "naturalsorttests",
-      "community": 417,
-      "community_name": "EdgeTuple",
+      "community": 514,
+      "community_name": "TEST",
       "norm_label": "naturalsorttests"
     },
     {
@@ -107994,8 +107994,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "naturallessnumericcomparison",
-      "community": 417,
-      "community_name": "EdgeTuple",
+      "community": 514,
+      "community_name": "TEST",
       "norm_label": "naturallessnumericcomparison"
     },
     {
@@ -108005,8 +108005,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_readers_naturalsorttests_cpp_naturalsortordering",
-      "community": 417,
-      "community_name": "EdgeTuple",
+      "community": 514,
+      "community_name": "TEST",
       "norm_label": "naturalsortordering"
     },
     {
@@ -108016,8 +108016,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "wildcardmatchpatterns",
-      "community": 417,
-      "community_name": "EdgeTuple",
+      "community": 514,
+      "community_name": "TEST",
       "norm_label": "wildcardmatchpatterns"
     },
     {
@@ -108027,8 +108027,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "expandwildcardsnowildcardpassthrough",
-      "community": 417,
-      "community_name": "EdgeTuple",
+      "community": 514,
+      "community_name": "TEST",
       "norm_label": "expandwildcardsnowildcardpassthrough"
     },
     {
@@ -108038,8 +108038,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "expandwildcardsfilesystemmatching",
-      "community": 417,
-      "community_name": "EdgeTuple",
+      "community": 514,
+      "community_name": "TEST",
       "norm_label": "expandwildcardsfilesystemmatching"
     },
     {
@@ -108049,8 +108049,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "expandwildcardsthrowsonnomatch",
-      "community": 417,
-      "community_name": "EdgeTuple",
+      "community": 514,
+      "community_name": "TEST",
       "norm_label": "expandwildcardsthrowsonnomatch"
     },
     {
@@ -111481,8 +111481,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_utils_ziparchivewritertests",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "ziparchivewritertests.cpp"
     },
     {
@@ -112064,8 +112064,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_writers_writertests",
-      "community": 39,
-      "community_name": "Cell",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "writertests.cpp"
     },
     {
@@ -130820,7 +130820,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L334",
+      "source_location": "L333",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -130832,7 +130832,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L392",
+      "source_location": "L391",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -165365,7 +165365,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L334",
+      "source_location": "L333",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -165437,7 +165437,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L334",
+      "source_location": "L333",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -165473,7 +165473,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L334",
+      "source_location": "L333",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -165509,7 +165509,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L334",
+      "source_location": "L333",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -165816,7 +165816,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L365",
+      "source_location": "L364",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_calculators_scattering_xrdcalculator_xrdcalculator_calculatefromsq",
@@ -175259,7 +175259,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L315",
+      "source_location": "L314",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -175271,7 +175271,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L334",
+      "source_location": "L333",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -192026,7 +192026,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_simddistance",
-      "target": "include_math_simd_simddistance_compute_dsq_block",
+      "target": "include_math_simd_simddistance_computedsqblock",
       "confidence_score": 1.0
     },
     {
@@ -192037,7 +192037,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_simddistance",
-      "target": "include_math_simd_simddistance_fill_position_block",
+      "target": "include_math_simd_simddistance_fillpositionblock",
       "confidence_score": 1.0
     },
     {
@@ -192072,7 +192072,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simddistance_compute_dsq_block",
+      "source": "include_math_simd_simddistance_computedsqblock",
       "target": "include_math_simd_simddistance_hpp_t",
       "confidence_score": 1.0
     },
@@ -192084,7 +192084,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simddistance_compute_dsq_block",
+      "source": "include_math_simd_simddistance_computedsqblock",
       "target": "include_math_simd_simdtypes_positionblockt",
       "confidence_score": 1.0
     },
@@ -192096,7 +192096,7 @@
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
-      "source": "include_math_simd_simddistance_fill_position_block",
+      "source": "include_math_simd_simddistance_fillpositionblock",
       "target": "include_math_simd_simddistance_hpp_t",
       "confidence_score": 1.0
     },
@@ -192108,7 +192108,7 @@
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
-      "source": "include_math_simd_simddistance_fill_position_block",
+      "source": "include_math_simd_simddistance_fillpositionblock",
       "target": "include_math_simd_simddistance_hpp_atomrange",
       "confidence_score": 1.0
     },
@@ -192120,7 +192120,7 @@
       "weight": 1.0,
       "context": "return_type",
       "_origin": "ast",
-      "source": "include_math_simd_simddistance_fill_position_block",
+      "source": "include_math_simd_simddistance_fillpositionblock",
       "target": "include_math_simd_simddistance_hpp_size_t",
       "confidence_score": 1.0
     },
@@ -192132,7 +192132,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simddistance_fill_position_block",
+      "source": "include_math_simd_simddistance_fillpositionblock",
       "target": "include_math_simd_simdtypes_fillpositionblockparams",
       "confidence_score": 1.0
     },
@@ -192164,33 +192164,33 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/SIMDNormalization.hpp",
-      "source_location": "L68",
+      "source_location": "L67",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_simdnormalization",
-      "target": "include_math_simd_simdnormalization_normalize_rdf_bins",
+      "target": "include_math_simd_simdnormalization_normalizerdfbins",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/SIMDNormalization.hpp",
-      "source_location": "L96",
+      "source_location": "L95",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_simdnormalization",
-      "target": "include_math_simd_simdnormalization_scale_bins",
+      "target": "include_math_simd_simdnormalization_scalebins",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/SIMDNormalization.hpp",
-      "source_location": "L51",
+      "source_location": "L50",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_simdnormalization",
-      "target": "include_math_simd_simdnormalization_sinc_integral",
+      "target": "include_math_simd_simdnormalization_sincintegral",
       "confidence_score": 1.0
     },
     {
@@ -192221,11 +192221,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/SIMDNormalization.hpp",
-      "source_location": "L51",
+      "source_location": "L50",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdnormalization_sinc_integral",
+      "source": "include_math_simd_simdnormalization_sincintegral",
       "target": "include_math_simd_simdnormalization_hpp_size_t",
       "confidence_score": 1.0
     },
@@ -192237,7 +192237,7 @@
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
-      "source": "include_math_simd_simdnormalization_sinc_integral",
+      "source": "include_math_simd_simdnormalization_sincintegral",
       "target": "include_math_simd_simdnormalization_hpp_t",
       "confidence_score": 1.0
     },
@@ -192249,7 +192249,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdnormalization_sinc_integral",
+      "source": "include_math_simd_simdnormalization_sincintegral",
       "target": "include_math_simd_simdtypes_sincintegralparams",
       "confidence_score": 1.0
     },
@@ -192257,11 +192257,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/SIMDNormalization.hpp",
-      "source_location": "L68",
+      "source_location": "L67",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
-      "source": "include_math_simd_simdnormalization_normalize_rdf_bins",
+      "source": "include_math_simd_simdnormalization_normalizerdfbins",
       "target": "include_math_simd_simdnormalization_hpp_t",
       "confidence_score": 1.0
     },
@@ -192269,11 +192269,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/SIMDNormalization.hpp",
-      "source_location": "L96",
+      "source_location": "L95",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdnormalization_scale_bins",
+      "source": "include_math_simd_simdnormalization_scalebins",
       "target": "include_math_simd_simdnormalization_hpp_t",
       "confidence_score": 1.0
     },
@@ -192281,11 +192281,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/SIMDNormalization.hpp",
-      "source_location": "L96",
+      "source_location": "L95",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdnormalization_scale_bins",
+      "source": "include_math_simd_simdnormalization_scalebins",
       "target": "include_math_simd_simdnormalization_hpp_size_t",
       "confidence_score": 1.0
     },
@@ -192293,11 +192293,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/SIMDNormalization.hpp",
-      "source_location": "L68",
+      "source_location": "L67",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdnormalization_normalize_rdf_bins",
+      "source": "include_math_simd_simdnormalization_normalizerdfbins",
       "target": "include_math_simd_simdtypes_rdfnormalizationparams",
       "confidence_score": 1.0
     },
@@ -192305,11 +192305,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/SIMDNormalization.hpp",
-      "source_location": "L82",
+      "source_location": "L81",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdnormalization_scale_bins",
+      "source": "include_math_simd_simdnormalization_scalebins",
       "target": "include_math_simd_simdtypes_scalebinsparams",
       "confidence_score": 1.0
     },
@@ -192345,7 +192345,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_simdscattering",
-      "target": "include_math_simd_simdscattering_complex_exp_sum",
+      "target": "include_math_simd_simdscattering_complexexpsum",
       "confidence_score": 1.0
     },
     {
@@ -192356,7 +192356,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_simdscattering",
-      "target": "include_math_simd_simdscattering_debye_sum",
+      "target": "include_math_simd_simdscattering_debyesum",
       "confidence_score": 1.0
     },
     {
@@ -192367,7 +192367,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_simdscattering",
-      "target": "include_math_simd_simdscattering_dot_block",
+      "target": "include_math_simd_simdscattering_dotblock",
       "confidence_score": 1.0
     },
     {
@@ -192378,7 +192378,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_simdscattering",
-      "target": "include_math_simd_simdscattering_miller_phase_sum",
+      "target": "include_math_simd_simdscattering_millerphasesum",
       "confidence_score": 1.0
     },
     {
@@ -192389,7 +192389,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_simdscattering",
-      "target": "include_math_simd_simdscattering_simd_dot",
+      "target": "include_math_simd_simdscattering_simddot",
       "confidence_score": 1.0
     },
     {
@@ -192424,7 +192424,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdscattering_simd_dot",
+      "source": "include_math_simd_simdscattering_simddot",
       "target": "include_math_simd_simdscattering_hpp_size_t",
       "confidence_score": 1.0
     },
@@ -192436,7 +192436,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdscattering_simd_dot",
+      "source": "include_math_simd_simdscattering_simddot",
       "target": "include_math_simd_simdscattering_hpp_t",
       "confidence_score": 1.0
     },
@@ -192448,7 +192448,7 @@
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
-      "source": "include_math_simd_simdscattering_complex_exp_sum",
+      "source": "include_math_simd_simdscattering_complexexpsum",
       "target": "include_math_simd_simdscattering_hpp_t",
       "confidence_score": 1.0
     },
@@ -192460,7 +192460,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdscattering_debye_sum",
+      "source": "include_math_simd_simdscattering_debyesum",
       "target": "include_math_simd_simdscattering_hpp_t",
       "confidence_score": 1.0
     },
@@ -192472,7 +192472,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdscattering_dot_block",
+      "source": "include_math_simd_simdscattering_dotblock",
       "target": "include_math_simd_simdscattering_hpp_t",
       "confidence_score": 1.0
     },
@@ -192484,7 +192484,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdscattering_miller_phase_sum",
+      "source": "include_math_simd_simdscattering_millerphasesum",
       "target": "include_math_simd_simdscattering_hpp_t",
       "confidence_score": 1.0
     },
@@ -192496,7 +192496,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdscattering_complex_exp_sum",
+      "source": "include_math_simd_simdscattering_complexexpsum",
       "target": "include_math_simd_simdscattering_hpp_size_t",
       "confidence_score": 1.0
     },
@@ -192508,7 +192508,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdscattering_debye_sum",
+      "source": "include_math_simd_simdscattering_debyesum",
       "target": "include_math_simd_simdscattering_hpp_size_t",
       "confidence_score": 1.0
     },
@@ -192520,7 +192520,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdscattering_dot_block",
+      "source": "include_math_simd_simdscattering_dotblock",
       "target": "include_math_simd_simdscattering_hpp_size_t",
       "confidence_score": 1.0
     },
@@ -192532,7 +192532,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdscattering_miller_phase_sum",
+      "source": "include_math_simd_simdscattering_millerphasesum",
       "target": "include_math_simd_simdscattering_hpp_size_t",
       "confidence_score": 1.0
     },
@@ -192544,7 +192544,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdscattering_complex_exp_sum",
+      "source": "include_math_simd_simdscattering_complexexpsum",
       "target": "complexexpsumparams",
       "confidence_score": 1.0
     },
@@ -192556,7 +192556,7 @@
       "weight": 1.0,
       "context": "return_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdscattering_complex_exp_sum",
+      "source": "include_math_simd_simdscattering_complexexpsum",
       "target": "include_math_simd_simdtypes_complexexpsumresult",
       "confidence_score": 1.0
     },
@@ -192568,7 +192568,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdscattering_complex_exp_sum",
+      "source": "include_math_simd_simdscattering_complexexpsum",
       "target": "include_math_simd_simdtypes_millerexpsumparams",
       "confidence_score": 1.0
     },
@@ -192580,7 +192580,7 @@
       "weight": 1.0,
       "context": "return_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdscattering_miller_phase_sum",
+      "source": "include_math_simd_simdscattering_millerphasesum",
       "target": "include_math_simd_simdscattering_hpp_millerphasesumresult",
       "confidence_score": 1.0
     },
@@ -192592,7 +192592,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdscattering_miller_phase_sum",
+      "source": "include_math_simd_simdscattering_millerphasesum",
       "target": "include_math_simd_simdtypes_millerphasesumparams",
       "confidence_score": 1.0
     },
@@ -192639,7 +192639,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_simdtypes",
-      "target": "include_math_simd_simdtypes_dist_sq_scalar",
+      "target": "include_math_simd_simdtypes_distsqscalar",
       "confidence_score": 1.0
     },
     {
@@ -192738,7 +192738,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx2kernels_compute_dsq_block",
+      "source": "include_math_simd_detail_avx2kernels_computedsqblock",
       "target": "include_math_simd_simdtypes_positionblockt",
       "confidence_score": 1.0
     },
@@ -192750,7 +192750,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx512kernels_compute_dsq_block",
+      "source": "include_math_simd_detail_avx512kernels_computedsqblock",
       "target": "include_math_simd_simdtypes_positionblockt",
       "confidence_score": 1.0
     },
@@ -192762,7 +192762,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_scalarkernels_compute_dsq_block",
+      "source": "include_math_simd_detail_scalarkernels_computedsqblock",
       "target": "include_math_simd_simdtypes_positionblockt",
       "confidence_score": 1.0
     },
@@ -192858,7 +192858,7 @@
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
-      "source": "include_math_simd_simdtypes_dist_sq_scalar",
+      "source": "include_math_simd_simdtypes_distsqscalar",
       "target": "include_math_simd_simdtypes_hpp_t",
       "confidence_score": 1.0
     },
@@ -193026,7 +193026,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdtypes_dist_sq_scalar",
+      "source": "include_math_simd_simdtypes_distsqscalar",
       "target": "include_math_simd_simdtypes_point3t",
       "confidence_score": 1.0
     },
@@ -193070,11 +193070,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
-      "source_location": "L205",
+      "source_location": "L204",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx2kernels_sinc_integral",
+      "source": "include_math_simd_detail_avx2kernels_sincintegral",
       "target": "include_math_simd_simdtypes_sincintegralparams",
       "confidence_score": 1.0
     },
@@ -193082,11 +193082,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
-      "source_location": "L154",
+      "source_location": "L153",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx512kernels_sinc_integral",
+      "source": "include_math_simd_detail_avx512kernels_sincintegral",
       "target": "include_math_simd_simdtypes_sincintegralparams",
       "confidence_score": 1.0
     },
@@ -193094,11 +193094,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
-      "source_location": "L100",
+      "source_location": "L99",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_scalarkernels_sinc_integral",
+      "source": "include_math_simd_detail_scalarkernels_sincintegral",
       "target": "include_math_simd_simdtypes_sincintegralparams",
       "confidence_score": 1.0
     },
@@ -193142,11 +193142,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
-      "source_location": "L312",
+      "source_location": "L311",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx2kernels_normalize_rdf_bins",
+      "source": "include_math_simd_detail_avx2kernels_normalizerdfbins",
       "target": "include_math_simd_simdtypes_rdfnormalizationparams",
       "confidence_score": 1.0
     },
@@ -193154,11 +193154,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
-      "source_location": "L254",
+      "source_location": "L253",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx512kernels_normalize_rdf_bins",
+      "source": "include_math_simd_detail_avx512kernels_normalizerdfbins",
       "target": "include_math_simd_simdtypes_rdfnormalizationparams",
       "confidence_score": 1.0
     },
@@ -193166,11 +193166,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
-      "source_location": "L168",
+      "source_location": "L167",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_scalarkernels_normalize_rdf_bins",
+      "source": "include_math_simd_detail_scalarkernels_normalizerdfbins",
       "target": "include_math_simd_simdtypes_rdfnormalizationparams",
       "confidence_score": 1.0
     },
@@ -193274,11 +193274,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
-      "source_location": "L365",
+      "source_location": "L364",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx2kernels_scale_bins",
+      "source": "include_math_simd_detail_avx2kernels_scalebins",
       "target": "include_math_simd_simdtypes_scalebinsparams",
       "confidence_score": 1.0
     },
@@ -193286,11 +193286,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
-      "source_location": "L307",
+      "source_location": "L306",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx512kernels_scale_bins",
+      "source": "include_math_simd_detail_avx512kernels_scalebins",
       "target": "include_math_simd_simdtypes_scalebinsparams",
       "confidence_score": 1.0
     },
@@ -193298,11 +193298,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
-      "source_location": "L198",
+      "source_location": "L197",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_scalarkernels_scale_bins",
+      "source": "include_math_simd_detail_scalarkernels_scalebins",
       "target": "include_math_simd_simdtypes_scalebinsparams",
       "confidence_score": 1.0
     },
@@ -193346,11 +193346,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
-      "source_location": "L428",
+      "source_location": "L427",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx2kernels_miller_phase_sum",
+      "source": "include_math_simd_detail_avx2kernels_millerphasesum",
       "target": "include_math_simd_simdtypes_millerphasesumparams",
       "confidence_score": 1.0
     },
@@ -193358,11 +193358,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
-      "source_location": "L355",
+      "source_location": "L354",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx512kernels_miller_phase_sum",
+      "source": "include_math_simd_detail_avx512kernels_millerphasesum",
       "target": "include_math_simd_simdtypes_millerphasesumparams",
       "confidence_score": 1.0
     },
@@ -193370,11 +193370,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
-      "source_location": "L216",
+      "source_location": "L215",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_scalarkernels_miller_phase_sum",
+      "source": "include_math_simd_detail_scalarkernels_millerphasesum",
       "target": "include_math_simd_simdtypes_millerphasesumparams",
       "confidence_score": 1.0
     },
@@ -193590,7 +193590,7 @@
       "weight": 1.0,
       "context": "return_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdtypes_dist_sq_scalar",
+      "source": "include_math_simd_simdtypes_distsqscalar",
       "target": "include_math_simd_simdtypes_hpp_real_t",
       "confidence_score": 1.0
     },
@@ -193602,7 +193602,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_simdtypes_dist_sq_scalar",
+      "source": "include_math_simd_simdtypes_distsqscalar",
       "target": "point3",
       "confidence_score": 1.0
     },
@@ -193614,62 +193614,62 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_avx2kernels",
-      "target": "include_math_simd_detail_avx2kernels_compute_dsq_block",
+      "target": "include_math_simd_detail_avx2kernels_computedsqblock",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
-      "source_location": "L244",
+      "source_location": "L243",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_avx2kernels",
-      "target": "include_math_simd_detail_avx2kernels_debye_sum",
+      "target": "include_math_simd_detail_avx2kernels_debyesum",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
-      "source_location": "L172",
+      "source_location": "L171",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_avx2kernels",
-      "target": "include_math_simd_detail_avx2kernels_dot_block",
+      "target": "include_math_simd_detail_avx2kernels_dotblock",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
-      "source_location": "L428",
+      "source_location": "L427",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_avx2kernels",
-      "target": "include_math_simd_detail_avx2kernels_miller_phase_sum",
+      "target": "include_math_simd_detail_avx2kernels_millerphasesum",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
-      "source_location": "L312",
+      "source_location": "L311",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_avx2kernels",
-      "target": "include_math_simd_detail_avx2kernels_normalize_rdf_bins",
+      "target": "include_math_simd_detail_avx2kernels_normalizerdfbins",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
-      "source_location": "L365",
+      "source_location": "L364",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_avx2kernels",
-      "target": "include_math_simd_detail_avx2kernels_scale_bins",
+      "target": "include_math_simd_detail_avx2kernels_scalebins",
       "confidence_score": 1.0
     },
     {
@@ -193680,18 +193680,18 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_avx2kernels",
-      "target": "include_math_simd_detail_avx2kernels_simd_dot",
+      "target": "include_math_simd_detail_avx2kernels_simddot",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
-      "source_location": "L205",
+      "source_location": "L204",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_avx2kernels",
-      "target": "include_math_simd_detail_avx2kernels_sinc_integral",
+      "target": "include_math_simd_detail_avx2kernels_sincintegral",
       "confidence_score": 1.0
     },
     {
@@ -193702,7 +193702,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx2kernels_simd_dot",
+      "source": "include_math_simd_detail_avx2kernels_simddot",
       "target": "include_math_simd_detail_avx2kernels_hpp_size_t",
       "confidence_score": 1.0
     },
@@ -193711,22 +193711,22 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
-      "source_location": "L202",
+      "source_location": "L201",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx2kernels_sinc_integral",
-      "target": "include_math_simd_detail_avx2kernels_simd_dot",
+      "source": "include_math_simd_detail_avx2kernels_sincintegral",
+      "target": "include_math_simd_detail_avx2kernels_simddot",
       "confidence_score": 1.0
     },
     {
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
-      "source_location": "L244",
+      "source_location": "L243",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx2kernels_debye_sum",
+      "source": "include_math_simd_detail_avx2kernels_debyesum",
       "target": "include_math_simd_detail_avx2kernels_hpp_size_t",
       "confidence_score": 1.0
     },
@@ -193734,11 +193734,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
-      "source_location": "L172",
+      "source_location": "L171",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx2kernels_dot_block",
+      "source": "include_math_simd_detail_avx2kernels_dotblock",
       "target": "include_math_simd_detail_avx2kernels_hpp_size_t",
       "confidence_score": 1.0
     },
@@ -193746,11 +193746,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX2Kernels.hpp",
-      "source_location": "L428",
+      "source_location": "L427",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx2kernels_miller_phase_sum",
+      "source": "include_math_simd_detail_avx2kernels_millerphasesum",
       "target": "include_math_simd_detail_avx2kernels_hpp_millerphasesumresult",
       "confidence_score": 1.0
     },
@@ -193762,62 +193762,62 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_avx512kernels",
-      "target": "include_math_simd_detail_avx512kernels_compute_dsq_block",
+      "target": "include_math_simd_detail_avx512kernels_computedsqblock",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
-      "source_location": "L189",
+      "source_location": "L188",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_avx512kernels",
-      "target": "include_math_simd_detail_avx512kernels_debye_sum",
+      "target": "include_math_simd_detail_avx512kernels_debyesum",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
-      "source_location": "L128",
+      "source_location": "L127",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_avx512kernels",
-      "target": "include_math_simd_detail_avx512kernels_dot_block",
+      "target": "include_math_simd_detail_avx512kernels_dotblock",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
-      "source_location": "L355",
+      "source_location": "L354",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_avx512kernels",
-      "target": "include_math_simd_detail_avx512kernels_miller_phase_sum",
+      "target": "include_math_simd_detail_avx512kernels_millerphasesum",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
-      "source_location": "L254",
+      "source_location": "L253",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_avx512kernels",
-      "target": "include_math_simd_detail_avx512kernels_normalize_rdf_bins",
+      "target": "include_math_simd_detail_avx512kernels_normalizerdfbins",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
-      "source_location": "L307",
+      "source_location": "L306",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_avx512kernels",
-      "target": "include_math_simd_detail_avx512kernels_scale_bins",
+      "target": "include_math_simd_detail_avx512kernels_scalebins",
       "confidence_score": 1.0
     },
     {
@@ -193828,18 +193828,18 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_avx512kernels",
-      "target": "include_math_simd_detail_avx512kernels_simd_dot",
+      "target": "include_math_simd_detail_avx512kernels_simddot",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
-      "source_location": "L154",
+      "source_location": "L153",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_avx512kernels",
-      "target": "include_math_simd_detail_avx512kernels_sinc_integral",
+      "target": "include_math_simd_detail_avx512kernels_sincintegral",
       "confidence_score": 1.0
     },
     {
@@ -193850,7 +193850,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx512kernels_simd_dot",
+      "source": "include_math_simd_detail_avx512kernels_simddot",
       "target": "include_math_simd_detail_avx512kernels_hpp_size_t",
       "confidence_score": 1.0
     },
@@ -193859,22 +193859,22 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
-      "source_location": "L151",
+      "source_location": "L150",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx512kernels_sinc_integral",
-      "target": "include_math_simd_detail_avx512kernels_simd_dot",
+      "source": "include_math_simd_detail_avx512kernels_sincintegral",
+      "target": "include_math_simd_detail_avx512kernels_simddot",
       "confidence_score": 1.0
     },
     {
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
-      "source_location": "L189",
+      "source_location": "L188",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx512kernels_debye_sum",
+      "source": "include_math_simd_detail_avx512kernels_debyesum",
       "target": "include_math_simd_detail_avx512kernels_hpp_size_t",
       "confidence_score": 1.0
     },
@@ -193882,11 +193882,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
-      "source_location": "L128",
+      "source_location": "L127",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx512kernels_dot_block",
+      "source": "include_math_simd_detail_avx512kernels_dotblock",
       "target": "include_math_simd_detail_avx512kernels_hpp_size_t",
       "confidence_score": 1.0
     },
@@ -193894,11 +193894,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/AVX512Kernels.hpp",
-      "source_location": "L355",
+      "source_location": "L354",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_avx512kernels_miller_phase_sum",
+      "source": "include_math_simd_detail_avx512kernels_millerphasesum",
       "target": "include_math_simd_detail_avx512kernels_hpp_millerphasesumresult",
       "confidence_score": 1.0
     },
@@ -193910,62 +193910,62 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_scalarkernels",
-      "target": "include_math_simd_detail_scalarkernels_compute_dsq_block",
+      "target": "include_math_simd_detail_scalarkernels_computedsqblock",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
-      "source_location": "L127",
+      "source_location": "L126",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_scalarkernels",
-      "target": "include_math_simd_detail_scalarkernels_debye_sum",
+      "target": "include_math_simd_detail_scalarkernels_debyesum",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
-      "source_location": "L85",
+      "source_location": "L84",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_scalarkernels",
-      "target": "include_math_simd_detail_scalarkernels_dot_block",
+      "target": "include_math_simd_detail_scalarkernels_dotblock",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
-      "source_location": "L216",
+      "source_location": "L215",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_scalarkernels",
-      "target": "include_math_simd_detail_scalarkernels_miller_phase_sum",
+      "target": "include_math_simd_detail_scalarkernels_millerphasesum",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
-      "source_location": "L168",
+      "source_location": "L167",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_scalarkernels",
-      "target": "include_math_simd_detail_scalarkernels_normalize_rdf_bins",
+      "target": "include_math_simd_detail_scalarkernels_normalizerdfbins",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
-      "source_location": "L198",
+      "source_location": "L197",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_scalarkernels",
-      "target": "include_math_simd_detail_scalarkernels_scale_bins",
+      "target": "include_math_simd_detail_scalarkernels_scalebins",
       "confidence_score": 1.0
     },
     {
@@ -193976,18 +193976,18 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_scalarkernels",
-      "target": "include_math_simd_detail_scalarkernels_simd_dot",
+      "target": "include_math_simd_detail_scalarkernels_simddot",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
-      "source_location": "L100",
+      "source_location": "L99",
       "weight": 1.0,
       "_origin": "ast",
       "source": "include_math_simd_detail_scalarkernels",
-      "target": "include_math_simd_detail_scalarkernels_sinc_integral",
+      "target": "include_math_simd_detail_scalarkernels_sincintegral",
       "confidence_score": 1.0
     },
     {
@@ -193998,7 +193998,7 @@
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_scalarkernels_simd_dot",
+      "source": "include_math_simd_detail_scalarkernels_simddot",
       "target": "include_math_simd_detail_scalarkernels_hpp_size_t",
       "confidence_score": 1.0
     },
@@ -194007,22 +194007,22 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
-      "source_location": "L97",
+      "source_location": "L96",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "include_math_simd_detail_scalarkernels_sinc_integral",
-      "target": "include_math_simd_detail_scalarkernels_simd_dot",
+      "source": "include_math_simd_detail_scalarkernels_sincintegral",
+      "target": "include_math_simd_detail_scalarkernels_simddot",
       "confidence_score": 1.0
     },
     {
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
-      "source_location": "L127",
+      "source_location": "L126",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_scalarkernels_debye_sum",
+      "source": "include_math_simd_detail_scalarkernels_debyesum",
       "target": "include_math_simd_detail_scalarkernels_hpp_size_t",
       "confidence_score": 1.0
     },
@@ -194030,11 +194030,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
-      "source_location": "L85",
+      "source_location": "L84",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_scalarkernels_dot_block",
+      "source": "include_math_simd_detail_scalarkernels_dotblock",
       "target": "include_math_simd_detail_scalarkernels_hpp_size_t",
       "confidence_score": 1.0
     },
@@ -194042,11 +194042,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "include/math/simd/detail/ScalarKernels.hpp",
-      "source_location": "L216",
+      "source_location": "L215",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
-      "source": "include_math_simd_detail_scalarkernels_miller_phase_sum",
+      "source": "include_math_simd_detail_scalarkernels_millerphasesum",
       "target": "include_math_simd_detail_scalarkernels_hpp_millerphasesumresult",
       "confidence_score": 1.0
     },
@@ -253956,7 +253956,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L315",
+      "source_location": "L314",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_calculators_scattering_xrdcalculator",
@@ -253978,7 +253978,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L334",
+      "source_location": "L333",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_calculators_scattering_xrdcalculator",
@@ -253989,7 +253989,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L392",
+      "source_location": "L391",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_calculators_scattering_xrdcalculator",
@@ -254000,7 +254000,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L303",
+      "source_location": "L302",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_calculators_scattering_xrdcalculator",
@@ -254191,7 +254191,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L315",
+      "source_location": "L314",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -254203,7 +254203,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L334",
+      "source_location": "L333",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -254215,7 +254215,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L392",
+      "source_location": "L391",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -254227,7 +254227,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L303",
+      "source_location": "L302",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -254287,7 +254287,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L392",
+      "source_location": "L391",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -254359,7 +254359,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L315",
+      "source_location": "L314",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -254371,7 +254371,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L334",
+      "source_location": "L333",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -254383,7 +254383,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L392",
+      "source_location": "L391",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -254395,7 +254395,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L303",
+      "source_location": "L302",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -254504,7 +254504,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L371",
+      "source_location": "L370",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_calculators_scattering_xrdcalculator_xrdcalculator_calculatefromsq",
@@ -254539,7 +254539,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L315",
+      "source_location": "L314",
       "weight": 1.0,
       "context": "return_type",
       "_origin": "ast",
@@ -254551,7 +254551,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L334",
+      "source_location": "L333",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -254563,7 +254563,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L392",
+      "source_location": "L391",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -254576,7 +254576,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/calculators/scattering/XRDCalculator.cpp",
-      "source_location": "L384",
+      "source_location": "L383",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_calculators_scattering_xrdcalculator_xrdcalculator_calculatefromsq",
@@ -338428,7 +338428,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/utils/SIMDUtilsTests.cpp",
-      "source_location": "L713",
+      "source_location": "L712",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_unit_utils_simdutilstests",
@@ -338730,7 +338730,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/utils/SIMDUtilsTests.cpp",
-      "source_location": "L713",
+      "source_location": "L712",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -338755,7 +338755,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/utils/SIMDUtilsTests.cpp",
-      "source_location": "L448",
+      "source_location": "L447",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_unit_utils_simdutilstests_test_f",
@@ -339006,7 +339006,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/utils/SIMDUtilsTests.cpp",
-      "source_location": "L680",
+      "source_location": "L679",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -339054,7 +339054,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/utils/SIMDUtilsTests.cpp",
-      "source_location": "L445",
+      "source_location": "L444",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -339066,7 +339066,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/utils/SIMDUtilsTests.cpp",
-      "source_location": "L641",
+      "source_location": "L640",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -339078,7 +339078,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/utils/SIMDUtilsTests.cpp",
-      "source_location": "L477",
+      "source_location": "L476",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -339090,7 +339090,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/utils/SIMDUtilsTests.cpp",
-      "source_location": "L573",
+      "source_location": "L572",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -339102,7 +339102,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/utils/SIMDUtilsTests.cpp",
-      "source_location": "L607",
+      "source_location": "L606",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -339138,7 +339138,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/utils/SIMDUtilsTests.cpp",
-      "source_location": "L495",
+      "source_location": "L494",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -339150,7 +339150,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/utils/SIMDUtilsTests.cpp",
-      "source_location": "L529",
+      "source_location": "L528",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -339210,7 +339210,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/utils/SIMDUtilsTests.cpp",
-      "source_location": "L713",
+      "source_location": "L712",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -339246,7 +339246,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/utils/SIMDUtilsTests.cpp",
-      "source_location": "L566",
+      "source_location": "L565",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -345313,5 +345313,5 @@
       "confidence_score": 1.0
     }
   ],
-  "built_at_commit": "411764f8ec4c43247c168d9a71ad872bb60b857e"
+  "built_at_commit": "2991ba82f0cb3e12a68f396a0fabfe3b34ad0de8"
 }

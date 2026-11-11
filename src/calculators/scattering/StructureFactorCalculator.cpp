@@ -208,7 +208,7 @@ std::vector<PartialInfo> buildPartialsInfo(const std::vector<TypeBlock> &type_bl
       std::string const key = (tb_a.symbol < tb_b.symbol) ? (tb_a.symbol + "-" + tb_b.symbol)
                                                           : (tb_b.symbol + "-" + tb_a.symbol);
       auto weight = static_cast<real_t>(0.0);
-      auto wit = ashcroft_weights.find(key);
+      const auto wit = ashcroft_weights.find(key);
       if (wit != ashcroft_weights.end()) {
         weight = wit->second;
       }
