@@ -326,9 +326,13 @@ public:
    * @return Row-major nested array representation.
    */
   [[nodiscard]] constexpr std::array<std::array<T, 3>, 3> array() const noexcept {
-    return {{{data_[0][0], data_[1][0], data_[2][0]},
-             {data_[0][1], data_[1][1], data_[2][1]},
-             {data_[0][2], data_[1][2], data_[2][2]}}};
+    return {
+        {
+            {data_[0][0], data_[1][0], data_[2][0]},
+            {data_[0][1], data_[1][1], data_[2][1]},
+            {data_[0][2], data_[1][2], data_[2][2]},
+        },
+    };
   }
 
   /**
@@ -473,8 +477,11 @@ template <typename T>
 template <typename T>
 [[nodiscard]] constexpr Vector3<T> cross(const Vector3<T> &vec_a,
                                          const Vector3<T> &vec_b) noexcept {
-  return {vec_a[1] * vec_b[2] - vec_a[2] * vec_b[1], vec_a[2] * vec_b[0] - vec_a[0] * vec_b[2],
-          vec_a[0] * vec_b[1] - vec_a[1] * vec_b[0]};
+  return {
+      vec_a[1] * vec_b[2] - vec_a[2] * vec_b[1],
+      vec_a[2] * vec_b[0] - vec_a[0] * vec_b[2],
+      vec_a[0] * vec_b[1] - vec_a[1] * vec_b[0],
+  };
 }
 
 /**
@@ -501,7 +508,7 @@ template <typename T>
  * @param vec_a The vector.
  * @return The squared length of the vector.
  */
-template <typename T> [[nodiscard]] constexpr T norm_sq(const Vector3<T> &vec_a) noexcept {
+template <typename T> [[nodiscard]] constexpr T normSq(const Vector3<T> &vec_a) noexcept {
   return vec_a * vec_a;
 }
 /**
@@ -568,17 +575,23 @@ template <typename T> [[nodiscard]] constexpr Matrix3<T> invert(const Matrix3<T>
   }
   const T inv = T{1} / det;
 
-  const Vector3<T> c_zero{matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1],
-                          matrix[0][2] * matrix[2][1] - matrix[0][1] * matrix[2][2],
-                          matrix[0][1] * matrix[1][2] - matrix[0][2] * matrix[1][1]};
+  const Vector3<T> c_zero{
+      matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1],
+      matrix[0][2] * matrix[2][1] - matrix[0][1] * matrix[2][2],
+      matrix[0][1] * matrix[1][2] - matrix[0][2] * matrix[1][1],
+  };
 
-  const Vector3<T> c_one{matrix[1][2] * matrix[2][0] - matrix[1][0] * matrix[2][2],
-                         matrix[0][0] * matrix[2][2] - matrix[0][2] * matrix[2][0],
-                         matrix[0][2] * matrix[1][0] - matrix[0][0] * matrix[1][2]};
+  const Vector3<T> c_one{
+      matrix[1][2] * matrix[2][0] - matrix[1][0] * matrix[2][2],
+      matrix[0][0] * matrix[2][2] - matrix[0][2] * matrix[2][0],
+      matrix[0][2] * matrix[1][0] - matrix[0][0] * matrix[1][2],
+  };
 
-  const Vector3<T> c_two{matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0],
-                         matrix[0][1] * matrix[2][0] - matrix[0][0] * matrix[2][1],
-                         matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]};
+  const Vector3<T> c_two{
+      matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0],
+      matrix[0][1] * matrix[2][0] - matrix[0][0] * matrix[2][1],
+      matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0],
+  };
 
   return Matrix3<T>(c_zero * inv, c_one * inv, c_two * inv);
 }

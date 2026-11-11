@@ -25,27 +25,29 @@ namespace correlation::math {
  * @return The factorial of n.
  */
 inline real_t factorial(int n) {
-  static const std::array<real_t, 21> FACT = {static_cast<real_t>(1.0),
-                                              static_cast<real_t>(1.0),
-                                              static_cast<real_t>(2.0),
-                                              static_cast<real_t>(6.0),
-                                              static_cast<real_t>(24.0),
-                                              static_cast<real_t>(120.0),
-                                              static_cast<real_t>(720.0),
-                                              static_cast<real_t>(5040.0),
-                                              static_cast<real_t>(40320.0),
-                                              static_cast<real_t>(362880.0),
-                                              static_cast<real_t>(3628800.0),
-                                              static_cast<real_t>(39916800.0),
-                                              static_cast<real_t>(479001600.0),
-                                              static_cast<real_t>(6227020800.0),
-                                              static_cast<real_t>(87178291200.0),
-                                              static_cast<real_t>(1307674368000.0),
-                                              static_cast<real_t>(20922789888000.0),
-                                              static_cast<real_t>(355687428096000.0),
-                                              static_cast<real_t>(6402373705728000.0),
-                                              static_cast<real_t>(121645100408832000.0),
-                                              static_cast<real_t>(2432902008176640000.0)};
+  static const std::array<real_t, 21> FACT = {
+      static_cast<real_t>(1.0),
+      static_cast<real_t>(1.0),
+      static_cast<real_t>(2.0),
+      static_cast<real_t>(6.0),
+      static_cast<real_t>(24.0),
+      static_cast<real_t>(120.0),
+      static_cast<real_t>(720.0),
+      static_cast<real_t>(5040.0),
+      static_cast<real_t>(40320.0),
+      static_cast<real_t>(362880.0),
+      static_cast<real_t>(3628800.0),
+      static_cast<real_t>(39916800.0),
+      static_cast<real_t>(479001600.0),
+      static_cast<real_t>(6227020800.0),
+      static_cast<real_t>(87178291200.0),
+      static_cast<real_t>(1307674368000.0),
+      static_cast<real_t>(20922789888000.0),
+      static_cast<real_t>(355687428096000.0),
+      static_cast<real_t>(6402373705728000.0),
+      static_cast<real_t>(121645100408832000.0),
+      static_cast<real_t>(2432902008176640000.0),
+  };
   if (n < 0) {
     return static_cast<real_t>(0.0);
   }

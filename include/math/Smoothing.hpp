@@ -59,13 +59,13 @@ inline void fillGaussian(std::vector<real_t> &kernel, const KernelGenerationPara
 
 inline void fillTriweight(std::vector<real_t> &kernel, const KernelGenerationParams &params,
                           real_t center) {
-  constexpr real_t factor = static_cast<real_t>(35.0) / static_cast<real_t>(32.0);
+  constexpr real_t FACTOR = static_cast<real_t>(35.0) / static_cast<real_t>(32.0);
   for (size_t i = 0; i < params.size; ++i) {
     const real_t norm_dist = ((static_cast<real_t>(i) - center) * params.bin_width) / params.sigma;
     if (std::abs(norm_dist) <= 1.0) {
       const real_t norm_dist_sq = norm_dist * norm_dist;
       kernel[i] =
-          factor * std::pow(static_cast<real_t>(1.0) - norm_dist_sq, static_cast<real_t>(3.0));
+          FACTOR * std::pow(static_cast<real_t>(1.0) - norm_dist_sq, static_cast<real_t>(3.0));
     } else {
       kernel[i] = 0.0;
     }
@@ -182,7 +182,7 @@ inline void fillBiweight(std::vector<real_t> &kernel, const KernelGenerationPara
  * @param params   Kernel smoothing configuration parameters.
  * @return A vector containing the smoothed data (same length as `y_values`).
  */
-inline std::vector<real_t> KernelSmoothing(const std::vector<real_t> &y_values,
+inline std::vector<real_t> kernelSmoothing(const std::vector<real_t> &y_values,
                                            KernelSmoothingParams params) {
   real_t const bin_width = params.bin_width;
   real_t const sigma = params.sigma;
@@ -201,7 +201,7 @@ inline std::vector<real_t> KernelSmoothing(const std::vector<real_t> &y_values,
   // Calculate the kernel radius in bins by dividing the physical sigma by bin_width.
   // We use 4.0 * sigma to cover approximately 99.99% of the Gaussian area.
   const size_t num_points = y_values.size();
-  auto kernel_radius_bins = static_cast<size_t>(4.0 * sigma / bin_width);
+  const auto kernel_radius_bins = static_cast<size_t>(4.0 * sigma / bin_width);
 
   // Clamp the radius to prevent the kernel from exceeding half the data size.
   const size_t max_kernel_radius = num_points / 2;
@@ -216,7 +216,8 @@ inline std::vector<real_t> KernelSmoothing(const std::vector<real_t> &y_values,
 
   // Pass the original physical sigma (in distance units) to the kernel
   // generator.
-  const auto kernel = generateKernel({kernel_size, bin_width, sigma, type});
+  const auto kernel =
+      generateKernel({.size = kernel_size, .bin_width = bin_width, .sigma = sigma, .type = type});
   std::vector<real_t> smoothed(num_points, 0.0);
 
   // Phase 1 – left boundary (bins 0 .. kernel_radius-1): needs index clamping.
@@ -265,14 +266,14 @@ inline std::vector<real_t> KernelSmoothing(const std::vector<real_t> &y_values,
  * @param params   Kernel smoothing configuration parameters.
  * @return A vector containing the smoothed data.
  */
-inline std::vector<real_t> KernelSmoothing(const std::vector<real_t> &r_values,
+inline std::vector<real_t> kernelSmoothing(const std::vector<real_t> &r_values,
                                            const std::vector<real_t> &y_values,
                                            KernelSmoothingParams params) {
   if (r_values.size() != y_values.size() || r_values.size() < 2) {
     return {};
   }
   params.bin_width = r_values[1] - r_values[0];
-  return KernelSmoothing(y_values, params);
+  return kernelSmoothing(y_values, params);
 }
 
 } // namespace correlation::math

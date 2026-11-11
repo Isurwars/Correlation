@@ -20,14 +20,14 @@ namespace correlation::math {
  * @tparam T Floating-point coordinate type (float or double).
  */
 template <typename T>
-inline void compute_dsq_block(T ref_x, T ref_y, T ref_z, const PositionBlockT<T> &block,
-                              T *CORRELATION_RESTRICT out_dsq) noexcept {
+inline void computeDsqBlock(T ref_x, T ref_y, T ref_z, const PositionBlockT<T> &block,
+                            T *CORRELATION_RESTRICT out_dsq) noexcept {
 #ifdef CORRELATION_SIMD_AVX512
-  detail::avx512::compute_dsq_block(ref_x, ref_y, ref_z, block, out_dsq);
-#elif defined(CORRELATION_SIMD_AVX2)
-  detail::avx2::compute_dsq_block(ref_x, ref_y, ref_z, block, out_dsq);
+  detail::avx512::computeDsqBlock(ref_x, ref_y, ref_z, block, out_dsq);
+#elifdef CORRELATION_SIMD_AVX2
+  detail::avx2::computeDsqBlock(ref_x, ref_y, ref_z, block, out_dsq);
 #else
-  detail::scalar::compute_dsq_block(ref_x, ref_y, ref_z, block, out_dsq);
+  detail::scalar::computeDsqBlock(ref_x, ref_y, ref_z, block, out_dsq);
 #endif
 }
 
@@ -37,8 +37,7 @@ inline void compute_dsq_block(T ref_x, T ref_y, T ref_z, const PositionBlockT<T>
  * @tparam T Coordinate scalar type (defaults to real_t).
  */
 template <typename AtomRange, typename T = real_t>
-inline std::size_t
-fill_position_block(const FillPositionBlockParams<AtomRange, T> &params) noexcept {
+inline std::size_t fillPositionBlock(const FillPositionBlockParams<AtomRange, T> &params) noexcept {
   if (params.atoms == nullptr || params.x_s == nullptr || params.y_s == nullptr ||
       params.z_s == nullptr) {
     return 0;

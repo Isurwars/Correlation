@@ -47,7 +47,7 @@ void checkAcceptorsForHydrogen(const correlation::core::Cell &cell, size_t donor
   const auto &pos_h = atoms[h_idx].position();
   const auto &pos_d = atoms[donor_idx].position();
   const correlation::math::Vector3<real_t> v_dh = cell.minimumImage(pos_h - pos_d);
-  const real_t d_dh_sq = correlation::math::norm_sq(v_dh);
+  const real_t d_dh_sq = correlation::math::normSq(v_dh);
   if (d_dh_sq < static_cast<real_t>(1e-12)) {
     return;
   }
@@ -59,7 +59,7 @@ void checkAcceptorsForHydrogen(const correlation::core::Cell &cell, size_t donor
     }
     const auto &atom_j = atoms[atom_idx];
     const correlation::math::Vector3<real_t> v_da = cell.minimumImage(atom_j.position() - pos_d);
-    const real_t d_da_sq = correlation::math::norm_sq(v_da);
+    const real_t d_da_sq = correlation::math::normSq(v_da);
 
     if (d_da_sq < criteria.r_cut_sq && d_da_sq >= static_cast<real_t>(1e-12)) {
       const real_t dot_val = v_dh * v_da;
@@ -116,7 +116,7 @@ HBondCalculator::calculate(const correlation::core::Cell &cell,
   // Geometric criteria
   const HBondCriteria criteria{
       .r_cut_sq = static_cast<real_t>(3.5 * 3.5), // Donor-Acceptor distance squared
-      .alpha_cut = static_cast<real_t>(30.0)      // H-D...A angle,
+      .alpha_cut = static_cast<real_t>(30.0),     // H-D...A angle,
   };
 
   std::vector<int> hbond_counts(num_atoms, 0);

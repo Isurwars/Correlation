@@ -100,7 +100,7 @@ TEST_F(SmoothingTests, GenerateKernelNormalizesAndCalculatesCorrectly) {
 TEST_F(SmoothingTests, KernelSmoothingBoundaryInputsAndErrors) {
   // Empty data
   std::vector<real_t> const empty_y;
-  const auto empty_res = KernelSmoothing(empty_y, {
+  const auto empty_res = kernelSmoothing(empty_y, {
                                                       .bin_width = 0.1,
                                                       .sigma = 0.5,
                                                       .type = KernelType::Gaussian,
@@ -109,14 +109,14 @@ TEST_F(SmoothingTests, KernelSmoothingBoundaryInputsAndErrors) {
 
   // Invalid bin_width
   std::vector<real_t> const y_values = {1.0, 2.0, 3.0, 4.0, 5.0};
-  EXPECT_THROW(KernelSmoothing(y_values,
+  EXPECT_THROW(kernelSmoothing(y_values,
                                {
                                    .bin_width = 0.0,
                                    .sigma = 0.5,
                                    .type = KernelType::Gaussian,
                                }),
                std::invalid_argument);
-  EXPECT_THROW(KernelSmoothing(y_values,
+  EXPECT_THROW(kernelSmoothing(y_values,
                                {
                                    .bin_width = -0.1,
                                    .sigma = 0.5,
@@ -125,14 +125,14 @@ TEST_F(SmoothingTests, KernelSmoothingBoundaryInputsAndErrors) {
                std::invalid_argument);
 
   // Invalid sigma
-  EXPECT_THROW(KernelSmoothing(y_values,
+  EXPECT_THROW(kernelSmoothing(y_values,
                                {
                                    .bin_width = 0.1,
                                    .sigma = 0.0,
                                    .type = KernelType::Gaussian,
                                }),
                std::invalid_argument);
-  EXPECT_THROW(KernelSmoothing(y_values,
+  EXPECT_THROW(kernelSmoothing(y_values,
                                {
                                    .bin_width = 0.1,
                                    .sigma = -0.5,
@@ -147,7 +147,7 @@ TEST_F(SmoothingTests, KernelSmoothingComputesConvolutions) {
   real_t const bin_width = 0.2;
   real_t const sigma = 0.4;
 
-  const auto smoothed = KernelSmoothing(y_values, {
+  const auto smoothed = kernelSmoothing(y_values, {
                                                       .bin_width = bin_width,
                                                       .sigma = sigma,
                                                       .type = KernelType::Gaussian,
@@ -166,12 +166,12 @@ TEST_F(SmoothingTests, CompatibilityOverloadDerivesBinWidth) {
   std::vector<real_t> const y_values = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0};
   real_t const sigma = 0.5;
 
-  const auto smoothed_r = KernelSmoothing(r_values, y_values,
+  const auto smoothed_r = kernelSmoothing(r_values, y_values,
                                           {
                                               .sigma = sigma,
                                               .type = KernelType::Gaussian,
                                           });
-  const auto smoothed_dx = KernelSmoothing(y_values, {
+  const auto smoothed_dx = kernelSmoothing(y_values, {
                                                          .bin_width = 0.2,
                                                          .sigma = sigma,
                                                          .type = KernelType::Gaussian,
@@ -184,7 +184,7 @@ TEST_F(SmoothingTests, CompatibilityOverloadDerivesBinWidth) {
 
   // Size mismatch returns empty
   std::vector<real_t> const r_bad = {0.0, 0.2};
-  EXPECT_TRUE(KernelSmoothing(r_bad, y_values,
+  EXPECT_TRUE(kernelSmoothing(r_bad, y_values,
                               {
                                   .sigma = sigma,
                                   .type = KernelType::Gaussian,
@@ -194,7 +194,7 @@ TEST_F(SmoothingTests, CompatibilityOverloadDerivesBinWidth) {
   // Size < 2 returns empty
   std::vector<real_t> const r_short = {0.0};
   std::vector<real_t> const y_short = {1.0};
-  EXPECT_TRUE(KernelSmoothing(r_short, y_short,
+  EXPECT_TRUE(kernelSmoothing(r_short, y_short,
                               {
                                   .sigma = sigma,
                                   .type = KernelType::Gaussian,

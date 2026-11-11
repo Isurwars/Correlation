@@ -460,7 +460,7 @@ void ThreadLocalDistances::computeDistances(size_t orig_atom_idx,
       .z = soa_z.data(),
       .count = c_count,
   };
-  correlation::math::compute_dsq_block(a_x, a_y, a_z, block, dsq_scratch.data());
+  correlation::math::computeDsqBlock(a_x, a_y, a_z, block, dsq_scratch.data());
 
   for (size_t k = 0; k < c_count; ++k) {
     real_t const d_sq = dsq_scratch[k];

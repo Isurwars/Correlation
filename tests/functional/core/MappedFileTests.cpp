@@ -79,7 +79,7 @@ TEST_F(MappedFileFunctionalTests, VerifyDataBufferIterationAndSearch) {
 
   // Find a specific word "trajectory" in the mapped data
   const std::string search_target = "trajectory";
-  const auto *iterator = std::search(begin, end, search_target.begin(), search_target.end());
+  const char *const iterator = std::search(begin, end, search_target.begin(), search_target.end());
 
   ASSERT_NE(iterator, end);
 

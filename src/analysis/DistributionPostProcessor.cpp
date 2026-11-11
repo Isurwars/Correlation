@@ -62,7 +62,7 @@ void DistributionPostProcessor::smooth(Histogram &hist, std::string_view name, r
       tbb::blocked_range<size_t>(0, entries.size()), [&](const tbb::blocked_range<size_t> &range) {
         for (size_t i = range.begin(); i != range.end(); ++i) {
           results[i] =
-              correlation::math::KernelSmoothing(*entries[i].second, {
+              correlation::math::kernelSmoothing(*entries[i].second, {
                                                                          .bin_width = bin_dx,
                                                                          .sigma = min_sigma,
                                                                          .type = kernel,

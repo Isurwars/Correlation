@@ -516,8 +516,8 @@ void forEachPairWithin(const correlation::core::Cell &cell, real_t r_max,
               .z = gatherer.soa_z.data(),
               .count = c_count,
           };
-          correlation::math::compute_dsq_block(atom_pos.x(), atom_pos.y(), atom_pos.z(), block,
-                                               gatherer.dsq_scratch.data());
+          correlation::math::computeDsqBlock(atom_pos.x(), atom_pos.y(), atom_pos.z(), block,
+                                             gatherer.dsq_scratch.data());
 
           for (size_t k = 0; k < c_count; ++k) {
             const real_t d_sq = gatherer.dsq_scratch[k];

@@ -101,7 +101,7 @@ TEST_F(Vector3Tests, Vector3FreeFunctions) {
 
   // norm_sq and norm
   Vector3<double> const vec_v(3.0, 4.0, 0.0);
-  EXPECT_DOUBLE_EQ(norm_sq(vec_v), 25.0);
+  EXPECT_DOUBLE_EQ(normSq(vec_v), 25.0);
   EXPECT_DOUBLE_EQ(norm(vec_v), 5.0);
 
   // normalize
@@ -292,8 +292,8 @@ TEST_F(Vector3Tests, CrossProductProperties) {
   EXPECT_DOUBLE_EQ(vec_x_cross_y.z(), 1.0);
 
   // Lagrange's identity: |a x b|^2 = |a|^2*|b|^2 - (a.b)^2
-  double const lhs = norm_sq(axb);
-  double const rhs = norm_sq(vec_1) * norm_sq(vec_2) - dot(vec_1, vec_2) * dot(vec_1, vec_2);
+  double const lhs = normSq(axb);
+  double const rhs = normSq(vec_1) * normSq(vec_2) - dot(vec_1, vec_2) * dot(vec_1, vec_2);
   EXPECT_NEAR(lhs, rhs, 1e-10);
 }
 
@@ -348,7 +348,7 @@ TEST_F(Vector3Tests, Vector3FloatType) {
   EXPECT_FLOAT_EQ(sum.z(), 9.0F);
 
   EXPECT_FLOAT_EQ(dot(vec_a, vec_b), 32.0F);
-  EXPECT_FLOAT_EQ(norm_sq(vec_a), 14.0F);
+  EXPECT_FLOAT_EQ(normSq(vec_a), 14.0F);
 
   auto const normalized = normalize(vec_a);
   EXPECT_NEAR(norm(normalized), 1.0F, 1e-6F);
@@ -357,11 +357,11 @@ TEST_F(Vector3Tests, Vector3FloatType) {
 TEST_F(Vector3Tests, NormProperties) {
   Vector3<double> const vec_v(3.0, 4.0, 0.0);
 
-  EXPECT_DOUBLE_EQ(norm_sq(vec_v), norm(vec_v) * norm(vec_v));
+  EXPECT_DOUBLE_EQ(normSq(vec_v), norm(vec_v) * norm(vec_v));
 
   Vector3<double> const zero;
   EXPECT_DOUBLE_EQ(norm(zero), 0.0);
-  EXPECT_DOUBLE_EQ(norm_sq(zero), 0.0);
+  EXPECT_DOUBLE_EQ(normSq(zero), 0.0);
 
   Vector3<double> const neg(-3.0, -4.0, -5.0);
   EXPECT_GE(norm(neg), 0.0);

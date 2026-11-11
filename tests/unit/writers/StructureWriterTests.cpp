@@ -19,6 +19,7 @@
 
 #include <filesystem>
 #include <gtest/gtest.h>
+#include <span>
 
 namespace {
 
@@ -44,10 +45,10 @@ using namespace correlation::core;
 
 void verifyLatticeParametersNear(const std::array<real_t, 6> &p_init,
                                  const std::array<real_t, 6> &p_parse, real_t tolerance) {
-  const auto *it_parse = p_parse.begin();
-  for (real_t val_init : p_init) {
-    EXPECT_NEAR(val_init, *it_parse, tolerance);
-    ++it_parse;
+  std::span<const real_t, 6> const span_init(p_init);
+  std::span<const real_t, 6> const span_parse(p_parse);
+  for (size_t idx = 0; idx < span_init.size(); ++idx) {
+    EXPECT_NEAR(span_init[idx], span_parse[idx], tolerance);
   }
 }
 

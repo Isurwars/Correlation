@@ -299,7 +299,7 @@ inline void processSingleQVector(const QVector &q_vec, QBinning binning, size_t 
     const size_t off = type_blocks[ti].offset;
     const size_t cnt = type_blocks[ti].count;
     const auto result =
-        correlation::math::miller_phase_sum(correlation::math::MillerPhaseSumParams<real_t>{
+        correlation::math::millerPhaseSum(correlation::math::MillerPhaseSumParams<real_t>{
             .cos1 = phases.e1_cos + (q_vec.h + basis.hmax) * num_atoms + off,
             .sin1 = phases.e1_sin + (q_vec.h + basis.hmax) * num_atoms + off,
             .cos2 = phases.e2_cos + (q_vec.k + basis.kmax) * num_atoms + off,

@@ -133,7 +133,7 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell,
     for (size_t i = 0; i < num_atoms; ++i) {
       math::Vector3<real_t> const diff = positions[i] - sample_point;
       math::Vector3<real_t> const mic = cell.minimumImage(diff);
-      dsq_all[i] = math::norm_sq(mic);
+      dsq_all[i] = math::normSq(mic);
     }
 
     // Sort squared distances for efficient counting

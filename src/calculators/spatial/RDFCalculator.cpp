@@ -128,8 +128,8 @@ void accumulateRawCounts(const correlation::core::Cell &cell,
       // raw_histograms. We multiply by 2 to account for both A_1 -> A_2 and A_2
       // -> A_1 interactions.
       if (i == j) {
-        correlation::math::scale_bins(partial_hist.data(), static_cast<real_t>(2.0),
-                                      settings.num_bins);
+        correlation::math::scaleBins(partial_hist.data(), static_cast<real_t>(2.0),
+                                     settings.num_bins);
       }
     }
   }
@@ -189,7 +189,7 @@ void normalizeDistributions(const correlation::core::Cell &cell,
           .Jinv_out = j_r.partials[inversekey].data(),
           .count = settings.num_bins,
       };
-      correlation::math::normalize_rdf_bins(params);
+      correlation::math::normalizeRdfBins(params);
     }
   }
 }

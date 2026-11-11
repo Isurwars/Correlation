@@ -648,7 +648,7 @@ void processCandidatePair(size_t first_idx, size_t second_idx, const math::Vecto
                           real_t cutoff_sq, const Cell &cell, const BondCutoffMatrix &bond_cutoffs,
                           const DistanceCalculationConfig &config,
                           BruteForceReferenceData &ref_data) {
-  const real_t d_sq = math::norm_sq(r_ij);
+  const real_t d_sq = math::normSq(r_ij);
   if (d_sq >= cutoff_sq) {
     return;
   }

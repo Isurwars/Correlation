@@ -14,10 +14,7 @@
 
 #include <algorithm>
 #include <array>
-#include <cmath>
-#include <iomanip>
 #include <map>
-#include <sstream>
 #include <tbb/parallel_for.h>
 
 namespace correlation::calculators {
@@ -108,7 +105,7 @@ extractNearestFromCell(const correlation::core::Cell &cell, size_t target_idx) {
       continue;
     }
     const math::Vector3<real_t> disp = cell.minimumImage(atoms[j].position() - target_pos);
-    const real_t dist_sq_val = math::norm_sq(disp);
+    const real_t dist_sq_val = math::normSq(disp);
     candidates.push_back(DistVec{.dist_sq = dist_sq_val, .r_ij = disp});
   }
 

@@ -49,9 +49,9 @@ void computeTriadAngles(int type_central, const std::vector<correlation::core::A
     const size_t k_count = neighbor_count - j_idx - 1; // number of k's for this j
 
     // SIMD dot products: dots[m_idx] = dot(v_j, v_{j+1+m_idx})
-    correlation::math::dot_block(scratch.nb_x[j_idx], scratch.nb_y[j_idx], scratch.nb_z[j_idx],
-                                 scratch.nb_x.data() + j_idx + 1, scratch.nb_y.data() + j_idx + 1,
-                                 scratch.nb_z.data() + j_idx + 1, scratch.dots.data(), k_count);
+    correlation::math::dotBlock(scratch.nb_x[j_idx], scratch.nb_y[j_idx], scratch.nb_z[j_idx],
+                                scratch.nb_x.data() + j_idx + 1, scratch.nb_y.data() + j_idx + 1,
+                                scratch.nb_z.data() + j_idx + 1, scratch.dots.data(), k_count);
 
     const int type1 = atoms[neighbors[j_idx].index].elementId();
     const real_t dist1 = scratch.nb_dist[j_idx];

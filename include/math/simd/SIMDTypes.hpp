@@ -52,7 +52,7 @@ template <typename T = real_t> struct Point3T {
 using Point3 = Point3T<real_t>;
 
 /**
- * @brief Parameter container for sinc_integral kernel invocations.
+ * @brief Parameter container for sincIntegral kernel invocations.
  * @tparam T Floating-point precision (float or double).
  */
 template <typename T> struct SincIntegralParams {
@@ -64,7 +64,7 @@ template <typename T> struct SincIntegralParams {
 };
 
 /**
- * @brief Parameter container for normalize_rdf_bins kernel invocations.
+ * @brief Parameter container for normalizeRdfBins kernel invocations.
  * @tparam T Floating-point precision (float or double).
  */
 template <typename T> struct RDFNormalizationParams {
@@ -82,7 +82,7 @@ template <typename T> struct RDFNormalizationParams {
 };
 
 /**
- * @brief Parameter container for scale_bins kernel invocations.
+ * @brief Parameter container for scaleBins kernel invocations.
  * @tparam T Floating-point precision (float or double).
  */
 template <typename T> struct ScaleBinsParams {
@@ -92,7 +92,7 @@ template <typename T> struct ScaleBinsParams {
 };
 
 /**
- * @brief Parameter container for miller_phase_sum kernel invocations.
+ * @brief Parameter container for millerPhaseSum kernel invocations.
  * @tparam T Floating-point precision (float or double).
  */
 template <typename T> struct MillerPhaseSumParams {
@@ -106,7 +106,7 @@ template <typename T> struct MillerPhaseSumParams {
 };
 
 /**
- * @brief Parameter container for miller_exp_sum / complex_exp_sum kernel invocations.
+ * @brief Parameter container for millerExpSum / complexExpSum kernel invocations.
  * @tparam T Coordinate scalar type (defaults to real_t).
  */
 template <typename T = real_t> struct MillerExpSumParams {
@@ -119,7 +119,7 @@ template <typename T = real_t> struct MillerExpSumParams {
   std::size_t count{0};
 };
 
-/// Alias for MillerExpSumParams used with complex_exp_sum kernel invocations.
+/// Alias for MillerExpSumParams used with complexExpSum kernel invocations.
 template <typename T = real_t> using ComplexExpSumParams = MillerExpSumParams<T>;
 
 /**
@@ -134,11 +134,11 @@ template <typename T = real_t> struct ComplexExpSumResult {
 /// Alias for PhaseSumResult used with phase sum kernel invocations.
 template <typename T = real_t> using PhaseSumResult = ComplexExpSumResult<T>;
 
-/// Alias for MillerPhaseSumResult used with miller_phase_sum kernel invocations.
+/// Alias for MillerPhaseSumResult used with millerPhaseSum kernel invocations.
 template <typename T = real_t> using MillerPhaseSumResult = ComplexExpSumResult<T>;
 
 /**
- * @brief Parameter container for fill_position_block kernel invocations.
+ * @brief Parameter container for fillPositionBlock kernel invocations.
  * @tparam AtomRange A range of atom objects.
  * @tparam T Coordinate scalar type (defaults to real_t).
  */
@@ -159,7 +159,7 @@ template <typename AtomRange, typename T = real_t> struct FillPositionBlockParam
  * @return The scalar squared distance.
  */
 template <typename T>
-[[nodiscard]] inline T dist_sq_scalar(Point3T<T> point_a, Point3T<T> point_b) noexcept {
+[[nodiscard]] inline T distSqScalar(Point3T<T> point_a, Point3T<T> point_b) noexcept {
   const T dist_x = point_b.x - point_a.x;
   const T dist_y = point_b.y - point_a.y;
   const T dist_z = point_b.z - point_a.z;
@@ -167,13 +167,13 @@ template <typename T>
 }
 
 /**
- * @brief Non-templated overload of dist_sq_scalar for backward compatibility.
+ * @brief Non-templated overload of distSqScalar for backward compatibility.
  * @param[in] point_a The first point.
  * @param[in] point_b The second point.
  * @return The scalar squared distance using real_t.
  */
-[[nodiscard]] inline real_t dist_sq_scalar(Point3 point_a, Point3 point_b) noexcept {
-  return dist_sq_scalar<real_t>(point_a, point_b);
+[[nodiscard]] inline real_t distSqScalar(Point3 point_a, Point3 point_b) noexcept {
+  return distSqScalar<real_t>(point_a, point_b);
 }
 
 } // namespace correlation::math

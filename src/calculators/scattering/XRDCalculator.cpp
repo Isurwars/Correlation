@@ -282,13 +282,12 @@ XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
             const PartialXRD &partial_xrd = xrd_partials[partial_idx];
             const size_t pcount = std::min(partial_xrd.integrand->size(), r_count);
             auto const integral = static_cast<real_t>(
-                correlation::math::simd_dot(partial_xrd.integrand->data(), sinqr.data(), pcount));
+                correlation::math::simdDot(partial_xrd.integrand->data(), sinqr.data(), pcount));
             real_t const form_factor_1 = getAtomicFormFactor(partial_xrd.sym1, q_value);
             real_t const form_factor_2 = getAtomicFormFactor(partial_xrd.sym2, q_value);
 
-            intensity_q.add(static_cast<real_t>(form_factor_1 * form_factor_2 *
-                                                (correlation::math::FOUR_PI * total_rho / q_value) *
-                                                integral));
+            intensity_q.add((form_factor_1 * form_factor_2 *
+                             (correlation::math::FOUR_PI * total_rho / q_value) * integral));
           }
 
           intensities[i] = intensity_q.value();
@@ -302,7 +301,7 @@ XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
 
 real_t XRDCalculator::getAtomicFormFactor(const std::string &symbol, real_t q_value) {
   const auto &coeffs = correlation::physics::getAtomicFormFactors(symbol);
-  const auto s_value = static_cast<real_t>(q_value / correlation::math::FOUR_PI);
+  const auto s_value = (q_value / correlation::math::FOUR_PI);
   const real_t s_squared = s_value * s_value;
   auto form_factor = static_cast<real_t>(coeffs.at(8));
   for (size_t i = 0; i < 4; ++i) {

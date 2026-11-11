@@ -18,9 +18,9 @@
 
 namespace correlation::math::detail::avx2 {
 
-inline void compute_dsq_block(float ref_x, float ref_y, float ref_z,
-                              const PositionBlockT<float> &block,
-                              float *CORRELATION_RESTRICT out_dsq) noexcept {
+inline void computeDsqBlock(float ref_x, float ref_y, float ref_z,
+                            const PositionBlockT<float> &block,
+                            float *CORRELATION_RESTRICT out_dsq) noexcept {
   const __m256 va_x = _mm256_set1_ps(ref_x);
   const __m256 va_y = _mm256_set1_ps(ref_y);
   const __m256 va_z = _mm256_set1_ps(ref_z);
@@ -40,7 +40,7 @@ inline void compute_dsq_block(float ref_x, float ref_y, float ref_z,
     _mm256_storeu_ps(out_dsq + idx, dsq);
   }
   for (; idx < block.count; ++idx) {
-    out_dsq[idx] = dist_sq_scalar<float>(
+    out_dsq[idx] = distSqScalar<float>(
         {
             .x = ref_x,
             .y = ref_y,
@@ -54,9 +54,9 @@ inline void compute_dsq_block(float ref_x, float ref_y, float ref_z,
   }
 }
 
-inline void compute_dsq_block(double ref_x, double ref_y, double ref_z,
-                              const PositionBlockT<double> &block,
-                              double *CORRELATION_RESTRICT out_dsq) noexcept {
+inline void computeDsqBlock(double ref_x, double ref_y, double ref_z,
+                            const PositionBlockT<double> &block,
+                            double *CORRELATION_RESTRICT out_dsq) noexcept {
   const __m256d va_x = _mm256_set1_pd(ref_x);
   const __m256d va_y = _mm256_set1_pd(ref_y);
   const __m256d va_z = _mm256_set1_pd(ref_z);
@@ -76,7 +76,7 @@ inline void compute_dsq_block(double ref_x, double ref_y, double ref_z,
     _mm256_storeu_pd(out_dsq + idx, dsq);
   }
   for (; idx < block.count; ++idx) {
-    out_dsq[idx] = dist_sq_scalar<double>(
+    out_dsq[idx] = distSqScalar<double>(
         {
             .x = ref_x,
             .y = ref_y,
@@ -90,8 +90,8 @@ inline void compute_dsq_block(double ref_x, double ref_y, double ref_z,
   }
 }
 
-inline double simd_dot(const double *CORRELATION_RESTRICT input_a,
-                       const double *CORRELATION_RESTRICT input_b, std::size_t count) noexcept {
+inline double simdDot(const double *CORRELATION_RESTRICT input_a,
+                      const double *CORRELATION_RESTRICT input_b, std::size_t count) noexcept {
   __m256d vacc = _mm256_setzero_pd();
   std::size_t idx = 0;
   for (; idx + 4 <= count; idx += 4) {
@@ -119,8 +119,8 @@ inline double simd_dot(const double *CORRELATION_RESTRICT input_a,
   return acc;
 }
 
-inline float simd_dot(const float *CORRELATION_RESTRICT input_a,
-                      const float *CORRELATION_RESTRICT input_b, std::size_t count) noexcept {
+inline float simdDot(const float *CORRELATION_RESTRICT input_a,
+                     const float *CORRELATION_RESTRICT input_b, std::size_t count) noexcept {
   __m256 vacc = _mm256_setzero_ps();
   std::size_t idx = 0;
   for (; idx + 8 <= count; idx += 8) {
@@ -142,10 +142,9 @@ inline float simd_dot(const float *CORRELATION_RESTRICT input_a,
   return acc;
 }
 
-inline void dot_block(double v1x, double v1y, double v1z, const double *CORRELATION_RESTRICT v2x,
-                      const double *CORRELATION_RESTRICT v2y,
-                      const double *CORRELATION_RESTRICT v2z, double *CORRELATION_RESTRICT out_dot,
-                      std::size_t count) noexcept {
+inline void dotBlock(double v1x, double v1y, double v1z, const double *CORRELATION_RESTRICT v2x,
+                     const double *CORRELATION_RESTRICT v2y, const double *CORRELATION_RESTRICT v2z,
+                     double *CORRELATION_RESTRICT out_dot, std::size_t count) noexcept {
   const __m256d vv1x = _mm256_set1_pd(v1x);
   const __m256d vv1y = _mm256_set1_pd(v1y);
   const __m256d vv1z = _mm256_set1_pd(v1z);
@@ -169,9 +168,9 @@ inline void dot_block(double v1x, double v1y, double v1z, const double *CORRELAT
   }
 }
 
-inline void dot_block(float v1x, float v1y, float v1z, const float *CORRELATION_RESTRICT v2x,
-                      const float *CORRELATION_RESTRICT v2y, const float *CORRELATION_RESTRICT v2z,
-                      float *CORRELATION_RESTRICT out_dot, std::size_t count) noexcept {
+inline void dotBlock(float v1x, float v1y, float v1z, const float *CORRELATION_RESTRICT v2x,
+                     const float *CORRELATION_RESTRICT v2y, const float *CORRELATION_RESTRICT v2z,
+                     float *CORRELATION_RESTRICT out_dot, std::size_t count) noexcept {
   const __m256 vv1x = _mm256_set1_ps(v1x);
   const __m256 vv1y = _mm256_set1_ps(v1y);
   const __m256 vv1z = _mm256_set1_ps(v1z);
@@ -195,22 +194,22 @@ inline void dot_block(float v1x, float v1y, float v1z, const float *CORRELATION_
   }
 }
 
-inline double sinc_integral(const SincIntegralParams<double> &params) noexcept {
+inline double sincIntegral(const SincIntegralParams<double> &params) noexcept {
   for (std::size_t idx = 0; idx < params.count; ++idx) {
     params.sinqr_scratch[idx] = std::sin(params.q_magnitude * params.radial_bins[idx]);
   }
-  return simd_dot(params.integrand, params.sinqr_scratch, params.count);
+  return simdDot(params.integrand, params.sinqr_scratch, params.count);
 }
 
-inline float sinc_integral(const SincIntegralParams<float> &params) noexcept {
+inline float sincIntegral(const SincIntegralParams<float> &params) noexcept {
   for (std::size_t idx = 0; idx < params.count; ++idx) {
     params.sinqr_scratch[idx] = std::sin(params.q_magnitude * params.radial_bins[idx]);
   }
-  return simd_dot(params.integrand, params.sinqr_scratch, params.count);
+  return simdDot(params.integrand, params.sinqr_scratch, params.count);
 }
 
-inline double debye_sum(double q_magnitude, const double *CORRELATION_RESTRICT distances,
-                        double *CORRELATION_RESTRICT scratch, std::size_t count) noexcept {
+inline double debyeSum(double q_magnitude, const double *CORRELATION_RESTRICT distances,
+                       double *CORRELATION_RESTRICT scratch, std::size_t count) noexcept {
   if (q_magnitude < 1.0e-9) {
     return static_cast<double>(count);
   }
@@ -241,8 +240,8 @@ inline double debye_sum(double q_magnitude, const double *CORRELATION_RESTRICT d
   return acc;
 }
 
-inline float debye_sum(float q_magnitude, const float *CORRELATION_RESTRICT distances,
-                       float *CORRELATION_RESTRICT scratch, std::size_t count) noexcept {
+inline float debyeSum(float q_magnitude, const float *CORRELATION_RESTRICT distances,
+                      float *CORRELATION_RESTRICT scratch, std::size_t count) noexcept {
   if (q_magnitude < 1.0e-9F) {
     return static_cast<float>(count);
   }
@@ -267,7 +266,7 @@ inline float debye_sum(float q_magnitude, const float *CORRELATION_RESTRICT dist
   return acc;
 }
 
-inline void normalize_rdf_bins(const RDFNormalizationParams<double> &params) noexcept {
+inline void normalizeRdfBins(const RDFNormalizationParams<double> &params) noexcept {
   if (params.count > 0) {
     params.g_out[0] = 0.0;
     params.G_out[0] = 0.0;
@@ -276,21 +275,21 @@ inline void normalize_rdf_bins(const RDFNormalizationParams<double> &params) noe
   }
   const __m256d vg_norm = _mm256_set1_pd(params.g_norm);
   const __m256d v_1 = _mm256_set1_pd(1.0);
-  const __m256d vinNidr = _mm256_set1_pd(params.inv_Ni_dr);
-  const __m256d vinNjdr = _mm256_set1_pd(params.inv_Nj_dr);
+  const __m256d vin_nidr = _mm256_set1_pd(params.inv_Ni_dr);
+  const __m256d vin_njdr = _mm256_set1_pd(params.inv_Nj_dr);
   const __m256d vpi4rho = _mm256_set1_pd(params.pi4_rho_j);
 
   std::size_t idx = 1;
   for (; idx + 4 <= params.count; idx += 4) {
-    const __m256d v_H = _mm256_loadu_pd(params.hist_data + idx);
+    const __m256d v_h = _mm256_loadu_pd(params.hist_data + idx);
     const __m256d v_r = _mm256_loadu_pd(params.radial_bins + idx);
     const __m256d vr2 = _mm256_mul_pd(v_r, v_r);
-    const __m256d v_g = _mm256_div_pd(_mm256_mul_pd(v_H, vg_norm), vr2);
+    const __m256d v_g = _mm256_div_pd(_mm256_mul_pd(v_h, vg_norm), vr2);
     _mm256_storeu_pd(params.g_out + idx, v_g);
     _mm256_storeu_pd(params.G_out + idx,
                      _mm256_mul_pd(vpi4rho, _mm256_mul_pd(v_r, _mm256_sub_pd(v_g, v_1))));
-    _mm256_storeu_pd(params.J_out + idx, _mm256_mul_pd(v_H, vinNidr));
-    _mm256_storeu_pd(params.Jinv_out + idx, _mm256_mul_pd(v_H, vinNjdr));
+    _mm256_storeu_pd(params.J_out + idx, _mm256_mul_pd(v_h, vin_nidr));
+    _mm256_storeu_pd(params.Jinv_out + idx, _mm256_mul_pd(v_h, vin_njdr));
   }
   for (; idx < params.count; ++idx) {
     const double r_val = params.radial_bins[idx];
@@ -309,7 +308,7 @@ inline void normalize_rdf_bins(const RDFNormalizationParams<double> &params) noe
   }
 }
 
-inline void normalize_rdf_bins(const RDFNormalizationParams<float> &params) noexcept {
+inline void normalizeRdfBins(const RDFNormalizationParams<float> &params) noexcept {
   if (params.count > 0) {
     params.g_out[0] = 0.0F;
     params.G_out[0] = 0.0F;
@@ -318,21 +317,21 @@ inline void normalize_rdf_bins(const RDFNormalizationParams<float> &params) noex
   }
   const __m256 vg_norm = _mm256_set1_ps(params.g_norm);
   const __m256 v_1 = _mm256_set1_ps(1.0F);
-  const __m256 vinNidr = _mm256_set1_ps(params.inv_Ni_dr);
-  const __m256 vinNjdr = _mm256_set1_ps(params.inv_Nj_dr);
+  const __m256 vin_nidr = _mm256_set1_ps(params.inv_Ni_dr);
+  const __m256 vin_njdr = _mm256_set1_ps(params.inv_Nj_dr);
   const __m256 vpi4rho = _mm256_set1_ps(params.pi4_rho_j);
 
   std::size_t idx = 1;
   for (; idx + 8 <= params.count; idx += 8) {
-    const __m256 v_H = _mm256_loadu_ps(params.hist_data + idx);
+    const __m256 v_h = _mm256_loadu_ps(params.hist_data + idx);
     const __m256 v_r = _mm256_loadu_ps(params.radial_bins + idx);
     const __m256 vr2 = _mm256_mul_ps(v_r, v_r);
-    const __m256 v_g = _mm256_div_ps(_mm256_mul_ps(v_H, vg_norm), vr2);
+    const __m256 v_g = _mm256_div_ps(_mm256_mul_ps(v_h, vg_norm), vr2);
     _mm256_storeu_ps(params.g_out + idx, v_g);
     _mm256_storeu_ps(params.G_out + idx,
                      _mm256_mul_ps(vpi4rho, _mm256_mul_ps(v_r, _mm256_sub_ps(v_g, v_1))));
-    _mm256_storeu_ps(params.J_out + idx, _mm256_mul_ps(v_H, vinNidr));
-    _mm256_storeu_ps(params.Jinv_out + idx, _mm256_mul_ps(v_H, vinNjdr));
+    _mm256_storeu_ps(params.J_out + idx, _mm256_mul_ps(v_h, vin_nidr));
+    _mm256_storeu_ps(params.Jinv_out + idx, _mm256_mul_ps(v_h, vin_njdr));
   }
   for (; idx < params.count; ++idx) {
     const float r_val = params.radial_bins[idx];
@@ -351,7 +350,7 @@ inline void normalize_rdf_bins(const RDFNormalizationParams<float> &params) noex
   }
 }
 
-inline void scale_bins(const ScaleBinsParams<double> &params) noexcept {
+inline void scaleBins(const ScaleBinsParams<double> &params) noexcept {
   const __m256d v_scale = _mm256_set1_pd(params.scale_factor);
   std::size_t idx = 0;
   for (; idx + 4 <= params.count; idx += 4) {
@@ -362,7 +361,7 @@ inline void scale_bins(const ScaleBinsParams<double> &params) noexcept {
   }
 }
 
-inline void scale_bins(const ScaleBinsParams<float> &params) noexcept {
+inline void scaleBins(const ScaleBinsParams<float> &params) noexcept {
   const __m256 v_scale = _mm256_set1_ps(params.scale_factor);
   std::size_t idx = 0;
   for (; idx + 8 <= params.count; idx += 8) {
@@ -373,8 +372,8 @@ inline void scale_bins(const ScaleBinsParams<float> &params) noexcept {
   }
 }
 
-inline void miller_phase_sum(const MillerPhaseSumParams<double> &params,
-                             MillerPhaseSumResult<double> &result) noexcept {
+inline void millerPhaseSum(const MillerPhaseSumParams<double> &params,
+                           MillerPhaseSumResult<double> &result) noexcept {
   __m256d vc_sum = _mm256_setzero_pd();
   __m256d vs_sum = _mm256_setzero_pd();
   std::size_t idx = 0;
@@ -425,8 +424,8 @@ inline void miller_phase_sum(const MillerPhaseSumParams<double> &params,
   }
 }
 
-inline void miller_phase_sum(const MillerPhaseSumParams<float> &params,
-                             MillerPhaseSumResult<float> &result) noexcept {
+inline void millerPhaseSum(const MillerPhaseSumParams<float> &params,
+                           MillerPhaseSumResult<float> &result) noexcept {
   __m256 vc_sum = _mm256_setzero_ps();
   __m256 vs_sum = _mm256_setzero_ps();
   std::size_t idx = 0;
