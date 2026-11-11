@@ -1,10 +1,12 @@
 import {
     MaterialStyleMetrics,
+    MaterialPalette,
     InputSelect,
     MenuItem,
     Horizontal,
     TabItem,
 } from "../../../material/material.slint";
+
 export component PreviewHeader inherits Horizontal {
     in property <[MenuItem]> plot_items: [];
     in-out property <int> selected_plot_index: -1;
@@ -13,24 +15,24 @@ export component PreviewHeader inherits Horizontal {
     callback plot_selected(int);
 
     out property <string> tooltip_text:
-        tab_plot_area.has-hover ? "2D Plot View\n\n📈 Interactive curve visualizer with zoom, pan, peak tagging, and calibration." :
-        tab_3d_area.has-hover ? "3D Structure View\n\n🌐 Interactive atomic visualizer with orbit camera, bonds, and unit cell wireframe." :
-        tab_dual_area.has-hover ? "Dual Split-Screen View\n\n◫ Side-by-side synchronized 2D plot and 3D molecular viewport." :
-        tab_data_area.has-hover ? "Data Explorer View\n\n📄 Tabular numerical coordinates and distribution intensities." : "";
+        tab_plot.has_hover ? "2D Plot View\n\n📈 Interactive curve visualizer with zoom, pan, peak tagging, and calibration." :
+        tab_3d.has_hover ? "3D Structure View\n\n🌐 Interactive atomic visualizer with orbit camera, bonds, and unit cell wireframe." :
+        tab_dual.has_hover ? "Dual Split-Screen View\n\n◫ Side-by-side synchronized 2D plot and 3D molecular viewport." :
+        tab_data.has_hover ? "Data Explorer View\n\n📄 Tabular numerical coordinates and distribution intensities." : "";
 
     out property <length> tooltip_x:
         plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.x + plot_dropdown_area.mouse-x :
-        tab_plot_area.has-hover ? tab_plot_area.absolute-position.x + tab_plot_area.mouse-x :
-        tab_3d_area.has-hover ? tab_3d_area.absolute-position.x + tab_3d_area.mouse-x :
-        tab_dual_area.has-hover ? tab_dual_area.absolute-position.x + tab_dual_area.mouse-x :
-        tab_data_area.has-hover ? tab_data_area.absolute-position.x + tab_data_area.mouse-x : 0px;
+        tab_plot.has_hover ? tab_plot.abs_x + tab_plot.mouse_x :
+        tab_3d.has_hover ? tab_3d.abs_x + tab_3d.mouse_x :
+        tab_dual.has_hover ? tab_dual.abs_x + tab_dual.mouse_x :
+        tab_data.has_hover ? tab_data.abs_x + tab_data.mouse_x : 0px;
 
     out property <length> tooltip_y:
         plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.y + plot_dropdown_area.mouse-y :
-        tab_plot_area.has-hover ? tab_plot_area.absolute-position.y + tab_plot_area.mouse-y :
-        tab_3d_area.has-hover ? tab_3d_area.absolute-position.y + tab_3d_area.mouse-y :
-        tab_dual_area.has-hover ? tab_dual_area.absolute-position.y + tab_dual_area.mouse-y :
-        tab_data_area.has-hover ? tab_data_area.absolute-position.y + tab_data_area.mouse-y : 0px;
+        tab_plot.has_hover ? tab_plot.abs_y + tab_plot.mouse_y :
+        tab_3d.has_hover ? tab_3d.abs_y + tab_3d.mouse_y :
+        tab_dual.has_hover ? tab_dual.abs_y + tab_dual.mouse_y :
+        tab_data.has_hover ? tab_data.abs_y + tab_data.mouse_y : 0px;
 
     spacing: MaterialStyleMetrics.spacing_8;
     height: MaterialStyleMetrics.size_40;
@@ -48,44 +50,36 @@ export component PreviewHeader inherits Horizontal {
         }
     }
 
-    // Tab Buttons
-    Horizontal {
-        spacing: MaterialStyleMetrics.spacing_4;
+    // Encapsulated Segmented Pill Multibutton Tab Bar
+    Rectangle {
         height: 100%;
+        background: MaterialPalette.surface_container;
+        border-radius: self.height / 2;
+        border-width: 1px;
+        border-color: MaterialPalette.outline_variant.with_alpha(40%);
 
-        tab_plot_area := TouchArea {
-            width: tab_plot.preferred-width;
-            height: 100%;
+        HorizontalLayout {
+            padding: 3px;
+            spacing: MaterialStyleMetrics.spacing_4;
+
             tab_plot := TabItem {
                 text: "2D Plot";
                 active: root.active_tab == 0;
                 clicked => { root.active_tab = 0; }
             }
-        }
 
-        tab_3d_area := TouchArea {
-            width: tab_3d.preferred-width;
-            height: 100%;
             tab_3d := TabItem {
                 text: "3D View";
                 active: root.active_tab == 1;
                 clicked => { root.active_tab = 1; }
             }
-        }
 
-        tab_dual_area := TouchArea {
-            width: tab_dual.preferred-width;
-            height: 100%;
             tab_dual := TabItem {
                 text: "Dual View";
                 active: root.active_tab == 2;
                 clicked => { root.active_tab = 2; }
             }
-        }
 
-        tab_data_area := TouchArea {
-            width: tab_data.preferred-width;
-            height: 100%;
             tab_data := TabItem {
                 text: "Data Explorer";
                 active: root.active_tab == 3;

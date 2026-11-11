@@ -5,8 +5,8 @@
 
 import { MaterialTypography } from "../styling/material_typography.slint";
 import { MaterialPalette } from "../styling/material_palette.slint";
+import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
 import { MaterialText } from "./material_text.slint";
-import { Palette } from "std-widgets.slint";
 
 export component TabItem inherits Rectangle {
     in property <string> text;
@@ -14,52 +14,63 @@ export component TabItem inherits Rectangle {
     in property <bool> active;
     callback clicked();
 
-    height: 36px;
-    background: transparent;
+    out property <bool> has_hover: touch.has-hover;
+    out property <length> mouse_x: touch.mouse-x;
+    out property <length> mouse_y: touch.mouse-y;
+    out property <length> abs_x: touch.absolute-position.x;
+    out property <length> abs_y: touch.absolute-position.y;
 
-    property <bool> is_dark: Palette.color_scheme == ColorScheme.dark;
+    accessible-role: tab;
+    accessible-checked: root.active;
+    accessible-label: root.text;
 
-    states [
-        hover when touch.has-hover: {
-            background: root.is_dark ? #ffffff.with_alpha(5%) : #000000.with_alpha(5%);
-        }
-    ]
+    height: 100%;
+    border-radius: self.height / 2;
+    background: root.active ? MaterialPalette.primary :
+                touch.has-hover ? MaterialPalette.surface_container_highest : transparent;
+
+    animate background {
+        duration: 150ms;
+        easing: ease-out;
+    }
 
     touch := TouchArea {
+        mouse-cursor: pointer;
         clicked => { root.clicked(); }
     }
 
     HorizontalLayout {
+        padding-left: MaterialStyleMetrics.padding_14;
+        padding-right: MaterialStyleMetrics.padding_14;
         alignment: center;
-        spacing: 4px;
+        spacing: MaterialStyleMetrics.spacing_6;
+
         if root.icon.width > 0 && root.icon.height > 0: Image {
             source: root.icon;
-            width: 14px;
-            height: 14px;
-            colorize: active ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+            width: MaterialStyleMetrics.size_16;
+            height: MaterialStyleMetrics.size_16;
+            colorize: root.active ? MaterialPalette.on_primary :
+                      touch.has-hover ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
             y: (parent.height - self.height) / 2;
+
+            animate colorize {
+                duration: 150ms;
+                easing: ease-out;
+            }
         }
+
         MaterialText {
             text: root.text;
-            style: MaterialTypography.label_medium;
-            font_weight: active ? MaterialTypography.semibold : MaterialTypography.medium;
-            color: active ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+            style: root.active ? MaterialTypography.label_medium_prominent : MaterialTypography.label_medium;
+            color: root.active ? MaterialPalette.on_primary :
+                   touch.has-hover ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
             horizontal-alignment: center;
             vertical-alignment: center;
-        }
-    }
 
-    // Bottom active indicator line
-    Rectangle {
-        y: parent.height - 2px;
-        height: 2px;
-        width: active ? 80% : 0%;
-        background: MaterialPalette.primary;
-        border_radius: 1px;
-
-        animate width {
-            duration: 150ms;
-            easing: ease-in-out;
+            animate color {
+                duration: 150ms;
+                easing: ease-out;
+            }
         }
     }
 }
