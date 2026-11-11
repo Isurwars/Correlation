@@ -321,6 +321,11 @@ void AppController::registerStructure3DCallbacks() {
   window_.on_preview_tab_changed([this](int tab) {
     const bool is_3d = (tab == 1 || tab == 2);
     structure_3d_controller_->set3DModeActive(is_3d);
+    if (tab == 2) {
+      structure_3d_controller_->handleToggleDistributionHUD(false);
+    } else if (tab == 1) {
+      structure_3d_controller_->handleToggleDistributionHUD(true);
+    }
     if ((tab == 0 || tab == 2) && plot_controller_ != nullptr) {
       plot_controller_->requestPlotUpdate(window_.get_selected_plot_index(), true);
     }

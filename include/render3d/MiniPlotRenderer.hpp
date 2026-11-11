@@ -63,8 +63,10 @@ struct MiniPlotConfig {
  */
 class MiniPlotRenderer {
 public:
-  static constexpr uint32_t kDefaultWidth = 260;
-  static constexpr uint32_t kDefaultHeight = 130;
+  /// @brief Default canvas width (px).
+  static constexpr uint32_t K_DEFAULT_WIDTH = 260;
+  /// @brief Default canvas height (px).
+  static constexpr uint32_t K_DEFAULT_HEIGHT = 130;
 
   /**
    * @brief Renders a 2D mini distribution plot into an RGBA pixel buffer with default
@@ -78,7 +80,7 @@ public:
   [[nodiscard]] static PlotImageBuffer render(const analysis::MetricCurveData &metric_data,
                                               std::optional<std::size_t> frame_idx, uint32_t width,
                                               uint32_t height) {
-    return render(metric_data, frame_idx, MiniPlotConfig{}, width, height);
+    return render(metric_data, frame_idx, MiniPlotConfig(), width, height);
   }
 
   /**
@@ -92,9 +94,9 @@ public:
    */
   [[nodiscard]] static PlotImageBuffer render(const analysis::MetricCurveData &metric_data,
                                               std::optional<std::size_t> frame_idx = std::nullopt,
-                                              const MiniPlotConfig &config = {},
-                                              uint32_t width = kDefaultWidth,
-                                              uint32_t height = kDefaultHeight);
+                                              const MiniPlotConfig &config = MiniPlotConfig(),
+                                              uint32_t width = K_DEFAULT_WIDTH,
+                                              uint32_t height = K_DEFAULT_HEIGHT);
 
   /**
    * @brief Finds the primary local maximum peak in a 1D curve.

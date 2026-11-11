@@ -379,4 +379,52 @@ TEST(SvgPlotterTests, DetectsMainPeakForRadialHistogram) {
   EXPECT_EQ(svg.find("r₂"), std::string::npos);
 }
 
+TEST(SvgPlotterTests, DualViewScalesBasedOnlyOnEnsembleMean) {
+  Histogram hist;
+  hist.title = "Dual View RDF";
+  hist.bins = {1.0, 2.0, 3.0, 4.0};
+  hist.partials["Ensemble Mean"] = {0.5, 1.2, 0.8, 0.2};
+  hist.partials["Frame 12"] = {5.0, 30.0, 20.0, 1.0};
+
+  PlotConfig config;
+  config.use_native_text = true;
+
+  std::string const svg = renderHistogramAsSvg(hist, config);
+  EXPECT_FALSE(svg.empty());
+  EXPECT_EQ(svg.find(">30.0<"), std::string::npos);
+  EXPECT_EQ(svg.find(">25.0<"), std::string::npos);
+}
+
+TEST(SvgPlotterTests, DualViewPreservesStableColorsInSvgOutput) {
+  Histogram hist1;
+  hist1.bins = {1.0, 2.0, 3.0};
+  hist1.partials["Ensemble Mean"] = {1.0, 2.0, 1.5};
+  hist1.partials["Frame 1"] = {100.0, 200.0, 150.0};
+
+  PlotConfig config;
+  config.palette = PlotConfig::Palette::OkabeIto;
+  const std::string mean_col = detail::color(0, 2, config.palette);
+  const std::string frame_col = detail::color(1, 2, config.palette);
+
+  const std::string svg1 = renderHistogramAsSvg(hist1, config);
+  EXPECT_NE(svg1.find(mean_col), std::string::npos);
+  EXPECT_NE(svg1.find(frame_col), std::string::npos);
+
+  // Even when Frame 2 has much lower score than Ensemble Mean, colors remain identical
+  Histogram hist2;
+  hist2.bins = {1.0, 2.0, 3.0};
+  hist2.partials["Ensemble Mean"] = {1.0, 2.0, 1.5};
+  hist2.partials["Frame 2"] = {0.001, 0.002, 0.001};
+
+  const std::string svg2 = renderHistogramAsSvg(hist2, config);
+  EXPECT_NE(svg2.find(mean_col), std::string::npos);
+  EXPECT_NE(svg2.find(frame_col), std::string::npos);
+
+  // Custom color for Frame persists via custom_colors map with key "Frame"
+  std::map<std::string, std::string> custom_cols;
+  custom_cols["Frame"] = "#123456";
+  const std::string svg3 = renderHistogramAsSvg(hist2, config, HoverInfo(), {}, {}, custom_cols);
+  EXPECT_NE(svg3.find("#123456"), std::string::npos);
+}
+
 } // namespace correlation::testing

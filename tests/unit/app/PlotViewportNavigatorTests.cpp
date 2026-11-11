@@ -44,6 +44,19 @@ TEST(PlotViewportNavigatorTests, ComputesScalesCorrectly) {
   EXPECT_GE(y_scale.max, 3.0);
 }
 
+TEST(PlotViewportNavigatorTests, DualViewIgnoresFrameFluctuationInYScale) {
+  correlation::analysis::Histogram hist;
+  hist.bins = {1.0, 2.0, 3.0, 4.0};
+  hist.partials["Ensemble Mean"] = {0.5, 1.2, 0.8, 0.2};
+  hist.partials["Frame 42"] = {5.0, 25.0, 18.0, 2.0};
+
+  const correlation::plotters::PlotConfig config;
+  const auto y_scale = PlotViewportNavigator::computeYScale(hist, config);
+
+  EXPECT_LT(y_scale.max, 5.0);
+  EXPECT_GE(y_scale.max, 1.2);
+}
+
 TEST(PlotViewportNavigatorTests, ManualLimitsOverrideScales) {
   const auto hist = createSampleHistogram();
   correlation::plotters::PlotConfig config;

@@ -228,7 +228,11 @@ struct PdfHistogramRenderer {
       }
     }
 
+    const bool has_ensemble_mean = partials.contains("Ensemble Mean");
     for (const auto &[key, vals] : partials) {
+      if (has_ensemble_mean && (key.starts_with("Frame ") || key == "Frame")) {
+        continue;
+      }
       for (real_t const val : vals) {
         max_y = std::max(max_y, val);
         min_y = std::min(min_y, val);

@@ -479,6 +479,7 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
 
   updateTableData(&task.active_hist);
   updateCurveToggleItems(&task.active_hist);
+  task.custom_curve_colors = series_manager_.getAssignedCurveColors();
 
   correlation::plotters::LabeledHistogram current_entry;
   current_entry.label = "Current";

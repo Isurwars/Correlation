@@ -40,7 +40,11 @@ PlotViewportNavigator::computeYScale(const correlation::analysis::Histogram &his
   auto raw_y_min = static_cast<real_t>(0.0);
   auto raw_y_max = static_cast<real_t>(0.0);
   const auto &partials = hist.smoothed_partials.empty() ? hist.partials : hist.smoothed_partials;
+  const bool has_ensemble_mean = partials.contains("Ensemble Mean");
   for (const auto &[key, value] : partials) {
+    if (has_ensemble_mean && (key.starts_with("Frame ") || key == "Frame")) {
+      continue;
+    }
     for (const real_t val : value) {
       raw_y_min = std::min(raw_y_min, val);
       raw_y_max = std::max(raw_y_max, val);

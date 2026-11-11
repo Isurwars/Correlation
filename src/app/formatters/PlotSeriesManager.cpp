@@ -66,6 +66,17 @@ struct RankedPartial {
 [[nodiscard]] std::vector<RankedPartial>
 rankPartials(const std::map<std::string, std::vector<real_t>> &partials,
              const std::map<std::string, real_t> &weights) {
+  if (partials.contains("Ensemble Mean")) {
+    std::vector<RankedPartial> dual_candidates;
+    dual_candidates.push_back({.key = "Ensemble Mean", .score = 1.0});
+    for (const auto &[key, values] : partials) {
+      if (key != "Ensemble Mean" && (key.starts_with("Frame ") || key == "Frame")) {
+        dual_candidates.push_back({.key = key, .score = 0.5});
+      }
+    }
+    return dual_candidates;
+  }
+
   std::vector<RankedPartial> candidates;
   for (const auto &[key, values] : partials) {
     if (key == "Total" || key == "total" || key.starts_with("Frequency_")) {
@@ -120,11 +131,15 @@ assignStableCurveColors(const std::map<std::string, std::vector<real_t>> &partia
       }
     }
   }
+  const bool has_ensemble_mean = partials.contains("Ensemble Mean");
   const std::size_t count = ranked_partials.size();
   for (std::size_t i = 0; i < count; ++i) {
     const std::string &key = ranked_partials[i].key;
     if (custom_colors.contains(key) && !custom_colors.at(key).empty()) {
       assigned[key] = custom_colors.at(key);
+    } else if (has_ensemble_mean && (key.starts_with("Frame ") || key == "Frame") &&
+               custom_colors.contains("Frame") && !custom_colors.at("Frame").empty()) {
+      assigned[key] = custom_colors.at("Frame");
     } else {
       assigned[key] = correlation::plotters::detail::color(i, count, config.palette);
     }
@@ -271,6 +286,10 @@ void PlotSeriesManager::setCustomColor(int curve_id, const std::string &color_he
   const std::string &key = current_toggle_keys_[curve_id];
   custom_curve_colors_[key] = color_hex;
   assigned_curve_colors_[key] = color_hex;
+  if (key.starts_with("Frame ") || key == "Frame") {
+    custom_curve_colors_["Frame"] = color_hex;
+    assigned_curve_colors_["Frame"] = color_hex;
+  }
 }
 
 void PlotSeriesManager::pinCurrentRun(

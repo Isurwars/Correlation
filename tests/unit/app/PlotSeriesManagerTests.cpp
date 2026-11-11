@@ -356,5 +356,62 @@ TEST(PlotSeriesManagerTests, InvertCurveVisibilityGlobalAndFilterScoped) {
   EXPECT_FALSE(manager.isCurveVisible("Si-Si")); // untouched
 }
 
+TEST(PlotSeriesManagerTests, DualViewPreservesStableColorsAcrossFrames) {
+  PlotSeriesManager manager;
+  const correlation::plotters::PlotConfig config;
+
+  correlation::analysis::Histogram frame1_hist;
+  frame1_hist.partials["Ensemble Mean"] = {1.0, 1.5, 2.0};
+  frame1_hist.partials["Frame 1"] = {100.0, 200.0, 300.0};
+
+  const auto items1 = manager.generateToggleItems(&frame1_hist, config);
+  ASSERT_NE(items1, nullptr);
+  ASSERT_EQ(items1->row_count(), 2);
+  const auto assigned1 = manager.getAssignedCurveColors();
+  EXPECT_EQ(assigned1.at("Ensemble Mean"),
+            correlation::plotters::detail::color(0, 2, config.palette));
+  EXPECT_EQ(assigned1.at("Frame 1"), correlation::plotters::detail::color(1, 2, config.palette));
+
+  // Advance to Frame 2 where frame values are lower than mean
+  correlation::analysis::Histogram frame2_hist;
+  frame2_hist.partials["Ensemble Mean"] = {1.0, 1.5, 2.0};
+  frame2_hist.partials["Frame 2"] = {0.01, 0.02, 0.01};
+
+  const auto items2 = manager.generateToggleItems(&frame2_hist, config);
+  ASSERT_NE(items2, nullptr);
+  ASSERT_EQ(items2->row_count(), 2);
+  const auto assigned2 = manager.getAssignedCurveColors();
+  EXPECT_EQ(assigned2.at("Ensemble Mean"),
+            correlation::plotters::detail::color(0, 2, config.palette));
+  EXPECT_EQ(assigned2.at("Frame 2"), correlation::plotters::detail::color(1, 2, config.palette));
+}
+
+TEST(PlotSeriesManagerTests, DualViewCustomColorPersistsAcrossFrames) {
+  PlotSeriesManager manager;
+  const correlation::plotters::PlotConfig config;
+
+  correlation::analysis::Histogram frame1_hist;
+  frame1_hist.partials["Ensemble Mean"] = {1.0, 1.5, 2.0};
+  frame1_hist.partials["Frame 1"] = {1.2, 1.4, 2.1};
+
+  [[maybe_unused]] const auto items1 = manager.generateToggleItems(&frame1_hist, config);
+  // Set custom color on Frame 1 (id 1)
+  manager.setCustomColor(1, "#FF5733");
+
+  const auto assigned1 = manager.getAssignedCurveColors();
+  EXPECT_EQ(assigned1.at("Frame 1"), "#FF5733");
+
+  // Advance to Frame 2
+  correlation::analysis::Histogram frame2_hist;
+  frame2_hist.partials["Ensemble Mean"] = {1.0, 1.5, 2.0};
+  frame2_hist.partials["Frame 2"] = {0.9, 1.3, 1.8};
+
+  [[maybe_unused]] const auto items2 = manager.generateToggleItems(&frame2_hist, config);
+  const auto assigned2 = manager.getAssignedCurveColors();
+  EXPECT_EQ(assigned2.at("Frame 2"), "#FF5733");
+  EXPECT_EQ(assigned2.at("Ensemble Mean"),
+            correlation::plotters::detail::color(0, 2, config.palette));
+}
+
 } // namespace
 } // namespace correlation::app

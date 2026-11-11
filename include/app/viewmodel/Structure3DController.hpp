@@ -171,6 +171,15 @@ public:
   void handleToggleDistributionHUD(bool visible);
 
   /**
+   * @brief Queries whether the distribution mini-graph HUD is currently visible.
+   * @return True if HUD is visible, false otherwise.
+   */
+  [[nodiscard]] bool isDistributionHUDVisible() const noexcept {
+    const std::scoped_lock lock(mutex_);
+    return dist_hud_visible_;
+  }
+
+  /**
    * @brief Sets custom plot configuration / limits for a distribution metric on the HUD.
    * @param[in] metric Target distribution metric.
    * @param[in] config Custom mini-plot configuration.

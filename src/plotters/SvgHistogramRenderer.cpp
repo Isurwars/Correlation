@@ -166,7 +166,16 @@ public:
       return true;
     }
     const auto found_it = visibility->find(key);
-    return (found_it != visibility->end()) ? found_it->second : true;
+    if (found_it != visibility->end()) {
+      return found_it->second;
+    }
+    if (key.starts_with("Frame ") || key == "Frame") {
+      const auto frame_it = visibility->find("Frame");
+      if (frame_it != visibility->end()) {
+        return frame_it->second;
+      }
+    }
+    return true;
   }
 
   [[nodiscard]] static real_t
@@ -193,14 +202,63 @@ public:
       if (itx != custom_colors->end() && !itx->second.empty()) {
         return itx->second;
       }
+      if (key.starts_with("Frame ") || key == "Frame") {
+        const auto it_frame = custom_colors->find("Frame");
+        if (it_frame != custom_colors->end() && !it_frame->second.empty()) {
+          return it_frame->second;
+        }
+      }
     }
     if (key == "Total") {
       return (config.theme == PlotConfig::Theme::Light) ? "#000000" : "#FFFFFF";
     }
-    if (key == "Ensemble Mean" || key.starts_with("Frame ") || key == "Frame") {
-      return (config.theme == PlotConfig::Theme::Light) ? "#0284c7" : "#38bdf8";
+    if (key == "Ensemble Mean") {
+      return color(0, 2, config.palette);
+    }
+    if (key.starts_with("Frame ") || key == "Frame") {
+      return color(1, 2, config.palette);
     }
     return color(partial_idx, num_partials, config.palette);
+  }
+
+  [[nodiscard]] static std::vector<std::pair<std::string, real_t>>
+  collectDualCandidates(const std::map<std::string, std::vector<real_t>> &raw_partials,
+                        const std::map<std::string, bool> *visibility) {
+    std::vector<std::pair<std::string, real_t>> candidates;
+    if (isCurveVisible("Ensemble Mean", visibility)) {
+      candidates.emplace_back("Ensemble Mean", 1.0);
+    }
+    for (const auto &[key, value] : raw_partials) {
+      if (key != "Ensemble Mean" && (key.starts_with("Frame ") || key == "Frame")) {
+        if (isCurveVisible(key, visibility)) {
+          candidates.emplace_back(key, 0.5);
+        }
+      }
+    }
+    return candidates;
+  }
+
+  [[nodiscard]] static std::vector<std::pair<std::string, real_t>>
+  collectStandardCandidates(const std::map<std::string, std::vector<real_t>> &raw_partials,
+                            const RenderContext &ctx) {
+    std::vector<std::pair<std::string, real_t>> candidates;
+    for (const auto &[key, value] : raw_partials) {
+      if (key == "Total" || key.starts_with("Frequency_")) {
+        continue;
+      }
+      if (!isCurveVisible(key, ctx.curve_visibility)) {
+        continue;
+      }
+      candidates.emplace_back(key, calculateScore(key, value, ctx.weights));
+    }
+
+    std::ranges::sort(candidates, [](const auto &lhs, const auto &rhs) {
+      if (std::abs(lhs.second - rhs.second) > layout::SCORE_EPSILON) {
+        return lhs.second > rhs.second;
+      }
+      return lhs.first < rhs.first;
+    });
+    return candidates;
   }
 
   [[nodiscard]] static std::vector<RenderSeries> filterSeries(const RenderContext &ctx) {
@@ -228,23 +286,9 @@ public:
       return buildStyledSeries(selected, ctx);
     }
 
-    std::vector<std::pair<std::string, real_t>> candidates;
-    for (const auto &[key, value] : raw_partials) {
-      if (key == "Total" || key.starts_with("Frequency_")) {
-        continue;
-      }
-      if (!isCurveVisible(key, ctx.curve_visibility)) {
-        continue;
-      }
-      candidates.emplace_back(key, calculateScore(key, value, ctx.weights));
-    }
-
-    std::ranges::sort(candidates, [](const auto &lhs, const auto &rhs) {
-      if (std::abs(lhs.second - rhs.second) > layout::SCORE_EPSILON) {
-        return lhs.second > rhs.second;
-      }
-      return lhs.first < rhs.first;
-    });
+    const auto candidates = raw_partials.contains("Ensemble Mean")
+                                ? collectDualCandidates(raw_partials, ctx.curve_visibility)
+                                : collectStandardCandidates(raw_partials, ctx);
 
     const bool has_custom_vis = ctx.curve_visibility != nullptr && !ctx.curve_visibility->empty();
     const std::size_t limit = has_custom_vis
@@ -324,7 +368,14 @@ public:
     real_t raw_y_min = 0.0;
     real_t raw_y_max = 0.0;
 
+    const bool has_ensemble_mean = std::ranges::any_of(
+        series, [](const auto &series_entry) { return series_entry.key == "Ensemble Mean"; });
+
     for (const auto &series_item : series) {
+      if (has_ensemble_mean &&
+          (series_item.key.starts_with("Frame ") || series_item.key == "Frame")) {
+        continue;
+      }
       for (const real_t val : series_item.values) {
         raw_y_max = std::max(raw_y_max, val);
         raw_y_min = std::min(raw_y_min, val);

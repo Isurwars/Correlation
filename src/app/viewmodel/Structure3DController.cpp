@@ -722,6 +722,8 @@ void Structure3DController::syncDistributionHUDToWindow() {
       active_frame = streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
     }
 
+    window_.set_structure_3d_dist_hud_visible(visible);
+
     if (!store || !visible || !store->hasData(metric)) {
       window_.set_structure_3d_dist_has_data(false);
       return;

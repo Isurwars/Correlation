@@ -12,6 +12,7 @@ export component TabItem inherits Rectangle {
     in property <string> text;
     in property <image> icon;
     in property <bool> active;
+    in property <bool> compact: false;
     callback clicked();
 
     out property <bool> has_hover: touch.has-hover;
@@ -25,7 +26,7 @@ export component TabItem inherits Rectangle {
     accessible-label: root.text;
 
     height: 100%;
-    border-radius: self.height / 2;
+    border-radius: 0px;
     background: root.active ? MaterialPalette.primary :
                 touch.has-hover ? MaterialPalette.surface_container_highest : transparent;
 
@@ -40,15 +41,15 @@ export component TabItem inherits Rectangle {
     }
 
     HorizontalLayout {
-        padding-left: MaterialStyleMetrics.padding_14;
-        padding-right: MaterialStyleMetrics.padding_14;
+        padding-left: root.compact ? MaterialStyleMetrics.padding_8 : MaterialStyleMetrics.padding_14;
+        padding-right: root.compact ? MaterialStyleMetrics.padding_8 : MaterialStyleMetrics.padding_14;
         alignment: center;
-        spacing: MaterialStyleMetrics.spacing_6;
+        spacing: root.compact ? MaterialStyleMetrics.spacing_4 : MaterialStyleMetrics.spacing_6;
 
         if root.icon.width > 0 && root.icon.height > 0: Image {
             source: root.icon;
-            width: MaterialStyleMetrics.size_16;
-            height: MaterialStyleMetrics.size_16;
+            width: root.compact ? MaterialStyleMetrics.size_14 : MaterialStyleMetrics.size_16;
+            height: root.compact ? MaterialStyleMetrics.size_14 : MaterialStyleMetrics.size_16;
             colorize: root.active ? MaterialPalette.on_primary :
                       touch.has-hover ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
             y: (parent.height - self.height) / 2;
@@ -61,7 +62,9 @@ export component TabItem inherits Rectangle {
 
         MaterialText {
             text: root.text;
-            style: root.active ? MaterialTypography.label_medium_prominent : MaterialTypography.label_medium;
+            style: root.compact ?
+                   (root.active ? MaterialTypography.label_small_prominent : MaterialTypography.label_small) :
+                   (root.active ? MaterialTypography.label_medium_prominent : MaterialTypography.label_medium);
             color: root.active ? MaterialPalette.on_primary :
                    touch.has-hover ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
             horizontal-alignment: center;

@@ -1066,18 +1066,28 @@ TEST_F(AppControllerTests, DualViewAndTabOrderLifecycleIntegration) {
   EXPECT_EQ(window->get_preview_active_tab(), 0);
   EXPECT_FALSE(structure_ctrl->is3DModeActive());
 
-  // Tab 1: 3D View (is3DModeActive == true)
+  // Tab 1: 3D View (is3DModeActive == true, dist HUD open by default)
   window->set_preview_active_tab(1);
   window->invoke_preview_tab_changed(1);
   EXPECT_EQ(window->get_preview_active_tab(), 1);
   EXPECT_TRUE(structure_ctrl->is3DModeActive());
+  EXPECT_TRUE(structure_ctrl->isDistributionHUDVisible());
+  EXPECT_TRUE(window->get_structure_3d_dist_hud_visible());
 
-  // Tab 2: Dual View (is3DModeActive == true)
+  // Tab 2: Dual View (is3DModeActive == true, dist HUD closed)
   window->set_preview_active_tab(2);
   window->invoke_preview_tab_changed(2);
   EXPECT_EQ(window->get_preview_active_tab(), 2);
   EXPECT_TRUE(structure_ctrl->is3DModeActive());
+  EXPECT_FALSE(structure_ctrl->isDistributionHUDVisible());
+  EXPECT_FALSE(window->get_structure_3d_dist_hud_visible());
   EXPECT_FLOAT_EQ(window->get_preview_dual_split_ratio(), 0.5F);
+
+  // Return to Tab 1: 3D View opens dist HUD by default
+  window->set_preview_active_tab(1);
+  window->invoke_preview_tab_changed(1);
+  EXPECT_TRUE(structure_ctrl->isDistributionHUDVisible());
+  EXPECT_TRUE(window->get_structure_3d_dist_hud_visible());
 
   // Modify dual split ratio (e.g. user drags SplitterHandle)
   window->set_preview_dual_split_ratio(0.65F);

@@ -577,18 +577,22 @@ export component AppWindow inherits Window {
             }
             if (event.text == "1" || ((event.modifiers.alt || event.modifiers.control) && event.text == "1")) {
                 root.preview_active_tab = 0;
+                root.preview_tab_changed(0);
                 return accept;
             }
             if (event.text == "2" || ((event.modifiers.alt || event.modifiers.control) && event.text == "2")) {
                 root.preview_active_tab = 1;
+                root.preview_tab_changed(1);
                 return accept;
             }
             if (event.text == "3" || ((event.modifiers.alt || event.modifiers.control) && event.text == "3")) {
                 root.preview_active_tab = 2;
+                root.preview_tab_changed(2);
                 return accept;
             }
             if (event.text == "4" || ((event.modifiers.alt || event.modifiers.control) && event.text == "4")) {
                 root.preview_active_tab = 3;
+                root.preview_tab_changed(3);
                 return accept;
             }
             return reject;

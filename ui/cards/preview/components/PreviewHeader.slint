@@ -50,22 +50,27 @@ export component PreviewHeader inherits Horizontal {
         }
     }
 
-    // Encapsulated Segmented Pill Multibutton Tab Bar
+    // Connected Segmented Button Group
     Rectangle {
         height: 100%;
         background: MaterialPalette.surface_container;
-        border-radius: self.height / 2;
+        border-radius: MaterialStyleMetrics.border_radius_8;
         border-width: 1px;
-        border-color: MaterialPalette.outline_variant.with_alpha(40%);
+        border-color: MaterialPalette.outline_variant;
+        clip: true;
 
         HorizontalLayout {
-            padding: 3px;
-            spacing: MaterialStyleMetrics.spacing_4;
+            spacing: 0px;
 
             tab_plot := TabItem {
                 text: "2D Plot";
                 active: root.active_tab == 0;
                 clicked => { root.active_tab = 0; }
+            }
+
+            Rectangle {
+                width: 1px;
+                background: MaterialPalette.outline_variant;
             }
 
             tab_3d := TabItem {
@@ -74,10 +79,20 @@ export component PreviewHeader inherits Horizontal {
                 clicked => { root.active_tab = 1; }
             }
 
+            Rectangle {
+                width: 1px;
+                background: MaterialPalette.outline_variant;
+            }
+
             tab_dual := TabItem {
                 text: "Dual View";
                 active: root.active_tab == 2;
                 clicked => { root.active_tab = 2; }
+            }
+
+            Rectangle {
+                width: 1px;
+                background: MaterialPalette.outline_variant;
             }
 
             tab_data := TabItem {

@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <utility>
 
 namespace correlation::render3d {
 
@@ -26,11 +27,14 @@ struct ViewportBox {
   float bottom{114.0F};
 };
 
-void blendPixel(PlotImageBuffer &buf, int x, int y, RgbaPixel color, float alpha_mult) noexcept {
-  if (x < 0 || x >= static_cast<int>(buf.width) || y < 0 || y >= static_cast<int>(buf.height)) {
+void blendPixel(PlotImageBuffer &buf, int pixel_x, int pixel_y, RgbaPixel color,
+                float alpha_mult) noexcept {
+  if (pixel_x < 0 || std::cmp_greater_equal(pixel_x, buf.width) || pixel_y < 0 ||
+      std::cmp_greater_equal(pixel_y, buf.height)) {
     return;
   }
-  const auto idx = static_cast<std::size_t>(y * static_cast<int>(buf.width) + x);
+  const auto idx = static_cast<std::size_t>(pixel_y) * static_cast<std::size_t>(buf.width) +
+                   static_cast<std::size_t>(pixel_x);
   auto &dst = buf.pixels[idx];
 
   const float src_a = (static_cast<float>(color.a) / 255.0F) * std::clamp(alpha_mult, 0.0F, 1.0F);
@@ -47,40 +51,41 @@ void blendPixel(PlotImageBuffer &buf, int x, int y, RgbaPixel color, float alpha
 }
 
 void clearCanvas(PlotImageBuffer &buf, RgbaPixel bg_color) {
-  std::fill(buf.pixels.begin(), buf.pixels.end(), bg_color);
+  std::ranges::fill(buf.pixels, bg_color);
 }
 
-void drawLineAA(PlotImageBuffer &buf, float x0, float y0, float x1, float y1, RgbaPixel color,
-                float thickness) {
-  const float dx = x1 - x0;
-  const float dy = y1 - y0;
-  const float len = std::sqrt(dx * dx + dy * dy);
+void drawLineAA(PlotImageBuffer &buf, float start_x, float start_y, float end_x, float end_y,
+                RgbaPixel color, float thickness) {
+  const float delta_x = end_x - start_x;
+  const float delta_y = end_y - start_y;
+  const float len = std::sqrt(delta_x * delta_x + delta_y * delta_y);
   if (len < 0.001F) {
-    blendPixel(buf, static_cast<int>(std::round(x0)), static_cast<int>(std::round(y0)), color,
-               1.0F);
+    blendPixel(buf, static_cast<int>(std::round(start_x)), static_cast<int>(std::round(start_y)),
+               color, 1.0F);
     return;
   }
 
   const int steps = static_cast<int>(std::ceil(len * 2.0F));
-  const float step_x = dx / static_cast<float>(steps);
-  const float step_y = dy / static_cast<float>(steps);
+  const float step_x = delta_x / static_cast<float>(steps);
+  const float step_y = delta_y / static_cast<float>(steps);
 
-  for (int s = 0; s <= steps; ++s) {
-    const float cx = x0 + static_cast<float>(s) * step_x;
-    const float cy = y0 + static_cast<float>(s) * step_y;
+  for (int step_idx = 0; step_idx <= steps; ++step_idx) {
+    const float center_x = start_x + static_cast<float>(step_idx) * step_x;
+    const float center_y = start_y + static_cast<float>(step_idx) * step_y;
 
-    const int min_x = static_cast<int>(std::floor(cx - thickness));
-    const int max_x = static_cast<int>(std::ceil(cx + thickness));
-    const int min_y = static_cast<int>(std::floor(cy - thickness));
-    const int max_y = static_cast<int>(std::ceil(cy + thickness));
+    const int min_x = static_cast<int>(std::floor(center_x - thickness));
+    const int max_x = static_cast<int>(std::ceil(center_x + thickness));
+    const int min_y = static_cast<int>(std::floor(center_y - thickness));
+    const int max_y = static_cast<int>(std::ceil(center_y + thickness));
 
-    for (int py = min_y; py <= max_y; ++py) {
-      for (int px = min_x; px <= max_x; ++px) {
-        const float dist = std::sqrt((static_cast<float>(px) - cx) * (static_cast<float>(px) - cx) +
-                                     (static_cast<float>(py) - cy) * (static_cast<float>(py) - cy));
+    for (int pixel_y = min_y; pixel_y <= max_y; ++pixel_y) {
+      for (int pixel_x = min_x; pixel_x <= max_x; ++pixel_x) {
+        const float dist = std::sqrt(
+            (static_cast<float>(pixel_x) - center_x) * (static_cast<float>(pixel_x) - center_x) +
+            (static_cast<float>(pixel_y) - center_y) * (static_cast<float>(pixel_y) - center_y));
         if (dist <= thickness) {
           const float alpha = 1.0F - (dist / thickness);
-          blendPixel(buf, px, py, color, alpha);
+          blendPixel(buf, pixel_x, pixel_y, color, alpha);
         }
       }
     }
@@ -114,15 +119,18 @@ Bounds2D computeBounds(std::span<const real_t> bins, std::span<const real_t> mea
   }
 
   real_t max_val = 0.0;
-  for (const auto &v : mean) {
-    max_val = std::max(max_val, v);
+  for (const auto &val : mean) {
+    max_val = std::max(max_val, val);
   }
-  for (const auto &v : frame) {
-    max_val = std::max(max_val, v);
+  if (mean.empty()) {
+    for (const auto &val : frame) {
+      max_val = std::max(max_val, val);
+    }
   }
 
-  bounds.y_min = 0.0;
-  bounds.y_max = (max_val > 0.0) ? (max_val * 1.15) : 1.0;
+  bounds.y_min = static_cast<real_t>(0.0);
+  bounds.y_max = (max_val > static_cast<real_t>(0.0)) ? (max_val * static_cast<real_t>(1.15))
+                                                      : static_cast<real_t>(1.0);
   if (config.manual_y_min.has_value()) {
     bounds.y_min = *config.manual_y_min;
   }
@@ -132,42 +140,44 @@ Bounds2D computeBounds(std::span<const real_t> bins, std::span<const real_t> mea
   return bounds;
 }
 
-float mapX(real_t val, const Bounds2D &b, const ViewportBox &box) {
-  const auto denom = (b.x_max > b.x_min) ? (b.x_max - b.x_min) : static_cast<real_t>(1.0);
-  const auto norm = static_cast<float>((val - b.x_min) / denom);
+float mapX(real_t val, const Bounds2D &bounds, const ViewportBox &box) {
+  const auto denom =
+      (bounds.x_max > bounds.x_min) ? (bounds.x_max - bounds.x_min) : static_cast<real_t>(1.0);
+  const auto norm = static_cast<float>((val - bounds.x_min) / denom);
   return box.left + norm * (box.right - box.left);
 }
 
-float mapY(real_t val, const Bounds2D &b, const ViewportBox &box, bool log_scale) {
+float mapY(real_t val, const Bounds2D &bounds, const ViewportBox &box, bool log_scale) {
   if (log_scale) {
-    constexpr real_t kFloor = 1e-4;
-    const real_t log_val = std::log10(std::max(val, kFloor));
-    const real_t log_min = std::log10(std::max(b.y_min, kFloor));
-    const real_t log_max = std::log10(std::max(b.y_max, kFloor));
+    constexpr real_t K_FLOOR = 1e-4;
+    const real_t log_val = std::log10(std::max(val, K_FLOOR));
+    const real_t log_min = std::log10(std::max(bounds.y_min, K_FLOOR));
+    const real_t log_max = std::log10(std::max(bounds.y_max, K_FLOOR));
     const real_t denom = (log_max > log_min) ? (log_max - log_min) : static_cast<real_t>(1.0);
     const auto norm = static_cast<float>((log_val - log_min) / denom);
     return box.bottom - norm * (box.bottom - box.top);
   }
 
-  const auto denom = (b.y_max > b.y_min) ? (b.y_max - b.y_min) : static_cast<real_t>(1.0);
-  const auto norm = static_cast<float>((val - b.y_min) / denom);
+  const auto denom =
+      (bounds.y_max > bounds.y_min) ? (bounds.y_max - bounds.y_min) : static_cast<real_t>(1.0);
+  const auto norm = static_cast<float>((val - bounds.y_min) / denom);
   return box.bottom - norm * (box.bottom - box.top);
 }
 
 void renderPolyline(PlotImageBuffer &buf, std::span<const real_t> bins,
                     std::span<const real_t> values, const Bounds2D &bounds, const ViewportBox &box,
                     bool log_scale, RgbaPixel color, float thickness) {
-  const std::size_t n = std::min(bins.size(), values.size());
-  if (n < 2) {
+  const std::size_t point_count = std::min(bins.size(), values.size());
+  if (point_count < 2) {
     return;
   }
 
-  for (std::size_t i = 0; i + 1 < n; ++i) {
-    const float x0 = mapX(bins[i], bounds, box);
-    const float y0 = mapY(values[i], bounds, box, log_scale);
-    const float x1 = mapX(bins[i + 1], bounds, box);
-    const float y1 = mapY(values[i + 1], bounds, box, log_scale);
-    drawLineAA(buf, x0, y0, x1, y1, color, thickness);
+  for (std::size_t i = 0; i + 1 < point_count; ++i) {
+    const float pt0_x = mapX(bins[i], bounds, box);
+    const float pt0_y = mapY(values[i], bounds, box, log_scale);
+    const float pt1_x = mapX(bins[i + 1], bounds, box);
+    const float pt1_y = mapY(values[i + 1], bounds, box, log_scale);
+    drawLineAA(buf, pt0_x, pt0_y, pt1_x, pt1_y, color, thickness);
   }
 }
 
@@ -176,20 +186,23 @@ void drawPeakMarker(PlotImageBuffer &buf, const PeakInfo &peak, const Bounds2D &
   if (!peak.valid) {
     return;
   }
-  const float px = mapX(peak.x, bounds, box);
-  const float py = mapY(peak.y, bounds, box, log_scale);
+  const float peak_x = mapX(peak.x, bounds, box);
+  const float peak_y = mapY(peak.y, bounds, box, log_scale);
 
   const RgbaPixel marker_color{.r = 255, .g = 215, .b = 0, .a = 255};
   const RgbaPixel halo_color{.r = 255, .g = 215, .b = 0, .a = 90};
 
   // Outer halo & center dot
-  for (int dy = -4; dy <= 4; ++dy) {
-    for (int dx = -4; dx <= 4; ++dx) {
-      const float d = std::sqrt(static_cast<float>(dx * dx + dy * dy));
-      if (d <= 2.0F) {
-        blendPixel(buf, static_cast<int>(px) + dx, static_cast<int>(py) + dy, marker_color, 1.0F);
-      } else if (d <= 4.0F) {
-        blendPixel(buf, static_cast<int>(px) + dx, static_cast<int>(py) + dy, halo_color, 0.6F);
+  for (int offset_y = -4; offset_y <= 4; ++offset_y) {
+    for (int offset_x = -4; offset_x <= 4; ++offset_x) {
+      const float distance =
+          std::sqrt(static_cast<float>(offset_x * offset_x + offset_y * offset_y));
+      if (distance <= 2.0F) {
+        blendPixel(buf, static_cast<int>(peak_x) + offset_x, static_cast<int>(peak_y) + offset_y,
+                   marker_color, 1.0F);
+      } else if (distance <= 4.0F) {
+        blendPixel(buf, static_cast<int>(peak_x) + offset_x, static_cast<int>(peak_y) + offset_y,
+                   halo_color, 0.6F);
       }
     }
   }
@@ -199,14 +212,14 @@ void drawPeakMarker(PlotImageBuffer &buf, const PeakInfo &peak, const Bounds2D &
 
 PeakInfo MiniPlotRenderer::findPeak(std::span<const real_t> bins,
                                     std::span<const real_t> values) noexcept {
-  const std::size_t n = std::min(bins.size(), values.size());
-  if (n < 3) {
+  const std::size_t point_count = std::min(bins.size(), values.size());
+  if (point_count < 3) {
     return {.x = 0.0, .y = 0.0, .valid = false};
   }
 
   real_t max_val = values[0];
   std::size_t peak_idx = 0;
-  for (std::size_t i = 1; i < n; ++i) {
+  for (std::size_t i = 1; i < point_count; ++i) {
     if (values[i] > max_val) {
       max_val = values[i];
       peak_idx = i;
@@ -224,18 +237,22 @@ PlotImageBuffer MiniPlotRenderer::render(const analysis::MetricCurveData &metric
                                          std::optional<std::size_t> frame_idx,
                                          const MiniPlotConfig &config, uint32_t width,
                                          uint32_t height) {
-  PlotImageBuffer buffer{.width = width,
-                         .height = height,
-                         .pixels =
-                             std::vector<RgbaPixel>(static_cast<std::size_t>(width * height))};
+  PlotImageBuffer buffer{
+      .width = width,
+      .height = height,
+      .pixels = std::vector<RgbaPixel>(static_cast<std::size_t>(width) *
+                                       static_cast<std::size_t>(height)),
+  };
 
   const RgbaPixel bg_color{.r = 18, .g = 21, .b = 26, .a = 230};
   clearCanvas(buffer, bg_color);
 
-  const ViewportBox box{.left = 14.0F,
-                        .right = static_cast<float>(width) - 14.0F,
-                        .top = 16.0F,
-                        .bottom = static_cast<float>(height) - 16.0F};
+  const ViewportBox box{
+      .left = 14.0F,
+      .right = static_cast<float>(width) - 14.0F,
+      .top = 16.0F,
+      .bottom = static_cast<float>(height) - 16.0F,
+  };
 
   drawGridLines(buffer, box);
 

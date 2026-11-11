@@ -17,6 +17,7 @@ import {
     DropDownMenu,
     MenuItem,
     Icons,
+    TabItem,
 } from "../../../material/material.slint";
 import { CurveToggleItem, PlotAxisSettings, TaggedPeakRecord, ExportConfig } from "../../../Types.slint";
 
@@ -166,78 +167,51 @@ export component CurveSidebar inherits Horizontal {
                 alignment: center;
                 height: 32px;
 
-                // Segmented Tabs
+                // Connected Segmented Button Group
                 Rectangle {
                     horizontal-stretch: 1;
                     height: 30px;
-                    background: MaterialPalette.surface_container_high;
-                    border-radius: MaterialStyleMetrics.border_radius_4;
+                    background: MaterialPalette.surface_container;
+                    border-radius: MaterialStyleMetrics.border_radius_8;
+                    border-width: 1px;
+                    border-color: MaterialPalette.outline_variant;
+                    clip: true;
 
                     HorizontalLayout {
-                        padding: 2px;
-                        spacing: 2px;
+                        spacing: 0px;
 
-                        curves_tab_btn := TouchArea {
+                        TabItem {
                             horizontal-stretch: 1;
-                            mouse-cursor: pointer;
+                            compact: true;
+                            text: "Curves (" + root.curve_toggle_items.length + ")";
+                            active: root.active_tab == 0;
                             clicked => { root.active_tab = 0; }
-
-                            Rectangle {
-                                background: (root.active_tab == 0) ? MaterialPalette.primary_container :
-                                            curves_tab_btn.has-hover ? MaterialPalette.surface_container_highest : transparent;
-                                border-radius: MaterialStyleMetrics.border_radius_2;
-
-                                MaterialText {
-                                    text: "Curves (" + root.curve_toggle_items.length + ")";
-                                    style: MaterialTypography.label_small;
-                                    font-weight: (root.active_tab == 0) ? 600 : 400;
-                                    color: (root.active_tab == 0) ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
-                                    horizontal-alignment: center;
-                                    vertical-alignment: center;
-                                }
-                            }
                         }
 
-                        axes_tab_btn := TouchArea {
+                        Rectangle {
+                            width: 1px;
+                            background: MaterialPalette.outline_variant;
+                        }
+
+                        TabItem {
                             horizontal-stretch: 1;
-                            mouse-cursor: pointer;
+                            compact: true;
+                            text: "Style & Axes";
+                            active: root.active_tab == 1;
                             clicked => { root.active_tab = 1; }
-
-                            Rectangle {
-                                background: (root.active_tab == 1) ? MaterialPalette.primary_container :
-                                            axes_tab_btn.has-hover ? MaterialPalette.surface_container_highest : transparent;
-                                border-radius: MaterialStyleMetrics.border_radius_2;
-
-                                MaterialText {
-                                    text: "Style & Axes";
-                                    style: MaterialTypography.label_small;
-                                    font-weight: (root.active_tab == 1) ? 600 : 400;
-                                    color: (root.active_tab == 1) ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
-                                    horizontal-alignment: center;
-                                    vertical-alignment: center;
-                                }
-                            }
                         }
 
-                        peaks_tab_btn := TouchArea {
+                        Rectangle {
+                            width: 1px;
+                            background: MaterialPalette.outline_variant;
+                        }
+
+                        TabItem {
                             horizontal-stretch: 1;
-                            mouse-cursor: pointer;
+                            compact: true;
+                            text: "Peaks (" + root.tagged_peaks.length + ")";
+                            active: root.active_tab == 2;
                             clicked => { root.active_tab = 2; }
-
-                            Rectangle {
-                                background: (root.active_tab == 2) ? MaterialPalette.primary_container :
-                                            peaks_tab_btn.has-hover ? MaterialPalette.surface_container_highest : transparent;
-                                border-radius: MaterialStyleMetrics.border_radius_2;
-
-                                MaterialText {
-                                    text: "Peaks (" + root.tagged_peaks.length + ")";
-                                    style: MaterialTypography.label_small;
-                                    font-weight: (root.active_tab == 2) ? 600 : 400;
-                                    color: (root.active_tab == 2) ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
-                                    horizontal-alignment: center;
-                                    vertical-alignment: center;
-                                }
-                            }
                         }
                     }
                 }

@@ -14,6 +14,7 @@ import {
     SplitterHandle,
     CheckBoxRow,
     FilledButton,
+    TabItem,
 } from "../../../material/material.slint";
 import { PhaseSlider } from "./PhaseSlider.slint";
 import { PhaseMiniHistogram } from "./PhaseMiniHistogram.slint";
@@ -132,57 +133,38 @@ export component Structure3DSidebar inherits Horizontal {
                 alignment: center;
                 height: 32px;
 
-                // Segmented Tabs
+                // Connected Segmented Button Group
                 Rectangle {
                     horizontal-stretch: 1;
                     height: 30px;
-                    background: MaterialPalette.surface_container_high;
-                    border-radius: MaterialStyleMetrics.border_radius_4;
+                    background: MaterialPalette.surface_container;
+                    border-radius: MaterialStyleMetrics.border_radius_8;
+                    border-width: 1px;
+                    border-color: MaterialPalette.outline_variant;
+                    clip: true;
 
                     HorizontalLayout {
-                        padding: 2px;
-                        spacing: 2px;
+                        spacing: 0px;
 
-                        phase_tab_btn := TouchArea {
+                        TabItem {
                             horizontal-stretch: 1;
-                            mouse-cursor: pointer;
+                            compact: true;
+                            text: "Phase & Halos";
+                            active: root.active_tab == 0;
                             clicked => { root.active_tab = 0; }
-
-                            Rectangle {
-                                background: (root.active_tab == 0) ? MaterialPalette.primary_container :
-                                            phase_tab_btn.has-hover ? MaterialPalette.surface_container_highest : transparent;
-                                border-radius: MaterialStyleMetrics.border_radius_2;
-
-                                MaterialText {
-                                    text: "Phase & Halos";
-                                    style: MaterialTypography.label_small;
-                                    font-weight: (root.active_tab == 0) ? 600 : 400;
-                                    color: (root.active_tab == 0) ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
-                                    horizontal-alignment: center;
-                                    vertical-alignment: center;
-                                }
-                            }
                         }
 
-                        scene_tab_btn := TouchArea {
+                        Rectangle {
+                            width: 1px;
+                            background: MaterialPalette.outline_variant;
+                        }
+
+                        TabItem {
                             horizontal-stretch: 1;
-                            mouse-cursor: pointer;
+                            compact: true;
+                            text: "Display & Scene";
+                            active: root.active_tab == 1;
                             clicked => { root.active_tab = 1; }
-
-                            Rectangle {
-                                background: (root.active_tab == 1) ? MaterialPalette.primary_container :
-                                            scene_tab_btn.has-hover ? MaterialPalette.surface_container_highest : transparent;
-                                border-radius: MaterialStyleMetrics.border_radius_2;
-
-                                MaterialText {
-                                    text: "Display & Scene";
-                                    style: MaterialTypography.label_small;
-                                    font-weight: (root.active_tab == 1) ? 600 : 400;
-                                    color: (root.active_tab == 1) ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
-                                    horizontal-alignment: center;
-                                    vertical-alignment: center;
-                                }
-                            }
                         }
                     }
                 }
