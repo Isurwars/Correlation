@@ -10,6 +10,8 @@
 #include <cmath>
 #include <gtest/gtest.h>
 
+using correlation::real_t;
+
 namespace correlation::calculators {
 
 namespace {
@@ -63,7 +65,7 @@ TEST(HBondCalculatorTests, NullNeighborsReturnsEmptyHistogram) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("O", {5.0, 5.0, 5.0});
 
-  auto hist = HBondCalculator::calculate(cell, nullptr);
+  const auto hist = HBondCalculator::calculate(cell, nullptr);
 
   EXPECT_TRUE(hist.bins.empty());
   EXPECT_TRUE(hist.partials.empty());
@@ -85,7 +87,7 @@ TEST(HBondCalculatorTests, NoElectronegativeAtomsNoHBonds) {
   const real_t cutoff = 5.0;
   const auto bcsq = makeCutoffMatrix(2, cutoff);
   const analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
-  auto hist = HBondCalculator::calculate(cell, &analyzer);
+  const auto hist = HBondCalculator::calculate(cell, &analyzer);
 
   // No electronegative atoms means no donor/acceptor analysis.
   // The histogram may be empty or may have bin {0} with zero frequency.
@@ -107,7 +109,7 @@ TEST(HBondCalculatorTests, OnlyHydrogensNoHBonds) {
   const real_t cutoff = 5.0;
   const auto bcsq = makeCutoffMatrix(1, cutoff);
   const analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
-  auto hist = HBondCalculator::calculate(cell, &analyzer);
+  const auto hist = HBondCalculator::calculate(cell, &analyzer);
 
   // No electronegative atoms → no H-bond counting, but histogram may
   // still contain bin {0}. Verify no non-zero H-bond counts.
@@ -136,7 +138,7 @@ TEST(HBondCalculatorTests, HistogramDimensionsAreConsistent) {
   // 2 element types: O (0), H (1)
   const auto bcsq = makeCutoffMatrix(2, cutoff);
   const analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
-  auto hist = HBondCalculator::calculate(cell, &analyzer);
+  const auto hist = HBondCalculator::calculate(cell, &analyzer);
 
   for (const auto &[key, values] : hist.partials) {
     EXPECT_EQ(values.size(), hist.bins.size())
@@ -165,7 +167,7 @@ TEST(HBondCalculatorTests, TotalDistributionSumsToOne) {
   // 2 elements: O(0), H(1)
   const auto bcsq = makeCutoffMatrix(2, cutoff);
   const analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
-  auto hist = HBondCalculator::calculate(cell, &analyzer);
+  const auto hist = HBondCalculator::calculate(cell, &analyzer);
 
   ASSERT_TRUE(hist.partials.count("Total"));
   real_t sum = 0.0;
@@ -185,7 +187,7 @@ TEST(HBondCalculatorTests, HistogramMetadataIsPopulated) {
   const real_t cutoff = 5.0;
   const auto bcsq = makeCutoffMatrix(2, cutoff);
   const analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
-  auto hist = HBondCalculator::calculate(cell, &analyzer);
+  const auto hist = HBondCalculator::calculate(cell, &analyzer);
 
   EXPECT_EQ(hist.title, "Hydrogen Bond Distribution");
   EXPECT_EQ(hist.x_label, "N_HB");
@@ -213,7 +215,7 @@ TEST(HBondCalculatorTests, LinearHBond_IsDetected) {
   const real_t cutoff = 5.0;
   const auto bcsq = makeCutoffMatrix(2, cutoff);
   const analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
-  auto hist = HBondCalculator::calculate(cell, &analyzer);
+  const auto hist = HBondCalculator::calculate(cell, &analyzer);
 
   // There should be at least one H-bond detected
   ASSERT_FALSE(hist.bins.empty()) << "Expected at least one H-bond bin.";
@@ -248,7 +250,7 @@ TEST(HBondCalculatorTests, OppositeDirection_NotDetected) {
   // 2 elements: O(0), H(1)
   const auto bcsq = makeCutoffMatrix(2, cutoff);
   const analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
-  auto hist = HBondCalculator::calculate(cell, &analyzer);
+  const auto hist = HBondCalculator::calculate(cell, &analyzer);
 
   // H points opposite to acceptor → angle ≈ 180° >> 30°, no H-bond.
   // All electronegative atoms should have 0 H-bonds.
@@ -273,7 +275,7 @@ TEST(HBondCalculatorTests, TooFarApart_NotDetected) {
   const real_t cutoff = 6.0;
   const auto bcsq = makeCutoffMatrix(2, cutoff);
   const analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
-  auto hist = HBondCalculator::calculate(cell, &analyzer);
+  const auto hist = HBondCalculator::calculate(cell, &analyzer);
 
   // All electronegative atoms should have 0 H-bonds
   if (!hist.bins.empty()) {
@@ -300,7 +302,7 @@ TEST(HBondCalculatorTests, NitrogenDonor_IsDetected) {
   // 3 elements: N(0), H(1), O(2)
   const auto bcsq = makeCutoffMatrix(3, cutoff);
   const analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
-  auto hist = HBondCalculator::calculate(cell, &analyzer);
+  const auto hist = HBondCalculator::calculate(cell, &analyzer);
 
   ASSERT_FALSE(hist.bins.empty());
 
@@ -328,7 +330,7 @@ TEST(HBondCalculatorTests, FluorineDonorAndAcceptor) {
   const real_t cutoff = 5.0;
   const auto bcsq = makeCutoffMatrix(2, cutoff);
   const analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
-  auto hist = HBondCalculator::calculate(cell, &analyzer);
+  const auto hist = HBondCalculator::calculate(cell, &analyzer);
 
   ASSERT_FALSE(hist.bins.empty());
 
@@ -395,7 +397,7 @@ TEST(HBondCalculatorTests, AcceptorOnly_NoHydrogens) {
   const real_t cutoff = 5.0;
   const auto bcsq = makeCutoffMatrix(2, cutoff);
   const analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
-  auto hist = HBondCalculator::calculate(cell, &analyzer);
+  const auto hist = HBondCalculator::calculate(cell, &analyzer);
 
   // Should produce a valid histogram without crashes
   for (const auto &[key, values] : hist.partials) {
@@ -408,9 +410,14 @@ TEST(HBondCalculatorTests, AcceptorOnly_NoHydrogens) {
 TEST(HBondCalculatorTests, BulkMetalNoHBonds) {
   // 4-atom FCC copper — no H, O, N, F, S atoms at all
   real_t const lattice_parameter = 3.6;
-  correlation::core::Cell cell({lattice_parameter, lattice_parameter, lattice_parameter,
-                                static_cast<real_t>(90.0), static_cast<real_t>(90.0),
-                                static_cast<real_t>(90.0)});
+  correlation::core::Cell cell({
+      lattice_parameter,
+      lattice_parameter,
+      lattice_parameter,
+      static_cast<real_t>(90.0),
+      static_cast<real_t>(90.0),
+      static_cast<real_t>(90.0),
+  });
   cell.addAtom("Cu", {0.0, 0.0, 0.0});
   cell.addAtom("Cu", {lattice_parameter / 2, lattice_parameter / 2, 0.0});
   cell.addAtom("Cu", {lattice_parameter / 2, 0.0, lattice_parameter / 2});
@@ -419,7 +426,7 @@ TEST(HBondCalculatorTests, BulkMetalNoHBonds) {
   real_t const cutoff = 3.0;
   const auto bond_cutoffs_sq = makeCutoffMatrix(1, cutoff);
   analysis::StructureAnalyzer const analyzer(cell, cutoff, bond_cutoffs_sq, false);
-  auto hist = HBondCalculator::calculate(cell, &analyzer);
+  const auto hist = HBondCalculator::calculate(cell, &analyzer);
 
   // Pure metal: no electronegative atoms, so no H-bond counting.
   // The histogram may still exist but should have no non-zero H-bond counts.

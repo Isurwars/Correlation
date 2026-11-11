@@ -13,6 +13,7 @@
 namespace correlation::testing {
 
 using namespace correlation::math;
+using correlation::real_t;
 namespace {
 class SmoothingTests : public ::testing::Test {};
 } // namespace
@@ -99,11 +100,11 @@ TEST_F(SmoothingTests, GenerateKernelNormalizesAndCalculatesCorrectly) {
 TEST_F(SmoothingTests, KernelSmoothingBoundaryInputsAndErrors) {
   // Empty data
   std::vector<real_t> const empty_y;
-  auto empty_res = KernelSmoothing(empty_y, {
-                                                .bin_width = 0.1,
-                                                .sigma = 0.5,
-                                                .type = KernelType::Gaussian,
-                                            });
+  const auto empty_res = KernelSmoothing(empty_y, {
+                                                      .bin_width = 0.1,
+                                                      .sigma = 0.5,
+                                                      .type = KernelType::Gaussian,
+                                                  });
   EXPECT_TRUE(empty_res.empty());
 
   // Invalid bin_width
@@ -146,11 +147,11 @@ TEST_F(SmoothingTests, KernelSmoothingComputesConvolutions) {
   real_t const bin_width = 0.2;
   real_t const sigma = 0.4;
 
-  auto smoothed = KernelSmoothing(y_values, {
-                                                .bin_width = bin_width,
-                                                .sigma = sigma,
-                                                .type = KernelType::Gaussian,
-                                            });
+  const auto smoothed = KernelSmoothing(y_values, {
+                                                      .bin_width = bin_width,
+                                                      .sigma = sigma,
+                                                      .type = KernelType::Gaussian,
+                                                  });
   ASSERT_EQ(smoothed.size(), y_values.size());
 
   // Smoothing step function should blur the boundary.
@@ -165,16 +166,16 @@ TEST_F(SmoothingTests, CompatibilityOverloadDerivesBinWidth) {
   std::vector<real_t> const y_values = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0};
   real_t const sigma = 0.5;
 
-  auto smoothed_r = KernelSmoothing(r_values, y_values,
-                                    {
-                                        .sigma = sigma,
-                                        .type = KernelType::Gaussian,
-                                    });
-  auto smoothed_dx = KernelSmoothing(y_values, {
-                                                   .bin_width = 0.2,
-                                                   .sigma = sigma,
-                                                   .type = KernelType::Gaussian,
-                                               });
+  const auto smoothed_r = KernelSmoothing(r_values, y_values,
+                                          {
+                                              .sigma = sigma,
+                                              .type = KernelType::Gaussian,
+                                          });
+  const auto smoothed_dx = KernelSmoothing(y_values, {
+                                                         .bin_width = 0.2,
+                                                         .sigma = sigma,
+                                                         .type = KernelType::Gaussian,
+                                                     });
 
   ASSERT_EQ(smoothed_r.size(), smoothed_dx.size());
   for (size_t i = 0; i < smoothed_r.size(); ++i) {

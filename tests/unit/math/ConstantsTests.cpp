@@ -10,6 +10,8 @@
 
 #include <gtest/gtest.h>
 
+using correlation::real_t;
+
 namespace correlation::math::testing {
 
 TEST(ConstantsTests, PiValuesAndDerivedMultiples) {

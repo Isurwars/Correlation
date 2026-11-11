@@ -10,6 +10,8 @@
 #include <string>
 #include <vector>
 
+using correlation::real_t;
+
 namespace {
 
 std::string getTestDataDir() {
@@ -25,6 +27,41 @@ std::string getTestDataDir() {
     }
   }
   return "../../tests/data/";
+}
+
+void verifyHistogramPresence(const correlation::analysis::DistributionFunctions &dist_funcs) {
+  EXPECT_FALSE(dist_funcs.getHistogram("TestHist").title.empty());
+}
+
+void verifyHistogramThrowsOutOfRange(
+    const correlation::analysis::DistributionFunctions &dist_funcs) {
+  EXPECT_THROW(static_cast<void>(dist_funcs.getHistogram("TestHist")), std::out_of_range);
+}
+
+void verifyHistogramDeletion(correlation::analysis::DistributionFunctions &dist_funcs) {
+  EXPECT_TRUE(dist_funcs.removeHistogram("TestHist"));
+  EXPECT_FALSE(dist_funcs.removeHistogram("TestHist"));
+}
+
+void verifyHistogramRemoval(correlation::analysis::DistributionFunctions &dist_funcs) {
+  correlation::analysis::Histogram hist;
+  hist.title = "TestHist";
+  dist_funcs.addHistogram("TestHist", std::move(hist));
+  verifyHistogramPresence(dist_funcs);
+  verifyHistogramDeletion(dist_funcs);
+  verifyHistogramThrowsOutOfRange(dist_funcs);
+}
+
+void verifyRecalculationHistograms(const correlation::app::AnalysisDispatcher &dispatcher,
+                                   const correlation::analysis::Histogram &initial_gr,
+                                   const correlation::analysis::Histogram &initial_pad) {
+  const auto *cached_gr = dispatcher.getHistogram("g_r");
+  ASSERT_NE(cached_gr, nullptr);
+  EXPECT_EQ(cached_gr->partials, initial_gr.partials);
+
+  const auto *recalculated_pad = dispatcher.getHistogram("PAD");
+  ASSERT_NE(recalculated_pad, nullptr);
+  EXPECT_NE(recalculated_pad->partials, initial_pad.partials);
 }
 
 TEST(AnalysisDispatcherTests, InitialStateIsEmpty) {
@@ -159,14 +196,7 @@ TEST(AnalysisDispatcherTests, DistributionFunctionsRemoveHistogram) {
       loader.cell() != nullptr ? *loader.cell() : correlation::core::Cell{};
   correlation::analysis::DistributionFunctions dist_funcs(cell);
 
-  correlation::analysis::Histogram hist;
-  hist.title = "TestHist";
-  dist_funcs.addHistogram("TestHist", std::move(hist));
-  EXPECT_FALSE(dist_funcs.getHistogram("TestHist").title.empty());
-
-  EXPECT_TRUE(dist_funcs.removeHistogram("TestHist"));
-  EXPECT_FALSE(dist_funcs.removeHistogram("TestHist"));
-  EXPECT_THROW(static_cast<void>(dist_funcs.getHistogram("TestHist")), std::out_of_range);
+  verifyHistogramRemoval(dist_funcs);
 }
 
 TEST(AnalysisDispatcherTests, SelectiveRecalculationFallbackWhenNoPriorRun) {
@@ -205,32 +235,24 @@ TEST(AnalysisDispatcherTests, SelectiveRecalculationPreservesInvariantHistograms
   // First full run with bonding cutoff permitting Si-Si bonds (e.g. 0 to 3.0 Å)
   opts.bond_cutoffs = {{{.min_sq = 0.0, .max_sq = 3.0 * 3.0}}};
   const auto run_res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);
-  ASSERT_TRUE(run_res.has_value()) << (run_res ? "" : run_res.error());
+  ASSERT_TRUE(run_res.has_value());
 
   const auto *initial_gr = dispatcher.getHistogram("g_r");
   ASSERT_NE(initial_gr, nullptr);
-  const auto initial_gr_partials = initial_gr->partials;
+  const auto initial_gr_copy = *initial_gr;
 
   const auto *initial_pad = dispatcher.getHistogram("PAD");
   ASSERT_NE(initial_pad, nullptr);
-  const auto initial_pad_partials = initial_pad->partials;
+  const auto initial_pad_copy = *initial_pad;
 
   // Now change cutoffs to cut off all bonds (0 to 1.0 Å, shorter than Si-Si 2.35 Å)
   opts.bond_cutoffs = {{{.min_sq = 0.0, .max_sq = 1.0 * 1.0}}};
 
   // Perform selective recalculation
   const auto recalc_res = dispatcher.runSelectiveRecalculation(*loader.trajectoryMut(), opts);
-  ASSERT_TRUE(recalc_res.has_value()) << (recalc_res ? "" : recalc_res.error());
+  ASSERT_TRUE(recalc_res.has_value());
 
-  // Verify distance-based g_r is intact and unchanged
-  const auto *cached_gr = dispatcher.getHistogram("g_r");
-  ASSERT_NE(cached_gr, nullptr);
-  EXPECT_EQ(cached_gr->partials, initial_gr_partials);
-
-  // Verify bond-dependent PAD was recalculated and updated with the new cutoff
-  const auto *recalculated_pad = dispatcher.getHistogram("PAD");
-  ASSERT_NE(recalculated_pad, nullptr);
-  EXPECT_NE(recalculated_pad->partials, initial_pad_partials);
+  verifyRecalculationHistograms(dispatcher, initial_gr_copy, initial_pad_copy);
 }
 
 TEST(AnalysisDispatcherTests, SelectiveRecalculationNoOpWhenNoBondDependentCalculators) {

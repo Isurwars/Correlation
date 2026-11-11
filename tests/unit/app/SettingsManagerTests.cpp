@@ -31,7 +31,7 @@ private:
 };
 
 TEST_F(SettingsManagerTests, DefaultSettingsFallback) {
-  correlation::app::AppSettings settings;
+  const correlation::app::AppSettings settings;
   EXPECT_EQ(settings.window_width, 1180U);
   EXPECT_EQ(settings.window_height, 795U);
   EXPECT_FLOAT_EQ(settings.left_col_width, 220.0F);
@@ -47,7 +47,7 @@ TEST_F(SettingsManagerTests, RoundTripSerialization) {
 
   ASSERT_TRUE(correlation::app::SettingsManager::save(custom));
 
-  correlation::app::AppSettings loaded = correlation::app::SettingsManager::load();
+  const correlation::app::AppSettings loaded = correlation::app::SettingsManager::load();
   EXPECT_EQ(loaded.window_width, 1440U);
   EXPECT_EQ(loaded.window_height, 900U);
   EXPECT_FLOAT_EQ(loaded.left_col_width, 315.5F);
@@ -63,7 +63,7 @@ TEST_F(SettingsManagerTests, ClampingBounds) {
 
   ASSERT_TRUE(correlation::app::SettingsManager::save(out_of_bounds));
 
-  correlation::app::AppSettings loaded = correlation::app::SettingsManager::load();
+  const correlation::app::AppSettings loaded = correlation::app::SettingsManager::load();
   EXPECT_EQ(loaded.window_width, 800U);
   EXPECT_EQ(loaded.window_height, 600U);
   EXPECT_FLOAT_EQ(loaded.left_col_width, 180.0F);

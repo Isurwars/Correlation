@@ -13,6 +13,8 @@
 
 namespace correlation::render3d {
 
+using correlation::real_t;
+
 namespace {
 
 [[nodiscard]] constexpr std::size_t pixelOffset(std::size_t x_coord, std::size_t y_coord,

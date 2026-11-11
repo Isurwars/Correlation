@@ -13,29 +13,26 @@
 #include <cmath>
 #include <gtest/gtest.h>
 
+using correlation::real_t;
+
 namespace correlation::analysis {
 namespace {
 class StructureFactorCalculatorTests : public ::testing::Test {
 protected:
   void SetUp() override {}
 };
-} // namespace
 
-// For a simple cubic crystal, S(Q) should show peaks at the allowed Bragg
-// reflections. The first peak for a simple cubic lattice is at Q = 2*pi/a.
-TEST_F(StructureFactorCalculatorTests, CalculatesSimpleCubicBraggPeak) {
-  // Build a 2x2x2 simple cubic supercell with lattice constant a=3.0 Å
-  const real_t vec_a = 3.0;
+correlation::core::Cell createSimpleCubicCell(real_t vec_a) {
+  const real_t length = static_cast<real_t>(2.0) * vec_a;
   correlation::core::Cell cell(std::array<real_t, 6>{
-      static_cast<real_t>(2 * vec_a),
-      static_cast<real_t>(2 * vec_a),
-      static_cast<real_t>(2 * vec_a),
+      length,
+      length,
+      length,
       90.0,
       90.0,
       90.0,
   });
 
-  // 8 atoms at corners of a 2x2x2 supercell
   for (int ix = 0; ix < 2; ++ix) {
     for (int iy = 0; iy < 2; ++iy) {
       for (int iz = 0; iz < 2; ++iz) {
@@ -44,9 +41,30 @@ TEST_F(StructureFactorCalculatorTests, CalculatesSimpleCubicBraggPeak) {
       }
     }
   }
+  return cell;
+}
+
+real_t findMaxPeak(const Histogram &hist, real_t q_min, real_t q_max) {
+  auto peak_sq = static_cast<real_t>(0.0);
+  for (size_t i = 0; i < hist.bins.size(); ++i) {
+    if (hist.bins[i] >= q_min && hist.bins[i] <= q_max) {
+      peak_sq = std::max(peak_sq, hist.partials.at("Total")[i]);
+    }
+  }
+  return peak_sq;
+}
+
+} // namespace
+
+// For a simple cubic crystal, S(Q) should show peaks at the allowed Bragg
+// reflections. The first peak for a simple cubic lattice is at Q = 2*pi/a.
+TEST_F(StructureFactorCalculatorTests, CalculatesSimpleCubicBraggPeak) {
+  // Build a 2x2x2 simple cubic supercell with lattice constant a=3.0 Å
+  const real_t vec_a = 3.0;
+  const auto cell = createSimpleCubicCell(vec_a);
 
   DistributionFunctions dists(cell);
-  correlation::calculators::StructureFactorCalculator calc;
+  const correlation::calculators::StructureFactorCalculator calc;
   AnalysisSettings settings;
   settings.q_max = 5.0;
   settings.q_bin_width = 0.05;
@@ -60,12 +78,7 @@ TEST_F(StructureFactorCalculatorTests, CalculatesSimpleCubicBraggPeak) {
 
   // The first Bragg peak for a SC lattice at a=3 is at Q = 2*pi/3 ≈ 2.094
   // Å^{-1} Find the max S(Q) value in the range [1.8, 2.4]
-  real_t peak_sq = static_cast<real_t>(0.0);
-  for (size_t i = 0; i < hist.bins.size(); ++i) {
-    if (hist.bins[i] >= static_cast<real_t>(1.8) && hist.bins[i] <= static_cast<real_t>(2.4)) {
-      peak_sq = std::max(peak_sq, hist.partials.at("Total")[i]);
-    }
-  }
+  const real_t peak_sq = findMaxPeak(hist, 1.8, 2.4);
   // At a Bragg peak, S(Q) should be much greater than 1
   EXPECT_GT(peak_sq, 2.0);
 }
@@ -76,7 +89,7 @@ TEST_F(StructureFactorCalculatorTests, SingleAtomGivesOne) {
   cell.addAtom("Si", {0.0, 0.0, 0.0});
 
   DistributionFunctions dists(cell);
-  correlation::calculators::StructureFactorCalculator calc;
+  const correlation::calculators::StructureFactorCalculator calc;
   AnalysisSettings settings;
   settings.q_max = 5.0;
   settings.q_bin_width = 0.1;
@@ -103,7 +116,7 @@ TEST_F(StructureFactorCalculatorTests, DimerProducesValidSQ) {
   cell.addAtom("Ar", {6.5, 5.0, 5.0}); // Distance 1.5 Å
 
   DistributionFunctions dists(cell);
-  correlation::calculators::StructureFactorCalculator calc;
+  const correlation::calculators::StructureFactorCalculator calc;
   AnalysisSettings settings;
   settings.q_max = 10.0;
   settings.q_bin_width = 0.1;
@@ -118,8 +131,8 @@ TEST_F(StructureFactorCalculatorTests, DimerProducesValidSQ) {
   // For a homonuclear dimer of 2 atoms at distance d=1.5 A, S(Q) = 1 +
   // sin(Q*d)/(Q*d)
   for (size_t i = 0; i < hist.bins.size(); ++i) {
-    real_t q_val = hist.bins[i];
-    real_t expected_sq = static_cast<real_t>(1.0);
+    const real_t q_val = hist.bins[i];
+    auto expected_sq = static_cast<real_t>(1.0);
     if (q_val > static_cast<real_t>(1e-6)) {
       expected_sq +=
           std::sin(q_val * static_cast<real_t>(1.5)) / (q_val * static_cast<real_t>(1.5));
@@ -146,7 +159,7 @@ TEST_F(StructureFactorCalculatorTests, VerifiesPartialsExistForMulticomponent) {
   cell.addAtom("O", {1.2, 0.0, 0.0});
 
   DistributionFunctions dists(cell);
-  correlation::calculators::StructureFactorCalculator calc;
+  const correlation::calculators::StructureFactorCalculator calc;
   AnalysisSettings settings;
   settings.q_max = 10.0;
   settings.q_bin_width = 1.0;
@@ -172,7 +185,7 @@ TEST_F(StructureFactorCalculatorTests, HomonuclearClusterPartialsPresent) {
   cell.addAtom("Si", {0.0, 0.0, 2.0});
 
   DistributionFunctions dists(cell);
-  correlation::calculators::StructureFactorCalculator calc;
+  const correlation::calculators::StructureFactorCalculator calc;
   AnalysisSettings settings;
   settings.q_max = 5.0;
   settings.q_bin_width = 0.5;
@@ -188,7 +201,7 @@ TEST_F(StructureFactorCalculatorTests, CalculateSF_InvalidInputsThrow) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Si", {0.0, 0.0, 0.0});
   DistributionFunctions dists(cell);
-  correlation::calculators::StructureFactorCalculator calc;
+  const correlation::calculators::StructureFactorCalculator calc;
 
   AnalysisSettings settings_invalid_q;
   settings_invalid_q.q_max = -1.0;
@@ -207,88 +220,70 @@ TEST_F(StructureFactorCalculatorTests, CalculateSF_InvalidInputsThrow) {
 }
 
 TEST_F(StructureFactorCalculatorTests, CalculateSF_EmptyCellThrows) {
-  correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
-  EXPECT_THROW(DistributionFunctions dists(cell), std::invalid_argument);
+  const correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  EXPECT_THROW((void)DistributionFunctions(cell), std::invalid_argument);
 }
 
 TEST_F(StructureFactorCalculatorTests, FCC_Copper_SQ) {
   real_t const a = 3.615;
-  auto cell = correlation::testing::crystals::createFCCCell(a, "Cu", 2, 2, 2);
+  const auto cell = correlation::testing::crystals::createFCCCell(a, "Cu", 2, 2, 2);
 
   DistributionFunctions dists(cell);
-  correlation::calculators::StructureFactorCalculator calc;
+  const correlation::calculators::StructureFactorCalculator calc;
   AnalysisSettings settings;
   settings.q_max = 6.0;
   settings.q_bin_width = 0.05;
 
   calc.calculateFrame(dists, settings);
   const auto &hist = dists.getHistogram("S_q");
-  const auto &sq_total = hist.partials.at("Total");
 
   // FCC (111) peak at Q = 2*pi/a * sqrt(3) ~ 3.01 A^-1
-  real_t peak_sq = 0.0;
-  for (size_t i = 0; i < hist.bins.size(); ++i) {
-    if (hist.bins[i] >= 2.8 && hist.bins[i] <= 3.2) {
-      peak_sq = std::max(peak_sq, sq_total[i]);
-    }
-  }
+  const real_t peak_sq = findMaxPeak(hist, 2.8, 3.2);
   EXPECT_GT(peak_sq, 2.0);
 }
 
 TEST_F(StructureFactorCalculatorTests, BCC_Iron_SQ) {
   real_t const a = 2.866;
-  auto cell = correlation::testing::crystals::createBCCCell(a, "Fe", 3, 3, 3);
+  const auto cell = correlation::testing::crystals::createBCCCell(a, "Fe", 3, 3, 3);
 
   DistributionFunctions dists(cell);
-  correlation::calculators::StructureFactorCalculator calc;
+  const correlation::calculators::StructureFactorCalculator calc;
   AnalysisSettings settings;
   settings.q_max = 6.0;
   settings.q_bin_width = 0.05;
 
   calc.calculateFrame(dists, settings);
   const auto &hist = dists.getHistogram("S_q");
-  const auto &sq_total = hist.partials.at("Total");
 
   // BCC (110) peak at Q = 2*pi/a * sqrt(2) ~ 3.10 A^-1
-  real_t peak_sq = 0.0;
-  for (size_t i = 0; i < hist.bins.size(); ++i) {
-    if (hist.bins[i] >= 2.9 && hist.bins[i] <= 3.3) {
-      peak_sq = std::max(peak_sq, sq_total[i]);
-    }
-  }
+  const real_t peak_sq = findMaxPeak(hist, 2.9, 3.3);
   EXPECT_GT(peak_sq, 2.0);
 }
 
 TEST_F(StructureFactorCalculatorTests, Diamond_Silicon_SQ) {
   real_t const a = 5.431;
-  auto cell = correlation::testing::crystals::createDiamondCell(a, "Si", 2, 2, 2);
+  const auto cell = correlation::testing::crystals::createDiamondCell(a, "Si", 2, 2, 2);
 
   DistributionFunctions dists(cell);
-  correlation::calculators::StructureFactorCalculator calc;
+  const correlation::calculators::StructureFactorCalculator calc;
   AnalysisSettings settings;
   settings.q_max = 5.0;
   settings.q_bin_width = 0.05;
 
   calc.calculateFrame(dists, settings);
   const auto &hist = dists.getHistogram("S_q");
-  const auto &sq_total = hist.partials.at("Total");
 
   // Diamond (111) peak at Q = 2*pi/a * sqrt(3) ~ 2.00 A^-1
-  real_t peak_sq = 0.0;
-  for (size_t i = 0; i < hist.bins.size(); ++i) {
-    if (hist.bins[i] >= 1.8 && hist.bins[i] <= 2.2) {
-      peak_sq = std::max(peak_sq, sq_total[i]);
-    }
-  }
+  const real_t peak_sq = findMaxPeak(hist, 1.8, 2.2);
   EXPECT_GT(peak_sq, 2.0);
 }
 
 TEST_F(StructureFactorCalculatorTests, NaCl_RockSalt_SQ) {
   real_t const a = 5.64;
-  auto cell = correlation::testing::crystals::createNaClCell(a, "Na", "Cl", 2, 2, 2);
+  const auto cell = correlation::testing::crystals::createNaClCell(a, "Na", "Cl", 2, 2, 2);
 
   DistributionFunctions dists(cell);
-  correlation::calculators::StructureFactorCalculator calc;
+  const correlation::calculators::StructureFactorCalculator calc;
   AnalysisSettings settings;
   settings.q_max = 5.0;
   settings.q_bin_width = 0.05;
@@ -301,15 +296,8 @@ TEST_F(StructureFactorCalculatorTests, NaCl_RockSalt_SQ) {
   EXPECT_TRUE(hist.partials.contains("Cl-Na") || hist.partials.contains("Na-Cl"));
   EXPECT_TRUE(hist.partials.contains("Total"));
 
-  const auto &sq_total = hist.partials.at("Total");
-
   // NaCl (200) peak at Q = 2*pi/a * sqrt(4) ~ 2.23 A^-1
-  real_t peak_sq = 0.0;
-  for (size_t i = 0; i < hist.bins.size(); ++i) {
-    if (hist.bins[i] >= 2.05 && hist.bins[i] <= 2.4) {
-      peak_sq = std::max(peak_sq, sq_total[i]);
-    }
-  }
+  const real_t peak_sq = findMaxPeak(hist, 2.05, 2.4);
   EXPECT_GT(peak_sq, 1.5);
 }
 } // namespace correlation::analysis

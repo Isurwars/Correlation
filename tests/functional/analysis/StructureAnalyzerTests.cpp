@@ -13,6 +13,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+using correlation::real_t;
+
 namespace correlation::analysis {
 namespace {
 
@@ -35,6 +37,21 @@ protected:
 
   [[nodiscard]] const correlation::core::Trajectory &trajectory() const { return trajectory_; }
 
+  static void verifyReverseNeighbor(const correlation::core::NeighborGraph &graph, size_t atom_idx,
+                                    const correlation::core::Neighbor &neighbor) {
+    const size_t neighbor_idx = neighbor.index;
+    const auto &reverse_neighbors = graph.getNeighbors(neighbor_idx);
+    const auto rev_it = std::ranges::find_if(
+        reverse_neighbors, [atom_idx](const auto &rev) { return rev.index == atom_idx; });
+    ASSERT_NE(rev_it, reverse_neighbors.end())
+        << "Symmetry broken: correlation::core::Atom " << atom_idx << " sees " << neighbor_idx
+        << " but " << neighbor_idx << " does not see " << atom_idx;
+    EXPECT_NEAR(rev_it->distance, neighbor.distance, 1e-6);
+    EXPECT_NEAR(rev_it->r_ij.x(), -neighbor.r_ij.x(), 1e-6);
+    EXPECT_NEAR(rev_it->r_ij.y(), -neighbor.r_ij.y(), 1e-6);
+    EXPECT_NEAR(rev_it->r_ij.z(), -neighbor.r_ij.z(), 1e-6);
+  }
+
 private:
   correlation::core::Trajectory trajectory_;
 };
@@ -48,7 +65,8 @@ TEST_F(StructureAnalyzerTests, FindsCorrectNeighborsForSilicon) {
   // Fractional coordinates for the 8 atoms in a diamond cubic cell
   std::vector<correlation::math::Vector3<real_t>> const fractional_coords = {
       {0.0, 0.0, 0.0},    {0.5, 0.5, 0.0},    {0.5, 0.0, 0.5},    {0.0, 0.5, 0.5},
-      {0.25, 0.25, 0.25}, {0.75, 0.75, 0.25}, {0.75, 0.25, 0.75}, {0.25, 0.75, 0.75}};
+      {0.25, 0.25, 0.25}, {0.75, 0.75, 0.25}, {0.75, 0.25, 0.75}, {0.25, 0.75, 0.75},
+  };
 
   for (const auto &frac_pos : fractional_coords) {
     // Convert fractional to Cartesian coordinates before adding to the cell
@@ -61,7 +79,6 @@ TEST_F(StructureAnalyzerTests, FindsCorrectNeighborsForSilicon) {
   // approx 2.35 Å.
   StructureAnalyzer const neighbors(si_cell, 3.0, trajectory().getBondCutoffsSQ());
   const auto &neighbor_graph = neighbors.neighborGraph();
-  const auto &atoms = si_cell.atoms();
 
   // Assert
   ASSERT_EQ(neighbor_graph.nodeCount(), 8);
@@ -274,27 +291,9 @@ TEST_F(StructureAnalyzerTests, EnforcesNeighborSymmetry) {
   const auto &neighbor_graph = analyzer.neighborGraph();
 
   // Assert: Check symmetry for all pairs.
-  for (size_t i = 0; i < neighbor_graph.nodeCount(); ++i) {
-    for (const auto &neighbor : neighbor_graph.getNeighbors(i)) {
-      size_t const neighbor_idx = neighbor.index;
-
-      // If i sees j, then j must see i
-      bool found_reverse = false;
-      for (const auto &reverse_neighbor : neighbor_graph.getNeighbors(neighbor_idx)) {
-        if (reverse_neighbor.index == i) {
-          found_reverse = true;
-          // Distances must match
-          EXPECT_NEAR(reverse_neighbor.distance, neighbor.distance, 1e-6);
-          // Vectors must be opposite (r_ij = j - i)
-          EXPECT_NEAR(reverse_neighbor.r_ij.x(), -neighbor.r_ij.x(), 1e-6);
-          EXPECT_NEAR(reverse_neighbor.r_ij.y(), -neighbor.r_ij.y(), 1e-6);
-          EXPECT_NEAR(reverse_neighbor.r_ij.z(), -neighbor.r_ij.z(), 1e-6);
-          break;
-        }
-      }
-      EXPECT_TRUE(found_reverse) << "Symmetry broken: correlation::core::Atom " << i << " sees "
-                                 << neighbor_idx << " but " << neighbor_idx << " does not see "
-                                 << i;
+  for (size_t atom_idx = 0; atom_idx < neighbor_graph.nodeCount(); ++atom_idx) {
+    for (const auto &neighbor : neighbor_graph.getNeighbors(atom_idx)) {
+      verifyReverseNeighbor(neighbor_graph, atom_idx, neighbor);
     }
   }
 }
@@ -417,16 +416,16 @@ TEST_F(StructureAnalyzerTests, ThrowsOnInvalidCutoff) {
                std::invalid_argument);
 
   // Inverted range: max_sq (1.0) < min_sq (4.0)
-  BondCutoffMatrix inverted_cutoffs = {{{4.0, 1.0}}};
+  const BondCutoffMatrix inverted_cutoffs = {{{.min_sq = 4.0, .max_sq = 1.0}}};
   EXPECT_THROW(StructureAnalyzer(cell, 5.0, inverted_cutoffs), std::invalid_argument);
 
   // Negative min_sq
-  BondCutoffMatrix negative_cutoffs = {{{-0.5, 4.0}}};
+  const BondCutoffMatrix negative_cutoffs = {{{.min_sq = -0.5, .max_sq = 4.0}}};
   EXPECT_THROW(StructureAnalyzer(cell, 5.0, negative_cutoffs), std::invalid_argument);
 }
 
 TEST_F(StructureAnalyzerTests, HandlesEmptyCellGracefully) {
-  correlation::core::Cell empty_cell;
+  const correlation::core::Cell empty_cell;
   updateTrajectory(empty_cell);
 
   StructureAnalyzer const analyzer(empty_cell, 3.0, trajectory().getBondCutoffsSQ());

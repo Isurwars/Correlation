@@ -6,6 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+#include "math/Precision.hpp"
 #include "render3d/Camera3D.hpp"
 #include "render3d/RenderEngineFactory.hpp"
 #include "render3d/Scene3D.hpp"
@@ -16,6 +17,8 @@
 #ifdef CORRELATION_USE_VULKAN
 
 namespace correlation::render3d {
+
+using correlation::real_t;
 namespace {
 
 class VulkanRenderEngineTests : public ::testing::Test {
@@ -96,10 +99,10 @@ TEST_F(VulkanRenderEngineTests, RenderFrameWithAtomsAndBonds) {
 
   // Verify non-background pixels are present in the frame
   bool has_foreground = false;
-  for (std::size_t i = 0; i < frame.size(); i += 4) {
-    const uint8_t red = frame[i];
-    const uint8_t green = frame[i + 1];
-    const uint8_t blue = frame[i + 2];
+  for (std::size_t idx = 0; idx < frame.size(); idx += 4) {
+    const uint8_t red = frame[idx];
+    const uint8_t green = frame[idx + 1];
+    const uint8_t blue = frame[idx + 2];
     // Check if significantly different from background (25, 25, 30)
     if (red > 60 || green > 60 || blue > 60) {
       has_foreground = true;

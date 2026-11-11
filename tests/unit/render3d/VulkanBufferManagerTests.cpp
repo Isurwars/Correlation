@@ -6,6 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+#include "math/Precision.hpp"
 #include "render3d/Camera3D.hpp"
 #include "render3d/Scene3D.hpp"
 #include "render3d/vulkan/VulkanBufferManager.hpp"
@@ -18,6 +19,9 @@
 #ifdef CORRELATION_USE_VULKAN
 
 namespace correlation::render3d::vulkan {
+
+using correlation::real_t;
+
 namespace {
 
 class VulkanBufferManagerTests : public ::testing::Test {
@@ -47,33 +51,7 @@ private:
   VulkanPipelineManager pipeline_mgr_;
 };
 
-TEST_F(VulkanBufferManagerTests, InitializationAndProperties) {
-  VulkanBufferManager buffer_mgr;
-  EXPECT_FALSE(buffer_mgr.isValid());
-  EXPECT_EQ(buffer_mgr.descriptorSet(), VK_NULL_HANDLE);
-  EXPECT_EQ(buffer_mgr.sphereQuadBuffer(), VK_NULL_HANDLE);
-  EXPECT_EQ(buffer_mgr.cylinderQuadBuffer(), VK_NULL_HANDLE);
-  EXPECT_EQ(buffer_mgr.atomInstanceCount(), 0);
-  EXPECT_EQ(buffer_mgr.bondInstanceCount(), 0);
-  EXPECT_EQ(buffer_mgr.wireframeVertexCount(), 0);
-
-  EXPECT_TRUE(buffer_mgr.initialize(device().device(), device().physicalDevice(),
-                                    pipelineManager().descriptorSetLayout()));
-  EXPECT_TRUE(buffer_mgr.isValid());
-  EXPECT_NE(buffer_mgr.descriptorSet(), VK_NULL_HANDLE);
-  EXPECT_NE(buffer_mgr.sphereQuadBuffer(), VK_NULL_HANDLE);
-  EXPECT_NE(buffer_mgr.cylinderQuadBuffer(), VK_NULL_HANDLE);
-
-  buffer_mgr.destroy();
-  EXPECT_FALSE(buffer_mgr.isValid());
-  EXPECT_EQ(buffer_mgr.descriptorSet(), VK_NULL_HANDLE);
-}
-
-TEST_F(VulkanBufferManagerTests, UploadSceneAndGeometricGrowth) {
-  VulkanBufferManager buffer_mgr;
-  ASSERT_TRUE(buffer_mgr.initialize(device().device(), device().physicalDevice(),
-                                    pipelineManager().descriptorSetLayout()));
-
+[[nodiscard]] Scene3D createTestScene() {
   Scene3D scene;
   scene.addAtom(AtomInstance{
       .position = {0.0F, 0.0F, 0.0F},
@@ -100,7 +78,39 @@ TEST_F(VulkanBufferManagerTests, UploadSceneAndGeometricGrowth) {
       .end = {5.0F, 0.0F, 0.0F},
       .color = {.r = 255, .g = 255, .b = 255, .a = 255},
   });
+  return scene;
+}
 
+} // namespace
+
+TEST_F(VulkanBufferManagerTests, InitializationAndProperties) {
+  VulkanBufferManager buffer_mgr;
+  EXPECT_FALSE(buffer_mgr.isValid());
+  EXPECT_EQ(buffer_mgr.descriptorSet(), VK_NULL_HANDLE);
+  EXPECT_EQ(buffer_mgr.sphereQuadBuffer(), VK_NULL_HANDLE);
+  EXPECT_EQ(buffer_mgr.cylinderQuadBuffer(), VK_NULL_HANDLE);
+  EXPECT_EQ(buffer_mgr.atomInstanceCount(), 0);
+  EXPECT_EQ(buffer_mgr.bondInstanceCount(), 0);
+  EXPECT_EQ(buffer_mgr.wireframeVertexCount(), 0);
+
+  EXPECT_TRUE(buffer_mgr.initialize(device().device(), device().physicalDevice(),
+                                    pipelineManager().descriptorSetLayout()));
+  EXPECT_TRUE(buffer_mgr.isValid());
+  EXPECT_NE(buffer_mgr.descriptorSet(), VK_NULL_HANDLE);
+  EXPECT_NE(buffer_mgr.sphereQuadBuffer(), VK_NULL_HANDLE);
+  EXPECT_NE(buffer_mgr.cylinderQuadBuffer(), VK_NULL_HANDLE);
+
+  buffer_mgr.destroy();
+  EXPECT_FALSE(buffer_mgr.isValid());
+  EXPECT_EQ(buffer_mgr.descriptorSet(), VK_NULL_HANDLE);
+}
+
+TEST_F(VulkanBufferManagerTests, UploadScene) {
+  VulkanBufferManager buffer_mgr;
+  ASSERT_TRUE(buffer_mgr.initialize(device().device(), device().physicalDevice(),
+                                    pipelineManager().descriptorSetLayout()));
+
+  const Scene3D scene = createTestScene();
   const Camera3D camera;
   const ViewportDimensions dims{.width = 800, .height = 600};
 
@@ -112,14 +122,23 @@ TEST_F(VulkanBufferManagerTests, UploadSceneAndGeometricGrowth) {
   EXPECT_NE(buffer_mgr.atomInstanceBuffer(), VK_NULL_HANDLE);
   EXPECT_NE(buffer_mgr.bondInstanceBuffer(), VK_NULL_HANDLE);
   EXPECT_NE(buffer_mgr.wireframeBuffer(), VK_NULL_HANDLE);
+}
 
-  // Growth test: add 500 atoms
-  for (int i = 0; i < 500; ++i) {
+TEST_F(VulkanBufferManagerTests, GeometricBufferGrowth) {
+  VulkanBufferManager buffer_mgr;
+  ASSERT_TRUE(buffer_mgr.initialize(device().device(), device().physicalDevice(),
+                                    pipelineManager().descriptorSetLayout()));
+
+  Scene3D scene = createTestScene();
+  const Camera3D camera;
+  const ViewportDimensions dims{.width = 800, .height = 600};
+
+  for (int idx = 0; idx < 500; ++idx) {
     scene.addAtom(AtomInstance{
-        .position = {static_cast<float>(i), 1.0F, 0.0F},
+        .position = {static_cast<float>(idx), 1.0F, 0.0F},
         .radius = 0.5F,
         .color = {.r = 100, .g = 150, .b = 200, .a = 255},
-        .id = static_cast<uint32_t>(i + 3),
+        .id = static_cast<uint32_t>(idx + 3),
         .atomic_number = 6,
     });
   }
@@ -147,7 +166,6 @@ TEST_F(VulkanBufferManagerTests, MoveSemantics) {
   EXPECT_EQ(mgr3.descriptorSet(), orig_desc);
 }
 
-} // namespace
 } // namespace correlation::render3d::vulkan
 
 #endif // CORRELATION_USE_VULKAN

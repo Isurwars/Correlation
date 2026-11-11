@@ -14,6 +14,8 @@
 
 namespace correlation::render3d {
 
+using correlation::real_t;
+
 TEST(TrajectoryStreamerTests, NullTrajectoryHandling) {
   TrajectoryStreamer streamer;
   EXPECT_FALSE(streamer.hasTrajectory());

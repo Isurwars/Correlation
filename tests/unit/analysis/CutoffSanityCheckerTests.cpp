@@ -16,6 +16,7 @@
 
 using namespace correlation::analysis;
 using namespace correlation::core;
+using correlation::real_t;
 
 namespace {
 

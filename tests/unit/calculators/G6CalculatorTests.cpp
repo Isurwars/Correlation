@@ -21,13 +21,14 @@ namespace correlation::testing {
 using namespace correlation::calculators;
 using namespace correlation::core;
 using namespace correlation::analysis;
+using correlation::real_t;
 
 TEST(G6CalculatorTests, FitsExponentialDecayAccurately) {
-  constexpr size_t num_bins = 10;
+  const size_t num_bins = 10;
   std::vector<real_t> r_bins(num_bins);
   std::vector<real_t> g6_values(num_bins);
 
-  constexpr real_t target_xi = 3.5;
+  const real_t target_xi = 3.5;
   for (size_t pt_idx = 0; pt_idx < num_bins; ++pt_idx) {
     r_bins[pt_idx] = static_cast<real_t>(pt_idx + 1);
     g6_values[pt_idx] = static_cast<real_t>(std::exp(-r_bins[pt_idx] / target_xi));
@@ -41,7 +42,7 @@ TEST(G6CalculatorTests, FitsExponentialDecayAccurately) {
 }
 
 TEST(G6CalculatorTests, DetectsCrystallinePlateauForConstantG6) {
-  constexpr size_t num_bins = 8;
+  const size_t num_bins = 8;
   std::vector<real_t> r_bins(num_bins);
   std::vector<real_t> g6_values(num_bins, 0.85);
 

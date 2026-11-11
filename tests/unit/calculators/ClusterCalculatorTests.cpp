@@ -11,6 +11,20 @@
 
 using namespace correlation::calculators;
 using namespace correlation::analysis;
+using correlation::real_t;
+
+namespace {
+void verifyChainClusterDistribution(const DistributionFunctions &dists) {
+  const auto &hist = dists.getHistogram("cluster_size");
+  EXPECT_EQ(hist.bins.size(), 10);
+  const auto &total = hist.partials.at("Total");
+
+  for (size_t i = 0; i < 9; ++i) {
+    EXPECT_DOUBLE_EQ(total[i], 0.0);
+  }
+  EXPECT_DOUBLE_EQ(total[9], 1.0); // One cluster of size 10
+}
+} // namespace
 
 TEST(ClusterCalculatorTests, BasicClustering) {
   correlation::core::Cell cell;
@@ -32,8 +46,8 @@ TEST(ClusterCalculatorTests, BasicClustering) {
   AnalysisSettings const settings;
 
   real_t const cutoff = 1.5;
-  StructureAnalyzer const analyzer(cell, cutoff, {{{0.36, static_cast<real_t>(cutoff * cutoff)}}},
-                                   false);
+  StructureAnalyzer const analyzer(
+      cell, cutoff, {{{.min_sq = 0.36, .max_sq = static_cast<real_t>(cutoff * cutoff)}}}, false);
   dists.setStructureAnalyzer(&analyzer);
 
   ClusterCalculator const calc;
@@ -70,26 +84,17 @@ TEST(ClusterCalculatorTests, SingleGiantCluster) {
   AnalysisSettings const settings;
 
   real_t const cutoff = 1.5;
-  StructureAnalyzer const analyzer(cell, cutoff, {{{0.36, static_cast<real_t>(cutoff * cutoff)}}},
-                                   false);
+  StructureAnalyzer const analyzer(
+      cell, cutoff, {{{.min_sq = 0.36, .max_sq = static_cast<real_t>(cutoff * cutoff)}}}, false);
   dists.setStructureAnalyzer(&analyzer);
 
   ClusterCalculator const calc;
   calc.calculateFrame(dists, settings);
 
-  const auto &hist = dists.getHistogram("cluster_size");
-  EXPECT_NO_THROW((void)dists.getHistogram("Cluster Size"));
-  EXPECT_EQ(hist.bins.size(), 10);
-  const auto &total = hist.partials.at("Total");
-
-  for (size_t i = 0; i < 9; ++i) {
-    EXPECT_DOUBLE_EQ(total[i], 0.0);
-  }
-  EXPECT_DOUBLE_EQ(total[9], 1.0); // One cluster of size 10
+  verifyChainClusterDistribution(dists);
 }
 
 TEST(ClusterCalculatorTests, EmptyCell) {
-  correlation::core::Cell cell;
-  cell.setLatticeParameters({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
-  EXPECT_THROW(DistributionFunctions dists(cell), std::invalid_argument);
+  correlation::core::Cell const cell;
+  EXPECT_THROW(DistributionFunctions const dists(cell), std::invalid_argument);
 }

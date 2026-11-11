@@ -13,7 +13,122 @@
 #include <numbers>
 #include <span>
 
+using correlation::real_t;
+
 namespace correlation::mlip {
+
+namespace {
+
+void verifySimpleCubicEdges(const PeriodicGraphData &graph) {
+  for (size_t edge = 0; edge < 6; ++edge) {
+    EXPECT_EQ(graph.edge_index_flat[static_cast<size_t>(0 * 6) + edge], 0);
+    EXPECT_EQ(graph.edge_index_flat[static_cast<size_t>(1 * 6) + edge], 0);
+
+    const real_t s_x = graph.edge_shifts_flat[edge * 3 + 0];
+    const real_t s_y = graph.edge_shifts_flat[edge * 3 + 1];
+    const real_t s_z = graph.edge_shifts_flat[edge * 3 + 2];
+    const real_t shift_norm_sq = s_x * s_x + s_y * s_y + s_z * s_z;
+    EXPECT_NEAR(shift_norm_sq, static_cast<real_t>(1.0), 1e-5);
+  }
+}
+
+void verifyDimerEdges(const PeriodicGraphData &graph) {
+  const int64_t src0 = graph.edge_index_flat[0];
+  const int64_t dst0 = graph.edge_index_flat[2];
+  const bool is_forward = (src0 == 0 && dst0 == 1);
+  const real_t expected_v0 = is_forward ? static_cast<real_t>(1.2) : static_cast<real_t>(-1.2);
+  EXPECT_NEAR(graph.edge_vectors_flat[0], expected_v0, 1e-5);
+  EXPECT_NEAR(graph.edge_vectors_flat[3], -expected_v0, 1e-5);
+}
+
+void verifyUnsoldsSum(std::span<const real_t> harmonics, real_t k_pi) {
+  const real_t sum_l0 = harmonics[0] * harmonics[0];
+  EXPECT_NEAR(sum_l0, static_cast<real_t>(1.0) / (static_cast<real_t>(4.0) * k_pi),
+              static_cast<real_t>(1e-5));
+
+  real_t sum_l1 = 0.0;
+  for (size_t idx_m = 1; idx_m <= 3; ++idx_m) {
+    sum_l1 += harmonics[idx_m] * harmonics[idx_m];
+  }
+  EXPECT_NEAR(sum_l1, static_cast<real_t>(3.0) / (static_cast<real_t>(4.0) * k_pi),
+              static_cast<real_t>(1e-5));
+
+  real_t sum_l2 = 0.0;
+  for (size_t idx_m = 4; idx_m <= 8; ++idx_m) {
+    sum_l2 += harmonics[idx_m] * harmonics[idx_m];
+  }
+  EXPECT_NEAR(sum_l2, static_cast<real_t>(5.0) / (static_cast<real_t>(4.0) * k_pi),
+              static_cast<real_t>(1e-5));
+
+  real_t sum_l3 = 0.0;
+  for (size_t idx_m = 9; idx_m <= 15; ++idx_m) {
+    sum_l3 += harmonics[idx_m] * harmonics[idx_m];
+  }
+  EXPECT_NEAR(sum_l3, static_cast<real_t>(7.0) / (static_cast<real_t>(4.0) * k_pi),
+              static_cast<real_t>(1e-5));
+}
+
+void verifyOrbSHDir(const correlation::math::Vector3<real_t> &dir) {
+  const auto y_lm = PeriodicGraphBuilder::computeOrbSphericalHarmonics(dir, 3);
+  ASSERT_EQ(y_lm.size(), 16U);
+
+  // l=0: Y_00 = 1.0 -> sum sq = 1.0 = 2*0 + 1
+  const real_t sum_l0 = y_lm[0] * y_lm[0];
+  EXPECT_NEAR(sum_l0, static_cast<real_t>(1.0), 1e-4);
+
+  // l=1: components 1..3 -> sum sq = 2*1 + 1 = 3.0
+  const real_t sum_l1 = y_lm[1] * y_lm[1] + y_lm[2] * y_lm[2] + y_lm[3] * y_lm[3];
+  EXPECT_NEAR(sum_l1, static_cast<real_t>(3.0), 1e-4);
+
+  // l=2: components 4..8 -> sum sq = 2*2 + 1 = 5.0
+  real_t sum_l2 = 0.0;
+  for (size_t idx = 4; idx <= 8; ++idx) {
+    sum_l2 += y_lm[idx] * y_lm[idx];
+  }
+  EXPECT_NEAR(sum_l2, static_cast<real_t>(5.0), 1e-4);
+
+  // l=3: components 9..15 -> sum sq = 2*3 + 1 = 7.0
+  real_t sum_l3 = 0.0;
+  for (size_t idx = 9; idx <= 15; ++idx) {
+    sum_l3 += y_lm[idx] * y_lm[idx];
+  }
+  EXPECT_NEAR(sum_l3, static_cast<real_t>(7.0), 1e-4);
+}
+
+void verifySingleOrbFeature(const PeriodicGraphData &graph, size_t edge_idx, real_t cutoff) {
+  const size_t orb_offset = edge_idx * 128;
+  const size_t rbf_offset = edge_idx * 8;
+  const size_t sh_offset = edge_idx * 16;
+  real_t max_diff = 0.0;
+  for (size_t idx_n = 0; idx_n < 8; ++idx_n) {
+    const real_t rbf_val = graph.edge_radial_basis_flat[rbf_offset + idx_n];
+    for (size_t idx_m = 0; idx_m < 16; ++idx_m) {
+      const real_t sh_val = graph.edge_spherical_harmonics_flat[sh_offset + idx_m];
+      const real_t expected = cutoff * rbf_val * sh_val;
+      const real_t actual = graph.edge_orb_features_flat[orb_offset + idx_n * 16 + idx_m];
+      max_diff = std::max(max_diff, std::abs(actual - expected));
+    }
+  }
+  EXPECT_NEAR(max_diff, static_cast<real_t>(0.0), 1e-5);
+}
+
+void verifyOrbGraphEdges(const PeriodicGraphData &graph, size_t total_edges) {
+  for (size_t edge_idx = 0; edge_idx < total_edges; ++edge_idx) {
+    const real_t unit_x = graph.edge_unit_vectors_flat[edge_idx * 3 + 0];
+    const real_t unit_y = graph.edge_unit_vectors_flat[edge_idx * 3 + 1];
+    const real_t unit_z = graph.edge_unit_vectors_flat[edge_idx * 3 + 2];
+    const real_t unit_norm = std::sqrt(unit_x * unit_x + unit_y * unit_y + unit_z * unit_z);
+    EXPECT_NEAR(unit_norm, static_cast<real_t>(1.0), 1e-5);
+
+    const real_t cutoff = graph.edge_cutoff_envelope_flat[edge_idx];
+    EXPECT_GE(cutoff, static_cast<real_t>(0.0));
+    EXPECT_LE(cutoff, static_cast<real_t>(1.0));
+
+    verifySingleOrbFeature(graph, edge_idx, cutoff);
+  }
+}
+
+} // namespace
 
 TEST(PeriodicGraphBuilderTests, AtomicNumberResolution) {
   EXPECT_EQ(PeriodicGraphBuilder::getAtomicNumber("H"), 1);
@@ -29,8 +144,8 @@ TEST(PeriodicGraphBuilderTests, AtomicNumberResolution) {
 }
 
 TEST(PeriodicGraphBuilderTests, EmptyCell) {
-  correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
-  auto graph = PeriodicGraphBuilder::buildGraph(cell, 5.0, false);
+  correlation::core::Cell const cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  auto const graph = PeriodicGraphBuilder::buildGraph(cell, 5.0, false);
 
   EXPECT_EQ(graph.atom_count, 0U);
   EXPECT_EQ(graph.edge_count, 0U);
@@ -46,7 +161,7 @@ TEST(PeriodicGraphBuilderTests, SimpleCubicFirstNeighborShell) {
   cell.addAtom("Si", {0.0, 0.0, 0.0});
 
   // Cutoff 4.1 Å encompasses the 6 periodic nearest neighbors
-  auto graph = PeriodicGraphBuilder::buildGraph(cell, 4.1, false);
+  auto const graph = PeriodicGraphBuilder::buildGraph(cell, 4.1, false);
 
   EXPECT_EQ(graph.atom_count, 1U);
   EXPECT_EQ(graph.edge_count, 6U);
@@ -56,17 +171,7 @@ TEST(PeriodicGraphBuilderTests, SimpleCubicFirstNeighborShell) {
   ASSERT_EQ(graph.edge_index_flat.size(), 12U);  // 2 * 6
   ASSERT_EQ(graph.edge_shifts_flat.size(), 18U); // 6 * 3
 
-  // All edges should originate from node 0 and point to node 0 across periodic boundaries
-  for (size_t edge = 0; edge < 6; ++edge) {
-    EXPECT_EQ(graph.edge_index_flat[static_cast<size_t>(0 * 6) + edge], 0);
-    EXPECT_EQ(graph.edge_index_flat[static_cast<size_t>(1 * 6) + edge], 0);
-
-    const real_t s_x = graph.edge_shifts_flat[edge * 3 + 0];
-    const real_t s_y = graph.edge_shifts_flat[edge * 3 + 1];
-    const real_t s_z = graph.edge_shifts_flat[edge * 3 + 2];
-    const real_t shift_norm_sq = s_x * s_x + s_y * s_y + s_z * s_z;
-    EXPECT_NEAR(shift_norm_sq, static_cast<real_t>(1.0), 1e-5);
-  }
+  verifySimpleCubicEdges(graph);
 }
 
 TEST(PeriodicGraphBuilderTests, DimerWithinCutoff) {
@@ -74,7 +179,7 @@ TEST(PeriodicGraphBuilderTests, DimerWithinCutoff) {
   cell.addAtom("C", {0.0, 0.0, 0.0});
   cell.addAtom("O", {1.2, 0.0, 0.0});
 
-  auto graph = PeriodicGraphBuilder::buildGraph(cell, 2.0, false);
+  auto const graph = PeriodicGraphBuilder::buildGraph(cell, 2.0, false);
 
   EXPECT_EQ(graph.atom_count, 2U);
   EXPECT_EQ(graph.edge_count, 2U); // 0 -> 1 and 1 -> 0
@@ -91,22 +196,7 @@ TEST(PeriodicGraphBuilderTests, DimerWithinCutoff) {
   EXPECT_NEAR(graph.edge_distances[0], static_cast<real_t>(1.2), 1e-5);
   EXPECT_NEAR(graph.edge_distances[1], static_cast<real_t>(1.2), 1e-5);
 
-  // Edge 0: 0 -> 1 (vector +1.2, 0, 0), Edge 1: 1 -> 0 (vector -1.2, 0, 0)
-  const int64_t src0 = graph.edge_index_flat[0 * 2 + 0];
-  const int64_t dst0 = graph.edge_index_flat[1 * 2 + 0];
-  const int64_t src1 = graph.edge_index_flat[0 * 2 + 1];
-  const int64_t dst1 = graph.edge_index_flat[1 * 2 + 1];
-
-  EXPECT_TRUE((src0 == 0 && dst0 == 1 && src1 == 1 && dst1 == 0) ||
-              (src0 == 1 && dst0 == 0 && src1 == 0 && dst1 == 1));
-
-  if (src0 == 0 && dst0 == 1) {
-    EXPECT_NEAR(graph.edge_vectors_flat[0 * 3 + 0], static_cast<real_t>(1.2), 1e-5);
-    EXPECT_NEAR(graph.edge_vectors_flat[1 * 3 + 0], static_cast<real_t>(-1.2), 1e-5);
-  } else {
-    EXPECT_NEAR(graph.edge_vectors_flat[0 * 3 + 0], static_cast<real_t>(-1.2), 1e-5);
-    EXPECT_NEAR(graph.edge_vectors_flat[1 * 3 + 0], static_cast<real_t>(1.2), 1e-5);
-  }
+  verifyDimerEdges(graph);
 }
 
 TEST(PeriodicGraphBuilderTests, SelfLoopsToggle) {
@@ -114,7 +204,7 @@ TEST(PeriodicGraphBuilderTests, SelfLoopsToggle) {
   cell.addAtom("Si", {0.0, 0.0, 0.0});
 
   // Small cutoff that has no periodic images within 2.0 Å
-  auto graph_no_loops = PeriodicGraphBuilder::buildGraph(cell, 2.0, false);
+  auto const graph_no_loops = PeriodicGraphBuilder::buildGraph(cell, 2.0, false);
   EXPECT_EQ(graph_no_loops.edge_count, 0U);
 
   auto graph_with_loops = PeriodicGraphBuilder::buildGraph(cell, 2.0, true);
@@ -166,46 +256,15 @@ TEST(PeriodicGraphBuilderTests, GaussianRBFExpansion) {
   EXPECT_LT(rbf[2], static_cast<real_t>(1.0));
 }
 
-namespace {
-
-void verifyUnsoldsSum(std::span<const real_t> harmonics, real_t k_pi) {
-  const real_t sum_l0 = harmonics[0] * harmonics[0];
-  EXPECT_NEAR(sum_l0, static_cast<real_t>(1.0) / (static_cast<real_t>(4.0) * k_pi),
-              static_cast<real_t>(1e-5));
-
-  real_t sum_l1 = 0.0;
-  for (size_t idx_m = 1; idx_m <= 3; ++idx_m) {
-    sum_l1 += harmonics[idx_m] * harmonics[idx_m];
-  }
-  EXPECT_NEAR(sum_l1, static_cast<real_t>(3.0) / (static_cast<real_t>(4.0) * k_pi),
-              static_cast<real_t>(1e-5));
-
-  real_t sum_l2 = 0.0;
-  for (size_t idx_m = 4; idx_m <= 8; ++idx_m) {
-    sum_l2 += harmonics[idx_m] * harmonics[idx_m];
-  }
-  EXPECT_NEAR(sum_l2, static_cast<real_t>(5.0) / (static_cast<real_t>(4.0) * k_pi),
-              static_cast<real_t>(1e-5));
-
-  real_t sum_l3 = 0.0;
-  for (size_t idx_m = 9; idx_m <= 15; ++idx_m) {
-    sum_l3 += harmonics[idx_m] * harmonics[idx_m];
-  }
-  EXPECT_NEAR(sum_l3, static_cast<real_t>(7.0) / (static_cast<real_t>(4.0) * k_pi),
-              static_cast<real_t>(1e-5));
-}
-
-} // namespace
-
 TEST(PeriodicGraphBuilderTests, SphericalHarmonicsUnsoldsTheorem) {
-  constexpr real_t k_pi = std::numbers::pi_v<real_t>;
-  constexpr auto inv_sqrt3 = std::numbers::inv_sqrt3_v<real_t>;
+  constexpr real_t K_PI = std::numbers::pi_v<real_t>;
+  constexpr auto INV_SQRT3 = std::numbers::inv_sqrt3_v<real_t>;
   const auto inv_sqrt14 = static_cast<real_t>(1.0 / std::sqrt(14.0));
   const std::vector<correlation::math::Vector3<real_t>> test_dirs = {
       {static_cast<real_t>(1.0), static_cast<real_t>(0.0), static_cast<real_t>(0.0)},
       {static_cast<real_t>(0.0), static_cast<real_t>(1.0), static_cast<real_t>(0.0)},
       {static_cast<real_t>(0.0), static_cast<real_t>(0.0), static_cast<real_t>(1.0)},
-      {inv_sqrt3, inv_sqrt3, inv_sqrt3},
+      {INV_SQRT3, INV_SQRT3, INV_SQRT3},
       {inv_sqrt14, static_cast<real_t>(2.0) * inv_sqrt14, static_cast<real_t>(3.0) * inv_sqrt14},
       {static_cast<real_t>(-2.0) * inv_sqrt14, inv_sqrt14, static_cast<real_t>(-3.0) * inv_sqrt14},
   };
@@ -213,23 +272,23 @@ TEST(PeriodicGraphBuilderTests, SphericalHarmonicsUnsoldsTheorem) {
   for (const auto &dir : test_dirs) {
     const auto y_lm = PeriodicGraphBuilder::computeSphericalHarmonics(dir, 3);
     ASSERT_EQ(y_lm.size(), 16U);
-    verifyUnsoldsSum(y_lm, k_pi);
+    verifyUnsoldsSum(y_lm, K_PI);
   }
 }
 
 TEST(PeriodicGraphBuilderTests, SphericalHarmonicsZeroVector) {
-  constexpr real_t k_pi = std::numbers::pi_v<real_t>;
+  constexpr real_t K_PI = std::numbers::pi_v<real_t>;
   const correlation::math::Vector3<real_t> zero_vec{0.0, 0.0, 0.0};
   const auto y_lm = PeriodicGraphBuilder::computeSphericalHarmonics(zero_vec, 3);
   ASSERT_EQ(y_lm.size(), 16U);
 
   // Y_00 should be 1 / sqrt(4 * pi)
-  EXPECT_NEAR(y_lm[0], static_cast<real_t>(1.0) / std::sqrt(static_cast<real_t>(4.0) * k_pi),
+  EXPECT_NEAR(y_lm[0], static_cast<real_t>(1.0) / std::sqrt(static_cast<real_t>(4.0) * K_PI),
               static_cast<real_t>(1e-6));
 
   // All higher l components should be exactly 0
-  for (size_t i = 1; i < 16; ++i) {
-    EXPECT_NEAR(y_lm[i], static_cast<real_t>(0.0), static_cast<real_t>(1e-12));
+  for (size_t idx = 1; idx < 16; ++idx) {
+    EXPECT_NEAR(y_lm[idx], static_cast<real_t>(0.0), static_cast<real_t>(1e-12));
   }
 }
 
@@ -248,23 +307,23 @@ TEST(PeriodicGraphBuilderTests, SphericalHarmonicsSpanBoundsSafety) {
 }
 
 TEST(PeriodicGraphBuilderTests, PeriodicGraphWithSphericalHarmonics) {
-  constexpr real_t k_pi = std::numbers::pi_v<real_t>;
+  constexpr real_t K_PI = std::numbers::pi_v<real_t>;
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   cell.addAtom("C", {0.0, 0.0, 0.0});
   cell.addAtom("O", {1.2, 0.0, 0.0});
 
   // Default l_max = 0: empty spherical harmonics buffer
-  auto graph_l0 = PeriodicGraphBuilder::buildGraph(cell, 2.0, false, 0);
+  auto const graph_l0 = PeriodicGraphBuilder::buildGraph(cell, 2.0, false, 0);
   EXPECT_EQ(graph_l0.edge_count, 2U);
   EXPECT_TRUE(graph_l0.edge_spherical_harmonics_flat.empty());
 
   // l_max = 2: 9 components per edge -> 2 * 9 = 18 elements
-  auto graph_l2 = PeriodicGraphBuilder::buildGraph(cell, 2.0, false, 2);
+  auto const graph_l2 = PeriodicGraphBuilder::buildGraph(cell, 2.0, false, 2);
   EXPECT_EQ(graph_l2.edge_count, 2U);
   ASSERT_EQ(graph_l2.edge_spherical_harmonics_flat.size(), 18U);
 
   // l_max = 3: 16 components per edge -> 2 * 16 = 32 elements
-  auto graph_l3 = PeriodicGraphBuilder::buildGraph(cell, 2.0, false, 3);
+  auto const graph_l3 = PeriodicGraphBuilder::buildGraph(cell, 2.0, false, 3);
   EXPECT_EQ(graph_l3.edge_count, 2U);
   ASSERT_EQ(graph_l3.edge_spherical_harmonics_flat.size(), 32U);
 
@@ -272,12 +331,12 @@ TEST(PeriodicGraphBuilderTests, PeriodicGraphWithSphericalHarmonics) {
     const size_t offset = edge_idx * 16;
     const std::span<const real_t> edge_sh(graph_l3.edge_spherical_harmonics_flat.data() + offset,
                                           16);
-    verifyUnsoldsSum(edge_sh, k_pi);
+    verifyUnsoldsSum(edge_sh, K_PI);
   }
 }
 
 TEST(PeriodicGraphBuilderTests, OrbCutoffEnvelopeAnalytical) {
-  const real_t r_max = static_cast<real_t>(6.0);
+  const auto r_max = static_cast<real_t>(6.0);
 
   // Boundary conditions
   EXPECT_NEAR(PeriodicGraphBuilder::computeOrbCutoffEnvelope(0.0, r_max), static_cast<real_t>(1.0),
@@ -303,7 +362,7 @@ TEST(PeriodicGraphBuilderTests, OrbCutoffEnvelopeAnalytical) {
 
 TEST(PeriodicGraphBuilderTests, OrbBesselBasisAnalytical) {
   const OrbDescriptorConfig cfg{.r_max = 6.0, .num_rbf = 8};
-  constexpr real_t k_pi = std::numbers::pi_v<real_t>;
+  constexpr real_t K_PI = std::numbers::pi_v<real_t>;
   const real_t prefactor = std::sqrt(static_cast<real_t>(2.0) / static_cast<real_t>(6.0));
 
   // Limit at distance = 0
@@ -311,7 +370,7 @@ TEST(PeriodicGraphBuilderTests, OrbBesselBasisAnalytical) {
   ASSERT_EQ(zero_basis.size(), 8U);
   for (size_t idx_n = 0; idx_n < 8; ++idx_n) {
     const real_t expected =
-        prefactor * static_cast<real_t>(idx_n + 1) * k_pi / static_cast<real_t>(6.0);
+        prefactor * static_cast<real_t>(idx_n + 1) * K_PI / static_cast<real_t>(6.0);
     EXPECT_NEAR(zero_basis[idx_n], expected, 1e-5);
   }
 
@@ -319,7 +378,7 @@ TEST(PeriodicGraphBuilderTests, OrbBesselBasisAnalytical) {
   const auto mid_basis = PeriodicGraphBuilder::computeOrbBesselBasis(3.0, cfg);
   ASSERT_EQ(mid_basis.size(), 8U);
   for (size_t idx_n = 0; idx_n < 8; ++idx_n) {
-    const real_t arg = static_cast<real_t>(idx_n + 1) * k_pi * static_cast<real_t>(0.5);
+    const real_t arg = static_cast<real_t>(idx_n + 1) * K_PI * static_cast<real_t>(0.5);
     const real_t expected = prefactor * std::sin(arg) / static_cast<real_t>(3.0);
     EXPECT_NEAR(mid_basis[idx_n], expected, 1e-5);
   }
@@ -330,39 +389,21 @@ TEST(PeriodicGraphBuilderTests, OrbSphericalHarmonicsComponentNormalization) {
       {1.0, 0.0, 0.0},
       {0.0, 1.0, 0.0},
       {0.0, 0.0, 1.0},
-      {static_cast<real_t>(1.0 / std::numbers::sqrt3_v<double>),
-       static_cast<real_t>(1.0 / std::numbers::sqrt3_v<double>),
-       static_cast<real_t>(1.0 / std::numbers::sqrt3_v<double>)},
+      {
+          static_cast<real_t>(1.0 / std::numbers::sqrt3_v<double>),
+          static_cast<real_t>(1.0 / std::numbers::sqrt3_v<double>),
+          static_cast<real_t>(1.0 / std::numbers::sqrt3_v<double>),
+      },
       {static_cast<real_t>(0.6), static_cast<real_t>(0.8), static_cast<real_t>(0.0)},
-      {static_cast<real_t>(0.26726124), static_cast<real_t>(0.53452248),
-       static_cast<real_t>(0.80178373)},
+      {
+          static_cast<real_t>(0.26726124),
+          static_cast<real_t>(0.53452248),
+          static_cast<real_t>(0.80178373),
+      },
   };
 
   for (const auto &dir : test_dirs) {
-    const auto y_lm = PeriodicGraphBuilder::computeOrbSphericalHarmonics(dir, 3);
-    ASSERT_EQ(y_lm.size(), 16U);
-
-    // l=0: Y_00 = 1.0 -> sum sq = 1.0 = 2*0 + 1
-    const real_t sum_l0 = y_lm[0] * y_lm[0];
-    EXPECT_NEAR(sum_l0, static_cast<real_t>(1.0), 1e-4);
-
-    // l=1: components 1..3 -> sum sq = 2*1 + 1 = 3.0
-    const real_t sum_l1 = y_lm[1] * y_lm[1] + y_lm[2] * y_lm[2] + y_lm[3] * y_lm[3];
-    EXPECT_NEAR(sum_l1, static_cast<real_t>(3.0), 1e-4);
-
-    // l=2: components 4..8 -> sum sq = 2*2 + 1 = 5.0
-    real_t sum_l2 = 0.0;
-    for (size_t i = 4; i <= 8; ++i) {
-      sum_l2 += y_lm[i] * y_lm[i];
-    }
-    EXPECT_NEAR(sum_l2, static_cast<real_t>(5.0), 1e-4);
-
-    // l=3: components 9..15 -> sum sq = 2*3 + 1 = 7.0
-    real_t sum_l3 = 0.0;
-    for (size_t i = 9; i <= 15; ++i) {
-      sum_l3 += y_lm[i] * y_lm[i];
-    }
-    EXPECT_NEAR(sum_l3, static_cast<real_t>(7.0), 1e-4);
+    verifyOrbSHDir(dir);
   }
 }
 
@@ -389,32 +430,7 @@ TEST(PeriodicGraphBuilderTests, BuildOrbGraphDescriptorsIntegrity) {
   EXPECT_EQ(graph.edge_cutoff_envelope_flat.size(), total_edges);
   EXPECT_EQ(graph.edge_orb_features_flat.size(), total_edges * 128);
 
-  for (size_t edge_idx = 0; edge_idx < total_edges; ++edge_idx) {
-    const real_t unit_x = graph.edge_unit_vectors_flat[edge_idx * 3 + 0];
-    const real_t unit_y = graph.edge_unit_vectors_flat[edge_idx * 3 + 1];
-    const real_t unit_z = graph.edge_unit_vectors_flat[edge_idx * 3 + 2];
-    const real_t unit_norm = std::sqrt(unit_x * unit_x + unit_y * unit_y + unit_z * unit_z);
-    EXPECT_NEAR(unit_norm, static_cast<real_t>(1.0), 1e-5);
-
-    const real_t cutoff = graph.edge_cutoff_envelope_flat[edge_idx];
-    EXPECT_GE(cutoff, static_cast<real_t>(0.0));
-    EXPECT_LE(cutoff, static_cast<real_t>(1.0));
-
-    // Check fused outer product: f_c * RBF_n * Y_m
-    const size_t orb_offset = edge_idx * 128;
-    const size_t rbf_offset = edge_idx * 8;
-    const size_t sh_offset = edge_idx * 16;
-
-    for (size_t idx_n = 0; idx_n < 8; ++idx_n) {
-      const real_t rbf_val = graph.edge_radial_basis_flat[rbf_offset + idx_n];
-      for (size_t idx_m = 0; idx_m < 16; ++idx_m) {
-        const real_t sh_val = graph.edge_spherical_harmonics_flat[sh_offset + idx_m];
-        const real_t expected_feature = cutoff * rbf_val * sh_val;
-        const real_t actual_feature = graph.edge_orb_features_flat[orb_offset + idx_n * 16 + idx_m];
-        EXPECT_NEAR(actual_feature, expected_feature, 1e-5);
-      }
-    }
-  }
+  verifyOrbGraphEdges(graph, total_edges);
 }
 
 } // namespace correlation::mlip

@@ -1,20 +1,12 @@
 #include "readers/CellReader.hpp"
 
-#include <gtest/gtest.h>
-
-using namespace correlation::readers;
-
-TEST(CellReaderTests, Properties) {
-  CellReader reader;
-  EXPECT_EQ(reader.getName(), "CASTEP CELL");
-  EXPECT_FALSE(reader.isTrajectory());
-  auto exts = reader.getExtensions();
-  EXPECT_EQ(exts.size(), 1);
-  EXPECT_EQ(exts[0], "cell");
-}
-
 #include <filesystem>
+#include <gtest/gtest.h>
+#include <string>
 #include <vector>
+
+using correlation::real_t;
+using namespace correlation::readers;
 
 namespace {
 
@@ -35,10 +27,19 @@ std::string getTestDataDir() {
 
 } // namespace
 
+TEST(CellReaderTests, Properties) {
+  CellReader const reader;
+  EXPECT_EQ(reader.getName(), "CASTEP CELL");
+  EXPECT_FALSE(reader.isTrajectory());
+  auto const exts = reader.getExtensions();
+  EXPECT_EQ(exts.size(), 1);
+  EXPECT_EQ(exts[0], "cell");
+}
+
 TEST(CellReaderTests, ReadsStructureLatticeAbc) {
   std::string const data_dir = getTestDataDir();
   CellReader reader;
-  auto cell = reader.readStructure(data_dir + "clean.cell");
+  auto const cell = reader.readStructure(data_dir + "clean.cell");
 
   EXPECT_EQ(cell.atomCount(), 1);
   EXPECT_DOUBLE_EQ(cell.latticeParameters()[0], 15.0);
@@ -49,7 +50,7 @@ TEST(CellReaderTests, ReadsStructureLatticeAbc) {
 TEST(CellReaderTests, ReadsStructureLatticeCartAndFrac) {
   std::string const data_dir = getTestDataDir();
   CellReader reader;
-  auto cell = reader.readStructure(data_dir + "clean_cart.cell");
+  auto const cell = reader.readStructure(data_dir + "clean_cart.cell");
 
   EXPECT_EQ(cell.atomCount(), 2);
   EXPECT_DOUBLE_EQ(cell.latticeParameters()[0], 10.0);
@@ -74,5 +75,5 @@ TEST(CellReaderTests, ReadsStructureLatticeCartAndFrac) {
 
 TEST(CellReaderTests, ThrowsOnReadTrajectory) {
   CellReader reader;
-  EXPECT_THROW(reader.readTrajectory("dummy.cell"), std::runtime_error);
+  EXPECT_THROW((void)reader.readTrajectory("dummy.cell"), std::runtime_error);
 }

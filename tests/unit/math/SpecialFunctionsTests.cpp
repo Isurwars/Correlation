@@ -13,6 +13,7 @@
 namespace correlation::testing {
 
 using namespace correlation::math;
+using correlation::real_t;
 namespace {
 class SpecialFunctionsTests : public ::testing::Test {};
 } // namespace
@@ -94,16 +95,18 @@ TEST_F(SpecialFunctionsTests, SphLegendreAnalyticValues) {
 }
 
 TEST_F(SpecialFunctionsTests, SphLegendreBatchEquivalence) {
-  std::vector<real_t> angles = {static_cast<real_t>(0.0), static_cast<real_t>(0.2),
-                                static_cast<real_t>(0.5), static_cast<real_t>(M_PI / 2.0),
-                                static_cast<real_t>(2.1), static_cast<real_t>(M_PI - 0.1),
-                                std::numbers::pi_v<float>};
+  const std::vector<real_t> angles = {
+      static_cast<real_t>(0.0),        static_cast<real_t>(0.2), static_cast<real_t>(0.5),
+      static_cast<real_t>(M_PI / 2.0), static_cast<real_t>(2.1), static_cast<real_t>(M_PI - 0.1),
+      std::numbers::pi_v<float>,
+  };
   size_t const count = angles.size();
   std::vector<real_t> batch_results(count);
 
   // Test different combinations of l and m
-  std::vector<std::pair<int, int>> const l_m_pairs = {{0, 0}, {1, 0}, {1, 1}, {2, 0},
-                                                      {2, 1}, {2, 2}, {3, 1}, {4, 2}};
+  std::vector<std::pair<int, int>> const l_m_pairs = {
+      {0, 0}, {1, 0}, {1, 1}, {2, 0}, {2, 1}, {2, 2}, {3, 1}, {4, 2},
+  };
 
   for (const auto &[degree, order] : l_m_pairs) {
     sphLegendreBatch(
@@ -126,8 +129,11 @@ TEST_F(SpecialFunctionsTests, SphLegendreBatchEquivalence) {
 }
 
 TEST_F(SpecialFunctionsTests, SphLegendreBatchOutOfBoundsmPopulatesZero) {
-  std::vector<real_t> angles = {static_cast<real_t>(0.1), static_cast<real_t>(0.2),
-                                static_cast<real_t>(0.3)};
+  const std::vector<real_t> angles = {
+      static_cast<real_t>(0.1),
+      static_cast<real_t>(0.2),
+      static_cast<real_t>(0.3),
+  };
   std::vector<real_t> results(3, static_cast<real_t>(1.23)); // Prefill with dummy data
 
   sphLegendreBatch(

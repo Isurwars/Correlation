@@ -23,7 +23,7 @@ namespace {
   };
 
   for (const auto &root : search_roots) {
-    auto full_path = std::filesystem::path(root) / relative_path;
+    const auto full_path = std::filesystem::path(root) / relative_path;
     if (std::filesystem::exists(full_path)) {
       return full_path.string();
     }
@@ -53,22 +53,7 @@ private:
   std::filesystem::path path_;
 };
 
-TEST(ServiceIntegrationTests, EndToEndMultiFrameTrajectoryPipeline) {
-  const std::string trajectory_path = findTestDataPath("xdatcar/Si.xdatcar");
-  ASSERT_TRUE(std::filesystem::exists(trajectory_path))
-      << "Trajectory test fixture not found: " << trajectory_path;
-
-  correlation::app::TrajectoryLoader loader;
-  const auto load_result = loader.loadFile(trajectory_path);
-  ASSERT_TRUE(load_result.has_value()) << load_result.error();
-  EXPECT_EQ(loader.getFrameCount(), 3);
-  ASSERT_NE(loader.cell(), nullptr);
-  EXPECT_EQ(loader.cell()->atomCount(), 4);
-
-  const auto temp_dir = std::filesystem::temp_directory_path() / "correlation_e2e_service_test";
-  const TempDirectoryGuard temp_guard{temp_dir};
-  const std::string out_base = (temp_guard.path() / "analysis_run").string();
-
+correlation::app::ProgramOptions createTestPipelineOptions(const std::string &out_base) {
   correlation::app::ProgramOptions options;
   options.output_file_base = out_base;
   options.r_max = 5.0;
@@ -84,37 +69,65 @@ TEST(ServiceIntegrationTests, EndToEndMultiFrameTrajectoryPipeline) {
   options.active_calculators["SQ"] = true;
   options.active_calculators["VACF"] = true;
   options.active_calculators["MSD"] = true;
+  return options;
+}
 
-  correlation::app::AnalysisDispatcher dispatcher;
-  bool progress_invoked = false;
-  dispatcher.setProgressCallback([&progress_invoked](float progress, const std::string &) {
-    if (progress > 0.0F) {
-      progress_invoked = true;
-    }
-  });
-
-  const auto run_result = dispatcher.runAnalysis(loader.trajectoryMut(), options);
-  ASSERT_TRUE(run_result.has_value())
-      << "runAnalysis failed: " << (run_result ? "" : run_result.error());
-  EXPECT_TRUE(progress_invoked);
-  EXPECT_FALSE(dispatcher.isCancelled());
-
-  const auto available_hists = dispatcher.getAvailableHistogramNames();
-  EXPECT_FALSE(available_hists.empty());
-  EXPECT_NE(std::ranges::find(available_hists, "g_r"), available_hists.end());
-  EXPECT_NE(std::ranges::find(available_hists, "VACF"), available_hists.end());
-  EXPECT_NE(std::ranges::find(available_hists, "MSD"), available_hists.end());
-
-  const auto write_result = dispatcher.writeFiles(options);
-  ASSERT_TRUE(write_result.has_value())
-      << "writeFiles failed: " << (write_result ? "" : write_result.error());
-
+void verifyGeneratedOutputFiles(const std::string &out_base) {
   const auto csv_dir = std::filesystem::path(out_base) / "csv";
   EXPECT_TRUE(std::filesystem::exists(csv_dir / "g.csv"));
   EXPECT_TRUE(std::filesystem::exists(csv_dir / "J.csv"));
   EXPECT_TRUE(std::filesystem::exists(csv_dir / "VACF.csv"));
   EXPECT_TRUE(std::filesystem::exists(csv_dir / "MSD.csv"));
   EXPECT_TRUE(std::filesystem::exists(std::filesystem::path(out_base) / "summary.txt"));
+}
+
+void verifyAvailableHistograms(const std::vector<std::string> &available_hists) {
+  EXPECT_FALSE(available_hists.empty());
+  EXPECT_NE(std::ranges::find(available_hists, "g_r"), available_hists.end());
+  EXPECT_NE(std::ranges::find(available_hists, "VACF"), available_hists.end());
+  EXPECT_NE(std::ranges::find(available_hists, "MSD"), available_hists.end());
+}
+
+[[nodiscard]] correlation::app::TrajectoryLoader loadTestTrajectory(const std::string &path) {
+  correlation::app::TrajectoryLoader loader;
+  const auto load_result = loader.loadFile(path);
+  EXPECT_TRUE(load_result.has_value());
+  EXPECT_EQ(loader.getFrameCount(), 3);
+  EXPECT_NE(loader.cell(), nullptr);
+  EXPECT_EQ(loader.cell()->atomCount(), 4);
+  return loader;
+}
+
+TEST(ServiceIntegrationTests, EndToEndMultiFrameTrajectoryPipeline) {
+  const std::string trajectory_path = findTestDataPath("xdatcar/Si.xdatcar");
+  ASSERT_TRUE(std::filesystem::exists(trajectory_path));
+
+  auto loader = loadTestTrajectory(trajectory_path);
+
+  const auto temp_dir = std::filesystem::temp_directory_path() / "correlation_e2e_service_test";
+  const TempDirectoryGuard temp_guard{temp_dir};
+  const std::string out_base = (temp_guard.path() / "analysis_run").string();
+
+  const auto options = createTestPipelineOptions(out_base);
+
+  correlation::app::AnalysisDispatcher dispatcher;
+  bool progress_invoked = false;
+  dispatcher.setProgressCallback([&progress_invoked](float progress, const std::string &) {
+    progress_invoked = progress > 0.0F;
+  });
+
+  const auto run_result = dispatcher.runAnalysis(loader.trajectoryMut(), options);
+  ASSERT_TRUE(run_result.has_value());
+  EXPECT_TRUE(progress_invoked);
+  EXPECT_FALSE(dispatcher.isCancelled());
+
+  const auto available_hists = dispatcher.getAvailableHistogramNames();
+  verifyAvailableHistograms(available_hists);
+
+  const auto write_result = dispatcher.writeFiles(options);
+  ASSERT_TRUE(write_result.has_value());
+
+  verifyGeneratedOutputFiles(out_base);
 }
 
 TEST(ServiceIntegrationTests, AbortsGracefullyOnMissingTrajectory) {

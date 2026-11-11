@@ -15,30 +15,10 @@ namespace correlation::testing {
 using namespace correlation::calculators;
 using namespace correlation::core;
 using namespace correlation::analysis;
+using correlation::real_t;
 
-TEST(MSDCalculatorTests, ComputesCorrectMSDAndDeff) {
-  // Construct a trajectory of 5 frames with 1 atom moving linearly
-  // x(t) = t, y(t) = 0, z(t) = 0
-  std::vector<Cell> frames;
-  for (int i = 0; i < 5; ++i) {
-    Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
-    cell.addAtom("Si", {static_cast<real_t>(i), 0.0, 0.0});
-    frames.push_back(std::move(cell));
-  }
-
-  real_t time_step = 1.0; // 1 fs
-  Trajectory traj(std::move(frames), time_step);
-
-  // Act
-  auto results = MSDCalculator::calculate(traj, MaxFrames{2}, StartFrame{0}, EndFrame{5});
-
-  // Assert
-  ASSERT_TRUE(results.contains("MSD"));
-  ASSERT_TRUE(results.contains("D_eff"));
-
-  const auto &msd_hist = results.at("MSD");
-  const auto &deff_hist = results.at("D_eff");
-
+namespace {
+void verifyMSDValues(const Histogram &msd_hist, const Histogram &deff_hist) {
   // Check lag 0
   EXPECT_DOUBLE_EQ(msd_hist.partials.at("Total")[0], 0.0);
   EXPECT_DOUBLE_EQ(deff_hist.partials.at("Total")[0], 0.0);
@@ -54,6 +34,33 @@ TEST(MSDCalculatorTests, ComputesCorrectMSDAndDeff) {
   // D_eff(2) = 4.0 / (6 * 2 * 1.0) = 4.0 / 12.0 = 1.0 / 3.0
   EXPECT_NEAR(msd_hist.partials.at("Total")[2], 4.0, 1e-6);
   EXPECT_NEAR(deff_hist.partials.at("Total")[2], 1.0 / 3.0, 1e-6);
+}
+} // namespace
+
+TEST(MSDCalculatorTests, ComputesCorrectMSDAndDeff) {
+  // Construct a trajectory of 5 frames with 1 atom moving linearly
+  // x(t) = t, y(t) = 0, z(t) = 0
+  std::vector<Cell> frames;
+  for (int i = 0; i < 5; ++i) {
+    Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
+    cell.addAtom("Si", {static_cast<real_t>(i), 0.0, 0.0});
+    frames.push_back(std::move(cell));
+  }
+
+  const real_t time_step = 1.0; // 1 fs
+  const Trajectory traj(std::move(frames), time_step);
+
+  // Act
+  const auto results = MSDCalculator::calculate(traj, MaxFrames{2}, StartFrame{0}, EndFrame{5});
+
+  // Assert
+  ASSERT_TRUE(results.contains("MSD"));
+  ASSERT_TRUE(results.contains("D_eff"));
+
+  const auto &msd_hist = results.at("MSD");
+  const auto &deff_hist = results.at("D_eff");
+
+  verifyMSDValues(msd_hist, deff_hist);
 }
 
 // --- Extreme / Edge-Case Tests ---
@@ -89,7 +96,7 @@ TEST(MSDCalculatorTests, MultiAtomAveraging) {
     frames.push_back(std::move(cell));
   }
 
-  Trajectory traj(std::move(frames), 1.0);
+  const Trajectory traj(std::move(frames), 1.0);
   auto results = MSDCalculator::calculate(traj, MaxFrames{2}, StartFrame{0}, EndFrame{4});
 
   ASSERT_TRUE(results.contains("MSD"));
@@ -112,7 +119,7 @@ TEST(MSDCalculatorTests, FrameRangeSubset) {
     frames.push_back(std::move(cell));
   }
 
-  Trajectory traj(std::move(frames), 1.0);
+  const Trajectory traj(std::move(frames), 1.0);
   // Restrict to frames [3, 7) with max correlation lag 2
   auto results = MSDCalculator::calculate(traj, MaxFrames{2}, StartFrame{3}, EndFrame{7});
 
@@ -138,21 +145,21 @@ TEST(MSDCalculatorTests, ComputeDiffusionCoefficientMSD) {
 
 TEST(MSDCalculatorTests, DynamicsAnalyzerMSDNonPhysicalInputs) {
   // Mismatched size / empty inputs
-  std::vector<real_t> time_empty = {};
-  std::vector<real_t> msd_empty = {};
+  const std::vector<real_t> time_empty = {};
+  const std::vector<real_t> msd_empty = {};
   EXPECT_DOUBLE_EQ(correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(
                        time_empty, msd_empty),
                    0.0);
 
-  std::vector<real_t> time_small = {0.0};
-  std::vector<real_t> msd_small = {0.0};
+  const std::vector<real_t> time_small = {0.0};
+  const std::vector<real_t> msd_small = {0.0};
   EXPECT_DOUBLE_EQ(correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(
                        time_small, msd_small),
                    0.0);
 
   // Negative slope (non-physical diffusion)
-  std::vector<real_t> time = {0.0, 1.0, 2.0, 3.0, 4.0};
-  std::vector<real_t> msd_neg_slope = {24.0, 18.0, 12.0, 6.0, 0.0};
+  const std::vector<real_t> time = {0.0, 1.0, 2.0, 3.0, 4.0};
+  const std::vector<real_t> msd_neg_slope = {24.0, 18.0, 12.0, 6.0, 0.0};
   EXPECT_DOUBLE_EQ(
       correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(time, msd_neg_slope),
       0.0);

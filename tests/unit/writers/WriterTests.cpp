@@ -4,7 +4,6 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "analysis/DistributionFunctions.hpp"
-#include "calculators/order/SteinhardtCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 #include "math/Precision.hpp"
@@ -22,6 +21,8 @@
 #endif
 #include <iterator> // For std::distance
 #include <vector>
+
+using correlation::real_t;
 
 namespace {
 
@@ -65,7 +66,7 @@ protected:
     for (const auto &entry : std::filesystem::directory_iterator(".", error_code)) {
       if (entry.is_regular_file()) {
         const auto filename = entry.path().filename().string();
-        if (filename.rfind(prefix, 0) == 0) {
+        if (filename.starts_with(prefix)) {
           std::filesystem::remove(entry.path(), error_code);
         }
       }
@@ -134,7 +135,7 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   const auto &pad_bins = pad_hist.bins;
   const auto &si_si_si_pad = pad_hist.partials.at("Si-Si-Si");
 
-  auto max_it = std::max_element(si_si_si_pad.begin(), si_si_si_pad.end());
+  const auto max_it = std::ranges::max_element(si_si_si_pad);
   size_t const peak_index = std::distance(si_si_si_pad.begin(), max_it);
 
   // The dominant peak angle should be the tetrahedral angle in silicon.
@@ -185,8 +186,8 @@ TEST_F(FileWriterTests, PADCsvContainsRawAndNormalizedAndSmoothedColumns) {
   EXPECT_NE(header_line.find("Si-Si-Si_smoothed"), std::string::npos)
       << "PAD CSV header missing smoothed column 'Si-Si-Si_smoothed'";
   // Verify the raw columns appear before the normalized columns
-  auto raw_pos = header_line.find("Si-Si-Si_raw");
-  auto norm_pos = header_line.find(",Si-Si-Si,");
+  const auto raw_pos = header_line.find("Si-Si-Si_raw");
+  const auto norm_pos = header_line.find(",Si-Si-Si,");
   EXPECT_LT(raw_pos, norm_pos) << "Raw companion columns should appear before normalized columns";
 
   cleanPrefix(prefix);
@@ -570,8 +571,8 @@ TEST_F(FileWriterTests, WritesParquetFiles) {
 TEST_F(FileWriterTests, WritesZipBundle) {
   // Arrange
   std::string const path = getDataDir() + "si_crystal.car";
-  correlation::readers::FileType type = correlation::readers::determineFileType(path);
-  correlation::core::Cell si_cell = correlation::readers::readStructure(path, type);
+  const correlation::readers::FileType type = correlation::readers::determineFileType(path);
+  const correlation::core::Cell si_cell = correlation::readers::readStructure(path, type);
   correlation::core::Trajectory trajectory;
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
@@ -588,7 +589,7 @@ TEST_F(FileWriterTests, WritesZipBundle) {
   std::error_code error_code;
   std::filesystem::remove(zip_path, error_code);
 
-  correlation::writers::FileWriter writer(dists);
+  const correlation::writers::FileWriter writer(dists);
 
   // Act: write bundle with CSV and SVG enabled
   auto res = writer.writeBundle(zip_path, /*use_csv=*/true, /*use_hdf5=*/false,
@@ -618,8 +619,8 @@ TEST_F(FileWriterTests, WritesZipBundle) {
 TEST_F(FileWriterTests, WritesCategorizedFolder) {
   // Arrange
   std::string const path = getDataDir() + "si_crystal.car";
-  correlation::readers::FileType type = correlation::readers::determineFileType(path);
-  correlation::core::Cell si_cell = correlation::readers::readStructure(path, type);
+  const correlation::readers::FileType type = correlation::readers::determineFileType(path);
+  const correlation::core::Cell si_cell = correlation::readers::readStructure(path, type);
   correlation::core::Trajectory trajectory;
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
@@ -635,7 +636,7 @@ TEST_F(FileWriterTests, WritesCategorizedFolder) {
   std::error_code error_code;
   std::filesystem::remove_all(folder_path, error_code);
 
-  correlation::writers::FileWriter writer(dists);
+  const correlation::writers::FileWriter writer(dists);
 
   // Act: write categorized folder with CSV and SVG enabled
   auto res = writer.writeFolder(folder_path, /*use_csv=*/true, /*use_hdf5=*/false,
@@ -658,8 +659,8 @@ TEST_F(FileWriterTests, WritesCategorizedFolder) {
 TEST_F(FileWriterTests, WritesCategorizedFolderWithAlgorithmFiltering) {
   // Arrange
   std::string const path = getDataDir() + "si_crystal.car";
-  correlation::readers::FileType type = correlation::readers::determineFileType(path);
-  correlation::core::Cell si_cell = correlation::readers::readStructure(path, type);
+  const correlation::readers::FileType type = correlation::readers::determineFileType(path);
+  const correlation::core::Cell si_cell = correlation::readers::readStructure(path, type);
   correlation::core::Trajectory trajectory;
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
@@ -675,10 +676,10 @@ TEST_F(FileWriterTests, WritesCategorizedFolderWithAlgorithmFiltering) {
   std::error_code error_code;
   std::filesystem::remove_all(folder_path, error_code);
 
-  correlation::writers::FileWriter writer(dists);
+  const correlation::writers::FileWriter writer(dists);
 
   // Filter only PAD (exclude RDF / g(r))
-  std::vector<std::string> selected_algos = {"PAD"};
+  const std::vector<std::string> selected_algos = {"PAD"};
 
   // Act
   auto res = writer.writeFolder(folder_path, /*use_csv=*/true, /*use_hdf5=*/false,

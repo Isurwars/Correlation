@@ -9,6 +9,8 @@
 
 #include <gtest/gtest.h>
 
+using correlation::real_t;
+
 namespace correlation::calculators {
 namespace {
 class MotifFinderTests : public ::testing::Test {
@@ -68,7 +70,7 @@ TEST_F(MotifFinderTests, EmptyGraphReturnsNoRings) {
   // A graph with no edges at all
   graph = correlation::core::NeighborGraph(5);
 
-  auto rings = MotifFinder::findRings(graph, 6);
+  const auto rings = MotifFinder::findRings(graph, 6);
 
   // No edges means no rings of any size
   for (int size = 3; size <= 6; ++size) {
@@ -88,7 +90,7 @@ TEST_F(MotifFinderTests, IsolatedNodesReturnsNoRings) {
   graph.addDirectedEdge(2, 3, 1.0, {1.0, 0.0, 0.0});
   graph.addDirectedEdge(3, 2, 1.0, {-1.0, 0.0, 0.0});
 
-  auto rings = MotifFinder::findRings(graph, 6);
+  const auto rings = MotifFinder::findRings(graph, 6);
 
   for (int size = 3; size <= 6; ++size) {
     EXPECT_EQ(rings.count(size), 0) << "Expected no rings of size " << size;
@@ -109,7 +111,7 @@ TEST_F(MotifFinderTests, MaxRingSizeExcludesLargerRings) {
   graph.addDirectedEdge(0, 3, 1.0, {0.0, 1.0, 0.0});
 
   // max_size = 3 should NOT find the size-4 ring
-  auto rings = MotifFinder::findRings(graph, 3);
+  const auto rings = MotifFinder::findRings(graph, 3);
 
   EXPECT_EQ(rings.count(3), 0);
   EXPECT_EQ(rings.count(4), 0); // Should be excluded by max_size
@@ -145,7 +147,7 @@ TEST_F(MotifFinderTests, ExtractCyclesExtractsExactTopology) {
   ASSERT_EQ(cycles_4.size(), 1);
   EXPECT_EQ(cycles_4[0].size(), 4);
 
-  auto cycles_5 = MotifFinder::extractCycles(graph, 5);
+  const auto cycles_5 = MotifFinder::extractCycles(graph, 5);
   EXPECT_TRUE(cycles_5.empty());
 }
 
@@ -158,10 +160,10 @@ TEST_F(MotifFinderTests, MaxSizeLessThanThreeReturnsEmpty) {
   graph.addDirectedEdge(2, 0, 1.0, {-1.0, -1.0, 0.0});
   graph.addDirectedEdge(0, 2, 1.0, {1.0, 1.0, 0.0});
 
-  auto rings = MotifFinder::findRings(graph, 2);
+  const auto rings = MotifFinder::findRings(graph, 2);
   EXPECT_TRUE(rings.empty());
 
-  auto cycles = MotifFinder::extractCycles(graph, 2);
+  const auto cycles = MotifFinder::extractCycles(graph, 2);
   EXPECT_TRUE(cycles.empty());
 }
 
@@ -169,7 +171,7 @@ TEST_F(MotifFinderTests, FranzblauDetectsSimpleHexagon) {
   graph = correlation::core::NeighborGraph(6);
   // Simple hexagon: 0-1-2-3-4-5-0
   for (size_t i = 0; i < 6; ++i) {
-    size_t next = (i + 1) % 6;
+    const size_t next = (i + 1) % 6;
     graph.addDirectedEdge(i, next, 1.0, {1.0, 0.0, 0.0});
     graph.addDirectedEdge(next, i, 1.0, {-1.0, 0.0, 0.0});
   }
@@ -193,7 +195,7 @@ TEST_F(MotifFinderTests, FranzblauRejectsCompositeRingWithAlternateGeodesic) {
   // length 2 exist), so Franzblau strictly rejects the composite 6-cycle.
   graph = correlation::core::NeighborGraph(7);
   for (size_t i = 0; i < 6; ++i) {
-    size_t next = (i + 1) % 6;
+    const size_t next = (i + 1) % 6;
     graph.addDirectedEdge(i, next, 1.0, {1.0, 0.0, 0.0});
     graph.addDirectedEdge(next, i, 1.0, {-1.0, 0.0, 0.0});
   }
@@ -214,6 +216,26 @@ TEST_F(MotifFinderTests, FranzblauRejectsCompositeRingWithAlternateGeodesic) {
   EXPECT_EQ(franzblau_rings[4], 1U); // Only the primitive 4-cycle remains
 }
 
+namespace {
+void verifyBridgedSiNeighbors(const correlation::core::NeighborGraph &bridged) {
+  EXPECT_EQ(bridged.getNeighbors(0).size(), 2U);
+  EXPECT_EQ(bridged.getNeighbors(2).size(), 2U);
+  EXPECT_EQ(bridged.getNeighbors(4).size(), 2U);
+}
+
+void verifyBridgedOxygenNeighbors(const correlation::core::NeighborGraph &bridged) {
+  EXPECT_EQ(bridged.getNeighbors(1).size(), 0U);
+  EXPECT_EQ(bridged.getNeighbors(3).size(), 0U);
+  EXPECT_EQ(bridged.getNeighbors(5).size(), 0U);
+}
+
+void verifyBridgedGraphStructure(const correlation::core::NeighborGraph &bridged) {
+  EXPECT_EQ(bridged.nodeCount(), 6U);
+  verifyBridgedSiNeighbors(bridged);
+  verifyBridgedOxygenNeighbors(bridged);
+}
+} // namespace
+
 TEST_F(MotifFinderTests, BuildBridgedGraphContractsOxygenBridges) {
   // Create 6-atom cell: Si0 - O1 - Si2 - O3 - Si4 - O5 - Si0
   correlation::core::Cell silica_ring(std::array<real_t, 6>{20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
@@ -233,16 +255,7 @@ TEST_F(MotifFinderTests, BuildBridgedGraphContractsOxygenBridges) {
   }
 
   const auto bridged = MotifFinder::buildBridgedGraph(graph, silica_ring, "Si", "O");
-  EXPECT_EQ(bridged.nodeCount(), 6U);
-
-  // In the bridged graph, Si0 (node 0) should be connected to Si2 (node 2) and Si4 (node 4)
-  EXPECT_EQ(bridged.getNeighbors(0).size(), 2U);
-  EXPECT_EQ(bridged.getNeighbors(2).size(), 2U);
-  EXPECT_EQ(bridged.getNeighbors(4).size(), 2U);
-  // Oxygen atoms (nodes 1, 3, 5) should have 0 neighbors in the former-projected graph
-  EXPECT_EQ(bridged.getNeighbors(1).size(), 0U);
-  EXPECT_EQ(bridged.getNeighbors(3).size(), 0U);
-  EXPECT_EQ(bridged.getNeighbors(5).size(), 0U);
+  verifyBridgedGraphStructure(bridged);
 
   // Cycle search on bridged graph finds exactly 1 ring of size 3 (3 Si polyhedra)
   const auto rings = MotifFinder::findRings(bridged, 6);

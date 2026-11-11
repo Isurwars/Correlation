@@ -1,20 +1,15 @@
 #include "readers/ArcReader.hpp"
 
-#include <gtest/gtest.h>
-
-using namespace correlation::readers;
-
-TEST(ArcReaderTests, Properties) {
-  ArcReader const reader;
-  EXPECT_EQ(reader.getName(), "Accelrys ARC");
-  EXPECT_TRUE(reader.isTrajectory());
-  auto exts = reader.getExtensions();
-  EXPECT_EQ(exts.size(), 1);
-  EXPECT_EQ(exts[0], "arc");
-}
-
 #include <filesystem>
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+#include <string>
 #include <vector>
+
+#include "../../PrecisionTestHelper.hpp"
+
+using correlation::real_t;
+using namespace correlation::readers;
 
 namespace {
 
@@ -35,10 +30,19 @@ std::string getTestDataDir() {
 
 } // namespace
 
+TEST(ArcReaderTests, Properties) {
+  ArcReader const reader;
+  EXPECT_EQ(reader.getName(), "Accelrys ARC");
+  EXPECT_TRUE(reader.isTrajectory());
+  auto const exts = reader.getExtensions();
+  EXPECT_EQ(exts.size(), 1);
+  EXPECT_EQ(exts[0], "arc");
+}
+
 TEST(ArcReaderTests, ReadsTrajectory) {
   std::string const data_dir = getTestDataDir();
   ArcReader reader;
-  auto traj = reader.readTrajectory(data_dir + "clean.arc");
+  auto const traj = reader.readTrajectory(data_dir + "clean.arc");
 
   EXPECT_EQ(traj.getFrameCount(), 2);
 
@@ -60,5 +64,5 @@ TEST(ArcReaderTests, ReadsTrajectory) {
 
 TEST(ArcReaderTests, ThrowsOnReadStructure) {
   ArcReader reader;
-  EXPECT_THROW(reader.readStructure("dummy.arc"), std::runtime_error);
+  EXPECT_THROW((void)reader.readStructure("dummy.arc"), std::runtime_error);
 }

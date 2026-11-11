@@ -13,6 +13,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+using correlation::real_t;
+
 namespace correlation::analysis {
 
 namespace {
@@ -42,6 +44,39 @@ public:
   correlation::core::Cell cell_;
   correlation::core::Trajectory trajectory_;
 };
+
+struct MaxPeakInfo {
+  real_t max_intensity{0.0};
+  real_t max_theta{0.0};
+};
+
+MaxPeakInfo findMaxPeakInRange(const Histogram &hist, real_t theta_min, real_t theta_max) {
+  const auto &total_intensity = hist.partials.at("Total");
+  MaxPeakInfo result;
+  for (size_t i = 0; i < total_intensity.size(); ++i) {
+    if (hist.bins[i] >= theta_min && hist.bins[i] <= theta_max &&
+        total_intensity[i] > result.max_intensity) {
+      result.max_intensity = total_intensity[i];
+      result.max_theta = hist.bins[i];
+    }
+  }
+  return result;
+}
+
+correlation::core::Cell createCubicSupercell() {
+  correlation::core::Cell cubic_cell({9.0, 9.0, 9.0, 90.0, 90.0, 90.0});
+  for (int i = 0; i < 2; ++i) {
+    for (int j = 0; j < 2; ++j) {
+      for (int k = 0; k < 2; ++k) {
+        cubic_cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(i * 3.0),
+                                                                    static_cast<real_t>(j * 3.0),
+                                                                    static_cast<real_t>(k * 3.0)));
+      }
+    }
+  }
+  return cubic_cell;
+}
+
 } // namespace
 
 TEST_F(XRDCalculatorTests, CalculateXRD) {
@@ -141,16 +176,7 @@ TEST_F(XRDCalculatorTests, CalculateXRD_IntensityIsZeroAtThetaZero) {
 
 TEST_F(XRDCalculatorTests, CalculateXRDCubicCell) {
   // Simple cubic cell a = 3.0, 3x3x3 supercell
-  correlation::core::Cell cubic_cell({9.0, 9.0, 9.0, 90.0, 90.0, 90.0});
-  for (int i = 0; i < 2; ++i) {
-    for (int j = 0; j < 2; ++j) {
-      for (int k = 0; k < 2; ++k) {
-        cubic_cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(i * 3.0),
-                                                                    static_cast<real_t>(j * 3.0),
-                                                                    static_cast<real_t>(k * 3.0)));
-      }
-    }
-  }
+  const auto cubic_cell = createCubicSupercell();
 
   correlation::core::Trajectory traj;
   traj.addFrame(cubic_cell);
@@ -174,25 +200,17 @@ TEST_F(XRDCalculatorTests, CalculateXRDCubicCell) {
   const auto &hist = dists.getHistogram("XRD");
   EXPECT_FALSE(hist.bins.empty());
 
-  const auto &total_intensity = hist.partials.at("Total");
-  real_t max_intensity = static_cast<real_t>(0.0);
-  real_t max_theta = static_cast<real_t>(0.0);
-  for (size_t i = 0; i < total_intensity.size(); ++i) {
-    if (hist.bins[i] > static_cast<real_t>(15.0) && total_intensity[i] > max_intensity) {
-      max_intensity = total_intensity[i];
-      max_theta = hist.bins[i];
-    }
-  }
+  const auto peak = findMaxPeakInRange(hist, 15.0, 90.0);
 
   // We expect non-zero max intensity due to Bragg scattering
-  EXPECT_GT(max_intensity, 0.0);
+  EXPECT_GT(peak.max_intensity, 0.0);
 
   // For a Simple Cubic cell with a = 3.0 A and Cu K-alpha (1.5406 A)
   // the first peak (100) theoretically appears at 2*theta ~ 29.75 degrees.
   // However, due to the small r_max (4.5 A) resulting in broad peaks, and
   // the rapidly decreasing atomic form factor for Ar, the apparent maximum
   // shifts to lower angles (~28.5 degrees).
-  EXPECT_NEAR(max_theta, 28.5, 1.0);
+  EXPECT_NEAR(peak.max_theta, 28.5, 1.0);
 }
 
 TEST_F(XRDCalculatorTests, CalculateXRD_InvalidInputsThrow) {
@@ -218,7 +236,7 @@ TEST_F(XRDCalculatorTests, CalculateXRD_InvalidInputsThrow) {
                }),
                std::invalid_argument);
 
-  Histogram empty_gr;
+  const Histogram empty_gr;
   EXPECT_THROW(correlation::calculators::XRDCalculator::calculate(
                    empty_gr, cell_, {}, correlation::calculators::Wavelength{1.5406},
                    correlation::calculators::MinTheta{5.0},
@@ -236,14 +254,14 @@ TEST_F(XRDCalculatorTests, CalculateFromSq) {
   s_q_hist.bins = {0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0};
   s_q_hist.partials["Ar-Ar"] = std::vector<real_t>(10, 1.0);
 
-  std::map<std::string, real_t> ashcroft_weights = {{"Ar-Ar", static_cast<real_t>(1.0)}};
+  const std::map<std::string, real_t> ashcroft_weights = {{"Ar-Ar", static_cast<real_t>(1.0)}};
 
   EXPECT_NO_THROW(correlation::calculators::XRDCalculator::calculateFromSq(
       s_q_hist, cell_, ashcroft_weights, correlation::calculators::Wavelength{1.5406},
       correlation::calculators::MinTheta{10.0}, correlation::calculators::MaxTheta{90.0},
       correlation::calculators::BinWidth{0.5}));
 
-  auto xrd_hist = correlation::calculators::XRDCalculator::calculateFromSq(
+  const auto xrd_hist = correlation::calculators::XRDCalculator::calculateFromSq(
       s_q_hist, cell_, ashcroft_weights, correlation::calculators::Wavelength{1.5406},
       correlation::calculators::MinTheta{10.0}, correlation::calculators::MaxTheta{90.0},
       correlation::calculators::BinWidth{0.5});
@@ -255,7 +273,7 @@ TEST_F(XRDCalculatorTests, CalculateFromSq) {
 
 TEST_F(XRDCalculatorTests, FCC_Copper_XRD) {
   real_t const a = 3.615;
-  auto cell = correlation::testing::crystals::createFCCCell(a, "Cu", 3, 3, 3);
+  const auto cell = correlation::testing::crystals::createFCCCell(a, "Cu", 3, 3, 3);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 8.0, trajectory_.getBondCutoffsSQ());
@@ -272,26 +290,15 @@ TEST_F(XRDCalculatorTests, FCC_Copper_XRD) {
   });
 
   const auto &hist = dists.getHistogram("XRD");
-  const auto &total_intensity = hist.partials.at("Total");
+  const auto peak = findMaxPeakInRange(hist, 40.0, 46.0);
 
-  real_t max_intensity = 0.0;
-  real_t max_theta = 0.0;
-  for (size_t i = 0; i < total_intensity.size(); ++i) {
-    if (hist.bins[i] >= 40.0 && hist.bins[i] <= 46.0) {
-      if (total_intensity[i] > max_intensity) {
-        max_intensity = total_intensity[i];
-        max_theta = hist.bins[i];
-      }
-    }
-  }
-
-  EXPECT_GT(max_intensity, 0.0);
-  EXPECT_NEAR(max_theta, 43.3, 1.5);
+  EXPECT_GT(peak.max_intensity, 0.0);
+  EXPECT_NEAR(peak.max_theta, 43.3, 1.5);
 }
 
 TEST_F(XRDCalculatorTests, BCC_Iron_XRD) {
   real_t const a = 2.866;
-  auto cell = correlation::testing::crystals::createBCCCell(a, "Fe", 3, 3, 3);
+  const auto cell = correlation::testing::crystals::createBCCCell(a, "Fe", 3, 3, 3);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 7.0, trajectory_.getBondCutoffsSQ());
@@ -308,26 +315,15 @@ TEST_F(XRDCalculatorTests, BCC_Iron_XRD) {
   });
 
   const auto &hist = dists.getHistogram("XRD");
-  const auto &total_intensity = hist.partials.at("Total");
+  const auto peak = findMaxPeakInRange(hist, 41.0, 47.0);
 
-  real_t max_intensity = 0.0;
-  real_t max_theta = 0.0;
-  for (size_t i = 0; i < total_intensity.size(); ++i) {
-    if (hist.bins[i] >= 41.0 && hist.bins[i] <= 47.0) {
-      if (total_intensity[i] > max_intensity) {
-        max_intensity = total_intensity[i];
-        max_theta = hist.bins[i];
-      }
-    }
-  }
-
-  EXPECT_GT(max_intensity, 0.0);
-  EXPECT_NEAR(max_theta, 44.7, 1.5);
+  EXPECT_GT(peak.max_intensity, 0.0);
+  EXPECT_NEAR(peak.max_theta, 44.7, 1.5);
 }
 
 TEST_F(XRDCalculatorTests, Diamond_Silicon_XRD) {
   real_t const a = 5.431;
-  auto cell = correlation::testing::crystals::createDiamondCell(a, "Si", 2, 2, 2);
+  const auto cell = correlation::testing::crystals::createDiamondCell(a, "Si", 2, 2, 2);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 8.0, trajectory_.getBondCutoffsSQ());
@@ -344,26 +340,15 @@ TEST_F(XRDCalculatorTests, Diamond_Silicon_XRD) {
   });
 
   const auto &hist = dists.getHistogram("XRD");
-  const auto &total_intensity = hist.partials.at("Total");
+  const auto peak = findMaxPeakInRange(hist, 26.0, 31.0);
 
-  real_t max_intensity = 0.0;
-  real_t max_theta = 0.0;
-  for (size_t i = 0; i < total_intensity.size(); ++i) {
-    if (hist.bins[i] >= 26.0 && hist.bins[i] <= 31.0) {
-      if (total_intensity[i] > max_intensity) {
-        max_intensity = total_intensity[i];
-        max_theta = hist.bins[i];
-      }
-    }
-  }
-
-  EXPECT_GT(max_intensity, 0.0);
-  EXPECT_NEAR(max_theta, 28.4, 1.5);
+  EXPECT_GT(peak.max_intensity, 0.0);
+  EXPECT_NEAR(peak.max_theta, 28.4, 1.5);
 }
 
 TEST_F(XRDCalculatorTests, NaCl_RockSalt_XRD) {
   real_t const a = 5.64;
-  auto cell = correlation::testing::crystals::createNaClCell(a, "Na", "Cl", 2, 2, 2);
+  const auto cell = correlation::testing::crystals::createNaClCell(a, "Na", "Cl", 2, 2, 2);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 8.0, trajectory_.getBondCutoffsSQ());
@@ -380,21 +365,10 @@ TEST_F(XRDCalculatorTests, NaCl_RockSalt_XRD) {
   });
 
   const auto &hist = dists.getHistogram("XRD");
-  const auto &total_intensity = hist.partials.at("Total");
+  const auto peak = findMaxPeakInRange(hist, 29.0, 34.0);
 
-  real_t max_intensity = 0.0;
-  real_t max_theta = 0.0;
-  for (size_t i = 0; i < total_intensity.size(); ++i) {
-    if (hist.bins[i] >= 29.0 && hist.bins[i] <= 34.0) {
-      if (total_intensity[i] > max_intensity) {
-        max_intensity = total_intensity[i];
-        max_theta = hist.bins[i];
-      }
-    }
-  }
-
-  EXPECT_GT(max_intensity, 0.0);
-  EXPECT_NEAR(max_theta, 31.7, 1.5);
+  EXPECT_GT(peak.max_intensity, 0.0);
+  EXPECT_NEAR(peak.max_theta, 31.7, 1.5);
 }
 
 } // namespace correlation::analysis

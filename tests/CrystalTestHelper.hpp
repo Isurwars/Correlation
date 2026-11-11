@@ -11,6 +11,8 @@
 
 namespace correlation::testing::crystals {
 
+using correlation::real_t;
+
 /// Create a Simple Cubic (SC) supercell.
 /// \param a Lattice constant in Angstroms
 /// \param element Chemical element symbol

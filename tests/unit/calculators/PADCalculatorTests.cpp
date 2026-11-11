@@ -19,6 +19,8 @@
 #include <numbers>
 #include <numeric>
 
+using correlation::real_t;
+
 namespace correlation::analysis {
 
 // ============================================================================
@@ -116,11 +118,11 @@ countAngles(const std::vector<std::vector<std::vector<std::vector<real_t>>>> &an
 
 [[nodiscard]] double findPeakAngle(const std::vector<real_t> &partial,
                                    const std::vector<real_t> &bins) {
-  auto max_it = std::ranges::max_element(partial);
+  const auto max_it = std::ranges::max_element(partial);
   if (max_it == partial.end()) {
     return -1.0;
   }
-  auto idx = std::distance(partial.begin(), max_it);
+  const auto idx = std::distance(partial.begin(), max_it);
   return bins[idx];
 }
 
@@ -130,7 +132,8 @@ void setupIcosahedron(correlation::core::Cell &cell,
   const auto phi = static_cast<real_t>(std::numbers::phi);
   std::vector<std::vector<real_t>> const vertices = {
       {0, 1, phi},  {0, 1, -phi},  {0, -1, phi}, {0, -1, -phi}, {1, phi, 0},  {1, -phi, 0},
-      {-1, phi, 0}, {-1, -phi, 0}, {phi, 0, 1},  {phi, 0, -1},  {-phi, 0, 1}, {-phi, 0, -1}};
+      {-1, phi, 0}, {-1, -phi, 0}, {phi, 0, 1},  {phi, 0, -1},  {-phi, 0, 1}, {-phi, 0, -1},
+  };
   for (const auto &vertex : vertices) {
     cell.addAtom("Si", correlation::math::Vector3<real_t>(
                            base_coord + vertex[0], base_coord + vertex[1], base_coord + vertex[2]));
@@ -180,7 +183,7 @@ public:
 } // namespace
 
 TEST_F(PADCalculatorTests_AngleReproduction, CalculatePAD) {
-  auto water = correlation::testing::crystals::createWaterMoleculeCell(
+  const auto water = correlation::testing::crystals::createWaterMoleculeCell(
       {.O_pos = {5.0, 5.0, 5.0}, .r_OH = 1.0, .angle_HOH_deg = 104.5, .box_size = 10.0});
 
   updateTrajectory(water);
@@ -192,7 +195,7 @@ TEST_F(PADCalculatorTests_AngleReproduction, CalculatePAD) {
   EXPECT_EQ(hist.bins.size(), hist_alias.bins.size());
   const auto &hoh = hist.partials.at("H-O-H");
 
-  auto max_it = std::ranges::max_element(hoh);
+  const auto max_it = std::ranges::max_element(hoh);
   size_t const idx = std::distance(hoh.begin(), max_it);
   real_t const angle = hist.bins[idx];
   // 104.5 angle with 0.001 bins could land in 104.4995 or 104.5005 due to
@@ -327,10 +330,9 @@ TEST_F(PADCalculatorTests, SingleAtomNoAngles) {
   // but no angles found. Let's check total counts.
   if (static_cast<unsigned int>(dists.getAllHistograms().contains("PAD")) != 0U) {
     const auto &hist = dists.getHistogram("PAD");
-    if (!hist.partials.empty()) {
-      if (static_cast<unsigned int>(hist.partials.contains("Total")) != 0U) {
-        EXPECT_DOUBLE_EQ(sumHistogram(hist.partials.at("Total")), 0.0);
-      }
+    if (!hist.partials.empty() &&
+        (static_cast<unsigned int>(hist.partials.contains("Total")) != 0U)) {
+      EXPECT_DOUBLE_EQ(sumHistogram(hist.partials.at("Total")), 0.0);
     }
   }
 }
@@ -415,8 +417,6 @@ TEST_F(PADCalculatorTests, EquilateralTriangle60) {
   // Should have O-Si-O
   const auto &partial = hist.partials.at("O-Si-O");
 
-  // Find peak near 60
-  double const val_at_60 = 0;
   // index for 60 deg is 60 or 59 depending on binning.
   // 59.5 (idx 59) -> [59, 60)
   // 60.5 (idx 60) -> [60, 61)

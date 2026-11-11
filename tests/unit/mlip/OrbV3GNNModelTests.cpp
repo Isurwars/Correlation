@@ -20,6 +20,8 @@
 #include <stdexcept>
 #include <string>
 
+using correlation::real_t;
+
 namespace correlation::mlip {
 
 namespace {

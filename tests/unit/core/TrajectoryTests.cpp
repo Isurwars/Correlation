@@ -19,6 +19,7 @@
 namespace correlation::testing {
 
 using namespace correlation::core;
+using correlation::real_t;
 namespace {
 class TrajectoryTests : public ::testing::Test {
 public:
@@ -122,8 +123,11 @@ TEST_F(TrajectoryTests, AddFrameThrowsOnElementCountMismatch) {
 // --- Unitary Tests: Deduplication ---
 
 TEST_F(TrajectoryTests, RemoveDuplicatedFrames) {
-  std::vector<Cell> const frames = {createSimpleFrame(0, 0, 0), createSimpleFrame(0, 0, 0),
-                                    createSimpleFrame(1, 1, 1)};
+  std::vector<Cell> const frames = {
+      createSimpleFrame(0, 0, 0),
+      createSimpleFrame(0, 0, 0),
+      createSimpleFrame(1, 1, 1),
+  };
   Trajectory traj;
   for (const auto &frame : frames) {
     // AddFrame doesn't deduplicate automatically, but Trajectory(vector) does.
@@ -136,20 +140,29 @@ TEST_F(TrajectoryTests, RemoveDuplicatedFrames) {
 }
 
 TEST_F(TrajectoryTests, RemovesConsecutiveTriplicates) {
-  std::vector<Cell> const frames = {createSimpleFrame(0, 0, 0), createSimpleFrame(0, 0, 0),
-                                    createSimpleFrame(0, 0, 0)};
+  std::vector<Cell> const frames = {
+      createSimpleFrame(0, 0, 0),
+      createSimpleFrame(0, 0, 0),
+      createSimpleFrame(0, 0, 0),
+  };
   Trajectory const traj(frames, 1.0);
   EXPECT_EQ(traj.getFrameCount(), 1);
 }
 
 TEST_F(TrajectoryTests, HandlesNoDuplicates) {
-  std::vector<Cell> const frames = {createSimpleFrame(0, 0, 0), createSimpleFrame(1, 1, 1)};
+  std::vector<Cell> const frames = {
+      createSimpleFrame(0, 0, 0),
+      createSimpleFrame(1, 1, 1),
+  };
   Trajectory const traj(frames, 1.0);
   EXPECT_EQ(traj.getFrameCount(), 2);
 }
 
 TEST_F(TrajectoryTests, HandlesAllDuplicates) {
-  std::vector<Cell> const frames = {createSimpleFrame(0, 0, 0), createSimpleFrame(0, 0, 0)};
+  std::vector<Cell> const frames = {
+      createSimpleFrame(0, 0, 0),
+      createSimpleFrame(0, 0, 0),
+  };
   Trajectory const traj(frames, 1.0);
   EXPECT_EQ(traj.getFrameCount(), 1);
 }
@@ -157,8 +170,11 @@ TEST_F(TrajectoryTests, HandlesAllDuplicates) {
 // --- Unitary Tests: Physics & State ---
 
 TEST_F(TrajectoryTests, CalculateVelocitiesComputesCorrectVelocities) {
-  std::vector<Cell> const frames = {createSimpleFrame(0, 0, 0), createSimpleFrame(1, 0, 0),
-                                    createSimpleFrame(2, 0, 0)};
+  std::vector<Cell> const frames = {
+      createSimpleFrame(0, 0, 0),
+      createSimpleFrame(1, 0, 0),
+      createSimpleFrame(2, 0, 0),
+  };
   Trajectory traj(frames, 1.0);
   traj.calculateVelocities();
   EXPECT_NEAR(traj.getFrame(0).atoms()[0].velocity().x(), 1.0, 1e-6);
@@ -176,8 +192,10 @@ TEST_F(TrajectoryTests, CalculateVelocitiesHandlesPBC) {
 
 TEST_F(TrajectoryTests, SetBondCutoffsManuallyWorks) {
   Trajectory traj;
-  traj.setBondCutoffs({{{.min_sq = 0.36, .max_sq = 2.25}, {.min_sq = 0.49, .max_sq = 4.0}},
-                       {{.min_sq = 0.49, .max_sq = 4.0}, {.min_sq = 0.64, .max_sq = 6.25}}});
+  traj.setBondCutoffs({
+      {{.min_sq = 0.36, .max_sq = 2.25}, {.min_sq = 0.49, .max_sq = 4.0}},
+      {{.min_sq = 0.49, .max_sq = 4.0}, {.min_sq = 0.64, .max_sq = 6.25}},
+  });
   EXPECT_NEAR(traj.getMinBondCutoffSQ(0, 0), 0.36, 1e-5);
   EXPECT_NEAR(traj.getBondCutoffSQ(0, 0), 2.25, 1e-5);
   EXPECT_NEAR(traj.getMinBondCutoff(0, 0), 0.6, 1e-5);
@@ -390,9 +408,9 @@ TEST_F(TrajectoryTests, FirstFrameConcurrentThreadSafe) {
   out << "1\ncomment\nH 4.0 5.0 6.0\n";
   out.close();
 
-  auto mapped = std::make_shared<MappedFile>(test_file);
+  const auto mapped = std::make_shared<MappedFile>(test_file);
   const std::vector<size_t> offsets = {0, 24, 48};
-  auto parser = [](const char *data, size_t size) {
+  const auto parser = [](const char *data, size_t size) {
     (void)data;
     (void)size;
     Cell cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
@@ -407,7 +425,7 @@ TEST_F(TrajectoryTests, FirstFrameConcurrentThreadSafe) {
   workers.reserve(NUM_THREADS);
 
   for (int i = 0; i < NUM_THREADS; ++i) {
-    workers.emplace_back([&traj]() {
+    workers.emplace_back([&traj] {
       for (int iter = 0; iter < 100; ++iter) {
         const Cell &frame = traj.firstFrame();
         EXPECT_EQ(frame.atomCount(), 1);

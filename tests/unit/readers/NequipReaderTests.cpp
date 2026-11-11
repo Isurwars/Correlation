@@ -10,7 +10,12 @@
 
 #include <filesystem>
 #include <fstream>
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
+
+#include "../../PrecisionTestHelper.hpp"
+
+using correlation::real_t;
 
 namespace {
 
@@ -22,7 +27,7 @@ public:
   };
 
   [[nodiscard]] std::filesystem::path createTempFile(const TempFileSpec &spec) const {
-    auto file_path = test_dir_ / spec.filename;
+    auto const file_path = test_dir_ / spec.filename;
     std::ofstream ofs(file_path);
     ofs << spec.content;
     return file_path;
@@ -51,10 +56,11 @@ TEST_F(NequipReaderTests, ReadSingleFrameNequip) {
       "Si 0.1 0.2 0.3 0.01 -0.02 0.03\n"
       "O 1.5 2.5 3.5 -0.04 0.05 -0.06\n";
 
-  auto file_path = createTempFile({.filename = "single_frame.nequip", .content = nequip_content});
+  auto const file_path =
+      createTempFile({.filename = "single_frame.nequip", .content = nequip_content});
 
   correlation::readers::NequipReader reader;
-  auto cell = reader.readStructure(file_path.string());
+  auto const cell = reader.readStructure(file_path.string());
 
   EXPECT_EQ(cell.atomCount(), 2);
   EXPECT_THAT(cell.getEnergy(), correlation::testing::IsRealEq(-25.432));
@@ -93,19 +99,19 @@ TEST_F(NequipReaderTests, ReadMultiFrameTrajectory) {
       "C 0.0 0.0 0.0 -0.05 0.0 0.0\n"
       "C 1.6 0.0 0.0 0.05 0.0 0.0\n";
 
-  auto file_path = createTempFile({.filename = "trajectory.nequip", .content = traj_content});
+  auto const file_path = createTempFile({.filename = "trajectory.nequip", .content = traj_content});
 
   correlation::readers::NequipReader reader;
-  auto traj = reader.readTrajectory(file_path.string());
+  auto const traj = reader.readTrajectory(file_path.string());
 
   EXPECT_EQ(traj.getFrameCount(), 2);
 
-  auto frame_0 = traj.getFrame(0);
+  const auto &frame_0 = traj.getFrame(0);
   EXPECT_EQ(frame_0.atomCount(), 2);
   EXPECT_THAT(frame_0.getEnergy(), correlation::testing::IsRealEq(-100.5));
   EXPECT_THAT(frame_0.atoms()[1].position().x(), correlation::testing::IsRealEq(1.5));
 
-  auto frame_1 = traj.getFrame(1);
+  const auto &frame_1 = traj.getFrame(1);
   EXPECT_EQ(frame_1.atomCount(), 2);
   EXPECT_THAT(frame_1.getEnergy(), correlation::testing::IsRealEq(-102.3));
   EXPECT_THAT(frame_1.atoms()[1].position().x(), correlation::testing::IsRealEq(1.6));
@@ -120,10 +126,10 @@ TEST_F(NequipReaderTests, ReadStructureReturnsLastFrame) {
                                    "Properties=species:S:1:pos:R:3 energy=-15.0\n"
                                    "H 1.0 1.0 1.0\n";
 
-  auto file_path = createTempFile({.filename = "last_frame.xyz", .content = traj_content});
+  auto const file_path = createTempFile({.filename = "last_frame.xyz", .content = traj_content});
 
   correlation::readers::NequipReader reader;
-  auto cell = reader.readStructure(file_path.string());
+  auto const cell = reader.readStructure(file_path.string());
 
   EXPECT_EQ(cell.atomCount(), 1);
   EXPECT_THAT(cell.getEnergy(), correlation::testing::IsRealEq(-15.0));
@@ -135,14 +141,16 @@ TEST_F(NequipReaderTests, MalformedHeaderThrows) {
                                         "Properties=species:S:1:pos:R:3\n"
                                         "H 0.0 0.0 0.0\n";
 
-  auto file_path = createTempFile({.filename = "malformed.extxyz", .content = malformed_content});
+  auto const file_path =
+      createTempFile({.filename = "malformed.extxyz", .content = malformed_content});
 
   correlation::readers::NequipReader reader;
-  EXPECT_THROW(reader.readStructure(file_path.string()), std::runtime_error);
+  EXPECT_THROW((void)reader.readStructure(file_path.string()), std::runtime_error);
 }
 
 TEST_F(NequipReaderTests, ReaderFactoryRegistration) {
-  auto *reader = correlation::readers::ReaderFactory::instance().getReaderForExtension(".nequip");
+  const auto *reader =
+      correlation::readers::ReaderFactory::instance().getReaderForExtension(".nequip");
   ASSERT_NE(reader, nullptr);
   EXPECT_EQ(reader->getName(), "NequIP Reader");
   EXPECT_TRUE(reader->isTrajectory());

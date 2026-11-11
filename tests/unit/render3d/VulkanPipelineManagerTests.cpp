@@ -6,6 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+#include "math/Precision.hpp"
 #include "render3d/vulkan/VulkanContext.hpp"
 #include "render3d/vulkan/VulkanDevice.hpp"
 #include "render3d/vulkan/VulkanOffscreenTarget.hpp"
@@ -15,6 +16,8 @@
 #ifdef CORRELATION_USE_VULKAN
 
 namespace correlation::render3d::vulkan {
+
+using correlation::real_t;
 namespace {
 
 class VulkanPipelineManagerTests : public ::testing::Test {

@@ -16,6 +16,7 @@ namespace correlation::testing {
 
 using namespace correlation::calculators;
 using namespace correlation::core;
+using correlation::real_t;
 using correlation::analysis::BondCutoffMatrix;
 
 TEST(DistanceCalculatorTests, ComputesPairwiseDistancesAndNeighborGraph) {
@@ -951,6 +952,72 @@ TEST(DistanceCalculatorTests, BruteForceEquivalenceRandomAmorphousCell) {
   }
 }
 
+namespace {
+void verifySingleNeighbor(size_t atom_idx, size_t neighbor_idx, const Neighbor &nbr1,
+                          const Neighbor &nbr2) {
+  EXPECT_EQ(nbr1.index, nbr2.index)
+      << "Index mismatch for atom " << atom_idx << " at neighbor " << neighbor_idx;
+  EXPECT_DOUBLE_EQ(nbr1.distance, nbr2.distance)
+      << "Distance mismatch for atom " << atom_idx << " at neighbor " << neighbor_idx;
+  EXPECT_DOUBLE_EQ(nbr1.r_ij.x(), nbr2.r_ij.x());
+  EXPECT_DOUBLE_EQ(nbr1.r_ij.y(), nbr2.r_ij.y());
+  EXPECT_DOUBLE_EQ(nbr1.r_ij.z(), nbr2.r_ij.z());
+}
+
+void verifyNeighborParity(size_t atom_idx, std::span<const Neighbor> nbrs1,
+                          std::span<const Neighbor> nbrs2) {
+  ASSERT_EQ(nbrs1.size(), nbrs2.size()) << "Mismatch in neighbor count for atom " << atom_idx;
+  for (size_t neighbor_idx = 0; neighbor_idx < nbrs1.size(); ++neighbor_idx) {
+    verifySingleNeighbor(atom_idx, neighbor_idx, nbrs1[neighbor_idx], nbrs2[neighbor_idx]);
+  }
+}
+
+void verifyIndexParity(std::span<const AtomID> indices1, std::span<const AtomID> indices2) {
+  ASSERT_EQ(indices1.size(), indices2.size());
+  for (size_t neighbor_idx = 0; neighbor_idx < indices1.size(); ++neighbor_idx) {
+    EXPECT_EQ(indices1[neighbor_idx], indices2[neighbor_idx]);
+  }
+}
+
+void verifyPairMetrics3(size_t atom_i, size_t atom_j, real_t d_sq,
+                        const correlation::math::Vector3<real_t> &r_ij) {
+  EXPECT_NE(atom_i, atom_j);
+  EXPECT_LE(d_sq, 9.0);
+  EXPECT_NEAR(std::sqrt(d_sq), 2.0, 1e-5);
+  EXPECT_NEAR(std::abs(r_ij.x()), 2.0, 1e-5);
+}
+
+void testPairWithinCutoff3(const Cell &cell) {
+  std::atomic<size_t> pair_count{0};
+  DistanceCalculator::forEachPairWithin(cell, 3.0, true,
+                                        [&](size_t atom_i, size_t atom_j, real_t d_sq,
+                                            const correlation::math::Vector3<real_t> &r_ij) {
+                                          pair_count.fetch_add(1, std::memory_order_relaxed);
+                                          verifyPairMetrics3(atom_i, atom_j, d_sq, r_ij);
+                                        });
+  EXPECT_EQ(pair_count.load(), 1);
+}
+
+void verifyPairMetrics6(size_t atom_i, size_t atom_j, real_t d_sq,
+                        const correlation::math::Vector3<real_t> &r_ij) {
+  EXPECT_NE(atom_i, atom_j);
+  EXPECT_LE(d_sq, 36.0);
+  EXPECT_GT(d_sq, 0.0);
+  EXPECT_TRUE(r_ij.x() != 0.0 || r_ij.y() != 0.0 || r_ij.z() != 0.0);
+}
+
+void testPairWithinCutoff6(const Cell &cell) {
+  std::atomic<size_t> pair_count{0};
+  DistanceCalculator::forEachPairWithin(cell, 6.0, true,
+                                        [&](size_t atom_i, size_t atom_j, real_t d_sq,
+                                            const correlation::math::Vector3<real_t> &r_ij) {
+                                          pair_count.fetch_add(1, std::memory_order_relaxed);
+                                          verifyPairMetrics6(atom_i, atom_j, d_sq, r_ij);
+                                        });
+  EXPECT_GE(pair_count.load(), 2);
+}
+} // namespace
+
 TEST(DistanceCalculatorTests, DeterministicNeighborGraphAcrossThreadCounts) {
   const auto cell = makeRandomAmorphousCell(RandomAmorphousCellConfig{
       .num_atoms = 150,
@@ -978,26 +1045,13 @@ TEST(DistanceCalculatorTests, DeterministicNeighborGraphAcrossThreadCounts) {
   ASSERT_EQ(graph_1thread.edgeCount(), graph_multithread.edgeCount());
 
   for (size_t i = 0; i < cell.atomCount(); ++i) {
-    auto nbrs1 = graph_1thread.getNeighbors(i);
-    auto nbrs2 = graph_multithread.getNeighbors(i);
-    ASSERT_EQ(nbrs1.size(), nbrs2.size()) << "Mismatch in neighbor count for atom " << i;
+    const auto nbrs1 = graph_1thread.getNeighbors(i);
+    const auto nbrs2 = graph_multithread.getNeighbors(i);
+    verifyNeighborParity(i, nbrs1, nbrs2);
 
-    for (size_t k = 0; k < nbrs1.size(); ++k) {
-      EXPECT_EQ(nbrs1[k].index, nbrs2[k].index)
-          << "Index mismatch for atom " << i << " at neighbor " << k;
-      EXPECT_DOUBLE_EQ(nbrs1[k].distance, nbrs2[k].distance)
-          << "Distance mismatch for atom " << i << " at neighbor " << k;
-      EXPECT_DOUBLE_EQ(nbrs1[k].r_ij.x(), nbrs2[k].r_ij.x());
-      EXPECT_DOUBLE_EQ(nbrs1[k].r_ij.y(), nbrs2[k].r_ij.y());
-      EXPECT_DOUBLE_EQ(nbrs1[k].r_ij.z(), nbrs2[k].r_ij.z());
-    }
-
-    auto indices1 = graph_1thread.getNeighborIndices(i);
-    auto indices2 = graph_multithread.getNeighborIndices(i);
-    ASSERT_EQ(indices1.size(), indices2.size());
-    for (size_t k = 0; k < indices1.size(); ++k) {
-      EXPECT_EQ(indices1[k], indices2[k]);
-    }
+    const auto indices1 = graph_1thread.getNeighborIndices(i);
+    const auto indices2 = graph_multithread.getNeighborIndices(i);
+    verifyIndexParity(indices1, indices2);
   }
 }
 
@@ -1007,33 +1061,8 @@ TEST(DistanceCalculatorTests, ForEachPairWithinVisitsExpectedPairs) {
   cell.addAtom("O", {2.0, 0.0, 0.0});
   cell.addAtom("O", {0.0, 5.0, 0.0});
 
-  std::atomic<size_t> pair_count{0};
-  DistanceCalculator::forEachPairWithin(cell, 3.0, true,
-                                        [&](size_t atom_i, size_t atom_j, real_t d_sq,
-                                            const correlation::math::Vector3<real_t> &r_ij) {
-                                          pair_count.fetch_add(1, std::memory_order_relaxed);
-                                          EXPECT_NE(atom_i, atom_j);
-                                          EXPECT_LE(d_sq, 9.0);
-                                          EXPECT_NEAR(std::sqrt(d_sq), 2.0, 1e-5);
-                                          EXPECT_NEAR(std::abs(r_ij.x()), 2.0, 1e-5);
-                                        });
-
-  EXPECT_EQ(pair_count.load(), 1);
-
-  // With r_max = 6.0, (0, 1) at 2.0 and (0, 2) at 5.0 are within cutoff
-  pair_count.store(0);
-  DistanceCalculator::forEachPairWithin(cell, 6.0, true,
-                                        [&](size_t atom_i, size_t atom_j, real_t d_sq,
-                                            const correlation::math::Vector3<real_t> &r_ij) {
-                                          pair_count.fetch_add(1, std::memory_order_relaxed);
-                                          EXPECT_NE(atom_i, atom_j);
-                                          EXPECT_LE(d_sq, 36.0);
-                                          EXPECT_GT(d_sq, 0.0);
-                                          EXPECT_TRUE(r_ij.x() != 0.0 || r_ij.y() != 0.0 ||
-                                                      r_ij.z() != 0.0);
-                                        });
-
-  EXPECT_GE(pair_count.load(), 2);
+  testPairWithinCutoff3(cell);
+  testPairWithinCutoff6(cell);
 }
 
 TEST(DistanceCalculatorTests, ForEachPairWithinHandlesEmptyAndSingleAtomCell) {

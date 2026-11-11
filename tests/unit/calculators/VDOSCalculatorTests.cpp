@@ -11,7 +11,10 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+using correlation::real_t;
+
 namespace correlation::analysis {
+namespace {
 
 TEST(VDOSCalculatorTests, VDOSIsNonZeroAtZeroFrequencyForConstantVACF) {
   // Create a simple constant VACF (DC signal)
@@ -20,10 +23,10 @@ TEST(VDOSCalculatorTests, VDOSIsNonZeroAtZeroFrequencyForConstantVACF) {
   // frequency weighting), a constant VACF should result in a significant peak
   // at f=0 (DC component).
 
-  std::vector<real_t> vacf(100, 1.0); // Constant VACF
-  real_t time_step = 1.0;
+  const std::vector<real_t> vacf(100, 1.0); // Constant VACF
+  const real_t time_step = 1.0;
 
-  auto [frequencies, intensities, unused] = DynamicsAnalyzer::calculateVDOS(vacf, time_step);
+  const auto [frequencies, intensities, unused] = DynamicsAnalyzer::calculateVDOS(vacf, time_step);
 
   ASSERT_FALSE(frequencies.empty());
   ASSERT_EQ(frequencies[0], 0.0);
@@ -41,29 +44,29 @@ TEST(VDOSCalculatorTests, PerfectSolidShowsSinglePeak) {
   // The resulting VDOS (real part) should have a single maximum at that
   // specific frequency.
 
-  real_t time_step = 1.0; // 1 fs
-  size_t num_frames = 2000;
+  const real_t time_step = 1.0; // 1 fs
+  const size_t num_frames = 2000;
   std::vector<real_t> vacf(num_frames);
 
   // Frequency of the pure cosine wave in THz
-  real_t target_nu_thz = 25.0;
+  const real_t target_nu_thz = 25.0;
 
   for (size_t i = 0; i < num_frames; ++i) {
-    real_t t_fs = static_cast<real_t>(i) * time_step;
+    const real_t t_fs = static_cast<real_t>(i) * time_step;
     // 0.001 converts fs to ps for THz frequency
     vacf[i] =
         static_cast<real_t>(std::cos(2.0 * correlation::math::PI * target_nu_thz * t_fs * 0.001));
   }
 
-  auto [frequencies, intensities_real, intensities_imag] =
+  const auto [frequencies, intensities_real, intensities_imag] =
       DynamicsAnalyzer::calculateVDOS(vacf, time_step);
 
   // Find the maximum intensity in the real part
-  auto max_it = std::ranges::max_element(intensities_real);
-  size_t max_idx = std::distance(intensities_real.begin(), max_it);
+  const auto max_it = std::ranges::max_element(intensities_real);
+  const size_t max_idx = std::distance(intensities_real.begin(), max_it);
 
   // Delta nu is the frequency resolution
-  real_t d_nu = frequencies[1] - frequencies[0];
+  const real_t d_nu = frequencies[1] - frequencies[0];
 
   // Check if the maximum frequency matches the target frequency within an
   // acceptable resolution margin
@@ -80,39 +83,41 @@ TEST(VDOSCalculatorTests, IdealGasShowsImaginaryPeak) {
   // translates to a VDOS where the real part peaks at 0 THz and the imaginary
   // part peaks at frequency nu = a / 2pi.
 
-  real_t time_step = 1.0; // 1 fs
-  size_t num_frames = 2000;
+  const real_t time_step = 1.0; // 1 fs
+  const size_t num_frames = 2000;
   std::vector<real_t> vacf(num_frames);
 
   // We choose an exponential decay coefficient 'a' such that the imaginary peak
   // is at 10.0 THz.
-  real_t target_nu_peak = 10.0;
-  auto vec_a =
+  const real_t target_nu_peak = 10.0;
+  const auto vec_a =
       static_cast<real_t>(2.0 * correlation::math::PI * target_nu_peak); // a in THz (ps^-1)
 
   for (size_t i = 0; i < num_frames; ++i) {
-    auto t_ps = static_cast<real_t>(static_cast<real_t>(i) * time_step * 0.001); // fs to ps
+    const auto t_ps = static_cast<real_t>(static_cast<real_t>(i) * time_step * 0.001); // fs to ps
     vacf[i] = std::exp(-vec_a * t_ps);
   }
 
-  auto [frequencies, intensities_real, intensities_imag] =
+  const auto [frequencies, intensities_real, intensities_imag] =
       DynamicsAnalyzer::calculateVDOS(vacf, time_step);
 
   // 1. The Real part should peak at exactly 0 Hz for pure exponential decay
-  auto max_real_it = std::ranges::max_element(intensities_real);
-  size_t max_real_idx = std::distance(intensities_real.begin(), max_real_it);
+  const auto max_real_it = std::ranges::max_element(intensities_real);
+  const size_t max_real_idx = std::distance(intensities_real.begin(), max_real_it);
 
   EXPECT_NEAR(frequencies[max_real_idx], 0.0, correlation::is_single_precision ? 0.5 : 1e-6)
       << "The real VDOS for an exponential decay should have its maximum at 0 THz.";
 
   // 2. The Imaginary part should peak at target_nu_peak
-  auto max_imag_it = std::ranges::max_element(intensities_imag);
-  size_t max_imag_idx = std::distance(intensities_imag.begin(), max_imag_it);
+  const auto max_imag_it = std::ranges::max_element(intensities_imag);
+  const size_t max_imag_idx = std::distance(intensities_imag.begin(), max_imag_it);
 
-  real_t d_nu = frequencies[1] - frequencies[0];
+  const real_t d_nu = frequencies[1] - frequencies[0];
 
   EXPECT_NEAR(frequencies[max_imag_idx], target_nu_peak, 2.0 * d_nu)
       << "The imaginary VDOS peak " << frequencies[max_imag_idx]
       << " THz does not correspond to the decay constant frequency " << target_nu_peak << " THz.";
 }
+
+} // namespace
 } // namespace correlation::analysis

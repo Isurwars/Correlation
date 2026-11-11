@@ -13,6 +13,8 @@
 
 namespace correlation::render3d {
 
+using correlation::real_t;
+
 TEST(Scene3DTests, ElementColoringPalette) {
   // Hydrogen (Z = 1) - ASE/Jmol white
   const auto c_h = getElementColor(1);

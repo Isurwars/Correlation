@@ -13,76 +13,110 @@
 #include <vector>
 
 using namespace correlation::analysis;
+using correlation::real_t;
+
+namespace {
+
+struct SyntheticRdfConfig {
+  real_t peak_pos{static_cast<real_t>(1.62)};
+  real_t peak_width{static_cast<real_t>(0.12)};
+  real_t trough_pos{static_cast<real_t>(2.15)};
+  real_t r_max_grid{static_cast<real_t>(5.0)};
+  real_t step_size{static_cast<real_t>(0.02)};
+};
 
 class FirstMinimumDetectorTests : public ::testing::Test {
 protected:
   // Generates synthetic g(r) representing a covalent or amorphous pair with primary peak & trough
-  static auto generateSyntheticRDF(real_t peak_pos = 1.62, real_t peak_width = 0.12,
-                                   real_t trough_pos = 2.15, real_t r_max_grid = 5.0,
-                                   real_t dr = 0.02)
+  static auto generateSyntheticRDF(const SyntheticRdfConfig &config = {})
       -> std::pair<std::vector<real_t>, std::vector<real_t>> {
     std::vector<real_t> bins;
-    std::vector<real_t> gr;
-    const size_t n_bins = static_cast<size_t>(r_max_grid / dr);
+    std::vector<real_t> rdf_values;
+    const auto n_bins = static_cast<size_t>(config.r_max_grid / config.step_size);
     bins.reserve(n_bins);
-    gr.reserve(n_bins);
+    rdf_values.reserve(n_bins);
 
     for (size_t i = 0; i < n_bins; ++i) {
-      const real_t r = static_cast<real_t>(i) * dr;
+      const real_t r = static_cast<real_t>(i) * config.step_size;
       bins.push_back(r);
 
-      real_t val = 0.0;
-      if (r > 1.3) {
+      auto val = static_cast<real_t>(0.0);
+      if (r > static_cast<real_t>(1.3)) {
         // First coordination peak
-        const real_t diff1 = (r - peak_pos) / peak_width;
+        const real_t diff1 = (r - config.peak_pos) / config.peak_width;
         const real_t peak1 =
-            static_cast<real_t>(4.5) * std::exp(-static_cast<real_t>(0.5) * diff1 * diff1);
+            static_cast<real_t>(4.5) * std::exp(static_cast<real_t>(-0.5) * diff1 * diff1);
 
         // Second coordination peak
         const real_t diff2 = (r - static_cast<real_t>(2.8)) / static_cast<real_t>(0.35);
         const real_t peak2 =
-            static_cast<real_t>(1.8) * std::exp(-static_cast<real_t>(0.5) * diff2 * diff2);
+            static_cast<real_t>(1.8) * std::exp(static_cast<real_t>(-0.5) * diff2 * diff2);
 
         // Trough baseline between peaks
         val = peak1 + peak2 + static_cast<real_t>(0.1);
       }
-      gr.push_back(val);
+      rdf_values.push_back(val);
     }
-    return {bins, gr};
+    return {bins, rdf_values};
   }
 };
 
 TEST_F(FirstMinimumDetectorTests, ReturnsErrorOnInsufficientData) {
-  const std::vector<real_t> bins = {1.0, 1.1, 1.2};
-  const std::vector<real_t> gr = {0.0, 1.0, 0.0};
+  const std::vector<real_t> bins = {
+      static_cast<real_t>(1.0),
+      static_cast<real_t>(1.1),
+      static_cast<real_t>(1.2),
+  };
+  const std::vector<real_t> rdf_values = {
+      static_cast<real_t>(0.0),
+      static_cast<real_t>(1.0),
+      static_cast<real_t>(0.0),
+  };
 
-  const auto result = FirstMinimumDetector::detectCutoffs(bins, gr);
+  const auto result = FirstMinimumDetector::detectCutoffs(bins, rdf_values);
   ASSERT_FALSE(result.has_value());
   EXPECT_EQ(result.error(), DetectionError::InsufficientData);
 }
 
 TEST_F(FirstMinimumDetectorTests, ReturnsErrorOnMismatchedSizes) {
-  const std::vector<real_t> bins = {1.0, 1.1, 1.2, 1.3, 1.4, 1.5};
-  const std::vector<real_t> gr = {0.0, 1.0, 2.0, 3.0, 2.0, 1.0, 0.5};
+  const std::vector<real_t> bins = {
+      static_cast<real_t>(1.0), static_cast<real_t>(1.1), static_cast<real_t>(1.2),
+      static_cast<real_t>(1.3), static_cast<real_t>(1.4), static_cast<real_t>(1.5),
+  };
+  const std::vector<real_t> rdf_values = {
+      static_cast<real_t>(0.0), static_cast<real_t>(1.0), static_cast<real_t>(2.0),
+      static_cast<real_t>(3.0), static_cast<real_t>(2.0), static_cast<real_t>(1.0),
+      static_cast<real_t>(0.5),
+  };
 
-  const auto result = FirstMinimumDetector::detectCutoffs(bins, gr);
+  const auto result = FirstMinimumDetector::detectCutoffs(bins, rdf_values);
   ASSERT_FALSE(result.has_value());
   EXPECT_EQ(result.error(), DetectionError::MismatchedSizes);
 }
 
 TEST_F(FirstMinimumDetectorTests, ReturnsErrorWhenNoPeakFound) {
-  const std::vector<real_t> bins = {0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-  const std::vector<real_t> gr = {0.01, 0.01, 0.01, 0.01, 0.01, 0.01};
+  const std::vector<real_t> bins = {
+      static_cast<real_t>(0.5), static_cast<real_t>(0.6), static_cast<real_t>(0.7),
+      static_cast<real_t>(0.8), static_cast<real_t>(0.9), static_cast<real_t>(1.0),
+  };
+  const std::vector<real_t> rdf_values = {
+      static_cast<real_t>(0.01), static_cast<real_t>(0.01), static_cast<real_t>(0.01),
+      static_cast<real_t>(0.01), static_cast<real_t>(0.01), static_cast<real_t>(0.01),
+  };
 
-  const auto result = FirstMinimumDetector::detectCutoffs(bins, gr);
+  const auto result = FirstMinimumDetector::detectCutoffs(bins, rdf_values);
   ASSERT_FALSE(result.has_value());
   EXPECT_EQ(result.error(), DetectionError::NoPeakFound);
 }
 
 TEST_F(FirstMinimumDetectorTests, DetectsPeakOnsetAndMinimumAccurately) {
-  const auto [bins, gr] = generateSyntheticRDF(1.62, 0.12, 2.15);
+  const auto [bins, rdf_values] = generateSyntheticRDF({
+      .peak_pos = static_cast<real_t>(1.62),
+      .peak_width = static_cast<real_t>(0.12),
+      .trough_pos = static_cast<real_t>(2.15),
+  });
 
-  const auto result = FirstMinimumDetector::detectCutoffs(bins, gr);
+  const auto result = FirstMinimumDetector::detectCutoffs(bins, rdf_values);
   ASSERT_TRUE(result.has_value()) << FirstMinimumDetector::formatError(result.error());
 
   const auto cutoffs = *result;
@@ -101,11 +135,15 @@ TEST_F(FirstMinimumDetectorTests, DetectsPeakOnsetAndMinimumAccurately) {
 }
 
 TEST_F(FirstMinimumDetectorTests, HistogramOverloadDetectsPartial) {
-  const auto [bins, gr] = generateSyntheticRDF(1.60, 0.10, 2.10);
+  const auto [bins, rdf_values] = generateSyntheticRDF({
+      .peak_pos = static_cast<real_t>(1.60),
+      .peak_width = static_cast<real_t>(0.10),
+      .trough_pos = static_cast<real_t>(2.10),
+  });
 
   Histogram hist;
   hist.bins = bins;
-  hist.partials["Si-O"] = gr;
+  hist.partials["Si-O"] = rdf_values;
 
   const auto result = FirstMinimumDetector::detectCutoffs(hist, "Si-O");
   ASSERT_TRUE(result.has_value());
@@ -126,3 +164,5 @@ TEST_F(FirstMinimumDetectorTests, FormatErrorReturnsNonEmptyDescriptions) {
   EXPECT_FALSE(FirstMinimumDetector::formatError(DetectionError::InvalidRange).empty());
   EXPECT_FALSE(FirstMinimumDetector::formatError(DetectionError::PartialNotFound).empty());
 }
+
+} // namespace

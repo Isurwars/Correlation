@@ -1,21 +1,16 @@
 #include "math/Constants.hpp"
 #include "readers/CastepMdReader.hpp"
 
-#include <gtest/gtest.h>
-
-using namespace correlation::readers;
-
-TEST(CastepMdReaderTests, Properties) {
-  CastepMdReader reader;
-  EXPECT_EQ(reader.getName(), "CASTEP MD");
-  EXPECT_TRUE(reader.isTrajectory());
-  auto exts = reader.getExtensions();
-  EXPECT_EQ(exts.size(), 1);
-  EXPECT_EQ(exts[0], "md");
-}
-
 #include <filesystem>
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+#include <string>
 #include <vector>
+
+#include "../../PrecisionTestHelper.hpp"
+
+using correlation::real_t;
+using namespace correlation::readers;
 
 namespace {
 
@@ -36,11 +31,20 @@ std::string getTestDataDir() {
 
 } // namespace
 
+TEST(CastepMdReaderTests, Properties) {
+  CastepMdReader const reader;
+  EXPECT_EQ(reader.getName(), "CASTEP MD");
+  EXPECT_TRUE(reader.isTrajectory());
+  auto const exts = reader.getExtensions();
+  EXPECT_EQ(exts.size(), 1);
+  EXPECT_EQ(exts[0], "md");
+}
+
 TEST(CastepMdReaderTests, ReadsTrajectory) {
   std::string const data_dir = getTestDataDir();
   CastepMdReader reader;
-  auto traj = reader.readTrajectory(data_dir + "clean.md");
-  auto struct_cell = reader.readStructure(data_dir + "clean.md");
+  auto const traj = reader.readTrajectory(data_dir + "clean.md");
+  auto const struct_cell = reader.readStructure(data_dir + "clean.md");
 
   // Trajectory checks
   EXPECT_EQ(traj.getFrameCount(), 2);

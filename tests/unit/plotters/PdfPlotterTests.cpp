@@ -13,6 +13,7 @@
 
 namespace correlation::testing {
 
+using correlation::real_t;
 using namespace correlation::plotters;
 using namespace correlation::analysis;
 
@@ -23,7 +24,7 @@ public:
 
 protected:
   void SetUp() override {
-    auto temp_dir = std::filesystem::temp_directory_path();
+    auto const temp_dir = std::filesystem::temp_directory_path();
     temp_pdf_path = (temp_dir / "test_output.pdf").string();
   }
 
@@ -48,7 +49,7 @@ TEST_F(PdfPlotterTests, RendersEmptyHistogramAsPdfGracefully) {
   empty_hist.x_label = "Distance";
   empty_hist.y_label = "g(r)";
 
-  PlotConfig config;
+  const PlotConfig config;
   renderHistogramAsPdf(empty_hist, temp_pdf_path, config);
 
   EXPECT_TRUE(fileExistsAndIsNotEmpty(temp_pdf_path));
@@ -88,12 +89,15 @@ TEST_F(PdfPlotterTests, RendersComparisonPdfCorrectly) {
   hist2.bins = {1.0, 2.0, 3.0};
   hist2.partials["Total"] = {0.6, 1.1, 1.6};
 
-  std::vector<LabeledHistogram> datasets = {{"Run A", &hist1}, {"Run B", &hist2}};
+  const std::vector<LabeledHistogram> datasets = {
+      {.label = "Run A", .hist = &hist1},
+      {.label = "Run B", .hist = &hist2},
+  };
 
   PlotConfig config;
   config.theme = PlotConfig::Theme::Dark;
   config.fill_area = true;
-  renderComparisonPdf(datasets, {"Total", temp_pdf_path}, config);
+  renderComparisonPdf(datasets, ComparisonQuery{.key = "Total", .filepath = temp_pdf_path}, config);
 
   EXPECT_TRUE(fileExistsAndIsNotEmpty(temp_pdf_path));
 }

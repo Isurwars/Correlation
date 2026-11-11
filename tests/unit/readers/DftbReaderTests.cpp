@@ -13,6 +13,8 @@
 #include <fstream>
 #include <gtest/gtest.h>
 
+using correlation::real_t;
+
 namespace correlation::readers {
 
 namespace {
@@ -38,7 +40,7 @@ private:
 };
 
 TEST_F(DftbReaderTests, DiscoveryInReaderFactory) {
-  auto &factory = ReaderFactory::instance();
+  const auto &factory = ReaderFactory::instance();
   const auto *reader = factory.getReaderForExtension(".gen");
 
   ASSERT_NE(reader, nullptr);
@@ -56,7 +58,7 @@ TEST_F(DftbReaderTests, ParsesClusterMode) {
   out.close();
 
   DftbReader reader;
-  auto cell = reader.readStructure(testFile());
+  auto const cell = reader.readStructure(testFile());
 
   EXPECT_EQ(cell.atomCount(), 3);
   EXPECT_EQ(cell.atoms()[0].element().symbol, "C");
@@ -78,7 +80,7 @@ TEST_F(DftbReaderTests, ParsesPeriodicCartesianMode) {
   out.close();
 
   DftbReader reader;
-  auto cell = reader.readStructure(testFile());
+  auto const cell = reader.readStructure(testFile());
 
   EXPECT_EQ(cell.atomCount(), 2);
   EXPECT_EQ(cell.atoms()[0].element().symbol, "Si");
@@ -87,7 +89,7 @@ TEST_F(DftbReaderTests, ParsesPeriodicCartesianMode) {
 
 TEST_F(DftbReaderTests, ThrowsOnNonExistentFile) {
   DftbReader reader;
-  EXPECT_THROW(reader.readStructure("non_existent_file.gen"), std::runtime_error);
+  EXPECT_THROW((void)reader.readStructure("non_existent_file.gen"), std::runtime_error);
 }
 
 } // namespace

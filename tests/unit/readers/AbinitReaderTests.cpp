@@ -13,6 +13,8 @@
 #include <fstream>
 #include <gtest/gtest.h>
 
+using correlation::real_t;
+
 namespace correlation::readers {
 
 namespace {
@@ -39,7 +41,7 @@ private:
 };
 
 TEST_F(AbinitReaderTests, DiscoveryInReaderFactory) {
-  auto &factory = ReaderFactory::instance();
+  const auto &factory = ReaderFactory::instance();
   const auto *reader = factory.getReaderForExtension(".abi");
 
   ASSERT_NE(reader, nullptr);
@@ -63,7 +65,7 @@ TEST_F(AbinitReaderTests, ParsesAcellAndXangst) {
   out.close();
 
   AbinitReader reader;
-  auto cell = reader.readStructure(testFile());
+  auto const cell = reader.readStructure(testFile());
 
   EXPECT_EQ(cell.atomCount(), 2);
   EXPECT_NEAR(cell.atoms()[1].position().x(), 1.2, 1e-4);
@@ -71,7 +73,7 @@ TEST_F(AbinitReaderTests, ParsesAcellAndXangst) {
 
 TEST_F(AbinitReaderTests, ThrowsOnNonExistentFile) {
   AbinitReader reader;
-  EXPECT_THROW(reader.readStructure("non_existent_file.abi"), std::runtime_error);
+  EXPECT_THROW((void)reader.readStructure("non_existent_file.abi"), std::runtime_error);
 }
 
 } // namespace

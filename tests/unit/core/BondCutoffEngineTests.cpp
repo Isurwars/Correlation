@@ -12,6 +12,7 @@
 namespace correlation::testing {
 
 using namespace correlation::core;
+using correlation::real_t;
 
 TEST(BondCutoffEngineTests, ComputeFromElementsCalculatesCorrectRanges) {
   const std::vector<Element> elements{

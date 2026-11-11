@@ -1,20 +1,31 @@
-// Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
-// SPDX-License-Identifier: AGPL-3.0-only
-// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+/**
+ * @file VaspReaderTests.cpp
+ * @brief Unit tests for VaspReader POSCAR and CONTCAR parsing.
+ * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+ * @par License
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 
+#include "../../PrecisionTestHelper.hpp"
 #include "core/Cell.hpp"
 #include "readers/VaspReader.hpp"
 
 #include <filesystem>
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <map>
 #include <stdexcept>
+#include <string>
+#include <vector>
+
+namespace correlation::testing {
+
+using correlation::real_t;
 
 namespace {
 
 // Helper to find the test data directory relative to the executable
-std::string getTestDataDir() {
-  // Try common paths relative to the build directory
+[[nodiscard]] std::string getTestDataDir() {
   std::vector<std::string> const candidates = {
       "../../tests/data/", // build/tests -> tests/data
       "../tests/data/",    // build -> tests/data
@@ -26,21 +37,23 @@ std::string getTestDataDir() {
       return dir;
     }
   }
-  // Try absolute path from source dir (CMake sets CWD to build/tests)
   return "../../tests/data/";
 }
 
 class VaspReaderTests : public ::testing::Test {
-public:
-  std::string data_dir_;
-
 protected:
+  [[nodiscard]] const std::string &dataDir() const noexcept { return data_dir_; }
+
   void SetUp() override { data_dir_ = getTestDataDir() + "vasp/"; }
+
+private:
+  std::string data_dir_;
 };
+
 } // namespace
 
 TEST_F(VaspReaderTests, ParseSiDiamondPoscar) {
-  auto cell = correlation::readers::VaspReader::read(data_dir_ + "Si.poscar");
+  const auto cell = correlation::readers::VaspReader::read(dataDir() + "Si.poscar");
 
   // 8 Si atoms
   EXPECT_EQ(cell.atomCount(), 8);
@@ -50,31 +63,31 @@ TEST_F(VaspReaderTests, ParseSiDiamondPoscar) {
   EXPECT_EQ(cell.elements()[0].symbol, "Si");
 
   // Lattice should be 5.43 x 5.43 x 5.43 (scaling factor * unit vectors)
-  auto params = cell.latticeParameters();
-  EXPECT_NEAR(params[0], 5.43, 1e-6);
-  EXPECT_NEAR(params[1], 5.43, 1e-6);
-  EXPECT_NEAR(params[2], 5.43, 1e-6);
-  EXPECT_NEAR(params[3], 90.0, 1e-6);
-  EXPECT_NEAR(params[4], 90.0, 1e-6);
-  EXPECT_NEAR(params[5], 90.0, 1e-6);
+  const auto params = cell.latticeParameters();
+  EXPECT_THAT(params[0], IsRealEq(static_cast<real_t>(5.43)));
+  EXPECT_THAT(params[1], IsRealEq(static_cast<real_t>(5.43)));
+  EXPECT_THAT(params[2], IsRealEq(static_cast<real_t>(5.43)));
+  EXPECT_THAT(params[3], IsRealEq(static_cast<real_t>(90.0)));
+  EXPECT_THAT(params[4], IsRealEq(static_cast<real_t>(90.0)));
+  EXPECT_THAT(params[5], IsRealEq(static_cast<real_t>(90.0)));
 }
 
 TEST_F(VaspReaderTests, ParseCartesianCoordinates) {
-  auto cell = correlation::readers::VaspReader::read(data_dir_ + "Si_cartesian.poscar");
+  const auto cell = correlation::readers::VaspReader::read(dataDir() + "Si_cartesian.poscar");
 
   EXPECT_EQ(cell.atomCount(), 8);
   EXPECT_EQ(cell.elements().size(), 1);
   EXPECT_EQ(cell.elements()[0].symbol, "Si");
 
   // First atom should be at origin
-  auto pos = cell.atoms()[0].position();
-  EXPECT_NEAR(pos[0], 0.0, 1e-6);
-  EXPECT_NEAR(pos[1], 0.0, 1e-6);
-  EXPECT_NEAR(pos[2], 0.0, 1e-6);
+  const auto pos = cell.atoms()[0].position();
+  EXPECT_THAT(pos[0], IsRealEq(static_cast<real_t>(0.0)));
+  EXPECT_THAT(pos[1], IsRealEq(static_cast<real_t>(0.0)));
+  EXPECT_THAT(pos[2], IsRealEq(static_cast<real_t>(0.0)));
 }
 
 TEST_F(VaspReaderTests, ParseSelectiveDynamics) {
-  auto cell = correlation::readers::VaspReader::read(data_dir_ + "Si_seldyn.poscar");
+  const auto cell = correlation::readers::VaspReader::read(dataDir() + "Si_seldyn.poscar");
 
   // Should have 4 atoms despite the Selective Dynamics line
   EXPECT_EQ(cell.atomCount(), 4);
@@ -83,7 +96,7 @@ TEST_F(VaspReaderTests, ParseSelectiveDynamics) {
 }
 
 TEST_F(VaspReaderTests, ParseMultiSpecies) {
-  auto cell = correlation::readers::VaspReader::read(data_dir_ + "SiO_multi.poscar");
+  const auto cell = correlation::readers::VaspReader::read(dataDir() + "SiO_multi.poscar");
 
   // 4 Si + 4 O = 8 total atoms
   EXPECT_EQ(cell.atomCount(), 8);
@@ -101,12 +114,12 @@ TEST_F(VaspReaderTests, ParseMultiSpecies) {
 }
 
 TEST_F(VaspReaderTests, ScalingFactorApplied) {
-  auto cell = correlation::readers::VaspReader::read(data_dir_ + "Si.poscar");
+  const auto cell = correlation::readers::VaspReader::read(dataDir() + "Si.poscar");
 
   // The POSCAR has scaling factor 5.43 with unit vectors
   // So lattice should be 5.43 Å
-  auto params = cell.latticeParameters();
-  EXPECT_NEAR(params[0], 5.43, 1e-6);
+  const auto params = cell.latticeParameters();
+  EXPECT_THAT(params[0], IsRealEq(static_cast<real_t>(5.43)));
 }
 
 TEST_F(VaspReaderTests, ReaderIsRegisteredInFactory) {
@@ -114,7 +127,7 @@ TEST_F(VaspReaderTests, ReaderIsRegisteredInFactory) {
   EXPECT_EQ(reader.getName(), "VASP POSCAR");
   EXPECT_FALSE(reader.isTrajectory());
 
-  auto exts = reader.getExtensions();
+  const auto exts = reader.getExtensions();
   EXPECT_EQ(exts.size(), 3);
   EXPECT_EQ(exts[0], "poscar");
   EXPECT_EQ(exts[1], "contcar");
@@ -123,10 +136,12 @@ TEST_F(VaspReaderTests, ReaderIsRegisteredInFactory) {
 
 TEST_F(VaspReaderTests, ReadTrajectoryThrows) {
   correlation::readers::VaspReader reader;
-  EXPECT_THROW(reader.readTrajectory(data_dir_ + "Si.poscar"), std::runtime_error);
+  EXPECT_THROW(reader.readTrajectory(dataDir() + "Si.poscar"), std::runtime_error);
 }
 
 TEST_F(VaspReaderTests, NonExistentFileThrows) {
   EXPECT_THROW(correlation::readers::VaspReader::read("nonexistent_file.poscar"),
                std::runtime_error);
 }
+
+} // namespace correlation::testing

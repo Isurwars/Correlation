@@ -6,11 +6,26 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+#include "math/Precision.hpp"
 #include "render3d/Math3D.hpp"
 #include <gtest/gtest.h>
 #include <numbers>
 
 namespace correlation::render3d {
+
+using correlation::real_t;
+
+namespace {
+
+void verifyMatrixEquality(const Matrix4<float> &lhs, const Matrix4<float> &rhs) {
+  for (std::size_t row_idx = 0; row_idx < 4; ++row_idx) {
+    for (std::size_t col_idx = 0; col_idx < 4; ++col_idx) {
+      EXPECT_FLOAT_EQ(lhs(row_idx, col_idx), rhs(row_idx, col_idx));
+    }
+  }
+}
+
+} // namespace
 
 TEST(Math3DTests, Vector4BasicOperations) {
   const Vector4<float> vec1(1.0F, 2.0F, 3.0F, 1.0F);
@@ -34,7 +49,7 @@ TEST(Math3DTests, Vector4BasicOperations) {
   EXPECT_FLOAT_EQ(scaled.z(), 6.0F);
   EXPECT_FLOAT_EQ(scaled.w(), 2.0F);
 
-  EXPECT_THROW([[maybe_unused]] auto div_zero = vec1 / 0.0F, std::runtime_error);
+  EXPECT_THROW([[maybe_unused]] const auto div_zero = vec1 / 0.0F, std::runtime_error);
 
   const auto point = vec1.toVector3();
   EXPECT_FLOAT_EQ(point.x(), 1.0F);
@@ -53,11 +68,7 @@ TEST(Math3DTests, Matrix4IdentityAndMultiplication) {
   EXPECT_FLOAT_EQ(transformed.w(), 1.0F);
 
   const auto ident2 = ident * ident;
-  for (std::size_t row_idx = 0; row_idx < 4; ++row_idx) {
-    for (std::size_t col_idx = 0; col_idx < 4; ++col_idx) {
-      EXPECT_FLOAT_EQ(ident(row_idx, col_idx), ident2(row_idx, col_idx));
-    }
-  }
+  verifyMatrixEquality(ident, ident2);
 }
 
 TEST(Math3DTests, Matrix4TranslationAndScaling) {

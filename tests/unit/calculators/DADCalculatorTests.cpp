@@ -10,8 +10,27 @@
 #include <gtest/gtest.h>
 #include <numbers>
 
+using correlation::real_t;
+
 namespace correlation::analysis {
 namespace {
+void verifyNormalizedDihedralSum(const std::vector<real_t> &partial, real_t bin_width) {
+  real_t sum = 0.0;
+  for (const auto val : partial) {
+    sum += val;
+  }
+  // Because it is normalized: sum * bin_width = 1.0
+  EXPECT_NEAR(sum * bin_width, 1.0, 1e-5);
+}
+
+void verifyRawDihedralSum(const std::vector<real_t> &partial) {
+  real_t raw_sum = 0.0;
+  for (const auto val : partial) {
+    raw_sum += val;
+  }
+  EXPECT_GT(raw_sum, 0.0);
+}
+
 class DADCalculatorTests : public ::testing::Test {
 public:
   correlation::core::Cell cell_;
@@ -43,33 +62,20 @@ TEST_F(DADCalculatorTests, BasicCalculation) {
   ASSERT_TRUE(results.contains("DAD"));
   ASSERT_TRUE(results.contains("DAD_raw"));
 
-  Histogram f_dihedral = std::move(results["DAD"]);
-  Histogram f_dihedral_raw = std::move(results["DAD_raw"]);
+  const Histogram f_dihedral = std::move(results["DAD"]);
+  const Histogram f_dihedral_raw = std::move(results["DAD_raw"]);
 
   // We only expect one type of dihedral for C-C-C-C.
   ASSERT_FALSE(f_dihedral.partials.empty());
 
-  auto &partial = f_dihedral.partials["C-C-C-C"];
+  const auto &partial = f_dihedral.partials.at("C-C-C-C");
   ASSERT_EQ(partial.size(), f_dihedral.bins.size());
 
-  // There is exactly one dihedral since there's one chain 0-1-2-3 (and 3-2-1-0
-  // which is identical). Did DADCalculator put it in the correct bin? We can
-  // just verify that total sum is > 0, actually since we normalized, sum over
-  // bin * width ~ 1 or total_counts is 2.
-  real_t sum = 0.0;
-  for (auto val : partial) {
-    sum += val;
-  }
-  // Because it is normalized: sum * bin_width = 1.0
-  EXPECT_NEAR(sum * bin_width, 1.0, 1e-5);
+  verifyNormalizedDihedralSum(partial, bin_width);
 
   EXPECT_EQ(f_dihedral_raw.y_unit, "counts");
   ASSERT_TRUE(f_dihedral_raw.partials.contains("C-C-C-C"));
-  real_t raw_sum = 0.0;
-  for (auto val : f_dihedral_raw.partials["C-C-C-C"]) {
-    raw_sum += val;
-  }
-  EXPECT_GT(raw_sum, 0.0);
+  verifyRawDihedralSum(f_dihedral_raw.partials.at("C-C-C-C"));
 }
 
 TEST_F(DADCalculatorTests, IcosahedronAnglesDAD) {
@@ -79,7 +85,8 @@ TEST_F(DADCalculatorTests, IcosahedronAnglesDAD) {
   real_t const phi = std::numbers::phi;
   std::vector<std::vector<real_t>> const vertices = {
       {0, 1, phi},  {0, 1, -phi},  {0, -1, phi}, {0, -1, -phi}, {1, phi, 0},  {1, -phi, 0},
-      {-1, phi, 0}, {-1, -phi, 0}, {phi, 0, 1},  {phi, 0, -1},  {-phi, 0, 1}, {-phi, 0, -1}};
+      {-1, phi, 0}, {-1, -phi, 0}, {phi, 0, 1},  {phi, 0, -1},  {-phi, 0, 1}, {-phi, 0, -1},
+  };
 
   for (const auto &vertex : vertices) {
     cell_iso.addAtom("Si",
@@ -106,7 +113,8 @@ TEST_F(DADCalculatorTests, IcosahedronAnglesDAD) {
       static_cast<real_t>(0.0),   static_cast<real_t>(31.7),   static_cast<real_t>(36.0),
       static_cast<real_t>(63.4),  static_cast<real_t>(72.0),   static_cast<real_t>(100.0),
       static_cast<real_t>(108.0), static_cast<real_t>(138.19), static_cast<real_t>(144.0),
-      static_cast<real_t>(180.0)};
+      static_cast<real_t>(180.0),
+  };
 
   for (real_t const target : expected_angles) {
     bool found = false;

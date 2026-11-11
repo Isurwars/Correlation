@@ -17,6 +17,8 @@
 
 #include <gtest/gtest.h>
 
+using correlation::real_t;
+
 namespace correlation::calculators {
 namespace {
 
@@ -34,9 +36,9 @@ core::NeighborGraph buildDiamondTestGraph(int n_cells) {
   const real_t cutoff = 3.0;
   const real_t cutoff_sq = cutoff * cutoff;
 
-  auto bond_cutoffs = makeCutoffMatrix(0.0, 2.8 * 2.8);
+  const auto bond_cutoffs = makeCutoffMatrix(0.0, 2.8 * 2.8);
   core::NeighborGraph graph(cell.atomCount());
-  calculators::DistanceCalculationConfig config{
+  const calculators::DistanceCalculationConfig config{
       .r_max = cutoff,
       .r_bin_width = 0.0,
       .num_bins = 0,
@@ -72,7 +74,7 @@ TEST(BaselineRegressionTests, SmallCellDistanceBaseline) {
   real_t total_hist_sum = 0.0;
   for (const auto &row : histograms) {
     for (const auto &col : row) {
-      for (real_t count : col) {
+      for (const real_t count : col) {
         total_hist_sum += count;
       }
     }
@@ -109,7 +111,7 @@ TEST(BaselineRegressionTests, MidCellDistanceBaseline) {
   real_t total_hist_sum = 0.0;
   for (const auto &row : histograms) {
     for (const auto &col : row) {
-      for (real_t count : col) {
+      for (const real_t count : col) {
         total_hist_sum += count;
       }
     }
@@ -120,29 +122,33 @@ TEST(BaselineRegressionTests, MidCellDistanceBaseline) {
   EXPECT_DOUBLE_EQ(total_hist_sum, 5376.0);
 }
 
+void verifyRingCounts(const std::map<int, size_t> &rings) {
+  EXPECT_EQ(rings.count(3), 0);
+  EXPECT_EQ(rings.count(4), 0);
+  EXPECT_EQ(rings.count(5), 0);
+  EXPECT_EQ(rings.at(6), 128);
+}
+
+void verifyGraphCoordination(const core::NeighborGraph &graph, size_t expected_coordination) {
+  for (size_t i = 0; i < graph.nodeCount(); ++i) {
+    EXPECT_EQ(graph.getNeighbors(i).size(), expected_coordination);
+  }
+}
+
 TEST(BaselineRegressionTests, DiamondMotifRingsBaseline) {
   const auto graph = buildDiamondTestGraph(2); // 8 * 2^3 = 64 atoms
   EXPECT_EQ(graph.nodeCount(), 64);
 
   // Each atom in diamond Si has coordination 4
-  for (size_t i = 0; i < graph.nodeCount(); ++i) {
-    EXPECT_EQ(graph.getNeighbors(i).size(), 4);
-  }
+  verifyGraphCoordination(graph, 4);
 
   const auto king_rings = calculators::MotifFinder::findRings(graph, 6, analysis::RingType::King);
   const auto franz_rings =
       calculators::MotifFinder::findRings(graph, 6, analysis::RingType::Franzblau);
 
   // No 3, 4, or 5-membered rings in diamond
-  EXPECT_EQ(king_rings.count(3), 0);
-  EXPECT_EQ(king_rings.count(4), 0);
-  EXPECT_EQ(king_rings.count(5), 0);
-  EXPECT_EQ(king_rings.at(6), 128);
-
-  EXPECT_EQ(franz_rings.count(3), 0);
-  EXPECT_EQ(franz_rings.count(4), 0);
-  EXPECT_EQ(franz_rings.count(5), 0);
-  EXPECT_EQ(franz_rings.at(6), 128);
+  verifyRingCounts(king_rings);
+  verifyRingCounts(franz_rings);
 }
 
 TEST(BaselineRegressionTests, GraphDescriptorsRingBaseline) {
@@ -154,7 +160,7 @@ TEST(BaselineRegressionTests, GraphDescriptorsRingBaseline) {
   ASSERT_EQ(desc.size(), graph.atom_count * max_size);
 
   real_t total_ring_desc = 0.0;
-  for (real_t value : desc) {
+  for (const real_t value : desc) {
     total_ring_desc += value;
   }
   EXPECT_DOUBLE_EQ(total_ring_desc, 768.0);

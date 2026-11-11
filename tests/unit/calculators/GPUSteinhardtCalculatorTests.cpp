@@ -35,12 +35,14 @@ TEST(GPUSteinhardtCalculatorTests, FallbackOrGPUExecution) {
   cell.addAtom("Si", {0.0, 0.0, 0.0});
   cell.addAtom("Si", {1.5, 1.5, 1.5});
 
-  correlation::analysis::StructureAnalyzer const analyzer(cell, 3.0, {{{0.36, 9.0}}}, false);
+  correlation::analysis::StructureAnalyzer const analyzer(
+      cell, 3.0, {{{.min_sq = 0.36, .max_sq = 9.0}}}, false);
 
-  correlation::analysis::DistributionFunctions dists(cell, 3.0, {{{0.36, 9.0}}});
-  correlation::analysis::AnalysisSettings settings;
+  correlation::analysis::DistributionFunctions dists(cell, 3.0,
+                                                     {{{.min_sq = 0.36, .max_sq = 9.0}}});
+  const correlation::analysis::AnalysisSettings settings;
 
-  GPUSteinhardtCalculator gpu_calc;
+  const GPUSteinhardtCalculator gpu_calc;
   auto hists = SteinhardtCalculator::calculate(cell, &analyzer);
   for (auto &[name, hist] : hists) {
     dists.addHistogram(name, std::move(hist));
@@ -57,11 +59,13 @@ TEST(GPUSteinhardtCalculatorTests, FloatPrecisionEvaluation) {
   cell.addAtom("Fe", {2.0, 0.0, 0.0});
   cell.addAtom("Fe", {0.0, 2.0, 0.0});
 
-  correlation::analysis::StructureAnalyzer const analyzer(cell, 3.0, {{{0.36, 9.0}}}, false);
-  correlation::analysis::DistributionFunctions dists(cell, 3.0, {{{0.36, 9.0}}});
-  correlation::analysis::AnalysisSettings settings;
+  correlation::analysis::StructureAnalyzer const analyzer(
+      cell, 3.0, {{{.min_sq = 0.36, .max_sq = 9.0}}}, false);
+  correlation::analysis::DistributionFunctions dists(cell, 3.0,
+                                                     {{{.min_sq = 0.36, .max_sq = 9.0}}});
+  const correlation::analysis::AnalysisSettings settings;
 
-  GPUSteinhardtCalculator gpu_calc;
+  const GPUSteinhardtCalculator gpu_calc;
   auto hists = SteinhardtCalculator::calculate(cell, &analyzer);
   for (auto &[name, hist] : hists) {
     dists.addHistogram(name, std::move(hist));
@@ -77,11 +81,13 @@ TEST(GPUSteinhardtCalculatorTests, DoublePrecisionEvaluation) {
   cell.addAtom("Al", {0.0, 2.5, 0.0});
   cell.addAtom("Al", {0.0, 0.0, 2.5});
 
-  correlation::analysis::StructureAnalyzer const analyzer(cell, 3.5, {{{0.36, 12.0}}}, false);
-  correlation::analysis::DistributionFunctions dists(cell, 3.5, {{{0.36, 12.0}}});
-  correlation::analysis::AnalysisSettings settings;
+  correlation::analysis::StructureAnalyzer const analyzer(
+      cell, 3.5, {{{.min_sq = 0.36, .max_sq = 12.0}}}, false);
+  correlation::analysis::DistributionFunctions dists(cell, 3.5,
+                                                     {{{.min_sq = 0.36, .max_sq = 12.0}}});
+  const correlation::analysis::AnalysisSettings settings;
 
-  GPUSteinhardtCalculator gpu_calc;
+  const GPUSteinhardtCalculator gpu_calc;
   auto hists = SteinhardtCalculator::calculate(cell, &analyzer);
   for (auto &[name, hist] : hists) {
     dists.addHistogram(name, std::move(hist));

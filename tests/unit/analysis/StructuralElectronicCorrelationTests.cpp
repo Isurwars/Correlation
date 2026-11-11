@@ -17,6 +17,8 @@
 
 namespace correlation::analysis {
 
+using correlation::real_t;
+
 namespace {
 
 class MockElectronicModel : public correlation::mlip::MLIPInterface {
@@ -32,10 +34,10 @@ public:
     out.ldos_bins = bins_;
     out.ldos.resize(n_atoms * bins_, static_cast<real_t>(0.0));
 
-    for (size_t i = 0; i < n_atoms; ++i) {
+    for (size_t idx = 0; idx < n_atoms; ++idx) {
       for (size_t bin_idx = 0; bin_idx < bins_; ++bin_idx) {
-        out.ldos[i * bins_ + bin_idx] = static_cast<real_t>(1.0 + static_cast<double>(i) * 0.2 +
-                                                            static_cast<double>(bin_idx) * 0.05);
+        out.ldos[idx * bins_ + bin_idx] = static_cast<real_t>(1.0 + static_cast<double>(idx) * 0.2 +
+                                                              static_cast<double>(bin_idx) * 0.05);
       }
     }
     return out;
@@ -45,7 +47,7 @@ private:
   size_t bins_{20};
 };
 
-correlation::core::Cell makeFccCell(real_t lattice_a = static_cast<real_t>(3.615)) {
+[[nodiscard]] correlation::core::Cell makeFccCell(real_t lattice_a = static_cast<real_t>(3.615)) {
   correlation::core::Cell cell({lattice_a, lattice_a, lattice_a, 90.0, 90.0, 90.0});
   cell.addAtom("Cu", {0.0, 0.0, 0.0});
   cell.addAtom("Cu",
@@ -63,7 +65,7 @@ void verifyTDOSConservation(const MotifProjectedTDOS &res, size_t num_bins) {
   EXPECT_EQ(res.frame_count, 1);
 
   for (size_t bin_idx = 0; bin_idx < num_bins; ++bin_idx) {
-    real_t sum_motifs = 0.0;
+    auto sum_motifs = static_cast<real_t>(0.0);
     for (const auto &[motif_name, partial] : res.motif_tdos) {
       sum_motifs += partial[bin_idx];
     }
@@ -71,7 +73,7 @@ void verifyTDOSConservation(const MotifProjectedTDOS &res, size_t num_bins) {
   }
 }
 
-} // anonymous namespace
+} // namespace
 
 TEST(StructuralElectronicCorrelationTests, NullModelOrEmptyTrajectoryReturnsEmpty) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
@@ -80,11 +82,12 @@ TEST(StructuralElectronicCorrelationTests, NullModelOrEmptyTrajectoryReturnsEmpt
   const correlation::core::Trajectory empty_traj;
   const correlation::calculators::TDOSParams null_params{.model = nullptr};
 
-  auto res1 = StructuralElectronicCorrelation::correlateCNA(dists, empty_traj, null_params);
+  const auto res1 = StructuralElectronicCorrelation::correlateCNA(dists, empty_traj, null_params);
   EXPECT_TRUE(res1.energies.empty());
   EXPECT_TRUE(res1.total_tdos.empty());
 
-  auto res2 = StructuralElectronicCorrelation::correlateSteinhardt(dists, empty_traj, null_params);
+  const auto res2 =
+      StructuralElectronicCorrelation::correlateSteinhardt(dists, empty_traj, null_params);
   EXPECT_TRUE(res2.energies.empty());
   EXPECT_TRUE(res2.total_tdos.empty());
 }
@@ -97,7 +100,10 @@ TEST(StructuralElectronicCorrelationTests, CNACorrelationPreservesTotalConservat
   const size_t num_bins = 15;
   const MockElectronicModel model(num_bins);
   const correlation::calculators::TDOSParams params{
-      .e_min = static_cast<real_t>(-10.0), .e_max = static_cast<real_t>(5.0), .model = &model};
+      .e_min = static_cast<real_t>(-10.0),
+      .e_max = static_cast<real_t>(5.0),
+      .model = &model,
+  };
 
   correlation::analysis::DistributionFunctions dists(cell);
   const auto res = StructuralElectronicCorrelation::correlateCNA(dists, traj, params);
@@ -115,7 +121,10 @@ TEST(StructuralElectronicCorrelationTests, SteinhardtCorrelationPreservesTotalCo
   const size_t num_bins = 15;
   const MockElectronicModel model(num_bins);
   const correlation::calculators::TDOSParams params{
-      .e_min = static_cast<real_t>(-10.0), .e_max = static_cast<real_t>(5.0), .model = &model};
+      .e_min = static_cast<real_t>(-10.0),
+      .e_max = static_cast<real_t>(5.0),
+      .model = &model,
+  };
 
   correlation::analysis::DistributionFunctions dists(cell);
   const auto res = StructuralElectronicCorrelation::correlateSteinhardt(dists, traj, params);

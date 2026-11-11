@@ -14,6 +14,8 @@
 #include <random>
 #include <vector>
 
+using correlation::real_t;
+
 namespace correlation::calculators {
 
 namespace {
@@ -30,8 +32,9 @@ struct CreateRandomCellParams {
  * @brief Portable 53-bit uniform double generator in [0, 1) to guarantee bit-for-bit reproducible
  * random sampling across compilers and platforms.
  */
-[[nodiscard]] double generate_canonical_portable(std::mt19937_64 &rng) noexcept {
-  return static_cast<double>(rng() >> 11) * (1.0 / 9007199254740992.0);
+[[nodiscard]] double generateCanonicalPortable(std::mt19937_64 &rng) noexcept {
+  const uint64_t val = rng();
+  return static_cast<double>(val >> 11U) * (1.0 / 9007199254740992.0);
 }
 
 /**
@@ -48,8 +51,8 @@ template <typename T, typename U>
 
   const size_t num_points = std::min(bins.size(), var.size());
   for (size_t k = 0; k < num_points; ++k) {
-    const double r_val = static_cast<double>(bins[k]);
-    const double v_val = static_cast<double>(var[k]);
+    const auto r_val = static_cast<double>(bins[k]);
+    const auto v_val = static_cast<double>(var[k]);
 
     if (r_val > r_min && r_val < r_max && std::isfinite(v_val) && v_val > var_threshold) {
       const double log_r = std::log(r_val);
@@ -69,7 +72,7 @@ template <typename T, typename U>
     return -1.0;
   }
 
-  const double count_d = static_cast<double>(count);
+  const auto count_d = static_cast<double>(count);
   const double denom = count_d * sum_xx - sum_x * sum_x;
   if (!std::isfinite(denom) || std::abs(denom) < 1e-12) {
     return -1.0;
@@ -98,16 +101,20 @@ correlation::core::Cell createSCLattice(real_t box_length, int atoms_per_axis) {
  * Uses a fixed seed for reproducibility.
  */
 correlation::core::Cell createRandomCell(CreateRandomCellParams params) {
-  correlation::core::Cell cell({static_cast<real_t>(params.box_length),
-                                static_cast<real_t>(params.box_length),
-                                static_cast<real_t>(params.box_length), static_cast<real_t>(90.0),
-                                static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
+  correlation::core::Cell cell({
+      static_cast<real_t>(params.box_length),
+      static_cast<real_t>(params.box_length),
+      static_cast<real_t>(params.box_length),
+      static_cast<real_t>(90.0),
+      static_cast<real_t>(90.0),
+      static_cast<real_t>(90.0),
+  });
   std::seed_seq seed{12345};
   std::mt19937_64 rng(seed);
   for (size_t i = 0; i < params.num_atoms; ++i) {
-    const auto x_pos = static_cast<real_t>(generate_canonical_portable(rng) * params.box_length);
-    const auto y_pos = static_cast<real_t>(generate_canonical_portable(rng) * params.box_length);
-    const auto z_pos = static_cast<real_t>(generate_canonical_portable(rng) * params.box_length);
+    const auto x_pos = static_cast<real_t>(generateCanonicalPortable(rng) * params.box_length);
+    const auto y_pos = static_cast<real_t>(generateCanonicalPortable(rng) * params.box_length);
+    const auto z_pos = static_cast<real_t>(generateCanonicalPortable(rng) * params.box_length);
     cell.addAtom("Ar", {x_pos, y_pos, z_pos});
   }
   return cell;
@@ -122,11 +129,11 @@ class HyperuniformityCalculatorTests : public ::testing::Test {};
 // =============================================================================
 
 TEST_F(HyperuniformityCalculatorTests, ReturnsEmptyForEmptyCell) {
-  correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
-  auto results = HyperuniformityCalculator::calculate(cell, {
-                                                                .num_samples = 100,
-                                                                .r_bin_width = 0.5,
-                                                            });
+  const correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  const auto results = HyperuniformityCalculator::calculate(cell, {
+                                                                      .num_samples = 100,
+                                                                      .r_bin_width = 0.5,
+                                                                  });
   EXPECT_TRUE(results.empty());
 }
 
@@ -134,39 +141,49 @@ TEST_F(HyperuniformityCalculatorTests, ReturnsEmptyForTinyBox) {
   // Box too small: L/2 = 1.5, which is < r_min=2.0
   correlation::core::Cell cell({3.0, 3.0, 3.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {1.5, 1.5, 1.5});
-  auto results = HyperuniformityCalculator::calculate(cell, {
-                                                                .num_samples = 100,
-                                                                .r_bin_width = 0.5,
-                                                            });
+  const auto results = HyperuniformityCalculator::calculate(cell, {
+                                                                      .num_samples = 100,
+                                                                      .r_bin_width = 0.5,
+                                                                  });
   EXPECT_TRUE(results.empty());
 }
 
-TEST_F(HyperuniformityCalculatorTests, ProducesExpectedHistograms) {
-  auto cell = createSCLattice(20.0, 4);
-  auto results = HyperuniformityCalculator::calculate(cell, {
-                                                                .num_samples = 500,
-                                                                .r_bin_width = 1.0,
-                                                            });
+namespace {
+void verifyVarianceNonNegative(const std::vector<real_t> &variances) {
+  for (const auto variance : variances) {
+    EXPECT_GE(variance, -1e-9); // Allow tiny numerical errors
+  }
+}
 
+void verifyHistogramsBasic(const correlation::analysis::Histogram &sigma2,
+                           const correlation::analysis::Histogram &chi_h) {
+  EXPECT_FALSE(sigma2.bins.empty());
+  EXPECT_FALSE(chi_h.bins.empty());
+  EXPECT_EQ(sigma2.bins.size(), chi_h.bins.size());
+  EXPECT_TRUE(sigma2.partials.contains("Total"));
+  EXPECT_TRUE(chi_h.partials.contains("Total"));
+}
+
+void verifyHyperuniformityResults(
+    const std::map<std::string, correlation::analysis::Histogram> &results) {
   ASSERT_TRUE(results.contains("sigma2_N"));
   ASSERT_TRUE(results.contains("chi_H"));
 
   const auto &sigma2 = results.at("sigma2_N");
   const auto &chi_h = results.at("chi_H");
 
-  // Bins should be populated
-  EXPECT_FALSE(sigma2.bins.empty());
-  EXPECT_FALSE(chi_h.bins.empty());
-  EXPECT_EQ(sigma2.bins.size(), chi_h.bins.size());
+  verifyHistogramsBasic(sigma2, chi_h);
+  verifyVarianceNonNegative(sigma2.partials.at("Total"));
+}
+} // namespace
 
-  // Should have "Total" partial
-  EXPECT_TRUE(sigma2.partials.contains("Total"));
-  EXPECT_TRUE(chi_h.partials.contains("Total"));
-
-  // Variance should be non-negative everywhere
-  for (const double variance : sigma2.partials.at("Total")) {
-    EXPECT_GE(variance, -1e-9); // Allow tiny numerical errors
-  }
+TEST_F(HyperuniformityCalculatorTests, ProducesExpectedHistograms) {
+  const auto cell = createSCLattice(20.0, 4);
+  const auto results = HyperuniformityCalculator::calculate(cell, {
+                                                                      .num_samples = 500,
+                                                                      .r_bin_width = 1.0,
+                                                                  });
+  verifyHyperuniformityResults(results);
 }
 
 TEST_F(HyperuniformityCalculatorTests, ThrowsOnInvalidBinWidth) {
@@ -209,15 +226,15 @@ TEST_F(HyperuniformityCalculatorTests, ThrowsOnZeroSamples) {
  * is close to 3.
  */
 TEST_F(HyperuniformityCalculatorTests, RandomPointsVarianceScalesAsR3) {
-  auto cell = createRandomCell({
+  const auto cell = createRandomCell({
       .box_length = 30.0,
       .num_atoms = 500,
   });
   // Use more samples for statistical stability
-  auto results = HyperuniformityCalculator::calculate(cell, {
-                                                                .num_samples = 5000,
-                                                                .r_bin_width = 0.5,
-                                                            });
+  const auto results = HyperuniformityCalculator::calculate(cell, {
+                                                                      .num_samples = 5000,
+                                                                      .r_bin_width = 0.5,
+                                                                  });
 
   ASSERT_TRUE(results.contains("sigma2_N"));
   const auto &sigma2 = results.at("sigma2_N");
@@ -240,11 +257,11 @@ TEST_F(HyperuniformityCalculatorTests, RandomPointsVarianceScalesAsR3) {
  */
 TEST_F(HyperuniformityCalculatorTests, LatticeVarianceScalesAsR2) {
   // Large SC lattice: 8³ = 512 atoms in 40 Å box
-  auto cell = createSCLattice(40.0, 8);
-  auto results = HyperuniformityCalculator::calculate(cell, {
-                                                                .num_samples = 5000,
-                                                                .r_bin_width = 0.5,
-                                                            });
+  const auto cell = createSCLattice(40.0, 8);
+  const auto results = HyperuniformityCalculator::calculate(cell, {
+                                                                      .num_samples = 5000,
+                                                                      .r_bin_width = 0.5,
+                                                                  });
 
   ASSERT_TRUE(results.contains("sigma2_N"));
   const auto &sigma2 = results.at("sigma2_N");
@@ -264,20 +281,22 @@ TEST_F(HyperuniformityCalculatorTests, LatticeVarianceScalesAsR2) {
  */
 TEST_F(HyperuniformityCalculatorTests, LatticeHasLowerSlopeThanRandom) {
   // Create both systems with same density
-  auto lattice_cell = createSCLattice(30.0, 6); // 216 atoms
-  auto random_cell = createRandomCell({
+  const auto lattice_cell = createSCLattice(30.0, 6); // 216 atoms
+  const auto random_cell = createRandomCell({
       .box_length = 30.0,
       .num_atoms = 216,
   });
 
-  auto lattice_results = HyperuniformityCalculator::calculate(lattice_cell, {
-                                                                                .num_samples = 3000,
-                                                                                .r_bin_width = 0.5,
-                                                                            });
-  auto random_results = HyperuniformityCalculator::calculate(random_cell, {
-                                                                              .num_samples = 3000,
-                                                                              .r_bin_width = 0.5,
-                                                                          });
+  const auto lattice_results =
+      HyperuniformityCalculator::calculate(lattice_cell, {
+                                                             .num_samples = 3000,
+                                                             .r_bin_width = 0.5,
+                                                         });
+  const auto random_results =
+      HyperuniformityCalculator::calculate(random_cell, {
+                                                            .num_samples = 3000,
+                                                            .r_bin_width = 0.5,
+                                                        });
 
   ASSERT_TRUE(lattice_results.contains("sigma2_N"));
   ASSERT_TRUE(random_results.contains("sigma2_N"));
@@ -302,11 +321,11 @@ TEST_F(HyperuniformityCalculatorTests, LatticeHasLowerSlopeThanRandom) {
 // =============================================================================
 
 TEST_F(HyperuniformityCalculatorTests, HistogramMetadataIsCorrect) {
-  auto cell = createSCLattice(20.0, 4);
-  auto results = HyperuniformityCalculator::calculate(cell, {
-                                                                .num_samples = 100,
-                                                                .r_bin_width = 1.0,
-                                                            });
+  const auto cell = createSCLattice(20.0, 4);
+  const auto results = HyperuniformityCalculator::calculate(cell, {
+                                                                      .num_samples = 100,
+                                                                      .r_bin_width = 1.0,
+                                                                  });
 
   ASSERT_TRUE(results.contains("sigma2_N"));
   ASSERT_TRUE(results.contains("chi_H"));

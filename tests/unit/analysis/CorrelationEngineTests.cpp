@@ -11,6 +11,7 @@
 
 namespace {
 
+using correlation::real_t;
 using correlation::analysis::CorrelationEngine;
 using correlation::analysis::CorrelationEngineConfig;
 
@@ -105,7 +106,7 @@ TEST(DistributionFunctionsTests, PartialKeyHandlesValidAndOutOfBoundsIndices) {
   cell.addAtom("Si", correlation::math::Vector3<real_t>{0.0, 0.0, 0.0});
   cell.addAtom("O", correlation::math::Vector3<real_t>{1.6, 0.0, 0.0});
 
-  correlation::analysis::DistributionFunctions dists(cell);
+  const correlation::analysis::DistributionFunctions dists(cell);
 
   // Valid indices
   EXPECT_EQ(dists.getPartialKey(0, 1), "Si-O");
@@ -121,28 +122,46 @@ TEST(DistributionFunctionsTests, PartialKeyHandlesValidAndOutOfBoundsIndices) {
 }
 
 TEST(BondCutoffRangeTests, ValidRangeAcceptsPositiveBounds) {
-  correlation::analysis::BondCutoffRange range{.min_sq = 0.0, .max_sq = 10.0};
+  const correlation::analysis::BondCutoffRange range{
+      .min_sq = static_cast<real_t>(0.0),
+      .max_sq = static_cast<real_t>(10.0),
+  };
   EXPECT_TRUE(range.isValid());
 }
 
 TEST(BondCutoffRangeTests, ValidRangeAcceptsEqualPositiveBounds) {
-  correlation::analysis::BondCutoffRange range{.min_sq = 5.0, .max_sq = 5.0};
+  const correlation::analysis::BondCutoffRange range{
+      .min_sq = static_cast<real_t>(5.0),
+      .max_sq = static_cast<real_t>(5.0),
+  };
   EXPECT_TRUE(range.isValid());
 }
 
 TEST(BondCutoffRangeTests, InvalidRangeRejectsZeroUpperBound) {
-  correlation::analysis::BondCutoffRange range{.min_sq = 0.0, .max_sq = 0.0};
+  const correlation::analysis::BondCutoffRange range{
+      .min_sq = static_cast<real_t>(0.0),
+      .max_sq = static_cast<real_t>(0.0),
+  };
   EXPECT_FALSE(range.isValid());
 }
 
 TEST(BondCutoffRangeTests, InvalidRangeRejectsInvertedBounds) {
-  correlation::analysis::BondCutoffRange range{.min_sq = 10.0, .max_sq = 4.0};
+  const correlation::analysis::BondCutoffRange range{
+      .min_sq = static_cast<real_t>(10.0),
+      .max_sq = static_cast<real_t>(4.0),
+  };
   EXPECT_FALSE(range.isValid());
 }
 
 TEST(BondCutoffRangeTests, InvalidRangeRejectsNegativeBounds) {
-  correlation::analysis::BondCutoffRange range1{.min_sq = -1.0, .max_sq = 4.0};
-  correlation::analysis::BondCutoffRange range2{.min_sq = 0.0, .max_sq = -2.0};
+  const correlation::analysis::BondCutoffRange range1{
+      .min_sq = static_cast<real_t>(-1.0),
+      .max_sq = static_cast<real_t>(4.0),
+  };
+  const correlation::analysis::BondCutoffRange range2{
+      .min_sq = static_cast<real_t>(0.0),
+      .max_sq = static_cast<real_t>(-2.0),
+  };
   EXPECT_FALSE(range1.isValid());
   EXPECT_FALSE(range2.isValid());
 }

@@ -1,20 +1,15 @@
 #include "readers/CifReader.hpp"
 
-#include <gtest/gtest.h>
-
-using namespace correlation::readers;
-
-TEST(CifReaderTests, Properties) {
-  CifReader const reader;
-  EXPECT_EQ(reader.getName(), "CIF");
-  EXPECT_FALSE(reader.isTrajectory());
-  auto exts = reader.getExtensions();
-  EXPECT_EQ(exts.size(), 1);
-  EXPECT_EQ(exts[0], "cif");
-}
-
 #include <filesystem>
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+#include <string>
 #include <vector>
+
+#include "../../PrecisionTestHelper.hpp"
+
+using correlation::real_t;
+using namespace correlation::readers;
 
 namespace {
 
@@ -35,10 +30,19 @@ std::string getTestDataDir() {
 
 } // namespace
 
+TEST(CifReaderTests, Properties) {
+  CifReader const reader;
+  EXPECT_EQ(reader.getName(), "CIF");
+  EXPECT_FALSE(reader.isTrajectory());
+  auto const exts = reader.getExtensions();
+  EXPECT_EQ(exts.size(), 1);
+  EXPECT_EQ(exts[0], "cif");
+}
+
 TEST(CifReaderTests, ReadsStructureWithSymmetryAndUncertainty) {
   std::string const data_dir = getTestDataDir();
   CifReader reader;
-  auto cell = reader.readStructure(data_dir + "clean.cif");
+  auto const cell = reader.readStructure(data_dir + "clean.cif");
 
   EXPECT_THAT(cell.latticeParameters()[0], correlation::testing::IsRealEq(5.64));
   EXPECT_THAT(cell.latticeParameters()[3], correlation::testing::IsRealEq(90.0));
@@ -58,5 +62,5 @@ TEST(CifReaderTests, ReadsStructureWithSymmetryAndUncertainty) {
 
 TEST(CifReaderTests, ThrowsOnReadTrajectory) {
   CifReader reader;
-  EXPECT_THROW(reader.readTrajectory("dummy.cif"), std::runtime_error);
+  EXPECT_THROW((void)reader.readTrajectory("dummy.cif"), std::runtime_error);
 }

@@ -13,13 +13,15 @@
 #include <fstream>
 #include <gtest/gtest.h>
 
+using correlation::real_t;
+
 namespace correlation::readers {
 
 namespace {
 
 class GpawReaderTests : public ::testing::Test {
 protected:
-  std::string test_file_;
+  [[nodiscard]] const std::string &testFile() const noexcept { return test_file_; }
 
   void SetUp() override {
     const auto *test_info = ::testing::UnitTest::GetInstance()->current_test_info();
@@ -32,10 +34,13 @@ protected:
       std::filesystem::remove(test_file_);
     }
   }
+
+private:
+  std::string test_file_;
 };
 
 TEST_F(GpawReaderTests, DiscoveryInReaderFactory) {
-  auto &factory = ReaderFactory::instance();
+  const auto &factory = ReaderFactory::instance();
   const auto *reader = factory.getReaderForExtension(".gpaw");
 
   ASSERT_NE(reader, nullptr);
@@ -44,7 +49,7 @@ TEST_F(GpawReaderTests, DiscoveryInReaderFactory) {
 }
 
 TEST_F(GpawReaderTests, ParsesLatticeAndPositions) {
-  std::ofstream out(test_file_);
+  std::ofstream out(testFile());
   out << "  ___ ___ ___ _ _ _  \n";
   out << " |   |   |   | | | | \n";
   out << " | | | | | | | | | | \n";
@@ -64,7 +69,7 @@ TEST_F(GpawReaderTests, ParsesLatticeAndPositions) {
   out.close();
 
   GpawReader reader;
-  auto cell = reader.readStructure(test_file_);
+  auto const cell = reader.readStructure(testFile());
 
   EXPECT_EQ(cell.atomCount(), 2);
   EXPECT_EQ(cell.elements().size(), 1);
@@ -75,7 +80,7 @@ TEST_F(GpawReaderTests, ParsesLatticeAndPositions) {
 
 TEST_F(GpawReaderTests, ThrowsOnNonExistentFile) {
   GpawReader reader;
-  EXPECT_THROW(reader.readStructure("non_existent_file.gpaw"), std::runtime_error);
+  EXPECT_THROW((void)reader.readStructure("non_existent_file.gpaw"), std::runtime_error);
 }
 
 } // namespace

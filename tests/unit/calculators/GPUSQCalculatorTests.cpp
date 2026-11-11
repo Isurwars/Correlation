@@ -33,12 +33,13 @@ TEST(GPUSQCalculatorTests, FallbackOrGPUExecution) {
   cell.addAtom("Si", {0.0, 0.0, 0.0});
   cell.addAtom("Si", {1.5, 1.5, 1.5});
 
-  correlation::analysis::DistributionFunctions dists(cell, 3.0, {{{0.36, 9.0}}});
+  correlation::analysis::DistributionFunctions dists(cell, 3.0,
+                                                     {{{.min_sq = 0.36, .max_sq = 9.0}}});
   correlation::analysis::AnalysisSettings settings;
   settings.q_max = 5.0;
   settings.q_bin_width = 0.5;
 
-  GPUSQCalculator gpu_calc;
+  const GPUSQCalculator gpu_calc;
   EXPECT_NO_THROW(gpu_calc.calculateFrame(dists, settings));
   EXPECT_TRUE(dists.getAllHistograms().contains("S_q") ||
               dists.getAllHistograms().contains("S_Q") ||

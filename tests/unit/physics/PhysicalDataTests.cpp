@@ -8,6 +8,7 @@
 
 namespace correlation::testing {
 
+using correlation::real_t;
 using namespace correlation::physics;
 
 TEST(PhysicalDataTests, GetCovalentRadiusCorrectly) {
@@ -41,12 +42,12 @@ TEST(PhysicalDataTests, GetAtomicMassCorrectly) {
 
 TEST(PhysicalDataTests, GetAtomicFormFactorsCorrectly) {
   // Test valid element (Silicon)
-  auto silicon_ff = getAtomicFormFactors("Si");
+  auto const silicon_ff = getAtomicFormFactors("Si");
   EXPECT_NEAR(silicon_ff[0], 5.275329, correlation::is_single_precision ? 1e-4 : 1e-6);
   EXPECT_NEAR(silicon_ff[8], 0.145073, correlation::is_single_precision ? 1e-4 : 1e-6);
 
   // Test Hydrogen form factors
-  auto h_ff = getAtomicFormFactors("H");
+  auto const h_ff = getAtomicFormFactors("H");
   EXPECT_EQ(h_ff.size(), 9U);
 
   // Test invalid element throws

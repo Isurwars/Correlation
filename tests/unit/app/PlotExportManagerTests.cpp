@@ -35,7 +35,7 @@ TEST(PlotExportManagerTests, InitialStateNotActive) {
 }
 
 TEST(PlotExportManagerTests, SavePlotFailsWithNullHistogram) {
-  correlation::plotters::PlotConfig config;
+  const correlation::plotters::PlotConfig config;
   const auto result = PlotExportManager::savePlot("test.svg", "g_r", nullptr, config, {});
   EXPECT_FALSE(result.has_value());
   EXPECT_EQ(result.error(), "Histogram is null");
@@ -43,7 +43,7 @@ TEST(PlotExportManagerTests, SavePlotFailsWithNullHistogram) {
 
 TEST(PlotExportManagerTests, SavePlotSingleHistogramSvg) {
   const auto hist = createMockHistogram("g_r");
-  correlation::plotters::PlotConfig config;
+  const correlation::plotters::PlotConfig config;
   const std::filesystem::path out_path =
       std::filesystem::temp_directory_path() / "test_export_single.svg";
 
@@ -70,7 +70,7 @@ TEST(PlotExportManagerTests, SavePlotComparisonOverlaySvg) {
 
   const std::vector<PinnedRun> pinned_runs = {run1};
 
-  correlation::plotters::PlotConfig config;
+  const correlation::plotters::PlotConfig config;
   const std::filesystem::path out_path =
       std::filesystem::temp_directory_path() / "test_export_comparison.svg";
 

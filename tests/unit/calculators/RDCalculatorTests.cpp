@@ -12,6 +12,8 @@
 #include <fstream>
 #include <gtest/gtest.h>
 
+using correlation::real_t;
+
 namespace correlation::analysis {
 
 namespace {
@@ -36,7 +38,7 @@ protected:
 } // namespace
 
 TEST_F(RDCalculatorTests, ComputeMotif) {
-  size_t max_ring_size = 5;
+  const size_t max_ring_size = 5;
   Histogram f_motif = correlation::calculators::RDCalculator::calculate(graph, max_ring_size);
 
   EXPECT_EQ(f_motif.x_label, "Ring Size");
@@ -59,68 +61,23 @@ TEST_F(RDCalculatorTests, InvalidMaxRingSize) {
                std::invalid_argument);
 }
 
-TEST_F(RDCalculatorTests, CelluloseRingDistribution) {
-  std::string cellulose_path = "../../examples/Cellulose/Cellulose.md";
-  std::ifstream file(cellulose_path);
-  if (!file.good()) {
-    cellulose_path = "../examples/Cellulose/Cellulose.md";
-    std::ifstream file_2(cellulose_path);
-    if (!file_2.good()) {
-      cellulose_path = "examples/Cellulose/Cellulose.md";
-      std::ifstream file_3(cellulose_path);
-      if (!file_3.good()) {
-        GTEST_SKIP() << "Cellulose.md example file not found. Skipping test.";
-        return;
-      }
+namespace {
+std::optional<std::string> resolveCellulosePath() {
+  const std::array<std::string, 3> candidates = {
+      "../../examples/Cellulose/Cellulose.md",
+      "../examples/Cellulose/Cellulose.md",
+      "examples/Cellulose/Cellulose.md",
+  };
+  for (const auto &path : candidates) {
+    if (const std::ifstream file(path); file.good()) {
+      return path;
     }
   }
+  return std::nullopt;
+}
 
-  correlation::readers::FileType type = correlation::readers::determineFileType(cellulose_path);
-  correlation::core::Trajectory traj = correlation::readers::readTrajectory(cellulose_path, type);
-  if (traj.getFrames().empty()) {
-    GTEST_SKIP() << "No frames found in Cellulose.md";
-    return;
-  }
-
-  traj.precomputeBondCutoffs();
-  auto cutoffs = traj.getBondCutoffs();
-
-  // Custom bond cutoff: The covalent radius of O is 0.73, sum is 1.46.
-  // The default bond factor is 1.2, making the cutoff 1.752.
-  // We need the O-O cutoff to be smaller than the H-bond distance (1.478)
-  // Let's set the O-O cutoff squared to 1.45^2 = 2.1025.
-
-  // Find the index for Oxygen
-  int o_idx = -1;
-  const auto &elements = traj.getFrames()[0].elements();
-  for (size_t i = 0; i < elements.size(); ++i) {
-    if (elements[i].symbol == "O") {
-      o_idx = static_cast<int>(i);
-      break;
-    }
-  }
-
-  if (o_idx != -1) {
-    cutoffs[o_idx][o_idx].max_sq = 1.45 * 1.45;
-  }
-  traj.setBondCutoffs(cutoffs);
-
-  correlation::core::Cell frame = traj.getFrames()[0];
-  StructureAnalyzer analyzer(frame, 3.0, traj.getBondCutoffsSQ(), true);
-  const correlation::core::NeighborGraph &graph_cellulose = analyzer.neighborGraph();
-
-  size_t max_ring_size = 10;
-
-  Histogram f_motif =
-      correlation::calculators::RDCalculator::calculate(graph_cellulose, max_ring_size);
-
-  EXPECT_EQ(f_motif.x_label, "Ring Size");
-  ASSERT_EQ(f_motif.bins.size(), max_ring_size - 2);
-
-  auto &partial = f_motif.partials.at("Rings");
-  EXPECT_EQ(partial.size(), max_ring_size - 2);
-
-  real_t sum_rings = static_cast<real_t>(0.0);
+void verifyCellulosePartials(const std::vector<real_t> &partial) {
+  auto sum_rings = static_cast<real_t>(0.0);
   for (size_t i = 0; i < partial.size(); ++i) {
     if (i == 3) { // Bin 3 corresponds to ring size 6 (since bins start at 3)
       EXPECT_NEAR(partial[i], 1.0, 1e-6) << "Ring size 6 should have all the counts.";
@@ -132,21 +89,75 @@ TEST_F(RDCalculatorTests, CelluloseRingDistribution) {
   EXPECT_NEAR(sum_rings, 1.0, 1e-6);
 }
 
+void adjustOxygenCutoff(correlation::core::Trajectory &traj) {
+  traj.precomputeBondCutoffs();
+  auto cutoffs = traj.getBondCutoffs();
+  int o_idx = -1;
+  const auto &elements = traj.getFrames()[0].elements();
+  for (size_t i = 0; i < elements.size(); ++i) {
+    if (elements[i].symbol == "O") {
+      o_idx = static_cast<int>(i);
+      break;
+    }
+  }
+  if (o_idx != -1) {
+    cutoffs[o_idx][o_idx].max_sq = 1.45 * 1.45;
+  }
+  traj.setBondCutoffs(cutoffs);
+}
+} // namespace
+
+TEST_F(RDCalculatorTests, CelluloseRingDistribution) {
+  const auto cellulose_path_opt = resolveCellulosePath();
+  if (!cellulose_path_opt.has_value()) {
+    GTEST_SKIP() << "Cellulose.md example file not found. Skipping test.";
+    return;
+  }
+  const std::string &cellulose_path = *cellulose_path_opt;
+
+  const correlation::readers::FileType type =
+      correlation::readers::determineFileType(cellulose_path);
+  correlation::core::Trajectory traj = correlation::readers::readTrajectory(cellulose_path, type);
+  if (traj.getFrames().empty()) {
+    GTEST_SKIP() << "No frames found in Cellulose.md";
+    return;
+  }
+
+  adjustOxygenCutoff(traj);
+
+  const correlation::core::Cell frame = traj.getFrames()[0];
+  const StructureAnalyzer analyzer(frame, 3.0, traj.getBondCutoffsSQ(), true);
+  const correlation::core::NeighborGraph &graph_cellulose = analyzer.neighborGraph();
+
+  const size_t max_ring_size = 10;
+  const Histogram f_motif =
+      correlation::calculators::RDCalculator::calculate(graph_cellulose, max_ring_size);
+
+  EXPECT_EQ(f_motif.x_label, "Ring Size");
+  ASSERT_EQ(f_motif.bins.size(), max_ring_size - 2);
+
+  const auto &partial = f_motif.partials.at("Rings");
+  EXPECT_EQ(partial.size(), max_ring_size - 2);
+
+  verifyCellulosePartials(partial);
+}
+
 TEST_F(RDCalculatorTests, ComputesFranzblauAndKingSeparately) {
   // Graph: 6-cycle 0-1-2-3-4-5-0 plus node 6 connected to 0 and 2.
-  correlation::core::NeighborGraph g(7);
+  correlation::core::NeighborGraph neighbor_graph(7);
   for (size_t i = 0; i < 6; ++i) {
-    size_t next = (i + 1) % 6;
-    g.addDirectedEdge(i, next, 1.0, {1.0, 0.0, 0.0});
-    g.addDirectedEdge(next, i, 1.0, {-1.0, 0.0, 0.0});
+    const size_t next = (i + 1) % 6;
+    neighbor_graph.addDirectedEdge(i, next, 1.0, {1.0, 0.0, 0.0});
+    neighbor_graph.addDirectedEdge(next, i, 1.0, {-1.0, 0.0, 0.0});
   }
-  g.addDirectedEdge(0, 6, 1.0, {0.0, 1.0, 0.0});
-  g.addDirectedEdge(6, 0, 1.0, {0.0, -1.0, 0.0});
-  g.addDirectedEdge(2, 6, 1.0, {0.0, 1.0, 0.0});
-  g.addDirectedEdge(6, 2, 1.0, {0.0, -1.0, 0.0});
+  neighbor_graph.addDirectedEdge(0, 6, 1.0, {0.0, 1.0, 0.0});
+  neighbor_graph.addDirectedEdge(6, 0, 1.0, {0.0, -1.0, 0.0});
+  neighbor_graph.addDirectedEdge(2, 6, 1.0, {0.0, 1.0, 0.0});
+  neighbor_graph.addDirectedEdge(6, 2, 1.0, {0.0, -1.0, 0.0});
 
   // 1. King calculation: accepts composite 6-ring
-  auto king_hist = correlation::calculators::RDCalculator::calculate(g, 6, RingType::King);
+  auto king_hist =
+      correlation::calculators::RDCalculator::calculate(neighbor_graph, 6, RingType::King);
   auto const &king_raw = king_hist.partials.at("RawCounts");
   // Bins: 3, 4, 5, 6 (indices 0, 1, 2, 3)
   EXPECT_EQ(king_raw[1], 1.0); // 4-ring
@@ -154,7 +165,7 @@ TEST_F(RDCalculatorTests, ComputesFranzblauAndKingSeparately) {
 
   // 2. Franzblau calculation: rejects composite 6-ring
   auto franzblau_hist =
-      correlation::calculators::RDCalculator::calculate(g, 6, RingType::Franzblau);
+      correlation::calculators::RDCalculator::calculate(neighbor_graph, 6, RingType::Franzblau);
   auto const &franzblau_raw = franzblau_hist.partials.at("RawCounts");
   EXPECT_EQ(franzblau_raw[1], 1.0); // 4-ring
   EXPECT_EQ(franzblau_raw[3], 0.0); // 6-ring rejected
@@ -169,14 +180,14 @@ TEST_F(RDCalculatorTests, ComputesBridgedSilicaRingStatistics) {
   silica_ring.addAtom("Si", {1.0, 2.0, 0.0}); // 4
   silica_ring.addAtom("O", {0.0, 1.0, 0.0});  // 5
 
-  correlation::core::NeighborGraph g(6);
+  correlation::core::NeighborGraph neighbor_graph(6);
   for (size_t i = 0; i < 6; ++i) {
-    size_t next = (i + 1) % 6;
-    g.addDirectedEdge(i, next, 1.0, {1.0, 0.0, 0.0});
-    g.addDirectedEdge(next, i, 1.0, {-1.0, 0.0, 0.0});
+    const size_t next = (i + 1) % 6;
+    neighbor_graph.addDirectedEdge(i, next, 1.0, {1.0, 0.0, 0.0});
+    neighbor_graph.addDirectedEdge(next, i, 1.0, {-1.0, 0.0, 0.0});
   }
 
-  correlation::calculators::RDCalculator::RDParams params{
+  const correlation::calculators::RDCalculator::RDParams params{
       .max_ring_size = 6,
       .ring_type = RingType::Franzblau,
       .projection_mode = RingProjectionMode::BridgedProjection,
@@ -185,7 +196,8 @@ TEST_F(RDCalculatorTests, ComputesBridgedSilicaRingStatistics) {
       .report_polyhedra_size = true,
   };
 
-  auto hist = correlation::calculators::RDCalculator::calculate(g, silica_ring, params);
+  auto hist =
+      correlation::calculators::RDCalculator::calculate(neighbor_graph, silica_ring, params);
 
   EXPECT_EQ(hist.x_unit, "polyhedra");
   EXPECT_EQ(hist.bins[0], 3.0); // Bins: 3, 4, 5, 6
@@ -209,14 +221,14 @@ TEST_F(RDCalculatorTests, ComputesAlternatingSilicaRingStatistics) {
   silica_ring.addAtom("Si", {1.0, 2.0, 0.0}); // 4
   silica_ring.addAtom("O", {0.0, 1.0, 0.0});  // 5
 
-  correlation::core::NeighborGraph g(6);
+  correlation::core::NeighborGraph neighbor_graph(6);
   for (size_t i = 0; i < 6; ++i) {
-    size_t next = (i + 1) % 6;
-    g.addDirectedEdge(i, next, 1.0, {1.0, 0.0, 0.0});
-    g.addDirectedEdge(next, i, 1.0, {-1.0, 0.0, 0.0});
+    const size_t next = (i + 1) % 6;
+    neighbor_graph.addDirectedEdge(i, next, 1.0, {1.0, 0.0, 0.0});
+    neighbor_graph.addDirectedEdge(next, i, 1.0, {-1.0, 0.0, 0.0});
   }
 
-  correlation::calculators::RDCalculator::RDParams params{
+  const correlation::calculators::RDCalculator::RDParams params{
       .max_ring_size = 6,
       .ring_type = RingType::Franzblau,
       .projection_mode = RingProjectionMode::AlternatingTracing,
@@ -225,7 +237,8 @@ TEST_F(RDCalculatorTests, ComputesAlternatingSilicaRingStatistics) {
       .report_polyhedra_size = true,
   };
 
-  auto hist = correlation::calculators::RDCalculator::calculate(g, silica_ring, params);
+  auto hist =
+      correlation::calculators::RDCalculator::calculate(neighbor_graph, silica_ring, params);
 
   EXPECT_EQ(hist.x_unit, "polyhedra");
   // In alternating mode with report_polyhedra_size, bins start at 2 (since 4 atoms = 2 tetrahedra)

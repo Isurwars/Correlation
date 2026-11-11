@@ -14,6 +14,7 @@ namespace correlation::testing {
 
 using namespace correlation::plotters;
 using namespace correlation::analysis;
+using correlation::real_t;
 
 TEST(SvgPlotterTests, RendersEmptyHistogramGracefully) {
   Histogram empty_hist;
@@ -23,7 +24,7 @@ TEST(SvgPlotterTests, RendersEmptyHistogramGracefully) {
 
   PlotConfig config;
   config.use_native_text = true;
-  std::string svg = renderHistogramAsSvg(empty_hist, config);
+  std::string const svg = renderHistogramAsSvg(empty_hist, config);
   EXPECT_FALSE(svg.empty());
   EXPECT_NE(svg.find("<svg"), std::string::npos);
   EXPECT_NE(svg.find("<text"), std::string::npos);
@@ -50,7 +51,7 @@ TEST(SvgPlotterTests, RendersValidHistogramCorrectly) {
   config.theme = PlotConfig::Theme::Light;
   config.show_grid = true;
   config.use_native_text = true;
-  std::string svg = renderHistogramAsSvg(hist, config);
+  std::string const svg = renderHistogramAsSvg(hist, config);
 
   // Assert
   EXPECT_FALSE(svg.empty());
@@ -76,7 +77,7 @@ TEST(SvgPlotterTests, RendersDarkThemeCorrectly) {
 
   PlotConfig config;
   config.theme = PlotConfig::Theme::Dark;
-  std::string svg = renderHistogramAsSvg(hist, config);
+  std::string const svg = renderHistogramAsSvg(hist, config);
 
   // Dark theme bg is #1e1e2e
   EXPECT_NE(svg.find("fill=\"#1e1e2e\""), std::string::npos);
@@ -93,10 +94,13 @@ TEST(SvgPlotterTests, RendersComparisonOverlayCorrectly) {
   hist2.bins = {1.0, 2.0, 3.0};
   hist2.partials["Total"] = {0.6, 1.1, 1.6};
 
-  std::vector<LabeledHistogram> datasets = {{"Run A", &hist1}, {"Run B", &hist2}};
+  const std::vector<LabeledHistogram> datasets = {
+      {.label = "Run A", .hist = &hist1},
+      {.label = "Run B", .hist = &hist2},
+  };
 
   // Act
-  std::string svg = renderComparisonSvg(datasets, "Total");
+  std::string const svg = renderComparisonSvg(datasets, "Total");
 
   // Assert
   EXPECT_FALSE(svg.empty());
@@ -121,7 +125,7 @@ TEST(SvgPlotterTests, RendersWithHoverActive) {
   hover.widget_width = 800.0;
   hover.widget_height = 600.0;
 
-  std::string svg = renderHistogramAsSvg(hist, config, hover);
+  std::string const svg = renderHistogramAsSvg(hist, config, hover);
   EXPECT_FALSE(svg.empty());
   // Should draw the dashed guide line
   EXPECT_NE(svg.find("stroke-dasharray=\"4,4\""), std::string::npos);
@@ -153,7 +157,7 @@ TEST(SvgPlotterTests, RendersWithHover2DNearestSnapping) {
   hover.widget_width = 1200.0;
   hover.widget_height = 900.0;
 
-  std::string svg = renderHistogramAsSvg(hist, config, hover);
+  std::string const svg = renderHistogramAsSvg(hist, config, hover);
   EXPECT_FALSE(svg.empty());
 
   // Verify that "Si-O" (y=1.0 -> sy=746.7) is identified and snapped to as nearest curve
@@ -171,7 +175,7 @@ TEST(SvgPlotterTests, RendersShadedCurveCorrectly) {
   config.fill_area = true;
   config.use_native_text = true;
 
-  std::string svg = renderHistogramAsSvg(hist, config);
+  std::string const svg = renderHistogramAsSvg(hist, config);
   EXPECT_FALSE(svg.empty());
 
   // Verify that linearGradient and polygon elements are in the SVG output
@@ -190,14 +194,14 @@ TEST(SvgPlotterTests, RendersContinuousColormapsAndCustomColors) {
   // Test Magma continuous palette
   PlotConfig magma_config;
   magma_config.palette = PlotConfig::Palette::Magma;
-  std::string magma_svg = renderHistogramAsSvg(hist, magma_config);
+  std::string const magma_svg = renderHistogramAsSvg(hist, magma_config);
   EXPECT_FALSE(magma_svg.empty());
   EXPECT_NE(magma_svg.find("stroke=\"#"), std::string::npos);
 
   // Test custom curve color override
-  PlotConfig custom_config;
-  std::map<std::string, std::string> custom_colors = {{"Total", "#FF00FF"}};
-  std::string custom_svg =
+  const PlotConfig custom_config;
+  const std::map<std::string, std::string> custom_colors = {{"Total", "#FF00FF"}};
+  std::string const custom_svg =
       renderHistogramAsSvg(hist, custom_config, HoverInfo(), {}, {}, custom_colors);
   EXPECT_NE(custom_svg.find("stroke=\"#FF00FF\""), std::string::npos);
 }
@@ -212,7 +216,7 @@ TEST(SvgPlotterTests, RendersCustomMarkerSizeCorrectly) {
   config.show_markers = true;
   config.marker_size = 5.2;
 
-  std::string svg = renderHistogramAsSvg(hist, config);
+  std::string const svg = renderHistogramAsSvg(hist, config);
   EXPECT_FALSE(svg.empty());
   EXPECT_NE(svg.find("r=\"5.2\""), std::string::npos);
 }
@@ -229,7 +233,7 @@ TEST(SvgPlotterTests, AppliesManualZoomBoundsAndClipping) {
   config.manual_y_min = 0.5;
   config.manual_y_max = 2.8;
 
-  std::string svg = renderHistogramAsSvg(hist, config);
+  std::string const svg = renderHistogramAsSvg(hist, config);
   EXPECT_FALSE(svg.empty());
   EXPECT_NE(svg.find("id=\"plot-area-clip\""), std::string::npos);
   EXPECT_NE(svg.find("clip-path=\"url(#plot-area-clip)\""), std::string::npos);
@@ -256,7 +260,7 @@ TEST(SvgPlotterTests, RendersReferenceLinesWithLabels) {
       .color_hex = "#E11D48",
   });
 
-  std::string svg = renderHistogramAsSvg(hist, config);
+  std::string const svg = renderHistogramAsSvg(hist, config);
   EXPECT_FALSE(svg.empty());
   EXPECT_NE(svg.find("stroke=\"#0284C7\""), std::string::npos);
   EXPECT_NE(svg.find("stroke=\"#E11D48\""), std::string::npos);
@@ -323,7 +327,7 @@ TEST(SvgPlotterTests, SinglePartialRendersOnlyTotal) {
   PlotConfig config;
   config.theme = PlotConfig::Theme::Light;
   config.use_native_text = true;
-  std::string svg = renderHistogramAsSvg(hist, config);
+  std::string const svg = renderHistogramAsSvg(hist, config);
 
   EXPECT_FALSE(svg.empty());
   // Total is drawn (neutral color in light mode)
@@ -344,7 +348,7 @@ TEST(SvgPlotterTests, DetectsMainPeakOnNormalizedDistribution) {
   PlotConfig config;
   config.use_native_text = true;
   config.show_peak_callouts = true;
-  std::string svg = renderHistogramAsSvg(hist, config);
+  std::string const svg = renderHistogramAsSvg(hist, config);
 
   EXPECT_FALSE(svg.empty());
   // Peak indicator polygon and callout line should be present
@@ -366,7 +370,7 @@ TEST(SvgPlotterTests, DetectsMainPeakForRadialHistogram) {
   PlotConfig config;
   config.use_native_text = true;
   config.show_peak_callouts = true;
-  std::string svg = renderHistogramAsSvg(hist, config);
+  std::string const svg = renderHistogramAsSvg(hist, config);
 
   EXPECT_FALSE(svg.empty());
   // Radial histogram uses "r₁" for main peak at 2.00

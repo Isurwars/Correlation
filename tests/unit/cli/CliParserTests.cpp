@@ -5,10 +5,14 @@
 
 #include "cli/CliParser.hpp"
 
+#include "../../PrecisionTestHelper.hpp"
+
 #include <filesystem>
 #include <gtest/gtest.h>
 #include <string>
 #include <vector>
+
+using correlation::real_t;
 
 namespace {
 
@@ -22,7 +26,7 @@ struct ArgBuilder {
   std::vector<char *> argv;
 
   // Construct from initializer list: {"correlation-cli", "--help", ...}
-  explicit ArgBuilder(std::initializer_list<std::string> args) : storage(args) {
+  ArgBuilder(std::initializer_list<std::string> args) : storage(args) {
     for (auto &store : storage) {
       argv.push_back(store.data());
     }
@@ -686,9 +690,13 @@ TEST_F(CliParserTests, ConvertSubcommandOptionsParsing) {
 }
 
 TEST_F(CliParserTests, ConvertSubcommandExecutionFailsOnMissingFile) {
-  correlation::cli::ConvertOptions opts{
+  const correlation::cli::ConvertOptions opts{
       .input_file = "non_existent_file.car",
       .output_file = "/tmp/should_not_exist.vasp",
+      .from_format = "",
+      .to_format = "",
+      .fractional = true,
+      .quiet = false,
   };
   EXPECT_EQ(correlation::cli::executeConvert(opts), 1);
 }

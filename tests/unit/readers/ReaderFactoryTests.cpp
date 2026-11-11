@@ -13,6 +13,7 @@
 
 namespace correlation::testing {
 
+using correlation::real_t;
 using namespace correlation::readers;
 namespace {
 class MockReader : public BaseReader {

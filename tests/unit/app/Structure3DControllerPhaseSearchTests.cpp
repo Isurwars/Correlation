@@ -22,6 +22,8 @@
 #ifdef _WIN32
 #define NOMINMAX
 #include <Windows.h>
+
+using correlation::real_t;
 #endif
 
 namespace correlation::app {

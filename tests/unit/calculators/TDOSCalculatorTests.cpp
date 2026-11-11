@@ -17,6 +17,8 @@
 #include <gtest/gtest.h>
 #include <initializer_list>
 
+using correlation::real_t;
+
 namespace correlation::calculators {
 
 namespace {
@@ -117,7 +119,10 @@ TEST(TDOSCalculatorTests, EnergyGridVerification) {
   const size_t num_bins = 50;
   const MockTDOSModel model({.bins = num_bins});
   const TDOSParams params{
-      .e_min = static_cast<real_t>(-15.0), .e_max = static_cast<real_t>(5.0), .model = &model};
+      .e_min = static_cast<real_t>(-15.0),
+      .e_max = static_cast<real_t>(5.0),
+      .model = &model,
+  };
 
   const auto hist = TDOSCalculator::calculate(cell, params);
 
@@ -145,7 +150,10 @@ TEST(TDOSCalculatorTests, SpeciesPartialsConservation) {
   const size_t num_bins = 10;
   const MockTDOSModel model({.bins = num_bins});
   const TDOSParams params{
-      .e_min = static_cast<real_t>(-15.0), .e_max = static_cast<real_t>(5.0), .model = &model};
+      .e_min = static_cast<real_t>(-15.0),
+      .e_max = static_cast<real_t>(5.0),
+      .model = &model,
+  };
 
   const auto hist = TDOSCalculator::calculate(cell, params);
 
@@ -177,7 +185,10 @@ TEST(TDOSCalculatorTests, TrajectoryAveraging) {
   const size_t num_bins = 10;
   MockTDOSModel model({.bins = num_bins});
   const TDOSParams params{
-      .e_min = static_cast<real_t>(-15.0), .e_max = static_cast<real_t>(5.0), .model = &model};
+      .e_min = static_cast<real_t>(-15.0),
+      .e_max = static_cast<real_t>(5.0),
+      .model = &model,
+  };
 
   const auto hist1 = TDOSCalculator::calculate(cell1, params);
 
@@ -203,7 +214,10 @@ TEST(TDOSCalculatorTests, CancellationResponsiveness) {
 
   const MockTDOSModel model({.bins = 10});
   const TDOSParams params{
-      .e_min = static_cast<real_t>(-15.0), .e_max = static_cast<real_t>(5.0), .model = &model};
+      .e_min = static_cast<real_t>(-15.0),
+      .e_max = static_cast<real_t>(5.0),
+      .model = &model,
+  };
 
   const std::atomic<bool> cancel_flag{true};
   const auto hist = TDOSCalculator::calculateTrajectory(traj, params, &cancel_flag);

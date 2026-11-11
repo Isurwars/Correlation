@@ -13,6 +13,7 @@
 namespace correlation::testing {
 
 using namespace correlation::core;
+using correlation::real_t;
 
 namespace {
 class AtomFunctionalTests : public ::testing::Test {};
@@ -20,18 +21,18 @@ class AtomFunctionalTests : public ::testing::Test {};
 TEST_F(AtomFunctionalTests, VerifyMethaneTetrahedralGeometry) {
   // Carbon atom at the center of the tetrahedron
   const Element element_c{.symbol = "C", .id = {6}};
-  Atom carbon(element_c, {0.0, 0.0, 0.0}, 0);
+  const Atom carbon(element_c, {0.0, 0.0, 0.0}, 0);
 
   // Four Hydrogen atoms at the vertices of the tetrahedron
   // C-H bond length is approx 1.09 Angstroms
   const Element element_h{.symbol = "H", .id = {1}};
-  const real_t bond_len = static_cast<real_t>(1.09);
+  const auto bond_len = static_cast<real_t>(1.09);
   const real_t factor = bond_len / std::sqrt(static_cast<real_t>(3.0));
 
-  Atom h_1(element_h, {factor, factor, factor}, 1);
-  Atom h_2(element_h, {-factor, -factor, factor}, 2);
-  Atom h_3(element_h, {-factor, factor, -factor}, 3);
-  Atom h_4(element_h, {factor, -factor, -factor}, 4);
+  const Atom h_1(element_h, {factor, factor, factor}, 1);
+  const Atom h_2(element_h, {-factor, -factor, factor}, 2);
+  const Atom h_3(element_h, {-factor, factor, -factor}, 3);
+  const Atom h_4(element_h, {factor, -factor, -factor}, 4);
 
   // Verify bond distances from Carbon to each Hydrogen
   EXPECT_NEAR(distance(carbon, h_1), bond_len, 1e-4);
@@ -41,7 +42,7 @@ TEST_F(AtomFunctionalTests, VerifyMethaneTetrahedralGeometry) {
 
   // Verify tetrahedral angle: acos(-1/3) which is ~ 109.47 degrees (1.910633 radians)
   const real_t expected_angle_rad = std::acos(static_cast<real_t>(-1.0 / 3.0));
-  const real_t expected_angle_deg = static_cast<real_t>(109.4712);
+  const auto expected_angle_deg = static_cast<real_t>(109.4712);
 
   real_t const angle_1_c_2 = angle(carbon, h_1, h_2);
   real_t const angle_1_c_3 = angle(carbon, h_1, h_3);
@@ -63,7 +64,7 @@ TEST_F(AtomFunctionalTests, VerifyMethaneTetrahedralGeometry) {
 
 TEST_F(AtomFunctionalTests, VerifyDynamicAttributeModifications) {
   // Simulate an atom participating in a reaction or phase transition
-  Element element = {.symbol = "Al", .id = {13}};
+  const Element element = {.symbol = "Al", .id = {13}};
   Atom atom(element, {1.0, 2.0, 3.0}, 1);
 
   // Change type from Al to O (e.g. oxidation simulation update)
@@ -90,16 +91,16 @@ TEST_F(AtomFunctionalTests, VerifyAngleCollinearAndOverlapping) {
   const Element element_c{.symbol = "C", .id = {6}};
   const Element element_h{.symbol = "H", .id = {1}};
 
-  Atom center(element_c, {0.0, 0.0, 0.0}, 0);
+  const Atom center(element_c, {0.0, 0.0, 0.0}, 0);
 
   // Collinear
-  Atom atom_a(element_h, {1.0, 0.0, 0.0}, 1);
-  Atom atom_b(element_h, {-1.0, 0.0, 0.0}, 2);
+  const Atom atom_a(element_h, {1.0, 0.0, 0.0}, 1);
+  const Atom atom_b(element_h, {-1.0, 0.0, 0.0}, 2);
 
   EXPECT_NEAR(angle(center, atom_a, atom_b), correlation::math::PI, 1e-6);
 
   // Overlapping outer atom with center
-  Atom overlapping(element_h, {0.0, 0.0, 0.0}, 3);
+  const Atom overlapping(element_h, {0.0, 0.0, 0.0}, 3);
   EXPECT_NEAR(angle(center, overlapping, atom_b), 0.0, 1e-6);
 
   // Overlapping center atom itself

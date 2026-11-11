@@ -13,10 +13,32 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+using correlation::real_t;
+
 namespace correlation::calculators {
 namespace {
 
 class TenWoldeFrenkelCalculatorTests : public ::testing::Test {};
+
+void verifyFCCCoherentBonds(const std::vector<real_t> &n_conn, size_t expected_count) {
+  ASSERT_EQ(n_conn.size(), expected_count);
+  for (const auto val : n_conn) {
+    EXPECT_FLOAT_EQ(static_cast<float>(val), 12.0F);
+  }
+}
+
+void verifyFCCHistogram(const analysis::Histogram &hist) {
+  ASSERT_FALSE(hist.bins.empty());
+  ASSERT_TRUE(hist.partials.contains("Total"));
+  ASSERT_TRUE(hist.partials.contains("Cu"));
+
+  // Bin 12 should hold 100% of the distribution
+  EXPECT_FLOAT_EQ(static_cast<float>(hist.partials.at("Total")[12]), 1.0F);
+  EXPECT_FLOAT_EQ(static_cast<float>(hist.partials.at("Cu")[12]), 1.0F);
+
+  // Description should state solid-like fraction 1.0000
+  EXPECT_NE(hist.description.find("solid-like fraction: 1.0000"), std::string::npos);
+}
 
 TEST_F(TenWoldeFrenkelCalculatorTests, NullNeighborsThrows) {
   const auto cell = correlation::testing::crystals::createFCCCell(1.0, "Cu", 1, 1, 1);
@@ -43,25 +65,11 @@ TEST_F(TenWoldeFrenkelCalculatorTests, PerfectFCC) {
   ASSERT_EQ(analyzer.neighborGraph().getNeighbors(0).size(), 12UL);
 
   const auto n_conn = TenWoldeFrenkelCalculator::calculatePerAtom(cell, &analyzer);
-  ASSERT_EQ(n_conn.size(), cell.atomCount());
-
-  // In perfect FCC, all 12 bonds are mutually coherent with chi_ij >= 0.7
-  for (const auto val : n_conn) {
-    EXPECT_FLOAT_EQ(static_cast<float>(val), 12.0F);
-  }
+  verifyFCCCoherentBonds(n_conn, cell.atomCount());
 
   // Verify histogram generation
   const auto hist = TenWoldeFrenkelCalculator::calculate(cell, &analyzer);
-  ASSERT_FALSE(hist.bins.empty());
-  ASSERT_TRUE(hist.partials.contains("Total"));
-  ASSERT_TRUE(hist.partials.contains("Cu"));
-
-  // Bin 12 should hold 100% of the distribution
-  EXPECT_FLOAT_EQ(static_cast<float>(hist.partials.at("Total")[12]), 1.0F);
-  EXPECT_FLOAT_EQ(static_cast<float>(hist.partials.at("Cu")[12]), 1.0F);
-
-  // Description should state solid-like fraction 1.0000
-  EXPECT_NE(hist.description.find("solid-like fraction: 1.0000"), std::string::npos);
+  verifyFCCHistogram(hist);
 }
 
 TEST_F(TenWoldeFrenkelCalculatorTests, PrecomputedSteinhardtEquivalence) {

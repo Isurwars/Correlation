@@ -9,6 +9,8 @@
 #include "app/viewmodel/PlotMarkerManager.hpp"
 #include <gtest/gtest.h>
 
+using correlation::real_t;
+
 namespace correlation::app {
 namespace {
 

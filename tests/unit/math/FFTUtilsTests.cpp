@@ -19,8 +19,10 @@ class FFTUtilsTests : public ::testing::Test {};
 
 TEST_F(FFTUtilsTests, ComputeFFTHandlesPowerOfTwoAndInvert) {
   // Test forward and inverse FFT on size 8
-  std::vector<std::complex<double>> signal = {{1.0, 0.0}, {2.0, 0.0}, {3.0, 0.0}, {4.0, 0.0},
-                                              {0.0, 0.0}, {0.0, 0.0}, {0.0, 0.0}, {0.0, 0.0}};
+  std::vector<std::complex<double>> signal = {
+      {1.0, 0.0}, {2.0, 0.0}, {3.0, 0.0}, {4.0, 0.0},
+      {0.0, 0.0}, {0.0, 0.0}, {0.0, 0.0}, {0.0, 0.0},
+  };
   auto original = signal;
 
   // Forward FFT
@@ -64,7 +66,7 @@ TEST_F(FFTUtilsTests, ComputeFFTHandlesEmptyInput) {
 
 TEST_F(FFTUtilsTests, AutocorrelateEmptyReturnsEmpty) {
   const std::vector<double> empty_x;
-  auto res = autocorrelate(empty_x);
+  const auto res = autocorrelate(empty_x);
   EXPECT_TRUE(res.empty());
 }
 
@@ -75,7 +77,7 @@ TEST_F(FFTUtilsTests, AutocorrelateMatchesMathematicalDefinition) {
   // R[0] = 1*1 + 2*2 + 3*3 = 14
   // R[1] = 1*2 + 2*3 = 8
   // R[2] = 1*3 = 3
-  auto result = autocorrelate(positive_positions);
+  const auto result = autocorrelate(positive_positions);
 
   ASSERT_EQ(result.size(), positive_positions.size());
   EXPECT_NEAR(result[0], 14.0, 1e-9);
@@ -88,7 +90,7 @@ TEST_F(FFTUtilsTests, AutocorrelateReusesWorkspaceCorrectly) {
   const std::vector<double> pos_2 = {1.0, 2.0, 3.0, 4.0};
   std::vector<std::complex<double>> workspace;
 
-  auto result_1 = autocorrelate(pos_1, workspace);
+  const auto result_1 = autocorrelate(pos_1, workspace);
   EXPECT_EQ(result_1.size(), 2);
 #if defined(CORRELATION_USE_FFTW3) || defined(CORRELATION_USE_MKL)
   EXPECT_GE(workspace.size(), 3);
@@ -96,7 +98,7 @@ TEST_F(FFTUtilsTests, AutocorrelateReusesWorkspaceCorrectly) {
   EXPECT_GE(workspace.size(), 4); // padded to 2^2
 #endif
 
-  auto result_2 = autocorrelate(pos_2, workspace);
+  const auto result_2 = autocorrelate(pos_2, workspace);
   EXPECT_EQ(result_2.size(), 4);
 #if defined(CORRELATION_USE_FFTW3) || defined(CORRELATION_USE_MKL)
   EXPECT_GE(workspace.size(), 8);

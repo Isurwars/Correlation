@@ -121,7 +121,7 @@ TEST_F(Matrix3Tests, Matrix3NegativeDeterminant) {
 
   EXPECT_DOUBLE_EQ(determinant(mat_m), -1.0);
 
-  auto inv = invert(mat_m);
+  const auto inv = invert(mat_m);
   auto product = mat_m * inv;
   EXPECT_NEAR(product(0, 0), 1.0, 1e-15);
   EXPECT_NEAR(product(1, 1), 1.0, 1e-15);
@@ -347,15 +347,15 @@ TEST_F(Matrix3Tests, TransposeSpecialMatrices) {
   Vector3<double> const vec_col_2(7.0, 8.0, 9.0);
   Matrix3<double> const mat_m(vec_col_0, vec_col_1, vec_col_2);
 
-  auto mat_identity = Matrix3<double>::identity();
-  auto mat_identity_t = transpose(mat_identity);
+  const auto mat_identity = Matrix3<double>::identity();
+  const auto mat_identity_t = transpose(mat_identity);
   EXPECT_TRUE(mat_identity == mat_identity_t);
 
   Vector3<double> const vec_sym_col_0(1.0, 2.0, 3.0);
   Vector3<double> const vec_sym_col_1(2.0, 5.0, 6.0);
   Vector3<double> const vec_sym_col_2(3.0, 6.0, 9.0);
   Matrix3<double> const mat_symmetric(vec_sym_col_0, vec_sym_col_1, vec_sym_col_2);
-  auto mat_sym_t = transpose(mat_symmetric);
+  const auto mat_sym_t = transpose(mat_symmetric);
   EXPECT_TRUE(mat_symmetric == mat_sym_t);
 
   EXPECT_DOUBLE_EQ(mat_m.trace(), transpose(mat_m).trace());
@@ -373,7 +373,7 @@ TEST_F(Matrix3Tests, InvertRightMultiplyIdentity) {
   Vector3<double> const vec_col_2(4.0, -2.0, 5.0);
   Matrix3<double> const mat_m(vec_col_0, vec_col_1, vec_col_2);
 
-  auto mat_m_inv = invert(mat_m);
+  const auto mat_m_inv = invert(mat_m);
 
   auto product = mat_m * mat_m_inv;
   for (std::size_t row = 0; row < 3; ++row) {
@@ -393,7 +393,7 @@ TEST_F(Matrix3Tests, InvertLeftMultiplyIdentityAndDeterminant) {
   double const det = determinant(mat_m);
   EXPECT_GT(std::abs(det), 1e-10);
 
-  auto mat_m_inv = invert(mat_m);
+  const auto mat_m_inv = invert(mat_m);
 
   auto product2 = mat_m_inv * mat_m;
   for (std::size_t row = 0; row < 3; ++row) {

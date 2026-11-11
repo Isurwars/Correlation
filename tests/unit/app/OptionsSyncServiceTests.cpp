@@ -121,7 +121,7 @@ TEST_F(OptionsSyncServiceTests, ReadFromUISuccessAndOutputBaseCalculation) {
 }
 
 TEST_F(OptionsSyncServiceTests, ReadFromUIFramePresetsStartAndEnd) {
-  auto &win = window();
+  const auto &win = window();
 
   auto opts = win.get_analysis_options();
   opts.min_frame = "Start";
@@ -139,7 +139,7 @@ TEST_F(OptionsSyncServiceTests, ReadFromUIFramePresetsStartAndEnd) {
 }
 
 TEST_F(OptionsSyncServiceTests, ReadFromUIValidationFailsWhenBinWidthExceedsMax) {
-  auto &win = window();
+  const auto &win = window();
 
   auto opts = win.get_analysis_options();
   opts.r_max = "5.0";
@@ -168,7 +168,7 @@ TEST_F(OptionsSyncServiceTests, ReadFromUIValidationFailsWhenBinWidthExceedsMax)
 }
 
 TEST_F(OptionsSyncServiceTests, ReadFromUIValidationFailsWhenFramesInverted) {
-  auto &win = window();
+  const auto &win = window();
 
   auto opts = win.get_analysis_options();
   opts.r_max = "10.0";

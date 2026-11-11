@@ -16,6 +16,7 @@ namespace correlation::testing {
 using namespace correlation::calculators;
 using namespace correlation::core;
 using namespace correlation::math;
+using correlation::real_t;
 
 TEST(AngleCalculatorTests, ComputesCorrect90DegreeAngle) {
   // Construct a cubic cell with lattice vectors of length 10.0
@@ -37,7 +38,7 @@ TEST(AngleCalculatorTests, ComputesCorrect90DegreeAngle) {
   graph.addDirectedEdge(0, 2, 1.0, {0.0, 1.0, 0.0});
 
   // Initialize AngleTensor
-  size_t num_elements = cell.elements().size();
+  const size_t num_elements = cell.elements().size();
   AngleTensor out_angles(num_elements,
                          std::vector<std::vector<std::vector<real_t>>>(
                              num_elements, std::vector<std::vector<real_t>>(num_elements)));
@@ -65,7 +66,7 @@ TEST(AngleCalculatorTests, ComputesCorrect180DegreeAngle) {
   graph.addDirectedEdge(0, 1, 1.0, {1.0, 0.0, 0.0});
   graph.addDirectedEdge(0, 2, 1.0, {-1.0, 0.0, 0.0});
 
-  size_t num_elements = cell.elements().size();
+  const size_t num_elements = cell.elements().size();
   AngleTensor out_angles(num_elements,
                          std::vector<std::vector<std::vector<real_t>>>(
                              num_elements, std::vector<std::vector<real_t>>(num_elements)));
@@ -90,7 +91,7 @@ TEST(AngleCalculatorTests, ComputesCorrect60DegreeAngle) {
       0, 2, 1.0,
       correlation::math::Vector3<real_t>(0.5, static_cast<real_t>(std::sqrt(3.0) / 2.0), 0.0));
 
-  size_t num_elements = cell.elements().size();
+  const size_t num_elements = cell.elements().size();
   AngleTensor out_angles(num_elements,
                          std::vector<std::vector<std::vector<real_t>>>(
                              num_elements, std::vector<std::vector<real_t>>(num_elements)));
@@ -111,7 +112,7 @@ TEST(AngleCalculatorTests, SingleNeighborProducesNoAngles) {
   NeighborGraph graph(2);
   graph.addDirectedEdge(0, 1, 1.0, {1.0, 0.0, 0.0});
 
-  size_t num_elements = cell.elements().size();
+  const size_t num_elements = cell.elements().size();
   AngleTensor out_angles(num_elements,
                          std::vector<std::vector<std::vector<real_t>>>(
                              num_elements, std::vector<std::vector<real_t>>(num_elements)));
@@ -138,7 +139,7 @@ TEST(AngleCalculatorTests, OverlappingAtomsProduceNoAngles) {
   graph.addDirectedEdge(0, 1, 0.0, {0.0, 0.0, 0.0});
   graph.addDirectedEdge(0, 2, 0.0, {0.0, 0.0, 0.0});
 
-  size_t num_elements = cell.elements().size();
+  const size_t num_elements = cell.elements().size();
   AngleTensor out_angles(num_elements,
                          std::vector<std::vector<std::vector<real_t>>>(
                              num_elements, std::vector<std::vector<real_t>>(num_elements)));

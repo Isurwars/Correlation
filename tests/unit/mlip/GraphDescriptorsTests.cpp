@@ -16,6 +16,8 @@
 
 #include "../../CrystalTestHelper.hpp"
 
+using correlation::real_t;
+
 namespace correlation::mlip {
 
 namespace {

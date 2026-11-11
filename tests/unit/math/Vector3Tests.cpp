@@ -148,7 +148,7 @@ TEST_F(Vector3Tests, Vector3UnaryNegation) {
 
   // Negation of zero vector
   Vector3<double> const vec_zero;
-  auto vec_neg_zero = -vec_zero;
+  auto const vec_neg_zero = -vec_zero;
   EXPECT_TRUE(vec_neg_zero.empty());
 }
 
@@ -350,7 +350,7 @@ TEST_F(Vector3Tests, Vector3FloatType) {
   EXPECT_FLOAT_EQ(dot(vec_a, vec_b), 32.0F);
   EXPECT_FLOAT_EQ(norm_sq(vec_a), 14.0F);
 
-  auto normalized = normalize(vec_a);
+  auto const normalized = normalize(vec_a);
   EXPECT_NEAR(norm(normalized), 1.0F, 1e-6F);
 }
 
@@ -373,7 +373,7 @@ TEST_F(Vector3Tests, NormProperties) {
   double const scalar = -3.5;
   EXPECT_NEAR(norm(vec_v * scalar), std::abs(scalar) * norm(vec_v), 1e-15);
 
-  auto normalized = normalize(vec_v);
+  auto const normalized = normalize(vec_v);
   EXPECT_NEAR(norm(normalized), 1.0, 1e-15);
 }
 

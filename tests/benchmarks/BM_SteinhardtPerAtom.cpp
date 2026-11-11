@@ -16,6 +16,8 @@
 
 #include <benchmark/benchmark.h>
 
+using correlation::real_t;
+
 namespace correlation::benchmarks {
 
 namespace {

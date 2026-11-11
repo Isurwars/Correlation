@@ -8,6 +8,8 @@
 
 #include <gtest/gtest.h>
 
+using correlation::real_t;
+
 namespace correlation::mlip {
 namespace {
 
@@ -64,4 +66,3 @@ TEST(MaceGNNModelTests, FallbackMultiAtomCellForces) {
 
 } // namespace
 } // namespace correlation::mlip
-

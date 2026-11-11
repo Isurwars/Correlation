@@ -20,21 +20,19 @@
 #include <Windows.h>
 #endif
 
+using correlation::real_t;
+
 namespace correlation::app {
 namespace {
 
-core::Cell createTestCell() {
-  core::Cell cell(correlation::math::Vector3<real_t>{15.0F, 0.0F, 0.0F},
-                  correlation::math::Vector3<real_t>{0.0F, 15.0F, 0.0F},
-                  correlation::math::Vector3<real_t>{0.0F, 0.0F, 15.0F});
-  cell.addAtom("Si", correlation::math::Vector3<real_t>{0.0F, 0.0F, 0.0F});
-  cell.addAtom("O", correlation::math::Vector3<real_t>{1.6F, 0.0F, 0.0F});
-  return cell;
-}
-
 class Structure3DControllerDistributionTests : public ::testing::Test {
 public:
-  [[nodiscard]] AppWindow &window() { return **window_; }
+  [[nodiscard]] AppWindow &window() {
+    if (!window_.has_value()) {
+      throw std::runtime_error("Window not initialized");
+    }
+    return **window_;
+  }
 
 protected:
   void SetUp() override {
@@ -46,14 +44,15 @@ protected:
     window_.emplace(AppWindow::create());
   }
 
+private:
   std::optional<slint::ComponentHandle<AppWindow>> window_;
 };
 
 TEST_F(Structure3DControllerDistributionTests, SetsStoreAndUpdatesWindowProperties) {
-  ProgramOptions options;
+  const ProgramOptions options;
   Structure3DController controller(window(), options);
 
-  auto store = std::make_shared<analysis::PerFrameDistributionStore>(3);
+  const auto store = std::make_shared<analysis::PerFrameDistributionStore>(3);
   store->setBins(analysis::DistributionMetric::RDF, {1.0, 2.0, 3.0, 4.0});
   store->setMeanCurve(analysis::DistributionMetric::RDF, {0.1, 2.5, 1.2, 0.2});
   store->setFrameCurve(analysis::DistributionMetric::RDF, 0, {0.2, 3.1, 1.5, 0.1});
@@ -69,10 +68,10 @@ TEST_F(Structure3DControllerDistributionTests, SetsStoreAndUpdatesWindowProperti
 }
 
 TEST_F(Structure3DControllerDistributionTests, TogglesMetricAndUpdatesWindow) {
-  ProgramOptions options;
+  const ProgramOptions options;
   Structure3DController controller(window(), options);
 
-  auto store = std::make_shared<analysis::PerFrameDistributionStore>(2);
+  const auto store = std::make_shared<analysis::PerFrameDistributionStore>(2);
   store->setBins(analysis::DistributionMetric::PAD, {30.0, 60.0, 90.0, 109.5, 120.0});
   store->setMeanCurve(analysis::DistributionMetric::PAD, {0.0, 0.1, 0.4, 2.8, 0.5});
   store->setFrameCurve(analysis::DistributionMetric::PAD, 0, {0.0, 0.1, 0.5, 3.2, 0.4});
@@ -89,10 +88,10 @@ TEST_F(Structure3DControllerDistributionTests, TogglesMetricAndUpdatesWindow) {
 }
 
 TEST_F(Structure3DControllerDistributionTests, TogglesHUDVisibility) {
-  ProgramOptions options;
+  const ProgramOptions options;
   Structure3DController controller(window(), options);
 
-  auto store = std::make_shared<analysis::PerFrameDistributionStore>(1);
+  const auto store = std::make_shared<analysis::PerFrameDistributionStore>(1);
   store->setBins(analysis::DistributionMetric::RDF, {1.0, 2.0});
   store->setMeanCurve(analysis::DistributionMetric::RDF, {1.0, 2.0});
 
@@ -108,4 +107,3 @@ TEST_F(Structure3DControllerDistributionTests, TogglesHUDVisibility) {
 
 } // namespace
 } // namespace correlation::app
-

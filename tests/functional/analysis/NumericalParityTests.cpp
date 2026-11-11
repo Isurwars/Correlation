@@ -30,6 +30,7 @@ namespace correlation::testing {
 
 namespace {
 
+using correlation::real_t;
 using correlation::analysis::DistributionFunctions;
 using correlation::analysis::StructureAnalyzer;
 using correlation::calculators::CNCalculator;

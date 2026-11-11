@@ -12,8 +12,14 @@
 
 namespace correlation::render3d {
 
+using correlation::real_t;
+
 TEST(RenderEngineFactoryTests, CreateCpuEngineDirectly) {
-  const auto engine = RenderEngineFactory::createEngine(BackendPreference::CpuOnly, {400, 300});
+  const auto engine =
+      RenderEngineFactory::createEngine(BackendPreference::CpuOnly, {
+                                                                        .width = 400,
+                                                                        .height = 300,
+                                                                    });
   ASSERT_NE(engine, nullptr);
 
   EXPECT_EQ(engine->dimensions().width, 400);
@@ -26,7 +32,10 @@ TEST(RenderEngineFactoryTests, CreateCpuEngineDirectly) {
 }
 
 TEST(RenderEngineFactoryTests, CreateAutoEngineWithFallback) {
-  const auto engine = RenderEngineFactory::createEngine(BackendPreference::Auto, {320, 240});
+  const auto engine = RenderEngineFactory::createEngine(BackendPreference::Auto, {
+                                                                                     .width = 320,
+                                                                                     .height = 240,
+                                                                                 });
   ASSERT_NE(engine, nullptr);
 
   EXPECT_EQ(engine->dimensions().width, 320);
@@ -39,7 +48,11 @@ TEST(RenderEngineFactoryTests, CreateAutoEngineWithFallback) {
 
 TEST(RenderEngineFactoryTests, VulkanOnlyReturnsNullptrWhenUnavailable) {
   // If Vulkan is not supported in the current environment, VulkanOnly must safely return nullptr
-  const auto engine = RenderEngineFactory::createEngine(BackendPreference::VulkanOnly, {200, 200});
+  const auto engine =
+      RenderEngineFactory::createEngine(BackendPreference::VulkanOnly, {
+                                                                           .width = 200,
+                                                                           .height = 200,
+                                                                       });
   if (engine == nullptr) {
     SUCCEED();
   } else {
@@ -49,17 +62,25 @@ TEST(RenderEngineFactoryTests, VulkanOnlyReturnsNullptrWhenUnavailable) {
 }
 
 TEST(RenderEngineFactoryTests, RenderSceneThroughInterface) {
-  const auto engine = RenderEngineFactory::createEngine(BackendPreference::Auto, {200, 150});
+  const auto engine = RenderEngineFactory::createEngine(BackendPreference::Auto, {
+                                                                                     .width = 200,
+                                                                                     .height = 150,
+                                                                                 });
   ASSERT_NE(engine, nullptr);
 
   core::Cell cell;
-  const math::Matrix3<real_t> lattice(math::Vector3<real_t>(6.0, 0.0, 0.0),
-                                      math::Vector3<real_t>(0.0, 6.0, 0.0),
-                                      math::Vector3<real_t>(0.0, 0.0, 6.0));
+  const math::Matrix3<real_t> lattice(
+      math::Vector3<real_t>(static_cast<real_t>(6.0), static_cast<real_t>(0.0),
+                            static_cast<real_t>(0.0)),
+      math::Vector3<real_t>(static_cast<real_t>(0.0), static_cast<real_t>(6.0),
+                            static_cast<real_t>(0.0)),
+      math::Vector3<real_t>(static_cast<real_t>(0.0), static_cast<real_t>(0.0),
+                            static_cast<real_t>(6.0)));
   cell.updateLattice(lattice);
-  cell.addAtom("Si", math::Vector3<real_t>(3.0, 3.0, 3.0));
+  cell.addAtom("Si", math::Vector3<real_t>(static_cast<real_t>(3.0), static_cast<real_t>(3.0),
+                                           static_cast<real_t>(3.0)));
 
-  const auto scene = Scene3D::fromCell(cell, 1.2, true);
+  const auto scene = Scene3D::fromCell(cell, static_cast<real_t>(1.2), true);
   engine->setScene(scene);
 
   Camera3D camera;
@@ -72,8 +93,8 @@ TEST(RenderEngineFactoryTests, RenderSceneThroughInterface) {
 
   // Verify non-zero pixels exist in buffer
   std::size_t painted_pixels = 0;
-  for (std::size_t i = 0; i < pixels.size(); i += 4) {
-    if (pixels[i] != 24 || pixels[i + 1] != 24 || pixels[i + 2] != 29) {
+  for (std::size_t idx = 0; idx < pixels.size(); idx += 4) {
+    if (pixels[idx] != 24 || pixels[idx + 1] != 24 || pixels[idx + 2] != 29) {
       ++painted_pixels;
     }
   }

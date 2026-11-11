@@ -20,6 +20,8 @@
 #include <gtest/gtest.h>
 #include <numbers>
 
+using correlation::real_t;
+
 namespace correlation::testing {
 
 TEST(SYCLCalculatorTests, DeviceDetectionDoesNotCrash) {
@@ -37,8 +39,10 @@ TEST(SYCLCalculatorTests, ComputesDistancesViaSYCLFallback) {
   correlation::calculators::RawHistogramTensor out_histograms;
   correlation::core::NeighborGraph out_graph(2);
   real_t const cutoff_sq = 4.0;
-  correlation::analysis::BondCutoffMatrix const bond_cutoffs = {{{0.36, 2.25}, {0.36, 2.25}},
-                                                                {{0.36, 2.25}, {0.36, 2.25}}};
+  correlation::analysis::BondCutoffMatrix const bond_cutoffs = {
+      {{.min_sq = 0.36, .max_sq = 2.25}, {.min_sq = 0.36, .max_sq = 2.25}},
+      {{.min_sq = 0.36, .max_sq = 2.25}, {.min_sq = 0.36, .max_sq = 2.25}},
+  };
   correlation::calculators::DistanceCalculationConfig const hist_config{
       .r_max = 2.0,
       .r_bin_width = 0.02,
@@ -80,11 +84,12 @@ TEST(SYCLCalculatorTests, ComputesSQViaSYCLFallback) {
   cell.addAtom("Si", {0.0, 0.0, 0.0});
   cell.addAtom("Si", {1.0, 0.0, 0.0});
 
-  auto s_q_hist = correlation::calculators::sycl_gpu::compute_sq_sycl(cell, {
-                                                                                .q_min = 0.5,
-                                                                                .q_max = 10.0,
-                                                                                .q_bin_width = 0.1,
-                                                                            });
+  const auto s_q_hist =
+      correlation::calculators::sycl_gpu::compute_sq_sycl(cell, {
+                                                                    .q_min = 0.5,
+                                                                    .q_max = 10.0,
+                                                                    .q_bin_width = 0.1,
+                                                                });
   EXPECT_FALSE(s_q_hist.bins.empty());
   EXPECT_GT(s_q_hist.bins.size(), 0U);
 }
@@ -105,7 +110,7 @@ TEST(SYCLCalculatorTests, ComputesAngleTensorViaSYCLFallback) {
   EXPECT_EQ(angles.size(), cell.elements().size());
   EXPECT_FALSE(angles[0][0][0].empty());
 
-  real_t const expected_angle = static_cast<real_t>(std::numbers::pi / 2.0);
+  auto const expected_angle = static_cast<real_t>(std::numbers::pi / 2.0);
   EXPECT_NEAR(angles[0][0][0][0], expected_angle, 1e-4);
 }
 
@@ -119,7 +124,7 @@ TEST(SYCLCalculatorTests, ComputesAnglesViaSYCLFallback) {
   graph.addDirectedEdge(0, 1, 1.0, {1.0, 0.0, 0.0});
   graph.addDirectedEdge(0, 2, 1.0, {0.0, 1.0, 0.0});
 
-  auto angle_hist =
+  const auto angle_hist =
       correlation::calculators::sycl_gpu::compute_angles_sycl(cell, graph,
                                                               {
                                                                   .min_angle_deg = 0.0,
@@ -151,12 +156,13 @@ TEST(SYCLCalculatorTests, ComputesXRDViaSYCLFallback) {
   cell.addAtom("Si", {0.0, 0.0, 0.0});
   cell.addAtom("Si", {1.0, 0.0, 0.0});
 
-  auto xrd_hist = correlation::calculators::sycl_gpu::compute_xrd_sycl(cell, {
-                                                                                 .lambda = 1.5406,
-                                                                                 .theta_min = 10.0,
-                                                                                 .theta_max = 80.0,
-                                                                                 .bin_width = 0.5,
-                                                                             });
+  const auto xrd_hist =
+      correlation::calculators::sycl_gpu::compute_xrd_sycl(cell, {
+                                                                     .lambda = 1.5406,
+                                                                     .theta_min = 10.0,
+                                                                     .theta_max = 80.0,
+                                                                     .bin_width = 0.5,
+                                                                 });
   EXPECT_FALSE(xrd_hist.bins.empty());
   EXPECT_EQ(xrd_hist.x_label, "2θ");
 }
@@ -166,24 +172,24 @@ TEST(SYCLCalculatorTests, ComputesXRDGPUWrapper) {
   cell.addAtom("Si", {0.0, 0.0, 0.0});
   cell.addAtom("Si", {1.0, 0.0, 0.0});
 
-  auto xrd_hist = correlation::calculators::gpu::compute_xrd_gpu(cell, {
-                                                                           .lambda = 1.5406,
-                                                                           .theta_min = 10.0,
-                                                                           .theta_max = 80.0,
-                                                                           .bin_width = 0.5,
-                                                                       });
+  const auto xrd_hist = correlation::calculators::gpu::compute_xrd_gpu(cell, {
+                                                                                 .lambda = 1.5406,
+                                                                                 .theta_min = 10.0,
+                                                                                 .theta_max = 80.0,
+                                                                                 .bin_width = 0.5,
+                                                                             });
   EXPECT_FALSE(xrd_hist.bins.empty());
 }
 
 TEST(SYCLCalculatorTests, SYCLAngleParamsDefaultValues) {
-  correlation::calculators::sycl_gpu::SYCLAngleParams params;
+  const correlation::calculators::sycl_gpu::SYCLAngleParams params;
   EXPECT_NEAR(params.min_angle_deg, static_cast<real_t>(0.0), 1e-4);
   EXPECT_NEAR(params.max_angle_deg, static_cast<real_t>(180.0), 1e-4);
   EXPECT_NEAR(params.bin_width_deg, static_cast<real_t>(1.0), 1e-4);
 }
 
 TEST(SYCLCalculatorTests, SYCLXRDParamsDefaultValues) {
-  correlation::calculators::sycl_gpu::SYCLXRDParams params;
+  const correlation::calculators::sycl_gpu::SYCLXRDParams params;
   EXPECT_NEAR(params.lambda, static_cast<real_t>(1.5406), 1e-4);
   EXPECT_NEAR(params.theta_min, static_cast<real_t>(5.0), 1e-4);
   EXPECT_NEAR(params.theta_max, static_cast<real_t>(90.0), 1e-4);

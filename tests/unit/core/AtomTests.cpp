@@ -12,6 +12,7 @@
 namespace correlation::testing {
 
 using namespace correlation::core;
+using correlation::real_t;
 namespace {
 class AtomTests : public ::testing::Test {};
 } // namespace

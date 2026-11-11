@@ -6,6 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+#include "math/Precision.hpp"
 #include "utils/ZipArchiveWriter.hpp"
 
 #include <gtest/gtest.h>
@@ -16,6 +17,8 @@
 #include <string>
 
 namespace {
+
+using correlation::real_t;
 
 class ZipArchiveWriterTest : public ::testing::Test {
 protected:
@@ -42,17 +45,17 @@ TEST_F(ZipArchiveWriterTest, BasicCreationAndReadback) {
 
   {
     correlation::utils::ZipArchiveWriter writer;
-    auto open_res = writer.open(zip_path);
+    const auto open_res = writer.open(zip_path);
     ASSERT_TRUE(open_res.has_value()) << open_res.error();
     EXPECT_TRUE(writer.isOpen());
 
-    auto add_mem_res = writer.addFileFromString("hello.txt", "Hello, World!");
+    const auto add_mem_res = writer.addFileFromString("hello.txt", "Hello, World!");
     EXPECT_TRUE(add_mem_res.has_value()) << add_mem_res.error();
 
-    auto add_sub_res = writer.addFileFromString("nested/data.csv", "1,2,3\n4,5,6\n");
+    const auto add_sub_res = writer.addFileFromString("nested/data.csv", "1,2,3\n4,5,6\n");
     EXPECT_TRUE(add_sub_res.has_value()) << add_sub_res.error();
 
-    auto finalize_res = writer.finalize();
+    const auto finalize_res = writer.finalize();
     EXPECT_TRUE(finalize_res.has_value()) << finalize_res.error();
     EXPECT_FALSE(writer.isOpen());
   }
@@ -63,29 +66,29 @@ TEST_F(ZipArchiveWriterTest, BasicCreationAndReadback) {
   // Verify using miniz reader API directly
   mz_zip_archive zip;
   mz_zip_zero_struct(&zip);
-  mz_bool init_ok = mz_zip_reader_init_file(&zip, zip_path.string().c_str(), 0);
+  const mz_bool init_ok = mz_zip_reader_init_file(&zip, zip_path.string().c_str(), 0);
   ASSERT_TRUE(init_ok);
 
-  mz_uint num_files = mz_zip_reader_get_num_files(&zip);
+  const mz_uint num_files = mz_zip_reader_get_num_files(&zip);
   EXPECT_EQ(num_files, 2U);
 
-  int hello_idx = mz_zip_reader_locate_file(&zip, "hello.txt", nullptr, 0);
+  const int hello_idx = mz_zip_reader_locate_file(&zip, "hello.txt", nullptr, 0);
   EXPECT_GE(hello_idx, 0);
 
   size_t hello_size = 0;
   void *hello_buf = mz_zip_reader_extract_to_heap(&zip, hello_idx, &hello_size, 0);
   ASSERT_NE(hello_buf, nullptr);
-  std::string hello_str(static_cast<const char *>(hello_buf), hello_size);
+  const std::string hello_str(static_cast<const char *>(hello_buf), hello_size);
   mz_free(hello_buf);
   EXPECT_EQ(hello_str, "Hello, World!");
 
-  int data_idx = mz_zip_reader_locate_file(&zip, "nested/data.csv", nullptr, 0);
+  const int data_idx = mz_zip_reader_locate_file(&zip, "nested/data.csv", nullptr, 0);
   EXPECT_GE(data_idx, 0);
 
   size_t data_size = 0;
   void *data_buf = mz_zip_reader_extract_to_heap(&zip, data_idx, &data_size, 0);
   ASSERT_NE(data_buf, nullptr);
-  std::string data_str(static_cast<const char *>(data_buf), data_size);
+  const std::string data_str(static_cast<const char *>(data_buf), data_size);
   mz_free(data_buf);
   EXPECT_EQ(data_str, "1,2,3\n4,5,6\n");
 
@@ -103,7 +106,7 @@ TEST_F(ZipArchiveWriterTest, AddFromDisk) {
   {
     correlation::utils::ZipArchiveWriter writer;
     ASSERT_TRUE(writer.open(zip_path).has_value());
-    auto add_res = writer.addFileFromDisk("from_disk/source.txt", src_file);
+    const auto add_res = writer.addFileFromDisk("from_disk/source.txt", src_file);
     EXPECT_TRUE(add_res.has_value()) << add_res.error();
     EXPECT_TRUE(writer.finalize().has_value());
   }
@@ -113,13 +116,13 @@ TEST_F(ZipArchiveWriterTest, AddFromDisk) {
   mz_zip_zero_struct(&zip);
   ASSERT_TRUE(mz_zip_reader_init_file(&zip, zip_path.string().c_str(), 0));
 
-  int idx = mz_zip_reader_locate_file(&zip, "from_disk/source.txt", nullptr, 0);
+  const int idx = mz_zip_reader_locate_file(&zip, "from_disk/source.txt", nullptr, 0);
   EXPECT_GE(idx, 0);
 
   size_t size = 0;
   void *buf = mz_zip_reader_extract_to_heap(&zip, idx, &size, 0);
   ASSERT_NE(buf, nullptr);
-  std::string content(static_cast<const char *>(buf), size);
+  const std::string content(static_cast<const char *>(buf), size);
   mz_free(buf);
   EXPECT_EQ(content, "disk file content\nsecond line");
 
@@ -138,10 +141,10 @@ TEST_F(ZipArchiveWriterTest, RAIIAutoFinalizeDestruction) {
 
 TEST_F(ZipArchiveWriterTest, MovedFromStateReturnsError) {
   const auto zip_path = testDir() / "test_moved_from.zip";
-  correlation::utils::ZipArchiveWriter writer;
-  correlation::utils::ZipArchiveWriter moved_to = std::move(writer);
+  std::vector<correlation::utils::ZipArchiveWriter> writers(2);
+  writers[1] = std::move(writers[0]);
 
-  auto res = writer.open(zip_path);
+  const auto res = writers[0].open(zip_path);
   EXPECT_FALSE(res.has_value());
   EXPECT_EQ(res.error(), "ZipArchiveWriter is in a moved-from state");
 }

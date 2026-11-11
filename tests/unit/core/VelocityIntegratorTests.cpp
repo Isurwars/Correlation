@@ -12,6 +12,7 @@
 namespace correlation::testing {
 
 using namespace correlation::core;
+using correlation::real_t;
 
 TEST(VelocityIntegratorTests, IgnoresSingleFrameOrZeroTimeStep) {
   Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});

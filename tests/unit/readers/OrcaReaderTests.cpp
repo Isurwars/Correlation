@@ -15,6 +15,8 @@
 
 namespace correlation::readers {
 
+using correlation::real_t;
+
 namespace {
 
 class OrcaReaderTests : public ::testing::Test {
@@ -38,7 +40,7 @@ private:
 };
 
 TEST_F(OrcaReaderTests, DiscoveryInReaderFactory) {
-  auto &factory = ReaderFactory::instance();
+  const auto &factory = ReaderFactory::instance();
   const auto *reader = factory.getReaderForExtension(".orca");
 
   ASSERT_NE(reader, nullptr);
@@ -62,12 +64,13 @@ TEST_F(OrcaReaderTests, ParsesSingleStructureAngstrom) {
   out.close();
 
   OrcaReader reader;
-  auto cell = reader.readStructure(testFile());
+  const auto cell = reader.readStructure(testFile());
 
   EXPECT_EQ(cell.atomCount(), 3);
   EXPECT_EQ(cell.atoms()[0].element().symbol, "C");
-  EXPECT_NEAR(cell.atoms()[1].position().x(), 1.16, 1e-4);
-  EXPECT_NEAR(cell.atoms()[2].position().x(), -1.16, 1e-4);
+  EXPECT_NEAR(cell.atoms()[1].position().x(), static_cast<real_t>(1.16), static_cast<real_t>(1e-4));
+  EXPECT_NEAR(cell.atoms()[2].position().x(), static_cast<real_t>(-1.16),
+              static_cast<real_t>(1e-4));
 }
 
 TEST_F(OrcaReaderTests, ParsesOptimizationTrajectory) {
@@ -87,10 +90,11 @@ TEST_F(OrcaReaderTests, ParsesOptimizationTrajectory) {
   out.close();
 
   OrcaReader reader;
-  auto trajectory = reader.readTrajectory(testFile());
+  const auto trajectory = reader.readTrajectory(testFile());
 
   EXPECT_EQ(trajectory.getFrameCount(), 2);
-  EXPECT_NEAR(trajectory.getFrames()[1].atoms()[1].position().z(), 0.74, 1e-4);
+  EXPECT_NEAR(trajectory.getFrames()[1].atoms()[1].position().z(), static_cast<real_t>(0.74),
+              static_cast<real_t>(1e-4));
 }
 
 TEST_F(OrcaReaderTests, ThrowsOnNonExistentFile) {

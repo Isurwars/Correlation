@@ -10,6 +10,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+using correlation::real_t;
+
 namespace correlation::analysis {
 namespace {
 
@@ -147,16 +149,18 @@ TEST_F(VoronoiCalculatorTests, HexagonalClosePacked) {
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 3; ++j) {
       for (int k = 0; k < 2; ++k) {
-        real_t const fx1 = static_cast<real_t>((static_cast<real_t>(i) + 0.0) / 3.0);
-        real_t const fy1 = static_cast<real_t>((static_cast<real_t>(j) + 0.0) / 3.0);
-        real_t const fz1 = static_cast<real_t>((static_cast<real_t>(k) + 0.0) / 2.0);
+        auto const fx1 = static_cast<real_t>((static_cast<real_t>(i) + 0.0) / 3.0);
+        auto const fy1 = static_cast<real_t>((static_cast<real_t>(j) + 0.0) / 3.0);
+        auto const fz1 = static_cast<real_t>((static_cast<real_t>(k) + 0.0) / 2.0);
 
-        real_t const fx2 = static_cast<real_t>((static_cast<real_t>(i) + 1.0 / 3.0) / 3.0);
-        real_t const fy2 = static_cast<real_t>((static_cast<real_t>(j) + 2.0 / 3.0) / 3.0);
-        real_t const fz2 = static_cast<real_t>((static_cast<real_t>(k) + 0.5) / 2.0);
+        auto const fx2 = static_cast<real_t>((static_cast<real_t>(i) + 1.0 / 3.0) / 3.0);
+        auto const fy2 = static_cast<real_t>((static_cast<real_t>(j) + 2.0 / 3.0) / 3.0);
+        auto const fz2 = static_cast<real_t>((static_cast<real_t>(k) + 0.5) / 2.0);
 
-        auto pos1 = cell_hcp.latticeVectors() * correlation::math::Vector3<real_t>(fx1, fy1, fz1);
-        auto pos2 = cell_hcp.latticeVectors() * correlation::math::Vector3<real_t>(fx2, fy2, fz2);
+        const auto pos1 =
+            cell_hcp.latticeVectors() * correlation::math::Vector3<real_t>(fx1, fy1, fz1);
+        const auto pos2 =
+            cell_hcp.latticeVectors() * correlation::math::Vector3<real_t>(fx2, fy2, fz2);
 
         cell_hcp.addAtom("Ar", pos1);
         cell_hcp.addAtom("Ar", pos2);

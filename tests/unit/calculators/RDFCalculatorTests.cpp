@@ -21,6 +21,8 @@
 #include <numbers>
 #include <vector>
 
+using correlation::real_t;
+
 namespace correlation::analysis {
 
 namespace {
@@ -216,7 +218,7 @@ TEST_F(RDFCalculatorTests, CalculateRDF) {
   const auto &total = hist.partials.at("Ar-Ar");
 
   // High precision peak location
-  auto max_it = std::ranges::max_element(total);
+  const auto max_it = std::ranges::max_element(total);
   size_t const peak_idx = std::distance(total.begin(), max_it);
   real_t const peak_r = hist.bins[peak_idx];
 
@@ -315,7 +317,7 @@ TEST_F(RDFCalculatorTests, AddAndScale) {
 
   // Should be back to original magnitude
   // We check peak value
-  auto max_it = std::ranges::max_element(h1_scaled);
+  const auto max_it = std::ranges::max_element(h1_scaled);
   real_t const peak = *max_it;
 
   // Single frame RDF peak value depends on volume and density, but it's
@@ -430,7 +432,7 @@ TEST_F(RDFCalculatorTests, VerifyAshcroftWeightsAreCorrect) {
 
 TEST_F(RDFCalculatorTests, FCC_Copper_RDF) {
   real_t const lat_a = 3.615;
-  auto cell = correlation::testing::crystals::createFCCCell(lat_a, "Cu", 2, 2, 2);
+  const auto cell = correlation::testing::crystals::createFCCCell(lat_a, "Cu", 2, 2, 2);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 5.0, trajectory_.getBondCutoffsSQ());
@@ -449,7 +451,7 @@ TEST_F(RDFCalculatorTests, FCC_Copper_RDF) {
 
 TEST_F(RDFCalculatorTests, BCC_Iron_RDF) {
   real_t const lat_a = 2.866;
-  auto cell = correlation::testing::crystals::createBCCCell(lat_a, "Fe", 3, 3, 3);
+  const auto cell = correlation::testing::crystals::createBCCCell(lat_a, "Fe", 3, 3, 3);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 4.5, trajectory_.getBondCutoffsSQ());
@@ -468,7 +470,7 @@ TEST_F(RDFCalculatorTests, BCC_Iron_RDF) {
 
 TEST_F(RDFCalculatorTests, Diamond_Silicon_RDF) {
   real_t const lat_a = 5.431;
-  auto cell = correlation::testing::crystals::createDiamondCell(lat_a, "Si", 2, 2, 2);
+  const auto cell = correlation::testing::crystals::createDiamondCell(lat_a, "Si", 2, 2, 2);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 5.0, trajectory_.getBondCutoffsSQ());
@@ -487,7 +489,7 @@ TEST_F(RDFCalculatorTests, Diamond_Silicon_RDF) {
 
 TEST_F(RDFCalculatorTests, NaCl_RockSalt_RDF) {
   real_t const lat_a = 5.64;
-  auto cell = correlation::testing::crystals::createNaClCell(lat_a, "Na", "Cl", 2, 2, 2);
+  const auto cell = correlation::testing::crystals::createNaClCell(lat_a, "Na", "Cl", 2, 2, 2);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 5.0, trajectory_.getBondCutoffsSQ());
@@ -599,7 +601,7 @@ TEST_F(RDFCalculatorTests, CrystalUnitCell_BCCIron_2Atoms_ComputesSelfLatticeTra
   // Conventional BCC unit cell has 2 atoms. The 2nd neighbor shell at r = a is
   // a pure lattice translation of identical atoms (self-image across periodic boundary).
   const auto lat_a = static_cast<real_t>(2.866);
-  auto cell = correlation::testing::crystals::createBCCCell(lat_a, "Fe", 1, 1, 1);
+  const auto cell = correlation::testing::crystals::createBCCCell(lat_a, "Fe", 1, 1, 1);
   ASSERT_EQ(cell.atomCount(), 2);
 
   updateTrajectory(cell);
@@ -627,7 +629,7 @@ TEST_F(RDFCalculatorTests, CrystalUnitCell_BCCIron_2Atoms_ComputesSelfLatticeTra
 TEST_F(RDFCalculatorTests, CrystalUnitCell_DiamondSilicon_8Atoms_ComputesPeriodicImages) {
   // Conventional Diamond Cubic unit cell has 8 atoms and lattice constant a = 5.431 A.
   const auto lat_a = static_cast<real_t>(5.431);
-  auto cell = correlation::testing::crystals::createDiamondCell(lat_a, "Si", 1, 1, 1);
+  const auto cell = correlation::testing::crystals::createDiamondCell(lat_a, "Si", 1, 1, 1);
   ASSERT_EQ(cell.atomCount(), 8);
 
   updateTrajectory(cell);
@@ -660,7 +662,7 @@ TEST_F(RDFCalculatorTests, CrystalUnitCell_DiamondSilicon_8Atoms_ComputesPeriodi
 TEST_F(RDFCalculatorTests, CrystalUnitCell_NaCl_8Atoms_ComputesPeriodicImages) {
   // Conventional Rock Salt unit cell has 8 atoms (4 Na + 4 Cl) and lattice constant a = 5.64 A.
   const auto lat_a = static_cast<real_t>(5.64);
-  auto cell = correlation::testing::crystals::createNaClCell(lat_a, "Na", "Cl", 1, 1, 1);
+  const auto cell = correlation::testing::crystals::createNaClCell(lat_a, "Na", "Cl", 1, 1, 1);
   ASSERT_EQ(cell.atomCount(), 8);
 
   updateTrajectory(cell);
@@ -713,6 +715,84 @@ namespace {
 
 } // namespace
 
+namespace {
+void verifyTailAsymptoteAndPbc(const std::vector<real_t> &total_vals, size_t pbc_bin,
+                               real_t expected_tail, real_t tail_tol, real_t pbc_tol) {
+  const real_t avg_tail = computeTailAverage(total_vals, 10);
+  EXPECT_NEAR(avg_tail, expected_tail, tail_tol);
+  ASSERT_LT(pbc_bin, total_vals.size());
+  EXPECT_NEAR(total_vals[pbc_bin], 1.0, pbc_tol);
+}
+
+void verifyAmorphousPalladiumTails(const DistributionFunctions &dist_functions) {
+  const auto &g_r = dist_functions.getHistogram("g_r");
+  ASSERT_TRUE(g_r.partials.contains("Total"));
+  const auto &total_vals = g_r.partials.at("Total");
+  ASSERT_FALSE(total_vals.empty());
+
+  const auto pbc_bin = static_cast<size_t>(14.7058 / 0.05);
+  verifyTailAsymptoteAndPbc(total_vals, pbc_bin, 1.0, 0.05, 0.10);
+
+  const auto &g_unw = dist_functions.getHistogram("g_r_unweighted");
+  ASSERT_TRUE(g_unw.partials.contains("Pd-Pd"));
+  const real_t unw_avg = computeTailAverage(g_unw.partials.at("Pd-Pd"), 10);
+  EXPECT_NEAR(unw_avg, 1.0, 0.05);
+}
+
+void verifyLiquidBismuthTails(const DistributionFunctions &dist_functions) {
+  const auto &g_r = dist_functions.getHistogram("g_r");
+  ASSERT_TRUE(g_r.partials.contains("Total"));
+  const auto &total_vals = g_r.partials.at("Total");
+  ASSERT_FALSE(total_vals.empty());
+
+  const auto pbc_bin_bi = static_cast<size_t>(19.5516 / 0.05);
+  verifyTailAsymptoteAndPbc(total_vals, pbc_bin_bi, 1.0, 0.08, 0.10);
+
+  const auto &g_unw = dist_functions.getHistogram("g_r_unweighted");
+  ASSERT_TRUE(g_unw.partials.contains("Bi-Bi"));
+  const real_t unw_avg = computeTailAverage(g_unw.partials.at("Bi-Bi"), 10);
+  EXPECT_NEAR(unw_avg, 1.0, 0.08);
+}
+
+void verifyWeightedAshcroftPartials(const Histogram &g_r,
+                                   const std::map<std::string, real_t> &ashcroft_weights) {
+  for (const auto &[key, expected_weight] : ashcroft_weights) {
+    ASSERT_TRUE(g_r.partials.contains(key)) << "Missing partial: " << key;
+    const real_t partial_avg = computeTailAverage(g_r.partials.at(key), 10);
+    EXPECT_NEAR(partial_avg, expected_weight, 0.05)
+        << "Weighted partial " << key << " does not asymptote to Ashcroft weight "
+        << expected_weight;
+  }
+}
+
+void verifyUnweightedAshcroftPartials(const Histogram &g_unw,
+                                     const std::map<std::string, real_t> &ashcroft_weights) {
+  for (const auto &[key, expected_weight] : ashcroft_weights) {
+    ASSERT_TRUE(g_unw.partials.contains(key)) << "Missing unweighted partial: " << key;
+    const real_t unw_avg = computeTailAverage(g_unw.partials.at(key), 10);
+    EXPECT_NEAR(unw_avg, 1.0, 0.10) << "Unweighted partial " << key << " does not asymptote to 1.0";
+  }
+}
+
+void verifyPdSiAlloyPartials(const DistributionFunctions &dist_functions) {
+  const auto &g_r = dist_functions.getHistogram("g_r");
+  ASSERT_TRUE(g_r.partials.contains("Total"));
+  const auto &total_vals = g_r.partials.at("Total");
+  ASSERT_FALSE(total_vals.empty());
+
+  const real_t total_avg = computeTailAverage(total_vals, 10);
+  EXPECT_NEAR(total_avg, 1.0, 0.05);
+
+  const auto &ashcroft_weights = dist_functions.getAshcroftWeights();
+  ASSERT_FALSE(ashcroft_weights.empty());
+
+  verifyWeightedAshcroftPartials(g_r, ashcroft_weights);
+
+  const auto &g_unw = dist_functions.getHistogram("g_r_unweighted");
+  verifyUnweightedAshcroftPartials(g_unw, ashcroft_weights);
+}
+} // namespace
+
 TEST_F(RDFCalculatorTests, AmorphousPalladiumSingleFrameAsymptotesToOneAt20A) {
   const std::string filepath = resolveExamplePath("examples/a-Pd/a-Pd.car");
   if (filepath.empty()) {
@@ -732,29 +812,13 @@ TEST_F(RDFCalculatorTests, AmorphousPalladiumSingleFrameAsymptotesToOneAt20A) {
   opts.smoothing_sigma = 0.1;
   opts.active_calculators["RDF"] = true;
 
-  auto res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);
+  const auto res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);
   ASSERT_TRUE(res.has_value()) << "Analysis failed for " << filepath;
 
   const auto *dist_functions = dispatcher.getDistributionFunctions();
   ASSERT_NE(dist_functions, nullptr);
 
-  const auto &g_r = dist_functions->getHistogram("g_r");
-  ASSERT_TRUE(g_r.partials.contains("Total"));
-  const auto &total_vals = g_r.partials.at("Total");
-  ASSERT_FALSE(total_vals.empty());
-
-  const real_t avg_tail = computeTailAverage(total_vals, 10);
-  EXPECT_NEAR(avg_tail, 1.0, 0.05);
-
-  // Verify no PBC distance periodic artifact peak around L = 14.7058 A
-  const auto pbc_bin = static_cast<size_t>(14.7058 / 0.05);
-  ASSERT_LT(pbc_bin, total_vals.size());
-  EXPECT_NEAR(total_vals[pbc_bin], 1.0, 0.10);
-
-  const auto &g_unw = dist_functions->getHistogram("g_r_unweighted");
-  ASSERT_TRUE(g_unw.partials.contains("Pd-Pd"));
-  const real_t unw_avg = computeTailAverage(g_unw.partials.at("Pd-Pd"), 10);
-  EXPECT_NEAR(unw_avg, 1.0, 0.05);
+  verifyAmorphousPalladiumTails(*dist_functions);
 }
 
 TEST_F(RDFCalculatorTests, LiquidBismuthLast100FramesMeanAsymptotesToOneAt20A) {
@@ -778,29 +842,13 @@ TEST_F(RDFCalculatorTests, LiquidBismuthLast100FramesMeanAsymptotesToOneAt20A) {
   opts.smoothing_sigma = 0.1;
   opts.active_calculators["RDF"] = true;
 
-  auto res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);
+  const auto res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);
   ASSERT_TRUE(res.has_value()) << "Analysis failed for " << filepath;
 
   const auto *dist_functions = dispatcher.getDistributionFunctions();
   ASSERT_NE(dist_functions, nullptr);
 
-  const auto &g_r = dist_functions->getHistogram("g_r");
-  ASSERT_TRUE(g_r.partials.contains("Total"));
-  const auto &total_vals = g_r.partials.at("Total");
-  ASSERT_FALSE(total_vals.empty());
-
-  // Liquid Bi has L ~ 19.55 A; verify no PBC artifact peak at L and proper asymptote
-  const auto pbc_bin_bi = static_cast<size_t>(19.5516 / 0.05);
-  ASSERT_LT(pbc_bin_bi, total_vals.size());
-  EXPECT_NEAR(total_vals[pbc_bin_bi], 1.0, 0.10);
-
-  const real_t avg_tail = computeTailAverage(total_vals, 10);
-  EXPECT_NEAR(avg_tail, 1.0, 0.08);
-
-  const auto &g_unw = dist_functions->getHistogram("g_r_unweighted");
-  ASSERT_TRUE(g_unw.partials.contains("Bi-Bi"));
-  const real_t unw_avg = computeTailAverage(g_unw.partials.at("Bi-Bi"), 10);
-  EXPECT_NEAR(unw_avg, 1.0, 0.08);
+  verifyLiquidBismuthTails(*dist_functions);
 }
 
 TEST_F(RDFCalculatorTests,
@@ -823,40 +871,13 @@ TEST_F(RDFCalculatorTests,
   opts.smoothing_sigma = 0.1;
   opts.active_calculators["RDF"] = true;
 
-  auto res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);
+  const auto res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);
   ASSERT_TRUE(res.has_value()) << "Analysis failed for " << filepath;
 
   const auto *dist_functions = dispatcher.getDistributionFunctions();
   ASSERT_NE(dist_functions, nullptr);
 
-  const auto &g_r = dist_functions->getHistogram("g_r");
-  ASSERT_TRUE(g_r.partials.contains("Total"));
-  const auto &total_vals = g_r.partials.at("Total");
-  ASSERT_FALSE(total_vals.empty());
-
-  // 1. Check Total tends to 1 at r = 20 A
-  const real_t total_avg = computeTailAverage(total_vals, 10);
-  EXPECT_NEAR(total_avg, 1.0, 0.05);
-
-  // 2. Check each weighted partial in g_r tends to its corresponding Ashcroft weight
-  const auto &ashcroft_weights = dist_functions->getAshcroftWeights();
-  ASSERT_FALSE(ashcroft_weights.empty());
-
-  for (const auto &[key, expected_weight] : ashcroft_weights) {
-    ASSERT_TRUE(g_r.partials.contains(key)) << "Missing partial: " << key;
-    const real_t partial_avg = computeTailAverage(g_r.partials.at(key), 10);
-    EXPECT_NEAR(partial_avg, expected_weight, 0.05)
-        << "Weighted partial " << key << " does not asymptote to Ashcroft weight "
-        << expected_weight;
-  }
-
-  // 3. Check each unweighted partial in g_r_unweighted tends to 1.0
-  const auto &g_unw = dist_functions->getHistogram("g_r_unweighted");
-  for (const auto &[key, expected_weight] : ashcroft_weights) {
-    ASSERT_TRUE(g_unw.partials.contains(key)) << "Missing unweighted partial: " << key;
-    const real_t unw_avg = computeTailAverage(g_unw.partials.at(key), 10);
-    EXPECT_NEAR(unw_avg, 1.0, 0.10) << "Unweighted partial " << key << " does not asymptote to 1.0";
-  }
+  verifyPdSiAlloyPartials(*dist_functions);
 }
 
 } // namespace correlation::analysis

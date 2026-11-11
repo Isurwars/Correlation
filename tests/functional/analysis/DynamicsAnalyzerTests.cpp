@@ -15,6 +15,8 @@
 #include <string_view>
 #include <vector>
 
+using correlation::real_t;
+
 namespace correlation::analysis {
 
 // Assuming the test is run from the build directory or project root
@@ -100,7 +102,7 @@ TEST(DynamicsAnalyzerTests, CalculatesVDOSCorrectly) {
   ASSERT_EQ(frequencies.size(), intensities_imag.size());
 
   // 3. Find peak in real part
-  auto max_it = std::ranges::max_element(intensities_real);
+  const auto max_it = std::ranges::max_element(intensities_real);
   size_t const peak_idx = std::distance(intensities_real.begin(), max_it);
   real_t const peak_freq = frequencies[peak_idx];
 
@@ -222,7 +224,7 @@ TEST(DynamicsAnalyzerTests, HandlesEmptyAndInvalidTrajectories) {
       DynamicsAnalyzer::calculateMSD(trajectory, MaxFrames{1}, StartFrame{1}, EndFrame{1}).empty());
 
   // Trajectory with 0 atoms per frame
-  correlation::core::Cell zero_atom_cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  const correlation::core::Cell zero_atom_cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   correlation::core::Trajectory zero_atom_traj;
   zero_atom_traj.addFrame(zero_atom_cell);
   zero_atom_traj.addFrame(zero_atom_cell);

@@ -20,6 +20,8 @@
 #include <parquet/arrow/reader.h>
 #include <parquet/exception.h>
 
+using correlation::real_t;
+
 namespace correlation::writers::testing {
 
 TEST(ArrowWriterTests, MetadataAndExtensionInfo) {

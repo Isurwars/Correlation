@@ -11,6 +11,8 @@
 #include <optional>
 #include <stdexcept>
 
+using correlation::real_t;
+
 namespace correlation::app {
 namespace {
 
@@ -19,6 +21,29 @@ template <typename T> [[nodiscard]] T requireValue(const std::optional<T> &opt) 
     throw std::runtime_error("Optional value is unexpectedly empty");
   }
   return *opt;
+}
+
+void verifyRankThresholdVisibilities(const std::shared_ptr<slint::Model<CurveToggleItem>> &items) {
+  ASSERT_EQ(items->row_count(), 12);
+  for (int i = 0; i < 10; ++i) {
+    EXPECT_TRUE(requireValue(items->row_data(i)).visible);
+  }
+  EXPECT_FALSE(requireValue(items->row_data(10)).visible);
+  EXPECT_FALSE(requireValue(items->row_data(11)).visible);
+}
+
+void verifyFeFilterMatches(const std::shared_ptr<slint::Model<CurveToggleItem>> &items) {
+  ASSERT_EQ(items->row_count(), 4);
+  EXPECT_FALSE(requireValue(items->row_data(0)).matches_filter);
+  EXPECT_TRUE(requireValue(items->row_data(1)).matches_filter);
+  EXPECT_TRUE(requireValue(items->row_data(2)).matches_filter);
+  EXPECT_FALSE(requireValue(items->row_data(3)).matches_filter);
+}
+
+void verifyAllMatchFilter(const std::shared_ptr<slint::Model<CurveToggleItem>> &items) {
+  for (std::size_t i = 0; i < items->row_count(); ++i) {
+    EXPECT_TRUE(requireValue(items->row_data(i)).matches_filter);
+  }
 }
 
 TEST(PlotSeriesManagerTests, InitialStateIsPristine) {
@@ -189,15 +214,7 @@ TEST(PlotSeriesManagerTests, PartialVisibilityRankThreshold) {
 
   const auto items = manager.generateToggleItems(&hist, config);
   ASSERT_NE(items, nullptr);
-  ASSERT_EQ(items->row_count(), 12);
-
-  // First 10 sorted partials (P00..P09) are visible by default
-  for (int i = 0; i < 10; ++i) {
-    EXPECT_TRUE(requireValue(items->row_data(i)).visible);
-  }
-  // 11th and 12th (P10, P11) default to hidden (rank >= 10)
-  EXPECT_FALSE(requireValue(items->row_data(10)).visible);
-  EXPECT_FALSE(requireValue(items->row_data(11)).visible);
+  verifyRankThresholdVisibilities(items);
 }
 
 TEST(PlotSeriesManagerTests, ToggleItemsMatchSvgOrderAndColors) {
@@ -294,22 +311,12 @@ TEST(PlotSeriesManagerTests, FilterCurvesSubstringCaseInsensitive) {
 
   const auto items = manager.generateToggleItems(&hist, config);
   ASSERT_NE(items, nullptr);
-  ASSERT_EQ(items->row_count(), 4);
-
-  // Total should not match "fe"
-  EXPECT_FALSE(requireValue(items->row_data(0)).matches_filter);
-  // Fe-Fe and Fe-Si should match "fe" case-insensitively
-  EXPECT_TRUE(requireValue(items->row_data(1)).matches_filter);
-  EXPECT_TRUE(requireValue(items->row_data(2)).matches_filter);
-  // Si-Si should not match "fe"
-  EXPECT_FALSE(requireValue(items->row_data(3)).matches_filter);
+  verifyFeFilterMatches(items);
 
   // Clear filter
   manager.setFilterText("");
   const auto items_cleared = manager.generateToggleItems(&hist, config);
-  for (std::size_t i = 0; i < items_cleared->row_count(); ++i) {
-    EXPECT_TRUE(requireValue(items_cleared->row_data(i)).matches_filter);
-  }
+  verifyAllMatchFilter(items_cleared);
 }
 
 TEST(PlotSeriesManagerTests, InvertCurveVisibilityGlobalAndFilterScoped) {

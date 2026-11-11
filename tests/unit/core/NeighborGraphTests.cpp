@@ -6,6 +6,8 @@
 #include "core/NeighborGraph.hpp"
 #include "math/LinearAlgebra.hpp"
 
+#include "../../PrecisionTestHelper.hpp"
+
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -14,6 +16,7 @@ namespace {
 
 using namespace correlation::core;
 using namespace correlation::math;
+using correlation::real_t;
 
 class NeighborGraphTests : public ::testing::Test {};
 
@@ -27,7 +30,7 @@ TEST_F(NeighborGraphTests, ParameterConstructorInitializesNodeCount) {
   const NeighborGraph graph(10);
   EXPECT_EQ(graph.nodeCount(), 10);
 
-  auto matrix = graph.getDenseAdjacencyMatrix();
+  const auto matrix = graph.getDenseAdjacencyMatrix();
   EXPECT_EQ(matrix.size(), 100);
   for (const bool val : matrix) {
     EXPECT_FALSE(val);
@@ -36,7 +39,7 @@ TEST_F(NeighborGraphTests, ParameterConstructorInitializesNodeCount) {
 
 TEST_F(NeighborGraphTests, AddDirectedEdgeAndGetNeighbors) {
   NeighborGraph graph(5);
-  Vector3<real_t> r_ij{1.0, 2.0, 3.0};
+  const Vector3<real_t> r_ij{1.0, 2.0, 3.0};
   graph.addDirectedEdge(0, 1, 3.74, r_ij);
 
   EXPECT_TRUE(graph.areConnected(AtomIndex{0}, AtomIndex{1}));
@@ -63,7 +66,7 @@ TEST_F(NeighborGraphTests, OutOfBoundsEdgeAdditionDoesNotCrash) {
   EXPECT_NO_THROW(graph.addDirectedEdge(0, 5, 1.0, r_ij));
   EXPECT_TRUE(graph.areConnected(AtomIndex{0}, AtomIndex{5}));
 
-  auto matrix = graph.getDenseAdjacencyMatrix();
+  const auto matrix = graph.getDenseAdjacencyMatrix();
   ASSERT_EQ(matrix.size(), 9);
   for (const bool val : matrix) {
     EXPECT_FALSE(val);
@@ -177,7 +180,7 @@ TEST_F(NeighborGraphTests, LargeGraphPerformance) {
   EXPECT_EQ(neighbors.size(), 4);
 
   // Dense matrix should be NxN
-  auto matrix = graph.getDenseAdjacencyMatrix();
+  const auto matrix = graph.getDenseAdjacencyMatrix();
   EXPECT_EQ(matrix.size(), num_nodes * num_nodes);
 }
 
@@ -199,7 +202,7 @@ TEST_F(NeighborGraphTests, CSRStorageOffsetsAndIndices) {
   EXPECT_EQ(graph.nodeCount(), 4);
   EXPECT_EQ(graph.edgeCount(), 4);
 
-  auto offsets = graph.offsets();
+  const auto offsets = graph.offsets();
   ASSERT_EQ(offsets.size(), 5);
   EXPECT_EQ(offsets[0], 0);
   EXPECT_EQ(offsets[1], 2);
@@ -208,7 +211,7 @@ TEST_F(NeighborGraphTests, CSRStorageOffsetsAndIndices) {
   EXPECT_EQ(offsets[4], 4);
 
   // Targets must be sorted per row by (index, distance)
-  auto targets = graph.targets();
+  const auto targets = graph.targets();
   ASSERT_EQ(targets.size(), 4);
   EXPECT_EQ(targets[0], 1);
   EXPECT_EQ(targets[1], 2);
@@ -216,12 +219,12 @@ TEST_F(NeighborGraphTests, CSRStorageOffsetsAndIndices) {
   EXPECT_EQ(targets[3], 0);
 
   // Lightweight neighbor indices view
-  auto nbr_indices_0 = graph.getNeighborIndices(0);
+  const auto nbr_indices_0 = graph.getNeighborIndices(0);
   ASSERT_EQ(nbr_indices_0.size(), 2);
   EXPECT_EQ(nbr_indices_0[0], 1);
   EXPECT_EQ(nbr_indices_0[1], 2);
 
-  auto nbr_indices_1 = graph.getNeighborIndices(1);
+  const auto nbr_indices_1 = graph.getNeighborIndices(1);
   EXPECT_TRUE(nbr_indices_1.empty());
 
   // Binary search connectivity
@@ -248,14 +251,14 @@ TEST_F(NeighborGraphTests, AssignCSRDirectly) {
   EXPECT_TRUE(graph.areConnected(AtomIndex{0}, AtomIndex{2}));
   EXPECT_FALSE(graph.areConnected(AtomIndex{0}, AtomIndex{0}));
 
-  auto nbrs_0 = graph.getNeighbors(0);
+  const auto nbrs_0 = graph.getNeighbors(0);
   ASSERT_EQ(nbrs_0.size(), 2);
   EXPECT_EQ(nbrs_0[0].index, 1);
   EXPECT_DOUBLE_EQ(nbrs_0[0].distance, 1.0);
   EXPECT_EQ(nbrs_0[1].index, 2);
   EXPECT_DOUBLE_EQ(nbrs_0[1].distance, 2.0);
 
-  auto indices_0 = graph.getNeighborIndices(0);
+  const auto indices_0 = graph.getNeighborIndices(0);
   ASSERT_EQ(indices_0.size(), 2);
   EXPECT_EQ(indices_0[0], 1);
   EXPECT_EQ(indices_0[1], 2);

@@ -10,6 +10,7 @@
 
 namespace {
 
+using correlation::real_t;
 using correlation::app::AppDefaults;
 using correlation::app::PhysicsService;
 using correlation::core::Cell;
@@ -39,14 +40,15 @@ TEST(PhysicsServiceTests, ScaleBondCutoffsValidAndEdgeCases) {
 
   const correlation::analysis::BondCutoffMatrix mat = {
       {{.min_sq = 1.0, .max_sq = 4.0}, {.min_sq = 2.0, .max_sq = 5.0}},
-      {{.min_sq = 2.0, .max_sq = 5.0}, {.min_sq = 1.5, .max_sq = 4.5}}};
+      {{.min_sq = 2.0, .max_sq = 5.0}, {.min_sq = 1.5, .max_sq = 4.5}},
+  };
 
   // Zero or negative scale factor returns unchanged matrix
-  auto non_scaled = PhysicsService::scaleBondCutoffs(mat, 0.0);
+  const auto non_scaled = PhysicsService::scaleBondCutoffs(mat, 0.0);
   EXPECT_DOUBLE_EQ(non_scaled[0][0].min_sq, 1.0);
   EXPECT_DOUBLE_EQ(non_scaled[0][0].max_sq, 4.0);
 
-  auto scaled = PhysicsService::scaleBondCutoffs(mat, 2.0);
+  const auto scaled = PhysicsService::scaleBondCutoffs(mat, 2.0);
   EXPECT_DOUBLE_EQ(scaled[0][0].min_sq, 4.0);
   EXPECT_DOUBLE_EQ(scaled[0][0].max_sq, 16.0);
   EXPECT_DOUBLE_EQ(scaled[0][1].min_sq, 8.0);

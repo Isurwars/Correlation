@@ -62,6 +62,38 @@ protected:
     return data;
   }
 };
+
+template <typename T>
+void verifySingleRdfBin(std::size_t idx, const correlation::math::RDFNormalizationParams<T> &params,
+                        double tolerance) {
+  const T r_val = params.radial_bins[idx];
+  if (r_val < static_cast<T>(1e-9)) {
+    return;
+  }
+
+  const T val_h = params.hist_data[idx];
+  const T expected_g = val_h * params.g_norm / (r_val * r_val);
+  const T expected_g_cap = params.pi4_rho_j * r_val * (expected_g - static_cast<T>(1.0));
+  const T expected_j = val_h * params.inv_Ni_dr;
+  const T expected_jinv = val_h * params.inv_Nj_dr;
+
+  EXPECT_NEAR(params.g_out[idx], expected_g, tolerance)
+      << "g failed at index " << idx << " for count: " << params.count;
+  EXPECT_NEAR(params.G_out[idx], expected_g_cap, tolerance)
+      << "G failed at index " << idx << " for count: " << params.count;
+  EXPECT_NEAR(params.J_out[idx], expected_j, tolerance)
+      << "J failed at index " << idx << " for count: " << params.count;
+  EXPECT_NEAR(params.Jinv_out[idx], expected_jinv, tolerance)
+      << "Jinv failed at index " << idx << " for count: " << params.count;
+}
+
+template <typename T>
+void verifyRdfBins(const correlation::math::RDFNormalizationParams<T> &params, double tolerance) {
+  for (std::size_t idx = 1; idx < params.count; ++idx) {
+    verifySingleRdfBin<T>(idx, params, tolerance);
+  }
+}
+
 } // namespace
 
 // -----------------------------------------------------------------------------
@@ -273,7 +305,7 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsMatchesScalar) {
     std::vector<double> actual_j(size, 0.0);
     std::vector<double> actual_jinv(size, 0.0);
 
-    correlation::math::normalize_rdf_bins(correlation::math::RDFNormalizationParams<double>{
+    const correlation::math::RDFNormalizationParams<double> params{
         .hist_data = vec_h.data(),
         .radial_bins = rbins.data(),
         .g_norm = g_norm,
@@ -285,28 +317,9 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsMatchesScalar) {
         .J_out = actual_j.data(),
         .Jinv_out = actual_jinv.data(),
         .count = size,
-    });
-
-    for (std::size_t idx = 1; idx < size; ++idx) {
-      const double r_val = rbins[idx];
-      if (r_val < 1e-9) {
-        continue;
-      }
-
-      const double expected_g = vec_h[idx] * g_norm / (r_val * r_val);
-      const double expected_g_cap = pi4_rho_j * r_val * (expected_g - 1.0);
-      const double expected_j = vec_h[idx] * inv_ni_dr;
-      const double expected_jinv = vec_h[idx] * inv_nj_dr;
-
-      EXPECT_NEAR(actual_g[idx], expected_g, 1e-9)
-          << "g failed at index " << idx << " for size: " << size;
-      EXPECT_NEAR(actual_g_cap[idx], expected_g_cap, 1e-9)
-          << "G failed at index " << idx << " for size: " << size;
-      EXPECT_NEAR(actual_j[idx], expected_j, 1e-9)
-          << "J failed at index " << idx << " for size: " << size;
-      EXPECT_NEAR(actual_jinv[idx], expected_jinv, 1e-9)
-          << "Jinv failed at index " << idx << " for size: " << size;
-    }
+    };
+    correlation::math::normalize_rdf_bins(params);
+    verifyRdfBins<double>(params, 1e-9);
   }
 }
 
@@ -328,7 +341,7 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsFloatMatchesScalar) {
     std::vector<float> actual_j(size, 0.0F);
     std::vector<float> actual_jinv(size, 0.0F);
 
-    correlation::math::normalize_rdf_bins(correlation::math::RDFNormalizationParams<float>{
+    const correlation::math::RDFNormalizationParams<float> params{
         .hist_data = vec_h.data(),
         .radial_bins = rbins.data(),
         .g_norm = g_norm,
@@ -340,28 +353,9 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsFloatMatchesScalar) {
         .J_out = actual_j.data(),
         .Jinv_out = actual_jinv.data(),
         .count = size,
-    });
-
-    for (std::size_t idx = 1; idx < size; ++idx) {
-      const float r_val = rbins[idx];
-      if (r_val < 1e-9F) {
-        continue;
-      }
-
-      const float expected_g = vec_h[idx] * g_norm / (r_val * r_val);
-      const float expected_g_cap = pi4_rho_j * r_val * (expected_g - 1.0F);
-      const float expected_j = vec_h[idx] * inv_ni_dr;
-      const float expected_jinv = vec_h[idx] * inv_nj_dr;
-
-      EXPECT_NEAR(actual_g[idx], expected_g, 1e-4F)
-          << "Float g failed at index " << idx << " for size: " << size;
-      EXPECT_NEAR(actual_g_cap[idx], expected_g_cap, 1e-4F)
-          << "Float G failed at index " << idx << " for size: " << size;
-      EXPECT_NEAR(actual_j[idx], expected_j, 1e-4F)
-          << "Float J failed at index " << idx << " for size: " << size;
-      EXPECT_NEAR(actual_jinv[idx], expected_jinv, 1e-4F)
-          << "Float Jinv failed at index " << idx << " for size: " << size;
-    }
+    };
+    correlation::math::normalize_rdf_bins(params);
+    verifyRdfBins<float>(params, 1e-4);
   }
 }
 
@@ -645,21 +639,23 @@ TEST_F(SIMDUtilsTests, MillerPhaseSumResultStructMatchesScalar) {
 }
 
 TEST_F(SIMDUtilsTests, FillPositionBlockParamsStructWorks) {
-  const std::vector<DummyPos> dummy_atoms = {{
-                                                 .x_val = 1.0,
-                                                 .y_val = 2.0,
-                                                 .z_val = 3.0,
-                                             },
-                                             {
-                                                 .x_val = 4.0,
-                                                 .y_val = 5.0,
-                                                 .z_val = 6.0,
-                                             },
-                                             {
-                                                 .x_val = 7.0,
-                                                 .y_val = 8.0,
-                                                 .z_val = 9.0,
-                                             }};
+  const std::vector<DummyPos> dummy_atoms = {
+      {
+          .x_val = 1.0,
+          .y_val = 2.0,
+          .z_val = 3.0,
+      },
+      {
+          .x_val = 4.0,
+          .y_val = 5.0,
+          .z_val = 6.0,
+      },
+      {
+          .x_val = 7.0,
+          .y_val = 8.0,
+          .z_val = 9.0,
+      },
+  };
   std::vector<double> x_s;
   std::vector<double> y_s;
   std::vector<double> z_s;

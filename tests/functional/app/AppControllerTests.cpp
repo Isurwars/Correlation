@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "AppWindow.h"
+#include "analysis/AnalysisTypes.hpp"
 #include "app/core/AppController.hpp"
 #include "app/core/AppOptions.hpp"
 #include "app/services/AnalysisDispatcher.hpp"
@@ -22,6 +23,133 @@
 #define NOMINMAX
 #include <Windows.h>
 #endif
+
+namespace {
+
+[[nodiscard]] auto resolveExamplePath(std::string_view relative_subpath) -> std::string {
+  for (const auto &prefix : {"../../", "../", "./"}) {
+    const std::string candidate = prefix + std::string(relative_subpath);
+    if (std::filesystem::exists(candidate)) {
+      return candidate;
+    }
+  }
+  return "";
+}
+
+template <typename T>
+[[nodiscard]] auto getRow(const std::shared_ptr<slint::Model<T>> &model, size_t index) -> T {
+  const auto opt = model->row_data(index);
+  if (!opt.has_value()) {
+    throw std::runtime_error("Row index out of bounds or missing");
+  }
+  return *opt;
+}
+
+void verifyCutoffCell(const correlation::analysis::BondCutoffRange &range, double expected_min,
+                      double expected_max) {
+  EXPECT_NEAR(range.max_sq, expected_max, 1e-5);
+  EXPECT_NEAR(range.min_sq, expected_min, 1e-5);
+}
+
+void verifyBondCutoffMatrix(const correlation::analysis::BondCutoffMatrix &cutoffs) {
+  ASSERT_EQ(cutoffs.rows(), 2);
+  ASSERT_EQ(cutoffs.cols(), 2);
+
+  verifyCutoffCell(cutoffs[0][0], 0.65 * 0.65, 2.50 * 2.50);
+  verifyCutoffCell(cutoffs[0][1], 0.70 * 0.70, 3.10 * 3.10);
+  verifyCutoffCell(cutoffs[1][0], 0.70 * 0.70, 3.10 * 3.10);
+  verifyCutoffCell(cutoffs[1][1], 0.60 * 0.60, 2.80 * 2.80);
+}
+
+auto findCutoffPair(const std::shared_ptr<slint::Model<BondCutoff>> &cutoffs, std::string_view el_a,
+                    std::string_view el_b) -> std::optional<BondCutoff> {
+  for (size_t i = 0; i < cutoffs->row_count(); ++i) {
+    auto item = getRow(cutoffs, i);
+    const std::string_view elem1(item.element1.data());
+    const std::string_view elem2(item.element2.data());
+    const bool direct_match = (elem1 == el_a && elem2 == el_b);
+    const bool reverse_match = (elem1 == el_b && elem2 == el_a);
+    if (direct_match || reverse_match) {
+      return item;
+    }
+  }
+  return std::nullopt;
+}
+
+void verifyPairDistances(const std::optional<BondCutoff> &item, std::string_view expected_min,
+                         std::string_view expected_max) {
+  ASSERT_TRUE(item.has_value());
+  EXPECT_EQ(item->min_distance.data(), expected_min);
+  EXPECT_EQ(item->max_distance.data(), expected_max);
+}
+
+void verifyRecommendedCutoffs(const std::shared_ptr<slint::Model<BondCutoff>> &cutoffs) {
+  ASSERT_EQ(cutoffs->row_count(), 3);
+  verifyPairDistances(findCutoffPair(cutoffs, "Pd", "Pd"), "1.44", "2.88");
+  verifyPairDistances(findCutoffPair(cutoffs, "Pd", "Si"), "1.42", "2.83");
+  verifyPairDistances(findCutoffPair(cutoffs, "Si", "Si"), "1.39", "2.78");
+}
+
+void verifyRestoredBondCutoffs(const std::shared_ptr<slint::Model<BondCutoff>> &restored) {
+  ASSERT_EQ(restored->row_count(), 3);
+  for (size_t i = 0; i < restored->row_count(); ++i) {
+    const auto item = getRow(restored, i);
+    if (item.element1 == "Pd" && item.element2 == "Pd") {
+      EXPECT_EQ(item.min_distance.data(), std::string("1.44"));
+      EXPECT_EQ(item.max_distance.data(), std::string("2.88"));
+    }
+  }
+}
+
+void verifyUniformCutoffs(const std::shared_ptr<slint::Model<BondCutoff>> &cutoffs,
+                          std::string_view expected_max) {
+  ASSERT_GT(cutoffs->row_count(), 0);
+  for (size_t i = 0; i < cutoffs->row_count(); ++i) {
+    const auto opt = getRow(cutoffs, i);
+    EXPECT_EQ(opt.min_distance.data(), std::string("0.00"));
+    EXPECT_EQ(opt.max_distance.data(), expected_max);
+  }
+}
+
+void verifyCurveFilterMatches(const std::shared_ptr<slint::Model<CurveToggleItem>> &curves,
+                              std::string_view pattern) {
+  for (std::size_t i = 0; i < curves->row_count(); ++i) {
+    const auto item = getRow(curves, i);
+    const std::string label = std::string(item.label);
+    if (label.contains(pattern)) {
+      EXPECT_TRUE(item.matches_filter);
+    } else {
+      EXPECT_FALSE(item.matches_filter);
+    }
+  }
+}
+
+void verifyAllCurvesMatchFilter(const std::shared_ptr<slint::Model<CurveToggleItem>> &curves) {
+  for (std::size_t i = 0; i < curves->row_count(); ++i) {
+    const auto item = getRow(curves, i);
+    EXPECT_TRUE(item.matches_filter);
+  }
+}
+
+void verifyPlotStyling(const correlation::plotters::PlotConfig &config) {
+  EXPECT_EQ(config.preset_size, correlation::plotters::PlotConfig::PresetSize::SingleColumn);
+  EXPECT_EQ(config.palette, correlation::plotters::PlotConfig::Palette::Viridis);
+  EXPECT_TRUE(config.show_markers);
+  EXPECT_TRUE(config.fill_area);
+}
+
+void verifyPlotMetrics(const correlation::plotters::PlotConfig &config) {
+  EXPECT_FLOAT_EQ(config.font_scale, 1.5F);
+  EXPECT_FLOAT_EQ(config.line_width, 4.0F);
+  EXPECT_FLOAT_EQ(config.marker_size, 5.0F);
+}
+
+void verifyActivePlotConfig(const correlation::plotters::PlotConfig &config) {
+  verifyPlotStyling(config);
+  verifyPlotMetrics(config);
+}
+
+} // namespace
 
 // Test fixture for the AppController class
 class AppControllerTests : public ::testing::Test {
@@ -72,35 +200,30 @@ TEST_F(AppControllerTests, ConstructorInitializesCorrectly) {
 }
 
 TEST_F(AppControllerTests, HandlesBondCutoffsCorrectly) {
-  // Arrange
   auto window = AppWindow::create();
 
-  std::string file_path = "../../examples/a-PdSi/a-PdSi.car";
-  if (!std::filesystem::exists(file_path)) {
-    file_path = "../examples/a-PdSi/a-PdSi.car";
-  }
-  if (!std::filesystem::exists(file_path)) {
-    file_path = "examples/a-PdSi/a-PdSi.car";
-  }
+  const std::string file_path = resolveExamplePath("examples/a-PdSi/a-PdSi.car");
+  ASSERT_FALSE(file_path.empty());
   ASSERT_TRUE(loader().loadFile(file_path).has_value());
 
   correlation::app::AppController controller(*window, loader(), dispatcher(), options());
 
-  // Set up elements in UI that match the elements in loaded cell (Pd, Si)
-  auto atom_counts = std::make_shared<slint::VectorModel<AtomCount>>();
+  const auto atom_counts = std::make_shared<slint::VectorModel<AtomCount>>();
   atom_counts->push_back({
       .symbol = "Pd",
       .count = 80,
+      .color = {},
+      .is_unknown = false,
   });
   atom_counts->push_back({
       .symbol = "Si",
       .count = 20,
+      .color = {},
+      .is_unknown = false,
   });
   window->set_atom_counts(atom_counts);
 
-  // Set up cutoffs: Pd-Pd, Pd-Si, Si-Si
-  // In upper-triangular order: Pd-Pd, Pd-Si, Si-Si
-  auto cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
+  const auto cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
   cutoffs->push_back({
       .element1 = "Pd",
       .element2 = "Pd",
@@ -121,23 +244,8 @@ TEST_F(AppControllerTests, HandlesBondCutoffsCorrectly) {
   });
   window->set_bond_cutoffs(cutoffs);
 
-  // Act
-  auto opts = callHandleOptionsfromUI(controller);
-
-  // Assert: verify that the flat cutoffs are mapped to symmetric 2D matrix
-  ASSERT_EQ(opts.bond_cutoffs.size(), 2);
-  ASSERT_EQ(opts.bond_cutoffs[0].size(), 2);
-  ASSERT_EQ(opts.bond_cutoffs[1].size(), 2);
-
-  EXPECT_NEAR(opts.bond_cutoffs[0][0].max_sq, 2.50 * 2.50, 1e-5); // Si-Si
-  EXPECT_NEAR(opts.bond_cutoffs[0][1].max_sq, 3.10 * 3.10, 1e-5); // Si-Pd
-  EXPECT_NEAR(opts.bond_cutoffs[1][0].max_sq, 3.10 * 3.10, 1e-5); // Pd-Si
-  EXPECT_NEAR(opts.bond_cutoffs[1][1].max_sq, 2.80 * 2.80, 1e-5); // Pd-Pd
-
-  EXPECT_NEAR(opts.bond_cutoffs[0][0].min_sq, 0.65 * 0.65, 1e-5); // Si-Si
-  EXPECT_NEAR(opts.bond_cutoffs[0][1].min_sq, 0.70 * 0.70, 1e-5); // Si-Pd
-  EXPECT_NEAR(opts.bond_cutoffs[1][0].min_sq, 0.70 * 0.70, 1e-5); // Pd-Si
-  EXPECT_NEAR(opts.bond_cutoffs[1][1].min_sq, 0.60 * 0.60, 1e-5); // Pd-Pd
+  const auto opts = callHandleOptionsfromUI(controller);
+  verifyBondCutoffMatrix(opts.bond_cutoffs);
 }
 
 TEST_F(AppControllerTests, SynchronizesOptionsToAndFromUI) {
@@ -193,7 +301,7 @@ TEST_F(AppControllerTests, SynchronizesOptionsToAndFromUI) {
   ui_opts.max_frame = "End";
   window->set_analysis_options(ui_opts);
 
-  auto parsed_opts = controller.handleOptionsfromUI();
+  const auto parsed_opts = controller.handleOptionsfromUI();
   EXPECT_NEAR(parsed_opts.r_max, 14.20, 1e-5);
   EXPECT_EQ(parsed_opts.min_frame, 0);
   EXPECT_EQ(parsed_opts.max_frame, -1);
@@ -202,68 +310,29 @@ TEST_F(AppControllerTests, SynchronizesOptionsToAndFromUI) {
 TEST_F(AppControllerTests, PopulatesRecommendedBondCutoffs) {
   auto window = AppWindow::create();
 
-  std::string file_path = "../../examples/a-PdSi/a-PdSi.car";
-  if (!std::filesystem::exists(file_path)) {
-    file_path = "../examples/a-PdSi/a-PdSi.car";
-  }
-  if (!std::filesystem::exists(file_path)) {
-    file_path = "examples/a-PdSi/a-PdSi.car";
-  }
+  const std::string file_path = resolveExamplePath("examples/a-PdSi/a-PdSi.car");
+  ASSERT_FALSE(file_path.empty());
   ASSERT_TRUE(loader().loadFile(file_path).has_value());
 
   correlation::app::AppController controller(*window, loader(), dispatcher(), options());
 
   controller.setBondCutoffs();
 
-  auto cutoffs = window->get_bond_cutoffs();
-  ASSERT_EQ(cutoffs->row_count(), 3); // Pd-Pd, Pd-Si, Si-Si
-
-  bool found_pd_pd = false;
-  bool found_pd_si = false;
-  bool found_si_si = false;
-
-  for (size_t i = 0; i < cutoffs->row_count(); ++i) {
-    auto item = cutoffs->row_data(i).value();
-    std::string el1 = item.element1.data();
-    std::string el2 = item.element2.data();
-    if (el1 == "Pd" && el2 == "Pd") {
-      found_pd_pd = true;
-      EXPECT_EQ(item.min_distance.data(), std::string("1.44"));
-      EXPECT_EQ(item.max_distance.data(), std::string("2.88"));
-    }
-    if ((el1 == "Pd" && el2 == "Si") || (el1 == "Si" && el2 == "Pd")) {
-      found_pd_si = true;
-      EXPECT_EQ(item.min_distance.data(), std::string("1.42"));
-      EXPECT_EQ(item.max_distance.data(), std::string("2.83"));
-    }
-    if (el1 == "Si" && el2 == "Si") {
-      found_si_si = true;
-      EXPECT_EQ(item.min_distance.data(), std::string("1.39"));
-      EXPECT_EQ(item.max_distance.data(), std::string("2.78"));
-    }
-  }
-
-  EXPECT_TRUE(found_pd_pd);
-  EXPECT_TRUE(found_pd_si);
-  EXPECT_TRUE(found_si_si);
+  const auto cutoffs = window->get_bond_cutoffs();
+  verifyRecommendedCutoffs(cutoffs);
 }
 
 TEST_F(AppControllerTests, ResetsBondCutoffsToDefaultsWhenInvoked) {
   auto window = AppWindow::create();
 
-  std::string file_path = "../../examples/a-PdSi/a-PdSi.car";
-  if (!std::filesystem::exists(file_path)) {
-    file_path = "../examples/a-PdSi/a-PdSi.car";
-  }
-  if (!std::filesystem::exists(file_path)) {
-    file_path = "examples/a-PdSi/a-PdSi.car";
-  }
+  const std::string file_path = resolveExamplePath("examples/a-PdSi/a-PdSi.car");
+  ASSERT_FALSE(file_path.empty());
   ASSERT_TRUE(loader().loadFile(file_path).has_value());
 
   const correlation::app::AppController controller(*window, loader(), dispatcher(), options());
 
   // Set modified/custom cutoffs
-  auto cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
+  const auto cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
   cutoffs->push_back(
       {.element1 = "Pd", .element2 = "Pd", .min_distance = "9.99", .max_distance = "9.99"});
   cutoffs->push_back(
@@ -276,22 +345,8 @@ TEST_F(AppControllerTests, ResetsBondCutoffsToDefaultsWhenInvoked) {
   window->invoke_reset_bond_cutoffs();
 
   // Verify recommended defaults were restored
-  auto restored = window->get_bond_cutoffs();
-  ASSERT_EQ(restored->row_count(), 3);
-  for (size_t i = 0; i < restored->row_count(); ++i) {
-    const auto maybe_item = restored->row_data(i);
-    ASSERT_TRUE(maybe_item.has_value());
-    if (!maybe_item.has_value()) {
-      continue;
-    }
-    const auto &item = *maybe_item;
-    const std::string el1 = item.element1.data();
-    const std::string el2 = item.element2.data();
-    if (el1 == "Pd" && el2 == "Pd") {
-      EXPECT_EQ(item.min_distance.data(), std::string("1.44"));
-      EXPECT_EQ(item.max_distance.data(), std::string("2.88"));
-    }
-  }
+  const auto restored = window->get_bond_cutoffs();
+  verifyRestoredBondCutoffs(restored);
 }
 
 TEST_F(AppControllerTests, ResetsOptionBlocksToDefaultsWhenInvoked) {
@@ -381,7 +436,7 @@ TEST_F(AppControllerTests, ResetsOptionBlocksToDefaultsWhenInvoked) {
   cfg.minor_subdivisions = 5;
   window->set_export_config(cfg);
   window->invoke_reset_export_settings();
-  auto restored_cfg = window->get_export_config();
+  const auto restored_cfg = window->get_export_config();
   EXPECT_EQ(restored_cfg.size_preset, 0);
   EXPECT_EQ(restored_cfg.palette, 0);
   EXPECT_EQ(restored_cfg.font_scale, "1.0");
@@ -407,8 +462,15 @@ TEST_F(AppControllerTests, ResetsOptionBlocksToDefaultsWhenInvoked) {
   EXPECT_GT(window->get_calculator_groups()->row_count(), 0);
 
   // 11. Clear Comparison Curves
-  auto comp_curves = std::make_shared<slint::VectorModel<ComparisonCurveData>>();
-  comp_curves->push_back({.id = 1, .label = "Run 1"});
+  const auto comp_curves = std::make_shared<slint::VectorModel<ComparisonCurveData>>();
+  comp_curves->push_back({
+      .id = 1,
+      .label = "Run 1",
+      .color_hex = {},
+      .dash_style = 0,
+      .visible = true,
+      .file_path = "",
+  });
   window->set_comparison_curves(comp_curves);
   EXPECT_EQ(window->get_comparison_curves()->row_count(), 1);
   window->invoke_clear_comparison_curves();
@@ -434,13 +496,8 @@ TEST_F(AppControllerTests, ResetsOptionBlocksToDefaultsWhenInvoked) {
 TEST_F(AppControllerTests, HandlesXRDOptionsAndCutoffHeuristics) {
   auto window = AppWindow::create();
 
-  std::string file_path = "../../examples/a-PdSi/a-PdSi.car";
-  if (!std::filesystem::exists(file_path)) {
-    file_path = "../examples/a-PdSi/a-PdSi.car";
-  }
-  if (!std::filesystem::exists(file_path)) {
-    file_path = "examples/a-PdSi/a-PdSi.car";
-  }
+  const std::string file_path = resolveExamplePath("examples/a-PdSi/a-PdSi.car");
+  ASSERT_FALSE(file_path.empty());
   ASSERT_TRUE(loader().loadFile(file_path).has_value());
 
   const correlation::app::AppController controller(*window, loader(), dispatcher(), options());
@@ -468,16 +525,7 @@ TEST_F(AppControllerTests, HandlesXRDOptionsAndCutoffHeuristics) {
 
   window->invoke_set_uniform_cutoff(3.4F);
   cutoffs = window->get_bond_cutoffs();
-  ASSERT_GT(cutoffs->row_count(), 0);
-  for (size_t i = 0; i < cutoffs->row_count(); ++i) {
-    const auto opt = cutoffs->row_data(i);
-    if (!opt) {
-      FAIL() << "Missing row data at index " << i;
-      return;
-    }
-    EXPECT_EQ(opt->min_distance.data(), std::string("0.00"));
-    EXPECT_EQ(opt->max_distance.data(), std::string("3.40"));
-  }
+  verifyUniformCutoffs(cutoffs, "3.40");
 
   // Test Min, Max, and Global Cutoff signals
   window->invoke_apply_min_factor(0.6F);
@@ -490,16 +538,7 @@ TEST_F(AppControllerTests, HandlesXRDOptionsAndCutoffHeuristics) {
 
   window->invoke_apply_global_cutoff(3.5F);
   cutoffs = window->get_bond_cutoffs();
-  ASSERT_GT(cutoffs->row_count(), 0);
-  for (size_t i = 0; i < cutoffs->row_count(); ++i) {
-    const auto opt = cutoffs->row_data(i);
-    if (!opt) {
-      FAIL() << "Missing row data at index " << i;
-      return;
-    }
-    EXPECT_EQ(opt->min_distance.data(), std::string("0.00"));
-    EXPECT_EQ(opt->max_distance.data(), std::string("3.50"));
-  }
+  verifyUniformCutoffs(cutoffs, "3.50");
 }
 
 TEST_F(AppControllerTests, UpdatesActiveGroupFlagsWhenCalculatorsToggled) {
@@ -558,18 +597,18 @@ TEST_F(AppControllerTests, PopulatesTableAndDynamicProperties) {
   controller.getPlotController()->populatePlotList();
 
   // Verify plot items is not empty
-  auto plot_items = window->get_plot_items();
+  const auto plot_items = window->get_plot_items();
   ASSERT_GT(plot_items->row_count(), 0);
 
   // Trigger plot update for index 0
   controller.getPlotController()->requestPlotUpdate(0, true);
 
   // Verify table headers are set
-  auto headers = window->get_table_headers();
+  const auto headers = window->get_table_headers();
   ASSERT_GT(headers->row_count(), 0);
 
   // Verify table rows are set
-  auto rows = window->get_table_rows();
+  const auto rows = window->get_table_rows();
   ASSERT_GT(rows->row_count(), 0);
 }
 
@@ -579,7 +618,7 @@ TEST_F(AppControllerTests, GuiLaunchAndEventLoopSmokeTest) {
 
   slint::Timer quit_timer;
   quit_timer.start(slint::TimerMode::SingleShot, std::chrono::milliseconds(50),
-                   []() { slint::quit_event_loop(); });
+                   [] { slint::quit_event_loop(); });
 
   EXPECT_NO_THROW(window->run());
 }
@@ -746,7 +785,7 @@ TEST_F(AppControllerTests, ExportFormatAndLayoutCallbacksIntegration) {
 
 namespace {
 /// Finds the row index of a calculator group by name in the window's group model.
-[[nodiscard]] std::optional<size_t> findGroupRow(AppWindow &window, std::string_view name) {
+[[nodiscard]] std::optional<size_t> findGroupRow(const AppWindow &window, std::string_view name) {
   const auto groups = window.get_calculator_groups();
   for (size_t idx = 0; groups != nullptr && idx < groups->row_count(); ++idx) {
     const auto row = groups->row_data(idx);
@@ -757,7 +796,7 @@ namespace {
   return std::nullopt;
 }
 
-[[nodiscard]] CalculatorGroup groupAt(AppWindow &window, size_t idx) {
+[[nodiscard]] CalculatorGroup groupAt(const AppWindow &window, size_t idx) {
   const auto row = window.get_calculator_groups()->row_data(idx);
   if (!row.has_value()) {
     throw std::runtime_error("Calculator group row missing");
@@ -779,7 +818,7 @@ TEST_F(AppControllerTests, CalculatorToggleDoesNotCollapseExpandedSubTree) {
 
   const auto group = groupAt(*window, *scattering);
   ASSERT_GT(group.calculators->row_count(), 0U);
-  const auto calc = group.calculators->row_data(0).value();
+  const auto calc = getRow(group.calculators, 0);
   window->invoke_toggle_calculator(calc.id, !calc.enabled);
 
   // Sub-tree stays open and the root model is updated in place (not replaced).
@@ -839,14 +878,8 @@ TEST_F(AppControllerTests, ExpandAndCollapseAllCalculatorGroups) {
 TEST_F(AppControllerTests, PlotZoomLimitsSynchronizeToUIAndReset) {
   auto window = AppWindow::create();
 
-  std::string sample_file = "../../examples/a-PdSi/a-PdSi.car";
-  if (!std::filesystem::exists(sample_file)) {
-    sample_file = "../examples/a-PdSi/a-PdSi.car";
-  }
-  if (!std::filesystem::exists(sample_file)) {
-    sample_file = "examples/a-PdSi/a-PdSi.car";
-  }
-  ASSERT_TRUE(std::filesystem::exists(sample_file));
+  const std::string sample_file = resolveExamplePath("examples/a-PdSi/a-PdSi.car");
+  ASSERT_FALSE(sample_file.empty());
   ASSERT_TRUE(loader().loadFile(sample_file).has_value());
 
   options().active_calculators["g(r), J(r), G(r)"] = true;
@@ -886,14 +919,8 @@ TEST_F(AppControllerTests, PlotZoomLimitsSynchronizeToUIAndReset) {
 TEST_F(AppControllerTests, PlotCopyToClipboardSetsPayloadAndStatus) {
   auto window = AppWindow::create();
 
-  std::string sample_file = "../../examples/a-PdSi/a-PdSi.car";
-  if (!std::filesystem::exists(sample_file)) {
-    sample_file = "../examples/a-PdSi/a-PdSi.car";
-  }
-  if (!std::filesystem::exists(sample_file)) {
-    sample_file = "examples/a-PdSi/a-PdSi.car";
-  }
-  ASSERT_TRUE(std::filesystem::exists(sample_file));
+  const std::string sample_file = resolveExamplePath("examples/a-PdSi/a-PdSi.car");
+  ASSERT_FALSE(sample_file.empty());
   ASSERT_TRUE(loader().loadFile(sample_file).has_value());
 
   options().active_calculators["g(r), J(r), G(r)"] = true;
@@ -918,14 +945,8 @@ TEST_F(AppControllerTests, PlotCopyToClipboardSetsPayloadAndStatus) {
 TEST_F(AppControllerTests, PlotPeakTaggingAndCoordinationNumberIntegration) {
   auto window = AppWindow::create();
 
-  std::string sample_file = "../../examples/a-PdSi/a-PdSi.car";
-  if (!std::filesystem::exists(sample_file)) {
-    sample_file = "../examples/a-PdSi/a-PdSi.car";
-  }
-  if (!std::filesystem::exists(sample_file)) {
-    sample_file = "examples/a-PdSi/a-PdSi.car";
-  }
-  ASSERT_TRUE(std::filesystem::exists(sample_file));
+  const std::string sample_file = resolveExamplePath("examples/a-PdSi/a-PdSi.car");
+  ASSERT_FALSE(sample_file.empty());
   ASSERT_TRUE(loader().loadFile(sample_file).has_value());
 
   options().active_calculators["g(r), J(r), G(r)"] = true;
@@ -941,13 +962,12 @@ TEST_F(AppControllerTests, PlotPeakTaggingAndCoordinationNumberIntegration) {
   // Simulate range tagging across the first coordination shell
   window->invoke_tag_peak_range(120.0F, 240.0F);
 
-  auto peaks_model = window->get_tagged_peaks();
+  const auto peaks_model = window->get_tagged_peaks();
   ASSERT_EQ(peaks_model->row_count(), 1U);
-  auto peak_opt = peaks_model->row_data(0);
-  ASSERT_TRUE(peak_opt.has_value());
-  EXPECT_FALSE(std::string(peak_opt->r_peak).empty());
-  EXPECT_FALSE(std::string(peak_opt->coordination_num).empty());
-  EXPECT_GE(peak_opt->screen_r_peak, 0.0F);
+  const auto peak_item = getRow(peaks_model, 0);
+  EXPECT_FALSE(std::string(peak_item.r_peak).empty());
+  EXPECT_FALSE(std::string(peak_item.coordination_num).empty());
+  EXPECT_GE(peak_item.screen_r_peak, 0.0F);
 
   // Clear peaks
   window->invoke_clear_tagged_peaks();
@@ -957,14 +977,8 @@ TEST_F(AppControllerTests, PlotPeakTaggingAndCoordinationNumberIntegration) {
 TEST_F(AppControllerTests, CurveFilterAndInvertSelectionIntegration) {
   auto window = AppWindow::create();
 
-  std::string sample_file = "../../examples/a-PdSi/a-PdSi.car";
-  if (!std::filesystem::exists(sample_file)) {
-    sample_file = "../examples/a-PdSi/a-PdSi.car";
-  }
-  if (!std::filesystem::exists(sample_file)) {
-    sample_file = "examples/a-PdSi/a-PdSi.car";
-  }
-  ASSERT_TRUE(std::filesystem::exists(sample_file));
+  const std::string sample_file = resolveExamplePath("examples/a-PdSi/a-PdSi.car");
+  ASSERT_FALSE(sample_file.empty());
   ASSERT_TRUE(loader().loadFile(sample_file).has_value());
 
   options().active_calculators["g(r), J(r), G(r)"] = true;
@@ -983,16 +997,7 @@ TEST_F(AppControllerTests, CurveFilterAndInvertSelectionIntegration) {
   // Apply search filter "Si"
   window->invoke_filter_curves(slint::SharedString("Si"));
   curves = window->get_curve_toggle_items();
-  for (std::size_t i = 0; i < curves->row_count(); ++i) {
-    const auto item = curves->row_data(i);
-    ASSERT_TRUE(item.has_value());
-    const std::string label = std::string(item->label);
-    if (label.contains("Si")) {
-      EXPECT_TRUE(item->matches_filter);
-    } else {
-      EXPECT_FALSE(item->matches_filter);
-    }
-  }
+  verifyCurveFilterMatches(curves, "Si");
 
   // Invert matching curves
   window->invoke_invert_curves();
@@ -1002,22 +1007,14 @@ TEST_F(AppControllerTests, CurveFilterAndInvertSelectionIntegration) {
   // Clear filter
   window->invoke_filter_curves(slint::SharedString(""));
   curves = window->get_curve_toggle_items();
-  for (std::size_t i = 0; i < curves->row_count(); ++i) {
-    EXPECT_TRUE(curves->row_data(i)->matches_filter);
-  }
+  verifyAllCurvesMatchFilter(curves);
 }
 
 TEST_F(AppControllerTests, ConsolidatedPlotSettingsSynchronizationIntegration) {
   auto window = AppWindow::create();
 
-  std::string sample_file = "../../examples/a-PdSi/a-PdSi.car";
-  if (!std::filesystem::exists(sample_file)) {
-    sample_file = "../examples/a-PdSi/a-PdSi.car";
-  }
-  if (!std::filesystem::exists(sample_file)) {
-    sample_file = "examples/a-PdSi/a-PdSi.car";
-  }
-  ASSERT_TRUE(std::filesystem::exists(sample_file));
+  const std::string sample_file = resolveExamplePath("examples/a-PdSi/a-PdSi.car");
+  ASSERT_FALSE(sample_file.empty());
   ASSERT_TRUE(loader().loadFile(sample_file).has_value());
 
   options().active_calculators["g(r), J(r), G(r)"] = true;
@@ -1046,13 +1043,7 @@ TEST_F(AppControllerTests, ConsolidatedPlotSettingsSynchronizationIntegration) {
 
   // Verify plot config reflects consolidated publication settings
   const auto active_config = plot_ctrl->buildPlotConfigFromUI();
-  EXPECT_EQ(active_config.preset_size, correlation::plotters::PlotConfig::PresetSize::SingleColumn);
-  EXPECT_EQ(active_config.palette, correlation::plotters::PlotConfig::Palette::Viridis);
-  EXPECT_FLOAT_EQ(active_config.font_scale, 1.5F);
-  EXPECT_FLOAT_EQ(active_config.line_width, 4.0F);
-  EXPECT_FLOAT_EQ(active_config.marker_size, 5.0F);
-  EXPECT_TRUE(active_config.show_markers);
-  EXPECT_TRUE(active_config.fill_area);
+  verifyActivePlotConfig(active_config);
 
   // Reset export settings through UI callback
   window->invoke_reset_export_settings();
@@ -1136,27 +1127,22 @@ TEST_F(AppControllerTests, SampleDatasetAndRecentFilesIntegration) {
   controller.addRecentFile("test_path_2.car");
   auto recents = window->get_recent_files();
   ASSERT_EQ(recents->row_count(), 2);
-  EXPECT_EQ(recents->row_data(0).value(), slint::SharedString("test_path_2.car"));
-  EXPECT_EQ(recents->row_data(1).value(), slint::SharedString("test_path_1.car"));
+  EXPECT_EQ(getRow(recents, 0), slint::SharedString("test_path_2.car"));
+  EXPECT_EQ(getRow(recents, 1), slint::SharedString("test_path_1.car"));
 
   // Verify adding duplicate file promotes it to front without duplicating
   controller.addRecentFile("test_path_1.car");
   recents = window->get_recent_files();
   ASSERT_EQ(recents->row_count(), 2);
-  EXPECT_EQ(recents->row_data(0).value(), slint::SharedString("test_path_1.car"));
-  EXPECT_EQ(recents->row_data(1).value(), slint::SharedString("test_path_2.car"));
+  EXPECT_EQ(getRow(recents, 0), slint::SharedString("test_path_1.car"));
+  EXPECT_EQ(getRow(recents, 1), slint::SharedString("test_path_2.car"));
 }
 
 TEST_F(AppControllerTests, DualViewPerFrameOverlayIntegration) {
   auto window = AppWindow::create();
 
-  std::string file_path = "../../examples/a-PdSi/a-PdSi.car";
-  if (!std::filesystem::exists(file_path)) {
-    file_path = "../examples/a-PdSi/a-PdSi.car";
-  }
-  if (!std::filesystem::exists(file_path)) {
-    file_path = "examples/a-PdSi/a-PdSi.car";
-  }
+  const std::string file_path = resolveExamplePath("examples/a-PdSi/a-PdSi.car");
+  ASSERT_FALSE(file_path.empty());
   ASSERT_TRUE(loader().loadFile(file_path).has_value());
 
   options().active_calculators["g(r), J(r), G(r)"] = true;
@@ -1169,13 +1155,13 @@ TEST_F(AppControllerTests, DualViewPerFrameOverlayIntegration) {
   ASSERT_NE(plot_ctrl, nullptr);
   ASSERT_NE(structure_ctrl, nullptr);
 
-  const auto *df = dispatcher().getDistributionFunctions();
-  ASSERT_NE(df, nullptr);
+  const auto *dist_funcs = dispatcher().getDistributionFunctions();
+  ASSERT_NE(dist_funcs, nullptr);
 
   // Set up 2-frame distribution store
-  auto store = std::make_shared<correlation::analysis::PerFrameDistributionStore>(2);
-  const auto &bins = df->getAllHistograms().at("g_r").bins;
-  const auto &mean_curve = df->getAllHistograms().at("g_r").partials.at("Total");
+  const auto store = std::make_shared<correlation::analysis::PerFrameDistributionStore>(2);
+  const auto &bins = dist_funcs->getAllHistograms().at("g_r").bins;
+  const auto &mean_curve = dist_funcs->getAllHistograms().at("g_r").partials.at("Total");
   store->setBins(correlation::analysis::DistributionMetric::RDF, bins);
   store->setMeanCurve(correlation::analysis::DistributionMetric::RDF, mean_curve);
   store->setFrameCurve(correlation::analysis::DistributionMetric::RDF, 0, mean_curve);
@@ -1187,31 +1173,31 @@ TEST_F(AppControllerTests, DualViewPerFrameOverlayIntegration) {
   // Tab 0: Standard 2D Plot view with Total and partials
   window->set_preview_active_tab(0);
   plot_ctrl->requestPlotUpdate(0, true);
-  auto toggle_items_tab0 = window->get_curve_toggle_items();
+  const auto toggle_items_tab0 = window->get_curve_toggle_items();
   ASSERT_GT(toggle_items_tab0->row_count(), 1);
-  EXPECT_EQ(toggle_items_tab0->row_data(0).value().label, slint::SharedString("Total"));
+  EXPECT_EQ(getRow(toggle_items_tab0, 0).label, slint::SharedString("Total"));
 
   // Tab 2: Dual View with Ensemble Mean (accented) and Frame 1 (faded)
   window->set_preview_active_tab(2);
   window->set_structure_3d_current_frame(0);
   plot_ctrl->requestPlotUpdate(0, true);
-  auto toggle_items_tab2 = window->get_curve_toggle_items();
+  const auto toggle_items_tab2 = window->get_curve_toggle_items();
   ASSERT_EQ(toggle_items_tab2->row_count(), 2);
-  EXPECT_EQ(toggle_items_tab2->row_data(0).value().label, slint::SharedString("Ensemble Mean"));
-  EXPECT_EQ(toggle_items_tab2->row_data(1).value().label, slint::SharedString("Frame 1"));
+  EXPECT_EQ(getRow(toggle_items_tab2, 0).label, slint::SharedString("Ensemble Mean"));
+  EXPECT_EQ(getRow(toggle_items_tab2, 1).label, slint::SharedString("Frame 1"));
 
   // Seek to frame 1 in 3D viewport -> updates Dual View to Frame 2
   window->invoke_seek_frame_3d(1);
   plot_ctrl->requestPlotUpdate(0, true);
-  auto toggle_items_frame1 = window->get_curve_toggle_items();
+  const auto toggle_items_frame1 = window->get_curve_toggle_items();
   ASSERT_EQ(toggle_items_frame1->row_count(), 2);
-  EXPECT_EQ(toggle_items_frame1->row_data(0).value().label, slint::SharedString("Ensemble Mean"));
-  EXPECT_EQ(toggle_items_frame1->row_data(1).value().label, slint::SharedString("Frame 2"));
+  EXPECT_EQ(getRow(toggle_items_frame1, 0).label, slint::SharedString("Ensemble Mean"));
+  EXPECT_EQ(getRow(toggle_items_frame1, 1).label, slint::SharedString("Frame 2"));
 
   // Switching back to Tab 0 restores standard partials
   window->set_preview_active_tab(0);
   window->invoke_preview_tab_changed(0);
-  auto restored_items = window->get_curve_toggle_items();
+  const auto restored_items = window->get_curve_toggle_items();
   ASSERT_GT(restored_items->row_count(), 1);
-  EXPECT_EQ(restored_items->row_data(0).value().label, slint::SharedString("Total"));
+  EXPECT_EQ(getRow(restored_items, 0).label, slint::SharedString("Total"));
 }

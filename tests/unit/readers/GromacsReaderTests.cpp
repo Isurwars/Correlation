@@ -8,7 +8,14 @@
 #include "readers/GromacsReader.hpp"
 
 #include <filesystem>
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <string>
+#include <vector>
+
+#include "../../PrecisionTestHelper.hpp"
+
+using correlation::real_t;
 
 namespace {
 
@@ -28,56 +35,59 @@ std::string getTestDataDir() {
 }
 
 class GromacsReaderTests : public ::testing::Test {
-public:
-  std::string data_dir_;
-
 protected:
+  [[nodiscard]] const std::string &dataDir() const noexcept { return data_dir_; }
+
   void SetUp() override { data_dir_ = getTestDataDir(); }
+
+private:
+  std::string data_dir_;
 };
+
 } // namespace
 
 TEST_F(GromacsReaderTests, ReadMultiFrameTrajectory) {
   correlation::readers::GromacsReader reader;
   EXPECT_TRUE(reader.isTrajectory());
 
-  auto traj = reader.readTrajectory(data_dir_ + "clean.gro");
+  auto const traj = reader.readTrajectory(dataDir() + "clean.gro");
   EXPECT_EQ(traj.getFrameCount(), 2);
 
   // Frame 1
-  auto frame1 = traj.getFrame(0);
+  const auto frame1 = traj.getFrame(0);
   EXPECT_EQ(frame1.atomCount(), 3);
   EXPECT_EQ(frame1.atoms()[0].element().symbol, "O"); // "OW" -> "O"
   EXPECT_EQ(frame1.atoms()[1].element().symbol, "H"); // "HW1" -> "H"
 
-  auto pos1 = frame1.atoms()[0].position();
+  const auto pos1 = frame1.atoms()[0].position();
   // GROMACS is in nm, we convert to Angstroms (* 10)
   EXPECT_THAT(pos1.x(), correlation::testing::IsRealEq(1.0));
   EXPECT_THAT(pos1.y(), correlation::testing::IsRealEq(2.0));
   EXPECT_THAT(pos1.z(), correlation::testing::IsRealEq(3.0));
 
-  auto lat1 = frame1.latticeParameters();
+  const auto lat1 = frame1.latticeParameters();
   EXPECT_THAT(lat1[0], correlation::testing::IsRealEq(10.0));
   EXPECT_THAT(lat1[1], correlation::testing::IsRealEq(20.0));
   EXPECT_THAT(lat1[2], correlation::testing::IsRealEq(30.0));
 
   // Frame 2
-  auto frame2 = traj.getFrame(1);
+  const auto frame2 = traj.getFrame(1);
   EXPECT_EQ(frame2.atomCount(), 3);
-  auto pos2 = frame2.atoms()[0].position();
+  const auto pos2 = frame2.atoms()[0].position();
   EXPECT_THAT(pos2.x(), correlation::testing::IsRealEq(1.1));
   EXPECT_THAT(pos2.y(), correlation::testing::IsRealEq(2.1));
   EXPECT_THAT(pos2.z(), correlation::testing::IsRealEq(3.1));
 
-  auto lat2 = frame2.latticeParameters();
+  const auto lat2 = frame2.latticeParameters();
   EXPECT_THAT(lat2[0], correlation::testing::IsRealEq(11.0));
 }
 
 TEST_F(GromacsReaderTests, ReadStructureReturnsLastFrame) {
   correlation::readers::GromacsReader reader;
-  auto cell = reader.readStructure(data_dir_ + "clean.gro");
+  auto const cell = reader.readStructure(dataDir() + "clean.gro");
 
   EXPECT_EQ(cell.atomCount(), 3);
-  auto pos = cell.atoms()[0].position();
+  const auto pos = cell.atoms()[0].position();
   // Should be Frame 2
   EXPECT_THAT(pos.x(), correlation::testing::IsRealEq(1.1));
 }

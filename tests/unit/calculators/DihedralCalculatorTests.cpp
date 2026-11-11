@@ -11,6 +11,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+using correlation::real_t;
+
 namespace {
 class DihedralCalculatorTests : public ::testing::Test {
 public:

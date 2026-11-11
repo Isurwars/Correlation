@@ -13,6 +13,8 @@
 #include <thread>
 #include <vector>
 
+using correlation::real_t;
+
 namespace correlation::app {
 namespace {
 

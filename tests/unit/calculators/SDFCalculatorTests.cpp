@@ -9,6 +9,7 @@
 
 using namespace correlation::calculators;
 using namespace correlation::analysis;
+using correlation::real_t;
 
 TEST(SDFCalculatorTests, CalculateSDF) {
   correlation::core::Cell cell;

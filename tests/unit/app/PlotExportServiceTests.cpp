@@ -33,21 +33,22 @@ TEST(PlotExportServiceTests, ExportHistogramToSvgFile) {
   hist.bins = {1.0, 2.0, 3.0};
   hist.partials["Total"] = {0.5, 1.5, 0.2};
 
-  correlation::plotters::PlotConfig config;
+  const correlation::plotters::PlotConfig config;
 
   const auto temp_path = std::filesystem::temp_directory_path() / "test_export_hist.svg";
-  std::error_code ec;
-  std::filesystem::remove(temp_path, ec);
+  std::error_code err_code;
+  std::filesystem::remove(temp_path, err_code);
 
   const auto result = PlotExportService::exportHistogram(temp_path.string(), hist, config);
   ASSERT_TRUE(result.has_value());
   EXPECT_TRUE(std::filesystem::exists(temp_path));
 
-  std::ifstream in(temp_path);
-  std::string content((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+  std::ifstream input_file(temp_path);
+  const std::string content((std::istreambuf_iterator<char>(input_file)),
+                            std::istreambuf_iterator<char>());
   EXPECT_NE(content.find("<svg"), std::string::npos);
 
-  std::filesystem::remove(temp_path, ec);
+  std::filesystem::remove(temp_path, err_code);
 }
 
 TEST(PlotExportServiceTests, ExportComparisonToSvgFile) {
@@ -61,32 +62,33 @@ TEST(PlotExportServiceTests, ExportComparisonToSvgFile) {
   hist2.bins = {1.0, 2.0};
   hist2.partials["Total"] = {0.6, 1.1};
 
-  std::vector<correlation::plotters::LabeledHistogram> datasets = {
-      {"Run 1", &hist1},
-      {"Run 2", &hist2},
+  const std::vector<correlation::plotters::LabeledHistogram> datasets = {
+      {.label = "Run 1", .hist = &hist1},
+      {.label = "Run 2", .hist = &hist2},
   };
 
-  correlation::plotters::PlotConfig config;
+  const correlation::plotters::PlotConfig config;
 
   const auto temp_path = std::filesystem::temp_directory_path() / "test_export_comp.svg";
-  std::error_code ec;
-  std::filesystem::remove(temp_path, ec);
+  std::error_code err_code;
+  std::filesystem::remove(temp_path, err_code);
 
   const auto result =
       PlotExportService::exportComparison(temp_path.string(), datasets, "Total", config);
   ASSERT_TRUE(result.has_value());
   EXPECT_TRUE(std::filesystem::exists(temp_path));
 
-  std::ifstream in(temp_path);
-  std::string content((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+  std::ifstream input_file(temp_path);
+  const std::string content((std::istreambuf_iterator<char>(input_file)),
+                            std::istreambuf_iterator<char>());
   EXPECT_NE(content.find("<svg"), std::string::npos);
 
-  std::filesystem::remove(temp_path, ec);
+  std::filesystem::remove(temp_path, err_code);
 }
 
 TEST(PlotExportServiceTests, ExportFailsGracefullyOnInvalidDirectory) {
-  correlation::analysis::Histogram hist;
-  correlation::plotters::PlotConfig config;
+  const correlation::analysis::Histogram hist;
+  const correlation::plotters::PlotConfig config;
 
   const std::string invalid_path = "/non_existent_dir_12345/sub/test.svg";
   const auto result = PlotExportService::exportHistogram(invalid_path, hist, config);

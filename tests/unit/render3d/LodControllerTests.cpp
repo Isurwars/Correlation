@@ -6,13 +6,16 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+#include "math/Precision.hpp"
 #include "render3d/LodController.hpp"
 #include <gtest/gtest.h>
 
 namespace correlation::render3d {
 
+using correlation::real_t;
+
 TEST(LodControllerTests, SmallSystemHighLod) {
-  LodController controller;
+  LodController const controller;
   const auto policy_static = controller.evaluatePolicy(1000, false);
   EXPECT_EQ(policy_static.level, LodLevel::High);
   EXPECT_TRUE(policy_static.render_bonds);
@@ -25,7 +28,7 @@ TEST(LodControllerTests, SmallSystemHighLod) {
 }
 
 TEST(LodControllerTests, MediumSystemLod) {
-  LodController controller;
+  LodController const controller;
   const auto policy_static = controller.evaluatePolicy(10000, false);
   EXPECT_EQ(policy_static.level, LodLevel::Medium);
   EXPECT_TRUE(policy_static.render_bonds);
@@ -38,7 +41,7 @@ TEST(LodControllerTests, MediumSystemLod) {
 }
 
 TEST(LodControllerTests, LargeSystemLowLod) {
-  LodController controller;
+  LodController const controller;
   const auto policy = controller.evaluatePolicy(50000, false);
   EXPECT_EQ(policy.level, LodLevel::Low);
   EXPECT_FALSE(policy.render_bonds);

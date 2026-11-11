@@ -50,11 +50,11 @@ TEST_F(PresetManagerTests, RoundTripSerialization) {
   EXPECT_DOUBLE_EQ(loaded.options.r_bin_width, preset.options.r_bin_width);
   EXPECT_EQ(loaded.options.smoothing, preset.options.smoothing);
 
-  auto it1 = loaded.options.active_calculators.find("RDF");
+  const auto it1 = loaded.options.active_calculators.find("RDF");
   ASSERT_NE(it1, loaded.options.active_calculators.end());
   EXPECT_TRUE(it1->second);
 
-  auto it2 = loaded.options.active_calculators.find("S_K");
+  const auto it2 = loaded.options.active_calculators.find("S_K");
   ASSERT_NE(it2, loaded.options.active_calculators.end());
   EXPECT_FALSE(it2->second);
 }
@@ -66,7 +66,7 @@ TEST_F(PresetManagerTests, SerializationWithSpecialCharacters) {
   preset.options.r_max = 15.0;
 
   std::string const json = correlation::app::PresetManager::toJson(preset);
-  correlation::app::Preset loaded = correlation::app::PresetManager::fromJson(json);
+  const correlation::app::Preset loaded = correlation::app::PresetManager::fromJson(json);
 
   EXPECT_EQ(loaded.name, preset.name);
   EXPECT_EQ(loaded.description, preset.description);
@@ -77,7 +77,7 @@ TEST_F(PresetManagerTests, MissingKeysFallback) {
     "name": "TestUnitPreset"
   })";
 
-  correlation::app::Preset loaded = correlation::app::PresetManager::fromJson(json);
+  const correlation::app::Preset loaded = correlation::app::PresetManager::fromJson(json);
 
   EXPECT_EQ(loaded.name, "TestUnitPreset");
   EXPECT_EQ(loaded.description, ""); // default string fallback
@@ -147,7 +147,7 @@ TEST_F(PresetManagerTests, PresetNameSanitization) {
   EXPECT_TRUE(std::filesystem::exists(expected_file));
 
   // Load all to see if it reads it back with original name
-  auto all = correlation::app::PresetManager::loadAll();
+  const auto all = correlation::app::PresetManager::loadAll();
   bool found = false;
   for (const auto &preset : all) {
     if (preset.name == "TestUnitPreset_Sanitize!@#") {
@@ -160,6 +160,32 @@ TEST_F(PresetManagerTests, PresetNameSanitization) {
   // Remove using original name
   correlation::app::PresetManager::remove("TestUnitPreset_Sanitize!@#");
   EXPECT_FALSE(std::filesystem::exists(expected_file));
+}
+
+auto extractTestPresetNames(const std::vector<correlation::app::Preset> &presets)
+    -> std::vector<std::string> {
+  std::vector<std::string> names;
+  for (const auto &preset : presets) {
+    if (preset.name.starts_with("TestUnitPreset_")) {
+      names.push_back(preset.name);
+    }
+  }
+  return names;
+}
+
+void verifyPresetOrdering(const std::vector<correlation::app::Preset> &presets) {
+  const auto names = extractTestPresetNames(presets);
+  ASSERT_GE(names.size(), 3);
+  const auto it_a = std::ranges::find(names, "TestUnitPreset_A");
+  const auto it_b = std::ranges::find(names, "TestUnitPreset_B");
+  const auto it_c = std::ranges::find(names, "TestUnitPreset_C");
+
+  ASSERT_NE(it_a, names.end());
+  ASSERT_NE(it_b, names.end());
+  ASSERT_NE(it_c, names.end());
+
+  EXPECT_TRUE(it_a < it_b);
+  EXPECT_TRUE(it_b < it_c);
 }
 
 TEST_F(PresetManagerTests, LoadAllSorting) {
@@ -181,28 +207,8 @@ TEST_F(PresetManagerTests, LoadAllSorting) {
   correlation::app::PresetManager::save(preset_b);
 
   // Load all
-  auto all = correlation::app::PresetManager::loadAll();
-
-  // Find indices of our test presets in the result
-  std::vector<std::string> names;
-  for (const auto &preset : all) {
-    if (preset.name.starts_with("TestUnitPreset_")) {
-      names.push_back(preset.name);
-    }
-  }
-
-  // They must be sorted: A, B, C
-  ASSERT_GE(names.size(), 3);
-  auto it_a = std::ranges::find(names, "TestUnitPreset_A");
-  auto it_b = std::ranges::find(names, "TestUnitPreset_B");
-  auto it_c = std::ranges::find(names, "TestUnitPreset_C");
-
-  ASSERT_NE(it_a, names.end());
-  ASSERT_NE(it_b, names.end());
-  ASSERT_NE(it_c, names.end());
-
-  EXPECT_TRUE(it_a < it_b);
-  EXPECT_TRUE(it_b < it_c);
+  const auto all = correlation::app::PresetManager::loadAll();
+  verifyPresetOrdering(all);
 
   // Clean up
   correlation::app::PresetManager::remove("TestUnitPreset_A");

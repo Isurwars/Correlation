@@ -14,6 +14,7 @@
 namespace correlation::testing {
 
 using namespace correlation::core;
+using correlation::real_t;
 namespace {
 class CellTests : public ::testing::Test {
 protected:
@@ -231,7 +232,7 @@ TEST_F(CellTests, TriclinicCellMinimumImage) {
   Cell const cell({{5.0, 5.0, 5.0, 60.0, 60.0, 60.0}});
 
   // Distance vector that spans more than half the cell in some direction
-  auto image = cell.minimumImage({4.0, 4.0, 4.0});
+  const auto image = cell.minimumImage({4.0, 4.0, 4.0});
   real_t const image_length = correlation::math::norm(image);
 
   // The minimum image vector must be shorter than or equal to half the max box extent
@@ -303,7 +304,11 @@ TEST_F(CellTests, FractionalCartesianRoundTripPrecision) {
 
   // Test several fractional points (s_x, s_y, s_z) in [0, 1)
   const std::vector<correlation::math::Vector3<real_t>> test_fracs = {
-      {0.1, 0.2, 0.3}, {0.0, 0.0, 0.0}, {0.99, 0.5, 0.25}, {0.333, 0.666, 0.123}};
+      {0.1, 0.2, 0.3},
+      {0.0, 0.0, 0.0},
+      {0.99, 0.5, 0.25},
+      {0.333, 0.666, 0.123},
+  };
 
   for (const auto &orig_frac : test_fracs) {
     // r = lattice * s
@@ -318,9 +323,14 @@ TEST_F(CellTests, FractionalCartesianRoundTripPrecision) {
 }
 
 TEST_F(CellTests, PerpendicularWidthsOrthogonalAndDegenerate) {
-  const Cell ortho({static_cast<real_t>(10.0), static_cast<real_t>(12.0), static_cast<real_t>(15.0),
-                    static_cast<real_t>(90.0), static_cast<real_t>(90.0),
-                    static_cast<real_t>(90.0)});
+  const Cell ortho({
+      static_cast<real_t>(10.0),
+      static_cast<real_t>(12.0),
+      static_cast<real_t>(15.0),
+      static_cast<real_t>(90.0),
+      static_cast<real_t>(90.0),
+      static_cast<real_t>(90.0),
+  });
   const auto widths = ortho.perpendicularWidths();
   EXPECT_NEAR(widths[0], 10.0, 1e-5);
   EXPECT_NEAR(widths[1], 12.0, 1e-5);
@@ -334,8 +344,14 @@ TEST_F(CellTests, PerpendicularWidthsOrthogonalAndDegenerate) {
 }
 
 TEST_F(CellTests, ReplicateExpandsLatticeAndAtoms) {
-  Cell cell({static_cast<real_t>(4.0), static_cast<real_t>(5.0), static_cast<real_t>(6.0),
-             static_cast<real_t>(90.0), static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
+  Cell cell({
+      static_cast<real_t>(4.0),
+      static_cast<real_t>(5.0),
+      static_cast<real_t>(6.0),
+      static_cast<real_t>(90.0),
+      static_cast<real_t>(90.0),
+      static_cast<real_t>(90.0),
+  });
   cell.addAtom("Si",
                {static_cast<real_t>(0.0), static_cast<real_t>(0.0), static_cast<real_t>(0.0)});
   cell.addAtom("O", {static_cast<real_t>(1.0), static_cast<real_t>(1.0), static_cast<real_t>(1.0)});
@@ -360,8 +376,14 @@ TEST_F(CellTests, ReplicateExpandsLatticeAndAtoms) {
 }
 
 TEST_F(CellTests, ReplicateThrowsOnInvalidFactorsOrExcessiveAtoms) {
-  Cell cell({static_cast<real_t>(10.0), static_cast<real_t>(10.0), static_cast<real_t>(10.0),
-             static_cast<real_t>(90.0), static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
+  Cell cell({
+      static_cast<real_t>(10.0),
+      static_cast<real_t>(10.0),
+      static_cast<real_t>(10.0),
+      static_cast<real_t>(90.0),
+      static_cast<real_t>(90.0),
+      static_cast<real_t>(90.0),
+  });
   cell.addAtom("C", {static_cast<real_t>(1.0), static_cast<real_t>(1.0), static_cast<real_t>(1.0)});
 
   EXPECT_THROW(static_cast<void>(cell.replicate(0, 1, 1)), std::invalid_argument);
@@ -373,8 +395,14 @@ TEST_F(CellTests, ReplicateThrowsOnInvalidFactorsOrExcessiveAtoms) {
 }
 
 TEST_F(CellTests, AutoSupercellSatisfiesMinimumImageConvention) {
-  Cell cell({static_cast<real_t>(3.0), static_cast<real_t>(4.0), static_cast<real_t>(5.0),
-             static_cast<real_t>(90.0), static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
+  Cell cell({
+      static_cast<real_t>(3.0),
+      static_cast<real_t>(4.0),
+      static_cast<real_t>(5.0),
+      static_cast<real_t>(90.0),
+      static_cast<real_t>(90.0),
+      static_cast<real_t>(90.0),
+  });
   cell.addAtom("Cu",
                {static_cast<real_t>(0.0), static_cast<real_t>(0.0), static_cast<real_t>(0.0)});
 

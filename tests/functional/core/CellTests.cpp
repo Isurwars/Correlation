@@ -13,6 +13,7 @@
 namespace correlation::testing {
 
 using namespace correlation::core;
+using correlation::real_t;
 
 namespace {
 class CellFunctionalTests : public ::testing::Test {};
@@ -63,8 +64,8 @@ TEST_F(CellFunctionalTests, BuildFCCLatticeAndVerifyPBCDistances) {
   const auto expected_nn = static_cast<real_t>(lattice_parameter / std::numbers::sqrt2);
 
   // Calculate distance between atom 0 and 1
-  auto dist_vec = cell.atoms()[1].position() - cell.atoms()[0].position();
-  auto mi_vec = cell.minimumImage(dist_vec);
+  const auto dist_vec = cell.atoms()[1].position() - cell.atoms()[0].position();
+  const auto mi_vec = cell.minimumImage(dist_vec);
 
   EXPECT_NEAR(correlation::math::norm(mi_vec), expected_nn, 1e-6);
 }
@@ -76,7 +77,7 @@ TEST_F(CellFunctionalTests, VerifyWaterMoleculePBCStability) {
   // O at origin, H atoms at typical distance/angle
   // OH distance ~ 0.96 A, HOH angle ~ 104.5
   const real_t oh_dist = 0.9584;
-  const real_t hoh_angle_rad = static_cast<real_t>(104.45 * (correlation::math::PI / 180.0));
+  const auto hoh_angle_rad = static_cast<real_t>(104.45 * (correlation::math::PI / 180.0));
 
   cell.addAtom("O", {10.0, 10.0, 10.0});
   cell.addAtom("H", correlation::math::Vector3<real_t>(static_cast<real_t>(10.0) + oh_dist,
@@ -98,13 +99,10 @@ TEST_F(CellFunctionalTests, VerifyWaterMoleculePBCStability) {
 
   // Verify that the internal geometry (bond length/angle) is preserved
   const auto &atoms = cell.atoms();
-  real_t const distance_1_2 = distance(atoms[0], atoms[1]);
-  real_t const distance_1_3 = distance(atoms[0], atoms[2]);
-  real_t const angle_1_2_3 = angle(atoms[0], atoms[1], atoms[2]);
 
   // Use minimum image for distance if they were wrapped differently
-  auto image_1 = cell.minimumImage(atoms[1].position() - atoms[0].position());
-  auto image_2 = cell.minimumImage(atoms[2].position() - atoms[0].position());
+  const auto image_1 = cell.minimumImage(atoms[1].position() - atoms[0].position());
+  const auto image_2 = cell.minimumImage(atoms[2].position() - atoms[0].position());
 
   EXPECT_NEAR(correlation::math::norm(image_1), oh_dist,
               correlation::is_single_precision ? 1e-5 : 1e-6);

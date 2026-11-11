@@ -13,10 +13,37 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+using correlation::real_t;
+
 namespace correlation::calculators::gpu {
 
+namespace {
+void verifyFloatDistanceOutput(const RawHistogramTensor &out_histograms,
+                               const correlation::core::NeighborGraph &out_graph) {
+  EXPECT_EQ(out_histograms[0][1][75], 1.0);
+  EXPECT_TRUE(
+      out_graph.areConnected(correlation::core::AtomIndex{0}, correlation::core::AtomIndex{1}));
+  const auto &neighbors = out_graph.getNeighbors(0);
+  ASSERT_EQ(neighbors.size(), 1);
+  EXPECT_EQ(neighbors[0].index, 1);
+  EXPECT_NEAR(neighbors[0].distance, 1.5, 1e-4);
+}
+
+void verifyDoubleDistanceOutput(const RawHistogramTensor &out_histograms,
+                                const correlation::core::NeighborGraph &out_graph) {
+  EXPECT_EQ(out_histograms[0][0][50], 1.0);
+  EXPECT_TRUE(
+      out_graph.areConnected(correlation::core::AtomIndex{0}, correlation::core::AtomIndex{1}));
+}
+
+void verifyDirectHistOutput(const RawHistogramTensor &out_histograms) {
+  EXPECT_EQ(out_histograms[0][1][60], 1.0);
+  EXPECT_EQ(out_histograms[1][0][60], 1.0);
+}
+} // namespace
+
 TEST(GPUDistanceCalculatorTests, HasGPUDeviceCheck) {
-  EXPECT_NO_THROW({ [[maybe_unused]] bool has_dev = has_gpu_device(); });
+  EXPECT_NO_THROW({ [[maybe_unused]] const bool has_dev = has_gpu_device(); });
 }
 
 TEST(GPUDistanceCalculatorTests, FloatPrecisionDistanceComputation) {
@@ -37,19 +64,13 @@ TEST(GPUDistanceCalculatorTests, FloatPrecisionDistanceComputation) {
   };
   correlation::core::NeighborGraph out_graph(2);
 
-  if (has_gpu_device()) {
-    EXPECT_NO_THROW(compute_distances_gpu<float>(cell, cutoff_sq, bond_cutoffs_sq, true,
-                                                 &out_histograms, config, out_graph));
-
-    EXPECT_EQ(out_histograms[0][1][75], 1.0);
-
-    EXPECT_TRUE(
-        out_graph.areConnected(correlation::core::AtomIndex{0}, correlation::core::AtomIndex{1}));
-    const auto &neighbors = out_graph.getNeighbors(0);
-    ASSERT_EQ(neighbors.size(), 1);
-    EXPECT_EQ(neighbors[0].index, 1);
-    EXPECT_NEAR(neighbors[0].distance, 1.5, 1e-4);
+  if (!has_gpu_device()) {
+    return;
   }
+
+  compute_distances_gpu<float>(cell, cutoff_sq, bond_cutoffs_sq, true, &out_histograms, config,
+                               out_graph);
+  verifyFloatDistanceOutput(out_histograms, out_graph);
 }
 
 TEST(GPUDistanceCalculatorTests, DoublePrecisionDistanceComputation) {
@@ -70,15 +91,13 @@ TEST(GPUDistanceCalculatorTests, DoublePrecisionDistanceComputation) {
   };
   correlation::core::NeighborGraph out_graph(2);
 
-  if (has_gpu_device()) {
-    EXPECT_NO_THROW(compute_distances_gpu<double>(cell, cutoff_sq, bond_cutoffs_sq, true,
-                                                  &out_histograms, config, out_graph));
-
-    EXPECT_EQ(out_histograms[0][0][50], 1.0);
-
-    EXPECT_TRUE(
-        out_graph.areConnected(correlation::core::AtomIndex{0}, correlation::core::AtomIndex{1}));
+  if (!has_gpu_device()) {
+    return;
   }
+
+  compute_distances_gpu<double>(cell, cutoff_sq, bond_cutoffs_sq, true, &out_histograms, config,
+                                out_graph);
+  verifyDoubleDistanceOutput(out_histograms, out_graph);
 }
 
 TEST(GPUDistanceCalculatorTests, SinglePassDirectHistogramAccumulation) {
@@ -100,14 +119,13 @@ TEST(GPUDistanceCalculatorTests, SinglePassDirectHistogramAccumulation) {
   };
   correlation::core::NeighborGraph out_graph(0);
 
-  if (has_gpu_device()) {
-    EXPECT_NO_THROW(compute_distances_gpu<double>(cell, cutoff_sq, empty_bond_cutoffs, true,
-                                                  &out_histograms, config, out_graph));
-
-    // Distance 1.2 / 0.02 = bin 60
-    EXPECT_EQ(out_histograms[0][1][60], 1.0);
-    EXPECT_EQ(out_histograms[1][0][60], 1.0);
+  if (!has_gpu_device()) {
+    return;
   }
+
+  compute_distances_gpu<double>(cell, cutoff_sq, empty_bond_cutoffs, true, &out_histograms, config,
+                                out_graph);
+  verifyDirectHistOutput(out_histograms);
 }
 
 } // namespace correlation::calculators::gpu

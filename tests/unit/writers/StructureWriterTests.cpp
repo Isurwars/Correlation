@@ -17,18 +17,17 @@
 #include "writers/structure/PoscarWriter.hpp"
 #include "writers/structure/StructureWriterFactory.hpp"
 
-#include <cmath>
 #include <filesystem>
-#include <fstream>
 #include <gtest/gtest.h>
 
 namespace {
 
+using correlation::real_t;
 using namespace correlation::writers::structure;
 using namespace correlation::readers;
 using namespace correlation::core;
 
-std::string findDataPath(const std::string &relative_path) {
+[[nodiscard]] std::string findDataPath(const std::string &relative_path) {
   const std::vector<std::string> prefixes = {
       "../../tests/data/",
       "../tests/data/",
@@ -43,6 +42,15 @@ std::string findDataPath(const std::string &relative_path) {
   return "tests/data/" + relative_path;
 }
 
+void verifyLatticeParametersNear(const std::array<real_t, 6> &p_init,
+                                 const std::array<real_t, 6> &p_parse, real_t tolerance) {
+  const auto *it_parse = p_parse.begin();
+  for (real_t val_init : p_init) {
+    EXPECT_NEAR(val_init, *it_parse, tolerance);
+    ++it_parse;
+  }
+}
+
 class StructureWriterTests : public ::testing::Test {
 protected:
   void SetUp() override {
@@ -51,15 +59,18 @@ protected:
   }
 
   void TearDown() override {
-    std::error_code ec;
-    std::filesystem::remove_all(temp_dir_, ec);
+    std::error_code err_code;
+    std::filesystem::remove_all(temp_dir_, err_code);
   }
 
+  [[nodiscard]] const std::filesystem::path &tempDir() const noexcept { return temp_dir_; }
+
+private:
   std::filesystem::path temp_dir_;
 };
 
 TEST_F(StructureWriterTests, FactoryRegistrationAndDiscovery) {
-  auto &factory = StructureWriterFactory::instance();
+  const auto &factory = StructureWriterFactory::instance();
 
   EXPECT_NE(factory.getWriterForExtension(".vasp"), nullptr);
   EXPECT_NE(factory.getWriterForExtension("poscar"), nullptr);
@@ -80,78 +91,75 @@ TEST_F(StructureWriterTests, PoscarRoundTripFromCar) {
   std::string const source_car = findDataPath("car/si_crystal.car");
   ASSERT_TRUE(std::filesystem::exists(source_car));
 
-  Cell initial_cell = CarReader::read(source_car);
+  const Cell initial_cell = CarReader::read(source_car);
   ASSERT_EQ(initial_cell.atomCount(), 8);
 
-  std::filesystem::path const out_poscar = temp_dir_ / "silicon.vasp";
-  PoscarWriter writer;
+  std::filesystem::path const out_poscar = tempDir() / "silicon.vasp";
+  const PoscarWriter writer;
   writer.write(out_poscar.string(), initial_cell, {.fractional = true, .title = "Si Roundtrip"});
   ASSERT_TRUE(std::filesystem::exists(out_poscar));
 
-  Cell parsed_cell = VaspReader::read(out_poscar.string());
+  const Cell parsed_cell = VaspReader::read(out_poscar.string());
   EXPECT_EQ(parsed_cell.atomCount(), initial_cell.atomCount());
-  EXPECT_NEAR(parsed_cell.volume(), initial_cell.volume(), 1e-2);
+  EXPECT_NEAR(parsed_cell.volume(), initial_cell.volume(), static_cast<real_t>(1e-2));
 
-  const auto &p_init = initial_cell.latticeParameters();
-  const auto &p_parse = parsed_cell.latticeParameters();
-  for (std::size_t i = 0; i < 6; ++i) {
-    EXPECT_NEAR(p_init[i], p_parse[i], 1e-2);
-  }
+  verifyLatticeParametersNear(initial_cell.latticeParameters(), parsed_cell.latticeParameters(),
+                              static_cast<real_t>(1e-2));
 }
 
 TEST_F(StructureWriterTests, CellRoundTripFromPoscar) {
   std::string const source_poscar = findDataPath("vasp/Si.poscar");
   ASSERT_TRUE(std::filesystem::exists(source_poscar));
 
-  Cell initial_cell = VaspReader::read(source_poscar);
+  const Cell initial_cell = VaspReader::read(source_poscar);
   ASSERT_EQ(initial_cell.atomCount(), 8);
 
-  std::filesystem::path const out_cell = temp_dir_ / "silicon.cell";
-  CellWriter writer;
+  std::filesystem::path const out_cell = tempDir() / "silicon.cell";
+  const CellWriter writer;
   writer.write(out_cell.string(), initial_cell, {.fractional = true});
   ASSERT_TRUE(std::filesystem::exists(out_cell));
 
-  Cell parsed_cell = CellReader::read(out_cell.string());
+  const Cell parsed_cell = CellReader::read(out_cell.string());
   EXPECT_EQ(parsed_cell.atomCount(), 8);
-  EXPECT_NEAR(parsed_cell.volume(), initial_cell.volume(), 1e-2);
+  EXPECT_NEAR(parsed_cell.volume(), initial_cell.volume(), static_cast<real_t>(1e-2));
 }
 
 TEST_F(StructureWriterTests, CifRoundTrip) {
   std::string const source_poscar = findDataPath("vasp/Si.poscar");
   ASSERT_TRUE(std::filesystem::exists(source_poscar));
 
-  Cell initial_cell = VaspReader::read(source_poscar);
-  std::filesystem::path const out_cif = temp_dir_ / "silicon.cif";
+  const Cell initial_cell = VaspReader::read(source_poscar);
+  std::filesystem::path const out_cif = tempDir() / "silicon.cif";
 
-  CifWriter writer;
+  const CifWriter writer;
   writer.write(out_cif.string(), initial_cell);
   ASSERT_TRUE(std::filesystem::exists(out_cif));
 
-  Cell parsed_cell = CifReader::read(out_cif.string());
+  const Cell parsed_cell = CifReader::read(out_cif.string());
   EXPECT_EQ(parsed_cell.atomCount(), 8);
-  EXPECT_NEAR(parsed_cell.volume(), initial_cell.volume(), 1e-2);
+  EXPECT_NEAR(parsed_cell.volume(), initial_cell.volume(), static_cast<real_t>(1e-2));
 }
 
 TEST_F(StructureWriterTests, CarRoundTrip) {
   std::string const source_car = findDataPath("car/si_crystal.car");
   ASSERT_TRUE(std::filesystem::exists(source_car));
 
-  Cell initial_cell = CarReader::read(source_car);
-  std::filesystem::path const out_car = temp_dir_ / "silicon_out.car";
+  const Cell initial_cell = CarReader::read(source_car);
+  std::filesystem::path const out_car = tempDir() / "silicon_out.car";
 
-  CarWriter writer;
+  const CarWriter writer;
   writer.write(out_car.string(), initial_cell);
   ASSERT_TRUE(std::filesystem::exists(out_car));
 
-  Cell parsed_cell = CarReader::read(out_car.string());
+  const Cell parsed_cell = CarReader::read(out_car.string());
   EXPECT_EQ(parsed_cell.atomCount(), 8);
-  EXPECT_NEAR(parsed_cell.volume(), initial_cell.volume(), 1e-2);
+  EXPECT_NEAR(parsed_cell.volume(), initial_cell.volume(), static_cast<real_t>(1e-2));
 }
 
 TEST_F(StructureWriterTests, DegenerateCellThrowsException) {
-  Cell empty_cell;
-  std::filesystem::path const dummy_path = temp_dir_ / "fail.vasp";
-  PoscarWriter writer;
+  const Cell empty_cell;
+  std::filesystem::path const dummy_path = tempDir() / "fail.vasp";
+  const PoscarWriter writer;
   EXPECT_THROW(writer.write(dummy_path.string(), empty_cell), std::runtime_error);
 }
 

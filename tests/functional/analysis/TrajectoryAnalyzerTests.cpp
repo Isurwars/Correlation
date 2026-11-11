@@ -9,6 +9,8 @@
 
 #include <gtest/gtest.h>
 
+using correlation::real_t;
+
 namespace correlation::analysis {
 
 TEST(TrajectoryAnalyzerTests, BasicUsage) {
@@ -24,7 +26,9 @@ TEST(TrajectoryAnalyzerTests, BasicUsage) {
   trajectory.addFrame(cell);
 
   real_t const neighbor_cutoff = 2.0;
-  BondCutoffMatrix const bond_cutoffs = {{{0.36, 1.1}}}; // Assuming H-H is index 0-0, simplified
+  BondCutoffMatrix const bond_cutoffs = {
+      {{.min_sq = 0.36, .max_sq = 1.1}},
+  }; // Assuming H-H is index 0-0, simplified
 
   TrajectoryAnalyzer const analyzer(trajectory, neighbor_cutoff, bond_cutoffs);
 
@@ -34,7 +38,7 @@ TEST(TrajectoryAnalyzerTests, BasicUsage) {
 
   // Verify that StructureAnalyzers can be created dynamically
   for (size_t i = 0; i < analyzer.getNumFrames(); ++i) {
-    auto analyzer_ptr = analyzer.createAnalyzer(i);
+    const auto analyzer_ptr = analyzer.createAnalyzer(i);
     // Just checking if we can access them and they are not null
     EXPECT_TRUE(analyzer_ptr != nullptr);
     // In a real test we might check neighbor counts if we knew indices
@@ -54,7 +58,7 @@ TEST(TrajectoryAnalyzerTests, StartAndEndFrameLimits) {
   trajectory.addFrame(cell); // 4 frames total
 
   real_t const neighbor_cutoff = 2.0;
-  BondCutoffMatrix const bond_cutoffs = {{{0.36, 1.1}}};
+  BondCutoffMatrix const bond_cutoffs = {{{.min_sq = 0.36, .max_sq = 1.1}}};
 
   // Case 1: Analyze frames from index 1 to 3 (exclusive, so frames 1 and 2, getNumFrames() = 2)
   {
@@ -93,13 +97,13 @@ TEST(TrajectoryAnalyzerTests, ProgressCallbackIsCalled) {
   trajectory.addFrame(cell);
 
   real_t const neighbor_cutoff = 2.0;
-  BondCutoffMatrix const bond_cutoffs = {{{0.36, 1.1}}};
+  BondCutoffMatrix const bond_cutoffs = {{{.min_sq = 0.36, .max_sq = 1.1}}};
 
   bool callback_called = false;
   float progress_val = 0.0F;
   std::string progress_msg;
 
-  auto callback = [&](float progress, const std::string &message) {
+  const auto callback = [&](float progress, const std::string &message) {
     callback_called = true;
     progress_val = progress;
     progress_msg = message;
@@ -122,16 +126,16 @@ TEST(TrajectoryAnalyzerTests, CreateAnalyzerOutOfBoundsReturnsNullptr) {
   trajectory.addFrame(cell); // 1 frame total
 
   real_t const neighbor_cutoff = 2.0;
-  BondCutoffMatrix const bond_cutoffs = {{{0.36, 1.1}}};
+  BondCutoffMatrix const bond_cutoffs = {{{.min_sq = 0.36, .max_sq = 1.1}}};
 
   TrajectoryAnalyzer const analyzer(trajectory, neighbor_cutoff, bond_cutoffs);
 
   // Index 0 is valid
-  auto analyzer_ptr = analyzer.createAnalyzer(0);
+  const auto analyzer_ptr = analyzer.createAnalyzer(0);
   EXPECT_NE(analyzer_ptr, nullptr);
 
   // Index 1 is out of bounds
-  auto analyzer_invalid = analyzer.createAnalyzer(1);
+  const auto analyzer_invalid = analyzer.createAnalyzer(1);
   EXPECT_EQ(analyzer_invalid, nullptr);
 }
 
