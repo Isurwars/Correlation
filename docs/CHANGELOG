@@ -1,6 +1,41 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.3.0] - 2026-11-11
+
+### 🚀 Features & Machine Learning Potentials
+- **Spin & Charge Correlation Calculators (`SpinCorrelationCalculator`, `ChargeCorrelationCalculator`)**:
+  - Implemented real-space spin correlation function $\langle S_i \cdot S_j \rangle(r)$ and local charge fluctuation density correlation metrics across multi-component magnetic and ionic materials.
+- **MACE GNN Potential Integration (`MaceGNNModel`, `MaceReader`) & ASE Bridge**:
+  - Added native evaluation of equivariant message-passing neural network architectures for molecular dynamics and structural relaxation with ASE trajectory interchange.
+- **Peak Integration Service (`PeakIntegrationService`)**:
+  - Added baseline-corrected trapezoidal and Simpson integration engine across continuous distribution profiles ($g(r)$, $S(Q)$, $PAD$) with UI tagging and data table export.
+- **Enhanced 2D Plot Tooling & 1-Click SVG Export (`ImagingToolbar.slint`, `PlotExportService`)**:
+  - Added 1-click clipboard SVG copying and quick export dialog directly accessible from the floating 2D plot toolbar.
+
+### 🖥️ User Interface & 3D Structure Viewport
+- **3D Viewport Action Bar Synchronization (`Structure3DWorkflowBar.slint`, `Structure3DViewport.slint`)**:
+  - Updated the 3D viewport floating action pill to use standardized green (`MaterialPalette.run`) for execution and red (`MaterialPalette.error`) for aborting, with full accessibility labeling.
+  - Wired live cancellation support (`cancel_analysis`) and validation error state gating across the 3D viewport.
+- **Segmented Pill Navigation & Docked Sidebar (`Structure3DSidebar.slint`, `PreviewCard.slint`)**:
+  - Unified 3D visualization and phase search controls into a collapsible docked sidebar.
+  - Redesigned top-level view navigation into fluid animated segmented pill controls.
+- **Dual View Per-Frame Overlays & Camera Orientation Presets**:
+  - Added simultaneous synchronized 2D correlation curve inspection alongside 3D structural viewpoints, with quick standard orientation buttons (XY Top, XZ Front, YZ Side, Isometric).
+
+### 📐 Analysis & Post-Processing Refinements
+- **Angular & Reciprocal Space Kernel Smoothing (`DistributionPostProcessor`)**:
+  - Increased angular domain smoothing scale (`ANGULAR_DOMAIN_SCALE`) from `15.0` to `20.0` (+33%) for plane angle ($PAD$) and dihedral angle ($DAD$) distributions.
+  - Introduced reciprocal-space structure factor scaling (`SQ_DOMAIN_SCALE = 2.0`) to smoothly suppress discrete supercell shell oscillations while preserving diffraction peaks.
+- **Standardized PAD Naming & Extended Alias Resolution (`PADCalculator`, `DistributionFunctions`)**:
+  - Standardized display titles to `PAD(θ) Normalized` and `PAD(θ) RAW`.
+  - Added backward-compatible alias mappings for `PAD(θ) Normalized`, `PAD(θ) RAW`, `PAD(Theta) Normalized`, `PAD(Theta) RAW`, and `Plane-Angle Distribution`.
+
+### 🛠️ Build, CI & Packaging
+- **Release Signing & Version Bump**:
+  - Integrated SignPath automated Windows code-signing pipeline into release workflow.
+  - Bumped project version to `4.3.0` across CMake, Slint UI, packaging specs (PKGBUILD, CPack, Windows RC), and Python packages.
+
 ## [4.2.1] - 2026-11-04
 
 ### 🐛 Bug Fixes & Spatial Calculators
