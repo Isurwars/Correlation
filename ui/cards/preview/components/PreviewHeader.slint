@@ -1,6 +1,7 @@
 import {
     MaterialStyleMetrics,
     MaterialPalette,
+    MaterialText,
     InputSelect,
     MenuItem,
     Horizontal,
@@ -11,16 +12,21 @@ export component PreviewHeader inherits Horizontal {
     in property <[MenuItem]> plot_items: [];
     in-out property <int> selected_plot_index: -1;
     in-out property <int> active_tab: 0;
+    in-out property <int> dual_scope: 0;
 
     callback plot_selected(int);
 
     out property <string> tooltip_text:
+        (root.active_tab == 2 && dual_tab_2d.has_hover) ? "Show 2D Inspector\n\nConfigure curves, axes, and tagged peaks for the 2D plot." :
+        (root.active_tab == 2 && dual_tab_3d.has_hover) ? "Show 3D Inspector\n\nConfigure atomic rendering, order parameter presets, and phase search." :
         tab_plot.has_hover ? "2D Plot View\n\n📈 Interactive curve visualizer with zoom, pan, peak tagging, and calibration." :
         tab_3d.has_hover ? "3D Structure View\n\n🌐 Interactive atomic visualizer with orbit camera, bonds, and unit cell wireframe." :
         tab_dual.has_hover ? "Dual Split-Screen View\n\n◫ Side-by-side synchronized 2D plot and 3D molecular viewport." :
         tab_data.has_hover ? "Data Explorer View\n\n📄 Tabular numerical coordinates and distribution intensities." : "";
 
     out property <length> tooltip_x:
+        (root.active_tab == 2 && dual_tab_2d.has_hover) ? dual_tab_2d.abs_x + dual_tab_2d.mouse_x :
+        (root.active_tab == 2 && dual_tab_3d.has_hover) ? dual_tab_3d.abs_x + dual_tab_3d.mouse_x :
         plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.x + plot_dropdown_area.mouse-x :
         tab_plot.has_hover ? tab_plot.abs_x + tab_plot.mouse_x :
         tab_3d.has_hover ? tab_3d.abs_x + tab_3d.mouse_x :
@@ -28,6 +34,8 @@ export component PreviewHeader inherits Horizontal {
         tab_data.has_hover ? tab_data.abs_x + tab_data.mouse_x : 0px;
 
     out property <length> tooltip_y:
+        (root.active_tab == 2 && dual_tab_2d.has_hover) ? dual_tab_2d.abs_y + dual_tab_2d.mouse_y :
+        (root.active_tab == 2 && dual_tab_3d.has_hover) ? dual_tab_3d.abs_y + dual_tab_3d.mouse_y :
         plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.y + plot_dropdown_area.mouse-y :
         tab_plot.has_hover ? tab_plot.abs_y + tab_plot.mouse_y :
         tab_3d.has_hover ? tab_3d.abs_y + tab_3d.mouse_y :
@@ -99,6 +107,52 @@ export component PreviewHeader inherits Horizontal {
                 text: "Data Explorer";
                 active: root.active_tab == 3;
                 clicked => { root.active_tab = 3; }
+            }
+        }
+    }
+
+    // Dual View Inspector Scope Switcher (Visible in Dual View mode)
+    dual_scope_container := Rectangle {
+        visible: root.active_tab == 2;
+        width: root.active_tab == 2 ? self.preferred-width : 0px;
+        height: 100%;
+        background: MaterialPalette.surface_container;
+        border-radius: MaterialStyleMetrics.border_radius_8;
+        border-width: 1px;
+        border-color: MaterialPalette.outline_variant;
+        clip: true;
+
+        HorizontalLayout {
+            spacing: 0px;
+            padding-left: 8px;
+            padding-right: 0px;
+
+            MaterialText {
+                text: "Inspector:";
+                font-size: 11px;
+                color: MaterialPalette.on_surface_variant;
+                vertical-alignment: center;
+            }
+
+            Rectangle { width: 6px; }
+
+            dual_tab_2d := TabItem {
+                text: "2D";
+                compact: true;
+                active: root.dual_scope == 0;
+                clicked => { root.dual_scope = 0; }
+            }
+
+            Rectangle {
+                width: 1px;
+                background: MaterialPalette.outline_variant;
+            }
+
+            dual_tab_3d := TabItem {
+                text: "3D";
+                compact: true;
+                active: root.dual_scope == 1;
+                clicked => { root.dual_scope = 1; }
             }
         }
     }

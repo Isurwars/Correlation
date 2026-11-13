@@ -1,0 +1,145 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    Icons,
+} from "../material/material.slint";
+
+component RightRailButton inherits Rectangle {
+    in property <image> icon;
+    in property <bool> active: false;
+    in property <string> tooltip: "";
+    in property <bool> enabled: true;
+    in property <color> active_bg: MaterialPalette.secondary_container.brighter(35%);
+    in property <color> active_fg: MaterialPalette.on_secondary_container;
+    in property <color> inactive_bg: transparent;
+    in property <color> inactive_fg: MaterialPalette.on_surface_variant;
+    in property <bool> show_indicator: root.active;
+
+    callback clicked();
+
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: !root.enabled ? transparent :
+                root.active ? (touch.has-hover ? root.active_bg.darker(8%) : root.active_bg) :
+                root.inactive_bg != transparent ? (touch.has-hover ? root.inactive_bg.darker(8%) : root.inactive_bg) :
+                touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+    animate background { duration: 150ms; }
+
+    if root.show_indicator: Rectangle {
+        x: parent.width - 1px;
+        y: 8px;
+        width: 3px;
+        height: 24px;
+        border-radius: 1.5px;
+        background: MaterialPalette.primary;
+    }
+
+    Image {
+        width: 20px;
+        height: 20px;
+        source: root.icon;
+        colorize: !root.enabled ? MaterialPalette.outline :
+                  root.active ? root.active_fg : root.inactive_fg;
+        animate colorize { duration: 150ms; }
+    }
+
+    out property <bool> has_hover: touch.has-hover;
+    out property <length> hover_x: touch.has-hover ? touch.absolute-position.x + touch.mouse-x : 0px;
+    out property <length> hover_y: touch.has-hover ? touch.absolute-position.y + touch.mouse-y : 0px;
+
+    touch := TouchArea {
+        width: 100%;
+        height: 100%;
+        enabled: root.enabled;
+        clicked => { root.clicked(); }
+    }
+
+    accessible-role: button;
+    accessible-label: root.tooltip;
+}
+
+export component RightMiniSideBar inherits Rectangle {
+    in-out property <int> active_panel: 0;
+
+    callback select_panel(int);
+    callback toggle_collapse();
+
+    out property <string> hovered_tooltip_text:
+        btn_plot.has_hover ? btn_plot.tooltip :
+        btn_structure.has_hover ? btn_structure.tooltip :
+        btn_collapse.has_hover ? btn_collapse.tooltip : "";
+
+    out property <length> hovered_x:
+        btn_plot.has_hover ? btn_plot.hover_x :
+        btn_structure.has_hover ? btn_structure.hover_x :
+        btn_collapse.has_hover ? btn_collapse.hover_x : 0px;
+
+    out property <length> hovered_y:
+        btn_plot.has_hover ? btn_plot.hover_y :
+        btn_structure.has_hover ? btn_structure.hover_y :
+        btn_collapse.has_hover ? btn_collapse.hover_y : 0px;
+
+    out property <length> hovered_width: 0px;
+    out property <length> hovered_height: 0px;
+
+    width: 48px;
+    background: MaterialPalette.surface_container_low;
+
+    // Left border divider
+    Rectangle {
+        x: 0;
+        y: 0;
+        width: 1px;
+        height: 100%;
+        background: MaterialPalette.outline_variant;
+    }
+
+    VerticalLayout {
+        padding-top: 6px;
+        padding-bottom: 6px;
+        padding-left: 4px;
+        padding-right: 4px;
+        spacing: 6px;
+
+        // Panel 0: 2D Plot Inspector
+        btn_plot := RightRailButton {
+            icon: Icons.auto_graph;
+            active: root.active_panel == 0;
+            tooltip: "Plot Inspector (Curves, Style, Axes & Peaks)\n\n📊 Manage curves, customize axes and styling, and inspect tagged peaks.";
+            clicked => {
+                root.select_panel(root.active_panel == 0 ? -1 : 0);
+            }
+        }
+
+        // Panel 1: 3D Structure Inspector
+        btn_structure := RightRailButton {
+            icon: Icons.science;
+            active: root.active_panel == 1;
+            tooltip: "Structure 3D Inspector (Phase Search & Scene)\n\n🔬 Calibrate order parameter thresholds, 2D phase heatmaps, and camera/render settings.";
+            clicked => {
+                root.select_panel(root.active_panel == 1 ? -1 : 1);
+            }
+        }
+
+        // Spacer to push collapse button to bottom
+        Rectangle {
+            vertical-stretch: 1;
+        }
+
+        // Collapse / Expand Toggle
+        btn_collapse := RightRailButton {
+            icon: root.active_panel >= 0 ? Icons.chevron_forward : Icons.chevron_backward;
+            tooltip: root.active_panel >= 0 ? "Collapse Inspector Panel\n\n▶️ Hide panel to expand workspace." : "Expand Inspector Panel\n\n◀️ Restore inspector panel.";
+            clicked => {
+                root.toggle_collapse();
+            }
+        }
+    }
+}
+

@@ -17,7 +17,6 @@ import { PlotReticleOverlay } from "./components/PlotReticleOverlay.slint";
 import { CutoffCalibrationOverlay } from "./components/CutoffCalibrationOverlay.slint";
 import { CutoffCalibrationBar } from "./components/CutoffCalibrationBar.slint";
 import { ImagingToolbar } from "./components/ImagingToolbar.slint";
-import { CurveSidebar } from "./components/CurveSidebar.slint";
 import { PlotDataTable } from "./components/PlotDataTable.slint";
 import { Structure3DViewport } from "./components/Structure3DViewport.slint";
 import { CrystalMarker } from "./components/PhaseHeatmapView.slint";
@@ -38,7 +37,8 @@ export component PreviewCard inherits FilledCard {
     in property <[CurveToggleItem]> curve_toggle_items: [];
     in-out property <int> selected_plot_index: -1;
     in property <int> pinned_runs_count: 0;
-    in-out property <length> sidebar_width: 180px;
+    in-out property <int> inspector_scope: 0;
+    callback toggle_plot_settings();
 
     in property <string> hover_coord_text: "";
     in property <bool> has_active_zoom: false;
@@ -214,21 +214,18 @@ export component PreviewCard inherits FilledCard {
     out property <string> hovered_tooltip_text:
         (root.active_tool == 5 && calibration_bar.hovered_tooltip_text != "") ? calibration_bar.hovered_tooltip_text :
         imaging_toolbar.tooltip_text != "" ? imaging_toolbar.tooltip_text :
-        curve_sidebar.tooltip_text != "" ? curve_sidebar.tooltip_text :
         preview_header.tooltip_text != "" ? preview_header.tooltip_text :
         (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? "Remove all pinned runs from the comparison overlay." : "";
 
     out property <length> hovered_x:
         (root.active_tool == 5 && calibration_bar.hovered_tooltip_text != "") ? calibration_bar.hovered_x :
         imaging_toolbar.tooltip_text != "" ? imaging_toolbar.tooltip_x :
-        curve_sidebar.tooltip_text != "" ? curve_sidebar.tooltip_x :
         preview_header.tooltip_text != "" ? preview_header.tooltip_x :
         (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? clear_pinned_area.absolute-position.x + clear_pinned_area.mouse-x : 0px;
 
     out property <length> hovered_y:
         (root.active_tool == 5 && calibration_bar.hovered_tooltip_text != "") ? calibration_bar.hovered_y :
         imaging_toolbar.tooltip_text != "" ? imaging_toolbar.tooltip_y :
-        curve_sidebar.tooltip_text != "" ? curve_sidebar.tooltip_y :
         preview_header.tooltip_text != "" ? preview_header.tooltip_y :
         (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? clear_pinned_area.absolute-position.y + clear_pinned_area.mouse-y : 0px;
 
@@ -258,6 +255,7 @@ export component PreviewCard inherits FilledCard {
             plot_items: root.plot_items;
             selected_plot_index <=> root.selected_plot_index;
             active_tab <=> root.active_tab;
+            dual_scope <=> root.inspector_scope;
             plot_selected(idx) => { root.plot_selected(idx); }
         }
 
@@ -285,7 +283,7 @@ export component PreviewCard inherits FilledCard {
             }
         }
 
-        // 4. Body: Tab Host Container (occupies 100% of remaining vertical card height)
+        // 4. Body: Tab Viewports (occupies 100% of remaining vertical card height)
         tab_host := Rectangle {
             width: 100%;
             vertical-stretch: 1;
@@ -297,19 +295,17 @@ export component PreviewCard inherits FilledCard {
                 : parent.width * 0.5;
 
             // Tab 0 (2D Plot) & Tab 2 (Dual View Left Pane)
-            tab_plot := HorizontalLayout {
+            tab_plot := Rectangle {
                 x: 0px;
                 y: 0px;
                 width: root.active_tab == 2 ? parent.dual_plot_width : parent.width;
                 height: 100%;
                 visible: root.active_tab == 0 || root.active_tab == 2;
-                spacing: MaterialStyleMetrics.spacing_8;
 
                 // SVG Plot Area
                 plot_container := Rectangle {
-                    horizontal-stretch: 1;
-                    vertical-stretch: 1;
-                    min-height: 120px;
+                    width: 100%;
+                    height: 100%;
                     background: MaterialPalette.surface;
                     border-radius: MaterialStyleMetrics.border_radius_2;
                     clip: self.width > 1px && self.height > 1px;
@@ -367,6 +363,9 @@ export component PreviewCard inherits FilledCard {
 
                         pointer-event(event) => {
                             if (event.kind == PointerEventKind.down) {
+                                if (root.active_tab == 2) {
+                                    root.inspector_scope = 0;
+                                }
                                 if (event.button == PointerEventButton.right || event.button == PointerEventButton.middle) {
                                     if (root.active_tool != 0) {
                                         root.active_tool = 0;
@@ -521,39 +520,15 @@ export component PreviewCard inherits FilledCard {
                         reset_zoom => { root.reset_zoom(); }
                         clear_markers => { root.clear_markers(); }
                         toggle_settings => {
-                            root.plot_sidebar_collapsed = !root.plot_sidebar_collapsed;
-                            if (!root.plot_sidebar_collapsed) {
-                                curve_sidebar.active_tab = 1;
+                            if (root.active_tab == 2) {
+                                root.inspector_scope = 0;
                             }
+                            root.toggle_plot_settings();
                         }
                         update_plot => { root.apply_axis_settings(); }
                         copy_clipboard => { root.copy_plot_clipboard(); }
                         export_plot => { root.export_plot(); }
                     }
-                }
-
-                // Unified Plot Control Sidebar
-                curve_sidebar := CurveSidebar {
-                    curve_toggle_items: root.curve_toggle_items;
-                    sidebar_width <=> root.sidebar_width;
-                    sidebar_collapsed <=> root.plot_sidebar_collapsed;
-                    axis_settings <=> root.axis_settings;
-                    export_config <=> root.export_config;
-                    active_color_picker_id <=> root.active_color_picker_id;
-                    tagged_peaks: root.tagged_peaks;
-                    toggle_curve_visibility(id, v) => { root.toggle_curve_visibility(id, v); }
-                    toggle_all_curves(v) => { root.toggle_all_curves(v); }
-                    filter_curves(f) => { root.filter_curves(f); }
-                    invert_curves => { root.invert_curves(); }
-                    set_curve_color(id, c) => { root.set_curve_color(id, c); }
-                    set_curve_width(w) => { root.set_curve_width(w); }
-                    apply_axis_settings => { root.apply_axis_settings(); }
-                    reset_axis_settings => { root.reset_axis_settings(); }
-                    reset_export_settings => { root.reset_export_settings(); }
-                    toggle_collapse => { root.plot_sidebar_collapsed = true; }
-                    remove_tagged_peak(id) => { root.remove_tagged_peak(id); }
-                    clear_tagged_peaks => { root.clear_tagged_peaks(); }
-                    export_tagged_peaks => { root.export_tagged_peaks(); }
                 }
             }
 
@@ -597,6 +572,11 @@ export component PreviewCard inherits FilledCard {
                 total_atoms: root.total_atoms;
                 num_frames: root.num_frames;
                 recent_files: root.recent_files;
+                clicked => {
+                    if (root.active_tab == 2) {
+                        root.inspector_scope = 1;
+                    }
+                }
                 run_analysis => { root.run_analysis(); }
                 cancel_analysis => { root.cancel_analysis(); }
                 open_panel(idx) => { root.open_panel(idx); }
@@ -653,20 +633,7 @@ export component PreviewCard inherits FilledCard {
                 set_dist_metric(m) => { root.set_structure_3d_dist_metric(m); }
                 toggle_dist_hud(v) => { root.toggle_structure_3d_dist_hud(v); }
 
-                toggle_phase_search(en) => { root.toggle_phase_search_3d(en); }
-                set_phase_preset(idx) => { root.set_phase_preset_3d(idx); }
-                set_phase_descriptor(idx) => { root.set_phase_descriptor_3d(idx); }
-                set_phase_colormap(idx) => { root.set_phase_colormap_3d(idx); }
-                set_phase_thresholds(min, max) => { root.set_phase_thresholds_3d(min, max); }
-                set_phase_intensity(val) => { root.set_phase_intensity_3d(val); }
-                set_phase_radius_ratio(val) => { root.set_phase_radius_ratio_3d(val); }
                 set_atom_scale(val) => { root.set_atom_scale_3d(val); }
-                set_phase_dim_non_matching(dim) => { root.set_phase_dim_non_matching_3d(dim); }
-                set_phase_hide_non_matching(hide) => { root.set_phase_hide_non_matching_3d(hide); }
-                set_phase_2d_mode(is_2d) => { root.set_phase_2d_mode_3d(is_2d); }
-                set_phase_descriptor_y(idx) => { root.set_phase_descriptor_y_3d(idx); }
-                set_phase_thresholds_2d(min_x, max_x, min_y, max_y) => { root.set_phase_thresholds_2d_3d(min_x, max_x, min_y, max_y); }
-                export_phase_heatmap_png() => { root.export_phase_heatmap_png_3d(); }
             }
 
             // Tab 3: Dataset Values Table View (Data Explorer)
@@ -680,5 +647,6 @@ export component PreviewCard inherits FilledCard {
                 table_rows: root.table_rows;
             }
         }
+
     }
 }

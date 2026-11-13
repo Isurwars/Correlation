@@ -45,6 +45,8 @@ import {
 
 import { MiniSideBar } from "nav/MiniSideBar.slint";
 import { SidePanelHost } from "nav/SidePanelHost.slint";
+import { RightMiniSideBar } from "nav/RightMiniSideBar.slint";
+import { RightSidePanelHost } from "nav/RightSidePanelHost.slint";
 import { AppFooter } from "nav/AppFooter.slint";
 import { PreviewCard, CrystalMarker } from "cards/preview/PreviewCard.slint";
 
@@ -276,6 +278,11 @@ export component AppWindow inherits Window {
     in-out property <int> active_panel: 0;
     in-out property <int> last_active_panel: 0;
 
+    in-out property <length> right_col_width: 320px;
+    in-out property <length> last_right_col_width: 320px;
+    in-out property <int> active_right_panel: 0; // 0: Plot Inspector, 1: Structure 3D Inspector, -1: Collapsed
+    in-out property <int> last_active_right_panel: 0;
+
     // Export Options Properties & Callbacks
     in-out property <ExportFormatOptions> export_format_options: {
         export_csv: true,
@@ -335,6 +342,7 @@ export component AppWindow inherits Window {
     in-out property <bool> plot_settings_open: false;
     in-out property <PlotAxisSettings> axis_settings;
     in-out property <int> selected_curve_id: 0;
+    in-out property <int> active_color_picker_id: -1;
     callback apply_axis_settings();
     callback reset_axis_settings();
     callback set_curve_width(string);
@@ -437,31 +445,41 @@ export component AppWindow inherits Window {
     /// hovered_tooltip_text: Dynamically update based on the currently
     ///   hovered component.
     property <string> active_panel_tooltip: side_panel_host.hovered_tooltip_text;
-
+    property <string> right_panel_tooltip: right_side_panel_host.hovered_tooltip_text;
     property <string> preview_hovered_tooltip: preview_card.hovered_tooltip_text;
 
     property <string> hovered_tooltip_text: 
         mini_sidebar.hovered_tooltip_text != "" ? mini_sidebar.hovered_tooltip_text :
-        active_panel_tooltip != "" ? active_panel_tooltip : preview_hovered_tooltip;
+        right_mini_sidebar.hovered_tooltip_text != "" ? right_mini_sidebar.hovered_tooltip_text :
+        active_panel_tooltip != "" ? active_panel_tooltip :
+        right_panel_tooltip != "" ? right_panel_tooltip : preview_hovered_tooltip;
 
     property <length> hovered_x:
         mini_sidebar.hovered_tooltip_text != "" ? mini_sidebar.hovered_x :
+        right_mini_sidebar.hovered_tooltip_text != "" ? right_mini_sidebar.hovered_x :
         side_panel_host.hovered_tooltip_text != "" ? side_panel_host.hovered_x :
+        right_side_panel_host.hovered_tooltip_text != "" ? right_side_panel_host.hovered_x :
         preview_hovered_tooltip != "" ? preview_card.hovered_x : 0px;
 
     property <length> hovered_y:
         mini_sidebar.hovered_tooltip_text != "" ? mini_sidebar.hovered_y :
+        right_mini_sidebar.hovered_tooltip_text != "" ? right_mini_sidebar.hovered_y :
         side_panel_host.hovered_tooltip_text != "" ? side_panel_host.hovered_y :
+        right_side_panel_host.hovered_tooltip_text != "" ? right_side_panel_host.hovered_y :
         preview_hovered_tooltip != "" ? preview_card.hovered_y : 0px;
 
     property <length> hovered_width:
         mini_sidebar.hovered_tooltip_text != "" ? mini_sidebar.hovered_width :
+        right_mini_sidebar.hovered_tooltip_text != "" ? right_mini_sidebar.hovered_width :
         side_panel_host.hovered_tooltip_text != "" ? side_panel_host.hovered_width :
+        right_side_panel_host.hovered_tooltip_text != "" ? right_side_panel_host.hovered_width :
         preview_hovered_tooltip != "" ? preview_card.hovered_width : 0px;
 
     property <length> hovered_height:
         mini_sidebar.hovered_tooltip_text != "" ? mini_sidebar.hovered_height :
+        right_mini_sidebar.hovered_tooltip_text != "" ? right_mini_sidebar.hovered_height :
         side_panel_host.hovered_tooltip_text != "" ? side_panel_host.hovered_height :
+        right_side_panel_host.hovered_tooltip_text != "" ? right_side_panel_host.hovered_height :
         preview_hovered_tooltip != "" ? preview_card.hovered_height : 0px;
 
     title: root.file_loaded ? ("Correlation " + root.app_version + " - " + root.file_status_text) : ("Correlation " + root.app_version);
@@ -578,11 +596,13 @@ export component AppWindow inherits Window {
             if (event.text == "1" || ((event.modifiers.alt || event.modifiers.control) && event.text == "1")) {
                 root.preview_active_tab = 0;
                 root.preview_tab_changed(0);
+                if (root.active_right_panel >= 0) { root.active_right_panel = 0; }
                 return accept;
             }
             if (event.text == "2" || ((event.modifiers.alt || event.modifiers.control) && event.text == "2")) {
                 root.preview_active_tab = 1;
                 root.preview_tab_changed(1);
+                if (root.active_right_panel >= 0) { root.active_right_panel = 1; }
                 return accept;
             }
             if (event.text == "3" || ((event.modifiers.alt || event.modifiers.control) && event.text == "3")) {
@@ -896,21 +916,8 @@ export component AppWindow inherits Window {
                         root.clear_markers();
                     }
 
-                    tagged_peaks: root.tagged_peaks;
                     tag_peak_at(x, y) => { root.tag_peak_at(x, y); }
                     tag_peak_range(x1, x2) => { root.tag_peak_range(x1, x2); }
-                    remove_tagged_peak(id) => { root.remove_tagged_peak(id); }
-                    clear_tagged_peaks => { root.clear_tagged_peaks(); }
-                    export_tagged_peaks => { root.export_tagged_peaks(); }
-
-                    plot_settings_open <=> root.plot_settings_open;
-                    axis_settings <=> root.axis_settings;
-                    export_config <=> root.export_config;
-                    selected_curve_id <=> root.selected_curve_id;
-                    apply_axis_settings => { root.apply_axis_settings(); }
-                    reset_axis_settings => { root.reset_axis_settings(); }
-                    reset_export_settings => { root.reset_export_settings(); }
-                    set_curve_width(w) => { root.set_curve_width(w); }
 
                     calibration_pairs: root.calibration_pairs;
                     active_calibration_pair_index <=> root.active_calibration_pair_index;
@@ -941,9 +948,25 @@ export component AppWindow inherits Window {
                     seek_frame_3d(idx) => { root.seek_frame_3d(idx); }
                     step_frame_3d(fwd) => { root.step_frame_3d(fwd); }
                     viewport_3d_resized(w, h) => { root.viewport_3d_resized(w, h); }
-                    tab_changed(tab) => { root.preview_tab_changed(tab); }
+                    tab_changed(tab) => {
+                        root.preview_tab_changed(tab);
+                        if (root.active_right_panel >= 0) {
+                            if (tab == 0) { root.active_right_panel = 0; }
+                            else if (tab == 1) { root.active_right_panel = 1; }
+                        }
+                    }
                     dual_split_ratio <=> root.preview_dual_split_ratio;
-                    structure_3d_phase_panel_open <=> root.structure_3d_phase_panel_open;
+                    inspector_scope: root.active_right_panel == 1 ? 1 : 0;
+                    structure_3d_phase_panel_open: root.active_right_panel == 1;
+                    toggle_plot_settings => {
+                        if (root.active_right_panel == 0) {
+                            root.active_right_panel = -1;
+                        } else {
+                            root.active_right_panel = 0;
+                            root.right_col_width = Math.max(200px, root.last_right_col_width);
+                        }
+                    }
+
                     structure_3d_phase_enabled: root.structure_3d_phase_enabled;
                     structure_3d_phase_preset: root.structure_3d_phase_preset;
                     structure_3d_phase_descriptor: root.structure_3d_phase_descriptor;
@@ -980,21 +1003,160 @@ export component AppWindow inherits Window {
                     structure_3d_dist_peak_text: root.structure_3d_dist_peak_text;
                     set_structure_3d_dist_metric(m) => { root.set_structure_3d_dist_metric(m); }
                     toggle_structure_3d_dist_hud(v) => { root.toggle_structure_3d_dist_hud(v); }
+                }
 
-                    toggle_phase_search_3d(en) => { root.toggle_phase_search_3d(en); }
-                    set_phase_preset_3d(idx) => { root.set_phase_preset_3d(idx); }
-                    set_phase_descriptor_3d(idx) => { root.set_phase_descriptor_3d(idx); }
-                    set_phase_colormap_3d(idx) => { root.set_phase_colormap_3d(idx); }
-                    set_phase_thresholds_3d(min, max) => { root.set_phase_thresholds_3d(min, max); }
-                    set_phase_intensity_3d(val) => { root.set_phase_intensity_3d(val); }
-                    set_phase_radius_ratio_3d(val) => { root.set_phase_radius_ratio_3d(val); }
-                    set_atom_scale_3d(val) => { root.set_atom_scale_3d(val); }
-                    set_phase_dim_non_matching_3d(dim) => { root.set_phase_dim_non_matching_3d(dim); }
-                    set_phase_hide_non_matching_3d(hide) => { root.set_phase_hide_non_matching_3d(hide); }
-                    set_phase_2d_mode_3d(is_2d) => { root.set_phase_2d_mode_3d(is_2d); }
-                    set_phase_descriptor_y_3d(idx) => { root.set_phase_descriptor_y_3d(idx); }
-                    set_phase_thresholds_2d_3d(min_x, max_x, min_y, max_y) => { root.set_phase_thresholds_2d_3d(min_x, max_x, min_y, max_y); }
-                    export_phase_heatmap_png_3d() => { root.export_phase_heatmap_png_3d(); }
+                // 3. Splitter Handle between Preview Workspace and Right Inspector
+                right_splitter_handle := SplitterHandle {
+                    visible: (root.active_right_panel >= 0 || self.is_dragging) && root.width >= 700px;
+                    moved(delta) => {
+                        let current_w = root.active_right_panel == -1 ? 0px : root.right_col_width;
+                        let target_w = current_w - delta;
+                        if (target_w < 120px) {
+                            if (root.active_right_panel >= 0) {
+                                root.last_active_right_panel = root.active_right_panel;
+                            }
+                            root.active_right_panel = -1;
+                        } else if (target_w < 200px) {
+                            if (root.active_right_panel == -1) {
+                                root.active_right_panel = root.last_active_right_panel >= 0 ? root.last_active_right_panel : 0;
+                            }
+                            root.right_col_width = 200px;
+                            root.last_right_col_width = 200px;
+                        } else {
+                            if (root.active_right_panel == -1) {
+                                root.active_right_panel = root.last_active_right_panel >= 0 ? root.last_active_right_panel : 0;
+                            }
+                            root.right_col_width = Math.min(520px, target_w);
+                            root.last_right_col_width = root.right_col_width;
+                        }
+                    }
+                    reset => {
+                        root.right_col_width = 320px;
+                        root.last_right_col_width = 320px;
+                    }
+                }
+
+                // 4. Single Active Right Panel Column (Column 3)
+                right_side_panel_host := RightSidePanelHost {
+                    width: root.active_right_panel == -1 ? 0px : root.right_col_width;
+                    visible: root.active_right_panel >= 0;
+                    horizontal-stretch: 0;
+
+                    active_panel <=> root.active_right_panel;
+                    last_active_panel <=> root.last_active_right_panel;
+                    select_panel(id) => {
+                        if (id >= 0) {
+                            root.last_active_right_panel = id;
+                            root.active_right_panel = id;
+                            root.right_col_width = Math.max(200px, root.last_right_col_width);
+                        } else {
+                            if (root.active_right_panel >= 0) {
+                                root.last_active_right_panel = root.active_right_panel;
+                            }
+                            root.active_right_panel = -1;
+                        }
+                    }
+
+                    // 2D Plot Inspector properties & callbacks
+                    curve_toggle_items: root.curve_toggle_items;
+                    axis_settings <=> root.axis_settings;
+                    export_config <=> root.export_config;
+                    active_color_picker_id <=> root.active_color_picker_id;
+                    tagged_peaks: root.tagged_peaks;
+
+                    filter_curves(f) => { root.filter_curves(f); }
+                    invert_curves => { root.invert_curves(); }
+                    toggle_curve_visibility(id, vis) => { root.toggle_curve_visibility(id, vis); }
+                    toggle_all_curves(vis) => { root.toggle_all_curves(vis); }
+                    set_curve_color(id, col) => { root.set_curve_color(id, col); }
+                    set_curve_width(w) => { root.set_curve_width(w); }
+                    apply_axis_settings => { root.apply_axis_settings(); }
+                    reset_axis_settings => { root.reset_axis_settings(); }
+                    reset_export_settings => { root.reset_export_settings(); }
+                    remove_tagged_peak(id) => { root.remove_tagged_peak(id); }
+                    clear_tagged_peaks => { root.clear_tagged_peaks(); }
+                    export_tagged_peaks => { root.export_tagged_peaks(); }
+
+                    // Structure 3D Inspector properties & callbacks
+                    phase_enabled: root.structure_3d_phase_enabled;
+                    preset_index: root.structure_3d_phase_preset;
+                    descriptor_index: root.structure_3d_phase_descriptor;
+                    colormap_index: root.structure_3d_phase_colormap;
+                    min_threshold: root.structure_3d_phase_min_threshold;
+                    max_threshold: root.structure_3d_phase_max_threshold;
+                    domain_min: root.structure_3d_phase_domain_min;
+                    domain_max: root.structure_3d_phase_domain_max;
+                    halo_intensity: root.structure_3d_phase_halo_intensity;
+                    halo_radius_ratio: root.structure_3d_phase_halo_radius_ratio;
+                    atom_scale: root.structure_3d_atom_scale;
+                    dim_non_matching: root.structure_3d_phase_dim_non_matching;
+                    hide_non_matching: root.structure_3d_phase_hide_non_matching;
+                    histogram_counts: root.structure_3d_phase_histogram_counts;
+                    matching_atoms: root.structure_3d_phase_matching_atoms;
+                    total_atoms: root.structure_3d_phase_total_atoms;
+                    colorbar_image: root.structure_3d_phase_colorbar_image;
+                    descriptor_name: root.structure_3d_phase_descriptor_name;
+
+                    is_2d_mode: root.structure_3d_phase_is_2d_mode;
+                    descriptor_y_index: root.structure_3d_phase_descriptor_y;
+                    min_threshold_y: root.structure_3d_phase_min_threshold_y;
+                    max_threshold_y: root.structure_3d_phase_max_threshold_y;
+                    domain_min_y: root.structure_3d_phase_domain_min_y;
+                    domain_max_y: root.structure_3d_phase_domain_max_y;
+                    descriptor_name_y: root.structure_3d_phase_descriptor_name_y;
+                    heatmap_image: root.structure_3d_phase_heatmap_image;
+                    crystal_markers: root.structure_3d_phase_crystal_markers;
+
+                    bonds_enabled: root.structure_3d_bonds_enabled;
+                    wireframe_enabled: root.structure_3d_wireframe_enabled;
+                    in_cell_enabled: root.structure_3d_in_cell;
+                    dist_hud_visible: root.structure_3d_dist_hud_visible;
+
+                    toggle_phase_enabled(en) => { root.toggle_phase_search_3d(en); }
+                    set_preset(idx) => { root.set_phase_preset_3d(idx); }
+                    set_descriptor(idx) => { root.set_phase_descriptor_3d(idx); }
+                    set_colormap(idx) => { root.set_phase_colormap_3d(idx); }
+                    set_thresholds(min, max) => { root.set_phase_thresholds_3d(min, max); }
+                    set_intensity(val) => { root.set_phase_intensity_3d(val); }
+                    set_radius_ratio(val) => { root.set_phase_radius_ratio_3d(val); }
+                    set_atom_scale(val) => { root.set_atom_scale_3d(val); }
+                    set_dim_non_matching(dim) => { root.set_phase_dim_non_matching_3d(dim); }
+                    set_hide_non_matching(hide) => { root.set_phase_hide_non_matching_3d(hide); }
+                    set_2d_mode(is_2d) => { root.set_phase_2d_mode_3d(is_2d); }
+                    set_descriptor_y(idx) => { root.set_phase_descriptor_y_3d(idx); }
+                    set_thresholds_2d(min_x, max_x, min_y, max_y) => { root.set_phase_thresholds_2d_3d(min_x, max_x, min_y, max_y); }
+                    export_heatmap_png => { root.export_phase_heatmap_png_3d(); }
+                    reset_view => { root.reset_view_3d(); }
+                    toggle_bonds(en) => { root.toggle_bonds_3d(en); }
+                    toggle_wireframe(en) => { root.toggle_wireframe_3d(en); }
+                    toggle_in_cell(en) => { root.toggle_in_cell_3d(en); }
+                    toggle_dist_hud(v) => { root.toggle_structure_3d_dist_hud(v); }
+                }
+
+                // 5. Far-Right Activity Bar (RightMiniSideBar) - Fixed 48px
+                right_mini_sidebar := RightMiniSideBar {
+                    active_panel <=> root.active_right_panel;
+                    select_panel(id) => {
+                        if (id >= 0) {
+                            root.last_active_right_panel = id;
+                            root.active_right_panel = id;
+                            root.right_col_width = Math.max(200px, root.last_right_col_width);
+                        } else {
+                            if (root.active_right_panel >= 0) {
+                                root.last_active_right_panel = root.active_right_panel;
+                            }
+                            root.active_right_panel = -1;
+                        }
+                    }
+                    toggle_collapse => {
+                        if (root.active_right_panel >= 0) {
+                            root.last_active_right_panel = root.active_right_panel;
+                            root.active_right_panel = -1;
+                        } else {
+                            root.active_right_panel = root.last_active_right_panel >= 0 ? root.last_active_right_panel : 0;
+                            root.right_col_width = Math.max(200px, root.last_right_col_width);
+                        }
+                    }
                 }
             }
 
