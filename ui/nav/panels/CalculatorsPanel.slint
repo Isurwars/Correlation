@@ -148,9 +148,6 @@ export component CalculatorsPanel inherits Rectangle {
                     r_bin_error: root.app_errors.r_bin_error;
                     reset => { root.reset_rdf_options(); }
                     visible: root.has_radial_active;
-                    height: root.has_radial_active ? self.preferred-height : 0px;
-                    opacity: root.has_radial_active ? 1.0 : 0.0;
-                    animate opacity { duration: 150ms; }
                 }
 
                 // 4. Bond Angle & Dihedral Distribution Card (Expanded on top by default)
@@ -163,9 +160,6 @@ export component CalculatorsPanel inherits Rectangle {
                     dihedral_bin_error: root.app_errors.dihedral_bin_error;
                     reset => { root.reset_angle_options(); }
                     visible: root.has_angular_active;
-                    height: root.has_angular_active ? self.preferred-height : 0px;
-                    opacity: root.has_angular_active ? 1.0 : 0.0;
-                    animate opacity { duration: 150ms; }
                 }
 
                 // 5. Trajectory Options Card (Expanded on top by default)

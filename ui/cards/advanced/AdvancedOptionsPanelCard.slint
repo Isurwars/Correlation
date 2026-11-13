@@ -130,9 +130,6 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
                     r_int_max_error: root.r_int_max_error;
                     reset => { root.reset_sq_options(); }
                     visible: root.has_scattering_active;
-                    height: root.has_scattering_active ? self.preferred-height : 0px;
-                    opacity: root.has_scattering_active ? 1.0 : 0.0;
-                    animate opacity { duration: 150ms; }
                 }
 
                 // Powder Diffraction (XRD) Card
@@ -150,9 +147,6 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
                     reset => { root.reset_xrd_options(); }
                     radiation_preset_changed(idx) => { root.xrd_radiation_preset_changed(idx); }
                     visible: root.has_scattering_active;
-                    height: root.has_scattering_active ? self.preferred-height : 0px;
-                    opacity: root.has_scattering_active ? 1.0 : 0.0;
-                    animate opacity { duration: 150ms; }
                 }
 
                 // Rings Card
@@ -162,9 +156,6 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
                     max_ring_error: root.max_ring_error;
                     reset => { root.reset_rings_options(); }
                     visible: root.has_rings_active;
-                    height: root.has_rings_active ? self.preferred-height : 0px;
-                    opacity: root.has_rings_active ? 1.0 : 0.0;
-                    animate opacity { duration: 150ms; }
                 }
 
                 // Calculated Dynamic Properties

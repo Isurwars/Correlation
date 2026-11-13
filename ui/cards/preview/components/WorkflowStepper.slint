@@ -29,7 +29,6 @@ export component WorkflowStepper inherits Rectangle {
             border-radius: 14px;
             background: !root.file_loaded ? MaterialPalette.primary_container :
                         step1_touch.has-hover ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_high;
-            animate background { duration: 150ms; }
 
             HorizontalLayout {
                 padding-left: 12px;
@@ -66,7 +65,6 @@ export component WorkflowStepper inherits Rectangle {
             border-radius: 14px;
             background: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? MaterialPalette.primary_container :
                         step2_touch.has-hover ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_high;
-            animate background { duration: 150ms; }
 
             HorizontalLayout {
                 padding-left: 12px;
@@ -99,7 +97,6 @@ export component WorkflowStepper inherits Rectangle {
             border-radius: 14px;
             background: root.analysis_running ? MaterialPalette.primary_container :
                         (root.file_loaded && step3_touch.has-hover) ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_high;
-            animate background { duration: 150ms; }
 
             HorizontalLayout {
                 padding-left: 12px;
@@ -138,7 +135,6 @@ export component WorkflowStepper inherits Rectangle {
             border-radius: 14px;
             background: root.analysis_done ? MaterialPalette.primary_container :
                         (root.analysis_done && step4_touch.has-hover) ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_high;
-            animate background { duration: 150ms; }
 
             HorizontalLayout {
                 padding-left: 12px;
