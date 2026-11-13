@@ -3,14 +3,23 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-import { AnalysisOptions, AppErrors } from "../../Types.slint";
+import { AnalysisOptions, AppErrors, WorkflowState } from "../../Types.slint";
 import { AdvancedOptionsPanelCard } from "../../cards/advanced/AdvancedOptionsPanelCard.slint";
 
-/// Modular Host Component for Panel 2: Advanced Options (S(Q), XRD, Rings, Smoothing, LEF)
+/// Modular Host Component for Stage 2: Advanced Options (S(Q), XRD, Rings, Dynamic Properties, Smoothing, LEF)
 export component AdvancedOptionsPanel inherits Rectangle {
     in property <bool> file_loaded: false;
     in property <bool> has_scattering_active: true;
     in property <bool> has_rings_active: true;
+    in property <WorkflowState> workflow_state;
+    callback run_analysis();
+    callback cancel_analysis();
+
+    // Dynamic properties
+    in property <string> diff_msd: "";
+    in property <string> diff_vacf: "";
+    in property <string> relaxation_time: "";
+    in property <string> deborah_number: "";
 
     in-out property <AnalysisOptions> analysis_options;
     in property <AppErrors> app_errors;
@@ -34,6 +43,14 @@ export component AdvancedOptionsPanel inherits Rectangle {
         file_loaded: root.file_loaded;
         has_scattering_active: root.has_scattering_active;
         has_rings_active: root.has_rings_active;
+        workflow_state: root.workflow_state;
+        run_analysis => { root.run_analysis(); }
+        cancel_analysis => { root.cancel_analysis(); }
+
+        diff_msd: root.diff_msd;
+        diff_vacf: root.diff_vacf;
+        relaxation_time: root.relaxation_time;
+        deborah_number: root.deborah_number;
 
         q_max <=> root.analysis_options.q_max;
         q_bin_width <=> root.analysis_options.q_bin_width;

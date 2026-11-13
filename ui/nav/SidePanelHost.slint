@@ -30,11 +30,9 @@ import {
 } from "../Types.slint";
 
 import { OperationsPanel } from "panels/OperationsPanel.slint";
-import { StructurePanel } from "panels/StructurePanel.slint";
+import { CalculatorsPanel } from "panels/CalculatorsPanel.slint";
 import { AdvancedOptionsPanel } from "panels/AdvancedOptionsPanel.slint";
-import { PlotSettingsPanel } from "panels/PlotSettingsPanel.slint";
-import { AnalysesPanel } from "panels/AnalysesPanel.slint";
-import { SaveExportPanel } from "panels/SaveExportPanel.slint";
+import { ExportPresentationPanel } from "panels/ExportPresentationPanel.slint";
 
 /// Container hosting the primary left-hand side activity panels (Column 1)
 export component SidePanelHost inherits Vertical {
@@ -92,43 +90,33 @@ export component SidePanelHost inherits Vertical {
     // Tooltip reflection properties
     out property <string> hovered_tooltip_text:
         root.active_panel == 0 ? panel_operations.hovered_tooltip_text :
-        root.active_panel == 1 ? panel_structure.hovered_tooltip_text :
+        root.active_panel == 1 ? panel_calculators.hovered_tooltip_text :
         root.active_panel == 2 ? panel_advanced.hovered_tooltip_text :
-        root.active_panel == 3 ? panel_plot.hovered_tooltip_text :
-        root.active_panel == 4 ? panel_analyses.hovered_tooltip_text :
-        root.active_panel == 5 ? panel_export.hovered_tooltip_text : "";
+        root.active_panel == 3 ? panel_export.hovered_tooltip_text : "";
 
     out property <length> hovered_x:
         root.active_panel == 0 ? panel_operations.hovered_x :
-        root.active_panel == 1 ? panel_structure.hovered_x :
+        root.active_panel == 1 ? panel_calculators.hovered_x :
         root.active_panel == 2 ? panel_advanced.hovered_x :
-        root.active_panel == 3 ? panel_plot.hovered_x :
-        root.active_panel == 4 ? panel_analyses.hovered_x :
-        root.active_panel == 5 ? panel_export.hovered_x : 0px;
+        root.active_panel == 3 ? panel_export.hovered_x : 0px;
 
     out property <length> hovered_y:
         root.active_panel == 0 ? panel_operations.hovered_y :
-        root.active_panel == 1 ? panel_structure.hovered_y :
+        root.active_panel == 1 ? panel_calculators.hovered_y :
         root.active_panel == 2 ? panel_advanced.hovered_y :
-        root.active_panel == 3 ? panel_plot.hovered_y :
-        root.active_panel == 4 ? panel_analyses.hovered_y :
-        root.active_panel == 5 ? panel_export.hovered_y : 0px;
+        root.active_panel == 3 ? panel_export.hovered_y : 0px;
 
     out property <length> hovered_width:
         root.active_panel == 0 ? panel_operations.hovered_width :
-        root.active_panel == 1 ? panel_structure.hovered_width :
+        root.active_panel == 1 ? panel_calculators.hovered_width :
         root.active_panel == 2 ? panel_advanced.hovered_width :
-        root.active_panel == 3 ? panel_plot.hovered_width :
-        root.active_panel == 4 ? panel_analyses.hovered_width :
-        root.active_panel == 5 ? panel_export.hovered_width : 0px;
+        root.active_panel == 3 ? panel_export.hovered_width : 0px;
 
     out property <length> hovered_height:
         root.active_panel == 0 ? panel_operations.hovered_height :
-        root.active_panel == 1 ? panel_structure.hovered_height :
+        root.active_panel == 1 ? panel_calculators.hovered_height :
         root.active_panel == 2 ? panel_advanced.hovered_height :
-        root.active_panel == 3 ? panel_plot.hovered_height :
-        root.active_panel == 4 ? panel_analyses.hovered_height :
-        root.active_panel == 5 ? panel_export.hovered_height : 0px;
+        root.active_panel == 3 ? panel_export.hovered_height : 0px;
 
     // Callbacks - Operations
     callback browse_file();
@@ -192,11 +180,9 @@ export component SidePanelHost inherits Vertical {
         alignment: center;
 
         MaterialText {
-            text: root.active_panel == 0 ? "Operations" :
-                root.active_panel == 1 ? "Common Options" :
-                root.active_panel == 2 ? "Advanced Options" :
-                root.active_panel == 3 ? "Plot Settings" :
-                root.active_panel == 4 ? "Analyses" : "Save & Export";
+            text: root.active_panel == 0 ? "Input & Structure" :
+                root.active_panel == 1 ? "Calculators & Parameters" :
+                root.active_panel == 2 ? "Advanced Options" : "Export & Presentation";
             style: MaterialTypography.title_small;
             color: MaterialPalette.on_surface;
             vertical-alignment: center;
@@ -220,7 +206,7 @@ export component SidePanelHost inherits Vertical {
     Rectangle {
         vertical-stretch: 1;
 
-        // Panel 0: Operations
+        // Stage 0: Input & Structure
         panel_operations := OperationsPanel {
             width: 100%;
             height: 100%;
@@ -242,19 +228,27 @@ export component SidePanelHost inherits Vertical {
             cancel_analysis => { root.cancel_analysis(); }
         }
 
-        // Panel 1: Common Options (Structure)
-        panel_structure := StructurePanel {
+        // Stage 1: Calculators & Parameters
+        panel_calculators := CalculatorsPanel {
             width: 100%;
             height: 100%;
             visible: root.active_panel == 1;
             file_loaded: root.file_metadata.loaded;
+            num_frames: root.file_metadata.num_frames;
+            workflow_state: root.workflow_state;
+
+            calculator_groups <=> root.calculator_groups;
+            total_calculator_count: root.total_calculator_count;
+            enabled_calculator_count: root.enabled_calculator_count;
+            toggle_calculator(id, enabled) => { root.toggle_calculator(id, enabled); }
+            toggle_calculator_group(grp, enabled) => { root.toggle_calculator_group(grp, enabled); }
+            toggle_all_calculators(enabled) => { root.toggle_all_calculators(enabled); }
+            set_calculator_group_expanded(grp, exp) => { root.set_calculator_group_expanded(grp, exp); }
+            set_all_calculator_groups_expanded(exp) => { root.set_all_calculator_groups_expanded(exp); }
+            reset_analyses_selection => { root.reset_analyses_selection(); }
+
             has_radial_active: root.has_radial_active;
             has_angular_active: root.has_angular_active;
-
-            diff_msd: root.diff_msd;
-            diff_vacf: root.diff_vacf;
-            relaxation_time: root.relaxation_time;
-            deborah_number: root.deborah_number;
 
             atom_counts: root.file_metadata.atom_counts;
             bond_cutoffs <=> root.bond_cutoffs;
@@ -270,16 +264,15 @@ export component SidePanelHost inherits Vertical {
 
             analysis_options <=> root.analysis_options;
             app_errors: root.app_errors;
-            num_frames: root.file_metadata.num_frames;
             reset_rdf_options => { root.reset_rdf_options(); }
             reset_angle_options => { root.reset_angle_options(); }
             reset_trajectory_options => { root.reset_trajectory_options(); }
-            workflow_state: root.workflow_state;
+
             run_analysis => { root.run_analysis(); }
             cancel_analysis => { root.cancel_analysis(); }
         }
 
-        // Panel 2: Advanced Options
+        // Stage 2: Advanced Options
         panel_advanced := AdvancedOptionsPanel {
             width: 100%;
             height: 100%;
@@ -287,6 +280,12 @@ export component SidePanelHost inherits Vertical {
             file_loaded: root.file_metadata.loaded;
             has_scattering_active: root.has_scattering_active;
             has_rings_active: root.has_rings_active;
+            workflow_state: root.workflow_state;
+
+            diff_msd: root.diff_msd;
+            diff_vacf: root.diff_vacf;
+            relaxation_time: root.relaxation_time;
+            deborah_number: root.deborah_number;
 
             analysis_options <=> root.analysis_options;
             app_errors: root.app_errors;
@@ -296,14 +295,33 @@ export component SidePanelHost inherits Vertical {
             reset_rings_options => { root.reset_rings_options(); }
             reset_smoothing_options => { root.reset_smoothing_options(); }
             reset_advanced_options => { root.reset_advanced_options(); }
+
+            run_analysis => { root.run_analysis(); }
+            cancel_analysis => { root.cancel_analysis(); }
         }
 
-        // Panel 3: Plot Settings
-        panel_plot := PlotSettingsPanel {
+        // Stage 3: Export & Presentation
+        panel_export := ExportPresentationPanel {
             width: 100%;
             height: 100%;
             visible: root.active_panel == 3;
             enabled: root.file_metadata.loaded;
+            analysis_done: root.workflow_state.analysis_done;
+
+            export_format_options <=> root.export_format_options;
+            export_analysis_items <=> root.export_analysis_items;
+            export_all_analyses <=> root.export_all_analyses;
+            toggle_export_analysis(id, val) => { root.toggle_export_analysis(id, val); }
+            toggle_all_export_analyses(val) => { root.toggle_all_export_analyses(val); }
+            write_files => { root.write_files(); }
+            export_structure => { root.export_structure(); }
+            reset_export_options => { root.reset_export_options(); }
+
+            export_config <=> root.export_config;
+            export_font_scale_error: root.app_errors.export_font_scale_error;
+            export_line_width_error: root.app_errors.export_line_width_error;
+            export_marker_size_error: root.app_errors.export_marker_size_error;
+            reset_export_settings => { root.reset_export_settings(); }
 
             comparison_curves: root.comparison_curves;
             pinned_runs_count: root.pinned_runs_count;
@@ -313,49 +331,6 @@ export component SidePanelHost inherits Vertical {
             remove_comparison_curve(id) => { root.remove_comparison_curve(id); }
             toggle_difference_plot(show) => { root.toggle_difference_plot(show); }
             clear_comparison_curves => { root.clear_comparison_curves(); }
-
-            export_config <=> root.export_config;
-            export_font_scale_error: root.app_errors.export_font_scale_error;
-            export_line_width_error: root.app_errors.export_line_width_error;
-            export_marker_size_error: root.app_errors.export_marker_size_error;
-            reset_export_settings => { root.reset_export_settings(); }
-        }
-
-        // Panel 4: Analyses
-        panel_analyses := AnalysesPanel {
-            width: 100%;
-            height: 100%;
-            visible: root.active_panel == 4;
-            file_loaded: root.file_metadata.loaded;
-
-            calculator_groups <=> root.calculator_groups;
-            total_calculator_count: root.total_calculator_count;
-            enabled_calculator_count: root.enabled_calculator_count;
-            toggle_calculator(id, enabled) => { root.toggle_calculator(id, enabled); }
-            toggle_calculator_group(grp, enabled) => { root.toggle_calculator_group(grp, enabled); }
-            toggle_all_calculators(enabled) => { root.toggle_all_calculators(enabled); }
-            set_calculator_group_expanded(grp, exp) => { root.set_calculator_group_expanded(grp, exp); }
-            set_all_calculator_groups_expanded(exp) => { root.set_all_calculator_groups_expanded(exp); }
-            reset_analyses_selection => { root.reset_analyses_selection(); }
-        }
-
-        // Panel 5: Save & Export
-        panel_export := SaveExportPanel {
-            width: 100%;
-            height: 100%;
-            visible: root.active_panel == 5;
-            enabled: root.file_metadata.loaded;
-            analysis_done: root.workflow_state.analysis_done;
-
-            export_format_options <=> root.export_format_options;
-            export_analysis_items <=> root.export_analysis_items;
-            export_all_analyses <=> root.export_all_analyses;
-
-            toggle_export_analysis(id, val) => { root.toggle_export_analysis(id, val); }
-            toggle_all_export_analyses(val) => { root.toggle_all_export_analyses(val); }
-            write_files => { root.write_files(); }
-            export_structure => { root.export_structure(); }
-            reset_export_options => { root.reset_export_options(); }
 
             preset_items: root.preset_items;
             selected_preset <=> root.selected_preset;

@@ -7,6 +7,7 @@
 #include "analysis/AnalysisTypes.hpp"
 #include "app/core/AppController.hpp"
 #include "app/core/AppOptions.hpp"
+#include "app/core/SettingsManager.hpp"
 #include "app/services/AnalysisDispatcher.hpp"
 #include "app/services/TrajectoryLoader.hpp"
 #include "app/viewmodel/PlotController.hpp"
@@ -630,8 +631,8 @@ TEST_F(AppControllerTests, MiniSideBarPanelNavigationAndCollapse) {
   // Initial state defaults to panel 0 (Operations)
   EXPECT_EQ(window->get_active_panel(), 0);
 
-  // Switch across all 6 panels
-  for (int panel = 0; panel <= 5; ++panel) {
+  // Switch across all 4 stage panels (0: Input, 1: Calculators, 2: Advanced, 3: Export)
+  for (int panel = 0; panel <= 3; ++panel) {
     window->set_active_panel(panel);
     EXPECT_EQ(window->get_active_panel(), panel);
   }
@@ -1129,6 +1130,16 @@ TEST_F(AppControllerTests, CameraPresetsOrientationIntegration) {
 }
 
 TEST_F(AppControllerTests, SampleDatasetAndRecentFilesIntegration) {
+  const auto original_settings = correlation::app::SettingsManager::load();
+  struct SettingsRestoreGuard {
+    correlation::app::AppSettings saved;
+    ~SettingsRestoreGuard() { correlation::app::SettingsManager::save(saved); }
+  } guard{.saved = original_settings};
+
+  auto clean_settings = original_settings;
+  clean_settings.recent_files.clear();
+  correlation::app::SettingsManager::save(clean_settings);
+
   auto window = AppWindow::create();
   correlation::app::AppController controller(*window, loader(), dispatcher(), options());
 

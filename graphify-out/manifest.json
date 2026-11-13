@@ -530,8 +530,8 @@
     "semantic_hash": ""
   },
   "tests/functional/app/AppControllerTests.cpp": {
-    "mtime": 1794413707.1894317,
-    "ast_hash": "5456237dfdc0c623ce213dc22142f74f",
+    "mtime": 1794538750.1828654,
+    "ast_hash": "781967dab031bcff2fb35925c01eba4c",
     "semantic_hash": ""
   },
   "tests/functional/app/SlintSvgIntegrationTests.cpp": {
@@ -915,7 +915,7 @@
     "semantic_hash": ""
   },
   ".github/workflows/release.yml": {
-    "mtime": 1794444858.1271515,
+    "mtime": 1794445296.1159158,
     "ast_hash": "59384b3fbbcfc538f998997c7d4edfb1",
     "semantic_hash": ""
   },
@@ -2055,7 +2055,7 @@
     "semantic_hash": ""
   },
   "src/app/services/AnalysisRunner.cpp": {
-    "mtime": 1793989007.920501,
+    "mtime": 1794538750.0628672,
     "ast_hash": "e4596597562b8c194a77fe0d29bc0547",
     "semantic_hash": ""
   },

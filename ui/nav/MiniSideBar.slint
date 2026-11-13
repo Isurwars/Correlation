@@ -78,37 +78,31 @@ export component MiniSideBar inherits Rectangle {
     callback toggle_collapse();
 
     out property <string> hovered_tooltip_text:
-        btn_operations.has_hover ? btn_operations.tooltip :
-        btn_common.has_hover ? btn_common.tooltip :
+        btn_input.has_hover ? btn_input.tooltip :
+        btn_calculators.has_hover ? btn_calculators.tooltip :
         btn_advanced.has_hover ? btn_advanced.tooltip :
-        btn_plot.has_hover ? btn_plot.tooltip :
-        btn_analyses.has_hover ? btn_analyses.tooltip :
         btn_export.has_hover ? btn_export.tooltip :
         btn_run.has_hover ? btn_run.tooltip :
         btn_theme.has_hover ? btn_theme.tooltip :
         btn_collapse.has_hover ? btn_collapse.tooltip : "";
 
     out property <length> hovered_x:
-        btn_operations.has_hover ? btn_operations.hover_x :
-        btn_common.has_hover ? btn_common.hover_x :
+        btn_input.has_hover ? btn_input.hover_x :
+        btn_calculators.has_hover ? btn_calculators.hover_x :
         btn_advanced.has_hover ? btn_advanced.hover_x :
-        btn_plot.has_hover ? btn_plot.hover_x :
-        btn_analyses.has_hover ? btn_analyses.hover_x :
         btn_export.has_hover ? btn_export.hover_x :
         btn_run.has_hover ? btn_run.hover_x :
         btn_theme.has_hover ? btn_theme.hover_x :
         btn_collapse.has_hover ? btn_collapse.hover_x : 0px;
 
     out property <length> hovered_y:
-        btn_operations.has_hover ? btn_operations.hover_y :
-        btn_common.has_hover ? btn_common.hover_y :
+        btn_input.has_hover ? btn_input.hover_y :
+        btn_calculators.has_hover ? btn_calculators.hover_y :
         btn_advanced.has_hover ? btn_advanced.hover_y :
-        btn_plot.has_hover ? btn_plot.hover_y :
-        btn_analyses.has_hover ? btn_analyses.hover_y :
         btn_export.has_hover ? btn_export.hover_y :
         btn_run.has_hover ? btn_run.hover_y :
         btn_theme.has_hover ? btn_theme.hover_y :
-        btn_collapse.has_hover ? btn_collapse.hover_y : 0px;
+        btn_collapse.has_hover ? btn_collapse.hover_x : 0px;
 
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
@@ -132,27 +126,27 @@ export component MiniSideBar inherits Rectangle {
         padding-right: 4px;
         spacing: 6px;
 
-        // Panel 0: Operations & Trajectory
-        btn_operations := RailButton {
+        // Stage 0: Input & Structure
+        btn_input := RailButton {
             icon: Icons.folder_open;
             active: root.active_panel == 0;
-            tooltip: "Operations & Trajectory (Ctrl+O)\n\n📁 Load structures, view lattice diagnostics, and configure frame slicing.";
+            tooltip: "Input & Structure (Ctrl+O)\n\n📁 Load structures, configure trajectory slicing, and view system diagnostics.";
             clicked => {
                 root.select_panel(root.active_panel == 0 ? -1 : 0);
             }
         }
 
-        // Panel 1: Common Options (RDF, Cutoffs, Angles)
-        btn_common := RailButton {
+        // Stage 1: Calculators & Parameters
+        btn_calculators := RailButton {
             icon: Icons.tune;
             active: root.active_panel == 1;
-            tooltip: "Common Options\n\n⚙️ Configure pair bond cutoffs, RDF search radii, and plane angle binning.";
+            tooltip: "Calculators & Parameters\n\n⚙️ Select analyses and calibrate pair cutoffs, scattering, and angular parameters.";
             clicked => {
                 root.select_panel(root.active_panel == 1 ? -1 : 1);
             }
         }
 
-        // Panel 2: Advanced Options (S(Q), Rings, Smoothing, Order)
+        // Stage 2: Advanced Options
         btn_advanced := RailButton {
             icon: Icons.science;
             active: root.active_panel == 2;
@@ -162,33 +156,13 @@ export component MiniSideBar inherits Rectangle {
             }
         }
 
-        // Panel 3: Plot Settings & Comparisons
-        btn_plot := RailButton {
-            icon: Icons.auto_graph;
-            active: root.active_panel == 3;
-            tooltip: "Plot Settings & Comparisons\n\n📊 Adjust figure styling, publication DPI presets, and pin runs for comparison.";
-            clicked => {
-                root.select_panel(root.active_panel == 3 ? -1 : 3);
-            }
-        }
-
-        // Panel 4: Analyses Selection
-        btn_analyses := RailButton {
-            icon: Icons.analytics;
-            active: root.active_panel == 4;
-            tooltip: "Analyses Selection\n\n📈 Toggle specific distribution functions, scattering kernels, and order parameters.";
-            clicked => {
-                root.select_panel(root.active_panel == 4 ? -1 : 4);
-            }
-        }
-
-        // Panel 5: Save & Export
+        // Stage 3: Export & Presentation
         btn_export := RailButton {
             icon: Icons.save;
-            active: root.active_panel == 5;
-            tooltip: "Save & Export (Ctrl+S)\n\n💾 Export results to CSV, HDF5, Parquet, or publication-quality SVG vector plots.";
+            active: root.active_panel == 3;
+            tooltip: "Export & Presentation (Ctrl+S)\n\n💾 Export data (CSV, HDF5, Parquet), figure presets, and multi-run comparisons.";
             clicked => {
-                root.select_panel(root.active_panel == 5 ? -1 : 5);
+                root.select_panel(root.active_panel == 3 ? -1 : 3);
             }
         }
 

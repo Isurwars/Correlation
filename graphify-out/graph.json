@@ -1592,8 +1592,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_analysis_analysistypes_hpp_span",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "span"
     },
     {
@@ -1713,8 +1713,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "iterator",
-      "community": 9,
-      "community_name": "vector",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "iterator"
     },
     {
@@ -2725,8 +2725,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_analysis_distributionfunctions_hpp_string_view",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "string_view"
     },
     {
@@ -3682,8 +3682,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_analysis_firstminimumdetector",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "firstminimumdetector.hpp"
     },
     {
@@ -4056,8 +4056,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_analysis_perframedistributionstore",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "perframedistributionstore.hpp"
     },
     {
@@ -9215,8 +9215,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_app_services_validationruleservice",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "validationruleservice.hpp"
     },
     {
@@ -11800,8 +11800,8 @@
       "source_location": "L222",
       "_origin": "ast",
       "id": "include_app_viewmodel_plotcontroller_plotcontroller_buildplotconfigfromui",
-      "community": 278,
-      "community_name": "MockReader",
+      "community": 300,
+      "community_name": "MappedFileTests",
       "norm_label": "buildplotconfigfromui"
     },
     {
@@ -11965,8 +11965,8 @@
       "source_location": "L304",
       "_origin": "ast",
       "id": "include_app_viewmodel_plotcontroller_plotcontroller_getactiveplotconfig",
-      "community": 278,
-      "community_name": "MockReader",
+      "community": 300,
+      "community_name": "MappedFileTests",
       "norm_label": ".getactiveplotconfig()"
     },
     {
@@ -12141,8 +12141,8 @@
       "source_location": "L335",
       "_origin": "ast",
       "id": "include_app_viewmodel_plotcontroller_plotcontroller_updatetabledata",
-      "community": 468,
-      "community_name": "DfsStackFrame",
+      "community": 300,
+      "community_name": "MappedFileTests",
       "norm_label": "updatetabledata"
     },
     {
@@ -12152,8 +12152,8 @@
       "source_location": "L336",
       "_origin": "ast",
       "id": "include_app_viewmodel_plotcontroller_plotcontroller_updatecurvetoggleitems",
-      "community": 468,
-      "community_name": "DfsStackFrame",
+      "community": 300,
+      "community_name": "MappedFileTests",
       "norm_label": "updatecurvetoggleitems"
     },
     {
@@ -12163,8 +12163,8 @@
       "source_location": "L337",
       "_origin": "ast",
       "id": "include_app_viewmodel_plotcontroller_plotcontroller_applydualviewoverlay",
-      "community": 468,
-      "community_name": "DfsStackFrame",
+      "community": 300,
+      "community_name": "MappedFileTests",
       "norm_label": "applydualviewoverlay"
     },
     {
@@ -15243,8 +15243,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_basecalculator",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "basecalculator.hpp"
     },
     {
@@ -15727,8 +15727,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_contracts_iframecalculator",
-      "community": 448,
-      "community_name": "ZipArchiveWriter::Impl",
+      "community": 468,
+      "community_name": "DfsStackFrame",
       "norm_label": "iframecalculator.hpp"
     },
     {
@@ -15738,8 +15738,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "include_calculators_contracts_iframecalculator_distributionfunctions",
-      "community": 448,
-      "community_name": "ZipArchiveWriter::Impl",
+      "community": 468,
+      "community_name": "DfsStackFrame",
       "norm_label": "distributionfunctions"
     },
     {
@@ -15749,8 +15749,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "include_calculators_contracts_iframecalculator_analysissettings",
-      "community": 448,
-      "community_name": "ZipArchiveWriter::Impl",
+      "community": 468,
+      "community_name": "DfsStackFrame",
       "norm_label": "analysissettings"
     },
     {
@@ -15760,8 +15760,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "include_calculators_contracts_iframecalculator_iframecalculator",
-      "community": 448,
-      "community_name": "ZipArchiveWriter::Impl",
+      "community": 468,
+      "community_name": "DfsStackFrame",
       "norm_label": "iframecalculator"
     },
     {
@@ -15771,8 +15771,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "include_calculators_contracts_iframecalculator_iframecalculator_iframecalculator",
-      "community": 448,
-      "community_name": "ZipArchiveWriter::Impl",
+      "community": 468,
+      "community_name": "DfsStackFrame",
       "norm_label": ".~iframecalculator()"
     },
     {
@@ -15782,8 +15782,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "include_calculators_contracts_iframecalculator_iframecalculator_calculateframe",
-      "community": 448,
-      "community_name": "ZipArchiveWriter::Impl",
+      "community": 468,
+      "community_name": "DfsStackFrame",
       "norm_label": "calculateframe"
     },
     {
@@ -16849,8 +16849,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_ml_chargecorrelationcalculator",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "chargecorrelationcalculator.hpp"
     },
     {
@@ -17267,8 +17267,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_calculators_ml_spincorrelationcalculator",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "spincorrelationcalculator.hpp"
     },
     {
@@ -18015,8 +18015,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "include_calculators_order_steinhardtcalculator_steinhardtoptions",
-      "community": 449,
-      "community_name": "renderHistogramAsPng",
+      "community": 545,
+      "community_name": "BinningConfig",
       "norm_label": "steinhardtoptions"
     },
     {
@@ -18026,8 +18026,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "include_calculators_order_steinhardtcalculator_steinhardtoptions_keep_q6m",
-      "community": 449,
-      "community_name": "renderHistogramAsPng",
+      "community": 545,
+      "community_name": "BinningConfig",
       "norm_label": "keep_q6m"
     },
     {
@@ -23174,8 +23174,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_core_bondcutoffengine",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "bondcutoffengine.hpp"
     },
     {
@@ -23405,8 +23405,8 @@
       "source_location": "L239",
       "_origin": "ast",
       "id": "include_core_cell_cell_perpendicularwidths",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "perpendicularwidths"
     },
     {
@@ -23416,8 +23416,8 @@
       "source_location": "L250",
       "_origin": "ast",
       "id": "include_core_cell_cell_replicate",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "replicate"
     },
     {
@@ -23504,8 +23504,8 @@
       "source_location": "L299",
       "_origin": "ast",
       "id": "include_core_cell_cell_updatelatticeparametersfromvectors",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "updatelatticeparametersfromvectors"
     },
     {
@@ -25143,8 +25143,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_core_trajectoryfilter",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "trajectoryfilter.hpp"
     },
     {
@@ -25154,8 +25154,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "include_core_trajectoryfilter_trajectory",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "trajectory"
     },
     {
@@ -25198,8 +25198,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_core_velocityintegrator",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "velocityintegrator.hpp"
     },
     {
@@ -25209,8 +25209,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "include_core_velocityintegrator_trajectory",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "trajectory"
     },
     {
@@ -27640,8 +27640,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_mlip_mlipinterface",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "mlipinterface.hpp"
     },
     {
@@ -27860,8 +27860,8 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "include_mlip_mlipinterface_mlipinterface",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "mlipinterface"
     },
     {
@@ -27871,8 +27871,8 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "include_mlip_mlipinterface_mlipinterface_mlipinterface",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": ".~mlipinterface()"
     },
     {
@@ -27882,8 +27882,8 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "include_mlip_mlipinterface_mlipinterface_getmodelname",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "getmodelname"
     },
     {
@@ -27893,8 +27893,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "include_mlip_mlipinterface_mlipinterface_evaluate",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "evaluate"
     },
     {
@@ -27904,8 +27904,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_mlip_macegnnmodel",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "macegnnmodel.hpp"
     },
     {
@@ -28069,8 +28069,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_mlip_orbv3gnnmodel",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "orbv3gnnmodel.hpp"
     },
     {
@@ -28938,8 +28938,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_mlip_torchgnnmodel",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "torchgnnmodel.hpp"
     },
     {
@@ -29103,8 +29103,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_physics_physicaldata",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "physicaldata.hpp"
     },
     {
@@ -29224,8 +29224,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_plotters_colormapservice",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "colormapservice.hpp"
     },
     {
@@ -35021,8 +35021,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_render3d_elementcolors",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "elementcolors.hpp"
     },
     {
@@ -35186,8 +35186,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_render3d_irenderengine",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "irenderengine.hpp"
     },
     {
@@ -36352,8 +36352,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_render3d_scene3d",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "scene3d.hpp"
     },
     {
@@ -37254,8 +37254,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_render3d_cpu_softwareframebuffer",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "softwareframebuffer.hpp"
     },
     {
@@ -38618,8 +38618,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_render3d_vulkan_vulkancommon",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "vulkancommon.hpp"
     },
     {
@@ -38629,8 +38629,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "include_render3d_vulkan_vulkancommon_checkvkresult",
-      "community": 397,
-      "community_name": "TEST",
+      "community": 368,
+      "community_name": "UpdateChecker.cpp",
       "norm_label": "checkvkresult()"
     },
     {
@@ -38640,8 +38640,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "vkresult",
-      "community": 397,
-      "community_name": "TEST",
+      "community": 368,
+      "community_name": "UpdateChecker.cpp",
       "norm_label": "vkresult"
     },
     {
@@ -38651,8 +38651,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_render3d_vulkan_vulkancommon_hpp_string_view",
-      "community": 397,
-      "community_name": "TEST",
+      "community": 368,
+      "community_name": "UpdateChecker.cpp",
       "norm_label": "string_view"
     },
     {
@@ -39069,8 +39069,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_render3d_vulkan_vulkanoffscreentarget",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "vulkanoffscreentarget.hpp"
     },
     {
@@ -40433,8 +40433,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "include_utils_ziparchivewriter",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "ziparchivewriter.hpp"
     },
     {
@@ -43644,8 +43644,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_cpp_real_t",
-      "community": 307,
-      "community_name": "ClusterCalculator",
+      "community": 405,
+      "community_name": "TEST",
       "norm_label": "real_t"
     },
     {
@@ -43754,8 +43754,8 @@
       "source_location": "L179",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_ensureneighborscomputed",
-      "community": 307,
-      "community_name": "ClusterCalculator",
+      "community": 405,
+      "community_name": "TEST",
       "norm_label": "distributionfunctions::ensureneighborscomputed()"
     },
     {
@@ -43875,8 +43875,8 @@
       "source_location": "L288",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_calculatecoordinationnumber",
-      "community": 307,
-      "community_name": "ClusterCalculator",
+      "community": 405,
+      "community_name": "TEST",
       "norm_label": "distributionfunctions::calculatecoordinationnumber()"
     },
     {
@@ -43886,8 +43886,8 @@
       "source_location": "L292",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_calculaterdf",
-      "community": 307,
-      "community_name": "ClusterCalculator",
+      "community": 405,
+      "community_name": "TEST",
       "norm_label": "distributionfunctions::calculaterdf()"
     },
     {
@@ -43897,8 +43897,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "rdfparams",
-      "community": 307,
-      "community_name": "ClusterCalculator",
+      "community": 405,
+      "community_name": "TEST",
       "norm_label": "rdfparams"
     },
     {
@@ -43908,8 +43908,8 @@
       "source_location": "L323",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_calculatepad",
-      "community": 307,
-      "community_name": "ClusterCalculator",
+      "community": 405,
+      "community_name": "TEST",
       "norm_label": "distributionfunctions::calculatepad()"
     },
     {
@@ -43919,8 +43919,8 @@
       "source_location": "L333",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_calculatedad",
-      "community": 307,
-      "community_name": "ClusterCalculator",
+      "community": 405,
+      "community_name": "TEST",
       "norm_label": "distributionfunctions::calculatedad()"
     },
     {
@@ -43985,8 +43985,8 @@
       "source_location": "L427",
       "_origin": "ast",
       "id": "src_analysis_distributionfunctions_distributionfunctions_scale",
-      "community": 307,
-      "community_name": "ClusterCalculator",
+      "community": 405,
+      "community_name": "TEST",
       "norm_label": "distributionfunctions::scale()"
     },
     {
@@ -49254,8 +49254,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "src_app_viewmodel_phasesearchservice_getelementcovalentradius",
-      "community": 280,
-      "community_name": "hipGetDeviceCount",
+      "community": 108,
+      "community_name": "NiceScale",
       "norm_label": "getelementcovalentradius()"
     },
     {
@@ -49265,8 +49265,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_viewmodel_phasesearchservice_cpp_real_t",
-      "community": 280,
-      "community_name": "hipGetDeviceCount",
+      "community": 108,
+      "community_name": "NiceScale",
       "norm_label": "real_t"
     },
     {
@@ -49276,8 +49276,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_viewmodel_phasesearchservice_cpp_string",
-      "community": 280,
-      "community_name": "hipGetDeviceCount",
+      "community": 108,
+      "community_name": "NiceScale",
       "norm_label": "string"
     },
     {
@@ -49287,8 +49287,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "src_app_viewmodel_phasesearchservice_buildcellbondcutoffs",
-      "community": 280,
-      "community_name": "hipGetDeviceCount",
+      "community": 108,
+      "community_name": "NiceScale",
       "norm_label": "buildcellbondcutoffs()"
     },
     {
@@ -49529,8 +49529,8 @@
       "source_location": "L128",
       "_origin": "ast",
       "id": "src_app_viewmodel_phasesearchservice_isphasematch",
-      "community": 280,
-      "community_name": "hipGetDeviceCount",
+      "community": 108,
+      "community_name": "NiceScale",
       "norm_label": "isphasematch()"
     },
     {
@@ -50167,8 +50167,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_cpp_sharedstring",
-      "community": 278,
-      "community_name": "MockReader",
+      "community": 300,
+      "community_name": "MappedFileTests",
       "norm_label": "sharedstring"
     },
     {
@@ -50233,8 +50233,8 @@
       "source_location": "L138",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_histogramkeytometric",
-      "community": 468,
-      "community_name": "DfsStackFrame",
+      "community": 300,
+      "community_name": "MappedFileTests",
       "norm_label": "histogramkeytometric()"
     },
     {
@@ -50244,8 +50244,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_cpp_optional",
-      "community": 468,
-      "community_name": "DfsStackFrame",
+      "community": 300,
+      "community_name": "MappedFileTests",
       "norm_label": "optional"
     },
     {
@@ -50255,8 +50255,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_cpp_distributionmetric",
-      "community": 468,
-      "community_name": "DfsStackFrame",
+      "community": 300,
+      "community_name": "MappedFileTests",
       "norm_label": "distributionmetric"
     },
     {
@@ -50266,8 +50266,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_cpp_string_view",
-      "community": 468,
-      "community_name": "DfsStackFrame",
+      "community": 300,
+      "community_name": "MappedFileTests",
       "norm_label": "string_view"
     },
     {
@@ -50321,8 +50321,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_cpp_span",
-      "community": 300,
-      "community_name": "MappedFileTests",
+      "community": 479,
+      "community_name": "XdatcarReaderTests",
       "norm_label": "span"
     },
     {
@@ -50343,8 +50343,8 @@
       "source_location": "L169",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_updatedynamicproperties",
-      "community": 278,
-      "community_name": "MockReader",
+      "community": 479,
+      "community_name": "XdatcarReaderTests",
       "norm_label": "updatedynamicproperties()"
     },
     {
@@ -50365,8 +50365,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_cpp_distributionfunctions",
-      "community": 278,
-      "community_name": "MockReader",
+      "community": 479,
+      "community_name": "XdatcarReaderTests",
       "norm_label": "distributionfunctions"
     },
     {
@@ -50475,8 +50475,8 @@
       "source_location": "L387",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_plotcontroller_handlemousemove",
-      "community": 278,
-      "community_name": "MockReader",
+      "community": 300,
+      "community_name": "MappedFileTests",
       "norm_label": "plotcontroller::handlemousemove()"
     },
     {
@@ -50486,8 +50486,8 @@
       "source_location": "L434",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_plotcontroller_requestplotupdate",
-      "community": 468,
-      "community_name": "DfsStackFrame",
+      "community": 300,
+      "community_name": "MappedFileTests",
       "norm_label": "plotcontroller::requestplotupdate()"
     },
     {
@@ -50541,8 +50541,8 @@
       "source_location": "L567",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_plotcontroller_updatecurvetoggleitems",
-      "community": 278,
-      "community_name": "MockReader",
+      "community": 300,
+      "community_name": "MappedFileTests",
       "norm_label": "plotcontroller::updatecurvetoggleitems()"
     },
     {
@@ -50552,8 +50552,8 @@
       "source_location": "L573",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_plotcontroller_handlesaveplot",
-      "community": 278,
-      "community_name": "MockReader",
+      "community": 300,
+      "community_name": "MappedFileTests",
       "norm_label": "plotcontroller::handlesaveplot()"
     },
     {
@@ -50563,8 +50563,8 @@
       "source_location": "L595",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_plotcontroller_handlecopyplottoclipboard",
-      "community": 278,
-      "community_name": "MockReader",
+      "community": 300,
+      "community_name": "MappedFileTests",
       "norm_label": "plotcontroller::handlecopyplottoclipboard()"
     },
     {
@@ -50618,8 +50618,8 @@
       "source_location": "L677",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_plotcontroller_handlefiltercurves",
-      "community": 468,
-      "community_name": "DfsStackFrame",
+      "community": 300,
+      "community_name": "MappedFileTests",
       "norm_label": "plotcontroller::handlefiltercurves()"
     },
     {
@@ -50750,8 +50750,8 @@
       "source_location": "L859",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_plotcontroller_syncmetricsettingstoui",
-      "community": 278,
-      "community_name": "MockReader",
+      "community": 300,
+      "community_name": "MappedFileTests",
       "norm_label": "plotcontroller::syncmetricsettingstoui()"
     },
     {
@@ -50772,8 +50772,8 @@
       "source_location": "L928",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_parsexaxissettings",
-      "community": 408,
-      "community_name": "GapParser",
+      "community": 278,
+      "community_name": "MockReader",
       "norm_label": "parsexaxissettings()"
     },
     {
@@ -50783,8 +50783,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "plotaxissettings",
-      "community": 408,
-      "community_name": "GapParser",
+      "community": 278,
+      "community_name": "MockReader",
       "norm_label": "plotaxissettings"
     },
     {
@@ -50794,8 +50794,8 @@
       "source_location": "L960",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_parseyaxissettings",
-      "community": 408,
-      "community_name": "GapParser",
+      "community": 278,
+      "community_name": "MockReader",
       "norm_label": "parseyaxissettings()"
     },
     {
@@ -50805,8 +50805,8 @@
       "source_location": "L992",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_parsetickandgridsettings",
-      "community": 408,
-      "community_name": "GapParser",
+      "community": 278,
+      "community_name": "MockReader",
       "norm_label": "parsetickandgridsettings()"
     },
     {
@@ -50816,8 +50816,8 @@
       "source_location": "L1023",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_plotcontroller_handleapplyaxissettings",
-      "community": 408,
-      "community_name": "GapParser",
+      "community": 278,
+      "community_name": "MockReader",
       "norm_label": "plotcontroller::handleapplyaxissettings()"
     },
     {
@@ -50893,8 +50893,8 @@
       "source_location": "L1208",
       "_origin": "ast",
       "id": "src_app_viewmodel_plotcontroller_plotcontroller_handleexporttaggedpeaks",
-      "community": 278,
-      "community_name": "MockReader",
+      "community": 300,
+      "community_name": "MappedFileTests",
       "norm_label": "plotcontroller::handleexporttaggedpeaks()"
     },
     {
@@ -52675,8 +52675,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_bindings_analysis_bindings_hpp_src_bindings_analysis_bindings",
-      "community": 507,
-      "community_name": "forEachPairWithin",
+      "community": 485,
+      "community_name": "GPULattice",
       "norm_label": "analysis_bindings.hpp"
     },
     {
@@ -52983,8 +52983,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_bindings_calculator_bindings_hpp_src_bindings_calculator_bindings",
-      "community": 507,
-      "community_name": "forEachPairWithin",
+      "community": 485,
+      "community_name": "GPULattice",
       "norm_label": "calculator_bindings.hpp"
     },
     {
@@ -53225,8 +53225,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_bindings_core_bindings_hpp_src_bindings_core_bindings",
-      "community": 507,
-      "community_name": "forEachPairWithin",
+      "community": 485,
+      "community_name": "GPULattice",
       "norm_label": "core_bindings.hpp"
     },
     {
@@ -53291,8 +53291,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_bindings_io_bindings_hpp_src_bindings_io_bindings",
-      "community": 507,
-      "community_name": "forEachPairWithin",
+      "community": 485,
+      "community_name": "GPULattice",
       "norm_label": "io_bindings.hpp"
     },
     {
@@ -53302,8 +53302,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_bindings_math_bindings_cpp_src_bindings_math_bindings",
-      "community": 507,
-      "community_name": "forEachPairWithin",
+      "community": 485,
+      "community_name": "GPULattice",
       "norm_label": "math_bindings.cpp"
     },
     {
@@ -53335,8 +53335,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_bindings_math_bindings_hpp_src_bindings_math_bindings",
-      "community": 507,
-      "community_name": "forEachPairWithin",
+      "community": 485,
+      "community_name": "GPULattice",
       "norm_label": "math_bindings.hpp"
     },
     {
@@ -53456,8 +53456,8 @@
       "source_location": "L309",
       "_origin": "ast",
       "id": "src_bindings_mlip_bindings_pymlipinterface",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "pymlipinterface"
     },
     {
@@ -53467,8 +53467,8 @@
       "source_location": "L313",
       "_origin": "ast",
       "id": "src_bindings_mlip_bindings_pymlipinterface_getmodelname",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": ".getmodelname()"
     },
     {
@@ -53478,8 +53478,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_bindings_mlip_bindings_cpp_string",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": "string"
     },
     {
@@ -53489,8 +53489,8 @@
       "source_location": "L317",
       "_origin": "ast",
       "id": "src_bindings_mlip_bindings_pymlipinterface_evaluate",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 507,
+      "community_name": "forEachPairWithin",
       "norm_label": ".evaluate()"
     },
     {
@@ -53544,8 +53544,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_bindings_mlip_bindings_hpp_src_bindings_mlip_bindings",
-      "community": 507,
-      "community_name": "forEachPairWithin",
+      "community": 485,
+      "community_name": "GPULattice",
       "norm_label": "mlip_bindings.hpp"
     },
     {
@@ -53555,8 +53555,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_bindings_module",
-      "community": 507,
-      "community_name": "forEachPairWithin",
+      "community": 485,
+      "community_name": "GPULattice",
       "norm_label": "module.cpp"
     },
     {
@@ -53764,8 +53764,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_bindings_writer_bindings_cpp_src_bindings_writer_bindings",
-      "community": 507,
-      "community_name": "forEachPairWithin",
+      "community": 485,
+      "community_name": "GPULattice",
       "norm_label": "writer_bindings.cpp"
     },
     {
@@ -53797,8 +53797,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_bindings_writer_bindings_hpp_src_bindings_writer_bindings",
-      "community": 507,
-      "community_name": "forEachPairWithin",
+      "community": 485,
+      "community_name": "GPULattice",
       "norm_label": "writer_bindings.hpp"
     },
     {
@@ -57757,8 +57757,8 @@
       "source_location": "L299",
       "_origin": "ast",
       "id": "src_calculators_order_steinhardtcalculator_binningconfig",
-      "community": 545,
-      "community_name": "BinningConfig",
+      "community": 449,
+      "community_name": "renderHistogramAsPng",
       "norm_label": "binningconfig"
     },
     {
@@ -57768,8 +57768,8 @@
       "source_location": "L300",
       "_origin": "ast",
       "id": "src_calculators_order_steinhardtcalculator_binningconfig_min_val",
-      "community": 545,
-      "community_name": "BinningConfig",
+      "community": 449,
+      "community_name": "renderHistogramAsPng",
       "norm_label": "min_val"
     },
     {
@@ -57779,8 +57779,8 @@
       "source_location": "L301",
       "_origin": "ast",
       "id": "src_calculators_order_steinhardtcalculator_binningconfig_max_val",
-      "community": 545,
-      "community_name": "BinningConfig",
+      "community": 449,
+      "community_name": "renderHistogramAsPng",
       "norm_label": "max_val"
     },
     {
@@ -57790,8 +57790,8 @@
       "source_location": "L302",
       "_origin": "ast",
       "id": "src_calculators_order_steinhardtcalculator_binningconfig_d_val",
-      "community": 545,
-      "community_name": "BinningConfig",
+      "community": 449,
+      "community_name": "renderHistogramAsPng",
       "norm_label": "d_val"
     },
     {
@@ -60507,8 +60507,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "src_calculators_spatial_dadcalculator_dihedralpopulationparams_neighbors",
-      "community": 307,
-      "community_name": "ClusterCalculator",
+      "community": 405,
+      "community_name": "TEST",
       "norm_label": "neighbors"
     },
     {
@@ -60683,8 +60683,8 @@
       "source_location": "L176",
       "_origin": "ast",
       "id": "src_calculators_spatial_dadcalculator_dadcalculator_calculateframe",
-      "community": 307,
-      "community_name": "ClusterCalculator",
+      "community": 3,
+      "community_name": "PresetManager.cpp",
       "norm_label": "dadcalculator::calculateframe()"
     },
     {
@@ -60694,8 +60694,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_calculators_spatial_dadcalculator_cpp_distributionfunctions",
-      "community": 307,
-      "community_name": "ClusterCalculator",
+      "community": 3,
+      "community_name": "PresetManager.cpp",
       "norm_label": "distributionfunctions"
     },
     {
@@ -60705,8 +60705,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_calculators_spatial_dadcalculator_cpp_analysissettings",
-      "community": 307,
-      "community_name": "ClusterCalculator",
+      "community": 3,
+      "community_name": "PresetManager.cpp",
       "norm_label": "analysissettings"
     },
     {
@@ -65105,8 +65105,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_core_cell",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "cell.cpp"
     },
     {
@@ -65116,8 +65116,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_core_cell_normalizeelementsymbol",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "normalizeelementsymbol()"
     },
     {
@@ -65127,8 +65127,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_core_cell_cpp_string",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "string"
     },
     {
@@ -65138,8 +65138,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_core_cell_cpp_string_view",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "string_view"
     },
     {
@@ -65149,8 +65149,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "src_core_cell_cell_cell",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "cell::cell()"
     },
     {
@@ -65160,8 +65160,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_core_cell_cpp_vector3",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "vector3"
     },
     {
@@ -65171,8 +65171,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_core_cell_cpp_real_t",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "real_t"
     },
     {
@@ -65182,8 +65182,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "src_core_cell_cell_setlatticeparameters",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "cell::setlatticeparameters()"
     },
     {
@@ -65193,8 +65193,8 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "src_core_cell_cell_updatelattice",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "cell::updatelattice()"
     },
     {
@@ -65204,8 +65204,8 @@
       "source_location": "L103",
       "_origin": "ast",
       "id": "src_core_cell_cell_updatelatticeparametersfromvectors",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "cell::updatelatticeparametersfromvectors()"
     },
     {
@@ -65215,8 +65215,8 @@
       "source_location": "L144",
       "_origin": "ast",
       "id": "src_core_cell_cell_findelement",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "cell::findelement()"
     },
     {
@@ -65226,8 +65226,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_core_cell_cpp_optional",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "optional"
     },
     {
@@ -65237,8 +65237,8 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "src_core_cell_cell_renameelement",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "cell::renameelement()"
     },
     {
@@ -65248,8 +65248,8 @@
       "source_location": "L203",
       "_origin": "ast",
       "id": "src_core_cell_cell_minimumimage",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "cell::minimumimage()"
     },
     {
@@ -65259,8 +65259,8 @@
       "source_location": "L216",
       "_origin": "ast",
       "id": "src_core_cell_cell_wrappositions",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "cell::wrappositions()"
     },
     {
@@ -65270,8 +65270,8 @@
       "source_location": "L226",
       "_origin": "ast",
       "id": "src_core_cell_cell_perpendicularwidths",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "cell::perpendicularwidths()"
     },
     {
@@ -65281,8 +65281,8 @@
       "source_location": "L246",
       "_origin": "ast",
       "id": "src_core_cell_cell_replicate",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "cell::replicate()"
     },
     {
@@ -65292,8 +65292,8 @@
       "source_location": "L291",
       "_origin": "ast",
       "id": "src_core_cell_cell_autosupercell",
-      "community": 159,
-      "community_name": "FileIOHandler",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "cell::autosupercell()"
     },
     {
@@ -68768,8 +68768,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_plotters_colormapservice",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "colormapservice.cpp"
     },
     {
@@ -73762,8 +73762,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_readers_cellreader",
-      "community": 385,
-      "community_name": "ReferenceLine",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "cellreader.cpp"
     },
     {
@@ -73773,8 +73773,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "src_readers_cellreader_cellreader_readstructure",
-      "community": 385,
-      "community_name": "ReferenceLine",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "cellreader::readstructure()"
     },
     {
@@ -73784,8 +73784,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_cellreader_cpp_string",
-      "community": 385,
-      "community_name": "ReferenceLine",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "string"
     },
     {
@@ -73795,8 +73795,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_cellreader_cpp_function",
-      "community": 385,
-      "community_name": "ReferenceLine",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "function"
     },
     {
@@ -73806,8 +73806,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "src_readers_cellreader_cellreader_readtrajectory",
-      "community": 385,
-      "community_name": "ReferenceLine",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "cellreader::readtrajectory()"
     },
     {
@@ -73817,8 +73817,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_cellreader_cpp_trajectory",
-      "community": 385,
-      "community_name": "ReferenceLine",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "trajectory"
     },
     {
@@ -73828,8 +73828,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "src_readers_cellreader_tolower",
-      "community": 385,
-      "community_name": "ReferenceLine",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "tolower()"
     },
     {
@@ -73839,8 +73839,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "src_readers_cellreader_parselatticecart",
-      "community": 385,
-      "community_name": "ReferenceLine",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "parselatticecart()"
     },
     {
@@ -73850,8 +73850,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_cellreader_cpp_stringstream",
-      "community": 385,
-      "community_name": "ReferenceLine",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "stringstream"
     },
     {
@@ -73861,8 +73861,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_readers_cellreader_cpp_real_t",
-      "community": 385,
-      "community_name": "ReferenceLine",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "real_t"
     },
     {
@@ -73872,8 +73872,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "src_readers_cellreader_parselatticeabc",
-      "community": 385,
-      "community_name": "ReferenceLine",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "parselatticeabc()"
     },
     {
@@ -73883,8 +73883,8 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "src_readers_cellreader_parsepositionsabs",
-      "community": 385,
-      "community_name": "ReferenceLine",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "parsepositionsabs()"
     },
     {
@@ -73894,8 +73894,8 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "src_readers_cellreader_parsepositionsfrac",
-      "community": 385,
-      "community_name": "ReferenceLine",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "parsepositionsfrac()"
     },
     {
@@ -73905,8 +73905,8 @@
       "source_location": "L117",
       "_origin": "ast",
       "id": "src_readers_cellreader_cellreader_read",
-      "community": 385,
-      "community_name": "ReferenceLine",
+      "community": 79,
+      "community_name": "LocalEntropyCalculator.cpp",
       "norm_label": "cellreader::read()"
     },
     {
@@ -81110,8 +81110,8 @@
       "source_location": "L231",
       "_origin": "ast",
       "id": "src_render3d_vulkan_vulkanoffscreentarget_vulkanoffscreentarget_createrenderpass",
-      "community": 397,
-      "community_name": "TEST",
+      "community": 368,
+      "community_name": "UpdateChecker.cpp",
       "norm_label": "vulkanoffscreentarget::createrenderpass()"
     },
     {
@@ -81143,8 +81143,8 @@
       "source_location": "L335",
       "_origin": "ast",
       "id": "src_render3d_vulkan_vulkanoffscreentarget_vulkanoffscreentarget_createframebuffer",
-      "community": 397,
-      "community_name": "TEST",
+      "community": 368,
+      "community_name": "UpdateChecker.cpp",
       "norm_label": "vulkanoffscreentarget::createframebuffer()"
     },
     {
@@ -85078,7 +85078,7 @@
       "label": "resolveExamplePath()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L29",
+      "source_location": "L30",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_resolveexamplepath",
       "community": 520,
@@ -85100,7 +85100,7 @@
       "label": "getRow()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L40",
+      "source_location": "L41",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_getrow",
       "community": 457,
@@ -85144,7 +85144,7 @@
       "label": "verifyCutoffCell()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L48",
+      "source_location": "L49",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_verifycutoffcell",
       "community": 520,
@@ -85155,7 +85155,7 @@
       "label": "verifyBondCutoffMatrix()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L54",
+      "source_location": "L55",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_verifybondcutoffmatrix",
       "community": 520,
@@ -85166,7 +85166,7 @@
       "label": "findCutoffPair()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L64",
+      "source_location": "L65",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_findcutoffpair",
       "community": 457,
@@ -85188,7 +85188,7 @@
       "label": "verifyPairDistances()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L79",
+      "source_location": "L80",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_verifypairdistances",
       "community": 457,
@@ -85210,7 +85210,7 @@
       "label": "verifyRecommendedCutoffs()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L86",
+      "source_location": "L87",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_verifyrecommendedcutoffs",
       "community": 457,
@@ -85221,7 +85221,7 @@
       "label": "verifyRestoredBondCutoffs()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L93",
+      "source_location": "L94",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_verifyrestoredbondcutoffs",
       "community": 457,
@@ -85232,7 +85232,7 @@
       "label": "verifyUniformCutoffs()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L104",
+      "source_location": "L105",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_verifyuniformcutoffs",
       "community": 457,
@@ -85243,7 +85243,7 @@
       "label": "verifyCurveFilterMatches()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L114",
+      "source_location": "L115",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_verifycurvefiltermatches",
       "community": 457,
@@ -85265,7 +85265,7 @@
       "label": "verifyAllCurvesMatchFilter()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L127",
+      "source_location": "L128",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_verifyallcurvesmatchfilter",
       "community": 457,
@@ -85276,7 +85276,7 @@
       "label": "verifyPlotStyling()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L134",
+      "source_location": "L135",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_verifyplotstyling",
       "community": 520,
@@ -85287,7 +85287,7 @@
       "label": "verifyPlotMetrics()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L141",
+      "source_location": "L142",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_verifyplotmetrics",
       "community": 520,
@@ -85298,7 +85298,7 @@
       "label": "verifyActivePlotConfig()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L147",
+      "source_location": "L148",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_verifyactiveplotconfig",
       "community": 520,
@@ -85309,7 +85309,7 @@
       "label": "AppControllerTests",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L155",
+      "source_location": "L156",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_appcontrollertests",
       "community": 420,
@@ -85331,7 +85331,7 @@
       "label": ".SetUp()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L173",
+      "source_location": "L174",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_appcontrollertests_setup",
       "community": 420,
@@ -85342,7 +85342,7 @@
       "label": ".callHandleOptionsfromUI()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L184",
+      "source_location": "L185",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_appcontrollertests_callhandleoptionsfromui",
       "community": 420,
@@ -85375,7 +85375,7 @@
       "label": "loader_",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L190",
+      "source_location": "L191",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_appcontrollertests_loader",
       "community": 420,
@@ -85397,7 +85397,7 @@
       "label": "dispatcher_",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L191",
+      "source_location": "L192",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_appcontrollertests_dispatcher",
       "community": 420,
@@ -85408,7 +85408,7 @@
       "label": "options_",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L192",
+      "source_location": "L193",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_appcontrollertests_options",
       "community": 420,
@@ -85419,7 +85419,7 @@
       "label": "TEST_F()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L195",
+      "source_location": "L196",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_test_f",
       "community": 87,
@@ -85562,7 +85562,7 @@
       "label": "findPdSiExample()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L645",
+      "source_location": "L646",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_findpdsiexample",
       "community": 520,
@@ -85650,7 +85650,7 @@
       "label": "findGroupRow()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L788",
+      "source_location": "L789",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_findgrouprow",
       "community": 528,
@@ -85672,7 +85672,7 @@
       "label": "groupAt()",
       "file_type": "code",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L799",
+      "source_location": "L800",
       "_origin": "ast",
       "id": "tests_functional_app_appcontrollertests_groupat",
       "community": 528,
@@ -94013,8 +94013,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_calculators_chiralitycalculatortests",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 159,
+      "community_name": "FileIOHandler",
       "norm_label": "chiralitycalculatortests.cpp"
     },
     {
@@ -94024,8 +94024,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "tests_unit_calculators_chiralitycalculatortests_chiralitycalculatortests",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 159,
+      "community_name": "FileIOHandler",
       "norm_label": "chiralitycalculatortests"
     },
     {
@@ -94035,8 +94035,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_calculators_chiralitycalculatortests_cpp_testing_test",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 159,
+      "community_name": "FileIOHandler",
       "norm_label": "testing::test"
     },
     {
@@ -94046,8 +94046,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "tests_unit_calculators_chiralitycalculatortests_chiralitycalculatortests_getpeakvalue",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 159,
+      "community_name": "FileIOHandler",
       "norm_label": ".getpeakvalue()"
     },
     {
@@ -94057,8 +94057,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_calculators_chiralitycalculatortests_cpp_real_t",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 159,
+      "community_name": "FileIOHandler",
       "norm_label": "real_t"
     },
     {
@@ -94068,8 +94068,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "tests_unit_calculators_chiralitycalculatortests_test_f",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 159,
+      "community_name": "FileIOHandler",
       "norm_label": "test_f()"
     },
     {
@@ -94079,8 +94079,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "achiralcoplanarmotif",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 159,
+      "community_name": "FileIOHandler",
       "norm_label": "achiralcoplanarmotif"
     },
     {
@@ -94090,8 +94090,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "chiralrighthandedmotif",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 159,
+      "community_name": "FileIOHandler",
       "norm_label": "chiralrighthandedmotif"
     },
     {
@@ -94101,8 +94101,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "chirallefthandedmotif",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 159,
+      "community_name": "FileIOHandler",
       "norm_label": "chirallefthandedmotif"
     },
     {
@@ -94112,8 +94112,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "histogramdistribution",
-      "community": 145,
-      "community_name": "PADCalculator.cpp",
+      "community": 159,
+      "community_name": "FileIOHandler",
       "norm_label": "histogramdistribution"
     },
     {
@@ -101592,8 +101592,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_core_bondcutoffenginetests",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "bondcutoffenginetests.cpp"
     },
     {
@@ -102604,8 +102604,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_core_trajectorytests",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "unit/core/trajectorytests.cpp"
     },
     {
@@ -110128,8 +110128,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_render3d_scene3dtests",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "scene3dtests.cpp"
     },
     {
@@ -111800,8 +111800,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_writers_structurewritertests",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "structurewritertests.cpp"
     },
     {
@@ -111833,8 +111833,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "tests_unit_writers_structurewritertests_verifylatticeparametersnear",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "verifylatticeparametersnear()"
     },
     {
@@ -111844,8 +111844,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_writers_structurewritertests_cpp_real_t",
-      "community": 79,
-      "community_name": "LocalEntropyCalculator.cpp",
+      "community": 9,
+      "community_name": "vector",
       "norm_label": "real_t"
     },
     {
@@ -112009,8 +112009,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "tests_unit_writers_writerfactorytests_mockwriter",
-      "community": 95,
-      "community_name": "TEST",
+      "community": 385,
+      "community_name": "ReferenceLine",
       "norm_label": "mockwriter"
     },
     {
@@ -112020,8 +112020,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "tests_unit_writers_writerfactorytests_mockwriter_getname",
-      "community": 95,
-      "community_name": "TEST",
+      "community": 385,
+      "community_name": "ReferenceLine",
       "norm_label": ".getname()"
     },
     {
@@ -112031,8 +112031,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_writers_writerfactorytests_cpp_string",
-      "community": 95,
-      "community_name": "TEST",
+      "community": 385,
+      "community_name": "ReferenceLine",
       "norm_label": "string"
     },
     {
@@ -112042,8 +112042,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "tests_unit_writers_writerfactorytests_mockwriter_getextensions",
-      "community": 95,
-      "community_name": "TEST",
+      "community": 385,
+      "community_name": "ReferenceLine",
       "norm_label": ".getextensions()"
     },
     {
@@ -112053,8 +112053,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_writers_writerfactorytests_cpp_vector",
-      "community": 95,
-      "community_name": "TEST",
+      "community": 385,
+      "community_name": "ReferenceLine",
       "norm_label": "vector"
     },
     {
@@ -112064,8 +112064,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "tests_unit_writers_writerfactorytests_mockwriter_write",
-      "community": 95,
-      "community_name": "TEST",
+      "community": 385,
+      "community_name": "ReferenceLine",
       "norm_label": ".write()"
     },
     {
@@ -112075,8 +112075,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "tests_unit_writers_writerfactorytests_cpp_distributionfunctions",
-      "community": 95,
-      "community_name": "TEST",
+      "community": 385,
+      "community_name": "ReferenceLine",
       "norm_label": "distributionfunctions"
     },
     {
@@ -112185,8 +112185,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_writers_writertests",
-      "community": 9,
-      "community_name": "vector",
+      "community": 39,
+      "community_name": "Cell",
       "norm_label": "writertests.cpp"
     },
     {
@@ -120947,7 +120947,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L48",
+      "source_location": "L49",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -121763,7 +121763,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L54",
+      "source_location": "L55",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -129886,7 +129886,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -133839,7 +133839,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -138254,7 +138254,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -138434,7 +138434,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L10",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -140159,7 +140159,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L192",
+      "source_location": "L193",
       "weight": 1.0,
       "context": "field",
       "_origin": "ast",
@@ -140171,7 +140171,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L184",
+      "source_location": "L185",
       "weight": 1.0,
       "context": "return_type",
       "_origin": "ast",
@@ -146058,7 +146058,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L198",
+      "source_location": "L199",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_test_f",
@@ -200547,7 +200547,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L147",
+      "source_location": "L148",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -200559,7 +200559,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L141",
+      "source_location": "L142",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -200571,7 +200571,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L134",
+      "source_location": "L135",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -306226,7 +306226,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L13",
+      "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306237,7 +306237,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L155",
+      "source_location": "L156",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306260,7 +306260,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L64",
+      "source_location": "L65",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306271,7 +306271,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L788",
+      "source_location": "L789",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306282,7 +306282,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L645",
+      "source_location": "L646",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306293,7 +306293,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L40",
+      "source_location": "L41",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306304,7 +306304,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L799",
+      "source_location": "L800",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306315,7 +306315,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306326,7 +306326,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L1151",
+      "source_location": "L1162",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306337,7 +306337,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L147",
+      "source_location": "L148",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306348,7 +306348,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L127",
+      "source_location": "L128",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306359,7 +306359,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L54",
+      "source_location": "L55",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306370,7 +306370,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L114",
+      "source_location": "L115",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306381,7 +306381,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L48",
+      "source_location": "L49",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306392,7 +306392,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L79",
+      "source_location": "L80",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306403,7 +306403,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L141",
+      "source_location": "L142",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306414,7 +306414,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L134",
+      "source_location": "L135",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306425,7 +306425,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L86",
+      "source_location": "L87",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306436,7 +306436,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L93",
+      "source_location": "L94",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306447,7 +306447,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L104",
+      "source_location": "L105",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests",
@@ -306458,7 +306458,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -306471,7 +306471,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L205",
+      "source_location": "L206",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_test_f",
@@ -306482,7 +306482,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L64",
+      "source_location": "L65",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -306495,7 +306495,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L788",
+      "source_location": "L789",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_findgrouprow",
@@ -306506,7 +306506,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L114",
+      "source_location": "L115",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -306518,7 +306518,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L79",
+      "source_location": "L80",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -306530,7 +306530,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L104",
+      "source_location": "L105",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -306543,7 +306543,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L67",
+      "source_location": "L68",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_findcutoffpair",
@@ -306554,7 +306554,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L40",
+      "source_location": "L41",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -306566,7 +306566,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L40",
+      "source_location": "L41",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -306578,7 +306578,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L40",
+      "source_location": "L41",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -306591,7 +306591,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L821",
+      "source_location": "L822",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_test_f",
@@ -306603,7 +306603,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L129",
+      "source_location": "L130",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_verifyallcurvesmatchfilter",
@@ -306615,7 +306615,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L117",
+      "source_location": "L118",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_verifycurvefiltermatches",
@@ -306627,7 +306627,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L96",
+      "source_location": "L97",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_verifyrestoredbondcutoffs",
@@ -306639,7 +306639,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L108",
+      "source_location": "L109",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_verifyuniformcutoffs",
@@ -306650,7 +306650,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L64",
+      "source_location": "L65",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -306662,7 +306662,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L127",
+      "source_location": "L128",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -306674,7 +306674,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L114",
+      "source_location": "L115",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -306686,7 +306686,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L86",
+      "source_location": "L87",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -306698,7 +306698,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L93",
+      "source_location": "L94",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -306710,7 +306710,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L104",
+      "source_location": "L105",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -306722,7 +306722,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L64",
+      "source_location": "L65",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -306734,7 +306734,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L127",
+      "source_location": "L128",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -306746,7 +306746,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L114",
+      "source_location": "L115",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -306758,7 +306758,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L86",
+      "source_location": "L87",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -306770,7 +306770,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L93",
+      "source_location": "L94",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -306782,7 +306782,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L104",
+      "source_location": "L105",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -306795,7 +306795,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L58",
+      "source_location": "L59",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_verifybondcutoffmatrix",
@@ -306807,7 +306807,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L248",
+      "source_location": "L249",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_test_f",
@@ -306818,7 +306818,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L64",
+      "source_location": "L65",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -306831,7 +306831,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L88",
+      "source_location": "L89",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_verifyrecommendedcutoffs",
@@ -306842,7 +306842,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L79",
+      "source_location": "L80",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -306854,7 +306854,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L86",
+      "source_location": "L87",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -306866,7 +306866,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L93",
+      "source_location": "L94",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -306878,7 +306878,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L104",
+      "source_location": "L105",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -306890,7 +306890,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L79",
+      "source_location": "L80",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -306903,7 +306903,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L88",
+      "source_location": "L89",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_verifyrecommendedcutoffs",
@@ -306914,7 +306914,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L788",
+      "source_location": "L789",
       "weight": 1.0,
       "context": "return_type",
       "_origin": "ast",
@@ -306927,7 +306927,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L322",
+      "source_location": "L323",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_test_f",
@@ -306939,7 +306939,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L349",
+      "source_location": "L350",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_test_f",
@@ -306951,7 +306951,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L528",
+      "source_location": "L529",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_test_f",
@@ -306963,7 +306963,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L1000",
+      "source_location": "L1001",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_test_f",
@@ -306974,7 +306974,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L114",
+      "source_location": "L115",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -306986,7 +306986,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L127",
+      "source_location": "L128",
       "weight": 1.0,
       "context": "generic_arg",
       "_origin": "ast",
@@ -306999,7 +306999,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L1010",
+      "source_location": "L1011",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_test_f",
@@ -307011,7 +307011,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L148",
+      "source_location": "L149",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_verifyactiveplotconfig",
@@ -307023,7 +307023,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L149",
+      "source_location": "L150",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_verifyactiveplotconfig",
@@ -307035,7 +307035,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L1046",
+      "source_location": "L1047",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_test_f",
@@ -307046,35 +307046,11 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L184",
+      "source_location": "L185",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_appcontrollertests",
       "target": "tests_functional_app_appcontrollertests_appcontrollertests_callhandleoptionsfromui",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "defines",
-      "confidence": "EXTRACTED",
-      "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L191",
-      "weight": 1.0,
-      "context": "field",
-      "_origin": "ast",
-      "source": "tests_functional_app_appcontrollertests_appcontrollertests",
-      "target": "tests_functional_app_appcontrollertests_appcontrollertests_dispatcher",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "defines",
-      "confidence": "EXTRACTED",
-      "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L190",
-      "weight": 1.0,
-      "context": "field",
-      "_origin": "ast",
-      "source": "tests_functional_app_appcontrollertests_appcontrollertests",
-      "target": "tests_functional_app_appcontrollertests_appcontrollertests_loader",
       "confidence_score": 1.0
     },
     {
@@ -307086,6 +307062,30 @@
       "context": "field",
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_appcontrollertests",
+      "target": "tests_functional_app_appcontrollertests_appcontrollertests_dispatcher",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/functional/app/AppControllerTests.cpp",
+      "source_location": "L191",
+      "weight": 1.0,
+      "context": "field",
+      "_origin": "ast",
+      "source": "tests_functional_app_appcontrollertests_appcontrollertests",
+      "target": "tests_functional_app_appcontrollertests_appcontrollertests_loader",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/functional/app/AppControllerTests.cpp",
+      "source_location": "L193",
+      "weight": 1.0,
+      "context": "field",
+      "_origin": "ast",
+      "source": "tests_functional_app_appcontrollertests_appcontrollertests",
       "target": "tests_functional_app_appcontrollertests_appcontrollertests_options",
       "confidence_score": 1.0
     },
@@ -307093,7 +307093,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L173",
+      "source_location": "L174",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_appcontrollertests",
@@ -307104,7 +307104,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L191",
+      "source_location": "L192",
       "weight": 1.0,
       "context": "field",
       "_origin": "ast",
@@ -307116,7 +307116,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L155",
+      "source_location": "L156",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_appcontrollertests",
@@ -307127,7 +307127,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L190",
+      "source_location": "L191",
       "weight": 1.0,
       "context": "field",
       "_origin": "ast",
@@ -307139,7 +307139,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L1151",
+      "source_location": "L1162",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307151,7 +307151,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L184",
+      "source_location": "L185",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307164,7 +307164,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L247",
+      "source_location": "L248",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_test_f",
@@ -307175,7 +307175,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L728",
+      "source_location": "L729",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307187,7 +307187,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L709",
+      "source_location": "L710",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307199,7 +307199,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L808",
+      "source_location": "L809",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307211,7 +307211,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L1103",
+      "source_location": "L1104",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307223,7 +307223,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L1013",
+      "source_location": "L1014",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307235,7 +307235,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L195",
+      "source_location": "L196",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307247,7 +307247,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L977",
+      "source_location": "L978",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307259,7 +307259,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L1056",
+      "source_location": "L1057",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307271,7 +307271,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L1151",
+      "source_location": "L1162",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307283,7 +307283,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L860",
+      "source_location": "L861",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307295,7 +307295,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L747",
+      "source_location": "L748",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307307,7 +307307,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L773",
+      "source_location": "L774",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307319,7 +307319,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L829",
+      "source_location": "L830",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307331,7 +307331,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L615",
+      "source_location": "L616",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307343,7 +307343,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L202",
+      "source_location": "L203",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307355,7 +307355,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L559",
+      "source_location": "L560",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307367,7 +307367,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L496",
+      "source_location": "L497",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307379,7 +307379,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L626",
+      "source_location": "L627",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307391,7 +307391,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L919",
+      "source_location": "L920",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307403,7 +307403,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L945",
+      "source_location": "L946",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307415,7 +307415,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L878",
+      "source_location": "L879",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307427,7 +307427,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L310",
+      "source_location": "L311",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307439,7 +307439,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L576",
+      "source_location": "L577",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307451,7 +307451,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L659",
+      "source_location": "L660",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307463,7 +307463,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L325",
+      "source_location": "L326",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307475,7 +307475,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L352",
+      "source_location": "L353",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307487,7 +307487,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L677",
+      "source_location": "L678",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307499,7 +307499,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L1131",
+      "source_location": "L1132",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307511,7 +307511,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L848",
+      "source_location": "L849",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307523,7 +307523,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L251",
+      "source_location": "L252",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307536,7 +307536,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L812",
+      "source_location": "L813",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_test_f",
@@ -307548,7 +307548,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L711",
+      "source_location": "L712",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_test_f",
@@ -307560,7 +307560,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L817",
+      "source_location": "L818",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_functional_app_appcontrollertests_test_f",
@@ -307571,7 +307571,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L544",
+      "source_location": "L545",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307583,7 +307583,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L701",
+      "source_location": "L702",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307595,7 +307595,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L788",
+      "source_location": "L789",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307607,7 +307607,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L799",
+      "source_location": "L800",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -307619,7 +307619,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/functional/app/AppControllerTests.cpp",
-      "source_location": "L799",
+      "source_location": "L800",
       "weight": 1.0,
       "context": "return_type",
       "_origin": "ast",
@@ -345778,5 +345778,5 @@
       "confidence_score": 1.0
     }
   ],
-  "built_at_commit": "e8378f27082a6f0824a324eb07cdaa0b0ad0293e"
+  "built_at_commit": "fc9ce721bb7f5b247ee45b7e20a01c2fd2da78cb"
 }

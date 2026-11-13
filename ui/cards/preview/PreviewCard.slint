@@ -216,24 +216,21 @@ export component PreviewCard inherits FilledCard {
         imaging_toolbar.tooltip_text != "" ? imaging_toolbar.tooltip_text :
         curve_sidebar.tooltip_text != "" ? curve_sidebar.tooltip_text :
         preview_header.tooltip_text != "" ? preview_header.tooltip_text :
-        (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? "Remove all pinned runs from the comparison overlay." :
-        save_results_area.has-hover ? "Export analysis results to files in the selected formats (CSV, HDF5, Parquet, SVG).\n\n💡 Tip: Results are written to the output destination directory." : "";
+        (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? "Remove all pinned runs from the comparison overlay." : "";
 
     out property <length> hovered_x:
         (root.active_tool == 5 && calibration_bar.hovered_tooltip_text != "") ? calibration_bar.hovered_x :
         imaging_toolbar.tooltip_text != "" ? imaging_toolbar.tooltip_x :
         curve_sidebar.tooltip_text != "" ? curve_sidebar.tooltip_x :
         preview_header.tooltip_text != "" ? preview_header.tooltip_x :
-        (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? clear_pinned_area.absolute-position.x + clear_pinned_area.mouse-x :
-        save_results_area.has-hover ? save_results_area.absolute-position.x + save_results_area.mouse-x : 0px;
+        (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? clear_pinned_area.absolute-position.x + clear_pinned_area.mouse-x : 0px;
 
     out property <length> hovered_y:
         (root.active_tool == 5 && calibration_bar.hovered_tooltip_text != "") ? calibration_bar.hovered_y :
         imaging_toolbar.tooltip_text != "" ? imaging_toolbar.tooltip_y :
         curve_sidebar.tooltip_text != "" ? curve_sidebar.tooltip_y :
         preview_header.tooltip_text != "" ? preview_header.tooltip_y :
-        (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? clear_pinned_area.absolute-position.y + clear_pinned_area.mouse-y :
-        save_results_area.has-hover ? save_results_area.absolute-position.y + save_results_area.mouse-y : 0px;
+        (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? clear_pinned_area.absolute-position.y + clear_pinned_area.mouse-y : 0px;
 
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
@@ -253,6 +250,7 @@ export component PreviewCard inherits FilledCard {
             browse_file => { root.browse_file(); }
             open_panel(idx) => { root.open_panel(idx); }
             run_analysis => { root.run_analysis(); }
+            cancel_analysis => { root.cancel_analysis(); }
         }
 
         // 2. Header: Plot dropdown and Tabs
@@ -680,26 +678,6 @@ export component PreviewCard inherits FilledCard {
                 visible: root.active_tab == 3;
                 table_headers: root.table_headers;
                 table_rows: root.table_rows;
-            }
-        }
-
-        // 5. Footer: Save Results
-        Horizontal {
-            height: MaterialStyleMetrics.size_40;
-            save_results_area := TouchArea {
-                accessible-role: button;
-                accessible-label: "Save Analysis Results";
-                height: 100%;
-                horizontal-stretch: 1;
-                FilledButton {
-                    width: 100%;
-                    height: 100%;
-                    text: "Save Results";
-                    enabled: root.analysis_done;
-                    background: MaterialPalette.primary;
-                    text_color: MaterialPalette.on_primary;
-                    clicked => { root.write_files(); }
-                }
             }
         }
     }

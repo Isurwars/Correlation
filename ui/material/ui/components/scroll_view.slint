@@ -19,13 +19,13 @@ export component MaterialScrollView {
     // Slint standard property bindings
     in-out property <length> viewport_x <=> flick.content-x;
     in-out property <length> viewport_y <=> flick.content-y;
-    in-out property <length> viewport_width: 0px;
-    in-out property <length> viewport_height: 0px;
+    in-out property <length> viewport_width <=> flick.content-width;
+    in-out property <length> viewport_height <=> flick.content-height;
 
     in-out property <length> content_x <=> flick.content-x;
     in-out property <length> content_y <=> flick.content-y;
-    in-out property <length> content_width <=> root.viewport_width;
-    in-out property <length> content_height <=> root.viewport_height;
+    in-out property <length> content_width <=> flick.content-width;
+    in-out property <length> content_height <=> flick.content-height;
 
     out property <length> visible_width: flick.width;
     out property <length> visible_height: flick.height;
@@ -42,14 +42,7 @@ export component MaterialScrollView {
         height: 100%;
         interactive: root.enabled;
 
-        viewport := Rectangle {
-            x: 0;
-            y: 0;
-            width: (!root.is_h_enabled) ? flick.width : (root.viewport_width > 0px ? root.viewport_width : self.preferred-width);
-            height: (!root.is_v_enabled) ? flick.height : (root.viewport_height > 0px ? root.viewport_height : self.preferred-height);
-
-            @children
-        }
+        @children
     }
 
     // Scroll metrics
@@ -117,36 +110,49 @@ export component MaterialScrollView {
         }
     }
 
-    // Vertical Overlay Scrollbar
+    // Vertical Overlay Scrollbar / Slider Track
     v_bar := Rectangle {
         visible: root.show_v_bar;
         x: parent.width - self.width - 2px;
         y: 2px;
-        width: v_touch.has_hover || v_touch.pressed ? 6px : 4px;
-        height: parent.height - 4px - (root.show_h_bar ? 8px : 0px);
+        width: v_touch.has_hover || v_touch.pressed ? 10px : 7px;
+        height: parent.height - 4px - (root.show_h_bar ? 12px : 0px);
         border-radius: self.width / 2;
-        background: MaterialPalette.outline_variant.with_alpha(20%);
+        background: (v_touch.has_hover || v_touch.pressed) ?
+            MaterialPalette.surface_container_highest : MaterialPalette.outline_variant.with_alpha(25%);
         z: 10;
 
         animate width { duration: 150ms; easing: ease-out; }
+        animate background { duration: 150ms; }
 
         v_thumb := Rectangle {
+            x: (parent.width - self.width) / 2;
             width: parent.width;
-            height: max(24px, parent.height * (flick.height / max(1px, flick.content-height)));
+            height: max(32px, parent.height * (flick.height / max(1px, flick.content-height)));
             border-radius: self.width / 2;
             background: v_touch.pressed ? MaterialPalette.primary :
-                v_touch.has_hover ? MaterialPalette.on_surface_variant :
-                MaterialPalette.outline_variant.with_alpha(70%);
+                v_touch.has_hover ? MaterialPalette.primary.with_alpha(85%) :
+                MaterialPalette.on_surface_variant.with_alpha(70%);
             y: (parent.height - self.height) * (root.max_scroll_y > 0px ? max(0.0, min(1.0, -flick.content-y / root.max_scroll_y)) : 0.0);
 
             animate background { duration: 150ms; }
         }
 
         v_touch := TouchArea {
-            width: 100%;
+            x: -4px;
+            width: parent.width + 8px;
             height: 100%;
+            mouse-cursor: pointer;
             property <length> press_y;
             property <length> press_vp_y;
+
+            scroll-event(event) => {
+                if (event.delta-y != 0) {
+                    flick.content-y = min(0px, max(-root.max_scroll_y, flick.content-y + event.delta-y));
+                    return accept;
+                }
+                reject
+            }
 
             pointer-event(event) => {
                 if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {

@@ -8,12 +8,16 @@ import {
     MaterialPalette,
     ScrollView,
     Vertical,
+    FilledButton,
+    Icons,
 } from "../../material/material.slint";
+import { WorkflowState } from "../../Types.slint";
 import { SQOptionsCard } from "SQOptionsCard.slint";
 import { XRDOptionsCard } from "XRDOptionsCard.slint";
 import { RingsOptionsCard } from "RingsOptionsCard.slint";
 import { SmoothingOptionsCard } from "SmoothingOptionsCard.slint";
 import { AdvancedOptionsCard } from "AdvancedOptionsCard.slint";
+import { DynamicPropertiesCard } from "../dynamic/DynamicPropertiesCard.slint";
 
 // ============================================================================
 // AdvancedOptionsPanelCard Component (Panel 2)
@@ -22,6 +26,9 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
     in property <bool> file_loaded: false;
     in property <bool> has_scattering_active: true;
     in property <bool> has_rings_active: true;
+    in property <WorkflowState> workflow_state;
+    callback run_analysis();
+    callback cancel_analysis();
 
     // SQ Options
     in-out property <string> q_max;
@@ -50,6 +57,12 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
     in property <string> max_ring_error: "";
     callback reset_rings_options();
 
+    // Dynamic properties
+    in property <string> diff_msd: "";
+    in property <string> diff_vacf: "";
+    in property <string> relaxation_time: "";
+    in property <string> deborah_number: "";
+
     // Smoothing Options
     in-out property <bool> smoothing_enabled;
     in-out property <string> smoothing_sigma;
@@ -70,6 +83,7 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
         sq_card.hovered_tooltip_text != "" ? sq_card.hovered_tooltip_text :
         xrd_card.hovered_tooltip_text != "" ? xrd_card.hovered_tooltip_text :
         rings_card.hovered_tooltip_text != "" ? rings_card.hovered_tooltip_text :
+        dynamic_properties.hovered_tooltip_text != "" ? dynamic_properties.hovered_tooltip_text :
         smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_tooltip_text :
         advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_tooltip_text : "";
 
@@ -77,6 +91,7 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
         sq_card.hovered_tooltip_text != "" ? sq_card.hovered_x :
         xrd_card.hovered_tooltip_text != "" ? xrd_card.hovered_x :
         rings_card.hovered_tooltip_text != "" ? rings_card.hovered_x :
+        dynamic_properties.hovered_tooltip_text != "" ? dynamic_properties.hovered_x :
         smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_x :
         advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_x : 0px;
 
@@ -84,99 +99,126 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
         sq_card.hovered_tooltip_text != "" ? sq_card.hovered_y :
         xrd_card.hovered_tooltip_text != "" ? xrd_card.hovered_y :
         rings_card.hovered_tooltip_text != "" ? rings_card.hovered_y :
+        dynamic_properties.hovered_tooltip_text != "" ? dynamic_properties.hovered_y :
         smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_y :
         advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_y : 0px;
 
-    out property <length> hovered_width:
-        sq_card.hovered_tooltip_text != "" ? sq_card.hovered_width :
-        xrd_card.hovered_tooltip_text != "" ? xrd_card.hovered_width :
-        rings_card.hovered_tooltip_text != "" ? rings_card.hovered_width :
-        smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_width :
-        advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_width : 0px;
+    out property <length> hovered_width: 0px;
+    out property <length> hovered_height: 0px;
 
-    out property <length> hovered_height:
-        sq_card.hovered_tooltip_text != "" ? sq_card.hovered_height :
-        xrd_card.hovered_tooltip_text != "" ? xrd_card.hovered_height :
-        rings_card.hovered_tooltip_text != "" ? rings_card.hovered_height :
-        smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_height :
-        advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_height : 0px;
-
-    ScrollView {
+    Vertical {
         width: 100%;
         height: 100%;
+        spacing: MaterialStyleMetrics.spacing_8;
+        padding: 0;
 
-        Vertical {
-            padding: 0;
-            spacing: MaterialStyleMetrics.spacing_8;
+        ScrollView {
+            vertical-stretch: 1;
 
-            // Structure Factor S(Q) Card
-            sq_card := SQOptionsCard {
-                file_loaded: root.file_loaded;
-                q_max <=> root.q_max;
-                q_bin_width <=> root.q_bin_width;
-                r_int_max <=> root.r_int_max;
-                q_max_error: root.q_max_error;
-                q_bin_error: root.q_bin_error;
-                r_int_max_error: root.r_int_max_error;
-                reset => { root.reset_sq_options(); }
-                visible: root.has_scattering_active;
-                height: root.has_scattering_active ? self.preferred-height : 0px;
-                opacity: root.has_scattering_active ? 1.0 : 0.0;
-                animate opacity { duration: 150ms; }
+            Vertical {
+                padding: 0;
+                spacing: MaterialStyleMetrics.spacing_8;
+
+                // Structure Factor S(Q) Card
+                sq_card := SQOptionsCard {
+                    file_loaded: root.file_loaded;
+                    q_max <=> root.q_max;
+                    q_bin_width <=> root.q_bin_width;
+                    r_int_max <=> root.r_int_max;
+                    q_max_error: root.q_max_error;
+                    q_bin_error: root.q_bin_error;
+                    r_int_max_error: root.r_int_max_error;
+                    reset => { root.reset_sq_options(); }
+                    visible: root.has_scattering_active;
+                    height: root.has_scattering_active ? self.preferred-height : 0px;
+                    opacity: root.has_scattering_active ? 1.0 : 0.0;
+                    animate opacity { duration: 150ms; }
+                }
+
+                // Powder Diffraction (XRD) Card
+                xrd_card := XRDOptionsCard {
+                    file_loaded: root.file_loaded;
+                    radiation_preset <=> root.xrd_radiation_preset;
+                    lambda <=> root.xrd_lambda;
+                    theta_min <=> root.xrd_theta_min;
+                    theta_max <=> root.xrd_theta_max;
+                    bin_width <=> root.xrd_bin_width;
+                    lambda_error: root.xrd_lambda_error;
+                    theta_min_error: root.xrd_theta_min_error;
+                    theta_max_error: root.xrd_theta_max_error;
+                    bin_width_error: root.xrd_bin_width_error;
+                    reset => { root.reset_xrd_options(); }
+                    radiation_preset_changed(idx) => { root.xrd_radiation_preset_changed(idx); }
+                    visible: root.has_scattering_active;
+                    height: root.has_scattering_active ? self.preferred-height : 0px;
+                    opacity: root.has_scattering_active ? 1.0 : 0.0;
+                    animate opacity { duration: 150ms; }
+                }
+
+                // Rings Card
+                rings_card := RingsOptionsCard {
+                    file_loaded: root.file_loaded;
+                    max_ring_size <=> root.max_ring_size;
+                    max_ring_error: root.max_ring_error;
+                    reset => { root.reset_rings_options(); }
+                    visible: root.has_rings_active;
+                    height: root.has_rings_active ? self.preferred-height : 0px;
+                    opacity: root.has_rings_active ? 1.0 : 0.0;
+                    animate opacity { duration: 150ms; }
+                }
+
+                // Calculated Dynamic Properties
+                dynamic_properties := DynamicPropertiesCard {
+                    diff_msd: root.diff_msd;
+                    diff_vacf: root.diff_vacf;
+                    relaxation_time: root.relaxation_time;
+                    deborah_number: root.deborah_number;
+                }
+
+                // Smoothing Card
+                smoothing_card := SmoothingOptionsCard {
+                    file_loaded: root.file_loaded;
+                    smoothing_enabled <=> root.smoothing_enabled;
+                    smoothing_sigma <=> root.smoothing_sigma;
+                    smoothing_kernel <=> root.smoothing_kernel;
+                    smoothing_sigma_error: root.smoothing_sigma_error;
+                    reset => { root.reset_smoothing_options(); }
+                }
+
+                // Advanced Order Parameters Card
+                advanced_card := AdvancedOptionsCard {
+                    file_loaded: root.file_loaded;
+                    lef_cutoff <=> root.lef_cutoff;
+                    lef_sigma <=> root.lef_sigma;
+                    lef_cutoff_error: root.lef_cutoff_error;
+                    lef_sigma_error: root.lef_sigma_error;
+                    hyper_samples <=> root.hyper_samples;
+                    hyper_samples_error: root.hyper_samples_error;
+                    reset => { root.reset_advanced_options(); }
+                }
             }
+        }
 
-            // Powder Diffraction (XRD) Card
-            xrd_card := XRDOptionsCard {
-                file_loaded: root.file_loaded;
-                radiation_preset <=> root.xrd_radiation_preset;
-                lambda <=> root.xrd_lambda;
-                theta_min <=> root.xrd_theta_min;
-                theta_max <=> root.xrd_theta_max;
-                bin_width <=> root.xrd_bin_width;
-                lambda_error: root.xrd_lambda_error;
-                theta_min_error: root.xrd_theta_min_error;
-                theta_max_error: root.xrd_theta_max_error;
-                bin_width_error: root.xrd_bin_width_error;
-                reset => { root.reset_xrd_options(); }
-                radiation_preset_changed(idx) => { root.xrd_radiation_preset_changed(idx); }
-                visible: root.has_scattering_active;
-                height: root.has_scattering_active ? self.preferred-height : 0px;
-                opacity: root.has_scattering_active ? 1.0 : 0.0;
-                animate opacity { duration: 150ms; }
-            }
-
-            // Rings Card
-            rings_card := RingsOptionsCard {
-                file_loaded: root.file_loaded;
-                max_ring_size <=> root.max_ring_size;
-                max_ring_error: root.max_ring_error;
-                reset => { root.reset_rings_options(); }
-                visible: root.has_rings_active;
-                height: root.has_rings_active ? self.preferred-height : 0px;
-                opacity: root.has_rings_active ? 1.0 : 0.0;
-                animate opacity { duration: 150ms; }
-            }
-
-            // Smoothing Card
-            smoothing_card := SmoothingOptionsCard {
-                file_loaded: root.file_loaded;
-                smoothing_enabled <=> root.smoothing_enabled;
-                smoothing_sigma <=> root.smoothing_sigma;
-                smoothing_kernel <=> root.smoothing_kernel;
-                smoothing_sigma_error: root.smoothing_sigma_error;
-                reset => { root.reset_smoothing_options(); }
-            }
-
-            // Advanced Order Parameters Card
-            advanced_card := AdvancedOptionsCard {
-                file_loaded: root.file_loaded;
-                lef_cutoff <=> root.lef_cutoff;
-                lef_sigma <=> root.lef_sigma;
-                lef_cutoff_error: root.lef_cutoff_error;
-                lef_sigma_error: root.lef_sigma_error;
-                hyper_samples <=> root.hyper_samples;
-                hyper_samples_error: root.hyper_samples_error;
-                reset => { root.reset_advanced_options(); }
+        // Pinned Bottom Run / Cancel Button
+        TouchArea {
+            accessible-role: button;
+            accessible-label: root.workflow_state.analysis_running ? "Cancel Analysis" : "Run Analysis";
+            height: MaterialStyleMetrics.size_40;
+            FilledButton {
+                width: 100%;
+                height: 100%;
+                icon: root.workflow_state.analysis_running ? Icons.close : Icons.play_arrow;
+                text: root.workflow_state.analysis_running ? "Cancel Analysis" : "Run Analysis";
+                enabled: root.workflow_state.analysis_running || (root.file_loaded && !root.workflow_state.has_validation_errors);
+                background: root.workflow_state.analysis_running ? MaterialPalette.error : MaterialPalette.run;
+                text_color: root.workflow_state.analysis_running ? MaterialPalette.on_error : MaterialPalette.on_run;
+                clicked => {
+                    if (root.workflow_state.analysis_running) {
+                        root.cancel_analysis();
+                    } else {
+                        root.run_analysis();
+                    }
+                }
             }
         }
     }

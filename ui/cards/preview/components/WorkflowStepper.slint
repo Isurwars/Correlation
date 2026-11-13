@@ -11,6 +11,7 @@ export component WorkflowStepper inherits Rectangle {
     callback browse_file();
     callback open_panel(int);
     callback run_analysis();
+    callback cancel_analysis();
 
     width: 100%;
     height: 28px;
@@ -23,10 +24,12 @@ export component WorkflowStepper inherits Rectangle {
         alignment: center;
 
         // 1. Load File
-        Rectangle {
+        step1 := Rectangle {
             height: 28px;
             border-radius: 14px;
-            background: !root.file_loaded ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+            background: !root.file_loaded ? MaterialPalette.primary_container :
+                        step1_touch.has-hover ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_high;
+            animate background { duration: 150ms; }
 
             HorizontalLayout {
                 padding-left: 12px;
@@ -39,9 +42,15 @@ export component WorkflowStepper inherits Rectangle {
                 }
             }
 
-            TouchArea {
+            step1_touch := TouchArea {
                 mouse-cursor: pointer;
-                clicked => { root.browse_file(); }
+                clicked => {
+                    if (!root.file_loaded) {
+                        root.browse_file();
+                    } else {
+                        root.open_panel(0);
+                    }
+                }
             }
         }
 
@@ -52,10 +61,12 @@ export component WorkflowStepper inherits Rectangle {
         }
 
         // 2. Configure Options
-        Rectangle {
+        step2 := Rectangle {
             height: 28px;
             border-radius: 14px;
-            background: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+            background: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? MaterialPalette.primary_container :
+                        step2_touch.has-hover ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_high;
+            animate background { duration: 150ms; }
 
             HorizontalLayout {
                 padding-left: 12px;
@@ -70,7 +81,7 @@ export component WorkflowStepper inherits Rectangle {
                 }
             }
 
-            TouchArea {
+            step2_touch := TouchArea {
                 mouse-cursor: pointer;
                 clicked => { root.open_panel(1); }
             }
@@ -83,16 +94,18 @@ export component WorkflowStepper inherits Rectangle {
         }
 
         // 3. Run Calculation
-        Rectangle {
+        step3 := Rectangle {
             height: 28px;
             border-radius: 14px;
-            background: root.analysis_running ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+            background: root.analysis_running ? MaterialPalette.primary_container :
+                        (root.file_loaded && step3_touch.has-hover) ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_high;
+            animate background { duration: 150ms; }
 
             HorizontalLayout {
                 padding-left: 12px;
                 padding-right: 12px;
                 Text {
-                    text: root.analysis_running ? "3. Calculating... (Active)" :
+                    text: root.analysis_running ? "3. Calculating... (Cancel)" :
                           root.analysis_done ? "3. Calculation Complete ✓" : "3. Run Calculation";
                     font-size: MaterialTypography.label_medium.font_size;
                     color: root.analysis_running ? MaterialPalette.on_primary_container :
@@ -101,10 +114,12 @@ export component WorkflowStepper inherits Rectangle {
                 }
             }
 
-            TouchArea {
-                mouse-cursor: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? pointer : default;
+            step3_touch := TouchArea {
+                mouse-cursor: (root.file_loaded || root.analysis_running) ? pointer : default;
                 clicked => {
-                    if (root.file_loaded && !root.analysis_running && !root.analysis_done) {
+                    if (root.analysis_running) {
+                        root.cancel_analysis();
+                    } else if (root.file_loaded) {
                         root.run_analysis();
                     }
                 }
@@ -118,10 +133,12 @@ export component WorkflowStepper inherits Rectangle {
         }
 
         // 4. Preview & Export
-        Rectangle {
+        step4 := Rectangle {
             height: 28px;
             border-radius: 14px;
-            background: root.analysis_done ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+            background: root.analysis_done ? MaterialPalette.primary_container :
+                        (root.analysis_done && step4_touch.has-hover) ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_high;
+            animate background { duration: 150ms; }
 
             HorizontalLayout {
                 padding-left: 12px;
@@ -131,6 +148,15 @@ export component WorkflowStepper inherits Rectangle {
                     font-size: MaterialTypography.label_medium.font_size;
                     color: root.analysis_done ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
                     vertical-alignment: center;
+                }
+            }
+
+            step4_touch := TouchArea {
+                mouse-cursor: root.analysis_done ? pointer : default;
+                clicked => {
+                    if (root.analysis_done) {
+                        root.open_panel(3);
+                    }
                 }
             }
         }
