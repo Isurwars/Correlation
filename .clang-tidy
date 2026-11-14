@@ -18,7 +18,8 @@ Checks: >
   -misc-include-cleaner,
   -readability-math-missing-parentheses,
   -cppcoreguidelines-pro-type-reinterpret-cast,
-  -modernize-use-std-numbers
+  -modernize-use-std-numbers,
+  -readability-trailing-comma
 
 HeaderFilterRegex: '^(?!.*(build/|build-fuzz/|/usr/|/opt/|pdfgen|RobotoData)).*$'
 FormatStyle: file

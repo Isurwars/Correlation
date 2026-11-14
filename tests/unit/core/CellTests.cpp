@@ -253,12 +253,14 @@ TEST_F(CellTests, TriclinicCellMinimumImage) {
 TEST_F(CellTests, ExtremelySmallCell) {
   // Very small cell — should not cause underflow or precision issues
   // Note: Cell::updateLattice rejects volume <= 1e-9, so 0.01^3 = 1e-6 is valid
-  const std::array<real_t, 6> params = {static_cast<real_t>(0.01),
-                                        static_cast<real_t>(0.01),
-                                        static_cast<real_t>(0.01),
-                                        90.0,
-                                        90.0,
-                                        90.0};
+  const std::array<real_t, 6> params = {
+      static_cast<real_t>(0.01),
+      static_cast<real_t>(0.01),
+      static_cast<real_t>(0.01),
+      90.0,
+      90.0,
+      90.0,
+  };
   Cell cell(params);
   EXPECT_NEAR(cell.volume(), 1e-6, correlation::is_single_precision ? 1e-10 : 1e-12);
 

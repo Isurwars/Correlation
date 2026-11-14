@@ -63,13 +63,11 @@ void processAtomPair(const correlation::math::Vector3<real_t> &pos_i,
   const real_t mag_j_len = correlation::math::norm(m_j);
   const real_t dot_m = m_i.x() * m_j.x() + m_i.y() * m_j.y() + m_i.z() * m_j.z();
 
-  real_t dot_s = static_cast<real_t>(0.0);
+  auto dot_s = static_cast<real_t>(0.0);
   if (mag_i_len > static_cast<real_t>(1e-6) && mag_j_len > static_cast<real_t>(1e-6)) {
     dot_s = dot_m / (mag_i_len * mag_j_len);
-    if (dot_s > static_cast<real_t>(1.0))
-      dot_s = static_cast<real_t>(1.0);
-    if (dot_s < static_cast<real_t>(-1.0))
-      dot_s = static_cast<real_t>(-1.0);
+    dot_s = std::min(dot_s, static_cast<real_t>(1.0));
+    dot_s = std::max(dot_s, static_cast<real_t>(-1.0));
   }
 
   local_hist.spin_dot[bin] += dot_s;
@@ -84,7 +82,7 @@ void accumulateAllPairs(const correlation::core::Cell &cell,
   const bool is_periodic = (cell.volume() > static_cast<real_t>(1e-6));
 
   tbb::enumerable_thread_specific<LocalSpinHistograms> thread_histograms(
-      [num_bins]() { return LocalSpinHistograms(num_bins); });
+      [num_bins] { return LocalSpinHistograms(num_bins); });
 
   tbb::parallel_for(tbb::blocked_range<size_t>(0, n_atoms),
                     [&](const tbb::blocked_range<size_t> &range) {
@@ -102,23 +100,24 @@ void accumulateAllPairs(const correlation::core::Cell &cell,
                     });
 
   for (const auto &local_hist : thread_histograms) {
-    for (size_t b = 0; b < num_bins; ++b) {
-      result.spin_correlation[b] += local_hist.spin_dot[b];
-      result.magnetic_moment_corr[b] += local_hist.mag_dot[b];
-      result.pair_counts[b] += local_hist.counts[b];
+    for (size_t bin_idx = 0; bin_idx < num_bins; ++bin_idx) {
+      result.spin_correlation[bin_idx] += local_hist.spin_dot[bin_idx];
+      result.magnetic_moment_corr[bin_idx] += local_hist.mag_dot[bin_idx];
+      result.pair_counts[bin_idx] += local_hist.counts[bin_idx];
     }
   }
 }
 
 void finalizeAverages(size_t num_bins, real_t r_bin_width, SpinCorrelationResult &result) noexcept {
-  for (size_t b = 0; b < num_bins; ++b) {
-    result.r_bins[b] = (static_cast<real_t>(b) + static_cast<real_t>(0.5)) * r_bin_width;
-    if (result.pair_counts[b] > 0) {
-      result.spin_correlation[b] /= static_cast<real_t>(result.pair_counts[b]);
-      result.magnetic_moment_corr[b] /= static_cast<real_t>(result.pair_counts[b]);
+  for (size_t bin_idx = 0; bin_idx < num_bins; ++bin_idx) {
+    result.r_bins[bin_idx] =
+        (static_cast<real_t>(bin_idx) + static_cast<real_t>(0.5)) * r_bin_width;
+    if (result.pair_counts[bin_idx] > 0) {
+      result.spin_correlation[bin_idx] /= static_cast<real_t>(result.pair_counts[bin_idx]);
+      result.magnetic_moment_corr[bin_idx] /= static_cast<real_t>(result.pair_counts[bin_idx]);
     } else {
-      result.spin_correlation[b] = static_cast<real_t>(0.0);
-      result.magnetic_moment_corr[b] = static_cast<real_t>(0.0);
+      result.spin_correlation[bin_idx] = static_cast<real_t>(0.0);
+      result.magnetic_moment_corr[bin_idx] = static_cast<real_t>(0.0);
     }
   }
 }

@@ -30,7 +30,7 @@ void VDOSCalculator::calculateTrajectory(
     return; // VACF must be computed first
   }
   const auto &vacf_hist = dists.getHistogram("VACF");
-  auto it_total = vacf_hist.partials.find("Total");
+  auto const it_total = vacf_hist.partials.find("Total");
   if (it_total == vacf_hist.partials.end() || it_total->second.size() < 2) {
     return; // VACF data is too short for VDOS calculation (e.g. single-frame calculation)
   }

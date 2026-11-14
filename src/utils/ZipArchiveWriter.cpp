@@ -21,6 +21,10 @@ struct ZipArchiveWriter::Impl {
   bool is_finalized{false};
 
   Impl() { mz_zip_zero_struct(&archive); }
+  Impl(const Impl &) = delete;
+  Impl &operator=(const Impl &) = delete;
+  Impl(Impl &&) = delete;
+  Impl &operator=(Impl &&) = delete;
 
   ~Impl() { cleanup(); }
 
@@ -51,11 +55,11 @@ std::expected<void, std::string> ZipArchiveWriter::open(const std::filesystem::p
   }
 
   const std::string path_str = archive_path.string();
-  mz_bool status = mz_zip_writer_init_file(&impl_->archive, path_str.c_str(), 0);
-  if (!status) {
+  const mz_bool status = mz_zip_writer_init_file(&impl_->archive, path_str.c_str(), 0);
+  if (status == MZ_FALSE) {
     const char *err = mz_zip_get_error_string(mz_zip_get_last_error(&impl_->archive));
     return std::unexpected(std::format("Failed to initialize zip file '{}': {}", path_str,
-                                       err ? err : "unknown error"));
+                                       err != nullptr ? err : "unknown error"));
   }
 
   impl_->is_open = true;
@@ -73,12 +77,12 @@ ZipArchiveWriter::addFileFromMemory(std::string_view entry_name, std::span<const
   }
 
   const std::string name(entry_name);
-  mz_bool status = mz_zip_writer_add_mem(&impl_->archive, name.c_str(), data.data(), data.size(),
-                                         MZ_DEFAULT_COMPRESSION);
-  if (!status) {
+  const mz_bool status = mz_zip_writer_add_mem(&impl_->archive, name.c_str(), data.data(),
+                                               data.size(), MZ_DEFAULT_COMPRESSION);
+  if (status == MZ_FALSE) {
     const char *err = mz_zip_get_error_string(mz_zip_get_last_error(&impl_->archive));
-    return std::unexpected(
-        std::format("Failed to add memory entry '{}': {}", name, err ? err : "unknown error"));
+    return std::unexpected(std::format("Failed to add memory entry '{}': {}", name,
+                                       err != nullptr ? err : "unknown error"));
   }
   return {};
 }
@@ -104,13 +108,14 @@ ZipArchiveWriter::addFileFromDisk(std::string_view entry_name,
   }
 
   const std::string name(entry_name);
-  mz_bool status =
+  const mz_bool status =
       mz_zip_writer_add_file(&impl_->archive, name.c_str(), source_path.string().c_str(), nullptr,
                              0, MZ_DEFAULT_COMPRESSION);
-  if (!status) {
+  if (status == MZ_FALSE) {
     const char *err = mz_zip_get_error_string(mz_zip_get_last_error(&impl_->archive));
     return std::unexpected(std::format("Failed to add file '{}' from disk '{}': {}", name,
-                                       source_path.string(), err ? err : "unknown error"));
+                                       source_path.string(),
+                                       err != nullptr ? err : "unknown error"));
   }
   return {};
 }
@@ -123,12 +128,12 @@ std::expected<void, std::string> ZipArchiveWriter::finalize() {
     return {};
   }
 
-  mz_bool status = mz_zip_writer_finalize_archive(&impl_->archive);
-  if (!status) {
+  const mz_bool status = mz_zip_writer_finalize_archive(&impl_->archive);
+  if (status == MZ_FALSE) {
     const char *err = mz_zip_get_error_string(mz_zip_get_last_error(&impl_->archive));
     impl_->cleanup();
     return std::unexpected(
-        std::format("Failed to finalize zip archive: {}", err ? err : "unknown error"));
+        std::format("Failed to finalize zip archive: {}", err != nullptr ? err : "unknown error"));
   }
 
   impl_->is_finalized = true;

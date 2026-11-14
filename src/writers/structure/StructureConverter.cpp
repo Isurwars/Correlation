@@ -21,7 +21,7 @@ namespace {
 
 correlation::readers::BaseReader *resolveSourceReader(const std::string &input_file,
                                                       const std::string &from_format) {
-  auto &reader_factory = correlation::readers::ReaderFactory::instance();
+  auto const &reader_factory = correlation::readers::ReaderFactory::instance();
 
   if (!from_format.empty()) {
     std::string ext = from_format;
@@ -42,7 +42,7 @@ correlation::readers::BaseReader *resolveSourceReader(const std::string &input_f
 
 BaseStructureWriter *resolveDestinationWriter(const std::string &output_file,
                                               const std::string &to_format) {
-  auto &writer_factory = StructureWriterFactory::instance();
+  auto const &writer_factory = StructureWriterFactory::instance();
 
   if (!to_format.empty()) {
     auto *writer = writer_factory.getWriterForFormat(to_format);
@@ -88,7 +88,7 @@ void convertStructure(const std::string &input_file, const std::string &output_f
                              input_file);
   }
 
-  auto *writer = resolveDestinationWriter(output_file, options.to_format);
+  auto const *writer = resolveDestinationWriter(output_file, options.to_format);
   if (writer == nullptr) {
     throw std::runtime_error("Unrecognized or unsupported destination structure format for: " +
                              output_file);

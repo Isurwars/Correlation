@@ -30,7 +30,7 @@ const bool REGISTERED =
 
 [[nodiscard]] inline real_t computePairCoherence(const std::complex<real_t> *q6m_i,
                                                  const std::complex<real_t> *q6m_j) noexcept {
-  real_t chi = static_cast<real_t>(0.0);
+  auto chi = static_cast<real_t>(0.0);
   for (size_t m_order = 0; m_order < 13; ++m_order) {
     chi += q6m_i[m_order].real() * q6m_j[m_order].real() +
            q6m_i[m_order].imag() * q6m_j[m_order].imag();
@@ -131,8 +131,8 @@ correlation::analysis::Histogram TenWoldeFrenkelCalculator::calculate(
   }
 
   constexpr size_t K_BINS = 21; // 0 through 20
-  constexpr real_t K_MIN_VAL = static_cast<real_t>(0.0);
-  constexpr real_t K_MAX_VAL = static_cast<real_t>(21.0);
+  constexpr auto K_MIN_VAL = static_cast<real_t>(0.0);
+  constexpr auto K_MAX_VAL = static_cast<real_t>(21.0);
 
   size_t solid_like_count = 0;
   for (const auto val : n_conn) {

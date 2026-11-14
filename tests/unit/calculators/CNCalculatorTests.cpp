@@ -30,10 +30,14 @@ TEST(CNCalculatorTests, CalculatesCorrectCoordinationNumbers) {
   // Define cutoffs
   real_t const neighbor_cutoff = 1.5;
   BondCutoffMatrix const bond_cutoffs = {
-      {{.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25},
-       {.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25}}, // C-C, C-H
-      {{.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25},
-       {.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25}}, // H-C, H-H
+      {
+          {.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25},
+          {.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25},
+      }, // C-C, C-H
+      {
+          {.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25},
+          {.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25},
+      }, // H-C, H-H
   };
 
   // Build StructureAnalyzer to compute neighbor list
@@ -90,7 +94,8 @@ TEST(CNCalculatorTests, HighCoordinationFCC) {
   // Use cutoff slightly above that
   real_t const neighbor_cutoff = 0.75;
   BondCutoffMatrix const bond_cutoffs = {
-      {{.min_sq = static_cast<real_t>(0.36), .max_sq = 0.75 * 0.75}}};
+      {{.min_sq = static_cast<real_t>(0.36), .max_sq = 0.75 * 0.75}},
+  };
 
   // Need to consider periodic images (ignore_periodic_self_interactions = false)
   StructureAnalyzer const analyzer(cell, neighbor_cutoff, bond_cutoffs, false);

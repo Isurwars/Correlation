@@ -21,19 +21,19 @@ void FileWriter::write(const std::string &base_path, bool use_csv, bool use_hdf5
   auto &factory = WriterFactory::instance();
 
   if (use_csv && df_ != nullptr) {
-    if (auto *writer = factory.getWriter("CSV")) {
+    if (auto const *writer = factory.getWriter("CSV")) {
       writer->write(base_path, *df_, smoothing);
     }
   }
 
   if (use_hdf5 && df_ != nullptr) {
-    if (auto *writer = factory.getWriter("HDF5")) {
+    if (auto const *writer = factory.getWriter("HDF5")) {
       writer->write(base_path, *df_, smoothing);
     }
   }
 
   if (use_parquet && df_ != nullptr) {
-    if (auto *writer = factory.getWriter("Parquet")) {
+    if (auto const *writer = factory.getWriter("Parquet")) {
       writer->write(base_path, *df_, smoothing);
     }
   }

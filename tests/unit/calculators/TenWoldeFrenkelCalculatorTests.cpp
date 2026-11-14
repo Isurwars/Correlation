@@ -104,8 +104,10 @@ TEST_F(TenWoldeFrenkelCalculatorTests, ThresholdFiltering) {
       {{{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(0.8 * 0.8)}}}, false);
 
   // Very strict chi_cut = 0.9999 should reject bonds unless perfectly aligned
-  const TenWoldeFrenkelParams strict_params{.chi_cut = static_cast<real_t>(0.9999),
-                                            .nconn_min = 12};
+  const TenWoldeFrenkelParams strict_params{
+      .chi_cut = static_cast<real_t>(0.9999),
+      .nconn_min = 12,
+  };
   const auto n_conn_strict =
       TenWoldeFrenkelCalculator::calculatePerAtom(cell, &analyzer, strict_params);
   ASSERT_EQ(n_conn_strict.size(), cell.atomCount());

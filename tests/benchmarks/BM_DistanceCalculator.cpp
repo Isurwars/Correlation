@@ -41,7 +41,7 @@ void benchDistanceSmallCell(benchmark::State &state) {
       .num_bins = static_cast<size_t>(cutoff / 0.05),
   };
 
-  for ([[maybe_unused]] auto iter : state) {
+  for ([[maybe_unused]] auto const iter : state) {
     core::NeighborGraph graph(cell.atomCount());
     calculators::RawHistogramTensor histograms;
     calculators::DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, graph,
@@ -65,7 +65,7 @@ void benchDistanceMidCell(benchmark::State &state) {
       .num_bins = static_cast<size_t>(cutoff / 0.05),
   };
 
-  for ([[maybe_unused]] auto iter : state) {
+  for ([[maybe_unused]] auto const iter : state) {
     core::NeighborGraph graph(cell.atomCount());
     calculators::RawHistogramTensor histograms;
     calculators::DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, graph,
@@ -89,7 +89,7 @@ void benchDistanceLargeCell(benchmark::State &state) {
       .num_bins = static_cast<size_t>(cutoff / 0.05),
   };
 
-  for ([[maybe_unused]] auto iter : state) {
+  for ([[maybe_unused]] auto const iter : state) {
     core::NeighborGraph graph(cell.atomCount());
     calculators::RawHistogramTensor histograms;
     calculators::DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs, true, graph,

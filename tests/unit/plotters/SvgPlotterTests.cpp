@@ -42,12 +42,21 @@ TEST(SvgPlotterTests, RendersValidHistogramCorrectly) {
 
   // 5 bins
   hist.bins = {1.0, 2.0, 3.0, 4.0, 5.0};
-  hist.partials["Total"] = {static_cast<real_t>(0.1), 0.5, static_cast<real_t>(1.2),
-                            static_cast<real_t>(0.8), static_cast<real_t>(0.2)};
-  hist.partials["Si-O"] = {0.0, static_cast<real_t>(0.3), static_cast<real_t>(0.9),
-                           static_cast<real_t>(0.4), static_cast<real_t>(0.1)};
-  hist.partials["O-O"] = {static_cast<real_t>(0.1), static_cast<real_t>(0.4),
-                          static_cast<real_t>(0.8), 0.5, static_cast<real_t>(0.1)};
+  hist.partials["Total"] = {
+      static_cast<real_t>(0.1), 0.5, static_cast<real_t>(1.2), static_cast<real_t>(0.8),
+      static_cast<real_t>(0.2),
+  };
+  hist.partials["Si-O"] = {
+      0.0,
+      static_cast<real_t>(0.3),
+      static_cast<real_t>(0.9),
+      static_cast<real_t>(0.4),
+      static_cast<real_t>(0.1),
+  };
+  hist.partials["O-O"] = {
+      static_cast<real_t>(0.1), static_cast<real_t>(0.4), static_cast<real_t>(0.8), 0.5,
+      static_cast<real_t>(0.1),
+  };
 
   // Act
   PlotConfig config;
@@ -95,8 +104,11 @@ TEST(SvgPlotterTests, RendersComparisonOverlayCorrectly) {
   Histogram hist2;
   hist2.title = "Comparison";
   hist2.bins = {1.0, 2.0, 3.0};
-  hist2.partials["Total"] = {static_cast<real_t>(0.6), static_cast<real_t>(1.1),
-                             static_cast<real_t>(1.6)};
+  hist2.partials["Total"] = {
+      static_cast<real_t>(0.6),
+      static_cast<real_t>(1.1),
+      static_cast<real_t>(1.6),
+  };
 
   const std::vector<LabeledHistogram> datasets = {
       {.label = "Run A", .hist = &hist1},
@@ -193,8 +205,11 @@ TEST(SvgPlotterTests, RendersContinuousColormapsAndCustomColors) {
   hist.bins = {1.0, 2.0, 3.0};
   hist.partials["Total"] = {1.0, 2.0, 1.5};
   hist.partials["O-O"] = {0.5, static_cast<real_t>(0.8), 1.0};
-  hist.partials["Si-O"] = {static_cast<real_t>(0.2), static_cast<real_t>(0.4),
-                           static_cast<real_t>(0.6)};
+  hist.partials["Si-O"] = {
+      static_cast<real_t>(0.2),
+      static_cast<real_t>(0.4),
+      static_cast<real_t>(0.6),
+  };
 
   // Test Magma continuous palette
   PlotConfig magma_config;
@@ -313,7 +328,7 @@ TEST(SvgPlotterTests, ScreenToDataGeometryTransformsAccurately) {
   EXPECT_NEAR(s_top_y, 50.0, 1e-4);
 
   const real_t test_x = 3.75;
-  const real_t test_y = static_cast<real_t>(2.15);
+  const auto test_y = static_cast<real_t>(2.15);
   const auto [s_mid_x, s_mid_y] =
       detail::dataToScreen(test_x, test_y, 1000.0, 600.0, config, x_scale, y_scale);
   const auto [rec_x, rec_y] =
@@ -348,9 +363,10 @@ TEST(SvgPlotterTests, DetectsMainPeakOnNormalizedDistribution) {
   hist.y_label = "P(θ)";
   hist.bins = {10.0, 20.0, 30.0, 40.0, 50.0, 60.0};
   // Small normalized values well below the old 0.5 threshold
-  hist.partials["Total"] = {static_cast<real_t>(0.005), static_cast<real_t>(0.012),
-                            static_cast<real_t>(0.038), static_cast<real_t>(0.021),
-                            static_cast<real_t>(0.009), static_cast<real_t>(0.002)};
+  hist.partials["Total"] = {
+      static_cast<real_t>(0.005), static_cast<real_t>(0.012), static_cast<real_t>(0.038),
+      static_cast<real_t>(0.021), static_cast<real_t>(0.009), static_cast<real_t>(0.002),
+  };
 
   PlotConfig config;
   config.use_native_text = true;
@@ -372,9 +388,11 @@ TEST(SvgPlotterTests, DetectsMainPeakForRadialHistogram) {
   hist.x_label = "r";
   hist.y_label = "g(r)";
   hist.bins = {1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0};
-  hist.partials["Total"] = {0.0, static_cast<real_t>(0.2), static_cast<real_t>(2.8),
-                            0.5, static_cast<real_t>(1.2), static_cast<real_t>(0.8),
-                            1.0};
+  hist.partials["Total"] = {
+      0.0, static_cast<real_t>(0.2), static_cast<real_t>(2.8),
+      0.5, static_cast<real_t>(1.2), static_cast<real_t>(0.8),
+      1.0,
+  };
 
   PlotConfig config;
   config.use_native_text = true;
@@ -392,8 +410,12 @@ TEST(SvgPlotterTests, DualViewScalesBasedOnlyOnEnsembleMean) {
   Histogram hist;
   hist.title = "Dual View RDF";
   hist.bins = {1.0, 2.0, 3.0, 4.0};
-  hist.partials["Ensemble Mean"] = {0.5, static_cast<real_t>(1.2), static_cast<real_t>(0.8),
-                                    static_cast<real_t>(0.2)};
+  hist.partials["Ensemble Mean"] = {
+      0.5,
+      static_cast<real_t>(1.2),
+      static_cast<real_t>(0.8),
+      static_cast<real_t>(0.2),
+  };
   hist.partials["Frame 12"] = {5.0, 30.0, 20.0, 1.0};
 
   PlotConfig config;
@@ -424,8 +446,11 @@ TEST(SvgPlotterTests, DualViewPreservesStableColorsInSvgOutput) {
   Histogram hist2;
   hist2.bins = {1.0, 2.0, 3.0};
   hist2.partials["Ensemble Mean"] = {1.0, 2.0, 1.5};
-  hist2.partials["Frame 2"] = {static_cast<real_t>(0.001), static_cast<real_t>(0.002),
-                               static_cast<real_t>(0.001)};
+  hist2.partials["Frame 2"] = {
+      static_cast<real_t>(0.001),
+      static_cast<real_t>(0.002),
+      static_cast<real_t>(0.001),
+  };
 
   const std::string svg2 = renderHistogramAsSvg(hist2, config);
   EXPECT_NE(svg2.find(mean_col), std::string::npos);

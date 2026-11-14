@@ -55,12 +55,12 @@ public:
 
   /**
    * @brief Writes a single histogram and its smoothed companion to an output stream (CSV format).
-   * @param os Output stream.
+   * @param out_stream Output stream.
    * @param hist The Histogram data structure.
    * @param raw_companion Optional raw companion histogram.
    */
   static void
-  writeHistogramToStream(std::ostream &os, const correlation::analysis::Histogram &hist,
+  writeHistogramToStream(std::ostream &out_stream, const correlation::analysis::Histogram &hist,
                          const correlation::analysis::Histogram *raw_companion = nullptr);
 
 private:

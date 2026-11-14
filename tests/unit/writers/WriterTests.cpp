@@ -180,7 +180,7 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   correlation::analysis::DistributionFunctions dists(si_cell, 20.0, trajectory.getBondCutoffsSQ());
 
   // Act
-  const real_t rdf_bin = static_cast<real_t>(0.05);
+  const auto rdf_bin = static_cast<real_t>(0.05);
   const real_t pad_bin = 1.0;
   const real_t dad_bin = 1.0;
   dists.calculateRDF({

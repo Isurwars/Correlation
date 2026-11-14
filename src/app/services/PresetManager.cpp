@@ -79,10 +79,9 @@ size_t findRootKey(const std::string &json, const std::string &key) {
     }
     if (chr == '"') {
       in_string = !in_string;
-      if (in_string && tracker.brace_level == 1 && tracker.bracket_level == 0) {
-        if (isTargetKeyAt(json, i, key)) {
-          return i;
-        }
+      if (in_string && tracker.brace_level == 1 && tracker.bracket_level == 0 &&
+          isTargetKeyAt(json, i, key)) {
+        return i;
       }
       continue;
     }

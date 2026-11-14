@@ -104,7 +104,7 @@ void writeCoordinates(std::ostream &out, const correlation::core::Cell &cell,
   const auto &inv_lattice = cell.inverseLatticeVectors();
 
   for (const auto &sym : grouping.order) {
-    for (std::size_t atom_idx : grouping.indices.at(sym)) {
+    for (std::size_t const atom_idx : grouping.indices.at(sym)) {
       const auto &atom = cell.atoms()[atom_idx];
       correlation::math::Vector3<real_t> const coords =
           fractional ? formatFractionalCoordinates(inv_lattice * atom.position()) : atom.position();

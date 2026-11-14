@@ -76,8 +76,8 @@ CORRELATION_DEVICE CORRELATION_HOST inline void gpuSincos<float>(float val, floa
 }
 
 template <>
-CORRELATION_DEVICE CORRELATION_HOST inline void gpuSincos<double>(double val, double *sin_val,
-                                                                  double *cos_val) {
+[[maybe_unused]] CORRELATION_DEVICE CORRELATION_HOST inline void
+gpuSincos<double>(double val, double *sin_val, double *cos_val) {
 #ifdef __CUDA_ARCH__
   __sincos(val, sin_val, cos_val);
 #elifdef __HIP_DEVICE_COMPILE__
@@ -151,7 +151,7 @@ std::vector<real_t> averageBinnedSQ(const std::vector<T> &rho_cos, size_t num_q_
   const int num_q = static_cast<int>(qmag.size());
 
   for (int qi = 0; qi < num_q; ++qi) {
-    auto bin = static_cast<size_t>(qmag[qi] / q_bin_width);
+    auto const bin = static_cast<size_t>(qmag[qi] / q_bin_width);
     if (bin >= num_q_bins) {
       continue;
     }

@@ -29,7 +29,7 @@ using hipError_t = cudaError_t;
 #define hipDeviceSynchronize cudaDeviceSynchronize
 #define hipGetErrorString cudaGetErrorString
 
-#if defined(__CUDACC__)
+#ifdef __CUDACC__
 /**
  * @brief Portable kernel launch function mapping to CUDA chevron syntax.
  * @tparam K Kernel function type.

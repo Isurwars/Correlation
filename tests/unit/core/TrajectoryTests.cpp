@@ -193,10 +193,14 @@ TEST_F(TrajectoryTests, CalculateVelocitiesHandlesPBC) {
 TEST_F(TrajectoryTests, SetBondCutoffsManuallyWorks) {
   Trajectory traj;
   traj.setBondCutoffs({
-      {{.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25},
-       {.min_sq = static_cast<real_t>(0.49), .max_sq = 4.0}},
-      {{.min_sq = static_cast<real_t>(0.49), .max_sq = 4.0},
-       {.min_sq = static_cast<real_t>(0.64), .max_sq = 6.25}},
+      {
+          {.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25},
+          {.min_sq = static_cast<real_t>(0.49), .max_sq = 4.0},
+      },
+      {
+          {.min_sq = static_cast<real_t>(0.49), .max_sq = 4.0},
+          {.min_sq = static_cast<real_t>(0.64), .max_sq = 6.25},
+      },
   });
   EXPECT_NEAR(traj.getMinBondCutoffSQ(0, 0), 0.36, 1e-5);
   EXPECT_NEAR(traj.getBondCutoffSQ(0, 0), 2.25, 1e-5);

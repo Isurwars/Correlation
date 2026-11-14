@@ -59,7 +59,7 @@ private:
 TEST_F(StructureAnalyzerTests, FindsCorrectNeighborsForSilicon) {
   // Arrange: Create an 8-atom conventional unit cell of Silicon.
   // The diamond lattice structure is a robust test for neighbor finding.
-  const real_t lattice_const = static_cast<real_t>(5.43); // Angstroms
+  const auto lattice_const = static_cast<real_t>(5.43); // Angstroms
   correlation::core::Cell si_cell({lattice_const, lattice_const, lattice_const, 90.0, 90.0, 90.0});
 
   // Fractional coordinates for the 8 atoms in a diamond cubic cell
@@ -82,7 +82,7 @@ TEST_F(StructureAnalyzerTests, FindsCorrectNeighborsForSilicon) {
 
   // Assert
   ASSERT_EQ(neighbor_graph.nodeCount(), 8);
-  const real_t expected_distance = static_cast<real_t>(2.3512); // More precise value
+  const auto expected_distance = static_cast<real_t>(2.3512); // More precise value
 
   // Every Si atom in a diamond lattice must have exactly 4 nearest neighbors.
   for (size_t i = 0; i < neighbor_graph.nodeCount(); ++i) {
@@ -144,8 +144,8 @@ TEST_F(StructureAnalyzerTests, DistancesTensorIsCorrect) {
 TEST_F(StructureAnalyzerTests, CalculatesCorrectAnglesForWater) {
   // Arrange: Create a single water molecule with a known bond angle.
   correlation::core::Cell water_cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
-  const real_t bond_length = static_cast<real_t>(0.957); // Angstroms
-  const real_t bond_angle_deg = 104.5;                   // Degrees
+  const auto bond_length = static_cast<real_t>(0.957); // Angstroms
+  const real_t bond_angle_deg = 104.5;                 // Degrees
   const real_t bond_angle_rad = bond_angle_deg * correlation::math::DEG_TO_RAD;
 
   water_cell.addAtom("O", {10.0, 10.0, 10.0});

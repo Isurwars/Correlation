@@ -30,10 +30,14 @@ TEST(DistanceCalculatorTests, ComputesPairwiseDistancesAndNeighborGraph) {
   // Setup inputs
   real_t const cutoff_sq = 4.0; // Cutoff distance = 2.0
   BondCutoffMatrix const bond_cutoffs = {
-      {{.min_sq = static_cast<real_t>(0.36), .max_sq = 4.0},
-       {.min_sq = static_cast<real_t>(0.36), .max_sq = 4.0}}, // Si-Si, Si-O
-      {{.min_sq = static_cast<real_t>(0.36), .max_sq = 4.0},
-       {.min_sq = static_cast<real_t>(0.36), .max_sq = 4.0}}, // O-Si, O-O
+      {
+          {.min_sq = static_cast<real_t>(0.36), .max_sq = 4.0},
+          {.min_sq = static_cast<real_t>(0.36), .max_sq = 4.0},
+      }, // Si-Si, Si-O
+      {
+          {.min_sq = static_cast<real_t>(0.36), .max_sq = 4.0},
+          {.min_sq = static_cast<real_t>(0.36), .max_sq = 4.0},
+      }, // O-Si, O-O
   };
 
   size_t const num_elements = cell.elements().size();
@@ -157,10 +161,14 @@ TEST(DistanceCalculatorTests, AtomsOutsideCutoff) {
   // Cutoff = 2.0, so this pair should NOT be found
   real_t const cutoff_sq = 4.0;
   BondCutoffMatrix const bond_cutoffs = {
-      {{.min_sq = static_cast<real_t>(0.36), .max_sq = 4.0},
-       {.min_sq = static_cast<real_t>(0.36), .max_sq = 4.0}},
-      {{.min_sq = static_cast<real_t>(0.36), .max_sq = 4.0},
-       {.min_sq = static_cast<real_t>(0.36), .max_sq = 4.0}},
+      {
+          {.min_sq = static_cast<real_t>(0.36), .max_sq = 4.0},
+          {.min_sq = static_cast<real_t>(0.36), .max_sq = 4.0},
+      },
+      {
+          {.min_sq = static_cast<real_t>(0.36), .max_sq = 4.0},
+          {.min_sq = static_cast<real_t>(0.36), .max_sq = 4.0},
+      },
   };
 
   RawHistogramTensor out_histograms;
@@ -294,7 +302,8 @@ TEST(DistanceCalculatorTests, LargeTriclinicCellSubcellPartitioning) {
   real_t const cutoff = 3.5;
   real_t const cutoff_sq = cutoff * cutoff;
   BondCutoffMatrix const bond_cutoffs = {
-      {{.min_sq = static_cast<real_t>(0.64), .max_sq = cutoff_sq}}};
+      {{.min_sq = static_cast<real_t>(0.64), .max_sq = cutoff_sq}},
+  };
 
   RawHistogramTensor out_histograms;
   NeighborGraph out_graph(4);
@@ -328,7 +337,7 @@ TEST(DistanceCalculatorTests, SmallCrystalCellMultiImageExpansion) {
 
   real_t const r_max = 10.0;
   real_t const cutoff_sq = r_max * r_max;
-  real_t const bin_width = static_cast<real_t>(0.02);
+  auto const bin_width = static_cast<real_t>(0.02);
   const auto num_bins = static_cast<size_t>(std::ceil(r_max / bin_width));
 
   // No bonds needed, only distance histogramming
@@ -365,10 +374,10 @@ TEST(DistanceCalculatorTests, SmallCrystalCellMultiImageExpansion) {
 }
 
 TEST(DistanceCalculatorTests, SmallCellFCCMultiImageExpansionMatchesSupercellUpTo20A) {
-  real_t const lat_a = static_cast<real_t>(3.6);
+  auto const lat_a = static_cast<real_t>(3.6);
   real_t const r_max = 20.0;
   real_t const cutoff_sq = r_max * r_max;
-  real_t const bin_width = static_cast<real_t>(0.0217);
+  auto const bin_width = static_cast<real_t>(0.0217);
   const auto num_bins = static_cast<size_t>(std::ceil(r_max / bin_width));
   DistanceCalculationConfig const config{
       .r_max = r_max,
@@ -423,7 +432,7 @@ TEST(DistanceCalculatorTests, SmallCellFCCMultiImageExpansionMatchesSupercellUpT
 }
 
 TEST(DistanceCalculatorTests, SmallCellBCCMultiImageExpansionMatchesSupercellUpTo20A) {
-  real_t const lat_a = static_cast<real_t>(2.88);
+  auto const lat_a = static_cast<real_t>(2.88);
   real_t const r_max = 20.0;
   real_t const cutoff_sq = r_max * r_max;
   real_t const bin_width = 0.03125;
@@ -883,7 +892,10 @@ TEST(DistanceCalculatorTests, BruteForceEquivalenceTinySingleAtomCell) {
   cell.addAtom("Ar", {1.5, 1.5, 1.5});
   const BondCutoffMatrix bonds = {{{.min_sq = 0.0, .max_sq = 100.0}}};
   const DistanceCalculationConfig config{
-      .r_max = 8.0, .r_bin_width = static_cast<real_t>(0.1), .num_bins = 80};
+      .r_max = 8.0,
+      .r_bin_width = static_cast<real_t>(0.1),
+      .num_bins = 80,
+  };
 
   for (const real_t cutoff :
        {static_cast<real_t>(2.5), static_cast<real_t>(5.0), static_cast<real_t>(7.5)}) {
@@ -903,7 +915,10 @@ TEST(DistanceCalculatorTests, BruteForceEquivalenceSkewedTriclinicCell) {
       {{.min_sq = 0.0, .max_sq = 100.0}, {.min_sq = 0.0, .max_sq = 100.0}},
   };
   const DistanceCalculationConfig config{
-      .r_max = 6.0, .r_bin_width = static_cast<real_t>(0.1), .num_bins = 60};
+      .r_max = 6.0,
+      .r_bin_width = static_cast<real_t>(0.1),
+      .num_bins = 60,
+  };
 
   for (const real_t cutoff : {static_cast<real_t>(3.0), static_cast<real_t>(5.5)}) {
     verifyDistanceEquivalence(cell, cutoff, bonds, config);
@@ -919,7 +934,10 @@ TEST(DistanceCalculatorTests, BruteForceEquivalenceThinSlabCell) {
 
   const BondCutoffMatrix bonds = {{{.min_sq = 0.0, .max_sq = 100.0}}};
   const DistanceCalculationConfig config{
-      .r_max = 7.0, .r_bin_width = static_cast<real_t>(0.1), .num_bins = 70};
+      .r_max = 7.0,
+      .r_bin_width = static_cast<real_t>(0.1),
+      .num_bins = 70,
+  };
 
   for (const real_t cutoff : {static_cast<real_t>(4.0), static_cast<real_t>(6.5)}) {
     verifyDistanceEquivalence(cell, cutoff, bonds, config);
@@ -936,7 +954,10 @@ TEST(DistanceCalculatorTests, BruteForceEquivalenceBoundaryWidthCell) {
 
   const BondCutoffMatrix bonds = {{{.min_sq = 0.0, .max_sq = 100.0}}};
   const DistanceCalculationConfig config{
-      .r_max = 6.0, .r_bin_width = static_cast<real_t>(0.05), .num_bins = 120};
+      .r_max = 6.0,
+      .r_bin_width = static_cast<real_t>(0.05),
+      .num_bins = 120,
+  };
 
   for (const real_t cutoff : {static_cast<real_t>(3.0), static_cast<real_t>(6.0)}) {
     verifyDistanceEquivalence(cell, cutoff, bonds, config);
@@ -949,12 +970,18 @@ TEST(DistanceCalculatorTests, BruteForceEquivalenceDiamondAndFCCSupercells) {
 
   const BondCutoffMatrix si_bonds = {{{.min_sq = 0.0, .max_sq = 25.0}}};
   const DistanceCalculationConfig si_config{
-      .r_max = 4.5, .r_bin_width = static_cast<real_t>(0.05), .num_bins = 90};
+      .r_max = 4.5,
+      .r_bin_width = static_cast<real_t>(0.05),
+      .num_bins = 90,
+  };
   verifyDistanceEquivalence(diamond, static_cast<real_t>(4.0), si_bonds, si_config);
 
   const BondCutoffMatrix cu_bonds = {{{.min_sq = 0.0, .max_sq = 25.0}}};
   const DistanceCalculationConfig cu_config{
-      .r_max = 4.5, .r_bin_width = static_cast<real_t>(0.05), .num_bins = 90};
+      .r_max = 4.5,
+      .r_bin_width = static_cast<real_t>(0.05),
+      .num_bins = 90,
+  };
   verifyDistanceEquivalence(fcc, static_cast<real_t>(3.5), cu_bonds, cu_config);
 }
 
@@ -966,7 +993,10 @@ TEST(DistanceCalculatorTests, BruteForceEquivalenceRandomAmorphousCell) {
   });
   const BondCutoffMatrix bonds = {{{.min_sq = 0.0, .max_sq = 50.0}}};
   const DistanceCalculationConfig config{
-      .r_max = 5.0, .r_bin_width = static_cast<real_t>(0.05), .num_bins = 100};
+      .r_max = 5.0,
+      .r_bin_width = static_cast<real_t>(0.05),
+      .num_bins = 100,
+  };
   for (const real_t cutoff : {static_cast<real_t>(2.5), static_cast<real_t>(4.8)}) {
     verifyDistanceEquivalence(cell, cutoff, bonds, config);
   }
@@ -1048,7 +1078,10 @@ TEST(DistanceCalculatorTests, DeterministicNeighborGraphAcrossThreadCounts) {
   const real_t cutoff_sq = cutoff * cutoff;
   const BondCutoffMatrix bonds = {{{.min_sq = 0.0, .max_sq = cutoff_sq}}};
   const DistanceCalculationConfig config{
-      .r_max = cutoff, .r_bin_width = static_cast<real_t>(0.05), .num_bins = 90};
+      .r_max = cutoff,
+      .r_bin_width = static_cast<real_t>(0.05),
+      .num_bins = 90,
+  };
 
   NeighborGraph graph_1thread(cell.atomCount());
   {

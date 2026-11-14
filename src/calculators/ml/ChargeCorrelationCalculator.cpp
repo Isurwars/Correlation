@@ -66,7 +66,7 @@ void accumulateAllChargePairs(const correlation::core::Cell &cell, std::span<con
   const bool is_periodic = (cell.volume() > static_cast<real_t>(1e-6));
 
   tbb::enumerable_thread_specific<LocalChargeHistograms> thread_histograms(
-      [num_bins]() { return LocalChargeHistograms(num_bins); });
+      [num_bins] { return LocalChargeHistograms(num_bins); });
 
   tbb::parallel_for(tbb::blocked_range<size_t>(0, n_atoms),
                     [&](const tbb::blocked_range<size_t> &range) {
@@ -84,15 +84,15 @@ void accumulateAllChargePairs(const correlation::core::Cell &cell, std::span<con
                     });
 
   for (const auto &local_hist : thread_histograms) {
-    for (size_t b = 0; b < num_bins; ++b) {
-      result.g_qq[b] += local_hist.charge_prod[b];
-      result.pair_counts[b] += local_hist.counts[b];
+    for (size_t bin_idx = 0; bin_idx < num_bins; ++bin_idx) {
+      result.g_qq[bin_idx] += local_hist.charge_prod[bin_idx];
+      result.pair_counts[bin_idx] += local_hist.counts[bin_idx];
     }
   }
 }
 
 real_t computeSumSquaredCharges(std::span<const real_t> charges) noexcept {
-  real_t sum_q2 = static_cast<real_t>(0.0);
+  auto sum_q2 = static_cast<real_t>(0.0);
   for (const real_t q : charges) {
     sum_q2 += (q * q);
   }
@@ -108,25 +108,25 @@ void finalizeChargeNormalization(const correlation::core::Cell &cell,
     volume = static_cast<real_t>(1000.0);
   }
 
-  real_t running_integral = static_cast<real_t>(0.0);
-  constexpr real_t four_pi = correlation::math::FOUR_PI;
+  auto running_integral = static_cast<real_t>(0.0);
+  constexpr real_t FOUR_PI_VAL = correlation::math::FOUR_PI;
 
-  for (size_t b = 0; b < num_bins; ++b) {
-    const real_t r = (static_cast<real_t>(b) + static_cast<real_t>(0.5)) * r_bin_width;
-    result.r_bins[b] = r;
+  for (size_t bin_idx = 0; bin_idx < num_bins; ++bin_idx) {
+    const real_t r = (static_cast<real_t>(bin_idx) + static_cast<real_t>(0.5)) * r_bin_width;
+    result.r_bins[bin_idx] = r;
 
     // Shell volume: dV = 4 * pi * r^2 * dr
-    const real_t dV = four_pi * r * r * r_bin_width;
+    const real_t shell_vol = FOUR_PI_VAL * r * r * r_bin_width;
 
-    if (dV > static_cast<real_t>(0.0) && sum_q2 > static_cast<real_t>(1e-9)) {
+    if (shell_vol > static_cast<real_t>(0.0) && sum_q2 > static_cast<real_t>(1e-9)) {
       // 2.0 factor because pair sum runs over i < j
-      const real_t raw_prod_sum = static_cast<real_t>(2.0) * result.g_qq[b];
-      result.g_qq[b] = (volume * raw_prod_sum) / (dV * sum_q2);
+      const real_t raw_prod_sum = static_cast<real_t>(2.0) * result.g_qq[bin_idx];
+      result.g_qq[bin_idx] = (volume * raw_prod_sum) / (shell_vol * sum_q2);
       running_integral += raw_prod_sum;
-      result.charge_integral[b] = running_integral;
+      result.charge_integral[bin_idx] = running_integral;
     } else {
-      result.g_qq[b] = static_cast<real_t>(0.0);
-      result.charge_integral[b] = static_cast<real_t>(0.0);
+      result.g_qq[bin_idx] = static_cast<real_t>(0.0);
+      result.charge_integral[bin_idx] = static_cast<real_t>(0.0);
     }
   }
 }

@@ -1133,8 +1133,14 @@ TEST_F(AppControllerTests, SampleDatasetAndRecentFilesIntegration) {
   const auto original_settings = correlation::app::SettingsManager::load();
   struct SettingsRestoreGuard {
     correlation::app::AppSettings saved;
+    explicit SettingsRestoreGuard(correlation::app::AppSettings settings)
+        : saved(std::move(settings)) {}
+    SettingsRestoreGuard(const SettingsRestoreGuard &) = delete;
+    SettingsRestoreGuard &operator=(const SettingsRestoreGuard &) = delete;
+    SettingsRestoreGuard(SettingsRestoreGuard &&) = delete;
+    SettingsRestoreGuard &operator=(SettingsRestoreGuard &&) = delete;
     ~SettingsRestoreGuard() { correlation::app::SettingsManager::save(saved); }
-  } guard{.saved = original_settings};
+  } const guard(original_settings);
 
   auto clean_settings = original_settings;
   clean_settings.recent_files.clear();

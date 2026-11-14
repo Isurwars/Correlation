@@ -225,7 +225,7 @@ TEST_F(StructureFactorCalculatorTests, CalculateSF_EmptyCellThrows) {
 }
 
 TEST_F(StructureFactorCalculatorTests, FCC_Copper_SQ) {
-  real_t const a = static_cast<real_t>(3.615);
+  auto const a = static_cast<real_t>(3.615);
   const auto cell = correlation::testing::crystals::createFCCCell(a, "Cu", 2, 2, 2);
 
   DistributionFunctions dists(cell);
@@ -243,7 +243,7 @@ TEST_F(StructureFactorCalculatorTests, FCC_Copper_SQ) {
 }
 
 TEST_F(StructureFactorCalculatorTests, BCC_Iron_SQ) {
-  real_t const a = static_cast<real_t>(2.866);
+  auto const a = static_cast<real_t>(2.866);
   const auto cell = correlation::testing::crystals::createBCCCell(a, "Fe", 3, 3, 3);
 
   DistributionFunctions dists(cell);
@@ -261,7 +261,7 @@ TEST_F(StructureFactorCalculatorTests, BCC_Iron_SQ) {
 }
 
 TEST_F(StructureFactorCalculatorTests, Diamond_Silicon_SQ) {
-  real_t const a = static_cast<real_t>(5.431);
+  auto const a = static_cast<real_t>(5.431);
   const auto cell = correlation::testing::crystals::createDiamondCell(a, "Si", 2, 2, 2);
 
   DistributionFunctions dists(cell);
@@ -279,7 +279,7 @@ TEST_F(StructureFactorCalculatorTests, Diamond_Silicon_SQ) {
 }
 
 TEST_F(StructureFactorCalculatorTests, NaCl_RockSalt_SQ) {
-  real_t const a = static_cast<real_t>(5.64);
+  auto const a = static_cast<real_t>(5.64);
   const auto cell = correlation::testing::crystals::createNaClCell(a, "Na", "Cl", 2, 2, 2);
 
   DistributionFunctions dists(cell);

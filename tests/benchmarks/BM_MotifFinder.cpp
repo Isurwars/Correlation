@@ -35,7 +35,7 @@ core::NeighborGraph buildDiamondGraph(int n_cells) {
   };
 
   core::NeighborGraph graph(cell.atomCount());
-  calculators::DistanceCalculationConfig config{
+  calculators::DistanceCalculationConfig const config{
       .r_max = cutoff,
       .r_bin_width = 0.0,
       .num_bins = 0,
@@ -51,8 +51,8 @@ void bmMotifFinderKingRingsDiamond(benchmark::State &state) {
   const auto graph = buildDiamondGraph(4);
   const size_t max_ring_size = 6;
 
-  for ([[maybe_unused]] auto iter : state) {
-    auto rings =
+  for ([[maybe_unused]] auto const iter : state) {
+    auto const rings =
         calculators::MotifFinder::findRings(graph, max_ring_size, analysis::RingType::King);
     benchmark::DoNotOptimize(rings.size());
     benchmark::ClobberMemory();
@@ -65,8 +65,8 @@ void bmMotifFinderFranzblauRingsDiamond(benchmark::State &state) {
   const auto graph = buildDiamondGraph(4);
   const size_t max_ring_size = 6;
 
-  for ([[maybe_unused]] auto iter : state) {
-    auto rings =
+  for ([[maybe_unused]] auto const iter : state) {
+    auto const rings =
         calculators::MotifFinder::findRings(graph, max_ring_size, analysis::RingType::Franzblau);
     benchmark::DoNotOptimize(rings.size());
     benchmark::ClobberMemory();
@@ -79,8 +79,8 @@ void bmMotifFinderExtractCyclesDiamond(benchmark::State &state) {
   const auto graph = buildDiamondGraph(4);
   const size_t target_size = 6;
 
-  for ([[maybe_unused]] auto iter : state) {
-    auto cycles =
+  for ([[maybe_unused]] auto const iter : state) {
+    auto const cycles =
         calculators::MotifFinder::extractCycles(graph, target_size, analysis::RingType::King);
     benchmark::DoNotOptimize(cycles.size());
     benchmark::ClobberMemory();

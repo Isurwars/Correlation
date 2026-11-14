@@ -40,10 +40,14 @@ TEST(SYCLCalculatorTests, ComputesDistancesViaSYCLFallback) {
   correlation::core::NeighborGraph out_graph(2);
   real_t const cutoff_sq = 4.0;
   correlation::analysis::BondCutoffMatrix const bond_cutoffs = {
-      {{.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25},
-       {.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25}},
-      {{.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25},
-       {.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25}},
+      {
+          {.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25},
+          {.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25},
+      },
+      {
+          {.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25},
+          {.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25},
+      },
   };
   correlation::calculators::DistanceCalculationConfig const hist_config{
       .r_max = 2.0,

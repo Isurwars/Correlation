@@ -15,8 +15,8 @@ namespace correlation::writers::structure {
 
 namespace {
 
-std::string normalizeString(std::string_view sv) {
-  std::string result(sv);
+std::string normalizeString(std::string_view str_view) {
+  std::string result(str_view);
   // Strip leading dot if present
   if (!result.empty() && result.front() == '.') {
     result.erase(0, 1);
@@ -69,7 +69,7 @@ bool StructureWriterFactory::registerWriter(std::unique_ptr<BaseStructureWriter>
 BaseStructureWriter *
 StructureWriterFactory::getWriterForExtension(std::string_view extension) const {
   std::string const norm = normalizeString(extension);
-  auto iter = extension_map_.find(norm);
+  auto const iter = extension_map_.find(norm);
   if (iter != extension_map_.end()) {
     return iter->second;
   }
@@ -78,7 +78,7 @@ StructureWriterFactory::getWriterForExtension(std::string_view extension) const 
 
 BaseStructureWriter *StructureWriterFactory::getWriterForFormat(std::string_view format) const {
   std::string const norm = normalizeString(format);
-  auto iter = format_map_.find(norm);
+  auto const iter = format_map_.find(norm);
   if (iter != format_map_.end()) {
     return iter->second;
   }

@@ -20,7 +20,7 @@ void renderHistogramAsPng(const correlation::analysis::Histogram &hist, const st
                           const std::map<std::string, real_t> &ashcroft_weights, int dpi) {
   (void)dpi;
   // Fallback / standard vector SVG-based file writing for PNG pipeline
-  std::string svg_data = renderHistogramAsSvg(hist, config, {}, ashcroft_weights);
+  const std::string svg_data = renderHistogramAsSvg(hist, config, {}, ashcroft_weights);
   std::ofstream out(filepath, std::ios::binary);
   if (!out.is_open()) {
     throw std::runtime_error("Failed to open output PNG file: " + filepath);

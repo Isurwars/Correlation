@@ -23,13 +23,13 @@ namespace {
 const bool REGISTERED = ReaderFactory::registerTypeSafe<QEReader>("QEReader");
 
 struct QETrajectoryParser {
+  correlation::core::Cell current_cell;
   std::ifstream *file = nullptr;
   std::vector<correlation::core::Cell> frames;
-  correlation::core::Cell current_cell;
   bool parsing_atoms = false;
   bool has_box = false;
 
-  QETrajectoryParser(std::ifstream &stream) : file(&stream) {}
+  explicit QETrajectoryParser(std::ifstream &stream) : file(&stream) {}
 
   void parseCellParameters() {
     std::array<std::array<real_t, 3>, 3> lat_vec = {};

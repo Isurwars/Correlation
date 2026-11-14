@@ -61,11 +61,19 @@ TEST_F(Structure3DControllerDistributionTests, SetsStoreAndUpdatesWindowProperti
       analysis::DistributionMetric::RDF, 0,
       {static_cast<real_t>(0.2), static_cast<real_t>(3.1), 1.5, static_cast<real_t>(0.1)});
   store->setFrameCurve(analysis::DistributionMetric::RDF, 1,
-                       {static_cast<real_t>(0.1), static_cast<real_t>(2.2),
-                        static_cast<real_t>(1.1), static_cast<real_t>(0.3)});
+                       {
+                           static_cast<real_t>(0.1),
+                           static_cast<real_t>(2.2),
+                           static_cast<real_t>(1.1),
+                           static_cast<real_t>(0.3),
+                       });
   store->setFrameCurve(analysis::DistributionMetric::RDF, 2,
-                       {static_cast<real_t>(0.3), static_cast<real_t>(2.8),
-                        static_cast<real_t>(1.3), static_cast<real_t>(0.2)});
+                       {
+                           static_cast<real_t>(0.3),
+                           static_cast<real_t>(2.8),
+                           static_cast<real_t>(1.3),
+                           static_cast<real_t>(0.2),
+                       });
 
   controller.setDistributionStore(store);
 

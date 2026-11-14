@@ -38,7 +38,7 @@ BondCutoffMapper::createDefaultCutoffEntries(std::span<const correlation::core::
   const size_t num_elements = elements.size();
   entries.reserve((num_elements * (num_elements + 1)) / 2);
 
-  auto safe_get_radius = [](const std::string &symbol) -> real_t {
+  auto const safe_get_radius = [](const std::string &symbol) -> real_t {
     try {
       return physics::getCovalentRadius(symbol);
     } catch (const std::out_of_range &) {
@@ -74,7 +74,8 @@ BondCutoffMapper::parseCutoffMatrix(std::span<const CutoffEntry> entries,
       num_elements, std::vector<correlation::analysis::BondCutoffRange>(
                         num_elements, correlation::analysis::BondCutoffRange{
                                           .min_sq = static_cast<real_t>(0.0),
-                                          .max_sq = static_cast<real_t>(0.0)}));
+                                          .max_sq = static_cast<real_t>(0.0),
+                                      }));
 
   for (const auto &entry : entries) {
     const real_t min_dist = parseDistanceSafe(entry.min_distance);

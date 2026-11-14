@@ -238,12 +238,12 @@ correlation::core::Cell MaceReader::parseMaceFrame(const char *data, size_t size
 
 void MaceReader::parseLattice(const std::string &comment, CommentData &data) {
   const std::string lat_key = "Lattice=\"";
-  auto pos = comment.find(lat_key);
+  auto const pos = comment.find(lat_key);
   if (pos == std::string::npos) {
     return;
   }
-  auto start = pos + lat_key.size();
-  auto end = comment.find('"', start);
+  auto const start = pos + lat_key.size();
+  auto const end = comment.find('"', start);
   if (end == std::string::npos) {
     return;
   }
@@ -268,7 +268,7 @@ void MaceReader::parseEnergy(const std::string &comment, CommentData &data) {
   };
 
   for (const auto &key : energy_keys) {
-    auto pos = comment.find(key);
+    auto const pos = comment.find(key);
     if (pos == std::string::npos) {
       continue;
     }
@@ -297,7 +297,7 @@ void MaceReader::parseEnergy(const std::string &comment, CommentData &data) {
 
 void MaceReader::parseProperties(const std::string &comment, CommentData &data) {
   const std::string prop_key = "Properties=";
-  auto pos = comment.find(prop_key);
+  auto const pos = comment.find(prop_key);
   if (pos == std::string::npos) {
     return;
   }
@@ -376,7 +376,7 @@ MaceReader::CommentData MaceReader::parseCommentLine(const std::string &comment)
 correlation::core::Cell
 MaceReader::readStructure(const std::string &filename,
                           std::function<void(float, const std::string &)> progress_callback) {
-  auto traj = readTrajectory(filename, std::move(progress_callback));
+  auto const traj = readTrajectory(filename, std::move(progress_callback));
   if (traj.getFrameCount() == 0) {
     throw std::runtime_error("No structure found in MACE file: " + filename);
   }
@@ -390,7 +390,7 @@ MaceReader::readTrajectory(const std::string &filename,
     progress_callback(0.0F, "Reading MACE file...");
   }
 
-  auto mapped_file = std::make_shared<correlation::core::MappedFile>(filename);
+  auto const mapped_file = std::make_shared<correlation::core::MappedFile>(filename);
   const char *data = mapped_file->data();
   const size_t total_size = mapped_file->size();
 
@@ -407,7 +407,7 @@ MaceReader::readTrajectory(const std::string &filename,
     progress_callback(1.0F, "MACE file loaded.");
   }
 
-  auto parser_func = [](const char *data_begin, size_t data_size) {
+  auto const parser_func = [](const char *data_begin, size_t data_size) {
     return parseMaceFrame(data_begin, data_size);
   };
 

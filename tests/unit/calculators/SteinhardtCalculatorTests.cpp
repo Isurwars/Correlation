@@ -28,10 +28,10 @@ protected:
 
     // Find the non-zero bins
     size_t const q4_bins = 100;
-    real_t const d_q = static_cast<real_t>(1.0 / q4_bins);
+    auto const d_q = static_cast<real_t>(1.0 / q4_bins);
     size_t const w6_bins = 100;
-    real_t const w_min = static_cast<real_t>(-0.2);
-    real_t const w_max = static_cast<real_t>(0.2);
+    auto const w_min = static_cast<real_t>(-0.2);
+    auto const w_max = static_cast<real_t>(0.2);
     real_t const d_w = (w_max - w_min) / w6_bins;
 
     for (size_t bin = 0; bin < q4_bins; ++bin) {
@@ -68,7 +68,7 @@ protected:
     real_t const d_w4 = (w4_max - w4_min) / w4_bins;
 
     size_t const q_bins = 100;
-    real_t const d_q = static_cast<real_t>(1.0 / q_bins);
+    auto const d_q = static_cast<real_t>(1.0 / q_bins);
 
     real_t w4_val = 0;
     real_t q4_bar_val = 0;
@@ -223,7 +223,7 @@ TEST_F(SteinhardtCalculatorTests, Icosahedral) {
   const auto &hist_w4 = hists.at("W4_hat").partials.at("Total");
   size_t const w4_bins = 100;
   real_t const w4_min = -0.5;
-  real_t const d_w4 = static_cast<real_t>(1.0 / w4_bins);
+  auto const d_w4 = static_cast<real_t>(1.0 / w4_bins);
   real_t w4_val = 0;
   for (size_t bin = 0; bin < w4_bins; ++bin) {
     if (hist_w4[bin] > 0) {
@@ -303,8 +303,8 @@ TEST_F(SteinhardtCalculatorTests, SphericalHarmonics) {
   // L = 1, M = 1: Y_1^1 = 0.5 * sqrt(3/(2*pi)) * sin(theta) * e^(i*phi) ~ 0.345494149 * sin(theta)
   // * e^(i*phi) (Condon-Shortley phase is cancelled)
   {
-    real_t const theta = static_cast<real_t>(0.8);
-    real_t const phi = static_cast<real_t>(0.6);
+    auto const theta = static_cast<real_t>(0.8);
+    auto const phi = static_cast<real_t>(0.6);
     const auto val =
         SteinhardtCalculator::sphericalHarmonic(1, 1,
                                                 {
@@ -319,8 +319,8 @@ TEST_F(SteinhardtCalculatorTests, SphericalHarmonics) {
 
   // L = 1, M = -1: Y_1^-1 = - (Y_1^1)*
   {
-    real_t const theta = static_cast<real_t>(0.8);
-    real_t const phi = static_cast<real_t>(0.6);
+    auto const theta = static_cast<real_t>(0.8);
+    auto const phi = static_cast<real_t>(0.6);
     const auto val =
         SteinhardtCalculator::sphericalHarmonic(1, -1,
                                                 {

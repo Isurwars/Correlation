@@ -26,9 +26,9 @@ const bool REGISTERED = ReaderFactory::registerTypeSafe<OrcaReader>("OrcaReader"
 constexpr real_t BOHR_TO_ANGSTROM = static_cast<real_t>(0.52917721092);
 
 struct OrcaTrajectoryParser {
+  correlation::core::Cell current_cell;
   std::ifstream *file{nullptr};
   std::vector<correlation::core::Cell> frames;
-  correlation::core::Cell current_cell;
   bool in_coord_block{false};
   bool is_bohr{false};
 

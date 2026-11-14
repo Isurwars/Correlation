@@ -149,7 +149,7 @@ TEST(CNACalculatorTests, FCC_Supercell_ProducesNonEmptyResult) {
   const auto cell = correlation::testing::crystals::createFCCCell(vec_a, "Al", 2, 2, 2);
 
   // 1st NN distance = a/sqrt(2) ≈ 2.83; cutoff between 1st and 2nd NN
-  real_t const cutoff = static_cast<real_t>(3.2);
+  auto const cutoff = static_cast<real_t>(3.2);
   analysis::StructureAnalyzer const analyzer(
       cell, cutoff, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = cutoff * cutoff}}}, false);
   const auto hist = CNACalculator::calculate(cell, &analyzer);
@@ -175,7 +175,7 @@ TEST(CNACalculatorTests, BCC_Supercell_ProducesOutput) {
   const auto cell = correlation::testing::crystals::createBCCCell(vec_a, "Fe", 3, 3, 3);
 
   // Include both 1st NN (a*sqrt(3)/2 ≈ 2.598) and 2nd NN (a = 3.0)
-  real_t const cutoff = static_cast<real_t>(3.1);
+  auto const cutoff = static_cast<real_t>(3.1);
   analysis::StructureAnalyzer const analyzer(
       cell, cutoff, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = cutoff * cutoff}}}, false);
   const auto hist = CNACalculator::calculate(cell, &analyzer);
@@ -236,7 +236,7 @@ TEST(CNACalculatorTests, DeterministicResults) {
     }
   }
 
-  real_t const cutoff = static_cast<real_t>(3.2);
+  auto const cutoff = static_cast<real_t>(3.2);
   analysis::StructureAnalyzer const analyzer(
       cell, cutoff, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = cutoff * cutoff}}}, false);
 
@@ -257,7 +257,7 @@ TEST(CNACalculatorTests, TinyPeriodicCell_DoesNotCrash) {
   cell.addAtom("Cu", {vec_a / 2, 0.0, vec_a / 2});
   cell.addAtom("Cu", {0.0, vec_a / 2, vec_a / 2});
 
-  real_t const cutoff = static_cast<real_t>(3.2);
+  auto const cutoff = static_cast<real_t>(3.2);
   analysis::StructureAnalyzer const analyzer(
       cell, cutoff, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = cutoff * cutoff}}}, false);
 

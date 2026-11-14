@@ -431,7 +431,7 @@ TEST_F(RDFCalculatorTests, VerifyAshcroftWeightsAreCorrect) {
 }
 
 TEST_F(RDFCalculatorTests, FCC_Copper_RDF) {
-  real_t const lat_a = static_cast<real_t>(3.615);
+  auto const lat_a = static_cast<real_t>(3.615);
   const auto cell = correlation::testing::crystals::createFCCCell(lat_a, "Cu", 2, 2, 2);
   updateTrajectory(cell);
 
@@ -450,7 +450,7 @@ TEST_F(RDFCalculatorTests, FCC_Copper_RDF) {
 }
 
 TEST_F(RDFCalculatorTests, BCC_Iron_RDF) {
-  real_t const lat_a = static_cast<real_t>(2.866);
+  auto const lat_a = static_cast<real_t>(2.866);
   const auto cell = correlation::testing::crystals::createBCCCell(lat_a, "Fe", 3, 3, 3);
   updateTrajectory(cell);
 
@@ -469,7 +469,7 @@ TEST_F(RDFCalculatorTests, BCC_Iron_RDF) {
 }
 
 TEST_F(RDFCalculatorTests, Diamond_Silicon_RDF) {
-  real_t const lat_a = static_cast<real_t>(5.431);
+  auto const lat_a = static_cast<real_t>(5.431);
   const auto cell = correlation::testing::crystals::createDiamondCell(lat_a, "Si", 2, 2, 2);
   updateTrajectory(cell);
 
@@ -488,7 +488,7 @@ TEST_F(RDFCalculatorTests, Diamond_Silicon_RDF) {
 }
 
 TEST_F(RDFCalculatorTests, NaCl_RockSalt_RDF) {
-  real_t const lat_a = static_cast<real_t>(5.64);
+  auto const lat_a = static_cast<real_t>(5.64);
   const auto cell = correlation::testing::crystals::createNaClCell(lat_a, "Na", "Cl", 2, 2, 2);
   updateTrajectory(cell);
 

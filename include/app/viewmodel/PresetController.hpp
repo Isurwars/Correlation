@@ -76,9 +76,9 @@ public:
 
   /**
    * @brief Applies a scientific domain preset by ID.
-   * @param[in] id Domain preset ID.
+   * @param[in] preset_id Domain preset ID.
    */
-  void handleApplyDomainPreset(int id);
+  void handleApplyDomainPreset(int preset_id);
 
 private:
   ::AppWindow &window_;

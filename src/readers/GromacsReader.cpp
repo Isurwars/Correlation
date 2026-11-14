@@ -129,7 +129,7 @@ correlation::core::Cell GromacsReader::parseGroFrame(const char *data, size_t si
   size_t offset = 0;
   size_t line_end = 0;
 
-  auto next_line = [&] -> std::string {
+  auto const next_line = [&] -> std::string {
     line_end = findLineEnd(data, size, offset);
     std::string line = extractLine(data, offset, line_end);
     offset = skipLineEnding(data, size, line_end);
@@ -237,7 +237,7 @@ correlation::core::Cell
 GromacsReader::readStructure(const std::string &filename,
                              std::function<void(float, const std::string &)> progress_callback) {
 
-  auto traj = readTrajectory(filename, progress_callback);
+  auto const traj = readTrajectory(filename, progress_callback);
   if (traj.getFrameCount() == 0) {
     throw std::runtime_error("No structure found in GROMACS file: " + filename);
   }
@@ -255,7 +255,7 @@ GromacsReader::readTrajectory(const std::string &filename,
     progress_callback(0.0F, "Reading GROMACS file...");
   }
 
-  auto mapped_file = std::make_shared<correlation::core::MappedFile>(filename);
+  auto const mapped_file = std::make_shared<correlation::core::MappedFile>(filename);
   const char *data = mapped_file->data();
   const size_t total_size = mapped_file->size();
 
@@ -296,7 +296,7 @@ GromacsReader::readTrajectory(const std::string &filename,
     progress_callback(1.0F, "GROMACS file loaded.");
   }
 
-  auto parser = [](const char *buf, size_t size) { return parseGroFrame(buf, size); };
+  auto const parser = [](const char *buf, size_t size) { return parseGroFrame(buf, size); };
 
   return {mapped_file, std::move(frame_offsets), parser, 1.0};
 }

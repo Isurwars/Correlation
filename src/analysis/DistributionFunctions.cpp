@@ -530,7 +530,7 @@ void extractFrameCurves(const DistributionFunctions &frame_df, size_t frame_idx,
   }
 }
 
-void computeSingleFrameMiniCurves(correlation::core::Trajectory &trajectory, size_t frame_idx,
+void computeSingleFrameMiniCurves(const correlation::core::Trajectory &trajectory, size_t frame_idx,
                                   const AnalysisSettings &settings,
                                   const BondCutoffMatrix &bond_cutoffs,
                                   PerFrameDistributionStore &store) {
@@ -589,6 +589,35 @@ void populateMeanStoreCurves(const DistributionFunctions &final_df,
   }
 }
 
+void populateRemainderMiniCurves(const correlation::core::Trajectory &trajectory,
+                                 const AnalysisSettings &settings,
+                                 const BondCutoffMatrix &bond_cutoffs,
+                                 PerFrameDistributionStore &store) {
+  const size_t total_trajectory_frames = trajectory.getFrameCount();
+  std::vector<size_t> remainder_frames;
+  remainder_frames.reserve(total_trajectory_frames);
+  for (size_t frame_idx = 0; frame_idx < total_trajectory_frames; ++frame_idx) {
+    if (!store.hasFrame(DistributionMetric::RDF, frame_idx)) {
+      remainder_frames.push_back(frame_idx);
+    }
+  }
+
+  if (remainder_frames.empty()) {
+    return;
+  }
+
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, remainder_frames.size()),
+                    [&](const tbb::blocked_range<size_t> &range) {
+                      for (size_t i = range.begin(); i != range.end(); ++i) {
+                        if (settings.cancel_flag && settings.cancel_flag->load()) {
+                          continue;
+                        }
+                        computeSingleFrameMiniCurves(trajectory, remainder_frames[i], settings,
+                                                     bond_cutoffs, store);
+                      }
+                    });
+}
+
 } // namespace
 
 std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
@@ -644,26 +673,7 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
       });
 
   // Calculate lightweight mini-curves (g(r), PAD, S(Q)) for all remaining trajectory frames
-  std::vector<size_t> remainder_frames;
-  remainder_frames.reserve(total_trajectory_frames);
-  for (size_t f = 0; f < total_trajectory_frames; ++f) {
-    if (!per_frame_store->hasFrame(DistributionMetric::RDF, f)) {
-      remainder_frames.push_back(f);
-    }
-  }
-
-  if (!remainder_frames.empty()) {
-    tbb::parallel_for(tbb::blocked_range<size_t>(0, remainder_frames.size()),
-                      [&](const tbb::blocked_range<size_t> &range) {
-                        for (size_t i = range.begin(); i != range.end(); ++i) {
-                          if (settings.cancel_flag && settings.cancel_flag->load()) {
-                            continue;
-                          }
-                          computeSingleFrameMiniCurves(trajectory, remainder_frames[i], settings,
-                                                       bond_cutoffs, *per_frame_store);
-                        }
-                      });
-  }
+  populateRemainderMiniCurves(trajectory, settings, bond_cutoffs, *per_frame_store);
 
   // Accumulate results
   if (results.empty() || !results[0]) {

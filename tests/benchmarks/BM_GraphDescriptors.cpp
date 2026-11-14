@@ -25,8 +25,8 @@ void bmGraphDescriptorsRingStatistics(benchmark::State &state) {
   const auto graph = mlip::PeriodicGraphBuilder::buildGraph(cell, static_cast<real_t>(2.8));
   const size_t max_ring_size = 6;
 
-  for ([[maybe_unused]] auto iter : state) {
-    auto desc = mlip::GraphDescriptors::computeRingStatisticsDescriptor(graph, max_ring_size);
+  for ([[maybe_unused]] auto const iter : state) {
+    auto const desc = mlip::GraphDescriptors::computeRingStatisticsDescriptor(graph, max_ring_size);
     benchmark::DoNotOptimize(desc.size());
     benchmark::ClobberMemory();
   }

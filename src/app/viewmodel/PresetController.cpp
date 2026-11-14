@@ -75,7 +75,7 @@ void PresetController::handleDeletePreset(int index) {
 void PresetController::refreshPresetList() {
   presets_ = PresetManager::loadAll();
 
-  auto menu_model = std::make_shared<slint::VectorModel<MenuItem>>();
+  auto const menu_model = std::make_shared<slint::VectorModel<MenuItem>>();
   for (const auto &preset : presets_) {
     MenuItem item;
     item.text = slint::SharedString(preset.name);
@@ -126,7 +126,7 @@ void PresetController::handleMaterialTypeChanged(int type) {
 
 void PresetController::initDomainPresets() {
   const auto &presets = DomainPresetRegistry::getPresets();
-  auto slint_presets = std::make_shared<slint::VectorModel<DomainPresetItem>>();
+  auto const slint_presets = std::make_shared<slint::VectorModel<DomainPresetItem>>();
   for (const auto &preset : presets) {
     slint_presets->push_back(DomainPresetItem{
         .id = static_cast<int>(preset.id),
@@ -138,9 +138,9 @@ void PresetController::initDomainPresets() {
   window_.set_domain_presets(slint_presets);
 }
 
-void PresetController::handleApplyDomainPreset(int id) {
-  const auto preset_id = static_cast<DomainPresetId>(id);
-  if (!DomainPresetRegistry::applyPreset(preset_id, options_)) {
+void PresetController::handleApplyDomainPreset(int preset_id) {
+  const auto domain_id = static_cast<DomainPresetId>(preset_id);
+  if (!DomainPresetRegistry::applyPreset(domain_id, options_)) {
     return;
   }
 
@@ -150,7 +150,7 @@ void PresetController::handleApplyDomainPreset(int id) {
   controller_.updateActiveGroupFlags();
   static_cast<void>(controller_.getInputValidator()->validateInputs());
 
-  const auto *preset = DomainPresetRegistry::getPreset(preset_id);
+  const auto *preset = DomainPresetRegistry::getPreset(domain_id);
   if (preset != nullptr) {
     window_.set_analysis_status_text(
         slint::SharedString(std::string("Applied template: ") + preset->name));

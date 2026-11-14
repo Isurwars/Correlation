@@ -158,8 +158,9 @@ CORRELATION_DEVICE void computeY6m(SphericalHarmonicInput<T> input,
   T const norm5 = static_cast<T>(0.0002480962451000);
   T const norm6 = static_cast<T>(0.0001012848529241);
 
-  std::array<T, 7> const poly = {p60 * norm0, p61 * norm1, p62 * norm2, p63 * norm3,
-                                 p64 * norm4, p65 * norm5, p66 * norm6};
+  std::array<T, 7> const poly = {
+      p60 * norm0, p61 * norm1, p62 * norm2, p63 * norm3, p64 * norm4, p65 * norm5, p66 * norm6,
+  };
 
   for (int m_idx = 0; m_idx <= 6; ++m_idx) {
     T cos_mphi = std::cos(static_cast<T>(m_idx) * phi);
@@ -421,13 +422,13 @@ void GPUSteinhardtCalculator::calculateFrame(
     T const q4_val = *(h_q4.data() + i);
     T const q6_val = *(h_q6.data() + i);
     if (q4_val >= static_cast<T>(0.0) && q4_val < q_max) {
-      auto bin = static_cast<size_t>(q4_val / d_q);
+      auto const bin = static_cast<size_t>(q4_val / d_q);
       if (bin < bins_q) {
         *(q4_bins.data() + bin) += static_cast<real_t>(1.0);
       }
     }
     if (q6_val >= static_cast<T>(0.0) && q6_val < q_max) {
-      auto bin = static_cast<size_t>(q6_val / d_q);
+      auto const bin = static_cast<size_t>(q6_val / d_q);
       if (bin < bins_q) {
         *(q6_bins.data() + bin) += static_cast<real_t>(1.0);
       }

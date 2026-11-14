@@ -302,10 +302,10 @@ correlation::core::Cell XYZReader::parseXYZFrame(const char *data, size_t size) 
 
 void XYZReader::parseLattice(const std::string &comment, CommentData &data) {
   const std::string lat_key = "Lattice=\"";
-  auto pos = comment.find(lat_key);
+  auto const pos = comment.find(lat_key);
   if (pos != std::string::npos) {
-    auto start = pos + lat_key.size();
-    auto end = comment.find('"', start);
+    auto const start = pos + lat_key.size();
+    auto const end = comment.find('"', start);
     if (end != std::string::npos) {
       std::string_view const values(comment.data() + start, end - start);
       std::array<real_t, 9> lattice{};
@@ -339,7 +339,7 @@ void XYZReader::parseLattice(const std::string &comment, CommentData &data) {
 void XYZReader::parseEnergy(const std::string &comment, CommentData &data) {
   const std::vector<std::string> energy_keys = {"energy=", "dft_energy=", "Energy="};
   for (const auto &key : energy_keys) {
-    auto pos = comment.find(key);
+    auto const pos = comment.find(key);
     if (pos != std::string::npos) {
       auto start = pos + key.size();
       if (start < comment.size()) {
@@ -365,7 +365,7 @@ void XYZReader::parseEnergy(const std::string &comment, CommentData &data) {
 
 void XYZReader::parseProperties(const std::string &comment, CommentData &data) {
   const std::string prop_key = "Properties=";
-  auto pos = comment.find(prop_key);
+  auto const pos = comment.find(prop_key);
   if (pos == std::string::npos) {
     return;
   }
@@ -449,7 +449,7 @@ correlation::core::Cell
 XYZReader::readStructure(const std::string &filename,
                          std::function<void(float, const std::string &)> progress_callback) {
 
-  auto traj = readTrajectory(filename, progress_callback);
+  auto const traj = readTrajectory(filename, progress_callback);
   if (traj.getFrameCount() == 0) {
     throw std::runtime_error("No structure found in XYZ file: " + filename);
   }
@@ -467,7 +467,7 @@ XYZReader::readTrajectory(const std::string &filename,
     progress_callback(0.0F, "Reading XYZ file...");
   }
 
-  auto mapped_file = std::make_shared<correlation::core::MappedFile>(filename);
+  auto const mapped_file = std::make_shared<correlation::core::MappedFile>(filename);
   const char *data = mapped_file->data();
   const size_t total_size = mapped_file->size();
 
@@ -485,7 +485,7 @@ XYZReader::readTrajectory(const std::string &filename,
     progress_callback(1.0F, "XYZ file loaded.");
   }
 
-  auto parser_func = [](const char *data_begin, size_t data_size) {
+  auto const parser_func = [](const char *data_begin, size_t data_size) {
     return parseXYZFrame(data_begin, data_size);
   };
 

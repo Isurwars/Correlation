@@ -82,10 +82,12 @@ buildColumns(const correlation::analysis::Histogram &hist,
 
   if (raw_companion != nullptr) {
     for (const auto &key : getSortedKeys(raw_companion->partials)) {
-      cols.push_back({.name = key + "_raw",
-                      .unit = raw_unit,
-                      .comment = key + "_raw",
-                      .data = &raw_companion->partials.at(key)});
+      cols.push_back({
+          .name = key + "_raw",
+          .unit = raw_unit,
+          .comment = key + "_raw",
+          .data = &raw_companion->partials.at(key),
+      });
     }
   }
 
@@ -95,10 +97,12 @@ buildColumns(const correlation::analysis::Histogram &hist,
   }
 
   for (const auto &key : getSortedKeys(hist.smoothed_partials)) {
-    cols.push_back({.name = key + "_smoothed",
-                    .unit = data_unit,
-                    .comment = key + "_smoothed",
-                    .data = &hist.smoothed_partials.at(key)});
+    cols.push_back({
+        .name = key + "_smoothed",
+        .unit = data_unit,
+        .comment = key + "_smoothed",
+        .data = &hist.smoothed_partials.at(key),
+    });
   }
 
   return cols;
@@ -146,7 +150,7 @@ void writeDataRows(std::ostream &file, const std::vector<correlation::real_t> &b
 
 } // namespace
 
-void CSVWriter::writeHistogramToStream(std::ostream &os,
+void CSVWriter::writeHistogramToStream(std::ostream &out_stream,
                                        const correlation::analysis::Histogram &hist,
                                        const correlation::analysis::Histogram *raw_companion) {
   if (hist.partials.empty() || hist.bins.empty()) {
@@ -154,8 +158,8 @@ void CSVWriter::writeHistogramToStream(std::ostream &os,
   }
 
   const auto columns = buildColumns(hist, raw_companion);
-  writeHeader(os, hist, columns);
-  writeDataRows(os, hist.bins, columns);
+  writeHeader(out_stream, hist, columns);
+  writeDataRows(out_stream, hist.bins, columns);
 }
 
 void CSVWriter::writeHistogramToCSV(const std::string &filename,

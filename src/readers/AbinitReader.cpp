@@ -28,15 +28,15 @@ const bool REGISTERED = ReaderFactory::registerTypeSafe<AbinitReader>("AbinitRea
 constexpr real_t BOHR_TO_ANGSTROM = static_cast<real_t>(0.52917721092);
 
 struct AbinitTrajectoryParser {
+  correlation::core::Cell current_cell;
   std::ifstream *file{nullptr};
   std::vector<correlation::core::Cell> frames;
-  correlation::core::Cell current_cell;
-  bool parsing_xcart{false};
-  bool parsing_xangst{false};
-  bool has_lattice{false};
   std::vector<std::string> symbols;
   std::array<real_t, 3> acell{1.0, 1.0, 1.0};
   std::array<std::array<real_t, 3>, 3> rprim{{{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}}};
+  bool parsing_xcart{false};
+  bool parsing_xangst{false};
+  bool has_lattice{false};
 
   explicit AbinitTrajectoryParser(std::ifstream &stream) : file(&stream) {}
 

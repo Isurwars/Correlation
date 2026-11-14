@@ -254,8 +254,11 @@ TEST(PhaseDescriptorsLRUCacheTests, StoreAndRetrieveUnifiedDescriptors) {
   PhaseDescriptorsLRUCache cache(4);
   const auto desc = std::make_shared<FramePhaseDescriptors>();
   desc->steinhardt = makeDummyParams(10, static_cast<real_t>(0.55));
-  desc->local_entropy = {static_cast<real_t>(-6.15), static_cast<real_t>(-6.10),
-                         static_cast<real_t>(-6.20)};
+  desc->local_entropy = {
+      static_cast<real_t>(-6.15),
+      static_cast<real_t>(-6.10),
+      static_cast<real_t>(-6.20),
+  };
   desc->twf_nconn = {12.0, 11.0, 12.0};
   desc->q_tet = {static_cast<real_t>(0.99), static_cast<real_t>(0.98), 1.00};
 
