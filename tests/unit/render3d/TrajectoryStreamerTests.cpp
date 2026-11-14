@@ -44,7 +44,7 @@ std::shared_ptr<core::Trajectory> createSampleTrajectory(int frame_count) {
     frames.push_back(cell);
   }
 
-  return std::make_shared<core::Trajectory>(std::move(frames), 1.0);
+  return std::make_shared<core::Trajectory>(std::move(frames), static_cast<real_t>(1.0));
 }
 } // namespace
 

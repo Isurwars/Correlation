@@ -68,10 +68,10 @@ TEST(PlotViewportNavigatorTests, DualViewIgnoresFrameFluctuationInYScale) {
 TEST(PlotViewportNavigatorTests, ManualLimitsOverrideScales) {
   const auto hist = createSampleHistogram();
   correlation::plotters::PlotConfig config;
-  config.manual_x_min = 2.0;
-  config.manual_x_max = 6.0;
-  config.manual_y_min = 0.5;
-  config.manual_y_max = 2.5;
+  config.manual_x_min = static_cast<real_t>(2.0);
+  config.manual_x_max = static_cast<real_t>(6.0);
+  config.manual_y_min = static_cast<real_t>(0.5);
+  config.manual_y_max = static_cast<real_t>(2.5);
 
   const auto x_scale = PlotViewportNavigator::computeXScale(hist, config);
   EXPECT_DOUBLE_EQ(x_scale.min, 2.0);
@@ -162,10 +162,10 @@ TEST(PlotViewportNavigatorTests, AppliesWheelZoomInAndOut) {
 TEST(PlotViewportNavigatorTests, AppliesLimitsToPlotConfig) {
   PlotViewportNavigator nav;
   nav.setLimits(ViewportLimits{
-      .x_min = 1.5,
-      .x_max = 8.5,
-      .y_min = -0.2,
-      .y_max = 4.2,
+      .x_min = static_cast<real_t>(1.5),
+      .x_max = static_cast<real_t>(8.5),
+      .y_min = static_cast<real_t>(-0.2),
+      .y_max = static_cast<real_t>(4.2),
   });
 
   correlation::plotters::PlotConfig config;

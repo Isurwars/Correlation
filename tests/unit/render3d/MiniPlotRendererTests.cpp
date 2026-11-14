@@ -98,10 +98,10 @@ TEST_F(MiniPlotRendererTests, RendersWithNullOptFrameIndex) {
 TEST_F(MiniPlotRendererTests, RendersWithManualBoundsAndLogScale) {
   const auto data = createMockData();
   const MiniPlotConfig config{
-      .manual_x_min = 2.0,
-      .manual_x_max = 4.0,
-      .manual_y_min = 0.5,
-      .manual_y_max = 5.0,
+      .manual_x_min = 2.0F,
+      .manual_x_max = 4.0F,
+      .manual_y_min = 0.5F,
+      .manual_y_max = 5.0F,
       .y_log_scale = true,
   };
   const auto buf = MiniPlotRenderer::render(data, 1, config, 260, 130);

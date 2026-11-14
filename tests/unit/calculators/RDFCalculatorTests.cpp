@@ -246,12 +246,12 @@ TEST_F(RDFCalculatorTests, CalculateCoordinationNumber) {
   // Si has 2 O neighbors. So bin 2 should be 1.
   // Ensure sufficient size
   ASSERT_GT(sio_cn.size(), 2);
-  EXPECT_EQ(sio_cn[2], 1);
+  EXPECT_EQ(sio_cn[2], static_cast<real_t>(1.0));
 
   const auto &osi_cn = hist.partials.at("O-Si");
   // Each O has 1 Si neighbor. There are 2 Os. So bin 1 should be 2.
   ASSERT_GT(osi_cn.size(), 1);
-  EXPECT_EQ(osi_cn[1], 2);
+  EXPECT_EQ(osi_cn[1], static_cast<real_t>(2.0));
 }
 
 TEST_F(RDFCalculatorTests, Smoothing) {

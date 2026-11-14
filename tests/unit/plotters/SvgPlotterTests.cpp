@@ -248,10 +248,10 @@ TEST(SvgPlotterTests, AppliesManualZoomBoundsAndClipping) {
   hist.partials["Total"] = {0.0, 1.0, 2.5, 3.0, 1.5, static_cast<real_t>(0.2)};
 
   PlotConfig config;
-  config.manual_x_min = 1.5;
-  config.manual_x_max = 3.5;
-  config.manual_y_min = 0.5;
-  config.manual_y_max = 2.8;
+  config.manual_x_min = static_cast<real_t>(1.5);
+  config.manual_x_max = static_cast<real_t>(3.5);
+  config.manual_y_min = static_cast<real_t>(0.5);
+  config.manual_y_max = static_cast<real_t>(2.8);
 
   std::string const svg = renderHistogramAsSvg(hist, config);
   EXPECT_FALSE(svg.empty());

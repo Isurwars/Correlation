@@ -385,24 +385,24 @@ if(BUILD_WITH_ARROW)
     # Arrow targets built from source don't set the correct INCLUDE directories by default
     # We manually expose source and generated header folders.
     if (TARGET arrow_static)
-      target_include_directories(arrow_static INTERFACE 
+      target_include_directories(arrow_static SYSTEM INTERFACE 
         $<BUILD_INTERFACE:${arrow_SOURCE_DIR}/cpp/src>
         $<BUILD_INTERFACE:${arrow_BINARY_DIR}/src>
       )
     elseif (TARGET arrow_shared)
-      target_include_directories(arrow_shared INTERFACE 
+      target_include_directories(arrow_shared SYSTEM INTERFACE 
         $<BUILD_INTERFACE:${arrow_SOURCE_DIR}/cpp/src>
         $<BUILD_INTERFACE:${arrow_BINARY_DIR}/src>
       )
     endif()
 
     if (TARGET parquet_static)
-      target_include_directories(parquet_static INTERFACE 
+      target_include_directories(parquet_static SYSTEM INTERFACE 
         $<BUILD_INTERFACE:${arrow_SOURCE_DIR}/cpp/src>
         $<BUILD_INTERFACE:${arrow_BINARY_DIR}/src>
       )
     elseif (TARGET parquet_shared)
-      target_include_directories(parquet_shared INTERFACE 
+      target_include_directories(parquet_shared SYSTEM INTERFACE 
         $<BUILD_INTERFACE:${arrow_SOURCE_DIR}/cpp/src>
         $<BUILD_INTERFACE:${arrow_BINARY_DIR}/src>
       )

@@ -266,9 +266,9 @@ TEST(PlotSeriesManagerTests, AshcroftWeightsRankPartialsDescending) {
   hist.partials["C-C"] = {5.0};
 
   const std::map<std::string, real_t> weights = {
-      {"A-A", 0.1},
-      {"B-B", 0.8},
-      {"C-C", 0.5},
+      {"A-A", static_cast<real_t>(0.1)},
+      {"B-B", static_cast<real_t>(0.8)},
+      {"C-C", static_cast<real_t>(0.5)},
   };
 
   const auto items = manager.generateToggleItems(&hist, config, weights);
