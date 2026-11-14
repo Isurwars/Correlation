@@ -900,8 +900,8 @@
     "semantic_hash": ""
   },
   "tests/unit/writers/WriterTests.cpp": {
-    "mtime": 1794662113.2860837,
-    "ast_hash": "2fd4076c6562486a5ced20770cc6c0c2",
+    "mtime": 1794670348.8830976,
+    "ast_hash": "6db67dbee1d2bcbcd463b586d0af3e31",
     "semantic_hash": ""
   },
   ".github/workflows/ci.yml": {
@@ -1290,8 +1290,8 @@
     "semantic_hash": ""
   },
   "tests/unit/writers/ArrowWriterTests.cpp": {
-    "mtime": 1794332224.0107398,
-    "ast_hash": "4897a5035caa91ffd5dc450227d4a829",
+    "mtime": 1794670356.846664,
+    "ast_hash": "4b57c9181f9708fe68fa3c982fb1adef",
     "semantic_hash": ""
   },
   "tests/CrystalTestHelper.hpp": {
@@ -1325,7 +1325,7 @@
     "semantic_hash": ""
   },
   "src/plotters/PngPlotter.cpp": {
-    "mtime": 1794662364.3902617,
+    "mtime": 1794670038.1551344,
     "ast_hash": "d221efa5897c4efcd5d96c01236f0577",
     "semantic_hash": ""
   },
@@ -2040,7 +2040,7 @@
     "semantic_hash": ""
   },
   "src/app/formatters/PlotExportService.cpp": {
-    "mtime": 1794662362.9472888,
+    "mtime": 1794670040.1533394,
     "ast_hash": "a731c4401fb4e96ad0fbf9f3c63518ac",
     "semantic_hash": ""
   },
@@ -2500,7 +2500,7 @@
     "semantic_hash": ""
   },
   "src/writers/ExportBundleWriter.cpp": {
-    "mtime": 1794662367.946195,
+    "mtime": 1794670040.2440755,
     "ast_hash": "d6a82a67307741ba456df06c2c495035",
     "semantic_hash": ""
   },

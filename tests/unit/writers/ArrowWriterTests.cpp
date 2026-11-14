@@ -38,16 +38,21 @@ TEST(ArrowWriterTests, WriteAllParquetCreatesOutputFile) {
   std::filesystem::create_directories(temp_dir);
   std::string base_output = (temp_dir / "test_sample").string();
 
-  correlation::core::Cell cell(std::array<real_t, 6>{10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
-  cell.addAtom("Si", {0.0, 0.0, 0.0});
-  cell.addAtom("Si", {2.0, 0.0, 0.0});
+  correlation::core::Cell cell(std::array<real_t, 6>{
+      static_cast<real_t>(10.0), static_cast<real_t>(10.0), static_cast<real_t>(10.0),
+      static_cast<real_t>(90.0), static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
+  cell.addAtom("Si",
+               {static_cast<real_t>(0.0), static_cast<real_t>(0.0), static_cast<real_t>(0.0)});
+  cell.addAtom("Si",
+               {static_cast<real_t>(2.0), static_cast<real_t>(0.0), static_cast<real_t>(0.0)});
 
   correlation::core::Trajectory traj;
   traj.addFrame(cell);
   traj.precomputeBondCutoffs();
 
-  correlation::analysis::DistributionFunctions dists(cell, 5.0, traj.getBondCutoffsSQ());
-  dists.calculateRDF({.r_max = 5.0, .r_bin_width = 0.5});
+  correlation::analysis::DistributionFunctions dists(cell, static_cast<real_t>(5.0),
+                                                     traj.getBondCutoffsSQ());
+  dists.calculateRDF({.r_max = static_cast<real_t>(5.0), .r_bin_width = static_cast<real_t>(0.5)});
 
   EXPECT_NO_THROW(ArrowWriter::writeAllParquet(base_output, dists, false));
 
@@ -64,9 +69,13 @@ TEST(ArrowWriterTests, ParquetPreservesHistogramMetadataAndUnits) {
   std::filesystem::create_directories(temp_dir);
   std::string base_output = (temp_dir / "test_steinhardt").string();
 
-  correlation::core::Cell cell(std::array<real_t, 6>{10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
-  cell.addAtom("Si", {0.0, 0.0, 0.0});
-  cell.addAtom("Si", {2.0, 0.0, 0.0});
+  correlation::core::Cell cell(std::array<real_t, 6>{
+      static_cast<real_t>(10.0), static_cast<real_t>(10.0), static_cast<real_t>(10.0),
+      static_cast<real_t>(90.0), static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
+  cell.addAtom("Si",
+               {static_cast<real_t>(0.0), static_cast<real_t>(0.0), static_cast<real_t>(0.0)});
+  cell.addAtom("Si",
+               {static_cast<real_t>(2.0), static_cast<real_t>(0.0), static_cast<real_t>(0.0)});
 
   correlation::analysis::Histogram hist;
   hist.x_label = "Q4";
@@ -74,10 +83,11 @@ TEST(ArrowWriterTests, ParquetPreservesHistogramMetadataAndUnits) {
   hist.y_unit = "counts";
   hist.description = "Steinhardt Q4 Bond Orientational Order Parameter";
   hist.file_suffix = "_Q4";
-  hist.bins = {0.1, 0.2, 0.3};
-  hist.partials["Total"] = {1.0, 2.0, 3.0};
+  hist.bins = {static_cast<real_t>(0.1), static_cast<real_t>(0.2), static_cast<real_t>(0.3)};
+  hist.partials["Total"] = {static_cast<real_t>(1.0), static_cast<real_t>(2.0),
+                            static_cast<real_t>(3.0)};
 
-  correlation::analysis::DistributionFunctions dists(cell, 0.0);
+  correlation::analysis::DistributionFunctions dists(cell, static_cast<real_t>(0.0));
   dists.addHistogram("Q4", std::move(hist));
 
   EXPECT_NO_THROW(ArrowWriter::writeAllParquet(base_output, dists, false));

@@ -365,14 +365,14 @@ TEST_F(FileWriterTests, WritesHDF5File) {
   trajectory.precomputeBondCutoffs();
 
   correlation::analysis::DistributionFunctions dists(
-      si_cell, 5.0,
+      si_cell, static_cast<real_t>(5.0),
       trajectory.getBondCutoffsSQ()); // Use smaller r_max for faster test
 
   dists.calculateRDF({
-      .r_max = 5.0,
-      .r_bin_width = 0.1,
+      .r_max = static_cast<real_t>(5.0),
+      .r_bin_width = static_cast<real_t>(0.1),
   });
-  dists.calculatePAD(2.0);
+  dists.calculatePAD(static_cast<real_t>(2.0));
 
   const std::string prefix = "test_si_h5";
   cleanPrefix(prefix);
@@ -458,11 +458,12 @@ TEST_F(FileWriterTests, WritesVACFMetadata) {
   correlation::core::Trajectory trajectory;
   trajectory.addFrame(frame1);
   trajectory.addFrame(frame2);
-  trajectory.setTimeStep(1.0);        // 1 fs
-  trajectory.precomputeBondCutoffs(); // Required for DistributionFunctions
+  trajectory.setTimeStep(static_cast<real_t>(1.0)); // 1 fs
+  trajectory.precomputeBondCutoffs();               // Required for DistributionFunctions
   trajectory.calculateVelocities();
 
-  correlation::analysis::DistributionFunctions dists(frame1, 5.0, trajectory.getBondCutoffsSQ());
+  correlation::analysis::DistributionFunctions dists(frame1, static_cast<real_t>(5.0),
+                                                     trajectory.getBondCutoffsSQ());
   dists.calculateVACF(trajectory, correlation::analysis::MaxFrames{2});
 
   correlation::writers::FileWriter const writer(dists);
@@ -494,7 +495,8 @@ TEST_F(FileWriterTests, WritesSteinhardtHDF5Metadata) {
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
 
-  correlation::analysis::DistributionFunctions dists(si_cell, 5.0, trajectory.getBondCutoffsSQ());
+  correlation::analysis::DistributionFunctions dists(si_cell, static_cast<real_t>(5.0),
+                                                     trajectory.getBondCutoffsSQ());
 
   correlation::calculators::SteinhardtCalculator const steinhardt;
   steinhardt.calculateFrame(dists, {});
@@ -546,13 +548,14 @@ TEST_F(FileWriterTests, WritesParquetFiles) {
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
 
-  correlation::analysis::DistributionFunctions dists(si_cell, 5.0, trajectory.getBondCutoffsSQ());
+  correlation::analysis::DistributionFunctions dists(si_cell, static_cast<real_t>(5.0),
+                                                     trajectory.getBondCutoffsSQ());
 
   dists.calculateRDF({
-      .r_max = 5.0,
-      .r_bin_width = 0.1,
+      .r_max = static_cast<real_t>(5.0),
+      .r_bin_width = static_cast<real_t>(0.1),
   });
-  dists.calculatePAD(2.0);
+  dists.calculatePAD(static_cast<real_t>(2.0));
 
   correlation::calculators::SteinhardtCalculator const steinhardt;
   steinhardt.calculateFrame(dists, {});
@@ -588,13 +591,14 @@ TEST_F(FileWriterTests, WritesZipBundle) {
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
 
-  correlation::analysis::DistributionFunctions dists(si_cell, 5.0, trajectory.getBondCutoffsSQ());
+  correlation::analysis::DistributionFunctions dists(si_cell, static_cast<real_t>(5.0),
+                                                     trajectory.getBondCutoffsSQ());
 
   dists.calculateRDF({
-      .r_max = 5.0,
+      .r_max = static_cast<real_t>(5.0),
       .r_bin_width = static_cast<real_t>(0.1),
   });
-  dists.calculatePAD(2.0);
+  dists.calculatePAD(static_cast<real_t>(2.0));
 
   const std::string zip_path = "test_si_bundle.zip";
   std::error_code error_code;
