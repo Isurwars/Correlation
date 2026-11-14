@@ -18,10 +18,11 @@ namespace correlation::calculators::sycl_gpu {
  * @brief Parameters for SYCL XRD pattern calculation.
  */
 struct SYCLXRDParams {
-  real_t lambda{1.5406};  /**< Incident X-ray wavelength in Angstroms (e.g. Cu K-alpha). */
-  real_t theta_min{5.0};  /**< Minimum 2-theta scattering angle in degrees. */
-  real_t theta_max{90.0}; /**< Maximum 2-theta scattering angle in degrees. */
-  real_t bin_width{0.1};  /**< Angular resolution step in degrees. */
+  real_t lambda{static_cast<real_t>(
+      1.5406)}; /**< Incident X-ray wavelength in Angstroms (e.g. Cu K-alpha). */
+  real_t theta_min{static_cast<real_t>(5.0)};  /**< Minimum 2-theta scattering angle in degrees. */
+  real_t theta_max{static_cast<real_t>(90.0)}; /**< Maximum 2-theta scattering angle in degrees. */
+  real_t bin_width{static_cast<real_t>(0.1)};  /**< Angular resolution step in degrees. */
 };
 
 /**

@@ -192,7 +192,8 @@ void init_calculators(py::module_ &mod) {
   // ------------------------------------------------------------------
   py::class_<TenWoldeFrenkelParams>(mod, "TenWoldeFrenkelParams",
                                     "Parameters for Ten Wolde-Frenkel bond coherence analysis.")
-      .def(py::init<real_t, size_t>(), py::arg("chi_cut") = 0.7, py::arg("nconn_min") = 7)
+      .def(py::init<real_t, size_t>(), py::arg("chi_cut") = static_cast<real_t>(0.7),
+           py::arg("nconn_min") = 7)
       .def_readwrite("chi_cut", &TenWoldeFrenkelParams::chi_cut,
                      "Coherence dot-product threshold (default 0.7).")
       .def_readwrite("nconn_min", &TenWoldeFrenkelParams::nconn_min,
@@ -201,14 +202,16 @@ void init_calculators(py::module_ &mod) {
   py::class_<TetrahedralParams>(mod, "TetrahedralParams",
                                 "Parameters for tetrahedral order parameter q_tet calculation.")
       .def(py::init<size_t, real_t, real_t>(), py::arg("num_bins") = 50,
-           py::arg("min_domain") = 0.0, py::arg("max_domain") = 1.0)
+           py::arg("min_domain") = static_cast<real_t>(0.0),
+           py::arg("max_domain") = static_cast<real_t>(1.0))
       .def_readwrite("num_bins", &TetrahedralParams::num_bins, "Number of histogram bins.")
       .def_readwrite("min_domain", &TetrahedralParams::min_domain, "Lower domain bound.")
       .def_readwrite("max_domain", &TetrahedralParams::max_domain, "Upper domain bound.");
 
   py::class_<LocalEntropyParams>(mod, "LocalEntropyParams",
                                  "Parameters for Local Entropic Fingerprint (s2) calculation.")
-      .def(py::init<real_t, real_t>(), py::arg("cutoff") = 5.0, py::arg("sigma") = 0.2)
+      .def(py::init<real_t, real_t>(), py::arg("cutoff") = static_cast<real_t>(5.0),
+           py::arg("sigma") = static_cast<real_t>(0.2))
       .def_readwrite("cutoff", &LocalEntropyParams::cutoff,
                      "Radial cutoff radius for entropy integration (default 5.0 A).")
       .def_readwrite("sigma", &LocalEntropyParams::sigma,
@@ -287,7 +290,8 @@ void init_calculators(py::module_ &mod) {
         const py::gil_scoped_acquire acquire;
         return hist;
       },
-      py::arg("cell"), py::arg("neighbors"), py::arg("r_max") = 10.0, py::arg("r_bin_width") = 0.05,
+      py::arg("cell"), py::arg("neighbors"), py::arg("r_max") = static_cast<real_t>(10.0),
+      py::arg("r_bin_width") = static_cast<real_t>(0.05),
       "Computes radial bond-orientational correlation function g6(r).\n\n"
       "Parameters\n----------\n"
       "cell : Cell\n"

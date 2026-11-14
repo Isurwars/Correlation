@@ -84,35 +84,35 @@ namespace {
 void applyMaterialDefaults(const CLI::App &app, CliOptions &opts) {
   if (opts.material_type == 2) { // Crystalline
     if (app.count("--r-bin") == 0U) {
-      opts.r_bin_width = 0.002;
+      opts.r_bin_width = static_cast<real_t>(0.002);
     }
     if (app.count("--q-bin") == 0U) {
-      opts.q_bin_width = 0.002;
+      opts.q_bin_width = static_cast<real_t>(0.002);
     }
     if (app.count("--angle-bin") == 0U) {
-      opts.angle_bin_width = 0.1;
+      opts.angle_bin_width = static_cast<real_t>(0.1);
     }
     if ((app.count("--dihedral-bin") == 0U) && (app.count("--angle-bin") == 0U)) {
-      opts.dihedral_bin_width = 0.1;
+      opts.dihedral_bin_width = static_cast<real_t>(0.1);
     }
     if (app.count("--smoothing-sigma") == 0U) {
-      opts.smoothing_sigma = 0.01;
+      opts.smoothing_sigma = static_cast<real_t>(0.01);
     }
   } else if (opts.material_type == 1) { // Liquid
     if (app.count("--r-bin") == 0U) {
-      opts.r_bin_width = 0.05;
+      opts.r_bin_width = static_cast<real_t>(0.05);
     }
     if (app.count("--q-bin") == 0U) {
-      opts.q_bin_width = 0.05;
+      opts.q_bin_width = static_cast<real_t>(0.05);
     }
     if (app.count("--angle-bin") == 0U) {
-      opts.angle_bin_width = 0.5;
+      opts.angle_bin_width = static_cast<real_t>(0.5);
     }
     if ((app.count("--dihedral-bin") == 0U) && (app.count("--angle-bin") == 0U)) {
-      opts.dihedral_bin_width = 0.5;
+      opts.dihedral_bin_width = static_cast<real_t>(0.5);
     }
     if (app.count("--smoothing-sigma") == 0U) {
-      opts.smoothing_sigma = 0.15;
+      opts.smoothing_sigma = static_cast<real_t>(0.15);
     }
   }
 }

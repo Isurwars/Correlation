@@ -18,22 +18,22 @@ namespace correlation::analysis {
 
 namespace {
 
-constexpr real_t MIN_PEAK_THRESHOLD_FRAC = 0.05;
+constexpr auto MIN_PEAK_THRESHOLD_FRAC = static_cast<real_t>(0.05);
 using correlation::math::FOUR_PI;
 
 [[nodiscard]] std::pair<std::size_t, std::size_t>
 findBoundingIndices(std::span<const real_t> x_bins, real_t r_min, real_t r_max) noexcept {
-  const auto n = x_bins.size();
+  const auto num_bins = x_bins.size();
   std::size_t min_idx = 0;
-  while (min_idx < n && x_bins[min_idx] < r_min) {
+  while (min_idx < num_bins && x_bins[min_idx] < r_min) {
     ++min_idx;
   }
   std::size_t max_idx = min_idx;
-  while (max_idx < n && x_bins[max_idx] <= r_max) {
+  while (max_idx < num_bins && x_bins[max_idx] <= r_max) {
     ++max_idx;
   }
-  if (max_idx > 0 && max_idx == n) {
-    max_idx = n - 1;
+  if (max_idx > 0 && max_idx == num_bins) {
+    max_idx = num_bins - 1;
   }
   return {min_idx, max_idx};
 }
@@ -51,14 +51,14 @@ findBoundingIndices(std::span<const real_t> x_bins, real_t r_min, real_t r_max) 
   return peak_idx;
 }
 
-[[nodiscard]] real_t interpolateHalfCross(real_t x1, real_t y1, real_t x2, real_t y2,
-                                          real_t target_y) noexcept {
-  const real_t dy = y2 - y1;
-  if (std::abs(dy) < static_cast<real_t>(1e-12)) {
-    return (x1 + x2) * static_cast<real_t>(0.5);
+[[nodiscard]] real_t interpolateHalfCross(real_t x_left, real_t y_left, real_t x_right,
+                                          real_t y_right, real_t target_y) noexcept {
+  const real_t delta_y = y_right - y_left;
+  if (std::abs(delta_y) < static_cast<real_t>(1e-12)) {
+    return (x_left + x_right) * static_cast<real_t>(0.5);
   }
-  const real_t frac = (target_y - y1) / dy;
-  return x1 + frac * (x2 - x1);
+  const real_t frac = (target_y - y_left) / delta_y;
+  return x_left + frac * (x_right - x_left);
 }
 
 } // namespace
@@ -120,28 +120,28 @@ PeakIntegralResult PeakIntegrationService::integrateRange(std::span<const real_t
   real_t cn_sum = 0.0;
 
   for (std::size_t i = min_idx; i < max_idx && (i + 1) < num_points; ++i) {
-    const real_t x0 = x_bins[i];
-    const real_t x1 = x_bins[i + 1];
-    const real_t y0 = y_vals[i];
-    const real_t y1 = y_vals[i + 1];
-    const real_t dx = x1 - x0;
+    const real_t x_cur = x_bins[i];
+    const real_t x_next = x_bins[i + 1];
+    const real_t y_cur = y_vals[i];
+    const real_t y_next = y_vals[i + 1];
+    const real_t delta_x = x_next - x_cur;
 
-    area += static_cast<real_t>(0.5) * (y0 + y1) * dx;
-    moment += static_cast<real_t>(0.5) * (x0 * y0 + x1 * y1) * dx;
+    area += static_cast<real_t>(0.5) * (y_cur + y_next) * delta_x;
+    moment += static_cast<real_t>(0.5) * (x_cur * y_cur + x_next * y_next) * delta_x;
 
     if (is_radial && number_density.has_value()) {
-      const real_t shell0 = x0 * x0 * y0;
-      const real_t shell1 = x1 * x1 * y1;
-      cn_sum += static_cast<real_t>(0.5) * (shell0 + shell1) * dx;
+      const real_t shell0 = x_cur * x_cur * y_cur;
+      const real_t shell1 = x_next * x_next * y_next;
+      cn_sum += static_cast<real_t>(0.5) * (shell0 + shell1) * delta_x;
     }
   }
 
   const real_t centroid = (area > static_cast<real_t>(1e-12)) ? (moment / area) : peak_x;
   const real_t fwhm = calculateFWHM(x_bins, y_vals, peak_idx, min_idx, max_idx);
 
-  std::optional<real_t> cn;
+  std::optional<real_t> coord_num;
   if (is_radial && number_density.has_value() && *number_density > static_cast<real_t>(0.0)) {
-    cn = FOUR_PI * (*number_density) * cn_sum;
+    coord_num = FOUR_PI * (*number_density) * cn_sum;
   }
 
   return PeakIntegralResult{
@@ -150,7 +150,7 @@ PeakIntegralResult PeakIntegrationService::integrateRange(std::span<const real_t
       .r_max = x_bins[max_idx],
       .peak_height = peak_y,
       .area = area,
-      .coordination_number = cn,
+      .coordination_number = coord_num,
       .fwhm = fwhm,
       .centroid = centroid,
   };
@@ -169,9 +169,9 @@ PeakIntegrationService::autoDetectPeakNear(std::span<const real_t> x_bins,
   std::size_t closest_idx = 0;
   real_t min_dist = std::numeric_limits<real_t>::max();
   for (std::size_t i = 0; i < num_points; ++i) {
-    const real_t d = std::abs(x_bins[i] - target_x);
-    if (d < min_dist) {
-      min_dist = d;
+    const real_t dist = std::abs(x_bins[i] - target_x);
+    if (dist < min_dist) {
+      min_dist = dist;
       closest_idx = i;
     }
   }

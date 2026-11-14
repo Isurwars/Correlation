@@ -341,8 +341,8 @@ void VoronoiCalculator::populateHistogram(correlation::analysis::Histogram &hist
       continue;
     }
     const std::string &sym = atoms[i].element().symbol;
-    hist.partials[sym][idx] += 1.0;
-    hist.partials["Total"][idx] += 1.0;
+    hist.partials[sym][idx] += static_cast<real_t>(1.0);
+    hist.partials["Total"][idx] += static_cast<real_t>(1.0);
   }
 }
 
@@ -392,7 +392,7 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
 
   // 3b. Sphericity histogram
   size_t const sph_bins = 100;
-  real_t const sph_d = 1.0 / static_cast<real_t>(sph_bins);
+  real_t const sph_d = static_cast<real_t>(1.0) / static_cast<real_t>(sph_bins);
 
   std::vector<real_t> sph_bin_centers(sph_bins);
   for (size_t i = 0; i < sph_bins; ++i) {
@@ -478,8 +478,8 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
       continue;
     }
     const std::string &sym = cell.atoms()[i].element().symbol;
-    sig_hist.partials[sym][idx] += 1.0;
-    sig_hist.partials["Total"][idx] += 1.0;
+    sig_hist.partials[sym][idx] += static_cast<real_t>(1.0);
+    sig_hist.partials["Total"][idx] += static_cast<real_t>(1.0);
   }
 
   // 5. Normalize histograms

@@ -215,7 +215,6 @@ export component SidePanelHost inherits Vertical {
             file_metadata: root.file_metadata;
             workflow_state: root.workflow_state;
 
-            material_type <=> root.material_type;
             analysis_options <=> root.analysis_options;
             app_errors: root.app_errors;
             browse_file => { root.browse_file(); }
@@ -223,7 +222,6 @@ export component SidePanelHost inherits Vertical {
             export_structure => { root.export_structure(); }
             rename_element(old_sym, new_sym) => { root.rename_element(old_sym, new_sym); }
             reset_trajectory_options => { root.reset_trajectory_options(); }
-            reset_material_type => { root.reset_material_type(); }
             run_analysis => { root.run_analysis(); }
             cancel_analysis => { root.cancel_analysis(); }
         }
@@ -237,15 +235,8 @@ export component SidePanelHost inherits Vertical {
             num_frames: root.file_metadata.num_frames;
             workflow_state: root.workflow_state;
 
-            calculator_groups <=> root.calculator_groups;
-            total_calculator_count: root.total_calculator_count;
-            enabled_calculator_count: root.enabled_calculator_count;
-            toggle_calculator(id, enabled) => { root.toggle_calculator(id, enabled); }
-            toggle_calculator_group(grp, enabled) => { root.toggle_calculator_group(grp, enabled); }
-            toggle_all_calculators(enabled) => { root.toggle_all_calculators(enabled); }
-            set_calculator_group_expanded(grp, exp) => { root.set_calculator_group_expanded(grp, exp); }
-            set_all_calculator_groups_expanded(exp) => { root.set_all_calculator_groups_expanded(exp); }
-            reset_analyses_selection => { root.reset_analyses_selection(); }
+            material_type <=> root.material_type;
+            reset_material_type => { root.reset_material_type(); }
 
             has_radial_active: root.has_radial_active;
             has_angular_active: root.has_angular_active;
@@ -281,6 +272,16 @@ export component SidePanelHost inherits Vertical {
             has_scattering_active: root.has_scattering_active;
             has_rings_active: root.has_rings_active;
             workflow_state: root.workflow_state;
+
+            calculator_groups <=> root.calculator_groups;
+            total_calculator_count: root.total_calculator_count;
+            enabled_calculator_count: root.enabled_calculator_count;
+            toggle_calculator(id, enabled) => { root.toggle_calculator(id, enabled); }
+            toggle_calculator_group(grp, enabled) => { root.toggle_calculator_group(grp, enabled); }
+            toggle_all_calculators(enabled) => { root.toggle_all_calculators(enabled); }
+            set_calculator_group_expanded(grp, exp) => { root.set_calculator_group_expanded(grp, exp); }
+            set_all_calculator_groups_expanded(exp) => { root.set_all_calculator_groups_expanded(exp); }
+            reset_analyses_selection => { root.reset_analyses_selection(); }
 
             diff_msd: root.diff_msd;
             diff_vacf: root.diff_vacf;

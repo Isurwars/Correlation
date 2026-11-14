@@ -392,13 +392,13 @@ void ThreadLocalDistances::updateHistogram(const BondCandidate &cand) {
         (static_cast<size_t>(cand.type_a) * num_elements + static_cast<size_t>(cand.type_b)) *
             num_bins +
         bin_idx;
-    flat_histograms[offset_ab] += 1.0;
+    flat_histograms[offset_ab] += static_cast<real_t>(1.0);
     if (cand.atom_idx != cand.j_idx && cand.type_a != cand.type_b) {
       const size_t offset_ba =
           (static_cast<size_t>(cand.type_b) * num_elements + static_cast<size_t>(cand.type_a)) *
               num_bins +
           bin_idx;
-      flat_histograms[offset_ba] += 1.0;
+      flat_histograms[offset_ba] += static_cast<real_t>(1.0);
     }
   }
 }

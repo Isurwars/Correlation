@@ -162,7 +162,7 @@ void PlotViewportNavigator::applyWheelZoom(float mouse_x, float mouse_y, float d
 
   const auto [c_x, c_y] = screenToData(mouse_x, mouse_y, canvas_w, canvas_h, hist, config);
 
-  const real_t zoom_factor = (delta > 0.0F) ? 0.85 : 1.18;
+  const real_t zoom_factor = (delta > 0.0F) ? static_cast<real_t>(0.85) : static_cast<real_t>(1.18);
 
   const real_t cur_x_min = zoom_x_min_.value_or(x_scale.min);
   const real_t cur_x_max = zoom_x_max_.value_or(x_scale.max);

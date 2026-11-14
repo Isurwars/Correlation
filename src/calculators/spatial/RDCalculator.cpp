@@ -109,7 +109,7 @@ accumulateRingStats(const std::vector<std::vector<correlation::core::AtomID>> &c
     }
 
     size_t const bin = eff_size - config.min_ring_size;
-    acc.raw_counts[bin] += 1.0;
+    acc.raw_counts[bin] += static_cast<real_t>(1.0);
     acc.total_counts++;
 
     size_t former_in_ring = 0;

@@ -18,7 +18,7 @@ namespace correlation::analysis {
 namespace {
 
 constexpr size_t MIN_DATA_POINTS = 5;
-constexpr real_t MIN_PEAK_INTENSITY = 0.05;
+constexpr real_t MIN_PEAK_INTENSITY = static_cast<real_t>(0.05);
 
 [[nodiscard]] std::vector<real_t> smoothSeries(std::span<const real_t> input) {
   std::vector<real_t> output(input.size());

@@ -39,9 +39,9 @@ struct KernelGenerationParams {
  * @brief Options bundling for data series kernel smoothing.
  */
 struct KernelSmoothingParams {
-  real_t bin_width = 0.0;                 ///< Uniform bin width of the data (e.g., Δr in Å).
-  real_t sigma = 0.1;                     ///< Kernel bandwidth standard deviation.
-  KernelType type = KernelType::Gaussian; ///< Kernel function selection.
+  real_t bin_width = static_cast<real_t>(0.0); ///< Uniform bin width of the data (e.g., Δr in Å).
+  real_t sigma = static_cast<real_t>(0.1);     ///< Kernel bandwidth standard deviation.
+  KernelType type = KernelType::Gaussian;      ///< Kernel function selection.
 };
 namespace detail {
 

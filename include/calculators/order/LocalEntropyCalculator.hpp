@@ -17,8 +17,8 @@ namespace correlation::calculators {
  * @brief Parameters for the Local Entropic Fingerprint (LEF) calculation.
  */
 struct LocalEntropyParams {
-  real_t cutoff = 5.0; ///< Integration cutoff radius Rc in Angstroms.
-  real_t sigma = 0.2;  ///< Gaussian kernel standard deviation in Angstroms.
+  real_t cutoff = static_cast<real_t>(5.0); ///< Integration cutoff radius Rc in Angstroms.
+  real_t sigma = static_cast<real_t>(0.2);  ///< Gaussian kernel standard deviation in Angstroms.
 };
 
 /**

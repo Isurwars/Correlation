@@ -128,7 +128,7 @@ void ClusterCalculator::calculateFrame(
   for (size_t const size : root_sizes) {
     if (size > 0) {
       // Cluster size 's' corresponds to bin index 's - 1'
-      partial[size - 1] += 1.0;
+      partial[size - 1] += static_cast<real_t>(1.0);
     }
   }
 

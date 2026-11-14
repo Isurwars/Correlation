@@ -217,7 +217,7 @@ real_t computeSingleAtomEntropy(const std::vector<real_t> &atom_distances,
   real_t const density = static_cast<real_t>(cell.atomCount()) / vol;
 
   // We integrate from r = dr to Rc with step size dr
-  real_t const dr_val = 0.02;
+  auto const dr_val = static_cast<real_t>(0.02);
   auto const num_steps = static_cast<size_t>(std::ceil(cutoff / dr_val));
 
   real_t integral = 0.0;
@@ -291,8 +291,8 @@ void addValueToHistogram(std::map<std::string, std::vector<real_t>> &partials,
                          const std::string &symbol, real_t val, BinningConfig config) {
   if (val >= config.min_val && val < config.max_val) {
     auto const bin_idx = static_cast<size_t>((val - config.min_val) / config.d_val);
-    partials[symbol][bin_idx] += 1.0;
-    partials["Total"][bin_idx] += 1.0;
+    partials[symbol][bin_idx] += static_cast<real_t>(1.0);
+    partials["Total"][bin_idx] += static_cast<real_t>(1.0);
   }
 }
 
@@ -427,7 +427,7 @@ LocalEntropyCalculator::calculate(const correlation::core::Cell &cell,
                     [&](const tbb::blocked_range<size_t> &range) {
                       auto &local = ets.local();
                       for (size_t i = range.begin(); i != range.end(); ++i) {
-                        local.num_atoms_f += 1.0;
+                        local.num_atoms_f += static_cast<real_t>(1.0);
                         const std::string &symbol = atoms[i].element().symbol;
                         addValueToHistogram(local.partials, symbol, entropies[i],
                                             {

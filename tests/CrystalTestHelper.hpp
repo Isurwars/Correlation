@@ -246,8 +246,8 @@ inline correlation::core::Cell createNaClCell(real_t lat_a, const std::string &c
 struct DimerCellOptions {
   std::string elem1{"Ar"};
   std::string elem2{"Ar"};
-  real_t dist{1.5};
-  real_t box_size{10.0};
+  real_t dist{static_cast<real_t>(1.5)};
+  real_t box_size{static_cast<real_t>(10.0)};
 };
 
 /// Create a 2-atom Dimer cell.
@@ -262,10 +262,11 @@ inline correlation::core::Cell createDimerCell(DimerCellOptions const &opts = {}
 
 /// Parameters for Water (H2O) molecule cell creation.
 struct WaterMoleculeOptions {
-  correlation::math::Vector3<real_t> O_pos{5.0, 5.0, 5.0};
-  real_t r_OH{0.957};
-  real_t angle_HOH_deg{104.52};
-  real_t box_size{10.0};
+  correlation::math::Vector3<real_t> O_pos{static_cast<real_t>(5.0), static_cast<real_t>(5.0),
+                                           static_cast<real_t>(5.0)};
+  real_t r_OH{static_cast<real_t>(0.957)};
+  real_t angle_HOH_deg{static_cast<real_t>(104.52)};
+  real_t box_size{static_cast<real_t>(10.0)};
 };
 
 /// Create a Water (H2O) molecule cell.
@@ -289,10 +290,10 @@ struct TriatomicAngleCellOptions {
   std::string center_elem{"O"};
   std::string arm_elem1{"H"};
   std::string arm_elem2{"H"};
-  real_t dist1{0.957};
-  real_t dist2{0.957};
-  real_t angle_deg{104.52};
-  real_t box_size{20.0};
+  real_t dist1{static_cast<real_t>(0.957)};
+  real_t dist2{static_cast<real_t>(0.957)};
+  real_t angle_deg{static_cast<real_t>(104.52)};
+  real_t box_size{static_cast<real_t>(20.0)};
 };
 
 /// Create a Triatomic Bent / Angle molecule cell.
@@ -314,8 +315,8 @@ createTriatomicAngleCell(TriatomicAngleCellOptions const &opts = {}) {
 struct RingCellOptions {
   size_t num_atoms{6};
   std::string element{"C"};
-  real_t radius{1.4};
-  real_t box_size{20.0};
+  real_t radius{static_cast<real_t>(1.4)};
+  real_t box_size{static_cast<real_t>(20.0)};
 };
 
 /// Create a Regular N-Polygon Ring cell.

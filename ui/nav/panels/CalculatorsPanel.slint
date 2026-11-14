@@ -11,13 +11,12 @@ import {
 import {
     AtomCount,
     BondCutoff,
-    CalculatorGroup,
     AnalysisOptions,
     AppErrors,
     SanityBadgeState,
     WorkflowState,
 } from "../../Types.slint";
-import { AnalysesSelectionCard } from "../../cards/analyses/AnalysesSelectionCard.slint";
+import { MaterialTypeCard } from "../../cards/operations/MaterialTypeCard.slint";
 import { BondCutoffsCard } from "../../cards/common/BondCutoffsCard.slint";
 import { RDFOptionsCard } from "../../cards/common/RDFOptionsCard.slint";
 import { BondAngleOptionsCard } from "../../cards/common/BondAngleOptionsCard.slint";
@@ -32,16 +31,9 @@ export component CalculatorsPanel inherits Rectangle {
     callback run_analysis();
     callback cancel_analysis();
 
-    // Calculator Selection state
-    in-out property <[CalculatorGroup]> calculator_groups: [];
-    in property <int> total_calculator_count: 0;
-    in property <int> enabled_calculator_count: 0;
-    callback toggle_calculator(string, bool);
-    callback toggle_calculator_group(string, bool);
-    callback toggle_all_calculators(bool);
-    callback set_calculator_group_expanded(string, bool);
-    callback set_all_calculator_groups_expanded(bool);
-    callback reset_analyses_selection();
+    // Material Type preset state
+    in-out property <int> material_type: 0;
+    callback reset_material_type();
 
     // Active domain flags
     in property <bool> has_radial_active: true;
@@ -68,7 +60,7 @@ export component CalculatorsPanel inherits Rectangle {
     callback reset_trajectory_options();
 
     out property <string> hovered_tooltip_text:
-        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_calculator_description :
+        material_card.hovered_tooltip_text != "" ? material_card.hovered_tooltip_text :
         bond_cutoffs_card.hovered_tooltip_text != "" ? bond_cutoffs_card.hovered_tooltip_text :
         rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_tooltip_text :
         angle_card.hovered_tooltip_text != "" ? angle_card.hovered_tooltip_text :
@@ -76,7 +68,7 @@ export component CalculatorsPanel inherits Rectangle {
         exec_bar.has_hover ? exec_bar.hovered_tooltip_text : "";
 
     out property <length> hovered_x:
-        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_x :
+        material_card.hovered_tooltip_text != "" ? material_card.hovered_x :
         bond_cutoffs_card.hovered_tooltip_text != "" ? bond_cutoffs_card.hovered_x :
         rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_x :
         angle_card.hovered_tooltip_text != "" ? angle_card.hovered_x :
@@ -84,7 +76,7 @@ export component CalculatorsPanel inherits Rectangle {
         exec_bar.has_hover ? exec_bar.hover_x : 0px;
 
     out property <length> hovered_y:
-        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_y :
+        material_card.hovered_tooltip_text != "" ? material_card.hovered_y :
         bond_cutoffs_card.hovered_tooltip_text != "" ? bond_cutoffs_card.hovered_y :
         rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_y :
         angle_card.hovered_tooltip_text != "" ? angle_card.hovered_y :
@@ -107,19 +99,12 @@ export component CalculatorsPanel inherits Rectangle {
                 padding: 0;
                 spacing: MaterialStyleMetrics.spacing_8;
 
-                // 1. Calculator Catalog Selection (Collapsed by default)
-                analyses_card := AnalysesSelectionCard {
-                    expanded: false;
+                // 1. Material Type Preset Card (Expanded on top by default)
+                material_card := MaterialTypeCard {
+                    expanded: true;
                     file_loaded: root.file_loaded;
-                    calculator_groups: root.calculator_groups;
-                    total_calculator_count: root.total_calculator_count;
-                    enabled_calculator_count: root.enabled_calculator_count;
-                    toggle_calculator(id, val) => { root.toggle_calculator(id, val); }
-                    toggle_calculator_group(grp, val) => { root.toggle_calculator_group(grp, val); }
-                    toggle_all_calculators(val) => { root.toggle_all_calculators(val); }
-                    set_calculator_group_expanded(grp, exp) => { root.set_calculator_group_expanded(grp, exp); }
-                    set_all_calculator_groups_expanded(exp) => { root.set_all_calculator_groups_expanded(exp); }
-                    reset => { root.reset_analyses_selection(); }
+                    material_type <=> root.material_type;
+                    reset => { root.reset_material_type(); }
                 }
 
                 // 2. Bond Cutoffs & Calibration Card (Expanded on top by default)

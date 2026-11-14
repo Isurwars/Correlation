@@ -36,18 +36,19 @@ enum class DomainPresetId : std::uint8_t {
 struct DomainPresetDefinition {
   DomainPresetId id = DomainPresetId::SilicateBorateGlasses; ///< Unique domain identifier.
   std::string name;                                          ///< Human-readable domain name.
-  std::string description;                      ///< Scientific description of analysis workflow.
-  std::string badge_text;                       ///< Compact category tag.
-  std::string recommended_elements;             ///< Typical element archetypes.
-  real_t r_max = 15.0;                          ///< Max radial distance in Å.
-  real_t r_bin_width = 0.02;                    ///< RDF histogram bin width in Å.
-  real_t q_max = 20.0;                          ///< Max scattering momentum transfer in Å^-1.
-  real_t q_bin_width = 0.02;                    ///< S(Q) histogram bin width in Å^-1.
-  real_t angle_bin_width = 0.25;                ///< Angular distribution bin width in degrees.
-  size_t max_ring_size = 12;                    ///< Topological ring cutoff.
-  bool smoothing = false;                       ///< Whether Gaussian smoothing is enabled.
-  real_t smoothing_sigma = 0.02;                ///< Gaussian kernel sigma.
-  std::vector<std::string> enabled_calculators; ///< Calculator IDs to enable for this domain.
+  std::string description;                        ///< Scientific description of analysis workflow.
+  std::string badge_text;                         ///< Compact category tag.
+  std::string recommended_elements;               ///< Typical element archetypes.
+  real_t r_max = static_cast<real_t>(15.0);       ///< Max radial distance in Å.
+  real_t r_bin_width = static_cast<real_t>(0.02); ///< RDF histogram bin width in Å.
+  real_t q_max = static_cast<real_t>(20.0);       ///< Max scattering momentum transfer in Å^-1.
+  real_t q_bin_width = static_cast<real_t>(0.02); ///< S(Q) histogram bin width in Å^-1.
+  real_t angle_bin_width =
+      static_cast<real_t>(0.25); ///< Angular distribution bin width in degrees.
+  size_t max_ring_size = 12;     ///< Topological ring cutoff.
+  bool smoothing = false;        ///< Whether Gaussian smoothing is enabled.
+  real_t smoothing_sigma = static_cast<real_t>(0.02); ///< Gaussian kernel sigma.
+  std::vector<std::string> enabled_calculators;       ///< Calculator IDs to enable for this domain.
 };
 
 /**

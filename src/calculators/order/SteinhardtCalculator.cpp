@@ -42,16 +42,16 @@ struct GlobalSteinhardtFactors {
 
 struct HistogramConfigs {
   size_t bins_q{100};
-  real_t q_max{1.0};
-  real_t step_q{0.01};
+  real_t q_max{static_cast<real_t>(1.0)};
+  real_t step_q{static_cast<real_t>(0.01)};
   size_t bins_w4{100};
-  real_t w4_min{-0.5};
-  real_t w4_max{0.5};
-  real_t step_w4{0.01};
+  real_t w4_min{static_cast<real_t>(-0.5)};
+  real_t w4_max{static_cast<real_t>(0.5)};
+  real_t step_w4{static_cast<real_t>(0.01)};
   size_t bins_w6{100};
-  real_t w6_min{-0.2};
-  real_t w6_max{0.2};
-  real_t step_w6{0.004};
+  real_t w6_min{static_cast<real_t>(-0.2)};
+  real_t w6_max{static_cast<real_t>(0.2)};
+  real_t step_w6{static_cast<real_t>(0.004)};
 };
 
 struct Wigner4Table {
@@ -622,7 +622,7 @@ SteinhardtCalculator::calculatePerAtom(const correlation::core::Cell &cell,
 
                         if (options.keep_q6m && params.q6m_normalized.has_value()) {
                           auto &q6m_norm = *params.q6m_normalized;
-                          real_t sum_sq = static_cast<real_t>(0.0);
+                          auto sum_sq = static_cast<real_t>(0.0);
                           for (size_t m_idx = 0; m_idx < 13; ++m_idx) {
                             sum_sq += std::norm(all_vecs[i].q6m.at(m_idx));
                           }
@@ -658,18 +658,18 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
 
   // 3. Initialize Histograms
   size_t const bins_q = 100;
-  real_t const q_max = 1.0;
-  real_t const d_q = q_max / bins_q;
+  auto const q_max = static_cast<real_t>(1.0);
+  real_t const d_q = q_max / static_cast<real_t>(bins_q);
 
   size_t const bins_w4 = 100;
-  real_t const w4_min = -0.5;
-  real_t const w4_max = 0.5;
-  real_t const d_w4 = (w4_max - w4_min) / bins_w4;
+  auto const w4_min = static_cast<real_t>(-0.5);
+  auto const w4_max = static_cast<real_t>(0.5);
+  real_t const d_w4 = (w4_max - w4_min) / static_cast<real_t>(bins_w4);
 
   size_t const bins_w6 = 100;
-  real_t const w6_min = -0.2;
-  real_t const w6_max = 0.2;
-  real_t const d_w6 = (w6_max - w6_min) / bins_w6;
+  auto const w6_min = static_cast<real_t>(-0.2);
+  auto const w6_max = static_cast<real_t>(0.2);
+  real_t const d_w6 = (w6_max - w6_min) / static_cast<real_t>(bins_w6);
 
   correlation::analysis::Histogram hist_q4;
   hist_q4.x_label = "Q4";

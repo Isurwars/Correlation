@@ -52,7 +52,7 @@ public:
   explicit StructureAnalyzer(std::shared_ptr<const correlation::core::Cell> cell, real_t cutoff,
                              BondCutoffMatrix bond_cutoffs,
                              bool ignore_periodic_self_interactions = true,
-                             real_t r_bin_width = 0.02);
+                             real_t r_bin_width = static_cast<real_t>(0.02));
 
   /**
    * @brief Constructs a StructureAnalyzer copying the cell into a shared instance.
@@ -65,7 +65,7 @@ public:
   explicit StructureAnalyzer(const correlation::core::Cell &cell, real_t cutoff,
                              BondCutoffMatrix bond_cutoffs,
                              bool ignore_periodic_self_interactions = true,
-                             real_t r_bin_width = 0.02);
+                             real_t r_bin_width = static_cast<real_t>(0.02));
 
   ~StructureAnalyzer() = default;
   StructureAnalyzer(const StructureAnalyzer &) = delete;

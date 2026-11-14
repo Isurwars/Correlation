@@ -378,15 +378,18 @@ void init_analysis(py::module_ &mod) {
           [](DistributionFunctions &dists, real_t r_max, real_t bin_width) {
             dists.calculateRDF({.r_max = r_max, .r_bin_width = bin_width});
           },
-          py::arg("r_max") = 20.0, py::arg("bin_width") = 0.05,
+          py::arg("r_max") = static_cast<real_t>(20.0),
+          py::arg("bin_width") = static_cast<real_t>(0.05),
           "Calculate g(r), J(r), and G(r).\n\n"
           "Parameters\n----------\n"
           "r_max : float\n    Maximum radius (Å). Default 20.0.\n"
           "bin_width : float\n    Histogram bin width (Å). Default 0.05.")
-      .def("calculate_pad", &DistributionFunctions::calculatePAD, py::arg("bin_width") = 0.25,
+      .def("calculate_pad", &DistributionFunctions::calculatePAD,
+           py::arg("bin_width") = static_cast<real_t>(0.25),
            "Calculate the Plane Angle Distribution (PAD).\n\n"
            "bin_width : float\n    Angular bin width (°). Default 0.25.")
-      .def("calculate_dad", &DistributionFunctions::calculateDAD, py::arg("bin_width") = 0.25,
+      .def("calculate_dad", &DistributionFunctions::calculateDAD,
+           py::arg("bin_width") = static_cast<real_t>(0.25),
            "Calculate the Dihedral Angle Distribution (DAD).\n\n"
            "bin_width : float\n    Angular bin width (°). Default 0.25.")
       .def(
@@ -418,8 +421,10 @@ void init_analysis(py::module_ &mod) {
                 .bin_width = bin_width,
             });
           },
-          py::arg("lambda") = 1.5406, py::arg("theta_min") = 5.0, py::arg("theta_max") = 90.0,
-          py::arg("bin_width") = 1.0,
+          py::arg("lambda") = static_cast<real_t>(1.5406),
+          py::arg("theta_min") = static_cast<real_t>(5.0),
+          py::arg("theta_max") = static_cast<real_t>(90.0),
+          py::arg("bin_width") = static_cast<real_t>(1.0),
           "Calculate the X-Ray Diffraction (XRD) pattern.\n\n"
           "Parameters\n----------\n"
           "lambda : float\n    X-ray wavelength (Å). Default 1.5406 (Cu Kα).\n"
@@ -440,7 +445,7 @@ void init_analysis(py::module_ &mod) {
                 dists.cell(), dists.neighbors(), params);
             dists.addHistogram("TWF_Nconn", std::move(hist));
           },
-          py::arg("chi_cut") = 0.7, py::arg("nconn_min") = 7,
+          py::arg("chi_cut") = static_cast<real_t>(0.7), py::arg("nconn_min") = 7,
           "Calculate Ten Wolde-Frenkel bond coherence distribution (TWF_Nconn).")
       .def(
           "calculate_tetrahedral_order",
@@ -454,7 +459,8 @@ void init_analysis(py::module_ &mod) {
                 dists.cell(), dists.neighbors(), params);
             dists.addHistogram("Q_tet", std::move(hist));
           },
-          py::arg("num_bins") = 50, py::arg("min_domain") = 0.0, py::arg("max_domain") = 1.0,
+          py::arg("num_bins") = 50, py::arg("min_domain") = static_cast<real_t>(0.0),
+          py::arg("max_domain") = static_cast<real_t>(1.0),
           "Calculate Chau-Hardwick tetrahedral order parameter distribution (Q_tet).")
       .def(
           "calculate_local_entropy",
@@ -467,7 +473,7 @@ void init_analysis(py::module_ &mod) {
                 dists.cell(), dists.neighbors(), params);
             dists.addHistogram("s2", std::move(hist));
           },
-          py::arg("cutoff") = 5.0, py::arg("sigma") = 0.2,
+          py::arg("cutoff") = static_cast<real_t>(5.0), py::arg("sigma") = static_cast<real_t>(0.2),
           "Calculate Local Entropic Fingerprint distribution (s2).")
       .def(
           "calculate_g6",
@@ -476,7 +482,8 @@ void init_analysis(py::module_ &mod) {
                 dists.cell(), dists.neighbors(), r_max, r_bin_width);
             dists.addHistogram("G6_r", std::move(hist));
           },
-          py::arg("r_max") = 10.0, py::arg("r_bin_width") = 0.05,
+          py::arg("r_max") = static_cast<real_t>(10.0),
+          py::arg("r_bin_width") = static_cast<real_t>(0.05),
           "Calculate radial bond-orientational correlation function (G6_r).")
 
       // Smoothing

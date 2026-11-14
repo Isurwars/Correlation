@@ -17,13 +17,11 @@ export component OperationsPanel inherits Rectangle {
     callback export_structure();
     callback rename_element(string, string);
 
-    // Material & Trajectory Setup
-    in-out property <int> material_type: 0;
+    // Trajectory Setup
     in-out property <AnalysisOptions> analysis_options;
     in property <AppErrors> app_errors;
 
     callback reset_trajectory_options();
-    callback reset_material_type();
 
     // Execution
     in property <WorkflowState> workflow_state;
@@ -55,9 +53,6 @@ export component OperationsPanel inherits Rectangle {
         box_volume: root.file_metadata.box_volume;
         box_density: root.file_metadata.box_density;
         box_dimensions: root.file_metadata.box_dimensions;
-
-        material_type <=> root.material_type;
-        reset_material_type => { root.reset_material_type(); }
 
         analysis_running: root.workflow_state.analysis_running;
         has_validation_errors: root.workflow_state.has_validation_errors;

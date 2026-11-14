@@ -17,9 +17,9 @@
 namespace correlation::analysis {
 namespace {
 
-constexpr real_t MIN_PLAUSIBLE_CUTOFF = 0.8;
-constexpr real_t MAX_PLAUSIBLE_CUTOFF = 6.0;
-constexpr real_t PBC_SAFETY_MARGIN = 0.48;
+constexpr real_t MIN_PLAUSIBLE_CUTOFF = static_cast<real_t>(0.8);
+constexpr real_t MAX_PLAUSIBLE_CUTOFF = static_cast<real_t>(6.0);
+constexpr real_t PBC_SAFETY_MARGIN = static_cast<real_t>(0.48);
 
 [[nodiscard]] real_t safeCovalentRadius(std::string_view symbol) {
   try {
@@ -185,7 +185,7 @@ constexpr real_t PBC_SAFETY_MARGIN = 0.48;
             .fix_action = SanityFixAction::AutoDetectFirstMin,
             .fix_label = "Auto-Detect",
             .problematic_pair = pair_str,
-            .suggested_value = 3.2,
+            .suggested_value = static_cast<real_t>(3.2),
         };
       }
       if (max_d < MIN_PLAUSIBLE_CUTOFF) {
@@ -200,7 +200,7 @@ constexpr real_t PBC_SAFETY_MARGIN = 0.48;
             .fix_action = SanityFixAction::ResetToCovalent,
             .fix_label = "Reset",
             .problematic_pair = pair_str,
-            .suggested_value = 1.5,
+            .suggested_value = static_cast<real_t>(1.5),
         };
       }
     }

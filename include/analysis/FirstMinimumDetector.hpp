@@ -49,12 +49,17 @@ struct CutoffResult {
  * @brief Tuning parameters for first minimum and cutoff detection.
  */
 struct DetectionOptions {
-  real_t min_search_radius{0.5}; ///< Minimum radius (Å) to start searching for the primary peak.
-  real_t max_search_radius{8.0}; ///< Maximum radius (Å) to search for the primary peak.
-  real_t search_window{1.8}; ///< Radial search window (Å) after peak to locate the first minimum.
-  real_t onset_threshold_frac{0.05}; ///< Fraction of peak height defining peak onset (r_min).
-  real_t core_floor_radius{0.5};     ///< Hard-core lower bound floor for r_min in Å.
-  bool apply_smoothing{true}; ///< Whether to apply 3-point filter before derivative analysis.
+  real_t min_search_radius{
+      static_cast<real_t>(0.5)}; ///< Minimum radius (Å) to start searching for the primary peak.
+  real_t max_search_radius{
+      static_cast<real_t>(8.0)}; ///< Maximum radius (Å) to search for the primary peak.
+  real_t search_window{static_cast<real_t>(
+      1.8)}; ///< Radial search window (Å) after peak to locate the first minimum.
+  real_t onset_threshold_frac{
+      static_cast<real_t>(0.05)}; ///< Fraction of peak height defining peak onset (r_min).
+  real_t core_floor_radius{
+      static_cast<real_t>(0.5)}; ///< Hard-core lower bound floor for r_min in Å.
+  bool apply_smoothing{true};    ///< Whether to apply 3-point filter before derivative analysis.
 };
 
 /**

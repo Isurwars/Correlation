@@ -438,17 +438,17 @@ generateSymmetryAtoms(const std::vector<AsymmetricAtom> &asymmetric_atoms,
   }
 
   std::vector<AsymmetricAtom> final_atoms;
-  const real_t tolerance = static_cast<real_t>(1e-4);
+  const auto tolerance = static_cast<real_t>(1e-4);
 
   for (const auto &atom : asymmetric_atoms) {
     for (const auto &sym_op : symmetry_ops) {
       correlation::math::Vector3<real_t> frac_pos = sym_op.apply(atom.frac_pos);
 
       // Normalize fractional coordinates to be within [0-epsilon, 1-epsilon)
-      auto normalize_coord = [](real_t val) -> real_t {
+      const auto normalize_coord = [](real_t val) -> real_t {
         auto res = static_cast<real_t>(std::fmod(val, 1.0));
         if (res < 0) {
-          res += 1.0;
+          res += static_cast<real_t>(1.0);
         }
         return res;
       };

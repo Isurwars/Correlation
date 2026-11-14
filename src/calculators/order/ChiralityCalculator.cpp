@@ -49,8 +49,8 @@ void addValueToHistogram(std::map<std::string, std::vector<real_t>> &partials,
     if (bin_idx >= bins) {
       bin_idx = bins - 1;
     }
-    partials[symbol][bin_idx] += 1.0;
-    partials["Total"][bin_idx] += 1.0;
+    partials[symbol][bin_idx] += static_cast<real_t>(1.0);
+    partials["Total"][bin_idx] += static_cast<real_t>(1.0);
   }
 }
 
@@ -197,7 +197,7 @@ ChiralityCalculator::calculate(const correlation::core::Cell &cell,
                     [&](const tbb::blocked_range<size_t> &range) {
                       auto &local = ets.local();
                       for (size_t i = range.begin(); i != range.end(); ++i) {
-                        local.num_atoms_f += 1.0;
+                        local.num_atoms_f += static_cast<real_t>(1.0);
                         const std::string &symbol = atoms[i].element().symbol;
                         addValueToHistogram(local.partials, symbol, chiralities[i],
                                             {

@@ -14,13 +14,13 @@ namespace correlation::calculators::sycl_gpu {
 
 correlation::analysis::Histogram compute_xrd_sycl(const correlation::core::Cell &cell,
                                                   const SYCLXRDParams &params) {
-  real_t const r_max = 10.0;
+  auto const r_max = static_cast<real_t>(10.0);
   correlation::core::Trajectory traj;
   traj.addFrame(cell);
   traj.precomputeBondCutoffs();
 
   correlation::analysis::DistributionFunctions dists(cell, r_max, traj.getBondCutoffsSQ());
-  dists.calculateRDF({.r_max = r_max, .r_bin_width = 0.05});
+  dists.calculateRDF({.r_max = r_max, .r_bin_width = static_cast<real_t>(0.05)});
 
   const auto &g_r_hist = dists.getHistogram("g_r");
 

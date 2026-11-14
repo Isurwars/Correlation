@@ -149,7 +149,7 @@ float mapX(real_t val, const Bounds2D &bounds, const ViewportBox &box) {
 
 float mapY(real_t val, const Bounds2D &bounds, const ViewportBox &box, bool log_scale) {
   if (log_scale) {
-    constexpr real_t K_FLOOR = 1e-4;
+    constexpr auto K_FLOOR = static_cast<real_t>(1e-4);
     const real_t log_val = std::log10(std::max(val, K_FLOOR));
     const real_t log_min = std::log10(std::max(bounds.y_min, K_FLOOR));
     const real_t log_max = std::log10(std::max(bounds.y_max, K_FLOOR));

@@ -19,10 +19,11 @@ namespace correlation::calculators {
  * @brief Configuration parameters for GPU-accelerated XRD calculation.
  */
 struct GPUXRDParams {
-  real_t lambda{1.5406};  ///< X-ray source wavelength in Angstroms (default: Cu-Kalpha = 1.5406 A).
-  real_t theta_min{10.0}; ///< Minimum 2theta diffraction angle in degrees.
-  real_t theta_max{80.0}; ///< Maximum 2theta diffraction angle in degrees.
-  real_t bin_width{0.1};  ///< Angular resolution delta(2theta) in degrees.
+  real_t lambda{static_cast<real_t>(
+      1.5406)}; ///< X-ray source wavelength in Angstroms (default: Cu-Kalpha = 1.5406 A).
+  real_t theta_min{static_cast<real_t>(10.0)}; ///< Minimum 2theta diffraction angle in degrees.
+  real_t theta_max{static_cast<real_t>(80.0)}; ///< Maximum 2theta diffraction angle in degrees.
+  real_t bin_width{static_cast<real_t>(0.1)};  ///< Angular resolution delta(2theta) in degrees.
 };
 
 namespace gpu {

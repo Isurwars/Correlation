@@ -34,8 +34,8 @@ class TrajectoryAnalyzer;
  * @brief Parameters for radial distribution function g(r) calculation.
  */
 struct RDFParams {
-  real_t r_max = 20.0;       ///< Maximum radius to calculate up to (Angstroms).
-  real_t r_bin_width = 0.05; ///< Width of each bin in Angstroms.
+  real_t r_max = static_cast<real_t>(20.0); ///< Maximum radius to calculate up to (Angstroms).
+  real_t r_bin_width = static_cast<real_t>(0.05); ///< Width of each bin in Angstroms.
   real_t max_radius =
       correlation::math::MAX_CUTOFF_RADIUS; ///< Maximum allowable cutoff radius ceiling.
 };
@@ -54,33 +54,38 @@ struct alignas(64) DynamicProperties {
  * @brief Parameters for X-Ray Diffraction (XRD) pattern calculation.
  */
 struct XRDParams {
-  real_t lambda = 1.5406;  ///< X-ray wavelength in Angstroms.
-  real_t theta_min = 5.0;  ///< Minimum 2-theta angle in degrees.
-  real_t theta_max = 90.0; ///< Maximum 2-theta angle in degrees.
-  real_t bin_width = 1.0;  ///< Bin width for 2-theta in degrees.
+  real_t lambda = static_cast<real_t>(1.5406);  ///< X-ray wavelength in Angstroms.
+  real_t theta_min = static_cast<real_t>(5.0);  ///< Minimum 2-theta angle in degrees.
+  real_t theta_max = static_cast<real_t>(90.0); ///< Maximum 2-theta angle in degrees.
+  real_t bin_width = static_cast<real_t>(1.0);  ///< Bin width for 2-theta in degrees.
 };
 
 /**
  * @brief Configuration settings for distribution function analysis.
  */
 struct AnalysisSettings {
-  real_t r_max = 20.0;                 ///< Maximum radius for RDF calculations (Angstroms).
-  real_t r_bin_width = 0.02;           ///< Bin width for radial distributions (Angstroms).
-  real_t q_max = 20.0;                 ///< Maximum momentum transfer for S(Q) (Angstroms^-1).
-  real_t q_bin_width = 0.02;           ///< Bin width for S(Q) (Angstroms^-1).
-  real_t r_int_max = 10.0;             ///< Cutoff for integration-based properties.
-  real_t angle_bin_width = 1.0;        ///< Bin width for bond angle distributions (degrees).
-  real_t dihedral_bin_width = 1.0;     ///< Bin width for dihedral distributions (degrees).
+  real_t r_max = static_cast<real_t>(20.0); ///< Maximum radius for RDF calculations (Angstroms).
+  real_t r_bin_width =
+      static_cast<real_t>(0.02);            ///< Bin width for radial distributions (Angstroms).
+  real_t q_max = static_cast<real_t>(20.0); ///< Maximum momentum transfer for S(Q) (Angstroms^-1).
+  real_t q_bin_width = static_cast<real_t>(0.02); ///< Bin width for S(Q) (Angstroms^-1).
+  real_t r_int_max = static_cast<real_t>(10.0);   ///< Cutoff for integration-based properties.
+  real_t angle_bin_width =
+      static_cast<real_t>(1.0); ///< Bin width for bond angle distributions (degrees).
+  real_t dihedral_bin_width =
+      static_cast<real_t>(1.0);        ///< Bin width for dihedral distributions (degrees).
   size_t max_ring_size = 12;           ///< Maximum size of rings to search for.
   RingType ring_type = RingType::King; ///< Ring topology criterion (King or Franzblau).
   RingProjectionMode ring_projection_mode =
-      RingProjectionMode::Direct;    ///< Network glass ring projection strategy.
-  std::string ring_network_former;   ///< Network-former element symbol (e.g., "Si").
-  std::string ring_bridging_element; ///< Bridging element symbol (e.g., "O").
-  real_t lef_cutoff = 5.0;           ///< Cutoff radius for local entropy integration.
-  real_t lef_sigma = 0.2;   ///< Standard deviation for Gaussian smoothing in local entropy.
-  real_t twf_chi_cut = 0.7; ///< Coherence threshold for Ten Wolde-Frenkel bonds.
-  size_t twf_nconn_min = 7; ///< Minimum coherent bonds for solid-like classification.
+      RingProjectionMode::Direct;               ///< Network glass ring projection strategy.
+  std::string ring_network_former;              ///< Network-former element symbol (e.g., "Si").
+  std::string ring_bridging_element;            ///< Bridging element symbol (e.g., "O").
+  real_t lef_cutoff = static_cast<real_t>(5.0); ///< Cutoff radius for local entropy integration.
+  real_t lef_sigma =
+      static_cast<real_t>(0.2); ///< Standard deviation for Gaussian smoothing in local entropy.
+  real_t twf_chi_cut =
+      static_cast<real_t>(0.7);           ///< Coherence threshold for Ten Wolde-Frenkel bonds.
+  size_t twf_nconn_min = 7;               ///< Minimum coherent bonds for solid-like classification.
   size_t hyperuniformity_samples = 10000; ///< Number of random sample points for hyperuniformity.
   size_t frame_stride = 1;                ///< Sampling stride between frames (>= 1).
 
@@ -137,8 +142,8 @@ struct AnalysisSettings {
     return false;
   }
 
-  bool smoothing = true;        ///< Whether to apply post-processing smoothing.
-  real_t smoothing_sigma = 0.1; ///< Gaussian smoothing standard deviation.
+  bool smoothing = true; ///< Whether to apply post-processing smoothing.
+  real_t smoothing_sigma = static_cast<real_t>(0.1); ///< Gaussian smoothing standard deviation.
   correlation::math::KernelType smoothing_kernel =
       correlation::math::KernelType::Gaussian; ///< The kernel to use for smoothing.
 

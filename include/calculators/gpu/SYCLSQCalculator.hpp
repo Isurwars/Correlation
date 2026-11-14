@@ -18,9 +18,9 @@ namespace correlation::calculators::sycl_gpu {
  * @brief Parameters for SYCL S(Q) structure factor calculation.
  */
 struct SYCLSQParams {
-  real_t q_min{0.0};       /**< Minimum Q value for structure factor computation. */
-  real_t q_max{10.0};      /**< Maximum Q value for structure factor computation. */
-  real_t q_bin_width{0.1}; /**< Bin resolution step for Q values. */
+  real_t q_min{static_cast<real_t>(0.0)};  /**< Minimum Q value for structure factor computation. */
+  real_t q_max{static_cast<real_t>(10.0)}; /**< Maximum Q value for structure factor computation. */
+  real_t q_bin_width{static_cast<real_t>(0.1)}; /**< Bin resolution step for Q values. */
 };
 
 /**

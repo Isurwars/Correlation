@@ -20,7 +20,6 @@ import {
     ScrollView,
 } from "../../material/material.slint";
 import { AtomCount } from "../../Types.slint";
-import { MaterialTypeCard } from "MaterialTypeCard.slint";
 import { PinnedExecutionBar } from "../../nav/components/PinnedExecutionBar.slint";
 
 // ============================================================================
@@ -49,10 +48,6 @@ export component OperationsPanelCard inherits Rectangle {
     in property <string> box_density: "";
     in property <string> box_dimensions: "";
 
-    // Material Setup Options
-    in-out property <int> material_type: 0;
-    callback reset_material_type();
-
     // Analysis Execution
     in property <bool> analysis_running;
     in property <bool> has_validation_errors;
@@ -65,8 +60,7 @@ export component OperationsPanelCard inherits Rectangle {
         btn_export.has_hover ? "Convert or export the currently loaded structure into POSCAR, CELL, CIF, or CAR format." :
         file_header_area.has-hover ? ("Loaded File: " + (root.file_status_text != "" ? root.file_status_text : "None")) :
         diagnostics_header.has-hover ? "System Diagnostics & Composition.\n\n🔬 Details lattice dimensions, cell volume, macroscopic density, and atomic species counts." :
-        (material_card.hovered_tooltip_text != "" ? material_card.hovered_tooltip_text :
-        exec_bar.has_hover ? exec_bar.hovered_tooltip_text : "");
+        exec_bar.has_hover ? exec_bar.hovered_tooltip_text : "";
 
     out property <length> hovered_x:
         btn_load.has_hover ? btn_load.hover_x :
@@ -74,16 +68,14 @@ export component OperationsPanelCard inherits Rectangle {
         btn_export.has_hover ? btn_export.hover_x :
         file_header_area.has-hover ? file_header_area.absolute-position.x + file_header_area.mouse-x :
         diagnostics_header.has-hover ? diagnostics_header.absolute-position.x + diagnostics_header.mouse-x :
-        (material_card.hovered_tooltip_text != "" ? material_card.hovered_x :
-        exec_bar.has_hover ? exec_bar.hover_x : 0px);
+        exec_bar.has_hover ? exec_bar.hover_x : 0px;
     out property <length> hovered_y:
         btn_load.has_hover ? btn_load.hover_y :
         btn_reload.has_hover ? btn_reload.hover_y :
         btn_export.has_hover ? btn_export.hover_y :
         file_header_area.has-hover ? file_header_area.absolute-position.y + file_header_area.mouse-y :
         diagnostics_header.has-hover ? diagnostics_header.absolute-position.y + diagnostics_header.mouse-y :
-        (material_card.hovered_tooltip_text != "" ? material_card.hovered_y :
-        exec_bar.has_hover ? exec_bar.hover_y : 0px);
+        exec_bar.has_hover ? exec_bar.hover_y : 0px;
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
 
@@ -156,13 +148,6 @@ export component OperationsPanelCard inherits Rectangle {
                             indeterminate: true;
                         }
                     }
-                }
-
-                // --- Setup Options: Material Type ---
-                material_card := MaterialTypeCard {
-                    file_loaded: root.file_loaded;
-                    material_type <=> root.material_type;
-                    reset => { root.reset_material_type(); }
                 }
 
                 // --- File Summary & Diagnostics Card ---

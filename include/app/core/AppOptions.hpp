@@ -22,47 +22,61 @@ namespace correlation::app {
  * @brief Default values and messages for the application.
  */
 struct AppDefaults {
-  static constexpr real_t R_MAX = 20.0;       ///< Default max radius for RDF (Angstrom).
-  static constexpr real_t R_BIN_WIDTH = 0.02; ///< Default bin width for RDF (Angstrom).
-  static constexpr real_t Q_MAX = 20.0;       ///< Default max q for S(Q) (Angstrom^-1).
-  static constexpr real_t Q_BIN_WIDTH = 0.02; ///< Default bin width for S(Q) (Angstrom^-1).
-  static constexpr real_t R_INT_MAX = 10.0;   ///< Default max radius for integration (Angstrom).
-  static constexpr real_t ANGLE_BIN_WIDTH = 0.25; ///< Default bin width for ADF (Degrees).
-  static constexpr real_t SMOOTHING_SIGMA = 0.1;  ///< Default Gaussian smoothing sigma.
-  static constexpr real_t LEF_CUTOFF = 5.0;       ///< Default cutoff for local entropy.
-  static constexpr real_t LEF_SIGMA = 0.2;        ///< Default Gaussian sigma for local entropy.
+  static constexpr real_t R_MAX =
+      static_cast<real_t>(20.0); ///< Default max radius for RDF (Angstrom).
+  static constexpr real_t R_BIN_WIDTH =
+      static_cast<real_t>(0.02); ///< Default bin width for RDF (Angstrom).
+  static constexpr real_t Q_MAX =
+      static_cast<real_t>(20.0); ///< Default max q for S(Q) (Angstrom^-1).
+  static constexpr real_t Q_BIN_WIDTH =
+      static_cast<real_t>(0.02); ///< Default bin width for S(Q) (Angstrom^-1).
+  static constexpr real_t R_INT_MAX =
+      static_cast<real_t>(10.0); ///< Default max radius for integration (Angstrom).
+  static constexpr real_t ANGLE_BIN_WIDTH =
+      static_cast<real_t>(0.25); ///< Default bin width for ADF (Degrees).
+  static constexpr real_t SMOOTHING_SIGMA =
+      static_cast<real_t>(0.1); ///< Default Gaussian smoothing sigma.
+  static constexpr real_t LEF_CUTOFF =
+      static_cast<real_t>(5.0); ///< Default cutoff for local entropy.
+  static constexpr real_t LEF_SIGMA =
+      static_cast<real_t>(0.2); ///< Default Gaussian sigma for local entropy.
 
   // Crystalline Defaults (1 order of magnitude smaller)
-  static constexpr real_t R_BIN_WIDTH_CRYSTAL = 0.002;
-  static constexpr real_t Q_BIN_WIDTH_CRYSTAL = 0.002;
-  static constexpr real_t ANGLE_BIN_WIDTH_CRYSTAL = 0.1;
-  static constexpr real_t SMOOTHING_SIGMA_CRYSTAL = 0.01;
+  static constexpr real_t R_BIN_WIDTH_CRYSTAL = static_cast<real_t>(0.002);
+  static constexpr real_t Q_BIN_WIDTH_CRYSTAL = static_cast<real_t>(0.002);
+  static constexpr real_t ANGLE_BIN_WIDTH_CRYSTAL = static_cast<real_t>(0.1);
+  static constexpr real_t SMOOTHING_SIGMA_CRYSTAL = static_cast<real_t>(0.01);
 
   // Liquid Defaults (broad/diffuse features)
-  static constexpr real_t R_BIN_WIDTH_LIQUID = 0.05;
-  static constexpr real_t Q_BIN_WIDTH_LIQUID = 0.05;
-  static constexpr real_t ANGLE_BIN_WIDTH_LIQUID = 0.5;
-  static constexpr real_t SMOOTHING_SIGMA_LIQUID = 0.15;
+  static constexpr real_t R_BIN_WIDTH_LIQUID = static_cast<real_t>(0.05);
+  static constexpr real_t Q_BIN_WIDTH_LIQUID = static_cast<real_t>(0.05);
+  static constexpr real_t ANGLE_BIN_WIDTH_LIQUID = static_cast<real_t>(0.5);
+  static constexpr real_t SMOOTHING_SIGMA_LIQUID = static_cast<real_t>(0.15);
 
   /** @brief Default smoothing kernel. */
   static constexpr decltype(correlation::math::KernelType::Gaussian) SMOOTHING_KERNEL =
       correlation::math::KernelType::Gaussian;
 
-  static constexpr real_t TIME_STEP = 1.0; ///< Default time step (fs).
+  static constexpr real_t TIME_STEP = static_cast<real_t>(1.0); ///< Default time step (fs).
 
   // XRD Defaults
-  static constexpr real_t XRD_LAMBDA = 1.5406;   ///< Default X-ray wavelength in Å (Cu K-alpha).
-  static constexpr real_t XRD_THETA_MIN = 10.0;  ///< Default min 2-theta in degrees.
-  static constexpr real_t XRD_THETA_MAX = 140.0; ///< Default max 2-theta in degrees.
-  static constexpr real_t XRD_BIN_WIDTH = 0.05;  ///< Default 2-theta bin width in degrees.
+  static constexpr real_t XRD_LAMBDA =
+      static_cast<real_t>(1.5406); ///< Default X-ray wavelength in Å (Cu K-alpha).
+  static constexpr real_t XRD_THETA_MIN =
+      static_cast<real_t>(10.0); ///< Default min 2-theta in degrees.
+  static constexpr real_t XRD_THETA_MAX =
+      static_cast<real_t>(140.0); ///< Default max 2-theta in degrees.
+  static constexpr real_t XRD_BIN_WIDTH =
+      static_cast<real_t>(0.05); ///< Default 2-theta bin width in degrees.
 
   // Bond Cutoff Defaults
   static constexpr real_t BOND_MIN_FACTOR =
-      0.6; ///< Default factor for minimum bond cutoff distance.
+      static_cast<real_t>(0.6); ///< Default factor for minimum bond cutoff distance.
   static constexpr real_t BOND_MAX_FACTOR =
-      1.2; ///< Default factor for maximum bond cutoff distance.
-  static constexpr real_t BOND_GLOBAL_CUTOFF = 3.5; ///< Default global uniform bond cutoff in Å.
-  static constexpr size_t MAX_RING_SIZE = 12;       ///< Default max ring size for topology.
+      static_cast<real_t>(1.2); ///< Default factor for maximum bond cutoff distance.
+  static constexpr real_t BOND_GLOBAL_CUTOFF =
+      static_cast<real_t>(3.5);               ///< Default global uniform bond cutoff in Å.
+  static constexpr size_t MAX_RING_SIZE = 12; ///< Default max ring size for topology.
 
   // --- Status Messages ---
   static constexpr const char *MSG_RUNNING_ANALYSIS =

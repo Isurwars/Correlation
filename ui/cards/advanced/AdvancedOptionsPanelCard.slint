@@ -8,7 +8,8 @@ import {
     ScrollView,
     Vertical,
 } from "../../material/material.slint";
-import { WorkflowState } from "../../Types.slint";
+import { CalculatorGroup, WorkflowState } from "../../Types.slint";
+import { AnalysesSelectionCard } from "../analyses/AnalysesSelectionCard.slint";
 import { SQOptionsCard } from "SQOptionsCard.slint";
 import { XRDOptionsCard } from "XRDOptionsCard.slint";
 import { RingsOptionsCard } from "RingsOptionsCard.slint";
@@ -27,6 +28,17 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
     in property <WorkflowState> workflow_state;
     callback run_analysis();
     callback cancel_analysis();
+
+    // Calculator Selection state
+    in-out property <[CalculatorGroup]> calculator_groups: [];
+    in property <int> total_calculator_count: 0;
+    in property <int> enabled_calculator_count: 0;
+    callback toggle_calculator(string, bool);
+    callback toggle_calculator_group(string, bool);
+    callback toggle_all_calculators(bool);
+    callback set_calculator_group_expanded(string, bool);
+    callback set_all_calculator_groups_expanded(bool);
+    callback reset_analyses_selection();
 
     // SQ Options
     in-out property <string> q_max;
@@ -78,6 +90,7 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
     callback reset_advanced_options();
 
     out property <string> hovered_tooltip_text:
+        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_calculator_description :
         sq_card.hovered_tooltip_text != "" ? sq_card.hovered_tooltip_text :
         xrd_card.hovered_tooltip_text != "" ? xrd_card.hovered_tooltip_text :
         rings_card.hovered_tooltip_text != "" ? rings_card.hovered_tooltip_text :
@@ -87,6 +100,7 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
         exec_bar.has_hover ? exec_bar.hovered_tooltip_text : "";
 
     out property <length> hovered_x:
+        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_x :
         sq_card.hovered_tooltip_text != "" ? sq_card.hovered_x :
         xrd_card.hovered_tooltip_text != "" ? xrd_card.hovered_x :
         rings_card.hovered_tooltip_text != "" ? rings_card.hovered_x :
@@ -96,6 +110,7 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
         exec_bar.has_hover ? exec_bar.hover_x : 0px;
 
     out property <length> hovered_y:
+        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_y :
         sq_card.hovered_tooltip_text != "" ? sq_card.hovered_y :
         xrd_card.hovered_tooltip_text != "" ? xrd_card.hovered_y :
         rings_card.hovered_tooltip_text != "" ? rings_card.hovered_y :
@@ -119,6 +134,21 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
             Vertical {
                 padding: 0;
                 spacing: MaterialStyleMetrics.spacing_8;
+
+                // Calculator Catalog Selection (Collapsed by default)
+                analyses_card := AnalysesSelectionCard {
+                    expanded: false;
+                    file_loaded: root.file_loaded;
+                    calculator_groups: root.calculator_groups;
+                    total_calculator_count: root.total_calculator_count;
+                    enabled_calculator_count: root.enabled_calculator_count;
+                    toggle_calculator(id, val) => { root.toggle_calculator(id, val); }
+                    toggle_calculator_group(grp, val) => { root.toggle_calculator_group(grp, val); }
+                    toggle_all_calculators(val) => { root.toggle_all_calculators(val); }
+                    set_calculator_group_expanded(grp, exp) => { root.set_calculator_group_expanded(grp, exp); }
+                    set_all_calculator_groups_expanded(exp) => { root.set_all_calculator_groups_expanded(exp); }
+                    reset => { root.reset_analyses_selection(); }
+                }
 
                 // Structure Factor S(Q) Card
                 sq_card := SQOptionsCard {

@@ -8,7 +8,8 @@ using correlation::real_t;
 
 namespace correlation::testing {
 
-inline constexpr real_t kTestTolerance = correlation::is_single_precision ? 1e-4F : 1e-12;
+inline constexpr real_t kTestTolerance =
+    correlation::is_single_precision ? static_cast<real_t>(1e-4) : static_cast<real_t>(1e-12);
 
 inline auto IsRealEq(real_t expected) {
   if constexpr (correlation::is_single_precision) {
