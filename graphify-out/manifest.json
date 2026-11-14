@@ -365,8 +365,8 @@
     "semantic_hash": ""
   },
   "src/cli/CliParser.cpp": {
-    "mtime": 1794637924.4213626,
-    "ast_hash": "1c2dd117c80662c6769fed7fd8bc235b",
+    "mtime": 1794677203.5101318,
+    "ast_hash": "ae185d94445b5271b30bd4eaf047fef3",
     "semantic_hash": ""
   },
   "src/cli/main_cli.cpp": {
@@ -800,7 +800,7 @@
     "semantic_hash": ""
   },
   "tests/unit/plotters/SvgPlotterTests.cpp": {
-    "mtime": 1794675564.6699352,
+    "mtime": 1794675772.3454678,
     "ast_hash": "17059e08538b792f92a9012bb6a2bd81",
     "semantic_hash": ""
   },
@@ -960,7 +960,7 @@
     "semantic_hash": ""
   },
   "tests/CMakeLists.txt": {
-    "mtime": 1794675559.9059968,
+    "mtime": 1794675772.0151608,
     "ast_hash": "adb897aa08a26ec48e09fd9c2cfd747d",
     "semantic_hash": ""
   },
@@ -1545,7 +1545,7 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/RDFCalculatorTests.cpp": {
-    "mtime": 1794675563.4609509,
+    "mtime": 1794675772.2631574,
     "ast_hash": "c2f41141e463877282cf60ffeca90277",
     "semantic_hash": ""
   },
@@ -1910,7 +1910,7 @@
     "semantic_hash": ""
   },
   "tests/unit/app/PlotSeriesManagerTests.cpp": {
-    "mtime": 1794675568.402887,
+    "mtime": 1794675772.1001596,
     "ast_hash": "e85ce52b01dbf91c9b91f2d0e778c262",
     "semantic_hash": ""
   },
@@ -2700,7 +2700,7 @@
     "semantic_hash": ""
   },
   "tests/unit/app/PlotViewportNavigatorTests.cpp": {
-    "mtime": 1794675571.7628434,
+    "mtime": 1794675772.1751585,
     "ast_hash": "6b9d9ae277b2dfaed99c22306ce3620d",
     "semantic_hash": ""
   },
@@ -2840,8 +2840,8 @@
     "semantic_hash": ""
   },
   "tests/unit/render3d/TrajectoryStreamerTests.cpp": {
-    "mtime": 1794675565.773921,
-    "ast_hash": "6f6b83418db0723442917cbb529e7eb7",
+    "mtime": 1794677203.767127,
+    "ast_hash": "0b9b82c4e082f1b8683b1fe8f88eec97",
     "semantic_hash": ""
   },
   "include/app/viewmodel/Structure3DController.hpp": {
@@ -3480,7 +3480,7 @@
     "semantic_hash": ""
   },
   "tests/unit/render3d/MiniPlotRendererTests.cpp": {
-    "mtime": 1794675567.164903,
+    "mtime": 1794675772.4101553,
     "ast_hash": "ee2cde155a3b1a6036ea043560563363",
     "semantic_hash": ""
   },

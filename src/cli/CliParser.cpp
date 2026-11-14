@@ -309,14 +309,14 @@ bool parseArgs(std::span<const char *const> argv, CliOptions &opts) {
 
   try {
     app.parse(static_cast<int>(argv.size()), argv.data());
-  } catch (const CLI::CallForHelp &e) {
+  } catch (const CLI::CallForHelp &) {
     printUsage(argv[0]);
     opts.show_help = true;
     return true;
-  } catch (const CLI::CallForVersion &e) {
+  } catch (const CLI::CallForVersion &) {
     opts.show_version = true;
     return true;
-  } catch (const CLI::ParseError &e) {
+  } catch (const CLI::ParseError &) {
     printUsage(argv[0]);
     return false;
   }

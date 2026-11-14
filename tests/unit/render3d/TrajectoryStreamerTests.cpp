@@ -108,7 +108,7 @@ TEST(TrajectoryStreamerTests, StreamWithInCellWrapping) {
     frames.push_back(cell);
   }
 
-  const auto traj = std::make_shared<core::Trajectory>(std::move(frames), 1.0);
+  const auto traj = std::make_shared<core::Trajectory>(std::move(frames), static_cast<real_t>(1.0));
   TrajectoryStreamer streamer(traj);
 
   // Initialize scene
