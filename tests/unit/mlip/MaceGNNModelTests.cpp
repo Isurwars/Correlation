@@ -58,7 +58,7 @@ TEST(MaceGNNModelTests, FallbackMultiAtomCellForces) {
   MaceGNNModel const model("dummy_mace.pt", "cpu", 5.0);
   correlation::core::Cell cell(std::array<real_t, 6>{10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("C", {0.0, 0.0, 0.0});
-  cell.addAtom("O", {1.2, 0.0, 0.0});
+  cell.addAtom("O", {static_cast<real_t>(1.2), 0.0, 0.0});
 
   auto const output = model.evaluate(cell);
   EXPECT_EQ(output.forces.size(), 2U);

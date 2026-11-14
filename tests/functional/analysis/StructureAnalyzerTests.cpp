@@ -377,10 +377,11 @@ TEST_F(StructureAnalyzerTests, CalculatesCorrectDihedralAngles) {
 
   // A at (0, 0, 0), B at (1.7, 0, 0), C at (1.7, 1.7, 0), D at (1.7, 1.7, 1.7)
   // Distance A-B = 1.7, B-C = 1.7, C-D = 1.7
-  cell.addAtom("C", {0.0, 0.0, 0.0}); // A (index 0)
-  cell.addAtom("C", {1.7, 0.0, 0.0}); // B (index 1)
-  cell.addAtom("C", {1.7, 1.7, 0.0}); // C (index 2)
-  cell.addAtom("C", {1.7, 1.7, 1.7}); // D (index 3)
+  cell.addAtom("C", {0.0, 0.0, 0.0});                                           // A (index 0)
+  cell.addAtom("C", {static_cast<real_t>(1.7), 0.0, 0.0});                      // B (index 1)
+  cell.addAtom("C", {static_cast<real_t>(1.7), static_cast<real_t>(1.7), 0.0}); // C (index 2)
+  cell.addAtom("C", {static_cast<real_t>(1.7), static_cast<real_t>(1.7),
+                     static_cast<real_t>(1.7)}); // D (index 3)
   updateTrajectory(cell);
 
   // Act: Compute structure analysis

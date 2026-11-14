@@ -38,10 +38,11 @@ protected:
 TEST_F(ChiralityCalculatorTests, AchiralCoplanarMotif) {
   // Central atom at (0,0,0) and 3 coplanar neighbors in XY plane (z = 0)
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
-  cell.addAtom("Ar", {5.0, 5.0, 5.0}); // Central atom (index 0)
-  cell.addAtom("Ar", {6.0, 5.0, 5.0}); // Neighbor 1: r1 = (1.0, 0, 0), d = 1.0
-  cell.addAtom("Ar", {5.0, 6.1, 5.0}); // Neighbor 2: r2 = (0, 1.1, 0), d = 1.1
-  cell.addAtom("Ar", {3.8, 3.8, 5.0}); // Neighbor 3: r3 = (-1.2, -1.2, 0), d = 1.697
+  cell.addAtom("Ar", {5.0, 5.0, 5.0});                      // Central atom (index 0)
+  cell.addAtom("Ar", {6.0, 5.0, 5.0});                      // Neighbor 1: r1 = (1.0, 0, 0), d = 1.0
+  cell.addAtom("Ar", {5.0, static_cast<real_t>(6.1), 5.0}); // Neighbor 2: r2 = (0, 1.1, 0), d = 1.1
+  cell.addAtom("Ar", {static_cast<real_t>(3.8), static_cast<real_t>(3.8),
+                      5.0}); // Neighbor 3: r3 = (-1.2, -1.2, 0), d = 1.697
 
   StructureAnalyzer const analyzer(
       cell, 2.5, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 2.5 * 2.5}}}, false);
@@ -54,10 +55,10 @@ TEST_F(ChiralityCalculatorTests, AchiralCoplanarMotif) {
 TEST_F(ChiralityCalculatorTests, ChiralRightHandedMotif) {
   // Central atom at (5.0, 5.0, 5.0) and 3 neighbors forming a right-handed basis
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
-  cell.addAtom("Ar", {5.0, 5.0, 5.0}); // Central atom (index 0)
-  cell.addAtom("Ar", {6.0, 5.0, 5.0}); // Neighbor 1: r1 = (1.0, 0, 0), d = 1.0
-  cell.addAtom("Ar", {5.0, 6.1, 5.0}); // Neighbor 2: r2 = (0, 1.1, 0), d = 1.1
-  cell.addAtom("Ar", {5.0, 5.0, 6.2}); // Neighbor 3: r3 = (0, 0, 1.2), d = 1.2
+  cell.addAtom("Ar", {5.0, 5.0, 5.0});                      // Central atom (index 0)
+  cell.addAtom("Ar", {6.0, 5.0, 5.0});                      // Neighbor 1: r1 = (1.0, 0, 0), d = 1.0
+  cell.addAtom("Ar", {5.0, static_cast<real_t>(6.1), 5.0}); // Neighbor 2: r2 = (0, 1.1, 0), d = 1.1
+  cell.addAtom("Ar", {5.0, 5.0, static_cast<real_t>(6.2)}); // Neighbor 3: r3 = (0, 0, 1.2), d = 1.2
 
   StructureAnalyzer const analyzer(
       cell, 2.5, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 2.5 * 2.5}}}, false);
@@ -70,10 +71,11 @@ TEST_F(ChiralityCalculatorTests, ChiralRightHandedMotif) {
 TEST_F(ChiralityCalculatorTests, ChiralLeftHandedMotif) {
   // Central atom at (5.0, 5.0, 5.0) and 3 neighbors forming a left-handed basis
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
-  cell.addAtom("Ar", {5.0, 5.0, 5.0}); // Central atom (index 0)
-  cell.addAtom("Ar", {6.0, 5.0, 5.0}); // Neighbor 1: r1 = (1.0, 0, 0), d = 1.0
-  cell.addAtom("Ar", {5.0, 6.1, 5.0}); // Neighbor 2: r2 = (0, 1.1, 0), d = 1.1
-  cell.addAtom("Ar", {5.0, 5.0, 3.8}); // Neighbor 3: r3 = (0, 0, -1.2), d = 1.2
+  cell.addAtom("Ar", {5.0, 5.0, 5.0});                      // Central atom (index 0)
+  cell.addAtom("Ar", {6.0, 5.0, 5.0});                      // Neighbor 1: r1 = (1.0, 0, 0), d = 1.0
+  cell.addAtom("Ar", {5.0, static_cast<real_t>(6.1), 5.0}); // Neighbor 2: r2 = (0, 1.1, 0), d = 1.1
+  cell.addAtom("Ar",
+               {5.0, 5.0, static_cast<real_t>(3.8)}); // Neighbor 3: r3 = (0, 0, -1.2), d = 1.2
 
   StructureAnalyzer const analyzer(
       cell, 2.5, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 2.5 * 2.5}}}, false);
@@ -87,8 +89,8 @@ TEST_F(ChiralityCalculatorTests, HistogramDistribution) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {5.0, 5.0, 5.0});
   cell.addAtom("Ar", {6.0, 5.0, 5.0});
-  cell.addAtom("Ar", {5.0, 6.1, 5.0});
-  cell.addAtom("Ar", {5.0, 5.0, 6.2});
+  cell.addAtom("Ar", {5.0, static_cast<real_t>(6.1), 5.0});
+  cell.addAtom("Ar", {5.0, 5.0, static_cast<real_t>(6.2)});
 
   StructureAnalyzer const analyzer(
       cell, 2.5, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 2.5 * 2.5}}}, false);

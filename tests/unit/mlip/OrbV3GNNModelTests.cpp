@@ -43,9 +43,9 @@ namespace {
 [[nodiscard]] correlation::core::Cell buildCelluloseSnippetCell() {
   correlation::core::Cell cell({8.0, 8.0, 8.0, 90.0, 90.0, 90.0});
   cell.addAtom("C", {1.0, 1.0, 1.0});
-  cell.addAtom("O", {2.4, 1.0, 1.0});
-  cell.addAtom("H", {0.4, 1.8, 1.0});
-  cell.addAtom("H", {2.9, 1.7, 1.0});
+  cell.addAtom("O", {static_cast<real_t>(2.4), 1.0, 1.0});
+  cell.addAtom("H", {static_cast<real_t>(0.4), static_cast<real_t>(1.8), 1.0});
+  cell.addAtom("H", {static_cast<real_t>(2.9), static_cast<real_t>(1.7), 1.0});
   return cell;
 }
 
@@ -174,7 +174,7 @@ TEST(OrbV3GNNModelTests, AllowsNonCelluloseValidElementsWithCalibrationReport) {
   OrbV3GNNModel const model(fixture);
   correlation::core::Cell si_cell({8.0, 8.0, 8.0, 90.0, 90.0, 90.0});
   si_cell.addAtom("Si", {1.0, 1.0, 1.0});
-  si_cell.addAtom("O", {2.6, 1.0, 1.0});
+  si_cell.addAtom("O", {static_cast<real_t>(2.6), 1.0, 1.0});
 
   const auto report = PeriodicGraphBuilder::validateElementCompatibility(si_cell);
   EXPECT_FALSE(report.has_unmapped_elements);
@@ -225,9 +225,9 @@ TEST(OrbV3GNNModelTests, NumericalParityAgainstPyTorchCelluloseModel) {
 
   correlation::core::Cell cell({15.0, 15.0, 15.0, 90.0, 90.0, 90.0});
   cell.addAtom("C", {1.0, 1.0, 1.0});
-  cell.addAtom("O", {2.4, 1.0, 1.0});
-  cell.addAtom("H", {0.4, 1.8, 1.0});
-  cell.addAtom("H", {2.9, 1.7, 1.0});
+  cell.addAtom("O", {static_cast<real_t>(2.4), 1.0, 1.0});
+  cell.addAtom("H", {static_cast<real_t>(0.4), static_cast<real_t>(1.8), 1.0});
+  cell.addAtom("H", {static_cast<real_t>(2.9), static_cast<real_t>(1.7), 1.0});
 
   const auto out = model.evaluate(cell);
 

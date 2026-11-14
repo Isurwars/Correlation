@@ -24,8 +24,8 @@ Rigorous technical audit before staging, committing, or merging changes in `Corr
 
 | Gate | Check | Command / Verification | Pass Criteria |
 | :--- | :--- | :--- | :--- |
-| **1. Compilation** | Strict compiler flags | `cmake --build build -j$(nproc)` | 0 warnings with `-Wall -Wextra -Wpedantic -Werror` |
-| **2. Clang-Tidy** | Static analysis | `clang-tidy -p build <modified_files>` | 0 warnings. **Zero** `NOLINT` comments allowed. |
+| **1. Compilation** | Strict compiler & conversion flags | `cmake --build build -j$(nproc)` | 0 warnings/errors with `-Wall -Wextra -Wpedantic -Werror=float-conversion -Werror=implicit-float-conversion -Werror=shorten-64-to-32` (`/we4244 /we4267 /we4305` on MSVC). |
+| **2. Clang-Tidy** | Static analysis & narrowing | `clang-tidy -p build <modified_files>` | 0 warnings/errors (`bugprone-narrowing-conversions`, `clang-diagnostic-float-conversion`, `clang-diagnostic-shorten-64-to-32`). **Zero** `NOLINT` comments allowed. |
 | **3. Complexity** | Cognitive complexity threshold | `clang-tidy -checks="readability-function-cognitive-complexity"` | Cognitive complexity $\le 25$ per function. |
 | **4. SOLID Architecture** | SRP, OCP, LSP, ISP, DIP & Zero-cost | Architectural inspection | Clean separation of concerns, no virtual calls in hot loops, concepts for math, DI at boundaries (see [solid-design](file:///home/isurwars/Projects/Correlation/.agents/skills/solid-design/SKILL.md)). |
 | **5. Concurrency** | Thread safety & alignment | Code inspection | No shared mutable state without lock/reduction; `alignas(64)` on thread-local accumulators. |

@@ -236,7 +236,7 @@ TEST_F(SteinhardtCalculatorTests, Icosahedral) {
 TEST_F(SteinhardtCalculatorTests, HandlesAcosNumericalNoiseSafely) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {5.0, 5.0, 5.0});
-  cell.addAtom("Ar", {5.0, 5.0, 6.000000000000001});
+  cell.addAtom("Ar", {5.0, 5.0, static_cast<real_t>(6.000000000000001)});
   cell.addAtom("Ar", {5.0, 5.0, 4.0});
 
   StructureAnalyzer const analyzer(

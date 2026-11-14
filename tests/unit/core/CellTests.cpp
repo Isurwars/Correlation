@@ -262,7 +262,8 @@ TEST_F(CellTests, ExtremelySmallCell) {
   Cell cell(params);
   EXPECT_NEAR(cell.volume(), 1e-6, correlation::is_single_precision ? 1e-10 : 1e-12);
 
-  cell.addAtom("H", {0.005, 0.005, 0.005});
+  cell.addAtom(
+      "H", {static_cast<real_t>(0.005), static_cast<real_t>(0.005), static_cast<real_t>(0.005)});
   cell.wrapPositions();
   const auto &pos = cell.atoms().front().position();
   EXPECT_NEAR(pos.x(), 0.005, correlation::is_single_precision ? 1e-9 : 1e-12);
@@ -295,7 +296,7 @@ TEST_F(CellTests, HighAtomCount) {
 }
 
 TEST_F(CellTests, AcosNumericalNoiseClamping) {
-  Cell const cell({1.0, 0.0, 0.0}, {-1.0, 1.01e-8, 0.0}, {0.0, 0.0, 1.0});
+  Cell const cell({1.0, 0.0, 0.0}, {-1.0, static_cast<real_t>(1.01e-8), 0.0}, {0.0, 0.0, 1.0});
   auto params = cell.latticeParameters();
   EXPECT_FALSE(std::isnan(params[3]));
   EXPECT_FALSE(std::isnan(params[4]));
@@ -310,10 +311,10 @@ TEST_F(CellTests, FractionalCartesianRoundTripPrecision) {
 
   // Test several fractional points (s_x, s_y, s_z) in [0, 1)
   const std::vector<correlation::math::Vector3<real_t>> test_fracs = {
-      {0.1, 0.2, 0.3},
+      {static_cast<real_t>(0.1), static_cast<real_t>(0.2), static_cast<real_t>(0.3)},
       {0.0, 0.0, 0.0},
-      {0.99, 0.5, 0.25},
-      {0.333, 0.666, 0.123},
+      {static_cast<real_t>(0.99), 0.5, 0.25},
+      {static_cast<real_t>(0.333), static_cast<real_t>(0.666), static_cast<real_t>(0.123)},
   };
 
   for (const auto &orig_frac : test_fracs) {

@@ -5,9 +5,17 @@
 ## 1. Static Analysis & Formatting (Clang Tooling)
 - **Tooling Compliance:** All C++ code must strictly align with workspace `.clang-format` and `.clang-tidy` rules.
 - **Verification Gate:** Run `clang-tidy` against `compile_commands.json` on all modified files prior to task completion. Resolve all warnings and linter findings before presenting code.
-- **Strict Compilation:** Code must compile cleanly with `-Wall -Wextra -Wpedantic -Werror`.
+- **Strict Compilation:** Code must compile cleanly with `-Wall -Wextra -Wpedantic -Werror` and strict conversion-as-error gates:
+  - **Clang:** `-Wfloat-conversion -Wimplicit-float-conversion -Wshorten-64-to-32 -Werror=float-conversion -Werror=implicit-float-conversion -Werror=shorten-64-to-32`
+  - **GCC:** `-Wfloat-conversion -Werror=float-conversion`
+  - **MSVC:** `/W4 /we4244 /we4267 /we4305`
 - **Cognitive Complexity Gate:** Function cognitive complexity must be $\le 25$ (`readability-function-cognitive-complexity`). See [complexity-gate](file:///home/isurwars/Projects/Correlation/.agents/rules/complexity-gate.md).
-- **Zero Narrowing:** Implicit narrowing conversions (e.g., `double` to `float`, `size_t` to `int`) are prohibited. Use `static_cast` or explicit conversions where appropriate.
+- **Zero Narrowing & Precision Portability (`C4244`, `C4267`, `C4305`):**
+  - Implicit narrowing conversions (`double` to `real_t`/`float`, `size_t` to `AtomID`/`uint32_t` or `int`, `int` to `char`) are hard compilation and `clang-tidy` errors.
+  - Always cast floating-point literals assigned or passed to `real_t` with `static_cast<real_t>(...)` (and use `std::numbers::*_v<real_t>` for mathematical constants).
+  - Always cast `size_t` indices to `correlation::core::AtomID` (`static_cast<AtomID>(...)`) when calling graph/atom index APIs.
+  - Never pass raw `::tolower` or `std::tolower` to `std::ranges::transform`; always use `[](unsigned char chr) { return static_cast<char>(std::tolower(chr)); }`.
+  - In `.cu` / GPU files, qualify `<cmath>` functions (`std::sqrt`, `std::cos`, `std::sin`, `std::atan2`) so `float` overloads are selected instead of C `double` functions.
 - **Prohibit NOLINT Suppressions:** Never insert `NOLINT`, `NOLINTNEXTLINE`, `NOLINTBEGIN`, `NOLINTEND`, or any inline suppression comments. Fix the root cause in code design or types.
 
 ## 2. Doxygen Documentation Standard

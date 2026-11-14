@@ -213,6 +213,7 @@ def evaluate_command_safety(command_line: str) -> tuple[bool, str]:
 # --------------------------------------------------------------------------------------
 
 _NOLINT_RE = re.compile(r"(//|/\*).*?\bNOLINT(NEXTLINE|BEGIN|END)?\b")
+_RAW_TOLOWER_RE = re.compile(r"\btransform\s*\([^;]*?(?:::|\bstd::)to(?:lower|upper)\b")
 _STRIP_RE = re.compile(
     r"//[^\n]*|/\*.*?\*/|\"(?:\\.|[^\"\\\n])*\"|'(?:\\.|[^'\\\n])*'|^[ \t]*#(?:[^\n\\]|\\.)*",
     re.DOTALL | re.MULTILINE,
@@ -376,6 +377,12 @@ def audit_cpp_file(file_path: Path) -> list[str]:
         for idx, line in enumerate(content.splitlines(), start=1)
         if _NOLINT_RE.search(line)
     ]
+    for idx, line in enumerate(content.splitlines(), start=1):
+        if _RAW_TOLOWER_RE.search(line):
+            violations.append(
+                f"[{rel_path}:{idx}] -> Narrowing Conversion (C4244) -> "
+                "Use `[](unsigned char chr) { return static_cast<char>(std::tolower(chr)); }`."
+            )
     for line, name, score in estimate_cognitive_complexity(content):
         if score > COGNITIVE_COMPLEXITY_THRESHOLD:
             violations.append(

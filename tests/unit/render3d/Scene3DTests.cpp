@@ -96,7 +96,8 @@ TEST(Scene3DTests, BuildSceneFromCell) {
   cell.updateLattice(lattice);
 
   cell.addAtom("C", math::Vector3<real_t>(5.0, 5.0, 5.0));
-  cell.addAtom("H", math::Vector3<real_t>(5.0, 5.0, 6.09)); // 1.09 A bond distance
+  cell.addAtom("H",
+               math::Vector3<real_t>(5.0, 5.0, static_cast<real_t>(6.09))); // 1.09 A bond distance
 
   const auto scene = Scene3D::fromCell(cell, 1.2, true);
   ASSERT_NE(scene, nullptr);

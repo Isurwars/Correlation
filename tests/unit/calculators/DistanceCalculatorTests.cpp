@@ -235,7 +235,7 @@ TEST(DistanceCalculatorTests, ThrowsWhenBondCutoffExceedsSearchCutoff) {
 TEST(DistanceCalculatorTests, EnforcesMinimumAndMaximumBondCutoffs) {
   Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
   cell.addAtom("Si", {0.0, 0.0, 0.0});
-  cell.addAtom("Si", {0.4, 0.0, 0.0}); // Distance = 0.4 Å (below min 0.8 Å)
+  cell.addAtom("Si", {static_cast<real_t>(0.4), 0.0, 0.0}); // Distance = 0.4 Å (below min 0.8 Å)
   cell.addAtom("Si", {1.5, 0.0, 0.0}); // Distance = 1.5 Å (within [0.8, 2.0] Å)
   cell.addAtom("Si",
                {2.5, 0.0, 0.0}); // Distance = 2.5 Å (above max 2.0 Å, below global cutoff 3.0 Å)
@@ -322,7 +322,8 @@ TEST(DistanceCalculatorTests, LargeTriclinicCellSubcellPartitioning) {
 
 TEST(DistanceCalculatorTests, SmallCrystalCellMultiImageExpansion) {
   // 1-atom cubic crystal unit cell: a = 3.6 Å
-  Cell cell({3.6, 0.0, 0.0}, {0.0, 3.6, 0.0}, {0.0, 0.0, 3.6});
+  Cell cell({static_cast<real_t>(3.6), 0.0, 0.0}, {0.0, static_cast<real_t>(3.6), 0.0},
+            {0.0, 0.0, static_cast<real_t>(3.6)});
   cell.addAtom("Cu", {0.0, 0.0, 0.0});
 
   real_t const r_max = 10.0;
@@ -490,13 +491,13 @@ TEST(DistanceCalculatorTests, Large40ACellSubcellPartitioningAndPBCWrapping) {
   cell.addAtom("Si", {1.5, 0.5, 0.5});
 
   // Atom 2 across X PBC boundary at (39.2, 0.5, 0.5) in bin (7, 0, 0) (wrapped dist = 1.3 Å)
-  cell.addAtom("Si", {39.2, 0.5, 0.5});
+  cell.addAtom("Si", {static_cast<real_t>(39.2), 0.5, 0.5});
 
   // Atom 3 across Y PBC boundary at (0.5, 39.0, 0.5) in bin (0, 7, 0) (wrapped dist = 1.5 Å)
   cell.addAtom("Si", {0.5, 39.0, 0.5});
 
   // Atom 4 across Z PBC boundary at (0.5, 0.5, 38.8) in bin (0, 0, 7) (wrapped dist = 1.7 Å)
-  cell.addAtom("Si", {0.5, 0.5, 38.8});
+  cell.addAtom("Si", {0.5, 0.5, static_cast<real_t>(38.8)});
 
   // Atom 5 across diagonal 3D corner PBC at (39.5, 39.5, 39.5) in bin (7, 7, 7) (wrapped dist =
   // sqrt(3) ≈ 1.732 Å)
@@ -562,20 +563,27 @@ TEST(DistanceCalculatorTests, Large40ATriclinicSubcellPartitioningAndPBCWrapping
   const auto &lattice = cell.latticeVectors();
 
   // Atom 0 near origin
-  cell.addAtom("Si", {0.2, 0.2, 0.2});
+  cell.addAtom("Si",
+               {static_cast<real_t>(0.2), static_cast<real_t>(0.2), static_cast<real_t>(0.2)});
 
   // Atom 1 placed ~25 Å away in box center (distant subcell)
   const auto center_pos = 0.5 * lattice[0] + 0.5 * lattice[1] + 0.5 * lattice[2];
   cell.addAtom("Si", center_pos);
 
   // Atom 2 near A boundary face (wrapped distance ~1.3 Å)
-  cell.addAtom("Si", lattice[0] - correlation::math::Vector3<real_t>{1.1, -0.2, -0.2});
+  cell.addAtom("Si", lattice[0] - correlation::math::Vector3<real_t>{static_cast<real_t>(1.1),
+                                                                     static_cast<real_t>(-0.2),
+                                                                     static_cast<real_t>(-0.2)});
 
   // Atom 3 near B boundary face (wrapped distance ~1.4 Å)
-  cell.addAtom("Si", lattice[1] - correlation::math::Vector3<real_t>{-0.2, 1.2, -0.2});
+  cell.addAtom("Si", lattice[1] - correlation::math::Vector3<real_t>{static_cast<real_t>(-0.2),
+                                                                     static_cast<real_t>(1.2),
+                                                                     static_cast<real_t>(-0.2)});
 
   // Atom 4 near C boundary face (wrapped distance ~1.5 Å)
-  cell.addAtom("Si", lattice[2] - correlation::math::Vector3<real_t>{-0.2, -0.2, 1.3});
+  cell.addAtom("Si", lattice[2] - correlation::math::Vector3<real_t>{static_cast<real_t>(-0.2),
+                                                                     static_cast<real_t>(-0.2),
+                                                                     static_cast<real_t>(1.3)});
 
   real_t const cutoff = 4.0;
   real_t const cutoff_sq = cutoff * cutoff;

@@ -44,7 +44,7 @@ TEST(SpinChargeCorrelationTests, SpinCalculatorFerroVsAntiferro) {
 TEST(SpinChargeCorrelationTests, ChargeCalculatorAttraction) {
   correlation::core::Cell cell(std::array<real_t, 6>{10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Na", {0.0, 0.0, 0.0});
-  cell.addAtom("Cl", {2.8, 0.0, 0.0});
+  cell.addAtom("Cl", {static_cast<real_t>(2.8), 0.0, 0.0});
 
   std::vector<real_t> charges{1.0, -1.0};
   auto const res = ChargeCorrelationCalculator::calculate(cell, charges, 5.0, 0.5);

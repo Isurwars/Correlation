@@ -104,9 +104,12 @@ inline const std::array<real_t, 9> &getAtomicFormFactors(std::string_view symbol
 }
 
 namespace detail {
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable : 4305) // Truncation from 'double' to 'real_t' in static constant table
+#elif defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfloat-conversion"
 #endif
 inline constexpr std::array<ElementData, 98> DATABASE = {
     {
@@ -1778,8 +1781,10 @@ inline constexpr std::array<ElementData, 98> DATABASE = {
         },
     },
 };
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 #pragma warning(pop)
+#elif defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic pop
 #endif
 
 constexpr const ElementData *find(std::string_view symbol) noexcept {

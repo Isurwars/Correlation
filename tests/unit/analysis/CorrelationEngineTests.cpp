@@ -82,7 +82,7 @@ TEST(CorrelationEngineTests, RunAnalysisSucceedsOnSingleFrameTrajectory) {
   correlation::core::Trajectory traj;
   correlation::core::Cell cell(std::array<real_t, 6>{10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("C", correlation::math::Vector3<real_t>{0.0, 0.0, 0.0});
-  cell.addAtom("O", correlation::math::Vector3<real_t>{1.2, 0.0, 0.0});
+  cell.addAtom("O", correlation::math::Vector3<real_t>{static_cast<real_t>(1.2), 0.0, 0.0});
   traj.addFrame(cell);
 
   CorrelationEngineConfig config;
@@ -104,7 +104,7 @@ TEST(CorrelationEngineTests, RunAnalysisSucceedsOnSingleFrameTrajectory) {
 TEST(DistributionFunctionsTests, PartialKeyHandlesValidAndOutOfBoundsIndices) {
   correlation::core::Cell cell(std::array<real_t, 6>{10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Si", correlation::math::Vector3<real_t>{0.0, 0.0, 0.0});
-  cell.addAtom("O", correlation::math::Vector3<real_t>{1.6, 0.0, 0.0});
+  cell.addAtom("O", correlation::math::Vector3<real_t>{static_cast<real_t>(1.6), 0.0, 0.0});
 
   const correlation::analysis::DistributionFunctions dists(cell);
 

@@ -99,7 +99,7 @@ TEST(SoftwareRasterizerTests, RenderCellWithWireframeAndBonds) {
                                       math::Vector3<real_t>(0.0, 0.0, 8.0));
   cell.updateLattice(lattice);
   cell.addAtom("C", math::Vector3<real_t>(4.0, 4.0, 4.0));
-  cell.addAtom("H", math::Vector3<real_t>(4.0, 4.0, 5.09));
+  cell.addAtom("H", math::Vector3<real_t>(4.0, 4.0, static_cast<real_t>(5.09)));
 
   const auto scene = Scene3D::fromCell(cell, 1.2, true);
   ASSERT_NE(scene, nullptr);

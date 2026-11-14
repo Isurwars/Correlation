@@ -156,7 +156,7 @@ TEST_F(StructureFactorCalculatorTests, DimerProducesValidSQ) {
 TEST_F(StructureFactorCalculatorTests, VerifiesPartialsExistForMulticomponent) {
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   cell.addAtom("C", {0.0, 0.0, 0.0});
-  cell.addAtom("O", {1.2, 0.0, 0.0});
+  cell.addAtom("O", {static_cast<real_t>(1.2), 0.0, 0.0});
 
   DistributionFunctions dists(cell);
   const correlation::calculators::StructureFactorCalculator calc;

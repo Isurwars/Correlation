@@ -103,7 +103,7 @@ TEST(GPUDistanceCalculatorTests, DoublePrecisionDistanceComputation) {
 TEST(GPUDistanceCalculatorTests, SinglePassDirectHistogramAccumulation) {
   correlation::core::Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
   cell.addAtom("Si", {0.0, 0.0, 0.0});
-  cell.addAtom("O", {1.2, 0.0, 0.0});
+  cell.addAtom("O", {static_cast<real_t>(1.2), 0.0, 0.0});
 
   double const cutoff_sq = 4.0;
   // Empty bond cutoffs simulating RDF calculator mode

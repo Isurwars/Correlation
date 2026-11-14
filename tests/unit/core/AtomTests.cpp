@@ -105,8 +105,12 @@ TEST_F(AtomTests, AngleFunctionClampsFloatingPointInaccuracies) {
   const Atom center(element, {0.0, 0.0, 0.0}, 0);
 
   // Vectors that are slightly offset due to precision but logically collinear
-  const Atom neighbor_a(element, {1e-15, 1e-15, 1e-15}, 1);
-  const Atom neighbor_b(element, {2e-15, 2e-15, 2e-15}, 2);
+  const Atom neighbor_a(
+      element, {static_cast<real_t>(1e-15), static_cast<real_t>(1e-15), static_cast<real_t>(1e-15)},
+      1);
+  const Atom neighbor_b(
+      element, {static_cast<real_t>(2e-15), static_cast<real_t>(2e-15), static_cast<real_t>(2e-15)},
+      2);
 
   EXPECT_DOUBLE_EQ(angle(center, neighbor_a, neighbor_b), 0.0);
 }
@@ -140,7 +144,8 @@ TEST_F(AtomTests, ElementIDEqualityWorks) {
 
 TEST_F(AtomTests, DistanceBetweenIdenticalAtomsIsZero) {
   const Element element = {.symbol = "H", .id = {0}};
-  const Atom atom(element, {1.2, -3.4, 5.6}, 1);
+  const Atom atom(
+      element, {static_cast<real_t>(1.2), static_cast<real_t>(-3.4), static_cast<real_t>(5.6)}, 1);
   EXPECT_DOUBLE_EQ(distance(atom, atom), 0.0);
 }
 
@@ -185,7 +190,8 @@ TEST_F(AtomTests, HandlesLongAndSpecialElementSymbols) {
 
 TEST_F(AtomTests, VelocityAccessorsWork) {
   Atom atom;
-  const correlation::math::Vector3<real_t> vel{0.5, -1.2, 3.4};
+  const correlation::math::Vector3<real_t> vel{0.5, static_cast<real_t>(-1.2),
+                                               static_cast<real_t>(3.4)};
   atom.setVelocity(vel);
 
   EXPECT_NEAR(atom.velocity().x(), 0.5, 1e-5);
@@ -196,7 +202,8 @@ TEST_F(AtomTests, VelocityAccessorsWork) {
 TEST_F(AtomTests, CopyAndMoveSemanticsWork) {
   const Element element = {.symbol = "Si", .id = {14}};
   const correlation::math::Vector3<real_t> pos = {1.0, 2.0, 3.0};
-  const correlation::math::Vector3<real_t> vel = {0.1, 0.2, 0.3};
+  const correlation::math::Vector3<real_t> vel = {
+      static_cast<real_t>(0.1), static_cast<real_t>(0.2), static_cast<real_t>(0.3)};
   Atom original(element, pos, 42);
   original.setVelocity(vel);
 

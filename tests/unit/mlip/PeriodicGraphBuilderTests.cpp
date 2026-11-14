@@ -177,7 +177,7 @@ TEST(PeriodicGraphBuilderTests, SimpleCubicFirstNeighborShell) {
 TEST(PeriodicGraphBuilderTests, DimerWithinCutoff) {
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   cell.addAtom("C", {0.0, 0.0, 0.0});
-  cell.addAtom("O", {1.2, 0.0, 0.0});
+  cell.addAtom("O", {static_cast<real_t>(1.2), 0.0, 0.0});
 
   auto const graph = PeriodicGraphBuilder::buildGraph(cell, 2.0, false);
 
@@ -310,7 +310,7 @@ TEST(PeriodicGraphBuilderTests, PeriodicGraphWithSphericalHarmonics) {
   constexpr real_t K_PI = std::numbers::pi_v<real_t>;
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   cell.addAtom("C", {0.0, 0.0, 0.0});
-  cell.addAtom("O", {1.2, 0.0, 0.0});
+  cell.addAtom("O", {static_cast<real_t>(1.2), 0.0, 0.0});
 
   // Default l_max = 0: empty spherical harmonics buffer
   auto const graph_l0 = PeriodicGraphBuilder::buildGraph(cell, 2.0, false, 0);

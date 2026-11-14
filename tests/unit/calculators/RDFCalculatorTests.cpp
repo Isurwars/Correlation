@@ -231,8 +231,8 @@ TEST_F(RDFCalculatorTests, CalculateCoordinationNumber) {
   // Use a setup where we know neighbors exactly
   correlation::core::Cell cn_cell({10, 10, 10, 90, 90, 90});
   cn_cell.addAtom("Si", {5.0, 5.0, 5.0});
-  cn_cell.addAtom("O", {6.6, 5.0, 5.0}); // 1.6 dist
-  cn_cell.addAtom("O", {3.4, 5.0, 5.0}); // 1.6 dist
+  cn_cell.addAtom("O", {static_cast<real_t>(6.6), 5.0, 5.0}); // 1.6 dist
+  cn_cell.addAtom("O", {static_cast<real_t>(3.4), 5.0, 5.0}); // 1.6 dist
   // Si has 2 O neighbors at 1.6.
 
   updateTrajectory(cn_cell);

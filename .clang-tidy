@@ -22,10 +22,16 @@ Checks: >
 
 HeaderFilterRegex: '^(?!.*(build/|build-fuzz/|/usr/|/opt/|pdfgen|RobotoData)).*$'
 FormatStyle: file
-WarningsAsErrors: 'bugprone-*,cert-*,performance-*'
+WarningsAsErrors: 'bugprone-*,cert-*,performance-*,cppcoreguidelines-narrowing-conversions,clang-diagnostic-float-conversion,clang-diagnostic-implicit-float-conversion,clang-diagnostic-shorten-64-to-32'
 
 CheckOptions:
   bugprone-easily-swappable-parameters.MinimumLength: '3'
+  bugprone-narrowing-conversions.WarnOnFloatingPointNarrowingConversion: 'true'
+  bugprone-narrowing-conversions.WarnOnIntegerNarrowingConversion: 'true'
+  bugprone-narrowing-conversions.WarnWithinTemplateInstantiation: 'true'
+  cppcoreguidelines-narrowing-conversions.WarnOnFloatingPointNarrowingConversion: 'true'
+  cppcoreguidelines-narrowing-conversions.WarnOnIntegerNarrowingConversion: 'true'
+  cppcoreguidelines-narrowing-conversions.WarnWithinTemplateInstantiation: 'true'
   cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor: 'true'
   misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic: 'true'
   modernize-loop-convert.MinConfidence: 'reasonable'

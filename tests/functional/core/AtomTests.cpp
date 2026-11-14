@@ -72,7 +72,7 @@ TEST_F(AtomFunctionalTests, VerifyDynamicAttributeModifications) {
   atom.setElement(new_element);
   atom.setID(101);
   atom.setPosition({1.5, 2.5, 3.5});
-  atom.setVelocity({0.1, -0.2, 0.5});
+  atom.setVelocity({static_cast<real_t>(0.1), static_cast<real_t>(-0.2), 0.5});
 
   EXPECT_EQ(atom.element().symbol, "O");
   EXPECT_EQ(atom.elementId(), 8);

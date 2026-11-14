@@ -130,7 +130,7 @@ TEST(HBondCalculatorTests, HistogramDimensionsAreConsistent) {
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   // Donor water
   cell.addAtom("O", {10.0, 10.0, 10.0});
-  cell.addAtom("H", {10.0, 10.0, 10.96}); // O-H ≈ 0.96 Å
+  cell.addAtom("H", {10.0, 10.0, static_cast<real_t>(10.96)}); // O-H ≈ 0.96 Å
   // Acceptor oxygen
   cell.addAtom("O", {10.0, 10.0, 12.5}); // D-A distance ≈ 2.5 Å < 3.5 Å
 
@@ -152,16 +152,16 @@ TEST(HBondCalculatorTests, TotalDistributionSumsToOne) {
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   // Water 1: donor
   cell.addAtom("O", {10.0, 10.0, 10.0});
-  cell.addAtom("H", {10.0, 10.0, 10.96});
-  cell.addAtom("H", {10.0, 10.96, 10.0});
+  cell.addAtom("H", {10.0, 10.0, static_cast<real_t>(10.96)});
+  cell.addAtom("H", {10.0, static_cast<real_t>(10.96), 10.0});
   // Water 2: acceptor
   cell.addAtom("O", {10.0, 10.0, 12.5});
-  cell.addAtom("H", {10.0, 10.0, 13.46});
-  cell.addAtom("H", {10.0, 10.96, 12.5});
+  cell.addAtom("H", {10.0, 10.0, static_cast<real_t>(13.46)});
+  cell.addAtom("H", {10.0, static_cast<real_t>(10.96), 12.5});
   // Water 3: far away, no H-bond
   cell.addAtom("O", {18.0, 18.0, 18.0});
-  cell.addAtom("H", {18.0, 18.0, 18.96});
-  cell.addAtom("H", {18.0, 18.96, 18.0});
+  cell.addAtom("H", {18.0, 18.0, static_cast<real_t>(18.96)});
+  cell.addAtom("H", {18.0, static_cast<real_t>(18.96), 18.0});
 
   const real_t cutoff = 5.0;
   // 2 elements: O(0), H(1)
@@ -181,7 +181,7 @@ TEST(HBondCalculatorTests, TotalDistributionSumsToOne) {
 TEST(HBondCalculatorTests, HistogramMetadataIsPopulated) {
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   cell.addAtom("O", {10.0, 10.0, 10.0});
-  cell.addAtom("H", {10.0, 10.0, 10.96});
+  cell.addAtom("H", {10.0, 10.0, static_cast<real_t>(10.96)});
   cell.addAtom("O", {10.0, 10.0, 12.5});
 
   const real_t cutoff = 5.0;
@@ -208,7 +208,7 @@ TEST(HBondCalculatorTests, LinearHBond_IsDetected) {
   // O donor at origin
   cell.addAtom("O", {10.0, 10.0, 10.0});
   // H along z-axis, O-H = 0.96 Å
-  cell.addAtom("H", {10.0, 10.0, 10.96});
+  cell.addAtom("H", {10.0, 10.0, static_cast<real_t>(10.96)});
   // O acceptor along z-axis, D-A = 2.5 Å
   cell.addAtom("O", {10.0, 10.0, 12.5});
 
@@ -239,7 +239,7 @@ TEST(HBondCalculatorTests, OppositeDirection_NotDetected) {
   // O donor at center
   cell.addAtom("O", {20.0, 20.0, 20.0});
   // H pointing AWAY from the acceptor, O-H = 0.96 Å along -z
-  cell.addAtom("H", {20.0, 20.0, 19.04});
+  cell.addAtom("H", {20.0, 20.0, static_cast<real_t>(19.04)});
   // O acceptor along +z direction, D-A = 3.0 Å (within 3.5 Å H-bond cutoff)
   // H-to-acceptor distance = 3.96 Å (> typical bond cutoff of ~1.5 Å)
   cell.addAtom("O", {20.0, 20.0, 23.0});
@@ -268,7 +268,7 @@ TEST(HBondCalculatorTests, TooFarApart_NotDetected) {
   // O donor
   cell.addAtom("O", {10.0, 10.0, 10.0});
   // H along z
-  cell.addAtom("H", {10.0, 10.0, 10.96});
+  cell.addAtom("H", {10.0, 10.0, static_cast<real_t>(10.96)});
   // O acceptor far along z (D-A = 5.0 Å > 3.5 Å cutoff)
   cell.addAtom("O", {10.0, 10.0, 15.0});
 
@@ -294,9 +294,9 @@ TEST(HBondCalculatorTests, NitrogenDonor_IsDetected) {
   // N donor
   cell.addAtom("N", {10.0, 10.0, 10.0});
   // H along z-axis, N-H ≈ 1.01 Å
-  cell.addAtom("H", {10.0, 10.0, 11.01});
+  cell.addAtom("H", {10.0, 10.0, static_cast<real_t>(11.01)});
   // O acceptor, D-A ≈ 2.8 Å
-  cell.addAtom("O", {10.0, 10.0, 12.8});
+  cell.addAtom("O", {10.0, 10.0, static_cast<real_t>(12.8)});
 
   const real_t cutoff = 5.0;
   // 3 elements: N(0), H(1), O(2)
@@ -323,7 +323,7 @@ TEST(HBondCalculatorTests, FluorineDonorAndAcceptor) {
   // F donor
   cell.addAtom("F", {10.0, 10.0, 10.0});
   // H along z-axis, F-H ≈ 0.92 Å
-  cell.addAtom("H", {10.0, 10.0, 10.92});
+  cell.addAtom("H", {10.0, 10.0, static_cast<real_t>(10.92)});
   // F acceptor, D-A ≈ 2.5 Å
   cell.addAtom("F", {10.0, 10.0, 12.5});
 
@@ -371,7 +371,7 @@ TEST(HBondCalculatorTests, CoincidentHAndDonor_DoesNotCrash) {
 TEST(HBondCalculatorTests, CoincidentDonorAndAcceptor_DoesNotCrash) {
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   cell.addAtom("O", {10.0, 10.0, 10.0});
-  cell.addAtom("H", {10.0, 10.0, 10.96});
+  cell.addAtom("H", {10.0, 10.0, static_cast<real_t>(10.96)});
   cell.addAtom("O", {10.0, 10.0, 10.0});
 
   const real_t cutoff = 5.0;
@@ -392,7 +392,7 @@ TEST(HBondCalculatorTests, AcceptorOnly_NoHydrogens) {
   cell.addAtom("O", {10.0, 10.0, 10.0});
   // Another O with bonded H (donor)
   cell.addAtom("O", {10.0, 10.0, 12.5});
-  cell.addAtom("H", {10.0, 10.0, 11.54}); // H between the two O atoms
+  cell.addAtom("H", {10.0, 10.0, static_cast<real_t>(11.54)}); // H between the two O atoms
 
   const real_t cutoff = 5.0;
   const auto bcsq = makeCutoffMatrix(2, cutoff);
@@ -441,7 +441,7 @@ TEST(HBondCalculatorTests, BulkMetalNoHBonds) {
 TEST(HBondCalculatorTests, DeterministicResults) {
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   cell.addAtom("O", {10.0, 10.0, 10.0});
-  cell.addAtom("H", {10.0, 10.0, 10.96});
+  cell.addAtom("H", {10.0, 10.0, static_cast<real_t>(10.96)});
   cell.addAtom("O", {10.0, 10.0, 12.5});
 
   const real_t cutoff = 5.0;

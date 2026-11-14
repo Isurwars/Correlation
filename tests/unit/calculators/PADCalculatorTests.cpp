@@ -210,9 +210,9 @@ TEST_F(PADCalculatorTests_AngleReproduction, MissingAnglesWhenCutoffIsTooSmall) 
   // C is at (5,6.6,5) -> dist 1.6
   // Angle should be 90 degrees.
 
-  cell_.addAtom("O", {3.4, 5.0, 5.0});
+  cell_.addAtom("O", {static_cast<real_t>(3.4), 5.0, 5.0});
   cell_.addAtom("Si", {5.0, 5.0, 5.0});
-  cell_.addAtom("O", {5.0, 6.6, 5.0});
+  cell_.addAtom("O", {5.0, static_cast<real_t>(6.6), 5.0});
   updateTrajectory();
 
   // Bond cutoff for Si-O is likely around 1.6 * 1.2 = 1.92 or similar.
@@ -239,8 +239,8 @@ TEST_F(PADCalculatorTests_AngleReproduction, MissingAnglesWhenCutoffIsTooSmall) 
 
 TEST_F(PADCalculatorTests_AngleReproduction, PBCAngleDetection) {
   cell_.addAtom("Si", {0.5, 0.5, 0.5});
-  cell_.addAtom("O", {8.9, 0.5, 0.5});
-  cell_.addAtom("O", {0.5, 8.9, 0.5});
+  cell_.addAtom("O", {static_cast<real_t>(8.9), 0.5, 0.5});
+  cell_.addAtom("O", {0.5, static_cast<real_t>(8.9), 0.5});
   updateTrajectory();
 
   StructureAnalyzer const analyzer(cell_, static_cast<real_t>(1.8), trajectory_.getBondCutoffsSQ());
@@ -350,9 +350,9 @@ TEST_F(PADCalculatorTests, NullNeighborsThrows) {
 // 2. Geometry Verification
 TEST_F(PADCalculatorTests, LinearGeometry180) {
   // A-B-C line
-  cell_.addAtom("O", {8.4, 10.0, 10.0});
+  cell_.addAtom("O", {static_cast<real_t>(8.4), 10.0, 10.0});
   cell_.addAtom("Si", {10.0, 10.0, 10.0});
-  cell_.addAtom("O", {11.6, 10.0, 10.0});
+  cell_.addAtom("O", {static_cast<real_t>(11.6), 10.0, 10.0});
   updateTrajectory();
 
   // Verify StructureAnalyzer finds neighbors
@@ -384,9 +384,9 @@ TEST_F(PADCalculatorTests, LinearGeometry180) {
 }
 
 TEST_F(PADCalculatorTests, RightAngle90) {
-  cell_.addAtom("O", {10.0, 8.4, 10.0});
+  cell_.addAtom("O", {10.0, static_cast<real_t>(8.4), 10.0});
   cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
-  cell_.addAtom("O", {11.6, 10.0, 10.0});
+  cell_.addAtom("O", {static_cast<real_t>(11.6), 10.0, 10.0});
   updateTrajectory();
 
   DistributionFunctions dists(cell_, 2.0, trajectory_.getBondCutoffsSQ());
@@ -407,8 +407,9 @@ TEST_F(PADCalculatorTests, EquilateralTriangle60) {
   // O at (1.6,0,0)
   // O at (0.8, 1.6*sqrt(3)/2, 0)
   cell_.addAtom("Si", {10.0, 10.0, 10.0});
-  cell_.addAtom("O", {11.6, 10.0, 10.0});
-  cell_.addAtom("O", {10.0 + 1.6 * 0.5, 10.0 + 1.6 * std::numbers::sqrt3 / 2.0, 10.0});
+  cell_.addAtom("O", {static_cast<real_t>(11.6), 10.0, 10.0});
+  cell_.addAtom("O", {static_cast<real_t>(10.0 + 1.6 * 0.5),
+                      static_cast<real_t>(10.0 + 1.6 * std::numbers::sqrt3 / 2.0), 10.0});
   updateTrajectory();
 
   DistributionFunctions dists(cell_, 2.0, trajectory_.getBondCutoffsSQ());
@@ -463,8 +464,8 @@ TEST_F(PADCalculatorTests, TetrahedralAngle) {
 // 3. Symmetry & Multi-Species
 TEST_F(PADCalculatorTests, SymmetryAndSorting) {
   cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
-  cell_.addAtom("O", {11.6, 10.0, 10.0});
-  cell_.addAtom("N", {10.0, 11.6, 10.0}); // 90 degrees
+  cell_.addAtom("O", {static_cast<real_t>(11.6), 10.0, 10.0});
+  cell_.addAtom("N", {10.0, static_cast<real_t>(11.6), 10.0}); // 90 degrees
   updateTrajectory();
 
   DistributionFunctions dists(cell_, 2.0, trajectory_.getBondCutoffsSQ());
@@ -652,9 +653,9 @@ TEST_F(PADCalculatorTests, BondDistanceWithinCutoffRangeProducesAngle) {
 
 TEST_F(PADCalculatorTests, VerifyPADRawHistogram) {
   // Linear O-Si-O -> 1 angle of 180 degrees
-  cell_.addAtom("O", {8.4, 10.0, 10.0});
+  cell_.addAtom("O", {static_cast<real_t>(8.4), 10.0, 10.0});
   cell_.addAtom("Si", {10.0, 10.0, 10.0});
-  cell_.addAtom("O", {11.6, 10.0, 10.0});
+  cell_.addAtom("O", {static_cast<real_t>(11.6), 10.0, 10.0});
   updateTrajectory();
 
   DistributionFunctions dists(cell_, 2.0, trajectory_.getBondCutoffsSQ());

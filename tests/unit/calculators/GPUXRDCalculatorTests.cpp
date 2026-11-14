@@ -33,7 +33,8 @@ TEST(GPUXRDCalculatorTests, DiscoveryInCalculatorFactory) {
 TEST(GPUXRDCalculatorTests, FallbackOrGPUExecution) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Si", {0.0, 0.0, 0.0});
-  cell.addAtom("Si", {2.35, 2.35, 2.35});
+  cell.addAtom("Si",
+               {static_cast<real_t>(2.35), static_cast<real_t>(2.35), static_cast<real_t>(2.35)});
 
   correlation::analysis::DistributionFunctions dists(cell);
   correlation::analysis::AnalysisSettings const settings;
@@ -47,7 +48,8 @@ TEST(GPUXRDCalculatorTests, FallbackOrGPUExecution) {
 TEST(GPUXRDCalculatorTests, ComputeXRDDirectFunction) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Si", {0.0, 0.0, 0.0});
-  cell.addAtom("Si", {2.35, 2.35, 2.35});
+  cell.addAtom("Si",
+               {static_cast<real_t>(2.35), static_cast<real_t>(2.35), static_cast<real_t>(2.35)});
 
   GPUXRDParams const params{
       .lambda = static_cast<real_t>(1.5406),

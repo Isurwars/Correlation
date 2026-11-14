@@ -28,7 +28,9 @@ public:
     const size_t n_atoms = cell.atoms().size();
     out.total_energy = static_cast<real_t>(-42.5);
     out.per_atom_energy.resize(n_atoms, static_cast<real_t>(-4.25));
-    out.forces.resize(n_atoms, correlation::math::Vector3<real_t>{0.1, -0.2, 0.3});
+    out.forces.resize(n_atoms, correlation::math::Vector3<real_t>{static_cast<real_t>(0.1),
+                                                                  static_cast<real_t>(-0.2),
+                                                                  static_cast<real_t>(0.3)});
     out.stress = correlation::math::Matrix3<real_t>();
     return out;
   }

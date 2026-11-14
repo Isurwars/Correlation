@@ -237,12 +237,12 @@ TEST_F(XRDCalculatorTests, CalculateXRD_InvalidInputsThrow) {
                std::invalid_argument);
 
   const Histogram empty_gr;
-  EXPECT_THROW(correlation::calculators::XRDCalculator::calculate(
-                   empty_gr, cell_, {}, correlation::calculators::Wavelength{1.5406},
-                   correlation::calculators::MinTheta{5.0},
-                   correlation::calculators::MaxTheta{90.0},
-                   correlation::calculators::BinWidth{0.5}),
-               std::invalid_argument);
+  EXPECT_THROW(
+      correlation::calculators::XRDCalculator::calculate(
+          empty_gr, cell_, {}, correlation::calculators::Wavelength{static_cast<real_t>(1.5406)},
+          correlation::calculators::MinTheta{5.0}, correlation::calculators::MaxTheta{90.0},
+          correlation::calculators::BinWidth{0.5}),
+      std::invalid_argument);
 }
 
 TEST_F(XRDCalculatorTests, CalculateFromSq) {
@@ -257,12 +257,14 @@ TEST_F(XRDCalculatorTests, CalculateFromSq) {
   const std::map<std::string, real_t> ashcroft_weights = {{"Ar-Ar", static_cast<real_t>(1.0)}};
 
   EXPECT_NO_THROW(correlation::calculators::XRDCalculator::calculateFromSq(
-      s_q_hist, cell_, ashcroft_weights, correlation::calculators::Wavelength{1.5406},
+      s_q_hist, cell_, ashcroft_weights,
+      correlation::calculators::Wavelength{static_cast<real_t>(1.5406)},
       correlation::calculators::MinTheta{10.0}, correlation::calculators::MaxTheta{90.0},
       correlation::calculators::BinWidth{0.5}));
 
   const auto xrd_hist = correlation::calculators::XRDCalculator::calculateFromSq(
-      s_q_hist, cell_, ashcroft_weights, correlation::calculators::Wavelength{1.5406},
+      s_q_hist, cell_, ashcroft_weights,
+      correlation::calculators::Wavelength{static_cast<real_t>(1.5406)},
       correlation::calculators::MinTheta{10.0}, correlation::calculators::MaxTheta{90.0},
       correlation::calculators::BinWidth{0.5});
 

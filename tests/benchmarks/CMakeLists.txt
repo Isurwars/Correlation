@@ -23,6 +23,7 @@ target_link_libraries(correlation_benchmarks PRIVATE
     benchmark::benchmark
     TBB::tbb
 )
+correlation_enable_warnings(correlation_benchmarks)
 
 if(BUILD_WITH_CUDA)
     set_target_properties(correlation_benchmarks PROPERTIES CUDA_STANDARD 20)
