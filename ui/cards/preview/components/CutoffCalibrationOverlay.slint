@@ -5,6 +5,7 @@
 
 import {
     MaterialPalette,
+    MaterialStyleMetrics,
     MaterialTypography,
     MaterialText,
 } from "../../../material/material.slint";
@@ -47,7 +48,7 @@ export component CutoffCalibrationOverlay inherits Rectangle {
             y: 0px;
             width: peak_text.preferred-width + 10px;
             height: 18px;
-            border-radius: 9px;
+            border-radius: MaterialStyleMetrics.border_radius_full;
             background: MaterialPalette.surface_container_highest.with_alpha(90%);
             border-width: 1px;
             border-color: MaterialPalette.outline_variant;
@@ -78,10 +79,10 @@ export component CutoffCalibrationOverlay inherits Rectangle {
             y: 12px;
             width: min_text.preferred-width + 12px;
             height: 22px;
-            border-radius: 11px;
+            border-radius: MaterialStyleMetrics.border_radius_full;
             background: MaterialPalette.primary;
             drop-shadow-blur: 4px;
-            drop-shadow-color: #00000040;
+            drop-shadow-color: MaterialPalette.shadow_30;
 
             min_text := MaterialText {
                 width: 100%;
@@ -151,10 +152,10 @@ export component CutoffCalibrationOverlay inherits Rectangle {
             y: 12px;
             width: max_text.preferred-width + 12px;
             height: 22px;
-            border-radius: 11px;
+            border-radius: MaterialStyleMetrics.border_radius_full;
             background: MaterialPalette.tertiary;
             drop-shadow-blur: 4px;
-            drop-shadow-color: #00000040;
+            drop-shadow-color: MaterialPalette.shadow_30;
 
             max_text := MaterialText {
                 width: 100%;

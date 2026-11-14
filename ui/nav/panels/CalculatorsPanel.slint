@@ -5,11 +5,8 @@
 
 import {
     MaterialStyleMetrics,
-    MaterialPalette,
     ScrollView,
     Vertical,
-    FilledButton,
-    Icons,
 } from "../../material/material.slint";
 import {
     AtomCount,
@@ -25,6 +22,7 @@ import { BondCutoffsCard } from "../../cards/common/BondCutoffsCard.slint";
 import { RDFOptionsCard } from "../../cards/common/RDFOptionsCard.slint";
 import { BondAngleOptionsCard } from "../../cards/common/BondAngleOptionsCard.slint";
 import { TrajectoryOptionsCard } from "../../cards/operations/TrajectoryOptionsCard.slint";
+import { PinnedExecutionBar } from "../components/PinnedExecutionBar.slint";
 
 /// Modular Host Component for Stage 1: Calculators & Parameters
 export component CalculatorsPanel inherits Rectangle {
@@ -74,21 +72,24 @@ export component CalculatorsPanel inherits Rectangle {
         bond_cutoffs_card.hovered_tooltip_text != "" ? bond_cutoffs_card.hovered_tooltip_text :
         rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_tooltip_text :
         angle_card.hovered_tooltip_text != "" ? angle_card.hovered_tooltip_text :
-        trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_tooltip_text : "";
+        trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_tooltip_text :
+        exec_bar.has_hover ? exec_bar.hovered_tooltip_text : "";
 
     out property <length> hovered_x:
-        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_x : 0px :
+        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_x :
         bond_cutoffs_card.hovered_tooltip_text != "" ? bond_cutoffs_card.hovered_x :
         rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_x :
         angle_card.hovered_tooltip_text != "" ? angle_card.hovered_x :
-        trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_x : 0px;
+        trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_x :
+        exec_bar.has_hover ? exec_bar.hover_x : 0px;
 
     out property <length> hovered_y:
-        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_y : 0px :
+        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_y :
         bond_cutoffs_card.hovered_tooltip_text != "" ? bond_cutoffs_card.hovered_y :
         rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_y :
         angle_card.hovered_tooltip_text != "" ? angle_card.hovered_y :
-        trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_y : 0px;
+        trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_y :
+        exec_bar.has_hover ? exec_bar.hover_y : 0px;
 
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
@@ -138,7 +139,7 @@ export component CalculatorsPanel inherits Rectangle {
                     set_uniform_cutoff(max_val) => { root.set_uniform_cutoff(max_val); }
                 }
 
-                // 3. Radial Distribution Functions (RDF) Card (Expanded on top by default)
+                // 3. Radial Distribution Functions (RDF) Card (Expanded by default)
                 rdf_card := RDFOptionsCard {
                     expanded: true;
                     file_loaded: root.file_loaded;
@@ -150,9 +151,9 @@ export component CalculatorsPanel inherits Rectangle {
                     visible: root.has_radial_active;
                 }
 
-                // 4. Bond Angle & Dihedral Distribution Card (Expanded on top by default)
+                // 4. Bond Angle & Dihedral Distribution Card (Collapsed by default)
                 angle_card := BondAngleOptionsCard {
-                    expanded: true;
+                    expanded: false;
                     file_loaded: root.file_loaded;
                     angle_bin_width <=> root.analysis_options.angle_bin_width;
                     dihedral_bin_width <=> root.analysis_options.dihedral_bin_width;
@@ -162,7 +163,7 @@ export component CalculatorsPanel inherits Rectangle {
                     visible: root.has_angular_active;
                 }
 
-                // 5. Trajectory Options Card (Expanded on top by default)
+                // 5. Trajectory Options Card (Expanded by default)
                 trajectory_card := TrajectoryOptionsCard {
                     expanded: true;
                     file_loaded: root.file_loaded;
@@ -181,26 +182,13 @@ export component CalculatorsPanel inherits Rectangle {
         }
 
         // 6. Pinned Bottom Run / Cancel Analysis Action Trigger
-        TouchArea {
-            accessible-role: button;
-            accessible-label: root.workflow_state.analysis_running ? "Cancel Analysis" : "Run Analysis";
-            height: MaterialStyleMetrics.size_40;
-            FilledButton {
-                width: 100%;
-                height: 100%;
-                icon: root.workflow_state.analysis_running ? Icons.close : Icons.play_arrow;
-                text: root.workflow_state.analysis_running ? "Cancel Analysis" : "Run Analysis";
-                enabled: root.workflow_state.analysis_running || (root.file_loaded && !root.workflow_state.has_validation_errors);
-                background: root.workflow_state.analysis_running ? MaterialPalette.error : MaterialPalette.run;
-                text_color: root.workflow_state.analysis_running ? MaterialPalette.on_error : MaterialPalette.on_run;
-                clicked => {
-                    if (root.workflow_state.analysis_running) {
-                        root.cancel_analysis();
-                    } else {
-                        root.run_analysis();
-                    }
-                }
-            }
+        exec_bar := PinnedExecutionBar {
+            width: 100%;
+            file_loaded: root.file_loaded;
+            analysis_running: root.workflow_state.analysis_running;
+            has_validation_errors: root.workflow_state.has_validation_errors;
+            run_analysis => { root.run_analysis(); }
+            cancel_analysis => { root.cancel_analysis(); }
         }
     }
 }

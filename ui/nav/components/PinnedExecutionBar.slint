@@ -1,0 +1,77 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialPalette,
+    OutlinedCard,
+    MaterialText,
+    FilledButton,
+    Vertical,
+    Icons,
+} from "../../material/material.slint";
+
+/// Pinned execution footer shared across left configuration panels (Stages 0-2).
+export component PinnedExecutionBar inherits Rectangle {
+    in property <bool> file_loaded: false;
+    in property <bool> analysis_running: false;
+    in property <bool> has_validation_errors: false;
+    in property <string> validation_summary: "Fix validation errors before running";
+
+    callback run_analysis();
+    callback cancel_analysis();
+
+    out property <bool> has_hover: run_btn.has_hover;
+    out property <length> hover_x: run_btn.hover_x;
+    out property <length> hover_y: run_btn.hover_y;
+    out property <string> hovered_tooltip_text: run_btn.has_hover
+        ? (root.analysis_running
+            ? "Abort the currently executing trajectory analysis."
+            : (!root.file_loaded
+                ? "Load a structure or trajectory file before running."
+                : (root.has_validation_errors
+                    ? root.validation_summary
+                    : "Run all selected analyses on the loaded trajectory.\n\n🔬 Computes distribution functions across the selected frame range.")))
+        : "";
+
+    vertical-stretch: 0;
+    height: card.preferred-height;
+
+    card := OutlinedCard {
+        width: 100%;
+
+        Vertical {
+            padding: MaterialStyleMetrics.spacing_8;
+            spacing: MaterialStyleMetrics.spacing_4;
+
+            if root.has_validation_errors && !root.analysis_running && root.validation_summary != "": MaterialText {
+                text: "⚠ " + root.validation_summary;
+                style: MaterialTypography.label_small;
+                color: MaterialPalette.error;
+                wrap: word-wrap;
+                horizontal-alignment: center;
+            }
+
+            run_btn := FilledButton {
+                width: 100%;
+                height: MaterialStyleMetrics.size_40;
+                icon: root.analysis_running ? Icons.close : Icons.play_arrow;
+                text: root.analysis_running ? "Cancel Analysis" : "Run Analysis";
+                enabled: root.file_loaded && (root.analysis_running || !root.has_validation_errors);
+                background: root.analysis_running ? MaterialPalette.error : MaterialPalette.run;
+                text_color: root.analysis_running ? MaterialPalette.on_error : MaterialPalette.on_run;
+                clicked => {
+                    if (root.analysis_running) {
+                        root.cancel_analysis();
+                    } else {
+                        root.run_analysis();
+                    }
+                }
+            }
+        }
+    }
+}
+

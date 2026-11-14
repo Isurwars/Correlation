@@ -1,7 +1,50 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
 import {
     MaterialPalette,
+    MaterialStyleMetrics,
     MaterialTypography,
+    MaterialText,
 } from "../../../material/material.slint";
+
+component WorkflowStepPill inherits Rectangle {
+    in property <string> label;
+    in property <bool> active: false;
+    in property <bool> completed: false;
+    in property <bool> interactive: true;
+
+    callback clicked();
+
+    height: 28px;
+    border-radius: MaterialStyleMetrics.border_radius_full;
+    background: root.active ? MaterialPalette.primary_container :
+                (root.interactive && step_touch.has-hover) ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_high;
+    animate background { duration: 150ms; }
+
+    HorizontalLayout {
+        padding-left: MaterialStyleMetrics.padding_12;
+        padding-right: MaterialStyleMetrics.padding_12;
+
+        MaterialText {
+            text: root.label;
+            style: MaterialTypography.label_medium;
+            color: root.active ? MaterialPalette.on_primary_container :
+                   root.completed ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+            vertical-alignment: center;
+        }
+    }
+
+    step_touch := TouchArea {
+        enabled: root.interactive;
+        mouse-cursor: root.interactive ? pointer : default;
+        accessible-role: button;
+        accessible-label: root.label;
+        clicked => { root.clicked(); }
+    }
+}
 
 export component WorkflowStepper inherits Rectangle {
     in property <bool> file_loaded: false;
@@ -20,139 +63,74 @@ export component WorkflowStepper inherits Rectangle {
     HorizontalLayout {
         width: 100%;
         height: 100%;
-        spacing: 8px;
+        spacing: MaterialStyleMetrics.spacing_8;
         alignment: center;
 
-        // 1. Load File
-        step1 := Rectangle {
-            height: 28px;
-            border-radius: 14px;
-            background: !root.file_loaded ? MaterialPalette.primary_container :
-                        step1_touch.has-hover ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_high;
-
-            HorizontalLayout {
-                padding-left: 12px;
-                padding-right: 12px;
-                Text {
-                    text: !root.file_loaded ? "1. Load File (Active)" : "1. File Loaded ✓";
-                    font-size: MaterialTypography.label_medium.font_size;
-                    color: !root.file_loaded ? MaterialPalette.on_primary_container : MaterialPalette.primary;
-                    vertical-alignment: center;
-                }
-            }
-
-            step1_touch := TouchArea {
-                mouse-cursor: pointer;
-                clicked => {
-                    if (!root.file_loaded) {
-                        root.browse_file();
-                    } else {
-                        root.open_panel(0);
-                    }
+        WorkflowStepPill {
+            label: !root.file_loaded ? "1. Load File (Active)" : "1. File Loaded ✓";
+            active: !root.file_loaded;
+            completed: root.file_loaded;
+            clicked => {
+                if (!root.file_loaded) {
+                    root.browse_file();
+                } else {
+                    root.open_panel(0);
                 }
             }
         }
 
-        Text {
+        MaterialText {
             text: "➔";
+            style: MaterialTypography.label_medium;
             color: MaterialPalette.outline;
             vertical-alignment: center;
         }
 
-        // 2. Configure Options
-        step2 := Rectangle {
-            height: 28px;
-            border-radius: 14px;
-            background: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? MaterialPalette.primary_container :
-                        step2_touch.has-hover ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_high;
-
-            HorizontalLayout {
-                padding-left: 12px;
-                padding-right: 12px;
-                Text {
-                    text: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? "2. Configure Options (Active)" :
-                          (root.analysis_running || root.analysis_done) ? "2. Options Configured ✓" : "2. Configure Options";
-                    font-size: MaterialTypography.label_medium.font_size;
-                    color: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? MaterialPalette.on_primary_container :
-                           (root.analysis_running || root.analysis_done) ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
-                    vertical-alignment: center;
-                }
-            }
-
-            step2_touch := TouchArea {
-                mouse-cursor: pointer;
-                clicked => { root.open_panel(1); }
-            }
+        WorkflowStepPill {
+            label: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? "2. Configure Options (Active)" :
+                   (root.analysis_running || root.analysis_done) ? "2. Options Configured ✓" : "2. Configure Options";
+            active: root.file_loaded && !root.analysis_running && !root.analysis_done;
+            completed: root.analysis_running || root.analysis_done;
+            clicked => { root.open_panel(1); }
         }
 
-        Text {
+        MaterialText {
             text: "➔";
+            style: MaterialTypography.label_medium;
             color: MaterialPalette.outline;
             vertical-alignment: center;
         }
 
-        // 3. Run Calculation
-        step3 := Rectangle {
-            height: 28px;
-            border-radius: 14px;
-            background: root.analysis_running ? MaterialPalette.primary_container :
-                        (root.file_loaded && step3_touch.has-hover) ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_high;
-
-            HorizontalLayout {
-                padding-left: 12px;
-                padding-right: 12px;
-                Text {
-                    text: root.analysis_running ? "3. Calculating... (Cancel)" :
-                          root.analysis_done ? "3. Calculation Complete ✓" : "3. Run Calculation";
-                    font-size: MaterialTypography.label_medium.font_size;
-                    color: root.analysis_running ? MaterialPalette.on_primary_container :
-                           root.analysis_done ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
-                    vertical-alignment: center;
-                }
-            }
-
-            step3_touch := TouchArea {
-                mouse-cursor: (root.file_loaded || root.analysis_running) ? pointer : default;
-                clicked => {
-                    if (root.analysis_running) {
-                        root.cancel_analysis();
-                    } else if (root.file_loaded) {
-                        root.run_analysis();
-                    }
+        WorkflowStepPill {
+            label: root.analysis_running ? "3. Calculating... (Cancel)" :
+                   root.analysis_done ? "3. Calculation Complete ✓" : "3. Run Calculation";
+            active: root.analysis_running;
+            completed: root.analysis_done;
+            interactive: root.file_loaded || root.analysis_running;
+            clicked => {
+                if (root.analysis_running) {
+                    root.cancel_analysis();
+                } else if (root.file_loaded) {
+                    root.run_analysis();
                 }
             }
         }
 
-        Text {
+        MaterialText {
             text: "➔";
+            style: MaterialTypography.label_medium;
             color: MaterialPalette.outline;
             vertical-alignment: center;
         }
 
-        // 4. Preview & Export
-        step4 := Rectangle {
-            height: 28px;
-            border-radius: 14px;
-            background: root.analysis_done ? MaterialPalette.primary_container :
-                        (root.analysis_done && step4_touch.has-hover) ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_high;
-
-            HorizontalLayout {
-                padding-left: 12px;
-                padding-right: 12px;
-                Text {
-                    text: root.analysis_done ? "4. Preview & Export (Active)" : "4. Preview & Export";
-                    font-size: MaterialTypography.label_medium.font_size;
-                    color: root.analysis_done ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
-                    vertical-alignment: center;
-                }
-            }
-
-            step4_touch := TouchArea {
-                mouse-cursor: root.analysis_done ? pointer : default;
-                clicked => {
-                    if (root.analysis_done) {
-                        root.open_panel(3);
-                    }
+        WorkflowStepPill {
+            label: root.analysis_done ? "4. Preview & Export (Active)" : "4. Preview & Export";
+            active: root.analysis_done;
+            completed: root.analysis_done;
+            interactive: root.analysis_done;
+            clicked => {
+                if (root.analysis_done) {
+                    root.open_panel(3);
                 }
             }
         }

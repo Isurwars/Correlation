@@ -5,6 +5,7 @@
 
 import {
     MaterialPalette,
+    MaterialStyleMetrics,
     MaterialTypography,
     MaterialText,
     Icons,
@@ -37,7 +38,7 @@ export component CutoffCalibrationBar inherits Rectangle {
         btn_reset.has-hover ? btn_reset.absolute-position.y + btn_reset.mouse-y : 0px;
 
     height: 42px;
-    border-radius: 21px;
+    border-radius: MaterialStyleMetrics.border_radius_full;
     background: MaterialPalette.surface_container_high.with_alpha(95%);
     border-width: 1.5px;
     border-color: MaterialPalette.outline.with_alpha(80%);
@@ -84,7 +85,7 @@ export component CutoffCalibrationBar inherits Rectangle {
             for pair[idx] in root.pairs: Rectangle {
                 property <bool> is_active: idx == root.active_pair_index;
                 height: 28px;
-                border-radius: 14px;
+                border-radius: MaterialStyleMetrics.border_radius_full;
                 background: is_active ? MaterialPalette.primary :
                             chip_touch.has-hover ? MaterialPalette.surface_container_highest : transparent;
                 border-width: is_active ? 0px : 1px;
@@ -95,6 +96,8 @@ export component CutoffCalibrationBar inherits Rectangle {
                     width: 100%;
                     height: 100%;
                     mouse-cursor: pointer;
+                    accessible-role: button;
+                    accessible-label: "Select pair " + pair.label;
                     clicked => {
                         root.active_pair_index = idx;
                         root.select_pair(idx);
@@ -128,12 +131,14 @@ export component CutoffCalibrationBar inherits Rectangle {
             height: 30px;
             width: auto_content.preferred-width + 20px;
             mouse-cursor: pointer;
+            accessible-role: button;
+            accessible-label: "Auto-detect first minimum";
             clicked => { root.auto_detect(root.active_pair_index); }
 
             Rectangle {
                 width: 100%;
                 height: 100%;
-                border-radius: 15px;
+                border-radius: MaterialStyleMetrics.border_radius_full;
                 background: btn_auto.has-hover ? MaterialPalette.tertiary_container.darker(5%) : MaterialPalette.tertiary_container;
                 border-width: 1px;
                 border-color: MaterialPalette.tertiary.with_alpha(40%);
@@ -167,12 +172,14 @@ export component CutoffCalibrationBar inherits Rectangle {
             width: 28px;
             height: 28px;
             mouse-cursor: pointer;
+            accessible-role: button;
+            accessible-label: "Reset pair cutoff to covalent heuristic";
             clicked => { root.reset_pair(root.active_pair_index); }
 
             Rectangle {
                 width: 100%;
                 height: 100%;
-                border-radius: 14px;
+                border-radius: MaterialStyleMetrics.border_radius_full;
                 background: btn_reset.has-hover ? MaterialPalette.surface_container_highest : transparent;
 
                 Image {
@@ -191,12 +198,14 @@ export component CutoffCalibrationBar inherits Rectangle {
             width: 28px;
             height: 28px;
             mouse-cursor: pointer;
+            accessible-role: button;
+            accessible-label: "Exit cutoff calibration mode";
             clicked => { root.close(); }
 
             Rectangle {
                 width: 100%;
                 height: 100%;
-                border-radius: 14px;
+                border-radius: MaterialStyleMetrics.border_radius_full;
                 background: btn_close.has-hover ? MaterialPalette.error_container : transparent;
 
                 Image {

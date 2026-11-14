@@ -219,6 +219,7 @@ export component Structure3DViewport inherits Rectangle {
                     total_atoms: root.total_atoms;
                     analysis_running: root.analysis_running;
                     has_validation_errors: root.has_validation_errors;
+                    analysis_done: root.analysis_done;
 
                     run_analysis => { root.run_analysis(); }
                     cancel_analysis => { root.cancel_analysis(); }

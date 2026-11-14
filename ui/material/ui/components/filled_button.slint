@@ -21,6 +21,10 @@ export component FilledButton {
 
     callback clicked <=> base.clicked;
 
+    out property <bool> has_hover: base.has-hover;
+    out property <length> hover_x: base.absolute-position.x + base.mouse-x;
+    out property <length> hover_y: base.absolute-position.y + base.mouse-y;
+
     accessible-role: button;
     accessible-enabled: root.enabled;
     accessible-label: root.text == "" ? root.tooltip : root.text;

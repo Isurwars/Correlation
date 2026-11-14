@@ -1,9 +1,78 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
 import {
     MaterialPalette,
+    MaterialStyleMetrics,
     MaterialTypography,
     MaterialText,
     Icons,
 } from "../../../material/material.slint";
+
+component ToolbarIconButton inherits TouchArea {
+    in property <image> icon;
+    in property <string> label: "";
+    in property <string> accessible_name: "";
+    in property <bool> active: false;
+    in property <color> active_bg: MaterialPalette.primary;
+    in property <color> active_fg: MaterialPalette.on_primary;
+    in property <color> idle_fg: MaterialPalette.on_surface;
+
+    out property <length> hover_x: self.has-hover ? self.absolute-position.x + self.mouse-x : 0px;
+    out property <length> hover_y: self.has-hover ? self.absolute-position.y + self.mouse-y : 0px;
+
+    width: 30px;
+    height: 30px;
+    mouse-cursor: self.enabled ? pointer : default;
+    accessible-role: button;
+    accessible-label: root.accessible_name;
+
+    Rectangle {
+        width: 100%;
+        height: 100%;
+        border-radius: MaterialStyleMetrics.border_radius_full;
+        background: !root.enabled ? transparent :
+                    root.active ? (root.has-hover ? root.active_bg.darker(8%) : root.active_bg) :
+                    (root.has-hover ? MaterialPalette.surface_container_high : transparent);
+        border-width: root.active ? 1.5px : 0px;
+        border-color: root.active ? root.active_fg.with_alpha(35%) : transparent;
+        animate background, border-color { duration: 150ms; easing: ease-out; }
+
+        if root.label == "": Image {
+            x: (parent.width - self.width) / 2;
+            y: (parent.height - self.height) / 2;
+            width: 16px;
+            height: 16px;
+            source: root.icon;
+            colorize: !root.enabled ? MaterialPalette.outline :
+                      root.active ? root.active_fg : root.idle_fg;
+            animate colorize { duration: 150ms; }
+        }
+
+        if root.label != "": MaterialText {
+            width: 100%;
+            height: 100%;
+            text: root.label;
+            style: root.active ? MaterialTypography.label_medium_prominent : MaterialTypography.label_medium;
+            color: !root.enabled ? MaterialPalette.outline :
+                   root.active ? root.active_fg : root.idle_fg;
+            animate color { duration: 150ms; }
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+}
+
+component ToolbarDivider inherits VerticalLayout {
+    alignment: center;
+    Rectangle {
+        width: 1px;
+        height: 16px;
+        background: MaterialPalette.outline_variant.with_alpha(50%);
+    }
+}
 
 export component ImagingToolbar inherits Rectangle {
     in property <bool> has_active_zoom: false;
@@ -20,500 +89,186 @@ export component ImagingToolbar inherits Rectangle {
     callback export_plot();
 
     out property <string> tooltip_text:
-        copy_touch.has-hover ? "Copy Plot to Clipboard\n\n📋 Copy SVG vector image markup to system clipboard for instant pasting." :
-        export_touch.has-hover ? "Export Plot\n\n💾 Quick export current plot visualization directly to SVG or PDF file." :
-        update_touch.has-hover ? "Update Plot\n\n🔄 Apply current axis bounds, ticks, log scaling, and refresh visualization." :
-        settings_touch.has-hover ? "Plot Settings & Styling\n\n⚙️ Configure axis bounds (X/Y limits), tick intervals, log scale, and curve styling." :
-        home_touch.has-hover ? "Home (Reset Zoom)\n\n🔄 Restore full coordinate axes limits." :
-        zoom_touch.has-hover ? "Rubberband Box Zoom\n\n🔍 Click and drag on plot to inspect a specific region of interest." :
-        zoom_out_touch.has-hover ? "Click to Zoom Out\n\n🔍 Click anywhere on plot to step viewport zoom out centered on click." :
-        marker_x_touch.has-hover ? "Add Vertical Marker (+X)\n\n📍 Click plot to place a vertical guide line at target distance or angle." :
-        marker_y_touch.has-hover ? "Add Horizontal Marker (+Y)\n\n📍 Click plot to place a horizontal intensity threshold guide." :
-        calibrate_touch.has-hover ? "Calibrate Cutoffs\n\n🎯 Interactively adjust and auto-detect first coordination shell bond cutoffs on g(r)." :
-        peak_touch.has-hover ? "Peak & CN Inspector\n\n🔬 Click peak to auto-detect shell & CN, or drag to integrate a custom range." :
-        (root.markers_count > 0 && clear_markers_touch.has-hover) ? "Clear Markers\n\n🗑️ Remove all inspection guides from the plot." : "";
+        copy_btn.has-hover ? "Copy Plot to Clipboard\n\nCopy SVG vector image markup to system clipboard for instant pasting." :
+        export_btn.has-hover ? "Export Plot\n\nQuick export current plot visualization directly to SVG or PDF file." :
+        update_btn.has-hover ? "Update Plot\n\nApply current axis bounds, ticks, log scaling, and refresh visualization." :
+        settings_btn.has-hover ? "Plot Settings & Styling\n\nConfigure axis bounds (X/Y limits), tick intervals, log scale, and curve styling." :
+        home_btn.has-hover ? "Home (Reset Zoom)\n\nRestore full coordinate axes limits." :
+        zoom_btn.has-hover ? "Rubberband Box Zoom\n\nClick and drag on plot to inspect a specific region of interest." :
+        zoom_out_btn.has-hover ? "Click to Zoom Out\n\nClick anywhere on plot to step viewport zoom out centered on click." :
+        marker_x_btn.has-hover ? "Add Vertical Marker (+X)\n\nClick plot to place a vertical guide line at target distance or angle." :
+        marker_y_btn.has-hover ? "Add Horizontal Marker (+Y)\n\nClick plot to place a horizontal intensity threshold guide." :
+        calibrate_btn.has-hover ? "Calibrate Cutoffs\n\nInteractively adjust and auto-detect first coordination shell bond cutoffs on g(r)." :
+        peak_btn.has-hover ? "Peak & CN Inspector\n\nClick peak to auto-detect shell & CN, or drag to integrate a custom range." :
+        (root.markers_count > 0 && clear_markers_btn.has-hover) ? "Clear Markers\n\nRemove all inspection guides from the plot." : "";
 
     out property <length> tooltip_x:
-        copy_touch.has-hover ? copy_touch.absolute-position.x + copy_touch.mouse-x :
-        export_touch.has-hover ? export_touch.absolute-position.x + export_touch.mouse-x :
-        update_touch.has-hover ? update_touch.absolute-position.x + update_touch.mouse-x :
-        settings_touch.has-hover ? settings_touch.absolute-position.x + settings_touch.mouse-x :
-        home_touch.has-hover ? home_touch.absolute-position.x + home_touch.mouse-x :
-        zoom_touch.has-hover ? zoom_touch.absolute-position.x + zoom_touch.mouse-x :
-        zoom_out_touch.has-hover ? zoom_out_touch.absolute-position.x + zoom_out_touch.mouse-x :
-        marker_x_touch.has-hover ? marker_x_touch.absolute-position.x + marker_x_touch.mouse-x :
-        marker_y_touch.has-hover ? marker_y_touch.absolute-position.y + marker_y_touch.mouse-x :
-        calibrate_touch.has-hover ? calibrate_touch.absolute-position.x + calibrate_touch.mouse-x :
-        peak_touch.has-hover ? peak_touch.absolute-position.x + peak_touch.mouse-x :
-        (root.markers_count > 0 && clear_markers_touch.has-hover) ? clear_markers_touch.absolute-position.x + clear_markers_touch.mouse-x : 0px;
+        copy_btn.has-hover ? copy_btn.hover_x :
+        export_btn.has-hover ? export_btn.hover_x :
+        update_btn.has-hover ? update_btn.hover_x :
+        settings_btn.has-hover ? settings_btn.hover_x :
+        home_btn.has-hover ? home_btn.hover_x :
+        zoom_btn.has-hover ? zoom_btn.hover_x :
+        zoom_out_btn.has-hover ? zoom_out_btn.hover_x :
+        marker_x_btn.has-hover ? marker_x_btn.hover_x :
+        marker_y_btn.has-hover ? marker_y_btn.hover_x :
+        calibrate_btn.has-hover ? calibrate_btn.hover_x :
+        peak_btn.has-hover ? peak_btn.hover_x :
+        (root.markers_count > 0 && clear_markers_btn.has-hover) ? clear_markers_btn.hover_x : 0px;
 
     out property <length> tooltip_y:
-        copy_touch.has-hover ? copy_touch.absolute-position.y + copy_touch.mouse-y :
-        export_touch.has-hover ? export_touch.absolute-position.y + export_touch.mouse-y :
-        update_touch.has-hover ? update_touch.absolute-position.y + update_touch.mouse-y :
-        settings_touch.has-hover ? settings_touch.absolute-position.y + settings_touch.mouse-y :
-        home_touch.has-hover ? home_touch.absolute-position.y + home_touch.mouse-y :
-        zoom_touch.has-hover ? zoom_touch.absolute-position.y + zoom_touch.mouse-y :
-        zoom_out_touch.has-hover ? zoom_out_touch.absolute-position.y + zoom_out_touch.mouse-y :
-        marker_x_touch.has-hover ? marker_x_touch.absolute-position.y + marker_x_touch.mouse-y :
-        marker_y_touch.has-hover ? marker_y_touch.absolute-position.y + marker_y_touch.mouse-y :
-        calibrate_touch.has-hover ? calibrate_touch.absolute-position.y + calibrate_touch.mouse-y :
-        peak_touch.has-hover ? peak_touch.absolute-position.y + peak_touch.mouse-y :
-        (root.markers_count > 0 && clear_markers_touch.has-hover) ? clear_markers_touch.absolute-position.y + clear_markers_touch.mouse-y : 0px;
+        copy_btn.has-hover ? copy_btn.hover_y :
+        export_btn.has-hover ? export_btn.hover_y :
+        update_btn.has-hover ? update_btn.hover_y :
+        settings_btn.has-hover ? settings_btn.hover_y :
+        home_btn.has-hover ? home_btn.hover_y :
+        zoom_btn.has-hover ? zoom_btn.hover_y :
+        zoom_out_btn.has-hover ? zoom_out_btn.hover_y :
+        marker_x_btn.has-hover ? marker_x_btn.hover_y :
+        marker_y_btn.has-hover ? marker_y_btn.hover_y :
+        calibrate_btn.has-hover ? calibrate_btn.hover_y :
+        peak_btn.has-hover ? peak_btn.hover_y :
+        (root.markers_count > 0 && clear_markers_btn.has-hover) ? clear_markers_btn.hover_y : 0px;
 
     width: toolbar_layout.preferred-width + 16px;
     height: 38px;
-    border-radius: 19px;
+    border-radius: MaterialStyleMetrics.border_radius_full;
     background: MaterialPalette.surface_container_highest;
     border-width: 1.5px;
     border-color: MaterialPalette.outline;
 
     toolbar_layout := HorizontalLayout {
         height: 100%;
-        padding-left: 8px;
-        padding-right: 8px;
+        padding-left: MaterialStyleMetrics.padding_8;
+        padding-right: MaterialStyleMetrics.padding_8;
         spacing: 5px;
         alignment: center;
 
-        // Home (Reset Zoom)
-        home_touch := TouchArea {
-            width: 30px;
-            height: 30px;
+        home_btn := ToolbarIconButton {
             y: (parent.height - self.height) / 2;
+            icon: Icons.home;
             enabled: root.has_active_zoom;
-            mouse-cursor: self.enabled ? pointer : default;
+            accessible_name: "Home (Reset Zoom)";
             clicked => { root.reset_zoom(); }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: 15px;
-                background: home_touch.has-hover && home_touch.enabled ? MaterialPalette.surface_container_high : transparent;
-
-                Image {
-                    x: (parent.width - self.width) / 2;
-                    y: (parent.height - self.height) / 2;
-                    width: 16px;
-                    height: 16px;
-                    source: Icons.home;
-                    colorize: home_touch.enabled ? MaterialPalette.on_surface : MaterialPalette.outline;
-                }
-            }
         }
 
-        // Divider
-        VerticalLayout {
-            alignment: center;
-            Rectangle {
-                width: 1px;
-                height: 16px;
-                background: MaterialPalette.outline_variant.with_alpha(50%);
-            }
-        }
+        ToolbarDivider {}
 
-        // Box Zoom Toggle
-        zoom_touch := TouchArea {
-            width: 30px;
-            height: 30px;
+        zoom_btn := ToolbarIconButton {
             y: (parent.height - self.height) / 2;
-            mouse-cursor: pointer;
-            clicked => {
-                root.active_tool = (root.active_tool == 1 ? 0 : 1);
-            }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: 15px;
-                background: root.active_tool == 1 ?
-                    (zoom_touch.has-hover ? MaterialPalette.tertiary.darker(8%) : MaterialPalette.tertiary) :
-                    (zoom_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
-                border-width: root.active_tool == 1 ? 1.5px : 0px;
-                border-color: root.active_tool == 1 ? MaterialPalette.on_tertiary.with_alpha(35%) : transparent;
-
-                animate background, border-color { duration: 150ms; easing: ease-out; }
-
-                Image {
-                    x: (parent.width - self.width) / 2;
-                    y: (parent.height - self.height) / 2;
-                    width: 16px;
-                    height: 16px;
-                    source: Icons.zoom_in;
-                    colorize: root.active_tool == 1 ? MaterialPalette.on_tertiary : MaterialPalette.on_surface;
-                    animate colorize { duration: 150ms; }
-                }
-            }
+            icon: Icons.zoom_in;
+            active: root.active_tool == 1;
+            active_bg: MaterialPalette.tertiary;
+            active_fg: MaterialPalette.on_tertiary;
+            accessible_name: "Box Zoom Tool";
+            clicked => { root.active_tool = (root.active_tool == 1 ? 0 : 1); }
         }
 
-        // Click to Zoom Out Toggle
-        zoom_out_touch := TouchArea {
-            width: 30px;
-            height: 30px;
+        zoom_out_btn := ToolbarIconButton {
             y: (parent.height - self.height) / 2;
-            mouse-cursor: pointer;
-            clicked => {
-                root.active_tool = (root.active_tool == 4 ? 0 : 4);
-            }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: 15px;
-                background: root.active_tool == 4 ?
-                    (zoom_out_touch.has-hover ? MaterialPalette.tertiary.darker(8%) : MaterialPalette.tertiary) :
-                    (zoom_out_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
-                border-width: root.active_tool == 4 ? 1.5px : 0px;
-                border-color: root.active_tool == 4 ? MaterialPalette.on_tertiary.with_alpha(35%) : transparent;
-
-                animate background, border-color { duration: 150ms; easing: ease-out; }
-
-                Image {
-                    x: (parent.width - self.width) / 2;
-                    y: (parent.height - self.height) / 2;
-                    width: 16px;
-                    height: 16px;
-                    source: Icons.zoom_out;
-                    colorize: root.active_tool == 4 ? MaterialPalette.on_tertiary : MaterialPalette.on_surface;
-                    animate colorize { duration: 150ms; }
-                }
-            }
+            icon: Icons.zoom_out;
+            active: root.active_tool == 4;
+            active_bg: MaterialPalette.tertiary;
+            active_fg: MaterialPalette.on_tertiary;
+            accessible_name: "Click to Zoom Out";
+            clicked => { root.active_tool = (root.active_tool == 4 ? 0 : 4); }
         }
 
-        // Divider
-        VerticalLayout {
-            alignment: center;
-            Rectangle {
-                width: 1px;
-                height: 16px;
-                background: MaterialPalette.outline_variant.with_alpha(50%);
-            }
-        }
+        ToolbarDivider {}
 
-        // Add Vertical X Marker (+X)
-        marker_x_touch := TouchArea {
-            width: 30px;
-            height: 30px;
+        marker_x_btn := ToolbarIconButton {
             y: (parent.height - self.height) / 2;
-            mouse-cursor: pointer;
-            clicked => {
-                root.active_tool = (root.active_tool == 2 ? 0 : 2);
-            }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: 15px;
-                background: root.active_tool == 2 ?
-                    (marker_x_touch.has-hover ? MaterialPalette.primary.darker(8%) : MaterialPalette.primary) :
-                    (marker_x_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
-                border-width: root.active_tool == 2 ? 1.5px : 0px;
-                border-color: root.active_tool == 2 ? MaterialPalette.on_primary.with_alpha(35%) : transparent;
-
-                animate background, border-color { duration: 150ms; easing: ease-out; }
-
-                MaterialText {
-                    width: 100%;
-                    height: 100%;
-                    text: "+X";
-                    style: root.active_tool == 2 ? MaterialTypography.label_medium_prominent : MaterialTypography.label_medium;
-                    color: root.active_tool == 2 ? MaterialPalette.on_primary : MaterialPalette.on_surface;
-                    animate color { duration: 150ms; }
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
-                }
-            }
+            label: "+X";
+            active: root.active_tool == 2;
+            accessible_name: "Add Vertical Marker (+X)";
+            clicked => { root.active_tool = (root.active_tool == 2 ? 0 : 2); }
         }
 
-        // Add Horizontal Y Marker (+Y)
-        marker_y_touch := TouchArea {
-            width: 30px;
-            height: 30px;
+        marker_y_btn := ToolbarIconButton {
             y: (parent.height - self.height) / 2;
-            mouse-cursor: pointer;
-            clicked => {
-                root.active_tool = (root.active_tool == 3 ? 0 : 3);
-            }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: 15px;
-                background: root.active_tool == 3 ?
-                    (marker_y_touch.has-hover ? MaterialPalette.secondary.darker(8%) : MaterialPalette.secondary) :
-                    (marker_y_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
-                border-width: root.active_tool == 3 ? 1.5px : 0px;
-                border-color: root.active_tool == 3 ? MaterialPalette.on_secondary.with_alpha(35%) : transparent;
-
-                animate background, border-color { duration: 150ms; easing: ease-out; }
-
-                MaterialText {
-                    width: 100%;
-                    height: 100%;
-                    text: "+Y";
-                    style: root.active_tool == 3 ? MaterialTypography.label_medium_prominent : MaterialTypography.label_medium;
-                    color: root.active_tool == 3 ? MaterialPalette.on_secondary : MaterialPalette.on_surface;
-                    animate color { duration: 150ms; }
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
-                }
-            }
+            label: "+Y";
+            active: root.active_tool == 3;
+            active_bg: MaterialPalette.secondary;
+            active_fg: MaterialPalette.on_secondary;
+            accessible_name: "Add Horizontal Marker (+Y)";
+            clicked => { root.active_tool = (root.active_tool == 3 ? 0 : 3); }
         }
 
-        // Clear Markers
-        clear_markers_touch := TouchArea {
+        clear_markers_btn := ToolbarIconButton {
             visible: root.markers_count > 0;
             width: root.markers_count > 0 ? 30px : 0px;
-            height: 30px;
             y: (parent.height - self.height) / 2;
-            mouse-cursor: pointer;
+            icon: Icons.delete_sweep;
+            idle_fg: MaterialPalette.error;
+            accessible_name: "Clear Plot Markers";
             clicked => { root.clear_markers(); }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: 15px;
-                background: clear_markers_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
-
-                Image {
-                    x: (parent.width - self.width) / 2;
-                    y: (parent.height - self.height) / 2;
-                    width: 16px;
-                    height: 16px;
-                    source: Icons.delete_sweep;
-                    colorize: MaterialPalette.error;
-                }
-            }
         }
 
-        // Divider
-        VerticalLayout {
-            alignment: center;
-            Rectangle {
-                width: 1px;
-                height: 16px;
-                background: MaterialPalette.outline_variant.with_alpha(50%);
-            }
-        }
+        ToolbarDivider {}
 
-        // Calibrate Cutoffs Toggle (Tool 5)
-        calibrate_touch := TouchArea {
-            width: 30px;
-            height: 30px;
+        calibrate_btn := ToolbarIconButton {
             y: (parent.height - self.height) / 2;
-            mouse-cursor: pointer;
-            clicked => {
-                root.active_tool = (root.active_tool == 5 ? 0 : 5);
-            }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: 15px;
-                background: root.active_tool == 5 ?
-                    (calibrate_touch.has-hover ? MaterialPalette.primary.darker(8%) : MaterialPalette.primary) :
-                    (calibrate_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
-                border-width: root.active_tool == 5 ? 1.5px : 0px;
-                border-color: root.active_tool == 5 ? MaterialPalette.on_primary.with_alpha(35%) : transparent;
-
-                animate background, border-color { duration: 150ms; easing: ease-out; }
-
-                Image {
-                    x: (parent.width - self.width) / 2;
-                    y: (parent.height - self.height) / 2;
-                    width: 16px;
-                    height: 16px;
-                    source: Icons.tune;
-                    colorize: root.active_tool == 5 ? MaterialPalette.on_primary : MaterialPalette.on_surface;
-                    animate colorize { duration: 150ms; }
-                }
-            }
+            icon: Icons.tune;
+            active: root.active_tool == 5;
+            accessible_name: "Calibrate Bond Cutoffs";
+            clicked => { root.active_tool = (root.active_tool == 5 ? 0 : 5); }
         }
 
-        // Peak & CN Inspector Toggle (Tool 6)
-        peak_touch := TouchArea {
-            width: 30px;
-            height: 30px;
+        peak_btn := ToolbarIconButton {
             y: (parent.height - self.height) / 2;
-            mouse-cursor: pointer;
-            clicked => {
-                root.active_tool = (root.active_tool == 6 ? 0 : 6);
-            }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: 15px;
-                background: root.active_tool == 6 ?
-                    (peak_touch.has-hover ? MaterialPalette.tertiary.darker(8%) : MaterialPalette.tertiary) :
-                    (peak_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
-                border-width: root.active_tool == 6 ? 1.5px : 0px;
-                border-color: root.active_tool == 6 ? MaterialPalette.on_tertiary.with_alpha(35%) : transparent;
-
-                animate background, border-color { duration: 150ms; easing: ease-out; }
-
-                Image {
-                    x: (parent.width - self.width) / 2;
-                    y: (parent.height - self.height) / 2;
-                    width: 16px;
-                    height: 16px;
-                    source: Icons.analytics;
-                    colorize: root.active_tool == 6 ? MaterialPalette.on_tertiary : MaterialPalette.on_surface;
-                    animate colorize { duration: 150ms; }
-                }
-            }
+            icon: Icons.analytics;
+            active: root.active_tool == 6;
+            active_bg: MaterialPalette.tertiary;
+            active_fg: MaterialPalette.on_tertiary;
+            accessible_name: "Peak and Coordination Number Inspector";
+            clicked => { root.active_tool = (root.active_tool == 6 ? 0 : 6); }
         }
 
-        // Divider
-        VerticalLayout {
-            alignment: center;
-            Rectangle {
-                width: 1px;
-                height: 16px;
-                background: MaterialPalette.outline_variant.with_alpha(50%);
-            }
-        }
+        ToolbarDivider {}
 
-        // Settings / Customization Popover Toggle
-        settings_touch := TouchArea {
-            width: 30px;
-            height: 30px;
+        settings_btn := ToolbarIconButton {
             y: (parent.height - self.height) / 2;
-            mouse-cursor: pointer;
-            clicked => {
-                root.toggle_settings();
-            }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: 15px;
-                background: root.settings_open ?
-                    (settings_touch.has-hover ? MaterialPalette.secondary.darker(8%) : MaterialPalette.secondary) :
-                    (settings_touch.has-hover ? MaterialPalette.surface_container_high : transparent);
-                border-width: root.settings_open ? 1.5px : 0px;
-                border-color: root.settings_open ? MaterialPalette.on_secondary.with_alpha(35%) : transparent;
-
-                animate background, border-color { duration: 150ms; easing: ease-out; }
-
-                MaterialText {
-                    text: "⚙";
-                    font-size: 15px;
-                    color: root.settings_open ? MaterialPalette.on_secondary : MaterialPalette.on_surface;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
-                }
-            }
+            icon: Icons.tune;
+            active: root.settings_open;
+            active_bg: MaterialPalette.secondary;
+            active_fg: MaterialPalette.on_secondary;
+            accessible_name: "Plot Settings and Styling";
+            clicked => { root.toggle_settings(); }
         }
 
-        // Update Plot (Refresh) Button
-        update_touch := TouchArea {
-            width: 30px;
-            height: 30px;
+        update_btn := ToolbarIconButton {
             y: (parent.height - self.height) / 2;
-            mouse-cursor: pointer;
-            clicked => {
-                root.update_plot();
-            }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: 15px;
-                background: update_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
-
-                Image {
-                    x: (parent.width - self.width) / 2;
-                    y: (parent.height - self.height) / 2;
-                    width: 16px;
-                    height: 16px;
-                    source: Icons.restart_alt;
-                    colorize: MaterialPalette.on_surface;
-                }
-            }
+            icon: Icons.restart_alt;
+            accessible_name: "Refresh Plot Visualization";
+            clicked => { root.update_plot(); }
         }
 
-        // Divider
-        VerticalLayout {
-            alignment: center;
-            Rectangle {
-                width: 1px;
-                height: 16px;
-                background: MaterialPalette.outline_variant.with_alpha(50%);
-            }
-        }
+        ToolbarDivider {}
 
-        // Copy Plot SVG to Clipboard
-        copy_touch := TouchArea {
-            width: 30px;
-            height: 30px;
+        copy_btn := ToolbarIconButton {
             y: (parent.height - self.height) / 2;
-            mouse-cursor: pointer;
-            clicked => {
-                root.copy_clipboard();
-            }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: 15px;
-                background: copy_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
-
-                MaterialText {
-                    text: "📋";
-                    font-size: 14px;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
-                }
-            }
+            icon: Icons.save;
+            accessible_name: "Copy Plot SVG to Clipboard";
+            clicked => { root.copy_clipboard(); }
         }
 
-        // Export Plot File (SVG / PDF)
-        export_touch := TouchArea {
-            width: 30px;
-            height: 30px;
+        export_btn := ToolbarIconButton {
             y: (parent.height - self.height) / 2;
-            mouse-cursor: pointer;
-            clicked => {
-                root.export_plot();
-            }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: 15px;
-                background: export_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
-
-                Image {
-                    x: (parent.width - self.width) / 2;
-                    y: (parent.height - self.height) / 2;
-                    width: 16px;
-                    height: 16px;
-                    source: Icons.save;
-                    colorize: MaterialPalette.on_surface;
-                }
-            }
+            icon: Icons.save;
+            accessible_name: "Export Plot Image";
+            clicked => { root.export_plot(); }
         }
 
-        // Divider before coordinates (only if coordinates present)
+        if root.hover_coord_text != "": ToolbarDivider {}
+
         if root.hover_coord_text != "": VerticalLayout {
             alignment: center;
-            Rectangle {
-                width: 1px;
-                height: 16px;
-                background: MaterialPalette.outline_variant.with_alpha(50%);
-            }
-        }
-
-        // Live HUD Coordinates (to the right of the buttons!)
-        if root.hover_coord_text != "": VerticalLayout {
-            alignment: center;
-            padding-left: 6px;
-            padding-right: 6px;
+            padding-left: MaterialStyleMetrics.padding_6;
+            padding-right: MaterialStyleMetrics.padding_6;
 
             MaterialText {
                 text: root.hover_coord_text;
-                font-size: 13px;
-                font-weight: 500;
+                style: MaterialTypography.label_large;
                 color: MaterialPalette.on_surface;
                 vertical-alignment: center;
             }

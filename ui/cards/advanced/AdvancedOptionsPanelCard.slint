@@ -5,11 +5,8 @@
 
 import {
     MaterialStyleMetrics,
-    MaterialPalette,
     ScrollView,
     Vertical,
-    FilledButton,
-    Icons,
 } from "../../material/material.slint";
 import { WorkflowState } from "../../Types.slint";
 import { SQOptionsCard } from "SQOptionsCard.slint";
@@ -18,6 +15,7 @@ import { RingsOptionsCard } from "RingsOptionsCard.slint";
 import { SmoothingOptionsCard } from "SmoothingOptionsCard.slint";
 import { AdvancedOptionsCard } from "AdvancedOptionsCard.slint";
 import { DynamicPropertiesCard } from "../dynamic/DynamicPropertiesCard.slint";
+import { PinnedExecutionBar } from "../../nav/components/PinnedExecutionBar.slint";
 
 // ============================================================================
 // AdvancedOptionsPanelCard Component (Panel 2)
@@ -85,7 +83,8 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
         rings_card.hovered_tooltip_text != "" ? rings_card.hovered_tooltip_text :
         dynamic_properties.hovered_tooltip_text != "" ? dynamic_properties.hovered_tooltip_text :
         smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_tooltip_text :
-        advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_tooltip_text : "";
+        advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_tooltip_text :
+        exec_bar.has_hover ? exec_bar.hovered_tooltip_text : "";
 
     out property <length> hovered_x:
         sq_card.hovered_tooltip_text != "" ? sq_card.hovered_x :
@@ -93,7 +92,8 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
         rings_card.hovered_tooltip_text != "" ? rings_card.hovered_x :
         dynamic_properties.hovered_tooltip_text != "" ? dynamic_properties.hovered_x :
         smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_x :
-        advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_x : 0px;
+        advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_x :
+        exec_bar.has_hover ? exec_bar.hover_x : 0px;
 
     out property <length> hovered_y:
         sq_card.hovered_tooltip_text != "" ? sq_card.hovered_y :
@@ -101,7 +101,8 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
         rings_card.hovered_tooltip_text != "" ? rings_card.hovered_y :
         dynamic_properties.hovered_tooltip_text != "" ? dynamic_properties.hovered_y :
         smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_y :
-        advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_y : 0px;
+        advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_y :
+        exec_bar.has_hover ? exec_bar.hover_y : 0px;
 
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
@@ -151,6 +152,7 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
 
                 // Rings Card
                 rings_card := RingsOptionsCard {
+                    expanded: false;
                     file_loaded: root.file_loaded;
                     max_ring_size <=> root.max_ring_size;
                     max_ring_error: root.max_ring_error;
@@ -168,6 +170,7 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
 
                 // Smoothing Card
                 smoothing_card := SmoothingOptionsCard {
+                    expanded: false;
                     file_loaded: root.file_loaded;
                     smoothing_enabled <=> root.smoothing_enabled;
                     smoothing_sigma <=> root.smoothing_sigma;
@@ -178,6 +181,7 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
 
                 // Advanced Order Parameters Card
                 advanced_card := AdvancedOptionsCard {
+                    expanded: false;
                     file_loaded: root.file_loaded;
                     lef_cutoff <=> root.lef_cutoff;
                     lef_sigma <=> root.lef_sigma;
@@ -191,26 +195,13 @@ export component AdvancedOptionsPanelCard inherits Rectangle {
         }
 
         // Pinned Bottom Run / Cancel Button
-        TouchArea {
-            accessible-role: button;
-            accessible-label: root.workflow_state.analysis_running ? "Cancel Analysis" : "Run Analysis";
-            height: MaterialStyleMetrics.size_40;
-            FilledButton {
-                width: 100%;
-                height: 100%;
-                icon: root.workflow_state.analysis_running ? Icons.close : Icons.play_arrow;
-                text: root.workflow_state.analysis_running ? "Cancel Analysis" : "Run Analysis";
-                enabled: root.workflow_state.analysis_running || (root.file_loaded && !root.workflow_state.has_validation_errors);
-                background: root.workflow_state.analysis_running ? MaterialPalette.error : MaterialPalette.run;
-                text_color: root.workflow_state.analysis_running ? MaterialPalette.on_error : MaterialPalette.on_run;
-                clicked => {
-                    if (root.workflow_state.analysis_running) {
-                        root.cancel_analysis();
-                    } else {
-                        root.run_analysis();
-                    }
-                }
-            }
+        exec_bar := PinnedExecutionBar {
+            width: 100%;
+            file_loaded: root.file_loaded;
+            analysis_running: root.workflow_state.analysis_running;
+            has_validation_errors: root.workflow_state.has_validation_errors;
+            run_analysis => { root.run_analysis(); }
+            cancel_analysis => { root.cancel_analysis(); }
         }
     }
 }

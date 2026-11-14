@@ -45,8 +45,6 @@ component TreeToolbarChip inherits TouchArea {
         chip_label := MaterialText {
             text: root.label;
             style: MaterialTypography.label_small;
-            font_size: 10.5px;
-            font_weight: 600;
             color: !root.chip_enabled ? MaterialPalette.outline :
                 root.active ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
             horizontal-alignment: center;
@@ -241,7 +239,7 @@ export component AnalysesSelectionCard inherits OutlinedCard {
                                             Rectangle {
                                                 height: 18px;
                                                 width: count_text.preferred-width + 10px;
-                                                border-radius: 9px;
+                                                border-radius: MaterialStyleMetrics.border_radius_full;
                                                 background: group.enabled_count > 0 ?
                                                     MaterialPalette.primary.with_alpha(18%) :
                                                     MaterialPalette.surface_container_low;
@@ -249,7 +247,6 @@ export component AnalysesSelectionCard inherits OutlinedCard {
                                                 count_text := MaterialText {
                                                     text: group.enabled_count + "/" + group.total_count;
                                                     style: MaterialTypography.label_small;
-                                                    font_size: 10px;
                                                     color: group.enabled_count > 0 ?
                                                         MaterialPalette.primary :
                                                         MaterialPalette.on_surface_variant;
@@ -331,7 +328,7 @@ export component AnalysesSelectionCard inherits OutlinedCard {
                                 Rectangle {
                                     width: 100%;
                                     height: 100%;
-                                    border-radius: 6px;
+                                    border-radius: MaterialStyleMetrics.border_radius_6;
                                     border-width: 1px;
                                     border-color: calc.enabled ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(60%);
                                     background: calc.enabled ?
@@ -367,8 +364,7 @@ export component AnalysesSelectionCard inherits OutlinedCard {
 
                                         MaterialText {
                                             text: calc.name;
-                                            style: MaterialTypography.body_small;
-                                            font_size: 10.5px;
+                                            style: MaterialTypography.label_small;
                                             color: MaterialPalette.on_surface_variant;
                                             overflow: elide;
                                             vertical-alignment: center;

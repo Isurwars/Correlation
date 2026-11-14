@@ -1,0 +1,176 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialText,
+    ScrollView,
+    FilledButton,
+    Icons,
+} from "../../../../material/material.slint";
+import { TaggedPeakRecord } from "../../../../Types.slint";
+
+/// Tab 2 of CurveSidebar: tagged peaks table, CSV export, and shell/coordination inspection.
+export component TaggedPeaksTab inherits VerticalLayout {
+    in property <[TaggedPeakRecord]> tagged_peaks: [];
+
+    callback remove_tagged_peak(int);
+    callback clear_tagged_peaks();
+    callback export_tagged_peaks();
+
+    spacing: MaterialStyleMetrics.spacing_6;
+
+    if root.tagged_peaks.length == 0: VerticalLayout {
+        vertical-stretch: 1;
+
+        Rectangle {
+            height: 160px;
+            background: MaterialPalette.surface_container;
+            border-radius: MaterialStyleMetrics.border_radius_4;
+
+            VerticalLayout {
+                alignment: center;
+                padding: MaterialStyleMetrics.padding_12;
+                spacing: MaterialStyleMetrics.spacing_8;
+
+                Image {
+                    width: 24px;
+                    height: 24px;
+                    source: Icons.analytics;
+                    colorize: MaterialPalette.outline;
+                    horizontal-alignment: center;
+                }
+
+                MaterialText {
+                    text: "No peaks tagged yet.\n\nDouble-click a peak on the plot or enable Peak Inspector to inspect shell & coordination number.";
+                    style: MaterialTypography.body_small;
+                    color: MaterialPalette.on_surface_variant;
+                    horizontal-alignment: center;
+                    wrap: word-wrap;
+                }
+            }
+        }
+
+        Rectangle {
+            vertical-stretch: 1;
+        }
+    }
+
+    if root.tagged_peaks.length > 0: HorizontalLayout {
+        spacing: MaterialStyleMetrics.spacing_6;
+        height: 28px;
+
+        FilledButton {
+            horizontal-stretch: 1;
+            height: 28px;
+            text: "Export CSV";
+            clicked => { root.export_tagged_peaks(); }
+        }
+
+        clear_all_touch := TouchArea {
+            horizontal-stretch: 1;
+            height: 28px;
+            mouse-cursor: pointer;
+            accessible-role: button;
+            accessible-label: "Clear All Tagged Peaks";
+            clicked => { root.clear_tagged_peaks(); }
+
+            Rectangle {
+                background: clear_all_touch.has-hover ? MaterialPalette.error_container : MaterialPalette.surface_container_high;
+                border-radius: MaterialStyleMetrics.border_radius_4;
+                border-width: 1px;
+                border-color: MaterialPalette.outline_variant;
+
+                MaterialText {
+                    text: "Clear All";
+                    style: MaterialTypography.label_medium;
+                    color: clear_all_touch.has-hover ? MaterialPalette.on_error_container : MaterialPalette.error;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+        }
+    }
+
+    if root.tagged_peaks.length > 0: ScrollView {
+        vertical-stretch: 1;
+        VerticalLayout {
+            spacing: MaterialStyleMetrics.spacing_6;
+
+            for peak in root.tagged_peaks: Rectangle {
+                background: MaterialPalette.surface_container;
+                border-radius: MaterialStyleMetrics.border_radius_4;
+                border-width: 1px;
+                border-color: peak.color_hex;
+
+                VerticalLayout {
+                    padding: MaterialStyleMetrics.padding_6;
+                    spacing: MaterialStyleMetrics.spacing_4;
+
+                    HorizontalLayout {
+                        alignment: space-between;
+
+                        MaterialText {
+                            text: peak.curve_name + " @ " + peak.r_peak;
+                            style: MaterialTypography.label_medium_prominent;
+                            color: MaterialPalette.on_surface;
+                            vertical-alignment: center;
+                        }
+
+                        del_btn := TouchArea {
+                            width: 18px;
+                            height: 18px;
+                            mouse-cursor: pointer;
+                            accessible-role: button;
+                            accessible-label: "Remove peak " + peak.curve_name + " @ " + peak.r_peak;
+                            clicked => { root.remove_tagged_peak(peak.id); }
+
+                            Image {
+                                x: (parent.width - self.width) / 2;
+                                y: (parent.height - self.height) / 2;
+                                width: 12px;
+                                height: 12px;
+                                source: Icons.close;
+                                colorize: del_btn.has-hover ? MaterialPalette.error : MaterialPalette.outline;
+                            }
+                        }
+                    }
+
+                    HorizontalLayout {
+                        spacing: MaterialStyleMetrics.spacing_8;
+                        MaterialText {
+                            text: peak.coordination_num != "—" ? ("CN: " + peak.coordination_num) : ("Area: " + peak.area);
+                            style: MaterialTypography.label_small;
+                            font_weight: 600;
+                            color: MaterialPalette.primary;
+                        }
+                        MaterialText {
+                            text: "Shell: [" + peak.r_min + " - " + peak.r_max + "]";
+                            style: MaterialTypography.label_small;
+                            color: MaterialPalette.on_surface_variant;
+                        }
+                    }
+
+                    HorizontalLayout {
+                        spacing: MaterialStyleMetrics.spacing_8;
+                        MaterialText {
+                            text: "Height: " + peak.peak_height;
+                            style: MaterialTypography.label_small;
+                            color: MaterialPalette.outline;
+                        }
+                        MaterialText {
+                            text: "FWHM: " + peak.fwhm;
+                            style: MaterialTypography.label_small;
+                            color: MaterialPalette.outline;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+

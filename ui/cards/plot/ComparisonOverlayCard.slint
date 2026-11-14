@@ -10,6 +10,7 @@ import {
     Vertical,
     Icons,
     ScrollView,
+    CheckBoxRow,
 } from "../../material/material.slint";
 import { ComparisonCurveData } from "../../Types.slint";
 
@@ -17,7 +18,7 @@ import { ComparisonCurveData } from "../../Types.slint";
 // ComparisonOverlayCard Component
 // ============================================================================
 export component ComparisonOverlayCard inherits OutlinedCard {
-    in-out property <bool> expanded: true;
+    in-out property <bool> expanded: false;
     in property <bool> enabled: true;
     in property <[ComparisonCurveData]> comparison_curves: [];
     in property <int> pinned_runs_count: 0;
@@ -75,35 +76,18 @@ export component ComparisonOverlayCard inherits OutlinedCard {
             FilledButton {
                 height: MaterialStyleMetrics.size_40;
                 text: "Import File...";
-                icon: Icons.edit;
+                icon: Icons.folder_open;
                 tooltip: "Import external reference curve (.csv or .dat) to overlay directly onto the plot.";
                 clicked => { root.import_comparison_file(); }
             }
 
             // Difference Plot Toggle
-            diff_toggle_area := TouchArea {
+            diff_toggle_area := CheckBoxRow {
                 height: 32px;
-                clicked => { root.toggle_difference_plot(!root.show_difference); }
-
-                HorizontalLayout {
-                    spacing: MaterialStyleMetrics.spacing_8;
-                    alignment: start;
-
-                    Rectangle {
-                        width: 18px;
-                        height: 18px;
-                        border-radius: 4px;
-                        background: root.show_difference ? MaterialPalette.primary : MaterialPalette.surface_container_high;
-                        border-width: 1px;
-                        border-color: MaterialPalette.outline;
-                    }
-
-                    MaterialText {
-                        text: "Show Overlaid Absolute Difference (Y_diff = Y_ref - Y_target)";
-                        style: MaterialTypography.body_medium;
-                        color: MaterialPalette.on_surface;
-                        vertical-alignment: center;
-                    }
+                text: "Show Overlaid Absolute Difference (Y_diff = Y_ref - Y_target)";
+                check_state_bool: root.show_difference;
+                checked_state_changed(checked) => {
+                    root.toggle_difference_plot(checked);
                 }
             }
 

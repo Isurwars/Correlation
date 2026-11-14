@@ -5,9 +5,39 @@
 
 import {
     MaterialPalette,
+    MaterialStyleMetrics,
     MaterialTypography,
     MaterialText,
+    Icons,
 } from "../../../material/material.slint";
+
+component HudMetricPill inherits Rectangle {
+    in property <string> label;
+    in property <bool> active: false;
+
+    callback clicked();
+
+    width: 40px;
+    height: 20px;
+    border-radius: MaterialStyleMetrics.border_radius_full;
+    background: root.active ? MaterialPalette.primary : MaterialPalette.surface_container_high;
+
+    TouchArea {
+        mouse-cursor: pointer;
+        accessible-role: button;
+        accessible-label: "Show " + root.label + " mini plot";
+        clicked => { root.clicked(); }
+
+        MaterialText {
+            text: root.label;
+            style: MaterialTypography.label_small;
+            font_weight: root.active ? 700 : 500;
+            color: root.active ? MaterialPalette.on_primary : MaterialPalette.on_surface_variant;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+}
 
 export component DistributionHUDCard inherits Rectangle {
     in property <image> chart_image;
@@ -20,83 +50,43 @@ export component DistributionHUDCard inherits Rectangle {
 
     width: 276px;
     height: 184px;
-    border-radius: 12px;
+    border-radius: MaterialStyleMetrics.border_radius_12;
     background: MaterialPalette.surface_container_highest.with_alpha(92%);
     border-width: 1px;
     border-color: MaterialPalette.outline_variant.with_alpha(55%);
     clip: true;
 
     VerticalLayout {
-        padding-left: 8px;
-        padding-right: 8px;
-        padding-top: 6px;
-        padding-bottom: 6px;
-        spacing: 4px;
+        padding-left: MaterialStyleMetrics.padding_8;
+        padding-right: MaterialStyleMetrics.padding_8;
+        padding-top: MaterialStyleMetrics.padding_6;
+        padding-bottom: MaterialStyleMetrics.padding_6;
+        spacing: MaterialStyleMetrics.spacing_4;
 
         // Header: metric pills & close button
         HorizontalLayout {
             alignment: space-between;
-            spacing: 6px;
+            spacing: MaterialStyleMetrics.spacing_6;
 
-            // Metric Switcher Pills
             HorizontalLayout {
-                spacing: 4px;
+                spacing: MaterialStyleMetrics.spacing_4;
 
-                // Pill 0: g(r)
-                Rectangle {
-                    width: 38px;
-                    height: 20px;
-                    border-radius: 10px;
-                    background: root.active_metric == 0 ? MaterialPalette.primary : MaterialPalette.surface_container_high;
-                    TouchArea {
-                        clicked => { root.set_metric(0); }
-                        MaterialText {
-                            text: "g(r)";
-                            font-size: 10.5px;
-                            font-weight: root.active_metric == 0 ? 700 : 500;
-                            color: root.active_metric == 0 ? MaterialPalette.on_primary : MaterialPalette.on_surface_variant;
-                            horizontal-alignment: center;
-                            vertical-alignment: center;
-                        }
-                    }
+                HudMetricPill {
+                    label: "g(r)";
+                    active: root.active_metric == 0;
+                    clicked => { root.set_metric(0); }
                 }
 
-                // Pill 1: PAD
-                Rectangle {
-                    width: 40px;
-                    height: 20px;
-                    border-radius: 10px;
-                    background: root.active_metric == 1 ? MaterialPalette.primary : MaterialPalette.surface_container_high;
-                    TouchArea {
-                        clicked => { root.set_metric(1); }
-                        MaterialText {
-                            text: "PAD";
-                            font-size: 10.5px;
-                            font-weight: root.active_metric == 1 ? 700 : 500;
-                            color: root.active_metric == 1 ? MaterialPalette.on_primary : MaterialPalette.on_surface_variant;
-                            horizontal-alignment: center;
-                            vertical-alignment: center;
-                        }
-                    }
+                HudMetricPill {
+                    label: "PAD";
+                    active: root.active_metric == 1;
+                    clicked => { root.set_metric(1); }
                 }
 
-                // Pill 2: S(Q)
-                Rectangle {
-                    width: 38px;
-                    height: 20px;
-                    border-radius: 10px;
-                    background: root.active_metric == 2 ? MaterialPalette.primary : MaterialPalette.surface_container_high;
-                    TouchArea {
-                        clicked => { root.set_metric(2); }
-                        MaterialText {
-                            text: "S(Q)";
-                            font-size: 10.5px;
-                            font-weight: root.active_metric == 2 ? 700 : 500;
-                            color: root.active_metric == 2 ? MaterialPalette.on_primary : MaterialPalette.on_surface_variant;
-                            horizontal-alignment: center;
-                            vertical-alignment: center;
-                        }
-                    }
+                HudMetricPill {
+                    label: "S(Q)";
+                    active: root.active_metric == 2;
+                    clicked => { root.set_metric(2); }
                 }
             }
 
@@ -104,17 +94,22 @@ export component DistributionHUDCard inherits Rectangle {
             Rectangle {
                 width: 20px;
                 height: 20px;
-                border-radius: 10px;
-                background: MaterialPalette.surface_container_low;
+                border-radius: MaterialStyleMetrics.border_radius_full;
+                background: close_touch.has-hover ? MaterialPalette.surface_container_high : MaterialPalette.surface_container_low;
 
-                TouchArea {
+                close_touch := TouchArea {
+                    mouse-cursor: pointer;
+                    accessible-role: button;
+                    accessible-label: "Close Distribution Mini-HUD";
                     clicked => { root.close_hud(); }
-                    MaterialText {
-                        text: "✕";
-                        font-size: 10px;
-                        color: MaterialPalette.on_surface_variant;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
+
+                    Image {
+                        x: (parent.width - self.width) / 2;
+                        y: (parent.height - self.height) / 2;
+                        width: 12px;
+                        height: 12px;
+                        source: Icons.close;
+                        colorize: MaterialPalette.on_surface_variant;
                     }
                 }
             }
@@ -124,9 +119,9 @@ export component DistributionHUDCard inherits Rectangle {
         Rectangle {
             width: 260px;
             height: 126px;
-            border-radius: 6px;
+            border-radius: MaterialStyleMetrics.border_radius_6;
             clip: true;
-            background: #12151a;
+            background: MaterialPalette.hud_canvas;
 
             Image {
                 width: 100%;
@@ -141,39 +136,39 @@ export component DistributionHUDCard inherits Rectangle {
             alignment: space-between;
 
             HorizontalLayout {
-                spacing: 8px;
+                spacing: MaterialStyleMetrics.spacing_8;
 
-                // Mean indicator (dashed/muted)
+                // Mean indicator
                 HorizontalLayout {
-                    spacing: 4px;
+                    spacing: MaterialStyleMetrics.spacing_4;
                     Rectangle {
                         y: (parent.height - self.height) / 2;
                         width: 10px;
                         height: 2px;
-                        background: #879baf;
+                        background: MaterialPalette.on_surface_variant;
                     }
                     MaterialText {
                         text: "Mean";
-                        font-size: 9.5px;
+                        style: MaterialTypography.label_small;
                         color: MaterialPalette.on_surface_variant;
                         vertical-alignment: center;
                     }
                 }
 
-                // Current Frame indicator (vibrant teal)
+                // Current Frame indicator
                 HorizontalLayout {
-                    spacing: 4px;
+                    spacing: MaterialStyleMetrics.spacing_4;
                     Rectangle {
                         y: (parent.height - self.height) / 2;
                         width: 10px;
                         height: 3px;
                         border-radius: 1px;
-                        background: #40d7d7;
+                        background: MaterialPalette.hud_accent;
                     }
                     MaterialText {
                         text: "Frame " + (root.current_frame + 1);
-                        font-size: 9.5px;
-                        font-weight: 600;
+                        style: MaterialTypography.label_small;
+                        font_weight: 600;
                         color: MaterialPalette.on_surface;
                         vertical-alignment: center;
                     }
@@ -182,9 +177,9 @@ export component DistributionHUDCard inherits Rectangle {
 
             if (root.peak_text != ""): MaterialText {
                 text: root.peak_text;
-                font-size: 9.5px;
-                font-weight: 600;
-                color: #ffd700;
+                style: MaterialTypography.label_small;
+                font_weight: 600;
+                color: MaterialPalette.hud_peak;
                 vertical-alignment: center;
             }
         }

@@ -5,6 +5,7 @@
 
 import {
     MaterialPalette,
+    MaterialStyleMetrics,
     MaterialTypography,
     MaterialText,
 } from "../../../material/material.slint";
@@ -34,8 +35,8 @@ export component PhaseHeatmapCanvas inherits Rectangle {
 
     horizontal-stretch: 1;
     height: 190px;
-    border-radius: 6px;
-    background: #14171c;
+    border-radius: MaterialStyleMetrics.border_radius_6;
+    background: MaterialPalette.hud_canvas;
     border-width: 1.5px;
     border-color: MaterialPalette.outline_variant.with_alpha(60%);
     clip: true;
@@ -54,8 +55,8 @@ export component PhaseHeatmapCanvas inherits Rectangle {
         y: Math.max(2px, Math.min(parent.height - 13px, parent.height * marker.y_ratio - 6px));
         width: 22px;
         height: 12px;
-        border-radius: 3px;
-        background: #111419.with_alpha(88%);
+        border-radius: MaterialStyleMetrics.border_radius_4;
+        background: MaterialPalette.hud_surface.with_alpha(88%);
         border-width: 1px;
         border-color: MaterialPalette.primary;
 

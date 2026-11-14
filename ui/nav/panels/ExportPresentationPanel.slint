@@ -103,6 +103,7 @@ export component ExportPresentationPanel inherits Rectangle {
 
             // 2. Publication Plot Figure Styling
             export_settings_card := ExportSettingsCard {
+                expanded: false;
                 enabled: root.enabled;
                 export_size_preset <=> root.export_config.size_preset;
                 export_palette <=> root.export_config.palette;
@@ -125,6 +126,7 @@ export component ExportPresentationPanel inherits Rectangle {
 
             // 3. Multi-Run Comparison Overlays
             comparison_card := ComparisonOverlayCard {
+                expanded: false;
                 enabled: root.enabled;
                 comparison_curves: root.comparison_curves;
                 pinned_runs_count: root.pinned_runs_count;

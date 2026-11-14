@@ -5,11 +5,82 @@
 
 import {
     MaterialPalette,
+    MaterialStyleMetrics,
     MaterialTypography,
     MaterialText,
     Icons,
 } from "../../../material/material.slint";
 import { PhaseSlider } from "./PhaseSlider.slint";
+
+component ToolbarPresetChip inherits TouchArea {
+    in property <string> label;
+    in property <string> accessible_name;
+
+    width: 26px;
+    height: 100%;
+    mouse-cursor: pointer;
+    accessible-role: button;
+    accessible-label: root.accessible_name;
+
+    Rectangle {
+        width: 100%;
+        height: 100%;
+        border-radius: MaterialStyleMetrics.border_radius_4;
+        background: root.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+        MaterialText {
+            text: root.label;
+            style: MaterialTypography.label_small;
+            font_weight: 700;
+            color: MaterialPalette.on_surface_variant;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+}
+
+component ToolbarToggleChip inherits TouchArea {
+    in property <image> icon;
+    in property <string> glyph: "";
+    in property <bool> active: false;
+    in property <string> accessible_name;
+
+    width: 30px;
+    height: 30px;
+    mouse-cursor: pointer;
+    accessible-role: button;
+    accessible-label: root.accessible_name;
+
+    Rectangle {
+        width: 100%;
+        height: 100%;
+        border-radius: MaterialStyleMetrics.border_radius_full;
+        background: root.active ? MaterialPalette.primary.with_alpha(20%) :
+                    (root.has-hover ? MaterialPalette.surface_container_high : transparent);
+        border-width: root.active ? 1.5px : 0px;
+        border-color: root.active ? MaterialPalette.primary : transparent;
+        animate background, border-color { duration: 150ms; }
+
+        if root.glyph == "": Image {
+            x: (parent.width - self.width) / 2;
+            y: (parent.height - self.height) / 2;
+            width: 16px;
+            height: 16px;
+            source: root.icon;
+            colorize: root.active ? MaterialPalette.primary : MaterialPalette.on_surface;
+        }
+
+        if root.glyph != "": MaterialText {
+            width: 100%;
+            height: 100%;
+            text: root.glyph;
+            style: MaterialTypography.label_large;
+            color: root.active ? MaterialPalette.primary : MaterialPalette.on_surface;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+}
 
 export component Structure3DToolBar inherits Rectangle {
     in property <bool> bonds_enabled: true;
@@ -30,7 +101,7 @@ export component Structure3DToolBar inherits Rectangle {
     callback set_atom_scale(float);
 
     height: 38px;
-    border-radius: 19px;
+    border-radius: MaterialStyleMetrics.border_radius_full;
     background: MaterialPalette.surface_container_highest;
     border-width: 1.5px;
     border-color: MaterialPalette.outline;
@@ -38,36 +109,16 @@ export component Structure3DToolBar inherits Rectangle {
 
     tools_layout := HorizontalLayout {
         height: 100%;
-        padding-left: 8px;
-        padding-right: 8px;
-        spacing: 6px;
+        padding-left: MaterialStyleMetrics.padding_8;
+        padding-right: MaterialStyleMetrics.padding_8;
+        spacing: MaterialStyleMetrics.spacing_6;
         alignment: center;
 
-        // Home / Reset view
-        TouchArea {
-            width: 30px;
-            height: 30px;
+        ToolbarToggleChip {
             y: (parent.height - self.height) / 2;
-            mouse-cursor: pointer;
-            accessible-role: button;
-            accessible-label: "Home / Reset 3D Camera";
+            icon: Icons.home;
+            accessible_name: "Home / Reset 3D Camera";
             clicked => { root.reset_view(); }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: 15px;
-                background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
-
-                Image {
-                    x: (parent.width - self.width) / 2;
-                    y: (parent.height - self.height) / 2;
-                    width: 16px;
-                    height: 16px;
-                    source: Icons.home;
-                    colorize: MaterialPalette.on_surface;
-                }
-            }
         }
 
         // Camera Orientation Presets (Top XY, Front XZ, Side YZ, Isometric 3D)
@@ -76,246 +127,66 @@ export component Structure3DToolBar inherits Rectangle {
             height: 24px;
             y: (parent.height - self.height) / 2;
 
-            TouchArea {
-                width: 26px;
-                height: 100%;
-                mouse-cursor: pointer;
-                accessible-role: button;
-                accessible-label: "Camera Preset Top (XY)";
+            ToolbarPresetChip {
+                label: "XY";
+                accessible_name: "Camera Preset Top (XY)";
                 clicked => { root.set_camera_preset(0); }
-                Rectangle {
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 4px;
-                    background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
-                    MaterialText {
-                        text: "XY";
-                        font-size: 10.5px;
-                        font-weight: 700;
-                        color: MaterialPalette.on_surface_variant;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
-                    }
-                }
             }
-
-            TouchArea {
-                width: 26px;
-                height: 100%;
-                mouse-cursor: pointer;
-                accessible-role: button;
-                accessible-label: "Camera Preset Front (XZ)";
+            ToolbarPresetChip {
+                label: "XZ";
+                accessible_name: "Camera Preset Front (XZ)";
                 clicked => { root.set_camera_preset(1); }
-                Rectangle {
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 4px;
-                    background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
-                    MaterialText {
-                        text: "XZ";
-                        font-size: 10.5px;
-                        font-weight: 700;
-                        color: MaterialPalette.on_surface_variant;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
-                    }
-                }
             }
-
-            TouchArea {
-                width: 26px;
-                height: 100%;
-                mouse-cursor: pointer;
-                accessible-role: button;
-                accessible-label: "Camera Preset Side (YZ)";
+            ToolbarPresetChip {
+                label: "YZ";
+                accessible_name: "Camera Preset Side (YZ)";
                 clicked => { root.set_camera_preset(2); }
-                Rectangle {
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 4px;
-                    background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
-                    MaterialText {
-                        text: "YZ";
-                        font-size: 10.5px;
-                        font-weight: 700;
-                        color: MaterialPalette.on_surface_variant;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
-                    }
-                }
             }
-
-            TouchArea {
-                width: 26px;
-                height: 100%;
-                mouse-cursor: pointer;
-                accessible-role: button;
-                accessible-label: "Camera Preset Isometric (3D)";
+            ToolbarPresetChip {
+                label: "3D";
+                accessible_name: "Camera Preset Isometric (3D)";
                 clicked => { root.set_camera_preset(3); }
-                Rectangle {
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 4px;
-                    background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
-                    MaterialText {
-                        text: "3D";
-                        font-size: 10.5px;
-                        font-weight: 700;
-                        color: MaterialPalette.on_surface_variant;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
-                    }
-                }
             }
         }
 
-        // Toggle Bonds
-        TouchArea {
-            width: 30px;
-            height: 30px;
+        ToolbarToggleChip {
             y: (parent.height - self.height) / 2;
-            mouse-cursor: pointer;
+            glyph: "B";
+            active: root.bonds_enabled;
+            accessible_name: root.bonds_enabled ? "Hide Atomic Bonds" : "Show Atomic Bonds";
             clicked => { root.toggle_bonds(!root.bonds_enabled); }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: 15px;
-                background: root.bonds_enabled ? MaterialPalette.primary.with_alpha(20%) :
-                    (parent.has-hover ? MaterialPalette.surface_container_high : transparent);
-                border-width: root.bonds_enabled ? 1.5px : 0px;
-                border-color: root.bonds_enabled ? MaterialPalette.primary : transparent;
-
-                MaterialText {
-                    width: 100%;
-                    height: 100%;
-                    text: root.bonds_enabled ? "🔗" : "⛓";
-                    font-size: 14px;
-                    color: root.bonds_enabled ? MaterialPalette.primary : MaterialPalette.on_surface;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
-                }
-            }
         }
 
-        // Toggle Wireframe
-        TouchArea {
-            width: 30px;
-            height: 30px;
+        ToolbarToggleChip {
             y: (parent.height - self.height) / 2;
-            mouse-cursor: pointer;
+            glyph: "⬡";
+            active: root.wireframe_enabled;
+            accessible_name: root.wireframe_enabled ? "Hide Unit Cell Wireframe" : "Show Unit Cell Wireframe";
             clicked => { root.toggle_wireframe(!root.wireframe_enabled); }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: 15px;
-                background: root.wireframe_enabled ? MaterialPalette.primary.with_alpha(20%) :
-                    (parent.has-hover ? MaterialPalette.surface_container_high : transparent);
-                border-width: root.wireframe_enabled ? 1.5px : 0px;
-                border-color: root.wireframe_enabled ? MaterialPalette.primary : transparent;
-
-                MaterialText {
-                    width: 100%;
-                    height: 100%;
-                    text: "⬡";
-                    font-size: 16px;
-                    color: root.wireframe_enabled ? MaterialPalette.primary : MaterialPalette.on_surface;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
-                }
-            }
         }
 
-        // Toggle In-Cell PBC
-        TouchArea {
-            width: 30px;
-            height: 30px;
+        ToolbarToggleChip {
             y: (parent.height - self.height) / 2;
-            mouse-cursor: pointer;
-            accessible-role: button;
-            accessible-label: root.in_cell_enabled ? "In-Cell PBC Active (Folded & Boundary-Clipped)" : "Standard Non-Forced Coordinates";
+            glyph: "⊞";
+            active: root.in_cell_enabled;
+            accessible_name: root.in_cell_enabled ? "In-Cell PBC Active (Folded & Boundary-Clipped)" : "Standard Non-Forced Coordinates";
             clicked => { root.toggle_in_cell(!root.in_cell_enabled); }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: 15px;
-                background: root.in_cell_enabled ? MaterialPalette.primary.with_alpha(20%) :
-                    (parent.has-hover ? MaterialPalette.surface_container_high : transparent);
-                border-width: root.in_cell_enabled ? 1.5px : 0px;
-                border-color: root.in_cell_enabled ? MaterialPalette.primary : transparent;
-
-                MaterialText {
-                    width: 100%;
-                    height: 100%;
-                    text: "⊞";
-                    font-size: 15px;
-                    color: root.in_cell_enabled ? MaterialPalette.primary : MaterialPalette.on_surface;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
-                }
-            }
         }
 
-        // Toggle Phase Search Panel
-        TouchArea {
-            width: 30px;
-            height: 30px;
+        ToolbarToggleChip {
             y: (parent.height - self.height) / 2;
-            mouse-cursor: pointer;
-            accessible-role: button;
-            accessible-label: root.phase_panel_open ? "Hide Phase Search" : "Show Phase Search";
+            icon: Icons.science;
+            active: root.phase_panel_open || root.phase_enabled;
+            accessible_name: root.phase_panel_open ? "Hide Phase Search" : "Show Phase Search";
             clicked => { root.toggle_phase_panel(); }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: 15px;
-                background: (root.phase_panel_open || root.phase_enabled) ? MaterialPalette.primary.with_alpha(20%) :
-                    (parent.has-hover ? MaterialPalette.surface_container_high : transparent);
-                border-width: (root.phase_panel_open || root.phase_enabled) ? 1.5px : 0px;
-                border-color: (root.phase_panel_open || root.phase_enabled) ? MaterialPalette.primary : transparent;
-
-                MaterialText {
-                    width: 100%;
-                    height: 100%;
-                    text: "🔮";
-                    font-size: 14px;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
-                }
-            }
         }
 
-        // Toggle Distribution Mini-Graph HUD
-        TouchArea {
-            width: 30px;
-            height: 30px;
+        ToolbarToggleChip {
             y: (parent.height - self.height) / 2;
-            mouse-cursor: pointer;
-            accessible-role: button;
-            accessible-label: root.dist_hud_enabled ? "Hide Distribution Graph" : "Show Distribution Graph";
+            icon: Icons.analytics;
+            active: root.dist_hud_enabled;
+            accessible_name: root.dist_hud_enabled ? "Hide Distribution Graph" : "Show Distribution Graph";
             clicked => { root.toggle_dist_hud(); }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: 15px;
-                background: root.dist_hud_enabled ? MaterialPalette.primary.with_alpha(20%) :
-                    (parent.has-hover ? MaterialPalette.surface_container_high : transparent);
-                border-width: root.dist_hud_enabled ? 1.5px : 0px;
-                border-color: root.dist_hud_enabled ? MaterialPalette.primary : transparent;
-
-                MaterialText {
-                    width: 100%;
-                    height: 100%;
-                    text: "📊";
-                    font-size: 13px;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
-                }
-            }
         }
 
         // Divider

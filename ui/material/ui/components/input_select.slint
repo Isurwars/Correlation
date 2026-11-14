@@ -35,7 +35,7 @@ component InputSelectItem {
         background: root.flash_active ? MaterialPalette.primary_container
             : root.highlighted ? MaterialPalette.surface_container_highest
             : root.selected ? MaterialPalette.surface_container_high
-            : #00000000;
+            : transparent;
         animate background { duration: 150ms; }
 
         state_area := StateLayerArea {

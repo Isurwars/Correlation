@@ -14,8 +14,8 @@ component RailButton inherits Rectangle {
     in property <bool> active: false;
     in property <string> tooltip: "";
     in property <bool> enabled: true;
-    in property <color> active_bg: MaterialPalette.secondary_container.brighter(35%);
-    in property <color> active_fg: MaterialPalette.on_secondary_container;
+    in property <color> active_bg: MaterialPalette.primary_container;
+    in property <color> active_fg: MaterialPalette.on_primary_container;
     in property <color> inactive_bg: transparent;
     in property <color> inactive_fg: MaterialPalette.on_surface_variant;
     in property <bool> show_indicator: root.active;
@@ -24,7 +24,7 @@ component RailButton inherits Rectangle {
 
     width: 40px;
     height: 40px;
-    border-radius: 8px;
+    border-radius: MaterialStyleMetrics.border_radius_8;
     background: !root.enabled ? transparent :
                 root.active ? (touch.has-hover ? root.active_bg.darker(8%) : root.active_bg) :
                 root.inactive_bg != transparent ? (touch.has-hover ? root.inactive_bg.darker(8%) : root.inactive_bg) :
@@ -33,10 +33,10 @@ component RailButton inherits Rectangle {
 
     if root.show_indicator: Rectangle {
         x: -2px;
-        y: 8px;
+        y: (parent.height - self.height) / 2;
         width: 3px;
-        height: 24px;
-        border-radius: 1.5px;
+        height: 20px;
+        border-radius: 2px;
         background: MaterialPalette.primary;
     }
 
@@ -102,7 +102,7 @@ export component MiniSideBar inherits Rectangle {
         btn_export.has_hover ? btn_export.hover_y :
         btn_run.has_hover ? btn_run.hover_y :
         btn_theme.has_hover ? btn_theme.hover_y :
-        btn_collapse.has_hover ? btn_collapse.hover_x : 0px;
+        btn_collapse.has_hover ? btn_collapse.hover_y : 0px;
 
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;

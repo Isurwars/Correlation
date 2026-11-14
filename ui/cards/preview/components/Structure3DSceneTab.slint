@@ -1,0 +1,109 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialText,
+    ScrollView,
+    CheckBoxRow,
+    FilledButton,
+} from "../../../material/material.slint";
+import { PhaseSlider } from "./PhaseSlider.slint";
+
+/// Tab 1 of Structure3DSidebar: camera reset, atomic representation, and HUD overlay toggles.
+export component Structure3DSceneTab inherits ScrollView {
+    in property <float> atom_scale: 0.35;
+    in property <bool> bonds_enabled: true;
+    in property <bool> wireframe_enabled: true;
+    in property <bool> in_cell_enabled: false;
+    in property <bool> dist_hud_visible: true;
+
+    callback reset_view();
+    callback set_atom_scale(float);
+    callback toggle_bonds(bool);
+    callback toggle_wireframe(bool);
+    callback toggle_in_cell(bool);
+    callback toggle_dist_hud(bool);
+
+    VerticalLayout {
+        spacing: MaterialStyleMetrics.spacing_12;
+        padding-right: 2px;
+
+        // Camera Controls Section
+        VerticalLayout {
+            spacing: MaterialStyleMetrics.spacing_6;
+
+            MaterialText {
+                text: "Camera & Orientation";
+                style: MaterialTypography.label_medium;
+                color: MaterialPalette.on_surface;
+            }
+
+            FilledButton {
+                height: 32px;
+                text: "Reset Camera View";
+                clicked => { root.reset_view(); }
+            }
+        }
+
+        // Atomic Representation Section
+        VerticalLayout {
+            spacing: MaterialStyleMetrics.spacing_8;
+
+            MaterialText {
+                text: "Atomic Representation";
+                style: MaterialTypography.label_medium;
+                color: MaterialPalette.on_surface;
+            }
+
+            PhaseSlider {
+                label: "Ball Scale";
+                value: root.atom_scale;
+                min_val: 0.1;
+                max_val: 1.5;
+                display_text: "" + (Math.round(root.atom_scale * 100) / 100) + "x";
+                value_changed(val) => { root.set_atom_scale(val); }
+            }
+
+            CheckBoxRow {
+                text: "Render Bonds";
+                check_state_bool: root.bonds_enabled;
+                checked_state_changed(en) => { root.toggle_bonds(en); }
+            }
+
+            CheckBoxRow {
+                text: "Unit Cell Wireframe";
+                check_state_bool: root.wireframe_enabled;
+                checked_state_changed(en) => { root.toggle_wireframe(en); }
+            }
+
+            CheckBoxRow {
+                text: "In-Cell PBC Coordinates";
+                check_state_bool: root.in_cell_enabled;
+                checked_state_changed(en) => { root.toggle_in_cell(en); }
+            }
+        }
+
+        // Viewport Overlays Section
+        VerticalLayout {
+            spacing: MaterialStyleMetrics.spacing_8;
+
+            MaterialText {
+                text: "Overlays";
+                style: MaterialTypography.label_medium;
+                color: MaterialPalette.on_surface;
+            }
+
+            CheckBoxRow {
+                text: "Distribution Mini-HUD";
+                check_state_bool: root.dist_hud_visible;
+                checked_state_changed(v) => { root.toggle_dist_hud(v); }
+            }
+        }
+    }
+}
+

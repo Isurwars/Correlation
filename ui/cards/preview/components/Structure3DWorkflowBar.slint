@@ -5,6 +5,7 @@
 
 import {
     MaterialPalette,
+    MaterialStyleMetrics,
     MaterialTypography,
     MaterialText,
     Icons,
@@ -15,36 +16,51 @@ export component Structure3DWorkflowBar inherits Rectangle {
     in property <string> total_atoms: "";
     in property <bool> analysis_running: false;
     in property <bool> has_validation_errors: false;
+    in property <bool> analysis_done: false;
 
     callback run_analysis();
     callback cancel_analysis();
     callback open_panel(int);
 
     height: 36px;
-    border-radius: 18px;
-    background: MaterialPalette.surface_container_highest.with_alpha(85%);
+    border-radius: MaterialStyleMetrics.border_radius_full;
+    background: MaterialPalette.surface_container_highest.with_alpha(88%);
     border-width: 1px;
-    border-color: MaterialPalette.outline_variant.with_alpha(50%);
+    border-color: MaterialPalette.outline_variant.with_alpha(55%);
     width: workflow_layout.preferred-width + 16px;
 
     workflow_layout := HorizontalLayout {
         height: 100%;
-        padding-left: 8px;
-        padding-right: 8px;
-        spacing: 8px;
+        padding-left: MaterialStyleMetrics.padding_8;
+        padding-right: MaterialStyleMetrics.padding_8;
+        spacing: MaterialStyleMetrics.spacing_8;
         alignment: center;
 
-        // File metadata pill
-        MaterialText {
-            y: (parent.height - self.height) / 2;
-            text: "📁 " + root.file_basename + " (" + root.total_atoms + " atoms)";
-            font-size: 13px;
-            color: MaterialPalette.on_surface_variant;
-            vertical-alignment: center;
+        // Compact Structure Status Pill
+        HorizontalLayout {
+            spacing: MaterialStyleMetrics.spacing_6;
+            alignment: center;
+
+            VerticalLayout {
+                alignment: center;
+                Image {
+                    width: 14px;
+                    height: 14px;
+                    source: Icons.folder_open;
+                    colorize: MaterialPalette.on_surface_variant;
+                }
+            }
+
+            MaterialText {
+                text: root.file_basename + " (" + root.total_atoms + " atoms)";
+                style: MaterialTypography.label_large;
+                color: MaterialPalette.on_surface_variant;
+                vertical-alignment: center;
+            }
         }
 
-        // Run / Cancel Analysis Button (Compact pill with centered icon and label)
-        run_btn_touch := TouchArea {
+        // Quick Action CTA (shown while running or before analysis completes)
+        if !root.analysis_done || root.analysis_running: run_btn_touch := TouchArea {
             accessible-role: button;
             accessible-label: root.analysis_running ? "Cancel Analysis" : "Run Analysis";
             height: 28px;
@@ -63,7 +79,7 @@ export component Structure3DWorkflowBar inherits Rectangle {
             Rectangle {
                 width: 100%;
                 height: 100%;
-                border-radius: 14px;
+                border-radius: MaterialStyleMetrics.border_radius_full;
                 background: !run_btn_touch.enabled ? MaterialPalette.surface_container_high :
                     root.analysis_running ? (run_btn_touch.has-hover ? MaterialPalette.error.darker(8%) : MaterialPalette.error) :
                     (run_btn_touch.has-hover ? MaterialPalette.run.darker(8%) : MaterialPalette.run);
@@ -71,9 +87,9 @@ export component Structure3DWorkflowBar inherits Rectangle {
                 animate background { duration: 150ms; }
 
                 run_btn_layout := HorizontalLayout {
-                    padding-left: 10px;
-                    padding-right: 10px;
-                    spacing: 6px;
+                    padding-left: MaterialStyleMetrics.padding_10;
+                    padding-right: MaterialStyleMetrics.padding_10;
+                    spacing: MaterialStyleMetrics.spacing_6;
                     alignment: center;
 
                     Image {
@@ -86,9 +102,9 @@ export component Structure3DWorkflowBar inherits Rectangle {
                     }
 
                     MaterialText {
-                        text: root.analysis_running ? "Cancel Analysis" : "Run Analysis";
-                        font-size: 13px;
-                        font-weight: 600;
+                        text: root.analysis_running ? "Cancel" : "Run";
+                        style: MaterialTypography.label_large;
+                        font_weight: 600;
                         color: !run_btn_touch.enabled ? MaterialPalette.outline :
                             root.analysis_running ? MaterialPalette.on_error : MaterialPalette.on_run;
                         vertical-alignment: center;
@@ -98,28 +114,29 @@ export component Structure3DWorkflowBar inherits Rectangle {
             }
         }
 
-        // Options Button
+        // Open 3D Inspector / Calculators Button
         options_touch := TouchArea {
             width: 28px;
             height: 28px;
             y: (parent.height - self.height) / 2;
             mouse-cursor: pointer;
+            accessible-role: button;
+            accessible-label: "Open Calculators and Parameters";
             clicked => { root.open_panel(1); }
 
             Rectangle {
                 width: 100%;
                 height: 100%;
-                border-radius: 14px;
+                border-radius: MaterialStyleMetrics.border_radius_full;
                 background: options_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
 
-                MaterialText {
-                    width: 100%;
-                    height: 100%;
-                    text: "⚙";
-                    font-size: 14px;
-                    color: MaterialPalette.on_surface_variant;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
+                Image {
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
+                    width: 15px;
+                    height: 15px;
+                    source: Icons.tune;
+                    colorize: MaterialPalette.on_surface_variant;
                 }
             }
         }

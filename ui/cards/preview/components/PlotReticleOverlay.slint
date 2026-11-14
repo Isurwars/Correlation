@@ -1,5 +1,6 @@
 import {
     MaterialPalette,
+    MaterialStyleMetrics,
     MaterialTypography,
     MaterialText,
     Icons,
@@ -51,12 +52,12 @@ export component PlotReticleOverlay inherits Rectangle {
             y: Math.max(8px, peak.screen_y_peak - 32px);
             width: badge_layout.preferred-width + 12px;
             height: 22px;
-            border-radius: 11px;
+            border-radius: MaterialStyleMetrics.border_radius_full;
             background: MaterialPalette.surface_container_highest.with_alpha(94%);
             border-width: 1.5px;
             border-color: peak.color_hex;
             drop-shadow-blur: 4px;
-            drop-shadow-color: #00000035;
+            drop-shadow-color: MaterialPalette.shadow_30;
 
             badge_layout := HorizontalLayout {
                 padding-left: 6px;
@@ -82,6 +83,8 @@ export component PlotReticleOverlay inherits Rectangle {
                     width: 14px;
                     height: 14px;
                     mouse-cursor: pointer;
+                    accessible-role: button;
+                    accessible-label: "Remove peak marker";
                     clicked => { root.remove_peak(peak.id); }
 
                     Image {

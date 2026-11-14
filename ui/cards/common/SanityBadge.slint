@@ -27,19 +27,19 @@ export component SanityBadge inherits Rectangle {
 
     // Color definitions based on severity: 0: Success, 1: Warning, 2: Error
     property <color> badge_bg:
-        state.severity == 0 ? #10B981.with-alpha(0.12) :
-        state.severity == 1 ? #F59E0B.with-alpha(0.15) :
-        #EF4444.with-alpha(0.15);
+        state.severity == 0 ? MaterialPalette.success.with-alpha(0.12) :
+        state.severity == 1 ? MaterialPalette.warning.with-alpha(0.15) :
+        MaterialPalette.error.with-alpha(0.15);
 
     property <color> badge_border:
-        state.severity == 0 ? #10B981 :
-        state.severity == 1 ? #F59E0B :
-        #EF4444;
+        state.severity == 0 ? MaterialPalette.success :
+        state.severity == 1 ? MaterialPalette.warning :
+        MaterialPalette.error;
 
     property <color> badge_text:
-        state.severity == 0 ? #10B981 :
-        state.severity == 1 ? #F59E0B :
-        #EF4444;
+        state.severity == 0 ? MaterialPalette.success :
+        state.severity == 1 ? MaterialPalette.warning :
+        MaterialPalette.error;
 
     property <image> badge_icon:
         state.severity == 0 ? Icons.check :
@@ -47,7 +47,7 @@ export component SanityBadge inherits Rectangle {
         Icons.close;
 
     height: 26px;
-    border-radius: 13px;
+    border-radius: MaterialStyleMetrics.border_radius_full;
     background: root.badge_bg;
     border-width: 1px;
     border-color: root.badge_border;
@@ -78,7 +78,7 @@ export component SanityBadge inherits Rectangle {
         // Action Fix Button (If available)
         if root.state.has_fix: Rectangle {
             height: 18px;
-            border-radius: 9px;
+            border-radius: MaterialStyleMetrics.border_radius_full;
             background: fix_touch.has-hover ? root.badge_text.with-alpha(0.30) : root.badge_text.with-alpha(0.18);
             border-width: 1px;
             border-color: root.badge_text;
@@ -98,6 +98,8 @@ export component SanityBadge inherits Rectangle {
 
             fix_touch := TouchArea {
                 mouse-cursor: pointer;
+                accessible-role: button;
+                accessible-label: root.state.fix_label != "" ? root.state.fix_label : "Fix Bond Cutoff Issue";
                 clicked => {
                     root.fix_clicked(root.state.fix_action);
                 }

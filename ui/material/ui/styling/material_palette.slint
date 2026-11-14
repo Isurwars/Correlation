@@ -22,6 +22,16 @@ export global MaterialPalette {
     out property <color> on_tertiary_container: root.scheme.onTertiaryContainer;
     out property <color> warning: root.scheme.warning;
     out property <color> on_warning: root.scheme.onWarning;
+    out property <color> warning_container: root.scheme.warningContainer;
+    out property <color> on_warning_container: root.scheme.onWarningContainer;
+    out property <color> success: root.scheme.success;
+    out property <color> on_success: root.scheme.onSuccess;
+    out property <color> success_container: root.scheme.successContainer;
+    out property <color> on_success_container: root.scheme.onSuccessContainer;
+    out property <color> hud_canvas: root.scheme.hudCanvas;
+    out property <color> hud_surface: root.scheme.hudSurface;
+    out property <color> hud_accent: root.scheme.hudAccent;
+    out property <color> hud_peak: root.scheme.hudPeak;
     out property <color> run: root.scheme.run;
     out property <color> on_run: root.scheme.onRun;
     out property <color> error: root.scheme.error;
@@ -85,8 +95,18 @@ export global MaterialPalette {
             onTertiary: rgb(255, 255, 255),
             tertiaryContainer: rgb(252, 215, 251),
             onTertiaryContainer: rgb(41, 19, 45),
-            warning: rgb(255, 235, 59),
-            onWarning: rgb(62, 57, 0),
+            warning: rgb(217, 119, 6),
+            onWarning: rgb(255, 255, 255),
+            warningContainer: #FEF3C7,
+            onWarningContainer: #92400E,
+            success: #059669,
+            onSuccess: #FFFFFF,
+            successContainer: #D1FAE5,
+            onSuccessContainer: #065F46,
+            hudCanvas: #12151A,
+            hudSurface: #111419,
+            hudAccent: #40D7D7,
+            hudPeak: #FFD700,
             run: rgb(129, 199, 132),
             onRun: rgb(0, 51, 0),
             error: rgb(244, 67, 54),
@@ -142,6 +162,16 @@ export global MaterialPalette {
             onTertiaryContainer: rgb(236, 239, 244),
             warning: rgb(235, 203, 139),
             onWarning: rgb(16, 20, 25),
+            warningContainer: #78350F,
+            onWarningContainer: #FDE68A,
+            success: #10B981,
+            onSuccess: #064E3B,
+            successContainer: #064E3B,
+            onSuccessContainer: #A7F3D0,
+            hudCanvas: #12151A,
+            hudSurface: #111419,
+            hudAccent: #40D7D7,
+            hudPeak: #FFD700,
             run: rgb(163, 190, 140),
             onRun: rgb(16, 20, 25),
             error: rgb(191, 97, 106),

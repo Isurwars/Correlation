@@ -21,6 +21,7 @@ import {
 } from "../../material/material.slint";
 import { AtomCount } from "../../Types.slint";
 import { MaterialTypeCard } from "MaterialTypeCard.slint";
+import { PinnedExecutionBar } from "../../nav/components/PinnedExecutionBar.slint";
 
 // ============================================================================
 // OperationsPanelCard Component (Panel 0)
@@ -59,30 +60,30 @@ export component OperationsPanelCard inherits Rectangle {
     callback cancel_analysis();
 
     out property <string> hovered_tooltip_text:
-        load_area.has-hover ? "Load a structure or trajectory file" :
-        reload_area.has-hover ? "Reload the currently loaded file from disk.\n\n🔄 Useful when the trajectory is updated by an active external simulation." :
-        export_area.has-hover ? "Convert or export the currently loaded structure into POSCAR, CELL, CIF, or CAR format." :
+        btn_load.has_hover ? "Load a structure or trajectory file" :
+        btn_reload.has_hover ? "Reload the currently loaded file from disk.\n\n🔄 Useful when the trajectory is updated by an active external simulation." :
+        btn_export.has_hover ? "Convert or export the currently loaded structure into POSCAR, CELL, CIF, or CAR format." :
         file_header_area.has-hover ? ("Loaded File: " + (root.file_status_text != "" ? root.file_status_text : "None")) :
         diagnostics_header.has-hover ? "System Diagnostics & Composition.\n\n🔬 Details lattice dimensions, cell volume, macroscopic density, and atomic species counts." :
         (material_card.hovered_tooltip_text != "" ? material_card.hovered_tooltip_text :
-        run_area.has-hover ? "Run all selected analyses on the loaded trajectory.\n\n🔬 This computes distribution functions (RDF, S(Q), PAD, etc.) across the selected frame range, averaging over all frames. Results appear in the Preview panel and can be saved afterward." : "");
+        exec_bar.has_hover ? exec_bar.hovered_tooltip_text : "");
 
     out property <length> hovered_x:
-        load_area.has-hover ? load_area.absolute-position.x + load_area.mouse-x :
-        reload_area.has-hover ? reload_area.absolute-position.x + reload_area.mouse-x :
-        export_area.has-hover ? export_area.absolute-position.x + export_area.mouse-x :
+        btn_load.has_hover ? btn_load.hover_x :
+        btn_reload.has_hover ? btn_reload.hover_x :
+        btn_export.has_hover ? btn_export.hover_x :
         file_header_area.has-hover ? file_header_area.absolute-position.x + file_header_area.mouse-x :
         diagnostics_header.has-hover ? diagnostics_header.absolute-position.x + diagnostics_header.mouse-x :
         (material_card.hovered_tooltip_text != "" ? material_card.hovered_x :
-        run_area.has-hover ? run_area.absolute-position.x + run_area.mouse-x : 0px);
+        exec_bar.has_hover ? exec_bar.hover_x : 0px);
     out property <length> hovered_y:
-        load_area.has-hover ? load_area.absolute-position.y + load_area.mouse-y :
-        reload_area.has-hover ? reload_area.absolute-position.y + reload_area.mouse-y :
-        export_area.has-hover ? export_area.absolute-position.y + export_area.mouse-y :
+        btn_load.has_hover ? btn_load.hover_y :
+        btn_reload.has_hover ? btn_reload.hover_y :
+        btn_export.has_hover ? btn_export.hover_y :
         file_header_area.has-hover ? file_header_area.absolute-position.y + file_header_area.mouse-y :
         diagnostics_header.has-hover ? diagnostics_header.absolute-position.y + diagnostics_header.mouse-y :
         (material_card.hovered_tooltip_text != "" ? material_card.hovered_y :
-        run_area.has-hover ? run_area.absolute-position.y + run_area.mouse-y : 0px);
+        exec_bar.has_hover ? exec_bar.hover_y : 0px);
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
 
@@ -110,54 +111,41 @@ export component OperationsPanelCard inherits Rectangle {
                         Horizontal {
                             spacing: MaterialStyleMetrics.spacing_8;
 
-                            load_area := TouchArea {
-                                accessible-role: button;
-                                accessible-label: "Load Structure or Trajectory File";
+                            btn_load := FilledButton {
                                 height: MaterialStyleMetrics.size_40;
                                 horizontal-stretch: 1;
-                                FilledButton {
-                                    width: 100%;
-                                    height: 100%;
-                                    text: "Load File";
-                                    icon: Icons.folder_open;
-                                    enabled: root.load_enabled && !root.analysis_running;
-                                    clicked => {
-                                        root.browse_file();
-                                    }
+                                text: "Load File";
+                                tooltip: "";
+                                icon: Icons.folder_open;
+                                enabled: root.load_enabled && !root.analysis_running;
+                                clicked => {
+                                    root.browse_file();
                                 }
                             }
 
-                            reload_area := TouchArea {
-                                accessible-role: button;
+                            btn_reload := IconButton {
                                 accessible-label: "Reload Current File";
                                 height: MaterialStyleMetrics.size_40;
                                 width: MaterialStyleMetrics.size_40;
                                 horizontal-stretch: 0;
-                                IconButton {
-                                    width: 100%;
-                                    height: 100%;
-                                    icon: Icons.restart_alt;
-                                    enabled: root.load_enabled && root.file_loaded && !root.analysis_running;
-                                    clicked => {
-                                        root.reload_file();
-                                    }
+                                icon: Icons.restart_alt;
+                                tooltip: "";
+                                enabled: root.load_enabled && root.file_loaded && !root.analysis_running;
+                                clicked => {
+                                    root.reload_file();
                                 }
                             }
 
-                            export_area := TouchArea {
-                                accessible-role: button;
+                            btn_export := IconButton {
                                 accessible-label: "Export or Convert Structure";
                                 height: MaterialStyleMetrics.size_40;
                                 width: MaterialStyleMetrics.size_40;
                                 horizontal-stretch: 0;
-                                IconButton {
-                                    width: 100%;
-                                    height: 100%;
-                                    icon: Icons.save;
-                                    enabled: root.load_enabled && root.file_loaded && !root.analysis_running;
-                                    clicked => {
-                                        root.export_structure();
-                                    }
+                                icon: Icons.save;
+                                tooltip: "";
+                                enabled: root.load_enabled && root.file_loaded && !root.analysis_running;
+                                clicked => {
+                                    root.export_structure();
                                 }
                             }
                         }
@@ -318,42 +306,14 @@ export component OperationsPanelCard inherits Rectangle {
             }
         }
 
-        // --- Option A: Pinned Execution Bar outside ScrollView ---
-        OutlinedCard {
-            vertical-stretch: 0;
-
-            Vertical {
-                padding: MaterialStyleMetrics.spacing_8;
-                spacing: MaterialStyleMetrics.spacing_4;
-
-                if root.has_validation_errors && !root.analysis_running: MaterialText {
-                    text: "⚠ Fix validation errors before running";
-                    color: MaterialPalette.error;
-                    wrap: word-wrap;
-                    horizontal-alignment: center;
-                }
-
-                run_area := TouchArea {
-                    accessible-role: button;
-                    accessible-label: root.analysis_running ? "Cancel Analysis" : "Run Analysis";
-                    height: MaterialStyleMetrics.size_40;
-                    FilledButton {
-                        width: 100%;
-                        height: 100%;
-                        text: root.analysis_running ? "Cancel Analysis" : "Run Analysis";
-                        enabled: root.analysis_running || (root.file_loaded && !root.has_validation_errors);
-                        background: root.analysis_running ? MaterialPalette.error : MaterialPalette.run;
-                        text_color: root.analysis_running ? MaterialPalette.on_error : MaterialPalette.on_run;
-                        clicked => {
-                            if (root.analysis_running) {
-                                root.cancel_analysis();
-                            } else {
-                                root.run_analysis();
-                            }
-                        }
-                    }
-                }
-            }
+        // --- Pinned Execution Bar outside ScrollView ---
+        exec_bar := PinnedExecutionBar {
+            width: 100%;
+            file_loaded: root.file_loaded;
+            analysis_running: root.analysis_running;
+            has_validation_errors: root.has_validation_errors;
+            run_analysis => { root.run_analysis(); }
+            cancel_analysis => { root.cancel_analysis(); }
         }
     }
 }

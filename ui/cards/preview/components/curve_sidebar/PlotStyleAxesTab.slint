@@ -1,0 +1,535 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialText,
+    ScrollView,
+    CheckBoxRow,
+    FilledButton,
+    DropDownMenu,
+    MenuItem,
+} from "../../../../material/material.slint";
+import { PlotAxisSettings, ExportConfig } from "../../../../Types.slint";
+import { CompactInputField } from "CompactInputField.slint";
+
+component PresetSegmentButton inherits TouchArea {
+    in property <string> label;
+    in property <bool> active: false;
+
+    horizontal-stretch: 1;
+    mouse-cursor: pointer;
+    accessible-role: button;
+    accessible-label: "Publication preset " + root.label;
+
+    Rectangle {
+        background: root.active ? MaterialPalette.primary_container :
+                    root.has-hover ? MaterialPalette.surface_container_highest : transparent;
+        border-radius: MaterialStyleMetrics.border_radius_2;
+        animate background { duration: 120ms; }
+
+        MaterialText {
+            text: root.label;
+            style: MaterialTypography.label_small;
+            font_weight: root.active ? 600 : 400;
+            color: root.active ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+}
+
+component StepAdjustButton inherits TouchArea {
+    in property <string> symbol;
+    in property <string> label;
+
+    width: 24px;
+    height: 24px;
+    mouse-cursor: pointer;
+    accessible-role: button;
+    accessible-label: root.label;
+
+    Rectangle {
+        background: root.has-hover ? MaterialPalette.surface_container_highest : transparent;
+        border-radius: MaterialStyleMetrics.border_radius_2;
+        border-width: 1px;
+        border-color: MaterialPalette.outline;
+
+        MaterialText {
+            text: root.symbol;
+            style: MaterialTypography.label_medium;
+            color: MaterialPalette.on_surface;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+}
+
+/// Tab 1 of CurveSidebar: publication styling presets, typography, axis limits, and gridlines.
+export component PlotStyleAxesTab inherits ScrollView {
+    in-out property <PlotAxisSettings> axis_settings;
+    in-out property <ExportConfig> export_config;
+    in property <[MenuItem]> palette_menu_items: [];
+
+    callback apply_axis_settings();
+    callback reset_axis_settings();
+    callback reset_export_settings();
+
+    content-height: 820px;
+
+    VerticalLayout {
+        spacing: MaterialStyleMetrics.spacing_12;
+        padding-right: 2px;
+
+        // 1. Publication Sizing Preset (Segmented 4-way Pill Bar)
+        VerticalLayout {
+            spacing: MaterialStyleMetrics.spacing_4;
+
+            MaterialText {
+                text: "Publication Preset";
+                style: MaterialTypography.label_medium;
+                color: MaterialPalette.on_surface;
+            }
+
+            Rectangle {
+                height: 30px;
+                background: MaterialPalette.surface_container_high;
+                border-radius: MaterialStyleMetrics.border_radius_4;
+
+                HorizontalLayout {
+                    padding: 2px;
+                    spacing: 2px;
+
+                    PresetSegmentButton {
+                        label: "Default";
+                        active: root.export_config.size_preset == 0;
+                        clicked => {
+                            root.export_config.size_preset = 0;
+                            root.apply_axis_settings();
+                        }
+                    }
+
+                    PresetSegmentButton {
+                        label: "1-Col";
+                        active: root.export_config.size_preset == 1;
+                        clicked => {
+                            root.export_config.size_preset = 1;
+                            root.apply_axis_settings();
+                        }
+                    }
+
+                    PresetSegmentButton {
+                        label: "2-Col";
+                        active: root.export_config.size_preset == 2;
+                        clicked => {
+                            root.export_config.size_preset = 2;
+                            root.apply_axis_settings();
+                        }
+                    }
+
+                    PresetSegmentButton {
+                        label: "Slide";
+                        active: root.export_config.size_preset == 3;
+                        clicked => {
+                            root.export_config.size_preset = 3;
+                            root.apply_axis_settings();
+                        }
+                    }
+                }
+            }
+        }
+
+        // 2. Publication Color Palette
+        VerticalLayout {
+            spacing: MaterialStyleMetrics.spacing_4;
+
+            MaterialText {
+                text: "Color Palette";
+                style: MaterialTypography.label_medium;
+                color: MaterialPalette.on_surface;
+            }
+
+            DropDownMenu {
+                width: 100%;
+                items: root.palette_menu_items;
+                current_index <=> root.export_config.palette;
+            }
+        }
+
+        // 3. Typography & Stroke Metrics
+        VerticalLayout {
+            spacing: MaterialStyleMetrics.spacing_4;
+
+            MaterialText {
+                text: "Typography & Strokes";
+                style: MaterialTypography.label_medium;
+                color: MaterialPalette.on_surface;
+            }
+
+            HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_6;
+
+                VerticalLayout {
+                    horizontal-stretch: 1;
+                    spacing: 2px;
+                    MaterialText {
+                        text: "Font Scale:";
+                        style: MaterialTypography.label_small;
+                        color: MaterialPalette.on_surface_variant;
+                    }
+                    CompactInputField {
+                        placeholder_text: "1.0";
+                        text <=> root.export_config.font_scale;
+                        accepted(_) => { root.apply_axis_settings(); }
+                    }
+                }
+
+                VerticalLayout {
+                    horizontal-stretch: 1;
+                    spacing: 2px;
+                    MaterialText {
+                        text: "Line (pt):";
+                        style: MaterialTypography.label_small;
+                        color: MaterialPalette.on_surface_variant;
+                    }
+                    CompactInputField {
+                        placeholder_text: "3.0";
+                        text <=> root.export_config.line_width;
+                        accepted(_) => { root.apply_axis_settings(); }
+                    }
+                }
+
+                VerticalLayout {
+                    horizontal-stretch: 1;
+                    spacing: 2px;
+                    MaterialText {
+                        text: "Marker (px):";
+                        style: MaterialTypography.label_small;
+                        color: MaterialPalette.on_surface_variant;
+                    }
+                    CompactInputField {
+                        placeholder_text: "3.5";
+                        text <=> root.export_config.marker_size;
+                        accepted(_) => { root.apply_axis_settings(); }
+                    }
+                }
+            }
+        }
+
+        // 4. Display Toggles
+        VerticalLayout {
+            spacing: MaterialStyleMetrics.spacing_4;
+
+            MaterialText {
+                text: "Display Elements";
+                style: MaterialTypography.label_medium;
+                color: MaterialPalette.on_surface;
+            }
+
+            HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_6;
+                CheckBoxRow {
+                    horizontal-stretch: 1;
+                    text: "Legend";
+                    check_state_bool: root.export_config.show_legend;
+                    checked_state_changed(s) => {
+                        root.export_config.show_legend = s;
+                        root.apply_axis_settings();
+                    }
+                }
+                CheckBoxRow {
+                    horizontal-stretch: 1;
+                    text: "Markers";
+                    check_state_bool: root.export_config.show_markers;
+                    checked_state_changed(s) => {
+                        root.export_config.show_markers = s;
+                        root.apply_axis_settings();
+                    }
+                }
+            }
+
+            HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_6;
+                CheckBoxRow {
+                    horizontal-stretch: 1;
+                    text: "Major Grid";
+                    check_state_bool: root.axis_settings.show_major_grid;
+                    checked_state_changed(s) => {
+                        root.axis_settings.show_major_grid = s;
+                        root.export_config.show_grid = s;
+                        root.apply_axis_settings();
+                    }
+                }
+                CheckBoxRow {
+                    horizontal-stretch: 1;
+                    text: "Fill Area";
+                    check_state_bool: root.export_config.fill_area;
+                    checked_state_changed(s) => {
+                        root.export_config.fill_area = s;
+                        root.apply_axis_settings();
+                    }
+                }
+            }
+        }
+
+        // 5. X-Axis Section
+        VerticalLayout {
+            spacing: MaterialStyleMetrics.spacing_4;
+
+            HorizontalLayout {
+                alignment: center;
+                MaterialText {
+                    horizontal-stretch: 1;
+                    text: "X-Axis Range";
+                    style: MaterialTypography.label_medium;
+                    color: MaterialPalette.on_surface;
+                    vertical-alignment: center;
+                }
+                CheckBoxRow {
+                    text: "Auto";
+                    check_state_bool: root.axis_settings.auto_x;
+                    checked_state_changed(checked) => {
+                        root.axis_settings.auto_x = checked;
+                        if (checked) {
+                            root.apply_axis_settings();
+                        }
+                    }
+                }
+            }
+
+            HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_6;
+                CompactInputField {
+                    horizontal-stretch: 1;
+                    placeholder_text: "X Min";
+                    text <=> root.axis_settings.x_min;
+                    enabled: !root.axis_settings.auto_x;
+                    accepted(_) => {
+                        root.axis_settings.auto_x = false;
+                        root.apply_axis_settings();
+                    }
+                }
+                CompactInputField {
+                    horizontal-stretch: 1;
+                    placeholder_text: "X Max";
+                    text <=> root.axis_settings.x_max;
+                    enabled: !root.axis_settings.auto_x;
+                    accepted(_) => {
+                        root.axis_settings.auto_x = false;
+                        root.apply_axis_settings();
+                    }
+                }
+            }
+        }
+
+        // 6. Y-Axis Section
+        VerticalLayout {
+            spacing: MaterialStyleMetrics.spacing_4;
+
+            HorizontalLayout {
+                alignment: center;
+                MaterialText {
+                    horizontal-stretch: 1;
+                    text: "Y-Axis Range";
+                    style: MaterialTypography.label_medium;
+                    color: MaterialPalette.on_surface;
+                    vertical-alignment: center;
+                }
+                CheckBoxRow {
+                    text: "Auto";
+                    check_state_bool: root.axis_settings.auto_y;
+                    checked_state_changed(checked) => {
+                        root.axis_settings.auto_y = checked;
+                        if (checked) {
+                            root.apply_axis_settings();
+                        }
+                    }
+                }
+            }
+
+            HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_6;
+                CompactInputField {
+                    horizontal-stretch: 1;
+                    placeholder_text: "Y Min";
+                    text <=> root.axis_settings.y_min;
+                    enabled: !root.axis_settings.auto_y;
+                    accepted(_) => {
+                        root.axis_settings.auto_y = false;
+                        root.apply_axis_settings();
+                    }
+                }
+                CompactInputField {
+                    horizontal-stretch: 1;
+                    placeholder_text: "Y Max";
+                    text <=> root.axis_settings.y_max;
+                    enabled: !root.axis_settings.auto_y;
+                    accepted(_) => {
+                        root.axis_settings.auto_y = false;
+                        root.apply_axis_settings();
+                    }
+                }
+            }
+        }
+
+        // 7. Tick Steps Section
+        VerticalLayout {
+            spacing: MaterialStyleMetrics.spacing_4;
+
+            HorizontalLayout {
+                alignment: center;
+                MaterialText {
+                    horizontal-stretch: 1;
+                    text: "Major Tick Steps";
+                    style: MaterialTypography.label_medium;
+                    color: MaterialPalette.on_surface;
+                    vertical-alignment: center;
+                }
+                CheckBoxRow {
+                    text: "Auto";
+                    check_state_bool: root.axis_settings.auto_ticks;
+                    checked_state_changed(checked) => {
+                        root.axis_settings.auto_ticks = checked;
+                        if (checked) {
+                            root.apply_axis_settings();
+                        }
+                    }
+                }
+            }
+
+            HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_6;
+                CompactInputField {
+                    horizontal-stretch: 1;
+                    placeholder_text: "ΔX Step";
+                    text <=> root.axis_settings.x_major_step;
+                    enabled: !root.axis_settings.auto_ticks;
+                    accepted(_) => {
+                        root.axis_settings.auto_ticks = false;
+                        root.apply_axis_settings();
+                    }
+                }
+                CompactInputField {
+                    horizontal-stretch: 1;
+                    placeholder_text: "ΔY Step";
+                    text <=> root.axis_settings.y_major_step;
+                    enabled: !root.axis_settings.auto_ticks;
+                    accepted(_) => {
+                        root.axis_settings.auto_ticks = false;
+                        root.apply_axis_settings();
+                    }
+                }
+            }
+        }
+
+        // 8. Minor Subdivisions & Log Scale
+        HorizontalLayout {
+            spacing: MaterialStyleMetrics.spacing_6;
+            alignment: center;
+
+            MaterialText {
+                horizontal-stretch: 1;
+                text: "Minor Subdivisions (0-5):";
+                style: MaterialTypography.label_small;
+                color: MaterialPalette.on_surface_variant;
+                vertical-alignment: center;
+            }
+
+            StepAdjustButton {
+                symbol: "-";
+                label: "Decrease minor subdivisions";
+                clicked => {
+                    if (root.axis_settings.minor_subdivisions > 0) {
+                        root.axis_settings.minor_subdivisions -= 1;
+                        root.apply_axis_settings();
+                    }
+                }
+            }
+
+            MaterialText {
+                text: "\{root.axis_settings.minor_subdivisions}";
+                style: MaterialTypography.label_large;
+                color: MaterialPalette.on_surface;
+                vertical-alignment: center;
+            }
+
+            StepAdjustButton {
+                symbol: "+";
+                label: "Increase minor subdivisions";
+                clicked => {
+                    if (root.axis_settings.minor_subdivisions < 5) {
+                        root.axis_settings.minor_subdivisions += 1;
+                        root.apply_axis_settings();
+                    }
+                }
+            }
+        }
+
+        // Scaling & Grid Options
+        VerticalLayout {
+            spacing: 2px;
+
+            CheckBoxRow {
+                text: "Y Log₁₀ Scale";
+                check_state_bool: root.axis_settings.y_log_scale;
+                checked_state_changed(s) => {
+                    root.axis_settings.y_log_scale = s;
+                    root.apply_axis_settings();
+                }
+            }
+            CheckBoxRow {
+                text: "Show Minor Grid";
+                check_state_bool: root.axis_settings.show_minor_grid;
+                checked_state_changed(s) => {
+                    root.axis_settings.show_minor_grid = s;
+                    root.apply_axis_settings();
+                }
+            }
+        }
+
+        // Action Buttons (Update & Defaults)
+        HorizontalLayout {
+            spacing: MaterialStyleMetrics.spacing_8;
+            padding-top: MaterialStyleMetrics.padding_6;
+
+            FilledButton {
+                horizontal-stretch: 1;
+                height: 32px;
+                text: "Update";
+                clicked => {
+                    root.apply_axis_settings();
+                }
+            }
+
+            defaults_touch := TouchArea {
+                horizontal-stretch: 1;
+                height: 32px;
+                mouse-cursor: pointer;
+                accessible-role: button;
+                accessible-label: "Reset Plot Style and Axes to Defaults";
+                clicked => {
+                    root.reset_axis_settings();
+                    root.reset_export_settings();
+                }
+                Rectangle {
+                    background: defaults_touch.has-hover ? MaterialPalette.surface_container_highest : transparent;
+                    border-radius: MaterialStyleMetrics.border_radius_4;
+                    border-width: 1px;
+                    border-color: MaterialPalette.outline;
+                    MaterialText {
+                        text: "Defaults";
+                        style: MaterialTypography.label_medium;
+                        color: MaterialPalette.on_surface_variant;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+        }
+    }
+}
+
