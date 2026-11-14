@@ -622,6 +622,7 @@ FetchContent_Declare(
   GIT_SHALLOW TRUE
   SYSTEM
   EXCLUDE_FROM_ALL
+  PATCH_COMMAND ${CMAKE_COMMAND} -DMINIZ_DIR=<SOURCE_DIR> -P ${PROJECT_SOURCE_DIR}/cmake/PatchMiniz.cmake
 )
 set(BUILD_EXAMPLES OFF CACHE BOOL "Disable miniz examples" FORCE)
 set(BUILD_FUZZERS OFF CACHE BOOL "Disable miniz fuzzers" FORCE)
@@ -630,6 +631,9 @@ correlation_pop_shared_libs()
 
 if(TARGET miniz)
   set_target_properties(miniz PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  if(MSVC)
+    set_target_properties(miniz PROPERTIES MSVC_DEBUG_INFORMATION_FORMAT Embedded)
+  endif()
   if(CMAKE_C_COMPILER_ID MATCHES "Clang")
     target_compile_options(miniz PRIVATE "-Wno-#pragma-messages")
   endif()
