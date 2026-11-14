@@ -159,7 +159,7 @@ TEST_F(ThreadDeterminismTests, PADDeterminismAcrossThreads) {
 
     DistributionFunctions dists(cell, CUTOFF, traj.getBondCutoffsSQ());
 
-    runInArena(threads, [&] { dists.calculatePAD(0.2); });
+    runInArena(threads, [&] { dists.calculatePAD(static_cast<real_t>(0.2)); });
 
     const auto &hist = dists.getHistogram("PAD");
     ASSERT_TRUE(hist.partials.contains("Si-Si-Si"));

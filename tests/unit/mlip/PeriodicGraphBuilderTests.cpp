@@ -161,7 +161,7 @@ TEST(PeriodicGraphBuilderTests, SimpleCubicFirstNeighborShell) {
   cell.addAtom("Si", {0.0, 0.0, 0.0});
 
   // Cutoff 4.1 Å encompasses the 6 periodic nearest neighbors
-  auto const graph = PeriodicGraphBuilder::buildGraph(cell, 4.1, false);
+  auto const graph = PeriodicGraphBuilder::buildGraph(cell, static_cast<real_t>(4.1), false);
 
   EXPECT_EQ(graph.atom_count, 1U);
   EXPECT_EQ(graph.edge_count, 6U);

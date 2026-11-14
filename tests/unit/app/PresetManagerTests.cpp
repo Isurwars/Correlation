@@ -33,7 +33,7 @@ TEST_F(PresetManagerTests, RoundTripSerialization) {
   preset.name = "TestUnitPreset";
   preset.description = "Unit testing preset description with quotes \"escaped\"";
   preset.options.r_max = 18.5;
-  preset.options.r_bin_width = 0.05;
+  preset.options.r_bin_width = static_cast<real_t>(0.05);
   preset.options.smoothing = true;
   preset.options.active_calculators = {{"RDF", true}, {"S_K", false}};
 

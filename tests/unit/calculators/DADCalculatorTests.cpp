@@ -54,7 +54,8 @@ TEST_F(DADCalculatorTests, BasicCalculation) {
   // Cutoff must be > 1.0 to find the bonds (dist is 1.0 each)
   real_t const r_cut = 1.5;
   BondCutoffMatrix const bond_cutoffs(
-      1, std::vector<BondCutoffRange>(1, BondCutoffRange{.min_sq = 0.36, .max_sq = r_cut * r_cut}));
+      1, std::vector<BondCutoffRange>(
+             1, BondCutoffRange{.min_sq = static_cast<real_t>(0.36), .max_sq = r_cut * r_cut}));
   StructureAnalyzer const analyzer(cell_, r_cut, bond_cutoffs, true);
 
   real_t const bin_width = 10.0;
@@ -82,7 +83,7 @@ TEST_F(DADCalculatorTests, IcosahedronAnglesDAD) {
   correlation::core::Cell cell_iso;
   cell_iso.setLatticeParameters({30.0, 30.0, 30.0, 90.0, 90.0, 90.0});
   cell_iso.addAtom("Si", {10.0, 10.0, 10.0}); // Center
-  real_t const phi = std::numbers::phi;
+  real_t const phi = std::numbers::phi_v<real_t>;
   std::vector<std::vector<real_t>> const vertices = {
       {0, 1, phi},  {0, 1, -phi},  {0, -1, phi}, {0, -1, -phi}, {1, phi, 0},  {1, -phi, 0},
       {-1, phi, 0}, {-1, -phi, 0}, {phi, 0, 1},  {phi, 0, -1},  {-phi, 0, 1}, {-phi, 0, -1},
@@ -97,7 +98,8 @@ TEST_F(DADCalculatorTests, IcosahedronAnglesDAD) {
 
   real_t const r_cut = 2.5;
   BondCutoffMatrix const bond_cutoffs(
-      1, std::vector<BondCutoffRange>(1, BondCutoffRange{.min_sq = 0.36, .max_sq = r_cut * r_cut}));
+      1, std::vector<BondCutoffRange>(
+             1, BondCutoffRange{.min_sq = static_cast<real_t>(0.36), .max_sq = r_cut * r_cut}));
   StructureAnalyzer const analyzer(cell_iso, r_cut, bond_cutoffs, true);
 
   real_t const bin_width = 1.0;

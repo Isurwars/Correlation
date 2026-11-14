@@ -135,7 +135,7 @@ recordBondInteraction(AtomPair pair, T d_sq, PairPositions<T> positions, GPUAtom
     T const r_y = (atoms.wrapped_y[pair.j_val] - positions.atom_pos.y) + precise_disp_y;
     T const r_z = (atoms.wrapped_z[pair.j_val] - positions.atom_pos.z) + precise_disp_z;
 
-    T const precise_dist = sqrt(r_x * r_x + r_y * r_y + r_z * r_z);
+    T const precise_dist = std::sqrt(r_x * r_x + r_y * r_y + r_z * r_z);
 
     unsigned long long const idx = atomicAdd(bond_counter, 1ULL);
     bonds[idx] = GPUBond<T>{
@@ -183,7 +183,7 @@ processBin(int i_val, GPUPosition<T> atom_pos, int type_a, GPUPosition<T> disp, 
       continue;
     }
 
-    T const dist = sqrt(d_sq);
+    T const dist = std::sqrt(d_sq);
     int const type_b = atoms.element_ids[j_val];
     AtomPair const pair{.i_val = i_val, .j_val = j_val, .type_a = type_a, .type_b = type_b};
     GPUPosition<T> const shifted{.x = shifted_x, .y = shifted_y, .z = shifted_z};
@@ -375,9 +375,9 @@ SpatialPartitionData<T> buildSpatialPartition(const correlation::core::Cell &cel
     wrapped_z[i] = static_cast<T>(
         std::fma(f_z, lattice[2].z(), std::fma(f_y, lattice[1].z(), f_x * lattice[0].z())));
 
-    int const c_x = std::clamp(static_cast<int>(std::floor(f_x * k_x)), 0, k_x - 1);
-    int const c_y = std::clamp(static_cast<int>(std::floor(f_y * k_y)), 0, k_y - 1);
-    int const c_z = std::clamp(static_cast<int>(std::floor(f_z * k_z)), 0, k_z - 1);
+    int const c_x = std::clamp(static_cast<int>(std::floor(f_x * static_cast<T>(k_x))), 0, k_x - 1);
+    int const c_y = std::clamp(static_cast<int>(std::floor(f_y * static_cast<T>(k_y))), 0, k_y - 1);
+    int const c_z = std::clamp(static_cast<int>(std::floor(f_z * static_cast<T>(k_z))), 0, k_z - 1);
 
     int const bin_idx = c_x * (k_y * k_z) + c_y * k_z + c_z;
     atom_bin[i] = bin_idx;

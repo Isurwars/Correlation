@@ -20,7 +20,7 @@ class CellFunctionalTests : public ::testing::Test {};
 
 TEST_F(CellFunctionalTests, BuildBCCLatticeAndVerifyDensity) {
   // Iron (Fe) has a BCC structure with a lattice parameter of ~2.866 Angstroms
-  const real_t lattice_parameter = 2.866;
+  const real_t lattice_parameter = static_cast<real_t>(2.866);
   Cell cell({{lattice_parameter, lattice_parameter, lattice_parameter, 90.0, 90.0, 90.0}});
 
   // BCC basis: (0,0,0) and (0.5, 0.5, 0.5) in fractional coordinates
@@ -43,7 +43,7 @@ TEST_F(CellFunctionalTests, BuildBCCLatticeAndVerifyDensity) {
 
 TEST_F(CellFunctionalTests, BuildFCCLatticeAndVerifyPBCDistances) {
   // Aluminum (Al) has an FCC structure with a lattice parameter of ~4.046 Angstroms
-  const real_t lattice_parameter = 4.046;
+  const real_t lattice_parameter = static_cast<real_t>(4.046);
   Cell cell({{lattice_parameter, lattice_parameter, lattice_parameter, 90.0, 90.0, 90.0}});
 
   // FCC basis
@@ -76,7 +76,7 @@ TEST_F(CellFunctionalTests, VerifyWaterMoleculePBCStability) {
 
   // O at origin, H atoms at typical distance/angle
   // OH distance ~ 0.96 A, HOH angle ~ 104.5
-  const real_t oh_dist = 0.9584;
+  const real_t oh_dist = static_cast<real_t>(0.9584);
   const auto hoh_angle_rad = static_cast<real_t>(104.45 * (correlation::math::PI / 180.0));
 
   cell.addAtom("O", {10.0, 10.0, 10.0});
@@ -91,7 +91,7 @@ TEST_F(CellFunctionalTests, VerifyWaterMoleculePBCStability) {
   // Now move the molecule across the boundary
   for (auto &atom : const_cast<std::vector<Atom> &>(cell.atoms())) {
     auto pos = atom.position();
-    pos.x() += 15.0; // Moves from 10 to 25, which should wrap to 5
+    pos.x() += static_cast<real_t>(15.0); // Moves from 10 to 25, which should wrap to 5
     atom.setPosition(pos);
   }
 

@@ -53,11 +53,11 @@ TEST_F(CutoffSanityCheckerTests, DetectsOptimalCutoffs) {
   matrix[0][0].min_sq = 1.5 * 1.5;
   matrix[0][0].max_sq = 3.0 * 3.0;
   // Si-O (0, 1): [1.2, 2.2]
-  matrix[0][1].min_sq = 1.2 * 1.2;
-  matrix[0][1].max_sq = 2.2 * 2.2;
+  matrix[0][1].min_sq = static_cast<real_t>(1.2 * 1.2);
+  matrix[0][1].max_sq = static_cast<real_t>(2.2 * 2.2);
   // O-O (1, 1): [1.8, 3.2]
-  matrix[1][1].min_sq = 1.8 * 1.8;
-  matrix[1][1].max_sq = 3.2 * 3.2;
+  matrix[1][1].min_sq = static_cast<real_t>(1.8 * 1.8);
+  matrix[1][1].max_sq = static_cast<real_t>(3.2 * 3.2);
 
   const auto report = CutoffSanityChecker::checkCutoffs(matrix, elements_, &cell_);
   EXPECT_EQ(report.severity, SanitySeverity::Optimal);
@@ -72,8 +72,8 @@ TEST_F(CutoffSanityCheckerTests, DetectsRangeInversion) {
   matrix[0][0].max_sq = 3.0 * 3.0;
   matrix[0][1].min_sq = 2.5 * 2.5;
   matrix[0][1].max_sq = 2.0 * 2.0;
-  matrix[1][1].min_sq = 1.8 * 1.8;
-  matrix[1][1].max_sq = 3.2 * 3.2;
+  matrix[1][1].min_sq = static_cast<real_t>(1.8 * 1.8);
+  matrix[1][1].max_sq = static_cast<real_t>(3.2 * 3.2);
 
   const auto report = CutoffSanityChecker::checkCutoffs(matrix, elements_, &cell_);
   EXPECT_EQ(report.severity, SanitySeverity::Error);
@@ -88,10 +88,10 @@ TEST_F(CutoffSanityCheckerTests, DetectsPBCViolation) {
   // PBC violation for Si-O: max (6.0) > L_min / 2 (5.0)
   matrix[0][0].min_sq = 1.5 * 1.5;
   matrix[0][0].max_sq = 3.0 * 3.0;
-  matrix[0][1].min_sq = 1.2 * 1.2;
+  matrix[0][1].min_sq = static_cast<real_t>(1.2 * 1.2);
   matrix[0][1].max_sq = 6.0 * 6.0;
-  matrix[1][1].min_sq = 1.8 * 1.8;
-  matrix[1][1].max_sq = 3.2 * 3.2;
+  matrix[1][1].min_sq = static_cast<real_t>(1.8 * 1.8);
+  matrix[1][1].max_sq = static_cast<real_t>(3.2 * 3.2);
 
   const auto report = CutoffSanityChecker::checkCutoffs(matrix, elements_, &cell_);
   EXPECT_EQ(report.severity, SanitySeverity::Error);
@@ -107,8 +107,8 @@ TEST_F(CutoffSanityCheckerTests, DetectsMissingCutoff) {
   // Missing cutoff for O-O: max_sq == 0
   matrix[0][0].min_sq = 1.5 * 1.5;
   matrix[0][0].max_sq = 3.0 * 3.0;
-  matrix[0][1].min_sq = 1.2 * 1.2;
-  matrix[0][1].max_sq = 2.2 * 2.2;
+  matrix[0][1].min_sq = static_cast<real_t>(1.2 * 1.2);
+  matrix[0][1].max_sq = static_cast<real_t>(2.2 * 2.2);
   matrix[1][1].min_sq = 0.0;
   matrix[1][1].max_sq = 0.0;
 
@@ -122,12 +122,12 @@ TEST_F(CutoffSanityCheckerTests, DetectsMissingCutoff) {
 TEST_F(CutoffSanityCheckerTests, DetectsPlausibilityWarnings) {
   BondCutoffMatrix matrix(2);
   // Unphysically small max cutoff (0.6 Å < MIN_PLAUSIBLE_CUTOFF 0.8 Å)
-  matrix[0][0].min_sq = 0.1 * 0.1;
-  matrix[0][0].max_sq = 0.6 * 0.6;
-  matrix[0][1].min_sq = 1.2 * 1.2;
-  matrix[0][1].max_sq = 2.2 * 2.2;
-  matrix[1][1].min_sq = 1.8 * 1.8;
-  matrix[1][1].max_sq = 3.2 * 3.2;
+  matrix[0][0].min_sq = static_cast<real_t>(0.1 * 0.1);
+  matrix[0][0].max_sq = static_cast<real_t>(0.6 * 0.6);
+  matrix[0][1].min_sq = static_cast<real_t>(1.2 * 1.2);
+  matrix[0][1].max_sq = static_cast<real_t>(2.2 * 2.2);
+  matrix[1][1].min_sq = static_cast<real_t>(1.8 * 1.8);
+  matrix[1][1].max_sq = static_cast<real_t>(3.2 * 3.2);
 
   const auto report = CutoffSanityChecker::checkCutoffs(matrix, elements_, &cell_);
   EXPECT_EQ(report.severity, SanitySeverity::Warning);
@@ -140,10 +140,10 @@ TEST_F(CutoffSanityCheckerTests, AppliesFixClampToBoxHalf) {
   BondCutoffMatrix matrix(2);
   matrix[0][0].min_sq = 1.5 * 1.5;
   matrix[0][0].max_sq = 3.0 * 3.0;
-  matrix[0][1].min_sq = 1.2 * 1.2;
+  matrix[0][1].min_sq = static_cast<real_t>(1.2 * 1.2);
   matrix[0][1].max_sq = 6.0 * 6.0; // Violates PBC (5.0 Å)
-  matrix[1][1].min_sq = 1.8 * 1.8;
-  matrix[1][1].max_sq = 3.2 * 3.2;
+  matrix[1][1].min_sq = static_cast<real_t>(1.8 * 1.8);
+  matrix[1][1].max_sq = static_cast<real_t>(3.2 * 3.2);
 
   const bool applied =
       CutoffSanityChecker::applyFix(matrix, elements_, &cell_, SanityFixAction::ClampToBoxHalf);

@@ -63,7 +63,7 @@ TEST_F(MaceReaderTests, ReadSingleFrameMace) {
   auto const cell = reader.readStructure(file_path.string());
 
   EXPECT_EQ(cell.atomCount(), 2);
-  EXPECT_THAT(cell.getEnergy(), correlation::testing::IsRealEq(-25.432));
+  EXPECT_THAT(cell.getEnergy(), correlation::testing::IsRealEq(static_cast<real_t>(-25.432)));
 
   const auto &params = cell.latticeParameters();
   EXPECT_THAT(params[0], correlation::testing::IsRealEq(5.0));
@@ -72,18 +72,18 @@ TEST_F(MaceReaderTests, ReadSingleFrameMace) {
 
   const auto &atoms = cell.atoms();
   EXPECT_EQ(atoms[0].element().symbol, "Si");
-  EXPECT_THAT(atoms[0].position().x(), correlation::testing::IsRealEq(0.1));
-  EXPECT_THAT(atoms[0].position().y(), correlation::testing::IsRealEq(0.2));
-  EXPECT_THAT(atoms[0].position().z(), correlation::testing::IsRealEq(0.3));
+  EXPECT_THAT(atoms[0].position().x(), correlation::testing::IsRealEq(static_cast<real_t>(0.1)));
+  EXPECT_THAT(atoms[0].position().y(), correlation::testing::IsRealEq(static_cast<real_t>(0.2)));
+  EXPECT_THAT(atoms[0].position().z(), correlation::testing::IsRealEq(static_cast<real_t>(0.3)));
 
   // Verify forces stored in velocity
-  EXPECT_THAT(atoms[0].velocity().x(), correlation::testing::IsRealEq(0.01));
-  EXPECT_THAT(atoms[0].velocity().y(), correlation::testing::IsRealEq(-0.02));
-  EXPECT_THAT(atoms[0].velocity().z(), correlation::testing::IsRealEq(0.03));
+  EXPECT_THAT(atoms[0].velocity().x(), correlation::testing::IsRealEq(static_cast<real_t>(0.01)));
+  EXPECT_THAT(atoms[0].velocity().y(), correlation::testing::IsRealEq(static_cast<real_t>(-0.02)));
+  EXPECT_THAT(atoms[0].velocity().z(), correlation::testing::IsRealEq(static_cast<real_t>(0.03)));
 
   EXPECT_EQ(atoms[1].element().symbol, "O");
   EXPECT_THAT(atoms[1].position().x(), correlation::testing::IsRealEq(1.5));
-  EXPECT_THAT(atoms[1].velocity().x(), correlation::testing::IsRealEq(-0.04));
+  EXPECT_THAT(atoms[1].velocity().x(), correlation::testing::IsRealEq(static_cast<real_t>(-0.04)));
 }
 
 TEST_F(MaceReaderTests, ReadMultiFrameTrajectory) {
@@ -113,9 +113,11 @@ TEST_F(MaceReaderTests, ReadMultiFrameTrajectory) {
 
   const auto &frame_1 = traj.getFrame(1);
   EXPECT_EQ(frame_1.atomCount(), 2);
-  EXPECT_THAT(frame_1.getEnergy(), correlation::testing::IsRealEq(-102.3));
-  EXPECT_THAT(frame_1.atoms()[1].position().x(), correlation::testing::IsRealEq(1.6));
-  EXPECT_THAT(frame_1.atoms()[1].velocity().x(), correlation::testing::IsRealEq(0.05));
+  EXPECT_THAT(frame_1.getEnergy(), correlation::testing::IsRealEq(static_cast<real_t>(-102.3)));
+  EXPECT_THAT(frame_1.atoms()[1].position().x(),
+              correlation::testing::IsRealEq(static_cast<real_t>(1.6)));
+  EXPECT_THAT(frame_1.atoms()[1].velocity().x(),
+              correlation::testing::IsRealEq(static_cast<real_t>(0.05)));
 }
 
 TEST_F(MaceReaderTests, ReadStructureReturnsLastFrame) {

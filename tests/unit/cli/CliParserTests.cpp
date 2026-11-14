@@ -49,9 +49,9 @@ TEST_F(CliParserTests, DefaultsWithInputFileOnly) {
   EXPECT_EQ(opts.input_file, "input.poscar");
   EXPECT_EQ(opts.output_base, "input"); // stem of input.poscar
   EXPECT_THAT(opts.r_max, correlation::testing::IsRealEq(20.0));
-  EXPECT_THAT(opts.r_bin_width, correlation::testing::IsRealEq(0.02));
+  EXPECT_THAT(opts.r_bin_width, correlation::testing::IsRealEq(static_cast<real_t>(0.02)));
   EXPECT_THAT(opts.q_max, correlation::testing::IsRealEq(20.0));
-  EXPECT_THAT(opts.q_bin_width, correlation::testing::IsRealEq(0.02));
+  EXPECT_THAT(opts.q_bin_width, correlation::testing::IsRealEq(static_cast<real_t>(0.02)));
   EXPECT_THAT(opts.angle_bin_width, correlation::testing::IsRealEq(0.25));
   EXPECT_THAT(opts.dihedral_bin_width, correlation::testing::IsRealEq(0.25));
   EXPECT_FALSE(opts.has_dihedral_bin);
@@ -66,7 +66,7 @@ TEST_F(CliParserTests, DefaultsWithInputFileOnly) {
   EXPECT_THAT(opts.time_step, correlation::testing::IsRealEq(1.0));
   EXPECT_THAT(opts.r_int_max, correlation::testing::IsRealEq(10.0));
   EXPECT_EQ(opts.max_ring_size, 12);
-  EXPECT_THAT(opts.smoothing_sigma, correlation::testing::IsRealEq(0.1));
+  EXPECT_THAT(opts.smoothing_sigma, correlation::testing::IsRealEq(static_cast<real_t>(0.1)));
   EXPECT_EQ(opts.smoothing_kernel, correlation::math::KernelType::Gaussian);
   EXPECT_FALSE(opts.show_version);
   EXPECT_FALSE(opts.show_help);
@@ -145,7 +145,7 @@ TEST_F(CliParserTests, RBinOption) {
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
-  EXPECT_THAT(opts.r_bin_width, correlation::testing::IsRealEq(0.05));
+  EXPECT_THAT(opts.r_bin_width, correlation::testing::IsRealEq(static_cast<real_t>(0.05)));
 }
 
 TEST_F(CliParserTests, QMaxOption) {
@@ -161,7 +161,7 @@ TEST_F(CliParserTests, QBinOption) {
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
-  EXPECT_THAT(opts.q_bin_width, correlation::testing::IsRealEq(0.1));
+  EXPECT_THAT(opts.q_bin_width, correlation::testing::IsRealEq(static_cast<real_t>(0.1)));
 }
 
 TEST_F(CliParserTests, AngleBinOption) {
@@ -448,7 +448,7 @@ TEST_F(CliParserTests, MultipleOptionsCombined) {
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
   EXPECT_EQ(opts.input_file, "sim.xyz");
   EXPECT_THAT(opts.r_max, correlation::testing::IsRealEq(30.0));
-  EXPECT_THAT(opts.r_bin_width, correlation::testing::IsRealEq(0.05));
+  EXPECT_THAT(opts.r_bin_width, correlation::testing::IsRealEq(static_cast<real_t>(0.05)));
   EXPECT_THAT(opts.q_max, correlation::testing::IsRealEq(25.0));
   EXPECT_FALSE(opts.csv);
   EXPECT_TRUE(opts.hdf5);
@@ -618,11 +618,11 @@ TEST_F(CliParserTests, LiquidMaterialDefaults) {
   correlation::cli::CliOptions opts;
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
   EXPECT_EQ(opts.material_type, 1);
-  EXPECT_THAT(opts.r_bin_width, correlation::testing::IsRealEq(0.05));
-  EXPECT_THAT(opts.q_bin_width, correlation::testing::IsRealEq(0.05));
+  EXPECT_THAT(opts.r_bin_width, correlation::testing::IsRealEq(static_cast<real_t>(0.05)));
+  EXPECT_THAT(opts.q_bin_width, correlation::testing::IsRealEq(static_cast<real_t>(0.05)));
   EXPECT_THAT(opts.angle_bin_width, correlation::testing::IsRealEq(0.5));
   EXPECT_THAT(opts.dihedral_bin_width, correlation::testing::IsRealEq(0.5));
-  EXPECT_THAT(opts.smoothing_sigma, correlation::testing::IsRealEq(0.15));
+  EXPECT_THAT(opts.smoothing_sigma, correlation::testing::IsRealEq(static_cast<real_t>(0.15)));
 }
 
 TEST_F(CliParserTests, CrystallineMaterialDefaults) {
@@ -630,11 +630,11 @@ TEST_F(CliParserTests, CrystallineMaterialDefaults) {
   correlation::cli::CliOptions opts;
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
   EXPECT_EQ(opts.material_type, 2);
-  EXPECT_THAT(opts.r_bin_width, correlation::testing::IsRealEq(0.002));
-  EXPECT_THAT(opts.q_bin_width, correlation::testing::IsRealEq(0.002));
-  EXPECT_THAT(opts.angle_bin_width, correlation::testing::IsRealEq(0.1));
-  EXPECT_THAT(opts.dihedral_bin_width, correlation::testing::IsRealEq(0.1));
-  EXPECT_THAT(opts.smoothing_sigma, correlation::testing::IsRealEq(0.01));
+  EXPECT_THAT(opts.r_bin_width, correlation::testing::IsRealEq(static_cast<real_t>(0.002)));
+  EXPECT_THAT(opts.q_bin_width, correlation::testing::IsRealEq(static_cast<real_t>(0.002)));
+  EXPECT_THAT(opts.angle_bin_width, correlation::testing::IsRealEq(static_cast<real_t>(0.1)));
+  EXPECT_THAT(opts.dihedral_bin_width, correlation::testing::IsRealEq(static_cast<real_t>(0.1)));
+  EXPECT_THAT(opts.smoothing_sigma, correlation::testing::IsRealEq(static_cast<real_t>(0.01)));
 }
 
 TEST_F(CliParserTests, MaterialDefaultsWithOverrides) {
@@ -645,11 +645,16 @@ TEST_F(CliParserTests, MaterialDefaultsWithOverrides) {
   correlation::cli::CliOptions opts;
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
   EXPECT_EQ(opts.material_type, 2);
-  EXPECT_THAT(opts.r_bin_width, correlation::testing::IsRealEq(0.01));       // Overridden
-  EXPECT_THAT(opts.q_bin_width, correlation::testing::IsRealEq(0.002));      // Crystal default
-  EXPECT_THAT(opts.angle_bin_width, correlation::testing::IsRealEq(0.1));    // Crystal default
-  EXPECT_THAT(opts.dihedral_bin_width, correlation::testing::IsRealEq(0.1)); // Crystal default
-  EXPECT_THAT(opts.smoothing_sigma, correlation::testing::IsRealEq(0.05));   // Overridden
+  EXPECT_THAT(opts.r_bin_width,
+              correlation::testing::IsRealEq(static_cast<real_t>(0.01))); // Overridden
+  EXPECT_THAT(opts.q_bin_width,
+              correlation::testing::IsRealEq(static_cast<real_t>(0.002))); // Crystal default
+  EXPECT_THAT(opts.angle_bin_width,
+              correlation::testing::IsRealEq(static_cast<real_t>(0.1))); // Crystal default
+  EXPECT_THAT(opts.dihedral_bin_width,
+              correlation::testing::IsRealEq(static_cast<real_t>(0.1))); // Crystal default
+  EXPECT_THAT(opts.smoothing_sigma,
+              correlation::testing::IsRealEq(static_cast<real_t>(0.05))); // Overridden
 }
 
 TEST_F(CliParserTests, ZipBundleCliFlags) {

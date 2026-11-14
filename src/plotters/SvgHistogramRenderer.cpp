@@ -226,13 +226,12 @@ public:
                         const std::map<std::string, bool> *visibility) {
     std::vector<std::pair<std::string, real_t>> candidates;
     if (isCurveVisible("Ensemble Mean", visibility)) {
-      candidates.emplace_back("Ensemble Mean", 1.0);
+      candidates.emplace_back("Ensemble Mean", static_cast<real_t>(1.0));
     }
     for (const auto &[key, value] : raw_partials) {
-      if (key != "Ensemble Mean" && (key.starts_with("Frame ") || key == "Frame")) {
-        if (isCurveVisible(key, visibility)) {
-          candidates.emplace_back(key, 0.5);
-        }
+      if (key != "Ensemble Mean" && (key.starts_with("Frame ") || key == "Frame") &&
+          isCurveVisible(key, visibility)) {
+        candidates.emplace_back(key, static_cast<real_t>(0.5));
       }
     }
     return candidates;
@@ -363,10 +362,10 @@ public:
   [[nodiscard]] static std::pair<detail::NiceScale, detail::NiceScale>
   computeScales(std::span<const real_t> x_coords, std::span<const RenderSeries> series,
                 const PlotConfig &config) {
-    real_t raw_x_min = x_coords.empty() ? 0.0 : x_coords.front();
-    real_t raw_x_max = x_coords.empty() ? 1.0 : x_coords.back();
-    real_t raw_y_min = 0.0;
-    real_t raw_y_max = 0.0;
+    real_t raw_x_min = x_coords.empty() ? static_cast<real_t>(0.0) : x_coords.front();
+    real_t raw_x_max = x_coords.empty() ? static_cast<real_t>(1.0) : x_coords.back();
+    auto raw_y_min = static_cast<real_t>(0.0);
+    auto raw_y_max = static_cast<real_t>(0.0);
 
     const bool has_ensemble_mean = std::ranges::any_of(
         series, [](const auto &series_entry) { return series_entry.key == "Ensemble Mean"; });

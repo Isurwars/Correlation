@@ -40,12 +40,14 @@ TEST(SYCLCalculatorTests, ComputesDistancesViaSYCLFallback) {
   correlation::core::NeighborGraph out_graph(2);
   real_t const cutoff_sq = 4.0;
   correlation::analysis::BondCutoffMatrix const bond_cutoffs = {
-      {{.min_sq = 0.36, .max_sq = 2.25}, {.min_sq = 0.36, .max_sq = 2.25}},
-      {{.min_sq = 0.36, .max_sq = 2.25}, {.min_sq = 0.36, .max_sq = 2.25}},
+      {{.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25},
+       {.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25}},
+      {{.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25},
+       {.min_sq = static_cast<real_t>(0.36), .max_sq = 2.25}},
   };
   correlation::calculators::DistanceCalculationConfig const hist_config{
       .r_max = 2.0,
-      .r_bin_width = 0.02,
+      .r_bin_width = static_cast<real_t>(0.02),
       .num_bins = 100,
   };
 
@@ -69,7 +71,7 @@ TEST(SYCLCalculatorTests, ComputesDistancesGPUWrapper) {
   std::vector<std::vector<real_t>> const bond_cutoffs_sq = {{2.25, 2.25}, {2.25, 2.25}};
   correlation::calculators::DistanceCalculationConfig const hist_config{
       .r_max = 2.0,
-      .r_bin_width = 0.02,
+      .r_bin_width = static_cast<real_t>(0.02),
       .num_bins = 100,
   };
 
@@ -84,12 +86,12 @@ TEST(SYCLCalculatorTests, ComputesSQViaSYCLFallback) {
   cell.addAtom("Si", {0.0, 0.0, 0.0});
   cell.addAtom("Si", {1.0, 0.0, 0.0});
 
-  const auto s_q_hist =
-      correlation::calculators::sycl_gpu::compute_sq_sycl(cell, {
-                                                                    .q_min = 0.5,
-                                                                    .q_max = 10.0,
-                                                                    .q_bin_width = 0.1,
-                                                                });
+  const auto s_q_hist = correlation::calculators::sycl_gpu::compute_sq_sycl(
+      cell, {
+                .q_min = 0.5,
+                .q_max = 10.0,
+                .q_bin_width = static_cast<real_t>(0.1),
+            });
   EXPECT_FALSE(s_q_hist.bins.empty());
   EXPECT_GT(s_q_hist.bins.size(), 0U);
 }
@@ -156,13 +158,13 @@ TEST(SYCLCalculatorTests, ComputesXRDViaSYCLFallback) {
   cell.addAtom("Si", {0.0, 0.0, 0.0});
   cell.addAtom("Si", {1.0, 0.0, 0.0});
 
-  const auto xrd_hist =
-      correlation::calculators::sycl_gpu::compute_xrd_sycl(cell, {
-                                                                     .lambda = 1.5406,
-                                                                     .theta_min = 10.0,
-                                                                     .theta_max = 80.0,
-                                                                     .bin_width = 0.5,
-                                                                 });
+  const auto xrd_hist = correlation::calculators::sycl_gpu::compute_xrd_sycl(
+      cell, {
+                .lambda = static_cast<real_t>(1.5406),
+                .theta_min = 10.0,
+                .theta_max = 80.0,
+                .bin_width = 0.5,
+            });
   EXPECT_FALSE(xrd_hist.bins.empty());
   EXPECT_EQ(xrd_hist.x_label, "2θ");
 }
@@ -172,12 +174,13 @@ TEST(SYCLCalculatorTests, ComputesXRDGPUWrapper) {
   cell.addAtom("Si", {0.0, 0.0, 0.0});
   cell.addAtom("Si", {1.0, 0.0, 0.0});
 
-  const auto xrd_hist = correlation::calculators::gpu::compute_xrd_gpu(cell, {
-                                                                                 .lambda = 1.5406,
-                                                                                 .theta_min = 10.0,
-                                                                                 .theta_max = 80.0,
-                                                                                 .bin_width = 0.5,
-                                                                             });
+  const auto xrd_hist = correlation::calculators::gpu::compute_xrd_gpu(
+      cell, {
+                .lambda = static_cast<real_t>(1.5406),
+                .theta_min = 10.0,
+                .theta_max = 80.0,
+                .bin_width = 0.5,
+            });
   EXPECT_FALSE(xrd_hist.bins.empty());
 }
 

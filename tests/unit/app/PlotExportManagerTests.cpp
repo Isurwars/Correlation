@@ -22,10 +22,38 @@ correlation::analysis::Histogram createMockHistogram(const std::string &title) {
   hist.x_label = "r";
   hist.x_unit = "Å";
   hist.y_label = "g(r)";
-  hist.bins = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8};
-  hist.partials["Total"] = {0.0, 0.5, 1.2, 2.5, 1.8, 0.9, 0.4, 0.1};
-  hist.partials["A-A"] = {0.0, 0.2, 0.6, 1.2, 0.9, 0.4, 0.2, 0.0};
-  hist.partials["A-B"] = {0.0, 0.3, 0.6, 1.3, 0.9, 0.5, 0.2, 0.1};
+  hist.bins = {static_cast<real_t>(0.1),
+               static_cast<real_t>(0.2),
+               static_cast<real_t>(0.3),
+               static_cast<real_t>(0.4),
+               0.5,
+               static_cast<real_t>(0.6),
+               static_cast<real_t>(0.7),
+               static_cast<real_t>(0.8)};
+  hist.partials["Total"] = {0.0,
+                            0.5,
+                            static_cast<real_t>(1.2),
+                            2.5,
+                            static_cast<real_t>(1.8),
+                            static_cast<real_t>(0.9),
+                            static_cast<real_t>(0.4),
+                            static_cast<real_t>(0.1)};
+  hist.partials["A-A"] = {0.0,
+                          static_cast<real_t>(0.2),
+                          static_cast<real_t>(0.6),
+                          static_cast<real_t>(1.2),
+                          static_cast<real_t>(0.9),
+                          static_cast<real_t>(0.4),
+                          static_cast<real_t>(0.2),
+                          0.0};
+  hist.partials["A-B"] = {0.0,
+                          static_cast<real_t>(0.3),
+                          static_cast<real_t>(0.6),
+                          static_cast<real_t>(1.3),
+                          static_cast<real_t>(0.9),
+                          0.5,
+                          static_cast<real_t>(0.2),
+                          static_cast<real_t>(0.1)};
   return hist;
 }
 
@@ -62,7 +90,14 @@ TEST(PlotExportManagerTests, SavePlotSingleHistogramSvg) {
 TEST(PlotExportManagerTests, SavePlotComparisonOverlaySvg) {
   const auto current_hist = createMockHistogram("g_r");
   auto pinned_hist = createMockHistogram("g_r");
-  pinned_hist.bins = {0.0, 0.4, 1.0, 2.1, 1.5, 0.7, 0.3, 0.0};
+  pinned_hist.bins = {0.0,
+                      static_cast<real_t>(0.4),
+                      1.0,
+                      static_cast<real_t>(2.1),
+                      1.5,
+                      static_cast<real_t>(0.7),
+                      static_cast<real_t>(0.3),
+                      0.0};
 
   PinnedRun run1;
   run1.label = "Run 1";

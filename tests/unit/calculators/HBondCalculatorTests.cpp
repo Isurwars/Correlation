@@ -16,7 +16,7 @@ namespace correlation::calculators {
 
 namespace {
 [[nodiscard]] analysis::BondCutoffMatrix makeCutoffMatrix(size_t element_count, real_t cutoff) {
-  constexpr real_t MIN_DIST = 0.6;
+  constexpr real_t MIN_DIST = static_cast<real_t>(0.6);
   const auto min_sq = MIN_DIST * MIN_DIST;
   const auto max_sq = cutoff * cutoff;
   return analysis::BondCutoffMatrix(
@@ -409,7 +409,7 @@ TEST(HBondCalculatorTests, AcceptorOnly_NoHydrogens) {
 /// Tests performance and correctness under bulk non-bonding conditions.
 TEST(HBondCalculatorTests, BulkMetalNoHBonds) {
   // 4-atom FCC copper — no H, O, N, F, S atoms at all
-  real_t const lattice_parameter = 3.6;
+  real_t const lattice_parameter = static_cast<real_t>(3.6);
   correlation::core::Cell cell({
       lattice_parameter,
       lattice_parameter,

@@ -170,8 +170,8 @@ TEST_F(MotifFinderTests, MaxSizeLessThanThreeReturnsEmpty) {
 TEST_F(MotifFinderTests, FranzblauDetectsSimpleHexagon) {
   graph = correlation::core::NeighborGraph(6);
   // Simple hexagon: 0-1-2-3-4-5-0
-  for (size_t i = 0; i < 6; ++i) {
-    const size_t next = (i + 1) % 6;
+  for (correlation::core::AtomID i = 0; i < 6; ++i) {
+    const correlation::core::AtomID next = (i + 1) % 6;
     graph.addDirectedEdge(i, next, 1.0, {1.0, 0.0, 0.0});
     graph.addDirectedEdge(next, i, 1.0, {-1.0, 0.0, 0.0});
   }
@@ -194,8 +194,8 @@ TEST_F(MotifFinderTests, FranzblauRejectsCompositeRingWithAlternateGeodesic) {
   // Under Franzblau, the geodesic between 0 and 2 on the 6-cycle is NOT unique (two geodesics of
   // length 2 exist), so Franzblau strictly rejects the composite 6-cycle.
   graph = correlation::core::NeighborGraph(7);
-  for (size_t i = 0; i < 6; ++i) {
-    const size_t next = (i + 1) % 6;
+  for (correlation::core::AtomID i = 0; i < 6; ++i) {
+    const correlation::core::AtomID next = (i + 1) % 6;
     graph.addDirectedEdge(i, next, 1.0, {1.0, 0.0, 0.0});
     graph.addDirectedEdge(next, i, 1.0, {-1.0, 0.0, 0.0});
   }
@@ -248,8 +248,8 @@ TEST_F(MotifFinderTests, BuildBridgedGraphContractsOxygenBridges) {
 
   graph = correlation::core::NeighborGraph(6);
   // Add bonds along the 6-cycle
-  for (size_t i = 0; i < 6; ++i) {
-    const size_t next = (i + 1) % 6;
+  for (correlation::core::AtomID i = 0; i < 6; ++i) {
+    const correlation::core::AtomID next = (i + 1) % 6;
     graph.addDirectedEdge(i, next, 1.0, {1.0, 0.0, 0.0});
     graph.addDirectedEdge(next, i, 1.0, {-1.0, 0.0, 0.0});
   }
@@ -285,7 +285,8 @@ TEST_F(MotifFinderTests, FilterAlternatingCyclesValidatesSequence) {
 TEST_F(MotifFinderTests, ChordedRingExcludedByPreFilter) {
   // Graph: 4-cycle 0-1-2-3-0 with a diagonal chord 0-2
   graph = correlation::core::NeighborGraph(4);
-  auto const add_edge = [this](size_t src_node, size_t dst_node) {
+  auto const add_edge = [this](correlation::core::AtomID src_node,
+                               correlation::core::AtomID dst_node) {
     graph.addDirectedEdge(src_node, dst_node, 1.0, {0.0, 0.0, 0.0});
     graph.addDirectedEdge(dst_node, src_node, 1.0, {0.0, 0.0, 0.0});
   };
@@ -308,7 +309,8 @@ TEST_F(MotifFinderTests, ChordedRingExcludedByPreFilter) {
 TEST_F(MotifFinderTests, MultiEdgeGraphDeduplication) {
   // Graph: triangle 0-1-2 with duplicate multi-edges
   graph = correlation::core::NeighborGraph(3);
-  auto const add_edge = [this](size_t src_node, size_t dst_node) {
+  auto const add_edge = [this](correlation::core::AtomID src_node,
+                               correlation::core::AtomID dst_node) {
     graph.addDirectedEdge(src_node, dst_node, 1.0, {0.0, 0.0, 0.0});
     graph.addDirectedEdge(dst_node, src_node, 1.0, {0.0, 0.0, 0.0});
   };
@@ -326,7 +328,8 @@ TEST_F(MotifFinderTests, MultiEdgeGraphDeduplication) {
 namespace {
 correlation::core::NeighborGraph buildCubeGraph() {
   correlation::core::NeighborGraph cube(8);
-  auto const add_edge = [&cube](size_t src_node, size_t dst_node) {
+  auto const add_edge = [&cube](correlation::core::AtomID src_node,
+                                correlation::core::AtomID dst_node) {
     cube.addDirectedEdge(src_node, dst_node, 1.0, {0.0, 0.0, 0.0});
     cube.addDirectedEdge(dst_node, src_node, 1.0, {0.0, 0.0, 0.0});
   };

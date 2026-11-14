@@ -44,14 +44,14 @@ TEST_F(LocalEntropyCalculatorTests, SimpleCubic) {
       }
     }
   }
-  StructureAnalyzer const analyzer_sc(cell_sc, 6.5, {{{.min_sq = 0.36, .max_sq = 6.5 * 6.5}}},
-                                      false);
-  const auto hist_sc =
-      correlation::calculators::LocalEntropyCalculator::calculate(cell_sc, &analyzer_sc,
-                                                                  {
-                                                                      .cutoff = 6.0,
-                                                                      .sigma = 0.2,
-                                                                  });
+  StructureAnalyzer const analyzer_sc(
+      cell_sc, 6.5, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 6.5 * 6.5}}}, false);
+  const auto hist_sc = correlation::calculators::LocalEntropyCalculator::calculate(
+      cell_sc, &analyzer_sc,
+      {
+          .cutoff = 6.0,
+          .sigma = static_cast<real_t>(0.2),
+      });
   real_t const entropy_sc = getPeakEntropy(hist_sc);
   EXPECT_NEAR(entropy_sc, -6.15, 1e-4);
 }
@@ -73,14 +73,14 @@ TEST_F(LocalEntropyCalculatorTests, BodyCenteredCubic) {
       }
     }
   }
-  StructureAnalyzer const analyzer_bcc(cell_bcc, 6.5, {{{.min_sq = 0.36, .max_sq = 6.5 * 6.5}}},
-                                       false);
-  const auto hist_bcc =
-      correlation::calculators::LocalEntropyCalculator::calculate(cell_bcc, &analyzer_bcc,
-                                                                  {
-                                                                      .cutoff = 6.0,
-                                                                      .sigma = 0.2,
-                                                                  });
+  StructureAnalyzer const analyzer_bcc(
+      cell_bcc, 6.5, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 6.5 * 6.5}}}, false);
+  const auto hist_bcc = correlation::calculators::LocalEntropyCalculator::calculate(
+      cell_bcc, &analyzer_bcc,
+      {
+          .cutoff = 6.0,
+          .sigma = static_cast<real_t>(0.2),
+      });
   real_t const entropy_bcc = getPeakEntropy(hist_bcc);
   EXPECT_NEAR(entropy_bcc, -5.95, 1e-4);
 }
@@ -108,14 +108,14 @@ TEST_F(LocalEntropyCalculatorTests, FaceCenteredCubic) {
       }
     }
   }
-  StructureAnalyzer const analyzer_fcc(cell_fcc, 6.5, {{{.min_sq = 0.36, .max_sq = 6.5 * 6.5}}},
-                                       false);
-  const auto hist_fcc =
-      correlation::calculators::LocalEntropyCalculator::calculate(cell_fcc, &analyzer_fcc,
-                                                                  {
-                                                                      .cutoff = 6.0,
-                                                                      .sigma = 0.2,
-                                                                  });
+  StructureAnalyzer const analyzer_fcc(
+      cell_fcc, 6.5, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 6.5 * 6.5}}}, false);
+  const auto hist_fcc = correlation::calculators::LocalEntropyCalculator::calculate(
+      cell_fcc, &analyzer_fcc,
+      {
+          .cutoff = 6.0,
+          .sigma = static_cast<real_t>(0.2),
+      });
   real_t const entropy_fcc = getPeakEntropy(hist_fcc);
   EXPECT_NEAR(entropy_fcc, -10.85, 1e-4);
 }
@@ -132,14 +132,14 @@ TEST_F(LocalEntropyCalculatorTests, Random) {
     cell_rand.addAtom("Ar", {static_cast<real_t>(dis(gen)), static_cast<real_t>(dis(gen)),
                              static_cast<real_t>(dis(gen))});
   }
-  StructureAnalyzer const analyzer_rand(cell_rand, 6.5, {{{.min_sq = 0.36, .max_sq = 6.5 * 6.5}}},
-                                        false);
-  const auto hist_rand =
-      correlation::calculators::LocalEntropyCalculator::calculate(cell_rand, &analyzer_rand,
-                                                                  {
-                                                                      .cutoff = 6.0,
-                                                                      .sigma = 0.2,
-                                                                  });
+  StructureAnalyzer const analyzer_rand(
+      cell_rand, 6.5, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 6.5 * 6.5}}}, false);
+  const auto hist_rand = correlation::calculators::LocalEntropyCalculator::calculate(
+      cell_rand, &analyzer_rand,
+      {
+          .cutoff = 6.0,
+          .sigma = static_cast<real_t>(0.2),
+      });
   real_t const entropy_rand = getPeakEntropy(hist_rand);
   EXPECT_NEAR(entropy_rand, -1.55, 1e-2);
 }
@@ -158,14 +158,14 @@ TEST_F(LocalEntropyCalculatorTests, WorksWithDefaultBondCutoffsOrNullptr) {
   }
 
   // Narrow chemical bond cutoff of 2.5 A (far smaller than 6.0 A cutoff)
-  StructureAnalyzer const analyzer_narrow(cell_sc, 2.5, {{{.min_sq = 0.36, .max_sq = 2.5 * 2.5}}},
-                                          false);
+  StructureAnalyzer const analyzer_narrow(
+      cell_sc, 2.5, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 2.5 * 2.5}}}, false);
   const auto hist_with_narrow_analyzer =
-      correlation::calculators::LocalEntropyCalculator::calculate(cell_sc, &analyzer_narrow,
-                                                                  {.cutoff = 6.0, .sigma = 0.2});
+      correlation::calculators::LocalEntropyCalculator::calculate(
+          cell_sc, &analyzer_narrow, {.cutoff = 6.0, .sigma = static_cast<real_t>(0.2)});
 
   const auto hist_with_nullptr = correlation::calculators::LocalEntropyCalculator::calculate(
-      cell_sc, nullptr, {.cutoff = 6.0, .sigma = 0.2});
+      cell_sc, nullptr, {.cutoff = 6.0, .sigma = static_cast<real_t>(0.2)});
 
   real_t const entropy_narrow = getPeakEntropy(hist_with_narrow_analyzer);
   real_t const entropy_null = getPeakEntropy(hist_with_nullptr);
@@ -186,7 +186,7 @@ TEST_F(LocalEntropyCalculatorTests, CalculatePerAtom) {
   }
 
   const auto per_atom = correlation::calculators::LocalEntropyCalculator::calculatePerAtom(
-      cell_sc, nullptr, {.cutoff = 6.0, .sigma = 0.2});
+      cell_sc, nullptr, {.cutoff = 6.0, .sigma = static_cast<real_t>(0.2)});
 
   ASSERT_EQ(per_atom.size(), 27UL);
   for (const auto val : per_atom) {
@@ -195,7 +195,7 @@ TEST_F(LocalEntropyCalculatorTests, CalculatePerAtom) {
 
   correlation::core::Cell const empty_cell;
   const auto empty_res = correlation::calculators::LocalEntropyCalculator::calculatePerAtom(
-      empty_cell, nullptr, {.cutoff = 6.0, .sigma = 0.2});
+      empty_cell, nullptr, {.cutoff = 6.0, .sigma = static_cast<real_t>(0.2)});
   EXPECT_TRUE(empty_res.empty());
 }
 

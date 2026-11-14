@@ -21,7 +21,7 @@ namespace {
 
 void bmGraphDescriptorsRingStatistics(benchmark::State &state) {
   // Diamond supercell with 8 * 3^3 = 216 atoms
-  const auto cell = testing::crystals::createDiamondCell(5.43, "Si", 3, 3, 3);
+  const auto cell = testing::crystals::createDiamondCell(static_cast<real_t>(5.43), "Si", 3, 3, 3);
   const auto graph = mlip::PeriodicGraphBuilder::buildGraph(cell, static_cast<real_t>(2.8));
   const size_t max_ring_size = 6;
 

@@ -121,7 +121,7 @@ TEST_F(RDFCalculatorTests, MoveConstructorWorks) {
   DistributionFunctions df_source(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   df_source.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.1,
+      .r_bin_width = static_cast<real_t>(0.1),
   });
 
   DistributionFunctions const df_dest(std::move(df_source));
@@ -135,7 +135,7 @@ TEST_F(RDFCalculatorTests, MoveAssignmentWorks) {
   DistributionFunctions df_source(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   df_source.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.1,
+      .r_bin_width = static_cast<real_t>(0.1),
   });
 
   DistributionFunctions df_dest(cell_);
@@ -159,7 +159,7 @@ TEST_F(RDFCalculatorTests, AccessorsWork) {
   // Calculate something
   dists.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.1,
+      .r_bin_width = static_cast<real_t>(0.1),
   });
   hist_names = dists.getAvailableHistograms();
   EXPECT_FALSE(hist_names.empty());
@@ -191,28 +191,28 @@ TEST_F(RDFCalculatorTests, CalculateRDF) {
                std::invalid_argument); // Zero bin width
   EXPECT_THROW(dists.calculateRDF({
                    .r_max = 0.0,
-                   .r_bin_width = 0.1,
+                   .r_bin_width = static_cast<real_t>(0.1),
                }),
                std::invalid_argument); // Zero r_max
   EXPECT_THROW(dists.calculateRDF({
                    .r_max = 51.0,
-                   .r_bin_width = 0.1,
+                   .r_bin_width = static_cast<real_t>(0.1),
                }),
                std::invalid_argument); // r_max > max_cutoff_radius (50.0)
   EXPECT_THROW(dists.calculateRDF({
                    .r_max = 16.0,
-                   .r_bin_width = 0.1,
+                   .r_bin_width = static_cast<real_t>(0.1),
                    .max_radius = 15.0,
                }),
                std::invalid_argument); // Custom max_radius exceeded
-  EXPECT_THROW(static_cast<void>(correlation::calculators::RDFCalculator::calculate(cell_, nullptr,
-                                                                                    {}, 51.0, 0.1)),
+  EXPECT_THROW(static_cast<void>(correlation::calculators::RDFCalculator::calculate(
+                   cell_, nullptr, {}, 51.0, static_cast<real_t>(0.1))),
                std::invalid_argument); // Direct calculate exceeding max_cutoff_radius
 
   // Valid calculation with tight bins for numerical accuracy
   dists.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.001,
+      .r_bin_width = static_cast<real_t>(0.001),
   });
   const auto &hist = dists.getHistogram("g_r");
   const auto &total = hist.partials.at("Ar-Ar");
@@ -259,18 +259,18 @@ TEST_F(RDFCalculatorTests, Smoothing) {
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   dists.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.1,
+      .r_bin_width = static_cast<real_t>(0.1),
   });
 
   // Checks "smooth" single
-  ASSERT_NO_THROW(dists.smooth("g_r", 0.2));
+  ASSERT_NO_THROW(dists.smooth("g_r", static_cast<real_t>(0.2)));
   const auto &hist = dists.getHistogram("g_r");
   EXPECT_FALSE(hist.smoothed_partials.empty());
 
   // Check "smoothAll"
   // Add another histogram
   dists.calculateCoordinationNumber();
-  dists.smoothAll(0.2);
+  dists.smoothAll(static_cast<real_t>(0.2));
   const auto &cn_hist = dists.getHistogram("CN");
   EXPECT_FALSE(cn_hist.smoothed_partials.empty());
 }
@@ -286,7 +286,7 @@ TEST_F(RDFCalculatorTests, SetStructureAnalyzer) {
 
   dists.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.1,
+      .r_bin_width = static_cast<real_t>(0.1),
   });
   EXPECT_NO_THROW((void)dists.getHistogram("g_r"));
   EXPECT_FALSE(dists.getHistogram("g_r").partials.empty());
@@ -297,13 +297,13 @@ TEST_F(RDFCalculatorTests, AddAndScale) {
   DistributionFunctions df1(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   df1.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.1,
+      .r_bin_width = static_cast<real_t>(0.1),
   });
 
   DistributionFunctions df2(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   df2.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.1,
+      .r_bin_width = static_cast<real_t>(0.1),
   });
 
   // Add
@@ -325,7 +325,7 @@ TEST_F(RDFCalculatorTests, AddAndScale) {
   DistributionFunctions df_ref(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   df_ref.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.1,
+      .r_bin_width = static_cast<real_t>(0.1),
   });
   real_t const ref_peak =
       *std::ranges::max_element(df_ref.getHistogram("g_r").partials.at("Ar-Ar"));
@@ -340,7 +340,7 @@ TEST_F(RDFCalculatorTests, ComputeMean) {
 
   AnalysisSettings settings;
   settings.r_max = 5.0;
-  settings.r_bin_width = 0.1;
+  settings.r_bin_width = static_cast<real_t>(0.1);
   settings.smoothing = false;
   settings.active_calculators["RDF"] = true;
 
@@ -373,11 +373,11 @@ TEST_F(RDFCalculatorTests, HandlesMissingPartialInAdd) {
 
   df1.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.1,
+      .r_bin_width = static_cast<real_t>(0.1),
   });
   df2.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.1,
+      .r_bin_width = static_cast<real_t>(0.1),
   });
 
   // df1 initially only has Ar-Ar (plus Total)
@@ -423,7 +423,7 @@ TEST_F(RDFCalculatorTests, VerifyAshcroftWeightsAreCorrect) {
   // 2. Verify RDF total is the sum of weighted partials
   dists.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.1,
+      .r_bin_width = static_cast<real_t>(0.1),
   });
   const auto &g_r = dists.getHistogram("g_r");
   const auto &g_r_total = dists.getHistogram("G_r");
@@ -431,14 +431,14 @@ TEST_F(RDFCalculatorTests, VerifyAshcroftWeightsAreCorrect) {
 }
 
 TEST_F(RDFCalculatorTests, FCC_Copper_RDF) {
-  real_t const lat_a = 3.615;
+  real_t const lat_a = static_cast<real_t>(3.615);
   const auto cell = correlation::testing::crystals::createFCCCell(lat_a, "Cu", 2, 2, 2);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 5.0, trajectory_.getBondCutoffsSQ());
   dists.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.01,
+      .r_bin_width = static_cast<real_t>(0.01),
   });
 
   const auto &hist = dists.getHistogram("g_r");
@@ -450,63 +450,65 @@ TEST_F(RDFCalculatorTests, FCC_Copper_RDF) {
 }
 
 TEST_F(RDFCalculatorTests, BCC_Iron_RDF) {
-  real_t const lat_a = 2.866;
+  real_t const lat_a = static_cast<real_t>(2.866);
   const auto cell = correlation::testing::crystals::createBCCCell(lat_a, "Fe", 3, 3, 3);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 4.5, trajectory_.getBondCutoffsSQ());
   dists.calculateRDF({
       .r_max = 4.5,
-      .r_bin_width = 0.01,
+      .r_bin_width = static_cast<real_t>(0.01),
   });
 
   const auto &hist = dists.getHistogram("g_r");
   const auto &fe_fe = hist.partials.at("Fe-Fe");
 
-  const auto [peak_r1, max_val1] = findPeakInRange(hist.bins, fe_fe, 2.0, 2.7);
+  const auto [peak_r1, max_val1] = findPeakInRange(hist.bins, fe_fe, 2.0, static_cast<real_t>(2.7));
   EXPECT_NEAR(peak_r1, lat_a * std::sqrt(3.0) / 2.0, 0.02);
   EXPECT_GT(max_val1, 1.0);
 }
 
 TEST_F(RDFCalculatorTests, Diamond_Silicon_RDF) {
-  real_t const lat_a = 5.431;
+  real_t const lat_a = static_cast<real_t>(5.431);
   const auto cell = correlation::testing::crystals::createDiamondCell(lat_a, "Si", 2, 2, 2);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 5.0, trajectory_.getBondCutoffsSQ());
   dists.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.01,
+      .r_bin_width = static_cast<real_t>(0.01),
   });
 
   const auto &hist = dists.getHistogram("g_r");
   const auto &si_si = hist.partials.at("Si-Si");
 
-  const auto [peak_r1, max_val1] = findPeakInRange(hist.bins, si_si, 2.0, 2.6);
+  const auto [peak_r1, max_val1] = findPeakInRange(hist.bins, si_si, 2.0, static_cast<real_t>(2.6));
   EXPECT_NEAR(peak_r1, lat_a * std::sqrt(3.0) / 4.0, 0.02);
   EXPECT_GT(max_val1, 1.0);
 }
 
 TEST_F(RDFCalculatorTests, NaCl_RockSalt_RDF) {
-  real_t const lat_a = 5.64;
+  real_t const lat_a = static_cast<real_t>(5.64);
   const auto cell = correlation::testing::crystals::createNaClCell(lat_a, "Na", "Cl", 2, 2, 2);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 5.0, trajectory_.getBondCutoffsSQ());
   dists.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.01,
+      .r_bin_width = static_cast<real_t>(0.01),
   });
 
   const auto &hist = dists.getHistogram("g_r");
   const auto &nacl = hist.partials.at("Na-Cl");
   const auto &nana = hist.partials.at("Na-Na");
 
-  const auto [peak_nacl, max_nacl] = findPeakInRange(hist.bins, nacl, 2.5, 3.2);
+  const auto [peak_nacl, max_nacl] =
+      findPeakInRange(hist.bins, nacl, 2.5, static_cast<real_t>(3.2));
   EXPECT_NEAR(peak_nacl, lat_a / 2.0, 0.02);
   EXPECT_GT(max_nacl, 1.0);
 
-  const auto [peak_nana, max_nana] = findPeakInRange(hist.bins, nana, 3.6, 4.4);
+  const auto [peak_nana, max_nana] =
+      findPeakInRange(hist.bins, nana, static_cast<real_t>(3.6), static_cast<real_t>(4.4));
   EXPECT_NEAR(peak_nana, lat_a / std::numbers::sqrt2, 0.02);
   EXPECT_GT(max_nana, 1.0);
 }
@@ -516,7 +518,7 @@ TEST_F(RDFCalculatorTests, VerifyRawAndUnweightedHistograms) {
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   dists.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.1,
+      .r_bin_width = static_cast<real_t>(0.1),
   });
 
   ASSERT_TRUE(dists.getAllHistograms().contains("H_r"));
@@ -539,12 +541,12 @@ TEST_F(RDFCalculatorTests, AddAccumulatesWithMismatchedPartialSizes) {
   DistributionFunctions df2(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
   Histogram h_1;
-  h_1.bins = {0.1, 0.2, 0.3};
+  h_1.bins = {static_cast<real_t>(0.1), static_cast<real_t>(0.2), static_cast<real_t>(0.3)};
   h_1.partials["Ar-Ar"] = {1.0, 2.0, 3.0};
   h_1.compute_count = 1;
 
   Histogram h_2;
-  h_2.bins = {0.1, 0.2, 0.3};
+  h_2.bins = {static_cast<real_t>(0.1), static_cast<real_t>(0.2), static_cast<real_t>(0.3)};
   h_2.partials["Ar-Ar"] = {10.0, 20.0}; // Shorter partial size
   h_2.compute_count = 1;
 
@@ -577,7 +579,7 @@ TEST_F(RDFCalculatorTests, PrimitiveCellRDFComputesSelfImages) {
   DistributionFunctions dists(prim_cell, 5.0, trajectory_.getBondCutoffsSQ());
   dists.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.02,
+      .r_bin_width = static_cast<real_t>(0.02),
   });
 
   const auto &hist = dists.getHistogram("g_r");
@@ -608,7 +610,7 @@ TEST_F(RDFCalculatorTests, CrystalUnitCell_BCCIron_2Atoms_ComputesSelfLatticeTra
   DistributionFunctions dists(cell, 6.0, trajectory_.getBondCutoffsSQ());
   dists.calculateRDF({
       .r_max = 6.0,
-      .r_bin_width = 0.02,
+      .r_bin_width = static_cast<real_t>(0.02),
   });
 
   const auto &hist = dists.getHistogram("g_r");
@@ -616,12 +618,14 @@ TEST_F(RDFCalculatorTests, CrystalUnitCell_BCCIron_2Atoms_ComputesSelfLatticeTra
   const auto &fe_fe = hist.partials.at("Fe-Fe");
 
   // 1st neighbor shell: 8 atoms at a * sqrt(3) / 2 ~ 2.482 A
-  const auto [peak_r1, max_val1] = findPeakInRange(hist.bins, fe_fe, 2.2, 2.7);
+  const auto [peak_r1, max_val1] =
+      findPeakInRange(hist.bins, fe_fe, static_cast<real_t>(2.2), static_cast<real_t>(2.7));
   EXPECT_NEAR(peak_r1, lat_a * std::sqrt(3.0) / 2.0, 0.03);
   EXPECT_GT(max_val1, 1.0);
 
   // 2nd neighbor shell: 6 atoms at r = a ~ 2.866 A (periodic self-image translation)
-  const auto [peak_r2, max_val2] = findPeakInRange(hist.bins, fe_fe, 2.7, 3.1);
+  const auto [peak_r2, max_val2] =
+      findPeakInRange(hist.bins, fe_fe, static_cast<real_t>(2.7), static_cast<real_t>(3.1));
   EXPECT_NEAR(peak_r2, lat_a, 0.03);
   EXPECT_GT(max_val2, 1.0);
 }
@@ -636,7 +640,7 @@ TEST_F(RDFCalculatorTests, CrystalUnitCell_DiamondSilicon_8Atoms_ComputesPeriodi
   DistributionFunctions dists(cell, 10.0, trajectory_.getBondCutoffsSQ());
   dists.calculateRDF({
       .r_max = 10.0,
-      .r_bin_width = 0.02,
+      .r_bin_width = static_cast<real_t>(0.02),
   });
 
   const auto &hist = dists.getHistogram("g_r");
@@ -644,17 +648,20 @@ TEST_F(RDFCalculatorTests, CrystalUnitCell_DiamondSilicon_8Atoms_ComputesPeriodi
   const auto &si_si = hist.partials.at("Si-Si");
 
   // 1st neighbor shell: 4 atoms at a * sqrt(3) / 4 ~ 2.351 A
-  const auto [peak_r1, max_val1] = findPeakInRange(hist.bins, si_si, 2.1, 2.6);
+  const auto [peak_r1, max_val1] =
+      findPeakInRange(hist.bins, si_si, static_cast<real_t>(2.1), static_cast<real_t>(2.6));
   EXPECT_NEAR(peak_r1, lat_a * std::sqrt(3.0) / 4.0, 0.03);
   EXPECT_GT(max_val1, 1.0);
 
   // 2nd neighbor shell: 12 atoms at a / sqrt(2) ~ 3.840 A
-  const auto [peak_r2, max_val2] = findPeakInRange(hist.bins, si_si, 3.6, 4.1);
+  const auto [peak_r2, max_val2] =
+      findPeakInRange(hist.bins, si_si, static_cast<real_t>(3.6), static_cast<real_t>(4.1));
   EXPECT_NEAR(peak_r2, lat_a / std::numbers::sqrt2, 0.03);
   EXPECT_GT(max_val2, 1.0);
 
   // Distant neighbor shell beyond the unit cell length (r > 5.431 A), e.g. at a * sqrt(2) ~ 7.68 A
-  const auto [peak_r_dist, max_val_dist] = findPeakInRange(hist.bins, si_si, 7.4, 8.0);
+  const auto [peak_r_dist, max_val_dist] =
+      findPeakInRange(hist.bins, si_si, static_cast<real_t>(7.4), 8.0);
   EXPECT_NEAR(peak_r_dist, lat_a * std::numbers::sqrt2, 0.05);
   EXPECT_GT(max_val_dist, 0.5);
 }
@@ -669,7 +676,7 @@ TEST_F(RDFCalculatorTests, CrystalUnitCell_NaCl_8Atoms_ComputesPeriodicImages) {
   DistributionFunctions dists(cell, 8.0, trajectory_.getBondCutoffsSQ());
   dists.calculateRDF({
       .r_max = 8.0,
-      .r_bin_width = 0.02,
+      .r_bin_width = static_cast<real_t>(0.02),
   });
 
   const auto &hist = dists.getHistogram("g_r");
@@ -677,14 +684,14 @@ TEST_F(RDFCalculatorTests, CrystalUnitCell_NaCl_8Atoms_ComputesPeriodicImages) {
   ASSERT_TRUE(hist.partials.contains("Na-Na"));
 
   // Na-Cl 1st neighbor shell at a / 2 ~ 2.82 A
-  const auto [peak_nacl, max_nacl] =
-      findPeakInRange(hist.bins, hist.partials.at("Na-Cl"), 2.6, 3.1);
+  const auto [peak_nacl, max_nacl] = findPeakInRange(
+      hist.bins, hist.partials.at("Na-Cl"), static_cast<real_t>(2.6), static_cast<real_t>(3.1));
   EXPECT_NEAR(peak_nacl, lat_a / 2.0, 0.03);
   EXPECT_GT(max_nacl, 1.0);
 
   // Na-Na 2nd neighbor shell at a / sqrt(2) ~ 3.988 A
-  const auto [peak_nana, max_nana] =
-      findPeakInRange(hist.bins, hist.partials.at("Na-Na"), 3.7, 4.2);
+  const auto [peak_nana, max_nana] = findPeakInRange(
+      hist.bins, hist.partials.at("Na-Na"), static_cast<real_t>(3.7), static_cast<real_t>(4.2));
   EXPECT_NEAR(peak_nana, lat_a / std::numbers::sqrt2, 0.03);
   EXPECT_GT(max_nana, 1.0);
 }
@@ -731,7 +738,8 @@ void verifyAmorphousPalladiumTails(const DistributionFunctions &dist_functions) 
   ASSERT_FALSE(total_vals.empty());
 
   const auto pbc_bin = static_cast<size_t>(14.7058 / 0.05);
-  verifyTailAsymptoteAndPbc(total_vals, pbc_bin, 1.0, 0.05, 0.10);
+  verifyTailAsymptoteAndPbc(total_vals, pbc_bin, 1.0, static_cast<real_t>(0.05),
+                            static_cast<real_t>(0.10));
 
   const auto &g_unw = dist_functions.getHistogram("g_r_unweighted");
   ASSERT_TRUE(g_unw.partials.contains("Pd-Pd"));
@@ -746,7 +754,8 @@ void verifyLiquidBismuthTails(const DistributionFunctions &dist_functions) {
   ASSERT_FALSE(total_vals.empty());
 
   const auto pbc_bin_bi = static_cast<size_t>(19.5516 / 0.05);
-  verifyTailAsymptoteAndPbc(total_vals, pbc_bin_bi, 1.0, 0.08, 0.10);
+  verifyTailAsymptoteAndPbc(total_vals, pbc_bin_bi, 1.0, static_cast<real_t>(0.08),
+                            static_cast<real_t>(0.10));
 
   const auto &g_unw = dist_functions.getHistogram("g_r_unweighted");
   ASSERT_TRUE(g_unw.partials.contains("Bi-Bi"));
@@ -755,7 +764,7 @@ void verifyLiquidBismuthTails(const DistributionFunctions &dist_functions) {
 }
 
 void verifyWeightedAshcroftPartials(const Histogram &g_r,
-                                   const std::map<std::string, real_t> &ashcroft_weights) {
+                                    const std::map<std::string, real_t> &ashcroft_weights) {
   for (const auto &[key, expected_weight] : ashcroft_weights) {
     ASSERT_TRUE(g_r.partials.contains(key)) << "Missing partial: " << key;
     const real_t partial_avg = computeTailAverage(g_r.partials.at(key), 10);
@@ -766,7 +775,7 @@ void verifyWeightedAshcroftPartials(const Histogram &g_r,
 }
 
 void verifyUnweightedAshcroftPartials(const Histogram &g_unw,
-                                     const std::map<std::string, real_t> &ashcroft_weights) {
+                                      const std::map<std::string, real_t> &ashcroft_weights) {
   for (const auto &[key, expected_weight] : ashcroft_weights) {
     ASSERT_TRUE(g_unw.partials.contains(key)) << "Missing unweighted partial: " << key;
     const real_t unw_avg = computeTailAverage(g_unw.partials.at(key), 10);
@@ -807,9 +816,9 @@ TEST_F(RDFCalculatorTests, AmorphousPalladiumSingleFrameAsymptotesToOneAt20A) {
   correlation::app::ProgramOptions opts;
   opts.input_file = filepath;
   opts.r_max = 20.0;
-  opts.r_bin_width = 0.05;
+  opts.r_bin_width = static_cast<real_t>(0.05);
   opts.smoothing = true;
-  opts.smoothing_sigma = 0.1;
+  opts.smoothing_sigma = static_cast<real_t>(0.1);
   opts.active_calculators["RDF"] = true;
 
   const auto res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);
@@ -837,9 +846,9 @@ TEST_F(RDFCalculatorTests, LiquidBismuthLast100FramesMeanAsymptotesToOneAt20A) {
   opts.min_frame = static_cast<int>(loader.getFrameCount()) - 100;
   opts.max_frame = -1;
   opts.r_max = 20.0;
-  opts.r_bin_width = 0.05;
+  opts.r_bin_width = static_cast<real_t>(0.05);
   opts.smoothing = true;
-  opts.smoothing_sigma = 0.1;
+  opts.smoothing_sigma = static_cast<real_t>(0.1);
   opts.active_calculators["RDF"] = true;
 
   const auto res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);
@@ -866,9 +875,9 @@ TEST_F(RDFCalculatorTests,
   correlation::app::ProgramOptions opts;
   opts.input_file = filepath;
   opts.r_max = 20.0;
-  opts.r_bin_width = 0.05;
+  opts.r_bin_width = static_cast<real_t>(0.05);
   opts.smoothing = true;
-  opts.smoothing_sigma = 0.1;
+  opts.smoothing_sigma = static_cast<real_t>(0.1);
   opts.active_calculators["RDF"] = true;
 
   const auto res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);

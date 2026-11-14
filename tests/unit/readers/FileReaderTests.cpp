@@ -127,14 +127,14 @@ TEST_F(FileReaderTests, ReadCellFileCorrectly) {
   ASSERT_EQ(atoms.size(), 2);
 
   EXPECT_EQ(atoms[0].element().symbol, "C");
-  EXPECT_THAT(atoms[0].position().x(), correlation::testing::IsRealEq(1.1));
-  EXPECT_THAT(atoms[0].position().y(), correlation::testing::IsRealEq(2.2));
-  EXPECT_THAT(atoms[0].position().z(), correlation::testing::IsRealEq(3.3));
+  EXPECT_THAT(atoms[0].position().x(), correlation::testing::IsRealEq(static_cast<real_t>(1.1)));
+  EXPECT_THAT(atoms[0].position().y(), correlation::testing::IsRealEq(static_cast<real_t>(2.2)));
+  EXPECT_THAT(atoms[0].position().z(), correlation::testing::IsRealEq(static_cast<real_t>(3.3)));
 
   EXPECT_EQ(atoms[1].element().symbol, "O");
-  EXPECT_THAT(atoms[1].position().x(), correlation::testing::IsRealEq(4.4));
+  EXPECT_THAT(atoms[1].position().x(), correlation::testing::IsRealEq(static_cast<real_t>(4.4)));
   EXPECT_THAT(atoms[1].position().y(), correlation::testing::IsRealEq(5.5));
-  EXPECT_THAT(atoms[1].position().z(), correlation::testing::IsRealEq(6.6));
+  EXPECT_THAT(atoms[1].position().z(), correlation::testing::IsRealEq(static_cast<real_t>(6.6)));
 }
 
 TEST_F(FileReaderTests, ReadCifFileCorrectly) {
@@ -144,10 +144,10 @@ TEST_F(FileReaderTests, ReadCifFileCorrectly) {
 
   // Assert: Check lattice parameters
   const auto &params = result_cell.latticeParameters();
-  EXPECT_THAT(params[0], correlation::testing::IsRealEq(5.64)); // a
-  EXPECT_THAT(params[1], correlation::testing::IsRealEq(5.64)); // b
-  EXPECT_THAT(params[2], correlation::testing::IsRealEq(5.64)); // c
-  EXPECT_THAT(params[5], correlation::testing::IsRealEq(90.0)); // gamma
+  EXPECT_THAT(params[0], correlation::testing::IsRealEq(static_cast<real_t>(5.64))); // a
+  EXPECT_THAT(params[1], correlation::testing::IsRealEq(static_cast<real_t>(5.64))); // b
+  EXPECT_THAT(params[2], correlation::testing::IsRealEq(static_cast<real_t>(5.64))); // c
+  EXPECT_THAT(params[5], correlation::testing::IsRealEq(90.0));                      // gamma
 
   // Assert: Check total atom count (2 unique atoms * 1 symm ops = 2 atoms)
   verifyCifAtoms(result_cell.atoms());
@@ -310,7 +310,7 @@ TEST_F(FileReaderTests, ReadCastepMdCorrectly) {
   EXPECT_THAT(file_1.atoms()[1].position().x(),
               correlation::testing::IsRealEq(4.0 * correlation::math::BOHR_TO_ANGSTROM));
 
-  EXPECT_THAT(file_1.getEnergy(), correlation::testing::IsRealEq(-31.8206146));
+  EXPECT_THAT(file_1.getEnergy(), correlation::testing::IsRealEq(static_cast<real_t>(-31.8206146)));
 
   // Check Frame 2
   const auto &file_2 = frames[1];

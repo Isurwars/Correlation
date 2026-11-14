@@ -20,8 +20,8 @@ class SmoothingTests : public ::testing::Test {};
 
 TEST_F(SmoothingTests, GenerateKernelNormalizesAndCalculatesCorrectly) {
   size_t const size = 11;
-  real_t const bin_width = 0.1;
-  real_t const sigma = 0.3;
+  real_t const bin_width = static_cast<real_t>(0.1);
+  real_t const sigma = static_cast<real_t>(0.3);
   const auto tol = static_cast<real_t>(1e-5);
 
   // Gaussian
@@ -101,7 +101,7 @@ TEST_F(SmoothingTests, KernelSmoothingBoundaryInputsAndErrors) {
   // Empty data
   std::vector<real_t> const empty_y;
   const auto empty_res = kernelSmoothing(empty_y, {
-                                                      .bin_width = 0.1,
+                                                      .bin_width = static_cast<real_t>(0.1),
                                                       .sigma = 0.5,
                                                       .type = KernelType::Gaussian,
                                                   });
@@ -118,7 +118,7 @@ TEST_F(SmoothingTests, KernelSmoothingBoundaryInputsAndErrors) {
                std::invalid_argument);
   EXPECT_THROW(kernelSmoothing(y_values,
                                {
-                                   .bin_width = -0.1,
+                                   .bin_width = static_cast<real_t>(-0.1),
                                    .sigma = 0.5,
                                    .type = KernelType::Gaussian,
                                }),
@@ -127,14 +127,14 @@ TEST_F(SmoothingTests, KernelSmoothingBoundaryInputsAndErrors) {
   // Invalid sigma
   EXPECT_THROW(kernelSmoothing(y_values,
                                {
-                                   .bin_width = 0.1,
+                                   .bin_width = static_cast<real_t>(0.1),
                                    .sigma = 0.0,
                                    .type = KernelType::Gaussian,
                                }),
                std::invalid_argument);
   EXPECT_THROW(kernelSmoothing(y_values,
                                {
-                                   .bin_width = 0.1,
+                                   .bin_width = static_cast<real_t>(0.1),
                                    .sigma = -0.5,
                                    .type = KernelType::Gaussian,
                                }),
@@ -144,8 +144,8 @@ TEST_F(SmoothingTests, KernelSmoothingBoundaryInputsAndErrors) {
 TEST_F(SmoothingTests, KernelSmoothingComputesConvolutions) {
   // Simple step signal
   std::vector<real_t> const y_values = {0.0, 0.0, 0.0, 10.0, 10.0, 10.0};
-  real_t const bin_width = 0.2;
-  real_t const sigma = 0.4;
+  real_t const bin_width = static_cast<real_t>(0.2);
+  real_t const sigma = static_cast<real_t>(0.4);
 
   const auto smoothed = kernelSmoothing(y_values, {
                                                       .bin_width = bin_width,
@@ -162,7 +162,12 @@ TEST_F(SmoothingTests, KernelSmoothingComputesConvolutions) {
 }
 
 TEST_F(SmoothingTests, CompatibilityOverloadDerivesBinWidth) {
-  std::vector<real_t> const r_values = {0.0, 0.2, 0.4, 0.6, 0.8, 1.0};
+  std::vector<real_t> const r_values = {0.0,
+                                        static_cast<real_t>(0.2),
+                                        static_cast<real_t>(0.4),
+                                        static_cast<real_t>(0.6),
+                                        static_cast<real_t>(0.8),
+                                        1.0};
   std::vector<real_t> const y_values = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0};
   real_t const sigma = 0.5;
 
@@ -172,7 +177,7 @@ TEST_F(SmoothingTests, CompatibilityOverloadDerivesBinWidth) {
                                               .type = KernelType::Gaussian,
                                           });
   const auto smoothed_dx = kernelSmoothing(y_values, {
-                                                         .bin_width = 0.2,
+                                                         .bin_width = static_cast<real_t>(0.2),
                                                          .sigma = sigma,
                                                          .type = KernelType::Gaussian,
                                                      });
@@ -183,7 +188,7 @@ TEST_F(SmoothingTests, CompatibilityOverloadDerivesBinWidth) {
   }
 
   // Size mismatch returns empty
-  std::vector<real_t> const r_bad = {0.0, 0.2};
+  std::vector<real_t> const r_bad = {0.0, static_cast<real_t>(0.2)};
   EXPECT_TRUE(kernelSmoothing(r_bad, y_values,
                               {
                                   .sigma = sigma,

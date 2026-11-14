@@ -71,15 +71,15 @@ TEST_F(GapReaderTests, ReadSingleFrameGap) {
   const auto &atoms = cell.atoms();
   EXPECT_EQ(atoms[0].element().symbol, "C");
   EXPECT_THAT(atoms[0].position().x(), correlation::testing::IsRealEq(0.0));
-  EXPECT_THAT(atoms[0].velocity().x(), correlation::testing::IsRealEq(0.1));
-  EXPECT_THAT(atoms[0].velocity().y(), correlation::testing::IsRealEq(-0.2));
-  EXPECT_THAT(atoms[0].velocity().z(), correlation::testing::IsRealEq(0.3));
+  EXPECT_THAT(atoms[0].velocity().x(), correlation::testing::IsRealEq(static_cast<real_t>(0.1)));
+  EXPECT_THAT(atoms[0].velocity().y(), correlation::testing::IsRealEq(static_cast<real_t>(-0.2)));
+  EXPECT_THAT(atoms[0].velocity().z(), correlation::testing::IsRealEq(static_cast<real_t>(0.3)));
 
   EXPECT_EQ(atoms[1].element().symbol, "C");
   EXPECT_THAT(atoms[1].position().x(), correlation::testing::IsRealEq(1.5));
-  EXPECT_THAT(atoms[1].velocity().x(), correlation::testing::IsRealEq(-0.1));
-  EXPECT_THAT(atoms[1].velocity().y(), correlation::testing::IsRealEq(0.2));
-  EXPECT_THAT(atoms[1].velocity().z(), correlation::testing::IsRealEq(-0.3));
+  EXPECT_THAT(atoms[1].velocity().x(), correlation::testing::IsRealEq(static_cast<real_t>(-0.1)));
+  EXPECT_THAT(atoms[1].velocity().y(), correlation::testing::IsRealEq(static_cast<real_t>(0.2)));
+  EXPECT_THAT(atoms[1].velocity().z(), correlation::testing::IsRealEq(static_cast<real_t>(-0.3)));
 }
 
 TEST_F(GapReaderTests, ReadMultiFrameTrajectory) {
@@ -107,17 +107,22 @@ TEST_F(GapReaderTests, ReadMultiFrameTrajectory) {
   const auto frame_0 = traj.getFrame(0);
   EXPECT_THAT(frame_0.getEnergy(), correlation::testing::IsRealEq(-10.0));
   EXPECT_THAT(frame_0.latticeParameters()[0], correlation::testing::IsRealEq(5.0));
-  EXPECT_THAT(frame_0.atoms()[0].velocity().x(), correlation::testing::IsRealEq(0.01));
+  EXPECT_THAT(frame_0.atoms()[0].velocity().x(),
+              correlation::testing::IsRealEq(static_cast<real_t>(0.01)));
 
   const auto frame_1 = traj.getFrame(1);
   EXPECT_THAT(frame_1.getEnergy(), correlation::testing::IsRealEq(-10.5));
-  EXPECT_THAT(frame_1.latticeParameters()[0], correlation::testing::IsRealEq(5.1));
-  EXPECT_THAT(frame_1.atoms()[0].velocity().x(), correlation::testing::IsRealEq(0.02));
+  EXPECT_THAT(frame_1.latticeParameters()[0],
+              correlation::testing::IsRealEq(static_cast<real_t>(5.1)));
+  EXPECT_THAT(frame_1.atoms()[0].velocity().x(),
+              correlation::testing::IsRealEq(static_cast<real_t>(0.02)));
 
   const auto frame_2 = traj.getFrame(2);
   EXPECT_THAT(frame_2.getEnergy(), correlation::testing::IsRealEq(-11.0));
-  EXPECT_THAT(frame_2.latticeParameters()[0], correlation::testing::IsRealEq(5.2));
-  EXPECT_THAT(frame_2.atoms()[0].velocity().x(), correlation::testing::IsRealEq(0.03));
+  EXPECT_THAT(frame_2.latticeParameters()[0],
+              correlation::testing::IsRealEq(static_cast<real_t>(5.2)));
+  EXPECT_THAT(frame_2.atoms()[0].velocity().x(),
+              correlation::testing::IsRealEq(static_cast<real_t>(0.03)));
 }
 
 TEST_F(GapReaderTests, ReadStructureReturnsLastFrame) {

@@ -44,7 +44,7 @@ TEST(G6CalculatorTests, FitsExponentialDecayAccurately) {
 TEST(G6CalculatorTests, DetectsCrystallinePlateauForConstantG6) {
   const size_t num_bins = 8;
   std::vector<real_t> r_bins(num_bins);
-  std::vector<real_t> g6_values(num_bins, 0.85);
+  std::vector<real_t> g6_values(num_bins, static_cast<real_t>(0.85));
 
   for (size_t pt_idx = 0; pt_idx < num_bins; ++pt_idx) {
     r_bins[pt_idx] = static_cast<real_t>(pt_idx + 1) * static_cast<real_t>(1.5);
@@ -73,28 +73,32 @@ TEST(G6CalculatorTests, ThrowsOnInvalidInputs) {
   cell.addAtom("Cu", {2.0, 0.0, 0.0});
 
   // Null neighbors
-  EXPECT_THROW((void)G6Calculator::calculate(cell, nullptr, 5.0, 0.1), std::logic_error);
+  EXPECT_THROW((void)G6Calculator::calculate(cell, nullptr, 5.0, static_cast<real_t>(0.1)),
+               std::logic_error);
 
   const StructureAnalyzer analyzer(cell, 3.0, {{{.min_sq = 0.0, .max_sq = 9.0}}}, true);
 
   // Invalid r_max
-  EXPECT_THROW((void)G6Calculator::calculate(cell, &analyzer, 0.0, 0.1), std::invalid_argument);
-  EXPECT_THROW((void)G6Calculator::calculate(cell, &analyzer, -1.0, 0.1), std::invalid_argument);
+  EXPECT_THROW((void)G6Calculator::calculate(cell, &analyzer, 0.0, static_cast<real_t>(0.1)),
+               std::invalid_argument);
+  EXPECT_THROW((void)G6Calculator::calculate(cell, &analyzer, -1.0, static_cast<real_t>(0.1)),
+               std::invalid_argument);
 
   // Invalid r_bin_width
   EXPECT_THROW((void)G6Calculator::calculate(cell, &analyzer, 5.0, 0.0), std::invalid_argument);
-  EXPECT_THROW((void)G6Calculator::calculate(cell, &analyzer, 5.0, -0.1), std::invalid_argument);
+  EXPECT_THROW((void)G6Calculator::calculate(cell, &analyzer, 5.0, static_cast<real_t>(-0.1)),
+               std::invalid_argument);
 }
 
 TEST(G6CalculatorTests, EvaluatesFCCLatticeCorrelation) {
   // Build a 2x2x2 FCC Copper supercell (32 atoms)
-  const Cell cell = crystals::createFCCCell(3.615, "Cu", 2, 2, 2);
+  const Cell cell = crystals::createFCCCell(static_cast<real_t>(3.615), "Cu", 2, 2, 2);
   ASSERT_EQ(cell.atomCount(), 32);
 
   // Neighbor cutoff capturing first coordination shell (~2.556 A)
   const StructureAnalyzer analyzer(cell, 3.0, {{{.min_sq = 0.0, .max_sq = 9.0}}}, true);
 
-  const auto hist = G6Calculator::calculate(cell, &analyzer, 5.0, 0.1);
+  const auto hist = G6Calculator::calculate(cell, &analyzer, 5.0, static_cast<real_t>(0.1));
 
   EXPECT_EQ(hist.title, "g₆(r) — Bond-Orientational Correlation Function");
   EXPECT_EQ(hist.x_label, "r");
@@ -117,12 +121,12 @@ TEST(G6CalculatorTests, EvaluatesFCCLatticeCorrelation) {
 }
 
 TEST(G6CalculatorTests, CalculateFramePopulatesDistributionFunctions) {
-  const Cell cell = crystals::createFCCCell(3.615, "Cu", 2, 2, 2);
+  const Cell cell = crystals::createFCCCell(static_cast<real_t>(3.615), "Cu", 2, 2, 2);
   DistributionFunctions dists(cell, 3.0, {{{.min_sq = 0.0, .max_sq = 9.0}}});
 
   AnalysisSettings settings;
   settings.r_max = 5.0;
-  settings.r_bin_width = 0.1;
+  settings.r_bin_width = static_cast<real_t>(0.1);
 
   const G6Calculator calc;
   calc.calculateFrame(dists, settings);

@@ -74,9 +74,9 @@ TEST_F(GromacsReaderTests, ReadMultiFrameTrajectory) {
   const auto frame2 = traj.getFrame(1);
   EXPECT_EQ(frame2.atomCount(), 3);
   const auto pos2 = frame2.atoms()[0].position();
-  EXPECT_THAT(pos2.x(), correlation::testing::IsRealEq(1.1));
-  EXPECT_THAT(pos2.y(), correlation::testing::IsRealEq(2.1));
-  EXPECT_THAT(pos2.z(), correlation::testing::IsRealEq(3.1));
+  EXPECT_THAT(pos2.x(), correlation::testing::IsRealEq(static_cast<real_t>(1.1)));
+  EXPECT_THAT(pos2.y(), correlation::testing::IsRealEq(static_cast<real_t>(2.1)));
+  EXPECT_THAT(pos2.z(), correlation::testing::IsRealEq(static_cast<real_t>(3.1)));
 
   const auto lat2 = frame2.latticeParameters();
   EXPECT_THAT(lat2[0], correlation::testing::IsRealEq(11.0));
@@ -89,5 +89,5 @@ TEST_F(GromacsReaderTests, ReadStructureReturnsLastFrame) {
   EXPECT_EQ(cell.atomCount(), 3);
   const auto pos = cell.atoms()[0].position();
   // Should be Frame 2
-  EXPECT_THAT(pos.x(), correlation::testing::IsRealEq(1.1));
+  EXPECT_THAT(pos.x(), correlation::testing::IsRealEq(static_cast<real_t>(1.1)));
 }

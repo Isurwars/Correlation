@@ -40,7 +40,7 @@ TEST_F(NeighborGraphTests, ParameterConstructorInitializesNodeCount) {
 TEST_F(NeighborGraphTests, AddDirectedEdgeAndGetNeighbors) {
   NeighborGraph graph(5);
   const Vector3<real_t> r_ij{1.0, 2.0, 3.0};
-  graph.addDirectedEdge(0, 1, 3.74, r_ij);
+  graph.addDirectedEdge(0, 1, static_cast<real_t>(3.74), r_ij);
 
   EXPECT_TRUE(graph.areConnected(AtomIndex{0}, AtomIndex{1}));
   EXPECT_FALSE(graph.areConnected(AtomIndex{1}, AtomIndex{0}));
@@ -48,7 +48,7 @@ TEST_F(NeighborGraphTests, AddDirectedEdgeAndGetNeighbors) {
   const auto &neighbors = graph.getNeighbors(0);
   ASSERT_EQ(neighbors.size(), 1);
   EXPECT_EQ(neighbors[0].index, 1);
-  EXPECT_THAT(neighbors[0].distance, ::correlation::testing::IsRealEq(3.74));
+  EXPECT_THAT(neighbors[0].distance, ::correlation::testing::IsRealEq(static_cast<real_t>(3.74)));
   EXPECT_THAT(neighbors[0].r_ij.x(), ::correlation::testing::IsRealEq(r_ij.x()));
   EXPECT_THAT(neighbors[0].r_ij.y(), ::correlation::testing::IsRealEq(r_ij.y()));
   EXPECT_THAT(neighbors[0].r_ij.z(), ::correlation::testing::IsRealEq(r_ij.z()));
@@ -169,7 +169,7 @@ TEST_F(NeighborGraphTests, LargeGraphPerformance) {
   // Connect every pair (i,j) where i < j as a directed edge i -> j
   for (size_t i = 0; i < num_nodes; ++i) {
     for (size_t j = i + 1; j < num_nodes && j < i + 5; ++j) { // Limit to 5 neighbors each
-      graph.addDirectedEdge(i, j, 1.0, r_ij);
+      graph.addDirectedEdge(static_cast<AtomID>(i), static_cast<AtomID>(j), 1.0, r_ij);
     }
   }
 

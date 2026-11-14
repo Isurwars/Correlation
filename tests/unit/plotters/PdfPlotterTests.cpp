@@ -64,8 +64,10 @@ TEST_F(PdfPlotterTests, RendersValidHistogramAsPdfCorrectly) {
   hist.y_unit = "A^-1";
 
   hist.bins = {1.0, 2.0, 3.0, 4.0, 5.0};
-  hist.partials["Total"] = {0.1, 0.5, 1.2, 0.8, 0.2};
-  hist.partials["Si-O"] = {0.0, 0.3, 0.9, 0.4, 0.1};
+  hist.partials["Total"] = {static_cast<real_t>(0.1), 0.5, static_cast<real_t>(1.2),
+                            static_cast<real_t>(0.8), static_cast<real_t>(0.2)};
+  hist.partials["Si-O"] = {0.0, static_cast<real_t>(0.3), static_cast<real_t>(0.9),
+                           static_cast<real_t>(0.4), static_cast<real_t>(0.1)};
 
   PlotConfig config;
   config.theme = PlotConfig::Theme::Light;
@@ -87,7 +89,8 @@ TEST_F(PdfPlotterTests, RendersComparisonPdfCorrectly) {
   Histogram hist2;
   hist2.title = "Comparison";
   hist2.bins = {1.0, 2.0, 3.0};
-  hist2.partials["Total"] = {0.6, 1.1, 1.6};
+  hist2.partials["Total"] = {static_cast<real_t>(0.6), static_cast<real_t>(1.1),
+                             static_cast<real_t>(1.6)};
 
   const std::vector<LabeledHistogram> datasets = {
       {.label = "Run A", .hist = &hist1},

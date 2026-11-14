@@ -2460,83 +2460,160 @@ constexpr auto GLYPH_STROKES_HEX_03C9_76 = std::to_array<size_t>({163});
 } // namespace
 
 void Roboto::registerExtended() {
-  add(0x00B0, 0.0, 0.3735, GLYPH_PTS_HEX_00B0_0, GLYPH_STROKES_HEX_00B0_0);
-  add(0x00B1, 0.0, 0.5342, GLYPH_PTS_HEX_00B1_1, GLYPH_STROKES_HEX_00B1_1);
-  add(0x00C5, 0.0, 0.6523, GLYPH_PTS_HEX_00C5_2, GLYPH_STROKES_HEX_00C5_2);
-  add(0x00D7, 0.0, 0.5332, GLYPH_PTS_HEX_00D7_3, GLYPH_STROKES_HEX_00D7_3);
-  add(0x0394, 0.0, 0.7051, GLYPH_PTS_HEX_0394_4, GLYPH_STROKES_HEX_0394_4);
-  add(0x0398, 0.0, 0.6802, GLYPH_PTS_HEX_0398_5, GLYPH_STROKES_HEX_0398_5);
-  add(0x03A6, 0.0, 0.7163, GLYPH_PTS_HEX_03A6_6, GLYPH_STROKES_HEX_03A6_6);
-  add(0x03A9, 0.0, 0.6650, GLYPH_PTS_HEX_03A9_7, GLYPH_STROKES_HEX_03A9_7);
-  add(0x03B8, 0.0, 0.5693, GLYPH_PTS_HEX_03B8_8, GLYPH_STROKES_HEX_03B8_8);
-  add(0x03BC, 0.0, 0.5664, GLYPH_PTS_HEX_03BC_9, GLYPH_STROKES_HEX_03BC_9);
-  add(0x03C0, 0.0, 0.5957, GLYPH_PTS_HEX_03C0_10, GLYPH_STROKES_HEX_03C0_10);
-  add(0x03C6, 0.0, 0.7046, GLYPH_PTS_HEX_03C6_11, GLYPH_STROKES_HEX_03C6_11);
-  add(0x00B2, 0.0, 0.3667, GLYPH_PTS_HEX_00B2_12, GLYPH_STROKES_HEX_00B2_12);
-  add(0x00B3, 0.0, 0.3667, GLYPH_PTS_HEX_00B3_13, GLYPH_STROKES_HEX_00B3_13);
-  add(0x00B9, 0.0, 0.3667, GLYPH_PTS_HEX_00B9_14, GLYPH_STROKES_HEX_00B9_14);
-  add(0x2070, 0.0, 0.3086, GLYPH_PTS_HEX_2070_15, GLYPH_STROKES_HEX_2070_15);
-  add(0x2074, 0.0, 0.3667, GLYPH_PTS_HEX_2074_16, GLYPH_STROKES_HEX_2074_16);
-  add(0x2075, 0.0, 0.3086, GLYPH_PTS_HEX_2075_17, GLYPH_STROKES_HEX_2075_17);
-  add(0x2076, 0.0, 0.3086, GLYPH_PTS_HEX_2076_18, GLYPH_STROKES_HEX_2076_18);
-  add(0x2077, 0.0, 0.3086, GLYPH_PTS_HEX_2077_19, GLYPH_STROKES_HEX_2077_19);
-  add(0x2078, 0.0, 0.3086, GLYPH_PTS_HEX_2078_20, GLYPH_STROKES_HEX_2078_20);
-  add(0x2079, 0.0, 0.3086, GLYPH_PTS_HEX_2079_21, GLYPH_STROKES_HEX_2079_21);
-  add(0x207A, 0.0, 0.3115, GLYPH_PTS_HEX_207A_22, GLYPH_STROKES_HEX_207A_22);
-  add(0x207B, 0.0, 0.1514, GLYPH_PTS_HEX_207B_23, GLYPH_STROKES_HEX_207B_23);
-  add(0x207C, 0.0, 0.3018, GLYPH_PTS_HEX_207C_24, GLYPH_STROKES_HEX_207C_24);
-  add(0x207D, 0.0, 0.1880, GLYPH_PTS_HEX_207D_25, GLYPH_STROKES_HEX_207D_25);
-  add(0x207E, 0.0, 0.1909, GLYPH_PTS_HEX_207E_26, GLYPH_STROKES_HEX_207E_26);
-  add(0x207F, 0.0, 0.3032, GLYPH_PTS_HEX_207F_27, GLYPH_STROKES_HEX_207F_27);
-  add(0x0391, 0.0, 0.6390, GLYPH_PTS_HEX_0391_28, GLYPH_STROKES_HEX_0391_28);
-  add(0x0392, 0.0, 0.6500, GLYPH_PTS_HEX_0392_29, GLYPH_STROKES_HEX_0392_29);
-  add(0x0393, 0.0, 0.4990, GLYPH_PTS_HEX_0393_30, GLYPH_STROKES_HEX_0393_30);
-  add(0x0394, 0.0, 0.6390, GLYPH_PTS_HEX_0394_31, GLYPH_STROKES_HEX_0394_31);
-  add(0x0395, 0.0, 0.5560, GLYPH_PTS_HEX_0395_32, GLYPH_STROKES_HEX_0395_32);
-  add(0x0396, 0.0, 0.5720, GLYPH_PTS_HEX_0396_33, GLYPH_STROKES_HEX_0396_33);
-  add(0x0397, 0.0, 0.7410, GLYPH_PTS_HEX_0397_34, GLYPH_STROKES_HEX_0397_34);
-  add(0x0398, 0.0, 0.7810, GLYPH_PTS_HEX_0398_35, GLYPH_STROKES_HEX_0398_35);
-  add(0x0399, 0.0, 0.3390, GLYPH_PTS_HEX_0399_36, GLYPH_STROKES_HEX_0399_36);
-  add(0x039A, 0.0, 0.6190, GLYPH_PTS_HEX_039A_37, GLYPH_STROKES_HEX_039A_37);
-  add(0x039B, 0.0, 0.6090, GLYPH_PTS_HEX_039B_38, GLYPH_STROKES_HEX_039B_38);
-  add(0x039C, 0.0, 0.9070, GLYPH_PTS_HEX_039C_39, GLYPH_STROKES_HEX_039C_39);
-  add(0x039D, 0.0, 0.7600, GLYPH_PTS_HEX_039D_40, GLYPH_STROKES_HEX_039D_40);
-  add(0x039E, 0.0, 0.6240, GLYPH_PTS_HEX_039E_41, GLYPH_STROKES_HEX_039E_41);
-  add(0x039F, 0.0, 0.7810, GLYPH_PTS_HEX_039F_42, GLYPH_STROKES_HEX_039F_42);
-  add(0x03A0, 0.0, 0.7310, GLYPH_PTS_HEX_03A0_43, GLYPH_STROKES_HEX_03A0_43);
-  add(0x03A1, 0.0, 0.6050, GLYPH_PTS_HEX_03A1_44, GLYPH_STROKES_HEX_03A1_44);
-  add(0x03A3, 0.0, 0.5720, GLYPH_PTS_HEX_03A3_45, GLYPH_STROKES_HEX_03A3_45);
-  add(0x03A4, 0.0, 0.5560, GLYPH_PTS_HEX_03A4_46, GLYPH_STROKES_HEX_03A4_46);
-  add(0x03A5, 0.0, 0.5660, GLYPH_PTS_HEX_03A5_47, GLYPH_STROKES_HEX_03A5_47);
-  add(0x03A6, 0.0, 0.8430, GLYPH_PTS_HEX_03A6_48, GLYPH_STROKES_HEX_03A6_48);
-  add(0x03A7, 0.0, 0.5860, GLYPH_PTS_HEX_03A7_49, GLYPH_STROKES_HEX_03A7_49);
-  add(0x03A8, 0.0, 0.8210, GLYPH_PTS_HEX_03A8_50, GLYPH_STROKES_HEX_03A8_50);
-  add(0x03A9, 0.0, 0.7170, GLYPH_PTS_HEX_03A9_51, GLYPH_STROKES_HEX_03A9_51);
-  add(0x03B1, 0.0, 0.6230, GLYPH_PTS_HEX_03B1_52, GLYPH_STROKES_HEX_03B1_52);
-  add(0x03B2, 0.0, 0.6130, GLYPH_PTS_HEX_03B2_53, GLYPH_STROKES_HEX_03B2_53);
-  add(0x03B3, 0.0, 0.5160, GLYPH_PTS_HEX_03B3_54, GLYPH_STROKES_HEX_03B3_54);
-  add(0x03B4, 0.0, 0.5880, GLYPH_PTS_HEX_03B4_55, GLYPH_STROKES_HEX_03B4_55);
-  add(0x03B5, 0.0, 0.4700, GLYPH_PTS_HEX_03B5_56, GLYPH_STROKES_HEX_03B5_56);
-  add(0x03B6, 0.0, 0.4600, GLYPH_PTS_HEX_03B6_57, GLYPH_STROKES_HEX_03B6_57);
-  add(0x03B7, 0.0, 0.6080, GLYPH_PTS_HEX_03B7_58, GLYPH_STROKES_HEX_03B7_58);
-  add(0x03B8, 0.0, 0.5940, GLYPH_PTS_HEX_03B8_59, GLYPH_STROKES_HEX_03B8_59);
-  add(0x03B9, 0.0, 0.3320, GLYPH_PTS_HEX_03B9_60, GLYPH_STROKES_HEX_03B9_60);
-  add(0x03BA, 0.0, 0.5340, GLYPH_PTS_HEX_03BA_61, GLYPH_STROKES_HEX_03BA_61);
-  add(0x03BB, 0.0, 0.5190, GLYPH_PTS_HEX_03BB_62, GLYPH_STROKES_HEX_03BB_62);
-  add(0x03BC, 0.0, 0.6260, GLYPH_PTS_HEX_03BC_63, GLYPH_STROKES_HEX_03BC_63);
-  add(0x03BD, 0.0, 0.5160, GLYPH_PTS_HEX_03BD_64, GLYPH_STROKES_HEX_03BD_64);
-  add(0x03BE, 0.0, 0.4900, GLYPH_PTS_HEX_03BE_65, GLYPH_STROKES_HEX_03BE_65);
-  add(0x03BF, 0.0, 0.6050, GLYPH_PTS_HEX_03BF_66, GLYPH_STROKES_HEX_03BF_66);
-  add(0x03C0, 0.0, 0.6530, GLYPH_PTS_HEX_03C0_67, GLYPH_STROKES_HEX_03C0_67);
-  add(0x03C1, 0.0, 0.6000, GLYPH_PTS_HEX_03C1_68, GLYPH_STROKES_HEX_03C1_68);
-  add(0x03C2, 0.0, 0.4870, GLYPH_PTS_HEX_03C2_69, GLYPH_STROKES_HEX_03C2_69);
-  add(0x03C3, 0.0, 0.6140, GLYPH_PTS_HEX_03C3_70, GLYPH_STROKES_HEX_03C3_70);
-  add(0x03C4, 0.0, 0.4900, GLYPH_PTS_HEX_03C4_71, GLYPH_STROKES_HEX_03C4_71);
-  add(0x03C5, 0.0, 0.5980, GLYPH_PTS_HEX_03C5_72, GLYPH_STROKES_HEX_03C5_72);
-  add(0x03C6, 0.0, 0.7250, GLYPH_PTS_HEX_03C6_73, GLYPH_STROKES_HEX_03C6_73);
-  add(0x03C7, 0.0, 0.5940, GLYPH_PTS_HEX_03C7_74, GLYPH_STROKES_HEX_03C7_74);
-  add(0x03C8, 0.0, 0.7490, GLYPH_PTS_HEX_03C8_75, GLYPH_STROKES_HEX_03C8_75);
-  add(0x03C9, 0.0, 0.7990, GLYPH_PTS_HEX_03C9_76, GLYPH_STROKES_HEX_03C9_76);
+  add(0x00B0, static_cast<real_t>(0.0), static_cast<real_t>(0.3735), GLYPH_PTS_HEX_00B0_0,
+      GLYPH_STROKES_HEX_00B0_0);
+  add(0x00B1, static_cast<real_t>(0.0), static_cast<real_t>(0.5342), GLYPH_PTS_HEX_00B1_1,
+      GLYPH_STROKES_HEX_00B1_1);
+  add(0x00C5, static_cast<real_t>(0.0), static_cast<real_t>(0.6523), GLYPH_PTS_HEX_00C5_2,
+      GLYPH_STROKES_HEX_00C5_2);
+  add(0x00D7, static_cast<real_t>(0.0), static_cast<real_t>(0.5332), GLYPH_PTS_HEX_00D7_3,
+      GLYPH_STROKES_HEX_00D7_3);
+  add(0x0394, static_cast<real_t>(0.0), static_cast<real_t>(0.7051), GLYPH_PTS_HEX_0394_4,
+      GLYPH_STROKES_HEX_0394_4);
+  add(0x0398, static_cast<real_t>(0.0), static_cast<real_t>(0.6802), GLYPH_PTS_HEX_0398_5,
+      GLYPH_STROKES_HEX_0398_5);
+  add(0x03A6, static_cast<real_t>(0.0), static_cast<real_t>(0.7163), GLYPH_PTS_HEX_03A6_6,
+      GLYPH_STROKES_HEX_03A6_6);
+  add(0x03A9, static_cast<real_t>(0.0), static_cast<real_t>(0.6650), GLYPH_PTS_HEX_03A9_7,
+      GLYPH_STROKES_HEX_03A9_7);
+  add(0x03B8, static_cast<real_t>(0.0), static_cast<real_t>(0.5693), GLYPH_PTS_HEX_03B8_8,
+      GLYPH_STROKES_HEX_03B8_8);
+  add(0x03BC, static_cast<real_t>(0.0), static_cast<real_t>(0.5664), GLYPH_PTS_HEX_03BC_9,
+      GLYPH_STROKES_HEX_03BC_9);
+  add(0x03C0, static_cast<real_t>(0.0), static_cast<real_t>(0.5957), GLYPH_PTS_HEX_03C0_10,
+      GLYPH_STROKES_HEX_03C0_10);
+  add(0x03C6, static_cast<real_t>(0.0), static_cast<real_t>(0.7046), GLYPH_PTS_HEX_03C6_11,
+      GLYPH_STROKES_HEX_03C6_11);
+  add(0x00B2, static_cast<real_t>(0.0), static_cast<real_t>(0.3667), GLYPH_PTS_HEX_00B2_12,
+      GLYPH_STROKES_HEX_00B2_12);
+  add(0x00B3, static_cast<real_t>(0.0), static_cast<real_t>(0.3667), GLYPH_PTS_HEX_00B3_13,
+      GLYPH_STROKES_HEX_00B3_13);
+  add(0x00B9, static_cast<real_t>(0.0), static_cast<real_t>(0.3667), GLYPH_PTS_HEX_00B9_14,
+      GLYPH_STROKES_HEX_00B9_14);
+  add(0x2070, static_cast<real_t>(0.0), static_cast<real_t>(0.3086), GLYPH_PTS_HEX_2070_15,
+      GLYPH_STROKES_HEX_2070_15);
+  add(0x2074, static_cast<real_t>(0.0), static_cast<real_t>(0.3667), GLYPH_PTS_HEX_2074_16,
+      GLYPH_STROKES_HEX_2074_16);
+  add(0x2075, static_cast<real_t>(0.0), static_cast<real_t>(0.3086), GLYPH_PTS_HEX_2075_17,
+      GLYPH_STROKES_HEX_2075_17);
+  add(0x2076, static_cast<real_t>(0.0), static_cast<real_t>(0.3086), GLYPH_PTS_HEX_2076_18,
+      GLYPH_STROKES_HEX_2076_18);
+  add(0x2077, static_cast<real_t>(0.0), static_cast<real_t>(0.3086), GLYPH_PTS_HEX_2077_19,
+      GLYPH_STROKES_HEX_2077_19);
+  add(0x2078, static_cast<real_t>(0.0), static_cast<real_t>(0.3086), GLYPH_PTS_HEX_2078_20,
+      GLYPH_STROKES_HEX_2078_20);
+  add(0x2079, static_cast<real_t>(0.0), static_cast<real_t>(0.3086), GLYPH_PTS_HEX_2079_21,
+      GLYPH_STROKES_HEX_2079_21);
+  add(0x207A, static_cast<real_t>(0.0), static_cast<real_t>(0.3115), GLYPH_PTS_HEX_207A_22,
+      GLYPH_STROKES_HEX_207A_22);
+  add(0x207B, static_cast<real_t>(0.0), static_cast<real_t>(0.1514), GLYPH_PTS_HEX_207B_23,
+      GLYPH_STROKES_HEX_207B_23);
+  add(0x207C, static_cast<real_t>(0.0), static_cast<real_t>(0.3018), GLYPH_PTS_HEX_207C_24,
+      GLYPH_STROKES_HEX_207C_24);
+  add(0x207D, static_cast<real_t>(0.0), static_cast<real_t>(0.1880), GLYPH_PTS_HEX_207D_25,
+      GLYPH_STROKES_HEX_207D_25);
+  add(0x207E, static_cast<real_t>(0.0), static_cast<real_t>(0.1909), GLYPH_PTS_HEX_207E_26,
+      GLYPH_STROKES_HEX_207E_26);
+  add(0x207F, static_cast<real_t>(0.0), static_cast<real_t>(0.3032), GLYPH_PTS_HEX_207F_27,
+      GLYPH_STROKES_HEX_207F_27);
+  add(0x0391, static_cast<real_t>(0.0), static_cast<real_t>(0.6390), GLYPH_PTS_HEX_0391_28,
+      GLYPH_STROKES_HEX_0391_28);
+  add(0x0392, static_cast<real_t>(0.0), static_cast<real_t>(0.6500), GLYPH_PTS_HEX_0392_29,
+      GLYPH_STROKES_HEX_0392_29);
+  add(0x0393, static_cast<real_t>(0.0), static_cast<real_t>(0.4990), GLYPH_PTS_HEX_0393_30,
+      GLYPH_STROKES_HEX_0393_30);
+  add(0x0394, static_cast<real_t>(0.0), static_cast<real_t>(0.6390), GLYPH_PTS_HEX_0394_31,
+      GLYPH_STROKES_HEX_0394_31);
+  add(0x0395, static_cast<real_t>(0.0), static_cast<real_t>(0.5560), GLYPH_PTS_HEX_0395_32,
+      GLYPH_STROKES_HEX_0395_32);
+  add(0x0396, static_cast<real_t>(0.0), static_cast<real_t>(0.5720), GLYPH_PTS_HEX_0396_33,
+      GLYPH_STROKES_HEX_0396_33);
+  add(0x0397, static_cast<real_t>(0.0), static_cast<real_t>(0.7410), GLYPH_PTS_HEX_0397_34,
+      GLYPH_STROKES_HEX_0397_34);
+  add(0x0398, static_cast<real_t>(0.0), static_cast<real_t>(0.7810), GLYPH_PTS_HEX_0398_35,
+      GLYPH_STROKES_HEX_0398_35);
+  add(0x0399, static_cast<real_t>(0.0), static_cast<real_t>(0.3390), GLYPH_PTS_HEX_0399_36,
+      GLYPH_STROKES_HEX_0399_36);
+  add(0x039A, static_cast<real_t>(0.0), static_cast<real_t>(0.6190), GLYPH_PTS_HEX_039A_37,
+      GLYPH_STROKES_HEX_039A_37);
+  add(0x039B, static_cast<real_t>(0.0), static_cast<real_t>(0.6090), GLYPH_PTS_HEX_039B_38,
+      GLYPH_STROKES_HEX_039B_38);
+  add(0x039C, static_cast<real_t>(0.0), static_cast<real_t>(0.9070), GLYPH_PTS_HEX_039C_39,
+      GLYPH_STROKES_HEX_039C_39);
+  add(0x039D, static_cast<real_t>(0.0), static_cast<real_t>(0.7600), GLYPH_PTS_HEX_039D_40,
+      GLYPH_STROKES_HEX_039D_40);
+  add(0x039E, static_cast<real_t>(0.0), static_cast<real_t>(0.6240), GLYPH_PTS_HEX_039E_41,
+      GLYPH_STROKES_HEX_039E_41);
+  add(0x039F, static_cast<real_t>(0.0), static_cast<real_t>(0.7810), GLYPH_PTS_HEX_039F_42,
+      GLYPH_STROKES_HEX_039F_42);
+  add(0x03A0, static_cast<real_t>(0.0), static_cast<real_t>(0.7310), GLYPH_PTS_HEX_03A0_43,
+      GLYPH_STROKES_HEX_03A0_43);
+  add(0x03A1, static_cast<real_t>(0.0), static_cast<real_t>(0.6050), GLYPH_PTS_HEX_03A1_44,
+      GLYPH_STROKES_HEX_03A1_44);
+  add(0x03A3, static_cast<real_t>(0.0), static_cast<real_t>(0.5720), GLYPH_PTS_HEX_03A3_45,
+      GLYPH_STROKES_HEX_03A3_45);
+  add(0x03A4, static_cast<real_t>(0.0), static_cast<real_t>(0.5560), GLYPH_PTS_HEX_03A4_46,
+      GLYPH_STROKES_HEX_03A4_46);
+  add(0x03A5, static_cast<real_t>(0.0), static_cast<real_t>(0.5660), GLYPH_PTS_HEX_03A5_47,
+      GLYPH_STROKES_HEX_03A5_47);
+  add(0x03A6, static_cast<real_t>(0.0), static_cast<real_t>(0.8430), GLYPH_PTS_HEX_03A6_48,
+      GLYPH_STROKES_HEX_03A6_48);
+  add(0x03A7, static_cast<real_t>(0.0), static_cast<real_t>(0.5860), GLYPH_PTS_HEX_03A7_49,
+      GLYPH_STROKES_HEX_03A7_49);
+  add(0x03A8, static_cast<real_t>(0.0), static_cast<real_t>(0.8210), GLYPH_PTS_HEX_03A8_50,
+      GLYPH_STROKES_HEX_03A8_50);
+  add(0x03A9, static_cast<real_t>(0.0), static_cast<real_t>(0.7170), GLYPH_PTS_HEX_03A9_51,
+      GLYPH_STROKES_HEX_03A9_51);
+  add(0x03B1, static_cast<real_t>(0.0), static_cast<real_t>(0.6230), GLYPH_PTS_HEX_03B1_52,
+      GLYPH_STROKES_HEX_03B1_52);
+  add(0x03B2, static_cast<real_t>(0.0), static_cast<real_t>(0.6130), GLYPH_PTS_HEX_03B2_53,
+      GLYPH_STROKES_HEX_03B2_53);
+  add(0x03B3, static_cast<real_t>(0.0), static_cast<real_t>(0.5160), GLYPH_PTS_HEX_03B3_54,
+      GLYPH_STROKES_HEX_03B3_54);
+  add(0x03B4, static_cast<real_t>(0.0), static_cast<real_t>(0.5880), GLYPH_PTS_HEX_03B4_55,
+      GLYPH_STROKES_HEX_03B4_55);
+  add(0x03B5, static_cast<real_t>(0.0), static_cast<real_t>(0.4700), GLYPH_PTS_HEX_03B5_56,
+      GLYPH_STROKES_HEX_03B5_56);
+  add(0x03B6, static_cast<real_t>(0.0), static_cast<real_t>(0.4600), GLYPH_PTS_HEX_03B6_57,
+      GLYPH_STROKES_HEX_03B6_57);
+  add(0x03B7, static_cast<real_t>(0.0), static_cast<real_t>(0.6080), GLYPH_PTS_HEX_03B7_58,
+      GLYPH_STROKES_HEX_03B7_58);
+  add(0x03B8, static_cast<real_t>(0.0), static_cast<real_t>(0.5940), GLYPH_PTS_HEX_03B8_59,
+      GLYPH_STROKES_HEX_03B8_59);
+  add(0x03B9, static_cast<real_t>(0.0), static_cast<real_t>(0.3320), GLYPH_PTS_HEX_03B9_60,
+      GLYPH_STROKES_HEX_03B9_60);
+  add(0x03BA, static_cast<real_t>(0.0), static_cast<real_t>(0.5340), GLYPH_PTS_HEX_03BA_61,
+      GLYPH_STROKES_HEX_03BA_61);
+  add(0x03BB, static_cast<real_t>(0.0), static_cast<real_t>(0.5190), GLYPH_PTS_HEX_03BB_62,
+      GLYPH_STROKES_HEX_03BB_62);
+  add(0x03BC, static_cast<real_t>(0.0), static_cast<real_t>(0.6260), GLYPH_PTS_HEX_03BC_63,
+      GLYPH_STROKES_HEX_03BC_63);
+  add(0x03BD, static_cast<real_t>(0.0), static_cast<real_t>(0.5160), GLYPH_PTS_HEX_03BD_64,
+      GLYPH_STROKES_HEX_03BD_64);
+  add(0x03BE, static_cast<real_t>(0.0), static_cast<real_t>(0.4900), GLYPH_PTS_HEX_03BE_65,
+      GLYPH_STROKES_HEX_03BE_65);
+  add(0x03BF, static_cast<real_t>(0.0), static_cast<real_t>(0.6050), GLYPH_PTS_HEX_03BF_66,
+      GLYPH_STROKES_HEX_03BF_66);
+  add(0x03C0, static_cast<real_t>(0.0), static_cast<real_t>(0.6530), GLYPH_PTS_HEX_03C0_67,
+      GLYPH_STROKES_HEX_03C0_67);
+  add(0x03C1, static_cast<real_t>(0.0), static_cast<real_t>(0.6000), GLYPH_PTS_HEX_03C1_68,
+      GLYPH_STROKES_HEX_03C1_68);
+  add(0x03C2, static_cast<real_t>(0.0), static_cast<real_t>(0.4870), GLYPH_PTS_HEX_03C2_69,
+      GLYPH_STROKES_HEX_03C2_69);
+  add(0x03C3, static_cast<real_t>(0.0), static_cast<real_t>(0.6140), GLYPH_PTS_HEX_03C3_70,
+      GLYPH_STROKES_HEX_03C3_70);
+  add(0x03C4, static_cast<real_t>(0.0), static_cast<real_t>(0.4900), GLYPH_PTS_HEX_03C4_71,
+      GLYPH_STROKES_HEX_03C4_71);
+  add(0x03C5, static_cast<real_t>(0.0), static_cast<real_t>(0.5980), GLYPH_PTS_HEX_03C5_72,
+      GLYPH_STROKES_HEX_03C5_72);
+  add(0x03C6, static_cast<real_t>(0.0), static_cast<real_t>(0.7250), GLYPH_PTS_HEX_03C6_73,
+      GLYPH_STROKES_HEX_03C6_73);
+  add(0x03C7, static_cast<real_t>(0.0), static_cast<real_t>(0.5940), GLYPH_PTS_HEX_03C7_74,
+      GLYPH_STROKES_HEX_03C7_74);
+  add(0x03C8, static_cast<real_t>(0.0), static_cast<real_t>(0.7490), GLYPH_PTS_HEX_03C8_75,
+      GLYPH_STROKES_HEX_03C8_75);
+  add(0x03C9, static_cast<real_t>(0.0), static_cast<real_t>(0.7990), GLYPH_PTS_HEX_03C9_76,
+      GLYPH_STROKES_HEX_03C9_76);
 }
 
 } // namespace correlation::plotters

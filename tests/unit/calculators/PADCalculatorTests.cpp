@@ -189,7 +189,7 @@ TEST_F(PADCalculatorTests_AngleReproduction, CalculatePAD) {
   updateTrajectory(water);
   DistributionFunctions dists(water, 2.0, trajectory_.getBondCutoffsSQ());
 
-  dists.calculatePAD(0.001);
+  dists.calculatePAD(static_cast<real_t>(0.001));
   const auto &hist = dists.getHistogram("PAD");
   const auto &hist_alias = dists.getHistogram("BAD");
   EXPECT_EQ(hist.bins.size(), hist_alias.bins.size());
@@ -218,7 +218,8 @@ TEST_F(PADCalculatorTests_AngleReproduction, MissingAnglesWhenCutoffIsTooSmall) 
   // Bond cutoff for Si-O is likely around 1.6 * 1.2 = 1.92 or similar.
   // Distance is 1.6.
   {
-    StructureAnalyzer const analyzer(cell_, 1.8, trajectory_.getBondCutoffsSQ());
+    StructureAnalyzer const analyzer(cell_, static_cast<real_t>(1.8),
+                                     trajectory_.getBondCutoffsSQ());
     const auto &angles = analyzer.angles();
     bool found = false;
     for (const auto &t_1 : angles) {
@@ -242,7 +243,7 @@ TEST_F(PADCalculatorTests_AngleReproduction, PBCAngleDetection) {
   cell_.addAtom("O", {0.5, 8.9, 0.5});
   updateTrajectory();
 
-  StructureAnalyzer const analyzer(cell_, 1.8, trajectory_.getBondCutoffsSQ());
+  StructureAnalyzer const analyzer(cell_, static_cast<real_t>(1.8), trajectory_.getBondCutoffsSQ());
 
   bool found = false;
   const auto &angles = analyzer.angles();
@@ -364,7 +365,7 @@ TEST_F(PADCalculatorTests, LinearGeometry180) {
   // Bond length 1.6. Cutoff needs to be > 1.6
   DistributionFunctions dists(cell_, 2.0, trajectory_.getBondCutoffsSQ());
   // Fine binning for accuracy
-  dists.calculatePAD(0.001);
+  dists.calculatePAD(static_cast<real_t>(0.001));
 
   const auto &hist = dists.getHistogram("PAD");
   // Should have O-Si-O peak at 180
@@ -389,7 +390,7 @@ TEST_F(PADCalculatorTests, RightAngle90) {
   updateTrajectory();
 
   DistributionFunctions dists(cell_, 2.0, trajectory_.getBondCutoffsSQ());
-  dists.calculatePAD(0.001);
+  dists.calculatePAD(static_cast<real_t>(0.001));
 
   const auto &hist = dists.getHistogram("PAD");
   ASSERT_EQ(hist.partials.count("O-Si-O"), 1);
@@ -449,7 +450,7 @@ TEST_F(PADCalculatorTests, TetrahedralAngle) {
 
   DistributionFunctions dists(cell_, 2.0,
                               trajectory_.getBondCutoffsSQ()); // Distance is 1.6
-  dists.calculatePAD(0.001);                                   // Hyperfine bins
+  dists.calculatePAD(static_cast<real_t>(0.001));              // Hyperfine bins
 
   const auto &hist = dists.getHistogram("PAD");
   const auto &partial = hist.partials.at("O-Si-O");
@@ -546,7 +547,7 @@ TEST_F(PADCalculatorTests, IcosahedronAnglesPAD) {
   updateTrajectory();
 
   DistributionFunctions dists(cell_, 2.5, trajectory_.getBondCutoffsSQ());
-  dists.calculatePAD(0.01);
+  dists.calculatePAD(static_cast<real_t>(0.01));
 
   const auto &hist = dists.getHistogram("PAD");
   ASSERT_EQ(hist.partials.count("Si-Si-Si"), 1);

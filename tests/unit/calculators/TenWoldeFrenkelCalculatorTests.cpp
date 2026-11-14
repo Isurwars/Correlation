@@ -60,8 +60,9 @@ TEST_F(TenWoldeFrenkelCalculatorTests, EmptyCell) {
 TEST_F(TenWoldeFrenkelCalculatorTests, PerfectFCC) {
   // FCC Cu cell, 4 atoms per unit cell. 1x1x1 supercell has coordination 12.
   const auto cell = correlation::testing::crystals::createFCCCell(1.0, "Cu", 1, 1, 1);
-  const analysis::StructureAnalyzer analyzer(cell, 0.8, {{{.min_sq = 0.36, .max_sq = 0.8 * 0.8}}},
-                                             false);
+  const analysis::StructureAnalyzer analyzer(
+      cell, static_cast<real_t>(0.8),
+      {{{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(0.8 * 0.8)}}}, false);
   ASSERT_EQ(analyzer.neighborGraph().getNeighbors(0).size(), 12UL);
 
   const auto n_conn = TenWoldeFrenkelCalculator::calculatePerAtom(cell, &analyzer);
@@ -74,8 +75,9 @@ TEST_F(TenWoldeFrenkelCalculatorTests, PerfectFCC) {
 
 TEST_F(TenWoldeFrenkelCalculatorTests, PrecomputedSteinhardtEquivalence) {
   const auto cell = correlation::testing::crystals::createFCCCell(1.0, "Cu", 2, 2, 2);
-  const analysis::StructureAnalyzer analyzer(cell, 0.8, {{{.min_sq = 0.36, .max_sq = 0.8 * 0.8}}},
-                                             false);
+  const analysis::StructureAnalyzer analyzer(
+      cell, static_cast<real_t>(0.8),
+      {{{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(0.8 * 0.8)}}}, false);
 
   // 1. Without pre-computed Steinhardt (calculates internally)
   const auto n_conn_auto = TenWoldeFrenkelCalculator::calculatePerAtom(cell, &analyzer);
@@ -97,11 +99,13 @@ TEST_F(TenWoldeFrenkelCalculatorTests, PrecomputedSteinhardtEquivalence) {
 
 TEST_F(TenWoldeFrenkelCalculatorTests, ThresholdFiltering) {
   const auto cell = correlation::testing::crystals::createFCCCell(1.0, "Cu", 1, 1, 1);
-  const analysis::StructureAnalyzer analyzer(cell, 0.8, {{{.min_sq = 0.36, .max_sq = 0.8 * 0.8}}},
-                                             false);
+  const analysis::StructureAnalyzer analyzer(
+      cell, static_cast<real_t>(0.8),
+      {{{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(0.8 * 0.8)}}}, false);
 
   // Very strict chi_cut = 0.9999 should reject bonds unless perfectly aligned
-  const TenWoldeFrenkelParams strict_params{.chi_cut = 0.9999, .nconn_min = 12};
+  const TenWoldeFrenkelParams strict_params{.chi_cut = static_cast<real_t>(0.9999),
+                                            .nconn_min = 12};
   const auto n_conn_strict =
       TenWoldeFrenkelCalculator::calculatePerAtom(cell, &analyzer, strict_params);
   ASSERT_EQ(n_conn_strict.size(), cell.atomCount());
@@ -110,7 +114,7 @@ TEST_F(TenWoldeFrenkelCalculatorTests, ThresholdFiltering) {
   }
 
   // Lenient chi_cut = 0.1 should keep all 12 bonds
-  const TenWoldeFrenkelParams lenient_params{.chi_cut = 0.1, .nconn_min = 7};
+  const TenWoldeFrenkelParams lenient_params{.chi_cut = static_cast<real_t>(0.1), .nconn_min = 7};
   const auto n_conn_lenient =
       TenWoldeFrenkelCalculator::calculatePerAtom(cell, &analyzer, lenient_params);
   ASSERT_EQ(n_conn_lenient.size(), cell.atomCount());
@@ -121,9 +125,11 @@ TEST_F(TenWoldeFrenkelCalculatorTests, ThresholdFiltering) {
 
 TEST_F(TenWoldeFrenkelCalculatorTests, CalculateFrameIntegration) {
   const auto cell = correlation::testing::crystals::createFCCCell(1.0, "Cu", 1, 1, 1);
-  analysis::DistributionFunctions dists(cell, 0.8, {{{.min_sq = 0.36, .max_sq = 0.8 * 0.8}}});
+  analysis::DistributionFunctions dists(
+      cell, static_cast<real_t>(0.8),
+      {{{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(0.8 * 0.8)}}});
   analysis::AnalysisSettings settings;
-  settings.twf_chi_cut = 0.7;
+  settings.twf_chi_cut = static_cast<real_t>(0.7);
   settings.twf_nconn_min = 7;
 
   const TenWoldeFrenkelCalculator calc;

@@ -22,7 +22,8 @@ namespace {
 
 FileType getExtensionlessVaspType(const std::filesystem::path &filepath) {
   std::string basename = filepath.filename().string();
-  std::ranges::transform(basename, basename.begin(), ::tolower);
+  std::ranges::transform(basename, basename.begin(),
+                         [](unsigned char chr) { return static_cast<char>(std::tolower(chr)); });
   if (basename == "poscar" || basename == "contcar") {
     return FileType::Vasp;
   }
@@ -34,7 +35,8 @@ FileType getExtensionlessVaspType(const std::filesystem::path &filepath) {
 
 bool isLammpsDumpBasename(const std::filesystem::path &filepath) {
   std::string basename = filepath.filename().string();
-  std::ranges::transform(basename, basename.begin(), ::tolower);
+  std::ranges::transform(basename, basename.begin(),
+                         [](unsigned char chr) { return static_cast<char>(std::tolower(chr)); });
   return basename.starts_with("dump.") || basename.contains(".dump.") ||
          basename.contains(".lammpstrj.");
 }
@@ -77,7 +79,8 @@ const std::unordered_map<std::string, FileType> &getExtensionTypeMap() {
 FileType determineFileType(const std::string &filename) {
   const std::filesystem::path filepath(filename);
   std::string ext = filepath.extension().string();
-  std::ranges::transform(ext, ext.begin(), ::tolower);
+  std::ranges::transform(ext, ext.begin(),
+                         [](unsigned char chr) { return static_cast<char>(std::tolower(chr)); });
 
   const auto &map = getExtensionTypeMap();
   const auto iter = map.find(ext);
@@ -129,7 +132,8 @@ BaseReader *findReaderForFile(const std::string &filename) {
 
   // Extensionless files: try basename (handles POSCAR, CONTCAR, XDATCAR)
   std::string basename = std::filesystem::path(filename).filename().string();
-  std::ranges::transform(basename, basename.begin(), ::tolower);
+  std::ranges::transform(basename, basename.begin(),
+                         [](unsigned char chr) { return static_cast<char>(std::tolower(chr)); });
 
   if (basename == "poscar" || basename == "contcar") {
     return ReaderFactory::instance().getReaderForExtension(".poscar");

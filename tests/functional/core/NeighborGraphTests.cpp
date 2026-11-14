@@ -36,8 +36,10 @@ auto buildSimpleCubicGraph(real_t lattice_a) -> NeighborGraph {
   const auto add_symmetric_edge = [&](size_t i_idx, size_t j_idx) {
     Vector3R const r_ij = coords[j_idx] - coords[i_idx];
     Vector3R const r_ji = coords[i_idx] - coords[j_idx];
-    graph.addDirectedEdge(i_idx, j_idx, lattice_a, r_ij);
-    graph.addDirectedEdge(j_idx, i_idx, lattice_a, r_ji);
+    graph.addDirectedEdge(static_cast<correlation::core::AtomID>(i_idx),
+                          static_cast<correlation::core::AtomID>(j_idx), lattice_a, r_ij);
+    graph.addDirectedEdge(static_cast<correlation::core::AtomID>(j_idx),
+                          static_cast<correlation::core::AtomID>(i_idx), lattice_a, r_ji);
   };
 
   // Edges along X

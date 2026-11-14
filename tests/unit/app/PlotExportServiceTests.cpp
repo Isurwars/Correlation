@@ -31,7 +31,7 @@ TEST(PlotExportServiceTests, ExportHistogramToSvgFile) {
   correlation::analysis::Histogram hist;
   hist.title = "Test Export";
   hist.bins = {1.0, 2.0, 3.0};
-  hist.partials["Total"] = {0.5, 1.5, 0.2};
+  hist.partials["Total"] = {0.5, 1.5, static_cast<real_t>(0.2)};
 
   const correlation::plotters::PlotConfig config;
 
@@ -60,7 +60,7 @@ TEST(PlotExportServiceTests, ExportComparisonToSvgFile) {
   correlation::analysis::Histogram hist2;
   hist2.title = "Run 2";
   hist2.bins = {1.0, 2.0};
-  hist2.partials["Total"] = {0.6, 1.1};
+  hist2.partials["Total"] = {static_cast<real_t>(0.6), static_cast<real_t>(1.1)};
 
   const std::vector<correlation::plotters::LabeledHistogram> datasets = {
       {.label = "Run 1", .hist = &hist1},

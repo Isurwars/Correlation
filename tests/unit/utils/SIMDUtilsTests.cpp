@@ -32,7 +32,7 @@ public:
   std::uniform_real_distribution<float> pos_dist_f{0.1F, 15.0F};
 
   std::uniform_real_distribution<real_t> dist{-10.0, 10.0};
-  std::uniform_real_distribution<real_t> pos_dist{0.1, 15.0}; // For distances
+  std::uniform_real_distribution<real_t> pos_dist{static_cast<real_t>(0.1), 15.0}; // For distances
 
 protected:
   // Helper to generate a vector of random real_t

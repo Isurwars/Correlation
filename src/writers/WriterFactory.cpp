@@ -32,7 +32,8 @@ bool WriterFactory::registerWriter(std::unique_ptr<BaseWriter> writer) {
     if (lower_ext[0] != '.') {
       lower_ext.insert(0, 1, '.');
     }
-    std::ranges::transform(lower_ext, lower_ext.begin(), ::tolower);
+    std::ranges::transform(lower_ext, lower_ext.begin(),
+                           [](unsigned char chr) { return static_cast<char>(std::tolower(chr)); });
     extension_map_[lower_ext] = writer.get();
   }
 
@@ -48,9 +49,10 @@ BaseWriter *WriterFactory::getWriterForExtension(const std::string &extension) {
   if (lower_ext[0] != '.') {
     lower_ext.insert(0, 1, '.');
   }
-  std::ranges::transform(lower_ext, lower_ext.begin(), ::tolower);
+  std::ranges::transform(lower_ext, lower_ext.begin(),
+                         [](unsigned char chr) { return static_cast<char>(std::tolower(chr)); });
 
-  auto iterator = extension_map_.find(lower_ext);
+  auto const iterator = extension_map_.find(lower_ext);
   if (iterator != extension_map_.end()) {
     return iterator->second;
   }
@@ -62,7 +64,7 @@ const std::vector<std::unique_ptr<BaseWriter>> &WriterFactory::getWriters() cons
 }
 
 BaseWriter *WriterFactory::getWriter(const std::string &name) {
-  auto iterator = name_map_.find(name);
+  auto const iterator = name_map_.find(name);
   if (iterator != name_map_.end()) {
     return iterator->second;
   }

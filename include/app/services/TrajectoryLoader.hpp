@@ -155,7 +155,7 @@ public:
    * @brief Simulation timestep of the trajectory in femtoseconds.
    */
   [[nodiscard]] real_t getTimeStep() const noexcept {
-    return trajectory_ ? trajectory_->getTimeStep() : 1.0;
+    return trajectory_ ? trajectory_->getTimeStep() : static_cast<real_t>(1.0);
   }
 
   /**

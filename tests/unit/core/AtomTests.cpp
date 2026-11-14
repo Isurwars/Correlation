@@ -146,7 +146,7 @@ TEST_F(AtomTests, DistanceBetweenIdenticalAtomsIsZero) {
 
 TEST_F(AtomTests, DistanceHandlesSubnormalCoordinates) {
   const Element element = {.symbol = "H", .id = {0}};
-  const real_t subnormal = 1e-308;
+  const real_t subnormal = static_cast<real_t>(1e-308);
   const Atom atom1(element, {0.0, 0.0, 0.0}, 0);
   const Atom atom2(element, {subnormal, subnormal, subnormal}, 1);
   const real_t dist = distance(atom1, atom2);

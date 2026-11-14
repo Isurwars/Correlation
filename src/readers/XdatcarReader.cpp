@@ -144,7 +144,9 @@ struct XdatcarParser {
       // Detect "Direct" keyword (case-insensitive check on first 6 chars)
       if (trimmed.size() >= 6) {
         std::string prefix = trimmed.substr(0, 6);
-        std::ranges::transform(prefix, prefix.begin(), ::tolower);
+        std::ranges::transform(prefix, prefix.begin(), [](unsigned char chr) {
+          return static_cast<char>(std::tolower(chr));
+        });
         if (prefix == "direct") {
           // The frame data starts AFTER the "Direct" line — the frame_offset
           // points to the "Direct" line itself so the parser knows where it is.

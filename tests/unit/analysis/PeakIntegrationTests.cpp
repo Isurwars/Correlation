@@ -57,7 +57,7 @@ void verifyDetectedPeak(const std::optional<PeakIntegralResult> &peak, real_t ex
 
 TEST_F(PeakIntegrationTests, IntegratesGaussianPeakAccurately) {
   constexpr real_t MEAN = 2.5;
-  constexpr real_t SIGMA = 0.12;
+  constexpr real_t SIGMA = static_cast<real_t>(0.12);
   constexpr real_t AMP = 5.0;
   const auto [x_bins, y_vals] = generateGaussianProfile({.mean = MEAN, .sigma = SIGMA, .amp = AMP});
 
@@ -79,9 +79,9 @@ TEST_F(PeakIntegrationTests, IntegratesGaussianPeakAccurately) {
 
 TEST_F(PeakIntegrationTests, ComputesCoordinationNumberForRadialShell) {
   // Model a single coordination shell of 8 neighbors at r = 2.48 Å in a BCC cell
-  constexpr real_t SHELL_RADIUS = 2.48;
-  constexpr real_t SIGMA = 0.08;
-  constexpr real_t RHO = 0.085; // macroscopic number density (atoms / Å³)
+  constexpr real_t SHELL_RADIUS = static_cast<real_t>(2.48);
+  constexpr real_t SIGMA = static_cast<real_t>(0.08);
+  constexpr real_t RHO = static_cast<real_t>(0.085); // macroscopic number density (atoms / Å³)
 
   // In radial shell: CN = 4πρ ∫ r² g(r) dr.
   // If g(r) = A * exp(-(r-r0)² / 2σ²), then ∫ r² g(r) dr ≈ r0² A σ sqrt(2π).

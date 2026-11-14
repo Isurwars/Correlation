@@ -33,8 +33,8 @@ TEST(GPUSQCalculatorTests, FallbackOrGPUExecution) {
   cell.addAtom("Si", {0.0, 0.0, 0.0});
   cell.addAtom("Si", {1.5, 1.5, 1.5});
 
-  correlation::analysis::DistributionFunctions dists(cell, 3.0,
-                                                     {{{.min_sq = 0.36, .max_sq = 9.0}}});
+  correlation::analysis::DistributionFunctions dists(
+      cell, 3.0, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 9.0}}});
   correlation::analysis::AnalysisSettings settings;
   settings.q_max = 5.0;
   settings.q_bin_width = 0.5;

@@ -80,19 +80,19 @@ void verifyRDFThrows(DistributionFunctions &dists) {
   expectThrows([&] {
     dists.calculateRDF({
         .r_max = -5.0,
-        .r_bin_width = 0.05,
+        .r_bin_width = static_cast<real_t>(0.05),
     });
   });
   expectThrows([&] {
     dists.calculateRDF({
         .r_max = 20.0,
-        .r_bin_width = -0.05,
+        .r_bin_width = static_cast<real_t>(-0.05),
     });
   });
   expectThrows([&] {
     dists.calculateRDF({
         .r_max = 0.0,
-        .r_bin_width = 0.05,
+        .r_bin_width = static_cast<real_t>(0.05),
     });
   });
   expectThrows([&] {
@@ -114,7 +114,7 @@ void verifyXRDThrows(DistributionFunctions &dists) {
   });
   expectThrows([&] {
     dists.calculateXRD({
-        .lambda = 1.54,
+        .lambda = static_cast<real_t>(1.54),
         .theta_min = -5.0,
         .theta_max = 90.0,
         .bin_width = 1.0,
@@ -122,7 +122,7 @@ void verifyXRDThrows(DistributionFunctions &dists) {
   });
   expectThrows([&] {
     dists.calculateXRD({
-        .lambda = 1.54,
+        .lambda = static_cast<real_t>(1.54),
         .theta_min = 5.0,
         .theta_max = -90.0,
         .bin_width = 1.0,
@@ -130,7 +130,7 @@ void verifyXRDThrows(DistributionFunctions &dists) {
   });
   expectThrows([&] {
     dists.calculateXRD({
-        .lambda = 1.54,
+        .lambda = static_cast<real_t>(1.54),
         .theta_min = 90.0,
         .theta_max = 5.0,
         .bin_width = 1.0,
@@ -138,7 +138,7 @@ void verifyXRDThrows(DistributionFunctions &dists) {
   });
   expectThrows([&] {
     dists.calculateXRD({
-        .lambda = 1.54,
+        .lambda = static_cast<real_t>(1.54),
         .theta_min = 5.0,
         .theta_max = 90.0,
         .bin_width = -1.0,
@@ -251,16 +251,18 @@ TEST_F(VACFCalculatorTests, DistributionFunctionsDynamicProperties) {
   EXPECT_DOUBLE_EQ(dists.getDeborahNumber(), 0.0);
 
   // Set values
-  dists.setDiffusionCoefficientMSD(1.23);
-  dists.setDiffusionCoefficientVACF(4.56);
-  dists.setRelaxationTime(7.89);
-  dists.setDeborahNumber(0.12);
+  dists.setDiffusionCoefficientMSD(static_cast<real_t>(1.23));
+  dists.setDiffusionCoefficientVACF(static_cast<real_t>(4.56));
+  dists.setRelaxationTime(static_cast<real_t>(7.89));
+  dists.setDeborahNumber(static_cast<real_t>(0.12));
 
   // Verify updated values
-  EXPECT_THAT(dists.getDiffusionCoefficientMSD(), correlation::testing::IsRealEq(1.23));
-  EXPECT_THAT(dists.getDiffusionCoefficientVACF(), correlation::testing::IsRealEq(4.56));
-  EXPECT_THAT(dists.getRelaxationTime(), correlation::testing::IsRealEq(7.89));
-  EXPECT_THAT(dists.getDeborahNumber(), correlation::testing::IsRealEq(0.12));
+  EXPECT_THAT(dists.getDiffusionCoefficientMSD(),
+              correlation::testing::IsRealEq(static_cast<real_t>(1.23)));
+  EXPECT_THAT(dists.getDiffusionCoefficientVACF(),
+              correlation::testing::IsRealEq(static_cast<real_t>(4.56)));
+  EXPECT_THAT(dists.getRelaxationTime(), correlation::testing::IsRealEq(static_cast<real_t>(7.89)));
+  EXPECT_THAT(dists.getDeborahNumber(), correlation::testing::IsRealEq(static_cast<real_t>(0.12)));
 }
 
 TEST_F(VACFCalculatorTests, DynamicsAnalyzerNonPhysicalInputs) {

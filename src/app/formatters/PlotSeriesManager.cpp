@@ -68,10 +68,10 @@ rankPartials(const std::map<std::string, std::vector<real_t>> &partials,
              const std::map<std::string, real_t> &weights) {
   if (partials.contains("Ensemble Mean")) {
     std::vector<RankedPartial> dual_candidates;
-    dual_candidates.push_back({.key = "Ensemble Mean", .score = 1.0});
+    dual_candidates.push_back({.key = "Ensemble Mean", .score = static_cast<real_t>(1.0)});
     for (const auto &[key, values] : partials) {
       if (key != "Ensemble Mean" && (key.starts_with("Frame ") || key == "Frame")) {
-        dual_candidates.push_back({.key = key, .score = 0.5});
+        dual_candidates.push_back({.key = key, .score = static_cast<real_t>(0.5)});
       }
     }
     return dual_candidates;

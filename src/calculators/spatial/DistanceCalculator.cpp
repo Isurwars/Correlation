@@ -168,9 +168,9 @@ struct ThreadLocalDistances {
 
     const size_t total_bins = num_elements * num_elements * num_bins;
     if (flat_histograms.size() != total_bins) {
-      flat_histograms.assign(total_bins, 0.0);
+      flat_histograms.assign(total_bins, static_cast<real_t>(0.0));
     } else {
-      std::ranges::fill(flat_histograms, 0.0);
+      std::ranges::fill(flat_histograms, static_cast<real_t>(0.0));
     }
   }
 

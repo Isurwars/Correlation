@@ -62,8 +62,9 @@ TEST(SpinChargeCorrelationTests, InvalidInputValidation) {
   std::vector<real_t> charges{1.0};
   EXPECT_THROW((void)ChargeCorrelationCalculator::calculate(cell, charges, -1.0, 0.5),
                std::invalid_argument);
-  EXPECT_THROW((void)ChargeCorrelationCalculator::calculate(cell, charges, 5.0, -0.1),
-               std::invalid_argument);
+  EXPECT_THROW(
+      (void)ChargeCorrelationCalculator::calculate(cell, charges, 5.0, static_cast<real_t>(-0.1)),
+      std::invalid_argument);
 
   std::vector<real_t> empty_charges;
   EXPECT_THROW((void)ChargeCorrelationCalculator::calculate(cell, empty_charges, 5.0, 0.5),

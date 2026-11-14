@@ -658,7 +658,9 @@ MotifFinder::buildBridgedGraph(const correlation::core::NeighborGraph &graph,
           auto const disp = cell.minimumImage(atoms[second_idx].position() - atoms[i].position());
           real_t const dist =
               std::sqrt(disp.x() * disp.x() + disp.y() * disp.y() + disp.z() * disp.z());
-          bridged_graph.addDirectedEdge(i, second_idx, dist, disp);
+          bridged_graph.addDirectedEdge(static_cast<correlation::core::AtomID>(i),
+                                        static_cast<correlation::core::AtomID>(second_idx), dist,
+                                        disp);
         }
       }
     }
@@ -669,7 +671,9 @@ MotifFinder::buildBridgedGraph(const correlation::core::NeighborGraph &graph,
       if (nbr_idx < num_nodes && atoms[nbr_idx].element().symbol == former_element &&
           !connected[nbr_idx]) {
         connected[nbr_idx] = true;
-        bridged_graph.addDirectedEdge(i, nbr_idx, nbr.distance, nbr.r_ij);
+        bridged_graph.addDirectedEdge(static_cast<correlation::core::AtomID>(i),
+                                      static_cast<correlation::core::AtomID>(nbr_idx), nbr.distance,
+                                      nbr.r_ij);
       }
     }
   }

@@ -28,10 +28,10 @@ integrateVdosFrequency(real_t theta, const std::vector<real_t> &windowed_vacf, r
   real_t integral_imag = 0.0;
 
   if (num_frames == 0) {
-    return {0.0, 0.0};
+    return {static_cast<real_t>(0.0), static_cast<real_t>(0.0)};
   }
   if (num_frames == 1) {
-    return {windowed_vacf[0] * time_step, 0.0};
+    return {windowed_vacf[0] * time_step, static_cast<real_t>(0.0)};
   }
 
   if (std::abs(theta) < 1e-6) {

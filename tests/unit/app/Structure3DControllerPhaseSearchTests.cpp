@@ -166,7 +166,8 @@ TEST_F(Structure3DControllerPhaseSearchTests, LargeCellAdaptiveHaloRadiusBoostAn
   Structure3DController controller(window(), options);
 
   // 8x8x8 FCC cell of Cu (a = 3.61 * 8 = 28.88 A, diagonal ~50.0 A > 40.0 A threshold)
-  const auto large_cell = testing::crystals::createFCCCell(3.61, "Cu", 8, 8, 8);
+  const auto large_cell =
+      testing::crystals::createFCCCell(static_cast<real_t>(3.61), "Cu", 8, 8, 8);
   controller.setCell(large_cell);
   controller.setAtomScale(0.60F);
   ASSERT_NE(controller.scene(), nullptr);
@@ -197,7 +198,7 @@ TEST_F(Structure3DControllerPhaseSearchTests, SteinhardtEvaluationAndLRUCacheOnF
   Structure3DController controller(window(), options);
 
   // Setup FCC cell
-  const auto cell = testing::crystals::createFCCCell(3.61, "Cu", 2, 2, 2);
+  const auto cell = testing::crystals::createFCCCell(static_cast<real_t>(3.61), "Cu", 2, 2, 2);
   controller.setCell(cell);
   ASSERT_NE(controller.scene(), nullptr);
   EXPECT_GT(controller.scene()->atoms().size(), 0UL);
@@ -239,7 +240,7 @@ TEST_F(Structure3DControllerPhaseSearchTests, PhaseHalosAndDimmingOnScene) {
   const ProgramOptions options;
   Structure3DController controller(window(), options);
 
-  const auto cell = testing::crystals::createFCCCell(3.61, "Cu", 1, 1, 1);
+  const auto cell = testing::crystals::createFCCCell(static_cast<real_t>(3.61), "Cu", 1, 1, 1);
   controller.setCell(cell);
   controller.setCrystalPreset(CrystalPreset::FCC);
 
@@ -270,7 +271,7 @@ TEST_F(Structure3DControllerPhaseSearchTests, TelemetryHistogramGeneration) {
   const ProgramOptions options;
   Structure3DController controller(window(), options);
 
-  const auto cell = testing::crystals::createFCCCell(3.61, "Cu", 2, 2, 2);
+  const auto cell = testing::crystals::createFCCCell(static_cast<real_t>(3.61), "Cu", 2, 2, 2);
   controller.setCell(cell);
   controller.setCrystalPreset(CrystalPreset::FCC);
   controller.setPhaseSearchEnabled(true);
@@ -365,7 +366,7 @@ TEST_F(Structure3DControllerPhaseSearchTests, PhaseHeatmap2DAndPngExport) {
   const ProgramOptions options;
   Structure3DController controller(window(), options);
 
-  const auto cell = testing::crystals::createFCCCell(3.61, "Cu", 2, 2, 2);
+  const auto cell = testing::crystals::createFCCCell(static_cast<real_t>(3.61), "Cu", 2, 2, 2);
   controller.setCell(cell);
   controller.setPhaseSearchEnabled(true);
   controller.setPhase2DMode(true);
@@ -421,7 +422,7 @@ TEST_F(Structure3DControllerPhaseSearchTests, OffThreadSetCellAndTrajectorySafet
   const ProgramOptions options;
   Structure3DController controller(window(), options);
 
-  const auto cell = testing::crystals::createFCCCell(3.61, "Cu", 1, 1, 1);
+  const auto cell = testing::crystals::createFCCCell(static_cast<real_t>(3.61), "Cu", 1, 1, 1);
 
   // Call setCell from a background thread
   {

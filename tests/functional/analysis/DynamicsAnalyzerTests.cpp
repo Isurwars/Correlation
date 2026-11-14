@@ -245,11 +245,11 @@ TEST(DynamicsAnalyzerTests, HandlesVDOSBoundaryAndEdgeCaseInputs) {
 
   // Non-positive time step
   auto [freqs_neg, vdos_re_neg, vdos_im_neg] =
-      DynamicsAnalyzer::calculateVDOS({1.0, 0.8, 0.5}, -1.0);
+      DynamicsAnalyzer::calculateVDOS({1.0, static_cast<real_t>(0.8), 0.5}, -1.0);
   EXPECT_TRUE(freqs_neg.empty());
 
   auto [freqs_zero, vdos_re_zero, vdos_im_zero] =
-      DynamicsAnalyzer::calculateVDOS({1.0, 0.8, 0.5}, 0.0);
+      DynamicsAnalyzer::calculateVDOS({1.0, static_cast<real_t>(0.8), 0.5}, 0.0);
   EXPECT_TRUE(freqs_zero.empty());
 
   // Single-frame VACF: must not crash or underflow

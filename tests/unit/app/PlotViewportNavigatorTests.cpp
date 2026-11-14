@@ -17,7 +17,9 @@ namespace {
 correlation::analysis::Histogram createSampleHistogram() {
   correlation::analysis::Histogram hist;
   hist.bins = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0};
-  hist.partials["Total"] = {0.0, 0.5, 1.5, 3.0, 2.0, 1.0, 0.5, 0.2, 0.1, 0.0, 0.0};
+  hist.partials["Total"] = {
+      0.0, 0.5, 1.5, 3.0, 2.0, 1.0, 0.5, static_cast<real_t>(0.2), static_cast<real_t>(0.1),
+      0.0, 0.0};
   return hist;
 }
 
@@ -47,7 +49,8 @@ TEST(PlotViewportNavigatorTests, ComputesScalesCorrectly) {
 TEST(PlotViewportNavigatorTests, DualViewIgnoresFrameFluctuationInYScale) {
   correlation::analysis::Histogram hist;
   hist.bins = {1.0, 2.0, 3.0, 4.0};
-  hist.partials["Ensemble Mean"] = {0.5, 1.2, 0.8, 0.2};
+  hist.partials["Ensemble Mean"] = {0.5, static_cast<real_t>(1.2), static_cast<real_t>(0.8),
+                                    static_cast<real_t>(0.2)};
   hist.partials["Frame 42"] = {5.0, 25.0, 18.0, 2.0};
 
   const correlation::plotters::PlotConfig config;

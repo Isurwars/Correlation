@@ -86,12 +86,12 @@ TEST_F(XRDCalculatorTests, CalculateXRD) {
   // Needs RDF first
   dists.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.05,
+      .r_bin_width = static_cast<real_t>(0.05),
   });
 
   // Calling calculateXRD
   dists.calculateXRD({
-      .lambda = 1.5406,
+      .lambda = static_cast<real_t>(1.5406),
       .theta_min = 5.0,
       .theta_max = 90.0,
       .bin_width = 0.5,
@@ -112,7 +112,7 @@ TEST_F(XRDCalculatorTests, CalculateXRD_ThrowsIfNoRDF) {
 
   // Calling calculateXRD before calculateRDF should throw
   EXPECT_THROW(dists.calculateXRD({
-                   .lambda = 1.5406,
+                   .lambda = static_cast<real_t>(1.5406),
                    .theta_min = 5.0,
                    .theta_max = 90.0,
                    .bin_width = 0.5,
@@ -126,19 +126,19 @@ TEST_F(XRDCalculatorTests, CalculateXRD_InvalidBinWidth) {
 
   dists.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.05,
+      .r_bin_width = static_cast<real_t>(0.05),
   });
 
   // Calling calculateXRD with invalid bin width should throw
   EXPECT_THROW(dists.calculateXRD({
-                   .lambda = 1.5406,
+                   .lambda = static_cast<real_t>(1.5406),
                    .theta_min = 5.0,
                    .theta_max = 90.0,
                    .bin_width = 0.0,
                }),
                std::invalid_argument);
   EXPECT_THROW(dists.calculateXRD({
-                   .lambda = 1.5406,
+                   .lambda = static_cast<real_t>(1.5406),
                    .theta_min = 5.0,
                    .theta_max = 90.0,
                    .bin_width = -0.5,
@@ -153,12 +153,12 @@ TEST_F(XRDCalculatorTests, CalculateXRD_IntensityIsZeroAtThetaZero) {
   // Needs RDF first
   dists.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.05,
+      .r_bin_width = static_cast<real_t>(0.05),
   });
 
   // Calling calculateXRD with range starting at 0.0
   dists.calculateXRD({
-      .lambda = 1.5406,
+      .lambda = static_cast<real_t>(1.5406),
       .theta_min = 0.0,
       .theta_max = 10.0,
       .bin_width = 0.5,
@@ -185,15 +185,15 @@ TEST_F(XRDCalculatorTests, CalculateXRDCubicCell) {
   DistributionFunctions dists(cubic_cell, 4.5, traj.getBondCutoffsSQ());
   dists.calculateRDF({
       .r_max = 4.5,
-      .r_bin_width = 0.05,
+      .r_bin_width = static_cast<real_t>(0.05),
   });
 
   // Calculate XRD for Cu K-alpha
   dists.calculateXRD({
-      .lambda = 1.5406,
+      .lambda = static_cast<real_t>(1.5406),
       .theta_min = 10.0,
       .theta_max = 90.0,
-      .bin_width = 0.1,
+      .bin_width = static_cast<real_t>(0.1),
   });
 
   EXPECT_NO_THROW((void)dists.getHistogram("XRD"));
@@ -218,7 +218,7 @@ TEST_F(XRDCalculatorTests, CalculateXRD_InvalidInputsThrow) {
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   dists.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.05,
+      .r_bin_width = static_cast<real_t>(0.05),
   });
 
   EXPECT_THROW(dists.calculateXRD({
@@ -272,21 +272,21 @@ TEST_F(XRDCalculatorTests, CalculateFromSq) {
 }
 
 TEST_F(XRDCalculatorTests, FCC_Copper_XRD) {
-  real_t const a = 3.615;
+  real_t const a = static_cast<real_t>(3.615);
   const auto cell = correlation::testing::crystals::createFCCCell(a, "Cu", 3, 3, 3);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 8.0, trajectory_.getBondCutoffsSQ());
   dists.calculateRDF({
       .r_max = 8.0,
-      .r_bin_width = 0.02,
+      .r_bin_width = static_cast<real_t>(0.02),
   });
 
   dists.calculateXRD({
-      .lambda = 1.5406,
+      .lambda = static_cast<real_t>(1.5406),
       .theta_min = 10.0,
       .theta_max = 90.0,
-      .bin_width = 0.1,
+      .bin_width = static_cast<real_t>(0.1),
   });
 
   const auto &hist = dists.getHistogram("XRD");
@@ -297,21 +297,21 @@ TEST_F(XRDCalculatorTests, FCC_Copper_XRD) {
 }
 
 TEST_F(XRDCalculatorTests, BCC_Iron_XRD) {
-  real_t const a = 2.866;
+  real_t const a = static_cast<real_t>(2.866);
   const auto cell = correlation::testing::crystals::createBCCCell(a, "Fe", 3, 3, 3);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 7.0, trajectory_.getBondCutoffsSQ());
   dists.calculateRDF({
       .r_max = 7.0,
-      .r_bin_width = 0.02,
+      .r_bin_width = static_cast<real_t>(0.02),
   });
 
   dists.calculateXRD({
-      .lambda = 1.5406,
+      .lambda = static_cast<real_t>(1.5406),
       .theta_min = 10.0,
       .theta_max = 90.0,
-      .bin_width = 0.1,
+      .bin_width = static_cast<real_t>(0.1),
   });
 
   const auto &hist = dists.getHistogram("XRD");
@@ -322,21 +322,21 @@ TEST_F(XRDCalculatorTests, BCC_Iron_XRD) {
 }
 
 TEST_F(XRDCalculatorTests, Diamond_Silicon_XRD) {
-  real_t const a = 5.431;
+  real_t const a = static_cast<real_t>(5.431);
   const auto cell = correlation::testing::crystals::createDiamondCell(a, "Si", 2, 2, 2);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 8.0, trajectory_.getBondCutoffsSQ());
   dists.calculateRDF({
       .r_max = 8.0,
-      .r_bin_width = 0.02,
+      .r_bin_width = static_cast<real_t>(0.02),
   });
 
   dists.calculateXRD({
-      .lambda = 1.5406,
+      .lambda = static_cast<real_t>(1.5406),
       .theta_min = 10.0,
       .theta_max = 90.0,
-      .bin_width = 0.1,
+      .bin_width = static_cast<real_t>(0.1),
   });
 
   const auto &hist = dists.getHistogram("XRD");
@@ -347,21 +347,21 @@ TEST_F(XRDCalculatorTests, Diamond_Silicon_XRD) {
 }
 
 TEST_F(XRDCalculatorTests, NaCl_RockSalt_XRD) {
-  real_t const a = 5.64;
+  real_t const a = static_cast<real_t>(5.64);
   const auto cell = correlation::testing::crystals::createNaClCell(a, "Na", "Cl", 2, 2, 2);
   updateTrajectory(cell);
 
   DistributionFunctions dists(cell, 8.0, trajectory_.getBondCutoffsSQ());
   dists.calculateRDF({
       .r_max = 8.0,
-      .r_bin_width = 0.02,
+      .r_bin_width = static_cast<real_t>(0.02),
   });
 
   dists.calculateXRD({
-      .lambda = 1.5406,
+      .lambda = static_cast<real_t>(1.5406),
       .theta_min = 10.0,
       .theta_max = 90.0,
-      .bin_width = 0.1,
+      .bin_width = static_cast<real_t>(0.1),
   });
 
   const auto &hist = dists.getHistogram("XRD");

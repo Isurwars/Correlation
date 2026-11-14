@@ -36,10 +36,10 @@ TEST(GPUSteinhardtCalculatorTests, FallbackOrGPUExecution) {
   cell.addAtom("Si", {1.5, 1.5, 1.5});
 
   correlation::analysis::StructureAnalyzer const analyzer(
-      cell, 3.0, {{{.min_sq = 0.36, .max_sq = 9.0}}}, false);
+      cell, 3.0, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 9.0}}}, false);
 
-  correlation::analysis::DistributionFunctions dists(cell, 3.0,
-                                                     {{{.min_sq = 0.36, .max_sq = 9.0}}});
+  correlation::analysis::DistributionFunctions dists(
+      cell, 3.0, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 9.0}}});
   const correlation::analysis::AnalysisSettings settings;
 
   const GPUSteinhardtCalculator gpu_calc;
@@ -60,9 +60,9 @@ TEST(GPUSteinhardtCalculatorTests, FloatPrecisionEvaluation) {
   cell.addAtom("Fe", {0.0, 2.0, 0.0});
 
   correlation::analysis::StructureAnalyzer const analyzer(
-      cell, 3.0, {{{.min_sq = 0.36, .max_sq = 9.0}}}, false);
-  correlation::analysis::DistributionFunctions dists(cell, 3.0,
-                                                     {{{.min_sq = 0.36, .max_sq = 9.0}}});
+      cell, 3.0, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 9.0}}}, false);
+  correlation::analysis::DistributionFunctions dists(
+      cell, 3.0, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 9.0}}});
   const correlation::analysis::AnalysisSettings settings;
 
   const GPUSteinhardtCalculator gpu_calc;
@@ -82,9 +82,9 @@ TEST(GPUSteinhardtCalculatorTests, DoublePrecisionEvaluation) {
   cell.addAtom("Al", {0.0, 0.0, 2.5});
 
   correlation::analysis::StructureAnalyzer const analyzer(
-      cell, 3.5, {{{.min_sq = 0.36, .max_sq = 12.0}}}, false);
-  correlation::analysis::DistributionFunctions dists(cell, 3.5,
-                                                     {{{.min_sq = 0.36, .max_sq = 12.0}}});
+      cell, 3.5, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 12.0}}}, false);
+  correlation::analysis::DistributionFunctions dists(
+      cell, 3.5, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 12.0}}});
   const correlation::analysis::AnalysisSettings settings;
 
   const GPUSteinhardtCalculator gpu_calc;

@@ -75,7 +75,7 @@ TEST(PlotTableFormatterTests, FormatsRowsAndNumericPrecision) {
   correlation::analysis::Histogram hist;
   hist.x_label = "Distance";
   hist.bins = {1.25, 2.50};
-  hist.partials["Total"] = {0.1234567, 10.5};
+  hist.partials["Total"] = {static_cast<real_t>(0.1234567), 10.5};
 
   const auto model = PlotTableFormatter::formatTable(&hist);
   ASSERT_NE(model.rows, nullptr);

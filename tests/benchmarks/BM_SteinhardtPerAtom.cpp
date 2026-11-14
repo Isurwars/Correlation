@@ -27,7 +27,7 @@ constexpr uint32_t FRAMEBUFFER_HEIGHT = 600;
 
 void benchSteinhardtPerAtom10k(benchmark::State &state) {
   // 14x14x14 FCC supercell = 4 * 14^3 = 10,976 atoms
-  const auto cell = testing::crystals::createFCCCell(3.61, "Cu", 14, 14, 14);
+  const auto cell = testing::crystals::createFCCCell(static_cast<real_t>(3.61), "Cu", 14, 14, 14);
   const real_t cutoff = 3.0;
   const analysis::BondCutoffMatrix cutoff_matrix = {
       {{.min_sq = 0.0, .max_sq = cutoff * cutoff}},
@@ -50,7 +50,7 @@ void benchRasterizerHaloGlow(benchmark::State &state) {
   camera.setViewport(static_cast<float>(FRAMEBUFFER_WIDTH), static_cast<float>(FRAMEBUFFER_HEIGHT));
 
   // 6x6x6 FCC supercell = 864 atoms
-  const auto cell = testing::crystals::createFCCCell(3.61, "Cu", 6, 6, 6);
+  const auto cell = testing::crystals::createFCCCell(static_cast<real_t>(3.61), "Cu", 6, 6, 6);
   const auto scene = render3d::Scene3D::fromCell(cell, 1.15, false, false);
   if (scene == nullptr) {
     state.SkipWithError("Failed to generate scene");

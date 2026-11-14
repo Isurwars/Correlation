@@ -72,7 +72,7 @@ TEST(PlotSeriesManagerTests, ToggleCurveVisibilityModifiesState) {
   correlation::analysis::Histogram hist;
   hist.partials["Total"] = {1.0, 2.0};
   hist.partials["Si-O"] = {0.5, 1.0};
-  hist.partials["O-O"] = {0.2, 0.4};
+  hist.partials["O-O"] = {static_cast<real_t>(0.2), static_cast<real_t>(0.4)};
 
   const auto items = manager.generateToggleItems(&hist, config);
   ASSERT_NE(items, nullptr);
@@ -223,9 +223,12 @@ TEST(PlotSeriesManagerTests, ToggleItemsMatchSvgOrderAndColors) {
 
   correlation::analysis::Histogram hist;
   hist.bins = {1.0, 2.0, 3.0, 4.0, 5.0};
-  hist.partials["Total"] = {0.1, 0.5, 1.2, 0.8, 0.2};
-  hist.partials["Si-O"] = {0.0, 0.3, 0.9, 0.4, 0.1};
-  hist.partials["O-O"] = {0.0, 0.2, 0.3, 0.4, 0.1};
+  hist.partials["Total"] = {static_cast<real_t>(0.1), 0.5, static_cast<real_t>(1.2),
+                            static_cast<real_t>(0.8), static_cast<real_t>(0.2)};
+  hist.partials["Si-O"] = {0.0, static_cast<real_t>(0.3), static_cast<real_t>(0.9),
+                           static_cast<real_t>(0.4), static_cast<real_t>(0.1)};
+  hist.partials["O-O"] = {0.0, static_cast<real_t>(0.2), static_cast<real_t>(0.3),
+                          static_cast<real_t>(0.4), static_cast<real_t>(0.1)};
 
   const auto items = manager.generateToggleItems(&hist, config);
   ASSERT_NE(items, nullptr);
@@ -278,7 +281,7 @@ TEST(PlotSeriesManagerTests, ColorsRemainStableAcrossVisibilityToggles) {
   hist.partials["Total"] = {1.0};
   hist.partials["Si-Si"] = {2.0};
   hist.partials["Si-O"] = {1.5};
-  hist.partials["O-O"] = {0.8};
+  hist.partials["O-O"] = {static_cast<real_t>(0.8)};
 
   [[maybe_unused]] const auto items_before = manager.generateToggleItems(&hist, config);
   const auto assigned_colors_before = manager.getAssignedCurveColors();
@@ -304,7 +307,7 @@ TEST(PlotSeriesManagerTests, FilterCurvesSubstringCaseInsensitive) {
   hist.partials["Total"] = {1.0};
   hist.partials["Fe-Fe"] = {2.0};
   hist.partials["Fe-Si"] = {1.5};
-  hist.partials["Si-Si"] = {0.8};
+  hist.partials["Si-Si"] = {static_cast<real_t>(0.8)};
 
   manager.setFilterText("fe");
   EXPECT_EQ(manager.getFilterText(), "fe");
@@ -375,7 +378,8 @@ TEST(PlotSeriesManagerTests, DualViewPreservesStableColorsAcrossFrames) {
   // Advance to Frame 2 where frame values are lower than mean
   correlation::analysis::Histogram frame2_hist;
   frame2_hist.partials["Ensemble Mean"] = {1.0, 1.5, 2.0};
-  frame2_hist.partials["Frame 2"] = {0.01, 0.02, 0.01};
+  frame2_hist.partials["Frame 2"] = {static_cast<real_t>(0.01), static_cast<real_t>(0.02),
+                                     static_cast<real_t>(0.01)};
 
   const auto items2 = manager.generateToggleItems(&frame2_hist, config);
   ASSERT_NE(items2, nullptr);
@@ -392,7 +396,8 @@ TEST(PlotSeriesManagerTests, DualViewCustomColorPersistsAcrossFrames) {
 
   correlation::analysis::Histogram frame1_hist;
   frame1_hist.partials["Ensemble Mean"] = {1.0, 1.5, 2.0};
-  frame1_hist.partials["Frame 1"] = {1.2, 1.4, 2.1};
+  frame1_hist.partials["Frame 1"] = {static_cast<real_t>(1.2), static_cast<real_t>(1.4),
+                                     static_cast<real_t>(2.1)};
 
   [[maybe_unused]] const auto items1 = manager.generateToggleItems(&frame1_hist, config);
   // Set custom color on Frame 1 (id 1)
@@ -404,7 +409,8 @@ TEST(PlotSeriesManagerTests, DualViewCustomColorPersistsAcrossFrames) {
   // Advance to Frame 2
   correlation::analysis::Histogram frame2_hist;
   frame2_hist.partials["Ensemble Mean"] = {1.0, 1.5, 2.0};
-  frame2_hist.partials["Frame 2"] = {0.9, 1.3, 1.8};
+  frame2_hist.partials["Frame 2"] = {static_cast<real_t>(0.9), static_cast<real_t>(1.3),
+                                     static_cast<real_t>(1.8)};
 
   [[maybe_unused]] const auto items2 = manager.generateToggleItems(&frame2_hist, config);
   const auto assigned2 = manager.getAssignedCurveColors();

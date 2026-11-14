@@ -93,7 +93,7 @@ TEST(AnalysisDispatcherTests, RunsAnalysisOnLoadedTrajectory) {
   correlation::app::AnalysisDispatcher dispatcher;
   correlation::app::ProgramOptions opts;
   opts.r_max = 5.0;
-  opts.r_bin_width = 0.1;
+  opts.r_bin_width = static_cast<real_t>(0.1);
   opts.active_calculators["RDF"] = true;
 
   auto run_res = dispatcher.runAnalysis(*loader.trajectoryMut(), opts);
@@ -122,7 +122,7 @@ TEST(AnalysisDispatcherTests, WriteFilesZipBundle) {
   correlation::app::AnalysisDispatcher dispatcher;
   correlation::app::ProgramOptions opts;
   opts.r_max = 5.0;
-  opts.r_bin_width = 0.1;
+  opts.r_bin_width = static_cast<real_t>(0.1);
   opts.active_calculators["RDF"] = true;
 
   ASSERT_TRUE(dispatcher.runAnalysis(*loader.trajectoryMut(), opts).has_value());
@@ -207,7 +207,7 @@ TEST(AnalysisDispatcherTests, SelectiveRecalculationFallbackWhenNoPriorRun) {
   correlation::app::AnalysisDispatcher dispatcher;
   correlation::app::ProgramOptions opts;
   opts.r_max = 5.0;
-  opts.r_bin_width = 0.1;
+  opts.r_bin_width = static_cast<real_t>(0.1);
   opts.active_calculators["RDF"] = true;
 
   EXPECT_EQ(dispatcher.getDistributionFunctions(), nullptr);
@@ -227,7 +227,7 @@ TEST(AnalysisDispatcherTests, SelectiveRecalculationPreservesInvariantHistograms
   correlation::app::AnalysisDispatcher dispatcher;
   correlation::app::ProgramOptions opts;
   opts.r_max = 5.0;
-  opts.r_bin_width = 0.05;
+  opts.r_bin_width = static_cast<real_t>(0.05);
   opts.angle_bin_width = 1.0;
   opts.active_calculators["RDF"] = true;
   opts.active_calculators["PAD"] = true;
@@ -263,7 +263,7 @@ TEST(AnalysisDispatcherTests, SelectiveRecalculationNoOpWhenNoBondDependentCalcu
   correlation::app::AnalysisDispatcher dispatcher;
   correlation::app::ProgramOptions opts;
   opts.r_max = 5.0;
-  opts.r_bin_width = 0.05;
+  opts.r_bin_width = static_cast<real_t>(0.05);
   opts.active_calculators["RDF"] = true;
 
   ASSERT_TRUE(dispatcher.runAnalysis(*loader.trajectoryMut(), opts).has_value());
@@ -289,7 +289,7 @@ TEST(AnalysisDispatcherTests, FastPreviewRDFWorksOnMultiFrameTrajectory) {
   correlation::app::AnalysisDispatcher dispatcher;
   correlation::app::ProgramOptions opts;
   opts.r_max = 4.5;
-  opts.r_bin_width = 0.1;
+  opts.r_bin_width = static_cast<real_t>(0.1);
 
   const auto res = dispatcher.runFastPreviewRDF(&traj, opts);
   ASSERT_TRUE(res.has_value()) << (res ? "" : res.error());

@@ -32,11 +32,12 @@ correlation::analysis::BondCutoffMatrix makeCutoffMatrix(real_t min_sq, real_t m
 }
 
 core::NeighborGraph buildDiamondTestGraph(int n_cells) {
-  const auto cell = testing::crystals::createDiamondCell(5.43, "Si", n_cells, n_cells, n_cells);
+  const auto cell = testing::crystals::createDiamondCell(static_cast<real_t>(5.43), "Si", n_cells,
+                                                         n_cells, n_cells);
   const real_t cutoff = 3.0;
   const real_t cutoff_sq = cutoff * cutoff;
 
-  const auto bond_cutoffs = makeCutoffMatrix(0.0, 2.8 * 2.8);
+  const auto bond_cutoffs = makeCutoffMatrix(0.0, static_cast<real_t>(2.8 * 2.8));
   core::NeighborGraph graph(cell.atomCount());
   const calculators::DistanceCalculationConfig config{
       .r_max = cutoff,
@@ -87,10 +88,10 @@ TEST(BaselineRegressionTests, SmallCellDistanceBaseline) {
 }
 
 TEST(BaselineRegressionTests, MidCellDistanceBaseline) {
-  const auto cell = testing::crystals::createFCCCell(3.61, "Cu", 4, 4, 4);
+  const auto cell = testing::crystals::createFCCCell(static_cast<real_t>(3.61), "Cu", 4, 4, 4);
   const real_t cutoff = 5.0;
   const real_t cutoff_sq = cutoff * cutoff;
-  const auto bond_cutoffs = makeCutoffMatrix(0.0, 2.9 * 2.9);
+  const auto bond_cutoffs = makeCutoffMatrix(0.0, static_cast<real_t>(2.9 * 2.9));
   const size_t num_bins = 100;
   const calculators::DistanceCalculationConfig config{
       .r_max = cutoff,
@@ -152,7 +153,7 @@ TEST(BaselineRegressionTests, DiamondMotifRingsBaseline) {
 }
 
 TEST(BaselineRegressionTests, GraphDescriptorsRingBaseline) {
-  const auto cell = testing::crystals::createDiamondCell(5.43, "Si", 2, 2, 2);
+  const auto cell = testing::crystals::createDiamondCell(static_cast<real_t>(5.43), "Si", 2, 2, 2);
   const auto graph = mlip::PeriodicGraphBuilder::buildGraph(cell, static_cast<real_t>(2.8));
   const size_t max_size = 6;
 

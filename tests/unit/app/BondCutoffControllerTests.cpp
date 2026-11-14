@@ -225,8 +225,24 @@ TEST_F(BondCutoffControllerTests, AutoDetectCutoffsUpdatesBoundsAndPeak) {
   correlation::analysis::Histogram hist;
   hist.title = "Radial Distribution Function";
   hist.bins = {1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0};
-  hist.partials["Total"] = {0.0, 0.2, 1.0, 3.5, 1.8, 0.4, 0.6, 1.2, 1.1};
-  hist.partials["Si-Si"] = {0.0, 0.2, 1.0, 3.5, 1.8, 0.4, 0.6, 1.2, 1.1};
+  hist.partials["Total"] = {0.0,
+                            static_cast<real_t>(0.2),
+                            1.0,
+                            3.5,
+                            static_cast<real_t>(1.8),
+                            static_cast<real_t>(0.4),
+                            static_cast<real_t>(0.6),
+                            static_cast<real_t>(1.2),
+                            static_cast<real_t>(1.1)};
+  hist.partials["Si-Si"] = {0.0,
+                            static_cast<real_t>(0.2),
+                            1.0,
+                            3.5,
+                            static_cast<real_t>(1.8),
+                            static_cast<real_t>(0.4),
+                            static_cast<real_t>(0.6),
+                            static_cast<real_t>(1.2),
+                            static_cast<real_t>(1.1)};
   const std::string title = hist.title;
   distribution_funcs->addHistogram(title, std::move(hist));
   dispatcher.setDistributionFunctions(std::move(distribution_funcs));

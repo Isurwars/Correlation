@@ -28,10 +28,10 @@ protected:
 
     // Find the non-zero bins
     size_t const q4_bins = 100;
-    real_t const d_q = 1.0 / q4_bins;
+    real_t const d_q = static_cast<real_t>(1.0 / q4_bins);
     size_t const w6_bins = 100;
-    real_t const w_min = -0.2;
-    real_t const w_max = 0.2;
+    real_t const w_min = static_cast<real_t>(-0.2);
+    real_t const w_max = static_cast<real_t>(0.2);
     real_t const d_w = (w_max - w_min) / w6_bins;
 
     for (size_t bin = 0; bin < q4_bins; ++bin) {
@@ -68,7 +68,7 @@ protected:
     real_t const d_w4 = (w4_max - w4_min) / w4_bins;
 
     size_t const q_bins = 100;
-    real_t const d_q = 1.0 / q_bins;
+    real_t const d_q = static_cast<real_t>(1.0 / q_bins);
 
     real_t w4_val = 0;
     real_t q4_bar_val = 0;
@@ -101,28 +101,38 @@ TEST_F(SteinhardtCalculatorTests, SimpleCubic) {
   cell.addAtom("Ar", {0.5, 0.5, 0.5});
 
   // ignore_periodic_self_interactions = false (captures the 6 periodic face neighbors)
-  StructureAnalyzer const analyzer(cell, 1.1, {{{.min_sq = 0.36, .max_sq = 1.1 * 1.1}}}, false);
+  StructureAnalyzer const analyzer(
+      cell, static_cast<real_t>(1.1),
+      {{{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(1.1 * 1.1)}}}, false);
   ASSERT_EQ(analyzer.neighborGraph().getNeighbors(0).size(), 6UL);
 
   const auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
   // Classical values: Z=6, q4=0.7638, q6=0.3536, w4_hat=+0.1593, w6_hat=+0.0132
-  checkOutputs(hists, 0.7638, 0.3536, 0.0132);
-  checkAllOutputs(hists, 0.7638, 0.3536, 0.1593, 0.0132, 0.7638, 0.3536);
+  checkOutputs(hists, static_cast<real_t>(0.7638), static_cast<real_t>(0.3536),
+               static_cast<real_t>(0.0132));
+  checkAllOutputs(hists, static_cast<real_t>(0.7638), static_cast<real_t>(0.3536),
+                  static_cast<real_t>(0.1593), static_cast<real_t>(0.0132),
+                  static_cast<real_t>(0.7638), static_cast<real_t>(0.3536));
 }
 
 TEST_F(SteinhardtCalculatorTests, BCC) {
   // BCC: Coordination Z = 14 (8 in 1st shell @ dist=sqrt(0.75)~0.866, 6 in 2nd shell @ dist=1.0)
   const auto cell = correlation::testing::crystals::createBCCCell(1.0, "Ar", 1, 1, 1);
 
-  StructureAnalyzer const analyzer(cell, 1.1, {{{.min_sq = 0.36, .max_sq = 1.1 * 1.1}}}, false);
+  StructureAnalyzer const analyzer(
+      cell, static_cast<real_t>(1.1),
+      {{{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(1.1 * 1.1)}}}, false);
   ASSERT_EQ(analyzer.neighborGraph().getNeighbors(0).size(), 14UL);
 
   const auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
   // Classical values for 14-neighbor BCC: q4=0.0364, q6=0.5107, w4_hat=+0.1593, w6_hat=+0.0131
-  checkOutputs(hists, 0.0364, 0.5107, 0.0131);
-  checkAllOutputs(hists, 0.0364, 0.5107, 0.1593, 0.0131, 0.0364, 0.5107);
+  checkOutputs(hists, static_cast<real_t>(0.0364), static_cast<real_t>(0.5107),
+               static_cast<real_t>(0.0131));
+  checkAllOutputs(hists, static_cast<real_t>(0.0364), static_cast<real_t>(0.5107),
+                  static_cast<real_t>(0.1593), static_cast<real_t>(0.0131),
+                  static_cast<real_t>(0.0364), static_cast<real_t>(0.5107));
 }
 
 TEST_F(SteinhardtCalculatorTests, HCP) {
@@ -132,35 +142,47 @@ TEST_F(SteinhardtCalculatorTests, HCP) {
   const auto cell = correlation::testing::crystals::createHCPCell(LAT_A, lat_c, "Mg", 2, 2, 2);
 
   // 12 nearest neighbors at distance 1.0
-  StructureAnalyzer const analyzer(cell, 1.1, {{{.min_sq = 0.36, .max_sq = 1.1 * 1.1}}}, false);
+  StructureAnalyzer const analyzer(
+      cell, static_cast<real_t>(1.1),
+      {{{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(1.1 * 1.1)}}}, false);
   ASSERT_EQ(analyzer.neighborGraph().getNeighbors(0).size(), 12UL);
 
   const auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
   // Classical values for HCP: Z=12, q4=0.0972, q6=0.4848, w4_hat=+0.1341, w6_hat=-0.0124
-  checkOutputs(hists, 0.0972, 0.4848, -0.0124);
-  checkAllOutputs(hists, 0.0972, 0.4848, 0.1341, -0.0124, 0.0972, 0.4848);
+  checkOutputs(hists, static_cast<real_t>(0.0972), static_cast<real_t>(0.4848),
+               static_cast<real_t>(-0.0124));
+  checkAllOutputs(hists, static_cast<real_t>(0.0972), static_cast<real_t>(0.4848),
+                  static_cast<real_t>(0.1341), static_cast<real_t>(-0.0124),
+                  static_cast<real_t>(0.0972), static_cast<real_t>(0.4848));
 }
 
 TEST_F(SteinhardtCalculatorTests, FCC) {
   // Face-Centered Cubic: Coordination Z = 12 (dist = sqrt(0.5) ~ 0.707)
   const auto cell = correlation::testing::crystals::createFCCCell(1.0, "Ar", 1, 1, 1);
 
-  StructureAnalyzer const analyzer(cell, 0.8, {{{.min_sq = 0.36, .max_sq = 0.8 * 0.8}}}, false);
+  StructureAnalyzer const analyzer(
+      cell, static_cast<real_t>(0.8),
+      {{{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(0.8 * 0.8)}}}, false);
   ASSERT_EQ(analyzer.neighborGraph().getNeighbors(0).size(), 12UL);
 
   const auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
   // Classical values for FCC: Z=12, q4=0.1909, q6=0.5745, w4_hat=-0.1593, w6_hat=-0.0132
-  checkOutputs(hists, 0.1909, 0.5745, -0.0132);
-  checkAllOutputs(hists, 0.1909, 0.5745, -0.1593, -0.0132, 0.1909, 0.5745);
+  checkOutputs(hists, static_cast<real_t>(0.1909), static_cast<real_t>(0.5745),
+               static_cast<real_t>(-0.0132));
+  checkAllOutputs(hists, static_cast<real_t>(0.1909), static_cast<real_t>(0.5745),
+                  static_cast<real_t>(-0.1593), static_cast<real_t>(-0.0132),
+                  static_cast<real_t>(0.1909), static_cast<real_t>(0.5745));
 }
 
 TEST_F(SteinhardtCalculatorTests, DistortedCrystalLechnerDellagoAveraging) {
   // Test that Lechner-Dellago Q4_bar and Q6_bar remain stable under small thermal-like
   // perturbations
   const auto cell = correlation::testing::crystals::createFCCCell(1.0, "Ar", 2, 2, 2);
-  StructureAnalyzer const analyzer(cell, 0.8, {{{.min_sq = 0.36, .max_sq = 0.8 * 0.8}}}, false);
+  StructureAnalyzer const analyzer(
+      cell, static_cast<real_t>(0.8),
+      {{{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(0.8 * 0.8)}}}, false);
   const auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
   ASSERT_TRUE(hists.count("Q4_bar"));
@@ -188,18 +210,20 @@ TEST_F(SteinhardtCalculatorTests, Icosahedral) {
 
   // Edge length is ~1.05. Using cutoff 1.02 ensures surface atoms only see
   // center. Thus they will have 1 neighbor, Ql=1.0, and be excluded from histogram!
-  StructureAnalyzer const analyzer(cell, 1.02, {{{.min_sq = 0.36, .max_sq = 1.02 * 1.02}}}, true);
+  StructureAnalyzer const analyzer(
+      cell, static_cast<real_t>(1.02),
+      {{{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(1.02 * 1.02)}}}, true);
   ASSERT_EQ(analyzer.neighborGraph().getNeighbors(0).size(), 12UL);
 
   const auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
   // Classical values for Icosahedral: Z=12, q4=0.0000, q6=0.6633, w4_hat=0.0000, w6_hat=-0.1698
-  checkOutputs(hists, 0.0000, 0.6633, -0.1698);
+  checkOutputs(hists, 0.0000, static_cast<real_t>(0.6633), static_cast<real_t>(-0.1698));
 
   const auto &hist_w4 = hists.at("W4_hat").partials.at("Total");
   size_t const w4_bins = 100;
   real_t const w4_min = -0.5;
-  real_t const d_w4 = 1.0 / w4_bins;
+  real_t const d_w4 = static_cast<real_t>(1.0 / w4_bins);
   real_t w4_val = 0;
   for (size_t bin = 0; bin < w4_bins; ++bin) {
     if (hist_w4[bin] > 0) {
@@ -215,7 +239,9 @@ TEST_F(SteinhardtCalculatorTests, HandlesAcosNumericalNoiseSafely) {
   cell.addAtom("Ar", {5.0, 5.0, 6.000000000000001});
   cell.addAtom("Ar", {5.0, 5.0, 4.0});
 
-  StructureAnalyzer const analyzer(cell, 1.1, {{{.min_sq = 0.36, .max_sq = 1.1 * 1.1}}}, false);
+  StructureAnalyzer const analyzer(
+      cell, static_cast<real_t>(1.1),
+      {{{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(1.1 * 1.1)}}}, false);
   ASSERT_NO_THROW({
     const auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
     EXPECT_FALSE(hists.empty());
@@ -235,7 +261,9 @@ TEST_F(SteinhardtCalculatorTests, EmptySystemOrNoNeighborsFillsPartialsWithZeros
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {5.0, 5.0, 5.0});
 
-  StructureAnalyzer const analyzer(cell, 1.1, {{{.min_sq = 0.36, .max_sq = 1.1 * 1.1}}}, false);
+  StructureAnalyzer const analyzer(
+      cell, static_cast<real_t>(1.1),
+      {{{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(1.1 * 1.1)}}}, false);
   const auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
   EXPECT_FALSE(hists.empty());
@@ -253,7 +281,7 @@ TEST_F(SteinhardtCalculatorTests, SphericalHarmonics) {
     const auto val = SteinhardtCalculator::sphericalHarmonic(0, 0,
                                                              {
                                                                  .theta = 0.5,
-                                                                 .phi = 0.2,
+                                                                 .phi = static_cast<real_t>(0.2),
                                                              });
     EXPECT_NEAR(val.real(), 0.28209479177, correlation::is_single_precision ? 1e-5 : 1e-8);
     EXPECT_NEAR(val.imag(), 0.0, correlation::is_single_precision ? 1e-5 : 1e-8);
@@ -275,8 +303,8 @@ TEST_F(SteinhardtCalculatorTests, SphericalHarmonics) {
   // L = 1, M = 1: Y_1^1 = 0.5 * sqrt(3/(2*pi)) * sin(theta) * e^(i*phi) ~ 0.345494149 * sin(theta)
   // * e^(i*phi) (Condon-Shortley phase is cancelled)
   {
-    real_t const theta = 0.8;
-    real_t const phi = 0.6;
+    real_t const theta = static_cast<real_t>(0.8);
+    real_t const phi = static_cast<real_t>(0.6);
     const auto val =
         SteinhardtCalculator::sphericalHarmonic(1, 1,
                                                 {
@@ -291,8 +319,8 @@ TEST_F(SteinhardtCalculatorTests, SphericalHarmonics) {
 
   // L = 1, M = -1: Y_1^-1 = - (Y_1^1)*
   {
-    real_t const theta = 0.8;
-    real_t const phi = 0.6;
+    real_t const theta = static_cast<real_t>(0.8);
+    real_t const phi = static_cast<real_t>(0.6);
     const auto val =
         SteinhardtCalculator::sphericalHarmonic(1, -1,
                                                 {
@@ -388,7 +416,9 @@ TEST_F(SteinhardtCalculatorTests, CalculatePerAtomDirectEvaluation) {
 
   // Test FCC per-atom values
   const auto cell = correlation::testing::crystals::createFCCCell(1.0, "Ar", 1, 1, 1);
-  StructureAnalyzer const analyzer(cell, 0.8, {{{.min_sq = 0.36, .max_sq = 0.8 * 0.8}}}, false);
+  StructureAnalyzer const analyzer(
+      cell, static_cast<real_t>(0.8),
+      {{{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(0.8 * 0.8)}}}, false);
   const size_t num_atoms = cell.atoms().size();
 
   const auto params =

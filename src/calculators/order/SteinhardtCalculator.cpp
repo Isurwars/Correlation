@@ -536,14 +536,15 @@ real_t SteinhardtCalculator::wigner3j(Wigner3jParams params) {
        correlation::math::factorial(j_three + m_three));
   comp = std::sqrt(comp);
 
-  real_t const phase1 = ((j_one - j_two - m_three) % 2 != 0) ? -1.0 : 1.0;
+  auto const phase1 =
+      ((j_one - j_two - m_three) % 2 != 0) ? static_cast<real_t>(-1.0) : static_cast<real_t>(1.0);
 
   int const k_min = std::max({0, j_two - j_three - m_one, j_one - j_three + m_two});
   int const k_max = std::min({j_one + j_two - j_three, j_one - m_one, j_two + m_two});
 
   real_t sum = 0.0;
   for (int k = k_min; k <= k_max; ++k) {
-    real_t const k_phase = (k % 2 != 0) ? -1.0 : 1.0;
+    auto const k_phase = (k % 2 != 0) ? static_cast<real_t>(-1.0) : static_cast<real_t>(1.0);
     real_t const denom = (correlation::math::factorial(k) *
                           correlation::math::factorial(j_one + j_two - j_three - k) *
                           correlation::math::factorial(j_one - m_one - k) *

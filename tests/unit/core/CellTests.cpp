@@ -70,7 +70,7 @@ TEST_F(CellTests, RuleOfFiveWorksCorrectly) {
   const std::array<real_t, 6> params = {4.0, 4.0, 4.0, 90.0, 90.0, 90.0};
   Cell cell(params);
   cell.addAtom("H", {0.5, 0.5, 0.5});
-  cell.setEnergy(1.23);
+  cell.setEnergy(static_cast<real_t>(1.23));
 
   // Copy Constructor
   Cell const cell_copy(cell);
@@ -98,7 +98,7 @@ TEST_F(CellTests, AccessorsWorkCorrectly) {
   cell.setLatticeParameters({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   EXPECT_NEAR(cell.volume(), 1000.0, correlation::is_single_precision ? 1e-5 : 1e-9);
 
-  cell.setEnergy(-13.6);
+  cell.setEnergy(static_cast<real_t>(-13.6));
   EXPECT_NEAR(cell.getEnergy(), -13.6, correlation::is_single_precision ? 1e-6 : 1e-9);
 }
 
@@ -187,11 +187,12 @@ TEST_F(CellTests, ConstructorThrowsOnZeroOrSingularVolume) {
 
 TEST_F(CellTests, SetLatticeParametersBoundaryAngles) {
   // Extreme but valid angles
-  EXPECT_NO_THROW(Cell({10.0, 10.0, 10.0, 0.1, 90.0, 90.0}));
-  EXPECT_NO_THROW(Cell({10.0, 10.0, 10.0, 179.9, 90.0, 90.0}));
+  EXPECT_NO_THROW(Cell({10.0, 10.0, 10.0, static_cast<real_t>(0.1), 90.0, 90.0}));
+  EXPECT_NO_THROW(Cell({10.0, 10.0, 10.0, static_cast<real_t>(179.9), 90.0, 90.0}));
 
   // Invalid angles throwing invalid_argument
-  EXPECT_THROW(Cell({10.0, 10.0, 10.0, -0.1, 90.0, 90.0}), std::invalid_argument);
+  EXPECT_THROW(Cell({10.0, 10.0, 10.0, static_cast<real_t>(-0.1), 90.0, 90.0}),
+               std::invalid_argument);
   EXPECT_THROW(Cell({10.0, 10.0, 10.0, 180.0, 90.0, 90.0}), std::invalid_argument);
 }
 
@@ -252,7 +253,12 @@ TEST_F(CellTests, TriclinicCellMinimumImage) {
 TEST_F(CellTests, ExtremelySmallCell) {
   // Very small cell — should not cause underflow or precision issues
   // Note: Cell::updateLattice rejects volume <= 1e-9, so 0.01^3 = 1e-6 is valid
-  const std::array<real_t, 6> params = {0.01, 0.01, 0.01, 90.0, 90.0, 90.0};
+  const std::array<real_t, 6> params = {static_cast<real_t>(0.01),
+                                        static_cast<real_t>(0.01),
+                                        static_cast<real_t>(0.01),
+                                        90.0,
+                                        90.0,
+                                        90.0};
   Cell cell(params);
   EXPECT_NEAR(cell.volume(), 1e-6, correlation::is_single_precision ? 1e-10 : 1e-12);
 

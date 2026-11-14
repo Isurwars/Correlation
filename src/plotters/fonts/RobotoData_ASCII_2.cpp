@@ -1441,56 +1441,96 @@ constexpr auto GLYPH_STROKES_SYM_49 = std::to_array<size_t>({153});
 } // namespace
 
 void Roboto::registerBasic2() {
-  add('M', 0.0, 0.8730, GLYPH_PTS_M_0, GLYPH_STROKES_M_0);
-  add('N', 0.0, 0.7129, GLYPH_PTS_N_1, GLYPH_STROKES_N_1);
-  add('O', 0.0, 0.6875, GLYPH_PTS_O_2, GLYPH_STROKES_O_2);
-  add('P', 0.0, 0.6309, GLYPH_PTS_P_3, GLYPH_STROKES_P_3);
-  add('Q', 0.0, 0.6875, GLYPH_PTS_Q_4, GLYPH_STROKES_Q_4);
-  add('R', 0.0, 0.6157, GLYPH_PTS_R_5, GLYPH_STROKES_R_5);
-  add('S', 0.0, 0.5933, GLYPH_PTS_S_6, GLYPH_STROKES_S_6);
-  add('T', 0.0, 0.5967, GLYPH_PTS_T_7, GLYPH_STROKES_T_7);
-  add('U', 0.0, 0.6484, GLYPH_PTS_U_8, GLYPH_STROKES_U_8);
-  add('V', 0.0, 0.6362, GLYPH_PTS_V_9, GLYPH_STROKES_V_9);
-  add('W', 0.0, 0.8872, GLYPH_PTS_W_10, GLYPH_STROKES_W_10);
-  add('X', 0.0, 0.6270, GLYPH_PTS_X_11, GLYPH_STROKES_X_11);
-  add('Y', 0.0, 0.6006, GLYPH_PTS_Y_12, GLYPH_STROKES_Y_12);
-  add('Z', 0.0, 0.5986, GLYPH_PTS_Z_13, GLYPH_STROKES_Z_13);
-  add('[', 0.0, 0.2651, GLYPH_PTS_SYM_14, GLYPH_STROKES_SYM_14);
-  add('\\', 0.0, 0.4102, GLYPH_PTS_BACKSLASH_15, GLYPH_STROKES_BACKSLASH_15);
-  add(']', 0.0, 0.2651, GLYPH_PTS_SYM_16, GLYPH_STROKES_SYM_16);
-  add('^', 0.0, 0.4180, GLYPH_PTS_SYM_17, GLYPH_STROKES_SYM_17);
-  add('_', 0.0, 0.4512, GLYPH_PTS_SYM_18, GLYPH_STROKES_SYM_18);
-  add('`', 0.0, 0.3091, GLYPH_PTS_SYM_19, GLYPH_STROKES_SYM_19);
-  add('a', 0.0, 0.5439, GLYPH_PTS_LOWER_A_20, GLYPH_STROKES_LOWER_A_20);
-  add('b', 0.0, 0.5610, GLYPH_PTS_LOWER_B_21, GLYPH_STROKES_LOWER_B_21);
-  add('c', 0.0, 0.5234, GLYPH_PTS_LOWER_C_22, GLYPH_STROKES_LOWER_C_22);
-  add('d', 0.0, 0.5640, GLYPH_PTS_LOWER_D_23, GLYPH_STROKES_LOWER_D_23);
-  add('e', 0.0, 0.5298, GLYPH_PTS_LOWER_E_24, GLYPH_STROKES_LOWER_E_24);
-  add('f', 0.0, 0.3472, GLYPH_PTS_LOWER_F_25, GLYPH_STROKES_LOWER_F_25);
-  add('g', 0.0, 0.5610, GLYPH_PTS_LOWER_G_26, GLYPH_STROKES_LOWER_G_26);
-  add('h', 0.0, 0.5508, GLYPH_PTS_LOWER_H_27, GLYPH_STROKES_LOWER_H_27);
-  add('i', 0.0, 0.2427, GLYPH_PTS_LOWER_I_28, GLYPH_STROKES_LOWER_I_28);
-  add('j', 0.0, 0.2388, GLYPH_PTS_LOWER_J_29, GLYPH_STROKES_LOWER_J_29);
-  add('k', 0.0, 0.5068, GLYPH_PTS_LOWER_K_30, GLYPH_STROKES_LOWER_K_30);
-  add('l', 0.0, 0.2427, GLYPH_PTS_LOWER_L_31, GLYPH_STROKES_LOWER_L_31);
-  add('m', 0.0, 0.8765, GLYPH_PTS_LOWER_M_32, GLYPH_STROKES_LOWER_M_32);
-  add('n', 0.0, 0.5518, GLYPH_PTS_LOWER_N_33, GLYPH_STROKES_LOWER_N_33);
-  add('o', 0.0, 0.5703, GLYPH_PTS_LOWER_O_34, GLYPH_STROKES_LOWER_O_34);
-  add('p', 0.0, 0.5610, GLYPH_PTS_LOWER_P_35, GLYPH_STROKES_LOWER_P_35);
-  add('q', 0.0, 0.5684, GLYPH_PTS_LOWER_Q_36, GLYPH_STROKES_LOWER_Q_36);
-  add('r', 0.0, 0.3384, GLYPH_PTS_LOWER_R_37, GLYPH_STROKES_LOWER_R_37);
-  add('s', 0.0, 0.5156, GLYPH_PTS_LOWER_S_38, GLYPH_STROKES_LOWER_S_38);
-  add('t', 0.0, 0.3267, GLYPH_PTS_LOWER_T_39, GLYPH_STROKES_LOWER_T_39);
-  add('u', 0.0, 0.5513, GLYPH_PTS_LOWER_U_40, GLYPH_STROKES_LOWER_U_40);
-  add('v', 0.0, 0.4844, GLYPH_PTS_LOWER_V_41, GLYPH_STROKES_LOWER_V_41);
-  add('w', 0.0, 0.7515, GLYPH_PTS_LOWER_W_42, GLYPH_STROKES_LOWER_W_42);
-  add('x', 0.0, 0.4956, GLYPH_PTS_LOWER_X_43, GLYPH_STROKES_LOWER_X_43);
-  add('y', 0.0, 0.4731, GLYPH_PTS_LOWER_Y_44, GLYPH_STROKES_LOWER_Y_44);
-  add('z', 0.0, 0.4956, GLYPH_PTS_LOWER_Z_45, GLYPH_STROKES_LOWER_Z_45);
-  add('{', 0.0, 0.3384, GLYPH_PTS_SYM_46, GLYPH_STROKES_SYM_46);
-  add('|', 0.0, 0.2437, GLYPH_PTS_SYM_47, GLYPH_STROKES_SYM_47);
-  add('}', 0.0, 0.3384, GLYPH_PTS_SYM_48, GLYPH_STROKES_SYM_48);
-  add('~', 0.0, 0.6802, GLYPH_PTS_SYM_49, GLYPH_STROKES_SYM_49);
+  add('M', static_cast<real_t>(0.0), static_cast<real_t>(0.8730), GLYPH_PTS_M_0, GLYPH_STROKES_M_0);
+  add('N', static_cast<real_t>(0.0), static_cast<real_t>(0.7129), GLYPH_PTS_N_1, GLYPH_STROKES_N_1);
+  add('O', static_cast<real_t>(0.0), static_cast<real_t>(0.6875), GLYPH_PTS_O_2, GLYPH_STROKES_O_2);
+  add('P', static_cast<real_t>(0.0), static_cast<real_t>(0.6309), GLYPH_PTS_P_3, GLYPH_STROKES_P_3);
+  add('Q', static_cast<real_t>(0.0), static_cast<real_t>(0.6875), GLYPH_PTS_Q_4, GLYPH_STROKES_Q_4);
+  add('R', static_cast<real_t>(0.0), static_cast<real_t>(0.6157), GLYPH_PTS_R_5, GLYPH_STROKES_R_5);
+  add('S', static_cast<real_t>(0.0), static_cast<real_t>(0.5933), GLYPH_PTS_S_6, GLYPH_STROKES_S_6);
+  add('T', static_cast<real_t>(0.0), static_cast<real_t>(0.5967), GLYPH_PTS_T_7, GLYPH_STROKES_T_7);
+  add('U', static_cast<real_t>(0.0), static_cast<real_t>(0.6484), GLYPH_PTS_U_8, GLYPH_STROKES_U_8);
+  add('V', static_cast<real_t>(0.0), static_cast<real_t>(0.6362), GLYPH_PTS_V_9, GLYPH_STROKES_V_9);
+  add('W', static_cast<real_t>(0.0), static_cast<real_t>(0.8872), GLYPH_PTS_W_10,
+      GLYPH_STROKES_W_10);
+  add('X', static_cast<real_t>(0.0), static_cast<real_t>(0.6270), GLYPH_PTS_X_11,
+      GLYPH_STROKES_X_11);
+  add('Y', static_cast<real_t>(0.0), static_cast<real_t>(0.6006), GLYPH_PTS_Y_12,
+      GLYPH_STROKES_Y_12);
+  add('Z', static_cast<real_t>(0.0), static_cast<real_t>(0.5986), GLYPH_PTS_Z_13,
+      GLYPH_STROKES_Z_13);
+  add('[', static_cast<real_t>(0.0), static_cast<real_t>(0.2651), GLYPH_PTS_SYM_14,
+      GLYPH_STROKES_SYM_14);
+  add('\\', static_cast<real_t>(0.0), static_cast<real_t>(0.4102), GLYPH_PTS_BACKSLASH_15,
+      GLYPH_STROKES_BACKSLASH_15);
+  add(']', static_cast<real_t>(0.0), static_cast<real_t>(0.2651), GLYPH_PTS_SYM_16,
+      GLYPH_STROKES_SYM_16);
+  add('^', static_cast<real_t>(0.0), static_cast<real_t>(0.4180), GLYPH_PTS_SYM_17,
+      GLYPH_STROKES_SYM_17);
+  add('_', static_cast<real_t>(0.0), static_cast<real_t>(0.4512), GLYPH_PTS_SYM_18,
+      GLYPH_STROKES_SYM_18);
+  add('`', static_cast<real_t>(0.0), static_cast<real_t>(0.3091), GLYPH_PTS_SYM_19,
+      GLYPH_STROKES_SYM_19);
+  add('a', static_cast<real_t>(0.0), static_cast<real_t>(0.5439), GLYPH_PTS_LOWER_A_20,
+      GLYPH_STROKES_LOWER_A_20);
+  add('b', static_cast<real_t>(0.0), static_cast<real_t>(0.5610), GLYPH_PTS_LOWER_B_21,
+      GLYPH_STROKES_LOWER_B_21);
+  add('c', static_cast<real_t>(0.0), static_cast<real_t>(0.5234), GLYPH_PTS_LOWER_C_22,
+      GLYPH_STROKES_LOWER_C_22);
+  add('d', static_cast<real_t>(0.0), static_cast<real_t>(0.5640), GLYPH_PTS_LOWER_D_23,
+      GLYPH_STROKES_LOWER_D_23);
+  add('e', static_cast<real_t>(0.0), static_cast<real_t>(0.5298), GLYPH_PTS_LOWER_E_24,
+      GLYPH_STROKES_LOWER_E_24);
+  add('f', static_cast<real_t>(0.0), static_cast<real_t>(0.3472), GLYPH_PTS_LOWER_F_25,
+      GLYPH_STROKES_LOWER_F_25);
+  add('g', static_cast<real_t>(0.0), static_cast<real_t>(0.5610), GLYPH_PTS_LOWER_G_26,
+      GLYPH_STROKES_LOWER_G_26);
+  add('h', static_cast<real_t>(0.0), static_cast<real_t>(0.5508), GLYPH_PTS_LOWER_H_27,
+      GLYPH_STROKES_LOWER_H_27);
+  add('i', static_cast<real_t>(0.0), static_cast<real_t>(0.2427), GLYPH_PTS_LOWER_I_28,
+      GLYPH_STROKES_LOWER_I_28);
+  add('j', static_cast<real_t>(0.0), static_cast<real_t>(0.2388), GLYPH_PTS_LOWER_J_29,
+      GLYPH_STROKES_LOWER_J_29);
+  add('k', static_cast<real_t>(0.0), static_cast<real_t>(0.5068), GLYPH_PTS_LOWER_K_30,
+      GLYPH_STROKES_LOWER_K_30);
+  add('l', static_cast<real_t>(0.0), static_cast<real_t>(0.2427), GLYPH_PTS_LOWER_L_31,
+      GLYPH_STROKES_LOWER_L_31);
+  add('m', static_cast<real_t>(0.0), static_cast<real_t>(0.8765), GLYPH_PTS_LOWER_M_32,
+      GLYPH_STROKES_LOWER_M_32);
+  add('n', static_cast<real_t>(0.0), static_cast<real_t>(0.5518), GLYPH_PTS_LOWER_N_33,
+      GLYPH_STROKES_LOWER_N_33);
+  add('o', static_cast<real_t>(0.0), static_cast<real_t>(0.5703), GLYPH_PTS_LOWER_O_34,
+      GLYPH_STROKES_LOWER_O_34);
+  add('p', static_cast<real_t>(0.0), static_cast<real_t>(0.5610), GLYPH_PTS_LOWER_P_35,
+      GLYPH_STROKES_LOWER_P_35);
+  add('q', static_cast<real_t>(0.0), static_cast<real_t>(0.5684), GLYPH_PTS_LOWER_Q_36,
+      GLYPH_STROKES_LOWER_Q_36);
+  add('r', static_cast<real_t>(0.0), static_cast<real_t>(0.3384), GLYPH_PTS_LOWER_R_37,
+      GLYPH_STROKES_LOWER_R_37);
+  add('s', static_cast<real_t>(0.0), static_cast<real_t>(0.5156), GLYPH_PTS_LOWER_S_38,
+      GLYPH_STROKES_LOWER_S_38);
+  add('t', static_cast<real_t>(0.0), static_cast<real_t>(0.3267), GLYPH_PTS_LOWER_T_39,
+      GLYPH_STROKES_LOWER_T_39);
+  add('u', static_cast<real_t>(0.0), static_cast<real_t>(0.5513), GLYPH_PTS_LOWER_U_40,
+      GLYPH_STROKES_LOWER_U_40);
+  add('v', static_cast<real_t>(0.0), static_cast<real_t>(0.4844), GLYPH_PTS_LOWER_V_41,
+      GLYPH_STROKES_LOWER_V_41);
+  add('w', static_cast<real_t>(0.0), static_cast<real_t>(0.7515), GLYPH_PTS_LOWER_W_42,
+      GLYPH_STROKES_LOWER_W_42);
+  add('x', static_cast<real_t>(0.0), static_cast<real_t>(0.4956), GLYPH_PTS_LOWER_X_43,
+      GLYPH_STROKES_LOWER_X_43);
+  add('y', static_cast<real_t>(0.0), static_cast<real_t>(0.4731), GLYPH_PTS_LOWER_Y_44,
+      GLYPH_STROKES_LOWER_Y_44);
+  add('z', static_cast<real_t>(0.0), static_cast<real_t>(0.4956), GLYPH_PTS_LOWER_Z_45,
+      GLYPH_STROKES_LOWER_Z_45);
+  add('{', static_cast<real_t>(0.0), static_cast<real_t>(0.3384), GLYPH_PTS_SYM_46,
+      GLYPH_STROKES_SYM_46);
+  add('|', static_cast<real_t>(0.0), static_cast<real_t>(0.2437), GLYPH_PTS_SYM_47,
+      GLYPH_STROKES_SYM_47);
+  add('}', static_cast<real_t>(0.0), static_cast<real_t>(0.3384), GLYPH_PTS_SYM_48,
+      GLYPH_STROKES_SYM_48);
+  add('~', static_cast<real_t>(0.0), static_cast<real_t>(0.6802), GLYPH_PTS_SYM_49,
+      GLYPH_STROKES_SYM_49);
 }
 
 } // namespace correlation::plotters

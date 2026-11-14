@@ -59,7 +59,7 @@ TEST(GPUDistanceCalculatorTests, FloatPrecisionDistanceComputation) {
       num_elements, std::vector<std::vector<real_t>>(num_elements, std::vector<real_t>(100, 0.0)));
   DistanceCalculationConfig const config{
       .r_max = 2.0,
-      .r_bin_width = 0.02,
+      .r_bin_width = static_cast<real_t>(0.02),
       .num_bins = 100,
   };
   correlation::core::NeighborGraph out_graph(2);
@@ -86,7 +86,7 @@ TEST(GPUDistanceCalculatorTests, DoublePrecisionDistanceComputation) {
       num_elements, std::vector<std::vector<real_t>>(num_elements, std::vector<real_t>(100, 0.0)));
   DistanceCalculationConfig const config{
       .r_max = 2.0,
-      .r_bin_width = 0.02,
+      .r_bin_width = static_cast<real_t>(0.02),
       .num_bins = 100,
   };
   correlation::core::NeighborGraph out_graph(2);
@@ -114,7 +114,7 @@ TEST(GPUDistanceCalculatorTests, SinglePassDirectHistogramAccumulation) {
       num_elements, std::vector<std::vector<real_t>>(num_elements, std::vector<real_t>(100, 0.0)));
   DistanceCalculationConfig const config{
       .r_max = 2.0,
-      .r_bin_width = 0.02,
+      .r_bin_width = static_cast<real_t>(0.02),
       .num_bins = 100,
   };
   correlation::core::NeighborGraph out_graph(0);

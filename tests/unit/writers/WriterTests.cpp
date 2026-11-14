@@ -180,7 +180,7 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   correlation::analysis::DistributionFunctions dists(si_cell, 20.0, trajectory.getBondCutoffsSQ());
 
   // Act
-  const real_t rdf_bin = 0.05;
+  const real_t rdf_bin = static_cast<real_t>(0.05);
   const real_t pad_bin = 1.0;
   const real_t dad_bin = 1.0;
   dists.calculateRDF({
@@ -189,7 +189,7 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   });
   dists.calculatePAD(pad_bin);
   dists.calculateDAD(dad_bin);
-  dists.smoothAll(0.1);
+  dists.smoothAll(static_cast<real_t>(0.1));
 
   const std::string prefix = "test_si_calc";
   cleanPrefix(prefix);
@@ -249,7 +249,7 @@ TEST_F(FileWriterTests, PADCsvContainsRawAndNormalizedAndSmoothedColumns) {
 
   correlation::analysis::DistributionFunctions dists(si_cell, 5.0, trajectory.getBondCutoffsSQ());
   dists.calculatePAD(2.0);
-  dists.smoothAll(0.1);
+  dists.smoothAll(static_cast<real_t>(0.1));
 
   const std::string prefix = "test_si_pad_cols";
   cleanPrefix(prefix);
@@ -289,7 +289,7 @@ TEST_F(FileWriterTests, PADRawCsvContainsRawCountsAndSmoothed) {
 
   correlation::analysis::DistributionFunctions dists(si_cell, 5.0, trajectory.getBondCutoffsSQ());
   dists.calculatePAD(2.0);
-  dists.smoothAll(0.1);
+  dists.smoothAll(static_cast<real_t>(0.1));
 
   const std::string prefix = "test_si_pad_raw";
   cleanPrefix(prefix);
@@ -331,7 +331,7 @@ TEST_F(FileWriterTests, DADCsvAndRawCsvAreCreated) {
 
   correlation::analysis::DistributionFunctions dists(si_cell, 5.0, trajectory.getBondCutoffsSQ());
   dists.calculateDAD(2.0);
-  dists.smoothAll(0.1);
+  dists.smoothAll(static_cast<real_t>(0.1));
 
   const std::string prefix = "test_si_dad";
   cleanPrefix(prefix);
@@ -592,7 +592,7 @@ TEST_F(FileWriterTests, WritesZipBundle) {
 
   dists.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.1,
+      .r_bin_width = static_cast<real_t>(0.1),
   });
   dists.calculatePAD(2.0);
 
@@ -639,7 +639,7 @@ TEST_F(FileWriterTests, WritesCategorizedFolder) {
   correlation::analysis::DistributionFunctions dists(si_cell, 5.0, trajectory.getBondCutoffsSQ());
   dists.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.1,
+      .r_bin_width = static_cast<real_t>(0.1),
   });
   dists.calculatePAD(2.0);
 
@@ -679,7 +679,7 @@ TEST_F(FileWriterTests, WritesCategorizedFolderWithAlgorithmFiltering) {
   correlation::analysis::DistributionFunctions dists(si_cell, 5.0, trajectory.getBondCutoffsSQ());
   dists.calculateRDF({
       .r_max = 5.0,
-      .r_bin_width = 0.1,
+      .r_bin_width = static_cast<real_t>(0.1),
   });
   dists.calculatePAD(2.0);
 

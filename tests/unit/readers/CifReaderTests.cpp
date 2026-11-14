@@ -44,7 +44,8 @@ TEST(CifReaderTests, ReadsStructureWithSymmetryAndUncertainty) {
   CifReader reader;
   auto const cell = reader.readStructure(data_dir + "clean.cif");
 
-  EXPECT_THAT(cell.latticeParameters()[0], correlation::testing::IsRealEq(5.64));
+  EXPECT_THAT(cell.latticeParameters()[0],
+              correlation::testing::IsRealEq(static_cast<real_t>(5.64)));
   EXPECT_THAT(cell.latticeParameters()[3], correlation::testing::IsRealEq(90.0));
 
   // Na 0.0 0.0 0.0 with symmetry:

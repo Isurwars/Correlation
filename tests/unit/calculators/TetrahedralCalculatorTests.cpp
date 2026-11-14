@@ -45,7 +45,8 @@ TEST_F(TetrahedralCalculatorTests, UnderCoordinatedCell) {
 TEST_F(TetrahedralCalculatorTests, DiamondSiliconPerAtomValues) {
   // Diamond Silicon (lat_a = 5.43 Å) has coordination 4 with ideal tetrahedral angles
   // cos(psi) = -1/3 => q_tet == 1.0 for all bulk atoms
-  const auto cell = correlation::testing::crystals::createDiamondCell(5.43, "Si", 2, 2, 2);
+  const auto cell =
+      correlation::testing::crystals::createDiamondCell(static_cast<real_t>(5.43), "Si", 2, 2, 2);
   ASSERT_GT(cell.atomCount(), 0UL);
 
   // First coordination shell for Diamond Si (cutoff 3.0 Å encompasses 4 nearest neighbors)
@@ -59,7 +60,8 @@ TEST_F(TetrahedralCalculatorTests, DiamondSiliconPerAtomValues) {
 }
 
 TEST_F(TetrahedralCalculatorTests, DiamondSiliconHistogramDistribution) {
-  const auto cell = correlation::testing::crystals::createDiamondCell(5.43, "Si", 2, 2, 2);
+  const auto cell =
+      correlation::testing::crystals::createDiamondCell(static_cast<real_t>(5.43), "Si", 2, 2, 2);
   const analysis::StructureAnalyzer analyzer(cell, 3.0, {{{.min_sq = 1.0, .max_sq = 9.0}}}, false);
 
   const auto hist = TetrahedralCalculator::calculate(cell, &analyzer);
@@ -74,7 +76,8 @@ TEST_F(TetrahedralCalculatorTests, DiamondSiliconHistogramDistribution) {
 
 TEST_F(TetrahedralCalculatorTests, DiamondSiliconWithoutAnalyzer) {
   // Test fallback to Cell minimum image search when analyzer == nullptr
-  const auto cell = correlation::testing::crystals::createDiamondCell(5.43, "Si", 2, 2, 2);
+  const auto cell =
+      correlation::testing::crystals::createDiamondCell(static_cast<real_t>(5.43), "Si", 2, 2, 2);
   const auto q_tet = TetrahedralCalculator::calculatePerAtom(cell, nullptr);
 
   ASSERT_EQ(q_tet.size(), cell.atomCount());
@@ -95,7 +98,8 @@ TEST_F(TetrahedralCalculatorTests, FactoryRegistration) {
 }
 
 TEST_F(TetrahedralCalculatorTests, CalculateFrameDistribution) {
-  const auto cell = correlation::testing::crystals::createDiamondCell(5.43, "Si", 1, 1, 1);
+  const auto cell =
+      correlation::testing::crystals::createDiamondCell(static_cast<real_t>(5.43), "Si", 1, 1, 1);
   analysis::DistributionFunctions dists(cell);
   const TetrahedralCalculator calc;
   const analysis::AnalysisSettings settings;

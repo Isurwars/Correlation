@@ -147,7 +147,7 @@ TEST_F(NumericalParityTests, DiamondSiliconPADTetrahedralAngleParity) {
   DistributionFunctions dists(cell, NEIGHBOR_CUTOFF, traj.getBondCutoffsSQ());
 
   // Calculate PAD with high resolution (0.05 degree binning)
-  dists.calculatePAD(0.05);
+  dists.calculatePAD(static_cast<real_t>(0.05));
 
   const auto &hist = dists.getHistogram("PAD");
   ASSERT_TRUE(hist.partials.contains("Si-Si-Si"));

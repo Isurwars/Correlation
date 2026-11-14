@@ -52,7 +52,7 @@ TEST(CastepMdReaderTests, ReadsTrajectory) {
   // Frame 1 check
   const auto &file_1 = traj.getFrame(0);
   EXPECT_EQ(file_1.atomCount(), 1);
-  EXPECT_THAT(file_1.getEnergy(), correlation::testing::IsRealEq(-31.8206146));
+  EXPECT_THAT(file_1.getEnergy(), correlation::testing::IsRealEq(static_cast<real_t>(-31.8206146)));
   // Bohr to angstrom conversion checking:
   // lattice a = 100.0 bohr = 100.0 * 0.529177210903...
   EXPECT_NEAR(file_1.latticeParameters()[0], 100.0 * correlation::math::BOHR_TO_ANGSTROM, 1e-5);
@@ -67,5 +67,6 @@ TEST(CastepMdReaderTests, ReadsTrajectory) {
 
   // readStructure returns the first frame
   EXPECT_EQ(struct_cell.atomCount(), 1);
-  EXPECT_THAT(struct_cell.getEnergy(), correlation::testing::IsRealEq(-31.8206146));
+  EXPECT_THAT(struct_cell.getEnergy(),
+              correlation::testing::IsRealEq(static_cast<real_t>(-31.8206146)));
 }

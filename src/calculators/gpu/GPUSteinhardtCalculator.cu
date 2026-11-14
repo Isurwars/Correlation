@@ -84,7 +84,7 @@ CORRELATION_DEVICE void computeY4m(SphericalHarmonicInput<T> input,
   T *imag_y = output.imag_y;
 
   T const sin2 = static_cast<T>(1.0) - costheta * costheta;
-  T const sintheta = (sin2 > static_cast<T>(0.0)) ? sqrt(sin2) : static_cast<T>(0.0);
+  T const sintheta = (sin2 > static_cast<T>(0.0)) ? std::sqrt(sin2) : static_cast<T>(0.0);
 
   T const p40 =
       static_cast<T>(0.125) * (static_cast<T>(35.0) * costheta * costheta * costheta * costheta -
@@ -105,8 +105,8 @@ CORRELATION_DEVICE void computeY4m(SphericalHarmonicInput<T> input,
   std::array<T, 5> const poly = {p40 * norm0, p41 * norm1, p42 * norm2, p43 * norm3, p44 * norm4};
 
   for (int m_idx = 0; m_idx <= 4; ++m_idx) {
-    T cos_mphi = cos(static_cast<T>(m_idx) * phi);
-    T sin_mphi = sin(static_cast<T>(m_idx) * phi);
+    T cos_mphi = std::cos(static_cast<T>(m_idx) * phi);
+    T sin_mphi = std::sin(static_cast<T>(m_idx) * phi);
 
     *(real_y + m_idx + 4) = *(poly.data() + m_idx) * cos_mphi;
     *(imag_y + m_idx + 4) = *(poly.data() + m_idx) * sin_mphi;
@@ -128,7 +128,7 @@ CORRELATION_DEVICE void computeY6m(SphericalHarmonicInput<T> input,
   T *imag_y = output.imag_y;
 
   T const sin2 = static_cast<T>(1.0) - costheta * costheta;
-  T const sintheta = (sin2 > static_cast<T>(0.0)) ? sqrt(sin2) : static_cast<T>(0.0);
+  T const sintheta = (sin2 > static_cast<T>(0.0)) ? std::sqrt(sin2) : static_cast<T>(0.0);
 
   T const cos2 = costheta * costheta;
   T const cos4 = cos2 * cos2;
@@ -162,8 +162,8 @@ CORRELATION_DEVICE void computeY6m(SphericalHarmonicInput<T> input,
                                  p64 * norm4, p65 * norm5, p66 * norm6};
 
   for (int m_idx = 0; m_idx <= 6; ++m_idx) {
-    T cos_mphi = cos(static_cast<T>(m_idx) * phi);
-    T sin_mphi = sin(static_cast<T>(m_idx) * phi);
+    T cos_mphi = std::cos(static_cast<T>(m_idx) * phi);
+    T sin_mphi = std::sin(static_cast<T>(m_idx) * phi);
 
     *(real_y + m_idx + 6) = *(poly.data() + m_idx) * cos_mphi;
     *(imag_y + m_idx + 6) = *(poly.data() + m_idx) * sin_mphi;
@@ -215,14 +215,14 @@ CORRELATION_GLOBAL void steinhardtKernel(GPUPoint<T> const *CORRELATION_RESTRICT
     T const delta_z = neighbor_atom.z - central_atom.z;
 
     T const r_sq = delta_x * delta_x + delta_y * delta_y + delta_z * delta_z;
-    T const r_val = sqrt(r_sq);
+    T const r_val = std::sqrt(r_sq);
 
     if (r_val <= static_cast<T>(1e-12)) {
       continue;
     }
 
     T const costheta = delta_z / r_val;
-    T const phi = atan2(delta_y, delta_x);
+    T const phi = std::atan2(delta_y, delta_x);
 
     std::array<T, 9> y4_r{};
     std::array<T, 9> y4_i{};
@@ -278,8 +278,8 @@ CORRELATION_GLOBAL void steinhardtKernel(GPUPoint<T> const *CORRELATION_RESTRICT
   }
 
   T const pi_val = static_cast<T>(correlation::math::PI);
-  T const norm_q4 = sqrt((static_cast<T>(4.0) * pi_val / static_cast<T>(9.0)) * sum_sq4);
-  T const norm_q6 = sqrt((static_cast<T>(4.0) * pi_val / static_cast<T>(13.0)) * sum_sq6);
+  T const norm_q4 = std::sqrt((static_cast<T>(4.0) * pi_val / static_cast<T>(9.0)) * sum_sq4);
+  T const norm_q6 = std::sqrt((static_cast<T>(4.0) * pi_val / static_cast<T>(13.0)) * sum_sq6);
 
   *(outputs.q4_out + atom_idx) = norm_q4;
   *(outputs.q6_out + atom_idx) = norm_q6;

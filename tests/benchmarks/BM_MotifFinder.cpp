@@ -23,14 +23,15 @@ namespace {
 
 core::NeighborGraph buildDiamondGraph(int n_cells) {
   // lat_a = 5.43 A, nn distance = 2.35 A
-  const auto cell = testing::crystals::createDiamondCell(5.43, "Si", n_cells, n_cells, n_cells);
+  const auto cell = testing::crystals::createDiamondCell(static_cast<real_t>(5.43), "Si", n_cells,
+                                                         n_cells, n_cells);
   const real_t cutoff = 3.0;
   const real_t cutoff_sq = cutoff * cutoff;
 
   correlation::analysis::BondCutoffMatrix bond_cutoffs(1);
   bond_cutoffs[0][0] = correlation::analysis::BondCutoffRange{
       .min_sq = 0.0,
-      .max_sq = 2.8 * 2.8,
+      .max_sq = static_cast<real_t>(2.8 * 2.8),
   };
 
   core::NeighborGraph graph(cell.atomCount());

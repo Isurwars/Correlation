@@ -21,11 +21,15 @@ protected:
   [[nodiscard]] static MetricCurveData createMockData() {
     MetricCurveData data;
     data.bins = {1.0, 2.0, 3.0, 4.0, 5.0};
-    data.mean_curve = {0.2, 1.5, 3.8, 1.2, 0.4};
+    data.mean_curve = {static_cast<real_t>(0.2), 1.5, static_cast<real_t>(3.8),
+                       static_cast<real_t>(1.2), static_cast<real_t>(0.4)};
     data.frame_curves.resize(3);
-    data.frame_curves[0] = {0.1, 1.1, 3.5, 1.3, 0.3};
-    data.frame_curves[1] = {0.3, 1.9, 4.1, 1.0, 0.5};
-    data.frame_curves[2] = {0.2, 1.4, 3.2, 1.5, 0.4};
+    data.frame_curves[0] = {static_cast<real_t>(0.1), static_cast<real_t>(1.1), 3.5,
+                            static_cast<real_t>(1.3), static_cast<real_t>(0.3)};
+    data.frame_curves[1] = {static_cast<real_t>(0.3), static_cast<real_t>(1.9),
+                            static_cast<real_t>(4.1), 1.0, 0.5};
+    data.frame_curves[2] = {static_cast<real_t>(0.2), static_cast<real_t>(1.4),
+                            static_cast<real_t>(3.2), 1.5, static_cast<real_t>(0.4)};
     data.name = "g(r)";
     data.title = "Radial Distribution Function";
     data.x_unit = "Å";
@@ -38,7 +42,8 @@ protected:
 
 TEST_F(MiniPlotRendererTests, IdentifiesPeakAccurately) {
   const std::vector<real_t> bins = {1.0, 2.0, 3.0, 4.0, 5.0};
-  const std::vector<real_t> values = {0.1, 1.5, 4.2, 1.8, 0.3};
+  const std::vector<real_t> values = {static_cast<real_t>(0.1), 1.5, static_cast<real_t>(4.2),
+                                      static_cast<real_t>(1.8), static_cast<real_t>(0.3)};
 
   const auto peak = MiniPlotRenderer::findPeak(bins, values);
   EXPECT_TRUE(peak.valid);

@@ -136,7 +136,8 @@ TEST(GraphDescriptorsTests, RingDescriptorMatchesPerSizeReferenceFcc) {
 }
 
 TEST(GraphDescriptorsTests, RingDescriptorMatchesPerSizeReferenceDiamond) {
-  const auto cell = correlation::testing::crystals::createDiamondCell(5.43, "Si", 2, 2, 2);
+  const auto cell =
+      correlation::testing::crystals::createDiamondCell(static_cast<real_t>(5.43), "Si", 2, 2, 2);
   expectRingDescriptorMatchesReference(cell, static_cast<real_t>(2.8), 8);
 }
 

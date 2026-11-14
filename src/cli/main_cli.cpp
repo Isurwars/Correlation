@@ -55,7 +55,8 @@ auto trim(std::string str) -> std::string {
 }
 
 auto toLower(std::string str) -> std::string {
-  std::ranges::transform(str, str.begin(), ::tolower);
+  std::ranges::transform(str, str.begin(),
+                         [](unsigned char chr) { return static_cast<char>(std::tolower(chr)); });
   return str;
 }
 

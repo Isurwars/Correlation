@@ -145,7 +145,7 @@ TEST_F(VoronoiCalculatorTests, FaceCenteredCubic) {
 TEST_F(VoronoiCalculatorTests, HexagonalClosePacked) {
   // 4. Hexagonal Close-Packed (HCP) Structure
   // Supercell size 3x3x2 using lattice parameters (36 atoms)
-  correlation::core::Cell cell_hcp({9.0, 9.0, 9.79795897, 90.0, 90.0, 120.0});
+  correlation::core::Cell cell_hcp({9.0, 9.0, static_cast<real_t>(9.79795897), 90.0, 90.0, 120.0});
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 3; ++j) {
       for (int k = 0; k < 2; ++k) {

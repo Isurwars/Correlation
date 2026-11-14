@@ -26,8 +26,8 @@ std::shared_ptr<SteinhardtParams> makeDummyParams(std::size_t num_atoms, real_t 
   params->Q4_bar.assign(num_atoms, base_q6 * static_cast<real_t>(0.5));
   params->Q6.assign(num_atoms, base_q6);
   params->Q4.assign(num_atoms, base_q6 * static_cast<real_t>(0.5));
-  params->W6_hat.assign(num_atoms, -0.01);
-  params->W4_hat.assign(num_atoms, -0.15);
+  params->W6_hat.assign(num_atoms, static_cast<real_t>(-0.01));
+  params->W4_hat.assign(num_atoms, static_cast<real_t>(-0.15));
   return params;
 }
 
@@ -41,7 +41,7 @@ TEST(SteinhardtLRUCacheTests, InitialStateAndCapacity) {
 
 TEST(SteinhardtLRUCacheTests, PutAndRetrieve) {
   SteinhardtLRUCache cache(4);
-  const auto params = makeDummyParams(10, 0.575);
+  const auto params = makeDummyParams(10, static_cast<real_t>(0.575));
 
   cache.put(0, params);
   EXPECT_EQ(cache.size(), 1UL);
@@ -56,9 +56,9 @@ TEST(SteinhardtLRUCacheTests, PutAndRetrieve) {
 TEST(SteinhardtLRUCacheTests, LRUEvictionOrder) {
   // Cache with capacity 3
   SteinhardtLRUCache cache(3);
-  cache.put(1, makeDummyParams(1, 0.1));
-  cache.put(2, makeDummyParams(1, 0.2));
-  cache.put(3, makeDummyParams(1, 0.3));
+  cache.put(1, makeDummyParams(1, static_cast<real_t>(0.1)));
+  cache.put(2, makeDummyParams(1, static_cast<real_t>(0.2)));
+  cache.put(3, makeDummyParams(1, static_cast<real_t>(0.3)));
 
   EXPECT_EQ(cache.size(), 3UL);
 
@@ -66,7 +66,7 @@ TEST(SteinhardtLRUCacheTests, LRUEvictionOrder) {
   EXPECT_NE(cache.get(1), nullptr);
 
   // Insert frame 4 -> frame 2 should be evicted
-  cache.put(4, makeDummyParams(1, 0.4));
+  cache.put(4, makeDummyParams(1, static_cast<real_t>(0.4)));
 
   EXPECT_EQ(cache.size(), 3UL);
   EXPECT_TRUE(cache.contains(1));
@@ -77,14 +77,14 @@ TEST(SteinhardtLRUCacheTests, LRUEvictionOrder) {
 
 TEST(SteinhardtLRUCacheTests, PeekDoesNotPromoteToMRU) {
   SteinhardtLRUCache cache(2);
-  cache.put(10, makeDummyParams(1, 0.1));
-  cache.put(20, makeDummyParams(1, 0.2));
+  cache.put(10, makeDummyParams(1, static_cast<real_t>(0.1)));
+  cache.put(20, makeDummyParams(1, static_cast<real_t>(0.2)));
 
   // Peek frame 10 (should NOT make it MRU; frame 10 remains oldest)
   EXPECT_NE(cache.peek(10), nullptr);
 
   // Put frame 30 -> frame 10 should be evicted because peek didn't update order
-  cache.put(30, makeDummyParams(1, 0.3));
+  cache.put(30, makeDummyParams(1, static_cast<real_t>(0.3)));
 
   EXPECT_FALSE(cache.contains(10));
   EXPECT_TRUE(cache.contains(20));
@@ -94,7 +94,7 @@ TEST(SteinhardtLRUCacheTests, PeekDoesNotPromoteToMRU) {
 TEST(SteinhardtLRUCacheTests, ClearPurgesAllEntries) {
   SteinhardtLRUCache cache(4);
   cache.put(1, makeDummyParams(5, 0.5));
-  cache.put(2, makeDummyParams(5, 0.6));
+  cache.put(2, makeDummyParams(5, static_cast<real_t>(0.6)));
   EXPECT_EQ(cache.size(), 2UL);
 
   cache.clear();
@@ -253,10 +253,11 @@ TEST(PhaseSearchTypesTests, StringConversionsAndDomains) {
 TEST(PhaseDescriptorsLRUCacheTests, StoreAndRetrieveUnifiedDescriptors) {
   PhaseDescriptorsLRUCache cache(4);
   const auto desc = std::make_shared<FramePhaseDescriptors>();
-  desc->steinhardt = makeDummyParams(10, 0.55);
-  desc->local_entropy = {-6.15, -6.10, -6.20};
+  desc->steinhardt = makeDummyParams(10, static_cast<real_t>(0.55));
+  desc->local_entropy = {static_cast<real_t>(-6.15), static_cast<real_t>(-6.10),
+                         static_cast<real_t>(-6.20)};
   desc->twf_nconn = {12.0, 11.0, 12.0};
-  desc->q_tet = {0.99, 0.98, 1.00};
+  desc->q_tet = {static_cast<real_t>(0.99), static_cast<real_t>(0.98), 1.00};
 
   cache.put(0, desc);
   EXPECT_TRUE(cache.contains(0));

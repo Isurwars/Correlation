@@ -14,7 +14,9 @@ runs:
         echo "SCCACHE_IDLE_TIMEOUT=0" >> "$GITHUB_ENV"
         echo "SCCACHE_RETRY_ATTEMPTS=5" >> "$GITHUB_ENV"
         echo "SCCACHE_RETRY_DELAY=2" >> "$GITHUB_ENV"
-        echo "RUSTC_WRAPPER=sccache" >> "$GITHUB_ENV"
+        if [ "${{ runner.os }}" != "Windows" ]; then
+          echo "RUSTC_WRAPPER=sccache" >> "$GITHUB_ENV"
+        fi
 
     - name: Start sccache server
       shell: bash

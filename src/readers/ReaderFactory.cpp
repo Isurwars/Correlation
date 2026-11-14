@@ -78,7 +78,8 @@ bool isLammpsDumpFilenamePattern(std::string_view filename) {
     return false;
   }
   std::string basename = std::filesystem::path(filename).filename().string();
-  std::ranges::transform(basename, basename.begin(), ::tolower);
+  std::ranges::transform(basename, basename.begin(),
+                         [](unsigned char chr) { return static_cast<char>(std::tolower(chr)); });
   return basename.starts_with("dump.") || basename.contains(".dump.") ||
          basename.contains(".lammpstrj.");
 }
@@ -103,7 +104,8 @@ bool ReaderFactory::registerReader(std::unique_ptr<BaseReader> reader) {
     if (lower_ext[0] != '.') {
       lower_ext.insert(0, 1, '.');
     }
-    std::ranges::transform(lower_ext, lower_ext.begin(), ::tolower);
+    std::ranges::transform(lower_ext, lower_ext.begin(),
+                           [](unsigned char chr) { return static_cast<char>(std::tolower(chr)); });
     extension_map_[lower_ext] = reader.get();
   }
 
@@ -119,7 +121,8 @@ BaseReader *ReaderFactory::getReaderForExtension(const ReaderExtensionQuery &que
   if (lower_ext[0] != '.') {
     lower_ext.insert(0, 1, '.');
   }
-  std::ranges::transform(lower_ext, lower_ext.begin(), ::tolower);
+  std::ranges::transform(lower_ext, lower_ext.begin(),
+                         [](unsigned char chr) { return static_cast<char>(std::tolower(chr)); });
 
   if ((lower_ext == ".out" || lower_ext == ".in") && !query.filename.empty()) {
     const std::string sniffed = sniffFormatFromOutFile(query.filename);

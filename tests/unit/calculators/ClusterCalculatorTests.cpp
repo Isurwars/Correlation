@@ -47,7 +47,9 @@ TEST(ClusterCalculatorTests, BasicClustering) {
 
   real_t const cutoff = 1.5;
   StructureAnalyzer const analyzer(
-      cell, cutoff, {{{.min_sq = 0.36, .max_sq = static_cast<real_t>(cutoff * cutoff)}}}, false);
+      cell, cutoff,
+      {{{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(cutoff * cutoff)}}},
+      false);
   dists.setStructureAnalyzer(&analyzer);
 
   ClusterCalculator const calc;
@@ -85,7 +87,9 @@ TEST(ClusterCalculatorTests, SingleGiantCluster) {
 
   real_t const cutoff = 1.5;
   StructureAnalyzer const analyzer(
-      cell, cutoff, {{{.min_sq = 0.36, .max_sq = static_cast<real_t>(cutoff * cutoff)}}}, false);
+      cell, cutoff,
+      {{{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(cutoff * cutoff)}}},
+      false);
   dists.setStructureAnalyzer(&analyzer);
 
   ClusterCalculator const calc;

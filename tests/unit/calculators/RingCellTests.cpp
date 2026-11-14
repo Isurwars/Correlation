@@ -92,13 +92,15 @@ TEST_P(RingCellTests, MotifFinderRingDetection) {
     const auto &atom1 = cell.atoms()[i];
     const auto &atom2 = cell.atoms()[next_idx];
     real_t const dist = vecNorm(atom1.position() - atom2.position());
-    graph.addDirectedEdge(i, next_idx, dist, {0, 0, 0});
-    graph.addDirectedEdge(next_idx, i, dist, {0, 0, 0});
+    graph.addDirectedEdge(static_cast<core::AtomID>(i), static_cast<core::AtomID>(next_idx), dist,
+                          {0, 0, 0});
+    graph.addDirectedEdge(static_cast<core::AtomID>(next_idx), static_cast<core::AtomID>(i), dist,
+                          {0, 0, 0});
   }
 
   auto rings = calculators::MotifFinder::findRings(graph, 8);
-  EXPECT_EQ(rings[num_atoms], 1) << "Ring of size " << num_atoms
-                                 << " should detect exactly 1 ring motif.";
+  EXPECT_EQ(rings[static_cast<int>(num_atoms)], 1)
+      << "Ring of size " << num_atoms << " should detect exactly 1 ring motif.";
 }
 
 // 3. Verify Plane Angle Distribution (PAD) internal angles
@@ -116,7 +118,7 @@ TEST_P(RingCellTests, PlaneAngleDistribution) {
   traj.precomputeBondCutoffs();
 
   DistributionFunctions dists(cell, cutoff, traj.getBondCutoffsSQ());
-  dists.calculatePAD(0.01);
+  dists.calculatePAD(static_cast<real_t>(0.01));
 
   real_t const expected_angle_deg = static_cast<real_t>(180.0) *
                                     static_cast<real_t>(num_atoms - 2) /
@@ -153,7 +155,7 @@ TEST_P(RingCellTests, PlanarAngleDistributionRunsCleanly) {
   traj.precomputeBondCutoffs();
 
   DistributionFunctions dists(cell, cutoff, traj.getBondCutoffsSQ());
-  EXPECT_NO_THROW(dists.calculatePAD(0.05));
+  EXPECT_NO_THROW(dists.calculatePAD(static_cast<real_t>(0.05)));
 }
 
 // 5. Verify Radial Interatomic Distance Spectrum (RDF pair distance check)

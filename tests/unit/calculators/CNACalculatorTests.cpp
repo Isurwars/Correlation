@@ -87,7 +87,7 @@ TEST(CNACalculatorTests, HistogramDimensionsAreConsistent) {
 
   real_t const cutoff = 3.0;
   analysis::StructureAnalyzer const analyzer(
-      cell, cutoff, {{{.min_sq = 0.36, .max_sq = cutoff * cutoff}}}, false);
+      cell, cutoff, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = cutoff * cutoff}}}, false);
   const auto hist = CNACalculator::calculate(cell, &analyzer);
 
   ASSERT_FALSE(hist.bins.empty());
@@ -109,7 +109,7 @@ TEST(CNACalculatorTests, TotalPartialSumsToOne) {
 
   real_t const cutoff = 3.0;
   analysis::StructureAnalyzer const analyzer(
-      cell, cutoff, {{{.min_sq = 0.36, .max_sq = cutoff * cutoff}}}, false);
+      cell, cutoff, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = cutoff * cutoff}}}, false);
   const auto hist = CNACalculator::calculate(cell, &analyzer);
 
   ASSERT_TRUE(hist.partials.contains("Total"));
@@ -127,7 +127,7 @@ TEST(CNACalculatorTests, HistogramMetadataIsPopulated) {
 
   real_t const cutoff = 3.0;
   analysis::StructureAnalyzer const analyzer(
-      cell, cutoff, {{{.min_sq = 0.36, .max_sq = cutoff * cutoff}}}, false);
+      cell, cutoff, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = cutoff * cutoff}}}, false);
   const auto hist = CNACalculator::calculate(cell, &analyzer);
 
   EXPECT_EQ(hist.title, "Common Neighbor Analysis");
@@ -149,9 +149,9 @@ TEST(CNACalculatorTests, FCC_Supercell_ProducesNonEmptyResult) {
   const auto cell = correlation::testing::crystals::createFCCCell(vec_a, "Al", 2, 2, 2);
 
   // 1st NN distance = a/sqrt(2) ≈ 2.83; cutoff between 1st and 2nd NN
-  real_t const cutoff = 3.2;
+  real_t const cutoff = static_cast<real_t>(3.2);
   analysis::StructureAnalyzer const analyzer(
-      cell, cutoff, {{{.min_sq = 0.36, .max_sq = cutoff * cutoff}}}, false);
+      cell, cutoff, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = cutoff * cutoff}}}, false);
   const auto hist = CNACalculator::calculate(cell, &analyzer);
 
   // Should produce non-empty results
@@ -175,9 +175,9 @@ TEST(CNACalculatorTests, BCC_Supercell_ProducesOutput) {
   const auto cell = correlation::testing::crystals::createBCCCell(vec_a, "Fe", 3, 3, 3);
 
   // Include both 1st NN (a*sqrt(3)/2 ≈ 2.598) and 2nd NN (a = 3.0)
-  real_t const cutoff = 3.1;
+  real_t const cutoff = static_cast<real_t>(3.1);
   analysis::StructureAnalyzer const analyzer(
-      cell, cutoff, {{{.min_sq = 0.36, .max_sq = cutoff * cutoff}}}, false);
+      cell, cutoff, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = cutoff * cutoff}}}, false);
   const auto hist = CNACalculator::calculate(cell, &analyzer);
 
   ASSERT_FALSE(hist.bins.empty()) << "BCC supercell should produce CNA output.";
@@ -202,8 +202,8 @@ TEST(CNACalculatorTests, TwoAtomsNoCommonNeighbors) {
   cell.addAtom("Ar", {12.0, 10.0, 10.0}); // 2 Å apart
 
   real_t const cutoff = 3.0;
-  analysis::StructureAnalyzer const analyzer(cell, cutoff,
-                                             {{{.min_sq = 0.36, .max_sq = cutoff * cutoff}}}, true);
+  analysis::StructureAnalyzer const analyzer(
+      cell, cutoff, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = cutoff * cutoff}}}, true);
   const auto hist = CNACalculator::calculate(cell, &analyzer);
 
   // Two atoms that are neighbors but share no common neighbors ⟹ classified as "1000"
@@ -236,9 +236,9 @@ TEST(CNACalculatorTests, DeterministicResults) {
     }
   }
 
-  real_t const cutoff = 3.2;
+  real_t const cutoff = static_cast<real_t>(3.2);
   analysis::StructureAnalyzer const analyzer(
-      cell, cutoff, {{{.min_sq = 0.36, .max_sq = cutoff * cutoff}}}, false);
+      cell, cutoff, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = cutoff * cutoff}}}, false);
 
   const auto hist1 = CNACalculator::calculate(cell, &analyzer);
   const auto hist2 = CNACalculator::calculate(cell, &analyzer);
@@ -257,9 +257,9 @@ TEST(CNACalculatorTests, TinyPeriodicCell_DoesNotCrash) {
   cell.addAtom("Cu", {vec_a / 2, 0.0, vec_a / 2});
   cell.addAtom("Cu", {0.0, vec_a / 2, vec_a / 2});
 
-  real_t const cutoff = 3.2;
+  real_t const cutoff = static_cast<real_t>(3.2);
   analysis::StructureAnalyzer const analyzer(
-      cell, cutoff, {{{.min_sq = 0.36, .max_sq = cutoff * cutoff}}}, false);
+      cell, cutoff, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = cutoff * cutoff}}}, false);
 
   ASSERT_NO_THROW({
     const auto hist = CNACalculator::calculate(cell, &analyzer);

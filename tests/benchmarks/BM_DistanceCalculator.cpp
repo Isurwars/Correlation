@@ -55,7 +55,7 @@ void benchDistanceSmallCell(benchmark::State &state) {
 
 void benchDistanceMidCell(benchmark::State &state) {
   // 6x6x6 FCC supercell (864 atoms)
-  const auto cell = testing::crystals::createFCCCell(3.61, "Cu", 6, 6, 6);
+  const auto cell = testing::crystals::createFCCCell(static_cast<real_t>(3.61), "Cu", 6, 6, 6);
   const real_t cutoff = 5.0;
   const real_t cutoff_sq = cutoff * cutoff;
   const auto bond_cutoffs = makeCutoffMatrix(0.0, 3.0 * 3.0);
@@ -79,7 +79,7 @@ void benchDistanceMidCell(benchmark::State &state) {
 
 void benchDistanceLargeCell(benchmark::State &state) {
   // 14x14x14 FCC supercell (10,976 atoms)
-  const auto cell = testing::crystals::createFCCCell(3.61, "Cu", 14, 14, 14);
+  const auto cell = testing::crystals::createFCCCell(static_cast<real_t>(3.61), "Cu", 14, 14, 14);
   const real_t cutoff = 5.0;
   const real_t cutoff_sq = cutoff * cutoff;
   const auto bond_cutoffs = makeCutoffMatrix(0.0, 3.0 * 3.0);

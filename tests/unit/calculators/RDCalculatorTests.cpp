@@ -31,8 +31,8 @@ protected:
     graph.addDirectedEdge(1, 2, 1.0, {0, 1, 0});
     graph.addDirectedEdge(2, 1, 1.0, {0, -1, 0});
 
-    graph.addDirectedEdge(2, 0, 1.414, {-1, -1, 0});
-    graph.addDirectedEdge(0, 2, 1.414, {1, 1, 0});
+    graph.addDirectedEdge(2, 0, static_cast<real_t>(1.414), {-1, -1, 0});
+    graph.addDirectedEdge(0, 2, static_cast<real_t>(1.414), {1, 1, 0});
   }
 };
 } // namespace
@@ -101,7 +101,7 @@ void adjustOxygenCutoff(correlation::core::Trajectory &traj) {
     }
   }
   if (o_idx != -1) {
-    cutoffs[o_idx][o_idx].max_sq = 1.45 * 1.45;
+    cutoffs[o_idx][o_idx].max_sq = static_cast<real_t>(1.45 * 1.45);
   }
   traj.setBondCutoffs(cutoffs);
 }
@@ -145,8 +145,8 @@ TEST_F(RDCalculatorTests, CelluloseRingDistribution) {
 TEST_F(RDCalculatorTests, ComputesFranzblauAndKingSeparately) {
   // Graph: 6-cycle 0-1-2-3-4-5-0 plus node 6 connected to 0 and 2.
   correlation::core::NeighborGraph neighbor_graph(7);
-  for (size_t i = 0; i < 6; ++i) {
-    const size_t next = (i + 1) % 6;
+  for (correlation::core::AtomID i = 0; i < 6; ++i) {
+    const correlation::core::AtomID next = (i + 1) % 6;
     neighbor_graph.addDirectedEdge(i, next, 1.0, {1.0, 0.0, 0.0});
     neighbor_graph.addDirectedEdge(next, i, 1.0, {-1.0, 0.0, 0.0});
   }
@@ -181,8 +181,8 @@ TEST_F(RDCalculatorTests, ComputesBridgedSilicaRingStatistics) {
   silica_ring.addAtom("O", {0.0, 1.0, 0.0});  // 5
 
   correlation::core::NeighborGraph neighbor_graph(6);
-  for (size_t i = 0; i < 6; ++i) {
-    const size_t next = (i + 1) % 6;
+  for (correlation::core::AtomID i = 0; i < 6; ++i) {
+    const correlation::core::AtomID next = (i + 1) % 6;
     neighbor_graph.addDirectedEdge(i, next, 1.0, {1.0, 0.0, 0.0});
     neighbor_graph.addDirectedEdge(next, i, 1.0, {-1.0, 0.0, 0.0});
   }
@@ -222,8 +222,8 @@ TEST_F(RDCalculatorTests, ComputesAlternatingSilicaRingStatistics) {
   silica_ring.addAtom("O", {0.0, 1.0, 0.0});  // 5
 
   correlation::core::NeighborGraph neighbor_graph(6);
-  for (size_t i = 0; i < 6; ++i) {
-    const size_t next = (i + 1) % 6;
+  for (correlation::core::AtomID i = 0; i < 6; ++i) {
+    const correlation::core::AtomID next = (i + 1) % 6;
     neighbor_graph.addDirectedEdge(i, next, 1.0, {1.0, 0.0, 0.0});
     neighbor_graph.addDirectedEdge(next, i, 1.0, {-1.0, 0.0, 0.0});
   }

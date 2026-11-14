@@ -50,7 +50,7 @@ TEST(ArcReaderTests, ReadsTrajectory) {
   const auto &frame_1 = traj.getFrame(0);
   EXPECT_EQ(frame_1.atomCount(), 1);
   EXPECT_THAT(frame_1.latticeParameters()[0], correlation::testing::IsRealEq(10.0));
-  EXPECT_THAT(frame_1.getEnergy(), correlation::testing::IsRealEq(-12.345));
+  EXPECT_THAT(frame_1.getEnergy(), correlation::testing::IsRealEq(static_cast<real_t>(-12.345)));
   EXPECT_EQ(frame_1.atoms()[0].element().symbol, "C");
 
   // Frame 2 check

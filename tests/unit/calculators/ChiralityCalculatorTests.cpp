@@ -43,7 +43,8 @@ TEST_F(ChiralityCalculatorTests, AchiralCoplanarMotif) {
   cell.addAtom("Ar", {5.0, 6.1, 5.0}); // Neighbor 2: r2 = (0, 1.1, 0), d = 1.1
   cell.addAtom("Ar", {3.8, 3.8, 5.0}); // Neighbor 3: r3 = (-1.2, -1.2, 0), d = 1.697
 
-  StructureAnalyzer const analyzer(cell, 2.5, {{{.min_sq = 0.36, .max_sq = 2.5 * 2.5}}}, false);
+  StructureAnalyzer const analyzer(
+      cell, 2.5, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 2.5 * 2.5}}}, false);
   real_t const chi =
       correlation::calculators::ChiralityCalculator::computeSingleAtomChirality(0, cell, &analyzer);
 
@@ -58,7 +59,8 @@ TEST_F(ChiralityCalculatorTests, ChiralRightHandedMotif) {
   cell.addAtom("Ar", {5.0, 6.1, 5.0}); // Neighbor 2: r2 = (0, 1.1, 0), d = 1.1
   cell.addAtom("Ar", {5.0, 5.0, 6.2}); // Neighbor 3: r3 = (0, 0, 1.2), d = 1.2
 
-  StructureAnalyzer const analyzer(cell, 2.5, {{{.min_sq = 0.36, .max_sq = 2.5 * 2.5}}}, false);
+  StructureAnalyzer const analyzer(
+      cell, 2.5, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 2.5 * 2.5}}}, false);
   real_t const chi =
       correlation::calculators::ChiralityCalculator::computeSingleAtomChirality(0, cell, &analyzer);
 
@@ -73,7 +75,8 @@ TEST_F(ChiralityCalculatorTests, ChiralLeftHandedMotif) {
   cell.addAtom("Ar", {5.0, 6.1, 5.0}); // Neighbor 2: r2 = (0, 1.1, 0), d = 1.1
   cell.addAtom("Ar", {5.0, 5.0, 3.8}); // Neighbor 3: r3 = (0, 0, -1.2), d = 1.2
 
-  StructureAnalyzer const analyzer(cell, 2.5, {{{.min_sq = 0.36, .max_sq = 2.5 * 2.5}}}, false);
+  StructureAnalyzer const analyzer(
+      cell, 2.5, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 2.5 * 2.5}}}, false);
   real_t const chi =
       correlation::calculators::ChiralityCalculator::computeSingleAtomChirality(0, cell, &analyzer);
 
@@ -87,7 +90,8 @@ TEST_F(ChiralityCalculatorTests, HistogramDistribution) {
   cell.addAtom("Ar", {5.0, 6.1, 5.0});
   cell.addAtom("Ar", {5.0, 5.0, 6.2});
 
-  StructureAnalyzer const analyzer(cell, 2.5, {{{.min_sq = 0.36, .max_sq = 2.5 * 2.5}}}, false);
+  StructureAnalyzer const analyzer(
+      cell, 2.5, {{{.min_sq = static_cast<real_t>(0.36), .max_sq = 2.5 * 2.5}}}, false);
   auto hist = correlation::calculators::ChiralityCalculator::calculate(cell, &analyzer);
 
   EXPECT_EQ(hist.title, "Chiral Order Parameter Distribution");

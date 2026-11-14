@@ -54,10 +54,18 @@ TEST_F(Structure3DControllerDistributionTests, SetsStoreAndUpdatesWindowProperti
 
   const auto store = std::make_shared<analysis::PerFrameDistributionStore>(3);
   store->setBins(analysis::DistributionMetric::RDF, {1.0, 2.0, 3.0, 4.0});
-  store->setMeanCurve(analysis::DistributionMetric::RDF, {0.1, 2.5, 1.2, 0.2});
-  store->setFrameCurve(analysis::DistributionMetric::RDF, 0, {0.2, 3.1, 1.5, 0.1});
-  store->setFrameCurve(analysis::DistributionMetric::RDF, 1, {0.1, 2.2, 1.1, 0.3});
-  store->setFrameCurve(analysis::DistributionMetric::RDF, 2, {0.3, 2.8, 1.3, 0.2});
+  store->setMeanCurve(
+      analysis::DistributionMetric::RDF,
+      {static_cast<real_t>(0.1), 2.5, static_cast<real_t>(1.2), static_cast<real_t>(0.2)});
+  store->setFrameCurve(
+      analysis::DistributionMetric::RDF, 0,
+      {static_cast<real_t>(0.2), static_cast<real_t>(3.1), 1.5, static_cast<real_t>(0.1)});
+  store->setFrameCurve(analysis::DistributionMetric::RDF, 1,
+                       {static_cast<real_t>(0.1), static_cast<real_t>(2.2),
+                        static_cast<real_t>(1.1), static_cast<real_t>(0.3)});
+  store->setFrameCurve(analysis::DistributionMetric::RDF, 2,
+                       {static_cast<real_t>(0.3), static_cast<real_t>(2.8),
+                        static_cast<real_t>(1.3), static_cast<real_t>(0.2)});
 
   controller.setDistributionStore(store);
 
@@ -73,8 +81,12 @@ TEST_F(Structure3DControllerDistributionTests, TogglesMetricAndUpdatesWindow) {
 
   const auto store = std::make_shared<analysis::PerFrameDistributionStore>(2);
   store->setBins(analysis::DistributionMetric::PAD, {30.0, 60.0, 90.0, 109.5, 120.0});
-  store->setMeanCurve(analysis::DistributionMetric::PAD, {0.0, 0.1, 0.4, 2.8, 0.5});
-  store->setFrameCurve(analysis::DistributionMetric::PAD, 0, {0.0, 0.1, 0.5, 3.2, 0.4});
+  store->setMeanCurve(
+      analysis::DistributionMetric::PAD,
+      {0.0, static_cast<real_t>(0.1), static_cast<real_t>(0.4), static_cast<real_t>(2.8), 0.5});
+  store->setFrameCurve(
+      analysis::DistributionMetric::PAD, 0,
+      {0.0, static_cast<real_t>(0.1), 0.5, static_cast<real_t>(3.2), static_cast<real_t>(0.4)});
 
   controller.setDistributionStore(store);
 

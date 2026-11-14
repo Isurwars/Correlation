@@ -27,7 +27,7 @@ TEST(TrajectoryAnalyzerTests, BasicUsage) {
 
   real_t const neighbor_cutoff = 2.0;
   BondCutoffMatrix const bond_cutoffs = {
-      {{.min_sq = 0.36, .max_sq = 1.1}},
+      {{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(1.1)}},
   }; // Assuming H-H is index 0-0, simplified
 
   TrajectoryAnalyzer const analyzer(trajectory, neighbor_cutoff, bond_cutoffs);
@@ -58,7 +58,8 @@ TEST(TrajectoryAnalyzerTests, StartAndEndFrameLimits) {
   trajectory.addFrame(cell); // 4 frames total
 
   real_t const neighbor_cutoff = 2.0;
-  BondCutoffMatrix const bond_cutoffs = {{{.min_sq = 0.36, .max_sq = 1.1}}};
+  BondCutoffMatrix const bond_cutoffs = {
+      {{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(1.1)}}};
 
   // Case 1: Analyze frames from index 1 to 3 (exclusive, so frames 1 and 2, getNumFrames() = 2)
   {
@@ -97,7 +98,8 @@ TEST(TrajectoryAnalyzerTests, ProgressCallbackIsCalled) {
   trajectory.addFrame(cell);
 
   real_t const neighbor_cutoff = 2.0;
-  BondCutoffMatrix const bond_cutoffs = {{{.min_sq = 0.36, .max_sq = 1.1}}};
+  BondCutoffMatrix const bond_cutoffs = {
+      {{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(1.1)}}};
 
   bool callback_called = false;
   float progress_val = 0.0F;
@@ -126,7 +128,8 @@ TEST(TrajectoryAnalyzerTests, CreateAnalyzerOutOfBoundsReturnsNullptr) {
   trajectory.addFrame(cell); // 1 frame total
 
   real_t const neighbor_cutoff = 2.0;
-  BondCutoffMatrix const bond_cutoffs = {{{.min_sq = 0.36, .max_sq = 1.1}}};
+  BondCutoffMatrix const bond_cutoffs = {
+      {{.min_sq = static_cast<real_t>(0.36), .max_sq = static_cast<real_t>(1.1)}}};
 
   TrajectoryAnalyzer const analyzer(trajectory, neighbor_cutoff, bond_cutoffs);
 

@@ -256,14 +256,14 @@ TEST_F(AppControllerTests, SynchronizesOptionsToAndFromUI) {
   backend_opts.input_file = "dummy_input.arc";
   backend_opts.smoothing = true;
   backend_opts.r_max = 12.5;
-  backend_opts.r_bin_width = 0.05;
+  backend_opts.r_bin_width = static_cast<real_t>(0.05);
   backend_opts.q_max = 15.0;
-  backend_opts.q_bin_width = 0.1;
+  backend_opts.q_bin_width = static_cast<real_t>(0.1);
   backend_opts.r_int_max = 8.0;
   backend_opts.angle_bin_width = 2.0;
   backend_opts.dihedral_bin_width = 3.0;
   backend_opts.max_ring_size = 8;
-  backend_opts.smoothing_sigma = 0.03;
+  backend_opts.smoothing_sigma = static_cast<real_t>(0.03);
   backend_opts.smoothing_kernel = correlation::math::KernelType::Gaussian;
   backend_opts.material_type = 1;
   backend_opts.min_frame = 2; // 0-based index 2 -> 3rd frame
