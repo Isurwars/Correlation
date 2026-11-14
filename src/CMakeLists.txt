@@ -503,7 +503,7 @@ if(TARGET app_gui_obj)
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
         target_compile_options(app_gui_obj PRIVATE -Wall -Wextra -Wpedantic)
     elseif(MSVC)
-        target_compile_options(app_gui_obj PRIVATE /W4)
+        target_compile_options(app_gui_obj PRIVATE /W4 /external:W0 /wd4324 /wd4458)
     endif()
 endif()
 

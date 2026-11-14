@@ -110,7 +110,7 @@ void PlotExportManager::exportPlotAsync(const std::string &default_base_path,
             },
         },
     };
-    const nfdfiltersize_t filter_count = filter_list.size();
+    const auto filter_count = static_cast<nfdfiltersize_t>(filter_list.size());
 
     nfdchar_t *out_path = nullptr;
     const nfdresult_t result =

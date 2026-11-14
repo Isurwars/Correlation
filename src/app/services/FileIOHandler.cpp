@@ -555,7 +555,7 @@ void FileIOHandler::handleBrowseFile() {
             },
         },
     };
-    const nfdfiltersize_t filter_count = filter_list.size();
+    const auto filter_count = static_cast<nfdfiltersize_t>(filter_list.size());
 
     const nfdpathset_t *path_set = nullptr;
     const nfdresult_t result =
