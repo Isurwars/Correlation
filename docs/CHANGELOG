@@ -1,6 +1,33 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.4.0] - 2026-11-14
+
+### 🖥️ User Interface & Navigation
+- **Right-Side Inspector & Navigation Panels (`RightMiniSideBar.slint`, `RightSidePanelHost.slint`, `PreviewHeader.slint`)**:
+  - Added a dedicated right-side mini sidebar and inspector panel host for streamlined curve, peak, and 3D scene inspection.
+- **Calculators & Export Presentation Panels (`CalculatorsPanel.slint`, `ExportPresentationPanel.slint`)**:
+  - Introduced modular calculators and export presentation panels in the navigation host.
+- **Modular Sidebar & Curve Inspector Components (`CurveListTab.slint`, `PlotStyleAxesTab.slint`, `TaggedPeaksTab.slint`, `Structure3DPhaseTab.slint`, `Structure3DSceneTab.slint`, `PinnedExecutionBar.slint`)**:
+  - Decomposed `CurveSidebar`, `Structure3DSidebar`, and `ImagingToolbar` into focused, reusable sub-components and introduced a pinned execution bar across UI cards.
+  - Removed legacy UI animations and cleaned up scroll view and sidebar layouts for snappier responsiveness.
+
+### ♻️ Code Quality & Refactoring
+- **Strict Zero-Narrowing Compiler Compliance**:
+  - Enforced strict zero-narrowing compiler flags and resolved conversion warnings codebase-wide, wrapping floating-point literals with `static_cast<real_t>` across analysis and calculator classes.
+- **Modular File I/O & Plot Export (`FileIOHandler.cpp`, `PlotExportManager.cpp`)**:
+  - Modularized file I/O handling and plot export functionality for cleaner separation of concerns.
+
+### 🧪 Testing
+- **Trajectory Streamer Unit Tests (`TrajectoryStreamerTests.cpp`)**:
+  - Added unit tests for `TrajectoryStreamer` and updated unit test suites across writers, plotters, and renderers.
+
+### 🛠️ Build, CI & Packaging
+- **MSVC & sccache Compatibility (`Dependencies.cmake`, `PatchMiniz.cmake`, `Warnings.cmake`)**:
+  - Marked Arrow and Parquet target include directories as `SYSTEM` with MSVC external warning suppression.
+  - Added `PatchMiniz.cmake` to use `/Z7` instead of `/Zi` for `sccache` compatibility on MSVC.
+  - Updated CI and release workflows to use `windows-2022` runners and bumped project version to `4.4.0` across CMake, Slint UI, packaging specs, and Python packages.
+
 ## [4.3.0] - 2026-11-11
 
 ### 🚀 Features & Machine Learning Potentials
