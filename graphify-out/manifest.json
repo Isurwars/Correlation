@@ -905,8 +905,8 @@
     "semantic_hash": ""
   },
   ".github/workflows/ci.yml": {
-    "mtime": 1793813366.1343439,
-    "ast_hash": "63cccfb548834ac762bcf3360d7b0629",
+    "mtime": 1794630962.649476,
+    "ast_hash": "2c8f4f4180422012b13a102b5a3641f1",
     "semantic_hash": ""
   },
   ".github/workflows/docs.yml": {
@@ -915,8 +915,8 @@
     "semantic_hash": ""
   },
   ".github/workflows/release.yml": {
-    "mtime": 1794445296.1159158,
-    "ast_hash": "59384b3fbbcfc538f998997c7d4edfb1",
+    "mtime": 1794630964.8744378,
+    "ast_hash": "5354f5fbf2376a2e7792d94c3f5bbd70",
     "semantic_hash": ""
   },
   "CMakeLists.txt": {
