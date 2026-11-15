@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 import {
+    MaterialAnimations,
     MaterialPalette,
     MaterialStyleMetrics,
     MaterialTypography,
@@ -22,7 +23,7 @@ component WorkflowStepPill inherits Rectangle {
     border-radius: MaterialStyleMetrics.border_radius_full;
     background: root.active ? MaterialPalette.primary_container :
                 (root.interactive && step_touch.has-hover) ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_high;
-    animate background { duration: 150ms; }
+    animate background { duration: MaterialAnimations.base_duration; }
 
     HorizontalLayout {
         padding-left: MaterialStyleMetrics.padding_12;

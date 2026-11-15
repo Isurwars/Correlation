@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 import {
+    MaterialAnimations,
     MaterialPalette,
     MaterialStyleMetrics,
     MaterialTypography,
@@ -142,7 +143,7 @@ export component CutoffCalibrationBar inherits Rectangle {
                 background: btn_auto.has-hover ? MaterialPalette.tertiary_container.darker(5%) : MaterialPalette.tertiary_container;
                 border-width: 1px;
                 border-color: MaterialPalette.tertiary.with_alpha(40%);
-                animate background { duration: 150ms; }
+                animate background { duration: MaterialAnimations.base_duration; }
 
                 auto_content := HorizontalLayout {
                     padding-left: 10px;

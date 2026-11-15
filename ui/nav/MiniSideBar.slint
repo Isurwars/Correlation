@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 import {
+    MaterialAnimations,
     MaterialPalette,
     MaterialStyleMetrics,
     Icons,
@@ -29,14 +30,14 @@ component RailButton inherits Rectangle {
                 root.active ? (touch.has-hover ? root.active_bg.darker(8%) : root.active_bg) :
                 root.inactive_bg != transparent ? (touch.has-hover ? root.inactive_bg.darker(8%) : root.inactive_bg) :
                 touch.has-hover ? MaterialPalette.surface_container_high : transparent;
-    animate background { duration: 150ms; }
+    animate background { duration: MaterialAnimations.base_duration; }
 
     if root.show_indicator: Rectangle {
         x: -2px;
         y: (parent.height - self.height) / 2;
         width: 3px;
         height: 20px;
-        border-radius: 2px;
+        border-radius: MaterialStyleMetrics.border_radius_2;
         background: MaterialPalette.primary;
     }
 
@@ -46,7 +47,7 @@ component RailButton inherits Rectangle {
         source: root.icon;
         colorize: !root.enabled ? MaterialPalette.outline :
                   root.active ? root.active_fg : root.inactive_fg;
-        animate colorize { duration: 150ms; }
+        animate colorize { duration: MaterialAnimations.base_duration; }
     }
 
     out property <bool> has_hover: touch.has-hover;

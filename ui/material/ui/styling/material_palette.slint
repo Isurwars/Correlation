@@ -73,8 +73,27 @@ export global MaterialPalette {
     out property <color> shadow_15: #000000.with_alpha(15%);
     out property <color> shadow_30: #000000.with_alpha(30%);
     out property <float> state_layer_opacity_hover: 8%;
-    out property <float> state_layer_opacity_focus: 10%;
-    out property <float> state_layer_opacity_press: 10%;
+    out property <float> state_layer_opacity_focus: 12%;
+    out property <float> state_layer_opacity_press: 12%;
+
+    // Categorical data-visualisation series colours (colour-blind-safe Okabe-Ito
+    // first, then extended set). `series_hexes` mirrors `series_colors` for C++.
+    out property <[color]> series_colors: [
+        #e69f00, #56b4e9, #009e73, #f0e442,
+        #0072b2, #d55e00, #cc79a7, #00c49f,
+        #1f77b4, #ff7f0e, #2ca02c, #d62728,
+        #9467bd, #8c564b, #e377c2, #7f7f7f,
+        #bcbd22, #17becf, #332288, #117733,
+        #44aa99, #88ccee, #ddcc77, #cc6677
+    ];
+    out property <[string]> series_hexes: [
+        "#e69f00", "#56b4e9", "#009e73", "#f0e442",
+        "#0072b2", "#d55e00", "#cc79a7", "#00c49f",
+        "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728",
+        "#9467bd", "#8c564b", "#e377c2", "#7f7f7f",
+        "#bcbd22", "#17becf", "#332288", "#117733",
+        "#44aa99", "#88ccee", "#ddcc77", "#cc6677"
+    ];
     out property <float> state_layer_opacity_disabled: 12%;
     out property <float> state_layer_opacity_drag: 16%;
     out property <float> disable_opacity: 38%;

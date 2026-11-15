@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 import {
+    MaterialAnimations,
     MaterialPalette,
     MaterialStyleMetrics,
     MaterialText,
@@ -80,9 +81,9 @@ export component PhaseSlider inherits Rectangle {
                 border-width: 1.5px;
                 border-color: MaterialPalette.surface_container_lowest;
 
-                animate width { duration: 100ms; }
-                animate height { duration: 100ms; }
-                animate border-radius { duration: 100ms; }
+                animate width { duration: MaterialAnimations.fast_duration; }
+                animate height { duration: MaterialAnimations.fast_duration; }
+                animate border-radius { duration: MaterialAnimations.fast_duration; }
             }
 
             slider_touch := TouchArea {

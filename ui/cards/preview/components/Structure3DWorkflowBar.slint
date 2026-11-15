@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 import {
+    MaterialAnimations,
     MaterialPalette,
     MaterialStyleMetrics,
     MaterialTypography,
@@ -84,7 +85,7 @@ export component Structure3DWorkflowBar inherits Rectangle {
                     root.analysis_running ? (run_btn_touch.has-hover ? MaterialPalette.error.darker(8%) : MaterialPalette.error) :
                     (run_btn_touch.has-hover ? MaterialPalette.run.darker(8%) : MaterialPalette.run);
 
-                animate background { duration: 150ms; }
+                animate background { duration: MaterialAnimations.base_duration; }
 
                 run_btn_layout := HorizontalLayout {
                     padding-left: MaterialStyleMetrics.padding_10;

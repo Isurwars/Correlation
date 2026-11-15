@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 import {
+    MaterialStyleMetrics,
     MaterialPalette,
     MaterialTypography,
     MaterialText,
@@ -19,7 +20,7 @@ export component PhaseColorbar inherits VerticalLayout {
 
     Rectangle {
         height: 8px;
-        border-radius: 4px;
+        border-radius: MaterialStyleMetrics.border_radius_4;
         clip: true;
         background: MaterialPalette.surface_container_high;
         border-width: 0.5px;

@@ -2,7 +2,7 @@
 // Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { MaterialPalette, MaterialTypography } from "../material/material.slint";
+import { MaterialStyleMetrics, MaterialAnimations, MaterialPalette, MaterialTypography } from "../material/material.slint";
 
 export component AppFooter inherits Rectangle {
     in property <string> status_text: "";
@@ -55,7 +55,7 @@ export component AppFooter inherits Rectangle {
             height: 100%;
             background: MaterialPalette.primary;
             animate width {
-                duration: 150ms;
+                duration: MaterialAnimations.base_duration;
                 easing: ease-out;
             }
         }
@@ -79,10 +79,10 @@ export component AppFooter inherits Rectangle {
 
         if root.update_available: Rectangle {
             background: update_touch.has_hover ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
-            border-radius: 4px;
+            border-radius: MaterialStyleMetrics.border_radius_4;
             height: 20px;
             y: (parent.height - self.height) / 2;
-            animate background { duration: 150ms; }
+            animate background { duration: MaterialAnimations.base_duration; }
 
             update_touch := TouchArea {
                 mouse-cursor: pointer;
@@ -115,7 +115,7 @@ export component AppFooter inherits Rectangle {
                     vertical-alignment: center;
                     accessible-role: text;
                     accessible-label: "New Version Notification";
-                    animate color { duration: 150ms; }
+                    animate color { duration: MaterialAnimations.base_duration; }
                 }
             }
         }

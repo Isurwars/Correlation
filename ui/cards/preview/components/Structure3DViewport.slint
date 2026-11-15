@@ -111,7 +111,7 @@ export component Structure3DViewport inherits Rectangle {
         width: 100%;
         height: 100%;
         background: MaterialPalette.surface_container_lowest;
-        border-radius: 8px;
+        border-radius: MaterialStyleMetrics.border_radius_8;
         clip: true;
 
         changed width => {
@@ -245,12 +245,12 @@ export component Structure3DViewport inherits Rectangle {
                 y: parent.height - self.height - (root.total_frames > 1 ? 66px : 10px);
                 width: hint_text.preferred-width + 20px;
                 height: 24px;
-                border-radius: 12px;
+                border-radius: MaterialStyleMetrics.border_radius_12;
                 background: MaterialPalette.surface_container_highest.with_alpha(60%);
 
                 hint_text := MaterialText {
                     text: "🖱 Left: Orbit  •  Right: Pan  •  Scroll: Zoom  •  Space: Play/Pause  •  ←/→: Step  •  H: Home";
-                    font-size: 12px;
+                    font-size: MaterialTypography.label_medium.font_size;
                     color: MaterialPalette.on_surface_variant.with_alpha(80%);
                     horizontal-alignment: center;
                     vertical-alignment: center;

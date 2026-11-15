@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 import {
+    MaterialAnimations,
     MaterialPalette,
     MaterialStyleMetrics,
     MaterialTypography,
@@ -147,7 +148,7 @@ export component Structure3DPhaseTab inherits ScrollView {
                     border-width: 1px;
                     border-color: root.phase_enabled ? MaterialPalette.primary : MaterialPalette.outline;
 
-                    animate background { duration: 150ms; }
+                    animate background { duration: MaterialAnimations.base_duration; }
 
                     MaterialText {
                         width: 100%;

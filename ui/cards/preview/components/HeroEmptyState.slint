@@ -187,7 +187,7 @@ export component HeroEmptyState inherits Rectangle {
                         border-color: MaterialPalette.outline_variant.with_alpha(50%);
                         MaterialText {
                             text: "📄 " + file;
-                            font-size: 11px;
+                            font-size: MaterialTypography.label_small.font_size;
                             color: touch_rec.has-hover ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
                             horizontal-alignment: center;
                             vertical-alignment: center;
@@ -221,7 +221,7 @@ export component HeroEmptyState inherits Rectangle {
 
             Rectangle {
                 background: MaterialPalette.surface_container_high;
-                border-radius: 8px;
+                border-radius: MaterialStyleMetrics.border_radius_8;
                 border-width: 1px;
                 border-color: MaterialPalette.outline_variant;
 

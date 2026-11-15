@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 import {
+    MaterialStyleMetrics,
     MaterialPalette,
     MaterialTypography,
     MaterialText,
@@ -17,7 +18,7 @@ export component PhasePresetsGrid inherits VerticalLayout {
 
     MaterialText {
         text: "Phase Presets";
-        font-size: 11px;
+        font-size: MaterialTypography.label_small.font_size;
         font-weight: 600;
         color: MaterialPalette.on_surface_variant;
     }
@@ -37,7 +38,7 @@ export component PhasePresetsGrid inherits VerticalLayout {
             Rectangle {
                 width: 100%;
                 height: 100%;
-                border-radius: 12px;
+                border-radius: MaterialStyleMetrics.border_radius_12;
                 background: root.preset_index == idx
                     ? MaterialPalette.primary.with_alpha(25%)
                     : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
@@ -48,7 +49,7 @@ export component PhasePresetsGrid inherits VerticalLayout {
                     width: 100%;
                     height: 100%;
                     text: label;
-                    font-size: 11px;
+                    font-size: MaterialTypography.label_small.font_size;
                     font-weight: root.preset_index == idx ? 700 : 400;
                     color: root.preset_index == idx ? MaterialPalette.primary : MaterialPalette.on_surface;
                     horizontal-alignment: center;
@@ -73,7 +74,7 @@ export component PhasePresetsGrid inherits VerticalLayout {
             Rectangle {
                 width: 100%;
                 height: 100%;
-                border-radius: 12px;
+                border-radius: MaterialStyleMetrics.border_radius_12;
                 background: root.preset_index == (idx + 3)
                     ? MaterialPalette.primary.with_alpha(25%)
                     : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
@@ -84,7 +85,7 @@ export component PhasePresetsGrid inherits VerticalLayout {
                     width: 100%;
                     height: 100%;
                     text: label;
-                    font-size: 11px;
+                    font-size: MaterialTypography.label_small.font_size;
                     font-weight: root.preset_index == (idx + 3) ? 700 : 400;
                     color: root.preset_index == (idx + 3) ? MaterialPalette.primary : MaterialPalette.on_surface;
                     horizontal-alignment: center;
@@ -109,7 +110,7 @@ export component PhasePresetsGrid inherits VerticalLayout {
             Rectangle {
                 width: 100%;
                 height: 100%;
-                border-radius: 12px;
+                border-radius: MaterialStyleMetrics.border_radius_12;
                 background: root.preset_index == (idx + 6)
                     ? MaterialPalette.primary.with_alpha(25%)
                     : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
@@ -120,7 +121,7 @@ export component PhasePresetsGrid inherits VerticalLayout {
                     width: 100%;
                     height: 100%;
                     text: label;
-                    font-size: 11px;
+                    font-size: MaterialTypography.label_small.font_size;
                     font-weight: root.preset_index == (idx + 6) ? 700 : 400;
                     color: root.preset_index == (idx + 6) ? MaterialPalette.primary : MaterialPalette.on_surface;
                     horizontal-alignment: center;

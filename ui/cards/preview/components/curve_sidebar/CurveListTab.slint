@@ -54,23 +54,8 @@ export component CurveListTab inherits VerticalLayout {
     callback set_curve_width(string);
     callback apply_axis_settings();
 
-    private property <[color]> swatch_colors: [
-        #e69f00, #56b4e9, #009e73, #f0e442,
-        #0072b2, #d55e00, #cc79a7, #00c49f,
-        #1f77b4, #ff7f0e, #2ca02c, #d62728,
-        #9467bd, #8c564b, #e377c2, #7f7f7f,
-        #bcbd22, #17becf, #332288, #117733,
-        #44aa99, #88ccee, #ddcc77, #cc6677
-    ];
-
-    private property <[string]> swatch_hexes: [
-        "#e69f00", "#56b4e9", "#009e73", "#f0e442",
-        "#0072b2", "#d55e00", "#cc79a7", "#00c49f",
-        "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728",
-        "#9467bd", "#8c564b", "#e377c2", "#7f7f7f",
-        "#bcbd22", "#17becf", "#332288", "#117733",
-        "#44aa99", "#88ccee", "#ddcc77", "#cc6677"
-    ];
+    private property <[color]> swatch_colors: MaterialPalette.series_colors;
+    private property <[string]> swatch_hexes: MaterialPalette.series_hexes;
 
     spacing: MaterialStyleMetrics.spacing_6;
 

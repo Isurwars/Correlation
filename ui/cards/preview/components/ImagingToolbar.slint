@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 import {
+    MaterialAnimations,
     MaterialPalette,
     MaterialStyleMetrics,
     MaterialTypography,
@@ -38,7 +39,7 @@ component ToolbarIconButton inherits TouchArea {
                     (root.has-hover ? MaterialPalette.surface_container_high : transparent);
         border-width: root.active ? 1.5px : 0px;
         border-color: root.active ? root.active_fg.with_alpha(35%) : transparent;
-        animate background, border-color { duration: 150ms; easing: ease-out; }
+        animate background, border-color { duration: MaterialAnimations.base_duration; easing: ease-out; }
 
         if root.label == "": Image {
             x: (parent.width - self.width) / 2;
@@ -48,7 +49,7 @@ component ToolbarIconButton inherits TouchArea {
             source: root.icon;
             colorize: !root.enabled ? MaterialPalette.outline :
                       root.active ? root.active_fg : root.idle_fg;
-            animate colorize { duration: 150ms; }
+            animate colorize { duration: MaterialAnimations.base_duration; }
         }
 
         if root.label != "": MaterialText {
@@ -58,7 +59,7 @@ component ToolbarIconButton inherits TouchArea {
             style: root.active ? MaterialTypography.label_medium_prominent : MaterialTypography.label_medium;
             color: !root.enabled ? MaterialPalette.outline :
                    root.active ? root.active_fg : root.idle_fg;
-            animate color { duration: 150ms; }
+            animate color { duration: MaterialAnimations.base_duration; }
             horizontal-alignment: center;
             vertical-alignment: center;
         }

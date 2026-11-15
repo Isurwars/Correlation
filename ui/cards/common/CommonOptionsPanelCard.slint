@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 import {
+    MaterialAnimations,
     MaterialStyleMetrics,
     MaterialPalette,
     ScrollView,
@@ -156,7 +157,7 @@ export component CommonOptionsPanelCard inherits Rectangle {
                 visible: root.has_radial_active;
                 height: root.has_radial_active ? self.preferred-height : 0px;
                 opacity: root.has_radial_active ? 1.0 : 0.0;
-                animate opacity { duration: 150ms; }
+                animate opacity { duration: MaterialAnimations.base_duration; }
             }
 
             // Plane Angle Options Card
@@ -170,7 +171,7 @@ export component CommonOptionsPanelCard inherits Rectangle {
                 visible: root.has_angular_active;
                 height: root.has_angular_active ? self.preferred-height : 0px;
                 opacity: root.has_angular_active ? 1.0 : 0.0;
-                animate opacity { duration: 150ms; }
+                animate opacity { duration: MaterialAnimations.base_duration; }
             }
 
             // Trajectory Options Card

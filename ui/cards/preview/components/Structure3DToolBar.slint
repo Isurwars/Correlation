@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 import {
+    MaterialAnimations,
     MaterialPalette,
     MaterialStyleMetrics,
     MaterialTypography,
@@ -59,7 +60,7 @@ component ToolbarToggleChip inherits TouchArea {
                     (root.has-hover ? MaterialPalette.surface_container_high : transparent);
         border-width: root.active ? 1.5px : 0px;
         border-color: root.active ? MaterialPalette.primary : transparent;
-        animate background, border-color { duration: 150ms; }
+        animate background, border-color { duration: MaterialAnimations.base_duration; }
 
         if root.glyph == "": Image {
             x: (parent.width - self.width) / 2;

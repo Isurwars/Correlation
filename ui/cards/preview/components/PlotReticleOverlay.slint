@@ -131,7 +131,7 @@ export component PlotReticleOverlay inherits Rectangle {
         y: root.mouse_y - 6px;
         width: 12px;
         height: 12px;
-        border-radius: 6px;
+        border-radius: MaterialStyleMetrics.border_radius_6;
         border-width: 2px;
         border-color: (root.active_tool == 1 || root.active_tool == 4 || root.active_tool == 6) ? MaterialPalette.tertiary.with_alpha(95%) :
                       (root.active_tool == 2 ? MaterialPalette.primary.with_alpha(95%) :
@@ -219,6 +219,6 @@ export component PlotReticleOverlay inherits Rectangle {
         background: MaterialPalette.tertiary.with_alpha(20%);
         border-width: 1.5px;
         border-color: MaterialPalette.tertiary;
-        border-radius: 2px;
+        border-radius: MaterialStyleMetrics.border_radius_2;
     }
 }

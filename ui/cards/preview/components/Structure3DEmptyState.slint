@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 import {
+    MaterialStyleMetrics,
     MaterialPalette,
     MaterialTypography,
     MaterialText,
@@ -20,7 +21,7 @@ export component Structure3DEmptyState inherits Rectangle {
     width: 380px;
     height: 190px;
     background: MaterialPalette.surface_container_high.with_alpha(92%);
-    border-radius: 16px;
+    border-radius: MaterialStyleMetrics.border_radius_16;
     border-width: 1px;
     border-color: MaterialPalette.outline_variant;
 
@@ -39,7 +40,7 @@ export component Structure3DEmptyState inherits Rectangle {
 
         MaterialText {
             text: "Open a trajectory or pick a quick demo dataset:";
-            font-size: 12px;
+            font-size: MaterialTypography.label_medium.font_size;
             color: MaterialPalette.on_surface_variant;
             horizontal-alignment: center;
             wrap: word-wrap;
@@ -71,7 +72,7 @@ export component Structure3DEmptyState inherits Rectangle {
                     border-color: MaterialPalette.outline_variant;
                     MaterialText {
                         text: "🔬 a-PdSi";
-                        font-size: 11px;
+                        font-size: MaterialTypography.label_small.font_size;
                         color: touch_pdsi_3d.has-hover ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
                         horizontal-alignment: center;
                         vertical-alignment: center;
@@ -93,7 +94,7 @@ export component Structure3DEmptyState inherits Rectangle {
                     border-color: MaterialPalette.outline_variant;
                     MaterialText {
                         text: "🌿 Cellulose";
-                        font-size: 11px;
+                        font-size: MaterialTypography.label_small.font_size;
                         color: touch_cell_3d.has-hover ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
                         horizontal-alignment: center;
                         vertical-alignment: center;
@@ -115,7 +116,7 @@ export component Structure3DEmptyState inherits Rectangle {
                     border-color: MaterialPalette.outline_variant;
                     MaterialText {
                         text: "💎 Silicon";
-                        font-size: 11px;
+                        font-size: MaterialTypography.label_small.font_size;
                         color: touch_si_3d.has-hover ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
                         horizontal-alignment: center;
                         vertical-alignment: center;

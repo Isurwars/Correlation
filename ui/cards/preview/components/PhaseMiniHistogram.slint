@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 import {
+    MaterialStyleMetrics,
     MaterialPalette,
     MaterialTypography,
     MaterialText,
@@ -19,7 +20,7 @@ export component PhaseMiniHistogram inherits Rectangle {
     in property <int> total_atoms: 0;
 
     height: 52px;
-    border-radius: 6px;
+    border-radius: MaterialStyleMetrics.border_radius_6;
     background: MaterialPalette.surface_container_lowest;
     border-width: 1px;
     border-color: MaterialPalette.outline_variant.with_alpha(50%);
