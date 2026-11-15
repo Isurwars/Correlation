@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.5.0] - 2026-11-14
+
+### 🖥️ User Interface & 3D Viewport Ergonomics
+- **Responsive 3D Camera Orbit & Symmetric Exponential Zoom (`Camera3D`, `Structure3DController`, `Structure3DViewport.slint`)**:
+  - Replaced linear wheel zoom with symmetric exponential scaling (`distance_ * std::exp(-factor)`) to prevent sudden clamping to minimum distance on fast wheel or trackpad events.
+  - Normalized `scroll-event` wheel deltas by `120px` and tuned orbit (`0.4F` deg/px) and zoom (`0.18F` per notch) sensitivities for crisp, controllable 3D navigation.
+- **Material Design 3 Token Consolidation (`material_palette.slint`, `material_animations.slint`, `ui/cards/`, `ui/nav/`)**:
+  - Centralized categorical curve series colors (`series_colors`, `series_hexes`), M3 state-layer opacities (`12%` focus/press), and interaction timing tokens (`fast_duration`, `base_duration`, `slow_duration`, `ease_out_easing`).
+  - Migrated hardcoded corner radii, font sizes, and animation durations across UI cards and navigation components to Material design tokens.
+- **Modular Slint Component Architecture**:
+  - Decomposed oversized UI cards into focused, reusable subcomponents: `Plot2DViewport`, `HeroFileLoadedCta`, `TrajectoryPlaybackSlider`, `CurveColorPicker`, `CurveListSearchBox`, `PlotAxesControls`, `OperationsDiagnosticsCard`, `BondCutoffsScalingDrawer`, and `AnalysesGroupSection`.
+
+### 🧪 Testing
+- **3D Camera Regression Coverage (`Camera3DTests`)**:
+  - Added symmetry and large-delta clamping safety assertions in `Camera3DTests.PanAndZoom`.
+
 ## [4.4.0] - 2026-11-14
 
 ### 🖥️ User Interface & Navigation
