@@ -14,6 +14,8 @@ import {
 } from "../../../../material/material.slint";
 import { CurveToggleItem } from "../../../../Types.slint";
 import { CompactInputField } from "CompactInputField.slint";
+import { CurveColorPicker } from "CurveColorPicker.slint";
+import { CurveListSearchBox } from "CurveListSearchBox.slint";
 
 component CurveBatchAction inherits TouchArea {
     in property <string> label;
@@ -54,93 +56,12 @@ export component CurveListTab inherits VerticalLayout {
     callback set_curve_width(string);
     callback apply_axis_settings();
 
-    private property <[color]> swatch_colors: MaterialPalette.series_colors;
-    private property <[string]> swatch_hexes: MaterialPalette.series_hexes;
-
     spacing: MaterialStyleMetrics.spacing_6;
 
     // 1. Search Filter Box
-    HorizontalLayout {
-        height: 28px;
-
-        search_container := Rectangle {
-            horizontal-stretch: 1;
-            height: 28px;
-            border-radius: MaterialStyleMetrics.border_radius_4;
-            background: MaterialPalette.surface_container_highest;
-            border-width: 1px;
-            border-color: search_input.has-focus ? MaterialPalette.primary : MaterialPalette.outline_variant;
-
-            HorizontalLayout {
-                padding-left: MaterialStyleMetrics.padding_8;
-                padding-right: MaterialStyleMetrics.padding_6;
-                spacing: MaterialStyleMetrics.spacing_6;
-                alignment: center;
-
-                VerticalLayout {
-                    alignment: center;
-                    Image {
-                        width: 14px;
-                        height: 14px;
-                        source: Icons.zoom_in;
-                        colorize: MaterialPalette.on_surface_variant;
-                    }
-                }
-
-                Rectangle {
-                    horizontal-stretch: 1;
-
-                    if root.curve_filter == "" && !search_input.has-focus: MaterialText {
-                        width: 100%;
-                        height: 100%;
-                        text: "Filter curves (e.g. Fe, O-H)...";
-                        style: MaterialTypography.body_small;
-                        color: MaterialPalette.on_surface_variant.with_alpha(60%);
-                        vertical-alignment: center;
-                    }
-
-                    search_input := TextInput {
-                        width: 100%;
-                        height: 100%;
-                        single-line: true;
-                        text <=> root.curve_filter;
-                        color: MaterialPalette.on_surface;
-                        font-size: MaterialTypography.body_small.font_size;
-                        vertical-alignment: center;
-
-                        edited => {
-                            root.filter_curves(self.text);
-                        }
-                    }
-                }
-
-                if root.curve_filter != "": clear_search_touch := TouchArea {
-                    width: 18px;
-                    height: 18px;
-                    mouse-cursor: pointer;
-                    accessible-role: button;
-                    accessible-label: "Clear curve filter";
-                    clicked => {
-                        root.curve_filter = "";
-                        root.filter_curves("");
-                    }
-
-                    Rectangle {
-                        border-radius: MaterialStyleMetrics.border_radius_full;
-                        background: clear_search_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
-
-                        Image {
-                            x: (parent.width - self.width) / 2;
-                            y: (parent.height - self.height) / 2;
-                            width: 12px;
-                            height: 12px;
-                            source: Icons.close;
-                            colorize: MaterialPalette.on_surface_variant;
-                        }
-                    }
-                }
-            }
-        }
+    CurveListSearchBox {
+        curve_filter <=> root.curve_filter;
+        filter_curves(f) => { root.filter_curves(f); }
     }
 
     // 2. All / None / Invert Batch Visibility Row
@@ -271,87 +192,9 @@ export component CurveListTab inherits VerticalLayout {
     }
 
     // 4. In-Place Color Palette Picker
-    if root.active_color_picker_id >= 0: Rectangle {
-        background: MaterialPalette.surface_container_high;
-        border-radius: MaterialStyleMetrics.border_radius_4;
-        border-width: 1px;
-        border-color: MaterialPalette.outline;
-
-        VerticalLayout {
-            padding: MaterialStyleMetrics.padding_8;
-            spacing: MaterialStyleMetrics.spacing_6;
-
-            HorizontalLayout {
-                alignment: center;
-                MaterialText {
-                    horizontal-stretch: 1;
-                    text: "Select Color";
-                    style: MaterialTypography.label_medium;
-                    color: MaterialPalette.on_surface;
-                    vertical-alignment: center;
-                }
-
-                close_picker_touch := TouchArea {
-                    width: 20px;
-                    height: 20px;
-                    mouse-cursor: pointer;
-                    accessible-role: button;
-                    accessible-label: "Close color picker";
-                    clicked => { root.active_color_picker_id = -1; }
-
-                    Rectangle {
-                        border-radius: MaterialStyleMetrics.border_radius_full;
-                        background: close_picker_touch.has-hover ? MaterialPalette.surface_container_highest : transparent;
-
-                        Image {
-                            x: (parent.width - self.width) / 2;
-                            y: (parent.height - self.height) / 2;
-                            width: 12px;
-                            height: 12px;
-                            source: Icons.close;
-                            colorize: MaterialPalette.on_surface_variant;
-                        }
-                    }
-                }
-            }
-
-            VerticalLayout {
-                spacing: MaterialStyleMetrics.spacing_4;
-                for r_idx in 6: HorizontalLayout {
-                    spacing: MaterialStyleMetrics.spacing_4;
-                    alignment: center;
-                    for c_idx in 4: swatch_touch := TouchArea {
-                        width: 28px;
-                        height: 24px;
-                        mouse-cursor: pointer;
-                        accessible-role: button;
-                        accessible-label: "Color swatch " + root.swatch_hexes[r_idx * 4 + c_idx];
-                        clicked => {
-                            root.set_curve_color(root.active_color_picker_id, root.swatch_hexes[r_idx * 4 + c_idx]);
-                            root.active_color_picker_id = -1;
-                        }
-                        Rectangle {
-                            width: 20px;
-                            height: 20px;
-                            border-radius: MaterialStyleMetrics.border_radius_full;
-                            background: root.swatch_colors[r_idx * 4 + c_idx];
-                            border-width: swatch_touch.has-hover ? 2px : 1px;
-                            border-color: swatch_touch.has-hover ? MaterialPalette.primary : MaterialPalette.outline;
-                        }
-                    }
-                }
-            }
-
-            CompactInputField {
-                placeholder_text: "#RRGGBB";
-                accepted(hex) => {
-                    if (hex != "") {
-                        root.set_curve_color(root.active_color_picker_id, hex);
-                        root.active_color_picker_id = -1;
-                    }
-                }
-            }
-        }
+    if root.active_color_picker_id >= 0: CurveColorPicker {
+        active_color_picker_id <=> root.active_color_picker_id;
+        set_curve_color(id, hex) => { root.set_curve_color(id, hex); }
     }
 
     // 5. Line Width Configuration

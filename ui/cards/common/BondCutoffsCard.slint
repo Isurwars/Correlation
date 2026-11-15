@@ -4,18 +4,13 @@ import {
     MaterialPalette,
     OutlinedCard,
     ExpandableHeader,
-    TextField,
-    FilledButton,
     MaterialText,
     Vertical,
-    Horizontal,
     Matrix,
-    TabItem,
-    Icon,
-    Icons,
 } from "../../material/material.slint";
 import { BondCutoff, AtomCount, SanityBadgeState } from "../../Types.slint";
 import { SanityBadge } from "SanityBadge.slint";
+import { BondCutoffsScalingDrawer } from "BondCutoffsScalingDrawer.slint";
 
 export component BondCutoffsCard inherits OutlinedCard {
     in-out property <bool> expanded: true;
@@ -72,38 +67,17 @@ export component BondCutoffsCard inherits OutlinedCard {
     out property <string> hovered_tooltip_text:
         !root.file_loaded ? "" :
         (matrix_legend_area.has-hover ? "Pairwise bond cutoffs matrix in Ångströms.\n\n▲ Upper Triangle: Max distance (bonding cutoff)\n▼ Lower Triangle: Min distance (core exclusion)\n\n✏️ Direct Editing: Click any cell in the table below to customize individual pair limits." :
-        scaling_toggle_touch.has-hover ? "Expand or collapse bulk scaling factors (Min Factor, Max Factor, Global Cutoff)." :
-        !root.show_scaling_tools ? "" :
-        (min_factor_area.has-hover ? "Minimum bond distance scaling factor (default: 0.6).\n\n🔬 Scales the sum of covalent/vdW radii to reject unphysically close atomic overlaps." :
-        apply_min_area.has-hover ? "Recalculate and apply minimum distance thresholds across all atom pairs." :
-        max_factor_area.has-hover ? "Maximum bond distance scaling factor (default: 1.2).\n\n🔬 Scales the sum of covalent/vdW radii to capture the first coordination shell." :
-        apply_max_area.has-hover ? "Recalculate and apply maximum distance thresholds across all atom pairs." :
-        global_cutoff_area.has-hover ? "Global uniform cutoff in Ångströms (default: 3.5 Å).\n\n🔬 Sets an identical isotropic cutoff across all pairs." :
-        apply_global_area.has-hover ? "Apply the global cutoff distance across all matrix entries." : ""));
+        scaling_drawer.hovered_tooltip_text);
 
     out property <length> hovered_x:
         !root.file_loaded ? 0px :
         (matrix_legend_area.has-hover ? matrix_legend_area.absolute-position.x + matrix_legend_area.mouse-x :
-        scaling_toggle_touch.has-hover ? scaling_toggle_touch.absolute-position.x + scaling_toggle_touch.mouse-x :
-        !root.show_scaling_tools ? 0px :
-        (min_factor_area.has-hover ? min_factor_area.absolute-position.x + min_factor_area.mouse-x :
-        apply_min_area.has-hover ? apply_min_area.absolute-position.x + apply_min_area.mouse-x :
-        max_factor_area.has-hover ? max_factor_area.absolute-position.x + max_factor_area.mouse-x :
-        apply_max_area.has-hover ? apply_max_area.absolute-position.x + apply_max_area.mouse-x :
-        global_cutoff_area.has-hover ? global_cutoff_area.absolute-position.x + global_cutoff_area.mouse-x :
-        apply_global_area.has-hover ? apply_global_area.absolute-position.x + apply_global_area.mouse-x : 0px));
+        scaling_drawer.hovered_x);
 
     out property <length> hovered_y:
         !root.file_loaded ? 0px :
         (matrix_legend_area.has-hover ? matrix_legend_area.absolute-position.y + matrix_legend_area.mouse-y :
-        scaling_toggle_touch.has-hover ? scaling_toggle_touch.absolute-position.y + scaling_toggle_touch.mouse-y :
-        !root.show_scaling_tools ? 0px :
-        (min_factor_area.has-hover ? min_factor_area.absolute-position.y + min_factor_area.mouse-y :
-        apply_min_area.has-hover ? apply_min_area.absolute-position.y + apply_min_area.mouse-y :
-        max_factor_area.has-hover ? max_factor_area.absolute-position.y + max_factor_area.mouse-y :
-        apply_max_area.has-hover ? apply_max_area.absolute-position.y + apply_max_area.mouse-y :
-        global_cutoff_area.has-hover ? global_cutoff_area.absolute-position.y + global_cutoff_area.mouse-y :
-        apply_global_area.has-hover ? apply_global_area.absolute-position.y + apply_global_area.mouse-y : 0px));
+        scaling_drawer.hovered_y);
 
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
@@ -260,130 +234,16 @@ export component BondCutoffsCard inherits OutlinedCard {
             }
 
             // Collapsible Quick Scaling Tools Drawer
-            Rectangle {
-                visible: root.file_loaded;
-                height: root.file_loaded ? 28px : 0px;
-                clip: true;
-                border-radius: MaterialStyleMetrics.border_radius_6;
-                background: scaling_toggle_touch.has-hover ? MaterialPalette.surface_container_high : MaterialPalette.surface_container_low;
-                border-width: 1px;
-                border-color: MaterialPalette.outline_variant;
-
-                scaling_toggle_touch := TouchArea {
-                    width: 100%;
-                    height: 100%;
-                    mouse-cursor: pointer;
-                    accessible-role: button;
-                    accessible-label: "Toggle Quick Scaling Tools";
-                    clicked => {
-                        root.show_scaling_tools = !root.show_scaling_tools;
-                    }
-                }
-
-                HorizontalLayout {
-                    padding-left: MaterialStyleMetrics.padding_8;
-                    padding-right: MaterialStyleMetrics.padding_8;
-                    alignment: space-between;
-
-                    MaterialText {
-                        text: "Quick Scaling Tools";
-                        style: MaterialTypography.label_medium;
-                        color: MaterialPalette.on_surface_variant;
-                        vertical-alignment: center;
-                    }
-
-                    VerticalLayout {
-                        alignment: center;
-                        Icon {
-                            width: 18px;
-                            height: 18px;
-                            source: root.show_scaling_tools ? Icons.arrow_drop_up : Icons.arrow_drop_down;
-                            colorize: MaterialPalette.on_surface_variant;
-                        }
-                    }
-                }
-            }
-
-            VerticalLayout {
-                visible: root.file_loaded && root.show_scaling_tools;
-                height: (root.file_loaded && root.show_scaling_tools) ? self.preferred-height : 0px;
-                spacing: MaterialStyleMetrics.spacing_8;
-
-                // Row 1: Min factor (default 0.6)
-                HorizontalLayout {
-                    spacing: 8px;
-                    min_factor_area := TouchArea {
-                        horizontal-stretch: 1;
-                        min-width: 90px;
-                        TextField {
-                            width: 100%;
-                            enabled: root.file_loaded;
-                            label: "Min Factor";
-                            text <=> root.min_factor;
-                        }
-                    }
-                    apply_min_area := TouchArea {
-                        horizontal-stretch: 0;
-                        FilledButton {
-                            enabled: root.file_loaded;
-                            text: "Apply Min";
-                            clicked => {
-                                root.apply_min_factor(root.min_factor.to-float());
-                            }
-                        }
-                    }
-                }
-
-                // Row 2: Max factor (default 1.2)
-                HorizontalLayout {
-                    spacing: 8px;
-                    max_factor_area := TouchArea {
-                        horizontal-stretch: 1;
-                        min-width: 90px;
-                        TextField {
-                            width: 100%;
-                            enabled: root.file_loaded;
-                            label: "Max Factor";
-                            text <=> root.max_factor;
-                        }
-                    }
-                    apply_max_area := TouchArea {
-                        horizontal-stretch: 0;
-                        FilledButton {
-                            enabled: root.file_loaded;
-                            text: "Apply Max";
-                            clicked => {
-                                root.apply_max_factor(root.max_factor.to-float());
-                            }
-                        }
-                    }
-                }
-
-                // Row 3: Global cutoff (default 3.5)
-                HorizontalLayout {
-                    spacing: 8px;
-                    global_cutoff_area := TouchArea {
-                        horizontal-stretch: 1;
-                        min-width: 90px;
-                        TextField {
-                            width: 100%;
-                            enabled: root.file_loaded;
-                            label: "Global Cutoff";
-                            text <=> root.global_cutoff;
-                        }
-                    }
-                    apply_global_area := TouchArea {
-                        horizontal-stretch: 0;
-                        FilledButton {
-                            enabled: root.file_loaded;
-                            text: "Set Global";
-                            clicked => {
-                                root.apply_global_cutoff(root.global_cutoff.to-float());
-                                root.set_uniform_cutoff(root.global_cutoff.to-float());
-                            }
-                        }
-                    }
-                }
+            scaling_drawer := BondCutoffsScalingDrawer {
+                file_loaded: root.file_loaded;
+                show_scaling_tools <=> root.show_scaling_tools;
+                min_factor <=> root.min_factor;
+                max_factor <=> root.max_factor;
+                global_cutoff <=> root.global_cutoff;
+                apply_min_factor(v) => { root.apply_min_factor(v); }
+                apply_max_factor(v) => { root.apply_max_factor(v); }
+                apply_global_cutoff(v) => { root.apply_global_cutoff(v); }
+                set_uniform_cutoff(v) => { root.set_uniform_cutoff(v); }
             }
 
         }

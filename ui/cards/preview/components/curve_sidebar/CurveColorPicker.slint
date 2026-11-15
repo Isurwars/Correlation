@@ -1,0 +1,103 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialText,
+    Icons,
+} from "../../../../material/material.slint";
+import { CompactInputField } from "CompactInputField.slint";
+
+export component CurveColorPicker inherits Rectangle {
+    in-out property <int> active_color_picker_id: -1;
+    callback set_curve_color(int, string);
+
+    private property <[color]> swatch_colors: MaterialPalette.series_colors;
+    private property <[string]> swatch_hexes: MaterialPalette.series_hexes;
+
+    background: MaterialPalette.surface_container_high;
+    border-radius: MaterialStyleMetrics.border_radius_4;
+    border-width: 1px;
+    border-color: MaterialPalette.outline;
+
+    VerticalLayout {
+        padding: MaterialStyleMetrics.padding_8;
+        spacing: MaterialStyleMetrics.spacing_6;
+
+        HorizontalLayout {
+            alignment: center;
+            MaterialText {
+                horizontal-stretch: 1;
+                text: "Select Color";
+                style: MaterialTypography.label_medium;
+                color: MaterialPalette.on_surface;
+                vertical-alignment: center;
+            }
+
+            close_picker_touch := TouchArea {
+                width: 20px;
+                height: 20px;
+                mouse-cursor: pointer;
+                accessible-role: button;
+                accessible-label: "Close color picker";
+                clicked => { root.active_color_picker_id = -1; }
+
+                Rectangle {
+                    border-radius: MaterialStyleMetrics.border_radius_full;
+                    background: close_picker_touch.has-hover ? MaterialPalette.surface_container_highest : transparent;
+
+                    Image {
+                        x: (parent.width - self.width) / 2;
+                        y: (parent.height - self.height) / 2;
+                        width: 12px;
+                        height: 12px;
+                        source: Icons.close;
+                        colorize: MaterialPalette.on_surface_variant;
+                    }
+                }
+            }
+        }
+
+        VerticalLayout {
+            spacing: MaterialStyleMetrics.spacing_4;
+            for r_idx in 6: HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_4;
+                alignment: center;
+                for c_idx in 4: swatch_touch := TouchArea {
+                    width: 28px;
+                    height: 24px;
+                    mouse-cursor: pointer;
+                    accessible-role: button;
+                    accessible-label: "Color swatch " + root.swatch_hexes[r_idx * 4 + c_idx];
+                    clicked => {
+                        root.set_curve_color(root.active_color_picker_id, root.swatch_hexes[r_idx * 4 + c_idx]);
+                        root.active_color_picker_id = -1;
+                    }
+                    Rectangle {
+                        width: 20px;
+                        height: 20px;
+                        border-radius: MaterialStyleMetrics.border_radius_full;
+                        background: root.swatch_colors[r_idx * 4 + c_idx];
+                        border-width: swatch_touch.has-hover ? 2px : 1px;
+                        border-color: swatch_touch.has-hover ? MaterialPalette.primary : MaterialPalette.outline;
+                    }
+                }
+            }
+        }
+
+        CompactInputField {
+            placeholder_text: "#RRGGBB";
+            accepted(hex) => {
+                if (hex != "") {
+                    root.set_curve_color(root.active_color_picker_id, hex);
+                    root.active_color_picker_id = -1;
+                }
+            }
+        }
+    }
+}
+

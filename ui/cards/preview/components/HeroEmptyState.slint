@@ -5,9 +5,36 @@ import {
     MaterialText,
     Vertical,
     FilledButton,
-    Horizontal,
     Icons,
 } from "../../../material/material.slint";
+import { HeroFileLoadedCta } from "HeroFileLoadedCta.slint";
+
+component HeroSampleChip inherits Rectangle {
+    in property <string> label;
+    callback clicked();
+
+    width: chip_txt.preferred-width + 16px;
+    height: 28px;
+    border-radius: 14px;
+    background: chip_touch.has-hover ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+    border-width: 1px;
+    border-color: MaterialPalette.outline_variant;
+
+    chip_txt := MaterialText {
+        text: root.label;
+        font-size: 11.5px;
+        color: chip_touch.has-hover ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+
+    chip_touch := TouchArea {
+        mouse-cursor: pointer;
+        accessible-role: button;
+        accessible-label: root.label;
+        clicked => { root.clicked(); }
+    }
+}
 
 export component HeroEmptyState inherits Rectangle {
     in property <bool> file_loaded: false;
@@ -94,70 +121,19 @@ export component HeroEmptyState inherits Rectangle {
                     vertical-alignment: center;
                 }
 
-                touch_pdsi := TouchArea {
-                    width: btn_pdsi.preferred-width + 12px;
-                    height: 28px;
-                    mouse-cursor: pointer;
+                HeroSampleChip {
+                    label: "🔬 a-PdSi (Glass)";
                     clicked => { root.load_sample("a-PdSi"); }
-                    btn_pdsi := Rectangle {
-                        width: 100%;
-                        height: 100%;
-                        border-radius: 14px;
-                        background: touch_pdsi.has-hover ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
-                        border-width: 1px;
-                        border-color: MaterialPalette.outline_variant;
-                        MaterialText {
-                            text: "🔬 a-PdSi (Glass)";
-                            font-size: 11.5px;
-                            color: touch_pdsi.has-hover ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
-                            horizontal-alignment: center;
-                            vertical-alignment: center;
-                        }
-                    }
                 }
 
-                touch_cell := TouchArea {
-                    width: btn_cell.preferred-width + 12px;
-                    height: 28px;
-                    mouse-cursor: pointer;
+                HeroSampleChip {
+                    label: "🌿 Cellulose (Polymer)";
                     clicked => { root.load_sample("Cellulose"); }
-                    btn_cell := Rectangle {
-                        width: 100%;
-                        height: 100%;
-                        border-radius: 14px;
-                        background: touch_cell.has-hover ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
-                        border-width: 1px;
-                        border-color: MaterialPalette.outline_variant;
-                        MaterialText {
-                            text: "🌿 Cellulose (Polymer)";
-                            font-size: 11.5px;
-                            color: touch_cell.has-hover ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
-                            horizontal-alignment: center;
-                            vertical-alignment: center;
-                        }
-                    }
                 }
 
-                touch_si := TouchArea {
-                    width: btn_si.preferred-width + 12px;
-                    height: 28px;
-                    mouse-cursor: pointer;
+                HeroSampleChip {
+                    label: "💎 Silicon (Crystal)";
                     clicked => { root.load_sample("Si"); }
-                    btn_si := Rectangle {
-                        width: 100%;
-                        height: 100%;
-                        border-radius: 14px;
-                        background: touch_si.has-hover ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
-                        border-width: 1px;
-                        border-color: MaterialPalette.outline_variant;
-                        MaterialText {
-                            text: "💎 Silicon (Crystal)";
-                            font-size: 11.5px;
-                            color: touch_si.has-hover ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
-                            horizontal-alignment: center;
-                            vertical-alignment: center;
-                        }
-                    }
                 }
             }
 
@@ -215,66 +191,13 @@ export component HeroEmptyState inherits Rectangle {
             }
         }
 
-        if root.file_loaded: Vertical {
-            spacing: MaterialStyleMetrics.spacing_12;
-            alignment: center;
-
-            Rectangle {
-                background: MaterialPalette.surface_container_high;
-                border-radius: MaterialStyleMetrics.border_radius_8;
-                border-width: 1px;
-                border-color: MaterialPalette.outline_variant;
-
-                HorizontalLayout {
-                    padding-left: 16px;
-                    padding-right: 16px;
-                    padding-top: 8px;
-                    padding-bottom: 8px;
-                    spacing: 16px;
-                    alignment: center;
-
-                    MaterialText {
-                        text: "📁 " + root.file_basename;
-                        style: MaterialTypography.label_large;
-                        color: MaterialPalette.on_surface;
-                        vertical-alignment: center;
-                    }
-
-                    MaterialText {
-                        text: "• " + root.total_atoms + " atoms";
-                        style: MaterialTypography.body_medium;
-                        color: MaterialPalette.on_surface_variant;
-                        vertical-alignment: center;
-                    }
-
-                    MaterialText {
-                        text: "• " + root.num_frames + " frames";
-                        style: MaterialTypography.body_medium;
-                        color: MaterialPalette.on_surface_variant;
-                        vertical-alignment: center;
-                    }
-                }
-            }
-
-            HorizontalLayout {
-                spacing: 12px;
-                alignment: center;
-
-                FilledButton {
-                    height: MaterialStyleMetrics.size_40;
-                    text: root.analysis_running ? "Calculation Running..." : "Run Analysis (Ctrl+R)";
-                    icon: Icons.play_arrow;
-                    enabled: !root.analysis_running;
-                    clicked => { root.run_analysis(); }
-                }
-
-                FilledButton {
-                    height: MaterialStyleMetrics.size_40;
-                    text: "Configure Options";
-                    icon: Icons.tune;
-                    clicked => { root.open_panel(1); }
-                }
-            }
+        if root.file_loaded: HeroFileLoadedCta {
+            analysis_running: root.analysis_running;
+            file_basename: root.file_basename;
+            total_atoms: root.total_atoms;
+            num_frames: root.num_frames;
+            run_analysis => { root.run_analysis(); }
+            open_panel(id) => { root.open_panel(id); }
         }
     }
 

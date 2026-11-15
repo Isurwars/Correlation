@@ -1,0 +1,245 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialPalette,
+    CheckBox,
+    CheckState,
+    CheckBoxRow,
+    MaterialText,
+    Icon,
+    Icons,
+    Vertical,
+    Horizontal,
+} from "../../material/material.slint";
+import { CalculatorGroup } from "../../Types.slint";
+
+export component AnalysesGroupSection inherits Vertical {
+    in property <CalculatorGroup> group;
+    in property <bool> show_divider: false;
+    in property <bool> file_loaded: false;
+    in property <bool> compact_mode: false;
+
+    callback toggle_calculator(string, bool);
+    callback toggle_calculator_group(string, bool);
+    callback set_calculator_group_expanded(string, bool);
+    callback calculator_hovered(string);
+
+    spacing: MaterialStyleMetrics.spacing_2;
+
+    if root.show_divider: Rectangle {
+        height: 1px;
+        background: MaterialPalette.outline_variant;
+    }
+
+    // Category Sub-Tree Header: Decoupled Tri-State CheckBox + Expand/Collapse Header
+    HorizontalLayout {
+        height: 32px;
+        spacing: MaterialStyleMetrics.spacing_2;
+        alignment: stretch;
+
+        VerticalLayout {
+            width: 28px;
+            alignment: center;
+
+            CheckBox {
+                width: 24px;
+                height: 24px;
+                enabled: root.file_loaded;
+                tristate: true;
+                check_state: root.group.enabled_count == 0 ? CheckState.unchecked :
+                    (root.group.enabled_count == root.group.total_count ? CheckState.checked : CheckState.partially_checked);
+                checked_state_changed => {
+                    root.toggle_calculator_group(root.group.name, root.group.enabled_count < root.group.total_count);
+                }
+            }
+        }
+
+        group_header_touch := TouchArea {
+            horizontal-stretch: 1;
+            mouse-cursor: pointer;
+            accessible-role: button;
+            accessible-label: root.group.name;
+            clicked => {
+                root.set_calculator_group_expanded(root.group.name, !root.group.expanded);
+            }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: MaterialStyleMetrics.border_radius_2;
+                background: group_header_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                HorizontalLayout {
+                    padding-left: 2px;
+                    padding-right: 6px;
+                    spacing: MaterialStyleMetrics.spacing_4;
+                    alignment: space-between;
+
+                    HorizontalLayout {
+                        spacing: 2px;
+
+                        VerticalLayout {
+                            alignment: center;
+                            Icon {
+                                colorize: MaterialPalette.on_surface_variant;
+                                width: 20px;
+                                height: 20px;
+                                source: root.group.expanded ? Icons.arrow_drop_down : Icons.arrow_right;
+                            }
+                        }
+
+                        MaterialText {
+                            text: root.group.name;
+                            style: MaterialTypography.title_small;
+                            vertical-alignment: center;
+                            color: MaterialPalette.on_surface;
+                        }
+                    }
+
+                    VerticalLayout {
+                        alignment: center;
+                        Rectangle {
+                            height: 18px;
+                            width: count_text.preferred-width + 10px;
+                            border-radius: MaterialStyleMetrics.border_radius_full;
+                            background: root.group.enabled_count > 0 ?
+                                MaterialPalette.primary.with_alpha(18%) :
+                                MaterialPalette.surface_container_low;
+
+                            count_text := MaterialText {
+                                text: root.group.enabled_count + "/" + root.group.total_count;
+                                style: MaterialTypography.label_small;
+                                color: root.group.enabled_count > 0 ?
+                                    MaterialPalette.primary :
+                                    MaterialPalette.on_surface_variant;
+                                horizontal-alignment: center;
+                                vertical-alignment: center;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Sub-Tree Body: Standard Tree Rows vs. Compact Chip Grid
+    if root.group.expanded && !root.compact_mode: HorizontalLayout {
+        padding-left: 11px;
+        spacing: 8px;
+
+        Rectangle {
+            width: 1px;
+            background: MaterialPalette.outline_variant;
+        }
+
+        Vertical {
+            horizontal-stretch: 1;
+            spacing: MaterialStyleMetrics.spacing_2;
+            padding: 0;
+
+            for calc[ci] in root.group.calculators: Horizontal {
+                height: 28px;
+                padding-left: MaterialStyleMetrics.spacing_2;
+
+                CheckBoxRow {
+                    enabled: root.file_loaded;
+                    check_state_bool: calc.enabled;
+                    text: calc.name;
+                    horizontal-stretch: 1;
+
+                    property <bool> _hover: self.has-hover;
+                    changed _hover => {
+                        if (self.has-hover) {
+                            root.calculator_hovered(calc.description);
+                        }
+                    }
+
+                    checked_state_changed(s) => {
+                        root.toggle_calculator(calc.id, s);
+                    }
+                }
+            }
+        }
+    }
+
+    if root.group.expanded && root.compact_mode: VerticalLayout {
+        padding-left: 12px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        spacing: 4px;
+
+        for calc[ci] in root.group.calculators: compact_chip := TouchArea {
+            height: 24px;
+            enabled: root.file_loaded;
+            mouse-cursor: root.file_loaded ? pointer : default;
+            accessible-role: checkbox;
+            accessible-label: calc.name;
+
+            property <bool> _hover: self.has-hover;
+            changed _hover => {
+                if (self.has-hover) {
+                    root.calculator_hovered(calc.name + "\n" + calc.description);
+                }
+            }
+
+            clicked => {
+                root.toggle_calculator(calc.id, !calc.enabled);
+            }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: MaterialStyleMetrics.border_radius_6;
+                border-width: 1px;
+                border-color: calc.enabled ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(60%);
+                background: calc.enabled ?
+                    MaterialPalette.primary.with_alpha(16%) :
+                    (compact_chip.has-hover ? MaterialPalette.surface_container_high : MaterialPalette.surface_container_low);
+
+                HorizontalLayout {
+                    padding-left: 8px;
+                    padding-right: 8px;
+                    spacing: 6px;
+                    alignment: space-between;
+
+                    HorizontalLayout {
+                        spacing: 6px;
+                        VerticalLayout {
+                            alignment: center;
+                            Rectangle {
+                                width: 8px;
+                                height: 8px;
+                                border-radius: MaterialStyleMetrics.border_radius_4;
+                                background: calc.enabled ? MaterialPalette.primary : MaterialPalette.outline;
+                            }
+                        }
+
+                        MaterialText {
+                            text: calc.short_name != "" ? calc.short_name : calc.name;
+                            style: MaterialTypography.label_medium;
+                            font_weight: 600;
+                            color: calc.enabled ? MaterialPalette.primary : MaterialPalette.on_surface;
+                            vertical-alignment: center;
+                        }
+                    }
+
+                    MaterialText {
+                        text: calc.name;
+                        style: MaterialTypography.label_small;
+                        color: MaterialPalette.on_surface_variant;
+                        overflow: elide;
+                        vertical-alignment: center;
+                        horizontal-alignment: right;
+                        horizontal-stretch: 1;
+                    }
+                }
+            }
+        }
+    }
+}
+

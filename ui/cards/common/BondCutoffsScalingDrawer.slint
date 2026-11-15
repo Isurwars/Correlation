@@ -1,0 +1,190 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialPalette,
+    TextField,
+    FilledButton,
+    MaterialText,
+    Icon,
+    Icons,
+} from "../../material/material.slint";
+
+export component BondCutoffsScalingDrawer inherits VerticalLayout {
+    in property <bool> file_loaded;
+    in-out property <bool> show_scaling_tools: false;
+    in-out property <string> min_factor: "0.6";
+    in-out property <string> max_factor: "1.2";
+    in-out property <string> global_cutoff: "3.5";
+
+    callback apply_min_factor(float);
+    callback apply_max_factor(float);
+    callback apply_global_cutoff(float);
+    callback set_uniform_cutoff(float);
+
+    out property <string> hovered_tooltip_text:
+        !root.file_loaded ? "" :
+        (scaling_toggle_touch.has-hover ? "Expand or collapse bulk scaling factors (Min Factor, Max Factor, Global Cutoff)." :
+        !root.show_scaling_tools ? "" :
+        (min_factor_area.has-hover ? "Minimum bond distance scaling factor (default: 0.6).\n\n🔬 Scales the sum of covalent/vdW radii to reject unphysically close atomic overlaps." :
+        apply_min_area.has-hover ? "Recalculate and apply minimum distance thresholds across all atom pairs." :
+        max_factor_area.has-hover ? "Maximum bond distance scaling factor (default: 1.2).\n\n🔬 Scales the sum of covalent/vdW radii to capture the first coordination shell." :
+        apply_max_area.has-hover ? "Recalculate and apply maximum distance thresholds across all atom pairs." :
+        global_cutoff_area.has-hover ? "Global uniform cutoff in Ångströms (default: 3.5 Å).\n\n🔬 Sets an identical isotropic cutoff across all pairs." :
+        apply_global_area.has-hover ? "Apply the global cutoff distance across all matrix entries." : ""));
+
+    out property <length> hovered_x:
+        !root.file_loaded ? 0px :
+        (scaling_toggle_touch.has-hover ? scaling_toggle_touch.absolute-position.x + scaling_toggle_touch.mouse-x :
+        !root.show_scaling_tools ? 0px :
+        (min_factor_area.has-hover ? min_factor_area.absolute-position.x + min_factor_area.mouse-x :
+        apply_min_area.has-hover ? apply_min_area.absolute-position.x + apply_min_area.mouse-x :
+        max_factor_area.has-hover ? max_factor_area.absolute-position.x + max_factor_area.mouse-x :
+        apply_max_area.has-hover ? apply_max_area.absolute-position.x + apply_max_area.mouse-x :
+        global_cutoff_area.has-hover ? global_cutoff_area.absolute-position.x + global_cutoff_area.mouse-x :
+        apply_global_area.has-hover ? apply_global_area.absolute-position.x + apply_global_area.mouse-x : 0px));
+
+    out property <length> hovered_y:
+        !root.file_loaded ? 0px :
+        (scaling_toggle_touch.has-hover ? scaling_toggle_touch.absolute-position.y + scaling_toggle_touch.mouse-y :
+        !root.show_scaling_tools ? 0px :
+        (min_factor_area.has-hover ? min_factor_area.absolute-position.y + min_factor_area.mouse-y :
+        apply_min_area.has-hover ? apply_min_area.absolute-position.y + apply_min_area.mouse-y :
+        max_factor_area.has-hover ? max_factor_area.absolute-position.y + max_factor_area.mouse-y :
+        apply_max_area.has-hover ? apply_max_area.absolute-position.y + apply_max_area.mouse-y :
+        global_cutoff_area.has-hover ? global_cutoff_area.absolute-position.y + global_cutoff_area.mouse-y :
+        apply_global_area.has-hover ? apply_global_area.absolute-position.y + apply_global_area.mouse-y : 0px));
+
+    spacing: MaterialStyleMetrics.spacing_8;
+
+    Rectangle {
+        visible: root.file_loaded;
+        height: root.file_loaded ? 28px : 0px;
+        clip: true;
+        border-radius: MaterialStyleMetrics.border_radius_6;
+        background: scaling_toggle_touch.has-hover ? MaterialPalette.surface_container_high : MaterialPalette.surface_container_low;
+        border-width: 1px;
+        border-color: MaterialPalette.outline_variant;
+
+        scaling_toggle_touch := TouchArea {
+            width: 100%;
+            height: 100%;
+            mouse-cursor: pointer;
+            accessible-role: button;
+            accessible-label: "Toggle Quick Scaling Tools";
+            clicked => {
+                root.show_scaling_tools = !root.show_scaling_tools;
+            }
+        }
+
+        HorizontalLayout {
+            padding-left: MaterialStyleMetrics.padding_8;
+            padding-right: MaterialStyleMetrics.padding_8;
+            alignment: space-between;
+
+            MaterialText {
+                text: "Quick Scaling Tools";
+                style: MaterialTypography.label_medium;
+                color: MaterialPalette.on_surface_variant;
+                vertical-alignment: center;
+            }
+
+            VerticalLayout {
+                alignment: center;
+                Icon {
+                    width: 18px;
+                    height: 18px;
+                    source: root.show_scaling_tools ? Icons.arrow_drop_up : Icons.arrow_drop_down;
+                    colorize: MaterialPalette.on_surface_variant;
+                }
+            }
+        }
+    }
+
+    VerticalLayout {
+        visible: root.file_loaded && root.show_scaling_tools;
+        height: (root.file_loaded && root.show_scaling_tools) ? self.preferred-height : 0px;
+        spacing: MaterialStyleMetrics.spacing_8;
+
+        // Row 1: Min factor (default 0.6)
+        HorizontalLayout {
+            spacing: 8px;
+            min_factor_area := TouchArea {
+                horizontal-stretch: 1;
+                min-width: 90px;
+                TextField {
+                    width: 100%;
+                    enabled: root.file_loaded;
+                    label: "Min Factor";
+                    text <=> root.min_factor;
+                }
+            }
+            apply_min_area := TouchArea {
+                horizontal-stretch: 0;
+                FilledButton {
+                    enabled: root.file_loaded;
+                    text: "Apply Min";
+                    clicked => {
+                        root.apply_min_factor(root.min_factor.to-float());
+                    }
+                }
+            }
+        }
+
+        // Row 2: Max factor (default 1.2)
+        HorizontalLayout {
+            spacing: 8px;
+            max_factor_area := TouchArea {
+                horizontal-stretch: 1;
+                min-width: 90px;
+                TextField {
+                    width: 100%;
+                    enabled: root.file_loaded;
+                    label: "Max Factor";
+                    text <=> root.max_factor;
+                }
+            }
+            apply_max_area := TouchArea {
+                horizontal-stretch: 0;
+                FilledButton {
+                    enabled: root.file_loaded;
+                    text: "Apply Max";
+                    clicked => {
+                        root.apply_max_factor(root.max_factor.to-float());
+                    }
+                }
+            }
+        }
+
+        // Row 3: Global cutoff (default 3.5)
+        HorizontalLayout {
+            spacing: 8px;
+            global_cutoff_area := TouchArea {
+                horizontal-stretch: 1;
+                min-width: 90px;
+                TextField {
+                    width: 100%;
+                    enabled: root.file_loaded;
+                    label: "Global Cutoff";
+                    text <=> root.global_cutoff;
+                }
+            }
+            apply_global_area := TouchArea {
+                horizontal-stretch: 0;
+                FilledButton {
+                    enabled: root.file_loaded;
+                    text: "Set Global";
+                    clicked => {
+                        root.apply_global_cutoff(root.global_cutoff.to-float());
+                        root.set_uniform_cutoff(root.global_cutoff.to-float());
+                    }
+                }
+            }
+        }
+    }
+}
+

@@ -1,0 +1,200 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialText,
+    CheckBoxRow,
+} from "../../../../material/material.slint";
+import { PlotAxisSettings } from "../../../../Types.slint";
+import { CompactInputField } from "CompactInputField.slint";
+
+component StepAdjustButton inherits TouchArea {
+    in property <string> symbol;
+    in property <string> label;
+
+    width: 24px;
+    height: 24px;
+    mouse-cursor: pointer;
+    accessible-role: button;
+    accessible-label: root.label;
+
+    Rectangle {
+        background: root.has-hover ? MaterialPalette.surface_container_highest : transparent;
+        border-radius: MaterialStyleMetrics.border_radius_2;
+        border-width: 1px;
+        border-color: MaterialPalette.outline;
+
+        MaterialText {
+            text: root.symbol;
+            style: MaterialTypography.label_medium;
+            color: MaterialPalette.on_surface;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+}
+
+component AxisPairRow inherits VerticalLayout {
+    in property <string> title;
+    in property <string> min_placeholder;
+    in property <string> max_placeholder;
+    in-out property <bool> auto_checked;
+    in-out property <string> min_value;
+    in-out property <string> max_value;
+    callback apply_axis_settings();
+
+    spacing: MaterialStyleMetrics.spacing_4;
+
+    HorizontalLayout {
+        alignment: center;
+        MaterialText {
+            horizontal-stretch: 1;
+            text: root.title;
+            style: MaterialTypography.label_medium;
+            color: MaterialPalette.on_surface;
+            vertical-alignment: center;
+        }
+        CheckBoxRow {
+            text: "Auto";
+            check_state_bool: root.auto_checked;
+            checked_state_changed(checked) => {
+                root.auto_checked = checked;
+                if (checked) {
+                    root.apply_axis_settings();
+                }
+            }
+        }
+    }
+
+    HorizontalLayout {
+        spacing: MaterialStyleMetrics.spacing_6;
+        CompactInputField {
+            horizontal-stretch: 1;
+            placeholder_text: root.min_placeholder;
+            text <=> root.min_value;
+            enabled: !root.auto_checked;
+            accepted(_) => {
+                root.auto_checked = false;
+                root.apply_axis_settings();
+            }
+        }
+        CompactInputField {
+            horizontal-stretch: 1;
+            placeholder_text: root.max_placeholder;
+            text <=> root.max_value;
+            enabled: !root.auto_checked;
+            accepted(_) => {
+                root.auto_checked = false;
+                root.apply_axis_settings();
+            }
+        }
+    }
+}
+
+export component PlotAxesControls inherits VerticalLayout {
+    in-out property <PlotAxisSettings> axis_settings;
+    callback apply_axis_settings();
+
+    spacing: MaterialStyleMetrics.spacing_12;
+
+    AxisPairRow {
+        title: "X-Axis Range";
+        min_placeholder: "X Min";
+        max_placeholder: "X Max";
+        auto_checked <=> root.axis_settings.auto_x;
+        min_value <=> root.axis_settings.x_min;
+        max_value <=> root.axis_settings.x_max;
+        apply_axis_settings => { root.apply_axis_settings(); }
+    }
+
+    AxisPairRow {
+        title: "Y-Axis Range";
+        min_placeholder: "Y Min";
+        max_placeholder: "Y Max";
+        auto_checked <=> root.axis_settings.auto_y;
+        min_value <=> root.axis_settings.y_min;
+        max_value <=> root.axis_settings.y_max;
+        apply_axis_settings => { root.apply_axis_settings(); }
+    }
+
+    AxisPairRow {
+        title: "Major Tick Steps";
+        min_placeholder: "ΔX Step";
+        max_placeholder: "ΔY Step";
+        auto_checked <=> root.axis_settings.auto_ticks;
+        min_value <=> root.axis_settings.x_major_step;
+        max_value <=> root.axis_settings.y_major_step;
+        apply_axis_settings => { root.apply_axis_settings(); }
+    }
+
+    // Minor Subdivisions & Log Scale
+    HorizontalLayout {
+        spacing: MaterialStyleMetrics.spacing_6;
+        alignment: center;
+
+        MaterialText {
+            horizontal-stretch: 1;
+            text: "Minor Subdivisions (0-5):";
+            style: MaterialTypography.label_small;
+            color: MaterialPalette.on_surface_variant;
+            vertical-alignment: center;
+        }
+
+        StepAdjustButton {
+            symbol: "-";
+            label: "Decrease minor subdivisions";
+            clicked => {
+                if (root.axis_settings.minor_subdivisions > 0) {
+                    root.axis_settings.minor_subdivisions -= 1;
+                    root.apply_axis_settings();
+                }
+            }
+        }
+
+        MaterialText {
+            text: "\{root.axis_settings.minor_subdivisions}";
+            style: MaterialTypography.label_large;
+            color: MaterialPalette.on_surface;
+            vertical-alignment: center;
+        }
+
+        StepAdjustButton {
+            symbol: "+";
+            label: "Increase minor subdivisions";
+            clicked => {
+                if (root.axis_settings.minor_subdivisions < 5) {
+                    root.axis_settings.minor_subdivisions += 1;
+                    root.apply_axis_settings();
+                }
+            }
+        }
+    }
+
+    // Scaling & Grid Options
+    VerticalLayout {
+        spacing: 2px;
+
+        CheckBoxRow {
+            text: "Y Log₁₀ Scale";
+            check_state_bool: root.axis_settings.y_log_scale;
+            checked_state_changed(s) => {
+                root.axis_settings.y_log_scale = s;
+                root.apply_axis_settings();
+            }
+        }
+        CheckBoxRow {
+            text: "Show Minor Grid";
+            check_state_bool: root.axis_settings.show_minor_grid;
+            checked_state_changed(s) => {
+                root.axis_settings.show_minor_grid = s;
+                root.apply_axis_settings();
+            }
+        }
+    }
+}
+

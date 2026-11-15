@@ -5,14 +5,10 @@
 
 import {
     MaterialStyleMetrics,
-    MaterialTypography,
     MaterialPalette,
     OutlinedCard,
-    MaterialText,
     FilledButton,
     LinearProgressIndicator,
-    ExpandableHeader,
-    InfoRow,
     Vertical,
     Horizontal,
     IconButton,
@@ -21,6 +17,7 @@ import {
 } from "../../material/material.slint";
 import { AtomCount } from "../../Types.slint";
 import { PinnedExecutionBar } from "../../nav/components/PinnedExecutionBar.slint";
+import { OperationsDiagnosticsCard } from "OperationsDiagnosticsCard.slint";
 
 // ============================================================================
 // OperationsPanelCard Component (Panel 0)
@@ -58,23 +55,23 @@ export component OperationsPanelCard inherits Rectangle {
         btn_load.has_hover ? "Load a structure or trajectory file" :
         btn_reload.has_hover ? "Reload the currently loaded file from disk.\n\n🔄 Useful when the trajectory is updated by an active external simulation." :
         btn_export.has_hover ? "Convert or export the currently loaded structure into POSCAR, CELL, CIF, or CAR format." :
-        file_header_area.has-hover ? ("Loaded File: " + (root.file_status_text != "" ? root.file_status_text : "None")) :
-        diagnostics_header.has-hover ? "System Diagnostics & Composition.\n\n🔬 Details lattice dimensions, cell volume, macroscopic density, and atomic species counts." :
+        diagnostics_card.header_has_hover ? ("Loaded File: " + (root.file_status_text != "" ? root.file_status_text : "None")) :
+        diagnostics_card.diagnostics_has_hover ? "System Diagnostics & Composition.\n\n🔬 Details lattice dimensions, cell volume, macroscopic density, and atomic species counts." :
         exec_bar.has_hover ? exec_bar.hovered_tooltip_text : "";
 
     out property <length> hovered_x:
         btn_load.has_hover ? btn_load.hover_x :
         btn_reload.has_hover ? btn_reload.hover_x :
         btn_export.has_hover ? btn_export.hover_x :
-        file_header_area.has-hover ? file_header_area.absolute-position.x + file_header_area.mouse-x :
-        diagnostics_header.has-hover ? diagnostics_header.absolute-position.x + diagnostics_header.mouse-x :
+        diagnostics_card.header_has_hover ? diagnostics_card.header_hover_x :
+        diagnostics_card.diagnostics_has_hover ? diagnostics_card.diagnostics_hover_x :
         exec_bar.has_hover ? exec_bar.hover_x : 0px;
     out property <length> hovered_y:
         btn_load.has_hover ? btn_load.hover_y :
         btn_reload.has_hover ? btn_reload.hover_y :
         btn_export.has_hover ? btn_export.hover_y :
-        file_header_area.has-hover ? file_header_area.absolute-position.y + file_header_area.mouse-y :
-        diagnostics_header.has-hover ? diagnostics_header.absolute-position.y + diagnostics_header.mouse-y :
+        diagnostics_card.header_has_hover ? diagnostics_card.header_hover_y :
+        diagnostics_card.diagnostics_has_hover ? diagnostics_card.diagnostics_hover_y :
         exec_bar.has_hover ? exec_bar.hover_y : 0px;
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
@@ -151,141 +148,20 @@ export component OperationsPanelCard inherits Rectangle {
                 }
 
                 // --- File Summary & Diagnostics Card ---
-                OutlinedCard {
-                    Vertical {
-                        padding: MaterialStyleMetrics.spacing_8;
-                        spacing: MaterialStyleMetrics.spacing_6;
-
-                        // Tier 1: Summary Header (Basename + Metrics chip)
-                        file_header_area := TouchArea {
-                            Vertical {
-                                spacing: MaterialStyleMetrics.spacing_2;
-                                padding: 0;
-
-                                Horizontal {
-                                    alignment: space-between;
-                                    MaterialText {
-                                        text: root.file_loaded ? root.file_basename : "No file loaded";
-                                        style: MaterialTypography.title_small;
-                                        color: root.file_loaded ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
-                                        overflow: elide;
-                                    }
-                                    if root.file_loaded: MaterialText {
-                                        text: root.num_frames > 1 ? ("" + root.total_atoms + " atoms • " + root.num_frames + " frames") : ("" + root.total_atoms + " atoms");
-                                        style: MaterialTypography.label_small;
-                                        color: MaterialPalette.on_surface_variant;
-                                    }
-                                }
-                            }
-                        }
-
-                        // Tier 2: Collapsible Diagnostics Drawer
-                        diagnostics_header := ExpandableHeader {
-                            text: "System Diagnostics";
-                            expanded <=> root.atoms_expanded;
-                            enabled: root.file_loaded;
-                            opacity: root.file_loaded ? 1.0 : 0.4;
-                        }
-
-                        Vertical {
-                            height: root.atoms_expanded ? self.preferred-height : 0px;
-                            visible: self.height > 0px;
-                            opacity: root.atoms_expanded ? 1.0 : 0.0;
-                            animate height, opacity {
-                                duration: 250ms;
-                                easing: ease-in-out;
-                            }
-                            spacing: MaterialStyleMetrics.spacing_4;
-
-                            if (root.box_dimensions != ""): InfoRow {
-                                label: "Lattice:";
-                                value: root.box_dimensions;
-                            }
-                            if (root.box_volume != ""): InfoRow {
-                                label: "Volume:";
-                                value: root.box_volume;
-                            }
-                            if (root.box_density != ""): InfoRow {
-                                label: "Density:";
-                                value: root.box_density;
-                            }
-
-                            if (root.atom_counts.length > 0): MaterialText {
-                                text: "Composition Breakdown (Click species to remap):";
-                                style: MaterialTypography.label_small;
-                                color: MaterialPalette.on_surface_variant;
-                            }
-                            for info in root.atom_counts: Horizontal {
-                                spacing: MaterialStyleMetrics.spacing_6;
-                                alignment: space-between;
-                                padding-left: MaterialStyleMetrics.spacing_4;
-                                padding-right: MaterialStyleMetrics.spacing_4;
-                                height: 26px;
-
-                                Horizontal {
-                                    spacing: MaterialStyleMetrics.spacing_6;
-                                    vertical-stretch: 0;
-
-                                    Rectangle {
-                                        width: 10px;
-                                        height: 10px;
-                                        y: (parent.height - self.height) / 2;
-                                        border-radius: 5px;
-                                        background: info.color;
-                                        border-width: 1px;
-                                        border-color: MaterialPalette.outline_variant;
-                                    }
-
-                                    Rectangle {
-                                        width: 54px;
-                                        height: 22px;
-                                        y: (parent.height - self.height) / 2;
-                                        border-radius: MaterialStyleMetrics.border_radius_4;
-                                        background: MaterialPalette.surface_container_highest;
-                                        border-width: 1px;
-                                        border-color: species_input.has-focus ? MaterialPalette.primary :
-                                            (info.is_unknown ? MaterialPalette.tertiary : MaterialPalette.outline_variant);
-
-                                        species_input := TextInput {
-                                            width: 100%;
-                                            height: 100%;
-                                            text: info.symbol;
-                                            horizontal-alignment: center;
-                                            vertical-alignment: center;
-                                            color: MaterialPalette.on_surface;
-                                            font-size: MaterialTypography.label_medium.font_size;
-                                            font-weight: MaterialTypography.label_medium.font_weight;
-                                            single-line: true;
-                                            accepted => {
-                                                if (self.text != "" && self.text != info.symbol) {
-                                                    root.rename_element(info.symbol, self.text);
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    if info.is_unknown: MaterialText {
-                                        text: "Set element";
-                                        style: MaterialTypography.label_small;
-                                        color: MaterialPalette.tertiary;
-                                        vertical-alignment: center;
-                                    }
-                                }
-
-                                MaterialText {
-                                    text: "" + info.count;
-                                    style: MaterialTypography.body_small;
-                                    color: MaterialPalette.on_surface;
-                                    vertical-alignment: center;
-                                }
-                            }
-
-                            if (root.num_frames > 1 && root.removed_frames_count > 0): InfoRow {
-                                label: "Skipped Frames:";
-                                value: root.removed_frames_count;
-                                text-color: MaterialPalette.error;
-                            }
-                        }
+                diagnostics_card := OperationsDiagnosticsCard {
+                    file_loaded: root.file_loaded;
+                    file_basename: root.file_basename;
+                    file_status_text: root.file_status_text;
+                    num_frames: root.num_frames;
+                    total_atoms: root.total_atoms;
+                    removed_frames_count: root.removed_frames_count;
+                    atom_counts: root.atom_counts;
+                    box_volume: root.box_volume;
+                    box_density: root.box_density;
+                    box_dimensions: root.box_dimensions;
+                    atoms_expanded <=> root.atoms_expanded;
+                    rename_element(old_sym, new_sym) => {
+                        root.rename_element(old_sym, new_sym);
                     }
                 }
             }

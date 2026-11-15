@@ -12,11 +12,7 @@ import {
 import { TableRow, CurveToggleItem, CalibrationPair, PlotAxisSettings, TaggedPeakRecord, ExportConfig } from "../../Types.slint";
 import { WorkflowStepper } from "./components/WorkflowStepper.slint";
 import { PreviewHeader } from "./components/PreviewHeader.slint";
-import { HeroEmptyState } from "./components/HeroEmptyState.slint";
-import { PlotReticleOverlay } from "./components/PlotReticleOverlay.slint";
-import { CutoffCalibrationOverlay } from "./components/CutoffCalibrationOverlay.slint";
-import { CutoffCalibrationBar } from "./components/CutoffCalibrationBar.slint";
-import { ImagingToolbar } from "./components/ImagingToolbar.slint";
+import { Plot2DViewport } from "./components/Plot2DViewport.slint";
 import { PlotDataTable } from "./components/PlotDataTable.slint";
 import { Structure3DViewport } from "./components/Structure3DViewport.slint";
 import { CrystalMarker } from "./components/PhaseHeatmapView.slint";
@@ -44,14 +40,6 @@ export component PreviewCard inherits FilledCard {
     in property <bool> has_active_zoom: false;
     in property <int> markers_count: 0;
     property <int> active_tool: 0; // 0: None, 1: Zoom Box, 2: +X Marker, 3: +Y Marker, 4: Zoom Out
-    property <bool> is_selecting: false;
-    property <length> drag_start_x: 0px;
-    property <length> drag_start_y: 0px;
-    property <length> drag_current_x: 0px;
-    property <length> drag_current_y: 0px;
-    property <bool> is_panning: false;
-    property <length> pan_last_x: 0px;
-    property <length> pan_last_y: 0px;
 
     // Table data
     in property <[string]> table_headers: [];
@@ -212,20 +200,17 @@ export component PreviewCard inherits FilledCard {
 
     // Hover state for tooltip (aggregated from child components)
     out property <string> hovered_tooltip_text:
-        (root.active_tool == 5 && calibration_bar.hovered_tooltip_text != "") ? calibration_bar.hovered_tooltip_text :
-        imaging_toolbar.tooltip_text != "" ? imaging_toolbar.tooltip_text :
+        plot_2d.hovered_tooltip_text != "" ? plot_2d.hovered_tooltip_text :
         preview_header.tooltip_text != "" ? preview_header.tooltip_text :
         (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? "Remove all pinned runs from the comparison overlay." : "";
 
     out property <length> hovered_x:
-        (root.active_tool == 5 && calibration_bar.hovered_tooltip_text != "") ? calibration_bar.hovered_x :
-        imaging_toolbar.tooltip_text != "" ? imaging_toolbar.tooltip_x :
+        plot_2d.hovered_tooltip_text != "" ? plot_2d.hovered_x :
         preview_header.tooltip_text != "" ? preview_header.tooltip_x :
         (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? clear_pinned_area.absolute-position.x + clear_pinned_area.mouse-x : 0px;
 
     out property <length> hovered_y:
-        (root.active_tool == 5 && calibration_bar.hovered_tooltip_text != "") ? calibration_bar.hovered_y :
-        imaging_toolbar.tooltip_text != "" ? imaging_toolbar.tooltip_y :
+        plot_2d.hovered_tooltip_text != "" ? plot_2d.hovered_y :
         preview_header.tooltip_text != "" ? preview_header.tooltip_y :
         (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? clear_pinned_area.absolute-position.y + clear_pinned_area.mouse-y : 0px;
 
@@ -302,233 +287,52 @@ export component PreviewCard inherits FilledCard {
                 height: 100%;
                 visible: root.active_tab == 0 || root.active_tab == 2;
 
-                // SVG Plot Area
-                plot_container := Rectangle {
+                plot_2d := Plot2DViewport {
                     width: 100%;
                     height: 100%;
-                    background: MaterialPalette.surface;
-                    border-radius: MaterialStyleMetrics.border_radius_2;
-                    clip: self.width > 1px && self.height > 1px;
-                    visible: self.width > 0.1px && self.height > 0.1px;
-
-                    changed width => {
-                        if (self.width > 10px && self.height > 10px) {
-                            root.plot_resized(self.width, self.height);
-                        }
-                    }
-                    changed height => {
-                        if (self.width > 10px && self.height > 10px) {
-                            root.plot_resized(self.width, self.height);
-                        }
-                    }
-
-                    HeroEmptyState {
-                        x: 0px;
-                        y: 0px;
-                        width: 100%;
-                        height: 100%;
-                        visible: !root.analysis_done || root.selected_plot_index < 0;
-                        file_loaded: root.file_loaded;
-                        analysis_running: root.analysis_running;
-                        analysis_done: root.analysis_done;
-                        selected_plot_index: root.selected_plot_index;
-                        file_basename: root.file_basename;
-                        total_atoms: root.total_atoms;
-                        num_frames: root.num_frames;
-                        recent_files: root.recent_files;
-                        browse_file => { root.browse_file(); }
-                        load_sample(s) => { root.load_sample(s); }
-                        load_recent(r) => { root.load_recent(r); }
-                        run_analysis => { root.run_analysis(); }
-                        open_panel(idx) => { root.open_panel(idx); }
-                    }
-
-                    // Interactive Rendered Plot
-                    plot_touch := TouchArea {
-                        x: 0px;
-                        y: 0px;
-                        width: 100%;
-                        height: 100%;
-                        visible: root.selected_plot_index >= 0;
-                        mouse-cursor: root.is_panning ? grabbing : (root.active_tool != 0 ? crosshair : default);
-
-                        double-clicked => {
-                            root.tag_peak_at(self.mouse-x / 1px, self.mouse-y / 1px);
-                        }
-
-                        scroll-event(event) => {
-                            root.plot_wheel_zoom(self.mouse-x / 1px, self.mouse-y / 1px, event.delta-y / 1px);
-                            accept
-                        }
-
-                        pointer-event(event) => {
-                            if (event.kind == PointerEventKind.down) {
-                                if (root.active_tab == 2) {
-                                    root.inspector_scope = 0;
-                                }
-                                if (event.button == PointerEventButton.right || event.button == PointerEventButton.middle) {
-                                    if (root.active_tool != 0) {
-                                        root.active_tool = 0;
-                                    } else {
-                                        root.is_panning = true;
-                                        root.pan_last_x = self.mouse-x;
-                                        root.pan_last_y = self.mouse-y;
-                                    }
-                                } else if (event.button == PointerEventButton.left) {
-                                    if (root.active_tool == 2) {
-                                        root.add_marker_at(self.mouse-x / 1px, self.mouse-y / 1px, true);
-                                    } else if (root.active_tool == 3) {
-                                        root.add_marker_at(self.mouse-x / 1px, self.mouse-y / 1px, false);
-                                    } else if (root.active_tool == 1 || root.active_tool == 6) {
-                                        root.drag_start_x = self.mouse-x;
-                                        root.drag_start_y = self.mouse-y;
-                                        root.drag_current_x = self.mouse-x;
-                                        root.drag_current_y = self.mouse-y;
-                                        root.is_selecting = true;
-                                    } else if (root.active_tool == 4) {
-                                        root.plot_wheel_zoom(self.mouse-x / 1px, self.mouse-y / 1px, -1.0);
-                                    }
-                                }
-                            } else if (event.kind == PointerEventKind.up) {
-                                if (event.button == PointerEventButton.right || event.button == PointerEventButton.middle) {
-                                    root.is_panning = false;
-                                }
-                                if (root.is_selecting) {
-                                    root.is_selecting = false;
-                                    if (root.active_tool == 6) {
-                                        let drag_dist = Math.abs(root.drag_current_x - root.drag_start_x);
-                                        if (drag_dist > 6px) {
-                                            root.tag_peak_range(root.drag_start_x / 1px, root.drag_current_x / 1px);
-                                        } else {
-                                            root.tag_peak_at(self.mouse-x / 1px, self.mouse-y / 1px);
-                                        }
-                                    } else {
-                                        root.zoom_to_rect(root.drag_start_x / 1px, root.drag_start_y / 1px, root.drag_current_x / 1px, root.drag_current_y / 1px);
-                                    }
-                                }
-                            } else if (event.kind == PointerEventKind.cancel) {
-                                root.is_selecting = false;
-                                root.is_panning = false;
-                            } else if (event.kind == PointerEventKind.move) {
-                                if (!root.is_panning && !root.is_selecting) {
-                                    root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
-                                }
-                            }
-                        }
-
-                        changed has-hover => {
-                            if (!self.has-hover) {
-                                root.is_selecting = false;
-                                root.is_panning = false;
-                            }
-                            root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
-                        }
-
-                        changed mouse-x => {
-                            if (!root.is_panning && !root.is_selecting && self.has-hover) {
-                                root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
-                            }
-                        }
-
-                        changed mouse-y => {
-                            if (!root.is_panning && !root.is_selecting && self.has-hover) {
-                                root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
-                            }
-                        }
-
-                        moved => {
-                            if (root.is_panning) {
-                                let delta_x = (self.mouse-x - root.pan_last_x) / 1px;
-                                let delta_y = (self.mouse-y - root.pan_last_y) / 1px;
-                                root.pan_last_x = self.mouse-x;
-                                root.pan_last_y = self.mouse-y;
-                                if (delta_x != 0 || delta_y != 0) {
-                                    root.plot_pan(delta_x, delta_y);
-                                }
-                            }
-                            if (root.is_selecting) {
-                                root.drag_current_x = self.mouse-x;
-                                root.drag_current_y = self.mouse-y;
-                            }
-                            root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
-                        }
-
-                        Image {
-                            width: 100%;
-                            height: 100%;
-                            source: root.preview_plot;
-                            image-fit: contain;
-                        }
-                    }
-
-                    // Hover Crosshairs, Reticle, and Mode Badge Overlay
-                    PlotReticleOverlay {
-                        x: 0px;
-                        y: 0px;
-                        width: 100%;
-                        height: 100%;
-                        has_hover: plot_touch.has-hover;
-                        mouse_x: plot_touch.mouse-x;
-                        mouse_y: plot_touch.mouse-y;
-                        selected_plot_index: root.selected_plot_index;
-                        active_tool: root.active_tool;
-                        is_selecting: root.is_selecting;
-                        is_panning: root.is_panning;
-                        drag_start_x: root.drag_start_x;
-                        drag_start_y: root.drag_start_y;
-                        drag_current_x: root.drag_current_x;
-                        drag_current_y: root.drag_current_y;
-                        tagged_peaks: root.tagged_peaks;
-                        remove_peak(id) => { root.remove_tagged_peak(id); }
-                    }
-
-                    // Cutoff Calibration Overlay (Handles, Shaded Region, and Onset Indicators)
-                    calibration_overlay := CutoffCalibrationOverlay {
-                        x: 0px;
-                        y: 0px;
-                        width: 100%;
-                        height: 100%;
-                        active: root.active_tool == 5;
-                        pair: root.calibration_pairs[root.active_calibration_pair_index];
-                        drag_min(mx) => { root.drag_cutoff_handle(root.active_calibration_pair_index, false, mx); }
-                        drag_max(mx) => { root.drag_cutoff_handle(root.active_calibration_pair_index, true, mx); }
-                    }
-
-                    // Floating Cutoff Calibration Wizard Bar (when Tool 5 is active)
-                    calibration_bar := CutoffCalibrationBar {
-                        visible: root.active_tool == 5 && root.selected_plot_index >= 0;
-                        x: parent.width - self.preferred-width - 12px;
-                        y: 10px;
-                        pairs: root.calibration_pairs;
-                        active_pair_index <=> root.active_calibration_pair_index;
-                        select_pair(idx) => { root.select_calibration_pair(idx); }
-                        auto_detect(idx) => { root.auto_detect_cutoff(idx); }
-                        reset_pair(idx) => { root.reset_calibration_pair(idx); }
-                        close => { root.active_tool = 0; }
-                    }
-
-                    // Floating Imaging Toolbar
-                    imaging_toolbar := ImagingToolbar {
-                        visible: root.selected_plot_index >= 0;
-                        x: 12px;
-                        y: 12px;
-                        has_active_zoom: root.has_active_zoom;
-                        active_tool <=> root.active_tool;
-                        markers_count: root.markers_count;
-                        hover_coord_text: root.hover_coord_text;
-                        settings_open: !root.plot_sidebar_collapsed;
-                        reset_zoom => { root.reset_zoom(); }
-                        clear_markers => { root.clear_markers(); }
-                        toggle_settings => {
-                            if (root.active_tab == 2) {
-                                root.inspector_scope = 0;
-                            }
-                            root.toggle_plot_settings();
-                        }
-                        update_plot => { root.apply_axis_settings(); }
-                        copy_clipboard => { root.copy_plot_clipboard(); }
-                        export_plot => { root.export_plot(); }
-                    }
+                    file_loaded: root.file_loaded;
+                    analysis_running: root.analysis_running;
+                    analysis_done: root.analysis_done;
+                    selected_plot_index: root.selected_plot_index;
+                    preview_plot: root.preview_plot;
+                    file_basename: root.file_basename;
+                    total_atoms: root.total_atoms;
+                    num_frames: root.num_frames;
+                    recent_files: root.recent_files;
+                    active_tab: root.active_tab;
+                    inspector_scope <=> root.inspector_scope;
+                    hover_coord_text: root.hover_coord_text;
+                    has_active_zoom: root.has_active_zoom;
+                    markers_count: root.markers_count;
+                    plot_sidebar_collapsed: root.plot_sidebar_collapsed;
+                    tagged_peaks <=> root.tagged_peaks;
+                    calibration_pairs: root.calibration_pairs;
+                    active_calibration_pair_index <=> root.active_calibration_pair_index;
+                    active_tool <=> root.active_tool;
+                    browse_file => { root.browse_file(); }
+                    load_sample(s) => { root.load_sample(s); }
+                    load_recent(r) => { root.load_recent(r); }
+                    run_analysis => { root.run_analysis(); }
+                    open_panel(idx) => { root.open_panel(idx); }
+                    plot_resized(w, h) => { root.plot_resized(w, h); }
+                    mouse_move(mx, my, hov, w, h) => { root.mouse_move(mx, my, hov, w, h); }
+                    zoom_to_rect(x1, y1, x2, y2) => { root.zoom_to_rect(x1, y1, x2, y2); }
+                    plot_pan(dx, dy) => { root.plot_pan(dx, dy); }
+                    plot_wheel_zoom(mx, my, d) => { root.plot_wheel_zoom(mx, my, d); }
+                    reset_zoom => { root.reset_zoom(); }
+                    add_marker_at(mx, my, x_only) => { root.add_marker_at(mx, my, x_only); }
+                    clear_markers => { root.clear_markers(); }
+                    tag_peak_at(mx, my) => { root.tag_peak_at(mx, my); }
+                    tag_peak_range(x1, x2) => { root.tag_peak_range(x1, x2); }
+                    remove_tagged_peak(id) => { root.remove_tagged_peak(id); }
+                    select_calibration_pair(idx) => { root.select_calibration_pair(idx); }
+                    auto_detect_cutoff(idx) => { root.auto_detect_cutoff(idx); }
+                    reset_calibration_pair(idx) => { root.reset_calibration_pair(idx); }
+                    drag_cutoff_handle(idx, is_max, mx) => { root.drag_cutoff_handle(idx, is_max, mx); }
+                    toggle_plot_settings => { root.toggle_plot_settings(); }
+                    apply_axis_settings => { root.apply_axis_settings(); }
+                    copy_plot_clipboard => { root.copy_plot_clipboard(); }
+                    export_plot => { root.export_plot(); }
                 }
             }
 
