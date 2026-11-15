@@ -65,7 +65,9 @@ void Camera3D::pan(float delta_x, float delta_y) noexcept {
 }
 
 void Camera3D::zoom(float factor) noexcept {
-  distance_ = std::clamp(distance_ * (1.0F - factor), K_MIN_DISTANCE, K_MAX_DISTANCE);
+  // Exponential scaling guarantees symmetric zoom-in/out and prevents negative
+  // distances when large wheel/trackpad deltas arrive.
+  distance_ = std::clamp(distance_ * std::exp(-factor), K_MIN_DISTANCE, K_MAX_DISTANCE);
 }
 
 void Camera3D::fitToBox(const math::Vector3<float> &min_pt,

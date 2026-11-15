@@ -121,9 +121,10 @@ void Structure3DController::handleViewportResized(float width, float height) {
 }
 
 void Structure3DController::handleRotate(float delta_x, float delta_y) {
+  constexpr float K_ORBIT_SENSITIVITY = 0.4F; // degrees per logical pixel
   {
     const std::scoped_lock lock(mutex_);
-    camera_.orbit(delta_x, delta_y);
+    camera_.orbit(delta_x * K_ORBIT_SENSITIVITY, delta_y * K_ORBIT_SENSITIVITY);
   }
   requestRender();
 }
@@ -137,9 +138,11 @@ void Structure3DController::handlePan(float delta_x, float delta_y) {
 }
 
 void Structure3DController::handleZoom(float delta) {
+  constexpr float K_ZOOM_SENSITIVITY = 0.18F; // ~16.5% distance change per wheel notch
+  const float clamped_delta = std::clamp(delta, -4.0F, 4.0F);
   {
     const std::scoped_lock lock(mutex_);
-    camera_.zoom(delta);
+    camera_.zoom(clamped_delta * K_ZOOM_SENSITIVITY);
   }
   requestRender();
 }

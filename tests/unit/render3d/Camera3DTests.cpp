@@ -48,6 +48,13 @@ TEST(Camera3DTests, PanAndZoom) {
 
   camera.zoom(-0.5F);
   EXPECT_GT(camera.distance(), initial_dist * 0.8F);
+
+  // Exponential zoom is symmetric and safe against large single-tick deltas
+  const float before_sym = camera.distance();
+  camera.zoom(1.5F);
+  EXPECT_GT(camera.distance(), 0.5F);
+  camera.zoom(-1.5F);
+  EXPECT_NEAR(camera.distance(), before_sym, 1e-3F);
 }
 
 TEST(Camera3DTests, FitToBox) {
