@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.5.1] - 2026-11-16
+
+### 🖥️ User Interface & Component Architecture
+- **Reusable Material Components & Global Tooltips**:
+  - Introduced reusable Material `Chip` and `Slider` components and migrated UI views to use them.
+  - Added tooltips across UI components and navigation elements powered by global `TooltipState`.
+- **Card & Toolbar Standardization**:
+  - Refactored operation and inspector cards to use `OptionSection` and `ValidatedField` (removing explicit fixed width constraints on `ValidatedField` and deleting obsolete panel cards).
+  - Improved 3D toolbar component reuse, added phase panel toggle callbacks, simplified `PhaseHeatmapAxisSelector`, and aligned `TrajectoryPlaybackBar` with Material design tokens.
+
+### 🛠️ Build, CI & Packaging
+- **Packaging & Release Workflow Cleanup**:
+  - Reorganized packaging directory layout, relocated Conda recipe files, and updated `.gitignore` and `CMakeLists.txt` packaging ignores.
+  - Removed SignPath Windows code-signing steps from `.github/workflows/release.yml`.
+
 ## [4.5.0] - 2026-11-14
 
 ### 🖥️ User Interface & 3D Viewport Ergonomics
@@ -75,8 +90,7 @@ All notable changes to this project will be documented in this file.
   - Added backward-compatible alias mappings for `PAD(θ) Normalized`, `PAD(θ) RAW`, `PAD(Theta) Normalized`, `PAD(Theta) RAW`, and `Plane-Angle Distribution`.
 
 ### 🛠️ Build, CI & Packaging
-- **Release Signing & Version Bump**:
-  - Integrated SignPath automated Windows code-signing pipeline into release workflow.
+- **Version Bump**:
   - Bumped project version to `4.3.0` across CMake, Slint UI, packaging specs (PKGBUILD, CPack, Windows RC), and Python packages.
 
 ## [4.2.1] - 2026-11-04
