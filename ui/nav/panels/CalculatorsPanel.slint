@@ -60,28 +60,16 @@ export component CalculatorsPanel inherits Rectangle {
     callback reset_trajectory_options();
 
     out property <string> hovered_tooltip_text:
-        material_card.hovered_tooltip_text != "" ? material_card.hovered_tooltip_text :
         bond_cutoffs_card.hovered_tooltip_text != "" ? bond_cutoffs_card.hovered_tooltip_text :
-        rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_tooltip_text :
-        angle_card.hovered_tooltip_text != "" ? angle_card.hovered_tooltip_text :
-        trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_tooltip_text :
-        exec_bar.has_hover ? exec_bar.hovered_tooltip_text : "";
+        "";
 
     out property <length> hovered_x:
-        material_card.hovered_tooltip_text != "" ? material_card.hovered_x :
         bond_cutoffs_card.hovered_tooltip_text != "" ? bond_cutoffs_card.hovered_x :
-        rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_x :
-        angle_card.hovered_tooltip_text != "" ? angle_card.hovered_x :
-        trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_x :
-        exec_bar.has_hover ? exec_bar.hover_x : 0px;
+        0px;
 
     out property <length> hovered_y:
-        material_card.hovered_tooltip_text != "" ? material_card.hovered_y :
         bond_cutoffs_card.hovered_tooltip_text != "" ? bond_cutoffs_card.hovered_y :
-        rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_y :
-        angle_card.hovered_tooltip_text != "" ? angle_card.hovered_y :
-        trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_y :
-        exec_bar.has_hover ? exec_bar.hover_y : 0px;
+        0px;
 
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;

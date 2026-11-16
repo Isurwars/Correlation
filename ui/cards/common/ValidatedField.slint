@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-import { TextField } from "../../material/material.slint";
+import { TextField, TooltipState } from "../../material/material.slint";
 
 /// Full-width TextField wrapped in a TouchArea for tooltip hover coordinates.
 export component ValidatedField inherits TouchArea {
@@ -11,10 +11,24 @@ export component ValidatedField inherits TouchArea {
     in-out property <string> text;
     in property <string> error: "";
     in property <bool> field_enabled: true;
+    in property <string> tooltip_text: "";
 
     out property <length> hover_x: self.absolute-position.x + self.mouse-x;
     out property <length> hover_y: self.absolute-position.y + self.mouse-y;
 
+    changed has-hover => {
+        if (self.has-hover && root.tooltip_text != "") {
+            TooltipState.active = {
+                text: root.tooltip_text,
+                x: self.absolute-position.x + self.mouse-x,
+                y: self.absolute-position.y + self.mouse-y,
+                width: 0px,
+                height: 0px,
+            };
+        } else if (root.tooltip_text != "" && TooltipState.active.text == root.tooltip_text) {
+            TooltipState.active = { text: "", x: 0px, y: 0px, width: 0px, height: 0px };
+        }
+    }
 
     TextField {
         enabled: root.field_enabled;

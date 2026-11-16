@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-import { DropDownMenu } from "../../material/material.slint";
+import { DropDownMenu, TooltipTarget } from "../../material/material.slint";
 import { OptionSection } from "../common/OptionSection.slint";
 
 export component MaterialTypeCard inherits OptionSection {
@@ -13,17 +13,8 @@ export component MaterialTypeCard inherits OptionSection {
     in property <bool> file_loaded;
     in-out property <int> material_type: 0; // 0: Amorphous, 1: Liquid, 2: Crystalline
 
-    out property <string> hovered_tooltip_text:
-        material_dropdown_area.has-hover ? "Select the material type to load recommended parameter defaults." : "";
-
-    out property <length> hovered_x:
-        material_dropdown_area.has-hover ? material_dropdown_area.absolute-position.x + material_dropdown_area.mouse-x : 0px;
-    out property <length> hovered_y:
-        material_dropdown_area.has-hover ? material_dropdown_area.absolute-position.y + material_dropdown_area.mouse-y : 0px;
-    out property <length> hovered_width: 0px;
-    out property <length> hovered_height: 0px;
-
-    material_dropdown_area := TouchArea {
+    TooltipTarget {
+        tooltip_text: "Select the material type to load recommended parameter defaults.";
         DropDownMenu {
             width: 100%;
             label: "Material Defaults";

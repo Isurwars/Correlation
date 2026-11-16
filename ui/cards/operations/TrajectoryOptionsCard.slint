@@ -28,38 +28,20 @@ export component TrajectoryOptionsCard inherits OptionSection {
     in-out property <string> frame_stride: "1";
     in property <string> frame_stride_error: "";
 
-    out property <string> hovered_tooltip_text:
-        time_step_area.has-hover ? "Time interval between parsed frames in femtoseconds (fs).\n\n📏 Auto-calculated from atomic masses using √(9m/5), where m is the lightest element's mass.\n\n🔬 Physics: The time step determines the time axis for dynamic properties (MSD, VACF, vDoS). Verify this matches your simulation's actual time step for accurate diffusion coefficients and vibrational spectra." :
-        start_frame_area.has-hover ? "First frame to include in the analysis.\n\n📏 Tip: Use 'Start' or '1' for the first frame.\n\n🔬 Physics: In molecular dynamics, the initial frames may represent an equilibration phase. Excluding early frames ensures only the production run is analyzed. A common practice is to discard the first 10–20% of frames." :
-        end_frame_area.has-hover ? "Last frame to include in the analysis.\n\n📏 Tip: Use 'End' to include all remaining frames.\n\n🔬 Physics: Selecting a subset of frames can speed up analysis during parameter exploration. Once you find good settings, use the full range for publication-quality results." :
-        stride_area.has-hover ? "Sampling stride between frames (e.g. 10 evaluates every 10th frame).\n\n🔬 Physics: Useful for rapid preliminary screening of long trajectories to save compute time while maintaining statistical convergence." : "";
-
-    out property <length> hovered_x:
-        time_step_area.has-hover ? time_step_area.hover_x :
-        start_frame_area.has-hover ? start_frame_area.hover_x :
-        end_frame_area.has-hover ? end_frame_area.hover_x :
-        stride_area.has-hover ? stride_area.hover_x : 0px;
-    out property <length> hovered_y:
-        time_step_area.has-hover ? time_step_area.hover_y :
-        start_frame_area.has-hover ? start_frame_area.hover_y :
-        end_frame_area.has-hover ? end_frame_area.hover_y :
-        stride_area.has-hover ? stride_area.hover_y : 0px;
-    out property <length> hovered_width: 0px;
-    out property <length> hovered_height: 0px;
-
-    time_step_area := ValidatedField {
+    ValidatedField {
         accessible-role: text-input;
         accessible-label: "Time Step in femtoseconds";
         field_enabled: root.file_loaded && root.num_frames > 1;
         label: "Time Step (fs)";
         text <=> root.time_step;
         error: root.time_step_error;
+        tooltip_text: "Time interval between parsed frames in femtoseconds (fs).\n\n📏 Auto-calculated from atomic masses using √(9m/5), where m is the lightest element's mass.\n\n🔬 Physics: The time step determines the time axis for dynamic properties (MSD, VACF, vDoS). Verify this matches your simulation's actual time step for accurate diffusion coefficients and vibrational spectra.";
     }
 
     Horizontal {
         spacing: MaterialStyleMetrics.spacing_8;
 
-        start_frame_area := ValidatedField {
+        ValidatedField {
             horizontal-stretch: 1;
             accessible-role: text-input;
             accessible-label: "Start Frame";
@@ -67,9 +49,10 @@ export component TrajectoryOptionsCard inherits OptionSection {
             label: "Start Frame";
             text <=> root.min_frame;
             error: root.min_frame_error;
+            tooltip_text: "First frame to include in the analysis.\n\n📏 Tip: Use 'Start' or '1' for the first frame.\n\n🔬 Physics: In molecular dynamics, the initial frames may represent an equilibration phase. Excluding early frames ensures only the production run is analyzed. A common practice is to discard the first 10–20% of frames.";
         }
 
-        end_frame_area := ValidatedField {
+        ValidatedField {
             horizontal-stretch: 1;
             accessible-role: text-input;
             accessible-label: "End Frame";
@@ -77,15 +60,17 @@ export component TrajectoryOptionsCard inherits OptionSection {
             label: "End Frame";
             text <=> root.max_frame;
             error: root.max_frame_error;
+            tooltip_text: "Last frame to include in the analysis.\n\n📏 Tip: Use 'End' to include all remaining frames.\n\n🔬 Physics: Selecting a subset of frames can speed up analysis during parameter exploration. Once you find good settings, use the full range for publication-quality results.";
         }
     }
 
-    stride_area := ValidatedField {
+    ValidatedField {
         accessible-role: text-input;
         accessible-label: "Frame Stride";
         field_enabled: root.file_loaded && root.num_frames > 1;
         label: "Frame Stride (1 = all)";
         text <=> root.frame_stride;
         error: root.frame_stride_error;
+        tooltip_text: "Sampling stride between frames (e.g. 10 evaluates every 10th frame).\n\n🔬 Physics: Useful for rapid preliminary screening of long trajectories to save compute time while maintaining statistical convergence.";
     }
 }

@@ -17,23 +17,6 @@ export component RightMiniSideBar inherits Rectangle {
     callback select_panel(int);
     callback toggle_collapse();
 
-    out property <string> hovered_tooltip_text:
-        btn_plot.has_hover ? btn_plot.tooltip :
-        btn_structure.has_hover ? btn_structure.tooltip :
-        btn_collapse.has_hover ? btn_collapse.tooltip : "";
-
-    out property <length> hovered_x:
-        btn_plot.has_hover ? btn_plot.hover_x :
-        btn_structure.has_hover ? btn_structure.hover_x :
-        btn_collapse.has_hover ? btn_collapse.hover_x : 0px;
-
-    out property <length> hovered_y:
-        btn_plot.has_hover ? btn_plot.hover_y :
-        btn_structure.has_hover ? btn_structure.hover_y :
-        btn_collapse.has_hover ? btn_collapse.hover_y : 0px;
-
-    out property <length> hovered_width: 0px;
-    out property <length> hovered_height: 0px;
 
     width: 48px;
     background: MaterialPalette.surface_container_low;

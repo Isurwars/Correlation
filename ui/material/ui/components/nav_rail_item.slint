@@ -7,6 +7,7 @@ import { MaterialAnimations } from "../styling/material_animations.slint";
 import { MaterialPalette } from "../styling/material_palette.slint";
 import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
 import { StateLayer } from "./state_layer.slint";
+import { TooltipState } from "./tooltip_state.slint";
 
 /// Material 3 navigation rail icon item with optional active bar indicator.
 export component NavRailItem inherits Rectangle {
@@ -70,6 +71,19 @@ export component NavRailItem inherits Rectangle {
         height: 100%;
         enabled: root.enabled;
         mouse-cursor: root.enabled ? pointer : default;
+        changed has-hover => {
+            if (self.has-hover && root.tooltip != "") {
+                TooltipState.active = {
+                    text: root.tooltip,
+                    x: self.absolute-position.x + self.mouse-x,
+                    y: self.absolute-position.y + self.mouse-y,
+                    width: 0px,
+                    height: 0px,
+                };
+            } else if (root.tooltip != "" && TooltipState.active.text == root.tooltip) {
+                TooltipState.active = { text: "", x: 0px, y: 0px, width: 0px, height: 0px };
+            }
+        }
         clicked => { root.clicked(); }
     }
 }

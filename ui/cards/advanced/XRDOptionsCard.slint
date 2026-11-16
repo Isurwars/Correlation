@@ -1,4 +1,4 @@
-import { DropDownMenu } from "../../material/material.slint";
+import { DropDownMenu, TooltipTarget } from "../../material/material.slint";
 import { OptionSection } from "../common/OptionSection.slint";
 import { ValidatedField } from "../common/ValidatedField.slint";
 
@@ -21,31 +21,8 @@ export component XRDOptionsCard inherits OptionSection {
 
     callback radiation_preset_changed(int);
 
-    out property <string> hovered_tooltip_text:
-        preset_area.has-hover ? "X-ray tube target anode radiation preset.\n\n🔬 Cu-Kα: 1.5406 Å (Standard laboratory diffractometer).\n\n🔬 Mo-Kα: 0.7107 Å (Hard X-rays, higher penetration).\n\n🔬 Co-Kα: 1.7890 Å (Ideal for Fe-rich samples to minimize fluorescence).\n\n🔬 Cr-Kα: 2.2897 Å (Large d-spacing & thin film surface diffraction)." :
-        lambda_area.has-hover ? "X-ray incident radiation wavelength (λ) in Ångströms.\n\n📏 Default: 1.5406 Å (Cu-Kα1 weighted doublet).\n\n🔬 Physics: Directly sets reciprocal-to-angular Bragg mapping Q = 4π sin(θ) / λ." :
-        min_theta_area.has-hover ? "Minimum scattering angle (2θ) in degrees.\n\n📏 Default: 10.0°.\n\n🔬 Physics: Defines the low-angle boundary of the powder diffraction pattern." :
-        max_theta_area.has-hover ? "Maximum scattering angle (2θ) in degrees.\n\n📏 Default: 140.0°.\n\n🔬 Physics: Upper 2θ boundary. Must not exceed 180°." :
-        bin_width_area.has-hover ? "Angular step resolution (Δ2θ) in degrees.\n\n📏 Default: 0.05°.\n\n🔬 Physics: Bin width for the powder diffraction histogram. Finer steps resolve split peaks in high-symmetry crystals." : "";
-
-    out property <length> hovered_x:
-        preset_area.has-hover ? preset_area.absolute-position.x + preset_area.mouse-x :
-        lambda_area.has-hover ? lambda_area.hover_x :
-        min_theta_area.has-hover ? min_theta_area.hover_x :
-        max_theta_area.has-hover ? max_theta_area.hover_x :
-        bin_width_area.has-hover ? bin_width_area.hover_x : 0px;
-
-    out property <length> hovered_y:
-        preset_area.has-hover ? preset_area.absolute-position.y + preset_area.mouse-y :
-        lambda_area.has-hover ? lambda_area.hover_y :
-        min_theta_area.has-hover ? min_theta_area.hover_y :
-        max_theta_area.has-hover ? max_theta_area.hover_y :
-        bin_width_area.has-hover ? bin_width_area.hover_y : 0px;
-
-    out property <length> hovered_width: 0px;
-    out property <length> hovered_height: 0px;
-
-    preset_area := TouchArea {
+    TooltipTarget {
+        tooltip_text: "X-ray tube target anode radiation preset.\n\n🔬 Cu-Kα: 1.5406 Å (Standard laboratory diffractometer).\n\n🔬 Mo-Kα: 0.7107 Å (Hard X-rays, higher penetration).\n\n🔬 Co-Kα: 1.7890 Å (Ideal for Fe-rich samples to minimize fluorescence).\n\n🔬 Cr-Kα: 2.2897 Å (Large d-spacing & thin film surface diffraction).";
         DropDownMenu {
             enabled: root.file_loaded;
             width: 100%;
@@ -64,31 +41,35 @@ export component XRDOptionsCard inherits OptionSection {
         }
     }
 
-    lambda_area := ValidatedField {
+    ValidatedField {
         field_enabled: root.file_loaded && root.radiation_preset == 4;
         label: "Wavelength λ (Å)";
         text <=> root.lambda;
         error: root.lambda_error;
+        tooltip_text: "X-ray incident radiation wavelength (λ) in Ångströms.\n\n📏 Default: 1.5406 Å (Cu-Kα1 weighted doublet).\n\n🔬 Physics: Directly sets reciprocal-to-angular Bragg mapping Q = 4π sin(θ) / λ.";
     }
 
-    min_theta_area := ValidatedField {
+    ValidatedField {
         field_enabled: root.file_loaded;
         label: "Min 2θ (°)";
         text <=> root.theta_min;
         error: root.theta_min_error;
+        tooltip_text: "Minimum scattering angle (2θ) in degrees.\n\n📏 Default: 10.0°.\n\n🔬 Physics: Defines the low-angle boundary of the powder diffraction pattern.";
     }
 
-    max_theta_area := ValidatedField {
+    ValidatedField {
         field_enabled: root.file_loaded;
         label: "Max 2θ (°)";
         text <=> root.theta_max;
         error: root.theta_max_error;
+        tooltip_text: "Maximum scattering angle (2θ) in degrees.\n\n📏 Default: 140.0°.\n\n🔬 Physics: Upper 2θ boundary. Must not exceed 180°.";
     }
 
-    bin_width_area := ValidatedField {
+    ValidatedField {
         field_enabled: root.file_loaded;
         label: "2θ Bin Width (°)";
         text <=> root.bin_width;
         error: root.bin_width_error;
+        tooltip_text: "Angular step resolution (Δ2θ) in degrees.\n\n📏 Default: 0.05°.\n\n🔬 Physics: Bin width for the powder diffraction histogram. Finer steps resolve split peaks in high-symmetry crystals.";
     }
 }

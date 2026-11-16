@@ -24,35 +24,6 @@ export component MiniSideBar inherits Rectangle {
     callback toggle_theme();
     callback toggle_collapse();
 
-    out property <string> hovered_tooltip_text:
-        btn_input.has_hover ? btn_input.tooltip :
-        btn_calculators.has_hover ? btn_calculators.tooltip :
-        btn_advanced.has_hover ? btn_advanced.tooltip :
-        btn_export.has_hover ? btn_export.tooltip :
-        btn_run.has_hover ? btn_run.tooltip :
-        btn_theme.has_hover ? btn_theme.tooltip :
-        btn_collapse.has_hover ? btn_collapse.tooltip : "";
-
-    out property <length> hovered_x:
-        btn_input.has_hover ? btn_input.hover_x :
-        btn_calculators.has_hover ? btn_calculators.hover_x :
-        btn_advanced.has_hover ? btn_advanced.hover_x :
-        btn_export.has_hover ? btn_export.hover_x :
-        btn_run.has_hover ? btn_run.hover_x :
-        btn_theme.has_hover ? btn_theme.hover_x :
-        btn_collapse.has_hover ? btn_collapse.hover_x : 0px;
-
-    out property <length> hovered_y:
-        btn_input.has_hover ? btn_input.hover_y :
-        btn_calculators.has_hover ? btn_calculators.hover_y :
-        btn_advanced.has_hover ? btn_advanced.hover_y :
-        btn_export.has_hover ? btn_export.hover_y :
-        btn_run.has_hover ? btn_run.hover_y :
-        btn_theme.has_hover ? btn_theme.hover_y :
-        btn_collapse.has_hover ? btn_collapse.hover_y : 0px;
-
-    out property <length> hovered_width: 0px;
-    out property <length> hovered_height: 0px;
 
     width: 48px;
     background: MaterialPalette.surface_container_low;

@@ -9,18 +9,11 @@ export component RingsOptionsCard inherits OptionSection {
     in-out property <string> max_ring_size;
     in property <string> max_ring_error: "";
 
-    out property <string> hovered_tooltip_text:
-        ring_size_area.has-hover ? "Maximum ring size for topological ring statistics.\n\n📏 Recommended: 8–12 (default: 12).\n\n🔬 Physics: Rings are closed loops of bonded atoms — they characterize medium-range order in network glasses (e.g., SiO₂ has predominantly 6-membered rings). Larger max sizes capture rare large rings but increase computation time exponentially. For most amorphous networks, rings >12 are statistically rare and computationally expensive." : "";
-
-    out property <length> hovered_x: ring_size_area.has-hover ? ring_size_area.hover_x : 0px;
-    out property <length> hovered_y: ring_size_area.has-hover ? ring_size_area.hover_y : 0px;
-    out property <length> hovered_width: 0px;
-    out property <length> hovered_height: 0px;
-
-    ring_size_area := ValidatedField {
+    ValidatedField {
         field_enabled: root.file_loaded;
         label: "Max Ring Size";
         text <=> root.max_ring_size;
         error: root.max_ring_error;
+        tooltip_text: "Maximum ring size for topological ring statistics.\n\n📏 Recommended: 8–12 (default: 12).\n\n🔬 Physics: Rings are closed loops of bonded atoms — they characterize medium-range order in network glasses (e.g., SiO₂ has predominantly 6-membered rings). Larger max sizes capture rare large rings but increase computation time exponentially. For most amorphous networks, rings >12 are statistically rare and computationally expensive.";
     }
 }

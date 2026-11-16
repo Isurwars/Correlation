@@ -44,7 +44,7 @@ export component OperationsPanel inherits Rectangle {
         btn_export.has_hover ? "Convert or export the currently loaded structure into POSCAR, CELL, CIF, or CAR format." :
         diagnostics_card.header_has_hover ? ("Loaded File: " + (root.file_metadata.status_text != "" ? root.file_metadata.status_text : "None")) :
         diagnostics_card.diagnostics_has_hover ? "System Diagnostics & Composition.\n\n🔬 Details lattice dimensions, cell volume, macroscopic density, and atomic species counts." :
-        exec_bar.has_hover ? exec_bar.hovered_tooltip_text : "";
+        "";
 
     out property <length> hovered_x:
         btn_load.has_hover ? btn_load.hover_x :
@@ -52,14 +52,14 @@ export component OperationsPanel inherits Rectangle {
         btn_export.has_hover ? btn_export.hover_x :
         diagnostics_card.header_has_hover ? diagnostics_card.header_hover_x :
         diagnostics_card.diagnostics_has_hover ? diagnostics_card.diagnostics_hover_x :
-        exec_bar.has_hover ? exec_bar.hover_x : 0px;
+        0px;
     out property <length> hovered_y:
         btn_load.has_hover ? btn_load.hover_y :
         btn_reload.has_hover ? btn_reload.hover_y :
         btn_export.has_hover ? btn_export.hover_y :
         diagnostics_card.header_has_hover ? diagnostics_card.header_hover_y :
         diagnostics_card.diagnostics_has_hover ? diagnostics_card.diagnostics_hover_y :
-        exec_bar.has_hover ? exec_bar.hover_y : 0px;
+        0px;
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
 

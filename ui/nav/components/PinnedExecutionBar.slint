@@ -12,6 +12,7 @@ import {
     FilledButton,
     Vertical,
     Icons,
+    TooltipState,
 } from "../../material/material.slint";
 
 /// Pinned execution footer shared across left configuration panels (Stages 0-2).
@@ -24,18 +25,27 @@ export component PinnedExecutionBar inherits Rectangle {
     callback run_analysis();
     callback cancel_analysis();
 
-    out property <bool> has_hover: run_btn.has_hover;
-    out property <length> hover_x: run_btn.hover_x;
-    out property <length> hover_y: run_btn.hover_y;
-    out property <string> hovered_tooltip_text: run_btn.has_hover
-        ? (root.analysis_running
-            ? "Abort the currently executing trajectory analysis."
-            : (!root.file_loaded
-                ? "Load a structure or trajectory file before running."
-                : (root.has_validation_errors
-                    ? root.validation_summary
-                    : "Run all selected analyses on the loaded trajectory.\n\n🔬 Computes distribution functions across the selected frame range.")))
-        : "";
+    property <string> run_tooltip_text: root.analysis_running
+        ? "Abort the currently executing trajectory analysis."
+        : (!root.file_loaded
+            ? "Load a structure or trajectory file before running."
+            : (root.has_validation_errors
+                ? root.validation_summary
+                : "Run all selected analyses on the loaded trajectory.\n\n🔬 Computes distribution functions across the selected frame range."));
+    property <bool> btn_hovered: run_btn.has_hover;
+    changed btn_hovered => {
+        if (self.btn_hovered) {
+            TooltipState.active = {
+                text: root.run_tooltip_text,
+                x: run_btn.hover_x,
+                y: run_btn.hover_y,
+                width: 0px,
+                height: 0px,
+            };
+        } else if (TooltipState.active.text == root.run_tooltip_text) {
+            TooltipState.active = { text: "", x: 0px, y: 0px, width: 0px, height: 0px };
+        }
+    }
 
     vertical-stretch: 0;
     height: card.preferred-height;

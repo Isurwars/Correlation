@@ -56,33 +56,15 @@ export component AdvancedOptionsPanel inherits Rectangle {
 
     out property <string> hovered_tooltip_text:
         analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_calculator_description :
-        sq_card.hovered_tooltip_text != "" ? sq_card.hovered_tooltip_text :
-        xrd_card.hovered_tooltip_text != "" ? xrd_card.hovered_tooltip_text :
-        rings_card.hovered_tooltip_text != "" ? rings_card.hovered_tooltip_text :
-        dynamic_properties.hovered_tooltip_text != "" ? dynamic_properties.hovered_tooltip_text :
-        smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_tooltip_text :
-        advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_tooltip_text :
-        exec_bar.has_hover ? exec_bar.hovered_tooltip_text : "";
+        "";
 
     out property <length> hovered_x:
         analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_x :
-        sq_card.hovered_tooltip_text != "" ? sq_card.hovered_x :
-        xrd_card.hovered_tooltip_text != "" ? xrd_card.hovered_x :
-        rings_card.hovered_tooltip_text != "" ? rings_card.hovered_x :
-        dynamic_properties.hovered_tooltip_text != "" ? dynamic_properties.hovered_x :
-        smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_x :
-        advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_x :
-        exec_bar.has_hover ? exec_bar.hover_x : 0px;
+        0px;
 
     out property <length> hovered_y:
         analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_y :
-        sq_card.hovered_tooltip_text != "" ? sq_card.hovered_y :
-        xrd_card.hovered_tooltip_text != "" ? xrd_card.hovered_y :
-        rings_card.hovered_tooltip_text != "" ? rings_card.hovered_y :
-        dynamic_properties.hovered_tooltip_text != "" ? dynamic_properties.hovered_y :
-        smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_y :
-        advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_y :
-        exec_bar.has_hover ? exec_bar.hover_y : 0px;
+        0px;
 
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;

@@ -18,6 +18,7 @@ import {
     SplitterHandle,
     TabItem,
     ToolTip,
+    TooltipState,
 } from "material/material.slint";
 import { Palette } from "std-widgets.slint";
 
@@ -449,35 +450,25 @@ export component AppWindow inherits Window {
     property <string> preview_hovered_tooltip: preview_card.hovered_tooltip_text;
 
     property <string> hovered_tooltip_text: 
-        mini_sidebar.hovered_tooltip_text != "" ? mini_sidebar.hovered_tooltip_text :
-        right_mini_sidebar.hovered_tooltip_text != "" ? right_mini_sidebar.hovered_tooltip_text :
         active_panel_tooltip != "" ? active_panel_tooltip :
         right_panel_tooltip != "" ? right_panel_tooltip : preview_hovered_tooltip;
 
     property <length> hovered_x:
-        mini_sidebar.hovered_tooltip_text != "" ? mini_sidebar.hovered_x :
-        right_mini_sidebar.hovered_tooltip_text != "" ? right_mini_sidebar.hovered_x :
         side_panel_host.hovered_tooltip_text != "" ? side_panel_host.hovered_x :
         right_side_panel_host.hovered_tooltip_text != "" ? right_side_panel_host.hovered_x :
         preview_hovered_tooltip != "" ? preview_card.hovered_x : 0px;
 
     property <length> hovered_y:
-        mini_sidebar.hovered_tooltip_text != "" ? mini_sidebar.hovered_y :
-        right_mini_sidebar.hovered_tooltip_text != "" ? right_mini_sidebar.hovered_y :
         side_panel_host.hovered_tooltip_text != "" ? side_panel_host.hovered_y :
         right_side_panel_host.hovered_tooltip_text != "" ? right_side_panel_host.hovered_y :
         preview_hovered_tooltip != "" ? preview_card.hovered_y : 0px;
 
     property <length> hovered_width:
-        mini_sidebar.hovered_tooltip_text != "" ? mini_sidebar.hovered_width :
-        right_mini_sidebar.hovered_tooltip_text != "" ? right_mini_sidebar.hovered_width :
         side_panel_host.hovered_tooltip_text != "" ? side_panel_host.hovered_width :
         right_side_panel_host.hovered_tooltip_text != "" ? right_side_panel_host.hovered_width :
         preview_hovered_tooltip != "" ? preview_card.hovered_width : 0px;
 
     property <length> hovered_height:
-        mini_sidebar.hovered_tooltip_text != "" ? mini_sidebar.hovered_height :
-        right_mini_sidebar.hovered_tooltip_text != "" ? right_mini_sidebar.hovered_height :
         side_panel_host.hovered_tooltip_text != "" ? side_panel_host.hovered_height :
         right_side_panel_host.hovered_tooltip_text != "" ? right_side_panel_host.hovered_height :
         preview_hovered_tooltip != "" ? preview_card.hovered_height : 0px;
@@ -1185,13 +1176,13 @@ export component AppWindow inherits Window {
     }
 
     ToolTip {
-        hovered_x: root.hovered_x;
-        hovered_y: root.hovered_y;
-        hovered_width: root.hovered_width;
-        hovered_height: root.hovered_height;
+        hovered_x: TooltipState.active.text != "" ? TooltipState.active.x : root.hovered_x;
+        hovered_y: TooltipState.active.text != "" ? TooltipState.active.y : root.hovered_y;
+        hovered_width: TooltipState.active.text != "" ? TooltipState.active.width : root.hovered_width;
+        hovered_height: TooltipState.active.text != "" ? TooltipState.active.height : root.hovered_height;
         parent_width: root.width;
         parent_height: root.height;
-        visible: root.hovered_tooltip_text != "";
-        text: root.hovered_tooltip_text;
+        visible: TooltipState.active.text != "" || root.hovered_tooltip_text != "";
+        text: TooltipState.active.text != "" ? TooltipState.active.text : root.hovered_tooltip_text;
     }
 }
