@@ -9,43 +9,8 @@ import {
     MaterialStyleMetrics,
     MaterialTypography,
     MaterialText,
+    Chip,
 } from "../../../material/material.slint";
-
-component WorkflowStepPill inherits Rectangle {
-    in property <string> label;
-    in property <bool> active: false;
-    in property <bool> completed: false;
-    in property <bool> interactive: true;
-
-    callback clicked();
-
-    height: 28px;
-    border-radius: MaterialStyleMetrics.border_radius_full;
-    background: root.active ? MaterialPalette.primary_container :
-                (root.interactive && step_touch.has-hover) ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_high;
-    animate background { duration: MaterialAnimations.base_duration; }
-
-    HorizontalLayout {
-        padding-left: MaterialStyleMetrics.padding_12;
-        padding-right: MaterialStyleMetrics.padding_12;
-
-        MaterialText {
-            text: root.label;
-            style: MaterialTypography.label_medium;
-            color: root.active ? MaterialPalette.on_primary_container :
-                   root.completed ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
-            vertical-alignment: center;
-        }
-    }
-
-    step_touch := TouchArea {
-        enabled: root.interactive;
-        mouse-cursor: root.interactive ? pointer : default;
-        accessible-role: button;
-        accessible-label: root.label;
-        clicked => { root.clicked(); }
-    }
-}
 
 export component WorkflowStepper inherits Rectangle {
     in property <bool> file_loaded: false;
@@ -67,10 +32,13 @@ export component WorkflowStepper inherits Rectangle {
         spacing: MaterialStyleMetrics.spacing_8;
         alignment: center;
 
-        WorkflowStepPill {
+        Chip {
+            chip_height: MaterialStyleMetrics.size_28;
+            corner_radius: MaterialStyleMetrics.border_radius_full;
+            outlined: false;
             label: !root.file_loaded ? "1. Load File (Active)" : "1. File Loaded ✓";
-            active: !root.file_loaded;
-            completed: root.file_loaded;
+            selected: !root.file_loaded;
+            idle_fg: (root.file_loaded) ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
             clicked => {
                 if (!root.file_loaded) {
                     root.browse_file();
@@ -87,11 +55,14 @@ export component WorkflowStepper inherits Rectangle {
             vertical-alignment: center;
         }
 
-        WorkflowStepPill {
+        Chip {
+            chip_height: MaterialStyleMetrics.size_28;
+            corner_radius: MaterialStyleMetrics.border_radius_full;
+            outlined: false;
             label: (root.file_loaded && !root.analysis_running && !root.analysis_done) ? "2. Configure Options (Active)" :
                    (root.analysis_running || root.analysis_done) ? "2. Options Configured ✓" : "2. Configure Options";
-            active: root.file_loaded && !root.analysis_running && !root.analysis_done;
-            completed: root.analysis_running || root.analysis_done;
+            selected: root.file_loaded && !root.analysis_running && !root.analysis_done;
+            idle_fg: (root.analysis_running || root.analysis_done) ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
             clicked => { root.open_panel(1); }
         }
 
@@ -102,12 +73,15 @@ export component WorkflowStepper inherits Rectangle {
             vertical-alignment: center;
         }
 
-        WorkflowStepPill {
+        Chip {
+            chip_height: MaterialStyleMetrics.size_28;
+            corner_radius: MaterialStyleMetrics.border_radius_full;
+            outlined: false;
             label: root.analysis_running ? "3. Calculating... (Cancel)" :
                    root.analysis_done ? "3. Calculation Complete ✓" : "3. Run Calculation";
-            active: root.analysis_running;
-            completed: root.analysis_done;
-            interactive: root.file_loaded || root.analysis_running;
+            selected: root.analysis_running;
+            idle_fg: (root.analysis_done) ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+            enabled: root.file_loaded || root.analysis_running;
             clicked => {
                 if (root.analysis_running) {
                     root.cancel_analysis();
@@ -124,11 +98,14 @@ export component WorkflowStepper inherits Rectangle {
             vertical-alignment: center;
         }
 
-        WorkflowStepPill {
+        Chip {
+            chip_height: MaterialStyleMetrics.size_28;
+            corner_radius: MaterialStyleMetrics.border_radius_full;
+            outlined: false;
             label: root.analysis_done ? "4. Preview & Export (Active)" : "4. Preview & Export";
-            active: root.analysis_done;
-            completed: root.analysis_done;
-            interactive: root.analysis_done;
+            selected: root.analysis_done;
+            idle_fg: (root.analysis_done) ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+            enabled: root.analysis_done;
             clicked => {
                 if (root.analysis_done) {
                     root.open_panel(3);

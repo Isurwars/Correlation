@@ -7,6 +7,8 @@ import {
     MaterialPalette,
     MaterialTypography,
     MaterialText,
+    MaterialStyleMetrics,
+    Chip,
 } from "../../../material/material.slint";
 
 export component PhaseDescriptorSelector inherits HorizontalLayout {
@@ -34,33 +36,15 @@ export component PhaseDescriptorSelector inherits HorizontalLayout {
             height: 22px;
             property <[string]> desc_labels: ["q̄₆", "q̄₄", "q₆", "q₄", "ŵ₆", "ŵ₄", "s₂", "N_c", "q_tet"];
 
-            for d_label[d_idx] in self.desc_labels: TouchArea {
+            for d_label[d_idx] in self.desc_labels: Chip {
                 horizontal-stretch: 1;
-                height: 100%;
-                mouse-cursor: pointer;
+                chip_height: MaterialStyleMetrics.size_20 + MaterialStyleMetrics.size_2;
+                corner_radius: MaterialStyleMetrics.border_radius_8;
+                label: d_label;
+                selected: root.descriptor_index == d_idx;
+                active_bg: MaterialPalette.secondary.with_alpha(25%);
+                active_fg: MaterialPalette.secondary;
                 clicked => { root.set_descriptor(d_idx); }
-
-                Rectangle {
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 10px;
-                    background: root.descriptor_index == d_idx
-                        ? MaterialPalette.secondary.with_alpha(25%)
-                        : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
-                    border-width: root.descriptor_index == d_idx ? 1.5px : 1px;
-                    border-color: root.descriptor_index == d_idx ? MaterialPalette.secondary : MaterialPalette.outline_variant.with_alpha(40%);
-
-                    MaterialText {
-                        width: 100%;
-                        height: 100%;
-                        text: d_label;
-                        font-size: 10.5px;
-                        font-weight: root.descriptor_index == d_idx ? 700 : 400;
-                        color: root.descriptor_index == d_idx ? MaterialPalette.secondary : MaterialPalette.on_surface;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
-                    }
-                }
             }
         }
     }
@@ -82,33 +66,15 @@ export component PhaseDescriptorSelector inherits HorizontalLayout {
             height: 22px;
             property <[string]> cmap_labels: ["Viridis", "Plasma", "Cool", "Turbo"];
 
-            for c_label[c_idx] in self.cmap_labels: TouchArea {
+            for c_label[c_idx] in self.cmap_labels: Chip {
                 horizontal-stretch: 1;
-                height: 100%;
-                mouse-cursor: pointer;
+                chip_height: MaterialStyleMetrics.size_20 + MaterialStyleMetrics.size_2;
+                corner_radius: MaterialStyleMetrics.border_radius_8;
+                label: c_label;
+                selected: root.colormap_index == c_idx;
+                active_bg: MaterialPalette.tertiary.with_alpha(25%);
+                active_fg: MaterialPalette.tertiary;
                 clicked => { root.set_colormap(c_idx); }
-
-                Rectangle {
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 10px;
-                    background: root.colormap_index == c_idx
-                        ? MaterialPalette.tertiary.with_alpha(25%)
-                        : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
-                    border-width: root.colormap_index == c_idx ? 1.5px : 1px;
-                    border-color: root.colormap_index == c_idx ? MaterialPalette.tertiary : MaterialPalette.outline_variant.with_alpha(40%);
-
-                    MaterialText {
-                        width: 100%;
-                        height: 100%;
-                        text: c_label;
-                        font-size: 10.5px;
-                        font-weight: root.colormap_index == c_idx ? 700 : 400;
-                        color: root.colormap_index == c_idx ? MaterialPalette.tertiary : MaterialPalette.on_surface;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
-                    }
-                }
             }
         }
     }

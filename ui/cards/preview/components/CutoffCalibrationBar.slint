@@ -91,7 +91,7 @@ export component CutoffCalibrationBar inherits Rectangle {
                             chip_touch.has-hover ? MaterialPalette.surface_container_highest : transparent;
                 border-width: is_active ? 0px : 1px;
                 border-color: MaterialPalette.outline_variant;
-                animate background { duration: 120ms; }
+                animate background { duration: MaterialAnimations.fast_duration; }
 
                 chip_touch := TouchArea {
                     width: 100%;

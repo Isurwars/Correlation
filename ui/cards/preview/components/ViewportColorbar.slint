@@ -9,6 +9,7 @@ import {
     MaterialTypography,
     MaterialText,
 } from "../../../material/material.slint";
+import { PhaseColorbar } from "./PhaseColorbar.slint";
 
 export component ViewportColorbar inherits Rectangle {
     in property <string> descriptor_name: "q̄₆";
@@ -25,58 +26,34 @@ export component ViewportColorbar inherits Rectangle {
     clip: true;
 
     VerticalLayout {
-        padding-left: 10px;
-        padding-right: 10px;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        spacing: 3px;
+        padding-left: MaterialStyleMetrics.padding_10;
+        padding-right: MaterialStyleMetrics.padding_10;
+        padding-top: MaterialStyleMetrics.padding_4;
+        padding-bottom: MaterialStyleMetrics.padding_4;
+        spacing: MaterialStyleMetrics.spacing_2;
 
-        // Header: Descriptor label and title
         HorizontalLayout {
             alignment: space-between;
             MaterialText {
                 text: root.descriptor_name;
-                font-size: 12.5px;
-                font-weight: 700;
+                style: MaterialTypography.label_medium_prominent;
                 color: MaterialPalette.on_surface;
                 vertical-alignment: center;
             }
             MaterialText {
                 text: "Scalar Halo";
-                font-size: 10.5px;
+                style: MaterialTypography.label_small;
                 color: MaterialPalette.on_surface_variant;
                 vertical-alignment: center;
             }
         }
 
-        // Color gradient bar
-        Rectangle {
-            height: 10px;
-            border-radius: MaterialStyleMetrics.border_radius_4;
-            clip: true;
-            background: MaterialPalette.surface_container_high;
-
-            Image {
-                width: 100%;
-                height: 100%;
-                source: root.colorbar_image;
-                image-fit: fill;
-            }
-        }
-
-        // Min / Max labels
-        HorizontalLayout {
-            alignment: space-between;
-            MaterialText {
-                text: "" + (Math.round(root.min_val * 100) / 100);
-                font-size: 10.5px;
-                color: MaterialPalette.on_surface_variant;
-            }
-            MaterialText {
-                text: "" + (Math.round(root.max_val * 100) / 100);
-                font-size: 10.5px;
-                color: MaterialPalette.on_surface_variant;
-            }
+        PhaseColorbar {
+            colorbar_image: root.colorbar_image;
+            min_threshold: root.min_val;
+            max_threshold: root.max_val;
+            descriptor_name: root.descriptor_name;
+            show_title: false;
         }
     }
 }

@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 import {
+    MaterialAnimations,
     MaterialPalette,
     MaterialStyleMetrics,
     MaterialTypography,
@@ -105,7 +106,7 @@ export component CutoffCalibrationOverlay inherits Rectangle {
             background: min_touch.has-hover ? MaterialPalette.primary.darker(10%) : MaterialPalette.primary;
             border-width: 1.5px;
             border-color: MaterialPalette.on_primary.with_alpha(60%);
-            animate background { duration: 120ms; }
+            animate background { duration: MaterialAnimations.fast_duration; }
 
             // Vertical grip ridges
             Rectangle {
@@ -178,7 +179,7 @@ export component CutoffCalibrationOverlay inherits Rectangle {
             background: max_touch.has-hover ? MaterialPalette.tertiary.darker(10%) : MaterialPalette.tertiary;
             border-width: 1.5px;
             border-color: MaterialPalette.on_tertiary.with_alpha(60%);
-            animate background { duration: 120ms; }
+            animate background { duration: MaterialAnimations.fast_duration; }
 
             // Vertical grip ridges
             Rectangle {

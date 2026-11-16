@@ -9,35 +9,8 @@ import {
     MaterialTypography,
     MaterialText,
     Icons,
+    SegmentedButton,
 } from "../../../material/material.slint";
-
-component HudMetricPill inherits Rectangle {
-    in property <string> label;
-    in property <bool> active: false;
-
-    callback clicked();
-
-    width: 40px;
-    height: 20px;
-    border-radius: MaterialStyleMetrics.border_radius_full;
-    background: root.active ? MaterialPalette.primary : MaterialPalette.surface_container_high;
-
-    TouchArea {
-        mouse-cursor: pointer;
-        accessible-role: button;
-        accessible-label: "Show " + root.label + " mini plot";
-        clicked => { root.clicked(); }
-
-        MaterialText {
-            text: root.label;
-            style: MaterialTypography.label_small;
-            font_weight: root.active ? 700 : 500;
-            color: root.active ? MaterialPalette.on_primary : MaterialPalette.on_surface_variant;
-            horizontal-alignment: center;
-            vertical-alignment: center;
-        }
-    }
-}
 
 export component DistributionHUDCard inherits Rectangle {
     in property <image> chart_image;
@@ -68,26 +41,16 @@ export component DistributionHUDCard inherits Rectangle {
             alignment: space-between;
             spacing: MaterialStyleMetrics.spacing_6;
 
-            HorizontalLayout {
-                spacing: MaterialStyleMetrics.spacing_4;
-
-                HudMetricPill {
-                    label: "g(r)";
-                    active: root.active_metric == 0;
-                    clicked => { root.set_metric(0); }
-                }
-
-                HudMetricPill {
-                    label: "PAD";
-                    active: root.active_metric == 1;
-                    clicked => { root.set_metric(1); }
-                }
-
-                HudMetricPill {
-                    label: "S(Q)";
-                    active: root.active_metric == 2;
-                    clicked => { root.set_metric(2); }
-                }
+            SegmentedButton {
+                width: 128px;
+                segment_height: MaterialStyleMetrics.size_20;
+                model: [
+                    { label: "g(r)", enabled: true },
+                    { label: "PAD", enabled: true },
+                    { label: "S(Q)", enabled: true },
+                ];
+                current_index: root.active_metric;
+                selected(i) => { root.set_metric(i); }
             }
 
             // Close button

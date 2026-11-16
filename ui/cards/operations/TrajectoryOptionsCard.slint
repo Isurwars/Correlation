@@ -5,29 +5,17 @@
 
 import {
     MaterialStyleMetrics,
-    MaterialTypography,
-    MaterialPalette,
-    OutlinedCard,
-    ExpandableHeader,
-    MaterialText,
-    TextField,
-    Vertical,
     Horizontal,
-    Icon,
-    Icons,
 } from "../../material/material.slint";
+import { OptionSection } from "../common/OptionSection.slint";
+import { ValidatedField } from "../common/ValidatedField.slint";
 
-// ============================================================================
-// TrajectoryOptionsCard Component
-// ============================================================================
-/// Allows users to specify trajectory analysis configurations, specifically
-/// the time step (fs) and range of frames (Start and End) to be analyzed.
-// ============================================================================
-export component TrajectoryOptionsCard inherits OutlinedCard {
-    in-out property <bool> expanded: true;
+export component TrajectoryOptionsCard inherits OptionSection {
+    title: "Trajectory Options";
+    reset_enabled: root.file_loaded;
+
     in property <bool> file_loaded;
     in property <int> num_frames;
-    callback reset();
 
     in-out property <string> time_step;
     in property <string> time_step_error: "";
@@ -47,104 +35,57 @@ export component TrajectoryOptionsCard inherits OutlinedCard {
         stride_area.has-hover ? "Sampling stride between frames (e.g. 10 evaluates every 10th frame).\n\n🔬 Physics: Useful for rapid preliminary screening of long trajectories to save compute time while maintaining statistical convergence." : "";
 
     out property <length> hovered_x:
-        time_step_area.has-hover ? time_step_area.absolute-position.x + time_step_area.mouse-x :
-        start_frame_area.has-hover ? start_frame_area.absolute-position.x + start_frame_area.mouse-x :
-        end_frame_area.has-hover ? end_frame_area.absolute-position.x + end_frame_area.mouse-x :
-        stride_area.has-hover ? stride_area.absolute-position.x + stride_area.mouse-x : 0px;
+        time_step_area.has-hover ? time_step_area.hover_x :
+        start_frame_area.has-hover ? start_frame_area.hover_x :
+        end_frame_area.has-hover ? end_frame_area.hover_x :
+        stride_area.has-hover ? stride_area.hover_x : 0px;
     out property <length> hovered_y:
-        time_step_area.has-hover ? time_step_area.absolute-position.y + time_step_area.mouse-y :
-        start_frame_area.has-hover ? start_frame_area.absolute-position.y + start_frame_area.mouse-y :
-        end_frame_area.has-hover ? end_frame_area.absolute-position.y + end_frame_area.mouse-y :
-        stride_area.has-hover ? stride_area.absolute-position.y + stride_area.mouse-y : 0px;
+        time_step_area.has-hover ? time_step_area.hover_y :
+        start_frame_area.has-hover ? start_frame_area.hover_y :
+        end_frame_area.has-hover ? end_frame_area.hover_y :
+        stride_area.has-hover ? stride_area.hover_y : 0px;
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
 
-    Vertical {
-        padding: MaterialStyleMetrics.spacing_8;
+    time_step_area := ValidatedField {
+        accessible-role: text-input;
+        accessible-label: "Time Step in femtoseconds";
+        field_enabled: root.file_loaded && root.num_frames > 1;
+        label: "Time Step (fs)";
+        text <=> root.time_step;
+        error: root.time_step_error;
+    }
+
+    Horizontal {
         spacing: MaterialStyleMetrics.spacing_8;
 
-        ExpandableHeader {
-            text: "Trajectory Options";
-            expanded <=> root.expanded;
-            show_reset: true;
-            reset_enabled: root.file_loaded;
-            reset => { root.reset(); }
+        start_frame_area := ValidatedField {
+            horizontal-stretch: 1;
+            accessible-role: text-input;
+            accessible-label: "Start Frame";
+            field_enabled: root.file_loaded && root.num_frames > 1;
+            label: "Start Frame";
+            text <=> root.min_frame;
+            error: root.min_frame_error;
         }
 
-        Vertical {
-            height: root.expanded ? self.preferred-height : 0px;
-            visible: self.height > 0px;
-            opacity: root.expanded ? 1.0 : 0.0;
-            animate height, opacity {
-                duration: 250ms;
-                easing: ease-in-out;
-            }
-
-            padding: 0;
-            spacing: MaterialStyleMetrics.spacing_8;
-
-            // Time Step input
-            time_step_area := TouchArea {
-                accessible-role: text-input;
-                accessible-label: "Time Step in femtoseconds";
-                tf_time := TextField {
-                    width: 100%;
-                    label: "Time Step (fs)";
-                    horizontal-stretch: 1;
-                    vertical-stretch: 0;
-                    text <=> root.time_step;
-                    enabled: root.file_loaded && root.num_frames > 1;
-                    has_error: root.time_step_error != "";
-                    supporting_text: root.time_step_error;
-                }
-            }
-
-            // Frame Range inputs
-            Horizontal {
-                spacing: MaterialStyleMetrics.spacing_8;
-
-                start_frame_area := TouchArea {
-                    accessible-role: text-input;
-                    accessible-label: "Start Frame";
-                    horizontal-stretch: 1;
-                    tf_start := TextField {
-                        width: 100%;
-                        enabled: root.file_loaded && root.num_frames > 1;
-                        label: "Start Frame";
-                        text <=> root.min_frame;
-                        has_error: root.min_frame_error != "";
-                        supporting_text: root.min_frame_error;
-                    }
-                }
-
-                end_frame_area := TouchArea {
-                    accessible-role: text-input;
-                    accessible-label: "End Frame";
-                    horizontal-stretch: 1;
-                    tf_end := TextField {
-                        width: 100%;
-                        enabled: root.file_loaded && root.num_frames > 1;
-                        label: "End Frame";
-                        text <=> root.max_frame;
-                        has_error: root.max_frame_error != "";
-                        supporting_text: root.max_frame_error;
-                    }
-                }
-
-                stride_area := TouchArea {
-                    accessible-role: text-input;
-                    accessible-label: "Frame Stride";
-                    horizontal-stretch: 1;
-                    tf_stride := TextField {
-                        width: 100%;
-                        enabled: root.file_loaded && root.num_frames > 1;
-                        label: "Stride";
-                        text <=> root.frame_stride;
-                        has_error: root.frame_stride_error != "";
-                        supporting_text: root.frame_stride_error;
-                    }
-                }
-            }
+        end_frame_area := ValidatedField {
+            horizontal-stretch: 1;
+            accessible-role: text-input;
+            accessible-label: "End Frame";
+            field_enabled: root.file_loaded && root.num_frames > 1;
+            label: "End Frame";
+            text <=> root.max_frame;
+            error: root.max_frame_error;
         }
+    }
+
+    stride_area := ValidatedField {
+        accessible-role: text-input;
+        accessible-label: "Frame Stride";
+        field_enabled: root.file_loaded && root.num_frames > 1;
+        label: "Frame Stride (1 = all)";
+        text <=> root.frame_stride;
+        error: root.frame_stride_error;
     }
 }

@@ -15,6 +15,7 @@ export component PhaseColorbar inherits VerticalLayout {
     in property <float> min_threshold: 0.0;
     in property <float> max_threshold: 1.0;
     in property <string> descriptor_name: "q̄₆";
+    in property <bool> show_title: true;
 
     spacing: 2px;
 
@@ -43,7 +44,7 @@ export component PhaseColorbar inherits VerticalLayout {
             color: MaterialPalette.on_surface_variant;
         }
 
-        MaterialText {
+        if root.show_title: MaterialText {
             text: root.descriptor_name + " Scalar Palette";
             font-size: 10px;
             font-weight: 600;
