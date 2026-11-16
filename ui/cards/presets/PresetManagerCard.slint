@@ -6,8 +6,6 @@
 import {
     MaterialStyleMetrics,
     MaterialPalette,
-    OutlinedCard,
-    ExpandableHeader,
     TextField,
     Vertical,
     Horizontal,
@@ -16,9 +14,12 @@ import {
     FilledButton,
     Icons,
 } from "../../material/material.slint";
+import { OptionSection } from "../common/OptionSection.slint";
 
-export component PresetManagerCard inherits OutlinedCard {
-    in-out property <bool> expanded: false;
+export component PresetManagerCard inherits OptionSection {
+    title: "Parameter Presets";
+    expanded: false;
+    reset_enabled: root.enabled && root.selected_preset >= 0;
     in property <bool> enabled: true;
 
     in property <[MenuItem]> preset_items: [];
@@ -27,7 +28,6 @@ export component PresetManagerCard inherits OutlinedCard {
     callback load_preset(int);
     callback save_preset(string); // name
     callback delete_preset(int);
-    callback reset();
 
     property <string> save_name: "";
 
@@ -53,28 +53,6 @@ export component PresetManagerCard inherits OutlinedCard {
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
 
-    Vertical {
-        padding: MaterialStyleMetrics.spacing_8;
-        spacing: MaterialStyleMetrics.spacing_8;
-
-        ExpandableHeader {
-            text: "Parameter Presets";
-            expanded <=> root.expanded;
-            show_reset: true;
-            reset_enabled: root.enabled && root.selected_preset >= 0;
-            reset => { root.reset(); }
-        }
-
-        Vertical {
-            height: root.expanded ? self.preferred-height : 0px;
-            visible: self.height > 0px;
-            opacity: root.expanded ? 1.0 : 0.0;
-            padding: 0;
-            spacing: MaterialStyleMetrics.spacing_8;
-            animate height, opacity {
-                duration: 250ms;
-                easing: ease-in-out;
-            }
 
             // Load and Delete
             VerticalLayout {
@@ -152,6 +130,4 @@ export component PresetManagerCard inherits OutlinedCard {
                     }
                 }
             }
-        }
-    }
 }

@@ -3,10 +3,22 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+import {
+    MaterialStyleMetrics,
+    ScrollView,
+    Vertical,
+} from "../../material/material.slint";
 import { AnalysisOptions, AppErrors, CalculatorGroup, WorkflowState } from "../../Types.slint";
-import { AdvancedOptionsPanelCard } from "../../cards/advanced/AdvancedOptionsPanelCard.slint";
+import { AnalysesSelectionCard } from "../../cards/analyses/AnalysesSelectionCard.slint";
+import { SQOptionsCard } from "../../cards/advanced/SQOptionsCard.slint";
+import { XRDOptionsCard } from "../../cards/advanced/XRDOptionsCard.slint";
+import { RingsOptionsCard } from "../../cards/advanced/RingsOptionsCard.slint";
+import { SmoothingOptionsCard } from "../../cards/advanced/SmoothingOptionsCard.slint";
+import { AdvancedOptionsCard } from "../../cards/advanced/AdvancedOptionsCard.slint";
+import { DynamicPropertiesCard } from "../../cards/dynamic/DynamicPropertiesCard.slint";
+import { PinnedExecutionBar } from "../components/PinnedExecutionBar.slint";
 
-/// Modular Host Component for Stage 2: Advanced Options (Analyses Selection, S(Q), XRD, Rings, Dynamic Properties, Smoothing, LEF)
+/// Modular Host Component for Stage 2: Advanced Options
 export component AdvancedOptionsPanel inherits Rectangle {
     in property <bool> file_loaded: false;
     in property <bool> has_scattering_active: true;
@@ -42,73 +54,141 @@ export component AdvancedOptionsPanel inherits Rectangle {
     callback reset_smoothing_options();
     callback reset_advanced_options();
 
-    out property <string> hovered_tooltip_text: card.hovered_tooltip_text;
-    out property <length> hovered_x: card.hovered_x;
-    out property <length> hovered_y: card.hovered_y;
-    out property <length> hovered_width: card.hovered_width;
-    out property <length> hovered_height: card.hovered_height;
+    out property <string> hovered_tooltip_text:
+        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_calculator_description :
+        sq_card.hovered_tooltip_text != "" ? sq_card.hovered_tooltip_text :
+        xrd_card.hovered_tooltip_text != "" ? xrd_card.hovered_tooltip_text :
+        rings_card.hovered_tooltip_text != "" ? rings_card.hovered_tooltip_text :
+        dynamic_properties.hovered_tooltip_text != "" ? dynamic_properties.hovered_tooltip_text :
+        smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_tooltip_text :
+        advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_tooltip_text :
+        exec_bar.has_hover ? exec_bar.hovered_tooltip_text : "";
 
-    card := AdvancedOptionsPanelCard {
+    out property <length> hovered_x:
+        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_x :
+        sq_card.hovered_tooltip_text != "" ? sq_card.hovered_x :
+        xrd_card.hovered_tooltip_text != "" ? xrd_card.hovered_x :
+        rings_card.hovered_tooltip_text != "" ? rings_card.hovered_x :
+        dynamic_properties.hovered_tooltip_text != "" ? dynamic_properties.hovered_x :
+        smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_x :
+        advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_x :
+        exec_bar.has_hover ? exec_bar.hover_x : 0px;
+
+    out property <length> hovered_y:
+        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_y :
+        sq_card.hovered_tooltip_text != "" ? sq_card.hovered_y :
+        xrd_card.hovered_tooltip_text != "" ? xrd_card.hovered_y :
+        rings_card.hovered_tooltip_text != "" ? rings_card.hovered_y :
+        dynamic_properties.hovered_tooltip_text != "" ? dynamic_properties.hovered_y :
+        smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_y :
+        advanced_card.hovered_tooltip_text != "" ? advanced_card.hovered_y :
+        exec_bar.has_hover ? exec_bar.hover_y : 0px;
+
+    out property <length> hovered_width: 0px;
+    out property <length> hovered_height: 0px;
+
+    Vertical {
         width: 100%;
         height: 100%;
-        file_loaded: root.file_loaded;
-        has_scattering_active: root.has_scattering_active;
-        has_rings_active: root.has_rings_active;
-        workflow_state: root.workflow_state;
-        run_analysis => { root.run_analysis(); }
-        cancel_analysis => { root.cancel_analysis(); }
+        spacing: MaterialStyleMetrics.spacing_8;
+        padding: 0;
 
-        calculator_groups <=> root.calculator_groups;
-        total_calculator_count: root.total_calculator_count;
-        enabled_calculator_count: root.enabled_calculator_count;
-        toggle_calculator(id, enabled) => { root.toggle_calculator(id, enabled); }
-        toggle_calculator_group(grp, enabled) => { root.toggle_calculator_group(grp, enabled); }
-        toggle_all_calculators(enabled) => { root.toggle_all_calculators(enabled); }
-        set_calculator_group_expanded(grp, exp) => { root.set_calculator_group_expanded(grp, exp); }
-        set_all_calculator_groups_expanded(exp) => { root.set_all_calculator_groups_expanded(exp); }
-        reset_analyses_selection => { root.reset_analyses_selection(); }
+        ScrollView {
+            vertical-stretch: 1;
 
-        diff_msd: root.diff_msd;
-        diff_vacf: root.diff_vacf;
-        relaxation_time: root.relaxation_time;
-        deborah_number: root.deborah_number;
+            Vertical {
+                padding: 0;
+                spacing: MaterialStyleMetrics.spacing_8;
 
-        q_max <=> root.analysis_options.q_max;
-        q_bin_width <=> root.analysis_options.q_bin_width;
-        r_int_max <=> root.analysis_options.r_int_max;
-        q_max_error: root.app_errors.q_max_error;
-        q_bin_error: root.app_errors.q_bin_error;
-        r_int_max_error: root.app_errors.r_int_max_error;
-        reset_sq_options => { root.reset_sq_options(); }
+                analyses_card := AnalysesSelectionCard {
+                    expanded: false;
+                    file_loaded: root.file_loaded;
+                    calculator_groups: root.calculator_groups;
+                    total_calculator_count: root.total_calculator_count;
+                    enabled_calculator_count: root.enabled_calculator_count;
+                    toggle_calculator(id, val) => { root.toggle_calculator(id, val); }
+                    toggle_calculator_group(grp, val) => { root.toggle_calculator_group(grp, val); }
+                    toggle_all_calculators(val) => { root.toggle_all_calculators(val); }
+                    set_calculator_group_expanded(grp, exp) => { root.set_calculator_group_expanded(grp, exp); }
+                    set_all_calculator_groups_expanded(exp) => { root.set_all_calculator_groups_expanded(exp); }
+                    reset => { root.reset_analyses_selection(); }
+                }
 
-        xrd_radiation_preset <=> root.analysis_options.xrd_radiation_preset;
-        xrd_lambda <=> root.analysis_options.xrd_lambda;
-        xrd_theta_min <=> root.analysis_options.xrd_theta_min;
-        xrd_theta_max <=> root.analysis_options.xrd_theta_max;
-        xrd_bin_width <=> root.analysis_options.xrd_bin_width;
-        xrd_lambda_error: root.app_errors.xrd_lambda_error;
-        xrd_theta_min_error: root.app_errors.xrd_theta_min_error;
-        xrd_theta_max_error: root.app_errors.xrd_theta_max_error;
-        xrd_bin_width_error: root.app_errors.xrd_bin_width_error;
-        reset_xrd_options => { root.reset_xrd_options(); }
-        xrd_radiation_preset_changed(idx) => { root.xrd_radiation_preset_changed(idx); }
+                sq_card := SQOptionsCard {
+                    file_loaded: root.file_loaded;
+                    q_max <=> root.analysis_options.q_max;
+                    q_bin_width <=> root.analysis_options.q_bin_width;
+                    r_int_max <=> root.analysis_options.r_int_max;
+                    q_max_error: root.app_errors.q_max_error;
+                    q_bin_error: root.app_errors.q_bin_error;
+                    r_int_max_error: root.app_errors.r_int_max_error;
+                    reset => { root.reset_sq_options(); }
+                    visible: root.has_scattering_active;
+                }
 
-        max_ring_size <=> root.analysis_options.max_ring_size;
-        max_ring_error: root.app_errors.max_ring_error;
-        reset_rings_options => { root.reset_rings_options(); }
+                xrd_card := XRDOptionsCard {
+                    file_loaded: root.file_loaded;
+                    radiation_preset <=> root.analysis_options.xrd_radiation_preset;
+                    lambda <=> root.analysis_options.xrd_lambda;
+                    theta_min <=> root.analysis_options.xrd_theta_min;
+                    theta_max <=> root.analysis_options.xrd_theta_max;
+                    bin_width <=> root.analysis_options.xrd_bin_width;
+                    lambda_error: root.app_errors.xrd_lambda_error;
+                    theta_min_error: root.app_errors.xrd_theta_min_error;
+                    theta_max_error: root.app_errors.xrd_theta_max_error;
+                    bin_width_error: root.app_errors.xrd_bin_width_error;
+                    reset => { root.reset_xrd_options(); }
+                    radiation_preset_changed(idx) => { root.xrd_radiation_preset_changed(idx); }
+                    visible: root.has_scattering_active;
+                }
 
-        smoothing_enabled <=> root.analysis_options.smoothing_enabled;
-        smoothing_sigma <=> root.analysis_options.smoothing_sigma;
-        smoothing_kernel <=> root.analysis_options.smoothing_kernel;
-        smoothing_sigma_error: root.app_errors.smoothing_sigma_error;
-        reset_smoothing_options => { root.reset_smoothing_options(); }
+                rings_card := RingsOptionsCard {
+                    expanded: false;
+                    file_loaded: root.file_loaded;
+                    max_ring_size <=> root.analysis_options.max_ring_size;
+                    max_ring_error: root.app_errors.max_ring_error;
+                    reset => { root.reset_rings_options(); }
+                    visible: root.has_rings_active;
+                }
 
-        lef_cutoff <=> root.analysis_options.lef_cutoff;
-        lef_sigma <=> root.analysis_options.lef_sigma;
-        hyper_samples <=> root.analysis_options.hyper_samples;
-        lef_cutoff_error: root.app_errors.lef_cutoff_error;
-        lef_sigma_error: root.app_errors.lef_sigma_error;
-        hyper_samples_error: root.app_errors.hyper_samples_error;
-        reset_advanced_options => { root.reset_advanced_options(); }
+                dynamic_properties := DynamicPropertiesCard {
+                    diff_msd: root.diff_msd;
+                    diff_vacf: root.diff_vacf;
+                    relaxation_time: root.relaxation_time;
+                    deborah_number: root.deborah_number;
+                }
+
+                smoothing_card := SmoothingOptionsCard {
+                    expanded: false;
+                    file_loaded: root.file_loaded;
+                    smoothing_enabled <=> root.analysis_options.smoothing_enabled;
+                    smoothing_sigma <=> root.analysis_options.smoothing_sigma;
+                    smoothing_kernel <=> root.analysis_options.smoothing_kernel;
+                    smoothing_sigma_error: root.app_errors.smoothing_sigma_error;
+                    reset => { root.reset_smoothing_options(); }
+                }
+
+                advanced_card := AdvancedOptionsCard {
+                    expanded: false;
+                    file_loaded: root.file_loaded;
+                    lef_cutoff <=> root.analysis_options.lef_cutoff;
+                    lef_sigma <=> root.analysis_options.lef_sigma;
+                    lef_cutoff_error: root.app_errors.lef_cutoff_error;
+                    lef_sigma_error: root.app_errors.lef_sigma_error;
+                    hyper_samples <=> root.analysis_options.hyper_samples;
+                    hyper_samples_error: root.app_errors.hyper_samples_error;
+                    reset => { root.reset_advanced_options(); }
+                }
+            }
+        }
+
+        exec_bar := PinnedExecutionBar {
+            width: 100%;
+            file_loaded: root.file_loaded;
+            analysis_running: root.workflow_state.analysis_running;
+            has_validation_errors: root.workflow_state.has_validation_errors;
+            run_analysis => { root.run_analysis(); }
+            cancel_analysis => { root.cancel_analysis(); }
+        }
     }
 }

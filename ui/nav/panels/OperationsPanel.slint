@@ -3,12 +3,23 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+import {
+    MaterialStyleMetrics,
+    OutlinedCard,
+    FilledButton,
+    LinearProgressIndicator,
+    Vertical,
+    Horizontal,
+    IconButton,
+    Icons,
+    ScrollView,
+} from "../../material/material.slint";
 import { FileMetadata, WorkflowState, AnalysisOptions, AppErrors } from "../../Types.slint";
-import { OperationsPanelCard } from "../../cards/operations/OperationsPanelCard.slint";
+import { PinnedExecutionBar } from "../components/PinnedExecutionBar.slint";
+import { OperationsDiagnosticsCard } from "../../cards/operations/OperationsDiagnosticsCard.slint";
 
 /// Modular Host Component for Panel 0: Operations & Trajectory Setup
 export component OperationsPanel inherits Rectangle {
-    // File loading & status
     in property <bool> load_enabled: true;
     in property <FileMetadata> file_metadata;
 
@@ -17,46 +28,127 @@ export component OperationsPanel inherits Rectangle {
     callback export_structure();
     callback rename_element(string, string);
 
-    // Trajectory Setup
     in-out property <AnalysisOptions> analysis_options;
     in property <AppErrors> app_errors;
-
     callback reset_trajectory_options();
 
-    // Execution
     in property <WorkflowState> workflow_state;
     callback run_analysis();
     callback cancel_analysis();
 
-    out property <string> hovered_tooltip_text: card.hovered_tooltip_text;
-    out property <length> hovered_x: card.hovered_x;
-    out property <length> hovered_y: card.hovered_y;
-    out property <length> hovered_width: card.hovered_width;
-    out property <length> hovered_height: card.hovered_height;
+    in-out property <bool> atoms_expanded: true;
 
-    card := OperationsPanelCard {
+    out property <string> hovered_tooltip_text:
+        btn_load.has_hover ? "Load a structure or trajectory file" :
+        btn_reload.has_hover ? "Reload the currently loaded file from disk.\n\n🔄 Useful when the trajectory is updated by an active external simulation." :
+        btn_export.has_hover ? "Convert or export the currently loaded structure into POSCAR, CELL, CIF, or CAR format." :
+        diagnostics_card.header_has_hover ? ("Loaded File: " + (root.file_metadata.status_text != "" ? root.file_metadata.status_text : "None")) :
+        diagnostics_card.diagnostics_has_hover ? "System Diagnostics & Composition.\n\n🔬 Details lattice dimensions, cell volume, macroscopic density, and atomic species counts." :
+        exec_bar.has_hover ? exec_bar.hovered_tooltip_text : "";
+
+    out property <length> hovered_x:
+        btn_load.has_hover ? btn_load.hover_x :
+        btn_reload.has_hover ? btn_reload.hover_x :
+        btn_export.has_hover ? btn_export.hover_x :
+        diagnostics_card.header_has_hover ? diagnostics_card.header_hover_x :
+        diagnostics_card.diagnostics_has_hover ? diagnostics_card.diagnostics_hover_x :
+        exec_bar.has_hover ? exec_bar.hover_x : 0px;
+    out property <length> hovered_y:
+        btn_load.has_hover ? btn_load.hover_y :
+        btn_reload.has_hover ? btn_reload.hover_y :
+        btn_export.has_hover ? btn_export.hover_y :
+        diagnostics_card.header_has_hover ? diagnostics_card.header_hover_y :
+        diagnostics_card.diagnostics_has_hover ? diagnostics_card.diagnostics_hover_y :
+        exec_bar.has_hover ? exec_bar.hover_y : 0px;
+    out property <length> hovered_width: 0px;
+    out property <length> hovered_height: 0px;
+
+    Vertical {
         width: 100%;
         height: 100%;
-        load_enabled: root.load_enabled;
-        file_loading: root.file_metadata.loading;
-        browse_file => { root.browse_file(); }
-        reload_file => { root.reload_file(); }
-        export_structure => { root.export_structure(); }
-        rename_element(old_sym, new_sym) => { root.rename_element(old_sym, new_sym); }
-        file_status_text: root.file_metadata.status_text;
-        file_basename: root.file_metadata.basename;
-        file_loaded: root.file_metadata.loaded;
-        num_frames: root.file_metadata.num_frames;
-        total_atoms: root.file_metadata.total_atoms;
-        removed_frames_count: root.file_metadata.removed_frames_count;
-        atom_counts: root.file_metadata.atom_counts;
-        box_volume: root.file_metadata.box_volume;
-        box_density: root.file_metadata.box_density;
-        box_dimensions: root.file_metadata.box_dimensions;
+        spacing: MaterialStyleMetrics.spacing_8;
+        padding: 0;
 
-        analysis_running: root.workflow_state.analysis_running;
-        has_validation_errors: root.workflow_state.has_validation_errors;
-        run_analysis => { root.run_analysis(); }
-        cancel_analysis => { root.cancel_analysis(); }
+        ScrollView {
+            vertical-stretch: 1;
+
+            Vertical {
+                spacing: MaterialStyleMetrics.spacing_8;
+                padding: 0;
+
+                OutlinedCard {
+                    Vertical {
+                        padding: MaterialStyleMetrics.spacing_8;
+                        spacing: MaterialStyleMetrics.spacing_6;
+
+                        Horizontal {
+                            spacing: MaterialStyleMetrics.spacing_8;
+
+                            btn_load := FilledButton {
+                                height: MaterialStyleMetrics.size_40;
+                                horizontal-stretch: 1;
+                                text: "Load File";
+                                tooltip: "";
+                                icon: Icons.folder_open;
+                                enabled: root.load_enabled && !root.workflow_state.analysis_running;
+                                clicked => { root.browse_file(); }
+                            }
+
+                            btn_reload := IconButton {
+                                accessible-label: "Reload Current File";
+                                height: MaterialStyleMetrics.size_40;
+                                width: MaterialStyleMetrics.size_40;
+                                horizontal-stretch: 0;
+                                icon: Icons.restart_alt;
+                                tooltip: "";
+                                enabled: root.load_enabled && root.file_metadata.loaded && !root.workflow_state.analysis_running;
+                                clicked => { root.reload_file(); }
+                            }
+
+                            btn_export := IconButton {
+                                accessible-label: "Export or Convert Structure";
+                                height: MaterialStyleMetrics.size_40;
+                                width: MaterialStyleMetrics.size_40;
+                                horizontal-stretch: 0;
+                                icon: Icons.save;
+                                tooltip: "";
+                                enabled: root.load_enabled && root.file_metadata.loaded && !root.workflow_state.analysis_running;
+                                clicked => { root.export_structure(); }
+                            }
+                        }
+
+                        if root.file_metadata.loading: LinearProgressIndicator {
+                            width: 100%;
+                            height: 4px;
+                            indeterminate: true;
+                        }
+                    }
+                }
+
+                diagnostics_card := OperationsDiagnosticsCard {
+                    file_loaded: root.file_metadata.loaded;
+                    file_basename: root.file_metadata.basename;
+                    file_status_text: root.file_metadata.status_text;
+                    num_frames: root.file_metadata.num_frames;
+                    total_atoms: root.file_metadata.total_atoms;
+                    removed_frames_count: root.file_metadata.removed_frames_count;
+                    atom_counts: root.file_metadata.atom_counts;
+                    box_volume: root.file_metadata.box_volume;
+                    box_density: root.file_metadata.box_density;
+                    box_dimensions: root.file_metadata.box_dimensions;
+                    atoms_expanded <=> root.atoms_expanded;
+                    rename_element(old_sym, new_sym) => { root.rename_element(old_sym, new_sym); }
+                }
+            }
+        }
+
+        exec_bar := PinnedExecutionBar {
+            width: 100%;
+            file_loaded: root.file_metadata.loaded;
+            analysis_running: root.workflow_state.analysis_running;
+            has_validation_errors: root.workflow_state.has_validation_errors;
+            run_analysis => { root.run_analysis(); }
+            cancel_analysis => { root.cancel_analysis(); }
+        }
     }
 }

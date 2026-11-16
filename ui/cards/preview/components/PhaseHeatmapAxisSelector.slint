@@ -8,6 +8,7 @@ import {
     MaterialPalette,
     MaterialTypography,
     MaterialText,
+    Chip,
 } from "../../../material/material.slint";
 
 export component PhaseHeatmapAxisSelector inherits VerticalLayout {
@@ -17,97 +18,55 @@ export component PhaseHeatmapAxisSelector inherits VerticalLayout {
     callback set_descriptor_x(int);
     callback set_descriptor_y(int);
 
-    spacing: 3px;
+    property <[string]> axis_labels: ["q̄₆", "q̄₄", "q₆", "q₄", "ŵ₆", "ŵ₄", "s₂", "N_conn", "q_tet"];
 
-    // X Axis Selector
+    spacing: MaterialStyleMetrics.spacing_4;
+
     HorizontalLayout {
-        spacing: 3px;
+        spacing: MaterialStyleMetrics.spacing_4;
         alignment: center;
 
         MaterialText {
-            width: 32px;
+            width: MaterialStyleMetrics.size_32;
             text: "X:";
-            font-size: 10px;
-            font-weight: 700;
+            style: MaterialTypography.label_small_prominent;
             color: MaterialPalette.on_surface_variant;
             vertical-alignment: center;
         }
 
-        property <[string]> x_labels: ["q̄₆", "q̄₄", "q₆", "q₄", "ŵ₆", "ŵ₄", "s₂", "N_conn", "q_tet"];
-
-        for label[idx] in self.x_labels: TouchArea {
+        for label[idx] in root.axis_labels: Chip {
             horizontal-stretch: 1;
-            height: 18px;
-            mouse-cursor: pointer;
+            chip_height: MaterialStyleMetrics.size_18;
+            label: label;
+            selected: root.descriptor_x == idx;
+            active_bg: MaterialPalette.primary.with_alpha(30%);
+            active_fg: MaterialPalette.primary;
+            idle_fg: MaterialPalette.on_surface;
             clicked => { root.set_descriptor_x(idx); }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: MaterialStyleMetrics.border_radius_4;
-                background: root.descriptor_x == idx
-                    ? MaterialPalette.primary.with_alpha(30%)
-                    : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
-                border-width: root.descriptor_x == idx ? 1px : 0.5px;
-                border-color: root.descriptor_x == idx ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(30%);
-
-                MaterialText {
-                    width: 100%;
-                    height: 100%;
-                    text: label;
-                    font-size: 9px;
-                    font-weight: root.descriptor_x == idx ? 700 : 400;
-                    color: root.descriptor_x == idx ? MaterialPalette.primary : MaterialPalette.on_surface;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
-                }
-            }
         }
     }
 
-    // Y Axis Selector
     HorizontalLayout {
-        spacing: 3px;
+        spacing: MaterialStyleMetrics.spacing_4;
         alignment: center;
 
         MaterialText {
-            width: 32px;
+            width: MaterialStyleMetrics.size_32;
             text: "Y:";
-            font-size: 10px;
-            font-weight: 700;
+            style: MaterialTypography.label_small_prominent;
             color: MaterialPalette.on_surface_variant;
             vertical-alignment: center;
         }
 
-        property <[string]> y_labels: ["q̄₆", "q̄₄", "q₆", "q₄", "ŵ₆", "ŵ₄", "s₂", "N_conn", "q_tet"];
-
-        for label[idx] in self.y_labels: TouchArea {
+        for label[idx] in root.axis_labels: Chip {
             horizontal-stretch: 1;
-            height: 18px;
-            mouse-cursor: pointer;
+            chip_height: MaterialStyleMetrics.size_18;
+            label: label;
+            selected: root.descriptor_y == idx;
+            active_bg: MaterialPalette.secondary.with_alpha(30%);
+            active_fg: MaterialPalette.secondary;
+            idle_fg: MaterialPalette.on_surface;
             clicked => { root.set_descriptor_y(idx); }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: MaterialStyleMetrics.border_radius_4;
-                background: root.descriptor_y == idx
-                    ? MaterialPalette.secondary.with_alpha(30%)
-                    : (parent.has-hover ? MaterialPalette.surface_container_highest : transparent);
-                border-width: root.descriptor_y == idx ? 1px : 0.5px;
-                border-color: root.descriptor_y == idx ? MaterialPalette.secondary : MaterialPalette.outline_variant.with_alpha(30%);
-
-                MaterialText {
-                    width: 100%;
-                    height: 100%;
-                    text: label;
-                    font-size: 9px;
-                    font-weight: root.descriptor_y == idx ? 700 : 400;
-                    color: root.descriptor_y == idx ? MaterialPalette.secondary : MaterialPalette.on_surface;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
-                }
-            }
         }
     }
 }

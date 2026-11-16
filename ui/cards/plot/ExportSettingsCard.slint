@@ -8,8 +8,6 @@ import {
     MaterialPalette,
     MaterialTypography,
     MaterialText,
-    OutlinedCard,
-    ExpandableHeader,
     TextField,
     Vertical,
     Horizontal,
@@ -17,11 +15,12 @@ import {
     MenuItem,
     CheckBoxRow,
 } from "../../material/material.slint";
+import { OptionSection } from "../common/OptionSection.slint";
 
-export component ExportSettingsCard inherits OutlinedCard {
-    in-out property <bool> expanded: true;
+export component ExportSettingsCard inherits OptionSection {
+    title: "Publication Plot Settings";
+    reset_enabled: root.enabled;
     in property <bool> enabled: true;
-    callback reset();
 
     in-out property <int> export_size_preset: 0;
     in-out property <int> export_palette: 0;
@@ -95,28 +94,6 @@ export component ExportSettingsCard inherits OutlinedCard {
         { text: "Cividis (Continuous)", enabled: true }
     ];
 
-    Vertical {
-        padding: MaterialStyleMetrics.spacing_8;
-        spacing: MaterialStyleMetrics.spacing_8;
-
-        ExpandableHeader {
-            text: "Publication Plot Settings";
-            expanded <=> root.expanded;
-            show_reset: true;
-            reset_enabled: root.enabled;
-            reset => { root.reset(); }
-        }
-
-        Vertical {
-            height: root.expanded ? self.preferred-height : 0px;
-            visible: self.height > 0px;
-            opacity: root.expanded ? 1.0 : 0.0;
-            padding: 0;
-            spacing: MaterialStyleMetrics.spacing_8;
-            animate height, opacity {
-                duration: 250ms;
-                easing: ease-in-out;
-            }
 
             Rectangle {
                 size_area := TouchArea {}
@@ -251,6 +228,4 @@ export component ExportSettingsCard inherits OutlinedCard {
                     }
                 }
             }
-        }
-    }
 }
