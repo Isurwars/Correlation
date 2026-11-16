@@ -9,35 +9,10 @@ import {
     MaterialTypography,
     MaterialText,
     CheckBoxRow,
+    Chip,
+    TextField,
 } from "../../../../material/material.slint";
 import { PlotAxisSettings } from "../../../../Types.slint";
-import { CompactInputField } from "CompactInputField.slint";
-
-component StepAdjustButton inherits TouchArea {
-    in property <string> symbol;
-    in property <string> label;
-
-    width: 24px;
-    height: 24px;
-    mouse-cursor: pointer;
-    accessible-role: button;
-    accessible-label: root.label;
-
-    Rectangle {
-        background: root.has-hover ? MaterialPalette.surface_container_highest : transparent;
-        border-radius: MaterialStyleMetrics.border_radius_2;
-        border-width: 1px;
-        border-color: MaterialPalette.outline;
-
-        MaterialText {
-            text: root.symbol;
-            style: MaterialTypography.label_medium;
-            color: MaterialPalette.on_surface;
-            horizontal-alignment: center;
-            vertical-alignment: center;
-        }
-    }
-}
 
 component AxisPairRow inherits VerticalLayout {
     in property <string> title;
@@ -73,7 +48,8 @@ component AxisPairRow inherits VerticalLayout {
 
     HorizontalLayout {
         spacing: MaterialStyleMetrics.spacing_6;
-        CompactInputField {
+        TextField {
+            dense: true;
             horizontal-stretch: 1;
             placeholder_text: root.min_placeholder;
             text <=> root.min_value;
@@ -83,7 +59,8 @@ component AxisPairRow inherits VerticalLayout {
                 root.apply_axis_settings();
             }
         }
-        CompactInputField {
+        TextField {
+            dense: true;
             horizontal-stretch: 1;
             placeholder_text: root.max_placeholder;
             text <=> root.max_value;
@@ -145,9 +122,11 @@ export component PlotAxesControls inherits VerticalLayout {
             vertical-alignment: center;
         }
 
-        StepAdjustButton {
-            symbol: "-";
-            label: "Decrease minor subdivisions";
+        Chip {
+                chip_height: MaterialStyleMetrics.size_24;
+                corner_radius: MaterialStyleMetrics.border_radius_2;
+            label: "-";
+            accessible_name: "Decrease minor subdivisions";
             clicked => {
                 if (root.axis_settings.minor_subdivisions > 0) {
                     root.axis_settings.minor_subdivisions -= 1;
@@ -163,9 +142,11 @@ export component PlotAxesControls inherits VerticalLayout {
             vertical-alignment: center;
         }
 
-        StepAdjustButton {
-            symbol: "+";
-            label: "Increase minor subdivisions";
+        Chip {
+                chip_height: MaterialStyleMetrics.size_24;
+                corner_radius: MaterialStyleMetrics.border_radius_2;
+            label: "+";
+            accessible_name: "Increase minor subdivisions";
             clicked => {
                 if (root.axis_settings.minor_subdivisions < 5) {
                     root.axis_settings.minor_subdivisions += 1;

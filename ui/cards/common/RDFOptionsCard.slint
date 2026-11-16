@@ -1,79 +1,39 @@
-import {
-    MaterialStyleMetrics,
-    MaterialPalette,
-    OutlinedCard,
-    ExpandableHeader,
-    TextField,
-    Vertical,
-} from "../../material/material.slint";
+import { OptionSection } from "OptionSection.slint";
+import { ValidatedField } from "ValidatedField.slint";
 
-export component RDFOptionsCard inherits OutlinedCard {
-    in-out property <bool> expanded: true;
+export component RDFOptionsCard inherits OptionSection {
+    title: "Radial Distribution";
+    reset_enabled: root.file_loaded;
+
     in property <bool> file_loaded;
     in-out property <string> r_max;
     in-out property <string> r_bin_width;
     in property <string> r_max_error: "";
     in property <string> r_bin_error: "";
-    callback reset();
 
     out property <string> hovered_tooltip_text:
         r_max_area.has-hover ? "Maximum radius for RDF calculations g(r), J(r), G(r).\n\n📏 Recommended: 20 Å (half the simulation box length).\n\n🔬 Physics: Should be ≤ L/2 to avoid self-correlation artifacts from periodic boundary conditions. For liquids, g(r) converges to 1.0 well before this limit." : r_bin_area.has-hover ? "Bin width for the RDF histograms g(r), J(r), G(r).\n\n📏 Recommended: 0.02 Å.\n\n🔬 Physics: Smaller bins resolve finer features in the pair distribution but increase noise for small systems. 0.02 Å balances resolution and statistical quality for most simulations (>500 atoms)." : "";
 
     out property <length> hovered_x:
-        r_max_area.has-hover ? r_max_area.absolute-position.x + r_max_area.mouse-x :
-        r_bin_area.has-hover ? r_bin_area.absolute-position.x + r_bin_area.mouse-x : 0px;
+        r_max_area.has-hover ? r_max_area.hover_x :
+        r_bin_area.has-hover ? r_bin_area.hover_x : 0px;
     out property <length> hovered_y:
-        r_max_area.has-hover ? r_max_area.absolute-position.y + r_max_area.mouse-y :
-        r_bin_area.has-hover ? r_bin_area.absolute-position.y + r_bin_area.mouse-y : 0px;
+        r_max_area.has-hover ? r_max_area.hover_y :
+        r_bin_area.has-hover ? r_bin_area.hover_y : 0px;
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
 
-    Vertical {
-        padding: MaterialStyleMetrics.spacing_8;
-        spacing: MaterialStyleMetrics.spacing_8;
+    r_max_area := ValidatedField {
+        field_enabled: root.file_loaded;
+        label: "RDF Max r (Å)";
+        text <=> root.r_max;
+        error: root.r_max_error;
+    }
 
-        ExpandableHeader {
-            text: "Radial Distribution";
-            expanded <=> root.expanded;
-            show_reset: true;
-            reset_enabled: root.file_loaded;
-            reset => { root.reset(); }
-        }
-
-        Vertical {
-            height: root.expanded ? self.preferred-height : 0px;
-            visible: self.height > 0px;
-            opacity: root.expanded ? 1.0 : 0.0;
-            padding: 0;
-            spacing: MaterialStyleMetrics.spacing_8;
-            animate height, opacity {
-                duration: 250ms;
-                easing: ease-in-out;
-            }
-
-            r_max_area := TouchArea {
-                width: 100%;
-                TextField {
-                    enabled: root.file_loaded;
-                    width: 100%;
-                    label: "RDF Max r (Å)";
-                    text <=> root.r_max;
-                    has_error: root.r_max_error != "";
-                    supporting_text: root.r_max_error;
-                }
-            }
-
-            r_bin_area := TouchArea {
-                width: 100%;
-                TextField {
-                    enabled: root.file_loaded;
-                    width: 100%;
-                    label: "RDF Bin Width (Å)";
-                    text <=> root.r_bin_width;
-                    has_error: root.r_bin_error != "";
-                    supporting_text: root.r_bin_error;
-                }
-            }
-        }
+    r_bin_area := ValidatedField {
+        field_enabled: root.file_loaded;
+        label: "RDF Bin Width (Å)";
+        text <=> root.r_bin_width;
+        error: root.r_bin_error;
     }
 }

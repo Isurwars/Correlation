@@ -1,0 +1,75 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import { MaterialAnimations } from "../styling/material_animations.slint";
+import { MaterialPalette } from "../styling/material_palette.slint";
+import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
+import { StateLayer } from "./state_layer.slint";
+
+/// Material 3 navigation rail icon item with optional active bar indicator.
+export component NavRailItem inherits Rectangle {
+    in property <image> icon;
+    in property <bool> active: false;
+    in property <string> tooltip: "";
+    in property <bool> enabled: true;
+    in property <color> active_bg: MaterialPalette.primary_container;
+    in property <color> active_fg: MaterialPalette.on_primary_container;
+    in property <color> inactive_bg: transparent;
+    in property <color> inactive_fg: MaterialPalette.on_surface_variant;
+    in property <bool> show_indicator: root.active;
+    in property <bool> indicator_right: false;
+
+    out property <bool> has_hover: touch.has-hover;
+    out property <length> hover_x: touch.has-hover ? touch.absolute-position.x + touch.mouse-x : 0px;
+    out property <length> hover_y: touch.has-hover ? touch.absolute-position.y + touch.mouse-y : 0px;
+
+    callback clicked();
+
+    width: MaterialStyleMetrics.size_40;
+    height: MaterialStyleMetrics.size_40;
+    border-radius: MaterialStyleMetrics.border_radius_8;
+    background: !root.enabled ? transparent :
+                root.active ? root.active_bg : root.inactive_bg;
+    animate background { duration: MaterialAnimations.base_duration; }
+
+    accessible-role: button;
+    accessible-label: root.tooltip;
+    accessible-enabled: root.enabled;
+    accessible-action-default => { root.clicked(); }
+
+    StateLayer {
+        enabled: root.enabled;
+        has_hover: touch.has-hover;
+        pressed: touch.pressed;
+        background: root.active ? root.active_fg : root.inactive_fg;
+        border_radius: MaterialStyleMetrics.border_radius_8;
+    }
+
+    if root.show_indicator: Rectangle {
+        x: root.indicator_right ? (parent.width - 1px) : -2px;
+        y: (parent.height - self.height) / 2;
+        width: MaterialStyleMetrics.size_3;
+        height: MaterialStyleMetrics.size_20;
+        border-radius: MaterialStyleMetrics.border_radius_2;
+        background: MaterialPalette.primary;
+    }
+
+    Image {
+        width: MaterialStyleMetrics.size_20;
+        height: MaterialStyleMetrics.size_20;
+        source: root.icon;
+        colorize: !root.enabled ? MaterialPalette.outline :
+                  root.active ? root.active_fg : root.inactive_fg;
+        animate colorize { duration: MaterialAnimations.base_duration; }
+    }
+
+    touch := TouchArea {
+        width: 100%;
+        height: 100%;
+        enabled: root.enabled;
+        mouse-cursor: root.enabled ? pointer : default;
+        clicked => { root.clicked(); }
+    }
+}

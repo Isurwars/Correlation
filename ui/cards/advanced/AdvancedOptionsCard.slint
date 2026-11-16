@@ -1,14 +1,10 @@
-import {
-    MaterialStyleMetrics,
-    MaterialPalette,
-    OutlinedCard,
-    ExpandableHeader,
-    TextField,
-    Vertical,
-} from "../../material/material.slint";
+import { OptionSection } from "../common/OptionSection.slint";
+import { ValidatedField } from "../common/ValidatedField.slint";
 
-export component AdvancedOptionsCard inherits OutlinedCard {
-    in-out property <bool> expanded: true;
+export component AdvancedOptionsCard inherits OptionSection {
+    title: "Advanced Order Parameters";
+    reset_enabled: root.file_loaded;
+
     in property <bool> file_loaded;
     in-out property <string> lef_cutoff;
     in-out property <string> lef_sigma;
@@ -16,7 +12,6 @@ export component AdvancedOptionsCard inherits OutlinedCard {
     in property <string> lef_cutoff_error: "";
     in property <string> lef_sigma_error: "";
     in property <string> hyper_samples_error: "";
-    callback reset();
 
     out property <string> hovered_tooltip_text:
         cutoff_area.has-hover ? "Cutoff radius (Rc) for the local entropy integration.\n\n📏 Recommended: 5.0 Å.\n\n🔬 Physics: Defines the maximum distance to consider when calculating the local entropic fingerprint around each atom. Integrates local correlations up to this distance." :
@@ -24,71 +19,34 @@ export component AdvancedOptionsCard inherits OutlinedCard {
         hyper_area.has-hover ? "Number of random sample points for hyperuniformity calculation.\n\n📏 Recommended: 10000.\n\n🔬 Physics: More samples improve the statistical accuracy of the local number variance σ²_N(R) and hyperuniformity index χ_H(R). Higher values yield smoother curves but increase computation time." : "";
 
     out property <length> hovered_x:
-        cutoff_area.has-hover ? cutoff_area.absolute-position.x + cutoff_area.mouse-x :
-        sigma_area.has-hover ? sigma_area.absolute-position.x + sigma_area.mouse-x :
-        hyper_area.has-hover ? hyper_area.absolute-position.x + hyper_area.mouse-x : 0px;
+        cutoff_area.has-hover ? cutoff_area.hover_x :
+        sigma_area.has-hover ? sigma_area.hover_x :
+        hyper_area.has-hover ? hyper_area.hover_x : 0px;
     out property <length> hovered_y:
-        cutoff_area.has-hover ? cutoff_area.absolute-position.y + cutoff_area.mouse-y :
-        sigma_area.has-hover ? sigma_area.absolute-position.y + sigma_area.mouse-y :
-        hyper_area.has-hover ? hyper_area.absolute-position.y + hyper_area.mouse-y : 0px;
+        cutoff_area.has-hover ? cutoff_area.hover_y :
+        sigma_area.has-hover ? sigma_area.hover_y :
+        hyper_area.has-hover ? hyper_area.hover_y : 0px;
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
 
-    Vertical {
-        padding: MaterialStyleMetrics.spacing_8;
-        spacing: MaterialStyleMetrics.spacing_8;
+    cutoff_area := ValidatedField {
+        field_enabled: root.file_loaded;
+        label: "Local Entropy Cutoff (Rc)";
+        text <=> root.lef_cutoff;
+        error: root.lef_cutoff_error;
+    }
 
-        ExpandableHeader {
-            text: "Advanced Order Parameters";
-            expanded <=> root.expanded;
-            show_reset: true;
-            reset_enabled: root.file_loaded;
-            reset => { root.reset(); }
-        }
+    sigma_area := ValidatedField {
+        field_enabled: root.file_loaded;
+        label: "Local Entropy Sigma (σ)";
+        text <=> root.lef_sigma;
+        error: root.lef_sigma_error;
+    }
 
-        Vertical {
-            height: root.expanded ? self.preferred-height : 0px;
-            visible: self.height > 0px;
-            opacity: root.expanded ? 1.0 : 0.0;
-            padding: 0;
-            spacing: MaterialStyleMetrics.spacing_8;
-            animate height, opacity {
-                duration: 250ms;
-                easing: ease-in-out;
-            }
-
-            cutoff_area := TouchArea {
-                TextField {
-                    enabled: root.file_loaded;
-                    width: 100%;
-                    label: "Local Entropy Cutoff (Rc)";
-                    text <=> root.lef_cutoff;
-                    has_error: root.lef_cutoff_error != "";
-                    supporting_text: root.lef_cutoff_error;
-                }
-            }
-
-            sigma_area := TouchArea {
-                TextField {
-                    enabled: root.file_loaded;
-                    width: 100%;
-                    label: "Local Entropy Sigma (σ)";
-                    text <=> root.lef_sigma;
-                    has_error: root.lef_sigma_error != "";
-                    supporting_text: root.lef_sigma_error;
-                }
-            }
-
-            hyper_area := TouchArea {
-                TextField {
-                    enabled: root.file_loaded;
-                    width: 100%;
-                    label: "Hyperuniformity Samples";
-                    text <=> root.hyper_samples;
-                    has_error: root.hyper_samples_error != "";
-                    supporting_text: root.hyper_samples_error;
-                }
-            }
-        }
+    hyper_area := ValidatedField {
+        field_enabled: root.file_loaded;
+        label: "Hyperuniformity Samples";
+        text <=> root.hyper_samples;
+        error: root.hyper_samples_error;
     }
 }

@@ -19,6 +19,7 @@ export component TextField {
     in property <image> leading_icon;
     in property <image> trailing_icon;
     in property <bool> enabled: true;
+    in property <bool> dense: false;
     in property <bool> read_only <=> input.read_only;
     out property <bool> has_focus: input.has_focus;
     in_out property <string> text <=> input.text;
@@ -52,7 +53,7 @@ export component TextField {
             border_top_left_radius: MaterialStyleMetrics.border_radius_2;
             border_top_right_radius: MaterialStyleMetrics.border_radius_2;
             background: MaterialPalette.surface_container_highest;
-            min-height: MaterialStyleMetrics.size_40;
+            min-height: root.dense ? MaterialStyleMetrics.size_28 : MaterialStyleMetrics.size_40;
 
             inner_layout := HorizontalLayout {
                 padding_left: root.has_leading ? MaterialStyleMetrics.padding_2 : MaterialStyleMetrics.padding_8;
@@ -64,6 +65,7 @@ export component TextField {
                 if root.has_leading: IconButton {
                     icon: root.leading_icon;
                     enabled: root.enabled;
+                    inline: root.dense;
 
                     clicked => {
                         root.leading_icon_clicked();
@@ -83,10 +85,10 @@ export component TextField {
                         input := TextInput {
                             x: min(0px, max(parent.width - self.width - self.text_cursor_width, root.computed_x));
                             width: max(parent.width - self.text-cursor-width, self.preferred-width);
-                            font_size: MaterialTypography.body_large.font_size;
-                            font_weight: MaterialTypography.label_large_prominent.font_weight;
+                            font_size: root.dense ? MaterialTypography.body_small.font_size : MaterialTypography.body_large.font_size;
+                            font_weight: root.dense ? MaterialTypography.regular : MaterialTypography.label_large_prominent.font_weight;
                             text_cursor_width: MaterialStyleMetrics.size_3;
-                            vertical_alignment: bottom;
+                            vertical_alignment: root.dense ? center : bottom;
                             single_line: true;
                             color: MaterialPalette.on_surface;
                             selection_background_color: MaterialPalette.primary.with_alpha(0.5);
@@ -120,7 +122,17 @@ export component TextField {
                             }
                         }
 
+                        if root.dense && root.text == "" && !input.has_focus && root.placeholder_text != "": MaterialText {
+                            width: 100%;
+                            height: 100%;
+                            text: root.placeholder_text;
+                            style: MaterialTypography.body_small;
+                            color: MaterialPalette.on_surface_variant.with_alpha(60%);
+                            vertical-alignment: center;
+                        }
+
                         text_label := MaterialText {
+                            visible: !root.dense;
                             y: (parent.height - self.height) / 2;
                             width: 100%;
                             text: root.label;

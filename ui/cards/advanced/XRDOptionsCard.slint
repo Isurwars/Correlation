@@ -1,15 +1,11 @@
-import {
-    MaterialStyleMetrics,
-    MaterialPalette,
-    OutlinedCard,
-    ExpandableHeader,
-    TextField,
-    DropDownMenu,
-    Vertical,
-} from "../../material/material.slint";
+import { DropDownMenu } from "../../material/material.slint";
+import { OptionSection } from "../common/OptionSection.slint";
+import { ValidatedField } from "../common/ValidatedField.slint";
 
-export component XRDOptionsCard inherits OutlinedCard {
-    in-out property <bool> expanded: true;
+export component XRDOptionsCard inherits OptionSection {
+    title: "Powder Diffraction (XRD)";
+    reset_enabled: root.file_loaded;
+
     in property <bool> file_loaded;
 
     in-out property <int> radiation_preset: 0;
@@ -23,7 +19,6 @@ export component XRDOptionsCard inherits OutlinedCard {
     in property <string> theta_max_error: "";
     in property <string> bin_width_error: "";
 
-    callback reset();
     callback radiation_preset_changed(int);
 
     out property <string> hovered_tooltip_text:
@@ -35,106 +30,65 @@ export component XRDOptionsCard inherits OutlinedCard {
 
     out property <length> hovered_x:
         preset_area.has-hover ? preset_area.absolute-position.x + preset_area.mouse-x :
-        lambda_area.has-hover ? lambda_area.absolute-position.x + lambda_area.mouse-x :
-        min_theta_area.has-hover ? min_theta_area.absolute-position.x + min_theta_area.mouse-x :
-        max_theta_area.has-hover ? max_theta_area.absolute-position.x + max_theta_area.mouse-x :
-        bin_width_area.has-hover ? bin_width_area.absolute-position.x + bin_width_area.mouse-x : 0px;
+        lambda_area.has-hover ? lambda_area.hover_x :
+        min_theta_area.has-hover ? min_theta_area.hover_x :
+        max_theta_area.has-hover ? max_theta_area.hover_x :
+        bin_width_area.has-hover ? bin_width_area.hover_x : 0px;
 
     out property <length> hovered_y:
         preset_area.has-hover ? preset_area.absolute-position.y + preset_area.mouse-y :
-        lambda_area.has-hover ? lambda_area.absolute-position.y + lambda_area.mouse-y :
-        min_theta_area.has-hover ? min_theta_area.absolute-position.y + min_theta_area.mouse-y :
-        max_theta_area.has-hover ? max_theta_area.absolute-position.y + max_theta_area.mouse-y :
-        bin_width_area.has-hover ? bin_width_area.absolute-position.y + bin_width_area.mouse-y : 0px;
+        lambda_area.has-hover ? lambda_area.hover_y :
+        min_theta_area.has-hover ? min_theta_area.hover_y :
+        max_theta_area.has-hover ? max_theta_area.hover_y :
+        bin_width_area.has-hover ? bin_width_area.hover_y : 0px;
 
     out property <length> hovered_width: 0px;
     out property <length> hovered_height: 0px;
 
-    Vertical {
-        padding: MaterialStyleMetrics.spacing_8;
-        spacing: MaterialStyleMetrics.spacing_8;
-
-        ExpandableHeader {
-            text: "Powder Diffraction (XRD)";
-            expanded <=> root.expanded;
-            show_reset: true;
-            reset_enabled: root.file_loaded;
-            reset => { root.reset(); }
-        }
-
-        Vertical {
-            height: root.expanded ? self.preferred-height : 0px;
-            visible: self.height > 0px;
-            opacity: root.expanded ? 1.0 : 0.0;
-            padding: 0;
-            spacing: MaterialStyleMetrics.spacing_8;
-            animate height, opacity {
-                duration: 250ms;
-                easing: ease-in-out;
-            }
-
-            preset_area := TouchArea {
-                DropDownMenu {
-                    enabled: root.file_loaded;
-                    width: 100%;
-                    label: "Radiation Source";
-                    items: [
-                        { text: "Cu-Kα (1.5406 Å)", enabled: true },
-                        { text: "Mo-Kα (0.7107 Å)", enabled: true },
-                        { text: "Co-Kα (1.7890 Å)", enabled: true },
-                        { text: "Cr-Kα (2.2897 Å)", enabled: true },
-                        { text: "Custom Wavelength", enabled: true }
-                    ];
-                    current-index <=> root.radiation_preset;
-                    selected(idx) => {
-                        root.radiation_preset_changed(idx);
-                    }
-                }
-            }
-
-            lambda_area := TouchArea {
-                TextField {
-                    enabled: root.file_loaded && root.radiation_preset == 4;
-                    width: 100%;
-                    label: "Wavelength λ (Å)";
-                    text <=> root.lambda;
-                    has_error: root.lambda_error != "";
-                    supporting_text: root.lambda_error;
-                }
-            }
-
-            min_theta_area := TouchArea {
-                TextField {
-                    enabled: root.file_loaded;
-                    width: 100%;
-                    label: "Min 2θ (°)";
-                    text <=> root.theta_min;
-                    has_error: root.theta_min_error != "";
-                    supporting_text: root.theta_min_error;
-                }
-            }
-
-            max_theta_area := TouchArea {
-                TextField {
-                    enabled: root.file_loaded;
-                    width: 100%;
-                    label: "Max 2θ (°)";
-                    text <=> root.theta_max;
-                    has_error: root.theta_max_error != "";
-                    supporting_text: root.theta_max_error;
-                }
-            }
-
-            bin_width_area := TouchArea {
-                TextField {
-                    enabled: root.file_loaded;
-                    width: 100%;
-                    label: "2θ Bin Width (°)";
-                    text <=> root.bin_width;
-                    has_error: root.bin_width_error != "";
-                    supporting_text: root.bin_width_error;
-                }
+    preset_area := TouchArea {
+        DropDownMenu {
+            enabled: root.file_loaded;
+            width: 100%;
+            label: "Radiation Source";
+            items: [
+                { text: "Cu-Kα (1.5406 Å)", enabled: true },
+                { text: "Mo-Kα (0.7107 Å)", enabled: true },
+                { text: "Co-Kα (1.7890 Å)", enabled: true },
+                { text: "Cr-Kα (2.2897 Å)", enabled: true },
+                { text: "Custom Wavelength", enabled: true }
+            ];
+            current-index <=> root.radiation_preset;
+            selected(idx) => {
+                root.radiation_preset_changed(idx);
             }
         }
+    }
+
+    lambda_area := ValidatedField {
+        field_enabled: root.file_loaded && root.radiation_preset == 4;
+        label: "Wavelength λ (Å)";
+        text <=> root.lambda;
+        error: root.lambda_error;
+    }
+
+    min_theta_area := ValidatedField {
+        field_enabled: root.file_loaded;
+        label: "Min 2θ (°)";
+        text <=> root.theta_min;
+        error: root.theta_min_error;
+    }
+
+    max_theta_area := ValidatedField {
+        field_enabled: root.file_loaded;
+        label: "Max 2θ (°)";
+        text <=> root.theta_max;
+        error: root.theta_max_error;
+    }
+
+    bin_width_area := ValidatedField {
+        field_enabled: root.file_loaded;
+        label: "2θ Bin Width (°)";
+        text <=> root.bin_width;
+        error: root.bin_width_error;
     }
 }

@@ -6,35 +6,9 @@ import {
     Vertical,
     FilledButton,
     Icons,
+    Chip,
 } from "../../../material/material.slint";
 import { HeroFileLoadedCta } from "HeroFileLoadedCta.slint";
-
-component HeroSampleChip inherits Rectangle {
-    in property <string> label;
-    callback clicked();
-
-    width: chip_txt.preferred-width + 16px;
-    height: 28px;
-    border-radius: 14px;
-    background: chip_touch.has-hover ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
-    border-width: 1px;
-    border-color: MaterialPalette.outline_variant;
-
-    chip_txt := MaterialText {
-        text: root.label;
-        font-size: 11.5px;
-        color: chip_touch.has-hover ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
-        horizontal-alignment: center;
-        vertical-alignment: center;
-    }
-
-    chip_touch := TouchArea {
-        mouse-cursor: pointer;
-        accessible-role: button;
-        accessible-label: root.label;
-        clicked => { root.clicked(); }
-    }
-}
 
 export component HeroEmptyState inherits Rectangle {
     in property <bool> file_loaded: false;
@@ -121,17 +95,20 @@ export component HeroEmptyState inherits Rectangle {
                     vertical-alignment: center;
                 }
 
-                HeroSampleChip {
+                Chip {
+                    chip_height: MaterialStyleMetrics.size_24 + MaterialStyleMetrics.size_4;
                     label: "🔬 a-PdSi (Glass)";
                     clicked => { root.load_sample("a-PdSi"); }
                 }
 
-                HeroSampleChip {
+                Chip {
+                    chip_height: MaterialStyleMetrics.size_24 + MaterialStyleMetrics.size_4;
                     label: "🌿 Cellulose (Polymer)";
                     clicked => { root.load_sample("Cellulose"); }
                 }
 
-                HeroSampleChip {
+                Chip {
+                    chip_height: MaterialStyleMetrics.size_24 + MaterialStyleMetrics.size_4;
                     label: "💎 Silicon (Crystal)";
                     clicked => { root.load_sample("Si"); }
                 }

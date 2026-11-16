@@ -9,8 +9,8 @@ import {
     MaterialTypography,
     MaterialText,
     Icons,
+    TextField,
 } from "../../../../material/material.slint";
-import { CompactInputField } from "CompactInputField.slint";
 
 export component CurveColorPicker inherits Rectangle {
     in-out property <int> active_color_picker_id: -1;
@@ -89,7 +89,8 @@ export component CurveColorPicker inherits Rectangle {
             }
         }
 
-        CompactInputField {
+        TextField {
+            dense: true;
             placeholder_text: "#RRGGBB";
             accepted(hex) => {
                 if (hex != "") {

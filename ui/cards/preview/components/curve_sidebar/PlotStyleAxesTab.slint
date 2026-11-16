@@ -13,36 +13,11 @@ import {
     FilledButton,
     DropDownMenu,
     MenuItem,
+    SegmentedButton,
+    TextField,
 } from "../../../../material/material.slint";
 import { PlotAxisSettings, ExportConfig } from "../../../../Types.slint";
-import { CompactInputField } from "CompactInputField.slint";
 import { PlotAxesControls } from "PlotAxesControls.slint";
-
-component PresetSegmentButton inherits TouchArea {
-    in property <string> label;
-    in property <bool> active: false;
-
-    horizontal-stretch: 1;
-    mouse-cursor: pointer;
-    accessible-role: button;
-    accessible-label: "Publication preset " + root.label;
-
-    Rectangle {
-        background: root.active ? MaterialPalette.primary_container :
-                    root.has-hover ? MaterialPalette.surface_container_highest : transparent;
-        border-radius: MaterialStyleMetrics.border_radius_2;
-        animate background { duration: 120ms; }
-
-        MaterialText {
-            text: root.label;
-            style: MaterialTypography.label_small;
-            font_weight: root.active ? 600 : 400;
-            color: root.active ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
-            horizontal-alignment: center;
-            vertical-alignment: center;
-        }
-    }
-}
 
 /// Tab 1 of CurveSidebar: publication styling presets, typography, axis limits, and gridlines.
 export component PlotStyleAxesTab inherits ScrollView {
@@ -70,50 +45,18 @@ export component PlotStyleAxesTab inherits ScrollView {
                 color: MaterialPalette.on_surface;
             }
 
-            Rectangle {
-                height: 30px;
-                background: MaterialPalette.surface_container_high;
-                border-radius: MaterialStyleMetrics.border_radius_4;
-
-                HorizontalLayout {
-                    padding: 2px;
-                    spacing: 2px;
-
-                    PresetSegmentButton {
-                        label: "Default";
-                        active: root.export_config.size_preset == 0;
-                        clicked => {
-                            root.export_config.size_preset = 0;
-                            root.apply_axis_settings();
-                        }
-                    }
-
-                    PresetSegmentButton {
-                        label: "1-Col";
-                        active: root.export_config.size_preset == 1;
-                        clicked => {
-                            root.export_config.size_preset = 1;
-                            root.apply_axis_settings();
-                        }
-                    }
-
-                    PresetSegmentButton {
-                        label: "2-Col";
-                        active: root.export_config.size_preset == 2;
-                        clicked => {
-                            root.export_config.size_preset = 2;
-                            root.apply_axis_settings();
-                        }
-                    }
-
-                    PresetSegmentButton {
-                        label: "Slide";
-                        active: root.export_config.size_preset == 3;
-                        clicked => {
-                            root.export_config.size_preset = 3;
-                            root.apply_axis_settings();
-                        }
-                    }
+            SegmentedButton {
+                segment_height: MaterialStyleMetrics.size_30;
+                model: [
+                    { label: "Default", enabled: true },
+                    { label: "1-Col", enabled: true },
+                    { label: "2-Col", enabled: true },
+                    { label: "Slide", enabled: true },
+                ];
+                current_index: root.export_config.size_preset;
+                selected(i) => {
+                    root.export_config.size_preset = i;
+                    root.apply_axis_settings();
                 }
             }
         }
@@ -156,7 +99,8 @@ export component PlotStyleAxesTab inherits ScrollView {
                         style: MaterialTypography.label_small;
                         color: MaterialPalette.on_surface_variant;
                     }
-                    CompactInputField {
+                    TextField {
+                        dense: true;
                         placeholder_text: "1.0";
                         text <=> root.export_config.font_scale;
                         accepted(_) => { root.apply_axis_settings(); }
@@ -171,7 +115,8 @@ export component PlotStyleAxesTab inherits ScrollView {
                         style: MaterialTypography.label_small;
                         color: MaterialPalette.on_surface_variant;
                     }
-                    CompactInputField {
+                    TextField {
+                        dense: true;
                         placeholder_text: "3.0";
                         text <=> root.export_config.line_width;
                         accepted(_) => { root.apply_axis_settings(); }
@@ -186,7 +131,8 @@ export component PlotStyleAxesTab inherits ScrollView {
                         style: MaterialTypography.label_small;
                         color: MaterialPalette.on_surface_variant;
                     }
-                    CompactInputField {
+                    TextField {
+                        dense: true;
                         placeholder_text: "3.5";
                         text <=> root.export_config.marker_size;
                         accepted(_) => { root.apply_axis_settings(); }

@@ -538,6 +538,7 @@
   "536": "ThreadLocalBond",
   "537": "ParsedAtomRecord",
   "538": "LocalEntropyCalculator::calculateFrame",
+  "539": "readTrajectory",
   "540": "buildTypeBlocks",
   "543": "resolveExampleFilePath",
   "549": "ITrajectoryCalculator",

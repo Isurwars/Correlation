@@ -6,9 +6,9 @@
 import {
     MaterialStyleMetrics,
     MaterialPalette,
-    MaterialTypography,
-    MaterialText,
     FilledButton,
+    EmptyState,
+    Chip,
     Icons,
 } from "../../../material/material.slint";
 
@@ -25,26 +25,9 @@ export component Structure3DEmptyState inherits Rectangle {
     border-width: 1px;
     border-color: MaterialPalette.outline_variant;
 
-    VerticalLayout {
-        padding: 16px;
-        spacing: 8px;
-        alignment: center;
-
-        MaterialText {
-            text: "No Structure Loaded";
-            font-size: 15px;
-            font-weight: 700;
-            color: MaterialPalette.on_surface;
-            horizontal-alignment: center;
-        }
-
-        MaterialText {
-            text: "Open a trajectory or pick a quick demo dataset:";
-            font-size: MaterialTypography.label_medium.font_size;
-            color: MaterialPalette.on_surface_variant;
-            horizontal-alignment: center;
-            wrap: word-wrap;
-        }
+    EmptyState {
+        title: "No Structure Loaded";
+        body: "Open a trajectory or pick a quick demo dataset:";
 
         FilledButton {
             height: 34px;
@@ -53,75 +36,24 @@ export component Structure3DEmptyState inherits Rectangle {
             clicked => { root.browse_file(); }
         }
 
-        // Quick Demo Samples
         HorizontalLayout {
-            spacing: 6px;
+            spacing: MaterialStyleMetrics.spacing_6;
             alignment: center;
 
-            touch_pdsi_3d := TouchArea {
-                width: btn_pdsi_3d.preferred-width + 10px;
-                height: 26px;
-                mouse-cursor: pointer;
+            Chip {
+                label: "🔬 a-PdSi";
+                corner_radius: MaterialStyleMetrics.border_radius_full;
                 clicked => { root.load_sample("a-PdSi"); }
-                btn_pdsi_3d := Rectangle {
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 13px;
-                    background: touch_pdsi_3d.has-hover ? MaterialPalette.primary_container : MaterialPalette.surface_container;
-                    border-width: 1px;
-                    border-color: MaterialPalette.outline_variant;
-                    MaterialText {
-                        text: "🔬 a-PdSi";
-                        font-size: MaterialTypography.label_small.font_size;
-                        color: touch_pdsi_3d.has-hover ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
-                    }
-                }
             }
-
-            touch_cell_3d := TouchArea {
-                width: btn_cell_3d.preferred-width + 10px;
-                height: 26px;
-                mouse-cursor: pointer;
+            Chip {
+                label: "🌿 Cellulose";
+                corner_radius: MaterialStyleMetrics.border_radius_full;
                 clicked => { root.load_sample("Cellulose"); }
-                btn_cell_3d := Rectangle {
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 13px;
-                    background: touch_cell_3d.has-hover ? MaterialPalette.primary_container : MaterialPalette.surface_container;
-                    border-width: 1px;
-                    border-color: MaterialPalette.outline_variant;
-                    MaterialText {
-                        text: "🌿 Cellulose";
-                        font-size: MaterialTypography.label_small.font_size;
-                        color: touch_cell_3d.has-hover ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
-                    }
-                }
             }
-
-            touch_si_3d := TouchArea {
-                width: btn_si_3d.preferred-width + 10px;
-                height: 26px;
-                mouse-cursor: pointer;
+            Chip {
+                label: "💎 Silicon";
+                corner_radius: MaterialStyleMetrics.border_radius_full;
                 clicked => { root.load_sample("Si"); }
-                btn_si_3d := Rectangle {
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 13px;
-                    background: touch_si_3d.has-hover ? MaterialPalette.primary_container : MaterialPalette.surface_container;
-                    border-width: 1px;
-                    border-color: MaterialPalette.outline_variant;
-                    MaterialText {
-                        text: "💎 Silicon";
-                        font-size: MaterialTypography.label_small.font_size;
-                        color: touch_si_3d.has-hover ? MaterialPalette.on_primary_container : MaterialPalette.on_surface;
-                        horizontal-alignment: center;
-                        vertical-alignment: center;
-                    }
-                }
             }
         }
     }

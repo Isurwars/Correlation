@@ -12,11 +12,10 @@ import {
     Vertical,
     Chip,
     Icons,
+    TextField,
 } from "../../../../material/material.slint";
 import { CurveToggleItem } from "../../../../Types.slint";
-import { CompactInputField } from "CompactInputField.slint";
 import { CurveColorPicker } from "CurveColorPicker.slint";
-import { CurveListSearchBox } from "CurveListSearchBox.slint";
 
 /// Tab 0 of CurveSidebar: curve filtering, batch visibility, color swatches, and line width.
 export component CurveListTab inherits VerticalLayout {
@@ -36,9 +35,13 @@ export component CurveListTab inherits VerticalLayout {
     spacing: MaterialStyleMetrics.spacing_6;
 
     // 1. Search Filter Box
-    CurveListSearchBox {
-        curve_filter <=> root.curve_filter;
-        filter_curves(f) => { root.filter_curves(f); }
+    TextField {
+        dense: true;
+        leading_icon: Icons.zoom_in;
+        placeholder_text: "Filter curves (e.g. Fe, O-H)...";
+        text <=> root.curve_filter;
+        edited(f) => { root.filter_curves(f); }
+        accepted(f) => { root.filter_curves(f); }
     }
 
     // 2. All / None / Invert Batch Visibility Row
@@ -192,7 +195,8 @@ export component CurveListTab inherits VerticalLayout {
             vertical-alignment: center;
         }
 
-        CompactInputField {
+        TextField {
+            dense: true;
             horizontal-stretch: 1;
             placeholder_text: "1.5";
             text <=> root.line_width;

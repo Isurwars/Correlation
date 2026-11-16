@@ -1,0 +1,48 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialAnimations,
+    MaterialStyleMetrics,
+    OutlinedCard,
+    ExpandableHeader,
+    Vertical,
+} from "../../material/material.slint";
+
+/// Collapsible OutlinedCard section with an ExpandableHeader and animated body.
+export component OptionSection inherits OutlinedCard {
+    in property <string> title;
+    in-out property <bool> expanded: true;
+    in property <bool> show_reset: true;
+    in property <bool> reset_enabled: true;
+    callback reset();
+
+    Vertical {
+        padding: MaterialStyleMetrics.spacing_8;
+        spacing: MaterialStyleMetrics.spacing_8;
+
+        ExpandableHeader {
+            text: root.title;
+            expanded <=> root.expanded;
+            show_reset: root.show_reset;
+            reset_enabled: root.reset_enabled;
+            reset => { root.reset(); }
+        }
+
+        Vertical {
+            height: root.expanded ? self.preferred-height : 0px;
+            visible: self.height > 0px;
+            opacity: root.expanded ? 1.0 : 0.0;
+            padding: 0;
+            spacing: MaterialStyleMetrics.spacing_8;
+            animate height, opacity {
+                duration: MaterialAnimations.base_duration;
+                easing: ease-in-out;
+            }
+
+            @children
+        }
+    }
+}

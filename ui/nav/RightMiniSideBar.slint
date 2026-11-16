@@ -8,62 +8,8 @@ import {
     MaterialPalette,
     MaterialStyleMetrics,
     Icons,
+    NavRailItem,
 } from "../material/material.slint";
-
-component RightRailButton inherits Rectangle {
-    in property <image> icon;
-    in property <bool> active: false;
-    in property <string> tooltip: "";
-    in property <bool> enabled: true;
-    in property <color> active_bg: MaterialPalette.primary_container;
-    in property <color> active_fg: MaterialPalette.on_primary_container;
-    in property <color> inactive_bg: transparent;
-    in property <color> inactive_fg: MaterialPalette.on_surface_variant;
-    in property <bool> show_indicator: root.active;
-
-    callback clicked();
-
-    width: 40px;
-    height: 40px;
-    border-radius: MaterialStyleMetrics.border_radius_8;
-    background: !root.enabled ? transparent :
-                root.active ? (touch.has-hover ? root.active_bg.darker(8%) : root.active_bg) :
-                root.inactive_bg != transparent ? (touch.has-hover ? root.inactive_bg.darker(8%) : root.inactive_bg) :
-                touch.has-hover ? MaterialPalette.surface_container_high : transparent;
-    animate background { duration: MaterialAnimations.base_duration; }
-
-    if root.show_indicator: Rectangle {
-        x: parent.width - 1px;
-        y: (parent.height - self.height) / 2;
-        width: 3px;
-        height: 20px;
-        border-radius: MaterialStyleMetrics.border_radius_2;
-        background: MaterialPalette.primary;
-    }
-
-    Image {
-        width: 20px;
-        height: 20px;
-        source: root.icon;
-        colorize: !root.enabled ? MaterialPalette.outline :
-                  root.active ? root.active_fg : root.inactive_fg;
-        animate colorize { duration: MaterialAnimations.base_duration; }
-    }
-
-    out property <bool> has_hover: touch.has-hover;
-    out property <length> hover_x: touch.has-hover ? touch.absolute-position.x + touch.mouse-x : 0px;
-    out property <length> hover_y: touch.has-hover ? touch.absolute-position.y + touch.mouse-y : 0px;
-
-    touch := TouchArea {
-        width: 100%;
-        height: 100%;
-        enabled: root.enabled;
-        clicked => { root.clicked(); }
-    }
-
-    accessible-role: button;
-    accessible-label: root.tooltip;
-}
 
 export component RightMiniSideBar inherits Rectangle {
     in-out property <int> active_panel: 0;
@@ -109,7 +55,8 @@ export component RightMiniSideBar inherits Rectangle {
         spacing: 6px;
 
         // Panel 0: 2D Plot Inspector
-        btn_plot := RightRailButton {
+        btn_plot := NavRailItem {
+            indicator_right: true;
             icon: Icons.auto_graph;
             active: root.active_panel == 0;
             tooltip: "Plot Inspector (Curves, Style, Axes & Peaks)\n\n📊 Manage curves, customize axes and styling, and inspect tagged peaks.";
@@ -119,7 +66,8 @@ export component RightMiniSideBar inherits Rectangle {
         }
 
         // Panel 1: 3D Structure Inspector
-        btn_structure := RightRailButton {
+        btn_structure := NavRailItem {
+            indicator_right: true;
             icon: Icons.science;
             active: root.active_panel == 1;
             tooltip: "Structure 3D Inspector (Phase Search & Scene)\n\n🔬 Calibrate order parameter thresholds, 2D phase heatmaps, and camera/render settings.";
@@ -134,7 +82,8 @@ export component RightMiniSideBar inherits Rectangle {
         }
 
         // Collapse / Expand Toggle
-        btn_collapse := RightRailButton {
+        btn_collapse := NavRailItem {
+            indicator_right: true;
             icon: root.active_panel >= 0 ? Icons.chevron_forward : Icons.chevron_backward;
             tooltip: root.active_panel >= 0 ? "Collapse Inspector Panel\n\n▶️ Hide panel to expand workspace." : "Expand Inspector Panel\n\n◀️ Restore inspector panel.";
             clicked => {

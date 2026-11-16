@@ -8,62 +8,8 @@ import {
     MaterialPalette,
     MaterialStyleMetrics,
     Icons,
+    NavRailItem,
 } from "../material/material.slint";
-
-component RailButton inherits Rectangle {
-    in property <image> icon;
-    in property <bool> active: false;
-    in property <string> tooltip: "";
-    in property <bool> enabled: true;
-    in property <color> active_bg: MaterialPalette.primary_container;
-    in property <color> active_fg: MaterialPalette.on_primary_container;
-    in property <color> inactive_bg: transparent;
-    in property <color> inactive_fg: MaterialPalette.on_surface_variant;
-    in property <bool> show_indicator: root.active;
-
-    callback clicked();
-
-    width: 40px;
-    height: 40px;
-    border-radius: MaterialStyleMetrics.border_radius_8;
-    background: !root.enabled ? transparent :
-                root.active ? (touch.has-hover ? root.active_bg.darker(8%) : root.active_bg) :
-                root.inactive_bg != transparent ? (touch.has-hover ? root.inactive_bg.darker(8%) : root.inactive_bg) :
-                touch.has-hover ? MaterialPalette.surface_container_high : transparent;
-    animate background { duration: MaterialAnimations.base_duration; }
-
-    if root.show_indicator: Rectangle {
-        x: -2px;
-        y: (parent.height - self.height) / 2;
-        width: 3px;
-        height: 20px;
-        border-radius: MaterialStyleMetrics.border_radius_2;
-        background: MaterialPalette.primary;
-    }
-
-    Image {
-        width: 20px;
-        height: 20px;
-        source: root.icon;
-        colorize: !root.enabled ? MaterialPalette.outline :
-                  root.active ? root.active_fg : root.inactive_fg;
-        animate colorize { duration: MaterialAnimations.base_duration; }
-    }
-
-    out property <bool> has_hover: touch.has-hover;
-    out property <length> hover_x: touch.has-hover ? touch.absolute-position.x + touch.mouse-x : 0px;
-    out property <length> hover_y: touch.has-hover ? touch.absolute-position.y + touch.mouse-y : 0px;
-
-    touch := TouchArea {
-        width: 100%;
-        height: 100%;
-        enabled: root.enabled;
-        clicked => { root.clicked(); }
-    }
-
-    accessible-role: button;
-    accessible-label: root.tooltip;
-}
 
 export component MiniSideBar inherits Rectangle {
     in-out property <int> active_panel: 0;
@@ -128,7 +74,7 @@ export component MiniSideBar inherits Rectangle {
         spacing: 6px;
 
         // Stage 0: Input & Structure
-        btn_input := RailButton {
+        btn_input := NavRailItem {
             icon: Icons.folder_open;
             active: root.active_panel == 0;
             tooltip: "Input & Structure (Ctrl+O)\n\n📁 Load structures, configure trajectory slicing, and view system diagnostics.";
@@ -138,7 +84,7 @@ export component MiniSideBar inherits Rectangle {
         }
 
         // Stage 1: Calculators & Parameters
-        btn_calculators := RailButton {
+        btn_calculators := NavRailItem {
             icon: Icons.tune;
             active: root.active_panel == 1;
             tooltip: "Calculators & Parameters\n\n⚙️ Select analyses and calibrate pair cutoffs, scattering, and angular parameters.";
@@ -148,7 +94,7 @@ export component MiniSideBar inherits Rectangle {
         }
 
         // Stage 2: Advanced Options
-        btn_advanced := RailButton {
+        btn_advanced := NavRailItem {
             icon: Icons.science;
             active: root.active_panel == 2;
             tooltip: "Advanced Options\n\n🔬 Fine-tune static structure factor S(Q), powder XRD, ring topology, and smoothing.";
@@ -158,7 +104,7 @@ export component MiniSideBar inherits Rectangle {
         }
 
         // Stage 3: Export & Presentation
-        btn_export := RailButton {
+        btn_export := NavRailItem {
             icon: Icons.save;
             active: root.active_panel == 3;
             tooltip: "Export & Presentation (Ctrl+S)\n\n💾 Export data (CSV, HDF5, Parquet), figure presets, and multi-run comparisons.";
@@ -173,7 +119,7 @@ export component MiniSideBar inherits Rectangle {
         }
 
         // Quick Run / Cancel Action
-        btn_run := RailButton {
+        btn_run := NavRailItem {
             icon: root.analysis_running ? Icons.stop : Icons.play_arrow;
             active: root.analysis_running;
             active_bg: MaterialPalette.error_container;
@@ -196,7 +142,7 @@ export component MiniSideBar inherits Rectangle {
         }
 
         // Theme Toggle
-        btn_theme := RailButton {
+        btn_theme := NavRailItem {
             icon: root.is_dark ? Icons.light_mode : Icons.dark_mode;
             tooltip: "Toggle Color Scheme (Ctrl+D)\n\n🌓 Switch between Material Dark and Light themes.";
             clicked => {
@@ -205,7 +151,7 @@ export component MiniSideBar inherits Rectangle {
         }
 
         // Collapse / Expand Toggle
-        btn_collapse := RailButton {
+        btn_collapse := NavRailItem {
             icon: root.active_panel >= 0 ? Icons.chevron_backward : Icons.chevron_forward;
             tooltip: root.active_panel >= 0 ? "Collapse Side Panel\n\n◀️ Hide panel to expand plot workspace." : "Expand Side Panel\n\n▶️ Restore options panel.";
             clicked => {

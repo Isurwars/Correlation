@@ -19,13 +19,21 @@ export component Chip {
     in property <bool> enabled: true;
     in property <bool> outlined: true;
     in property <length> chip_height: MaterialStyleMetrics.size_24;
+    in property <length> corner_radius: MaterialStyleMetrics.border_radius_4;
+    in property <color> active_bg: MaterialPalette.primary.with_alpha(18%);
+    in property <color> active_fg: MaterialPalette.primary;
+    in property <color> idle_fg: MaterialPalette.on_surface_variant;
     in property <string> accessible_name: root.label;
+
+    out property <bool> has_hover: touch.has-hover;
+    out property <length> hover_x: touch.has-hover ? touch.absolute-position.x + touch.mouse-x : 0px;
+    out property <length> hover_y: touch.has-hover ? touch.absolute-position.y + touch.mouse-y : 0px;
 
     callback clicked();
 
     property <bool> has_icon: root.icon.width > 0 && root.icon.height > 0;
     property <color> content_color: !root.enabled ? MaterialPalette.outline
-        : root.selected ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+        : root.selected ? root.active_fg : root.idle_fg;
 
     min-width: self.chip_height;
     height: root.chip_height;
@@ -40,10 +48,10 @@ export component Chip {
     accessible-action-default => { root.clicked(); }
 
     Rectangle {
-        border_radius: MaterialStyleMetrics.border_radius_4;
+        border_radius: root.corner_radius;
         border_width: root.outlined ? MaterialStyleMetrics.size_1 : 0px;
         border_color: root.selected ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(60%);
-        background: root.selected ? MaterialPalette.primary.with_alpha(18%) : MaterialPalette.surface_container_low;
+        background: root.selected ? root.active_bg : (root.outlined ? MaterialPalette.surface_container_low : transparent);
         animate background { duration: MaterialAnimations.base_duration; }
         animate border_color { duration: MaterialAnimations.base_duration; }
     }
@@ -53,7 +61,7 @@ export component Chip {
         has_hover: touch.has-hover;
         pressed: touch.pressed;
         background: root.content_color;
-        border_radius: MaterialStyleMetrics.border_radius_4;
+        border_radius: root.corner_radius;
     }
 
     content := HorizontalLayout {
