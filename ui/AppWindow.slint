@@ -235,6 +235,8 @@ export component AppWindow inherits Window {
     in property <bool> structure_3d_bonds_enabled: true;
     in property <bool> structure_3d_wireframe_enabled: true;
     in-out property <bool> structure_3d_in_cell: false;
+    in property <string> structure_3d_backend_label: "";
+    in property <bool> structure_3d_gpu_accelerated: false;
     // Phase Search properties
     in-out property <bool> structure_3d_phase_panel_open: false;
     in property <bool> structure_3d_phase_enabled: false;
@@ -924,6 +926,8 @@ export component AppWindow inherits Window {
                     structure_3d_wireframe_enabled: root.structure_3d_wireframe_enabled;
                     structure_3d_in_cell: root.structure_3d_in_cell;
                     structure_3d_is_playing <=> root.structure_3d_is_playing;
+                    structure_3d_backend_label: root.structure_3d_backend_label;
+                    structure_3d_gpu_accelerated: root.structure_3d_gpu_accelerated;
 
                     rotate_3d(dx, dy) => { root.rotate_3d(dx, dy); }
                     pan_3d(dx, dy) => { root.pan_3d(dx, dy); }

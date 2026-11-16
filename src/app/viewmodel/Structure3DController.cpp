@@ -16,6 +16,7 @@
 #include <cmath>
 #include <cstdint>
 #include <format>
+#include <iostream>
 #include <utility>
 
 namespace correlation::app {
@@ -73,6 +74,15 @@ Structure3DController::Structure3DController(::AppWindow &window, const ProgramO
 
   syncPhaseSearchToWindow();
   syncDistributionHUDToWindow();
+
+  const bool is_gpu = render_pipeline_->isHardwareAccelerated();
+  const std::string device_name = render_pipeline_->deviceName();
+  const std::string backend_name = render_pipeline_->backendName();
+  std::cerr << "[Render3D] Backend: " << backend_name << " | Device: " << device_name << " ("
+            << (is_gpu ? "GPU" : "CPU") << ")\n";
+  window_.set_structure_3d_gpu_accelerated(is_gpu);
+  window_.set_structure_3d_backend_label(
+      slint::SharedString(std::format("{}: {}", is_gpu ? "GPU" : "CPU", device_name)));
 }
 
 Structure3DController::~Structure3DController() {

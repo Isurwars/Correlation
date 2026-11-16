@@ -13,6 +13,7 @@
 #include <cstdint>
 #include <memory>
 #include <span>
+#include <string>
 #include <string_view>
 
 namespace correlation::render3d {
@@ -83,6 +84,12 @@ public:
    * @return Backend name string view.
    */
   [[nodiscard]] virtual std::string_view backendName() const noexcept = 0;
+
+  /**
+   * @brief Human-readable name of the active rendering device (e.g. GPU model or CPU).
+   * @return Device name string.
+   */
+  [[nodiscard]] virtual std::string deviceName() const { return std::string(backendName()); }
 
   /**
    * @brief Indicates if the engine uses hardware GPU acceleration.

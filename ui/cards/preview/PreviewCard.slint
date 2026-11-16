@@ -124,6 +124,8 @@ export component PreviewCard inherits FilledCard {
     in property <bool> structure_3d_wireframe_enabled: true;
     in property <bool> structure_3d_in_cell: false;
     in-out property <bool> structure_3d_is_playing: false;
+    in property <string> structure_3d_backend_label: "";
+    in property <bool> structure_3d_gpu_accelerated: false;
 
     // Phase Search properties & callbacks
     in-out property <bool> structure_3d_phase_panel_open: false;
@@ -369,6 +371,8 @@ export component PreviewCard inherits FilledCard {
                 wireframe_enabled: root.structure_3d_wireframe_enabled;
                 in_cell_enabled: root.structure_3d_in_cell;
                 is_playing <=> root.structure_3d_is_playing;
+                backend_label: root.structure_3d_backend_label;
+                gpu_accelerated: root.structure_3d_gpu_accelerated;
                 file_loaded: root.file_loaded;
                 analysis_running: root.analysis_running;
                 has_validation_errors: root.has_validation_errors;

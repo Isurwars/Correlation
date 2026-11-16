@@ -12,6 +12,7 @@
 #include "render3d/IRenderEngine.hpp"
 #include "render3d/Scene3D.hpp"
 #include <memory>
+#include <string>
 #include <vector>
 
 #ifdef CORRELATION_USE_VULKAN
@@ -49,6 +50,7 @@ public:
   [[nodiscard]] std::span<const uint8_t> renderFrame() override;
   [[nodiscard]] ViewportDimensions dimensions() const noexcept override;
   [[nodiscard]] std::string_view backendName() const noexcept override;
+  [[nodiscard]] std::string deviceName() const override;
   [[nodiscard]] bool isHardwareAccelerated() const noexcept override;
 
 private:

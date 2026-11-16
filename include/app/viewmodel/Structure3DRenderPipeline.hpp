@@ -21,6 +21,7 @@
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <string>
 #include <thread>
 
 namespace correlation::app {
@@ -109,6 +110,24 @@ public:
    * @param[in] active True if viewport is visible and receiving updates.
    */
   void setActive(bool active) noexcept;
+
+  /**
+   * @brief Human-readable name of the active rendering backend.
+   * @return Backend name string, or "None" if uninitialized.
+   */
+  [[nodiscard]] std::string backendName() const;
+
+  /**
+   * @brief Human-readable name of the active rendering device (GPU or CPU).
+   * @return Device name string, or "None" if uninitialized.
+   */
+  [[nodiscard]] std::string deviceName() const;
+
+  /**
+   * @brief Checks whether the active rendering backend is GPU-accelerated.
+   * @return True if hardware-accelerated (e.g. Vulkan GPU), false otherwise.
+   */
+  [[nodiscard]] bool isHardwareAccelerated() const noexcept;
 
 private:
   void renderLoop();

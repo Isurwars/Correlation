@@ -18,12 +18,12 @@ Structure3DRenderPipeline::Structure3DRenderPipeline(
     FrameDispatchedCallback callback, std::shared_ptr<std::atomic<bool>> alive,
     std::unique_ptr<render3d::IRenderEngine> engine)
     : callback_(std::move(callback)), alive_(std::move(alive)),
-      engine_(
-          engine ? std::move(engine)
-                 : render3d::RenderEngineFactory::createEngine(render3d::BackendPreference::Auto)) {
-  if (engine_ != nullptr) {
-    static_cast<void>(engine_->initialize(viewport_dims_));
-  }
+      engine_(engine ? [&engine, this] {
+        static_cast<void>(engine->initialize(viewport_dims_));
+        return std::move(engine);
+      }()
+                     : render3d::RenderEngineFactory::createEngine(
+                           render3d::BackendPreference::Auto, viewport_dims_)) {
   render_worker_ = std::jthread([this] { renderLoop(); });
 }
 
@@ -96,6 +96,18 @@ void Structure3DRenderPipeline::setActive(bool active) noexcept {
   if (active) {
     cv_.notify_one();
   }
+}
+
+std::string Structure3DRenderPipeline::backendName() const {
+  return engine_ != nullptr ? std::string(engine_->backendName()) : "None";
+}
+
+std::string Structure3DRenderPipeline::deviceName() const {
+  return engine_ != nullptr ? engine_->deviceName() : "None";
+}
+
+bool Structure3DRenderPipeline::isHardwareAccelerated() const noexcept {
+  return engine_ != nullptr && engine_->isHardwareAccelerated();
 }
 
 void Structure3DRenderPipeline::dispatchFrame(const std::uint8_t *pixel_data, std::uint32_t width,

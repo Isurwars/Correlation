@@ -282,6 +282,15 @@ std::string_view VulkanRenderEngine::backendName() const noexcept {
   return "Vulkan (Headless Offscreen)";
 }
 
+std::string VulkanRenderEngine::deviceName() const {
+#ifdef CORRELATION_USE_VULKAN
+  if (device_ && device_->isValid()) {
+    return device_->physicalDeviceName();
+  }
+#endif
+  return "Vulkan (Uninitialized)";
+}
+
 bool VulkanRenderEngine::isHardwareAccelerated() const noexcept { return true; }
 
 } // namespace correlation::render3d

@@ -25,6 +25,8 @@ export component Structure3DViewport inherits Rectangle {
     in property <bool> wireframe_enabled: true;
     in property <bool> in_cell_enabled: false;
     in-out property <bool> is_playing: false;
+    in property <string> backend_label: "";
+    in property <bool> gpu_accelerated: false;
 
     // Phase Search & Halos
     in-out property <bool> phase_panel_open: false;
@@ -225,6 +227,44 @@ export component Structure3DViewport inherits Rectangle {
                     run_analysis => { root.run_analysis(); }
                     cancel_analysis => { root.cancel_analysis(); }
                     open_panel(id) => { root.open_panel(id); }
+                }
+            }
+
+            // Render Backend Status Badge (top-left, below toolbar)
+            if (root.backend_label != ""): Rectangle {
+                x: 12px;
+                y: 58px;
+                width: backend_row.preferred-width + 16px;
+                height: 22px;
+                border-radius: MaterialStyleMetrics.border_radius_12;
+                background: MaterialPalette.surface_container_highest.with_alpha(75%);
+                border-width: 1px;
+                border-color: root.gpu_accelerated
+                    ? MaterialPalette.tertiary.with_alpha(45%)
+                    : MaterialPalette.outline_variant.with_alpha(45%);
+
+                backend_row := HorizontalLayout {
+                    padding-left: 8px;
+                    padding-right: 8px;
+                    spacing: 6px;
+                    alignment: center;
+
+                    Rectangle {
+                        width: 7px;
+                        height: 7px;
+                        y: (parent.height - self.height) / 2;
+                        border-radius: 3.5px;
+                        background: root.gpu_accelerated
+                            ? MaterialPalette.tertiary
+                            : MaterialPalette.on_surface_variant;
+                    }
+
+                    MaterialText {
+                        text: root.backend_label;
+                        font-size: MaterialTypography.label_small.font_size;
+                        color: MaterialPalette.on_surface_variant;
+                        vertical-alignment: center;
+                    }
                 }
             }
 
