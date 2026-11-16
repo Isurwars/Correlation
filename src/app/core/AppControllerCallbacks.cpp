@@ -12,7 +12,6 @@
 #include "app/services/FileIOHandler.hpp"
 #include "app/services/InputValidator.hpp"
 #include "app/services/OptionsResetService.hpp"
-#include "app/services/OptionsSyncService.hpp"
 #include "app/viewmodel/BondCutoffController.hpp"
 #include "app/viewmodel/PlotController.hpp"
 #include "app/viewmodel/PresetController.hpp"
