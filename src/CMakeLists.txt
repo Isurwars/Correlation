@@ -370,6 +370,9 @@ if(BUILD_GUI)
     # GUI ViewModels & Controllers compiled once
     add_library(app_gui_obj OBJECT
         app/core/AppController.cpp
+        app/core/AppControllerCallbacks.cpp
+        app/core/AppController3DCallbacks.cpp
+        app/core/AppControllerCalculators.cpp
         app/viewmodel/BondCutoffController.cpp
         app/viewmodel/PhaseExportManager.cpp
         app/viewmodel/PhaseSearchService.cpp

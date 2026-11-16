@@ -8,14 +8,12 @@
 
 #pragma once
 
-#include "AppWindow.h"
 #include "app/core/AppOptions.hpp"
 #include "app/core/SettingsManager.hpp"
 #include "app/services/AnalysisDispatcher.hpp"
 #include "app/services/BondCutoffService.hpp"
 #include "app/services/TrajectoryLoader.hpp"
 #include "app/viewmodel/BondCutoffController.hpp"
-#include <nfd.h>
 
 #include <functional>
 #include <map>
