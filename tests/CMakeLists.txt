@@ -290,3 +290,18 @@ endif()
 if(BUILD_BENCHMARKS)
     add_subdirectory(benchmarks)
 endif()
+
+#-----------------------------------------------------------
+# Parallel test runner target (ninja check / cmake --build build --target check)
+#-----------------------------------------------------------
+include(ProcessorCount)
+ProcessorCount(NPROC)
+if(NPROC EQUAL 0)
+    set(NPROC 1)
+endif()
+
+add_custom_target(check
+    COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${CMAKE_BINARY_DIR} -j ${NPROC} --output-on-failure
+    USES_TERMINAL
+    COMMENT "Running CTest across ${NPROC} parallel workers..."
+)

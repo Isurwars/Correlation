@@ -55,10 +55,10 @@
 
 ## 6. Verification & Quality Gates
 1. **Compilation:** Code must compile cleanly with modern C++23 standards.
-2. **Static Analysis:** Run `clang-tidy` against `compile_commands.json` on all modified files. Zero `NOLINT` suppressions permitted.
+2. **Static Analysis:** Run parallel `run-clang-tidy -p build -j$(nproc)` against `compile_commands.json` on all modified files (or `cmake --build build --target clang-tidy`). Zero `NOLINT` suppressions permitted.
 3. **Cognitive Complexity:** All functions must maintain Cognitive Complexity $\le 25$ (see [refactor-complexity](file:///home/isurwars/Projects/Correlation/.agents/skills/refactor-complexity/SKILL.md)).
 4. **SOLID Architecture:** Verify adherence to SOLID paradigms and zero-cost abstraction guardrails (see [solid-design](file:///home/isurwars/Projects/Correlation/.agents/skills/solid-design/SKILL.md)).
-5. **Testing:** Execute `ctest --test-dir build --output-on-failure` and `pytest tests/test_*.py` (see [testing-standards](file:///home/isurwars/Projects/Correlation/.agents/rules/testing-standards.md) and [tdd](file:///home/isurwars/Projects/Correlation/.agents/skills/tdd/SKILL.md)).
+5. **Testing:** Execute `ctest --test-dir build -j$(nproc) --output-on-failure` (or `cmake --build build --target check`) and `pytest tests/test_*.py` (see [testing-standards](file:///home/isurwars/Projects/Correlation/.agents/rules/testing-standards.md) and [tdd](file:///home/isurwars/Projects/Correlation/.agents/skills/tdd/SKILL.md)).
 6. **Documentation:** Verify Doxygen blocks on all public/protected interfaces in header files (see [doc-generator](file:///home/isurwars/Projects/Correlation/.agents/skills/doc-generator/SKILL.md)).
 7. **Code Review:** Execute [code-review](file:///home/isurwars/Projects/Correlation/.agents/skills/code-review/SKILL.md) audit prior to staging or committing changes.
 8. **Graph Maintenance:** Execute `graphify update .` immediately upon completing an implementation plan and passing verification tests to keep dependency graphs and community clusters synchronized.

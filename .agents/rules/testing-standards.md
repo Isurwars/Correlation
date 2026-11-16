@@ -6,9 +6,10 @@
 
 | Target / Suite | Scope | Execution Command |
 | :--- | :--- | :--- |
-| `correlation_unit_tests` | Unit tests for calculators, readers, writers, math, core | `ctest --test-dir build -R correlation_unit_tests --output-on-failure` |
-| `correlation_functional_tests` | Integration tests for end-to-end analysis pipelines | `ctest --test-dir build -R correlation_functional_tests --output-on-failure` |
-| `correlation_gui_tests` | Slint UI property sync and controller ViewModel tests | `ctest --test-dir build -R correlation_gui_tests --output-on-failure` |
+| `All CTest Suites` | All 1,185+ unit, functional, & GUI tests | `ctest --test-dir build -j$(nproc) --output-on-failure` or `cmake --build build --target check` |
+| `correlation_unit_tests` | Unit tests for calculators, readers, writers, math, core | `ctest --test-dir build -j$(nproc) -R correlation_unit_tests --output-on-failure` |
+| `correlation_functional_tests` | Integration tests for end-to-end analysis pipelines | `ctest --test-dir build -j$(nproc) -R correlation_functional_tests --output-on-failure` |
+| `correlation_gui_tests` | Slint UI property sync and controller ViewModel tests | `ctest --test-dir build -j$(nproc) -R correlation_gui_tests --output-on-failure` |
 | `Python Bindings Suite` | NumPy / PyBind11 bindings and adapters validation | `.venv/bin/pytest tests/test_*.py` |
 | `Fuzz Suite` | LLVM libFuzzer targets for trajectory readers | Built under `tests/fuzz/` when fuzzing enabled |
 
