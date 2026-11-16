@@ -34,8 +34,8 @@ configure_file(
     @ONLY
 )
 configure_file(
-    "${PROJECT_SOURCE_DIR}/recipe/meta.yaml.in"
-    "${PROJECT_BINARY_DIR}/recipe/meta.yaml"
+    "${PROJECT_SOURCE_DIR}/packaging/conda/meta.yaml.in"
+    "${PROJECT_BINARY_DIR}/packaging/conda/meta.yaml"
     @ONLY
 )
 

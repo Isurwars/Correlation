@@ -12,6 +12,8 @@ clang_tidy_output.txt
 
 aur/
 packaging/correlation.iss
+packaging/resource.rc
+packaging/conda/meta.yaml
 /scripts/
 !.agents/scripts/
 
