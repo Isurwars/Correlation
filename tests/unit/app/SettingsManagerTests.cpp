@@ -4,7 +4,6 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "app/core/SettingsManager.hpp"
-#include <cstdlib>
 #include <filesystem>
 #include <gtest/gtest.h>
 
@@ -31,8 +30,8 @@ protected:
 #else
     unsetenv("CORRELATION_SETTINGS_PATH");
 #endif
-    std::error_code ec;
-    std::filesystem::remove_all(temp_dir_, ec);
+    std::error_code error_code;
+    std::filesystem::remove_all(temp_dir_, error_code);
   }
 
 private:

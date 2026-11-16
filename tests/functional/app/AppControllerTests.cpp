@@ -7,7 +7,6 @@
 #include "analysis/AnalysisTypes.hpp"
 #include "app/core/AppController.hpp"
 #include "app/core/AppOptions.hpp"
-#include "app/core/SettingsManager.hpp"
 #include "app/services/AnalysisDispatcher.hpp"
 #include "app/services/TrajectoryLoader.hpp"
 #include "app/viewmodel/PlotController.hpp"
@@ -1143,7 +1142,7 @@ TEST_F(AppControllerTests, SampleDatasetAndRecentFilesIntegration) {
 
   struct SettingsCleanupGuard {
     std::filesystem::path dir;
-    explicit SettingsCleanupGuard(std::filesystem::path p) : dir(std::move(p)) {}
+    explicit SettingsCleanupGuard(std::filesystem::path path) : dir(std::move(path)) {}
     SettingsCleanupGuard(const SettingsCleanupGuard &) = delete;
     SettingsCleanupGuard &operator=(const SettingsCleanupGuard &) = delete;
     SettingsCleanupGuard(SettingsCleanupGuard &&) = delete;
@@ -1154,8 +1153,8 @@ TEST_F(AppControllerTests, SampleDatasetAndRecentFilesIntegration) {
 #else
       unsetenv("CORRELATION_SETTINGS_PATH");
 #endif
-      std::error_code ec;
-      std::filesystem::remove_all(dir, ec);
+      std::error_code error_code;
+      std::filesystem::remove_all(dir, error_code);
     }
   } const guard(temp_dir);
 
