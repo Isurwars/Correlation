@@ -62,7 +62,7 @@ export component TrajectoryPlaybackBar inherits Rectangle {
     }
 
     height: 46px;
-    border-radius: 23px;
+    border-radius: MaterialStyleMetrics.border_radius_full;
     background: MaterialPalette.surface_container_highest.with_alpha(92%);
     border-width: 1.5px;
     border-color: MaterialPalette.outline_variant.with_alpha(60%);
@@ -87,7 +87,7 @@ export component TrajectoryPlaybackBar inherits Rectangle {
             Rectangle {
                 width: 100%;
                 height: 100%;
-                border-radius: 15px;
+                border-radius: MaterialStyleMetrics.border_radius_full;
                 background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
                 animate background { duration: MaterialAnimations.base_duration; }
 
@@ -95,7 +95,7 @@ export component TrajectoryPlaybackBar inherits Rectangle {
                     width: 100%;
                     height: 100%;
                     text: "⏮";
-                    font-size: 13px;
+                    style: MaterialTypography.label_large;
                     color: MaterialPalette.on_surface;
                     horizontal-alignment: center;
                     vertical-alignment: center;
@@ -149,7 +149,7 @@ export component TrajectoryPlaybackBar inherits Rectangle {
             Rectangle {
                 width: 100%;
                 height: 100%;
-                border-radius: 15px;
+                border-radius: MaterialStyleMetrics.border_radius_full;
                 background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
                 animate background { duration: MaterialAnimations.base_duration; }
 
@@ -157,7 +157,7 @@ export component TrajectoryPlaybackBar inherits Rectangle {
                     width: 100%;
                     height: 100%;
                     text: "⏭";
-                    font-size: 13px;
+                    style: MaterialTypography.label_large;
                     color: MaterialPalette.on_surface;
                     horizontal-alignment: center;
                     vertical-alignment: center;
@@ -184,7 +184,7 @@ export component TrajectoryPlaybackBar inherits Rectangle {
             height: 28px;
             y: (parent.height - self.height) / 2;
             width: counter_layout.preferred-width + 16px;
-            border-radius: 14px;
+            border-radius: MaterialStyleMetrics.border_radius_full;
             background: MaterialPalette.surface_container_high.with_alpha(80%);
 
             counter_layout := HorizontalLayout {
@@ -194,7 +194,7 @@ export component TrajectoryPlaybackBar inherits Rectangle {
 
                 MaterialText {
                     text: (root.current_frame + 1) + " / " + root.total_frames;
-                    font-size: 13px;
+                    style: MaterialTypography.label_large;
                     font-weight: 500;
                     color: MaterialPalette.on_surface_variant;
                     vertical-alignment: center;
@@ -219,7 +219,7 @@ export component TrajectoryPlaybackBar inherits Rectangle {
             Rectangle {
                 width: 100%;
                 height: 100%;
-                border-radius: 15px;
+                border-radius: MaterialStyleMetrics.border_radius_full;
                 background: mode_btn.has-hover ? MaterialPalette.surface_container_high : transparent;
                 animate background { duration: MaterialAnimations.base_duration; }
 
@@ -228,7 +228,7 @@ export component TrajectoryPlaybackBar inherits Rectangle {
                     height: 100%;
                     text: root.playback_mode == 0 ? "🔁" :
                         root.playback_mode == 1 ? "🔀" : "➡️";
-                    font-size: 13px;
+                    style: MaterialTypography.label_large;
                     color: root.playback_mode == 0 ? MaterialPalette.primary : MaterialPalette.on_surface;
                     horizontal-alignment: center;
                     vertical-alignment: center;
@@ -253,7 +253,7 @@ export component TrajectoryPlaybackBar inherits Rectangle {
             Rectangle {
                 width: 100%;
                 height: 100%;
-                border-radius: 14px;
+                border-radius: MaterialStyleMetrics.border_radius_full;
                 background: speed_btn.has-hover ? MaterialPalette.surface_container_high :
                     MaterialPalette.surface_container_high.with_alpha(80%);
                 border-width: 1px;
@@ -269,7 +269,7 @@ export component TrajectoryPlaybackBar inherits Rectangle {
                         text: root.speed_index == 0 ? "0.5x" :
                             root.speed_index == 1 ? "1.0x" :
                             root.speed_index == 2 ? "2.0x" : "5.0x";
-                        font-size: 12.5px;
+                        style: MaterialTypography.body_medium;
                         font-weight: 600;
                         color: MaterialPalette.primary;
                         vertical-alignment: center;
