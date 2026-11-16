@@ -37,6 +37,7 @@ component AxisPairRow inherits VerticalLayout {
         CheckBoxRow {
             text: "Auto";
             check_state_bool: root.auto_checked;
+            tooltip_text: "Automatically fit " + root.title + " to visible data.";
             checked_state_changed(checked) => {
                 root.auto_checked = checked;
                 if (checked) {
@@ -127,6 +128,7 @@ export component PlotAxesControls inherits VerticalLayout {
                 corner_radius: MaterialStyleMetrics.border_radius_2;
             label: "-";
             accessible_name: "Decrease minor subdivisions";
+            tooltip_text: "Decrease minor tick subdivisions between major ticks.";
             clicked => {
                 if (root.axis_settings.minor_subdivisions > 0) {
                     root.axis_settings.minor_subdivisions -= 1;
@@ -147,6 +149,7 @@ export component PlotAxesControls inherits VerticalLayout {
                 corner_radius: MaterialStyleMetrics.border_radius_2;
             label: "+";
             accessible_name: "Increase minor subdivisions";
+            tooltip_text: "Increase minor tick subdivisions between major ticks (max 5).";
             clicked => {
                 if (root.axis_settings.minor_subdivisions < 5) {
                     root.axis_settings.minor_subdivisions += 1;
@@ -163,6 +166,7 @@ export component PlotAxesControls inherits VerticalLayout {
         CheckBoxRow {
             text: "Y Log₁₀ Scale";
             check_state_bool: root.axis_settings.y_log_scale;
+            tooltip_text: "Plot the vertical axis on a base-10 logarithmic scale.";
             checked_state_changed(s) => {
                 root.axis_settings.y_log_scale = s;
                 root.apply_axis_settings();
@@ -171,6 +175,7 @@ export component PlotAxesControls inherits VerticalLayout {
         CheckBoxRow {
             text: "Show Minor Grid";
             check_state_bool: root.axis_settings.show_minor_grid;
+            tooltip_text: "Display subtle gridlines at minor tick subdivisions.";
             checked_state_changed(s) => {
                 root.axis_settings.show_minor_grid = s;
                 root.apply_axis_settings();

@@ -71,6 +71,7 @@ export component HeroFileLoadedCta inherits Vertical {
             text: root.analysis_running ? "Calculation Running..." : "Run Analysis (Ctrl+R)";
             icon: Icons.play_arrow;
             enabled: !root.analysis_running;
+            tooltip: "Execute enabled calculators on the loaded structure/trajectory (Ctrl+R).";
             clicked => { root.run_analysis(); }
         }
 
@@ -78,6 +79,7 @@ export component HeroFileLoadedCta inherits Vertical {
             height: MaterialStyleMetrics.size_40;
             text: "Configure Options";
             icon: Icons.tune;
+            tooltip: "Open Calculators & Parameters panel to select analyses and bond cutoffs.";
             clicked => { root.open_panel(1); }
         }
     }

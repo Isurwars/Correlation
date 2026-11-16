@@ -35,6 +35,7 @@ export component PhaseVisualControls inherits VerticalLayout {
             minimum: 0.1;
             maximum: 1.5;
             display_text: "" + (Math.round(root.atom_scale * 100) / 100) + "x";
+            tooltip_text: "Scale atomic sphere radii relative to covalent radii.";
             changed(val) => { root.set_atom_scale(val); }
         }
 
@@ -45,6 +46,7 @@ export component PhaseVisualControls inherits VerticalLayout {
             minimum: 0.1;
             maximum: 1.0;
             display_text: "" + (Math.round(root.halo_intensity * 100) / 100);
+            tooltip_text: "Adjust brightness/opacity of phase-matching atom halos.";
             changed(val) => { root.set_intensity(val); }
         }
 
@@ -55,6 +57,7 @@ export component PhaseVisualControls inherits VerticalLayout {
             minimum: 1.1;
             maximum: 4.5;
             display_text: "" + (Math.round(root.halo_radius_ratio * 100) / 100) + "x";
+            tooltip_text: "Adjust outer halo radius multiplier around matching atoms.";
             changed(val) => { root.set_radius_ratio(val); }
         }
     }
@@ -62,12 +65,14 @@ export component PhaseVisualControls inherits VerticalLayout {
     CheckBoxRow {
         text: "Dim non-matching core atoms";
         check_state_bool: root.dim_non_matching;
+        tooltip_text: "Reduce opacity of atoms outside the selected order-parameter range.";
         checked_state_changed(dim) => { root.set_dim_non_matching(dim); }
     }
 
     CheckBoxRow {
         text: "Hide non-matching core atoms";
         check_state_bool: root.hide_non_matching;
+        tooltip_text: "Completely hide atoms outside the selected order-parameter range.";
         checked_state_changed(hide) => { root.set_hide_non_matching(hide); }
     }
 }

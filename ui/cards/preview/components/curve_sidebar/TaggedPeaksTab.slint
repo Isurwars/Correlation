@@ -11,6 +11,7 @@ import {
     ScrollView,
     FilledButton,
     Icons,
+    TooltipTarget,
 } from "../../../../material/material.slint";
 import { TaggedPeakRecord } from "../../../../Types.slint";
 
@@ -68,13 +69,15 @@ export component TaggedPeaksTab inherits VerticalLayout {
             horizontal-stretch: 1;
             height: 28px;
             text: "Export CSV";
+            tooltip: "Export all tagged peak positions, intensities, and coordination numbers to CSV.";
             clicked => { root.export_tagged_peaks(); }
         }
 
-        clear_all_touch := TouchArea {
+        clear_all_touch := TooltipTarget {
             horizontal-stretch: 1;
             height: 28px;
             mouse-cursor: pointer;
+            tooltip_text: "Remove all tagged peaks from the plot.";
             accessible-role: button;
             accessible-label: "Clear All Tagged Peaks";
             clicked => { root.clear_tagged_peaks(); }

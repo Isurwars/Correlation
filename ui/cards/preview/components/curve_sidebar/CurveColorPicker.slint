@@ -10,6 +10,7 @@ import {
     MaterialText,
     Icons,
     TextField,
+    TooltipTarget,
 } from "../../../../material/material.slint";
 
 export component CurveColorPicker inherits Rectangle {
@@ -67,10 +68,11 @@ export component CurveColorPicker inherits Rectangle {
             for r_idx in 6: HorizontalLayout {
                 spacing: MaterialStyleMetrics.spacing_4;
                 alignment: center;
-                for c_idx in 4: swatch_touch := TouchArea {
+                for c_idx in 4: swatch_touch := TooltipTarget {
                     width: 28px;
                     height: 24px;
                     mouse-cursor: pointer;
+                    tooltip_text: "Apply color " + root.swatch_hexes[r_idx * 4 + c_idx] + " to curve.";
                     accessible-role: button;
                     accessible-label: "Color swatch " + root.swatch_hexes[r_idx * 4 + c_idx];
                     clicked => {

@@ -33,6 +33,7 @@ export component Structure3DEmptyState inherits Rectangle {
             height: 34px;
             text: "Open Trajectory File... (Ctrl+O)";
             icon: Icons.folder_open;
+            tooltip: "Browse and load a structure or molecular dynamics trajectory file (Ctrl+O).";
             clicked => { root.browse_file(); }
         }
 
@@ -43,16 +44,19 @@ export component Structure3DEmptyState inherits Rectangle {
             Chip {
                 label: "🔬 a-PdSi";
                 corner_radius: MaterialStyleMetrics.border_radius_full;
+                tooltip_text: "Load bundled amorphous Pd–Si metallic glass sample.";
                 clicked => { root.load_sample("a-PdSi"); }
             }
             Chip {
                 label: "🌿 Cellulose";
                 corner_radius: MaterialStyleMetrics.border_radius_full;
+                tooltip_text: "Load bundled crystalline/amorphous cellulose sample.";
                 clicked => { root.load_sample("Cellulose"); }
             }
             Chip {
                 label: "💎 Silicon";
                 corner_radius: MaterialStyleMetrics.border_radius_full;
+                tooltip_text: "Load bundled crystalline diamond-cubic silicon sample.";
                 clicked => { root.load_sample("Si"); }
             }
         }

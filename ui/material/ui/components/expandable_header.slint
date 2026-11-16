@@ -9,14 +9,49 @@ import { MaterialPalette } from "../styling/material_palette.slint";
 import { MaterialText } from "material_text.slint";
 import { Icon } from "icon.slint";
 import { Icons } from "../icons/icons.slint";
+import { TooltipState } from "tooltip_state.slint";
 
 export component ExpandableHeader inherits TouchArea {
     in property <string> text;
     in-out property <bool> expanded: false;
     in property <bool> show_reset: false;
     in property <bool> reset_enabled: true;
+    in property <string> header_tooltip: "";
+    in property <string> reset_tooltip: "Reset this section's parameters to their default values.";
     callback reset();
     height: 36px;
+
+    property <bool> header_pending: false;
+    property <bool> reset_pending: false;
+    property <bool> reset_hovered: false;
+
+    changed has-hover => {
+        if (self.has-hover && !root.reset_hovered && root.header_tooltip != "") {
+            root.header_pending = true;
+            header_timer.running = true;
+        } else {
+            root.header_pending = false;
+            header_timer.running = false;
+            if (root.header_tooltip != "" && TooltipState.active.text == root.header_tooltip) {
+                TooltipState.active = { text: "", x: 0px, y: 0px, width: 0px, height: 0px };
+            }
+        }
+    }
+
+    header_timer := Timer {
+        interval: 150ms;
+        triggered => {
+            if (root.header_pending && root.has-hover && !root.reset_hovered) {
+                TooltipState.active = {
+                    text: root.header_tooltip,
+                    x: root.absolute-position.x,
+                    y: root.absolute-position.y,
+                    width: root.width,
+                    height: root.height,
+                };
+            }
+        }
+    }
 
     HorizontalLayout {
         spacing: MaterialStyleMetrics.spacing_4;
@@ -53,6 +88,37 @@ export component ExpandableHeader inherits TouchArea {
                 enabled: root.reset_enabled;
                 accessible-role: button;
                 accessible-label: "Reset Defaults";
+
+                changed has-hover => {
+                    root.reset_hovered = self.has-hover;
+                    if (self.has-hover && root.reset_tooltip != "") {
+                        root.header_pending = false;
+                        header_timer.running = false;
+                        root.reset_pending = true;
+                        reset_timer.running = true;
+                    } else {
+                        root.reset_pending = false;
+                        reset_timer.running = false;
+                        if (root.reset_tooltip != "" && TooltipState.active.text == root.reset_tooltip) {
+                            TooltipState.active = { text: "", x: 0px, y: 0px, width: 0px, height: 0px };
+                        }
+                    }
+                }
+
+                reset_timer := Timer {
+                    interval: 150ms;
+                    triggered => {
+                        if (root.reset_pending && reset_touch.has-hover) {
+                            TooltipState.active = {
+                                text: root.reset_tooltip,
+                                x: reset_touch.absolute-position.x,
+                                y: reset_touch.absolute-position.y,
+                                width: reset_touch.width,
+                                height: reset_touch.height,
+                            };
+                        }
+                    }
+                }
 
                 Rectangle {
                     width: 100%;

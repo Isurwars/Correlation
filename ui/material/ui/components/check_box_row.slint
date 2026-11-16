@@ -6,12 +6,44 @@
 import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
 import { CheckBox, CheckState } from "check_box.slint";
 import { MaterialText } from "material_text.slint";
+import { TooltipState } from "tooltip_state.slint";
 
 export component CheckBoxRow inherits TouchArea {
     in property <string> text;
     in property <bool> check_state_bool;
+    in property <string> tooltip_text: "";
     out property <CheckState> check_state: root.check_state_bool ? CheckState.checked : CheckState.unchecked;
     callback checked_state_changed(bool);
+
+    property <bool> show_pending: false;
+
+    changed has-hover => {
+        if (self.has-hover && root.tooltip_text != "") {
+            root.show_pending = true;
+            delay_timer.running = true;
+        } else {
+            root.show_pending = false;
+            delay_timer.running = false;
+            if (root.tooltip_text != "" && TooltipState.active.text == root.tooltip_text) {
+                TooltipState.active = { text: "", x: 0px, y: 0px, width: 0px, height: 0px };
+            }
+        }
+    }
+
+    delay_timer := Timer {
+        interval: 150ms;
+        triggered => {
+            if (root.show_pending && root.has-hover) {
+                TooltipState.active = {
+                    text: root.tooltip_text,
+                    x: root.absolute-position.x,
+                    y: root.absolute-position.y,
+                    width: root.width,
+                    height: root.height,
+                };
+            }
+        }
+    }
 
     clicked => {
         root.checked_state_changed(!root.check_state_bool);

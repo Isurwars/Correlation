@@ -11,6 +11,7 @@ import {
     MaterialText,
     Icons,
     MaterialSlider,
+    TooltipTarget,
 } from "../../../material/material.slint";
 
 export component TrajectoryPlaybackBar inherits Rectangle {
@@ -75,11 +76,12 @@ export component TrajectoryPlaybackBar inherits Rectangle {
         spacing: 10px;
 
         // Step Previous Button
-        TouchArea {
+        TooltipTarget {
             width: 30px;
             height: 30px;
             y: (parent.height - self.height) / 2;
             mouse-cursor: pointer;
+            tooltip_text: "Step to previous trajectory frame.";
             accessible-role: button;
             accessible-label: "Previous Frame";
             clicked => { root.step_frame(false); }
@@ -104,11 +106,12 @@ export component TrajectoryPlaybackBar inherits Rectangle {
         }
 
         // Play / Pause Button
-        play_btn := TouchArea {
+        play_btn := TooltipTarget {
             width: 32px;
             height: 32px;
             y: (parent.height - self.height) / 2;
             mouse-cursor: pointer;
+            tooltip_text: root.is_playing ? "Pause trajectory playback." : "Play trajectory animation.";
             accessible-role: button;
             accessible-label: root.is_playing ? "Pause Trajectory" : "Play Trajectory";
             clicked => {
@@ -137,11 +140,12 @@ export component TrajectoryPlaybackBar inherits Rectangle {
         }
 
         // Step Next Button
-        TouchArea {
+        TooltipTarget {
             width: 30px;
             height: 30px;
             y: (parent.height - self.height) / 2;
             mouse-cursor: pointer;
+            tooltip_text: "Step to next trajectory frame.";
             accessible-role: button;
             accessible-label: "Next Frame";
             clicked => { root.step_frame(true); }
@@ -173,6 +177,7 @@ export component TrajectoryPlaybackBar inherits Rectangle {
             minimum: 0.0;
             maximum: Math.max(1, root.total_frames - 1);
             value: root.current_frame;
+            tooltip_text: "Scrub through trajectory frames (" + (root.current_frame + 1) + " / " + root.total_frames + ").";
             changed(v) => {
                 root.current_frame = Math.round(v);
                 root.seek_frame(Math.round(v));
@@ -204,11 +209,14 @@ export component TrajectoryPlaybackBar inherits Rectangle {
         }
 
         // Playback Mode Button (Loop / Ping-Pong / Play-Once)
-        mode_btn := TouchArea {
+        mode_btn := TooltipTarget {
             width: 30px;
             height: 30px;
             y: (parent.height - self.height) / 2;
             mouse-cursor: pointer;
+            tooltip_text: root.playback_mode == 0 ? "Playback Mode: Loop (click to switch to Ping-Pong)." :
+                root.playback_mode == 1 ? "Playback Mode: Ping-Pong (click to switch to Play Once)." :
+                "Playback Mode: Play Once (click to switch to Loop).";
             accessible-role: button;
             accessible-label: root.playback_mode == 0 ? "Playback Mode: Loop" :
                 root.playback_mode == 1 ? "Playback Mode: Ping-Pong" : "Playback Mode: Play Once";
@@ -237,11 +245,12 @@ export component TrajectoryPlaybackBar inherits Rectangle {
         }
 
         // Playback Speed Selector Pill (0.5x, 1x, 2x, 5x)
-        speed_btn := TouchArea {
+        speed_btn := TooltipTarget {
             width: speed_layout.preferred-width + 16px;
             height: 28px;
             y: (parent.height - self.height) / 2;
             mouse-cursor: pointer;
+            tooltip_text: "Cycle trajectory playback speed (0.5x, 1.0x, 2.0x, 5.0x).";
             accessible-role: button;
             accessible-label: "Playback Speed: " + (root.speed_index == 0 ? "0.5x" :
                 root.speed_index == 1 ? "1.0x" :

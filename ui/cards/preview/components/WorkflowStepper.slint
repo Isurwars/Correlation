@@ -39,6 +39,7 @@ export component WorkflowStepper inherits Rectangle {
             label: !root.file_loaded ? "1. Load File (Active)" : "1. File Loaded ✓";
             selected: !root.file_loaded;
             idle_fg: (root.file_loaded) ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+            tooltip_text: !root.file_loaded ? "Open a structure or trajectory file (Ctrl+O)." : "Inspect loaded structure and trajectory diagnostics.";
             clicked => {
                 if (!root.file_loaded) {
                     root.browse_file();
@@ -63,6 +64,7 @@ export component WorkflowStepper inherits Rectangle {
                    (root.analysis_running || root.analysis_done) ? "2. Options Configured ✓" : "2. Configure Options";
             selected: root.file_loaded && !root.analysis_running && !root.analysis_done;
             idle_fg: (root.analysis_running || root.analysis_done) ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+            tooltip_text: "Select calculators and tune bond cutoffs or RDF/angular parameters.";
             clicked => { root.open_panel(1); }
         }
 
@@ -82,6 +84,7 @@ export component WorkflowStepper inherits Rectangle {
             selected: root.analysis_running;
             idle_fg: (root.analysis_done) ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
             enabled: root.file_loaded || root.analysis_running;
+            tooltip_text: root.analysis_running ? "Cancel the running analysis (Esc)." : "Execute all enabled structural and dynamical calculators (Ctrl+R).";
             clicked => {
                 if (root.analysis_running) {
                     root.cancel_analysis();

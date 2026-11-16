@@ -17,6 +17,8 @@ export component OptionSection inherits OutlinedCard {
     in-out property <bool> expanded: true;
     in property <bool> show_reset: true;
     in property <bool> reset_enabled: true;
+    in property <string> header_tooltip: "";
+    in property <string> reset_tooltip: "Reset this section's parameters to their default values.";
     callback reset();
 
     Vertical {
@@ -28,6 +30,8 @@ export component OptionSection inherits OutlinedCard {
             expanded <=> root.expanded;
             show_reset: root.show_reset;
             reset_enabled: root.reset_enabled;
+            header_tooltip: root.header_tooltip;
+            reset_tooltip: root.reset_tooltip;
             reset => { root.reset(); }
         }
 

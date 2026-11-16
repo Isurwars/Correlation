@@ -82,6 +82,7 @@ export component AnalysesSelectionCard inherits OutlinedCard {
                         label: "All";
                         enabled: root.file_loaded;
                         selected: root.total_calculator_count > 0 && root.enabled_calculator_count == root.total_calculator_count;
+                        tooltip_text: "Enable all available structural and dynamical calculators.";
                         clicked => { root.toggle_all_calculators(true); }
                     }
 
@@ -89,6 +90,7 @@ export component AnalysesSelectionCard inherits OutlinedCard {
                         label: "None";
                         enabled: root.file_loaded;
                         selected: root.total_calculator_count > 0 && root.enabled_calculator_count == 0;
+                        tooltip_text: "Disable all calculators.";
                         clicked => { root.toggle_all_calculators(false); }
                     }
                 }
@@ -99,16 +101,19 @@ export component AnalysesSelectionCard inherits OutlinedCard {
                     Chip {
                         label: "Compact";
                         selected: root.compact_mode;
+                        tooltip_text: "Toggle compact chip view for calculator groups.";
                         clicked => { root.compact_mode = !root.compact_mode; }
                     }
 
                     Chip {
                         label: "Expand";
+                        tooltip_text: "Expand all calculator category groups.";
                         clicked => { root.set_all_calculator_groups_expanded(true); }
                     }
 
                     Chip {
                         label: "Collapse";
+                        tooltip_text: "Collapse all calculator category groups.";
                         clicked => { root.set_all_calculator_groups_expanded(false); }
                     }
                 }

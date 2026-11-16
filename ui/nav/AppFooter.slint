@@ -2,7 +2,7 @@
 // Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { MaterialStyleMetrics, MaterialAnimations, MaterialPalette, MaterialTypography } from "../material/material.slint";
+import { MaterialStyleMetrics, MaterialAnimations, MaterialPalette, MaterialTypography, TooltipTarget } from "../material/material.slint";
 
 export component AppFooter inherits Rectangle {
     in property <string> status_text: "";
@@ -84,8 +84,9 @@ export component AppFooter inherits Rectangle {
             y: (parent.height - self.height) / 2;
             animate background { duration: MaterialAnimations.base_duration; }
 
-            update_touch := TouchArea {
+            update_touch := TooltipTarget {
                 mouse-cursor: pointer;
+                tooltip_text: "New release v" + root.update_version + " is available. Click to open GitHub Releases.";
                 clicked => {
                     root.open_url(root.update_url);
                 }

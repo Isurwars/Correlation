@@ -13,6 +13,7 @@ import {
     Icons,
     MaterialSlider,
     SegmentedButton,
+    TooltipTarget,
 } from "../../../material/material.slint";
 import { PhaseMiniHistogram } from "./PhaseMiniHistogram.slint";
 import { PhaseHeatmapView, CrystalMarker } from "./PhaseHeatmapView.slint";
@@ -99,10 +100,11 @@ export component Structure3DPhaseTab inherits ScrollView {
             }
 
             // Master Toggle Pill
-            toggle_touch := TouchArea {
+            toggle_touch := TooltipTarget {
                 width: 64px;
                 height: 22px;
                 mouse-cursor: pointer;
+                tooltip_text: "Toggle Steinhardt / order-parameter halo highlighting in the 3D viewport.";
                 accessible-role: button;
                 accessible-label: root.phase_enabled ? "Disable Halos" : "Enable Halos";
                 clicked => { root.toggle_phase_enabled(!root.phase_enabled); }
@@ -139,6 +141,10 @@ export component Structure3DPhaseTab inherits ScrollView {
             model: [
                 { label: "1D Histogram", enabled: true },
                 { label: "2D Heatmap", enabled: true },
+            ];
+            tooltips: [
+                "Threshold a single order parameter using a 1D histogram.",
+                "Select a 2D phase region on a joint order-parameter heatmap.",
             ];
             current_index: root.is_2d_mode ? 1 : 0;
             selected(i) => { root.set_2d_mode(i == 1); }
@@ -207,6 +213,7 @@ export component Structure3DPhaseTab inherits ScrollView {
                 minimum: root.domain_min;
                 maximum: root.max_threshold;
                 display_text: "" + (Math.round(root.min_threshold * 100) / 100);
+                tooltip_text: "Lower order-parameter threshold for highlighting matching atoms.";
                 changed(val) => { root.set_thresholds(val, root.max_threshold); }
             }
 
@@ -217,6 +224,7 @@ export component Structure3DPhaseTab inherits ScrollView {
                 minimum: root.min_threshold;
                 maximum: root.domain_max;
                 display_text: "" + (Math.round(root.max_threshold * 100) / 100);
+                tooltip_text: "Upper order-parameter threshold for highlighting matching atoms.";
                 changed(val) => { root.set_thresholds(root.min_threshold, val); }
             }
         }

@@ -10,6 +10,7 @@ import {
     MaterialTypography,
     MaterialText,
     Icons,
+    TooltipTarget,
 } from "../../../material/material.slint";
 
 export component Structure3DWorkflowBar inherits Rectangle {
@@ -61,9 +62,12 @@ export component Structure3DWorkflowBar inherits Rectangle {
         }
 
         // Quick Action CTA (shown while running or before analysis completes)
-        if !root.analysis_done || root.analysis_running: run_btn_touch := TouchArea {
+        if !root.analysis_done || root.analysis_running: run_btn_touch := TooltipTarget {
             accessible-role: button;
             accessible-label: root.analysis_running ? "Cancel Analysis" : "Run Analysis";
+            tooltip_text: root.analysis_running ? "Cancel the running analysis (Esc)." :
+                root.has_validation_errors ? "Fix validation errors in parameters before running." :
+                "Run all enabled calculators on the loaded structure (Ctrl+R).";
             height: 28px;
             y: (parent.height - self.height) / 2;
             width: run_btn_layout.preferred-width + 20px;
@@ -116,11 +120,12 @@ export component Structure3DWorkflowBar inherits Rectangle {
         }
 
         // Open 3D Inspector / Calculators Button
-        options_touch := TouchArea {
+        options_touch := TooltipTarget {
             width: 28px;
             height: 28px;
             y: (parent.height - self.height) / 2;
             mouse-cursor: pointer;
+            tooltip_text: "Open Calculators & Parameters panel.";
             accessible-role: button;
             accessible-label: "Open Calculators and Parameters";
             clicked => { root.open_panel(1); }

@@ -80,6 +80,7 @@ export component HeroEmptyState inherits Rectangle {
                 height: MaterialStyleMetrics.size_40;
                 text: "Open Trajectory File... (Ctrl+O)";
                 icon: Icons.folder_open;
+                tooltip: "Browse and load a structure or molecular dynamics trajectory file (Ctrl+O).";
                 clicked => { root.browse_file(); }
             }
 
@@ -98,18 +99,21 @@ export component HeroEmptyState inherits Rectangle {
                 Chip {
                     chip_height: MaterialStyleMetrics.size_24 + MaterialStyleMetrics.size_4;
                     label: "🔬 a-PdSi (Glass)";
+                    tooltip_text: "Load bundled amorphous Pd–Si metallic glass sample.";
                     clicked => { root.load_sample("a-PdSi"); }
                 }
 
                 Chip {
                     chip_height: MaterialStyleMetrics.size_24 + MaterialStyleMetrics.size_4;
                     label: "🌿 Cellulose (Polymer)";
+                    tooltip_text: "Load bundled crystalline/amorphous cellulose sample.";
                     clicked => { root.load_sample("Cellulose"); }
                 }
 
                 Chip {
                     chip_height: MaterialStyleMetrics.size_24 + MaterialStyleMetrics.size_4;
                     label: "💎 Silicon (Crystal)";
+                    tooltip_text: "Load bundled crystalline diamond-cubic silicon sample.";
                     clicked => { root.load_sample("Si"); }
                 }
             }

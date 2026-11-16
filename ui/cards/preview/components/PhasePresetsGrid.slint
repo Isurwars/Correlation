@@ -8,11 +8,28 @@ import {
     MaterialPalette,
     MaterialTypography,
     MaterialText,
+    TooltipTarget,
 } from "../../../material/material.slint";
 
 export component PhasePresetsGrid inherits VerticalLayout {
     in property <int> preset_index: 0;
     callback set_preset(int);
+
+    private property <[string]> row1_tips: [
+        "Custom user-defined order-parameter thresholds.",
+        "Preset for disordered liquid-like local environments.",
+        "Preset for amorphous/glassy local environments.",
+    ];
+    private property <[string]> row2_tips: [
+        "Preset for amorphous network-forming motifs.",
+        "Preset for Face-Centered Cubic (FCC) crystalline coordination.",
+        "Preset for Hexagonal Close-Packed (HCP) crystalline coordination.",
+    ];
+    private property <[string]> row3_tips: [
+        "Preset for Body-Centered Cubic (BCC) crystalline coordination.",
+        "Preset for Icosahedral (5-fold) local symmetry.",
+        "Preset for Tetrahedral / Diamond cubic coordination.",
+    ];
 
     spacing: 3px;
 
@@ -29,10 +46,11 @@ export component PhasePresetsGrid inherits VerticalLayout {
         height: 24px;
         property <[string]> row1_labels: ["Custom", "Liquid", "Glass"];
 
-        for label[idx] in self.row1_labels: TouchArea {
+        for label[idx] in self.row1_labels: TooltipTarget {
             horizontal-stretch: 1;
             height: 100%;
             mouse-cursor: pointer;
+            tooltip_text: root.row1_tips[idx];
             clicked => { root.set_preset(idx); }
 
             Rectangle {
@@ -65,10 +83,11 @@ export component PhasePresetsGrid inherits VerticalLayout {
         height: 24px;
         property <[string]> row2_labels: ["a-Net", "FCC", "HCP"];
 
-        for label[idx] in self.row2_labels: TouchArea {
+        for label[idx] in self.row2_labels: TooltipTarget {
             horizontal-stretch: 1;
             height: 100%;
             mouse-cursor: pointer;
+            tooltip_text: root.row2_tips[idx];
             clicked => { root.set_preset(idx + 3); }
 
             Rectangle {
@@ -101,10 +120,11 @@ export component PhasePresetsGrid inherits VerticalLayout {
         height: 24px;
         property <[string]> row3_labels: ["BCC", "Ico", "Diamond"];
 
-        for label[idx] in self.row3_labels: TouchArea {
+        for label[idx] in self.row3_labels: TooltipTarget {
             horizontal-stretch: 1;
             height: 100%;
             mouse-cursor: pointer;
+            tooltip_text: root.row3_tips[idx];
             clicked => { root.set_preset(idx + 6); }
 
             Rectangle {

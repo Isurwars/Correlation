@@ -16,6 +16,7 @@ export component SmoothingOptionsCard inherits OptionSection {
         enabled: root.file_loaded;
         check_state_bool: root.smoothing_enabled;
         text: "Enable Smoothing";
+        tooltip_text: "Apply kernel convolution smoothing to computed distribution histograms.\n\n🔬 Reduces statistical binning noise in small cells or short trajectories.";
         checked_state_changed(s) => {
             root.smoothing_enabled = s;
         }

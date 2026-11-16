@@ -46,6 +46,7 @@ export component Structure3DSceneTab inherits ScrollView {
             FilledButton {
                 height: 32px;
                 text: "Reset Camera View";
+                tooltip: "Reset 3D camera rotation, pan, and zoom to the default isometric view.";
                 clicked => { root.reset_view(); }
             }
         }
@@ -66,24 +67,28 @@ export component Structure3DSceneTab inherits ScrollView {
                 minimum: 0.1;
                 maximum: 1.5;
                 display_text: "" + (Math.round(root.atom_scale * 100) / 100) + "x";
+                tooltip_text: "Scale atomic sphere radii relative to covalent radii.";
                 changed(val) => { root.set_atom_scale(val); }
             }
 
             CheckBoxRow {
                 text: "Render Bonds";
                 check_state_bool: root.bonds_enabled;
+                tooltip_text: "Show or hide chemical bonds computed from active pairwise cutoffs.";
                 checked_state_changed(en) => { root.toggle_bonds(en); }
             }
 
             CheckBoxRow {
                 text: "Unit Cell Wireframe";
                 check_state_bool: root.wireframe_enabled;
+                tooltip_text: "Show or hide the simulation unit cell bounding box.";
                 checked_state_changed(en) => { root.toggle_wireframe(en); }
             }
 
             CheckBoxRow {
                 text: "In-Cell PBC Coordinates";
                 check_state_bool: root.in_cell_enabled;
+                tooltip_text: "Wrap all atoms inside the primary unit cell using periodic boundary conditions.";
                 checked_state_changed(en) => { root.toggle_in_cell(en); }
             }
         }
@@ -101,6 +106,7 @@ export component Structure3DSceneTab inherits ScrollView {
             CheckBoxRow {
                 text: "Distribution Mini-HUD";
                 check_state_bool: root.dist_hud_visible;
+                tooltip_text: "Toggle the floating bond-length / coordination distribution mini-HUD.";
                 checked_state_changed(v) => { root.toggle_dist_hud(v); }
             }
         }

@@ -15,6 +15,7 @@ import {
     Icons,
     Vertical,
     Horizontal,
+    TooltipTarget,
 } from "../../material/material.slint";
 import { CalculatorGroup } from "../../Types.slint";
 
@@ -46,22 +47,27 @@ export component AnalysesGroupSection inherits Vertical {
             width: 28px;
             alignment: center;
 
-            CheckBox {
-                width: 24px;
-                height: 24px;
-                enabled: root.file_loaded;
-                tristate: true;
-                check_state: root.group.enabled_count == 0 ? CheckState.unchecked :
-                    (root.group.enabled_count == root.group.total_count ? CheckState.checked : CheckState.partially_checked);
-                checked_state_changed => {
-                    root.toggle_calculator_group(root.group.name, root.group.enabled_count < root.group.total_count);
+            TooltipTarget {
+                tooltip_text: "Toggle all calculators in " + root.group.name + ".";
+
+                CheckBox {
+                    width: 24px;
+                    height: 24px;
+                    enabled: root.file_loaded;
+                    tristate: true;
+                    check_state: root.group.enabled_count == 0 ? CheckState.unchecked :
+                        (root.group.enabled_count == root.group.total_count ? CheckState.checked : CheckState.partially_checked);
+                    checked_state_changed => {
+                        root.toggle_calculator_group(root.group.name, root.group.enabled_count < root.group.total_count);
+                    }
                 }
             }
         }
 
-        group_header_touch := TouchArea {
+        group_header_touch := TooltipTarget {
             horizontal-stretch: 1;
             mouse-cursor: pointer;
+            tooltip_text: (root.group.expanded ? "Collapse " : "Expand ") + root.group.name + " (" + root.group.enabled_count + "/" + root.group.total_count + " enabled).";
             accessible-role: button;
             accessible-label: root.group.name;
             clicked => {

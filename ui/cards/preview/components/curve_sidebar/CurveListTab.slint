@@ -13,6 +13,7 @@ import {
     Chip,
     Icons,
     TextField,
+    TooltipTarget,
 } from "../../../../material/material.slint";
 import { CurveToggleItem } from "../../../../Types.slint";
 import { CurveColorPicker } from "CurveColorPicker.slint";
@@ -35,13 +36,16 @@ export component CurveListTab inherits VerticalLayout {
     spacing: MaterialStyleMetrics.spacing_6;
 
     // 1. Search Filter Box
-    TextField {
-        dense: true;
-        leading_icon: Icons.zoom_in;
-        placeholder_text: "Filter curves (e.g. Fe, O-H)...";
-        text <=> root.curve_filter;
-        edited(f) => { root.filter_curves(f); }
-        accepted(f) => { root.filter_curves(f); }
+    TooltipTarget {
+        tooltip_text: "Filter curves by element or pair name (e.g. Fe, Si-O).";
+        TextField {
+            dense: true;
+            leading_icon: Icons.zoom_in;
+            placeholder_text: "Filter curves (e.g. Fe, O-H)...";
+            text <=> root.curve_filter;
+            edited(f) => { root.filter_curves(f); }
+            accepted(f) => { root.filter_curves(f); }
+        }
     }
 
     // 2. All / None / Invert Batch Visibility Row
@@ -61,6 +65,7 @@ export component CurveListTab inherits VerticalLayout {
             outlined: false;
             accessible_name: self.label + " curves";
             label: "All";
+            tooltip_text: "Show all curves matching the current filter.";
             clicked => { root.toggle_all_curves(true); }
         }
 
@@ -75,6 +80,7 @@ export component CurveListTab inherits VerticalLayout {
             outlined: false;
             accessible_name: self.label + " curves";
             label: "None";
+            tooltip_text: "Hide all curves matching the current filter.";
             clicked => { root.toggle_all_curves(false); }
         }
 
@@ -89,6 +95,7 @@ export component CurveListTab inherits VerticalLayout {
             outlined: false;
             accessible_name: self.label + " curves";
             label: "Invert";
+            tooltip_text: "Invert visibility of all curves matching the current filter.";
             clicked => { root.invert_curves(); }
         }
     }

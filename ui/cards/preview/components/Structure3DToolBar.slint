@@ -53,6 +53,7 @@ export component Structure3DToolBar inherits Rectangle {
         ToolbarChip {
             icon: Icons.home;
             accessible_name: "Home / Reset 3D Camera";
+            tooltip_text: "Reset 3D camera to default isometric view.";
             clicked => { root.reset_view(); }
         }
 
@@ -66,24 +67,28 @@ export component Structure3DToolBar inherits Rectangle {
                 y: 0px;
                 label: "XY";
                 accessible_name: "Camera Preset Top (XY)";
+                tooltip_text: "Snap camera to Top (XY) plane.";
                 clicked => { root.set_camera_preset(0); }
             }
             ToolbarChip {
                 y: 0px;
                 label: "XZ";
                 accessible_name: "Camera Preset Front (XZ)";
+                tooltip_text: "Snap camera to Front (XZ) plane.";
                 clicked => { root.set_camera_preset(1); }
             }
             ToolbarChip {
                 y: 0px;
                 label: "YZ";
                 accessible_name: "Camera Preset Side (YZ)";
+                tooltip_text: "Snap camera to Side (YZ) plane.";
                 clicked => { root.set_camera_preset(2); }
             }
             ToolbarChip {
                 y: 0px;
                 label: "3D";
                 accessible_name: "Camera Preset Isometric (3D)";
+                tooltip_text: "Snap camera to Isometric (3D) view.";
                 clicked => { root.set_camera_preset(3); }
             }
         }
@@ -92,6 +97,7 @@ export component Structure3DToolBar inherits Rectangle {
             label: "B";
             selected: root.bonds_enabled;
             accessible_name: root.bonds_enabled ? "Hide Atomic Bonds" : "Show Atomic Bonds";
+            tooltip_text: root.bonds_enabled ? "Hide atomic bonds." : "Show atomic bonds.";
             clicked => { root.toggle_bonds(!root.bonds_enabled); }
         }
 
@@ -99,6 +105,7 @@ export component Structure3DToolBar inherits Rectangle {
             label: "⬡";
             selected: root.wireframe_enabled;
             accessible_name: root.wireframe_enabled ? "Hide Unit Cell Wireframe" : "Show Unit Cell Wireframe";
+            tooltip_text: root.wireframe_enabled ? "Hide unit cell wireframe." : "Show unit cell wireframe.";
             clicked => { root.toggle_wireframe(!root.wireframe_enabled); }
         }
 
@@ -106,6 +113,7 @@ export component Structure3DToolBar inherits Rectangle {
             label: "⊞";
             selected: root.in_cell_enabled;
             accessible_name: root.in_cell_enabled ? "In-Cell PBC Active (Folded & Boundary-Clipped)" : "Standard Non-Forced Coordinates";
+            tooltip_text: root.in_cell_enabled ? "In-Cell PBC active (atoms wrapped into primary cell)." : "Wrap atoms into primary unit cell (PBC).";
             clicked => { root.toggle_in_cell(!root.in_cell_enabled); }
         }
 
@@ -113,6 +121,7 @@ export component Structure3DToolBar inherits Rectangle {
             icon: Icons.science;
             selected: root.phase_enabled;
             accessible_name: root.phase_enabled ? "Hide Phase Search" : "Show Phase Search";
+            tooltip_text: "Open 3D Phase Search & Order Parameter Inspector.";
             clicked => { root.toggle_phase_panel(); }
         }
 
@@ -120,6 +129,7 @@ export component Structure3DToolBar inherits Rectangle {
             icon: Icons.analytics;
             selected: root.dist_hud_enabled;
             accessible_name: root.dist_hud_enabled ? "Hide Distribution Graph" : "Show Distribution Graph";
+            tooltip_text: root.dist_hud_enabled ? "Hide Distribution Mini-HUD." : "Show Distribution Mini-HUD.";
             clicked => { root.toggle_dist_hud(); }
         }
 
@@ -140,6 +150,7 @@ export component Structure3DToolBar inherits Rectangle {
             minimum: 0.1;
             maximum: 1.5;
             display_text: "" + (Math.round(root.atom_scale * 100) / 100) + "x";
+            tooltip_text: "Adjust atomic sphere radius scale.";
             changed(val) => { root.set_atom_scale(val); }
         }
     }

@@ -10,6 +10,7 @@ import { MaterialTypography } from "../styling/material_typography.slint";
 import { MaterialText } from "./material_text.slint";
 import { Icon } from "./icon.slint";
 import { StateLayer } from "./state_layer.slint";
+import { TooltipState } from "./tooltip_state.slint";
 
 /// Material 3 chip (assist / filter). Compact by default.
 export component Chip {
@@ -24,6 +25,7 @@ export component Chip {
     in property <color> active_fg: MaterialPalette.primary;
     in property <color> idle_fg: MaterialPalette.on_surface_variant;
     in property <string> accessible_name: root.label;
+    in property <string> tooltip_text: "";
 
     out property <bool> has_hover: touch.has-hover;
     out property <length> hover_x: touch.has-hover ? touch.absolute-position.x + touch.mouse-x : 0px;
@@ -88,9 +90,38 @@ export component Chip {
         }
     }
 
+    property <bool> show_tooltip_pending: false;
+
+    delay_timer := Timer {
+        interval: 150ms;
+        triggered => {
+            if (root.show_tooltip_pending && touch.has-hover && root.tooltip_text != "") {
+                TooltipState.active = {
+                    text: root.tooltip_text,
+                    x: touch.absolute-position.x,
+                    y: touch.absolute-position.y,
+                    width: touch.width,
+                    height: touch.height,
+                };
+            }
+        }
+    }
+
     touch := TouchArea {
         enabled: root.enabled;
         mouse-cursor: root.enabled ? pointer : default;
         clicked => { root.clicked(); }
+        changed has-hover => {
+            if (self.has-hover && root.tooltip_text != "") {
+                root.show_tooltip_pending = true;
+                delay_timer.running = true;
+            } else {
+                root.show_tooltip_pending = false;
+                delay_timer.running = false;
+                if (root.tooltip_text != "" && TooltipState.active.text == root.tooltip_text) {
+                    TooltipState.active = { text: "", x: 0px, y: 0px, width: 0px, height: 0px };
+                }
+            }
+        }
     }
 }

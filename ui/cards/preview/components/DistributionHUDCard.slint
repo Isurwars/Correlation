@@ -10,6 +10,7 @@ import {
     MaterialText,
     Icons,
     SegmentedButton,
+    TooltipTarget,
 } from "../../../material/material.slint";
 
 export component DistributionHUDCard inherits Rectangle {
@@ -49,6 +50,11 @@ export component DistributionHUDCard inherits Rectangle {
                     { label: "PAD", enabled: true },
                     { label: "S(Q)", enabled: true },
                 ];
+                tooltips: [
+                    "Show Radial Distribution Function g(r) in mini-HUD.",
+                    "Show Plane-Angle Distribution (PAD) in mini-HUD.",
+                    "Show Static Structure Factor S(Q) in mini-HUD.",
+                ];
                 current_index: root.active_metric;
                 selected(i) => { root.set_metric(i); }
             }
@@ -60,8 +66,9 @@ export component DistributionHUDCard inherits Rectangle {
                 border-radius: MaterialStyleMetrics.border_radius_full;
                 background: close_touch.has-hover ? MaterialPalette.surface_container_high : MaterialPalette.surface_container_low;
 
-                close_touch := TouchArea {
+                close_touch := TooltipTarget {
                     mouse-cursor: pointer;
+                    tooltip_text: "Close Distribution Mini-HUD.";
                     accessible-role: button;
                     accessible-label: "Close Distribution Mini-HUD";
                     clicked => { root.close_hud(); }

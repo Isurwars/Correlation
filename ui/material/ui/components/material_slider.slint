@@ -7,6 +7,7 @@ import { MaterialPalette } from "../styling/material_palette.slint";
 import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
 import { MaterialTypography } from "../styling/material_typography.slint";
 import { MaterialText } from "./material_text.slint";
+import { TooltipTarget } from "./tooltip_target.slint";
 
 /// Material 3 slider with optional label and value readout.
 export component MaterialSlider {
@@ -16,6 +17,7 @@ export component MaterialSlider {
     in property <float> maximum: 1.0;
     in property <bool> enabled: true;
     in property <float> value: 0.5;
+    in property <string> tooltip_text: "";
 
     callback changed(value: float);
 
@@ -42,9 +44,12 @@ export component MaterialSlider {
         root.changed(Math.clamp(v, root.minimum, root.maximum));
     }
 
-    VerticalLayout {
-        alignment: center;
-        spacing: MaterialStyleMetrics.size_1;
+    TooltipTarget {
+        tooltip_text: root.tooltip_text;
+
+        VerticalLayout {
+            alignment: center;
+            spacing: MaterialStyleMetrics.size_1;
 
         if root.show_header: HorizontalLayout {
             alignment: space-between;
@@ -97,6 +102,7 @@ export component MaterialSlider {
                 moved => {
                     if (self.pressed) {
                         root.set_value(root.minimum + (root.maximum - root.minimum) * Math.clamp(self.mouse-x / self.width, 0.0, 1.0));
+                    }
                     }
                 }
             }

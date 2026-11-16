@@ -10,6 +10,7 @@ import {
     MaterialText,
     Icons,
     Horizontal,
+    TooltipTarget,
 } from "../../material/material.slint";
 import { SanityBadgeState } from "../../Types.slint";
 
@@ -52,8 +53,11 @@ export component SanityBadge inherits Rectangle {
     border-width: 1px;
     border-color: root.badge_border;
 
-    Horizontal {
-        padding-left: MaterialStyleMetrics.padding_8;
+    TooltipTarget {
+        tooltip_text: root.state.message + (root.state.has_fix ? "\n\nClick '" + (root.state.fix_label != "" ? root.state.fix_label : "Fix") + "' to automatically resolve." : "");
+
+        Horizontal {
+            padding-left: MaterialStyleMetrics.padding_8;
         padding-right: MaterialStyleMetrics.padding_8;
         spacing: MaterialStyleMetrics.spacing_6;
         alignment: center;
@@ -104,6 +108,7 @@ export component SanityBadge inherits Rectangle {
                     root.fix_clicked(root.state.fix_action);
                 }
             }
+        }
         }
     }
 }
