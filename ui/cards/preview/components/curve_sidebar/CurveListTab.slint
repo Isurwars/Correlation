@@ -10,36 +10,13 @@ import {
     MaterialText,
     ScrollView,
     Vertical,
+    Chip,
     Icons,
 } from "../../../../material/material.slint";
 import { CurveToggleItem } from "../../../../Types.slint";
 import { CompactInputField } from "CompactInputField.slint";
 import { CurveColorPicker } from "CurveColorPicker.slint";
 import { CurveListSearchBox } from "CurveListSearchBox.slint";
-
-component CurveBatchAction inherits TouchArea {
-    in property <string> label;
-
-    height: 22px;
-    width: action_txt.preferred-width + 8px;
-    mouse-cursor: pointer;
-    accessible-role: button;
-    accessible-label: root.label + " curves";
-
-    Rectangle {
-        border-radius: MaterialStyleMetrics.border_radius_4;
-        background: root.has-hover ? MaterialPalette.surface_container_highest : transparent;
-
-        action_txt := MaterialText {
-            text: root.label;
-            style: MaterialTypography.label_small;
-            font_weight: 600;
-            color: MaterialPalette.primary;
-            horizontal-alignment: center;
-            vertical-alignment: center;
-        }
-    }
-}
 
 /// Tab 0 of CurveSidebar: curve filtering, batch visibility, color swatches, and line width.
 export component CurveListTab inherits VerticalLayout {
@@ -77,7 +54,9 @@ export component CurveListTab inherits VerticalLayout {
             vertical-alignment: center;
         }
 
-        CurveBatchAction {
+        Chip {
+            outlined: false;
+            accessible_name: self.label + " curves";
             label: "All";
             clicked => { root.toggle_all_curves(true); }
         }
@@ -89,7 +68,9 @@ export component CurveListTab inherits VerticalLayout {
             vertical-alignment: center;
         }
 
-        CurveBatchAction {
+        Chip {
+            outlined: false;
+            accessible_name: self.label + " curves";
             label: "None";
             clicked => { root.toggle_all_curves(false); }
         }
@@ -101,7 +82,9 @@ export component CurveListTab inherits VerticalLayout {
             vertical-alignment: center;
         }
 
-        CurveBatchAction {
+        Chip {
+            outlined: false;
+            accessible_name: self.label + " curves";
             label: "Invert";
             clicked => { root.invert_curves(); }
         }

@@ -6,8 +6,8 @@
 import {
     CheckBoxRow,
     MaterialStyleMetrics,
+    MaterialSlider,
 } from "../../../material/material.slint";
-import { PhaseSlider } from "./PhaseSlider.slint";
 
 export component PhaseVisualControls inherits VerticalLayout {
     in property <float> halo_intensity: 0.85;
@@ -28,34 +28,34 @@ export component PhaseVisualControls inherits VerticalLayout {
     HorizontalLayout {
         spacing: MaterialStyleMetrics.spacing_6;
 
-        PhaseSlider {
+        MaterialSlider {
             horizontal-stretch: 1;
             label: "Ball Radius";
             value: root.atom_scale;
-            min_val: 0.1;
-            max_val: 1.5;
+            minimum: 0.1;
+            maximum: 1.5;
             display_text: "" + (Math.round(root.atom_scale * 100) / 100) + "x";
-            value_changed(val) => { root.set_atom_scale(val); }
+            changed(val) => { root.set_atom_scale(val); }
         }
 
-        PhaseSlider {
+        MaterialSlider {
             horizontal-stretch: 1;
             label: "Glow Intensity";
             value: root.halo_intensity;
-            min_val: 0.1;
-            max_val: 1.0;
+            minimum: 0.1;
+            maximum: 1.0;
             display_text: "" + (Math.round(root.halo_intensity * 100) / 100);
-            value_changed(val) => { root.set_intensity(val); }
+            changed(val) => { root.set_intensity(val); }
         }
 
-        PhaseSlider {
+        MaterialSlider {
             horizontal-stretch: 1;
             label: "Glow Radius";
             value: root.halo_radius_ratio;
-            min_val: 1.1;
-            max_val: 4.5;
+            minimum: 1.1;
+            maximum: 4.5;
             display_text: "" + (Math.round(root.halo_radius_ratio * 100) / 100) + "x";
-            value_changed(val) => { root.set_radius_ratio(val); }
+            changed(val) => { root.set_radius_ratio(val); }
         }
     }
 

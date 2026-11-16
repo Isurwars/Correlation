@@ -1,0 +1,105 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import { MaterialPalette } from "../styling/material_palette.slint";
+import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
+import { MaterialTypography } from "../styling/material_typography.slint";
+import { MaterialText } from "./material_text.slint";
+
+/// Material 3 slider with optional label and value readout.
+export component MaterialSlider {
+    in property <string> label: "";
+    in property <string> display_text: "";
+    in property <float> minimum: 0.0;
+    in property <float> maximum: 1.0;
+    in property <bool> enabled: true;
+    in property <float> value: 0.5;
+
+    callback changed(value: float);
+
+    property <float> ratio: root.maximum > root.minimum
+        ? Math.clamp((root.value - root.minimum) / (root.maximum - root.minimum), 0.0, 1.0) : 0.0;
+    property <bool> show_header: root.label != "" || root.display_text != "";
+    property <length> thumb_size: (touch.has-hover || touch.pressed) ? MaterialStyleMetrics.size_14 - MaterialStyleMetrics.size_2 : MaterialStyleMetrics.size_14 - MaterialStyleMetrics.size_4;
+
+    accessible-role: slider;
+    accessible-label: root.label;
+    accessible-value: root.display_text;
+    accessible-value-minimum: root.minimum;
+    accessible-value-maximum: root.maximum;
+    accessible-value-step: (root.maximum - root.minimum) / 100;
+    accessible-enabled: root.enabled;
+    accessible-action-set-value(v) => { root.set_value(v.to-float()); }
+    accessible-action-increment => { root.set_value(root.value + (root.maximum - root.minimum) / 100); }
+    accessible-action-decrement => { root.set_value(root.value - (root.maximum - root.minimum) / 100); }
+
+    min-height: root.show_header ? MaterialStyleMetrics.size_30 : MaterialStyleMetrics.size_14;
+    opacity: root.enabled ? 100% : 38%;
+
+    function set_value(v: float) {
+        root.changed(Math.clamp(v, root.minimum, root.maximum));
+    }
+
+    VerticalLayout {
+        alignment: center;
+        spacing: MaterialStyleMetrics.size_1;
+
+        if root.show_header: HorizontalLayout {
+            alignment: space-between;
+            MaterialText {
+                text: root.label;
+                style: MaterialTypography.label_small;
+                color: MaterialPalette.on_surface_variant;
+            }
+            MaterialText {
+                text: root.display_text;
+                style: MaterialTypography.label_small_prominent;
+                color: MaterialPalette.primary;
+            }
+        }
+
+        track_area := Rectangle {
+            height: MaterialStyleMetrics.size_14;
+
+            Rectangle {
+                y: (parent.height - self.height) / 2;
+                width: parent.width;
+                height: MaterialStyleMetrics.size_3;
+                border_radius: self.height / 2;
+                background: MaterialPalette.surface_container_highest;
+
+                Rectangle {
+                    width: parent.width * root.ratio;
+                    border_radius: parent.border_radius;
+                    background: MaterialPalette.primary;
+                }
+            }
+
+            Rectangle {
+                width: root.thumb_size;
+                height: root.thumb_size;
+                border_radius: self.width / 2;
+                x: Math.clamp(parent.width * root.ratio - self.width / 2, 0px, parent.width - self.width);
+                y: (parent.height - self.height) / 2;
+                background: MaterialPalette.primary;
+            }
+
+            touch := TouchArea {
+                enabled: root.enabled;
+                mouse-cursor: root.enabled ? pointer : default;
+                pointer-event(e) => {
+                    if (e.button == PointerEventButton.left && e.kind == PointerEventKind.down) {
+                        root.set_value(root.minimum + (root.maximum - root.minimum) * Math.clamp(self.mouse-x / self.width, 0.0, 1.0));
+                    }
+                }
+                moved => {
+                    if (self.pressed) {
+                        root.set_value(root.minimum + (root.maximum - root.minimum) * Math.clamp(self.mouse-x / self.width, 0.0, 1.0));
+                    }
+                }
+            }
+        }
+    }
+}

@@ -10,44 +10,12 @@ import {
     MaterialPalette,
     OutlinedCard,
     ExpandableHeader,
+    Chip,
     MaterialText,
     Vertical,
 } from "../../material/material.slint";
 import { CalculatorGroup } from "../../Types.slint";
 import { AnalysesGroupSection } from "AnalysesGroupSection.slint";
-
-component TreeToolbarChip inherits TouchArea {
-    in property <string> label;
-    in property <bool> active: false;
-    in property <bool> chip_enabled: true;
-    enabled: root.chip_enabled;
-    mouse-cursor: root.chip_enabled ? pointer : default;
-    height: 22px;
-    width: chip_label.preferred-width + 14px;
-    accessible-role: button;
-    accessible-label: root.label;
-
-    Rectangle {
-        width: 100%;
-        height: 100%;
-        border-radius: MaterialStyleMetrics.border_radius_4;
-        border-width: 1px;
-        border-color: root.active ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(60%);
-        background: !root.chip_enabled ? transparent :
-            root.active ? MaterialPalette.primary.with_alpha(18%) :
-            root.has-hover ? MaterialPalette.surface_container_highest : MaterialPalette.surface_container_low;
-        animate background { duration: MaterialAnimations.base_duration; }
-
-        chip_label := MaterialText {
-            text: root.label;
-            style: MaterialTypography.label_small;
-            color: !root.chip_enabled ? MaterialPalette.outline :
-                root.active ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
-            horizontal-alignment: center;
-            vertical-alignment: center;
-        }
-    }
-}
 
 export component AnalysesSelectionCard inherits OutlinedCard {
     in-out property <bool> expanded: false;
@@ -110,17 +78,17 @@ export component AnalysesSelectionCard inherits OutlinedCard {
                 HorizontalLayout {
                     spacing: MaterialStyleMetrics.spacing_4;
 
-                    TreeToolbarChip {
+                    Chip {
                         label: "All";
-                        chip_enabled: root.file_loaded;
-                        active: root.total_calculator_count > 0 && root.enabled_calculator_count == root.total_calculator_count;
+                        enabled: root.file_loaded;
+                        selected: root.total_calculator_count > 0 && root.enabled_calculator_count == root.total_calculator_count;
                         clicked => { root.toggle_all_calculators(true); }
                     }
 
-                    TreeToolbarChip {
+                    Chip {
                         label: "None";
-                        chip_enabled: root.file_loaded;
-                        active: root.total_calculator_count > 0 && root.enabled_calculator_count == 0;
+                        enabled: root.file_loaded;
+                        selected: root.total_calculator_count > 0 && root.enabled_calculator_count == 0;
                         clicked => { root.toggle_all_calculators(false); }
                     }
                 }
@@ -128,18 +96,18 @@ export component AnalysesSelectionCard inherits OutlinedCard {
                 HorizontalLayout {
                     spacing: MaterialStyleMetrics.spacing_4;
 
-                    TreeToolbarChip {
+                    Chip {
                         label: "Compact";
-                        active: root.compact_mode;
+                        selected: root.compact_mode;
                         clicked => { root.compact_mode = !root.compact_mode; }
                     }
 
-                    TreeToolbarChip {
+                    Chip {
                         label: "Expand";
                         clicked => { root.set_all_calculator_groups_expanded(true); }
                     }
 
-                    TreeToolbarChip {
+                    Chip {
                         label: "Collapse";
                         clicked => { root.set_all_calculator_groups_expanded(false); }
                     }

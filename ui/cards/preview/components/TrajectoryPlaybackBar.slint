@@ -10,8 +10,8 @@ import {
     MaterialStyleMetrics,
     MaterialText,
     Icons,
+    MaterialSlider,
 } from "../../../material/material.slint";
-import { TrajectoryPlaybackSlider } from "TrajectoryPlaybackSlider.slint";
 
 export component TrajectoryPlaybackBar inherits Rectangle {
     in-out property <int> current_frame: 0;
@@ -166,10 +166,17 @@ export component TrajectoryPlaybackBar inherits Rectangle {
         }
 
         // Scrub Slider Container
-        TrajectoryPlaybackSlider {
-            current_frame <=> root.current_frame;
-            total_frames: root.total_frames;
-            seek_frame(target) => { root.seek_frame(target); }
+        MaterialSlider {
+            horizontal-stretch: 1;
+            min-width: 100px;
+            label: "";
+            minimum: 0.0;
+            maximum: Math.max(1, root.total_frames - 1);
+            value: root.current_frame;
+            changed(v) => {
+                root.current_frame = Math.round(v);
+                root.seek_frame(Math.round(v));
+            }
         }
 
         // Frame Counter Badge

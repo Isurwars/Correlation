@@ -1,0 +1,85 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import { MaterialAnimations } from "../styling/material_animations.slint";
+import { MaterialPalette } from "../styling/material_palette.slint";
+import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
+import { MaterialTypography } from "../styling/material_typography.slint";
+import { MaterialText } from "./material_text.slint";
+import { Icon } from "./icon.slint";
+import { StateLayer } from "./state_layer.slint";
+
+/// Material 3 chip (assist / filter). Compact by default.
+export component Chip {
+    in property <string> label;
+    in property <image> icon;
+    in property <bool> selected: false;
+    in property <bool> enabled: true;
+    in property <bool> outlined: true;
+    in property <length> chip_height: MaterialStyleMetrics.size_24;
+    in property <string> accessible_name: root.label;
+
+    callback clicked();
+
+    property <bool> has_icon: root.icon.width > 0 && root.icon.height > 0;
+    property <color> content_color: !root.enabled ? MaterialPalette.outline
+        : root.selected ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+
+    min-width: self.chip_height;
+    height: root.chip_height;
+    horizontal-stretch: 0;
+    preferred-width: content.preferred-width;
+
+    accessible-role: button;
+    accessible-label: root.accessible_name;
+    accessible-checkable: true;
+    accessible-checked: root.selected;
+    accessible-enabled: root.enabled;
+    accessible-action-default => { root.clicked(); }
+
+    Rectangle {
+        border_radius: MaterialStyleMetrics.border_radius_4;
+        border_width: root.outlined ? MaterialStyleMetrics.size_1 : 0px;
+        border_color: root.selected ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(60%);
+        background: root.selected ? MaterialPalette.primary.with_alpha(18%) : MaterialPalette.surface_container_low;
+        animate background { duration: MaterialAnimations.base_duration; }
+        animate border_color { duration: MaterialAnimations.base_duration; }
+    }
+
+    StateLayer {
+        enabled: root.enabled;
+        has_hover: touch.has-hover;
+        pressed: touch.pressed;
+        background: root.content_color;
+        border_radius: MaterialStyleMetrics.border_radius_4;
+    }
+
+    content := HorizontalLayout {
+        padding_left: MaterialStyleMetrics.padding_6;
+        padding_right: MaterialStyleMetrics.padding_6;
+        spacing: MaterialStyleMetrics.spacing_4;
+        alignment: center;
+
+        if root.has_icon: Icon {
+            source: root.icon;
+            colorize: root.content_color;
+            width: MaterialStyleMetrics.icon_size_18;
+        }
+        if root.label != "": MaterialText {
+            text: root.label;
+            style: MaterialTypography.label_small;
+            color: root.content_color;
+            vertical-alignment: center;
+            horizontal-alignment: center;
+            overflow: clip;
+        }
+    }
+
+    touch := TouchArea {
+        enabled: root.enabled;
+        mouse-cursor: root.enabled ? pointer : default;
+        clicked => { root.clicked(); }
+    }
+}

@@ -11,8 +11,8 @@ import {
     ScrollView,
     CheckBoxRow,
     FilledButton,
+    MaterialSlider,
 } from "../../../material/material.slint";
-import { PhaseSlider } from "./PhaseSlider.slint";
 
 /// Tab 1 of Structure3DSidebar: camera reset, atomic representation, and HUD overlay toggles.
 export component Structure3DSceneTab inherits ScrollView {
@@ -60,13 +60,13 @@ export component Structure3DSceneTab inherits ScrollView {
                 color: MaterialPalette.on_surface;
             }
 
-            PhaseSlider {
+            MaterialSlider {
                 label: "Ball Scale";
                 value: root.atom_scale;
-                min_val: 0.1;
-                max_val: 1.5;
+                minimum: 0.1;
+                maximum: 1.5;
                 display_text: "" + (Math.round(root.atom_scale * 100) / 100) + "x";
-                value_changed(val) => { root.set_atom_scale(val); }
+                changed(val) => { root.set_atom_scale(val); }
             }
 
             CheckBoxRow {

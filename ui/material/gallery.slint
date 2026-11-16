@@ -1,0 +1,36 @@
+// Dev-only gallery of Material primitives. Preview: slint-lsp preview / slint-viewer.
+import { Chip } from "ui/components/chip.slint";
+import { SegmentedButton } from "ui/components/segmented_button.slint";
+import { MaterialSlider } from "ui/components/material_slider.slint";
+import { Badge } from "ui/components/badge.slint";
+import { EmptyState } from "ui/components/empty_state.slint";
+import { MaterialPalette } from "ui/styling/material_palette.slint";
+
+export component Gallery inherits Window {
+    width: 420px;
+    height: 420px;
+    background: MaterialPalette.surface;
+    property <int> seg: 0;
+    VerticalLayout {
+        padding: 16px;
+        spacing: 12px;
+        HorizontalLayout { spacing: 6px; alignment: start;
+            Chip { label: "Assist"; }
+            Chip { label: "Selected"; selected: true; }
+            Chip { label: "Disabled"; enabled: false; }
+        }
+        SegmentedButton {
+            model: [{ label: "A", enabled: true }, { label: "B", enabled: true }, { label: "C", enabled: false }];
+            current_index: root.seg;
+            selected(i) => { root.seg = i; }
+        }
+        MaterialSlider { label: "Opacity"; display_text: "0.50"; }
+        MaterialSlider { }
+        HorizontalLayout { spacing: 6px; alignment: start;
+            Badge { text: "OK"; tone: 1; }
+            Badge { text: "Warn"; tone: 2; }
+            Badge { text: "n/a"; }
+        }
+        EmptyState { title: "Nothing loaded"; body: "Open a structure file to begin."; }
+    }
+}

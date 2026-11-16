@@ -11,8 +11,8 @@ import {
     MaterialText,
     ScrollView,
     Icons,
+    MaterialSlider,
 } from "../../../material/material.slint";
-import { PhaseSlider } from "./PhaseSlider.slint";
 import { PhaseMiniHistogram } from "./PhaseMiniHistogram.slint";
 import { PhaseHeatmapView, CrystalMarker } from "./PhaseHeatmapView.slint";
 import { PhasePresetsGrid } from "./PhasePresetsGrid.slint";
@@ -238,24 +238,24 @@ export component Structure3DPhaseTab inherits ScrollView {
         if (!root.is_2d_mode): HorizontalLayout {
             spacing: MaterialStyleMetrics.spacing_6;
 
-            PhaseSlider {
+            MaterialSlider {
                 horizontal-stretch: 1;
                 label: "Min Cutoff";
                 value: root.min_threshold;
-                min_val: root.domain_min;
-                max_val: root.max_threshold;
+                minimum: root.domain_min;
+                maximum: root.max_threshold;
                 display_text: "" + (Math.round(root.min_threshold * 100) / 100);
-                value_changed(val) => { root.set_thresholds(val, root.max_threshold); }
+                changed(val) => { root.set_thresholds(val, root.max_threshold); }
             }
 
-            PhaseSlider {
+            MaterialSlider {
                 horizontal-stretch: 1;
                 label: "Max Cutoff";
                 value: root.max_threshold;
-                min_val: root.min_threshold;
-                max_val: root.domain_max;
+                minimum: root.min_threshold;
+                maximum: root.domain_max;
                 display_text: "" + (Math.round(root.max_threshold * 100) / 100);
-                value_changed(val) => { root.set_thresholds(root.min_threshold, val); }
+                changed(val) => { root.set_thresholds(root.min_threshold, val); }
             }
         }
 

@@ -1,0 +1,72 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import { MaterialAnimations } from "../styling/material_animations.slint";
+import { MaterialPalette } from "../styling/material_palette.slint";
+import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
+import { MaterialTypography } from "../styling/material_typography.slint";
+import { MaterialText } from "./material_text.slint";
+import { StateLayer } from "./state_layer.slint";
+
+export struct SegmentItem {
+    label: string,
+    enabled: bool,
+}
+
+/// Material 3 segmented button: single selection across `model`.
+export component SegmentedButton {
+    in property <[SegmentItem]> model;
+    in property <int> current_index: 0;
+    in property <bool> enabled: true;
+    in property <length> segment_height: MaterialStyleMetrics.size_30;
+
+    callback selected(index: int);
+
+    height: root.segment_height;
+    accessible-role: tab-list;
+
+    Rectangle {
+        border_radius: MaterialStyleMetrics.border_radius_full;
+        border_width: MaterialStyleMetrics.size_1;
+        border_color: MaterialPalette.outline_variant;
+    }
+
+    HorizontalLayout {
+        for item[i] in root.model: Rectangle {
+            property <bool> active: i == root.current_index;
+            property <bool> usable: root.enabled && item.enabled;
+            horizontal-stretch: 1;
+            accessible-role: tab;
+            accessible-label: item.label;
+            accessible-checked: self.active;
+
+            StateLayer {
+                enabled: parent.usable;
+                has_hover: touch.has-hover;
+                pressed: touch.pressed;
+                background: MaterialPalette.on_surface;
+                border_radius: MaterialStyleMetrics.border_radius_full;
+            }
+            Rectangle {
+                border_radius: MaterialStyleMetrics.border_radius_full;
+                background: parent.active ? MaterialPalette.secondary_container : transparent;
+                animate background { duration: MaterialAnimations.base_duration; }
+            }
+            MaterialText {
+                text: item.label;
+                style: MaterialTypography.label_small;
+                color: !parent.usable ? MaterialPalette.outline
+                    : parent.active ? MaterialPalette.on_secondary_container : MaterialPalette.on_surface;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+            touch := TouchArea {
+                enabled: parent.usable;
+                mouse-cursor: parent.usable ? pointer : default;
+                clicked => { root.selected(i); }
+            }
+        }
+    }
+}
