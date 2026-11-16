@@ -1130,21 +1130,34 @@ TEST_F(AppControllerTests, CameraPresetsOrientationIntegration) {
 }
 
 TEST_F(AppControllerTests, SampleDatasetAndRecentFilesIntegration) {
-  const auto original_settings = correlation::app::SettingsManager::load();
-  struct SettingsRestoreGuard {
-    correlation::app::AppSettings saved;
-    explicit SettingsRestoreGuard(correlation::app::AppSettings settings)
-        : saved(std::move(settings)) {}
-    SettingsRestoreGuard(const SettingsRestoreGuard &) = delete;
-    SettingsRestoreGuard &operator=(const SettingsRestoreGuard &) = delete;
-    SettingsRestoreGuard(SettingsRestoreGuard &&) = delete;
-    SettingsRestoreGuard &operator=(SettingsRestoreGuard &&) = delete;
-    ~SettingsRestoreGuard() { correlation::app::SettingsManager::save(saved); }
-  } const guard(original_settings);
+  const auto temp_dir =
+      std::filesystem::temp_directory_path() /
+      ("corr_app_settings_" + std::to_string(testing::UnitTest::GetInstance()->random_seed()));
+  std::filesystem::create_directories(temp_dir);
+  const auto test_path = temp_dir / "settings.json";
+#ifdef _WIN32
+  _putenv_s("CORRELATION_SETTINGS_PATH", test_path.string().c_str());
+#else
+  setenv("CORRELATION_SETTINGS_PATH", test_path.c_str(), 1);
+#endif
 
-  auto clean_settings = original_settings;
-  clean_settings.recent_files.clear();
-  correlation::app::SettingsManager::save(clean_settings);
+  struct SettingsCleanupGuard {
+    std::filesystem::path dir;
+    explicit SettingsCleanupGuard(std::filesystem::path p) : dir(std::move(p)) {}
+    SettingsCleanupGuard(const SettingsCleanupGuard &) = delete;
+    SettingsCleanupGuard &operator=(const SettingsCleanupGuard &) = delete;
+    SettingsCleanupGuard(SettingsCleanupGuard &&) = delete;
+    SettingsCleanupGuard &operator=(SettingsCleanupGuard &&) = delete;
+    ~SettingsCleanupGuard() {
+#ifdef _WIN32
+      _putenv_s("CORRELATION_SETTINGS_PATH", "");
+#else
+      unsetenv("CORRELATION_SETTINGS_PATH");
+#endif
+      std::error_code ec;
+      std::filesystem::remove_all(dir, ec);
+    }
+  } const guard(temp_dir);
 
   auto window = AppWindow::create();
   correlation::app::AppController controller(*window, loader(), dispatcher(), options());

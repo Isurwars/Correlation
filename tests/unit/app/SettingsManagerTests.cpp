@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "app/core/SettingsManager.hpp"
+#include <cstdlib>
 #include <filesystem>
 #include <gtest/gtest.h>
 
@@ -12,22 +13,31 @@ namespace {
 class SettingsManagerTests : public ::testing::Test {
 protected:
   void SetUp() override {
-    test_path_ = correlation::app::SettingsManager::settingsFilePath();
-    if (std::filesystem::exists(test_path_)) {
-      original_settings_ = correlation::app::SettingsManager::load();
-    }
+    temp_dir_ =
+        std::filesystem::temp_directory_path() /
+        ("corr_test_settings_" + std::to_string(testing::UnitTest::GetInstance()->random_seed()));
+    std::filesystem::create_directories(temp_dir_);
+    test_path_ = temp_dir_ / "settings.json";
+#ifdef _WIN32
+    _putenv_s("CORRELATION_SETTINGS_PATH", test_path_.string().c_str());
+#else
+    setenv("CORRELATION_SETTINGS_PATH", test_path_.c_str(), 1);
+#endif
   }
 
   void TearDown() override {
-    // Restore original settings if existed
-    if (original_settings_.window_width > 0) {
-      correlation::app::SettingsManager::save(original_settings_);
-    }
+#ifdef _WIN32
+    _putenv_s("CORRELATION_SETTINGS_PATH", "");
+#else
+    unsetenv("CORRELATION_SETTINGS_PATH");
+#endif
+    std::error_code ec;
+    std::filesystem::remove_all(temp_dir_, ec);
   }
 
 private:
+  std::filesystem::path temp_dir_;
   std::filesystem::path test_path_;
-  correlation::app::AppSettings original_settings_;
 };
 
 TEST_F(SettingsManagerTests, DefaultSettingsFallback) {

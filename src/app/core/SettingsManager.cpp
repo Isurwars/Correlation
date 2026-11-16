@@ -13,6 +13,10 @@
 namespace correlation::app {
 
 std::filesystem::path SettingsManager::settingsFilePath() {
+  const char *custom_path = std::getenv("CORRELATION_SETTINGS_PATH");
+  if (custom_path != nullptr && custom_path[0] != '\0') {
+    return std::filesystem::path(custom_path);
+  }
 #ifdef _WIN32
   const char *app_data = std::getenv("APPDATA");
   if (app_data != nullptr && app_data[0] != '\0') {
