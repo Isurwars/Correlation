@@ -4,15 +4,19 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 import {
-    MaterialAnimations,
     MaterialPalette,
     MaterialStyleMetrics,
-    MaterialTypography,
-    MaterialText,
     Icons,
     MaterialSlider,
     Chip,
 } from "../../../material/material.slint";
+
+component ToolbarChip inherits Chip {
+    chip_height: MaterialStyleMetrics.size_30;
+    corner_radius: MaterialStyleMetrics.border_radius_full;
+    outlined: false;
+    y: MaterialStyleMetrics.size_4;
+}
 
 export component Structure3DToolBar inherits Rectangle {
     in property <bool> bonds_enabled: true;
@@ -46,11 +50,7 @@ export component Structure3DToolBar inherits Rectangle {
         spacing: MaterialStyleMetrics.spacing_6;
         alignment: center;
 
-        Chip {
-            chip_height: MaterialStyleMetrics.size_30;
-            corner_radius: MaterialStyleMetrics.border_radius_full;
-            outlined: false;
-            y: (parent.height - self.height) / 2;
+        ToolbarChip {
             icon: Icons.home;
             accessible_name: "Home / Reset 3D Camera";
             clicked => { root.reset_view(); }
@@ -58,89 +58,65 @@ export component Structure3DToolBar inherits Rectangle {
 
         // Camera Orientation Presets (Top XY, Front XZ, Side YZ, Isometric 3D)
         HorizontalLayout {
-            spacing: 2px;
-            height: 24px;
-            y: (parent.height - self.height) / 2;
+            height: MaterialStyleMetrics.size_30;
+            y: MaterialStyleMetrics.size_4;
+            spacing: MaterialStyleMetrics.spacing_2;
 
-            Chip {
-                chip_height: MaterialStyleMetrics.size_24;
-                outlined: false;
+            ToolbarChip {
+                y: 0px;
                 label: "XY";
                 accessible_name: "Camera Preset Top (XY)";
                 clicked => { root.set_camera_preset(0); }
             }
-            Chip {
-                chip_height: MaterialStyleMetrics.size_24;
-                outlined: false;
+            ToolbarChip {
+                y: 0px;
                 label: "XZ";
                 accessible_name: "Camera Preset Front (XZ)";
                 clicked => { root.set_camera_preset(1); }
             }
-            Chip {
-                chip_height: MaterialStyleMetrics.size_24;
-                outlined: false;
+            ToolbarChip {
+                y: 0px;
                 label: "YZ";
                 accessible_name: "Camera Preset Side (YZ)";
                 clicked => { root.set_camera_preset(2); }
             }
-            Chip {
-                chip_height: MaterialStyleMetrics.size_24;
-                outlined: false;
+            ToolbarChip {
+                y: 0px;
                 label: "3D";
                 accessible_name: "Camera Preset Isometric (3D)";
                 clicked => { root.set_camera_preset(3); }
             }
         }
 
-        Chip {
-            chip_height: MaterialStyleMetrics.size_30;
-            corner_radius: MaterialStyleMetrics.border_radius_full;
-            outlined: false;
-            y: (parent.height - self.height) / 2;
+        ToolbarChip {
             label: "B";
             selected: root.bonds_enabled;
             accessible_name: root.bonds_enabled ? "Hide Atomic Bonds" : "Show Atomic Bonds";
             clicked => { root.toggle_bonds(!root.bonds_enabled); }
         }
 
-        Chip {
-            chip_height: MaterialStyleMetrics.size_30;
-            corner_radius: MaterialStyleMetrics.border_radius_full;
-            outlined: false;
-            y: (parent.height - self.height) / 2;
+        ToolbarChip {
             label: "⬡";
             selected: root.wireframe_enabled;
             accessible_name: root.wireframe_enabled ? "Hide Unit Cell Wireframe" : "Show Unit Cell Wireframe";
             clicked => { root.toggle_wireframe(!root.wireframe_enabled); }
         }
 
-        Chip {
-            chip_height: MaterialStyleMetrics.size_30;
-            corner_radius: MaterialStyleMetrics.border_radius_full;
-            outlined: false;
-            y: (parent.height - self.height) / 2;
+        ToolbarChip {
             label: "⊞";
             selected: root.in_cell_enabled;
             accessible_name: root.in_cell_enabled ? "In-Cell PBC Active (Folded & Boundary-Clipped)" : "Standard Non-Forced Coordinates";
             clicked => { root.toggle_in_cell(!root.in_cell_enabled); }
         }
 
-        Chip {
-            chip_height: MaterialStyleMetrics.size_30;
-            corner_radius: MaterialStyleMetrics.border_radius_full;
-            outlined: false;
-            y: (parent.height - self.height) / 2;
+        ToolbarChip {
             icon: Icons.science;
-            selected: root.phase_panel_open || root.phase_enabled;
-            accessible_name: root.phase_panel_open ? "Hide Phase Search" : "Show Phase Search";
+            selected: root.phase_enabled;
+            accessible_name: root.phase_enabled ? "Hide Phase Search" : "Show Phase Search";
             clicked => { root.toggle_phase_panel(); }
         }
 
-        Chip {
-            chip_height: MaterialStyleMetrics.size_30;
-            corner_radius: MaterialStyleMetrics.border_radius_full;
-            outlined: false;
-            y: (parent.height - self.height) / 2;
+        ToolbarChip {
             icon: Icons.analytics;
             selected: root.dist_hud_enabled;
             accessible_name: root.dist_hud_enabled ? "Hide Distribution Graph" : "Show Distribution Graph";

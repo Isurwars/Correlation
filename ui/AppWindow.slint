@@ -949,6 +949,15 @@ export component AppWindow inherits Window {
                     dual_split_ratio <=> root.preview_dual_split_ratio;
                     inspector_scope: root.active_right_panel == 1 ? 1 : 0;
                     structure_3d_phase_panel_open: root.active_right_panel == 1;
+                    toggle_phase_panel_3d => {
+                        let next = !root.structure_3d_phase_enabled;
+                        root.toggle_phase_search_3d(next);
+                        if (next) {
+                            root.active_right_panel = 1;
+                            root.last_active_right_panel = 1;
+                            right_side_panel_host.structure_active_tab = 0;
+                        }
+                    }
                     toggle_plot_settings => {
                         if (root.active_right_panel == 0) {
                             root.active_right_panel = -1;

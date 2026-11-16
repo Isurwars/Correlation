@@ -34,6 +34,7 @@ export component RightSidePanelHost inherits Vertical {
 
     // Panel control state
     in-out property <int> active_panel: -1;
+    in-out property <int> structure_active_tab: 0;
     in-out property <int> last_active_panel: 0;
 
     // Callbacks for panel control
@@ -202,6 +203,7 @@ export component RightSidePanelHost inherits Vertical {
 
         // Stage 1: Structure 3D Inspector (Phase Search, Halos, Scene & Camera)
         panel_structure := Structure3DSidebar {
+            active_tab <=> root.structure_active_tab;
             width: 100%;
             height: 100%;
             visible: root.active_panel == 1;

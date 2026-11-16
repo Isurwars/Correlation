@@ -11,13 +11,13 @@ import {
     Chip,
 } from "../../../material/material.slint";
 
-export component PhaseDescriptorSelector inherits HorizontalLayout {
+export component PhaseDescriptorSelector inherits VerticalLayout {
     in property <int> descriptor_index: 0;
     in property <int> colormap_index: 0;
     callback set_descriptor(int);
     callback set_colormap(int);
 
-    spacing: 6px;
+    spacing: MaterialStyleMetrics.spacing_6;
 
     // Descriptor Pills
     VerticalLayout {

@@ -65,15 +65,18 @@ export component Chip {
     }
 
     content := HorizontalLayout {
-        padding_left: MaterialStyleMetrics.padding_6;
-        padding_right: MaterialStyleMetrics.padding_6;
+        padding_left: root.label == "" ? 0px : MaterialStyleMetrics.padding_6;
+        padding_right: root.label == "" ? 0px : MaterialStyleMetrics.padding_6;
         spacing: MaterialStyleMetrics.spacing_4;
         alignment: center;
 
-        if root.has_icon: Icon {
-            source: root.icon;
-            colorize: root.content_color;
-            width: MaterialStyleMetrics.icon_size_18;
+        if root.has_icon: VerticalLayout {
+            alignment: center;
+            Icon {
+                source: root.icon;
+                colorize: root.content_color;
+                width: MaterialStyleMetrics.icon_size_18;
+            }
         }
         if root.label != "": MaterialText {
             text: root.label;

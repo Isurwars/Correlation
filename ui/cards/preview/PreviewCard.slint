@@ -168,6 +168,7 @@ export component PreviewCard inherits FilledCard {
     callback toggle_structure_3d_dist_hud(bool);
 
     callback toggle_phase_search_3d(bool);
+    callback toggle_phase_panel_3d();
     callback set_phase_preset_3d(int);
     callback set_phase_descriptor_3d(int);
     callback set_phase_colormap_3d(int);
@@ -395,6 +396,7 @@ export component PreviewCard inherits FilledCard {
                 toggle_bonds(enabled) => { root.toggle_bonds_3d(enabled); }
                 toggle_wireframe(enabled) => { root.toggle_wireframe_3d(enabled); }
                 toggle_in_cell(enabled) => { root.toggle_in_cell_3d(enabled); }
+                toggle_phase_panel => { root.toggle_phase_panel_3d(); }
                 seek_frame(idx) => { root.seek_frame_3d(idx); }
                 step_frame(fwd) => { root.step_frame_3d(fwd); }
                 resized(w, h) => { root.viewport_3d_resized(w, h); }
