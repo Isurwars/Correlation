@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "app/viewmodel/PhaseSearchTypes.hpp"
 #include "render3d/Camera3D.hpp"
 #include "render3d/IRenderEngine.hpp"
 #include "render3d/LodController.hpp"
@@ -37,6 +38,17 @@ struct RenderPipelineSnapshot {
   bool render_bonds{true};                  ///< Covalent bond rendering toggle.
   bool render_wireframe{true};              ///< Unit cell wireframe toggle.
   bool is_interacting{false};               ///< True during active user orbit/pan drag.
+
+  // GPU Halo Highlight configuration
+  bool gpu_halos_enabled{false};
+  PhaseDescriptor phase_descriptor{PhaseDescriptor::Q6Bar};
+  float phase_min_threshold{0.46F};
+  float phase_max_threshold{0.58F};
+  float phase_halo_ratio{1.35F};
+  float phase_halo_intensity{0.85F};
+  std::array<float, 4> phase_halo_color{1.0F, 0.84F, 0.0F, 1.0F};
+  bool phase_dim_non_matching{false};
+  bool phase_hide_non_matching{false};
 };
 
 /**

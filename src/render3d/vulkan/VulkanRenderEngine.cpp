@@ -30,6 +30,7 @@ void VulkanRenderEngine::cleanup() noexcept {
       render_fence_ = VK_NULL_HANDLE;
     }
     render_command_buffer_ = VK_NULL_HANDLE;
+    compute_service_.reset();
     buffer_manager_.reset();
     pipeline_manager_.reset();
     target_.reset();
@@ -70,6 +71,13 @@ bool VulkanRenderEngine::initialize(const ViewportDimensions &dimensions) {
   buffer_manager_ = std::make_unique<vulkan::VulkanBufferManager>();
   if (!buffer_manager_->initialize(device_->device(), device_->physicalDevice(),
                                    pipeline_manager_->descriptorSetLayout())) {
+    cleanup();
+    return false;
+  }
+
+  compute_service_ = std::make_unique<vulkan::VulkanComputeService>();
+  if (!compute_service_->initialize(device_->device(), device_->physicalDevice(),
+                                    device_->graphicsQueue(), device_->queueFamilyIndex())) {
     cleanup();
     return false;
   }
@@ -137,6 +145,22 @@ void VulkanRenderEngine::setCamera(const Camera3D &camera) { camera_ = camera; }
 void VulkanRenderEngine::setFeatureVisibility(bool render_bonds, bool render_wireframe) {
   render_bonds_ = render_bonds;
   render_wireframe_ = render_wireframe;
+}
+
+void VulkanRenderEngine::setGpuHaloConfig(bool enabled, app::PhaseDescriptor descriptor,
+                                          float min_thresh, float max_thresh, float halo_ratio,
+                                          float halo_intensity,
+                                          const std::array<float, 4> &halo_color,
+                                          bool dim_non_matching, bool hide_non_matching) {
+  gpu_halos_enabled_ = enabled;
+  halo_settings_.descriptor = descriptor;
+  halo_settings_.min_threshold = min_thresh;
+  halo_settings_.max_threshold = max_thresh;
+  halo_settings_.halo_radius_ratio = halo_ratio;
+  halo_settings_.halo_intensity = halo_intensity;
+  halo_settings_.halo_color = halo_color;
+  halo_settings_.dim_non_matching = dim_non_matching;
+  halo_settings_.hide_non_matching = hide_non_matching;
 }
 
 void VulkanRenderEngine::bindViewportAndDescriptors() {
@@ -245,6 +269,18 @@ std::span<const uint8_t> VulkanRenderEngine::renderFrame() {
 
   if (scene_) {
     buffer_manager_->uploadScene(*scene_, camera_, dimensions_);
+    if (gpu_halos_enabled_ && compute_service_ && compute_service_->isValid() &&
+        !scene_->atoms().empty()) {
+      const auto &bmin = scene_->boundsMin();
+      const auto &bmax = scene_->boundsMax();
+      const std::array<float, 4> box_min{bmin.x(), bmin.y(), bmin.z(), 0.0F};
+      const std::array<float, 4> box_max{bmax.x(), bmax.y(), bmax.z(), 0.0F};
+      vulkan::GpuHistogramOutput gpu_hist;
+      static_cast<void>(compute_service_->evaluateOrderParametersAndApplyHalos(
+          buffer_manager_->atomInstanceBuffer(), buffer_manager_->atomInstanceBuffer(),
+          static_cast<uint32_t>(scene_->atoms().size()), box_min, box_max, 3.2F, halo_settings_,
+          gpu_hist));
+    }
   } else {
     const Scene3D empty_scene;
     buffer_manager_->uploadScene(empty_scene, camera_, dimensions_);

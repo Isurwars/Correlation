@@ -1,0 +1,89 @@
+#version 450
+layout(local_size_x = 256) in;
+
+layout(std430, set = 0, binding = 0) readonly buffer AtomPositions {
+    vec4 in_positions[];
+};
+
+layout(std430, set = 0, binding = 1) readonly buffer NeighborCounts {
+    uint in_neighbor_counts[];
+};
+
+layout(std430, set = 0, binding = 2) readonly buffer NeighborIndices {
+    uint in_neighbor_indices[];
+};
+
+layout(std430, set = 0, binding = 3) writeonly buffer TetrahedralResults {
+    float out_q_tet[];
+};
+
+layout(push_constant) uniform TetrahedralParams {
+    vec4 box_min;
+    vec4 box_max;
+    uint max_neighbors;
+    uint num_atoms;
+} pc;
+
+void main() {
+    uint idx = gl_GlobalInvocationID.x;
+    if (idx >= pc.num_atoms) return;
+
+    uint count = in_neighbor_counts[idx];
+    if (count < 4) {
+        out_q_tet[idx] = 0.0;
+        return;
+    }
+
+    vec3 pos_i = in_positions[idx].xyz;
+    uint base_offset = idx * pc.max_neighbors;
+    vec3 box_size = pc.box_max.xyz - pc.box_min.xyz;
+
+    // Find the 4 nearest neighbors
+    float best_dist_sq[4] = float[4](1e30, 1e30, 1e30, 1e30);
+    vec3 best_dr[4];
+
+    for (uint n = 0; n < count; ++n) {
+        uint j = in_neighbor_indices[base_offset + n];
+        vec3 dr = in_positions[j].xyz - pos_i;
+        if (box_size.x > 0.0) {
+            dr -= box_size * round(dr / box_size);
+        }
+        float d2 = dot(dr, dr);
+
+        // Insertion sort into top 4
+        if (d2 < best_dist_sq[3]) {
+            best_dist_sq[3] = d2;
+            best_dr[3] = dr;
+            for (int k = 2; k >= 0; --k) {
+                if (best_dist_sq[k+1] < best_dist_sq[k]) {
+                    float tmp_d = best_dist_sq[k];
+                    best_dist_sq[k] = best_dist_sq[k+1];
+                    best_dist_sq[k+1] = tmp_d;
+
+                    vec3 tmp_v = best_dr[k];
+                    best_dr[k] = best_dr[k+1];
+                    best_dr[k+1] = tmp_v;
+                }
+            }
+        }
+    }
+
+    // Normalize direction vectors
+    vec3 u[4];
+    for (int k = 0; k < 4; ++k) {
+        float r = sqrt(best_dist_sq[k]);
+        u[k] = (r > 1e-6) ? (best_dr[k] / r) : vec3(0.0);
+    }
+
+    // q_tet = 1 - 3/8 * sum_{j=1}^3 sum_{k=j+1}^4 (cos(psi_jik) + 1/3)^2
+    float sum_terms = 0.0;
+    for (int j = 0; j < 3; ++j) {
+        for (int k = j + 1; k < 4; ++k) {
+            float cos_psi = clamp(dot(u[j], u[k]), -1.0, 1.0);
+            float val = cos_psi + (1.0 / 3.0);
+            sum_terms += val * val;
+        }
+    }
+
+    out_q_tet[idx] = 1.0 - (0.375 * sum_terms);
+}

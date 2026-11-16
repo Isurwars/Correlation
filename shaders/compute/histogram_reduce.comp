@@ -1,0 +1,55 @@
+#version 450
+layout(local_size_x = 256) in;
+
+layout(std430, set = 0, binding = 0) readonly buffer DescriptorValues {
+    float in_descriptor_values[];
+};
+
+layout(std430, set = 0, binding = 1) buffer HistogramBuffer {
+    uint out_histogram_bins[100];
+    uint out_matching_count;
+    uint out_total_count;
+};
+
+layout(push_constant) uniform HistParams {
+    float min_val;
+    float max_val;
+    float threshold_min;
+    float threshold_max;
+    uint num_atoms;
+} pc;
+
+shared uint local_bins[100];
+shared uint local_matching;
+
+void main() {
+    uint tid = gl_LocalInvocationIndex;
+    if (tid < 100) {
+        local_bins[tid] = 0;
+    }
+    if (tid == 0) {
+        local_matching = 0;
+    }
+    barrier();
+
+    uint idx = gl_GlobalInvocationID.x;
+    if (idx < pc.num_atoms) {
+        float val = in_descriptor_values[idx];
+        if (val >= pc.threshold_min && val <= pc.threshold_max) {
+            atomicAdd(local_matching, 1);
+        }
+
+        float norm = (val - pc.min_val) / max(pc.max_val - pc.min_val, 1e-6);
+        int bin = clamp(int(norm * 100.0), 0, 99);
+        atomicAdd(local_bins[bin], 1);
+    }
+    barrier();
+
+    if (tid < 100) {
+        atomicAdd(out_histogram_bins[tid], local_bins[tid]);
+    }
+    if (tid == 0) {
+        atomicAdd(out_matching_count, local_matching);
+        atomicAdd(out_total_count, min(pc.num_atoms, 256u));
+    }
+}

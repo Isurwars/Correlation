@@ -1,0 +1,176 @@
+#version 450
+layout(local_size_x = 256) in;
+
+layout(std430, set = 0, binding = 0) readonly buffer AtomPositions {
+    vec4 in_positions[];
+};
+
+layout(std430, set = 0, binding = 1) readonly buffer NeighborCounts {
+    uint in_neighbor_counts[];
+};
+
+layout(std430, set = 0, binding = 2) readonly buffer NeighborIndices {
+    uint in_neighbor_indices[];
+};
+
+layout(std430, set = 0, binding = 3) writeonly buffer SteinhardtResults {
+    vec4 out_q_params[]; // x = Q4, y = Q6, z = q_bar6, w = unused
+};
+
+layout(std430, set = 0, binding = 4) writeonly buffer ComplexHarmonics {
+    vec2 out_q6m[]; // 13 components per atom (real, imag)
+};
+
+layout(push_constant) uniform SteinhardtParams {
+    vec4 box_min;
+    vec4 box_max;
+    uint max_neighbors;
+    uint num_atoms;
+    float cutoff;
+    uint pad;
+} pc;
+
+const float FOUR_PI = 12.566370614359172;
+
+void computeY4m(float costheta, float phi, inout float real_y[9], inout float imag_y[9]) {
+    float sin2 = max(0.0, 1.0 - costheta * costheta);
+    float sintheta = sqrt(sin2);
+
+    float p40 = 0.125 * (35.0 * costheta * costheta * costheta * costheta - 30.0 * costheta * costheta + 3.0);
+    float p41 = -2.5 * costheta * (7.0 * costheta * costheta - 3.0) * sintheta;
+    float p42 = 7.5 * (7.0 * costheta * costheta - 1.0) * sin2;
+    float p43 = -105.0 * costheta * sintheta * sin2;
+    float p44 = 105.0 * sin2 * sin2;
+
+    float norm0 = 0.1057855469369004;
+    float norm1 = 0.0528927734684502;
+    float norm2 = 0.0152687588147426;
+    float norm3 = 0.0044077109282582;
+    float norm4 = 0.0015583606622822;
+
+    float poly[5] = float[5](p40 * norm0, p41 * norm1, p42 * norm2, p43 * norm3, p44 * norm4);
+
+    for (int m = 0; m <= 4; ++m) {
+        float cos_mphi = cos(float(m) * phi);
+        float sin_mphi = sin(float(m) * phi);
+        real_y[m + 4] = poly[m] * cos_mphi;
+        imag_y[m + 4] = poly[m] * sin_mphi;
+        if (m > 0) {
+            float sign = (m % 2 == 0) ? 1.0 : -1.0;
+            real_y[-m + 4] = sign * poly[m] * cos_mphi;
+            imag_y[-m + 4] = -sign * poly[m] * sin_mphi;
+        }
+    }
+}
+
+void computeY6m(float costheta, float phi, inout float real_y[13], inout float imag_y[13]) {
+    float sin2 = max(0.0, 1.0 - costheta * costheta);
+    float sintheta = sqrt(sin2);
+    float c2 = costheta * costheta;
+    float c4 = c2 * c2;
+
+    float p60 = 0.0625 * (231.0 * c4 * c2 - 315.0 * c4 + 105.0 * c2 - 5.0);
+    float p61 = -0.4375 * costheta * (33.0 * c4 - 30.0 * c2 + 5.0) * sintheta;
+    float p62 = 2.625 * (33.0 * c4 - 18.0 * c2 + 1.0) * sin2;
+    float p63 = -8.75 * costheta * (11.0 * c2 - 3.0) * sintheta * sin2;
+    float p64 = 52.5 * (11.0 * c2 - 1.0) * sin2 * sin2;
+    float p65 = -945.0 * costheta * sintheta * sin2 * sin2;
+    float p66 = 945.0 * sin2 * sin2 * sin2;
+
+    float norm0 = 0.06334586940387588;
+    float norm1 = 0.02586079979313175;
+    float norm2 = 0.00746537367807775;
+    float norm3 = 0.00215507005476718;
+    float norm4 = 0.00062211516709848;
+    float norm5 = 0.00017959089069638;
+    float norm6 = 0.00005184344073383;
+
+    float poly[7] = float[7](p60 * norm0, p61 * norm1, p62 * norm2, p63 * norm3, p64 * norm4, p65 * norm5, p66 * norm6);
+
+    for (int m = 0; m <= 6; ++m) {
+        float cos_mphi = cos(float(m) * phi);
+        float sin_mphi = sin(float(m) * phi);
+        real_y[m + 6] = poly[m] * cos_mphi;
+        imag_y[m + 6] = poly[m] * sin_mphi;
+        if (m > 0) {
+            float sign = (m % 2 == 0) ? 1.0 : -1.0;
+            real_y[-m + 6] = sign * poly[m] * cos_mphi;
+            imag_y[-m + 6] = -sign * poly[m] * sin_mphi;
+        }
+    }
+}
+
+void main() {
+    uint idx = gl_GlobalInvocationID.x;
+    if (idx >= pc.num_atoms) return;
+
+    uint count = in_neighbor_counts[idx];
+    if (count == 0) {
+        out_q_params[idx] = vec4(0.0);
+        for (int m = 0; m < 13; ++m) {
+            out_q6m[idx * 13 + m] = vec2(0.0);
+        }
+        return;
+    }
+
+    vec3 pos_i = in_positions[idx].xyz;
+    uint base_offset = idx * pc.max_neighbors;
+
+    float sum_y4_real[9];
+    float sum_y4_imag[9];
+    for (int i = 0; i < 9; ++i) { sum_y4_real[i] = 0.0; sum_y4_imag[i] = 0.0; }
+
+    float sum_y6_real[13];
+    float sum_y6_imag[13];
+    for (int i = 0; i < 13; ++i) { sum_y6_real[i] = 0.0; sum_y6_imag[i] = 0.0; }
+
+    vec3 box_size = pc.box_max.xyz - pc.box_min.xyz;
+
+    for (uint n = 0; n < count; ++n) {
+        uint j = in_neighbor_indices[base_offset + n];
+        vec3 dr = in_positions[j].xyz - pos_i;
+        if (box_size.x > 0.0) {
+            dr -= box_size * round(dr / box_size);
+        }
+
+        float r = length(dr);
+        if (r > 1e-6) {
+            float costheta = clamp(dr.z / r, -1.0, 1.0);
+            float phi = atan(dr.y, dr.x);
+
+            float y4_r[9], y4_i[9];
+            computeY4m(costheta, phi, y4_r, y4_i);
+            for (int m = 0; m < 9; ++m) {
+                sum_y4_real[m] += y4_r[m];
+                sum_y4_imag[m] += y4_i[m];
+            }
+
+            float y6_r[13], y6_i[13];
+            computeY6m(costheta, phi, y6_r, y6_i);
+            for (int m = 0; m < 13; ++m) {
+                sum_y6_real[m] += y6_r[m];
+                sum_y6_imag[m] += y6_i[m];
+            }
+        }
+    }
+
+    float inv_n = 1.0 / float(count);
+    float q4_mag_sq = 0.0;
+    for (int m = 0; m < 9; ++m) {
+        float re = sum_y4_real[m] * inv_n;
+        float im = sum_y4_imag[m] * inv_n;
+        q4_mag_sq += re * re + im * im;
+    }
+    float q4 = sqrt((FOUR_PI / 9.0) * q4_mag_sq);
+
+    float q6_mag_sq = 0.0;
+    for (int m = 0; m < 13; ++m) {
+        float re = sum_y6_real[m] * inv_n;
+        float im = sum_y6_imag[m] * inv_n;
+        q6_mag_sq += re * re + im * im;
+        out_q6m[idx * 13 + m] = vec2(re, im);
+    }
+    float q6 = sqrt((FOUR_PI / 13.0) * q6_mag_sq);
+
+    out_q_params[idx] = vec4(q4, q6, q6, 0.0);
+}

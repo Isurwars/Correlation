@@ -1,0 +1,85 @@
+#version 450
+layout(local_size_x = 256) in;
+
+layout(std430, set = 0, binding = 0) readonly buffer AtomPositions {
+    vec4 in_positions[];
+};
+
+layout(std430, set = 0, binding = 1) readonly buffer NeighborCounts {
+    uint in_neighbor_counts[];
+};
+
+layout(std430, set = 0, binding = 2) readonly buffer NeighborIndices {
+    uint in_neighbor_indices[];
+};
+
+layout(std430, set = 0, binding = 3) writeonly buffer LocalEntropyResults {
+    float out_local_entropy[];
+};
+
+layout(push_constant) uniform LocalEntropyParams {
+    vec4 box_min;
+    vec4 box_max;
+    float cutoff;
+    float rho; // local density
+    uint max_neighbors;
+    uint num_atoms;
+} pc;
+
+const float PI = 3.141592653589793;
+
+void main() {
+    uint idx = gl_GlobalInvocationID.x;
+    if (idx >= pc.num_atoms) return;
+
+    uint count = in_neighbor_counts[idx];
+    if (count == 0) {
+        out_local_entropy[idx] = 0.0;
+        return;
+    }
+
+    vec3 pos_i = in_positions[idx].xyz;
+    uint base_offset = idx * pc.max_neighbors;
+    vec3 box_size = pc.box_max.xyz - pc.box_min.xyz;
+
+    // Discretize radial distribution g_m(r) into 50 shells
+    const int NUM_BINS = 50;
+    float bin_width = pc.cutoff / float(NUM_BINS);
+    float g_r[NUM_BINS];
+    for (int b = 0; b < NUM_BINS; ++b) g_r[b] = 0.0;
+
+    for (uint n = 0; n < count; ++n) {
+        uint j = in_neighbor_indices[base_offset + n];
+        vec3 dr = in_positions[j].xyz - pos_i;
+        if (box_size.x > 0.0) {
+            dr -= box_size * round(dr / box_size);
+        }
+        float r = length(dr);
+        if (r < pc.cutoff) {
+            int bin = int(r / bin_width);
+            if (bin < NUM_BINS) {
+                g_r[bin] += 1.0;
+            }
+        }
+    }
+
+    // Integrate -2 * pi * rho * int [g(r)*ln(g(r)) - (g(r) - 1)] * r^2 dr
+    float s_two = 0.0;
+    float inv_vol_factor = 1.0 / (4.0 * PI * pc.rho * bin_width);
+
+    for (int b = 0; b < NUM_BINS; ++b) {
+        float r = (float(b) + 0.5) * bin_width;
+        float shell_vol = 4.0 * PI * r * r * bin_width;
+        float g = g_r[b] / max(pc.rho * shell_vol, 1e-6);
+
+        if (g > 1e-4) {
+            float term = (g * log(g) - (g - 1.0)) * r * r * bin_width;
+            s_two -= 2.0 * PI * pc.rho * term;
+        } else {
+            // g ~ 0 limit: term = r^2 dr
+            s_two -= 2.0 * PI * pc.rho * (r * r * bin_width);
+        }
+    }
+
+    out_local_entropy[idx] = s_two;
+}

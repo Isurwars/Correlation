@@ -243,6 +243,8 @@ if(CORRELATION_HAS_VULKAN)
         render3d/vulkan/VulkanBuffer.cpp
         render3d/vulkan/VulkanOffscreenTarget.cpp
         render3d/vulkan/VulkanPipelineManager.cpp
+        render3d/vulkan/VulkanComputePipelineManager.cpp
+        render3d/vulkan/compute/VulkanComputeService.cpp
         render3d/vulkan/VulkanBufferManager.cpp
         render3d/vulkan/VulkanRenderEngine.cpp
     )

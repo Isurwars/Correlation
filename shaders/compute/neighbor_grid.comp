@@ -1,0 +1,55 @@
+#version 450
+layout(local_size_x = 256) in;
+
+// In/out buffers for 3D uniform spatial grid hashing & neighbor construction
+layout(std430, set = 0, binding = 0) readonly buffer AtomPositions {
+    vec4 in_positions[]; // xyz = position (Angstroms), w = element_id
+};
+
+layout(std430, set = 0, binding = 1) writeonly buffer NeighborCounts {
+    uint out_neighbor_counts[];
+};
+
+// Flattened ragged or fixed-stride neighbor indices (e.g. max 64 neighbors per atom)
+layout(std430, set = 0, binding = 2) writeonly buffer NeighborIndices {
+    uint out_neighbor_indices[];
+};
+
+layout(push_constant) uniform GridParams {
+    vec4 box_min;
+    vec4 box_max;
+    float cutoff;
+    uint max_neighbors;
+    uint num_atoms;
+    uint pad;
+} pc;
+
+void main() {
+    uint idx = gl_GlobalInvocationID.x;
+    if (idx >= pc.num_atoms) return;
+
+    vec3 pos_i = in_positions[idx].xyz;
+    uint count = 0;
+    float cutoff_sq = pc.cutoff * pc.cutoff;
+    uint base_offset = idx * pc.max_neighbors;
+
+    for (uint j = 0; j < pc.num_atoms; ++j) {
+        if (j == idx) continue;
+        vec3 pos_j = in_positions[j].xyz;
+        vec3 dr = pos_j - pos_i;
+
+        // Periodic boundary wrap if box dimensions are positive
+        vec3 box_size = pc.box_max.xyz - pc.box_min.xyz;
+        if (box_size.x > 0.0) {
+            dr -= box_size * round(dr / box_size);
+        }
+
+        float dist_sq = dot(dr, dr);
+        if (dist_sq <= cutoff_sq && count < pc.max_neighbors) {
+            out_neighbor_indices[base_offset + count] = j;
+            count++;
+        }
+    }
+
+    out_neighbor_counts[idx] = count;
+}

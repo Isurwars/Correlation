@@ -1,0 +1,74 @@
+#version 450
+layout(local_size_x = 256) in;
+
+layout(std430, set = 0, binding = 0) readonly buffer NeighborCounts {
+    uint in_neighbor_counts[];
+};
+
+layout(std430, set = 0, binding = 1) readonly buffer NeighborIndices {
+    uint in_neighbor_indices[];
+};
+
+layout(std430, set = 0, binding = 2) readonly buffer ComplexHarmonics {
+    vec2 in_q6m[]; // 13 components per atom
+};
+
+layout(std430, set = 0, binding = 3) writeonly buffer TWFResults {
+    float out_n_conn[];
+};
+
+layout(push_constant) uniform TWFParams {
+    float connection_threshold; // standard ~0.7
+    uint max_neighbors;
+    uint num_atoms;
+    uint pad;
+} pc;
+
+void main() {
+    uint idx = gl_GlobalInvocationID.x;
+    if (idx >= pc.num_atoms) return;
+
+    uint count = in_neighbor_counts[idx];
+    if (count == 0) {
+        out_n_conn[idx] = 0.0;
+        return;
+    }
+
+    uint base_offset = idx * pc.max_neighbors;
+    uint atom_m_offset = idx * 13;
+
+    // Normalizer for atom i
+    float norm_sq_i = 0.0;
+    for (int m = 0; m < 13; ++m) {
+        vec2 q_im = in_q6m[atom_m_offset + m];
+        norm_sq_i += dot(q_im, q_im);
+    }
+    float inv_norm_i = (norm_sq_i > 1e-12) ? inversesqrt(norm_sq_i) : 0.0;
+
+    uint n_conn = 0;
+    for (uint n = 0; n < count; ++n) {
+        uint j = in_neighbor_indices[base_offset + n];
+        uint neighbor_m_offset = j * 13;
+
+        float norm_sq_j = 0.0;
+        float dot_real = 0.0;
+
+        for (int m = 0; m < 13; ++m) {
+            vec2 q_im = in_q6m[atom_m_offset + m];
+            vec2 q_jm = in_q6m[neighbor_m_offset + m];
+
+            norm_sq_j += dot(q_jm, q_jm);
+            // Complex inner product Re(q_im * conj(q_jm)) = re_i * re_j + im_i * im_j
+            dot_real += q_im.x * q_jm.x + q_im.y * q_jm.y;
+        }
+
+        float inv_norm_j = (norm_sq_j > 1e-12) ? inversesqrt(norm_sq_j) : 0.0;
+        float s_ij = dot_real * (inv_norm_i * inv_norm_j);
+
+        if (s_ij >= pc.connection_threshold) {
+            n_conn++;
+        }
+    }
+
+    out_n_conn[idx] = float(n_conn);
+}

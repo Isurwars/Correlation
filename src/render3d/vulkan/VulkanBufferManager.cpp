@@ -7,8 +7,6 @@
  */
 
 #include "render3d/vulkan/VulkanBufferManager.hpp"
-#include <algorithm>
-#include <cmath>
 #include <utility>
 
 namespace correlation::render3d::vulkan {
@@ -243,7 +241,7 @@ void VulkanBufferManager::uploadAtomInstances(const std::vector<AtomInstance> &a
   const auto byte_span = std::as_bytes(std::span{instances.data(), instances.size()});
   const BufferAllocationDesc desc{
       .size = static_cast<VkDeviceSize>(byte_span.size()),
-      .usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+      .usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
       .properties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
   };
 

@@ -170,6 +170,11 @@ void Structure3DRenderPipeline::renderLoop() {
     const bool show_bonds = snapshot.render_bonds && lod_policy.render_bonds;
 
     engine_->setFeatureVisibility(show_bonds, snapshot.render_wireframe);
+    engine_->setGpuHaloConfig(snapshot.gpu_halos_enabled, snapshot.phase_descriptor,
+                              snapshot.phase_min_threshold, snapshot.phase_max_threshold,
+                              snapshot.phase_halo_ratio, snapshot.phase_halo_intensity,
+                              snapshot.phase_halo_color, snapshot.phase_dim_non_matching,
+                              snapshot.phase_hide_non_matching);
     engine_->setCamera(snapshot.camera);
     engine_->setScene(snapshot.scene);
 

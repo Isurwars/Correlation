@@ -10,6 +10,7 @@
 
 #include "render3d/Camera3D.hpp"
 #include "render3d/Scene3D.hpp"
+#include "app/viewmodel/PhaseSearchTypes.hpp"
 #include <cstdint>
 #include <memory>
 #include <span>
@@ -66,6 +67,23 @@ public:
    * @param render_wireframe True to render unit cell wireframe lines.
    */
   virtual void setFeatureVisibility(bool /*render_bonds*/, bool /*render_wireframe*/) {}
+
+  /**
+   * @brief Configures GPU-driven halo and phase search computation.
+   * @param enabled Whether GPU halo computation is active.
+   * @param descriptor Active order parameter descriptor.
+   * @param min_thresh Minimum matching threshold.
+   * @param max_thresh Maximum matching threshold.
+   * @param halo_ratio Visual halo expansion multiplier.
+   * @param halo_intensity Halo color alpha intensity.
+   * @param halo_color RGBA halo highlight color.
+   * @param dim_non_matching Whether non-matching atoms are dimmed.
+   * @param hide_non_matching Whether non-matching atoms are completely hidden.
+   */
+  virtual void setGpuHaloConfig(bool /*enabled*/, app::PhaseDescriptor /*descriptor*/,
+                                float /*min_thresh*/, float /*max_thresh*/, float /*halo_ratio*/,
+                                float /*halo_intensity*/, const std::array<float, 4> & /*halo_color*/,
+                                bool /*dim_non_matching*/, bool /*hide_non_matching*/) {}
 
   /**
    * @brief Executes a single frame render and returns RGBA8 pixel span.

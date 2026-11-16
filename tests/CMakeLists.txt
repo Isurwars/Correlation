@@ -157,6 +157,7 @@ if(CORRELATION_HAS_VULKAN)
         unit/render3d/VulkanPipelineManagerTests.cpp
         unit/render3d/VulkanBufferManagerTests.cpp
         unit/render3d/VulkanRenderEngineTests.cpp
+        unit/render3d/VulkanComputeServiceTests.cpp
     )
 endif()
 # (Definitions and discovery are configured at the end of the file in a loop)

@@ -11,6 +11,7 @@
 #include "render3d/Camera3D.hpp"
 #include "render3d/IRenderEngine.hpp"
 #include "render3d/Scene3D.hpp"
+#include "render3d/vulkan/compute/VulkanComputeService.hpp"
 #include <memory>
 #include <string>
 #include <vector>
@@ -47,6 +48,10 @@ public:
   void setScene(std::shared_ptr<const Scene3D> scene) override;
   void setCamera(const Camera3D &camera) override;
   void setFeatureVisibility(bool render_bonds, bool render_wireframe) override;
+  void setGpuHaloConfig(bool enabled, app::PhaseDescriptor descriptor, float min_thresh,
+                        float max_thresh, float halo_ratio, float halo_intensity,
+                        const std::array<float, 4> &halo_color, bool dim_non_matching,
+                        bool hide_non_matching) override;
   [[nodiscard]] std::span<const uint8_t> renderFrame() override;
   [[nodiscard]] ViewportDimensions dimensions() const noexcept override;
   [[nodiscard]] std::string_view backendName() const noexcept override;
@@ -74,6 +79,9 @@ private:
   std::unique_ptr<vulkan::VulkanOffscreenTarget> target_;
   std::unique_ptr<vulkan::VulkanPipelineManager> pipeline_manager_;
   std::unique_ptr<vulkan::VulkanBufferManager> buffer_manager_;
+  std::unique_ptr<vulkan::VulkanComputeService> compute_service_;
+  vulkan::GpuHaloSettings halo_settings_{};
+  bool gpu_halos_enabled_{false};
   VkCommandBuffer render_command_buffer_{VK_NULL_HANDLE};
   VkFence render_fence_{VK_NULL_HANDLE};
 #endif

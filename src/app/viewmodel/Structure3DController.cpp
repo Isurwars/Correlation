@@ -98,6 +98,7 @@ void Structure3DController::requestRender(bool immediate) {
     return;
   }
   const std::scoped_lock lock(mutex_);
+  const bool gpu_halos = render_pipeline_->isHardwareAccelerated() && isPhaseSearchEnabled();
   const RenderPipelineSnapshot snapshot{
       .camera = camera_,
       .scene = scene_ ? std::make_shared<render3d::Scene3D>(*scene_) : nullptr,
@@ -105,6 +106,15 @@ void Structure3DController::requestRender(bool immediate) {
       .render_bonds = render_bonds_,
       .render_wireframe = render_wireframe_,
       .is_interacting = is_interacting_,
+      .gpu_halos_enabled = gpu_halos,
+      .phase_descriptor = phaseDescriptor(),
+      .phase_min_threshold = phaseMinThreshold(),
+      .phase_max_threshold = phaseMaxThreshold(),
+      .phase_halo_ratio = phaseHaloRadiusRatio(),
+      .phase_halo_intensity = phaseHaloIntensity(),
+      .phase_halo_color = {1.0F, 0.84F, 0.0F, 1.0F},
+      .phase_dim_non_matching = isPhaseDimNonMatching(),
+      .phase_hide_non_matching = isPhaseHideNonMatching(),
   };
   render_pipeline_->updateSnapshot(snapshot, immediate);
 }

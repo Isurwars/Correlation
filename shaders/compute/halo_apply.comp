@@ -1,0 +1,54 @@
+#version 450
+layout(local_size_x = 256) in;
+
+struct AtomInstanceGpu {
+    vec3 center;
+    float radius;
+    vec4 color;
+    vec4 halo_color;
+    vec2 style; // x = halo_radius_ratio, y = dim_factor
+};
+
+layout(std430, set = 0, binding = 0) readonly buffer DescriptorValues {
+    float in_descriptor_values[];
+};
+
+layout(std430, set = 0, binding = 1) buffer AtomInstances {
+    AtomInstanceGpu out_instances[];
+};
+
+layout(push_constant) uniform HaloApplyParams {
+    vec4 active_halo_color; // rgba
+    float min_threshold;
+    float max_threshold;
+    float halo_radius_ratio;
+    float halo_intensity;
+    uint dim_non_matching;
+    uint hide_non_matching;
+    uint num_atoms;
+    uint pad;
+} pc;
+
+void main() {
+    uint idx = gl_GlobalInvocationID.x;
+    if (idx >= pc.num_atoms) return;
+
+    float val = in_descriptor_values[idx];
+    bool matches = (val >= pc.min_threshold && val <= pc.max_threshold);
+
+    if (matches) {
+        out_instances[idx].halo_color = vec4(pc.active_halo_color.rgb, pc.active_halo_color.a * pc.halo_intensity);
+        out_instances[idx].style.x = pc.halo_radius_ratio;
+        out_instances[idx].style.y = 1.0; // full brightness
+    } else {
+        out_instances[idx].halo_color = vec4(0.0);
+        out_instances[idx].style.x = 1.0;
+        if (pc.hide_non_matching != 0) {
+            out_instances[idx].style.y = 0.0; // hidden / fully transparent
+        } else if (pc.dim_non_matching != 0) {
+            out_instances[idx].style.y = 0.25; // dimmed
+        } else {
+            out_instances[idx].style.y = 1.0; // normal
+        }
+    }
+}
