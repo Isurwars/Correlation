@@ -15,7 +15,8 @@ import { PreviewHeader } from "./components/PreviewHeader.slint";
 import { Plot2DViewport } from "./components/Plot2DViewport.slint";
 import { PlotDataTable } from "./components/PlotDataTable.slint";
 import { Structure3DViewport } from "./components/Structure3DViewport.slint";
-import { CrystalMarker } from "./components/PhaseHeatmapView.slint";
+import { PhaseHeatmapView, CrystalMarker } from "./components/PhaseHeatmapView.slint";
+import { TabItem } from "../../material/ui/components/tab_item.slint";
 
 export { CrystalMarker }
 
@@ -47,6 +48,8 @@ export component PreviewCard inherits FilledCard {
 
     in-out property <int> active_tab: 0;
     in-out property <float> dual_split_ratio: 0.5;
+    in-out property <int> dual_left_view: 0; // 0: g(r), 1: S(Q), 2: PAD, 3: 2D Phase Heatmap
+    callback select_dual_left_plot(int);
     property <int> active_color_picker_id: -1;
 
     changed file_loaded => {
@@ -290,52 +293,173 @@ export component PreviewCard inherits FilledCard {
                 height: 100%;
                 visible: root.active_tab == 0 || root.active_tab == 2;
 
-                plot_2d := Plot2DViewport {
-                    width: 100%;
-                    height: 100%;
-                    file_loaded: root.file_loaded;
-                    analysis_running: root.analysis_running;
-                    analysis_done: root.analysis_done;
-                    selected_plot_index: root.selected_plot_index;
-                    preview_plot: root.preview_plot;
-                    file_basename: root.file_basename;
-                    total_atoms: root.total_atoms;
-                    num_frames: root.num_frames;
-                    recent_files: root.recent_files;
-                    active_tab: root.active_tab;
-                    inspector_scope <=> root.inspector_scope;
-                    hover_coord_text: root.hover_coord_text;
-                    has_active_zoom: root.has_active_zoom;
-                    markers_count: root.markers_count;
-                    plot_sidebar_collapsed: root.plot_sidebar_collapsed;
-                    tagged_peaks <=> root.tagged_peaks;
-                    calibration_pairs: root.calibration_pairs;
-                    active_calibration_pair_index <=> root.active_calibration_pair_index;
-                    active_tool <=> root.active_tool;
-                    browse_file => { root.browse_file(); }
-                    load_sample(s) => { root.load_sample(s); }
-                    load_recent(r) => { root.load_recent(r); }
-                    run_analysis => { root.run_analysis(); }
-                    open_panel(idx) => { root.open_panel(idx); }
-                    plot_resized(w, h) => { root.plot_resized(w, h); }
-                    mouse_move(mx, my, hov, w, h) => { root.mouse_move(mx, my, hov, w, h); }
-                    zoom_to_rect(x1, y1, x2, y2) => { root.zoom_to_rect(x1, y1, x2, y2); }
-                    plot_pan(dx, dy) => { root.plot_pan(dx, dy); }
-                    plot_wheel_zoom(mx, my, d) => { root.plot_wheel_zoom(mx, my, d); }
-                    reset_zoom => { root.reset_zoom(); }
-                    add_marker_at(mx, my, x_only) => { root.add_marker_at(mx, my, x_only); }
-                    clear_markers => { root.clear_markers(); }
-                    tag_peak_at(mx, my) => { root.tag_peak_at(mx, my); }
-                    tag_peak_range(x1, x2) => { root.tag_peak_range(x1, x2); }
-                    remove_tagged_peak(id) => { root.remove_tagged_peak(id); }
-                    select_calibration_pair(idx) => { root.select_calibration_pair(idx); }
-                    auto_detect_cutoff(idx) => { root.auto_detect_cutoff(idx); }
-                    reset_calibration_pair(idx) => { root.reset_calibration_pair(idx); }
-                    drag_cutoff_handle(idx, is_max, mx) => { root.drag_cutoff_handle(idx, is_max, mx); }
-                    toggle_plot_settings => { root.toggle_plot_settings(); }
-                    apply_axis_settings => { root.apply_axis_settings(); }
-                    copy_plot_clipboard => { root.copy_plot_clipboard(); }
-                    export_plot => { root.export_plot(); }
+                VerticalLayout {
+                    spacing: 0px;
+                    padding: 0px;
+
+                    // Unified View Selector Bar for Dual View mode
+                    if (root.active_tab == 2): Rectangle {
+                        height: 38px;
+                        background: MaterialPalette.surface_container;
+
+                        HorizontalLayout {
+                            alignment: start;
+                            spacing: 8px;
+                            padding-left: 8px;
+                            padding-right: 8px;
+                            padding-top: 5px;
+                            padding-bottom: 5px;
+
+                            Rectangle {
+                                height: 28px;
+                                background: MaterialPalette.surface_container_high;
+                                border-radius: MaterialStyleMetrics.border_radius_8;
+                                border-width: 1px;
+                                border-color: MaterialPalette.outline_variant;
+                                clip: true;
+
+                                HorizontalLayout {
+                                    spacing: 0px;
+
+                                    TabItem {
+                                        text: "g(r)";
+                                        compact: true;
+                                        active: root.dual_left_view == 0;
+                                        clicked => {
+                                            root.dual_left_view = 0;
+                                            root.select_dual_left_plot(0);
+                                        }
+                                    }
+
+                                    Rectangle { width: 1px; background: MaterialPalette.outline_variant; }
+
+                                    TabItem {
+                                        text: "S(Q)";
+                                        compact: true;
+                                        active: root.dual_left_view == 1;
+                                        clicked => {
+                                            root.dual_left_view = 1;
+                                            root.select_dual_left_plot(1);
+                                        }
+                                    }
+
+                                    Rectangle { width: 1px; background: MaterialPalette.outline_variant; }
+
+                                    TabItem {
+                                        text: "PAD";
+                                        compact: true;
+                                        active: root.dual_left_view == 2;
+                                        clicked => {
+                                            root.dual_left_view = 2;
+                                            root.select_dual_left_plot(2);
+                                        }
+                                    }
+
+                                    Rectangle { width: 1px; background: MaterialPalette.outline_variant; }
+
+                                    TabItem {
+                                        text: "2D Heatmap";
+                                        compact: true;
+                                        active: root.dual_left_view == 3;
+                                        clicked => {
+                                            root.dual_left_view = 3;
+                                            root.select_dual_left_plot(3);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (root.active_tab == 2): Rectangle {
+                        height: 1px;
+                        background: MaterialPalette.outline_variant;
+                    }
+
+                    // Content View Host
+                    Rectangle {
+                        vertical-stretch: 1;
+
+                        plot_2d := Plot2DViewport {
+                            visible: root.active_tab != 2 || root.dual_left_view != 3;
+                            width: 100%;
+                            height: 100%;
+                            file_loaded: root.file_loaded;
+                            analysis_running: root.analysis_running;
+                            analysis_done: root.analysis_done;
+                            selected_plot_index: root.selected_plot_index;
+                            preview_plot: root.preview_plot;
+                            file_basename: root.file_basename;
+                            total_atoms: root.total_atoms;
+                            num_frames: root.num_frames;
+                            recent_files: root.recent_files;
+                            active_tab: root.active_tab;
+                            inspector_scope <=> root.inspector_scope;
+                            hover_coord_text: root.hover_coord_text;
+                            has_active_zoom: root.has_active_zoom;
+                            markers_count: root.markers_count;
+                            plot_sidebar_collapsed: root.plot_sidebar_collapsed;
+                            tagged_peaks <=> root.tagged_peaks;
+                            calibration_pairs: root.calibration_pairs;
+                            active_calibration_pair_index <=> root.active_calibration_pair_index;
+                            active_tool <=> root.active_tool;
+                            browse_file => { root.browse_file(); }
+                            load_sample(s) => { root.load_sample(s); }
+                            load_recent(r) => { root.load_recent(r); }
+                            run_analysis => { root.run_analysis(); }
+                            open_panel(idx) => { root.open_panel(idx); }
+                            plot_resized(w, h) => { root.plot_resized(w, h); }
+                            mouse_move(mx, my, hov, w, h) => { root.mouse_move(mx, my, hov, w, h); }
+                            zoom_to_rect(x1, y1, x2, y2) => { root.zoom_to_rect(x1, y1, x2, y2); }
+                            plot_pan(dx, dy) => { root.plot_pan(dx, dy); }
+                            plot_wheel_zoom(mx, my, d) => { root.plot_wheel_zoom(mx, my, d); }
+                            reset_zoom => { root.reset_zoom(); }
+                            add_marker_at(mx, my, x_only) => { root.add_marker_at(mx, my, x_only); }
+                            clear_markers => { root.clear_markers(); }
+                            tag_peak_at(mx, my) => { root.tag_peak_at(mx, my); }
+                            tag_peak_range(x1, x2) => { root.tag_peak_range(x1, x2); }
+                            remove_tagged_peak(id) => { root.remove_tagged_peak(id); }
+                            select_calibration_pair(idx) => { root.select_calibration_pair(idx); }
+                            auto_detect_cutoff(idx) => { root.auto_detect_cutoff(idx); }
+                            reset_calibration_pair(idx) => { root.reset_calibration_pair(idx); }
+                            drag_cutoff_handle(idx, is_max, mx) => { root.drag_cutoff_handle(idx, is_max, mx); }
+                            toggle_plot_settings => { root.toggle_plot_settings(); }
+                            apply_axis_settings => { root.apply_axis_settings(); }
+                            copy_plot_clipboard => { root.copy_plot_clipboard(); }
+                            export_plot => { root.export_plot(); }
+                        }
+
+                        dual_heatmap := PhaseHeatmapView {
+                            visible: root.active_tab == 2 && root.dual_left_view == 3;
+                            width: 100%;
+                            height: 100%;
+                            heatmap_image: root.structure_3d_phase_heatmap_image;
+                            descriptor_x: root.structure_3d_phase_descriptor;
+                            descriptor_y: root.structure_3d_phase_descriptor_y;
+                            descriptor_name_x: root.structure_3d_phase_descriptor_name;
+                            descriptor_name_y: root.structure_3d_phase_descriptor_name_y;
+                            min_x: root.structure_3d_phase_domain_min;
+                            max_x: root.structure_3d_phase_domain_max;
+                            min_y: root.structure_3d_phase_domain_min_y;
+                            max_y: root.structure_3d_phase_domain_max_y;
+                            sel_min_x: root.structure_3d_phase_min_threshold;
+                            sel_max_x: root.structure_3d_phase_max_threshold;
+                            sel_min_y: root.structure_3d_phase_min_threshold_y;
+                            sel_max_y: root.structure_3d_phase_max_threshold_y;
+                            matching_atoms: root.structure_3d_phase_matching_atoms;
+                            total_atoms: root.structure_3d_phase_total_atoms;
+                            crystal_markers: root.structure_3d_phase_crystal_markers;
+                            set_descriptor_x(idx) => { root.set_phase_descriptor_3d(idx); }
+                            set_descriptor_y(idx) => { root.set_phase_descriptor_y_3d(idx); }
+                            set_selection_2d(min_x, max_x, min_y, max_y) => {
+                                root.set_phase_thresholds_2d_3d(min_x, max_x, min_y, max_y);
+                            }
+                            export_png => { root.export_phase_heatmap_png_3d(); }
+                            reset_selection => {
+                                root.set_phase_thresholds_2d_3d(0.0, 1.0, 0.0, 1.0);
+                            }
+                        }
+                    }
                 }
             }
 

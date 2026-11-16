@@ -459,25 +459,56 @@ PhaseSearchService::computeDescriptorsSync(std::size_t frame_index) {
   const real_t max_dist = computeMaxBondDistance(cutoffs, target_cell.elements().size());
   try {
     const analysis::StructureAnalyzer analyzer(target_cell, max_dist, cutoffs, false);
-    const calculators::SteinhardtCalculator::SteinhardtOptions steinhardt_opts{
-        .keep_q6m = true,
-    };
-    auto steinhardt_params = calculators::SteinhardtCalculator::calculatePerAtom(
-        target_cell, &analyzer, steinhardt_opts);
-    auto lef_values = calculators::LocalEntropyCalculator::calculatePerAtom(target_cell, &analyzer);
-    const calculators::TenWoldeFrenkelParams twf_params{};
-    auto twf_values = calculators::TenWoldeFrenkelCalculator::calculatePerAtom(
-        target_cell, &analyzer, twf_params, &steinhardt_params);
-    auto q_tet_values =
-        calculators::TetrahedralCalculator::calculatePerAtom(target_cell, &analyzer);
-
     auto descriptors = std::make_shared<FramePhaseDescriptors>();
-    descriptors->steinhardt =
-        std::make_shared<const calculators::SteinhardtCalculator::SteinhardtParams>(
-            std::move(steinhardt_params));
-    descriptors->local_entropy = std::move(lef_values);
-    descriptors->twf_nconn = std::move(twf_values);
-    descriptors->q_tet = std::move(q_tet_values);
+
+    const auto active_desc = phase_settings_.descriptor;
+    const bool is_2d = phase_settings_.is_2d_mode;
+    const auto active_desc_y = phase_settings_.descriptor_y;
+
+    const bool need_steinhardt =
+        (active_desc == PhaseDescriptor::Q6Bar || active_desc == PhaseDescriptor::Q4Bar ||
+         active_desc == PhaseDescriptor::Q6 || active_desc == PhaseDescriptor::Q4 ||
+         active_desc == PhaseDescriptor::W6Hat || active_desc == PhaseDescriptor::W4Hat ||
+         active_desc == PhaseDescriptor::TwfNconn) ||
+        (is_2d &&
+         (active_desc_y == PhaseDescriptor::Q6Bar || active_desc_y == PhaseDescriptor::Q4Bar ||
+          active_desc_y == PhaseDescriptor::Q6 || active_desc_y == PhaseDescriptor::Q4 ||
+          active_desc_y == PhaseDescriptor::W6Hat || active_desc_y == PhaseDescriptor::W4Hat ||
+          active_desc_y == PhaseDescriptor::TwfNconn));
+
+    std::optional<calculators::SteinhardtCalculator::SteinhardtParams> steinhardt_params;
+    if (need_steinhardt) {
+      const calculators::SteinhardtCalculator::SteinhardtOptions steinhardt_opts{
+          .keep_q6m = (active_desc == PhaseDescriptor::TwfNconn ||
+                       (is_2d && active_desc_y == PhaseDescriptor::TwfNconn)),
+      };
+      steinhardt_params = calculators::SteinhardtCalculator::calculatePerAtom(
+          target_cell, &analyzer, steinhardt_opts);
+    }
+
+    if (active_desc == PhaseDescriptor::LocalEntropy ||
+        (is_2d && active_desc_y == PhaseDescriptor::LocalEntropy)) {
+      descriptors->local_entropy =
+          calculators::LocalEntropyCalculator::calculatePerAtom(target_cell, &analyzer);
+    }
+
+    if (active_desc == PhaseDescriptor::TwfNconn ||
+        (is_2d && active_desc_y == PhaseDescriptor::TwfNconn)) {
+      const calculators::TenWoldeFrenkelParams twf_params{};
+      descriptors->twf_nconn = calculators::TenWoldeFrenkelCalculator::calculatePerAtom(
+          target_cell, &analyzer, twf_params, steinhardt_params ? &(*steinhardt_params) : nullptr);
+    }
+
+    if (active_desc == PhaseDescriptor::QTet || (is_2d && active_desc_y == PhaseDescriptor::QTet)) {
+      descriptors->q_tet =
+          calculators::TetrahedralCalculator::calculatePerAtom(target_cell, &analyzer);
+    }
+
+    if (steinhardt_params) {
+      descriptors->steinhardt =
+          std::make_shared<const calculators::SteinhardtCalculator::SteinhardtParams>(
+              std::move(*steinhardt_params));
+    }
     return descriptors;
   } catch (const std::exception &) {
     return nullptr;
@@ -641,7 +672,8 @@ void PhaseSearchService::prewarmAdjacentFrames(std::size_t center_frame) {
   if (total <= 1) {
     return;
   }
-  constexpr std::array<int64_t, 4> K_OFFSETS{-1, 1, -2, 2};
+  // Prewarm only immediate adjacent frames (±1) to prevent CPU core starvation and RAM bloat
+  constexpr std::array<int64_t, 2> K_OFFSETS{-1, 1};
   for (const auto offset : K_OFFSETS) {
     if (stop_phase_worker_.load() || requested_phase_frame_.load() >= 0) {
       break;

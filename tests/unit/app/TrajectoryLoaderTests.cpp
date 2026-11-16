@@ -136,7 +136,8 @@ TEST(TrajectoryLoaderTests, InjectedReaderRegistryIsUsed) {
 
 std::filesystem::path findPlasticExamplesDir() {
   for (const auto &candidate :
-       {"examples/plastic", "../examples/plastic", "../../examples/plastic"}) {
+       {"examples/Plastic", "examples/plastic", "../examples/Plastic", "../examples/plastic",
+        "../../examples/Plastic", "../../examples/plastic"}) {
     if (std::filesystem::exists(std::filesystem::path(candidate) / "dump.compresion.0")) {
       return candidate;
     }

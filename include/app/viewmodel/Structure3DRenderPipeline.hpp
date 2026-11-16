@@ -147,9 +147,9 @@ private:
 
   FrameDispatchedCallback callback_;
   std::shared_ptr<std::atomic<bool>> alive_;
-  std::unique_ptr<render3d::IRenderEngine> engine_;
-  render3d::LodController lod_controller_;
   render3d::ViewportDimensions viewport_dims_{.width = 800, .height = 600};
+  render3d::LodController lod_controller_;
+  std::unique_ptr<render3d::IRenderEngine> engine_;
 
   mutable std::mutex mutex_;
   std::condition_variable cv_;

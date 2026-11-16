@@ -368,18 +368,79 @@ correlation::plotters::PlotConfig PlotController::buildPlotConfigFromUI() {
   return config;
 }
 
-void PlotController::populatePlotList() {
+namespace {
+
+std::vector<std::string> filterDualViewPlotNames(std::span<const std::string> all_names) {
+  std::vector<std::string> dual_names;
+  bool has_gr = false;
+  bool has_sq = false;
+  bool has_pad = false;
+
+  for (const auto &name : all_names) {
+    const auto metric_opt = histogramKeyToMetric(name);
+    if (!metric_opt.has_value()) {
+      continue;
+    }
+    if (*metric_opt == correlation::analysis::DistributionMetric::RDF && !has_gr) {
+      dual_names.push_back(name);
+      has_gr = true;
+    } else if (*metric_opt == correlation::analysis::DistributionMetric::SQ && !has_sq) {
+      dual_names.push_back(name);
+      has_sq = true;
+    } else if (*metric_opt == correlation::analysis::DistributionMetric::PAD && !has_pad) {
+      dual_names.push_back(name);
+      has_pad = true;
+    }
+  }
+  dual_names.emplace_back("2D Phase Heatmap");
+  return dual_names;
+}
+
+std::shared_ptr<slint::VectorModel<MenuItem>>
+buildDualPlotMenuModel(std::span<const std::string> dual_names,
+                       const AnalysisDispatcher &dispatcher) {
+  auto menu_model = std::make_shared<slint::VectorModel<MenuItem>>();
+  for (const auto &name : dual_names) {
+    MenuItem item;
+    item.enabled = true;
+    if (name == "2D Phase Heatmap") {
+      item.text = slint::SharedString("2D Phase Heatmap");
+    } else {
+      const correlation::analysis::Histogram *hist = dispatcher.getHistogram(name);
+      item.text = (hist != nullptr && !hist->title.empty()) ? slint::SharedString(hist->title)
+                                                            : slint::SharedString(name);
+    }
+    menu_model->push_back(item);
+  }
+  return menu_model;
+}
+
+} // namespace
+
+void PlotController::syncPlotListForActiveTab(int tab) {
   pipeline_.invalidateCache();
-  auto names = dispatcher_.getAvailableHistogramNames();
+  auto all_names = dispatcher_.getAvailableHistogramNames();
+  sortPlotNames(all_names);
 
-  sortPlotNames(names);
-  available_plot_keys_ = names;
+  if (tab == 2) {
+    available_plot_keys_ = filterDualViewPlotNames(all_names);
+    window_.set_plot_items(buildDualPlotMenuModel(available_plot_keys_, dispatcher_));
+  } else {
+    available_plot_keys_ = all_names;
+    window_.set_plot_items(buildPlotMenuModel(all_names, dispatcher_));
+  }
 
-  window_.set_plot_items(buildPlotMenuModel(names, dispatcher_));
+  const int current = window_.get_selected_plot_index();
+  if (current < 0 || std::cmp_greater_equal(current, available_plot_keys_.size())) {
+    window_.set_selected_plot_index(available_plot_keys_.empty() ? -1 : 0);
+  }
+}
+
+void PlotController::populatePlotList() {
+  syncPlotListForActiveTab(window_.get_preview_active_tab());
   updateDynamicProperties(window_, dispatcher_.getDistributionFunctions());
 
-  window_.set_selected_plot_index(names.empty() ? -1 : 0);
-  if (!names.empty()) {
+  if (!available_plot_keys_.empty()) {
     requestPlotUpdate(0, true);
   }
 }
@@ -436,12 +497,38 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
     return;
   }
 
+  const std::string &name = available_plot_keys_[index];
+  if (name == "2D Phase Heatmap") {
+    window_.set_preview_dual_left_view(3);
+    if (structure_3d_controller_ != nullptr) {
+      structure_3d_controller_->setPhase2DMode(true);
+      structure_3d_controller_->setPhaseSearchEnabled(true);
+    }
+    active_plot_index_ = index;
+    if (window_.get_selected_plot_index() != index) {
+      window_.set_selected_plot_index(index);
+    }
+    return;
+  }
+
+  if (window_.get_preview_active_tab() == 2) {
+    const auto metric_opt = histogramKeyToMetric(name);
+    if (metric_opt.has_value()) {
+      if (*metric_opt == correlation::analysis::DistributionMetric::RDF) {
+        window_.set_preview_dual_left_view(0);
+      } else if (*metric_opt == correlation::analysis::DistributionMetric::SQ) {
+        window_.set_preview_dual_left_view(1);
+      } else if (*metric_opt == correlation::analysis::DistributionMetric::PAD) {
+        window_.set_preview_dual_left_view(2);
+      }
+    }
+  }
+
   if (active_plot_index_ != index) {
     active_plot_index_ = index;
     syncMetricSettingsToUI(index);
   }
 
-  const std::string &name = available_plot_keys_[index];
   const correlation::analysis::Histogram *hist = dispatcher_.getHistogram(name);
   if (hist == nullptr) {
     return;

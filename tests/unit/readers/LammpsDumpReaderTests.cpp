@@ -219,7 +219,8 @@ namespace {
 std::vector<std::string> collectPlasticDumpFiles() {
   std::filesystem::path plastic_dir;
   for (const auto &candidate :
-       {"examples/plastic", "../examples/plastic", "../../examples/plastic"}) {
+       {"examples/Plastic", "examples/plastic", "../examples/Plastic", "../examples/plastic",
+        "../../examples/Plastic", "../../examples/plastic"}) {
     if (std::filesystem::exists(std::filesystem::path(candidate) / "dump.compresion.0")) {
       plastic_dir = candidate;
       break;

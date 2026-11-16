@@ -255,7 +255,11 @@ void AppController::registerStructure3DCallbacks() {
   if (!structure_3d_controller_) {
     return;
   }
+  registerCameraCallbacks();
+  registerPhaseSearchCallbacks();
+}
 
+void AppController::registerCameraCallbacks() {
   window_.on_rotate_3d([this](float delta_x, float delta_y) {
     structure_3d_controller_->handleRotate(delta_x, delta_y);
   });
@@ -317,19 +321,71 @@ void AppController::registerStructure3DCallbacks() {
   window_.on_viewport_3d_resized([this](float width, float height) {
     structure_3d_controller_->handleViewportResized(width, height);
   });
+}
 
+void AppController::handleSelectDualLeftPlot(int idx) {
+  if (idx == 3) {
+    window_.set_preview_dual_left_view(3);
+    if (structure_3d_controller_) {
+      structure_3d_controller_->setPhase2DMode(true);
+      structure_3d_controller_->setPhaseSearchEnabled(true);
+    }
+    if (plot_controller_ != nullptr) {
+      const auto keys = plot_controller_->availablePlotKeys();
+      for (std::size_t i = 0; i < keys.size(); ++i) {
+        if (keys[i] == "2D Phase Heatmap") {
+          window_.set_selected_plot_index(static_cast<int>(i));
+          break;
+        }
+      }
+    }
+    return;
+  }
+
+  window_.set_preview_dual_left_view(idx);
+  if (plot_controller_ == nullptr) {
+    return;
+  }
+
+  std::string_view target_prefix;
+  if (idx == 0) {
+    target_prefix = "g_r";
+  } else if (idx == 1) {
+    target_prefix = "S_q";
+  } else if (idx == 2) {
+    target_prefix = "PAD";
+  }
+
+  const auto keys = plot_controller_->availablePlotKeys();
+  for (std::size_t i = 0; i < keys.size(); ++i) {
+    if (keys[i] == target_prefix || keys[i].starts_with(target_prefix)) {
+      window_.set_selected_plot_index(static_cast<int>(i));
+      plot_controller_->requestPlotUpdate(static_cast<int>(i), true);
+      break;
+    }
+  }
+}
+
+void AppController::registerPhaseSearchCallbacks() {
   window_.on_preview_tab_changed([this](int tab) {
     const bool is_3d = (tab == 1 || tab == 2);
     structure_3d_controller_->set3DModeActive(is_3d);
     if (tab == 2) {
       structure_3d_controller_->handleToggleDistributionHUD(false);
+      if (plot_controller_ != nullptr) {
+        plot_controller_->syncPlotListForActiveTab(2);
+      }
     } else if (tab == 1) {
       structure_3d_controller_->handleToggleDistributionHUD(true);
+    } else if (tab == 0 && plot_controller_ != nullptr) {
+      plot_controller_->syncPlotListForActiveTab(0);
     }
     if ((tab == 0 || tab == 2) && plot_controller_ != nullptr) {
       plot_controller_->requestPlotUpdate(window_.get_selected_plot_index(), true);
     }
   });
+
+  window_.on_select_dual_left_plot([this](int idx) { handleSelectDualLeftPlot(idx); });
 
   window_.on_toggle_phase_search_3d(
       [this](bool enabled) { structure_3d_controller_->setPhaseSearchEnabled(enabled); });
@@ -653,20 +709,13 @@ bool isDefaultDisabledCalculator(const correlation::calculators::BaseCalculator 
   }
   const auto name = calc->getName();
   const auto short_name = calc->getShortName();
-  if (short_name == "RD" || name == "Ring Size Distribution") {
-    return true;
-  }
-  if (short_name == "DAD" || name == "Dihedral Angle Distribution") {
-    return true;
-  }
-  if (short_name == "TDOS" || name == "Total Density of States (TDOS)" || short_name == "MLIP" ||
-      name == "ML Interatomic Potential (ORB-v3)") {
-    return true;
-  }
-  if (name.contains("(GPU)") || short_name.ends_with("_GPU")) {
-    return true;
-  }
-  return false;
+
+  // Enable only Radial (g(r)), Planar Angle Distribution (PAD), and Structure Factor (S(Q)) by
+  // default
+  const bool is_default_enabled = (short_name == "RDF" || name == "Radial Distribution Function" ||
+                                   short_name == "PAD" || name == "Plane Angle Distribution" ||
+                                   short_name == "SQ" || name == "Static Structure Factor");
+  return !is_default_enabled;
 }
 
 using CalculatorPtrList = std::vector<const correlation::calculators::BaseCalculator *>;

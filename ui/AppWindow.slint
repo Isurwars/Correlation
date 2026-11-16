@@ -117,6 +117,8 @@ export component AppWindow inherits Window {
     in property <string> box_dimensions: "";
     in-out property <int> preview_active_tab: 0;
     in-out property <float> preview_dual_split_ratio: 0.5;
+    in-out property <int> preview_dual_left_view: 0; // 0: g(r), 1: S(Q), 2: PAD, 3: 2D Phase Heatmap
+    callback select_dual_left_plot(int);
     in property <[string]> recent_files: [];
     callback reload_file();
     callback load_sample(string);
@@ -951,6 +953,8 @@ export component AppWindow inherits Window {
                         }
                     }
                     dual_split_ratio <=> root.preview_dual_split_ratio;
+                    dual_left_view <=> root.preview_dual_left_view;
+                    select_dual_left_plot(idx) => { root.select_dual_left_plot(idx); }
                     inspector_scope: root.active_right_panel == 1 ? 1 : 0;
                     structure_3d_phase_panel_open: root.active_right_panel == 1;
                     toggle_phase_panel_3d => {

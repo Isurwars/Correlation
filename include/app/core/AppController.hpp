@@ -211,6 +211,9 @@ private:
   void registerAnalysesCallbacks();
   void registerPlotCallbacks();
   void registerStructure3DCallbacks();
+  void registerCameraCallbacks();
+  void registerPhaseSearchCallbacks();
+  void handleSelectDualLeftPlot(int idx);
   void registerPresetAndOptionCallbacks();
   void registerExportCallbacks();
 };

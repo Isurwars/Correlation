@@ -32,20 +32,13 @@ isDefaultDisabledCalculator(const correlation::calculators::BaseCalculator *calc
   }
   const auto name = calc->getName();
   const auto short_name = calc->getShortName();
-  if (short_name == "RD" || name == "Ring Size Distribution") {
-    return true;
-  }
-  if (short_name == "DAD" || name == "Dihedral Angle Distribution") {
-    return true;
-  }
-  if (short_name == "TDOS" || name == "Total Density of States (TDOS)" || short_name == "MLIP" ||
-      name == "ML Interatomic Potential (ORB-v3)") {
-    return true;
-  }
-  if (name.contains("(GPU)") || short_name.ends_with("_GPU")) {
-    return true;
-  }
-  return false;
+
+  // Enable only Radial (g(r)), Planar Angle Distribution (PAD), and Structure Factor (S(Q)) by
+  // default
+  const bool is_default_enabled = (short_name == "RDF" || name == "Radial Distribution Function" ||
+                                   short_name == "PAD" || name == "Plane Angle Distribution" ||
+                                   short_name == "SQ" || name == "Static Structure Factor");
+  return !is_default_enabled;
 }
 
 auto trim(std::string str) -> std::string {

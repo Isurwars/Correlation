@@ -95,6 +95,20 @@ public:
   void requestPlotUpdate(int index, bool immediate = false);
 
   /**
+   * @brief Synchronizes the dropdown plot items and available keys according to active tab.
+   * In Dual View mode (tab 2), restricts selections to g(r), S(Q), PAD, and 2D Phase Heatmap.
+   * @param[in] tab Active tab index.
+   */
+  void syncPlotListForActiveTab(int tab);
+
+  /**
+   * @brief Returns active plot key names.
+   */
+  [[nodiscard]] std::span<const std::string> availablePlotKeys() const noexcept {
+    return available_plot_keys_;
+  }
+
+  /**
    * @brief Handles saving the current plot to file (SVG/PDF).
    */
   void handleSavePlot();
