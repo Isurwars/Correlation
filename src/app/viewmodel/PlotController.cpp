@@ -148,6 +148,10 @@ histogramKeyToMetric(std::string_view name) noexcept {
   if (name == "S_q" || name == "SQ" || name == "S(Q)" || name == "Static Structure Factor") {
     return correlation::analysis::DistributionMetric::SQ;
   }
+  if (name == "XRD" || name.starts_with("XRD_") || name == "X-Ray Diffraction" ||
+      name == "X-Ray Diffraction Pattern") {
+    return correlation::analysis::DistributionMetric::XRD;
+  }
   return std::nullopt;
 }
 
@@ -375,6 +379,7 @@ std::vector<std::string> filterDualViewPlotNames(std::span<const std::string> al
   bool has_gr = false;
   bool has_sq = false;
   bool has_pad = false;
+  bool has_xrd = false;
 
   for (const auto &name : all_names) {
     const auto metric_opt = histogramKeyToMetric(name);
@@ -390,6 +395,9 @@ std::vector<std::string> filterDualViewPlotNames(std::span<const std::string> al
     } else if (*metric_opt == correlation::analysis::DistributionMetric::PAD && !has_pad) {
       dual_names.push_back(name);
       has_pad = true;
+    } else if (*metric_opt == correlation::analysis::DistributionMetric::XRD && !has_xrd) {
+      dual_names.push_back(name);
+      has_xrd = true;
     }
   }
   dual_names.emplace_back("2D Phase Heatmap");
@@ -499,7 +507,7 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
 
   const std::string &name = available_plot_keys_[index];
   if (name == "2D Phase Heatmap") {
-    window_.set_preview_dual_left_view(3);
+    window_.set_preview_dual_left_view(4);
     if (structure_3d_controller_ != nullptr) {
       structure_3d_controller_->setPhase2DMode(true);
       structure_3d_controller_->setPhaseSearchEnabled(true);
@@ -520,6 +528,8 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
         window_.set_preview_dual_left_view(1);
       } else if (*metric_opt == correlation::analysis::DistributionMetric::PAD) {
         window_.set_preview_dual_left_view(2);
+      } else if (*metric_opt == correlation::analysis::DistributionMetric::XRD) {
+        window_.set_preview_dual_left_view(3);
       }
     }
   }

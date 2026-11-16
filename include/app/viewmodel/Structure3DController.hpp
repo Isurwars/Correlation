@@ -497,7 +497,7 @@ private:
 
   std::shared_ptr<const analysis::PerFrameDistributionStore> distribution_store_;
   analysis::DistributionMetric active_dist_metric_{analysis::DistributionMetric::RDF};
-  std::array<render3d::MiniPlotConfig, 3> metric_plot_configs_{};
+  std::array<render3d::MiniPlotConfig, 4> metric_plot_configs_{};
   bool dist_hud_visible_{true};
 
   mutable std::mutex mutex_;

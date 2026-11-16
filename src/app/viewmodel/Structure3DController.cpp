@@ -695,7 +695,7 @@ void Structure3DController::setDistributionStore(
 }
 
 void Structure3DController::handleSelectDistributionMetric(int metric_index) {
-  if (metric_index < 0 || metric_index > 2) {
+  if (metric_index < 0 || metric_index > 3) {
     return;
   }
   {

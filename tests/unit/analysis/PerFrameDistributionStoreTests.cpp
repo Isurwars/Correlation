@@ -31,6 +31,7 @@ TEST_F(PerFrameDistributionStoreTests, InitializesWithCorrectFrameCount) {
   EXPECT_FALSE(store().hasData(DistributionMetric::RDF));
   EXPECT_FALSE(store().hasData(DistributionMetric::PAD));
   EXPECT_FALSE(store().hasData(DistributionMetric::SQ));
+  EXPECT_FALSE(store().hasData(DistributionMetric::XRD));
 }
 
 TEST_F(PerFrameDistributionStoreTests, StoresAndRetrievesBinsAndMean) {
@@ -101,6 +102,31 @@ TEST_F(PerFrameDistributionStoreTests, ValidatesMetadata) {
   const auto &sq_meta = store().getMetricData(DistributionMetric::SQ);
   EXPECT_EQ(sq_meta.name, "S(Q)");
   EXPECT_EQ(sq_meta.x_unit, "Å⁻¹");
+
+  const auto &xrd_meta = store().getMetricData(DistributionMetric::XRD);
+  EXPECT_EQ(xrd_meta.name, "XRD");
+  EXPECT_EQ(xrd_meta.x_unit, "deg");
+  EXPECT_EQ(xrd_meta.y_unit, "a.u.");
+}
+
+TEST_F(PerFrameDistributionStoreTests, StoresAndRetrievesXRDPerFrameAndMean) {
+  const std::vector<real_t> bins = {static_cast<real_t>(20.0), static_cast<real_t>(40.0),
+                                    static_cast<real_t>(60.0)};
+  const std::vector<real_t> mean = {static_cast<real_t>(100.0), static_cast<real_t>(500.0),
+                                    static_cast<real_t>(250.0)};
+  const std::vector<real_t> frame2 = {static_cast<real_t>(90.0), static_cast<real_t>(520.0),
+                                      static_cast<real_t>(240.0)};
+
+  store().setBins(DistributionMetric::XRD, bins);
+  store().setMeanCurve(DistributionMetric::XRD, mean);
+  store().setFrameCurve(DistributionMetric::XRD, 2, frame2);
+
+  EXPECT_TRUE(store().hasData(DistributionMetric::XRD));
+  EXPECT_TRUE(store().hasFrame(DistributionMetric::XRD, 2));
+  EXPECT_FALSE(store().hasFrame(DistributionMetric::XRD, 1));
+  EXPECT_EQ(store().getBins(DistributionMetric::XRD), bins);
+  EXPECT_EQ(store().getMeanCurve(DistributionMetric::XRD), mean);
+  EXPECT_EQ(store().getFrameCurve(DistributionMetric::XRD, 2), frame2);
 }
 
 } // namespace

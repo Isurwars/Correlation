@@ -528,6 +528,12 @@ void extractFrameCurves(const DistributionFunctions &frame_df, size_t frame_idx,
       store.setFrameCurve(DistributionMetric::SQ, frame_idx, it_tot->second);
     }
   }
+  if (const auto it_xrd = hists.find("XRD"); it_xrd != hists.end()) {
+    if (const auto it_tot = it_xrd->second.partials.find("Total");
+        it_tot != it_xrd->second.partials.end()) {
+      store.setFrameCurve(DistributionMetric::XRD, frame_idx, it_tot->second);
+    }
+  }
 }
 
 void computeSingleFrameMiniCurves(const correlation::core::Trajectory &trajectory, size_t frame_idx,
@@ -560,6 +566,12 @@ void computeSingleFrameMiniCurves(const correlation::core::Trajectory &trajector
     sq_calc->calculateFrame(frame_df, settings);
   }
 
+  const auto *xrd_calc =
+      ::correlation::calculators::CalculatorFactory::instance().getCalculator("XRD");
+  if (xrd_calc != nullptr && xrd_calc->isConfigured()) {
+    xrd_calc->calculateFrame(frame_df, settings);
+  }
+
   extractFrameCurves(frame_df, frame_idx, store);
 }
 
@@ -585,6 +597,13 @@ void populateMeanStoreCurves(const DistributionFunctions &final_df,
     if (const auto it_tot = it_sq->second.partials.find("Total");
         it_tot != it_sq->second.partials.end()) {
       store.setMeanCurve(DistributionMetric::SQ, it_tot->second);
+    }
+  }
+  if (const auto it_xrd = final_hists.find("XRD"); it_xrd != final_hists.end()) {
+    store.setBins(DistributionMetric::XRD, it_xrd->second.bins);
+    if (const auto it_tot = it_xrd->second.partials.find("Total");
+        it_tot != it_xrd->second.partials.end()) {
+      store.setMeanCurve(DistributionMetric::XRD, it_tot->second);
     }
   }
 }

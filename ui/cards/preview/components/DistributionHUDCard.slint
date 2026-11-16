@@ -15,7 +15,7 @@ import {
 
 export component DistributionHUDCard inherits Rectangle {
     in property <image> chart_image;
-    in property <int> active_metric: 0; // 0 = g(r), 1 = PAD, 2 = S(Q)
+    in property <int> active_metric: 0; // 0 = g(r), 1 = PAD, 2 = S(Q), 3 = XRD
     in property <string> peak_text: "";
     in property <int> current_frame: 0;
 
@@ -43,17 +43,19 @@ export component DistributionHUDCard inherits Rectangle {
             spacing: MaterialStyleMetrics.spacing_6;
 
             SegmentedButton {
-                width: 128px;
+                width: 176px;
                 segment_height: MaterialStyleMetrics.size_20;
                 model: [
                     { label: "g(r)", enabled: true },
                     { label: "PAD", enabled: true },
                     { label: "S(Q)", enabled: true },
+                    { label: "XRD", enabled: true },
                 ];
                 tooltips: [
                     "Show Radial Distribution Function g(r) in mini-HUD.",
                     "Show Plane-Angle Distribution (PAD) in mini-HUD.",
                     "Show Static Structure Factor S(Q) in mini-HUD.",
+                    "Show X-Ray Diffraction Pattern I(2θ) in mini-HUD.",
                 ];
                 current_index: root.active_metric;
                 selected(i) => { root.set_metric(i); }

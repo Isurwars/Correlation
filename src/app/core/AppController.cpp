@@ -324,8 +324,8 @@ void AppController::registerCameraCallbacks() {
 }
 
 void AppController::handleSelectDualLeftPlot(int idx) {
-  if (idx == 3) {
-    window_.set_preview_dual_left_view(3);
+  if (idx == 4) {
+    window_.set_preview_dual_left_view(4);
     if (structure_3d_controller_) {
       structure_3d_controller_->setPhase2DMode(true);
       structure_3d_controller_->setPhaseSearchEnabled(true);
@@ -354,6 +354,8 @@ void AppController::handleSelectDualLeftPlot(int idx) {
     target_prefix = "S_q";
   } else if (idx == 2) {
     target_prefix = "PAD";
+  } else if (idx == 3) {
+    target_prefix = "XRD";
   }
 
   const auto keys = plot_controller_->availablePlotKeys();
@@ -710,11 +712,13 @@ bool isDefaultDisabledCalculator(const correlation::calculators::BaseCalculator 
   const auto name = calc->getName();
   const auto short_name = calc->getShortName();
 
-  // Enable only Radial (g(r)), Planar Angle Distribution (PAD), and Structure Factor (S(Q)) by
-  // default
-  const bool is_default_enabled = (short_name == "RDF" || name == "Radial Distribution Function" ||
-                                   short_name == "PAD" || name == "Plane Angle Distribution" ||
-                                   short_name == "SQ" || name == "Static Structure Factor");
+  // Enable only Radial (g(r)), Planar Angle Distribution (PAD), Structure Factor (S(Q)), and
+  // XRD by default
+  const bool is_default_enabled =
+      (short_name == "RDF" || name == "Radial Distribution Function" || short_name == "PAD" ||
+       name == "Plane Angle Distribution" || short_name == "SQ" ||
+       name == "Static Structure Factor" || short_name == "XRD" || name == "X-Ray Diffraction" ||
+       name == "X-Ray Diffraction Pattern");
   return !is_default_enabled;
 }
 

@@ -44,6 +44,16 @@ PerFrameDistributionStore::PerFrameDistributionStore(std::size_t total_frames)
       .x_unit = "Å⁻¹",
       .y_unit = "",
   };
+
+  metrics_.at(toIndex(DistributionMetric::XRD)) = {
+      .bins = {},
+      .mean_curve = {},
+      .frame_curves = std::vector<std::vector<real_t>>(total_frames_),
+      .name = "XRD",
+      .title = "X-Ray Diffraction Pattern",
+      .x_unit = "deg",
+      .y_unit = "a.u.",
+  };
 }
 
 std::size_t PerFrameDistributionStore::toIndex(DistributionMetric metric) noexcept {

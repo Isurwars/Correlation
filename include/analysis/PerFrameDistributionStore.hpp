@@ -23,20 +23,21 @@ namespace correlation::analysis {
 enum class DistributionMetric : uint8_t {
   RDF = 0, ///< Radial Distribution Function g(r)
   PAD = 1, ///< Planar Angle Distribution θ
-  SQ = 2   ///< Structure Factor S(Q)
+  SQ = 2,  ///< Structure Factor S(Q)
+  XRD = 3  ///< X-Ray Diffraction Pattern I(2θ)
 };
 
 /**
  * @brief Holds 1D curve data for a specific distribution across an entire trajectory.
  */
 struct MetricCurveData {
-  std::vector<real_t> bins;                      ///< X-axis bin positions (shared across frames)
-  std::vector<real_t> mean_curve;                ///< Y-axis ensemble mean curve (from [min_frame, max_frame])
+  std::vector<real_t> bins;       ///< X-axis bin positions (shared across frames)
+  std::vector<real_t> mean_curve; ///< Y-axis ensemble mean curve (from [min_frame, max_frame])
   std::vector<std::vector<real_t>> frame_curves; ///< Y-axis per-frame curves (indexed by frame_idx)
-  std::string name;                              ///< Short metric identifier ("g(r)", "PAD", "S(Q)")
-  std::string title;                             ///< Full display title
-  std::string x_unit;                            ///< Physical unit for X axis ("Å", "deg", "Å⁻¹")
-  std::string y_unit;                            ///< Physical unit for Y axis
+  std::string name;   ///< Short metric identifier ("g(r)", "PAD", "S(Q)")
+  std::string title;  ///< Full display title
+  std::string x_unit; ///< Physical unit for X axis ("Å", "deg", "Å⁻¹")
+  std::string y_unit; ///< Physical unit for Y axis
 };
 
 /**
@@ -117,7 +118,7 @@ public:
    * @return Const reference to the frame's curve vector (or empty vector if unpopulated).
    */
   [[nodiscard]] const std::vector<real_t> &getFrameCurve(DistributionMetric metric,
-                                                        std::size_t frame_idx) const;
+                                                         std::size_t frame_idx) const;
 
   /**
    * @brief Retrieves const reference to the full metric curve dataset.
@@ -134,7 +135,7 @@ public:
   [[nodiscard]] MetricCurveData &getMetricData(DistributionMetric metric);
 
 private:
-  static constexpr std::size_t kMetricCount = 3;
+  static constexpr std::size_t kMetricCount = 4;
 
   [[nodiscard]] static std::size_t toIndex(DistributionMetric metric) noexcept;
 
@@ -144,4 +145,3 @@ private:
 };
 
 } // namespace correlation::analysis
-

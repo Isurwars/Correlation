@@ -107,6 +107,26 @@ TEST_F(Structure3DControllerDistributionTests, TogglesMetricAndUpdatesWindow) {
             std::string::npos);
 }
 
+TEST_F(Structure3DControllerDistributionTests, TogglesXRDMetricAndUpdatesWindow) {
+  const ProgramOptions options;
+  Structure3DController controller(window(), options);
+
+  const auto store = std::make_shared<analysis::PerFrameDistributionStore>(2);
+  store->setBins(analysis::DistributionMetric::XRD, {20.0, 30.0, 42.5, 60.0});
+  store->setMeanCurve(analysis::DistributionMetric::XRD, {10.0, 20.0, 150.0, 15.0});
+  store->setFrameCurve(analysis::DistributionMetric::XRD, 0, {12.0, 22.0, 160.0, 14.0});
+
+  controller.setDistributionStore(store);
+
+  // Switch to XRD (metric 3)
+  controller.handleSelectDistributionMetric(3);
+
+  EXPECT_TRUE(window().get_structure_3d_dist_has_data());
+  EXPECT_EQ(window().get_structure_3d_dist_metric(), 3);
+  EXPECT_NE(std::string(window().get_structure_3d_dist_peak_text().data()).find("42.5"),
+            std::string::npos);
+}
+
 TEST_F(Structure3DControllerDistributionTests, TogglesHUDVisibility) {
   const ProgramOptions options;
   Structure3DController controller(window(), options);

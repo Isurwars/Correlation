@@ -33,11 +33,13 @@ isDefaultDisabledCalculator(const correlation::calculators::BaseCalculator *calc
   const auto name = calc->getName();
   const auto short_name = calc->getShortName();
 
-  // Enable only Radial (g(r)), Planar Angle Distribution (PAD), and Structure Factor (S(Q)) by
-  // default
-  const bool is_default_enabled = (short_name == "RDF" || name == "Radial Distribution Function" ||
-                                   short_name == "PAD" || name == "Plane Angle Distribution" ||
-                                   short_name == "SQ" || name == "Static Structure Factor");
+  // Enable only Radial (g(r)), Planar Angle Distribution (PAD), Structure Factor (S(Q)), and
+  // XRD by default
+  const bool is_default_enabled =
+      (short_name == "RDF" || name == "Radial Distribution Function" || short_name == "PAD" ||
+       name == "Plane Angle Distribution" || short_name == "SQ" ||
+       name == "Static Structure Factor" || short_name == "XRD" || name == "X-Ray Diffraction" ||
+       name == "X-Ray Diffraction Pattern");
   return !is_default_enabled;
 }
 
