@@ -447,6 +447,9 @@ export component PreviewCard inherits FilledCard {
                             height: 100%;
                             full_height: true;
                             heatmap_image: root.structure_3d_phase_heatmap_image;
+                            colorbar_image: root.structure_3d_phase_colorbar_image;
+                            colormap_index: root.structure_3d_phase_colormap;
+                            preset_index: root.structure_3d_phase_preset;
                             descriptor_x: root.structure_3d_phase_descriptor;
                             descriptor_y: root.structure_3d_phase_descriptor_y;
                             descriptor_name_x: root.structure_3d_phase_descriptor_name;
@@ -464,6 +467,8 @@ export component PreviewCard inherits FilledCard {
                             crystal_markers: root.structure_3d_phase_crystal_markers;
                             set_descriptor_x(idx) => { root.set_phase_descriptor_3d(idx); }
                             set_descriptor_y(idx) => { root.set_phase_descriptor_y_3d(idx); }
+                            set_colormap(idx) => { root.set_phase_colormap_3d(idx); }
+                            set_preset(idx) => { root.set_phase_preset_3d(idx); }
                             set_selection_2d(min_x, max_x, min_y, max_y) => {
                                 root.set_phase_thresholds_2d_3d(min_x, max_x, min_y, max_y);
                             }

@@ -148,15 +148,6 @@ export component Structure3DSidebar inherits Rectangle {
             total_atoms: root.total_atoms;
             colorbar_image: root.colorbar_image;
             descriptor_name: root.descriptor_name;
-            is_2d_mode: root.is_2d_mode;
-            descriptor_y_index: root.descriptor_y_index;
-            min_threshold_y: root.min_threshold_y;
-            max_threshold_y: root.max_threshold_y;
-            domain_min_y: root.domain_min_y;
-            domain_max_y: root.domain_max_y;
-            descriptor_name_y: root.descriptor_name_y;
-            heatmap_image: root.heatmap_image;
-            crystal_markers: root.crystal_markers;
 
             toggle_phase_enabled(en) => { root.toggle_phase_enabled(en); }
             set_preset(idx) => { root.set_preset(idx); }
@@ -168,10 +159,6 @@ export component Structure3DSidebar inherits Rectangle {
             set_atom_scale(val) => { root.set_atom_scale(val); }
             set_dim_non_matching(dim) => { root.set_dim_non_matching(dim); }
             set_hide_non_matching(hide) => { root.set_hide_non_matching(hide); }
-            set_2d_mode(en) => { root.set_2d_mode(en); }
-            set_descriptor_y(idx) => { root.set_descriptor_y(idx); }
-            set_thresholds_2d(x0, x1, y0, y1) => { root.set_thresholds_2d(x0, x1, y0, y1); }
-            export_heatmap_png => { root.export_heatmap_png(); }
         }
 
         // 3. Tab 1: Display & Scene Configuration

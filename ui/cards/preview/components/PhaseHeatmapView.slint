@@ -8,16 +8,21 @@ import {
     MaterialPalette,
     MaterialTypography,
     MaterialText,
+    Chip,
 } from "../../../material/material.slint";
 import { CrystalMarker } from "./PhaseHeatmapTypes.slint";
 import { PhaseHeatmapAxisSelector } from "./PhaseHeatmapAxisSelector.slint";
 import { PhaseHeatmapCanvas } from "./PhaseHeatmapCanvas.slint";
+import { PhaseColorbar } from "./PhaseColorbar.slint";
 
 export { CrystalMarker }
 
 export component PhaseHeatmapView inherits Rectangle {
     in property <bool> full_height: false;
     in property <image> heatmap_image;
+    in property <image> colorbar_image;
+    in property <int> colormap_index: 0;
+    in property <int> preset_index: 0;
     in property <int> descriptor_x: 1; // Default Q4Bar
     in property <int> descriptor_y: 0; // Default Q6Bar
     in property <string> descriptor_name_x: "q̄₄";
@@ -36,6 +41,8 @@ export component PhaseHeatmapView inherits Rectangle {
 
     callback set_descriptor_x(int);
     callback set_descriptor_y(int);
+    callback set_colormap(int);
+    callback set_preset(int);
     callback set_selection_2d(float, float, float, float); // min_x, max_x, min_y, max_y
     callback export_png();
     callback reset_selection();
@@ -56,7 +63,7 @@ export component PhaseHeatmapView inherits Rectangle {
             alignment: space-between;
 
             MaterialText {
-                text: "2D Density Map";
+                text: "2D Phase Heatmap";
                 font-size: MaterialTypography.label_small.font_size;
                 font-weight: 700;
                 color: MaterialPalette.on_surface;
@@ -127,12 +134,64 @@ export component PhaseHeatmapView inherits Rectangle {
             }
         }
 
-        // 2. Axis Selection Rows
+        // 2. Crystal Presets Quick Selector
+        HorizontalLayout {
+            spacing: 3px;
+            height: 22px;
+            property <[string]> preset_labels: ["Custom", "Liquid", "Glass", "a-Net", "FCC", "HCP", "BCC", "Ico", "Diamond"];
+
+            for p_label[p_idx] in self.preset_labels: Chip {
+                horizontal-stretch: 1;
+                chip_height: MaterialStyleMetrics.size_20;
+                corner_radius: MaterialStyleMetrics.border_radius_8;
+                label: p_label;
+                selected: root.preset_index == p_idx;
+                active_bg: MaterialPalette.primary.with_alpha(25%);
+                active_fg: MaterialPalette.primary;
+                tooltip_text: "Apply " + p_label + " 2D phase preset.";
+                clicked => { root.set_preset(p_idx); }
+            }
+        }
+
+        // 3. Axis Selection Rows
         PhaseHeatmapAxisSelector {
             descriptor_x: root.descriptor_x;
             descriptor_y: root.descriptor_y;
             set_descriptor_x(idx) => { root.set_descriptor_x(idx); }
             set_descriptor_y(idx) => { root.set_descriptor_y(idx); }
+        }
+
+        // 4. Color Palette & Colormap Selector
+        HorizontalLayout {
+            spacing: 8px;
+            alignment: center;
+
+            // Colormap Selector Chips
+            HorizontalLayout {
+                spacing: 2px;
+                property <[string]> cmap_labels: ["Viridis", "Plasma", "Cool", "Turbo"];
+
+                for c_label[c_idx] in self.cmap_labels: Chip {
+                    chip_height: MaterialStyleMetrics.size_20;
+                    corner_radius: MaterialStyleMetrics.border_radius_8;
+                    label: c_label;
+                    selected: root.colormap_index == c_idx;
+                    active_bg: MaterialPalette.tertiary.with_alpha(25%);
+                    active_fg: MaterialPalette.tertiary;
+                    tooltip_text: "Switch colormap to " + c_label;
+                    clicked => { root.set_colormap(c_idx); }
+                }
+            }
+
+            // Scalar Palette Colorbar Bar
+            PhaseColorbar {
+                horizontal-stretch: 1;
+                colorbar_image: root.colorbar_image;
+                min_threshold: root.sel_min_x;
+                max_threshold: root.sel_max_x;
+                descriptor_name: root.descriptor_name_x;
+                show_title: true;
+            }
         }
 
         // 3. Heatmap Canvas with Coordinate Overlays
@@ -216,14 +275,25 @@ export component PhaseHeatmapView inherits Rectangle {
             }
         }
 
-        // 4. Selection Telemetry Summary
+        // 5. Selection Telemetry Summary
         HorizontalLayout {
             alignment: space-between;
 
-            MaterialText {
-                text: "Selection Box:";
-                font-size: 9.5px;
-                color: MaterialPalette.on_surface_variant;
+            HorizontalLayout {
+                spacing: 6px;
+
+                MaterialText {
+                    text: "Selection Box:";
+                    font-size: 9.5px;
+                    color: MaterialPalette.on_surface_variant;
+                }
+
+                MaterialText {
+                    text: "[" + (Math.round(root.sel_min_x * 100) / 100) + ", " + (Math.round(root.sel_max_x * 100) / 100) + "] × [" + (Math.round(root.sel_min_y * 100) / 100) + ", " + (Math.round(root.sel_max_y * 100) / 100) + "]";
+                    font-size: 9.5px;
+                    font-weight: 600;
+                    color: MaterialPalette.on_surface;
+                }
             }
 
             MaterialText {

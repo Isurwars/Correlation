@@ -15,6 +15,7 @@ export component PhaseVisualControls inherits VerticalLayout {
     in property <float> atom_scale: 0.35;
     in property <bool> dim_non_matching: false;
     in property <bool> hide_non_matching: false;
+    in property <bool> show_dim_options: true;
 
     callback set_intensity(float);
     callback set_radius_ratio(float);
@@ -62,14 +63,14 @@ export component PhaseVisualControls inherits VerticalLayout {
         }
     }
 
-    CheckBoxRow {
+    if root.show_dim_options: CheckBoxRow {
         text: "Dim non-matching core atoms";
         check_state_bool: root.dim_non_matching;
         tooltip_text: "Reduce opacity of atoms outside the selected order-parameter range.";
         checked_state_changed(dim) => { root.set_dim_non_matching(dim); }
     }
 
-    CheckBoxRow {
+    if root.show_dim_options: CheckBoxRow {
         text: "Hide non-matching core atoms";
         check_state_bool: root.hide_non_matching;
         tooltip_text: "Completely hide atoms outside the selected order-parameter range.";
