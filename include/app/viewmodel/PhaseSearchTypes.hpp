@@ -108,18 +108,18 @@ struct PhaseHistogram {
 
 /**
  * @struct PhaseHeatmap2D
- * @brief 64x64 joint distribution histogram across two order parameters (X and Y).
+ * @brief 128x128 joint distribution histogram across two order parameters (X and Y).
  */
 struct PhaseHeatmap2D {
-  static constexpr std::size_t K_GRID_SIZE = 64;
-  std::vector<uint32_t> counts; ///< 64x64 grid cells (row 0 is max_y, row 63 is min_y).
-  float min_x{0.0F};            ///< Domain minimum on X-axis.
-  float max_x{1.0F};            ///< Domain maximum on X-axis.
-  float min_y{0.0F};            ///< Domain minimum on Y-axis.
-  float max_y{1.0F};            ///< Domain maximum on Y-axis.
-  float bin_width_x{0.015625F}; ///< Bin width along X.
-  float bin_width_y{0.015625F}; ///< Bin width along Y.
-  uint32_t max_count{0};        ///< Peak bin count across the 64x64 grid.
+  static constexpr std::size_t K_GRID_SIZE = 128;
+  std::vector<uint32_t> counts;  ///< 128x128 grid cells (row 0 is max_y, row 127 is min_y).
+  float min_x{0.0F};             ///< Domain minimum on X-axis.
+  float max_x{1.0F};             ///< Domain maximum on X-axis.
+  float min_y{0.0F};             ///< Domain minimum on Y-axis.
+  float max_y{1.0F};             ///< Domain maximum on Y-axis.
+  float bin_width_x{0.0078125F}; ///< Bin width along X.
+  float bin_width_y{0.0078125F}; ///< Bin width along Y.
+  uint32_t max_count{0};         ///< Peak bin count across the 128x128 grid.
   uint32_t matching_atom_count{
       0,
   }; ///< Atoms falling inside 2D bounding box [Xmin, Xmax] x [Ymin, Ymax].

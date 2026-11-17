@@ -19,14 +19,23 @@ namespace correlation::app {
 
 namespace {
 
-constexpr std::size_t K_HEATMAP_GRID_BINS = 64;
-constexpr std::size_t K_SLINT_PREVIEW_DIMS = 128;
-constexpr std::size_t K_PNG_EXPORT_DIMS = 256;
+constexpr std::size_t K_SLINT_PREVIEW_DIMS = 512;
+constexpr std::size_t K_PNG_EXPORT_DIMS = 1024;
+
+[[nodiscard]] inline std::size_t resolveGridBins(const PhaseHeatmap2D &heatmap) noexcept {
+  if (heatmap.counts.empty()) {
+    return PhaseHeatmap2D::K_GRID_SIZE;
+  }
+  const auto calculated_bins =
+      static_cast<std::size_t>(std::round(std::sqrt(heatmap.counts.size())));
+  return (calculated_bins > 0) ? calculated_bins : PhaseHeatmap2D::K_GRID_SIZE;
+}
 
 } // namespace
 
 slint::Image PhaseExportManager::renderHeatmapImage(const PhaseHeatmap2D &heatmap,
                                                     plotters::ColormapType colormap) {
+  const std::size_t grid_bins = resolveGridBins(heatmap);
   std::vector<slint::Rgba8Pixel> pixels(K_SLINT_PREVIEW_DIMS * K_SLINT_PREVIEW_DIMS);
 
   const double log_max =
@@ -34,11 +43,10 @@ slint::Image PhaseExportManager::renderHeatmapImage(const PhaseHeatmap2D &heatma
 
   for (std::size_t py = 0; py < K_SLINT_PREVIEW_DIMS; ++py) {
     // Invert Y so 0 is at bottom
-    const std::size_t bin_y =
-        (K_SLINT_PREVIEW_DIMS - 1 - py) * K_HEATMAP_GRID_BINS / K_SLINT_PREVIEW_DIMS;
+    const std::size_t bin_y = (K_SLINT_PREVIEW_DIMS - 1 - py) * grid_bins / K_SLINT_PREVIEW_DIMS;
     for (std::size_t px = 0; px < K_SLINT_PREVIEW_DIMS; ++px) {
-      const std::size_t bin_x = px * K_HEATMAP_GRID_BINS / K_SLINT_PREVIEW_DIMS;
-      const std::size_t cell_idx = bin_y * K_HEATMAP_GRID_BINS + bin_x;
+      const std::size_t bin_x = px * grid_bins / K_SLINT_PREVIEW_DIMS;
+      const std::size_t cell_idx = bin_y * grid_bins + bin_x;
       const std::uint32_t count =
           (cell_idx < heatmap.counts.size()) ? heatmap.counts[cell_idx] : 0U;
 
@@ -63,6 +71,7 @@ slint::Image PhaseExportManager::renderHeatmapImage(const PhaseHeatmap2D &heatma
 bool PhaseExportManager::exportHeatmapPng(const std::string &filepath,
                                           const PhaseHeatmap2D &heatmap,
                                           plotters::ColormapType colormap) {
+  const std::size_t grid_bins = resolveGridBins(heatmap);
   const std::string out_path = filepath.empty() ? "phase_heatmap_2d.png" : filepath;
   std::vector<std::uint8_t> raw_rgba(K_PNG_EXPORT_DIMS * K_PNG_EXPORT_DIMS * 4);
 
@@ -70,11 +79,10 @@ bool PhaseExportManager::exportHeatmapPng(const std::string &filepath,
       (heatmap.max_count > 0) ? std::log1p(static_cast<double>(heatmap.max_count)) : 1.0;
 
   for (std::size_t py = 0; py < K_PNG_EXPORT_DIMS; ++py) {
-    const std::size_t bin_y =
-        (K_PNG_EXPORT_DIMS - 1 - py) * K_HEATMAP_GRID_BINS / K_PNG_EXPORT_DIMS;
+    const std::size_t bin_y = (K_PNG_EXPORT_DIMS - 1 - py) * grid_bins / K_PNG_EXPORT_DIMS;
     for (std::size_t px = 0; px < K_PNG_EXPORT_DIMS; ++px) {
-      const std::size_t bin_x = px * K_HEATMAP_GRID_BINS / K_PNG_EXPORT_DIMS;
-      const std::size_t cell_idx = bin_y * K_HEATMAP_GRID_BINS + bin_x;
+      const std::size_t bin_x = px * grid_bins / K_PNG_EXPORT_DIMS;
+      const std::size_t cell_idx = bin_y * grid_bins + bin_x;
       const std::uint32_t count =
           (cell_idx < heatmap.counts.size()) ? heatmap.counts[cell_idx] : 0U;
 

@@ -12,6 +12,7 @@ import {
 import { CrystalMarker } from "./PhaseHeatmapTypes.slint";
 
 export component PhaseHeatmapCanvas inherits Rectangle {
+    in property <bool> full_height: false;
     in property <image> heatmap_image;
     in property <float> min_x: 0.0;
     in property <float> max_x: 1.0;
@@ -34,7 +35,8 @@ export component PhaseHeatmapCanvas inherits Rectangle {
     property <length> drag_curr_y: 0px;
 
     horizontal-stretch: 1;
-    height: 190px;
+    vertical-stretch: root.full_height ? 1 : 0;
+    min-height: 190px;
     border-radius: MaterialStyleMetrics.border_radius_6;
     background: MaterialPalette.hud_canvas;
     border-width: 1.5px;

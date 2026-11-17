@@ -378,7 +378,7 @@ TEST_F(Structure3DControllerPhaseSearchTests, PhaseHeatmap2DAndPngExport) {
   controller.setPhaseThresholds2D(0.45F, 0.60F, 0.10F, 0.25F);
 
   const auto heatmap = controller.phaseHeatmap();
-  EXPECT_EQ(heatmap.counts.size(), 64UL * 64UL);
+  EXPECT_EQ(heatmap.counts.size(), PhaseHeatmap2D::K_GRID_SIZE * PhaseHeatmap2D::K_GRID_SIZE);
   EXPECT_EQ(heatmap.total_atom_count, cell.atoms().size());
   EXPECT_GT(heatmap.matching_atom_count, 0UL);
   EXPECT_LE(heatmap.matching_atom_count, heatmap.total_atom_count);
