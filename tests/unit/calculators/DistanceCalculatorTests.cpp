@@ -2,10 +2,13 @@
 #include "calculators/spatial/DistanceCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/NeighborGraph.hpp"
+#include "readers/LammpsDumpReader.hpp"
 
 #include "../../CrystalTestHelper.hpp"
 
 #include <algorithm>
+#include <atomic>
+#include <filesystem>
 #include <gtest/gtest.h>
 #include <numbers>
 #include <random>
@@ -1139,6 +1142,111 @@ TEST(DistanceCalculatorTests, ForEachPairWithinHandlesEmptyAndSingleAtomCell) {
   DistanceCalculator::forEachPairWithin(cell, -1.0, true,
                                         [&](size_t, size_t, real_t, const auto &) { ++count; });
   EXPECT_EQ(count, 0);
+}
+
+namespace {
+
+[[nodiscard]] std::filesystem::path findPlasticDumpPath() {
+  for (const auto &candidate :
+       {"examples/Plastic", "examples/plastic", "../examples/Plastic", "../examples/plastic",
+        "../../examples/Plastic", "../../examples/plastic"}) {
+    const auto file = std::filesystem::path(candidate) / "dump.compresion.0";
+    if (std::filesystem::exists(file)) {
+      return file;
+    }
+  }
+  return {};
+}
+
+void verifyGridDimensions(const detail::SearchGridConfig &grid_config) {
+  const bool dims_match = (grid_config.k_x == 23 && grid_config.k_y == 23 && grid_config.k_z == 23);
+  const bool max_d_match =
+      (grid_config.max_dx == 1 && grid_config.max_dy == 1 && grid_config.max_dz == 1);
+  EXPECT_FALSE(grid_config.is_small_cell);
+  EXPECT_TRUE(dims_match);
+  EXPECT_TRUE(max_d_match);
+}
+
+void verifySubcellMetrics(const Cell &cell, const detail::SearchGridConfig &grid_config,
+                          real_t cutoff) {
+  const auto total_subcells = static_cast<size_t>(grid_config.k_x) *
+                              static_cast<size_t>(grid_config.k_y) *
+                              static_cast<size_t>(grid_config.k_z);
+  EXPECT_EQ(total_subcells, 12167U);
+
+  const auto &lat_params = cell.latticeParameters();
+  const real_t subcell_dx = lat_params[0] / static_cast<real_t>(grid_config.k_x);
+  EXPECT_GE(subcell_dx, cutoff);
+  EXPECT_NEAR(subcell_dx, 3.0717, 0.01);
+}
+
+void verifyPlasticCellGridPartition(const Cell &cell, real_t cutoff, real_t cutoff_sq) {
+  const auto grid_config = detail::buildSearchGridConfig(cell, cutoff_sq);
+  verifyGridDimensions(grid_config);
+  verifySubcellMetrics(cell, grid_config, cutoff);
+}
+
+[[nodiscard]] size_t countPairsWithinCutoff(const Cell &cell, real_t cutoff, real_t cutoff_sq) {
+  std::atomic<size_t> pairs_count{0};
+  DistanceCalculator::forEachPairWithin(
+      cell, cutoff, true, [&](size_t, size_t, real_t d_sq, const math::Vector3<real_t> &) {
+        EXPECT_LT(d_sq, cutoff_sq);
+        pairs_count.fetch_add(1, std::memory_order_relaxed);
+      });
+  return pairs_count.load();
+}
+
+[[nodiscard]] BondCutoffMatrix makeUniformBondCutoffs(size_t num_elements, real_t cutoff_sq) {
+  BondCutoffMatrix matrix(num_elements);
+  for (size_t i = 0; i < num_elements; ++i) {
+    matrix[i].resize(num_elements);
+    for (size_t j = 0; j < num_elements; ++j) {
+      matrix[i][j] = {.min_sq = 0.0, .max_sq = cutoff_sq};
+    }
+  }
+  return matrix;
+}
+
+} // namespace
+
+TEST(DistanceCalculatorTests, PlasticExampleLargeCellDivideAndConquer) {
+  const auto plastic_path = findPlasticDumpPath();
+  ASSERT_FALSE(plastic_path.empty()) << "Plastic compression dump file not found";
+
+  readers::LammpsDumpReader reader;
+  const auto traj = reader.readTrajectory(plastic_path.string());
+  ASSERT_GT(traj.getFrameCount(), 0U);
+  const auto &cell = traj.getFrame(0);
+
+  ASSERT_EQ(cell.atomCount(), 16000U);
+  const auto &lat_params = cell.latticeParameters();
+  EXPECT_NEAR(lat_params[0], 70.65, 0.1);
+  EXPECT_NEAR(lat_params[1], 70.65, 0.1);
+  EXPECT_NEAR(lat_params[2], 70.65, 0.1);
+
+  const real_t cutoff = 3.0;
+  const real_t cutoff_sq = cutoff * cutoff;
+
+  // 1. Verify Grid Configuration from CellListTraversal (k = floor(width / r_cut) = 23)
+  verifyPlasticCellGridPartition(cell, cutoff, cutoff_sq);
+
+  // 2. Count visited pairs using forEachPairWithin vs Full Supercell O(N^2)
+  const size_t pairs_within_cutoff = countPairsWithinCutoff(cell, cutoff, cutoff_sq);
+  EXPECT_GT(pairs_within_cutoff, 0U);
+
+  // Full size supercell naive pairs = N * (N - 1) / 2 = 16000 * 15999 / 2 = 127,992,000
+  const size_t full_supercell_pairs = (cell.atomCount() * (cell.atomCount() - 1)) / 2;
+  EXPECT_EQ(full_supercell_pairs, 127992000U);
+  // Visited pairs within r_cut must be a tiny fraction of full supercell
+  EXPECT_LT(pairs_within_cutoff, full_supercell_pairs / 100);
+
+  // 3. Verify NeighborGraph compute execution and consistency
+  NeighborGraph graph(cell.atomCount());
+  const auto bonds = makeUniformBondCutoffs(cell.elements().size(), cutoff_sq);
+
+  DistanceCalculator::compute(cell, cutoff_sq, bonds, true, graph);
+  EXPECT_EQ(graph.nodeCount(), 16000U);
+  EXPECT_EQ(graph.edgeCount(), pairs_within_cutoff * 2);
 }
 
 } // namespace correlation::testing
