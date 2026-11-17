@@ -303,7 +303,7 @@ struct CrystalMarkerData {
         .max_threshold_2d_x = 1.00F,
         .descriptor_2d_y = PhaseDescriptor::Q6Bar,
         .min_threshold_2d_y = 0.35F,
-        .max_threshold_2d_y = 0.55F,
+        .max_threshold_2d_y = 0.68F,
     };
   case CrystalPreset::Custom:
   default:
@@ -343,6 +343,9 @@ namespace detail {
       CrystalMarkerData{.label = "FCC", .x_ratio = 0.191F, .y_ratio = 0.425F},
       CrystalMarkerData{.label = "HCP", .x_ratio = 0.097F, .y_ratio = 0.515F},
       CrystalMarkerData{.label = "BCC", .x_ratio = 0.036F, .y_ratio = 0.489F},
+      CrystalMarkerData{.label = "Dia", .x_ratio = 0.509F, .y_ratio = 0.372F},
+      CrystalMarkerData{.label = "SC", .x_ratio = 0.764F, .y_ratio = 0.646F},
+      CrystalMarkerData{.label = "HD", .x_ratio = 0.108F, .y_ratio = 0.555F},
       CrystalMarkerData{.label = "Ico", .x_ratio = 0.000F, .y_ratio = 0.801F},
       CrystalMarkerData{.label = "Liq", .x_ratio = 0.025F, .y_ratio = 0.880F},
   };
@@ -353,6 +356,9 @@ namespace detail {
       CrystalMarkerData{.label = "FCC", .x_ratio = 0.575F, .y_ratio = 0.809F},
       CrystalMarkerData{.label = "HCP", .x_ratio = 0.485F, .y_ratio = 0.903F},
       CrystalMarkerData{.label = "BCC", .x_ratio = 0.511F, .y_ratio = 0.964F},
+      CrystalMarkerData{.label = "Dia", .x_ratio = 0.628F, .y_ratio = 0.491F},
+      CrystalMarkerData{.label = "SC", .x_ratio = 0.354F, .y_ratio = 0.236F},
+      CrystalMarkerData{.label = "HD", .x_ratio = 0.445F, .y_ratio = 0.892F},
       CrystalMarkerData{.label = "Ico", .x_ratio = 0.199F, .y_ratio = 1.000F},
       CrystalMarkerData{.label = "Liq", .x_ratio = 0.120F, .y_ratio = 0.975F},
   };
@@ -360,9 +366,12 @@ namespace detail {
 
 [[nodiscard]] inline std::vector<CrystalMarkerData> markersQ6W6() noexcept {
   return {
-      CrystalMarkerData{.label = "FCC", .x_ratio = 0.575F, .y_ratio = 0.500F},
+      CrystalMarkerData{.label = "FCC", .x_ratio = 0.575F, .y_ratio = 0.533F},
       CrystalMarkerData{.label = "HCP", .x_ratio = 0.485F, .y_ratio = 0.530F},
       CrystalMarkerData{.label = "BCC", .x_ratio = 0.511F, .y_ratio = 0.467F},
+      CrystalMarkerData{.label = "Dia", .x_ratio = 0.628F, .y_ratio = 0.533F},
+      CrystalMarkerData{.label = "SC", .x_ratio = 0.354F, .y_ratio = 0.467F},
+      CrystalMarkerData{.label = "HD", .x_ratio = 0.445F, .y_ratio = 0.530F},
       CrystalMarkerData{.label = "Ico", .x_ratio = 0.199F, .y_ratio = 0.923F},
       CrystalMarkerData{.label = "Liq", .x_ratio = 0.120F, .y_ratio = 0.500F},
   };
@@ -370,9 +379,12 @@ namespace detail {
 
 [[nodiscard]] inline std::vector<CrystalMarkerData> markersW6Q6() noexcept {
   return {
-      CrystalMarkerData{.label = "FCC", .x_ratio = 0.500F, .y_ratio = 0.425F},
+      CrystalMarkerData{.label = "FCC", .x_ratio = 0.468F, .y_ratio = 0.425F},
       CrystalMarkerData{.label = "HCP", .x_ratio = 0.470F, .y_ratio = 0.515F},
       CrystalMarkerData{.label = "BCC", .x_ratio = 0.533F, .y_ratio = 0.489F},
+      CrystalMarkerData{.label = "Dia", .x_ratio = 0.468F, .y_ratio = 0.372F},
+      CrystalMarkerData{.label = "SC", .x_ratio = 0.533F, .y_ratio = 0.646F},
+      CrystalMarkerData{.label = "HD", .x_ratio = 0.470F, .y_ratio = 0.555F},
       CrystalMarkerData{.label = "Ico", .x_ratio = 0.077F, .y_ratio = 0.801F},
       CrystalMarkerData{.label = "Liq", .x_ratio = 0.500F, .y_ratio = 0.880F},
   };
@@ -383,7 +395,20 @@ namespace detail {
       CrystalMarkerData{.label = "FCC", .x_ratio = 0.191F, .y_ratio = 0.898F},
       CrystalMarkerData{.label = "HCP", .x_ratio = 0.097F, .y_ratio = 0.165F},
       CrystalMarkerData{.label = "BCC", .x_ratio = 0.036F, .y_ratio = 0.332F},
+      CrystalMarkerData{.label = "Dia", .x_ratio = 0.509F, .y_ratio = 0.898F},
+      CrystalMarkerData{.label = "SC", .x_ratio = 0.764F, .y_ratio = 0.103F},
       CrystalMarkerData{.label = "Ico", .x_ratio = 0.000F, .y_ratio = 0.500F},
+  };
+}
+
+[[nodiscard]] inline std::vector<CrystalMarkerData> markersW4Q4() noexcept {
+  return {
+      CrystalMarkerData{.label = "FCC", .x_ratio = 0.103F, .y_ratio = 0.809F},
+      CrystalMarkerData{.label = "HCP", .x_ratio = 0.835F, .y_ratio = 0.903F},
+      CrystalMarkerData{.label = "BCC", .x_ratio = 0.898F, .y_ratio = 0.964F},
+      CrystalMarkerData{.label = "Dia", .x_ratio = 0.103F, .y_ratio = 0.491F},
+      CrystalMarkerData{.label = "SC", .x_ratio = 0.898F, .y_ratio = 0.236F},
+      CrystalMarkerData{.label = "Ico", .x_ratio = 0.500F, .y_ratio = 1.000F},
   };
 }
 
@@ -419,9 +444,27 @@ namespace detail {
 
 [[nodiscard]] inline std::vector<CrystalMarkerData> markersQTetQ6() noexcept {
   return {
-      CrystalMarkerData{.label = "Dia", .x_ratio = 0.950F, .y_ratio = 0.550F},
+      CrystalMarkerData{.label = "Dia", .x_ratio = 0.950F, .y_ratio = 0.372F},
+      CrystalMarkerData{.label = "HD", .x_ratio = 0.950F, .y_ratio = 0.555F},
       CrystalMarkerData{.label = "a-Net", .x_ratio = 0.850F, .y_ratio = 0.850F},
+      CrystalMarkerData{.label = "FCC", .x_ratio = 0.000F, .y_ratio = 0.425F},
+      CrystalMarkerData{.label = "HCP", .x_ratio = 0.000F, .y_ratio = 0.515F},
+      CrystalMarkerData{.label = "BCC", .x_ratio = 0.000F, .y_ratio = 0.489F},
+      CrystalMarkerData{.label = "SC", .x_ratio = 0.000F, .y_ratio = 0.646F},
       CrystalMarkerData{.label = "Liq", .x_ratio = 0.320F, .y_ratio = 0.880F},
+  };
+}
+
+[[nodiscard]] inline std::vector<CrystalMarkerData> markersQ6QTet() noexcept {
+  return {
+      CrystalMarkerData{.label = "Dia", .x_ratio = 0.628F, .y_ratio = 0.050F},
+      CrystalMarkerData{.label = "HD", .x_ratio = 0.445F, .y_ratio = 0.050F},
+      CrystalMarkerData{.label = "a-Net", .x_ratio = 0.150F, .y_ratio = 0.150F},
+      CrystalMarkerData{.label = "FCC", .x_ratio = 0.575F, .y_ratio = 1.000F},
+      CrystalMarkerData{.label = "HCP", .x_ratio = 0.485F, .y_ratio = 1.000F},
+      CrystalMarkerData{.label = "BCC", .x_ratio = 0.511F, .y_ratio = 1.000F},
+      CrystalMarkerData{.label = "SC", .x_ratio = 0.354F, .y_ratio = 1.000F},
+      CrystalMarkerData{.label = "Liq", .x_ratio = 0.120F, .y_ratio = 0.680F},
   };
 }
 
@@ -457,6 +500,9 @@ getCrystalReferenceMarkers(PhaseDescriptor desc_x, PhaseDescriptor desc_y) noexc
   if (is_q4(desc_x) && desc_y == PhaseDescriptor::W4Hat) {
     return detail::markersQ4W4();
   }
+  if (desc_x == PhaseDescriptor::W4Hat && is_q4(desc_y)) {
+    return detail::markersW4Q4();
+  }
   if (is_q6(desc_x) && desc_y == PhaseDescriptor::LocalEntropy) {
     return detail::markersQ6LocalEntropy();
   }
@@ -468,6 +514,9 @@ getCrystalReferenceMarkers(PhaseDescriptor desc_x, PhaseDescriptor desc_y) noexc
   }
   if (desc_x == PhaseDescriptor::QTet && is_q6(desc_y)) {
     return detail::markersQTetQ6();
+  }
+  if (is_q6(desc_x) && desc_y == PhaseDescriptor::QTet) {
+    return detail::markersQ6QTet();
   }
 
   return {};

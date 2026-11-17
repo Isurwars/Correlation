@@ -437,5 +437,43 @@ TEST_F(Structure3DControllerPhaseSearchTests, OffThreadSetCellAndTrajectorySafet
   EXPECT_EQ(window().get_structure_3d_current_frame(), 0);
 }
 
+TEST_F(Structure3DControllerPhaseSearchTests, ExtendedCrystalReferenceMarkersDiamondAndSimpleCubic) {
+  const auto markers_q6_q4 =
+      getCrystalReferenceMarkers(PhaseDescriptor::Q6Bar, PhaseDescriptor::Q4Bar);
+  bool found_dia = false;
+  bool found_sc = false;
+  bool found_hd = false;
+  for (const auto &marker : markers_q6_q4) {
+    if (marker.label == "Dia") {
+      found_dia = true;
+      EXPECT_NEAR(marker.x_ratio, 0.628F, 1e-3F);
+      EXPECT_NEAR(marker.y_ratio, 0.491F, 1e-3F);
+    } else if (marker.label == "SC") {
+      found_sc = true;
+      EXPECT_NEAR(marker.x_ratio, 0.354F, 1e-3F);
+      EXPECT_NEAR(marker.y_ratio, 0.236F, 1e-3F);
+    } else if (marker.label == "HD") {
+      found_hd = true;
+      EXPECT_NEAR(marker.x_ratio, 0.445F, 1e-3F);
+      EXPECT_NEAR(marker.y_ratio, 0.892F, 1e-3F);
+    }
+  }
+  EXPECT_TRUE(found_dia);
+  EXPECT_TRUE(found_sc);
+  EXPECT_TRUE(found_hd);
+
+  const auto markers_qtet_q6 =
+      getCrystalReferenceMarkers(PhaseDescriptor::QTet, PhaseDescriptor::Q6Bar);
+  bool found_qtet_dia = false;
+  for (const auto &marker : markers_qtet_q6) {
+    if (marker.label == "Dia") {
+      found_qtet_dia = true;
+      EXPECT_NEAR(marker.x_ratio, 0.950F, 1e-3F);
+      EXPECT_NEAR(marker.y_ratio, 0.372F, 1e-3F);
+    }
+  }
+  EXPECT_TRUE(found_qtet_dia);
+}
+
 } // namespace
 } // namespace correlation::app
