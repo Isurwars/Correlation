@@ -227,27 +227,31 @@ TEST(PhaseSearchTypesTests, StringConversionsAndDomains) {
 
   const auto [q_min, q_max] = getDescriptorDomain(PhaseDescriptor::Q6Bar);
   EXPECT_FLOAT_EQ(q_min, 0.0F);
-  EXPECT_FLOAT_EQ(q_max, 1.0F);
+  EXPECT_FLOAT_EQ(q_max, 0.75F);
+
+  const auto [q4_min, q4_max] = getDescriptorDomain(PhaseDescriptor::Q4Bar);
+  EXPECT_FLOAT_EQ(q4_min, -0.05F);
+  EXPECT_FLOAT_EQ(q4_max, 0.85F);
 
   const auto [w_min, w_max] = getDescriptorDomain(PhaseDescriptor::W6Hat);
-  EXPECT_FLOAT_EQ(w_min, -0.2F);
-  EXPECT_FLOAT_EQ(w_max, 0.2F);
+  EXPECT_FLOAT_EQ(w_min, -0.22F);
+  EXPECT_FLOAT_EQ(w_max, 0.10F);
 
   const auto [w4_min, w4_max] = getDescriptorDomain(PhaseDescriptor::W4Hat);
-  EXPECT_FLOAT_EQ(w4_min, -0.2F);
-  EXPECT_FLOAT_EQ(w4_max, 0.2F);
+  EXPECT_FLOAT_EQ(w4_min, -0.22F);
+  EXPECT_FLOAT_EQ(w4_max, 0.22F);
 
   const auto [s2_min, s2_max] = getDescriptorDomain(PhaseDescriptor::LocalEntropy);
-  EXPECT_FLOAT_EQ(s2_min, -15.0F);
-  EXPECT_FLOAT_EQ(s2_max, 0.0F);
+  EXPECT_FLOAT_EQ(s2_min, -10.0F);
+  EXPECT_FLOAT_EQ(s2_max, 0.5F);
 
   const auto [nconn_min, nconn_max] = getDescriptorDomain(PhaseDescriptor::TwfNconn);
   EXPECT_FLOAT_EQ(nconn_min, 0.0F);
   EXPECT_FLOAT_EQ(nconn_max, 16.0F);
 
   const auto [qtet_min, qtet_max] = getDescriptorDomain(PhaseDescriptor::QTet);
-  EXPECT_FLOAT_EQ(qtet_min, 0.0F);
-  EXPECT_FLOAT_EQ(qtet_max, 1.0F);
+  EXPECT_FLOAT_EQ(qtet_min, -0.10F);
+  EXPECT_FLOAT_EQ(qtet_max, 1.10F);
 }
 
 TEST(PhaseDescriptorsLRUCacheTests, StoreAndRetrieveUnifiedDescriptors) {

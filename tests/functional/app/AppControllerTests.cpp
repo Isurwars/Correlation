@@ -9,8 +9,10 @@
 #include "app/core/AppOptions.hpp"
 #include "app/services/AnalysisDispatcher.hpp"
 #include "app/services/TrajectoryLoader.hpp"
+#include "app/viewmodel/PhaseSearchTypes.hpp"
 #include "app/viewmodel/PlotController.hpp"
 #include "app/viewmodel/Structure3DController.hpp"
+#include "plotters/ColormapService.hpp"
 #include <csignal>
 #include <filesystem>
 #include <optional>
@@ -1255,17 +1257,19 @@ TEST_F(AppControllerTests, DualViewHeatmapCallbacksIntegration) {
   EXPECT_TRUE(structure_ctrl->isPhaseSearchEnabled());
 
   // Invoke preset selection (Diamond = 8)
-  window->invoke_set_phase_preset_3d(static_cast<int>(CrystalPreset::Diamond));
-  EXPECT_EQ(structure_ctrl->crystalPreset(), CrystalPreset::Diamond);
-  EXPECT_EQ(structure_ctrl->phaseDescriptor(), PhaseDescriptor::QTet);
-  EXPECT_EQ(structure_ctrl->phaseDescriptorY(), PhaseDescriptor::Q6Bar);
+  window->invoke_set_phase_preset_3d(static_cast<int>(correlation::app::CrystalPreset::Diamond));
+  EXPECT_EQ(structure_ctrl->crystalPreset(), correlation::app::CrystalPreset::Diamond);
+  EXPECT_EQ(structure_ctrl->phaseDescriptor(), correlation::app::PhaseDescriptor::QTet);
+  EXPECT_EQ(structure_ctrl->phaseDescriptorY(), correlation::app::PhaseDescriptor::Q6Bar);
 
   // Invoke descriptor changes (X -> Q6Bar, Y -> Q4Bar)
-  window->invoke_set_phase_descriptor_3d(static_cast<int>(PhaseDescriptor::Q6Bar));
-  EXPECT_EQ(structure_ctrl->phaseDescriptor(), PhaseDescriptor::Q6Bar);
+  window->invoke_set_phase_descriptor_3d(
+      static_cast<int>(correlation::app::PhaseDescriptor::Q6Bar));
+  EXPECT_EQ(structure_ctrl->phaseDescriptor(), correlation::app::PhaseDescriptor::Q6Bar);
 
-  window->invoke_set_phase_descriptor_y_3d(static_cast<int>(PhaseDescriptor::Q4Bar));
-  EXPECT_EQ(structure_ctrl->phaseDescriptorY(), PhaseDescriptor::Q4Bar);
+  window->invoke_set_phase_descriptor_y_3d(
+      static_cast<int>(correlation::app::PhaseDescriptor::Q4Bar));
+  EXPECT_EQ(structure_ctrl->phaseDescriptorY(), correlation::app::PhaseDescriptor::Q4Bar);
 
   // Invoke 2D threshold change
   window->invoke_set_phase_thresholds_2d_3d(0.3F, 0.7F, 0.1F, 0.4F);
@@ -1275,6 +1279,7 @@ TEST_F(AppControllerTests, DualViewHeatmapCallbacksIntegration) {
   EXPECT_FLOAT_EQ(structure_ctrl->phaseMaxThresholdY(), 0.4F);
 
   // Invoke colormap change (Plasma = 1)
-  window->invoke_set_phase_colormap_3d(static_cast<int>(plotters::ColormapType::Plasma));
-  EXPECT_EQ(structure_ctrl->phaseColormap(), plotters::ColormapType::Plasma);
+  window->invoke_set_phase_colormap_3d(
+      static_cast<int>(correlation::plotters::ColormapType::Plasma));
+  EXPECT_EQ(structure_ctrl->phaseColormap(), correlation::plotters::ColormapType::Plasma);
 }

@@ -343,8 +343,17 @@ void verifyCrystalMarkersQ6Q4(const std::vector<CrystalMarkerData> &markers) {
       fcc_x_ratio = marker.x_ratio;
     }
   }
-  EXPECT_GT(fcc_x_ratio, 0.4F);
-  EXPECT_LT(fcc_x_ratio, 0.7F);
+  EXPECT_GT(fcc_x_ratio, 0.5F);
+  EXPECT_LT(fcc_x_ratio, 0.85F);
+}
+
+void assertMarkerCoordinates(const std::vector<CrystalMarkerData> &markers, std::string_view label,
+                             float expected_x, float expected_y) {
+  const auto marker_iter = std::ranges::find_if(
+      markers, [label](const auto &marker_item) { return marker_item.label == label; });
+  ASSERT_NE(marker_iter, markers.end());
+  EXPECT_NEAR(marker_iter->x_ratio, expected_x, 1e-3F);
+  EXPECT_NEAR(marker_iter->y_ratio, expected_y, 1e-3F);
 }
 
 void verifyHeatmapPngExport(Structure3DController &controller) {
@@ -437,42 +446,17 @@ TEST_F(Structure3DControllerPhaseSearchTests, OffThreadSetCellAndTrajectorySafet
   EXPECT_EQ(window().get_structure_3d_current_frame(), 0);
 }
 
-TEST_F(Structure3DControllerPhaseSearchTests, ExtendedCrystalReferenceMarkersDiamondAndSimpleCubic) {
+TEST_F(Structure3DControllerPhaseSearchTests,
+       ExtendedCrystalReferenceMarkersDiamondAndSimpleCubic) {
   const auto markers_q6_q4 =
       getCrystalReferenceMarkers(PhaseDescriptor::Q6Bar, PhaseDescriptor::Q4Bar);
-  bool found_dia = false;
-  bool found_sc = false;
-  bool found_hd = false;
-  for (const auto &marker : markers_q6_q4) {
-    if (marker.label == "Dia") {
-      found_dia = true;
-      EXPECT_NEAR(marker.x_ratio, 0.628F, 1e-3F);
-      EXPECT_NEAR(marker.y_ratio, 0.491F, 1e-3F);
-    } else if (marker.label == "SC") {
-      found_sc = true;
-      EXPECT_NEAR(marker.x_ratio, 0.354F, 1e-3F);
-      EXPECT_NEAR(marker.y_ratio, 0.236F, 1e-3F);
-    } else if (marker.label == "HD") {
-      found_hd = true;
-      EXPECT_NEAR(marker.x_ratio, 0.445F, 1e-3F);
-      EXPECT_NEAR(marker.y_ratio, 0.892F, 1e-3F);
-    }
-  }
-  EXPECT_TRUE(found_dia);
-  EXPECT_TRUE(found_sc);
-  EXPECT_TRUE(found_hd);
+  assertMarkerCoordinates(markers_q6_q4, "Dia", 0.837F, 0.379F);
+  assertMarkerCoordinates(markers_q6_q4, "SC", 0.472F, 0.096F);
+  assertMarkerCoordinates(markers_q6_q4, "HD", 0.593F, 0.824F);
 
   const auto markers_qtet_q6 =
       getCrystalReferenceMarkers(PhaseDescriptor::QTet, PhaseDescriptor::Q6Bar);
-  bool found_qtet_dia = false;
-  for (const auto &marker : markers_qtet_q6) {
-    if (marker.label == "Dia") {
-      found_qtet_dia = true;
-      EXPECT_NEAR(marker.x_ratio, 0.950F, 1e-3F);
-      EXPECT_NEAR(marker.y_ratio, 0.372F, 1e-3F);
-    }
-  }
-  EXPECT_TRUE(found_qtet_dia);
+  assertMarkerCoordinates(markers_qtet_q6, "Dia", 0.917F, 0.163F);
 }
 
 } // namespace

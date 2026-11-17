@@ -320,19 +320,22 @@ struct CrystalMarkerData {
 getDescriptorDomain(PhaseDescriptor descriptor) noexcept {
   switch (descriptor) {
   case PhaseDescriptor::W6Hat:
+    return {-0.22F, 0.10F};
   case PhaseDescriptor::W4Hat:
-    return {-0.2F, 0.2F};
+    return {-0.22F, 0.22F};
   case PhaseDescriptor::LocalEntropy:
-    return {-15.0F, 0.0F};
+    return {-10.0F, 0.5F};
   case PhaseDescriptor::TwfNconn:
     return {0.0F, 16.0F};
   case PhaseDescriptor::QTet:
+    return {-0.10F, 1.10F};
   case PhaseDescriptor::Q6Bar:
-  case PhaseDescriptor::Q4Bar:
   case PhaseDescriptor::Q6:
+    return {0.0F, 0.75F};
+  case PhaseDescriptor::Q4Bar:
   case PhaseDescriptor::Q4:
   default:
-    return {0.0F, 1.0F};
+    return {-0.05F, 0.85F};
   }
 }
 
@@ -340,131 +343,131 @@ namespace detail {
 
 [[nodiscard]] inline std::vector<CrystalMarkerData> markersQ4Q6() noexcept {
   return {
-      CrystalMarkerData{.label = "FCC", .x_ratio = 0.191F, .y_ratio = 0.425F},
-      CrystalMarkerData{.label = "HCP", .x_ratio = 0.097F, .y_ratio = 0.515F},
-      CrystalMarkerData{.label = "BCC", .x_ratio = 0.036F, .y_ratio = 0.489F},
-      CrystalMarkerData{.label = "Dia", .x_ratio = 0.509F, .y_ratio = 0.372F},
-      CrystalMarkerData{.label = "SC", .x_ratio = 0.764F, .y_ratio = 0.646F},
-      CrystalMarkerData{.label = "HD", .x_ratio = 0.108F, .y_ratio = 0.555F},
-      CrystalMarkerData{.label = "Ico", .x_ratio = 0.000F, .y_ratio = 0.801F},
-      CrystalMarkerData{.label = "Liq", .x_ratio = 0.025F, .y_ratio = 0.880F},
+      CrystalMarkerData{.label = "FCC", .x_ratio = 0.268F, .y_ratio = 0.233F},
+      CrystalMarkerData{.label = "HCP", .x_ratio = 0.163F, .y_ratio = 0.353F},
+      CrystalMarkerData{.label = "BCC", .x_ratio = 0.096F, .y_ratio = 0.319F},
+      CrystalMarkerData{.label = "Dia", .x_ratio = 0.621F, .y_ratio = 0.163F},
+      CrystalMarkerData{.label = "SC", .x_ratio = 0.904F, .y_ratio = 0.528F},
+      CrystalMarkerData{.label = "HD", .x_ratio = 0.176F, .y_ratio = 0.407F},
+      CrystalMarkerData{.label = "Ico", .x_ratio = 0.056F, .y_ratio = 0.735F},
+      CrystalMarkerData{.label = "Liq", .x_ratio = 0.083F, .y_ratio = 0.840F},
   };
 }
 
 [[nodiscard]] inline std::vector<CrystalMarkerData> markersQ6Q4() noexcept {
   return {
-      CrystalMarkerData{.label = "FCC", .x_ratio = 0.575F, .y_ratio = 0.809F},
-      CrystalMarkerData{.label = "HCP", .x_ratio = 0.485F, .y_ratio = 0.903F},
-      CrystalMarkerData{.label = "BCC", .x_ratio = 0.511F, .y_ratio = 0.964F},
-      CrystalMarkerData{.label = "Dia", .x_ratio = 0.628F, .y_ratio = 0.491F},
-      CrystalMarkerData{.label = "SC", .x_ratio = 0.354F, .y_ratio = 0.236F},
-      CrystalMarkerData{.label = "HD", .x_ratio = 0.445F, .y_ratio = 0.892F},
-      CrystalMarkerData{.label = "Ico", .x_ratio = 0.199F, .y_ratio = 1.000F},
-      CrystalMarkerData{.label = "Liq", .x_ratio = 0.120F, .y_ratio = 0.975F},
+      CrystalMarkerData{.label = "FCC", .x_ratio = 0.767F, .y_ratio = 0.732F},
+      CrystalMarkerData{.label = "HCP", .x_ratio = 0.647F, .y_ratio = 0.837F},
+      CrystalMarkerData{.label = "BCC", .x_ratio = 0.681F, .y_ratio = 0.904F},
+      CrystalMarkerData{.label = "Dia", .x_ratio = 0.837F, .y_ratio = 0.379F},
+      CrystalMarkerData{.label = "SC", .x_ratio = 0.472F, .y_ratio = 0.096F},
+      CrystalMarkerData{.label = "HD", .x_ratio = 0.593F, .y_ratio = 0.824F},
+      CrystalMarkerData{.label = "Ico", .x_ratio = 0.265F, .y_ratio = 0.944F},
+      CrystalMarkerData{.label = "Liq", .x_ratio = 0.160F, .y_ratio = 0.917F},
   };
 }
 
 [[nodiscard]] inline std::vector<CrystalMarkerData> markersQ6W6() noexcept {
   return {
-      CrystalMarkerData{.label = "FCC", .x_ratio = 0.575F, .y_ratio = 0.533F},
-      CrystalMarkerData{.label = "HCP", .x_ratio = 0.485F, .y_ratio = 0.530F},
-      CrystalMarkerData{.label = "BCC", .x_ratio = 0.511F, .y_ratio = 0.467F},
-      CrystalMarkerData{.label = "Dia", .x_ratio = 0.628F, .y_ratio = 0.533F},
-      CrystalMarkerData{.label = "SC", .x_ratio = 0.354F, .y_ratio = 0.467F},
-      CrystalMarkerData{.label = "HD", .x_ratio = 0.445F, .y_ratio = 0.530F},
-      CrystalMarkerData{.label = "Ico", .x_ratio = 0.199F, .y_ratio = 0.923F},
-      CrystalMarkerData{.label = "Liq", .x_ratio = 0.120F, .y_ratio = 0.500F},
+      CrystalMarkerData{.label = "FCC", .x_ratio = 0.767F, .y_ratio = 0.353F},
+      CrystalMarkerData{.label = "HCP", .x_ratio = 0.647F, .y_ratio = 0.350F},
+      CrystalMarkerData{.label = "BCC", .x_ratio = 0.681F, .y_ratio = 0.272F},
+      CrystalMarkerData{.label = "Dia", .x_ratio = 0.837F, .y_ratio = 0.353F},
+      CrystalMarkerData{.label = "SC", .x_ratio = 0.472F, .y_ratio = 0.272F},
+      CrystalMarkerData{.label = "HD", .x_ratio = 0.593F, .y_ratio = 0.350F},
+      CrystalMarkerData{.label = "Ico", .x_ratio = 0.265F, .y_ratio = 0.844F},
+      CrystalMarkerData{.label = "Liq", .x_ratio = 0.160F, .y_ratio = 0.313F},
   };
 }
 
 [[nodiscard]] inline std::vector<CrystalMarkerData> markersW6Q6() noexcept {
   return {
-      CrystalMarkerData{.label = "FCC", .x_ratio = 0.468F, .y_ratio = 0.425F},
-      CrystalMarkerData{.label = "HCP", .x_ratio = 0.470F, .y_ratio = 0.515F},
-      CrystalMarkerData{.label = "BCC", .x_ratio = 0.533F, .y_ratio = 0.489F},
-      CrystalMarkerData{.label = "Dia", .x_ratio = 0.468F, .y_ratio = 0.372F},
-      CrystalMarkerData{.label = "SC", .x_ratio = 0.533F, .y_ratio = 0.646F},
-      CrystalMarkerData{.label = "HD", .x_ratio = 0.470F, .y_ratio = 0.555F},
-      CrystalMarkerData{.label = "Ico", .x_ratio = 0.077F, .y_ratio = 0.801F},
-      CrystalMarkerData{.label = "Liq", .x_ratio = 0.500F, .y_ratio = 0.880F},
+      CrystalMarkerData{.label = "FCC", .x_ratio = 0.647F, .y_ratio = 0.233F},
+      CrystalMarkerData{.label = "HCP", .x_ratio = 0.650F, .y_ratio = 0.353F},
+      CrystalMarkerData{.label = "BCC", .x_ratio = 0.728F, .y_ratio = 0.319F},
+      CrystalMarkerData{.label = "Dia", .x_ratio = 0.647F, .y_ratio = 0.163F},
+      CrystalMarkerData{.label = "SC", .x_ratio = 0.728F, .y_ratio = 0.528F},
+      CrystalMarkerData{.label = "HD", .x_ratio = 0.650F, .y_ratio = 0.407F},
+      CrystalMarkerData{.label = "Ico", .x_ratio = 0.156F, .y_ratio = 0.735F},
+      CrystalMarkerData{.label = "Liq", .x_ratio = 0.688F, .y_ratio = 0.840F},
   };
 }
 
 [[nodiscard]] inline std::vector<CrystalMarkerData> markersQ4W4() noexcept {
   return {
-      CrystalMarkerData{.label = "FCC", .x_ratio = 0.191F, .y_ratio = 0.898F},
-      CrystalMarkerData{.label = "HCP", .x_ratio = 0.097F, .y_ratio = 0.165F},
-      CrystalMarkerData{.label = "BCC", .x_ratio = 0.036F, .y_ratio = 0.332F},
-      CrystalMarkerData{.label = "Dia", .x_ratio = 0.509F, .y_ratio = 0.898F},
-      CrystalMarkerData{.label = "SC", .x_ratio = 0.764F, .y_ratio = 0.103F},
-      CrystalMarkerData{.label = "Ico", .x_ratio = 0.000F, .y_ratio = 0.500F},
+      CrystalMarkerData{.label = "FCC", .x_ratio = 0.268F, .y_ratio = 0.861F},
+      CrystalMarkerData{.label = "HCP", .x_ratio = 0.163F, .y_ratio = 0.195F},
+      CrystalMarkerData{.label = "BCC", .x_ratio = 0.096F, .y_ratio = 0.139F},
+      CrystalMarkerData{.label = "Dia", .x_ratio = 0.621F, .y_ratio = 0.861F},
+      CrystalMarkerData{.label = "SC", .x_ratio = 0.904F, .y_ratio = 0.139F},
+      CrystalMarkerData{.label = "Ico", .x_ratio = 0.056F, .y_ratio = 0.500F},
   };
 }
 
 [[nodiscard]] inline std::vector<CrystalMarkerData> markersW4Q4() noexcept {
   return {
-      CrystalMarkerData{.label = "FCC", .x_ratio = 0.103F, .y_ratio = 0.809F},
-      CrystalMarkerData{.label = "HCP", .x_ratio = 0.835F, .y_ratio = 0.903F},
-      CrystalMarkerData{.label = "BCC", .x_ratio = 0.898F, .y_ratio = 0.964F},
-      CrystalMarkerData{.label = "Dia", .x_ratio = 0.103F, .y_ratio = 0.491F},
-      CrystalMarkerData{.label = "SC", .x_ratio = 0.898F, .y_ratio = 0.236F},
-      CrystalMarkerData{.label = "Ico", .x_ratio = 0.500F, .y_ratio = 1.000F},
+      CrystalMarkerData{.label = "FCC", .x_ratio = 0.139F, .y_ratio = 0.732F},
+      CrystalMarkerData{.label = "HCP", .x_ratio = 0.805F, .y_ratio = 0.837F},
+      CrystalMarkerData{.label = "BCC", .x_ratio = 0.861F, .y_ratio = 0.904F},
+      CrystalMarkerData{.label = "Dia", .x_ratio = 0.139F, .y_ratio = 0.379F},
+      CrystalMarkerData{.label = "SC", .x_ratio = 0.861F, .y_ratio = 0.096F},
+      CrystalMarkerData{.label = "Ico", .x_ratio = 0.500F, .y_ratio = 0.944F},
   };
 }
 
 [[nodiscard]] inline std::vector<CrystalMarkerData> markersQ6LocalEntropy() noexcept {
   return {
-      CrystalMarkerData{.label = "FCC", .x_ratio = 0.575F, .y_ratio = 0.700F},
-      CrystalMarkerData{.label = "HCP", .x_ratio = 0.485F, .y_ratio = 0.700F},
-      CrystalMarkerData{.label = "BCC", .x_ratio = 0.511F, .y_ratio = 0.633F},
-      CrystalMarkerData{.label = "Ico", .x_ratio = 0.199F, .y_ratio = 0.600F},
-      CrystalMarkerData{.label = "Gl", .x_ratio = 0.160F, .y_ratio = 0.400F},
-      CrystalMarkerData{.label = "Liq", .x_ratio = 0.120F, .y_ratio = 0.133F},
+      CrystalMarkerData{.label = "FCC", .x_ratio = 0.767F, .y_ratio = 0.476F},
+      CrystalMarkerData{.label = "HCP", .x_ratio = 0.647F, .y_ratio = 0.476F},
+      CrystalMarkerData{.label = "BCC", .x_ratio = 0.681F, .y_ratio = 0.429F},
+      CrystalMarkerData{.label = "Ico", .x_ratio = 0.265F, .y_ratio = 0.619F},
+      CrystalMarkerData{.label = "Gl", .x_ratio = 0.213F, .y_ratio = 0.619F},
+      CrystalMarkerData{.label = "Liq", .x_ratio = 0.160F, .y_ratio = 0.190F},
   };
 }
 
 [[nodiscard]] inline std::vector<CrystalMarkerData> markersLocalEntropyQ6() noexcept {
   return {
-      CrystalMarkerData{.label = "FCC", .x_ratio = 0.300F, .y_ratio = 0.425F},
-      CrystalMarkerData{.label = "HCP", .x_ratio = 0.300F, .y_ratio = 0.515F},
-      CrystalMarkerData{.label = "BCC", .x_ratio = 0.367F, .y_ratio = 0.489F},
-      CrystalMarkerData{.label = "Ico", .x_ratio = 0.400F, .y_ratio = 0.801F},
-      CrystalMarkerData{.label = "Gl", .x_ratio = 0.600F, .y_ratio = 0.840F},
-      CrystalMarkerData{.label = "Liq", .x_ratio = 0.867F, .y_ratio = 0.880F},
+      CrystalMarkerData{.label = "FCC", .x_ratio = 0.524F, .y_ratio = 0.233F},
+      CrystalMarkerData{.label = "HCP", .x_ratio = 0.524F, .y_ratio = 0.353F},
+      CrystalMarkerData{.label = "BCC", .x_ratio = 0.571F, .y_ratio = 0.319F},
+      CrystalMarkerData{.label = "Ico", .x_ratio = 0.381F, .y_ratio = 0.735F},
+      CrystalMarkerData{.label = "Gl", .x_ratio = 0.381F, .y_ratio = 0.787F},
+      CrystalMarkerData{.label = "Liq", .x_ratio = 0.810F, .y_ratio = 0.840F},
   };
 }
 
 [[nodiscard]] inline std::vector<CrystalMarkerData> markersQTetLocalEntropy() noexcept {
   return {
-      CrystalMarkerData{.label = "Dia", .x_ratio = 0.950F, .y_ratio = 0.733F},
-      CrystalMarkerData{.label = "a-Net", .x_ratio = 0.850F, .y_ratio = 0.367F},
-      CrystalMarkerData{.label = "Liq", .x_ratio = 0.320F, .y_ratio = 0.133F},
+      CrystalMarkerData{.label = "Dia", .x_ratio = 0.917F, .y_ratio = 0.429F},
+      CrystalMarkerData{.label = "a-Net", .x_ratio = 0.792F, .y_ratio = 0.571F},
+      CrystalMarkerData{.label = "Liq", .x_ratio = 0.350F, .y_ratio = 0.190F},
   };
 }
 
 [[nodiscard]] inline std::vector<CrystalMarkerData> markersQTetQ6() noexcept {
   return {
-      CrystalMarkerData{.label = "Dia", .x_ratio = 0.950F, .y_ratio = 0.372F},
-      CrystalMarkerData{.label = "HD", .x_ratio = 0.950F, .y_ratio = 0.555F},
-      CrystalMarkerData{.label = "a-Net", .x_ratio = 0.850F, .y_ratio = 0.850F},
-      CrystalMarkerData{.label = "FCC", .x_ratio = 0.000F, .y_ratio = 0.425F},
-      CrystalMarkerData{.label = "HCP", .x_ratio = 0.000F, .y_ratio = 0.515F},
-      CrystalMarkerData{.label = "BCC", .x_ratio = 0.000F, .y_ratio = 0.489F},
-      CrystalMarkerData{.label = "SC", .x_ratio = 0.000F, .y_ratio = 0.646F},
-      CrystalMarkerData{.label = "Liq", .x_ratio = 0.320F, .y_ratio = 0.880F},
+      CrystalMarkerData{.label = "Dia", .x_ratio = 0.917F, .y_ratio = 0.163F},
+      CrystalMarkerData{.label = "HD", .x_ratio = 0.913F, .y_ratio = 0.407F},
+      CrystalMarkerData{.label = "a-Net", .x_ratio = 0.792F, .y_ratio = 0.800F},
+      CrystalMarkerData{.label = "FCC", .x_ratio = 0.083F, .y_ratio = 0.233F},
+      CrystalMarkerData{.label = "HCP", .x_ratio = 0.083F, .y_ratio = 0.353F},
+      CrystalMarkerData{.label = "BCC", .x_ratio = 0.083F, .y_ratio = 0.319F},
+      CrystalMarkerData{.label = "SC", .x_ratio = 0.083F, .y_ratio = 0.528F},
+      CrystalMarkerData{.label = "Liq", .x_ratio = 0.350F, .y_ratio = 0.840F},
   };
 }
 
 [[nodiscard]] inline std::vector<CrystalMarkerData> markersQ6QTet() noexcept {
   return {
-      CrystalMarkerData{.label = "Dia", .x_ratio = 0.628F, .y_ratio = 0.050F},
-      CrystalMarkerData{.label = "HD", .x_ratio = 0.445F, .y_ratio = 0.050F},
-      CrystalMarkerData{.label = "a-Net", .x_ratio = 0.150F, .y_ratio = 0.150F},
-      CrystalMarkerData{.label = "FCC", .x_ratio = 0.575F, .y_ratio = 1.000F},
-      CrystalMarkerData{.label = "HCP", .x_ratio = 0.485F, .y_ratio = 1.000F},
-      CrystalMarkerData{.label = "BCC", .x_ratio = 0.511F, .y_ratio = 1.000F},
-      CrystalMarkerData{.label = "SC", .x_ratio = 0.354F, .y_ratio = 1.000F},
-      CrystalMarkerData{.label = "Liq", .x_ratio = 0.120F, .y_ratio = 0.680F},
+      CrystalMarkerData{.label = "Dia", .x_ratio = 0.837F, .y_ratio = 0.083F},
+      CrystalMarkerData{.label = "HD", .x_ratio = 0.593F, .y_ratio = 0.087F},
+      CrystalMarkerData{.label = "a-Net", .x_ratio = 0.200F, .y_ratio = 0.208F},
+      CrystalMarkerData{.label = "FCC", .x_ratio = 0.767F, .y_ratio = 0.917F},
+      CrystalMarkerData{.label = "HCP", .x_ratio = 0.647F, .y_ratio = 0.917F},
+      CrystalMarkerData{.label = "BCC", .x_ratio = 0.681F, .y_ratio = 0.917F},
+      CrystalMarkerData{.label = "SC", .x_ratio = 0.472F, .y_ratio = 0.917F},
+      CrystalMarkerData{.label = "Liq", .x_ratio = 0.160F, .y_ratio = 0.650F},
   };
 }
 
