@@ -8,9 +8,9 @@
 
 #pragma once
 
+#include "app/viewmodel/PhaseSearchTypes.hpp"
 #include "render3d/Camera3D.hpp"
 #include "render3d/Scene3D.hpp"
-#include "app/viewmodel/PhaseSearchTypes.hpp"
 #include <cstdint>
 #include <memory>
 #include <span>
@@ -26,6 +26,22 @@ namespace correlation::render3d {
 struct ViewportDimensions {
   uint32_t width{800};  ///< Horizontal pixel resolution.
   uint32_t height{600}; ///< Vertical pixel resolution.
+};
+
+/**
+ * @struct GpuHaloConfig
+ * @brief Configuration parameters for GPU-driven halo visualization.
+ */
+struct GpuHaloConfig {
+  bool enabled{false};
+  app::PhaseDescriptor descriptor{app::PhaseDescriptor::Q6Bar};
+  float min_threshold{0.0F};
+  float max_threshold{1.0F};
+  float halo_radius_ratio{1.35F};
+  float halo_intensity{0.85F};
+  std::array<float, 4> halo_color{1.0F, 0.84F, 0.0F, 1.0F};
+  bool dim_non_matching{false};
+  bool hide_non_matching{false};
 };
 
 /**
@@ -70,20 +86,9 @@ public:
 
   /**
    * @brief Configures GPU-driven halo and phase search computation.
-   * @param enabled Whether GPU halo computation is active.
-   * @param descriptor Active order parameter descriptor.
-   * @param min_thresh Minimum matching threshold.
-   * @param max_thresh Maximum matching threshold.
-   * @param halo_ratio Visual halo expansion multiplier.
-   * @param halo_intensity Halo color alpha intensity.
-   * @param halo_color RGBA halo highlight color.
-   * @param dim_non_matching Whether non-matching atoms are dimmed.
-   * @param hide_non_matching Whether non-matching atoms are completely hidden.
+   * @param config Halo configuration descriptor and threshold state.
    */
-  virtual void setGpuHaloConfig(bool /*enabled*/, app::PhaseDescriptor /*descriptor*/,
-                                float /*min_thresh*/, float /*max_thresh*/, float /*halo_ratio*/,
-                                float /*halo_intensity*/, const std::array<float, 4> & /*halo_color*/,
-                                bool /*dim_non_matching*/, bool /*hide_non_matching*/) {}
+  virtual void setGpuHaloConfig(const GpuHaloConfig & /*config*/) {}
 
   /**
    * @brief Executes a single frame render and returns RGBA8 pixel span.

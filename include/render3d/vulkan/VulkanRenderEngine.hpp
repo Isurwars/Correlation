@@ -48,10 +48,7 @@ public:
   void setScene(std::shared_ptr<const Scene3D> scene) override;
   void setCamera(const Camera3D &camera) override;
   void setFeatureVisibility(bool render_bonds, bool render_wireframe) override;
-  void setGpuHaloConfig(bool enabled, app::PhaseDescriptor descriptor, float min_thresh,
-                        float max_thresh, float halo_ratio, float halo_intensity,
-                        const std::array<float, 4> &halo_color, bool dim_non_matching,
-                        bool hide_non_matching) override;
+  void setGpuHaloConfig(const GpuHaloConfig &config) override;
   [[nodiscard]] std::span<const uint8_t> renderFrame() override;
   [[nodiscard]] ViewportDimensions dimensions() const noexcept override;
   [[nodiscard]] std::string_view backendName() const noexcept override;

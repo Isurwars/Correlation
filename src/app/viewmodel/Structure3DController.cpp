@@ -98,7 +98,7 @@ void Structure3DController::requestRender(bool immediate) {
     return;
   }
   const std::scoped_lock lock(mutex_);
-  const bool gpu_halos = render_pipeline_->isHardwareAccelerated() && isPhaseSearchEnabled();
+  const bool gpu_halos = false;
   const RenderPipelineSnapshot snapshot{
       .camera = camera_,
       .scene = scene_ ? std::make_shared<render3d::Scene3D>(*scene_) : nullptr,

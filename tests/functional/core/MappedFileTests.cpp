@@ -6,10 +6,12 @@
 #include "core/MappedFile.hpp"
 
 #include <algorithm>
+#include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <gtest/gtest.h>
 #include <memory>
+#include <random>
 #include <string>
 
 namespace correlation::testing {
@@ -18,9 +20,20 @@ using namespace correlation::core;
 
 namespace {
 class MappedFileFunctionalTests : public ::testing::Test {
+public:
+  MappedFileFunctionalTests() {
+    test_dir_ = (std::filesystem::temp_directory_path() /
+                 ("mapped_file_test_" + std::to_string(std::random_device{}()) + "_" +
+                  std::to_string(std::chrono::steady_clock::now().time_since_epoch().count())))
+                    .string();
+    file_a_path_ = test_dir_ + "/file_a.txt";
+    file_b_path_ = test_dir_ + "/file_b.txt";
+  }
+
 protected:
   void SetUp() override {
-    std::filesystem::create_directory(test_dir_);
+    std::error_code err_code;
+    std::filesystem::create_directories(test_dir_, err_code);
 
     std::ofstream out_a(file_a_path_);
     out_a << content_a_;
@@ -31,7 +44,10 @@ protected:
     out_b.close();
   }
 
-  void TearDown() override { std::filesystem::remove_all(test_dir_); }
+  void TearDown() override {
+    std::error_code err_code;
+    std::filesystem::remove_all(test_dir_, err_code);
+  }
 
   [[nodiscard]] const std::string &fileAPath() const { return file_a_path_; }
   [[nodiscard]] const std::string &fileBPath() const { return file_b_path_; }
@@ -40,9 +56,9 @@ protected:
   [[nodiscard]] const std::string &testDir() const { return test_dir_; }
 
 private:
-  std::string test_dir_ = "mapped_file_functional_test_data";
-  std::string file_a_path_ = test_dir_ + "/file_a.txt";
-  std::string file_b_path_ = test_dir_ + "/file_b.txt";
+  std::string test_dir_;
+  std::string file_a_path_;
+  std::string file_b_path_;
 
   std::string content_a_ = "File A: Initial trajectory data with several frames and coordinates.";
   std::string content_b_ = "File B: Secondary configuration and parameters.";
