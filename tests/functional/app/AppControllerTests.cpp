@@ -1240,3 +1240,41 @@ TEST_F(AppControllerTests, DualViewPerFrameOverlayIntegration) {
   ASSERT_GT(restored_items->row_count(), 1);
   EXPECT_EQ(getRow(restored_items, 0).label, slint::SharedString("Total"));
 }
+
+TEST_F(AppControllerTests, DualViewHeatmapCallbacksIntegration) {
+  auto window = AppWindow::create();
+  correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+
+  auto *structure_ctrl = controller.getStructure3DController();
+  ASSERT_NE(structure_ctrl, nullptr);
+
+  // Switch to dual view and select 2D Phase Heatmap (left view 4)
+  window->invoke_select_dual_left_plot(4);
+  EXPECT_EQ(window->get_preview_dual_left_view(), 4);
+  EXPECT_TRUE(structure_ctrl->isPhase2DMode());
+  EXPECT_TRUE(structure_ctrl->isPhaseSearchEnabled());
+
+  // Invoke preset selection (Diamond = 8)
+  window->invoke_set_phase_preset_3d(static_cast<int>(CrystalPreset::Diamond));
+  EXPECT_EQ(structure_ctrl->crystalPreset(), CrystalPreset::Diamond);
+  EXPECT_EQ(structure_ctrl->phaseDescriptor(), PhaseDescriptor::QTet);
+  EXPECT_EQ(structure_ctrl->phaseDescriptorY(), PhaseDescriptor::Q6Bar);
+
+  // Invoke descriptor changes (X -> Q6Bar, Y -> Q4Bar)
+  window->invoke_set_phase_descriptor_3d(static_cast<int>(PhaseDescriptor::Q6Bar));
+  EXPECT_EQ(structure_ctrl->phaseDescriptor(), PhaseDescriptor::Q6Bar);
+
+  window->invoke_set_phase_descriptor_y_3d(static_cast<int>(PhaseDescriptor::Q4Bar));
+  EXPECT_EQ(structure_ctrl->phaseDescriptorY(), PhaseDescriptor::Q4Bar);
+
+  // Invoke 2D threshold change
+  window->invoke_set_phase_thresholds_2d_3d(0.3F, 0.7F, 0.1F, 0.4F);
+  EXPECT_FLOAT_EQ(structure_ctrl->phaseMinThreshold(), 0.3F);
+  EXPECT_FLOAT_EQ(structure_ctrl->phaseMaxThreshold(), 0.7F);
+  EXPECT_FLOAT_EQ(structure_ctrl->phaseMinThresholdY(), 0.1F);
+  EXPECT_FLOAT_EQ(structure_ctrl->phaseMaxThresholdY(), 0.4F);
+
+  // Invoke colormap change (Plasma = 1)
+  window->invoke_set_phase_colormap_3d(static_cast<int>(plotters::ColormapType::Plasma));
+  EXPECT_EQ(structure_ctrl->phaseColormap(), plotters::ColormapType::Plasma);
+}

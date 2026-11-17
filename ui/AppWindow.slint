@@ -1011,6 +1011,22 @@ export component AppWindow inherits Window {
                     structure_3d_dist_peak_text: root.structure_3d_dist_peak_text;
                     set_structure_3d_dist_metric(m) => { root.set_structure_3d_dist_metric(m); }
                     toggle_structure_3d_dist_hud(v) => { root.toggle_structure_3d_dist_hud(v); }
+
+                    // Phase Search callbacks
+                    toggle_phase_search_3d(en) => { root.toggle_phase_search_3d(en); }
+                    set_phase_preset_3d(idx) => { root.set_phase_preset_3d(idx); }
+                    set_phase_descriptor_3d(idx) => { root.set_phase_descriptor_3d(idx); }
+                    set_phase_colormap_3d(idx) => { root.set_phase_colormap_3d(idx); }
+                    set_phase_thresholds_3d(min, max) => { root.set_phase_thresholds_3d(min, max); }
+                    set_phase_intensity_3d(val) => { root.set_phase_intensity_3d(val); }
+                    set_phase_radius_ratio_3d(val) => { root.set_phase_radius_ratio_3d(val); }
+                    set_atom_scale_3d(val) => { root.set_atom_scale_3d(val); }
+                    set_phase_dim_non_matching_3d(dim) => { root.set_phase_dim_non_matching_3d(dim); }
+                    set_phase_hide_non_matching_3d(hide) => { root.set_phase_hide_non_matching_3d(hide); }
+                    set_phase_2d_mode_3d(is_2d) => { root.set_phase_2d_mode_3d(is_2d); }
+                    set_phase_descriptor_y_3d(idx) => { root.set_phase_descriptor_y_3d(idx); }
+                    set_phase_thresholds_2d_3d(x0, x1, y0, y1) => { root.set_phase_thresholds_2d_3d(x0, x1, y0, y1); }
+                    export_phase_heatmap_png_3d => { root.export_phase_heatmap_png_3d(); }
                 }
 
                 // 3. Splitter Handle between Preview Workspace and Right Inspector
