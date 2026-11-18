@@ -139,20 +139,20 @@ TEST(PhaseSearchTypesTests, CanonicalPresetConfigurations) {
   EXPECT_FLOAT_EQ(liquid_cfg.min_threshold_2d_x, 0.06F);
   EXPECT_FLOAT_EQ(liquid_cfg.max_threshold_2d_x, 0.22F);
   EXPECT_EQ(liquid_cfg.descriptor_2d_y, PhaseDescriptor::LocalEntropy);
-  EXPECT_FLOAT_EQ(liquid_cfg.min_threshold_2d_y, -3.0F);
-  EXPECT_FLOAT_EQ(liquid_cfg.max_threshold_2d_y, -1.0F);
+  EXPECT_FLOAT_EQ(liquid_cfg.min_threshold_2d_y, -3.5F);
+  EXPECT_FLOAT_EQ(liquid_cfg.max_threshold_2d_y, -1.5F);
 
   const auto glass_cfg = getPresetConfig(CrystalPreset::AmorphousGlass);
   EXPECT_EQ(glass_cfg.descriptor, PhaseDescriptor::LocalEntropy);
-  EXPECT_FLOAT_EQ(glass_cfg.min_threshold, -6.8F);
-  EXPECT_FLOAT_EQ(glass_cfg.max_threshold, -4.2F);
+  EXPECT_FLOAT_EQ(glass_cfg.min_threshold, -5.5F);
+  EXPECT_FLOAT_EQ(glass_cfg.max_threshold, -3.5F);
   EXPECT_TRUE(glass_cfg.is_2d);
   EXPECT_EQ(glass_cfg.descriptor_2d_x, PhaseDescriptor::Q6Bar);
   EXPECT_FLOAT_EQ(glass_cfg.min_threshold_2d_x, 0.10F);
   EXPECT_FLOAT_EQ(glass_cfg.max_threshold_2d_x, 0.26F);
   EXPECT_EQ(glass_cfg.descriptor_2d_y, PhaseDescriptor::LocalEntropy);
-  EXPECT_FLOAT_EQ(glass_cfg.min_threshold_2d_y, -6.8F);
-  EXPECT_FLOAT_EQ(glass_cfg.max_threshold_2d_y, -4.2F);
+  EXPECT_FLOAT_EQ(glass_cfg.min_threshold_2d_y, -5.5F);
+  EXPECT_FLOAT_EQ(glass_cfg.max_threshold_2d_y, -3.5F);
 
   const auto net_cfg = getPresetConfig(CrystalPreset::AmorphousNetwork);
   EXPECT_EQ(net_cfg.descriptor, PhaseDescriptor::QTet);
@@ -163,8 +163,8 @@ TEST(PhaseSearchTypesTests, CanonicalPresetConfigurations) {
   EXPECT_FLOAT_EQ(net_cfg.min_threshold_2d_x, 0.75F);
   EXPECT_FLOAT_EQ(net_cfg.max_threshold_2d_x, 0.95F);
   EXPECT_EQ(net_cfg.descriptor_2d_y, PhaseDescriptor::LocalEntropy);
-  EXPECT_FLOAT_EQ(net_cfg.min_threshold_2d_y, -7.5F);
-  EXPECT_FLOAT_EQ(net_cfg.max_threshold_2d_y, -4.8F);
+  EXPECT_FLOAT_EQ(net_cfg.min_threshold_2d_y, -5.5F);
+  EXPECT_FLOAT_EQ(net_cfg.max_threshold_2d_y, -3.5F);
 
   const auto fcc_cfg = getPresetConfig(CrystalPreset::FCC);
   EXPECT_EQ(fcc_cfg.descriptor, PhaseDescriptor::Q6Bar);
