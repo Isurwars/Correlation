@@ -162,11 +162,12 @@ void rasterizeHaloPixel(uint32_t pixel_x, uint32_t pixel_y, float dist_sq, const
 }
 
 void rasterizeSphere(const AtomInstance &atom, const Matrix4<float> &view,
-                     const Matrix4<float> &view_proj, float fov_rad,
-                     const RasterizerOptions &options, SoftwareFramebuffer &framebuffer) noexcept {
+                     const Matrix4<float> &view_proj, float fov_rad, bool is_ortho,
+                     float camera_dist, const RasterizerOptions &options,
+                     SoftwareFramebuffer &framebuffer) noexcept {
   const math::Vector3<float> p_view = view.transformPoint(atom.position);
   const float view_dist = -p_view.z();
-  if (view_dist <= 0.1F) {
+  if (!is_ortho && view_dist <= 0.1F) {
     return;
   }
 
@@ -177,8 +178,9 @@ void rasterizeSphere(const AtomInstance &atom, const Matrix4<float> &view,
   }
 
   const float tan_half_fov = std::tan(fov_rad * 0.5F);
-  const float screen_r =
-      (atom.radius * static_cast<float>(framebuffer.height())) / (2.0F * tan_half_fov * view_dist);
+  const float effective_dist = is_ortho ? camera_dist : view_dist;
+  const float screen_r = (atom.radius * static_cast<float>(framebuffer.height())) /
+                         (2.0F * tan_half_fov * effective_dist);
   if (screen_r < 0.5F) {
     return;
   }
@@ -206,7 +208,7 @@ void rasterizeSphere(const AtomInstance &atom, const Matrix4<float> &view,
   const float halo_r_squared = halo_r * halo_r;
   const float inv_r = 1.0F / screen_r;
   const float halo_thickness = halo_r - screen_r;
-  const float z_offset_factor = (atom.radius / view_dist) * 0.5F;
+  const float z_offset_factor = (atom.radius / effective_dist) * 0.5F;
 
   // Apply dim_factor to core atom color
   const float dim = std::clamp(atom.dim_factor, 0.0F, 1.0F);
@@ -294,8 +296,10 @@ void SoftwareRasterizer::render(const Scene3D &scene, const Camera3D &camera,
 
   // 3. Render spherical atoms
   if (options_.render_atoms) {
+    const bool is_ortho = camera.isOrthographic();
+    const float cam_dist = camera.distance();
     for (const auto &atom : scene.atoms()) {
-      rasterizeSphere(atom, view, view_proj, fov_rad, options_, framebuffer);
+      rasterizeSphere(atom, view, view_proj, fov_rad, is_ortho, cam_dist, options_, framebuffer);
     }
   }
 }

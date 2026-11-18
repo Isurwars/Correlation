@@ -131,6 +131,32 @@ TEST_F(Structure3DControllerTests, FeatureToggles) {
 
   controller.handleToggleWireframe(true);
   EXPECT_TRUE(window().get_structure_3d_wireframe_enabled());
+
+  // In-cell mode defaults to true
+  EXPECT_TRUE(controller.isInCell());
+  EXPECT_TRUE(window().get_structure_3d_in_cell());
+
+  controller.handleToggleInCell(false);
+  EXPECT_FALSE(controller.isInCell());
+  EXPECT_FALSE(window().get_structure_3d_in_cell());
+
+  controller.handleToggleInCell(true);
+  EXPECT_TRUE(controller.isInCell());
+  EXPECT_TRUE(window().get_structure_3d_in_cell());
+
+  // Isometric mode defaults to false (Perspective)
+  EXPECT_FALSE(controller.isIsometric());
+  EXPECT_FALSE(window().get_structure_3d_isometric());
+
+  controller.handleToggleProjection(true);
+  EXPECT_TRUE(controller.isIsometric());
+  EXPECT_TRUE(controller.camera().isOrthographic());
+  EXPECT_TRUE(window().get_structure_3d_isometric());
+
+  controller.handleToggleProjection(false);
+  EXPECT_FALSE(controller.isIsometric());
+  EXPECT_FALSE(controller.camera().isOrthographic());
+  EXPECT_FALSE(window().get_structure_3d_isometric());
 }
 
 TEST_F(Structure3DControllerTests, TrajectoryNavigation) {

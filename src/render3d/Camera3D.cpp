@@ -118,6 +118,12 @@ Matrix4<float> Camera3D::viewMatrix() const {
 
 Matrix4<float> Camera3D::projectionMatrix() const {
   const float fov_rad = fov_y_deg_ * K_DEG_TO_RAD;
+  if (projection_mode_ == ProjectionMode::Orthographic) {
+    const float half_height = distance_ * std::tan(fov_rad * 0.5F);
+    const float half_width = half_height * aspect_ratio_;
+    return Matrix4<float>::orthographic(-half_width, half_width, -half_height, half_height, z_near_,
+                                        z_far_);
+  }
   return Matrix4<float>::perspective(fov_rad, aspect_ratio_, z_near_, z_far_);
 }
 

@@ -9,16 +9,28 @@ import {
     Horizontal,
     SplitterHandle,
 } from "../../material/material.slint";
-import { TableRow, CurveToggleItem, CalibrationPair, PlotAxisSettings, TaggedPeakRecord, ExportConfig } from "../../Types.slint";
+import {
+    TableRow,
+    CurveToggleItem,
+    CalibrationPair,
+    PlotAxisSettings,
+    TaggedPeakRecord,
+    ExportConfig,
+} from "../../Types.slint";
 import { WorkflowStepper } from "./components/WorkflowStepper.slint";
 import { PreviewHeader } from "./components/PreviewHeader.slint";
 import { Plot2DViewport } from "./components/Plot2DViewport.slint";
 import { PlotDataTable } from "./components/PlotDataTable.slint";
 import { Structure3DViewport } from "./components/Structure3DViewport.slint";
-import { PhaseHeatmapView, CrystalMarker } from "./components/PhaseHeatmapView.slint";
+import {
+    PhaseHeatmapView,
+    CrystalMarker,
+} from "./components/PhaseHeatmapView.slint";
 import { TabItem } from "../../material/ui/components/tab_item.slint";
 
-export { CrystalMarker }
+export {
+    CrystalMarker,
+}
 
 // ============================================================================
 // PreviewCard Component
@@ -126,6 +138,8 @@ export component PreviewCard inherits FilledCard {
     in property <bool> structure_3d_bonds_enabled: true;
     in property <bool> structure_3d_wireframe_enabled: true;
     in property <bool> structure_3d_in_cell: false;
+    in property <bool> structure_3d_in_cell: true;
+    in property <bool> structure_3d_isometric: false;
     in-out property <bool> structure_3d_is_playing: false;
     in property <string> structure_3d_backend_label: "";
     in property <bool> structure_3d_gpu_accelerated: false;
@@ -197,6 +211,7 @@ export component PreviewCard inherits FilledCard {
     callback toggle_bonds_3d(bool);
     callback toggle_wireframe_3d(bool);
     callback toggle_in_cell_3d(bool);
+    callback toggle_projection_3d(bool);
     callback seek_frame_3d(int);
     callback step_frame_3d(bool);
     callback viewport_3d_resized(length, length);
@@ -263,6 +278,7 @@ export component PreviewCard inherits FilledCard {
             clear_pinned_area := TouchArea {
                 width: 120px;
                 height: 100%;
+
                 FilledButton {
                     width: 100%;
                     height: 100%;
@@ -327,7 +343,10 @@ export component PreviewCard inherits FilledCard {
                                         }
                                     }
 
-                                    Rectangle { width: 1px; background: MaterialPalette.outline_variant; }
+                                    Rectangle {
+                                        width: 1px;
+                                        background: MaterialPalette.outline_variant;
+                                    }
 
                                     TabItem {
                                         text: "S(Q)";
@@ -339,7 +358,10 @@ export component PreviewCard inherits FilledCard {
                                         }
                                     }
 
-                                    Rectangle { width: 1px; background: MaterialPalette.outline_variant; }
+                                    Rectangle {
+                                        width: 1px;
+                                        background: MaterialPalette.outline_variant;
+                                    }
 
                                     TabItem {
                                         text: "PAD";
@@ -351,7 +373,10 @@ export component PreviewCard inherits FilledCard {
                                         }
                                     }
 
-                                    Rectangle { width: 1px; background: MaterialPalette.outline_variant; }
+                                    Rectangle {
+                                        width: 1px;
+                                        background: MaterialPalette.outline_variant;
+                                    }
 
                                     TabItem {
                                         text: "XRD";
@@ -363,7 +388,10 @@ export component PreviewCard inherits FilledCard {
                                         }
                                     }
 
-                                    Rectangle { width: 1px; background: MaterialPalette.outline_variant; }
+                                    Rectangle {
+                                        width: 1px;
+                                        background: MaterialPalette.outline_variant;
+                                    }
 
                                     TabItem {
                                         text: "2D Heatmap";
@@ -508,6 +536,7 @@ export component PreviewCard inherits FilledCard {
                 bonds_enabled: root.structure_3d_bonds_enabled;
                 wireframe_enabled: root.structure_3d_wireframe_enabled;
                 in_cell_enabled: root.structure_3d_in_cell;
+                is_isometric: root.structure_3d_isometric;
                 is_playing <=> root.structure_3d_is_playing;
                 backend_label: root.structure_3d_backend_label;
                 gpu_accelerated: root.structure_3d_gpu_accelerated;
@@ -538,6 +567,7 @@ export component PreviewCard inherits FilledCard {
                 toggle_bonds(enabled) => { root.toggle_bonds_3d(enabled); }
                 toggle_wireframe(enabled) => { root.toggle_wireframe_3d(enabled); }
                 toggle_in_cell(enabled) => { root.toggle_in_cell_3d(enabled); }
+                toggle_projection(enabled) => { root.toggle_projection_3d(enabled); }
                 toggle_phase_panel => { root.toggle_phase_panel_3d(); }
                 seek_frame(idx) => { root.seek_frame_3d(idx); }
                 step_frame(fwd) => { root.step_frame_3d(fwd); }
@@ -595,6 +625,5 @@ export component PreviewCard inherits FilledCard {
                 table_rows: root.table_rows;
             }
         }
-
     }
 }

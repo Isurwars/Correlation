@@ -9,8 +9,17 @@
 #pragma once
 
 #include "render3d/Math3D.hpp"
+#include <cstdint>
 
 namespace correlation::render3d {
+
+/**
+ * @brief Projection mode for 3D camera rendering.
+ */
+enum class ProjectionMode : std::uint8_t {
+  Perspective = 0,  ///< Foreshortened perspective projection.
+  Orthographic = 1, ///< Parallel isometric / orthographic projection.
+};
 
 /**
  * @class Camera3D
@@ -89,6 +98,11 @@ public:
   [[nodiscard]] float elevation() const noexcept { return elevation_deg_; }
   [[nodiscard]] float fov() const noexcept { return fov_y_deg_; }
   [[nodiscard]] float aspectRatio() const noexcept { return aspect_ratio_; }
+  [[nodiscard]] ProjectionMode projectionMode() const noexcept { return projection_mode_; }
+  [[nodiscard]] bool isOrthographic() const noexcept {
+    return projection_mode_ == ProjectionMode::Orthographic;
+  }
+  void setProjectionMode(ProjectionMode mode) noexcept { projection_mode_ = mode; }
 
   /**
    * @brief Generates current view matrix.
@@ -118,6 +132,7 @@ private:
   float aspect_ratio_{1.3333F};
   float z_near_{0.1F};
   float z_far_{2000.0F};
+  ProjectionMode projection_mode_{ProjectionMode::Perspective};
 };
 
 } // namespace correlation::render3d

@@ -22,6 +22,8 @@ export component Structure3DToolBar inherits Rectangle {
     in property <bool> bonds_enabled: true;
     in property <bool> wireframe_enabled: true;
     in property <bool> in_cell_enabled: false;
+    in property <bool> in_cell_enabled: true;
+    in property <bool> is_isometric: false;
     in property <bool> phase_panel_open: false;
     in property <bool> phase_enabled: false;
     in property <bool> dist_hud_enabled: true;
@@ -32,6 +34,7 @@ export component Structure3DToolBar inherits Rectangle {
     callback toggle_bonds(bool);
     callback toggle_wireframe(bool);
     callback toggle_in_cell(bool);
+    callback toggle_projection(bool);
     callback toggle_phase_panel();
     callback toggle_dist_hud();
     callback set_atom_scale(float);
@@ -70,6 +73,7 @@ export component Structure3DToolBar inherits Rectangle {
                 tooltip_text: "Snap camera to Top (XY) plane.";
                 clicked => { root.set_camera_preset(0); }
             }
+
             ToolbarChip {
                 y: 0px;
                 label: "XZ";
@@ -77,6 +81,7 @@ export component Structure3DToolBar inherits Rectangle {
                 tooltip_text: "Snap camera to Front (XZ) plane.";
                 clicked => { root.set_camera_preset(1); }
             }
+
             ToolbarChip {
                 y: 0px;
                 label: "YZ";
@@ -84,6 +89,7 @@ export component Structure3DToolBar inherits Rectangle {
                 tooltip_text: "Snap camera to Side (YZ) plane.";
                 clicked => { root.set_camera_preset(2); }
             }
+
             ToolbarChip {
                 y: 0px;
                 label: "3D";
@@ -115,6 +121,14 @@ export component Structure3DToolBar inherits Rectangle {
             accessible_name: root.in_cell_enabled ? "In-Cell PBC Active (Folded & Boundary-Clipped)" : "Standard Non-Forced Coordinates";
             tooltip_text: root.in_cell_enabled ? "In-Cell PBC active (atoms wrapped into primary cell)." : "Wrap atoms into primary unit cell (PBC).";
             clicked => { root.toggle_in_cell(!root.in_cell_enabled); }
+        }
+
+        ToolbarChip {
+            label: root.is_isometric ? "ISO" : "PERSP";
+            selected: root.is_isometric;
+            accessible_name: root.is_isometric ? "Switch to Perspective View" : "Switch to Isometric View";
+            tooltip_text: root.is_isometric ? "Isometric (Orthographic) view active. Click for Perspective." : "Perspective view active. Click for Isometric (Orthographic).";
+            clicked => { root.toggle_projection(!root.is_isometric); }
         }
 
         ToolbarChip {

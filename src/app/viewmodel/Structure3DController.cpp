@@ -74,6 +74,10 @@ Structure3DController::Structure3DController(::AppWindow &window, const ProgramO
 
   syncPhaseSearchToWindow();
   syncDistributionHUDToWindow();
+  safeInvokeOnWindow([this] {
+    window_.set_structure_3d_in_cell(in_cell_mode_);
+    window_.set_structure_3d_isometric(camera_.isOrthographic());
+  });
 
   const bool is_gpu = render_pipeline_->isHardwareAccelerated();
   const std::string device_name = render_pipeline_->deviceName();
@@ -239,6 +243,16 @@ void Structure3DController::handleToggleInCell(bool enabled) {
     }
   }
   safeInvokeOnWindow([this, enabled] { window_.set_structure_3d_in_cell(enabled); });
+  requestRender();
+}
+
+void Structure3DController::handleToggleProjection(bool isometric) {
+  {
+    const std::scoped_lock lock(mutex_);
+    camera_.setProjectionMode(isometric ? render3d::ProjectionMode::Orthographic
+                                        : render3d::ProjectionMode::Perspective);
+  }
+  safeInvokeOnWindow([this, isometric] { window_.set_structure_3d_isometric(isometric); });
   requestRender();
 }
 

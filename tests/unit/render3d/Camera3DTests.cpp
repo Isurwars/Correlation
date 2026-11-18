@@ -88,4 +88,34 @@ TEST(Camera3DTests, MatrixGeneration) {
   EXPECT_LE(p_clip.z(), 1.0F);
 }
 
+TEST(Camera3DTests, OrthographicProjection) {
+  Camera3D camera;
+  camera.setViewport(800.0F, 600.0F);
+
+  EXPECT_FALSE(camera.isOrthographic());
+  EXPECT_EQ(camera.projectionMode(), ProjectionMode::Perspective);
+
+  camera.setProjectionMode(ProjectionMode::Orthographic);
+  EXPECT_TRUE(camera.isOrthographic());
+  EXPECT_EQ(camera.projectionMode(), ProjectionMode::Orthographic);
+
+  const auto proj_ortho = camera.projectionMatrix();
+  // In orthographic projection, affine w remains 1.0 (no divide by -z)
+  EXPECT_FLOAT_EQ(proj_ortho(3, 2), 0.0F);
+  EXPECT_FLOAT_EQ(proj_ortho(3, 3), 1.0F);
+
+  const auto view_proj_ortho = camera.viewProjectionMatrix();
+  const math::Vector3<float> origin(0.0F, 0.0F, 0.0F);
+  const auto p_clip = view_proj_ortho.transformPoint(origin);
+  EXPECT_GE(p_clip.z(), -1.0F);
+  EXPECT_LE(p_clip.z(), 1.0F);
+
+  camera.setProjectionMode(ProjectionMode::Perspective);
+  EXPECT_FALSE(camera.isOrthographic());
+  EXPECT_EQ(camera.projectionMode(), ProjectionMode::Perspective);
+
+  const auto proj_persp = camera.projectionMatrix();
+  EXPECT_FLOAT_EQ(proj_persp(3, 2), -1.0F);
+}
+
 } // namespace correlation::render3d

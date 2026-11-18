@@ -131,6 +131,21 @@ public:
   [[nodiscard]] bool isInCell() const noexcept { return in_cell_mode_; }
 
   /**
+   * @brief Queries whether isometric (orthographic) projection mode is active.
+   * @return True if isometric projection is enabled.
+   */
+  [[nodiscard]] bool isIsometric() const noexcept {
+    const std::scoped_lock lock(mutex_);
+    return camera_.isOrthographic();
+  }
+
+  /**
+   * @brief Toggles between perspective and isometric (orthographic) 3D camera projection.
+   * @param[in] isometric True for isometric/orthographic, false for perspective.
+   */
+  void handleToggleProjection(bool isometric);
+
+  /**
    * @brief Updates active atomic structure from loaded Cell.
    * @param[in] cell New atomic simulation cell.
    */
@@ -489,7 +504,7 @@ private:
   bool is_active_{false};
   bool render_bonds_{true};
   bool render_wireframe_{true};
-  bool in_cell_mode_{false};
+  bool in_cell_mode_{true};
   bool is_interacting_{false};
   double bond_cutoff_scale_{1.15};
   core::Cell current_cell_;

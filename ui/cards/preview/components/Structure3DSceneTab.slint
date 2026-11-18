@@ -20,6 +20,8 @@ export component Structure3DSceneTab inherits ScrollView {
     in property <bool> bonds_enabled: true;
     in property <bool> wireframe_enabled: true;
     in property <bool> in_cell_enabled: false;
+    in property <bool> in_cell_enabled: true;
+    in property <bool> is_isometric: false;
     in property <bool> dist_hud_visible: true;
 
     callback reset_view();
@@ -27,6 +29,7 @@ export component Structure3DSceneTab inherits ScrollView {
     callback toggle_bonds(bool);
     callback toggle_wireframe(bool);
     callback toggle_in_cell(bool);
+    callback toggle_projection(bool);
     callback toggle_dist_hud(bool);
 
     VerticalLayout {
@@ -48,6 +51,13 @@ export component Structure3DSceneTab inherits ScrollView {
                 text: "Reset Camera View";
                 tooltip: "Reset 3D camera rotation, pan, and zoom to the default isometric view.";
                 clicked => { root.reset_view(); }
+            }
+
+            CheckBoxRow {
+                text: "Isometric (Orthographic)";
+                check_state_bool: root.is_isometric;
+                tooltip_text: "Toggle parallel orthographic projection without perspective foreshortening.";
+                checked_state_changed(en) => { root.toggle_projection(en); }
             }
         }
 
@@ -112,4 +122,3 @@ export component Structure3DSceneTab inherits ScrollView {
         }
     }
 }
-

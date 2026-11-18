@@ -237,6 +237,8 @@ export component AppWindow inherits Window {
     in property <bool> structure_3d_bonds_enabled: true;
     in property <bool> structure_3d_wireframe_enabled: true;
     in-out property <bool> structure_3d_in_cell: false;
+    in-out property <bool> structure_3d_in_cell: true;
+    in-out property <bool> structure_3d_isometric: false;
     in property <string> structure_3d_backend_label: "";
     in property <bool> structure_3d_gpu_accelerated: false;
     // Phase Search properties
@@ -362,6 +364,7 @@ export component AppWindow inherits Window {
     callback toggle_bonds_3d(bool);
     callback toggle_wireframe_3d(bool);
     callback toggle_in_cell_3d(bool);
+    callback toggle_projection_3d(bool);
     callback seek_frame_3d(int);
     callback step_frame_3d(bool);
     callback set_structure_3d_dist_metric(int);
@@ -924,6 +927,7 @@ export component AppWindow inherits Window {
                     structure_3d_bonds_enabled: root.structure_3d_bonds_enabled;
                     structure_3d_wireframe_enabled: root.structure_3d_wireframe_enabled;
                     structure_3d_in_cell: root.structure_3d_in_cell;
+                    structure_3d_isometric: root.structure_3d_isometric;
                     structure_3d_is_playing <=> root.structure_3d_is_playing;
                     structure_3d_backend_label: root.structure_3d_backend_label;
                     structure_3d_gpu_accelerated: root.structure_3d_gpu_accelerated;
@@ -938,6 +942,10 @@ export component AppWindow inherits Window {
                     toggle_in_cell_3d(enabled) => {
                         root.structure_3d_in_cell = enabled;
                         root.toggle_in_cell_3d(enabled);
+                    }
+                    toggle_projection_3d(enabled) => {
+                        root.structure_3d_isometric = enabled;
+                        root.toggle_projection_3d(enabled);
                     }
                     seek_frame_3d(idx) => { root.seek_frame_3d(idx); }
                     step_frame_3d(fwd) => { root.step_frame_3d(fwd); }
@@ -1131,6 +1139,7 @@ export component AppWindow inherits Window {
                     bonds_enabled: root.structure_3d_bonds_enabled;
                     wireframe_enabled: root.structure_3d_wireframe_enabled;
                     in_cell_enabled: root.structure_3d_in_cell;
+                    is_isometric: root.structure_3d_isometric;
                     dist_hud_visible: root.structure_3d_dist_hud_visible;
 
                     toggle_phase_enabled(en) => { root.toggle_phase_search_3d(en); }
@@ -1151,6 +1160,7 @@ export component AppWindow inherits Window {
                     toggle_bonds(en) => { root.toggle_bonds_3d(en); }
                     toggle_wireframe(en) => { root.toggle_wireframe_3d(en); }
                     toggle_in_cell(en) => { root.toggle_in_cell_3d(en); }
+                    toggle_projection(en) => { root.toggle_projection_3d(en); }
                     toggle_dist_hud(v) => { root.toggle_structure_3d_dist_hud(v); }
                 }
 
