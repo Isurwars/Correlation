@@ -62,6 +62,19 @@ struct GroupedCalculators {
   return grouped;
 }
 
+[[nodiscard]] bool isVdosEnabled(const ProgramOptions &opts) noexcept {
+  const auto vdos_it = opts.active_calculators.find("Vibrational Density of States");
+  if (vdos_it != opts.active_calculators.end() && vdos_it->second) {
+    return true;
+  }
+  const auto vdos_short_it = opts.active_calculators.find("VDOS");
+  if (vdos_short_it != opts.active_calculators.end() && vdos_short_it->second) {
+    return true;
+  }
+  const auto vdos_alias_it = opts.active_calculators.find("vDoS");
+  return vdos_alias_it != opts.active_calculators.end() && vdos_alias_it->second;
+}
+
 [[nodiscard]] bool resolveCalculatorEnabled(const correlation::calculators::BaseCalculator &calc,
                                             const ProgramOptions &opts) {
   if (const auto calc_it = opts.active_calculators.find(std::string(calc.getName()));
@@ -71,6 +84,10 @@ struct GroupedCalculators {
   if (const auto short_it = opts.active_calculators.find(std::string(calc.getShortName()));
       short_it != opts.active_calculators.end()) {
     return short_it->second;
+  }
+  if ((calc.getShortName() == "VACF" || calc.getName() == "Velocity Autocorrelation Function") &&
+      isVdosEnabled(opts)) {
+    return true;
   }
   return !isDefaultDisabledCalculator(&calc);
 }
@@ -163,11 +180,28 @@ void AppController::populateCalculatorGroups() {
 void AppController::setCalculatorsEnabled(bool enabled, std::string_view group_filter) {
   const auto &calculators =
       ::correlation::calculators::CalculatorFactory::instance().getCalculators();
-  for (const auto &calc : calculators) {
-    if (!group_filter.empty() && calc->getGroup() != group_filter) {
-      continue;
+  if (group_filter.empty() && !enabled) {
+    options_.active_calculators.clear();
+    for (const auto &calc : calculators) {
+      options_.active_calculators[std::string(calc->getName())] = false;
+      if (!calc->getShortName().empty()) {
+        options_.active_calculators[std::string(calc->getShortName())] = false;
+      }
     }
-    options_.active_calculators[std::string(calc->getName())] = enabled;
+  } else {
+    for (const auto &calc : calculators) {
+      if (!group_filter.empty() && calc->getGroup() != group_filter) {
+        continue;
+      }
+      options_.active_calculators[std::string(calc->getName())] = enabled;
+      if (!calc->getShortName().empty()) {
+        options_.active_calculators[std::string(calc->getShortName())] = enabled;
+      }
+    }
+    if (isVdosEnabled(options_)) {
+      options_.active_calculators["Velocity Autocorrelation Function"] = true;
+      options_.active_calculators["VACF"] = true;
+    }
   }
   populateCalculatorGroups();
   updateActiveGroupFlags();

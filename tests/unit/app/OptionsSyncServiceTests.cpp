@@ -198,5 +198,38 @@ TEST_F(OptionsSyncServiceTests, UpdateActiveGroupFlagsSetsBooleans) {
   EXPECT_TRUE(win.get_has_scattering_active());
 }
 
+TEST_F(OptionsSyncServiceTests, ReadFromUIMarksVacfWhenVdosIsEnabled) {
+  auto &win = window();
+
+  auto groups_model = std::make_shared<slint::VectorModel<CalculatorGroup>>();
+  CalculatorGroup dyn_group;
+  dyn_group.name = "Dynamical";
+
+  auto calcs_model = std::make_shared<slint::VectorModel<CalculatorInfo>>();
+  CalculatorInfo vdos_info;
+  vdos_info.id = "Vibrational Density of States";
+  vdos_info.name = "Vibrational Density of States";
+  vdos_info.short_name = "VDOS";
+  vdos_info.enabled = true;
+  calcs_model->push_back(vdos_info);
+
+  CalculatorInfo vacf_info;
+  vacf_info.id = "Velocity Autocorrelation Function";
+  vacf_info.name = "Velocity Autocorrelation Function";
+  vacf_info.short_name = "VACF";
+  vacf_info.enabled = false;
+  calcs_model->push_back(vacf_info);
+
+  dyn_group.calculators = calcs_model;
+  groups_model->push_back(dyn_group);
+  win.set_calculator_groups(groups_model);
+
+  const auto res = OptionsSyncService::readFromUI(win, 10);
+  ASSERT_TRUE(res.has_value());
+  EXPECT_TRUE(res->active_calculators.at("Vibrational Density of States"));
+  EXPECT_TRUE(res->active_calculators.at("Velocity Autocorrelation Function"));
+  EXPECT_TRUE(res->active_calculators.at("VACF"));
+}
+
 } // namespace
 } // namespace correlation::app

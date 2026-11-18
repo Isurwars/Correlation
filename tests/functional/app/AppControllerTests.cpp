@@ -859,6 +859,54 @@ TEST_F(AppControllerTests, SelectAllAndSelectNoneCalculators) {
   EXPECT_GT(window->get_total_calculator_count(), 0);
 }
 
+TEST_F(AppControllerTests, EnablingVdosAutomaticallyMarksVacf) {
+  auto window = AppWindow::create();
+  correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+
+  // Initially ensure everything is disabled
+  window->invoke_toggle_all_calculators(false);
+  EXPECT_EQ(window->get_enabled_calculator_count(), 0);
+
+  // Toggle vDoS on
+  window->invoke_toggle_calculator("Vibrational Density of States", true);
+
+  // VACF must also be marked as enabled
+  const auto dynamical_idx = findGroupRow(*window, "Dynamical");
+  ASSERT_TRUE(dynamical_idx.has_value());
+  const auto dyn_group = groupAt(*window, *dynamical_idx);
+  ASSERT_NE(dyn_group.calculators, nullptr);
+
+  bool vacf_enabled = false;
+  bool vdos_enabled = false;
+  for (size_t ci = 0; ci < dyn_group.calculators->row_count(); ++ci) {
+    const auto row = dyn_group.calculators->row_data(ci);
+    if (!row.has_value()) {
+      continue;
+    }
+    if (row->name == "Velocity Autocorrelation Function" || row->short_name == "VACF") {
+      vacf_enabled = row->enabled;
+    }
+    if (row->name == "Vibrational Density of States" || row->short_name == "VDOS") {
+      vdos_enabled = row->enabled;
+    }
+  }
+  EXPECT_TRUE(vdos_enabled);
+  EXPECT_TRUE(vacf_enabled);
+
+  // Now disable VACF: vDoS should automatically be disabled as well
+  window->invoke_toggle_calculator("Velocity Autocorrelation Function", false);
+  const auto dyn_group_after = groupAt(*window, *dynamical_idx);
+  for (size_t ci = 0; ci < dyn_group_after.calculators->row_count(); ++ci) {
+    const auto row = dyn_group_after.calculators->row_data(ci);
+    if (!row.has_value()) {
+      continue;
+    }
+    if (row->name == "Vibrational Density of States" || row->short_name == "VDOS") {
+      EXPECT_FALSE(row->enabled);
+    }
+  }
+}
+
 TEST_F(AppControllerTests, ExpandAndCollapseAllCalculatorGroups) {
   auto window = AppWindow::create();
   const correlation::app::AppController controller(*window, loader(), dispatcher(), options());

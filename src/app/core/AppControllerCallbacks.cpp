@@ -16,6 +16,7 @@
 #include "app/viewmodel/PlotController.hpp"
 #include "app/viewmodel/PresetController.hpp"
 #include "app/viewmodel/Structure3DController.hpp"
+#include "calculators/CalculatorFactory.hpp"
 
 #include <filesystem>
 #include <string>
@@ -60,7 +61,27 @@ void AppController::registerActionCallbacks() {
   });
 
   window_.on_toggle_calculator([this](const slint::SharedString &calc_id, bool enabled) {
-    options_.active_calculators[std::string(calc_id.data())] = enabled;
+    const std::string id_str(calc_id.data());
+    options_.active_calculators[id_str] = enabled;
+    const auto *calc =
+        ::correlation::calculators::CalculatorFactory::instance().getCalculator(id_str);
+    if (calc != nullptr) {
+      options_.active_calculators[std::string(calc->getName())] = enabled;
+      if (!calc->getShortName().empty()) {
+        options_.active_calculators[std::string(calc->getShortName())] = enabled;
+      }
+      const bool is_vdos =
+          (calc->getShortName() == "VDOS" || calc->getName() == "Vibrational Density of States");
+      const bool is_vacf = (calc->getShortName() == "VACF" ||
+                            calc->getName() == "Velocity Autocorrelation Function");
+      if (is_vdos && enabled) {
+        options_.active_calculators["Velocity Autocorrelation Function"] = true;
+        options_.active_calculators["VACF"] = true;
+      } else if (is_vacf && !enabled) {
+        options_.active_calculators["Vibrational Density of States"] = false;
+        options_.active_calculators["VDOS"] = false;
+      }
+    }
     populateCalculatorGroups();
     updateActiveGroupFlags();
   });

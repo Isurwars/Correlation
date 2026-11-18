@@ -61,7 +61,19 @@ void collectActiveCalculators(const std::shared_ptr<slint::Model<CalculatorGroup
       }
       const auto &calc = maybe_calc.value();
       opt.active_calculators[std::string(calc.id.data())] = calc.enabled;
+      if (!calc.short_name.empty()) {
+        opt.active_calculators[std::string(calc.short_name.data())] = calc.enabled;
+      }
     }
+  }
+  const bool has_vdos =
+      (opt.active_calculators.contains("Vibrational Density of States") &&
+       opt.active_calculators["Vibrational Density of States"]) ||
+      (opt.active_calculators.contains("VDOS") && opt.active_calculators["VDOS"]) ||
+      (opt.active_calculators.contains("vDoS") && opt.active_calculators["vDoS"]);
+  if (has_vdos) {
+    opt.active_calculators["Velocity Autocorrelation Function"] = true;
+    opt.active_calculators["VACF"] = true;
   }
 }
 

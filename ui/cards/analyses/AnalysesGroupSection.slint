@@ -46,14 +46,26 @@ export component AnalysesGroupSection inherits Vertical {
             width: 28px;
             alignment: center;
 
-            TooltipTarget {
-                tooltip_text: "Toggle all calculators in " + root.group.name + ".";
+            group_check_touch := TooltipTarget {
+                width: 28px;
+                height: 28px;
+                mouse-cursor: root.file_loaded ? pointer : default;
+                tooltip_text: root.group.enabled_count == root.group.total_count ?
+                    ("Disable all calculators in " + root.group.name + ".") :
+                    ("Enable all calculators in " + root.group.name + ".");
+                accessible-role: checkbox;
+                accessible-label: "Toggle all " + root.group.name + " calculators";
+                accessible-checked: root.group.enabled_count == root.group.total_count;
+                clicked => {
+                    if (root.file_loaded) {
+                        root.toggle_calculator_group(root.group.name, root.group.enabled_count < root.group.total_count);
+                    }
+                }
 
                 CheckBox {
                     width: 24px;
                     height: 24px;
                     enabled: root.file_loaded;
-                    tristate: true;
                     check_state: root.group.enabled_count == 0 ? CheckState.unchecked :
                         (root.group.enabled_count == root.group.total_count ? CheckState.checked : CheckState.partially_checked);
                     checked_state_changed => {
