@@ -81,14 +81,34 @@ export component PhaseMiniHistogram inherits Rectangle {
         // Domain bounds footer
         HorizontalLayout {
             alignment: space-between;
+
             MaterialText {
                 text: "" + (Math.round(root.domain_min * 100) / 100);
-                font-size: 9.5px;
+                font-size: 8.5px;
                 color: MaterialPalette.on_surface_variant;
             }
+
+            MaterialText {
+                text: "" + (Math.round((root.domain_min + (root.domain_max - root.domain_min) * 0.25) * 100) / 100);
+                font-size: 8.5px;
+                color: MaterialPalette.on_surface_variant;
+            }
+
+            MaterialText {
+                text: "" + (Math.round((root.domain_min + (root.domain_max - root.domain_min) * 0.50) * 100) / 100);
+                font-size: 8.5px;
+                color: MaterialPalette.on_surface_variant;
+            }
+
+            MaterialText {
+                text: "" + (Math.round((root.domain_min + (root.domain_max - root.domain_min) * 0.75) * 100) / 100);
+                font-size: 8.5px;
+                color: MaterialPalette.on_surface_variant;
+            }
+
             MaterialText {
                 text: "" + (Math.round(root.domain_max * 100) / 100);
-                font-size: 9.5px;
+                font-size: 8.5px;
                 color: MaterialPalette.on_surface_variant;
             }
         }

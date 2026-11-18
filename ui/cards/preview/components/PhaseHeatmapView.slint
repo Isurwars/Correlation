@@ -38,6 +38,7 @@ export component PhaseHeatmapView inherits Rectangle {
     in property <int> matching_atoms: 0;
     in property <int> total_atoms: 0;
     in property <[CrystalMarker]> crystal_markers: [];
+    property <length> y_axis_header_width: 32px;
 
     callback set_descriptor_x(int);
     callback set_descriptor_y(int);
@@ -190,15 +191,34 @@ export component PhaseHeatmapView inherits Rectangle {
             }
         }
 
+        // Coordinate Axis Descriptor Banner
+        HorizontalLayout {
+            alignment: space-between;
+
+            MaterialText {
+                text: "↑ Y: " + root.descriptor_name_y;
+                font-size: 9.5px;
+                font-weight: 700;
+                color: MaterialPalette.secondary;
+            }
+
+            MaterialText {
+                text: "X: " + root.descriptor_name_x + " →";
+                font-size: 9.5px;
+                font-weight: 700;
+                color: MaterialPalette.primary;
+            }
+        }
+
         // 3. Heatmap Canvas with Coordinate Overlays
         HorizontalLayout {
             spacing: 4px;
             vertical-stretch: root.full_height ? 1 : 0;
             horizontal-stretch: 1;
 
-            // Y-Axis Label and Bounds
+            // Y-Axis 5-Point Numeric Scale
             VerticalLayout {
-                width: 24px;
+                width: root.y_axis_header_width;
                 alignment: space-between;
 
                 MaterialText {
@@ -209,10 +229,23 @@ export component PhaseHeatmapView inherits Rectangle {
                 }
 
                 MaterialText {
-                    text: root.descriptor_name_y;
-                    font-size: 9.5px;
-                    font-weight: 700;
-                    color: MaterialPalette.secondary;
+                    text: "" + (Math.round((root.min_y + (root.max_y - root.min_y) * 0.75) * 100) / 100);
+                    font-size: 8px;
+                    color: MaterialPalette.on_surface_variant;
+                    horizontal-alignment: right;
+                }
+
+                MaterialText {
+                    text: "" + (Math.round((root.min_y + (root.max_y - root.min_y) * 0.50) * 100) / 100);
+                    font-size: 8px;
+                    color: MaterialPalette.on_surface_variant;
+                    horizontal-alignment: right;
+                }
+
+                MaterialText {
+                    text: "" + (Math.round((root.min_y + (root.max_y - root.min_y) * 0.25) * 100) / 100);
+                    font-size: 8px;
+                    color: MaterialPalette.on_surface_variant;
                     horizontal-alignment: right;
                 }
 
@@ -246,28 +279,48 @@ export component PhaseHeatmapView inherits Rectangle {
             }
         }
 
-        // X-Axis Label and Bounds Footer
+        // X-Axis 5-Point Numeric Scale
         HorizontalLayout {
-            padding-left: 28px;
-            alignment: space-between;
+            spacing: 4px;
 
-            MaterialText {
-                text: "" + (Math.round(root.min_x * 100) / 100);
-                font-size: 8px;
-                color: MaterialPalette.on_surface_variant;
+            // Offset spacer matching Y-axis column width
+            Rectangle {
+                width: root.y_axis_header_width;
             }
 
-            MaterialText {
-                text: root.descriptor_name_x;
-                font-size: 9.5px;
-                font-weight: 700;
-                color: MaterialPalette.primary;
-            }
+            HorizontalLayout {
+                horizontal-stretch: 1;
+                alignment: space-between;
 
-            MaterialText {
-                text: "" + (Math.round(root.max_x * 100) / 100);
-                font-size: 8px;
-                color: MaterialPalette.on_surface_variant;
+                MaterialText {
+                    text: "" + (Math.round(root.min_x * 100) / 100);
+                    font-size: 8px;
+                    color: MaterialPalette.on_surface_variant;
+                }
+
+                MaterialText {
+                    text: "" + (Math.round((root.min_x + (root.max_x - root.min_x) * 0.25) * 100) / 100);
+                    font-size: 8px;
+                    color: MaterialPalette.on_surface_variant;
+                }
+
+                MaterialText {
+                    text: "" + (Math.round((root.min_x + (root.max_x - root.min_x) * 0.50) * 100) / 100);
+                    font-size: 8px;
+                    color: MaterialPalette.on_surface_variant;
+                }
+
+                MaterialText {
+                    text: "" + (Math.round((root.min_x + (root.max_x - root.min_x) * 0.75) * 100) / 100);
+                    font-size: 8px;
+                    color: MaterialPalette.on_surface_variant;
+                }
+
+                MaterialText {
+                    text: "" + (Math.round(root.max_x * 100) / 100);
+                    font-size: 8px;
+                    color: MaterialPalette.on_surface_variant;
+                }
             }
         }
 

@@ -51,6 +51,20 @@ export component PhaseHeatmapCanvas inherits Rectangle {
         image-fit: fill;
     }
 
+    // Subtle Cartesian Coordinate Grid Lines (25%, 50%, 75%)
+    for frac in [0.25, 0.50, 0.75]: Rectangle {
+        x: parent.width * frac;
+        width: 1px;
+        height: 100%;
+        background: MaterialPalette.outline_variant.with_alpha(15%);
+    }
+    for frac in [0.25, 0.50, 0.75]: Rectangle {
+        y: parent.height * frac;
+        width: 100%;
+        height: 1px;
+        background: MaterialPalette.outline_variant.with_alpha(15%);
+    }
+
     // Canonical Phase Reference Region Overlays (Areas)
     for marker in root.crystal_markers: Rectangle {
         visible: marker.is_area && marker.width_ratio > 0.0 && marker.height_ratio > 0.0;

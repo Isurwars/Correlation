@@ -89,8 +89,8 @@ TEST_F(Structure3DControllerPhaseSearchTests, CrystalPresetApplication) {
   controller.setCrystalPreset(CrystalPreset::AmorphousGlass);
   EXPECT_EQ(controller.crystalPreset(), CrystalPreset::AmorphousGlass);
   EXPECT_EQ(controller.phaseDescriptor(), PhaseDescriptor::LocalEntropy);
-  EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), -6.8F);
-  EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), -4.2F);
+  EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), -5.5F);
+  EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), -3.5F);
 
   // Apply AmorphousNetwork preset (1D)
   controller.setCrystalPreset(CrystalPreset::AmorphousNetwork);
@@ -120,8 +120,8 @@ TEST_F(Structure3DControllerPhaseSearchTests, CrystalPresetApplication) {
   EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), 0.06F);
   EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), 0.22F);
   EXPECT_EQ(controller.phaseDescriptorY(), PhaseDescriptor::LocalEntropy);
-  EXPECT_FLOAT_EQ(controller.phaseMinThresholdY(), -3.0F);
-  EXPECT_FLOAT_EQ(controller.phaseMaxThresholdY(), -1.0F);
+  EXPECT_FLOAT_EQ(controller.phaseMinThresholdY(), -3.5F);
+  EXPECT_FLOAT_EQ(controller.phaseMaxThresholdY(), -1.5F);
 
   controller.setCrystalPreset(CrystalPreset::AmorphousGlass);
   EXPECT_EQ(controller.crystalPreset(), CrystalPreset::AmorphousGlass);
@@ -129,8 +129,8 @@ TEST_F(Structure3DControllerPhaseSearchTests, CrystalPresetApplication) {
   EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), 0.10F);
   EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), 0.26F);
   EXPECT_EQ(controller.phaseDescriptorY(), PhaseDescriptor::LocalEntropy);
-  EXPECT_FLOAT_EQ(controller.phaseMinThresholdY(), -6.8F);
-  EXPECT_FLOAT_EQ(controller.phaseMaxThresholdY(), -4.2F);
+  EXPECT_FLOAT_EQ(controller.phaseMinThresholdY(), -5.5F);
+  EXPECT_FLOAT_EQ(controller.phaseMaxThresholdY(), -3.5F);
 
   controller.setPhaseThresholds2D(0.10F, 0.40F, -5.0F, -2.0F);
   EXPECT_EQ(controller.crystalPreset(), CrystalPreset::Custom);
@@ -495,9 +495,9 @@ TEST_F(Structure3DControllerPhaseSearchTests, GlassAndDisorderedPhaseRegionMarke
       getCrystalReferenceMarkers(PhaseDescriptor::QTet, PhaseDescriptor::LocalEntropy);
   EXPECT_EQ(markers_qtet_s2.size(), 4UL);
 
-  assertAreaMarker(markers_qtet_s2, "LDA", 0.786F, 0.536F, 0.14F, 0.20F);
-  assertAreaMarker(markers_qtet_s2, "HDA", 0.429F, 0.460F, 0.14F, 0.15F);
-  assertAreaMarker(markers_qtet_s2, "Liq", 0.550F, 0.206F, 0.14F, 0.15F);
+  assertAreaMarker(markers_qtet_s2, "LDA", 0.786F, 0.405F, 0.14F, 0.15F);
+  assertAreaMarker(markers_qtet_s2, "HDA", 0.429F, 0.405F, 0.14F, 0.15F);
+  assertAreaMarker(markers_qtet_s2, "Liq", 0.550F, 0.246F, 0.14F, 0.15F);
 
   const auto markers_s2_qtet =
       getCrystalReferenceMarkers(PhaseDescriptor::LocalEntropy, PhaseDescriptor::QTet);

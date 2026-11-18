@@ -215,21 +215,21 @@ struct CrystalMarkerData {
         .min_threshold_2d_x = 0.06F,
         .max_threshold_2d_x = 0.22F,
         .descriptor_2d_y = PhaseDescriptor::LocalEntropy,
-        .min_threshold_2d_y = -3.0F,
-        .max_threshold_2d_y = -1.0F,
+        .min_threshold_2d_y = -3.5F,
+        .max_threshold_2d_y = -1.5F,
     };
   case CrystalPreset::AmorphousGlass:
     return {
         .descriptor = PhaseDescriptor::LocalEntropy,
-        .min_threshold = -6.8F,
-        .max_threshold = -4.2F,
+        .min_threshold = -5.5F,
+        .max_threshold = -3.5F,
         .is_2d = true,
         .descriptor_2d_x = PhaseDescriptor::Q6Bar,
         .min_threshold_2d_x = 0.10F,
         .max_threshold_2d_x = 0.26F,
         .descriptor_2d_y = PhaseDescriptor::LocalEntropy,
-        .min_threshold_2d_y = -6.8F,
-        .max_threshold_2d_y = -4.2F,
+        .min_threshold_2d_y = -5.5F,
+        .max_threshold_2d_y = -3.5F,
     };
   case CrystalPreset::AmorphousNetwork:
     return {
@@ -241,8 +241,8 @@ struct CrystalMarkerData {
         .min_threshold_2d_x = 0.75F,
         .max_threshold_2d_x = 0.95F,
         .descriptor_2d_y = PhaseDescriptor::LocalEntropy,
-        .min_threshold_2d_y = -7.5F,
-        .max_threshold_2d_y = -4.8F,
+        .min_threshold_2d_y = -5.5F,
+        .max_threshold_2d_y = -3.5F,
     };
   case CrystalPreset::FCC:
     return {
@@ -447,15 +447,15 @@ inline constexpr std::array<PhysicalMarker, 6> K_MARKERS_Q6_LOCAL_ENTROPY{{
     PhysicalMarker{.label = "HCP", .x = 0.485F, .y = -8.00F, .width = 0.09F, .height = 2.0F},
     PhysicalMarker{.label = "BCC", .x = 0.511F, .y = -7.00F, .width = 0.09F, .height = 2.0F},
     PhysicalMarker{.label = "Ico", .x = 0.200F, .y = -6.50F, .width = 0.09F, .height = 2.0F},
-    PhysicalMarker{.label = "Gl", .x = 0.178F, .y = -5.50F, .width = 0.16F, .height = 2.6F},
-    PhysicalMarker{.label = "Liq", .x = 0.140F, .y = -2.00F, .width = 0.16F, .height = 2.0F},
+    PhysicalMarker{.label = "Gl", .x = 0.178F, .y = -4.50F, .width = 0.16F, .height = 2.0F},
+    PhysicalMarker{.label = "Liq", .x = 0.140F, .y = -2.50F, .width = 0.16F, .height = 2.0F},
 }};
 
 inline constexpr std::array<PhysicalMarker, 4> K_MARKERS_QTET_LOCAL_ENTROPY{{
     PhysicalMarker{.label = "Dia", .x = 0.965F, .y = -8.00F, .width = 0.14F, .height = 2.2F},
-    PhysicalMarker{.label = "LDA", .x = 0.850F, .y = -6.15F, .width = 0.20F, .height = 2.7F},
-    PhysicalMarker{.label = "HDA", .x = 0.350F, .y = -5.20F, .width = 0.22F, .height = 2.2F},
-    PhysicalMarker{.label = "Liq", .x = 0.520F, .y = -2.00F, .width = 0.22F, .height = 2.2F},
+    PhysicalMarker{.label = "LDA", .x = 0.850F, .y = -4.50F, .width = 0.20F, .height = 2.0F},
+    PhysicalMarker{.label = "HDA", .x = 0.350F, .y = -4.50F, .width = 0.22F, .height = 2.0F},
+    PhysicalMarker{.label = "Liq", .x = 0.520F, .y = -2.50F, .width = 0.22F, .height = 2.0F},
 }};
 
 inline constexpr std::array<PhysicalMarker, 8> K_MARKERS_QTET_Q6{{
