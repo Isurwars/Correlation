@@ -394,7 +394,7 @@ SpatialPartitionData<T> buildSpatialPartition(const correlation::core::Cell &cel
   std::vector<unsigned long long> insertion_cursors = bin_offsets;
   for (size_t i = 0; i < atom_count; ++i) {
     int const bin_idx = atom_bin[i];
-    bin_indices[insertion_cursors[bin_idx]++] = i;
+    bin_indices[static_cast<std::size_t>(insertion_cursors[bin_idx]++)] = i;
   }
 
   return SpatialPartitionData<T>{
@@ -493,7 +493,8 @@ void executeTwoPassBonds(const TwoPassExecutionContext<T> &ctx,
   unsigned long long h_bond_count = 0;
   d_bond_counter.copyToHost(&h_bond_count, 1);
 
-  correlation::core::gpu::DeviceBuffer<GPUBond<T>> d_bonds(h_bond_count);
+  std::size_t const bond_count_sz = static_cast<std::size_t>(h_bond_count);
+  correlation::core::gpu::DeviceBuffer<GPUBond<T>> d_bonds(bond_count_sz);
   d_bond_counter.setScalar(zero_val);
 
   // Pass 2: Write bonds and accumulate device histograms
@@ -507,9 +508,9 @@ void executeTwoPassBonds(const TwoPassExecutionContext<T> &ctx,
                      static_cast<int>(ctx.hist_config.num_bins), ctx.d_histograms_ptr);
   correlation::core::gpu::hipCheck(hipDeviceSynchronize());
 
-  std::vector<GPUBond<T>> host_bonds(h_bond_count);
+  std::vector<GPUBond<T>> host_bonds(bond_count_sz);
   if (h_bond_count > 0) {
-    d_bonds.copyToHost(host_bonds.data(), h_bond_count);
+    d_bonds.copyToHost(host_bonds.data(), bond_count_sz);
   }
   unpackGpuBonds(host_bonds, out_graph);
 }
