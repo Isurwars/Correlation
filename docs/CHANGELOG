@@ -1,6 +1,39 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.6.0] - 2026-11-18
+
+### 🚀 3D Visualization & Phase Search Enhancements
+- **Isometric (Orthographic) Camera Projection & In-Cell PBC Default (`Camera3D`, `SoftwareRasterizer`, `Structure3DController`, `Structure3DToolBar.slint`, `Structure3DSceneTab.slint`)**:
+  - Implemented parallel orthographic camera projection in `Camera3D` and `SoftwareRasterizer` matching the focal perspective frustum scale to eliminate depth distortion.
+  - Added interactive `ISO` / `PERSP` toolbar chip and sidebar checkbox toggle.
+  - Set in-cell periodic boundary condition (PBC) coordinate folding active by default on trajectory and cell loading.
+- **2D Order Parameter Phase Heatmaps & Dual View (`PhaseHeatmapCanvas.slint`, `PhaseHeatmapView.slint`, `PhaseSearchService`, `Structure3DController`)**:
+  - Integrated 2D phase heatmaps directly into Preview Dual View with full-height adaptive layouts and high-resolution rendering.
+  - Added Diamond, Simple Cubic, and Hexagonal Diamond reference phase markers alongside Liquid and Amorphous Glass canonical literature ranges ($1.5 \le |s_2| \le 3.5$ for liquids, $3.5 \le |s_2| \le 5.5$ for glasses).
+  - Calibrated XY domain ranges with protective margins, 5-point right-aligned Y-axis scale, and clear axis header banners.
+- **Enhanced Halo Glow Visualization & Vulkan Compute**:
+  - Doubled the default halo glow radius ratio to $2.70\times$ atom radius across software and GPU pipelines for prominent phase identification.
+  - Added Vulkan compute pipelines for GPU order parameter and halo evaluation (`VulkanComputeService`).
+- **Distribution Metric Extensions**:
+  - Added X-Ray Diffraction (XRD) distribution metric HUD visualization in the 3D viewport.
+
+### ♻️ Code Quality & Architecture Refactoring
+- **AppController Decomposition**:
+  - Decoupled `AppController` into parallel compilation units (`AppController3DCallbacks.cpp`, `AppControllerCalculators.cpp`, `AppControllerCallbacks.cpp`) improving build concurrency and modularity.
+- **Compiler Compliance & Cleanups**:
+  - Maintained strict C++23 standards, cognitive complexity $\le 25$, and zero `NOLINT` suppressions.
+
+### ⚡ Performance & CI
+- **Multi-Core Parallel Execution**:
+  - Enabled multi-core parallel execution for CTest and clang-tidy in CI pipelines.
+
+### 🧪 Testing
+- **3D Camera & Phase Search Test Suite**:
+  - Added unit test coverage for orthographic projection matrix generation and clip space bounds in `Camera3DTests`.
+  - Added feature toggle unit tests for default in-cell mode and projection switching in `Structure3DControllerTests`.
+  - Extended phase search tests covering 2D crystal preset markers and large plastic cell analysis.
+
 ## [4.5.1] - 2026-11-16
 
 ### 🖥️ User Interface & Component Architecture
