@@ -76,14 +76,12 @@ export component AdvancedOptionsPanel inherits Rectangle {
         padding: 0;
 
         ScrollView {
-            vertical-stretch: 1;
 
             Vertical {
                 padding: 0;
                 spacing: MaterialStyleMetrics.spacing_8;
 
                 analyses_card := AnalysesSelectionCard {
-                    expanded: false;
                     file_loaded: root.file_loaded;
                     calculator_groups: root.calculator_groups;
                     total_calculator_count: root.total_calculator_count;

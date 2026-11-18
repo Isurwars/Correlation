@@ -41,7 +41,6 @@ export component AnalysesGroupSection inherits Vertical {
     HorizontalLayout {
         height: 32px;
         spacing: MaterialStyleMetrics.spacing_2;
-        alignment: stretch;
 
         VerticalLayout {
             width: 28px;
@@ -198,8 +197,6 @@ export component AnalysesGroupSection inherits Vertical {
             }
 
             Rectangle {
-                width: 100%;
-                height: 100%;
                 border-radius: MaterialStyleMetrics.border_radius_6;
                 border-width: 1px;
                 border-color: calc.enabled ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(60%);
@@ -238,7 +235,6 @@ export component AnalysesGroupSection inherits Vertical {
                         text: calc.name;
                         style: MaterialTypography.label_small;
                         color: MaterialPalette.on_surface_variant;
-                        overflow: elide;
                         vertical-alignment: center;
                         horizontal-alignment: right;
                         horizontal-stretch: 1;

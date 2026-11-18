@@ -102,7 +102,6 @@ export component CurveListTab inherits VerticalLayout {
 
     // 3. Curves Scrollable List
     ScrollView {
-        vertical-stretch: 1;
         content-height: root.curve_toggle_items.length * 30px;
 
         VerticalLayout {
@@ -110,7 +109,6 @@ export component CurveListTab inherits VerticalLayout {
             alignment: start;
 
             for item in root.curve_toggle_items: VerticalLayout {
-                spacing: 0px;
                 padding: 0px;
 
                 if item.matches_filter: VerticalLayout {
@@ -172,7 +170,6 @@ export component CurveListTab inherits VerticalLayout {
                                     text: item.label;
                                     style: (item.label == "Total") ? MaterialTypography.label_large : MaterialTypography.body_medium;
                                     color: item.visible ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
-                                    overflow: elide;
                                     horizontal-alignment: left;
                                     vertical-alignment: center;
                                 }

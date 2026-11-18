@@ -317,6 +317,7 @@ struct CrystalMarkerData {
 
 /**
  * @brief Returns domain bounds [min, max] for a given order descriptor.
+ * @details Boundaries are expanded to full thermodynamic and physical limits (~20% zoom out).
  * @param[in] descriptor Target order parameter.
  * @return Pair of floats representing the nominal [min, max] range.
  */
@@ -324,566 +325,149 @@ struct CrystalMarkerData {
 getDescriptorDomain(PhaseDescriptor descriptor) noexcept {
   switch (descriptor) {
   case PhaseDescriptor::W6Hat:
-    return {-0.22F, 0.10F};
+    return {-0.26F, 0.12F};
   case PhaseDescriptor::W4Hat:
-    return {-0.22F, 0.22F};
+    return {-0.26F, 0.26F};
   case PhaseDescriptor::LocalEntropy:
-    return {-10.0F, 0.5F};
+    return {-12.0F, 0.6F};
   case PhaseDescriptor::TwfNconn:
-    return {0.0F, 16.0F};
+    return {0.0F, 20.0F};
   case PhaseDescriptor::QTet:
-    return {-0.10F, 1.10F};
+    return {-0.25F, 1.15F};
   case PhaseDescriptor::Q6Bar:
   case PhaseDescriptor::Q6:
-    return {0.0F, 0.75F};
+    return {0.0F, 0.90F};
   case PhaseDescriptor::Q4Bar:
   case PhaseDescriptor::Q4:
   default:
-    return {-0.05F, 0.85F};
+    return {-0.05F, 1.05F};
   }
 }
 
 namespace detail {
 
-[[nodiscard]] inline std::vector<CrystalMarkerData> markersQ4Q6() noexcept {
-  return {
-      CrystalMarkerData{.label = "FCC",
-                        .x_ratio = 0.268F,
-                        .y_ratio = 0.233F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.12F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "HCP",
-                        .x_ratio = 0.163F,
-                        .y_ratio = 0.353F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "BCC",
-                        .x_ratio = 0.096F,
-                        .y_ratio = 0.319F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Dia",
-                        .x_ratio = 0.621F,
-                        .y_ratio = 0.163F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.12F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "SC",
-                        .x_ratio = 0.904F,
-                        .y_ratio = 0.528F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "HD",
-                        .x_ratio = 0.176F,
-                        .y_ratio = 0.407F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Ico",
-                        .x_ratio = 0.056F,
-                        .y_ratio = 0.735F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Liq",
-                        .x_ratio = 0.083F,
-                        .y_ratio = 0.840F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.16F,
-                        .is_area = true},
+struct PhysicalMarker {
+  std::string_view label;
+  float x{0.0F};
+  float y{0.0F};
+  float width{0.0F};
+  float height{0.0F};
+  bool is_area{true};
+};
+
+[[nodiscard]] constexpr CrystalMarkerData
+toNormalizedMarker(const PhysicalMarker &marker, std::pair<float, float> domain_x,
+                   std::pair<float, float> domain_y) noexcept {
+  const float span_x = std::max(domain_x.second - domain_x.first, 1e-6F);
+  const float span_y = std::max(domain_y.second - domain_y.first, 1e-6F);
+  const float x_ratio = std::clamp((marker.x - domain_x.first) / span_x, 0.0F, 1.0F);
+  const float y_ratio = std::clamp((domain_y.second - marker.y) / span_y, 0.0F, 1.0F);
+  const float width_ratio = std::clamp(marker.width / span_x, 0.0F, 1.0F);
+  const float height_ratio = std::clamp(marker.height / span_y, 0.0F, 1.0F);
+  return CrystalMarkerData{
+      .label = marker.label,
+      .x_ratio = x_ratio,
+      .y_ratio = y_ratio,
+      .width_ratio = width_ratio,
+      .height_ratio = height_ratio,
+      .is_area = marker.is_area,
   };
 }
 
-[[nodiscard]] inline std::vector<CrystalMarkerData> markersQ6Q4() noexcept {
-  return {
-      CrystalMarkerData{.label = "FCC",
-                        .x_ratio = 0.767F,
-                        .y_ratio = 0.732F,
-                        .width_ratio = 0.12F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "HCP",
-                        .x_ratio = 0.647F,
-                        .y_ratio = 0.837F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "BCC",
-                        .x_ratio = 0.681F,
-                        .y_ratio = 0.904F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Dia",
-                        .x_ratio = 0.837F,
-                        .y_ratio = 0.379F,
-                        .width_ratio = 0.12F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "SC",
-                        .x_ratio = 0.472F,
-                        .y_ratio = 0.096F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "HD",
-                        .x_ratio = 0.593F,
-                        .y_ratio = 0.824F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Ico",
-                        .x_ratio = 0.265F,
-                        .y_ratio = 0.944F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Liq",
-                        .x_ratio = 0.160F,
-                        .y_ratio = 0.917F,
-                        .width_ratio = 0.16F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
+[[nodiscard]] constexpr PhysicalMarker swapAxes(const PhysicalMarker &marker) noexcept {
+  return PhysicalMarker{
+      .label = marker.label,
+      .x = marker.y,
+      .y = marker.x,
+      .width = marker.height,
+      .height = marker.width,
+      .is_area = marker.is_area,
   };
 }
 
-[[nodiscard]] inline std::vector<CrystalMarkerData> markersQ6W6() noexcept {
-  return {
-      CrystalMarkerData{.label = "FCC",
-                        .x_ratio = 0.767F,
-                        .y_ratio = 0.353F,
-                        .width_ratio = 0.12F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "HCP",
-                        .x_ratio = 0.647F,
-                        .y_ratio = 0.350F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "BCC",
-                        .x_ratio = 0.681F,
-                        .y_ratio = 0.272F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Dia",
-                        .x_ratio = 0.837F,
-                        .y_ratio = 0.353F,
-                        .width_ratio = 0.12F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "SC",
-                        .x_ratio = 0.472F,
-                        .y_ratio = 0.272F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "HD",
-                        .x_ratio = 0.593F,
-                        .y_ratio = 0.350F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Ico",
-                        .x_ratio = 0.265F,
-                        .y_ratio = 0.844F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.12F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Liq",
-                        .x_ratio = 0.160F,
-                        .y_ratio = 0.313F,
-                        .width_ratio = 0.16F,
-                        .height_ratio = 0.12F,
-                        .is_area = true},
-  };
+[[nodiscard]] inline std::vector<CrystalMarkerData>
+normalizeMarkers(std::span<const PhysicalMarker> physical_markers, PhaseDescriptor desc_x,
+                 PhaseDescriptor desc_y) noexcept {
+  const auto domain_x = getDescriptorDomain(desc_x);
+  const auto domain_y = getDescriptorDomain(desc_y);
+  std::vector<CrystalMarkerData> result;
+  result.reserve(physical_markers.size());
+  for (const auto &phy_marker : physical_markers) {
+    result.push_back(toNormalizedMarker(phy_marker, domain_x, domain_y));
+  }
+  return result;
 }
 
-[[nodiscard]] inline std::vector<CrystalMarkerData> markersW6Q6() noexcept {
-  return {
-      CrystalMarkerData{.label = "FCC",
-                        .x_ratio = 0.647F,
-                        .y_ratio = 0.233F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.12F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "HCP",
-                        .x_ratio = 0.650F,
-                        .y_ratio = 0.353F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "BCC",
-                        .x_ratio = 0.728F,
-                        .y_ratio = 0.319F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Dia",
-                        .x_ratio = 0.647F,
-                        .y_ratio = 0.163F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.12F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "SC",
-                        .x_ratio = 0.728F,
-                        .y_ratio = 0.528F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "HD",
-                        .x_ratio = 0.650F,
-                        .y_ratio = 0.407F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Ico",
-                        .x_ratio = 0.156F,
-                        .y_ratio = 0.735F,
-                        .width_ratio = 0.12F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Liq",
-                        .x_ratio = 0.688F,
-                        .y_ratio = 0.840F,
-                        .width_ratio = 0.12F,
-                        .height_ratio = 0.16F,
-                        .is_area = true},
-  };
+[[nodiscard]] inline std::vector<CrystalMarkerData>
+normalizeSwappedMarkers(std::span<const PhysicalMarker> physical_markers, PhaseDescriptor desc_x,
+                        PhaseDescriptor desc_y) noexcept {
+  const auto domain_x = getDescriptorDomain(desc_x);
+  const auto domain_y = getDescriptorDomain(desc_y);
+  std::vector<CrystalMarkerData> result;
+  result.reserve(physical_markers.size());
+  for (const auto &phy_marker : physical_markers) {
+    result.push_back(toNormalizedMarker(swapAxes(phy_marker), domain_x, domain_y));
+  }
+  return result;
 }
 
-[[nodiscard]] inline std::vector<CrystalMarkerData> markersQ4W4() noexcept {
-  return {
-      CrystalMarkerData{.label = "FCC",
-                        .x_ratio = 0.268F,
-                        .y_ratio = 0.861F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "HCP",
-                        .x_ratio = 0.163F,
-                        .y_ratio = 0.195F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "BCC",
-                        .x_ratio = 0.096F,
-                        .y_ratio = 0.139F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Dia",
-                        .x_ratio = 0.621F,
-                        .y_ratio = 0.861F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "SC",
-                        .x_ratio = 0.904F,
-                        .y_ratio = 0.139F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Ico",
-                        .x_ratio = 0.056F,
-                        .y_ratio = 0.500F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-  };
-}
+inline constexpr std::array<PhysicalMarker, 8> K_MARKERS_Q6_Q4{{
+    PhysicalMarker{.label = "FCC", .x = 0.575F, .y = 0.191F, .width = 0.10F, .height = 0.10F},
+    PhysicalMarker{.label = "HCP", .x = 0.485F, .y = 0.097F, .width = 0.09F, .height = 0.08F},
+    PhysicalMarker{.label = "BCC", .x = 0.511F, .y = 0.036F, .width = 0.08F, .height = 0.06F},
+    PhysicalMarker{.label = "Dia", .x = 0.628F, .y = 0.509F, .width = 0.10F, .height = 0.10F},
+    PhysicalMarker{.label = "SC", .x = 0.354F, .y = 0.764F, .width = 0.08F, .height = 0.08F},
+    PhysicalMarker{.label = "HD", .x = 0.445F, .y = 0.108F, .width = 0.08F, .height = 0.08F},
+    PhysicalMarker{.label = "Ico", .x = 0.199F, .y = 0.000F, .width = 0.08F, .height = 0.06F},
+    PhysicalMarker{.label = "Liq", .x = 0.120F, .y = 0.025F, .width = 0.14F, .height = 0.08F},
+}};
 
-[[nodiscard]] inline std::vector<CrystalMarkerData> markersW4Q4() noexcept {
-  return {
-      CrystalMarkerData{.label = "FCC",
-                        .x_ratio = 0.139F,
-                        .y_ratio = 0.732F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "HCP",
-                        .x_ratio = 0.805F,
-                        .y_ratio = 0.837F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "BCC",
-                        .x_ratio = 0.861F,
-                        .y_ratio = 0.904F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Dia",
-                        .x_ratio = 0.139F,
-                        .y_ratio = 0.379F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "SC",
-                        .x_ratio = 0.861F,
-                        .y_ratio = 0.096F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Ico",
-                        .x_ratio = 0.500F,
-                        .y_ratio = 0.944F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-  };
-}
+inline constexpr std::array<PhysicalMarker, 8> K_MARKERS_Q6_W6{{
+    PhysicalMarker{.label = "FCC", .x = 0.575F, .y = -0.013F, .width = 0.10F, .height = 0.03F},
+    PhysicalMarker{.label = "HCP", .x = 0.485F, .y = -0.012F, .width = 0.09F, .height = 0.03F},
+    PhysicalMarker{.label = "BCC", .x = 0.511F, .y = 0.013F, .width = 0.08F, .height = 0.03F},
+    PhysicalMarker{.label = "Dia", .x = 0.628F, .y = -0.013F, .width = 0.10F, .height = 0.03F},
+    PhysicalMarker{.label = "SC", .x = 0.354F, .y = 0.013F, .width = 0.08F, .height = 0.03F},
+    PhysicalMarker{.label = "HD", .x = 0.445F, .y = -0.012F, .width = 0.08F, .height = 0.03F},
+    PhysicalMarker{.label = "Ico", .x = 0.150F, .y = -0.165F, .width = 0.08F, .height = 0.04F},
+    PhysicalMarker{.label = "Liq", .x = 0.120F, .y = 0.000F, .width = 0.14F, .height = 0.04F},
+}};
 
-[[nodiscard]] inline std::vector<CrystalMarkerData> markersQ6LocalEntropy() noexcept {
-  return {
-      CrystalMarkerData{.label = "FCC",
-                        .x_ratio = 0.760F,
-                        .y_ratio = 0.810F,
-                        .width_ratio = 0.14F,
-                        .height_ratio = 0.19F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "HCP",
-                        .x_ratio = 0.640F,
-                        .y_ratio = 0.810F,
-                        .width_ratio = 0.12F,
-                        .height_ratio = 0.19F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "BCC",
-                        .x_ratio = 0.533F,
-                        .y_ratio = 0.714F,
-                        .width_ratio = 0.12F,
-                        .height_ratio = 0.19F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Ico",
-                        .x_ratio = 0.267F,
-                        .y_ratio = 0.667F,
-                        .width_ratio = 0.12F,
-                        .height_ratio = 0.19F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Gl",
-                        .x_ratio = 0.213F,
-                        .y_ratio = 0.619F,
-                        .width_ratio = 0.24F,
-                        .height_ratio = 0.30F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Liq",
-                        .x_ratio = 0.160F,
-                        .y_ratio = 0.238F,
-                        .width_ratio = 0.22F,
-                        .height_ratio = 0.22F,
-                        .is_area = true},
-  };
-}
+inline constexpr std::array<PhysicalMarker, 6> K_MARKERS_Q4_W4{{
+    PhysicalMarker{.label = "FCC", .x = 0.191F, .y = -0.159F, .width = 0.10F, .height = 0.05F},
+    PhysicalMarker{.label = "HCP", .x = 0.097F, .y = 0.134F, .width = 0.08F, .height = 0.04F},
+    PhysicalMarker{.label = "BCC", .x = 0.036F, .y = 0.159F, .width = 0.08F, .height = 0.04F},
+    PhysicalMarker{.label = "Dia", .x = 0.509F, .y = -0.159F, .width = 0.10F, .height = 0.05F},
+    PhysicalMarker{.label = "SC", .x = 0.764F, .y = 0.159F, .width = 0.08F, .height = 0.04F},
+    PhysicalMarker{.label = "Ico", .x = 0.000F, .y = 0.000F, .width = 0.08F, .height = 0.05F},
+}};
 
-[[nodiscard]] inline std::vector<CrystalMarkerData> markersLocalEntropyQ6() noexcept {
-  return {
-      CrystalMarkerData{.label = "FCC",
-                        .x_ratio = 0.810F,
-                        .y_ratio = 0.760F,
-                        .width_ratio = 0.19F,
-                        .height_ratio = 0.14F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "HCP",
-                        .x_ratio = 0.810F,
-                        .y_ratio = 0.640F,
-                        .width_ratio = 0.19F,
-                        .height_ratio = 0.12F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "BCC",
-                        .x_ratio = 0.714F,
-                        .y_ratio = 0.533F,
-                        .width_ratio = 0.19F,
-                        .height_ratio = 0.12F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Ico",
-                        .x_ratio = 0.667F,
-                        .y_ratio = 0.267F,
-                        .width_ratio = 0.19F,
-                        .height_ratio = 0.12F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Gl",
-                        .x_ratio = 0.619F,
-                        .y_ratio = 0.213F,
-                        .width_ratio = 0.30F,
-                        .height_ratio = 0.24F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Liq",
-                        .x_ratio = 0.238F,
-                        .y_ratio = 0.160F,
-                        .width_ratio = 0.22F,
-                        .height_ratio = 0.22F,
-                        .is_area = true},
-  };
-}
+inline constexpr std::array<PhysicalMarker, 6> K_MARKERS_Q6_LOCAL_ENTROPY{{
+    PhysicalMarker{.label = "FCC", .x = 0.575F, .y = -8.00F, .width = 0.10F, .height = 2.0F},
+    PhysicalMarker{.label = "HCP", .x = 0.485F, .y = -8.00F, .width = 0.09F, .height = 2.0F},
+    PhysicalMarker{.label = "BCC", .x = 0.511F, .y = -7.00F, .width = 0.09F, .height = 2.0F},
+    PhysicalMarker{.label = "Ico", .x = 0.200F, .y = -6.50F, .width = 0.09F, .height = 2.0F},
+    PhysicalMarker{.label = "Gl", .x = 0.178F, .y = -5.50F, .width = 0.16F, .height = 2.6F},
+    PhysicalMarker{.label = "Liq", .x = 0.140F, .y = -2.00F, .width = 0.16F, .height = 2.0F},
+}};
 
-[[nodiscard]] inline std::vector<CrystalMarkerData> markersQTetLocalEntropy() noexcept {
-  return {
-      CrystalMarkerData{.label = "Dia",
-                        .x_ratio = 0.883F,
-                        .y_ratio = 0.810F,
-                        .width_ratio = 0.12F,
-                        .height_ratio = 0.20F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "LDA",
-                        .x_ratio = 0.792F,
-                        .y_ratio = 0.619F,
-                        .width_ratio = 0.19F,
-                        .height_ratio = 0.26F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "HDA",
-                        .x_ratio = 0.375F,
-                        .y_ratio = 0.524F,
-                        .width_ratio = 0.22F,
-                        .height_ratio = 0.22F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Liq",
-                        .x_ratio = 0.517F,
-                        .y_ratio = 0.238F,
-                        .width_ratio = 0.21F,
-                        .height_ratio = 0.22F,
-                        .is_area = true},
-  };
-}
+inline constexpr std::array<PhysicalMarker, 4> K_MARKERS_QTET_LOCAL_ENTROPY{{
+    PhysicalMarker{.label = "Dia", .x = 0.965F, .y = -8.00F, .width = 0.14F, .height = 2.2F},
+    PhysicalMarker{.label = "LDA", .x = 0.850F, .y = -6.15F, .width = 0.20F, .height = 2.7F},
+    PhysicalMarker{.label = "HDA", .x = 0.350F, .y = -5.20F, .width = 0.22F, .height = 2.2F},
+    PhysicalMarker{.label = "Liq", .x = 0.520F, .y = -2.00F, .width = 0.22F, .height = 2.2F},
+}};
 
-[[nodiscard]] inline std::vector<CrystalMarkerData> markersLocalEntropyQTet() noexcept {
-  return {
-      CrystalMarkerData{.label = "Dia",
-                        .x_ratio = 0.810F,
-                        .y_ratio = 0.883F,
-                        .width_ratio = 0.20F,
-                        .height_ratio = 0.12F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "LDA",
-                        .x_ratio = 0.619F,
-                        .y_ratio = 0.792F,
-                        .width_ratio = 0.26F,
-                        .height_ratio = 0.19F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "HDA",
-                        .x_ratio = 0.524F,
-                        .y_ratio = 0.375F,
-                        .width_ratio = 0.22F,
-                        .height_ratio = 0.22F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Liq",
-                        .x_ratio = 0.238F,
-                        .y_ratio = 0.517F,
-                        .width_ratio = 0.22F,
-                        .height_ratio = 0.21F,
-                        .is_area = true},
-  };
-}
-
-[[nodiscard]] inline std::vector<CrystalMarkerData> markersQTetQ6() noexcept {
-  return {
-      CrystalMarkerData{.label = "Dia",
-                        .x_ratio = 0.917F,
-                        .y_ratio = 0.163F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.12F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "HD",
-                        .x_ratio = 0.913F,
-                        .y_ratio = 0.407F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "a-Net",
-                        .x_ratio = 0.792F,
-                        .y_ratio = 0.800F,
-                        .width_ratio = 0.18F,
-                        .height_ratio = 0.14F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "FCC",
-                        .x_ratio = 0.083F,
-                        .y_ratio = 0.233F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "HCP",
-                        .x_ratio = 0.083F,
-                        .y_ratio = 0.353F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "BCC",
-                        .x_ratio = 0.083F,
-                        .y_ratio = 0.319F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "SC",
-                        .x_ratio = 0.083F,
-                        .y_ratio = 0.528F,
-                        .width_ratio = 0.08F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Liq",
-                        .x_ratio = 0.350F,
-                        .y_ratio = 0.840F,
-                        .width_ratio = 0.18F,
-                        .height_ratio = 0.14F,
-                        .is_area = true},
-  };
-}
-
-[[nodiscard]] inline std::vector<CrystalMarkerData> markersQ6QTet() noexcept {
-  return {
-      CrystalMarkerData{.label = "Dia",
-                        .x_ratio = 0.837F,
-                        .y_ratio = 0.083F,
-                        .width_ratio = 0.12F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "HD",
-                        .x_ratio = 0.593F,
-                        .y_ratio = 0.087F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.10F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "a-Net",
-                        .x_ratio = 0.200F,
-                        .y_ratio = 0.208F,
-                        .width_ratio = 0.14F,
-                        .height_ratio = 0.18F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "FCC",
-                        .x_ratio = 0.767F,
-                        .y_ratio = 0.917F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "HCP",
-                        .x_ratio = 0.647F,
-                        .y_ratio = 0.917F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "BCC",
-                        .x_ratio = 0.681F,
-                        .y_ratio = 0.917F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "SC",
-                        .x_ratio = 0.472F,
-                        .y_ratio = 0.917F,
-                        .width_ratio = 0.10F,
-                        .height_ratio = 0.08F,
-                        .is_area = true},
-      CrystalMarkerData{.label = "Liq",
-                        .x_ratio = 0.160F,
-                        .y_ratio = 0.650F,
-                        .width_ratio = 0.14F,
-                        .height_ratio = 0.18F,
-                        .is_area = true},
-  };
-}
+inline constexpr std::array<PhysicalMarker, 8> K_MARKERS_QTET_Q6{{
+    PhysicalMarker{.label = "Dia", .x = 0.965F, .y = 0.628F, .width = 0.14F, .height = 0.10F},
+    PhysicalMarker{.label = "HD", .x = 0.960F, .y = 0.445F, .width = 0.12F, .height = 0.08F},
+    PhysicalMarker{.label = "a-Net", .x = 0.850F, .y = 0.150F, .width = 0.20F, .height = 0.12F},
+    PhysicalMarker{.label = "FCC", .x = 0.000F, .y = 0.575F, .width = 0.10F, .height = 0.08F},
+    PhysicalMarker{.label = "HCP", .x = 0.000F, .y = 0.485F, .width = 0.10F, .height = 0.08F},
+    PhysicalMarker{.label = "BCC", .x = 0.000F, .y = 0.511F, .width = 0.10F, .height = 0.08F},
+    PhysicalMarker{.label = "SC", .x = 0.000F, .y = 0.354F, .width = 0.10F, .height = 0.08F},
+    PhysicalMarker{.label = "Liq", .x = 0.350F, .y = 0.120F, .width = 0.20F, .height = 0.12F},
+}};
 
 [[nodiscard]] inline std::vector<CrystalMarkerData>
 getSteinhardtPairMarkers(PhaseDescriptor desc_x, PhaseDescriptor desc_y) noexcept {
@@ -895,22 +479,22 @@ getSteinhardtPairMarkers(PhaseDescriptor desc_x, PhaseDescriptor desc_y) noexcep
   };
 
   if (is_q4(desc_x) && is_q6(desc_y)) {
-    return markersQ4Q6();
+    return normalizeSwappedMarkers(K_MARKERS_Q6_Q4, desc_x, desc_y);
   }
   if (is_q6(desc_x) && is_q4(desc_y)) {
-    return markersQ6Q4();
+    return normalizeMarkers(K_MARKERS_Q6_Q4, desc_x, desc_y);
   }
   if (is_q6(desc_x) && desc_y == PhaseDescriptor::W6Hat) {
-    return markersQ6W6();
+    return normalizeMarkers(K_MARKERS_Q6_W6, desc_x, desc_y);
   }
   if (desc_x == PhaseDescriptor::W6Hat && is_q6(desc_y)) {
-    return markersW6Q6();
+    return normalizeSwappedMarkers(K_MARKERS_Q6_W6, desc_x, desc_y);
   }
   if (is_q4(desc_x) && desc_y == PhaseDescriptor::W4Hat) {
-    return markersQ4W4();
+    return normalizeMarkers(K_MARKERS_Q4_W4, desc_x, desc_y);
   }
   if (desc_x == PhaseDescriptor::W4Hat && is_q4(desc_y)) {
-    return markersW4Q4();
+    return normalizeSwappedMarkers(K_MARKERS_Q4_W4, desc_x, desc_y);
   }
   return {};
 }
@@ -922,22 +506,22 @@ getDisorderedPairMarkers(PhaseDescriptor desc_x, PhaseDescriptor desc_y) noexcep
   };
 
   if (is_q6(desc_x) && desc_y == PhaseDescriptor::LocalEntropy) {
-    return markersQ6LocalEntropy();
+    return normalizeMarkers(K_MARKERS_Q6_LOCAL_ENTROPY, desc_x, desc_y);
   }
   if (desc_x == PhaseDescriptor::LocalEntropy && is_q6(desc_y)) {
-    return markersLocalEntropyQ6();
+    return normalizeSwappedMarkers(K_MARKERS_Q6_LOCAL_ENTROPY, desc_x, desc_y);
   }
   if (desc_x == PhaseDescriptor::QTet && desc_y == PhaseDescriptor::LocalEntropy) {
-    return markersQTetLocalEntropy();
+    return normalizeMarkers(K_MARKERS_QTET_LOCAL_ENTROPY, desc_x, desc_y);
   }
   if (desc_x == PhaseDescriptor::LocalEntropy && desc_y == PhaseDescriptor::QTet) {
-    return markersLocalEntropyQTet();
+    return normalizeSwappedMarkers(K_MARKERS_QTET_LOCAL_ENTROPY, desc_x, desc_y);
   }
   if (desc_x == PhaseDescriptor::QTet && is_q6(desc_y)) {
-    return markersQTetQ6();
+    return normalizeMarkers(K_MARKERS_QTET_Q6, desc_x, desc_y);
   }
   if (is_q6(desc_x) && desc_y == PhaseDescriptor::QTet) {
-    return markersQ6QTet();
+    return normalizeSwappedMarkers(K_MARKERS_QTET_Q6, desc_x, desc_y);
   }
   return {};
 }

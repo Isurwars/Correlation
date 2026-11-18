@@ -74,7 +74,6 @@ export component CurveSidebar inherits Rectangle {
             clip: true;
 
             HorizontalLayout {
-                spacing: 0px;
 
                 TabItem {
                     horizontal-stretch: 1;
@@ -129,7 +128,6 @@ export component CurveSidebar inherits Rectangle {
         }
 
         if root.active_tab == 1: PlotStyleAxesTab {
-            vertical-stretch: 1;
             axis_settings <=> root.axis_settings;
             export_config <=> root.export_config;
             palette_menu_items: root.palette_menu_items;

@@ -67,8 +67,6 @@ export component NavRailItem inherits Rectangle {
     }
 
     touch := TouchArea {
-        width: 100%;
-        height: 100%;
         enabled: root.enabled;
         mouse-cursor: root.enabled ? pointer : default;
         changed has-hover => {

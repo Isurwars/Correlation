@@ -98,8 +98,6 @@ export component Plot2DViewport inherits Rectangle {
     HeroEmptyState {
         x: 0px;
         y: 0px;
-        width: 100%;
-        height: 100%;
         visible: !root.analysis_done || root.selected_plot_index < 0;
         file_loaded: root.file_loaded;
         analysis_running: root.analysis_running;
@@ -119,8 +117,6 @@ export component Plot2DViewport inherits Rectangle {
     plot_touch := TouchArea {
         x: 0px;
         y: 0px;
-        width: 100%;
-        height: 100%;
         visible: root.selected_plot_index >= 0;
         mouse-cursor: root.is_panning ? grabbing : (root.active_tool != 0 ? crosshair : default);
 
@@ -236,8 +232,6 @@ export component Plot2DViewport inherits Rectangle {
     PlotReticleOverlay {
         x: 0px;
         y: 0px;
-        width: 100%;
-        height: 100%;
         has_hover: plot_touch.has-hover;
         mouse_x: plot_touch.mouse-x;
         mouse_y: plot_touch.mouse-y;
@@ -256,8 +250,6 @@ export component Plot2DViewport inherits Rectangle {
     calibration_overlay := CutoffCalibrationOverlay {
         x: 0px;
         y: 0px;
-        width: 100%;
-        height: 100%;
         active: root.active_tool == 5;
         pair: root.calibration_pairs[root.active_calibration_pair_index];
         drag_min(mx) => { root.drag_cutoff_handle(root.active_calibration_pair_index, false, mx); }

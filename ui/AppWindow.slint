@@ -495,8 +495,6 @@ export component AppWindow inherits Window {
     // Main UI structure
     // ============================================================================
     main_focus := FocusScope {
-        width: 100%;
-        height: 100%;
 
         key-pressed(event) => {
             if (event.modifiers.control && (event.text == "o" || event.text == "O")) {
@@ -617,7 +615,6 @@ export component AppWindow inherits Window {
             width: 100%;
             height: 100%;
             padding: 0;
-            spacing: 0;
 
             Horizontal {
                 spacing: 2px;

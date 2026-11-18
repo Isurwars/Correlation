@@ -47,7 +47,6 @@ export component PhaseHeatmapView inherits Rectangle {
     callback export_png();
     callback reset_selection();
 
-    background: transparent;
 
     VerticalLayout {
         width: 100%;
@@ -84,8 +83,6 @@ export component PhaseHeatmapView inherits Rectangle {
                     clicked => { root.reset_selection(); }
 
                     Rectangle {
-                        width: 100%;
-                        height: 100%;
                         border-radius: MaterialStyleMetrics.border_radius_4;
                         background: reset_btn.has-hover ? MaterialPalette.surface_container_highest : transparent;
 
@@ -190,7 +187,6 @@ export component PhaseHeatmapView inherits Rectangle {
                 min_threshold: root.sel_min_x;
                 max_threshold: root.sel_max_x;
                 descriptor_name: root.descriptor_name_x;
-                show_title: true;
             }
         }
 

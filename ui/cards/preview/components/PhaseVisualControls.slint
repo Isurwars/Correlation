@@ -45,7 +45,6 @@ export component PhaseVisualControls inherits VerticalLayout {
             label: "Glow Intensity";
             value: root.halo_intensity;
             minimum: 0.1;
-            maximum: 1.0;
             display_text: "" + (Math.round(root.halo_intensity * 100) / 100);
             tooltip_text: "Adjust brightness/opacity of phase-matching atom halos.";
             changed(val) => { root.set_intensity(val); }

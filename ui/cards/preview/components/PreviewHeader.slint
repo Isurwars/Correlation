@@ -49,7 +49,6 @@ export component PreviewHeader inherits Horizontal {
     plot_dropdown_area := InputSelect {
         horizontal-stretch: 1;
         height: 100%;
-        label: "Select Plot";
         enabled: root.plot_items.length > 0;
         items: root.plot_items;
         current_index <=> root.selected_plot_index;
@@ -69,7 +68,6 @@ export component PreviewHeader inherits Horizontal {
         clip: true;
 
         HorizontalLayout {
-            spacing: 0px;
 
             tab_plot := TabItem {
                 text: "2D Plot";
@@ -124,7 +122,6 @@ export component PreviewHeader inherits Horizontal {
         clip: true;
 
         HorizontalLayout {
-            spacing: 0px;
             padding-left: 8px;
             padding-right: 0px;
 

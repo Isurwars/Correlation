@@ -22,7 +22,6 @@ export component CutoffCalibrationOverlay inherits Rectangle {
 
     width: 100%;
     height: 100%;
-    background: transparent;
     visible: root.active && root.pair.is_valid && root.visible_in_view;
 
     // Shaded Region Representing First Coordination Shell (Bonded Domain)
@@ -32,7 +31,6 @@ export component CutoffCalibrationOverlay inherits Rectangle {
         width: root.pair.r_max_px - root.pair.r_min_px;
         height: 100%;
         background: MaterialPalette.primary.with_alpha(15%);
-        border-width: 0px;
     }
 
     // Primary Coordination Peak Indicator

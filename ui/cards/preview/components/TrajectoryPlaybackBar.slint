@@ -67,7 +67,6 @@ export component TrajectoryPlaybackBar inherits Rectangle {
     background: MaterialPalette.surface_container_highest.with_alpha(92%);
     border-width: 1.5px;
     border-color: MaterialPalette.outline_variant.with_alpha(60%);
-    clip: false;
 
     HorizontalLayout {
         height: 100%;
@@ -173,8 +172,6 @@ export component TrajectoryPlaybackBar inherits Rectangle {
         MaterialSlider {
             horizontal-stretch: 1;
             min-width: 100px;
-            label: "";
-            minimum: 0.0;
             maximum: Math.max(1, root.total_frames - 1);
             value: root.current_frame;
             tooltip_text: "Scrub through trajectory frames (" + (root.current_frame + 1) + " / " + root.total_frames + ").";

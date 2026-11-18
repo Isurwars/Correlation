@@ -481,13 +481,13 @@ TEST_F(Structure3DControllerPhaseSearchTests,
        ExtendedCrystalReferenceMarkersDiamondAndSimpleCubic) {
   const auto markers_q6_q4 =
       getCrystalReferenceMarkers(PhaseDescriptor::Q6Bar, PhaseDescriptor::Q4Bar);
-  assertMarkerCoordinates(markers_q6_q4, "Dia", 0.837F, 0.379F);
-  assertMarkerCoordinates(markers_q6_q4, "SC", 0.472F, 0.096F);
-  assertMarkerCoordinates(markers_q6_q4, "HD", 0.593F, 0.824F);
+  assertMarkerCoordinates(markers_q6_q4, "Dia", 0.698F, 0.492F);
+  assertMarkerCoordinates(markers_q6_q4, "SC", 0.393F, 0.260F);
+  assertMarkerCoordinates(markers_q6_q4, "HD", 0.494F, 0.856F);
 
   const auto markers_qtet_q6 =
       getCrystalReferenceMarkers(PhaseDescriptor::QTet, PhaseDescriptor::Q6Bar);
-  assertMarkerCoordinates(markers_qtet_q6, "Dia", 0.917F, 0.163F);
+  assertMarkerCoordinates(markers_qtet_q6, "Dia", 0.868F, 0.302F);
 }
 
 TEST_F(Structure3DControllerPhaseSearchTests, GlassAndDisorderedPhaseRegionMarkers) {
@@ -495,9 +495,9 @@ TEST_F(Structure3DControllerPhaseSearchTests, GlassAndDisorderedPhaseRegionMarke
       getCrystalReferenceMarkers(PhaseDescriptor::QTet, PhaseDescriptor::LocalEntropy);
   EXPECT_EQ(markers_qtet_s2.size(), 4UL);
 
-  assertAreaMarker(markers_qtet_s2, "LDA", 0.792F, 0.619F, 0.15F, 0.20F);
-  assertAreaMarker(markers_qtet_s2, "HDA", 0.375F, 0.524F, 0.15F, 0.15F);
-  assertAreaMarker(markers_qtet_s2, "Liq", 0.517F, 0.238F, 0.15F, 0.15F);
+  assertAreaMarker(markers_qtet_s2, "LDA", 0.786F, 0.536F, 0.14F, 0.20F);
+  assertAreaMarker(markers_qtet_s2, "HDA", 0.429F, 0.460F, 0.14F, 0.15F);
+  assertAreaMarker(markers_qtet_s2, "Liq", 0.550F, 0.206F, 0.14F, 0.15F);
 
   const auto markers_s2_qtet =
       getCrystalReferenceMarkers(PhaseDescriptor::LocalEntropy, PhaseDescriptor::QTet);

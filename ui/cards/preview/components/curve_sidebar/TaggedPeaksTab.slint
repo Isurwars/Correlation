@@ -43,7 +43,6 @@ export component TaggedPeaksTab inherits VerticalLayout {
                     height: 24px;
                     source: Icons.analytics;
                     colorize: MaterialPalette.outline;
-                    horizontal-alignment: center;
                 }
 
                 MaterialText {
@@ -100,7 +99,6 @@ export component TaggedPeaksTab inherits VerticalLayout {
     }
 
     if root.tagged_peaks.length > 0: ScrollView {
-        vertical-stretch: 1;
         VerticalLayout {
             spacing: MaterialStyleMetrics.spacing_6;
 

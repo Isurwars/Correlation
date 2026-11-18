@@ -59,7 +59,6 @@ component SpeciesRemapRow inherits Horizontal {
                 color: MaterialPalette.on_surface;
                 font-size: MaterialTypography.label_medium.font_size;
                 font-weight: MaterialTypography.label_medium.font_weight;
-                single-line: true;
                 accepted => {
                     if (self.text != "" && self.text != root.info.symbol) {
                         root.rename_element(root.info.symbol, self.text);
@@ -122,7 +121,6 @@ export component OperationsDiagnosticsCard inherits OutlinedCard {
                         text: root.file_loaded ? root.file_basename : "No file loaded";
                         style: MaterialTypography.title_small;
                         color: root.file_loaded ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
-                        overflow: elide;
                     }
                     if root.file_loaded: MaterialText {
                         text: root.num_frames > 1 ? ("" + root.total_atoms + " atoms • " + root.num_frames + " frames") : ("" + root.total_atoms + " atoms");

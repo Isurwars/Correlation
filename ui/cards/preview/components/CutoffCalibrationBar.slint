@@ -94,8 +94,6 @@ export component CutoffCalibrationBar inherits Rectangle {
                 animate background { duration: MaterialAnimations.fast_duration; }
 
                 chip_touch := TouchArea {
-                    width: 100%;
-                    height: 100%;
                     mouse-cursor: pointer;
                     accessible-role: button;
                     accessible-label: "Select pair " + pair.label;
@@ -137,8 +135,6 @@ export component CutoffCalibrationBar inherits Rectangle {
             clicked => { root.auto_detect(root.active_pair_index); }
 
             Rectangle {
-                width: 100%;
-                height: 100%;
                 border-radius: MaterialStyleMetrics.border_radius_full;
                 background: btn_auto.has-hover ? MaterialPalette.tertiary_container.darker(5%) : MaterialPalette.tertiary_container;
                 border-width: 1px;
@@ -178,8 +174,6 @@ export component CutoffCalibrationBar inherits Rectangle {
             clicked => { root.reset_pair(root.active_pair_index); }
 
             Rectangle {
-                width: 100%;
-                height: 100%;
                 border-radius: MaterialStyleMetrics.border_radius_full;
                 background: btn_reset.has-hover ? MaterialPalette.surface_container_highest : transparent;
 
@@ -204,8 +198,6 @@ export component CutoffCalibrationBar inherits Rectangle {
             clicked => { root.close(); }
 
             Rectangle {
-                width: 100%;
-                height: 100%;
                 border-radius: MaterialStyleMetrics.border_radius_full;
                 background: btn_close.has-hover ? MaterialPalette.error_container : transparent;
 

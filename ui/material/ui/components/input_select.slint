@@ -30,8 +30,6 @@ component InputSelectItem {
 
     background_layer := Rectangle {
         clip: true;
-        width: 100%;
-        height: 100%;
         background: root.flash_active ? MaterialPalette.primary_container
             : root.highlighted ? MaterialPalette.surface_container_highest
             : root.selected ? MaterialPalette.surface_container_high
@@ -65,7 +63,6 @@ component InputSelectItem {
                     style: MaterialTypography.body_medium;
                     color: root.selected ? MaterialPalette.primary : MaterialPalette.on_surface;
                     vertical-alignment: center;
-                    overflow: elide;
                 }
             }
 
@@ -101,7 +98,6 @@ component InputSelectEmptyItem {
             style: MaterialTypography.body_medium;
             color: MaterialPalette.on_surface_variant;
             vertical-alignment: center;
-            overflow: elide;
         }
     }
 }
@@ -155,8 +151,6 @@ export component InputSelect {
     }
 
     trigger_container := Rectangle {
-        width: 100%;
-        height: 100%;
         border-radius: MaterialStyleMetrics.border_radius_2;
         background: !root.enabled ? MaterialPalette.surface_container_highest.with-alpha(0.38)
             : touch_area.has-hover ? MaterialPalette.surface_container_high
@@ -169,8 +163,6 @@ export component InputSelect {
         animate background, border-color { duration: 150ms; }
 
         focus_scope := FocusScope {
-            width: 100%;
-            height: 100%;
             enabled: root.enabled;
 
             key_pressed(event) => {
@@ -191,8 +183,6 @@ export component InputSelect {
             }
 
             touch_area := TouchArea {
-                width: 100%;
-                height: 100%;
                 enabled: root.enabled;
                 mouse-cursor: root.enabled ? pointer : default;
 
@@ -233,14 +223,12 @@ export component InputSelect {
                     VerticalLayout {
                         horizontal-stretch: 1;
                         alignment: center;
-                        spacing: 0px;
 
                         if root.label != "" && root.selected_text != "": MaterialText {
                             width: 100%;
                             text: root.label;
                             style: MaterialTypography.label_small;
                             color: (root.is_open || root.wheel_cycling) ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
-                            overflow: elide;
                         }
 
                         MaterialText {
@@ -248,7 +236,6 @@ export component InputSelect {
                             text: root.selected_text != "" ? root.selected_text : root.label;
                             style: MaterialTypography.body_medium;
                             color: root.enabled ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant.with-alpha(0.38);
-                            overflow: elide;
                         }
                     }
 
@@ -372,7 +359,6 @@ export component InputSelect {
 
                         items_layout := VerticalLayout {
                             padding: 0;
-                            spacing: 0;
 
                             for item[index] in root.items: InputSelectItem {
                                 text: item.text;

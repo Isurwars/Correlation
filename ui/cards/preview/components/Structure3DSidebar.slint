@@ -102,7 +102,6 @@ export component Structure3DSidebar inherits Rectangle {
             clip: true;
 
             HorizontalLayout {
-                spacing: 0px;
 
                 TabItem {
                     horizontal-stretch: 1;
@@ -129,7 +128,6 @@ export component Structure3DSidebar inherits Rectangle {
 
         // 2. Tab 0: Phase Search & Order Parameters
         if root.active_tab == 0: Structure3DPhaseTab {
-            vertical-stretch: 1;
             phase_enabled: root.phase_enabled;
             preset_index: root.preset_index;
             descriptor_index: root.descriptor_index;
@@ -163,7 +161,6 @@ export component Structure3DSidebar inherits Rectangle {
 
         // 3. Tab 1: Display & Scene Configuration
         if root.active_tab == 1: Structure3DSceneTab {
-            vertical-stretch: 1;
             atom_scale: root.atom_scale;
             bonds_enabled: root.bonds_enabled;
             wireframe_enabled: root.wireframe_enabled;
