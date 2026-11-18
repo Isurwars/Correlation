@@ -132,64 +132,64 @@ TEST(SteinhardtLRUCacheTests, ConcurrentAccessThreadSafety) {
 TEST(PhaseSearchTypesTests, CanonicalPresetConfigurations) {
   const auto liquid_cfg = getPresetConfig(CrystalPreset::Liquid);
   EXPECT_EQ(liquid_cfg.descriptor, PhaseDescriptor::Q6Bar);
-  EXPECT_FLOAT_EQ(liquid_cfg.min_threshold, 0.10F);
-  EXPECT_FLOAT_EQ(liquid_cfg.max_threshold, 0.28F);
+  EXPECT_FLOAT_EQ(liquid_cfg.min_threshold, 0.06F);
+  EXPECT_FLOAT_EQ(liquid_cfg.max_threshold, 0.22F);
   EXPECT_TRUE(liquid_cfg.is_2d);
   EXPECT_EQ(liquid_cfg.descriptor_2d_x, PhaseDescriptor::Q6Bar);
-  EXPECT_FLOAT_EQ(liquid_cfg.min_threshold_2d_x, 0.05F);
-  EXPECT_FLOAT_EQ(liquid_cfg.max_threshold_2d_x, 0.28F);
+  EXPECT_FLOAT_EQ(liquid_cfg.min_threshold_2d_x, 0.06F);
+  EXPECT_FLOAT_EQ(liquid_cfg.max_threshold_2d_x, 0.22F);
   EXPECT_EQ(liquid_cfg.descriptor_2d_y, PhaseDescriptor::LocalEntropy);
-  EXPECT_FLOAT_EQ(liquid_cfg.min_threshold_2d_y, -3.5F);
+  EXPECT_FLOAT_EQ(liquid_cfg.min_threshold_2d_y, -3.0F);
   EXPECT_FLOAT_EQ(liquid_cfg.max_threshold_2d_y, -1.0F);
 
   const auto glass_cfg = getPresetConfig(CrystalPreset::AmorphousGlass);
   EXPECT_EQ(glass_cfg.descriptor, PhaseDescriptor::LocalEntropy);
-  EXPECT_FLOAT_EQ(glass_cfg.min_threshold, -8.0F);
-  EXPECT_FLOAT_EQ(glass_cfg.max_threshold, -4.5F);
+  EXPECT_FLOAT_EQ(glass_cfg.min_threshold, -6.8F);
+  EXPECT_FLOAT_EQ(glass_cfg.max_threshold, -4.2F);
   EXPECT_TRUE(glass_cfg.is_2d);
   EXPECT_EQ(glass_cfg.descriptor_2d_x, PhaseDescriptor::Q6Bar);
-  EXPECT_FLOAT_EQ(glass_cfg.min_threshold_2d_x, 0.05F);
-  EXPECT_FLOAT_EQ(glass_cfg.max_threshold_2d_x, 0.32F);
+  EXPECT_FLOAT_EQ(glass_cfg.min_threshold_2d_x, 0.10F);
+  EXPECT_FLOAT_EQ(glass_cfg.max_threshold_2d_x, 0.26F);
   EXPECT_EQ(glass_cfg.descriptor_2d_y, PhaseDescriptor::LocalEntropy);
-  EXPECT_FLOAT_EQ(glass_cfg.min_threshold_2d_y, -8.0F);
-  EXPECT_FLOAT_EQ(glass_cfg.max_threshold_2d_y, -4.5F);
+  EXPECT_FLOAT_EQ(glass_cfg.min_threshold_2d_y, -6.8F);
+  EXPECT_FLOAT_EQ(glass_cfg.max_threshold_2d_y, -4.2F);
 
   const auto net_cfg = getPresetConfig(CrystalPreset::AmorphousNetwork);
   EXPECT_EQ(net_cfg.descriptor, PhaseDescriptor::QTet);
   EXPECT_FLOAT_EQ(net_cfg.min_threshold, 0.75F);
-  EXPECT_FLOAT_EQ(net_cfg.max_threshold, 1.00F);
+  EXPECT_FLOAT_EQ(net_cfg.max_threshold, 0.95F);
   EXPECT_TRUE(net_cfg.is_2d);
   EXPECT_EQ(net_cfg.descriptor_2d_x, PhaseDescriptor::QTet);
   EXPECT_FLOAT_EQ(net_cfg.min_threshold_2d_x, 0.75F);
-  EXPECT_FLOAT_EQ(net_cfg.max_threshold_2d_x, 1.00F);
+  EXPECT_FLOAT_EQ(net_cfg.max_threshold_2d_x, 0.95F);
   EXPECT_EQ(net_cfg.descriptor_2d_y, PhaseDescriptor::LocalEntropy);
   EXPECT_FLOAT_EQ(net_cfg.min_threshold_2d_y, -7.5F);
-  EXPECT_FLOAT_EQ(net_cfg.max_threshold_2d_y, -4.0F);
+  EXPECT_FLOAT_EQ(net_cfg.max_threshold_2d_y, -4.8F);
 
   const auto fcc_cfg = getPresetConfig(CrystalPreset::FCC);
   EXPECT_EQ(fcc_cfg.descriptor, PhaseDescriptor::Q6Bar);
-  EXPECT_FLOAT_EQ(fcc_cfg.min_threshold, 0.46F);
-  EXPECT_FLOAT_EQ(fcc_cfg.max_threshold, 0.58F);
+  EXPECT_FLOAT_EQ(fcc_cfg.min_threshold, 0.52F);
+  EXPECT_FLOAT_EQ(fcc_cfg.max_threshold, 0.62F);
 
   const auto hcp_cfg = getPresetConfig(CrystalPreset::HCP);
   EXPECT_EQ(hcp_cfg.descriptor, PhaseDescriptor::Q6Bar);
   EXPECT_FLOAT_EQ(hcp_cfg.min_threshold, 0.44F);
-  EXPECT_FLOAT_EQ(hcp_cfg.max_threshold, 0.52F);
+  EXPECT_FLOAT_EQ(hcp_cfg.max_threshold, 0.53F);
 
   const auto bcc_cfg = getPresetConfig(CrystalPreset::BCC);
   EXPECT_EQ(bcc_cfg.descriptor, PhaseDescriptor::Q6Bar);
-  EXPECT_FLOAT_EQ(bcc_cfg.min_threshold, 0.35F);
-  EXPECT_FLOAT_EQ(bcc_cfg.max_threshold, 0.44F);
+  EXPECT_FLOAT_EQ(bcc_cfg.min_threshold, 0.47F);
+  EXPECT_FLOAT_EQ(bcc_cfg.max_threshold, 0.55F);
 
   const auto ico_cfg = getPresetConfig(CrystalPreset::Icosahedral);
   EXPECT_EQ(ico_cfg.descriptor, PhaseDescriptor::W6Hat);
-  EXPECT_FLOAT_EQ(ico_cfg.min_threshold, -0.17F);
-  EXPECT_FLOAT_EQ(ico_cfg.max_threshold, -0.14F);
+  EXPECT_FLOAT_EQ(ico_cfg.min_threshold, -0.18F);
+  EXPECT_FLOAT_EQ(ico_cfg.max_threshold, -0.15F);
 
   const auto dia_cfg = getPresetConfig(CrystalPreset::Diamond);
   EXPECT_EQ(dia_cfg.descriptor, PhaseDescriptor::QTet);
-  EXPECT_FLOAT_EQ(dia_cfg.min_threshold, 0.85F);
-  EXPECT_FLOAT_EQ(dia_cfg.max_threshold, 1.00F);
+  EXPECT_FLOAT_EQ(dia_cfg.min_threshold, 0.88F);
+  EXPECT_FLOAT_EQ(dia_cfg.max_threshold, 1.05F);
 
   const auto custom_cfg = getPresetConfig(CrystalPreset::Custom);
   EXPECT_EQ(custom_cfg.descriptor, PhaseDescriptor::Q6Bar);
@@ -220,10 +220,11 @@ TEST(PhaseSearchTypesTests, StringConversionsAndDomains) {
 
   const auto markers_qtet_s2 =
       getCrystalReferenceMarkers(PhaseDescriptor::QTet, PhaseDescriptor::LocalEntropy);
-  EXPECT_EQ(markers_qtet_s2.size(), 3UL);
+  EXPECT_EQ(markers_qtet_s2.size(), 4UL);
   EXPECT_EQ(markers_qtet_s2[0].label, "Dia");
-  EXPECT_EQ(markers_qtet_s2[1].label, "a-Net");
-  EXPECT_EQ(markers_qtet_s2[2].label, "Liq");
+  EXPECT_EQ(markers_qtet_s2[1].label, "LDA");
+  EXPECT_EQ(markers_qtet_s2[2].label, "HDA");
+  EXPECT_EQ(markers_qtet_s2[3].label, "Liq");
 
   const auto [q_min, q_max] = getDescriptorDomain(PhaseDescriptor::Q6Bar);
   EXPECT_FLOAT_EQ(q_min, 0.0F);

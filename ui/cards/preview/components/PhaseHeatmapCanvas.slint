@@ -51,7 +51,20 @@ export component PhaseHeatmapCanvas inherits Rectangle {
         image-fit: fill;
     }
 
-    // Canonical Crystal Reference Markers
+    // Canonical Phase Reference Region Overlays (Areas)
+    for marker in root.crystal_markers: Rectangle {
+        visible: marker.is_area && marker.width_ratio > 0.0 && marker.height_ratio > 0.0;
+        x: Math.max(1px, Math.min(parent.width - 10px, parent.width * (marker.x_ratio - marker.width_ratio / 2.0)));
+        y: Math.max(1px, Math.min(parent.height - 10px, parent.height * (marker.y_ratio - marker.height_ratio / 2.0)));
+        width: Math.max(12px, Math.min(parent.width - self.x - 1px, parent.width * marker.width_ratio));
+        height: Math.max(10px, Math.min(parent.height - self.y - 1px, parent.height * marker.height_ratio));
+        border-radius: MaterialStyleMetrics.border_radius_4;
+        background: MaterialPalette.primary.with_alpha(10%);
+        border-width: 1px;
+        border-color: MaterialPalette.primary.with_alpha(45%);
+    }
+
+    // Canonical Crystal / Phase Reference Labels
     for marker in root.crystal_markers: Rectangle {
         x: Math.max(2px, Math.min(parent.width - 24px, parent.width * marker.x_ratio - 11px));
         y: Math.max(2px, Math.min(parent.height - 13px, parent.height * marker.y_ratio - 6px));

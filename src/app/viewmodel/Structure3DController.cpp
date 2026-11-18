@@ -611,6 +611,9 @@ void Structure3DController::syncPhaseSearchToWindow() {
         .label = slint::SharedString(ref.label),
         .x_ratio = ref.x_ratio,
         .y_ratio = ref.y_ratio,
+        .width_ratio = ref.width_ratio,
+        .height_ratio = ref.height_ratio,
+        .is_area = ref.is_area,
     });
   }
 

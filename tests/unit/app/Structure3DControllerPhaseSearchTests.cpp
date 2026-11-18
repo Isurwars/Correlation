@@ -59,8 +59,8 @@ TEST_F(Structure3DControllerPhaseSearchTests, DefaultPhaseSearchSettings) {
   EXPECT_FALSE(controller.isPhaseSearchEnabled());
   EXPECT_EQ(controller.phaseDescriptor(), PhaseDescriptor::Q6Bar);
   EXPECT_EQ(controller.crystalPreset(), CrystalPreset::Custom);
-  EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), 0.46F);
-  EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), 0.58F);
+  EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), 0.52F);
+  EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), 0.62F);
   EXPECT_EQ(controller.phaseColormap(), plotters::ColormapType::Viridis);
   EXPECT_NEAR(controller.phaseHaloIntensity(), 0.85F, 1e-4F);
   EXPECT_NEAR(controller.phaseHaloRadiusRatio(), 1.35F, 1e-4F);
@@ -75,36 +75,36 @@ TEST_F(Structure3DControllerPhaseSearchTests, CrystalPresetApplication) {
   controller.setCrystalPreset(CrystalPreset::FCC);
   EXPECT_EQ(controller.crystalPreset(), CrystalPreset::FCC);
   EXPECT_EQ(controller.phaseDescriptor(), PhaseDescriptor::Q6Bar);
-  EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), 0.46F);
-  EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), 0.58F);
+  EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), 0.52F);
+  EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), 0.62F);
 
   // Apply Liquid preset
   controller.setCrystalPreset(CrystalPreset::Liquid);
   EXPECT_EQ(controller.crystalPreset(), CrystalPreset::Liquid);
   EXPECT_EQ(controller.phaseDescriptor(), PhaseDescriptor::Q6Bar);
-  EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), 0.10F);
-  EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), 0.28F);
+  EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), 0.06F);
+  EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), 0.22F);
 
   // Apply AmorphousGlass preset (1D)
   controller.setCrystalPreset(CrystalPreset::AmorphousGlass);
   EXPECT_EQ(controller.crystalPreset(), CrystalPreset::AmorphousGlass);
   EXPECT_EQ(controller.phaseDescriptor(), PhaseDescriptor::LocalEntropy);
-  EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), -8.0F);
-  EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), -4.5F);
+  EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), -6.8F);
+  EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), -4.2F);
 
   // Apply AmorphousNetwork preset (1D)
   controller.setCrystalPreset(CrystalPreset::AmorphousNetwork);
   EXPECT_EQ(controller.crystalPreset(), CrystalPreset::AmorphousNetwork);
   EXPECT_EQ(controller.phaseDescriptor(), PhaseDescriptor::QTet);
   EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), 0.75F);
-  EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), 1.00F);
+  EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), 0.95F);
 
   // Apply Icosahedral preset
   controller.setCrystalPreset(CrystalPreset::Icosahedral);
   EXPECT_EQ(controller.crystalPreset(), CrystalPreset::Icosahedral);
   EXPECT_EQ(controller.phaseDescriptor(), PhaseDescriptor::W6Hat);
-  EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), -0.17F);
-  EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), -0.14F);
+  EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), -0.18F);
+  EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), -0.15F);
 
   // Manual threshold adjustment resets preset mode to Custom
   controller.setPhaseThresholds(0.30F, 0.70F);
@@ -117,20 +117,20 @@ TEST_F(Structure3DControllerPhaseSearchTests, CrystalPresetApplication) {
   controller.setCrystalPreset(CrystalPreset::Liquid);
   EXPECT_EQ(controller.crystalPreset(), CrystalPreset::Liquid);
   EXPECT_EQ(controller.phaseDescriptor(), PhaseDescriptor::Q6Bar);
-  EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), 0.05F);
-  EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), 0.28F);
+  EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), 0.06F);
+  EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), 0.22F);
   EXPECT_EQ(controller.phaseDescriptorY(), PhaseDescriptor::LocalEntropy);
-  EXPECT_FLOAT_EQ(controller.phaseMinThresholdY(), -3.5F);
+  EXPECT_FLOAT_EQ(controller.phaseMinThresholdY(), -3.0F);
   EXPECT_FLOAT_EQ(controller.phaseMaxThresholdY(), -1.0F);
 
   controller.setCrystalPreset(CrystalPreset::AmorphousGlass);
   EXPECT_EQ(controller.crystalPreset(), CrystalPreset::AmorphousGlass);
   EXPECT_EQ(controller.phaseDescriptor(), PhaseDescriptor::Q6Bar);
-  EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), 0.05F);
-  EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), 0.32F);
+  EXPECT_FLOAT_EQ(controller.phaseMinThreshold(), 0.10F);
+  EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), 0.26F);
   EXPECT_EQ(controller.phaseDescriptorY(), PhaseDescriptor::LocalEntropy);
-  EXPECT_FLOAT_EQ(controller.phaseMinThresholdY(), -8.0F);
-  EXPECT_FLOAT_EQ(controller.phaseMaxThresholdY(), -4.5F);
+  EXPECT_FLOAT_EQ(controller.phaseMinThresholdY(), -6.8F);
+  EXPECT_FLOAT_EQ(controller.phaseMaxThresholdY(), -4.2F);
 
   controller.setPhaseThresholds2D(0.10F, 0.40F, -5.0F, -2.0F);
   EXPECT_EQ(controller.crystalPreset(), CrystalPreset::Custom);
@@ -301,8 +301,8 @@ TEST_F(Structure3DControllerPhaseSearchTests, SlintWindowBindingSynchronization)
   EXPECT_TRUE(window().get_structure_3d_phase_enabled());
   EXPECT_EQ(window().get_structure_3d_phase_preset(), static_cast<int>(CrystalPreset::FCC));
   EXPECT_EQ(window().get_structure_3d_phase_descriptor(), static_cast<int>(PhaseDescriptor::Q6Bar));
-  EXPECT_FLOAT_EQ(window().get_structure_3d_phase_min_threshold(), 0.46F);
-  EXPECT_FLOAT_EQ(window().get_structure_3d_phase_max_threshold(), 0.58F);
+  EXPECT_FLOAT_EQ(window().get_structure_3d_phase_min_threshold(), 0.52F);
+  EXPECT_FLOAT_EQ(window().get_structure_3d_phase_max_threshold(), 0.62F);
   EXPECT_NEAR(window().get_structure_3d_phase_halo_intensity(), 0.92F, 1e-4F);
   EXPECT_NEAR(window().get_structure_3d_phase_halo_radius_ratio(), 1.65F, 1e-4F);
   EXPECT_TRUE(window().get_structure_3d_phase_dim_non_matching());
@@ -354,6 +354,37 @@ void assertMarkerCoordinates(const std::vector<CrystalMarkerData> &markers, std:
   ASSERT_NE(marker_iter, markers.end());
   EXPECT_NEAR(marker_iter->x_ratio, expected_x, 1e-3F);
   EXPECT_NEAR(marker_iter->y_ratio, expected_y, 1e-3F);
+}
+
+void assertAreaMarker(const std::vector<CrystalMarkerData> &markers, std::string_view label,
+                      float expected_x, float expected_y, float min_width, float min_height) {
+  const auto marker_iter = std::ranges::find_if(
+      markers, [label](const auto &marker_item) { return marker_item.label == label; });
+  ASSERT_NE(marker_iter, markers.end());
+  EXPECT_TRUE(marker_iter->is_area);
+  EXPECT_GE(marker_iter->width_ratio, min_width);
+  EXPECT_GE(marker_iter->height_ratio, min_height);
+  EXPECT_NEAR(marker_iter->x_ratio, expected_x, 1e-3F);
+  EXPECT_NEAR(marker_iter->y_ratio, expected_y, 1e-3F);
+}
+
+void verifyPresetEnclosesMarker(CrystalPreset preset, std::string_view label) {
+  const auto config = getPresetConfig(preset);
+  const auto [domain_min_x, domain_max_x] = getDescriptorDomain(config.descriptor_2d_x);
+  const auto [domain_min_y, domain_max_y] = getDescriptorDomain(config.descriptor_2d_y);
+
+  const auto markers = getCrystalReferenceMarkers(config.descriptor_2d_x, config.descriptor_2d_y);
+  const auto marker_iter = std::ranges::find_if(
+      markers, [label](const auto &marker_item) { return marker_item.label == label; });
+  ASSERT_NE(marker_iter, markers.end());
+
+  const float marker_x = domain_min_x + marker_iter->x_ratio * (domain_max_x - domain_min_x);
+  const float marker_y = domain_max_y - marker_iter->y_ratio * (domain_max_y - domain_min_y);
+
+  EXPECT_GE(marker_x, config.min_threshold_2d_x);
+  EXPECT_LE(marker_x, config.max_threshold_2d_x);
+  EXPECT_GE(marker_y, config.min_threshold_2d_y);
+  EXPECT_LE(marker_y, config.max_threshold_2d_y);
 }
 
 void verifyHeatmapPngExport(Structure3DController &controller) {
@@ -423,7 +454,7 @@ TEST_F(Structure3DControllerPhaseSearchTests, CrystalPreset2DConfigurationConsis
   const auto settings = controller.phaseSearchSettings();
   EXPECT_EQ(settings.descriptor, PhaseDescriptor::Q6Bar);
   EXPECT_EQ(settings.descriptor_y, PhaseDescriptor::Q4Bar);
-  EXPECT_FLOAT_EQ(settings.min_threshold_y, 0.15F);
+  EXPECT_FLOAT_EQ(settings.min_threshold_y, 0.14F);
   EXPECT_FLOAT_EQ(settings.max_threshold_y, 0.24F);
 }
 
@@ -457,6 +488,30 @@ TEST_F(Structure3DControllerPhaseSearchTests,
   const auto markers_qtet_q6 =
       getCrystalReferenceMarkers(PhaseDescriptor::QTet, PhaseDescriptor::Q6Bar);
   assertMarkerCoordinates(markers_qtet_q6, "Dia", 0.917F, 0.163F);
+}
+
+TEST_F(Structure3DControllerPhaseSearchTests, GlassAndDisorderedPhaseRegionMarkers) {
+  const auto markers_qtet_s2 =
+      getCrystalReferenceMarkers(PhaseDescriptor::QTet, PhaseDescriptor::LocalEntropy);
+  EXPECT_EQ(markers_qtet_s2.size(), 4UL);
+
+  assertAreaMarker(markers_qtet_s2, "LDA", 0.792F, 0.619F, 0.15F, 0.20F);
+  assertAreaMarker(markers_qtet_s2, "HDA", 0.375F, 0.524F, 0.15F, 0.15F);
+  assertAreaMarker(markers_qtet_s2, "Liq", 0.517F, 0.238F, 0.15F, 0.15F);
+
+  const auto markers_s2_qtet =
+      getCrystalReferenceMarkers(PhaseDescriptor::LocalEntropy, PhaseDescriptor::QTet);
+  EXPECT_EQ(markers_s2_qtet.size(), 4UL);
+}
+
+TEST_F(Structure3DControllerPhaseSearchTests, PresetBoxesEncloseCanonicalMarkers) {
+  verifyPresetEnclosesMarker(CrystalPreset::FCC, "FCC");
+  verifyPresetEnclosesMarker(CrystalPreset::BCC, "BCC");
+  verifyPresetEnclosesMarker(CrystalPreset::HCP, "HCP");
+  verifyPresetEnclosesMarker(CrystalPreset::Liquid, "Liq");
+  verifyPresetEnclosesMarker(CrystalPreset::AmorphousGlass, "Gl");
+  verifyPresetEnclosesMarker(CrystalPreset::Icosahedral, "Ico");
+  verifyPresetEnclosesMarker(CrystalPreset::Diamond, "Dia");
 }
 
 } // namespace
