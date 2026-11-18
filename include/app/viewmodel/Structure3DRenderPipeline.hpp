@@ -44,7 +44,7 @@ struct RenderPipelineSnapshot {
   PhaseDescriptor phase_descriptor{PhaseDescriptor::Q6Bar};
   float phase_min_threshold{0.46F};
   float phase_max_threshold{0.58F};
-  float phase_halo_ratio{1.35F};
+  float phase_halo_ratio{2.70F};
   float phase_halo_intensity{0.85F};
   std::array<float, 4> phase_halo_color{1.0F, 0.84F, 0.0F, 1.0F};
   bool phase_dim_non_matching{false};

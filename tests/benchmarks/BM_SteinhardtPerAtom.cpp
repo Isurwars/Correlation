@@ -62,7 +62,7 @@ void benchRasterizerHaloGlow(benchmark::State &state) {
   // Apply halo properties to all atoms
   for (auto &atom : scene->atoms()) {
     atom.halo_color = render3d::RgbaColor{.r = 68, .g = 1, .b = 84, .a = 200};
-    atom.halo_radius_ratio = 1.35F;
+    atom.halo_radius_ratio = 2.70F;
     atom.dim_factor = 1.0F;
   }
 

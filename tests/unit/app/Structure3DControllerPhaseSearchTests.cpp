@@ -63,7 +63,7 @@ TEST_F(Structure3DControllerPhaseSearchTests, DefaultPhaseSearchSettings) {
   EXPECT_FLOAT_EQ(controller.phaseMaxThreshold(), 0.62F);
   EXPECT_EQ(controller.phaseColormap(), plotters::ColormapType::Viridis);
   EXPECT_NEAR(controller.phaseHaloIntensity(), 0.85F, 1e-4F);
-  EXPECT_NEAR(controller.phaseHaloRadiusRatio(), 1.35F, 1e-4F);
+  EXPECT_NEAR(controller.phaseHaloRadiusRatio(), 2.70F, 1e-4F);
   EXPECT_FALSE(controller.isPhaseDimNonMatching());
 }
 

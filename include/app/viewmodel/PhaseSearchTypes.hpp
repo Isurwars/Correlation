@@ -81,7 +81,7 @@ struct PhaseSearchSettings {
       plotters::ColormapType::Viridis,
   };
   float halo_intensity{0.85F};    ///< Alpha glow strength [0.1, 1.0].
-  float halo_radius_ratio{1.35F}; ///< Outer glow radius multiplier.
+  float halo_radius_ratio{2.70F}; ///< Outer glow radius multiplier.
   float atom_scale{0.35F};        ///< Uniform ball radius scaling factor [0.05, 2.0].
   bool dim_non_matching{false};   ///< Dim core atoms outside threshold.
   bool hide_non_matching{false};  ///< Hide/cull core atoms outside threshold.

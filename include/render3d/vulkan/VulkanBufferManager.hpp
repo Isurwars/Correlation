@@ -47,7 +47,7 @@ struct AtomInstanceData {
   float radius{0.5F};
   std::array<float, 4> color{1.0F, 1.0F, 1.0F, 1.0F};
   std::array<float, 4> halo_color{0.0F, 0.0F, 0.0F, 0.0F};
-  std::array<float, 2> style{1.35F, 1.0F}; // x = halo_radius_ratio, y = dim_factor
+  std::array<float, 2> style{2.70F, 1.0F}; // x = halo_radius_ratio, y = dim_factor
 };
 
 /**

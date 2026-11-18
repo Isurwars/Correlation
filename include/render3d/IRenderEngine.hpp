@@ -37,7 +37,7 @@ struct GpuHaloConfig {
   app::PhaseDescriptor descriptor{app::PhaseDescriptor::Q6Bar};
   float min_threshold{0.0F};
   float max_threshold{1.0F};
-  float halo_radius_ratio{1.35F};
+  float halo_radius_ratio{2.70F};
   float halo_intensity{0.85F};
   std::array<float, 4> halo_color{1.0F, 0.84F, 0.0F, 1.0F};
   bool dim_non_matching{false};

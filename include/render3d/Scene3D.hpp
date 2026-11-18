@@ -29,7 +29,7 @@ struct AtomInstance {
 
   // Phase Search Halo and styling attributes
   RgbaColor halo_color{.r = 0, .g = 0, .b = 0, .a = 0}; ///< a == 0 denotes no halo
-  float halo_radius_ratio{1.35F};                       ///< Expansion over visual radius
+  float halo_radius_ratio{2.70F};                       ///< Expansion over visual radius
   float dim_factor{1.0F};                               ///< 1.0 = normal, 0.3 = ghosted
 };
 

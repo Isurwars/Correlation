@@ -29,7 +29,7 @@ struct GpuHaloSettings {
   app::PhaseDescriptor descriptor{app::PhaseDescriptor::Q6Bar};
   float min_threshold{0.46F};
   float max_threshold{0.58F};
-  float halo_radius_ratio{1.35F};
+  float halo_radius_ratio{2.70F};
   float halo_intensity{0.85F};
   std::array<float, 4> halo_color{1.0F, 0.84F, 0.0F, 1.0F};
   bool dim_non_matching{false};
@@ -51,7 +51,7 @@ public:
   VulkanComputeService &operator=(const VulkanComputeService &) = delete;
 
   [[nodiscard]] bool initialize(VkDevice device, VkPhysicalDevice physical_device,
-                               VkQueue compute_queue, uint32_t queue_family_index);
+                                VkQueue compute_queue, uint32_t queue_family_index);
   void cleanup() noexcept;
 
   /**
@@ -61,10 +61,12 @@ public:
    * 3. Direct write to target atom instance buffer (halos, styles)
    * 4. Histogram atomic reduction
    */
-  bool evaluateOrderParametersAndApplyHalos(
-      VkBuffer atom_positions_buffer, VkBuffer atom_instance_buffer, uint32_t num_atoms,
-      const std::array<float, 4> &box_min, const std::array<float, 4> &box_max,
-      float cutoff, const GpuHaloSettings &settings, GpuHistogramOutput &out_histogram);
+  bool evaluateOrderParametersAndApplyHalos(VkBuffer atom_positions_buffer,
+                                            VkBuffer atom_instance_buffer, uint32_t num_atoms,
+                                            const std::array<float, 4> &box_min,
+                                            const std::array<float, 4> &box_max, float cutoff,
+                                            const GpuHaloSettings &settings,
+                                            GpuHistogramOutput &out_histogram);
 
   [[nodiscard]] bool isValid() const noexcept { return is_initialized_; }
 
