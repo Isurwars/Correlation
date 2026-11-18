@@ -11,6 +11,10 @@
 #include "analysis/DistributionFunctions.hpp"
 #include "calculators/BaseCalculator.hpp"
 
+namespace correlation::core {
+class Cell;
+}
+
 namespace correlation::calculators {
 
 /**
@@ -69,6 +73,18 @@ public:
   [[nodiscard]] static correlation::analysis::Histogram
   calculate(const correlation::analysis::Histogram &vacf_hist, real_t max_imag_freq,
             real_t max_real_freq);
+
+  /**
+   * @brief Computes the recommended maximum positive vDoS frequency based on the lightest element.
+   *
+   * Continuous mass scaling: ν_max = max(10.0, 50.0 / sqrt(m_min)), bounded by Nyquist frequency.
+   *
+   * @param[in] cell The atomic cell containing chemical elements.
+   * @param[in] time_step The trajectory time step in femtoseconds.
+   * @return Recommended maximum real frequency in THz.
+   */
+  [[nodiscard]] static real_t computeRecommendedMaxFrequency(const correlation::core::Cell &cell,
+                                                             real_t time_step) noexcept;
 };
 
 } // namespace correlation::calculators

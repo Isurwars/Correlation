@@ -11,7 +11,6 @@
 #include "app/core/AppController.hpp"
 #include "calculators/CalculatorFactory.hpp"
 
-#include <algorithm>
 #include <map>
 #include <memory>
 #include <string>

@@ -4,6 +4,9 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "analysis/DynamicsAnalyzer.hpp"
+#include "calculators/temporal/VDOSCalculator.hpp"
+#include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
 #include "math/Constants.hpp"
 #include "math/Precision.hpp"
 
@@ -117,6 +120,80 @@ TEST(VDOSCalculatorTests, IdealGasShowsImaginaryPeak) {
   EXPECT_NEAR(frequencies[max_imag_idx], target_nu_peak, 2.0 * d_nu)
       << "The imaginary VDOS peak " << frequencies[max_imag_idx]
       << " THz does not correspond to the decay constant frequency " << target_nu_peak << " THz.";
+}
+
+TEST(VDOSCalculatorTests, ComputesRecommendedMaxFrequencyFromLightestAtom) {
+  using correlation::calculators::VDOSCalculator;
+  using correlation::core::Cell;
+
+  // 1. Hydrogen cell (m ~ 1.008 amu) -> ν_max ~ 50.0 / sqrt(1.008) ~ 49.8 THz
+  Cell h_cell;
+  h_cell.addAtom("H", {0.0, 0.0, 0.0});
+  const real_t h_max_freq = VDOSCalculator::computeRecommendedMaxFrequency(h_cell, 1.0);
+  EXPECT_NEAR(h_max_freq, 49.8, 0.5);
+
+  // 2. Carbon cell (m ~ 12.011 amu) -> ν_max ~ 50.0 / sqrt(12.011) ~ 14.4 THz
+  Cell c_cell;
+  c_cell.addAtom("C", {0.0, 0.0, 0.0});
+  const real_t c_max_freq = VDOSCalculator::computeRecommendedMaxFrequency(c_cell, 1.0);
+  EXPECT_NEAR(c_max_freq, 14.4, 0.5);
+
+  // 3. Silicon cell (m ~ 28.085 amu) -> scaled ~ 9.4 THz -> clamped to 10.0 THz minimum
+  Cell si_cell;
+  si_cell.addAtom("Si", {0.0, 0.0, 0.0});
+  const real_t si_max_freq = VDOSCalculator::computeRecommendedMaxFrequency(si_cell, 1.0);
+  EXPECT_DOUBLE_EQ(si_max_freq, 10.0);
+
+  // 4. Mixed cell with Si and H -> lightest atom (H) determines frequency ~ 49.8 THz
+  Cell mixed_cell;
+  mixed_cell.addAtom("Si", {0.0, 0.0, 0.0});
+  mixed_cell.addAtom("H", {1.0, 0.0, 0.0});
+  const real_t mixed_max_freq = VDOSCalculator::computeRecommendedMaxFrequency(mixed_cell, 1.0);
+  EXPECT_NEAR(mixed_max_freq, 49.8, 0.5);
+
+  // 5. Large time step (50 fs) -> Nyquist bound = 1000 / (2 * 50) = 10.0 THz
+  const real_t nyquist_bounded_freq = VDOSCalculator::computeRecommendedMaxFrequency(h_cell, 50.0);
+  EXPECT_DOUBLE_EQ(nyquist_bounded_freq, 10.0);
+
+  // 6. Empty cell defaults to 10.0 THz
+  Cell empty_cell;
+  const real_t empty_max_freq = VDOSCalculator::computeRecommendedMaxFrequency(empty_cell, 1.0);
+  EXPECT_DOUBLE_EQ(empty_max_freq, 10.0);
+}
+
+TEST(VDOSCalculatorTests, CalculateTrajectoryCalculatesHydrogenFrequenciesUpTo50THz) {
+  using correlation::analysis::DistributionFunctions;
+  using correlation::calculators::VDOSCalculator;
+  using correlation::core::Cell;
+  using correlation::core::Trajectory;
+
+  Cell h_cell;
+  h_cell.addAtom("H", {0.0, 0.0, 0.0});
+  Trajectory traj({h_cell, h_cell}, 1.0);
+
+  DistributionFunctions dists(h_cell);
+  // Synthetic VACF with 50 frames
+  Histogram vacf_hist;
+  vacf_hist.bins.resize(50);
+  for (size_t i = 0; i < 50; ++i) {
+    vacf_hist.bins[i] = static_cast<real_t>(i); // dt = 1 fs
+  }
+  std::vector<real_t> vacf_data(50, 1.0);
+  vacf_hist.partials["Total"] = vacf_data;
+  dists.addHistogram("VACF", std::move(vacf_hist));
+
+  VDOSCalculator calc;
+  AnalysisSettings settings;
+  calc.calculateTrajectory(dists, traj, settings);
+
+  ASSERT_TRUE(dists.hasHistogram("VDOS"));
+  const auto &vdos_hist = dists.getHistogram("VDOS");
+  ASSERT_FALSE(vdos_hist.bins.empty());
+
+  const real_t max_computed_freq = vdos_hist.bins.back();
+  EXPECT_GT(max_computed_freq, 45.0)
+      << "Hydrogen VDOS frequency should reach ~50 THz instead of being truncated to 10 THz";
+  EXPECT_LE(max_computed_freq, 50.0);
 }
 
 } // namespace

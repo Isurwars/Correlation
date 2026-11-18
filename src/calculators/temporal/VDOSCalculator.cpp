@@ -9,8 +9,12 @@
 #include "calculators/temporal/VDOSCalculator.hpp"
 #include "analysis/DynamicsAnalyzer.hpp"
 #include "calculators/CalculatorFactory.hpp"
+#include "core/Cell.hpp"
 #include "math/Constants.hpp"
+#include "physics/PhysicalData.hpp"
 
+#include <cmath>
+#include <limits>
 #include <stdexcept>
 #include <utility>
 
@@ -21,9 +25,41 @@ namespace {
 const bool REGISTERED = CalculatorFactory::registerTypeSafe<VDOSCalculator>("VDOSCalculator");
 } // namespace
 
+real_t VDOSCalculator::computeRecommendedMaxFrequency(const correlation::core::Cell &cell,
+                                                      real_t time_step) noexcept {
+  real_t min_mass = std::numeric_limits<real_t>::max();
+  for (const auto &elem : cell.elements()) {
+    try {
+      const real_t mass = correlation::physics::getAtomicMass(elem.symbol);
+      if (mass > static_cast<real_t>(0.0) && mass < min_mass) {
+        min_mass = mass;
+      }
+    } catch (const std::exception &) {
+      // Unrecognized element symbol, ignore
+    }
+  }
+
+  // Continuous mass scaling: ν_max = max(10.0, 50.0 / sqrt(m_min))
+  // For H (m ~ 1.008): ~49.8 THz
+  // For C (m ~ 12.01): ~14.4 THz
+  // For Si (m ~ 28.09): ~9.4 THz -> clamped to 10.0 THz minimum
+  real_t max_freq = static_cast<real_t>(10.0);
+  if (min_mass < std::numeric_limits<real_t>::max() && min_mass > static_cast<real_t>(0.0)) {
+    const real_t scaled_freq = static_cast<real_t>(50.0) / std::sqrt(min_mass);
+    max_freq = std::max(static_cast<real_t>(10.0), scaled_freq);
+  }
+
+  // Bounded by Nyquist frequency: ν_nyquist = 1000 / (2 * time_step) THz (time_step in fs)
+  if (time_step > static_cast<real_t>(0.0)) {
+    const real_t nyquist_thz = static_cast<real_t>(1000.0) / (static_cast<real_t>(2.0) * time_step);
+    max_freq = std::min(max_freq, nyquist_thz);
+  }
+
+  return max_freq;
+}
+
 void VDOSCalculator::calculateTrajectory(
-    correlation::analysis::DistributionFunctions &dists,
-    const correlation::core::Trajectory & /*traj*/,
+    correlation::analysis::DistributionFunctions &dists, const correlation::core::Trajectory &traj,
     const correlation::analysis::AnalysisSettings & /*settings*/) const {
   const auto &all = dists.getAllHistograms();
   if (!all.contains("VACF")) {
@@ -34,7 +70,16 @@ void VDOSCalculator::calculateTrajectory(
   if (it_total == vacf_hist.partials.end() || it_total->second.size() < 2) {
     return; // VACF data is too short for VDOS calculation (e.g. single-frame calculation)
   }
-  dists.addHistogram("VDOS", calculate(vacf_hist));
+
+  real_t const time_step =
+      vacf_hist.bins.size() >= 2 ? (vacf_hist.bins[1] - vacf_hist.bins[0]) : traj.getTimeStep();
+
+  VDOSParams params;
+  if (traj.getFrameCount() > 0) {
+    params.max_real_freq = computeRecommendedMaxFrequency(traj.firstFrame(), time_step);
+  }
+
+  dists.addHistogram("VDOS", calculate(vacf_hist, params));
 }
 
 correlation::analysis::Histogram
