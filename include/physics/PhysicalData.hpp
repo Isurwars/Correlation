@@ -13,6 +13,7 @@
 
 #include <algorithm>
 #include <array>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -66,6 +67,20 @@ inline real_t getCovalentRadius(std::string_view symbol) {
                             std::string(symbol));
   }
   return data->radius;
+}
+
+/**
+ * @brief Retrieves the atomic mass of a given chemical element without throwing.
+ *
+ * @param[in] symbol The atomic symbol of the element.
+ * @return The atomic mass in atomic mass units (Da or g/mol), or std::nullopt if unknown.
+ */
+[[nodiscard]] constexpr std::optional<real_t> findAtomicMass(std::string_view symbol) noexcept {
+  const auto *data = detail::find(symbol);
+  if (data == nullptr) {
+    return std::nullopt;
+  }
+  return data->mass;
 }
 
 /**

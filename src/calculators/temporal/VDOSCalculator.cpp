@@ -29,13 +29,9 @@ real_t VDOSCalculator::computeRecommendedMaxFrequency(const correlation::core::C
                                                       real_t time_step) noexcept {
   real_t min_mass = std::numeric_limits<real_t>::max();
   for (const auto &elem : cell.elements()) {
-    try {
-      const real_t mass = correlation::physics::getAtomicMass(elem.symbol);
-      if (mass > static_cast<real_t>(0.0) && mass < min_mass) {
-        min_mass = mass;
-      }
-    } catch (const std::exception &) {
-      // Unrecognized element symbol, ignore
+    if (const auto mass = correlation::physics::findAtomicMass(elem.symbol);
+        mass.has_value() && *mass > static_cast<real_t>(0.0) && *mass < min_mass) {
+      min_mass = *mass;
     }
   }
 
