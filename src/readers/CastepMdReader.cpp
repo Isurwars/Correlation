@@ -56,7 +56,7 @@ CastepMdReader::read(const std::string &file_name,
   myfile.clear();
   myfile.seekg(0, std::ios::beg);
   std::streampos last_progress_pos = 0;
-  size_t const update_interval = file_size / 100;
+  std::streamoff const update_interval = file_size / 100;
 
   // Skip the header
   bool in_header = true;
@@ -103,9 +103,9 @@ CastepMdReader::read(const std::string &file_name,
 
 void CastepMdReader::updateProgress(
     std::streampos current_pos, std::streampos file_size, std::streampos &last_progress_pos,
-    size_t update_interval,
+    std::streamoff update_interval,
     const std::function<void(float, const std::string &)> &progress_callback) {
-  if (std::cmp_greater(current_pos - last_progress_pos, update_interval)) {
+  if (current_pos - last_progress_pos > update_interval) {
     const float progress = static_cast<float>(current_pos) / static_cast<float>(file_size);
     progress_callback(progress, "Loading CASTEP MD file...");
     last_progress_pos = current_pos;

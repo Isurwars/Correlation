@@ -39,20 +39,24 @@ struct OutmolParser {
 
   std::streampos file_size = 0;
   std::streampos last_progress_pos = 0;
-  size_t update_interval = 0;
+  std::streamoff update_interval = 0;
   std::stringstream str_stream;
 
-  OutmolParser(std::ifstream &file, std::function<void(float, const std::string &)> progress)
-      : myfile(&file), progress_callback(std::move(progress)), update_interval(file_size / 100) {
-    myfile->seekg(0, std::ios::end);
-    file_size = myfile->tellg();
-    myfile->seekg(0, std::ios::beg);
+  static std::streampos getFileSize(std::ifstream &file) {
+    file.seekg(0, std::ios::end);
+    const std::streampos size = file.tellg();
+    file.seekg(0, std::ios::beg);
+    return size;
   }
+
+  OutmolParser(std::ifstream &file, std::function<void(float, const std::string &)> progress)
+      : myfile(&file), progress_callback(std::move(progress)), file_size(getFileSize(file)),
+        update_interval(file_size / 100) {}
 
   void reportProgress() {
     if (progress_callback) {
       std::streampos const current_pos = myfile->tellg();
-      if (std::cmp_greater(current_pos - last_progress_pos, update_interval)) {
+      if (current_pos - last_progress_pos > update_interval) {
         float const pos_fraction = static_cast<float>(current_pos) / static_cast<float>(file_size);
         progress_callback(pos_fraction, "Loading Outmol file...");
         last_progress_pos = current_pos;

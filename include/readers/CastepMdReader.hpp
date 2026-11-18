@@ -47,7 +47,7 @@ public:
 private:
   static void
   updateProgress(std::streampos current_pos, std::streampos file_size,
-                 std::streampos &last_progress_pos, size_t update_interval,
+                 std::streampos &last_progress_pos, std::streamoff update_interval,
                  const std::function<void(float, const std::string &)> &progress_callback);
 
   static void parseEnergyLine(const std::string &line, real_t &current_energy,
