@@ -87,7 +87,7 @@ struct BlendParams {
     return "0";
   }
 
-  if (abs_value < static_cast<real_t>(0.001) || abs_value >= static_cast<real_t>(10000.0)) {
+  if (abs_value < static_cast<real_t>(0.01) || abs_value >= static_cast<real_t>(10000.0)) {
     auto const exponent = static_cast<int>(std::floor(std::log10(abs_value)));
     real_t const fraction =
         value / std::pow(static_cast<real_t>(10.0), static_cast<real_t>(exponent));
@@ -239,6 +239,12 @@ struct PdfHistogramRenderer {
       }
     }
 
+    const bool is_vdos =
+        hist->file_suffix == "_VDOS" || hist->title == "Vibrational Density of States";
+    if (is_vdos) {
+      min_y = static_cast<real_t>(0.0);
+    }
+
     if (max_y == min_y) {
       max_y += static_cast<real_t>(1.0);
     }
@@ -261,6 +267,10 @@ struct PdfHistogramRenderer {
             .max = max_y,
         },
         8);
+    if (is_vdos) {
+      yScale.min = static_cast<real_t>(0.0);
+      yScale.ticks = {yScale.min, yScale.max};
+    }
     return true;
   }
 

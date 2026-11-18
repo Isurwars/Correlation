@@ -463,4 +463,46 @@ TEST(SvgPlotterTests, DualViewPreservesStableColorsInSvgOutput) {
   EXPECT_NE(svg3.find("#123456"), std::string::npos);
 }
 
+TEST(SvgPlotterTests, FmtScientificUsesScientificNotationBelowOneHundredth) {
+  EXPECT_EQ(detail::fmtScientific(static_cast<real_t>(0.0)), "0");
+  EXPECT_EQ(detail::fmtScientific(static_cast<real_t>(0.002)), "2.0×10⁻³");
+  EXPECT_EQ(detail::fmtScientific(static_cast<real_t>(0.0045)), "4.5×10⁻³");
+  EXPECT_EQ(detail::fmtScientific(static_cast<real_t>(0.05)), "0.05");
+  EXPECT_EQ(detail::fmtScientific(static_cast<real_t>(1.5)), "1.5");
+}
+
+TEST(SvgPlotterTests, VdosPlotClampsYMinToZeroAndEmitsTwoYTicks) {
+  Histogram vdos;
+  vdos.title = "Vibrational Density of States";
+  vdos.file_suffix = "_VDOS";
+  vdos.x_label = "ν";
+  vdos.y_label = "f(ω)";
+  vdos.bins = {0.0, 10.0, 20.0, 30.0, 40.0, 50.0};
+  // Include a slight negative value (numerical FFT artifact) and small positive peak
+  vdos.partials["Total"] = {static_cast<real_t>(-0.0005), static_cast<real_t>(0.001),
+                            static_cast<real_t>(0.004),   static_cast<real_t>(0.002),
+                            static_cast<real_t>(0.001),   static_cast<real_t>(0.0)};
+
+  PlotConfig config;
+  config.use_native_text = true;
+  config.show_grid = false;
+
+  const std::string svg = renderHistogramAsSvg(vdos, config);
+  EXPECT_FALSE(svg.empty());
+
+  // Y-axis should have native text "0" at bottom and non-zero scientific max label at top
+  EXPECT_NE(svg.find(">0</text>"), std::string::npos);
+  EXPECT_NE(svg.find("×10⁻³</text>"), std::string::npos);
+
+  // Verify there are no intermediate Y-axis ticks (only 2 Y-tick lines at x1="92.0" x2="100.0")
+  size_t y_tick_count = 0;
+  size_t pos = 0;
+  const std::string y_tick_prefix = "<line x1=\"92.0\"";
+  while ((pos = svg.find(y_tick_prefix, pos)) != std::string::npos) {
+    ++y_tick_count;
+    pos += y_tick_prefix.size();
+  }
+  EXPECT_EQ(y_tick_count, 2U);
+}
+
 } // namespace correlation::testing

@@ -552,7 +552,7 @@ inline std::string fmtScientific(real_t value) {
     return "0";
   }
 
-  if (abs_value < static_cast<real_t>(0.001) || abs_value >= static_cast<real_t>(10000.0)) {
+  if (abs_value < static_cast<real_t>(0.01) || abs_value >= static_cast<real_t>(10000.0)) {
     const int exponent = static_cast<int>(std::floor(std::log10(abs_value)));
     const real_t fraction =
         value / std::pow(static_cast<real_t>(10.0), static_cast<real_t>(exponent));

@@ -359,14 +359,10 @@ private:
 // ============================================================================
 class PlotAnalytics {
 public:
-  [[nodiscard]] static std::pair<detail::NiceScale, detail::NiceScale>
-  computeScales(std::span<const real_t> x_coords, std::span<const RenderSeries> series,
-                const PlotConfig &config) {
-    real_t raw_x_min = x_coords.empty() ? static_cast<real_t>(0.0) : x_coords.front();
-    real_t raw_x_max = x_coords.empty() ? static_cast<real_t>(1.0) : x_coords.back();
+  [[nodiscard]] static std::pair<real_t, real_t>
+  computeRawYRange(std::span<const RenderSeries> series, bool is_vdos) {
     auto raw_y_min = static_cast<real_t>(0.0);
     auto raw_y_max = static_cast<real_t>(0.0);
-
     const bool has_ensemble_mean = std::ranges::any_of(
         series, [](const auto &series_entry) { return series_entry.key == "Ensemble Mean"; });
 
@@ -381,33 +377,50 @@ public:
       }
     }
 
+    if (is_vdos) {
+      raw_y_min = static_cast<real_t>(0.0);
+    }
     const real_t y_padding = (raw_y_max - raw_y_min) * static_cast<real_t>(0.05);
-    raw_y_max += y_padding;
+    return {raw_y_min, raw_y_max + y_padding};
+  }
 
-    bool strict_x = false;
-    bool strict_y = false;
-    if (config.manual_x_min.has_value()) {
-      raw_x_min = *config.manual_x_min;
-      strict_x = true;
+  static void applyVdosYScale(detail::NiceScale &y_scale, const PlotConfig &config) {
+    if (!config.manual_y_min.has_value()) {
+      y_scale.min = static_cast<real_t>(0.0);
     }
-    if (config.manual_x_max.has_value()) {
-      raw_x_max = *config.manual_x_max;
-      strict_x = true;
+    if (!config.manual_ticks && !config.y_log_scale) {
+      y_scale.ticks = {y_scale.min, y_scale.max};
     }
-    if (config.manual_y_min.has_value()) {
-      raw_y_min = *config.manual_y_min;
-      strict_y = true;
+  }
+
+  static void applyLogYScale(detail::NiceScale &y_scale, real_t raw_y_min, real_t raw_y_max) {
+    y_scale.ticks.clear();
+    const int min_exp =
+        static_cast<int>(std::floor(std::log10(std::max(raw_y_min, static_cast<real_t>(1e-6)))));
+    const int max_exp =
+        static_cast<int>(std::ceil(std::log10(std::max(raw_y_max, static_cast<real_t>(1e-6)))));
+    for (int exp = min_exp; exp <= max_exp; ++exp) {
+      y_scale.ticks.push_back(static_cast<real_t>(std::pow(10.0, exp)));
     }
-    if (config.manual_y_max.has_value()) {
-      raw_y_max = *config.manual_y_max;
-      strict_y = true;
-    }
+  }
+
+  [[nodiscard]] static std::pair<detail::NiceScale, detail::NiceScale>
+  computeScales(std::span<const real_t> x_coords, std::span<const RenderSeries> series,
+                const PlotConfig &config, bool is_vdos = false) {
+    real_t raw_x_min = x_coords.empty() ? static_cast<real_t>(0.0) : x_coords.front();
+    real_t raw_x_max = x_coords.empty() ? static_cast<real_t>(1.0) : x_coords.back();
+    auto [raw_y_min, raw_y_max] = computeRawYRange(series, is_vdos);
+
+    const bool strict_x = config.manual_x_min.has_value() || config.manual_x_max.has_value();
+    const bool strict_y = config.manual_y_min.has_value() || config.manual_y_max.has_value();
+    raw_x_min = config.manual_x_min.value_or(raw_x_min);
+    raw_x_max = config.manual_x_max.value_or(raw_x_max);
+    raw_y_min = config.manual_y_min.value_or(raw_y_min);
+    raw_y_max = config.manual_y_max.value_or(raw_y_max);
 
     if (config.y_log_scale) {
       raw_y_min = std::max(raw_y_min, static_cast<real_t>(1e-4));
-      if (raw_y_max <= raw_y_min) {
-        raw_y_max = raw_y_min * static_cast<real_t>(100.0);
-      }
+      raw_y_max = std::max(raw_y_max, raw_y_min * static_cast<real_t>(100.0));
     }
 
     const real_t x_step = (config.manual_ticks && config.x_major_step > static_cast<real_t>(0.0))
@@ -420,14 +433,11 @@ public:
     detail::NiceScale y_scale(detail::DataRange{.min = raw_y_min, .max = raw_y_max}, 8, strict_y,
                               y_step);
     if (config.y_log_scale && !config.manual_ticks) {
-      y_scale.ticks.clear();
-      const int min_exp =
-          static_cast<int>(std::floor(std::log10(std::max(raw_y_min, static_cast<real_t>(1e-6)))));
-      const int max_exp =
-          static_cast<int>(std::ceil(std::log10(std::max(raw_y_max, static_cast<real_t>(1e-6)))));
-      for (int exp = min_exp; exp <= max_exp; ++exp) {
-        y_scale.ticks.push_back(static_cast<real_t>(std::pow(10.0, exp)));
-      }
+      applyLogYScale(y_scale, raw_y_min, raw_y_max);
+    }
+
+    if (is_vdos) {
+      applyVdosYScale(y_scale, config);
     }
 
     return {
@@ -1130,7 +1140,8 @@ std::string renderHistogramAsSvg(const correlation::analysis::Histogram &hist,
   }
 
   // Stage 2: Analytics, scales & peak detection
-  const auto [x_scale, y_scale] = PlotAnalytics::computeScales(hist.bins, series, config);
+  const bool is_vdos = hist.file_suffix == "_VDOS" || hist.title == "Vibrational Density of States";
+  const auto [x_scale, y_scale] = PlotAnalytics::computeScales(hist.bins, series, config, is_vdos);
   const std::vector<PeakCallout> peaks =
       PlotAnalytics::detectPeaks(hist.bins, series, hist.x_label);
   const auto [x_label, y_label] = formatAxisLabels(hist);
