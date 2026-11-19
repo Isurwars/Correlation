@@ -291,18 +291,24 @@ export component AppWindow inherits Window {
 
     // Camera HUD, Atom Inspector, Slab Clipping & Dual-View Radial Brushing
     in property <CameraHudState> structure_3d_camera_hud: {
-        ax_x: 0.7, ax_y: 0.3,
-        ay_x: 0.0, ay_y: -0.9,
-        az_x: -0.7, az_y: 0.3,
+        ax_x: 0.7,
+        ax_y: 0.3,
+        ay_x: 0.0,
+        ay_y: -0.9,
+        az_x: -0.7,
+        az_y: 0.3,
         scale_bar_px: 64px,
         scale_bar_label: "5 Å",
     };
     in property <InspectedAtomInfo> structure_3d_inspected_atom;
     in property <SlabClipState> structure_3d_slab_clip: {
         enabled: false,
-        x_min: 0.0, x_max: 1.0,
-        y_min: 0.0, y_max: 1.0,
-        z_min: 0.0, z_max: 1.0,
+        x_min: 0.0,
+        x_max: 1.0,
+        y_min: 0.0,
+        y_max: 1.0,
+        z_min: 0.0,
+        z_max: 1.0,
     };
     in property <string> structure_3d_radial_brush_text: "";
 
