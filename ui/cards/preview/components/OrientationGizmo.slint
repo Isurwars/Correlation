@@ -14,8 +14,8 @@ import {
 import { CameraHudState } from "../../../Types.slint";
 
 component AxisPill inherits TooltipTarget {
-    in property <string> label: "X";
-    in property <color> pill_color: #E06C75;
+    in property <string> label;
+    in property <color> pill_color;
 
     width: 18px;
     height: 18px;
@@ -70,10 +70,6 @@ export component OrientationGizmo inherits Rectangle {
 
     // Projected X axis line
     Path {
-        width: 100%;
-        height: 100%;
-        viewbox-x: 0;
-        viewbox-y: 0;
         viewbox-width: 76;
         viewbox-height: 76;
         stroke: #E06C75;
@@ -87,10 +83,6 @@ export component OrientationGizmo inherits Rectangle {
 
     // Projected Y axis line
     Path {
-        width: 100%;
-        height: 100%;
-        viewbox-x: 0;
-        viewbox-y: 0;
         viewbox-width: 76;
         viewbox-height: 76;
         stroke: #98C379;
@@ -104,10 +96,6 @@ export component OrientationGizmo inherits Rectangle {
 
     // Projected Z axis line
     Path {
-        width: 100%;
-        height: 100%;
-        viewbox-x: 0;
-        viewbox-y: 0;
         viewbox-width: 76;
         viewbox-height: 76;
         stroke: #61AFEF;

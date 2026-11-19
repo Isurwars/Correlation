@@ -133,7 +133,6 @@ export component CommandPalette inherits Rectangle {
 
                 // Command list
                 if root.items.length > 0: ScrollView {
-                    vertical-stretch: 1;
 
                     VerticalLayout {
                         spacing: 2px;
@@ -151,8 +150,6 @@ export component CommandPalette inherits Rectangle {
                             }
 
                             Rectangle {
-                                width: 100%;
-                                height: 100%;
                                 border-radius: MaterialStyleMetrics.border_radius_8;
                                 background: idx == root.selected_index
                                     ? MaterialPalette.primary_container

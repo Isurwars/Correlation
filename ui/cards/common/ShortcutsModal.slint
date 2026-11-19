@@ -144,8 +144,6 @@ export component ShortcutsModal inherits Rectangle {
                     clicked => { root.closed(); }
 
                     Rectangle {
-                        width: 100%;
-                        height: 100%;
                         border-radius: MaterialStyleMetrics.border_radius_full;
                         background: close_btn.has-hover ? MaterialPalette.surface_container_highest : transparent;
 
@@ -163,7 +161,6 @@ export component ShortcutsModal inherits Rectangle {
 
             // 2-Column Scrollable Grid
             ScrollView {
-                vertical-stretch: 1;
 
                 HorizontalLayout {
                     spacing: MaterialStyleMetrics.spacing_24;

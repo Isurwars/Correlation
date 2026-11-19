@@ -80,7 +80,6 @@ export component ToastBanner inherits Rectangle {
                 style: MaterialTypography.label_medium;
                 color: root.fg_color;
                 vertical-alignment: center;
-                overflow: elide;
             }
         }
 
@@ -94,8 +93,6 @@ export component ToastBanner inherits Rectangle {
             clicked => { ToastState.dismiss(); }
 
             Rectangle {
-                width: 100%;
-                height: 100%;
                 border-radius: MaterialStyleMetrics.border_radius_full;
                 background: close_touch.has-hover ? root.fg_color.with_alpha(12%) : transparent;
 

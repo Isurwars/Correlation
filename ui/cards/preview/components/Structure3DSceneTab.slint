@@ -148,7 +148,6 @@ export component Structure3DSceneTab inherits ScrollView {
                         horizontal-stretch: 1;
                         label: "X Min";
                         value: root.slab_clip.x_min;
-                        minimum: 0.0;
                         maximum: Math.max(0.01, root.slab_clip.x_max);
                         display_text: "" + Math.round(root.slab_clip.x_min * 100) + "%";
                         changed(val) => {
@@ -164,7 +163,6 @@ export component Structure3DSceneTab inherits ScrollView {
                         label: "X Max";
                         value: root.slab_clip.x_max;
                         minimum: Math.min(0.99, root.slab_clip.x_min);
-                        maximum: 1.0;
                         display_text: "" + Math.round(root.slab_clip.x_max * 100) + "%";
                         changed(val) => {
                             root.set_slab_clip({
@@ -182,7 +180,6 @@ export component Structure3DSceneTab inherits ScrollView {
                         horizontal-stretch: 1;
                         label: "Y Min";
                         value: root.slab_clip.y_min;
-                        minimum: 0.0;
                         maximum: Math.max(0.01, root.slab_clip.y_max);
                         display_text: "" + Math.round(root.slab_clip.y_min * 100) + "%";
                         changed(val) => {
@@ -198,7 +195,6 @@ export component Structure3DSceneTab inherits ScrollView {
                         label: "Y Max";
                         value: root.slab_clip.y_max;
                         minimum: Math.min(0.99, root.slab_clip.y_min);
-                        maximum: 1.0;
                         display_text: "" + Math.round(root.slab_clip.y_max * 100) + "%";
                         changed(val) => {
                             root.set_slab_clip({
@@ -216,7 +212,6 @@ export component Structure3DSceneTab inherits ScrollView {
                         horizontal-stretch: 1;
                         label: "Z Min";
                         value: root.slab_clip.z_min;
-                        minimum: 0.0;
                         maximum: Math.max(0.01, root.slab_clip.z_max);
                         display_text: "" + Math.round(root.slab_clip.z_min * 100) + "%";
                         changed(val) => {
@@ -232,7 +227,6 @@ export component Structure3DSceneTab inherits ScrollView {
                         label: "Z Max";
                         value: root.slab_clip.z_max;
                         minimum: Math.min(0.99, root.slab_clip.z_min);
-                        maximum: 1.0;
                         display_text: "" + Math.round(root.slab_clip.z_max * 100) + "%";
                         changed(val) => {
                             root.set_slab_clip({
