@@ -5,6 +5,9 @@ include(FetchContent)
 
 # Enforce CMake policy version minimum to 3.10 for external dependencies
 set(CMAKE_POLICY_VERSION_MINIMUM 3.10)
+# Ensure FetchContent subprojects (e.g., nfd with cmake_minimum_required 3.5) honor normal
+# variables like BUILD_SHARED_LIBS set by correlation_push_shared_libs() without CMP0077 warnings.
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
 # Default to shared libraries unless overridden
 if(NOT DEFINED BUILD_SHARED_LIBS)
