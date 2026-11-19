@@ -71,6 +71,7 @@ if(BUILD_GUI)
       EXCLUDE_FROM_ALL
     )
     set(SLINT_FEATURE_JEMALLOC OFF CACHE BOOL "Disable jemalloc for Slint runtime" FORCE)
+    set(SLINT_FEATURE_INTERPRETER OFF CACHE BOOL "Disable unused Slint interpreter runtime" FORCE)
     FetchContent_MakeAvailable(Slint)
 
     # Slint 1.18.0 unconditionally enables "jemalloc" for slint-compiler

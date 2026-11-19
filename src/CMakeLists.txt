@@ -319,7 +319,7 @@ if(BUILD_WITH_ARROW)
     target_compile_definitions(correlation_lib PUBLIC CORRELATION_USE_ARROW)
 endif()
 
-target_link_libraries(correlation_lib PUBLIC correlation_simd_options correlation_fft voro++)
+target_link_libraries(correlation_lib PUBLIC correlation_simd_options correlation_linker_options correlation_fft voro++)
 
 # Pybind11 creates a shared module and requires PIC (handled globally via CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -408,8 +408,14 @@ if(BUILD_GUI)
     set_property(TARGET app_gui_obj PROPERTY SLINT_EMBED_RESOURCES "embed-files")
     slint_target_sources(app_gui_obj
         ../ui/AppWindow.slint
+        COMPILATION_UNITS ${CORRELATION_SLINT_COMPILATION_UNITS}
         LIBRARY_PATHS material=${CMAKE_CURRENT_SOURCE_DIR}/../ui/material/material.slint
     )
+    if(CORRELATION_ENABLE_PCH AND NOT ENABLE_CLANG_TIDY)
+        target_precompile_headers(app_gui_obj PRIVATE
+            "${CMAKE_CURRENT_BINARY_DIR}/AppWindow.h"
+        )
+    endif()
 
     set(CORRELATION_SOURCES
         main.cpp
