@@ -13,6 +13,7 @@
 #include "app/formatters/PlotTableFormatter.hpp"
 #include "app/services/TrajectoryLoader.hpp"
 #include "app/viewmodel/Structure3DController.hpp"
+#include "calculators/order/HyperuniformityCalculator.hpp"
 #include "plotters/SvgPlotter.hpp"
 
 #include <algorithm>
@@ -170,28 +171,76 @@ buildPlotMenuModel(std::span<const std::string> names, const AnalysisDispatcher 
   return menu_model;
 }
 
+void populateDeborahRegime(::PhysicsDiagnostics &out, real_t deb) {
+  if (deb <= static_cast<real_t>(0.0)) {
+    return;
+  }
+  out.deborah_number = slint::SharedString(std::format("{:.4f}", deb));
+  if (deb < static_cast<real_t>(0.1)) {
+    out.deborah_regime = "Liquid-like (De ≪ 1)";
+    out.deborah_level = 0;
+  } else if (deb <= static_cast<real_t>(10.0)) {
+    out.deborah_regime = "Viscoelastic (De ~ 1)";
+    out.deborah_level = 1;
+  } else {
+    out.deborah_regime = "Solid-like (De ≫ 1)";
+    out.deborah_level = 2;
+  }
+}
+
+void populateHyperuniformity(::PhysicsDiagnostics &out,
+                             const correlation::analysis::HyperuniformityDiagnostics &diag) {
+  if (!diag.has_real_space && !diag.has_reciprocal_space) {
+    return;
+  }
+  if (diag.has_real_space) {
+    out.hyper_beta = slint::SharedString(std::format("{:.3f}", diag.variance_exponent_beta));
+    out.hyper_chi_h = slint::SharedString(std::format("{:.4f}", diag.asymptotic_chi_h));
+  }
+  if (diag.has_reciprocal_space) {
+    out.hyper_h_index = (diag.torquato_h_index > static_cast<real_t>(0.0) &&
+                         diag.torquato_h_index < static_cast<real_t>(0.01))
+                            ? slint::SharedString(std::format("{:.2e}", diag.torquato_h_index))
+                            : slint::SharedString(std::format("{:.4f}", diag.torquato_h_index));
+    out.hyper_alpha = slint::SharedString(std::format("{:.3f}", diag.low_q_exponent_alpha));
+  }
+  const auto verdict =
+      correlation::calculators::HyperuniformityCalculator::classifyHyperuniformity(diag);
+  out.hyper_verdict = slint::SharedString(verdict.label);
+  out.hyper_level = verdict.severity_level;
+}
+
 void updateDynamicProperties(
     const ::AppWindow &window,
     const correlation::analysis::DistributionFunctions *distribution_functions) {
+  ::PhysicsDiagnostics out{};
+  out.deborah_level = -1;
+  out.hyper_level = -1;
+
   if (distribution_functions == nullptr) {
-    window.set_diff_msd("");
-    window.set_diff_vacf("");
-    window.set_relaxation_time("");
-    window.set_deborah_number("");
+    window.set_physics_diagnostics(out);
     return;
   }
 
   const real_t msd = distribution_functions->getDiffusionCoefficientMSD();
-  window.set_diff_msd(msd > 0.0 ? slint::SharedString(std::format("{:.6f} Å²/fs", msd)) : "");
+  if (msd > static_cast<real_t>(0.0)) {
+    out.diff_msd = slint::SharedString(std::format("{:.6f} Å²/fs", msd));
+  }
 
   const real_t vacf = distribution_functions->getDiffusionCoefficientVACF();
-  window.set_diff_vacf(vacf > 0.0 ? slint::SharedString(std::format("{:.6f} Å²/fs", vacf)) : "");
+  if (vacf > static_cast<real_t>(0.0)) {
+    out.diff_vacf = slint::SharedString(std::format("{:.6f} Å²/fs", vacf));
+  }
 
   const real_t tau = distribution_functions->getRelaxationTime();
-  window.set_relaxation_time(tau > 0.0 ? slint::SharedString(std::format("{:.4f} fs", tau)) : "");
+  if (tau > static_cast<real_t>(0.0)) {
+    out.relaxation_time = slint::SharedString(std::format("{:.4f} fs", tau));
+  }
 
-  const real_t deb = distribution_functions->getDeborahNumber();
-  window.set_deborah_number(deb > 0.0 ? slint::SharedString(std::format("{:.4f}", deb)) : "");
+  populateDeborahRegime(out, distribution_functions->getDeborahNumber());
+  populateHyperuniformity(out, distribution_functions->getHyperuniformityDiagnostics());
+
+  window.set_physics_diagnostics(out);
 }
 
 [[nodiscard]] std::pair<std::string, std::span<const real_t>>

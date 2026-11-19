@@ -11,6 +11,7 @@
 #include "analysis/TrajectoryAnalyzer.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "calculators/ml/MLIPCalculator.hpp"
+#include "calculators/order/HyperuniformityCalculator.hpp"
 #include "calculators/scattering/TDOSCalculator.hpp"
 #include "math/Constants.hpp"
 #include "mlip/OrbV3GNNModel.hpp"
@@ -311,6 +312,61 @@ void CorrelationEngine::calculateDynamicProperties(DistributionFunctions &distri
   }
 }
 
+void CorrelationEngine::calculateHyperuniformityDiagnostics(
+    DistributionFunctions &distribution_functions) {
+  const auto &hists = distribution_functions.getAllHistograms();
+  HyperuniformityDiagnostics combined{};
+
+  const auto it_sigma2 = hists.find("sigma2_N");
+  if (it_sigma2 != hists.end()) {
+    const auto &s2_hist = it_sigma2->second;
+    const auto it_s2_total = s2_hist.partials.find("Total");
+    if (it_s2_total != s2_hist.partials.end()) {
+      std::span<const real_t> chi_span{};
+      const auto it_chi = hists.find("chi_H");
+      if (it_chi != hists.end()) {
+        const auto it_chi_total = it_chi->second.partials.find("Total");
+        if (it_chi_total != it_chi->second.partials.end()) {
+          chi_span = it_chi_total->second;
+        }
+      }
+      const auto real_diag = calculators::HyperuniformityCalculator::computeRealSpaceDiagnostics(
+          s2_hist.bins, it_s2_total->second, chi_span);
+      combined.variance_exponent_beta = real_diag.variance_exponent_beta;
+      combined.asymptotic_chi_h = real_diag.asymptotic_chi_h;
+      combined.has_real_space = real_diag.has_real_space;
+    }
+  }
+
+  const auto it_sq = hists.find("S_q");
+  if (it_sq != hists.end()) {
+    const auto &sq_hist = it_sq->second;
+    const auto it_sq_total = sq_hist.partials.find("Total");
+    if (it_sq_total != sq_hist.partials.end()) {
+      const auto recip_diag = calculators::HyperuniformityCalculator::computeReciprocalDiagnostics(
+          sq_hist.bins, it_sq_total->second);
+      combined.torquato_h_index = recip_diag.torquato_h_index;
+      combined.low_q_exponent_alpha = recip_diag.low_q_exponent_alpha;
+      combined.has_reciprocal_space = recip_diag.has_reciprocal_space;
+    }
+  }
+
+  distribution_functions.setHyperuniformityDiagnostics(combined);
+
+  if (combined.has_real_space || combined.has_reciprocal_space) {
+    const auto verdict = calculators::HyperuniformityCalculator::classifyHyperuniformity(combined);
+    std::cout << "Hyperuniformity check: " << verdict.label << '\n';
+    if (combined.has_real_space) {
+      std::cout << "  Variance scaling exponent β: " << combined.variance_exponent_beta
+                << ", asymptotic χ_H(R_max): " << combined.asymptotic_chi_h << '\n';
+    }
+    if (combined.has_reciprocal_space) {
+      std::cout << "  Torquato index H = S(0+)/S(q_peak): " << combined.torquato_h_index
+                << ", low-q exponent α: " << combined.low_q_exponent_alpha << '\n';
+    }
+  }
+}
+
 std::expected<std::unique_ptr<DistributionFunctions>, std::string>
 CorrelationEngine::runAnalysis(correlation::core::Trajectory &trajectory,
                                const CorrelationEngineConfig &config,
@@ -362,6 +418,7 @@ CorrelationEngine::runAnalysis(correlation::core::Trajectory &trajectory,
     if (dist_funcs) {
       runTrajectoryCalculators(*dist_funcs, trajectory, config.settings);
       calculateDynamicProperties(*dist_funcs);
+      calculateHyperuniformityDiagnostics(*dist_funcs);
     }
 
     return dist_funcs;

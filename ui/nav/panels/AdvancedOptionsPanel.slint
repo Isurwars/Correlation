@@ -8,7 +8,7 @@ import {
     ScrollView,
     Vertical,
 } from "../../material/material.slint";
-import { AnalysisOptions, AppErrors, CalculatorGroup, WorkflowState } from "../../Types.slint";
+import { AnalysisOptions, AppErrors, CalculatorGroup, PhysicsDiagnostics, WorkflowState } from "../../Types.slint";
 import { AnalysesSelectionCard } from "../../cards/analyses/AnalysesSelectionCard.slint";
 import { SQOptionsCard } from "../../cards/advanced/SQOptionsCard.slint";
 import { XRDOptionsCard } from "../../cards/advanced/XRDOptionsCard.slint";
@@ -38,11 +38,11 @@ export component AdvancedOptionsPanel inherits Rectangle {
     callback set_all_calculator_groups_expanded(bool);
     callback reset_analyses_selection();
 
-    // Dynamic properties
-    in property <string> diff_msd: "";
-    in property <string> diff_vacf: "";
-    in property <string> relaxation_time: "";
-    in property <string> deborah_number: "";
+    // Calculated dynamic & hyperuniformity diagnostics
+    in property <PhysicsDiagnostics> physics_diagnostics: {
+        deborah_level: -1,
+        hyper_level: -1,
+    };
 
     in-out property <AnalysisOptions> analysis_options;
     in property <AppErrors> app_errors;
@@ -132,10 +132,7 @@ export component AdvancedOptionsPanel inherits Rectangle {
                 }
 
                 dynamic_properties := DynamicPropertiesCard {
-                    diff_msd: root.diff_msd;
-                    diff_vacf: root.diff_vacf;
-                    relaxation_time: root.relaxation_time;
-                    deborah_number: root.deborah_number;
+                    diagnostics: root.physics_diagnostics;
                 }
 
                 smoothing_card := SmoothingOptionsCard {

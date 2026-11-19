@@ -65,6 +65,13 @@ public:
   static void calculateDynamicProperties(DistributionFunctions &distribution_functions);
 
   /**
+   * @brief Computes scalar hyperuniformity diagnostics (β, χ_H(R_max), H, α) from σ²_N, χ_H, and
+   * S(Q).
+   * @param distribution_functions Target DistributionFunctions container to update.
+   */
+  static void calculateHyperuniformityDiagnostics(DistributionFunctions &distribution_functions);
+
+  /**
    * @brief Dispatches active trajectory calculators on the trajectory.
    * @param distribution_functions Target DistributionFunctions container.
    * @param trajectory The trajectory to calculate on.

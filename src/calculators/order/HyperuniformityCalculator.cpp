@@ -203,4 +203,214 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell,
   return results;
 }
 
+namespace {
+
+[[nodiscard]] double fitLogLogSlope(std::span<const double> x_vals,
+                                    std::span<const double> y_vals) noexcept {
+  const size_t count = std::min(x_vals.size(), y_vals.size());
+  if (count < 2U) {
+    return 0.0;
+  }
+
+  double sum_x = 0.0;
+  double sum_y = 0.0;
+  for (size_t i = 0; i < count; ++i) {
+    sum_x += x_vals[i];
+    sum_y += y_vals[i];
+  }
+  const double mean_x = sum_x / static_cast<double>(count);
+  const double mean_y = sum_y / static_cast<double>(count);
+
+  double cov_xy = 0.0;
+  double var_x = 0.0;
+  for (size_t i = 0; i < count; ++i) {
+    const double delta_x = x_vals[i] - mean_x;
+    cov_xy += delta_x * (y_vals[i] - mean_y);
+    var_x += delta_x * delta_x;
+  }
+  return (var_x > 1e-18) ? (cov_xy / var_x) : 0.0;
+}
+
+[[nodiscard]] double extrapolateZeroIntercept(std::span<const double> x_vals,
+                                              std::span<const double> y_vals) noexcept {
+  const size_t count = std::min(x_vals.size(), y_vals.size());
+  if (count == 0U) {
+    return 0.0;
+  }
+  if (count == 1U) {
+    return std::max(0.0, y_vals[0]);
+  }
+
+  double sum_x = 0.0;
+  double sum_y = 0.0;
+  for (size_t i = 0; i < count; ++i) {
+    sum_x += x_vals[i];
+    sum_y += y_vals[i];
+  }
+  const double mean_x = sum_x / static_cast<double>(count);
+  const double mean_y = sum_y / static_cast<double>(count);
+
+  double cov_xy = 0.0;
+  double var_x = 0.0;
+  for (size_t i = 0; i < count; ++i) {
+    const double delta_x = x_vals[i] - mean_x;
+    cov_xy += delta_x * (y_vals[i] - mean_y);
+    var_x += delta_x * delta_x;
+  }
+  const double slope = (var_x > 1e-18) ? (cov_xy / var_x) : 0.0;
+  const double intercept = mean_y - slope * mean_x;
+  if (intercept > 0.0) {
+    return intercept;
+  }
+  return std::max(0.0, y_vals[0]);
+}
+
+} // namespace
+
+correlation::analysis::HyperuniformityDiagnostics
+HyperuniformityCalculator::computeRealSpaceDiagnostics(std::span<const real_t> radii,
+                                                       std::span<const real_t> sigma2_n,
+                                                       std::span<const real_t> chi_h) noexcept {
+  correlation::analysis::HyperuniformityDiagnostics diag{};
+  const size_t bin_count = std::min(radii.size(), sigma2_n.size());
+  if (bin_count < 3U) {
+    return diag;
+  }
+
+  // Skip the smallest 30% of radii when enough bins exist to avoid short-range discreteness noise.
+  const size_t fit_start = (bin_count >= 6U) ? (bin_count * 3U / 10U) : 0U;
+  std::vector<double> log_r;
+  std::vector<double> log_var;
+  log_r.reserve(bin_count - fit_start);
+  log_var.reserve(bin_count - fit_start);
+
+  for (size_t i = fit_start; i < bin_count; ++i) {
+    const auto r_val = static_cast<double>(radii[i]);
+    const auto v_val = static_cast<double>(sigma2_n[i]);
+    if (r_val > 0.0 && v_val > 1e-12) {
+      log_r.push_back(std::log(r_val));
+      log_var.push_back(std::log(v_val));
+    }
+  }
+
+  if (log_r.size() >= 3U) {
+    diag.variance_exponent_beta = static_cast<real_t>(fitLogLogSlope(log_r, log_var));
+    diag.has_real_space = true;
+  }
+
+  const size_t chi_n = std::min(radii.size(), chi_h.size());
+  if (chi_n > 0U) {
+    const size_t tail_start = (chi_n >= 4U) ? (chi_n * 3U / 4U) : 0U;
+    double chi_sum = 0.0;
+    size_t chi_count = 0U;
+    for (size_t i = tail_start; i < chi_n; ++i) {
+      const auto c_val = static_cast<double>(chi_h[i]);
+      if (std::isfinite(c_val) && c_val >= 0.0) {
+        chi_sum += c_val;
+        ++chi_count;
+      }
+    }
+    if (chi_count > 0U) {
+      diag.asymptotic_chi_h = static_cast<real_t>(chi_sum / static_cast<double>(chi_count));
+      diag.has_real_space = true;
+    }
+  }
+
+  return diag;
+}
+
+correlation::analysis::HyperuniformityDiagnostics
+HyperuniformityCalculator::computeReciprocalDiagnostics(std::span<const real_t> q_bins,
+                                                        std::span<const real_t> sq_total) noexcept {
+  correlation::analysis::HyperuniformityDiagnostics diag{};
+  const size_t bin_count = std::min(q_bins.size(), sq_total.size());
+  if (bin_count < 4U) {
+    return diag;
+  }
+
+  // Locate primary diffraction peak S(q_peak) for positive q.
+  double s_peak = 0.0;
+  double q_peak = 0.0;
+  size_t peak_idx = 0U;
+  for (size_t i = 0; i < bin_count; ++i) {
+    const auto q_val = static_cast<double>(q_bins[i]);
+    const auto s_val = static_cast<double>(sq_total[i]);
+    if (q_val > 0.0 && std::isfinite(s_val) && s_val > s_peak) {
+      s_peak = s_val;
+      q_peak = q_val;
+      peak_idx = i;
+    }
+  }
+  if (s_peak <= 1e-12 || peak_idx == 0U) {
+    return diag;
+  }
+
+  // Gather positive low-q points below 0.5 * q_peak (with fallback to lowest pre-peak points).
+  const double q_cutoff = 0.5 * q_peak;
+  std::vector<double> low_q;
+  std::vector<double> low_s;
+  std::vector<double> log_q;
+  std::vector<double> log_s;
+  for (size_t i = 0; i < peak_idx; ++i) {
+    const auto q_val = static_cast<double>(q_bins[i]);
+    const auto s_val = static_cast<double>(sq_total[i]);
+    if (q_val <= 0.0 || !std::isfinite(s_val) || s_val <= 0.0) {
+      continue;
+    }
+    if (q_val <= q_cutoff || low_q.size() < 4U) {
+      low_q.push_back(q_val);
+      low_s.push_back(s_val);
+      log_q.push_back(std::log(q_val));
+      log_s.push_back(std::log(s_val));
+    }
+  }
+
+  if (low_q.empty()) {
+    return diag;
+  }
+
+  const size_t extrap_n = std::min<size_t>(low_q.size(), 5U);
+  const double s_zero = extrapolateZeroIntercept(std::span<const double>(low_q).first(extrap_n),
+                                                 std::span<const double>(low_s).first(extrap_n));
+  diag.torquato_h_index = static_cast<real_t>(s_zero / s_peak);
+  if (log_q.size() >= 3U) {
+    diag.low_q_exponent_alpha = static_cast<real_t>(fitLogLogSlope(log_q, log_s));
+  }
+  diag.has_reciprocal_space = true;
+  return diag;
+}
+
+HyperuniformityVerdict HyperuniformityCalculator::classifyHyperuniformity(
+    const correlation::analysis::HyperuniformityDiagnostics &diag) noexcept {
+  if (!diag.has_real_space && !diag.has_reciprocal_space) {
+    return {.label = "", .severity_level = -1};
+  }
+
+  const bool strong_h =
+      diag.has_reciprocal_space && diag.torquato_h_index <= static_cast<real_t>(1e-4);
+  if (strong_h) {
+    return {.label = "Strongly Hyperuniform", .severity_level = 1};
+  }
+
+  const bool eff_hu_h =
+      diag.has_reciprocal_space && diag.torquato_h_index <= static_cast<real_t>(1e-3);
+  const bool eff_hu_beta = diag.has_real_space &&
+                           diag.variance_exponent_beta > static_cast<real_t>(0.0) &&
+                           diag.variance_exponent_beta <= static_cast<real_t>(2.35);
+  if (eff_hu_h || eff_hu_beta) {
+    return {.label = "Effectively Hyperuniform", .severity_level = 1};
+  }
+
+  const bool near_hu_h =
+      diag.has_reciprocal_space && diag.torquato_h_index <= static_cast<real_t>(1e-2);
+  const bool near_hu_beta = diag.has_real_space &&
+                            diag.variance_exponent_beta > static_cast<real_t>(0.0) &&
+                            diag.variance_exponent_beta <= static_cast<real_t>(2.70);
+  if (near_hu_h || near_hu_beta) {
+    return {.label = "Near-Hyperuniform", .severity_level = 2};
+  }
+
+  return {.label = "Non-Hyperuniform Liquid", .severity_level = 0};
+}
+
 } // namespace correlation::calculators

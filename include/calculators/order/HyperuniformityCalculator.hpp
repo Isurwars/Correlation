@@ -13,9 +13,19 @@
 
 #include <cstddef>
 #include <map>
+#include <span>
 #include <string>
+#include <string_view>
 
 namespace correlation::calculators {
+
+/**
+ * @brief Classification result for a hyperuniformity check.
+ */
+struct HyperuniformityVerdict {
+  std::string_view label; ///< Human-readable regime classification.
+  int severity_level{0}; ///< 0: Non-hyperuniform, 1: Effectively hyperuniform, 2: Near-HU, -1: N/A.
+};
 
 /**
  * @brief Parameters for the hyperuniformity calculation.
@@ -68,6 +78,38 @@ public:
    */
   [[nodiscard]] static std::map<std::string, correlation::analysis::Histogram>
   calculate(const correlation::core::Cell &cell, const HyperuniformityParams &params);
+
+  /**
+   * @brief Extracts real-space hyperuniformity metrics (β and large-R χ_H) from σ²_N(R) and χ_H(R).
+   *
+   * @param[in] radii Window radii R (Å).
+   * @param[in] sigma2_n Local number variance σ²_N(R).
+   * @param[in] chi_h Hyperuniformity index χ_H(R) = σ²_N(R) / ⟨N(R)⟩.
+   * @return Populated real-space fields of HyperuniformityDiagnostics.
+   */
+  [[nodiscard]] static correlation::analysis::HyperuniformityDiagnostics
+  computeRealSpaceDiagnostics(std::span<const real_t> radii, std::span<const real_t> sigma2_n,
+                              std::span<const real_t> chi_h) noexcept;
+
+  /**
+   * @brief Extracts reciprocal-space hyperuniformity metrics (H = S(0⁺)/S(q_peak) and α) from S(Q).
+   *
+   * @param[in] q_bins Reciprocal wavevector magnitudes q (Å⁻¹).
+   * @param[in] sq_total Total static structure factor S(q).
+   * @return Populated reciprocal-space fields of HyperuniformityDiagnostics.
+   */
+  [[nodiscard]] static correlation::analysis::HyperuniformityDiagnostics
+  computeReciprocalDiagnostics(std::span<const real_t> q_bins,
+                               std::span<const real_t> sq_total) noexcept;
+
+  /**
+   * @brief Classifies the hyperuniformity regime from real- and/or reciprocal-space diagnostics.
+   *
+   * @param[in] diag Computed scalar hyperuniformity diagnostics.
+   * @return Regime label and severity level (1 = hyperuniform, 2 = near-HU, 0 = non-HU, -1 = N/A).
+   */
+  [[nodiscard]] static HyperuniformityVerdict
+  classifyHyperuniformity(const correlation::analysis::HyperuniformityDiagnostics &diag) noexcept;
 };
 
 } // namespace correlation::calculators

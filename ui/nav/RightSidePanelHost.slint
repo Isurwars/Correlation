@@ -20,6 +20,7 @@ import {
     TaggedPeakRecord,
     ExportConfig,
     SlabClipState,
+    PhysicsDiagnostics,
 } from "../Types.slint";
 
 import { CrystalMarker } from "../cards/preview/PreviewCard.slint";
@@ -49,6 +50,10 @@ export component RightSidePanelHost inherits Vertical {
     in-out property <ExportConfig> export_config;
     in-out property <int> active_color_picker_id: -1;
     in property <[TaggedPeakRecord]> tagged_peaks: [];
+    in property <PhysicsDiagnostics> physics_diagnostics: {
+        deborah_level: -1,
+        hyper_level: -1,
+    };
 
     callback filter_curves(string);
     callback invert_curves();
@@ -191,6 +196,7 @@ export component RightSidePanelHost inherits Vertical {
             export_config <=> root.export_config;
             active_color_picker_id <=> root.active_color_picker_id;
             tagged_peaks: root.tagged_peaks;
+            physics_diagnostics: root.physics_diagnostics;
 
             filter_curves(f) => { root.filter_curves(f); }
             invert_curves => { root.invert_curves(); }

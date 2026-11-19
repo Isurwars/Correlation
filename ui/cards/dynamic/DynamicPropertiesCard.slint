@@ -10,17 +10,78 @@ import {
     MaterialText,
     OutlinedCard,
     InfoRow,
+    Horizontal,
     Vertical,
     TooltipTarget,
 } from "../../material/material.slint";
+import { PhysicsDiagnostics } from "../../Types.slint";
+
+component RegimeBadge inherits Rectangle {
+    in property <string> label;
+    in property <int> level: 0; // 0: neutral/info, 1: success, 2: warning
+
+    height: 22px;
+    border-radius: MaterialStyleMetrics.border_radius_8;
+    background:
+        root.level == 1 ? MaterialPalette.success_container :
+        root.level == 2 ? MaterialPalette.warning_container :
+        MaterialPalette.surface_container_highest;
+    border-width: 1px;
+    border-color:
+        root.level == 1 ? MaterialPalette.success.with_alpha(45%) :
+        root.level == 2 ? MaterialPalette.warning.with_alpha(45%) :
+        MaterialPalette.outline_variant;
+
+    Horizontal {
+        padding-left: MaterialStyleMetrics.padding_8;
+        padding-right: MaterialStyleMetrics.padding_8;
+        spacing: MaterialStyleMetrics.spacing_6;
+        alignment: center;
+
+        Rectangle {
+            width: 6px;
+            height: 6px;
+            border-radius: 3px;
+            y: (parent.height - self.height) / 2;
+            background:
+                root.level == 1 ? MaterialPalette.success :
+                root.level == 2 ? MaterialPalette.warning :
+                MaterialPalette.primary;
+        }
+
+        MaterialText {
+            text: root.label;
+            style: MaterialTypography.label_small;
+            font_weight: 600;
+            color:
+                root.level == 1 ? MaterialPalette.on_success_container :
+                root.level == 2 ? MaterialPalette.on_warning_container :
+                MaterialPalette.on_surface_variant;
+            vertical-alignment: center;
+        }
+    }
+}
 
 export component DynamicPropertiesCard inherits OutlinedCard {
-    in property <string> diff_msd: "";
-    in property <string> diff_vacf: "";
-    in property <string> relaxation_time: "";
-    in property <string> deborah_number: "";
+    in property <PhysicsDiagnostics> diagnostics: {
+        deborah_level: -1,
+        hyper_level: -1,
+    };
 
-    out property <bool> has_properties: root.diff_msd != "" || root.diff_vacf != "" || root.relaxation_time != "" || root.deborah_number != "";
+    out property <bool> has_dynamics:
+        root.diagnostics.diff_msd != "" ||
+        root.diagnostics.diff_vacf != "" ||
+        root.diagnostics.relaxation_time != "" ||
+        root.diagnostics.deborah_number != "";
+
+    out property <bool> has_hyperuniformity:
+        root.diagnostics.hyper_beta != "" ||
+        root.diagnostics.hyper_chi_h != "" ||
+        root.diagnostics.hyper_h_index != "" ||
+        root.diagnostics.hyper_alpha != "" ||
+        root.diagnostics.hyper_verdict != "";
+
+    out property <bool> has_properties: root.has_dynamics || root.has_hyperuniformity;
 
     visible: root.has_properties;
     height: root.has_properties ? self.preferred-height : 0px;
@@ -30,52 +91,131 @@ export component DynamicPropertiesCard inherits OutlinedCard {
         spacing: MaterialStyleMetrics.spacing_8;
 
         MaterialText {
-            text: "Calculated Dynamic Properties";
+            text: "Calculated Properties & Diagnostics";
             style: MaterialTypography.title_small;
             color: MaterialPalette.on_surface;
         }
 
-        Vertical {
+        // Dynamics & Deborah Number Section
+        if root.has_dynamics: Vertical {
             padding: 0;
             spacing: MaterialStyleMetrics.spacing_4;
 
-            TooltipTarget {
-                visible: root.diff_msd != "";
-                height: root.diff_msd != "" ? self.preferred-height : 0px;
-                tooltip_text: "Self-diffusion coefficient (D) computed from Mean Squared Displacement slope via Einstein relation: ⟨|r(t)-r(0)|²⟩ = 6Dt.\n\n📏 Units: 10⁻⁹ m²/s.";
+            if root.diagnostics.deborah_regime != "": TooltipTarget {
+                tooltip_text: "Deborah number regime (De = τ / t_obs).\n\n🔬 Physics: De < 0.1 indicates liquid-like viscous relaxation; 0.1 ≤ De ≤ 10 is viscoelastic; De > 10 indicates solid-like elasticity.";
+                Horizontal {
+                    padding: 0;
+                    spacing: MaterialStyleMetrics.spacing_6;
+                    alignment: space-between;
+
+                    MaterialText {
+                        text: "Dynamics Regime";
+                        style: MaterialTypography.label_small;
+                        color: MaterialPalette.on_surface_variant;
+                        vertical-alignment: center;
+                    }
+
+                    RegimeBadge {
+                        label: root.diagnostics.deborah_regime;
+                        level: root.diagnostics.deborah_level == 0 ? 1 : (root.diagnostics.deborah_level == 1 ? 2 : 0);
+                    }
+                }
+            }
+
+            if root.diagnostics.diff_msd != "": TooltipTarget {
+                tooltip_text: "Self-diffusion coefficient (D) computed from Mean Squared Displacement slope via Einstein relation: ⟨|r(t)-r(0)|²⟩ = 6Dt.\n\n📏 Units: Å²/fs (1 Å²/fs = 10⁻⁵ m²/s).";
                 InfoRow {
                     label: "Self-diffusion (MSD):";
-                    value: root.diff_msd;
+                    value: root.diagnostics.diff_msd;
                 }
             }
 
-            TooltipTarget {
-                visible: root.diff_vacf != "";
-                height: root.diff_vacf != "" ? self.preferred-height : 0px;
-                tooltip_text: "Self-diffusion coefficient (D) computed from Green-Kubo integral of Velocity Autocorrelation Function: D = (1/3) ∫ ⟨v(t)·v(0)⟩ dt.\n\n📏 Units: 10⁻⁹ m²/s.";
+            if root.diagnostics.diff_vacf != "": TooltipTarget {
+                tooltip_text: "Self-diffusion coefficient (D) computed from Green-Kubo integral of Velocity Autocorrelation Function: D = (1/3) ∫ ⟨v(t)·v(0)⟩ dt.\n\n📏 Units: Å²/fs (1 Å²/fs = 10⁻⁵ m²/s).";
                 InfoRow {
                     label: "Self-diffusion (VACF):";
-                    value: root.diff_vacf;
+                    value: root.diagnostics.diff_vacf;
                 }
             }
 
-            TooltipTarget {
-                visible: root.relaxation_time != "";
-                height: root.relaxation_time != "" ? self.preferred-height : 0px;
-                tooltip_text: "Structural / velocity correlation decay time scale (τ).\n\n📏 Units: femtoseconds (fs).";
+            if root.diagnostics.relaxation_time != "": TooltipTarget {
+                tooltip_text: "Velocity autocorrelation decay time scale (τ).\n\n📏 Units: femtoseconds (fs).";
                 InfoRow {
-                    label: "Relaxation time:";
-                    value: root.relaxation_time;
+                    label: "Relaxation time (τ):";
+                    value: root.diagnostics.relaxation_time;
                 }
             }
 
-            TooltipTarget {
-                visible: root.deborah_number != "";
-                height: root.deborah_number != "" ? self.preferred-height : 0px;
+            if root.diagnostics.deborah_number != "": TooltipTarget {
                 tooltip_text: "Deborah number (De = τ / t_obs).\n\n🔬 Physics: De ≪ 1 characterizes liquid-like viscous relaxation; De ≫ 1 indicates solid-like elasticity.";
                 InfoRow {
-                    label: "Deborah number:";
-                    value: root.deborah_number;
+                    label: "Deborah number (De):";
+                    value: root.diagnostics.deborah_number;
+                }
+            }
+        }
+
+        // Divider when both sections are present
+        if root.has_dynamics && root.has_hyperuniformity: Rectangle {
+            height: 1px;
+            background: MaterialPalette.outline_variant;
+        }
+
+        // Hyperuniformity Check Section
+        if root.has_hyperuniformity: Vertical {
+            padding: 0;
+            spacing: MaterialStyleMetrics.spacing_4;
+
+            if root.diagnostics.hyper_verdict != "": TooltipTarget {
+                tooltip_text: "Hyperuniformity check combining real-space variance scaling (σ²_N(R) ∝ R^β) and reciprocal-space Torquato-Stillinger index (H = S(0⁺)/S(q_peak)).\n\n🔬 Thresholds: H ≤ 10⁻³ or β ≤ 2.35 → Effectively Hyperuniform; H ≤ 10⁻² or β ≤ 2.70 → Near-Hyperuniform; otherwise Non-Hyperuniform Liquid.";
+                Horizontal {
+                    padding: 0;
+                    spacing: MaterialStyleMetrics.spacing_6;
+                    alignment: space-between;
+
+                    MaterialText {
+                        text: "Hyperuniformity";
+                        style: MaterialTypography.label_small;
+                        color: MaterialPalette.on_surface_variant;
+                        vertical-alignment: center;
+                    }
+
+                    RegimeBadge {
+                        label: root.diagnostics.hyper_verdict;
+                        level: root.diagnostics.hyper_level;
+                    }
+                }
+            }
+
+            if root.diagnostics.hyper_beta != "": TooltipTarget {
+                tooltip_text: "Real-space local number variance scaling exponent β from log-log fit σ²_N(R) ∝ R^β.\n\n🔬 Physics: β ≈ 2 indicates surface-dominated Class I hyperuniformity; 2 < β < 3 indicates Class II/III; β ≈ 3 is standard volume-scaling (non-hyperuniform liquid).";
+                InfoRow {
+                    label: "Variance slope (β):";
+                    value: root.diagnostics.hyper_beta;
+                }
+            }
+
+            if root.diagnostics.hyper_chi_h != "": TooltipTarget {
+                tooltip_text: "Large-R tail average of the real-space hyperuniformity index χ_H(R) = σ²_N(R) / ⟨N(R)⟩.\n\n🔬 Physics: Approaches 0 for hyperuniform systems and ρ k_B T κ_T (isothermal compressibility) for equilibrium liquids.";
+                InfoRow {
+                    label: "Large-R index χ_H:";
+                    value: root.diagnostics.hyper_chi_h;
+                }
+            }
+
+            if root.diagnostics.hyper_h_index != "": TooltipTarget {
+                tooltip_text: "Reciprocal-space Torquato-Stillinger hyperuniformity index H = S(q → 0⁺) / S(q_peak).\n\n🔬 Physics: H ≤ 10⁻³ indicates effective hyperuniformity; H ≤ 10⁻⁴ indicates strong hyperuniformity.";
+                InfoRow {
+                    label: "Torquato H index:";
+                    value: root.diagnostics.hyper_h_index;
+                }
+            }
+
+            if root.diagnostics.hyper_alpha != "": TooltipTarget {
+                tooltip_text: "Low-q power-law scaling exponent α from S(q) ∝ q^α as q → 0⁺.\n\n🔬 Physics: α > 1 (Class I), α = 1 (Class II), 0 < α < 1 (Class III) for hyperuniform systems; α ≈ 0 for equilibrium liquids with finite S(0⁺).";
+                InfoRow {
+                    label: "Low-q slope (α):";
+                    value: root.diagnostics.hyper_alpha;
                 }
             }
         }

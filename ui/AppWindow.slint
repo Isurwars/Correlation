@@ -43,6 +43,7 @@ import {
     SanityBadgeState,
     DomainPresetItem,
     PlotAxisSettings,
+    PhysicsDiagnostics,
     TaggedPeakRecord,
     CommandItem,
     CameraHudState,
@@ -234,10 +235,10 @@ export component AppWindow inherits Window {
     // Table data and calculated scalar properties
     in property <[string]> table_headers: [];
     in property <[TableRow]> table_rows: [];
-    in property <string> diff_msd: "";
-    in property <string> diff_vacf: "";
-    in property <string> relaxation_time: "";
-    in property <string> deborah_number: "";
+    in property <PhysicsDiagnostics> physics_diagnostics: {
+        deborah_level: -1,
+        hyper_level: -1,
+    };
 
     in property <[ComparisonCurveData]> comparison_curves: [];
     in property <bool> show_difference: false;
@@ -855,10 +856,7 @@ export component AppWindow inherits Window {
 
                     has_radial_active: root.has_radial_active;
                     has_angular_active: root.has_angular_active;
-                    diff_msd: root.diff_msd;
-                    diff_vacf: root.diff_vacf;
-                    relaxation_time: root.relaxation_time;
-                    deborah_number: root.deborah_number;
+                    physics_diagnostics: root.physics_diagnostics;
                     bond_cutoffs <=> root.bond_cutoffs;
                     bond_cutoffs_reset_trigger: root.bond_cutoffs_reset_trigger;
                     sanity_badge_state: root.sanity_badge_state;
@@ -1235,6 +1233,7 @@ export component AppWindow inherits Window {
 
                     active_panel <=> root.active_right_panel;
                     last_active_panel <=> root.last_active_right_panel;
+                    physics_diagnostics: root.physics_diagnostics;
                     select_panel(id) => {
                         if (id >= 0) {
                             root.last_active_right_panel = id;

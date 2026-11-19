@@ -9,7 +9,8 @@ import {
     MenuItem,
     TabItem,
 } from "../../../material/material.slint";
-import { CurveToggleItem, PlotAxisSettings, TaggedPeakRecord, ExportConfig } from "../../../Types.slint";
+import { CurveToggleItem, PlotAxisSettings, TaggedPeakRecord, ExportConfig, PhysicsDiagnostics } from "../../../Types.slint";
+import { DynamicPropertiesCard } from "../../dynamic/DynamicPropertiesCard.slint";
 import { CurveListTab } from "curve_sidebar/CurveListTab.slint";
 import { PlotStyleAxesTab } from "curve_sidebar/PlotStyleAxesTab.slint";
 import { TaggedPeaksTab } from "curve_sidebar/TaggedPeaksTab.slint";
@@ -21,6 +22,10 @@ export component CurveSidebar inherits Rectangle {
     in-out property <int> active_tab: 0; // 0: Curves, 1: Style & Axes, 2: Peaks
     in-out property <int> active_color_picker_id: -1;
     in property <[TaggedPeakRecord]> tagged_peaks: [];
+    in property <PhysicsDiagnostics> physics_diagnostics: {
+        deborah_level: -1,
+        hyper_level: -1,
+    };
     in-out property <string> curve_filter: "";
 
     callback filter_curves(string);
@@ -142,6 +147,11 @@ export component CurveSidebar inherits Rectangle {
             remove_tagged_peak(id) => { root.remove_tagged_peak(id); }
             clear_tagged_peaks => { root.clear_tagged_peaks(); }
             export_tagged_peaks => { root.export_tagged_peaks(); }
+        }
+
+        // 3. Calculated Dynamics & Hyperuniformity Diagnostics (auto-hides when empty)
+        DynamicPropertiesCard {
+            diagnostics: root.physics_diagnostics;
         }
     }
 }

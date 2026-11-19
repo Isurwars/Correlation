@@ -361,4 +361,77 @@ TEST_F(HyperuniformityCalculatorTests, CalculatorInterfaceIsCorrect) {
   EXPECT_FALSE(calc.getDescription().empty());
 }
 
+// =============================================================================
+// Scalar Hyperuniformity Diagnostics & Classification Tests
+// =============================================================================
+
+TEST_F(HyperuniformityCalculatorTests, RealSpaceDiagnosticsDistinguishHyperuniformVsLiquid) {
+  std::vector<real_t> radii;
+  std::vector<real_t> sigma2_hu;
+  std::vector<real_t> chi_hu;
+  std::vector<real_t> sigma2_liq;
+  std::vector<real_t> chi_liq;
+
+  for (int i = 4; i <= 20; ++i) {
+    const auto r = static_cast<real_t>(i) * static_cast<real_t>(0.5);
+    radii.push_back(r);
+    sigma2_hu.push_back(static_cast<real_t>(0.5) * r * r);
+    chi_hu.push_back(static_cast<real_t>(0.1) / r);
+    sigma2_liq.push_back(static_cast<real_t>(0.5) * r * r * r);
+    chi_liq.push_back(static_cast<real_t>(0.85));
+  }
+
+  const auto hu_diag =
+      HyperuniformityCalculator::computeRealSpaceDiagnostics(radii, sigma2_hu, chi_hu);
+  ASSERT_TRUE(hu_diag.has_real_space);
+  EXPECT_NEAR(hu_diag.variance_exponent_beta, 2.0, 1e-2);
+  EXPECT_LT(hu_diag.asymptotic_chi_h, 0.02);
+  const auto hu_verdict = HyperuniformityCalculator::classifyHyperuniformity(hu_diag);
+  EXPECT_EQ(hu_verdict.severity_level, 1);
+  EXPECT_EQ(hu_verdict.label, "Effectively Hyperuniform");
+
+  const auto liq_diag =
+      HyperuniformityCalculator::computeRealSpaceDiagnostics(radii, sigma2_liq, chi_liq);
+  ASSERT_TRUE(liq_diag.has_real_space);
+  EXPECT_NEAR(liq_diag.variance_exponent_beta, 3.0, 1e-2);
+  EXPECT_NEAR(liq_diag.asymptotic_chi_h, 0.85, 1e-3);
+  const auto liq_verdict = HyperuniformityCalculator::classifyHyperuniformity(liq_diag);
+  EXPECT_EQ(liq_verdict.severity_level, 0);
+  EXPECT_EQ(liq_verdict.label, "Non-Hyperuniform Liquid");
+}
+
+TEST_F(HyperuniformityCalculatorTests, ReciprocalDiagnosticsComputeTorquatoHAndAlpha) {
+  std::vector<real_t> q_bins;
+  std::vector<real_t> sq_hu;
+  std::vector<real_t> sq_liquid;
+
+  for (int i = 1; i <= 40; ++i) {
+    const auto q = static_cast<real_t>(i) * static_cast<real_t>(0.1);
+    q_bins.push_back(q);
+    // Peak at q = 2.5 Å⁻¹ (S_peak ≈ 2.5)
+    const double peak = 2.5 * std::exp(-std::pow((static_cast<double>(q) - 2.5) / 0.35, 2.0));
+    const double low_q_hu = (q <= static_cast<real_t>(1.2))
+                                ? (1e-4 * static_cast<double>(q) * static_cast<double>(q))
+                                : 0.0;
+    const double low_q_liq = 0.15;
+    sq_hu.push_back(static_cast<real_t>(low_q_hu + peak));
+    sq_liquid.push_back(static_cast<real_t>(low_q_liq + peak));
+  }
+
+  const auto hu_diag = HyperuniformityCalculator::computeReciprocalDiagnostics(q_bins, sq_hu);
+  ASSERT_TRUE(hu_diag.has_reciprocal_space);
+  EXPECT_LE(hu_diag.torquato_h_index, static_cast<real_t>(1e-4));
+  EXPECT_NEAR(hu_diag.low_q_exponent_alpha, 2.0, 0.2);
+  const auto hu_verdict = HyperuniformityCalculator::classifyHyperuniformity(hu_diag);
+  EXPECT_EQ(hu_verdict.severity_level, 1);
+  EXPECT_EQ(hu_verdict.label, "Strongly Hyperuniform");
+
+  const auto liq_diag = HyperuniformityCalculator::computeReciprocalDiagnostics(q_bins, sq_liquid);
+  ASSERT_TRUE(liq_diag.has_reciprocal_space);
+  EXPECT_GT(liq_diag.torquato_h_index, static_cast<real_t>(0.04));
+  const auto liq_verdict = HyperuniformityCalculator::classifyHyperuniformity(liq_diag);
+  EXPECT_EQ(liq_verdict.severity_level, 0);
+  EXPECT_EQ(liq_verdict.label, "Non-Hyperuniform Liquid");
+}
+
 } // namespace correlation::calculators

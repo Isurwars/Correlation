@@ -273,5 +273,23 @@ export struct SlabClipState {
     z_max: float,
 }
 
+export struct PhysicsDiagnostics {
+    // Dynamic properties
+    diff_msd: string,
+    diff_vacf: string,
+    relaxation_time: string,
+    deborah_number: string,
+    deborah_regime: string,
+    deborah_level: int, // -1: none, 0: liquid (De << 1), 1: viscoelastic (De ~ 1), 2: solid-like (De >> 1)
+
+    // Hyperuniformity diagnostics
+    hyper_beta: string,
+    hyper_chi_h: string,
+    hyper_h_index: string,
+    hyper_alpha: string,
+    hyper_verdict: string,
+    hyper_level: int, // -1: none, 0: non-hyperuniform, 1: hyperuniform, 2: near-hyperuniform
+}
+
 
 

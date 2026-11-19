@@ -371,6 +371,14 @@ void init_analysis(py::module_ &mod) {
            "Get the relaxation time computed from normalized VACF (fs).")
       .def("get_deborah_number", &DistributionFunctions::getDeborahNumber,
            "Get the Deborah number.")
+      .def("get_hyperuniformity_beta", &DistributionFunctions::getHyperuniformityBeta,
+           "Get the real-space number variance scaling exponent β (σ²_N(R) ∝ R^β).")
+      .def("get_hyperuniformity_chi_h", &DistributionFunctions::getHyperuniformityChiH,
+           "Get the large-R asymptotic hyperuniformity index χ_H(R_max).")
+      .def("get_hyperuniformity_h_index", &DistributionFunctions::getHyperuniformityHIndex,
+           "Get the Torquato-Stillinger index H = S(0⁺) / S(q_peak).")
+      .def("get_hyperuniformity_alpha", &DistributionFunctions::getHyperuniformityAlpha,
+           "Get the low-q structure factor scaling exponent α (S(q) ∝ q^α).")
 
       // Calculations
       .def(

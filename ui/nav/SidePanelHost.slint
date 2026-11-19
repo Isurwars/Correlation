@@ -27,6 +27,7 @@ import {
     FileMetadata,
     WorkflowState,
     SanityBadgeState,
+    PhysicsDiagnostics,
 } from "../Types.slint";
 
 import { OperationsPanel } from "panels/OperationsPanel.slint";
@@ -56,10 +57,10 @@ export component SidePanelHost inherits Vertical {
     // Common options / Structure state
     in property <bool> has_radial_active: false;
     in property <bool> has_angular_active: false;
-    in property <string> diff_msd: "";
-    in property <string> diff_vacf: "";
-    in property <string> relaxation_time: "";
-    in property <string> deborah_number: "";
+    in property <PhysicsDiagnostics> physics_diagnostics: {
+        deborah_level: -1,
+        hyper_level: -1,
+    };
     in-out property <[BondCutoff]> bond_cutoffs: [];
     in property <int> bond_cutoffs_reset_trigger: 0;
     in property <SanityBadgeState> sanity_badge_state;
@@ -283,10 +284,7 @@ export component SidePanelHost inherits Vertical {
             set_all_calculator_groups_expanded(exp) => { root.set_all_calculator_groups_expanded(exp); }
             reset_analyses_selection => { root.reset_analyses_selection(); }
 
-            diff_msd: root.diff_msd;
-            diff_vacf: root.diff_vacf;
-            relaxation_time: root.relaxation_time;
-            deborah_number: root.deborah_number;
+            physics_diagnostics: root.physics_diagnostics;
 
             analysis_options <=> root.analysis_options;
             app_errors: root.app_errors;

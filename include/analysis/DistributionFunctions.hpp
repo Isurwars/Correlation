@@ -51,6 +51,18 @@ struct alignas(64) DynamicProperties {
 };
 
 /**
+ * @brief Scalar hyperuniformity diagnostics derived from σ²_N(R), χ_H(R), and S(Q).
+ */
+struct alignas(64) HyperuniformityDiagnostics {
+  real_t variance_exponent_beta{0.0}; ///< Power-law slope β from σ²_N(R) ∝ R^β (≈2 HU, ≈3 Poisson).
+  real_t asymptotic_chi_h{0.0};       ///< Large-R tail mean of χ_H(R) = σ²_N(R) / ⟨N(R)⟩.
+  real_t torquato_h_index{0.0};       ///< Reciprocal-space index H = S(0⁺) / S(q_peak).
+  real_t low_q_exponent_alpha{0.0};   ///< Low-q scaling exponent α from S(q) ∝ q^α.
+  bool has_real_space{false};         ///< True when σ²_N(R) / χ_H(R) metrics were computed.
+  bool has_reciprocal_space{false};   ///< True when S(Q) H-index / α metrics were computed.
+};
+
+/**
  * @brief Parameters for X-Ray Diffraction (XRD) pattern calculation.
  */
 struct XRDParams {
@@ -404,6 +416,54 @@ public:
     dynamic_properties_.deborah_number = deborah_num;
   }
 
+  /**
+   * @brief Gets the scalar hyperuniformity diagnostics struct.
+   * @return Const reference to HyperuniformityDiagnostics.
+   */
+  [[nodiscard]] const HyperuniformityDiagnostics &getHyperuniformityDiagnostics() const noexcept {
+    return hyperuniformity_diagnostics_;
+  }
+
+  /**
+   * @brief Sets the scalar hyperuniformity diagnostics struct.
+   * @param diag The computed HyperuniformityDiagnostics values.
+   */
+  void setHyperuniformityDiagnostics(const HyperuniformityDiagnostics &diag) noexcept {
+    hyperuniformity_diagnostics_ = diag;
+  }
+
+  /**
+   * @brief Gets the real-space number variance scaling exponent β (σ²_N(R) ∝ R^β).
+   * @return Scaling exponent β (0 if not computed).
+   */
+  [[nodiscard]] real_t getHyperuniformityBeta() const noexcept {
+    return hyperuniformity_diagnostics_.variance_exponent_beta;
+  }
+
+  /**
+   * @brief Gets the large-R asymptotic real-space hyperuniformity index χ_H(R_max).
+   * @return Asymptotic χ_H value (0 if not computed).
+   */
+  [[nodiscard]] real_t getHyperuniformityChiH() const noexcept {
+    return hyperuniformity_diagnostics_.asymptotic_chi_h;
+  }
+
+  /**
+   * @brief Gets the reciprocal-space Torquato-Stillinger index H = S(0⁺) / S(q_peak).
+   * @return H index (0 if not computed).
+   */
+  [[nodiscard]] real_t getHyperuniformityHIndex() const noexcept {
+    return hyperuniformity_diagnostics_.torquato_h_index;
+  }
+
+  /**
+   * @brief Gets the low-q structure factor scaling exponent α (S(q) ∝ q^α).
+   * @return Scaling exponent α (0 if not computed).
+   */
+  [[nodiscard]] real_t getHyperuniformityAlpha() const noexcept {
+    return hyperuniformity_diagnostics_.low_q_exponent_alpha;
+  }
+
   ///@}
 
   /** @name Calculation Methods */
@@ -585,6 +645,8 @@ private:
   mutable std::mutex histogram_mutex_;             ///< Protects concurrent access to histograms_.
 
   DynamicProperties dynamic_properties_{}; ///< Trajectory-wide dynamic properties.
+  HyperuniformityDiagnostics
+      hyperuniformity_diagnostics_{}; ///< Scalar hyperuniformity diagnostics.
   std::shared_ptr<PerFrameDistributionStore>
       per_frame_store_; ///< Per-frame 1D distribution curves.
 };
