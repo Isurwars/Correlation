@@ -1,6 +1,41 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.7.0] - 2026-11-18
+
+### 🚀 Features
+- **3D Ray-Based Atom Picking & Viewport Camera HUD (`RayPicker`, `Structure3DController`, `AtomInspectorCard.slint`, `OrientationGizmo.slint`, `ViewportScaleBar.slint`)**:
+  - Added ray-sphere intersection picking in `RayPicker` with interactive atom selection and an `AtomInspectorCard` displaying picked atom properties (`7e0f1dea`).
+  - Added 3D viewport `OrientationGizmo` and dynamic `ViewportScaleBar` HUD overlays, plus `CommandPalette`, `ShortcutsModal`, and global `ToastBanner` notifications across the Material UI (`7e0f1dea`).
+- **Dynamic vDoS Frequency Scaling (`VDOSCalculator`)**:
+  - Dynamically scales the maximum vibrational density of states (vDoS) frequency based on the lightest atomic mass in the structure, capped up to 50 THz (`1ca8afeb`).
+
+### 🐛 Bug Fixes
+- **Analyses Group Toggle & vDoS Dependency (`AppControllerCalculators`, `OptionsSyncService`, `AnalysesGroupSection.slint`)**:
+  - Fixed external group all on/off toggle synchronization and enforced the VACF prerequisite automatically whenever vDoS is enabled (`34b113f5`).
+- **vDoS Plotter Axis & Tick Formatting (`PdfPlotter`, `SvgHistogramRenderer`)**:
+  - Clamped vDoS Y-axis minimum to `0` with 2 Y-ticks and fixed small tick label formatting (`f1f2bc15`).
+- **FetchContent Policy Hygiene (`Dependencies.cmake`)**:
+  - Set `CMAKE_POLICY_DEFAULT_CMP0077 NEW` so legacy `FetchContent` subprojects (such as `nfd`) honor scoped normal `BUILD_SHARED_LIBS` overrides without `CMP0077` warnings or cache leakage (`33b01915`).
+
+### ⚡ Performance & Build System
+- **Local & Release Build Acceleration (`CMakeLists.txt`, `src/CMakeLists.txt`, `CMakePresets.json`, `Dependencies.cmake`)**:
+  - Split Slint C++ codegen into `16` parallel compilation units (`CORRELATION_SLINT_COMPILATION_UNITS`) and enabled precompiled headers (`CORRELATION_ENABLE_PCH`) for `AppWindow.h` on `app_gui_obj` (`51ca1405`).
+  - Added automatic `sccache`/`ccache` compiler cache detection and `mold`/`lld` fast linker detection via `correlation_linker_options` (`51ca1405`).
+  - Disabled `BUILD_BENCHMARKS` in the `release` preset and disabled unused `SLINT_FEATURE_INTERPRETER` runtime compilation (`51ca1405`).
+
+### ♻️ Code Refactoring
+- **Target-Centric CMake Compile Definitions (`CMakeLists.txt`, `FindOrFetchVulkan.cmake`, `src/CMakeLists.txt`)**:
+  - Replaced directory-global `add_compile_definitions(...)` calls with a target-scoped `correlation_config` `INTERFACE` library for `CORRELATION_USE_SINGLE_PRECISION` and `CORRELATION_USE_VULKAN`, eliminating CMake 4.5 `non-target-directive` warnings (`9cb8acbf`).
+- **Physics Lookup Safety (`PhysicalData.hpp`, `VDOSCalculator.cpp`)**:
+  - Added `noexcept` `findAtomicMass` helper and removed empty `catch` blocks in `VDOSCalculator` (`f32c2ea2`).
+
+### 🛠️ CI & Testing
+- **Simulated H100 GPU CI Workflow (`.github/workflows/gpu-sim.yml`)**:
+  - Added optional workflow to execute GPU test suites on a simulated H100 environment (`f34f5296`, PR #59).
+- **Unit & Functional Test Coverage**:
+  - Added `RayPickerTests`, extended `Structure3DControllerTests`, `VDOSCalculatorTests`, `SvgPlotterTests`, `OptionsSyncServiceTests`, and `AppControllerTests`.
+
 ## [4.6.0] - 2026-11-18
 
 ### 🚀 3D Visualization & Phase Search Enhancements
