@@ -1,0 +1,113 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import { MaterialAnimations } from "../styling/material_animations.slint";
+import { MaterialPalette } from "../styling/material_palette.slint";
+import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
+import { MaterialTypography } from "../styling/material_typography.slint";
+import { MaterialText } from "./material_text.slint";
+import { Icons } from "../icons/icons.slint";
+import { ToastState } from "./toast_state.slint";
+
+/// Non-blocking M3 snackbar/toast notification overlay anchored bottom-right above AppFooter.
+export component ToastBanner inherits Rectangle {
+    property <int> active_revision: ToastState.revision;
+
+    changed active_revision => {
+        dismiss_timer.restart();
+    }
+
+    dismiss_timer := Timer {
+        interval: 3000ms;
+        running: ToastState.current.visible;
+        triggered() => {
+            ToastState.dismiss();
+        }
+    }
+
+    property <color> bg_color:
+        ToastState.current.severity == 1 ? MaterialPalette.success_container :
+        ToastState.current.severity == 2 ? MaterialPalette.warning_container :
+        ToastState.current.severity == 3 ? MaterialPalette.error_container :
+        MaterialPalette.inverse_surface;
+
+    property <color> fg_color:
+        ToastState.current.severity == 1 ? MaterialPalette.on_success_container :
+        ToastState.current.severity == 2 ? MaterialPalette.on_warning_container :
+        ToastState.current.severity == 3 ? MaterialPalette.on_error_container :
+        MaterialPalette.inverse_on_surface;
+
+    visible: ToastState.current.visible && ToastState.current.message != "";
+    width: Math.min(420px, Math.max(180px, content_layout.preferred-width + 24px));
+    height: 36px;
+    border-radius: MaterialStyleMetrics.border_radius_8;
+    background: root.bg_color;
+    border-width: 1px;
+    border-color: MaterialPalette.outline_variant.with_alpha(40%);
+    drop-shadow-blur: 12px;
+    drop-shadow-offset-y: 4px;
+    drop-shadow-color: MaterialPalette.shadow_30;
+    z: 90;
+
+    animate opacity { duration: MaterialAnimations.base_duration; easing: ease-out; }
+
+    content_layout := HorizontalLayout {
+        padding-left: MaterialStyleMetrics.padding_12;
+        padding-right: MaterialStyleMetrics.padding_8;
+        spacing: MaterialStyleMetrics.spacing_8;
+        alignment: space-between;
+
+        HorizontalLayout {
+            spacing: MaterialStyleMetrics.spacing_8;
+            alignment: center;
+
+            Rectangle {
+                width: 6px;
+                height: 6px;
+                border-radius: 3px;
+                y: (parent.height - self.height) / 2;
+                background:
+                    ToastState.current.severity == 1 ? MaterialPalette.success :
+                    ToastState.current.severity == 2 ? MaterialPalette.warning :
+                    ToastState.current.severity == 3 ? MaterialPalette.error :
+                    MaterialPalette.primary;
+            }
+
+            MaterialText {
+                text: ToastState.current.message;
+                style: MaterialTypography.label_medium;
+                color: root.fg_color;
+                vertical-alignment: center;
+                overflow: elide;
+            }
+        }
+
+        close_touch := TouchArea {
+            width: 24px;
+            height: 24px;
+            y: (parent.height - self.height) / 2;
+            mouse-cursor: pointer;
+            accessible-role: button;
+            accessible-label: "Dismiss Notification";
+            clicked => { ToastState.dismiss(); }
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+                border-radius: MaterialStyleMetrics.border_radius_full;
+                background: close_touch.has-hover ? root.fg_color.with_alpha(12%) : transparent;
+
+                Image {
+                    width: 14px;
+                    height: 14px;
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
+                    source: Icons.close;
+                    colorize: root.fg_color;
+                }
+            }
+        }
+    }
+}

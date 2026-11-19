@@ -471,33 +471,55 @@ void PlotController::handleMouseMove(float mouse_x, float mouse_y, bool hover, f
 
   if (!actual_hover) {
     window_.set_hover_coord_text("");
-  } else {
-    const int current_idx = window_.get_selected_plot_index();
-    if (current_idx >= 0 && std::cmp_less(current_idx, available_plot_keys_.size())) {
-      const std::string &name = available_plot_keys_[current_idx];
-      const auto *hist = dispatcher_.getHistogram(name);
-      if (hist != nullptr && !hist->bins.empty()) {
-        const auto config = buildPlotConfigFromUI();
-        const auto geom = correlation::plotters::detail::getViewportGeometry(config);
-        auto [svg_x, svg_y] =
-            correlation::plotters::detail::screenToSvg(mouse_x, mouse_y, width, height, config);
-        if (svg_x >= geom.px0 && svg_x <= geom.px1 && svg_y >= geom.py0 && svg_y <= geom.py1) {
-          const auto x_scale = computeXScale(*hist, config);
-          const auto y_scale = computeYScale(*hist, config);
-          auto [d_x, d_y] = correlation::plotters::detail::screenToData(
-              mouse_x, mouse_y, width, height, config, x_scale, y_scale);
-          const std::string text = std::format("X: {:.4g}  Y: {:.4g}", d_x, d_y);
-          window_.set_hover_coord_text(slint::SharedString(text));
-        } else {
-          window_.set_hover_coord_text("");
-        }
-      } else {
-        window_.set_hover_coord_text("");
-      }
-    } else {
-      window_.set_hover_coord_text("");
-    }
+    notifyRadialHover("", std::nullopt);
+    return;
   }
+
+  const int current_idx = window_.get_selected_plot_index();
+  if (current_idx < 0 || !std::cmp_less(current_idx, available_plot_keys_.size())) {
+    window_.set_hover_coord_text("");
+    notifyRadialHover("", std::nullopt);
+    return;
+  }
+
+  const std::string &name = available_plot_keys_[current_idx];
+  const auto *hist = dispatcher_.getHistogram(name);
+  if (hist == nullptr || hist->bins.empty()) {
+    window_.set_hover_coord_text("");
+    notifyRadialHover("", std::nullopt);
+    return;
+  }
+
+  const auto config = buildPlotConfigFromUI();
+  const auto geom = correlation::plotters::detail::getViewportGeometry(config);
+  auto [svg_x, svg_y] =
+      correlation::plotters::detail::screenToSvg(mouse_x, mouse_y, width, height, config);
+  if (svg_x < geom.px0 || svg_x > geom.px1 || svg_y < geom.py0 || svg_y > geom.py1) {
+    window_.set_hover_coord_text("");
+    notifyRadialHover("", std::nullopt);
+    return;
+  }
+
+  const auto x_scale = computeXScale(*hist, config);
+  const auto y_scale = computeYScale(*hist, config);
+  auto [d_x, d_y] = correlation::plotters::detail::screenToData(mouse_x, mouse_y, width, height,
+                                                                config, x_scale, y_scale);
+  window_.set_hover_coord_text(slint::SharedString(std::format("X: {:.4g}  Y: {:.4g}", d_x, d_y)));
+  notifyRadialHover(name, d_x);
+}
+
+void PlotController::notifyRadialHover(std::string_view plot_name,
+                                       std::optional<double> data_x) const {
+  if (structure_3d_controller_ == nullptr) {
+    return;
+  }
+  if (window_.get_preview_active_tab() != 2 || !data_x.has_value() || *data_x <= 0.0) {
+    structure_3d_controller_->setRadialBrushDistance(std::nullopt);
+    return;
+  }
+  const bool is_radial =
+      (plot_name.contains("g(r)") || plot_name.contains("G(r)") || plot_name.contains("J(r)"));
+  structure_3d_controller_->setRadialBrushDistance(is_radial ? data_x : std::nullopt);
 }
 
 void PlotController::requestPlotUpdate(int index, bool immediate) {

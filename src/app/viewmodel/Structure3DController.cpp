@@ -10,6 +10,7 @@
 #include "AppWindow.h"
 #include "app/viewmodel/PhaseExportManager.hpp"
 #include "plotters/ColormapService.hpp"
+#include "render3d/RayPicker.hpp"
 
 #include <algorithm>
 #include <array>
@@ -141,6 +142,7 @@ void Structure3DController::handleViewportResized(float width, float height) {
   if (render_pipeline_ != nullptr) {
     render_pipeline_->resize(viewport_dims_);
   }
+  syncCameraHudToWindow();
   requestRender();
 }
 
@@ -150,6 +152,7 @@ void Structure3DController::handleRotate(float delta_x, float delta_y) {
     const std::scoped_lock lock(mutex_);
     camera_.orbit(delta_x * K_ORBIT_SENSITIVITY, delta_y * K_ORBIT_SENSITIVITY);
   }
+  syncCameraHudToWindow();
   requestRender();
 }
 
@@ -158,6 +161,7 @@ void Structure3DController::handlePan(float delta_x, float delta_y) {
     const std::scoped_lock lock(mutex_);
     camera_.pan(delta_x, delta_y);
   }
+  syncCameraHudToWindow();
   requestRender();
 }
 
@@ -168,6 +172,7 @@ void Structure3DController::handleZoom(float delta) {
     const std::scoped_lock lock(mutex_);
     camera_.zoom(clamped_delta * K_ZOOM_SENSITIVITY);
   }
+  syncCameraHudToWindow();
   requestRender();
 }
 
@@ -181,6 +186,7 @@ void Structure3DController::handleResetView() {
                        math::Vector3<float>{10.0F, 10.0F, 10.0F});
     }
   }
+  syncCameraHudToWindow();
   requestRender();
 }
 
@@ -203,6 +209,7 @@ void Structure3DController::handleSetCameraPreset(int preset_idx) {
       break;
     }
   }
+  syncCameraHudToWindow();
   requestRender();
 }
 
@@ -317,6 +324,8 @@ void Structure3DController::setCell(const core::Cell &cell) {
     const std::scoped_lock lock(mutex_);
     current_cell_ = cell;
     current_trajectory_.reset();
+    picked_atom_index_.reset();
+    radial_brush_r_.reset();
     if (phase_service_ != nullptr) {
       phase_service_->clearCache();
     }
@@ -329,7 +338,10 @@ void Structure3DController::setCell(const core::Cell &cell) {
   safeInvokeOnWindow([this] {
     window_.set_structure_3d_current_frame(0);
     window_.set_structure_3d_total_frames(1);
+    window_.set_structure_3d_radial_brush_text("");
   });
+  syncInspectedAtomToWindow();
+  syncCameraHudToWindow();
   requestRender();
   syncPhaseSearchToWindow();
 }
@@ -346,6 +358,8 @@ void Structure3DController::setTrajectory(std::shared_ptr<const core::Trajectory
   {
     const std::scoped_lock lock(mutex_);
     current_trajectory_ = trajectory;
+    picked_atom_index_.reset();
+    radial_brush_r_.reset();
     if (phase_service_ != nullptr) {
       phase_service_->clearCache();
     }
@@ -695,11 +709,322 @@ void Structure3DController::updateScenePhaseVisuals() {
 }
 
 void Structure3DController::updateScenePhaseVisualsLocked() {
-  if (scene_ == nullptr || phase_service_ == nullptr) {
+  if (scene_ == nullptr) {
     return;
   }
-  const auto active_frame = streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
-  phase_service_->applyVisualsToScene(*scene_, active_frame);
+  if (phase_service_ != nullptr) {
+    const auto active_frame = streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
+    phase_service_->applyVisualsToScene(*scene_, active_frame);
+  }
+  applyAtomInspectionHighlightLocked();
+  std::size_t matched_brush = 0;
+  applyRadialBrushHighlightLocked(matched_brush);
+  applySlabClippingLocked();
+}
+
+void Structure3DController::syncCameraHudToWindow() {
+  render3d::CameraHudMetrics metrics{};
+  {
+    const std::scoped_lock lock(mutex_);
+    metrics = render3d::computeCameraHudMetrics(camera_, static_cast<float>(viewport_dims_.height));
+  }
+  safeInvokeOnWindow([this, metrics] {
+    CameraHudState hud{};
+    hud.ax_x = metrics.axis_x[0];
+    hud.ax_y = metrics.axis_x[1];
+    hud.ay_x = metrics.axis_y[0];
+    hud.ay_y = metrics.axis_y[1];
+    hud.az_x = metrics.axis_z[0];
+    hud.az_y = metrics.axis_z[1];
+    hud.scale_bar_px = metrics.scale_bar_px;
+    hud.scale_bar_label = slint::SharedString(metrics.scale_bar_label);
+    window_.set_structure_3d_camera_hud(hud);
+  });
+}
+
+void Structure3DController::handlePickAtom(float norm_x, float norm_y) {
+  {
+    const std::scoped_lock lock(mutex_);
+    if (scene_ == nullptr) {
+      picked_atom_index_.reset();
+    } else {
+      picked_atom_index_ = render3d::pickAtom(camera_, *scene_, norm_x, norm_y);
+    }
+    updateScenePhaseVisualsLocked();
+  }
+  syncInspectedAtomToWindow();
+  requestRender(true);
+}
+
+void Structure3DController::clearPickedAtom() {
+  {
+    const std::scoped_lock lock(mutex_);
+    if (!picked_atom_index_.has_value()) {
+      return;
+    }
+    picked_atom_index_.reset();
+    updateScenePhaseVisualsLocked();
+  }
+  syncInspectedAtomToWindow();
+  requestRender(true);
+}
+
+void Structure3DController::setSlabClipConfig(const SlabClipConfig &config) {
+  SlabClipConfig sanitized = config;
+  sanitized.x_min = std::clamp(sanitized.x_min, 0.0F, 1.0F);
+  sanitized.x_max = std::clamp(sanitized.x_max, sanitized.x_min, 1.0F);
+  sanitized.y_min = std::clamp(sanitized.y_min, 0.0F, 1.0F);
+  sanitized.y_max = std::clamp(sanitized.y_max, sanitized.y_min, 1.0F);
+  sanitized.z_min = std::clamp(sanitized.z_min, 0.0F, 1.0F);
+  sanitized.z_max = std::clamp(sanitized.z_max, sanitized.z_min, 1.0F);
+  {
+    const std::scoped_lock lock(mutex_);
+    slab_clip_ = sanitized;
+    updateScenePhaseVisualsLocked();
+  }
+  safeInvokeOnWindow([this, sanitized] {
+    SlabClipState ui_state{};
+    ui_state.enabled = sanitized.enabled;
+    ui_state.x_min = sanitized.x_min;
+    ui_state.x_max = sanitized.x_max;
+    ui_state.y_min = sanitized.y_min;
+    ui_state.y_max = sanitized.y_max;
+    ui_state.z_min = sanitized.z_min;
+    ui_state.z_max = sanitized.z_max;
+    window_.set_structure_3d_slab_clip(ui_state);
+  });
+  requestRender(true);
+}
+
+void Structure3DController::resetSlabClip() { setSlabClipConfig(SlabClipConfig{}); }
+
+void Structure3DController::setRadialBrushDistance(std::optional<double> r_angstrom) {
+  std::string brush_label;
+  bool changed = false;
+  {
+    const std::scoped_lock lock(mutex_);
+    if (radial_brush_r_.has_value() != r_angstrom.has_value() ||
+        (r_angstrom.has_value() && std::abs(*radial_brush_r_ - *r_angstrom) > 0.02)) {
+      radial_brush_r_ = r_angstrom;
+      changed = true;
+      if (scene_ != nullptr) {
+        if (phase_service_ != nullptr) {
+          const auto active_frame = streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
+          phase_service_->applyVisualsToScene(*scene_, active_frame);
+        }
+        applyAtomInspectionHighlightLocked();
+        std::size_t matched_atoms = 0;
+        applyRadialBrushHighlightLocked(matched_atoms);
+        applySlabClippingLocked();
+        if (radial_brush_r_.has_value()) {
+          brush_label =
+              std::format("Shell r = {:.2f} ± 0.15 Å ({} atoms)", *radial_brush_r_, matched_atoms);
+        }
+      }
+    }
+  }
+  if (!changed) {
+    return;
+  }
+  safeInvokeOnWindow([this, brush_label] {
+    window_.set_structure_3d_radial_brush_text(slint::SharedString(brush_label));
+  });
+  requestRender(false);
+}
+
+void Structure3DController::applyAtomInspectionHighlightLocked() {
+  if (scene_ == nullptr || !picked_atom_index_.has_value()) {
+    return;
+  }
+  auto &atoms = scene_->atoms();
+  const std::size_t sel_idx = *picked_atom_index_;
+  if (sel_idx >= atoms.size()) {
+    return;
+  }
+  const auto &center = atoms[sel_idx];
+  const auto scale = static_cast<float>(bond_cutoff_scale_);
+
+  for (std::size_t idx = 0; idx < atoms.size(); ++idx) {
+    if (idx == sel_idx) {
+      atoms[idx].halo_color = {.r = 64, .g = 215, .b = 215, .a = 230};
+      atoms[idx].halo_radius_ratio = 2.4F;
+      atoms[idx].dim_factor = 1.0F;
+      continue;
+    }
+    const float cutoff = (center.covalent_radius + atoms[idx].covalent_radius) * scale;
+    const float dist = math::norm(atoms[idx].position - center.position);
+    if (dist > 0.01F && dist <= cutoff) {
+      atoms[idx].halo_color = {.r = 255, .g = 196, .b = 0, .a = 200};
+      atoms[idx].halo_radius_ratio = 2.0F;
+      atoms[idx].dim_factor = 1.0F;
+    } else {
+      atoms[idx].dim_factor = std::min(atoms[idx].dim_factor, 0.35F);
+    }
+  }
+}
+
+namespace {
+
+void markShellAroundAtom(const std::vector<render3d::AtomInstance> &atoms, std::size_t ref_idx,
+                         float r_lo_sq, float r_hi_sq, std::vector<bool> &in_shell) {
+  in_shell[ref_idx] = true;
+  const auto &ref_pos = atoms[ref_idx].position;
+  for (std::size_t idx = 0; idx < atoms.size(); ++idx) {
+    if (idx == ref_idx) {
+      continue;
+    }
+    const auto diff = atoms[idx].position - ref_pos;
+    const float dist_sq = math::dot(diff, diff);
+    if (dist_sq >= r_lo_sq && dist_sq <= r_hi_sq) {
+      in_shell[idx] = true;
+    }
+  }
+}
+
+void markAllShellPairs(const std::vector<render3d::AtomInstance> &atoms, float r_lo_sq,
+                       float r_hi_sq, std::vector<bool> &in_shell) {
+  const std::size_t limit = std::min<std::size_t>(atoms.size(), 2500);
+  for (std::size_t outer = 0; outer < limit; ++outer) {
+    for (std::size_t inner = outer + 1; inner < limit; ++inner) {
+      const auto diff = atoms[inner].position - atoms[outer].position;
+      const float dist_sq = math::dot(diff, diff);
+      if (dist_sq >= r_lo_sq && dist_sq <= r_hi_sq) {
+        in_shell[outer] = true;
+        in_shell[inner] = true;
+      }
+    }
+  }
+}
+
+struct NeighborStats {
+  int count{0};
+  float sum_distance{0.0F};
+};
+
+[[nodiscard]] NeighborStats computeFirstShellStats(const std::vector<render3d::AtomInstance> &atoms,
+                                                   std::size_t center_idx, float cutoff_scale) {
+  NeighborStats stats{};
+  const auto &center = atoms[center_idx];
+  for (std::size_t other = 0; other < atoms.size(); ++other) {
+    if (other == center_idx) {
+      continue;
+    }
+    const float cutoff = (center.covalent_radius + atoms[other].covalent_radius) * cutoff_scale;
+    const float dist = math::norm(atoms[other].position - center.position);
+    if (dist > 0.01F && dist <= cutoff) {
+      ++stats.count;
+      stats.sum_distance += dist;
+    }
+  }
+  return stats;
+}
+
+} // namespace
+
+void Structure3DController::applyRadialBrushHighlightLocked(std::size_t &matched_atoms) {
+  matched_atoms = 0;
+  if (scene_ == nullptr || !radial_brush_r_.has_value()) {
+    return;
+  }
+  auto &atoms = scene_->atoms();
+  if (atoms.empty()) {
+    return;
+  }
+  constexpr float SHELL_HALF_WIDTH = 0.15F;
+  const auto target_r = static_cast<float>(*radial_brush_r_);
+  const float r_lo = std::max(0.0F, target_r - SHELL_HALF_WIDTH);
+  const float r_hi = target_r + SHELL_HALF_WIDTH;
+  const float r_lo_sq = r_lo * r_lo;
+  const float r_hi_sq = r_hi * r_hi;
+
+  std::vector<bool> in_shell(atoms.size(), false);
+  if (picked_atom_index_.has_value() && *picked_atom_index_ < atoms.size()) {
+    markShellAroundAtom(atoms, *picked_atom_index_, r_lo_sq, r_hi_sq, in_shell);
+  } else {
+    markAllShellPairs(atoms, r_lo_sq, r_hi_sq, in_shell);
+  }
+
+  for (std::size_t idx = 0; idx < atoms.size(); ++idx) {
+    if (in_shell[idx]) {
+      ++matched_atoms;
+      atoms[idx].halo_color = {.r = 86, .g = 180, .b = 233, .a = 215};
+      atoms[idx].halo_radius_ratio = 2.2F;
+      atoms[idx].dim_factor = 1.0F;
+    } else {
+      atoms[idx].dim_factor = std::min(atoms[idx].dim_factor, 0.25F);
+    }
+  }
+}
+
+void Structure3DController::applySlabClippingLocked() {
+  if (scene_ == nullptr || !slab_clip_.enabled) {
+    return;
+  }
+  const auto &min_b = scene_->boundsMin();
+  const auto &max_b = scene_->boundsMax();
+  const float span_x = std::max(max_b.x() - min_b.x(), 1e-4F);
+  const float span_y = std::max(max_b.y() - min_b.y(), 1e-4F);
+  const float span_z = std::max(max_b.z() - min_b.z(), 1e-4F);
+
+  const float lo_x = min_b.x() + (slab_clip_.x_min * span_x);
+  const float hi_x = min_b.x() + (slab_clip_.x_max * span_x);
+  const float lo_y = min_b.y() + (slab_clip_.y_min * span_y);
+  const float hi_y = min_b.y() + (slab_clip_.y_max * span_y);
+  const float lo_z = min_b.z() + (slab_clip_.z_min * span_z);
+  const float hi_z = min_b.z() + (slab_clip_.z_max * span_z);
+
+  for (auto &atom : scene_->atoms()) {
+    const auto &pos = atom.position;
+    if (pos.x() < lo_x || pos.x() > hi_x || pos.y() < lo_y || pos.y() > hi_y || pos.z() < lo_z ||
+        pos.z() > hi_z) {
+      atom.dim_factor = 0.0F;
+      atom.halo_color.a = 0;
+    }
+  }
+}
+
+void Structure3DController::syncInspectedAtomToWindow() {
+  InspectedAtomInfo info{};
+  info.valid = false;
+  {
+    const std::scoped_lock lock(mutex_);
+    if (scene_ == nullptr || !picked_atom_index_.has_value() ||
+        *picked_atom_index_ >= scene_->atoms().size()) {
+      safeInvokeOnWindow([this, info] { window_.set_structure_3d_inspected_atom(info); });
+      return;
+    }
+
+    const std::size_t idx = *picked_atom_index_;
+    const auto &atoms = scene_->atoms();
+    const auto &atom = atoms[idx];
+    info.valid = true;
+    info.atom_id = static_cast<int>(atom.id + 1);
+    info.element = slint::SharedString(
+        idx < current_cell_.atoms().size() ? current_cell_.atoms()[idx].element().symbol : "X");
+    info.coords_text = slint::SharedString(std::format("{:.2f}, {:.2f}, {:.2f}", atom.position.x(),
+                                                       atom.position.y(), atom.position.z()));
+
+    const auto stats = computeFirstShellStats(atoms, idx, static_cast<float>(bond_cutoff_scale_));
+    info.cn_text = slint::SharedString(std::to_string(stats.count));
+    if (stats.count > 0) {
+      info.avg_bond_text = slint::SharedString(
+          std::format("{:.3f} Å", stats.sum_distance / static_cast<float>(stats.count)));
+    }
+
+    if (phase_service_ != nullptr) {
+      const auto active_frame = streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
+      const auto desc = phase_service_->getOrComputeDescriptors(active_frame);
+      if (desc != nullptr && desc->steinhardt != nullptr) {
+        if (idx < desc->steinhardt->Q6_bar.size()) {
+          info.q6_text = slint::SharedString(std::format("{:.3f}", desc->steinhardt->Q6_bar[idx]));
+        }
+        if (idx < desc->steinhardt->Q4_bar.size()) {
+          info.q4_text = slint::SharedString(std::format("{:.3f}", desc->steinhardt->Q4_bar[idx]));
+        }
+      }
+    }
+  }
+  safeInvokeOnWindow([this, info] { window_.set_structure_3d_inspected_atom(info); });
 }
 
 void Structure3DController::setDistributionStore(

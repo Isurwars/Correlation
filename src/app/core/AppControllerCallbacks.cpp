@@ -18,13 +18,149 @@
 #include "app/viewmodel/Structure3DController.hpp"
 #include "calculators/CalculatorFactory.hpp"
 
+#include <algorithm>
+#include <array>
+#include <cctype>
 #include <filesystem>
+#include <memory>
 #include <string>
 #include <string_view>
+#include <vector>
 
 namespace correlation::app {
 
+namespace {
+
+struct CommandSpec {
+  std::string_view id;
+  std::string_view title;
+  std::string_view category;
+  std::string_view shortcut;
+};
+
+constexpr std::array<CommandSpec, 18> COMMAND_CATALOG{{
+    {.id = "open_file",
+     .title = "Open Structure / Trajectory File",
+     .category = "File",
+     .shortcut = "Ctrl+O"},
+    {.id = "run_analysis",
+     .title = "Run Enabled Analyses",
+     .category = "Analysis",
+     .shortcut = "Ctrl+R"},
+    {.id = "cancel_analysis",
+     .title = "Cancel Running Analysis",
+     .category = "Analysis",
+     .shortcut = "Esc"},
+    {.id = "export_data",
+     .title = "Export All Data Files",
+     .category = "Export",
+     .shortcut = "Ctrl+S"},
+    {.id = "export_plot",
+     .title = "Export Current Plot Image",
+     .category = "Export",
+     .shortcut = "Ctrl+Shift+S"},
+    {.id = "export_structure",
+     .title = "Export Structure File",
+     .category = "Export",
+     .shortcut = "Ctrl+E"},
+    {.id = "copy_svg",
+     .title = "Copy Plot SVG to Clipboard",
+     .category = "Plot",
+     .shortcut = "Ctrl+C"},
+    {.id = "view_2d", .title = "Switch to 2D Plot View", .category = "View", .shortcut = "1"},
+    {.id = "view_3d", .title = "Switch to 3D Structure View", .category = "View", .shortcut = "2"},
+    {.id = "view_dual", .title = "Switch to Dual Split View", .category = "View", .shortcut = "3"},
+    {.id = "view_data",
+     .title = "Switch to Data Explorer View",
+     .category = "View",
+     .shortcut = "4"},
+    {.id = "reset_view",
+     .title = "Reset Plot Zoom & 3D Camera",
+     .category = "View",
+     .shortcut = "H"},
+    {.id = "toggle_zen",
+     .title = "Toggle Zen Mode (Hide Sidebars)",
+     .category = "Workspace",
+     .shortcut = "Ctrl+\\"},
+    {.id = "toggle_theme",
+     .title = "Toggle Dark / Light Theme",
+     .category = "Workspace",
+     .shortcut = "Ctrl+D"},
+    {.id = "show_shortcuts",
+     .title = "Show Keyboard Shortcuts",
+     .category = "Help",
+     .shortcut = "?"},
+    {.id = "sample_pdsi",
+     .title = "Load Sample: a-PdSi Metallic Glass",
+     .category = "Sample",
+     .shortcut = ""},
+    {.id = "sample_cellulose",
+     .title = "Load Sample: Cellulose Polymer",
+     .category = "Sample",
+     .shortcut = ""},
+    {.id = "sample_si",
+     .title = "Load Sample: Silicon Crystal",
+     .category = "Sample",
+     .shortcut = ""},
+}};
+
+[[nodiscard]] bool matchesQuery(std::string_view haystack, std::string_view needle) {
+  if (needle.empty()) {
+    return true;
+  }
+  const auto match =
+      std::ranges::search(haystack, needle, [](unsigned char lhs, unsigned char rhs) {
+        return std::tolower(lhs) == std::tolower(rhs);
+      });
+  return !match.empty();
+}
+
+[[nodiscard]] bool isCommandEnabled(std::string_view cmd_id, const AppWindow &window) {
+  if (cmd_id == "run_analysis") {
+    return window.get_file_loaded() && !window.get_has_validation_errors() &&
+           !window.get_analysis_running();
+  }
+  if (cmd_id == "cancel_analysis") {
+    return window.get_analysis_running();
+  }
+  if (cmd_id == "export_data") {
+    return window.get_analysis_done();
+  }
+  if (cmd_id == "export_plot" || cmd_id == "copy_svg") {
+    return window.get_selected_plot_index() >= 0;
+  }
+  if (cmd_id == "export_structure") {
+    return window.get_file_loaded();
+  }
+  return true;
+}
+
+[[nodiscard]] std::shared_ptr<slint::VectorModel<CommandItem>>
+buildFilteredCommands(const AppWindow &window, std::string_view query) {
+  std::vector<CommandItem> items;
+  items.reserve(COMMAND_CATALOG.size());
+  for (const auto &spec : COMMAND_CATALOG) {
+    if (!matchesQuery(spec.title, query) && !matchesQuery(spec.category, query)) {
+      continue;
+    }
+    CommandItem item{};
+    item.id = slint::SharedString(spec.id);
+    item.title = slint::SharedString(spec.title);
+    item.category = slint::SharedString(spec.category);
+    item.shortcut = slint::SharedString(spec.shortcut);
+    item.enabled = isCommandEnabled(spec.id, window);
+    items.push_back(std::move(item));
+  }
+  return std::make_shared<slint::VectorModel<CommandItem>>(std::move(items));
+}
+
+} // namespace
+
 void AppController::registerActionCallbacks() {
+  window_.set_command_items(buildFilteredCommands(window_, ""));
+  window_.on_filter_commands([this](const slint::SharedString &query) {
+    window_.set_command_items(buildFilteredCommands(window_, std::string_view(query.data())));
+  });
   window_.on_run_analysis([this] { analysis_runner_->handleRunAnalysis(); });
   window_.on_cancel_analysis([this] { dispatcher_.cancelAnalysis(); });
   window_.on_browse_file([this] { file_io_handler_->handleBrowseFile(); });

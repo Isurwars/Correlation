@@ -16,6 +16,8 @@ import {
     PlotAxisSettings,
     TaggedPeakRecord,
     ExportConfig,
+    CameraHudState,
+    InspectedAtomInfo,
 } from "../../Types.slint";
 import { WorkflowStepper } from "./components/WorkflowStepper.slint";
 import { PreviewHeader } from "./components/PreviewHeader.slint";
@@ -182,6 +184,13 @@ export component PreviewCard inherits FilledCard {
     in property <int> structure_3d_dist_metric: 0;
     in property <string> structure_3d_dist_peak_text: "";
 
+    // Camera HUD, Atom Inspector & Dual-View Radial Brushing
+    in property <CameraHudState> structure_3d_camera_hud;
+    in property <InspectedAtomInfo> structure_3d_inspected_atom;
+    in property <string> structure_3d_radial_brush_text: "";
+
+    callback pick_atom_3d(float, float);
+    callback clear_picked_atom_3d();
     callback set_structure_3d_dist_metric(int);
     callback toggle_structure_3d_dist_hud(bool);
 
@@ -242,8 +251,8 @@ export component PreviewCard inherits FilledCard {
         height: 100%;
         spacing: MaterialStyleMetrics.spacing_8;
 
-        // 1. Workflow Stepper
-        WorkflowStepper {
+        // 1. Workflow Stepper (auto-collapses once analysis completes to maximize viewport height)
+        if !root.analysis_done: WorkflowStepper {
             file_loaded: root.file_loaded;
             analysis_running: root.analysis_running;
             analysis_done: root.analysis_done;
@@ -539,6 +548,11 @@ export component PreviewCard inherits FilledCard {
                 is_playing <=> root.structure_3d_is_playing;
                 backend_label: root.structure_3d_backend_label;
                 gpu_accelerated: root.structure_3d_gpu_accelerated;
+                camera_hud: root.structure_3d_camera_hud;
+                inspected_atom: root.structure_3d_inspected_atom;
+                radial_brush_text: root.structure_3d_radial_brush_text;
+                pick_atom(nx, ny) => { root.pick_atom_3d(nx, ny); }
+                clear_picked_atom => { root.clear_picked_atom_3d(); }
                 file_loaded: root.file_loaded;
                 analysis_running: root.analysis_running;
                 has_validation_errors: root.has_validation_errors;

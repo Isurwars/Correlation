@@ -40,7 +40,7 @@ export component CurveListTab inherits VerticalLayout {
         tooltip_text: "Filter curves by element or pair name (e.g. Fe, Si-O).";
         TextField {
             dense: true;
-            leading_icon: Icons.zoom_in;
+            leading_icon: Icons.search;
             placeholder_text: "Filter curves (e.g. Fe, O-H)...";
             text <=> root.curve_filter;
             edited(f) => { root.filter_curves(f); }

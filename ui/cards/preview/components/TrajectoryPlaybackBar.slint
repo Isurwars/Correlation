@@ -92,14 +92,13 @@ export component TrajectoryPlaybackBar inherits Rectangle {
                 background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
                 animate background { duration: MaterialAnimations.base_duration; }
 
-                MaterialText {
-                    width: 100%;
-                    height: 100%;
-                    text: "⏮";
-                    style: MaterialTypography.label_large;
-                    color: MaterialPalette.on_surface;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
+                Image {
+                    width: 16px;
+                    height: 16px;
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
+                    source: Icons.skip_previous;
+                    colorize: MaterialPalette.on_surface;
                 }
             }
         }
@@ -156,14 +155,13 @@ export component TrajectoryPlaybackBar inherits Rectangle {
                 background: parent.has-hover ? MaterialPalette.surface_container_high : transparent;
                 animate background { duration: MaterialAnimations.base_duration; }
 
-                MaterialText {
-                    width: 100%;
-                    height: 100%;
-                    text: "⏭";
-                    style: MaterialTypography.label_large;
-                    color: MaterialPalette.on_surface;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
+                Image {
+                    width: 16px;
+                    height: 16px;
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
+                    source: Icons.skip_next;
+                    colorize: MaterialPalette.on_surface;
                 }
             }
         }
@@ -228,15 +226,14 @@ export component TrajectoryPlaybackBar inherits Rectangle {
                 background: mode_btn.has-hover ? MaterialPalette.surface_container_high : transparent;
                 animate background { duration: MaterialAnimations.base_duration; }
 
-                MaterialText {
-                    width: 100%;
-                    height: 100%;
-                    text: root.playback_mode == 0 ? "🔁" :
-                        root.playback_mode == 1 ? "🔀" : "➡️";
-                    style: MaterialTypography.label_large;
-                    color: root.playback_mode == 0 ? MaterialPalette.primary : MaterialPalette.on_surface;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
+                Image {
+                    width: 16px;
+                    height: 16px;
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
+                    source: root.playback_mode == 0 ? Icons.repeat :
+                        root.playback_mode == 1 ? Icons.shuffle : Icons.arrow_forward;
+                    colorize: root.playback_mode == 0 ? MaterialPalette.primary : MaterialPalette.on_surface;
                 }
             }
         }

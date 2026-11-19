@@ -90,6 +90,26 @@ void AppController::registerCameraCallbacks() {
   window_.on_viewport_3d_resized([this](float width, float height) {
     structure_3d_controller_->handleViewportResized(width, height);
   });
+
+  window_.on_pick_atom_3d([this](float norm_x, float norm_y) {
+    structure_3d_controller_->handlePickAtom(norm_x, norm_y);
+  });
+
+  window_.on_clear_picked_atom_3d([this] { structure_3d_controller_->clearPickedAtom(); });
+
+  window_.on_set_slab_clip_3d([this](const SlabClipState &state) {
+    structure_3d_controller_->setSlabClipConfig(SlabClipConfig{
+        .enabled = state.enabled,
+        .x_min = state.x_min,
+        .x_max = state.x_max,
+        .y_min = state.y_min,
+        .y_max = state.y_max,
+        .z_min = state.z_min,
+        .z_max = state.z_max,
+    });
+  });
+
+  window_.on_reset_slab_clip_3d([this] { structure_3d_controller_->resetSlabClip(); });
 }
 
 void AppController::handleSelectDualLeftPlot(int idx) {

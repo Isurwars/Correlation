@@ -1,0 +1,73 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialText,
+} from "../../../material/material.slint";
+
+/// Calibrated dynamic Angstrom scale bar HUD for the 3D viewport.
+export component ViewportScaleBar inherits Rectangle {
+    in property <length> bar_width: 64px;
+    in property <string> label: "5 Å";
+
+    width: Math.max(root.bar_width + 20px, 60px);
+    height: 30px;
+    border-radius: MaterialStyleMetrics.border_radius_8;
+    background: MaterialPalette.surface_container_highest.with_alpha(78%);
+    border-width: 1px;
+    border-color: MaterialPalette.outline_variant.with_alpha(45%);
+
+    VerticalLayout {
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-top: 3px;
+        padding-bottom: 4px;
+        spacing: 2px;
+        alignment: center;
+
+        MaterialText {
+            text: root.label;
+            style: MaterialTypography.label_small;
+            font_weight: 600;
+            color: MaterialPalette.on_surface;
+            horizontal-alignment: center;
+        }
+
+        // Calibrated bracket bar
+        Rectangle {
+            width: root.bar_width;
+            height: 5px;
+            x: (parent.width - self.width) / 2;
+
+            // Horizontal bar
+            Rectangle {
+                x: 0;
+                y: 3px;
+                width: 100%;
+                height: 2px;
+                background: MaterialPalette.primary;
+            }
+            // Left tick
+            Rectangle {
+                x: 0;
+                y: 0;
+                width: 2px;
+                height: 5px;
+                background: MaterialPalette.primary;
+            }
+            // Right tick
+            Rectangle {
+                x: parent.width - 2px;
+                y: 0;
+                width: 2px;
+                height: 5px;
+                background: MaterialPalette.primary;
+            }
+        }
+    }
+}

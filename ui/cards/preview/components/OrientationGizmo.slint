@@ -1,0 +1,184 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialAnimations,
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialText,
+    TooltipTarget,
+} from "../../../material/material.slint";
+import { CameraHudState } from "../../../Types.slint";
+
+component AxisPill inherits TooltipTarget {
+    in property <string> label: "X";
+    in property <color> pill_color: #E06C75;
+
+    width: 18px;
+    height: 18px;
+    mouse-cursor: pointer;
+    accessible-role: button;
+    accessible-label: "Snap Camera to " + root.label + " Axis";
+
+    Rectangle {
+        width: 100%;
+        height: 100%;
+        border-radius: 9px;
+        background: root.has-hover ? root.pill_color.brighter(15%) : root.pill_color;
+        border-width: 1px;
+        border-color: MaterialPalette.surface_container_lowest;
+        animate background { duration: MaterialAnimations.base_duration; }
+
+        MaterialText {
+            width: 100%;
+            height: 100%;
+            text: root.label;
+            style: MaterialTypography.label_small;
+            font_weight: 700;
+            color: #101419;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+}
+
+/// Interactive corner orientation axis gizmo for snapping the 3D camera to standard views.
+export component OrientationGizmo inherits Rectangle {
+    in property <CameraHudState> hud_state: {
+        ax_x: 0.7, ax_y: 0.3,
+        ay_x: 0.0, ay_y: -0.9,
+        az_x: -0.7, az_y: 0.3,
+        scale_bar_px: 64px,
+        scale_bar_label: "5 Å",
+    };
+
+    callback set_camera_preset(int); // 0: XY (Z), 1: XZ (Y), 2: YZ (X), 3: Isometric 3D
+
+    width: 76px;
+    height: 76px;
+    border-radius: 38px;
+    background: MaterialPalette.surface_container_highest.with_alpha(80%);
+    border-width: 1px;
+    border-color: MaterialPalette.outline_variant.with_alpha(55%);
+
+    property <length> cx: 38px;
+    property <length> cy: 38px;
+    property <float> arm_len: 24.0;
+
+    // Projected X axis line
+    Path {
+        width: 100%;
+        height: 100%;
+        viewbox-x: 0;
+        viewbox-y: 0;
+        viewbox-width: 76;
+        viewbox-height: 76;
+        stroke: #E06C75;
+        stroke-width: 2px;
+        MoveTo { x: 38; y: 38; }
+        LineTo {
+            x: 38 + root.hud_state.ax_x * root.arm_len;
+            y: 38 + root.hud_state.ax_y * root.arm_len;
+        }
+    }
+
+    // Projected Y axis line
+    Path {
+        width: 100%;
+        height: 100%;
+        viewbox-x: 0;
+        viewbox-y: 0;
+        viewbox-width: 76;
+        viewbox-height: 76;
+        stroke: #98C379;
+        stroke-width: 2px;
+        MoveTo { x: 38; y: 38; }
+        LineTo {
+            x: 38 + root.hud_state.ay_x * root.arm_len;
+            y: 38 + root.hud_state.ay_y * root.arm_len;
+        }
+    }
+
+    // Projected Z axis line
+    Path {
+        width: 100%;
+        height: 100%;
+        viewbox-x: 0;
+        viewbox-y: 0;
+        viewbox-width: 76;
+        viewbox-height: 76;
+        stroke: #61AFEF;
+        stroke-width: 2px;
+        MoveTo { x: 38; y: 38; }
+        LineTo {
+            x: 38 + root.hud_state.az_x * root.arm_len;
+            y: 38 + root.hud_state.az_y * root.arm_len;
+        }
+    }
+
+    // Center 3D Isometric Snap Button
+    center_btn := TooltipTarget {
+        x: root.cx - 9px;
+        y: root.cy - 9px;
+        width: 18px;
+        height: 18px;
+        mouse-cursor: pointer;
+        tooltip_text: "Snap camera to Isometric (3D) view.";
+        accessible-role: button;
+        accessible-label: "Isometric 3D View";
+        clicked => { root.set_camera_preset(3); }
+
+        Rectangle {
+            width: 100%;
+            height: 100%;
+            border-radius: 9px;
+            background: center_btn.has-hover ? MaterialPalette.primary : MaterialPalette.surface_container_low;
+            border-width: 1px;
+            border-color: MaterialPalette.outline;
+
+            MaterialText {
+                width: 100%;
+                height: 100%;
+                text: "3D";
+                font-size: 8px;
+                font-weight: 700;
+                color: center_btn.has-hover ? MaterialPalette.on_primary : MaterialPalette.on_surface_variant;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+        }
+    }
+
+    // X axis endpoint (snaps to YZ side view)
+    AxisPill {
+        x: root.cx + (root.hud_state.ax_x * root.arm_len) * 1px - self.width / 2;
+        y: root.cy + (root.hud_state.ax_y * root.arm_len) * 1px - self.height / 2;
+        label: "X";
+        pill_color: #E06C75;
+        tooltip_text: "Snap camera along X axis (YZ plane).";
+        clicked => { root.set_camera_preset(2); }
+    }
+
+    // Y axis endpoint (snaps to XZ front view)
+    AxisPill {
+        x: root.cx + (root.hud_state.ay_x * root.arm_len) * 1px - self.width / 2;
+        y: root.cy + (root.hud_state.ay_y * root.arm_len) * 1px - self.height / 2;
+        label: "Y";
+        pill_color: #98C379;
+        tooltip_text: "Snap camera along Y axis (XZ plane).";
+        clicked => { root.set_camera_preset(1); }
+    }
+
+    // Z axis endpoint (snaps to XY top view)
+    AxisPill {
+        x: root.cx + (root.hud_state.az_x * root.arm_len) * 1px - self.width / 2;
+        y: root.cy + (root.hud_state.az_y * root.arm_len) * 1px - self.height / 2;
+        label: "Z";
+        pill_color: #61AFEF;
+        tooltip_text: "Snap camera along Z axis (XY plane).";
+        clicked => { root.set_camera_preset(0); }
+    }
+}

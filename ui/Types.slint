@@ -233,5 +233,45 @@ export struct TaggedPeakRecord {
     is_active: bool,
 }
 
+export struct CommandItem {
+    id: string,
+    title: string,
+    category: string,
+    shortcut: string,
+    enabled: bool,
+}
+
+export struct CameraHudState {
+    ax_x: float,
+    ax_y: float,
+    ay_x: float,
+    ay_y: float,
+    az_x: float,
+    az_y: float,
+    scale_bar_px: length,
+    scale_bar_label: string,
+}
+
+export struct InspectedAtomInfo {
+    valid: bool,
+    atom_id: int,
+    element: string,
+    coords_text: string,
+    cn_text: string,
+    q6_text: string,
+    q4_text: string,
+    avg_bond_text: string,
+}
+
+export struct SlabClipState {
+    enabled: bool,
+    x_min: float,
+    x_max: float,
+    y_min: float,
+    y_max: float,
+    z_min: float,
+    z_max: float,
+}
+
 
 

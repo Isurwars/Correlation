@@ -110,6 +110,7 @@ add_executable(correlation_unit_tests
     unit/math/ConstantsTests.cpp
     unit/render3d/Math3DTests.cpp
     unit/render3d/Camera3DTests.cpp
+    unit/render3d/RayPickerTests.cpp
     unit/render3d/Scene3DTests.cpp
     unit/render3d/SoftwareRasterizerTests.cpp
     unit/render3d/RenderEngineFactoryTests.cpp

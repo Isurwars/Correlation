@@ -1,0 +1,130 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialAnimations,
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialText,
+    Icons,
+    TooltipTarget,
+} from "../../../material/material.slint";
+import { InspectedAtomInfo } from "../../../Types.slint";
+
+component MetricRow inherits HorizontalLayout {
+    in property <string> label: "";
+    in property <string> value: "";
+
+    alignment: space-between;
+    spacing: MaterialStyleMetrics.spacing_8;
+
+    MaterialText {
+        text: root.label;
+        style: MaterialTypography.label_small;
+        color: MaterialPalette.on_surface_variant;
+        vertical-alignment: center;
+    }
+
+    MaterialText {
+        text: root.value;
+        style: MaterialTypography.label_small_prominent;
+        color: MaterialPalette.on_surface;
+        vertical-alignment: center;
+    }
+}
+
+/// Floating click-to-inspect atom telemetry card anchored top-right below OrientationGizmo.
+export component AtomInspectorCard inherits Rectangle {
+    in property <InspectedAtomInfo> info;
+    callback dismissed();
+
+    visible: root.info.valid;
+    width: 216px;
+    height: card_layout.preferred-height + 16px;
+    border-radius: MaterialStyleMetrics.border_radius_12;
+    background: MaterialPalette.surface_container_highest.with_alpha(92%);
+    border-width: 1px;
+    border-color: MaterialPalette.primary.with_alpha(60%);
+    drop-shadow-blur: 14px;
+    drop-shadow-offset-y: 4px;
+    drop-shadow-color: MaterialPalette.shadow_30;
+
+    card_layout := VerticalLayout {
+        padding: MaterialStyleMetrics.padding_10;
+        spacing: MaterialStyleMetrics.spacing_6;
+
+        // Header: Element badge + Atom ID + Close
+        HorizontalLayout {
+            alignment: space-between;
+
+            HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_6;
+                alignment: center;
+
+                Rectangle {
+                    height: 22px;
+                    width: elem_txt.preferred-width + 14px;
+                    border-radius: MaterialStyleMetrics.border_radius_full;
+                    background: MaterialPalette.primary;
+
+                    elem_txt := MaterialText {
+                        width: 100%;
+                        height: 100%;
+                        text: root.info.element;
+                        style: MaterialTypography.label_small_prominent;
+                        color: MaterialPalette.on_primary;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                }
+
+                MaterialText {
+                    text: "Atom #" + root.info.atom_id;
+                    style: MaterialTypography.label_medium_prominent;
+                    color: MaterialPalette.on_surface;
+                    vertical-alignment: center;
+                }
+            }
+
+            close_touch := TooltipTarget {
+                width: 22px;
+                height: 22px;
+                mouse-cursor: pointer;
+                tooltip_text: "Clear atom selection (Esc).";
+                accessible-role: button;
+                accessible-label: "Clear Atom Selection";
+                clicked => { root.dismissed(); }
+
+                Rectangle {
+                    width: 100%;
+                    height: 100%;
+                    border-radius: MaterialStyleMetrics.border_radius_full;
+                    background: close_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                    Image {
+                        width: 12px;
+                        height: 12px;
+                        x: (parent.width - self.width) / 2;
+                        y: (parent.height - self.height) / 2;
+                        source: Icons.close;
+                        colorize: MaterialPalette.on_surface_variant;
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            height: 1px;
+            background: MaterialPalette.outline_variant.with_alpha(50%);
+        }
+
+        MetricRow { label: "Coords (Å)"; value: root.info.coords_text; }
+        MetricRow { label: "Coord. Num (CN)"; value: root.info.cn_text; }
+        if root.info.avg_bond_text != "": MetricRow { label: "Mean Bond"; value: root.info.avg_bond_text; }
+        if root.info.q6_text != "": MetricRow { label: "Local q̄₆"; value: root.info.q6_text; }
+        if root.info.q4_text != "": MetricRow { label: "Local q̄₄"; value: root.info.q4_text; }
+    }
+}

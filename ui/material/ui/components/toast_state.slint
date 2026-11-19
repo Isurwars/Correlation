@@ -1,0 +1,24 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+export struct ToastData {
+    message: string,
+    severity: int, // 0: Info, 1: Success, 2: Warning, 3: Error
+    visible: bool,
+}
+
+export global ToastState {
+    in-out property <ToastData> current: { message: "", severity: 0, visible: false };
+    in-out property <int> revision: 0;
+
+    public function show(msg: string, sev: int) {
+        root.current = { message: msg, severity: sev, visible: true };
+        root.revision += 1;
+    }
+
+    public function dismiss() {
+        root.current = { message: root.current.message, severity: root.current.severity, visible: false };
+    }
+}

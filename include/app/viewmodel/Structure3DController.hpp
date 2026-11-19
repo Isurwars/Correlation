@@ -26,11 +26,26 @@
 #include <atomic>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <thread>
 
 class AppWindow;
 
 namespace correlation::app {
+
+/**
+ * @struct SlabClipConfig
+ * @brief Normalized [0, 1] X/Y/Z bounding box clipping configuration for the 3D scene.
+ */
+struct SlabClipConfig {
+  bool enabled{false};
+  float x_min{0.0F};
+  float x_max{1.0F};
+  float y_min{0.0F};
+  float y_max{1.0F};
+  float z_min{0.0F};
+  float z_max{1.0F};
+};
 
 /**
  * @class Structure3DController
@@ -473,10 +488,66 @@ public:
   [[nodiscard]] std::shared_ptr<const calculators::SteinhardtCalculator::SteinhardtParams>
   getOrComputeSteinhardt(std::size_t frame_index);
 
+  /**
+   * @brief Synchronizes projected axis triad and Angstrom scale bar HUD to the Slint window.
+   */
+  void syncCameraHudToWindow();
+
+  /**
+   * @brief Performs ray-sphere atom picking at normalized viewport coordinates [0, 1].
+   * @param[in] norm_x Normalized horizontal click position (0 = left, 1 = right).
+   * @param[in] norm_y Normalized vertical click position (0 = top, 1 = bottom).
+   */
+  void handlePickAtom(float norm_x, float norm_y);
+
+  /**
+   * @brief Clears the currently inspected atom selection and removes inspection highlights.
+   */
+  void clearPickedAtom();
+
+  /**
+   * @brief Returns the currently picked atom index, if any.
+   * @return Optional zero-based atom index in Scene3D::atoms().
+   */
+  [[nodiscard]] std::optional<std::size_t> pickedAtomIndex() const noexcept {
+    const std::scoped_lock lock(mutex_);
+    return picked_atom_index_;
+  }
+
+  /**
+   * @brief Updates X/Y/Z normalized slab clipping bounds and re-renders.
+   * @param[in] config Slab clipping configuration.
+   */
+  void setSlabClipConfig(const SlabClipConfig &config);
+
+  /**
+   * @brief Resets slab clipping bounds to [0, 1] and disables clipping.
+   */
+  void resetSlabClip();
+
+  /**
+   * @brief Returns the current slab clipping configuration.
+   * @return SlabClipConfig copy.
+   */
+  [[nodiscard]] SlabClipConfig slabClipConfig() const noexcept {
+    const std::scoped_lock lock(mutex_);
+    return slab_clip_;
+  }
+
+  /**
+   * @brief Sets or clears the Dual-View radial-shell brushing distance from g(r) hover.
+   * @param[in] r_angstrom Hovered radial distance in Angstroms, or std::nullopt to clear.
+   */
+  void setRadialBrushDistance(std::optional<double> r_angstrom);
+
 private:
   void requestPhaseCalculation(std::size_t frame_index);
   void updateScenePhaseVisuals();
   void updateScenePhaseVisualsLocked();
+  void applyAtomInspectionHighlightLocked();
+  void applyRadialBrushHighlightLocked(std::size_t &matched_atoms);
+  void applySlabClippingLocked();
+  void syncInspectedAtomToWindow();
 
   template <typename F> void safeInvokeOnWindow(F &&action) {
     if (std::this_thread::get_id() == main_thread_id_) {
@@ -514,6 +585,10 @@ private:
   analysis::DistributionMetric active_dist_metric_{analysis::DistributionMetric::RDF};
   std::array<render3d::MiniPlotConfig, 4> metric_plot_configs_{};
   bool dist_hud_visible_{true};
+
+  std::optional<std::size_t> picked_atom_index_;
+  SlabClipConfig slab_clip_{};
+  std::optional<double> radial_brush_r_;
 
   mutable std::mutex mutex_;
   std::thread::id main_thread_id_{std::this_thread::get_id()};

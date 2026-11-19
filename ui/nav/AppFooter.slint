@@ -12,6 +12,8 @@ export component AppFooter inherits Rectangle {
     in property <string> update_version: "";
     in property <string> update_url: "https://github.com/Isurwars/Correlation/releases";
     callback open_url(string);
+    callback open_command_palette();
+    callback open_shortcuts();
 
     height: 24px;
     background: MaterialPalette.surface_container_lowest;
@@ -77,46 +79,107 @@ export component AppFooter inherits Rectangle {
             accessible-label: "Footer Status";
         }
 
-        if root.update_available: Rectangle {
-            background: update_touch.has_hover ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
-            border-radius: MaterialStyleMetrics.border_radius_4;
-            height: 20px;
-            y: (parent.height - self.height) / 2;
-            animate background { duration: MaterialAnimations.base_duration; }
+        HorizontalLayout {
+            spacing: 6px;
+            alignment: center;
 
-            update_touch := TooltipTarget {
-                mouse-cursor: pointer;
-                tooltip_text: "New release v" + root.update_version + " is available. Click to open GitHub Releases.";
-                clicked => {
-                    root.open_url(root.update_url);
+            if root.update_available: Rectangle {
+                background: update_touch.has_hover ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;
+                border-radius: MaterialStyleMetrics.border_radius_4;
+                height: 20px;
+                y: (parent.height - self.height) / 2;
+                animate background { duration: MaterialAnimations.base_duration; }
+
+                update_touch := TooltipTarget {
+                    mouse-cursor: pointer;
+                    tooltip_text: "New release v" + root.update_version + " is available. Click to open GitHub Releases.";
+                    clicked => {
+                        root.open_url(root.update_url);
+                    }
+                }
+
+                HorizontalLayout {
+                    padding-left: 8px;
+                    padding-right: 8px;
+                    spacing: 6px;
+                    alignment: center;
+
+                    Rectangle {
+                        width: 6px;
+                        height: 6px;
+                        border-radius: 3px;
+                        background: MaterialPalette.primary;
+                        opacity: root.blink_state ? 1.0 : 0.3;
+                        y: (parent.height - self.height) / 2;
+                        animate opacity { duration: MaterialAnimations.emphasized_decelerate_duration; easing: ease-in-out; }
+                    }
+
+                    Text {
+                        text: "New version " + root.update_version + " available — Click to download";
+                        font-size: MaterialTypography.label_small.font_size;
+                        font-weight: MaterialTypography.label_small.font_weight;
+                        color: update_touch.has_hover ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+                        vertical-alignment: center;
+                        accessible-role: text;
+                        accessible-label: "New Version Notification";
+                        animate color { duration: MaterialAnimations.base_duration; }
+                    }
                 }
             }
 
-            HorizontalLayout {
-                padding-left: 8px;
-                padding-right: 8px;
-                spacing: 6px;
-                alignment: center;
+            // Command Palette quick trigger
+            Rectangle {
+                height: 18px;
+                y: (parent.height - self.height) / 2;
+                width: cmd_lbl.preferred-width + 12px;
+                border-radius: MaterialStyleMetrics.border_radius_4;
+                background: cmd_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+                animate background { duration: MaterialAnimations.base_duration; }
 
-                Rectangle {
-                    width: 6px;
-                    height: 6px;
-                    border-radius: 3px;
-                    background: MaterialPalette.primary;
-                    opacity: root.blink_state ? 1.0 : 0.3;
-                    y: (parent.height - self.height) / 2;
-                    animate opacity { duration: MaterialAnimations.emphasized_decelerate_duration; easing: ease-in-out; }
+                cmd_touch := TooltipTarget {
+                    mouse-cursor: pointer;
+                    tooltip_text: "Open Command Palette (Ctrl+K).";
+                    accessible-role: button;
+                    accessible-label: "Open Command Palette";
+                    clicked => { root.open_command_palette(); }
                 }
 
-                Text {
-                    text: "New version " + root.update_version + " available — Click to download";
+                cmd_lbl := Text {
+                    width: 100%;
+                    height: 100%;
+                    text: "Ctrl+K Commands";
                     font-size: MaterialTypography.label_small.font_size;
-                    font-weight: MaterialTypography.label_small.font_weight;
-                    color: update_touch.has_hover ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+                    color: cmd_touch.has-hover ? MaterialPalette.primary : MaterialPalette.outline;
+                    horizontal-alignment: center;
                     vertical-alignment: center;
-                    accessible-role: text;
-                    accessible-label: "New Version Notification";
-                    animate color { duration: MaterialAnimations.base_duration; }
+                }
+            }
+
+            // Keyboard Shortcuts quick trigger
+            Rectangle {
+                height: 18px;
+                y: (parent.height - self.height) / 2;
+                width: sc_lbl.preferred-width + 12px;
+                border-radius: MaterialStyleMetrics.border_radius_4;
+                background: sc_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+                animate background { duration: MaterialAnimations.base_duration; }
+
+                sc_touch := TooltipTarget {
+                    mouse-cursor: pointer;
+                    tooltip_text: "View Keyboard Shortcuts (? or F1).";
+                    accessible-role: button;
+                    accessible-label: "View Keyboard Shortcuts";
+                    clicked => { root.open_shortcuts(); }
+                }
+
+                sc_lbl := Text {
+                    width: 100%;
+                    height: 100%;
+                    text: "? Shortcuts";
+                    font-size: MaterialTypography.label_small.font_size;
+                    color: sc_touch.has-hover ? MaterialPalette.primary : MaterialPalette.outline;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
                 }
             }
         }

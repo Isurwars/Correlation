@@ -19,6 +19,8 @@ import {
     TabItem,
     ToolTip,
     TooltipState,
+    ToastState,
+    ToastBanner,
 } from "material/material.slint";
 import { Palette } from "std-widgets.slint";
 
@@ -42,6 +44,10 @@ import {
     DomainPresetItem,
     PlotAxisSettings,
     TaggedPeakRecord,
+    CommandItem,
+    CameraHudState,
+    InspectedAtomInfo,
+    SlabClipState,
 } from "Types.slint";
 
 import { MiniSideBar } from "nav/MiniSideBar.slint";
@@ -50,6 +56,8 @@ import { RightMiniSideBar } from "nav/RightMiniSideBar.slint";
 import { RightSidePanelHost } from "nav/RightSidePanelHost.slint";
 import { AppFooter } from "nav/AppFooter.slint";
 import { PreviewCard, CrystalMarker } from "cards/preview/PreviewCard.slint";
+import { ShortcutsModal } from "cards/common/ShortcutsModal.slint";
+import { CommandPalette } from "cards/common/CommandPalette.slint";
 
 export { CrystalMarker }
 export {
@@ -68,6 +76,10 @@ export {
     ComparisonCurveData,
     FileMetadata,
     WorkflowState,
+    CommandItem,
+    CameraHudState,
+    InspectedAtomInfo,
+    SlabClipState,
 }
 
 // ============================================================================
@@ -277,6 +289,23 @@ export component AppWindow inherits Window {
     in property <int> structure_3d_dist_metric: 0;
     in property <string> structure_3d_dist_peak_text: "";
 
+    // Camera HUD, Atom Inspector, Slab Clipping & Dual-View Radial Brushing
+    in property <CameraHudState> structure_3d_camera_hud: {
+        ax_x: 0.7, ax_y: 0.3,
+        ay_x: 0.0, ay_y: -0.9,
+        az_x: -0.7, az_y: 0.3,
+        scale_bar_px: 64px,
+        scale_bar_label: "5 Å",
+    };
+    in property <InspectedAtomInfo> structure_3d_inspected_atom;
+    in property <SlabClipState> structure_3d_slab_clip: {
+        enabled: false,
+        x_min: 0.0, x_max: 1.0,
+        y_min: 0.0, y_max: 1.0,
+        z_min: 0.0, z_max: 1.0,
+    };
+    in property <string> structure_3d_radial_brush_text: "";
+
     // Resizable layout geometry properties
     in-out property <length> left_col_width: 220px;
     in-out property <length> last_col_width: 220px;
@@ -288,6 +317,93 @@ export component AppWindow inherits Window {
     in-out property <length> last_right_col_width: 320px;
     in-out property <int> active_right_panel: 0; // 0: Plot Inspector, 1: Structure 3D Inspector, -1: Collapsed
     in-out property <int> last_active_right_panel: 0;
+
+    // Zen Mode & Power-User Overlay state
+    in-out property <bool> zen_mode: false;
+    property <int> zen_saved_left_panel: 0;
+    property <int> zen_saved_right_panel: 0;
+    in-out property <bool> command_palette_open: false;
+    in-out property <bool> shortcuts_modal_open: false;
+    in property <[CommandItem]> command_items: [];
+    callback filter_commands(string);
+
+    function toggle_zen_mode() {
+        if (!root.zen_mode) {
+            root.zen_saved_left_panel = root.active_panel;
+            root.zen_saved_right_panel = root.active_right_panel;
+            root.active_panel = -1;
+            root.active_right_panel = -1;
+            root.zen_mode = true;
+            ToastState.show("Zen Mode enabled — press Ctrl+\\ to restore panels", 0);
+        } else {
+            root.active_panel = root.zen_saved_left_panel;
+            root.active_right_panel = root.zen_saved_right_panel;
+            root.zen_mode = false;
+            ToastState.show("Workspace panels restored", 0);
+        }
+    }
+
+    function execute_command(cmd_id: string) {
+        if (cmd_id == "open_file") { root.browse_file(); }
+        else if (cmd_id == "run_analysis") {
+            if (root.file_loaded && !root.has_validation_errors && !root.analysis_running) {
+                root.run_analysis();
+            }
+        }
+        else if (cmd_id == "cancel_analysis") {
+            if (root.analysis_running) { root.cancel_analysis(); }
+        }
+        else if (cmd_id == "export_data") {
+            if (root.analysis_done) {
+                root.write_files();
+                ToastState.show("Exporting analysis data files...", 1);
+            }
+        }
+        else if (cmd_id == "export_plot") {
+            if (root.selected_plot_index >= 0) { root.save_plot(); }
+        }
+        else if (cmd_id == "export_structure") {
+            if (root.file_loaded) { root.export_structure(); }
+        }
+        else if (cmd_id == "copy_svg") {
+            if (root.selected_plot_index >= 0) {
+                root.copy_plot_clipboard();
+                ToastState.show("Plot SVG copied to clipboard", 1);
+            }
+        }
+        else if (cmd_id == "toggle_theme") {
+            Palette.color-scheme = Palette.color-scheme == ColorScheme.dark ? ColorScheme.light : ColorScheme.dark;
+            ToastState.show(Palette.color-scheme == ColorScheme.dark ? "Switched to Dark Theme" : "Switched to Light Theme", 0);
+        }
+        else if (cmd_id == "toggle_zen") { root.toggle_zen_mode(); }
+        else if (cmd_id == "show_shortcuts") { root.shortcuts_modal_open = true; }
+        else if (cmd_id == "view_2d") {
+            root.preview_active_tab = 0;
+            root.preview_tab_changed(0);
+            if (root.active_right_panel >= 0) { root.active_right_panel = 0; }
+        }
+        else if (cmd_id == "view_3d") {
+            root.preview_active_tab = 1;
+            root.preview_tab_changed(1);
+            if (root.active_right_panel >= 0) { root.active_right_panel = 1; }
+        }
+        else if (cmd_id == "view_dual") {
+            root.preview_active_tab = 2;
+            root.preview_tab_changed(2);
+        }
+        else if (cmd_id == "view_data") {
+            root.preview_active_tab = 3;
+            root.preview_tab_changed(3);
+        }
+        else if (cmd_id == "reset_view") {
+            root.reset_zoom();
+            root.reset_view_3d();
+            ToastState.show("Viewport zoom & 3D camera reset", 0);
+        }
+        else if (cmd_id == "sample_pdsi") { root.load_sample("a-PdSi"); ToastState.show("Loading a-PdSi sample...", 0); }
+        else if (cmd_id == "sample_cellulose") { root.load_sample("Cellulose"); ToastState.show("Loading Cellulose sample...", 0); }
+        else if (cmd_id == "sample_si") { root.load_sample("Si"); ToastState.show("Loading Silicon sample...", 0); }
+    }
 
     // Export Options Properties & Callbacks
     in-out property <ExportFormatOptions> export_format_options: {
@@ -384,6 +500,10 @@ export component AppWindow inherits Window {
     callback set_phase_descriptor_y_3d(int);
     callback set_phase_thresholds_2d_3d(float, float, float, float);
     callback export_phase_heatmap_png_3d();
+    callback pick_atom_3d(float, float);
+    callback clear_picked_atom_3d();
+    callback set_slab_clip_3d(SlabClipState);
+    callback reset_slab_clip_3d();
 
     // Presets callbacks
     callback export_config_changed();
@@ -499,6 +619,39 @@ export component AppWindow inherits Window {
     main_focus := FocusScope {
 
         key-pressed(event) => {
+            if (event.modifiers.control && (event.text == "k" || event.text == "K")) {
+                root.shortcuts_modal_open = false;
+                root.command_palette_open = !root.command_palette_open;
+                return accept;
+            }
+            if (event.modifiers.control && event.text == "\\") {
+                root.toggle_zen_mode();
+                return accept;
+            }
+            if (event.text == "?" || event.text == Key.F1) {
+                root.command_palette_open = false;
+                root.shortcuts_modal_open = !root.shortcuts_modal_open;
+                return accept;
+            }
+            if (event.text == Key.Escape) {
+                if (root.command_palette_open) {
+                    root.command_palette_open = false;
+                    return accept;
+                }
+                if (root.shortcuts_modal_open) {
+                    root.shortcuts_modal_open = false;
+                    return accept;
+                }
+                if (root.structure_3d_inspected_atom.valid) {
+                    root.clear_picked_atom_3d();
+                    return accept;
+                }
+                if (root.analysis_running) {
+                    root.cancel_analysis();
+                    ToastState.show("Analysis cancelled", 2);
+                }
+                return accept;
+            }
             if (event.modifiers.control && (event.text == "o" || event.text == "O")) {
                 root.browse_file();
                 return accept;
@@ -515,12 +668,6 @@ export component AppWindow inherits Window {
                 }
                 return accept;
             }
-            if (event.text == Key.Escape) {
-                if (root.analysis_running) {
-                    root.cancel_analysis();
-                }
-                return accept;
-            }
             if (event.modifiers.control && event.modifiers.shift && (event.text == "s" || event.text == "S")) {
                 if (root.selected_plot_index >= 0) {
                     root.save_plot();
@@ -530,11 +677,13 @@ export component AppWindow inherits Window {
             if (event.modifiers.control && (event.text == "s" || event.text == "S")) {
                 if (root.analysis_done) {
                     root.write_files();
+                    ToastState.show("Exporting analysis data files...", 1);
                 }
                 return accept;
             }
             if (event.modifiers.control && (event.text == "d" || event.text == "D")) {
                 Palette.color-scheme = Palette.color-scheme == ColorScheme.dark ? ColorScheme.light : ColorScheme.dark;
+                ToastState.show(Palette.color-scheme == ColorScheme.dark ? "Switched to Dark Theme" : "Switched to Light Theme", 0);
                 return accept;
             }
             if (event.modifiers.control && event.text == "]") {
@@ -552,6 +701,7 @@ export component AppWindow inherits Window {
             if (event.modifiers.control && (event.text == "c" || event.text == "C")) {
                 if ((root.preview_active_tab == 0 || root.preview_active_tab == 2) && root.selected_plot_index >= 0) {
                     root.copy_plot_clipboard();
+                    ToastState.show("Plot SVG copied to clipboard", 1);
                     return accept;
                 }
             }
@@ -650,6 +800,7 @@ export component AppWindow inherits Window {
                     cancel_analysis => { root.cancel_analysis(); }
                     toggle_theme => {
                         Palette.color-scheme = Palette.color-scheme == ColorScheme.dark ? ColorScheme.light : ColorScheme.dark;
+                        ToastState.show(Palette.color-scheme == ColorScheme.dark ? "Switched to Dark Theme" : "Switched to Light Theme", 0);
                     }
                     toggle_collapse => {
                         if (root.active_panel >= 0) {
@@ -872,6 +1023,7 @@ export component AppWindow inherits Window {
                     }
                     copy_plot_clipboard => {
                         root.copy_plot_clipboard();
+                        ToastState.show("Plot SVG copied to clipboard", 1);
                     }
                     pin_run => {
                         root.pin_run();
@@ -930,6 +1082,11 @@ export component AppWindow inherits Window {
                     structure_3d_is_playing <=> root.structure_3d_is_playing;
                     structure_3d_backend_label: root.structure_3d_backend_label;
                     structure_3d_gpu_accelerated: root.structure_3d_gpu_accelerated;
+                    structure_3d_camera_hud: root.structure_3d_camera_hud;
+                    structure_3d_inspected_atom: root.structure_3d_inspected_atom;
+                    structure_3d_radial_brush_text: root.structure_3d_radial_brush_text;
+                    pick_atom_3d(nx, ny) => { root.pick_atom_3d(nx, ny); }
+                    clear_picked_atom_3d => { root.clear_picked_atom_3d(); }
 
                     rotate_3d(dx, dy) => { root.rotate_3d(dx, dy); }
                     pan_3d(dx, dy) => { root.pan_3d(dx, dy); }
@@ -1140,6 +1297,7 @@ export component AppWindow inherits Window {
                     in_cell_enabled: root.structure_3d_in_cell;
                     is_isometric: root.structure_3d_isometric;
                     dist_hud_visible: root.structure_3d_dist_hud_visible;
+                    slab_clip: root.structure_3d_slab_clip;
 
                     toggle_phase_enabled(en) => { root.toggle_phase_search_3d(en); }
                     set_preset(idx) => { root.set_phase_preset_3d(idx); }
@@ -1161,6 +1319,8 @@ export component AppWindow inherits Window {
                     toggle_in_cell(en) => { root.toggle_in_cell_3d(en); }
                     toggle_projection(en) => { root.toggle_projection_3d(en); }
                     toggle_dist_hud(v) => { root.toggle_structure_3d_dist_hud(v); }
+                    set_slab_clip(clip) => { root.set_slab_clip_3d(clip); }
+                    reset_slab_clip => { root.reset_slab_clip_3d(); }
                 }
 
                 // 5. Far-Right Activity Bar (RightMiniSideBar) - Fixed 48px
@@ -1202,6 +1362,14 @@ export component AppWindow inherits Window {
                 open_url(url) => {
                     root.open_url(url);
                 }
+                open_command_palette => {
+                    root.shortcuts_modal_open = false;
+                    root.command_palette_open = true;
+                }
+                open_shortcuts => {
+                    root.command_palette_open = false;
+                    root.shortcuts_modal_open = true;
+                }
             }
         }
     }
@@ -1212,6 +1380,33 @@ export component AppWindow inherits Window {
         width: 0px;
         height: 0px;
         text <=> root.clipboard_payload;
+    }
+
+    // Non-blocking M3 Toast / Snackbar overlay (bottom-right above AppFooter)
+    ToastBanner {
+        x: parent.width - self.width - 16px;
+        y: parent.height - self.height - 34px;
+    }
+
+    // Keyboard Shortcuts Cheat-Sheet Modal (? / F1)
+    ShortcutsModal {
+        show: root.shortcuts_modal_open;
+        closed => {
+            root.shortcuts_modal_open = false;
+            main_focus.focus();
+        }
+    }
+
+    // Command Palette Modal (Ctrl+K)
+    CommandPalette {
+        show: root.command_palette_open;
+        items: root.command_items;
+        filter_changed(q) => { root.filter_commands(q); }
+        execute(id) => { root.execute_command(id); }
+        closed => {
+            root.command_palette_open = false;
+            main_focus.focus();
+        }
     }
 
     ToolTip {

@@ -61,65 +61,7 @@ export component Structure3DWorkflowBar inherits Rectangle {
             }
         }
 
-        // Quick Action CTA (shown while running or before analysis completes)
-        if !root.analysis_done || root.analysis_running: run_btn_touch := TooltipTarget {
-            accessible-role: button;
-            accessible-label: root.analysis_running ? "Cancel Analysis" : "Run Analysis";
-            tooltip_text: root.analysis_running ? "Cancel the running analysis (Esc)." :
-                root.has_validation_errors ? "Fix validation errors in parameters before running." :
-                "Run all enabled calculators on the loaded structure (Ctrl+R).";
-            height: 28px;
-            y: (parent.height - self.height) / 2;
-            width: run_btn_layout.preferred-width + 20px;
-            enabled: root.analysis_running || !root.has_validation_errors;
-            mouse-cursor: self.enabled ? pointer : default;
-            clicked => {
-                if (root.analysis_running) {
-                    root.cancel_analysis();
-                } else {
-                    root.run_analysis();
-                }
-            }
-
-            Rectangle {
-                width: 100%;
-                height: 100%;
-                border-radius: MaterialStyleMetrics.border_radius_full;
-                background: !run_btn_touch.enabled ? MaterialPalette.surface_container_high :
-                    root.analysis_running ? (run_btn_touch.has-hover ? MaterialPalette.error.darker(8%) : MaterialPalette.error) :
-                    (run_btn_touch.has-hover ? MaterialPalette.run.darker(8%) : MaterialPalette.run);
-
-                animate background { duration: MaterialAnimations.base_duration; }
-
-                run_btn_layout := HorizontalLayout {
-                    padding-left: MaterialStyleMetrics.padding_10;
-                    padding-right: MaterialStyleMetrics.padding_10;
-                    spacing: MaterialStyleMetrics.spacing_6;
-                    alignment: center;
-
-                    Image {
-                        width: 14px;
-                        height: 14px;
-                        y: (parent.height - self.height) / 2;
-                        source: root.analysis_running ? Icons.close : Icons.play_arrow;
-                        colorize: !run_btn_touch.enabled ? MaterialPalette.outline :
-                            root.analysis_running ? MaterialPalette.on_error : MaterialPalette.on_run;
-                    }
-
-                    MaterialText {
-                        text: root.analysis_running ? "Cancel" : "Run";
-                        style: MaterialTypography.label_large;
-                        font_weight: 600;
-                        color: !run_btn_touch.enabled ? MaterialPalette.outline :
-                            root.analysis_running ? MaterialPalette.on_error : MaterialPalette.on_run;
-                        vertical-alignment: center;
-                        horizontal-alignment: center;
-                    }
-                }
-            }
-        }
-
-        // Open 3D Inspector / Calculators Button
+        // Open Calculators / Parameters Button
         options_touch := TooltipTarget {
             width: 28px;
             height: 28px;

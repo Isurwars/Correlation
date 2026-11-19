@@ -14,14 +14,16 @@ import {
     MaterialSlider,
     CheckBoxRow,
     TooltipTarget,
+    SegmentedButton,
 } from "../../../material/material.slint";
 import { PhaseMiniHistogram } from "./PhaseMiniHistogram.slint";
 import { PhasePresetsGrid } from "./PhasePresetsGrid.slint";
 import { PhaseDescriptorSelector } from "./PhaseDescriptorSelector.slint";
 import { PhaseColorbar } from "./PhaseColorbar.slint";
 import { PhaseVisualControls } from "./PhaseVisualControls.slint";
+import { PhaseHeatmapView, CrystalMarker } from "./PhaseHeatmapView.slint";
 
-/// Tab 0 of Structure3DSidebar: order parameter phase highlighting, 1D thresholding, and halo controls.
+/// Tab 0 of Structure3DSidebar: order parameter phase highlighting, 1D/2D thresholding, and halo controls.
 export component Structure3DPhaseTab inherits ScrollView {
     in property <bool> phase_enabled: false;
     in property <int> preset_index: 0;
@@ -42,6 +44,17 @@ export component Structure3DPhaseTab inherits ScrollView {
     in property <image> colorbar_image;
     in property <string> descriptor_name: "q̄₆";
 
+    // 2D Heatmap Mode properties
+    in property <bool> is_2d_mode: false;
+    in property <int> descriptor_y_index: 0;
+    in property <float> min_threshold_y: 0.46;
+    in property <float> max_threshold_y: 0.58;
+    in property <float> domain_min_y: 0.0;
+    in property <float> domain_max_y: 1.0;
+    in property <string> descriptor_name_y: "q̄₄";
+    in property <image> heatmap_image;
+    in property <[CrystalMarker]> crystal_markers: [];
+
     callback toggle_phase_enabled(bool);
     callback set_preset(int);
     callback set_descriptor(int);
@@ -52,10 +65,18 @@ export component Structure3DPhaseTab inherits ScrollView {
     callback set_atom_scale(float);
     callback set_dim_non_matching(bool);
     callback set_hide_non_matching(bool);
+    callback set_2d_mode(bool);
+    callback set_descriptor_y(int);
+    callback set_thresholds_2d(float, float, float, float);
+    callback export_heatmap_png();
 
-    VerticalLayout {
+    viewport_height: content_layout.preferred-height + 8px;
+
+    content_layout := VerticalLayout {
+        alignment: start;
         spacing: MaterialStyleMetrics.spacing_8;
-        padding-right: 2px;
+        padding-right: 6px;
+        padding-bottom: 8px;
 
         // Master Toggle Row
         HorizontalLayout {
@@ -120,64 +141,120 @@ export component Structure3DPhaseTab inherits ScrollView {
             }
         }
 
+        // 1D / 2D Phase Mode Switcher
+        SegmentedButton {
+            width: 100%;
+            segment_height: MaterialStyleMetrics.size_24;
+            model: [
+                { label: "1D Threshold", enabled: true },
+                { label: "2D Heatmap", enabled: true },
+            ];
+            tooltips: [
+                "Filter atoms along a single Steinhardt order parameter.",
+                "Filter atoms using a 2D joint order-parameter heatmap.",
+            ];
+            current_index: root.is_2d_mode ? 1 : 0;
+            selected(idx) => { root.set_2d_mode(idx == 1); }
+        }
+
         // Crystal Presets Grid
         PhasePresetsGrid {
             preset_index: root.preset_index;
             set_preset(idx) => { root.set_preset(idx); }
         }
 
-        // Order Descriptor & Colormap Selector
-        PhaseDescriptorSelector {
-            descriptor_index: root.descriptor_index;
-            colormap_index: root.colormap_index;
-            set_descriptor(idx) => { root.set_descriptor(idx); }
-            set_colormap(idx) => { root.set_colormap(idx); }
-        }
-
-        // Color Palette Gradient & Dynamic Threshold Bounds
-        PhaseColorbar {
+        // 2D Joint Distribution Heatmap Mode
+        if root.is_2d_mode: PhaseHeatmapView {
+            height: 340px;
+            heatmap_image: root.heatmap_image;
             colorbar_image: root.colorbar_image;
-            min_threshold: root.min_threshold;
-            max_threshold: root.max_threshold;
-            descriptor_name: root.descriptor_name;
-        }
-
-        // 1D Threshold Range Sliders
-        HorizontalLayout {
-            spacing: MaterialStyleMetrics.spacing_6;
-
-            MaterialSlider {
-                horizontal-stretch: 1;
-                label: "Min Cutoff";
-                value: root.min_threshold;
-                minimum: root.domain_min;
-                maximum: root.max_threshold;
-                display_text: "" + (Math.round(root.min_threshold * 100) / 100);
-                tooltip_text: "Lower order-parameter threshold for highlighting matching atoms.";
-                changed(val) => { root.set_thresholds(val, root.max_threshold); }
-            }
-
-            MaterialSlider {
-                horizontal-stretch: 1;
-                label: "Max Cutoff";
-                value: root.max_threshold;
-                minimum: root.min_threshold;
-                maximum: root.domain_max;
-                display_text: "" + (Math.round(root.max_threshold * 100) / 100);
-                tooltip_text: "Upper order-parameter threshold for highlighting matching atoms.";
-                changed(val) => { root.set_thresholds(root.min_threshold, val); }
-            }
-        }
-
-        // 1D Mini-Histogram Distribution
-        PhaseMiniHistogram {
-            counts: root.histogram_counts;
-            min_threshold: root.min_threshold;
-            max_threshold: root.max_threshold;
-            domain_min: root.domain_min;
-            domain_max: root.domain_max;
+            colormap_index: root.colormap_index;
+            preset_index: root.preset_index;
+            descriptor_x: root.descriptor_index;
+            descriptor_y: root.descriptor_y_index;
+            descriptor_name_x: root.descriptor_name;
+            descriptor_name_y: root.descriptor_name_y;
+            min_x: root.domain_min;
+            max_x: root.domain_max;
+            min_y: root.domain_min_y;
+            max_y: root.domain_max_y;
+            sel_min_x: root.min_threshold;
+            sel_max_x: root.max_threshold;
+            sel_min_y: root.min_threshold_y;
+            sel_max_y: root.max_threshold_y;
             matching_atoms: root.matching_atoms;
             total_atoms: root.total_atoms;
+            crystal_markers: root.crystal_markers;
+
+            set_descriptor_x(idx) => { root.set_descriptor(idx); }
+            set_descriptor_y(idx) => { root.set_descriptor_y(idx); }
+            set_colormap(idx) => { root.set_colormap(idx); }
+            set_preset(idx) => { root.set_preset(idx); }
+            set_selection_2d(x0, x1, y0, y1) => { root.set_thresholds_2d(x0, x1, y0, y1); }
+            export_png => { root.export_heatmap_png(); }
+            reset_selection => {
+                root.set_thresholds_2d(root.domain_min, root.domain_max, root.domain_min_y, root.domain_max_y);
+            }
+        }
+
+        // 1D Threshold Controls Group
+        if !root.is_2d_mode: VerticalLayout {
+            alignment: start;
+            spacing: MaterialStyleMetrics.spacing_8;
+
+            // Order Descriptor & Colormap Selector
+            PhaseDescriptorSelector {
+                descriptor_index: root.descriptor_index;
+                colormap_index: root.colormap_index;
+                set_descriptor(idx) => { root.set_descriptor(idx); }
+                set_colormap(idx) => { root.set_colormap(idx); }
+            }
+
+            // Color Palette Gradient & Dynamic Threshold Bounds
+            PhaseColorbar {
+                colorbar_image: root.colorbar_image;
+                min_threshold: root.min_threshold;
+                max_threshold: root.max_threshold;
+                descriptor_name: root.descriptor_name;
+            }
+
+            // 1D Threshold Range Sliders
+            HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_6;
+
+                MaterialSlider {
+                    horizontal-stretch: 1;
+                    label: "Min Cutoff";
+                    value: root.min_threshold;
+                    minimum: root.domain_min;
+                    maximum: root.max_threshold;
+                    display_text: "" + (Math.round(root.min_threshold * 100) / 100);
+                    tooltip_text: "Lower order-parameter threshold for highlighting matching atoms.";
+                    changed(val) => { root.set_thresholds(val, root.max_threshold); }
+                }
+
+                MaterialSlider {
+                    horizontal-stretch: 1;
+                    label: "Max Cutoff";
+                    value: root.max_threshold;
+                    minimum: root.min_threshold;
+                    maximum: root.domain_max;
+                    display_text: "" + (Math.round(root.max_threshold * 100) / 100);
+                    tooltip_text: "Upper order-parameter threshold for highlighting matching atoms.";
+                    changed(val) => { root.set_thresholds(root.min_threshold, val); }
+                }
+            }
+
+            // 1D Mini-Histogram Distribution
+            PhaseMiniHistogram {
+                counts: root.histogram_counts;
+                min_threshold: root.min_threshold;
+                max_threshold: root.max_threshold;
+                domain_min: root.domain_min;
+                domain_max: root.domain_max;
+                matching_atoms: root.matching_atoms;
+                total_atoms: root.total_atoms;
+            }
         }
 
         // Core atom dimming / hiding for 1D thresholding

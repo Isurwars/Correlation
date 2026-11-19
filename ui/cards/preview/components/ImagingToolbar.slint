@@ -177,7 +177,7 @@ export component ImagingToolbar inherits Rectangle {
             corner_radius: MaterialStyleMetrics.border_radius_full;
             outlined: false;
             y: (parent.height - self.height) / 2;
-            icon: Icons.tune;
+            icon: Icons.hub;
             selected: root.active_tool == 5;
             accessible_name: "Calibrate Bond Cutoffs";
             clicked => { root.active_tool = (root.active_tool == 5 ? 0 : 5); }
@@ -228,7 +228,7 @@ export component ImagingToolbar inherits Rectangle {
             corner_radius: MaterialStyleMetrics.border_radius_full;
             outlined: false;
             y: (parent.height - self.height) / 2;
-            icon: Icons.save;
+            icon: Icons.content_copy;
             accessible_name: "Copy Plot SVG to Clipboard";
             clicked => { root.copy_clipboard(); }
         }
@@ -238,7 +238,7 @@ export component ImagingToolbar inherits Rectangle {
             corner_radius: MaterialStyleMetrics.border_radius_full;
             outlined: false;
             y: (parent.height - self.height) / 2;
-            icon: Icons.save;
+            icon: Icons.download;
             accessible_name: "Export Plot Image";
             clicked => { root.export_plot(); }
         }

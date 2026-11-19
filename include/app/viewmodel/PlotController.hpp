@@ -359,6 +359,7 @@ private:
 
   void syncMetricSettingsToUI(int index);
   void syncSettingsTo3DHUD(int index, const correlation::plotters::MetricPlotSettings &settings);
+  void notifyRadialHover(std::string_view plot_name, std::optional<double> data_x) const;
 
   std::vector<TaggedPeakData> tagged_peaks_;
   int next_peak_id_{1};

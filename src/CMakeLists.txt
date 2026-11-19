@@ -227,6 +227,7 @@ target_link_libraries(plotters_obj PRIVATE correlation_simd_options correlation_
 # 3D Render Engine as an OBJECT library
 set(RENDER3D_SOURCES
     render3d/Camera3D.cpp
+    render3d/RayPicker.cpp
     render3d/Scene3D.cpp
     render3d/cpu/SoftwareRasterizer.cpp
     render3d/cpu/CpuRenderEngine.cpp

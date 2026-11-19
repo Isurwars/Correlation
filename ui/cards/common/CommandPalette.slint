@@ -1,0 +1,254 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialAnimations,
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialText,
+    Icons,
+    ScrollView,
+    TextField,
+} from "../../material/material.slint";
+import { CommandItem } from "../../Types.slint";
+
+/// VS Code / Linear-style modal command palette triggered via Ctrl+K.
+export component CommandPalette inherits Rectangle {
+    in property <bool> show: false;
+    in property <[CommandItem]> items: [];
+    in-out property <string> query: "";
+    in-out property <int> selected_index: 0;
+
+    callback filter_changed(string);
+    callback execute(string);
+    callback closed();
+
+    changed show => {
+        if (root.show) {
+            root.query = "";
+            root.selected_index = 0;
+            root.filter_changed("");
+            search_focus.focus();
+        }
+    }
+
+    visible: root.show;
+    width: 100%;
+    height: 100%;
+    background: MaterialPalette.background_modal;
+    z: 120;
+
+    // Scrim dismissal
+    TouchArea {
+        clicked => { root.closed(); }
+    }
+
+    // Top-weighted centered palette card
+    Rectangle {
+        x: (parent.width - self.width) / 2;
+        y: Math.min(72px, Math.max(24px, parent.height * 0.1));
+        width: Math.min(540px, parent.width - 32px);
+        height: Math.min(420px, parent.height - self.y - 32px);
+        background: MaterialPalette.surface_container_high;
+        border-radius: MaterialStyleMetrics.border_radius_12;
+        border-width: 1px;
+        border-color: MaterialPalette.outline_variant;
+        drop-shadow-blur: 28px;
+        drop-shadow-offset-y: 10px;
+        drop-shadow-color: MaterialPalette.shadow_30;
+        clip: true;
+
+        // Absorb clicks inside modal
+        TouchArea {}
+
+        search_focus := FocusScope {
+            key-pressed(event) => {
+                if (event.text == Key.Escape) {
+                    root.closed();
+                    return accept;
+                }
+                if (event.text == Key.DownArrow) {
+                    if (root.items.length > 0) {
+                        root.selected_index = Math.mod(root.selected_index + 1, root.items.length);
+                    }
+                    return accept;
+                }
+                if (event.text == Key.UpArrow) {
+                    if (root.items.length > 0) {
+                        root.selected_index = root.selected_index <= 0 ? root.items.length - 1 : root.selected_index - 1;
+                    }
+                    return accept;
+                }
+                if (event.text == Key.Return) {
+                    if (root.selected_index >= 0 && root.selected_index < root.items.length && root.items[root.selected_index].enabled) {
+                        root.execute(root.items[root.selected_index].id);
+                        root.closed();
+                    }
+                    return accept;
+                }
+                return reject;
+            }
+
+            VerticalLayout {
+                padding: MaterialStyleMetrics.padding_12;
+                spacing: MaterialStyleMetrics.spacing_8;
+
+                // Search input
+                TextField {
+                    dense: true;
+                    leading_icon: Icons.search;
+                    placeholder_text: "Type a command (e.g. Run, Export, Theme, Zen, 3D)...";
+                    text <=> root.query;
+                    edited(q) => {
+                        root.selected_index = 0;
+                        root.filter_changed(q);
+                    }
+                    accepted(q) => {
+                        if (root.selected_index >= 0 && root.selected_index < root.items.length && root.items[root.selected_index].enabled) {
+                            root.execute(root.items[root.selected_index].id);
+                            root.closed();
+                        }
+                    }
+                }
+
+                Rectangle {
+                    height: 1px;
+                    background: MaterialPalette.outline_variant.with_alpha(50%);
+                }
+
+                // Empty filter state
+                if root.items.length == 0: Rectangle {
+                    vertical-stretch: 1;
+                    MaterialText {
+                        text: "No matching commands";
+                        style: MaterialTypography.body_medium;
+                        color: MaterialPalette.on_surface_variant;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                }
+
+                // Command list
+                if root.items.length > 0: ScrollView {
+                    vertical-stretch: 1;
+
+                    VerticalLayout {
+                        spacing: 2px;
+                        padding-right: 4px;
+
+                        for cmd[idx] in root.items: item_touch := TouchArea {
+                            height: 36px;
+                            mouse-cursor: cmd.enabled ? pointer : default;
+                            enabled: cmd.enabled;
+                            accessible-role: button;
+                            accessible-label: cmd.title;
+                            clicked => {
+                                root.execute(cmd.id);
+                                root.closed();
+                            }
+
+                            Rectangle {
+                                width: 100%;
+                                height: 100%;
+                                border-radius: MaterialStyleMetrics.border_radius_8;
+                                background: idx == root.selected_index
+                                    ? MaterialPalette.primary_container
+                                    : (item_touch.has-hover ? MaterialPalette.surface_container_highest : transparent);
+                                opacity: cmd.enabled ? 1.0 : 0.45;
+                                animate background { duration: MaterialAnimations.base_duration; }
+
+                                HorizontalLayout {
+                                    padding-left: MaterialStyleMetrics.padding_10;
+                                    padding-right: MaterialStyleMetrics.padding_10;
+                                    spacing: MaterialStyleMetrics.spacing_8;
+                                    alignment: space-between;
+
+                                    HorizontalLayout {
+                                        spacing: MaterialStyleMetrics.spacing_8;
+                                        alignment: start;
+
+                                        // Category Pill
+                                        Rectangle {
+                                            height: 20px;
+                                            y: (parent.height - self.height) / 2;
+                                            width: cat_txt.preferred-width + 12px;
+                                            border-radius: MaterialStyleMetrics.border_radius_4;
+                                            background: idx == root.selected_index
+                                                ? MaterialPalette.primary.with_alpha(20%)
+                                                : MaterialPalette.surface_container_highest;
+
+                                            cat_txt := MaterialText {
+                                                width: 100%;
+                                                height: 100%;
+                                                text: cmd.category;
+                                                style: MaterialTypography.label_small;
+                                                color: idx == root.selected_index
+                                                    ? MaterialPalette.on_primary_container
+                                                    : MaterialPalette.on_surface_variant;
+                                                horizontal-alignment: center;
+                                                vertical-alignment: center;
+                                            }
+                                        }
+
+                                        MaterialText {
+                                            text: cmd.title;
+                                            style: MaterialTypography.body_medium;
+                                            font_weight: idx == root.selected_index ? 600 : 400;
+                                            color: idx == root.selected_index
+                                                ? MaterialPalette.on_primary_container
+                                                : MaterialPalette.on_surface;
+                                            vertical-alignment: center;
+                                        }
+                                    }
+
+                                    // Shortcut Keycap
+                                    if cmd.shortcut != "": Rectangle {
+                                        height: 20px;
+                                        y: (parent.height - self.height) / 2;
+                                        width: sc_txt.preferred-width + 10px;
+                                        border-radius: MaterialStyleMetrics.border_radius_4;
+                                        background: MaterialPalette.surface_container_lowest;
+                                        border-width: 1px;
+                                        border-color: MaterialPalette.outline_variant;
+
+                                        sc_txt := MaterialText {
+                                            width: 100%;
+                                            height: 100%;
+                                            text: cmd.shortcut;
+                                            style: MaterialTypography.label_small;
+                                            font_weight: 600;
+                                            color: MaterialPalette.on_surface_variant;
+                                            horizontal-alignment: center;
+                                            vertical-alignment: center;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Footer hint
+                HorizontalLayout {
+                    alignment: space-between;
+                    padding-top: 2px;
+
+                    MaterialText {
+                        text: "↑↓ Navigate  •  Enter Execute  •  Esc Close";
+                        style: MaterialTypography.label_small;
+                        color: MaterialPalette.outline;
+                    }
+
+                    MaterialText {
+                        text: root.items.length + " commands";
+                        style: MaterialTypography.label_small;
+                        color: MaterialPalette.outline;
+                    }
+                }
+            }
+        }
+    }
+}

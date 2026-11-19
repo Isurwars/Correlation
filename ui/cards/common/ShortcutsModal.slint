@@ -1,0 +1,222 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialAnimations,
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialText,
+    Icons,
+    ScrollView,
+} from "../../material/material.slint";
+
+component KeyCap inherits Rectangle {
+    in property <string> keys: "";
+
+    height: 22px;
+    width: cap_txt.preferred-width + 12px;
+    border-radius: MaterialStyleMetrics.border_radius_4;
+    background: MaterialPalette.surface_container_highest;
+    border-width: 1px;
+    border-color: MaterialPalette.outline_variant;
+
+    cap_txt := MaterialText {
+        width: 100%;
+        height: 100%;
+        text: root.keys;
+        style: MaterialTypography.label_small;
+        font_weight: 600;
+        color: MaterialPalette.on_surface;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+}
+
+component ShortcutRow inherits HorizontalLayout {
+    in property <string> action: "";
+    in property <string> keys: "";
+
+    height: 26px;
+    alignment: space-between;
+    spacing: MaterialStyleMetrics.spacing_8;
+
+    MaterialText {
+        text: root.action;
+        style: MaterialTypography.body_medium;
+        color: MaterialPalette.on_surface_variant;
+        vertical-alignment: center;
+    }
+
+    KeyCap {
+        y: (parent.height - self.height) / 2;
+        keys: root.keys;
+    }
+}
+
+component ShortcutGroup inherits VerticalLayout {
+    in property <string> heading: "";
+
+    spacing: MaterialStyleMetrics.spacing_4;
+
+    MaterialText {
+        text: root.heading;
+        style: MaterialTypography.label_medium_prominent;
+        color: MaterialPalette.primary;
+    }
+
+    Rectangle {
+        height: 1px;
+        background: MaterialPalette.outline_variant.with_alpha(50%);
+    }
+
+    @children
+}
+
+/// Modal keyboard shortcuts cheat-sheet triggered via '?' or F1.
+export component ShortcutsModal inherits Rectangle {
+    in property <bool> show: false;
+    callback closed();
+
+    visible: root.show;
+    width: 100%;
+    height: 100%;
+    background: MaterialPalette.background_modal;
+    z: 110;
+
+    // Scrim dismissal
+    TouchArea {
+        clicked => { root.closed(); }
+    }
+
+    // Centered Modal Card
+    Rectangle {
+        width: Math.min(640px, parent.width - 32px);
+        height: Math.min(480px, parent.height - 48px);
+        background: MaterialPalette.surface_container_high;
+        border-radius: MaterialStyleMetrics.border_radius_12;
+        border-width: 1px;
+        border-color: MaterialPalette.outline_variant;
+        drop-shadow-blur: 24px;
+        drop-shadow-offset-y: 8px;
+        drop-shadow-color: MaterialPalette.shadow_30;
+        clip: true;
+
+        // Absorb clicks inside modal
+        TouchArea {}
+
+        VerticalLayout {
+            padding: MaterialStyleMetrics.padding_16;
+            spacing: MaterialStyleMetrics.spacing_12;
+
+            // Header
+            HorizontalLayout {
+                alignment: space-between;
+
+                HorizontalLayout {
+                    spacing: MaterialStyleMetrics.spacing_8;
+                    alignment: center;
+
+                    Image {
+                        width: 18px;
+                        height: 18px;
+                        y: (parent.height - self.height) / 2;
+                        source: Icons.keyboard;
+                        colorize: MaterialPalette.primary;
+                    }
+
+                    MaterialText {
+                        text: "Keyboard Shortcuts";
+                        style: MaterialTypography.title_medium;
+                        color: MaterialPalette.on_surface;
+                        vertical-alignment: center;
+                    }
+                }
+
+                close_btn := TouchArea {
+                    width: 28px;
+                    height: 28px;
+                    mouse-cursor: pointer;
+                    accessible-role: button;
+                    accessible-label: "Close Keyboard Shortcuts";
+                    clicked => { root.closed(); }
+
+                    Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: MaterialStyleMetrics.border_radius_full;
+                        background: close_btn.has-hover ? MaterialPalette.surface_container_highest : transparent;
+
+                        Image {
+                            width: 16px;
+                            height: 16px;
+                            x: (parent.width - self.width) / 2;
+                            y: (parent.height - self.height) / 2;
+                            source: Icons.close;
+                            colorize: MaterialPalette.on_surface_variant;
+                        }
+                    }
+                }
+            }
+
+            // 2-Column Scrollable Grid
+            ScrollView {
+                vertical-stretch: 1;
+
+                HorizontalLayout {
+                    spacing: MaterialStyleMetrics.spacing_24;
+                    padding-right: MaterialStyleMetrics.padding_8;
+
+                    // Left Column
+                    VerticalLayout {
+                        horizontal-stretch: 1;
+                        spacing: MaterialStyleMetrics.spacing_16;
+
+                        ShortcutGroup {
+                            heading: "File & Analysis";
+                            ShortcutRow { action: "Open Structure / Trajectory"; keys: "Ctrl+O"; }
+                            ShortcutRow { action: "Run Enabled Analyses"; keys: "Ctrl+R"; }
+                            ShortcutRow { action: "Cancel Running Analysis"; keys: "Esc"; }
+                            ShortcutRow { action: "Export All Data Files"; keys: "Ctrl+S"; }
+                            ShortcutRow { action: "Export Current Plot"; keys: "Ctrl+Shift+S"; }
+                            ShortcutRow { action: "Export Structure File"; keys: "Ctrl+E"; }
+                        }
+
+                        ShortcutGroup {
+                            heading: "Global & Workspace";
+                            ShortcutRow { action: "Command Palette"; keys: "Ctrl+K"; }
+                            ShortcutRow { action: "Toggle Zen Mode"; keys: "Ctrl+\\"; }
+                            ShortcutRow { action: "Toggle Dark / Light Theme"; keys: "Ctrl+D"; }
+                            ShortcutRow { action: "Keyboard Shortcuts"; keys: "? / F1"; }
+                        }
+                    }
+
+                    // Right Column
+                    VerticalLayout {
+                        horizontal-stretch: 1;
+                        spacing: MaterialStyleMetrics.spacing_16;
+
+                        ShortcutGroup {
+                            heading: "Viewports & Navigation";
+                            ShortcutRow { action: "2D Plot View"; keys: "1"; }
+                            ShortcutRow { action: "3D Structure View"; keys: "2"; }
+                            ShortcutRow { action: "Dual Split View"; keys: "3"; }
+                            ShortcutRow { action: "Data Explorer View"; keys: "4"; }
+                            ShortcutRow { action: "Previous / Next Plot"; keys: "Ctrl+[ / ]"; }
+                        }
+
+                        ShortcutGroup {
+                            heading: "Plot & 3D Interaction";
+                            ShortcutRow { action: "Copy Plot SVG"; keys: "Ctrl+C"; }
+                            ShortcutRow { action: "Reset Zoom / 3D Camera"; keys: "H"; }
+                            ShortcutRow { action: "Play / Pause Trajectory"; keys: "Space"; }
+                            ShortcutRow { action: "Step Frame Back / Forward"; keys: "← / →"; }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

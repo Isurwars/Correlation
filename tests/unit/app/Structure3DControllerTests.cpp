@@ -240,5 +240,55 @@ TEST_F(Structure3DControllerTests, ConcurrentResizeAndTrajectoryRenderDoesNotCra
   EXPECT_FALSE(controller.is3DModeActive());
 }
 
+TEST_F(Structure3DControllerTests, SlabClippingAndResetCullsAndRestoresAtoms) {
+  const ProgramOptions options;
+  Structure3DController controller(window(), options);
+  controller.setCell(createTestCell());
+
+  ASSERT_NE(controller.scene(), nullptr);
+  ASSERT_GE(controller.scene()->atoms().size(), 2U);
+
+  controller.setSlabClipConfig(SlabClipConfig{
+      .enabled = true,
+      .x_min = 0.0F,
+      .x_max = 0.05F,
+      .y_min = 0.0F,
+      .y_max = 1.0F,
+      .z_min = 0.0F,
+      .z_max = 1.0F,
+  });
+
+  bool any_culled = false;
+  for (const auto &atom : controller.scene()->atoms()) {
+    if (atom.dim_factor <= 0.0F) {
+      any_culled = true;
+    }
+  }
+  EXPECT_TRUE(any_culled);
+
+  controller.resetSlabClip();
+  EXPECT_FALSE(controller.slabClipConfig().enabled);
+  for (const auto &atom : controller.scene()->atoms()) {
+    EXPECT_GT(atom.dim_factor, 0.0F);
+  }
+}
+
+TEST_F(Structure3DControllerTests, RadialBrushAndCameraHudUpdateWindowState) {
+  const ProgramOptions options;
+  Structure3DController controller(window(), options);
+  controller.setCell(createTestCell());
+
+  controller.handleRotate(15.0F, 10.0F);
+  const auto hud = window().get_structure_3d_camera_hud();
+  EXPECT_GT(hud.scale_bar_px, 0.0F);
+  EXPECT_FALSE(std::string_view(hud.scale_bar_label.data()).empty());
+
+  controller.setRadialBrushDistance(1.5);
+  EXPECT_FALSE(std::string_view(window().get_structure_3d_radial_brush_text().data()).empty());
+
+  controller.setRadialBrushDistance(std::nullopt);
+  EXPECT_TRUE(std::string_view(window().get_structure_3d_radial_brush_text().data()).empty());
+}
+
 } // namespace
 } // namespace correlation::app

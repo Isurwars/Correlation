@@ -16,6 +16,7 @@ export component CheckBoxRow inherits TouchArea {
     callback checked_state_changed(bool);
 
     property <bool> show_pending: false;
+    min-height: 28px;
 
     changed has-hover => {
         if (self.has-hover && root.tooltip_text != "") {
