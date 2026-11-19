@@ -118,10 +118,11 @@ if(EMSCRIPTEN OR BUILD_WASM)
     set(CMAKE_CXX_LINK_LIBRARY_USING_WHOLE_ARCHIVE_SUPPORTED TRUE)
 endif()
 
+add_library(correlation_config INTERFACE)
 if(USE_SINGLE_PRECISION)
-    add_compile_definitions(CORRELATION_USE_SINGLE_PRECISION=1)
+    target_compile_definitions(correlation_config INTERFACE CORRELATION_USE_SINGLE_PRECISION=1)
 else()
-    add_compile_definitions(CORRELATION_USE_SINGLE_PRECISION=0)
+    target_compile_definitions(correlation_config INTERFACE CORRELATION_USE_SINGLE_PRECISION=0)
 endif()
 
 include(GNUInstallDirs)

@@ -34,7 +34,7 @@ target_include_directories(readers_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
 
-target_link_libraries(readers_obj PRIVATE correlation_simd_options)
+target_link_libraries(readers_obj PRIVATE correlation_config correlation_simd_options)
 
 # Calculators as an OBJECT library to ensure static registration triggers
 add_library(calculators_obj OBJECT
@@ -109,7 +109,7 @@ target_include_directories(calculators_obj PRIVATE
 )
 target_link_libraries(calculators_obj PRIVATE TBB::tbb voro++)
 target_compile_definitions(calculators_obj PRIVATE _PSTL_PAR_BACKEND_TBB)
-target_link_libraries(calculators_obj PRIVATE correlation_simd_options)
+target_link_libraries(calculators_obj PRIVATE correlation_config correlation_simd_options)
 
 # Optional GPU-accelerated calculators (CUDA / HIP)
 if(BUILD_WITH_CUDA OR BUILD_WITH_HIP)
@@ -124,6 +124,7 @@ if(BUILD_WITH_CUDA OR BUILD_WITH_HIP)
     )
     target_link_libraries(gpu_calculators_obj PRIVATE
         TBB::tbb
+        correlation_config
         correlation_simd_options
     )
     if(BUILD_WITH_CUDA)
@@ -165,7 +166,7 @@ add_library(writers_obj OBJECT ${WRITERS_SOURCES})
 target_include_directories(writers_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
-target_link_libraries(writers_obj PRIVATE correlation_simd_options miniz)
+target_link_libraries(writers_obj PRIVATE correlation_config correlation_simd_options miniz)
 if(BUILD_WITH_HDF5)
     target_link_libraries(writers_obj PRIVATE HighFive HDF5::HDF5 HDF5::HDF5_HL)
 endif()
@@ -186,7 +187,7 @@ add_library(mlip_obj OBJECT ${MLIP_SOURCES})
 target_include_directories(mlip_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
-target_link_libraries(mlip_obj PRIVATE TBB::tbb correlation_simd_options)
+target_link_libraries(mlip_obj PRIVATE TBB::tbb correlation_config correlation_simd_options)
 if(CORRELATION_ENABLE_LIBTORCH AND Torch_FOUND)
     target_link_libraries(mlip_obj PRIVATE "${TORCH_LIBRARIES}")
     target_include_directories(mlip_obj PRIVATE ${TORCH_INCLUDE_DIRS})
@@ -222,7 +223,7 @@ add_library(plotters_obj OBJECT ${PLOTTERS_SOURCES})
 target_include_directories(plotters_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
-target_link_libraries(plotters_obj PRIVATE correlation_simd_options correlation_pdfgen)
+target_link_libraries(plotters_obj PRIVATE correlation_config correlation_simd_options correlation_pdfgen)
 
 # 3D Render Engine as an OBJECT library
 set(RENDER3D_SOURCES
@@ -255,7 +256,7 @@ add_library(render3d_obj OBJECT ${RENDER3D_SOURCES})
 target_include_directories(render3d_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
-target_link_libraries(render3d_obj PRIVATE correlation_simd_options)
+target_link_libraries(render3d_obj PRIVATE correlation_config correlation_simd_options)
 if(TARGET Vulkan::Vulkan)
     target_link_libraries(render3d_obj PRIVATE Vulkan::Vulkan)
 endif()
@@ -319,7 +320,7 @@ if(BUILD_WITH_ARROW)
     target_compile_definitions(correlation_lib PUBLIC CORRELATION_USE_ARROW)
 endif()
 
-target_link_libraries(correlation_lib PUBLIC correlation_simd_options correlation_linker_options correlation_fft voro++)
+target_link_libraries(correlation_lib PUBLIC correlation_config correlation_simd_options correlation_linker_options correlation_fft voro++)
 
 # Pybind11 creates a shared module and requires PIC (handled globally via CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -475,7 +476,7 @@ if(NOT (EMSCRIPTEN OR BUILD_WASM))
     target_include_directories(cli_parser_obj PUBLIC
         ${PROJECT_SOURCE_DIR}/include
     )
-    target_link_libraries(cli_parser_obj PUBLIC correlation_simd_options CLI11::CLI11)
+    target_link_libraries(cli_parser_obj PUBLIC correlation_config correlation_simd_options CLI11::CLI11)
 
     # CLI Executable Target (correlation-cli) — no GUI dependency
     add_executable(correlation-cli

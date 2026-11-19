@@ -57,7 +57,7 @@ if(CORRELATION_ENABLE_VULKAN AND BUILD_GUI AND NOT (BUILD_WASM OR EMSCRIPTEN))
 
   if(Vulkan_LOADER_LIB OR Vulkan_LIBRARIES)
     set(CORRELATION_HAS_VULKAN TRUE CACHE INTERNAL "Vulkan backend active")
-    add_compile_definitions(CORRELATION_USE_VULKAN=1)
+    target_compile_definitions(correlation_config INTERFACE CORRELATION_USE_VULKAN=1)
     message(STATUS "Vulkan 3D rendering backend ENABLED (Loader: ${Vulkan_LOADER_LIB})")
   else()
     set(CORRELATION_HAS_VULKAN FALSE CACHE INTERNAL "Vulkan backend active")
