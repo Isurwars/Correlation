@@ -14,6 +14,10 @@ export component RingsOptionsCard inherits OptionSection {
         label: "Max Ring Size";
         text <=> root.max_ring_size;
         error: root.max_ring_error;
+        stepper: true;
+        minimum: 3.0;
+        maximum: 30.0;
+        decimals: 0;
         tooltip_text: "Maximum ring size for topological ring statistics.\n\n📏 Recommended: 8–12 (default: 12).\n\n🔬 Physics: Rings are closed loops of bonded atoms — they characterize medium-range order in network glasses (e.g., SiO₂ has predominantly 6-membered rings). Larger max sizes capture rare large rings but increase computation time exponentially. For most amorphous networks, rings >12 are statistically rare and computationally expensive.";
     }
 }

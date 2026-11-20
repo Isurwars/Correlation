@@ -1,0 +1,243 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import { MaterialTypography } from "../styling/material_typography.slint";
+import { MaterialPalette } from "../styling/material_palette.slint";
+import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
+import { MaterialAnimations } from "../styling/material_animations.slint";
+import { MaterialText } from "./material_text.slint";
+
+/// Material Design 3 numeric text field with integrated decrease (−) and increase (+) stepper buttons.
+export component NumberField {
+    in property <string> label;
+    in property <string> placeholder_text;
+    in property <string> unit_suffix;
+    in property <string> supporting_text;
+    in property <bool> has_error;
+    in property <bool> enabled: true;
+    in property <bool> dense: false;
+    in property <float> step: 1.0;
+    in property <float> minimum: 0.0;
+    in property <float> maximum: 1000000.0;
+    in property <int> decimals: 1;
+    out property <bool> has_focus: input.has_focus;
+    in-out property <string> text <=> input.text;
+
+    callback accepted(text: string);
+    callback edited(text: string);
+    callback value_changed(text: string);
+
+    property <color> highlight: root.enabled && root.has_error
+        ? MaterialPalette.error
+        : (root.has_focus ? MaterialPalette.primary : MaterialPalette.on_surface_variant);
+    property <float> current_numeric: root.text.is-float()
+        ? root.text.to-float()
+        : (root.placeholder_text.is-float() ? root.placeholder_text.to-float() : root.minimum);
+    property <bool> can_decrement: root.enabled && (root.current_numeric - root.step * 0.001 > root.minimum);
+    property <bool> can_increment: root.enabled && (root.current_numeric + root.step * 0.001 < root.maximum);
+
+    pure function format_number(val: float) -> string {
+        if (root.decimals <= 0) {
+            return "" + Math.round(val);
+        }
+        if (root.decimals == 1) {
+            return "" + (Math.round(val * 10.0) / 10.0);
+        }
+        if (root.decimals == 2) {
+            return "" + (Math.round(val * 100.0) / 100.0);
+        }
+        return "" + (Math.round(val * 1000.0) / 1000.0);
+    }
+
+    function step_by(delta: float) {
+        if (!root.enabled) {
+            return;
+        }
+        root.text = root.format_number(Math.max(root.minimum, Math.min(root.maximum, root.current_numeric + delta)));
+        root.edited(root.text);
+        root.value_changed(root.text);
+    }
+
+    forward-focus: input;
+    accessible-role: spinbox;
+    accessible-enabled: root.enabled;
+    accessible-value <=> text;
+    accessible-action-increment => { root.step_by(root.step); }
+    accessible-action-decrement => { root.step_by(-root.step); }
+
+    VerticalLayout {
+        spacing: MaterialStyleMetrics.spacing_4;
+
+        Rectangle {
+            border-top-left-radius: MaterialStyleMetrics.border_radius_2;
+            border-top-right-radius: MaterialStyleMetrics.border_radius_2;
+            background: MaterialPalette.surface_container_highest;
+            height: root.dense ? MaterialStyleMetrics.size_28 : MaterialStyleMetrics.size_40;
+            clip: true;
+            opacity: root.enabled ? 1.0 : 0.45;
+
+            HorizontalLayout {
+
+                // Decrease button (−)
+                dec_touch := TouchArea {
+                    width: root.dense ? 22px : 30px;
+                    enabled: root.can_decrement;
+                    mouse-cursor: root.can_decrement ? pointer : default;
+                    accessible-role: button;
+                    accessible-label: "Decrease " + (root.label != "" ? root.label : "value");
+                    clicked => { root.step_by(-root.step); }
+
+                    Rectangle {
+                        border-top-left-radius: MaterialStyleMetrics.border_radius_2;
+                        background: dec_touch.pressed
+                            ? MaterialPalette.on_surface.with_alpha(12%)
+                            : (dec_touch.has-hover ? MaterialPalette.on_surface.with_alpha(8%) : transparent);
+                        animate background { duration: MaterialAnimations.fast_duration; }
+
+                        MaterialText {
+                            text: "−";
+                            style: root.dense ? MaterialTypography.label_large : MaterialTypography.title_small;
+                            font_weight: 600;
+                            color: root.can_decrement ? MaterialPalette.on_surface_variant : MaterialPalette.outline;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+
+                Rectangle {
+                    width: 1px;
+                    background: MaterialPalette.outline_variant.with_alpha(50%);
+                }
+
+                // Editable center field (optional floating label + input + unit)
+                VerticalLayout {
+                    horizontal-stretch: 1;
+                    padding-left: MaterialStyleMetrics.padding_4;
+                    padding-right: MaterialStyleMetrics.padding_4;
+                    padding-top: root.dense ? 1px : 2px;
+                    padding-bottom: root.dense ? 1px : 2px;
+                    alignment: center;
+
+                    if root.label != "" && !root.dense: MaterialText {
+                        text: root.label;
+                        style: MaterialTypography.body_small;
+                        color: root.highlight;
+                        horizontal-alignment: center;
+                    }
+
+                    HorizontalLayout {
+                        spacing: 2px;
+                        alignment: center;
+
+                        Rectangle {
+                            horizontal-stretch: 1;
+                            min-width: 24px;
+                            height: 20px;
+                            clip: true;
+
+                            if root.text == "" && root.placeholder_text != "": MaterialText {
+                                text: root.placeholder_text;
+                                style: root.dense ? MaterialTypography.body_small : MaterialTypography.body_medium;
+                                color: MaterialPalette.on_surface_variant.with_alpha(65%);
+                                horizontal-alignment: center;
+                                vertical-alignment: center;
+                            }
+
+                            input := TextInput {
+                                width: 100%;
+                                height: 100%;
+                                font-size: root.dense ? MaterialTypography.body_small.font_size : MaterialTypography.body_medium.font_size;
+                                font-weight: root.dense ? MaterialTypography.regular : MaterialTypography.label_large_prominent.font_weight;
+                                horizontal-alignment: center;
+                                vertical-alignment: center;
+                                color: MaterialPalette.on_surface;
+                                selection-background-color: MaterialPalette.primary.with_alpha(0.5);
+                                selection-foreground-color: self.color;
+                                enabled: root.enabled;
+                                accessible-role: none;
+
+                                accepted => {
+                                    root.accepted(self.text);
+                                    root.value_changed(self.text);
+                                }
+
+                                edited => {
+                                    root.edited(self.text);
+                                }
+
+                                key-pressed(event) => {
+                                    if (event.text == Key.UpArrow) {
+                                        root.step_by(root.step);
+                                        return accept;
+                                    }
+                                    if (event.text == Key.DownArrow) {
+                                        root.step_by(-root.step);
+                                        return accept;
+                                    }
+                                    return reject;
+                                }
+                            }
+                        }
+
+                        if root.unit_suffix != "": MaterialText {
+                            text: root.unit_suffix;
+                            style: MaterialTypography.body_small;
+                            color: MaterialPalette.on_surface_variant;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+
+                Rectangle {
+                    width: 1px;
+                    background: MaterialPalette.outline_variant.with_alpha(50%);
+                }
+
+                // Increase button (+)
+                inc_touch := TouchArea {
+                    width: root.dense ? 22px : 30px;
+                    enabled: root.can_increment;
+                    mouse-cursor: root.can_increment ? pointer : default;
+                    accessible-role: button;
+                    accessible-label: "Increase " + (root.label != "" ? root.label : "value");
+                    clicked => { root.step_by(root.step); }
+
+                    Rectangle {
+                        border-top-right-radius: MaterialStyleMetrics.border_radius_2;
+                        background: inc_touch.pressed
+                            ? MaterialPalette.on_surface.with_alpha(12%)
+                            : (inc_touch.has-hover ? MaterialPalette.on_surface.with_alpha(8%) : transparent);
+                        animate background { duration: MaterialAnimations.fast_duration; }
+
+                        MaterialText {
+                            text: "+";
+                            style: root.dense ? MaterialTypography.label_large : MaterialTypography.title_small;
+                            font_weight: 600;
+                            color: root.can_increment ? MaterialPalette.on_surface_variant : MaterialPalette.outline;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+
+            // Bottom M3 indicator bar
+            Rectangle {
+                y: parent.height - self.height;
+                width: 100%;
+                height: root.has_focus ? 2px : 1px;
+                background: root.highlight;
+                animate background { duration: MaterialAnimations.fast_duration; }
+            }
+        }
+
+        if root.supporting_text != "": MaterialText {
+            text: root.supporting_text;
+            style: MaterialTypography.body_small;
+            color: root.has_error ? MaterialPalette.error : MaterialPalette.on_surface_variant;
+        }
+    }
+}

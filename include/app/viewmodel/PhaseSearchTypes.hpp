@@ -451,11 +451,17 @@ inline constexpr std::array<PhysicalMarker, 6> K_MARKERS_Q6_LOCAL_ENTROPY{{
     PhysicalMarker{.label = "Liq", .x = 0.140F, .y = -2.50F, .width = 0.16F, .height = 2.0F},
 }};
 
+// Calibrated against Errington & Debenedetti (Nature 2001), Martelli et al. (PRB 2017 / PNAS
+// 2018), and Piaggi & Parrinello (JCP 2017) / Gartner et al. (PRL 2020) for (q_tet, s_2):
+//   Dia/Ice: q_tet ~ 0.94–1.00, s_2 ~ -9.1 to -6.9 k_B
+//   LDA:     q_tet ~ 0.80–0.95 (mean ~0.88–0.91), s_2 ~ -7.3 to -5.1 k_B
+//   HDA:     q_tet ~ 0.62–0.78 (mean ~0.70–0.74), s_2 ~ -6.0 to -4.0 k_B
+//   Liq:     q_tet ~ 0.45–0.71 (ambient/supercooled water), s_2 ~ -4.1 to -1.9 k_B
 inline constexpr std::array<PhysicalMarker, 4> K_MARKERS_QTET_LOCAL_ENTROPY{{
     PhysicalMarker{.label = "Dia", .x = 0.965F, .y = -8.00F, .width = 0.14F, .height = 2.2F},
-    PhysicalMarker{.label = "LDA", .x = 0.850F, .y = -4.50F, .width = 0.20F, .height = 2.0F},
-    PhysicalMarker{.label = "HDA", .x = 0.350F, .y = -4.50F, .width = 0.22F, .height = 2.0F},
-    PhysicalMarker{.label = "Liq", .x = 0.520F, .y = -2.50F, .width = 0.22F, .height = 2.0F},
+    PhysicalMarker{.label = "LDA", .x = 0.880F, .y = -6.20F, .width = 0.18F, .height = 2.2F},
+    PhysicalMarker{.label = "HDA", .x = 0.700F, .y = -5.00F, .width = 0.18F, .height = 2.0F},
+    PhysicalMarker{.label = "Liq", .x = 0.580F, .y = -3.00F, .width = 0.26F, .height = 2.2F},
 }};
 
 inline constexpr std::array<PhysicalMarker, 8> K_MARKERS_QTET_Q6{{

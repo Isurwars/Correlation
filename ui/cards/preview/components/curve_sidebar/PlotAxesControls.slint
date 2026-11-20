@@ -9,8 +9,9 @@ import {
     MaterialTypography,
     MaterialText,
     CheckBoxRow,
-    Chip,
+    NumberField,
     TextField,
+    TooltipTarget,
 } from "../../../../material/material.slint";
 import { PlotAxisSettings } from "../../../../Types.slint";
 
@@ -123,37 +124,19 @@ export component PlotAxesControls inherits VerticalLayout {
             vertical-alignment: center;
         }
 
-        Chip {
-                chip_height: MaterialStyleMetrics.size_24;
-                corner_radius: MaterialStyleMetrics.border_radius_2;
-            label: "-";
-            accessible_name: "Decrease minor subdivisions";
-            tooltip_text: "Decrease minor tick subdivisions between major ticks.";
-            clicked => {
-                if (root.axis_settings.minor_subdivisions > 0) {
-                    root.axis_settings.minor_subdivisions -= 1;
-                    root.apply_axis_settings();
-                }
-            }
-        }
-
-        MaterialText {
-            text: "\{root.axis_settings.minor_subdivisions}";
-            style: MaterialTypography.label_large;
-            color: MaterialPalette.on_surface;
-            vertical-alignment: center;
-        }
-
-        Chip {
-                chip_height: MaterialStyleMetrics.size_24;
-                corner_radius: MaterialStyleMetrics.border_radius_2;
-            label: "+";
-            accessible_name: "Increase minor subdivisions";
-            tooltip_text: "Increase minor tick subdivisions between major ticks (max 5).";
-            clicked => {
-                if (root.axis_settings.minor_subdivisions < 5) {
-                    root.axis_settings.minor_subdivisions += 1;
-                    root.apply_axis_settings();
+        TooltipTarget {
+            tooltip_text: "Number of minor tick subdivisions between major ticks (0–5).";
+            NumberField {
+                width: 96px;
+                dense: true;
+                maximum: 5.0;
+                decimals: 0;
+                text: "\{root.axis_settings.minor_subdivisions}";
+                value_changed(v) => {
+                    if (v.is-float()) {
+                        root.axis_settings.minor_subdivisions = Math.max(0, Math.min(5, Math.round(v.to-float())));
+                        root.apply_axis_settings();
+                    }
                 }
             }
         }

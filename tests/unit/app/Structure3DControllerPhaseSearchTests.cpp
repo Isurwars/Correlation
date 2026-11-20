@@ -495,9 +495,9 @@ TEST_F(Structure3DControllerPhaseSearchTests, GlassAndDisorderedPhaseRegionMarke
       getCrystalReferenceMarkers(PhaseDescriptor::QTet, PhaseDescriptor::LocalEntropy);
   EXPECT_EQ(markers_qtet_s2.size(), 4UL);
 
-  assertAreaMarker(markers_qtet_s2, "LDA", 0.786F, 0.405F, 0.14F, 0.15F);
-  assertAreaMarker(markers_qtet_s2, "HDA", 0.429F, 0.405F, 0.14F, 0.15F);
-  assertAreaMarker(markers_qtet_s2, "Liq", 0.550F, 0.246F, 0.14F, 0.15F);
+  assertAreaMarker(markers_qtet_s2, "LDA", 0.807F, 0.540F, 0.12F, 0.17F);
+  assertAreaMarker(markers_qtet_s2, "HDA", 0.679F, 0.444F, 0.12F, 0.15F);
+  assertAreaMarker(markers_qtet_s2, "Liq", 0.593F, 0.286F, 0.18F, 0.17F);
 
   const auto markers_s2_qtet =
       getCrystalReferenceMarkers(PhaseDescriptor::LocalEntropy, PhaseDescriptor::QTet);

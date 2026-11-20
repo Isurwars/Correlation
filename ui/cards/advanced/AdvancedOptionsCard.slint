@@ -18,6 +18,10 @@ export component AdvancedOptionsCard inherits OptionSection {
         label: "Local Entropy Cutoff (Rc)";
         text <=> root.lef_cutoff;
         error: root.lef_cutoff_error;
+        stepper: true;
+        step: 0.5;
+        minimum: 1.0;
+        maximum: 20.0;
         tooltip_text: "Cutoff radius (Rc) for the local entropy integration.\n\n📏 Recommended: 5.0 Å.\n\n🔬 Physics: Defines the maximum distance to consider when calculating the local entropic fingerprint around each atom. Integrates local correlations up to this distance.";
     }
 
@@ -26,6 +30,11 @@ export component AdvancedOptionsCard inherits OptionSection {
         label: "Local Entropy Sigma (σ)";
         text <=> root.lef_sigma;
         error: root.lef_sigma_error;
+        stepper: true;
+        step: 0.05;
+        minimum: 0.01;
+        maximum: 2.0;
+        decimals: 2;
         tooltip_text: "Gaussian kernel width (σ) for the local entropic fingerprint.\n\n📏 Recommended: 0.2 Å.\n\n🔬 Physics: Controls the width of the Gaussian used to broaden the local pair distribution. Too small causes discrete binning noise; too large smears structural detail.";
     }
 
@@ -34,6 +43,10 @@ export component AdvancedOptionsCard inherits OptionSection {
         label: "Hyperuniformity Samples";
         text <=> root.hyper_samples;
         error: root.hyper_samples_error;
+        stepper: true;
+        step: 1000.0;
+        minimum: 100.0;
+        decimals: 0;
         tooltip_text: "Number of random sample points for hyperuniformity calculation.\n\n📏 Recommended: 10000.\n\n🔬 Physics: More samples improve the statistical accuracy of the local number variance σ²_N(R) and hyperuniformity index χ_H(R). Higher values yield smoother curves but increase computation time.";
     }
 }

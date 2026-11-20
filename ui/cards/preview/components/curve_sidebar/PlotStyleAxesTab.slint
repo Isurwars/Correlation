@@ -14,7 +14,7 @@ import {
     DropDownMenu,
     MenuItem,
     SegmentedButton,
-    TextField,
+    NumberField,
     TooltipTarget,
 } from "../../../../material/material.slint";
 import { PlotAxisSettings, ExportConfig } from "../../../../Types.slint";
@@ -90,7 +90,7 @@ export component PlotStyleAxesTab inherits ScrollView {
 
         // 3. Typography & Stroke Metrics
         VerticalLayout {
-            spacing: MaterialStyleMetrics.spacing_4;
+            spacing: MaterialStyleMetrics.spacing_6;
 
             MaterialText {
                 text: "Typography & Strokes";
@@ -99,54 +99,67 @@ export component PlotStyleAxesTab inherits ScrollView {
             }
 
             HorizontalLayout {
-                spacing: MaterialStyleMetrics.spacing_6;
-
-                VerticalLayout {
-                    horizontal-stretch: 1;
-                    spacing: 2px;
-                    MaterialText {
-                        text: "Font Scale:";
-                        style: MaterialTypography.label_small;
-                        color: MaterialPalette.on_surface_variant;
-                    }
-                    TextField {
-                        dense: true;
-                        placeholder_text: "1.0";
-                        text <=> root.export_config.font_scale;
-                        accepted(_) => { root.apply_axis_settings(); }
-                    }
+                spacing: MaterialStyleMetrics.spacing_8;
+                alignment: space-between;
+                MaterialText {
+                    text: "Font Scale";
+                    style: MaterialTypography.label_small;
+                    color: MaterialPalette.on_surface_variant;
+                    vertical-alignment: center;
                 }
-
-                VerticalLayout {
-                    horizontal-stretch: 1;
-                    spacing: 2px;
-                    MaterialText {
-                        text: "Line (pt):";
-                        style: MaterialTypography.label_small;
-                        color: MaterialPalette.on_surface_variant;
-                    }
-                    TextField {
-                        dense: true;
-                        placeholder_text: "3.0";
-                        text <=> root.export_config.line_width;
-                        accepted(_) => { root.apply_axis_settings(); }
-                    }
+                NumberField {
+                    width: 112px;
+                    dense: true;
+                    placeholder_text: "1.0";
+                    step: 0.1;
+                    minimum: 0.5;
+                    maximum: 3.0;
+                    text <=> root.export_config.font_scale;
+                    value_changed(_) => { root.apply_axis_settings(); }
                 }
+            }
 
-                VerticalLayout {
-                    horizontal-stretch: 1;
-                    spacing: 2px;
-                    MaterialText {
-                        text: "Marker (px):";
-                        style: MaterialTypography.label_small;
-                        color: MaterialPalette.on_surface_variant;
-                    }
-                    TextField {
-                        dense: true;
-                        placeholder_text: "3.5";
-                        text <=> root.export_config.marker_size;
-                        accepted(_) => { root.apply_axis_settings(); }
-                    }
+            HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_8;
+                alignment: space-between;
+                MaterialText {
+                    text: "Line Width";
+                    style: MaterialTypography.label_small;
+                    color: MaterialPalette.on_surface_variant;
+                    vertical-alignment: center;
+                }
+                NumberField {
+                    width: 112px;
+                    dense: true;
+                    placeholder_text: "3.0";
+                    unit_suffix: "pt";
+                    step: 0.5;
+                    minimum: 0.5;
+                    maximum: 10.0;
+                    text <=> root.export_config.line_width;
+                    value_changed(_) => { root.apply_axis_settings(); }
+                }
+            }
+
+            HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_8;
+                alignment: space-between;
+                MaterialText {
+                    text: "Marker Size";
+                    style: MaterialTypography.label_small;
+                    color: MaterialPalette.on_surface_variant;
+                    vertical-alignment: center;
+                }
+                NumberField {
+                    width: 112px;
+                    dense: true;
+                    placeholder_text: "3.5";
+                    unit_suffix: "px";
+                    step: 0.5;
+                    minimum: 1.0;
+                    maximum: 12.0;
+                    text <=> root.export_config.marker_size;
+                    value_changed(_) => { root.apply_axis_settings(); }
                 }
             }
         }

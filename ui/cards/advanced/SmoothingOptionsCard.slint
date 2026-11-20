@@ -27,6 +27,11 @@ export component SmoothingOptionsCard inherits OptionSection {
         label: "Smoothing Sigma";
         text <=> root.smoothing_sigma;
         error: root.smoothing_sigma_error;
+        stepper: true;
+        step: 0.01;
+        minimum: 0.001;
+        maximum: 2.0;
+        decimals: 3;
         tooltip_text: "Standard deviation (σ) for the smoothing kernel.\n\n📏 Recommended: 0.01 Å.\n\n🔬 Physics: Controls the width of the convolution kernel applied to distribution functions. Larger σ smooths more noise but broadens real peaks — important for resolving the first g(r) peak. As a rule of thumb, σ should be comparable to or smaller than the bin width to avoid over-smoothing physical features.";
     }
 

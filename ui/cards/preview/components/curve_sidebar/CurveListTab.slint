@@ -15,23 +15,25 @@ import {
     TextField,
     TooltipTarget,
 } from "../../../../material/material.slint";
-import { CurveToggleItem } from "../../../../Types.slint";
+import { CurveToggleItem, PhysicsDiagnostics } from "../../../../Types.slint";
+import { DynamicPropertiesCard } from "../../../dynamic/DynamicPropertiesCard.slint";
 import { CurveColorPicker } from "CurveColorPicker.slint";
 
-/// Tab 0 of CurveSidebar: curve filtering, batch visibility, color swatches, and line width.
+/// Tab 0 of CurveSidebar: curve filtering, batch visibility, color swatches, and calculated properties.
 export component CurveListTab inherits VerticalLayout {
     in property <[CurveToggleItem]> curve_toggle_items: [];
     in-out property <int> active_color_picker_id: -1;
     in-out property <string> curve_filter: "";
-    in-out property <string> line_width: "";
+    in property <PhysicsDiagnostics> physics_diagnostics: {
+        deborah_level: -1,
+        hyper_level: -1,
+    };
 
     callback filter_curves(string);
     callback invert_curves();
     callback toggle_curve_visibility(int, bool);
     callback toggle_all_curves(bool);
     callback set_curve_color(int, string);
-    callback set_curve_width(string);
-    callback apply_axis_settings();
 
     spacing: MaterialStyleMetrics.spacing_6;
 
@@ -100,7 +102,7 @@ export component CurveListTab inherits VerticalLayout {
         }
     }
 
-    // 3. Curves Scrollable List
+    // 3. Curves Scrollable List (fills available space so Calculated Properties stays anchored at bottom)
     ScrollView {
         content-height: root.curve_toggle_items.length * 30px;
 
@@ -187,35 +189,9 @@ export component CurveListTab inherits VerticalLayout {
         set_curve_color(id, hex) => { root.set_curve_color(id, hex); }
     }
 
-    // 5. Line Width Configuration
-    HorizontalLayout {
-        spacing: MaterialStyleMetrics.spacing_8;
-        alignment: center;
-
-        MaterialText {
-            text: "Line Width:";
-            style: MaterialTypography.label_small;
-            color: MaterialPalette.on_surface_variant;
-            vertical-alignment: center;
-        }
-
-        TextField {
-            dense: true;
-            horizontal-stretch: 1;
-            placeholder_text: "1.5";
-            text <=> root.line_width;
-            accepted(w) => {
-                root.set_curve_width(w);
-                root.apply_axis_settings();
-            }
-        }
-
-        MaterialText {
-            text: "pt";
-            style: MaterialTypography.body_small;
-            color: MaterialPalette.on_surface_variant;
-            vertical-alignment: center;
-        }
+    // 5. Calculated Dynamics & Hyperuniformity Diagnostics (directly below curve list)
+    DynamicPropertiesCard {
+        diagnostics: root.physics_diagnostics;
     }
 }
 

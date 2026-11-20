@@ -3,15 +3,20 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-import { TextField, TooltipState } from "../../material/material.slint";
+import { NumberField, TextField, TooltipState } from "../../material/material.slint";
 
-/// Full-width TextField wrapped in a TouchArea for tooltip hover coordinates.
+/// Full-width TextField (or NumberField when stepper is true) wrapped in a TouchArea for tooltip hover coordinates.
 export component ValidatedField inherits TouchArea {
     in property <string> label;
     in-out property <string> text;
     in property <string> error: "";
     in property <bool> field_enabled: true;
     in property <string> tooltip_text: "";
+    in property <bool> stepper: false;
+    in property <float> step: 1.0;
+    in property <float> minimum: 0.0;
+    in property <float> maximum: 1000000.0;
+    in property <int> decimals: 1;
 
     out property <length> hover_x: self.absolute-position.x + self.mouse-x;
     out property <length> hover_y: self.absolute-position.y + self.mouse-y;
@@ -30,12 +35,30 @@ export component ValidatedField inherits TouchArea {
         }
     }
 
-    TextField {
-        enabled: root.field_enabled;
-        width: 100%;
-        label: root.label;
-        text <=> root.text;
-        has_error: root.error != "";
-        supporting_text: root.error;
+    min-height: content.min-height;
+    preferred-height: content.preferred-height;
+
+    content := VerticalLayout {
+        if !root.stepper: TextField {
+            enabled: root.field_enabled;
+            width: 100%;
+            label: root.label;
+            text <=> root.text;
+            has_error: root.error != "";
+            supporting_text: root.error;
+        }
+
+        if root.stepper: NumberField {
+            enabled: root.field_enabled;
+            width: 100%;
+            label: root.label;
+            text <=> root.text;
+            has_error: root.error != "";
+            supporting_text: root.error;
+            step: root.step;
+            minimum: root.minimum;
+            maximum: root.maximum;
+            decimals: root.decimals;
+        }
     }
 }

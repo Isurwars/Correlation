@@ -16,6 +16,9 @@ export component RDFOptionsCard inherits OptionSection {
         label: "RDF Max r (Å)";
         text <=> root.r_max;
         error: root.r_max_error;
+        stepper: true;
+        minimum: 1.0;
+        maximum: 100.0;
         tooltip_text: "Maximum radius for RDF calculations g(r), J(r), G(r).\n\n📏 Recommended: 20 Å (half the simulation box length).\n\n🔬 Physics: Should be ≤ L/2 to avoid self-correlation artifacts from periodic boundary conditions. For liquids, g(r) converges to 1.0 well before this limit.";
     }
 
@@ -24,6 +27,11 @@ export component RDFOptionsCard inherits OptionSection {
         label: "RDF Bin Width (Å)";
         text <=> root.r_bin_width;
         error: root.r_bin_error;
+        stepper: true;
+        step: 0.01;
+        minimum: 0.005;
+        maximum: 1.0;
+        decimals: 3;
         tooltip_text: "Bin width for the RDF histograms g(r), J(r), G(r).\n\n📏 Recommended: 0.02 Å.\n\n🔬 Physics: Smaller bins resolve finer features in the pair distribution but increase noise for small systems. 0.02 Å balances resolution and statistical quality for most simulations (>500 atoms).";
     }
 }

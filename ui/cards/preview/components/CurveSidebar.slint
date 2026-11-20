@@ -10,7 +10,6 @@ import {
     TabItem,
 } from "../../../material/material.slint";
 import { CurveToggleItem, PlotAxisSettings, TaggedPeakRecord, ExportConfig, PhysicsDiagnostics } from "../../../Types.slint";
-import { DynamicPropertiesCard } from "../../dynamic/DynamicPropertiesCard.slint";
 import { CurveListTab } from "curve_sidebar/CurveListTab.slint";
 import { PlotStyleAxesTab } from "curve_sidebar/PlotStyleAxesTab.slint";
 import { TaggedPeaksTab } from "curve_sidebar/TaggedPeaksTab.slint";
@@ -122,14 +121,12 @@ export component CurveSidebar inherits Rectangle {
             curve_toggle_items: root.curve_toggle_items;
             active_color_picker_id <=> root.active_color_picker_id;
             curve_filter <=> root.curve_filter;
-            line_width <=> root.axis_settings.line_width;
+            physics_diagnostics: root.physics_diagnostics;
             filter_curves(q) => { root.filter_curves(q); }
             invert_curves => { root.invert_curves(); }
             toggle_curve_visibility(id, vis) => { root.toggle_curve_visibility(id, vis); }
             toggle_all_curves(vis) => { root.toggle_all_curves(vis); }
             set_curve_color(id, hex) => { root.set_curve_color(id, hex); }
-            set_curve_width(w) => { root.set_curve_width(w); }
-            apply_axis_settings => { root.apply_axis_settings(); }
         }
 
         if root.active_tab == 1: PlotStyleAxesTab {
@@ -147,11 +144,6 @@ export component CurveSidebar inherits Rectangle {
             remove_tagged_peak(id) => { root.remove_tagged_peak(id); }
             clear_tagged_peaks => { root.clear_tagged_peaks(); }
             export_tagged_peaks => { root.export_tagged_peaks(); }
-        }
-
-        // 3. Calculated Dynamics & Hyperuniformity Diagnostics (auto-hides when empty)
-        DynamicPropertiesCard {
-            diagnostics: root.physics_diagnostics;
         }
     }
 }
