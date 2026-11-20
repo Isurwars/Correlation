@@ -1,6 +1,25 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.7.1] - 2026-11-19
+
+### 🚀 Features
+- **Hyperuniformity Diagnostics & Regime Classification (`HyperuniformityCalculator`, `DistributionFunctions`, `CorrelationEngine`)**:
+  - Added scalar real-space hyperuniformity metrics: local number variance scaling exponent $\beta$ ($\sigma_N^2(R) \propto R^\beta$) and large-$R$ tail index $\chi_H(R_{\max})$ (`addce704`).
+  - Added scalar reciprocal-space metrics from $S(Q)$: Torquato-Stillinger index $H = S(0^+) / S(q_{\text{peak}})$ and low-$q$ scaling exponent $\alpha$ ($S(q) \propto q^\alpha$), along with automated regime classification (*Strongly Hyperuniform*, *Effectively Hyperuniform*, *Near-Hyperuniform*, *Non-Hyperuniform Liquid*) (`addce704`).
+  - Exposed `get_hyperuniformity_beta`, `get_hyperuniformity_chi_h`, `get_hyperuniformity_h_index`, and `get_hyperuniformity_alpha` in Python bindings and added CLI summary output (`addce704`).
+- **Unified Physics Diagnostics Card & Deborah Regime Badges (`DynamicPropertiesCard.slint`, `CurveSidebar.slint`, `PlotController`)**:
+  - Upgraded `DynamicPropertiesCard` into **Calculated Properties & Diagnostics** backed by a unified `PhysicsDiagnostics` struct displaying both **Dynamics** ($D_{\text{MSD}}$, $D_{\text{VACF}}$, $\tau$, $De$, plus *Liquid-like / Viscoelastic / Solid-like* regime badge) and **Hyperuniformity** ($\beta$, $\chi_H$, $H$, $\alpha$, plus verdict badge) (`addce704`).
+  - Surfaced diagnostics in **both** `AdvancedOptionsPanel` and the **Right Plot Inspector (`CurveSidebar`)**, and corrected MSD/VACF tooltip units to `Å²/fs` (`addce704`).
+
+### ♻️ Code Refactoring
+- **Slint UI Cleanup (`toast_banner.slint`, `CommandPalette.slint`, `ShortcutsModal.slint`, `OrientationGizmo.slint`, `Structure3DSceneTab.slint`, `AppWindow.slint`)**:
+  - Removed 29 redundant default-value property bindings flagged by `slint-lsp 1.19.0` and standardized camera HUD / slab-clip formatting (`403168fb`, `e7106f70`).
+
+### 🧪 Testing
+- **Hyperuniformity Diagnostics Unit Tests (`HyperuniformityCalculatorTests.cpp`)**:
+  - Added unit test coverage verifying real-space $\beta$/$\chi_H$, reciprocal-space $H$/$\alpha$, and regime classification for hyperuniform vs non-hyperuniform liquids (`addce704`).
+
 ## [4.7.0] - 2026-11-18
 
 ### 🚀 Features
