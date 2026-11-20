@@ -1,6 +1,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.7.2] - 2026-11-20
+
+### 🚀 Features & UI/UX
+- **Material Design 3 `NumberField` Stepper Component (`number_field.slint`, `ValidatedField.slint`)**:
+  - Added a reusable Material 3 `NumberField` numeric input with integrated decrease (`−`) / increase (`+`) buttons, `UpArrow`/`DownArrow` keyboard stepping, precision rounding, and min/max clamping (`37c0b43a`).
+  - Integrated `NumberField` across `PlotStyleAxesTab` (`Font Scale`, `Line Width`, `Marker Size`), `PlotAxesControls` (`Minor Subdivisions`), `RDFOptionsCard`, `RingsOptionsCard`, `SmoothingOptionsCard`, and `AdvancedOptionsCard` (`37c0b43a`).
+- **Right 2D Panel Layout Refinement (`CurveSidebar.slint`, `CurveListTab.slint`)**:
+  - Removed the redundant Line Width input from the Curves tab and anchored `DynamicPropertiesCard` cleanly at the bottom of the Curves panel while letting the curve list fill available vertical space (`37c0b43a`).
+
+### ⚡ Performance Improvements
+- **Large-System 3D Phase Search & Halo Acceleration (`PhaseSearchService`, `LocalEntropyCalculator`, `Structure3DController`, `VulkanRenderEngine`, `SoftwareRasterizer`)**:
+  - Added incremental `FramePhaseDescriptors` and `StructureAnalyzer` (`r_bin_width = 0.0`) caching so switching descriptors or toggling 2D mode reuses cached neighbor graphs and descriptors (`f6b6f456`).
+  - Replaced per-atom colormap sampling with a 256-entry LUT + TBB parallel `applyPhaseVisuals` (`N ≥ 2048`), and skipped eager `±1` adjacent-frame prewarming on large cells (`N > 4000`) (`f6b6f456`).
+  - Accelerated `LocalEntropyCalculator` by inverting Gaussian accumulation over a $\pm 5\sigma$ radial window (cutting `std::exp()` calls by ~6–8×) (`f6b6f456`).
+  - Added zero-copy `published_scene_` snapshots in `Structure3DController`, dirty-tracked Vulkan geometry uploads (`uploadUbo`-only on camera orbit/zoom), and `sqrt`-free radial halo falloff in `SoftwareRasterizer` (`f6b6f456`).
+
+### 🐛 Bug Fixes
+- **Live 2D Phase Heatmap Updates During Dynamic Playback (`Structure3DController`, `PhaseSearchService`)**:
+  - Added `syncPhaseSearchToWindow()` to `handleSeekFrame` and `handleStepFrame`, preserved the last valid heatmap during cache misses, and dispatched progressive heatmap updates when async frames complete during large-cell playback (`f6b6f456`).
+- **Literature-Calibrated Amorphous Ice Reference Markers (`PhaseSearchTypes.hpp`, `Structure3DControllerPhaseSearchTests.cpp`)**:
+  - Updated LDA ($(q_{\text{tet}}=0.88, s_2=-6.2\,k_B)$), HDA ($(q_{\text{tet}}=0.70, s_2=-5.0\,k_B)$), and Liquid ($(q_{\text{tet}}=0.58, s_2=-3.0\,k_B)$) reference boxes against Errington & Debenedetti, Martelli et al., and Piaggi & Parrinello benchmarks (`f6b6f456`).
+
 ## [4.7.1] - 2026-11-19
 
 ### 🚀 Features
