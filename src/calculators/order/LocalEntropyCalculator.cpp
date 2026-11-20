@@ -227,46 +227,57 @@ real_t computeSingleAtomEntropy(const std::vector<real_t> &atom_distances,
       static_cast<real_t>(1.0) /
       (sigma * std::sqrt(static_cast<real_t>(2.0) * correlation::math::PI));
 
-  const real_t two_sigma_sq = static_cast<real_t>(2.0) * sigma * sigma;
+  // Pre-allocate local g(r) grid and invert loops: each neighbor r_ij only contributes
+  // within ±5*sigma (outside which exp(-12.5) < 4e-6 is negligible).
+  const real_t inv_two_sigma_sq =
+      static_cast<real_t>(1.0) / (static_cast<real_t>(2.0) * sigma * sigma);
+  const real_t window_radius = static_cast<real_t>(5.0) * sigma;
+  const real_t inv_dr = static_cast<real_t>(1.0) / dr_val;
+
+  std::vector<real_t> g_accum(num_steps + 1, static_cast<real_t>(0.0));
+  for (const real_t r_ij : atom_distances) {
+    const real_t r_lo = std::max(dr_val, r_ij - window_radius);
+    const real_t r_hi = std::min(cutoff, r_ij + window_radius);
+    const auto step_lo =
+        static_cast<size_t>(std::max<long>(1L, static_cast<long>(std::ceil(r_lo * inv_dr))));
+    const auto step_hi = std::min(num_steps, static_cast<size_t>(std::floor(r_hi * inv_dr)));
+
+    for (size_t step = step_lo; step <= step_hi; ++step) {
+      const real_t diff = static_cast<real_t>(step) * dr_val - r_ij;
+      g_accum[step] += static_cast<real_t>(std::exp(-(diff * diff) * inv_two_sigma_sq));
+    }
+
+    // Mirror boundary term at r = 0 only contributes when r_ij < window_radius
+    if (r_ij < window_radius) {
+      const real_t mirror_hi = std::min(cutoff, window_radius - r_ij);
+      const auto mirror_step_hi =
+          std::min(num_steps, static_cast<size_t>(std::floor(mirror_hi * inv_dr)));
+      for (size_t step = 1; step <= mirror_step_hi; ++step) {
+        const real_t sum_r = static_cast<real_t>(step) * dr_val + r_ij;
+        g_accum[step] += static_cast<real_t>(std::exp(-(sum_r * sum_r) * inv_two_sigma_sq));
+      }
+    }
+  }
+
+  const real_t inv_four_pi_density =
+      static_cast<real_t>(1.0) / (static_cast<real_t>(4.0) * correlation::math::PI * density);
 
   for (size_t step = 1; step <= num_steps; ++step) {
-    real_t const r_val = static_cast<real_t>(step) * dr_val;
+    const real_t r_val = static_cast<real_t>(step) * dr_val;
     if (r_val > cutoff) {
       break;
     }
 
-    real_t g_val = 0.0;
-    for (const real_t r_ij : atom_distances) {
-      // Gaussian kernel with periodic boundary corrections at r=0
-      real_t const diff = r_val - r_ij;
-      real_t const sum_r = r_val + r_ij;
-      auto const term1 = static_cast<real_t>(std::exp(-(diff * diff) / two_sigma_sq));
-      auto const term2 = static_cast<real_t>(std::exp(-(sum_r * sum_r) / two_sigma_sq));
-      g_val += term1 + term2;
+    const real_t r_sq = r_val * r_val;
+    const real_t g_val =
+        (r_sq > 0.0) ? (g_accum[step] * gaussian_prefactor * inv_four_pi_density / r_sq) : 0.0F;
+
+    real_t integrand = r_sq;
+    if (g_val > static_cast<real_t>(1e-10)) {
+      integrand = (g_val * std::log(g_val) - g_val + static_cast<real_t>(1.0)) * r_sq;
     }
 
-    g_val *= gaussian_prefactor;
-
-    // Normalization: 4 * pi * density * r^2
-    real_t const norm = static_cast<real_t>(4.0) * correlation::math::PI * density * r_val * r_val;
-    if (norm > 0.0) {
-      g_val /= norm;
-    } else {
-      g_val = 0.0;
-    }
-
-    real_t integrand = 0.0;
-    if (g_val > 1e-10) {
-      integrand = (g_val * std::log(g_val) - g_val + static_cast<real_t>(1.0)) * r_val * r_val;
-    } else {
-      integrand = r_val * r_val;
-    }
-
-    // Trapezoidal rule integration
-    real_t weight = dr_val;
-    if (step == num_steps) {
-      weight = static_cast<real_t>(0.5) * dr_val;
-    }
+    const real_t weight = (step == num_steps) ? (static_cast<real_t>(0.5) * dr_val) : dr_val;
     integral += integrand * weight;
   }
 

@@ -19,6 +19,8 @@
 #include <array>
 #include <cmath>
 #include <cstdint>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
 #include <utility>
 
 namespace correlation::app {
@@ -90,7 +92,69 @@ std::span<const real_t> extractDescriptorValues(const FramePhaseDescriptors &des
   return {};
 }
 
+constexpr std::size_t K_LUT_SIZE = 256;
+constexpr std::size_t K_PARALLEL_ATOM_THRESHOLD = 2048;
+constexpr std::size_t K_PREWARM_MAX_ATOMS = 4000;
+
+[[nodiscard]] bool isSteinhardtDescriptor(PhaseDescriptor descriptor) noexcept {
+  return descriptor == PhaseDescriptor::Q6Bar || descriptor == PhaseDescriptor::Q4Bar ||
+         descriptor == PhaseDescriptor::Q6 || descriptor == PhaseDescriptor::Q4 ||
+         descriptor == PhaseDescriptor::W6Hat || descriptor == PhaseDescriptor::W4Hat ||
+         descriptor == PhaseDescriptor::TwfNconn;
+}
+
+[[nodiscard]] bool hasSingleDescriptor(const FramePhaseDescriptors &desc,
+                                       PhaseDescriptor descriptor) noexcept {
+  if (isSteinhardtDescriptor(descriptor)) {
+    if (descriptor == PhaseDescriptor::TwfNconn) {
+      return !desc.twf_nconn.empty();
+    }
+    return desc.steinhardt != nullptr;
+  }
+  if (descriptor == PhaseDescriptor::LocalEntropy) {
+    return !desc.local_entropy.empty();
+  }
+  if (descriptor == PhaseDescriptor::QTet) {
+    return !desc.q_tet.empty();
+  }
+  return false;
+}
+
+[[nodiscard]] bool hasRequiredDescriptors(const FramePhaseDescriptors &desc,
+                                          const PhaseSearchSettings &settings) noexcept {
+  if (!hasSingleDescriptor(desc, settings.descriptor)) {
+    return false;
+  }
+  if (settings.is_2d_mode && !hasSingleDescriptor(desc, settings.descriptor_y)) {
+    return false;
+  }
+  return true;
+}
+
+[[nodiscard]] std::size_t descriptorAtomCount(const FramePhaseDescriptors &desc) noexcept {
+  if (desc.steinhardt != nullptr) {
+    return desc.steinhardt->Q6_bar.size();
+  }
+  if (!desc.local_entropy.empty()) {
+    return desc.local_entropy.size();
+  }
+  if (!desc.q_tet.empty()) {
+    return desc.q_tet.size();
+  }
+  return desc.twf_nconn.size();
+}
+
 void resetPhaseVisuals(std::span<render3d::AtomInstance> atoms) noexcept {
+  if (atoms.size() >= K_PARALLEL_ATOM_THRESHOLD) {
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, atoms.size()),
+                      [&atoms](const tbb::blocked_range<std::size_t> &range) {
+                        for (std::size_t i = range.begin(); i < range.end(); ++i) {
+                          atoms[i].halo_color = render3d::RgbaColor{.r = 0, .g = 0, .b = 0, .a = 0};
+                          atoms[i].dim_factor = 1.0F;
+                        }
+                      });
+    return;
+  }
   for (auto &atom : atoms) {
     atom.halo_color = render3d::RgbaColor{.r = 0, .g = 0, .b = 0, .a = 0};
     atom.dim_factor = 1.0F;
@@ -102,13 +166,29 @@ struct PhaseVisualContext {
   float max_x{0.0F};
   float min_y{0.0F};
   float max_y{0.0F};
-  float diff_x{0.0F};
-  std::uint8_t alpha_byte{0};
+  float inv_diff_x{0.0F};
   float halo_radius_ratio{1.0F};
   float non_matching_dim{1.0F};
-  plotters::ColormapType colormap{plotters::ColormapType::Viridis};
+  std::array<render3d::RgbaColor, K_LUT_SIZE> color_lut{};
   bool is_2d{false};
 };
+
+[[nodiscard]] std::array<render3d::RgbaColor, K_LUT_SIZE>
+buildColormapLut(plotters::ColormapType colormap, std::uint8_t alpha_byte) noexcept {
+  std::array<render3d::RgbaColor, K_LUT_SIZE> lut{};
+  constexpr double K_INV_MAX = 1.0 / static_cast<double>(K_LUT_SIZE - 1);
+  for (std::size_t i = 0; i < K_LUT_SIZE; ++i) {
+    const auto sampled =
+        plotters::ColormapService::sample(static_cast<double>(i) * K_INV_MAX, colormap);
+    lut.at(i) = render3d::RgbaColor{
+        .r = sampled.r,
+        .g = sampled.g,
+        .b = sampled.b,
+        .a = alpha_byte,
+    };
+  }
+  return lut;
+}
 
 [[nodiscard]] float computeNonMatchingDimFactor(const PhaseSearchSettings &settings) noexcept {
   if (settings.hide_non_matching) {
@@ -139,19 +219,13 @@ struct PhaseVisualContext {
 }
 
 void applyAtomVisual(render3d::AtomInstance &atom, float val_x, bool matches,
-                     const PhaseVisualContext &ctx) {
+                     const PhaseVisualContext &ctx) noexcept {
   if (matches) {
-    const double norm_t =
-        (ctx.diff_x > 1e-6F)
-            ? std::clamp(static_cast<double>((val_x - ctx.min_x) / ctx.diff_x), 0.0, 1.0)
-            : 0.5;
-    const auto sampled = plotters::ColormapService::sample(norm_t, ctx.colormap);
-    atom.halo_color = render3d::RgbaColor{
-        .r = sampled.r,
-        .g = sampled.g,
-        .b = sampled.b,
-        .a = ctx.alpha_byte,
-    };
+    const float norm_t = (ctx.inv_diff_x > 0.0F)
+                             ? std::clamp((val_x - ctx.min_x) * ctx.inv_diff_x, 0.0F, 1.0F)
+                             : 0.5F;
+    const auto lut_idx = static_cast<std::size_t>(norm_t * static_cast<float>(K_LUT_SIZE - 1));
+    atom.halo_color = ctx.color_lut.at(lut_idx);
     atom.halo_radius_ratio = ctx.halo_radius_ratio;
     atom.dim_factor = 1.0F;
   } else {
@@ -385,12 +459,18 @@ void PhaseSearchService::requestCalculation(std::size_t frame_index) {
 void PhaseSearchService::applyVisualsToScene(render3d::Scene3D &scene, std::size_t active_frame) {
   const std::scoped_lock lock(phase_mutex_);
   const auto descriptors = lru_cache_.peek(active_frame);
-  if (phase_settings_.enabled && !descriptors) {
+  if (phase_settings_.enabled &&
+      (!descriptors || !hasRequiredDescriptors(*descriptors, phase_settings_))) {
     requestCalculation(active_frame);
   }
   applyPhaseVisualsToSceneInternal(scene, descriptors.get());
-  latest_histogram_ = computePhaseHistogram(descriptors.get());
-  latest_heatmap_ = computePhaseHeatmap(descriptors.get());
+  if (!phase_settings_.enabled || descriptors != nullptr) {
+    if (phase_settings_.is_2d_mode) {
+      latest_heatmap_ = computePhaseHeatmap(descriptors.get());
+    } else {
+      latest_histogram_ = computePhaseHistogram(descriptors.get());
+    }
+  }
 }
 
 void PhaseSearchService::applyPhaseVisualsToSceneInternal(
@@ -415,19 +495,32 @@ void PhaseSearchService::applyPhaseVisualsToSceneInternal(
   const auto alpha_byte = static_cast<std::uint8_t>(std::round(halo_alpha * 255.0F));
   const float effective_halo_ratio =
       phase_settings_.halo_radius_ratio * computeLargeCellHaloBoost(scene);
+  const float diff_x = phase_settings_.max_threshold - phase_settings_.min_threshold;
 
   const PhaseVisualContext ctx{
       .min_x = phase_settings_.min_threshold,
       .max_x = phase_settings_.max_threshold,
       .min_y = phase_settings_.min_threshold_y,
       .max_y = phase_settings_.max_threshold_y,
-      .diff_x = phase_settings_.max_threshold - phase_settings_.min_threshold,
-      .alpha_byte = alpha_byte,
+      .inv_diff_x = (diff_x > 1e-6F) ? (1.0F / diff_x) : 0.0F,
       .halo_radius_ratio = effective_halo_ratio,
       .non_matching_dim = computeNonMatchingDimFactor(phase_settings_),
-      .colormap = phase_settings_.colormap,
+      .color_lut = buildColormapLut(phase_settings_.colormap, alpha_byte),
       .is_2d = is_2d,
   };
+
+  if (atoms.size() >= K_PARALLEL_ATOM_THRESHOLD) {
+    tbb::parallel_for(
+        tbb::blocked_range<std::size_t>(0, atoms.size()),
+        [&atoms, &values_x, &values_y, &ctx](const tbb::blocked_range<std::size_t> &range) {
+          for (std::size_t i = range.begin(); i < range.end(); ++i) {
+            const auto val_x = static_cast<float>(values_x[i]);
+            const bool matches = isPhaseMatch(val_x, ctx, values_y, i);
+            applyAtomVisual(atoms[i], val_x, matches, ctx);
+          }
+        });
+    return;
+  }
 
   for (std::size_t i = 0; i < atoms.size(); ++i) {
     const auto val_x = static_cast<float>(values_x[i]);
@@ -435,6 +528,55 @@ void PhaseSearchService::applyPhaseVisualsToSceneInternal(
     applyAtomVisual(atoms[i], val_x, matches, ctx);
   }
 }
+
+namespace {
+
+void populateMissingDescriptors(FramePhaseDescriptors &descriptors, const core::Cell &target_cell,
+                                const PhaseSearchSettings &settings) {
+  const auto &analyzer = *descriptors.analyzer;
+  const auto active_desc = settings.descriptor;
+  const bool is_2d = settings.is_2d_mode;
+  const auto active_desc_y = settings.descriptor_y;
+
+  const bool need_twf = (active_desc == PhaseDescriptor::TwfNconn) ||
+                        (is_2d && active_desc_y == PhaseDescriptor::TwfNconn);
+  const bool need_steinhardt =
+      isSteinhardtDescriptor(active_desc) || (is_2d && isSteinhardtDescriptor(active_desc_y));
+
+  if (need_steinhardt && (!descriptors.steinhardt ||
+                          (need_twf && !descriptors.steinhardt->q6m_normalized.has_value()))) {
+    const calculators::SteinhardtCalculator::SteinhardtOptions steinhardt_opts{
+        .keep_q6m = need_twf,
+    };
+    auto computed = calculators::SteinhardtCalculator::calculatePerAtom(target_cell, &analyzer,
+                                                                        steinhardt_opts);
+    descriptors.steinhardt =
+        std::make_shared<const calculators::SteinhardtCalculator::SteinhardtParams>(
+            std::move(computed));
+  }
+
+  const bool need_entropy = (active_desc == PhaseDescriptor::LocalEntropy) ||
+                            (is_2d && active_desc_y == PhaseDescriptor::LocalEntropy);
+  if (need_entropy && descriptors.local_entropy.empty()) {
+    descriptors.local_entropy =
+        calculators::LocalEntropyCalculator::calculatePerAtom(target_cell, &analyzer);
+  }
+
+  if (need_twf && descriptors.twf_nconn.empty()) {
+    const calculators::TenWoldeFrenkelParams twf_params{};
+    descriptors.twf_nconn = calculators::TenWoldeFrenkelCalculator::calculatePerAtom(
+        target_cell, &analyzer, twf_params, descriptors.steinhardt.get());
+  }
+
+  const bool need_qtet =
+      (active_desc == PhaseDescriptor::QTet) || (is_2d && active_desc_y == PhaseDescriptor::QTet);
+  if (need_qtet && descriptors.q_tet.empty()) {
+    descriptors.q_tet =
+        calculators::TetrahedralCalculator::calculatePerAtom(target_cell, &analyzer);
+  }
+}
+
+} // namespace
 
 std::shared_ptr<const FramePhaseDescriptors>
 PhaseSearchService::computeDescriptorsSync(std::size_t frame_index) {
@@ -452,63 +594,28 @@ PhaseSearchService::computeDescriptorsSync(std::size_t frame_index) {
     return nullptr;
   }
 
-  if (cutoffs.empty() || cutoffs.size() != target_cell.elements().size()) {
-    cutoffs = buildCellBondCutoffs(target_cell);
+  PhaseSearchSettings active_settings;
+  {
+    const std::scoped_lock lock(phase_mutex_);
+    active_settings = phase_settings_;
   }
 
-  const real_t max_dist = computeMaxBondDistance(cutoffs, target_cell.elements().size());
+  const auto existing = lru_cache_.peek(frame_index);
+  auto descriptors = existing ? std::make_shared<FramePhaseDescriptors>(*existing)
+                              : std::make_shared<FramePhaseDescriptors>();
+
   try {
-    const analysis::StructureAnalyzer analyzer(target_cell, max_dist, cutoffs, false);
-    auto descriptors = std::make_shared<FramePhaseDescriptors>();
-
-    const auto active_desc = phase_settings_.descriptor;
-    const bool is_2d = phase_settings_.is_2d_mode;
-    const auto active_desc_y = phase_settings_.descriptor_y;
-
-    const bool need_steinhardt =
-        (active_desc == PhaseDescriptor::Q6Bar || active_desc == PhaseDescriptor::Q4Bar ||
-         active_desc == PhaseDescriptor::Q6 || active_desc == PhaseDescriptor::Q4 ||
-         active_desc == PhaseDescriptor::W6Hat || active_desc == PhaseDescriptor::W4Hat ||
-         active_desc == PhaseDescriptor::TwfNconn) ||
-        (is_2d &&
-         (active_desc_y == PhaseDescriptor::Q6Bar || active_desc_y == PhaseDescriptor::Q4Bar ||
-          active_desc_y == PhaseDescriptor::Q6 || active_desc_y == PhaseDescriptor::Q4 ||
-          active_desc_y == PhaseDescriptor::W6Hat || active_desc_y == PhaseDescriptor::W4Hat ||
-          active_desc_y == PhaseDescriptor::TwfNconn));
-
-    std::optional<calculators::SteinhardtCalculator::SteinhardtParams> steinhardt_params;
-    if (need_steinhardt) {
-      const calculators::SteinhardtCalculator::SteinhardtOptions steinhardt_opts{
-          .keep_q6m = (active_desc == PhaseDescriptor::TwfNconn ||
-                       (is_2d && active_desc_y == PhaseDescriptor::TwfNconn)),
-      };
-      steinhardt_params = calculators::SteinhardtCalculator::calculatePerAtom(
-          target_cell, &analyzer, steinhardt_opts);
+    if (!descriptors->analyzer) {
+      if (cutoffs.empty() || cutoffs.size() != target_cell.elements().size()) {
+        cutoffs = buildCellBondCutoffs(target_cell);
+      }
+      const real_t max_dist = computeMaxBondDistance(cutoffs, target_cell.elements().size());
+      // Pass r_bin_width = 0.0 to skip allocating/filling unused RDF raw_histograms_ tensor
+      descriptors->analyzer = std::make_shared<const analysis::StructureAnalyzer>(
+          target_cell, max_dist, cutoffs, false, static_cast<real_t>(0.0));
     }
 
-    if (active_desc == PhaseDescriptor::LocalEntropy ||
-        (is_2d && active_desc_y == PhaseDescriptor::LocalEntropy)) {
-      descriptors->local_entropy =
-          calculators::LocalEntropyCalculator::calculatePerAtom(target_cell, &analyzer);
-    }
-
-    if (active_desc == PhaseDescriptor::TwfNconn ||
-        (is_2d && active_desc_y == PhaseDescriptor::TwfNconn)) {
-      const calculators::TenWoldeFrenkelParams twf_params{};
-      descriptors->twf_nconn = calculators::TenWoldeFrenkelCalculator::calculatePerAtom(
-          target_cell, &analyzer, twf_params, steinhardt_params ? &(*steinhardt_params) : nullptr);
-    }
-
-    if (active_desc == PhaseDescriptor::QTet || (is_2d && active_desc_y == PhaseDescriptor::QTet)) {
-      descriptors->q_tet =
-          calculators::TetrahedralCalculator::calculatePerAtom(target_cell, &analyzer);
-    }
-
-    if (steinhardt_params) {
-      descriptors->steinhardt =
-          std::make_shared<const calculators::SteinhardtCalculator::SteinhardtParams>(
-              std::move(*steinhardt_params));
-    }
+    populateMissingDescriptors(*descriptors, target_cell, active_settings);
     return descriptors;
   } catch (const std::exception &) {
     return nullptr;
@@ -518,7 +625,12 @@ PhaseSearchService::computeDescriptorsSync(std::size_t frame_index) {
 std::shared_ptr<const FramePhaseDescriptors>
 PhaseSearchService::getOrComputeDescriptors(std::size_t frame_index) {
   auto cached = lru_cache_.get(frame_index);
-  if (cached) {
+  PhaseSearchSettings active_settings;
+  {
+    const std::scoped_lock lock(phase_mutex_);
+    active_settings = phase_settings_;
+  }
+  if (cached && hasRequiredDescriptors(*cached, active_settings)) {
     return cached;
   }
   auto computed = computeDescriptorsSync(frame_index);
@@ -649,8 +761,13 @@ void PhaseSearchService::processTargetPhaseFrame(int64_t target_frame) {
     return;
   }
   const auto frame_idx = static_cast<std::size_t>(target_frame);
+  PhaseSearchSettings active_settings;
+  {
+    const std::scoped_lock lock(phase_mutex_);
+    active_settings = phase_settings_;
+  }
   auto descriptors = lru_cache_.get(frame_idx);
-  if (!descriptors) {
+  if (!descriptors || !hasRequiredDescriptors(*descriptors, active_settings)) {
     descriptors = computeDescriptorsSync(frame_idx);
     if (descriptors) {
       lru_cache_.put(frame_idx, descriptors);
@@ -658,13 +775,23 @@ void PhaseSearchService::processTargetPhaseFrame(int64_t target_frame) {
   }
 
   if (descriptors) {
-    const auto active_frame = active_frame_provider_ ? active_frame_provider_() : 0UL;
-    if (active_frame == frame_idx && on_phase_updated_) {
+    {
+      const std::scoped_lock lock(phase_mutex_);
+      if (phase_settings_.is_2d_mode) {
+        latest_heatmap_ = computePhaseHeatmap(descriptors.get());
+      } else {
+        latest_histogram_ = computePhaseHistogram(descriptors.get());
+      }
+    }
+    if (on_phase_updated_) {
       on_phase_updated_();
     }
   }
 
-  prewarmAdjacentFrames(frame_idx);
+  // Avoid saturating CPU cores by prewarming adjacent frames on large cells (>4k atoms)
+  if (!descriptors || descriptorAtomCount(*descriptors) <= K_PREWARM_MAX_ATOMS) {
+    prewarmAdjacentFrames(frame_idx);
+  }
 }
 
 void PhaseSearchService::prewarmAdjacentFrames(std::size_t center_frame) {

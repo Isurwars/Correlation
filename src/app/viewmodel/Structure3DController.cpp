@@ -103,10 +103,17 @@ void Structure3DController::requestRender(bool immediate) {
     return;
   }
   const std::scoped_lock lock(mutex_);
+  if (scene_ == nullptr) {
+    published_scene_.reset();
+    scene_dirty_ = false;
+  } else if (scene_dirty_ || published_scene_ == nullptr) {
+    published_scene_ = std::make_shared<render3d::Scene3D>(*scene_);
+    scene_dirty_ = false;
+  }
   const bool gpu_halos = false;
   const RenderPipelineSnapshot snapshot{
       .camera = camera_,
-      .scene = scene_ ? std::make_shared<render3d::Scene3D>(*scene_) : nullptr,
+      .scene = published_scene_,
       .is_active = is_active_,
       .render_bonds = render_bonds_,
       .render_wireframe = render_wireframe_,
@@ -219,6 +226,7 @@ void Structure3DController::handleToggleBonds(bool enabled) {
     render_bonds_ = enabled;
     if (render_bonds_ && scene_ != nullptr) {
       scene_->recomputeBonds(bond_cutoff_scale_, in_cell_mode_);
+      scene_dirty_ = true;
     }
   }
   safeInvokeOnWindow([this, enabled] { window_.set_structure_3d_bonds_enabled(enabled); });
@@ -281,6 +289,9 @@ void Structure3DController::handleSeekFrame(int frame_index) {
   safeInvokeOnWindow(
       [this, actual_frame] { window_.set_structure_3d_current_frame(actual_frame); });
   syncDistributionHUDToWindow();
+  if (isPhaseSearchEnabled()) {
+    syncPhaseSearchToWindow();
+  }
   requestRender();
 }
 
@@ -302,6 +313,9 @@ void Structure3DController::handleStepFrame(bool forward) {
   }
   safeInvokeOnWindow([this, current_idx] { window_.set_structure_3d_current_frame(current_idx); });
   syncDistributionHUDToWindow();
+  if (isPhaseSearchEnabled()) {
+    syncPhaseSearchToWindow();
+  }
   requestRender();
 }
 
@@ -314,6 +328,7 @@ void Structure3DController::updateBondCutoffScale(double cutoff_scale) {
     bond_cutoff_scale_ = cutoff_scale;
     if (scene_ != nullptr && render_bonds_) {
       scene_->recomputeBonds(bond_cutoff_scale_, in_cell_mode_);
+      scene_dirty_ = true;
     }
   }
   requestRender();
@@ -720,6 +735,7 @@ void Structure3DController::updateScenePhaseVisualsLocked() {
   std::size_t matched_brush = 0;
   applyRadialBrushHighlightLocked(matched_brush);
   applySlabClippingLocked();
+  scene_dirty_ = true;
 }
 
 void Structure3DController::syncCameraHudToWindow() {

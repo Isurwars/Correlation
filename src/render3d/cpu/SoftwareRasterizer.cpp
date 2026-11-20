@@ -123,8 +123,8 @@ struct CoreSphereParams {
 
 struct HaloParams {
   math::Vector3<float> screen_center;
-  float screen_r{0.0F};
-  float halo_thickness{0.0F};
+  float r_squared{0.0F};
+  float inv_halo_ring_sq{0.0F};
   RgbaColor halo_color;
 };
 
@@ -144,9 +144,9 @@ void rasterizeCoreSpherePixel(uint32_t pixel_x, uint32_t pixel_y, float diff_x, 
 
 void rasterizeHaloPixel(uint32_t pixel_x, uint32_t pixel_y, float dist_sq, const HaloParams &params,
                         SoftwareFramebuffer &framebuffer) noexcept {
-  const float dist = std::sqrt(dist_sq);
-  const float param_t = (dist - params.screen_r) / params.halo_thickness;
-  const float falloff = std::max(0.0F, 1.0F - param_t);
+  // Fast sqrt-free radial falloff using squared distance ratio across [r_squared, halo_r_squared]
+  const float falloff =
+      std::max(0.0F, 1.0F - (dist_sq - params.r_squared) * params.inv_halo_ring_sq);
   const float alpha = static_cast<float>(params.halo_color.a) * (falloff * falloff);
   const auto alpha_u8 = static_cast<uint8_t>(std::clamp(alpha, 0.0F, 255.0F));
 
@@ -207,7 +207,8 @@ void rasterizeSphere(const AtomInstance &atom, const Matrix4<float> &view,
   const float r_squared = screen_r * screen_r;
   const float halo_r_squared = halo_r * halo_r;
   const float inv_r = 1.0F / screen_r;
-  const float halo_thickness = halo_r - screen_r;
+  const float halo_ring_sq = halo_r_squared - r_squared;
+  const float inv_halo_ring_sq = (halo_ring_sq > 1e-6F) ? (1.0F / halo_ring_sq) : 0.0F;
   const float z_offset_factor = (atom.radius / effective_dist) * 0.5F;
 
   // Apply dim_factor to core atom color
@@ -228,8 +229,8 @@ void rasterizeSphere(const AtomInstance &atom, const Matrix4<float> &view,
 
   const HaloParams halo_params{
       .screen_center = screen_center,
-      .screen_r = screen_r,
-      .halo_thickness = halo_thickness,
+      .r_squared = r_squared,
+      .inv_halo_ring_sq = inv_halo_ring_sq,
       .halo_color = atom.halo_color,
   };
 

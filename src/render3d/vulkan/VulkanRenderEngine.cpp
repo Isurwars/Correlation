@@ -38,6 +38,7 @@ void VulkanRenderEngine::cleanup() noexcept {
   }
 #endif
   initialized_ = false;
+  last_uploaded_scene_ = nullptr;
 }
 
 bool VulkanRenderEngine::initialize(const ViewportDimensions &dimensions) {
@@ -264,10 +265,16 @@ std::span<const uint8_t> VulkanRenderEngine::renderFrame() {
   vkResetFences(device_->device(), 1, &render_fence_);
 
   if (scene_) {
-    buffer_manager_->uploadScene(*scene_, camera_, dimensions_);
+    if (scene_.get() != last_uploaded_scene_) {
+      buffer_manager_->uploadScene(*scene_, camera_, dimensions_);
+      last_uploaded_scene_ = scene_.get();
+    } else {
+      buffer_manager_->uploadUbo(camera_, dimensions_);
+    }
   } else {
     const Scene3D empty_scene;
     buffer_manager_->uploadScene(empty_scene, camera_, dimensions_);
+    last_uploaded_scene_ = nullptr;
   }
 
   recordRenderCommands();

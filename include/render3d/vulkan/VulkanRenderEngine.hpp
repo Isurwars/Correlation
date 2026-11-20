@@ -65,6 +65,7 @@ private:
 
   ViewportDimensions dimensions_{.width = 800, .height = 600};
   std::shared_ptr<const Scene3D> scene_;
+  const Scene3D *last_uploaded_scene_{nullptr};
   Camera3D camera_;
   bool render_bonds_{true};
   bool render_wireframe_{true};

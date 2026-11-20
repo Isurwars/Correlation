@@ -568,6 +568,8 @@ private:
   std::unique_ptr<Structure3DRenderPipeline> render_pipeline_;
   std::unique_ptr<PhaseSearchService> phase_service_;
   std::shared_ptr<render3d::Scene3D> scene_;
+  std::shared_ptr<render3d::Scene3D> published_scene_;
+  bool scene_dirty_{true};
   render3d::Camera3D camera_;
   render3d::TrajectoryStreamer streamer_;
   render3d::ViewportDimensions viewport_dims_{.width = 800, .height = 600};

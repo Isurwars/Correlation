@@ -16,6 +16,10 @@
 #include <shared_mutex>
 #include <unordered_map>
 
+namespace correlation::analysis {
+class StructureAnalyzer;
+} // namespace correlation::analysis
+
 namespace correlation::app {
 
 /**
@@ -23,6 +27,7 @@ namespace correlation::app {
  * @brief Unified container holding computed per-atom phase order parameters for a frame.
  */
 struct FramePhaseDescriptors {
+  std::shared_ptr<const analysis::StructureAnalyzer> analyzer;
   std::shared_ptr<const calculators::SteinhardtCalculator::SteinhardtParams> steinhardt;
   std::vector<real_t> local_entropy;
   std::vector<real_t> twf_nconn;

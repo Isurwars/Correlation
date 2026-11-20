@@ -115,6 +115,13 @@ public:
   void uploadScene(const Scene3D &scene, const Camera3D &camera,
                    const ViewportDimensions &dimensions);
 
+  /**
+   * @brief Uploads only camera and viewport uniforms without re-uploading static scene geometry.
+   * @param camera View and projection camera state.
+   * @param dimensions Active viewport dimensions.
+   */
+  void uploadUbo(const Camera3D &camera, const ViewportDimensions &dimensions);
+
   [[nodiscard]] VkDescriptorSet descriptorSet() const noexcept { return descriptor_set_; }
   [[nodiscard]] VkBuffer sphereQuadBuffer() const noexcept { return sphere_quad_buffer_.buffer(); }
   [[nodiscard]] VkBuffer cylinderQuadBuffer() const noexcept {
@@ -139,7 +146,6 @@ private:
   [[nodiscard]] bool createSceneUbo();
   [[nodiscard]] bool createDescriptorPoolAndSet(VkDescriptorSetLayout ubo_layout);
   [[nodiscard]] bool createStaticQuadBuffers();
-  void uploadUbo(const Camera3D &camera, const ViewportDimensions &dimensions);
   void uploadAtomInstances(const std::vector<AtomInstance> &atoms);
   void uploadBondInstances(const std::vector<BondInstance> &bonds);
   void uploadWireframeLines(const std::vector<LineSegment> &lines);
