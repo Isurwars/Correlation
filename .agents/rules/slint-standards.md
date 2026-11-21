@@ -1,3 +1,8 @@
+---
+trigger: glob
+globs: "**/*.slint, **/ui/**, **/gui/**"
+---
+
 # Rule: Slint UI Architecture, Styling, and C++ Integration Standards
 
 *Activation Mode: Glob (`**/*.slint`, `**/ui/**`, `**/gui/**`)*

@@ -1,3 +1,8 @@
+---
+trigger: glob
+globs: "shaders/**, **/render3d/**"
+---
+
 # Rule: Vulkan 3D Rendering & Compute Shaders
 
 *Activation Mode: Glob (`shaders/**`, `**/render3d/**`)*

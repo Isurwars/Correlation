@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Rule: Caveman Navigation Protocol (Token-Efficient Codebase Discovery)
 
 *Activation Mode: Universal / Default Baseline*

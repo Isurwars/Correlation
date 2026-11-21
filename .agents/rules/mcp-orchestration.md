@@ -1,3 +1,8 @@
+---
+trigger: model_decision
+description: Governs manager-led delegation to local MCP servers (llama-cpp-mcp) for isolated math kernels or focused analysis.
+---
+
 # Rule: MCP Orchestration Protocol (Manager-Led Delegation)
 
 *Activation Mode: As Needed / Scoped Delegation*

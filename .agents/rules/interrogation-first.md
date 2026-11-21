@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Rule: Interrogation-First Protocol (Mandatory Pre-Implementation Gate)
 
 *Activation Mode: Universal / Default Baseline*

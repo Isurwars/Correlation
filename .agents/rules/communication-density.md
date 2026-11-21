@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Rule: Communication Density & Token Economy
 
 *Activation Mode: Universal / Default Baseline*

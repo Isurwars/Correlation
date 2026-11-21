@@ -1,3 +1,8 @@
+---
+trigger: glob
+globs: "**/*.hpp, **/*.cpp, **/*.cxx, **/*.h, **/*.cc, **/*.c, **/*.cu, **/*.cuh"
+---
+
 # Rule: Function Cognitive Complexity Gate
 
 *Activation Mode: Glob (`**/*.{hpp,cpp,cxx,h,cc,c,cu,cuh}`)*

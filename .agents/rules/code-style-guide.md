@@ -1,3 +1,8 @@
+---
+trigger: glob
+globs: "**/*.hpp, **/*.cpp, **/*.cxx, **/*.h, **/*.cc, **/*.c"
+---
+
 # Rule: C++ Code Style, Memory Safety, and Modern Standards
 
 *Activation Mode: Glob (`**/*.{hpp,cpp,cxx,h,cc,c}`)*

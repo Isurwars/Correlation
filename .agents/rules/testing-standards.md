@@ -1,3 +1,8 @@
+---
+trigger: glob
+globs: "**/tests/**, **/*Tests.cpp, **/*Test.cpp, **/tests/test_*.py"
+---
+
 # Rule: Testing Standards & Coverage
 
 *Activation Mode: Glob (`**/tests/**`, `**/*Tests.cpp`, `**/*Test.cpp`, `**/tests/test_*.py`)*

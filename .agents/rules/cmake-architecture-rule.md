@@ -1,3 +1,8 @@
+---
+trigger: glob
+globs: "**/CMakeLists.txt, **/*.cmake, CMakePresets.json"
+---
+
 # Rule: Target-Centric CMake Architecture & Build Safety
 
 *Activation Mode: Glob (`**/CMakeLists.txt`, `**/*.cmake`, `CMakePresets.json`)*

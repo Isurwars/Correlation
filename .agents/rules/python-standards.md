@@ -1,3 +1,8 @@
+---
+trigger: glob
+globs: "**/*.py, **/*.pyi, pyproject.toml"
+---
+
 # Rule: Python Standards, Type Checking & Bindings Interop
 
 *Activation Mode: Glob (`**/*.py`, `**/*.pyi`, `pyproject.toml`)*

@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Rule: Git Workflow & Conventional Commits
 
 *Activation Mode: Universal / Default Baseline*

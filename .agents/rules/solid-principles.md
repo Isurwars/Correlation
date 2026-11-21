@@ -1,3 +1,8 @@
+---
+trigger: glob
+globs: "**/*.hpp, **/*.cpp, **/*.cxx, **/*.h, **/*.cc"
+---
+
 # Rule: SOLID Architectural Principles for High-Performance C++23
 
 *Activation Mode: Glob (`**/*.{hpp,cpp,cxx,h,cc}`)*
