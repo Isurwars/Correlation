@@ -958,17 +958,44 @@ class MLIPOutput:
     def __init__(self) -> None:
         ...
     @property
+    def charges(self) -> numpy.typing.NDArray[numpy.float32]:
+        """
+        Per-atom partial or Born effective charges (e).
+        """
+    @charges.setter
+    def charges(self, arg0: numpy.typing.ArrayLike) -> None:
+        ...
+    @property
+    def energy_variance(self) -> float:
+        """
+        Committee or ensemble energy prediction variance (eV^2).
+        """
+    @energy_variance.setter
+    def energy_variance(self, arg0: typing.SupportsFloat | typing.SupportsIndex) -> None:
+        ...
+    @property
+    def force_variances(self) -> list[float]:
+        """
+        Committee or ensemble per-atom force variances ((eV/A)^2).
+        """
+    @force_variances.setter
+    def force_variances(self, arg0: collections.abc.Sequence[typing.SupportsFloat | typing.SupportsIndex]) -> None:
+        ...
+    @property
     def forces(self) -> numpy.typing.NDArray[numpy.float32]:
         """
         Predicted atomic forces as a (N, 3) NumPy array.
         """
+    @forces.setter
+    def forces(self, arg0: numpy.typing.ArrayLike) -> None:
+        ...
     @property
-    def ldos(self) -> list[list[float]]:
+    def ldos(self) -> numpy.typing.NDArray[numpy.float32]:
         """
         Local Density of States matrix [N_atoms x N_bins].
         """
     @ldos.setter
-    def ldos(self, arg0: collections.abc.Sequence[collections.abc.Sequence[typing.SupportsFloat | typing.SupportsIndex]]) -> None:
+    def ldos(self, arg0: numpy.typing.ArrayLike) -> None:
         ...
     @property
     def ldos_bins(self) -> int:
@@ -979,12 +1006,52 @@ class MLIPOutput:
     def ldos_bins(self, arg0: typing.SupportsInt | typing.SupportsIndex) -> None:
         ...
     @property
+    def ldos_e_max(self) -> float:
+        """
+        Upper bound of LDOS energy grid in eV.
+        """
+    @ldos_e_max.setter
+    def ldos_e_max(self, arg0: typing.SupportsFloat | typing.SupportsIndex) -> None:
+        ...
+    @property
+    def ldos_e_min(self) -> float:
+        """
+        Lower bound of LDOS energy grid in eV.
+        """
+    @ldos_e_min.setter
+    def ldos_e_min(self, arg0: typing.SupportsFloat | typing.SupportsIndex) -> None:
+        ...
+    @property
+    def ldos_sigma(self) -> float:
+        """
+        Gaussian broadening sigma in eV.
+        """
+    @ldos_sigma.setter
+    def ldos_sigma(self, arg0: typing.SupportsFloat | typing.SupportsIndex) -> None:
+        ...
+    @property
+    def magmoms(self) -> numpy.typing.NDArray[numpy.float32]:
+        """
+        Per-atom site magnetic moment vectors (mu_B).
+        """
+    @magmoms.setter
+    def magmoms(self, arg0: numpy.typing.ArrayLike) -> None:
+        ...
+    @property
     def per_atom_energy(self) -> list[float]:
         """
         Site-resolved per-atom energy.
         """
     @per_atom_energy.setter
     def per_atom_energy(self, arg0: collections.abc.Sequence[typing.SupportsFloat | typing.SupportsIndex]) -> None:
+        ...
+    @property
+    def stress(self) -> numpy.typing.NDArray[numpy.float32]:
+        """
+        Virial stress tensor as a (3, 3) NumPy array.
+        """
+    @stress.setter
+    def stress(self, arg0: numpy.typing.ArrayLike) -> None:
         ...
     @property
     def total_energy(self) -> float:

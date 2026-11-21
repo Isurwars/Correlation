@@ -255,8 +255,10 @@ def create_correlation_ase_calculator(
 
             # Compute requested structural correlations
             if "rdf" in active_descriptors:
-                calc = correlation.calculators.RDFCalculator()
-                self.results["rdf"] = calc.calculate(cell) if hasattr(calc, "calculate") else None
+                df = correlation.DistributionFunctions(cell, cutoff=rdf_cutoff)
+                bin_width = rdf_cutoff / float(max(rdf_bins, 1))
+                df.calculate_rdf(r_max=rdf_cutoff, bin_width=bin_width)
+                self.results["rdf"] = df.get_histogram("g_r")
 
     return CorrelationASECalculator()
 
