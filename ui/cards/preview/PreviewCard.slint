@@ -28,7 +28,7 @@ import {
     PhaseHeatmapView,
     CrystalMarker,
 } from "./components/PhaseHeatmapView.slint";
-import { TabItem } from "../../material/ui/components/tab_item.slint";
+import { DualViewPlotSelector } from "./components/DualViewPlotSelector.slint";
 
 export {
     CrystalMarker,
@@ -319,105 +319,9 @@ export component PreviewCard inherits FilledCard {
                     padding: 0px;
 
                     // Unified View Selector Bar for Dual View mode
-                    if (root.active_tab == 2): Rectangle {
-                        height: 38px;
-                        background: MaterialPalette.surface_container;
-
-                        HorizontalLayout {
-                            alignment: start;
-                            spacing: 8px;
-                            padding-left: 8px;
-                            padding-right: 8px;
-                            padding-top: 5px;
-                            padding-bottom: 5px;
-
-                            Rectangle {
-                                height: 28px;
-                                background: MaterialPalette.surface_container_high;
-                                border-radius: MaterialStyleMetrics.border_radius_8;
-                                border-width: 1px;
-                                border-color: MaterialPalette.outline_variant;
-                                clip: true;
-
-                                HorizontalLayout {
-
-                                    TabItem {
-                                        text: "g(r)";
-                                        compact: true;
-                                        active: root.dual_left_view == 0;
-                                        clicked => {
-                                            root.dual_left_view = 0;
-                                            root.select_dual_left_plot(0);
-                                        }
-                                    }
-
-                                    Rectangle {
-                                        width: 1px;
-                                        background: MaterialPalette.outline_variant;
-                                    }
-
-                                    TabItem {
-                                        text: "S(Q)";
-                                        compact: true;
-                                        active: root.dual_left_view == 1;
-                                        clicked => {
-                                            root.dual_left_view = 1;
-                                            root.select_dual_left_plot(1);
-                                        }
-                                    }
-
-                                    Rectangle {
-                                        width: 1px;
-                                        background: MaterialPalette.outline_variant;
-                                    }
-
-                                    TabItem {
-                                        text: "PAD";
-                                        compact: true;
-                                        active: root.dual_left_view == 2;
-                                        clicked => {
-                                            root.dual_left_view = 2;
-                                            root.select_dual_left_plot(2);
-                                        }
-                                    }
-
-                                    Rectangle {
-                                        width: 1px;
-                                        background: MaterialPalette.outline_variant;
-                                    }
-
-                                    TabItem {
-                                        text: "XRD";
-                                        compact: true;
-                                        active: root.dual_left_view == 3;
-                                        clicked => {
-                                            root.dual_left_view = 3;
-                                            root.select_dual_left_plot(3);
-                                        }
-                                    }
-
-                                    Rectangle {
-                                        width: 1px;
-                                        background: MaterialPalette.outline_variant;
-                                    }
-
-                                    TabItem {
-                                        text: "2D Heatmap";
-                                        compact: true;
-                                        active: root.dual_left_view == 4;
-                                        clicked => {
-                                            root.dual_left_view = 4;
-                                            root.select_dual_left_plot(4);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (root.active_tab == 2): Rectangle {
-                        height: 1px;
-                        background: MaterialPalette.outline_variant;
+                    if (root.active_tab == 2): DualViewPlotSelector {
+                        active_view <=> root.dual_left_view;
+                        select_view(idx) => { root.select_dual_left_plot(idx); }
                     }
 
                     // Content View Host

@@ -1,0 +1,125 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialTypography,
+    MaterialStyleMetrics,
+    MaterialText,
+} from "../../../material/material.slint";
+import { ViewportColorbar } from "./ViewportColorbar.slint";
+import { ViewportScaleBar } from "./ViewportScaleBar.slint";
+import { CameraHudState } from "../../../Types.slint";
+
+export component Structure3DOverlays inherits Rectangle {
+    in property <bool> file_loaded: false;
+    in property <int> total_frames: 0;
+    in property <string> backend_label: "";
+    in property <bool> gpu_accelerated: false;
+    in property <string> radial_brush_text: "";
+    in property <bool> phase_enabled: false;
+    in property <bool> phase_panel_open: false;
+    in property <string> phase_descriptor_name: "q̄₆";
+    in property <float> phase_min_threshold: 0.46;
+    in property <float> phase_max_threshold: 0.58;
+    in property <image> phase_colorbar_image;
+    in property <CameraHudState> camera_hud;
+
+    // Dual-View Radial Shell Brushing Status Pill (top-center)
+    if (root.file_loaded && root.radial_brush_text != ""): Rectangle {
+        x: (parent.width - self.width) / 2;
+        y: 12px;
+        width: brush_txt.preferred-width + 20px;
+        height: 26px;
+        border-radius: MaterialStyleMetrics.border_radius_full;
+        background: MaterialPalette.primary_container.with_alpha(92%);
+        border-width: 1px;
+        border-color: MaterialPalette.primary;
+
+        brush_txt := MaterialText {
+            width: 100%;
+            height: 100%;
+            text: root.radial_brush_text;
+            style: MaterialTypography.label_small_prominent;
+            color: MaterialPalette.on_primary_container;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+
+    // Render Backend Status Badge (below workflow pill)
+    if (root.backend_label != ""): Rectangle {
+        x: 60px;
+        y: root.file_loaded ? 54px : 12px;
+        width: backend_row.preferred-width + 16px;
+        height: 22px;
+        border-radius: MaterialStyleMetrics.border_radius_12;
+        background: MaterialPalette.surface_container_highest.with_alpha(75%);
+        border-width: 1px;
+        border-color: root.gpu_accelerated
+            ? MaterialPalette.tertiary.with_alpha(45%)
+            : MaterialPalette.outline_variant.with_alpha(45%);
+
+        backend_row := HorizontalLayout {
+            padding-left: 8px;
+            padding-right: 8px;
+            spacing: 6px;
+            alignment: center;
+
+            Rectangle {
+                width: 7px;
+                height: 7px;
+                y: (parent.height - self.height) / 2;
+                border-radius: 3.5px;
+                background: root.gpu_accelerated
+                    ? MaterialPalette.tertiary
+                    : MaterialPalette.on_surface_variant;
+            }
+
+            MaterialText {
+                text: root.backend_label;
+                font-size: MaterialTypography.label_small.font_size;
+                color: MaterialPalette.on_surface_variant;
+                vertical-alignment: center;
+            }
+        }
+    }
+
+    // Subtle bottom navigation hint
+    if (root.file_loaded): Rectangle {
+        x: (parent.width - self.width) / 2;
+        y: parent.height - self.height - (root.total_frames > 1 ? 66px : 10px);
+        width: hint_text.preferred-width + 20px;
+        height: 24px;
+        border-radius: MaterialStyleMetrics.border_radius_12;
+        background: MaterialPalette.surface_container_highest.with_alpha(60%);
+
+        hint_text := MaterialText {
+            text: "🖱 Left: Orbit  •  Right: Pan  •  Scroll: Zoom  •  Space: Play/Pause  •  ←/→: Step  •  H: Home";
+            font-size: MaterialTypography.label_medium.font_size;
+            color: MaterialPalette.on_surface_variant.with_alpha(80%);
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+
+    // Floating Viewport Colorbar (bottom-right when halos enabled and sidebar collapsed)
+    if (root.phase_enabled && !root.phase_panel_open): ViewportColorbar {
+        x: parent.width - self.width - 16px;
+        y: parent.height - self.height - (root.total_frames > 1 ? 104px : 54px);
+        descriptor_name: root.phase_descriptor_name;
+        min_val: root.phase_min_threshold;
+        max_val: root.phase_max_threshold;
+        colorbar_image: root.phase_colorbar_image;
+    }
+
+    // Calibrated Dynamic Angstrom Scale Bar (bottom-right)
+    if (root.file_loaded && root.camera_hud.scale_bar_label != ""): ViewportScaleBar {
+        x: parent.width - self.width - 16px;
+        y: parent.height - self.height - (root.total_frames > 1 ? 66px : 16px);
+        bar_width: root.camera_hud.scale_bar_px;
+        label: root.camera_hud.scale_bar_label;
+    }
+}

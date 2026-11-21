@@ -4,16 +4,13 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 import {
-    MaterialStyleMetrics,
     MaterialPalette,
-    MaterialTypography,
     MaterialText,
-    Chip,
 } from "../../../material/material.slint";
 import { CrystalMarker } from "./PhaseHeatmapTypes.slint";
 import { PhaseHeatmapAxisSelector } from "./PhaseHeatmapAxisSelector.slint";
 import { PhaseHeatmapCanvas } from "./PhaseHeatmapCanvas.slint";
-import { PhaseColorbar } from "./PhaseColorbar.slint";
+import { PhaseHeatmapToolbar } from "./PhaseHeatmapToolbar.slint";
 
 export { CrystalMarker }
 
@@ -59,137 +56,26 @@ export component PhaseHeatmapView inherits Rectangle {
         padding-bottom: root.full_height ? 8px : 0px;
         spacing: root.full_height ? 6px : 5px;
 
-        // 1. Telemetry & Snapshot Export Header
-        HorizontalLayout {
-            alignment: space-between;
-
-            MaterialText {
-                text: "2D Phase Heatmap";
-                font-size: MaterialTypography.label_small.font_size;
-                font-weight: 700;
-                color: MaterialPalette.on_surface;
-                vertical-alignment: center;
-            }
-
-            HorizontalLayout {
-                spacing: 6px;
-                alignment: center;
-
-                // Reset Selection Button
-                reset_btn := TouchArea {
-                    width: 22px;
-                    height: 20px;
-                    mouse-cursor: pointer;
-                    accessible-role: button;
-                    accessible-label: "Reset 2D Selection Box";
-                    clicked => { root.reset_selection(); }
-
-                    Rectangle {
-                        border-radius: MaterialStyleMetrics.border_radius_4;
-                        background: reset_btn.has-hover ? MaterialPalette.surface_container_highest : transparent;
-
-                        MaterialText {
-                            width: 100%;
-                            height: 100%;
-                            text: "↺";
-                            font-size: MaterialTypography.label_medium.font_size;
-                            color: MaterialPalette.on_surface_variant;
-                            horizontal-alignment: center;
-                            vertical-alignment: center;
-                        }
-                    }
-                }
-
-                // Export PNG Snapshot Button
-                export_btn := TouchArea {
-                    height: 20px;
-                    mouse-cursor: pointer;
-                    accessible-role: button;
-                    accessible-label: "Export Heatmap PNG";
-                    clicked => { root.export_png(); }
-
-                    Rectangle {
-                        border-radius: MaterialStyleMetrics.border_radius_4;
-                        background: export_btn.has-hover ? MaterialPalette.primary.with_alpha(25%) : MaterialPalette.surface_container_highest;
-                        border-width: 1px;
-                        border-color: export_btn.has-hover ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(40%);
-
-                        HorizontalLayout {
-                            padding-left: 6px;
-                            padding-right: 6px;
-                            spacing: 4px;
-                            alignment: center;
-
-                            MaterialText {
-                                text: "📸 PNG";
-                                font-size: 10px;
-                                font-weight: 600;
-                                color: MaterialPalette.primary;
-                                vertical-alignment: center;
-                            }
-                        }
-                    }
-                }
-            }
+        // 1. Header, Presets, Colormap & Colorbar
+        PhaseHeatmapToolbar {
+            colorbar_image: root.colorbar_image;
+            colormap_index: root.colormap_index;
+            preset_index: root.preset_index;
+            descriptor_name_x: root.descriptor_name_x;
+            sel_min_x: root.sel_min_x;
+            sel_max_x: root.sel_max_x;
+            set_colormap(idx) => { root.set_colormap(idx); }
+            set_preset(idx) => { root.set_preset(idx); }
+            export_png => { root.export_png(); }
+            reset_selection => { root.reset_selection(); }
         }
 
-        // 2. Crystal Presets Quick Selector
-        HorizontalLayout {
-            spacing: 3px;
-            height: 22px;
-            property <[string]> preset_labels: ["Custom", "Liquid", "Glass", "a-Net", "FCC", "HCP", "BCC", "Ico", "Diamond"];
-
-            for p_label[p_idx] in self.preset_labels: Chip {
-                horizontal-stretch: 1;
-                chip_height: MaterialStyleMetrics.size_20;
-                corner_radius: MaterialStyleMetrics.border_radius_8;
-                label: p_label;
-                selected: root.preset_index == p_idx;
-                active_bg: MaterialPalette.primary.with_alpha(25%);
-                active_fg: MaterialPalette.primary;
-                tooltip_text: "Apply " + p_label + " 2D phase preset.";
-                clicked => { root.set_preset(p_idx); }
-            }
-        }
-
-        // 3. Axis Selection Rows
+        // 2. Axis Selection Rows
         PhaseHeatmapAxisSelector {
             descriptor_x: root.descriptor_x;
             descriptor_y: root.descriptor_y;
             set_descriptor_x(idx) => { root.set_descriptor_x(idx); }
             set_descriptor_y(idx) => { root.set_descriptor_y(idx); }
-        }
-
-        // 4. Color Palette & Colormap Selector
-        HorizontalLayout {
-            spacing: 8px;
-            alignment: center;
-
-            // Colormap Selector Chips
-            HorizontalLayout {
-                spacing: 2px;
-                property <[string]> cmap_labels: ["Viridis", "Plasma", "Cool", "Turbo"];
-
-                for c_label[c_idx] in self.cmap_labels: Chip {
-                    chip_height: MaterialStyleMetrics.size_20;
-                    corner_radius: MaterialStyleMetrics.border_radius_8;
-                    label: c_label;
-                    selected: root.colormap_index == c_idx;
-                    active_bg: MaterialPalette.tertiary.with_alpha(25%);
-                    active_fg: MaterialPalette.tertiary;
-                    tooltip_text: "Switch colormap to " + c_label;
-                    clicked => { root.set_colormap(c_idx); }
-                }
-            }
-
-            // Scalar Palette Colorbar Bar
-            PhaseColorbar {
-                horizontal-stretch: 1;
-                colorbar_image: root.colorbar_image;
-                min_threshold: root.sel_min_x;
-                max_threshold: root.sel_max_x;
-                descriptor_name: root.descriptor_name_x;
-            }
         }
 
         // Coordinate Axis Descriptor Banner

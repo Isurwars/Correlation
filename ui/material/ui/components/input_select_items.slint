@@ -1,0 +1,99 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import { Icons } from "../icons/icons.slint";
+import { StateLayerArea } from "./state_layer.slint";
+import { MaterialPalette } from "../styling/material_palette.slint";
+import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
+import { MaterialTypography } from "../styling/material_typography.slint";
+import { MaterialText } from "./material_text.slint";
+
+export component InputSelectItem {
+    in property <string> text;
+    in property <bool> enabled: true;
+    in property <bool> selected: false;
+    in property <bool> highlighted: false;
+    in property <bool> is_match: true;
+
+    callback clicked();
+
+    property <bool> flash_active: false;
+
+    visible: root.is_match;
+    height: root.is_match ? MaterialStyleMetrics.size_40 : 0px;
+
+    background_layer := Rectangle {
+        clip: true;
+        background: root.flash_active ? MaterialPalette.primary_container
+            : root.highlighted ? MaterialPalette.surface_container_highest
+            : root.selected ? MaterialPalette.surface_container_high
+            : transparent;
+        animate background { duration: 150ms; }
+
+        state_area := StateLayerArea {
+            color: MaterialPalette.on_surface;
+            enabled: root.enabled;
+
+            HorizontalLayout {
+                padding_left: MaterialStyleMetrics.padding_12;
+                padding_right: MaterialStyleMetrics.padding_12;
+                spacing: MaterialStyleMetrics.spacing_8;
+                alignment: center;
+
+                Rectangle {
+                    width: 16px;
+                    height: 16px;
+                    if root.selected: Image {
+                        width: 16px;
+                        height: 16px;
+                        source: Icons.check;
+                        colorize: MaterialPalette.primary;
+                    }
+                }
+
+                MaterialText {
+                    horizontal-stretch: 1;
+                    text: root.text;
+                    style: MaterialTypography.body_medium;
+                    color: root.selected ? MaterialPalette.primary : MaterialPalette.on_surface;
+                    vertical-alignment: center;
+                }
+            }
+
+            clicked => {
+                root.flash_active = true;
+                root.clicked();
+            }
+        }
+    }
+}
+
+export component InputSelectEmptyItem {
+    in property <string> text: "No matches found";
+
+    height: MaterialStyleMetrics.size_40;
+
+    HorizontalLayout {
+        padding_left: MaterialStyleMetrics.padding_16;
+        padding_right: MaterialStyleMetrics.padding_16;
+        spacing: MaterialStyleMetrics.spacing_8;
+        alignment: center;
+
+        Image {
+            width: 16px;
+            height: 16px;
+            source: Icons.remove;
+            colorize: MaterialPalette.on_surface_variant;
+        }
+
+        MaterialText {
+            horizontal-stretch: 1;
+            text: root.text;
+            style: MaterialTypography.body_medium;
+            color: MaterialPalette.on_surface_variant;
+            vertical-alignment: center;
+        }
+    }
+}
