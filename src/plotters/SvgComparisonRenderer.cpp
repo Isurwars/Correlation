@@ -170,14 +170,12 @@ struct SvgComparisonRenderer {
       strict_y = true;
     }
 
-    const real_t x_step =
-        (config->manual_ticks && config->x_major_step > static_cast<real_t>(0.0))
-            ? config->x_major_step
-            : static_cast<real_t>(0.0);
-    const real_t y_step =
-        (config->manual_ticks && config->y_major_step > static_cast<real_t>(0.0))
-            ? config->y_major_step
-            : static_cast<real_t>(0.0);
+    const real_t x_step = (config->manual_ticks && config->x_major_step > static_cast<real_t>(0.0))
+                              ? config->x_major_step
+                              : static_cast<real_t>(0.0);
+    const real_t y_step = (config->manual_ticks && config->y_major_step > static_cast<real_t>(0.0))
+                              ? config->y_major_step
+                              : static_cast<real_t>(0.0);
 
     if (config->y_log_scale) {
       raw_y_min = std::max(raw_y_min, static_cast<real_t>(1e-4));
@@ -200,10 +198,10 @@ struct SvgComparisonRenderer {
         8, strict_y, y_step);
     if (config->y_log_scale && !config->manual_ticks) {
       yScale.ticks.clear();
-      const int min_exp = static_cast<int>(
-          std::floor(std::log10(std::max(raw_y_min, static_cast<real_t>(1e-6)))));
-      const int max_exp = static_cast<int>(
-          std::ceil(std::log10(std::max(raw_y_max, static_cast<real_t>(1e-6)))));
+      const int min_exp =
+          static_cast<int>(std::floor(std::log10(std::max(raw_y_min, static_cast<real_t>(1e-6)))));
+      const int max_exp =
+          static_cast<int>(std::ceil(std::log10(std::max(raw_y_max, static_cast<real_t>(1e-6)))));
       for (int exp = min_exp; exp <= max_exp; ++exp) {
         yScale.ticks.push_back(static_cast<real_t>(std::pow(10.0, exp)));
       }

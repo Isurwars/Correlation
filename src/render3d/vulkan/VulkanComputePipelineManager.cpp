@@ -47,9 +47,10 @@ void VulkanComputePipelineManager::cleanup() noexcept {
   initialized_ = false;
 }
 
-bool VulkanComputePipelineManager::createComputePipeline(
-    ComputeKernelType type, std::span<const uint32_t> spirv,
-    uint32_t push_constant_size, uint32_t num_storage_buffers) {
+bool VulkanComputePipelineManager::createComputePipeline(ComputeKernelType type,
+                                                         std::span<const uint32_t> spirv,
+                                                         uint32_t push_constant_size,
+                                                         uint32_t num_storage_buffers) {
   const auto idx = static_cast<size_t>(type);
 
   std::vector<VkDescriptorSetLayoutBinding> bindings(num_storage_buffers);
@@ -140,31 +141,36 @@ bool VulkanComputePipelineManager::initialize(VkDevice device) {
   device_ = device;
 
   // 1. NeighborGrid: 3 buffers, 48-byte push constants
-  if (!createComputePipeline(ComputeKernelType::NeighborGrid, shaders::NeighborGridCompSpv, 48, 3)) {
+  if (!createComputePipeline(ComputeKernelType::NeighborGrid, shaders::NeighborGridCompSpv, 48,
+                             3)) {
     cleanup();
     return false;
   }
 
   // 2. SteinhardtOrder: 5 buffers, 48-byte push constants
-  if (!createComputePipeline(ComputeKernelType::SteinhardtOrder, shaders::SteinhardtOrderCompSpv, 48, 5)) {
+  if (!createComputePipeline(ComputeKernelType::SteinhardtOrder, shaders::SteinhardtOrderCompSpv,
+                             48, 5)) {
     cleanup();
     return false;
   }
 
   // 3. TetrahedralOrder: 4 buffers, 40-byte push constants
-  if (!createComputePipeline(ComputeKernelType::TetrahedralOrder, shaders::TetrahedralOrderCompSpv, 40, 4)) {
+  if (!createComputePipeline(ComputeKernelType::TetrahedralOrder, shaders::TetrahedralOrderCompSpv,
+                             40, 4)) {
     cleanup();
     return false;
   }
 
   // 4. LocalEntropy: 4 buffers, 48-byte push constants
-  if (!createComputePipeline(ComputeKernelType::LocalEntropy, shaders::LocalEntropyCompSpv, 48, 4)) {
+  if (!createComputePipeline(ComputeKernelType::LocalEntropy, shaders::LocalEntropyCompSpv, 48,
+                             4)) {
     cleanup();
     return false;
   }
 
   // 5. TenWoldeFrenkel: 4 buffers, 16-byte push constants
-  if (!createComputePipeline(ComputeKernelType::TenWoldeFrenkel, shaders::TenWoldeFrenkelCompSpv, 16, 4)) {
+  if (!createComputePipeline(ComputeKernelType::TenWoldeFrenkel, shaders::TenWoldeFrenkelCompSpv,
+                             16, 4)) {
     cleanup();
     return false;
   }
@@ -176,7 +182,8 @@ bool VulkanComputePipelineManager::initialize(VkDevice device) {
   }
 
   // 7. HistogramReduce: 2 buffers, 20-byte push constants
-  if (!createComputePipeline(ComputeKernelType::HistogramReduce, shaders::HistogramReduceCompSpv, 20, 2)) {
+  if (!createComputePipeline(ComputeKernelType::HistogramReduce, shaders::HistogramReduceCompSpv,
+                             20, 2)) {
     cleanup();
     return false;
   }

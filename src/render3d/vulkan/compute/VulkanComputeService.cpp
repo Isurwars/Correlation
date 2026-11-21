@@ -149,7 +149,8 @@ void VulkanComputeService::ensureBuffers(uint32_t num_atoms) {
   desc.size = allocated_atom_capacity_ * sizeof(uint32_t);
   neighbor_counts_.ensureCapacity(device_, physical_device_, desc);
 
-  desc.size = static_cast<VkDeviceSize>(allocated_atom_capacity_) * MAX_NEIGHBORS * sizeof(uint32_t);
+  desc.size =
+      static_cast<VkDeviceSize>(allocated_atom_capacity_) * MAX_NEIGHBORS * sizeof(uint32_t);
   neighbor_indices_.ensureCapacity(device_, physical_device_, desc);
 
   desc.size = static_cast<VkDeviceSize>(allocated_atom_capacity_) * 4U * sizeof(float);
@@ -212,8 +213,7 @@ bool VulkanComputeService::evaluateOrderParametersAndApplyHalos(
 
   // Pass 1: Neighbor Grid
   {
-    VkDescriptorSetLayout layout =
-        pipelines_.descriptorSetLayout(ComputeKernelType::NeighborGrid);
+    VkDescriptorSetLayout layout = pipelines_.descriptorSetLayout(ComputeKernelType::NeighborGrid);
     const VkDescriptorSetAllocateInfo ds_alloc{
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
         .pNext = nullptr,
@@ -310,8 +310,8 @@ bool VulkanComputeService::evaluateOrderParametersAndApplyHalos(
       .dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
   };
   vkCmdPipelineBarrier(cmd_buffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-                       VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &barrier_neighbor, 0, nullptr,
-                       0, nullptr);
+                       VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &barrier_neighbor, 0, nullptr, 0,
+                       nullptr);
 
   // Pass 2: Steinhardt Order Parameters
   {
