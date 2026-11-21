@@ -80,6 +80,13 @@ if(CORRELATION_USE_FAST_LINKER AND UNIX AND NOT APPLE AND NOT (EMSCRIPTEN OR BUI
     endforeach()
 endif()
 
+add_library(correlation_config INTERFACE)
+if(USE_SINGLE_PRECISION)
+    target_compile_definitions(correlation_config INTERFACE CORRELATION_USE_SINGLE_PRECISION=1)
+else()
+    target_compile_definitions(correlation_config INTERFACE CORRELATION_USE_SINGLE_PRECISION=0)
+endif()
+
 if(BUILD_WITH_CUDA AND BUILD_WITH_HIP)
     message(FATAL_ERROR "Cannot build with both BUILD_WITH_CUDA and BUILD_WITH_HIP enabled. Choose one GPU backend.")
 endif()
@@ -87,13 +94,13 @@ endif()
 if(BUILD_WITH_CUDA)
     enable_language(CUDA)
     find_package(CUDAToolkit REQUIRED)
-    add_compile_definitions(CORRELATION_USE_CUDA CORRELATION_USE_GPU)
+    target_compile_definitions(correlation_config INTERFACE CORRELATION_USE_CUDA CORRELATION_USE_GPU)
     message(STATUS "CUDA enabled — GPU calculators will be built")
 endif()
 
 if(BUILD_WITH_HIP)
     enable_language(HIP)
-    add_compile_definitions(CORRELATION_USE_HIP CORRELATION_USE_GPU)
+    target_compile_definitions(correlation_config INTERFACE CORRELATION_USE_HIP CORRELATION_USE_GPU)
     message(STATUS "HIP enabled — GPU calculators will be built")
 endif()
 
@@ -116,13 +123,6 @@ if(EMSCRIPTEN OR BUILD_WASM)
         "-Wl,--no-whole-archive"
     )
     set(CMAKE_CXX_LINK_LIBRARY_USING_WHOLE_ARCHIVE_SUPPORTED TRUE)
-endif()
-
-add_library(correlation_config INTERFACE)
-if(USE_SINGLE_PRECISION)
-    target_compile_definitions(correlation_config INTERFACE CORRELATION_USE_SINGLE_PRECISION=1)
-else()
-    target_compile_definitions(correlation_config INTERFACE CORRELATION_USE_SINGLE_PRECISION=0)
 endif()
 
 include(GNUInstallDirs)
@@ -156,8 +156,8 @@ endif()
 # Workaround for Clang <= 18 with libstdc++: libstdc++ guards <expected> behind __cpp_concepts >= 202002L,
 # while Clang <= 18 defaults __cpp_concepts to 201907L.
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND NOT CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "19.0")
-    add_compile_definitions(__cpp_concepts=202002L)
-    add_compile_options(-Wno-builtin-macro-redefined)
+    target_compile_definitions(correlation_config INTERFACE __cpp_concepts=202002L)
+    target_compile_options(correlation_config INTERFACE -Wno-builtin-macro-redefined)
 endif()
 
 # Enable experimental C++ library features (needed for libc++ std::jthread starting in LLVM 18)
