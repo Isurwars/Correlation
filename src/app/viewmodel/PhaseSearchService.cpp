@@ -94,7 +94,17 @@ std::span<const real_t> extractDescriptorValues(const FramePhaseDescriptors &des
 
 constexpr std::size_t K_LUT_SIZE = 256;
 constexpr std::size_t K_PARALLEL_ATOM_THRESHOLD = 2048;
-constexpr std::size_t K_PREWARM_MAX_ATOMS = 4000;
+constexpr std::size_t K_CACHE_MEMORY_BUDGET_BYTES = 256UL * 1024UL * 1024UL;
+constexpr std::size_t K_BYTES_PER_ATOM_ESTIMATE = 72UL;
+constexpr std::size_t K_MIN_CACHE_FRAMES = 32UL;
+constexpr std::size_t K_MAX_CACHE_FRAMES = 512UL;
+
+[[nodiscard]] std::size_t computeAdaptiveCacheCapacity(std::size_t atom_count) noexcept {
+  const std::size_t per_frame_bytes =
+      std::max<std::size_t>(1UL, atom_count * K_BYTES_PER_ATOM_ESTIMATE);
+  return std::clamp(K_CACHE_MEMORY_BUDGET_BYTES / per_frame_bytes, K_MIN_CACHE_FRAMES,
+                    K_MAX_CACHE_FRAMES);
+}
 
 [[nodiscard]] bool isSteinhardtDescriptor(PhaseDescriptor descriptor) noexcept {
   return descriptor == PhaseDescriptor::Q6Bar || descriptor == PhaseDescriptor::Q4Bar ||
@@ -129,19 +139,6 @@ constexpr std::size_t K_PREWARM_MAX_ATOMS = 4000;
     return false;
   }
   return true;
-}
-
-[[nodiscard]] std::size_t descriptorAtomCount(const FramePhaseDescriptors &desc) noexcept {
-  if (desc.steinhardt != nullptr) {
-    return desc.steinhardt->Q6_bar.size();
-  }
-  if (!desc.local_entropy.empty()) {
-    return desc.local_entropy.size();
-  }
-  if (!desc.q_tet.empty()) {
-    return desc.q_tet.size();
-  }
-  return desc.twf_nconn.size();
 }
 
 void resetPhaseVisuals(std::span<render3d::AtomInstance> atoms) noexcept {
@@ -257,8 +254,16 @@ PhaseSearchService::~PhaseSearchService() {
 }
 
 void PhaseSearchService::setEnabled(bool enabled) {
-  const std::scoped_lock lock(phase_mutex_);
-  phase_settings_.enabled = enabled;
+  {
+    const std::scoped_lock lock(phase_mutex_);
+    phase_settings_.enabled = enabled;
+    if (enabled) {
+      startPrebakeLocked();
+    } else {
+      cancelPrebakeLocked();
+    }
+  }
+  phase_cv_.notify_one();
 }
 
 bool PhaseSearchService::isEnabled() const noexcept {
@@ -267,12 +272,18 @@ bool PhaseSearchService::isEnabled() const noexcept {
 }
 
 void PhaseSearchService::setDescriptor(PhaseDescriptor descriptor) {
-  const std::scoped_lock lock(phase_mutex_);
-  phase_settings_.preset = CrystalPreset::Custom;
-  phase_settings_.descriptor = descriptor;
-  const auto [domain_min, domain_max] = getDescriptorDomain(descriptor);
-  phase_settings_.min_threshold = domain_min;
-  phase_settings_.max_threshold = domain_max;
+  {
+    const std::scoped_lock lock(phase_mutex_);
+    phase_settings_.preset = CrystalPreset::Custom;
+    phase_settings_.descriptor = descriptor;
+    const auto [domain_min, domain_max] = getDescriptorDomain(descriptor);
+    phase_settings_.min_threshold = domain_min;
+    phase_settings_.max_threshold = domain_max;
+    if (phase_settings_.enabled) {
+      startPrebakeLocked();
+    }
+  }
+  phase_cv_.notify_one();
 }
 
 PhaseDescriptor PhaseSearchService::descriptor() const noexcept {
@@ -281,28 +292,34 @@ PhaseDescriptor PhaseSearchService::descriptor() const noexcept {
 }
 
 void PhaseSearchService::setCrystalPreset(CrystalPreset preset) {
-  const std::scoped_lock lock(phase_mutex_);
-  phase_settings_.preset = preset;
-  if (preset != CrystalPreset::Custom) {
-    const auto config = getPresetConfig(preset);
-    if (phase_settings_.is_2d_mode && config.is_2d) {
-      phase_settings_.descriptor = config.descriptor_2d_x;
-      phase_settings_.min_threshold = config.min_threshold_2d_x;
-      phase_settings_.max_threshold = config.max_threshold_2d_x;
-      phase_settings_.descriptor_y = config.descriptor_2d_y;
-      phase_settings_.min_threshold_y = config.min_threshold_2d_y;
-      phase_settings_.max_threshold_y = config.max_threshold_2d_y;
-    } else {
-      phase_settings_.descriptor = config.descriptor;
-      phase_settings_.min_threshold = config.min_threshold;
-      phase_settings_.max_threshold = config.max_threshold;
-      if (config.is_2d) {
+  {
+    const std::scoped_lock lock(phase_mutex_);
+    phase_settings_.preset = preset;
+    if (preset != CrystalPreset::Custom) {
+      const auto config = getPresetConfig(preset);
+      if (phase_settings_.is_2d_mode && config.is_2d) {
+        phase_settings_.descriptor = config.descriptor_2d_x;
+        phase_settings_.min_threshold = config.min_threshold_2d_x;
+        phase_settings_.max_threshold = config.max_threshold_2d_x;
         phase_settings_.descriptor_y = config.descriptor_2d_y;
         phase_settings_.min_threshold_y = config.min_threshold_2d_y;
         phase_settings_.max_threshold_y = config.max_threshold_2d_y;
+      } else {
+        phase_settings_.descriptor = config.descriptor;
+        phase_settings_.min_threshold = config.min_threshold;
+        phase_settings_.max_threshold = config.max_threshold;
+        if (config.is_2d) {
+          phase_settings_.descriptor_y = config.descriptor_2d_y;
+          phase_settings_.min_threshold_y = config.min_threshold_2d_y;
+          phase_settings_.max_threshold_y = config.max_threshold_2d_y;
+        }
       }
     }
+    if (phase_settings_.enabled) {
+      startPrebakeLocked();
+    }
   }
+  phase_cv_.notify_one();
 }
 
 CrystalPreset PhaseSearchService::crystalPreset() const noexcept {
@@ -388,8 +405,14 @@ bool PhaseSearchService::isHideNonMatching() const noexcept {
 }
 
 void PhaseSearchService::set2DMode(bool is_2d) {
-  const std::scoped_lock lock(phase_mutex_);
-  phase_settings_.is_2d_mode = is_2d;
+  {
+    const std::scoped_lock lock(phase_mutex_);
+    phase_settings_.is_2d_mode = is_2d;
+    if (phase_settings_.enabled) {
+      startPrebakeLocked();
+    }
+  }
+  phase_cv_.notify_one();
 }
 
 bool PhaseSearchService::is2DMode() const noexcept {
@@ -398,12 +421,18 @@ bool PhaseSearchService::is2DMode() const noexcept {
 }
 
 void PhaseSearchService::setDescriptorY(PhaseDescriptor desc_y) {
-  const std::scoped_lock lock(phase_mutex_);
-  phase_settings_.preset = CrystalPreset::Custom;
-  phase_settings_.descriptor_y = desc_y;
-  const auto [dmin, dmax] = getDescriptorDomain(desc_y);
-  phase_settings_.min_threshold_y = dmin;
-  phase_settings_.max_threshold_y = dmax;
+  {
+    const std::scoped_lock lock(phase_mutex_);
+    phase_settings_.preset = CrystalPreset::Custom;
+    phase_settings_.descriptor_y = desc_y;
+    const auto [dmin, dmax] = getDescriptorDomain(desc_y);
+    phase_settings_.min_threshold_y = dmin;
+    phase_settings_.max_threshold_y = dmax;
+    if (phase_settings_.enabled) {
+      startPrebakeLocked();
+    }
+  }
+  phase_cv_.notify_one();
 }
 
 PhaseDescriptor PhaseSearchService::descriptorY() const noexcept {
@@ -449,7 +478,73 @@ const PhaseDescriptorsLRUCache &PhaseSearchService::lruCache() const noexcept { 
 
 PhaseDescriptorsLRUCache &PhaseSearchService::lruCache() noexcept { return lru_cache_; }
 
-void PhaseSearchService::clearCache() { lru_cache_.clear(); }
+void PhaseSearchService::clearCache() {
+  cancelPrebake();
+  lru_cache_.clear();
+}
+
+void PhaseSearchService::startPrebakeLocked() { prebake_active_.store(true); }
+
+void PhaseSearchService::cancelPrebakeLocked() {
+  prebake_active_.store(false);
+  is_computing_.store(false);
+}
+
+void PhaseSearchService::startPrebake() {
+  {
+    const std::scoped_lock lock(phase_mutex_);
+    if (!phase_settings_.enabled) {
+      return;
+    }
+    startPrebakeLocked();
+  }
+  phase_cv_.notify_one();
+}
+
+void PhaseSearchService::cancelPrebake() {
+  const std::scoped_lock lock(phase_mutex_);
+  cancelPrebakeLocked();
+}
+
+bool PhaseSearchService::isFrameReady(std::size_t frame_index) const {
+  PhaseSearchSettings active_settings;
+  {
+    const std::scoped_lock lock(phase_mutex_);
+    active_settings = phase_settings_;
+  }
+  if (!active_settings.enabled) {
+    return true;
+  }
+  const auto cached = lru_cache_.peek(frame_index);
+  return cached != nullptr && hasRequiredDescriptors(*cached, active_settings);
+}
+
+PhasePrebakeStatus PhaseSearchService::prebakeStatus() const {
+  PhaseSearchSettings active_settings;
+  {
+    const std::scoped_lock lock(phase_mutex_);
+    active_settings = phase_settings_;
+  }
+  const std::size_t total = total_frames_provider_ ? total_frames_provider_() : 0UL;
+  if (!active_settings.enabled || total == 0) {
+    return PhasePrebakeStatus{};
+  }
+  const std::size_t target_total = std::min(total, lru_cache_.capacity());
+  const std::size_t cached =
+      lru_cache_.countMatching([&active_settings](const FramePhaseDescriptors &desc) {
+        return hasRequiredDescriptors(desc, active_settings);
+      });
+  const float progress =
+      (target_total > 0)
+          ? std::clamp(static_cast<float>(cached) / static_cast<float>(target_total), 0.0F, 1.0F)
+          : 1.0F;
+  return PhasePrebakeStatus{
+      .progress = progress,
+      .cached_frames = cached,
+      .total_frames = target_total,
+      .is_computing = is_computing_.load() || (prebake_active_.load() && cached < target_total),
+  };
+}
 
 void PhaseSearchService::requestCalculation(std::size_t frame_index) {
   requested_phase_frame_.store(static_cast<int64_t>(frame_index));
@@ -616,6 +711,9 @@ PhaseSearchService::computeDescriptorsSync(std::size_t frame_index) {
     }
 
     populateMissingDescriptors(*descriptors, target_cell, active_settings);
+    // Release heavy StructureAnalyzer neighbor graphs so scalar descriptors fit 32..512 frames
+    descriptors->analyzer.reset();
+    lru_cache_.setCapacity(computeAdaptiveCacheCapacity(target_cell.atomCount()));
     return descriptors;
   } catch (const std::exception &) {
     return nullptr;
@@ -746,20 +844,67 @@ PhaseSearchService::computePhaseHeatmap(const FramePhaseDescriptors *descriptors
   return heatmap;
 }
 
-int64_t PhaseSearchService::waitForNextPhaseFrame() {
-  std::unique_lock lock(phase_mutex_);
-  phase_cv_.wait(
-      lock, [this] { return stop_phase_worker_.load() || requested_phase_frame_.load() >= 0; });
-  if (stop_phase_worker_.load()) {
+int64_t
+PhaseSearchService::findNextUncachedPrebakeFrame(const PhaseSearchSettings &settings) const {
+  const std::size_t total = total_frames_provider_ ? total_frames_provider_() : 0UL;
+  if (total == 0) {
     return -1;
   }
-  return requested_phase_frame_.exchange(-1);
+  const std::size_t cap = std::min(total, lru_cache_.capacity());
+  const std::size_t start = active_frame_provider_ ? (active_frame_provider_() % total) : 0UL;
+  for (std::size_t offset = 0; offset < cap; ++offset) {
+    const std::size_t cand = (start + offset) % total;
+    const auto cached = lru_cache_.peek(cand);
+    if (!cached || !hasRequiredDescriptors(*cached, settings)) {
+      return static_cast<int64_t>(cand);
+    }
+  }
+  return -1;
+}
+
+int64_t PhaseSearchService::waitForNextPhaseFrame() {
+  while (!stop_phase_worker_.load()) {
+    PhaseSearchSettings active_settings;
+    {
+      std::unique_lock lock(phase_mutex_);
+      phase_cv_.wait(lock, [this] {
+        return stop_phase_worker_.load() || requested_phase_frame_.load() >= 0 ||
+               prebake_active_.load();
+      });
+      if (stop_phase_worker_.load()) {
+        return -1;
+      }
+      if (const int64_t req = requested_phase_frame_.exchange(-1); req >= 0) {
+        return req;
+      }
+      active_settings = phase_settings_;
+    }
+
+    if (!prebake_active_.load() || !active_settings.enabled) {
+      prebake_active_.store(false);
+      is_computing_.store(false);
+      continue;
+    }
+
+    const int64_t next_frame = findNextUncachedPrebakeFrame(active_settings);
+    if (next_frame >= 0) {
+      return next_frame;
+    }
+
+    prebake_active_.store(false);
+    is_computing_.store(false);
+    if (on_phase_updated_) {
+      on_phase_updated_();
+    }
+  }
+  return -1;
 }
 
 void PhaseSearchService::processTargetPhaseFrame(int64_t target_frame) {
   if (target_frame < 0) {
     return;
   }
+  is_computing_.store(true);
   const auto frame_idx = static_cast<std::size_t>(target_frame);
   PhaseSearchSettings active_settings;
   {
@@ -774,47 +919,19 @@ void PhaseSearchService::processTargetPhaseFrame(int64_t target_frame) {
     }
   }
 
-  if (descriptors) {
-    {
-      const std::scoped_lock lock(phase_mutex_);
-      if (phase_settings_.is_2d_mode) {
-        latest_heatmap_ = computePhaseHeatmap(descriptors.get());
-      } else {
-        latest_histogram_ = computePhaseHistogram(descriptors.get());
-      }
-    }
-    if (on_phase_updated_) {
-      on_phase_updated_();
+  const std::size_t active_frame = active_frame_provider_ ? active_frame_provider_() : 0UL;
+  if (descriptors && frame_idx == active_frame) {
+    const std::scoped_lock lock(phase_mutex_);
+    if (phase_settings_.is_2d_mode) {
+      latest_heatmap_ = computePhaseHeatmap(descriptors.get());
+    } else {
+      latest_histogram_ = computePhaseHistogram(descriptors.get());
     }
   }
 
-  // Avoid saturating CPU cores by prewarming adjacent frames on large cells (>4k atoms)
-  if (!descriptors || descriptorAtomCount(*descriptors) <= K_PREWARM_MAX_ATOMS) {
-    prewarmAdjacentFrames(frame_idx);
-  }
-}
-
-void PhaseSearchService::prewarmAdjacentFrames(std::size_t center_frame) {
-  const std::size_t total = total_frames_provider_ ? total_frames_provider_() : 0UL;
-  if (total <= 1) {
-    return;
-  }
-  // Prewarm only immediate adjacent frames (±1) to prevent CPU core starvation and RAM bloat
-  constexpr std::array<int64_t, 2> K_OFFSETS{-1, 1};
-  for (const auto offset : K_OFFSETS) {
-    if (stop_phase_worker_.load() || requested_phase_frame_.load() >= 0) {
-      break;
-    }
-    const auto cand_idx = static_cast<int64_t>(center_frame) + offset;
-    if (cand_idx >= 0 && std::cmp_less(cand_idx, total)) {
-      const auto frame_idx = static_cast<std::size_t>(cand_idx);
-      if (!lru_cache_.contains(frame_idx)) {
-        auto pre_descriptors = computeDescriptorsSync(frame_idx);
-        if (pre_descriptors) {
-          lru_cache_.put(frame_idx, std::move(pre_descriptors));
-        }
-      }
-    }
+  is_computing_.store(prebake_active_.load() || requested_phase_frame_.load() >= 0);
+  if (on_phase_updated_) {
+    on_phase_updated_();
   }
 }
 

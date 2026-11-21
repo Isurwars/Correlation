@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include "analysis/StructureAnalyzer.hpp"
 #include "app/viewmodel/PhaseSearchTypes.hpp"
 #include "app/viewmodel/SteinhardtLRUCache.hpp"
 #include "calculators/order/SteinhardtCalculator.hpp"
@@ -28,6 +27,17 @@
 #include <utility>
 
 namespace correlation::app {
+
+/**
+ * @struct PhasePrebakeStatus
+ * @brief Telemetry snapshot of background trajectory phase descriptor pre-baking.
+ */
+struct PhasePrebakeStatus {
+  float progress{0.0F};
+  std::size_t cached_frames{0};
+  std::size_t total_frames{0};
+  bool is_computing{false};
+};
 
 /**
  * @class PhaseSearchService
@@ -112,6 +122,10 @@ public:
   [[nodiscard]] PhaseDescriptorsLRUCache &lruCache() noexcept;
 
   void requestCalculation(std::size_t frame_index);
+  void startPrebake();
+  void cancelPrebake();
+  [[nodiscard]] bool isFrameReady(std::size_t frame_index) const;
+  [[nodiscard]] PhasePrebakeStatus prebakeStatus() const;
   void applyVisualsToScene(render3d::Scene3D &scene, std::size_t active_frame);
   void clearCache();
 
@@ -130,7 +144,9 @@ private:
   void phaseWorkerLoop();
   [[nodiscard]] int64_t waitForNextPhaseFrame();
   void processTargetPhaseFrame(int64_t target_frame);
-  void prewarmAdjacentFrames(std::size_t center_frame);
+  [[nodiscard]] int64_t findNextUncachedPrebakeFrame(const PhaseSearchSettings &settings) const;
+  void startPrebakeLocked();
+  void cancelPrebakeLocked();
 
   void applyPhaseVisualsToSceneInternal(render3d::Scene3D &scene,
                                         const FramePhaseDescriptors *descriptors);
@@ -149,6 +165,8 @@ private:
   mutable std::mutex phase_mutex_;
   std::condition_variable phase_cv_;
   std::atomic<bool> stop_phase_worker_{false};
+  std::atomic<bool> prebake_active_{false};
+  std::atomic<bool> is_computing_{false};
   std::atomic<int64_t> requested_phase_frame_{-1};
   std::jthread phase_worker_;
 };

@@ -33,6 +33,9 @@ export component Structure3DViewport inherits Rectangle {
     // Phase Search & Halos
     in-out property <bool> phase_panel_open: false;
     in property <bool> phase_enabled: false;
+    in property <bool> phase_computing: false;
+    in property <float> phase_prebake_progress: 0.0;
+    in property <int> phase_cached_frames: 0;
     in property <int> phase_preset: 0;
     in property <int> phase_descriptor: 0;
     in property <int> phase_colormap: 0;
@@ -124,6 +127,7 @@ export component Structure3DViewport inherits Rectangle {
     property <length> down_mouse_y: 0px;
     property <bool> is_dragging: false;
     property <bool> is_panning: false;
+    property <bool> has_interacted: false;
 
     // Main 3D Viewport Area
     viewport_container := Rectangle {
@@ -175,6 +179,9 @@ export component Structure3DViewport inherits Rectangle {
                     let line_dy = (self.mouse-y - root.last_mouse_y) / 1px;
                     root.last_mouse_x = self.mouse-x;
                     root.last_mouse_y = self.mouse-y;
+                    if (Math.abs(line_dx) > 0.5 || Math.abs(line_dy) > 0.5) {
+                        root.has_interacted = true;
+                    }
 
                     if (root.is_panning) {
                         root.pan_3d(line_dx, line_dy);
@@ -266,16 +273,20 @@ export component Structure3DViewport inherits Rectangle {
         if (root.file_loaded && root.total_frames > 1): TrajectoryPlaybackBar {
             x: (parent.width - self.width) / 2;
             y: parent.height - self.height - 12px;
-            width: Math.min(parent.width - 48px, 680px);
+            width: Math.min(parent.width - 24px, 680px);
             current_frame <=> root.current_frame;
             total_frames: root.total_frames;
             is_playing <=> root.is_playing;
+            phase_enabled: root.phase_enabled;
+            phase_computing: root.phase_computing;
+            phase_prebake_progress: root.phase_prebake_progress;
+            phase_cached_frames: root.phase_cached_frames;
             seek_frame(idx) => { root.seek_frame(idx); }
             step_frame(fwd) => { root.step_frame(fwd); }
         }
 
-        // Floating Distribution HUD Card (bottom-left, visible when analysis data exists & HUD active)
-        if (root.file_loaded && root.dist_has_data && root.dist_hud_visible): DistributionHUDCard {
+        // Floating Distribution HUD Card (bottom-left, hidden in very narrow Dual-View panes to avoid overlap)
+        if (root.file_loaded && root.dist_has_data && root.dist_hud_visible && viewport_container.width >= 440px): DistributionHUDCard {
             x: 16px;
             y: parent.height - self.height - (root.total_frames > 1 ? 66px : 16px);
             chart_image: root.dist_chart_image;
@@ -292,16 +303,17 @@ export component Structure3DViewport inherits Rectangle {
             }
         }
 
-        // Status Pills, Backend Badge, Nav Hint, Colorbar & Scale Bar Overlays
+        // Status Pills, Computing Indicator, Nav Hint, Colorbar & Scale Bar Overlays
         Structure3DOverlays {
             width: 100%;
             height: 100%;
             file_loaded: root.file_loaded;
             total_frames: root.total_frames;
-            backend_label: root.backend_label;
-            gpu_accelerated: root.gpu_accelerated;
+            has_interacted: root.has_interacted;
             radial_brush_text: root.radial_brush_text;
             phase_enabled: root.phase_enabled;
+            phase_computing: root.phase_computing;
+            phase_cached_frames: root.phase_cached_frames;
             phase_panel_open: root.phase_panel_open;
             phase_descriptor_name: root.phase_descriptor_name;
             phase_min_threshold: root.phase_min_threshold;

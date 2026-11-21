@@ -256,6 +256,9 @@ export component AppWindow inherits Window {
     // Phase Search properties
     in-out property <bool> structure_3d_phase_panel_open: false;
     in property <bool> structure_3d_phase_enabled: false;
+    in property <bool> structure_3d_phase_computing: false;
+    in property <float> structure_3d_phase_prebake_progress: 0.0;
+    in property <int> structure_3d_phase_cached_frames: 0;
     in property <int> structure_3d_phase_preset: 0;
     in property <int> structure_3d_phase_descriptor: 0;
     in property <int> structure_3d_phase_colormap: 0;
@@ -1141,6 +1144,9 @@ export component AppWindow inherits Window {
                     }
 
                     structure_3d_phase_enabled: root.structure_3d_phase_enabled;
+                    structure_3d_phase_computing: root.structure_3d_phase_computing;
+                    structure_3d_phase_prebake_progress: root.structure_3d_phase_prebake_progress;
+                    structure_3d_phase_cached_frames: root.structure_3d_phase_cached_frames;
                     structure_3d_phase_preset: root.structure_3d_phase_preset;
                     structure_3d_phase_descriptor: root.structure_3d_phase_descriptor;
                     structure_3d_phase_colormap: root.structure_3d_phase_colormap;
@@ -1364,6 +1370,8 @@ export component AppWindow inherits Window {
                 update_available: root.update_available;
                 update_version: root.update_version;
                 update_url: root.update_url;
+                backend_label: root.structure_3d_backend_label;
+                gpu_accelerated: root.structure_3d_gpu_accelerated;
                 open_url(url) => {
                     root.open_url(url);
                 }

@@ -20,7 +20,13 @@ export component TrajectoryPlaybackBar inherits Rectangle {
     in-out property <bool> is_playing: false;
     in-out property <int> playback_mode: 0; // 0: Loop (🔁), 1: Ping-Pong (🔀), 2: Play-Once (➡️)
     in-out property <int> speed_index: 1; // 0: 0.5x, 1: 1.0x, 2: 2.0x, 3: 5.0x
+    in property <bool> phase_enabled: false;
+    in property <bool> phase_computing: false;
+    in property <float> phase_prebake_progress: 0.0;
+    in property <int> phase_cached_frames: 0;
     property <bool> play_forward: true;
+    property <bool> compact_mode: root.width < 460px;
+    property <bool> ultra_compact: root.width < 340px;
 
     out property <duration> playback_interval:
         root.speed_index == 0 ? 100ms :
@@ -67,12 +73,33 @@ export component TrajectoryPlaybackBar inherits Rectangle {
     background: MaterialPalette.surface_container_highest.with_alpha(92%);
     border-width: 1.5px;
     border-color: MaterialPalette.outline_variant.with_alpha(60%);
+    clip: true;
+
+    // Slim Phase Pre-bake Progress Indicator along bottom edge
+    if (root.phase_enabled && (root.phase_computing || root.phase_prebake_progress < 0.999)): Rectangle {
+        x: 18px;
+        y: parent.height - 4px;
+        width: Math.max(0px, parent.width - 36px);
+        height: 2.5px;
+        border-radius: 1.25px;
+        background: MaterialPalette.surface_container_high;
+
+        Rectangle {
+            x: 0px;
+            y: 0px;
+            width: parent.width * Math.min(1.0, Math.max(0.0, root.phase_prebake_progress));
+            height: 100%;
+            border-radius: 1.25px;
+            background: MaterialPalette.primary;
+            animate width { duration: MaterialAnimations.base_duration; easing: ease-out; }
+        }
+    }
 
     HorizontalLayout {
         height: 100%;
-        padding-left: 12px;
-        padding-right: 14px;
-        spacing: 10px;
+        padding-left: root.compact_mode ? 8px : 12px;
+        padding-right: root.compact_mode ? 8px : 14px;
+        spacing: root.compact_mode ? 6px : 10px;
 
         // Step Previous Button
         TooltipTarget {
@@ -204,7 +231,7 @@ export component TrajectoryPlaybackBar inherits Rectangle {
         }
 
         // Playback Mode Button (Loop / Ping-Pong / Play-Once)
-        mode_btn := TooltipTarget {
+        if !root.ultra_compact: mode_btn := TooltipTarget {
             width: 30px;
             height: 30px;
             y: (parent.height - self.height) / 2;
@@ -239,7 +266,7 @@ export component TrajectoryPlaybackBar inherits Rectangle {
         }
 
         // Playback Speed Selector Pill (0.5x, 1x, 2x, 5x)
-        speed_btn := TooltipTarget {
+        if !root.ultra_compact: speed_btn := TooltipTarget {
             width: speed_layout.preferred-width + 16px;
             height: 28px;
             y: (parent.height - self.height) / 2;

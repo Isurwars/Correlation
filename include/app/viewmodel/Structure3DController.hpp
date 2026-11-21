@@ -542,6 +542,7 @@ public:
 
 private:
   void requestPhaseCalculation(std::size_t frame_index);
+  [[nodiscard]] bool canAdvancePlaybackFrameLocked(bool forward) const;
   void updateScenePhaseVisuals();
   void updateScenePhaseVisualsLocked();
   void applyAtomInspectionHighlightLocked();

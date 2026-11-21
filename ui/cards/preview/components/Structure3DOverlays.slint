@@ -16,10 +16,11 @@ import { CameraHudState } from "../../../Types.slint";
 export component Structure3DOverlays inherits Rectangle {
     in property <bool> file_loaded: false;
     in property <int> total_frames: 0;
-    in property <string> backend_label: "";
-    in property <bool> gpu_accelerated: false;
+    in property <bool> has_interacted: false;
     in property <string> radial_brush_text: "";
     in property <bool> phase_enabled: false;
+    in property <bool> phase_computing: false;
+    in property <int> phase_cached_frames: 0;
     in property <bool> phase_panel_open: false;
     in property <string> phase_descriptor_name: "q̄₆";
     in property <float> phase_min_threshold: 0.46;
@@ -49,22 +50,20 @@ export component Structure3DOverlays inherits Rectangle {
         }
     }
 
-    // Render Backend Status Badge (below workflow pill)
-    if (root.backend_label != ""): Rectangle {
-        x: 60px;
-        y: root.file_loaded ? 54px : 12px;
-        width: backend_row.preferred-width + 16px;
-        height: 22px;
-        border-radius: MaterialStyleMetrics.border_radius_12;
-        background: MaterialPalette.surface_container_highest.with_alpha(75%);
+    // Non-blocking Phase Pre-bake / Computing Status Pill (top-center)
+    if (root.file_loaded && root.phase_enabled && root.phase_computing): Rectangle {
+        x: (parent.width - self.width) / 2;
+        y: root.radial_brush_text != "" ? 44px : 12px;
+        width: phase_comp_row.preferred-width + 20px;
+        height: 26px;
+        border-radius: MaterialStyleMetrics.border_radius_full;
+        background: MaterialPalette.surface_container_highest.with_alpha(92%);
         border-width: 1px;
-        border-color: root.gpu_accelerated
-            ? MaterialPalette.tertiary.with_alpha(45%)
-            : MaterialPalette.outline_variant.with_alpha(45%);
+        border-color: MaterialPalette.primary.with_alpha(70%);
 
-        backend_row := HorizontalLayout {
-            padding-left: 8px;
-            padding-right: 8px;
+        phase_comp_row := HorizontalLayout {
+            padding-left: 10px;
+            padding-right: 10px;
             spacing: 6px;
             alignment: center;
 
@@ -73,22 +72,22 @@ export component Structure3DOverlays inherits Rectangle {
                 height: 7px;
                 y: (parent.height - self.height) / 2;
                 border-radius: 3.5px;
-                background: root.gpu_accelerated
-                    ? MaterialPalette.tertiary
-                    : MaterialPalette.on_surface_variant;
+                background: MaterialPalette.primary;
             }
 
             MaterialText {
-                text: root.backend_label;
-                font-size: MaterialTypography.label_small.font_size;
-                color: MaterialPalette.on_surface_variant;
+                text: root.total_frames > 1
+                    ? ("Baking " + root.phase_descriptor_name + " (" + root.phase_cached_frames + " / " + root.total_frames + ")…")
+                    : ("Computing " + root.phase_descriptor_name + "…");
+                style: MaterialTypography.label_small_prominent;
+                color: MaterialPalette.on_surface;
                 vertical-alignment: center;
             }
         }
     }
 
-    // Subtle bottom navigation hint
-    if (root.file_loaded): Rectangle {
+    // Subtle bottom navigation hint (auto-hides after first camera drag or in narrow Dual-View panes)
+    if (root.file_loaded && !root.has_interacted && root.width >= 640px): Rectangle {
         x: (parent.width - self.width) / 2;
         y: parent.height - self.height - (root.total_frames > 1 ? 66px : 10px);
         width: hint_text.preferred-width + 20px;

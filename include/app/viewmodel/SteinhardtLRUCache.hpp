@@ -10,6 +10,7 @@
 
 #include "calculators/order/SteinhardtCalculator.hpp"
 
+#include <algorithm>
 #include <cstddef>
 #include <list>
 #include <memory>
@@ -49,9 +50,10 @@ public:
 
   /**
    * @brief Constructs cache with specified maximum capacity.
-   * @param[in] max_capacity Maximum number of frames cached simultaneously (default 32).
+   * @param[in] max_capacity Maximum number of frames cached simultaneously (default 512).
    */
-  explicit ThreadSafeLRUCache(std::size_t max_capacity = 32) noexcept : capacity_(max_capacity) {}
+  explicit ThreadSafeLRUCache(std::size_t max_capacity = 512) noexcept
+      : capacity_(std::max<std::size_t>(1, max_capacity)) {}
 
   ~ThreadSafeLRUCache() = default;
   ThreadSafeLRUCache(const ThreadSafeLRUCache &) = delete;
@@ -145,7 +147,41 @@ public:
    * @brief Gets maximum frame capacity of the cache.
    * @return Cache capacity limit.
    */
-  [[nodiscard]] std::size_t capacity() const noexcept { return capacity_; }
+  [[nodiscard]] std::size_t capacity() const noexcept {
+    const std::shared_lock lock(mutex_);
+    return capacity_;
+  }
+
+  /**
+   * @brief Updates maximum frame capacity, evicting oldest entries if shrinking.
+   * @param[in] new_capacity New maximum frame count (clamped to >= 1).
+   */
+  void setCapacity(std::size_t new_capacity) {
+    const std::unique_lock lock(mutex_);
+    capacity_ = std::max<std::size_t>(1, new_capacity);
+    while (map_.size() > capacity_ && !lru_order_.empty()) {
+      const auto oldest_idx = lru_order_.back();
+      lru_order_.pop_back();
+      map_.erase(oldest_idx);
+    }
+  }
+
+  /**
+   * @brief Counts cached entries satisfying a predicate.
+   * @tparam Pred Callable taking `const ValueType &` and returning bool.
+   * @param[in] pred Predicate evaluated on each non-null cached value.
+   * @return Number of matching cached entries.
+   */
+  template <typename Pred> [[nodiscard]] std::size_t countMatching(Pred &&pred) const {
+    const std::shared_lock lock(mutex_);
+    std::size_t count = 0;
+    for (const auto &[idx, entry] : map_) {
+      if (entry.params && pred(*entry.params)) {
+        ++count;
+      }
+    }
+    return count;
+  }
 
   /**
    * @brief Purges all entries from the cache.
@@ -163,7 +199,7 @@ private:
   };
 
   mutable std::shared_mutex mutex_;
-  std::size_t capacity_{32};
+  std::size_t capacity_{512};
   std::list<std::size_t> lru_order_;
   std::unordered_map<std::size_t, CacheEntry> map_;
 };

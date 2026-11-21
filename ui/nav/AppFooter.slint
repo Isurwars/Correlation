@@ -11,6 +11,8 @@ export component AppFooter inherits Rectangle {
     in property <bool> update_available: false;
     in property <string> update_version: "";
     in property <string> update_url: "https://github.com/Isurwars/Correlation/releases";
+    in property <string> backend_label: "";
+    in property <bool> gpu_accelerated: false;
     callback open_url(string);
     callback open_command_palette();
     callback open_shortcuts();
@@ -82,6 +84,39 @@ export component AppFooter inherits Rectangle {
         HorizontalLayout {
             spacing: 6px;
             alignment: center;
+
+            // Compact 3D Render Backend Status Pill
+            if root.backend_label != "": Rectangle {
+                height: 18px;
+                y: (parent.height - self.height) / 2;
+                width: backend_row.preferred-width + 12px;
+                border-radius: MaterialStyleMetrics.border_radius_4;
+                background: MaterialPalette.surface_container_high.with_alpha(65%);
+
+                backend_row := HorizontalLayout {
+                    padding-left: 6px;
+                    padding-right: 6px;
+                    spacing: 5px;
+                    alignment: center;
+
+                    Rectangle {
+                        width: 6px;
+                        height: 6px;
+                        y: (parent.height - self.height) / 2;
+                        border-radius: 3px;
+                        background: root.gpu_accelerated
+                            ? MaterialPalette.tertiary
+                            : MaterialPalette.on_surface_variant;
+                    }
+
+                    Text {
+                        text: root.backend_label;
+                        font-size: MaterialTypography.label_small.font_size;
+                        color: MaterialPalette.on_surface_variant;
+                        vertical-alignment: center;
+                    }
+                }
+            }
 
             if root.update_available: Rectangle {
                 background: update_touch.has_hover ? MaterialPalette.primary_container : MaterialPalette.surface_container_high;

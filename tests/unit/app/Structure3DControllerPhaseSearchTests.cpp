@@ -13,11 +13,13 @@
 
 #include "../../CrystalTestHelper.hpp"
 
+#include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <gtest/gtest.h>
 #include <optional>
 #include <stdexcept>
+#include <thread>
 
 #ifdef _WIN32
 #define NOMINMAX
@@ -512,6 +514,51 @@ TEST_F(Structure3DControllerPhaseSearchTests, PresetBoxesEncloseCanonicalMarkers
   verifyPresetEnclosesMarker(CrystalPreset::AmorphousGlass, "Gl");
   verifyPresetEnclosesMarker(CrystalPreset::Icosahedral, "Ico");
   verifyPresetEnclosesMarker(CrystalPreset::Diamond, "Dia");
+}
+
+void assertCachedFramesLightweight(const Structure3DController &controller,
+                                   std::size_t expected_frames) {
+  EXPECT_EQ(controller.lruCache().size(), expected_frames);
+  for (std::size_t frame_idx = 0; frame_idx < expected_frames; ++frame_idx) {
+    const auto desc = controller.lruCache().peek(frame_idx);
+    ASSERT_NE(desc, nullptr);
+    EXPECT_NE(desc->steinhardt, nullptr);
+    EXPECT_EQ(desc->analyzer, nullptr);
+  }
+}
+
+TEST_F(Structure3DControllerPhaseSearchTests,
+       BackgroundPrebakeCachesTrajectoryAndPreservesMotionHalos) {
+  const ProgramOptions options;
+  Structure3DController controller(window(), options);
+
+  const auto trajectory = std::make_shared<core::Trajectory>();
+  const auto cell = testing::crystals::createFCCCell(static_cast<real_t>(3.61), "Cu", 1, 1, 1);
+  for (int idx = 0; idx < 3; ++idx) {
+    trajectory->addFrame(cell);
+  }
+
+  controller.setTrajectory(trajectory);
+  controller.setCrystalPreset(CrystalPreset::FCC);
+  controller.setPhaseSearchEnabled(true);
+
+  // Wait up to 5 seconds for background pre-bake to cache all 3 frames
+  const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
+  while (controller.lruCache().size() < 3 && std::chrono::steady_clock::now() < deadline) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  }
+
+  assertCachedFramesLightweight(controller, 3UL);
+
+  // Stepping during active playback must advance smoothly with active halos
+  window().set_structure_3d_is_playing(true);
+  controller.handleStepFrame(true);
+  EXPECT_EQ(window().get_structure_3d_current_frame(), 1);
+  assertAtomsHaveActiveHalos(controller.scene()->atoms());
+
+  controller.handleStepFrame(true);
+  EXPECT_EQ(window().get_structure_3d_current_frame(), 2);
+  assertAtomsHaveActiveHalos(controller.scene()->atoms());
 }
 
 } // namespace

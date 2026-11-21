@@ -271,11 +271,30 @@ void Structure3DController::handleToggleProjection(bool isometric) {
   requestRender();
 }
 
+bool Structure3DController::canAdvancePlaybackFrameLocked(bool forward) const {
+  if (phase_service_ == nullptr || !phase_service_->isEnabled()) {
+    return true;
+  }
+  const std::size_t total = streamer_.totalFrames();
+  if (total <= 1) {
+    return true;
+  }
+  const std::size_t current = streamer_.currentFrameIndex();
+  const std::size_t next_frame =
+      forward ? ((current + 1) % total) : ((current + total - 1) % total);
+  if (phase_service_->isFrameReady(next_frame)) {
+    return true;
+  }
+  phase_service_->requestCalculation(next_frame);
+  return false;
+}
+
 void Structure3DController::handleSeekFrame(int frame_index) {
   if (frame_index < 0) {
     return;
   }
   int actual_frame = frame_index;
+  bool has_picked = false;
   {
     const std::scoped_lock lock(mutex_);
     if (streamer_.totalFrames() > 0 && scene_ != nullptr) {
@@ -284,10 +303,14 @@ void Structure3DController::handleSeekFrame(int frame_index) {
           streamer_.seekFrame(target, *scene_, render_bonds_, bond_cutoff_scale_, in_cell_mode_));
       actual_frame = static_cast<int>(streamer_.currentFrameIndex());
       updateScenePhaseVisualsLocked();
+      has_picked = picked_atom_index_.has_value();
     }
   }
   safeInvokeOnWindow(
       [this, actual_frame] { window_.set_structure_3d_current_frame(actual_frame); });
+  if (has_picked) {
+    syncInspectedAtomToWindow();
+  }
   syncDistributionHUDToWindow();
   if (isPhaseSearchEnabled()) {
     syncPhaseSearchToWindow();
@@ -296,22 +319,42 @@ void Structure3DController::handleSeekFrame(int frame_index) {
 }
 
 void Structure3DController::handleStepFrame(bool forward) {
+  const bool is_playing =
+      (std::this_thread::get_id() == main_thread_id_) && window_.get_structure_3d_is_playing();
   int current_idx = 0;
+  bool has_picked = false;
+  bool stepped = false;
   {
     const std::scoped_lock lock(mutex_);
     if (streamer_.totalFrames() > 0 && scene_ != nullptr) {
-      if (forward) {
-        static_cast<void>(
-            streamer_.stepNext(*scene_, true, render_bonds_, bond_cutoff_scale_, in_cell_mode_));
+      if (is_playing && !canAdvancePlaybackFrameLocked(forward)) {
+        // Hold on current cached frame while pre-bake / worker computes next frame
+        stepped = false;
       } else {
-        static_cast<void>(
-            streamer_.stepPrev(*scene_, true, render_bonds_, bond_cutoff_scale_, in_cell_mode_));
+        if (forward) {
+          static_cast<void>(
+              streamer_.stepNext(*scene_, true, render_bonds_, bond_cutoff_scale_, in_cell_mode_));
+        } else {
+          static_cast<void>(
+              streamer_.stepPrev(*scene_, true, render_bonds_, bond_cutoff_scale_, in_cell_mode_));
+        }
+        current_idx = static_cast<int>(streamer_.currentFrameIndex());
+        updateScenePhaseVisualsLocked();
+        has_picked = picked_atom_index_.has_value();
+        stepped = true;
       }
-      current_idx = static_cast<int>(streamer_.currentFrameIndex());
-      updateScenePhaseVisualsLocked();
     }
   }
+  if (!stepped) {
+    if (isPhaseSearchEnabled()) {
+      syncPhaseSearchToWindow();
+    }
+    return;
+  }
   safeInvokeOnWindow([this, current_idx] { window_.set_structure_3d_current_frame(current_idx); });
+  if (has_picked) {
+    syncInspectedAtomToWindow();
+  }
   syncDistributionHUDToWindow();
   if (isPhaseSearchEnabled()) {
     syncPhaseSearchToWindow();
@@ -387,6 +430,9 @@ void Structure3DController::setTrajectory(std::shared_ptr<const core::Trajectory
     }
     streamer_.setTrajectory(std::move(trajectory));
     updateScenePhaseVisualsLocked();
+  }
+  if (phase_service_ != nullptr && phase_service_->isEnabled()) {
+    phase_service_->startPrebake();
   }
   safeInvokeOnWindow([this, total_frames] {
     window_.set_structure_3d_current_frame(0);
@@ -613,10 +659,12 @@ void Structure3DController::syncPhaseSearchToWindow() {
   PhaseSearchSettings settings_copy;
   PhaseHistogram hist_copy;
   PhaseHeatmap2D heatmap_copy;
+  PhasePrebakeStatus prebake_copy;
   if (phase_service_ != nullptr) {
     settings_copy = phase_service_->settings();
     hist_copy = phase_service_->latestHistogram();
     heatmap_copy = phase_service_->latestHeatmap();
+    prebake_copy = phase_service_->prebakeStatus();
   }
 
   const auto lut = plotters::ColormapService::getLut(settings_copy.colormap);
@@ -661,11 +709,14 @@ void Structure3DController::syncPhaseSearchToWindow() {
   }
 
   auto apply_to_window = [this, settings = settings_copy, hist = hist_copy, heatmap = heatmap_copy,
-                          colorbar_img = std::move(colorbar_img),
+                          prebake = prebake_copy, colorbar_img = std::move(colorbar_img),
                           counts_model = std::move(counts_model),
                           heatmap_img = std::move(heatmap_img),
                           markers_model = std::move(markers_model)] mutable {
     window_.set_structure_3d_phase_enabled(settings.enabled);
+    window_.set_structure_3d_phase_computing(prebake.is_computing);
+    window_.set_structure_3d_phase_prebake_progress(prebake.progress);
+    window_.set_structure_3d_phase_cached_frames(static_cast<int>(prebake.cached_frames));
     window_.set_structure_3d_phase_preset(static_cast<int>(settings.preset));
     window_.set_structure_3d_phase_descriptor(static_cast<int>(settings.descriptor));
     window_.set_structure_3d_phase_colormap(static_cast<int>(settings.colormap));
@@ -1013,10 +1064,15 @@ void Structure3DController::syncInspectedAtomToWindow() {
     const std::size_t idx = *picked_atom_index_;
     const auto &atoms = scene_->atoms();
     const auto &atom = atoms[idx];
+    const auto active_frame = streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
+    const core::Cell &active_cell =
+        (current_trajectory_ && active_frame < current_trajectory_->getFrameCount())
+            ? current_trajectory_->getFrame(active_frame)
+            : current_cell_;
     info.valid = true;
     info.atom_id = static_cast<int>(atom.id + 1);
     info.element = slint::SharedString(
-        idx < current_cell_.atoms().size() ? current_cell_.atoms()[idx].element().symbol : "X");
+        idx < active_cell.atoms().size() ? active_cell.atoms()[idx].element().symbol : "X");
     info.coords_text = slint::SharedString(std::format("{:.2f}, {:.2f}, {:.2f}", atom.position.x(),
                                                        atom.position.y(), atom.position.z()));
 
@@ -1028,8 +1084,10 @@ void Structure3DController::syncInspectedAtomToWindow() {
     }
 
     if (phase_service_ != nullptr) {
-      const auto active_frame = streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
-      const auto desc = phase_service_->getOrComputeDescriptors(active_frame);
+      const bool playing =
+          (std::this_thread::get_id() == main_thread_id_) && window_.get_structure_3d_is_playing();
+      const auto desc = playing ? phase_service_->lruCache().peek(active_frame)
+                                : phase_service_->getOrComputeDescriptors(active_frame);
       if (desc != nullptr && desc->steinhardt != nullptr) {
         if (idx < desc->steinhardt->Q6_bar.size()) {
           info.q6_text = slint::SharedString(std::format("{:.3f}", desc->steinhardt->Q6_bar[idx]));

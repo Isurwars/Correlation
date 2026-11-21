@@ -148,6 +148,9 @@ export component PreviewCard inherits FilledCard {
     // Phase Search properties & callbacks
     in-out property <bool> structure_3d_phase_panel_open: false;
     in property <bool> structure_3d_phase_enabled: false;
+    in property <bool> structure_3d_phase_computing: false;
+    in property <float> structure_3d_phase_prebake_progress: 0.0;
+    in property <int> structure_3d_phase_cached_frames: 0;
     in property <int> structure_3d_phase_preset: 0;
     in property <int> structure_3d_phase_descriptor: 0;
     in property <int> structure_3d_phase_colormap: 0;
@@ -401,16 +404,35 @@ export component PreviewCard inherits FilledCard {
                             matching_atoms: root.structure_3d_phase_matching_atoms;
                             total_atoms: root.structure_3d_phase_total_atoms;
                             crystal_markers: root.structure_3d_phase_crystal_markers;
-                            set_descriptor_x(idx) => { root.set_phase_descriptor_3d(idx); }
-                            set_descriptor_y(idx) => { root.set_phase_descriptor_y_3d(idx); }
-                            set_colormap(idx) => { root.set_phase_colormap_3d(idx); }
-                            set_preset(idx) => { root.set_phase_preset_3d(idx); }
+                            set_descriptor_x(idx) => {
+                                root.inspector_scope = 1;
+                                root.set_phase_descriptor_3d(idx);
+                            }
+                            set_descriptor_y(idx) => {
+                                root.inspector_scope = 1;
+                                root.set_phase_descriptor_y_3d(idx);
+                            }
+                            set_colormap(idx) => {
+                                root.inspector_scope = 1;
+                                root.set_phase_colormap_3d(idx);
+                            }
+                            set_preset(idx) => {
+                                root.inspector_scope = 1;
+                                root.set_phase_preset_3d(idx);
+                            }
                             set_selection_2d(min_x, max_x, min_y, max_y) => {
+                                root.inspector_scope = 1;
                                 root.set_phase_thresholds_2d_3d(min_x, max_x, min_y, max_y);
                             }
                             export_png => { root.export_phase_heatmap_png_3d(); }
                             reset_selection => {
-                                root.set_phase_thresholds_2d_3d(0.0, 1.0, 0.0, 1.0);
+                                root.inspector_scope = 1;
+                                root.set_phase_thresholds_2d_3d(
+                                    root.structure_3d_phase_domain_min,
+                                    root.structure_3d_phase_domain_max,
+                                    root.structure_3d_phase_domain_min_y,
+                                    root.structure_3d_phase_domain_max_y,
+                                );
                             }
                         }
                     }
@@ -492,6 +514,9 @@ export component PreviewCard inherits FilledCard {
 
                 phase_panel_open <=> root.structure_3d_phase_panel_open;
                 phase_enabled: root.structure_3d_phase_enabled;
+                phase_computing: root.structure_3d_phase_computing;
+                phase_prebake_progress: root.structure_3d_phase_prebake_progress;
+                phase_cached_frames: root.structure_3d_phase_cached_frames;
                 phase_preset: root.structure_3d_phase_preset;
                 phase_descriptor: root.structure_3d_phase_descriptor;
                 phase_colormap: root.structure_3d_phase_colormap;
