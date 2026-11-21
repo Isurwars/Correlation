@@ -33,11 +33,9 @@
 
 ## 5. C++ Target Integration & Build Safety
 
-- **Target-Centric CMake:** Integrate `.slint` files using `slint_target_sources(target ui/AppWindow.slint)`.
-- **C++23 Type Compatibility:** Bind C++ backends using generated header classes and type-safe `slint::` APIs.
-- **Verification:** Code changes must compile cleanly and pass `ctest -R correlation_gui_tests`.
+- **Target-Centric CMake:** Integrate `.slint` files using `slint_target_sources(target ui/AppWindow.slint COMPILATION_UNITS ${CORRELATION_SLINT_COMPILATION_UNITS} ...)`.
+- **TouchArea Conditional Layout Trap:** Never place conditional `if` children directly inside a `TouchArea` without wrapping them in a `VerticalLayout` and explicitly forwarding `min-height` and `preferred-height`.
+- **Verification:** Code changes must produce **0 diagnostics** in `slint-lsp 1.19.0`, compile cleanly with `slint-compiler`, and pass `ctest -R correlation_gui_tests`.
 
 ## References
-- **See skill:** [slint-ui](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-ui/SKILL.md) for modular component patterns, Material Design 3 tokens, and widget styling guidelines.
-- **See skill:** [slint-backend](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-backend/SKILL.md) for C++23 backend binding, async thread safety, and data model patterns.
-- **See skill:** [slint-preview](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-preview/SKILL.md) for live preview and hot-reload workflows.
+- **See skill:** [slint-development](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-development/SKILL.md) for unified Material Design 3 tokens, `NumberField` steppers, C++23 MVVM bindings, and `slint-lsp` verification.

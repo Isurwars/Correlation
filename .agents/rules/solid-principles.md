@@ -62,5 +62,5 @@ All software components in `Correlation` must conform to the **SOLID** design pr
 
 ## Reference
 
-- **See skill:** [solid-design](file:///home/isurwars/Projects/Correlation/.agents/skills/solid-design/SKILL.md) for C++23 patterns, anti-pattern catalogs, and refactoring guides.
-- **See skill:** [cpp-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-standards/SKILL.md) for RAII, immutability, and memory safety rules.
+- **See skill:** [solid-design](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp23-scientific/SKILL.md) for C++23 patterns, anti-pattern catalogs, and refactoring guides.
+- **See skill:** [cpp-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp23-scientific/SKILL.md) for RAII, immutability, and memory safety rules.

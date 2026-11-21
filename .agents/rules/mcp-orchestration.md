@@ -17,7 +17,6 @@ This directive governs interaction between the primary agent and local Model Con
 | Server Name | Available Tools | Primary Delegation Domain |
 | :--- | :--- | :--- |
 | **`llama-cpp-mcp`** | `ask_model`, `analyse_project` | Fast local GGUF model execution for pure math kernels, isolated routines, and AST inspection. |
-| **`ollama-local-bridge`** *(Optional)* | `ask_model`, `list_models`, `show_model` | Available when external Ollama daemon is active. |
 
 ## 3. Delegation Lifecycle
 

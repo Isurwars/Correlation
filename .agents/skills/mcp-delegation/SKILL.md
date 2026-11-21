@@ -1,11 +1,11 @@
 ---
 name: mcp-delegation
-description: Direct targeted task delegation to local MCP inference models (llama-cpp-mcp, ollama-local-bridge) with prompt contracts, payload constraints, and circuit breakers.
+description: Direct targeted task delegation to local MCP inference models (llama-cpp-mcp) with prompt contracts, payload constraints, and circuit breakers.
 ---
 
 # MCP Delegation Protocol
 
-This skill governs the delegation of atomic code generation, algorithmic optimization, and focused code inspection tasks to local Model Context Protocol (MCP) servers (`llama-cpp-mcp` and `ollama-local-bridge`).
+This skill governs the delegation of atomic code generation, algorithmic optimization, and focused code inspection tasks to local Model Context Protocol (MCP) servers (`llama-cpp-mcp`).
 
 ---
 

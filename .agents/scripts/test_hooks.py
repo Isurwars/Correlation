@@ -203,6 +203,15 @@ class TestCodeQualityAudits(unittest.TestCase):
         violations = self.audit("CMakeLists.txt", "file(GLOB SOURCES src/*.cpp)\n", audit_cmake_file)
         self.assertTrue(any("CMake Anti-Pattern" in v for v in violations))
 
+    def test_cmake_global_compile_definitions(self) -> None:
+        violations = self.audit(
+            "CMakeLists.txt",
+            "# add_compile_definitions(IGNORED)\nadd_compile_definitions(FOO=1)\n",
+            audit_cmake_file,
+        )
+        self.assertEqual(len(violations), 1)
+        self.assertIn("non-target-directive", violations[0])
+
     def test_slint_export_block(self) -> None:
         violations = self.audit(".slint", "export {}\n", audit_slint_file)
         self.assertTrue(any("Slint Anti-Pattern" in v for v in violations))

@@ -58,5 +58,5 @@ When delegating work to local MCP servers, emit a standardized single-line telem
 
 ## Reference
 
-- **See skill:** [caveman](file:///home/isurwars/Projects/Correlation/.agents/skills/caveman/SKILL.md) for extended communication protocol, code packaging rules, and limitations.
+- **See skill:** [caveman](file:///home/isurwars/Projects/Correlation/.agents/rules/caveman-navigation.md) for extended communication protocol, code packaging rules, and limitations.
 - **See skill:** [mcp-delegation](file:///home/isurwars/Projects/Correlation/.agents/skills/mcp-delegation/SKILL.md) for MCP prompt envelopes and circuit-breaker details.

@@ -41,6 +41,7 @@
   - [complexity-gate](file:///home/isurwars/Projects/Correlation/.agents/rules/complexity-gate.md) for complexity decomposition.
   - [cmake-architecture-rule](file:///home/isurwars/Projects/Correlation/.agents/rules/cmake-architecture-rule.md) for target-centric CMake design.
   - [slint-standards](file:///home/isurwars/Projects/Correlation/.agents/rules/slint-standards.md) for UI MVVM architecture and thread safety.
+  - [vulkan-rendering](file:///home/isurwars/Projects/Correlation/.agents/rules/vulkan-rendering.md) for Vulkan 3D rendering, shaders, and zero-copy scene uploads.
   - [testing-standards](file:///home/isurwars/Projects/Correlation/.agents/rules/testing-standards.md) for Google Test and pytest standards.
   - [python-standards](file:///home/isurwars/Projects/Correlation/.agents/rules/python-standards.md) for Pyright, type stubs, and pytest standards.
   - [git-workflow](file:///home/isurwars/Projects/Correlation/.agents/rules/git-workflow.md) for trunk-based development and Conventional Commits.
@@ -51,14 +52,14 @@
 - **Progressive Disclosure:** Offload detailed analyses, audits, or implementation plans exceeding **30 lines** into markdown artifacts (`brain/.../*.md`). Present only clickable file links and dense summary tables in chat responses.
 - **Minimal Code Packaging:** Output targeted diffs with `// ...` context placeholders; never print untouched class definitions or boilerplate.
 - **Diagnostics & Telemetry:** Adhere to strict `[File:Line] -> [Error Category] -> [Root Cause] -> [Fix Action]` diagnostics and standardized MCP telemetry logs.
-- **See rules & skills:** [communication-density](file:///home/isurwars/Projects/Correlation/.agents/rules/communication-density.md), [caveman](file:///home/isurwars/Projects/Correlation/.agents/skills/caveman/SKILL.md), [interrogation-first](file:///home/isurwars/Projects/Correlation/.agents/rules/interrogation-first.md), and [grill-me](file:///home/isurwars/Projects/Correlation/.agents/skills/grill-me/SKILL.md).
+- **See rules & skills:** [communication-density](file:///home/isurwars/Projects/Correlation/.agents/rules/communication-density.md), [caveman-navigation](file:///home/isurwars/Projects/Correlation/.agents/rules/caveman-navigation.md), [interrogation-first](file:///home/isurwars/Projects/Correlation/.agents/rules/interrogation-first.md), and [grill-me](file:///home/isurwars/Projects/Correlation/.agents/skills/grill-me/SKILL.md).
 
 ## 6. Verification & Quality Gates
 1. **Compilation:** Code must compile cleanly with modern C++23 standards.
 2. **Static Analysis:** Run parallel `run-clang-tidy -p build -j$(nproc)` against `compile_commands.json` on all modified files (or `cmake --build build --target clang-tidy`). Zero `NOLINT` suppressions permitted.
 3. **Cognitive Complexity:** All functions must maintain Cognitive Complexity $\le 25$ (see [refactor-complexity](file:///home/isurwars/Projects/Correlation/.agents/skills/refactor-complexity/SKILL.md)).
-4. **SOLID Architecture:** Verify adherence to SOLID paradigms and zero-cost abstraction guardrails (see [solid-design](file:///home/isurwars/Projects/Correlation/.agents/skills/solid-design/SKILL.md)).
+4. **SOLID & Scientific Rigor:** Verify adherence to C++23 SOLID paradigms ([cpp23-scientific](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp23-scientific/SKILL.md)) and physical sum-rule/literature validation ([scientific-validation](file:///home/isurwars/Projects/Correlation/.agents/skills/scientific-validation/SKILL.md)).
 5. **Testing:** Execute `ctest --test-dir build -j$(nproc) --output-on-failure` (or `cmake --build build --target check`) and `pytest tests/test_*.py` (see [testing-standards](file:///home/isurwars/Projects/Correlation/.agents/rules/testing-standards.md) and [tdd](file:///home/isurwars/Projects/Correlation/.agents/skills/tdd/SKILL.md)).
-6. **Documentation:** Verify Doxygen blocks on all public/protected interfaces in header files (see [doc-generator](file:///home/isurwars/Projects/Correlation/.agents/skills/doc-generator/SKILL.md)).
+6. **Slint & Documentation:** Verify 0 `slint-lsp 1.19.0` diagnostics on modified `.slint` files ([slint-development](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-development/SKILL.md)) and Doxygen blocks on public/protected C++ headers.
 7. **Code Review:** Execute [code-review](file:///home/isurwars/Projects/Correlation/.agents/skills/code-review/SKILL.md) audit prior to staging or committing changes.
 8. **Graph Maintenance:** Execute `graphify update .` immediately upon completing an implementation plan and passing verification tests to keep dependency graphs and community clusters synchronized.

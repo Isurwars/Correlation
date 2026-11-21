@@ -407,16 +407,26 @@ def audit_slint_file(file_path: Path) -> list[str]:
 
 
 def audit_cmake_file(file_path: Path) -> list[str]:
-    """Audits a CMake file for source-globbing anti-patterns."""
+    """Audits a CMake file for source-globbing and non-target-directive anti-patterns."""
     content = _read(file_path) if file_path.is_file() else None
     if content is None:
         return []
     rel_path = _rel(file_path)
-    return [
-        f"[{rel_path}:{idx}] -> CMake Anti-Pattern -> file(GLOB) used. Explicitly list source files."
-        for idx, line in enumerate(content.splitlines(), start=1)
-        if re.search(r"\bfile\s*\(\s*GLOB(_RECURSE)?\b", line, re.IGNORECASE)
-    ]
+    violations: list[str] = []
+    for idx, line in enumerate(content.splitlines(), start=1):
+        stripped = line.lstrip()
+        if stripped.startswith("#"):
+            continue
+        if re.search(r"\bfile\s*\(\s*GLOB(_RECURSE)?\b", line, re.IGNORECASE):
+            violations.append(
+                f"[{rel_path}:{idx}] -> CMake Anti-Pattern -> file(GLOB) used. Explicitly list source files."
+            )
+        if re.search(r"\badd_compile_definitions\s*\(", line, re.IGNORECASE):
+            violations.append(
+                f"[{rel_path}:{idx}] -> CMake non-target-directive -> "
+                "Use target_compile_definitions(correlation_config INTERFACE ...) instead of global add_compile_definitions."
+            )
+    return violations
 
 
 def parse_porcelain_z(output: str) -> list[str]:

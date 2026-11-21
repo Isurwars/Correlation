@@ -52,5 +52,5 @@ Append `!` after the type: `feat(core)!: rename DistributionFunctions to Correla
 
 ## Reference
 - **See skill:** [commit](file:///home/isurwars/Projects/Correlation/.agents/skills/commit/SKILL.md) for automated diff classification, subject line validation, and path-to-scope lookup tables.
-- **See skill:** [changelog](file:///home/isurwars/Projects/Correlation/.agents/skills/changelog/SKILL.md) for generating release notes and milestone documentation from Conventional Commits.
+- **See skill:** [changelog](file:///home/isurwars/Projects/Correlation/.agents/skills/release-engineering/SKILL.md) for generating release notes and milestone documentation from Conventional Commits.
 

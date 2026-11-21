@@ -34,8 +34,11 @@ target_link_libraries(correlation_lib
 - **Language Standard Discipline:** Require C++23 (`set(CMAKE_CXX_STANDARD 23)`, `set(CMAKE_CXX_STANDARD_REQUIRED ON)`, `set(CMAKE_CXX_EXTENSIONS OFF)`).
 - **Out-of-Source Build Guard:** Prohibit in-source compilation (`PROJECT_SOURCE_DIR` == `PROJECT_BINARY_DIR`). Prevent pollutions of source trees.
 
-## 3. Package & Dependency Fetching
+## 3. Package, Policy & Build Acceleration
 - **Dependency Strategy:**
   - Standalone utility libraries (`nfd`, `voro++`, `miniz`, `CLI11`) are fetched via `FetchContent` when not provided by host.
   - Core system frameworks (`TBB`, `Slint`, `GTest`, `FFTW3`) are resolved via `find_package(... REQUIRED)`.
+  - Maintain `set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)` in `cmake/Dependencies.cmake` so legacy `FetchContent` subprojects honor scoped normal variables (`correlation_push_shared_libs`).
+- **Target-Scoped Definitions:** Never add directory-global `add_compile_definitions(...)` (triggers CMake 4.5 `non-target-directive`); attach project-wide macros to `correlation_config` (`INTERFACE`).
+- **Build Acceleration:** Preserve `CORRELATION_SLINT_COMPILATION_UNITS` (default `16`), `CORRELATION_ENABLE_PCH` for `AppWindow.h`, `sccache`/`ccache` launcher auto-detection, and `correlation_linker_options` (`mold`/`lld`).
 - **Option Scoping:** Standardize feature toggles using `option(NAME "Description" DEFAULT_VALUE)` and propagate compile flags cleanly via target definitions.
