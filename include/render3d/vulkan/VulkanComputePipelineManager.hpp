@@ -27,11 +27,14 @@ enum class ComputeKernelType : uint8_t {
   LocalEntropy = 3,
   TenWoldeFrenkel = 4,
   HaloApply = 5,
-  HistogramReduce = 6
+  HistogramReduce = 6,
+  CellListBuild = 7
 };
 
 class VulkanComputePipelineManager {
 public:
+  static constexpr size_t KERNEL_COUNT = 8;
+
   VulkanComputePipelineManager() = default;
   ~VulkanComputePipelineManager() noexcept { cleanup(); }
 
@@ -53,9 +56,9 @@ private:
                                            uint32_t num_storage_buffers);
 
   VkDevice device_{VK_NULL_HANDLE};
-  std::array<VkDescriptorSetLayout, 7> descriptor_layouts_{};
-  std::array<VkPipelineLayout, 7> pipeline_layouts_{};
-  std::array<VkPipeline, 7> pipelines_{};
+  std::array<VkDescriptorSetLayout, KERNEL_COUNT> descriptor_layouts_{};
+  std::array<VkPipelineLayout, KERNEL_COUNT> pipeline_layouts_{};
+  std::array<VkPipeline, KERNEL_COUNT> pipelines_{};
   bool initialized_{false};
 };
 

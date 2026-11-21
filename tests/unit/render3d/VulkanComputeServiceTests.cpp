@@ -6,9 +6,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+#include "render3d/vulkan/VulkanBuffer.hpp"
 #include "render3d/vulkan/VulkanContext.hpp"
 #include "render3d/vulkan/VulkanDevice.hpp"
-#include "render3d/vulkan/VulkanBuffer.hpp"
 #include "render3d/vulkan/compute/VulkanComputeService.hpp"
 #include <gtest/gtest.h>
 #include <vector>
@@ -33,15 +33,13 @@ TEST_F(VulkanComputeServiceTests, InitializeAndExecuteSteinhardtOnFCC) {
   ASSERT_TRUE(device.initialize());
 
   VulkanComputeService service;
-  ASSERT_TRUE(service.initialize(device.device(), device.physicalDevice(),
-                                 device.graphicsQueue(), device.queueFamilyIndex()));
+  ASSERT_TRUE(service.initialize(device.device(), device.physicalDevice(), device.graphicsQueue(),
+                                 device.queueFamilyIndex()));
 
   // 4 atoms forming a tetrahedral / close-packed cluster
   const std::vector<float> atom_positions = {
-      0.0F, 0.0F, 0.0F, 0.0F,
-      1.5F, 1.5F, 0.0F, 0.0F,
-      1.5F, 0.0F, 1.5F, 0.0F,
-      0.0F, 1.5F, 1.5F, 0.0F,
+      0.0F, 0.0F, 0.0F, 0.0F, 1.5F, 1.5F, 0.0F, 0.0F,
+      1.5F, 0.0F, 1.5F, 0.0F, 0.0F, 1.5F, 1.5F, 0.0F,
   };
 
   VulkanBuffer pos_buffer;
@@ -83,6 +81,94 @@ TEST_F(VulkanComputeServiceTests, InitializeAndExecuteSteinhardtOnFCC) {
   EXPECT_TRUE(success);
 
   EXPECT_EQ(hist_out.total_count, 4);
+
+  pos_buffer.destroy();
+  inst_buffer.destroy();
+  service.cleanup();
+  device.destroy();
+}
+
+TEST_F(VulkanComputeServiceTests, PeriodicBoundaryCellListAndLargeSystemThroughput) {
+  VulkanDevice device;
+  ASSERT_TRUE(device.initialize());
+
+  VulkanComputeService service;
+  ASSERT_TRUE(service.initialize(device.device(), device.physicalDevice(), device.graphicsQueue(),
+                                 device.queueFamilyIndex()));
+
+  // Build a 20x20x10 FCC supercell = 16,000 atoms (same scale as examples/Plastic)
+  constexpr int NX = 20;
+  constexpr int NY = 20;
+  constexpr int NZ = 10;
+  constexpr float A = 4.0F;
+  constexpr std::array<std::array<float, 3>, 4> BASIS = {{
+      {0.0F, 0.0F, 0.0F},
+      {0.5F * A, 0.5F * A, 0.0F},
+      {0.5F * A, 0.0F, 0.5F * A},
+      {0.0F, 0.5F * A, 0.5F * A},
+  }};
+
+  const uint32_t num_atoms = static_cast<uint32_t>(NX * NY * NZ * 4);
+  std::vector<float> atom_positions;
+  atom_positions.reserve(static_cast<size_t>(num_atoms) * 4U);
+  for (int ix = 0; ix < NX; ++ix) {
+    for (int iy = 0; iy < NY; ++iy) {
+      for (int iz = 0; iz < NZ; ++iz) {
+        for (const auto &b : BASIS) {
+          atom_positions.push_back(static_cast<float>(ix) * A + b[0]);
+          atom_positions.push_back(static_cast<float>(iy) * A + b[1]);
+          atom_positions.push_back(static_cast<float>(iz) * A + b[2]);
+          atom_positions.push_back(0.0F);
+        }
+      }
+    }
+  }
+
+  VulkanBuffer pos_buffer;
+  const BufferAllocationDesc pos_desc{
+      .size = atom_positions.size() * sizeof(float),
+      .usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+      .properties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+  };
+  pos_buffer.create(device.device(), device.physicalDevice(), pos_desc);
+  ASSERT_TRUE(pos_buffer.isValid());
+  pos_buffer.upload(std::as_bytes(std::span{atom_positions}));
+
+  VulkanBuffer inst_buffer;
+  const BufferAllocationDesc inst_desc{
+      .size = static_cast<VkDeviceSize>(num_atoms) * 14U * sizeof(float),
+      .usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+      .properties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+  };
+  inst_buffer.create(device.device(), device.physicalDevice(), inst_desc);
+  ASSERT_TRUE(inst_buffer.isValid());
+
+  const GpuHaloSettings settings{
+      .descriptor = app::PhaseDescriptor::Q6,
+      .min_threshold = 0.50F,
+      .max_threshold = 0.65F,
+      .halo_radius_ratio = 1.4F,
+      .halo_intensity = 0.9F,
+      .halo_color = {1.0F, 0.84F, 0.0F, 1.0F},
+      .dim_non_matching = false,
+      .hide_non_matching = false,
+  };
+
+  GpuHistogramOutput hist_out;
+  const std::array<float, 4> box_min{0.0F, 0.0F, 0.0F, 0.0F};
+  const std::array<float, 4> box_max{static_cast<float>(NX) * A, static_cast<float>(NY) * A,
+                                     static_cast<float>(NZ) * A, 0.0F};
+
+  // FCC nearest-neighbor distance is A / sqrt(2) ~= 2.828 A; cutoff 3.3 A captures all 12 NNs
+  // including across periodic boundaries (ideal FCC Q6 ~= 0.5745).
+  const bool success = service.evaluateOrderParametersAndApplyHalos(
+      pos_buffer.buffer(), inst_buffer.buffer(), num_atoms, box_min, box_max, 3.3F, settings,
+      hist_out);
+  EXPECT_TRUE(success);
+  EXPECT_EQ(hist_out.total_count, num_atoms);
+  // All 16,000 atoms (including boundary atoms via periodic wrap) should match FCC Q6 in [0.50,
+  // 0.65]
+  EXPECT_EQ(hist_out.matching_count, num_atoms);
 
   pos_buffer.destroy();
   inst_buffer.destroy();

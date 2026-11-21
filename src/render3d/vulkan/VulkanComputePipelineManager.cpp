@@ -8,6 +8,7 @@
 
 #include "render3d/vulkan/VulkanComputePipelineManager.hpp"
 #include "render3d/vulkan/VulkanCommon.hpp"
+#include "render3d/vulkan/shaders/CellListBuildCompSpv.hpp"
 #include "render3d/vulkan/shaders/HaloApplyCompSpv.hpp"
 #include "render3d/vulkan/shaders/HistogramReduceCompSpv.hpp"
 #include "render3d/vulkan/shaders/LocalEntropyCompSpv.hpp"
@@ -140,8 +141,15 @@ bool VulkanComputePipelineManager::initialize(VkDevice device) {
   cleanup();
   device_ = device;
 
-  // 1. NeighborGrid: 3 buffers, 48-byte push constants
-  if (!createComputePipeline(ComputeKernelType::NeighborGrid, shaders::NeighborGridCompSpv, 48,
+  // 1. NeighborGrid (O(N) 27-cell traversal): 5 buffers, 64-byte push constants
+  if (!createComputePipeline(ComputeKernelType::NeighborGrid, shaders::NeighborGridCompSpv, 64,
+                             5)) {
+    cleanup();
+    return false;
+  }
+
+  // 8. CellListBuild (O(N) 3D spatial hash linked-list): 3 buffers, 64-byte push constants
+  if (!createComputePipeline(ComputeKernelType::CellListBuild, shaders::CellListBuildCompSpv, 64,
                              3)) {
     cleanup();
     return false;

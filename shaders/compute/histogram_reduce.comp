@@ -50,6 +50,8 @@ void main() {
     }
     if (tid == 0) {
         atomicAdd(out_matching_count, local_matching);
-        atomicAdd(out_total_count, min(pc.num_atoms, 256u));
+        uint group_start = gl_WorkGroupID.x * 256u;
+        uint group_count = (group_start < pc.num_atoms) ? min(pc.num_atoms - group_start, 256u) : 0u;
+        atomicAdd(out_total_count, group_count);
     }
 }

@@ -14,7 +14,7 @@ layout(std430, set = 0, binding = 2) readonly buffer NeighborIndices {
 };
 
 layout(std430, set = 0, binding = 3) writeonly buffer SteinhardtResults {
-    vec4 out_q_params[]; // x = Q4, y = Q6, z = q_bar6, w = unused
+    float out_descriptor_values[]; // Selected scalar order parameter (Q6 by default, Q4 if select_q4 != 0)
 };
 
 layout(std430, set = 0, binding = 4) writeonly buffer ComplexHarmonics {
@@ -27,7 +27,7 @@ layout(push_constant) uniform SteinhardtParams {
     uint max_neighbors;
     uint num_atoms;
     float cutoff;
-    uint pad;
+    uint select_q4;
 } pc;
 
 const float FOUR_PI = 12.566370614359172;
@@ -42,11 +42,11 @@ void computeY4m(float costheta, float phi, inout float real_y[9], inout float im
     float p43 = -105.0 * costheta * sintheta * sin2;
     float p44 = 105.0 * sin2 * sin2;
 
-    float norm0 = 0.1057855469369004;
-    float norm1 = 0.0528927734684502;
-    float norm2 = 0.0152687588147426;
-    float norm3 = 0.0044077109282582;
-    float norm4 = 0.0015583606622822;
+    float norm0 = 0.8462843753216345;
+    float norm1 = 0.1892349391009919;
+    float norm2 = 0.04460310290381928;
+    float norm3 = 0.01192068112922320;
+    float norm4 = 0.004214597240961282;
 
     float poly[5] = float[5](p40 * norm0, p41 * norm1, p42 * norm2, p43 * norm3, p44 * norm4);
 
@@ -70,20 +70,20 @@ void computeY6m(float costheta, float phi, inout float real_y[13], inout float i
     float c4 = c2 * c2;
 
     float p60 = 0.0625 * (231.0 * c4 * c2 - 315.0 * c4 + 105.0 * c2 - 5.0);
-    float p61 = -0.4375 * costheta * (33.0 * c4 - 30.0 * c2 + 5.0) * sintheta;
-    float p62 = 2.625 * (33.0 * c4 - 18.0 * c2 + 1.0) * sin2;
-    float p63 = -8.75 * costheta * (11.0 * c2 - 3.0) * sintheta * sin2;
-    float p64 = 52.5 * (11.0 * c2 - 1.0) * sin2 * sin2;
-    float p65 = -945.0 * costheta * sintheta * sin2 * sin2;
-    float p66 = 945.0 * sin2 * sin2 * sin2;
+    float p61 = -2.625 * costheta * (33.0 * c4 - 30.0 * c2 + 5.0) * sintheta;
+    float p62 = 13.125 * (33.0 * c4 - 18.0 * c2 + 1.0) * sin2;
+    float p63 = -157.5 * costheta * (11.0 * c2 - 3.0) * sintheta * sin2;
+    float p64 = 472.5 * (11.0 * c2 - 1.0) * sin2 * sin2;
+    float p65 = -10395.0 * costheta * sintheta * sin2 * sin2;
+    float p66 = 10395.0 * sin2 * sin2 * sin2;
 
-    float norm0 = 0.06334586940387588;
-    float norm1 = 0.02586079979313175;
-    float norm2 = 0.00746537367807775;
-    float norm3 = 0.00215507005476718;
-    float norm4 = 0.00062211516709848;
-    float norm5 = 0.00017959089069638;
-    float norm6 = 0.00005184344073383;
+    float norm0 = 1.017107236282055;
+    float norm1 = 0.1569435688318075;
+    float norm2 = 0.02481495777815175;
+    float norm3 = 0.004135826296358625;
+    float norm4 = 0.0007550951087857526;
+    float norm5 = 0.0001609868538641614;
+    float norm6 = 0.00004647290988781542;
 
     float poly[7] = float[7](p60 * norm0, p61 * norm1, p62 * norm2, p63 * norm3, p64 * norm4, p65 * norm5, p66 * norm6);
 
@@ -106,7 +106,7 @@ void main() {
 
     uint count = in_neighbor_counts[idx];
     if (count == 0) {
-        out_q_params[idx] = vec4(0.0);
+        out_descriptor_values[idx] = 0.0;
         for (int m = 0; m < 13; ++m) {
             out_q6m[idx * 13 + m] = vec2(0.0);
         }
@@ -172,5 +172,5 @@ void main() {
     }
     float q6 = sqrt((FOUR_PI / 13.0) * q6_mag_sq);
 
-    out_q_params[idx] = vec4(q4, q6, q6, 0.0);
+    out_descriptor_values[idx] = (pc.select_q4 != 0) ? q4 : q6;
 }

@@ -10,6 +10,7 @@
 #include "render3d/vulkan/VulkanCommon.hpp"
 
 #include <algorithm>
+#include <cmath>
 #include <cstring>
 
 namespace correlation::render3d::vulkan {
@@ -17,17 +18,60 @@ namespace correlation::render3d::vulkan {
 #ifdef CORRELATION_USE_VULKAN
 
 constexpr uint32_t MAX_NEIGHBORS = 64;
+constexpr int32_t MAX_GRID_DIM = 64;
+constexpr uint32_t EMPTY_CELL_SENTINEL = 0xFFFFFFFFU;
 
 namespace {
+
+struct PushConstantsCellListBuild {
+  std::array<float, 4> box_min;
+  std::array<float, 4> box_max;
+  std::array<int32_t, 4> grid_dims;
+  uint32_t num_atoms;
+  uint32_t pad0;
+  uint32_t pad1;
+  uint32_t pad2;
+};
+static_assert(sizeof(PushConstantsCellListBuild) == 64);
 
 struct PushConstantsNeighborGrid {
   std::array<float, 4> box_min;
   std::array<float, 4> box_max;
+  std::array<int32_t, 4> grid_dims;
   float cutoff;
   uint32_t max_neighbors;
   uint32_t num_atoms;
   uint32_t pad;
 };
+static_assert(sizeof(PushConstantsNeighborGrid) == 64);
+
+[[nodiscard]] std::array<int32_t, 4> computeGridDims(const std::array<float, 4> &box_min,
+                                                     const std::array<float, 4> &box_max,
+                                                     float cutoff) noexcept {
+  const float len_x = box_max[0] - box_min[0];
+  const float len_y = box_max[1] - box_min[1];
+  const float len_z = box_max[2] - box_min[2];
+  if (len_x <= 0.0F || len_y <= 0.0F || len_z <= 0.0F || cutoff <= 0.0F) {
+    return {1, 1, 1, 0};
+  }
+  const auto dim = [cutoff](float length) noexcept -> int32_t {
+    const auto count = static_cast<int32_t>(std::floor(length / cutoff));
+    return std::clamp(count, 1, MAX_GRID_DIM);
+  };
+  return {dim(len_x), dim(len_y), dim(len_z), 1};
+}
+
+void emitComputeBarrier(VkCommandBuffer cmd_buffer) noexcept {
+  const VkMemoryBarrier barrier{
+      .sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
+      .pNext = nullptr,
+      .srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT,
+      .dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT,
+  };
+  vkCmdPipelineBarrier(cmd_buffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+                       VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &barrier, 0, nullptr, 0,
+                       nullptr);
+}
 
 struct PushConstantsSteinhardt {
   std::array<float, 4> box_min;
@@ -71,6 +115,8 @@ void VulkanComputeService::cleanup() noexcept {
       command_pool_ = VK_NULL_HANDLE;
     }
     pipelines_.cleanup();
+    cell_head_.destroy();
+    atom_next_.destroy();
     neighbor_counts_.destroy();
     neighbor_indices_.destroy();
     descriptor_values_.destroy();
@@ -81,6 +127,7 @@ void VulkanComputeService::cleanup() noexcept {
   }
   is_initialized_ = false;
   allocated_atom_capacity_ = 0;
+  allocated_cell_capacity_ = 0;
 }
 
 bool VulkanComputeService::initialize(VkDevice device, VkPhysicalDevice physical_device,
@@ -147,6 +194,7 @@ void VulkanComputeService::ensureBuffers(uint32_t num_atoms) {
 
   auto desc = device_desc;
   desc.size = allocated_atom_capacity_ * sizeof(uint32_t);
+  atom_next_.ensureCapacity(device_, physical_device_, desc);
   neighbor_counts_.ensureCapacity(device_, physical_device_, desc);
 
   desc.size =
@@ -160,11 +208,249 @@ void VulkanComputeService::ensureBuffers(uint32_t num_atoms) {
   complex_harmonics_.ensureCapacity(device_, physical_device_, desc);
 
   desc.size = (100U + 2U) * sizeof(uint32_t);
+  desc.usage = static_cast<VkBufferUsageFlags>(VK_BUFFER_USAGE_STORAGE_BUFFER_BIT) |
+               static_cast<VkBufferUsageFlags>(VK_BUFFER_USAGE_TRANSFER_DST_BIT) |
+               static_cast<VkBufferUsageFlags>(VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
   histogram_ssbo_.ensureCapacity(device_, physical_device_, desc);
 
   desc.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-  desc.properties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+  desc.properties = static_cast<VkMemoryPropertyFlags>(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) |
+                    static_cast<VkMemoryPropertyFlags>(VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
   histogram_readback_.ensureCapacity(device_, physical_device_, desc);
+}
+
+void VulkanComputeService::ensureCellGridBuffers(uint32_t total_cells) {
+  if (total_cells <= allocated_cell_capacity_) {
+    return;
+  }
+  allocated_cell_capacity_ = std::max(total_cells, 4096U);
+  const BufferAllocationDesc cell_desc{
+      .size = static_cast<VkDeviceSize>(allocated_cell_capacity_) * sizeof(uint32_t),
+      .usage = static_cast<VkBufferUsageFlags>(VK_BUFFER_USAGE_STORAGE_BUFFER_BIT) |
+               static_cast<VkBufferUsageFlags>(VK_BUFFER_USAGE_TRANSFER_DST_BIT),
+      .properties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+  };
+  cell_head_.ensureCapacity(device_, physical_device_, cell_desc);
+}
+
+void VulkanComputeService::recordCellListBuildPass(
+    VkCommandBuffer cmd_buffer, VkBuffer atom_positions_buffer, uint32_t num_atoms,
+    const std::array<float, 4> &box_min, const std::array<float, 4> &box_max,
+    const std::array<int32_t, 4> &grid_dims, uint32_t total_cells) {
+  VkDescriptorSetLayout layout = pipelines_.descriptorSetLayout(ComputeKernelType::CellListBuild);
+  const VkDescriptorSetAllocateInfo ds_alloc{
+      .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+      .pNext = nullptr,
+      .descriptorPool = descriptor_pool_,
+      .descriptorSetCount = 1,
+      .pSetLayouts = &layout,
+  };
+  VkDescriptorSet descriptor_set = VK_NULL_HANDLE;
+  vkAllocateDescriptorSets(device_, &ds_alloc, &descriptor_set);
+
+  const VkDescriptorBufferInfo desc_buf0{
+      .buffer = atom_positions_buffer,
+      .offset = 0,
+      .range = static_cast<VkDeviceSize>(num_atoms) * sizeof(float) * 4U,
+  };
+  const VkDescriptorBufferInfo desc_buf1{
+      .buffer = cell_head_.buffer(),
+      .offset = 0,
+      .range = static_cast<VkDeviceSize>(total_cells) * sizeof(uint32_t),
+  };
+  const VkDescriptorBufferInfo desc_buf2{
+      .buffer = atom_next_.buffer(),
+      .offset = 0,
+      .range = static_cast<VkDeviceSize>(num_atoms) * sizeof(uint32_t),
+  };
+
+  const std::array<VkWriteDescriptorSet, 3> writes{
+      VkWriteDescriptorSet{
+          .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+          .pNext = nullptr,
+          .dstSet = descriptor_set,
+          .dstBinding = 0,
+          .dstArrayElement = 0,
+          .descriptorCount = 1,
+          .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+          .pImageInfo = nullptr,
+          .pBufferInfo = &desc_buf0,
+          .pTexelBufferView = nullptr,
+      },
+      VkWriteDescriptorSet{
+          .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+          .pNext = nullptr,
+          .dstSet = descriptor_set,
+          .dstBinding = 1,
+          .dstArrayElement = 0,
+          .descriptorCount = 1,
+          .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+          .pImageInfo = nullptr,
+          .pBufferInfo = &desc_buf1,
+          .pTexelBufferView = nullptr,
+      },
+      VkWriteDescriptorSet{
+          .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+          .pNext = nullptr,
+          .dstSet = descriptor_set,
+          .dstBinding = 2,
+          .dstArrayElement = 0,
+          .descriptorCount = 1,
+          .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+          .pImageInfo = nullptr,
+          .pBufferInfo = &desc_buf2,
+          .pTexelBufferView = nullptr,
+      },
+  };
+  vkUpdateDescriptorSets(device_, static_cast<uint32_t>(writes.size()), writes.data(), 0, nullptr);
+
+  vkCmdBindPipeline(cmd_buffer, VK_PIPELINE_BIND_POINT_COMPUTE,
+                    pipelines_.pipeline(ComputeKernelType::CellListBuild));
+  vkCmdBindDescriptorSets(cmd_buffer, VK_PIPELINE_BIND_POINT_COMPUTE,
+                          pipelines_.pipelineLayout(ComputeKernelType::CellListBuild), 0, 1,
+                          &descriptor_set, 0, nullptr);
+
+  const PushConstantsCellListBuild push_constants{
+      .box_min = box_min,
+      .box_max = box_max,
+      .grid_dims = grid_dims,
+      .num_atoms = num_atoms,
+      .pad0 = 0,
+      .pad1 = 0,
+      .pad2 = 0,
+  };
+  vkCmdPushConstants(cmd_buffer, pipelines_.pipelineLayout(ComputeKernelType::CellListBuild),
+                     VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(push_constants), &push_constants);
+
+  const uint32_t groups = (num_atoms + 255U) / 256U;
+  vkCmdDispatch(cmd_buffer, groups, 1, 1);
+}
+
+void VulkanComputeService::recordNeighborGridPass(
+    VkCommandBuffer cmd_buffer, VkBuffer atom_positions_buffer, uint32_t num_atoms,
+    const std::array<float, 4> &box_min, const std::array<float, 4> &box_max,
+    const std::array<int32_t, 4> &grid_dims, float cutoff, uint32_t total_cells) {
+  VkDescriptorSetLayout layout = pipelines_.descriptorSetLayout(ComputeKernelType::NeighborGrid);
+  const VkDescriptorSetAllocateInfo ds_alloc{
+      .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+      .pNext = nullptr,
+      .descriptorPool = descriptor_pool_,
+      .descriptorSetCount = 1,
+      .pSetLayouts = &layout,
+  };
+  VkDescriptorSet descriptor_set = VK_NULL_HANDLE;
+  vkAllocateDescriptorSets(device_, &ds_alloc, &descriptor_set);
+
+  const VkDescriptorBufferInfo desc_buf0{
+      .buffer = atom_positions_buffer,
+      .offset = 0,
+      .range = static_cast<VkDeviceSize>(num_atoms) * sizeof(float) * 4U,
+  };
+  const VkDescriptorBufferInfo desc_buf1{
+      .buffer = neighbor_counts_.buffer(),
+      .offset = 0,
+      .range = static_cast<VkDeviceSize>(num_atoms) * sizeof(uint32_t),
+  };
+  const VkDescriptorBufferInfo desc_buf2{
+      .buffer = neighbor_indices_.buffer(),
+      .offset = 0,
+      .range = static_cast<VkDeviceSize>(num_atoms) * MAX_NEIGHBORS * sizeof(uint32_t),
+  };
+  const VkDescriptorBufferInfo desc_buf3{
+      .buffer = cell_head_.buffer(),
+      .offset = 0,
+      .range = static_cast<VkDeviceSize>(total_cells) * sizeof(uint32_t),
+  };
+  const VkDescriptorBufferInfo desc_buf4{
+      .buffer = atom_next_.buffer(),
+      .offset = 0,
+      .range = static_cast<VkDeviceSize>(num_atoms) * sizeof(uint32_t),
+  };
+
+  const std::array<VkWriteDescriptorSet, 5> writes{
+      VkWriteDescriptorSet{
+          .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+          .pNext = nullptr,
+          .dstSet = descriptor_set,
+          .dstBinding = 0,
+          .dstArrayElement = 0,
+          .descriptorCount = 1,
+          .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+          .pImageInfo = nullptr,
+          .pBufferInfo = &desc_buf0,
+          .pTexelBufferView = nullptr,
+      },
+      VkWriteDescriptorSet{
+          .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+          .pNext = nullptr,
+          .dstSet = descriptor_set,
+          .dstBinding = 1,
+          .dstArrayElement = 0,
+          .descriptorCount = 1,
+          .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+          .pImageInfo = nullptr,
+          .pBufferInfo = &desc_buf1,
+          .pTexelBufferView = nullptr,
+      },
+      VkWriteDescriptorSet{
+          .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+          .pNext = nullptr,
+          .dstSet = descriptor_set,
+          .dstBinding = 2,
+          .dstArrayElement = 0,
+          .descriptorCount = 1,
+          .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+          .pImageInfo = nullptr,
+          .pBufferInfo = &desc_buf2,
+          .pTexelBufferView = nullptr,
+      },
+      VkWriteDescriptorSet{
+          .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+          .pNext = nullptr,
+          .dstSet = descriptor_set,
+          .dstBinding = 3,
+          .dstArrayElement = 0,
+          .descriptorCount = 1,
+          .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+          .pImageInfo = nullptr,
+          .pBufferInfo = &desc_buf3,
+          .pTexelBufferView = nullptr,
+      },
+      VkWriteDescriptorSet{
+          .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+          .pNext = nullptr,
+          .dstSet = descriptor_set,
+          .dstBinding = 4,
+          .dstArrayElement = 0,
+          .descriptorCount = 1,
+          .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+          .pImageInfo = nullptr,
+          .pBufferInfo = &desc_buf4,
+          .pTexelBufferView = nullptr,
+      },
+  };
+  vkUpdateDescriptorSets(device_, static_cast<uint32_t>(writes.size()), writes.data(), 0, nullptr);
+
+  vkCmdBindPipeline(cmd_buffer, VK_PIPELINE_BIND_POINT_COMPUTE,
+                    pipelines_.pipeline(ComputeKernelType::NeighborGrid));
+  vkCmdBindDescriptorSets(cmd_buffer, VK_PIPELINE_BIND_POINT_COMPUTE,
+                          pipelines_.pipelineLayout(ComputeKernelType::NeighborGrid), 0, 1,
+                          &descriptor_set, 0, nullptr);
+
+  const PushConstantsNeighborGrid push_constants{
+      .box_min = box_min,
+      .box_max = box_max,
+      .grid_dims = grid_dims,
+      .cutoff = cutoff,
+      .max_neighbors = MAX_NEIGHBORS,
+      .num_atoms = num_atoms,
+      .pad = 0,
+  };
+  vkCmdPushConstants(cmd_buffer, pipelines_.pipelineLayout(ComputeKernelType::NeighborGrid),
+                     VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(push_constants), &push_constants);
+
+  const uint32_t groups = (num_atoms + 255U) / 256U;
+  vkCmdDispatch(cmd_buffer, groups, 1, 1);
 }
 
 bool VulkanComputeService::evaluateOrderParametersAndApplyHalos(
@@ -175,7 +461,13 @@ bool VulkanComputeService::evaluateOrderParametersAndApplyHalos(
     return false;
   }
 
+  const std::array<int32_t, 4> grid_dims = computeGridDims(box_min, box_max, cutoff);
+  const uint32_t total_cells = static_cast<uint32_t>(grid_dims[0]) *
+                               static_cast<uint32_t>(grid_dims[1]) *
+                               static_cast<uint32_t>(grid_dims[2]);
+
   ensureBuffers(num_atoms);
+  ensureCellGridBuffers(total_cells);
 
   const VkCommandBufferAllocateInfo alloc_info{
       .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -200,6 +492,8 @@ bool VulkanComputeService::evaluateOrderParametersAndApplyHalos(
   vkBeginCommandBuffer(cmd_buffer, &begin_info);
 
   vkCmdFillBuffer(cmd_buffer, histogram_ssbo_.buffer(), 0, (100U + 2U) * sizeof(uint32_t), 0);
+  vkCmdFillBuffer(cmd_buffer, cell_head_.buffer(), 0,
+                  static_cast<VkDeviceSize>(total_cells) * sizeof(uint32_t), EMPTY_CELL_SENTINEL);
 
   const VkMemoryBarrier barrier_clear{
       .sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
@@ -211,107 +505,15 @@ bool VulkanComputeService::evaluateOrderParametersAndApplyHalos(
                        VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &barrier_clear, 0, nullptr, 0,
                        nullptr);
 
-  // Pass 1: Neighbor Grid
-  {
-    VkDescriptorSetLayout layout = pipelines_.descriptorSetLayout(ComputeKernelType::NeighborGrid);
-    const VkDescriptorSetAllocateInfo ds_alloc{
-        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-        .pNext = nullptr,
-        .descriptorPool = descriptor_pool_,
-        .descriptorSetCount = 1,
-        .pSetLayouts = &layout,
-    };
-    VkDescriptorSet descriptor_set = VK_NULL_HANDLE;
-    vkAllocateDescriptorSets(device_, &ds_alloc, &descriptor_set);
+  // Pass 1a: O(N) 3D Uniform Spatial Cell-List Build
+  recordCellListBuildPass(cmd_buffer, atom_positions_buffer, num_atoms, box_min, box_max, grid_dims,
+                          total_cells);
+  emitComputeBarrier(cmd_buffer);
 
-    const VkDescriptorBufferInfo desc_buf0{
-        .buffer = atom_positions_buffer,
-        .offset = 0,
-        .range = num_atoms * sizeof(float) * 4U,
-    };
-    const VkDescriptorBufferInfo desc_buf1{
-        .buffer = neighbor_counts_.buffer(),
-        .offset = 0,
-        .range = num_atoms * sizeof(uint32_t),
-    };
-    const VkDescriptorBufferInfo desc_buf2{
-        .buffer = neighbor_indices_.buffer(),
-        .offset = 0,
-        .range = static_cast<VkDeviceSize>(num_atoms) * MAX_NEIGHBORS * sizeof(uint32_t),
-    };
-
-    const std::array<VkWriteDescriptorSet, 3> writes{
-        VkWriteDescriptorSet{
-            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-            .pNext = nullptr,
-            .dstSet = descriptor_set,
-            .dstBinding = 0,
-            .dstArrayElement = 0,
-            .descriptorCount = 1,
-            .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-            .pImageInfo = nullptr,
-            .pBufferInfo = &desc_buf0,
-            .pTexelBufferView = nullptr,
-        },
-        VkWriteDescriptorSet{
-            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-            .pNext = nullptr,
-            .dstSet = descriptor_set,
-            .dstBinding = 1,
-            .dstArrayElement = 0,
-            .descriptorCount = 1,
-            .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-            .pImageInfo = nullptr,
-            .pBufferInfo = &desc_buf1,
-            .pTexelBufferView = nullptr,
-        },
-        VkWriteDescriptorSet{
-            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-            .pNext = nullptr,
-            .dstSet = descriptor_set,
-            .dstBinding = 2,
-            .dstArrayElement = 0,
-            .descriptorCount = 1,
-            .descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-            .pImageInfo = nullptr,
-            .pBufferInfo = &desc_buf2,
-            .pTexelBufferView = nullptr,
-        },
-    };
-    vkUpdateDescriptorSets(device_, static_cast<uint32_t>(writes.size()), writes.data(), 0,
-                           nullptr);
-
-    vkCmdBindPipeline(cmd_buffer, VK_PIPELINE_BIND_POINT_COMPUTE,
-                      pipelines_.pipeline(ComputeKernelType::NeighborGrid));
-    vkCmdBindDescriptorSets(cmd_buffer, VK_PIPELINE_BIND_POINT_COMPUTE,
-                            pipelines_.pipelineLayout(ComputeKernelType::NeighborGrid), 0, 1,
-                            &descriptor_set, 0, nullptr);
-
-    const PushConstantsNeighborGrid push_constants{
-        .box_min = box_min,
-        .box_max = box_max,
-        .cutoff = cutoff,
-        .max_neighbors = MAX_NEIGHBORS,
-        .num_atoms = num_atoms,
-        .pad = 0,
-    };
-
-    vkCmdPushConstants(cmd_buffer, pipelines_.pipelineLayout(ComputeKernelType::NeighborGrid),
-                       VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(push_constants), &push_constants);
-
-    const uint32_t groups = (num_atoms + 255U) / 256U;
-    vkCmdDispatch(cmd_buffer, groups, 1, 1);
-  }
-
-  const VkMemoryBarrier barrier_neighbor{
-      .sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
-      .pNext = nullptr,
-      .srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT,
-      .dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
-  };
-  vkCmdPipelineBarrier(cmd_buffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-                       VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &barrier_neighbor, 0, nullptr, 0,
-                       nullptr);
+  // Pass 1b: O(N) 27-Cell Neighbor Grid Traversal
+  recordNeighborGridPass(cmd_buffer, atom_positions_buffer, num_atoms, box_min, box_max, grid_dims,
+                         cutoff, total_cells);
+  emitComputeBarrier(cmd_buffer);
 
   // Pass 2: Steinhardt Order Parameters
   {
@@ -439,6 +641,8 @@ bool VulkanComputeService::evaluateOrderParametersAndApplyHalos(
     const uint32_t groups = (num_atoms + 255U) / 256U;
     vkCmdDispatch(cmd_buffer, groups, 1, 1);
   }
+
+  emitComputeBarrier(cmd_buffer);
 
   // Pass 3: In-VRAM Halo Application
   {
@@ -592,6 +796,16 @@ bool VulkanComputeService::evaluateOrderParametersAndApplyHalos(
     const uint32_t groups = (num_atoms + 255U) / 256U;
     vkCmdDispatch(cmd_buffer, groups, 1, 1);
   }
+
+  const VkMemoryBarrier barrier_readback{
+      .sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
+      .pNext = nullptr,
+      .srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT,
+      .dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT,
+  };
+  vkCmdPipelineBarrier(cmd_buffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+                       VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 1, &barrier_readback, 0, nullptr, 0,
+                       nullptr);
 
   const VkBufferCopy copy_region{
       .srcOffset = 0,

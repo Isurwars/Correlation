@@ -72,6 +72,16 @@ public:
 
 private:
   void ensureBuffers(uint32_t num_atoms);
+  void ensureCellGridBuffers(uint32_t total_cells);
+  void recordCellListBuildPass(VkCommandBuffer cmd_buffer, VkBuffer atom_positions_buffer,
+                               uint32_t num_atoms, const std::array<float, 4> &box_min,
+                               const std::array<float, 4> &box_max,
+                               const std::array<int32_t, 4> &grid_dims, uint32_t total_cells);
+  void recordNeighborGridPass(VkCommandBuffer cmd_buffer, VkBuffer atom_positions_buffer,
+                              uint32_t num_atoms, const std::array<float, 4> &box_min,
+                              const std::array<float, 4> &box_max,
+                              const std::array<int32_t, 4> &grid_dims, float cutoff,
+                              uint32_t total_cells);
 
   VkDevice device_{VK_NULL_HANDLE};
   VkPhysicalDevice physical_device_{VK_NULL_HANDLE};
@@ -82,6 +92,8 @@ private:
 
   VulkanComputePipelineManager pipelines_;
 
+  VulkanBuffer cell_head_;
+  VulkanBuffer atom_next_;
   VulkanBuffer neighbor_counts_;
   VulkanBuffer neighbor_indices_;
   VulkanBuffer descriptor_values_;
@@ -90,6 +102,7 @@ private:
   VulkanBuffer histogram_readback_;
 
   uint32_t allocated_atom_capacity_{0};
+  uint32_t allocated_cell_capacity_{0};
   bool is_initialized_{false};
 };
 

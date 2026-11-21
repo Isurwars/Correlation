@@ -1,7 +1,7 @@
 #version 450
 layout(local_size_x = 256) in;
 
-// In/out buffers for 3D uniform spatial grid hashing & neighbor construction
+// Pass 1b: O(N) 3D uniform spatial cell-list 27-cell neighbor construction
 layout(std430, set = 0, binding = 0) readonly buffer AtomPositions {
     vec4 in_positions[]; // xyz = position (Angstroms), w = element_id
 };
@@ -10,44 +10,101 @@ layout(std430, set = 0, binding = 1) writeonly buffer NeighborCounts {
     uint out_neighbor_counts[];
 };
 
-// Flattened ragged or fixed-stride neighbor indices (e.g. max 64 neighbors per atom)
+// Fixed-stride neighbor indices (e.g. max 64 neighbors per atom)
 layout(std430, set = 0, binding = 2) writeonly buffer NeighborIndices {
     uint out_neighbor_indices[];
+};
+
+layout(std430, set = 0, binding = 3) readonly buffer CellHead {
+    uint cell_head[];
+};
+
+layout(std430, set = 0, binding = 4) readonly buffer AtomNext {
+    uint atom_next[];
 };
 
 layout(push_constant) uniform GridParams {
     vec4 box_min;
     vec4 box_max;
+    ivec4 grid_dims; // xyz = grid dimensions (>= 1), w = periodic flag (1 = periodic, 0 = non-periodic)
     float cutoff;
     uint max_neighbors;
     uint num_atoms;
     uint pad;
 } pc;
 
+const uint EMPTY_CELL = 0xFFFFFFFFu;
+
 void main() {
     uint idx = gl_GlobalInvocationID.x;
     if (idx >= pc.num_atoms) return;
 
     vec3 pos_i = in_positions[idx].xyz;
+    vec3 box_size = pc.box_max.xyz - pc.box_min.xyz;
+    bool has_box = (box_size.x > 0.0 && box_size.y > 0.0 && box_size.z > 0.0);
+    bool is_periodic = has_box && (pc.grid_dims.w != 0);
+
+    ivec3 g = max(pc.grid_dims.xyz, ivec3(1));
+    ivec3 my_cell = ivec3(0);
+    if (has_box) {
+        vec3 frac = (pos_i - pc.box_min.xyz) / box_size;
+        if (is_periodic) {
+            frac = frac - floor(frac);
+        }
+        my_cell = clamp(ivec3(floor(frac * vec3(g))), ivec3(0), g - ivec3(1));
+    }
+
+    // Avoid duplicate cell visits when periodic grid dimensions are 1 or 2.
+    ivec3 d_min = is_periodic
+        ? ivec3(g.x >= 3 ? -1 : 0, g.y >= 3 ? -1 : 0, g.z >= 3 ? -1 : 0)
+        : ivec3(g.x >= 2 ? -1 : 0, g.y >= 2 ? -1 : 0, g.z >= 2 ? -1 : 0);
+    ivec3 d_max = ivec3(g.x >= 2 ? 1 : 0, g.y >= 2 ? 1 : 0, g.z >= 2 ? 1 : 0);
+
     uint count = 0;
     float cutoff_sq = pc.cutoff * pc.cutoff;
     uint base_offset = idx * pc.max_neighbors;
 
-    for (uint j = 0; j < pc.num_atoms; ++j) {
-        if (j == idx) continue;
-        vec3 pos_j = in_positions[j].xyz;
-        vec3 dr = pos_j - pos_i;
-
-        // Periodic boundary wrap if box dimensions are positive
-        vec3 box_size = pc.box_max.xyz - pc.box_min.xyz;
-        if (box_size.x > 0.0) {
-            dr -= box_size * round(dr / box_size);
+    for (int dz = d_min.z; dz <= d_max.z; ++dz) {
+        int nz = my_cell.z + dz;
+        if (is_periodic) {
+            nz = (nz + g.z) % g.z;
+        } else if (nz < 0 || nz >= g.z) {
+            continue;
         }
 
-        float dist_sq = dot(dr, dr);
-        if (dist_sq <= cutoff_sq && count < pc.max_neighbors) {
-            out_neighbor_indices[base_offset + count] = j;
-            count++;
+        for (int dy = d_min.y; dy <= d_max.y; ++dy) {
+            int ny = my_cell.y + dy;
+            if (is_periodic) {
+                ny = (ny + g.y) % g.y;
+            } else if (ny < 0 || ny >= g.y) {
+                continue;
+            }
+
+            for (int dx = d_min.x; dx <= d_max.x; ++dx) {
+                int nx = my_cell.x + dx;
+                if (is_periodic) {
+                    nx = (nx + g.x) % g.x;
+                } else if (nx < 0 || nx >= g.x) {
+                    continue;
+                }
+
+                uint cell_id = uint((nz * g.y + ny) * g.x + nx);
+                uint j = cell_head[cell_id];
+                while (j != EMPTY_CELL) {
+                    if (j != idx) {
+                        vec3 dr = in_positions[j].xyz - pos_i;
+                        if (is_periodic) {
+                            dr -= box_size * round(dr / box_size);
+                        }
+                        float dist_sq = dot(dr, dr);
+                        if (dist_sq <= cutoff_sq && count < pc.max_neighbors) {
+                            out_neighbor_indices[base_offset + count] = j;
+                            count++;
+                        }
+                    }
+                    j = atom_next[j];
+                }
+            }
         }
     }
 
