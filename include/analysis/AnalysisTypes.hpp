@@ -441,4 +441,15 @@ enum class RingProjectionMode : std::uint8_t {
                       ///< (e.g. Si-O-Si-O).
 };
 
+/**
+ * @enum VDOSWindowType
+ * @brief Time-domain tapering half-window applied to the VACF prior to Fourier cosine transform.
+ */
+enum class VDOSWindowType : std::uint8_t {
+  Hann = 0,     ///< Half-Hann: 0.5 * (1 + cos(pi * t / t_max)) — exact zero at t_max (default).
+  Blackman = 1, ///< Half-Blackman: 0.42 + 0.5*cos(pi*t/t_max) + 0.08*cos(2*pi*t/t_max).
+  Gaussian = 2, ///< Half-Gaussian: exp(-0.5 * (3 * t / t_max)^2).
+  None = 3,     ///< Rectangular (unwindowed): 1.0.
+};
+
 } // namespace correlation::analysis

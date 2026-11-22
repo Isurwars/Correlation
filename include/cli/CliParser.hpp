@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include "analysis/AnalysisTypes.hpp"
 #include "cli/ConvertCommand.hpp"
 #include "math/Smoothing.hpp"
 
@@ -54,6 +55,10 @@ struct CliOptions {
       static_cast<real_t>(5.0); ///< Cutoff radius for Local Entropic Fingerprint (Å).
   real_t lef_sigma = static_cast<real_t>(0.2); ///< Standard deviation for LEF Gaussian kernel (Å).
   int hyper_samples = 10000; ///< Sample count for hyperuniformity number variance.
+  int vacf_max_lag = -1;     ///< Maximum VACF lag frames (-1 = half trajectory).
+  correlation::analysis::VDOSWindowType vdos_window =
+      correlation::analysis::VDOSWindowType::Hann; ///< Time-domain window for VDOS.
+  int vdos_zero_pad = 4;                           ///< Zero-padding multiplier for VDOS FFT (>= 1).
   correlation::math::KernelType smoothing_kernel =
       correlation::math::KernelType::Gaussian; ///< Kernel function.
   int material_type = 0;                       ///< Material type preset index.

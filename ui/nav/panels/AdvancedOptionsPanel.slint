@@ -154,6 +154,11 @@ export component AdvancedOptionsPanel inherits Rectangle {
                     lef_sigma_error: root.app_errors.lef_sigma_error;
                     hyper_samples <=> root.analysis_options.hyper_samples;
                     hyper_samples_error: root.app_errors.hyper_samples_error;
+                    vacf_max_lag <=> root.analysis_options.vacf_max_lag;
+                    vacf_max_lag_error: root.app_errors.vacf_max_lag_error;
+                    vdos_window <=> root.analysis_options.vdos_window;
+                    vdos_zero_pad <=> root.analysis_options.vdos_zero_pad;
+                    vdos_zero_pad_error: root.app_errors.vdos_zero_pad_error;
                     reset => { root.reset_advanced_options(); }
                 }
             }

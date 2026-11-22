@@ -39,6 +39,9 @@ void resetAppErrors(AppErrors &errs) {
   errs.export_marker_size_error = "";
   errs.lef_cutoff_error = "";
   errs.lef_sigma_error = "";
+  errs.hyper_samples_error = "";
+  errs.vacf_max_lag_error = "";
+  errs.vdos_zero_pad_error = "";
   errs.xrd_lambda_error = "";
   errs.xrd_theta_min_error = "";
   errs.xrd_theta_max_error = "";
@@ -60,6 +63,9 @@ void resetAppErrors(AppErrors &errs) {
          lhs.export_marker_size_error != rhs.export_marker_size_error ||
          lhs.lef_cutoff_error != rhs.lef_cutoff_error ||
          lhs.lef_sigma_error != rhs.lef_sigma_error ||
+         lhs.hyper_samples_error != rhs.hyper_samples_error ||
+         lhs.vacf_max_lag_error != rhs.vacf_max_lag_error ||
+         lhs.vdos_zero_pad_error != rhs.vdos_zero_pad_error ||
          lhs.xrd_lambda_error != rhs.xrd_lambda_error ||
          lhs.xrd_theta_min_error != rhs.xrd_theta_min_error ||
          lhs.xrd_theta_max_error != rhs.xrd_theta_max_error ||
@@ -231,6 +237,24 @@ bool InputValidator::validateOtherAnalysisOptions(const AnalysisOptions &opts, A
 
   if (const auto res = ValidationRuleService::parsePositiveInt(opts.hyper_samples.data()); !res) {
     errs.hyper_samples_error = slint::SharedString(res.error());
+    valid = false;
+  }
+
+  try {
+    size_t pos = 0;
+    const std::string lag_str = opts.vacf_max_lag.data();
+    const int lag_val = std::stoi(lag_str, &pos);
+    if (pos != lag_str.size() || lag_val < -1 || lag_val == 0) {
+      errs.vacf_max_lag_error = "Must be -1 (auto) or ≥ 1";
+      valid = false;
+    }
+  } catch (const std::exception &) {
+    errs.vacf_max_lag_error = "Must be -1 (auto) or ≥ 1";
+    valid = false;
+  }
+
+  if (const auto res = ValidationRuleService::parsePositiveInt(opts.vdos_zero_pad.data()); !res) {
+    errs.vdos_zero_pad_error = slint::SharedString(res.error());
     valid = false;
   }
 

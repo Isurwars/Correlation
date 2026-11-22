@@ -81,6 +81,12 @@ namespace {
   if (config.settings.hyperuniformity_samples == 0) {
     return "Error: hyper_samples must be strictly positive.";
   }
+  if (config.settings.vacf_max_lag < -1 || config.settings.vacf_max_lag == 0) {
+    return "Error: vacf_max_lag must be -1 (auto) or strictly positive.";
+  }
+  if (config.settings.vdos_zero_pad == 0) {
+    return "Error: vdos_zero_pad must be at least 1.";
+  }
   if (config.max_frame < -1) {
     return "Error: max_frame cannot be less than -1.";
   }

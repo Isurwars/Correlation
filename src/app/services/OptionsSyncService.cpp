@@ -194,6 +194,9 @@ void OptionsSyncService::writeToUI(AppWindow &window, const ProgramOptions &opti
   opts.lef_cutoff = slint::SharedString(std::format("{:.2f}", options.lef_cutoff));
   opts.lef_sigma = slint::SharedString(std::format("{:.2f}", options.lef_sigma));
   opts.hyper_samples = slint::SharedString(std::to_string(options.hyper_samples));
+  opts.vacf_max_lag = slint::SharedString(std::to_string(options.vacf_max_lag));
+  opts.vdos_window = static_cast<int>(options.vdos_window);
+  opts.vdos_zero_pad = slint::SharedString(std::to_string(options.vdos_zero_pad));
   opts.xrd_radiation_preset = 0;
   opts.xrd_lambda = slint::SharedString(std::format("{:.4f}", options.xrd_params.lambda));
   opts.xrd_theta_min = slint::SharedString(std::format("{:.1f}", options.xrd_params.theta_min));
@@ -236,6 +239,16 @@ OptionsSyncService::readFromUI(const AppWindow &window, size_t frame_count,
       static_cast<size_t>(safeParse(ui_opts.max_ring_size, static_cast<real_t>(opt.max_ring_size)));
   opt.hyper_samples =
       static_cast<size_t>(safeParse(ui_opts.hyper_samples, static_cast<real_t>(opt.hyper_samples)));
+  try {
+    opt.vacf_max_lag = std::stoi(ui_opts.vacf_max_lag.data());
+  } catch (const std::exception &) {
+    opt.vacf_max_lag = AppDefaults::VACF_MAX_LAG;
+  }
+  const int vdos_win_idx = std::clamp(ui_opts.vdos_window, 0, 3);
+  opt.vdos_window = static_cast<correlation::analysis::VDOSWindowType>(vdos_win_idx);
+  opt.vdos_zero_pad =
+      std::max<size_t>(1, static_cast<size_t>(safeParse(ui_opts.vdos_zero_pad,
+                                                        static_cast<real_t>(opt.vdos_zero_pad))));
 
   collectActiveCalculators(window.get_calculator_groups(), opt);
 

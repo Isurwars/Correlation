@@ -11,10 +11,23 @@
 #include "analysis/AnalysisTypes.hpp"
 #include "core/Trajectory.hpp"
 
-#include <tuple>
+#include <map>
+#include <string>
+#include <utility>
 #include <vector>
 
 namespace correlation::analysis {
+
+/**
+ * @struct PartialVACFResult
+ * @brief Container for total (unweighted and mass-weighted) and per-element VACF curves.
+ */
+struct PartialVACFResult {
+  std::vector<real_t> total_unweighted;    ///< Unweighted total VACF (Å² fs⁻²), for Green-Kubo D.
+  std::vector<real_t> total_mass_weighted; ///< Mass-weighted total VACF (Å² fs⁻²), for phonon VDOS.
+  std::map<std::string, std::vector<real_t>> element_vacfs; ///< Per-element unweighted VACFs.
+  std::map<std::string, real_t> element_mass_weights;       ///< Normalized mass weights w_α.
+};
 
 /**
  * @brief Static class providing dynamics analysis methods.
@@ -83,20 +96,36 @@ public:
                StartFrame start_frame = {0}, EndFrame end_frame = {static_cast<size_t>(-1)});
 
   /**
+   * @brief Calculates total (unweighted and mass-weighted) and per-element VACFs.
+   *
+   * @param traj The trajectory containing pre-calculated velocities.
+   * @param max_correlation_frames Maximum time lag in frames (-1 = half trajectory).
+   * @param start_frame First frame to include (default: 0).
+   * @param end_frame One-past-last frame to include (default: all frames).
+   * @return PartialVACFResult containing total and per-element VACFs and mass weights.
+   */
+  [[nodiscard]] static PartialVACFResult
+  calculatePartialVACF(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames,
+                       StartFrame start_frame = {0},
+                       EndFrame end_frame = {static_cast<size_t>(-1)});
+
+  /**
    * @brief Calculates the Vibrational Density of States (VDOS) from the VACF.
    *
-   * Real part (Cosine Transform):
-   * @f[ \text{VDOS}_{\text{re}}(\omega) = \int_0^{\infty} C(t)\,\cos(\omega
-   * t)\,\mathrm{d}t @f] Imaginary part (Sine Transform):
-   * @f[ \text{VDOS}_{\text{im}}(\omega) = \int_0^{\infty} C(t)\,\sin(\omega
-   * t)\,\mathrm{d}t @f]
+   * Evaluates the real one-sided Fourier cosine transform via a zero-padded
+   * even-symmetric FFT (DCT-I equivalent) after applying a smooth time-domain
+   * half-window:
+   * @f[ g(\nu) = 2 \int_0^{t_{\max}} C(t)\,w(t)\,\cos(2\pi \nu t)\,\mathrm{d}t @f]
    *
    * @param vacf The Velocity Autocorrelation Function.
    * @param time_step The time step between frames (in femtoseconds).
-   * @return A tuple: {frequencies (THz), real_intensities, imag_intensities}.
+   * @param window_type Time-domain tapering half-window (default: Half-Hann).
+   * @param zero_pad_factor Zero-padding multiplier for frequency interpolation (>= 1, default: 4).
+   * @return A pair: {frequencies (THz, >= 0), intensities (>= 0)}.
    */
-  [[nodiscard]] static std::tuple<std::vector<real_t>, std::vector<real_t>, std::vector<real_t>>
-  calculateVDOS(const std::vector<real_t> &vacf, real_t time_step);
+  [[nodiscard]] static std::pair<std::vector<real_t>, std::vector<real_t>>
+  calculateVDOS(const std::vector<real_t> &vacf, real_t time_step,
+                VDOSWindowType window_type = VDOSWindowType::Hann, size_t zero_pad_factor = 4);
 
   /**
    * @brief Computes the self-diffusion coefficient D from MSD using linear regression on the second

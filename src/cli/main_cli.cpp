@@ -126,6 +126,9 @@ int main(int argc, char *argv[]) {
   opts.lef_cutoff = cli.lef_cutoff;
   opts.lef_sigma = cli.lef_sigma;
   opts.hyper_samples = cli.hyper_samples;
+  opts.vacf_max_lag = cli.vacf_max_lag;
+  opts.vdos_window = cli.vdos_window;
+  opts.vdos_zero_pad = static_cast<size_t>(cli.vdos_zero_pad);
   opts.smoothing_kernel = cli.smoothing_kernel;
   opts.material_type = cli.material_type;
   opts.mlip_model_path = cli.mlip_model_path;

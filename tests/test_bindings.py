@@ -124,6 +124,12 @@ settings.r_bin_width = 0.02
 settings.smoothing   = True
 settings.smoothing_sigma  = 0.05
 settings.smoothing_kernel = correlation.KernelType.Gaussian
+settings.vacf_max_lag = -1
+settings.vdos_window = correlation.VDOSWindowType.Hann
+settings.vdos_zero_pad = 4
+assert settings.vacf_max_lag == -1
+assert settings.vdos_window == correlation.VDOSWindowType.Hann
+assert settings.vdos_zero_pad == 4
 settings.active_calculators = {"RDF": True}
 print(f"  r_max        = {settings.r_max}")
 print(f"  r_bin_width  = {settings.r_bin_width}")

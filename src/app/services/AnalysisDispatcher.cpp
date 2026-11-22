@@ -60,6 +60,9 @@ toEngineConfig(const ProgramOptions &options, std::atomic<bool> *cancel_flag) {
   config.settings.lef_cutoff = options.lef_cutoff;
   config.settings.lef_sigma = options.lef_sigma;
   config.settings.hyperuniformity_samples = options.hyper_samples;
+  config.settings.vacf_max_lag = options.vacf_max_lag;
+  config.settings.vdos_window = options.vdos_window;
+  config.settings.vdos_zero_pad = options.vdos_zero_pad;
   config.settings.cancel_flag = cancel_flag;
   config.settings.xrd_params = options.xrd_params;
   config.settings.mlip_model_path = options.mlip_model_path;

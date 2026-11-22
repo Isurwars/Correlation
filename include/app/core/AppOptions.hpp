@@ -58,6 +58,10 @@ struct AppDefaults {
       correlation::math::KernelType::Gaussian;
 
   static constexpr real_t TIME_STEP = static_cast<real_t>(1.0); ///< Default time step (fs).
+  static constexpr int VACF_MAX_LAG = -1; ///< Default VACF max lag (-1 = auto N/2).
+  static constexpr correlation::analysis::VDOSWindowType VDOS_WINDOW =
+      correlation::analysis::VDOSWindowType::Hann; ///< Default VDOS tapering window.
+  static constexpr size_t VDOS_ZERO_PAD = 4;       ///< Default VDOS FFT zero-padding factor.
 
   // XRD Defaults
   static constexpr real_t XRD_LAMBDA =
@@ -132,11 +136,15 @@ struct ProgramOptions {
   real_t lef_sigma = AppDefaults::LEF_SIGMA; ///< Gaussian standard deviation for local entropy.
   size_t hyper_samples = 10000;              ///< Number of random samples for hyperuniformity.
   correlation::math::KernelType smoothing_kernel =
-      AppDefaults::SMOOTHING_KERNEL;         ///< Smoothing kernel type.
-  int min_frame = 0;                         ///< Starting frame index.
-  int max_frame = -1;                        ///< Ending frame index (-1 for all).
-  int frame_stride = 1;                      ///< Stride between analyzed frames (>= 1).
-  real_t time_step = AppDefaults::TIME_STEP; ///< Simulation time step in fs.
+      AppDefaults::SMOOTHING_KERNEL;            ///< Smoothing kernel type.
+  int min_frame = 0;                            ///< Starting frame index.
+  int max_frame = -1;                           ///< Ending frame index (-1 for all).
+  int frame_stride = 1;                         ///< Stride between analyzed frames (>= 1).
+  real_t time_step = AppDefaults::TIME_STEP;    ///< Simulation time step in fs.
+  int vacf_max_lag = AppDefaults::VACF_MAX_LAG; ///< Max VACF lag frames (-1 = auto N/2).
+  correlation::analysis::VDOSWindowType vdos_window =
+      AppDefaults::VDOS_WINDOW;                      ///< Time-domain tapering window for VDOS.
+  size_t vdos_zero_pad = AppDefaults::VDOS_ZERO_PAD; ///< Zero-padding factor for VDOS FFT.
 
   int material_type = 0; ///< Material type (0: Amorphous, 1: Liquid, 2: Crystalline).
 

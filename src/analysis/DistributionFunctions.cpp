@@ -350,11 +350,26 @@ void DistributionFunctions::calculateVACF(const correlation::core::Trajectory &t
   }
 }
 
-void DistributionFunctions::calculateVDOS() {
+void DistributionFunctions::calculateVDOS(VDOSWindowType window_type, size_t zero_pad_factor,
+                                          real_t max_freq) {
   if (!histograms_.contains("VACF")) {
     throw std::logic_error("Cannot calculate VDOS. Please calculate VACF first.");
   }
-  histograms_["VDOS"] = correlation::calculators::VDOSCalculator::calculate(histograms_.at("VACF"));
+  const auto &vacf_hist = histograms_.at("VACF");
+  const real_t time_step = vacf_hist.bins.size() >= 2 ? (vacf_hist.bins[1] - vacf_hist.bins[0])
+                                                      : static_cast<real_t>(1.0);
+  correlation::calculators::VDOSParams params;
+  params.window_type = window_type;
+  params.zero_pad_factor = zero_pad_factor;
+  params.max_real_freq =
+      (max_freq > static_cast<real_t>(0.0))
+          ? max_freq
+          : correlation::calculators::VDOSCalculator::computeRecommendedMaxFrequency(cell_,
+                                                                                     time_step);
+  auto decomposed =
+      correlation::calculators::VDOSCalculator::calculateDecomposed(vacf_hist, params, &cell_);
+  histograms_["VDOS"] = std::move(decomposed.vibrational);
+  histograms_["VDOS_Translational"] = std::move(decomposed.translational);
 }
 
 void DistributionFunctions::calculateXRD(XRDParams params) {

@@ -1,17 +1,23 @@
+import { DropDownMenu, TooltipTarget } from "../../material/material.slint";
 import { OptionSection } from "../common/OptionSection.slint";
 import { ValidatedField } from "../common/ValidatedField.slint";
 
 export component AdvancedOptionsCard inherits OptionSection {
-    title: "Advanced Order Parameters";
+    title: "Advanced Order & Dynamics";
     reset_enabled: root.file_loaded;
 
     in property <bool> file_loaded;
     in-out property <string> lef_cutoff;
     in-out property <string> lef_sigma;
     in-out property <string> hyper_samples;
+    in-out property <string> vacf_max_lag;
+    in-out property <int> vdos_window;
+    in-out property <string> vdos_zero_pad;
     in property <string> lef_cutoff_error: "";
     in property <string> lef_sigma_error: "";
     in property <string> hyper_samples_error: "";
+    in property <string> vacf_max_lag_error: "";
+    in property <string> vdos_zero_pad_error: "";
 
     ValidatedField {
         field_enabled: root.file_loaded;
@@ -48,5 +54,42 @@ export component AdvancedOptionsCard inherits OptionSection {
         minimum: 100.0;
         decimals: 0;
         tooltip_text: "Number of random sample points for hyperuniformity calculation.\n\n📏 Recommended: 10000.\n\n🔬 Physics: More samples improve the statistical accuracy of the local number variance σ²_N(R) and hyperuniformity index χ_H(R). Higher values yield smoother curves but increase computation time.";
+    }
+
+    ValidatedField {
+        field_enabled: root.file_loaded;
+        label: "VACF Max Lag (frames)";
+        text <=> root.vacf_max_lag;
+        error: root.vacf_max_lag_error;
+        tooltip_text: "Maximum lag in frames for VACF correlation.\n\n📏 Recommended: -1 (auto N/2).\n\n🔬 Physics: Capping lag at half the trajectory avoids high-variance tail noise that degrades low-frequency VDOS.";
+    }
+
+    TooltipTarget {
+        tooltip_text: "Time-domain tapering half-window applied to the VACF before the real cosine FFT.\n\n🔬 Half-Hann: Default smooth decay to exact zero at t_max; balanced peak sharpness and leakage suppression.\n\n🔬 Half-Blackman: Stronger sidelobe suppression (-58 dB) for noisy liquid VACFs.\n\n🔬 Gaussian: Smooth 3σ Gaussian line broadening.\n\n🔬 None: Unwindowed rectangular cutoff.";
+        DropDownMenu {
+            enabled: root.file_loaded;
+            width: 100%;
+            label: "VDOS Window";
+            items: [
+                { text: "Half-Hann", enabled: true },
+                { text: "Half-Blackman", enabled: true },
+                { text: "Gaussian", enabled: true },
+                { text: "None", enabled: true }
+            ];
+            current-index <=> root.vdos_window;
+        }
+    }
+
+    ValidatedField {
+        field_enabled: root.file_loaded;
+        label: "VDOS Zero-Pad Factor";
+        text <=> root.vdos_zero_pad;
+        error: root.vdos_zero_pad_error;
+        stepper: true;
+        step: 1.0;
+        minimum: 1.0;
+        maximum: 16.0;
+        decimals: 0;
+        tooltip_text: "Zero-padding multiplier for the symmetrized VDOS FFT.\n\n📏 Recommended: 4.\n\n🔬 Physics: Interpolates the frequency grid smoothly without altering physical resolution.";
     }
 }

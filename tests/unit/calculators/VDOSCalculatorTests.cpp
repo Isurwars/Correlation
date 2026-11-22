@@ -20,106 +20,155 @@ namespace correlation::analysis {
 namespace {
 
 TEST(VDOSCalculatorTests, VDOSIsNonZeroAtZeroFrequencyForConstantVACF) {
-  // Create a simple constant VACF (DC signal)
-  // Fourier transform of a constant is a delta at f=0.
-  // Since we define VDOS as the Fourier Transform of the VACF (without
-  // frequency weighting), a constant VACF should result in a significant peak
-  // at f=0 (DC component).
-
-  const std::vector<real_t> vacf(100, 1.0); // Constant VACF
+  const std::vector<real_t> vacf(100, 1.0); // Constant VACF (pure DC / diffusive)
   const real_t time_step = 1.0;
 
-  const auto [frequencies, intensities, unused] = DynamicsAnalyzer::calculateVDOS(vacf, time_step);
+  const auto [frequencies, intensities] = DynamicsAnalyzer::calculateVDOS(vacf, time_step);
 
   ASSERT_FALSE(frequencies.empty());
   ASSERT_EQ(frequencies[0], 0.0);
-
-  // The integral of a constant 1.0 over 100 points with dt=1.0 is roughly
-  // 100.0. With windowing and normalization, it might vary, but it should
-  // definitely be non-zero.
   EXPECT_GT(intensities[0], 1.0)
       << "VDOS at 0 THz should be non-zero for a constant VACF (DC component)";
+
+  // Smooth monotonic decay near ν = 0 (no Filon spike / cliff at freq_idx = 1)
+  EXPECT_GE(intensities[0], intensities[1]);
+  for (const real_t val : intensities) {
+    EXPECT_GE(val, static_cast<real_t>(0.0));
+  }
 }
 
-TEST(VDOSCalculatorTests, PerfectSolidShowsSinglePeak) {
-  // A perfect solid has a VACF represented by non-decaying cosine waves.
-  // We model a single vibrational mode as a pure cosine wave.
-  // The resulting VDOS (real part) should have a single maximum at that
-  // specific frequency.
-
+TEST(VDOSCalculatorTests, PerfectSolidShowsSinglePeakAndNoZeroJump) {
   const real_t time_step = 1.0; // 1 fs
   const size_t num_frames = 2000;
   std::vector<real_t> vacf(num_frames);
 
-  // Frequency of the pure cosine wave in THz
   const real_t target_nu_thz = 25.0;
-
   for (size_t i = 0; i < num_frames; ++i) {
     const real_t t_fs = static_cast<real_t>(i) * time_step;
-    // 0.001 converts fs to ps for THz frequency
     vacf[i] =
         static_cast<real_t>(std::cos(2.0 * correlation::math::PI * target_nu_thz * t_fs * 0.001));
   }
 
-  const auto [frequencies, intensities_real, intensities_imag] =
-      DynamicsAnalyzer::calculateVDOS(vacf, time_step);
+  const auto [frequencies, intensities] = DynamicsAnalyzer::calculateVDOS(vacf, time_step);
 
-  // Find the maximum intensity in the real part
-  const auto max_it = std::ranges::max_element(intensities_real);
-  const size_t max_idx = std::distance(intensities_real.begin(), max_it);
+  ASSERT_FALSE(frequencies.empty());
+  EXPECT_GE(frequencies.front(), static_cast<real_t>(0.0));
 
-  // Delta nu is the frequency resolution
+  const auto max_it = std::ranges::max_element(intensities);
+  const size_t max_idx = std::distance(intensities.begin(), max_it);
   const real_t d_nu = frequencies[1] - frequencies[0];
 
-  // Check if the maximum frequency matches the target frequency within an
-  // acceptable resolution margin
-  EXPECT_NEAR(frequencies[max_idx], target_nu_thz, 2.0 * d_nu)
-      << "The calculated VDOS max frequency " << frequencies[max_idx]
-      << " THz does not correspond to the input VACF frequency " << target_nu_thz << " THz.";
+  EXPECT_NEAR(frequencies[max_idx], target_nu_thz, 2.0 * d_nu);
+  EXPECT_GT(*max_it, 0.0);
 
-  EXPECT_GT(*max_it, 0.0) << "The peak real intensity should be positive.";
+  // Near-zero frequencies for a 25 THz harmonic solid must stay negligible (no Filon jump)
+  EXPECT_LT(intensities[0], (*max_it) * static_cast<real_t>(1e-3));
+  EXPECT_LT(intensities[1], (*max_it) * static_cast<real_t>(1e-3));
+  EXPECT_LT(intensities[2], (*max_it) * static_cast<real_t>(1e-3));
 }
 
-TEST(VDOSCalculatorTests, IdealGasShowsImaginaryPeak) {
-  // An ideal gas (or a purely diffusive liquid) has a VACF that decays
-  // exponentially without oscillations. A pure exponential decay e^(-at)
-  // translates to a VDOS where the real part peaks at 0 THz and the imaginary
-  // part peaks at frequency nu = a / 2pi.
-
-  const real_t time_step = 1.0; // 1 fs
+TEST(VDOSCalculatorTests, DiffusiveLiquidPeaksSmoothlyAtZeroFrequency) {
+  // Exponentially decaying VACF e^(-at) yields a Lorentzian VDOS peaking smoothly at ν = 0.
+  const real_t time_step = 1.0;
   const size_t num_frames = 2000;
   std::vector<real_t> vacf(num_frames);
-
-  // We choose an exponential decay coefficient 'a' such that the imaginary peak
-  // is at 10.0 THz.
-  const real_t target_nu_peak = 10.0;
-  const auto vec_a =
-      static_cast<real_t>(2.0 * correlation::math::PI * target_nu_peak); // a in THz (ps^-1)
+  const real_t decay_rate = static_cast<real_t>(2.0 * correlation::math::PI * 10.0);
 
   for (size_t i = 0; i < num_frames; ++i) {
-    const auto t_ps = static_cast<real_t>(static_cast<real_t>(i) * time_step * 0.001); // fs to ps
-    vacf[i] = std::exp(-vec_a * t_ps);
+    const auto t_ps = static_cast<real_t>(static_cast<real_t>(i) * time_step * 0.001);
+    vacf[i] = std::exp(-decay_rate * t_ps);
   }
 
-  const auto [frequencies, intensities_real, intensities_imag] =
-      DynamicsAnalyzer::calculateVDOS(vacf, time_step);
+  const auto [frequencies, intensities] = DynamicsAnalyzer::calculateVDOS(vacf, time_step);
+  ASSERT_GT(frequencies.size(), 10U);
+  const auto max_it = std::ranges::max_element(intensities);
+  const size_t max_idx = std::distance(intensities.begin(), max_it);
 
-  // 1. The Real part should peak at exactly 0 Hz for pure exponential decay
-  const auto max_real_it = std::ranges::max_element(intensities_real);
-  const size_t max_real_idx = std::distance(intensities_real.begin(), max_real_it);
+  EXPECT_EQ(max_idx, 0U) << "Pure exponential VACF must peak smoothly at 0 THz.";
+  EXPECT_GE(intensities[0], intensities[1]);
+  EXPECT_GE(intensities[1], intensities[2]);
+}
 
-  EXPECT_NEAR(frequencies[max_real_idx], 0.0, correlation::is_single_precision ? 0.5 : 1e-6)
-      << "The real VDOS for an exponential decay should have its maximum at 0 THz.";
+TEST(VDOSCalculatorTests, AllWindowTypesAndAreaNormalization) {
+  using correlation::calculators::VDOSCalculator;
+  using correlation::calculators::VDOSParams;
 
-  // 2. The Imaginary part should peak at target_nu_peak
-  const auto max_imag_it = std::ranges::max_element(intensities_imag);
-  const size_t max_imag_idx = std::distance(intensities_imag.begin(), max_imag_it);
+  const real_t time_step = 1.0;
+  const size_t num_frames = 512;
+  Histogram vacf_hist;
+  vacf_hist.bins.resize(num_frames);
+  std::vector<real_t> vacf_data(num_frames);
+  for (size_t i = 0; i < num_frames; ++i) {
+    vacf_hist.bins[i] = static_cast<real_t>(i) * time_step;
+    vacf_data[i] = static_cast<real_t>(std::cos(2.0 * correlation::math::PI * 15.0 * i * 0.001));
+  }
+  vacf_hist.partials["Total"] = vacf_data;
 
-  const real_t d_nu = frequencies[1] - frequencies[0];
+  for (const auto win : {VDOSWindowType::Hann, VDOSWindowType::Blackman, VDOSWindowType::Gaussian,
+                         VDOSWindowType::None}) {
+    VDOSParams params;
+    params.max_real_freq = static_cast<real_t>(500.0); // Full Nyquist to verify sum rule
+    params.window_type = win;
+    params.zero_pad_factor = 4;
+    params.normalize = true;
 
-  EXPECT_NEAR(frequencies[max_imag_idx], target_nu_peak, 2.0 * d_nu)
-      << "The imaginary VDOS peak " << frequencies[max_imag_idx]
-      << " THz does not correspond to the decay constant frequency " << target_nu_peak << " THz.";
+    const auto hist = VDOSCalculator::calculate(vacf_hist, params);
+    ASSERT_FALSE(hist.bins.empty());
+    EXPECT_DOUBLE_EQ(hist.bins.front(), 0.0); // Strictly real angular frequencies (ω >= 0)
+    EXPECT_EQ(hist.x_label, "ω");
+    EXPECT_EQ(hist.x_unit, "rad/ps");
+    EXPECT_EQ(hist.y_label, "g_vib(ω)");
+    EXPECT_EQ(hist.y_unit, "ps/rad");
+    EXPECT_DOUBLE_EQ(hist.partials.at("Total").front(), 0.0); // Vibrational-only vanishes at ω = 0
+
+    const auto &dos = hist.partials.at("Total");
+    double area = 0.0;
+    for (size_t i = 0; i + 1 < hist.bins.size(); ++i) {
+      EXPECT_GE(dos[i], static_cast<real_t>(0.0));
+      area += 0.5 * (static_cast<double>(dos[i]) + static_cast<double>(dos[i + 1])) *
+              (static_cast<double>(hist.bins[i + 1]) - static_cast<double>(hist.bins[i]));
+    }
+    EXPECT_NEAR(area, 1.0, 1e-3);
+  }
+}
+
+TEST(VDOSCalculatorTests, MassWeightedPartialVDOSSumsToTotal) {
+  using correlation::calculators::VDOSCalculator;
+  using correlation::calculators::VDOSParams;
+  using correlation::core::Cell;
+
+  Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  cell.addAtom("Si", {0.0, 0.0, 0.0});
+  cell.addAtom("O", {static_cast<real_t>(1.6), 0.0, 0.0});
+
+  const size_t num_frames = 256;
+  Histogram vacf_hist;
+  vacf_hist.bins.resize(num_frames);
+  std::vector<real_t> vacf_si(num_frames);
+  std::vector<real_t> vacf_o(num_frames);
+  std::vector<real_t> vacf_tot(num_frames);
+  for (size_t i = 0; i < num_frames; ++i) {
+    vacf_hist.bins[i] = static_cast<real_t>(i);
+    vacf_si[i] = static_cast<real_t>(std::cos(2.0 * correlation::math::PI * 8.0 * i * 0.001));
+    vacf_o[i] = static_cast<real_t>(std::cos(2.0 * correlation::math::PI * 20.0 * i * 0.001));
+    vacf_tot[i] = static_cast<real_t>(0.5) * (vacf_si[i] + vacf_o[i]);
+  }
+  vacf_hist.partials["Total"] = vacf_tot;
+  vacf_hist.partials["Si"] = vacf_si;
+  vacf_hist.partials["O"] = vacf_o;
+
+  VDOSParams params;
+  params.max_real_freq = static_cast<real_t>(50.0);
+  const auto hist = VDOSCalculator::calculate(vacf_hist, params, &cell);
+
+  ASSERT_TRUE(hist.partials.contains("Si"));
+  ASSERT_TRUE(hist.partials.contains("O"));
+  const auto &tot = hist.partials.at("Total");
+  const auto &p_si = hist.partials.at("Si");
+  const auto &p_o = hist.partials.at("O");
+  for (size_t i = 0; i < tot.size(); ++i) {
+    EXPECT_NEAR(p_si[i] + p_o[i], tot[i], 1e-5);
+  }
 }
 
 TEST(VDOSCalculatorTests, ComputesRecommendedMaxFrequencyFromLightestAtom) {
@@ -190,10 +239,71 @@ TEST(VDOSCalculatorTests, CalculateTrajectoryCalculatesHydrogenFrequenciesUpTo50
   const auto &vdos_hist = dists.getHistogram("VDOS");
   ASSERT_FALSE(vdos_hist.bins.empty());
 
-  const real_t max_computed_freq = vdos_hist.bins.back();
-  EXPECT_GT(max_computed_freq, 45.0)
+  const real_t max_computed_omega = vdos_hist.bins.back();
+  const real_t max_computed_thz = vdos_hist.partials.at("Frequency_THz").back();
+  EXPECT_GT(max_computed_thz, 45.0)
       << "Hydrogen VDOS frequency should reach ~50 THz instead of being truncated to 10 THz";
-  EXPECT_LE(max_computed_freq, 50.0);
+  EXPECT_LE(max_computed_thz, 50.0);
+  EXPECT_NEAR(max_computed_omega, max_computed_thz * correlation::math::TWO_PI, 1e-2);
+  EXPECT_TRUE(dists.hasHistogram("VDOS_Translational"));
+}
+
+TEST(VDOSCalculatorTests, TwoPhaseDecompositionSeparatesLiquidVibrationalAndTranslationalModes) {
+  using correlation::calculators::VDOSCalculator;
+  using correlation::calculators::VDOSParams;
+  using correlation::core::Cell;
+
+  // Liquid-like VACF: diffusive exponential decay + damped cage oscillation (like liquid Bi)
+  Cell cell({15.0, 15.0, 15.0, 90.0, 90.0, 90.0});
+  for (int i = 0; i < 64; ++i) {
+    cell.addAtom("Bi", {static_cast<real_t>(i % 4), static_cast<real_t>((i / 4) % 4),
+                        static_cast<real_t>(i / 16)});
+  }
+
+  const size_t num_frames = 512;
+  Histogram vacf_hist;
+  vacf_hist.bins.resize(num_frames);
+  std::vector<real_t> vacf_data(num_frames);
+  for (size_t i = 0; i < num_frames; ++i) {
+    const double t_fs = static_cast<double>(i);
+    vacf_hist.bins[i] = static_cast<real_t>(t_fs);
+    // Diffusive tail + 3 THz damped vibrational mode
+    const double val =
+        0.3 * std::exp(-t_fs / 80.0) +
+        0.7 * std::exp(-t_fs / 120.0) * std::cos(2.0 * correlation::math::PI * 3.0 * t_fs * 0.001);
+    vacf_data[i] = static_cast<real_t>(val);
+  }
+  vacf_hist.partials["Total"] = vacf_data;
+  vacf_hist.partials["Bi"] = vacf_data;
+
+  VDOSParams params;
+  params.max_real_freq = static_cast<real_t>(500.0);
+  const auto decomposed = VDOSCalculator::calculateDecomposed(vacf_hist, params, &cell);
+
+  EXPECT_GT(decomposed.fluidicity, static_cast<real_t>(0.0));
+  EXPECT_LE(decomposed.fluidicity, static_cast<real_t>(1.0));
+
+  const auto &g_vib = decomposed.vibrational.partials.at("Total");
+  const auto &g_trans = decomposed.translational.partials.at("Total");
+  ASSERT_EQ(g_vib.size(), g_trans.size());
+
+  // Vibrational modes strictly tend to 0 at ω = 0; translational modes peak at ω = 0
+  EXPECT_DOUBLE_EQ(g_vib[0], 0.0);
+  EXPECT_GT(g_trans[0], static_cast<real_t>(0.0));
+  EXPECT_GE(g_trans[0], g_trans[1]);
+
+  // Both spectra are independently area-normalized to 1 over [0, ω_Nyquist]
+  double vib_area = 0.0;
+  double trans_area = 0.0;
+  for (size_t i = 0; i + 1 < decomposed.vibrational.bins.size(); ++i) {
+    const double d_omega = static_cast<double>(decomposed.vibrational.bins[i + 1]) -
+                           static_cast<double>(decomposed.vibrational.bins[i]);
+    vib_area += 0.5 * (static_cast<double>(g_vib[i]) + static_cast<double>(g_vib[i + 1])) * d_omega;
+    trans_area +=
+        0.5 * (static_cast<double>(g_trans[i]) + static_cast<double>(g_trans[i + 1])) * d_omega;
+  }
+  EXPECT_NEAR(vib_area, 1.0, 1e-3);
+  EXPECT_NEAR(trans_area, 1.0, 1e-3);
 }
 
 } // namespace

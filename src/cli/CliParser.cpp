@@ -66,9 +66,12 @@ void printParameterOptions() {
       << "  --no-hdf5                 Disable HDF5 output (default: off)\n"
       << "  --parquet                 Enable Parquet output\n"
       << "  --no-parquet              Disable Parquet output\n\n"
-      << "Local Entropy Parameters:\n"
+      << "Local Entropy & Dynamics Parameters:\n"
       << "  --lef-cutoff <float>      Cutoff radius local entropy (default: 5.0)\n"
       << "  --lef-sigma <float>       Gaussian standard deviation local entropy (default: 0.2)\n"
+      << "  --vacf-max-lag <int>      Max VACF lag frames, -1=auto N/2 (default: -1)\n"
+      << "  --vdos-window <str>       VDOS window: hann, blackman, gaussian, none (default: hann)\n"
+      << "  --vdos-zero-pad <int>     VDOS FFT zero-padding multiplier >= 1 (default: 4)\n"
       << "  --mlip-model <path>       Path to ORB-v3 + LDOS binary weights (default: auto)\n";
 }
 
@@ -211,6 +214,14 @@ void applyMaterialDefaults(const CLI::App &app, CliOptions &opts) {
     std::cerr << "Error: --hyper-samples must be strictly positive.\n";
     return false;
   }
+  if (opts.vacf_max_lag < -1 || opts.vacf_max_lag == 0) {
+    std::cerr << "Error: --vacf-max-lag must be -1 (auto) or strictly positive.\n";
+    return false;
+  }
+  if (opts.vdos_zero_pad < 1) {
+    std::cerr << "Error: --vdos-zero-pad must be at least 1.\n";
+    return false;
+  }
   if (!opts.csv && !opts.hdf5 && !opts.parquet) {
     std::cerr
         << "Error: At least one output format (--csv, --hdf5, or --parquet) must be enabled.\n";
@@ -288,6 +299,20 @@ bool parseArgs(std::span<const char *const> argv, CliOptions &opts) {
   app.add_option("--mlip-model", opts.mlip_model_path);
 
   app.add_option("--hyper-samples", opts.hyper_samples);
+  app.add_option("--vacf-max-lag", opts.vacf_max_lag);
+  app.add_option("--vdos-zero-pad", opts.vdos_zero_pad);
+
+  std::map<std::string, correlation::analysis::VDOSWindowType> const vdos_win_map = {
+      {"hann", correlation::analysis::VDOSWindowType::Hann},
+      {"hanning", correlation::analysis::VDOSWindowType::Hann},
+      {"blackman", correlation::analysis::VDOSWindowType::Blackman},
+      {"gaussian", correlation::analysis::VDOSWindowType::Gaussian},
+      {"gauss", correlation::analysis::VDOSWindowType::Gaussian},
+      {"none", correlation::analysis::VDOSWindowType::None},
+  };
+  app.add_option("--vdos-window", opts.vdos_window,
+                 "VDOS time-domain window (hann, blackman, gaussian, none)")
+      ->transform(CLI::CheckedTransformer(vdos_win_map, CLI::ignore_case));
 
   std::string k_str = "gaussian";
   app.add_option("--smoothing-kernel", k_str);

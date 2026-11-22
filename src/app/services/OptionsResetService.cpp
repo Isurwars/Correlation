@@ -99,6 +99,9 @@ void OptionsResetService::resetAdvanced(AppWindow &window) {
   opts.lef_cutoff = slint::SharedString(std::format("{:.2f}", AppDefaults::LEF_CUTOFF));
   opts.lef_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::LEF_SIGMA));
   opts.hyper_samples = slint::SharedString(std::to_string(ProgramOptions{}.hyper_samples));
+  opts.vacf_max_lag = slint::SharedString(std::to_string(AppDefaults::VACF_MAX_LAG));
+  opts.vdos_window = static_cast<int>(AppDefaults::VDOS_WINDOW);
+  opts.vdos_zero_pad = slint::SharedString(std::to_string(AppDefaults::VDOS_ZERO_PAD));
   window.set_analysis_options(opts);
 }
 

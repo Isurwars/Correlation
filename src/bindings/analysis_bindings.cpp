@@ -102,6 +102,16 @@ BondCutoffMatrix parseBondCutoffMatrix(const py::object &bond_cutoffs_obj) {
 void init_analysis(py::module_ &mod) {
 
   // ------------------------------------------------------------------
+  // VDOSWindowType
+  // ------------------------------------------------------------------
+  py::enum_<VDOSWindowType>(mod, "VDOSWindowType",
+                            "Time-domain tapering half-window for VDOS cosine transform.")
+      .value("Hann", VDOSWindowType::Hann, "Half-Hann window (default).")
+      .value("Blackman", VDOSWindowType::Blackman, "Half-Blackman window.")
+      .value("Gaussian", VDOSWindowType::Gaussian, "Half-Gaussian window (3-sigma).")
+      .value("None", VDOSWindowType::None, "Unwindowed rectangular cutoff.");
+
+  // ------------------------------------------------------------------
   // BondCutoffRange
   // ------------------------------------------------------------------
   py::class_<BondCutoffRange>(mod, "BondCutoffRange",
@@ -169,9 +179,15 @@ void init_analysis(py::module_ &mod) {
                      "Cutoff radius for local entropy integration (Å). Default 5.0.")
       .def_readwrite("lef_sigma", &AnalysisSettings::lef_sigma,
                      "Gaussian sigma for local entropy smoothing (Å). Default 0.2.")
-      // Hyperuniformity
+      // Hyperuniformity & Dynamics
       .def_readwrite("hyperuniformity_samples", &AnalysisSettings::hyperuniformity_samples,
                      "Number of random sampling points for hyperuniformity. Default 10000.")
+      .def_readwrite("vacf_max_lag", &AnalysisSettings::vacf_max_lag,
+                     "Maximum VACF lag frames (-1 = half trajectory). Default -1.")
+      .def_readwrite("vdos_window", &AnalysisSettings::vdos_window,
+                     "Time-domain window for VDOS (VDOSWindowType). Default VDOSWindowType.Hann.")
+      .def_readwrite("vdos_zero_pad", &AnalysisSettings::vdos_zero_pad,
+                     "Zero-padding multiplier for VDOS FFT (>= 1). Default 4.")
       .def(
           "is_active",
           [](const AnalysisSettings &settings, const std::string &idx) {
@@ -415,9 +431,14 @@ void init_analysis(py::module_ &mod) {
           "max_correlation_frames : int\n    Max lag frames (-1 = half trajectory).\n"
           "start_frame : int\n    First frame to include. Default 0.\n"
           "end_frame : int\n    Last frame (exclusive). Default all.")
-      .def("calculate_vdos", &DistributionFunctions::calculateVDOS,
-           "Calculate the Vibrational Density of States (VDOS) from the VACF.\n"
-           "Requires calculate_vacf() to have been called first.")
+      .def(
+          "calculate_vdos",
+          [](DistributionFunctions &dists, VDOSWindowType window_type, size_t zero_pad_factor,
+             real_t max_freq) { dists.calculateVDOS(window_type, zero_pad_factor, max_freq); },
+          py::arg("window_type") = VDOSWindowType::Hann, py::arg("zero_pad_factor") = 4,
+          py::arg("max_freq") = static_cast<real_t>(-1.0),
+          "Calculate the real-frequency Vibrational Density of States (VDOS, ν >= 0) from VACF.\n"
+          "Requires calculate_vacf() to have been called first.")
       .def(
           "calculate_xrd",
           [](DistributionFunctions &dists, real_t wave_length, real_t theta_min, real_t theta_max,

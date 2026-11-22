@@ -94,16 +94,14 @@ TEST(DynamicsAnalyzerTests, CalculatesVDOSCorrectly) {
   }
 
   // 2. Calculate VDOS
-  auto [frequencies, intensities_real, intensities_imag] =
-      DynamicsAnalyzer::calculateVDOS(vacf, time_step);
+  auto [frequencies, intensities] = DynamicsAnalyzer::calculateVDOS(vacf, time_step);
 
   ASSERT_FALSE(frequencies.empty());
-  ASSERT_EQ(frequencies.size(), intensities_real.size());
-  ASSERT_EQ(frequencies.size(), intensities_imag.size());
+  ASSERT_EQ(frequencies.size(), intensities.size());
 
-  // 3. Find peak in real part
-  const auto max_it = std::ranges::max_element(intensities_real);
-  size_t const peak_idx = std::distance(intensities_real.begin(), max_it);
+  // 3. Find peak in real spectrum
+  const auto max_it = std::ranges::max_element(intensities);
+  size_t const peak_idx = std::distance(intensities.begin(), max_it);
   real_t const peak_freq = frequencies[peak_idx];
 
   // 4. Verify peak location
@@ -240,22 +238,23 @@ TEST(DynamicsAnalyzerTests, HandlesEmptyAndInvalidTrajectories) {
 
 TEST(DynamicsAnalyzerTests, HandlesVDOSBoundaryAndEdgeCaseInputs) {
   // Empty VACF input
-  auto [freqs_empty, vdos_re_empty, vdos_im_empty] = DynamicsAnalyzer::calculateVDOS({}, 0.5);
+  auto [freqs_empty, vdos_empty] = DynamicsAnalyzer::calculateVDOS({}, 0.5);
   EXPECT_TRUE(freqs_empty.empty());
+  EXPECT_TRUE(vdos_empty.empty());
 
   // Non-positive time step
-  auto [freqs_neg, vdos_re_neg, vdos_im_neg] =
+  auto [freqs_neg, vdos_neg] =
       DynamicsAnalyzer::calculateVDOS({1.0, static_cast<real_t>(0.8), 0.5}, -1.0);
   EXPECT_TRUE(freqs_neg.empty());
 
-  auto [freqs_zero, vdos_re_zero, vdos_im_zero] =
+  auto [freqs_zero, vdos_zero] =
       DynamicsAnalyzer::calculateVDOS({1.0, static_cast<real_t>(0.8), 0.5}, 0.0);
   EXPECT_TRUE(freqs_zero.empty());
 
   // Single-frame VACF: must not crash or underflow
-  auto [freqs_single, vdos_re_single, vdos_im_single] = DynamicsAnalyzer::calculateVDOS({1.0}, 0.5);
+  auto [freqs_single, vdos_single] = DynamicsAnalyzer::calculateVDOS({1.0}, 0.5);
   EXPECT_FALSE(freqs_single.empty());
-  EXPECT_EQ(freqs_single.size(), 2000);
+  EXPECT_EQ(freqs_single.size(), vdos_single.size());
 }
 
 } // namespace correlation::analysis

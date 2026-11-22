@@ -19,15 +19,25 @@ namespace correlation::calculators {
 
 /**
  * @brief Parameters for the Vibrational Density of States (VDOS) calculation.
- *
- * Bundles frequency bound parameters into a single struct to
- * prevent accidental argument swapping (bugprone-easily-swappable-parameters).
  */
 struct VDOSParams {
-  real_t max_imag_freq =
-      static_cast<real_t>(5.0); ///< Maximum negative (imaginary) frequency bound in THz.
-  real_t max_real_freq =
-      static_cast<real_t>(10.0); ///< Maximum positive (real) frequency bound in THz.
+  real_t max_real_freq = static_cast<real_t>(
+      10.0); ///< Maximum positive frequency bound in THz (ω_max = 2π·ν_max rad/ps).
+  correlation::analysis::VDOSWindowType window_type =
+      correlation::analysis::VDOSWindowType::Hann; ///< Time-domain tapering half-window.
+  size_t zero_pad_factor = 4; ///< Zero-padding multiplier for FFT interpolation (>= 1).
+  bool normalize = true;      ///< Area-normalize VDOS over [0, ω_Nyquist] to 1 (units: ps/rad).
+};
+
+/**
+ * @brief Result of 2PT spectral decomposition into vibrational and translational modes.
+ */
+struct VDOSDecomposition {
+  correlation::analysis::Histogram
+      vibrational; ///< Vibrational-only VDOS g_vib(ω), g_vib(0) = 0, ∫g_vib dω = 1.
+  correlation::analysis::Histogram
+      translational;      ///< Translational/diffusive DoS g_trans(ω), ∫g_trans dω = 1.
+  real_t fluidicity{0.0}; ///< 2PT fluidicity parameter f ∈ [0, 1] (0 = solid, 1 = gas).
 };
 
 /**
@@ -53,26 +63,29 @@ public:
                            const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
-   * @brief Computes the Vibrational Density of States (VDOS).
+   * @brief Computes 2PT-decomposed vibrational and translational DoS histograms on ω >= 0.
    * @param[in] vacf_hist Input Velocity Autocorrelation Function (VACF) histogram.
-   * @param[in] params Frequency bounds parameters for VDOS calculation.
-   * @return A histogram representing intensity vs frequency (THz/cm^-1).
+   * @param[in] params Frequency bound, windowing, zero-padding, and normalization parameters.
+   * @param[in] cell Optional reference cell for mass-weighted partials and 2PT fluidicity.
+   * @return VDOSDecomposition containing independently normalized vibrational and translational
+   *         histograms plus the 2PT fluidicity f ∈ [0, 1].
    * @throws std::logic_error if VACF data has fewer than 2 data points.
    */
-  [[nodiscard]] static correlation::analysis::Histogram
-  calculate(const correlation::analysis::Histogram &vacf_hist, const VDOSParams &params = {});
+  [[nodiscard]] static VDOSDecomposition
+  calculateDecomposed(const correlation::analysis::Histogram &vacf_hist,
+                      const VDOSParams &params = {}, const correlation::core::Cell *cell = nullptr);
 
   /**
-   * @brief Computes the Vibrational Density of States (VDOS) with explicit frequency bounds.
+   * @brief Computes the vibrational-only VDOS g_vib(ω) on real angular frequencies (ω >= 0).
    * @param[in] vacf_hist Input Velocity Autocorrelation Function (VACF) histogram.
-   * @param[in] max_imag_freq Maximum negative (imaginary) frequency bound in THz.
-   * @param[in] max_real_freq Maximum positive (real) frequency bound in THz.
-   * @return A histogram representing intensity vs frequency (THz/cm^-1).
+   * @param[in] params Frequency bound, windowing, zero-padding, and normalization parameters.
+   * @param[in] cell Optional reference cell for mass-weighted per-element partial VDOS.
+   * @return A histogram representing g_vib(ω) vs angular frequency ω (rad/ps).
    * @throws std::logic_error if VACF data has fewer than 2 data points.
    */
   [[nodiscard]] static correlation::analysis::Histogram
-  calculate(const correlation::analysis::Histogram &vacf_hist, real_t max_imag_freq,
-            real_t max_real_freq);
+  calculate(const correlation::analysis::Histogram &vacf_hist, const VDOSParams &params = {},
+            const correlation::core::Cell *cell = nullptr);
 
   /**
    * @brief Computes the recommended maximum positive vDoS frequency based on the lightest element.

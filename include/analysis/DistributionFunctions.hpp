@@ -100,6 +100,10 @@ struct AnalysisSettings {
   size_t twf_nconn_min = 7;               ///< Minimum coherent bonds for solid-like classification.
   size_t hyperuniformity_samples = 10000; ///< Number of random sample points for hyperuniformity.
   size_t frame_stride = 1;                ///< Sampling stride between frames (>= 1).
+  int vacf_max_lag = -1;                  ///< Maximum VACF lag frames (-1 = half trajectory).
+  VDOSWindowType vdos_window =
+      VDOSWindowType::Hann; ///< Time-domain window for VDOS cosine transform.
+  size_t vdos_zero_pad = 4; ///< Zero-padding multiplier for VDOS FFT (>= 1).
 
   /// Maps calculator ID (e.g., "RDF", "SQ") to whether it is enabled.
   /// An empty map means all calculators are enabled by default.
@@ -509,8 +513,12 @@ public:
   /**
    * @brief Calculates the Vibrational Density of States (VDOS) from the VACF.
    * Requires calculateVACF to be called first.
+   * @param window_type Time-domain tapering half-window (default: Half-Hann).
+   * @param zero_pad_factor Zero-padding multiplier for FFT interpolation (>= 1, default: 4).
+   * @param max_freq Maximum real frequency in THz (<= 0 uses element-based recommendation).
    */
-  void calculateVDOS();
+  void calculateVDOS(VDOSWindowType window_type = VDOSWindowType::Hann, size_t zero_pad_factor = 4,
+                     real_t max_freq = static_cast<real_t>(-1.0));
 
   /**
    * @brief Calculates the XRD pattern.

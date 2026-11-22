@@ -21,97 +21,39 @@
 namespace correlation::analysis {
 
 namespace {
-std::pair<real_t, real_t>
-integrateVdosFrequency(real_t theta, const std::vector<real_t> &windowed_vacf, real_t time_step) {
-  size_t const num_frames = windowed_vacf.size();
-  real_t integral_real = 0.0;
-  real_t integral_imag = 0.0;
 
-  if (num_frames == 0) {
-    return {static_cast<real_t>(0.0), static_cast<real_t>(0.0)};
+[[nodiscard]] real_t evaluateVdosWindow(size_t frame_idx, size_t num_frames,
+                                        VDOSWindowType window_type) noexcept {
+  if (num_frames <= 1 || window_type == VDOSWindowType::None) {
+    return static_cast<real_t>(1.0);
   }
-  if (num_frames == 1) {
-    return {windowed_vacf[0] * time_step, static_cast<real_t>(0.0)};
+  const double ratio = static_cast<double>(frame_idx) / static_cast<double>(num_frames - 1);
+  switch (window_type) {
+  case VDOSWindowType::Hann:
+    return static_cast<real_t>(0.5 * (1.0 + std::cos(correlation::math::PI * ratio)));
+  case VDOSWindowType::Blackman:
+    return static_cast<real_t>(0.42 + 0.5 * std::cos(correlation::math::PI * ratio) +
+                               0.08 * std::cos(correlation::math::TWO_PI * ratio));
+  case VDOSWindowType::Gaussian: {
+    const double scaled = 3.0 * ratio;
+    return static_cast<real_t>(std::exp(-0.5 * scaled * scaled));
   }
-
-  if (std::abs(theta) < 1e-6) {
-    for (size_t frame_idx = 0; frame_idx < num_frames; ++frame_idx) {
-      real_t const val = windowed_vacf[frame_idx];
-      real_t const arg = theta * static_cast<real_t>(frame_idx);
-
-      real_t const term_real = val * std::cos(arg);
-
-      if (frame_idx == 0 || frame_idx == num_frames - 1) {
-        integral_real += static_cast<real_t>(0.5) * term_real;
-      } else {
-        integral_real += term_real;
-      }
-    }
-    integral_real *= time_step;
-  } else {
-    real_t const theta2 = theta * theta;
-    real_t const theta3 = theta2 * theta;
-    real_t const sin_theta = std::sin(theta);
-    real_t const cos_theta = std::cos(theta);
-
-    real_t const alpha = static_cast<real_t>(1.0) / theta + sin_theta * cos_theta / theta2 -
-                         static_cast<real_t>(2.0) * sin_theta * sin_theta / theta3;
-    real_t const beta =
-        static_cast<real_t>(2.0) * ((static_cast<real_t>(1.0) + cos_theta * cos_theta) / theta2 -
-                                    static_cast<real_t>(2.0) * sin_theta * cos_theta / theta3);
-    real_t const gamma = static_cast<real_t>(4.0) * (sin_theta / theta3 - cos_theta / theta2);
-
-    const size_t two_n = (num_frames % 2 == 0) ? num_frames - 2 : num_frames - 1;
-
-    real_t const f_0 = windowed_vacf[0];
-    real_t const f_2_n = windowed_vacf[two_n];
-
-    real_t const arg_2_n = theta * static_cast<real_t>(two_n);
-
-    real_t sum_odd_cos = 0.0;
-    real_t sum_odd_sin = 0.0;
-    for (size_t frame_idx = 1; frame_idx < two_n; frame_idx += 2) {
-      real_t const arg = theta * static_cast<real_t>(frame_idx);
-      sum_odd_cos += windowed_vacf[frame_idx] * std::cos(arg);
-      sum_odd_sin += windowed_vacf[frame_idx] * std::sin(arg);
-    }
-
-    real_t sum_even_cos = 0.0;
-    real_t sum_even_sin = 0.0;
-    for (size_t frame_idx = 2; frame_idx < two_n; frame_idx += 2) {
-      real_t const arg = theta * static_cast<real_t>(frame_idx);
-      sum_even_cos += windowed_vacf[frame_idx] * std::cos(arg);
-      sum_even_sin += windowed_vacf[frame_idx] * std::sin(arg);
-    }
-
-    const auto even_cos_trapz =
-        static_cast<real_t>(sum_even_cos + static_cast<real_t>(0.5) *
-                                               (f_0 * std::cos(0.0) + f_2_n * std::cos(arg_2_n)));
-    const auto even_sin_trapz =
-        static_cast<real_t>(sum_even_sin + static_cast<real_t>(0.5) *
-                                               (f_0 * std::sin(0.0) + f_2_n * std::sin(arg_2_n)));
-
-    real_t const bound_cos = f_2_n * std::sin(arg_2_n);
-    const auto bound_sin = static_cast<real_t>(f_0 * std::cos(0.0) - f_2_n * std::cos(arg_2_n));
-
-    integral_real = time_step * (alpha * bound_cos + beta * even_cos_trapz + gamma * sum_odd_cos);
-    integral_imag = time_step * (alpha * bound_sin + beta * even_sin_trapz + gamma * sum_odd_sin);
-
-    if (num_frames % 2 == 0 && num_frames > 1) {
-      real_t const val1 = windowed_vacf[num_frames - 2];
-      real_t const val2 = windowed_vacf[num_frames - 1];
-
-      real_t const arg1 = theta * static_cast<real_t>(num_frames - 2);
-      real_t const arg2 = theta * static_cast<real_t>(num_frames - 1);
-
-      integral_real +=
-          static_cast<real_t>(0.5) * time_step * (val1 * std::cos(arg1) + val2 * std::cos(arg2));
-      integral_imag +=
-          static_cast<real_t>(0.5) * time_step * (val1 * std::sin(arg1) + val2 * std::sin(arg2));
-    }
+  case VDOSWindowType::None:
+  default:
+    return static_cast<real_t>(1.0);
   }
+}
 
-  return {integral_real, integral_imag};
+[[nodiscard]] size_t computeEvenPaddedFFTSize(size_t num_frames, size_t zero_pad_factor) noexcept {
+  const size_t pad_mult = std::max<size_t>(1, zero_pad_factor);
+  const size_t min_sym_len = (num_frames > 1) ? (2 * num_frames - 2) : 2;
+  const auto target = std::max<size_t>(
+      {static_cast<size_t>(2048), min_sym_len, static_cast<size_t>(2) * pad_mult * num_frames});
+  size_t fft_len = correlation::math::findNextGoodFFTSize(target);
+  if ((fft_len % 2) != 0) {
+    fft_len *= 2;
+  }
+  return fft_len;
 }
 
 std::vector<std::vector<correlation::math::Vector3<real_t>>>
@@ -186,69 +128,121 @@ computeCorrectedVelocities(const std::vector<correlation::core::Cell> &frames, s
 
   return atom_velocities;
 }
+struct ElementMassLayout {
+  std::vector<std::string> symbols;
+  std::vector<size_t> atom_elem_idx;
+  std::vector<size_t> counts;
+  std::vector<real_t> masses;
+  real_t total_mass{0.0};
+};
+
+[[nodiscard]] ElementMassLayout
+buildElementMassLayout(const std::vector<correlation::core::Atom> &ref_atoms) {
+  ElementMassLayout layout;
+  const size_t num_atoms = ref_atoms.size();
+  layout.atom_elem_idx.resize(num_atoms);
+  std::map<std::string, size_t> elem_to_idx;
+
+  for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
+    const std::string &sym = ref_atoms[atom_idx].element().symbol;
+    auto [elem_it, inserted] = elem_to_idx.emplace(sym, layout.symbols.size());
+    if (inserted) {
+      layout.symbols.push_back(sym);
+      layout.counts.push_back(0);
+      auto mass = static_cast<real_t>(1.0);
+      if (const auto m_opt = correlation::physics::findAtomicMass(sym);
+          m_opt.has_value() && *m_opt > static_cast<real_t>(0.0)) {
+        mass = *m_opt;
+      }
+      layout.masses.push_back(mass);
+    }
+    layout.atom_elem_idx[atom_idx] = elem_it->second;
+    layout.counts[elem_it->second]++;
+    layout.total_mass += layout.masses[elem_it->second];
+  }
+  return layout;
+}
+
+[[nodiscard]] PartialVACFResult
+assemblePartialVACFResult(const std::vector<std::vector<real_t>> &elem_sums,
+                          const ElementMassLayout &layout, size_t num_frames, size_t num_atoms) {
+  const size_t num_elems = layout.symbols.size();
+  const size_t lag_len = elem_sums.empty() ? 0 : elem_sums[0].size();
+  PartialVACFResult result;
+  result.total_unweighted.assign(lag_len, static_cast<real_t>(0.0));
+  result.total_mass_weighted.assign(lag_len, static_cast<real_t>(0.0));
+
+  for (size_t elem_idx = 0; elem_idx < num_elems; ++elem_idx) {
+    std::vector<real_t> elem_vacf(lag_len, static_cast<real_t>(0.0));
+    const auto count_e = static_cast<real_t>(layout.counts[elem_idx]);
+    const real_t weight_e = layout.total_mass > static_cast<real_t>(0.0)
+                                ? (count_e * layout.masses[elem_idx]) / layout.total_mass
+                                : static_cast<real_t>(0.0);
+    result.element_mass_weights[layout.symbols[elem_idx]] = weight_e;
+
+    for (size_t lag = 0; lag < lag_len; ++lag) {
+      const auto n_origins = static_cast<real_t>(num_frames - lag);
+      const real_t val = elem_sums[elem_idx][lag] / (n_origins * count_e);
+      elem_vacf[lag] = val;
+      result.total_unweighted[lag] +=
+          elem_sums[elem_idx][lag] / (n_origins * static_cast<real_t>(num_atoms));
+      result.total_mass_weighted[lag] += weight_e * val;
+    }
+    result.element_vacfs[layout.symbols[elem_idx]] = std::move(elem_vacf);
+  }
+  return result;
+}
+
 } // namespace
 
-std::vector<real_t> DynamicsAnalyzer::calculateVACF(const correlation::core::Trajectory &traj,
-                                                    MaxFrames max_correlation_frames_arg,
-                                                    StartFrame start_frame_arg,
-                                                    EndFrame end_frame_arg) {
+PartialVACFResult DynamicsAnalyzer::calculatePartialVACF(const correlation::core::Trajectory &traj,
+                                                         MaxFrames max_correlation_frames_arg,
+                                                         StartFrame start_frame_arg,
+                                                         EndFrame end_frame_arg) {
   int max_correlation_frames = max_correlation_frames_arg.value;
-  size_t start_frame = start_frame_arg.value;
-  size_t end_frame = end_frame_arg.value;
   if (traj.getFrameCount() < 2) {
     return {};
   }
-  const auto &frames = traj.getFrames(); // materialises lazy trajectory for computation
-
-  size_t const total_frames = frames.size();
+  const auto &frames = traj.getFrames();
+  const size_t total_frames = frames.size();
   if (total_frames < 2 || frames[0].atoms().empty()) {
     return {};
   }
-  size_t const num_atoms = frames[0].atoms().size();
 
-  start_frame = std::min(start_frame, total_frames - 1);
-  end_frame = std::min(end_frame, total_frames);
-  if (start_frame >= end_frame) {
+  const size_t start_frame = std::min(start_frame_arg.value, total_frames - 1);
+  const size_t end_frame = std::min(end_frame_arg.value, total_frames);
+  if (start_frame >= end_frame || (end_frame - start_frame) < 2) {
     return {};
   }
 
-  size_t const num_frames = end_frame - start_frame;
-  if (num_frames < 2) {
-    return {};
-  }
-
-  if (max_correlation_frames < 0 || std::cmp_greater_equal(max_correlation_frames, num_frames)) {
+  const size_t num_frames = end_frame - start_frame;
+  const size_t num_atoms = frames[0].atoms().size();
+  if (max_correlation_frames < 0) {
+    max_correlation_frames = std::max(1, static_cast<int>(num_frames / 2));
+  } else if (std::cmp_greater_equal(max_correlation_frames, num_frames)) {
     max_correlation_frames = static_cast<int>(num_frames) - 1;
   }
   if (max_correlation_frames <= 0) {
     return {};
   }
 
-  // Create corrected velocities (COM removed) mapped relative to start_frame
   const auto atom_velocities =
       computeCorrectedVelocities(frames, start_frame, num_frames, num_atoms);
   if (atom_velocities.empty()) {
     return {};
   }
 
-  std::vector<real_t> vacf(max_correlation_frames + 1, 0.0);
-  std::vector<int> counts(max_correlation_frames + 1, 0);
+  const ElementMassLayout layout = buildElementMassLayout(frames[start_frame].atoms());
+  const size_t num_elems = layout.symbols.size();
+  const size_t lag_len = static_cast<size_t>(max_correlation_frames) + 1;
 
-  // Count time origins per lag analytically
-  for (int lag = 0; lag <= max_correlation_frames; ++lag) {
-    counts[lag] = static_cast<int>(num_frames - static_cast<size_t>(lag));
-  }
-
-  // Thread-local VACF accumulators: eliminates all mutex acquisitions.
-  tbb::enumerable_thread_specific<std::vector<real_t>> ets_vacf(
-      [&] { return std::vector<real_t>(max_correlation_frames + 1, 0.0); });
-
-  // Thread-local FFT workspace: one heap allocation per thread, reused
-  // per-atom across all three autocorrelate calls.
+  tbb::enumerable_thread_specific<std::vector<std::vector<real_t>>> ets_elem_vacf([&] {
+    return std::vector<std::vector<real_t>>(num_elems, std::vector<real_t>(lag_len, 0.0));
+  });
   tbb::enumerable_thread_specific<std::vector<std::complex<real_t>>> ets_ws;
 
   tbb::parallel_for(static_cast<size_t>(0), num_atoms, [&](size_t atom_idx) {
-    auto &local_vacf = ets_vacf.local();
+    auto &local_elem = ets_elem_vacf.local()[layout.atom_elem_idx[atom_idx]];
     auto &workspace = ets_ws.local();
     const auto &v_i = atom_velocities[atom_idx];
 
@@ -261,30 +255,32 @@ std::vector<real_t> DynamicsAnalyzer::calculateVACF(const correlation::core::Tra
       vel_z[frame_idx] = v_i[frame_idx].z();
     }
 
-    auto s2_x = correlation::math::autocorrelate(vel_x, workspace);
-    auto s2_y = correlation::math::autocorrelate(vel_y, workspace);
-    auto s2_z = correlation::math::autocorrelate(vel_z, workspace);
-
-    for (int lag = 0; lag <= max_correlation_frames; ++lag) {
-      local_vacf[lag] += s2_x[lag] + s2_y[lag] + s2_z[lag];
+    const auto s2_x = correlation::math::autocorrelate(vel_x, workspace);
+    const auto s2_y = correlation::math::autocorrelate(vel_y, workspace);
+    const auto s2_z = correlation::math::autocorrelate(vel_z, workspace);
+    for (size_t lag = 0; lag < lag_len; ++lag) {
+      local_elem[lag] += s2_x[lag] + s2_y[lag] + s2_z[lag];
     }
   });
 
-  // Serial merge of per-thread accumulators into the shared vacf[]
-  for (const auto &local_vacf : ets_vacf) {
-    for (int lag = 0; lag <= max_correlation_frames; ++lag) {
-      vacf[lag] += local_vacf[lag];
+  std::vector<std::vector<real_t>> elem_sums(num_elems, std::vector<real_t>(lag_len, 0.0));
+  for (const auto &local_all : ets_elem_vacf) {
+    for (size_t elem_idx = 0; elem_idx < num_elems; ++elem_idx) {
+      for (size_t lag = 0; lag < lag_len; ++lag) {
+        elem_sums[elem_idx][lag] += local_all[elem_idx][lag];
+      }
     }
   }
 
-  // Normalize by number of time origins and number of atoms
-  for (int lag = 0; lag <= max_correlation_frames; ++lag) {
-    if (counts[lag] > 0) {
-      vacf[lag] /= (static_cast<real_t>(counts[lag]) * static_cast<real_t>(num_atoms));
-    }
-  }
+  return assemblePartialVACFResult(elem_sums, layout, num_frames, num_atoms);
+}
 
-  return vacf;
+std::vector<real_t> DynamicsAnalyzer::calculateVACF(const correlation::core::Trajectory &traj,
+                                                    MaxFrames max_correlation_frames_arg,
+                                                    StartFrame start_frame_arg,
+                                                    EndFrame end_frame_arg) {
+  return calculatePartialVACF(traj, max_correlation_frames_arg, start_frame_arg, end_frame_arg)
+      .total_unweighted;
 }
 
 std::vector<real_t> DynamicsAnalyzer::calculateMSD(const correlation::core::Trajectory &traj,
@@ -408,62 +404,52 @@ DynamicsAnalyzer::calculateNormalizedVACF(const correlation::core::Trajectory &t
   return vacf;
 }
 
-std::tuple<std::vector<real_t>, std::vector<real_t>, std::vector<real_t>>
-DynamicsAnalyzer::calculateVDOS(const std::vector<real_t> &vacf, real_t time_step) {
-  if (vacf.empty() || time_step <= 0.0) {
+std::pair<std::vector<real_t>, std::vector<real_t>>
+DynamicsAnalyzer::calculateVDOS(const std::vector<real_t> &vacf, real_t time_step,
+                                VDOSWindowType window_type, size_t zero_pad_factor) {
+  if (vacf.empty() || time_step <= static_cast<real_t>(0.0)) {
     return {};
   }
 
   const size_t num_frames = vacf.size();
-  real_t const t_max = static_cast<real_t>(num_frames - 1) * time_step; // Total time of correlation
+  const size_t fft_len = computeEvenPaddedFFTSize(num_frames, zero_pad_factor);
+  const size_t num_freq_points = fft_len / 2 + 1;
 
-  // Define frequency range
-  // Max frequency (Nyquist) is 1 / (2 * dt)
-  // But we are interested in physical vibrations, usually up to ~100 THz or
-  // ~3000 cm^-1 time_step is in fs. 1 fs = 10^-15 s. 1 THz = 10^12 Hz. Nyquist freq in
-  // THz = 1 / (2 * time_step * 10^-15) * 10^-12 = 1000 / (2 * time_step)
+  // Build exact even-symmetric zero-padded sequence in double precision for numerical stability.
+  // Re(DFT[j]) = x_0 + 2 * sum_{k=1}^{M-1} x_k * cos(2*pi*j*k / L), giving the exact trapezoidal
+  // cosine transform with 1/2 endpoint weight at t = 0 and zero imaginary component.
+  std::vector<std::complex<double>> buffer(fft_len, {0.0, 0.0});
+  buffer[0] = {static_cast<double>(vacf[0]) *
+                   static_cast<double>(evaluateVdosWindow(0, num_frames, window_type)),
+               0.0};
 
-  real_t nyquist_thz = static_cast<real_t>(1000.0) / (static_cast<real_t>(2.0) * time_step);
-
-  // Number of frequency points. Let's make it high resolution.
-  size_t const num_freq_points = 2000;
-  real_t d_nu = nyquist_thz / num_freq_points; // Frequency step in THz
-
-  std::vector<real_t> frequencies(num_freq_points);
-  std::vector<real_t> intensities_real(num_freq_points);
-  std::vector<real_t> intensities_imag(num_freq_points);
-
-  // Pre-calculate windowed VACF
-  std::vector<real_t> windowed_vacf(num_frames);
-  // Define standard deviation for the Gaussian window (e.g., stopping at 3
-  // sigma at t_max)
-  real_t const sigma = t_max >= 1e-6 ? t_max / static_cast<real_t>(3.0) : static_cast<real_t>(1.0);
-  for (size_t frame_idx = 0; frame_idx < num_frames; ++frame_idx) {
-    real_t const time_val = static_cast<real_t>(frame_idx) * time_step;
-    real_t const window =
-        std::exp(-static_cast<real_t>(0.5) * std::pow(time_val / sigma, static_cast<real_t>(2.0)));
-    windowed_vacf[frame_idx] = vacf[frame_idx] * window;
+  const size_t half_len = fft_len / 2;
+  for (size_t k = 1; k < num_frames; ++k) {
+    const double val = static_cast<double>(vacf[k]) *
+                       static_cast<double>(evaluateVdosWindow(k, num_frames, window_type));
+    buffer[k] = {val, 0.0};
+    if (k < half_len) {
+      buffer[fft_len - k] = {val, 0.0};
+    }
   }
 
-  tbb::parallel_for(static_cast<size_t>(0), num_freq_points, [&](size_t freq_idx) {
-    real_t const freq_val = static_cast<real_t>(freq_idx) * d_nu; // Frequency in THz
-    frequencies[freq_idx] = freq_val;
+  correlation::math::computeFFT(buffer, false);
 
-    // $\omega = 2 * \pi * \nu * 0.001$ (to handle THz to fs
-    // scale)
-    real_t const theta =
-        correlation::math::TWO_PI * freq_val * time_step * static_cast<real_t>(0.001);
+  std::vector<real_t> frequencies(num_freq_points);
+  std::vector<real_t> intensities(num_freq_points);
 
-    auto [integral_real, integral_imag] = integrateVdosFrequency(theta, windowed_vacf, time_step);
+  // dt in fs -> 1000.0 / (L * dt) is d_nu in THz.
+  const auto dt_d = static_cast<double>(time_step);
+  const double d_nu = 1000.0 / (static_cast<double>(fft_len) * dt_d);
 
-    real_t const damping = std::exp(
-        -static_cast<real_t>(0.5) *
-        std::pow(freq_val / (static_cast<real_t>(0.5) * nyquist_thz), static_cast<real_t>(2.0)));
-    intensities_real[freq_idx] = integral_real * damping;
-    intensities_imag[freq_idx] = integral_imag * damping;
-  });
+  for (size_t j = 0; j < num_freq_points; ++j) {
+    frequencies[j] = static_cast<real_t>(static_cast<double>(j) * d_nu);
+    // Clamp tiny negative numerical ripples from finite-time truncation to 0.
+    const double raw_val = buffer[j].real() * dt_d;
+    intensities[j] = static_cast<real_t>(std::max(0.0, raw_val));
+  }
 
-  return {frequencies, intensities_real, intensities_imag};
+  return {std::move(frequencies), std::move(intensities)};
 }
 
 real_t DynamicsAnalyzer::computeDiffusionCoefficientMSD(const std::vector<real_t> &time,

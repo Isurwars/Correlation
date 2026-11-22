@@ -19,11 +19,11 @@ const bool REGISTERED = CalculatorFactory::registerTypeSafe<VACFCalculator>("VAC
 
 void VACFCalculator::calculateTrajectory(
     correlation::analysis::DistributionFunctions &dists, const correlation::core::Trajectory &traj,
-    const correlation::analysis::AnalysisSettings & /*settings*/) const {
+    const correlation::analysis::AnalysisSettings &settings) const {
   if (traj.getFrameCount() < 2) {
     return;
   }
-  auto results = calculate(traj, {-1}, {0}, {static_cast<size_t>(-1)});
+  auto results = calculate(traj, {settings.vacf_max_lag}, {0}, {static_cast<size_t>(-1)});
   for (auto &[name, histogram] : results) {
     dists.addHistogram(name, std::move(histogram));
   }
@@ -35,19 +35,17 @@ VACFCalculator::calculate(const correlation::core::Trajectory &traj,
                           correlation::analysis::StartFrame start_frame,
                           correlation::analysis::EndFrame end_frame) {
   std::map<std::string, correlation::analysis::Histogram> results;
-  // Use getFrameCount() to avoid materialising a memory-mapped trajectory.
-  // VACF requires temporal evolution across at least 2 frames.
   if (traj.getFrameCount() < 2) {
     return results;
   }
 
-  std::vector<real_t> const raw_vacf = correlation::analysis::DynamicsAnalyzer::calculateVACF(
+  const auto partial_vacf = correlation::analysis::DynamicsAnalyzer::calculatePartialVACF(
       traj, max_correlation_frames, start_frame, end_frame);
-  if (raw_vacf.size() < 2) {
+  if (partial_vacf.total_unweighted.size() < 2) {
     return results;
   }
 
-  size_t const num_frames = raw_vacf.size();
+  size_t const num_frames = partial_vacf.total_unweighted.size();
   real_t const time_step = traj.getTimeStep();
 
   correlation::analysis::Histogram vacf_hist;
@@ -63,26 +61,39 @@ VACFCalculator::calculate(const correlation::core::Trajectory &traj,
     vacf_hist.bins[i] = static_cast<real_t>(i) * time_step;
   }
 
-  vacf_hist.partials["Total"] = raw_vacf;
-  results["VACF"] = std::move(vacf_hist);
-
-  std::vector<real_t> const norm_vacf =
-      correlation::analysis::DynamicsAnalyzer::calculateNormalizedVACF(traj, max_correlation_frames,
-                                                                       start_frame, end_frame);
-  if (norm_vacf.size() >= 2) {
-    correlation::analysis::Histogram norm_vacf_hist;
-    norm_vacf_hist.x_label = "t";
-    norm_vacf_hist.title = "Normalized Velocity Autocorrelation";
-    norm_vacf_hist.y_label = "C(t) / C(0)";
-    norm_vacf_hist.x_unit = "fs";
-    norm_vacf_hist.y_unit = "normalized";
-    norm_vacf_hist.description = "Normalized Velocity Autocorrelation Function";
-    norm_vacf_hist.file_suffix = "_VACF_norm";
-    norm_vacf_hist.bins = results["VACF"].bins;
-    norm_vacf_hist.partials["Total"] = norm_vacf;
-    results["vacf_normalized"] = std::move(norm_vacf_hist);
+  vacf_hist.partials["Total"] = partial_vacf.total_unweighted;
+  for (const auto &[elem_sym, elem_curve] : partial_vacf.element_vacfs) {
+    vacf_hist.partials[elem_sym] = elem_curve;
   }
 
+  correlation::analysis::Histogram norm_vacf_hist;
+  norm_vacf_hist.x_label = "t";
+  norm_vacf_hist.title = "Normalized Velocity Autocorrelation";
+  norm_vacf_hist.y_label = "C(t) / C(0)";
+  norm_vacf_hist.x_unit = "fs";
+  norm_vacf_hist.y_unit = "normalized";
+  norm_vacf_hist.description = "Normalized Velocity Autocorrelation Function";
+  norm_vacf_hist.file_suffix = "_VACF_norm";
+  norm_vacf_hist.bins = vacf_hist.bins;
+
+  const auto normalize_curve = [](const std::vector<real_t> &curve) {
+    std::vector<real_t> norm = curve;
+    if (!norm.empty() && norm[0] != static_cast<real_t>(0.0)) {
+      const real_t inv_c0 = static_cast<real_t>(1.0) / norm[0];
+      for (real_t &val : norm) {
+        val *= inv_c0;
+      }
+    }
+    return norm;
+  };
+
+  norm_vacf_hist.partials["Total"] = normalize_curve(partial_vacf.total_unweighted);
+  for (const auto &[elem_sym, elem_curve] : partial_vacf.element_vacfs) {
+    norm_vacf_hist.partials[elem_sym] = normalize_curve(elem_curve);
+  }
+
+  results["VACF"] = std::move(vacf_hist);
+  results["vacf_normalized"] = std::move(norm_vacf_hist);
   return results;
 }
 

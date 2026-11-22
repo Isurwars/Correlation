@@ -1140,7 +1140,9 @@ std::string renderHistogramAsSvg(const correlation::analysis::Histogram &hist,
   }
 
   // Stage 2: Analytics, scales & peak detection
-  const bool is_vdos = hist.file_suffix == "_VDOS" || hist.title == "Vibrational Density of States";
+  const bool is_vdos = hist.file_suffix == "_VDOS" || hist.file_suffix == "_VDOS_trans" ||
+                       hist.title == "Vibrational Density of States" ||
+                       hist.title == "Translational Density of States";
   const auto [x_scale, y_scale] = PlotAnalytics::computeScales(hist.bins, series, config, is_vdos);
   const std::vector<PeakCallout> peaks =
       PlotAnalytics::detectPeaks(hist.bins, series, hist.x_label);

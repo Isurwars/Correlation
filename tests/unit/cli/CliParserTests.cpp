@@ -421,6 +421,24 @@ TEST_F(CliParserTests, KernelUnknownDefaultsToGaussian) {
   EXPECT_EQ(opts.smoothing_kernel, correlation::math::KernelType::Gaussian);
 }
 
+TEST_F(CliParserTests, VdosAndVacfOptionsParsingAndValidation) {
+  ArgBuilder args{"correlation-cli", "f.poscar", "--vacf-max-lag",  "200",
+                  "--vdos-window",   "blackman", "--vdos-zero-pad", "8"};
+  correlation::cli::CliOptions opts;
+  ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+  EXPECT_EQ(opts.vacf_max_lag, 200);
+  EXPECT_EQ(opts.vdos_window, correlation::analysis::VDOSWindowType::Blackman);
+  EXPECT_EQ(opts.vdos_zero_pad, 8);
+
+  ArgBuilder bad_lag{"correlation-cli", "f.poscar", "--vacf-max-lag", "0"};
+  correlation::cli::CliOptions opts_bad_lag;
+  EXPECT_FALSE(correlation::cli::parseArgs(bad_lag.argc(), bad_lag.data(), opts_bad_lag));
+
+  ArgBuilder bad_pad{"correlation-cli", "f.poscar", "--vdos-zero-pad", "0"};
+  correlation::cli::CliOptions opts_bad_pad;
+  EXPECT_FALSE(correlation::cli::parseArgs(bad_pad.argc(), bad_pad.data(), opts_bad_pad));
+}
+
 // ===== Combined options =====
 
 TEST_F(CliParserTests, MultipleOptionsCombined) {
