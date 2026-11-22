@@ -195,7 +195,13 @@ void VulkanBufferManager::uploadScene(const Scene3D &scene, const Camera3D &came
   uploadUbo(camera, dimensions, style);
   uploadAtomInstances(scene.atoms());
   uploadBondInstances(scene.bonds());
-  uploadWireframeLines(scene.unitCellLines());
+  if (scene.guideLines().empty()) {
+    uploadWireframeLines(scene.unitCellLines());
+  } else {
+    std::vector<LineSegment> combined = scene.unitCellLines();
+    combined.insert(combined.end(), scene.guideLines().begin(), scene.guideLines().end());
+    uploadWireframeLines(combined);
+  }
 }
 
 void VulkanBufferManager::uploadUbo(const Camera3D &camera, const ViewportDimensions &dimensions,

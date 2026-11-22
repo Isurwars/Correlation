@@ -323,6 +323,8 @@ export component AppWindow inherits Window {
         z_max: 1.0,
     };
     in property <string> structure_3d_radial_brush_text: "";
+    in property <string> structure_3d_measurement_text: "";
+    in-out property <bool> shift_key_held: false;
 
     // Resizable layout geometry properties
     in-out property <length> left_col_width: 220px;
@@ -528,6 +530,8 @@ export component AppWindow inherits Window {
     callback export_phase_heatmap_png_3d();
     callback pick_atom_3d(float, float);
     callback clear_picked_atom_3d();
+    callback measure_atom_3d(float, float);
+    callback clear_measurement_3d();
     callback set_slab_clip_3d(SlabClipState);
     callback reset_slab_clip_3d();
 
@@ -644,7 +648,13 @@ export component AppWindow inherits Window {
     // ============================================================================
     main_focus := FocusScope {
 
+        key-released(event) => {
+            root.shift_key_held = event.modifiers.shift;
+            return reject;
+        }
+
         key-pressed(event) => {
+            root.shift_key_held = event.modifiers.shift;
             if (event.modifiers.control && (event.text == "k" || event.text == "K")) {
                 root.shortcuts_modal_open = false;
                 root.command_palette_open = !root.command_palette_open;
@@ -666,6 +676,10 @@ export component AppWindow inherits Window {
                 }
                 if (root.shortcuts_modal_open) {
                     root.shortcuts_modal_open = false;
+                    return accept;
+                }
+                if (root.structure_3d_measurement_text != "") {
+                    root.clear_measurement_3d();
                     return accept;
                 }
                 if (root.structure_3d_inspected_atom.valid) {
@@ -1117,8 +1131,12 @@ export component AppWindow inherits Window {
                     structure_3d_camera_hud: root.structure_3d_camera_hud;
                     structure_3d_inspected_atom: root.structure_3d_inspected_atom;
                     structure_3d_radial_brush_text: root.structure_3d_radial_brush_text;
+                    structure_3d_measurement_text: root.structure_3d_measurement_text;
+                    shift_key_held: root.shift_key_held;
                     pick_atom_3d(nx, ny) => { root.pick_atom_3d(nx, ny); }
                     clear_picked_atom_3d => { root.clear_picked_atom_3d(); }
+                    measure_atom_3d(nx, ny) => { root.measure_atom_3d(nx, ny); }
+                    clear_measurement_3d => { root.clear_measurement_3d(); }
                     focus_picked_atom_3d => { root.focus_picked_atom_3d(); }
                     tick_camera_animation_3d => { root.tick_camera_animation_3d(); }
                     toggle_element_visibility_3d(sym) => { root.toggle_element_visibility_3d(sym); }

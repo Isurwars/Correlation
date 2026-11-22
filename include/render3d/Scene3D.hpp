@@ -108,6 +108,18 @@ public:
   }
 
   /**
+   * @brief Gets 3D overlay guide line segments (e.g. distance/angle measurement ruler).
+   * @return Immutable reference to overlay guide lines.
+   */
+  [[nodiscard]] const std::vector<LineSegment> &guideLines() const noexcept { return guide_lines_; }
+
+  /**
+   * @brief Replaces the 3D overlay guide line segments.
+   * @param[in] lines New guide lines.
+   */
+  void setGuideLines(std::vector<LineSegment> lines) noexcept { guide_lines_ = std::move(lines); }
+
+  /**
    * @brief Gets the minimum 3D coordinate bounding box limits.
    * @return Vector of minimum x, y, z coordinates.
    */
@@ -218,6 +230,7 @@ private:
   std::vector<AtomInstance> atoms_;
   std::vector<BondInstance> bonds_;
   std::vector<LineSegment> unit_cell_lines_;
+  std::vector<LineSegment> guide_lines_;
   math::Vector3<float> bounds_min_{0.0F, 0.0F, 0.0F};
   math::Vector3<float> bounds_max_{0.0F, 0.0F, 0.0F};
 

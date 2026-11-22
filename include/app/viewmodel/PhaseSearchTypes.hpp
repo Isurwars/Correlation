@@ -30,6 +30,8 @@ enum class PhaseDescriptor : std::uint8_t {
   LocalEntropy, ///< Local Entropic Fingerprint (s_i / k_B).
   TwfNconn,     ///< Ten Wolde-Frenkel coherent bond count (N_conn).
   QTet,         ///< Chau-Hardwick tetrahedral order parameter (q_tet).
+  Displacement, ///< Cumulative PBC-unwrapped atomic displacement |Δr| relative to frame 0 (Å).
+  D2Min,        ///< Falk-Langer non-affine squared displacement D²_min relative to frame 0 (Å²).
 };
 
 /**
@@ -165,6 +167,10 @@ struct CrystalMarkerData {
     return "N_conn (TWF)";
   case PhaseDescriptor::QTet:
     return "q_tet (Tetrahedral)";
+  case PhaseDescriptor::Displacement:
+    return "|Δr| (Disp)";
+  case PhaseDescriptor::D2Min:
+    return "D²_min (Strain)";
   }
   return "Unknown";
 }
@@ -334,6 +340,10 @@ getDescriptorDomain(PhaseDescriptor descriptor) noexcept {
     return {0.0F, 20.0F};
   case PhaseDescriptor::QTet:
     return {-0.25F, 1.15F};
+  case PhaseDescriptor::Displacement:
+    return {0.0F, 5.0F};
+  case PhaseDescriptor::D2Min:
+    return {0.0F, 10.0F};
   case PhaseDescriptor::Q6Bar:
   case PhaseDescriptor::Q6:
     return {0.0F, 0.90F};

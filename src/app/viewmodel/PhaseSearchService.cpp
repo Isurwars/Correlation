@@ -88,6 +88,10 @@ std::span<const real_t> extractDescriptorValues(const FramePhaseDescriptors &des
     return descriptors.twf_nconn;
   case PhaseDescriptor::QTet:
     return descriptors.q_tet;
+  case PhaseDescriptor::Displacement:
+    return descriptors.displacement;
+  case PhaseDescriptor::D2Min:
+    return descriptors.d2_min;
   }
   return {};
 }
@@ -126,6 +130,12 @@ constexpr std::size_t K_MAX_CACHE_FRAMES = 512UL;
   }
   if (descriptor == PhaseDescriptor::QTet) {
     return !desc.q_tet.empty();
+  }
+  if (descriptor == PhaseDescriptor::Displacement) {
+    return !desc.displacement.empty();
+  }
+  if (descriptor == PhaseDescriptor::D2Min) {
+    return !desc.d2_min.empty();
   }
   return false;
 }
@@ -480,6 +490,10 @@ PhaseDescriptorsLRUCache &PhaseSearchService::lruCache() noexcept { return lru_c
 
 void PhaseSearchService::clearCache() {
   cancelPrebake();
+  {
+    const std::scoped_lock lock(phase_mutex_);
+    ref_frame0_analyzer_.reset();
+  }
   lru_cache_.clear();
 }
 
@@ -626,6 +640,206 @@ void PhaseSearchService::applyPhaseVisualsToSceneInternal(
 
 namespace {
 
+[[nodiscard]] math::Vector3<double> minimumImageDiffDouble(const math::Vector3<real_t> &origin,
+                                                           const math::Vector3<real_t> &target,
+                                                           const core::Cell &cell) noexcept {
+  const math::Vector3<double> diff(
+      static_cast<double>(target.x()) - static_cast<double>(origin.x()),
+      static_cast<double>(target.y()) - static_cast<double>(origin.y()),
+      static_cast<double>(target.z()) - static_cast<double>(origin.z()));
+  if (cell.volume() <= static_cast<real_t>(1e-6)) {
+    return diff;
+  }
+  const auto &inv = cell.inverseLatticeVectors();
+  const auto &lat = cell.latticeVectors();
+  const double fx = static_cast<double>(inv[0][0]) * diff.x() +
+                    static_cast<double>(inv[0][1]) * diff.y() +
+                    static_cast<double>(inv[0][2]) * diff.z();
+  const double fy = static_cast<double>(inv[1][0]) * diff.x() +
+                    static_cast<double>(inv[1][1]) * diff.y() +
+                    static_cast<double>(inv[1][2]) * diff.z();
+  const double fz = static_cast<double>(inv[2][0]) * diff.x() +
+                    static_cast<double>(inv[2][1]) * diff.y() +
+                    static_cast<double>(inv[2][2]) * diff.z();
+
+  const double wx = fx - std::round(fx);
+  const double wy = fy - std::round(fy);
+  const double wz = fz - std::round(fz);
+
+  return math::Vector3<double>(
+      static_cast<double>(lat[0][0]) * wx + static_cast<double>(lat[1][0]) * wy +
+          static_cast<double>(lat[2][0]) * wz,
+      static_cast<double>(lat[0][1]) * wx + static_cast<double>(lat[1][1]) * wy +
+          static_cast<double>(lat[2][1]) * wz,
+      static_cast<double>(lat[0][2]) * wx + static_cast<double>(lat[1][2]) * wy +
+          static_cast<double>(lat[2][2]) * wz);
+}
+
+[[nodiscard]] std::vector<real_t> computePerAtomDisplacement(const core::Cell &target_cell,
+                                                             const core::Cell &ref_cell) {
+  const auto &target_atoms = target_cell.atoms();
+  const auto &ref_atoms = ref_cell.atoms();
+  const std::size_t count = target_atoms.size();
+  std::vector<real_t> disp(count, static_cast<real_t>(0.0));
+  if (ref_atoms.size() != count || count == 0) {
+    return disp;
+  }
+  const bool has_pbc = target_cell.volume() > static_cast<real_t>(1e-6) &&
+                       ref_cell.volume() > static_cast<real_t>(1e-6);
+  const auto &inv_t = target_cell.inverseLatticeVectors();
+  const auto &inv_0 = ref_cell.inverseLatticeVectors();
+  const auto &lat_t = target_cell.latticeVectors();
+
+  auto compute_one = [&](std::size_t idx) {
+    const auto &pos_t = target_atoms[idx].position();
+    const auto &pos_0 = ref_atoms[idx].position();
+    if (!has_pbc) {
+      const double dx = static_cast<double>(pos_t.x()) - static_cast<double>(pos_0.x());
+      const double dy = static_cast<double>(pos_t.y()) - static_cast<double>(pos_0.y());
+      const double dz = static_cast<double>(pos_t.z()) - static_cast<double>(pos_0.z());
+      disp[idx] = static_cast<real_t>(std::sqrt(dx * dx + dy * dy + dz * dz));
+      return;
+    }
+    const auto frac_t = inv_t * pos_t;
+    const auto frac_0 = inv_0 * pos_0;
+    const double wx = static_cast<double>(frac_t.x()) - static_cast<double>(frac_0.x()) -
+                      std::round(static_cast<double>(frac_t.x()) - static_cast<double>(frac_0.x()));
+    const double wy = static_cast<double>(frac_t.y()) - static_cast<double>(frac_0.y()) -
+                      std::round(static_cast<double>(frac_t.y()) - static_cast<double>(frac_0.y()));
+    const double wz = static_cast<double>(frac_t.z()) - static_cast<double>(frac_0.z()) -
+                      std::round(static_cast<double>(frac_t.z()) - static_cast<double>(frac_0.z()));
+    const double dx = static_cast<double>(lat_t[0][0]) * wx +
+                      static_cast<double>(lat_t[1][0]) * wy + static_cast<double>(lat_t[2][0]) * wz;
+    const double dy = static_cast<double>(lat_t[0][1]) * wx +
+                      static_cast<double>(lat_t[1][1]) * wy + static_cast<double>(lat_t[2][1]) * wz;
+    const double dz = static_cast<double>(lat_t[0][2]) * wx +
+                      static_cast<double>(lat_t[1][2]) * wy + static_cast<double>(lat_t[2][2]) * wz;
+    disp[idx] = static_cast<real_t>(std::sqrt(dx * dx + dy * dy + dz * dz));
+  };
+
+  if (count >= K_PARALLEL_ATOM_THRESHOLD) {
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, count),
+                      [&compute_one](const tbb::blocked_range<std::size_t> &range) {
+                        for (std::size_t idx = range.begin(); idx < range.end(); ++idx) {
+                          compute_one(idx);
+                        }
+                      });
+  } else {
+    for (std::size_t idx = 0; idx < count; ++idx) {
+      compute_one(idx);
+    }
+  }
+  return disp;
+}
+
+[[nodiscard]] bool invert3x3Double(const std::array<std::array<double, 3>, 3> &mat,
+                                   std::array<std::array<double, 3>, 3> &inv) noexcept {
+  const double c00 = mat[1][1] * mat[2][2] - mat[1][2] * mat[2][1];
+  const double c01 = mat[1][2] * mat[2][0] - mat[1][0] * mat[2][2];
+  const double c02 = mat[1][0] * mat[2][1] - mat[1][1] * mat[2][0];
+  const double det = mat[0][0] * c00 + mat[0][1] * c01 + mat[0][2] * c02;
+  if (std::abs(det) < 1e-10) {
+    return false;
+  }
+  const double inv_det = 1.0 / det;
+  inv[0][0] = c00 * inv_det;
+  inv[1][0] = c01 * inv_det;
+  inv[2][0] = c02 * inv_det;
+  inv[0][1] = (mat[0][2] * mat[2][1] - mat[0][1] * mat[2][2]) * inv_det;
+  inv[1][1] = (mat[0][0] * mat[2][2] - mat[0][2] * mat[2][0]) * inv_det;
+  inv[2][1] = (mat[0][1] * mat[2][0] - mat[0][0] * mat[2][1]) * inv_det;
+  inv[0][2] = (mat[0][1] * mat[1][2] - mat[0][2] * mat[1][1]) * inv_det;
+  inv[1][2] = (mat[0][2] * mat[1][0] - mat[0][0] * mat[1][2]) * inv_det;
+  inv[2][2] = (mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0]) * inv_det;
+  return true;
+}
+
+[[nodiscard]] double computeSingleAtomD2Min(std::size_t atom_idx, const core::Cell &target_cell,
+                                            const core::NeighborGraph &ref_graph) noexcept {
+  const auto neighbors = ref_graph.getNeighbors(atom_idx);
+  if (neighbors.size() < 4) {
+    return 0.0;
+  }
+  const auto &target_atoms = target_cell.atoms();
+  const auto &origin_pos = target_atoms[atom_idx].position();
+
+  std::array<std::array<double, 3>, 3> x_mat{};
+  std::array<std::array<double, 3>, 3> y_mat{};
+  for (const auto &nbr : neighbors) {
+    if (nbr.index >= target_atoms.size()) {
+      continue;
+    }
+    const std::array<double, 3> ref_bond{static_cast<double>(nbr.r_ij.x()),
+                                         static_cast<double>(nbr.r_ij.y()),
+                                         static_cast<double>(nbr.r_ij.z())};
+    const auto cur_vec =
+        minimumImageDiffDouble(origin_pos, target_atoms[nbr.index].position(), target_cell);
+    const std::array<double, 3> cur_bond{cur_vec.x(), cur_vec.y(), cur_vec.z()};
+    for (std::size_t row = 0; row < 3; ++row) {
+      for (std::size_t col = 0; col < 3; ++col) {
+        x_mat.at(row).at(col) += cur_bond.at(row) * ref_bond.at(col);
+        y_mat.at(row).at(col) += ref_bond.at(row) * ref_bond.at(col);
+      }
+    }
+  }
+
+  std::array<std::array<double, 3>, 3> y_inv{};
+  std::array<std::array<double, 3>, 3> j_mat{{{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}}};
+  if (invert3x3Double(y_mat, y_inv)) {
+    j_mat = {};
+    for (std::size_t row = 0; row < 3; ++row) {
+      for (std::size_t col = 0; col < 3; ++col) {
+        for (std::size_t mid = 0; mid < 3; ++mid) {
+          j_mat.at(row).at(col) += x_mat.at(row).at(mid) * y_inv.at(mid).at(col);
+        }
+      }
+    }
+  }
+
+  double d2_sum = 0.0;
+  for (const auto &nbr : neighbors) {
+    if (nbr.index >= target_atoms.size()) {
+      continue;
+    }
+    const std::array<double, 3> ref_bond{static_cast<double>(nbr.r_ij.x()),
+                                         static_cast<double>(nbr.r_ij.y()),
+                                         static_cast<double>(nbr.r_ij.z())};
+    const auto cur_vec =
+        minimumImageDiffDouble(origin_pos, target_atoms[nbr.index].position(), target_cell);
+    const double res_x = cur_vec.x() - (j_mat[0][0] * ref_bond[0] + j_mat[0][1] * ref_bond[1] +
+                                        j_mat[0][2] * ref_bond[2]);
+    const double res_y = cur_vec.y() - (j_mat[1][0] * ref_bond[0] + j_mat[1][1] * ref_bond[1] +
+                                        j_mat[1][2] * ref_bond[2]);
+    const double res_z = cur_vec.z() - (j_mat[2][0] * ref_bond[0] + j_mat[2][1] * ref_bond[1] +
+                                        j_mat[2][2] * ref_bond[2]);
+    d2_sum += res_x * res_x + res_y * res_y + res_z * res_z;
+  }
+  return d2_sum;
+}
+
+[[nodiscard]] std::vector<real_t> computePerAtomD2Min(const core::Cell &target_cell,
+                                                      const core::NeighborGraph &ref_graph) {
+  const std::size_t count = target_cell.atoms().size();
+  std::vector<real_t> d2_vals(count, static_cast<real_t>(0.0));
+  if (count == 0) {
+    return d2_vals;
+  }
+  if (count >= K_PARALLEL_ATOM_THRESHOLD) {
+    tbb::parallel_for(
+        tbb::blocked_range<std::size_t>(0, count),
+        [&d2_vals, &target_cell, &ref_graph](const tbb::blocked_range<std::size_t> &range) {
+          for (std::size_t idx = range.begin(); idx < range.end(); ++idx) {
+            d2_vals[idx] = static_cast<real_t>(computeSingleAtomD2Min(idx, target_cell, ref_graph));
+          }
+        });
+  } else {
+    for (std::size_t idx = 0; idx < count; ++idx) {
+      d2_vals[idx] = static_cast<real_t>(computeSingleAtomD2Min(idx, target_cell, ref_graph));
+    }
+  }
+  return d2_vals;
+}
+
 void populateMissingDescriptors(FramePhaseDescriptors &descriptors, const core::Cell &target_cell,
                                 const PhaseSearchSettings &settings) {
   const auto &analyzer = *descriptors.analyzer;
@@ -673,6 +887,59 @@ void populateMissingDescriptors(FramePhaseDescriptors &descriptors, const core::
 
 } // namespace
 
+std::shared_ptr<const analysis::StructureAnalyzer> PhaseSearchService::getOrBuildFrame0Analyzer() {
+  {
+    const std::scoped_lock lock(phase_mutex_);
+    if (ref_frame0_analyzer_) {
+      return ref_frame0_analyzer_;
+    }
+  }
+  auto ref_opt = cell_provider_(0);
+  if (!ref_opt.has_value()) {
+    return nullptr;
+  }
+  auto [ref_cell, ref_cutoffs] = std::move(*ref_opt);
+  if (ref_cell.isEmpty() || ref_cell.atomCount() == 0) {
+    return nullptr;
+  }
+  if (ref_cutoffs.empty() || ref_cutoffs.size() != ref_cell.elements().size()) {
+    ref_cutoffs = buildCellBondCutoffs(ref_cell);
+  }
+  const real_t ref_max_dist = computeMaxBondDistance(ref_cutoffs, ref_cell.elements().size());
+  auto built = std::make_shared<const analysis::StructureAnalyzer>(
+      ref_cell, ref_max_dist, ref_cutoffs, false, static_cast<real_t>(0.0));
+  const std::scoped_lock lock(phase_mutex_);
+  ref_frame0_analyzer_ = built;
+  return built;
+}
+
+void PhaseSearchService::populateDeformationDescriptors(FramePhaseDescriptors &descriptors,
+                                                        std::size_t frame_index,
+                                                        const core::Cell &target_cell,
+                                                        const PhaseSearchSettings &settings) {
+  const bool need_disp =
+      (settings.descriptor == PhaseDescriptor::Displacement) ||
+      (settings.is_2d_mode && settings.descriptor_y == PhaseDescriptor::Displacement);
+  const bool need_d2min = (settings.descriptor == PhaseDescriptor::D2Min) ||
+                          (settings.is_2d_mode && settings.descriptor_y == PhaseDescriptor::D2Min);
+
+  if (need_disp && descriptors.displacement.empty()) {
+    if (frame_index == 0) {
+      descriptors.displacement.assign(target_cell.atomCount(), static_cast<real_t>(0.0));
+    } else if (auto ref_opt = cell_provider_(0); ref_opt.has_value()) {
+      descriptors.displacement = computePerAtomDisplacement(target_cell, ref_opt->first);
+    }
+  }
+
+  if (need_d2min && descriptors.d2_min.empty()) {
+    if (frame_index == 0) {
+      descriptors.d2_min.assign(target_cell.atomCount(), static_cast<real_t>(0.0));
+    } else if (const auto ref_analyzer = getOrBuildFrame0Analyzer()) {
+      descriptors.d2_min = computePerAtomD2Min(target_cell, ref_analyzer->neighborGraph());
+    }
+  }
+}
+
 std::shared_ptr<const FramePhaseDescriptors>
 PhaseSearchService::computeDescriptorsSync(std::size_t frame_index) {
   if (!cell_provider_) {
@@ -711,6 +978,8 @@ PhaseSearchService::computeDescriptorsSync(std::size_t frame_index) {
     }
 
     populateMissingDescriptors(*descriptors, target_cell, active_settings);
+    populateDeformationDescriptors(*descriptors, frame_index, target_cell, active_settings);
+
     // Release heavy StructureAnalyzer neighbor graphs so scalar descriptors fit 32..512 frames
     descriptors->analyzer.reset();
     lru_cache_.setCapacity(computeAdaptiveCacheCapacity(target_cell.atomCount()));

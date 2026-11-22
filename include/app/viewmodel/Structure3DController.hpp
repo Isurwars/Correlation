@@ -558,6 +558,27 @@ public:
   void clearPickedAtom();
 
   /**
+   * @brief Picks an atom for the 3D distance/angle ruler (up to 3 atoms, Shift+Click).
+   * @param[in] norm_x Normalized horizontal click position (0 = left, 1 = right).
+   * @param[in] norm_y Normalized vertical click position (0 = top, 1 = bottom).
+   */
+  void handleMeasureAtom(float norm_x, float norm_y);
+
+  /**
+   * @brief Clears active 3D distance/angle measurement atoms and guide lines.
+   */
+  void clearMeasurement();
+
+  /**
+   * @brief Returns currently measured atom indices (0..3).
+   * @return Copy of measured atom index list.
+   */
+  [[nodiscard]] std::vector<std::size_t> measuredAtomIndices() const {
+    const std::scoped_lock lock(mutex_);
+    return measured_atom_indices_;
+  }
+
+  /**
    * @brief Returns the currently picked atom index, if any.
    * @return Optional zero-based atom index in Scene3D::atoms().
    */
@@ -615,10 +636,12 @@ private:
   void updateScenePhaseVisuals();
   void updateScenePhaseVisualsLocked();
   void applyAtomInspectionHighlightLocked();
+  void applyMeasurementHighlightLocked();
   void applyRadialBrushHighlightLocked(std::size_t &matched_atoms);
   void applyElementVisibilityLocked();
   void applySlabClippingLocked();
   void syncInspectedAtomToWindow();
+  void syncMeasurementToWindow();
   void syncElementLegendToWindow();
 
   template <typename F> void safeInvokeOnWindow(F &&action) {
@@ -664,6 +687,7 @@ private:
   bool dist_hud_visible_{true};
 
   std::optional<std::size_t> picked_atom_index_;
+  std::vector<std::size_t> measured_atom_indices_;
   SlabClipConfig slab_clip_{};
   std::optional<double> radial_brush_r_;
 

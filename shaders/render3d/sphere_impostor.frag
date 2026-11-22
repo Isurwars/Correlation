@@ -23,7 +23,7 @@ layout(location = 0) out vec4 out_frag_color;
 
 void main() {
     float dim = in_style.y;
-    if (dim <= 0.0 && in_halo_color.a <= 0.0) {
+    if (dim <= 0.0) {
         discard;
     }
 
@@ -37,18 +37,7 @@ void main() {
     float c = dot(center, center) - r * r;
     float discriminant = b * b - c;
 
-    if (discriminant < 0.0 || dim <= 0.0) {
-        if (in_halo_color.a > 0.0) {
-            float dist_center = length(in_corner);
-            float halo_radius = r * max(in_style.x, 1.0);
-            if (dist_center <= halo_radius) {
-                float halo_alpha = smoothstep(halo_radius, r * 0.95, dist_center);
-                out_frag_color = vec4(in_halo_color.rgb, in_halo_color.a * halo_alpha * 0.85);
-                vec4 clip_center = ubo.proj * vec4(center, 1.0);
-                gl_FragDepth = clip_center.z / clip_center.w;
-                return;
-            }
-        }
+    if (discriminant < 0.0) {
         discard;
     }
 

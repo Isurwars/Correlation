@@ -561,5 +561,61 @@ TEST_F(Structure3DControllerPhaseSearchTests,
   assertAtomsHaveActiveHalos(controller.scene()->atoms());
 }
 
+TEST_F(Structure3DControllerPhaseSearchTests, DisplacementAndD2MinAffineVsPlasticInvariance) {
+  const ProgramOptions options;
+  Structure3DController controller(window(), options);
+
+  const auto frame0 = testing::crystals::createFCCCell(static_cast<real_t>(3.61), "Cu", 2, 2, 2);
+
+  // Frame 1: pure uniform affine deformation (scale X by 0.95, Y/Z by 1.02)
+  const auto &lat0 = frame0.latticeVectors();
+  const math::Vector3<real_t> vec_a(lat0[0][0] * static_cast<real_t>(0.95), lat0[0][1], lat0[0][2]);
+  const math::Vector3<real_t> vec_b(lat0[1][0], lat0[1][1] * static_cast<real_t>(1.02), lat0[1][2]);
+  const math::Vector3<real_t> vec_c(lat0[2][0], lat0[2][1], lat0[2][2] * static_cast<real_t>(1.02));
+  core::Cell frame1(vec_a, vec_b, vec_c);
+  for (const auto &atom : frame0.atoms()) {
+    const auto &pos = atom.position();
+    frame1.addAtom(atom.element().symbol,
+                   math::Vector3<real_t>{pos.x() * static_cast<real_t>(0.95),
+                                         pos.y() * static_cast<real_t>(1.02),
+                                         pos.z() * static_cast<real_t>(1.02)});
+  }
+
+  // Frame 2: local non-affine plastic displacement of atom 0 by +0.5 A along X
+  core::Cell frame2 = frame0;
+  auto &atoms2 = frame2.atoms();
+  ASSERT_FALSE(atoms2.empty());
+  const auto pos0 = atoms2[0].position();
+  atoms2[0].setPosition(
+      math::Vector3<real_t>{pos0.x() + static_cast<real_t>(0.5), pos0.y(), pos0.z()});
+
+  const auto trajectory = std::make_shared<core::Trajectory>();
+  trajectory->addFrame(frame0);
+  trajectory->addFrame(frame1);
+  trajectory->addFrame(frame2);
+  controller.setTrajectory(trajectory);
+
+  // Verify Falk-Langer D2_min invariance: pure affine strain yields ~0.0 D2_min
+  controller.setPhaseDescriptor(PhaseDescriptor::D2Min);
+  const auto desc_affine = controller.getOrComputeDescriptors(1);
+  ASSERT_NE(desc_affine, nullptr);
+  ASSERT_EQ(desc_affine->d2_min.size(), frame0.atomCount());
+  for (const auto val : desc_affine->d2_min) {
+    EXPECT_NEAR(static_cast<double>(val), 0.0, 1e-4);
+  }
+
+  // Verify non-affine plastic shear produces strong positive D2_min & Displacement on atom 0
+  const auto desc_plastic_d2 = controller.getOrComputeDescriptors(2);
+  ASSERT_NE(desc_plastic_d2, nullptr);
+  ASSERT_EQ(desc_plastic_d2->d2_min.size(), frame0.atomCount());
+  EXPECT_GT(static_cast<double>(desc_plastic_d2->d2_min[0]), 0.1);
+
+  controller.setPhaseDescriptor(PhaseDescriptor::Displacement);
+  const auto desc_plastic_disp = controller.getOrComputeDescriptors(2);
+  ASSERT_NE(desc_plastic_disp, nullptr);
+  ASSERT_EQ(desc_plastic_disp->displacement.size(), frame0.atomCount());
+  EXPECT_NEAR(static_cast<double>(desc_plastic_disp->displacement[0]), 0.5, 1e-3);
+}
+
 } // namespace
 } // namespace correlation::app

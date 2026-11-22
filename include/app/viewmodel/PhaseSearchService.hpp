@@ -147,6 +147,10 @@ private:
   [[nodiscard]] int64_t findNextUncachedPrebakeFrame(const PhaseSearchSettings &settings) const;
   void startPrebakeLocked();
   void cancelPrebakeLocked();
+  [[nodiscard]] std::shared_ptr<const analysis::StructureAnalyzer> getOrBuildFrame0Analyzer();
+  void populateDeformationDescriptors(FramePhaseDescriptors &descriptors, std::size_t frame_index,
+                                      const core::Cell &target_cell,
+                                      const PhaseSearchSettings &settings);
 
   void applyPhaseVisualsToSceneInternal(render3d::Scene3D &scene,
                                         const FramePhaseDescriptors *descriptors);
@@ -161,6 +165,7 @@ private:
   PhaseHistogram latest_histogram_;
   PhaseHeatmap2D latest_heatmap_;
   PhaseDescriptorsLRUCache lru_cache_;
+  std::shared_ptr<const analysis::StructureAnalyzer> ref_frame0_analyzer_;
 
   mutable std::mutex phase_mutex_;
   std::condition_variable phase_cv_;

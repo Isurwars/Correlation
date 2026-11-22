@@ -141,6 +141,12 @@ void AppController::registerCameraCallbacks() {
 
   window_.on_clear_picked_atom_3d([this] { structure_3d_controller_->clearPickedAtom(); });
 
+  window_.on_measure_atom_3d([this](float norm_x, float norm_y) {
+    structure_3d_controller_->handleMeasureAtom(norm_x, norm_y);
+  });
+
+  window_.on_clear_measurement_3d([this] { structure_3d_controller_->clearMeasurement(); });
+
   window_.on_set_slab_clip_3d([this](const SlabClipState &state) {
     structure_3d_controller_->setSlabClipConfig(SlabClipConfig{
         .enabled = state.enabled,

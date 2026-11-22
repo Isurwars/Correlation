@@ -9,6 +9,7 @@
 #include "render3d/vulkan/VulkanPipelineManager.hpp"
 #include "render3d/vulkan/VulkanCommon.hpp"
 #include "render3d/vulkan/shaders/CylinderImpostorSpv.hpp"
+#include "render3d/vulkan/shaders/HaloImpostorSpv.hpp"
 #include "render3d/vulkan/shaders/LineWireframeSpv.hpp"
 #include "render3d/vulkan/shaders/SphereImpostorSpv.hpp"
 #include <array>
@@ -70,13 +71,13 @@ VkPipelineMultisampleStateCreateInfo createMultisampleState() noexcept {
   };
 }
 
-VkPipelineDepthStencilStateCreateInfo createDepthStencilState() noexcept {
+VkPipelineDepthStencilStateCreateInfo createDepthStencilState(bool depth_write = true) noexcept {
   return VkPipelineDepthStencilStateCreateInfo{
       .sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
       .pNext = nullptr,
       .flags = 0,
       .depthTestEnable = VK_TRUE,
-      .depthWriteEnable = VK_TRUE,
+      .depthWriteEnable = depth_write ? VK_TRUE : VK_FALSE,
       .depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL,
       .depthBoundsTestEnable = VK_FALSE,
       .stencilTestEnable = VK_FALSE,
@@ -94,6 +95,7 @@ void VulkanPipelineManager::moveFrom(VulkanPipelineManager &other) noexcept {
   descriptor_set_layout_ = std::exchange(other.descriptor_set_layout_, VK_NULL_HANDLE);
   pipeline_layout_ = std::exchange(other.pipeline_layout_, VK_NULL_HANDLE);
   sphere_pipeline_ = std::exchange(other.sphere_pipeline_, VK_NULL_HANDLE);
+  halo_pipeline_ = std::exchange(other.halo_pipeline_, VK_NULL_HANDLE);
   cylinder_pipeline_ = std::exchange(other.cylinder_pipeline_, VK_NULL_HANDLE);
   wireframe_pipeline_ = std::exchange(other.wireframe_pipeline_, VK_NULL_HANDLE);
 }
@@ -107,8 +109,8 @@ bool VulkanPipelineManager::initialize(VkDevice device, VkRenderPass render_pass
     return false;
   }
 
-  if (!createSpherePipeline(render_pass) || !createCylinderPipeline(render_pass) ||
-      !createWireframePipeline(render_pass)) {
+  if (!createSpherePipeline(render_pass) || !createHaloPipeline(render_pass) ||
+      !createCylinderPipeline(render_pass) || !createWireframePipeline(render_pass)) {
     destroy();
     return false;
   }
@@ -121,6 +123,10 @@ void VulkanPipelineManager::destroy() noexcept {
     if (sphere_pipeline_ != VK_NULL_HANDLE) {
       vkDestroyPipeline(device_, sphere_pipeline_, nullptr);
       sphere_pipeline_ = VK_NULL_HANDLE;
+    }
+    if (halo_pipeline_ != VK_NULL_HANDLE) {
+      vkDestroyPipeline(device_, halo_pipeline_, nullptr);
+      halo_pipeline_ = VK_NULL_HANDLE;
     }
     if (cylinder_pipeline_ != VK_NULL_HANDLE) {
       vkDestroyPipeline(device_, cylinder_pipeline_, nullptr);
@@ -195,8 +201,21 @@ bool VulkanPipelineManager::createPipelineLayout() {
 }
 
 bool VulkanPipelineManager::createSpherePipeline(VkRenderPass render_pass) {
+  return createSphereOrHaloPipeline(render_pass, shaders::getSphereImpostorFragSpv(), true,
+                                    sphere_pipeline_);
+}
+
+bool VulkanPipelineManager::createHaloPipeline(VkRenderPass render_pass) {
+  return createSphereOrHaloPipeline(render_pass, shaders::getHaloImpostorFragSpv(), false,
+                                    halo_pipeline_);
+}
+
+bool VulkanPipelineManager::createSphereOrHaloPipeline(VkRenderPass render_pass,
+                                                       std::span<const uint32_t> frag_spv,
+                                                       bool depth_write_enable,
+                                                       VkPipeline &out_pipeline) {
   VkShaderModule vert_module = createShaderModule(shaders::getSphereImpostorVertSpv());
-  VkShaderModule frag_module = createShaderModule(shaders::getSphereImpostorFragSpv());
+  VkShaderModule frag_module = createShaderModule(frag_spv);
   if (vert_module == VK_NULL_HANDLE || frag_module == VK_NULL_HANDLE) {
     if (vert_module != VK_NULL_HANDLE) {
       vkDestroyShaderModule(device_, vert_module, nullptr);
@@ -322,7 +341,8 @@ bool VulkanPipelineManager::createSpherePipeline(VkRenderPass render_pass) {
 
   const VkPipelineRasterizationStateCreateInfo rasterization = createRasterizationState();
   const VkPipelineMultisampleStateCreateInfo multisample = createMultisampleState();
-  const VkPipelineDepthStencilStateCreateInfo depth_stencil = createDepthStencilState();
+  const VkPipelineDepthStencilStateCreateInfo depth_stencil =
+      createDepthStencilState(depth_write_enable);
   const VkPipelineColorBlendAttachmentState color_blend_attachment = createBlendAttachmentState();
 
   const VkPipelineColorBlendStateCreateInfo color_blend{
@@ -358,8 +378,8 @@ bool VulkanPipelineManager::createSpherePipeline(VkRenderPass render_pass) {
       .basePipelineIndex = -1,
   };
 
-  const VkResult result = vkCreateGraphicsPipelines(device_, VK_NULL_HANDLE, 1, &pipeline_info,
-                                                    nullptr, &sphere_pipeline_);
+  const VkResult result =
+      vkCreateGraphicsPipelines(device_, VK_NULL_HANDLE, 1, &pipeline_info, nullptr, &out_pipeline);
 
   vkDestroyShaderModule(device_, vert_module, nullptr);
   vkDestroyShaderModule(device_, frag_module, nullptr);

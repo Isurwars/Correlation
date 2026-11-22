@@ -228,6 +228,23 @@ void VulkanRenderEngine::drawAtoms() {
 #endif
 }
 
+void VulkanRenderEngine::drawHalos() {
+#ifdef CORRELATION_USE_VULKAN
+  if (buffer_manager_->atomInstanceCount() > 0 &&
+      pipeline_manager_->haloPipeline() != VK_NULL_HANDLE) {
+    vkCmdBindPipeline(render_command_buffer_, VK_PIPELINE_BIND_POINT_GRAPHICS,
+                      pipeline_manager_->haloPipeline());
+    const std::array<VkBuffer, 2> vertex_buffers{
+        buffer_manager_->sphereQuadBuffer(),
+        buffer_manager_->atomInstanceBuffer(),
+    };
+    const std::array<VkDeviceSize, 2> offsets{0, 0};
+    vkCmdBindVertexBuffers(render_command_buffer_, 0, 2, vertex_buffers.data(), offsets.data());
+    vkCmdDraw(render_command_buffer_, 4, buffer_manager_->atomInstanceCount(), 0, 0);
+  }
+#endif
+}
+
 void VulkanRenderEngine::recordRenderCommands() {
 #ifdef CORRELATION_USE_VULKAN
   vkResetCommandBuffer(render_command_buffer_, 0);
@@ -253,6 +270,7 @@ void VulkanRenderEngine::recordRenderCommands() {
   drawWireframe();
   drawBonds();
   drawAtoms();
+  drawHalos();
 
   vulkan::VulkanOffscreenTarget::endRenderPass(render_command_buffer_);
   target_->copyToStaging(render_command_buffer_, active_staging_index_);

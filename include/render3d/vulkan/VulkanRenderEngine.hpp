@@ -63,6 +63,7 @@ private:
   void drawWireframe();
   void drawBonds();
   void drawAtoms();
+  void drawHalos();
 
   ViewportDimensions dimensions_{.width = 800, .height = 600};
   std::shared_ptr<const Scene3D> scene_;

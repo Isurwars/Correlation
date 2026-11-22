@@ -195,9 +195,13 @@ export component PreviewCard inherits FilledCard {
     in property <CameraHudState> structure_3d_camera_hud;
     in property <InspectedAtomInfo> structure_3d_inspected_atom;
     in property <string> structure_3d_radial_brush_text: "";
+    in property <string> structure_3d_measurement_text: "";
+    in property <bool> shift_key_held: false;
 
     callback pick_atom_3d(float, float);
     callback clear_picked_atom_3d();
+    callback measure_atom_3d(float, float);
+    callback clear_measurement_3d();
     callback focus_picked_atom_3d();
     callback tick_camera_animation_3d();
     callback toggle_element_visibility_3d(string);
@@ -489,8 +493,12 @@ export component PreviewCard inherits FilledCard {
                 camera_hud: root.structure_3d_camera_hud;
                 inspected_atom: root.structure_3d_inspected_atom;
                 radial_brush_text: root.structure_3d_radial_brush_text;
+                measurement_text: root.structure_3d_measurement_text;
+                shift_held: root.shift_key_held;
                 pick_atom(nx, ny) => { root.pick_atom_3d(nx, ny); }
                 clear_picked_atom => { root.clear_picked_atom_3d(); }
+                measure_atom(nx, ny) => { root.measure_atom_3d(nx, ny); }
+                clear_measurement => { root.clear_measurement_3d(); }
                 focus_picked_atom => { root.focus_picked_atom_3d(); }
                 tick_camera_animation => { root.tick_camera_animation_3d(); }
                 toggle_element_visibility(sym) => { root.toggle_element_visibility_3d(sym); }

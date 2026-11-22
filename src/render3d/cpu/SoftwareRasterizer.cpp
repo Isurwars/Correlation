@@ -302,6 +302,16 @@ void SoftwareRasterizer::render(const Scene3D &scene, const Camera3D &camera,
     }
   }
 
+  // 1b. Render 3D overlay guide lines (distance/angle ruler)
+  for (const auto &line : scene.guideLines()) {
+    math::Vector3<float> p0_screen;
+    math::Vector3<float> p1_screen;
+    if (projectPoint(line.start, view_proj, framebuffer.width(), framebuffer.height(), p0_screen) &&
+        projectPoint(line.end, view_proj, framebuffer.width(), framebuffer.height(), p1_screen)) {
+      drawLineSegment(p0_screen, p1_screen, line.color, framebuffer);
+    }
+  }
+
   // 2. Render covalent bonds
   if (options_.render_bonds) {
     for (const auto &bond : scene.bonds()) {

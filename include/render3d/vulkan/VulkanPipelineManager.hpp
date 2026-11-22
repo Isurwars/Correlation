@@ -54,6 +54,7 @@ public:
   void destroy() noexcept;
 
   [[nodiscard]] VkPipeline spherePipeline() const noexcept { return sphere_pipeline_; }
+  [[nodiscard]] VkPipeline haloPipeline() const noexcept { return halo_pipeline_; }
   [[nodiscard]] VkPipeline cylinderPipeline() const noexcept { return cylinder_pipeline_; }
   [[nodiscard]] VkPipeline wireframePipeline() const noexcept { return wireframe_pipeline_; }
   [[nodiscard]] VkPipelineLayout pipelineLayout() const noexcept { return pipeline_layout_; }
@@ -68,6 +69,10 @@ private:
   [[nodiscard]] bool createDescriptorSetLayout();
   [[nodiscard]] bool createPipelineLayout();
   [[nodiscard]] bool createSpherePipeline(VkRenderPass render_pass);
+  [[nodiscard]] bool createHaloPipeline(VkRenderPass render_pass);
+  [[nodiscard]] bool createSphereOrHaloPipeline(VkRenderPass render_pass,
+                                                std::span<const uint32_t> frag_spv,
+                                                bool depth_write_enable, VkPipeline &out_pipeline);
   [[nodiscard]] bool createCylinderPipeline(VkRenderPass render_pass);
   [[nodiscard]] bool createWireframePipeline(VkRenderPass render_pass);
 
@@ -75,6 +80,7 @@ private:
   VkDescriptorSetLayout descriptor_set_layout_{VK_NULL_HANDLE};
   VkPipelineLayout pipeline_layout_{VK_NULL_HANDLE};
   VkPipeline sphere_pipeline_{VK_NULL_HANDLE};
+  VkPipeline halo_pipeline_{VK_NULL_HANDLE};
   VkPipeline cylinder_pipeline_{VK_NULL_HANDLE};
   VkPipeline wireframe_pipeline_{VK_NULL_HANDLE};
 };

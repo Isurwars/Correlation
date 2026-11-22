@@ -33,6 +33,8 @@ struct FramePhaseDescriptors {
   std::vector<real_t> local_entropy;
   std::vector<real_t> twf_nconn;
   std::vector<real_t> q_tet;
+  std::vector<real_t> displacement;
+  std::vector<real_t> d2_min;
 };
 
 /**

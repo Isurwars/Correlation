@@ -85,10 +85,14 @@ export component Structure3DViewport inherits Rectangle {
     };
     in property <InspectedAtomInfo> inspected_atom;
     in property <string> radial_brush_text: "";
+    in property <string> measurement_text: "";
+    in property <bool> shift_held: false;
 
     callback clicked();
     callback pick_atom(float, float);
     callback clear_picked_atom();
+    callback measure_atom(float, float);
+    callback clear_measurement();
     callback focus_picked_atom();
     callback tick_camera_animation();
     callback toggle_element_visibility(string);
@@ -186,7 +190,11 @@ export component Structure3DViewport inherits Rectangle {
                         let moved_x = Math.abs((self.mouse-x - root.down_mouse_x) / 1px);
                         let moved_y = Math.abs((self.mouse-y - root.down_mouse_y) / 1px);
                         if (moved_x < 4.0 && moved_y < 4.0) {
-                            root.pick_atom(self.mouse-x / self.width, self.mouse-y / self.height);
+                            if (root.shift_held) {
+                                root.measure_atom(self.mouse-x / self.width, self.mouse-y / self.height);
+                            } else {
+                                root.pick_atom(self.mouse-x / self.width, self.mouse-y / self.height);
+                            }
                         }
                     }
                     root.is_dragging = false;
@@ -334,6 +342,8 @@ export component Structure3DViewport inherits Rectangle {
             total_frames: root.total_frames;
             has_interacted: root.has_interacted;
             radial_brush_text: root.radial_brush_text;
+            measurement_text: root.measurement_text;
+            clear_measurement => { root.clear_measurement(); }
             phase_enabled: root.phase_enabled;
             phase_computing: root.phase_computing;
             phase_cached_frames: root.phase_cached_frames;

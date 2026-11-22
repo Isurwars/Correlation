@@ -27,6 +27,8 @@ export component PhaseDescriptorSelector inherits VerticalLayout {
         "Two-body excess entropy s₂: local structural ordering from pair correlations.",
         "Coordination number N_c: number of bonded neighbors within cutoff.",
         "Tetrahedral order q_tet: measures tetrahedrality (1.0 = ideal diamond/tetrahedron).",
+        "Cumulative atomic displacement |Δr| (Å) relative to Frame 0 with PBC unwrapping.",
+        "Falk-Langer non-affine strain D²_min (Å²) relative to Frame 0: isolates plastic shear bands.",
     ];
     private property <[string]> cmap_tips: [
         "Viridis perceptually uniform colormap.",
@@ -52,7 +54,7 @@ export component PhaseDescriptorSelector inherits VerticalLayout {
         HorizontalLayout {
             spacing: 2px;
             height: 22px;
-            property <[string]> desc_labels: ["q̄₆", "q̄₄", "q₆", "q₄", "ŵ₆", "ŵ₄", "s₂", "N_c", "q_tet"];
+            property <[string]> desc_labels: ["q̄₆", "q̄₄", "q₆", "q₄", "ŵ₆", "ŵ₄", "s₂", "N_c", "q_tet", "|Δr|", "D²"];
 
             for d_label[d_idx] in self.desc_labels: Chip {
                 horizontal-stretch: 1;

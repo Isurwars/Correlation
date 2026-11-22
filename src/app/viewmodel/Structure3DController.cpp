@@ -526,6 +526,7 @@ void Structure3DController::handleSeekFrame(int frame_index) {
   }
   int actual_frame = frame_index;
   bool has_picked = false;
+  bool has_measured = false;
   {
     const std::scoped_lock lock(mutex_);
     if (streamer_.totalFrames() > 0 && scene_ != nullptr) {
@@ -535,12 +536,16 @@ void Structure3DController::handleSeekFrame(int frame_index) {
       actual_frame = static_cast<int>(streamer_.currentFrameIndex());
       updateScenePhaseVisualsLocked();
       has_picked = picked_atom_index_.has_value();
+      has_measured = !measured_atom_indices_.empty();
     }
   }
   safeInvokeOnWindow(
       [this, actual_frame] { window_.set_structure_3d_current_frame(actual_frame); });
   if (has_picked) {
     syncInspectedAtomToWindow();
+  }
+  if (has_measured) {
+    syncMeasurementToWindow();
   }
   syncDistributionHUDToWindow();
   if (isPhaseSearchEnabled()) {
@@ -554,6 +559,7 @@ void Structure3DController::handleStepFrame(bool forward) {
       (std::this_thread::get_id() == main_thread_id_) && window_.get_structure_3d_is_playing();
   int current_idx = 0;
   bool has_picked = false;
+  bool has_measured = false;
   bool stepped = false;
   {
     const std::scoped_lock lock(mutex_);
@@ -572,6 +578,7 @@ void Structure3DController::handleStepFrame(bool forward) {
         current_idx = static_cast<int>(streamer_.currentFrameIndex());
         updateScenePhaseVisualsLocked();
         has_picked = picked_atom_index_.has_value();
+        has_measured = !measured_atom_indices_.empty();
         stepped = true;
       }
     }
@@ -585,6 +592,9 @@ void Structure3DController::handleStepFrame(bool forward) {
   safeInvokeOnWindow([this, current_idx] { window_.set_structure_3d_current_frame(current_idx); });
   if (has_picked) {
     syncInspectedAtomToWindow();
+  }
+  if (has_measured) {
+    syncMeasurementToWindow();
   }
   syncDistributionHUDToWindow();
   if (isPhaseSearchEnabled()) {
@@ -614,6 +624,7 @@ void Structure3DController::setCell(const core::Cell &cell) {
     current_cell_ = cell;
     current_trajectory_.reset();
     picked_atom_index_.reset();
+    measured_atom_indices_.clear();
     radial_brush_r_.reset();
     hidden_elements_.clear();
     if (phase_service_ != nullptr) {
@@ -631,6 +642,7 @@ void Structure3DController::setCell(const core::Cell &cell) {
     window_.set_structure_3d_radial_brush_text("");
   });
   syncInspectedAtomToWindow();
+  syncMeasurementToWindow();
   syncElementLegendToWindow();
   syncCameraHudToWindow();
   requestRender();
@@ -650,6 +662,7 @@ void Structure3DController::setTrajectory(std::shared_ptr<const core::Trajectory
     const std::scoped_lock lock(mutex_);
     current_trajectory_ = trajectory;
     picked_atom_index_.reset();
+    measured_atom_indices_.clear();
     radial_brush_r_.reset();
     hidden_elements_.clear();
     if (phase_service_ != nullptr) {
@@ -1018,6 +1031,7 @@ void Structure3DController::updateScenePhaseVisualsLocked() {
     phase_service_->applyVisualsToScene(*scene_, active_frame);
   }
   applyAtomInspectionHighlightLocked();
+  applyMeasurementHighlightLocked();
   std::size_t matched_brush = 0;
   applyRadialBrushHighlightLocked(matched_brush);
   applyElementVisibilityLocked();
@@ -1070,6 +1084,115 @@ void Structure3DController::clearPickedAtom() {
   }
   syncInspectedAtomToWindow();
   requestRender(true);
+}
+
+void Structure3DController::handleMeasureAtom(float norm_x, float norm_y) {
+  {
+    const std::scoped_lock lock(mutex_);
+    if (scene_ == nullptr) {
+      return;
+    }
+    const auto picked = render3d::pickAtom(camera_, *scene_, norm_x, norm_y);
+    if (!picked.has_value()) {
+      return;
+    }
+    if (measured_atom_indices_.size() >= 3) {
+      measured_atom_indices_.clear();
+    }
+    if (measured_atom_indices_.empty() || measured_atom_indices_.back() != *picked) {
+      measured_atom_indices_.push_back(*picked);
+    }
+    updateScenePhaseVisualsLocked();
+  }
+  syncMeasurementToWindow();
+  requestRender(true);
+}
+
+void Structure3DController::clearMeasurement() {
+  {
+    const std::scoped_lock lock(mutex_);
+    if (measured_atom_indices_.empty()) {
+      return;
+    }
+    measured_atom_indices_.clear();
+    updateScenePhaseVisualsLocked();
+  }
+  syncMeasurementToWindow();
+  requestRender(true);
+}
+
+void Structure3DController::applyMeasurementHighlightLocked() {
+  if (scene_ == nullptr) {
+    return;
+  }
+  if (measured_atom_indices_.empty()) {
+    scene_->setGuideLines({});
+    return;
+  }
+  auto &atoms = scene_->atoms();
+  constexpr std::array<render3d::RgbaColor, 3> K_RULER_COLORS{{
+      {.r = 0, .g = 229, .b = 255, .a = 235},
+      {.r = 255, .g = 196, .b = 0, .a = 235},
+      {.r = 255, .g = 64, .b = 129, .a = 235},
+  }};
+  for (std::size_t slot = 0; slot < measured_atom_indices_.size() && slot < 3; ++slot) {
+    const std::size_t idx = measured_atom_indices_[slot];
+    if (idx < atoms.size()) {
+      atoms[idx].halo_color = K_RULER_COLORS.at(slot);
+      atoms[idx].halo_radius_ratio = 2.4F;
+      atoms[idx].dim_factor = 1.0F;
+    }
+  }
+  std::vector<render3d::LineSegment> guides;
+  constexpr render3d::RgbaColor K_GUIDE_COLOR{.r = 0, .g = 229, .b = 255, .a = 255};
+  for (std::size_t seg = 0; seg + 1 < measured_atom_indices_.size(); ++seg) {
+    const std::size_t idx_a = measured_atom_indices_[seg];
+    const std::size_t idx_b = measured_atom_indices_[seg + 1];
+    if (idx_a < atoms.size() && idx_b < atoms.size()) {
+      guides.push_back(render3d::LineSegment{
+          .start = atoms[idx_a].position,
+          .end = atoms[idx_b].position,
+          .color = K_GUIDE_COLOR,
+      });
+    }
+  }
+  scene_->setGuideLines(std::move(guides));
+}
+
+void Structure3DController::syncMeasurementToWindow() {
+  std::string label;
+  {
+    const std::scoped_lock lock(mutex_);
+    if (scene_ != nullptr && !measured_atom_indices_.empty()) {
+      const auto &atoms = scene_->atoms();
+      if (measured_atom_indices_.size() == 1 && measured_atom_indices_[0] < atoms.size()) {
+        const auto &atom0 = atoms[measured_atom_indices_[0]];
+        label = std::format("Ruler: Atom #{} — Shift+Click 2nd atom", atom0.id + 1);
+      } else if (measured_atom_indices_.size() == 2 && measured_atom_indices_[0] < atoms.size() &&
+                 measured_atom_indices_[1] < atoms.size()) {
+        const float dist = math::norm(atoms[measured_atom_indices_[1]].position -
+                                      atoms[measured_atom_indices_[0]].position);
+        label = std::format("d(1–2) = {:.3f} Å  •  Shift+Click 3rd for angle", dist);
+      } else if (measured_atom_indices_.size() >= 3 && measured_atom_indices_[0] < atoms.size() &&
+                 measured_atom_indices_[1] < atoms.size() &&
+                 measured_atom_indices_[2] < atoms.size()) {
+        const auto vec1 =
+            atoms[measured_atom_indices_[0]].position - atoms[measured_atom_indices_[1]].position;
+        const auto vec2 =
+            atoms[measured_atom_indices_[2]].position - atoms[measured_atom_indices_[1]].position;
+        const float d12 = math::norm(vec1);
+        const float d23 = math::norm(vec2);
+        const float denom = std::max(d12 * d23, 1e-6F);
+        const float cos_theta = std::clamp(math::dot(vec1, vec2) / denom, -1.0F, 1.0F);
+        const float angle_deg = std::acos(cos_theta) * (180.0F / 3.14159265F);
+        label = std::format("θ(1–2–3) = {:.2f}°  •  d₁₂ = {:.2f} Å  •  d₂₃ = {:.2f} Å", angle_deg,
+                            d12, d23);
+      }
+    }
+  }
+  safeInvokeOnWindow([this, label = std::move(label)] {
+    window_.set_structure_3d_measurement_text(slint::SharedString(label));
+  });
 }
 
 void Structure3DController::setSlabClipConfig(const SlabClipConfig &config) {
