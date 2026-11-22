@@ -38,6 +38,7 @@ struct RenderPipelineSnapshot {
   bool render_bonds{true};                  ///< Covalent bond rendering toggle.
   bool render_wireframe{true};              ///< Unit cell wireframe toggle.
   bool depth_cueing{true};                  ///< Atmospheric depth cueing toggle.
+  bool ssao_enabled{true};                  ///< Screen-space ambient occlusion toggle.
   bool is_interacting{false};               ///< True during active user orbit/pan drag.
 
   // GPU Halo Highlight configuration

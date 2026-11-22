@@ -416,4 +416,67 @@ std::shared_ptr<Scene3D> Scene3D::fromCell(const core::Cell &cell, double bond_c
   return scene;
 }
 
+std::shared_ptr<Scene3D> Scene3D::buildVisualSupercell(int rep_a, int rep_b, int rep_c,
+                                                       std::size_t max_atoms) const {
+  const int rep_x = std::clamp(rep_a, 1, 3);
+  const int rep_y = std::clamp(rep_b, 1, 3);
+  const int rep_z = std::clamp(rep_c, 1, 3);
+  if ((rep_x == 1 && rep_y == 1 && rep_z == 1) || !has_lattice_ || atoms_.empty()) {
+    return std::make_shared<Scene3D>(*this);
+  }
+
+  auto result = std::make_shared<Scene3D>();
+  result->lattice_vectors_ = lattice_vectors_;
+  result->inv_lattice_vectors_ = inv_lattice_vectors_;
+  result->has_lattice_ = has_lattice_;
+  result->in_cell_ = in_cell_;
+  result->atom_scale_ = atom_scale_;
+  result->guide_lines_ = guide_lines_;
+
+  const math::Vector3<float> vec_a(lattice_vectors_[0]);
+  const math::Vector3<float> vec_b(lattice_vectors_[1]);
+  const math::Vector3<float> vec_c(lattice_vectors_[2]);
+
+  const std::size_t total_cells = static_cast<std::size_t>(rep_x) *
+                                  static_cast<std::size_t>(rep_y) * static_cast<std::size_t>(rep_z);
+  const std::size_t target_atoms = std::min(atoms_.size() * total_cells, max_atoms);
+  result->atoms_.reserve(target_atoms);
+  result->bonds_.reserve(bonds_.size() * total_cells);
+
+  for (int ix = 0; ix < rep_x; ++ix) {
+    for (int iy = 0; iy < rep_y; ++iy) {
+      for (int iz = 0; iz < rep_z; ++iz) {
+        if (result->atoms_.size() + atoms_.size() > max_atoms && !result->atoms_.empty()) {
+          continue;
+        }
+        const math::Vector3<float> shift = vec_a * static_cast<float>(ix) +
+                                           vec_b * static_cast<float>(iy) +
+                                           vec_c * static_cast<float>(iz);
+        for (const auto &atom : atoms_) {
+          AtomInstance copy = atom;
+          copy.position = atom.position + shift;
+          result->atoms_.push_back(copy);
+        }
+        for (const auto &bond : bonds_) {
+          BondInstance copy = bond;
+          copy.start = bond.start + shift;
+          copy.end = bond.end + shift;
+          result->bonds_.push_back(copy);
+        }
+      }
+    }
+  }
+
+  // Render supercell outer bounding wireframe
+  math::Matrix3<real_t> super_lattice = lattice_vectors_;
+  for (std::size_t col = 0; col < 3; ++col) {
+    super_lattice[0][col] *= static_cast<real_t>(rep_x);
+    super_lattice[1][col] *= static_cast<real_t>(rep_y);
+    super_lattice[2][col] *= static_cast<real_t>(rep_z);
+  }
+  extractUnitCellLines(super_lattice, result->unit_cell_lines_);
+  result->updateBounds();
+  return result;
+}
+
 } // namespace correlation::render3d

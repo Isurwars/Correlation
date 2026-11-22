@@ -87,7 +87,7 @@ public:
    * @param cmd Vulkan command buffer in recording state.
    * @param staging_index Ring index of the staging buffer to receive pixel data.
    */
-  void copyToStaging(VkCommandBuffer cmd, uint32_t staging_index);
+  void copyToStaging(VkCommandBuffer cmd, uint32_t staging_index, bool copy_depth = false);
 
   /**
    * @brief Obtains a mapped byte span of the requested staging buffer's pixel contents.
@@ -95,6 +95,21 @@ public:
    * @return Contiguous span of RGBA8 pixels, or empty span if invalid.
    */
   [[nodiscard]] std::span<const uint8_t> readoutStagingSpan(uint32_t staging_index) const noexcept;
+
+  /**
+   * @brief Obtains a mutable mapped byte span of the color staging buffer for in-place post-passes.
+   */
+  [[nodiscard]] std::span<uint8_t> readoutStagingMutableSpan(uint32_t staging_index) noexcept;
+
+  /**
+   * @brief Obtains a mapped float span of the D32 depth staging buffer (empty if unsupported).
+   */
+  [[nodiscard]] std::span<const float>
+  readoutDepthStagingSpan(uint32_t staging_index) const noexcept;
+
+  [[nodiscard]] bool hasDepthReadout() const noexcept {
+    return depth_format_ == VK_FORMAT_D32_SFLOAT;
+  }
 
   [[nodiscard]] VkRenderPass renderPass() const noexcept { return render_pass_; }
   [[nodiscard]] VkFramebuffer framebuffer() const noexcept { return framebuffer_; }
@@ -142,6 +157,7 @@ private:
   VkFramebuffer framebuffer_{VK_NULL_HANDLE};
 
   std::array<VulkanBuffer, STAGING_BUFFER_COUNT> staging_buffers_{};
+  std::array<VulkanBuffer, STAGING_BUFFER_COUNT> depth_staging_buffers_{};
 };
 
 #endif // CORRELATION_USE_VULKAN

@@ -226,6 +226,18 @@ public:
    */
   void updateBounds() noexcept;
 
+  /**
+   * @brief Builds a visual-only periodic supercell tiled rep_a x rep_b x rep_c along lattice
+   * vectors.
+   * @param[in] rep_a Repetitions along lattice vector a (clamped to >= 1).
+   * @param[in] rep_b Repetitions along lattice vector b (clamped to >= 1).
+   * @param[in] rep_c Repetitions along lattice vector c (clamped to >= 1).
+   * @param[in] max_atoms Soft safety cap on total replicated atom instances.
+   * @return Shared pointer to replicated Scene3D preserving halos, colors, and visibility.
+   */
+  [[nodiscard]] std::shared_ptr<Scene3D> buildVisualSupercell(int rep_a, int rep_b, int rep_c,
+                                                              std::size_t max_atoms = 250000) const;
+
 private:
   std::vector<AtomInstance> atoms_;
   std::vector<BondInstance> bonds_;

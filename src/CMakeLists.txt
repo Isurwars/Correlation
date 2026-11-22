@@ -377,6 +377,7 @@ if(BUILD_GUI)
         app/core/AppControllerCalculators.cpp
         app/viewmodel/BondCutoffController.cpp
         app/viewmodel/PhaseExportManager.cpp
+        app/viewmodel/TrajectoryExportManager.cpp
         app/viewmodel/PhaseSearchService.cpp
         app/viewmodel/PlotController.cpp
         app/viewmodel/PlotExportManager.cpp

@@ -50,6 +50,8 @@ public:
   using ActiveFrameProvider = std::function<std::size_t()>;
   using TotalFramesProvider = std::function<std::size_t()>;
   using UpdateCallback = std::function<void()>;
+  using GpuDescriptorEvaluator =
+      std::function<bool(const core::Cell &, PhaseDescriptor, real_t, std::vector<real_t> &)>;
 
   /**
    * @brief Constructs PhaseSearchService and spawns the background worker.
@@ -127,6 +129,7 @@ public:
   [[nodiscard]] bool isFrameReady(std::size_t frame_index) const;
   [[nodiscard]] PhasePrebakeStatus prebakeStatus() const;
   void applyVisualsToScene(render3d::Scene3D &scene, std::size_t active_frame);
+  void setGpuDescriptorEvaluator(GpuDescriptorEvaluator evaluator);
   void clearCache();
 
   [[nodiscard]] std::shared_ptr<const FramePhaseDescriptors>
@@ -159,6 +162,7 @@ private:
   ActiveFrameProvider active_frame_provider_;
   TotalFramesProvider total_frames_provider_;
   UpdateCallback on_phase_updated_;
+  GpuDescriptorEvaluator gpu_evaluator_;
   std::shared_ptr<std::atomic<bool>> alive_;
 
   PhaseSearchSettings phase_settings_;

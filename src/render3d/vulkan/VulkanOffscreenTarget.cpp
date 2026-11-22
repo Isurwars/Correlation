@@ -63,6 +63,9 @@ void VulkanOffscreenTarget::destroy() noexcept {
   for (auto &staging_buffer : staging_buffers_) {
     staging_buffer.destroy();
   }
+  for (auto &depth_buf : depth_staging_buffers_) {
+    depth_buf.destroy();
+  }
 
   if (render_pass_ != VK_NULL_HANDLE) {
     vkDestroyRenderPass(device_, render_pass_, nullptr);
@@ -126,6 +129,7 @@ void VulkanOffscreenTarget::moveFrom(VulkanOffscreenTarget &other) noexcept {
   depth_image_view_ = std::exchange(other.depth_image_view_, VK_NULL_HANDLE);
   framebuffer_ = std::exchange(other.framebuffer_, VK_NULL_HANDLE);
   staging_buffers_ = std::move(other.staging_buffers_);
+  depth_staging_buffers_ = std::move(other.depth_staging_buffers_);
 }
 
 void VulkanOffscreenTarget::beginRenderPass(VkCommandBuffer cmd, VkClearColorValue clear_color) {
@@ -164,7 +168,8 @@ void VulkanOffscreenTarget::beginRenderPass(VkCommandBuffer cmd, VkClearColorVal
 
 void VulkanOffscreenTarget::endRenderPass(VkCommandBuffer cmd) { vkCmdEndRenderPass(cmd); }
 
-void VulkanOffscreenTarget::copyToStaging(VkCommandBuffer cmd, uint32_t staging_index) {
+void VulkanOffscreenTarget::copyToStaging(VkCommandBuffer cmd, uint32_t staging_index,
+                                          bool copy_depth) {
   const size_t idx = staging_index % STAGING_BUFFER_COUNT;
   const VkBufferImageCopy region{
       .bufferOffset = 0,
@@ -198,6 +203,38 @@ void VulkanOffscreenTarget::copyToStaging(VkCommandBuffer cmd, uint32_t staging_
 
   vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_HOST_BIT, 0, 0,
                        nullptr, 1, &barrier, 0, nullptr);
+
+  if (copy_depth && hasDepthReadout() && depth_staging_buffers_.at(idx).isValid()) {
+    const VkBufferImageCopy depth_region{
+        .bufferOffset = 0,
+        .bufferRowLength = 0,
+        .bufferImageHeight = 0,
+        .imageSubresource =
+            {
+                .aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT,
+                .mipLevel = 0,
+                .baseArrayLayer = 0,
+                .layerCount = 1,
+            },
+        .imageOffset = {.x = 0, .y = 0, .z = 0},
+        .imageExtent = {.width = extent_.width, .height = extent_.height, .depth = 1},
+    };
+    vkCmdCopyImageToBuffer(cmd, depth_image_, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                           depth_staging_buffers_.at(idx).buffer(), 1, &depth_region);
+    const VkBufferMemoryBarrier depth_barrier{
+        .sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
+        .pNext = nullptr,
+        .srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT,
+        .dstAccessMask = VK_ACCESS_HOST_READ_BIT,
+        .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+        .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+        .buffer = depth_staging_buffers_.at(idx).buffer(),
+        .offset = 0,
+        .size = VK_WHOLE_SIZE,
+    };
+    vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_HOST_BIT, 0, 0,
+                         nullptr, 1, &depth_barrier, 0, nullptr);
+  }
 }
 
 std::span<const uint8_t>
@@ -208,6 +245,30 @@ VulkanOffscreenTarget::readoutStagingSpan(uint32_t staging_index) const noexcept
   }
   const size_t byte_size = static_cast<size_t>(extent_.width) * extent_.height * 4;
   return {static_cast<const uint8_t *>(staging_buffers_.at(idx).mappedData()), byte_size};
+}
+
+std::span<uint8_t>
+VulkanOffscreenTarget::readoutStagingMutableSpan(uint32_t staging_index) noexcept {
+  const size_t idx = staging_index % STAGING_BUFFER_COUNT;
+  if (!staging_buffers_.at(idx).isValid() || staging_buffers_.at(idx).mappedData() == nullptr) {
+    return {};
+  }
+  const size_t byte_size = static_cast<size_t>(extent_.width) * extent_.height * 4;
+  return {static_cast<uint8_t *>(staging_buffers_.at(idx).mappedData()), byte_size};
+}
+
+std::span<const float>
+VulkanOffscreenTarget::readoutDepthStagingSpan(uint32_t staging_index) const noexcept {
+  if (!hasDepthReadout()) {
+    return {};
+  }
+  const size_t idx = staging_index % STAGING_BUFFER_COUNT;
+  if (!depth_staging_buffers_.at(idx).isValid() ||
+      depth_staging_buffers_.at(idx).mappedData() == nullptr) {
+    return {};
+  }
+  const size_t pixel_count = static_cast<size_t>(extent_.width) * extent_.height;
+  return {static_cast<const float *>(depth_staging_buffers_.at(idx).mappedData()), pixel_count};
 }
 
 VkFormat VulkanOffscreenTarget::findDepthFormat() const {
@@ -241,16 +302,18 @@ void VulkanOffscreenTarget::createRenderPass() {
       .finalLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
   };
 
+  const bool depth_readable = hasDepthReadout();
   const VkAttachmentDescription depth_attachment{
       .flags = 0,
       .format = depth_format_,
       .samples = VK_SAMPLE_COUNT_1_BIT,
       .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-      .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+      .storeOp = depth_readable ? VK_ATTACHMENT_STORE_OP_STORE : VK_ATTACHMENT_STORE_OP_DONT_CARE,
       .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
       .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
       .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-      .finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+      .finalLayout = depth_readable ? VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL
+                                    : VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
   };
 
   const VkAttachmentReference color_ref{
@@ -326,9 +389,12 @@ void VulkanOffscreenTarget::createColorResources() {
 }
 
 void VulkanOffscreenTarget::createDepthResources() {
-  createImage(extent_.width, extent_.height, depth_format_, VK_IMAGE_TILING_OPTIMAL,
-              VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-              depth_image_, depth_memory_);
+  VkImageUsageFlags depth_usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+  if (hasDepthReadout()) {
+    depth_usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+  }
+  createImage(extent_.width, extent_.height, depth_format_, VK_IMAGE_TILING_OPTIMAL, depth_usage,
+              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depth_image_, depth_memory_);
   depth_image_view_ = createImageView(depth_image_, depth_format_, VK_IMAGE_ASPECT_DEPTH_BIT);
 }
 
@@ -364,6 +430,14 @@ void VulkanOffscreenTarget::createStagingBuffers() {
     staging_buffer.ensureCapacity(device_, physical_device_, desc);
     if (staging_buffer.mappedData() == nullptr) {
       static_cast<void>(staging_buffer.map());
+    }
+  }
+  if (hasDepthReadout()) {
+    for (auto &depth_buf : depth_staging_buffers_) {
+      depth_buf.ensureCapacity(device_, physical_device_, desc);
+      if (depth_buf.mappedData() == nullptr) {
+        static_cast<void>(depth_buf.map());
+      }
     }
   }
 }

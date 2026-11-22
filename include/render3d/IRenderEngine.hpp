@@ -50,6 +50,7 @@ struct GpuHaloConfig {
  */
 struct RenderStyleConfig {
   bool depth_cueing{true};
+  bool ssao_enabled{true};
   RgbaColor background_color{.r = 25, .g = 25, .b = 31, .a = 255};
 };
 

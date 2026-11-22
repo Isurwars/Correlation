@@ -254,6 +254,10 @@ export component AppWindow inherits Window {
     in-out property <bool> structure_3d_in_cell: true;
     in-out property <bool> structure_3d_isometric: false;
     in-out property <bool> structure_3d_depth_cueing: true;
+    in-out property <bool> structure_3d_ssao_enabled: true;
+    in-out property <int> structure_3d_supercell_x: 1;
+    in-out property <int> structure_3d_supercell_y: 1;
+    in-out property <int> structure_3d_supercell_z: 1;
     in property <bool> structure_3d_camera_animating: false;
     in property <[ElementLegendItem]> structure_3d_element_legend: [];
     in property <bool> structure_3d_has_hidden_elements: false;
@@ -501,6 +505,10 @@ export component AppWindow inherits Window {
     callback toggle_in_cell_3d(bool);
     callback toggle_projection_3d(bool);
     callback toggle_depth_cueing_3d(bool);
+    callback toggle_ssao_3d(bool);
+    callback set_visual_supercell_3d(int, int, int);
+    callback reset_visual_supercell_3d();
+    callback export_trajectory_animation_3d(bool, int);
     callback focus_picked_atom_3d();
     callback tick_camera_animation_3d();
     callback toggle_element_visibility_3d(string);
@@ -1356,6 +1364,11 @@ export component AppWindow inherits Window {
                     in_cell_enabled: root.structure_3d_in_cell;
                     is_isometric: root.structure_3d_isometric;
                     depth_cueing_enabled: root.structure_3d_depth_cueing;
+                    ssao_enabled: root.structure_3d_ssao_enabled;
+                    supercell_x: root.structure_3d_supercell_x;
+                    supercell_y: root.structure_3d_supercell_y;
+                    supercell_z: root.structure_3d_supercell_z;
+                    total_frames: root.structure_3d_total_frames;
                     element_legend: root.structure_3d_element_legend;
                     has_hidden_elements: root.structure_3d_has_hidden_elements;
                     snapshot_scale <=> root.structure_3d_snapshot_scale;
@@ -1383,6 +1396,10 @@ export component AppWindow inherits Window {
                     toggle_in_cell(en) => { root.toggle_in_cell_3d(en); }
                     toggle_projection(en) => { root.toggle_projection_3d(en); }
                     toggle_depth_cueing(en) => { root.toggle_depth_cueing_3d(en); }
+                    toggle_ssao(en) => { root.toggle_ssao_3d(en); }
+                    set_visual_supercell(nx, ny, nz) => { root.set_visual_supercell_3d(nx, ny, nz); }
+                    reset_visual_supercell => { root.reset_visual_supercell_3d(); }
+                    export_trajectory_animation(as_gif, bg) => { root.export_trajectory_animation_3d(as_gif, bg); }
                     toggle_element_visibility(sym) => { root.toggle_element_visibility_3d(sym); }
                     show_all_elements => { root.show_all_elements_3d(); }
                     export_snapshot(sc, bg) => { root.export_snapshot_3d(sc, bg); }

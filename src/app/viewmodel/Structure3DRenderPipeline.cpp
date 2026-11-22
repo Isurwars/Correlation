@@ -130,6 +130,7 @@ Structure3DRenderPipeline::renderSnapshotOffscreen(const RenderPipelineSnapshot 
   temp_engine->setFeatureVisibility(snapshot.render_bonds, snapshot.render_wireframe);
   temp_engine->setRenderStyle(render3d::RenderStyleConfig{
       .depth_cueing = snapshot.depth_cueing,
+      .ssao_enabled = snapshot.ssao_enabled,
       .background_color = bg_color,
   });
   temp_engine->setCamera(snap_cam);
@@ -201,6 +202,7 @@ void Structure3DRenderPipeline::renderLoop() {
     engine_->setFeatureVisibility(show_bonds, snapshot.render_wireframe);
     engine_->setRenderStyle(render3d::RenderStyleConfig{
         .depth_cueing = snapshot.depth_cueing,
+        .ssao_enabled = snapshot.ssao_enabled,
     });
     engine_->setGpuHaloConfig(render3d::GpuHaloConfig{
         .enabled = snapshot.gpu_halos_enabled,

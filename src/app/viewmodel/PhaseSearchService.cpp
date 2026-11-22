@@ -488,6 +488,11 @@ const PhaseDescriptorsLRUCache &PhaseSearchService::lruCache() const noexcept { 
 
 PhaseDescriptorsLRUCache &PhaseSearchService::lruCache() noexcept { return lru_cache_; }
 
+void PhaseSearchService::setGpuDescriptorEvaluator(GpuDescriptorEvaluator evaluator) {
+  const std::scoped_lock lock(phase_mutex_);
+  gpu_evaluator_ = std::move(evaluator);
+}
+
 void PhaseSearchService::clearCache() {
   cancelPrebake();
   {
@@ -967,18 +972,50 @@ PhaseSearchService::computeDescriptorsSync(std::size_t frame_index) {
                               : std::make_shared<FramePhaseDescriptors>();
 
   try {
-    if (!descriptors->analyzer) {
-      if (cutoffs.empty() || cutoffs.size() != target_cell.elements().size()) {
-        cutoffs = buildCellBondCutoffs(target_cell);
-      }
-      const real_t max_dist = computeMaxBondDistance(cutoffs, target_cell.elements().size());
-      // Pass r_bin_width = 0.0 to skip allocating/filling unused RDF raw_histograms_ tensor
-      descriptors->analyzer = std::make_shared<const analysis::StructureAnalyzer>(
-          target_cell, max_dist, cutoffs, false, static_cast<real_t>(0.0));
+    GpuDescriptorEvaluator gpu_eval;
+    {
+      const std::scoped_lock lock(phase_mutex_);
+      gpu_eval = gpu_evaluator_;
     }
 
-    populateMissingDescriptors(*descriptors, target_cell, active_settings);
-    populateDeformationDescriptors(*descriptors, frame_index, target_cell, active_settings);
+    if (cutoffs.empty() || cutoffs.size() != target_cell.elements().size()) {
+      cutoffs = buildCellBondCutoffs(target_cell);
+    }
+    const real_t max_dist = computeMaxBondDistance(cutoffs, target_cell.elements().size());
+
+    // GPU-accelerated pre-bake for large cells (>= 4k atoms) on scalar GPU-supported descriptors
+    constexpr std::size_t K_GPU_PREBAKE_THRESHOLD = 4096;
+    if (gpu_eval && target_cell.atomCount() >= K_GPU_PREBAKE_THRESHOLD) {
+      auto try_gpu = [&](PhaseDescriptor desc) {
+        std::vector<real_t> vals;
+        if (desc == PhaseDescriptor::LocalEntropy && descriptors->local_entropy.empty() &&
+            gpu_eval(target_cell, desc, max_dist, vals) && vals.size() == target_cell.atomCount()) {
+          descriptors->local_entropy = std::move(vals);
+        } else if (desc == PhaseDescriptor::QTet && descriptors->q_tet.empty() &&
+                   gpu_eval(target_cell, desc, max_dist, vals) &&
+                   vals.size() == target_cell.atomCount()) {
+          descriptors->q_tet = std::move(vals);
+        } else if (desc == PhaseDescriptor::TwfNconn && descriptors->twf_nconn.empty() &&
+                   gpu_eval(target_cell, desc, max_dist, vals) &&
+                   vals.size() == target_cell.atomCount()) {
+          descriptors->twf_nconn = std::move(vals);
+        }
+      };
+      try_gpu(active_settings.descriptor);
+      if (active_settings.is_2d_mode) {
+        try_gpu(active_settings.descriptor_y);
+      }
+    }
+
+    if (!hasRequiredDescriptors(*descriptors, active_settings)) {
+      if (!descriptors->analyzer) {
+        // Pass r_bin_width = 0.0 to skip allocating/filling unused RDF raw_histograms_ tensor
+        descriptors->analyzer = std::make_shared<const analysis::StructureAnalyzer>(
+            target_cell, max_dist, cutoffs, false, static_cast<real_t>(0.0));
+      }
+      populateMissingDescriptors(*descriptors, target_cell, active_settings);
+      populateDeformationDescriptors(*descriptors, frame_index, target_cell, active_settings);
+    }
 
     // Release heavy StructureAnalyzer neighbor graphs so scalar descriptors fit 32..512 frames
     descriptors->analyzer.reset();

@@ -179,6 +179,52 @@ public:
   }
 
   /**
+   * @brief Toggles screen-space ambient occlusion (SSAO) contact darkening on Vulkan.
+   * @param[in] enabled True to enable SSAO.
+   */
+  void handleToggleSsao(bool enabled);
+
+  /**
+   * @brief Queries whether SSAO is enabled.
+   * @return True if SSAO is enabled.
+   */
+  [[nodiscard]] bool isSsaoEnabled() const noexcept {
+    const std::scoped_lock lock(mutex_);
+    return ssao_enabled_;
+  }
+
+  /**
+   * @brief Sets visual-only periodic supercell replication counts (1..3 per axis).
+   */
+  void handleSetVisualSupercell(int rep_a, int rep_b, int rep_c);
+
+  /**
+   * @brief Resets visual supercell replication back to 1x1x1.
+   */
+  void handleResetVisualSupercell();
+
+  /**
+   * @brief Returns current visual supercell replication counts [nx, ny, nz].
+   */
+  [[nodiscard]] std::array<int, 3> visualSupercellDims() const noexcept {
+    const std::scoped_lock lock(mutex_);
+    return supercell_dims_;
+  }
+
+  /**
+   * @brief Exports all frames of the loaded trajectory as a PNG-sequence ZIP or Animated GIF.
+   * @param[in] filepath Destination .zip or .gif path.
+   * @param[in] as_gif True for GIF89a animation, false for PNG-sequence ZIP archive.
+   * @param[in] fps Playback frame rate for GIF timing (default 15).
+   * @param[in] bg_mode Background mode (0 = Dark, 1 = White, 2 = Transparent).
+   * @param[out] out_frames Optional count of exported frames.
+   * @return True if export succeeded.
+   */
+  [[nodiscard]] bool exportTrajectoryAnimation(const std::string &filepath, bool as_gif,
+                                               int fps = 15, int bg_mode = 0,
+                                               std::size_t *out_frames = nullptr);
+
+  /**
    * @brief Smoothly centers and zooms the camera onto the currently picked atom.
    */
   void handleFocusPickedAtom();
@@ -674,7 +720,9 @@ private:
   bool render_wireframe_{true};
   bool in_cell_mode_{true};
   bool depth_cueing_{true};
+  bool ssao_enabled_{true};
   bool is_interacting_{false};
+  std::array<int, 3> supercell_dims_{1, 1, 1};
   CameraAnimState camera_anim_{};
   std::unordered_set<std::string> hidden_elements_;
   double bond_cutoff_scale_{1.15};

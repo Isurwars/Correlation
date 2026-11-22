@@ -123,6 +123,9 @@ void VulkanComputeService::cleanup() noexcept {
     complex_harmonics_.destroy();
     histogram_ssbo_.destroy();
     histogram_readback_.destroy();
+    descriptor_readback_.destroy();
+    host_positions_buf_.destroy();
+    scratch_instances_buf_.destroy();
     device_ = VK_NULL_HANDLE;
   }
   is_initialized_ = false;
@@ -456,7 +459,8 @@ void VulkanComputeService::recordNeighborGridPass(
 bool VulkanComputeService::evaluateOrderParametersAndApplyHalos(
     VkBuffer atom_positions_buffer, VkBuffer atom_instance_buffer, uint32_t num_atoms,
     const std::array<float, 4> &box_min, const std::array<float, 4> &box_max, float cutoff,
-    const GpuHaloSettings &settings, GpuHistogramOutput &out_histogram) {
+    const GpuHaloSettings &settings, GpuHistogramOutput &out_histogram,
+    std::vector<float> *out_descriptors) {
   if (!is_initialized_ || num_atoms == 0) {
     return false;
   }
@@ -815,6 +819,22 @@ bool VulkanComputeService::evaluateOrderParametersAndApplyHalos(
   vkCmdCopyBuffer(cmd_buffer, histogram_ssbo_.buffer(), histogram_readback_.buffer(), 1,
                   &copy_region);
 
+  if (out_descriptors != nullptr) {
+    const BufferAllocationDesc readback_desc{
+        .size = static_cast<VkDeviceSize>(num_atoms) * sizeof(float),
+        .usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+        .properties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+    };
+    descriptor_readback_.ensureCapacity(device_, physical_device_, readback_desc);
+    const VkBufferCopy desc_copy{
+        .srcOffset = 0,
+        .dstOffset = 0,
+        .size = static_cast<VkDeviceSize>(num_atoms) * sizeof(float),
+    };
+    vkCmdCopyBuffer(cmd_buffer, descriptor_values_.buffer(), descriptor_readback_.buffer(), 1,
+                    &desc_copy);
+  }
+
   vkEndCommandBuffer(cmd_buffer);
 
   const VkSubmitInfo submit_info{
@@ -843,7 +863,49 @@ bool VulkanComputeService::evaluateOrderParametersAndApplyHalos(
     histogram_readback_.unmap();
   }
 
+  if (out_descriptors != nullptr) {
+    out_descriptors->resize(num_atoms);
+    const auto *desc_ptr = reinterpret_cast<const float *>(descriptor_readback_.map());
+    if (desc_ptr != nullptr) {
+      std::memcpy(out_descriptors->data(), desc_ptr,
+                  static_cast<std::size_t>(num_atoms) * sizeof(float));
+      descriptor_readback_.unmap();
+    }
+  }
+
   return true;
+}
+
+bool VulkanComputeService::computeDescriptorValues(
+    const std::vector<std::array<float, 4>> &positions, const std::array<float, 4> &box_min,
+    const std::array<float, 4> &box_max, float cutoff, app::PhaseDescriptor descriptor,
+    std::vector<float> &out_values) {
+  if (!is_initialized_ || positions.empty()) {
+    return false;
+  }
+  const auto num_atoms = static_cast<uint32_t>(positions.size());
+  const BufferAllocationDesc pos_desc{
+      .size = static_cast<VkDeviceSize>(num_atoms) * sizeof(std::array<float, 4>),
+      .usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+      .properties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+  };
+  host_positions_buf_.ensureCapacity(device_, physical_device_, pos_desc);
+  host_positions_buf_.upload(std::as_bytes(std::span{positions.data(), positions.size()}));
+
+  constexpr VkDeviceSize K_ATOM_INSTANCE_STRIDE = 56;
+  const BufferAllocationDesc inst_desc{
+      .size = static_cast<VkDeviceSize>(num_atoms) * K_ATOM_INSTANCE_STRIDE,
+      .usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+      .properties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+  };
+  scratch_instances_buf_.ensureCapacity(device_, physical_device_, inst_desc);
+
+  GpuHaloSettings settings{};
+  settings.descriptor = descriptor;
+  GpuHistogramOutput dummy_hist{};
+  return evaluateOrderParametersAndApplyHalos(host_positions_buf_.buffer(),
+                                              scratch_instances_buf_.buffer(), num_atoms, box_min,
+                                              box_max, cutoff, settings, dummy_hist, &out_values);
 }
 
 #endif // CORRELATION_USE_VULKAN

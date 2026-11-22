@@ -12,8 +12,11 @@
 #include "render3d/vulkan/VulkanDevice.hpp"
 #include "render3d/vulkan/VulkanOffscreenTarget.hpp"
 #include "render3d/vulkan/VulkanPipelineManager.hpp"
+#include <algorithm>
 #include <array>
 #include <cstdint>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
 
 namespace correlation::render3d {
 
@@ -273,11 +276,69 @@ void VulkanRenderEngine::recordRenderCommands() {
   drawHalos();
 
   vulkan::VulkanOffscreenTarget::endRenderPass(render_command_buffer_);
-  target_->copyToStaging(render_command_buffer_, active_staging_index_);
+  target_->copyToStaging(render_command_buffer_, active_staging_index_, render_style_.ssao_enabled);
 
   vkEndCommandBuffer(render_command_buffer_);
 #endif
 }
+
+namespace {
+
+void applyDepthSsaoPass(std::span<uint8_t> rgba, std::span<const float> depth, uint32_t width,
+                        uint32_t height) noexcept {
+  if (rgba.size() < static_cast<std::size_t>(width) * height * 4 ||
+      depth.size() < static_cast<std::size_t>(width) * height || width < 16 || height < 16) {
+    return;
+  }
+  constexpr std::array<std::pair<int, int>, 8> K_OFFSETS{{
+      {3, 0},
+      {-3, 0},
+      {0, 3},
+      {0, -3},
+      {5, 5},
+      {-5, 5},
+      {5, -5},
+      {-5, -5},
+  }};
+  constexpr float K_BIAS = 0.00035F;
+  constexpr float K_RANGE = 0.025F;
+  constexpr float K_STRENGTH = 0.42F;
+
+  const auto max_x = static_cast<int>(width) - 1;
+  const auto max_y = static_cast<int>(height) - 1;
+
+  tbb::parallel_for(
+      tbb::blocked_range<uint32_t>(0, height), [&](const tbb::blocked_range<uint32_t> &rows) {
+        for (uint32_t py = rows.begin(); py < rows.end(); ++py) {
+          const std::size_t row_off = static_cast<std::size_t>(py) * width;
+          for (uint32_t px = 0; px < width; ++px) {
+            const float center_d = depth[row_off + px];
+            if (center_d >= 0.9999F) {
+              continue;
+            }
+            float occ_sum = 0.0F;
+            for (const auto &[off_x, off_y] : K_OFFSETS) {
+              const auto sample_x =
+                  static_cast<uint32_t>(std::clamp(static_cast<int>(px) + off_x, 0, max_x));
+              const auto sample_y =
+                  static_cast<uint32_t>(std::clamp(static_cast<int>(py) + off_y, 0, max_y));
+              const float delta =
+                  center_d - depth[static_cast<std::size_t>(sample_y) * width + sample_x];
+              if (delta > K_BIAS && delta < K_RANGE) {
+                occ_sum += 1.0F - (delta / K_RANGE);
+              }
+            }
+            const float factor = 1.0F - (occ_sum * 0.125F) * K_STRENGTH;
+            const std::size_t p_idx = (row_off + px) * 4;
+            rgba[p_idx + 0] = static_cast<uint8_t>(static_cast<float>(rgba[p_idx + 0]) * factor);
+            rgba[p_idx + 1] = static_cast<uint8_t>(static_cast<float>(rgba[p_idx + 1]) * factor);
+            rgba[p_idx + 2] = static_cast<uint8_t>(static_cast<float>(rgba[p_idx + 2]) * factor);
+          }
+        }
+      });
+}
+
+} // namespace
 
 std::span<const uint8_t> VulkanRenderEngine::renderFrame() {
   if (!initialized_) {
@@ -321,6 +382,11 @@ std::span<const uint8_t> VulkanRenderEngine::renderFrame() {
   vkQueueSubmit(device_->graphicsQueue(), 1, &submit_info, render_fence_);
   vkWaitForFences(device_->device(), 1, &render_fence_, VK_TRUE, UINT64_MAX);
 
+  if (render_style_.ssao_enabled && target_->hasDepthReadout()) {
+    const auto mut_pixels = target_->readoutStagingMutableSpan(active_staging_index_);
+    const auto depth_span = target_->readoutDepthStagingSpan(active_staging_index_);
+    applyDepthSsaoPass(mut_pixels, depth_span, dimensions_.width, dimensions_.height);
+  }
   const auto pixels = target_->readoutStagingSpan(active_staging_index_);
   active_staging_index_ =
       (active_staging_index_ + 1) % vulkan::VulkanOffscreenTarget::STAGING_BUFFER_COUNT;

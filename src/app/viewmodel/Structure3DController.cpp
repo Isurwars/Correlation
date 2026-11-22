@@ -9,8 +9,14 @@
 #include "app/viewmodel/Structure3DController.hpp"
 #include "AppWindow.h"
 #include "app/viewmodel/PhaseExportManager.hpp"
+#include "app/viewmodel/TrajectoryExportManager.hpp"
 #include "plotters/ColormapService.hpp"
 #include "render3d/RayPicker.hpp"
+#include "render3d/RenderEngineFactory.hpp"
+#ifdef CORRELATION_USE_VULKAN
+#include "render3d/vulkan/VulkanDevice.hpp"
+#include "render3d/vulkan/compute/VulkanComputeService.hpp"
+#endif
 
 #include <algorithm>
 #include <array>
@@ -25,6 +31,104 @@
 #include <utility>
 
 namespace correlation::app {
+
+namespace {
+
+#ifdef CORRELATION_USE_VULKAN
+[[nodiscard]] PhaseSearchService::GpuDescriptorEvaluator createVulkanGpuDescriptorEvaluator() {
+  struct LazyGpuCompute {
+    std::mutex mtx;
+    bool attempted{false};
+    std::unique_ptr<render3d::vulkan::VulkanDevice> device;
+    std::unique_ptr<render3d::vulkan::VulkanComputeService> service;
+  };
+  const auto gpu_ctx = std::make_shared<LazyGpuCompute>();
+  return [gpu_ctx](const core::Cell &cell, PhaseDescriptor desc, real_t cutoff,
+                   std::vector<real_t> &out_values) -> bool {
+    const std::scoped_lock lock(gpu_ctx->mtx);
+    if (!gpu_ctx->attempted) {
+      gpu_ctx->attempted = true;
+      auto dev = std::make_unique<render3d::vulkan::VulkanDevice>();
+      if (dev->initialize()) {
+        auto svc = std::make_unique<render3d::vulkan::VulkanComputeService>();
+        if (svc->initialize(dev->device(), dev->physicalDevice(), dev->graphicsQueue(),
+                            dev->queueFamilyIndex())) {
+          gpu_ctx->device = std::move(dev);
+          gpu_ctx->service = std::move(svc);
+        }
+      }
+    }
+    if (gpu_ctx->service == nullptr || !gpu_ctx->service->isValid()) {
+      return false;
+    }
+    const auto &atoms = cell.atoms();
+    std::vector<std::array<float, 4>> pos_buf;
+    pos_buf.reserve(atoms.size());
+    std::array<float, 4> bmin{1e9F, 1e9F, 1e9F, 0.0F};
+    std::array<float, 4> bmax{-1e9F, -1e9F, -1e9F, 0.0F};
+    for (const auto &atom : atoms) {
+      const float pos_x = atom.position().x();
+      const float pos_y = atom.position().y();
+      const float pos_z = atom.position().z();
+      pos_buf.push_back({pos_x, pos_y, pos_z, 1.0F});
+      bmin[0] = std::min(bmin[0], pos_x);
+      bmin[1] = std::min(bmin[1], pos_y);
+      bmin[2] = std::min(bmin[2], pos_z);
+      bmax[0] = std::max(bmax[0], pos_x);
+      bmax[1] = std::max(bmax[1], pos_y);
+      bmax[2] = std::max(bmax[2], pos_z);
+    }
+    std::vector<float> gpu_vals;
+    if (!gpu_ctx->service->computeDescriptorValues(pos_buf, bmin, bmax, static_cast<float>(cutoff),
+                                                   desc, gpu_vals)) {
+      return false;
+    }
+    out_values.resize(gpu_vals.size());
+    for (std::size_t idx = 0; idx < gpu_vals.size(); ++idx) {
+      out_values[idx] = static_cast<real_t>(gpu_vals[idx]);
+    }
+    return true;
+  };
+}
+#endif
+
+void applyExportSceneFilters(render3d::Scene3D &frame_scene, const core::Cell &cell,
+                             const std::unordered_set<std::string> &hidden_elements,
+                             const SlabClipConfig &clip_cfg) {
+  if (!hidden_elements.empty()) {
+    const auto &cell_atoms = cell.atoms();
+    auto &scene_atoms = frame_scene.atoms();
+    const std::size_t cnt = std::min(cell_atoms.size(), scene_atoms.size());
+    for (std::size_t idx = 0; idx < cnt; ++idx) {
+      if (hidden_elements.contains(cell_atoms[idx].element().symbol)) {
+        scene_atoms[idx].dim_factor = 0.0F;
+        scene_atoms[idx].halo_color.a = 0;
+      }
+    }
+  }
+  if (!clip_cfg.enabled) {
+    return;
+  }
+  const auto &min_b = frame_scene.boundsMin();
+  const auto &max_b = frame_scene.boundsMax();
+  const float span_x = std::max(max_b.x() - min_b.x(), 1e-4F);
+  const float span_y = std::max(max_b.y() - min_b.y(), 1e-4F);
+  const float span_z = std::max(max_b.z() - min_b.z(), 1e-4F);
+  for (auto &atom : frame_scene.atoms()) {
+    const auto &pos = atom.position;
+    if (pos.x() < min_b.x() + clip_cfg.x_min * span_x ||
+        pos.x() > min_b.x() + clip_cfg.x_max * span_x ||
+        pos.y() < min_b.y() + clip_cfg.y_min * span_y ||
+        pos.y() > min_b.y() + clip_cfg.y_max * span_y ||
+        pos.z() < min_b.z() + clip_cfg.z_min * span_z ||
+        pos.z() > min_b.z() + clip_cfg.z_max * span_z) {
+      atom.dim_factor = 0.0F;
+      atom.halo_color.a = 0;
+    }
+  }
+}
+
+} // namespace
 
 Structure3DController::Structure3DController(::AppWindow &window, const ProgramOptions &options)
     : window_(window), options_(options), alive_(std::make_shared<std::atomic<bool>>(true)),
@@ -83,6 +187,7 @@ Structure3DController::Structure3DController(::AppWindow &window, const ProgramO
     window_.set_structure_3d_in_cell(in_cell_mode_);
     window_.set_structure_3d_isometric(camera_.isOrthographic());
     window_.set_structure_3d_depth_cueing(depth_cueing_);
+    window_.set_structure_3d_ssao_enabled(ssao_enabled_);
   });
 
   const bool is_gpu = render_pipeline_->isHardwareAccelerated();
@@ -93,6 +198,12 @@ Structure3DController::Structure3DController(::AppWindow &window, const ProgramO
   window_.set_structure_3d_gpu_accelerated(is_gpu);
   window_.set_structure_3d_backend_label(
       slint::SharedString(std::format("{}: {}", is_gpu ? "GPU" : "CPU", device_name)));
+
+#ifdef CORRELATION_USE_VULKAN
+  if (is_gpu && phase_service_ != nullptr) {
+    phase_service_->setGpuDescriptorEvaluator(createVulkanGpuDescriptorEvaluator());
+  }
+#endif
 }
 
 Structure3DController::~Structure3DController() {
@@ -112,7 +223,12 @@ void Structure3DController::requestRender(bool immediate) {
     published_scene_.reset();
     scene_dirty_ = false;
   } else if (scene_dirty_ || published_scene_ == nullptr) {
-    published_scene_ = std::make_shared<render3d::Scene3D>(*scene_);
+    if (supercell_dims_[0] > 1 || supercell_dims_[1] > 1 || supercell_dims_[2] > 1) {
+      published_scene_ =
+          scene_->buildVisualSupercell(supercell_dims_[0], supercell_dims_[1], supercell_dims_[2]);
+    } else {
+      published_scene_ = std::make_shared<render3d::Scene3D>(*scene_);
+    }
     scene_dirty_ = false;
   }
   const bool gpu_halos = false;
@@ -123,6 +239,7 @@ void Structure3DController::requestRender(bool immediate) {
       .render_bonds = render_bonds_,
       .render_wireframe = render_wireframe_,
       .depth_cueing = depth_cueing_,
+      .ssao_enabled = ssao_enabled_,
       .is_interacting = is_interacting_,
       .gpu_halos_enabled = gpu_halos,
       .phase_descriptor = phaseDescriptor(),
@@ -338,6 +455,132 @@ void Structure3DController::handleToggleDepthCueing(bool enabled) {
   }
   safeInvokeOnWindow([this, enabled] { window_.set_structure_3d_depth_cueing(enabled); });
   requestRender();
+}
+
+void Structure3DController::handleToggleSsao(bool enabled) {
+  {
+    const std::scoped_lock lock(mutex_);
+    ssao_enabled_ = enabled;
+  }
+  safeInvokeOnWindow([this, enabled] { window_.set_structure_3d_ssao_enabled(enabled); });
+  requestRender();
+}
+
+void Structure3DController::handleSetVisualSupercell(int rep_a, int rep_b, int rep_c) {
+  const std::array<int, 3> clamped{
+      std::clamp(rep_a, 1, 3),
+      std::clamp(rep_b, 1, 3),
+      std::clamp(rep_c, 1, 3),
+  };
+  {
+    const std::scoped_lock lock(mutex_);
+    supercell_dims_ = clamped;
+    scene_dirty_ = true;
+  }
+  safeInvokeOnWindow([this, clamped] {
+    window_.set_structure_3d_supercell_x(clamped[0]);
+    window_.set_structure_3d_supercell_y(clamped[1]);
+    window_.set_structure_3d_supercell_z(clamped[2]);
+  });
+  requestRender();
+}
+
+void Structure3DController::handleResetVisualSupercell() { handleSetVisualSupercell(1, 1, 1); }
+
+bool Structure3DController::exportTrajectoryAnimation(const std::string &filepath, bool as_gif,
+                                                      int fps, int bg_mode,
+                                                      std::size_t *out_frames) {
+  if (filepath.empty()) {
+    return false;
+  }
+  std::shared_ptr<const core::Trajectory> traj;
+  render3d::Camera3D cam_copy;
+  render3d::ViewportDimensions dims{};
+  bool bonds = true;
+  bool wire = true;
+  bool in_cell = true;
+  bool depth_cue = true;
+  bool ssao = true;
+  double cutoff_scale = 1.15;
+  std::array<int, 3> super_dims{1, 1, 1};
+  std::unordered_set<std::string> hidden_copy;
+  SlabClipConfig clip_copy{};
+  {
+    const std::scoped_lock lock(mutex_);
+    traj = current_trajectory_;
+    cam_copy = camera_;
+    dims = viewport_dims_;
+    bonds = render_bonds_;
+    wire = render_wireframe_;
+    in_cell = in_cell_mode_;
+    depth_cue = depth_cueing_;
+    ssao = ssao_enabled_;
+    cutoff_scale = bond_cutoff_scale_;
+    super_dims = supercell_dims_;
+    hidden_copy = hidden_elements_;
+    clip_copy = slab_clip_;
+  }
+  if (!traj || traj->getFrameCount() == 0) {
+    return false;
+  }
+
+  dims.width = std::clamp(dims.width, 320U, 1280U);
+  dims.height = std::clamp(dims.height, 240U, 960U);
+  cam_copy.setViewport(static_cast<float>(dims.width), static_cast<float>(dims.height));
+
+  auto temp_engine =
+      render3d::RenderEngineFactory::createEngine(render3d::BackendPreference::Auto, dims);
+  if (temp_engine == nullptr) {
+    return false;
+  }
+
+  render3d::RgbaColor bg_color{.r = 25, .g = 25, .b = 31, .a = 255};
+  if (bg_mode == 1) {
+    bg_color = render3d::RgbaColor{.r = 255, .g = 255, .b = 255, .a = 255};
+  } else if (bg_mode == 2 && !as_gif) {
+    bg_color = render3d::RgbaColor{.r = 0, .g = 0, .b = 0, .a = 0};
+  }
+  temp_engine->setFeatureVisibility(bonds, wire);
+  temp_engine->setRenderStyle(render3d::RenderStyleConfig{
+      .depth_cueing = depth_cue,
+      .ssao_enabled = ssao,
+      .background_color = bg_color,
+  });
+  temp_engine->setCamera(cam_copy);
+
+  const std::size_t total = traj->getFrameCount();
+  std::vector<std::vector<std::uint8_t>> rendered_frames;
+  rendered_frames.reserve(total);
+
+  for (std::size_t frame_idx = 0; frame_idx < total; ++frame_idx) {
+    const auto &cell = traj->getFrame(frame_idx);
+    const auto frame_scene = render3d::Scene3D::fromCell(cell, cutoff_scale, bonds, in_cell);
+    if (phase_service_ != nullptr && phase_service_->isEnabled()) {
+      static_cast<void>(phase_service_->getOrComputeDescriptors(frame_idx));
+      phase_service_->applyVisualsToScene(*frame_scene, frame_idx);
+    }
+    applyExportSceneFilters(*frame_scene, cell, hidden_copy, clip_copy);
+    const auto render_scene =
+        (super_dims[0] > 1 || super_dims[1] > 1 || super_dims[2] > 1)
+            ? frame_scene->buildVisualSupercell(super_dims[0], super_dims[1], super_dims[2])
+            : frame_scene;
+    temp_engine->setScene(render_scene);
+    const auto span = temp_engine->renderFrame();
+    if (span.empty()) {
+      return false;
+    }
+    rendered_frames.emplace_back(span.begin(), span.end());
+  }
+
+  const auto delay_cs = static_cast<std::uint16_t>(std::clamp(100 / std::max(fps, 1), 2, 100));
+  const bool exported = as_gif ? TrajectoryExportManager::exportAnimatedGif(
+                                     filepath, rendered_frames, dims.width, dims.height, delay_cs)
+                               : TrajectoryExportManager::exportPngSequenceZip(
+                                     filepath, rendered_frames, dims.width, dims.height);
+  if (exported && out_frames != nullptr) {
+    *out_frames = rendered_frames.size();
+  }
+  return exported;
 }
 
 void Structure3DController::handleToggleElementVisibility(const std::string &symbol) {

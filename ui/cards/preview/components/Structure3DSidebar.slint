@@ -53,6 +53,11 @@ export component Structure3DSidebar inherits Rectangle {
     in property <bool> in_cell_enabled: true;
     in property <bool> is_isometric: false;
     in property <bool> depth_cueing_enabled: true;
+    in property <bool> ssao_enabled: true;
+    in property <int> supercell_x: 1;
+    in property <int> supercell_y: 1;
+    in property <int> supercell_z: 1;
+    in property <int> total_frames: 0;
     in property <[ElementLegendItem]> element_legend: [];
     in property <bool> has_hidden_elements: false;
     in-out property <int> snapshot_scale: 1;
@@ -91,6 +96,10 @@ export component Structure3DSidebar inherits Rectangle {
     callback toggle_in_cell(bool);
     callback toggle_projection(bool);
     callback toggle_depth_cueing(bool);
+    callback toggle_ssao(bool);
+    callback set_visual_supercell(int, int, int);
+    callback reset_visual_supercell();
+    callback export_trajectory_animation(bool, int);
     callback toggle_element_visibility(string);
     callback show_all_elements();
     callback export_snapshot(int, int);
@@ -200,6 +209,11 @@ export component Structure3DSidebar inherits Rectangle {
             in_cell_enabled: root.in_cell_enabled;
             is_isometric: root.is_isometric;
             depth_cueing_enabled: root.depth_cueing_enabled;
+            ssao_enabled: root.ssao_enabled;
+            supercell_x: root.supercell_x;
+            supercell_y: root.supercell_y;
+            supercell_z: root.supercell_z;
+            total_frames: root.total_frames;
             element_legend: root.element_legend;
             has_hidden_elements: root.has_hidden_elements;
             snapshot_scale <=> root.snapshot_scale;
@@ -214,6 +228,10 @@ export component Structure3DSidebar inherits Rectangle {
             toggle_in_cell(en) => { root.toggle_in_cell(en); }
             toggle_projection(en) => { root.toggle_projection(en); }
             toggle_depth_cueing(en) => { root.toggle_depth_cueing(en); }
+            toggle_ssao(en) => { root.toggle_ssao(en); }
+            set_visual_supercell(nx, ny, nz) => { root.set_visual_supercell(nx, ny, nz); }
+            reset_visual_supercell => { root.reset_visual_supercell(); }
+            export_trajectory_animation(as_gif, bg) => { root.export_trajectory_animation(as_gif, bg); }
             toggle_element_visibility(sym) => { root.toggle_element_visibility(sym); }
             show_all_elements => { root.show_all_elements(); }
             export_snapshot(sc, bg) => { root.export_snapshot(sc, bg); }

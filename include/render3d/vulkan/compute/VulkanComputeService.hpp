@@ -66,7 +66,18 @@ public:
                                             const std::array<float, 4> &box_min,
                                             const std::array<float, 4> &box_max, float cutoff,
                                             const GpuHaloSettings &settings,
-                                            GpuHistogramOutput &out_histogram);
+                                            GpuHistogramOutput &out_histogram,
+                                            std::vector<float> *out_descriptors = nullptr);
+
+  /**
+   * @brief Convenience wrapper uploading host atom positions (x, y, z, radius), running GPU
+   * order-parameter compute shaders, and reading back per-atom scalar descriptor values.
+   */
+  [[nodiscard]] bool computeDescriptorValues(const std::vector<std::array<float, 4>> &positions,
+                                             const std::array<float, 4> &box_min,
+                                             const std::array<float, 4> &box_max, float cutoff,
+                                             app::PhaseDescriptor descriptor,
+                                             std::vector<float> &out_values);
 
   [[nodiscard]] bool isValid() const noexcept { return is_initialized_; }
 
@@ -100,6 +111,9 @@ private:
   VulkanBuffer complex_harmonics_;
   VulkanBuffer histogram_ssbo_;
   VulkanBuffer histogram_readback_;
+  VulkanBuffer descriptor_readback_;
+  VulkanBuffer host_positions_buf_;
+  VulkanBuffer scratch_instances_buf_;
 
   uint32_t allocated_atom_capacity_{0};
   uint32_t allocated_cell_capacity_{0};

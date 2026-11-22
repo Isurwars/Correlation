@@ -350,5 +350,68 @@ TEST_F(Structure3DControllerTests, HiResSnapshotExportWritesValidPng) {
   EXPECT_TRUE(std::filesystem::remove(tmp_png, err_code));
 }
 
+TEST_F(Structure3DControllerTests, VisualSupercellSsaoAndTrajectoryAnimationExport) {
+  const ProgramOptions options;
+  Structure3DController controller(window(), options);
+  controller.handleViewportResized(320.0F, 240.0F);
+
+  const auto traj = std::make_shared<core::Trajectory>();
+  traj->addFrame(createTestCell(0.0F));
+  traj->addFrame(createTestCell(0.4F));
+  controller.setTrajectory(traj);
+
+  // Verify SSAO toggle
+  EXPECT_TRUE(controller.isSsaoEnabled());
+  controller.handleToggleSsao(false);
+  EXPECT_FALSE(controller.isSsaoEnabled());
+  EXPECT_FALSE(window().get_structure_3d_ssao_enabled());
+
+  // Verify visual supercell replication (2x1x1 doubles atom count without mutating source Cell)
+  const auto tiled = controller.scene()->buildVisualSupercell(2, 1, 1);
+  ASSERT_NE(tiled, nullptr);
+  EXPECT_EQ(tiled->atoms().size(), controller.scene()->atoms().size() * 2UL);
+
+  controller.handleSetVisualSupercell(2, 1, 1);
+  EXPECT_EQ(controller.visualSupercellDims()[0], 2);
+  controller.handleResetVisualSupercell();
+  EXPECT_EQ(controller.visualSupercellDims()[0], 1);
+
+  // Verify PNG-sequence ZIP export (PK magic header)
+  const auto tmp_zip = std::filesystem::temp_directory_path() / "correlation_traj_test.zip";
+  const auto tmp_gif = std::filesystem::temp_directory_path() / "correlation_traj_test.gif";
+  std::error_code err_code;
+  std::filesystem::remove(tmp_zip, err_code);
+  std::filesystem::remove(tmp_gif, err_code);
+
+  std::size_t exported_frames = 0;
+  EXPECT_TRUE(
+      controller.exportTrajectoryAnimation(tmp_zip.string(), false, 15, 0, &exported_frames));
+  EXPECT_EQ(exported_frames, 2UL);
+  {
+    std::ifstream zip_in(tmp_zip, std::ios::binary);
+    ASSERT_TRUE(zip_in.is_open());
+    std::array<char, 2> magic{};
+    zip_in.read(magic.data(), 2);
+    EXPECT_EQ(magic[0], 'P');
+    EXPECT_EQ(magic[1], 'K');
+  }
+
+  // Verify Animated GIF89a export (GIF89a header)
+  exported_frames = 0;
+  EXPECT_TRUE(
+      controller.exportTrajectoryAnimation(tmp_gif.string(), true, 15, 0, &exported_frames));
+  EXPECT_EQ(exported_frames, 2UL);
+  {
+    std::ifstream gif_in(tmp_gif, std::ios::binary);
+    ASSERT_TRUE(gif_in.is_open());
+    std::array<char, 6> magic{};
+    gif_in.read(magic.data(), 6);
+    EXPECT_EQ(std::string_view(magic.data(), 6), "GIF89a");
+  }
+
+  EXPECT_TRUE(std::filesystem::remove(tmp_zip, err_code));
+  EXPECT_TRUE(std::filesystem::remove(tmp_gif, err_code));
+}
+
 } // namespace
 } // namespace correlation::app

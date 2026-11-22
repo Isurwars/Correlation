@@ -21,6 +21,71 @@
 
 namespace correlation::app {
 
+namespace {
+
+void handleExportTrajectoryAnimation(const AppWindow &window, Structure3DController &controller,
+                                     bool as_gif, int bg_mode) {
+  const std::array<nfdfilteritem_t, 1> filters =
+      as_gif ? std::array<nfdfilteritem_t, 1>{{{.name = "Animated GIF", .spec = "gif"}}}
+             : std::array<nfdfilteritem_t, 1>{{{.name = "PNG Sequence ZIP", .spec = "zip"}}};
+  nfdu8char_t *out_path = nullptr;
+  const std::string base = std::string(window.get_file_basename());
+  const std::string ext = as_gif ? ".gif" : "_frames.zip";
+  const std::string default_name = (base.empty() ? "trajectory" : base) + ext;
+  const nfdresult_t res =
+      NFD_SaveDialogU8(&out_path, filters.data(), filters.size(), nullptr, default_name.c_str());
+  if (res != NFD_OKAY || out_path == nullptr) {
+    return;
+  }
+  std::string target_path(out_path);
+  NFD_FreePathU8(out_path);
+  const std::string suffix = as_gif ? ".gif" : ".zip";
+  if (!target_path.ends_with(suffix)) {
+    target_path += suffix;
+  }
+  std::size_t exported_frames = 0;
+  const bool exported =
+      controller.exportTrajectoryAnimation(target_path, as_gif, 15, bg_mode, &exported_frames);
+  if (exported) {
+    window.invoke_show_toast(
+        slint::SharedString(
+            std::format("Exported {} frames ({})", exported_frames, as_gif ? "GIF" : "PNG ZIP")),
+        1);
+  } else {
+    window.invoke_show_toast(slint::SharedString("Failed to export trajectory animation"), 2);
+  }
+}
+
+void handleExportSnapshot(const AppWindow &window, Structure3DController &controller, int scale_idx,
+                          int bg_mode) {
+  constexpr std::array<nfdfilteritem_t, 1> K_FILTERS{{{.name = "PNG Image", .spec = "png"}}};
+  nfdu8char_t *out_path = nullptr;
+  const std::string base = std::string(window.get_file_basename());
+  const std::string default_name = base.empty() ? "structure_3d.png" : (base + "_3d.png");
+  const nfdresult_t res = NFD_SaveDialogU8(&out_path, K_FILTERS.data(), K_FILTERS.size(), nullptr,
+                                           default_name.c_str());
+  if (res != NFD_OKAY || out_path == nullptr) {
+    return;
+  }
+  std::string target_path(out_path);
+  NFD_FreePathU8(out_path);
+  if (!target_path.ends_with(".png") && !target_path.ends_with(".PNG")) {
+    target_path += ".png";
+  }
+  std::uint32_t width = 0;
+  std::uint32_t height = 0;
+  const bool exported =
+      controller.exportSnapshotPng(target_path, scale_idx, bg_mode, &width, &height);
+  if (exported) {
+    window.invoke_show_toast(
+        slint::SharedString(std::format("Saved 3D snapshot ({}×{})", width, height)), 1);
+  } else {
+    window.invoke_show_toast(slint::SharedString("Failed to export 3D snapshot"), 2);
+  }
+}
+
+} // namespace
+
 void AppController::registerStructure3DCallbacks() {
   if (!structure_3d_controller_) {
     return;
@@ -60,6 +125,20 @@ void AppController::registerCameraCallbacks() {
   window_.on_toggle_depth_cueing_3d(
       [this](bool enabled) { structure_3d_controller_->handleToggleDepthCueing(enabled); });
 
+  window_.on_toggle_ssao_3d(
+      [this](bool enabled) { structure_3d_controller_->handleToggleSsao(enabled); });
+
+  window_.on_set_visual_supercell_3d([this](int rep_a, int rep_b, int rep_c) {
+    structure_3d_controller_->handleSetVisualSupercell(rep_a, rep_b, rep_c);
+  });
+
+  window_.on_reset_visual_supercell_3d(
+      [this] { structure_3d_controller_->handleResetVisualSupercell(); });
+
+  window_.on_export_trajectory_animation_3d([this](bool as_gif, int bg_mode) {
+    handleExportTrajectoryAnimation(window_, *structure_3d_controller_, as_gif, bg_mode);
+  });
+
   window_.on_focus_picked_atom_3d([this] { structure_3d_controller_->handleFocusPickedAtom(); });
 
   window_.on_tick_camera_animation_3d([this] { structure_3d_controller_->tickCameraAnimation(); });
@@ -71,30 +150,7 @@ void AppController::registerCameraCallbacks() {
   window_.on_show_all_elements_3d([this] { structure_3d_controller_->handleShowAllElements(); });
 
   window_.on_export_snapshot_3d([this](int scale_idx, int bg_mode) {
-    constexpr std::array<nfdfilteritem_t, 1> K_FILTERS{{{.name = "PNG Image", .spec = "png"}}};
-    nfdu8char_t *out_path = nullptr;
-    const std::string base = std::string(window_.get_file_basename());
-    const std::string default_name = base.empty() ? "structure_3d.png" : (base + "_3d.png");
-    const nfdresult_t res = NFD_SaveDialogU8(&out_path, K_FILTERS.data(), K_FILTERS.size(), nullptr,
-                                             default_name.c_str());
-    if (res != NFD_OKAY || out_path == nullptr) {
-      return;
-    }
-    std::string target_path(out_path);
-    NFD_FreePathU8(out_path);
-    if (!target_path.ends_with(".png") && !target_path.ends_with(".PNG")) {
-      target_path += ".png";
-    }
-    std::uint32_t width = 0;
-    std::uint32_t height = 0;
-    const bool exported = structure_3d_controller_->exportSnapshotPng(target_path, scale_idx,
-                                                                      bg_mode, &width, &height);
-    if (exported) {
-      window_.invoke_show_toast(
-          slint::SharedString(std::format("Saved 3D snapshot ({}×{})", width, height)), 1);
-    } else {
-      window_.invoke_show_toast(slint::SharedString("Failed to export 3D snapshot"), 2);
-    }
+    handleExportSnapshot(window_, *structure_3d_controller_, scale_idx, bg_mode);
   });
 
   window_.on_seek_frame_3d([this](int frame_idx) {
