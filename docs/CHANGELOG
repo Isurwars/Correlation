@@ -1,6 +1,44 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.8.0] - 2026-11-21
+
+### 🚀 Features & 3D Viewer Overhaul
+- **Background Trajectory Phase Pre-Bake & Motion Halos (`PhaseSearchService`, `SteinhardtLRUCache`, `Structure3DController`, `TrajectoryPlaybackBar.slint`)**:
+  - Implemented automatic background pre-baking of trajectory phase descriptors so phase halos remain continuously visible during trajectory playback without frame drops or halo flickering (`c80b08de`).
+  - Released heavy `StructureAnalyzer` neighbor graphs immediately after scalar extraction and dynamically scaled LRU cache capacity (`32–512` frames within a 256 MB budget), plus live atom-inspector updates and Dual-View viewport decluttering (`c80b08de`).
+- **3D Depth Cueing, Smooth Camera Presets, Element Legend & Hi-Res Snapshots (`Camera3D`, `VulkanRenderEngine`, `SoftwareRasterizer`, `Structure3DController`, `Structure3DSceneTab.slint`)**:
+  - Added atmospheric depth cueing and hemisphere/rim lighting across Vulkan impostor shaders and the CPU `SoftwareRasterizer` (`a908a834`).
+  - Added Focus-on-Atom (`F`) and smooth animated camera axis presets (`a908a834`).
+  - Added an interactive Element Legend with per-species visibility toggles and high-resolution 3D PNG snapshot export (`1× / 2× / 4×` scale with Dark, White, or Transparent backgrounds) (`a908a834`).
+- **Plastic Deformation Descriptors, Two-Pass Vulkan Halos & 3D Measurement Ruler (`PhaseSearchService`, `VulkanPipelineManager`, `VulkanRenderEngine`, `halo_impostor.frag`, `Structure3DOverlays.slint`)**:
+  - Added frame-to-frame atomic `Displacement` and Falk–Langer non-affine squared displacement (`D2Min`) phase descriptors for shear-band and plastic deformation analysis (`23b8e605`).
+  - Upgraded Vulkan phase halos to a dedicated two-pass transparent halo compositing pipeline (`halo_impostor.frag`) with additive blending and depth-test parity (`23b8e605`).
+  - Added interactive `Shift+Click` 3D Distance & Angle Ruler overlays with live geometric guide lines (`23b8e605`).
+- **Visual Supercell Replication, Trajectory Animation Export, Vulkan SSAO & GPU Phase Pre-Bake (`Scene3D`, `TrajectoryExportManager`, `VulkanOffscreenTarget`, `VulkanRenderEngine`, `VulkanComputeService`)**:
+  - Added visual-only periodic supercell replication (`1..3` per axis, 250k atom safety cap) preserving halos, colors, and species visibility without mutating underlying analysis `Cell`/`Trajectory` data (`e387d4f1`).
+  - Added zero-dependency trajectory animation export to PNG-sequence `.zip` archives (`miniz`) and Animated GIF89a (6×6×6 + grayscale palette with LZW compression) honoring active halos, slab clips, supercells, and SSAO (`e387d4f1`).
+  - Added Vulkan `D32_SFLOAT` depth staging readback and a TBB-parallel 8-tap screen-space ambient occlusion (SSAO) contact-shading pass (`e387d4f1`).
+  - Added GPU-accelerated descriptor readback via `VulkanComputeService::computeDescriptorValues()` injected lazily into `PhaseSearchService` with automatic CPU fallback (`e387d4f1`).
+
+### ⚡ Performance Improvements
+- **3D Spatial Cell-List for Vulkan Compute Neighbor Search (`VulkanComputeService`, `shaders/compute/`)**:
+  - Replaced the $O(N^2)$ brute-force Vulkan neighbor search with a 3D spatial cell-list for large-scale atomistic systems (`213725d4`).
+
+### 🐛 Bug Fixes
+- **Python Bindings & ASE RDF Calculator (`python/correlation/`, `src/bindings/`)**:
+  - Synchronized `MLIPOutput` type stubs and fixed the ASE RDF calculator adapter (`df164869`).
+
+### ♻️ Code Refactoring & Build System
+- **Slint Component Decomposition (`ui/cards/preview/`, `ui/material/`)**:
+  - Decomposed oversized preview and Material Design 3 Slint components into modular, single-responsibility subcomponents (`48101cac`).
+- **Target-Scoped CMake Definitions (`CMakeLists.txt`, `cmake/`)**:
+  - Scoped conditional compile definitions cleanly to the `correlation_config` target (`c7b6cab2`).
+
+### 🧪 Testing
+- **3D Viewer, Phase Search & Export Test Coverage (`Structure3DControllerTests.cpp`, `Structure3DControllerPhaseSearchTests.cpp`)**:
+  - Added unit tests for background trajectory pre-baking, `Displacement`/`D2Min` affine vs. plastic invariance, visual supercell tiling/caps, SSAO toggling, and GIF89a + PNG-ZIP trajectory export round-trips (`c80b08de`, `a908a834`, `23b8e605`, `e387d4f1`).
+
 ## [4.7.2] - 2026-11-20
 
 ### 🚀 Features & UI/UX
