@@ -33,6 +33,7 @@ export component Structure3DToolBar inherits Rectangle {
     callback toggle_projection(bool);
     callback toggle_phase_panel();
     callback toggle_dist_hud();
+    callback export_snapshot();
 
     width: 40px;
     height: tools_layout.preferred-height + 12px;
@@ -117,6 +118,20 @@ export component Structure3DToolBar inherits Rectangle {
             accessible_name: root.dist_hud_enabled ? "Hide Distribution Graph" : "Show Distribution Graph";
             tooltip_text: root.dist_hud_enabled ? "Hide Distribution Mini-HUD." : "Show Distribution Mini-HUD.";
             clicked => { root.toggle_dist_hud(); }
+        }
+
+        Rectangle {
+            width: 20px;
+            height: 1px;
+            x: (parent.width - self.width) / 2;
+            background: MaterialPalette.outline_variant.with_alpha(60%);
+        }
+
+        DockChip {
+            icon: Icons.download;
+            accessible_name: "Export Hi-Res 3D Snapshot (PNG)";
+            tooltip_text: "Export high-resolution 3D viewport snapshot (PNG).";
+            clicked => { root.export_snapshot(); }
         }
     }
 }

@@ -190,18 +190,24 @@ bool VulkanBufferManager::createStaticQuadBuffers() {
 }
 
 void VulkanBufferManager::uploadScene(const Scene3D &scene, const Camera3D &camera,
-                                      const ViewportDimensions &dimensions) {
-  uploadUbo(camera, dimensions);
+                                      const ViewportDimensions &dimensions,
+                                      const RenderStyleConfig &style) {
+  uploadUbo(camera, dimensions, style);
   uploadAtomInstances(scene.atoms());
   uploadBondInstances(scene.bonds());
   uploadWireframeLines(scene.unitCellLines());
 }
 
-void VulkanBufferManager::uploadUbo(const Camera3D &camera, const ViewportDimensions &dimensions) {
+void VulkanBufferManager::uploadUbo(const Camera3D &camera, const ViewportDimensions &dimensions,
+                                    const RenderStyleConfig &style) {
   Matrix4<float> proj = camera.projectionMatrix();
   proj(1, 1) = -proj(1, 1);
 
   const math::Vector3<float> eye = camera.eyePosition();
+  const float cam_dist = camera.distance();
+  const float fog_start = cam_dist * 0.65F;
+  const float fog_end = cam_dist * 1.95F;
+  const bool use_fog = style.depth_cueing && style.background_color.a > 0;
   const SceneUboData ubo_data{
       .view = camera.viewMatrix().data(),
       .proj = proj.data(),
@@ -214,6 +220,8 @@ void VulkanBufferManager::uploadUbo(const Camera3D &camera, const ViewportDimens
           },
       .fov = camera.fov(),
       .padding = 0.0F,
+      .fog_params = {use_fog ? 1.0F : 0.0F, fog_start, fog_end, 0.52F},
+      .bg_color = toFloatRgba(style.background_color),
   };
 
   const auto byte_span = std::as_bytes(std::span{&ubo_data, 1});

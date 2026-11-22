@@ -87,6 +87,19 @@ public:
   void setTarget(const math::Vector3<float> &target) noexcept;
 
   /**
+   * @brief Sets orbital camera distance directly (clamped to valid range).
+   * @param distance Orbital distance from target in Angstroms.
+   */
+  void setDistance(float distance) noexcept;
+
+  /**
+   * @brief Sets near and far clipping planes.
+   * @param z_near Near clip distance (> 0).
+   * @param z_far Far clip distance (> z_near).
+   */
+  void setClipPlanes(float z_near, float z_far) noexcept;
+
+  /**
    * @brief Computes eye position in world space.
    * @return Eye coordinate.
    */

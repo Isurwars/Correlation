@@ -111,7 +111,13 @@ void extractBonds(const std::vector<AtomInstance> &atoms, double cutoff_scale,
 
   const auto num_atoms = atoms.size();
   for (std::size_t i = 0; i < num_atoms; ++i) {
+    if (atoms[i].dim_factor <= 0.0F) {
+      continue;
+    }
     for (std::size_t j = i + 1; j < num_atoms; ++j) {
+      if (atoms[j].dim_factor <= 0.0F) {
+        continue;
+      }
       const math::Vector3<float> diff = atoms[i].position - atoms[j].position;
       const float dist = math::norm(diff);
       const auto max_cutoff =

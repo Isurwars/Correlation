@@ -111,6 +111,34 @@ bool Structure3DRenderPipeline::isHardwareAccelerated() const noexcept {
   return engine_ != nullptr && engine_->isHardwareAccelerated();
 }
 
+std::vector<std::uint8_t>
+Structure3DRenderPipeline::renderSnapshotOffscreen(const RenderPipelineSnapshot &snapshot,
+                                                   const render3d::ViewportDimensions &dims,
+                                                   const render3d::RgbaColor &bg_color) {
+  if (snapshot.scene == nullptr || dims.width == 0 || dims.height == 0) {
+    return {};
+  }
+  auto temp_engine =
+      render3d::RenderEngineFactory::createEngine(render3d::BackendPreference::Auto, dims);
+  if (temp_engine == nullptr) {
+    return {};
+  }
+
+  render3d::Camera3D snap_cam = snapshot.camera;
+  snap_cam.setViewport(static_cast<float>(dims.width), static_cast<float>(dims.height));
+
+  temp_engine->setFeatureVisibility(snapshot.render_bonds, snapshot.render_wireframe);
+  temp_engine->setRenderStyle(render3d::RenderStyleConfig{
+      .depth_cueing = snapshot.depth_cueing,
+      .background_color = bg_color,
+  });
+  temp_engine->setCamera(snap_cam);
+  temp_engine->setScene(snapshot.scene);
+
+  const auto span = temp_engine->renderFrame();
+  return {span.begin(), span.end()};
+}
+
 void Structure3DRenderPipeline::dispatchFrame(const std::uint8_t *pixel_data, std::uint32_t width,
                                               std::uint32_t height) {
   if (pixel_data == nullptr || width == 0 || height == 0 || !callback_) {
@@ -171,6 +199,9 @@ void Structure3DRenderPipeline::renderLoop() {
     const bool show_bonds = snapshot.render_bonds && lod_policy.render_bonds;
 
     engine_->setFeatureVisibility(show_bonds, snapshot.render_wireframe);
+    engine_->setRenderStyle(render3d::RenderStyleConfig{
+        .depth_cueing = snapshot.depth_cueing,
+    });
     engine_->setGpuHaloConfig(render3d::GpuHaloConfig{
         .enabled = snapshot.gpu_halos_enabled,
         .descriptor = snapshot.phase_descriptor,

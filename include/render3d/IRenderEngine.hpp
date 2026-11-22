@@ -45,6 +45,15 @@ struct GpuHaloConfig {
 };
 
 /**
+ * @struct RenderStyleConfig
+ * @brief Visual shading and background styling configuration for 3D render engines.
+ */
+struct RenderStyleConfig {
+  bool depth_cueing{true};
+  RgbaColor background_color{.r = 25, .g = 25, .b = 31, .a = 255};
+};
+
+/**
  * @class IRenderEngine
  * @brief Abstract interface representing a headless offscreen 3D rendering backend.
  */
@@ -89,6 +98,12 @@ public:
    * @param config Halo configuration descriptor and threshold state.
    */
   virtual void setGpuHaloConfig(const GpuHaloConfig & /*config*/) {}
+
+  /**
+   * @brief Configures visual shading parameters (depth cueing, background color).
+   * @param style Visual style configuration.
+   */
+  virtual void setRenderStyle(const RenderStyleConfig & /*style*/) {}
 
   /**
    * @brief Executes a single frame render and returns RGBA8 pixel span.

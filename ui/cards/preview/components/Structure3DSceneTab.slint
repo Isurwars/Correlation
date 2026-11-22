@@ -12,8 +12,10 @@ import {
     CheckBoxRow,
     FilledButton,
     MaterialSlider,
+    SegmentedButton,
+    TooltipTarget,
 } from "../../../material/material.slint";
-import { SlabClipState } from "../../../Types.slint";
+import { SlabClipState, ElementLegendItem } from "../../../Types.slint";
 
 /// Tab 1 of Structure3DSidebar: camera reset, atomic representation, slab clipping, and HUD overlay toggles.
 export component Structure3DSceneTab inherits ScrollView {
@@ -22,6 +24,11 @@ export component Structure3DSceneTab inherits ScrollView {
     in property <bool> wireframe_enabled: true;
     in property <bool> in_cell_enabled: true;
     in property <bool> is_isometric: false;
+    in property <bool> depth_cueing_enabled: true;
+    in property <[ElementLegendItem]> element_legend: [];
+    in property <bool> has_hidden_elements: false;
+    in-out property <int> snapshot_scale: 1;
+    in-out property <int> snapshot_bg: 0;
     in property <bool> dist_hud_visible: true;
     in property <SlabClipState> slab_clip: {
         enabled: false,
@@ -36,6 +43,10 @@ export component Structure3DSceneTab inherits ScrollView {
     callback toggle_wireframe(bool);
     callback toggle_in_cell(bool);
     callback toggle_projection(bool);
+    callback toggle_depth_cueing(bool);
+    callback toggle_element_visibility(string);
+    callback show_all_elements();
+    callback export_snapshot(int, int);
     callback toggle_dist_hud(bool);
     callback set_slab_clip(SlabClipState);
     callback reset_slab_clip();
@@ -112,6 +123,39 @@ export component Structure3DSceneTab inherits ScrollView {
                 check_state_bool: root.in_cell_enabled;
                 tooltip_text: "Wrap all atoms inside the primary unit cell using periodic boundary conditions.";
                 checked_state_changed(en) => { root.toggle_in_cell(en); }
+            }
+
+            CheckBoxRow {
+                text: "Depth Cueing (Atmospheric Fog)";
+                check_state_bool: root.depth_cueing_enabled;
+                tooltip_text: "Fade distant atoms softly toward the background to enhance 3D depth perception.";
+                checked_state_changed(en) => { root.toggle_depth_cueing(en); }
+            }
+        }
+
+        // Element Visibility Section
+        if root.element_legend.length > 0: VerticalLayout {
+            spacing: MaterialStyleMetrics.spacing_6;
+
+            MaterialText {
+                text: "Element Visibility";
+                style: MaterialTypography.label_medium;
+                color: MaterialPalette.on_surface;
+            }
+
+            for item in root.element_legend: CheckBoxRow {
+                text: item.symbol + " (" + item.count + " atoms)";
+                check_state_bool: item.visible;
+                tooltip_text: "Show or hide " + item.symbol + " atoms in the 3D viewport.";
+                checked_state_changed => { root.toggle_element_visibility(item.symbol); }
+            }
+
+            if root.has_hidden_elements: FilledButton {
+                height: 28px;
+                text: "Show All Elements";
+                background: MaterialPalette.surface_container_highest;
+                text_color: MaterialPalette.on_surface;
+                clicked => { root.show_all_elements(); }
             }
         }
 
@@ -263,6 +307,58 @@ export component Structure3DSceneTab inherits ScrollView {
                 check_state_bool: root.dist_hud_visible;
                 tooltip_text: "Toggle the floating bond-length / coordination distribution mini-HUD.";
                 checked_state_changed(v) => { root.toggle_dist_hud(v); }
+            }
+        }
+
+        // Hi-Res 3D Snapshot Export Section
+        VerticalLayout {
+            spacing: MaterialStyleMetrics.spacing_6;
+
+            MaterialText {
+                text: "Hi-Res Snapshot (PNG)";
+                style: MaterialTypography.label_medium;
+                color: MaterialPalette.on_surface;
+            }
+
+            SegmentedButton {
+                width: 100%;
+                segment_height: MaterialStyleMetrics.size_24;
+                model: [
+                    { label: "1×", enabled: true },
+                    { label: "2×", enabled: true },
+                    { label: "4×", enabled: true },
+                ];
+                tooltips: [
+                    "Export at current viewport resolution.",
+                    "Export at 2× supersampled resolution.",
+                    "Export at 4× publication resolution (capped at 4096px).",
+                ];
+                current_index: root.snapshot_scale;
+                selected(idx) => { root.snapshot_scale = idx; }
+            }
+
+            SegmentedButton {
+                width: 100%;
+                segment_height: MaterialStyleMetrics.size_24;
+                model: [
+                    { label: "Dark", enabled: true },
+                    { label: "White", enabled: true },
+                    { label: "Alpha", enabled: true },
+                ];
+                tooltips: [
+                    "Use dark viewport background.",
+                    "Use pure white publication background.",
+                    "Use transparent alpha background.",
+                ];
+                current_index: root.snapshot_bg;
+                selected(idx) => { root.snapshot_bg = idx; }
+            }
+
+            FilledButton {
+                height: 30px;
+                text: "Export 3D Snapshot (PNG)";
+                tooltip: "Render high-resolution 3D snapshot and save to PNG.";
+                clicked => { root.export_snapshot(root.snapshot_scale, root.snapshot_bg); }
             }
         }
     }

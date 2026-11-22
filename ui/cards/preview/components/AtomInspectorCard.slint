@@ -39,6 +39,7 @@ component MetricRow inherits HorizontalLayout {
 /// Floating click-to-inspect atom telemetry card anchored top-right below OrientationGizmo.
 export component AtomInspectorCard inherits Rectangle {
     in property <InspectedAtomInfo> info;
+    callback focus_atom();
     callback dismissed();
 
     visible: root.info.valid;
@@ -89,28 +90,59 @@ export component AtomInspectorCard inherits Rectangle {
                 }
             }
 
-            close_touch := TooltipTarget {
-                width: 22px;
-                height: 22px;
-                mouse-cursor: pointer;
-                tooltip_text: "Clear atom selection (Esc).";
-                accessible-role: button;
-                accessible-label: "Clear Atom Selection";
-                clicked => { root.dismissed(); }
+            HorizontalLayout {
+                spacing: 4px;
+                alignment: center;
 
-                Rectangle {
-                    width: 100%;
-                    height: 100%;
-                    border-radius: MaterialStyleMetrics.border_radius_full;
-                    background: close_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+                focus_touch := TooltipTarget {
+                    width: 22px;
+                    height: 22px;
+                    mouse-cursor: pointer;
+                    tooltip_text: "Focus camera on this atom (F).";
+                    accessible-role: button;
+                    accessible-label: "Focus Camera on Atom";
+                    clicked => { root.focus_atom(); }
 
-                    Image {
-                        width: 12px;
-                        height: 12px;
-                        x: (parent.width - self.width) / 2;
-                        y: (parent.height - self.height) / 2;
-                        source: Icons.close;
-                        colorize: MaterialPalette.on_surface_variant;
+                    Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: MaterialStyleMetrics.border_radius_full;
+                        background: focus_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                        Image {
+                            width: 13px;
+                            height: 13px;
+                            x: (parent.width - self.width) / 2;
+                            y: (parent.height - self.height) / 2;
+                            source: Icons.zoom_in;
+                            colorize: MaterialPalette.primary;
+                        }
+                    }
+                }
+
+                close_touch := TooltipTarget {
+                    width: 22px;
+                    height: 22px;
+                    mouse-cursor: pointer;
+                    tooltip_text: "Clear atom selection (Esc).";
+                    accessible-role: button;
+                    accessible-label: "Clear Atom Selection";
+                    clicked => { root.dismissed(); }
+
+                    Rectangle {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: MaterialStyleMetrics.border_radius_full;
+                        background: close_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                        Image {
+                            width: 12px;
+                            height: 12px;
+                            x: (parent.width - self.width) / 2;
+                            y: (parent.height - self.height) / 2;
+                            source: Icons.close;
+                            colorize: MaterialPalette.on_surface_variant;
+                        }
                     }
                 }
             }

@@ -13,6 +13,10 @@
 #include "app/viewmodel/Structure3DController.hpp"
 
 #include <algorithm>
+#include <array>
+#include <format>
+#include <nfd.h>
+#include <string>
 #include <string_view>
 
 namespace correlation::app {
@@ -52,6 +56,46 @@ void AppController::registerCameraCallbacks() {
 
   window_.on_toggle_projection_3d(
       [this](bool enabled) { structure_3d_controller_->handleToggleProjection(enabled); });
+
+  window_.on_toggle_depth_cueing_3d(
+      [this](bool enabled) { structure_3d_controller_->handleToggleDepthCueing(enabled); });
+
+  window_.on_focus_picked_atom_3d([this] { structure_3d_controller_->handleFocusPickedAtom(); });
+
+  window_.on_tick_camera_animation_3d([this] { structure_3d_controller_->tickCameraAnimation(); });
+
+  window_.on_toggle_element_visibility_3d([this](const slint::SharedString &symbol) {
+    structure_3d_controller_->handleToggleElementVisibility(std::string(symbol));
+  });
+
+  window_.on_show_all_elements_3d([this] { structure_3d_controller_->handleShowAllElements(); });
+
+  window_.on_export_snapshot_3d([this](int scale_idx, int bg_mode) {
+    constexpr std::array<nfdfilteritem_t, 1> K_FILTERS{{{.name = "PNG Image", .spec = "png"}}};
+    nfdu8char_t *out_path = nullptr;
+    const std::string base = std::string(window_.get_file_basename());
+    const std::string default_name = base.empty() ? "structure_3d.png" : (base + "_3d.png");
+    const nfdresult_t res = NFD_SaveDialogU8(&out_path, K_FILTERS.data(), K_FILTERS.size(), nullptr,
+                                             default_name.c_str());
+    if (res != NFD_OKAY || out_path == nullptr) {
+      return;
+    }
+    std::string target_path(out_path);
+    NFD_FreePathU8(out_path);
+    if (!target_path.ends_with(".png") && !target_path.ends_with(".PNG")) {
+      target_path += ".png";
+    }
+    std::uint32_t width = 0;
+    std::uint32_t height = 0;
+    const bool exported = structure_3d_controller_->exportSnapshotPng(target_path, scale_idx,
+                                                                      bg_mode, &width, &height);
+    if (exported) {
+      window_.invoke_show_toast(
+          slint::SharedString(std::format("Saved 3D snapshot ({}×{})", width, height)), 1);
+    } else {
+      window_.invoke_show_toast(slint::SharedString("Failed to export 3D snapshot"), 2);
+    }
+  });
 
   window_.on_seek_frame_3d([this](int frame_idx) {
     structure_3d_controller_->handleSeekFrame(frame_idx);

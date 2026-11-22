@@ -37,6 +37,7 @@ struct RenderPipelineSnapshot {
   bool is_active{false};                    ///< Viewport active visibility flag.
   bool render_bonds{true};                  ///< Covalent bond rendering toggle.
   bool render_wireframe{true};              ///< Unit cell wireframe toggle.
+  bool depth_cueing{true};                  ///< Atmospheric depth cueing toggle.
   bool is_interacting{false};               ///< True during active user orbit/pan drag.
 
   // GPU Halo Highlight configuration
@@ -140,6 +141,18 @@ public:
    * @return True if hardware-accelerated (e.g. Vulkan GPU), false otherwise.
    */
   [[nodiscard]] bool isHardwareAccelerated() const noexcept;
+
+  /**
+   * @brief Renders a high-resolution offscreen snapshot without disturbing the live viewport.
+   * @param[in] snapshot Render configuration and scene snapshot.
+   * @param[in] dims Target snapshot pixel dimensions.
+   * @param[in] bg_color Clear/background color (use a=0 for transparent).
+   * @return Contiguous RGBA8 pixel buffer (empty on failure).
+   */
+  [[nodiscard]] static std::vector<std::uint8_t>
+  renderSnapshotOffscreen(const RenderPipelineSnapshot &snapshot,
+                          const render3d::ViewportDimensions &dims,
+                          const render3d::RgbaColor &bg_color);
 
 private:
   void renderLoop();

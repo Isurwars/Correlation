@@ -96,6 +96,15 @@ void Camera3D::setFov(float fov_y_deg) noexcept {
 
 void Camera3D::setTarget(const math::Vector3<float> &target) noexcept { target_ = target; }
 
+void Camera3D::setDistance(float distance) noexcept {
+  distance_ = std::clamp(distance, K_MIN_DISTANCE, K_MAX_DISTANCE);
+}
+
+void Camera3D::setClipPlanes(float z_near, float z_far) noexcept {
+  z_near_ = std::max(0.05F, z_near);
+  z_far_ = std::max(z_near_ + 1.0F, z_far);
+}
+
 math::Vector3<float> Camera3D::eyePosition() const noexcept {
   const float az_rad = azimuth_deg_ * K_DEG_TO_RAD;
   const float el_rad = elevation_deg_ * K_DEG_TO_RAD;

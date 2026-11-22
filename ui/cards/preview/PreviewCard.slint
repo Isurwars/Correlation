@@ -18,6 +18,7 @@ import {
     ExportConfig,
     CameraHudState,
     InspectedAtomInfo,
+    ElementLegendItem,
 } from "../../Types.slint";
 import { WorkflowStepper } from "./components/WorkflowStepper.slint";
 import { PreviewHeader } from "./components/PreviewHeader.slint";
@@ -141,6 +142,9 @@ export component PreviewCard inherits FilledCard {
     in property <bool> structure_3d_wireframe_enabled: true;
     in property <bool> structure_3d_in_cell: true;
     in property <bool> structure_3d_isometric: false;
+    in property <bool> structure_3d_camera_animating: false;
+    in property <[ElementLegendItem]> structure_3d_element_legend: [];
+    in property <bool> structure_3d_has_hidden_elements: false;
     in-out property <bool> structure_3d_is_playing: false;
     in property <string> structure_3d_backend_label: "";
     in property <bool> structure_3d_gpu_accelerated: false;
@@ -194,6 +198,11 @@ export component PreviewCard inherits FilledCard {
 
     callback pick_atom_3d(float, float);
     callback clear_picked_atom_3d();
+    callback focus_picked_atom_3d();
+    callback tick_camera_animation_3d();
+    callback toggle_element_visibility_3d(string);
+    callback show_all_elements_3d();
+    callback export_snapshot_3d();
     callback set_structure_3d_dist_metric(int);
     callback toggle_structure_3d_dist_hud(bool);
 
@@ -471,6 +480,9 @@ export component PreviewCard inherits FilledCard {
                 wireframe_enabled: root.structure_3d_wireframe_enabled;
                 in_cell_enabled: root.structure_3d_in_cell;
                 is_isometric: root.structure_3d_isometric;
+                camera_animating: root.structure_3d_camera_animating;
+                element_legend: root.structure_3d_element_legend;
+                has_hidden_elements: root.structure_3d_has_hidden_elements;
                 is_playing <=> root.structure_3d_is_playing;
                 backend_label: root.structure_3d_backend_label;
                 gpu_accelerated: root.structure_3d_gpu_accelerated;
@@ -479,6 +491,11 @@ export component PreviewCard inherits FilledCard {
                 radial_brush_text: root.structure_3d_radial_brush_text;
                 pick_atom(nx, ny) => { root.pick_atom_3d(nx, ny); }
                 clear_picked_atom => { root.clear_picked_atom_3d(); }
+                focus_picked_atom => { root.focus_picked_atom_3d(); }
+                tick_camera_animation => { root.tick_camera_animation_3d(); }
+                toggle_element_visibility(sym) => { root.toggle_element_visibility_3d(sym); }
+                show_all_elements => { root.show_all_elements_3d(); }
+                export_snapshot => { root.export_snapshot_3d(); }
                 file_loaded: root.file_loaded;
                 analysis_running: root.analysis_running;
                 has_validation_errors: root.has_validation_errors;

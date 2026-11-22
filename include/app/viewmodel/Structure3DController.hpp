@@ -24,10 +24,13 @@
 #include <slint.h>
 
 #include <atomic>
+#include <chrono>
 #include <memory>
 #include <mutex>
 #include <optional>
+#include <string>
 #include <thread>
+#include <unordered_set>
 
 class AppWindow;
 
@@ -159,6 +162,55 @@ public:
    * @param[in] isometric True for isometric/orthographic, false for perspective.
    */
   void handleToggleProjection(bool isometric);
+
+  /**
+   * @brief Toggles atmospheric depth cueing (fog) in Vulkan and CPU renderers.
+   * @param[in] enabled True to enable depth cueing.
+   */
+  void handleToggleDepthCueing(bool enabled);
+
+  /**
+   * @brief Queries whether depth cueing is enabled.
+   * @return True if depth cueing is active.
+   */
+  [[nodiscard]] bool isDepthCueingEnabled() const noexcept {
+    const std::scoped_lock lock(mutex_);
+    return depth_cueing_;
+  }
+
+  /**
+   * @brief Smoothly centers and zooms the camera onto the currently picked atom.
+   */
+  void handleFocusPickedAtom();
+
+  /**
+   * @brief Advances active smooth camera interpolation by one frame tick.
+   */
+  void tickCameraAnimation();
+
+  /**
+   * @brief Toggles hide/show visibility for all atoms of a chemical element symbol.
+   * @param[in] symbol Chemical element symbol (e.g. "Cu", "Si").
+   */
+  void handleToggleElementVisibility(const std::string &symbol);
+
+  /**
+   * @brief Restores visibility of all chemical elements.
+   */
+  void handleShowAllElements();
+
+  /**
+   * @brief Exports a high-resolution offscreen 3D viewport snapshot to a PNG file.
+   * @param[in] filepath Destination PNG file path.
+   * @param[in] scale_idx Resolution multiplier index (0 = 1x, 1 = 2x, 2 = 4x).
+   * @param[in] bg_mode Background mode (0 = Viewport dark, 1 = White, 2 = Transparent).
+   * @param[out] out_width Optional exported pixel width.
+   * @param[out] out_height Optional exported pixel height.
+   * @return True if PNG file was written successfully.
+   */
+  [[nodiscard]] bool exportSnapshotPng(const std::string &filepath, int scale_idx = 1,
+                                       int bg_mode = 0, std::uint32_t *out_width = nullptr,
+                                       std::uint32_t *out_height = nullptr);
 
   /**
    * @brief Updates active atomic structure from loaded Cell.
@@ -541,14 +593,33 @@ public:
   void setRadialBrushDistance(std::optional<double> r_angstrom);
 
 private:
+  struct CameraAnimState {
+    bool active{false};
+    std::chrono::steady_clock::time_point start_time{};
+    float duration_sec{0.22F};
+    math::Vector3<float> start_target{0.0F, 0.0F, 0.0F};
+    math::Vector3<float> end_target{0.0F, 0.0F, 0.0F};
+    float start_distance{20.0F};
+    float end_distance{20.0F};
+    float start_azimuth{0.0F};
+    float end_azimuth{0.0F};
+    float start_elevation{20.0F};
+    float end_elevation{20.0F};
+  };
+
   void requestPhaseCalculation(std::size_t frame_index);
   [[nodiscard]] bool canAdvancePlaybackFrameLocked(bool forward) const;
+  void startCameraAnimationLocked(const math::Vector3<float> &target, float distance,
+                                  float azimuth_deg, float elevation_deg);
+  void cancelCameraAnimationLocked();
   void updateScenePhaseVisuals();
   void updateScenePhaseVisualsLocked();
   void applyAtomInspectionHighlightLocked();
   void applyRadialBrushHighlightLocked(std::size_t &matched_atoms);
+  void applyElementVisibilityLocked();
   void applySlabClippingLocked();
   void syncInspectedAtomToWindow();
+  void syncElementLegendToWindow();
 
   template <typename F> void safeInvokeOnWindow(F &&action) {
     if (std::this_thread::get_id() == main_thread_id_) {
@@ -579,7 +650,10 @@ private:
   bool render_bonds_{true};
   bool render_wireframe_{true};
   bool in_cell_mode_{true};
+  bool depth_cueing_{true};
   bool is_interacting_{false};
+  CameraAnimState camera_anim_{};
+  std::unordered_set<std::string> hidden_elements_;
   double bond_cutoff_scale_{1.15};
   core::Cell current_cell_;
   std::shared_ptr<const core::Trajectory> current_trajectory_;

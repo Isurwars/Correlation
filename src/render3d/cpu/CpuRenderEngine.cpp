@@ -39,6 +39,13 @@ void CpuRenderEngine::setFeatureVisibility(bool render_bonds, bool render_wirefr
   rasterizer_.setOptions(opts);
 }
 
+void CpuRenderEngine::setRenderStyle(const RenderStyleConfig &style) {
+  auto opts = rasterizer_.options();
+  opts.depth_cueing = style.depth_cueing;
+  opts.background_color = style.background_color;
+  rasterizer_.setOptions(opts);
+}
+
 std::span<const uint8_t> CpuRenderEngine::renderFrame() {
   if (scene_ != nullptr) {
     rasterizer_.render(*scene_, camera_, framebuffer_);

@@ -29,6 +29,7 @@ struct RasterizerOptions {
   bool render_atoms{true};                                         ///< Flag to draw atom spheres.
   bool render_bonds{true};                                         ///< Flag to draw bonds.
   bool render_wireframe{true};                                     ///< Flag to draw simulation box.
+  bool depth_cueing{true}; ///< Flag for atmospheric depth fog.
 };
 
 /**

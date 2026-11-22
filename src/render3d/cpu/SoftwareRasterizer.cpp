@@ -26,7 +26,8 @@ constexpr float K_DEG_TO_RAD = std::numbers::pi_v<float> / 180.0F;
 }
 
 [[nodiscard]] RgbaColor shadeColor(RgbaColor base_color, float normal_x, float normal_y,
-                                   float normal_z, const RasterizerOptions &options) noexcept {
+                                   float normal_z, float fog_factor,
+                                   const RasterizerOptions &options) noexcept {
   const math::Vector3<float> norm_vec(normal_x, normal_y, normal_z);
   const math::Vector3<float> light_dir = safeNormalize(options.light_dir);
   const math::Vector3<float> view_dir(0.0F, 0.0F, 1.0F);
@@ -34,22 +35,30 @@ constexpr float K_DEG_TO_RAD = std::numbers::pi_v<float> / 180.0F;
 
   const float n_dot_l = std::max(0.0F, math::dot(norm_vec, light_dir));
   const float n_dot_h = std::max(0.0F, math::dot(norm_vec, halfway));
+  const float hemi = 0.5F + 0.5F * normal_y;
+  const float hemi_ambient = options.ambient * (0.75F + 0.55F * hemi);
+  const float rim_base = 1.0F - std::max(0.0F, normal_z);
+  const float rim = rim_base * rim_base * rim_base * 0.16F;
 
   const float diffuse_term = options.diffuse * n_dot_l;
   const float specular_term = options.specular * std::pow(n_dot_h, options.shininess);
-  const float intensity = options.ambient + diffuse_term;
+  const float intensity = hemi_ambient + diffuse_term;
 
-  const auto red =
-      static_cast<int>(static_cast<float>(base_color.r) * intensity + 255.0F * specular_term);
-  const auto green =
-      static_cast<int>(static_cast<float>(base_color.g) * intensity + 255.0F * specular_term);
-  const auto blue =
-      static_cast<int>(static_cast<float>(base_color.b) * intensity + 255.0F * specular_term);
+  float red = static_cast<float>(base_color.r) * intensity + 255.0F * (specular_term + rim);
+  float green = static_cast<float>(base_color.g) * intensity + 255.0F * (specular_term + rim);
+  float blue = static_cast<float>(base_color.b) * intensity + 255.0F * (specular_term + rim);
+
+  if (fog_factor > 0.0F) {
+    const float inv_fog = 1.0F - fog_factor;
+    red = red * inv_fog + static_cast<float>(options.background_color.r) * fog_factor;
+    green = green * inv_fog + static_cast<float>(options.background_color.g) * fog_factor;
+    blue = blue * inv_fog + static_cast<float>(options.background_color.b) * fog_factor;
+  }
 
   return RgbaColor{
-      .r = static_cast<uint8_t>(std::clamp(red, 0, 255)),
-      .g = static_cast<uint8_t>(std::clamp(green, 0, 255)),
-      .b = static_cast<uint8_t>(std::clamp(blue, 0, 255)),
+      .r = static_cast<uint8_t>(std::clamp(static_cast<int>(red), 0, 255)),
+      .g = static_cast<uint8_t>(std::clamp(static_cast<int>(green), 0, 255)),
+      .b = static_cast<uint8_t>(std::clamp(static_cast<int>(blue), 0, 255)),
       .a = base_color.a,
   };
 }
@@ -118,6 +127,7 @@ struct CoreSphereParams {
   math::Vector3<float> screen_center;
   float inv_r{0.0F};
   float z_offset_factor{0.0F};
+  float fog_factor{0.0F};
   RgbaColor base_color;
 };
 
@@ -138,7 +148,8 @@ void rasterizeCoreSpherePixel(uint32_t pixel_x, uint32_t pixel_y, float diff_x, 
   const float z_offset = norm_z * params.z_offset_factor;
   const float depth = params.screen_center.z() - z_offset;
 
-  const RgbaColor lit_color = shadeColor(params.base_color, norm_x, norm_y, norm_z, options);
+  const RgbaColor lit_color =
+      shadeColor(params.base_color, norm_x, norm_y, norm_z, params.fog_factor, options);
   framebuffer.testAndSetPixel(pixel_x, pixel_y, depth, lit_color);
 }
 
@@ -220,10 +231,19 @@ void rasterizeSphere(const AtomInstance &atom, const Matrix4<float> &view,
       .a = atom.color.a,
   };
 
+  float fog_factor = 0.0F;
+  if (options.depth_cueing && options.background_color.a > 0) {
+    const float fog_start = camera_dist * 0.65F;
+    const float fog_end = camera_dist * 1.95F;
+    const float fog_span = std::max(fog_end - fog_start, 1e-3F);
+    fog_factor = std::clamp((view_dist - fog_start) / fog_span, 0.0F, 1.0F) * 0.52F;
+  }
+
   const CoreSphereParams sphere_params{
       .screen_center = screen_center,
       .inv_r = inv_r,
       .z_offset_factor = z_offset_factor,
+      .fog_factor = fog_factor,
       .base_color = base_color,
   };
 

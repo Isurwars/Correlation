@@ -36,6 +36,8 @@ struct alignas(16) SceneUboData {
   std::array<float, 2> viewport_size{800.0F, 600.0F};
   float fov{45.0F};
   float padding{0.0F};
+  std::array<float, 4> fog_params{1.0F, 10.0F, 40.0F, 0.52F};
+  std::array<float, 4> bg_color{0.1F, 0.1F, 0.12F, 1.0F};
 };
 
 /**
@@ -113,14 +115,16 @@ public:
    * @param dimensions Active viewport dimensions.
    */
   void uploadScene(const Scene3D &scene, const Camera3D &camera,
-                   const ViewportDimensions &dimensions);
+                   const ViewportDimensions &dimensions, const RenderStyleConfig &style = {});
 
   /**
    * @brief Uploads only camera and viewport uniforms without re-uploading static scene geometry.
    * @param camera View and projection camera state.
    * @param dimensions Active viewport dimensions.
+   * @param style Visual shading and background configuration.
    */
-  void uploadUbo(const Camera3D &camera, const ViewportDimensions &dimensions);
+  void uploadUbo(const Camera3D &camera, const ViewportDimensions &dimensions,
+                 const RenderStyleConfig &style = {});
 
   [[nodiscard]] VkDescriptorSet descriptorSet() const noexcept { return descriptor_set_; }
   [[nodiscard]] VkBuffer sphereQuadBuffer() const noexcept { return sphere_quad_buffer_.buffer(); }

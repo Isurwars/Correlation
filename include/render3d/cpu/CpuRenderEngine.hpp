@@ -31,6 +31,7 @@ public:
   void setScene(std::shared_ptr<const Scene3D> scene) override;
   void setCamera(const Camera3D &camera) override;
   void setFeatureVisibility(bool render_bonds, bool render_wireframe) override;
+  void setRenderStyle(const RenderStyleConfig &style) override;
   [[nodiscard]] std::span<const uint8_t> renderFrame() override;
   [[nodiscard]] ViewportDimensions dimensions() const noexcept override;
   [[nodiscard]] std::string_view backendName() const noexcept override;

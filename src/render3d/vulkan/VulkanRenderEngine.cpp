@@ -160,6 +160,8 @@ void VulkanRenderEngine::setGpuHaloConfig(const GpuHaloConfig &config) {
   halo_settings_.hide_non_matching = config.hide_non_matching;
 }
 
+void VulkanRenderEngine::setRenderStyle(const RenderStyleConfig &style) { render_style_ = style; }
+
 void VulkanRenderEngine::bindViewportAndDescriptors() {
 #ifdef CORRELATION_USE_VULKAN
   const VkViewport viewport{
@@ -238,7 +240,14 @@ void VulkanRenderEngine::recordRenderCommands() {
   };
   vkBeginCommandBuffer(render_command_buffer_, &begin_info);
 
-  target_->beginRenderPass(render_command_buffer_, {{0.1F, 0.1F, 0.12F, 1.0F}});
+  constexpr float INV_255 = 1.0F / 255.0F;
+  const VkClearColorValue clear_rgba{{
+      static_cast<float>(render_style_.background_color.r) * INV_255,
+      static_cast<float>(render_style_.background_color.g) * INV_255,
+      static_cast<float>(render_style_.background_color.b) * INV_255,
+      static_cast<float>(render_style_.background_color.a) * INV_255,
+  }};
+  target_->beginRenderPass(render_command_buffer_, clear_rgba);
 
   bindViewportAndDescriptors();
   drawWireframe();
@@ -266,14 +275,14 @@ std::span<const uint8_t> VulkanRenderEngine::renderFrame() {
 
   if (scene_) {
     if (scene_.get() != last_uploaded_scene_) {
-      buffer_manager_->uploadScene(*scene_, camera_, dimensions_);
+      buffer_manager_->uploadScene(*scene_, camera_, dimensions_, render_style_);
       last_uploaded_scene_ = scene_.get();
     } else {
-      buffer_manager_->uploadUbo(camera_, dimensions_);
+      buffer_manager_->uploadUbo(camera_, dimensions_, render_style_);
     }
   } else {
     const Scene3D empty_scene;
-    buffer_manager_->uploadScene(empty_scene, camera_, dimensions_);
+    buffer_manager_->uploadScene(empty_scene, camera_, dimensions_, render_style_);
     last_uploaded_scene_ = nullptr;
   }
 

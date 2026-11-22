@@ -15,11 +15,18 @@ layout(binding = 0) uniform SceneUbo {
     vec2 viewport_size;
     float fov;
     float padding;
+    vec4 fog_params; // x = enabled (0/1), y = start, z = end, w = strength
+    vec4 bg_color;   // rgb = background / fog target color, a = clear alpha
 } ubo;
 
 layout(location = 0) out vec4 out_frag_color;
 
 void main() {
+    float dim = in_style.y;
+    if (dim <= 0.0 && in_halo_color.a <= 0.0) {
+        discard;
+    }
+
     vec3 ray_target = in_view_center + vec3(in_corner, 0.0);
     vec3 ray_dir = normalize(ray_target);
 
@@ -30,7 +37,7 @@ void main() {
     float c = dot(center, center) - r * r;
     float discriminant = b * b - c;
 
-    if (discriminant < 0.0) {
+    if (discriminant < 0.0 || dim <= 0.0) {
         if (in_halo_color.a > 0.0) {
             float dist_center = length(in_corner);
             float halo_radius = r * max(in_style.x, 1.0);
@@ -55,10 +62,18 @@ void main() {
 
     float diff = max(dot(normal, light_dir_view), 0.0);
     float spec = pow(max(dot(normal, halfway), 0.0), 32.0);
+    float hemi = 0.5 + 0.5 * normal.y;
+    vec3 ambient_rgb = mix(vec3(0.22, 0.24, 0.30), vec3(0.42, 0.44, 0.48), hemi);
+    float rim = pow(1.0 - max(dot(normal, view_dir), 0.0), 3.0) * 0.16;
 
-    float ambient = 0.35;
-    float dim = in_style.y;
-    vec3 shaded = (ambient + (1.0 - ambient) * diff) * in_color.rgb * dim + 0.3 * spec * vec3(1.0);
+    vec3 shaded = (ambient_rgb + 0.65 * diff) * in_color.rgb * dim + (0.30 * spec + rim * dim) * vec3(1.0);
+
+    if (ubo.fog_params.x > 0.5) {
+        float view_depth = -hit_point.z;
+        float fog_span = max(ubo.fog_params.z - ubo.fog_params.y, 1e-3);
+        float fog_t = clamp((view_depth - ubo.fog_params.y) / fog_span, 0.0, 1.0) * ubo.fog_params.w;
+        shaded = mix(shaded, ubo.bg_color.rgb, fog_t);
+    }
 
     float dist_perp = sqrt(max(dot(center, center) - b * b, 0.0));
     float alpha = in_color.a * (1.0 - smoothstep(r * 0.985, r, dist_perp));

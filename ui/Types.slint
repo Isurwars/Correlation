@@ -273,6 +273,13 @@ export struct SlabClipState {
     z_max: float,
 }
 
+export struct ElementLegendItem {
+    symbol: string,
+    count: int,
+    color: color,
+    visible: bool,
+}
+
 export struct PhysicsDiagnostics {
     // Dynamic properties
     diff_msd: string,

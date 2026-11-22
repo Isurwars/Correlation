@@ -13,6 +13,8 @@
 #include "core/Trajectory.hpp"
 
 #include <chrono>
+#include <filesystem>
+#include <fstream>
 #include <gtest/gtest.h>
 #include <optional>
 #include <stdexcept>
@@ -288,6 +290,64 @@ TEST_F(Structure3DControllerTests, RadialBrushAndCameraHudUpdateWindowState) {
 
   controller.setRadialBrushDistance(std::nullopt);
   EXPECT_TRUE(std::string_view(window().get_structure_3d_radial_brush_text().data()).empty());
+}
+
+TEST_F(Structure3DControllerTests, DepthCueingToggleAndElementVisibility) {
+  const ProgramOptions options;
+  Structure3DController controller(window(), options);
+  controller.setCell(createTestCell());
+
+  EXPECT_TRUE(controller.isDepthCueingEnabled());
+  EXPECT_TRUE(window().get_structure_3d_depth_cueing());
+  controller.handleToggleDepthCueing(false);
+  EXPECT_FALSE(controller.isDepthCueingEnabled());
+  EXPECT_FALSE(window().get_structure_3d_depth_cueing());
+
+  // Element legend populated with O (2) and Si (1)
+  const auto legend = window().get_structure_3d_element_legend();
+  ASSERT_NE(legend, nullptr);
+  EXPECT_EQ(legend->row_count(), 2UL);
+  EXPECT_FALSE(window().get_structure_3d_has_hidden_elements());
+
+  // Hide O atoms; Si (index 0) stays visible, O (indices 1, 2) become hidden
+  controller.handleToggleElementVisibility("O");
+  EXPECT_TRUE(window().get_structure_3d_has_hidden_elements());
+  EXPECT_GT(controller.scene()->atoms()[0].dim_factor, 0.0F);
+  EXPECT_FLOAT_EQ(controller.scene()->atoms()[1].dim_factor, 0.0F);
+  EXPECT_FLOAT_EQ(controller.scene()->atoms()[2].dim_factor, 0.0F);
+
+  // Restore all elements
+  controller.handleShowAllElements();
+  EXPECT_FALSE(window().get_structure_3d_has_hidden_elements());
+  EXPECT_GT(controller.scene()->atoms()[1].dim_factor, 0.0F);
+}
+
+TEST_F(Structure3DControllerTests, HiResSnapshotExportWritesValidPng) {
+  const ProgramOptions options;
+  Structure3DController controller(window(), options);
+  controller.handleViewportResized(320.0F, 240.0F);
+  controller.setCell(createTestCell());
+
+  const auto tmp_png = std::filesystem::temp_directory_path() / "correlation_3d_snap_test.png";
+  std::error_code err_code;
+  std::filesystem::remove(tmp_png, err_code);
+
+  std::uint32_t out_w = 0;
+  std::uint32_t out_h = 0;
+  EXPECT_TRUE(controller.exportSnapshotPng(tmp_png.string(), 0, 1, &out_w, &out_h));
+  EXPECT_EQ(out_w, 320U);
+  EXPECT_EQ(out_h, 240U);
+
+  std::ifstream in_file(tmp_png, std::ios::binary);
+  ASSERT_TRUE(in_file.is_open());
+  std::array<char, 4> magic{};
+  in_file.read(magic.data(), static_cast<std::streamsize>(magic.size()));
+  EXPECT_EQ(static_cast<unsigned char>(magic[0]), 0x89U);
+  EXPECT_EQ(magic[1], 'P');
+  EXPECT_EQ(magic[2], 'N');
+  EXPECT_EQ(magic[3], 'G');
+  in_file.close();
+  EXPECT_TRUE(std::filesystem::remove(tmp_png, err_code));
 }
 
 } // namespace

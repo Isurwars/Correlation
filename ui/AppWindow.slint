@@ -49,6 +49,7 @@ import {
     CameraHudState,
     InspectedAtomInfo,
     SlabClipState,
+    ElementLegendItem,
 } from "Types.slint";
 
 import { MiniSideBar } from "nav/MiniSideBar.slint";
@@ -81,6 +82,7 @@ export {
     CameraHudState,
     InspectedAtomInfo,
     SlabClipState,
+    ElementLegendItem,
 }
 
 // ============================================================================
@@ -251,6 +253,12 @@ export component AppWindow inherits Window {
     in property <bool> structure_3d_wireframe_enabled: true;
     in-out property <bool> structure_3d_in_cell: true;
     in-out property <bool> structure_3d_isometric: false;
+    in-out property <bool> structure_3d_depth_cueing: true;
+    in property <bool> structure_3d_camera_animating: false;
+    in property <[ElementLegendItem]> structure_3d_element_legend: [];
+    in property <bool> structure_3d_has_hidden_elements: false;
+    in-out property <int> structure_3d_snapshot_scale: 1; // 0: 1x, 1: 2x, 2: 4x
+    in-out property <int> structure_3d_snapshot_bg: 0;    // 0: Dark, 1: White, 2: Transparent
     in property <string> structure_3d_backend_label: "";
     in property <bool> structure_3d_gpu_accelerated: false;
     // Phase Search properties
@@ -490,6 +498,14 @@ export component AppWindow inherits Window {
     callback toggle_wireframe_3d(bool);
     callback toggle_in_cell_3d(bool);
     callback toggle_projection_3d(bool);
+    callback toggle_depth_cueing_3d(bool);
+    callback focus_picked_atom_3d();
+    callback tick_camera_animation_3d();
+    callback toggle_element_visibility_3d(string);
+    callback show_all_elements_3d();
+    callback export_snapshot_3d(int, int);
+    callback show_toast(string, int);
+    show_toast(msg, kind) => { ToastState.show(msg, kind); }
     callback seek_frame_3d(int);
     callback step_frame_3d(bool);
     callback set_structure_3d_dist_metric(int);
@@ -730,6 +746,12 @@ export component AppWindow inherits Window {
             if (event.text == Key.RightArrow) {
                 if ((root.preview_active_tab == 1 || root.preview_active_tab == 2) && root.structure_3d_total_frames > 1) {
                     root.step_frame_3d(true);
+                    return accept;
+                }
+            }
+            if (event.text == "f" || event.text == "F") {
+                if ((root.preview_active_tab == 1 || root.preview_active_tab == 2) && root.structure_3d_inspected_atom.valid) {
+                    root.focus_picked_atom_3d();
                     return accept;
                 }
             }
@@ -1086,6 +1108,9 @@ export component AppWindow inherits Window {
                     structure_3d_wireframe_enabled: root.structure_3d_wireframe_enabled;
                     structure_3d_in_cell: root.structure_3d_in_cell;
                     structure_3d_isometric: root.structure_3d_isometric;
+                    structure_3d_camera_animating: root.structure_3d_camera_animating;
+                    structure_3d_element_legend: root.structure_3d_element_legend;
+                    structure_3d_has_hidden_elements: root.structure_3d_has_hidden_elements;
                     structure_3d_is_playing <=> root.structure_3d_is_playing;
                     structure_3d_backend_label: root.structure_3d_backend_label;
                     structure_3d_gpu_accelerated: root.structure_3d_gpu_accelerated;
@@ -1094,6 +1119,11 @@ export component AppWindow inherits Window {
                     structure_3d_radial_brush_text: root.structure_3d_radial_brush_text;
                     pick_atom_3d(nx, ny) => { root.pick_atom_3d(nx, ny); }
                     clear_picked_atom_3d => { root.clear_picked_atom_3d(); }
+                    focus_picked_atom_3d => { root.focus_picked_atom_3d(); }
+                    tick_camera_animation_3d => { root.tick_camera_animation_3d(); }
+                    toggle_element_visibility_3d(sym) => { root.toggle_element_visibility_3d(sym); }
+                    show_all_elements_3d => { root.show_all_elements_3d(); }
+                    export_snapshot_3d => { root.export_snapshot_3d(root.structure_3d_snapshot_scale, root.structure_3d_snapshot_bg); }
 
                     rotate_3d(dx, dy) => { root.rotate_3d(dx, dy); }
                     pan_3d(dx, dy) => { root.pan_3d(dx, dy); }
@@ -1307,6 +1337,11 @@ export component AppWindow inherits Window {
                     wireframe_enabled: root.structure_3d_wireframe_enabled;
                     in_cell_enabled: root.structure_3d_in_cell;
                     is_isometric: root.structure_3d_isometric;
+                    depth_cueing_enabled: root.structure_3d_depth_cueing;
+                    element_legend: root.structure_3d_element_legend;
+                    has_hidden_elements: root.structure_3d_has_hidden_elements;
+                    snapshot_scale <=> root.structure_3d_snapshot_scale;
+                    snapshot_bg <=> root.structure_3d_snapshot_bg;
                     dist_hud_visible: root.structure_3d_dist_hud_visible;
                     slab_clip: root.structure_3d_slab_clip;
 
@@ -1329,6 +1364,10 @@ export component AppWindow inherits Window {
                     toggle_wireframe(en) => { root.toggle_wireframe_3d(en); }
                     toggle_in_cell(en) => { root.toggle_in_cell_3d(en); }
                     toggle_projection(en) => { root.toggle_projection_3d(en); }
+                    toggle_depth_cueing(en) => { root.toggle_depth_cueing_3d(en); }
+                    toggle_element_visibility(sym) => { root.toggle_element_visibility_3d(sym); }
+                    show_all_elements => { root.show_all_elements_3d(); }
+                    export_snapshot(sc, bg) => { root.export_snapshot_3d(sc, bg); }
                     toggle_dist_hud(v) => { root.toggle_structure_3d_dist_hud(v); }
                     set_slab_clip(clip) => { root.set_slab_clip_3d(clip); }
                     reset_slab_clip => { root.reset_slab_clip_3d(); }

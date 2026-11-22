@@ -49,6 +49,7 @@ public:
   void setCamera(const Camera3D &camera) override;
   void setFeatureVisibility(bool render_bonds, bool render_wireframe) override;
   void setGpuHaloConfig(const GpuHaloConfig &config) override;
+  void setRenderStyle(const RenderStyleConfig &style) override;
   [[nodiscard]] std::span<const uint8_t> renderFrame() override;
   [[nodiscard]] ViewportDimensions dimensions() const noexcept override;
   [[nodiscard]] std::string_view backendName() const noexcept override;
@@ -67,6 +68,7 @@ private:
   std::shared_ptr<const Scene3D> scene_;
   const Scene3D *last_uploaded_scene_{nullptr};
   Camera3D camera_;
+  RenderStyleConfig render_style_{};
   bool render_bonds_{true};
   bool render_wireframe_{true};
   bool initialized_{false};

@@ -14,10 +14,14 @@
 
 #include <algorithm>
 #include <array>
+#include <chrono>
 #include <cmath>
 #include <cstdint>
 #include <format>
+#include <fstream>
 #include <iostream>
+#include <map>
+#include <miniz.h>
 #include <utility>
 
 namespace correlation::app {
@@ -78,6 +82,7 @@ Structure3DController::Structure3DController(::AppWindow &window, const ProgramO
   safeInvokeOnWindow([this] {
     window_.set_structure_3d_in_cell(in_cell_mode_);
     window_.set_structure_3d_isometric(camera_.isOrthographic());
+    window_.set_structure_3d_depth_cueing(depth_cueing_);
   });
 
   const bool is_gpu = render_pipeline_->isHardwareAccelerated();
@@ -117,6 +122,7 @@ void Structure3DController::requestRender(bool immediate) {
       .is_active = is_active_,
       .render_bonds = render_bonds_,
       .render_wireframe = render_wireframe_,
+      .depth_cueing = depth_cueing_,
       .is_interacting = is_interacting_,
       .gpu_halos_enabled = gpu_halos,
       .phase_descriptor = phaseDescriptor(),
@@ -157,6 +163,7 @@ void Structure3DController::handleRotate(float delta_x, float delta_y) {
   constexpr float K_ORBIT_SENSITIVITY = 0.4F; // degrees per logical pixel
   {
     const std::scoped_lock lock(mutex_);
+    cancelCameraAnimationLocked();
     camera_.orbit(delta_x * K_ORBIT_SENSITIVITY, delta_y * K_ORBIT_SENSITIVITY);
   }
   syncCameraHudToWindow();
@@ -166,6 +173,7 @@ void Structure3DController::handleRotate(float delta_x, float delta_y) {
 void Structure3DController::handlePan(float delta_x, float delta_y) {
   {
     const std::scoped_lock lock(mutex_);
+    cancelCameraAnimationLocked();
     camera_.pan(delta_x, delta_y);
   }
   syncCameraHudToWindow();
@@ -177,7 +185,82 @@ void Structure3DController::handleZoom(float delta) {
   const float clamped_delta = std::clamp(delta, -4.0F, 4.0F);
   {
     const std::scoped_lock lock(mutex_);
+    cancelCameraAnimationLocked();
     camera_.zoom(clamped_delta * K_ZOOM_SENSITIVITY);
+  }
+  syncCameraHudToWindow();
+  requestRender();
+}
+
+void Structure3DController::startCameraAnimationLocked(const math::Vector3<float> &target,
+                                                       float distance, float azimuth_deg,
+                                                       float elevation_deg) {
+  if (!is_active_) {
+    camera_anim_.active = false;
+    camera_.setTarget(target);
+    camera_.setDistance(distance);
+    camera_.setOrientation(azimuth_deg, elevation_deg);
+    return;
+  }
+  camera_anim_.active = true;
+  camera_anim_.start_time = std::chrono::steady_clock::now();
+  camera_anim_.duration_sec = 0.22F;
+  camera_anim_.start_target = camera_.target();
+  camera_anim_.end_target = target;
+  camera_anim_.start_distance = camera_.distance();
+  camera_anim_.end_distance = distance;
+  camera_anim_.start_azimuth = camera_.azimuth();
+  camera_anim_.end_azimuth = azimuth_deg;
+  camera_anim_.start_elevation = camera_.elevation();
+  camera_anim_.end_elevation = elevation_deg;
+  safeInvokeOnWindow([this] { window_.set_structure_3d_camera_animating(true); });
+}
+
+void Structure3DController::cancelCameraAnimationLocked() {
+  if (!camera_anim_.active) {
+    return;
+  }
+  camera_anim_.active = false;
+  safeInvokeOnWindow([this] { window_.set_structure_3d_camera_animating(false); });
+}
+
+void Structure3DController::tickCameraAnimation() {
+  bool still_active = false;
+  {
+    const std::scoped_lock lock(mutex_);
+    if (!camera_anim_.active) {
+      return;
+    }
+    const float elapsed =
+        std::chrono::duration<float>(std::chrono::steady_clock::now() - camera_anim_.start_time)
+            .count();
+    const float raw_t = std::clamp(elapsed / camera_anim_.duration_sec, 0.0F, 1.0F);
+    const float inv_t = 1.0F - raw_t;
+    const float ease_t = 1.0F - inv_t * inv_t * inv_t; // cubic ease-out
+
+    const auto target =
+        camera_anim_.start_target + (camera_anim_.end_target - camera_anim_.start_target) * ease_t;
+    const float dist = camera_anim_.start_distance +
+                       (camera_anim_.end_distance - camera_anim_.start_distance) * ease_t;
+
+    // Shortest-path angular interpolation for azimuth
+    const float delta_az =
+        std::fmod(camera_anim_.end_azimuth - camera_anim_.start_azimuth + 540.0F, 360.0F) - 180.0F;
+    const float az_deg = camera_anim_.start_azimuth + delta_az * ease_t;
+    const float el_deg = camera_anim_.start_elevation +
+                         (camera_anim_.end_elevation - camera_anim_.start_elevation) * ease_t;
+
+    camera_.setTarget(target);
+    camera_.setDistance(dist);
+    camera_.setOrientation(az_deg, el_deg);
+
+    if (raw_t >= 1.0F) {
+      camera_anim_.active = false;
+    }
+    still_active = camera_anim_.active;
+  }
+  if (!still_active) {
+    safeInvokeOnWindow([this] { window_.set_structure_3d_camera_animating(false); });
   }
   syncCameraHudToWindow();
   requestRender();
@@ -186,12 +269,14 @@ void Structure3DController::handleZoom(float delta) {
 void Structure3DController::handleResetView() {
   {
     const std::scoped_lock lock(mutex_);
+    render3d::Camera3D target_cam = camera_;
     if (scene_ != nullptr) {
-      camera_.fitToBox(scene_->boundsMin(), scene_->boundsMax());
+      target_cam.fitToBox(scene_->boundsMin(), scene_->boundsMax());
     } else {
-      camera_.fitToBox(math::Vector3<float>{-10.0F, -10.0F, -10.0F},
-                       math::Vector3<float>{10.0F, 10.0F, 10.0F});
+      target_cam.fitToBox(math::Vector3<float>{-10.0F, -10.0F, -10.0F},
+                          math::Vector3<float>{10.0F, 10.0F, 10.0F});
     }
+    startCameraAnimationLocked(target_cam.target(), target_cam.distance(), 45.0F, 35.26F);
   }
   syncCameraHudToWindow();
   requestRender();
@@ -200,24 +285,170 @@ void Structure3DController::handleResetView() {
 void Structure3DController::handleSetCameraPreset(int preset_idx) {
   {
     const std::scoped_lock lock(mutex_);
+    float target_az = 45.0F;
+    float target_el = 35.26F;
     switch (preset_idx) {
     case 0: // Top (XY)
-      camera_.setOrientation(0.0F, 89.0F);
+      target_az = 0.0F;
+      target_el = 89.0F;
       break;
     case 1: // Front (XZ)
-      camera_.setOrientation(0.0F, 0.0F);
+      target_az = 0.0F;
+      target_el = 0.0F;
       break;
     case 2: // Side (YZ)
-      camera_.setOrientation(90.0F, 0.0F);
+      target_az = 90.0F;
+      target_el = 0.0F;
       break;
     case 3: // Isometric
     default:
-      camera_.setOrientation(45.0F, 35.26F);
+      target_az = 45.0F;
+      target_el = 35.26F;
       break;
     }
+    startCameraAnimationLocked(camera_.target(), camera_.distance(), target_az, target_el);
   }
   syncCameraHudToWindow();
   requestRender();
+}
+
+void Structure3DController::handleFocusPickedAtom() {
+  bool focused = false;
+  {
+    const std::scoped_lock lock(mutex_);
+    if (scene_ != nullptr && picked_atom_index_.has_value() &&
+        *picked_atom_index_ < scene_->atoms().size()) {
+      const auto &atom = scene_->atoms()[*picked_atom_index_];
+      const float focus_dist = std::max(8.0F, atom.covalent_radius * 9.0F);
+      camera_.setClipPlanes(0.1F, std::max(200.0F, focus_dist * 25.0F));
+      startCameraAnimationLocked(atom.position, focus_dist, camera_.azimuth(), camera_.elevation());
+      focused = true;
+    }
+  }
+  if (focused) {
+    syncCameraHudToWindow();
+    requestRender();
+  }
+}
+
+void Structure3DController::handleToggleDepthCueing(bool enabled) {
+  {
+    const std::scoped_lock lock(mutex_);
+    depth_cueing_ = enabled;
+  }
+  safeInvokeOnWindow([this, enabled] { window_.set_structure_3d_depth_cueing(enabled); });
+  requestRender();
+}
+
+void Structure3DController::handleToggleElementVisibility(const std::string &symbol) {
+  if (symbol.empty()) {
+    return;
+  }
+  {
+    const std::scoped_lock lock(mutex_);
+    if (hidden_elements_.contains(symbol)) {
+      hidden_elements_.erase(symbol);
+    } else {
+      hidden_elements_.insert(symbol);
+    }
+    updateScenePhaseVisualsLocked();
+    if (scene_ != nullptr && render_bonds_) {
+      scene_->recomputeBonds(bond_cutoff_scale_, in_cell_mode_);
+      scene_dirty_ = true;
+    }
+  }
+  syncElementLegendToWindow();
+  requestRender();
+}
+
+void Structure3DController::handleShowAllElements() {
+  {
+    const std::scoped_lock lock(mutex_);
+    if (hidden_elements_.empty()) {
+      return;
+    }
+    hidden_elements_.clear();
+    updateScenePhaseVisualsLocked();
+    if (scene_ != nullptr && render_bonds_) {
+      scene_->recomputeBonds(bond_cutoff_scale_, in_cell_mode_);
+      scene_dirty_ = true;
+    }
+  }
+  syncElementLegendToWindow();
+  requestRender();
+}
+
+bool Structure3DController::exportSnapshotPng(const std::string &filepath, int scale_idx,
+                                              int bg_mode, std::uint32_t *out_width,
+                                              std::uint32_t *out_height) {
+  if (filepath.empty()) {
+    return false;
+  }
+  constexpr std::array<std::uint32_t, 3> K_SCALES{1U, 2U, 4U};
+  const std::uint32_t scale = K_SCALES.at(static_cast<std::size_t>(std::clamp(scale_idx, 0, 2)));
+  render3d::ViewportDimensions snap_dims{};
+  RenderPipelineSnapshot snapshot{};
+  {
+    const std::scoped_lock lock(mutex_);
+    if (scene_ == nullptr) {
+      return false;
+    }
+    if (scene_dirty_ || published_scene_ == nullptr) {
+      published_scene_ = std::make_shared<render3d::Scene3D>(*scene_);
+      scene_dirty_ = false;
+    }
+    constexpr std::uint32_t K_MAX_SNAP_DIM = 4096U;
+    snap_dims.width = std::clamp(viewport_dims_.width * scale, 320U, K_MAX_SNAP_DIM);
+    snap_dims.height = std::clamp(viewport_dims_.height * scale, 240U, K_MAX_SNAP_DIM);
+    snapshot = RenderPipelineSnapshot{
+        .camera = camera_,
+        .scene = published_scene_,
+        .is_active = true,
+        .render_bonds = render_bonds_,
+        .render_wireframe = render_wireframe_,
+        .depth_cueing = depth_cueing_,
+        .is_interacting = false,
+    };
+  }
+
+  render3d::RgbaColor bg_color{.r = 25, .g = 25, .b = 31, .a = 255};
+  if (bg_mode == 1) {
+    bg_color = render3d::RgbaColor{.r = 255, .g = 255, .b = 255, .a = 255};
+  } else if (bg_mode == 2) {
+    bg_color = render3d::RgbaColor{.r = 0, .g = 0, .b = 0, .a = 0};
+  }
+
+  const auto rgba =
+      Structure3DRenderPipeline::renderSnapshotOffscreen(snapshot, snap_dims, bg_color);
+  if (rgba.empty()) {
+    return false;
+  }
+
+  std::size_t png_len = 0;
+  void *png_mem =
+      tdefl_write_image_to_png_file_in_memory(rgba.data(), static_cast<int>(snap_dims.width),
+                                              static_cast<int>(snap_dims.height), 4, &png_len);
+  if (png_mem == nullptr || png_len == 0) {
+    return false;
+  }
+
+  std::ofstream out(filepath, std::ios::binary);
+  if (!out.is_open()) {
+    mz_free(png_mem);
+    return false;
+  }
+  out.write(reinterpret_cast<const char *>(png_mem), static_cast<std::streamsize>(png_len));
+  mz_free(png_mem);
+  if (!out.good()) {
+    return false;
+  }
+  if (out_width != nullptr) {
+    *out_width = snap_dims.width;
+  }
+  if (out_height != nullptr) {
+    *out_height = snap_dims.height;
+  }
+  return true;
 }
 
 void Structure3DController::handleToggleBonds(bool enabled) {
@@ -384,6 +615,7 @@ void Structure3DController::setCell(const core::Cell &cell) {
     current_trajectory_.reset();
     picked_atom_index_.reset();
     radial_brush_r_.reset();
+    hidden_elements_.clear();
     if (phase_service_ != nullptr) {
       phase_service_->clearCache();
     }
@@ -399,6 +631,7 @@ void Structure3DController::setCell(const core::Cell &cell) {
     window_.set_structure_3d_radial_brush_text("");
   });
   syncInspectedAtomToWindow();
+  syncElementLegendToWindow();
   syncCameraHudToWindow();
   requestRender();
   syncPhaseSearchToWindow();
@@ -418,6 +651,7 @@ void Structure3DController::setTrajectory(std::shared_ptr<const core::Trajectory
     current_trajectory_ = trajectory;
     picked_atom_index_.reset();
     radial_brush_r_.reset();
+    hidden_elements_.clear();
     if (phase_service_ != nullptr) {
       phase_service_->clearCache();
     }
@@ -438,6 +672,7 @@ void Structure3DController::setTrajectory(std::shared_ptr<const core::Trajectory
     window_.set_structure_3d_current_frame(0);
     window_.set_structure_3d_total_frames(static_cast<int>(total_frames));
   });
+  syncElementLegendToWindow();
   requestRender();
   syncPhaseSearchToWindow();
 }
@@ -785,6 +1020,7 @@ void Structure3DController::updateScenePhaseVisualsLocked() {
   applyAtomInspectionHighlightLocked();
   std::size_t matched_brush = 0;
   applyRadialBrushHighlightLocked(matched_brush);
+  applyElementVisibilityLocked();
   applySlabClippingLocked();
   scene_dirty_ = true;
 }
@@ -1021,6 +1257,59 @@ void Structure3DController::applyRadialBrushHighlightLocked(std::size_t &matched
       atoms[idx].dim_factor = std::min(atoms[idx].dim_factor, 0.25F);
     }
   }
+}
+
+void Structure3DController::applyElementVisibilityLocked() {
+  if (scene_ == nullptr || hidden_elements_.empty()) {
+    return;
+  }
+  const auto active_frame = streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
+  const core::Cell &active_cell =
+      (current_trajectory_ && active_frame < current_trajectory_->getFrameCount())
+          ? current_trajectory_->getFrame(active_frame)
+          : current_cell_;
+  const auto &cell_atoms = active_cell.atoms();
+  auto &scene_atoms = scene_->atoms();
+  const std::size_t count = std::min(cell_atoms.size(), scene_atoms.size());
+  for (std::size_t idx = 0; idx < count; ++idx) {
+    if (hidden_elements_.contains(cell_atoms[idx].element().symbol)) {
+      scene_atoms[idx].dim_factor = 0.0F;
+      scene_atoms[idx].halo_color.a = 0;
+    }
+  }
+}
+
+void Structure3DController::syncElementLegendToWindow() {
+  std::map<std::string, int> counts;
+  std::unordered_set<std::string> hidden_copy;
+  {
+    const std::scoped_lock lock(mutex_);
+    hidden_copy = hidden_elements_;
+    const auto active_frame = streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
+    const core::Cell &active_cell =
+        (current_trajectory_ && active_frame < current_trajectory_->getFrameCount())
+            ? current_trajectory_->getFrame(active_frame)
+            : current_cell_;
+    for (const auto &atom : active_cell.atoms()) {
+      ++counts[atom.element().symbol];
+    }
+  }
+
+  auto model = std::make_shared<slint::VectorModel<ElementLegendItem>>();
+  for (const auto &[symbol, cnt] : counts) {
+    const auto rgba = render3d::getElementColor(symbol);
+    model->push_back(ElementLegendItem{
+        .symbol = slint::SharedString(symbol),
+        .count = cnt,
+        .color = slint::Color::from_rgb_uint8(rgba.r, rgba.g, rgba.b),
+        .visible = !hidden_copy.contains(symbol),
+    });
+  }
+  const bool has_hidden = !hidden_copy.empty();
+  safeInvokeOnWindow([this, model = std::move(model), has_hidden] {
+    window_.set_structure_3d_element_legend(model);
+    window_.set_structure_3d_has_hidden_elements(has_hidden);
+  });
 }
 
 void Structure3DController::applySlabClippingLocked() {
