@@ -13,6 +13,7 @@
 #include "math/Constants.hpp"
 #include "physics/PhysicalData.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <limits>
 #include <stdexcept>
@@ -24,23 +25,23 @@ namespace {
 // Static registration of the calculator in the factory
 const bool REGISTERED = CalculatorFactory::registerTypeSafe<VDOSCalculator>("VDOSCalculator");
 
-[[nodiscard]] double computeTrapezoidalArea(const std::vector<real_t> &freqs,
-                                            const std::vector<real_t> &vals) noexcept {
+[[nodiscard]] double computeTrapezoidalArea(const std::vector<double> &freqs,
+                                            const std::vector<double> &vals) noexcept {
   if (freqs.size() < 2 || freqs.size() != vals.size()) {
     return 0.0;
   }
   double area = 0.0;
   for (size_t i = 0; i + 1 < freqs.size(); ++i) {
-    const double d_nu = static_cast<double>(freqs[i + 1]) - static_cast<double>(freqs[i]);
-    area += 0.5 * (static_cast<double>(vals[i]) + static_cast<double>(vals[i + 1])) * d_nu;
+    const double d_nu = freqs[i + 1] - freqs[i];
+    area += 0.5 * (vals[i] + vals[i + 1]) * d_nu;
   }
   return area;
 }
 
-[[nodiscard]] std::map<std::string, real_t>
+[[nodiscard]] std::map<std::string, double>
 computeElementMassWeights(const correlation::core::Cell *cell,
                           const correlation::analysis::Histogram &vacf_hist) {
-  std::map<std::string, real_t> weights;
+  std::map<std::string, double> weights;
   if (cell == nullptr || cell->atoms().empty()) {
     return weights;
   }
@@ -65,24 +66,24 @@ computeElementMassWeights(const correlation::core::Cell *cell,
   }
   if (total_mass > 0.0) {
     for (const auto &[sym, species_mass] : raw_mass) {
-      weights[sym] = static_cast<real_t>(species_mass / total_mass);
+      weights[sym] = species_mass / total_mass;
     }
   }
   return weights;
 }
 
-void normalizeVdosSpectra(const std::vector<real_t> &freqs, std::vector<real_t> &total,
-                          std::map<std::string, std::vector<real_t>> &partials) noexcept {
+void normalizeVdosSpectra(const std::vector<double> &freqs, std::vector<double> &total,
+                          std::map<std::string, std::vector<double>> &partials) noexcept {
   const double total_area = computeTrapezoidalArea(freqs, total);
-  if (total_area <= 0.0) {
+  if (total_area <= 0.0 || !std::isfinite(total_area)) {
     return;
   }
-  const auto inv_area = static_cast<real_t>(1.0 / total_area);
-  for (real_t &val : total) {
+  const double inv_area = 1.0 / total_area;
+  for (double &val : total) {
     val *= inv_area;
   }
   for (auto &[sym, partial_dos] : partials) {
-    for (real_t &val : partial_dos) {
+    for (double &val : partial_dos) {
       val *= inv_area;
     }
   }
@@ -90,7 +91,7 @@ void normalizeVdosSpectra(const std::vector<real_t> &freqs, std::vector<real_t> 
 
 /// Solves the 2PT hard-sphere fluidicity equation F(f) = 0 on f ∈ [0, 1] via bisection.
 [[nodiscard]] double solveTwoPhaseFluidicity(double delta) noexcept {
-  if (delta <= 1e-12) {
+  if (delta <= 1e-12 || !std::isfinite(delta)) {
     return 0.0;
   }
   double low = 0.0;
@@ -112,10 +113,10 @@ void normalizeVdosSpectra(const std::vector<real_t> &freqs, std::vector<real_t> 
 
 /// Estimates 2PT fluidicity f ∈ [0, 1] from (cell, C(0), g(0)) or spectral half-width fallback.
 [[nodiscard]] double computeFluidicity(double g0_omega, double vacf_zero,
-                                       const std::vector<real_t> &full_omega,
-                                       const std::vector<real_t> &full_total,
+                                       const std::vector<double> &full_omega,
+                                       const std::vector<double> &full_total,
                                        const correlation::core::Cell *cell) noexcept {
-  if (g0_omega <= 1e-12) {
+  if (g0_omega <= 1e-12 || !std::isfinite(g0_omega)) {
     return 0.0;
   }
   if (cell != nullptr && cell->volume() > static_cast<real_t>(1e-9) && !cell->atoms().empty() &&
@@ -130,45 +131,48 @@ void normalizeVdosSpectra(const std::vector<real_t> &freqs, std::vector<real_t> 
   // Fallback without a Cell: match Lorentzian half-width at half-maximum g(ω_1/2) = g(0)/2.
   const double half_g0 = 0.5 * g0_omega;
   for (size_t i = 1; i < full_omega.size(); ++i) {
-    if (static_cast<double>(full_total[i]) <= half_g0) {
-      const auto omega_half = static_cast<double>(full_omega[i]);
+    if (full_total[i] <= half_g0) {
+      const double omega_half = full_omega[i];
       return std::clamp(0.5 * correlation::math::PI * g0_omega * omega_half, 1e-6, 1.0);
     }
   }
   return 1.0;
 }
 
-/// Splits a normalized spectrum into Lorentzian translational and vibrational-only components.
-void splitSingleSpectrum(const std::vector<real_t> &omega, const std::vector<real_t> &total,
-                         double fluidicity, std::vector<real_t> &vib_out,
-                         std::vector<real_t> &trans_out) {
+/// Splits a spectrum (with arbitrary species area A) into Lorentzian translational (area f*A) and
+/// vibrational-only components. Scaling by species_area preserves the 2PT sum rule across
+/// mass-weighted multi-element partials.
+void splitSingleSpectrum(const std::vector<double> &omega, const std::vector<double> &total,
+                         double fluidicity, std::vector<double> &vib_out,
+                         std::vector<double> &trans_out) {
   const size_t num_pts = omega.size();
-  vib_out.assign(num_pts, static_cast<real_t>(0.0));
-  trans_out.assign(num_pts, static_cast<real_t>(0.0));
+  vib_out.assign(num_pts, 0.0);
+  trans_out.assign(num_pts, 0.0);
   if (num_pts == 0) {
     return;
   }
-  const auto g0_val = static_cast<double>(total[0]);
-  if (fluidicity <= 1e-12 || g0_val <= 1e-12) {
+  const double g0_val = total[0];
+  const double species_area = computeTrapezoidalArea(omega, total);
+  if (fluidicity <= 1e-12 || g0_val <= 1e-12 || species_area <= 1e-12) {
     vib_out = total;
     return;
   }
-  const double coeff = (correlation::math::PI * g0_val) / (2.0 * fluidicity);
+  const double coeff = (correlation::math::PI * g0_val) / (2.0 * fluidicity * species_area);
   for (size_t i = 0; i < num_pts; ++i) {
-    const double arg = coeff * static_cast<double>(omega[i]);
+    const double arg = coeff * omega[i];
     const double g_trans = g0_val / (1.0 + arg * arg);
-    const double g_vib = std::max(0.0, static_cast<double>(total[i]) - g_trans);
-    trans_out[i] = static_cast<real_t>(g_trans);
-    vib_out[i] = static_cast<real_t>(g_vib);
+    const double g_vib = std::max(0.0, total[i] - g_trans);
+    trans_out[i] = g_trans;
+    vib_out[i] = g_vib;
   }
-  vib_out[0] = static_cast<real_t>(0.0);
+  vib_out[0] = 0.0;
 }
 
 struct FullRawSpectra {
-  std::vector<real_t> freqs_thz;
-  std::vector<real_t> omega_rad_ps;
-  std::vector<real_t> total;
-  std::map<std::string, std::vector<real_t>> partials;
+  std::vector<double> freqs_thz;
+  std::vector<double> omega_rad_ps;
+  std::vector<double> total;
+  std::map<std::string, std::vector<double>> partials;
 };
 
 [[nodiscard]] FullRawSpectra
@@ -183,20 +187,21 @@ computeRawFullSpectra(const correlation::analysis::Histogram &vacf_hist, const V
       auto [freqs, partial_dos] = correlation::analysis::DynamicsAnalyzer::calculateVDOS(
           vacf_hist.partials.at(sym), time_step, params.window_type, params.zero_pad_factor);
       if (raw.freqs_thz.empty()) {
-        raw.freqs_thz = std::move(freqs);
-        raw.total.assign(raw.freqs_thz.size(), static_cast<real_t>(0.0));
+        raw.freqs_thz.assign(freqs.begin(), freqs.end());
+        raw.total.assign(raw.freqs_thz.size(), 0.0);
       }
+      std::vector<double> weighted_dos(partial_dos.size());
       for (size_t i = 0; i < partial_dos.size(); ++i) {
-        partial_dos[i] *= weight;
-        raw.total[i] += partial_dos[i];
+        weighted_dos[i] = static_cast<double>(partial_dos[i]) * weight;
+        raw.total[i] += weighted_dos[i];
       }
-      raw.partials[sym] = std::move(partial_dos);
+      raw.partials[sym] = std::move(weighted_dos);
     }
   } else {
     auto [freqs, total_dos] = correlation::analysis::DynamicsAnalyzer::calculateVDOS(
         vacf_hist.partials.at("Total"), time_step, params.window_type, params.zero_pad_factor);
-    raw.freqs_thz = std::move(freqs);
-    raw.total = std::move(total_dos);
+    raw.freqs_thz.assign(freqs.begin(), freqs.end());
+    raw.total.assign(total_dos.begin(), total_dos.end());
   }
 
   raw.omega_rad_ps.resize(raw.freqs_thz.size());
@@ -208,21 +213,21 @@ computeRawFullSpectra(const correlation::analysis::Histogram &vacf_hist, const V
 }
 
 struct SplitSpectra {
-  std::vector<real_t> vib_total;
-  std::vector<real_t> trans_total;
-  std::map<std::string, std::vector<real_t>> vib_partials;
-  std::map<std::string, std::vector<real_t>> trans_partials;
+  std::vector<double> vib_total;
+  std::vector<double> trans_total;
+  std::map<std::string, std::vector<double>> vib_partials;
+  std::map<std::string, std::vector<double>> trans_partials;
 };
 
 [[nodiscard]] SplitSpectra decomposeSpectra(const FullRawSpectra &raw, double fluidicity,
                                             bool normalize) {
   SplitSpectra split;
   if (!raw.partials.empty()) {
-    split.vib_total.assign(raw.omega_rad_ps.size(), static_cast<real_t>(0.0));
-    split.trans_total.assign(raw.omega_rad_ps.size(), static_cast<real_t>(0.0));
+    split.vib_total.assign(raw.omega_rad_ps.size(), 0.0);
+    split.trans_total.assign(raw.omega_rad_ps.size(), 0.0);
     for (const auto &[sym, partial_dos] : raw.partials) {
-      std::vector<real_t> vib_p;
-      std::vector<real_t> trans_p;
+      std::vector<double> vib_p;
+      std::vector<double> trans_p;
       splitSingleSpectrum(raw.omega_rad_ps, partial_dos, fluidicity, vib_p, trans_p);
       for (size_t i = 0; i < raw.omega_rad_ps.size(); ++i) {
         split.vib_total[i] += vib_p[i];
@@ -242,11 +247,20 @@ struct SplitSpectra {
   return split;
 }
 
+[[nodiscard]] std::vector<real_t> castPrefixToReal(const std::vector<double> &src,
+                                                   size_t keep_count) {
+  std::vector<real_t> out(keep_count);
+  for (size_t i = 0; i < keep_count; ++i) {
+    out[i] = static_cast<real_t>(std::isfinite(src[i]) ? src[i] : 0.0);
+  }
+  return out;
+}
+
 [[nodiscard]] correlation::analysis::Histogram
 buildVdosHistogram(std::string title, std::string y_label, std::string file_suffix, bool normalized,
                    const std::vector<real_t> &out_thz, const std::vector<real_t> &out_cm_inv,
-                   const std::vector<real_t> &out_mev, const std::vector<real_t> &full_total,
-                   const std::map<std::string, std::vector<real_t>> &full_partials,
+                   const std::vector<real_t> &out_mev, const std::vector<double> &full_total,
+                   const std::map<std::string, std::vector<double>> &full_partials,
                    size_t keep_count) {
   correlation::analysis::Histogram hist;
   hist.x_label = "ω";
@@ -257,11 +271,9 @@ buildVdosHistogram(std::string title, std::string y_label, std::string file_suff
   hist.x_unit = "THz";
   hist.y_unit = normalized ? "THz⁻¹" : "arbitrary units";
   hist.bins = out_thz;
-  hist.partials["Total"].assign(full_total.begin(),
-                                full_total.begin() + static_cast<std::ptrdiff_t>(keep_count));
+  hist.partials["Total"] = castPrefixToReal(full_total, keep_count);
   for (const auto &[sym, partial_dos] : full_partials) {
-    hist.partials[sym].assign(partial_dos.begin(),
-                              partial_dos.begin() + static_cast<std::ptrdiff_t>(keep_count));
+    hist.partials[sym] = castPrefixToReal(partial_dos, keep_count);
   }
   hist.partials["Frequency_cm_1"] = out_cm_inv;
   hist.partials["Frequency_meV"] = out_mev;
@@ -338,23 +350,23 @@ VDOSCalculator::calculateDecomposed(const correlation::analysis::Histogram &vacf
   }
 
   const FullRawSpectra raw = computeRawFullSpectra(vacf_hist, params, cell);
-  const double g0_omega = raw.total.empty() ? 0.0 : static_cast<double>(raw.total[0]);
+  const double g0_omega = raw.total.empty() ? 0.0 : raw.total[0];
   const double fluidicity = computeFluidicity(g0_omega, static_cast<double>(vacf_total[0]),
                                               raw.omega_rad_ps, raw.total, cell);
   const SplitSpectra split = decomposeSpectra(raw, fluidicity, params.normalize);
 
   size_t keep_count = 0;
-  while (keep_count < raw.freqs_thz.size() && raw.freqs_thz[keep_count] <= params.max_real_freq) {
+  const auto max_freq_d = static_cast<double>(params.max_real_freq);
+  while (keep_count < raw.freqs_thz.size() && raw.freqs_thz[keep_count] <= max_freq_d) {
     ++keep_count;
   }
 
-  const std::vector<real_t> out_thz(
-      raw.freqs_thz.begin(), raw.freqs_thz.begin() + static_cast<std::ptrdiff_t>(keep_count));
+  const std::vector<real_t> out_thz = castPrefixToReal(raw.freqs_thz, keep_count);
   std::vector<real_t> out_cm_inv(keep_count);
   std::vector<real_t> out_mev(keep_count);
   for (size_t i = 0; i < keep_count; ++i) {
-    out_cm_inv[i] = out_thz[i] * static_cast<real_t>(correlation::math::THZ_TO_CMINV);
-    out_mev[i] = out_thz[i] * static_cast<real_t>(correlation::math::THZ_TO_MEV);
+    out_cm_inv[i] = static_cast<real_t>(raw.freqs_thz[i] * correlation::math::THZ_TO_CMINV);
+    out_mev[i] = static_cast<real_t>(raw.freqs_thz[i] * correlation::math::THZ_TO_MEV);
   }
 
   return VDOSDecomposition{

@@ -35,6 +35,30 @@ void verifyMSDValues(const Histogram &msd_hist, const Histogram &deff_hist) {
   EXPECT_NEAR(msd_hist.partials.at("Total")[2], 4.0, 1e-6);
   EXPECT_NEAR(deff_hist.partials.at("Total")[2], 1.0 / 3.0, 1e-6);
 }
+
+void verifyQuadraticMsdCurve(const std::vector<real_t> &msd, double lag1_val, double lag2_val) {
+  ASSERT_EQ(msd.size(), 3U);
+  EXPECT_NEAR(msd[0], 0.0, 1e-6);
+  EXPECT_NEAR(msd[1], lag1_val, 1e-5);
+  EXPECT_NEAR(msd[2], lag2_val, 1e-5);
+}
+
+void verifyPartialMsdMetadata(const Histogram &msd_hist, const Histogram &deff_hist) {
+  EXPECT_EQ(msd_hist.file_suffix, "_MSD");
+  EXPECT_EQ(deff_hist.file_suffix, "_D_eff");
+  ASSERT_TRUE(msd_hist.partials.contains("Si"));
+  ASSERT_TRUE(msd_hist.partials.contains("O"));
+  ASSERT_TRUE(deff_hist.partials.contains("Si"));
+  ASSERT_TRUE(deff_hist.partials.contains("O"));
+}
+
+void verifyPartialMsdLag1(const Histogram &msd_hist, const Histogram &deff_hist) {
+  EXPECT_NEAR(msd_hist.partials.at("Si")[1], 0.25, 1e-5);
+  EXPECT_NEAR(msd_hist.partials.at("O")[1], 1.0, 1e-5);
+  EXPECT_NEAR(msd_hist.partials.at("Total")[1], 0.625, 1e-5);
+  EXPECT_NEAR(deff_hist.partials.at("Si")[1], 0.25 / 6.0, 1e-5);
+  EXPECT_NEAR(deff_hist.partials.at("O")[1], 1.0 / 6.0, 1e-5);
+}
 } // namespace
 
 TEST(MSDCalculatorTests, ComputesCorrectMSDAndDeff) {
@@ -87,7 +111,9 @@ TEST(MSDCalculatorTests, StationaryAtomsMSDIsZero) {
 }
 
 TEST(MSDCalculatorTests, MultiAtomAveraging) {
-  // Two atoms: one moves +x, one moves +y. MSD should average contributions.
+  // Two equal-mass atoms: one moves +x, one moves +y.
+  // With default CoM drift removal, v_com = (+0.5, +0.5, 0), so relative displacements are
+  // (+0.5, -0.5, 0) and (-0.5, +0.5, 0) -> squared displacement = 0.5 * lag^2.
   std::vector<Cell> frames;
   for (int i = 0; i < 4; ++i) {
     Cell cell({20.0, 0.0, 0.0}, {0.0, 20.0, 0.0}, {0.0, 0.0, 20.0});
@@ -97,17 +123,70 @@ TEST(MSDCalculatorTests, MultiAtomAveraging) {
   }
 
   const Trajectory traj(std::move(frames), 1.0);
-  auto results = MSDCalculator::calculate(traj, MaxFrames{2}, StartFrame{0}, EndFrame{4});
+  const auto results = MSDCalculator::calculate(traj, MaxFrames{2}, StartFrame{0}, EndFrame{4});
 
   ASSERT_TRUE(results.contains("MSD"));
-  const auto &msd = results.at("MSD").partials.at("Total");
+  verifyQuadraticMsdCurve(results.at("MSD").partials.at("Total"), 0.5, 2.0);
 
-  // At lag 0: MSD = 0
-  EXPECT_NEAR(msd[0], 0.0, 1e-6);
-  // At lag 1: each atom displaced by 1.0 -> squared = 1.0, average = 1.0
-  EXPECT_NEAR(msd[1], 1.0, 1e-6);
-  // At lag 2: each displaced by 2.0 -> squared = 4.0, average = 4.0
-  EXPECT_NEAR(msd[2], 4.0, 1e-6);
+  // Without CoM drift removal, lab-frame squared displacement = 1.0 * lag^2.
+  const auto lab_msd =
+      DynamicsAnalyzer::calculateMSD(traj, MaxFrames{2}, StartFrame{0}, EndFrame{4}, false);
+  verifyQuadraticMsdCurve(lab_msd, 1.0, 4.0);
+}
+
+TEST(MSDCalculatorTests, CoMDriftRemovalEliminatesRigidTranslation) {
+  // Two atoms translating rigidly together at v = (1, 0, 0): CoM-corrected MSD must be 0.
+  std::vector<Cell> frames;
+  for (int i = 0; i < 6; ++i) {
+    Cell cell({20.0, 0.0, 0.0}, {0.0, 20.0, 0.0}, {0.0, 0.0, 20.0});
+    cell.addAtom("Si", {static_cast<real_t>(i), 2.0, 2.0});
+    cell.addAtom("O", {static_cast<real_t>(i) + static_cast<real_t>(2.0), 2.0, 2.0});
+    frames.push_back(std::move(cell));
+  }
+
+  const Trajectory traj(std::move(frames), 1.0);
+  const auto results = MSDCalculator::calculate(traj, MaxFrames{3}, StartFrame{0}, EndFrame{6});
+  ASSERT_TRUE(results.contains("MSD"));
+  for (const real_t val : results.at("MSD").partials.at("Total")) {
+    EXPECT_NEAR(val, 0.0, 1e-6);
+  }
+}
+
+TEST(MSDCalculatorTests, PerElementPartialMSDAndDeffFileSuffix) {
+  // Counter-moving pairs of Si (±0.5 Å/fs) and O (±1.0 Å/fs) have zero net CoM drift.
+  std::vector<Cell> frames;
+  for (int i = 0; i < 6; ++i) {
+    const auto step = static_cast<real_t>(i);
+    Cell cell({40.0, 0.0, 0.0}, {0.0, 40.0, 0.0}, {0.0, 0.0, 40.0});
+    cell.addAtom("Si", {static_cast<real_t>(10.0) + (static_cast<real_t>(0.5) * step), 5.0, 5.0});
+    cell.addAtom("Si", {static_cast<real_t>(10.0) - (static_cast<real_t>(0.5) * step), 5.0, 5.0});
+    cell.addAtom("O", {static_cast<real_t>(20.0) + step, 15.0, 5.0});
+    cell.addAtom("O", {static_cast<real_t>(20.0) - step, 15.0, 5.0});
+    frames.push_back(std::move(cell));
+  }
+
+  const Trajectory traj(std::move(frames), 1.0);
+  const auto results = MSDCalculator::calculate(traj, MaxFrames{2}, StartFrame{0}, EndFrame{6});
+  ASSERT_TRUE(results.contains("MSD"));
+  ASSERT_TRUE(results.contains("D_eff"));
+
+  const auto &msd_hist = results.at("MSD");
+  const auto &deff_hist = results.at("D_eff");
+  verifyPartialMsdMetadata(msd_hist, deff_hist);
+  verifyPartialMsdLag1(msd_hist, deff_hist);
+}
+
+TEST(MSDCalculatorTests, CenteredOLSPreservesPrecisionOnLargeTimeOffsets) {
+  // Large baseline time offset where uncentered float OLS suffers catastrophic cancellation.
+  std::vector<real_t> time(200);
+  std::vector<real_t> msd(200);
+  for (size_t i = 0; i < 200; ++i) {
+    const double t_val = 100000.0 + static_cast<double>(i);
+    time[i] = static_cast<real_t>(t_val);
+    msd[i] = static_cast<real_t>(6.0 * 0.25 * static_cast<double>(i));
+  }
+  const real_t d_coeff = DynamicsAnalyzer::computeDiffusionCoefficientMSD(time, msd);
+  EXPECT_NEAR(d_coeff, 0.25, 1e-3);
 }
 
 TEST(MSDCalculatorTests, FrameRangeSubset) {

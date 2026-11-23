@@ -550,5 +550,79 @@ TEST(VDOSCalculatorTests, CalculateTrajectoryPropagatesSettings) {
             dists_low.getHistogram("VDOS").bins.size());
 }
 
+TEST(VDOSCalculatorTests, AnalyticalOrnsteinUhlenbeckLorentzianAndGreenKuboSumRule) {
+  // Exact analytical benchmark: C(t) = exp(-t / tau_fs) has cosine transform
+  // g_raw(nu) = 2 * tau_fs / (1 + (2 * pi * nu_THz * tau_ps)^2) and satisfies g_raw(0) = 6 *
+  // D_VACF.
+  const double time_step = 1.0; // 1 fs
+  const double tau_fs = 50.0;   // 0.05 ps
+  const double tau_ps = tau_fs * 0.001;
+  const size_t num_frames = 1024; // 1024 fs >> tau_fs so tail truncation < 1e-9
+
+  std::vector<real_t> time(num_frames);
+  std::vector<real_t> vacf(num_frames);
+  for (size_t i = 0; i < num_frames; ++i) {
+    const double t_fs = static_cast<double>(i) * time_step;
+    time[i] = static_cast<real_t>(t_fs);
+    vacf[i] = static_cast<real_t>(std::exp(-t_fs / tau_fs));
+  }
+
+  const auto [freqs, g_raw] = DynamicsAnalyzer::calculateVDOS(vacf, static_cast<real_t>(time_step),
+                                                              VDOSWindowType::None, 4);
+  ASSERT_GT(freqs.size(), 100U);
+
+  // 1. Exact Green-Kubo zero-frequency sum rule: g_raw(0) == 6 * D_VACF
+  const real_t d_vacf = DynamicsAnalyzer::computeDiffusionCoefficientVACF(time, vacf);
+  EXPECT_NEAR(static_cast<double>(g_raw[0]), 6.0 * static_cast<double>(d_vacf), 0.5);
+
+  // 2. Point-by-point analytical Lorentzian parity across [0, 30 THz]
+  for (size_t i = 0; i < freqs.size() && freqs[i] <= static_cast<real_t>(30.0); i += 10) {
+    const double omega_tau = correlation::math::TWO_PI * static_cast<double>(freqs[i]) * tau_ps;
+    const double expected = (2.0 * tau_fs) / (1.0 + (omega_tau * omega_tau));
+    EXPECT_NEAR(static_cast<double>(g_raw[i]), expected, expected * 0.015 + 0.1);
+  }
+}
+
+TEST(VDOSCalculatorTests, MultiElementTwoPhaseTranslationalAreaFollowsMassWeights) {
+  using correlation::calculators::VDOSCalculator;
+  using correlation::calculators::VDOSParams;
+  using correlation::core::Cell;
+
+  // Binary liquid (Bi + Li) with identical liquid-like VACF curves:
+  // 2PT translational partial areas must match atomic mass weights w_Bi and w_Li.
+  Cell cell({15.0, 15.0, 15.0, 90.0, 90.0, 90.0});
+  cell.addAtom("Bi", {0.0, 0.0, 0.0});
+  cell.addAtom("Li", {static_cast<real_t>(3.0), 0.0, 0.0});
+
+  const size_t num_frames = 512;
+  Histogram vacf_hist;
+  vacf_hist.bins.resize(num_frames);
+  std::vector<real_t> vacf_curve(num_frames);
+  for (size_t i = 0; i < num_frames; ++i) {
+    const auto t_fs = static_cast<double>(i);
+    vacf_hist.bins[i] = static_cast<real_t>(t_fs);
+    const double val =
+        0.4 * std::exp(-t_fs / 60.0) +
+        0.6 * std::exp(-t_fs / 100.0) * std::cos(2.0 * correlation::math::PI * 4.0 * t_fs * 0.001);
+    vacf_curve[i] = static_cast<real_t>(val);
+  }
+  vacf_hist.partials["Total"] = vacf_curve;
+  vacf_hist.partials["Bi"] = vacf_curve;
+  vacf_hist.partials["Li"] = vacf_curve;
+
+  VDOSParams params;
+  params.max_real_freq = static_cast<real_t>(500.0);
+  const auto decomposed = VDOSCalculator::calculateDecomposed(vacf_hist, params, &cell);
+
+  const double area_bi = computeTrapezoidalArea(decomposed.translational.bins,
+                                                decomposed.translational.partials.at("Bi"));
+  const double area_li = computeTrapezoidalArea(decomposed.translational.bins,
+                                                decomposed.translational.partials.at("Li"));
+  // m_Bi ≈ 208.98, m_Li ≈ 6.94 -> w_Bi ≈ 0.9679, w_Li ≈ 0.0321
+  EXPECT_NEAR(area_bi, 208.98 / (208.98 + 6.94), 0.015);
+  EXPECT_NEAR(area_li, 6.94 / (208.98 + 6.94), 0.015);
+  EXPECT_NEAR(area_bi + area_li, 1.0, 1e-2);
+}
+
 } // namespace
 } // namespace correlation::analysis

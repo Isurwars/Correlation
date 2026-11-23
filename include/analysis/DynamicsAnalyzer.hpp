@@ -30,6 +30,15 @@ struct PartialVACFResult {
 };
 
 /**
+ * @struct PartialMSDResult
+ * @brief Container for total and per-element Mean Squared Displacement (MSD) curves.
+ */
+struct PartialMSDResult {
+  std::vector<real_t> total;                               ///< Total unweighted MSD (Å²).
+  std::map<std::string, std::vector<real_t>> element_msds; ///< Per-element MSDs (Å²).
+};
+
+/**
  * @brief Static class providing dynamics analysis methods.
  *
  * This class contains stateless static methods for calculating time-dependent
@@ -89,11 +98,28 @@ public:
    *        Pass -1 to use half the trajectory length (recommended).
    * @param start_frame First frame to include (default: 0).
    * @param end_frame One-past-last frame to include (default: all frames).
+   * @param remove_com_drift Remove center-of-mass drift when num_atoms > 1 (default: true).
    * @return A vector of MSD values indexed by lag (in Å²).
    */
   [[nodiscard]] static std::vector<real_t>
   calculateMSD(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames,
-               StartFrame start_frame = {0}, EndFrame end_frame = {static_cast<size_t>(-1)});
+               StartFrame start_frame = {0}, EndFrame end_frame = {static_cast<size_t>(-1)},
+               bool remove_com_drift = true);
+
+  /**
+   * @brief Calculates total and per-element Mean Squared Displacements (MSD).
+   *
+   * @param traj The trajectory containing atomic positions.
+   * @param max_correlation_frames Maximum lag in frames (-1 = half trajectory).
+   * @param start_frame First frame to include (default: 0).
+   * @param end_frame One-past-last frame to include (default: all frames).
+   * @param remove_com_drift Remove center-of-mass drift when num_atoms > 1 (default: true).
+   * @return PartialMSDResult containing total and per-element MSDs (in Å²).
+   */
+  [[nodiscard]] static PartialMSDResult
+  calculatePartialMSD(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames,
+                      StartFrame start_frame = {0}, EndFrame end_frame = {static_cast<size_t>(-1)},
+                      bool remove_com_drift = true);
 
   /**
    * @brief Calculates total (unweighted and mass-weighted) and per-element VACFs.

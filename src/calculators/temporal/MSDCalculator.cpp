@@ -11,11 +11,29 @@
 #include "calculators/CalculatorFactory.hpp"
 #include "math/Precision.hpp"
 
+#include <utility>
+#include <vector>
+
 namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
 const bool REGISTERED = CalculatorFactory::registerTypeSafe<MSDCalculator>("MSDCalculator");
+
+[[nodiscard]] std::vector<real_t> computeRunningDiffusion(const std::vector<real_t> &msd_curve,
+                                                          real_t time_step) {
+  const size_t num_frames = msd_curve.size();
+  std::vector<real_t> d_eff(num_frames, static_cast<real_t>(0.0));
+  const auto dt_d = static_cast<double>(time_step);
+  if (dt_d <= 0.0) {
+    return d_eff;
+  }
+  for (size_t i = 1; i < num_frames; ++i) {
+    const double time_fs = static_cast<double>(i) * dt_d;
+    d_eff[i] = static_cast<real_t>(static_cast<double>(msd_curve[i]) / (6.0 * time_fs));
+  }
+  return d_eff;
+}
 } // namespace
 
 void MSDCalculator::calculateTrajectory(
@@ -41,14 +59,14 @@ MSDCalculator::calculate(const correlation::core::Trajectory &traj,
     return results;
   }
 
-  std::vector<real_t> raw_msd = correlation::analysis::DynamicsAnalyzer::calculateMSD(
+  const auto partial_msd = correlation::analysis::DynamicsAnalyzer::calculatePartialMSD(
       traj, max_correlation_frames, start_frame, end_frame);
 
-  if (raw_msd.size() < 2) {
+  if (partial_msd.total.size() < 2) {
     return results;
   }
 
-  const size_t num_frames = raw_msd.size();
+  const size_t num_frames = partial_msd.total.size();
   const real_t time_step = traj.getTimeStep();
 
   correlation::analysis::Histogram msd_hist;
@@ -61,10 +79,12 @@ MSDCalculator::calculate(const correlation::core::Trajectory &traj,
   msd_hist.file_suffix = "_MSD";
   msd_hist.bins.resize(num_frames);
   for (size_t i = 0; i < num_frames; ++i) {
-    msd_hist.bins[i] = static_cast<real_t>(i) * time_step;
+    msd_hist.bins[i] = static_cast<real_t>(static_cast<double>(i) * static_cast<double>(time_step));
   }
-  msd_hist.partials["Total"] = raw_msd;
-  results["MSD"] = std::move(msd_hist);
+  msd_hist.partials["Total"] = partial_msd.total;
+  for (const auto &[elem_sym, elem_curve] : partial_msd.element_msds) {
+    msd_hist.partials[elem_sym] = elem_curve;
+  }
 
   correlation::analysis::Histogram deff_hist;
   deff_hist.x_label = "t";
@@ -73,18 +93,15 @@ MSDCalculator::calculate(const correlation::core::Trajectory &traj,
   deff_hist.x_unit = "fs";
   deff_hist.y_unit = "Å² fs⁻¹";
   deff_hist.description = "Running Diffusion Coefficient D(t) = MSD(t) / (6t)";
-  deff_hist.file_suffix = "_MSD";
-  deff_hist.bins = results["MSD"].bins; // Same time axis
-  std::vector<real_t> d_eff(num_frames, 0.0);
-  for (size_t i = 1; i < num_frames; ++i) {
-    const real_t time = static_cast<real_t>(i) * time_step;
-    if (time > 0.0) {
-      d_eff[i] = raw_msd[i] / (static_cast<real_t>(6.0) * time);
-    }
+  deff_hist.file_suffix = "_D_eff";
+  deff_hist.bins = msd_hist.bins;
+  deff_hist.partials["Total"] = computeRunningDiffusion(partial_msd.total, time_step);
+  for (const auto &[elem_sym, elem_curve] : partial_msd.element_msds) {
+    deff_hist.partials[elem_sym] = computeRunningDiffusion(elem_curve, time_step);
   }
-  deff_hist.partials["Total"] = d_eff;
-  results["D_eff"] = std::move(deff_hist);
 
+  results["MSD"] = std::move(msd_hist);
+  results["D_eff"] = std::move(deff_hist);
   return results;
 }
 
