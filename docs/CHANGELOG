@@ -1,6 +1,35 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.9.0] - 2026-11-23
+
+### 🚀 Features & Dynamics Analysis
+- **Two-Phase (2PT) VDOS Decomposition, Windowing & Configurable FFT (`VDOSCalculator`, `DynamicsAnalyzer`, `VACFCalculator`, `CliParser`, `AdvancedOptionsCard.slint`, `analysis_bindings.cpp`)**:
+  - Implemented 2PT spectral decomposition splitting total VDOS into vibrational-only ($g_{\text{vib}}$) and translational/diffusive ($g_{\text{trans}}$) modes with mass-weighted per-element partials (`0554483d`).
+  - Added configurable time-domain tapering half-windows (`Hann`, `Blackman`, `Gaussian`, `None`), FFT zero-padding multiplier (`vdos_zero_pad`), and VACF maximum lag (`vacf_max_lag`) across the C++ core, CLI, Python bindings, and Slint Advanced Options UI (`0554483d`).
+- **Per-Element CoM-Corrected MSD & Running Diffusion (`DynamicsAnalyzer`, `MSDCalculator`)**:
+  - Added `PartialMSDResult` and `DynamicsAnalyzer::calculatePartialMSD(..., bool remove_com_drift = true)` with automatic center-of-mass drift removal for multi-atom trajectories (`5789528e`).
+  - Exposed per-element partials in both `MSD` and `D_eff` histograms (`5789528e`).
+
+### ⚡ Performance Improvements
+- **Flat SoA Dynamics Engine & Zero-Allocation FFT Autocorrelation (`DynamicsAnalyzer.cpp`)**:
+  - Replaced nested `std::vector<std::vector<Vector3>>` AoS storage with contiguous `double` Structure-of-Arrays (`TrajectorySoA`) buffers, parallelized frame-level CoM velocity/drift subtraction, and eliminated per-atom heap allocations inside `tbb::parallel_for` via reusable thread-local `autocorrelateAccumulate()` and `MSDThreadScratch` workspaces (`5789528e`).
+
+### 🐛 Bug Fixes
+- **Multi-Element 2PT Lorentzian Mass-Weight Scaling (`VDOSCalculator.cpp`)**:
+  - Scaled `splitSingleSpectrum()` Lorentzian denominator by per-species spectral area $A_\alpha$ so $\int g_{\text{trans},\alpha}\,d\omega = w_\alpha f$ across binary/multi-component liquids, and kept intermediate raw/split spectra in `double` precision until final histogram output (`5789528e`).
+- **Single-Precision Cancellation & `D_eff` CSV Suffix Collision (`DynamicsAnalyzer.cpp`, `MSDCalculator.cpp`)**:
+  - Promoted MSD/VACF accumulators, centered OLS diffusion regression (`computeDiffusionCoefficientMSD`), and Green-Kubo / relaxation-time trapezoidal integrals to `double` with `std::isfinite` guards (`5789528e`).
+  - Changed `D_eff` histogram `file_suffix` from `"_MSD"` to `"_D_eff"` to prevent overwriting MSD CSV exports (`5789528e`).
+
+### ♻️ Code Refactoring
+- **VDOS Frequency Units Standardized to `THz` (`VDOSCalculator`, `WriterTests`, `VDOSCalculatorTests`, `DynamicsAnalyzerTests`)**:
+  - Switched VDOS output bins from angular frequency (`rad/ps`, `ps/rad`) to ordinary frequency (`THz`, area-normalized `THz⁻¹`) while removing the redundant `Frequency_THz` partial column and retaining `Frequency_cm_1` and `Frequency_meV` (`0c5d5d46`).
+
+### 🧪 Testing
+- **Analytical VDOS & Dynamics Verification (`VDOSCalculatorTests.cpp`, `MSDCalculatorTests.cpp`, `WriterTests.cpp`, `DynamicsAnalyzerTests.cpp`)**:
+  - Added exact analytical Ornstein-Uhlenbeck Lorentzian parity & $g_{\text{raw}}(0) = 6 D_{\text{VACF}}$ Green-Kubo sum-rule tests, binary liquid (`Bi` + `Li`) 2PT mass-weight area sum-rule tests, rigid-translation CoM removal tests, per-element MSD/`D_eff` suffix tests, and large-offset centered OLS precision tests (`0554483d`, `0c5d5d46`, `5789528e`).
+
 ## [4.8.0] - 2026-11-21
 
 ### 🚀 Features & 3D Viewer Overhaul
