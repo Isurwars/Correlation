@@ -146,16 +146,22 @@ void verifyVdosMetadata(HighFive::Group const &vdos_group) {
 }
 
 void verifyVdosTotal(HighFive::Group const &vdos_group) {
-  std::string const vdos_freq_name = "ν";
+  std::string const vdos_freq_name = "ω";
   std::string const vdos_val_name = "Total";
   EXPECT_TRUE(vdos_group.exist(vdos_freq_name));
   EXPECT_TRUE(vdos_group.exist(vdos_val_name));
+
+  HighFive::DataSet const vdos_freq_ds = vdos_group.getDataSet(vdos_freq_name);
+  EXPECT_TRUE(vdos_freq_ds.hasAttribute("units"));
+  std::string vdos_freq_units;
+  vdos_freq_ds.getAttribute("units").read(vdos_freq_units);
+  EXPECT_EQ(vdos_freq_units, "THz");
 
   HighFive::DataSet const vdos_val_ds = vdos_group.getDataSet(vdos_val_name);
   EXPECT_TRUE(vdos_val_ds.hasAttribute("units"));
   std::string vdos_units;
   vdos_val_ds.getAttribute("units").read(vdos_units);
-  EXPECT_EQ(vdos_units, "arbitrary units");
+  EXPECT_EQ(vdos_units, "THz⁻¹");
 }
 
 void verifyVdosHDF5(const std::string &vdos_filename) {

@@ -3,7 +3,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "analysis/DistributionFunctions.hpp"
 #include "analysis/DynamicsAnalyzer.hpp"
+#include "calculators/temporal/VACFCalculator.hpp"
+#include "calculators/temporal/VDOSCalculator.hpp"
 #include "core/Trajectory.hpp"
 #include "math/Constants.hpp"
 #include "math/LinearAlgebra.hpp"
@@ -255,6 +258,49 @@ TEST(DynamicsAnalyzerTests, HandlesVDOSBoundaryAndEdgeCaseInputs) {
   auto [freqs_single, vdos_single] = DynamicsAnalyzer::calculateVDOS({1.0}, 0.5);
   EXPECT_FALSE(freqs_single.empty());
   EXPECT_EQ(freqs_single.size(), vdos_single.size());
+}
+
+TEST(DynamicsAnalyzerTests, LiquidBismuthVDOSDecomposesVibrationalAndTranslationalModes) {
+  const auto file_path = resolveExampleFilePath(EXAMPLE_FILE);
+  ASSERT_TRUE(std::filesystem::exists(file_path))
+      << "Could not find example file: " << EXAMPLE_FILE;
+
+  correlation::core::Trajectory traj =
+      correlation::readers::readTrajectory(file_path.string(), correlation::readers::FileType::Arc);
+  ASSERT_GT(traj.getFrameCount(), 10U);
+  traj.calculateVelocities();
+
+  DistributionFunctions dists(traj.firstFrame());
+  AnalysisSettings settings;
+  settings.vdos_window = VDOSWindowType::Hann;
+  settings.vdos_zero_pad = 4;
+
+  const correlation::calculators::VACFCalculator vacf_calc;
+  vacf_calc.calculateTrajectory(dists, traj, settings);
+  ASSERT_TRUE(dists.hasHistogram("VACF"));
+
+  const correlation::calculators::VDOSCalculator vdos_calc;
+  vdos_calc.calculateTrajectory(dists, traj, settings);
+  ASSERT_TRUE(dists.hasHistogram("VDOS"));
+  ASSERT_TRUE(dists.hasHistogram("VDOS_Translational"));
+
+  const auto &vib = dists.getHistogram("VDOS");
+  const auto &trans = dists.getHistogram("VDOS_Translational");
+  EXPECT_EQ(vib.x_label, "ω");
+  EXPECT_EQ(vib.x_unit, "THz");
+  EXPECT_EQ(vib.y_label, "g_vib(ω)");
+  EXPECT_EQ(trans.y_label, "g_trans(ω)");
+
+  const auto &g_vib = vib.partials.at("Total");
+  const auto &g_trans = trans.partials.at("Total");
+  ASSERT_FALSE(g_vib.empty());
+  ASSERT_EQ(g_vib.size(), g_trans.size());
+
+  // Liquid Bi: vibrational modes strictly vanish at ω = 0; translational modes peak at ω = 0
+  EXPECT_DOUBLE_EQ(g_vib[0], 0.0);
+  EXPECT_GT(*std::ranges::max_element(g_vib), static_cast<real_t>(0.0));
+  EXPECT_GT(g_trans[0], static_cast<real_t>(0.0));
+  EXPECT_GE(g_trans[0], g_trans[1]);
 }
 
 } // namespace correlation::analysis

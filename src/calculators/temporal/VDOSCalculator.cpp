@@ -236,17 +236,16 @@ struct SplitSpectra {
                         split.trans_total);
   }
   if (normalize) {
-    normalizeVdosSpectra(raw.omega_rad_ps, split.vib_total, split.vib_partials);
-    normalizeVdosSpectra(raw.omega_rad_ps, split.trans_total, split.trans_partials);
+    normalizeVdosSpectra(raw.freqs_thz, split.vib_total, split.vib_partials);
+    normalizeVdosSpectra(raw.freqs_thz, split.trans_total, split.trans_partials);
   }
   return split;
 }
 
 [[nodiscard]] correlation::analysis::Histogram
 buildVdosHistogram(std::string title, std::string y_label, std::string file_suffix, bool normalized,
-                   const std::vector<real_t> &out_omega, const std::vector<real_t> &out_thz,
-                   const std::vector<real_t> &out_cm_inv, const std::vector<real_t> &out_mev,
-                   const std::vector<real_t> &full_total,
+                   const std::vector<real_t> &out_thz, const std::vector<real_t> &out_cm_inv,
+                   const std::vector<real_t> &out_mev, const std::vector<real_t> &full_total,
                    const std::map<std::string, std::vector<real_t>> &full_partials,
                    size_t keep_count) {
   correlation::analysis::Histogram hist;
@@ -255,16 +254,15 @@ buildVdosHistogram(std::string title, std::string y_label, std::string file_suff
   hist.description = hist.title;
   hist.file_suffix = std::move(file_suffix);
   hist.y_label = std::move(y_label);
-  hist.x_unit = "rad/ps";
-  hist.y_unit = normalized ? "ps/rad" : "arbitrary units";
-  hist.bins = out_omega;
+  hist.x_unit = "THz";
+  hist.y_unit = normalized ? "THz⁻¹" : "arbitrary units";
+  hist.bins = out_thz;
   hist.partials["Total"].assign(full_total.begin(),
                                 full_total.begin() + static_cast<std::ptrdiff_t>(keep_count));
   for (const auto &[sym, partial_dos] : full_partials) {
     hist.partials[sym].assign(partial_dos.begin(),
                               partial_dos.begin() + static_cast<std::ptrdiff_t>(keep_count));
   }
-  hist.partials["Frequency_THz"] = out_thz;
   hist.partials["Frequency_cm_1"] = out_cm_inv;
   hist.partials["Frequency_meV"] = out_mev;
   return hist;
@@ -350,8 +348,6 @@ VDOSCalculator::calculateDecomposed(const correlation::analysis::Histogram &vacf
     ++keep_count;
   }
 
-  const std::vector<real_t> out_omega(
-      raw.omega_rad_ps.begin(), raw.omega_rad_ps.begin() + static_cast<std::ptrdiff_t>(keep_count));
   const std::vector<real_t> out_thz(
       raw.freqs_thz.begin(), raw.freqs_thz.begin() + static_cast<std::ptrdiff_t>(keep_count));
   std::vector<real_t> out_cm_inv(keep_count);
@@ -363,12 +359,11 @@ VDOSCalculator::calculateDecomposed(const correlation::analysis::Histogram &vacf
 
   return VDOSDecomposition{
       .vibrational = buildVdosHistogram("Vibrational Density of States", "g_vib(ω)", "_VDOS",
-                                        params.normalize, out_omega, out_thz, out_cm_inv, out_mev,
+                                        params.normalize, out_thz, out_cm_inv, out_mev,
                                         split.vib_total, split.vib_partials, keep_count),
-      .translational =
-          buildVdosHistogram("Translational Density of States", "g_trans(ω)", "_VDOS_trans",
-                             params.normalize, out_omega, out_thz, out_cm_inv, out_mev,
-                             split.trans_total, split.trans_partials, keep_count),
+      .translational = buildVdosHistogram(
+          "Translational Density of States", "g_trans(ω)", "_VDOS_trans", params.normalize, out_thz,
+          out_cm_inv, out_mev, split.trans_total, split.trans_partials, keep_count),
       .fluidicity = static_cast<real_t>(fluidicity),
   };
 }
