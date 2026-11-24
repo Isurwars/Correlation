@@ -67,11 +67,11 @@ void verifyNearZeroNegligible(const std::vector<real_t> &intensities, real_t pea
 
 void verifyVdosHistogramMetadata(const Histogram &hist) {
   ASSERT_FALSE(hist.bins.empty());
-  EXPECT_DOUBLE_EQ(hist.bins.front(), 0.0); // Strictly real frequencies (THz >= 0)
+  EXPECT_DOUBLE_EQ(hist.bins.front(), 0.0); // Strictly real phonon energies (meV >= 0)
   EXPECT_EQ(hist.x_label, "ω");
-  EXPECT_EQ(hist.x_unit, "THz");
+  EXPECT_EQ(hist.x_unit, "meV");
   EXPECT_EQ(hist.y_label, "g_vib(ω)");
-  EXPECT_EQ(hist.y_unit, "THz⁻¹");
+  EXPECT_EQ(hist.y_unit, "meV⁻¹");
 }
 
 void verifyWindowNormalization(const Histogram &vacf_hist, VDOSWindowType win) {
@@ -109,16 +109,18 @@ void verifyTwoPhaseSpectra(const correlation::calculators::VDOSDecomposition &de
 
 void verifyAuxiliaryBinUnits(const Histogram &norm_1x, const Histogram &norm_3x, size_t idx) {
   EXPECT_NEAR(norm_1x.partials.at("Total")[idx], norm_3x.partials.at("Total")[idx], 1e-4);
-  const real_t thz = norm_1x.bins[idx];
+  const real_t mev = norm_1x.bins[idx];
+  const real_t thz = norm_1x.partials.at("Frequency_THz")[idx];
+  EXPECT_NEAR(mev, thz * static_cast<real_t>(correlation::math::THZ_TO_MEV), 1e-3);
   EXPECT_NEAR(norm_1x.partials.at("Frequency_cm_1")[idx],
               thz * static_cast<real_t>(correlation::math::THZ_TO_CMINV), 1e-2);
-  EXPECT_NEAR(norm_1x.partials.at("Frequency_meV")[idx],
-              thz * static_cast<real_t>(correlation::math::THZ_TO_MEV), 1e-3);
 }
 
 void verifyScaleInvarianceAndAuxiliaryUnits(const Histogram &norm_1x, const Histogram &norm_3x) {
   ASSERT_EQ(norm_1x.bins.size(), norm_3x.bins.size());
-  EXPECT_FALSE(norm_1x.partials.contains("Frequency_THz"));
+  EXPECT_TRUE(norm_1x.partials.contains("Frequency_THz"));
+  EXPECT_TRUE(norm_1x.partials.contains("Frequency_cm_1"));
+  EXPECT_FALSE(norm_1x.partials.contains("Frequency_meV"));
   for (size_t i = 0; i < norm_1x.bins.size(); ++i) {
     verifyAuxiliaryBinUnits(norm_1x, norm_3x, i);
   }
@@ -271,6 +273,16 @@ TEST(VDOSCalculatorTests, ComputesRecommendedMaxFrequencyFromLightestAtom) {
   EXPECT_DOUBLE_EQ(empty_max_freq, 10.0);
 }
 
+void verifyHydrogenVdosHistogram(const Histogram &vdos_hist) {
+  ASSERT_FALSE(vdos_hist.bins.empty());
+  const real_t max_computed_mev = vdos_hist.bins.back();
+  EXPECT_GT(max_computed_mev, static_cast<real_t>(45.0) * correlation::math::THZ_TO_MEV)
+      << "Hydrogen VDOS energy should reach ~50 THz (~206 meV) instead of being truncated";
+  EXPECT_LE(max_computed_mev, static_cast<real_t>(50.0) * correlation::math::THZ_TO_MEV + 1e-2);
+  EXPECT_TRUE(vdos_hist.partials.contains("Frequency_THz"));
+  EXPECT_FALSE(vdos_hist.partials.contains("Frequency_meV"));
+}
+
 TEST(VDOSCalculatorTests, CalculateTrajectoryCalculatesHydrogenFrequenciesUpTo50THz) {
   using correlation::analysis::DistributionFunctions;
   using correlation::calculators::VDOSCalculator;
@@ -297,14 +309,7 @@ TEST(VDOSCalculatorTests, CalculateTrajectoryCalculatesHydrogenFrequenciesUpTo50
   calc.calculateTrajectory(dists, traj, settings);
 
   ASSERT_TRUE(dists.hasHistogram("VDOS"));
-  const auto &vdos_hist = dists.getHistogram("VDOS");
-  ASSERT_FALSE(vdos_hist.bins.empty());
-
-  const real_t max_computed_thz = vdos_hist.bins.back();
-  EXPECT_GT(max_computed_thz, 45.0)
-      << "Hydrogen VDOS frequency should reach ~50 THz instead of being truncated to 10 THz";
-  EXPECT_LE(max_computed_thz, 50.0);
-  EXPECT_FALSE(vdos_hist.partials.contains("Frequency_THz"));
+  verifyHydrogenVdosHistogram(dists.getHistogram("VDOS"));
   EXPECT_TRUE(dists.hasHistogram("VDOS_Translational"));
 }
 
@@ -398,8 +403,9 @@ TEST(VDOSCalculatorTests, PureHarmonicSolidHasZeroFluidicityAndVanishingZeroFreq
 
   const auto max_it = std::ranges::max_element(g_vib);
   const auto peak_idx = static_cast<size_t>(std::distance(g_vib.begin(), max_it));
-  const real_t d_freq = decomposed.vibrational.bins[1] - decomposed.vibrational.bins[0];
-  EXPECT_NEAR(decomposed.vibrational.bins[peak_idx], target_thz, 2.0 * d_freq);
+  const real_t d_energy = decomposed.vibrational.bins[1] - decomposed.vibrational.bins[0];
+  EXPECT_NEAR(decomposed.vibrational.bins[peak_idx], target_thz * correlation::math::THZ_TO_MEV,
+              2.0 * d_energy);
 }
 
 TEST(VDOSCalculatorTests, PureExponentialWithoutCellTriggersFallbackFluidicity) {
@@ -454,7 +460,7 @@ TEST(VDOSCalculatorTests, ZeroPadFactorIncreasesResolutionWithoutShiftingPeak) {
   const auto &fine_dos = fine.partials.at("Total");
   const auto fine_peak =
       static_cast<size_t>(std::distance(fine_dos.begin(), std::ranges::max_element(fine_dos)));
-  EXPECT_NEAR(fine.bins[fine_peak], target_thz, 2.0 * d_freq_fine);
+  EXPECT_NEAR(fine.bins[fine_peak], target_thz * correlation::math::THZ_TO_MEV, 2.0 * d_freq_fine);
 }
 
 TEST(VDOSCalculatorTests, NormalizationScaleInvarianceAndAuxiliaryUnits) {

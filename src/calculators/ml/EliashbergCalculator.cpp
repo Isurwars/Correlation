@@ -228,28 +228,30 @@ struct TrajectorySamples {
   return std::max(0.0, (K_HBAR2_OVER_2AMU_EV_A2 * eta_alpha) / (mass_amu * mean_omega_ev));
 }
 
-[[nodiscard]] std::vector<double> convertVdosToMevDensity(std::span<const real_t> g_thz) {
-  std::vector<double> g_mev(g_thz.size());
-  for (size_t i = 0; i < g_thz.size(); ++i) {
-    g_mev[i] = std::max(0.0, static_cast<double>(g_thz[i])) / K_THZ_TO_MEV;
+[[nodiscard]] std::vector<double> convertVdosToMevDensity(std::span<const real_t> g_vals,
+                                                          double unit_to_mev) {
+  std::vector<double> g_mev(g_vals.size());
+  for (size_t i = 0; i < g_vals.size(); ++i) {
+    g_mev[i] = std::max(0.0, static_cast<double>(g_vals[i])) / unit_to_mev;
   }
   return g_mev;
 }
 
 void synthesizeSpeciesSpectra(const analysis::Histogram &vdos_vib,
-                              std::span<const double> omega_mev_d,
+                              std::span<const double> omega_mev_d, double unit_to_mev,
                               const SpeciesCouplingWeights &coupling,
                               std::vector<double> &total_a2f,
                               std::map<std::string, std::vector<real_t>> &species_a2f) {
   const size_t n_pts = omega_mev_d.size();
   for (const auto &[sym, g_vals] : vdos_vib.partials) {
-    if (sym == "Total" || sym == "total" || g_vals.size() != n_pts) {
+    if (sym == "Total" || sym == "total" || sym.starts_with("Frequency_") ||
+        g_vals.size() != n_pts) {
       continue;
     }
     const auto eta_it = coupling.eta_by_species.find(sym);
     const double eta_alpha =
         (eta_it != coupling.eta_by_species.end()) ? static_cast<double>(eta_it->second) : 0.0;
-    const auto g_mev = convertVdosToMevDensity(g_vals);
+    const auto g_mev = convertVdosToMevDensity(g_vals, unit_to_mev);
     const double prefactor =
         computeSpeciesPrefactor(sym, eta_alpha, computeMeanFrequencyMev(omega_mev_d, g_mev));
 
@@ -264,7 +266,7 @@ void synthesizeSpeciesSpectra(const analysis::Histogram &vdos_vib,
 }
 
 void synthesizeFallbackTotalSpectrum(const analysis::Histogram &vdos_vib,
-                                     std::span<const double> omega_mev_d,
+                                     std::span<const double> omega_mev_d, double unit_to_mev,
                                      const SpeciesCouplingWeights &coupling,
                                      std::vector<double> &total_a2f) {
   const auto it_tot = vdos_vib.partials.contains("Total") ? vdos_vib.partials.find("Total")
@@ -282,7 +284,7 @@ void synthesizeFallbackTotalSpectrum(const analysis::Histogram &vdos_vib,
   avg_eta /= static_cast<double>(n_spec);
   avg_mass = (avg_mass > 0.0) ? (avg_mass / static_cast<double>(n_spec)) : 12.0;
 
-  const auto g_mev = convertVdosToMevDensity(it_tot->second);
+  const auto g_mev = convertVdosToMevDensity(it_tot->second, unit_to_mev);
   const double mean_w_ev = std::max(1e-3, computeMeanFrequencyMev(omega_mev_d, g_mev) * 1e-3);
   const double prefactor = (K_HBAR2_OVER_2AMU_EV_A2 * avg_eta) / (avg_mass * mean_w_ev);
   for (size_t i = 0; i < omega_mev_d.size(); ++i) {
@@ -543,19 +545,22 @@ EliashbergResult EliashbergCalculator::calculate(const core::Trajectory &traj,
     return result;
   }
 
+  const double unit_to_mev = (vdos_vib.x_unit == "meV") ? 1.0 : K_THZ_TO_MEV;
   const size_t n_pts = vdos_vib.bins.size();
   std::vector<double> omega_mev_d(n_pts);
   std::vector<real_t> omega_mev_r(n_pts);
   for (size_t i = 0; i < n_pts; ++i) {
-    omega_mev_d[i] = static_cast<double>(vdos_vib.bins[i]) * K_THZ_TO_MEV;
+    omega_mev_d[i] = static_cast<double>(vdos_vib.bins[i]) * unit_to_mev;
     omega_mev_r[i] = static_cast<real_t>(omega_mev_d[i]);
   }
 
   std::vector<double> total_a2f(n_pts, 0.0);
   std::map<std::string, std::vector<real_t>> species_a2f;
-  synthesizeSpeciesSpectra(vdos_vib, omega_mev_d, result.coupling_weights, total_a2f, species_a2f);
+  synthesizeSpeciesSpectra(vdos_vib, omega_mev_d, unit_to_mev, result.coupling_weights, total_a2f,
+                           species_a2f);
   if (species_a2f.empty()) {
-    synthesizeFallbackTotalSpectrum(vdos_vib, omega_mev_d, result.coupling_weights, total_a2f);
+    synthesizeFallbackTotalSpectrum(vdos_vib, omega_mev_d, unit_to_mev, result.coupling_weights,
+                                    total_a2f);
   }
 
   std::vector<real_t> total_a2f_r(n_pts, static_cast<real_t>(0.0));

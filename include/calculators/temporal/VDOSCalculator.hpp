@@ -25,7 +25,7 @@ struct VDOSParams {
   correlation::analysis::VDOSWindowType window_type =
       correlation::analysis::VDOSWindowType::Hann; ///< Time-domain tapering half-window.
   size_t zero_pad_factor = 4; ///< Zero-padding multiplier for FFT interpolation (>= 1).
-  bool normalize = true;      ///< Area-normalize VDOS over [0, ν_Nyquist] to 1 (units: THz⁻¹).
+  bool normalize = true;      ///< Area-normalize VDOS over [0, E_Nyquist] to 1 (units: meV⁻¹).
 };
 
 /**
@@ -33,9 +33,9 @@ struct VDOSParams {
  */
 struct VDOSDecomposition {
   correlation::analysis::Histogram
-      vibrational; ///< Vibrational-only VDOS g_vib(ω), g_vib(0) = 0, ∫g_vib dν = 1.
+      vibrational; ///< Vibrational-only VDOS g_vib(ω), g_vib(0) = 0, ∫g_vib d(ħω) = 1.
   correlation::analysis::Histogram
-      translational;      ///< Translational/diffusive DoS g_trans(ω), ∫g_trans dν = 1.
+      translational;      ///< Translational/diffusive DoS g_trans(ω), ∫g_trans d(ħω) = 1.
   real_t fluidicity{0.0}; ///< 2PT fluidicity parameter f ∈ [0, 1] (0 = solid, 1 = gas).
 };
 
@@ -75,11 +75,11 @@ public:
                       const VDOSParams &params = {}, const correlation::core::Cell *cell = nullptr);
 
   /**
-   * @brief Computes the vibrational-only VDOS g_vib(ω) on real frequencies (THz, >= 0).
+   * @brief Computes the vibrational-only VDOS g_vib(ω) on real energies (meV, >= 0).
    * @param[in] vacf_hist Input Velocity Autocorrelation Function (VACF) histogram.
    * @param[in] params Frequency bound, windowing, zero-padding, and normalization parameters.
    * @param[in] cell Optional reference cell for mass-weighted per-element partial VDOS.
-   * @return A histogram representing g_vib(ω) vs frequency (THz).
+   * @return A histogram representing g_vib(ω) vs phonon energy (meV).
    * @throws std::logic_error if VACF data has fewer than 2 data points.
    */
   [[nodiscard]] static correlation::analysis::Histogram

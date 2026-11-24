@@ -287,7 +287,8 @@ TEST(DynamicsAnalyzerTests, LiquidBismuthVDOSDecomposesVibrationalAndTranslation
   const auto &vib = dists.getHistogram("VDOS");
   const auto &trans = dists.getHistogram("VDOS_Translational");
   EXPECT_EQ(vib.x_label, "ω");
-  EXPECT_EQ(vib.x_unit, "THz");
+  EXPECT_EQ(vib.x_unit, "meV");
+  EXPECT_EQ(trans.x_unit, "meV");
   EXPECT_EQ(vib.y_label, "g_vib(ω)");
   EXPECT_EQ(trans.y_label, "g_trans(ω)");
 

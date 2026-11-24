@@ -241,8 +241,12 @@ struct SplitSpectra {
                         split.trans_total);
   }
   if (normalize) {
-    normalizeVdosSpectra(raw.freqs_thz, split.vib_total, split.vib_partials);
-    normalizeVdosSpectra(raw.freqs_thz, split.trans_total, split.trans_partials);
+    std::vector<double> freqs_mev(raw.freqs_thz.size());
+    for (size_t i = 0; i < raw.freqs_thz.size(); ++i) {
+      freqs_mev[i] = raw.freqs_thz[i] * static_cast<double>(correlation::math::THZ_TO_MEV);
+    }
+    normalizeVdosSpectra(freqs_mev, split.vib_total, split.vib_partials);
+    normalizeVdosSpectra(freqs_mev, split.trans_total, split.trans_partials);
   }
   return split;
 }
@@ -268,15 +272,15 @@ buildVdosHistogram(std::string title, std::string y_label, std::string file_suff
   hist.description = hist.title;
   hist.file_suffix = std::move(file_suffix);
   hist.y_label = std::move(y_label);
-  hist.x_unit = "THz";
-  hist.y_unit = normalized ? "THz⁻¹" : "arbitrary units";
-  hist.bins = out_thz;
+  hist.x_unit = "meV";
+  hist.y_unit = normalized ? "meV⁻¹" : "arbitrary units";
+  hist.bins = out_mev;
   hist.partials["Total"] = castPrefixToReal(full_total, keep_count);
   for (const auto &[sym, partial_dos] : full_partials) {
     hist.partials[sym] = castPrefixToReal(partial_dos, keep_count);
   }
+  hist.partials["Frequency_THz"] = out_thz;
   hist.partials["Frequency_cm_1"] = out_cm_inv;
-  hist.partials["Frequency_meV"] = out_mev;
   return hist;
 }
 
