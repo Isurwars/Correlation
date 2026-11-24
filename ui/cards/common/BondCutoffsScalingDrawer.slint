@@ -7,7 +7,7 @@ import {
     MaterialStyleMetrics,
     MaterialTypography,
     MaterialPalette,
-    TextField,
+    NumberField,
     FilledButton,
     MaterialText,
     Icon,
@@ -114,11 +114,15 @@ export component BondCutoffsScalingDrawer inherits VerticalLayout {
             min_factor_area := TouchArea {
                 horizontal-stretch: 1;
                 min-width: 90px;
-                TextField {
+                NumberField {
                     width: 100%;
                     enabled: root.file_loaded;
                     label: "Min Factor";
                     text <=> root.min_factor;
+                    step: 0.05;
+                    minimum: 0.1;
+                    maximum: 2.0;
+                    decimals: 2;
                 }
             }
             apply_min_area := TouchArea {
@@ -139,11 +143,15 @@ export component BondCutoffsScalingDrawer inherits VerticalLayout {
             max_factor_area := TouchArea {
                 horizontal-stretch: 1;
                 min-width: 90px;
-                TextField {
+                NumberField {
                     width: 100%;
                     enabled: root.file_loaded;
                     label: "Max Factor";
                     text <=> root.max_factor;
+                    step: 0.05;
+                    minimum: 0.5;
+                    maximum: 3.0;
+                    decimals: 2;
                 }
             }
             apply_max_area := TouchArea {
@@ -164,11 +172,15 @@ export component BondCutoffsScalingDrawer inherits VerticalLayout {
             global_cutoff_area := TouchArea {
                 horizontal-stretch: 1;
                 min-width: 90px;
-                TextField {
+                NumberField {
                     width: 100%;
                     enabled: root.file_loaded;
                     label: "Global Cutoff";
                     text <=> root.global_cutoff;
+                    step: 0.1;
+                    minimum: 0.5;
+                    maximum: 20.0;
+                    decimals: 2;
                 }
             }
             apply_global_area := TouchArea {

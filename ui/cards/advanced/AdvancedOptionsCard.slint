@@ -61,6 +61,9 @@ export component AdvancedOptionsCard inherits OptionSection {
         label: "VACF Max Lag (frames)";
         text <=> root.vacf_max_lag;
         error: root.vacf_max_lag_error;
+        stepper: true;
+        minimum: -1.0;
+        decimals: 0;
         tooltip_text: "Maximum lag in frames for VACF correlation.\n\n📏 Recommended: -1 (auto N/2).\n\n🔬 Physics: Capping lag at half the trajectory avoids high-variance tail noise that degrades low-frequency VDOS.";
     }
 

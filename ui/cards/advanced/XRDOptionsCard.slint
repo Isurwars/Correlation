@@ -46,6 +46,11 @@ export component XRDOptionsCard inherits OptionSection {
         label: "Wavelength λ (Å)";
         text <=> root.lambda;
         error: root.lambda_error;
+        stepper: true;
+        step: 0.01;
+        minimum: 0.1;
+        maximum: 10.0;
+        decimals: 4;
         tooltip_text: "X-ray incident radiation wavelength (λ) in Ångströms.\n\n📏 Default: 1.5406 Å (Cu-Kα1 weighted doublet).\n\n🔬 Physics: Directly sets reciprocal-to-angular Bragg mapping Q = 4π sin(θ) / λ.";
     }
 
@@ -54,6 +59,8 @@ export component XRDOptionsCard inherits OptionSection {
         label: "Min 2θ (°)";
         text <=> root.theta_min;
         error: root.theta_min_error;
+        stepper: true;
+        maximum: 179.0;
         tooltip_text: "Minimum scattering angle (2θ) in degrees.\n\n📏 Default: 10.0°.\n\n🔬 Physics: Defines the low-angle boundary of the powder diffraction pattern.";
     }
 
@@ -62,6 +69,9 @@ export component XRDOptionsCard inherits OptionSection {
         label: "Max 2θ (°)";
         text <=> root.theta_max;
         error: root.theta_max_error;
+        stepper: true;
+        minimum: 1.0;
+        maximum: 180.0;
         tooltip_text: "Maximum scattering angle (2θ) in degrees.\n\n📏 Default: 140.0°.\n\n🔬 Physics: Upper 2θ boundary. Must not exceed 180°.";
     }
 
@@ -70,6 +80,11 @@ export component XRDOptionsCard inherits OptionSection {
         label: "2θ Bin Width (°)";
         text <=> root.bin_width;
         error: root.bin_width_error;
+        stepper: true;
+        step: 0.01;
+        minimum: 0.005;
+        maximum: 5.0;
+        decimals: 3;
         tooltip_text: "Angular step resolution (Δ2θ) in degrees.\n\n📏 Default: 0.05°.\n\n🔬 Physics: Bin width for the powder diffraction histogram. Finer steps resolve split peaks in high-symmetry crystals.";
     }
 }

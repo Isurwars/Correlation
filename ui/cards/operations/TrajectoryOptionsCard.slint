@@ -35,6 +35,11 @@ export component TrajectoryOptionsCard inherits OptionSection {
         label: "Time Step (fs)";
         text <=> root.time_step;
         error: root.time_step_error;
+        stepper: true;
+        step: 0.5;
+        minimum: 0.01;
+        maximum: 1000.0;
+        decimals: 2;
         tooltip_text: "Time interval between parsed frames in femtoseconds (fs).\n\n📏 Auto-calculated from atomic masses using √(9m/5), where m is the lightest element's mass.\n\n🔬 Physics: The time step determines the time axis for dynamic properties (MSD, VACF, vDoS). Verify this matches your simulation's actual time step for accurate diffusion coefficients and vibrational spectra.";
     }
 
@@ -71,6 +76,10 @@ export component TrajectoryOptionsCard inherits OptionSection {
         label: "Frame Stride (1 = all)";
         text <=> root.frame_stride;
         error: root.frame_stride_error;
+        stepper: true;
+        minimum: 1.0;
+        maximum: 10000.0;
+        decimals: 0;
         tooltip_text: "Sampling stride between frames (e.g. 10 evaluates every 10th frame).\n\n🔬 Physics: Useful for rapid preliminary screening of long trajectories to save compute time while maintaining statistical convergence.";
     }
 }

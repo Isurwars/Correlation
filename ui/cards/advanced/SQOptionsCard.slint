@@ -18,6 +18,9 @@ export component SQOptionsCard inherits OptionSection {
         label: "Max Q (Å⁻¹)";
         text <=> root.q_max;
         error: root.q_max_error;
+        stepper: true;
+        minimum: 1.0;
+        maximum: 100.0;
         tooltip_text: "Maximum scattering vector Q for the Structure Factor S(Q).\n\n📏 Recommended: 20.0 Å⁻¹.\n\n🔬 Physics: Higher Q probes shorter real-space distances (Q ≈ 2π/r). Q_max = 20 Å⁻¹ resolves features down to ~0.3 Å. For X-ray comparison, match the experimental 2θ range.";
     }
 
@@ -26,6 +29,11 @@ export component SQOptionsCard inherits OptionSection {
         label: "Q Bin Width (Å⁻¹)";
         text <=> root.q_bin_width;
         error: root.q_bin_error;
+        stepper: true;
+        step: 0.01;
+        minimum: 0.005;
+        maximum: 1.0;
+        decimals: 3;
         tooltip_text: "Bin width for the S(Q) histogram.\n\n📏 Recommended: 0.02 Å⁻¹.\n\n🔬 Physics: Related to r_max by the Nyquist criterion — finer Q bins require larger real-space integration radii. Too coarse bins smear sharp diffraction peaks.";
     }
 
@@ -34,6 +42,9 @@ export component SQOptionsCard inherits OptionSection {
         label: "Fourier Cutoff (Å)";
         text <=> root.r_int_max;
         error: root.r_int_max_error;
+        stepper: true;
+        minimum: 1.0;
+        maximum: 100.0;
         tooltip_text: "Upper integration limit for the Fourier transform of g(r) → S(Q).\n\n📏 Recommended: 10.0 Å.\n\n🔬 Physics: This is the real-space cutoff for the sine transform. Too short truncates long-range correlations (causing ripples in S(Q)). Too long amplifies noise from the g(r) tail.";
     }
 }

@@ -16,6 +16,10 @@ export component BondAngleOptionsCard inherits OptionSection {
         label: "PAD Bin Width (°)";
         text <=> root.angle_bin_width;
         error: root.angle_bin_error;
+        stepper: true;
+        step: 0.5;
+        minimum: 0.1;
+        maximum: 30.0;
         tooltip_text: "Bin width for the Plane-Angle Distribution (PAD).\n\n📏 Recommended: 1.0°.\n\n🔬 Physics: The PAD measures plane angles between triplets of atoms (e.g., O–Si–O ≈ 109.5° in tetrahedral coordination). 1° resolves distinct coordination geometries while maintaining good statistics. Finer bins (0.5°) help for crystalline systems with sharp angular peaks.";
     }
 
@@ -24,6 +28,10 @@ export component BondAngleOptionsCard inherits OptionSection {
         label: "DAD Bin Width (°)";
         text <=> root.dihedral_bin_width;
         error: root.dihedral_bin_error;
+        stepper: true;
+        step: 0.5;
+        minimum: 0.1;
+        maximum: 30.0;
         tooltip_text: "Bin width for the Dihedral-Angle Distribution (DAD).\n\n📏 Recommended: 1.0°.\n\n🔬 Physics: Dihedral angles measure torsion across four-atom chains (A–B–C–D). They reveal rotational conformations and ring puckering. 1° is sufficient for most amorphous systems; use finer bins for molecular crystals with distinct torsional states.";
     }
 }

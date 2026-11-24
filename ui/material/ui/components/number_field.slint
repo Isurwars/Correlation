@@ -9,7 +9,7 @@ import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
 import { MaterialAnimations } from "../styling/material_animations.slint";
 import { MaterialText } from "./material_text.slint";
 
-/// Material Design 3 numeric text field with integrated decrease (−) and increase (+) stepper buttons.
+/// Material Design 3 numeric text field with stacked right-side (+) and (−) stepper mini-buttons.
 export component NumberField {
     in property <string> label;
     in property <string> placeholder_text;
@@ -18,41 +18,64 @@ export component NumberField {
     in property <bool> has_error;
     in property <bool> enabled: true;
     in property <bool> dense: false;
+    in property <bool> read_only <=> input.read-only;
     in property <float> step: 1.0;
     in property <float> minimum: 0.0;
     in property <float> maximum: 1000000.0;
     in property <int> decimals: 1;
-    out property <bool> has_focus: input.has_focus;
+    out property <bool> has_focus: input.has-focus;
     in-out property <string> text <=> input.text;
 
     callback accepted(text: string);
     callback edited(text: string);
     callback value_changed(text: string);
 
+    property <length> computed_x;
     property <color> highlight: root.enabled && root.has_error
         ? MaterialPalette.error
         : (root.has_focus ? MaterialPalette.primary : MaterialPalette.on_surface_variant);
     property <float> current_numeric: root.text.is-float()
         ? root.text.to-float()
         : (root.placeholder_text.is-float() ? root.placeholder_text.to-float() : root.minimum);
-    property <bool> can_decrement: root.enabled && (root.current_numeric - root.step * 0.001 > root.minimum);
-    property <bool> can_increment: root.enabled && (root.current_numeric + root.step * 0.001 < root.maximum);
+    property <bool> can_decrement: root.enabled && !root.read_only && (root.current_numeric - root.step * 0.001 > root.minimum);
+    property <bool> can_increment: root.enabled && !root.read_only && (root.current_numeric + root.step * 0.001 < root.maximum);
+
+    pure function format_fixed(val: float, scale: int) -> string {
+        let rounded: int = Math.round(val * scale);
+        let sign: string = rounded < 0 ? "-" : "";
+        let abs_val: int = rounded < 0 ? -rounded : rounded;
+        let whole: int = abs_val / scale;
+        let frac: int = abs_val - whole * scale;
+        if (scale == 10) {
+            return sign + whole + "." + frac;
+        }
+        if (scale == 100) {
+            return sign + whole + "." + (frac < 10 ? "0" : "") + frac;
+        }
+        if (scale == 1000) {
+            return sign + whole + "." + (frac < 10 ? "00" : (frac < 100 ? "0" : "")) + frac;
+        }
+        return sign + whole + "." + (frac < 10 ? "000" : (frac < 100 ? "00" : (frac < 1000 ? "0" : ""))) + frac;
+    }
 
     pure function format_number(val: float) -> string {
         if (root.decimals <= 0) {
             return "" + Math.round(val);
         }
         if (root.decimals == 1) {
-            return "" + (Math.round(val * 10.0) / 10.0);
+            return root.format_fixed(val, 10);
         }
         if (root.decimals == 2) {
-            return "" + (Math.round(val * 100.0) / 100.0);
+            return root.format_fixed(val, 100);
         }
-        return "" + (Math.round(val * 1000.0) / 1000.0);
+        if (root.decimals == 3) {
+            return root.format_fixed(val, 1000);
+        }
+        return root.format_fixed(val, 10000);
     }
 
     function step_by(delta: float) {
-        if (!root.enabled) {
+        if (!root.enabled || root.read_only) {
             return;
         }
         root.text = root.format_number(Math.max(root.minimum, Math.min(root.maximum, root.current_numeric + delta)));
@@ -64,180 +87,244 @@ export component NumberField {
     accessible-role: spinbox;
     accessible-enabled: root.enabled;
     accessible-value <=> text;
+    accessible-placeholder-text: root.text == "" ? root.placeholder_text : "";
     accessible-action-increment => { root.step_by(root.step); }
     accessible-action-decrement => { root.step_by(-root.step); }
 
     VerticalLayout {
         spacing: MaterialStyleMetrics.spacing_4;
 
-        Rectangle {
+        background_layer := Rectangle {
             border-top-left-radius: MaterialStyleMetrics.border_radius_2;
             border-top-right-radius: MaterialStyleMetrics.border_radius_2;
             background: MaterialPalette.surface_container_highest;
-            height: root.dense ? MaterialStyleMetrics.size_28 : MaterialStyleMetrics.size_40;
+            min-height: root.dense ? MaterialStyleMetrics.size_28 : MaterialStyleMetrics.size_40;
             clip: true;
-            opacity: root.enabled ? 1.0 : 0.45;
 
             HorizontalLayout {
-
-                // Decrease button (−)
-                dec_touch := TouchArea {
-                    width: root.dense ? 22px : 30px;
-                    enabled: root.can_decrement;
-                    mouse-cursor: root.can_decrement ? pointer : default;
-                    accessible-role: button;
-                    accessible-label: "Decrease " + (root.label != "" ? root.label : "value");
-                    clicked => { root.step_by(-root.step); }
+                // Full-width editable input area + optional unit suffix
+                HorizontalLayout {
+                    horizontal-stretch: 1;
+                    padding-left: root.dense ? MaterialStyleMetrics.padding_6 : MaterialStyleMetrics.padding_8;
+                    padding-right: MaterialStyleMetrics.padding_4;
+                    padding-top: MaterialStyleMetrics.padding_2;
+                    padding-bottom: self.padding-top;
+                    spacing: MaterialStyleMetrics.spacing_2;
 
                     Rectangle {
-                        border-top-left-radius: MaterialStyleMetrics.border_radius_2;
-                        background: dec_touch.pressed
-                            ? MaterialPalette.on_surface.with_alpha(12%)
-                            : (dec_touch.has-hover ? MaterialPalette.on_surface.with_alpha(8%) : transparent);
-                        animate background { duration: MaterialAnimations.fast_duration; }
+                        horizontal-stretch: 1;
+                        clip: self.width > 1px && self.height > 1px;
+                        visible: self.width > 0.1px && self.height > 0.1px;
+                        min-height: input.min-height;
 
-                        MaterialText {
-                            text: "−";
-                            style: root.dense ? MaterialTypography.label_large : MaterialTypography.title_small;
-                            font_weight: 600;
-                            color: root.can_decrement ? MaterialPalette.on_surface_variant : MaterialPalette.outline;
-                            horizontal-alignment: center;
+                        input := TextInput {
+                            x: min(0px, max(parent.width - self.width - self.text-cursor-width, root.computed_x));
+                            width: max(parent.width - self.text-cursor-width, self.preferred-width);
+                            font-size: root.dense ? MaterialTypography.body_small.font_size : MaterialTypography.body_large.font_size;
+                            font-weight: root.dense ? MaterialTypography.regular : MaterialTypography.label_large_prominent.font_weight;
+                            text-cursor-width: MaterialStyleMetrics.size_3;
+                            vertical-alignment: root.dense ? center : bottom;
+                            color: MaterialPalette.on_surface;
+                            selection-background-color: MaterialPalette.primary.with_alpha(0.5);
+                            selection-foreground-color: self.color;
+                            enabled: root.enabled;
+                            accessible-role: none;
+
+                            cursor-position-changed(cursor_position) => {
+                                if (cursor_position.x + root.computed_x < 0) {
+                                    root.computed_x = -cursor_position.x;
+                                } else if (cursor_position.x + root.computed_x > parent.width - self.text-cursor-width) {
+                                    root.computed_x = parent.width - cursor_position.x - self.text-cursor-width;
+                                }
+                            }
+
+                            accepted => {
+                                root.accepted(self.text);
+                                root.value_changed(self.text);
+                            }
+
+                            edited => {
+                                root.edited(self.text);
+                            }
+
+                            key-pressed(event) => {
+                                if (event.text == Key.UpArrow) {
+                                    root.step_by(root.step);
+                                    return accept;
+                                }
+                                if (event.text == Key.DownArrow) {
+                                    root.step_by(-root.step);
+                                    return accept;
+                                }
+                                return reject;
+                            }
+                        }
+
+                        if (root.dense || root.label == "") && root.text == "" && !input.has-focus && root.placeholder_text != "": MaterialText {
+                            text: root.placeholder_text;
+                            style: root.dense ? MaterialTypography.body_small : MaterialTypography.body_large;
+                            color: MaterialPalette.on_surface_variant.with_alpha(60%);
                             vertical-alignment: center;
                         }
+
+                        text_label := MaterialText {
+                            visible: !root.dense && root.label != "";
+                            y: (parent.height - self.height) / 2;
+                            text: root.label;
+                            color: root.highlight;
+                            style: MaterialTypography.body_large;
+
+                            states [
+                                on_top when root.text != "" || input.has-focus: {
+                                    y: 0;
+                                    style: MaterialTypography.body_small;
+                                }
+                            ]
+
+                            animate font-size, y {
+                                duration: MaterialAnimations.standard_fast_duration;
+                                easing: MaterialAnimations.standard_easing;
+                            }
+                        }
+                    }
+
+                    if root.unit_suffix != "": MaterialText {
+                        text: root.unit_suffix;
+                        style: MaterialTypography.body_small;
+                        color: MaterialPalette.on_surface_variant;
+                        vertical-alignment: root.dense ? center : bottom;
                     }
                 }
 
+                // Vertical divider before stepper column
                 Rectangle {
                     width: 1px;
                     background: MaterialPalette.outline_variant.with_alpha(50%);
                 }
 
-                // Editable center field (optional floating label + input + unit)
+                // Right-side stacked (+) / (−) mini-buttons
                 VerticalLayout {
-                    horizontal-stretch: 1;
-                    padding-left: MaterialStyleMetrics.padding_4;
-                    padding-right: MaterialStyleMetrics.padding_4;
-                    padding-top: root.dense ? 1px : 2px;
-                    padding-bottom: root.dense ? 1px : 2px;
-                    alignment: center;
+                    width: root.dense ? 20px : 24px;
+                    horizontal-stretch: 0;
 
-                    if root.label != "" && !root.dense: MaterialText {
-                        text: root.label;
-                        style: MaterialTypography.body_small;
-                        color: root.highlight;
-                        horizontal-alignment: center;
-                    }
-
-                    HorizontalLayout {
-                        spacing: 2px;
-                        alignment: center;
+                    inc_touch := TouchArea {
+                        vertical-stretch: 1;
+                        enabled: root.can_increment;
+                        mouse-cursor: root.can_increment ? pointer : default;
+                        accessible-role: button;
+                        accessible-label: "Increase " + (root.label != "" ? root.label : "value");
+                        clicked => { root.step_by(root.step); }
 
                         Rectangle {
-                            horizontal-stretch: 1;
-                            min-width: 24px;
-                            height: 20px;
-                            clip: true;
+                            border-top-right-radius: MaterialStyleMetrics.border_radius_2;
+                            background: inc_touch.pressed
+                                ? MaterialPalette.on_surface.with_alpha(14%)
+                                : (inc_touch.has-hover ? MaterialPalette.on_surface.with_alpha(8%) : transparent);
+                            animate background { duration: MaterialAnimations.fast_duration; }
 
-                            if root.text == "" && root.placeholder_text != "": MaterialText {
-                                text: root.placeholder_text;
-                                style: root.dense ? MaterialTypography.body_small : MaterialTypography.body_medium;
-                                color: MaterialPalette.on_surface_variant.with_alpha(65%);
+                            MaterialText {
+                                text: "+";
+                                font-size: root.dense ? 11px : 13px;
+                                font-weight: 600;
+                                color: root.can_increment ? MaterialPalette.on_surface_variant : MaterialPalette.outline;
                                 horizontal-alignment: center;
                                 vertical-alignment: center;
                             }
-
-                            input := TextInput {
-                                width: 100%;
-                                height: 100%;
-                                font-size: root.dense ? MaterialTypography.body_small.font_size : MaterialTypography.body_medium.font_size;
-                                font-weight: root.dense ? MaterialTypography.regular : MaterialTypography.label_large_prominent.font_weight;
-                                horizontal-alignment: center;
-                                vertical-alignment: center;
-                                color: MaterialPalette.on_surface;
-                                selection-background-color: MaterialPalette.primary.with_alpha(0.5);
-                                selection-foreground-color: self.color;
-                                enabled: root.enabled;
-                                accessible-role: none;
-
-                                accepted => {
-                                    root.accepted(self.text);
-                                    root.value_changed(self.text);
-                                }
-
-                                edited => {
-                                    root.edited(self.text);
-                                }
-
-                                key-pressed(event) => {
-                                    if (event.text == Key.UpArrow) {
-                                        root.step_by(root.step);
-                                        return accept;
-                                    }
-                                    if (event.text == Key.DownArrow) {
-                                        root.step_by(-root.step);
-                                        return accept;
-                                    }
-                                    return reject;
-                                }
-                            }
-                        }
-
-                        if root.unit_suffix != "": MaterialText {
-                            text: root.unit_suffix;
-                            style: MaterialTypography.body_small;
-                            color: MaterialPalette.on_surface_variant;
-                            vertical-alignment: center;
                         }
                     }
-                }
-
-                Rectangle {
-                    width: 1px;
-                    background: MaterialPalette.outline_variant.with_alpha(50%);
-                }
-
-                // Increase button (+)
-                inc_touch := TouchArea {
-                    width: root.dense ? 22px : 30px;
-                    enabled: root.can_increment;
-                    mouse-cursor: root.can_increment ? pointer : default;
-                    accessible-role: button;
-                    accessible-label: "Increase " + (root.label != "" ? root.label : "value");
-                    clicked => { root.step_by(root.step); }
 
                     Rectangle {
-                        border-top-right-radius: MaterialStyleMetrics.border_radius_2;
-                        background: inc_touch.pressed
-                            ? MaterialPalette.on_surface.with_alpha(12%)
-                            : (inc_touch.has-hover ? MaterialPalette.on_surface.with_alpha(8%) : transparent);
-                        animate background { duration: MaterialAnimations.fast_duration; }
+                        height: 1px;
+                        background: MaterialPalette.outline_variant.with_alpha(50%);
+                    }
 
-                        MaterialText {
-                            text: "+";
-                            style: root.dense ? MaterialTypography.label_large : MaterialTypography.title_small;
-                            font_weight: 600;
-                            color: root.can_increment ? MaterialPalette.on_surface_variant : MaterialPalette.outline;
-                            horizontal-alignment: center;
-                            vertical-alignment: center;
+                    dec_touch := TouchArea {
+                        vertical-stretch: 1;
+                        enabled: root.can_decrement;
+                        mouse-cursor: root.can_decrement ? pointer : default;
+                        accessible-role: button;
+                        accessible-label: "Decrease " + (root.label != "" ? root.label : "value");
+                        clicked => { root.step_by(-root.step); }
+
+                        Rectangle {
+                            background: dec_touch.pressed
+                                ? MaterialPalette.on_surface.with_alpha(14%)
+                                : (dec_touch.has-hover ? MaterialPalette.on_surface.with_alpha(8%) : transparent);
+                            animate background { duration: MaterialAnimations.fast_duration; }
+
+                            MaterialText {
+                                text: "−";
+                                font-size: root.dense ? 11px : 13px;
+                                font-weight: 600;
+                                color: root.can_decrement ? MaterialPalette.on_surface_variant : MaterialPalette.outline;
+                                horizontal-alignment: center;
+                                vertical-alignment: center;
+                            }
                         }
                     }
                 }
             }
 
             // Bottom M3 indicator bar
-            Rectangle {
+            active_indicator := Rectangle {
                 y: parent.height - self.height;
-                width: 100%;
-                height: root.has_focus ? 2px : 1px;
+                height: MaterialStyleMetrics.size_1;
                 background: root.highlight;
-                animate background { duration: MaterialAnimations.fast_duration; }
+                visible: root.width > 1px;
+
+                animate height {
+                    duration: MaterialAnimations.standard_fast_duration;
+                    easing: MaterialAnimations.standard_easing;
+                }
             }
         }
 
-        if root.supporting_text != "": MaterialText {
-            text: root.supporting_text;
-            style: MaterialTypography.body_small;
-            color: root.has_error ? MaterialPalette.error : MaterialPalette.on_surface_variant;
+        if root.supporting_text != "": HorizontalLayout {
+            padding-left: MaterialStyleMetrics.padding_16;
+            padding-right: self.padding-left;
+            visible: root.width > 1px;
+
+            MaterialText {
+                text: root.supporting_text;
+                style: MaterialTypography.body_small;
+                color: root.highlight;
+                opacity: root.enabled ? 1 : MaterialPalette.disable_opacity;
+            }
         }
     }
+
+    public function set_selection_offsets(start: int, end: int) {
+        input.set-selection-offsets(start, end);
+    }
+
+    public function select_all() {
+        input.select-all();
+    }
+
+    public function clear_selection() {
+        input.clear-selection();
+    }
+
+    public function cut() {
+        input.cut();
+    }
+
+    public function copy() {
+        input.copy();
+    }
+
+    public function paste() {
+        input.paste();
+    }
+
+    states [
+        disabled when !root.enabled: {
+            background_layer.background: MaterialPalette.surface_container_highest.with_alpha(MaterialPalette.disable_opacity);
+            text_label.opacity: (root.width > 1px && root.height > 1px) ? MaterialPalette.disable_opacity : 1.0;
+            input.opacity: (root.width > 1px && root.height > 1px) ? MaterialPalette.disable_opacity : 1.0;
+        }
+        focused when input.has-focus: {
+            active_indicator.height: MaterialStyleMetrics.size_3;
+        }
+    ]
 }
