@@ -32,6 +32,7 @@ enum class PhaseDescriptor : std::uint8_t {
   QTet,         ///< Chau-Hardwick tetrahedral order parameter (q_tet).
   Displacement, ///< Cumulative PBC-unwrapped atomic displacement |Δr| relative to frame 0 (Å).
   D2Min,        ///< Falk-Langer non-affine squared displacement D²_min relative to frame 0 (Å²).
+  FermiLDOS,    ///< Site-resolved Fermi-level electronic LDOS N_i(E_F) (states/eV/atom).
 };
 
 /**
@@ -171,6 +172,8 @@ struct CrystalMarkerData {
     return "|Δr| (Disp)";
   case PhaseDescriptor::D2Min:
     return "D²_min (Strain)";
+  case PhaseDescriptor::FermiLDOS:
+    return "N(E_F) (LDOS)";
   }
   return "Unknown";
 }
@@ -344,6 +347,8 @@ getDescriptorDomain(PhaseDescriptor descriptor) noexcept {
     return {0.0F, 5.0F};
   case PhaseDescriptor::D2Min:
     return {0.0F, 10.0F};
+  case PhaseDescriptor::FermiLDOS:
+    return {0.0F, 3.0F};
   case PhaseDescriptor::Q6Bar:
   case PhaseDescriptor::Q6:
     return {0.0F, 0.90F};

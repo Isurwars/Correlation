@@ -72,7 +72,13 @@ void printParameterOptions() {
       << "  --vacf-max-lag <int>      Max VACF lag frames, -1=auto N/2 (default: -1)\n"
       << "  --vdos-window <str>       VDOS window: hann, blackman, gaussian, none (default: hann)\n"
       << "  --vdos-zero-pad <int>     VDOS FFT zero-padding multiplier >= 1 (default: 4)\n"
-      << "  --mlip-model <path>       Path to ORB-v3 + LDOS binary weights (default: auto)\n";
+      << "  --mlip-model <path>       Path to ORB-v3 + LDOS binary weights (default: auto)\n"
+      << "  --ldos-kernel <str>       LDOS broadening: none, gaussian, lorentzian (default: none)\n"
+      << "  --ldos-sigma <float>      Additional LDOS broadening width in eV (default: 0.0)\n"
+      << "  --ldos-temp <float>       Electronic smearing temperature in K (default: 300.0)\n"
+      << "  --eliashberg-mu-star <f>  Coulomb pseudopotential mu* in [0, 0.5) (default: 0.10)\n"
+      << "  --eliashberg-mode <str>   Coupling mode: trajectory, finite-disp (default: trajectory)\n"
+      << "  --eliashberg-disp-step <f> Finite-displacement amplitude in A (default: 0.02)\n";
 }
 
 } // namespace
@@ -222,6 +228,22 @@ void applyMaterialDefaults(const CLI::App &app, CliOptions &opts) {
     std::cerr << "Error: --vdos-zero-pad must be at least 1.\n";
     return false;
   }
+  if (opts.ldos_broadening_sigma < 0.0) {
+    std::cerr << "Error: --ldos-sigma cannot be negative.\n";
+    return false;
+  }
+  if (opts.ldos_electronic_temp_k < 0.0) {
+    std::cerr << "Error: --ldos-temp cannot be negative.\n";
+    return false;
+  }
+  if (opts.eliashberg_mu_star < 0.0 || opts.eliashberg_mu_star >= 0.5) {
+    std::cerr << "Error: --eliashberg-mu-star must lie in [0.0, 0.5).\n";
+    return false;
+  }
+  if (opts.eliashberg_disp_step <= 0.0) {
+    std::cerr << "Error: --eliashberg-disp-step must be strictly positive.\n";
+    return false;
+  }
   if (!opts.csv && !opts.hdf5 && !opts.parquet) {
     std::cerr
         << "Error: At least one output format (--csv, --hdf5, or --parquet) must be enabled.\n";
@@ -297,6 +319,31 @@ bool parseArgs(std::span<const char *const> argv, CliOptions &opts) {
   app.add_option("--lef-cutoff", opts.lef_cutoff);
   app.add_option("--lef-sigma", opts.lef_sigma);
   app.add_option("--mlip-model", opts.mlip_model_path);
+  app.add_option("--ldos-sigma", opts.ldos_broadening_sigma);
+  app.add_option("--ldos-temp", opts.ldos_electronic_temp_k);
+  app.add_option("--eliashberg-mu-star", opts.eliashberg_mu_star);
+  app.add_option("--eliashberg-disp-step", opts.eliashberg_disp_step);
+
+  std::map<std::string, correlation::analysis::LDOSBroadeningKernel> const ldos_kernel_map = {
+      {"none", correlation::analysis::LDOSBroadeningKernel::None},
+      {"gaussian", correlation::analysis::LDOSBroadeningKernel::Gaussian},
+      {"gauss", correlation::analysis::LDOSBroadeningKernel::Gaussian},
+      {"lorentzian", correlation::analysis::LDOSBroadeningKernel::Lorentzian},
+      {"lorentz", correlation::analysis::LDOSBroadeningKernel::Lorentzian},
+  };
+  app.add_option("--ldos-kernel", opts.ldos_broadening_kernel,
+                 "LDOS broadening kernel (none, gaussian, lorentzian)")
+      ->transform(CLI::CheckedTransformer(ldos_kernel_map, CLI::ignore_case));
+
+  std::map<std::string, correlation::analysis::CouplingEstimationMode> const eliashberg_mode_map = {
+      {"trajectory", correlation::analysis::CouplingEstimationMode::TrajectoryFluctuation},
+      {"traj", correlation::analysis::CouplingEstimationMode::TrajectoryFluctuation},
+      {"finite-disp", correlation::analysis::CouplingEstimationMode::FiniteDisplacement},
+      {"finite", correlation::analysis::CouplingEstimationMode::FiniteDisplacement},
+  };
+  app.add_option("--eliashberg-mode", opts.eliashberg_coupling_mode,
+                 "Eliashberg coupling mode (trajectory, finite-disp)")
+      ->transform(CLI::CheckedTransformer(eliashberg_mode_map, CLI::ignore_case));
 
   app.add_option("--hyper-samples", opts.hyper_samples);
   app.add_option("--vacf-max-lag", opts.vacf_max_lag);

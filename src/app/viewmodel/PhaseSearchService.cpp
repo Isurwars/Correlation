@@ -12,6 +12,8 @@
 #include "calculators/order/SteinhardtCalculator.hpp"
 #include "calculators/order/TenWoldeFrenkelCalculator.hpp"
 #include "calculators/order/TetrahedralCalculator.hpp"
+#include "calculators/scattering/TDOSCalculator.hpp"
+#include "mlip/OrbV3GNNModel.hpp"
 #include "physics/PhysicalData.hpp"
 #include "plotters/ColormapService.hpp"
 
@@ -19,6 +21,7 @@
 #include <array>
 #include <cmath>
 #include <cstdint>
+#include <iostream>
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
 #include <utility>
@@ -92,8 +95,35 @@ std::span<const real_t> extractDescriptorValues(const FramePhaseDescriptors &des
     return descriptors.displacement;
   case PhaseDescriptor::D2Min:
     return descriptors.d2_min;
+  case PhaseDescriptor::FermiLDOS:
+    return descriptors.fermi_ldos;
   }
   return {};
+}
+
+[[nodiscard]] std::vector<real_t> computePerAtomFermiLdos(const core::Cell &target_cell) {
+  std::vector<real_t> values(target_cell.atomCount(), static_cast<real_t>(0.0));
+  const auto model_path = mlip::OrbV3GNNModel::findDefaultModelPath();
+  if (model_path.empty()) {
+    return values;
+  }
+  try {
+    const mlip::OrbV3GNNModel model(model_path);
+    if (!model.isLoaded()) {
+      return values;
+    }
+    calculators::TDOSParams tdos_params;
+    tdos_params.model = &model;
+    tdos_params.compute_idos = false;
+    const auto detailed = calculators::TDOSCalculator::calculateDetailed(target_cell, tdos_params);
+    if (detailed.diagnostics.per_atom_fermi_dos.size() == target_cell.atomCount()) {
+      return detailed.diagnostics.per_atom_fermi_dos;
+    }
+  } catch (const std::exception &err) {
+    values.assign(target_cell.atomCount(), static_cast<real_t>(0.0));
+    std::cerr << "[PhaseSearchService] Fermi-LDOS evaluation skipped: " << err.what() << '\n';
+  }
+  return values;
 }
 
 constexpr std::size_t K_LUT_SIZE = 256;
@@ -136,6 +166,9 @@ constexpr std::size_t K_MAX_CACHE_FRAMES = 512UL;
   }
   if (descriptor == PhaseDescriptor::D2Min) {
     return !desc.d2_min.empty();
+  }
+  if (descriptor == PhaseDescriptor::FermiLDOS) {
+    return !desc.fermi_ldos.empty();
   }
   return false;
 }
@@ -657,27 +690,26 @@ namespace {
   }
   const auto &inv = cell.inverseLatticeVectors();
   const auto &lat = cell.latticeVectors();
-  const double fx = static_cast<double>(inv[0][0]) * diff.x() +
-                    static_cast<double>(inv[0][1]) * diff.y() +
-                    static_cast<double>(inv[0][2]) * diff.z();
-  const double fy = static_cast<double>(inv[1][0]) * diff.x() +
-                    static_cast<double>(inv[1][1]) * diff.y() +
-                    static_cast<double>(inv[1][2]) * diff.z();
-  const double fz = static_cast<double>(inv[2][0]) * diff.x() +
-                    static_cast<double>(inv[2][1]) * diff.y() +
-                    static_cast<double>(inv[2][2]) * diff.z();
+  const double frac_x = static_cast<double>(inv[0][0]) * diff.x() +
+                        static_cast<double>(inv[0][1]) * diff.y() +
+                        static_cast<double>(inv[0][2]) * diff.z();
+  const double frac_y = static_cast<double>(inv[1][0]) * diff.x() +
+                        static_cast<double>(inv[1][1]) * diff.y() +
+                        static_cast<double>(inv[1][2]) * diff.z();
+  const double frac_z = static_cast<double>(inv[2][0]) * diff.x() +
+                        static_cast<double>(inv[2][1]) * diff.y() +
+                        static_cast<double>(inv[2][2]) * diff.z();
 
-  const double wx = fx - std::round(fx);
-  const double wy = fy - std::round(fy);
-  const double wz = fz - std::round(fz);
+  const double wrap_x = frac_x - std::round(frac_x);
+  const double wrap_y = frac_y - std::round(frac_y);
+  const double wrap_z = frac_z - std::round(frac_z);
 
-  return math::Vector3<double>(
-      static_cast<double>(lat[0][0]) * wx + static_cast<double>(lat[1][0]) * wy +
-          static_cast<double>(lat[2][0]) * wz,
-      static_cast<double>(lat[0][1]) * wx + static_cast<double>(lat[1][1]) * wy +
-          static_cast<double>(lat[2][1]) * wz,
-      static_cast<double>(lat[0][2]) * wx + static_cast<double>(lat[1][2]) * wy +
-          static_cast<double>(lat[2][2]) * wz);
+  return {static_cast<double>(lat[0][0]) * wrap_x + static_cast<double>(lat[1][0]) * wrap_y +
+              static_cast<double>(lat[2][0]) * wrap_z,
+          static_cast<double>(lat[0][1]) * wrap_x + static_cast<double>(lat[1][1]) * wrap_y +
+              static_cast<double>(lat[2][1]) * wrap_z,
+          static_cast<double>(lat[0][2]) * wrap_x + static_cast<double>(lat[1][2]) * wrap_y +
+              static_cast<double>(lat[2][2]) * wrap_z};
 }
 
 [[nodiscard]] std::vector<real_t> computePerAtomDisplacement(const core::Cell &target_cell,
@@ -699,27 +731,35 @@ namespace {
     const auto &pos_t = target_atoms[idx].position();
     const auto &pos_0 = ref_atoms[idx].position();
     if (!has_pbc) {
-      const double dx = static_cast<double>(pos_t.x()) - static_cast<double>(pos_0.x());
-      const double dy = static_cast<double>(pos_t.y()) - static_cast<double>(pos_0.y());
-      const double dz = static_cast<double>(pos_t.z()) - static_cast<double>(pos_0.z());
-      disp[idx] = static_cast<real_t>(std::sqrt(dx * dx + dy * dy + dz * dz));
+      const double delta_x = static_cast<double>(pos_t.x()) - static_cast<double>(pos_0.x());
+      const double delta_y = static_cast<double>(pos_t.y()) - static_cast<double>(pos_0.y());
+      const double delta_z = static_cast<double>(pos_t.z()) - static_cast<double>(pos_0.z());
+      disp[idx] =
+          static_cast<real_t>(std::sqrt(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z));
       return;
     }
     const auto frac_t = inv_t * pos_t;
     const auto frac_0 = inv_0 * pos_0;
-    const double wx = static_cast<double>(frac_t.x()) - static_cast<double>(frac_0.x()) -
-                      std::round(static_cast<double>(frac_t.x()) - static_cast<double>(frac_0.x()));
-    const double wy = static_cast<double>(frac_t.y()) - static_cast<double>(frac_0.y()) -
-                      std::round(static_cast<double>(frac_t.y()) - static_cast<double>(frac_0.y()));
-    const double wz = static_cast<double>(frac_t.z()) - static_cast<double>(frac_0.z()) -
-                      std::round(static_cast<double>(frac_t.z()) - static_cast<double>(frac_0.z()));
-    const double dx = static_cast<double>(lat_t[0][0]) * wx +
-                      static_cast<double>(lat_t[1][0]) * wy + static_cast<double>(lat_t[2][0]) * wz;
-    const double dy = static_cast<double>(lat_t[0][1]) * wx +
-                      static_cast<double>(lat_t[1][1]) * wy + static_cast<double>(lat_t[2][1]) * wz;
-    const double dz = static_cast<double>(lat_t[0][2]) * wx +
-                      static_cast<double>(lat_t[1][2]) * wy + static_cast<double>(lat_t[2][2]) * wz;
-    disp[idx] = static_cast<real_t>(std::sqrt(dx * dx + dy * dy + dz * dz));
+    const double wrap_x =
+        static_cast<double>(frac_t.x()) - static_cast<double>(frac_0.x()) -
+        std::round(static_cast<double>(frac_t.x()) - static_cast<double>(frac_0.x()));
+    const double wrap_y =
+        static_cast<double>(frac_t.y()) - static_cast<double>(frac_0.y()) -
+        std::round(static_cast<double>(frac_t.y()) - static_cast<double>(frac_0.y()));
+    const double wrap_z =
+        static_cast<double>(frac_t.z()) - static_cast<double>(frac_0.z()) -
+        std::round(static_cast<double>(frac_t.z()) - static_cast<double>(frac_0.z()));
+    const double delta_x = static_cast<double>(lat_t[0][0]) * wrap_x +
+                           static_cast<double>(lat_t[1][0]) * wrap_y +
+                           static_cast<double>(lat_t[2][0]) * wrap_z;
+    const double delta_y = static_cast<double>(lat_t[0][1]) * wrap_x +
+                           static_cast<double>(lat_t[1][1]) * wrap_y +
+                           static_cast<double>(lat_t[2][1]) * wrap_z;
+    const double delta_z = static_cast<double>(lat_t[0][2]) * wrap_x +
+                           static_cast<double>(lat_t[1][2]) * wrap_y +
+                           static_cast<double>(lat_t[2][2]) * wrap_z;
+    disp[idx] =
+        static_cast<real_t>(std::sqrt(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z));
   };
 
   if (count >= K_PARALLEL_ATOM_THRESHOLD) {
@@ -943,6 +983,13 @@ void PhaseSearchService::populateDeformationDescriptors(FramePhaseDescriptors &d
       descriptors.d2_min = computePerAtomD2Min(target_cell, ref_analyzer->neighborGraph());
     }
   }
+
+  const bool need_fermi =
+      (settings.descriptor == PhaseDescriptor::FermiLDOS) ||
+      (settings.is_2d_mode && settings.descriptor_y == PhaseDescriptor::FermiLDOS);
+  if (need_fermi && descriptors.fermi_ldos.empty()) {
+    descriptors.fermi_ldos = computePerAtomFermiLdos(target_cell);
+  }
 }
 
 std::shared_ptr<const FramePhaseDescriptors>
@@ -986,7 +1033,7 @@ PhaseSearchService::computeDescriptorsSync(std::size_t frame_index) {
     // GPU-accelerated pre-bake for large cells (>= 4k atoms) on scalar GPU-supported descriptors
     constexpr std::size_t K_GPU_PREBAKE_THRESHOLD = 4096;
     if (gpu_eval && target_cell.atomCount() >= K_GPU_PREBAKE_THRESHOLD) {
-      auto try_gpu = [&](PhaseDescriptor desc) {
+      const auto try_gpu = [&](PhaseDescriptor desc) {
         std::vector<real_t> vals;
         if (desc == PhaseDescriptor::LocalEntropy && descriptors->local_entropy.empty() &&
             gpu_eval(target_cell, desc, max_dist, vals) && vals.size() == target_cell.atomCount()) {

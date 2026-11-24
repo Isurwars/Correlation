@@ -29,6 +29,7 @@ export component PhaseDescriptorSelector inherits VerticalLayout {
         "Tetrahedral order q_tet: measures tetrahedrality (1.0 = ideal diamond/tetrahedron).",
         "Cumulative atomic displacement |Δr| (Å) relative to Frame 0 with PBC unwrapping.",
         "Falk-Langer non-affine strain D²_min (Å²) relative to Frame 0: isolates plastic shear bands.",
+        "Site-resolved Fermi-level electronic LDOS N_i(E_F) (states/eV/atom) from MLIP.",
     ];
     private property <[string]> cmap_tips: [
         "Viridis perceptually uniform colormap.",
@@ -54,7 +55,7 @@ export component PhaseDescriptorSelector inherits VerticalLayout {
         HorizontalLayout {
             spacing: 2px;
             height: 22px;
-            property <[string]> desc_labels: ["q̄₆", "q̄₄", "q₆", "q₄", "ŵ₆", "ŵ₄", "s₂", "N_c", "q_tet", "|Δr|", "D²"];
+            property <[string]> desc_labels: ["q̄₆", "q̄₄", "q₆", "q₄", "ŵ₆", "ŵ₄", "s₂", "N_c", "q_tet", "|Δr|", "D²", "N(E_F)"];
 
             for d_label[d_idx] in self.desc_labels: Chip {
                 horizontal-stretch: 1;

@@ -210,12 +210,55 @@ void populateHyperuniformity(::PhysicsDiagnostics &out,
   out.hyper_level = verdict.severity_level;
 }
 
+void populateElectronicDiagnostics(::PhysicsDiagnostics &out,
+                                   const correlation::analysis::ElectronicDiagnostics &diag) {
+  if (!diag.has_electronic_dos) {
+    return;
+  }
+  out.electronic_fermi_dos =
+      slint::SharedString(std::format("{:.4f} states/eV/atom", diag.fermi_dos_total));
+  out.electronic_band_gap = slint::SharedString(std::format("{:.3f} eV", diag.band_gap));
+  if (diag.is_metallic || diag.band_gap <= static_cast<real_t>(1e-4)) {
+    out.electronic_regime = "Metallic";
+    out.electronic_level = 1;
+  } else if (diag.band_gap <= static_cast<real_t>(3.5)) {
+    out.electronic_regime = "Semiconducting";
+    out.electronic_level = 2;
+  } else {
+    out.electronic_regime = "Insulating";
+    out.electronic_level = 0;
+  }
+}
+
+void populateSuperconductingDiagnostics(
+    ::PhysicsDiagnostics &out, const correlation::analysis::SuperconductingDiagnostics &diag) {
+  if (!diag.has_eliashberg) {
+    return;
+  }
+  out.eliashberg_lambda = slint::SharedString(std::format("{:.3f}", diag.lambda));
+  out.eliashberg_omega_log = slint::SharedString(
+      std::format("{:.2f} meV ({:.1f} K)", diag.omega_log_mev, diag.omega_log_k));
+  out.eliashberg_tc = slint::SharedString(std::format("{:.2f} K", diag.tc_allen_dynes_k));
+  if (diag.lambda < static_cast<real_t>(0.5)) {
+    out.eliashberg_regime = "Weak Coupling";
+    out.eliashberg_level = 0;
+  } else if (diag.lambda <= static_cast<real_t>(1.2)) {
+    out.eliashberg_regime = "Intermediate Coupling";
+    out.eliashberg_level = 1;
+  } else {
+    out.eliashberg_regime = "Strong Coupling";
+    out.eliashberg_level = 2;
+  }
+}
+
 void updateDynamicProperties(
     const ::AppWindow &window,
     const correlation::analysis::DistributionFunctions *distribution_functions) {
   ::PhysicsDiagnostics out{};
   out.deborah_level = -1;
   out.hyper_level = -1;
+  out.electronic_level = -1;
+  out.eliashberg_level = -1;
 
   if (distribution_functions == nullptr) {
     window.set_physics_diagnostics(out);
@@ -239,6 +282,8 @@ void updateDynamicProperties(
 
   populateDeborahRegime(out, distribution_functions->getDeborahNumber());
   populateHyperuniformity(out, distribution_functions->getHyperuniformityDiagnostics());
+  populateElectronicDiagnostics(out, distribution_functions->getElectronicDiagnostics());
+  populateSuperconductingDiagnostics(out, distribution_functions->getSuperconductingDiagnostics());
 
   window.set_physics_diagnostics(out);
 }

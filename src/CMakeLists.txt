@@ -42,6 +42,7 @@ add_library(calculators_obj OBJECT
     calculators/CalculatorFactory.cpp
 
     # Machine learning calculators
+    calculators/ml/EliashbergCalculator.cpp
     calculators/ml/MLIPCalculator.cpp
     calculators/ml/SpinCorrelationCalculator.cpp
     calculators/ml/ChargeCorrelationCalculator.cpp
@@ -77,6 +78,7 @@ add_library(calculators_obj OBJECT
     calculators/temporal/VDOSCalculator.cpp
 
     # Scattering and reciprocal space calculators
+    calculators/scattering/LDOSPostProcessor.cpp
     calculators/scattering/StructureFactorCalculator.cpp
     calculators/scattering/TDOSCalculator.cpp
     calculators/scattering/XRDCalculator.cpp

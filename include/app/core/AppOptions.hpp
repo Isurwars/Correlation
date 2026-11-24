@@ -63,6 +63,17 @@ struct AppDefaults {
       correlation::analysis::VDOSWindowType::Hann; ///< Default VDOS tapering window.
   static constexpr size_t VDOS_ZERO_PAD = 4;       ///< Default VDOS FFT zero-padding factor.
 
+  // Electronic LDOS & Eliashberg Defaults
+  static constexpr correlation::analysis::LDOSBroadeningKernel LDOS_BROADENING_KERNEL =
+      correlation::analysis::LDOSBroadeningKernel::None;
+  static constexpr real_t LDOS_BROADENING_SIGMA = static_cast<real_t>(0.0);
+  static constexpr real_t LDOS_ELECTRONIC_TEMP_K = static_cast<real_t>(300.0);
+  static constexpr real_t LDOS_GAP_THRESHOLD = static_cast<real_t>(1e-3);
+  static constexpr real_t ELIASHBERG_MU_STAR = static_cast<real_t>(0.10);
+  static constexpr correlation::analysis::CouplingEstimationMode ELIASHBERG_COUPLING_MODE =
+      correlation::analysis::CouplingEstimationMode::TrajectoryFluctuation;
+  static constexpr real_t ELIASHBERG_DISP_STEP = static_cast<real_t>(0.02);
+
   // XRD Defaults
   static constexpr real_t XRD_LAMBDA =
       static_cast<real_t>(1.5406); ///< Default X-ray wavelength in Å (Cu K-alpha).
@@ -161,6 +172,18 @@ struct ProgramOptions {
 
   /** @brief Optional path to MLIP/LDOS binary model weights. */
   std::string mlip_model_path;
+
+  // Electronic LDOS / TDOS & Eliashberg α²F(ω) options
+  correlation::analysis::LDOSBroadeningKernel ldos_broadening_kernel =
+      AppDefaults::LDOS_BROADENING_KERNEL;
+  real_t ldos_broadening_sigma = AppDefaults::LDOS_BROADENING_SIGMA;
+  real_t ldos_electronic_temp_k = AppDefaults::LDOS_ELECTRONIC_TEMP_K;
+  real_t ldos_gap_threshold = AppDefaults::LDOS_GAP_THRESHOLD;
+  bool ldos_compute_idos = true;
+  real_t eliashberg_mu_star = AppDefaults::ELIASHBERG_MU_STAR;
+  correlation::analysis::CouplingEstimationMode eliashberg_coupling_mode =
+      AppDefaults::ELIASHBERG_COUPLING_MODE;
+  real_t eliashberg_disp_step = AppDefaults::ELIASHBERG_DISP_STEP;
 };
 
 } // namespace correlation::app

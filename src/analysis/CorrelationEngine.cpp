@@ -10,6 +10,7 @@
 #include "analysis/DynamicsAnalyzer.hpp"
 #include "analysis/TrajectoryAnalyzer.hpp"
 #include "calculators/CalculatorFactory.hpp"
+#include "calculators/ml/EliashbergCalculator.hpp"
 #include "calculators/ml/MLIPCalculator.hpp"
 #include "calculators/order/HyperuniformityCalculator.hpp"
 #include "calculators/scattering/TDOSCalculator.hpp"
@@ -109,6 +110,18 @@ namespace {
   if (settings.lef_sigma <= 0.0) {
     return "Error: lef_sigma must be strictly positive.";
   }
+  if (settings.ldos_broadening_sigma < 0.0) {
+    return "Error: ldos_broadening_sigma cannot be negative.";
+  }
+  if (settings.ldos_electronic_temp_k < 0.0) {
+    return "Error: ldos_electronic_temp_k cannot be negative.";
+  }
+  if (settings.eliashberg_mu_star < 0.0 || settings.eliashberg_mu_star >= 0.5) {
+    return "Error: eliashberg_mu_star must lie in [0.0, 0.5).";
+  }
+  if (settings.eliashberg_disp_step <= 0.0) {
+    return "Error: eliashberg_disp_step must be strictly positive.";
+  }
   return {};
 }
 
@@ -151,7 +164,8 @@ bool requiresVelocities(const AnalysisSettings &settings) {
         (calc->getShortName() == "VACF" || calc->getName() == "VACF" ||
          calc->getName() == "Velocity Autocorrelation Function" || calc->getShortName() == "VDOS" ||
          calc->getShortName() == "vDoS" || calc->getName() == "Vibrational Density of States" ||
-         calc->getName() == "vDoS")) {
+         calc->getName() == "vDoS" || calc->getShortName() == "a2F" ||
+         calc->getName() == "Eliashberg Spectral Function")) {
       return true;
     }
   }
@@ -165,7 +179,9 @@ public:
         settings.isActive("TDOS") || settings.isActive("Total Density of States (TDOS)");
     const bool wants_mlip =
         settings.isActive("MLIP") || settings.isActive("ML Interatomic Potential (ORB-v3)");
-    if (!wants_tdos && !wants_mlip) {
+    const bool wants_eliashberg =
+        settings.isActive("a2F") || settings.isActive("Eliashberg Spectral Function");
+    if (!wants_tdos && !wants_mlip && !wants_eliashberg) {
       return;
     }
 
@@ -186,6 +202,14 @@ public:
           mlip_calc_ = mlip;
           mlip_calc_->setModel(owned_model_.get());
         }
+      } else if (auto *eliash =
+                     dynamic_cast<::correlation::calculators::EliashbergCalculator *>(calc.get());
+                 eliash != nullptr && eliash->getModel() == nullptr) {
+        ensureModelLoaded(settings.mlip_model_path);
+        if (owned_model_ && owned_model_->isLoaded()) {
+          eliashberg_calc_ = eliash;
+          eliashberg_calc_->setModel(owned_model_.get());
+        }
       }
     }
   }
@@ -196,6 +220,9 @@ public:
     }
     if (mlip_calc_ != nullptr) {
       mlip_calc_->setModel(nullptr);
+    }
+    if (eliashberg_calc_ != nullptr) {
+      eliashberg_calc_->setModel(nullptr);
     }
   }
 
@@ -214,6 +241,7 @@ private:
   std::unique_ptr<::correlation::mlip::OrbV3GNNModel> owned_model_;
   ::correlation::calculators::TDOSCalculator *tdos_calc_{nullptr};
   ::correlation::calculators::MLIPCalculator *mlip_calc_{nullptr};
+  ::correlation::calculators::EliashbergCalculator *eliashberg_calc_{nullptr};
 };
 
 } // namespace
@@ -252,11 +280,19 @@ void CorrelationEngine::runTrajectoryCalculators(DistributionFunctions &distribu
 
   const auto &factory_calcs =
       ::correlation::calculators::CalculatorFactory::instance().getCalculators();
+  const ::correlation::calculators::BaseCalculator *deferred_eliashberg = nullptr;
   for (const auto &calc : factory_calcs) {
     if (calc->isTrajectoryCalculator() && !calc->isFrameCalculator() && calc->isConfigured() &&
         (settings.isActive(calc->getName()) || settings.isActive(calc->getShortName()))) {
+      if (calc->getShortName() == "a2F") {
+        deferred_eliashberg = calc.get();
+        continue;
+      }
       calc->calculateTrajectory(distribution_functions, trajectory, settings);
     }
+  }
+  if (deferred_eliashberg != nullptr) {
+    deferred_eliashberg->calculateTrajectory(distribution_functions, trajectory, settings);
   }
 }
 

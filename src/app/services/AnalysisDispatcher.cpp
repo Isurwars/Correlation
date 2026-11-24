@@ -66,6 +66,14 @@ toEngineConfig(const ProgramOptions &options, std::atomic<bool> *cancel_flag) {
   config.settings.cancel_flag = cancel_flag;
   config.settings.xrd_params = options.xrd_params;
   config.settings.mlip_model_path = options.mlip_model_path;
+  config.settings.ldos_broadening_kernel = options.ldos_broadening_kernel;
+  config.settings.ldos_broadening_sigma = options.ldos_broadening_sigma;
+  config.settings.ldos_electronic_temp_k = options.ldos_electronic_temp_k;
+  config.settings.ldos_gap_threshold = options.ldos_gap_threshold;
+  config.settings.ldos_compute_idos = options.ldos_compute_idos;
+  config.settings.eliashberg_mu_star = options.eliashberg_mu_star;
+  config.settings.eliashberg_coupling_mode = options.eliashberg_coupling_mode;
+  config.settings.eliashberg_disp_step = options.eliashberg_disp_step;
 
   config.bond_cutoffs = options.bond_cutoffs;
   config.min_frame = options.min_frame;

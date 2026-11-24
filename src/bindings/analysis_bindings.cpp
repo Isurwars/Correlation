@@ -111,6 +111,50 @@ void init_analysis(py::module_ &mod) {
       .value("Gaussian", VDOSWindowType::Gaussian, "Half-Gaussian window (3-sigma).")
       .value("None", VDOSWindowType::None, "Unwindowed rectangular cutoff.");
 
+  py::enum_<LDOSBroadeningKernel>(mod, "LDOSBroadeningKernel",
+                                  "Spectral convolution kernel for electronic LDOS/TDOS.")
+      .value("None", LDOSBroadeningKernel::None, "No additional broadening.")
+      .value("Gaussian", LDOSBroadeningKernel::Gaussian, "Normalized Gaussian broadening.")
+      .value("Lorentzian", LDOSBroadeningKernel::Lorentzian, "Normalized Lorentzian broadening.");
+
+  py::enum_<CouplingEstimationMode>(mod, "CouplingEstimationMode",
+                                    "Strategy for MLIP electron-phonon coupling estimation.")
+      .value("TrajectoryFluctuation", CouplingEstimationMode::TrajectoryFluctuation,
+             "Fast trajectory-fluctuation regression of dN_i(E_F) vs displacements.")
+      .value("FiniteDisplacement", CouplingEstimationMode::FiniteDisplacement,
+             "Deterministic central-difference +/- delta perturbations per species.");
+
+  py::class_<ElectronicDiagnostics>(mod, "ElectronicDiagnostics",
+                                    "Electronic structure diagnostics from LDOS/TDOS.")
+      .def(py::init<>())
+      .def_readwrite("fermi_dos_total", &ElectronicDiagnostics::fermi_dos_total)
+      .def_readwrite("band_gap", &ElectronicDiagnostics::band_gap)
+      .def_readwrite("vbm_energy", &ElectronicDiagnostics::vbm_energy)
+      .def_readwrite("cbm_energy", &ElectronicDiagnostics::cbm_energy)
+      .def_readwrite("fermi_dos_species", &ElectronicDiagnostics::fermi_dos_species)
+      .def_property_readonly(
+          "per_atom_fermi_dos",
+          [](const ElectronicDiagnostics &diag) -> py::array_t<real_t> {
+            return py::array_t<real_t>(static_cast<py::ssize_t>(diag.per_atom_fermi_dos.size()),
+                                       diag.per_atom_fermi_dos.data());
+          },
+          "Per-atom Fermi-level LDOS N_i(E_F) as a 1D NumPy array.")
+      .def_readwrite("is_metallic", &ElectronicDiagnostics::is_metallic)
+      .def_readwrite("has_electronic_dos", &ElectronicDiagnostics::has_electronic_dos);
+
+  py::class_<SuperconductingDiagnostics>(
+      mod, "SuperconductingDiagnostics",
+      "Superconducting screening diagnostics from Eliashberg alpha^2F(omega).")
+      .def(py::init<>())
+      .def_readwrite("lambda_ep", &SuperconductingDiagnostics::lambda)
+      .def_readwrite("omega_log_mev", &SuperconductingDiagnostics::omega_log_mev)
+      .def_readwrite("omega_log_k", &SuperconductingDiagnostics::omega_log_k)
+      .def_readwrite("omega_2_mev", &SuperconductingDiagnostics::omega_2_mev)
+      .def_readwrite("tc_mcmillan_k", &SuperconductingDiagnostics::tc_mcmillan_k)
+      .def_readwrite("tc_allen_dynes_k", &SuperconductingDiagnostics::tc_allen_dynes_k)
+      .def_readwrite("mu_star", &SuperconductingDiagnostics::mu_star)
+      .def_readwrite("has_eliashberg", &SuperconductingDiagnostics::has_eliashberg);
+
   // ------------------------------------------------------------------
   // BondCutoffRange
   // ------------------------------------------------------------------
@@ -537,6 +581,12 @@ void init_analysis(py::module_ &mod) {
           "kernel : KernelType\n    Smoothing kernel. Default Gaussian.")
 
       // Accumulation helpers
+      .def("get_electronic_diagnostics", &DistributionFunctions::getElectronicDiagnostics,
+           py::return_value_policy::reference_internal,
+           "Get electronic structure diagnostics (N(E_F), band gap, per-atom N_i(E_F)).")
+      .def("get_superconducting_diagnostics", &DistributionFunctions::getSuperconductingDiagnostics,
+           py::return_value_policy::reference_internal,
+           "Get superconducting screening diagnostics (lambda, omega_log, Allen-Dynes T_c).")
       .def("add", &DistributionFunctions::add, py::arg("other"),
            "Accumulate histograms from another DistributionFunctions object\n"
            "(used for trajectory averaging).")

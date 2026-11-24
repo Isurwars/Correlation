@@ -67,6 +67,18 @@ struct CliOptions {
   bool is_convert_command = false;             ///< Flag indicating convert subcommand was invoked.
   ConvertOptions convert_options{};            ///< Options for convert subcommand.
   std::string mlip_model_path;                 ///< Optional path to MLIP/LDOS binary weight file.
+  correlation::analysis::LDOSBroadeningKernel ldos_broadening_kernel =
+      correlation::analysis::LDOSBroadeningKernel::None; ///< LDOS spectral broadening kernel.
+  real_t ldos_broadening_sigma =
+      static_cast<real_t>(0.0); ///< Additional LDOS broadening width (eV).
+  real_t ldos_electronic_temp_k =
+      static_cast<real_t>(300.0); ///< Electronic temperature for Fermi-Dirac N(E_F) smearing (K).
+  real_t eliashberg_mu_star =
+      static_cast<real_t>(0.10); ///< Coulomb pseudopotential μ* for Allen-Dynes T_c.
+  correlation::analysis::CouplingEstimationMode eliashberg_coupling_mode =
+      correlation::analysis::CouplingEstimationMode::TrajectoryFluctuation; ///< Coupling mode.
+  real_t eliashberg_disp_step =
+      static_cast<real_t>(0.02); ///< Finite-displacement perturbation amplitude (Å).
 };
 
 /**

@@ -9,8 +9,10 @@
 
 #include "mlip_bindings.hpp"
 #include "calculators/ml/ChargeCorrelationCalculator.hpp"
+#include "calculators/ml/EliashbergCalculator.hpp"
 #include "calculators/ml/MLIPCalculator.hpp"
 #include "calculators/ml/SpinCorrelationCalculator.hpp"
+#include "calculators/scattering/LDOSPostProcessor.hpp"
 #include "calculators/scattering/TDOSCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
@@ -57,7 +59,11 @@ template <typename T>
   return py::array_t<T>({num_rows, num_cols}, {stride_row, stride_col}, buffer.data(), obj);
 }
 
-void bindPeriodicGraphData(py::module_ &mod) {
+template <typename T> [[nodiscard]] py::array_t<T> makeOwned1D(std::span<const T> buffer) {
+  return py::array_t<T>(static_cast<py::ssize_t>(buffer.size()), buffer.data());
+}
+
+void bindPeriodicGraphData(const py::module_ &mod) {
   py::class_<PeriodicGraphData>(
       mod, "PeriodicGraphData",
       "Container for periodic neighbor graph tensors ready for GNN model inference.")
@@ -319,57 +325,91 @@ public:
   }
 };
 
-void bindMlipInterface(py::module_ &mod) {
-  // ------------------------------------------------------------------
-  // MLIPInterface
-  // ------------------------------------------------------------------
-  py::class_<MLIPInterface, PyMLIPInterface>(mod, "MLIPInterface",
-                                             "Abstract interface for MLIP engines.")
-      .def(py::init<>())
-      .def("get_model_name", &MLIPInterface::getModelName, "Return model descriptor name.")
-      .def("evaluate", &MLIPInterface::evaluate, py::arg("cell"),
-           "Evaluate model on an atomic cell.");
+[[nodiscard]] py::array_t<real_t>
+vector3ListToNumpy(std::span<const correlation::math::Vector3<real_t>> vecs) {
+  const size_t count = vecs.size();
+  py::array_t<real_t> arr({static_cast<py::ssize_t>(count), static_cast<py::ssize_t>(3)});
+  auto buf = arr.mutable_unchecked<2>();
+  for (size_t idx = 0; idx < count; ++idx) {
+    const auto row = static_cast<py::ssize_t>(idx);
+    buf(row, 0) = vecs[idx].x();
+    buf(row, 1) = vecs[idx].y();
+    buf(row, 2) = vecs[idx].z();
+  }
+  return arr;
+}
 
-  // ------------------------------------------------------------------
-  // MLIPOutput
-  // ------------------------------------------------------------------
+void numpyToVector3List(const py::array_t<real_t> &arr,
+                        std::vector<correlation::math::Vector3<real_t>> &out) {
+  const auto buf = arr.unchecked<2>();
+  const auto count = static_cast<size_t>(buf.shape(0));
+  out.resize(count);
+  for (size_t idx = 0; idx < count; ++idx) {
+    const auto row = static_cast<py::ssize_t>(idx);
+    out[idx] = correlation::math::Vector3<real_t>{buf(row, 0), buf(row, 1), buf(row, 2)};
+  }
+}
+
+[[nodiscard]] py::array_t<real_t> getLdosNumpy(const MLIPOutput &out) {
+  if (out.ldos_bins == 0 || out.ldos.empty()) {
+    return {};
+  }
+  const size_t n_atoms = out.ldos.size() / out.ldos_bins;
+  py::array_t<real_t> arr(
+      {static_cast<py::ssize_t>(n_atoms), static_cast<py::ssize_t>(out.ldos_bins)});
+  auto buf = arr.mutable_unchecked<2>();
+  for (size_t i = 0; i < n_atoms; ++i) {
+    for (size_t bin_idx = 0; bin_idx < out.ldos_bins; ++bin_idx) {
+      buf(static_cast<py::ssize_t>(i), static_cast<py::ssize_t>(bin_idx)) =
+          out.ldos[i * out.ldos_bins + bin_idx];
+    }
+  }
+  return arr;
+}
+
+void setLdosNumpy(MLIPOutput &out, const py::array_t<real_t> &arr) {
+  const auto buf = arr.unchecked<2>();
+  const auto n_atoms = static_cast<size_t>(buf.shape(0));
+  const auto n_bins = static_cast<size_t>(buf.shape(1));
+  out.ldos_bins = n_bins;
+  out.ldos.resize(n_atoms * n_bins);
+  for (size_t i = 0; i < n_atoms; ++i) {
+    for (size_t bin_idx = 0; bin_idx < n_bins; ++bin_idx) {
+      out.ldos[i * n_bins + bin_idx] =
+          buf(static_cast<py::ssize_t>(i), static_cast<py::ssize_t>(bin_idx));
+    }
+  }
+}
+
+[[nodiscard]] py::array_t<real_t> getStressNumpy(const MLIPOutput &out) {
+  py::array_t<real_t> arr({3, 3});
+  auto buf = arr.mutable_unchecked<2>();
+  for (size_t row = 0; row < 3; ++row) {
+    for (size_t col = 0; col < 3; ++col) {
+      buf(static_cast<py::ssize_t>(row), static_cast<py::ssize_t>(col)) = out.stress(row, col);
+    }
+  }
+  return arr;
+}
+
+void setStressNumpy(MLIPOutput &out, const py::array_t<real_t> &arr) {
+  const auto buf = arr.unchecked<2>();
+  for (size_t row = 0; row < 3; ++row) {
+    for (size_t col = 0; col < 3; ++col) {
+      out.stress(row, col) = buf(static_cast<py::ssize_t>(row), static_cast<py::ssize_t>(col));
+    }
+  }
+}
+
+void bindMlipOutput(const py::module_ &mod) {
   py::class_<MLIPOutput>(mod, "MLIPOutput",
                          "Container for machine learning interatomic potential outputs.")
       .def(py::init<>())
       .def_readwrite("total_energy", &MLIPOutput::total_energy, "Total predicted potential energy.")
       .def_readwrite("per_atom_energy", &MLIPOutput::per_atom_energy,
                      "Site-resolved per-atom energy.")
-      .def_property(
-          "ldos",
-          [](const MLIPOutput &out) -> py::array_t<real_t> {
-            if (out.ldos_bins == 0 || out.ldos.empty()) {
-              return py::array_t<real_t>();
-            }
-            const size_t n_atoms = out.ldos.size() / out.ldos_bins;
-            py::array_t<real_t> arr(
-                {static_cast<py::ssize_t>(n_atoms), static_cast<py::ssize_t>(out.ldos_bins)});
-            auto buf = arr.mutable_unchecked<2>();
-            for (size_t i = 0; i < n_atoms; ++i) {
-              for (size_t b = 0; b < out.ldos_bins; ++b) {
-                buf(i, b) = out.ldos[i * out.ldos_bins + b];
-              }
-            }
-            return arr;
-          },
-          [](MLIPOutput &out, py::array_t<real_t> arr) {
-            auto buf = arr.unchecked<2>();
-            const size_t n_atoms = static_cast<size_t>(buf.shape(0));
-            const size_t n_bins = static_cast<size_t>(buf.shape(1));
-            out.ldos_bins = n_bins;
-            out.ldos.resize(n_atoms * n_bins);
-            for (size_t i = 0; i < n_atoms; ++i) {
-              for (size_t b = 0; b < n_bins; ++b) {
-                out.ldos[i * n_bins + b] =
-                    buf(static_cast<py::ssize_t>(i), static_cast<py::ssize_t>(b));
-              }
-            }
-          },
-          "Local Density of States matrix [N_atoms x N_bins].")
+      .def_property("ldos", &getLdosNumpy, &setLdosNumpy,
+                    "Local Density of States matrix [N_atoms x N_bins].")
       .def_readwrite("ldos_bins", &MLIPOutput::ldos_bins, "Number of LDOS energy bins.")
       .def_readwrite("ldos_e_min", &MLIPOutput::ldos_e_min,
                      "Lower bound of LDOS energy grid in eV.")
@@ -377,58 +417,20 @@ void bindMlipInterface(py::module_ &mod) {
                      "Upper bound of LDOS energy grid in eV.")
       .def_readwrite("ldos_sigma", &MLIPOutput::ldos_sigma, "Gaussian broadening sigma in eV.")
       .def_property(
-          "forces",
-          [](const MLIPOutput &out) -> py::array_t<real_t> {
-            const size_t n_atoms = out.forces.size();
-            py::array_t<real_t> arr(
-                {static_cast<py::ssize_t>(n_atoms), static_cast<py::ssize_t>(3)});
-            auto buf = arr.mutable_unchecked<2>();
-            for (size_t idx = 0; idx < n_atoms; ++idx) {
-              buf(idx, 0) = out.forces[idx].x();
-              buf(idx, 1) = out.forces[idx].y();
-              buf(idx, 2) = out.forces[idx].z();
-            }
-            return arr;
-          },
-          [](MLIPOutput &out, py::array_t<real_t> arr) {
-            auto buf = arr.unchecked<2>();
-            const size_t n_atoms = static_cast<size_t>(buf.shape(0));
-            out.forces.resize(n_atoms);
-            for (size_t idx = 0; idx < n_atoms; ++idx) {
-              out.forces[idx] = correlation::math::Vector3<real_t>{
-                  buf(static_cast<py::ssize_t>(idx), 0), buf(static_cast<py::ssize_t>(idx), 1),
-                  buf(static_cast<py::ssize_t>(idx), 2)};
-            }
+          "forces", [](const MLIPOutput &out) { return vector3ListToNumpy(out.forces); },
+          [](MLIPOutput &out, const py::array_t<real_t> &arr) {
+            numpyToVector3List(arr, out.forces);
           },
           "Predicted atomic forces as a (N, 3) NumPy array.")
-      .def_property(
-          "stress",
-          [](const MLIPOutput &out) -> py::array_t<real_t> {
-            py::array_t<real_t> arr({3, 3});
-            auto buf = arr.mutable_unchecked<2>();
-            for (size_t r = 0; r < 3; ++r) {
-              for (size_t c = 0; c < 3; ++c) {
-                buf(r, c) = out.stress(r, c);
-              }
-            }
-            return arr;
-          },
-          [](MLIPOutput &out, py::array_t<real_t> arr) {
-            auto buf = arr.unchecked<2>();
-            for (size_t r = 0; r < 3; ++r) {
-              for (size_t c = 0; c < 3; ++c) {
-                out.stress(r, c) = buf(static_cast<py::ssize_t>(r), static_cast<py::ssize_t>(c));
-              }
-            }
-          },
-          "Virial stress tensor as a (3, 3) NumPy array.")
+      .def_property("stress", &getStressNumpy, &setStressNumpy,
+                    "Virial stress tensor as a (3, 3) NumPy array.")
       .def_property(
           "charges",
           [](const MLIPOutput &out) -> py::array_t<real_t> {
-            return py::array_t<real_t>(out.charges.size(), out.charges.data());
+            return makeOwned1D<real_t>(out.charges);
           },
-          [](MLIPOutput &out, py::array_t<real_t> arr) {
-            auto buf = arr.unchecked<1>();
+          [](MLIPOutput &out, const py::array_t<real_t> &arr) {
+            const auto buf = arr.unchecked<1>();
             out.charges.resize(static_cast<size_t>(buf.shape(0)));
             for (size_t i = 0; i < out.charges.size(); ++i) {
               out.charges[i] = buf(static_cast<py::ssize_t>(i));
@@ -436,76 +438,18 @@ void bindMlipInterface(py::module_ &mod) {
           },
           "Per-atom partial or Born effective charges (e).")
       .def_property(
-          "magmoms",
-          [](const MLIPOutput &out) -> py::array_t<real_t> {
-            const size_t n_atoms = out.magmoms.size();
-            py::array_t<real_t> arr(
-                {static_cast<py::ssize_t>(n_atoms), static_cast<py::ssize_t>(3)});
-            auto buf = arr.mutable_unchecked<2>();
-            for (size_t idx = 0; idx < n_atoms; ++idx) {
-              buf(idx, 0) = out.magmoms[idx].x();
-              buf(idx, 1) = out.magmoms[idx].y();
-              buf(idx, 2) = out.magmoms[idx].z();
-            }
-            return arr;
-          },
-          [](MLIPOutput &out, py::array_t<real_t> arr) {
-            auto buf = arr.unchecked<2>();
-            const size_t n_atoms = static_cast<size_t>(buf.shape(0));
-            out.magmoms.resize(n_atoms);
-            for (size_t idx = 0; idx < n_atoms; ++idx) {
-              out.magmoms[idx] = correlation::math::Vector3<real_t>{
-                  buf(static_cast<py::ssize_t>(idx), 0), buf(static_cast<py::ssize_t>(idx), 1),
-                  buf(static_cast<py::ssize_t>(idx), 2)};
-            }
+          "magmoms", [](const MLIPOutput &out) { return vector3ListToNumpy(out.magmoms); },
+          [](MLIPOutput &out, const py::array_t<real_t> &arr) {
+            numpyToVector3List(arr, out.magmoms);
           },
           "Per-atom site magnetic moment vectors (mu_B).")
       .def_readwrite("energy_variance", &MLIPOutput::energy_variance,
                      "Committee or ensemble energy prediction variance (eV^2).")
       .def_readwrite("force_variances", &MLIPOutput::force_variances,
                      "Committee or ensemble per-atom force variances ((eV/A)^2).");
+}
 
-  // ------------------------------------------------------------------
-  // MaceGNNModel
-  // ------------------------------------------------------------------
-  py::class_<MaceGNNModel, MLIPInterface>(
-      mod, "MaceGNNModel",
-      "Native LibTorch MACE (Higher-Order Equivariant Message Passing) inference engine.")
-      .def(py::init<std::string, std::string, real_t>(), py::arg("model_path"),
-           py::arg("device") = "cpu", py::arg("cutoff") = static_cast<real_t>(5.0),
-           "Construct MaceGNNModel from TorchScript .pt or .model file.")
-      .def("is_loaded", &MaceGNNModel::isLoaded, "Check if model weights are loaded.")
-      .def_property("cutoff", &MaceGNNModel::cutoff, &MaceGNNModel::setCutoff,
-                    "Neighbor cutoff radius in Angstroms.");
-
-  // ------------------------------------------------------------------
-  // OrbV3GNNModel
-  // ------------------------------------------------------------------
-  py::class_<OrbV3GNNModel, MLIPInterface>(
-      mod, "OrbV3GNNModel", "Native C++23 ORB-v3 Graph Neural Network + LDOSHead inference engine.")
-      .def(py::init<std::string>(), py::arg("model_path") = "",
-           "Construct OrbV3GNNModel from binary weight file (auto-discovers default if empty).")
-      .def_static("find_default_model_path", &OrbV3GNNModel::findDefaultModelPath,
-                  py::arg("preferred_path") = "", "Find default cellulose_ldos.bin model path.")
-      .def("is_loaded", &OrbV3GNNModel::isLoaded, "Check if model weights are loaded.")
-      .def("model_path", &OrbV3GNNModel::modelPath, "Return resolved path to loaded weight file.");
-
-  // ------------------------------------------------------------------
-  // MLIPCalculator
-  // ------------------------------------------------------------------
-  py::class_<MLIPCalculator, BaseCalculator>(
-      mod, "MLIPCalculator", "Calculator interface for machine learning interatomic potentials.")
-      .def(py::init<>())
-      .def_static(
-          "calculate",
-          [](const correlation::core::Cell &cell, const MLIPInterface *model) {
-            return MLIPCalculator::calculate(cell, model);
-          },
-          py::arg("cell"), py::arg("model") = nullptr, "Evaluate MLIP on a given cell.");
-
-  // ------------------------------------------------------------------
-  // SpinCorrelationResult & SpinCorrelationCalculator
-  // ------------------------------------------------------------------
+void bindSpinChargeCalculators(const py::module_ &mod) {
   py::class_<SpinCorrelationResult>(
       mod, "SpinCorrelationResult",
       "Result of spatial spin-spin and magnetic moment correlation analysis.")
@@ -513,26 +457,25 @@ void bindMlipInterface(py::module_ &mod) {
       .def_property_readonly(
           "r_bins",
           [](const SpinCorrelationResult &res) -> py::array_t<real_t> {
-            return py::array_t<real_t>(res.r_bins.size(), res.r_bins.data());
+            return makeOwned1D<real_t>(res.r_bins);
           },
           "Radial distance bin centers in Angstroms.")
       .def_property_readonly(
           "spin_correlation",
           [](const SpinCorrelationResult &res) -> py::array_t<real_t> {
-            return py::array_t<real_t>(res.spin_correlation.size(), res.spin_correlation.data());
+            return makeOwned1D<real_t>(res.spin_correlation);
           },
           "Normalized spatial spin-spin alignment <S_i · S_j>(r) in [-1, 1].")
       .def_property_readonly(
           "magnetic_moment_corr",
           [](const SpinCorrelationResult &res) -> py::array_t<real_t> {
-            return py::array_t<real_t>(res.magnetic_moment_corr.size(),
-                                       res.magnetic_moment_corr.data());
+            return makeOwned1D<real_t>(res.magnetic_moment_corr);
           },
           "Unnormalized magnetic moment correlation <m_i · m_j>(r) in mu_B^2.")
       .def_property_readonly(
           "pair_counts",
           [](const SpinCorrelationResult &res) -> py::array_t<uint64_t> {
-            return py::array_t<uint64_t>(res.pair_counts.size(), res.pair_counts.data());
+            return makeOwned1D<uint64_t>(res.pair_counts);
           },
           "Pair observation counts per radial bin.");
 
@@ -542,15 +485,14 @@ void bindMlipInterface(py::module_ &mod) {
       .def(py::init<>())
       .def_static(
           "calculate",
-          [](const correlation::core::Cell &cell, py::array_t<real_t> magmoms_arr, real_t r_max,
-             real_t r_bin_width) {
-            auto buf = magmoms_arr.unchecked<2>();
-            const size_t n = static_cast<size_t>(buf.shape(0));
-            std::vector<correlation::math::Vector3<real_t>> vecs(n);
-            for (size_t i = 0; i < n; ++i) {
-              vecs[i] = correlation::math::Vector3<real_t>{buf(static_cast<py::ssize_t>(i), 0),
-                                                           buf(static_cast<py::ssize_t>(i), 1),
-                                                           buf(static_cast<py::ssize_t>(i), 2)};
+          [](const correlation::core::Cell &cell, const py::array_t<real_t> &magmoms_arr,
+             real_t r_max, real_t r_bin_width) {
+            const auto buf = magmoms_arr.unchecked<2>();
+            const auto count = static_cast<size_t>(buf.shape(0));
+            std::vector<correlation::math::Vector3<real_t>> vecs(count);
+            for (size_t i = 0; i < count; ++i) {
+              const auto row = static_cast<py::ssize_t>(i);
+              vecs[i] = correlation::math::Vector3<real_t>{buf(row, 0), buf(row, 1), buf(row, 2)};
             }
             return SpinCorrelationCalculator::calculate(cell, vecs, r_max, r_bin_width);
           },
@@ -563,9 +505,6 @@ void bindMlipInterface(py::module_ &mod) {
                   py::arg("r_bin_width") = static_cast<real_t>(0.05),
                   "Compute spatial spin correlation from Cell and MLIPOutput.");
 
-  // ------------------------------------------------------------------
-  // ChargeCorrelationResult & ChargeCorrelationCalculator
-  // ------------------------------------------------------------------
   py::class_<ChargeCorrelationResult>(
       mod, "ChargeCorrelationResult",
       "Result of charge-weighted pair distribution and screening analysis.")
@@ -573,25 +512,25 @@ void bindMlipInterface(py::module_ &mod) {
       .def_property_readonly(
           "r_bins",
           [](const ChargeCorrelationResult &res) -> py::array_t<real_t> {
-            return py::array_t<real_t>(res.r_bins.size(), res.r_bins.data());
+            return makeOwned1D<real_t>(res.r_bins);
           },
           "Radial distance bin centers in Angstroms.")
       .def_property_readonly(
           "g_qq",
           [](const ChargeCorrelationResult &res) -> py::array_t<real_t> {
-            return py::array_t<real_t>(res.g_qq.size(), res.g_qq.data());
+            return makeOwned1D<real_t>(res.g_qq);
           },
           "Charge-weighted pair distribution function g_qq(r).")
       .def_property_readonly(
           "charge_integral",
           [](const ChargeCorrelationResult &res) -> py::array_t<real_t> {
-            return py::array_t<real_t>(res.charge_integral.size(), res.charge_integral.data());
+            return makeOwned1D<real_t>(res.charge_integral);
           },
           "Running cumulative charge neutrality screening integral Q(r).")
       .def_property_readonly(
           "pair_counts",
           [](const ChargeCorrelationResult &res) -> py::array_t<uint64_t> {
-            return py::array_t<uint64_t>(res.pair_counts.size(), res.pair_counts.data());
+            return makeOwned1D<uint64_t>(res.pair_counts);
           },
           "Pair observation counts per radial bin.");
 
@@ -601,12 +540,12 @@ void bindMlipInterface(py::module_ &mod) {
       .def(py::init<>())
       .def_static(
           "calculate",
-          [](const correlation::core::Cell &cell, py::array_t<real_t> charges_arr, real_t r_max,
-             real_t r_bin_width) {
-            auto buf = charges_arr.unchecked<1>();
-            const size_t n = static_cast<size_t>(buf.shape(0));
-            std::vector<real_t> charges(n);
-            for (size_t i = 0; i < n; ++i) {
+          [](const correlation::core::Cell &cell, const py::array_t<real_t> &charges_arr,
+             real_t r_max, real_t r_bin_width) {
+            const auto buf = charges_arr.unchecked<1>();
+            const auto count = static_cast<size_t>(buf.shape(0));
+            std::vector<real_t> charges(count);
+            for (size_t i = 0; i < count; ++i) {
               charges[i] = buf(static_cast<py::ssize_t>(i));
             }
             return ChargeCorrelationCalculator::calculate(cell, charges, r_max, r_bin_width);
@@ -621,18 +560,137 @@ void bindMlipInterface(py::module_ &mod) {
                   "Compute charge pair distribution g_qq(r) from Cell and MLIPOutput.");
 }
 
-void bindTdos(py::module_ &mod) {
+void bindMlipInterface(const py::module_ &mod) {
+  py::class_<MLIPInterface, PyMLIPInterface>(mod, "MLIPInterface",
+                                             "Abstract interface for MLIP engines.")
+      .def(py::init<>())
+      .def("get_model_name", &MLIPInterface::getModelName, "Return model descriptor name.")
+      .def("evaluate", &MLIPInterface::evaluate, py::arg("cell"),
+           "Evaluate model on an atomic cell.");
+
+  bindMlipOutput(mod);
+
+  py::class_<MaceGNNModel, MLIPInterface>(
+      mod, "MaceGNNModel",
+      "Native LibTorch MACE (Higher-Order Equivariant Message Passing) inference engine.")
+      .def(py::init<std::string, std::string, real_t>(), py::arg("model_path"),
+           py::arg("device") = "cpu", py::arg("cutoff") = static_cast<real_t>(5.0),
+           "Construct MaceGNNModel from TorchScript .pt or .model file.")
+      .def("is_loaded", &MaceGNNModel::isLoaded, "Check if model weights are loaded.")
+      .def_property("cutoff", &MaceGNNModel::cutoff, &MaceGNNModel::setCutoff,
+                    "Neighbor cutoff radius in Angstroms.");
+
+  py::class_<OrbV3GNNModel, MLIPInterface>(
+      mod, "OrbV3GNNModel", "Native C++23 ORB-v3 Graph Neural Network + LDOSHead inference engine.")
+      .def(py::init<std::string>(), py::arg("model_path") = "",
+           "Construct OrbV3GNNModel from binary weight file (auto-discovers default if empty).")
+      .def_static("find_default_model_path", &OrbV3GNNModel::findDefaultModelPath,
+                  py::arg("preferred_path") = "", "Find default cellulose_ldos.bin model path.")
+      .def("is_loaded", &OrbV3GNNModel::isLoaded, "Check if model weights are loaded.")
+      .def("model_path", &OrbV3GNNModel::modelPath, "Return resolved path to loaded weight file.");
+
+  py::class_<MLIPCalculator, BaseCalculator>(
+      mod, "MLIPCalculator", "Calculator interface for machine learning interatomic potentials.")
+      .def(py::init<>())
+      .def_static(
+          "calculate",
+          [](const correlation::core::Cell &cell, const MLIPInterface *model) {
+            return MLIPCalculator::calculate(cell, model);
+          },
+          py::arg("cell"), py::arg("model") = nullptr, "Evaluate MLIP on a given cell.");
+
+  bindSpinChargeCalculators(mod);
+}
+
+void bindTdos(const py::module_ &mod) {
+  py::class_<BandGapInfo>(mod, "BandGapInfo",
+                          "Electronic band-edge and gap summary around E_F = 0 eV.")
+      .def(py::init<>())
+      .def_readwrite("band_gap", &BandGapInfo::band_gap)
+      .def_readwrite("vbm_energy", &BandGapInfo::vbm_energy)
+      .def_readwrite("cbm_energy", &BandGapInfo::cbm_energy)
+      .def_readwrite("is_metallic", &BandGapInfo::is_metallic);
+
+  py::class_<LDOSPostProcessor>(mod, "LDOSPostProcessor",
+                                "Stateless electronic LDOS/TDOS post-processing utilities.")
+      .def_static(
+          "broaden_spectrum",
+          [](const std::vector<real_t> &energies, const std::vector<real_t> &dos,
+             correlation::analysis::LDOSBroadeningKernel kernel, real_t sigma) {
+            return LDOSPostProcessor::broadenSpectrum(energies, dos, kernel, sigma);
+          },
+          py::arg("energies"), py::arg("dos"), py::arg("kernel"), py::arg("sigma"))
+      .def_static(
+          "rebin_spectrum",
+          [](const std::vector<real_t> &src_e, const std::vector<real_t> &src_dos,
+             const std::vector<real_t> &dst_e) {
+            return LDOSPostProcessor::rebinSpectrum(src_e, src_dos, dst_e);
+          },
+          py::arg("src_energies"), py::arg("src_dos"), py::arg("dst_energies"))
+      .def_static(
+          "evaluate_fermi_dos",
+          [](const std::vector<real_t> &energies, const std::vector<real_t> &dos,
+             real_t electronic_temp_k) {
+            return LDOSPostProcessor::evaluateFermiDos(energies, dos, electronic_temp_k);
+          },
+          py::arg("energies"), py::arg("dos"),
+          py::arg("electronic_temp_k") = static_cast<real_t>(0.0))
+      .def_static(
+          "detect_band_gap",
+          [](const std::vector<real_t> &energies, const std::vector<real_t> &dos,
+             real_t threshold) {
+            return LDOSPostProcessor::detectBandGap(energies, dos, threshold);
+          },
+          py::arg("energies"), py::arg("dos"), py::arg("threshold") = static_cast<real_t>(1e-3))
+      .def_static(
+          "compute_integrated_dos",
+          [](const std::vector<real_t> &energies, const std::vector<real_t> &dos) {
+            return LDOSPostProcessor::computeIntegratedDos(energies, dos);
+          },
+          py::arg("energies"), py::arg("dos"));
+
   // ------------------------------------------------------------------
-  // TDOSParams
+  // TDOSParams & LDOSResult
   // ------------------------------------------------------------------
   py::class_<TDOSParams>(mod, "TDOSParams",
                          "Configuration parameters for Total Density of States (TDOS) calculation.")
-      .def(py::init<real_t, real_t, const MLIPInterface *>(),
+      .def(py::init<>())
+      .def(py::init([](real_t e_min, real_t e_max, const MLIPInterface *model) {
+             TDOSParams params;
+             params.e_min = e_min;
+             params.e_max = e_max;
+             params.model = model;
+             return params;
+           }),
            py::arg("e_min") = static_cast<real_t>(-30.0),
            py::arg("e_max") = static_cast<real_t>(15.0), py::arg("model") = nullptr)
       .def_readwrite("e_min", &TDOSParams::e_min, "Lower energy bound in eV (relative to E_F).")
       .def_readwrite("e_max", &TDOSParams::e_max, "Upper energy bound in eV (relative to E_F).")
-      .def_readwrite("model", &TDOSParams::model, "MLIPInterface model pointer.");
+      .def_readwrite("model", &TDOSParams::model, "MLIPInterface model pointer.")
+      .def_readwrite("broadening_kernel", &TDOSParams::broadening_kernel)
+      .def_readwrite("broadening_sigma", &TDOSParams::broadening_sigma)
+      .def_readwrite("electronic_temp_k", &TDOSParams::electronic_temp_k)
+      .def_readwrite("gap_threshold", &TDOSParams::gap_threshold)
+      .def_readwrite("rebin_num_bins", &TDOSParams::rebin_num_bins)
+      .def_readwrite("compute_idos", &TDOSParams::compute_idos)
+      .def_readwrite("retain_per_atom_ldos", &TDOSParams::retain_per_atom_ldos);
+
+  py::class_<LDOSResult>(mod, "LDOSResult",
+                         "Comprehensive TDOS, IDOS, electronic diagnostics, and per-atom LDOS.")
+      .def(py::init<>())
+      .def_readonly("tdos", &LDOSResult::tdos)
+      .def_readonly("idos", &LDOSResult::idos)
+      .def_readonly("diagnostics", &LDOSResult::diagnostics)
+      .def_readonly("ldos_bins", &LDOSResult::ldos_bins)
+      .def_property_readonly(
+          "per_atom_ldos",
+          [](py::object &obj) -> py::array_t<real_t> {
+            const auto &res = obj.cast<const LDOSResult &>();
+            const size_t n_atoms =
+                (res.ldos_bins > 0) ? (res.per_atom_ldos.size() / res.ldos_bins) : 0;
+            return makeEmptyOr2D<real_t>(res.per_atom_ldos, n_atoms, res.ldos_bins, obj);
+          },
+          "Zero-copy (N_atoms, N_bins) per-atom LDOS NumPy array.");
 
   // ------------------------------------------------------------------
   // TDOSCalculator
@@ -648,17 +706,92 @@ void bindTdos(py::module_ &mod) {
       .def_static(
           "calculate",
           [](const correlation::core::Cell &cell, const TDOSParams &params) {
+            const py::gil_scoped_release release;
             return TDOSCalculator::calculate(cell, params);
           },
           py::arg("cell"), py::arg("params") = TDOSParams{},
           "Calculate Total Density of States for a single cell.")
       .def_static(
+          "calculate_detailed",
+          [](const correlation::core::Cell &cell, const TDOSParams &params) {
+            const py::gil_scoped_release release;
+            return TDOSCalculator::calculateDetailed(cell, params);
+          },
+          py::arg("cell"), py::arg("params") = TDOSParams{},
+          "Calculate TDOS, IDOS, electronic diagnostics, and optional per-atom LDOS for a cell.")
+      .def_static(
           "calculate_trajectory",
           [](const correlation::core::Trajectory &traj, const TDOSParams &params) {
+            const py::gil_scoped_release release;
             return TDOSCalculator::calculateTrajectory(traj, params, nullptr);
           },
           py::arg("traj"), py::arg("params") = TDOSParams{},
-          "Calculate frame-averaged Total Density of States for a trajectory.");
+          "Calculate frame-averaged Total Density of States for a trajectory.")
+      .def_static(
+          "calculate_trajectory_detailed",
+          [](const correlation::core::Trajectory &traj, const TDOSParams &params) {
+            const py::gil_scoped_release release;
+            return TDOSCalculator::calculateTrajectoryDetailed(traj, params, nullptr);
+          },
+          py::arg("traj"), py::arg("params") = TDOSParams{},
+          "Calculate trajectory-averaged TDOS, IDOS, and electronic diagnostics.");
+}
+
+void bindEliashberg(const py::module_ &mod) {
+  py::class_<EliashbergParams>(mod, "EliashbergParams",
+                               "Parameters for Hybrid MLIP-VDOS Eliashberg alpha^2F(omega).")
+      .def(py::init<>())
+      .def_readwrite("model", &EliashbergParams::model)
+      .def_readwrite("mu_star", &EliashbergParams::mu_star)
+      .def_readwrite("coupling_mode", &EliashbergParams::coupling_mode)
+      .def_readwrite("displacement_step", &EliashbergParams::displacement_step)
+      .def_readwrite("max_coupling_frames", &EliashbergParams::max_coupling_frames)
+      .def_readwrite("samples_per_species", &EliashbergParams::samples_per_species)
+      .def_readwrite("electronic_temp_k", &EliashbergParams::electronic_temp_k)
+      .def_readwrite("omega_min_mev", &EliashbergParams::omega_min_mev);
+
+  py::class_<SpeciesCouplingWeights>(mod, "SpeciesCouplingWeights",
+                                     "Species-resolved MLIP deformation sensitivity proxy.")
+      .def(py::init<>())
+      .def_readonly("eta_by_species", &SpeciesCouplingWeights::eta_by_species)
+      .def_readonly("fermi_dos_by_species", &SpeciesCouplingWeights::fermi_dos_by_species)
+      .def_readonly("total_fermi_dos", &SpeciesCouplingWeights::total_fermi_dos);
+
+  py::class_<EliashbergResult>(mod, "EliashbergResult",
+                               "Output bundle for Eliashberg alpha^2F(omega) estimation.")
+      .def(py::init<>())
+      .def_readonly("spectral_function", &EliashbergResult::spectral_function)
+      .def_readonly("diagnostics", &EliashbergResult::diagnostics)
+      .def_readonly("coupling_weights", &EliashbergResult::coupling_weights);
+
+  py::class_<EliashbergCalculator, BaseCalculator>(
+      mod, "EliashbergCalculator",
+      "Hybrid MLIP-VDOS Eliashberg spectral function alpha^2F(omega) and Allen-Dynes T_c "
+      "estimator.")
+      .def(py::init<>())
+      .def(py::init<const MLIPInterface *>(), py::arg("model") = nullptr)
+      .def("set_model", &EliashbergCalculator::setModel, py::arg("model"))
+      .def("get_model", &EliashbergCalculator::getModel)
+      .def_static(
+          "compute_from_spectrum",
+          [](const std::vector<real_t> &omega_mev, const std::vector<real_t> &a2f, real_t mu_star,
+             real_t omega_min_mev) {
+            return EliashbergCalculator::computeFromSpectrum(omega_mev, a2f, mu_star,
+                                                             omega_min_mev);
+          },
+          py::arg("omega_mev"), py::arg("a2f"), py::arg("mu_star") = static_cast<real_t>(0.10),
+          py::arg("omega_min_mev") = static_cast<real_t>(0.5),
+          "Compute lambda, omega_log, omega_2, McMillan and Allen-Dynes T_c from alpha^2F(omega).")
+      .def_static(
+          "calculate",
+          [](const correlation::core::Trajectory &traj,
+             const correlation::analysis::Histogram &vdos_vib, const EliashbergParams &params) {
+            const py::gil_scoped_release release;
+            return EliashbergCalculator::calculate(traj, vdos_vib, params, nullptr, nullptr);
+          },
+          py::arg("traj"), py::arg("vdos_vib"), py::arg("params") = EliashbergParams{},
+          "Estimate Eliashberg alpha^2F(omega) and superconducting diagnostics from trajectory and "
+          "vibrational VDOS.");
 }
 
 void bindGraphDescriptors(py::module_ &mod) {
@@ -710,5 +843,6 @@ void init_mlip(py::module_ &mod) {
   bindPeriodicGraphBuilder(mod);
   bindMlipInterface(mod);
   bindTdos(mod);
+  bindEliashberg(mod);
   bindGraphDescriptors(mod);
 }

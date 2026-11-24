@@ -301,6 +301,19 @@ export struct PhysicsDiagnostics {
     hyper_alpha: string,
     hyper_verdict: string,
     hyper_level: int, // -1: none, 0: non-hyperuniform, 1: hyperuniform, 2: near-hyperuniform
+
+    // Electronic LDOS/TDOS diagnostics
+    electronic_fermi_dos: string,
+    electronic_band_gap: string,
+    electronic_regime: string,
+    electronic_level: int, // -1: none, 0: insulating, 1: metallic, 2: semiconducting
+
+    // Eliashberg α²F(ω) superconducting screening diagnostics
+    eliashberg_lambda: string,
+    eliashberg_omega_log: string,
+    eliashberg_tc: string,
+    eliashberg_regime: string,
+    eliashberg_level: int, // -1: none, 0: weak, 1: intermediate, 2: strong
 }
 
 

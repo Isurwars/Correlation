@@ -66,6 +66,8 @@ export component DynamicPropertiesCard inherits OutlinedCard {
     in property <PhysicsDiagnostics> diagnostics: {
         deborah_level: -1,
         hyper_level: -1,
+        electronic_level: -1,
+        eliashberg_level: -1,
     };
 
     out property <bool> has_dynamics:
@@ -81,7 +83,19 @@ export component DynamicPropertiesCard inherits OutlinedCard {
         root.diagnostics.hyper_alpha != "" ||
         root.diagnostics.hyper_verdict != "";
 
-    out property <bool> has_properties: root.has_dynamics || root.has_hyperuniformity;
+    out property <bool> has_electronic:
+        root.diagnostics.electronic_fermi_dos != "" ||
+        root.diagnostics.electronic_band_gap != "" ||
+        root.diagnostics.electronic_regime != "";
+
+    out property <bool> has_eliashberg:
+        root.diagnostics.eliashberg_lambda != "" ||
+        root.diagnostics.eliashberg_omega_log != "" ||
+        root.diagnostics.eliashberg_tc != "" ||
+        root.diagnostics.eliashberg_regime != "";
+
+    out property <bool> has_properties:
+        root.has_dynamics || root.has_hyperuniformity || root.has_electronic || root.has_eliashberg;
 
     visible: root.has_properties;
     height: root.has_properties ? self.preferred-height : 0px;
@@ -216,6 +230,110 @@ export component DynamicPropertiesCard inherits OutlinedCard {
                 InfoRow {
                     label: "Low-q slope (α):";
                     value: root.diagnostics.hyper_alpha;
+                }
+            }
+        }
+
+        // Electronic Structure (LDOS/TDOS) Section
+        if (root.has_dynamics || root.has_hyperuniformity) && root.has_electronic: Rectangle {
+            height: 1px;
+            background: MaterialPalette.outline_variant;
+        }
+
+        if root.has_electronic: Vertical {
+            padding: 0;
+            spacing: MaterialStyleMetrics.spacing_4;
+
+            if root.diagnostics.electronic_regime != "": TooltipTarget {
+                tooltip_text: "Electronic regime classified from MLIP LDOS/TDOS around E_F = 0 eV.\n\n🔬 Physics: Metallic (E_g = 0, finite N(E_F)), Semiconducting (0 < E_g ≤ 3.5 eV), or Insulating (E_g > 3.5 eV).";
+                Horizontal {
+                    padding: 0;
+                    spacing: MaterialStyleMetrics.spacing_6;
+                    alignment: space-between;
+
+                    MaterialText {
+                        text: "Electronic Structure";
+                        style: MaterialTypography.label_small;
+                        color: MaterialPalette.on_surface_variant;
+                        vertical-alignment: center;
+                    }
+
+                    RegimeBadge {
+                        label: root.diagnostics.electronic_regime;
+                        level: root.diagnostics.electronic_level;
+                    }
+                }
+            }
+
+            if root.diagnostics.electronic_fermi_dos != "": TooltipTarget {
+                tooltip_text: "Electronic Density of States at the Fermi level N(E_F).\n\n📏 Units: states / eV / atom.";
+                InfoRow {
+                    label: "Fermi DOS N(E_F):";
+                    value: root.diagnostics.electronic_fermi_dos;
+                }
+            }
+
+            if root.diagnostics.electronic_band_gap != "": TooltipTarget {
+                tooltip_text: "Estimated electronic band gap E_g = CBM − VBM around E_F = 0 eV.\n\n📏 Units: eV.";
+                InfoRow {
+                    label: "Band gap (E_g):";
+                    value: root.diagnostics.electronic_band_gap;
+                }
+            }
+        }
+
+        // Superconductivity (Eliashberg α²F(ω)) Section
+        if (root.has_dynamics || root.has_hyperuniformity || root.has_electronic) && root.has_eliashberg: Rectangle {
+            height: 1px;
+            background: MaterialPalette.outline_variant;
+        }
+
+        if root.has_eliashberg: Vertical {
+            padding: 0;
+            spacing: MaterialStyleMetrics.spacing_4;
+
+            if root.diagnostics.eliashberg_regime != "": TooltipTarget {
+                tooltip_text: "Hybrid MLIP-VDOS Eliashberg α²F(ω) screening estimate.\n\n⚠️ Note: Estimated from MLIP LDOS deformation sensitivity and 2PT vibrational VDOS rather than full ab-initio DFPT.";
+                Horizontal {
+                    padding: 0;
+                    spacing: MaterialStyleMetrics.spacing_6;
+                    alignment: space-between;
+
+                    MaterialText {
+                        text: "Eliashberg α²F(ω)";
+                        style: MaterialTypography.label_small;
+                        color: MaterialPalette.on_surface_variant;
+                        vertical-alignment: center;
+                    }
+
+                    RegimeBadge {
+                        label: root.diagnostics.eliashberg_regime;
+                        level: root.diagnostics.eliashberg_level;
+                    }
+                }
+            }
+
+            if root.diagnostics.eliashberg_lambda != "": TooltipTarget {
+                tooltip_text: "Electron-phonon coupling constant λ = 2 ∫ [α²F(ω) / ω] dω (dimensionless MLIP-VDOS estimate).";
+                InfoRow {
+                    label: "Coupling (λ):";
+                    value: root.diagnostics.eliashberg_lambda;
+                }
+            }
+
+            if root.diagnostics.eliashberg_omega_log != "": TooltipTarget {
+                tooltip_text: "Logarithmic average phonon frequency ω_log from Eliashberg α²F(ω).\n\n📏 Units: meV (and K).";
+                InfoRow {
+                    label: "ω_log:";
+                    value: root.diagnostics.eliashberg_omega_log;
+                }
+            }
+
+            if root.diagnostics.eliashberg_tc != "": TooltipTarget {
+                tooltip_text: "Allen-Dynes superconducting critical temperature T_c estimate from λ, ω_log, ω_2, and μ*.\n\n📏 Units: Kelvin (K).";
+                InfoRow {
+                    label: "Allen-Dynes T_c:";
+                    value: root.diagnostics.eliashberg_tc;
                 }
             }
         }

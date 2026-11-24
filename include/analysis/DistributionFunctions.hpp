@@ -63,6 +63,34 @@ struct alignas(64) HyperuniformityDiagnostics {
 };
 
 /**
+ * @brief Electronic structure diagnostics extracted from MLIP LDOS/TDOS spectra.
+ */
+struct alignas(64) ElectronicDiagnostics {
+  real_t fermi_dos_total{0.0}; ///< Total DOS at the Fermi level N(E_F) (states/eV/atom).
+  real_t band_gap{0.0};        ///< Electronic band gap E_g (eV; 0 for metallic systems).
+  real_t vbm_energy{0.0};      ///< Valence band maximum relative to E_F (eV).
+  real_t cbm_energy{0.0};      ///< Conduction band minimum relative to E_F (eV).
+  std::map<std::string, real_t> fermi_dos_species; ///< Species-projected N_α(E_F).
+  std::vector<real_t> per_atom_fermi_dos;          ///< Per-atom N_i(E_F) for 3D visualization.
+  bool is_metallic{false};        ///< True when N(E_F) exceeds metallic threshold (E_g == 0).
+  bool has_electronic_dos{false}; ///< True when electronic DOS diagnostics were populated.
+};
+
+/**
+ * @brief Superconducting screening diagnostics derived from MLIP-VDOS Eliashberg α²F(ω).
+ */
+struct alignas(64) SuperconductingDiagnostics {
+  real_t lambda{0.0};           ///< Electron-phonon coupling constant λ (dimensionless).
+  real_t omega_log_mev{0.0};    ///< Logarithmic average phonon frequency ω_log (meV).
+  real_t omega_log_k{0.0};      ///< Logarithmic average frequency ħω_log/k_B (K).
+  real_t omega_2_mev{0.0};      ///< Root-mean-square frequency ω_2 (meV).
+  real_t tc_mcmillan_k{0.0};    ///< McMillan critical temperature T_c estimate (K).
+  real_t tc_allen_dynes_k{0.0}; ///< Allen-Dynes critical temperature T_c estimate (K).
+  real_t mu_star{static_cast<real_t>(0.10)}; ///< Coulomb pseudopotential μ* used for T_c.
+  bool has_eliashberg{false}; ///< True when Eliashberg α²F(ω) diagnostics were computed.
+};
+
+/**
  * @brief Parameters for X-Ray Diffraction (XRD) pattern calculation.
  */
 struct XRDParams {
@@ -148,6 +176,9 @@ struct AnalysisSettings {
         {"eDoS", "TDOS"},
         {"EDOS", "TDOS"},
         {"ML Interatomic Potential (ORB-v3)", "MLIP"},
+        {"Eliashberg Spectral Function", "a2F"},
+        {"Eliashberg", "a2F"},
+        {"alpha2F", "a2F"},
     };
     if (const auto alias_it = ALIAS_MAP.find(calc_id); alias_it != ALIAS_MAP.end()) {
       if (const auto ait = active_calculators.find(std::string(alias_it->second));
@@ -166,6 +197,24 @@ struct AnalysisSettings {
   std::atomic<bool> *cancel_flag = nullptr; ///< Pointer to a cancellation flag.
   XRDParams xrd_params{};                   ///< Parameters for XRD calculation.
   std::string mlip_model_path;              ///< Optional path to MLIP/LDOS binary weight file.
+
+  // Electronic LDOS / TDOS post-processing settings
+  LDOSBroadeningKernel ldos_broadening_kernel =
+      LDOSBroadeningKernel::None; ///< Additional LDOS spectral broadening kernel.
+  real_t ldos_broadening_sigma = static_cast<real_t>(0.0); ///< Broadening width sigma/gamma (eV).
+  real_t ldos_electronic_temp_k =
+      static_cast<real_t>(300.0); ///< Electronic temperature for Fermi-Dirac N(E_F) smearing (K).
+  real_t ldos_gap_threshold =
+      static_cast<real_t>(1e-3); ///< DOS threshold (states/eV/atom) for band-gap edge detection.
+  bool ldos_compute_idos = true; ///< Whether to compute companion Integrated DOS (IDOS) histogram.
+
+  // Eliashberg α²F(ω) superconductivity estimation settings
+  real_t eliashberg_mu_star =
+      static_cast<real_t>(0.10); ///< Coulomb pseudopotential μ* for Allen-Dynes T_c.
+  CouplingEstimationMode eliashberg_coupling_mode =
+      CouplingEstimationMode::TrajectoryFluctuation; ///< Deformation-sensitivity estimator mode.
+  real_t eliashberg_disp_step =
+      static_cast<real_t>(0.02); ///< Finite-displacement perturbation amplitude (Å).
 };
 
 // A structure to hold all data related to a single histogram.
@@ -468,6 +517,38 @@ public:
     return hyperuniformity_diagnostics_.low_q_exponent_alpha;
   }
 
+  /**
+   * @brief Gets the electronic structure diagnostics extracted from LDOS/TDOS.
+   * @return Const reference to ElectronicDiagnostics.
+   */
+  [[nodiscard]] const ElectronicDiagnostics &getElectronicDiagnostics() const noexcept {
+    return electronic_diagnostics_;
+  }
+
+  /**
+   * @brief Sets the electronic structure diagnostics extracted from LDOS/TDOS.
+   * @param[in] diagnostics ElectronicDiagnostics payload to store.
+   */
+  void setElectronicDiagnostics(ElectronicDiagnostics diagnostics) noexcept {
+    electronic_diagnostics_ = std::move(diagnostics);
+  }
+
+  /**
+   * @brief Gets the superconducting screening diagnostics derived from Eliashberg α²F(ω).
+   * @return Const reference to SuperconductingDiagnostics.
+   */
+  [[nodiscard]] const SuperconductingDiagnostics &getSuperconductingDiagnostics() const noexcept {
+    return superconducting_diagnostics_;
+  }
+
+  /**
+   * @brief Sets the superconducting screening diagnostics derived from Eliashberg α²F(ω).
+   * @param[in] diagnostics SuperconductingDiagnostics payload to store.
+   */
+  void setSuperconductingDiagnostics(const SuperconductingDiagnostics &diagnostics) noexcept {
+    superconducting_diagnostics_ = diagnostics;
+  }
+
   ///@}
 
   /** @name Calculation Methods */
@@ -654,7 +735,10 @@ private:
 
   DynamicProperties dynamic_properties_{}; ///< Trajectory-wide dynamic properties.
   HyperuniformityDiagnostics
-      hyperuniformity_diagnostics_{}; ///< Scalar hyperuniformity diagnostics.
+      hyperuniformity_diagnostics_{};              ///< Scalar hyperuniformity diagnostics.
+  ElectronicDiagnostics electronic_diagnostics_{}; ///< Electronic LDOS/TDOS diagnostics.
+  SuperconductingDiagnostics
+      superconducting_diagnostics_{}; ///< Eliashberg α²F(ω) superconducting diagnostics.
   std::shared_ptr<PerFrameDistributionStore>
       per_frame_store_; ///< Per-frame 1D distribution curves.
 };

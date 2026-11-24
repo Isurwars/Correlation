@@ -237,4 +237,30 @@ TEST(TDOSCalculatorTests, DistributionFunctionsIntegration) {
   EXPECT_NO_THROW(calc.calculateFrame(dists, settings));
 }
 
+TEST(TDOSCalculatorTests, DetailedResultPopulatesIdosAndElectronicDiagnostics) {
+  correlation::core::Cell cell({12.0, 12.0, 12.0, 90.0, 90.0, 90.0});
+  cell.addAtom("C", {0.0, 0.0, 0.0});
+  cell.addAtom("O", {2.0, 0.0, 0.0});
+
+  const MockTDOSModel model({.bins = 40});
+  TDOSParams params;
+  params.e_min = static_cast<real_t>(-10.0);
+  params.e_max = static_cast<real_t>(10.0);
+  params.model = &model;
+  params.broadening_kernel = correlation::analysis::LDOSBroadeningKernel::Gaussian;
+  params.broadening_sigma = static_cast<real_t>(0.25);
+  params.compute_idos = true;
+  params.retain_per_atom_ldos = true;
+
+  const auto detailed = TDOSCalculator::calculateDetailed(cell, params);
+  ASSERT_EQ(detailed.tdos.bins.size(), 40U);
+  ASSERT_EQ(detailed.idos.bins.size(), 40U);
+  EXPECT_TRUE(detailed.diagnostics.has_electronic_dos);
+  EXPECT_TRUE(detailed.diagnostics.is_metallic);
+  EXPECT_GT(detailed.diagnostics.fermi_dos_total, static_cast<real_t>(0.0));
+  ASSERT_EQ(detailed.diagnostics.per_atom_fermi_dos.size(), 2U);
+  EXPECT_EQ(detailed.per_atom_ldos.size(), 80U);
+  EXPECT_EQ(detailed.ldos_bins, 40U);
+}
+
 } // namespace correlation::calculators

@@ -452,4 +452,23 @@ enum class VDOSWindowType : std::uint8_t {
   None = 3,     ///< Rectangular (unwindowed): 1.0.
 };
 
+/**
+ * @enum LDOSBroadeningKernel
+ * @brief Spectral convolution kernel for post-processing electronic LDOS/TDOS spectra.
+ */
+enum class LDOSBroadeningKernel : std::uint8_t {
+  None = 0,       ///< No additional broadening beyond the model's native grid.
+  Gaussian = 1,   ///< Normalized Gaussian broadening with standard deviation sigma (eV).
+  Lorentzian = 2, ///< Normalized Lorentzian (Cauchy) broadening with HWHM gamma = sigma (eV).
+};
+
+/**
+ * @enum CouplingEstimationMode
+ * @brief Strategy for estimating MLIP electron-phonon deformation sensitivity.
+ */
+enum class CouplingEstimationMode : std::uint8_t {
+  TrajectoryFluctuation = 0, ///< Fast regression of per-atom δN_i(E_F, t) vs MD displacements.
+  FiniteDisplacement = 1,    ///< Deterministic central-difference ±δ perturbations per species.
+};
+
 } // namespace correlation::analysis

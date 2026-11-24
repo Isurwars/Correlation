@@ -132,6 +132,12 @@ int main(int argc, char *argv[]) {
   opts.smoothing_kernel = cli.smoothing_kernel;
   opts.material_type = cli.material_type;
   opts.mlip_model_path = cli.mlip_model_path;
+  opts.ldos_broadening_kernel = cli.ldos_broadening_kernel;
+  opts.ldos_broadening_sigma = cli.ldos_broadening_sigma;
+  opts.ldos_electronic_temp_k = cli.ldos_electronic_temp_k;
+  opts.eliashberg_mu_star = cli.eliashberg_mu_star;
+  opts.eliashberg_coupling_mode = cli.eliashberg_coupling_mode;
+  opts.eliashberg_disp_step = cli.eliashberg_disp_step;
 
   // Initialize active calculators
   populateActiveCalculators(cli, opts);

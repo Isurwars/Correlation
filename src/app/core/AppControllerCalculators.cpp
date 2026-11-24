@@ -61,7 +61,23 @@ struct GroupedCalculators {
   return grouped;
 }
 
+[[nodiscard]] bool isEliashbergEnabled(const ProgramOptions &opts) noexcept {
+  const auto full_it = opts.active_calculators.find("Eliashberg Spectral Function");
+  if (full_it != opts.active_calculators.end() && full_it->second) {
+    return true;
+  }
+  const auto short_it = opts.active_calculators.find("a2F");
+  if (short_it != opts.active_calculators.end() && short_it->second) {
+    return true;
+  }
+  const auto alias_it = opts.active_calculators.find("Eliashberg");
+  return alias_it != opts.active_calculators.end() && alias_it->second;
+}
+
 [[nodiscard]] bool isVdosEnabled(const ProgramOptions &opts) noexcept {
+  if (isEliashbergEnabled(opts)) {
+    return true;
+  }
   const auto vdos_it = opts.active_calculators.find("Vibrational Density of States");
   if (vdos_it != opts.active_calculators.end() && vdos_it->second) {
     return true;
@@ -86,6 +102,10 @@ struct GroupedCalculators {
   }
   if ((calc.getShortName() == "VACF" || calc.getName() == "Velocity Autocorrelation Function") &&
       isVdosEnabled(opts)) {
+    return true;
+  }
+  if ((calc.getShortName() == "VDOS" || calc.getName() == "Vibrational Density of States") &&
+      isEliashbergEnabled(opts)) {
     return true;
   }
   return !isDefaultDisabledCalculator(&calc);
@@ -196,6 +216,10 @@ void AppController::setCalculatorsEnabled(bool enabled, std::string_view group_f
       if (!calc->getShortName().empty()) {
         options_.active_calculators[std::string(calc->getShortName())] = enabled;
       }
+    }
+    if (isEliashbergEnabled(options_)) {
+      options_.active_calculators["Vibrational Density of States"] = true;
+      options_.active_calculators["VDOS"] = true;
     }
     if (isVdosEnabled(options_)) {
       options_.active_calculators["Velocity Autocorrelation Function"] = true;

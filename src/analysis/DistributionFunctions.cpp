@@ -46,11 +46,17 @@ DistributionFunctions::DistributionFunctions(DistributionFunctions &&other) noex
       neighbors_owned_(std::move(other.neighbors_owned_)), current_cutoff_(other.current_cutoff_),
       bond_cutoffs_(std::move(other.bond_cutoffs_)), histograms_(std::move(other.histograms_)),
       ashcroft_weights_(std::move(other.ashcroft_weights_)),
-      dynamic_properties_(other.dynamic_properties_) {
+      dynamic_properties_(other.dynamic_properties_),
+      hyperuniformity_diagnostics_(other.hyperuniformity_diagnostics_),
+      electronic_diagnostics_(std::move(other.electronic_diagnostics_)),
+      superconducting_diagnostics_(other.superconducting_diagnostics_),
+      per_frame_store_(std::move(other.per_frame_store_)) {
 
   other.current_cutoff_ = -1.0;
   other.neighbors_ref_ = nullptr;
   other.dynamic_properties_ = {};
+  other.hyperuniformity_diagnostics_ = {};
+  other.superconducting_diagnostics_ = {};
 }
 
 // Move Assignment Operator
@@ -64,10 +70,16 @@ DistributionFunctions &DistributionFunctions::operator=(DistributionFunctions &&
     histograms_ = std::move(other.histograms_);
     ashcroft_weights_ = std::move(other.ashcroft_weights_);
     dynamic_properties_ = other.dynamic_properties_;
+    hyperuniformity_diagnostics_ = other.hyperuniformity_diagnostics_;
+    electronic_diagnostics_ = std::move(other.electronic_diagnostics_);
+    superconducting_diagnostics_ = other.superconducting_diagnostics_;
+    per_frame_store_ = std::move(other.per_frame_store_);
 
     other.current_cutoff_ = -1.0;
     other.neighbors_ref_ = nullptr;
     other.dynamic_properties_ = {};
+    other.hyperuniformity_diagnostics_ = {};
+    other.superconducting_diagnostics_ = {};
   }
   return *this;
 }

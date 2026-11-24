@@ -74,7 +74,9 @@ add_executable(correlation_unit_tests
     unit/calculators/ChiralityCalculatorTests.cpp
     unit/calculators/HyperuniformityCalculatorTests.cpp
     unit/calculators/MLIPCalculatorTests.cpp
+    unit/calculators/EliashbergCalculatorTests.cpp
     unit/calculators/SpinChargeCorrelationTests.cpp
+    unit/calculators/LDOSPostProcessorTests.cpp
     unit/calculators/TDOSCalculatorTests.cpp
     unit/mlip/PeriodicGraphBuilderTests.cpp
     unit/mlip/TorchGNNModelTests.cpp
