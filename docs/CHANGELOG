@@ -1,6 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.9.1] - 2026-11-24
+
+### 🚀 Features & Electronic / UI Enhancements
+- **Eliashberg $\alpha^2 F(\omega)$ Calculator & Electronic LDOS Post-Processor (`EliashbergCalculator`, `LDOSPostProcessor`, `TDOSCalculator`, `DynamicPropertiesCard.slint`, `mlip_bindings.cpp`, `CliParser`)**:
+  - Added hybrid MLIP-VDOS Eliashberg spectral function $\alpha^2 F(\omega)$ calculation with electron-phonon coupling $\lambda$, logarithmic average phonon frequency $\omega_{\log}$, and Allen-Dynes superconducting $T_c$ diagnostics (`a9e173c7`).
+  - Added `LDOSPostProcessor` for Fermi-level DOS $N(E_F)$, band-gap $E_g$, and metallic/semiconducting/insulating regime classification, exposed across C++ core, CLI, Python bindings, 3D phase descriptors, and `DynamicPropertiesCard` (`a9e173c7`).
+- **Redesigned `NumberField` Stepper & Parameter Card Integration (`number_field.slint`, `BondAngleOptionsCard.slint`, `TrajectoryOptionsCard.slint`, `BondCutoffsScalingDrawer.slint`, `SQOptionsCard.slint`, `XRDOptionsCard.slint`, `AdvancedOptionsCard.slint`)**:
+  - Refactored `NumberField` with stacked right-side `+`/`−` mini-buttons, full-area `TextInput` selection/hit box, animated M3 floating label, horizontal cursor scrolling, and integer-scaled decimal formatting (0–4 decimals) (`063fb576`).
+  - Converted 15 numerical parameter inputs across the Params and Advanced Params cards to `NumberField` steppers (`063fb576`).
+
+### ♻️ Code Refactoring
+- **VDOS Energy Units Standardized to `meV` (`VDOSCalculator`, `EliashbergCalculator`, `VDOSCalculatorTests`, `DynamicsAnalyzerTests`)**:
+  - Switched VDOS primary frequency/energy axis units from `THz` / `THz⁻¹` to `meV` / `meV⁻¹` (retaining `Frequency_THz` and `Frequency_cm_1` partials) for direct alignment with electronic and Eliashberg spectra (`c269edef`).
+- **Left-Panel Scrollbar & Dynamic Viewport Sizing (`scroll_view.slint`, `SidePanelHost.slint`, `OperationsPanel.slint`, `CalculatorsPanel.slint`, `AdvancedOptionsPanel.slint`, `ExportPresentationPanel.slint`)**:
+  - Bound `MaterialScrollView` content dimensions dynamically to inner panel heights, clamped scroll offsets on section collapse, constrained `SidePanelHost` clipping, and reserved a dedicated `10px` right scrollbar gutter (`46c28608`).
+
+### 🧪 Testing
+- **Electronic, Superconducting & HDF5 VDOS Test Coverage (`EliashbergCalculatorTests.cpp`, `LDOSPostProcessorTests.cpp`, `TDOSCalculatorTests.cpp`, `WriterTests.cpp`)**:
+  - Added unit tests for `EliashbergCalculator` and `LDOSPostProcessor`, and updated HDF5 `FileWriterTests.WritesVACFMetadata` assertions to match `meV` / `meV⁻¹` VDOS units (`a9e173c7`, `50ef0c55`).
+
 ## [4.9.0] - 2026-11-23
 
 ### 🚀 Features & Dynamics Analysis
