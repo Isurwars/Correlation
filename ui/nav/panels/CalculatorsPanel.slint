@@ -81,8 +81,10 @@ export component CalculatorsPanel inherits Rectangle {
         padding: 0;
 
         ScrollView {
+            vertical-stretch: 1;
+            content_height: calc_content.preferred-height;
 
-            Vertical {
+            calc_content := Vertical {
                 padding: 0;
                 spacing: MaterialStyleMetrics.spacing_8;
 

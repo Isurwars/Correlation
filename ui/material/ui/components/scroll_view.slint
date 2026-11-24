@@ -35,29 +35,52 @@ export component MaterialScrollView {
     horizontal_stretch: 1;
     vertical_stretch: 1;
 
+    // Scroll metrics
+    property <length> effective_content_w: (!root.is_h_enabled)
+        ? flick.width
+        : (root.viewport_width > 0px ? root.viewport_width : viewport.preferred-width);
+    property <length> effective_content_h: (!root.is_v_enabled)
+        ? flick.height
+        : (root.viewport_height > 0px ? root.viewport_height : viewport.preferred-height);
+
+    property <length> max_scroll_x: max(0px, root.effective_content_w - flick.width);
+    property <length> max_scroll_y: max(0px, root.effective_content_h - flick.height);
+
+    property <bool> show_h_bar: root.is_h_enabled && (root.max_scroll_x > 1px) && (flick.width > 24px);
+    property <bool> show_v_bar: root.is_v_enabled && (root.max_scroll_y > 1px) && (flick.height > 24px);
+
+    changed max_scroll_y => {
+        if (flick.content-y < -root.max_scroll_y) {
+            flick.content-y = -root.max_scroll_y;
+        }
+    }
+
+    changed max_scroll_x => {
+        if (flick.content-x < -root.max_scroll_x) {
+            flick.content-x = -root.max_scroll_x;
+        }
+    }
+
     flick := Flickable {
         x: 0;
         y: 0;
         width: 100%;
         height: 100%;
         interactive: root.enabled;
+        content-width: max(self.width, root.effective_content_w);
+        content-height: max(self.height, root.effective_content_h);
 
         viewport := Rectangle {
             x: 0;
             y: 0;
-            width: (!root.is_h_enabled) ? flick.width : (root.viewport_width > 0px ? root.viewport_width : self.preferred-width);
-            height: (!root.is_v_enabled) ? flick.height : (root.viewport_height > 0px ? root.viewport_height : self.preferred-height);
+            width: (!root.is_h_enabled)
+                ? max(0px, flick.width - (root.is_v_enabled ? 10px : 0px))
+                : root.effective_content_w;
+            height: root.effective_content_h;
 
             @children
         }
     }
-
-    // Scroll metrics
-    property <length> max_scroll_x: max(0px, flick.content-width - flick.width);
-    property <length> max_scroll_y: max(0px, flick.content-height - flick.height);
-
-    property <bool> show_h_bar: root.is_h_enabled && (root.max_scroll_x > 1px) && (flick.width > 24px);
-    property <bool> show_v_bar: root.is_v_enabled && (root.max_scroll_y > 1px) && (flick.height > 24px);
 
     // Horizontal Overlay Scrollbar
     h_bar := Rectangle {

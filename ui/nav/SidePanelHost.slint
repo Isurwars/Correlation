@@ -206,6 +206,8 @@ export component SidePanelHost inherits Vertical {
     // Panel Content Area
     Rectangle {
         vertical-stretch: 1;
+        min-height: 0px;
+        clip: true;
 
         // Stage 0: Input & Structure
         panel_operations := OperationsPanel {

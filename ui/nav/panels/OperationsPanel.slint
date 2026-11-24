@@ -70,8 +70,10 @@ export component OperationsPanel inherits Rectangle {
         padding: 0;
 
         ScrollView {
+            vertical-stretch: 1;
+            content_height: ops_content.preferred-height;
 
-            Vertical {
+            ops_content := Vertical {
                 spacing: MaterialStyleMetrics.spacing_8;
                 padding: 0;
 
