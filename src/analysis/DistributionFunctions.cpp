@@ -491,9 +491,8 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::processSingleFrame
     if (!calc->isConfigured()) {
       continue;
     }
-    if (calc->getName() == "XRD" || calc->getShortName() == "XRD" ||
-        calc->getName() == "Static Structure Factor" || calc->getShortName() == "SQ") {
-      continue; // Run S(Q) and XRD after base calculators finish so g_r is available
+    if (calc->getName() == "XRD" || calc->getShortName() == "XRD") {
+      continue; // Run XRD after base calculators finish so g_r and S_q are available
     }
     if (!settings.isActive(calc->getName()) && !settings.isActive(calc->getShortName())) {
       continue;
@@ -503,14 +502,6 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::processSingleFrame
     });
   }
   calc_group.wait();
-
-  // Run S(Q) after g_r is computed so large cells can use hybrid direct + Fourier S(Q)
-  const auto *sq_calc = ::correlation::calculators::CalculatorFactory::instance().getCalculator(
-      "Static Structure Factor");
-  if (sq_calc != nullptr && sq_calc->isConfigured() &&
-      (settings.isActive(sq_calc->getName()) || settings.isActive(sq_calc->getShortName()))) {
-    sq_calc->calculateFrame(*frame_df, settings);
-  }
 
   // Run dependent frame calculators (e.g. XRD) after g_r and S_q are computed
   const auto *xrd_calc =

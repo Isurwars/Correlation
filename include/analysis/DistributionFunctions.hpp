@@ -110,6 +110,7 @@ struct AnalysisSettings {
   real_t q_max = static_cast<real_t>(20.0); ///< Maximum momentum transfer for S(Q) (Angstroms^-1).
   real_t q_bin_width = static_cast<real_t>(0.02); ///< Bin width for S(Q) (Angstroms^-1).
   real_t r_int_max = static_cast<real_t>(10.0);   ///< Cutoff for integration-based properties.
+  bool sq_exact_direct = false; ///< Force full direct reciprocal-space S(Q) for large cells (>= 1000 atoms).
   real_t angle_bin_width =
       static_cast<real_t>(1.0); ///< Bin width for bond angle distributions (degrees).
   real_t dihedral_bin_width =

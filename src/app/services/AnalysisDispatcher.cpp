@@ -50,6 +50,7 @@ toEngineConfig(const ProgramOptions &options, std::atomic<bool> *cancel_flag) {
   config.settings.q_max = options.q_max;
   config.settings.q_bin_width = options.q_bin_width;
   config.settings.r_int_max = options.r_int_max;
+  config.settings.sq_exact_direct = options.sq_exact_direct;
   config.settings.angle_bin_width = options.angle_bin_width;
   config.settings.dihedral_bin_width = options.dihedral_bin_width;
   config.settings.max_ring_size = options.max_ring_size;

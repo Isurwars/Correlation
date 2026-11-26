@@ -9,7 +9,6 @@
 #include "calculators/scattering/StructureFactorCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
 #include "calculators/CalculatorFactory.hpp"
-#include "calculators/spatial/RDFCalculator.hpp"
 #include "math/Constants.hpp"
 #include "math/SIMDUtils.hpp"
 
@@ -133,16 +132,41 @@ ReciprocalBasis computeReciprocalBasis(const correlation::core::Cell &cell, real
 }
 
 constexpr size_t K_MAX_DIRECT_QVECTORS = 25000;
+constexpr size_t K_SMALL_CELL_ATOM_THRESHOLD = 1000;
+constexpr size_t K_STRATIFIED_QVECTORS_PER_BIN = 512;
+
+[[nodiscard]] double computeDeterministicCellPhase(const correlation::core::Cell &cell) noexcept {
+  const auto &atoms = cell.atoms();
+  if (atoms.empty()) {
+    return 0.0;
+  }
+  const auto &pos0 = atoms.front().position();
+  const auto &pos_last = atoms.back().position();
+  const double mix = static_cast<double>(pos0.x()) * 12.9898 +
+                     static_cast<double>(pos0.y()) * 78.233 +
+                     static_cast<double>(pos0.z()) * 37.719 +
+                     static_cast<double>(pos_last.x()) * 45.164;
+  const double frac = std::abs(std::sin(mix) * 43758.5453);
+  return (frac - std::floor(frac)) * correlation::math::TWO_PI;
+}
 
 [[nodiscard]] bool isFriedelHalfSpace(int h_idx, int k_idx, int l_idx) noexcept {
   return (h_idx > 0) || (h_idx == 0 && k_idx > 0) || (h_idx == 0 && k_idx == 0 && l_idx > 0);
 }
 
+[[nodiscard]] uint64_t packMillerKey(int h_idx, int k_idx, int l_idx) noexcept {
+  constexpr int64_t BIAS = 1048576;
+  const auto h_u = static_cast<uint64_t>(static_cast<int64_t>(h_idx) + BIAS) & 0x1FFFFFULL;
+  const auto k_u = static_cast<uint64_t>(static_cast<int64_t>(k_idx) + BIAS) & 0x1FFFFFULL;
+  const auto l_u = static_cast<uint64_t>(static_cast<int64_t>(l_idx) + BIAS) & 0x1FFFFFULL;
+  return (h_u << 42U) | (k_u << 21U) | l_u;
+}
+
 std::vector<QVector> generateQVectors(const ReciprocalBasis &basis, real_t q_max) {
   std::vector<QVector> q_vectors;
-  const size_t box_est =
-      static_cast<size_t>(2 * basis.hmax + 1) * static_cast<size_t>(2 * basis.kmax + 1) *
-      static_cast<size_t>(2 * basis.lmax + 1) / 2;
+  const size_t box_est = static_cast<size_t>(2 * basis.hmax + 1) *
+                         static_cast<size_t>(2 * basis.kmax + 1) *
+                         static_cast<size_t>(2 * basis.lmax + 1) / 2;
   q_vectors.reserve(std::min<size_t>(box_est, K_MAX_DIRECT_QVECTORS * 2 + 4096));
 
   const real_t q_max_sq = q_max * q_max;
@@ -171,6 +195,122 @@ std::vector<QVector> generateQVectors(const ReciprocalBasis &basis, real_t q_max
           });
         }
       }
+    }
+  }
+  return q_vectors;
+}
+
+struct FibonacciShellParams {
+  double phi_offset;
+  double q_lo;
+  double q_hi;
+  real_t q_exact_max;
+  double q_max_d;
+};
+
+[[nodiscard]] bool trySampleFibonacciMiller(size_t sample_idx, const FibonacciShellParams &params,
+                                            const correlation::math::Matrix3<real_t> &lattice,
+                                            const ReciprocalBasis &full_basis,
+                                            QVector &out_vec) noexcept {
+  constexpr double GOLDEN_ANGLE = 2.39996322972865332; // pi * (3 - sqrt(5))
+  const double inv_two_pi = 1.0 / correlation::math::TWO_PI;
+  const double frac = (static_cast<double>(sample_idx) + 0.5) /
+                      static_cast<double>(K_STRATIFIED_QVECTORS_PER_BIN);
+  const double cos_theta = frac;
+  const double sin_theta = std::sqrt(std::max(0.0, 1.0 - cos_theta * cos_theta));
+  const double phi = params.phi_offset + static_cast<double>(sample_idx) * GOLDEN_ANGLE;
+  const double q_target = params.q_lo + frac * (params.q_hi - params.q_lo);
+
+  const double qx_t = q_target * sin_theta * std::cos(phi);
+  const double qy_t = q_target * sin_theta * std::sin(phi);
+  const double qz_t = q_target * cos_theta;
+
+  int h_idx = static_cast<int>(std::llround(
+      (static_cast<double>(lattice[0].x()) * qx_t + static_cast<double>(lattice[0].y()) * qy_t +
+       static_cast<double>(lattice[0].z()) * qz_t) *
+      inv_two_pi));
+  int k_idx = static_cast<int>(std::llround(
+      (static_cast<double>(lattice[1].x()) * qx_t + static_cast<double>(lattice[1].y()) * qy_t +
+       static_cast<double>(lattice[1].z()) * qz_t) *
+      inv_two_pi));
+  int l_idx = static_cast<int>(std::llround(
+      (static_cast<double>(lattice[2].x()) * qx_t + static_cast<double>(lattice[2].y()) * qy_t +
+       static_cast<double>(lattice[2].z()) * qz_t) *
+      inv_two_pi));
+
+  if (h_idx == 0 && k_idx == 0 && l_idx == 0) {
+    return false;
+  }
+  if (!isFriedelHalfSpace(h_idx, k_idx, l_idx)) {
+    h_idx = -h_idx;
+    k_idx = -k_idx;
+    l_idx = -l_idx;
+  }
+  if (std::abs(h_idx) > full_basis.hmax || std::abs(k_idx) > full_basis.kmax ||
+      std::abs(l_idx) > full_basis.lmax) {
+    return false;
+  }
+
+  const real_t q_x = static_cast<real_t>(h_idx) * full_basis.b1.x +
+                     static_cast<real_t>(k_idx) * full_basis.b2.x +
+                     static_cast<real_t>(l_idx) * full_basis.b3.x;
+  const real_t q_y = static_cast<real_t>(h_idx) * full_basis.b1.y +
+                     static_cast<real_t>(k_idx) * full_basis.b2.y +
+                     static_cast<real_t>(l_idx) * full_basis.b3.y;
+  const real_t q_z = static_cast<real_t>(h_idx) * full_basis.b1.z +
+                     static_cast<real_t>(k_idx) * full_basis.b2.z +
+                     static_cast<real_t>(l_idx) * full_basis.b3.z;
+  const real_t qmag = std::sqrt(q_x * q_x + q_y * q_y + q_z * q_z);
+  if (qmag <= params.q_exact_max || static_cast<double>(qmag) > params.q_max_d) {
+    return false;
+  }
+
+  out_vec = {.h = h_idx, .k = k_idx, .l = l_idx, .qmag = qmag};
+  return true;
+}
+
+std::vector<QVector> generateStratifiedQVectors(const correlation::core::Cell &cell,
+                                                const ReciprocalBasis &full_basis,
+                                                real_t q_exact_max, QBinning binning) {
+  const ReciprocalBasis low_basis = computeReciprocalBasis(cell, q_exact_max);
+  std::vector<QVector> q_vectors = generateQVectors(low_basis, q_exact_max);
+
+  const auto start_bin = static_cast<size_t>(std::floor(q_exact_max / binning.width));
+  if (start_bin >= binning.num_bins) {
+    return q_vectors;
+  }
+
+  const double q_max_d = static_cast<double>(binning.num_bins) * static_cast<double>(binning.width);
+  const double cell_phase = computeDeterministicCellPhase(cell);
+  const auto &lattice = cell.latticeVectors();
+  q_vectors.reserve(q_vectors.size() +
+                    (binning.num_bins - start_bin) * K_STRATIFIED_QVECTORS_PER_BIN);
+
+  std::vector<uint64_t> seen_keys;
+  seen_keys.reserve(K_STRATIFIED_QVECTORS_PER_BIN);
+
+  for (size_t bin_idx = start_bin; bin_idx < binning.num_bins; ++bin_idx) {
+    seen_keys.clear();
+    const double q_lo = static_cast<double>(bin_idx) * static_cast<double>(binning.width);
+    const FibonacciShellParams shell_params{
+        .phi_offset = cell_phase + static_cast<double>(bin_idx) * 1.6180339887498948,
+        .q_lo = q_lo,
+        .q_hi = q_lo + static_cast<double>(binning.width),
+        .q_exact_max = q_exact_max,
+        .q_max_d = q_max_d,
+    };
+
+    for (size_t s_idx = 0; s_idx < K_STRATIFIED_QVECTORS_PER_BIN; ++s_idx) {
+      QVector cand{};
+      if (!trySampleFibonacciMiller(s_idx, shell_params, lattice, full_basis, cand)) {
+        continue;
+      }
+      const uint64_t key = packMillerKey(cand.h, cand.k, cand.l);
+      if (std::ranges::find(seen_keys, key) != seen_keys.end()) {
+        continue;
+      }
+      seen_keys.push_back(key);
+      q_vectors.push_back(cand);
     }
   }
   return q_vectors;
@@ -459,165 +599,6 @@ void normalizeAndStoreResults(correlation::analysis::Histogram &s_q_hist,
   return std::clamp(static_cast<real_t>(q_switch), q_bin_width, q_max);
 }
 
-struct FourierIntegrandSet {
-  std::vector<real_t> r_bins;
-  std::vector<real_t> total_integrand;
-  std::vector<std::vector<real_t>> partial_integrands;
-};
-
-struct HighQTransformParams {
-  size_t num_atoms;
-  real_t cell_volume;
-  real_t q_direct_max;
-  real_t r_int_max;
-  real_t fallback_dr;
-};
-
-struct HighQOutputViews {
-  double total_prefactor;
-  std::vector<real_t> *total_out;
-  const std::vector<double> *partial_prefactors;
-  const std::vector<std::vector<real_t> *> *partial_outs;
-};
-
-[[nodiscard]] FourierIntegrandSet
-buildFourierIntegrands(const correlation::analysis::Histogram &g_r_hist,
-                       const std::vector<PartialInfo> &partials_info, real_t r_int_max,
-                       real_t fallback_dr) {
-  FourierIntegrandSet set;
-  const auto &src_bins = g_r_hist.bins;
-  if (src_bins.empty()) {
-    return set;
-  }
-  const real_t delta_r = (src_bins.size() >= 2) ? (src_bins[1] - src_bins[0]) : fallback_dr;
-  const real_t r_limit =
-      (r_int_max > static_cast<real_t>(0.0)) ? std::min(r_int_max, src_bins.back()) : src_bins.back();
-  if (r_limit <= static_cast<real_t>(0.0) || delta_r <= static_cast<real_t>(0.0)) {
-    return set;
-  }
-
-  size_t r_count = 0;
-  while (r_count < src_bins.size() && src_bins[r_count] <= r_limit) {
-    ++r_count;
-  }
-  if (r_count == 0) {
-    return set;
-  }
-
-  set.r_bins.assign(src_bins.begin(), src_bins.begin() + static_cast<std::ptrdiff_t>(r_count));
-  std::vector<double> r_lorch_dr(r_count);
-  const double inv_r_limit = 1.0 / static_cast<double>(r_limit);
-  for (size_t j = 0; j < r_count; ++j) {
-    const auto r_val = static_cast<double>(set.r_bins[j]);
-    const double x_val = correlation::math::PI * r_val * inv_r_limit;
-    const double lorch = (x_val > 1e-8) ? (std::sin(x_val) / x_val) : 1.0;
-    r_lorch_dr[j] = r_val * lorch * static_cast<double>(delta_r);
-  }
-
-  if (const auto it_tot = g_r_hist.partials.find("Total"); it_tot != g_r_hist.partials.end()) {
-    const size_t n_tot = std::min(r_count, it_tot->second.size());
-    set.total_integrand.assign(r_count, static_cast<real_t>(0.0));
-    for (size_t j = 0; j < n_tot; ++j) {
-      set.total_integrand[j] =
-          static_cast<real_t>((static_cast<double>(it_tot->second[j]) - 1.0) * r_lorch_dr[j]);
-    }
-  }
-
-  set.partial_integrands.resize(partials_info.size());
-  for (size_t pi = 0; pi < partials_info.size(); ++pi) {
-    const auto it_p = g_r_hist.partials.find(partials_info[pi].key);
-    if (it_p == g_r_hist.partials.end()) {
-      continue;
-    }
-    const size_t n_p = std::min(r_count, it_p->second.size());
-    auto &integ = set.partial_integrands[pi];
-    integ.assign(r_count, static_cast<real_t>(0.0));
-    for (size_t j = 0; j < n_p; ++j) {
-      integ[j] = static_cast<real_t>((static_cast<double>(it_p->second[j]) - 1.0) * r_lorch_dr[j]);
-    }
-  }
-  return set;
-}
-
-void evaluateFourierQBin(size_t q_idx, real_t q_val, const FourierIntegrandSet &integrands,
-                         const std::vector<PartialInfo> &partials_info,
-                         const HighQOutputViews &views, std::vector<real_t> &sinqr) {
-  const size_t r_count = integrands.r_bins.size();
-  for (size_t j = 0; j < r_count; ++j) {
-    sinqr[j] = std::sin(q_val * integrands.r_bins[j]);
-  }
-  const double inv_q = 1.0 / static_cast<double>(q_val);
-  if (!integrands.total_integrand.empty()) {
-    const double dot_val =
-        correlation::math::simdDot(integrands.total_integrand.data(), sinqr.data(), r_count);
-    (*views.total_out)[q_idx] = static_cast<real_t>(1.0 + views.total_prefactor * inv_q * dot_val);
-  }
-  for (size_t pi = 0; pi < partials_info.size(); ++pi) {
-    if (integrands.partial_integrands[pi].empty()) {
-      continue;
-    }
-    const double dot_val =
-        correlation::math::simdDot(integrands.partial_integrands[pi].data(), sinqr.data(), r_count);
-    const double delta_ab = partials_info[pi].is_identical ? 1.0 : 0.0;
-    (*(*views.partial_outs)[pi])[q_idx] =
-        static_cast<real_t>(delta_ab + (*views.partial_prefactors)[pi] * inv_q * dot_val);
-  }
-}
-
-void fillHighQFromRDF(correlation::analysis::Histogram &s_q_hist,
-                      const std::vector<size_t> &sq_total_count,
-                      const correlation::analysis::Histogram &g_r_hist,
-                      const std::vector<PartialInfo> &partials_info,
-                      const HighQTransformParams &params) {
-  const double vol = std::abs(static_cast<double>(params.cell_volume));
-  if (vol <= 1e-12) {
-    return;
-  }
-  const auto integrands =
-      buildFourierIntegrands(g_r_hist, partials_info, params.r_int_max, params.fallback_dr);
-  const size_t r_count = integrands.r_bins.size();
-  if (r_count == 0) {
-    return;
-  }
-
-  const size_t num_q_bins = s_q_hist.bins.size();
-  const double total_prefactor =
-      correlation::math::FOUR_PI * static_cast<double>(params.num_atoms) / vol;
-  std::vector<double> partial_prefactors(partials_info.size(), 0.0);
-  std::vector<std::vector<real_t> *> partial_outs(partials_info.size(), nullptr);
-  for (size_t pi = 0; pi < partials_info.size(); ++pi) {
-    partial_prefactors[pi] =
-        correlation::math::FOUR_PI *
-        std::sqrt(static_cast<double>(partials_info[pi].N_A) *
-                  static_cast<double>(partials_info[pi].N_B)) /
-        vol;
-    partial_outs[pi] = &s_q_hist.partials[partials_info[pi].key];
-  }
-
-  const HighQOutputViews views{
-      .total_prefactor = total_prefactor,
-      .total_out = &s_q_hist.partials["Total"],
-      .partial_prefactors = &partial_prefactors,
-      .partial_outs = &partial_outs,
-  };
-
-  tbb::enumerable_thread_specific<std::vector<real_t>> sinqr_ets(
-      [&] { return std::vector<real_t>(r_count, static_cast<real_t>(0.0)); });
-
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, num_q_bins),
-                    [&](const tbb::blocked_range<size_t> &range) {
-                      auto &sinqr = sinqr_ets.local();
-                      for (size_t qi = range.begin(); qi != range.end(); ++qi) {
-                        const real_t q_val = s_q_hist.bins[qi];
-                        if ((q_val <= params.q_direct_max && sq_total_count[qi] > 0) ||
-                            q_val <= static_cast<real_t>(1e-6)) {
-                          continue;
-                        }
-                        evaluateFourierQBin(qi, q_val, integrands, partials_info, views, sinqr);
-                      }
-                    });
-}
-
 } // namespace
 
 void StructureFactorCalculator::calculateFrame(
@@ -650,13 +631,22 @@ void StructureFactorCalculator::calculateFrame(
   }
 
   const real_t cell_volume = cell.volume();
-  const real_t q_direct_max = computeDirectQCutoff(cell_volume, q_max, q_bin_width);
-  const bool use_hybrid_fourier = (q_direct_max < q_max);
+  const bool force_full_direct =
+      settings.sq_exact_direct || (num_atoms < K_SMALL_CELL_ATOM_THRESHOLD);
+  const real_t q_direct_max =
+      force_full_direct ? q_max : computeDirectQCutoff(cell_volume, q_max, q_bin_width);
+  const bool use_stratified = (q_direct_max < q_max);
 
-  ReciprocalBasis const basis = computeReciprocalBasis(cell, q_direct_max);
-  std::vector<QVector> const q_vectors = generateQVectors(basis, q_direct_max);
+  QBinning const binning{
+      .width = q_bin_width,
+      .num_bins = num_q_bins,
+  };
+  ReciprocalBasis const basis = computeReciprocalBasis(cell, q_max);
+  std::vector<QVector> const q_vectors =
+      use_stratified ? generateStratifiedQVectors(cell, basis, q_direct_max, binning)
+                     : generateQVectors(basis, q_max);
 
-  if (q_vectors.empty() && !use_hybrid_fourier) {
+  if (q_vectors.empty()) {
     return;
   }
 
@@ -669,10 +659,6 @@ void StructureFactorCalculator::calculateFrame(
   const auto &ashcroft_weights = dists.getAshcroftWeights();
   std::vector<PartialInfo> const partials_info = buildPartialsInfo(type_blocks, ashcroft_weights);
 
-  QBinning const binning{
-      .width = q_bin_width,
-      .num_bins = num_q_bins,
-  };
   correlation::analysis::Histogram s_q_hist = createInitialHistogram(binning, partials_info);
 
   std::vector<real_t> sq_total_sum(num_q_bins, static_cast<real_t>(0.0));
@@ -705,41 +691,41 @@ void StructureFactorCalculator::calculateFrame(
       return std::make_tuple(
           std::vector<real_t>(num_q_bins, static_cast<real_t>(0.0)),
           std::vector<size_t>(num_q_bins, 0),
-          std::vector<std::vector<real_t>>(num_partials,
-                                           std::vector<real_t>(num_q_bins, static_cast<real_t>(0.0))),
+          std::vector<std::vector<real_t>>(
+              num_partials, std::vector<real_t>(num_q_bins, static_cast<real_t>(0.0))),
           std::vector<std::vector<size_t>>(num_partials, std::vector<size_t>(num_q_bins, 0)),
           std::vector<real_t>(num_q_bins, static_cast<real_t>(0.0)),
           std::vector<std::vector<real_t>>(
               num_partials, std::vector<real_t>(num_q_bins, static_cast<real_t>(0.0))));
     });
 
-    tbb::parallel_for(
-        tbb::blocked_range<size_t>(0, q_vectors.size()),
-        [&](const tbb::blocked_range<size_t> &range) {
-          auto &[local_total_sum, local_total_count, local_partial_sums, local_partial_counts,
-                 local_c_total_sum, local_c_partial_sums] = local_ets.local();
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, q_vectors.size()),
+                      [&](const tbb::blocked_range<size_t> &range) {
+                        auto &[local_total_sum, local_total_count, local_partial_sums,
+                               local_partial_counts, local_c_total_sum, local_c_partial_sums] =
+                            local_ets.local();
 
-          for (size_t qi = range.begin(); qi != range.end(); ++qi) {
-            processSingleQVector(q_vectors[qi], binning, num_atoms, basis, type_blocks,
-                                 partials_info,
-                                 {
-                                     .e1_cos = e1_cos.data(),
-                                     .e1_sin = e1_sin.data(),
-                                     .e2_cos = e2_cos.data(),
-                                     .e2_sin = e2_sin.data(),
-                                     .e3_cos = e3_cos.data(),
-                                     .e3_sin = e3_sin.data(),
-                                 },
-                                 {
-                                     .total_sum = &local_total_sum,
-                                     .total_count = &local_total_count,
-                                     .partial_sums = &local_partial_sums,
-                                     .partial_counts = &local_partial_counts,
-                                     .c_total_sum = &local_c_total_sum,
-                                     .c_partial_sums = &local_c_partial_sums,
-                                 });
-          }
-        });
+                        for (size_t qi = range.begin(); qi != range.end(); ++qi) {
+                          processSingleQVector(q_vectors[qi], binning, num_atoms, basis,
+                                               type_blocks, partials_info,
+                                               {
+                                                   .e1_cos = e1_cos.data(),
+                                                   .e1_sin = e1_sin.data(),
+                                                   .e2_cos = e2_cos.data(),
+                                                   .e2_sin = e2_sin.data(),
+                                                   .e3_cos = e3_cos.data(),
+                                                   .e3_sin = e3_sin.data(),
+                                               },
+                                               {
+                                                   .total_sum = &local_total_sum,
+                                                   .total_count = &local_total_count,
+                                                   .partial_sums = &local_partial_sums,
+                                                   .partial_counts = &local_partial_counts,
+                                                   .c_total_sum = &local_c_total_sum,
+                                                   .c_partial_sums = &local_c_partial_sums,
+                                               });
+                        }
+                      });
 
     combineAccumulators(local_ets, num_q_bins, num_partials, sq_total_sum, sq_total_count,
                         partial_sums, partial_counts);
@@ -747,34 +733,6 @@ void StructureFactorCalculator::calculateFrame(
 
   normalizeAndStoreResults(s_q_hist, sq_total_sum, sq_total_count, partial_sums, partial_counts,
                            partials_info, num_q_bins);
-
-  if (use_hybrid_fourier) {
-    const auto &all_hists = dists.getAllHistograms();
-    if (const auto it_gr = all_hists.find("g_r"); it_gr != all_hists.end()) {
-      fillHighQFromRDF(s_q_hist, sq_total_count, it_gr->second, partials_info,
-                       {
-                           .num_atoms = num_atoms,
-                           .cell_volume = cell_volume,
-                           .q_direct_max = q_direct_max,
-                           .r_int_max = settings.r_int_max,
-                           .fallback_dr = settings.r_bin_width,
-                       });
-    } else {
-      const real_t r_eval =
-          (settings.r_int_max > static_cast<real_t>(0.0)) ? settings.r_int_max : settings.r_max;
-      correlation::analysis::BondCutoffMatrix const zero_cutoffs(cell.elements().size());
-      correlation::analysis::DistributionFunctions temp_df(cell, r_eval, zero_cutoffs);
-      temp_df.calculateRDF({.r_max = r_eval, .r_bin_width = settings.r_bin_width});
-      fillHighQFromRDF(s_q_hist, sq_total_count, temp_df.getHistogram("g_r"), partials_info,
-                       {
-                           .num_atoms = num_atoms,
-                           .cell_volume = cell_volume,
-                           .q_direct_max = q_direct_max,
-                           .r_int_max = r_eval,
-                           .fallback_dr = settings.r_bin_width,
-                       });
-    }
-  }
 
   dists.addHistogram("S_q", std::move(s_q_hist));
 }

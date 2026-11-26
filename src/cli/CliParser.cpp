@@ -308,6 +308,7 @@ bool parseArgs(std::span<const char *const> argv, CliOptions &opts) {
 
   app.add_option("--q-max", opts.q_max);
   app.add_option("--q-bin", opts.q_bin_width);
+  app.add_flag("--sq-exact", opts.sq_exact_direct);
 
   app.add_option("--angle-bin", opts.angle_bin_width);
   app.add_option("--dihedral-bin", opts.dihedral_bin_width);

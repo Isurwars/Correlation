@@ -6,12 +6,16 @@
 #include "analysis/DistributionFunctions.hpp"
 #include "calculators/scattering/StructureFactorCalculator.hpp"
 #include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
 #include "math/Precision.hpp"
+#include "readers/FileReader.hpp"
 
 #include "../../CrystalTestHelper.hpp"
 
 #include <cmath>
+#include <filesystem>
 #include <gtest/gtest.h>
+#include <iostream>
 
 using correlation::real_t;
 
@@ -302,15 +306,15 @@ TEST_F(StructureFactorCalculatorTests, NaCl_RockSalt_SQ) {
 }
 
 TEST_F(StructureFactorCalculatorTests, LargeCellUsesHybridDirectAndFourierSQ) {
-  // Large 60x60x60 Å box (V = 216,000 Å³) with q_max = 20 Å⁻¹ triggers the hybrid
-  // low-Q direct + high-Q Fourier g(r)->S(Q) path instead of enumerating >14M q-vectors.
+  // Large 60x60x60 Å box with 1000 atoms (V = 216,000 Å³) and q_max = 20 Å⁻¹ triggers the
+  // hybrid low-Q direct + high-Q Fourier g(r)->S(Q) path instead of enumerating >14M q-vectors.
   correlation::core::Cell cell(std::array<real_t, 6>{60.0, 60.0, 60.0, 90.0, 90.0, 90.0});
-  for (int ix = 0; ix < 6; ++ix) {
-    for (int iy = 0; iy < 6; ++iy) {
-      for (int iz = 0; iz < 6; ++iz) {
+  for (int ix = 0; ix < 10; ++ix) {
+    for (int iy = 0; iy < 10; ++iy) {
+      for (int iz = 0; iz < 10; ++iz) {
         cell.addAtom((ix + iy + iz) % 2 == 0 ? "C" : "O",
-                     {static_cast<real_t>(ix * 10.0 + 1.0), static_cast<real_t>(iy * 10.0 + 1.0),
-                      static_cast<real_t>(iz * 10.0 + 1.0)});
+                     {static_cast<real_t>(ix * 6.0 + 1.0), static_cast<real_t>(iy * 6.0 + 1.0),
+                      static_cast<real_t>(iz * 6.0 + 1.0)});
       }
     }
   }
@@ -348,5 +352,159 @@ TEST_F(StructureFactorCalculatorTests, LargeCellUsesHybridDirectAndFourierSQ) {
     ++tail_cnt;
   }
   EXPECT_NEAR(tail_sum / static_cast<double>(tail_cnt), 1.0, 0.25);
+}
+
+namespace {
+
+struct SQAccuracyStats {
+  double r_squared;
+  double chi_squared;
+  double reduced_chi_squared;
+  double rmse;
+  size_t count;
+};
+
+[[nodiscard]] correlation::core::Cell
+buildDistinctOctantSupercell(const correlation::core::Trajectory &traj, size_t base_frame) {
+  const auto &orig = traj.getFrame(base_frame);
+  const auto &lat = orig.latticeVectors();
+  correlation::core::Cell supercell(lat[0] * static_cast<real_t>(2.0),
+                                    lat[1] * static_cast<real_t>(2.0),
+                                    lat[2] * static_cast<real_t>(2.0));
+  size_t octant = 0;
+  for (int ix = 0; ix < 2; ++ix) {
+    for (int iy = 0; iy < 2; ++iy) {
+      for (int iz = 0; iz < 2; ++iz) {
+        // Use 8 distinct liquid frames (spaced 20 frames apart) to avoid artificial 2x2x2
+        // periodic-copy extinction rules (where 7/8 of reciprocal vectors vanish identically).
+        const size_t src_frame = base_frame - octant * 20;
+        const auto &src_cell = traj.getFrame(src_frame);
+        const auto shift = lat[0] * static_cast<real_t>(ix) + lat[1] * static_cast<real_t>(iy) +
+                           lat[2] * static_cast<real_t>(iz);
+        for (const auto &atom : src_cell.atoms()) {
+          supercell.addAtom(atom.element().symbol, atom.position() + shift);
+        }
+        ++octant;
+      }
+    }
+  }
+  return supercell;
+}
+
+[[nodiscard]] SQAccuracyStats computeSQAccuracyStats(const std::vector<real_t> &q_bins,
+                                                     const std::vector<double> &mean_full,
+                                                     const std::vector<double> &mean_hybrid,
+                                                     double q_min_eval) {
+  double sum_y = 0.0;
+  size_t count = 0;
+  for (size_t i = 0; i < q_bins.size(); ++i) {
+    if (static_cast<double>(q_bins[i]) >= q_min_eval && mean_full[i] > 0.0) {
+      sum_y += mean_full[i];
+      ++count;
+    }
+  }
+  const double mean_y = (count > 0) ? (sum_y / static_cast<double>(count)) : 0.0;
+  double ss_res = 0.0;
+  double ss_tot = 0.0;
+  double chi_sq = 0.0;
+  for (size_t i = 0; i < q_bins.size(); ++i) {
+    if (static_cast<double>(q_bins[i]) >= q_min_eval && mean_full[i] > 0.0) {
+      const double diff = mean_hybrid[i] - mean_full[i];
+      ss_res += diff * diff;
+      const double dev = mean_full[i] - mean_y;
+      ss_tot += dev * dev;
+      chi_sq += (diff * diff) / std::max(std::abs(mean_full[i]), 1e-6);
+    }
+  }
+  return {
+      .r_squared = (ss_tot > 0.0) ? (1.0 - ss_res / ss_tot) : 1.0,
+      .chi_squared = chi_sq,
+      .reduced_chi_squared = (count > 0) ? (chi_sq / static_cast<double>(count)) : 0.0,
+      .rmse = (count > 0) ? std::sqrt(ss_res / static_cast<double>(count)) : 0.0,
+      .count = count,
+  };
+}
+
+} // namespace
+
+TEST_F(StructureFactorCalculatorTests, LiquidBismuthFullVsHybridSQAccuracy) {
+  std::filesystem::path lbi_path;
+  for (const auto &prefix : {"", "../", "../../", "../../../"}) {
+    const auto cand = std::filesystem::path(prefix) / "examples/l-Bi/l-Bi.arc";
+    if (std::filesystem::exists(cand)) {
+      lbi_path = std::filesystem::absolute(cand);
+      break;
+    }
+  }
+  if (lbi_path.empty()) {
+    GTEST_SKIP() << "Example file examples/l-Bi/l-Bi.arc not found";
+  }
+
+  const auto traj = correlation::readers::readTrajectory(
+      lbi_path.string(), correlation::readers::FileType::Arc);
+  ASSERT_GE(traj.getFrameCount(), 20u);
+
+  const size_t n_frames = traj.getFrameCount();
+  const size_t start_idx = n_frames - 10;
+  const size_t num_used = n_frames - start_idx;
+
+  const correlation::calculators::StructureFactorCalculator calc;
+  AnalysisSettings base_settings;
+  base_settings.q_max = static_cast<real_t>(12.0);
+  base_settings.q_bin_width = static_cast<real_t>(0.05);
+
+  std::vector<double> mean_full;
+  std::vector<double> mean_stratified;
+  std::vector<real_t> q_bins;
+
+  for (size_t f_idx = start_idx; f_idx < n_frames; ++f_idx) {
+    const auto supercell = buildDistinctOctantSupercell(traj, f_idx);
+
+    DistributionFunctions df_full(supercell);
+    DistributionFunctions df_strat(supercell);
+
+    AnalysisSettings full_cfg = base_settings;
+    full_cfg.sq_exact_direct = true;
+    calc.calculateFrame(df_full, full_cfg);
+
+    AnalysisSettings strat_cfg = base_settings;
+    strat_cfg.sq_exact_direct = false;
+    calc.calculateFrame(df_strat, strat_cfg);
+
+    const auto &h_full = df_full.getHistogram("S_q");
+    const auto &h_strat = df_strat.getHistogram("S_q");
+    if (mean_full.empty()) {
+      q_bins = h_full.bins;
+      mean_full.assign(q_bins.size(), 0.0);
+      mean_stratified.assign(q_bins.size(), 0.0);
+    }
+    const auto &s_f = h_full.partials.at("Total");
+    const auto &s_s = h_strat.partials.at("Total");
+    for (size_t i = 0; i < q_bins.size(); ++i) {
+      mean_full[i] += static_cast<double>(s_f[i]);
+      mean_stratified[i] += static_cast<double>(s_s[i]);
+    }
+  }
+
+  for (size_t i = 0; i < q_bins.size(); ++i) {
+    mean_full[i] /= static_cast<double>(num_used);
+    mean_stratified[i] /= static_cast<double>(num_used);
+  }
+
+  const auto all_stats = computeSQAccuracyStats(q_bins, mean_full, mean_stratified, 0.0);
+  const auto hi_stats = computeSQAccuracyStats(q_bins, mean_full, mean_stratified, 3.7);
+
+  std::cout << "[l-Bi Full vs Stratified S(Q)] Full Q [0..12 A^-1] (N=" << all_stats.count
+            << "): R^2=" << all_stats.r_squared << ", chi^2=" << all_stats.chi_squared
+            << ", red_chi^2=" << all_stats.reduced_chi_squared << ", RMSE=" << all_stats.rmse
+            << '\n';
+  std::cout << "[l-Bi Full vs Stratified S(Q)] High-Q [3.7..12 A^-1] (N=" << hi_stats.count
+            << "): R^2=" << hi_stats.r_squared << ", chi^2=" << hi_stats.chi_squared
+            << ", red_chi^2=" << hi_stats.reduced_chi_squared << ", RMSE=" << hi_stats.rmse
+            << '\n';
+
+  EXPECT_GT(all_stats.r_squared, 0.99);
+  EXPECT_LT(all_stats.reduced_chi_squared, 0.002);
+  EXPECT_LT(all_stats.rmse, 0.03);
 }
 } // namespace correlation::analysis

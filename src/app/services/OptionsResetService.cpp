@@ -52,6 +52,7 @@ void OptionsResetService::resetSQ(AppWindow &window) {
   auto opts = window.get_analysis_options();
   opts.q_max = slint::SharedString(std::format("{:.2f}", AppDefaults::Q_MAX));
   opts.r_int_max = slint::SharedString(std::format("{:.2f}", AppDefaults::R_INT_MAX));
+  opts.sq_exact_direct = false;
   if (opts.material_type == 2) {
     opts.q_bin_width = slint::SharedString(std::format("{:.3f}", AppDefaults::Q_BIN_WIDTH_CRYSTAL));
   } else if (opts.material_type == 1) {

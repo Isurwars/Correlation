@@ -1,3 +1,4 @@
+import { CheckBoxRow } from "../../material/material.slint";
 import { OptionSection } from "../common/OptionSection.slint";
 import { ValidatedField } from "../common/ValidatedField.slint";
 
@@ -9,6 +10,7 @@ export component SQOptionsCard inherits OptionSection {
     in-out property <string> q_max;
     in-out property <string> q_bin_width;
     in-out property <string> r_int_max;
+    in-out property <bool> sq_exact_direct: false;
     in property <string> q_max_error: "";
     in property <string> q_bin_error: "";
     in property <string> r_int_max_error: "";
@@ -46,5 +48,15 @@ export component SQOptionsCard inherits OptionSection {
         minimum: 1.0;
         maximum: 100.0;
         tooltip_text: "Upper integration limit for the Fourier transform of g(r) → S(Q).\n\n📏 Recommended: 10.0 Å.\n\n🔬 Physics: This is the real-space cutoff for the sine transform. Too short truncates long-range correlations (causing ripples in S(Q)). Too long amplifies noise from the g(r) tail.";
+    }
+
+    CheckBoxRow {
+        enabled: root.file_loaded;
+        check_state_bool: root.sq_exact_direct;
+        text: "Full Reciprocal S(Q) (≥1000 atoms)";
+        tooltip_text: "Force exact full reciprocal-space S(Q) summation for large cells (≥1000 atoms).\n\n⚡ Off (Default): Small cells (<1000 atoms) always use exact full S(Q); large cells use exact direct S(Q) at low Q and stratified Fibonacci q-shell sampling (512 directions/bin) at high Q.\n\n🔬 On: Evaluates all reciprocal lattice vectors up to Q_max (slower and higher RAM on large boxes).";
+        checked_state_changed(s) => {
+            root.sq_exact_direct = s;
+        }
     }
 }

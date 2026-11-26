@@ -185,6 +185,7 @@ void OptionsSyncService::writeToUI(AppWindow &window, const ProgramOptions &opti
   opts.q_max = slint::SharedString(std::format("{:.2f}", options.q_max));
   opts.q_bin_width = slint::SharedString(std::format("{:.2f}", options.q_bin_width));
   opts.r_int_max = slint::SharedString(std::format("{:.2f}", options.r_int_max));
+  opts.sq_exact_direct = options.sq_exact_direct;
   opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", options.angle_bin_width));
   opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", options.dihedral_bin_width));
   opts.max_ring_size = slint::SharedString(std::to_string(options.max_ring_size));
@@ -233,6 +234,7 @@ OptionsSyncService::readFromUI(const AppWindow &window, size_t frame_count,
   opt.q_max = safeParse(ui_opts.q_max, opt.q_max);
   opt.q_bin_width = safeParse(ui_opts.q_bin_width, opt.q_bin_width);
   opt.r_int_max = safeParse(ui_opts.r_int_max, opt.r_int_max);
+  opt.sq_exact_direct = ui_opts.sq_exact_direct;
   opt.angle_bin_width = safeParse(ui_opts.angle_bin_width, opt.angle_bin_width);
   opt.dihedral_bin_width = safeParse(ui_opts.dihedral_bin_width, opt.dihedral_bin_width);
   opt.max_ring_size =

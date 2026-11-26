@@ -121,6 +121,7 @@ int main(int argc, char *argv[]) {
   opts.use_zip = cli.zip;
   opts.time_step = cli.time_step;
   opts.r_int_max = cli.r_int_max;
+  opts.sq_exact_direct = cli.sq_exact_direct;
   opts.max_ring_size = cli.max_ring_size;
   opts.smoothing_sigma = cli.smoothing_sigma;
   opts.lef_cutoff = cli.lef_cutoff;

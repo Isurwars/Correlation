@@ -49,6 +49,7 @@ struct CliOptions {
   std::string disable_groups; ///< Comma-separated list of analysis groups to disable.
   real_t time_step = static_cast<real_t>(1.0);  ///< Time step between trajectory frames (fs).
   real_t r_int_max = static_cast<real_t>(10.0); ///< Cutoff radius for integral properties (Å).
+  bool sq_exact_direct = false; ///< Force full direct reciprocal-space S(Q) for large cells.
   int max_ring_size = 12; ///< Maximum ring size for primitive ring statistics.
   real_t smoothing_sigma = static_cast<real_t>(0.1); ///< Gaussian smoothing standard deviation.
   real_t lef_cutoff =

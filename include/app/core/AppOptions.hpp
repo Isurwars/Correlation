@@ -134,6 +134,7 @@ struct ProgramOptions {
   real_t q_max = AppDefaults::Q_MAX;                        ///< Max momentum transfer for S(Q).
   real_t q_bin_width = AppDefaults::Q_BIN_WIDTH;            ///< Step size for S(Q) histogram.
   real_t r_int_max = AppDefaults::R_INT_MAX;                ///< Upper limit for g(r) integration.
+  bool sq_exact_direct = false; ///< Force full direct reciprocal-space S(Q) for large cells (>= 1000 atoms).
   real_t angle_bin_width = AppDefaults::ANGLE_BIN_WIDTH;    ///< Step size for ADF.
   real_t dihedral_bin_width = AppDefaults::ANGLE_BIN_WIDTH; ///< Step size for dihedral analysis.
   size_t max_ring_size =

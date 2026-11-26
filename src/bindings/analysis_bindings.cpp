@@ -199,6 +199,8 @@ void init_analysis(py::module_ &mod) {
                      "Maximum momentum transfer for S(Q) (Å⁻¹). Default 20.0.")
       .def_readwrite("q_bin_width", &AnalysisSettings::q_bin_width,
                      "Bin width for S(Q) (Å⁻¹). Default 0.02.")
+      .def_readwrite("sq_exact_direct", &AnalysisSettings::sq_exact_direct,
+                     "Force exact full reciprocal-space S(Q) for large cells (>= 1000 atoms).")
       // Angular
       .def_readwrite("angle_bin_width", &AnalysisSettings::angle_bin_width,
                      "Bin width for bond angle distributions (°). Default 1.0.")
