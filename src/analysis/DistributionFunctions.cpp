@@ -511,6 +511,10 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::processSingleFrame
     xrd_calc->calculateFrame(*frame_df, settings);
   }
 
+  // Release heavy StructureAnalyzer (NeighborGraph, angle/dihedral tensors) immediately
+  // after frame calculators finish so only lightweight histograms remain.
+  frame_df->setStructureAnalyzerOwned(nullptr);
+
   return frame_df;
 }
 
@@ -614,52 +618,64 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
   const size_t stride = std::max<size_t>(1, settings.frame_stride);
   const size_t sample_count = (num_frames + stride - 1) / stride;
 
-  std::vector<std::unique_ptr<DistributionFunctions>> results(sample_count);
+  constexpr size_t LARGE_SYSTEM_ATOM_THRESHOLD = 2000;
+  const size_t first_frame_atoms =
+      (start_frame < total_trajectory_frames) ? trajectory.getFrame(start_frame).atomCount() : 0;
 
   // Retrieve bond cutoffs from the analyzer.
   const auto &bond_cutoffs = analyzer.getBondCutoffs();
 
-  std::mutex callback_mutex;
+  std::unique_ptr<DistributionFunctions> final_df;
+  std::mutex accumulate_mutex;
   std::atomic<size_t> completed_frames{0};
 
-  // TBB parallel_for nests cleanly with TBB calls inside each frame's
-  tbb::parallel_for(
-      tbb::blocked_range<size_t>(0, sample_count), [&](const tbb::blocked_range<size_t> &range) {
-        for (size_t sample_idx = range.begin(); sample_idx != range.end(); ++sample_idx) {
-          if (settings.cancel_flag && settings.cancel_flag->load()) {
-            continue;
-          }
-          const size_t frame_idx = start_frame + sample_idx * stride;
+  auto process_and_accumulate = [&](size_t sample_idx) {
+    if (settings.cancel_flag && settings.cancel_flag->load()) {
+      return;
+    }
+    const size_t frame_idx = start_frame + sample_idx * stride;
 
-          results[sample_idx] =
-              processSingleFrame(trajectory, analyzer, frame_idx, settings, bond_cutoffs);
-          if (!results[sample_idx]) {
-            continue;
-          }
+    auto frame_df = processSingleFrame(trajectory, analyzer, frame_idx, settings, bond_cutoffs);
+    if (!frame_df) {
+      return;
+    }
 
-          extractFrameCurves(*results[sample_idx], frame_idx, *per_frame_store);
+    extractFrameCurves(*frame_df, frame_idx, *per_frame_store);
 
-          const size_t current_completed = ++completed_frames;
-          if (progress_callback) {
-            const std::scoped_lock lock(callback_mutex);
-            progress_callback(static_cast<float>(current_completed) /
-                                  static_cast<float>(sample_count),
-                              "Calculating: " + std::to_string(current_completed) + " of " +
-                                  std::to_string(sample_count));
-          }
-        }
-      });
+    {
+      const std::scoped_lock lock(accumulate_mutex);
+      if (!final_df) {
+        final_df = std::move(frame_df);
+      } else {
+        final_df->add(*frame_df);
+      }
+      const size_t current_completed = ++completed_frames;
+      if (progress_callback) {
+        progress_callback(static_cast<float>(current_completed) / static_cast<float>(sample_count),
+                          "Calculating: " + std::to_string(current_completed) + " of " +
+                              std::to_string(sample_count));
+      }
+    }
+  };
 
-  // Accumulate results
-  if (results.empty() || !results[0]) {
-    return nullptr;
+  if (first_frame_atoms >= LARGE_SYSTEM_ATOM_THRESHOLD || sample_count <= 1) {
+    // Large cells already saturate all cores inside each frame via TBB; stream frames
+    // sequentially to keep peak RAM O(1) (one StructureAnalyzer in flight at a time).
+    for (size_t sample_idx = 0; sample_idx < sample_count; ++sample_idx) {
+      process_and_accumulate(sample_idx);
+    }
+  } else {
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, sample_count),
+                      [&](const tbb::blocked_range<size_t> &range) {
+                        for (size_t sample_idx = range.begin(); sample_idx != range.end();
+                             ++sample_idx) {
+                          process_and_accumulate(sample_idx);
+                        }
+                      });
   }
 
-  auto &final_df = results[0];
-  for (size_t i = 1; i < sample_count; ++i) {
-    if (results[i]) {
-      final_df->add(*results[i]);
-    }
+  if (!final_df) {
+    return nullptr;
   }
 
   normalizeHistograms(*final_df);
@@ -671,7 +687,7 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
   populateMeanStoreCurves(*final_df, *per_frame_store);
   final_df->setPerFrameStore(std::move(per_frame_store));
 
-  return std::move(final_df);
+  return final_df;
 }
 
 } // namespace correlation::analysis
