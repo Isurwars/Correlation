@@ -300,4 +300,53 @@ TEST_F(StructureFactorCalculatorTests, NaCl_RockSalt_SQ) {
   const real_t peak_sq = findMaxPeak(hist, static_cast<real_t>(2.05), static_cast<real_t>(2.4));
   EXPECT_GT(peak_sq, 1.5);
 }
+
+TEST_F(StructureFactorCalculatorTests, LargeCellUsesHybridDirectAndFourierSQ) {
+  // Large 60x60x60 Å box (V = 216,000 Å³) with q_max = 20 Å⁻¹ triggers the hybrid
+  // low-Q direct + high-Q Fourier g(r)->S(Q) path instead of enumerating >14M q-vectors.
+  correlation::core::Cell cell(std::array<real_t, 6>{60.0, 60.0, 60.0, 90.0, 90.0, 90.0});
+  for (int ix = 0; ix < 6; ++ix) {
+    for (int iy = 0; iy < 6; ++iy) {
+      for (int iz = 0; iz < 6; ++iz) {
+        cell.addAtom((ix + iy + iz) % 2 == 0 ? "C" : "O",
+                     {static_cast<real_t>(ix * 10.0 + 1.0), static_cast<real_t>(iy * 10.0 + 1.0),
+                      static_cast<real_t>(iz * 10.0 + 1.0)});
+      }
+    }
+  }
+
+  BondCutoffMatrix const zero_cutoffs(cell.elements().size());
+  DistributionFunctions dists(cell, static_cast<real_t>(15.0), zero_cutoffs);
+  dists.calculateRDF({.r_max = static_cast<real_t>(15.0), .r_bin_width = static_cast<real_t>(0.05)});
+
+  const correlation::calculators::StructureFactorCalculator calc;
+  AnalysisSettings settings;
+  settings.q_max = static_cast<real_t>(20.0);
+  settings.q_bin_width = static_cast<real_t>(0.05);
+  settings.r_max = static_cast<real_t>(15.0);
+  settings.r_int_max = static_cast<real_t>(12.0);
+  settings.r_bin_width = static_cast<real_t>(0.05);
+
+  calc.calculateFrame(dists, settings);
+  const auto &hist = dists.getHistogram("S_q");
+
+  ASSERT_EQ(hist.bins.size(), 400u);
+  ASSERT_TRUE(hist.partials.contains("Total"));
+  ASSERT_TRUE(hist.partials.contains("C-C"));
+  ASSERT_TRUE(hist.partials.contains("O-O"));
+  ASSERT_TRUE(hist.partials.contains("C-O"));
+
+  const auto &total_sq = hist.partials.at("Total");
+  for (real_t val : total_sq) {
+    EXPECT_TRUE(std::isfinite(val));
+  }
+  // High-Q Fourier tail must oscillate cleanly around 1.0
+  double tail_sum = 0.0;
+  size_t tail_cnt = 0;
+  for (size_t i = 300; i < total_sq.size(); ++i) {
+    tail_sum += static_cast<double>(total_sq[i]);
+    ++tail_cnt;
+  }
+  EXPECT_NEAR(tail_sum / static_cast<double>(tail_cnt), 1.0, 0.25);
+}
 } // namespace correlation::analysis
