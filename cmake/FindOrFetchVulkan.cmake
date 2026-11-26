@@ -39,7 +39,7 @@ if(CORRELATION_ENABLE_VULKAN AND BUILD_GUI AND NOT (BUILD_WASM OR EMSCRIPTEN))
     HINTS /usr/lib /usr/lib64 /usr/local/lib /opt/homebrew/lib
   )
 
-  # 4. Synthesize imported target Vulkan::Vulkan if needed
+  # 4. Synthesize or augment imported target Vulkan::Vulkan
   if(NOT TARGET Vulkan::Vulkan)
     add_library(Vulkan::Vulkan INTERFACE IMPORTED GLOBAL)
     if(TARGET Vulkan::Headers)
@@ -53,6 +53,8 @@ if(CORRELATION_ENABLE_VULKAN AND BUILD_GUI AND NOT (BUILD_WASM OR EMSCRIPTEN))
     elseif(Vulkan_LIBRARIES)
       target_link_libraries(Vulkan::Vulkan INTERFACE ${Vulkan_LIBRARIES})
     endif()
+  elseif(NOT _VULKAN_HEADERS_FOUND AND DEFINED vulkan_headers_SOURCE_DIR)
+    target_include_directories(Vulkan::Vulkan SYSTEM INTERFACE "${vulkan_headers_SOURCE_DIR}/include")
   endif()
 
   if(Vulkan_LOADER_LIB OR Vulkan_LIBRARIES)
