@@ -563,45 +563,6 @@ void extractFrameCurves(const DistributionFunctions &frame_df, size_t frame_idx,
   }
 }
 
-void computeSingleFrameMiniCurves(const correlation::core::Trajectory &trajectory, size_t frame_idx,
-                                  const AnalysisSettings &settings,
-                                  const BondCutoffMatrix &bond_cutoffs,
-                                  PerFrameDistributionStore &store) {
-  if (frame_idx >= trajectory.getFrameCount()) {
-    return;
-  }
-  const correlation::core::Cell frame = trajectory.getFrame(frame_idx);
-  DistributionFunctions frame_df(frame, static_cast<real_t>(0.0), bond_cutoffs);
-  frame_df.setStructureAnalyzerOwned(
-      std::make_unique<StructureAnalyzer>(frame, settings.r_max, bond_cutoffs));
-
-  const auto *rdf_calc = ::correlation::calculators::CalculatorFactory::instance().getCalculator(
-      "Radial Distribution Function");
-  if (rdf_calc != nullptr && rdf_calc->isConfigured()) {
-    rdf_calc->calculateFrame(frame_df, settings);
-  }
-
-  const auto *pad_calc = ::correlation::calculators::CalculatorFactory::instance().getCalculator(
-      "Plane Angle Distribution");
-  if (pad_calc != nullptr && pad_calc->isConfigured()) {
-    pad_calc->calculateFrame(frame_df, settings);
-  }
-
-  const auto *sq_calc = ::correlation::calculators::CalculatorFactory::instance().getCalculator(
-      "Static Structure Factor");
-  if (sq_calc != nullptr && sq_calc->isConfigured()) {
-    sq_calc->calculateFrame(frame_df, settings);
-  }
-
-  const auto *xrd_calc =
-      ::correlation::calculators::CalculatorFactory::instance().getCalculator("XRD");
-  if (xrd_calc != nullptr && xrd_calc->isConfigured()) {
-    xrd_calc->calculateFrame(frame_df, settings);
-  }
-
-  extractFrameCurves(frame_df, frame_idx, store);
-}
-
 void populateMeanStoreCurves(const DistributionFunctions &final_df,
                              PerFrameDistributionStore &store) {
   const auto &final_hists = final_df.getAllHistograms();
@@ -633,35 +594,6 @@ void populateMeanStoreCurves(const DistributionFunctions &final_df,
       store.setMeanCurve(DistributionMetric::XRD, it_tot->second);
     }
   }
-}
-
-void populateRemainderMiniCurves(const correlation::core::Trajectory &trajectory,
-                                 const AnalysisSettings &settings,
-                                 const BondCutoffMatrix &bond_cutoffs,
-                                 PerFrameDistributionStore &store) {
-  const size_t total_trajectory_frames = trajectory.getFrameCount();
-  std::vector<size_t> remainder_frames;
-  remainder_frames.reserve(total_trajectory_frames);
-  for (size_t frame_idx = 0; frame_idx < total_trajectory_frames; ++frame_idx) {
-    if (!store.hasFrame(DistributionMetric::RDF, frame_idx)) {
-      remainder_frames.push_back(frame_idx);
-    }
-  }
-
-  if (remainder_frames.empty()) {
-    return;
-  }
-
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, remainder_frames.size()),
-                    [&](const tbb::blocked_range<size_t> &range) {
-                      for (size_t i = range.begin(); i != range.end(); ++i) {
-                        if (settings.cancel_flag && settings.cancel_flag->load()) {
-                          continue;
-                        }
-                        computeSingleFrameMiniCurves(trajectory, remainder_frames[i], settings,
-                                                     bond_cutoffs, store);
-                      }
-                    });
 }
 
 } // namespace
@@ -717,9 +649,6 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
           }
         }
       });
-
-  // Calculate lightweight mini-curves (g(r), PAD, S(Q)) for all remaining trajectory frames
-  populateRemainderMiniCurves(trajectory, settings, bond_cutoffs, *per_frame_store);
 
   // Accumulate results
   if (results.empty() || !results[0]) {

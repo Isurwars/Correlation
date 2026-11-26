@@ -340,11 +340,6 @@ void FileIOHandler::handleRenameElement(const std::string &old_symbol,
     return;
   }
 
-  const auto preview_res = dispatcher_.runFastPreviewRDF(loader_.trajectoryMut(), options_);
-  if (!preview_res) {
-    // Fast preview RDF is non-fatal for species remapping.
-  }
-
   refreshAtomCountsUI();
   controller_.setBondCutoffs();
 

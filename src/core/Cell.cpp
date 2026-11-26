@@ -165,7 +165,31 @@ bool Cell::renameElement(std::string_view old_symbol, std::string_view new_symbo
   const auto collision_it = std::ranges::find_if(
       elements_, [&](const Element &elem) { return elem.symbol == normalized_new; });
   if (collision_it != elements_.end()) {
-    return false;
+    // Merge old_symbol into the existing normalized_new element and compact ElementIDs.
+    const auto removed_idx = static_cast<size_t>(std::distance(elements_.begin(), target_it));
+    const auto dest_idx = static_cast<size_t>(std::distance(elements_.begin(), collision_it));
+    const size_t final_dest_idx = (dest_idx > removed_idx) ? (dest_idx - 1) : dest_idx;
+
+    std::vector<size_t> id_remap(elements_.size());
+    for (size_t i = 0; i < elements_.size(); ++i) {
+      if (i == removed_idx) {
+        id_remap[i] = final_dest_idx;
+      } else if (i > removed_idx) {
+        id_remap[i] = i - 1;
+      } else {
+        id_remap[i] = i;
+      }
+    }
+
+    elements_.erase(target_it);
+    for (size_t i = 0; i < elements_.size(); ++i) {
+      elements_[i].id = ElementID{static_cast<int>(i)};
+    }
+    for (auto &atom : atoms_) {
+      const auto mapped_idx = id_remap[static_cast<size_t>(atom.elementId())];
+      atom.setElement(elements_[mapped_idx]);
+    }
+    return true;
   }
 
   target_it->symbol = normalized_new;

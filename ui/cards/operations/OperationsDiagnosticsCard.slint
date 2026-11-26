@@ -16,70 +16,126 @@ import {
 } from "../../material/material.slint";
 import { AtomCount } from "../../Types.slint";
 
-component SpeciesRemapRow inherits Horizontal {
+component SpeciesRemapRow inherits Rectangle {
     in property <AtomCount> info;
     callback rename_element(string, string);
 
-    spacing: MaterialStyleMetrics.spacing_6;
-    alignment: space-between;
-    padding-left: MaterialStyleMetrics.spacing_4;
-    padding-right: MaterialStyleMetrics.spacing_4;
-    height: 26px;
+    height: 28px;
 
-    Horizontal {
-        spacing: MaterialStyleMetrics.spacing_6;
-        vertical-stretch: 0;
-
-        Rectangle {
-            width: 10px;
-            height: 10px;
-            y: (parent.height - self.height) / 2;
-            border-radius: 5px;
-            background: root.info.color;
-            border-width: 1px;
-            border-color: MaterialPalette.outline_variant;
+    function commit_remap() {
+        if (species_input.text != "" && species_input.text != root.info.symbol) {
+            root.rename_element(root.info.symbol, species_input.text);
         }
+    }
 
-        Rectangle {
-            width: 54px;
-            height: 22px;
-            y: (parent.height - self.height) / 2;
-            border-radius: MaterialStyleMetrics.border_radius_4;
-            background: MaterialPalette.surface_container_highest;
-            border-width: 1px;
-            border-color: species_input.has-focus ? MaterialPalette.primary :
-                (root.info.is_unknown ? MaterialPalette.tertiary : MaterialPalette.outline_variant);
+    HorizontalLayout {
+        spacing: MaterialStyleMetrics.spacing_6;
+        alignment: space-between;
+        padding-left: MaterialStyleMetrics.spacing_4;
+        padding-right: MaterialStyleMetrics.spacing_4;
 
-            species_input := TextInput {
-                width: 100%;
-                height: 100%;
-                text: root.info.symbol;
-                horizontal-alignment: center;
-                vertical-alignment: center;
-                color: MaterialPalette.on_surface;
-                font-size: MaterialTypography.label_medium.font_size;
-                font-weight: MaterialTypography.label_medium.font_weight;
-                accepted => {
-                    if (self.text != "" && self.text != root.info.symbol) {
-                        root.rename_element(root.info.symbol, self.text);
+        HorizontalLayout {
+            spacing: MaterialStyleMetrics.spacing_6;
+
+            VerticalLayout {
+                alignment: center;
+                Rectangle {
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 5px;
+                    background: root.info.color;
+                    border-width: 1px;
+                    border-color: MaterialPalette.outline_variant;
+                }
+            }
+
+            VerticalLayout {
+                alignment: center;
+                Rectangle {
+                    width: 56px;
+                    height: 24px;
+                    border-radius: MaterialStyleMetrics.border_radius_4;
+                    background: MaterialPalette.surface_container_highest;
+                    border-width: species_input.has-focus ? 1.5px : 1px;
+                    border-color: species_input.has-focus ? MaterialPalette.primary :
+                        (root.info.is_unknown ? MaterialPalette.tertiary : MaterialPalette.outline_variant);
+
+                    species_input := TextInput {
+                        text: root.info.symbol;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                        color: MaterialPalette.on_surface;
+                        selection-background-color: MaterialPalette.primary.with_alpha(0.5);
+                        selection-foreground-color: self.color;
+                        font-size: MaterialTypography.label_medium.font_size;
+                        font-weight: MaterialTypography.label_medium.font_weight;
+
+                        accepted => {
+                            root.commit_remap();
+                        }
+
+                        changed has-focus => {
+                            if (!self.has-focus) {
+                                root.commit_remap();
+                            }
+                        }
+                    }
+                }
+            }
+
+            if species_input.text != "" && species_input.text != root.info.symbol: VerticalLayout {
+                alignment: center;
+                apply_touch := TouchArea {
+                    width: 22px;
+                    height: 22px;
+                    mouse-cursor: pointer;
+                    accessible-role: button;
+                    accessible-label: "Apply element remap";
+                    clicked => {
+                        root.commit_remap();
+                    }
+
+                    Rectangle {
+                        border-radius: MaterialStyleMetrics.border_radius_4;
+                        background: apply_touch.has-hover ? MaterialPalette.primary.with_alpha(20%) : MaterialPalette.primary.with_alpha(12%);
+                        MaterialText {
+                            text: "✓";
+                            style: MaterialTypography.label_medium;
+                            color: MaterialPalette.primary;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+
+            if root.info.is_unknown && (species_input.text == "" || species_input.text == root.info.symbol): VerticalLayout {
+                alignment: center;
+                set_touch := TouchArea {
+                    mouse-cursor: pointer;
+                    accessible-role: button;
+                    accessible-label: "Set element for species " + root.info.symbol;
+                    clicked => {
+                        species_input.focus();
+                        species_input.select-all();
+                    }
+
+                    MaterialText {
+                        text: "Set element";
+                        style: MaterialTypography.label_small;
+                        color: set_touch.has-hover ? MaterialPalette.primary : MaterialPalette.tertiary;
+                        vertical-alignment: center;
                     }
                 }
             }
         }
 
-        if root.info.is_unknown: MaterialText {
-            text: "Set element";
-            style: MaterialTypography.label_small;
-            color: MaterialPalette.tertiary;
+        MaterialText {
+            text: "" + root.info.count;
+            style: MaterialTypography.body_small;
+            color: MaterialPalette.on_surface;
             vertical-alignment: center;
         }
-    }
-
-    MaterialText {
-        text: "" + root.info.count;
-        style: MaterialTypography.body_small;
-        color: MaterialPalette.on_surface;
-        vertical-alignment: center;
     }
 }
 

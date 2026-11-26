@@ -458,10 +458,19 @@ TEST_F(CellTests, RenameElementNormalizesSymbolAndUpdatesAtomsInPlace) {
   EXPECT_EQ(cell.atoms()[0].elementId(), 0);
   EXPECT_EQ(cell.atoms()[1].elementId(), 1);
 
-  // Reject collision with existing element "2" or empty target
-  EXPECT_FALSE(cell.renameElement("Cu", "2"));
+  // Reject empty target or non-existent source
   EXPECT_FALSE(cell.renameElement("Cu", "   "));
   EXPECT_FALSE(cell.renameElement("NonExistent", "Zr"));
+
+  // Merge LAMMPS type "2" into existing "Cu" species and compact ElementIDs
+  EXPECT_TRUE(cell.renameElement("2", "Cu"));
+  ASSERT_EQ(cell.elements().size(), 1u);
+  EXPECT_EQ(cell.elements()[0].symbol, "Cu");
+  EXPECT_EQ(cell.elements()[0].id.value, 0);
+  for (const auto &atom : cell.atoms()) {
+    EXPECT_EQ(atom.element().symbol, "Cu");
+    EXPECT_EQ(atom.elementId(), 0);
+  }
 }
 
 } // namespace correlation::testing

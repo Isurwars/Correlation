@@ -231,25 +231,33 @@ bool Trajectory::renameElementMapped(std::string_view old_symbol, std::string_vi
     applyElementRemap(parsed);
     first_frame_ = std::move(parsed);
   }
-  const auto old_elems = first_frame_->elements();
+  std::optional<size_t> sample_atom_idx;
+  const auto &atoms_before = first_frame_->atoms();
+  for (size_t i = 0; i < atoms_before.size(); ++i) {
+    if (atoms_before[i].element().symbol == old_symbol) {
+      sample_atom_idx = i;
+      break;
+    }
+  }
   if (!first_frame_->renameElement(old_symbol, new_symbol)) {
     return false;
   }
   std::string resolved_new_symbol;
-  const auto &new_elems = first_frame_->elements();
-  for (size_t i = 0; i < new_elems.size() && i < old_elems.size(); ++i) {
-    if (old_elems[i].symbol == old_symbol) {
-      resolved_new_symbol = new_elems[i].symbol;
-      break;
-    }
+  if (sample_atom_idx.has_value() && *sample_atom_idx < first_frame_->atoms().size()) {
+    resolved_new_symbol = first_frame_->atoms()[*sample_atom_idx].element().symbol;
+  } else {
+    resolved_new_symbol = std::string(new_symbol);
   }
+  bool updated_existing = false;
   for (auto &[orig_sym, mapped_sym] : element_remap_) {
     if (mapped_sym == old_symbol) {
       mapped_sym = resolved_new_symbol;
-      return true;
+      updated_existing = true;
     }
   }
-  element_remap_.emplace_back(std::string(old_symbol), resolved_new_symbol);
+  if (!updated_existing) {
+    element_remap_.emplace_back(std::string(old_symbol), resolved_new_symbol);
+  }
   return true;
 }
 
