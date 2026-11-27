@@ -92,13 +92,15 @@ extractNearestFromCell(const correlation::core::Cell &cell, size_t target_idx) {
 
   const auto &target_pos = atoms[target_idx].position();
 
-  struct DistVec {
-    real_t dist_sq{0.0};
-    math::Vector3<real_t> r_ij;
+  // Fixed 4-element stack buffer (zero heap allocations per atom) keeping 4 smallest distances
+  std::array<real_t, 4> best_dist_sq{
+      std::numeric_limits<real_t>::max(),
+      std::numeric_limits<real_t>::max(),
+      std::numeric_limits<real_t>::max(),
+      std::numeric_limits<real_t>::max(),
   };
-
-  std::vector<DistVec> candidates;
-  candidates.reserve(num_atoms - 1);
+  std::array<math::Vector3<real_t>, 4> best_vecs{};
+  size_t max_slot = 0;
 
   for (size_t j = 0; j < num_atoms; ++j) {
     if (j == target_idx) {
@@ -106,18 +108,19 @@ extractNearestFromCell(const correlation::core::Cell &cell, size_t target_idx) {
     }
     const math::Vector3<real_t> disp = cell.minimumImage(atoms[j].position() - target_pos);
     const real_t dist_sq_val = math::normSq(disp);
-    candidates.push_back(DistVec{.dist_sq = dist_sq_val, .r_ij = disp});
+    if (dist_sq_val < best_dist_sq.at(max_slot)) {
+      best_dist_sq.at(max_slot) = dist_sq_val;
+      best_vecs.at(max_slot) = disp;
+      max_slot = 0;
+      for (size_t k = 1; k < 4; ++k) {
+        if (best_dist_sq.at(k) > best_dist_sq.at(max_slot)) {
+          max_slot = k;
+        }
+      }
+    }
   }
 
-  std::partial_sort(
-      candidates.begin(), candidates.begin() + 4, candidates.end(),
-      [](const DistVec &lhs, const DistVec &rhs) noexcept { return lhs.dist_sq < rhs.dist_sq; });
-
-  std::array<math::Vector3<real_t>, 4> displacements{};
-  for (size_t k = 0; k < 4; ++k) {
-    displacements.at(k) = candidates.at(k).r_ij;
-  }
-  return displacements;
+  return best_vecs;
 }
 
 /**

@@ -8,8 +8,13 @@
 
 #include "calculators/spatial/HBondCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
+#include "calculators/spatial/DistanceCalculator.hpp"
 #include "math/Constants.hpp"
+
 #include <algorithm>
+#include <cmath>
+#include <cstdint>
+#include <tbb/enumerable_thread_specific.h>
 #include <vector>
 
 namespace correlation::calculators {
@@ -17,8 +22,14 @@ namespace correlation::calculators {
 namespace {
 
 struct HBondCriteria {
+  real_t r_cut;
   real_t r_cut_sq;
-  real_t alpha_cut;
+  real_t cos_cut_sq;
+};
+
+struct DonorBond {
+  correlation::math::Vector3<real_t> v_dh;
+  real_t d_dh_sq{0.0};
 };
 
 // Static registration of the calculator in the factory
@@ -28,67 +39,80 @@ bool isElectronegative(const std::string &symbol) {
   return symbol == "O" || symbol == "N" || symbol == "F" || symbol == "S";
 }
 
-std::vector<size_t> findBondedHydrogens(size_t donor_idx,
-                                        const std::vector<correlation::core::Atom> &atoms,
-                                        const correlation::core::NeighborGraph &neighbor_graph) {
-  std::vector<size_t> hydrogens;
-  for (const auto &nb_graph : neighbor_graph.getNeighbors(donor_idx)) {
-    if (atoms[nb_graph.index].element().symbol == "H") {
-      hydrogens.push_back(nb_graph.index);
+[[nodiscard]] int countDirectedHBonds(const std::vector<DonorBond> &donor_bonds,
+                                      const correlation::math::Vector3<real_t> &v_da,
+                                      real_t d_da_sq, real_t cos_cut_sq) noexcept {
+  int matches = 0;
+  for (const auto &bond : donor_bonds) {
+    const real_t dot_val = bond.v_dh * v_da;
+    if (dot_val > static_cast<real_t>(0.0) &&
+        (dot_val * dot_val) > (cos_cut_sq * bond.d_dh_sq * d_da_sq)) {
+      ++matches;
     }
   }
-  return hydrogens;
+  return matches;
 }
 
-void checkAcceptorsForHydrogen(const correlation::core::Cell &cell, size_t donor_idx, size_t h_idx,
-                               const std::vector<size_t> &en_indices, const HBondCriteria &criteria,
-                               std::vector<int> &hbond_counts) {
+void findHydrogenBondsSmallBox(const correlation::core::Cell &cell,
+                               const std::vector<size_t> &en_indices,
+                               const std::vector<std::vector<DonorBond>> &donor_bonds,
+                               const HBondCriteria &criteria, std::vector<int> &hbond_counts) {
   const auto &atoms = cell.atoms();
-  const auto &pos_h = atoms[h_idx].position();
-  const auto &pos_d = atoms[donor_idx].position();
-  const correlation::math::Vector3<real_t> v_dh = cell.minimumImage(pos_h - pos_d);
-  const real_t d_dh_sq = correlation::math::normSq(v_dh);
-  if (d_dh_sq < static_cast<real_t>(1e-12)) {
-    return;
-  }
-  const real_t norm_dh = std::sqrt(d_dh_sq);
-
-  for (const size_t atom_idx : en_indices) {
-    if (donor_idx == atom_idx) {
+  for (const size_t donor_idx : en_indices) {
+    if (donor_bonds[donor_idx].empty()) {
       continue;
     }
-    const auto &atom_j = atoms[atom_idx];
-    const correlation::math::Vector3<real_t> v_da = cell.minimumImage(atom_j.position() - pos_d);
-    const real_t d_da_sq = correlation::math::normSq(v_da);
-
-    if (d_da_sq < criteria.r_cut_sq && d_da_sq >= static_cast<real_t>(1e-12)) {
-      const real_t dot_val = v_dh * v_da;
-      const real_t cos_alpha = dot_val / (norm_dh * std::sqrt(d_da_sq));
-      const real_t alpha =
-          std::acos(std::clamp(cos_alpha, static_cast<real_t>(-1.0), static_cast<real_t>(1.0))) *
-          static_cast<real_t>(correlation::math::RAD_TO_DEG);
-
-      if (alpha < criteria.alpha_cut) {
-        hbond_counts[donor_idx]++;
-        hbond_counts[atom_idx]++;
+    const auto &pos_d = atoms[donor_idx].position();
+    for (const size_t acc_idx : en_indices) {
+      if (donor_idx == acc_idx) {
+        continue;
+      }
+      const auto v_da = cell.minimumImage(atoms[acc_idx].position() - pos_d);
+      const real_t d_da_sq = correlation::math::normSq(v_da);
+      if (d_da_sq < criteria.r_cut_sq && d_da_sq >= static_cast<real_t>(1e-12)) {
+        const int matches =
+            countDirectedHBonds(donor_bonds[donor_idx], v_da, d_da_sq, criteria.cos_cut_sq);
+        hbond_counts[donor_idx] += matches;
+        hbond_counts[acc_idx] += matches;
       }
     }
   }
 }
 
-void findHydrogenBonds(const correlation::core::Cell &cell,
-                       const correlation::core::NeighborGraph &neighbor_graph,
-                       const std::vector<size_t> &en_indices, const HBondCriteria &criteria,
-                       std::vector<int> &hbond_counts) {
-  const auto &atoms = cell.atoms();
-  for (const size_t donor_idx : en_indices) {
-    const std::vector<size_t> hydrogens = findBondedHydrogens(donor_idx, atoms, neighbor_graph);
-    if (hydrogens.empty()) {
-      continue;
-    }
+void findHydrogenBondsCellList(const correlation::core::Cell &cell,
+                               const std::vector<uint8_t> &is_en,
+                               const std::vector<std::vector<DonorBond>> &donor_bonds,
+                               const HBondCriteria &criteria, std::vector<int> &hbond_counts) {
+  const size_t num_atoms = cell.atomCount();
+  tbb::enumerable_thread_specific<std::vector<int>> ets_counts(
+      [num_atoms] { return std::vector<int>(num_atoms, 0); });
 
-    for (const size_t h_idx : hydrogens) {
-      checkAcceptorsForHydrogen(cell, donor_idx, h_idx, en_indices, criteria, hbond_counts);
+  DistanceCalculator::forEachPairWithin(
+      cell, criteria.r_cut, true,
+      [&](size_t atom_a, size_t atom_b, real_t d_sq,
+          const correlation::math::Vector3<real_t> &r_ij) {
+        if (atom_a >= num_atoms || atom_b >= num_atoms || is_en[atom_a] == 0U ||
+            is_en[atom_b] == 0U) {
+          return;
+        }
+        if (d_sq >= criteria.r_cut_sq || d_sq < static_cast<real_t>(1e-12)) {
+          return;
+        }
+        const int ab_matches =
+            countDirectedHBonds(donor_bonds[atom_a], r_ij, d_sq, criteria.cos_cut_sq);
+        const int ba_matches =
+            countDirectedHBonds(donor_bonds[atom_b], -r_ij, d_sq, criteria.cos_cut_sq);
+        const int total = ab_matches + ba_matches;
+        if (total > 0) {
+          auto &local = ets_counts.local();
+          local[atom_a] += total;
+          local[atom_b] += total;
+        }
+      });
+
+  for (const auto &local : ets_counts) {
+    for (size_t i = 0; i < num_atoms; ++i) {
+      hbond_counts[i] += local[i];
     }
   }
 }
@@ -113,28 +137,47 @@ HBondCalculator::calculate(const correlation::core::Cell &cell,
   const size_t num_atoms = cell.atomCount();
   const auto &neighbor_graph = neighbors->neighborGraph();
 
-  // Geometric criteria
+  // Geometric criteria (R_DA < 3.5 A, angle H-D...A < 30 deg -> cos^2(alpha) > cos^2(30 deg))
+  constexpr auto K_R_CUT = static_cast<real_t>(3.5);
+  const real_t cos_cut =
+      std::cos(static_cast<real_t>(30.0) * static_cast<real_t>(correlation::math::DEG_TO_RAD));
   const HBondCriteria criteria{
-      .r_cut_sq = static_cast<real_t>(3.5 * 3.5), // Donor-Acceptor distance squared
-      .alpha_cut = static_cast<real_t>(30.0),     // H-D...A angle,
+      .r_cut = K_R_CUT,
+      .r_cut_sq = K_R_CUT * K_R_CUT,
+      .cos_cut_sq = cos_cut * cos_cut,
   };
 
   std::vector<int> hbond_counts(num_atoms, 0);
-
-  // Identify Donors (D) and Acceptors (A) - commonly O, N, F, S.
-  // Pre-filter to the electronegative subset so the inner acceptor
-  // search iterates N_en atoms rather than N (typically N_en << N).
-  // NOTE: for a full O(N_en) solution, StructureAnalyzer would need to
-  // expose a non-bonded neighbour list at R_cut = 3.5 Å per atom.
+  std::vector<uint8_t> is_en(num_atoms, 0U);
   std::vector<size_t> en_indices;
   en_indices.reserve(num_atoms / 4);
+  std::vector<std::vector<DonorBond>> donor_bonds(num_atoms);
+
   for (size_t i = 0; i < num_atoms; ++i) {
-    if (isElectronegative(atoms[i].element().symbol)) {
-      en_indices.push_back(i);
+    if (!isElectronegative(atoms[i].element().symbol)) {
+      continue;
+    }
+    is_en[i] = 1U;
+    en_indices.push_back(i);
+    const auto &pos_d = atoms[i].position();
+    for (const auto &nb_graph : neighbor_graph.getNeighbors(i)) {
+      if (atoms[nb_graph.index].element().symbol == "H") {
+        const auto v_dh = cell.minimumImage(atoms[nb_graph.index].position() - pos_d);
+        const real_t d_dh_sq = correlation::math::normSq(v_dh);
+        if (d_dh_sq >= static_cast<real_t>(1e-12)) {
+          donor_bonds[i].push_back(DonorBond{.v_dh = v_dh, .d_dh_sq = d_dh_sq});
+        }
+      }
     }
   }
 
-  findHydrogenBonds(cell, neighbor_graph, en_indices, criteria, hbond_counts);
+  const auto widths = cell.perpendicularWidths();
+  const real_t min_width = std::min({widths[0], widths[1], widths[2]});
+  if (min_width >= static_cast<real_t>(2.0) * criteria.r_cut) {
+    findHydrogenBondsCellList(cell, is_en, donor_bonds, criteria, hbond_counts);
+  } else {
+    findHydrogenBondsSmallBox(cell, en_indices, donor_bonds, criteria, hbond_counts);
+  }
 
   // Use pre-filtered en_indices for the final distribution loop.
   std::map<int, real_t> distribution;

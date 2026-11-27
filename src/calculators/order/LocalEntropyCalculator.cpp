@@ -217,7 +217,8 @@ struct MetricNeighborGrid {
 
 real_t computeSingleAtomEntropy(const std::vector<real_t> &atom_distances,
                                 const correlation::core::Cell &cell,
-                                const LocalEntropyParams &params) {
+                                const LocalEntropyParams &params,
+                                std::vector<real_t> &g_accum) {
   real_t const cutoff = params.cutoff;
   real_t const sigma = params.sigma;
 
@@ -245,7 +246,7 @@ real_t computeSingleAtomEntropy(const std::vector<real_t> &atom_distances,
   const real_t window_radius = static_cast<real_t>(5.0) * sigma;
   const real_t inv_dr = static_cast<real_t>(1.0) / dr_val;
 
-  std::vector<real_t> g_accum(num_steps + 1, static_cast<real_t>(0.0));
+  g_accum.assign(num_steps + 1, static_cast<real_t>(0.0));
   for (const real_t r_ij : atom_distances) {
     const real_t r_lo = std::max(dr_val, r_ij - window_radius);
     const real_t r_hi = std::min(cutoff, r_ij + window_radius);
@@ -383,6 +384,7 @@ LocalEntropyCalculator::calculatePerAtom(const correlation::core::Cell &cell,
 
   struct ThreadLocalScratch {
     std::vector<real_t> distances;
+    std::vector<real_t> g_accum;
   };
 
   tbb::enumerable_thread_specific<ThreadLocalScratch> thread_scratch;
@@ -393,7 +395,7 @@ LocalEntropyCalculator::calculatePerAtom(const correlation::core::Cell &cell,
         auto &scratch = thread_scratch.local();
         for (size_t i = range.begin(); i != range.end(); ++i) {
           grid.queryDistances(i, cell, params.cutoff, scratch.distances, ignore_self_periodic);
-          entropies[i] = computeSingleAtomEntropy(scratch.distances, cell, params);
+          entropies[i] = computeSingleAtomEntropy(scratch.distances, cell, params, scratch.g_accum);
         }
       });
 

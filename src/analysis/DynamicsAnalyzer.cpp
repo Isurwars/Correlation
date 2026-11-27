@@ -151,28 +151,34 @@ void subtractComDrift(TrajectorySoA &unwrapped, const ElementMassLayout &layout)
   const size_t num_frames = unwrapped.num_frames;
   const double inv_total_mass = 1.0 / layout.total_mass;
 
-  tbb::parallel_for(static_cast<size_t>(1), num_frames, [&](size_t frame_idx) {
-    double com_x = 0.0;
-    double com_y = 0.0;
-    double com_z = 0.0;
-    for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
-      const double mass = layout.masses[layout.atom_elem_idx[atom_idx]];
-      const size_t offset = (atom_idx * num_frames) + frame_idx;
-      com_x += unwrapped.x[offset] * mass;
-      com_y += unwrapped.y[offset] * mass;
-      com_z += unwrapped.z[offset] * mass;
-    }
-    com_x *= inv_total_mass;
-    com_y *= inv_total_mass;
-    com_z *= inv_total_mass;
+  // Use grain_size >= 64 (8+ 64-byte cache lines of double) to prevent false sharing across frames
+  constexpr size_t K_FRAME_GRAIN_SIZE = 64;
+  tbb::parallel_for(
+      tbb::blocked_range<size_t>(1, num_frames, K_FRAME_GRAIN_SIZE),
+      [&](const tbb::blocked_range<size_t> &range) {
+        for (size_t frame_idx = range.begin(); frame_idx != range.end(); ++frame_idx) {
+          double com_x = 0.0;
+          double com_y = 0.0;
+          double com_z = 0.0;
+          for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
+            const double mass = layout.masses[layout.atom_elem_idx[atom_idx]];
+            const size_t offset = (atom_idx * num_frames) + frame_idx;
+            com_x += unwrapped.x[offset] * mass;
+            com_y += unwrapped.y[offset] * mass;
+            com_z += unwrapped.z[offset] * mass;
+          }
+          com_x *= inv_total_mass;
+          com_y *= inv_total_mass;
+          com_z *= inv_total_mass;
 
-    for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
-      const size_t offset = (atom_idx * num_frames) + frame_idx;
-      unwrapped.x[offset] -= com_x;
-      unwrapped.y[offset] -= com_y;
-      unwrapped.z[offset] -= com_z;
-    }
-  });
+          for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
+            const size_t offset = (atom_idx * num_frames) + frame_idx;
+            unwrapped.x[offset] -= com_x;
+            unwrapped.y[offset] -= com_y;
+            unwrapped.z[offset] -= com_z;
+          }
+        }
+      });
 }
 
 [[nodiscard]] TrajectorySoA
@@ -231,30 +237,35 @@ computeCorrectedVelocities(const std::vector<correlation::core::Cell> &frames, s
 
   const double inv_total_mass = 1.0 / layout.total_mass;
 
-  tbb::parallel_for(static_cast<size_t>(0), num_frames, [&](size_t frame_idx) {
-    const auto &frame = frames[start_frame + frame_idx];
-    double mom_x = 0.0;
-    double mom_y = 0.0;
-    double mom_z = 0.0;
-    for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
-      const double mass = layout.masses[layout.atom_elem_idx[atom_idx]];
-      const auto vel = frame.atomVelocity(atom_idx);
-      mom_x += static_cast<double>(vel.x()) * mass;
-      mom_y += static_cast<double>(vel.y()) * mass;
-      mom_z += static_cast<double>(vel.z()) * mass;
-    }
-    const double com_vx = mom_x * inv_total_mass;
-    const double com_vy = mom_y * inv_total_mass;
-    const double com_vz = mom_z * inv_total_mass;
+  constexpr size_t K_FRAME_GRAIN_SIZE = 64;
+  tbb::parallel_for(
+      tbb::blocked_range<size_t>(0, num_frames, K_FRAME_GRAIN_SIZE),
+      [&](const tbb::blocked_range<size_t> &range) {
+        for (size_t frame_idx = range.begin(); frame_idx != range.end(); ++frame_idx) {
+          const auto &frame = frames[start_frame + frame_idx];
+          double mom_x = 0.0;
+          double mom_y = 0.0;
+          double mom_z = 0.0;
+          for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
+            const double mass = layout.masses[layout.atom_elem_idx[atom_idx]];
+            const auto vel = frame.atomVelocity(atom_idx);
+            mom_x += static_cast<double>(vel.x()) * mass;
+            mom_y += static_cast<double>(vel.y()) * mass;
+            mom_z += static_cast<double>(vel.z()) * mass;
+          }
+          const double com_vx = mom_x * inv_total_mass;
+          const double com_vy = mom_y * inv_total_mass;
+          const double com_vz = mom_z * inv_total_mass;
 
-    for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
-      const auto vel = frame.atomVelocity(atom_idx);
-      const size_t offset = (atom_idx * num_frames) + frame_idx;
-      velocities.x[offset] = static_cast<double>(vel.x()) - com_vx;
-      velocities.y[offset] = static_cast<double>(vel.y()) - com_vy;
-      velocities.z[offset] = static_cast<double>(vel.z()) - com_vz;
-    }
-  });
+          for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
+            const auto vel = frame.atomVelocity(atom_idx);
+            const size_t offset = (atom_idx * num_frames) + frame_idx;
+            velocities.x[offset] = static_cast<double>(vel.x()) - com_vx;
+            velocities.y[offset] = static_cast<double>(vel.y()) - com_vy;
+            velocities.z[offset] = static_cast<double>(vel.z()) - com_vz;
+          }
+        }
+      });
 
   return velocities;
 }

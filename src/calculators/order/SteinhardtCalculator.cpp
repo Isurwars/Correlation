@@ -170,21 +170,24 @@ AtomHarmonicVectors computeHarmonicVectors(size_t atom_idx,
         std::clamp(r_ij.z() / distance, static_cast<real_t>(-1.0), static_cast<real_t>(1.0)));
     real_t const phi = std::atan2(r_ij.y(), r_ij.x());
 
-    for (size_t m_idx = 0; m_idx < 9; ++m_idx) {
-      int const m_val = static_cast<int>(m_idx) - 4;
-      vecs.q4m.at(m_idx) += SteinhardtCalculator::sphericalHarmonic(4, m_val,
-                                                                    {
-                                                                        .theta = theta,
-                                                                        .phi = phi,
-                                                                    });
+    const SteinhardtCalculator::SphericalAngles angles{.theta = theta, .phi = phi};
+    // Exploit conjugate symmetry Y_l^{-m} = (-1)^m * conj(Y_l^m) to halve sphericalHarmonic calls.
+    vecs.q4m[4] += SteinhardtCalculator::sphericalHarmonic(4, 0, angles);
+    for (size_t m_idx = 1; m_idx <= 4; ++m_idx) {
+      const auto y_pos =
+          SteinhardtCalculator::sphericalHarmonic(4, static_cast<int>(m_idx), angles);
+      vecs.q4m.at(4U + m_idx) += y_pos;
+      const auto y_neg = ((m_idx % 2U) != 0U) ? -std::conj(y_pos) : std::conj(y_pos);
+      vecs.q4m.at(4U - m_idx) += y_neg;
     }
-    for (size_t m_idx = 0; m_idx < 13; ++m_idx) {
-      int const m_val = static_cast<int>(m_idx) - 6;
-      vecs.q6m.at(m_idx) += SteinhardtCalculator::sphericalHarmonic(6, m_val,
-                                                                    {
-                                                                        .theta = theta,
-                                                                        .phi = phi,
-                                                                    });
+
+    vecs.q6m[6] += SteinhardtCalculator::sphericalHarmonic(6, 0, angles);
+    for (size_t m_idx = 1; m_idx <= 6; ++m_idx) {
+      const auto y_pos =
+          SteinhardtCalculator::sphericalHarmonic(6, static_cast<int>(m_idx), angles);
+      vecs.q6m.at(6U + m_idx) += y_pos;
+      const auto y_neg = ((m_idx % 2U) != 0U) ? -std::conj(y_pos) : std::conj(y_pos);
+      vecs.q6m.at(6U - m_idx) += y_neg;
     }
   }
 
