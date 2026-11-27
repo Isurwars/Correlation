@@ -110,16 +110,22 @@ ReciprocalBasis computeReciprocalBasis(const correlation::core::Cell &cell, real
   const real_t bz_y = two_pi_val * inv(2, 1);
   const real_t bz_z = two_pi_val * inv(2, 2);
 
-  const real_t b1_norm = std::sqrt(bx_x * bx_x + bx_y * bx_y + bx_z * bx_z);
-  const real_t b2_norm = std::sqrt(by_x * by_x + by_y * by_y + by_z * by_z);
-  const real_t b3_norm = std::sqrt(bz_x * bz_x + bz_y * bz_y + bz_z * bz_z);
+  const auto &lattice = cell.latticeVectors();
+  const real_t a_norm = correlation::math::norm(lattice[0]);
+  const real_t b_norm = correlation::math::norm(lattice[1]);
+  const real_t c_norm = correlation::math::norm(lattice[2]);
 
-  const int hmax =
-      (b1_norm > static_cast<real_t>(1e-10)) ? static_cast<int>(std::ceil(q_max / b1_norm)) : 0;
-  const int kmax =
-      (b2_norm > static_cast<real_t>(1e-10)) ? static_cast<int>(std::ceil(q_max / b2_norm)) : 0;
-  const int lmax =
-      (b3_norm > static_cast<real_t>(1e-10)) ? static_cast<int>(std::ceil(q_max / b3_norm)) : 0;
+  // Exact Miller-index bounding box for arbitrary triclinic/hexagonal cells:
+  // |h| = |a . q| / (2*pi) <= |a| * q_max / (2*pi)
+  const int hmax = (a_norm > static_cast<real_t>(1e-10))
+                       ? static_cast<int>(std::ceil(q_max * a_norm / two_pi_val))
+                       : 0;
+  const int kmax = (b_norm > static_cast<real_t>(1e-10))
+                       ? static_cast<int>(std::ceil(q_max * b_norm / two_pi_val))
+                       : 0;
+  const int lmax = (c_norm > static_cast<real_t>(1e-10))
+                       ? static_cast<int>(std::ceil(q_max * c_norm / two_pi_val))
+                       : 0;
 
   return ReciprocalBasis{
       .b1 = {.x = bx_x, .y = bx_y, .z = bx_z},
@@ -411,21 +417,35 @@ void precomputePhases(int max_idx, const ReciprocalVector &rec_vec, size_t num_a
     sin_neg_one[j] = -sine[j];
   }
 
+  // Run angle-addition recurrence in double precision to prevent O(hmax * eps) drift in float mode
+  std::vector<double> prev_cos_d(num_atoms);
+  std::vector<double> prev_sin_d(num_atoms);
+  std::vector<double> base_cos_d(num_atoms);
+  std::vector<double> base_sin_d(num_atoms);
+  for (size_t j = 0; j < num_atoms; ++j) {
+    base_cos_d[j] = static_cast<double>(cosine[j]);
+    base_sin_d[j] = static_cast<double>(sine[j]);
+    prev_cos_d[j] = base_cos_d[j];
+    prev_sin_d[j] = base_sin_d[j];
+  }
+
   for (int h_idx = 2; h_idx <= max_idx; ++h_idx) {
-    const real_t *cos_prev = &(*phases.cos)[(h_idx - 1 + max_idx) * num_atoms];
-    const real_t *sin_prev = &(*phases.sin)[(h_idx - 1 + max_idx) * num_atoms];
     real_t *cos_curr = &(*phases.cos)[(h_idx + max_idx) * num_atoms];
     real_t *sin_curr = &(*phases.sin)[(h_idx + max_idx) * num_atoms];
     real_t *cos_neg = &(*phases.cos)[(-h_idx + max_idx) * num_atoms];
     real_t *sin_neg = &(*phases.sin)[(-h_idx + max_idx) * num_atoms];
 
     for (size_t j = 0; j < num_atoms; ++j) {
-      real_t const c_val = cos_prev[j] * cosine[j] - sin_prev[j] * sine[j];
-      real_t const s_val = sin_prev[j] * cosine[j] + cos_prev[j] * sine[j];
-      cos_curr[j] = c_val;
-      sin_curr[j] = s_val;
-      cos_neg[j] = c_val;
-      sin_neg[j] = -s_val;
+      const double c_val = prev_cos_d[j] * base_cos_d[j] - prev_sin_d[j] * base_sin_d[j];
+      const double s_val = prev_sin_d[j] * base_cos_d[j] + prev_cos_d[j] * base_sin_d[j];
+      prev_cos_d[j] = c_val;
+      prev_sin_d[j] = s_val;
+      const auto c_out = static_cast<real_t>(c_val);
+      const auto s_out = static_cast<real_t>(s_val);
+      cos_curr[j] = c_out;
+      sin_curr[j] = s_out;
+      cos_neg[j] = c_out;
+      sin_neg[j] = -s_out;
     }
   }
 }
@@ -434,16 +454,16 @@ inline void processSingleQVector(const QVector &q_vec, QBinning binning, size_t 
                                  const ReciprocalBasis &basis,
                                  const std::vector<TypeBlock> &type_blocks,
                                  const std::vector<PartialInfo> &partials_info,
-                                 const PrecomputedPhases &phases, ThreadAccumulators accum) {
+                                 const PrecomputedPhases &phases, ThreadAccumulators accum,
+                                 std::vector<real_t> &type_cos, std::vector<real_t> &type_sin) {
   const auto bin = static_cast<size_t>(q_vec.qmag / binning.width);
   if (bin >= binning.num_bins) {
     return;
   }
 
-  // Compute cos/sin sums for each type block by multiplying the
-  // per-index contributions (already factored by Miller h,k,l).
-  std::vector<real_t> type_cos(type_blocks.size(), static_cast<real_t>(0.0));
-  std::vector<real_t> type_sin(type_blocks.size(), static_cast<real_t>(0.0));
+  // Compute cos/sin sums for each type block into thread-local reusable scratch buffers.
+  type_cos.assign(type_blocks.size(), static_cast<real_t>(0.0));
+  type_sin.assign(type_blocks.size(), static_cast<real_t>(0.0));
 
   for (size_t ti = 0; ti < type_blocks.size(); ++ti) {
     const size_t off = type_blocks[ti].offset;
@@ -511,7 +531,7 @@ createInitialHistogram(const QBinning &binning, const std::vector<PartialInfo> &
   s_q_hist.title = "S(Q) — Structure Factor";
   s_q_hist.y_label = "S(Q)";
   s_q_hist.x_unit = "Å⁻¹";
-  s_q_hist.y_unit = "Å";
+  s_q_hist.y_unit = "";
   s_q_hist.description = "Structure Factor S(Q)";
   s_q_hist.file_suffix = "_S";
   for (size_t i = 0; i < binning.num_bins; ++i) {
@@ -704,6 +724,8 @@ void StructureFactorCalculator::calculateFrame(
                         auto &[local_total_sum, local_total_count, local_partial_sums,
                                local_partial_counts, local_c_total_sum, local_c_partial_sums] =
                             local_ets.local();
+                        std::vector<real_t> type_cos(type_blocks.size(), static_cast<real_t>(0.0));
+                        std::vector<real_t> type_sin(type_blocks.size(), static_cast<real_t>(0.0));
 
                         for (size_t qi = range.begin(); qi != range.end(); ++qi) {
                           processSingleQVector(q_vectors[qi], binning, num_atoms, basis,
@@ -723,7 +745,8 @@ void StructureFactorCalculator::calculateFrame(
                                                    .partial_counts = &local_partial_counts,
                                                    .c_total_sum = &local_c_total_sum,
                                                    .c_partial_sums = &local_c_partial_sums,
-                                               });
+                                               },
+                                               type_cos, type_sin);
                         }
                       });
 

@@ -270,8 +270,12 @@ void DistributionFunctions::calculateAshcroftWeights() {
       const auto &element_i = elements[i];
       const auto &element_j = elements[j];
 
-      const auto count_i = static_cast<real_t>(element_counts.at(element_i.symbol));
-      const auto count_j = static_cast<real_t>(element_counts.at(element_j.symbol));
+      const auto iter_i = element_counts.find(element_i.symbol);
+      const auto iter_j = element_counts.find(element_j.symbol);
+      const auto count_i =
+          static_cast<real_t>(iter_i != element_counts.end() ? iter_i->second : 0);
+      const auto count_j =
+          static_cast<real_t>(iter_j != element_counts.end() ? iter_j->second : 0);
 
       const auto num_atoms_d = static_cast<real_t>(num_atoms);
       real_t weight = (count_i * count_j) / (num_atoms_d * num_atoms_d);

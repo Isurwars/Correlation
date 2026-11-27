@@ -632,15 +632,21 @@ SearchGridConfig buildSearchGridConfig(const correlation::core::Cell &cell, real
 
   const real_t cutoff = std::sqrt(cutoff_sq);
 
-  const int k_x = std::max(1, static_cast<int>(std::floor(width_x / cutoff)));
-  const int k_y = std::max(1, static_cast<int>(std::floor(width_y / cutoff)));
-  const int k_z = std::max(1, static_cast<int>(std::floor(width_z / cutoff)));
+  const int raw_k_x = std::max(1, static_cast<int>(std::floor(width_x / cutoff)));
+  const int raw_k_y = std::max(1, static_cast<int>(std::floor(width_y / cutoff)));
+  const int raw_k_z = std::max(1, static_cast<int>(std::floor(width_z / cutoff)));
 
-  const bool is_small_cell = (k_x == 1 && k_y == 1 && k_z == 1);
+  const bool is_small_cell = (raw_k_x == 1 || raw_k_y == 1 || raw_k_z == 1);
+  const int k_x = is_small_cell ? 1 : raw_k_x;
+  const int k_y = is_small_cell ? 1 : raw_k_y;
+  const int k_z = is_small_cell ? 1 : raw_k_z;
 
-  const int max_dx = (k_x == 1) ? std::max(1, static_cast<int>(std::ceil(cutoff / width_x))) : 1;
-  const int max_dy = (k_y == 1) ? std::max(1, static_cast<int>(std::ceil(cutoff / width_y))) : 1;
-  const int max_dz = (k_z == 1) ? std::max(1, static_cast<int>(std::ceil(cutoff / width_z))) : 1;
+  const int max_dx =
+      (raw_k_x == 1) ? std::max(1, static_cast<int>(std::ceil(cutoff / width_x))) : 1;
+  const int max_dy =
+      (raw_k_y == 1) ? std::max(1, static_cast<int>(std::ceil(cutoff / width_y))) : 1;
+  const int max_dz =
+      (raw_k_z == 1) ? std::max(1, static_cast<int>(std::ceil(cutoff / width_z))) : 1;
 
   std::vector<correlation::math::Vector3<real_t>> small_cell_shifts;
   if (is_small_cell) {

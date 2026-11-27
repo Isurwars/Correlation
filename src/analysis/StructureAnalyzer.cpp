@@ -26,8 +26,8 @@ namespace {
 void validateBondCutoffs(const BondCutoffMatrix &bond_cutoffs) {
   for (const auto &row : bond_cutoffs) {
     for (const auto &range : row) {
-      if (range.min_sq < 0.0) {
-        throw std::invalid_argument("Minimum bond cutoff squared must be non-negative.");
+      if (range.min_sq < 0.0 || range.max_sq < 0.0) {
+        throw std::invalid_argument("Bond cutoffs squared must be non-negative.");
       }
       if (range.max_sq > 0.0 && range.max_sq < range.min_sq) {
         throw std::invalid_argument(
@@ -38,19 +38,15 @@ void validateBondCutoffs(const BondCutoffMatrix &bond_cutoffs) {
 }
 
 real_t computeMaxBondDistance(const BondCutoffMatrix &bond_cutoffs, size_t num_elements) {
-  return tbb::parallel_reduce(
-      tbb::blocked_range<size_t>(0, num_elements), static_cast<real_t>(0.0),
-      [&](const tbb::blocked_range<size_t> &range, real_t init) {
-        for (size_t i = range.begin(); i != range.end(); ++i) {
-          for (size_t j = i; j < num_elements; ++j) {
-            if (i < bond_cutoffs.size() && j < bond_cutoffs[i].size()) {
-              init = std::max(init, static_cast<real_t>(std::sqrt(bond_cutoffs[i][j].max_sq)));
-            }
-          }
-        }
-        return init;
-      },
-      [](real_t lhs, real_t rhs) { return std::max(lhs, rhs); });
+  auto max_dist = static_cast<real_t>(0.0);
+  for (size_t i = 0; i < num_elements; ++i) {
+    for (size_t j = i; j < num_elements; ++j) {
+      if (i < bond_cutoffs.size() && j < bond_cutoffs[i].size()) {
+        max_dist = std::max(max_dist, static_cast<real_t>(std::sqrt(bond_cutoffs[i][j].max_sq)));
+      }
+    }
+  }
+  return max_dist;
 }
 
 } // namespace

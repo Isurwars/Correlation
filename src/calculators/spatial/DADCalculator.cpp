@@ -131,6 +131,26 @@ void normalizeAndScale(NormalizeParams const &params) {
   }
 }
 
+void accumulateDihedralQuadruplet(const DihedralPopulationParams &params,
+                                  const std::vector<real_t> &angles_rad, size_t idx_a, size_t idx_b,
+                                  size_t idx_c, size_t idx_d,
+                                  correlation::analysis::Histogram &f_dihedral_raw) {
+  std::string const key = params.elements[idx_a].symbol + "-" + params.elements[idx_b].symbol +
+                          "-" + params.elements[idx_c].symbol + "-" + params.elements[idx_d].symbol;
+  auto &partial_hist = f_dihedral_raw.partials[key];
+  if (partial_hist.empty()) {
+    partial_hist.assign(params.num_bins, 0.0);
+  }
+  processDihedralAngles({
+      .angles_rad = angles_rad,
+      .partial_hist = &partial_hist,
+      .bin_width = params.bin_width,
+      .num_bins = params.num_bins,
+      .theta_min = params.theta_min,
+      .theta_max = params.theta_max,
+  });
+}
+
 /**
  * @brief Helper to populate raw dihedral angle histograms across all element quadruplets.
  */
@@ -144,28 +164,14 @@ void populateAllDihedrals(const DihedralPopulationParams &params,
     for (size_t idx_b = 0; idx_b < num_elements; ++idx_b) {
       for (size_t idx_c = 0; idx_c < num_elements; ++idx_c) {
         for (size_t idx_d = 0; idx_d < num_elements; ++idx_d) {
-          const auto &angles_rad = params.neighbors->dihedrals()[idx_a][idx_b][idx_c][idx_d];
-          if (angles_rad.empty()) {
+          if (std::tie(idx_a, idx_b, idx_c, idx_d) > std::tie(idx_d, idx_c, idx_b, idx_a)) {
             continue;
           }
-
-          std::string const key =
-              params.elements[idx_a].symbol + "-" + params.elements[idx_b].symbol + "-" +
-              params.elements[idx_c].symbol + "-" + params.elements[idx_d].symbol;
-
-          auto &partial_hist = f_dihedral_raw.partials[key];
-          if (partial_hist.empty()) {
-            partial_hist.assign(params.num_bins, 0.0);
+          const auto &angles_rad = params.neighbors->dihedrals()[idx_a][idx_b][idx_c][idx_d];
+          if (!angles_rad.empty()) {
+            accumulateDihedralQuadruplet(params, angles_rad, idx_a, idx_b, idx_c, idx_d,
+                                         f_dihedral_raw);
           }
-
-          processDihedralAngles({
-              .angles_rad = angles_rad,
-              .partial_hist = &partial_hist,
-              .bin_width = params.bin_width,
-              .num_bins = params.num_bins,
-              .theta_min = params.theta_min,
-              .theta_max = params.theta_max,
-          });
         }
       }
     }

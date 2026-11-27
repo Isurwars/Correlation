@@ -159,12 +159,16 @@ void normalizeDistributions(const correlation::core::Cell &cell,
       const real_t n_i = element_counts[i];
       const real_t n_j = element_counts[j];
 
-      const auto &h_ij = h_r.partials.at(key);
-
       g_r.partials[key].assign(settings.num_bins, 0.0);
       g_r_reduced.partials[key].assign(settings.num_bins, 0.0);
       j_r.partials[key].assign(settings.num_bins, 0.0);
       j_r.partials[inversekey].assign(settings.num_bins, 0.0);
+
+      if (n_i <= static_cast<real_t>(0.0) || n_j <= static_cast<real_t>(0.0)) {
+        continue;
+      }
+
+      const auto &h_ij = h_r.partials.at(key);
 
       // Second Pass: Normalize the raw counts H(r) into target distribution
       // functions. g(r) normalization constant: V / (4 * pi * dr * n_i * n_j).
@@ -209,7 +213,9 @@ void weightPartials(const correlation::core::Cell &cell,
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = i; j < num_elements; ++j) {
       std::string const key = getPartialKey(cell, i, j);
-      real_t const weight = ashcroft_weights.at(key);
+      const auto weight_it = ashcroft_weights.find(key);
+      real_t const weight =
+          (weight_it != ashcroft_weights.end()) ? weight_it->second : static_cast<real_t>(0.0);
 
       // 1. Weight g_r partial: g_ij_weighted(r) = w_ij * g_ij(r)
       auto &g_part = g_r.partials.at(key);
@@ -270,7 +276,9 @@ void computeTotalDistributions(correlation::analysis::Histogram &h_r,
       continue;
     }
 
-    real_t const weight = ashcroft_weights.at(key);
+    const auto weight_it = ashcroft_weights.find(key);
+    real_t const weight =
+        (weight_it != ashcroft_weights.end()) ? weight_it->second : static_cast<real_t>(0.0);
 
     for (size_t k = 0; k < num_bins; ++k) {
       total_g[k] += g_partial[k] * weight;

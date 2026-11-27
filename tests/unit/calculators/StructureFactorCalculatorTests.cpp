@@ -78,7 +78,7 @@ TEST_F(StructureFactorCalculatorTests, CalculatesSimpleCubicBraggPeak) {
   const auto &hist = dists.getHistogram("S_q");
   EXPECT_FALSE(hist.bins.empty());
   EXPECT_TRUE(hist.partials.contains("Total"));
-  EXPECT_EQ(hist.y_unit, "Å");
+  EXPECT_EQ(hist.y_unit, "");
 
   // The first Bragg peak for a SC lattice at a=3 is at Q = 2*pi/3 ≈ 2.094
   // Å^{-1} Find the max S(Q) value in the range [1.8, 2.4]

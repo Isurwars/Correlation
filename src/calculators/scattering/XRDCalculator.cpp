@@ -47,6 +47,9 @@ struct QGrid {
 
 // Helper for linear interpolation of partial S_ij(Q)
 real_t sampleSq(const QGrid &q_grid, const std::vector<real_t> &sq_data, real_t q_val) {
+  if (sq_data.empty()) {
+    return static_cast<real_t>(0.0);
+  }
   if (q_val <= q_grid.min) {
     return sq_data.front();
   }
@@ -61,7 +64,11 @@ real_t sampleSq(const QGrid &q_grid, const std::vector<real_t> &sq_data, real_t 
   }
   const real_t q_0 = bins[idx - 1];
   const real_t q_1 = bins[idx];
-  const real_t d_t = (q_val - q_0) / (q_1 - q_0);
+  const real_t delta_q = q_1 - q_0;
+  if (delta_q <= static_cast<real_t>(1e-12)) {
+    return sq_data[idx - 1];
+  }
+  const real_t d_t = (q_val - q_0) / delta_q;
   return sq_data[idx - 1] + d_t * (sq_data[idx] - sq_data[idx - 1]);
 }
 
@@ -74,6 +81,9 @@ buildPartialSqList(const std::map<std::string, std::vector<real_t>> &partials,
       continue;
     }
     const size_t dash_pos = key.find('-');
+    if (dash_pos == std::string::npos) {
+      continue;
+    }
     const std::string sym1 = key.substr(0, dash_pos);
     const std::string sym2 = key.substr(dash_pos + 1);
     const real_t c_1 =
@@ -122,6 +132,58 @@ real_t calculateIntensityAtQ(real_t q_value, const std::map<std::string, real_t>
   }
 
   return intensity_q.value();
+}
+struct PartialXRD {
+  const std::string *key;
+  const std::vector<real_t> *integrand;
+  real_t weight;
+  size_t idx1{0};
+  size_t idx2{0};
+};
+
+struct XrdSpeciesTable {
+  std::vector<std::string> symbols;
+  std::vector<real_t> concs;
+  std::vector<PartialXRD> partials;
+};
+
+[[nodiscard]] XrdSpeciesTable
+buildXrdSpeciesTable(const std::map<std::string, real_t> &concentrations,
+                     const std::map<std::string, std::vector<real_t>> &partial_integrands,
+                     const std::map<std::string, real_t> &ashcroft_weights) {
+  XrdSpeciesTable table;
+  std::map<std::string, size_t> symbol_to_idx;
+  table.symbols.reserve(concentrations.size());
+  table.concs.reserve(concentrations.size());
+  for (const auto &[sym, conc] : concentrations) {
+    symbol_to_idx[sym] = table.symbols.size();
+    table.symbols.push_back(sym);
+    table.concs.push_back(conc);
+  }
+
+  table.partials.reserve(partial_integrands.size());
+  for (const auto &[key, integ] : partial_integrands) {
+    const size_t dash_pos = key.find('-');
+    if (dash_pos == std::string::npos) {
+      continue;
+    }
+    const std::string sym1 = key.substr(0, dash_pos);
+    const std::string sym2 = key.substr(dash_pos + 1);
+    const auto it1 = symbol_to_idx.find(sym1);
+    const auto it2 = symbol_to_idx.find(sym2);
+    if (it1 == symbol_to_idx.end() || it2 == symbol_to_idx.end()) {
+      continue;
+    }
+    const auto weight = static_cast<real_t>(ashcroft_weights.at(key));
+    table.partials.push_back({
+        .key = &key,
+        .integrand = &integ,
+        .weight = weight,
+        .idx1 = it1->second,
+        .idx2 = it2->second,
+    });
+  }
+  return table;
 }
 } // namespace
 
@@ -198,6 +260,12 @@ XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
   if (lambda_val <= 0.0) {
     throw std::invalid_argument("Wavelength lambda must be strictly positive.");
   }
+  if (theta_max_val < theta_min_val) {
+    throw std::invalid_argument("theta_max must be >= theta_min.");
+  }
+  if (cell.volume() <= static_cast<real_t>(0.0)) {
+    throw std::invalid_argument("Cell volume must be strictly positive.");
+  }
 
   const auto &r_bins = g_r_hist.bins;
   const real_t delta_r = r_bins[1] - r_bins[0];
@@ -217,40 +285,31 @@ XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
 
   const auto partial_integrands = calculatePartialIntegrands(g_r_hist, ashcroft_weights, delta_r);
   const auto concentrations = calculateConcentrations(cell);
-
-  // Collect partials as a flat vector for parallel access (avoids map iteration
-  // inside the parallel region)
-  struct PartialXRD {
-    const std::string *key;
-    const std::vector<real_t> *integrand;
-    real_t weight;
-    std::string sym1, sym2;
-  };
-  std::vector<PartialXRD> xrd_partials;
-  xrd_partials.reserve(partial_integrands.size());
-  for (const auto &[key, integ] : partial_integrands) {
-    const auto weight = static_cast<real_t>(ashcroft_weights.at(key));
-    const size_t dash_pos = key.find('-');
-    const std::string sym1 = key.substr(0, dash_pos);
-    const std::string sym2 = key.substr(dash_pos + 1);
-    xrd_partials.push_back({
-        .key = &key,
-        .integrand = &integ,
-        .weight = weight,
-        .sym1 = sym1,
-        .sym2 = sym2,
-    });
-  }
+  const auto xrd_table = buildXrdSpeciesTable(concentrations, partial_integrands, ashcroft_weights);
+  const auto &species_symbols = xrd_table.symbols;
+  const auto &species_concs = xrd_table.concs;
+  const auto &xrd_partials = xrd_table.partials;
   const size_t num_xrd_partials = xrd_partials.size();
+  const size_t num_species = species_symbols.size();
 
-  // Thread-local sin(Q*r) scratch buffer
+  // Thread-local sin(Q*r) and cached f_i(Q) scratch buffers
   const size_t r_count = r_bins.size();
-  tbb::enumerable_thread_specific<std::vector<real_t>> sinqr_ets(
-      [&] { return std::vector<real_t>(r_count, 0.0); });
+  struct XrdThreadScratch {
+    std::vector<real_t> sinqr;
+    std::vector<real_t> form_factors;
+  };
+  tbb::enumerable_thread_specific<XrdThreadScratch> scratch_ets([&] {
+    return XrdThreadScratch{
+        .sinqr = std::vector<real_t>(r_count, static_cast<real_t>(0.0)),
+        .form_factors = std::vector<real_t>(num_species, static_cast<real_t>(0.0)),
+    };
+  });
 
   tbb::parallel_for(
       tbb::blocked_range<size_t>(0, num_bins), [&](const tbb::blocked_range<size_t> &range) {
-        auto &sinqr = sinqr_ets.local();
+        auto &scratch = scratch_ets.local();
+        auto &sinqr = scratch.sinqr;
+        auto &form_factors = scratch.form_factors;
 
         for (size_t i = range.begin(); i != range.end(); ++i) {
           auto const two_theta = theta_min_val + static_cast<real_t>(i) * bin_width_val;
@@ -268,9 +327,10 @@ XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
 
           correlation::KahanAccumulator<real_t> intensity_q;
 
-          for (const auto &[sym, concentration] : concentrations) {
-            auto const form_factor = getAtomicFormFactor(sym, q_value);
-            intensity_q.add(static_cast<real_t>(concentration) * form_factor * form_factor);
+          for (size_t s_idx = 0; s_idx < num_species; ++s_idx) {
+            const real_t form_factor = getAtomicFormFactor(species_symbols[s_idx], q_value);
+            form_factors[s_idx] = form_factor;
+            intensity_q.add(species_concs[s_idx] * form_factor * form_factor);
           }
 
           // Precompute sinqr once per theta step (angle bin)
@@ -278,16 +338,14 @@ XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
             sinqr[j] = std::sin(q_value * r_bins[j]);
           }
 
+          const real_t rho_prefactor = correlation::math::FOUR_PI * total_rho / q_value;
           for (size_t partial_idx = 0; partial_idx < num_xrd_partials; ++partial_idx) {
             const PartialXRD &partial_xrd = xrd_partials[partial_idx];
             const size_t pcount = std::min(partial_xrd.integrand->size(), r_count);
             auto const integral = static_cast<real_t>(
                 correlation::math::simdDot(partial_xrd.integrand->data(), sinqr.data(), pcount));
-            real_t const form_factor_1 = getAtomicFormFactor(partial_xrd.sym1, q_value);
-            real_t const form_factor_2 = getAtomicFormFactor(partial_xrd.sym2, q_value);
-
-            intensity_q.add((form_factor_1 * form_factor_2 *
-                             (correlation::math::FOUR_PI * total_rho / q_value) * integral));
+            intensity_q.add(form_factors[partial_xrd.idx1] * form_factors[partial_xrd.idx2] *
+                            rho_prefactor * integral);
           }
 
           intensities[i] = intensity_q.value();
@@ -347,6 +405,9 @@ correlation::analysis::Histogram XRDCalculator::calculateFromSq(
   }
   if (lambda_val <= 0.0) {
     throw std::invalid_argument("Wavelength lambda must be strictly positive.");
+  }
+  if (theta_max_val < theta_min_val) {
+    throw std::invalid_argument("theta_max must be >= theta_min.");
   }
 
   const size_t num_bins = static_cast<size_t>((theta_max_val - theta_min_val) / bin_width_val) + 1;

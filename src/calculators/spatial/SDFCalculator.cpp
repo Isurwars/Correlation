@@ -36,7 +36,8 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
   real_t const l_y = cell.latticeParameters()[1];
   real_t const l_z = cell.latticeParameters()[2];
 
-  if (l_x <= 0 || l_y <= 0 || l_z <= 0) {
+  if (l_x <= 0 || l_y <= 0 || l_z <= 0 ||
+      cell.volume() <= std::numeric_limits<real_t>::epsilon()) {
     return;
   }
 

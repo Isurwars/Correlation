@@ -72,18 +72,19 @@ findPrimaryPeak(std::span<const real_t> r_bins, std::span<const real_t> curve,
 
   real_t r_onset = r_bins[peak_idx];
   for (size_t i = peak_idx; i > 0; --i) {
-    if (curve[i] <= threshold) {
-      // Linear interpolation between i and i + 1
-      const real_t delta_y = curve[i + 1] - curve[i];
+    const size_t curr = i - 1;
+    if (curve[curr] <= threshold) {
+      // Linear interpolation between curr and curr + 1 (always in bounds since curr < peak_idx)
+      const real_t delta_y = curve[curr + 1] - curve[curr];
       if (std::abs(delta_y) > static_cast<real_t>(1e-6)) {
-        const real_t frac = (threshold - curve[i]) / delta_y;
-        r_onset = r_bins[i] + frac * (r_bins[i + 1] - r_bins[i]);
+        const real_t frac = (threshold - curve[curr]) / delta_y;
+        r_onset = r_bins[curr] + frac * (r_bins[curr + 1] - r_bins[curr]);
       } else {
-        r_onset = r_bins[i];
+        r_onset = r_bins[curr];
       }
       break;
     }
-    r_onset = r_bins[i];
+    r_onset = r_bins[curr];
   }
 
   return std::max(r_onset, opts.core_floor_radius);
@@ -193,8 +194,10 @@ FirstMinimumDetector::detectCutoffs(const Histogram &hist, std::string_view part
   const auto iter_partial = hist.partials.find(key);
   if (iter_partial == hist.partials.end()) {
     // Check if total requested and available under alternative casing
-    if (key == "Total" && !hist.partials.empty()) {
-      return detectCutoffs(hist.bins, hist.partials.begin()->second, opts);
+    if (key == "Total") {
+      if (const auto iter_lower = hist.partials.find("total"); iter_lower != hist.partials.end()) {
+        return detectCutoffs(hist.bins, iter_lower->second, opts);
+      }
     }
     return std::unexpected(DetectionError::PartialNotFound);
   }
