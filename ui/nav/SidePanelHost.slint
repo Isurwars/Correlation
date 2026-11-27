@@ -18,7 +18,6 @@ import {
     AtomCount,
     BondCutoff,
     CalculatorGroup,
-    DomainPresetItem,
     AnalysisOptions,
     AppErrors,
     ExportConfig,
@@ -52,7 +51,6 @@ export component SidePanelHost inherits Vertical {
 
     // Material & analysis setup
     in-out property <int> material_type: 0;
-    in property <[DomainPresetItem]> domain_presets: [];
     in-out property <AnalysisOptions> analysis_options;
     in property <AppErrors> app_errors;
     in property <bool> hdf5_available: true;
@@ -100,7 +98,6 @@ export component SidePanelHost inherits Vertical {
     callback rename_element(string, string);
     callback reset_trajectory_options();
     callback reset_material_type();
-    callback apply_domain_preset(int);
     callback run_analysis();
     callback cancel_analysis();
     callback open_style_inspector();
@@ -223,8 +220,6 @@ export component SidePanelHost inherits Vertical {
             }
 
             material_type <=> root.material_type;
-            domain_presets: root.domain_presets;
-            apply_domain_preset(id) => { root.apply_domain_preset(id); }
             reset_material_type => { root.reset_material_type(); }
 
             has_radial_active: root.has_radial_active;

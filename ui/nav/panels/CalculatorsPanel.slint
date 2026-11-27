@@ -16,7 +16,6 @@ import {
 import {
     AtomCount,
     BondCutoff,
-    DomainPresetItem,
     FileMetadata,
     AnalysisOptions,
     AppErrors,
@@ -48,11 +47,9 @@ export component CalculatorsPanel inherits Rectangle {
     callback open_input_panel();
     callback open_advanced_options();
 
-    // Material & Domain Presets state
+    // Material Type state
     in-out property <int> material_type: 0;
-    in property <[DomainPresetItem]> domain_presets: [];
     callback reset_material_type();
-    callback apply_domain_preset(int);
 
     // Active domain flags
     in property <bool> has_radial_active: true;
@@ -167,12 +164,10 @@ export component CalculatorsPanel inherits Rectangle {
                     reset => { root.reset_trajectory_options(); }
                 }
 
-                // 3. Material Type & Domain Templates Card
+                // 3. Material Type Card
                 MaterialTypeCard {
                     file_loaded: root.file_loaded;
                     material_type <=> root.material_type;
-                    domain_presets: root.domain_presets;
-                    apply_domain_preset(id) => { root.apply_domain_preset(id); }
                     reset => { root.reset_material_type(); }
                 }
 

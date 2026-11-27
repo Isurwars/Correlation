@@ -58,7 +58,7 @@ export component MiniSideBar inherits Rectangle {
         btn_calculators := NavRailItem {
             icon: Icons.tune;
             active: root.active_panel == 1;
-            tooltip: "Main Parameters\n\n⚙️ Configure trajectory frame slicing, material templates, pair cutoffs, RDF, and angular bins.";
+            tooltip: "Main Parameters\n\n⚙️ Configure trajectory frame slicing, material type, pair cutoffs, RDF, and angular bins.";
             clicked => {
                 root.select_panel(root.active_panel == 1 ? -1 : 1);
             }

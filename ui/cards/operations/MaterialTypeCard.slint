@@ -3,25 +3,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-import {
-    DropDownMenu,
-    MaterialPalette,
-    MaterialStyleMetrics,
-    MaterialTypography,
-    MaterialText,
-    TooltipTarget,
-} from "../../material/material.slint";
-import { DomainPresetItem } from "../../Types.slint";
+import { DropDownMenu } from "../../material/material.slint";
 import { OptionSection } from "../common/OptionSection.slint";
 
 export component MaterialTypeCard inherits OptionSection {
-    title: "Material & Domain Presets";
+    title: "Material Type";
     reset_enabled: root.file_loaded;
 
     in property <bool> file_loaded;
     in-out property <int> material_type: 0; // 0: Amorphous, 1: Liquid, 2: Crystalline
-    in property <[DomainPresetItem]> domain_presets: [];
-    callback apply_domain_preset(int);
 
     DropDownMenu {
         width: 100%;
@@ -34,61 +24,5 @@ export component MaterialTypeCard inherits OptionSection {
             { text: "Crystalline", enabled: true }
         ];
         current_index <=> root.material_type;
-    }
-
-    if root.domain_presets.length > 0: VerticalLayout {
-        spacing: MaterialStyleMetrics.spacing_4;
-
-        MaterialText {
-            text: "1-Click Domain Templates:";
-            style: MaterialTypography.label_small;
-            color: MaterialPalette.on_surface_variant;
-        }
-
-        for preset in root.domain_presets: preset_touch := TooltipTarget {
-            height: 28px;
-            mouse-cursor: pointer;
-            tooltip_text: preset.description;
-            accessible-role: button;
-            accessible-label: "Apply template " + preset.name;
-            clicked => { root.apply_domain_preset(preset.id); }
-
-            Rectangle {
-                border-radius: MaterialStyleMetrics.border_radius_6;
-                background: preset_touch.has-hover ? MaterialPalette.surface_container_high : MaterialPalette.surface_container_low;
-                border-width: 1px;
-                border-color: preset_touch.has-hover ? MaterialPalette.primary : MaterialPalette.outline_variant.with_alpha(60%);
-
-                HorizontalLayout {
-                    padding-left: MaterialStyleMetrics.padding_8;
-                    padding-right: MaterialStyleMetrics.padding_8;
-                    spacing: MaterialStyleMetrics.spacing_6;
-                    alignment: space-between;
-
-                    MaterialText {
-                        text: preset.name;
-                        style: MaterialTypography.label_medium;
-                        color: MaterialPalette.on_surface;
-                        vertical-alignment: center;
-                    }
-
-                    if preset.badge_text != "": Rectangle {
-                        height: 18px;
-                        y: (parent.height - self.height) / 2;
-                        width: badge_lbl.preferred-width + 10px;
-                        border-radius: MaterialStyleMetrics.border_radius_full;
-                        background: MaterialPalette.primary.with_alpha(16%);
-
-                        badge_lbl := MaterialText {
-                            text: preset.badge_text;
-                            style: MaterialTypography.label_small;
-                            color: MaterialPalette.primary;
-                            horizontal-alignment: center;
-                            vertical-alignment: center;
-                        }
-                    }
-                }
-            }
-        }
     }
 }

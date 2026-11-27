@@ -928,7 +928,6 @@ export component AppWindow inherits Window {
                     };
 
                     material_type <=> root.material_type;
-                    domain_presets: root.domain_presets;
                     analysis_options <=> root.analysis_options;
                     app_errors: root.app_errors;
                     hdf5_available: root.hdf5_available;
@@ -964,7 +963,6 @@ export component AppWindow inherits Window {
                     rename_element(old_sym, new_sym) => { root.rename_element(old_sym, new_sym); }
                     reset_trajectory_options => { root.reset_trajectory_options(); }
                     reset_material_type => { root.reset_material_type(); }
-                    apply_domain_preset(id) => { root.apply_domain_preset(id); }
                     run_analysis => { root.run_analysis(); }
                     cancel_analysis => { root.cancel_analysis(); }
                     open_style_inspector => {
