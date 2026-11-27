@@ -86,6 +86,103 @@ toEngineConfig(const ProgramOptions &options, std::atomic<bool> *cancel_flag) {
 
 } // namespace
 
+AnalysisDispatcher::~AnalysisDispatcher() { stopPerFramePrebake(); }
+
+void AnalysisDispatcher::clear() noexcept {
+  stopPerFramePrebake();
+  const std::unique_lock lock(df_mutex_);
+  df_.reset();
+}
+
+void AnalysisDispatcher::stopPerFramePrebake() noexcept {
+  prebake_cancel_.store(true, std::memory_order_release);
+  if (prebake_thread_.joinable()) {
+    prebake_thread_.join();
+  }
+}
+
+void AnalysisDispatcher::bindPerFrameTrajectory(
+    std::shared_ptr<const correlation::core::Trajectory> trajectory) {
+  if (!trajectory) {
+    return;
+  }
+
+  std::shared_ptr<correlation::analysis::PerFrameDistributionStore> store;
+  correlation::analysis::AnalysisSettings settings_copy;
+  correlation::analysis::BondCutoffMatrix cutoffs_copy;
+  {
+    const std::shared_lock lock(df_mutex_);
+    if (!df_) {
+      return;
+    }
+    store = df_->mutablePerFrameStore();
+    settings_copy = last_settings_;
+    cutoffs_copy = last_bond_cutoffs_;
+  }
+  if (!store) {
+    return;
+  }
+  if (cutoffs_copy.empty()) {
+    cutoffs_copy = trajectory->getBondCutoffs();
+  }
+
+  using correlation::analysis::DistributionMetric;
+  const std::array<bool, 4> wanted_metrics{
+      !store->getMeanCurve(DistributionMetric::RDF).empty(),
+      !store->getMeanCurve(DistributionMetric::PAD).empty(),
+      !store->getMeanCurve(DistributionMetric::SQ).empty(),
+      !store->getMeanCurve(DistributionMetric::XRD).empty(),
+  };
+
+  store->setFrameGenerator([traj = std::move(trajectory), settings = std::move(settings_copy),
+                            cutoffs = std::move(cutoffs_copy),
+                            wanted_metrics](std::size_t frame_idx) {
+    if (!traj || frame_idx >= traj->getFrameCount()) {
+      return correlation::analysis::PerFrameDistributionStore::FrameCurveArray{};
+    }
+    return correlation::analysis::DistributionFunctions::computeLightweightFrameCurves(
+        traj->getFrame(frame_idx), settings, cutoffs, wanted_metrics);
+  });
+}
+
+void AnalysisDispatcher::startPerFramePrebake(
+    std::shared_ptr<const correlation::core::Trajectory> trajectory,
+    std::function<void()> on_complete) {
+  stopPerFramePrebake();
+  if (!trajectory) {
+    return;
+  }
+  bindPerFrameTrajectory(std::move(trajectory));
+
+  std::shared_ptr<correlation::analysis::PerFrameDistributionStore> store;
+  {
+    const std::shared_lock lock(df_mutex_);
+    if (df_) {
+      store = df_->mutablePerFrameStore();
+    }
+  }
+  if (!store) {
+    return;
+  }
+
+  prebake_cancel_.store(false, std::memory_order_release);
+  const std::size_t total_frames = store->getTotalFrames();
+  prebake_thread_ = std::jthread(
+      [this, store = std::move(store), total_frames, on_complete = std::move(on_complete)] {
+        for (std::size_t frame_idx = 0; frame_idx < total_frames; ++frame_idx) {
+          if (prebake_cancel_.load(std::memory_order_acquire)) {
+            return;
+          }
+          if (store->needsFrameGeneration(frame_idx)) {
+            store->ensureFrame(frame_idx);
+          }
+        }
+        if (!prebake_cancel_.load(std::memory_order_acquire) && on_complete) {
+          on_complete();
+        }
+      });
+}
+
 std::expected<void, std::string>
 AnalysisDispatcher::validateOptions(const ProgramOptions &options) {
   const auto config = toEngineConfig(options, nullptr);
@@ -101,6 +198,7 @@ AnalysisDispatcher::runAnalysis(correlation::core::Trajectory *trajectory,
     return std::unexpected(err);
   }
 
+  stopPerFramePrebake();
   cancel_flag_ = false;
 
   if (const auto validation_res = validateOptions(options); !validation_res.has_value()) {
@@ -117,6 +215,10 @@ AnalysisDispatcher::runAnalysis(correlation::core::Trajectory *trajectory,
 
   {
     const std::unique_lock lock(df_mutex_);
+    last_settings_ = config.settings;
+    last_settings_.cancel_flag = nullptr;
+    last_bond_cutoffs_ =
+        !config.bond_cutoffs.empty() ? config.bond_cutoffs : trajectory->getBondCutoffs();
     df_ = std::move(result.value());
   }
   return {};

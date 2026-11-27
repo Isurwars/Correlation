@@ -749,6 +749,12 @@ void PlotController::applyDualViewOverlay(RenderTask &task, const std::string &n
   }
 
   const auto metric = *metric_opt;
+  if (!store->hasFrame(metric, current_frame) && trajectory_loader_ != nullptr &&
+      trajectory_loader_->trajectoryShared() != nullptr) {
+    dispatcher_.bindPerFrameTrajectory(trajectory_loader_->trajectoryShared());
+  }
+  store->ensureFrame(current_frame);
+
   const auto &bins = store->getBins(metric);
   const auto &mean_curve = store->getMeanCurve(metric);
   const auto &frame_curve = store->getFrameCurve(metric, current_frame);
@@ -763,7 +769,9 @@ void PlotController::applyDualViewOverlay(RenderTask &task, const std::string &n
   task.active_hist.smoothed_partials.clear();
 
   const std::string mean_label = "Ensemble Mean";
-  const std::string frame_label = std::format("Frame {}", current_frame + 1);
+  const std::string frame_label = store->isFrameInMean(current_frame)
+                                      ? std::format("Frame {}", current_frame + 1)
+                                      : std::format("Frame {} (outside mean)", current_frame + 1);
 
   task.active_hist.partials[mean_label] = mean_curve;
   task.active_hist.partials[frame_label] = frame_curve;

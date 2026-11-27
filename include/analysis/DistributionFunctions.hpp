@@ -697,6 +697,27 @@ public:
   }
 
   /**
+   * @brief Accesses mutable shared pointer to the per-frame distribution store.
+   * @return Mutable shared pointer to PerFrameDistributionStore, or nullptr.
+   */
+  [[nodiscard]] std::shared_ptr<PerFrameDistributionStore> mutablePerFrameStore() noexcept {
+    return per_frame_store_;
+  }
+
+  /**
+   * @brief Computes lightweight 1D [RDF, PAD, SQ, XRD] curves for a single cell frame.
+   * @param[in] cell Atomic cell frame to evaluate.
+   * @param[in] settings Analysis bin/cutoff parameters.
+   * @param[in] bond_cutoffs Pairwise squared bond cutoffs.
+   * @param[in] wanted_metrics Boolean mask indicating which [RDF, PAD, SQ, XRD] curves are needed.
+   * @return Array of computed Total curves indexed by DistributionMetric.
+   */
+  [[nodiscard]] static PerFrameDistributionStore::FrameCurveArray computeLightweightFrameCurves(
+      const correlation::core::Cell &cell, const AnalysisSettings &settings,
+      const BondCutoffMatrix &bond_cutoffs,
+      std::array<bool, PerFrameDistributionStore::METRIC_COUNT> wanted_metrics);
+
+  /**
    * @brief Sets or updates the per-frame distribution store.
    * @param[in] store Shared pointer to PerFrameDistributionStore.
    */

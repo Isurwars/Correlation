@@ -19,6 +19,7 @@
 #include <memory>
 #include <shared_mutex>
 #include <string>
+#include <thread>
 #include <vector>
 
 namespace correlation::app {
@@ -33,7 +34,7 @@ public:
   using ProgressCallback = std::function<void(float, const std::string &)>;
 
   AnalysisDispatcher() = default;
-  ~AnalysisDispatcher() = default;
+  ~AnalysisDispatcher();
 
   AnalysisDispatcher(const AnalysisDispatcher &) = delete;
   AnalysisDispatcher &operator=(const AnalysisDispatcher &) = delete;
@@ -120,7 +121,10 @@ public:
   /**
    * @brief Signals running analysis to abort at next cancellation checkpoint.
    */
-  void cancelAnalysis() noexcept { cancel_flag_ = true; }
+  void cancelAnalysis() noexcept {
+    cancel_flag_ = true;
+    prebake_cancel_.store(true, std::memory_order_release);
+  }
 
   /**
    * @brief Checks if cancellation was requested.
@@ -175,15 +179,35 @@ public:
   /**
    * @brief Clears current results.
    */
-  void clear() noexcept {
-    const std::unique_lock lock(df_mutex_);
-    df_.reset();
-  }
+  void clear() noexcept;
+
+  /**
+   * @brief Attaches a shared trajectory to lazily populate out-of-range 1D frame curves on demand.
+   * @param[in] trajectory Shared pointer to active trajectory.
+   */
+  void bindPerFrameTrajectory(std::shared_ptr<const correlation::core::Trajectory> trajectory);
+
+  /**
+   * @brief Starts a cancellable background worker to pre-bake remaining 1D per-frame curves.
+   * @param[in] trajectory Shared pointer to active trajectory.
+   * @param[in] on_complete Optional completion callback.
+   */
+  void startPerFramePrebake(std::shared_ptr<const correlation::core::Trajectory> trajectory,
+                            std::function<void()> on_complete = nullptr);
+
+  /**
+   * @brief Stops and joins any running per-frame pre-bake worker thread.
+   */
+  void stopPerFramePrebake() noexcept;
 
 private:
   mutable std::shared_mutex df_mutex_;
   std::unique_ptr<correlation::analysis::DistributionFunctions> df_;
+  correlation::analysis::AnalysisSettings last_settings_{};
+  correlation::analysis::BondCutoffMatrix last_bond_cutoffs_{};
   std::atomic<bool> cancel_flag_{false};
+  std::atomic<bool> prebake_cancel_{false};
+  std::jthread prebake_thread_;
   ProgressCallback progress_callback_;
 };
 

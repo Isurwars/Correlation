@@ -145,5 +145,31 @@ TEST_F(Structure3DControllerDistributionTests, TogglesHUDVisibility) {
   EXPECT_TRUE(window().get_structure_3d_dist_has_data());
 }
 
+TEST_F(Structure3DControllerDistributionTests, LazyGeneratesOutOfRangeFrameAndSetsInMeanFlag) {
+  const ProgramOptions options;
+  Structure3DController controller(window(), options);
+
+  const auto store = std::make_shared<analysis::PerFrameDistributionStore>(3);
+  store->configureMeanFrames({.start_frame = 1, .sample_count = 2, .stride = 1});
+  store->setBins(analysis::DistributionMetric::RDF, {1.0, 2.0, 3.0, 4.0});
+  store->setMeanCurve(analysis::DistributionMetric::RDF,
+                      {static_cast<real_t>(0.1), static_cast<real_t>(2.5), static_cast<real_t>(1.2),
+                       static_cast<real_t>(0.2)});
+  store->setFrameGenerator([](std::size_t /*frame_idx*/) {
+    analysis::PerFrameDistributionStore::FrameCurveArray generated{};
+    generated[0] = {static_cast<real_t>(0.2), static_cast<real_t>(3.4), static_cast<real_t>(1.1),
+                    static_cast<real_t>(0.3)};
+    return generated;
+  });
+
+  controller.setDistributionStore(store);
+
+  EXPECT_TRUE(window().get_structure_3d_dist_has_data());
+  EXPECT_FALSE(window().get_structure_3d_dist_in_mean());
+  EXPECT_TRUE(store->hasFrame(analysis::DistributionMetric::RDF, 0));
+  EXPECT_NE(std::string(window().get_structure_3d_dist_peak_text().data()).find("2.00"),
+            std::string::npos);
+}
+
 } // namespace
 } // namespace correlation::app

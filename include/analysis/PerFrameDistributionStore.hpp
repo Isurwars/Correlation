@@ -10,9 +10,9 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
-#include <memory>
+#include <functional>
+#include <mutex>
 #include <shared_mutex>
-#include <span>
 #include <string>
 #include <vector>
 
@@ -49,6 +49,16 @@ struct MetricCurveData {
  */
 class PerFrameDistributionStore {
 public:
+  static constexpr std::size_t METRIC_COUNT = 4;
+  using FrameCurveArray = std::array<std::vector<real_t>, METRIC_COUNT>;
+  using FrameCurveGenerator = std::function<FrameCurveArray(std::size_t)>;
+
+  struct MeanFrameWindow {
+    std::size_t start_frame{0};
+    std::size_t sample_count{0};
+    std::size_t stride{1};
+  };
+
   /**
    * @brief Constructs a store pre-allocated for a specific total frame count.
    * @param[in] total_frames Total number of frames across the full trajectory.
@@ -135,15 +145,62 @@ public:
    */
   [[nodiscard]] MetricCurveData &getMetricData(DistributionMetric metric);
 
-private:
-  static constexpr std::size_t kMetricCount = 4;
+  /**
+   * @brief Records the strided [start_frame, start_frame + sample_count * stride) mean window.
+   * @param[in] window Sampled frame window parameters accumulated into the mean.
+   */
+  void configureMeanFrames(MeanFrameWindow window);
 
+  /**
+   * @brief Explicitly marks whether a single frame contributed to the ensemble mean.
+   * @param[in] frame_idx Zero-based trajectory frame index.
+   * @param[in] in_mean True if included in ensemble mean.
+   */
+  void markFrameInMean(std::size_t frame_idx, bool in_mean = true);
+
+  /**
+   * @brief Queries whether a trajectory frame contributed to the ensemble mean.
+   * @param[in] frame_idx Zero-based trajectory frame index.
+   * @return True if frame was included in ensemble mean (or if no explicit mask was configured).
+   */
+  [[nodiscard]] bool isFrameInMean(std::size_t frame_idx) const noexcept;
+
+  /**
+   * @brief Installs an on-demand 1D curve generator for frames outside the initial mean range.
+   * @param[in] generator Callback computing [RDF, PAD, SQ, XRD] curves for a given frame index.
+   */
+  void setFrameGenerator(FrameCurveGenerator generator);
+
+  /**
+   * @brief Detaches any active lazy frame generator.
+   */
+  void clearFrameGenerator() noexcept;
+
+  /**
+   * @brief Checks whether any metric with a populated mean curve is missing a curve for frame_idx.
+   * @param[in] frame_idx Zero-based trajectory frame index.
+   * @return True if at least one active metric curve is still unpopulated for frame_idx.
+   */
+  [[nodiscard]] bool needsFrameGeneration(std::size_t frame_idx) const noexcept;
+
+  /**
+   * @brief Lazily computes and caches missing 1D curves for frame_idx if a generator is attached.
+   * @param[in] frame_idx Zero-based trajectory frame index.
+   */
+  void ensureFrame(std::size_t frame_idx) const;
+
+private:
   [[nodiscard]] static std::size_t toIndex(DistributionMetric metric) noexcept;
+  [[nodiscard]] bool needsFrameGenerationUnlocked(std::size_t frame_idx) const noexcept;
 
   mutable std::shared_mutex mutex_;
+  mutable std::mutex generation_mutex_;
   std::size_t total_frames_{0};
-  std::array<MetricCurveData, kMetricCount> metrics_;
-  static const std::vector<real_t> empty_curve_;
+  mutable std::array<MetricCurveData, METRIC_COUNT> metrics_;
+  bool has_explicit_mean_mask_{false};
+  std::vector<uint8_t> in_mean_mask_;
+  FrameCurveGenerator frame_generator_;
+  static const std::vector<real_t> EMPTY_CURVE;
 };
 
 } // namespace correlation::analysis

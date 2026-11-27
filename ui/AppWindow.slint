@@ -320,6 +320,7 @@ export component AppWindow inherits Window {
     in property <image> structure_3d_dist_image;
     in property <int> structure_3d_dist_metric: 0;
     in property <string> structure_3d_dist_peak_text: "";
+    in property <bool> structure_3d_dist_in_mean: true;
 
     // Camera HUD, Atom Inspector, Slab Clipping & Dual-View Radial Brushing
     in property <CameraHudState> structure_3d_camera_hud: {
@@ -1287,6 +1288,7 @@ export component AppWindow inherits Window {
                     structure_3d_dist_image: root.structure_3d_dist_image;
                     structure_3d_dist_metric: root.structure_3d_dist_metric;
                     structure_3d_dist_peak_text: root.structure_3d_dist_peak_text;
+                    structure_3d_dist_in_mean: root.structure_3d_dist_in_mean;
                     set_structure_3d_dist_metric(m) => { root.set_structure_3d_dist_metric(m); }
                     toggle_structure_3d_dist_hud(v) => { root.toggle_structure_3d_dist_hud(v); }
 

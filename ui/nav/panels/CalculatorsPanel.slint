@@ -91,7 +91,7 @@ export component CalculatorsPanel inherits Rectangle {
                 padding: 0;
                 spacing: MaterialStyleMetrics.spacing_8;
 
-                // 1. Analyses Selection Card (Expanded on top by default)
+                // 1. Analyses Selection Card (Collapsed by default)
                 AnalysesSelectionCard {
                     file_loaded: root.file_loaded;
                     calculator_groups: root.calculator_groups;
@@ -143,7 +143,6 @@ export component CalculatorsPanel inherits Rectangle {
 
                 // 5. Bond Angle & Dihedral Distribution Card
                 BondAngleOptionsCard {
-                    expanded: false;
                     file_loaded: root.file_loaded;
                     angle_bin_width <=> root.analysis_options.angle_bin_width;
                     dihedral_bin_width <=> root.analysis_options.dihedral_bin_width;

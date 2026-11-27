@@ -18,7 +18,7 @@ import { CalculatorGroup } from "../../Types.slint";
 import { AnalysesGroupSection } from "AnalysesGroupSection.slint";
 
 export component AnalysesSelectionCard inherits OutlinedCard {
-    in-out property <bool> expanded: true;
+    in-out property <bool> expanded: false;
     in-out property <bool> compact_mode: false;
     in property <bool> file_loaded;
     in property <[CalculatorGroup]> calculator_groups: [];

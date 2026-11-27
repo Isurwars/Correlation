@@ -74,6 +74,7 @@ export component Structure3DViewport inherits Rectangle {
     in property <image> dist_chart_image;
     in-out property <int> dist_active_metric: 0;
     in property <string> dist_peak_text: "";
+    in property <bool> dist_in_mean: true;
 
     // Camera HUD, Atom Inspector & Dual-View Radial Brushing
     in property <CameraHudState> camera_hud: {
@@ -324,6 +325,7 @@ export component Structure3DViewport inherits Rectangle {
             active_metric: root.dist_active_metric;
             peak_text: root.dist_peak_text;
             current_frame: root.current_frame;
+            frame_in_mean: root.dist_in_mean;
             set_metric(m) => {
                 root.dist_active_metric = m;
                 root.set_dist_metric(m);

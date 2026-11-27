@@ -196,6 +196,25 @@ TEST_F(PerFrameDistributionStoreTests, ComputeMeanRespectsStrideAndRange) {
   EXPECT_FALSE(per_frame->hasFrame(DistributionMetric::RDF, 2));
   EXPECT_FALSE(per_frame->hasFrame(DistributionMetric::RDF, 4));
 
+  // Verify mean-window frame mask distinguishes included vs skipped/out-of-range frames
+  EXPECT_TRUE(per_frame->isFrameInMean(1));
+  EXPECT_TRUE(per_frame->isFrameInMean(3));
+  EXPECT_FALSE(per_frame->isFrameInMean(0));
+  EXPECT_FALSE(per_frame->isFrameInMean(2));
+  EXPECT_FALSE(per_frame->isFrameInMean(4));
+
+  // Verify lazy on-demand generator populates out-of-range frames while preserving mean mask
+  auto mut_store = dists->mutablePerFrameStore();
+  ASSERT_NE(mut_store, nullptr);
+  mut_store->setFrameGenerator([&traj, &settings](std::size_t frame_idx) {
+    return DistributionFunctions::computeLightweightFrameCurves(
+        traj.getFrame(frame_idx), settings, BondCutoffMatrix{}, {true, false, false, false});
+  });
+  per_frame->ensureFrame(0);
+  EXPECT_TRUE(per_frame->hasFrame(DistributionMetric::RDF, 0));
+  EXPECT_FALSE(per_frame->getFrameCurve(DistributionMetric::RDF, 0).empty());
+  EXPECT_FALSE(per_frame->isFrameInMean(0));
+
   // Verify populate_per_frame_store = false skips store creation entirely
   settings.populate_per_frame_store = false;
   const auto preview_dists =

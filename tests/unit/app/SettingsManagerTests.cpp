@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "app/core/SettingsManager.hpp"
+#include <chrono>
 #include <filesystem>
 #include <gtest/gtest.h>
 
@@ -12,9 +13,11 @@ namespace {
 class SettingsManagerTests : public ::testing::Test {
 protected:
   void SetUp() override {
-    temp_dir_ =
-        std::filesystem::temp_directory_path() /
-        ("corr_test_settings_" + std::to_string(testing::UnitTest::GetInstance()->random_seed()));
+    const auto *test_info = ::testing::UnitTest::GetInstance()->current_test_info();
+    const std::string suffix =
+        (test_info != nullptr ? std::string(test_info->name()) : std::string("test")) + "_" +
+        std::to_string(std::chrono::steady_clock::now().time_since_epoch().count());
+    temp_dir_ = std::filesystem::temp_directory_path() / ("corr_test_settings_" + suffix);
     std::filesystem::create_directories(temp_dir_);
     test_path_ = temp_dir_ / "settings.json";
 #ifdef _WIN32

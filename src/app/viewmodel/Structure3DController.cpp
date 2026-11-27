@@ -1836,9 +1836,12 @@ void Structure3DController::syncDistributionHUDToWindow() {
       return;
     }
 
+    store->ensureFrame(active_frame);
+    const bool in_mean = store->isFrameInMean(active_frame);
+
     const auto &metric_data = store->getMetricData(metric);
     const auto buf =
-        render3d::MiniPlotRenderer::render(metric_data, active_frame, plot_cfg, 260, 126);
+        render3d::MiniPlotRenderer::render(metric_data, active_frame, plot_cfg, 292, 126);
 
     const slint::SharedPixelBuffer<slint::Rgba8Pixel> pixel_buffer(
         buf.width, buf.height, reinterpret_cast<const slint::Rgba8Pixel *>(buf.pixels.data()));
@@ -1846,6 +1849,7 @@ void Structure3DController::syncDistributionHUDToWindow() {
 
     window_.set_structure_3d_dist_image(chart_img);
     window_.set_structure_3d_dist_metric(static_cast<int>(metric));
+    window_.set_structure_3d_dist_in_mean(in_mean);
     window_.set_structure_3d_dist_hud_visible(visible);
     window_.set_structure_3d_dist_has_data(true);
 

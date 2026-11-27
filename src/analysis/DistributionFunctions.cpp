@@ -630,6 +630,13 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
 
   const size_t stride = std::max<size_t>(1, settings.frame_stride);
   const size_t sample_count = (num_frames + stride - 1) / stride;
+  if (per_frame_store != nullptr) {
+    per_frame_store->configureMeanFrames({
+        .start_frame = start_frame,
+        .sample_count = sample_count,
+        .stride = stride,
+    });
+  }
 
   const size_t first_frame_atoms =
       (total_trajectory_frames > 0) ? trajectory.firstFrame().atomCount() : 0;
@@ -702,6 +709,67 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
   }
 
   return final_df;
+}
+
+PerFrameDistributionStore::FrameCurveArray DistributionFunctions::computeLightweightFrameCurves(
+    const correlation::core::Cell &cell, const AnalysisSettings &settings,
+    const BondCutoffMatrix &bond_cutoffs,
+    std::array<bool, PerFrameDistributionStore::METRIC_COUNT> wanted_metrics) {
+  PerFrameDistributionStore::FrameCurveArray out{};
+  if (cell.atomCount() == 0) {
+    return out;
+  }
+
+  const bool need_rdf = wanted_metrics[0] || wanted_metrics[3];
+  const bool need_pad = wanted_metrics[1];
+  const bool need_sq = wanted_metrics[2];
+  const bool need_xrd = wanted_metrics[3];
+  if (!need_rdf && !need_pad && !need_sq && !need_xrd) {
+    return out;
+  }
+
+  AnalysisSettings light_settings = settings;
+  light_settings.active_calculators.clear();
+  light_settings.active_calculators["Radial Distribution Function"] = need_rdf;
+  light_settings.active_calculators["Plane Angle Distribution"] = need_pad;
+  light_settings.active_calculators["Static Structure Factor"] = need_sq;
+  light_settings.active_calculators["XRD"] = need_xrd;
+
+  auto cell_ptr = std::make_shared<const correlation::core::Cell>(cell);
+  DistributionFunctions frame_df(*cell_ptr, static_cast<real_t>(0.0), bond_cutoffs);
+  frame_df.setStructureAnalyzerOwned(std::make_unique<StructureAnalyzer>(
+      std::move(cell_ptr), light_settings.r_max, bond_cutoffs, true));
+
+  const auto &factory = ::correlation::calculators::CalculatorFactory::instance();
+  for (const char *calc_key : {"RDF", "PAD", "SQ"}) {
+    const auto *calc = factory.getCalculator(calc_key);
+    if (calc != nullptr && calc->isConfigured() &&
+        (light_settings.isActive(calc->getName()) ||
+         light_settings.isActive(calc->getShortName()))) {
+      calc->calculateFrame(frame_df, light_settings);
+    }
+  }
+  if (need_xrd) {
+    if (const auto *xrd_calc = factory.getCalculator("XRD");
+        xrd_calc != nullptr && xrd_calc->isConfigured()) {
+      xrd_calc->calculateFrame(frame_df, light_settings);
+    }
+  }
+  frame_df.setStructureAnalyzerOwned(nullptr);
+
+  const auto &hists = frame_df.getAllHistograms();
+  constexpr std::array<std::string_view, 4> HIST_KEYS{"g_r", "PAD", "S_q", "XRD"};
+  for (std::size_t idx = 0; idx < PerFrameDistributionStore::METRIC_COUNT; ++idx) {
+    if (!wanted_metrics.at(idx)) {
+      continue;
+    }
+    if (const auto hit = hists.find(std::string(HIST_KEYS.at(idx))); hit != hists.end()) {
+      if (const auto tit = hit->second.partials.find("Total"); tit != hit->second.partials.end()) {
+        out.at(idx) = tit->second;
+      }
+    }
+  }
+  return out;
 }
 
 } // namespace correlation::analysis

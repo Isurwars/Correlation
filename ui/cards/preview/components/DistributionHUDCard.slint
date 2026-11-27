@@ -18,11 +18,12 @@ export component DistributionHUDCard inherits Rectangle {
     in property <int> active_metric: 0; // 0 = g(r), 1 = PAD, 2 = S(Q), 3 = XRD
     in property <string> peak_text: "";
     in property <int> current_frame: 0;
+    in property <bool> frame_in_mean: true;
 
     callback set_metric(int);
     callback close_hud();
 
-    width: 276px;
+    width: 308px;
     height: 184px;
     border-radius: MaterialStyleMetrics.border_radius_12;
     background: MaterialPalette.surface_container_highest.with_alpha(92%);
@@ -89,7 +90,7 @@ export component DistributionHUDCard inherits Rectangle {
 
         // Rendered Mini-Plot Image
         Rectangle {
-            width: 260px;
+            width: 292px;
             height: 126px;
             border-radius: MaterialStyleMetrics.border_radius_6;
             clip: true;
@@ -138,10 +139,12 @@ export component DistributionHUDCard inherits Rectangle {
                         background: MaterialPalette.hud_accent;
                     }
                     MaterialText {
-                        text: "Frame " + (root.current_frame + 1);
+                        text: root.frame_in_mean ?
+                            "Frame " + (root.current_frame + 1) :
+                            "Frame " + (root.current_frame + 1) + " (outside mean)";
                         style: MaterialTypography.label_small;
                         font_weight: 600;
-                        color: MaterialPalette.on_surface;
+                        color: root.frame_in_mean ? MaterialPalette.on_surface : MaterialPalette.tertiary;
                         vertical-alignment: center;
                     }
                 }

@@ -104,6 +104,9 @@ void AnalysisRunner::handleAnalysisCompletion(const std::string &err) {
     const float last_w = window_.get_last_col_width();
     window_.set_left_col_width(last_w >= 180.0F ? last_w : 220.0F);
   }
+  if (const auto traj_shared = loader_.trajectoryShared()) {
+    dispatcher_.bindPerFrameTrajectory(traj_shared);
+  }
   controller_.getPlotController()->populatePlotList();
   controller_.populateExportAnalyses();
   if (auto *s3d = controller_.getStructure3DController(); s3d != nullptr) {
@@ -111,6 +114,9 @@ void AnalysisRunner::handleAnalysisCompletion(const std::string &err) {
     if (const auto *dist_funcs = dispatcher_.getDistributionFunctions(); dist_funcs != nullptr) {
       s3d->setDistributionStore(dist_funcs->getPerFrameStore());
     }
+  }
+  if (const auto traj_shared = loader_.trajectoryShared()) {
+    dispatcher_.startPerFramePrebake(traj_shared);
   }
 }
 

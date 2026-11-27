@@ -1379,3 +1379,60 @@ TEST_F(AppControllerTests, DualViewHeatmapCallbacksIntegration) {
       static_cast<int>(correlation::plotters::ColormapType::Plasma));
   EXPECT_EQ(structure_ctrl->phaseColormap(), correlation::plotters::ColormapType::Plasma);
 }
+
+TEST_F(AppControllerTests, DualViewOutOfRangeFrameComputesLazyOverlayAndAnnotatesLabel) {
+  using correlation::real_t;
+  auto window = AppWindow::create();
+
+  auto traj = std::make_shared<correlation::core::Trajectory>();
+  for (int f = 0; f < 3; ++f) {
+    correlation::core::Cell cell({static_cast<real_t>(10.0), static_cast<real_t>(10.0),
+                                  static_cast<real_t>(10.0), static_cast<real_t>(90.0),
+                                  static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
+    const auto shift = static_cast<real_t>(f) * static_cast<real_t>(0.1);
+    cell.addAtom("Pd", {static_cast<real_t>(1.0) + shift, static_cast<real_t>(1.0),
+                        static_cast<real_t>(1.0)});
+    cell.addAtom("Si",
+                 {static_cast<real_t>(3.5), static_cast<real_t>(1.0), static_cast<real_t>(1.0)});
+    cell.addAtom("Pd",
+                 {static_cast<real_t>(1.0), static_cast<real_t>(3.8), static_cast<real_t>(1.0)});
+    traj->addFrame(cell);
+  }
+  traj->precomputeBondCutoffs();
+  loader().setTrajectory(traj);
+
+  options().min_frame = 1;
+  options().max_frame = 3; // Mean includes frames 1 and 2; frame 0 is outside mean
+  options().r_max = static_cast<real_t>(4.5);
+  options().r_bin_width = static_cast<real_t>(0.5);
+  options().active_calculators["g(r), J(r), G(r)"] = true;
+
+  correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+  auto *structure_ctrl = controller.getStructure3DController();
+  auto *plot_ctrl = controller.getPlotController();
+  ASSERT_NE(structure_ctrl, nullptr);
+  ASSERT_NE(plot_ctrl, nullptr);
+
+  structure_ctrl->setTrajectory(loader().trajectoryShared());
+  ASSERT_TRUE(dispatcher().runAnalysis(loader().trajectoryMut(), options()).has_value());
+  structure_ctrl->setDistributionStore(dispatcher().getDistributionFunctions()->getPerFrameStore());
+  plot_ctrl->populatePlotList();
+
+  // Frame 0 is outside [min_frame=1, max_frame=3]: computes lazily & marks outside mean
+  window->set_preview_active_tab(2);
+  window->set_structure_3d_current_frame(0);
+  plot_ctrl->requestPlotUpdate(0, true);
+  const auto items_frame0 = window->get_curve_toggle_items();
+  ASSERT_EQ(items_frame0->row_count(), 2U);
+  EXPECT_EQ(getRow(items_frame0, 0).label, slint::SharedString("Ensemble Mean"));
+  EXPECT_EQ(getRow(items_frame0, 1).label, slint::SharedString("Frame 1 (outside mean)"));
+
+  // Seek to Frame 1 (inside mean window): labeled cleanly as "Frame 2"
+  window->invoke_seek_frame_3d(1);
+  plot_ctrl->requestPlotUpdate(0, true);
+  const auto items_frame1 = window->get_curve_toggle_items();
+  ASSERT_EQ(items_frame1->row_count(), 2U);
+  EXPECT_EQ(getRow(items_frame1, 0).label, slint::SharedString("Ensemble Mean"));
+  EXPECT_EQ(getRow(items_frame1, 1).label, slint::SharedString("Frame 2"));
+  EXPECT_TRUE(window->get_structure_3d_dist_in_mean());
+}
