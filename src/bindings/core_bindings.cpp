@@ -16,7 +16,7 @@ using namespace correlation::core;
 
 namespace {
 
-void bindElement(py::module_ &mod) {
+void bindElement(const py::module_ &mod) {
   py::class_<Element>(mod, "Element", "Chemical element specification.")
       .def(py::init<>(), "Construct an empty Element.")
       .def_readwrite("symbol", &Element::symbol, "Chemical symbol (e.g., 'C', 'O', 'Fe').")
@@ -26,7 +26,7 @@ void bindElement(py::module_ &mod) {
           "Unique integer identifier for the element type.");
 }
 
-void bindAtom(py::module_ &mod) {
+void bindAtom(const py::module_ &mod) {
   py::class_<Atom>(mod, "Atom", "Single atomic site with Cartesian position and chemical element.")
       .def(py::init<>(), "Construct an atom at the origin.")
       .def_property(
@@ -75,22 +75,18 @@ py::array_t<real_t> cellPositionsZeroCopy(const py::object &obj) {
 }
 
 py::array_t<real_t> cellVelocitiesZeroCopy(const py::object &obj) {
-  const auto &cell = obj.cast<const Cell &>();
+  auto &cell = obj.cast<Cell &>();
   const size_t num_atoms = cell.atomCount();
   if (num_atoms == 0) {
     return {};
   }
 
-  const auto rows = static_cast<py::ssize_t>(num_atoms);
-  const py::ssize_t cols = 3;
-  if (!cell.hasVelocities()) {
-    py::array_t<real_t> zeros({rows, cols});
-    std::fill_n(zeros.mutable_data(), rows * cols, static_cast<real_t>(0.0));
-    return zeros;
-  }
+  cell.ensureVelocities();
 
   const py::ssize_t stride_row = sizeof(correlation::math::Vector3<real_t>);
   const py::ssize_t stride_col = sizeof(real_t);
+  const auto rows = static_cast<py::ssize_t>(num_atoms);
+  const py::ssize_t cols = 3;
   const real_t *ptr = cell.velocities()[0].begin();
 
   return py::array_t<real_t>({rows, cols}, {stride_row, stride_col}, ptr, obj);
@@ -178,7 +174,7 @@ void cellToFile(const Cell &cell, const std::string &filepath, const std::string
   writer->write(filepath, cell, {.fractional = fractional});
 }
 
-void bindCell(py::module_ &mod) {
+void bindCell(const py::module_ &mod) {
   py::class_<Cell>(mod, "Cell",
                    "Simulation cell containing atomic coordinates and periodic box geometry.")
       .def(py::init<>(), "Construct an empty non-periodic Cell.")
@@ -234,7 +230,7 @@ void bindCell(py::module_ &mod) {
            "Serialize the cell to an atomic structure file (e.g. POSCAR, .cell, .cif, .car).");
 }
 
-void bindTrajectory(py::module_ &mod) {
+void bindTrajectory(const py::module_ &mod) {
   py::class_<Trajectory>(mod, "Trajectory", "Time-series collection of Cell simulation snapshots.")
       .def(py::init<>(), "Construct an empty trajectory.")
       .def_property("time_step", &Trajectory::getTimeStep, &Trajectory::setTimeStep,

@@ -71,6 +71,7 @@ metadata.version.regex = 'project\("?Correlation"?\s+VERSION\s+(?P<value>[0-9.]+
 cmake.args = [
     "-DBUILD_PYTHON_BINDINGS=ON",
     "-DBUILD_TESTING=OFF",
+    "-DBUILD_BENCHMARKS=OFF",
     "-DBUILD_GUI=OFF"
 ]
 wheel.packages = ["python/correlation", "python/matcorr"]

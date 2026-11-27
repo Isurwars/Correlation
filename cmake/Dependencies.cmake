@@ -29,6 +29,12 @@ endmacro()
 set(_CORRELATION_BUILD_TESTING_ENABLED ${BUILD_TESTING})
 set(BUILD_TESTING OFF)
 
+# 0. System Threads (-pthread required for std::jthread / std::shared_mutex on glibc < 2.34)
+if(NOT (EMSCRIPTEN OR BUILD_WASM) OR WASM_ENABLE_THREADS)
+  set(THREADS_PREFER_PTHREAD_FLAG ON)
+  find_package(Threads REQUIRED)
+endif()
+
 # 1. TBB
 find_package(TBB QUIET)
 if (TBB_FOUND)

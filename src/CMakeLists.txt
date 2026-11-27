@@ -328,6 +328,9 @@ target_link_libraries(correlation_lib PUBLIC correlation_config correlation_simd
 
 target_link_libraries(correlation_lib PUBLIC TBB::tbb)
 target_link_libraries(correlation_lib PRIVATE TBB::tbbmalloc)
+if(TARGET Threads::Threads)
+    target_link_libraries(correlation_lib PUBLIC Threads::Threads)
+endif()
 if(BUILD_WITH_HDF5)
     target_link_libraries(correlation_lib PUBLIC HighFive HDF5::HDF5 HDF5::HDF5_HL)
 endif()
