@@ -113,7 +113,7 @@ export component AppWindow inherits Window {
     in property <bool> timer_running: false;
 
     /// Application version string
-    in-out property <string> app_version: "v4.9.1";
+    in-out property <string> app_version: "v4.10.0";
 
     /// GitHub Update Check status
     in-out property <bool> update_available: false;
@@ -612,6 +612,7 @@ export component AppWindow inherits Window {
     
 
     property <bool> esc_cancel_armed: false;
+
     esc_cancel_timer := Timer {
         interval: 2000ms;
         running: root.esc_cancel_armed;

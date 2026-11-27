@@ -1,6 +1,39 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.10.0] - 2026-11-27
+
+### 🚀 Features & UI / Scattering Enhancements
+- **Hybrid & Exact Reciprocal-Space Structure Factor $S(Q)$ (`StructureFactorCalculator`, `DistributionFunctions`, `SQOptionsCard.slint`, `CliParser`, `analysis_bindings.cpp`)**:
+  - Implemented hybrid direct reciprocal-space Miller-index summation and radial Fourier transformation for `StructureFactorCalculator`, plus an explicit `sq_exact_direct` option across C++ core, CLI, Python bindings, and Slint UI to force exact direct $S(Q)$ evaluation on large cells (`f3b554a4`, `b3ae08d0`).
+- **Lazy Out-of-Range Per-Frame Distributions & Background Pre-Baking (`PerFrameDistributionStore`, `DistributionFunctions`, `AnalysisDispatcher`, `PlotController`, `Structure3DController`, `DistributionHUDCard.slint`)**:
+  - Added mean-window frame tracking (`MeanFrameWindow`, `isFrameInMean`), lock-isolated on-demand 1D curve memoization (`ensureFrame`), and a cancellable background `std::jthread` pre-bake worker so Dual View and the 3D Distribution HUD render `"Ensemble Mean"` vs `"Frame N (outside mean)"` across the entire trajectory while keeping `Run Analysis` complexity strictly $O(N_{\text{selected}})$ (`75990838`, `337a44b6`).
+- **UI/UX Overhaul, Unified Root `TooltipState`, Persistence & Selective Export (`AppWindow.slint`, `state_layer.slint`, `tooltip.slint`, `SettingsManager`, `AppController`, `CalculatorsPanel.slint`, `PinnedExecutionBar.slint`, `ExportOptionsCard.slint`)**:
+  - Unified all Material Design 3 component tooltips (`FocusTouchArea`, `DropDownMenu`, `NavRailItem`, `TabItem`, `InputSelect`, `Chip`, `CheckBoxRow`) onto root `TooltipState` (`z: 10000`, `250ms` hover delay, `280px` max-width, widget-box anchoring), eliminating sibling z-order occlusion and ~250 lines of manual tooltip prop-drilling (`5e1a17eb`).
+  - Added persistent workspace layout & color-scheme state (`right_col_width`, `dual_split_ratio`, `dark_theme`), basename `RecentFileItem` chips on 2D/3D empty states, resilient `Cellulose.md` sample path resolution, live `"Parameters modified — Re-run"` staleness pill, non-blocking double-`Esc` cancellation guard, HDF5/Parquet capability guards, and selective per-analysis export checklists (`5e1a17eb`).
+  - Streamlined standard-run navigation by placing a compact Trajectory Metadata Header and `TrajectoryOptionsCard` in `Main Parameters` (Panel 1), moving `AnalysesSelectionCard` to `Advanced Options` (Panel 2) with a 1-click `"Preselected: N/M analyses · Customize in Advanced →"` reminder above `Run Analysis`, and keeping `MaterialTypeCard` focused on `Amorphous`, `Liquid`, and `Crystalline` presets (`65b7bb63`, `4f29b55f`).
+- **Element Species Merging & Compaction During Renaming (`Cell`, `Trajectory`, `OperationsDiagnosticsCard.slint`)**:
+  - Added support for merging duplicate element symbols and compacting element ID tables when renaming atomic species in loaded structures and trajectories (`3af9c489`).
+
+### ⚡ Performance Improvements
+- **Spatial, Order-Parameter & Dynamics Hot-Loop Optimizations (`CNACalculator`, `HBondCalculator`, `SteinhardtCalculator`, `TetrahedralCalculator`, `LocalEntropyCalculator`, `DynamicsAnalyzer`)**:
+  - Accelerated calculator hot loops via epoch-marked CSR neighbor intersection and bitmask DP in CNA, squared-dot cell-list H-bond traversal, conjugate symmetry in Steinhardt spherical harmonics, stack-allocated tetrahedral neighbor selection, hoisted local-entropy scratch buffers, and cache-line grain sizing in dynamics (`d0f14153`).
+
+### 🐛 Bug Fixes
+- **Physics Invariants, Boundary Guards & Deadlock Prevention (`StructureFactorCalculator`, `XRDCalculator`, `HyperuniformityCalculator`, `DADCalculator`, `VoronoiCalculator`, `CNCalculator`, `DynamicsAnalyzer`, `Structure3DController`)**:
+  - Corrected small-cell grid routing, reversed dihedral deduplication, triclinic reciprocal-space bounds with `double` phase recurrence, perpendicular-width hyperuniformity cutoffs with `double` Welford variance, and zero-count/zero-volume guards across spatial and scattering calculators (`3e5ab881`).
+  - Prevented event-loop and render-pipeline deadlocks and validated minimum atom/frame counts across dynamics, Voronoi, coordination, dihedral, and local-entropy calculators (`c39ad92e`).
+  - Fixed `InputSelect` filtered keyboard navigation, radial-only cutoff calibration guards, `XRD` `2θ` validation bindings, and Vulkan `FindOrFetchVulkan` header augmentation when fetched (`80b0a08e`, `5e1a17eb`).
+
+### ♻️ Code Refactoring
+- **Memory Byte Budgets, Thread-Safe Stores & Off-Thread 3D Exports (`SteinhardtLRUCache`, `PerFrameDistributionStore`, `DistributionFunctions`, `FileIOHandler`, `AppController3DCallbacks`, `AnalysisDispatcher`)**:
+  - Enforced explicit memory byte budgets and `std::shared_mutex` synchronization across `SteinhardtLRUCache`, `PerFrameDistributionStore`, and `DistributionFunctions`, optimized frame-distribution peak RAM usage, and offloaded blocking 3D snapshot, animation, and phase exports to background threads (`eb7a118a`, `5ed0084b`, `46beee26`).
+  - Deduplicated plot styling controls in `ExportSettingsCard.slint` into a summary card linking directly to the canonical Right Plot Inspector (`5e1a17eb`).
+
+### 🧪 Testing
+- **Scattering, Per-Frame Store, Spatial Guards & GUI Integration Tests (`StructureFactorCalculatorTests.cpp`, `PerFrameDistributionStoreTests.cpp`, `AppControllerTests.cpp`, `SettingsManagerTests.cpp`, `Structure3DControllerDistributionTests.cpp`, `CNCalculatorTests.cpp`, `VoronoiCalculatorTests.cpp`)**:
+  - Expanded test coverage for hybrid/exact direct $S(Q)$ parity, out-of-range lazy per-frame curves and `"Frame N (outside mean)"` Dual-View/3D-HUD overlays, isolated parallel `CORRELATION_SETTINGS_PATH` persistence round-trips, species merging, and calculator edge-case guards (`3af9c489`, `f3b554a4`, `b3ae08d0`, `75990838`, `c39ad92e`, `5ed0084b`, `5e1a17eb`, `337a44b6`).
+
 ## [4.9.1] - 2026-11-24
 
 ### 🚀 Features & Electronic / UI Enhancements
