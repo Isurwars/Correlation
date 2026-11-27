@@ -113,7 +113,14 @@ export component TextField {
                             }
 
                             key_pressed(event) => {
-                                root.key_pressed(event)
+                                let res = root.key_pressed(event);
+                                if (res == EventResult.accept) {
+                                    return accept;
+                                }
+                                if (event.text == Key.LeftArrow || event.text == Key.RightArrow) {
+                                    return accept;
+                                }
+                                return reject;
                             }
 
                             key_released(event) => {

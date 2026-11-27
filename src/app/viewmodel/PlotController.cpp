@@ -544,6 +544,8 @@ void PlotController::populatePlotList() {
 
   if (!available_plot_keys_.empty()) {
     requestPlotUpdate(0, true);
+  } else {
+    window_.set_is_radial_plot_active(false);
   }
 }
 
@@ -620,10 +622,17 @@ void PlotController::notifyRadialHover(std::string_view plot_name,
 
 void PlotController::requestPlotUpdate(int index, bool immediate) {
   if (index < 0 || std::cmp_greater_equal(index, available_plot_keys_.size())) {
+    window_.set_is_radial_plot_active(false);
     return;
   }
 
   const std::string &name = available_plot_keys_[index];
+  const auto active_metric_opt = histogramKeyToMetric(name);
+  const bool is_radial_plot =
+      (active_metric_opt == correlation::analysis::DistributionMetric::RDF) || name == "G_r" ||
+      name == "J_r" || name == "H_r" || name == "g_r_unweighted";
+  window_.set_is_radial_plot_active(is_radial_plot);
+
   if (name == "2D Phase Heatmap") {
     window_.set_preview_dual_left_view(4);
     if (structure_3d_controller_ != nullptr) {

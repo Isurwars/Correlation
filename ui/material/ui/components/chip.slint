@@ -93,7 +93,7 @@ export component Chip {
     property <bool> show_tooltip_pending: false;
 
     delay_timer := Timer {
-        interval: 150ms;
+        interval: 250ms;
         triggered => {
             if (root.show_tooltip_pending && touch.has-hover && root.tooltip_text != "") {
                 TooltipState.active = {

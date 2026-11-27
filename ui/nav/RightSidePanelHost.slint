@@ -37,6 +37,7 @@ export component RightSidePanelHost inherits Vertical {
 
     // Panel control state
     in-out property <int> active_panel: -1;
+    in-out property <int> plot_active_tab: 0;
     in-out property <int> structure_active_tab: 0;
     in-out property <int> last_active_panel: 0;
 
@@ -158,22 +159,6 @@ export component RightSidePanelHost inherits Vertical {
     callback set_slab_clip(SlabClipState);
     callback reset_slab_clip();
 
-    // Tooltip reflection properties
-    out property <string> hovered_tooltip_text:
-        root.active_panel == 0 ? panel_curves.tooltip_text :
-        root.active_panel == 1 ? panel_structure.tooltip_text : "";
-
-    out property <length> hovered_x:
-        root.active_panel == 0 ? panel_curves.tooltip_x :
-        root.active_panel == 1 ? panel_structure.tooltip_x : 0px;
-
-    out property <length> hovered_y:
-        root.active_panel == 0 ? panel_curves.tooltip_y :
-        root.active_panel == 1 ? panel_structure.tooltip_y : 0px;
-
-    out property <length> hovered_width: 0px;
-    out property <length> hovered_height: 0px;
-
     // Header with Title and Close Button
     Horizontal {
         height: 36px;
@@ -208,6 +193,7 @@ export component RightSidePanelHost inherits Vertical {
 
         // Stage 0: 2D Plot Inspector (Curves, Style & Axes, Peaks)
         panel_curves := CurveSidebar {
+            active_tab <=> root.plot_active_tab;
             width: 100%;
             height: 100%;
             visible: root.active_panel == 0;

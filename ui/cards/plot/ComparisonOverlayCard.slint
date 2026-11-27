@@ -32,24 +32,11 @@ export component ComparisonOverlayCard inherits OptionSection {
     callback pin_current_run();
     callback clear_comparison_curves();
 
-    out property <string> hovered_tooltip_text:
-        diff_toggle_area.has-hover ? "Display residual difference curve (Current - Reference) below the distribution function." : "";
-
-    out property <length> hovered_x:
-        diff_toggle_area.has-hover ? diff_toggle_area.absolute-position.x + diff_toggle_area.mouse-x : 0px;
-
-    out property <length> hovered_y:
-        diff_toggle_area.has-hover ? diff_toggle_area.absolute-position.y + diff_toggle_area.mouse-y : 0px;
-
-    out property <length> hovered_width: 0px;
-    out property <length> hovered_height: 0px;
-
-
             FilledButton {
                 height: MaterialStyleMetrics.size_40;
                 text: "Pin Current Run";
                 icon: Icons.pin;
-                tooltip: "Pin the currently calculated results to memory for instant visual overlay against future parameter runs.";
+                tooltip: "Pin currently calculated results to memory for visual overlay against future parameter runs.";
                 clicked => { root.pin_current_run(); }
             }
 
@@ -62,10 +49,11 @@ export component ComparisonOverlayCard inherits OptionSection {
             }
 
             // Difference Plot Toggle
-            diff_toggle_area := CheckBoxRow {
+            CheckBoxRow {
                 height: 32px;
                 text: "Show Overlaid Absolute Difference (Y_diff = Y_ref - Y_target)";
                 check_state_bool: root.show_difference;
+                tooltip_text: "Display residual difference curve (Current - Reference) below the distribution function.";
                 checked_state_changed(checked) => {
                     root.toggle_difference_plot(checked);
                 }

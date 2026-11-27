@@ -5,7 +5,7 @@
 
 import { MaterialAnimations } from "../styling/material_animations.slint";
 import { MaterialPalette } from "../styling/material_palette.slint";
-import { ToolTip } from "./tooltip.slint";
+import { TooltipState } from "./tooltip_state.slint";
 import { MaterialWindowAdapter } from "./material_window.slint";
 
 export component Ripple {
@@ -125,10 +125,44 @@ export component FocusTouchArea inherits TouchArea {
 
     @children
 
+    property <bool> tooltip_pending: false;
 
-    if root.tooltip != "" && root.has_hover && !MaterialWindowAdapter.disable_hover && !root.pressed : ToolTip {
-        y: root.tooltip_offset;
-        text: root.tooltip;
+    changed has-hover => {
+        if (self.has-hover && root.tooltip != "" && !MaterialWindowAdapter.disable_hover && !root.pressed) {
+            root.tooltip_pending = true;
+            tooltip_timer.running = true;
+        } else {
+            root.tooltip_pending = false;
+            tooltip_timer.running = false;
+            if (root.tooltip != "" && TooltipState.active.text == root.tooltip) {
+                TooltipState.active = { text: "", x: 0px, y: 0px, width: 0px, height: 0px };
+            }
+        }
+    }
+
+    changed pressed => {
+        if (self.pressed && root.tooltip != "") {
+            root.tooltip_pending = false;
+            tooltip_timer.running = false;
+            if (TooltipState.active.text == root.tooltip) {
+                TooltipState.active = { text: "", x: 0px, y: 0px, width: 0px, height: 0px };
+            }
+        }
+    }
+
+    tooltip_timer := Timer {
+        interval: 250ms;
+        triggered => {
+            if (root.tooltip_pending && root.has-hover && root.tooltip != "" && !MaterialWindowAdapter.disable_hover && !root.pressed) {
+                TooltipState.active = {
+                    text: root.tooltip,
+                    x: root.absolute-position.x,
+                    y: root.absolute-position.y,
+                    width: root.width,
+                    height: root.height,
+                };
+            }
+        }
     }
 }
 

@@ -24,6 +24,9 @@ struct AppSettings {
   uint32_t window_height{795};
   float left_col_width{220.0F};
   float middle_col_width{220.0F};
+  float right_col_width{320.0F};
+  float dual_split_ratio{0.5F};
+  bool dark_theme{true};
   std::vector<std::string> recent_files;
 };
 

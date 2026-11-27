@@ -28,7 +28,6 @@ export component AnalysesGroupSection inherits Vertical {
     callback toggle_calculator(string, bool);
     callback toggle_calculator_group(string, bool);
     callback set_calculator_group_expanded(string, bool);
-    callback calculator_hovered(string);
 
     spacing: MaterialStyleMetrics.spacing_2;
 
@@ -167,14 +166,8 @@ export component AnalysesGroupSection inherits Vertical {
                     enabled: root.file_loaded;
                     check_state_bool: calc.enabled;
                     text: calc.name;
+                    tooltip_text: calc.description;
                     horizontal-stretch: 1;
-
-                    property <bool> _hover: self.has-hover;
-                    changed _hover => {
-                        if (self.has-hover) {
-                            root.calculator_hovered(calc.description);
-                        }
-                    }
 
                     checked_state_changed(s) => {
                         root.toggle_calculator(calc.id, s);
@@ -190,19 +183,13 @@ export component AnalysesGroupSection inherits Vertical {
         padding-bottom: 2px;
         spacing: 4px;
 
-        for calc[ci] in root.group.calculators: compact_chip := TouchArea {
+        for calc[ci] in root.group.calculators: compact_chip := TooltipTarget {
             height: 24px;
             enabled: root.file_loaded;
             mouse-cursor: root.file_loaded ? pointer : default;
+            tooltip_text: calc.name + "\n\n" + calc.description;
             accessible-role: checkbox;
             accessible-label: calc.name;
-
-            property <bool> _hover: self.has-hover;
-            changed _hover => {
-                if (self.has-hover) {
-                    root.calculator_hovered(calc.name + "\n" + calc.description);
-                }
-            }
 
             clicked => {
                 root.toggle_calculator(calc.id, !calc.enabled);

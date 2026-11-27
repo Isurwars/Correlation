@@ -156,6 +156,9 @@ export component NumberField {
                                     root.step_by(-root.step);
                                     return accept;
                                 }
+                                if (event.text == Key.LeftArrow || event.text == Key.RightArrow) {
+                                    return accept;
+                                }
                                 return reject;
                             }
                         }

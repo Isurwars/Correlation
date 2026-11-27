@@ -75,6 +75,13 @@ export component OffDiagonalCell {
                 edited => {
                     root.edited(self.text);
                 }
+
+                key-pressed(event) => {
+                    if (event.text == Key.LeftArrow || event.text == Key.RightArrow) {
+                        return accept;
+                    }
+                    return reject;
+                }
             }
         }
     }
@@ -153,6 +160,13 @@ export component DiagonalCell {
                         edited => {
                             root.max_edited(self.text);
                         }
+
+                        key-pressed(event) => {
+                            if (event.text == Key.LeftArrow || event.text == Key.RightArrow) {
+                                return accept;
+                            }
+                            return reject;
+                        }
                     }
                 }
             }
@@ -199,6 +213,13 @@ export component DiagonalCell {
 
                         edited => {
                             root.min_edited(self.text);
+                        }
+
+                        key-pressed(event) => {
+                            if (event.text == Key.LeftArrow || event.text == Key.RightArrow) {
+                                return accept;
+                            }
+                            return reject;
                         }
                     }
                 }

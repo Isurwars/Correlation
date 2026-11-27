@@ -11,17 +11,21 @@ import {
     OutlinedCard,
     ExpandableHeader,
     CheckBoxRow,
+    Chip,
     FilledButton,
     Vertical,
     Horizontal,
     Icons,
+    TooltipTarget,
 } from "../../material/material.slint";
-import { ExportFormatOptions } from "../../Types.slint";
+import { ExportFormatOptions, ExportAnalysisItem } from "../../Types.slint";
 
 export component ExportOptionsCard inherits OutlinedCard {
     in-out property <bool> expanded: true;
     in property <bool> enabled: true;
     in property <bool> analysis_done: false;
+    in property <bool> hdf5_available: true;
+    in property <bool> parquet_available: true;
 
     in-out property <ExportFormatOptions> format_options: {
         export_csv: true,
@@ -30,40 +34,14 @@ export component ExportOptionsCard inherits OutlinedCard {
         export_images: true,
         use_zip: false,
     };
+    in-out property <[ExportAnalysisItem]> export_analysis_items: [];
+    in-out property <bool> export_all_analyses: true;
 
+    callback toggle_export_analysis(string, bool);
+    callback toggle_all_export_analyses(bool);
     callback write_files();
     callback export_structure();
     callback reset();
-
-    out property <string> hovered_tooltip_text:
-        csv_row.has-hover ? "Export standard tabular Comma-Separated Values into csv/ directory.\n\n📄 Contains normalized distribution values and coordinate grids." :
-        images_row.has-hover ? "Export publication-quality vector plots into plots/ directory.\n\n📊 High-resolution SVG files formatted using current plot styling settings." :
-        hdf5_row.has-hover ? "Export hierarchical binary HDF5 dataset into hdf5/analysis.h5.\n\n💾 Ideal for large datasets, multi-frame trajectories, and Python/SciPy pipelines." :
-        arrow_row.has-hover ? "Export high-throughput Apache Arrow/Parquet columnar tables into arrow/ directory.\n\n⚡ Optimized for Polars, DuckDB, Pandas, and fast analytics." :
-        zip_row.has-hover ? "Package all selected formats into a single compressed .zip file archive.\n\n📦 If unchecked (default), exports a clean categorized folder with subdirectories." :
-        export_structure_btn_area.has-hover ? (root.enabled ? "Export and convert current simulation cell into POSCAR, CELL, CIF, or CAR format." : "No structure loaded.") :
-        export_btn_area.has-hover ? (root.analysis_done ? "Export all computed distributions into a destination folder or zip bundle." : "Analysis must be run before results can be exported.") : "";
-
-    out property <length> hovered_x:
-        csv_row.has-hover ? csv_row.absolute-position.x + csv_row.mouse-x :
-        images_row.has-hover ? images_row.absolute-position.x + images_row.mouse-x :
-        hdf5_row.has-hover ? hdf5_row.absolute-position.x + hdf5_row.mouse-x :
-        arrow_row.has-hover ? arrow_row.absolute-position.x + arrow_row.mouse-x :
-        zip_row.has-hover ? zip_row.absolute-position.x + zip_row.mouse-x :
-        export_structure_btn_area.has-hover ? export_structure_btn_area.absolute-position.x + export_structure_btn_area.mouse-x :
-        export_btn_area.has-hover ? export_btn_area.absolute-position.x + export_btn_area.mouse-x : 0px;
-
-    out property <length> hovered_y:
-        csv_row.has-hover ? csv_row.absolute-position.y + csv_row.mouse-y :
-        images_row.has-hover ? images_row.absolute-position.y + images_row.mouse-y :
-        hdf5_row.has-hover ? hdf5_row.absolute-position.y + hdf5_row.mouse-y :
-        arrow_row.has-hover ? arrow_row.absolute-position.y + arrow_row.mouse-y :
-        zip_row.has-hover ? zip_row.absolute-position.y + zip_row.mouse-y :
-        export_structure_btn_area.has-hover ? export_structure_btn_area.absolute-position.y + export_structure_btn_area.mouse-y :
-        export_btn_area.has-hover ? export_btn_area.absolute-position.y + export_btn_area.mouse-y : 0px;
-
-    out property <length> hovered_width: 0px;
-    out property <length> hovered_height: 0px;
 
     Vertical {
         padding: MaterialStyleMetrics.spacing_8;
@@ -99,58 +77,106 @@ export component ExportOptionsCard inherits OutlinedCard {
                 spacing: MaterialStyleMetrics.spacing_4;
                 padding-left: MaterialStyleMetrics.spacing_4;
 
-                Horizontal {
-                    height: 28px;
-                    csv_row := CheckBoxRow {
-                        width: 100%;
-                        height: 100%;
-                        text: "Comma Separated Values (.csv)";
-                        check_state_bool: root.format_options.export_csv;
-                        enabled: root.enabled;
-                        checked_state_changed(val) => {
-                            root.format_options.export_csv = val;
-                        }
+                CheckBoxRow {
+                    text: "Comma Separated Values (.csv)";
+                    check_state_bool: root.format_options.export_csv;
+                    enabled: root.enabled;
+                    tooltip_text: "Export standard tabular Comma-Separated Values into csv/ directory.\n\n📄 Contains normalized distribution values and coordinate grids.";
+                    checked_state_changed(val) => {
+                        root.format_options.export_csv = val;
                     }
                 }
 
-                Horizontal {
-                    height: 28px;
-                    images_row := CheckBoxRow {
-                        width: 100%;
-                        height: 100%;
-                        text: "Plots & Figures (.svg)";
-                        check_state_bool: root.format_options.export_images;
-                        enabled: root.enabled;
-                        checked_state_changed(val) => {
-                            root.format_options.export_images = val;
-                        }
+                CheckBoxRow {
+                    text: "Plots & Figures (.svg)";
+                    check_state_bool: root.format_options.export_images;
+                    enabled: root.enabled;
+                    tooltip_text: "Export publication-quality vector plots into plots/ directory.\n\n📊 High-resolution SVG files formatted using current plot styling settings.";
+                    checked_state_changed(val) => {
+                        root.format_options.export_images = val;
                     }
                 }
 
-                Horizontal {
-                    height: 28px;
-                    hdf5_row := CheckBoxRow {
-                        width: 100%;
-                        height: 100%;
-                        text: "Hierarchical Data Format (.h5)";
-                        check_state_bool: root.format_options.export_hdf5;
-                        enabled: root.enabled;
+                TooltipTarget {
+                    tooltip_text: root.hdf5_available
+                        ? "Export hierarchical binary HDF5 dataset into hdf5/analysis.h5.\n\n💾 Ideal for large datasets, multi-frame trajectories, and Python/SciPy pipelines."
+                        : "HDF5 support was disabled at build time (CORRELATION_USE_HDF5=OFF).";
+                    CheckBoxRow {
+                        text: root.hdf5_available ? "Hierarchical Data Format (.h5)" : "HDF5 (.h5 — Unavailable)";
+                        check_state_bool: root.format_options.export_hdf5 && root.hdf5_available;
+                        enabled: root.enabled && root.hdf5_available;
                         checked_state_changed(val) => {
                             root.format_options.export_hdf5 = val;
                         }
                     }
                 }
 
-                Horizontal {
-                    height: 28px;
-                    arrow_row := CheckBoxRow {
-                        width: 100%;
-                        height: 100%;
-                        text: "Apache Arrow / Parquet (.parquet)";
-                        check_state_bool: root.format_options.export_arrow;
-                        enabled: root.enabled;
+                TooltipTarget {
+                    tooltip_text: root.parquet_available
+                        ? "Export high-throughput Apache Arrow/Parquet columnar tables into arrow/ directory.\n\n⚡ Optimized for Polars, DuckDB, Pandas, and fast analytics."
+                        : "Apache Arrow/Parquet support was disabled at build time (CORRELATION_USE_ARROW=OFF).";
+                    CheckBoxRow {
+                        text: root.parquet_available ? "Apache Arrow / Parquet (.parquet)" : "Parquet (.parquet — Unavailable)";
+                        check_state_bool: root.format_options.export_arrow && root.parquet_available;
+                        enabled: root.enabled && root.parquet_available;
                         checked_state_changed(val) => {
                             root.format_options.export_arrow = val;
+                        }
+                    }
+                }
+            }
+
+            if root.analysis_done && root.export_analysis_items.length > 0: VerticalLayout {
+                spacing: MaterialStyleMetrics.spacing_4;
+
+                Rectangle {
+                    height: 1px;
+                    background: MaterialPalette.outline_variant;
+                }
+
+                MaterialText {
+                    text: "Included Analyses";
+                    style: MaterialTypography.label_medium;
+                    color: MaterialPalette.on_surface_variant;
+                }
+
+                CheckBoxRow {
+                    text: "Export all computed analyses (" + root.export_analysis_items.length + ")";
+                    check_state_bool: root.export_all_analyses;
+                    enabled: root.enabled;
+                    tooltip_text: "Uncheck to hand-pick individual computed distributions for export.";
+                    checked_state_changed(val) => {
+                        root.export_all_analyses = val;
+                        if (val) {
+                            root.toggle_all_export_analyses(true);
+                        }
+                    }
+                }
+
+                if !root.export_all_analyses: VerticalLayout {
+                    padding-left: MaterialStyleMetrics.spacing_8;
+                    spacing: MaterialStyleMetrics.spacing_2;
+
+                    HorizontalLayout {
+                        spacing: MaterialStyleMetrics.spacing_4;
+                        Chip {
+                            label: "All";
+                            outlined: false;
+                            clicked => { root.toggle_all_export_analyses(true); }
+                        }
+                        Chip {
+                            label: "None";
+                            outlined: false;
+                            clicked => { root.toggle_all_export_analyses(false); }
+                        }
+                    }
+
+                    for item in root.export_analysis_items: CheckBoxRow {
+                        text: item.name;
+                        check_state_bool: item.enabled;
+                        enabled: root.enabled;
+                        checked_state_changed(val) => {
+                            root.toggle_export_analysis(item.id, val);
                         }
                     }
                 }
@@ -172,35 +198,25 @@ export component ExportOptionsCard inherits OutlinedCard {
                 spacing: MaterialStyleMetrics.spacing_4;
                 padding-left: MaterialStyleMetrics.spacing_4;
 
-                Horizontal {
-                    height: 28px;
-                    zip_row := CheckBoxRow {
-                        width: 100%;
-                        height: 100%;
-                        text: "Create consolidated ZIP archive";
-                        check_state_bool: root.format_options.use_zip;
-                        enabled: root.enabled;
-                        checked_state_changed(val) => {
-                            root.format_options.use_zip = val;
-                        }
+                CheckBoxRow {
+                    text: "Create consolidated ZIP archive";
+                    check_state_bool: root.format_options.use_zip;
+                    enabled: root.enabled;
+                    tooltip_text: "Package all selected formats into a single compressed .zip file archive.\n\n📦 If unchecked (default), exports a clean categorized folder with subdirectories.";
+                    checked_state_changed(val) => {
+                        root.format_options.use_zip = val;
                     }
                 }
             }
 
-
-
-            Rectangle {
-                height: MaterialStyleMetrics.spacing_4;
-            }
-
             // Export Action Button
-            export_btn_area := TouchArea {
-                width: 100%;
+            TooltipTarget {
                 height: 38px;
+                tooltip_text: !root.analysis_done ? "Run an analysis first (Ctrl+R) before exporting distribution data." : "";
                 FilledButton {
                     width: 100%;
                     height: 100%;
-                    text: root.format_options.use_zip ? "Export ZIP Archive" : "Export Categorized Folder";
+                    text: root.format_options.use_zip ? "Export ZIP Archive (Ctrl+S)" : "Export Categorized Folder (Ctrl+S)";
                     enabled: root.enabled && root.analysis_done;
                     background: MaterialPalette.primary;
                     text_color: MaterialPalette.on_primary;
@@ -222,20 +238,15 @@ export component ExportOptionsCard inherits OutlinedCard {
                 color: MaterialPalette.on_surface_variant;
             }
 
-            export_structure_btn_area := TouchArea {
-                width: 100%;
+            FilledButton {
                 height: 38px;
-                FilledButton {
-                    width: 100%;
-                    height: 100%;
-                    text: "Convert / Export Cell";
-                    icon: Icons.save;
-                    enabled: root.enabled;
-                    background: MaterialPalette.secondary;
-                    text_color: MaterialPalette.on_secondary;
-                    clicked => {
-                        root.export_structure();
-                    }
+                text: "Convert / Export Cell (Ctrl+E)";
+                icon: Icons.save;
+                enabled: root.enabled;
+                background: MaterialPalette.secondary;
+                text_color: MaterialPalette.on_secondary;
+                clicked => {
+                    root.export_structure();
                 }
             }
         }

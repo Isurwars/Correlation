@@ -12,6 +12,7 @@ import { MaterialTypography } from "../styling/material_typography.slint";
 import { MaterialText } from "./material_text.slint";
 import { ScrollView } from "std-widgets.slint";
 import { Elevation } from "./elevation.slint";
+import { TooltipState } from "./tooltip_state.slint";
 import { InputSelectItem, InputSelectEmptyItem } from "./input_select_items.slint";
 
 export component InputSelect {
@@ -21,6 +22,7 @@ export component InputSelect {
     in property <[MenuItem]> items: [];
     in_out property <int> current_index: -1;
     in_out property <string> text: "";
+    in property <string> tooltip_text: "";
 
     callback selected(index: int);
 
@@ -56,9 +58,34 @@ export component InputSelect {
         }
     }
 
+    property <bool> show_tooltip_pending: false;
+
+    delay_timer := Timer {
+        interval: 250ms;
+        triggered => {
+            if (root.show_tooltip_pending && touch_area.has-hover && !root.is_open && root.tooltip_text != "") {
+                TooltipState.active = {
+                    text: root.tooltip_text,
+                    x: touch_area.absolute-position.x,
+                    y: touch_area.absolute-position.y,
+                    width: touch_area.width,
+                    height: touch_area.height,
+                };
+            }
+        }
+    }
+
     changed has-hover => {
         if !root.has-hover {
             root.wheel_cycling = false;
+            root.show_tooltip_pending = false;
+            delay_timer.running = false;
+            if (root.tooltip_text != "" && TooltipState.active.text == root.tooltip_text) {
+                TooltipState.active = { text: "", x: 0px, y: 0px, width: 0px, height: 0px };
+            }
+        } else if (root.tooltip_text != "") {
+            root.show_tooltip_pending = true;
+            delay_timer.running = true;
         }
     }
 
@@ -222,7 +249,7 @@ export component InputSelect {
                         edited(new_text) => {
                             root.search_text = new_text;
                             root.filter_active = (new_text != "");
-                            root.highlighted_index = -1;
+                            root.highlighted_index = root.find_first_match();
                         }
 
                         accepted(text) => {
@@ -401,15 +428,49 @@ export component InputSelect {
         }
     }
 
+    pure function item_matches(idx: int) -> bool {
+        if (idx < 0 || idx >= root.items.length || !root.items[idx].enabled) {
+            return false;
+        }
+        if (!root.filter_active || root.search_text == "") {
+            return true;
+        }
+        let hay = root.items[idx].text.to-lowercase();
+        let needle = root.search_text.to-lowercase();
+        return hay.replace-all(needle, "") != hay;
+    }
+
+    pure function advance1(cur: int, dir: int) -> int {
+        if (cur < 0 || cur >= root.items.length || root.item_matches(cur)) {
+            return cur;
+        }
+        return cur + dir;
+    }
+
+    pure function advance2(cur: int, dir: int) -> int { return root.advance1(root.advance1(cur, dir), dir); }
+    pure function advance4(cur: int, dir: int) -> int { return root.advance2(root.advance2(cur, dir), dir); }
+    pure function advance8(cur: int, dir: int) -> int { return root.advance4(root.advance4(cur, dir), dir); }
+    pure function advance32(cur: int, dir: int) -> int {
+        return root.advance8(root.advance8(root.advance8(root.advance8(cur, dir), dir), dir), dir);
+    }
+
+    pure function find_first_match() -> int {
+        let idx = root.advance32(0, 1);
+        return root.item_matches(idx) ? idx : -1;
+    }
+
     function commit_selection() {
-        if root.highlighted_index >= 0 && root.highlighted_index < root.items.length {
+        if root.item_matches(root.highlighted_index) {
             root.choose_item(root.highlighted_index);
-        } else if root.current_index >= 0 && root.current_index < root.items.length {
-            root.choose_item(root.current_index);
-        } else if root.items.length > 0 {
-            root.choose_item(0);
         } else {
-            root.close_menu();
+            let first = root.find_first_match();
+            if first >= 0 {
+                root.choose_item(first);
+            } else if !root.filter_active && root.current_index >= 0 && root.current_index < root.items.length {
+                root.choose_item(root.current_index);
+            } else if !root.filter_active && root.items.length > 0 {
+                root.choose_item(0);
+            }
         }
     }
 
@@ -417,10 +478,10 @@ export component InputSelect {
         if root.items.length == 0 {
             return;
         }
-        if root.highlighted_index < 0 {
-            root.highlighted_index = (root.current_index >= 0) ? root.current_index : 0;
-        } else {
-            root.highlighted_index = min(root.items.length - 1, root.highlighted_index + 1);
+        let start = (root.highlighted_index < 0) ? 0 : (root.highlighted_index + 1);
+        let cand = root.advance32(start, 1);
+        if root.item_matches(cand) {
+            root.highlighted_index = cand;
         }
     }
 
@@ -428,10 +489,10 @@ export component InputSelect {
         if root.items.length == 0 {
             return;
         }
-        if root.highlighted_index < 0 {
-            root.highlighted_index = (root.current_index >= 0) ? root.current_index : max(0, root.items.length - 1);
-        } else {
-            root.highlighted_index = max(0, root.highlighted_index - 1);
+        let start = (root.highlighted_index < 0) ? (root.items.length - 1) : (root.highlighted_index - 1);
+        let cand = root.advance32(start, -1);
+        if root.item_matches(cand) {
+            root.highlighted_index = cand;
         }
     }
 }

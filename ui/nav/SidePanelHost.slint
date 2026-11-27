@@ -18,6 +18,7 @@ import {
     AtomCount,
     BondCutoff,
     CalculatorGroup,
+    DomainPresetItem,
     AnalysisOptions,
     AppErrors,
     ExportConfig,
@@ -51,8 +52,11 @@ export component SidePanelHost inherits Vertical {
 
     // Material & analysis setup
     in-out property <int> material_type: 0;
+    in property <[DomainPresetItem]> domain_presets: [];
     in-out property <AnalysisOptions> analysis_options;
     in property <AppErrors> app_errors;
+    in property <bool> hdf5_available: true;
+    in property <bool> parquet_available: true;
 
     // Common options / Structure state
     in property <bool> has_radial_active: false;
@@ -90,45 +94,16 @@ export component SidePanelHost inherits Vertical {
     in property <[MenuItem]> preset_items: [];
     in-out property <int> selected_preset: -1;
 
-    // Tooltip reflection properties
-    out property <string> hovered_tooltip_text:
-        root.active_panel == 0 ? panel_operations.hovered_tooltip_text :
-        root.active_panel == 1 ? panel_calculators.hovered_tooltip_text :
-        root.active_panel == 2 ? panel_advanced.hovered_tooltip_text :
-        root.active_panel == 3 ? panel_export.hovered_tooltip_text : "";
-
-    out property <length> hovered_x:
-        root.active_panel == 0 ? panel_operations.hovered_x :
-        root.active_panel == 1 ? panel_calculators.hovered_x :
-        root.active_panel == 2 ? panel_advanced.hovered_x :
-        root.active_panel == 3 ? panel_export.hovered_x : 0px;
-
-    out property <length> hovered_y:
-        root.active_panel == 0 ? panel_operations.hovered_y :
-        root.active_panel == 1 ? panel_calculators.hovered_y :
-        root.active_panel == 2 ? panel_advanced.hovered_y :
-        root.active_panel == 3 ? panel_export.hovered_y : 0px;
-
-    out property <length> hovered_width:
-        root.active_panel == 0 ? panel_operations.hovered_width :
-        root.active_panel == 1 ? panel_calculators.hovered_width :
-        root.active_panel == 2 ? panel_advanced.hovered_width :
-        root.active_panel == 3 ? panel_export.hovered_width : 0px;
-
-    out property <length> hovered_height:
-        root.active_panel == 0 ? panel_operations.hovered_height :
-        root.active_panel == 1 ? panel_calculators.hovered_height :
-        root.active_panel == 2 ? panel_advanced.hovered_height :
-        root.active_panel == 3 ? panel_export.hovered_height : 0px;
-
     // Callbacks - Operations
     callback browse_file();
     callback reload_file();
     callback rename_element(string, string);
     callback reset_trajectory_options();
     callback reset_material_type();
+    callback apply_domain_preset(int);
     callback run_analysis();
     callback cancel_analysis();
+    callback open_style_inspector();
 
     // Callbacks - Common Options
     callback reset_bond_cutoffs();
@@ -237,10 +212,21 @@ export component SidePanelHost inherits Vertical {
             height: 100%;
             visible: root.active_panel == 1;
             file_loaded: root.file_metadata.loaded;
-            num_frames: root.file_metadata.num_frames;
             workflow_state: root.workflow_state;
 
+            calculator_groups <=> root.calculator_groups;
+            total_calculator_count: root.total_calculator_count;
+            enabled_calculator_count: root.enabled_calculator_count;
+            toggle_calculator(id, enabled) => { root.toggle_calculator(id, enabled); }
+            toggle_calculator_group(grp, enabled) => { root.toggle_calculator_group(grp, enabled); }
+            toggle_all_calculators(enabled) => { root.toggle_all_calculators(enabled); }
+            set_calculator_group_expanded(grp, exp) => { root.set_calculator_group_expanded(grp, exp); }
+            set_all_calculator_groups_expanded(exp) => { root.set_all_calculator_groups_expanded(exp); }
+            reset_analyses_selection => { root.reset_analyses_selection(); }
+
             material_type <=> root.material_type;
+            domain_presets: root.domain_presets;
+            apply_domain_preset(id) => { root.apply_domain_preset(id); }
             reset_material_type => { root.reset_material_type(); }
 
             has_radial_active: root.has_radial_active;
@@ -262,7 +248,6 @@ export component SidePanelHost inherits Vertical {
             app_errors: root.app_errors;
             reset_rdf_options => { root.reset_rdf_options(); }
             reset_angle_options => { root.reset_angle_options(); }
-            reset_trajectory_options => { root.reset_trajectory_options(); }
 
             run_analysis => { root.run_analysis(); }
             cancel_analysis => { root.cancel_analysis(); }
@@ -277,16 +262,6 @@ export component SidePanelHost inherits Vertical {
             has_scattering_active: root.has_scattering_active;
             has_rings_active: root.has_rings_active;
             workflow_state: root.workflow_state;
-
-            calculator_groups <=> root.calculator_groups;
-            total_calculator_count: root.total_calculator_count;
-            enabled_calculator_count: root.enabled_calculator_count;
-            toggle_calculator(id, enabled) => { root.toggle_calculator(id, enabled); }
-            toggle_calculator_group(grp, enabled) => { root.toggle_calculator_group(grp, enabled); }
-            toggle_all_calculators(enabled) => { root.toggle_all_calculators(enabled); }
-            set_calculator_group_expanded(grp, exp) => { root.set_calculator_group_expanded(grp, exp); }
-            set_all_calculator_groups_expanded(exp) => { root.set_all_calculator_groups_expanded(exp); }
-            reset_analyses_selection => { root.reset_analyses_selection(); }
 
             physics_diagnostics: root.physics_diagnostics;
 
@@ -310,6 +285,8 @@ export component SidePanelHost inherits Vertical {
             visible: root.active_panel == 3;
             enabled: root.file_metadata.loaded;
             analysis_done: root.workflow_state.analysis_done;
+            hdf5_available: root.hdf5_available;
+            parquet_available: root.parquet_available;
 
             export_format_options <=> root.export_format_options;
             export_analysis_items <=> root.export_analysis_items;
@@ -321,9 +298,7 @@ export component SidePanelHost inherits Vertical {
             reset_export_options => { root.reset_export_options(); }
 
             export_config <=> root.export_config;
-            export_font_scale_error: root.app_errors.export_font_scale_error;
-            export_line_width_error: root.app_errors.export_line_width_error;
-            export_marker_size_error: root.app_errors.export_marker_size_error;
+            open_style_inspector => { root.open_style_inspector(); }
             reset_export_settings => { root.reset_export_settings(); }
 
             comparison_curves: root.comparison_curves;

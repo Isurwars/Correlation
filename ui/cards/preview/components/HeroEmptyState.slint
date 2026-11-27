@@ -7,7 +7,9 @@ import {
     FilledButton,
     Icons,
     Chip,
+    TooltipTarget,
 } from "../../../material/material.slint";
+import { RecentFileItem } from "../../../Types.slint";
 import { HeroFileLoadedCta } from "HeroFileLoadedCta.slint";
 
 export component HeroEmptyState inherits Rectangle {
@@ -18,7 +20,7 @@ export component HeroEmptyState inherits Rectangle {
     in property <string> file_basename: "";
     in property <string> total_atoms: "";
     in property <string> num_frames: "";
-    in property <[string]> recent_files: [];
+    in property <[RecentFileItem]> recent_file_items: [];
 
     callback browse_file();
     callback run_analysis();
@@ -78,7 +80,6 @@ export component HeroEmptyState inherits Rectangle {
                 height: MaterialStyleMetrics.size_40;
                 text: "Open Trajectory File... (Ctrl+O)";
                 icon: Icons.folder_open;
-                tooltip: "Browse and load a structure or molecular dynamics trajectory file (Ctrl+O).";
                 clicked => { root.browse_file(); }
             }
 
@@ -117,7 +118,7 @@ export component HeroEmptyState inherits Rectangle {
             }
 
             // MRU Recent Files Row (if any)
-            if root.recent_files.length > 0: HorizontalLayout {
+            if root.recent_file_items.length > 0: HorizontalLayout {
                 spacing: 6px;
                 alignment: center;
 
@@ -128,22 +129,32 @@ export component HeroEmptyState inherits Rectangle {
                     vertical-alignment: center;
                 }
 
-                for file[idx] in root.recent_files: touch_rec := TouchArea {
-                    width: rec_chip.preferred-width + 12px;
+                for item in root.recent_file_items: touch_rec := TooltipTarget {
+                    width: min(156px, rec_lbl.preferred-width + 18px);
                     height: 26px;
                     mouse-cursor: pointer;
-                    clicked => { root.load_recent(file); }
-                    rec_chip := Rectangle {
+                    tooltip_text: item.full_path;
+                    accessible-role: button;
+                    accessible-label: "Load recent file " + item.basename;
+                    clicked => { root.load_recent(item.full_path); }
+
+                    Rectangle {
                         border-radius: 13px;
                         background: touch_rec.has-hover ? MaterialPalette.primary_container : MaterialPalette.surface_container_lowest;
                         border-width: 1px;
                         border-color: MaterialPalette.outline_variant.with_alpha(50%);
-                        MaterialText {
-                            text: "📄 " + file;
-                            font-size: MaterialTypography.label_small.font_size;
-                            color: touch_rec.has-hover ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
-                            horizontal-alignment: center;
-                            vertical-alignment: center;
+
+                        HorizontalLayout {
+                            padding-left: 8px;
+                            padding-right: 8px;
+
+                            rec_lbl := MaterialText {
+                                text: "📄 " + item.basename;
+                                font-size: MaterialTypography.label_small.font_size;
+                                color: touch_rec.has-hover ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
+                                horizontal-alignment: center;
+                                vertical-alignment: center;
+                            }
                         }
                     }
                 }

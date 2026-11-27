@@ -66,7 +66,7 @@ export component CommandPalette inherits Rectangle {
 
         search_focus := FocusScope {
             key-pressed(event) => {
-                if (event.text == Key.Escape) {
+                if (event.text == Key.Escape || (event.modifiers.control && (event.text == "k" || event.text == "K"))) {
                     root.closed();
                     return accept;
                 }

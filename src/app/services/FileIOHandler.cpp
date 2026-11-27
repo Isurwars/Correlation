@@ -65,13 +65,13 @@ namespace {
 
 void dispatchStatusUpdate(AppWindow &window, std::shared_ptr<std::atomic<bool>> alive,
                           std::string status_msg) {
-  slint::invoke_from_event_loop([&window, alive = std::move(alive),
-                                 status_msg = std::move(status_msg)] {
-    if (!alive->load(std::memory_order_acquire)) {
-      return;
-    }
-    window.set_analysis_status_text(slint::SharedString(status_msg));
-  });
+  slint::invoke_from_event_loop(
+      [&window, alive = std::move(alive), status_msg = std::move(status_msg)] {
+        if (!alive->load(std::memory_order_acquire)) {
+          return;
+        }
+        window.set_analysis_status_text(slint::SharedString(status_msg));
+      });
 }
 
 } // namespace
@@ -249,48 +249,49 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath,
     load_thread_.join();
   }
 
-  load_thread_ = std::jthread([this, alive = alive_, filepath, on_complete = std::move(on_complete)] {
-    const auto progress_cb = [this, alive](float progress, const std::string &msg) {
-      slint::invoke_from_event_loop([progress, msg, this, alive] {
-        if (!alive->load(std::memory_order_acquire)) {
-          return;
+  load_thread_ =
+      std::jthread([this, alive = alive_, filepath, on_complete = std::move(on_complete)] {
+        const auto progress_cb = [this, alive](float progress, const std::string &msg) {
+          slint::invoke_from_event_loop([progress, msg, this, alive] {
+            if (!alive->load(std::memory_order_acquire)) {
+              return;
+            }
+            window_.set_progress(progress);
+            if (!msg.empty()) {
+              window_.set_file_status_text(slint::SharedString(msg));
+            }
+          });
+        };
+
+        std::string message;
+        bool success = false;
+        const auto load_res = loader_.loadFile(filepath, progress_cb);
+        if (load_res) {
+          message = *load_res;
+          success = true;
+        } else {
+          message = std::string(AppDefaults::MSG_ERROR_LOADING) + load_res.error();
         }
-        window_.set_progress(progress);
-        if (!msg.empty()) {
-          window_.set_file_status_text(slint::SharedString(msg));
-        }
+
+        slint::invoke_from_event_loop([this, alive, filepath, message, success, on_complete] {
+          if (!alive->load(std::memory_order_acquire)) {
+            return;
+          }
+          window_.set_file_status_text(slint::SharedString(message));
+          window_.set_file_loading(false);
+          window_.set_timer_running(false);
+          window_.set_text_opacity(false);
+
+          if (success) {
+            options_.input_file = filepath;
+            onTrajectoryLoadSuccess(filepath);
+          }
+
+          if (on_complete) {
+            on_complete(success);
+          }
+        });
       });
-    };
-
-    std::string message;
-    bool success = false;
-    const auto load_res = loader_.loadFile(filepath, progress_cb);
-    if (load_res) {
-      message = *load_res;
-      success = true;
-    } else {
-      message = std::string(AppDefaults::MSG_ERROR_LOADING) + load_res.error();
-    }
-
-    slint::invoke_from_event_loop([this, alive, filepath, message, success, on_complete] {
-      if (!alive->load(std::memory_order_acquire)) {
-        return;
-      }
-      window_.set_file_status_text(slint::SharedString(message));
-      window_.set_file_loading(false);
-      window_.set_timer_running(false);
-      window_.set_text_opacity(false);
-
-      if (success) {
-        options_.input_file = filepath;
-        onTrajectoryLoadSuccess(filepath);
-      }
-
-      if (on_complete) {
-        on_complete(success);
-      }
-    });
-  });
 }
 
 void FileIOHandler::startLoadingTrajectories(const std::vector<std::string> &filepaths,
@@ -320,50 +321,49 @@ void FileIOHandler::startLoadingTrajectories(const std::vector<std::string> &fil
     load_thread_.join();
   }
 
-  load_thread_ = std::jthread(
-      [this, alive = alive_, sorted_paths = std::move(sorted_paths),
-       on_complete = std::move(on_complete)] {
-        const auto progress_cb = [this, alive](float progress, const std::string &msg) {
-          slint::invoke_from_event_loop([progress, msg, this, alive] {
-            if (!alive->load(std::memory_order_acquire)) {
-              return;
-            }
-            window_.set_progress(progress);
-            if (!msg.empty()) {
-              window_.set_file_status_text(slint::SharedString(msg));
-            }
-          });
-        };
-
-        std::string message;
-        bool success = false;
-        const auto load_res = loader_.loadFiles(sorted_paths, progress_cb);
-        if (load_res) {
-          message = *load_res;
-          success = true;
-        } else {
-          message = std::string(AppDefaults::MSG_ERROR_LOADING) + load_res.error();
+  load_thread_ = std::jthread([this, alive = alive_, sorted_paths = std::move(sorted_paths),
+                               on_complete = std::move(on_complete)] {
+    const auto progress_cb = [this, alive](float progress, const std::string &msg) {
+      slint::invoke_from_event_loop([progress, msg, this, alive] {
+        if (!alive->load(std::memory_order_acquire)) {
+          return;
         }
-
-        slint::invoke_from_event_loop([this, alive, sorted_paths, message, success, on_complete] {
-          if (!alive->load(std::memory_order_acquire)) {
-            return;
-          }
-          window_.set_file_status_text(slint::SharedString(message));
-          window_.set_file_loading(false);
-          window_.set_timer_running(false);
-          window_.set_text_opacity(false);
-
-          if (success) {
-            options_.input_file = sorted_paths.front();
-            onTrajectoryLoadSuccess(sorted_paths.front());
-          }
-
-          if (on_complete) {
-            on_complete(success);
-          }
-        });
+        window_.set_progress(progress);
+        if (!msg.empty()) {
+          window_.set_file_status_text(slint::SharedString(msg));
+        }
       });
+    };
+
+    std::string message;
+    bool success = false;
+    const auto load_res = loader_.loadFiles(sorted_paths, progress_cb);
+    if (load_res) {
+      message = *load_res;
+      success = true;
+    } else {
+      message = std::string(AppDefaults::MSG_ERROR_LOADING) + load_res.error();
+    }
+
+    slint::invoke_from_event_loop([this, alive, sorted_paths, message, success, on_complete] {
+      if (!alive->load(std::memory_order_acquire)) {
+        return;
+      }
+      window_.set_file_status_text(slint::SharedString(message));
+      window_.set_file_loading(false);
+      window_.set_timer_running(false);
+      window_.set_text_opacity(false);
+
+      if (success) {
+        options_.input_file = sorted_paths.front();
+        onTrajectoryLoadSuccess(sorted_paths.front());
+      }
+
+      if (on_complete) {
+        on_complete(success);
+      }
+    });
+  });
 }
 
 void FileIOHandler::refreshAtomCountsUI() {
@@ -423,6 +423,8 @@ void FileIOHandler::onTrajectoryLoadSuccess(const std::string &filepath) {
   }
 
   window_.set_file_loaded(true);
+  window_.set_analysis_done(false);
+  window_.set_results_stale(false);
 
   // Atom Counts
   refreshAtomCountsUI();

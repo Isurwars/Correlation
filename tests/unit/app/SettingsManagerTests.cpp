@@ -45,6 +45,9 @@ TEST_F(SettingsManagerTests, DefaultSettingsFallback) {
   EXPECT_EQ(settings.window_height, 795U);
   EXPECT_FLOAT_EQ(settings.left_col_width, 220.0F);
   EXPECT_FLOAT_EQ(settings.middle_col_width, 220.0F);
+  EXPECT_FLOAT_EQ(settings.right_col_width, 320.0F);
+  EXPECT_FLOAT_EQ(settings.dual_split_ratio, 0.5F);
+  EXPECT_TRUE(settings.dark_theme);
 }
 
 TEST_F(SettingsManagerTests, RoundTripSerialization) {
@@ -53,6 +56,9 @@ TEST_F(SettingsManagerTests, RoundTripSerialization) {
   custom.window_height = 900U;
   custom.left_col_width = 315.5F;
   custom.middle_col_width = 280.0F;
+  custom.right_col_width = 390.0F;
+  custom.dual_split_ratio = 0.65F;
+  custom.dark_theme = false;
 
   ASSERT_TRUE(correlation::app::SettingsManager::save(custom));
 
@@ -61,6 +67,9 @@ TEST_F(SettingsManagerTests, RoundTripSerialization) {
   EXPECT_EQ(loaded.window_height, 900U);
   EXPECT_FLOAT_EQ(loaded.left_col_width, 315.5F);
   EXPECT_FLOAT_EQ(loaded.middle_col_width, 280.0F);
+  EXPECT_FLOAT_EQ(loaded.right_col_width, 390.0F);
+  EXPECT_FLOAT_EQ(loaded.dual_split_ratio, 0.65F);
+  EXPECT_FALSE(loaded.dark_theme);
 }
 
 TEST_F(SettingsManagerTests, ClampingBounds) {
@@ -69,6 +78,8 @@ TEST_F(SettingsManagerTests, ClampingBounds) {
   out_of_bounds.window_height = 400U;
   out_of_bounds.left_col_width = 120.0F;
   out_of_bounds.middle_col_width = 500.0F;
+  out_of_bounds.right_col_width = 800.0F;
+  out_of_bounds.dual_split_ratio = 0.99F;
 
   ASSERT_TRUE(correlation::app::SettingsManager::save(out_of_bounds));
 
@@ -77,6 +88,8 @@ TEST_F(SettingsManagerTests, ClampingBounds) {
   EXPECT_EQ(loaded.window_height, 600U);
   EXPECT_FLOAT_EQ(loaded.left_col_width, 180.0F);
   EXPECT_FLOAT_EQ(loaded.middle_col_width, 450.0F);
+  EXPECT_FLOAT_EQ(loaded.right_col_width, 520.0F);
+  EXPECT_FLOAT_EQ(loaded.dual_split_ratio, 0.85F);
 }
 
 } // namespace

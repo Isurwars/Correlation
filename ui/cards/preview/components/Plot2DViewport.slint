@@ -7,7 +7,7 @@ import {
     MaterialPalette,
     MaterialStyleMetrics,
 } from "../../../material/material.slint";
-import { CalibrationPair, TaggedPeakRecord } from "../../../Types.slint";
+import { CalibrationPair, RecentFileItem, TaggedPeakRecord } from "../../../Types.slint";
 import { HeroEmptyState } from "HeroEmptyState.slint";
 import { PlotReticleOverlay } from "PlotReticleOverlay.slint";
 import { CutoffCalibrationOverlay } from "CutoffCalibrationOverlay.slint";
@@ -23,13 +23,14 @@ export component Plot2DViewport inherits Rectangle {
     in property <string> file_basename: "";
     in property <string> total_atoms: "";
     in property <string> num_frames: "";
-    in property <[string]> recent_files: [];
+    in property <[RecentFileItem]> recent_file_items: [];
     in property <int> active_tab: 0;
     in-out property <int> inspector_scope: 0;
     in property <string> hover_coord_text: "";
     in property <bool> has_active_zoom: false;
     in property <int> markers_count: 0;
     in property <bool> plot_sidebar_collapsed: false;
+    in property <bool> can_calibrate_cutoffs: false;
     in-out property <[TaggedPeakRecord]> tagged_peaks: [];
     in property <[CalibrationPair]> calibration_pairs: [];
     in-out property <int> active_calibration_pair_index: 0;
@@ -44,15 +45,11 @@ export component Plot2DViewport inherits Rectangle {
     property <length> pan_last_x: 0px;
     property <length> pan_last_y: 0px;
 
-    out property <string> hovered_tooltip_text:
-        (root.active_tool == 5 && calibration_bar.hovered_tooltip_text != "") ? calibration_bar.hovered_tooltip_text :
-        imaging_toolbar.tooltip_text != "" ? imaging_toolbar.tooltip_text : "";
-    out property <length> hovered_x:
-        (root.active_tool == 5 && calibration_bar.hovered_tooltip_text != "") ? calibration_bar.hovered_x :
-        imaging_toolbar.tooltip_text != "" ? imaging_toolbar.tooltip_x : 0px;
-    out property <length> hovered_y:
-        (root.active_tool == 5 && calibration_bar.hovered_tooltip_text != "") ? calibration_bar.hovered_y :
-        imaging_toolbar.tooltip_text != "" ? imaging_toolbar.tooltip_y : 0px;
+    changed can_calibrate_cutoffs => {
+        if (!root.can_calibrate_cutoffs && root.active_tool == 5) {
+            root.active_tool = 0;
+        }
+    }
 
     callback browse_file();
     callback load_sample(string);
@@ -106,7 +103,7 @@ export component Plot2DViewport inherits Rectangle {
         file_basename: root.file_basename;
         total_atoms: root.total_atoms;
         num_frames: root.num_frames;
-        recent_files: root.recent_files;
+        recent_file_items: root.recent_file_items;
         browse_file => { root.browse_file(); }
         load_sample(s) => { root.load_sample(s); }
         load_recent(r) => { root.load_recent(r); }
@@ -250,14 +247,16 @@ export component Plot2DViewport inherits Rectangle {
     calibration_overlay := CutoffCalibrationOverlay {
         x: 0px;
         y: 0px;
-        active: root.active_tool == 5;
-        pair: root.calibration_pairs[root.active_calibration_pair_index];
+        active: root.active_tool == 5 && root.can_calibrate_cutoffs;
+        pair: (root.calibration_pairs.length > 0 && root.active_calibration_pair_index >= 0 && root.active_calibration_pair_index < root.calibration_pairs.length)
+            ? root.calibration_pairs[root.active_calibration_pair_index]
+            : { is_valid: false };
         drag_min(mx) => { root.drag_cutoff_handle(root.active_calibration_pair_index, false, mx); }
         drag_max(mx) => { root.drag_cutoff_handle(root.active_calibration_pair_index, true, mx); }
     }
 
     calibration_bar := CutoffCalibrationBar {
-        visible: root.active_tool == 5 && root.selected_plot_index >= 0;
+        visible: root.active_tool == 5 && root.can_calibrate_cutoffs && root.selected_plot_index >= 0;
         x: parent.width - self.preferred-width - 12px;
         y: 10px;
         pairs: root.calibration_pairs;
@@ -277,6 +276,7 @@ export component Plot2DViewport inherits Rectangle {
         markers_count: root.markers_count;
         hover_coord_text: root.hover_coord_text;
         settings_open: !root.plot_sidebar_collapsed;
+        can_calibrate_cutoffs: root.can_calibrate_cutoffs;
         reset_zoom => { root.reset_zoom(); }
         clear_markers => { root.clear_markers(); }
         toggle_settings => {

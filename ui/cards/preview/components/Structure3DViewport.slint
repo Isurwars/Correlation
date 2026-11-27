@@ -16,7 +16,7 @@ import { Structure3DWorkflowBar } from "./Structure3DWorkflowBar.slint";
 import { Structure3DOverlays } from "./Structure3DOverlays.slint";
 import { OrientationGizmo } from "./OrientationGizmo.slint";
 import { AtomInspectorCard } from "./AtomInspectorCard.slint";
-import { CameraHudState, InspectedAtomInfo, ElementLegendItem } from "../../../Types.slint";
+import { CameraHudState, InspectedAtomInfo, ElementLegendItem, RecentFileItem } from "../../../Types.slint";
 
 export component Structure3DViewport inherits Rectangle {
     in property <image> structure_3d_image;
@@ -110,7 +110,7 @@ export component Structure3DViewport inherits Rectangle {
     in property <string> file_basename: "";
     in property <string> total_atoms: "";
     in property <string> num_frames: "";
-    in property <[string]> recent_files: [];
+    in property <[RecentFileItem]> recent_file_items: [];
 
     callback run_analysis();
     callback cancel_analysis();
@@ -234,10 +234,10 @@ export component Structure3DViewport inherits Rectangle {
         }
 
         // Centered Empty State when no structure file is loaded
-            if (!root.file_loaded): Structure3DEmptyState {
+        if (!root.file_loaded): Structure3DEmptyState {
             x: (parent.width - self.width) / 2;
             y: (parent.height - self.height) / 2;
-            recent_files: root.recent_files;
+            recent_file_items: root.recent_file_items;
             browse_file => { root.browse_file(); }
             load_sample(s) => { root.load_sample(s); }
             load_recent(r) => { root.load_recent(r); }

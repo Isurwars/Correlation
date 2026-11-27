@@ -7,6 +7,7 @@ import {
     MaterialText,
     Vertical,
     Matrix,
+    TooltipTarget,
 } from "../../material/material.slint";
 import { BondCutoff, AtomCount, SanityBadgeState } from "../../Types.slint";
 import { SanityBadge } from "SanityBadge.slint";
@@ -36,21 +37,7 @@ export component BondCutoffsCard inherits OutlinedCard {
     pure function get_flat_index(i: int, j: int, N: int) -> int {
         let r = min(i, j);
         let c = max(i, j);
-        let r_term = (r == 0) ? 0 : 
-                     (r == 1) ? 1 : 
-                     (r == 2) ? 3 : 
-                     (r == 3) ? 6 : 
-                     (r == 4) ? 10 : 
-                     (r == 5) ? 15 : 
-                     (r == 6) ? 21 : 
-                     (r == 7) ? 28 : 
-                     (r == 8) ? 36 : 
-                     (r == 9) ? 45 : 
-                     (r == 10) ? 55 : 
-                     (r == 11) ? 66 : 
-                     (r == 12) ? 78 : 
-                     (r == 13) ? 91 : 
-                     (r == 14) ? 105 : 120;
+        let r_term = Math.round((r * (r + 1)) / 2);
         return r * N - r_term + c;
     }
 
@@ -63,24 +50,6 @@ export component BondCutoffsCard inherits OutlinedCard {
         }
         return false;
     }
-
-    out property <string> hovered_tooltip_text:
-        !root.file_loaded ? "" :
-        (matrix_legend_area.has-hover ? "Pairwise bond cutoffs matrix in Ångströms.\n\n▲ Upper Triangle: Max distance (bonding cutoff)\n▼ Lower Triangle: Min distance (core exclusion)\n\n✏️ Direct Editing: Click any cell in the table below to customize individual pair limits." :
-        scaling_drawer.hovered_tooltip_text);
-
-    out property <length> hovered_x:
-        !root.file_loaded ? 0px :
-        (matrix_legend_area.has-hover ? matrix_legend_area.absolute-position.x + matrix_legend_area.mouse-x :
-        scaling_drawer.hovered_x);
-
-    out property <length> hovered_y:
-        !root.file_loaded ? 0px :
-        (matrix_legend_area.has-hover ? matrix_legend_area.absolute-position.y + matrix_legend_area.mouse-y :
-        scaling_drawer.hovered_y);
-
-    out property <length> hovered_width: 0px;
-    out property <length> hovered_height: 0px;
 
     Vertical {
         padding: MaterialStyleMetrics.spacing_8;
@@ -115,9 +84,10 @@ export component BondCutoffsCard inherits OutlinedCard {
                 color: MaterialPalette.on_surface_variant;
             }
 
-            matrix_legend_area := TouchArea {
+            TooltipTarget {
                 visible: root.file_loaded;
                 height: root.file_loaded ? self.preferred-height : 0px;
+                tooltip_text: "Pairwise bond cutoffs matrix in Ångströms.\n\n▲ Upper Triangle: Max distance (bonding cutoff)\n▼ Lower Triangle: Min distance (core exclusion)\n\n✏️ Click any cell below to customize individual pair limits.";
                 HorizontalLayout {
                     spacing: 12px;
                     alignment: space-between;

@@ -42,6 +42,7 @@ import {
     WorkflowState,
     SanityBadgeState,
     DomainPresetItem,
+    RecentFileItem,
     PlotAxisSettings,
     PhysicsDiagnostics,
     TaggedPeakRecord,
@@ -78,6 +79,8 @@ export {
     ComparisonCurveData,
     FileMetadata,
     WorkflowState,
+    DomainPresetItem,
+    RecentFileItem,
     CommandItem,
     CameraHudState,
     InspectedAtomInfo,
@@ -135,6 +138,7 @@ export component AppWindow inherits Window {
     in-out property <int> preview_dual_left_view: 0; // 0: g(r), 1: S(Q), 2: PAD, 3: XRD, 4: 2D Phase Heatmap
     callback select_dual_left_plot(int);
     in property <[string]> recent_files: [];
+    in property <[RecentFileItem]> recent_file_items: [];
     callback reload_file();
     callback load_sample(string);
     callback load_recent_file(string);
@@ -142,6 +146,8 @@ export component AppWindow inherits Window {
     /// Analysis execution state
     in property <bool> analysis_running: false;
     in property <bool> analysis_done: false;
+    in-out property <bool> results_stale: false;
+    in property <bool> is_radial_plot_active: false;
     in property <float> progress: 0.0;
     in property <bool> text_opacity: false;
     in-out property <string> analysis_status_text: "Ready to run analysis.";
@@ -220,7 +226,11 @@ export component AppWindow inherits Window {
     in property <[CurveToggleItem]> curve_toggle_items: [];
     in-out property <int> selected_plot_index: -1;
     in property <int> pinned_runs_count: 0;
+    in-out property <bool> is_dark_theme: true;
     out property <bool> is_dark: Palette.color_scheme == ColorScheme.dark;
+    changed is_dark_theme => {
+        Palette.color-scheme = root.is_dark_theme ? ColorScheme.dark : ColorScheme.light;
+    }
 
     in-out property <string> hover_coord_text: "";
     in-out property <bool> has_active_zoom: false;
@@ -402,8 +412,11 @@ export component AppWindow inherits Window {
             }
         }
         else if (cmd_id == "toggle_theme") {
-            Palette.color-scheme = Palette.color-scheme == ColorScheme.dark ? ColorScheme.light : ColorScheme.dark;
-            ToastState.show(Palette.color-scheme == ColorScheme.dark ? "Switched to Dark Theme" : "Switched to Light Theme", 0);
+            let next_dark = Palette.color-scheme != ColorScheme.dark;
+            root.is_dark_theme = next_dark;
+            Palette.color-scheme = next_dark ? ColorScheme.dark : ColorScheme.light;
+            root.theme_changed(next_dark);
+            ToastState.show(next_dark ? "Switched to Dark Theme" : "Switched to Light Theme", 0);
         }
         else if (cmd_id == "toggle_zen") { root.toggle_zen_mode(); }
         else if (cmd_id == "show_shortcuts") { root.shortcuts_modal_open = true; }
@@ -430,9 +443,9 @@ export component AppWindow inherits Window {
             root.reset_view_3d();
             ToastState.show("Viewport zoom & 3D camera reset", 0);
         }
-        else if (cmd_id == "sample_pdsi") { root.load_sample("a-PdSi"); ToastState.show("Loading a-PdSi sample...", 0); }
-        else if (cmd_id == "sample_cellulose") { root.load_sample("Cellulose"); ToastState.show("Loading Cellulose sample...", 0); }
-        else if (cmd_id == "sample_si") { root.load_sample("Si"); ToastState.show("Loading Silicon sample...", 0); }
+        else if (cmd_id == "sample_pdsi") { root.load_sample("a-PdSi"); }
+        else if (cmd_id == "sample_cellulose") { root.load_sample("Cellulose"); }
+        else if (cmd_id == "sample_si") { root.load_sample("Si"); }
     }
 
     // Export Options Properties & Callbacks
@@ -451,6 +464,9 @@ export component AppWindow inherits Window {
 
     // Callbacks (Bound to AppController.cpp)
     callback layout_geometry_changed(length, length);
+    callback right_layout_changed(length);
+    callback dual_split_changed(float);
+    callback theme_changed(bool);
     callback browse_file();
     callback rename_element(string, string);
     callback run_analysis();
@@ -594,8 +610,29 @@ export component AppWindow inherits Window {
     // ============================================================================
     
 
+    property <bool> esc_cancel_armed: false;
+    esc_cancel_timer := Timer {
+        interval: 2000ms;
+        running: root.esc_cancel_armed;
+        triggered => { root.esc_cancel_armed = false; }
+    }
+
+    changed analysis_running => {
+        if (!root.analysis_running) {
+            root.esc_cancel_armed = false;
+        }
+    }
+
     changed analysis_options => {
         root.validate_inputs();
+        if (root.analysis_done && !root.analysis_running) {
+            root.results_stale = true;
+        }
+    }
+    changed bond_cutoffs => {
+        if (root.analysis_done && !root.analysis_running) {
+            root.results_stale = true;
+        }
     }
     changed material_type => {
         root.material_type_changed(root.material_type);
@@ -609,39 +646,13 @@ export component AppWindow inherits Window {
     }
     changed analysis_done => {
         if root.analysis_done {
+            root.results_stale = false;
             root.active_panel = 3;
         }
     }
-
-    /// hovered_tooltip_text: Dynamically update based on the currently
-    ///   hovered component.
-    property <string> active_panel_tooltip: side_panel_host.hovered_tooltip_text;
-    property <string> right_panel_tooltip: right_side_panel_host.hovered_tooltip_text;
-    property <string> preview_hovered_tooltip: preview_card.hovered_tooltip_text;
-
-    property <string> hovered_tooltip_text: 
-        active_panel_tooltip != "" ? active_panel_tooltip :
-        right_panel_tooltip != "" ? right_panel_tooltip : preview_hovered_tooltip;
-
-    property <length> hovered_x:
-        side_panel_host.hovered_tooltip_text != "" ? side_panel_host.hovered_x :
-        right_side_panel_host.hovered_tooltip_text != "" ? right_side_panel_host.hovered_x :
-        preview_hovered_tooltip != "" ? preview_card.hovered_x : 0px;
-
-    property <length> hovered_y:
-        side_panel_host.hovered_tooltip_text != "" ? side_panel_host.hovered_y :
-        right_side_panel_host.hovered_tooltip_text != "" ? right_side_panel_host.hovered_y :
-        preview_hovered_tooltip != "" ? preview_card.hovered_y : 0px;
-
-    property <length> hovered_width:
-        side_panel_host.hovered_tooltip_text != "" ? side_panel_host.hovered_width :
-        right_side_panel_host.hovered_tooltip_text != "" ? right_side_panel_host.hovered_width :
-        preview_hovered_tooltip != "" ? preview_card.hovered_width : 0px;
-
-    property <length> hovered_height:
-        side_panel_host.hovered_tooltip_text != "" ? side_panel_host.hovered_height :
-        right_side_panel_host.hovered_tooltip_text != "" ? right_side_panel_host.hovered_height :
-        preview_hovered_tooltip != "" ? preview_card.hovered_height : 0px;
+    changed preview_dual_split_ratio => {
+        root.dual_split_changed(root.preview_dual_split_ratio);
+    }
 
     title: root.file_loaded ? ("Correlation " + root.app_version + " - " + root.file_status_text) : ("Correlation " + root.app_version);
     icon: @image-url("../Images/Logo.png");
@@ -701,8 +712,14 @@ export component AppWindow inherits Window {
                     return accept;
                 }
                 if (root.analysis_running) {
-                    root.cancel_analysis();
-                    ToastState.show("Analysis cancelled", 2);
+                    if (root.esc_cancel_armed) {
+                        root.esc_cancel_armed = false;
+                        root.cancel_analysis();
+                        ToastState.show("Analysis cancelled", 2);
+                    } else {
+                        root.esc_cancel_armed = true;
+                        ToastState.show("Press Esc again within 2s to cancel running analysis", 2);
+                    }
                 }
                 return accept;
             }
@@ -736,8 +753,11 @@ export component AppWindow inherits Window {
                 return accept;
             }
             if (event.modifiers.control && (event.text == "d" || event.text == "D")) {
-                Palette.color-scheme = Palette.color-scheme == ColorScheme.dark ? ColorScheme.light : ColorScheme.dark;
-                ToastState.show(Palette.color-scheme == ColorScheme.dark ? "Switched to Dark Theme" : "Switched to Light Theme", 0);
+                let next_dark = Palette.color-scheme != ColorScheme.dark;
+                root.is_dark_theme = next_dark;
+                Palette.color-scheme = next_dark ? ColorScheme.dark : ColorScheme.light;
+                root.theme_changed(next_dark);
+                ToastState.show(next_dark ? "Switched to Dark Theme" : "Switched to Light Theme", 0);
                 return accept;
             }
             if (event.modifiers.control && event.text == "]") {
@@ -859,8 +879,11 @@ export component AppWindow inherits Window {
                     run_analysis => { root.run_analysis(); }
                     cancel_analysis => { root.cancel_analysis(); }
                     toggle_theme => {
-                        Palette.color-scheme = Palette.color-scheme == ColorScheme.dark ? ColorScheme.light : ColorScheme.dark;
-                        ToastState.show(Palette.color-scheme == ColorScheme.dark ? "Switched to Dark Theme" : "Switched to Light Theme", 0);
+                        let next_dark = Palette.color-scheme != ColorScheme.dark;
+                        root.is_dark_theme = next_dark;
+                        Palette.color-scheme = next_dark ? ColorScheme.dark : ColorScheme.light;
+                        root.theme_changed(next_dark);
+                        ToastState.show(next_dark ? "Switched to Dark Theme" : "Switched to Light Theme", 0);
                     }
                     toggle_collapse => {
                         if (root.active_panel >= 0) {
@@ -904,8 +927,11 @@ export component AppWindow inherits Window {
                     };
 
                     material_type <=> root.material_type;
+                    domain_presets: root.domain_presets;
                     analysis_options <=> root.analysis_options;
                     app_errors: root.app_errors;
+                    hdf5_available: root.hdf5_available;
+                    parquet_available: root.parquet_available;
 
                     has_radial_active: root.has_radial_active;
                     has_angular_active: root.has_angular_active;
@@ -937,8 +963,15 @@ export component AppWindow inherits Window {
                     rename_element(old_sym, new_sym) => { root.rename_element(old_sym, new_sym); }
                     reset_trajectory_options => { root.reset_trajectory_options(); }
                     reset_material_type => { root.reset_material_type(); }
+                    apply_domain_preset(id) => { root.apply_domain_preset(id); }
                     run_analysis => { root.run_analysis(); }
                     cancel_analysis => { root.cancel_analysis(); }
+                    open_style_inspector => {
+                        root.active_right_panel = 0;
+                        root.last_active_right_panel = 0;
+                        root.right_col_width = Math.max(200px, root.last_right_col_width);
+                        right_side_panel_host.plot_active_tab = 1;
+                    }
 
                     reset_bond_cutoffs => { root.reset_bond_cutoffs(); }
                     fix_sanity_issue(action) => { root.fix_sanity_issue(action); }
@@ -1036,6 +1069,9 @@ export component AppWindow inherits Window {
                     file_loaded: root.file_loaded;
                     analysis_running: root.analysis_running;
                     has_validation_errors: root.has_validation_errors;
+                    results_stale: root.results_stale;
+                    plot_sidebar_collapsed: root.active_right_panel != 0;
+                    can_calibrate_cutoffs: root.is_radial_plot_active && root.calibration_pairs.length > 0;
                     file_basename: root.file_basename;
                     total_atoms: root.total_atoms;
                     num_frames: root.num_frames;
@@ -1052,7 +1088,7 @@ export component AppWindow inherits Window {
 
                     table_headers: root.table_headers;
                     table_rows: root.table_rows;
-                    recent_files: root.recent_files;
+                    recent_file_items: root.recent_file_items;
 
                     load_sample(s) => { root.load_sample(s); }
                     load_recent(r) => { root.load_recent_file(r); }
@@ -1274,6 +1310,11 @@ export component AppWindow inherits Window {
                 // 3. Splitter Handle between Preview Workspace and Right Inspector
                 right_splitter_handle := SplitterHandle {
                     visible: (root.active_right_panel >= 0 || self.is_dragging) && root.width >= 700px;
+                    changed is_dragging => {
+                        if (!self.is_dragging) {
+                            root.right_layout_changed(root.right_col_width);
+                        }
+                    }
                     moved(delta) => {
                         let current_w = root.active_right_panel == -1 ? 0px : root.right_col_width;
                         let target_w = current_w - delta;
@@ -1299,6 +1340,7 @@ export component AppWindow inherits Window {
                     reset => {
                         root.right_col_width = 320px;
                         root.last_right_col_width = 320px;
+                        root.right_layout_changed(root.right_col_width);
                     }
                 }
 
@@ -1512,13 +1554,13 @@ export component AppWindow inherits Window {
     }
 
     ToolTip {
-        hovered_x: TooltipState.active.text != "" ? TooltipState.active.x : root.hovered_x;
-        hovered_y: TooltipState.active.text != "" ? TooltipState.active.y : root.hovered_y;
-        hovered_width: TooltipState.active.text != "" ? TooltipState.active.width : root.hovered_width;
-        hovered_height: TooltipState.active.text != "" ? TooltipState.active.height : root.hovered_height;
+        hovered_x: TooltipState.active.x;
+        hovered_y: TooltipState.active.y;
+        hovered_width: TooltipState.active.width;
+        hovered_height: TooltipState.active.height;
         parent_width: root.width;
         parent_height: root.height;
-        visible: TooltipState.active.text != "" || root.hovered_tooltip_text != "";
-        text: TooltipState.active.text != "" ? TooltipState.active.text : root.hovered_tooltip_text;
+        visible: TooltipState.active.text != "";
+        text: TooltipState.active.text;
     }
 }

@@ -32,7 +32,7 @@ export component CheckBoxRow inherits TouchArea {
     }
 
     delay_timer := Timer {
-        interval: 150ms;
+        interval: 250ms;
         triggered => {
             if (root.show_pending && root.has-hover) {
                 TooltipState.active = {

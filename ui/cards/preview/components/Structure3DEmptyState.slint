@@ -6,20 +6,24 @@
 import {
     MaterialStyleMetrics,
     MaterialPalette,
+    MaterialTypography,
+    MaterialText,
     FilledButton,
     EmptyState,
     Chip,
     Icons,
+    TooltipTarget,
 } from "../../../material/material.slint";
+import { RecentFileItem } from "../../../Types.slint";
 
 export component Structure3DEmptyState inherits Rectangle {
     callback browse_file();
     callback load_sample(string);
     callback load_recent(string);
-    in property <[string]> recent_files: [];
+    in property <[RecentFileItem]> recent_file_items: [];
 
-    width: 380px;
-    height: 190px;
+    width: 400px;
+    height: root.recent_file_items.length > 0 ? 228px : 190px;
     background: MaterialPalette.surface_container_high.with_alpha(92%);
     border-radius: MaterialStyleMetrics.border_radius_16;
     border-width: 1px;
@@ -33,7 +37,6 @@ export component Structure3DEmptyState inherits Rectangle {
             height: 34px;
             text: "Open Trajectory File... (Ctrl+O)";
             icon: Icons.folder_open;
-            tooltip: "Browse and load a structure or molecular dynamics trajectory file (Ctrl+O).";
             clicked => { root.browse_file(); }
         }
 
@@ -47,17 +50,63 @@ export component Structure3DEmptyState inherits Rectangle {
                 tooltip_text: "Load bundled amorphous Pd–Si metallic glass sample.";
                 clicked => { root.load_sample("a-PdSi"); }
             }
+
             Chip {
                 label: "🌿 Cellulose";
                 corner_radius: MaterialStyleMetrics.border_radius_full;
                 tooltip_text: "Load bundled crystalline/amorphous cellulose sample.";
                 clicked => { root.load_sample("Cellulose"); }
             }
+
             Chip {
                 label: "💎 Silicon";
                 corner_radius: MaterialStyleMetrics.border_radius_full;
                 tooltip_text: "Load bundled crystalline diamond-cubic silicon sample.";
                 clicked => { root.load_sample("Si"); }
+            }
+        }
+
+        if root.recent_file_items.length > 0: HorizontalLayout {
+            spacing: MaterialStyleMetrics.spacing_4;
+            alignment: center;
+
+            MaterialText {
+                text: "Recent:";
+                font-size: MaterialTypography.label_small.font_size;
+                color: MaterialPalette.on_surface_variant;
+                vertical-alignment: center;
+            }
+
+            for item[idx] in root.recent_file_items: VerticalLayout {
+                if idx < 3: rec_touch := TooltipTarget {
+                    width: min(104px, rec_txt.preferred-width + 14px);
+                    height: 22px;
+                    mouse-cursor: pointer;
+                    tooltip_text: item.full_path;
+                    accessible-role: button;
+                    accessible-label: "Load recent file " + item.basename;
+                    clicked => { root.load_recent(item.full_path); }
+
+                    Rectangle {
+                        border-radius: 11px;
+                        background: rec_touch.has-hover ? MaterialPalette.primary_container : MaterialPalette.surface_container_lowest;
+                        border-width: 1px;
+                        border-color: MaterialPalette.outline_variant.with_alpha(50%);
+
+                        HorizontalLayout {
+                            padding-left: 6px;
+                            padding-right: 6px;
+
+                            rec_txt := MaterialText {
+                                text: item.basename;
+                                font-size: MaterialTypography.label_small.font_size;
+                                color: rec_touch.has-hover ? MaterialPalette.on_primary_container : MaterialPalette.on_surface_variant;
+                                horizontal-alignment: center;
+                                vertical-alignment: center;
+                            }
+                        }
+                    }
+                }
             }
         }
     }

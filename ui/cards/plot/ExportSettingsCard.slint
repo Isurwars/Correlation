@@ -6,14 +6,10 @@
 import {
     MaterialStyleMetrics,
     MaterialPalette,
-    MaterialTypography,
     MaterialText,
-    TextField,
-    Vertical,
-    Horizontal,
-    DropDownMenu,
-    MenuItem,
-    CheckBoxRow,
+    FilledButton,
+    InfoRow,
+    Icons,
 } from "../../material/material.slint";
 import { OptionSection } from "../common/OptionSection.slint";
 
@@ -22,210 +18,58 @@ export component ExportSettingsCard inherits OptionSection {
     reset_enabled: root.enabled;
     in property <bool> enabled: true;
 
-    in-out property <int> export_size_preset: 0;
-    in-out property <int> export_palette: 0;
-    in-out property <string> export_font_scale: "1.0";
-    in-out property <string> export_line_width: "3.0";
-    in-out property <string> export_marker_size: "3.5";
-    in-out property <bool> export_show_legend: true;
-    in-out property <bool> export_show_grid: true;
-    in-out property <bool> export_show_markers: false;
-    in-out property <bool> export_fill_area: false;
-    in-out property <bool> export_manual_ticks: false;
-    in-out property <string> export_x_major_step: "1.0";
-    in-out property <string> export_y_major_step: "0.5";
-    in-out property <int> export_minor_subdivisions: 0;
+    in property <int> export_size_preset: 0;
+    in property <int> export_palette: 0;
+    in property <string> export_font_scale: "1.0";
+    in property <string> export_line_width: "3.0";
 
-    in property <string> export_font_scale_error: "";
-    in property <string> export_line_width_error: "";
-    in property <string> export_marker_size_error: "";
+    callback open_style_inspector();
 
-    out property <string> hovered_tooltip_text:
-        size_area.has-hover ? "Select a standard publication size preset.\n\n📏 Default: 1200×900 px\n📏 Single Column: 3.5\" at 300 DPI\n📏 Double Column: 7\" at 300 DPI\n📏 Presentation: 10\" at 300 DPI" :
-        palette_area.has-hover ? "Choose color palette for publication lines.\n\n🎨 Okabe-Ito: Colorblind-safe palette (8 colors)\n🎨 Grayscale: Black/white/gray shades\n🎨 Viridis: Perceptually uniform colors" :
-        font_area.has-hover ? "Font scale multiplier for all labels.\n\n💡 Tip: Use 1.5–2.0 for single/double column LaTeX figures to ensure label readability." :
-        line_area.has-hover ? "Stroke width for plot curves (in px).\n\n💡 Tip: Wider strokes (3.0px+) look much cleaner in paper figures." :
-        marker_size_area.has-hover ? "Radius of data point markers in pixels (default: 3.5px).\n\n💡 Tip: Use smaller markers (2.0–3.0px) for dense data or larger (4.0–6.0px) for presentation slides." :
-        grid_area.has-hover ? "Toggle the background reference grid lines on the plot." :
-        legend_area.has-hover ? "Toggle the interactive color legend in the upper-right corner." :
-        markers_area.has-hover ? "Toggle data point markers (dots) along the curves." :
-        fill_area_checkbox_area.has-hover ? "Toggle a soft transparent background shading under the curves." : "";
-
-    out property <length> hovered_x:
-        size_area.has-hover ? size_area.absolute-position.x + size_area.mouse-x :
-        palette_area.has-hover ? palette_area.absolute-position.x + palette_area.mouse-x :
-        font_area.has-hover ? font_area.absolute-position.x + font_area.mouse-x :
-        line_area.has-hover ? line_area.absolute-position.x + line_area.mouse-x :
-        marker_size_area.has-hover ? marker_size_area.absolute-position.x + marker_size_area.mouse-x :
-        grid_area.has-hover ? grid_area.absolute-position.x + grid_area.mouse-x :
-        legend_area.has-hover ? legend_area.absolute-position.x + legend_area.mouse-x :
-        markers_area.has-hover ? markers_area.absolute-position.x + markers_area.mouse-x :
-        fill_area_checkbox_area.has-hover ? fill_area_checkbox_area.absolute-position.x + fill_area_checkbox_area.mouse-x : 0px;
-    out property <length> hovered_y:
-        size_area.has-hover ? size_area.absolute-position.y + size_area.mouse-y :
-        palette_area.has-hover ? palette_area.absolute-position.y + palette_area.mouse-y :
-        font_area.has-hover ? font_area.absolute-position.y + font_area.mouse-y :
-        line_area.has-hover ? line_area.absolute-position.y + line_area.mouse-y :
-        marker_size_area.has-hover ? marker_size_area.absolute-position.y + marker_size_area.mouse-y :
-        grid_area.has-hover ? grid_area.absolute-position.y + grid_area.mouse-y :
-        legend_area.has-hover ? legend_area.absolute-position.y + legend_area.mouse-y :
-        markers_area.has-hover ? markers_area.absolute-position.y + markers_area.mouse-y :
-        fill_area_checkbox_area.has-hover ? fill_area_checkbox_area.absolute-position.y + fill_area_checkbox_area.mouse-y : 0px;
-    out property <length> hovered_width: 0px;
-    out property <length> hovered_height: 0px;
-
-    property <[MenuItem]> size_items: [
-        { text: "Default (1200x900)", enabled: true },
-        { text: "Single Column (3.5\" @ 300 DPI)", enabled: true },
-        { text: "Double Column (7.0\" @ 300 DPI)", enabled: true },
-        { text: "Presentation (10.0\" @ 300 DPI)", enabled: true }
+    property <[string]> size_labels: [
+        "Default (1200×900)",
+        "Single Column (3.5\")",
+        "Double Column (7.0\")",
+        "Presentation (10.0\")",
     ];
 
-    property <[MenuItem]> palette_items: [
-        { text: "Okabe-Ito (Colorblind)", enabled: true },
-        { text: "Grayscale (B&W)", enabled: true },
-        { text: "Viridis", enabled: true },
-        { text: "Magma (Continuous)", enabled: true },
-        { text: "Heatmap (Continuous)", enabled: true },
-        { text: "Rainbow (Continuous)", enabled: true },
-        { text: "Turbo (Continuous)", enabled: true },
-        { text: "Plasma (Continuous)", enabled: true },
-        { text: "Inferno (Continuous)", enabled: true },
-        { text: "Cividis (Continuous)", enabled: true }
+    property <[string]> palette_labels: [
+        "Okabe-Ito",
+        "Grayscale",
+        "Viridis",
+        "Magma",
+        "Heatmap",
+        "Rainbow",
+        "Turbo",
+        "Plasma",
+        "Inferno",
+        "Cividis",
     ];
 
+    InfoRow {
+        label: "Figure Size:";
+        value: (root.export_size_preset >= 0 && root.export_size_preset < root.size_labels.length)
+            ? root.size_labels[root.export_size_preset]
+            : "Default";
+    }
 
-            Rectangle {
-                size_area := TouchArea {}
-                DropDownMenu {
-                    width: 100%;
-                    label: "Preset Size";
-                    enabled: root.enabled;
-                    items: root.size_items;
-                    current_index <=> root.export_size_preset;
-                }
-            }
+    InfoRow {
+        label: "Palette:";
+        value: (root.export_palette >= 0 && root.export_palette < root.palette_labels.length)
+            ? root.palette_labels[root.export_palette]
+            : "Okabe-Ito";
+    }
 
-            Rectangle {
-                palette_area := TouchArea {}
-                DropDownMenu {
-                    width: 100%;
-                    label: "Color Palette";
-                    enabled: root.enabled;
-                    items: root.palette_items;
-                    current_index <=> root.export_palette;
-                }
-            }
+    InfoRow {
+        label: "Typography & Stroke:";
+        value: "Font ×" + root.export_font_scale + " • " + root.export_line_width + " pt";
+    }
 
-            font_area := TouchArea {
-                TextField {
-                    width: 100%;
-                    label: "Font Scale";
-                    enabled: root.enabled;
-                    text <=> root.export_font_scale;
-                    has_error: root.export_font_scale_error != "";
-                    supporting_text: root.export_font_scale_error;
-                }
-            }
-
-            line_area := TouchArea {
-                TextField {
-                    width: 100%;
-                    label: "Line Width (px)";
-                    enabled: root.enabled;
-                    text <=> root.export_line_width;
-                    has_error: root.export_line_width_error != "";
-                    supporting_text: root.export_line_width_error;
-                }
-            }
-
-            marker_size_area := TouchArea {
-                TextField {
-                    width: 100%;
-                    label: "Marker Size (px)";
-                    enabled: root.enabled;
-                    text <=> root.export_marker_size;
-                    has_error: root.export_marker_size_error != "";
-                    supporting_text: root.export_marker_size_error;
-                }
-            }
-
-            grid_area := CheckBoxRow {
-                text: "Show Grid";
-                enabled: root.enabled;
-                check_state_bool: root.export_show_grid;
-                checked_state_changed(s) => {
-                    root.export_show_grid = s;
-                }
-            }
-
-            legend_area := CheckBoxRow {
-                text: "Show Legend";
-                enabled: root.enabled;
-                check_state_bool: root.export_show_legend;
-                checked_state_changed(s) => {
-                    root.export_show_legend = s;
-                }
-            }
-
-            markers_area := CheckBoxRow {
-                text: "Show Markers";
-                enabled: root.enabled;
-                check_state_bool: root.export_show_markers;
-                checked_state_changed(s) => {
-                    root.export_show_markers = s;
-                }
-            }
-
-            fill_area_checkbox_area := CheckBoxRow {
-                text: "Shade Curves";
-                enabled: root.enabled;
-                check_state_bool: root.export_fill_area;
-                checked_state_changed(s) => {
-                    root.export_fill_area = s;
-                }
-            }
-
-            // Axes & Major Ticks Section
-            Rectangle {
-                height: 1px;
-                background: MaterialPalette.outline_variant.with_alpha(50%);
-            }
-
-            MaterialText {
-                text: "Axes & Major Ticks";
-                style: MaterialTypography.label_medium_prominent;
-                color: MaterialPalette.primary;
-            }
-
-            manual_ticks_area := CheckBoxRow {
-                text: "Manual Tick Spacing";
-                enabled: root.enabled;
-                check_state_bool: root.export_manual_ticks;
-                checked_state_changed(s) => {
-                    root.export_manual_ticks = s;
-                }
-            }
-
-            if root.export_manual_ticks : VerticalLayout {
-                spacing: 8px;
-
-                TouchArea {
-                    TextField {
-                        width: 100%;
-                        label: "Major X Step (e.g. 1.0 Å)";
-                        enabled: root.enabled;
-                        text <=> root.export_x_major_step;
-                    }
-                }
-
-                TouchArea {
-                    TextField {
-                        width: 100%;
-                        label: "Major Y Step (e.g. 0.5)";
-                        enabled: root.enabled;
-                        text <=> root.export_y_major_step;
-                    }
-                }
-            }
+    FilledButton {
+        height: 36px;
+        text: "Open Style & Axes Inspector";
+        icon: Icons.tune;
+        background: MaterialPalette.surface_container_highest;
+        text_color: MaterialPalette.primary;
+        clicked => { root.open_style_inspector(); }
+    }
 }

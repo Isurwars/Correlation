@@ -30,9 +30,9 @@ export component PlotStyleAxesTab inherits ScrollView {
     callback reset_axis_settings();
     callback reset_export_settings();
 
-    content-height: 820px;
+    content_height: style_axes_layout.preferred-height + 8px;
 
-    VerticalLayout {
+    style_axes_layout := VerticalLayout {
         spacing: MaterialStyleMetrics.spacing_12;
         padding-right: 2px;
 
@@ -78,13 +78,11 @@ export component PlotStyleAxesTab inherits ScrollView {
                 color: MaterialPalette.on_surface;
             }
 
-            TooltipTarget {
+            DropDownMenu {
+                width: 100%;
+                items: root.palette_menu_items;
+                current_index <=> root.export_config.palette;
                 tooltip_text: "Choose colorblind-safe or continuous color palette for plot curves.";
-                DropDownMenu {
-                    width: 100%;
-                    items: root.palette_menu_items;
-                    current_index <=> root.export_config.palette;
-                }
             }
         }
 

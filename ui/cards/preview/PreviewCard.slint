@@ -19,6 +19,7 @@ import {
     CameraHudState,
     InspectedAtomInfo,
     ElementLegendItem,
+    RecentFileItem,
 } from "../../Types.slint";
 import { WorkflowStepper } from "./components/WorkflowStepper.slint";
 import { PreviewHeader } from "./components/PreviewHeader.slint";
@@ -74,6 +75,13 @@ export component PreviewCard inherits FilledCard {
     changed file_loaded => {
         if (root.file_loaded && !root.analysis_done) {
             root.active_tab = 1;
+            root.stepper_dismissed = false;
+        }
+    }
+
+    changed analysis_done => {
+        if (!root.analysis_done) {
+            root.stepper_dismissed = false;
         }
     }
 
@@ -81,6 +89,9 @@ export component PreviewCard inherits FilledCard {
     in property <bool> file_loaded: false;
     in property <bool> analysis_running: false;
     in property <bool> has_validation_errors: false;
+    in property <bool> results_stale: false;
+    in property <bool> can_calibrate_cutoffs: false;
+    property <bool> stepper_dismissed: false;
     in property <string> file_basename: "";
     in property <string> total_atoms: "";
     in property <string> num_frames: "";
@@ -106,7 +117,7 @@ export component PreviewCard inherits FilledCard {
     callback browse_file();
     callback load_sample(string);
     callback load_recent(string);
-    in property <[string]> recent_files: [];
+    in property <[RecentFileItem]> recent_file_items: [];
     callback run_analysis();
     callback cancel_analysis();
     callback open_panel(int);
@@ -247,32 +258,13 @@ export component PreviewCard inherits FilledCard {
 
     changed active_tab => { root.tab_changed(root.active_tab); }
 
-    // Hover state for tooltip (aggregated from child components)
-    out property <string> hovered_tooltip_text:
-        plot_2d.hovered_tooltip_text != "" ? plot_2d.hovered_tooltip_text :
-        preview_header.tooltip_text != "" ? preview_header.tooltip_text :
-        (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? "Remove all pinned runs from the comparison overlay." : "";
-
-    out property <length> hovered_x:
-        plot_2d.hovered_tooltip_text != "" ? plot_2d.hovered_x :
-        preview_header.tooltip_text != "" ? preview_header.tooltip_x :
-        (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? clear_pinned_area.absolute-position.x + clear_pinned_area.mouse-x : 0px;
-
-    out property <length> hovered_y:
-        plot_2d.hovered_tooltip_text != "" ? plot_2d.hovered_y :
-        preview_header.tooltip_text != "" ? preview_header.tooltip_y :
-        (root.pinned_runs_count > 0 && clear_pinned_area.has-hover) ? clear_pinned_area.absolute-position.y + clear_pinned_area.mouse-y : 0px;
-
-    out property <length> hovered_width: 0px;
-    out property <length> hovered_height: 0px;
-
     Vertical {
         width: 100%;
         height: 100%;
         spacing: MaterialStyleMetrics.spacing_8;
 
-        // 1. Workflow Stepper (auto-collapses once analysis completes to maximize viewport height)
-        if !root.analysis_done: WorkflowStepper {
+        // 1. Workflow Stepper (remains visible with Step 4 active until user dismisses)
+        if !root.stepper_dismissed: WorkflowStepper {
             file_loaded: root.file_loaded;
             analysis_running: root.analysis_running;
             analysis_done: root.analysis_done;
@@ -280,15 +272,20 @@ export component PreviewCard inherits FilledCard {
             open_panel(idx) => { root.open_panel(idx); }
             run_analysis => { root.run_analysis(); }
             cancel_analysis => { root.cancel_analysis(); }
+            dismiss => { root.stepper_dismissed = true; }
         }
 
-        // 2. Header: Plot dropdown and Tabs
-        preview_header := PreviewHeader {
+        // 2. Header: Plot dropdown, Stale-Plot Indicator, and Tabs
+        PreviewHeader {
             plot_items: root.plot_items;
             selected_plot_index <=> root.selected_plot_index;
             active_tab <=> root.active_tab;
             dual_scope <=> root.inspector_scope;
+            results_stale: root.results_stale;
+            analysis_running: root.analysis_running;
+            has_validation_errors: root.has_validation_errors;
             plot_selected(idx) => { root.plot_selected(idx); }
+            rerun_analysis => { root.run_analysis(); }
         }
 
         // 3. Pinned Runs Info
@@ -303,16 +300,12 @@ export component PreviewCard inherits FilledCard {
                 vertical-alignment: center;
             }
 
-            clear_pinned_area := TouchArea {
+            FilledButton {
                 width: 120px;
                 height: 100%;
-
-                FilledButton {
-                    width: 100%;
-                    height: 100%;
-                    text: "Clear Pinned";
-                    clicked => { root.clear_pinned_runs(); }
-                }
+                text: "Clear Pinned";
+                tooltip: "Remove all pinned runs from the comparison overlay.";
+                clicked => { root.clear_pinned_runs(); }
             }
         }
 
@@ -360,13 +353,14 @@ export component PreviewCard inherits FilledCard {
                             file_basename: root.file_basename;
                             total_atoms: root.total_atoms;
                             num_frames: root.num_frames;
-                            recent_files: root.recent_files;
+                            recent_file_items: root.recent_file_items;
                             active_tab: root.active_tab;
                             inspector_scope <=> root.inspector_scope;
                             hover_coord_text: root.hover_coord_text;
                             has_active_zoom: root.has_active_zoom;
                             markers_count: root.markers_count;
                             plot_sidebar_collapsed: root.plot_sidebar_collapsed;
+                            can_calibrate_cutoffs: root.can_calibrate_cutoffs;
                             tagged_peaks <=> root.tagged_peaks;
                             calibration_pairs: root.calibration_pairs;
                             active_calibration_pair_index <=> root.active_calibration_pair_index;
@@ -515,7 +509,7 @@ export component PreviewCard inherits FilledCard {
                 file_basename: root.file_basename;
                 total_atoms: root.total_atoms;
                 num_frames: root.num_frames;
-                recent_files: root.recent_files;
+                recent_file_items: root.recent_file_items;
                 clicked => {
                     if (root.active_tab == 2) {
                         root.inspector_scope = 1;

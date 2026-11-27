@@ -14,9 +14,19 @@ import {
     Icons,
     ScrollView,
 } from "../../material/material.slint";
-import { FileMetadata, WorkflowState, AnalysisOptions, AppErrors } from "../../Types.slint";
+import {
+    FileMetadata,
+    WorkflowState,
+    AnalysisOptions,
+    AppErrors,
+} from "../../Types.slint";
 import { PinnedExecutionBar } from "../components/PinnedExecutionBar.slint";
-import { OperationsDiagnosticsCard } from "../../cards/operations/OperationsDiagnosticsCard.slint";
+import {
+    OperationsDiagnosticsCard,
+} from "../../cards/operations/OperationsDiagnosticsCard.slint";
+import {
+    TrajectoryOptionsCard,
+} from "../../cards/operations/TrajectoryOptionsCard.slint";
 
 /// Modular Host Component for Panel 0: Operations & Trajectory Setup
 export component OperationsPanel inherits Rectangle {
@@ -38,31 +48,6 @@ export component OperationsPanel inherits Rectangle {
 
     in-out property <bool> atoms_expanded: true;
 
-    out property <string> hovered_tooltip_text:
-        btn_load.has_hover ? "Load a structure or trajectory file" :
-        btn_reload.has_hover ? "Reload the currently loaded file from disk.\n\n🔄 Useful when the trajectory is updated by an active external simulation." :
-        btn_export.has_hover ? "Convert or export the currently loaded structure into POSCAR, CELL, CIF, or CAR format." :
-        diagnostics_card.header_has_hover ? ("Loaded File: " + (root.file_metadata.status_text != "" ? root.file_metadata.status_text : "None")) :
-        diagnostics_card.diagnostics_has_hover ? "System Diagnostics & Composition.\n\n🔬 Details lattice dimensions, cell volume, macroscopic density, and atomic species counts." :
-        "";
-
-    out property <length> hovered_x:
-        btn_load.has_hover ? btn_load.hover_x :
-        btn_reload.has_hover ? btn_reload.hover_x :
-        btn_export.has_hover ? btn_export.hover_x :
-        diagnostics_card.header_has_hover ? diagnostics_card.header_hover_x :
-        diagnostics_card.diagnostics_has_hover ? diagnostics_card.diagnostics_hover_x :
-        0px;
-    out property <length> hovered_y:
-        btn_load.has_hover ? btn_load.hover_y :
-        btn_reload.has_hover ? btn_reload.hover_y :
-        btn_export.has_hover ? btn_export.hover_y :
-        diagnostics_card.header_has_hover ? diagnostics_card.header_hover_y :
-        diagnostics_card.diagnostics_has_hover ? diagnostics_card.diagnostics_hover_y :
-        0px;
-    out property <length> hovered_width: 0px;
-    out property <length> hovered_height: 0px;
-
     Vertical {
         width: 100%;
         height: 100%;
@@ -70,7 +55,6 @@ export component OperationsPanel inherits Rectangle {
         padding: 0;
 
         ScrollView {
-            vertical-stretch: 1;
             content_height: ops_content.preferred-height;
 
             ops_content := Vertical {
@@ -85,34 +69,33 @@ export component OperationsPanel inherits Rectangle {
                         Horizontal {
                             spacing: MaterialStyleMetrics.spacing_8;
 
-                            btn_load := FilledButton {
+                            FilledButton {
                                 height: MaterialStyleMetrics.size_40;
                                 horizontal-stretch: 1;
                                 text: "Load File";
-                                tooltip: "";
                                 icon: Icons.folder_open;
                                 enabled: root.load_enabled && !root.workflow_state.analysis_running;
                                 clicked => { root.browse_file(); }
                             }
 
-                            btn_reload := IconButton {
+                            IconButton {
                                 accessible-label: "Reload Current File";
                                 height: MaterialStyleMetrics.size_40;
                                 width: MaterialStyleMetrics.size_40;
                                 horizontal-stretch: 0;
                                 icon: Icons.restart_alt;
-                                tooltip: "";
+                                tooltip: "Reload current file from disk.\n\n🔄 Useful when a trajectory is updated by an active external simulation.";
                                 enabled: root.load_enabled && root.file_metadata.loaded && !root.workflow_state.analysis_running;
                                 clicked => { root.reload_file(); }
                             }
 
-                            btn_export := IconButton {
+                            IconButton {
                                 accessible-label: "Export or Convert Structure";
                                 height: MaterialStyleMetrics.size_40;
                                 width: MaterialStyleMetrics.size_40;
                                 horizontal-stretch: 0;
                                 icon: Icons.save;
-                                tooltip: "";
+                                tooltip: "Convert or export the loaded structure into POSCAR, CELL, CIF, or CAR format (Ctrl+E).";
                                 enabled: root.load_enabled && root.file_metadata.loaded && !root.workflow_state.analysis_running;
                                 clicked => { root.export_structure(); }
                             }
@@ -126,7 +109,7 @@ export component OperationsPanel inherits Rectangle {
                     }
                 }
 
-                diagnostics_card := OperationsDiagnosticsCard {
+                OperationsDiagnosticsCard {
                     file_loaded: root.file_metadata.loaded;
                     file_basename: root.file_metadata.basename;
                     file_status_text: root.file_metadata.status_text;
@@ -139,6 +122,20 @@ export component OperationsPanel inherits Rectangle {
                     box_dimensions: root.file_metadata.box_dimensions;
                     atoms_expanded <=> root.atoms_expanded;
                     rename_element(old_sym, new_sym) => { root.rename_element(old_sym, new_sym); }
+                }
+
+                TrajectoryOptionsCard {
+                    file_loaded: root.file_metadata.loaded;
+                    num_frames: root.file_metadata.num_frames;
+                    time_step <=> root.analysis_options.time_step;
+                    time_step_error: root.app_errors.time_step_error;
+                    min_frame <=> root.analysis_options.min_frame;
+                    max_frame <=> root.analysis_options.max_frame;
+                    min_frame_error: root.app_errors.min_frame_error;
+                    max_frame_error: root.app_errors.max_frame_error;
+                    frame_stride <=> root.analysis_options.frame_stride;
+                    frame_stride_error: root.app_errors.frame_stride_error;
+                    reset => { root.reset_trajectory_options(); }
                 }
             }
         }

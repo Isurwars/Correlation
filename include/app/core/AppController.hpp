@@ -157,6 +157,11 @@ public:
   void updateActiveGroupFlags();
 
   /**
+   * @brief Flags current plot results as stale if an analysis has already completed.
+   */
+  void markResultsStaleIfDone() noexcept;
+
+  /**
    * @brief Returns the InputValidator instance.
    */
   InputValidator *getInputValidator() { return input_validator_.get(); }

@@ -4,12 +4,13 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 import {
-    MaterialAnimations,
     MaterialPalette,
     MaterialStyleMetrics,
     MaterialTypography,
     MaterialText,
     Chip,
+    Icons,
+    TooltipTarget,
 } from "../../../material/material.slint";
 
 export component WorkflowStepper inherits Rectangle {
@@ -21,13 +22,11 @@ export component WorkflowStepper inherits Rectangle {
     callback open_panel(int);
     callback run_analysis();
     callback cancel_analysis();
+    callback dismiss();
 
-    width: 100%;
     height: 28px;
 
     HorizontalLayout {
-        width: 100%;
-        height: 100%;
         spacing: MaterialStyleMetrics.spacing_8;
         alignment: center;
 
@@ -108,9 +107,35 @@ export component WorkflowStepper inherits Rectangle {
             selected: root.analysis_done;
             idle_fg: (root.analysis_done) ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
             enabled: root.analysis_done;
+            tooltip_text: "Open Export & Presentation panel to export CSV, HDF5, Parquet, or publication figures (Ctrl+S).";
             clicked => {
                 if (root.analysis_done) {
                     root.open_panel(3);
+                }
+            }
+        }
+
+        if root.analysis_done: dismiss_touch := TooltipTarget {
+            width: 24px;
+            height: 24px;
+            y: (parent.height - self.height) / 2;
+            mouse-cursor: pointer;
+            tooltip_text: "Hide workflow stepper to maximize viewport height.";
+            accessible-role: button;
+            accessible-label: "Hide Workflow Stepper";
+            clicked => { root.dismiss(); }
+
+            Rectangle {
+                border-radius: MaterialStyleMetrics.border_radius_full;
+                background: dismiss_touch.has-hover ? MaterialPalette.surface_container_highest : transparent;
+
+                Image {
+                    width: 14px;
+                    height: 14px;
+                    x: (parent.width - self.width) / 2;
+                    y: (parent.height - self.height) / 2;
+                    source: Icons.close;
+                    colorize: MaterialPalette.on_surface_variant;
                 }
             }
         }

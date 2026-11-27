@@ -28,6 +28,7 @@ export component ImagingToolbar inherits Rectangle {
     in property <int> markers_count: 0;
     in property <string> hover_coord_text: "";
     in property <bool> settings_open: false;
+    in property <bool> can_calibrate_cutoffs: false;
 
     callback reset_zoom();
     callback clear_markers();
@@ -35,48 +36,6 @@ export component ImagingToolbar inherits Rectangle {
     callback update_plot();
     callback copy_clipboard();
     callback export_plot();
-
-    out property <string> tooltip_text:
-        copy_btn.has-hover ? "Copy Plot to Clipboard\n\nCopy SVG vector image markup to system clipboard for instant pasting." :
-        export_btn.has-hover ? "Export Plot\n\nQuick export current plot visualization directly to SVG or PDF file." :
-        update_btn.has-hover ? "Update Plot\n\nApply current axis bounds, ticks, log scaling, and refresh visualization." :
-        settings_btn.has-hover ? "Plot Settings & Styling\n\nConfigure axis bounds (X/Y limits), tick intervals, log scale, and curve styling." :
-        home_btn.has-hover ? "Home (Reset Zoom)\n\nRestore full coordinate axes limits." :
-        zoom_btn.has-hover ? "Rubberband Box Zoom\n\nClick and drag on plot to inspect a specific region of interest." :
-        zoom_out_btn.has-hover ? "Click to Zoom Out\n\nClick anywhere on plot to step viewport zoom out centered on click." :
-        marker_x_btn.has-hover ? "Add Vertical Marker (+X)\n\nClick plot to place a vertical guide line at target distance or angle." :
-        marker_y_btn.has-hover ? "Add Horizontal Marker (+Y)\n\nClick plot to place a horizontal intensity threshold guide." :
-        calibrate_btn.has-hover ? "Calibrate Cutoffs\n\nInteractively adjust and auto-detect first coordination shell bond cutoffs on g(r)." :
-        peak_btn.has-hover ? "Peak & CN Inspector\n\nClick peak to auto-detect shell & CN, or drag to integrate a custom range." :
-        (root.markers_count > 0 && clear_markers_btn.has-hover) ? "Clear Markers\n\nRemove all inspection guides from the plot." : "";
-
-    out property <length> tooltip_x:
-        copy_btn.has-hover ? copy_btn.hover_x :
-        export_btn.has-hover ? export_btn.hover_x :
-        update_btn.has-hover ? update_btn.hover_x :
-        settings_btn.has-hover ? settings_btn.hover_x :
-        home_btn.has-hover ? home_btn.hover_x :
-        zoom_btn.has-hover ? zoom_btn.hover_x :
-        zoom_out_btn.has-hover ? zoom_out_btn.hover_x :
-        marker_x_btn.has-hover ? marker_x_btn.hover_x :
-        marker_y_btn.has-hover ? marker_y_btn.hover_x :
-        calibrate_btn.has-hover ? calibrate_btn.hover_x :
-        peak_btn.has-hover ? peak_btn.hover_x :
-        (root.markers_count > 0 && clear_markers_btn.has-hover) ? clear_markers_btn.hover_x : 0px;
-
-    out property <length> tooltip_y:
-        copy_btn.has-hover ? copy_btn.hover_y :
-        export_btn.has-hover ? export_btn.hover_y :
-        update_btn.has-hover ? update_btn.hover_y :
-        settings_btn.has-hover ? settings_btn.hover_y :
-        home_btn.has-hover ? home_btn.hover_y :
-        zoom_btn.has-hover ? zoom_btn.hover_y :
-        zoom_out_btn.has-hover ? zoom_out_btn.hover_y :
-        marker_x_btn.has-hover ? marker_x_btn.hover_y :
-        marker_y_btn.has-hover ? marker_y_btn.hover_y :
-        calibrate_btn.has-hover ? calibrate_btn.hover_y :
-        peak_btn.has-hover ? peak_btn.hover_y :
-        (root.markers_count > 0 && clear_markers_btn.has-hover) ? clear_markers_btn.hover_y : 0px;
 
     width: toolbar_layout.preferred-width + 16px;
     height: 38px;
@@ -92,7 +51,7 @@ export component ImagingToolbar inherits Rectangle {
         spacing: 5px;
         alignment: center;
 
-        home_btn := Chip {
+        Chip {
             chip_height: MaterialStyleMetrics.size_30;
             corner_radius: MaterialStyleMetrics.border_radius_full;
             outlined: false;
@@ -100,12 +59,13 @@ export component ImagingToolbar inherits Rectangle {
             icon: Icons.home;
             enabled: root.has_active_zoom;
             accessible_name: "Home (Reset Zoom)";
+            tooltip_text: "Home (Reset Zoom — H)\n\nRestore full coordinate axes limits.";
             clicked => { root.reset_zoom(); }
         }
 
         ToolbarDivider {}
 
-        zoom_btn := Chip {
+        Chip {
             chip_height: MaterialStyleMetrics.size_30;
             corner_radius: MaterialStyleMetrics.border_radius_full;
             outlined: false;
@@ -115,10 +75,11 @@ export component ImagingToolbar inherits Rectangle {
             active_bg: MaterialPalette.tertiary;
             active_fg: MaterialPalette.on_tertiary;
             accessible_name: "Box Zoom Tool";
+            tooltip_text: "Rubberband Box Zoom\n\nClick and drag on plot to inspect a specific region of interest.";
             clicked => { root.active_tool = (root.active_tool == 1 ? 0 : 1); }
         }
 
-        zoom_out_btn := Chip {
+        Chip {
             chip_height: MaterialStyleMetrics.size_30;
             corner_radius: MaterialStyleMetrics.border_radius_full;
             outlined: false;
@@ -128,12 +89,13 @@ export component ImagingToolbar inherits Rectangle {
             active_bg: MaterialPalette.tertiary;
             active_fg: MaterialPalette.on_tertiary;
             accessible_name: "Click to Zoom Out";
+            tooltip_text: "Click to Zoom Out\n\nClick anywhere on plot to step viewport zoom out centered on click.";
             clicked => { root.active_tool = (root.active_tool == 4 ? 0 : 4); }
         }
 
         ToolbarDivider {}
 
-        marker_x_btn := Chip {
+        Chip {
             chip_height: MaterialStyleMetrics.size_30;
             corner_radius: MaterialStyleMetrics.border_radius_full;
             outlined: false;
@@ -141,10 +103,11 @@ export component ImagingToolbar inherits Rectangle {
             label: "+X";
             selected: root.active_tool == 2;
             accessible_name: "Add Vertical Marker (+X)";
+            tooltip_text: "Add Vertical Marker (+X)\n\nClick plot to place a vertical guide line at target distance or angle.";
             clicked => { root.active_tool = (root.active_tool == 2 ? 0 : 2); }
         }
 
-        marker_y_btn := Chip {
+        Chip {
             chip_height: MaterialStyleMetrics.size_30;
             corner_radius: MaterialStyleMetrics.border_radius_full;
             outlined: false;
@@ -154,10 +117,11 @@ export component ImagingToolbar inherits Rectangle {
             active_bg: MaterialPalette.secondary;
             active_fg: MaterialPalette.on_secondary;
             accessible_name: "Add Horizontal Marker (+Y)";
+            tooltip_text: "Add Horizontal Marker (+Y)\n\nClick plot to place a horizontal intensity threshold guide.";
             clicked => { root.active_tool = (root.active_tool == 3 ? 0 : 3); }
         }
 
-        clear_markers_btn := Chip {
+        Chip {
             chip_height: MaterialStyleMetrics.size_30;
             corner_radius: MaterialStyleMetrics.border_radius_full;
             outlined: false;
@@ -167,23 +131,28 @@ export component ImagingToolbar inherits Rectangle {
             icon: Icons.delete_sweep;
             idle_fg: MaterialPalette.error;
             accessible_name: "Clear Plot Markers";
+            tooltip_text: "Clear Markers\n\nRemove all inspection guides from the plot.";
             clicked => { root.clear_markers(); }
         }
 
         ToolbarDivider {}
 
-        calibrate_btn := Chip {
+        Chip {
             chip_height: MaterialStyleMetrics.size_30;
             corner_radius: MaterialStyleMetrics.border_radius_full;
             outlined: false;
             y: (parent.height - self.height) / 2;
             icon: Icons.hub;
-            selected: root.active_tool == 5;
+            enabled: root.can_calibrate_cutoffs;
+            selected: root.active_tool == 5 && root.can_calibrate_cutoffs;
             accessible_name: "Calibrate Bond Cutoffs";
+            tooltip_text: root.can_calibrate_cutoffs
+                ? "Calibrate Cutoffs\n\nInteractively adjust and auto-detect first coordination shell bond cutoffs on g(r)."
+                : "Calibrate Cutoffs (select a real-space radial plot such as g(r) to calibrate pairwise cutoffs).";
             clicked => { root.active_tool = (root.active_tool == 5 ? 0 : 5); }
         }
 
-        peak_btn := Chip {
+        Chip {
             chip_height: MaterialStyleMetrics.size_30;
             corner_radius: MaterialStyleMetrics.border_radius_full;
             outlined: false;
@@ -193,12 +162,13 @@ export component ImagingToolbar inherits Rectangle {
             active_bg: MaterialPalette.tertiary;
             active_fg: MaterialPalette.on_tertiary;
             accessible_name: "Peak and Coordination Number Inspector";
+            tooltip_text: "Peak & CN Inspector\n\nClick peak to auto-detect shell & CN, or drag to integrate a custom range.";
             clicked => { root.active_tool = (root.active_tool == 6 ? 0 : 6); }
         }
 
         ToolbarDivider {}
 
-        settings_btn := Chip {
+        Chip {
             chip_height: MaterialStyleMetrics.size_30;
             corner_radius: MaterialStyleMetrics.border_radius_full;
             outlined: false;
@@ -208,38 +178,42 @@ export component ImagingToolbar inherits Rectangle {
             active_bg: MaterialPalette.secondary;
             active_fg: MaterialPalette.on_secondary;
             accessible_name: "Plot Settings and Styling";
+            tooltip_text: "Plot Inspector & Styling\n\nToggle right-hand Curves, Style & Axes, and Tagged Peaks panel.";
             clicked => { root.toggle_settings(); }
         }
 
-        update_btn := Chip {
+        Chip {
             chip_height: MaterialStyleMetrics.size_30;
             corner_radius: MaterialStyleMetrics.border_radius_full;
             outlined: false;
             y: (parent.height - self.height) / 2;
             icon: Icons.restart_alt;
             accessible_name: "Refresh Plot Visualization";
+            tooltip_text: "Update Plot\n\nApply current axis bounds, ticks, log scaling, and refresh visualization.";
             clicked => { root.update_plot(); }
         }
 
         ToolbarDivider {}
 
-        copy_btn := Chip {
+        Chip {
             chip_height: MaterialStyleMetrics.size_30;
             corner_radius: MaterialStyleMetrics.border_radius_full;
             outlined: false;
             y: (parent.height - self.height) / 2;
             icon: Icons.content_copy;
             accessible_name: "Copy Plot SVG to Clipboard";
+            tooltip_text: "Copy Plot to Clipboard (Ctrl+C)\n\nCopy SVG vector image markup to system clipboard.";
             clicked => { root.copy_clipboard(); }
         }
 
-        export_btn := Chip {
+        Chip {
             chip_height: MaterialStyleMetrics.size_30;
             corner_radius: MaterialStyleMetrics.border_radius_full;
             outlined: false;
             y: (parent.height - self.height) / 2;
             icon: Icons.download;
             accessible_name: "Export Plot Image";
+            tooltip_text: "Export Plot (Ctrl+Shift+S)\n\nQuick export current plot visualization directly to SVG or PDF.";
             clicked => { root.export_plot(); }
         }
 

@@ -1,4 +1,4 @@
-import { DropDownMenu, TooltipTarget } from "../../material/material.slint";
+import { DropDownMenu } from "../../material/material.slint";
 import { OptionSection } from "../common/OptionSection.slint";
 import { ValidatedField } from "../common/ValidatedField.slint";
 
@@ -67,20 +67,18 @@ export component AdvancedOptionsCard inherits OptionSection {
         tooltip_text: "Maximum lag in frames for VACF correlation.\n\n📏 Recommended: -1 (auto N/2).\n\n🔬 Physics: Capping lag at half the trajectory avoids high-variance tail noise that degrades low-frequency VDOS.";
     }
 
-    TooltipTarget {
+    DropDownMenu {
+        enabled: root.file_loaded;
+        width: 100%;
+        label: "VDOS Window";
         tooltip_text: "Time-domain tapering half-window applied to the VACF before the real cosine FFT.\n\n🔬 Half-Hann: Default smooth decay to exact zero at t_max; balanced peak sharpness and leakage suppression.\n\n🔬 Half-Blackman: Stronger sidelobe suppression (-58 dB) for noisy liquid VACFs.\n\n🔬 Gaussian: Smooth 3σ Gaussian line broadening.\n\n🔬 None: Unwindowed rectangular cutoff.";
-        DropDownMenu {
-            enabled: root.file_loaded;
-            width: 100%;
-            label: "VDOS Window";
-            items: [
-                { text: "Half-Hann", enabled: true },
-                { text: "Half-Blackman", enabled: true },
-                { text: "Gaussian", enabled: true },
-                { text: "None", enabled: true }
-            ];
-            current-index <=> root.vdos_window;
-        }
+        items: [
+            { text: "Half-Hann", enabled: true },
+            { text: "Half-Blackman", enabled: true },
+            { text: "Gaussian", enabled: true },
+            { text: "None", enabled: true }
+        ];
+        current-index <=> root.vdos_window;
     }
 
     ValidatedField {
@@ -89,7 +87,6 @@ export component AdvancedOptionsCard inherits OptionSection {
         text <=> root.vdos_zero_pad;
         error: root.vdos_zero_pad_error;
         stepper: true;
-        step: 1.0;
         minimum: 1.0;
         maximum: 16.0;
         decimals: 0;

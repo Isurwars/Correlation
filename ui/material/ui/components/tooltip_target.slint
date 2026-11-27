@@ -16,12 +16,14 @@ export component TooltipTarget inherits TouchArea {
         } else {
             root.show_pending = false;
             delay_timer.running = false;
-            TooltipState.active = { text: "", x: 0px, y: 0px, width: 0px, height: 0px };
+            if (root.tooltip_text != "" && TooltipState.active.text == root.tooltip_text) {
+                TooltipState.active = { text: "", x: 0px, y: 0px, width: 0px, height: 0px };
+            }
         }
     }
 
     delay_timer := Timer {
-        interval: 150ms;
+        interval: 250ms;
         triggered => {
             if (root.show_pending && root.has-hover) {
                 TooltipState.active = {

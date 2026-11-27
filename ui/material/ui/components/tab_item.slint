@@ -7,12 +7,14 @@ import { MaterialTypography } from "../styling/material_typography.slint";
 import { MaterialPalette } from "../styling/material_palette.slint";
 import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
 import { MaterialText } from "./material_text.slint";
+import { TooltipState } from "./tooltip_state.slint";
 
 export component TabItem inherits Rectangle {
     in property <string> text;
     in property <image> icon;
     in property <bool> active;
     in property <bool> compact: false;
+    in property <string> tooltip_text: "";
     callback clicked();
 
     out property <bool> has_hover: touch.has-hover;
@@ -34,9 +36,38 @@ export component TabItem inherits Rectangle {
         easing: ease-out;
     }
 
+    property <bool> show_tooltip_pending: false;
+
+    delay_timer := Timer {
+        interval: 250ms;
+        triggered => {
+            if (root.show_tooltip_pending && touch.has-hover && root.tooltip_text != "") {
+                TooltipState.active = {
+                    text: root.tooltip_text,
+                    x: touch.absolute-position.x,
+                    y: touch.absolute-position.y,
+                    width: touch.width,
+                    height: touch.height,
+                };
+            }
+        }
+    }
+
     touch := TouchArea {
         mouse-cursor: pointer;
         clicked => { root.clicked(); }
+        changed has-hover => {
+            if (self.has-hover && root.tooltip_text != "") {
+                root.show_tooltip_pending = true;
+                delay_timer.running = true;
+            } else {
+                root.show_tooltip_pending = false;
+                delay_timer.running = false;
+                if (root.tooltip_text != "" && TooltipState.active.text == root.tooltip_text) {
+                    TooltipState.active = { text: "", x: 0px, y: 0px, width: 0px, height: 0px };
+                }
+            }
+        }
     }
 
     HorizontalLayout {

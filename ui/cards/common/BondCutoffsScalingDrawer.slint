@@ -12,6 +12,7 @@ import {
     MaterialText,
     Icon,
     Icons,
+    TooltipTarget,
 } from "../../material/material.slint";
 
 export component BondCutoffsScalingDrawer inherits VerticalLayout {
@@ -26,39 +27,6 @@ export component BondCutoffsScalingDrawer inherits VerticalLayout {
     callback apply_global_cutoff(float);
     callback set_uniform_cutoff(float);
 
-    out property <string> hovered_tooltip_text:
-        !root.file_loaded ? "" :
-        (scaling_toggle_touch.has-hover ? "Expand or collapse bulk scaling factors (Min Factor, Max Factor, Global Cutoff)." :
-        !root.show_scaling_tools ? "" :
-        (min_factor_area.has-hover ? "Minimum bond distance scaling factor (default: 0.6).\n\n🔬 Scales the sum of covalent/vdW radii to reject unphysically close atomic overlaps." :
-        apply_min_area.has-hover ? "Recalculate and apply minimum distance thresholds across all atom pairs." :
-        max_factor_area.has-hover ? "Maximum bond distance scaling factor (default: 1.2).\n\n🔬 Scales the sum of covalent/vdW radii to capture the first coordination shell." :
-        apply_max_area.has-hover ? "Recalculate and apply maximum distance thresholds across all atom pairs." :
-        global_cutoff_area.has-hover ? "Global uniform cutoff in Ångströms (default: 3.5 Å).\n\n🔬 Sets an identical isotropic cutoff across all pairs." :
-        apply_global_area.has-hover ? "Apply the global cutoff distance across all matrix entries." : ""));
-
-    out property <length> hovered_x:
-        !root.file_loaded ? 0px :
-        (scaling_toggle_touch.has-hover ? scaling_toggle_touch.absolute-position.x + scaling_toggle_touch.mouse-x :
-        !root.show_scaling_tools ? 0px :
-        (min_factor_area.has-hover ? min_factor_area.absolute-position.x + min_factor_area.mouse-x :
-        apply_min_area.has-hover ? apply_min_area.absolute-position.x + apply_min_area.mouse-x :
-        max_factor_area.has-hover ? max_factor_area.absolute-position.x + max_factor_area.mouse-x :
-        apply_max_area.has-hover ? apply_max_area.absolute-position.x + apply_max_area.mouse-x :
-        global_cutoff_area.has-hover ? global_cutoff_area.absolute-position.x + global_cutoff_area.mouse-x :
-        apply_global_area.has-hover ? apply_global_area.absolute-position.x + apply_global_area.mouse-x : 0px));
-
-    out property <length> hovered_y:
-        !root.file_loaded ? 0px :
-        (scaling_toggle_touch.has-hover ? scaling_toggle_touch.absolute-position.y + scaling_toggle_touch.mouse-y :
-        !root.show_scaling_tools ? 0px :
-        (min_factor_area.has-hover ? min_factor_area.absolute-position.y + min_factor_area.mouse-y :
-        apply_min_area.has-hover ? apply_min_area.absolute-position.y + apply_min_area.mouse-y :
-        max_factor_area.has-hover ? max_factor_area.absolute-position.y + max_factor_area.mouse-y :
-        apply_max_area.has-hover ? apply_max_area.absolute-position.y + apply_max_area.mouse-y :
-        global_cutoff_area.has-hover ? global_cutoff_area.absolute-position.y + global_cutoff_area.mouse-y :
-        apply_global_area.has-hover ? apply_global_area.absolute-position.y + apply_global_area.mouse-y : 0px));
-
     spacing: MaterialStyleMetrics.spacing_8;
 
     Rectangle {
@@ -70,8 +38,9 @@ export component BondCutoffsScalingDrawer inherits VerticalLayout {
         border-width: 1px;
         border-color: MaterialPalette.outline_variant;
 
-        scaling_toggle_touch := TouchArea {
+        scaling_toggle_touch := TooltipTarget {
             mouse-cursor: pointer;
+            tooltip_text: "Expand or collapse bulk scaling factors (Min Factor, Max Factor, Global Cutoff).";
             accessible-role: button;
             accessible-label: "Toggle Quick Scaling Tools";
             clicked => {
@@ -111,9 +80,10 @@ export component BondCutoffsScalingDrawer inherits VerticalLayout {
         // Row 1: Min factor (default 0.6)
         HorizontalLayout {
             spacing: 8px;
-            min_factor_area := TouchArea {
+            TooltipTarget {
                 horizontal-stretch: 1;
                 min-width: 90px;
+                tooltip_text: "Minimum bond distance scaling factor (default: 0.6).\n\n🔬 Scales the sum of covalent/vdW radii to reject unphysically close atomic overlaps.";
                 NumberField {
                     width: 100%;
                     enabled: root.file_loaded;
@@ -125,14 +95,13 @@ export component BondCutoffsScalingDrawer inherits VerticalLayout {
                     decimals: 2;
                 }
             }
-            apply_min_area := TouchArea {
+            FilledButton {
                 horizontal-stretch: 0;
-                FilledButton {
-                    enabled: root.file_loaded;
-                    text: "Apply Min";
-                    clicked => {
-                        root.apply_min_factor(root.min_factor.to-float());
-                    }
+                enabled: root.file_loaded;
+                text: "Apply Min";
+                tooltip: "Recalculate and apply minimum distance thresholds across all atom pairs.";
+                clicked => {
+                    root.apply_min_factor(root.min_factor.to-float());
                 }
             }
         }
@@ -140,9 +109,10 @@ export component BondCutoffsScalingDrawer inherits VerticalLayout {
         // Row 2: Max factor (default 1.2)
         HorizontalLayout {
             spacing: 8px;
-            max_factor_area := TouchArea {
+            TooltipTarget {
                 horizontal-stretch: 1;
                 min-width: 90px;
+                tooltip_text: "Maximum bond distance scaling factor (default: 1.2).\n\n🔬 Scales the sum of covalent/vdW radii to capture the first coordination shell.";
                 NumberField {
                     width: 100%;
                     enabled: root.file_loaded;
@@ -154,14 +124,13 @@ export component BondCutoffsScalingDrawer inherits VerticalLayout {
                     decimals: 2;
                 }
             }
-            apply_max_area := TouchArea {
+            FilledButton {
                 horizontal-stretch: 0;
-                FilledButton {
-                    enabled: root.file_loaded;
-                    text: "Apply Max";
-                    clicked => {
-                        root.apply_max_factor(root.max_factor.to-float());
-                    }
+                enabled: root.file_loaded;
+                text: "Apply Max";
+                tooltip: "Recalculate and apply maximum distance thresholds across all atom pairs.";
+                clicked => {
+                    root.apply_max_factor(root.max_factor.to-float());
                 }
             }
         }
@@ -169,9 +138,10 @@ export component BondCutoffsScalingDrawer inherits VerticalLayout {
         // Row 3: Global cutoff (default 3.5)
         HorizontalLayout {
             spacing: 8px;
-            global_cutoff_area := TouchArea {
+            TooltipTarget {
                 horizontal-stretch: 1;
                 min-width: 90px;
+                tooltip_text: "Global uniform cutoff in Ångströms (default: 3.5 Å).\n\n🔬 Sets an identical isotropic cutoff across all pairs.";
                 NumberField {
                     width: 100%;
                     enabled: root.file_loaded;
@@ -183,15 +153,13 @@ export component BondCutoffsScalingDrawer inherits VerticalLayout {
                     decimals: 2;
                 }
             }
-            apply_global_area := TouchArea {
+            FilledButton {
                 horizontal-stretch: 0;
-                FilledButton {
-                    enabled: root.file_loaded;
-                    text: "Set Global";
-                    clicked => {
-                        root.apply_global_cutoff(root.global_cutoff.to-float());
-                        root.set_uniform_cutoff(root.global_cutoff.to-float());
-                    }
+                enabled: root.file_loaded;
+                text: "Set Global";
+                tooltip: "Apply the uniform global cutoff distance across all matrix entries.";
+                clicked => {
+                    root.apply_global_cutoff(root.global_cutoff.to-float());
                 }
             }
         }

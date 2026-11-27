@@ -13,6 +13,7 @@
 #include "app/viewmodel/PlotController.hpp"
 #include "app/viewmodel/Structure3DController.hpp"
 #include "plotters/ColormapService.hpp"
+#include <chrono>
 #include <csignal>
 #include <filesystem>
 #include <optional>
@@ -181,6 +182,34 @@ protected:
 #else
     [[maybe_unused]] const errno_t putenv_res = _putenv_s("SLINT_BACKEND", "software");
 #endif
+
+    // Isolate each test from host ~/.config/correlation/settings.json and parallel CTest workers
+    const auto *test_info = ::testing::UnitTest::GetInstance()->current_test_info();
+    const std::string suffix =
+        (test_info != nullptr ? std::string(test_info->name()) : std::string("test")) + "_" +
+        std::to_string(std::chrono::steady_clock::now().time_since_epoch().count());
+    temp_settings_dir_ = std::filesystem::temp_directory_path() / ("corr_app_test_" + suffix);
+    std::filesystem::create_directories(temp_settings_dir_);
+    const auto settings_path = temp_settings_dir_ / "settings.json";
+#ifdef _WIN32
+    [[maybe_unused]] const errno_t settings_env_res =
+        _putenv_s("CORRELATION_SETTINGS_PATH", settings_path.string().c_str());
+#else
+    [[maybe_unused]] const int settings_env_res =
+        setenv("CORRELATION_SETTINGS_PATH", settings_path.c_str(), 1);
+#endif
+  }
+
+  void TearDown() override {
+#ifdef _WIN32
+    [[maybe_unused]] const errno_t unset_res = _putenv_s("CORRELATION_SETTINGS_PATH", "");
+#else
+    [[maybe_unused]] const int unset_res = unsetenv("CORRELATION_SETTINGS_PATH");
+#endif
+    if (!temp_settings_dir_.empty()) {
+      std::error_code error_code;
+      std::filesystem::remove_all(temp_settings_dir_, error_code);
+    }
   }
 
   static correlation::app::ProgramOptions
@@ -192,6 +221,7 @@ private:
   correlation::app::TrajectoryLoader loader_;
   correlation::app::AnalysisDispatcher dispatcher_;
   correlation::app::ProgramOptions options_;
+  std::filesystem::path temp_settings_dir_;
 };
 
 TEST_F(AppControllerTests, ConstructorInitializesCorrectly) {
@@ -1179,35 +1209,6 @@ TEST_F(AppControllerTests, CameraPresetsOrientationIntegration) {
 }
 
 TEST_F(AppControllerTests, SampleDatasetAndRecentFilesIntegration) {
-  const auto temp_dir =
-      std::filesystem::temp_directory_path() /
-      ("corr_app_settings_" + std::to_string(testing::UnitTest::GetInstance()->random_seed()));
-  std::filesystem::create_directories(temp_dir);
-  const auto test_path = temp_dir / "settings.json";
-#ifdef _WIN32
-  _putenv_s("CORRELATION_SETTINGS_PATH", test_path.string().c_str());
-#else
-  setenv("CORRELATION_SETTINGS_PATH", test_path.c_str(), 1);
-#endif
-
-  struct SettingsCleanupGuard {
-    std::filesystem::path dir;
-    explicit SettingsCleanupGuard(std::filesystem::path path) : dir(std::move(path)) {}
-    SettingsCleanupGuard(const SettingsCleanupGuard &) = delete;
-    SettingsCleanupGuard &operator=(const SettingsCleanupGuard &) = delete;
-    SettingsCleanupGuard(SettingsCleanupGuard &&) = delete;
-    SettingsCleanupGuard &operator=(SettingsCleanupGuard &&) = delete;
-    ~SettingsCleanupGuard() {
-#ifdef _WIN32
-      _putenv_s("CORRELATION_SETTINGS_PATH", "");
-#else
-      unsetenv("CORRELATION_SETTINGS_PATH");
-#endif
-      std::error_code error_code;
-      std::filesystem::remove_all(dir, error_code);
-    }
-  } const guard(temp_dir);
-
   auto window = AppWindow::create();
   correlation::app::AppController controller(*window, loader(), dispatcher(), options());
 
@@ -1225,6 +1226,53 @@ TEST_F(AppControllerTests, SampleDatasetAndRecentFilesIntegration) {
   ASSERT_EQ(recents->row_count(), 2);
   EXPECT_EQ(getRow(recents, 0), slint::SharedString("test_path_1.car"));
   EXPECT_EQ(getRow(recents, 1), slint::SharedString("test_path_2.car"));
+
+  // Verify structured recent_file_items extracts basenames while preserving full_path
+  controller.addRecentFile("/tmp/simulations/amorphous_SiO2.car");
+  const auto recent_items = window->get_recent_file_items();
+  ASSERT_EQ(recent_items->row_count(), 3);
+  EXPECT_EQ(getRow(recent_items, 0).basename, slint::SharedString("amorphous_SiO2.car"));
+  EXPECT_EQ(getRow(recent_items, 0).full_path,
+            slint::SharedString("/tmp/simulations/amorphous_SiO2.car"));
+}
+
+TEST_F(AppControllerTests, DomainPresetsStaleFlagAndRadialCalibrationGuardIntegration) {
+  auto window = AppWindow::create();
+  const std::string file_path = resolveExamplePath("examples/a-PdSi/a-PdSi.car");
+  ASSERT_FALSE(file_path.empty());
+  ASSERT_TRUE(loader().loadFile(file_path).has_value());
+
+  options().active_calculators["g(r), J(r), G(r)"] = true;
+  options().active_calculators["Plane Angle Distribution"] = true;
+  correlation::app::AppController controller(*window, loader(), dispatcher(), options());
+
+  // 1. Domain presets are initialized and exposed to Slint UI
+  const auto domain_presets = window->get_domain_presets();
+  ASSERT_NE(domain_presets, nullptr);
+  EXPECT_GT(domain_presets->row_count(), 0U);
+
+  // 2. Run analysis and verify radial plot guard tracks plot type
+  EXPECT_TRUE(dispatcher().runAnalysis(loader().trajectoryMut(), options()).has_value());
+  window->set_analysis_done(true);
+  EXPECT_FALSE(window->get_results_stale());
+
+  auto *plot_ctrl = controller.getPlotController();
+  ASSERT_NE(plot_ctrl, nullptr);
+  plot_ctrl->populatePlotList();
+  plot_ctrl->requestPlotUpdate(0, true); // g_r
+  EXPECT_TRUE(window->get_is_radial_plot_active());
+
+  // Switch to Dual View 2D Phase Heatmap -> radial calibration guard disables
+  window->set_preview_active_tab(2);
+  plot_ctrl->syncPlotListForActiveTab(2);
+  const int heatmap_idx = static_cast<int>(window->get_plot_items()->row_count()) - 1;
+  ASSERT_GE(heatmap_idx, 0);
+  plot_ctrl->requestPlotUpdate(heatmap_idx, true);
+  EXPECT_FALSE(window->get_is_radial_plot_active());
+
+  // 3. Modifying calculators or options after completion marks results stale
+  window->invoke_toggle_calculator("Plane Angle Distribution", false);
+  EXPECT_TRUE(window->get_results_stale());
 }
 
 TEST_F(AppControllerTests, DualViewPerFrameOverlayIntegration) {

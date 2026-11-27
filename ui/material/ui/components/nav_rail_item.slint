@@ -66,20 +66,36 @@ export component NavRailItem inherits Rectangle {
         animate colorize { duration: MaterialAnimations.base_duration; }
     }
 
+    property <bool> show_tooltip_pending: false;
+
+    delay_timer := Timer {
+        interval: 250ms;
+        triggered => {
+            if (root.show_tooltip_pending && touch.has-hover && root.tooltip != "") {
+                TooltipState.active = {
+                    text: root.tooltip,
+                    x: touch.absolute-position.x,
+                    y: touch.absolute-position.y,
+                    width: touch.width,
+                    height: touch.height,
+                };
+            }
+        }
+    }
+
     touch := TouchArea {
         enabled: root.enabled;
         mouse-cursor: root.enabled ? pointer : default;
         changed has-hover => {
             if (self.has-hover && root.tooltip != "") {
-                TooltipState.active = {
-                    text: root.tooltip,
-                    x: self.absolute-position.x + self.mouse-x,
-                    y: self.absolute-position.y + self.mouse-y,
-                    width: 0px,
-                    height: 0px,
-                };
-            } else if (root.tooltip != "" && TooltipState.active.text == root.tooltip) {
-                TooltipState.active = { text: "", x: 0px, y: 0px, width: 0px, height: 0px };
+                root.show_tooltip_pending = true;
+                delay_timer.running = true;
+            } else {
+                root.show_tooltip_pending = false;
+                delay_timer.running = false;
+                if (root.tooltip != "" && TooltipState.active.text == root.tooltip) {
+                    TooltipState.active = { text: "", x: 0px, y: 0px, width: 0px, height: 0px };
+                }
             }
         }
         clicked => { root.clicked(); }

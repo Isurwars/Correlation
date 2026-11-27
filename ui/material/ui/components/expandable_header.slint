@@ -39,7 +39,7 @@ export component ExpandableHeader inherits TouchArea {
     }
 
     header_timer := Timer {
-        interval: 150ms;
+        interval: 250ms;
         triggered => {
             if (root.header_pending && root.has-hover && !root.reset_hovered) {
                 TooltipState.active = {
@@ -106,7 +106,7 @@ export component ExpandableHeader inherits TouchArea {
                 }
 
                 reset_timer := Timer {
-                    interval: 150ms;
+                    interval: 250ms;
                     triggered => {
                         if (root.reset_pending && reset_touch.has-hover) {
                             TooltipState.active = {

@@ -10,6 +10,7 @@ import {
     MaterialTypography,
     MaterialText,
     Icons,
+    TooltipTarget,
 } from "../../../material/material.slint";
 import { CalibrationPair } from "../../../Types.slint";
 
@@ -22,21 +23,6 @@ export component CutoffCalibrationBar inherits Rectangle {
     callback auto_detect(int);
     callback reset_pair(int);
     callback close();
-
-    out property <string> hovered_tooltip_text:
-        btn_close.has-hover ? "Exit Calibration\n\n✖ Return to normal plot inspection mode." :
-        btn_auto.has-hover ? "Auto-detect 1st Minimum\n\n✨ Run mathematical curvature detector to locate peak onset and first trough." :
-        btn_reset.has-hover ? "Reset to Covalent\n\n🔄 Restore standard covalent radii bounds for this pair." : "";
-
-    out property <length> hovered_x:
-        btn_close.has-hover ? btn_close.absolute-position.x + btn_close.mouse-x :
-        btn_auto.has-hover ? btn_auto.absolute-position.x + btn_auto.mouse-x :
-        btn_reset.has-hover ? btn_reset.absolute-position.x + btn_reset.mouse-x : 0px;
-
-    out property <length> hovered_y:
-        btn_close.has-hover ? btn_close.absolute-position.y + btn_close.mouse-y :
-        btn_auto.has-hover ? btn_auto.absolute-position.y + btn_auto.mouse-y :
-        btn_reset.has-hover ? btn_reset.absolute-position.y + btn_reset.mouse-y : 0px;
 
     height: 42px;
     border-radius: MaterialStyleMetrics.border_radius_full;
@@ -126,10 +112,11 @@ export component CutoffCalibrationBar inherits Rectangle {
         }
 
         // Auto-Detect 1st Minimum Action Button
-        btn_auto := TouchArea {
+        btn_auto := TooltipTarget {
             height: 30px;
             width: auto_content.preferred-width + 20px;
             mouse-cursor: pointer;
+            tooltip_text: "Auto-detect 1st Minimum\n\n✨ Run curvature detector to locate peak onset and first trough.";
             accessible-role: button;
             accessible-label: "Auto-detect first minimum";
             clicked => { root.auto_detect(root.active_pair_index); }
@@ -165,10 +152,11 @@ export component CutoffCalibrationBar inherits Rectangle {
         }
 
         // Reset to Covalent Heuristic Button
-        btn_reset := TouchArea {
+        btn_reset := TooltipTarget {
             width: 28px;
             height: 28px;
             mouse-cursor: pointer;
+            tooltip_text: "Reset to Covalent\n\n🔄 Restore standard covalent radii bounds for this pair.";
             accessible-role: button;
             accessible-label: "Reset pair cutoff to covalent heuristic";
             clicked => { root.reset_pair(root.active_pair_index); }
@@ -189,10 +177,11 @@ export component CutoffCalibrationBar inherits Rectangle {
         }
 
         // Close / Exit Calibration Button
-        btn_close := TouchArea {
+        btn_close := TooltipTarget {
             width: 28px;
             height: 28px;
             mouse-cursor: pointer;
+            tooltip_text: "Exit Calibration\n\n✖ Return to normal plot inspection mode.";
             accessible-role: button;
             accessible-label: "Exit cutoff calibration mode";
             clicked => { root.close(); }

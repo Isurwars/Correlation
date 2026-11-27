@@ -27,7 +27,7 @@ export component IconButton {
     out property <length> hover_y: base.absolute-position.y + base.mouse-y;
 
     accessible-role: button;
-    accessible-enabled: true;
+    accessible-enabled: root.enabled;
     accessible-label: root.tooltip;
     accessible-checkable: root.checkable;
     accessible-checked: root.checked;

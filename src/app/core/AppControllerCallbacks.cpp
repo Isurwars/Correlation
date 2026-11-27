@@ -154,6 +154,46 @@ buildFilteredCommands(const AppWindow &window, std::string_view query) {
   return std::make_shared<slint::VectorModel<CommandItem>>(std::move(items));
 }
 
+[[nodiscard]] std::string resolveSampleRelativePath(std::string_view sample_name) {
+  if (sample_name == "a-PdSi") {
+    return "examples/a-PdSi/a-PdSi.car";
+  }
+  if (sample_name == "Cellulose") {
+    return "examples/Cellulose/Cellulose.md";
+  }
+  if (sample_name == "Si") {
+    return "examples/Si/Si.car";
+  }
+  return {};
+}
+
+[[nodiscard]] std::string resolveSampleFilePath(std::string_view sample_name) {
+  const std::string rel = resolveSampleRelativePath(sample_name);
+  if (rel.empty()) {
+    return {};
+  }
+  std::error_code ec;
+  for (const std::string_view prefix : {"", "../", "../../", "../../../"}) {
+    const std::filesystem::path candidate = std::filesystem::path(prefix) / rel;
+    if (std::filesystem::exists(candidate, ec) && !ec) {
+      return candidate.string();
+    }
+  }
+#ifndef _WIN32
+  const auto exe_path = std::filesystem::read_symlink("/proc/self/exe", ec);
+  if (!ec && !exe_path.empty()) {
+    const auto exe_dir = exe_path.parent_path();
+    for (const std::string_view prefix : {"", "../", "../../", "../share/correlation/"}) {
+      const std::filesystem::path candidate = exe_dir / prefix / rel;
+      if (std::filesystem::exists(candidate, ec) && !ec) {
+        return candidate.string();
+      }
+    }
+  }
+#endif
+  return {};
+}
+
 } // namespace
 
 void AppController::registerActionCallbacks() {
@@ -165,23 +205,28 @@ void AppController::registerActionCallbacks() {
   window_.on_cancel_analysis([this] { dispatcher_.cancelAnalysis(); });
   window_.on_browse_file([this] { file_io_handler_->handleBrowseFile(); });
   window_.on_load_sample([this](const slint::SharedString &sample_name) {
-    std::string path;
     const std::string_view name(sample_name.data());
-    if (name == "a-PdSi") {
-      path = "examples/a-PdSi/a-PdSi.car";
-    } else if (name == "Cellulose") {
-      path = "examples/Cellulose/Cellulose.car";
-    } else if (name == "Si") {
-      path = "examples/Si/Si.car";
-    }
-    if (!path.empty() && std::filesystem::exists(path)) {
-      loadTrajectory(path);
+    const std::string resolved = resolveSampleFilePath(name);
+    if (!resolved.empty()) {
+      window_.invoke_show_toast(slint::SharedString("Loading " + std::string(name) + " sample..."),
+                                0);
+      loadTrajectory(resolved);
+    } else {
+      const std::string msg = "Sample dataset '" + std::string(name) + "' not found on disk.";
+      window_.set_file_status_text(slint::SharedString(msg));
+      window_.invoke_show_toast(slint::SharedString(msg), 3);
     }
   });
   window_.on_load_recent_file([this](const slint::SharedString &recent_path) {
     const std::string path(recent_path.data());
-    if (std::filesystem::exists(path)) {
+    std::error_code ec;
+    if (!path.empty() && std::filesystem::exists(path, ec) && !ec) {
       loadTrajectory(path);
+    } else {
+      const std::string fname = std::filesystem::path(path).filename().string();
+      const std::string msg = "Recent file not found: " + (fname.empty() ? path : fname);
+      window_.set_file_status_text(slint::SharedString(msg));
+      window_.invoke_show_toast(slint::SharedString(msg), 3);
     }
   });
   window_.on_reload_file([this] { file_io_handler_->handleReloadFile(); });
@@ -220,6 +265,7 @@ void AppController::registerActionCallbacks() {
     }
     populateCalculatorGroups();
     updateActiveGroupFlags();
+    markResultsStaleIfDone();
   });
 
   registerAnalysesCallbacks();
@@ -229,14 +275,30 @@ void AppController::registerActionCallbacks() {
     settings_.middle_col_width = mid_w;
     saveSettings();
   });
+  window_.on_right_layout_changed([this](float right_w) {
+    settings_.right_col_width = std::clamp(right_w, 200.0F, 520.0F);
+    saveSettings();
+  });
+  window_.on_dual_split_changed([this](float ratio) {
+    settings_.dual_split_ratio = std::clamp(ratio, 0.15F, 0.85F);
+    saveSettings();
+  });
+  window_.on_theme_changed([this](bool dark) {
+    settings_.dark_theme = dark;
+    saveSettings();
+  });
 }
 
 void AppController::registerAnalysesCallbacks() {
   window_.on_toggle_calculator_group([this](const slint::SharedString &group_name, bool enabled) {
     setCalculatorsEnabled(enabled, std::string_view(group_name.data()));
+    markResultsStaleIfDone();
   });
 
-  window_.on_toggle_all_calculators([this](bool enabled) { setCalculatorsEnabled(enabled); });
+  window_.on_toggle_all_calculators([this](bool enabled) {
+    setCalculatorsEnabled(enabled);
+    markResultsStaleIfDone();
+  });
 
   window_.on_set_calculator_group_expanded(
       [this](const slint::SharedString &group_name, bool expanded) {
@@ -320,20 +382,28 @@ void AppController::registerPlotCallbacks() {
                                                     plot_controller_->getLastPlotHeight());
   });
 
-  window_.on_auto_detect_cutoff(
-      [this](int idx) { bond_cutoff_controller_.autoDetectCutoffs(idx); });
+  window_.on_auto_detect_cutoff([this](int idx) {
+    bond_cutoff_controller_.autoDetectCutoffs(idx);
+    markResultsStaleIfDone();
+  });
 
-  window_.on_reset_calibration_pair(
-      [this](int idx) { bond_cutoff_controller_.resetCalibrationPair(idx); });
+  window_.on_reset_calibration_pair([this](int idx) {
+    bond_cutoff_controller_.resetCalibrationPair(idx);
+    markResultsStaleIfDone();
+  });
 
   window_.on_drag_cutoff_handle([this](int idx, bool is_max, float mouse_x) {
     bond_cutoff_controller_.dragCutoffHandle(idx, is_max, mouse_x);
+    markResultsStaleIfDone();
   });
 }
 
 void AppController::registerPresetAndOptionCallbacks() {
   window_.on_load_preset([this](int index) {
-    slint::invoke_from_event_loop([this, index] { preset_controller_->handleLoadPreset(index); });
+    slint::invoke_from_event_loop([this, index] {
+      preset_controller_->handleLoadPreset(index);
+      markResultsStaleIfDone();
+    });
   });
   window_.on_save_preset([this](const slint::SharedString &name) {
     slint::invoke_from_event_loop(
@@ -343,77 +413,99 @@ void AppController::registerPresetAndOptionCallbacks() {
     slint::invoke_from_event_loop([this, index] { preset_controller_->handleDeletePreset(index); });
   });
   window_.on_material_type_changed([this](int type) {
-    slint::invoke_from_event_loop(
-        [this, type] { preset_controller_->handleMaterialTypeChanged(type); });
+    slint::invoke_from_event_loop([this, type] {
+      preset_controller_->handleMaterialTypeChanged(type);
+      markResultsStaleIfDone();
+    });
   });
 
   window_.on_apply_domain_preset([this](int preset_id) {
     slint::invoke_from_event_loop([this, preset_id] {
       preset_controller_->handleApplyDomainPreset(preset_id);
       bond_cutoff_controller_.evaluateSanityState();
+      markResultsStaleIfDone();
     });
   });
 
-  window_.on_fix_sanity_issue(
-      [this](int action) { bond_cutoff_controller_.handleFixSanityIssue(action); });
+  window_.on_fix_sanity_issue([this](int action) {
+    bond_cutoff_controller_.handleFixSanityIssue(action);
+    markResultsStaleIfDone();
+  });
 
   window_.on_reset_bond_cutoffs([this] {
     setBondCutoffs();
     if (structure_3d_controller_) {
       structure_3d_controller_->updateBondCutoffScale(1.15);
     }
+    markResultsStaleIfDone();
   });
   window_.on_reset_rdf_options([this] {
     OptionsResetService::resetRDF(window_);
     static_cast<void>(input_validator_->validateInputs());
+    markResultsStaleIfDone();
   });
   window_.on_reset_angle_options([this] {
     OptionsResetService::resetAngle(window_);
     static_cast<void>(input_validator_->validateInputs());
+    markResultsStaleIfDone();
   });
   window_.on_reset_sq_options([this] {
     OptionsResetService::resetSQ(window_);
     static_cast<void>(input_validator_->validateInputs());
+    markResultsStaleIfDone();
   });
   window_.on_reset_xrd_options([this] {
     OptionsResetService::resetXRD(window_);
     static_cast<void>(input_validator_->validateInputs());
+    markResultsStaleIfDone();
   });
   window_.on_xrd_radiation_preset_changed([this](int idx) {
     OptionsResetService::setXRDPreset(window_, idx);
     static_cast<void>(input_validator_->validateInputs());
+    markResultsStaleIfDone();
   });
   window_.on_apply_scaled_cutoffs([this](float factor) {
     bond_cutoff_controller_.applyScaledCutoffs(factor);
     if (structure_3d_controller_ && factor > 0.0F) {
       structure_3d_controller_->updateBondCutoffScale(static_cast<double>(factor));
     }
+    markResultsStaleIfDone();
   });
-  window_.on_set_uniform_cutoff(
-      [this](float max_val) { bond_cutoff_controller_.setUniformCutoff(max_val); });
+  window_.on_set_uniform_cutoff([this](float max_val) {
+    bond_cutoff_controller_.setUniformCutoff(max_val);
+    markResultsStaleIfDone();
+  });
   window_.on_apply_min_factor([this](float factor) {
     bond_cutoff_controller_.applyCovalentFactor(factor, FactorBound::Min);
+    markResultsStaleIfDone();
   });
   window_.on_apply_max_factor([this](float factor) {
     bond_cutoff_controller_.applyCovalentFactor(factor, FactorBound::Max);
+    markResultsStaleIfDone();
   });
-  window_.on_apply_global_cutoff(
-      [this](float cutoff) { bond_cutoff_controller_.applyGlobalCutoff(cutoff); });
+  window_.on_apply_global_cutoff([this](float cutoff) {
+    bond_cutoff_controller_.applyGlobalCutoff(cutoff);
+    markResultsStaleIfDone();
+  });
   window_.on_reset_rings_options([this] {
     OptionsResetService::resetRings(window_);
     static_cast<void>(input_validator_->validateInputs());
+    markResultsStaleIfDone();
   });
   window_.on_reset_smoothing_options([this] {
     OptionsResetService::resetSmoothing(window_);
     static_cast<void>(input_validator_->validateInputs());
+    markResultsStaleIfDone();
   });
   window_.on_reset_advanced_options([this] {
     OptionsResetService::resetAdvanced(window_);
     static_cast<void>(input_validator_->validateInputs());
+    markResultsStaleIfDone();
   });
   window_.on_reset_trajectory_options([this] {
     OptionsResetService::resetTrajectory(window_, loader_);
     static_cast<void>(input_validator_->validateInputs());
+    markResultsStaleIfDone();
   });
   window_.on_reset_export_settings([this] {
     OptionsResetService::resetExportSettings(window_);
@@ -426,11 +518,13 @@ void AppController::registerPresetAndOptionCallbacks() {
     if (preset_controller_) {
       preset_controller_->handleMaterialTypeChanged(0);
     }
+    markResultsStaleIfDone();
   });
   window_.on_reset_analyses_selection([this] {
     options_.active_calculators.clear();
     populateCalculatorGroups();
     updateActiveGroupFlags();
+    markResultsStaleIfDone();
   });
   window_.on_reset_presets([this] { window_.set_selected_preset(-1); });
   window_.on_clear_comparison_curves([this] {

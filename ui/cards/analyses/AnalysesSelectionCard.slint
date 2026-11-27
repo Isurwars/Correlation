@@ -18,7 +18,7 @@ import { CalculatorGroup } from "../../Types.slint";
 import { AnalysesGroupSection } from "AnalysesGroupSection.slint";
 
 export component AnalysesSelectionCard inherits OutlinedCard {
-    in-out property <bool> expanded: false;
+    in-out property <bool> expanded: true;
     in-out property <bool> compact_mode: false;
     in property <bool> file_loaded;
     in property <[CalculatorGroup]> calculator_groups: [];
@@ -31,19 +31,6 @@ export component AnalysesSelectionCard inherits OutlinedCard {
     callback set_calculator_group_expanded(string, bool);
     callback set_all_calculator_groups_expanded(bool);
     callback reset();
-
-    out property <string> hovered_calculator_description: "";
-    out property <length> hovered_x: bg_touch_area.has-hover ? bg_touch_area.absolute-position.x + bg_touch_area.mouse-x : 0px;
-    out property <length> hovered_y: bg_touch_area.has-hover ? bg_touch_area.absolute-position.y + bg_touch_area.mouse-y : 0px;
-    out property <length> hovered_width: 0px;
-    out property <length> hovered_height: 0px;
-
-    property <bool> is_bg_hovered: bg_touch_area.has-hover;
-    changed is_bg_hovered => {
-        if (!root.is_bg_hovered) {
-            root.hovered_calculator_description = "";
-        }
-    }
 
     Vertical {
         padding: MaterialStyleMetrics.spacing_8;
@@ -119,25 +106,19 @@ export component AnalysesSelectionCard inherits OutlinedCard {
                 }
             }
 
-            bg_touch_area := TouchArea {
-                width: 100%;
+            Vertical {
+                padding: 0;
+                spacing: MaterialStyleMetrics.spacing_4;
+                alignment: start;
 
-                Vertical {
-                    width: 100%;
-                    padding: 0;
-                    spacing: MaterialStyleMetrics.spacing_4;
-                    alignment: start;
-
-                    for group[gi] in root.calculator_groups: AnalysesGroupSection {
-                        group: group;
-                        show_divider: gi > 0;
-                        file_loaded: root.file_loaded;
-                        compact_mode: root.compact_mode;
-                        toggle_calculator(id, enabled) => { root.toggle_calculator(id, enabled); }
-                        toggle_calculator_group(grp, enabled) => { root.toggle_calculator_group(grp, enabled); }
-                        set_calculator_group_expanded(grp, exp) => { root.set_calculator_group_expanded(grp, exp); }
-                        calculator_hovered(desc) => { root.hovered_calculator_description = desc; }
-                    }
+                for group[gi] in root.calculator_groups: AnalysesGroupSection {
+                    group: group;
+                    show_divider: gi > 0;
+                    file_loaded: root.file_loaded;
+                    compact_mode: root.compact_mode;
+                    toggle_calculator(id, enabled) => { root.toggle_calculator(id, enabled); }
+                    toggle_calculator_group(grp, enabled) => { root.toggle_calculator_group(grp, enabled); }
+                    set_calculator_group_expanded(grp, exp) => { root.set_calculator_group_expanded(grp, exp); }
                 }
             }
         }

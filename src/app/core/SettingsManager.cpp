@@ -58,6 +58,35 @@ std::string extractJsonValue(const std::string &line, const std::string &key) {
   return line.substr(start, end - start);
 }
 
+void parseRecentFiles(const std::string &line, AppSettings &settings) {
+  const auto pos = line.find("\"recent_files\"");
+  if (pos == std::string::npos) {
+    return;
+  }
+  const auto start = line.find('[', pos);
+  const auto end = line.find(']', start);
+  if (start == std::string::npos || end == std::string::npos || end <= start + 1) {
+    return;
+  }
+  const std::string content = line.substr(start + 1, end - start - 1);
+  size_t cur = 0;
+  while (cur < content.size()) {
+    const auto q1 = content.find('"', cur);
+    if (q1 == std::string::npos) {
+      break;
+    }
+    const auto q2 = content.find('"', q1 + 1);
+    if (q2 == std::string::npos) {
+      break;
+    }
+    const std::string path = content.substr(q1 + 1, q2 - q1 - 1);
+    if (!path.empty()) {
+      settings.recent_files.push_back(path);
+    }
+    cur = q2 + 1;
+  }
+}
+
 void parseSettingsLine(const std::string &line, AppSettings &settings) {
   if (const auto val = extractJsonValue(line, "window_width"); !val.empty()) {
     settings.window_width = std::max(800U, static_cast<uint32_t>(std::stoul(val)));
@@ -71,29 +100,16 @@ void parseSettingsLine(const std::string &line, AppSettings &settings) {
   if (const auto val = extractJsonValue(line, "middle_col_width"); !val.empty()) {
     settings.middle_col_width = std::clamp(std::stof(val), 180.0F, 450.0F);
   }
-  if (const auto pos = line.find("\"recent_files\""); pos != std::string::npos) {
-    const auto start = line.find('[', pos);
-    const auto end = line.find(']', start);
-    if (start != std::string::npos && end != std::string::npos && end > start + 1) {
-      const std::string content = line.substr(start + 1, end - start - 1);
-      size_t cur = 0;
-      while (cur < content.size()) {
-        const auto q1 = content.find('"', cur);
-        if (q1 == std::string::npos) {
-          break;
-        }
-        const auto q2 = content.find('"', q1 + 1);
-        if (q2 == std::string::npos) {
-          break;
-        }
-        const std::string path = content.substr(q1 + 1, q2 - q1 - 1);
-        if (!path.empty()) {
-          settings.recent_files.push_back(path);
-        }
-        cur = q2 + 1;
-      }
-    }
+  if (const auto val = extractJsonValue(line, "right_col_width"); !val.empty()) {
+    settings.right_col_width = std::clamp(std::stof(val), 200.0F, 520.0F);
   }
+  if (const auto val = extractJsonValue(line, "dual_split_ratio"); !val.empty()) {
+    settings.dual_split_ratio = std::clamp(std::stof(val), 0.15F, 0.85F);
+  }
+  if (const auto val = extractJsonValue(line, "dark_theme"); !val.empty()) {
+    settings.dark_theme = (val.find("false") == std::string::npos);
+  }
+  parseRecentFiles(line, settings);
 }
 
 } // namespace
@@ -135,6 +151,9 @@ bool SettingsManager::save(const AppSettings &settings) {
     out << "  \"window_height\": " << settings.window_height << ",\n";
     out << "  \"left_col_width\": " << settings.left_col_width << ",\n";
     out << "  \"middle_col_width\": " << settings.middle_col_width << ",\n";
+    out << "  \"right_col_width\": " << settings.right_col_width << ",\n";
+    out << "  \"dual_split_ratio\": " << settings.dual_split_ratio << ",\n";
+    out << "  \"dark_theme\": " << (settings.dark_theme ? "true" : "false") << ",\n";
     out << "  \"recent_files\": [";
     for (size_t i = 0; i < settings.recent_files.size(); ++i) {
       out << "\"" << settings.recent_files[i] << "\"";

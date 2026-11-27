@@ -9,7 +9,13 @@ import {
     MenuItem,
     TabItem,
 } from "../../../material/material.slint";
-import { CurveToggleItem, PlotAxisSettings, TaggedPeakRecord, ExportConfig, PhysicsDiagnostics } from "../../../Types.slint";
+import {
+    CurveToggleItem,
+    PlotAxisSettings,
+    TaggedPeakRecord,
+    ExportConfig,
+    PhysicsDiagnostics,
+} from "../../../Types.slint";
 import { CurveListTab } from "curve_sidebar/CurveListTab.slint";
 import { PlotStyleAxesTab } from "curve_sidebar/PlotStyleAxesTab.slint";
 import { TaggedPeaksTab } from "curve_sidebar/TaggedPeaksTab.slint";
@@ -40,10 +46,6 @@ export component CurveSidebar inherits Rectangle {
     callback remove_tagged_peak(int);
     callback clear_tagged_peaks();
     callback export_tagged_peaks();
-
-    out property <string> tooltip_text: "";
-    out property <length> tooltip_x: 0px;
-    out property <length> tooltip_y: 0px;
 
     private property <[MenuItem]> palette_menu_items: [
         { text: "Okabe-Ito (Colorblind)", enabled: true },

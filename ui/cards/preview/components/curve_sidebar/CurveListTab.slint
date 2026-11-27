@@ -104,9 +104,9 @@ export component CurveListTab inherits VerticalLayout {
 
     // 3. Curves Scrollable List (fills available space so Calculated Properties stays anchored at bottom)
     ScrollView {
-        content-height: root.curve_toggle_items.length * 30px;
+        content_height: curves_list_layout.preferred-height;
 
-        VerticalLayout {
+        curves_list_layout := VerticalLayout {
             spacing: 2px;
             alignment: start;
 

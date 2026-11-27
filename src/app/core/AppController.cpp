@@ -26,11 +26,35 @@
 #include <nfd.h>
 
 #include <algorithm>
+#include <filesystem>
 #include <memory>
+#include <span>
 #include <string>
 #include <utility>
 
 namespace correlation::app {
+
+namespace {
+
+void syncRecentFilesToWindow(::AppWindow &window, std::span<const std::string> files) {
+  const auto recent_model = std::make_shared<slint::VectorModel<slint::SharedString>>();
+  const auto items_model = std::make_shared<slint::VectorModel<RecentFileItem>>();
+  for (const auto &file : files) {
+    recent_model->push_back(slint::SharedString(file));
+    std::string base = std::filesystem::path(file).filename().string();
+    if (base.empty()) {
+      base = file;
+    }
+    items_model->push_back(RecentFileItem{
+        .basename = slint::SharedString(base),
+        .full_path = slint::SharedString(file),
+    });
+  }
+  window.set_recent_files(recent_model);
+  window.set_recent_file_items(items_model);
+}
+
+} // namespace
 
 AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
                              AnalysisDispatcher &dispatcher, ProgramOptions &options)
@@ -120,16 +144,16 @@ void AppController::loadSettings() {
   window_.set_left_col_width(settings_.left_col_width);
   window_.set_last_col_width(settings_.left_col_width);
   window_.set_middle_col_width(settings_.middle_col_width);
+  window_.set_right_col_width(settings_.right_col_width);
+  window_.set_last_right_col_width(settings_.right_col_width);
+  window_.set_preview_dual_split_ratio(settings_.dual_split_ratio);
+  window_.set_is_dark_theme(settings_.dark_theme);
   if (settings_.window_width > 0 && settings_.window_height > 0) {
     window_.window().set_size(
         slint::PhysicalSize({.width = settings_.window_width, .height = settings_.window_height}));
   }
 
-  const auto recent_model = std::make_shared<slint::VectorModel<slint::SharedString>>();
-  for (const auto &file : settings_.recent_files) {
-    recent_model->push_back(slint::SharedString(file));
-  }
-  window_.set_recent_files(recent_model);
+  syncRecentFilesToWindow(window_, settings_.recent_files);
 }
 
 void AppController::addRecentFile(const std::string &filepath) {
@@ -144,12 +168,7 @@ void AppController::addRecentFile(const std::string &filepath) {
     recents.resize(5);
   }
   saveSettings();
-
-  const auto recent_model = std::make_shared<slint::VectorModel<slint::SharedString>>();
-  for (const auto &file : recents) {
-    recent_model->push_back(slint::SharedString(file));
-  }
-  window_.set_recent_files(recent_model);
+  syncRecentFilesToWindow(window_, recents);
 }
 
 void AppController::saveSettings() const {
@@ -157,6 +176,10 @@ void AppController::saveSettings() const {
   const float last_w = window_.get_last_col_width();
   settings.left_col_width = (last_w >= 180.0F) ? last_w : window_.get_left_col_width();
   settings.middle_col_width = window_.get_middle_col_width();
+  const float last_rw = window_.get_last_right_col_width();
+  settings.right_col_width = (last_rw >= 200.0F) ? last_rw : window_.get_right_col_width();
+  settings.dual_split_ratio = std::clamp(window_.get_preview_dual_split_ratio(), 0.15F, 0.85F);
+  settings.dark_theme = window_.get_is_dark_theme();
   const auto phys_size = window_.window().size();
   if (phys_size.width > 0 && phys_size.height > 0) {
     settings.window_width = phys_size.width;
@@ -182,6 +205,12 @@ void AppController::handleOptionstoUI() { OptionsSyncService::writeToUI(window_,
 
 void AppController::updateActiveGroupFlags() {
   OptionsSyncService::updateActiveGroupFlags(window_, options_);
+}
+
+void AppController::markResultsStaleIfDone() noexcept {
+  if (window_.get_analysis_done() && !window_.get_analysis_running()) {
+    window_.set_results_stale(true);
+  }
 }
 
 ProgramOptions AppController::handleOptionsfromUI() {

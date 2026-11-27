@@ -89,6 +89,9 @@ void AnalysisRunner::handleAnalysisCompletion(const std::string &err) {
   window_.set_analysis_running(false);
   window_.set_analysis_status_text(slint::SharedString(determineStatusMessage(err, cancelled)));
   window_.set_analysis_done(successful);
+  if (successful) {
+    window_.set_results_stale(false);
+  }
   window_.set_progress(successful ? 1.0F : 0.0F);
 
   if (!successful) {
@@ -121,6 +124,7 @@ void AnalysisRunner::handleRunAnalysis() {
   }
 
   window_.set_analysis_done(false); // Reset done state
+  window_.set_results_stale(false);
   window_.set_analysis_running(true);
   window_.set_progress(0.0F);
   window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_RUNNING_ANALYSIS));

@@ -13,6 +13,7 @@ import {
     InfoRow,
     Vertical,
     Horizontal,
+    TooltipTarget,
 } from "../../material/material.slint";
 import { AtomCount } from "../../Types.slint";
 
@@ -78,6 +79,13 @@ component SpeciesRemapRow inherits Rectangle {
                             if (!self.has-focus) {
                                 root.commit_remap();
                             }
+                        }
+
+                        key-pressed(event) => {
+                            if (event.text == Key.LeftArrow || event.text == Key.RightArrow) {
+                                return accept;
+                            }
+                            return reject;
                         }
                     }
                 }
@@ -154,19 +162,13 @@ export component OperationsDiagnosticsCard inherits OutlinedCard {
 
     callback rename_element(string, string);
 
-    out property <bool> header_has_hover: file_header_area.has-hover;
-    out property <length> header_hover_x: file_header_area.absolute-position.x + file_header_area.mouse-x;
-    out property <length> header_hover_y: file_header_area.absolute-position.y + file_header_area.mouse-y;
-    out property <bool> diagnostics_has_hover: diagnostics_header.has-hover;
-    out property <length> diagnostics_hover_x: diagnostics_header.absolute-position.x + diagnostics_header.mouse-x;
-    out property <length> diagnostics_hover_y: diagnostics_header.absolute-position.y + diagnostics_header.mouse-y;
-
     Vertical {
         padding: MaterialStyleMetrics.spacing_8;
         spacing: MaterialStyleMetrics.spacing_6;
 
         // Tier 1: Summary Header (Basename + Metrics chip)
-        file_header_area := TouchArea {
+        TooltipTarget {
+            tooltip_text: root.file_loaded ? ("Loaded File: " + root.file_status_text) : "No file loaded.";
             Vertical {
                 spacing: MaterialStyleMetrics.spacing_2;
                 padding: 0;
@@ -188,11 +190,12 @@ export component OperationsDiagnosticsCard inherits OutlinedCard {
         }
 
         // Tier 2: Collapsible Diagnostics Drawer
-        diagnostics_header := ExpandableHeader {
+        ExpandableHeader {
             text: "System Diagnostics";
             expanded <=> root.atoms_expanded;
             enabled: root.file_loaded;
             opacity: root.file_loaded ? 1.0 : 0.4;
+            header_tooltip: "System Diagnostics & Composition.\n\n🔬 Details lattice dimensions, cell volume, macroscopic density, and atomic species counts.";
         }
 
         Vertical {

@@ -80,6 +80,12 @@ export component ShortcutsModal inherits Rectangle {
     in property <bool> show: false;
     callback closed();
 
+    changed show => {
+        if (root.show) {
+            modal_focus.focus();
+        }
+    }
+
     visible: root.show;
     width: 100%;
     height: 100%;
@@ -89,6 +95,16 @@ export component ShortcutsModal inherits Rectangle {
     // Scrim dismissal
     TouchArea {
         clicked => { root.closed(); }
+    }
+
+    modal_focus := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Escape || event.text == "?" || event.text == Key.F1) {
+                root.closed();
+                return accept;
+            }
+            return reject;
+        }
     }
 
     // Centered Modal Card

@@ -1,4 +1,4 @@
-import { DropDownMenu, TooltipTarget } from "../../material/material.slint";
+import { DropDownMenu } from "../../material/material.slint";
 import { OptionSection } from "../common/OptionSection.slint";
 import { ValidatedField } from "../common/ValidatedField.slint";
 
@@ -21,23 +21,21 @@ export component XRDOptionsCard inherits OptionSection {
 
     callback radiation_preset_changed(int);
 
-    TooltipTarget {
-        tooltip_text: "X-ray tube target anode radiation preset.\n\n🔬 Cu-Kα: 1.5406 Å (Standard laboratory diffractometer).\n\n🔬 Mo-Kα: 0.7107 Å (Hard X-rays, higher penetration).\n\n🔬 Co-Kα: 1.7890 Å (Ideal for Fe-rich samples to minimize fluorescence).\n\n🔬 Cr-Kα: 2.2897 Å (Large d-spacing & thin film surface diffraction).";
-        DropDownMenu {
-            enabled: root.file_loaded;
-            width: 100%;
-            label: "Radiation Source";
-            items: [
-                { text: "Cu-Kα (1.5406 Å)", enabled: true },
-                { text: "Mo-Kα (0.7107 Å)", enabled: true },
-                { text: "Co-Kα (1.7890 Å)", enabled: true },
-                { text: "Cr-Kα (2.2897 Å)", enabled: true },
-                { text: "Custom Wavelength", enabled: true }
-            ];
-            current-index <=> root.radiation_preset;
-            selected(idx) => {
-                root.radiation_preset_changed(idx);
-            }
+    DropDownMenu {
+        enabled: root.file_loaded;
+        width: 100%;
+        label: "Radiation Source";
+        tooltip_text: "X-ray tube target anode radiation preset.\n\n🔬 Cu-Kα: 1.5406 Å (Standard lab diffractometer).\n🔬 Mo-Kα: 0.7107 Å (Hard X-rays, higher penetration).\n🔬 Co-Kα: 1.7890 Å (Ideal for Fe-rich samples).\n🔬 Cr-Kα: 2.2897 Å (Large d-spacing & surface diffraction).";
+        items: [
+            { text: "Cu-Kα (1.5406 Å)", enabled: true },
+            { text: "Mo-Kα (0.7107 Å)", enabled: true },
+            { text: "Co-Kα (1.7890 Å)", enabled: true },
+            { text: "Cr-Kα (2.2897 Å)", enabled: true },
+            { text: "Custom Wavelength", enabled: true }
+        ];
+        current-index <=> root.radiation_preset;
+        selected(idx) => {
+            root.radiation_preset_changed(idx);
         }
     }
 
