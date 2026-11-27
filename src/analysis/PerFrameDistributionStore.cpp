@@ -5,6 +5,7 @@
 
 #include "analysis/PerFrameDistributionStore.hpp"
 
+#include <mutex>
 #include <stdexcept>
 #include <utility>
 
@@ -14,11 +15,11 @@ const std::vector<real_t> PerFrameDistributionStore::empty_curve_{};
 
 PerFrameDistributionStore::PerFrameDistributionStore(std::size_t total_frames)
     : total_frames_(total_frames) {
-  // Initialize descriptors for the 3 supported 1D metrics
+  // Initialize descriptors lazily: frame_curves vectors are allocated only when a metric is written
   metrics_.at(toIndex(DistributionMetric::RDF)) = {
       .bins = {},
       .mean_curve = {},
-      .frame_curves = std::vector<std::vector<real_t>>(total_frames_),
+      .frame_curves = {},
       .name = "g(r)",
       .title = "Radial Distribution Function",
       .x_unit = "Å",
@@ -28,7 +29,7 @@ PerFrameDistributionStore::PerFrameDistributionStore(std::size_t total_frames)
   metrics_.at(toIndex(DistributionMetric::PAD)) = {
       .bins = {},
       .mean_curve = {},
-      .frame_curves = std::vector<std::vector<real_t>>(total_frames_),
+      .frame_curves = {},
       .name = "PAD",
       .title = "PAD(θ) Normalized",
       .x_unit = "deg",
@@ -38,7 +39,7 @@ PerFrameDistributionStore::PerFrameDistributionStore(std::size_t total_frames)
   metrics_.at(toIndex(DistributionMetric::SQ)) = {
       .bins = {},
       .mean_curve = {},
-      .frame_curves = std::vector<std::vector<real_t>>(total_frames_),
+      .frame_curves = {},
       .name = "S(Q)",
       .title = "Structure Factor",
       .x_unit = "Å⁻¹",
@@ -48,7 +49,7 @@ PerFrameDistributionStore::PerFrameDistributionStore(std::size_t total_frames)
   metrics_.at(toIndex(DistributionMetric::XRD)) = {
       .bins = {},
       .mean_curve = {},
-      .frame_curves = std::vector<std::vector<real_t>>(total_frames_),
+      .frame_curves = {},
       .name = "XRD",
       .title = "X-Ray Diffraction Pattern",
       .x_unit = "deg",
@@ -61,31 +62,40 @@ std::size_t PerFrameDistributionStore::toIndex(DistributionMetric metric) noexce
 }
 
 void PerFrameDistributionStore::setBins(DistributionMetric metric, std::vector<real_t> bins) {
+  const std::unique_lock lock(mutex_);
   metrics_.at(toIndex(metric)).bins = std::move(bins);
 }
 
 void PerFrameDistributionStore::setMeanCurve(DistributionMetric metric,
                                              std::vector<real_t> mean_curve) {
+  const std::unique_lock lock(mutex_);
   metrics_.at(toIndex(metric)).mean_curve = std::move(mean_curve);
 }
 
 void PerFrameDistributionStore::setFrameCurve(DistributionMetric metric, std::size_t frame_idx,
                                               std::vector<real_t> curve) {
-  auto &frame_curves = metrics_.at(toIndex(metric)).frame_curves;
-  if (frame_idx < frame_curves.size()) {
-    frame_curves[frame_idx] = std::move(curve);
+  if (frame_idx >= total_frames_) {
+    return;
   }
+  const std::unique_lock lock(mutex_);
+  auto &frame_curves = metrics_.at(toIndex(metric)).frame_curves;
+  if (frame_curves.empty()) {
+    frame_curves.resize(total_frames_);
+  }
+  frame_curves[frame_idx] = std::move(curve);
 }
 
 std::size_t PerFrameDistributionStore::getTotalFrames() const noexcept { return total_frames_; }
 
 bool PerFrameDistributionStore::hasData(DistributionMetric metric) const noexcept {
+  const std::shared_lock lock(mutex_);
   const auto &data = metrics_.at(toIndex(metric));
   return !data.bins.empty() && (!data.mean_curve.empty() || !data.frame_curves.empty());
 }
 
 bool PerFrameDistributionStore::hasFrame(DistributionMetric metric,
                                          std::size_t frame_idx) const noexcept {
+  const std::shared_lock lock(mutex_);
   const auto &frame_curves = metrics_.at(toIndex(metric)).frame_curves;
   if (frame_idx >= frame_curves.size()) {
     return false;
@@ -94,16 +104,19 @@ bool PerFrameDistributionStore::hasFrame(DistributionMetric metric,
 }
 
 const std::vector<real_t> &PerFrameDistributionStore::getBins(DistributionMetric metric) const {
+  const std::shared_lock lock(mutex_);
   return metrics_.at(toIndex(metric)).bins;
 }
 
 const std::vector<real_t> &
 PerFrameDistributionStore::getMeanCurve(DistributionMetric metric) const {
+  const std::shared_lock lock(mutex_);
   return metrics_.at(toIndex(metric)).mean_curve;
 }
 
 const std::vector<real_t> &PerFrameDistributionStore::getFrameCurve(DistributionMetric metric,
                                                                     std::size_t frame_idx) const {
+  const std::shared_lock lock(mutex_);
   const auto &frame_curves = metrics_.at(toIndex(metric)).frame_curves;
   if (frame_idx >= frame_curves.size() || frame_curves[frame_idx].empty()) {
     return empty_curve_;
@@ -112,10 +125,12 @@ const std::vector<real_t> &PerFrameDistributionStore::getFrameCurve(Distribution
 }
 
 const MetricCurveData &PerFrameDistributionStore::getMetricData(DistributionMetric metric) const {
+  const std::shared_lock lock(mutex_);
   return metrics_.at(toIndex(metric));
 }
 
 MetricCurveData &PerFrameDistributionStore::getMetricData(DistributionMetric metric) {
+  const std::unique_lock lock(mutex_);
   return metrics_.at(toIndex(metric));
 }
 

@@ -62,6 +62,29 @@ std::vector<Cell> TrajectoryFilter::filterConsecutiveDuplicates(std::span<const 
   return unique_frames;
 }
 
+size_t TrajectoryFilter::removeConsecutiveDuplicatesInPlace(std::vector<Cell> &frames,
+                                                            real_t tolerance) {
+  if (frames.size() < 2) {
+    return 0;
+  }
+
+  size_t write_idx = 1;
+  for (size_t read_idx = 1; read_idx < frames.size(); ++read_idx) {
+    if (!areFramesEqual(frames[read_idx], frames[write_idx - 1], tolerance)) {
+      if (write_idx != read_idx) {
+        frames[write_idx] = std::move(frames[read_idx]);
+      }
+      ++write_idx;
+    }
+  }
+
+  const size_t removed = frames.size() - write_idx;
+  if (removed > 0) {
+    frames.erase(frames.begin() + static_cast<std::ptrdiff_t>(write_idx), frames.end());
+  }
+  return removed;
+}
+
 size_t TrajectoryFilter::removeDuplicatedFrames(Trajectory &trajectory, real_t tolerance) {
   const size_t initial_count = trajectory.getFrameCount();
   trajectory.removeDuplicatedFrames(tolerance);

@@ -12,12 +12,16 @@
 #include "math/Precision.hpp"
 
 #include <algorithm>
+#include <array>
+#include <atomic>
 #include <cstdint>
 #include <memory>
 #include <mutex>
+#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include <vector>
 
 namespace correlation::core {
 
@@ -62,6 +66,8 @@ struct Element {
  */
 class ElementPool {
 public:
+  static constexpr std::size_t kMaxElements = 65536;
+
   /**
    * @brief Returns a shared sentinel empty element instance.
    * @return Pointer to default element.
@@ -72,24 +78,37 @@ public:
   }
 
   /**
-   * @brief Interns an Element into the pool or returns an existing instance.
-   * @param[in] elem Element struct to intern.
-   * @return Immutable pointer to shared Element.
+   * @brief Lock-free O(1) lookup of an interned Element by its compact 16-bit pool index.
+   * @param[in] index Compact index returned by internIndex().
+   * @return Const reference to the interned Element.
    */
-  [[nodiscard]] static const Element *intern(const Element &elem) {
-    if (elem.symbol.empty() && elem.id.value == -1) {
-      return defaultElement();
-    }
-    return intern(elem.symbol, elem.id);
+  [[nodiscard]] static const Element &get(std::uint16_t index) noexcept {
+    const Element *ptr = table()[index].load(std::memory_order_acquire);
+    return ptr != nullptr ? *ptr : *defaultElement();
   }
 
   /**
-   * @brief Interns an element by symbol and ID into the pool.
+   * @brief Interns an Element and returns its compact 16-bit pool index.
+   * @param[in] elem Element struct to intern.
+   * @return Compact pool index (0 for default empty element).
+   */
+  [[nodiscard]] static std::uint16_t internIndex(const Element &elem) {
+    if (elem.symbol.empty() && elem.id.value == -1) {
+      return 0;
+    }
+    return internIndex(elem.symbol, elem.id);
+  }
+
+  /**
+   * @brief Interns an element by symbol and ID and returns its compact 16-bit pool index.
    * @param[in] symbol Chemical symbol.
    * @param[in] elem_id Element identifier.
-   * @return Immutable pointer to shared Element.
+   * @return Compact pool index (0 for default empty element).
    */
-  [[nodiscard]] static const Element *intern(std::string_view symbol, ElementID elem_id) {
+  [[nodiscard]] static std::uint16_t internIndex(std::string_view symbol, ElementID elem_id) {
+    if (symbol.empty() && elem_id.value == -1) {
+      return 0;
+    }
     struct Key {
       std::string symbol;
       std::int32_t id_val;
@@ -105,33 +124,67 @@ public:
     };
 
     static std::mutex pool_mutex;
-    static std::unordered_map<Key, std::unique_ptr<Element>, KeyHash> pool;
+    static std::unordered_map<Key, std::uint16_t, KeyHash> index_map;
+    static std::vector<std::unique_ptr<Element>> storage;
 
     std::scoped_lock lock(pool_mutex);
     Key const key{std::string(symbol), elem_id.value};
-    auto iter = pool.find(key);
-    if (iter != pool.end()) {
-      return iter->second.get();
+    if (const auto iter = index_map.find(key); iter != index_map.end()) {
+      return iter->second;
+    }
+
+    const std::size_t next_slot = storage.size() + 1;
+    if (next_slot >= kMaxElements) {
+      throw std::overflow_error("ElementPool capacity exceeded (max 65535 distinct elements).");
     }
 
     auto new_element =
         std::unique_ptr<Element>(new Element{.symbol = std::string(symbol), .id = elem_id});
     const Element *ptr = new_element.get();
-    pool.emplace(key, std::move(new_element));
-    return ptr;
+    storage.push_back(std::move(new_element));
+    const auto idx = static_cast<std::uint16_t>(next_slot);
+    table()[idx].store(ptr, std::memory_order_release);
+    index_map.emplace(key, idx);
+    return idx;
+  }
+
+  /**
+   * @brief Interns an Element into the pool or returns an existing instance.
+   * @param[in] elem Element struct to intern.
+   * @return Immutable pointer to shared Element.
+   */
+  [[nodiscard]] static const Element *intern(const Element &elem) {
+    return &get(internIndex(elem));
+  }
+
+  /**
+   * @brief Interns an element by symbol and ID into the pool.
+   * @param[in] symbol Chemical symbol.
+   * @param[in] elem_id Element identifier.
+   * @return Immutable pointer to shared Element.
+   */
+  [[nodiscard]] static const Element *intern(std::string_view symbol, ElementID elem_id) {
+    return &get(internIndex(symbol, elem_id));
+  }
+
+private:
+  static std::array<std::atomic<const Element *>, kMaxElements> &table() noexcept {
+    static std::array<std::atomic<const Element *>, kMaxElements> entries{};
+    return entries;
   }
 };
 
 /**
  * @brief Represents an atom in the simulation cell.
  *
- * Stores the element type as a flyweight pointer, position, and unique ID of the atom.
+ * Compact 20-byte (float) / 32-byte (double) layout storing Cartesian position, unique ID,
+ * and a lock-free 16-bit ElementPool index. Velocities are stored lazily in Cell::velocities_.
  */
 class Atom {
 public:
   /** @name Constructors */
   ///@{
-  explicit Atom() noexcept : element_(ElementPool::defaultElement()) {}
+  explicit Atom() noexcept = default;
 
   /**
    * @brief Parameterized constructor.
@@ -139,8 +192,9 @@ public:
    * @param[in] pos The position vector of the atom.
    * @param[in] atom_id The unique ID of the atom.
    */
-  explicit Atom(const Element &element, const math::Vector3<real_t> &pos, AtomID atom_id) noexcept
-      : id_(atom_id), position_(pos), element_(ElementPool::intern(element)) {}
+  explicit Atom(const Element &element, const math::Vector3<real_t> &pos, AtomID atom_id)
+      : position_(pos), id_(atom_id), element_pool_idx_(ElementPool::internIndex(element)),
+        element_id_(static_cast<std::int16_t>(element.id.value)) {}
 
   /**
    * @brief Pointer-based flyweight constructor.
@@ -148,10 +202,11 @@ public:
    * @param[in] pos The position vector of the atom.
    * @param[in] atom_id The unique ID of the atom.
    */
-  explicit Atom(const Element *element_ptr, const math::Vector3<real_t> &pos,
-                AtomID atom_id) noexcept
-      : id_(atom_id), position_(pos),
-        element_(element_ptr != nullptr ? element_ptr : ElementPool::defaultElement()) {}
+  explicit Atom(const Element *element_ptr, const math::Vector3<real_t> &pos, AtomID atom_id)
+      : position_(pos), id_(atom_id),
+        element_pool_idx_(element_ptr != nullptr ? ElementPool::internIndex(*element_ptr) : 0),
+        element_id_(element_ptr != nullptr ? static_cast<std::int16_t>(element_ptr->id.value)
+                                           : static_cast<std::int16_t>(-1)) {}
 
   ///@}
 
@@ -183,46 +238,37 @@ public:
   void setPosition(const math::Vector3<real_t> &pos) noexcept { position_ = pos; }
 
   /**
-   * @brief Gets the velocity of the atom.
-   * @return A const reference to the velocity vector.
-   */
-  [[nodiscard]] const math::Vector3<real_t> &velocity() const noexcept { return velocity_; }
-
-  /**
-   * @brief Sets the velocity of the atom.
-   * @param[in] vel The new velocity vector.
-   */
-  void setVelocity(const math::Vector3<real_t> &vel) noexcept { velocity_ = vel; }
-
-  /**
    * @brief Gets the element type of the atom.
    * @return A const reference to the Element struct.
    */
   [[nodiscard]] const Element &element() const noexcept {
-    return element_ != nullptr ? *element_ : *ElementPool::defaultElement();
+    return ElementPool::get(element_pool_idx_);
   }
 
   /**
    * @brief Sets the element type of the atom.
    * @param[in] ele The new Element struct.
    */
-  void setElement(const Element &ele) { element_ = ElementPool::intern(ele); }
+  void setElement(const Element &ele) {
+    element_pool_idx_ = ElementPool::internIndex(ele);
+    element_id_ = static_cast<std::int16_t>(ele.id.value);
+  }
 
   /**
    * @brief Gets the integer ID of the element type.
    * @return The element ID value.
    */
-  [[nodiscard]] std::int32_t elementId() const noexcept { return element().id.value; }
+  [[nodiscard]] std::int32_t elementId() const noexcept {
+    return static_cast<std::int32_t>(element_id_);
+  }
 
   ///@}
 
 private:
-  AtomID id_{0};                   ///< Unique identification number.
-  math::Vector3<real_t> position_; ///< Cartesian coordinates in Angstroms.
-  math::Vector3<real_t> velocity_; ///< Velocity in Angstroms/fs.
-  const Element *element_{
-      ElementPool::defaultElement(),
-  }; ///< Flyweight pointer to element metadata.
+  math::Vector3<real_t> position_;    ///< Cartesian coordinates in Angstroms.
+  AtomID id_{0};                      ///< Unique identification number.
+  std::uint16_t element_pool_idx_{0}; ///< Compact index into ElementPool.
+  std::int16_t element_id_{-1};       ///< Cached integer element ID (-1 if unassigned).
 };
 
 /**

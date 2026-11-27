@@ -36,9 +36,9 @@ extractBondDependentCalculators(const std::map<std::string, bool> &active_calcul
 }
 
 void mergeCalculatedHistograms(correlation::analysis::DistributionFunctions &target,
-                               const correlation::analysis::DistributionFunctions &source) {
-  for (const auto &[name, hist] : source.getAllHistograms()) {
-    target.addHistogram(name, correlation::analysis::Histogram(hist));
+                               correlation::analysis::DistributionFunctions &source) {
+  for (const auto &name : source.getAvailableHistograms()) {
+    target.addHistogram(name, std::move(source.getMutableHistogram(name)));
   }
 }
 
@@ -140,7 +140,22 @@ AnalysisDispatcher::runFastPreviewRDF(correlation::core::Trajectory *trajectory,
   preview_opts.active_calculators["RDF"] = true;
   preview_opts.active_calculators["Radial Distribution Function"] = true;
 
-  return runAnalysis(trajectory, preview_opts);
+  cancel_flag_ = false;
+  if (const auto validation_res = validateOptions(preview_opts); !validation_res.has_value()) {
+    return std::unexpected(validation_res.error());
+  }
+
+  auto config = toEngineConfig(preview_opts, &cancel_flag_);
+  config.settings.populate_per_frame_store = false;
+  auto result = correlation::analysis::CorrelationEngine::runAnalysis(*trajectory, config,
+                                                                      progress_callback_);
+  if (!result) {
+    std::cerr << "Analysis Exception: " << result.error() << '\n';
+    return std::unexpected(result.error());
+  }
+
+  df_ = std::move(result.value());
+  return {};
 }
 
 bool AnalysisDispatcher::isBondDependentCalculator(std::string_view calc_id) noexcept {
@@ -213,7 +228,7 @@ AnalysisDispatcher::runSelectiveRecalculation(correlation::core::Trajectory *tra
     return std::unexpected(result.error());
   }
 
-  const auto &new_df = result.value();
+  auto &new_df = result.value();
   if (new_df) {
     mergeCalculatedHistograms(*df_, *new_df);
   }

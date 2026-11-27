@@ -41,9 +41,18 @@ std::unique_ptr<StructureAnalyzer> TrajectoryAnalyzer::createAnalyzer(size_t fra
   if (frame_idx >= trajectory_->getFrameCount()) {
     return nullptr;
   }
+  auto cell = std::make_shared<const correlation::core::Cell>(trajectory_->getFrame(frame_idx));
+  return createAnalyzer(std::move(cell));
+}
+
+std::unique_ptr<StructureAnalyzer>
+TrajectoryAnalyzer::createAnalyzer(std::shared_ptr<const correlation::core::Cell> cell) const {
+  if (!cell) {
+    return nullptr;
+  }
   const auto &cutoffs = !bond_cutoffs_.empty() ? bond_cutoffs_ : trajectory_->getBondCutoffs();
-  return std::make_unique<StructureAnalyzer>(trajectory_->getFrame(frame_idx), neighbor_cutoff_,
-                                             cutoffs, ignore_periodic_self_interactions_);
+  return std::make_unique<StructureAnalyzer>(std::move(cell), neighbor_cutoff_, cutoffs,
+                                             ignore_periodic_self_interactions_);
 }
 
 } // namespace correlation::analysis

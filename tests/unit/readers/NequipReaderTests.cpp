@@ -77,13 +77,13 @@ TEST_F(NequipReaderTests, ReadSingleFrameNequip) {
   EXPECT_THAT(atoms[0].position().z(), correlation::testing::IsRealEq(static_cast<real_t>(0.3)));
 
   // Verify forces stored in velocity
-  EXPECT_THAT(atoms[0].velocity().x(), correlation::testing::IsRealEq(static_cast<real_t>(0.01)));
-  EXPECT_THAT(atoms[0].velocity().y(), correlation::testing::IsRealEq(static_cast<real_t>(-0.02)));
-  EXPECT_THAT(atoms[0].velocity().z(), correlation::testing::IsRealEq(static_cast<real_t>(0.03)));
+  EXPECT_THAT(cell.atomVelocity(0).x(), correlation::testing::IsRealEq(static_cast<real_t>(0.01)));
+  EXPECT_THAT(cell.atomVelocity(0).y(), correlation::testing::IsRealEq(static_cast<real_t>(-0.02)));
+  EXPECT_THAT(cell.atomVelocity(0).z(), correlation::testing::IsRealEq(static_cast<real_t>(0.03)));
 
   EXPECT_EQ(atoms[1].element().symbol, "O");
   EXPECT_THAT(atoms[1].position().x(), correlation::testing::IsRealEq(1.5));
-  EXPECT_THAT(atoms[1].velocity().x(), correlation::testing::IsRealEq(static_cast<real_t>(-0.04)));
+  EXPECT_THAT(cell.atomVelocity(1).x(), correlation::testing::IsRealEq(static_cast<real_t>(-0.04)));
 }
 
 TEST_F(NequipReaderTests, ReadMultiFrameTrajectory) {
@@ -116,7 +116,7 @@ TEST_F(NequipReaderTests, ReadMultiFrameTrajectory) {
   EXPECT_THAT(frame_1.getEnergy(), correlation::testing::IsRealEq(static_cast<real_t>(-102.3)));
   EXPECT_THAT(frame_1.atoms()[1].position().x(),
               correlation::testing::IsRealEq(static_cast<real_t>(1.6)));
-  EXPECT_THAT(frame_1.atoms()[1].velocity().x(),
+  EXPECT_THAT(frame_1.atomVelocity(1).x(),
               correlation::testing::IsRealEq(static_cast<real_t>(0.05)));
 }
 

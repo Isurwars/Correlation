@@ -232,13 +232,13 @@ computeCorrectedVelocities(const std::vector<correlation::core::Cell> &frames, s
   const double inv_total_mass = 1.0 / layout.total_mass;
 
   tbb::parallel_for(static_cast<size_t>(0), num_frames, [&](size_t frame_idx) {
-    const auto &frame_atoms = frames[start_frame + frame_idx].atoms();
+    const auto &frame = frames[start_frame + frame_idx];
     double mom_x = 0.0;
     double mom_y = 0.0;
     double mom_z = 0.0;
     for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
       const double mass = layout.masses[layout.atom_elem_idx[atom_idx]];
-      const auto &vel = frame_atoms[atom_idx].velocity();
+      const auto vel = frame.atomVelocity(atom_idx);
       mom_x += static_cast<double>(vel.x()) * mass;
       mom_y += static_cast<double>(vel.y()) * mass;
       mom_z += static_cast<double>(vel.z()) * mass;
@@ -248,7 +248,7 @@ computeCorrectedVelocities(const std::vector<correlation::core::Cell> &frames, s
     const double com_vz = mom_z * inv_total_mass;
 
     for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
-      const auto &vel = frame_atoms[atom_idx].velocity();
+      const auto vel = frame.atomVelocity(atom_idx);
       const size_t offset = (atom_idx * num_frames) + frame_idx;
       velocities.x[offset] = static_cast<double>(vel.x()) - com_vx;
       velocities.y[offset] = static_cast<double>(vel.y()) - com_vy;

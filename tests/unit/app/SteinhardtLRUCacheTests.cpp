@@ -129,6 +129,26 @@ TEST(SteinhardtLRUCacheTests, ConcurrentAccessThreadSafety) {
   EXPECT_LE(cache.size(), cache.capacity());
 }
 
+TEST(SteinhardtLRUCacheTests, ByteBudgetEvictionEnforced) {
+  // Large frame capacity (64) but tiny byte budget that fits ~2 entries
+  const auto sample = makeDummyParams(100, 0.5);
+  const std::size_t one_entry_bytes = detail::estimateEntryBytes(*sample);
+  SteinhardtLRUCache cache(64, one_entry_bytes * 2);
+
+  cache.put(0, makeDummyParams(100, static_cast<real_t>(0.1)));
+  cache.put(1, makeDummyParams(100, static_cast<real_t>(0.2)));
+  EXPECT_EQ(cache.size(), 2UL);
+  EXPECT_LE(cache.memoryBytes(), cache.maxBytes());
+
+  // Inserting a 3rd entry must evict frame 0 due to byte budget even though capacity is 64
+  cache.put(2, makeDummyParams(100, static_cast<real_t>(0.3)));
+  EXPECT_EQ(cache.size(), 2UL);
+  EXPECT_FALSE(cache.contains(0));
+  EXPECT_TRUE(cache.contains(1));
+  EXPECT_TRUE(cache.contains(2));
+  EXPECT_LE(cache.memoryBytes(), cache.maxBytes());
+}
+
 TEST(PhaseSearchTypesTests, CanonicalPresetConfigurations) {
   const auto liquid_cfg = getPresetConfig(CrystalPreset::Liquid);
   EXPECT_EQ(liquid_cfg.descriptor, PhaseDescriptor::Q6Bar);

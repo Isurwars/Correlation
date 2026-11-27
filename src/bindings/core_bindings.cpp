@@ -76,17 +76,22 @@ py::array_t<real_t> cellPositionsZeroCopy(const py::object &obj) {
 
 py::array_t<real_t> cellVelocitiesZeroCopy(const py::object &obj) {
   const auto &cell = obj.cast<const Cell &>();
-  const auto &atoms = cell.atoms();
-  if (atoms.empty()) {
+  const size_t num_atoms = cell.atomCount();
+  if (num_atoms == 0) {
     return {};
   }
 
-  const py::ssize_t stride_row = sizeof(Atom);
-  const py::ssize_t stride_col = sizeof(real_t);
-  const auto rows = static_cast<py::ssize_t>(atoms.size());
+  const auto rows = static_cast<py::ssize_t>(num_atoms);
   const py::ssize_t cols = 3;
+  if (!cell.hasVelocities()) {
+    py::array_t<real_t> zeros({rows, cols});
+    std::fill_n(zeros.mutable_data(), rows * cols, static_cast<real_t>(0.0));
+    return zeros;
+  }
 
-  const real_t *ptr = atoms[0].velocity().begin();
+  const py::ssize_t stride_row = sizeof(correlation::math::Vector3<real_t>);
+  const py::ssize_t stride_col = sizeof(real_t);
+  const real_t *ptr = cell.velocities()[0].begin();
 
   return py::array_t<real_t>({rows, cols}, {stride_row, stride_col}, ptr, obj);
 }

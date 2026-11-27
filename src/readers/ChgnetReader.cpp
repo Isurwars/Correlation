@@ -159,7 +159,7 @@ void parseAtomLine(const std::string &line, const ChgnetReader::CommentData &com
     const auto pos_x = static_cast<real_t>(std::stod(tokens[comm_data.pos_x_col]));
     const auto pos_y = static_cast<real_t>(std::stod(tokens[comm_data.pos_y_col]));
     const auto pos_z = static_cast<real_t>(std::stod(tokens[comm_data.pos_z_col]));
-    auto &atom = cell.addAtom(symbol, correlation::math::Vector3<real_t>(pos_x, pos_y, pos_z));
+    cell.addAtom(symbol, correlation::math::Vector3<real_t>(pos_x, pos_y, pos_z));
 
     if (comm_data.force_x_col >= 0 && comm_data.force_y_col >= 0 && comm_data.force_z_col >= 0) {
       int const max_force_idx =
@@ -168,7 +168,8 @@ void parseAtomLine(const std::string &line, const ChgnetReader::CommentData &com
         const auto force_x = static_cast<real_t>(std::stod(tokens[comm_data.force_x_col]));
         const auto force_y = static_cast<real_t>(std::stod(tokens[comm_data.force_y_col]));
         const auto force_z = static_cast<real_t>(std::stod(tokens[comm_data.force_z_col]));
-        atom.setVelocity(correlation::math::Vector3<real_t>(force_x, force_y, force_z));
+        cell.setAtomVelocity(cell.atomCount() - 1,
+                             correlation::math::Vector3<real_t>(force_x, force_y, force_z));
       }
     }
   } catch (const std::exception &) {

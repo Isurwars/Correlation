@@ -330,6 +330,10 @@ void Trajectory::precomputeBondCutoffs() const {
   if (getFrameCount() == 0) {
     return;
   }
+  if (!frames_.empty()) {
+    bond_cutoffs_ = BondCutoffEngine::compute(frames_.front());
+    return;
+  }
   bond_cutoffs_ = BondCutoffEngine::compute(getFrame(0));
 }
 
@@ -343,10 +347,9 @@ void Trajectory::removeDuplicatedFrames(real_t tolerance) {
     return;
   }
 
-  auto unique_frames = TrajectoryFilter::filterConsecutiveDuplicates(frames_, tolerance);
-  if (unique_frames.size() < frames_.size()) {
-    removed_frames_count_ = frames_.size() - unique_frames.size();
-    frames_ = std::move(unique_frames);
+  const size_t removed = TrajectoryFilter::removeConsecutiveDuplicatesInPlace(frames_, tolerance);
+  if (removed > 0) {
+    removed_frames_count_ = removed;
     frame_lattice_parameters_.clear();
     frame_volumes_.clear();
     syncCellMetricsUnlocked();
@@ -367,7 +370,8 @@ void Trajectory::validateFrame(const Cell &new_frame) const {
     return;
   }
 
-  Cell reference = getFrame(0);
+  std::optional<Cell> temp_reference;
+  const Cell &reference = !frames_.empty() ? frames_.front() : temp_reference.emplace(getFrame(0));
 
   if (new_frame.atomCount() != reference.atomCount()) {
     throw std::runtime_error("Frame validation failed: Atom count mismatch. Expected " +

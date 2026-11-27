@@ -154,6 +154,55 @@ public:
    */
   [[nodiscard]] std::span<Atom> atomSpan() noexcept { return atoms_; }
 
+  // Lazy per-atom velocities / forces (allocated only when populated)
+  /**
+   * @brief Checks whether lazy per-atom velocities have been allocated for this cell.
+   * @return True if velocities are present.
+   */
+  [[nodiscard]] bool hasVelocities() const noexcept { return !velocities_.empty(); }
+
+  /**
+   * @brief Gets the contiguous lazy velocity buffer (empty if velocities were never set).
+   * @return Const reference to velocity vectors.
+   */
+  [[nodiscard]] const std::vector<math::Vector3<real_t>> &velocities() const noexcept {
+    return velocities_;
+  }
+
+  /**
+   * @brief Gets the velocity of a specific atom, returning {0, 0, 0} if unallocated.
+   * @param[in] atom_idx Zero-based atom index.
+   * @return Velocity vector in Angstroms/fs (or force vector for MLIP dataset readers).
+   */
+  [[nodiscard]] math::Vector3<real_t> atomVelocity(size_t atom_idx) const noexcept {
+    return (atom_idx < velocities_.size()) ? velocities_[atom_idx]
+                                           : math::Vector3<real_t>{0.0, 0.0, 0.0};
+  }
+
+  /**
+   * @brief Sets the velocity of a specific atom, lazily allocating velocities_ on first write.
+   * @param[in] atom_idx Zero-based atom index.
+   * @param[in] vel Velocity vector.
+   */
+  void setAtomVelocity(size_t atom_idx, const math::Vector3<real_t> &vel) {
+    if (atom_idx >= atoms_.size()) {
+      return;
+    }
+    if (velocities_.size() < atoms_.size()) {
+      velocities_.resize(atoms_.size(), math::Vector3<real_t>{0.0, 0.0, 0.0});
+    }
+    velocities_[atom_idx] = vel;
+  }
+
+  /**
+   * @brief Ensures the lazy velocity buffer is sized to match atomCount().
+   */
+  void ensureVelocities() {
+    if (velocities_.size() < atoms_.size()) {
+      velocities_.resize(atoms_.size(), math::Vector3<real_t>{0.0, 0.0, 0.0});
+    }
+  }
+
   // Elements
   /**
    * @brief Gets the list of unique chemical elements in the cell.
@@ -312,6 +361,8 @@ private:
   real_t energy_{0.0};            ///< Potential energy of this specific coordinate set.
   std::vector<Atom> atoms_;       ///< Collection of atoms in the cell.
   std::vector<Element> elements_; ///< Unique elements present in the system.
+  std::vector<math::Vector3<real_t>>
+      velocities_; ///< Lazy per-atom velocities/forces (0 B when unused).
 };
 
 } // namespace correlation::core

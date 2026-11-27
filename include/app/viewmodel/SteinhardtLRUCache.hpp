@@ -38,10 +38,42 @@ struct FramePhaseDescriptors {
   std::vector<real_t> fermi_ldos;
 };
 
+namespace detail {
+
+[[nodiscard]] inline std::size_t
+estimateEntryBytes(const calculators::SteinhardtCalculator::SteinhardtParams &params) noexcept {
+  const std::size_t elem_count = params.Q4.size() + params.Q6.size() + params.W4_hat.size() +
+                                 params.W6_hat.size() + params.Q4_bar.size() + params.Q6_bar.size();
+  std::size_t bytes = sizeof(params) + (elem_count * sizeof(real_t));
+  if (params.q6m_normalized.has_value()) {
+    bytes += params.q6m_normalized->size() * sizeof(std::complex<real_t>);
+  }
+  return bytes;
+}
+
+[[nodiscard]] inline std::size_t
+estimateEntryBytes(const FramePhaseDescriptors &desc) noexcept {
+  std::size_t bytes = sizeof(desc);
+  if (desc.steinhardt != nullptr) {
+    bytes += estimateEntryBytes(*desc.steinhardt);
+  }
+  const std::size_t scalar_count = desc.local_entropy.size() + desc.twf_nconn.size() +
+                                   desc.q_tet.size() + desc.displacement.size() +
+                                   desc.d2_min.size() + desc.fermi_ldos.size();
+  bytes += scalar_count * sizeof(real_t);
+  return bytes;
+}
+
+template <typename T> [[nodiscard]] inline std::size_t estimateEntryBytes(const T &val) noexcept {
+  return sizeof(val);
+}
+
+} // namespace detail
+
 /**
  * @class ThreadSafeLRUCache
  * @brief Thread-safe LRU cache storing per-atom parameters or descriptors for up to N trajectory
- * frames.
+ * frames, bounded by both frame count and a configurable memory byte budget.
  *
  * Utilizes std::shared_mutex to permit concurrent read queries while synchronizing LRU mutations
  * and evictions under write locks.
@@ -50,13 +82,16 @@ template <typename ValueType = calculators::SteinhardtCalculator::SteinhardtPara
 class ThreadSafeLRUCache {
 public:
   using ParamsPtr = std::shared_ptr<const ValueType>;
+  static constexpr std::size_t kDefaultMaxBytes = 256UL * 1024UL * 1024UL; ///< 256 MiB cap.
 
   /**
-   * @brief Constructs cache with specified maximum capacity.
+   * @brief Constructs cache with specified maximum frame capacity and memory byte budget.
    * @param[in] max_capacity Maximum number of frames cached simultaneously (default 512).
+   * @param[in] max_bytes Maximum resident byte budget (default 256 MiB; 0 disables byte cap).
    */
-  explicit ThreadSafeLRUCache(std::size_t max_capacity = 512) noexcept
-      : capacity_(std::max<std::size_t>(1, max_capacity)) {}
+  explicit ThreadSafeLRUCache(std::size_t max_capacity = 512,
+                              std::size_t max_bytes = kDefaultMaxBytes) noexcept
+      : capacity_(std::max<std::size_t>(1, max_capacity)), max_bytes_(max_bytes) {}
 
   ~ThreadSafeLRUCache() = default;
   ThreadSafeLRUCache(const ThreadSafeLRUCache &) = delete;
@@ -104,27 +139,30 @@ public:
     if (!params) {
       return;
     }
+    const std::size_t entry_bytes = detail::estimateEntryBytes(*params);
     const std::unique_lock lock(mutex_);
     const auto iter = map_.find(frame_index);
     if (iter != map_.end()) {
+      current_bytes_ = (current_bytes_ >= iter->second.bytes) ? (current_bytes_ - iter->second.bytes)
+                                                              : 0;
       lru_order_.erase(iter->second.order_it);
       lru_order_.push_front(frame_index);
       iter->second.order_it = lru_order_.begin();
       iter->second.params = std::move(params);
+      iter->second.bytes = entry_bytes;
+      current_bytes_ += entry_bytes;
+      evictIfNeededLocked();
       return;
-    }
-
-    if (map_.size() >= capacity_ && !lru_order_.empty()) {
-      const auto oldest_idx = lru_order_.back();
-      lru_order_.pop_back();
-      map_.erase(oldest_idx);
     }
 
     lru_order_.push_front(frame_index);
     map_[frame_index] = CacheEntry{
         .params = std::move(params),
         .order_it = lru_order_.begin(),
+        .bytes = entry_bytes,
     };
+    current_bytes_ += entry_bytes;
+    evictIfNeededLocked();
   }
 
   /**
@@ -162,11 +200,35 @@ public:
   void setCapacity(std::size_t new_capacity) {
     const std::unique_lock lock(mutex_);
     capacity_ = std::max<std::size_t>(1, new_capacity);
-    while (map_.size() > capacity_ && !lru_order_.empty()) {
-      const auto oldest_idx = lru_order_.back();
-      lru_order_.pop_back();
-      map_.erase(oldest_idx);
-    }
+    evictIfNeededLocked();
+  }
+
+  /**
+   * @brief Gets current estimated memory footprint of cached entries in bytes.
+   * @return Estimated resident bytes.
+   */
+  [[nodiscard]] std::size_t memoryBytes() const noexcept {
+    const std::shared_lock lock(mutex_);
+    return current_bytes_;
+  }
+
+  /**
+   * @brief Gets configured maximum byte budget (0 indicates unlimited).
+   * @return Maximum byte budget.
+   */
+  [[nodiscard]] std::size_t maxBytes() const noexcept {
+    const std::shared_lock lock(mutex_);
+    return max_bytes_;
+  }
+
+  /**
+   * @brief Updates the byte budget, evicting oldest entries if over budget.
+   * @param[in] new_max_bytes New byte budget (0 disables byte cap).
+   */
+  void setMaxBytes(std::size_t new_max_bytes) {
+    const std::unique_lock lock(mutex_);
+    max_bytes_ = new_max_bytes;
+    evictIfNeededLocked();
   }
 
   /**
@@ -193,16 +255,45 @@ public:
     const std::unique_lock lock(mutex_);
     map_.clear();
     lru_order_.clear();
+    current_bytes_ = 0;
   }
 
 private:
   struct CacheEntry {
     ParamsPtr params;
     std::list<std::size_t>::iterator order_it;
+    std::size_t bytes{0};
   };
+
+  void evictIfNeededLocked() {
+    // Always keep at least 1 entry if present (the most recently inserted frame)
+    while (map_.size() > 1 && !lru_order_.empty() &&
+           (map_.size() > capacity_ || (max_bytes_ > 0 && current_bytes_ > max_bytes_))) {
+      const auto oldest_idx = lru_order_.back();
+      lru_order_.pop_back();
+      if (const auto iter = map_.find(oldest_idx); iter != map_.end()) {
+        current_bytes_ = (current_bytes_ >= iter->second.bytes)
+                             ? (current_bytes_ - iter->second.bytes)
+                             : 0;
+        map_.erase(iter);
+      }
+    }
+    while (map_.size() > capacity_ && !lru_order_.empty()) {
+      const auto oldest_idx = lru_order_.back();
+      lru_order_.pop_back();
+      if (const auto iter = map_.find(oldest_idx); iter != map_.end()) {
+        current_bytes_ = (current_bytes_ >= iter->second.bytes)
+                             ? (current_bytes_ - iter->second.bytes)
+                             : 0;
+        map_.erase(iter);
+      }
+    }
+  }
 
   mutable std::shared_mutex mutex_;
   std::size_t capacity_{512};
+  std::size_t max_bytes_{kDefaultMaxBytes};
+  std::size_t current_bytes_{0};
   std::list<std::size_t> lru_order_;
   std::unordered_map<std::size_t, CacheEntry> map_;
 };

@@ -50,6 +50,14 @@ public:
    */
   [[nodiscard]] std::unique_ptr<StructureAnalyzer> createAnalyzer(size_t frame_idx) const;
 
+  /**
+   * @brief Factory method to create a StructureAnalyzer from an already-loaded shared Cell.
+   * @param cell Shared pointer to an immutable Cell frame (avoids re-parsing/copying the frame).
+   * @return A unique_ptr to a configured StructureAnalyzer.
+   */
+  [[nodiscard]] std::unique_ptr<StructureAnalyzer>
+  createAnalyzer(std::shared_ptr<const correlation::core::Cell> cell) const;
+
   /** @return Total number of frames after accounting for start/end limits. */
   [[nodiscard]] size_t getNumFrames() const { return effective_end_ - start_frame_; }
   /** @return The configured starting frame index. */

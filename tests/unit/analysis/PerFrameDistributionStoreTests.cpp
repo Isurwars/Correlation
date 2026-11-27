@@ -163,7 +163,7 @@ size_t countPopulatedFrames(const PerFrameDistributionStore &store, Distribution
   return populated_frames;
 }
 
-TEST_F(PerFrameDistributionStoreTests, ComputeMeanPopulatesAllFramesWhenStrided) {
+TEST_F(PerFrameDistributionStoreTests, ComputeMeanRespectsStrideAndRange) {
   auto traj = makeSyntheticTrajectory(5);
 
   AnalysisSettings settings;
@@ -189,7 +189,19 @@ TEST_F(PerFrameDistributionStoreTests, ComputeMeanPopulatesAllFramesWhenStrided)
   EXPECT_EQ(per_frame->getTotalFrames(), 5U);
   EXPECT_TRUE(per_frame->hasData(DistributionMetric::RDF));
   EXPECT_FALSE(per_frame->hasData(DistributionMetric::SQ));
-  EXPECT_EQ(countPopulatedFrames(*per_frame, DistributionMetric::RDF), 5U);
+  EXPECT_EQ(countPopulatedFrames(*per_frame, DistributionMetric::RDF), 2U);
+  EXPECT_TRUE(per_frame->hasFrame(DistributionMetric::RDF, 1));
+  EXPECT_TRUE(per_frame->hasFrame(DistributionMetric::RDF, 3));
+  EXPECT_FALSE(per_frame->hasFrame(DistributionMetric::RDF, 0));
+  EXPECT_FALSE(per_frame->hasFrame(DistributionMetric::RDF, 2));
+  EXPECT_FALSE(per_frame->hasFrame(DistributionMetric::RDF, 4));
+
+  // Verify populate_per_frame_store = false skips store creation entirely
+  settings.populate_per_frame_store = false;
+  const auto preview_dists =
+      DistributionFunctions::computeMean(traj, analyzer, start_frame, settings);
+  ASSERT_NE(preview_dists, nullptr);
+  EXPECT_EQ(preview_dists->getPerFrameStore(), nullptr);
 }
 
 } // namespace

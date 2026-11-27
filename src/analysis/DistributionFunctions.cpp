@@ -475,10 +475,11 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::processSingleFrame
     return nullptr;
   }
 
-  const correlation::core::Cell frame = trajectory.getFrame(frame_idx);
+  auto frame_ptr =
+      std::make_shared<const correlation::core::Cell>(trajectory.getFrame(frame_idx));
   auto frame_df =
-      std::make_unique<DistributionFunctions>(frame, static_cast<real_t>(0.0), bond_cutoffs);
-  frame_df->setStructureAnalyzerOwned(analyzer.createAnalyzer(frame_idx));
+      std::make_unique<DistributionFunctions>(*frame_ptr, static_cast<real_t>(0.0), bond_cutoffs);
+  frame_df->setStructureAnalyzerOwned(analyzer.createAnalyzer(std::move(frame_ptr)));
 
   // Dispatch independent frame-based calculators from the factory
   const auto &factory_calcs =
@@ -539,30 +540,33 @@ void DistributionFunctions::normalizeHistograms(DistributionFunctions &dist_func
 namespace {
 
 void extractFrameCurves(const DistributionFunctions &frame_df, size_t frame_idx,
-                        PerFrameDistributionStore &store) {
+                        PerFrameDistributionStore *store) {
+  if (store == nullptr) {
+    return;
+  }
   const auto &hists = frame_df.getAllHistograms();
   if (const auto it_gr = hists.find("g_r"); it_gr != hists.end()) {
     if (const auto it_tot = it_gr->second.partials.find("Total");
         it_tot != it_gr->second.partials.end()) {
-      store.setFrameCurve(DistributionMetric::RDF, frame_idx, it_tot->second);
+      store->setFrameCurve(DistributionMetric::RDF, frame_idx, it_tot->second);
     }
   }
   if (const auto it_pad = hists.find("PAD"); it_pad != hists.end()) {
     if (const auto it_tot = it_pad->second.partials.find("Total");
         it_tot != it_pad->second.partials.end()) {
-      store.setFrameCurve(DistributionMetric::PAD, frame_idx, it_tot->second);
+      store->setFrameCurve(DistributionMetric::PAD, frame_idx, it_tot->second);
     }
   }
   if (const auto it_sq = hists.find("S_q"); it_sq != hists.end()) {
     if (const auto it_tot = it_sq->second.partials.find("Total");
         it_tot != it_sq->second.partials.end()) {
-      store.setFrameCurve(DistributionMetric::SQ, frame_idx, it_tot->second);
+      store->setFrameCurve(DistributionMetric::SQ, frame_idx, it_tot->second);
     }
   }
   if (const auto it_xrd = hists.find("XRD"); it_xrd != hists.end()) {
     if (const auto it_tot = it_xrd->second.partials.find("Total");
         it_tot != it_xrd->second.partials.end()) {
-      store.setFrameCurve(DistributionMetric::XRD, frame_idx, it_tot->second);
+      store->setFrameCurve(DistributionMetric::XRD, frame_idx, it_tot->second);
     }
   }
 }
@@ -602,142 +606,6 @@ void populateMeanStoreCurves(const DistributionFunctions &final_df,
 
 constexpr size_t LARGE_SYSTEM_ATOM_THRESHOLD = 2000;
 
-struct ActiveMiniCalculators {
-  const ::correlation::calculators::BaseCalculator *rdf{nullptr};
-  const ::correlation::calculators::BaseCalculator *pad{nullptr};
-  const ::correlation::calculators::BaseCalculator *sq{nullptr};
-  const ::correlation::calculators::BaseCalculator *xrd{nullptr};
-
-  [[nodiscard]] bool anyActive() const noexcept {
-    return rdf != nullptr || pad != nullptr || sq != nullptr || xrd != nullptr;
-  }
-
-  [[nodiscard]] bool hasFramePopulated(const PerFrameDistributionStore &store,
-                                       size_t frame_idx) const noexcept {
-    if (rdf != nullptr) {
-      return store.hasFrame(DistributionMetric::RDF, frame_idx);
-    }
-    if (pad != nullptr) {
-      return store.hasFrame(DistributionMetric::PAD, frame_idx);
-    }
-    if (sq != nullptr) {
-      return store.hasFrame(DistributionMetric::SQ, frame_idx);
-    }
-    if (xrd != nullptr) {
-      return store.hasFrame(DistributionMetric::XRD, frame_idx);
-    }
-    return true;
-  }
-};
-
-const ::correlation::calculators::BaseCalculator *
-getActiveCalculator(const std::string &name, const AnalysisSettings &settings) {
-  const auto *calc = ::correlation::calculators::CalculatorFactory::instance().getCalculator(name);
-  if (calc == nullptr || !calc->isConfigured()) {
-    return nullptr;
-  }
-  if (!settings.isActive(calc->getName()) && !settings.isActive(calc->getShortName())) {
-    return nullptr;
-  }
-  return calc;
-}
-
-ActiveMiniCalculators resolveActiveMiniCalculators(const AnalysisSettings &settings) {
-  return {
-      .rdf = getActiveCalculator("Radial Distribution Function", settings),
-      .pad = getActiveCalculator("Plane Angle Distribution", settings),
-      .sq = getActiveCalculator("Static Structure Factor", settings),
-      .xrd = getActiveCalculator("XRD", settings),
-  };
-}
-
-void computeSingleFrameMiniCurves(const correlation::core::Trajectory &trajectory, size_t frame_idx,
-                                  const AnalysisSettings &settings,
-                                  const BondCutoffMatrix &bond_cutoffs,
-                                  const ActiveMiniCalculators &calcs,
-                                  PerFrameDistributionStore &store) {
-  if (frame_idx >= trajectory.getFrameCount()) {
-    return;
-  }
-  const correlation::core::Cell frame = trajectory.getFrame(frame_idx);
-  DistributionFunctions frame_df(frame, static_cast<real_t>(0.0), bond_cutoffs);
-  if (calcs.pad != nullptr) {
-    frame_df.setStructureAnalyzerOwned(
-        std::make_unique<StructureAnalyzer>(frame, settings.r_max, bond_cutoffs));
-  }
-
-  if (calcs.rdf != nullptr) {
-    calcs.rdf->calculateFrame(frame_df, settings);
-  }
-  if (calcs.pad != nullptr) {
-    calcs.pad->calculateFrame(frame_df, settings);
-  }
-  if (calcs.sq != nullptr) {
-    calcs.sq->calculateFrame(frame_df, settings);
-  }
-  if (calcs.xrd != nullptr) {
-    calcs.xrd->calculateFrame(frame_df, settings);
-  }
-
-  extractFrameCurves(frame_df, frame_idx, store);
-}
-
-void populateRemainderMiniCurves(
-    const correlation::core::Trajectory &trajectory, const AnalysisSettings &settings,
-    const BondCutoffMatrix &bond_cutoffs, size_t first_frame_atoms,
-    PerFrameDistributionStore &store,
-    const std::function<void(float, const std::string &)> &progress_callback) {
-  const ActiveMiniCalculators calcs = resolveActiveMiniCalculators(settings);
-  if (!calcs.anyActive()) {
-    return;
-  }
-
-  const size_t total_trajectory_frames = trajectory.getFrameCount();
-  std::vector<size_t> remainder_frames;
-  remainder_frames.reserve(total_trajectory_frames);
-  for (size_t frame_idx = 0; frame_idx < total_trajectory_frames; ++frame_idx) {
-    if (!calcs.hasFramePopulated(store, frame_idx)) {
-      remainder_frames.push_back(frame_idx);
-    }
-  }
-
-  if (remainder_frames.empty()) {
-    return;
-  }
-
-  std::mutex progress_mutex;
-  std::atomic<size_t> completed{0};
-  const size_t total_remainder = remainder_frames.size();
-
-  auto process_remainder = [&](size_t idx) {
-    if (settings.cancel_flag && settings.cancel_flag->load()) {
-      return;
-    }
-    computeSingleFrameMiniCurves(trajectory, remainder_frames[idx], settings, bond_cutoffs, calcs,
-                                 store);
-    const size_t done = ++completed;
-    if (progress_callback) {
-      const std::scoped_lock lock(progress_mutex);
-      progress_callback(static_cast<float>(done) / static_cast<float>(total_remainder),
-                        "Per-frame curves: " + std::to_string(done) + " of " +
-                            std::to_string(total_remainder));
-    }
-  };
-
-  if (first_frame_atoms >= LARGE_SYSTEM_ATOM_THRESHOLD || total_remainder <= 1) {
-    for (size_t idx = 0; idx < total_remainder; ++idx) {
-      process_remainder(idx);
-    }
-  } else {
-    tbb::parallel_for(tbb::blocked_range<size_t>(0, total_remainder),
-                      [&](const tbb::blocked_range<size_t> &range) {
-                        for (size_t idx = range.begin(); idx != range.end(); ++idx) {
-                          process_remainder(idx);
-                        }
-                      });
-  }
-}
-
 } // namespace
 
 std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
@@ -751,13 +619,16 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
   }
 
   const size_t total_trajectory_frames = trajectory.getFrameCount();
-  auto per_frame_store = std::make_shared<PerFrameDistributionStore>(total_trajectory_frames);
+  std::shared_ptr<PerFrameDistributionStore> per_frame_store;
+  if (settings.populate_per_frame_store) {
+    per_frame_store = std::make_shared<PerFrameDistributionStore>(total_trajectory_frames);
+  }
 
   const size_t stride = std::max<size_t>(1, settings.frame_stride);
   const size_t sample_count = (num_frames + stride - 1) / stride;
 
   const size_t first_frame_atoms =
-      (start_frame < total_trajectory_frames) ? trajectory.getFrame(start_frame).atomCount() : 0;
+      (total_trajectory_frames > 0) ? trajectory.firstFrame().atomCount() : 0;
 
   // Retrieve bond cutoffs from the analyzer.
   const auto &bond_cutoffs = analyzer.getBondCutoffs();
@@ -777,7 +648,7 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
       return;
     }
 
-    extractFrameCurves(*frame_df, frame_idx, *per_frame_store);
+    extractFrameCurves(*frame_df, frame_idx, per_frame_store.get());
 
     {
       const std::scoped_lock lock(accumulate_mutex);
@@ -815,19 +686,16 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
     return nullptr;
   }
 
-  if (settings.cancel_flag == nullptr || !settings.cancel_flag->load()) {
-    populateRemainderMiniCurves(trajectory, settings, bond_cutoffs, first_frame_atoms,
-                                *per_frame_store, progress_callback);
-  }
-
   normalizeHistograms(*final_df);
 
   if (settings.smoothing) {
     final_df->smoothAll(settings.smoothing_sigma, settings.smoothing_kernel);
   }
 
-  populateMeanStoreCurves(*final_df, *per_frame_store);
-  final_df->setPerFrameStore(std::move(per_frame_store));
+  if (per_frame_store != nullptr) {
+    populateMeanStoreCurves(*final_df, *per_frame_store);
+    final_df->setPerFrameStore(std::move(per_frame_store));
+  }
 
   return final_df;
 }

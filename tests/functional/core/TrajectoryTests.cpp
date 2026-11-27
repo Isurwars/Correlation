@@ -60,11 +60,11 @@ TEST_F(TrajectoryFunctionalTests, VerifyPBCDiffusionVelocityCalculation) {
   // Delta_r_raw = { -8.0, 0.0, 0.0 }
   // With PBC: minimumImage(-8.0) = 2.0 (the atom moved forward by 2.0 A across the boundary)
   // Velocity = displacement / dt = 2.0 / 0.5 = 4.0 A/fs
-  EXPECT_NEAR(traj.getFrame(0).atoms()[0].velocity().x(), static_cast<real_t>(4.0),
+  EXPECT_NEAR(traj.getFrame(0).atomVelocity(0).x(), static_cast<real_t>(4.0),
               static_cast<real_t>(1e-6));
-  EXPECT_NEAR(traj.getFrame(0).atoms()[0].velocity().y(), static_cast<real_t>(0.0),
+  EXPECT_NEAR(traj.getFrame(0).atomVelocity(0).y(), static_cast<real_t>(0.0),
               static_cast<real_t>(1e-6));
-  EXPECT_NEAR(traj.getFrame(0).atoms()[0].velocity().z(), static_cast<real_t>(0.0),
+  EXPECT_NEAR(traj.getFrame(0).atomVelocity(0).z(), static_cast<real_t>(0.0),
               static_cast<real_t>(1e-6));
 
   // For Frame 1 (Central difference):
@@ -72,7 +72,7 @@ TEST_F(TrajectoryFunctionalTests, VerifyPBCDiffusionVelocityCalculation) {
   // Delta_r_raw = { -6.5, 0.0, 0.0 }
   // With PBC: minimumImage(-6.5) = 3.5
   // Velocity = displacement / (2 * dt) = 3.5 / 1.0 = 3.5 A/fs
-  EXPECT_NEAR(traj.getFrame(1).atoms()[0].velocity().x(), static_cast<real_t>(3.5),
+  EXPECT_NEAR(traj.getFrame(1).atomVelocity(0).x(), static_cast<real_t>(3.5),
               static_cast<real_t>(1e-6));
 
   // For Frame 2:
@@ -80,7 +80,7 @@ TEST_F(TrajectoryFunctionalTests, VerifyPBCDiffusionVelocityCalculation) {
   // Delta_r_raw = { 1.5, 0.0, 0.0 }
   // With PBC: minimumImage(1.5) = 1.5
   // Velocity = displacement / dt = 1.5 / 0.5 = 3.0 A/fs
-  EXPECT_NEAR(traj.getFrame(2).atoms()[0].velocity().x(), static_cast<real_t>(3.0),
+  EXPECT_NEAR(traj.getFrame(2).atomVelocity(0).x(), static_cast<real_t>(3.0),
               static_cast<real_t>(1e-6));
 }
 

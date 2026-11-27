@@ -188,31 +188,21 @@ TEST_F(AtomTests, HandlesLongAndSpecialElementSymbols) {
   EXPECT_EQ(atom.id(), 999999);
 }
 
-TEST_F(AtomTests, VelocityAccessorsWork) {
-  Atom atom;
-  const correlation::math::Vector3<real_t> vel{0.5, static_cast<real_t>(-1.2),
-                                               static_cast<real_t>(3.4)};
-  atom.setVelocity(vel);
-
-  EXPECT_NEAR(atom.velocity().x(), 0.5, 1e-5);
-  EXPECT_NEAR(atom.velocity().y(), -1.2, 1e-5);
-  EXPECT_NEAR(atom.velocity().z(), 3.4, 1e-5);
+TEST_F(AtomTests, CompactMemoryLayoutAndLazyCellVelocities) {
+  static_assert(sizeof(Atom) <= 32, "Atom must stay compact (<= 20B float, <= 32B double)");
+  EXPECT_LE(sizeof(Atom), 32U);
 }
 
 TEST_F(AtomTests, CopyAndMoveSemanticsWork) {
   const Element element = {.symbol = "Si", .id = {14}};
   const correlation::math::Vector3<real_t> pos = {1.0, 2.0, 3.0};
-  const correlation::math::Vector3<real_t> vel = {
-      static_cast<real_t>(0.1), static_cast<real_t>(0.2), static_cast<real_t>(0.3)};
-  Atom original(element, pos, 42);
-  original.setVelocity(vel);
+  const Atom original(element, pos, 42);
 
   // Copy construction
   const Atom copy_constructed(original);
   EXPECT_EQ(copy_constructed.id(), 42);
   EXPECT_EQ(copy_constructed.element().symbol, "Si");
   EXPECT_NEAR(copy_constructed.position().x(), 1.0, 1e-9);
-  EXPECT_NEAR(copy_constructed.velocity().x(), 0.1, 1e-5);
 
   // Copy assignment
   Atom copy_assigned;

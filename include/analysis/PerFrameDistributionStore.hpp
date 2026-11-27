@@ -11,6 +11,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <shared_mutex>
 #include <span>
 #include <string>
 #include <vector>
@@ -139,6 +140,7 @@ private:
 
   [[nodiscard]] static std::size_t toIndex(DistributionMetric metric) noexcept;
 
+  mutable std::shared_mutex mutex_;
   std::size_t total_frames_{0};
   std::array<MetricCurveData, kMetricCount> metrics_;
   static const std::vector<real_t> empty_curve_;

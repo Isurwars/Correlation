@@ -177,7 +177,7 @@ TEST_F(TrajectoryTests, CalculateVelocitiesComputesCorrectVelocities) {
   };
   Trajectory traj(frames, 1.0);
   traj.calculateVelocities();
-  EXPECT_NEAR(traj.getFrame(0).atoms()[0].velocity().x(), 1.0, 1e-6);
+  EXPECT_NEAR(traj.getFrame(0).atomVelocity(0).x(), 1.0, 1e-6);
 }
 
 TEST_F(TrajectoryTests, CalculateVelocitiesHandlesPBC) {
@@ -187,7 +187,7 @@ TEST_F(TrajectoryTests, CalculateVelocitiesHandlesPBC) {
   frame_2.addAtom("H", {1.0, 5.0, 5.0});
   Trajectory traj({frame_1, frame_2}, 1.0);
   traj.calculateVelocities();
-  EXPECT_NEAR(traj.getFrame(0).atoms()[0].velocity().x(), 2.0, 1e-6);
+  EXPECT_NEAR(traj.getFrame(0).atomVelocity(0).x(), 2.0, 1e-6);
 }
 
 TEST_F(TrajectoryTests, SetBondCutoffsManuallyWorks) {
@@ -282,19 +282,19 @@ TEST_F(TrajectoryTests, CalculateVelocitiesHandlesZeroOrNegativeTimeStep) {
   std::vector<Cell> frames = {createSimpleFrame(0, 0, 0), createSimpleFrame(1, 0, 0)};
 
   // Set pre-existing velocities to a known non-zero value to verify they're preserved
-  frames[0].atoms()[0].setVelocity({42.0, 42.0, 42.0});
-  frames[1].atoms()[0].setVelocity({42.0, 42.0, 42.0});
+  frames[0].setAtomVelocity(0, {42.0, 42.0, 42.0});
+  frames[1].setAtomVelocity(0, {42.0, 42.0, 42.0});
 
   Trajectory traj_zero(frames, 0.0);
   traj_zero.calculateVelocities();
   // With zero timestep, calculateVelocities() returns early — pre-existing velocities stay
-  EXPECT_DOUBLE_EQ(traj_zero.getFrame(0).atoms()[0].velocity().x(), 42.0);
-  EXPECT_DOUBLE_EQ(traj_zero.getFrame(0).atoms()[0].velocity().y(), 42.0);
+  EXPECT_DOUBLE_EQ(traj_zero.getFrame(0).atomVelocity(0).x(), 42.0);
+  EXPECT_DOUBLE_EQ(traj_zero.getFrame(0).atomVelocity(0).y(), 42.0);
 
   Trajectory traj_neg(frames, -0.5);
   traj_neg.calculateVelocities();
   // Same for negative timestep — function returns early
-  EXPECT_DOUBLE_EQ(traj_neg.getFrame(0).atoms()[0].velocity().x(), 42.0);
+  EXPECT_DOUBLE_EQ(traj_neg.getFrame(0).atomVelocity(0).x(), 42.0);
 }
 
 TEST_F(TrajectoryTests, ConstructorThrowsOnMismatchedFrames) {
@@ -374,9 +374,9 @@ TEST_F(TrajectoryTests, CalculateVelocitiesSingleFrame) {
   traj.calculateVelocities();
 
   // Velocity should remain at default {0,0,0} since there's nothing to diff
-  EXPECT_DOUBLE_EQ(traj.getFrame(0).atoms()[0].velocity().x(), 0.0);
-  EXPECT_DOUBLE_EQ(traj.getFrame(0).atoms()[0].velocity().y(), 0.0);
-  EXPECT_DOUBLE_EQ(traj.getFrame(0).atoms()[0].velocity().z(), 0.0);
+  EXPECT_DOUBLE_EQ(traj.getFrame(0).atomVelocity(0).x(), 0.0);
+  EXPECT_DOUBLE_EQ(traj.getFrame(0).atomVelocity(0).y(), 0.0);
+  EXPECT_DOUBLE_EQ(traj.getFrame(0).atomVelocity(0).z(), 0.0);
 }
 
 TEST_F(TrajectoryTests, RemoveDuplicatedFramesCounter) {

@@ -129,6 +129,7 @@ struct AnalysisSettings {
   size_t twf_nconn_min = 7;               ///< Minimum coherent bonds for solid-like classification.
   size_t hyperuniformity_samples = 10000; ///< Number of random sample points for hyperuniformity.
   size_t frame_stride = 1;                ///< Sampling stride between frames (>= 1).
+  bool populate_per_frame_store = true;   ///< Populate per-frame 1D curves for 3D viewer scrubbing.
   int vacf_max_lag = -1;                  ///< Maximum VACF lag frames (-1 = half trajectory).
   VDOSWindowType vdos_window =
       VDOSWindowType::Hann; ///< Time-domain window for VDOS cosine transform.

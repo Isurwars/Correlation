@@ -25,10 +25,11 @@ void computeForwardBoundary(std::span<Cell> frames, real_t time_step) {
   auto &frame0 = frames[0];
   const auto &frame1 = frames[1];
   const size_t num_atoms = frame0.atomCount();
+  frame0.ensureVelocities();
   for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
     const auto &pos0 = frame0.atoms()[atom_idx].position();
     const auto &pos1 = frame1.atoms()[atom_idx].position();
-    frame0.atoms()[atom_idx].setVelocity(computeDisplacement(frame0, pos1, pos0) / time_step);
+    frame0.setAtomVelocity(atom_idx, computeDisplacement(frame0, pos1, pos0) / time_step);
   }
 }
 
@@ -37,10 +38,11 @@ void computeBackwardBoundary(std::span<Cell> frames, real_t time_step) {
   auto &frame_last = frames[num_frames - 1];
   const auto &frame_prev = frames[num_frames - 2];
   const size_t num_atoms = frame_last.atomCount();
+  frame_last.ensureVelocities();
   for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
     const auto &pos_n = frame_last.atoms()[atom_idx].position();
     const auto &pos_n_1 = frame_prev.atoms()[atom_idx].position();
-    frame_last.atoms()[atom_idx].setVelocity(computeDisplacement(frame_last, pos_n, pos_n_1) /
+    frame_last.setAtomVelocity(atom_idx, computeDisplacement(frame_last, pos_n, pos_n_1) /
                                              time_step);
   }
 }
@@ -53,12 +55,13 @@ void computeCentralDifferences(std::span<Cell> frames, real_t time_step) {
     const auto &frame_next = frames[frame_idx + 1];
     const auto &frame_prev = frames[frame_idx - 1];
     const size_t num_atoms = current_frame.atomCount();
+    current_frame.ensureVelocities();
 
     for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
       const auto &pos_next = frame_next.atoms()[atom_idx].position();
       const auto &pos_prev = frame_prev.atoms()[atom_idx].position();
-      current_frame.atoms()[atom_idx].setVelocity(
-          computeDisplacement(current_frame, pos_next, pos_prev) / two_dt);
+      current_frame.setAtomVelocity(
+          atom_idx, computeDisplacement(current_frame, pos_next, pos_prev) / two_dt);
     }
   }
 }

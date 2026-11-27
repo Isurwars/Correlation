@@ -40,8 +40,8 @@ namespace {
 
 void checkNonZeroVelocities(const std::vector<correlation::core::Cell> &frames) {
   correlation::real_t max_v_sq = 0.0;
-  for (const auto &atom : frames[10].atoms()) {
-    const auto velocity = atom.velocity();
+  for (size_t idx = 0; idx < frames[10].atomCount(); ++idx) {
+    const auto velocity = frames[10].atomVelocity(idx);
     max_v_sq = std::max(max_v_sq, correlation::math::dot(velocity, velocity));
   }
   EXPECT_GT(max_v_sq, 0.0) << "Particles should be moving";
@@ -62,7 +62,7 @@ TEST(DynamicsAnalyzerTests, CalculatesVACFFromExampletraj) {
 
   const auto &frames = traj.getFrames();
   ASSERT_FALSE(frames.empty());
-  EXPECT_NE(frames[1].atoms()[0].velocity().x(), 0.0);
+  EXPECT_NE(frames[1].atomVelocity(0).x(), 0.0);
   ASSERT_EQ(frames[0].atomCount(), traj.getFrames()[0].atomCount());
 
   checkNonZeroVelocities(frames);

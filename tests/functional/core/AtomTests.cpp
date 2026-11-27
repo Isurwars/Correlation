@@ -72,7 +72,6 @@ TEST_F(AtomFunctionalTests, VerifyDynamicAttributeModifications) {
   atom.setElement(new_element);
   atom.setID(101);
   atom.setPosition({1.5, 2.5, 3.5});
-  atom.setVelocity({static_cast<real_t>(0.1), static_cast<real_t>(-0.2), 0.5});
 
   EXPECT_EQ(atom.element().symbol, "O");
   EXPECT_EQ(atom.elementId(), 8);
@@ -81,10 +80,6 @@ TEST_F(AtomFunctionalTests, VerifyDynamicAttributeModifications) {
   EXPECT_NEAR(atom.position().x(), 1.5, 1e-6);
   EXPECT_NEAR(atom.position().y(), 2.5, 1e-6);
   EXPECT_NEAR(atom.position().z(), 3.5, 1e-6);
-
-  EXPECT_NEAR(atom.velocity().x(), 0.1, 1e-6);
-  EXPECT_NEAR(atom.velocity().y(), -0.2, 1e-6);
-  EXPECT_NEAR(atom.velocity().z(), 0.5, 1e-6);
 }
 
 TEST_F(AtomFunctionalTests, VerifyAngleCollinearAndOverlapping) {

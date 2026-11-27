@@ -38,6 +38,19 @@ public:
                               real_t tolerance = static_cast<real_t>(1e-5));
 
   /**
+   * @brief Filters and removes consecutive duplicate frames in-place from a vector of Cell frames.
+   *
+   * Uses two-pointer std::move compaction so zero extra Cell copies are allocated when no
+   * duplicates exist, eliminating 2x peak RAM spikes during trajectory loading.
+   *
+   * @param[in,out] frames Vector of cell frames to deduplicate in-place.
+   * @param[in] tolerance Euclidean distance threshold in Angstroms for position equivalence.
+   * @return Number of duplicate frames removed.
+   */
+  static size_t removeConsecutiveDuplicatesInPlace(std::vector<Cell> &frames,
+                                                   real_t tolerance = static_cast<real_t>(1e-5));
+
+  /**
    * @brief Filters and removes consecutive duplicate frames in-place from a Trajectory.
    * @param[in,out] trajectory Trajectory container to be deduplicated.
    * @param[in] tolerance Euclidean distance threshold in Angstroms.

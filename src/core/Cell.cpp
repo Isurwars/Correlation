@@ -302,8 +302,12 @@ Cell Cell::replicate(int rep_a, int rep_b, int rep_c) const {
                                                    vec_b * static_cast<real_t>(idx_b) +
                                                    vec_c * static_cast<real_t>(idx_c);
 
-        for (const auto &atom : atoms_) {
+        for (size_t atom_idx = 0; atom_idx < atoms_.size(); ++atom_idx) {
+          const auto &atom = atoms_[atom_idx];
           new_cell.addAtom(atom.element().symbol, atom.position() + displacement);
+          if (hasVelocities()) {
+            new_cell.setAtomVelocity(new_cell.atomCount() - 1, atomVelocity(atom_idx));
+          }
         }
       }
     }
