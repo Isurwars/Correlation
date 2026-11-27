@@ -227,21 +227,21 @@ export component Structure3DPhaseTab inherits ScrollView {
                     label: "Min Cutoff";
                     value: root.min_threshold;
                     minimum: root.domain_min;
-                    maximum: root.max_threshold;
+                    maximum: root.domain_max;
                     display_text: "" + (Math.round(root.min_threshold * 100) / 100);
                     tooltip_text: "Lower order-parameter threshold for highlighting matching atoms.";
-                    changed(val) => { root.set_thresholds(val, root.max_threshold); }
+                    changed(val) => { root.set_thresholds(Math.min(val, root.max_threshold), root.max_threshold); }
                 }
 
                 MaterialSlider {
                     horizontal-stretch: 1;
                     label: "Max Cutoff";
                     value: root.max_threshold;
-                    minimum: root.min_threshold;
+                    minimum: root.domain_min;
                     maximum: root.domain_max;
                     display_text: "" + (Math.round(root.max_threshold * 100) / 100);
                     tooltip_text: "Upper order-parameter threshold for highlighting matching atoms.";
-                    changed(val) => { root.set_thresholds(root.min_threshold, val); }
+                    changed(val) => { root.set_thresholds(root.min_threshold, Math.max(val, root.min_threshold)); }
                 }
             }
 

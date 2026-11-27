@@ -24,6 +24,7 @@ AnalysisRunner::AnalysisRunner(::AppWindow &window, TrajectoryLoader &loader,
       controller_(controller) {}
 
 AnalysisRunner::~AnalysisRunner() {
+  alive_->store(false, std::memory_order_release);
   if (analysis_thread_.joinable()) {
     analysis_thread_.join();
   }
@@ -31,7 +32,10 @@ AnalysisRunner::~AnalysisRunner() {
 
 void AnalysisRunner::updateProgress(float progress, const std::string &msg) {
   progress = std::clamp(progress, 0.0F, 1.0F);
-  slint::invoke_from_event_loop([progress, msg, this] {
+  slint::invoke_from_event_loop([progress, msg, this, alive = alive_] {
+    if (!alive->load(std::memory_order_acquire)) {
+      return;
+    }
     window_.set_progress(progress);
     if (!msg.empty()) {
       window_.set_analysis_status_text(slint::SharedString(msg));
@@ -99,9 +103,6 @@ void AnalysisRunner::handleAnalysisCompletion(const std::string &err) {
   }
   controller_.getPlotController()->populatePlotList();
   controller_.populateExportAnalyses();
-  if (!dispatcher_.getAvailableHistogramNames().empty()) {
-    controller_.getPlotController()->requestPlotUpdate(0, true);
-  }
   if (auto *s3d = controller_.getStructure3DController(); s3d != nullptr) {
     s3d->set3DModeActive(false);
     if (const auto *dist_funcs = dispatcher_.getDistributionFunctions(); dist_funcs != nullptr) {
@@ -134,9 +135,14 @@ void AnalysisRunner::handleRunAnalysis() {
   // Run analysis in a separate thread asynchronously without blocking GUI event loop
   joinPreviousThreadAsync();
 
-  analysis_thread_ = std::jthread([this] {
+  analysis_thread_ = std::jthread([this, alive = alive_] {
     const std::string err = executeAnalysis();
-    slint::invoke_from_event_loop([this, err] { handleAnalysisCompletion(err); });
+    slint::invoke_from_event_loop([this, alive, err] {
+      if (!alive->load(std::memory_order_acquire)) {
+        return;
+      }
+      handleAnalysisCompletion(err);
+    });
   });
 }
 

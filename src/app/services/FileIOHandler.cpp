@@ -30,6 +30,7 @@ FileIOHandler::FileIOHandler(::AppWindow &window, TrajectoryLoader &loader,
       controller_(controller) {}
 
 FileIOHandler::~FileIOHandler() {
+  alive_->store(false, std::memory_order_release);
   if (dialog_thread_.joinable()) {
     dialog_thread_.join();
   }
@@ -38,20 +39,46 @@ FileIOHandler::~FileIOHandler() {
   }
 }
 
-void FileIOHandler::executeWriteFiles(const std::string &filepath) {
-  ProgramOptions opts = controller_.handleOptionsfromUI();
-  opts.output_file_base = filepath;
+namespace {
 
-  const auto format_opts = window_.get_export_format_options();
+[[nodiscard]] ProgramOptions buildExportOptionsFromUI(const AppWindow &window,
+                                                      AppController &controller) {
+  ProgramOptions opts = controller.handleOptionsfromUI();
+  const auto format_opts = window.get_export_format_options();
   opts.use_zip = format_opts.use_zip;
   opts.use_csv = format_opts.export_csv;
   opts.use_hdf5 = format_opts.export_hdf5;
   opts.use_parquet = format_opts.export_arrow;
   opts.export_images = format_opts.export_images;
-
-  // Export all available distributions without algorithmic filtering
   opts.export_algorithms.clear();
+  if (!window.get_export_all_analyses()) {
+    if (const auto model = window.get_export_analysis_items(); model != nullptr) {
+      for (size_t i = 0; i < model->row_count(); ++i) {
+        if (const auto item = model->row_data(i); item.has_value() && item->enabled) {
+          opts.export_algorithms.emplace_back(item->id.data());
+        }
+      }
+    }
+  }
+  return opts;
+}
 
+void dispatchStatusUpdate(AppWindow &window, std::shared_ptr<std::atomic<bool>> alive,
+                          std::string status_msg) {
+  slint::invoke_from_event_loop([&window, alive = std::move(alive),
+                                 status_msg = std::move(status_msg)] {
+    if (!alive->load(std::memory_order_acquire)) {
+      return;
+    }
+    window.set_analysis_status_text(slint::SharedString(status_msg));
+  });
+}
+
+} // namespace
+
+void FileIOHandler::executeWriteFiles(const std::string &filepath) {
+  ProgramOptions opts = buildExportOptionsFromUI(window_, controller_);
+  opts.output_file_base = filepath;
   options_ = std::move(opts);
 
   const auto write_res = dispatcher_.writeFiles(options_);
@@ -89,48 +116,56 @@ void FileIOHandler::handleWriteFiles() {
 #endif
 
   const bool is_zip = format_opts.use_zip;
+  ProgramOptions export_opts = buildExportOptionsFromUI(window_, controller_);
 
-  dialog_thread_ = std::jthread([this, is_zip] {
-    nfdchar_t *out_path = nullptr;
-    nfdresult_t result = NFD_CANCEL;
+  dialog_thread_ =
+      std::jthread([this, alive = alive_, is_zip, export_opts = std::move(export_opts)] mutable {
+        nfdchar_t *out_path = nullptr;
+        nfdresult_t result = NFD_CANCEL;
 
-    if (is_zip) {
-      std::array<nfdfilteritem_t, 1> filter_list = {
-          {
+        if (is_zip) {
+          std::array<nfdfilteritem_t, 1> filter_list = {
               {
-                  .name = "Consolidated ZIP Bundle",
-                  .spec = "zip",
+                  {
+                      .name = "Consolidated ZIP Bundle",
+                      .spec = "zip",
+                  },
               },
-          },
-      };
-      result = NFD_SaveDialogU8(&out_path, filter_list.data(), filter_list.size(), nullptr,
-                                "correlation_export.zip");
-    } else {
-      result = NFD_PickFolderU8(&out_path, nullptr);
-    }
+          };
+          result = NFD_SaveDialogU8(&out_path, filter_list.data(), filter_list.size(), nullptr,
+                                    "correlation_export.zip");
+        } else {
+          result = NFD_PickFolderU8(&out_path, nullptr);
+        }
 
-    if (result == NFD_OKAY) {
-      std::string filepath(out_path);
-      NFD_FreePathU8(out_path);
+        if (result == NFD_OKAY) {
+          export_opts.output_file_base = std::string(out_path);
+          NFD_FreePathU8(out_path);
 
-      slint::invoke_from_event_loop([this, filepath = std::move(filepath)] {
-        dialog_active_.store(false);
-        executeWriteFiles(filepath);
+          // Perform heavy disk/archive I/O on the background worker thread (off UI thread)
+          const auto write_res = dispatcher_.writeFiles(export_opts);
+          const std::string status_msg =
+              write_res ? std::string(AppDefaults::MSG_FILES_WRITTEN) : write_res.error();
+          dialog_active_.store(false);
+
+          slint::invoke_from_event_loop(
+              [this, alive, export_opts = std::move(export_opts), status_msg] mutable {
+                if (!alive->load(std::memory_order_acquire)) {
+                  return;
+                }
+                options_ = std::move(export_opts);
+                window_.set_analysis_status_text(slint::SharedString(status_msg));
+              });
+        } else if (result == NFD_CANCEL) {
+          dialog_active_.store(false);
+          dispatchStatusUpdate(window_, alive, std::string(AppDefaults::MSG_SAVE_CANCELLED));
+        } else {
+          std::string error_msg = "Error: ";
+          error_msg += NFD_GetError();
+          dialog_active_.store(false);
+          dispatchStatusUpdate(window_, alive, std::move(error_msg));
+        }
       });
-    } else if (result == NFD_CANCEL) {
-      slint::invoke_from_event_loop([this] {
-        dialog_active_.store(false);
-        window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
-      });
-    } else {
-      std::string error_msg = "Error: ";
-      error_msg += NFD_GetError();
-      slint::invoke_from_event_loop([this, error_msg = std::move(error_msg)] {
-        dialog_active_.store(false);
-        window_.set_analysis_status_text(slint::SharedString(error_msg));
-      });
-    }
-  });
 }
 
 void FileIOHandler::handleExportStructure() {
@@ -150,7 +185,7 @@ void FileIOHandler::handleExportStructure() {
 
   const correlation::core::Cell cell_copy = *cell;
 
-  dialog_thread_ = std::jthread([this, cell_copy] {
+  dialog_thread_ = std::jthread([this, alive = alive_, cell_copy] {
     nfdchar_t *out_path = nullptr;
     std::array<nfdfilteritem_t, 4> const filter_list = {
         {
@@ -168,31 +203,34 @@ void FileIOHandler::handleExportStructure() {
       std::string const filepath(out_path);
       NFD_FreePathU8(out_path);
 
-      slint::invoke_from_event_loop([this, filepath, cell_copy] {
-        dialog_active_.store(false);
-        try {
-          const std::filesystem::path path(filepath);
-          std::string ext = path.extension().string();
-          if (ext.empty()) {
-            ext = path.filename().string();
-          }
-          const auto *const writer =
-              writers::structure::StructureWriterFactory::instance().getWriterForExtension(ext);
-          if (writer == nullptr) {
-            window_.set_analysis_status_text("Error: Unsupported export format for " +
-                                             slint::SharedString(filepath));
-            return;
-          }
-          writer->write(filepath, cell_copy);
-          window_.set_analysis_status_text("Successfully exported structure to " +
-                                           slint::SharedString(filepath));
-        } catch (const std::exception &e) {
-          window_.set_analysis_status_text(
-              slint::SharedString(std::string("Error exporting structure: ") + e.what()));
+      std::string status_msg;
+      try {
+        const std::filesystem::path path(filepath);
+        std::string ext = path.extension().string();
+        if (ext.empty()) {
+          ext = path.filename().string();
         }
+        const auto *const writer =
+            writers::structure::StructureWriterFactory::instance().getWriterForExtension(ext);
+        if (writer == nullptr) {
+          status_msg = "Error: Unsupported export format for " + filepath;
+        } else {
+          writer->write(filepath, cell_copy);
+          status_msg = "Successfully exported structure to " + filepath;
+        }
+      } catch (const std::exception &e) {
+        status_msg = std::string("Error exporting structure: ") + e.what();
+      }
+      dialog_active_.store(false);
+
+      slint::invoke_from_event_loop([this, alive, status_msg = std::move(status_msg)] {
+        if (!alive->load(std::memory_order_acquire)) {
+          return;
+        }
+        window_.set_analysis_status_text(slint::SharedString(status_msg));
       });
     } else {
-      slint::invoke_from_event_loop([this] { dialog_active_.store(false); });
+      dialog_active_.store(false);
     }
   });
 }
@@ -211,9 +249,12 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath,
     load_thread_.join();
   }
 
-  load_thread_ = std::jthread([this, filepath, on_complete = std::move(on_complete)] {
-    const auto progress_cb = [this](float progress, const std::string &msg) {
-      slint::invoke_from_event_loop([progress, msg, this] {
+  load_thread_ = std::jthread([this, alive = alive_, filepath, on_complete = std::move(on_complete)] {
+    const auto progress_cb = [this, alive](float progress, const std::string &msg) {
+      slint::invoke_from_event_loop([progress, msg, this, alive] {
+        if (!alive->load(std::memory_order_acquire)) {
+          return;
+        }
         window_.set_progress(progress);
         if (!msg.empty()) {
           window_.set_file_status_text(slint::SharedString(msg));
@@ -227,18 +268,21 @@ void FileIOHandler::startLoadingTrajectory(const std::string &filepath,
     if (load_res) {
       message = *load_res;
       success = true;
-      options_.input_file = filepath;
     } else {
       message = std::string(AppDefaults::MSG_ERROR_LOADING) + load_res.error();
     }
 
-    slint::invoke_from_event_loop([this, filepath, message, success, on_complete] {
+    slint::invoke_from_event_loop([this, alive, filepath, message, success, on_complete] {
+      if (!alive->load(std::memory_order_acquire)) {
+        return;
+      }
       window_.set_file_status_text(slint::SharedString(message));
       window_.set_file_loading(false);
       window_.set_timer_running(false);
       window_.set_text_opacity(false);
 
       if (success) {
+        options_.input_file = filepath;
         onTrajectoryLoadSuccess(filepath);
       }
 
@@ -277,9 +321,13 @@ void FileIOHandler::startLoadingTrajectories(const std::vector<std::string> &fil
   }
 
   load_thread_ = std::jthread(
-      [this, sorted_paths = std::move(sorted_paths), on_complete = std::move(on_complete)] {
-        const auto progress_cb = [this](float progress, const std::string &msg) {
-          slint::invoke_from_event_loop([progress, msg, this] {
+      [this, alive = alive_, sorted_paths = std::move(sorted_paths),
+       on_complete = std::move(on_complete)] {
+        const auto progress_cb = [this, alive](float progress, const std::string &msg) {
+          slint::invoke_from_event_loop([progress, msg, this, alive] {
+            if (!alive->load(std::memory_order_acquire)) {
+              return;
+            }
             window_.set_progress(progress);
             if (!msg.empty()) {
               window_.set_file_status_text(slint::SharedString(msg));
@@ -293,18 +341,21 @@ void FileIOHandler::startLoadingTrajectories(const std::vector<std::string> &fil
         if (load_res) {
           message = *load_res;
           success = true;
-          options_.input_file = sorted_paths.front();
         } else {
           message = std::string(AppDefaults::MSG_ERROR_LOADING) + load_res.error();
         }
 
-        slint::invoke_from_event_loop([this, sorted_paths, message, success, on_complete] {
+        slint::invoke_from_event_loop([this, alive, sorted_paths, message, success, on_complete] {
+          if (!alive->load(std::memory_order_acquire)) {
+            return;
+          }
           window_.set_file_status_text(slint::SharedString(message));
           window_.set_file_loading(false);
           window_.set_timer_running(false);
           window_.set_text_opacity(false);
 
           if (success) {
+            options_.input_file = sorted_paths.front();
             onTrajectoryLoadSuccess(sorted_paths.front());
           }
 
@@ -359,8 +410,6 @@ void FileIOHandler::handleRenameElement(const std::string &old_symbol,
 
   if (controller_.getPlotController() != nullptr) {
     controller_.getPlotController()->populatePlotList();
-    const int plot_idx = std::max(0, window_.get_selected_plot_index());
-    controller_.getPlotController()->requestPlotUpdate(plot_idx, true);
   }
 
   static_cast<void>(controller_.getInputValidator()->validateInputs());
@@ -410,9 +459,6 @@ void FileIOHandler::onTrajectoryLoadSuccess(const std::string &filepath) {
 
   if (controller_.getPlotController() != nullptr) {
     controller_.getPlotController()->populatePlotList();
-    if (!dispatcher_.getAvailableHistogramNames().empty()) {
-      controller_.getPlotController()->requestPlotUpdate(0, true);
-    }
   }
 
   static_cast<void>(controller_.getInputValidator()->validateInputs());

@@ -133,10 +133,7 @@ void applyExportSceneFilters(render3d::Scene3D &frame_scene, const core::Cell &c
 Structure3DController::Structure3DController(::AppWindow &window, const ProgramOptions &options)
     : window_(window), options_(options), alive_(std::make_shared<std::atomic<bool>>(true)),
       render_pipeline_(std::make_unique<Structure3DRenderPipeline>(
-          [this](const slint::Image &img) {
-            safeInvokeOnWindow([this, img] { window_.set_structure_3d_image(img); });
-          },
-          alive_)) {
+          [this](const slint::Image &img) { window_.set_structure_3d_image(img); }, alive_)) {
   camera_.setViewport(static_cast<float>(viewport_dims_.width),
                       static_cast<float>(viewport_dims_.height));
   camera_.fitToBox(math::Vector3<float>{-10.0F, -10.0F, -10.0F},
@@ -637,7 +634,12 @@ bool Structure3DController::exportSnapshotPng(const std::string &filepath, int s
       return false;
     }
     if (scene_dirty_ || published_scene_ == nullptr) {
-      published_scene_ = std::make_shared<render3d::Scene3D>(*scene_);
+      if (supercell_dims_[0] > 1 || supercell_dims_[1] > 1 || supercell_dims_[2] > 1) {
+        published_scene_ =
+            scene_->buildVisualSupercell(supercell_dims_[0], supercell_dims_[1], supercell_dims_[2]);
+      } else {
+        published_scene_ = std::make_shared<render3d::Scene3D>(*scene_);
+      }
       scene_dirty_ = false;
     }
     constexpr std::uint32_t K_MAX_SNAP_DIM = 4096U;
@@ -650,6 +652,7 @@ bool Structure3DController::exportSnapshotPng(const std::string &filepath, int s
         .render_bonds = render_bonds_,
         .render_wireframe = render_wireframe_,
         .depth_cueing = depth_cueing_,
+        .ssao_enabled = ssao_enabled_,
         .is_interacting = false,
     };
   }
@@ -1485,6 +1488,7 @@ void Structure3DController::setRadialBrushDistance(std::optional<double> r_angst
         std::size_t matched_atoms = 0;
         applyRadialBrushHighlightLocked(matched_atoms);
         applySlabClippingLocked();
+        scene_dirty_ = true;
         if (radial_brush_r_.has_value()) {
           brush_label =
               std::format("Shell r = {:.2f} ± 0.15 Å ({} atoms)", *radial_brush_r_, matched_atoms);

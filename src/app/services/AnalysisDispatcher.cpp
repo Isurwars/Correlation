@@ -115,7 +115,10 @@ AnalysisDispatcher::runAnalysis(correlation::core::Trajectory *trajectory,
     return std::unexpected(result.error());
   }
 
-  df_ = std::move(result.value());
+  {
+    const std::unique_lock lock(df_mutex_);
+    df_ = std::move(result.value());
+  }
   return {};
 }
 
@@ -154,7 +157,10 @@ AnalysisDispatcher::runFastPreviewRDF(correlation::core::Trajectory *trajectory,
     return std::unexpected(result.error());
   }
 
-  df_ = std::move(result.value());
+  {
+    const std::unique_lock lock(df_mutex_);
+    df_ = std::move(result.value());
+  }
   return {};
 }
 
@@ -230,7 +236,10 @@ AnalysisDispatcher::runSelectiveRecalculation(correlation::core::Trajectory *tra
 
   auto &new_df = result.value();
   if (new_df) {
-    mergeCalculatedHistograms(*df_, *new_df);
+    const std::unique_lock lock(df_mutex_);
+    if (df_) {
+      mergeCalculatedHistograms(*df_, *new_df);
+    }
   }
 
   return {};
@@ -244,6 +253,7 @@ AnalysisDispatcher::runSelectiveRecalculation(correlation::core::Trajectory &tra
 
 std::expected<void, std::string>
 AnalysisDispatcher::writeFiles(const ProgramOptions &options) const {
+  const std::shared_lock lock(df_mutex_);
   if (!df_) {
     std::string const err = AppDefaults::MSG_NO_DATA_TO_WRITE;
     std::cerr << err << '\n';
@@ -282,6 +292,7 @@ AnalysisDispatcher::writeFiles(const ProgramOptions &options) const {
 }
 
 std::vector<std::string> AnalysisDispatcher::getAvailableHistogramNames() const {
+  const std::shared_lock lock(df_mutex_);
   if (!df_) {
     return {};
   }
@@ -290,6 +301,7 @@ std::vector<std::string> AnalysisDispatcher::getAvailableHistogramNames() const 
 
 const correlation::analysis::Histogram *
 AnalysisDispatcher::getHistogram(const std::string &name) const {
+  const std::shared_lock lock(df_mutex_);
   if (!df_) {
     return nullptr;
   }

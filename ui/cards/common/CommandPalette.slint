@@ -31,7 +31,7 @@ export component CommandPalette inherits Rectangle {
             root.query = "";
             root.selected_index = 0;
             root.filter_changed("");
-            search_focus.focus();
+            search_input.focus();
         }
     }
 
@@ -97,7 +97,7 @@ export component CommandPalette inherits Rectangle {
                 spacing: MaterialStyleMetrics.spacing_8;
 
                 // Search input
-                TextField {
+                search_input := TextField {
                     dense: true;
                     leading_icon: Icons.search;
                     placeholder_text: "Type a command (e.g. Run, Export, Theme, Zen, 3D)...";

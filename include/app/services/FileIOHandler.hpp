@@ -13,6 +13,7 @@
 #include "app/services/TrajectoryLoader.hpp"
 #include <atomic>
 #include <functional>
+#include <memory>
 #include <string>
 #include <thread>
 
@@ -136,6 +137,8 @@ private:
   ProgramOptions &options_;
   AppController &controller_;
 
+  std::shared_ptr<std::atomic<bool>> alive_{
+      std::make_shared<std::atomic<bool>>(true)}; ///< Lifetime guard for queued UI callbacks.
   std::jthread dialog_thread_; ///< Background worker thread for native file dialogs
   std::jthread load_thread_;   ///< Background thread for loading files without blocking UI
   std::vector<std::string> loaded_filepaths_; ///< Active single or multi-file trajectory paths

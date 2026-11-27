@@ -328,7 +328,7 @@ PlotController::PlotController(::AppWindow &window, AnalysisDispatcher &dispatch
         updateTaggedPeakPixels();
       }) {}
 
-PlotController::~PlotController() = default;
+PlotController::~PlotController() { alive_->store(false, std::memory_order_release); }
 
 void PlotController::handlePlotResized(PlotSize size) {
   if (std::abs(size.width - last_plot_width_) < 4.0F &&
@@ -611,8 +611,10 @@ void PlotController::notifyRadialHover(std::string_view plot_name,
     structure_3d_controller_->setRadialBrushDistance(std::nullopt);
     return;
   }
-  const bool is_radial =
-      (plot_name.contains("g(r)") || plot_name.contains("G(r)") || plot_name.contains("J(r)"));
+  const auto metric_opt = histogramKeyToMetric(plot_name);
+  const bool is_radial = (metric_opt == correlation::analysis::DistributionMetric::RDF) ||
+                         plot_name == "G_r" || plot_name == "J_r" || plot_name == "H_r" ||
+                         plot_name == "g_r_unweighted";
   structure_3d_controller_->setRadialBrushDistance(is_radial ? data_x : std::nullopt);
 }
 
@@ -636,17 +638,9 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
   }
 
   if (window_.get_preview_active_tab() == 2) {
-    const auto metric_opt = histogramKeyToMetric(name);
-    if (metric_opt.has_value()) {
-      if (*metric_opt == correlation::analysis::DistributionMetric::RDF) {
-        window_.set_preview_dual_left_view(0);
-      } else if (*metric_opt == correlation::analysis::DistributionMetric::SQ) {
-        window_.set_preview_dual_left_view(1);
-      } else if (*metric_opt == correlation::analysis::DistributionMetric::PAD) {
-        window_.set_preview_dual_left_view(2);
-      } else if (*metric_opt == correlation::analysis::DistributionMetric::XRD) {
-        window_.set_preview_dual_left_view(3);
-      }
+    if (const auto metric_opt = histogramKeyToMetric(name); metric_opt.has_value()) {
+      constexpr std::array<int, 4> K_METRIC_TO_TAB{0, 2, 1, 3}; // RDF=0, PAD=2, SQ=1, XRD=3
+      window_.set_preview_dual_left_view(K_METRIC_TO_TAB.at(static_cast<std::size_t>(*metric_opt)));
     }
   }
 
@@ -690,8 +684,15 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
 
   applyDualViewOverlay(task, name, current_frame);
 
-  updateTableData(&task.active_hist);
-  updateCurveToggleItems(&task.active_hist);
+  const int active_tab = window_.get_preview_active_tab();
+  if (name != last_table_key_ || current_frame != last_table_frame_ ||
+      active_tab != last_table_tab_) {
+    updateTableData(&task.active_hist);
+    updateCurveToggleItems(&task.active_hist);
+    last_table_key_ = name;
+    last_table_frame_ = current_frame;
+    last_table_tab_ = active_tab;
+  }
   task.custom_curve_colors = series_manager_.getAssignedCurveColors();
 
   correlation::plotters::LabeledHistogram current_entry;
@@ -1055,8 +1056,14 @@ void PlotController::resetPlotState() noexcept {
   marker_manager_.clearMarkers();
   tagged_peaks_.clear();
   next_peak_id_ = 1;
+  last_table_key_.clear();
+  last_table_frame_ = std::numeric_limits<std::size_t>::max();
+  last_table_tab_ = -1;
   pipeline_.invalidateCache();
-  slint::invoke_from_event_loop([this] {
+  slint::invoke_from_event_loop([this, alive = alive_] {
+    if (!alive->load(std::memory_order_acquire)) {
+      return;
+    }
     window_.set_pinned_runs_count(0);
     window_.set_has_active_zoom(false);
     window_.set_markers_count(0);

@@ -199,6 +199,9 @@ private:
   std::unique_ptr<PlotController> plot_controller_;
   std::unique_ptr<PresetController> preset_controller_;
   std::unique_ptr<Structure3DController> structure_3d_controller_;
+  std::shared_ptr<std::atomic<bool>> alive_{std::make_shared<std::atomic<bool>>(true)};
+  std::atomic<bool> export_3d_busy_{false};
+  std::jthread export_3d_thread_;
   AppSettings settings_;
   std::map<std::string, bool, std::less<>> calculator_group_expanded_;
 

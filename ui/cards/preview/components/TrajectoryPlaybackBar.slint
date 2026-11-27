@@ -38,7 +38,7 @@ export component TrajectoryPlaybackBar inherits Rectangle {
 
     playback_timer := Timer {
         interval: root.playback_interval;
-        running: root.is_playing && root.total_frames > 1;
+        running: root.visible && root.is_playing && root.total_frames > 1;
         triggered() => {
             if (root.playback_mode == 0) {
                 root.step_frame(true);

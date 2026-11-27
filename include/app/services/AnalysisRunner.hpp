@@ -10,6 +10,8 @@
 
 #include "app/core/AppOptions.hpp"
 #include "app/services/TrajectoryLoader.hpp"
+#include <atomic>
+#include <memory>
 #include <string>
 #include <thread>
 
@@ -61,6 +63,8 @@ private:
   ProgramOptions &options_;
   AppController &controller_;
 
+  std::shared_ptr<std::atomic<bool>> alive_{
+      std::make_shared<std::atomic<bool>>(true)}; ///< Lifetime guard for queued UI callbacks.
   std::jthread analysis_thread_; ///< Handle for the background analysis computation.
 
   /**

@@ -244,6 +244,8 @@ export component AppWindow inherits Window {
     in property <PhysicsDiagnostics> physics_diagnostics: {
         deborah_level: -1,
         hyper_level: -1,
+        electronic_level: -1,
+        eliashberg_level: -1,
     };
 
     in property <[ComparisonCurveData]> comparison_curves: [];
@@ -983,6 +985,11 @@ export component AppWindow inherits Window {
                 // Splitter Handle between Column 1 and Column 2
                 splitter_handle := SplitterHandle {
                     visible: (root.active_panel >= 0 || self.is_dragging) && root.width >= 500px;
+                    changed is_dragging => {
+                        if (!self.is_dragging) {
+                            root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
+                        }
+                    }
                     moved(delta) => {
                         let current_w = root.active_panel == -1 ? 0px : root.left_col_width;
                         let target_w = current_w + delta;
@@ -997,14 +1004,12 @@ export component AppWindow inherits Window {
                             }
                             root.left_col_width = 180px;
                             root.last_col_width = 180px;
-                            root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
                         } else {
                             if (root.active_panel == -1) {
                                 root.active_panel = root.last_active_panel >= 0 ? root.last_active_panel : 0;
                             }
                             root.left_col_width = Math.min(450px, target_w);
                             root.last_col_width = root.left_col_width;
-                            root.layout_geometry_changed(root.left_col_width, root.middle_col_width);
                         }
                     }
                     reset => {
@@ -1184,6 +1189,12 @@ export component AppWindow inherits Window {
                     dual_left_view <=> root.preview_dual_left_view;
                     select_dual_left_plot(idx) => { root.select_dual_left_plot(idx); }
                     inspector_scope: root.active_right_panel == 1 ? 1 : 0;
+                    select_inspector_scope(scope) => {
+                        if (root.active_right_panel >= 0 && root.active_right_panel != scope) {
+                            root.active_right_panel = scope;
+                            root.last_active_right_panel = scope;
+                        }
+                    }
                     structure_3d_phase_panel_open: root.active_right_panel == 1;
                     toggle_phase_panel_3d => {
                         let next = !root.structure_3d_phase_enabled;
@@ -1294,7 +1305,7 @@ export component AppWindow inherits Window {
                 // 4. Single Active Right Panel Column (Column 3)
                 right_side_panel_host := RightSidePanelHost {
                     width: root.active_right_panel == -1 ? 0px : root.right_col_width;
-                    visible: root.active_right_panel >= 0;
+                    visible: root.active_right_panel >= 0 && root.width >= 700px;
                     horizontal-stretch: 0;
 
                     active_panel <=> root.active_right_panel;

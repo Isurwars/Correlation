@@ -17,6 +17,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <shared_mutex>
 #include <string>
 #include <vector>
 
@@ -157,6 +158,7 @@ public:
    */
   [[nodiscard]] const correlation::analysis::DistributionFunctions *
   getDistributionFunctions() const noexcept {
+    const std::shared_lock lock(df_mutex_);
     return df_.get();
   }
 
@@ -166,15 +168,20 @@ public:
    */
   void setDistributionFunctions(std::unique_ptr<correlation::analysis::DistributionFunctions>
                                     distribution_functions) noexcept {
+    const std::unique_lock lock(df_mutex_);
     df_ = std::move(distribution_functions);
   }
 
   /**
    * @brief Clears current results.
    */
-  void clear() noexcept { df_.reset(); }
+  void clear() noexcept {
+    const std::unique_lock lock(df_mutex_);
+    df_.reset();
+  }
 
 private:
+  mutable std::shared_mutex df_mutex_;
   std::unique_ptr<correlation::analysis::DistributionFunctions> df_;
   std::atomic<bool> cancel_flag_{false};
   ProgressCallback progress_callback_;

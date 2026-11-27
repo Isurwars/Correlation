@@ -50,6 +50,10 @@ export component PreviewCard inherits FilledCard {
     in-out property <int> selected_plot_index: -1;
     in property <int> pinned_runs_count: 0;
     in-out property <int> inspector_scope: 0;
+    callback select_inspector_scope(int);
+    changed inspector_scope => {
+        root.select_inspector_scope(root.inspector_scope);
+    }
     callback toggle_plot_settings();
 
     in property <string> hover_coord_text: "";

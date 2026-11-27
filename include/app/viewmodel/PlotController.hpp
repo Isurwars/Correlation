@@ -355,6 +355,10 @@ private:
 
   Structure3DController *structure_3d_controller_{nullptr};
   int active_plot_index_{-1};
+  std::string last_table_key_;
+  std::size_t last_table_frame_{std::numeric_limits<std::size_t>::max()};
+  int last_table_tab_{-1};
+  std::shared_ptr<std::atomic<bool>> alive_{std::make_shared<std::atomic<bool>>(true)};
   std::unordered_map<int, correlation::plotters::MetricPlotSettings> metric_settings_;
 
   void syncMetricSettingsToUI(int index);

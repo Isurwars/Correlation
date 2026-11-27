@@ -226,9 +226,9 @@ OptionsSyncService::readFromUI(const AppWindow &window, size_t frame_count,
   std::filesystem::path output_path = full_path.parent_path() / full_path.stem();
   opt.input_file = input_path_str;
   opt.output_file_base = output_path.make_preferred().string();
-  opt.smoothing = true;
 
   const auto ui_opts = window.get_analysis_options();
+  opt.smoothing = ui_opts.smoothing_enabled;
   opt.r_max = safeParse(ui_opts.r_max, opt.r_max);
   opt.r_bin_width = safeParse(ui_opts.r_bin_width, opt.r_bin_width);
   opt.q_max = safeParse(ui_opts.q_max, opt.q_max);

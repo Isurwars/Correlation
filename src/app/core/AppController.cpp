@@ -106,6 +106,10 @@ AppController::AppController(::AppWindow &window, TrajectoryLoader &loader,
     : AppController(window, loader, dispatcher, options) {}
 
 AppController::~AppController() {
+  alive_->store(false, std::memory_order_release);
+  if (export_3d_thread_.joinable()) {
+    export_3d_thread_.join();
+  }
   saveSettings();
   // Quit Native File Dialog
   NFD_Quit();
