@@ -186,5 +186,23 @@ TEST_F(VoronoiCalculatorTests, HexagonalClosePacked) {
   EXPECT_TRUE(hists_hcp.at("voronoi_signatures").description.contains("(0, 12, 0, 0)"));
 }
 
+TEST_F(VoronoiCalculatorTests, RotatedNonUpperTriangularCellMatchesCanonical) {
+  // Permuted/rotated cubic lattice (a along +Y, b along +Z, c along +X) -> non-upper-triangular
+  correlation::core::Cell cell_rot({0.0, 10.0, 0.0}, {0.0, 0.0, 10.0}, {10.0, 0.0, 0.0});
+  for (int i = 0; i < 2; ++i) {
+    for (int j = 0; j < 2; ++j) {
+      for (int k = 0; k < 2; ++k) {
+        cell_rot.addAtom("Ar", {static_cast<real_t>(i) * static_cast<real_t>(5.0),
+                                static_cast<real_t>(j) * static_cast<real_t>(5.0),
+                                static_cast<real_t>(k) * static_cast<real_t>(5.0)});
+      }
+    }
+  }
+
+  auto hists = correlation::calculators::VoronoiCalculator::calculate(cell_rot);
+  EXPECT_NEAR(getPeakValue(hists.at("voronoi_volume")), 125.0, 1.0);
+  EXPECT_NEAR(getPeakValue(hists.at("voronoi_cn")), 6.0, 1e-4);
+}
+
 } // namespace
 } // namespace correlation::analysis

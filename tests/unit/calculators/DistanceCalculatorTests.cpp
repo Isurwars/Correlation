@@ -1249,4 +1249,18 @@ TEST(DistanceCalculatorTests, PlasticExampleLargeCellDivideAndConquer) {
   EXPECT_EQ(graph.edgeCount(), pairs_within_cutoff * 2);
 }
 
+TEST(DistanceCalculatorTests, CellListTraversalIntermediateWidthDoesNotDropPeriodicPairs) {
+  // Width = 10.0, cutoff = 4.5 -> 2*cutoff (9.0) <= width < 3*cutoff (13.5).
+  // Previously k=3 with d=3.333 < 4.5 dropped wrapped pairs from interior bin c_x=1.
+  Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
+  cell.addAtom("Ar", {5.0, 5.0, 5.0}); // Interior bin (1,1,1)
+  cell.addAtom("Ar", {static_cast<real_t>(9.2), 5.0, 5.0}); // Distance 4.2 to atom 0
+  cell.addAtom("Ar", {static_cast<real_t>(0.8), 5.0, 5.0}); // Distance 4.2 to atom 0, 1.6 (wrapped) to atom 1
+
+  const real_t cutoff = static_cast<real_t>(4.5);
+  const real_t cutoff_sq = cutoff * cutoff;
+  const size_t pair_count = countPairsWithinCutoff(cell, cutoff, cutoff_sq);
+  EXPECT_EQ(pair_count, 3U);
+}
+
 } // namespace correlation::testing

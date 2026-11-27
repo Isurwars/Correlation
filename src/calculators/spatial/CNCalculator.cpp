@@ -18,37 +18,15 @@ namespace {
 const bool REGISTERED = CalculatorFactory::registerTypeSafe<CNCalculator>("CNCalculator");
 
 /**
- * @brief Helper to compute the "Any" and "Total" partial distributions for the histogram.
+ * @brief Helper to increment a coordination-number histogram bin, growing the vector as needed.
  */
-void populateCombinationPartials(correlation::analysis::Histogram &cn_histogram,
-                                 const correlation::core::Cell &cell, size_t num_bins) {
-  const auto &elements = cell.elements();
-  std::vector<real_t> any_any_dist(num_bins, real_t{0});
-
-  for (const auto &elem : elements) {
-    const std::string element_any_key = elem.symbol + "-Any";
-    std::vector<real_t> element_any_dist(num_bins, real_t{0});
-    bool found_any = false;
-
-    for (const auto &[key, dist_vector] : cn_histogram.partials) {
-      if (key.starts_with(elem.symbol + "-")) {
-        found_any = true;
-        for (size_t bin_idx = 0; bin_idx < num_bins; ++bin_idx) {
-          element_any_dist[bin_idx] += dist_vector[bin_idx];
-        }
-      }
-    }
-
-    if (found_any) {
-      cn_histogram.partials[element_any_key] = element_any_dist;
-      for (size_t bin_idx = 0; bin_idx < num_bins; ++bin_idx) {
-        any_any_dist[bin_idx] += element_any_dist[bin_idx];
-      }
-    }
+void incrementCoordinationBin(std::map<std::string, std::vector<int>> &dists,
+                              const std::string &key, size_t count) {
+  auto &vec = dists[key];
+  if (count >= vec.size()) {
+    vec.resize(count + 1, 0);
   }
-
-  cn_histogram.partials["Any-Any"] = any_any_dist;
-  cn_histogram.partials["Total"] = std::move(any_any_dist);
+  vec[count]++;
 }
 } // namespace
 
@@ -67,32 +45,34 @@ CNCalculator::calculate(const correlation::core::Cell &cell,
   }
 
   const auto &atoms = cell.atoms();
+  const auto &elements = cell.elements();
   const auto &neighbor_graph = neighbors->neighborGraph();
 
   std::map<std::string, std::vector<int>> partial_dists;
   size_t max_cn = 0;
 
   for (size_t i = 0; i < atoms.size(); ++i) {
-    const auto &central_atom = atoms[i];
-    const std::string &central_symbol = central_atom.element().symbol;
+    const std::string &central_symbol = atoms[i].element().symbol;
+    const auto neighbor_indices = neighbor_graph.getNeighborIndices(i);
 
     std::map<std::string, size_t> neighbor_counts_for_this_atom;
-    for (const auto neighbor_idx : neighbor_graph.getNeighborIndices(i)) {
-      const auto &neighbor_atom = atoms[neighbor_idx];
-      neighbor_counts_for_this_atom[neighbor_atom.element().symbol]++;
+    for (const auto neighbor_idx : neighbor_indices) {
+      neighbor_counts_for_this_atom[atoms[neighbor_idx].element().symbol]++;
     }
 
-    for (const auto &[neighbor_symbol, count] : neighbor_counts_for_this_atom) {
+    for (const auto &elem : elements) {
+      const auto iter = neighbor_counts_for_this_atom.find(elem.symbol);
+      const size_t count = (iter != neighbor_counts_for_this_atom.end()) ? iter->second : 0;
       std::string key = central_symbol;
       key += '-';
-      key += neighbor_symbol;
-
-      if (count >= partial_dists[key].size()) {
-        partial_dists[key].resize(count + 1, 0);
-      }
-      partial_dists[key][count]++;
-      max_cn = std::max(max_cn, count);
+      key += elem.symbol;
+      incrementCoordinationBin(partial_dists, key, count);
     }
+
+    const size_t total_cn = neighbor_indices.size();
+    incrementCoordinationBin(partial_dists, central_symbol + "-Any", total_cn);
+    incrementCoordinationBin(partial_dists, "Any-Any", total_cn);
+    max_cn = std::max(max_cn, total_cn);
   }
 
   correlation::analysis::Histogram cn_histogram;
@@ -110,6 +90,10 @@ CNCalculator::calculate(const correlation::core::Cell &cell,
     cn_histogram.bins[bin_idx] = static_cast<real_t>(bin_idx);
   }
 
+  if (!partial_dists.contains("Any-Any")) {
+    partial_dists["Any-Any"].assign(num_bins, 0);
+  }
+
   for (auto &[key, dist_vector] : partial_dists) {
     dist_vector.resize(num_bins, 0);
     auto &target_vec = cn_histogram.partials[key];
@@ -120,7 +104,7 @@ CNCalculator::calculate(const correlation::core::Cell &cell,
     }
   }
 
-  populateCombinationPartials(cn_histogram, cell, num_bins);
+  cn_histogram.partials["Total"] = cn_histogram.partials["Any-Any"];
 
   return cn_histogram;
 }

@@ -232,7 +232,9 @@ struct CandidateGatherer {
       const int c_y = (current_bin / grid_config.k_z) % grid_config.k_y;
       const int c_z = current_bin % grid_config.k_z;
 
-      const bool is_interior = (c_x > 0 && c_x < grid_config.k_x - 1) &&
+      const bool is_interior = (grid_config.max_dx == 1 && grid_config.max_dy == 1 &&
+                                grid_config.max_dz == 1) &&
+                               (c_x > 0 && c_x < grid_config.k_x - 1) &&
                                (c_y > 0 && c_y < grid_config.k_y - 1) &&
                                (c_z > 0 && c_z < grid_config.k_z - 1);
 
@@ -317,9 +319,9 @@ inline SearchGridConfig buildSearchGridConfig(const correlation::core::Cell &cel
   const real_t width_z = volume / std::max(math::norm(cross_ab), static_cast<real_t>(1e-9));
 
   const real_t cutoff = std::sqrt(cutoff_sq);
-  const bool is_small_cell = (width_x < static_cast<real_t>(2.0) * cutoff) ||
-                             (width_y < static_cast<real_t>(2.0) * cutoff) ||
-                             (width_z < static_cast<real_t>(2.0) * cutoff);
+  const bool is_small_cell = (width_x < static_cast<real_t>(3.0) * cutoff) ||
+                             (width_y < static_cast<real_t>(3.0) * cutoff) ||
+                             (width_z < static_cast<real_t>(3.0) * cutoff);
 
   if (is_small_cell) {
     const int max_dx = std::max(1, static_cast<int>(std::ceil(cutoff / width_x)));

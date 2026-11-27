@@ -351,7 +351,19 @@ PartialVACFResult DynamicsAnalyzer::calculatePartialVACF(const correlation::core
   }
 
   const size_t num_frames = end_frame - start_frame;
-  const size_t num_atoms = frames[0].atoms().size();
+  const size_t num_atoms = frames[start_frame].atoms().size();
+  if (num_atoms == 0) {
+    return {};
+  }
+  for (size_t frame_idx = start_frame + 1; frame_idx < end_frame; ++frame_idx) {
+    if (frames[frame_idx].atoms().size() != num_atoms) {
+      throw std::invalid_argument(
+          "DynamicsAnalyzer requires a constant atom count across analyzed frames (frame " +
+          std::to_string(start_frame) + " has " + std::to_string(num_atoms) + " atoms, frame " +
+          std::to_string(frame_idx) + " has " + std::to_string(frames[frame_idx].atoms().size()) +
+          " atoms).");
+    }
+  }
   if (max_correlation_frames < 0) {
     max_correlation_frames = std::max(1, static_cast<int>(num_frames / 2));
   } else if (std::cmp_greater_equal(max_correlation_frames, num_frames)) {
@@ -416,8 +428,7 @@ PartialMSDResult DynamicsAnalyzer::calculatePartialMSD(const correlation::core::
   }
   const auto &frames = traj.getFrames();
   const size_t total_frames = frames.size();
-  const size_t num_atoms = frames[0].atoms().size();
-  if (total_frames < 2 || num_atoms == 0) {
+  if (total_frames < 2) {
     return {};
   }
 
@@ -425,6 +436,20 @@ PartialMSDResult DynamicsAnalyzer::calculatePartialMSD(const correlation::core::
   const size_t end_frame = std::min(end_frame_arg.value, total_frames);
   if (start_frame >= end_frame || (end_frame - start_frame) < 2) {
     return {};
+  }
+
+  const size_t num_atoms = frames[start_frame].atoms().size();
+  if (num_atoms == 0) {
+    return {};
+  }
+  for (size_t frame_idx = start_frame + 1; frame_idx < end_frame; ++frame_idx) {
+    if (frames[frame_idx].atoms().size() != num_atoms) {
+      throw std::invalid_argument(
+          "DynamicsAnalyzer requires a constant atom count across analyzed frames (frame " +
+          std::to_string(start_frame) + " has " + std::to_string(num_atoms) + " atoms, frame " +
+          std::to_string(frame_idx) + " has " + std::to_string(frames[frame_idx].atoms().size()) +
+          " atoms).");
+    }
   }
 
   const size_t num_frames = end_frame - start_frame;

@@ -1708,6 +1708,9 @@ void Structure3DController::applySlabClippingLocked() {
 void Structure3DController::syncInspectedAtomToWindow() {
   InspectedAtomInfo info{};
   info.valid = false;
+  std::size_t idx = 0;
+  std::size_t active_frame = 0;
+  bool should_query_phase = false;
   {
     const std::scoped_lock lock(mutex_);
     if (scene_ == nullptr || !picked_atom_index_.has_value() ||
@@ -1716,10 +1719,10 @@ void Structure3DController::syncInspectedAtomToWindow() {
       return;
     }
 
-    const std::size_t idx = *picked_atom_index_;
+    idx = *picked_atom_index_;
     const auto &atoms = scene_->atoms();
     const auto &atom = atoms[idx];
-    const auto active_frame = streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
+    active_frame = streamer_.hasTrajectory() ? streamer_.currentFrameIndex() : 0UL;
     const core::Cell &active_cell =
         (current_trajectory_ && active_frame < current_trajectory_->getFrameCount())
             ? current_trajectory_->getFrame(active_frame)
@@ -1737,19 +1740,25 @@ void Structure3DController::syncInspectedAtomToWindow() {
       info.avg_bond_text = slint::SharedString(
           std::format("{:.3f} Å", stats.sum_distance / static_cast<float>(stats.count)));
     }
+    should_query_phase = (phase_service_ != nullptr);
+  }
 
-    if (phase_service_ != nullptr) {
+  // Query PhaseSearchService outside mutex_ to prevent self-deadlock with cell_provider_
+  // and avoid blocking the Slint UI thread on synchronous Steinhardt calculation.
+  if (should_query_phase) {
+    const auto desc = phase_service_->lruCache().peek(active_frame);
+    if (desc != nullptr && desc->steinhardt != nullptr) {
+      if (idx < desc->steinhardt->Q6_bar.size()) {
+        info.q6_text = slint::SharedString(std::format("{:.3f}", desc->steinhardt->Q6_bar[idx]));
+      }
+      if (idx < desc->steinhardt->Q4_bar.size()) {
+        info.q4_text = slint::SharedString(std::format("{:.3f}", desc->steinhardt->Q4_bar[idx]));
+      }
+    } else {
       const bool playing =
           (std::this_thread::get_id() == main_thread_id_) && window_.get_structure_3d_is_playing();
-      const auto desc = playing ? phase_service_->lruCache().peek(active_frame)
-                                : phase_service_->getOrComputeDescriptors(active_frame);
-      if (desc != nullptr && desc->steinhardt != nullptr) {
-        if (idx < desc->steinhardt->Q6_bar.size()) {
-          info.q6_text = slint::SharedString(std::format("{:.3f}", desc->steinhardt->Q6_bar[idx]));
-        }
-        if (idx < desc->steinhardt->Q4_bar.size()) {
-          info.q4_text = slint::SharedString(std::format("{:.3f}", desc->steinhardt->Q4_bar[idx]));
-        }
+      if (!playing) {
+        phase_service_->requestCalculation(active_frame);
       }
     }
   }

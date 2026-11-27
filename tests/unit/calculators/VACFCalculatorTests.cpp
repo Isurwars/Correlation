@@ -334,4 +334,26 @@ TEST_F(VACFCalculatorTests, SingleFrameTrajectoryExcludesVACF) {
   EXPECT_FALSE(dists.getAllHistograms().contains("vacf_normalized"));
 }
 
+TEST_F(VACFCalculatorTests, VariableAtomCountTrajectoryThrows) {
+  correlation::core::Cell frame0({10, 10, 10, 90, 90, 90});
+  frame0.addAtom("Ar", {0.0, 0.0, 0.0});
+  frame0.addAtom("Ar", {2.0, 0.0, 0.0});
+
+  correlation::core::Cell frame1({10, 10, 10, 90, 90, 90});
+  frame1.addAtom("Ar", {static_cast<real_t>(0.1), 0.0, 0.0});
+  frame1.addAtom("Ar", {static_cast<real_t>(2.1), 0.0, 0.0});
+
+  correlation::core::Trajectory traj;
+  traj.setTimeStep(1.0);
+  traj.addFrame(frame0);
+  traj.addFrame(frame1);
+  // Mutate frame 1 via frameSpan() to simulate an unvalidated / lazy-mapped variable-N trajectory
+  traj.frameSpan()[1].addAtom("Ar", {4.0, 0.0, 0.0});
+
+  EXPECT_THROW((void)DynamicsAnalyzer::calculatePartialVACF(traj, MaxFrames{1}),
+               std::invalid_argument);
+  EXPECT_THROW((void)DynamicsAnalyzer::calculatePartialMSD(traj, MaxFrames{1}),
+               std::invalid_argument);
+}
+
 } // namespace correlation::analysis

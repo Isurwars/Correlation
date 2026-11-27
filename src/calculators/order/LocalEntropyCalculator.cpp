@@ -88,18 +88,26 @@ struct MetricNeighborGrid {
     const auto &lattice = cell.latticeVectors();
     const auto &inv_lattice = cell.inverseLatticeVectors();
 
-    real_t const vol = cell.volume();
-    const correlation::math::Vector3<real_t> v_a = {lattice(0, 0), lattice(0, 1), lattice(0, 2)};
-    const correlation::math::Vector3<real_t> v_b = {lattice(1, 0), lattice(1, 1), lattice(1, 2)};
-    const correlation::math::Vector3<real_t> v_c = {lattice(2, 0), lattice(2, 1), lattice(2, 2)};
+    real_t const vol = std::abs(cell.volume());
+    const correlation::math::Vector3<real_t> &v_a = lattice[0];
+    const correlation::math::Vector3<real_t> &v_b = lattice[1];
+    const correlation::math::Vector3<real_t> &v_c = lattice[2];
 
     const correlation::math::Vector3<real_t> cross_bc = correlation::math::cross(v_b, v_c);
     const correlation::math::Vector3<real_t> cross_ca = correlation::math::cross(v_c, v_a);
     const correlation::math::Vector3<real_t> cross_ab = correlation::math::cross(v_a, v_b);
 
-    real_t const h_x = vol / correlation::math::norm(cross_bc);
-    real_t const h_y = vol / correlation::math::norm(cross_ca);
-    real_t const h_z = vol / correlation::math::norm(cross_ab);
+    real_t const norm_bc = correlation::math::norm(cross_bc);
+    real_t const norm_ca = correlation::math::norm(cross_ca);
+    real_t const norm_ab = correlation::math::norm(cross_ab);
+    constexpr auto K_EPS = static_cast<real_t>(1e-12);
+    if (vol <= K_EPS || norm_bc <= K_EPS || norm_ca <= K_EPS || norm_ab <= K_EPS) {
+      return;
+    }
+
+    real_t const h_x = vol / norm_bc;
+    real_t const h_y = vol / norm_ca;
+    real_t const h_z = vol / norm_ab;
 
     grid.K_x = std::max(1, static_cast<int>(std::floor(h_x / cutoff)));
     grid.K_y = std::max(1, static_cast<int>(std::floor(h_y / cutoff)));
@@ -169,6 +177,9 @@ struct MetricNeighborGrid {
   void queryDistances(size_t atom_idx, const correlation::core::Cell &cell, real_t cutoff,
                       std::vector<real_t> &distances_out, bool ignore_self_periodic) const {
     distances_out.clear();
+    if (bin_offsets.empty()) {
+      return;
+    }
     const auto &lattice = cell.latticeVectors();
     QueryContext const ctx = {
         .atom_idx = atom_idx,
@@ -211,7 +222,7 @@ real_t computeSingleAtomEntropy(const std::vector<real_t> &atom_distances,
   real_t const sigma = params.sigma;
 
   real_t const vol = cell.volume();
-  if (vol <= 0.0) {
+  if (vol <= 0.0 || cutoff <= 0.0 || sigma <= 0.0) {
     return 0.0;
   }
   real_t const density = static_cast<real_t>(cell.atomCount()) / vol;
@@ -302,8 +313,14 @@ void addValueToHistogram(std::map<std::string, std::vector<real_t>> &partials,
                          const std::string &symbol, real_t val, BinningConfig config) {
   if (val >= config.min_val && val < config.max_val) {
     auto const bin_idx = static_cast<size_t>((val - config.min_val) / config.d_val);
-    partials[symbol][bin_idx] += static_cast<real_t>(1.0);
-    partials["Total"][bin_idx] += static_cast<real_t>(1.0);
+    auto &sym_vec = partials[symbol];
+    auto &tot_vec = partials["Total"];
+    if (bin_idx < sym_vec.size()) {
+      sym_vec[bin_idx] += static_cast<real_t>(1.0);
+    }
+    if (bin_idx < tot_vec.size()) {
+      tot_vec[bin_idx] += static_cast<real_t>(1.0);
+    }
   }
 }
 
@@ -354,7 +371,7 @@ LocalEntropyCalculator::calculatePerAtom(const correlation::core::Cell &cell,
                                          LocalEntropyParams params) {
   const auto &atoms = cell.atoms();
   size_t const num_atoms = atoms.size();
-  if (num_atoms == 0) {
+  if (num_atoms == 0 || params.cutoff <= 0.0 || params.sigma <= 0.0) {
     return {};
   }
 
@@ -389,7 +406,7 @@ LocalEntropyCalculator::calculate(const correlation::core::Cell &cell,
                                   LocalEntropyParams params) {
   const auto &atoms = cell.atoms();
   size_t const num_atoms = atoms.size();
-  if (num_atoms == 0) {
+  if (num_atoms == 0 || params.cutoff <= 0.0 || params.sigma <= 0.0) {
     return {};
   }
 

@@ -20,6 +20,7 @@
 #include <span>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for_each.h>
+#include <utility>
 
 namespace correlation::calculators {
 
@@ -381,7 +382,9 @@ void ThreadLocalDistances::collectCandidatesFromBin(
 }
 
 void ThreadLocalDistances::updateHistogram(const BondCandidate &cand) {
-  if (num_bins == 0 || r_bin_width <= 0.0 || cand.d_sq >= r_max_sq) {
+  if (num_bins == 0 || r_bin_width <= 0.0 || cand.d_sq >= r_max_sq || cand.type_a < 0 ||
+      cand.type_b < 0 || std::cmp_greater_equal(cand.type_a, num_elements) ||
+      std::cmp_greater_equal(cand.type_b, num_elements)) {
     return;
   }
 
@@ -406,6 +409,10 @@ void ThreadLocalDistances::updateHistogram(const BondCandidate &cand) {
 void ThreadLocalDistances::updateBonds(const BondCandidate &cand,
                                        std::span<const FlatBondCutoff> flat_cutoffs,
                                        const correlation::math::Vector3<real_t> &atom_pos) {
+  if (cand.type_a < 0 || cand.type_b < 0 || std::cmp_greater_equal(cand.type_a, num_elements) ||
+      std::cmp_greater_equal(cand.type_b, num_elements)) {
+    return;
+  }
   const size_t cutoff_idx =
       static_cast<size_t>(cand.type_a) * num_elements + static_cast<size_t>(cand.type_b);
   if (cutoff_idx >= flat_cutoffs.size()) {

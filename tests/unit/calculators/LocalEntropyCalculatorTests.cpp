@@ -199,5 +199,38 @@ TEST_F(LocalEntropyCalculatorTests, CalculatePerAtom) {
   EXPECT_TRUE(empty_res.empty());
 }
 
+TEST_F(LocalEntropyCalculatorTests, NonSymmetricTriclinicCellAndInvalidParams) {
+  // Non-symmetric triclinic lattice where lattice != lattice^T
+  correlation::core::Cell cell_tri({10.0, 0.0, 0.0}, {3.0, 10.0, 0.0}, {2.0, 1.5, 10.0});
+  const auto &lat = cell_tri.latticeVectors();
+  for (int i = 0; i < 2; ++i) {
+    for (int j = 0; j < 2; ++j) {
+      for (int k = 0; k < 2; ++k) {
+        const auto pos = lat * correlation::math::Vector3<real_t>(
+                                   static_cast<real_t>(i) * static_cast<real_t>(0.5),
+                                   static_cast<real_t>(j) * static_cast<real_t>(0.5),
+                                   static_cast<real_t>(k) * static_cast<real_t>(0.5));
+        cell_tri.addAtom("Ar", pos);
+      }
+    }
+  }
+
+  const auto entropies = correlation::calculators::LocalEntropyCalculator::calculatePerAtom(
+      cell_tri, nullptr, {.cutoff = 6.0, .sigma = static_cast<real_t>(0.2)});
+  ASSERT_EQ(entropies.size(), 8U);
+  for (const auto val : entropies) {
+    EXPECT_TRUE(std::isfinite(val));
+    EXPECT_LT(val, 0.0);
+  }
+
+  // Invalid cutoff/sigma must return empty without NaN or division by zero
+  EXPECT_TRUE(correlation::calculators::LocalEntropyCalculator::calculatePerAtom(
+                  cell_tri, nullptr, {.cutoff = 0.0, .sigma = static_cast<real_t>(0.2)})
+                  .empty());
+  EXPECT_TRUE(correlation::calculators::LocalEntropyCalculator::calculatePerAtom(
+                  cell_tri, nullptr, {.cutoff = 6.0, .sigma = 0.0})
+                  .empty());
+}
+
 } // namespace
 } // namespace correlation::analysis

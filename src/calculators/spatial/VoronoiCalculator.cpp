@@ -117,20 +117,47 @@ struct AlignedBoxParameters {
 
 [[nodiscard]] AlignedBoxParameters
 extractAlignedBoxParameters(const correlation::math::Matrix3<real_t> &lattice) {
-  AlignedBoxParameters const params{
-      .box_x = lattice[0].x(),
-      .box_xy = lattice[1].x(),
-      .box_y = lattice[1].y(),
-      .box_xz = lattice[2].x(),
-      .box_yz = lattice[2].y(),
-      .box_z = lattice[2].z(),
-  };
+  constexpr auto K_EPS = static_cast<real_t>(1e-9);
+  const auto &vec_a = lattice[0];
+  const auto &vec_b = lattice[1];
+  const auto &vec_c = lattice[2];
 
-  if (params.box_x <= 1e-9 || params.box_y <= 1e-9 || params.box_z <= 1e-9) {
+  // Gram-Schmidt QR alignment into Voro++ upper-triangular periodic box (bx, bxy, by, bxz, byz, bz)
+  // preserving all lattice vector lengths, angles, and Euclidean distances for arbitrary triclinic
+  // orientations.
+  const real_t box_x = correlation::math::norm(vec_a);
+  if (box_x <= K_EPS) {
     throw std::runtime_error(
-        "Invalid or non-orthogonal/skewed cell dimensions for Voronoi calculation.");
+        "Invalid or degenerate lattice vector a for Voronoi calculation.");
   }
-  return params;
+  const auto q_1 = vec_a / box_x;
+
+  const real_t box_xy = correlation::math::dot(q_1, vec_b);
+  const auto b_perp = vec_b - (q_1 * box_xy);
+  const real_t box_y = correlation::math::norm(b_perp);
+  if (box_y <= K_EPS) {
+    throw std::runtime_error(
+        "Invalid or degenerate lattice vector b for Voronoi calculation.");
+  }
+  const auto q_2 = b_perp / box_y;
+
+  const auto q_3 = correlation::math::cross(q_1, q_2);
+  const real_t box_xz = correlation::math::dot(vec_c, q_1);
+  const real_t box_yz = correlation::math::dot(vec_c, q_2);
+  const real_t box_z = std::abs(correlation::math::dot(vec_c, q_3));
+  if (box_z <= K_EPS) {
+    throw std::runtime_error(
+        "Invalid or degenerate lattice vector c for Voronoi calculation.");
+  }
+
+  return AlignedBoxParameters{
+      .box_x = box_x,
+      .box_xy = box_xy,
+      .box_y = box_y,
+      .box_xz = box_xz,
+      .box_yz = box_yz,
+      .box_z = box_z,
+  };
 }
 
 [[nodiscard]] std::array<real_t, 3>

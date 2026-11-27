@@ -102,8 +102,9 @@ void AnalysisRunner::handleAnalysisCompletion(const std::string &err) {
   if (!dispatcher_.getAvailableHistogramNames().empty()) {
     controller_.getPlotController()->requestPlotUpdate(0, true);
   }
-  if (const auto *dist_funcs = dispatcher_.getDistributionFunctions(); dist_funcs != nullptr) {
-    if (auto *s3d = controller_.getStructure3DController(); s3d != nullptr) {
+  if (auto *s3d = controller_.getStructure3DController(); s3d != nullptr) {
+    s3d->set3DModeActive(false);
+    if (const auto *dist_funcs = dispatcher_.getDistributionFunctions(); dist_funcs != nullptr) {
       s3d->setDistributionStore(dist_funcs->getPerFrameStore());
     }
   }

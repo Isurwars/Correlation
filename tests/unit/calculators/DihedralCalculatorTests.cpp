@@ -148,3 +148,27 @@ TEST_F(DihedralCalculatorTests, HandlesCoincidentCentralBondSafely) {
   const auto &angles = dict[0][0][0][0];
   EXPECT_TRUE(angles.empty());
 }
+
+TEST_F(DihedralCalculatorTests, AutoResizesEmptyOutputTensor) {
+  cell.addAtom("C", {1.0, 0.0, 0.0});
+  cell.addAtom("C", {0.0, 0.0, 0.0});
+  cell.addAtom("C", {0.0, 1.0, 0.0});
+  cell.addAtom("C", {0.0, 1.0, 1.0});
+
+  graph = correlation::core::NeighborGraph(4);
+  graph.addDirectedEdge(0, 1, 1.0, cell.atoms()[1].position() - cell.atoms()[0].position());
+  graph.addDirectedEdge(1, 0, 1.0, cell.atoms()[0].position() - cell.atoms()[1].position());
+  graph.addDirectedEdge(1, 2, 1.0, cell.atoms()[2].position() - cell.atoms()[1].position());
+  graph.addDirectedEdge(2, 1, 1.0, cell.atoms()[1].position() - cell.atoms()[2].position());
+  graph.addDirectedEdge(2, 3, 1.0, cell.atoms()[3].position() - cell.atoms()[2].position());
+  graph.addDirectedEdge(3, 2, 1.0, cell.atoms()[2].position() - cell.atoms()[3].position());
+
+  // Pass an uninitialized/empty DihedralTensor; compute() must resize safely without crashing.
+  correlation::analysis::StructureAnalyzer::DihedralTensor empty_dict;
+  correlation::calculators::DihedralCalculator::compute(cell, graph, empty_dict);
+
+  ASSERT_EQ(empty_dict.size(), 1U);
+  ASSERT_EQ(empty_dict[0][0][0][0].size(), 1U);
+  EXPECT_NEAR(empty_dict[0][0][0][0][0], correlation::math::PI / 2.0,
+              correlation::is_single_precision ? 1e-4 : 1e-12);
+}

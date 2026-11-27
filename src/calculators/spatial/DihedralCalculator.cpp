@@ -13,6 +13,7 @@
 #include <optional>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
+#include <utility>
 
 namespace correlation::calculators {
 
@@ -78,9 +79,14 @@ void findAndProcessDihedralsForPair(
     correlation::analysis::StructureAnalyzer::DihedralTensor &local_tensor) {
   const auto &neighbors_b = graph.getNeighbors(idx_b);
   const auto &neighbors_c = graph.getNeighbors(idx_c);
+  const size_t num_elements = local_tensor.size();
 
   const int type_b = atoms[idx_b].elementId();
   const int type_c = atoms[idx_c].elementId();
+  if (type_b < 0 || type_c < 0 || std::cmp_greater_equal(type_b, num_elements) ||
+      std::cmp_greater_equal(type_c, num_elements)) {
+    return;
+  }
   const correlation::math::Vector3<real_t> &r_bc = neighbor_c.r_ij;
 
   for (const auto &neighbor_a : neighbors_b) {
@@ -90,6 +96,9 @@ void findAndProcessDihedralsForPair(
     }
 
     const int type_a = atoms[idx_a].elementId();
+    if (type_a < 0 || std::cmp_greater_equal(type_a, num_elements)) {
+      continue;
+    }
     const correlation::math::Vector3<real_t> &r_ba = neighbor_a.r_ij;
 
     for (const auto &neighbor_d : neighbors_c) {
@@ -99,6 +108,9 @@ void findAndProcessDihedralsForPair(
       }
 
       const int type_d = atoms[idx_d].elementId();
+      if (type_d < 0 || std::cmp_greater_equal(type_d, num_elements)) {
+        continue;
+      }
       const correlation::math::Vector3<real_t> &r_cd = neighbor_d.r_ij;
 
       auto const dihedral_angle_opt = calculateDihedralAngle({
@@ -115,6 +127,28 @@ void findAndProcessDihedralsForPair(
 
       if (type_a != type_d || type_b != type_c) {
         local_tensor[type_d][type_c][type_b][type_a].push_back(dihedral_angle);
+      }
+    }
+  }
+}
+
+void ensureDihedralTensorSize(
+    correlation::analysis::StructureAnalyzer::DihedralTensor &out_dihedrals, size_t num_elements) {
+  if (out_dihedrals.size() < num_elements) {
+    out_dihedrals.resize(num_elements);
+  }
+  for (size_t idx_a = 0; idx_a < num_elements; ++idx_a) {
+    if (out_dihedrals[idx_a].size() < num_elements) {
+      out_dihedrals[idx_a].resize(num_elements);
+    }
+    for (size_t idx_b = 0; idx_b < num_elements; ++idx_b) {
+      if (out_dihedrals[idx_a][idx_b].size() < num_elements) {
+        out_dihedrals[idx_a][idx_b].resize(num_elements);
+      }
+      for (size_t idx_c = 0; idx_c < num_elements; ++idx_c) {
+        if (out_dihedrals[idx_a][idx_b][idx_c].size() < num_elements) {
+          out_dihedrals[idx_a][idx_b][idx_c].resize(num_elements);
+        }
       }
     }
   }
@@ -195,6 +229,7 @@ void DihedralCalculator::compute(
         }
       });
 
+  ensureDihedralTensorSize(out_dihedrals, num_elements);
   mergeThreadLocalTensors(out_dihedrals, ets, num_elements);
 }
 

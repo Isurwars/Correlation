@@ -74,16 +74,54 @@ TEST(CNCalculatorTests, IsolatedAtomHasZeroCoordination) {
   StructureAnalyzer const analyzer(cell, neighbor_cutoff, bond_cutoffs, true);
   const auto hist = CNCalculator::calculate(cell, &analyzer);
 
-  // With no neighbors, the CN calculator doesn't create an "Ar-Ar" key at all
-  // (it only creates keys for atoms that HAVE neighbors of a given type).
-  // But "Any-Any" is always created and should be all zeros for an isolated atom.
+  // An isolated atom has 0 neighbors, so it is counted in bin 0 of Ar-Ar, Ar-Any, Any-Any, Total.
+  ASSERT_TRUE(hist.partials.contains("Ar-Ar"));
+  EXPECT_DOUBLE_EQ(hist.partials.at("Ar-Ar")[0], 1.0);
+  ASSERT_TRUE(hist.partials.contains("Ar-Any"));
+  EXPECT_DOUBLE_EQ(hist.partials.at("Ar-Any")[0], 1.0);
   ASSERT_TRUE(hist.partials.contains("Any-Any"));
-  const auto &any_any = hist.partials.at("Any-Any");
-  real_t total = 0.0;
-  for (real_t const &value : any_any) {
-    total += value;
+  EXPECT_DOUBLE_EQ(hist.partials.at("Any-Any")[0], 1.0);
+  ASSERT_TRUE(hist.partials.contains("Total"));
+  EXPECT_DOUBLE_EQ(hist.partials.at("Total")[0], 1.0);
+}
+
+TEST(CNCalculatorTests, MultiSpeciesAnyAndTotalAggregatePerAtom) {
+  Cell cell({20.0, 0.0, 0.0}, {0.0, 20.0, 0.0}, {0.0, 0.0, 20.0});
+  // Central Si atom bonded to 2 Si neighbors and 2 O neighbors -> total CN = 4
+  cell.addAtom("Si", {10.0, 10.0, 10.0});
+  cell.addAtom("Si", {11.0, 10.0, 10.0});
+  cell.addAtom("Si", {9.0, 10.0, 10.0});
+  cell.addAtom("O", {10.0, 11.0, 10.0});
+  cell.addAtom("O", {10.0, 9.0, 10.0});
+
+  real_t const neighbor_cutoff = static_cast<real_t>(1.2);
+  BondCutoffMatrix const bond_cutoffs = {
+      {
+          {.min_sq = static_cast<real_t>(0.25), .max_sq = static_cast<real_t>(1.44)},
+          {.min_sq = static_cast<real_t>(0.25), .max_sq = static_cast<real_t>(1.44)},
+      },
+      {
+          {.min_sq = static_cast<real_t>(0.25), .max_sq = static_cast<real_t>(1.44)},
+          {.min_sq = static_cast<real_t>(0.25), .max_sq = static_cast<real_t>(1.44)},
+      },
+  };
+
+  StructureAnalyzer const analyzer(cell, neighbor_cutoff, bond_cutoffs, true);
+  const auto hist = CNCalculator::calculate(cell, &analyzer);
+
+  // Central Si has 2 Si + 2 O = 4 total neighbors (not two atoms with CN=2).
+  ASSERT_TRUE(hist.partials.contains("Si-Any"));
+  ASSERT_GT(hist.partials.at("Si-Any").size(), 4U);
+  EXPECT_DOUBLE_EQ(hist.partials.at("Si-Any")[4], 1.0);
+  EXPECT_DOUBLE_EQ(hist.partials.at("Si-Any")[2], 0.0);
+  EXPECT_DOUBLE_EQ(hist.partials.at("Si-Any")[1], 2.0); // The 2 outer Si atoms each have CN=1
+
+  // Total counts must sum strictly to atomCount() (5 atoms) without double-counting.
+  real_t total_atoms_counted = 0.0;
+  for (real_t const val : hist.partials.at("Total")) {
+    total_atoms_counted += val;
   }
-  EXPECT_DOUBLE_EQ(total, 0.0) << "Isolated atom should contribute no CN counts";
+  EXPECT_DOUBLE_EQ(total_atoms_counted, 5.0);
 }
 
 TEST(CNCalculatorTests, HighCoordinationFCC) {

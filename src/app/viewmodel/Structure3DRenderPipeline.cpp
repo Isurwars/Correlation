@@ -176,6 +176,10 @@ void Structure3DRenderPipeline::renderLoop() {
         break;
       }
 
+      if (!render_pending_) {
+        continue;
+      }
+
       render_pending_ = false;
       need_reinit = std::exchange(reinit_pending_, false);
       target_dims = viewport_dims_;
