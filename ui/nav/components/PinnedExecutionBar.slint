@@ -13,6 +13,7 @@ import {
     Vertical,
     Icons,
     TooltipState,
+    TooltipTarget,
 } from "../../material/material.slint";
 
 /// Pinned execution footer shared across left configuration panels (Stages 0-2).
@@ -21,9 +22,13 @@ export component PinnedExecutionBar inherits Rectangle {
     in property <bool> analysis_running: false;
     in property <bool> has_validation_errors: false;
     in property <string> validation_summary: "Fix validation errors before running";
+    in property <bool> show_advanced_hint: false;
+    in property <int> enabled_calculator_count: 0;
+    in property <int> total_calculator_count: 0;
 
     callback run_analysis();
     callback cancel_analysis();
+    callback open_advanced_options();
 
     property <string> run_tooltip_text: root.analysis_running
         ? "Abort the currently executing trajectory analysis."
@@ -63,6 +68,33 @@ export component PinnedExecutionBar inherits Rectangle {
                 color: MaterialPalette.error;
                 wrap: word-wrap;
                 horizontal-alignment: center;
+            }
+
+            if root.show_advanced_hint && root.file_loaded && !root.analysis_running: Rectangle {
+                width: 100%;
+                height: 22px;
+                border-radius: MaterialStyleMetrics.border_radius_4;
+                background: adv_hint_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                adv_hint_touch := TooltipTarget {
+                    mouse-cursor: pointer;
+                    accessible-role: button;
+                    accessible-label: "Customize analyses in Advanced Options";
+                    tooltip_text: "Open Advanced Options to toggle individual calculators or fine-tune S(Q), XRD, Rings, and Smoothing.";
+                    clicked => { root.open_advanced_options(); }
+
+                    MaterialText {
+                        width: 100%;
+                        height: 100%;
+                        text: root.total_calculator_count > 0 ?
+                            "Preselected: " + root.enabled_calculator_count + "/" + root.total_calculator_count + " analyses · Customize in Advanced →" :
+                            "Preselected analyses · Customize in Advanced →";
+                        style: MaterialTypography.label_small;
+                        color: adv_hint_touch.has-hover ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+                        vertical-alignment: center;
+                        horizontal-alignment: center;
+                    }
+                }
             }
 
             run_btn := FilledButton {

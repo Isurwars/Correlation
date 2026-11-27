@@ -159,7 +159,7 @@ export component SidePanelHost inherits Vertical {
 
         MaterialText {
             text: root.active_panel == 0 ? "Input & Structure" :
-                root.active_panel == 1 ? "Calculators & Parameters" :
+                root.active_panel == 1 ? "Main Parameters" :
                 root.active_panel == 2 ? "Advanced Options" : "Export & Presentation";
             style: MaterialTypography.title_small;
             color: MaterialPalette.on_surface;
@@ -195,34 +195,32 @@ export component SidePanelHost inherits Vertical {
             file_metadata: root.file_metadata;
             workflow_state: root.workflow_state;
 
-            analysis_options <=> root.analysis_options;
-            app_errors: root.app_errors;
             browse_file => { root.browse_file(); }
             reload_file => { root.reload_file(); }
             export_structure => { root.export_structure(); }
             rename_element(old_sym, new_sym) => { root.rename_element(old_sym, new_sym); }
-            reset_trajectory_options => { root.reset_trajectory_options(); }
             run_analysis => { root.run_analysis(); }
             cancel_analysis => { root.cancel_analysis(); }
         }
 
-        // Stage 1: Calculators & Parameters
+        // Stage 1: Main Parameters
         panel_calculators := CalculatorsPanel {
             width: 100%;
             height: 100%;
             visible: root.active_panel == 1;
             file_loaded: root.file_metadata.loaded;
+            file_metadata: root.file_metadata;
             workflow_state: root.workflow_state;
-
-            calculator_groups <=> root.calculator_groups;
             total_calculator_count: root.total_calculator_count;
             enabled_calculator_count: root.enabled_calculator_count;
-            toggle_calculator(id, enabled) => { root.toggle_calculator(id, enabled); }
-            toggle_calculator_group(grp, enabled) => { root.toggle_calculator_group(grp, enabled); }
-            toggle_all_calculators(enabled) => { root.toggle_all_calculators(enabled); }
-            set_calculator_group_expanded(grp, exp) => { root.set_calculator_group_expanded(grp, exp); }
-            set_all_calculator_groups_expanded(exp) => { root.set_all_calculator_groups_expanded(exp); }
-            reset_analyses_selection => { root.reset_analyses_selection(); }
+            open_input_panel => {
+                root.active_panel = 0;
+                root.last_active_panel = 0;
+            }
+            open_advanced_options => {
+                root.active_panel = 2;
+                root.last_active_panel = 2;
+            }
 
             material_type <=> root.material_type;
             domain_presets: root.domain_presets;
@@ -246,6 +244,7 @@ export component SidePanelHost inherits Vertical {
 
             analysis_options <=> root.analysis_options;
             app_errors: root.app_errors;
+            reset_trajectory_options => { root.reset_trajectory_options(); }
             reset_rdf_options => { root.reset_rdf_options(); }
             reset_angle_options => { root.reset_angle_options(); }
 
@@ -262,6 +261,16 @@ export component SidePanelHost inherits Vertical {
             has_scattering_active: root.has_scattering_active;
             has_rings_active: root.has_rings_active;
             workflow_state: root.workflow_state;
+
+            calculator_groups <=> root.calculator_groups;
+            total_calculator_count: root.total_calculator_count;
+            enabled_calculator_count: root.enabled_calculator_count;
+            toggle_calculator(id, enabled) => { root.toggle_calculator(id, enabled); }
+            toggle_calculator_group(grp, enabled) => { root.toggle_calculator_group(grp, enabled); }
+            toggle_all_calculators(enabled) => { root.toggle_all_calculators(enabled); }
+            set_calculator_group_expanded(grp, exp) => { root.set_calculator_group_expanded(grp, exp); }
+            set_all_calculator_groups_expanded(exp) => { root.set_all_calculator_groups_expanded(exp); }
+            reset_analyses_selection => { root.reset_analyses_selection(); }
 
             physics_diagnostics: root.physics_diagnostics;
 

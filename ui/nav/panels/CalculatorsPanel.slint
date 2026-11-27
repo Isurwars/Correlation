@@ -4,23 +4,28 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 import {
+    MaterialPalette,
     MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialText,
+    OutlinedCard,
     ScrollView,
+    TooltipTarget,
     Vertical,
 } from "../../material/material.slint";
 import {
     AtomCount,
     BondCutoff,
-    CalculatorGroup,
     DomainPresetItem,
+    FileMetadata,
     AnalysisOptions,
     AppErrors,
     SanityBadgeState,
     WorkflowState,
 } from "../../Types.slint";
 import {
-    AnalysesSelectionCard,
-} from "../../cards/analyses/AnalysesSelectionCard.slint";
+    TrajectoryOptionsCard,
+} from "../../cards/operations/TrajectoryOptionsCard.slint";
 import {
     MaterialTypeCard,
 } from "../../cards/operations/MaterialTypeCard.slint";
@@ -31,23 +36,17 @@ import {
 } from "../../cards/common/BondAngleOptionsCard.slint";
 import { PinnedExecutionBar } from "../components/PinnedExecutionBar.slint";
 
-/// Modular Host Component for Stage 1: Calculators & Parameters
+/// Modular Host Component for Stage 1: Main Parameters
 export component CalculatorsPanel inherits Rectangle {
     in property <bool> file_loaded: false;
+    in property <FileMetadata> file_metadata;
     in property <WorkflowState> workflow_state;
-    callback run_analysis();
-    callback cancel_analysis();
-
-    // Calculator Selection state
-    in-out property <[CalculatorGroup]> calculator_groups: [];
     in property <int> total_calculator_count: 0;
     in property <int> enabled_calculator_count: 0;
-    callback toggle_calculator(string, bool);
-    callback toggle_calculator_group(string, bool);
-    callback toggle_all_calculators(bool);
-    callback set_calculator_group_expanded(string, bool);
-    callback set_all_calculator_groups_expanded(bool);
-    callback reset_analyses_selection();
+    callback run_analysis();
+    callback cancel_analysis();
+    callback open_input_panel();
+    callback open_advanced_options();
 
     // Material & Domain Presets state
     in-out property <int> material_type: 0;
@@ -75,6 +74,7 @@ export component CalculatorsPanel inherits Rectangle {
     // Parameter options & errors
     in-out property <AnalysisOptions> analysis_options;
     in property <AppErrors> app_errors;
+    callback reset_trajectory_options();
     callback reset_rdf_options();
     callback reset_angle_options();
 
@@ -91,21 +91,83 @@ export component CalculatorsPanel inherits Rectangle {
                 padding: 0;
                 spacing: MaterialStyleMetrics.spacing_8;
 
-                // 1. Analyses Selection Card (Collapsed by default)
-                AnalysesSelectionCard {
-                    file_loaded: root.file_loaded;
-                    calculator_groups: root.calculator_groups;
-                    total_calculator_count: root.total_calculator_count;
-                    enabled_calculator_count: root.enabled_calculator_count;
-                    toggle_calculator(id, val) => { root.toggle_calculator(id, val); }
-                    toggle_calculator_group(grp, val) => { root.toggle_calculator_group(grp, val); }
-                    toggle_all_calculators(val) => { root.toggle_all_calculators(val); }
-                    set_calculator_group_expanded(grp, exp) => { root.set_calculator_group_expanded(grp, exp); }
-                    set_all_calculator_groups_expanded(exp) => { root.set_all_calculator_groups_expanded(exp); }
-                    reset => { root.reset_analyses_selection(); }
+                // 1. Compact Trajectory Metadata Header
+                if root.file_loaded: OutlinedCard {
+                    Vertical {
+                        padding: MaterialStyleMetrics.spacing_8;
+                        spacing: MaterialStyleMetrics.spacing_4;
+
+                        HorizontalLayout {
+                            alignment: space-between;
+                            spacing: MaterialStyleMetrics.spacing_6;
+
+                            MaterialText {
+                                text: root.file_metadata.basename != "" ? root.file_metadata.basename : "Loaded Structure";
+                                style: MaterialTypography.label_large;
+                                font_weight: 600;
+                                color: MaterialPalette.on_surface;
+                                vertical-alignment: center;
+                                horizontal-stretch: 1;
+                            }
+
+                            Rectangle {
+                                width: details_lbl.preferred-width + 8px;
+                                height: 20px;
+                                border-radius: MaterialStyleMetrics.border_radius_4;
+                                background: details_touch.has-hover ? MaterialPalette.surface_container_high : transparent;
+
+                                details_touch := TooltipTarget {
+                                    mouse-cursor: pointer;
+                                    accessible-role: button;
+                                    accessible-label: "Inspect structure details";
+                                    tooltip_text: "Open Input & Structure panel to inspect per-element counts, rename species, or reload file.";
+                                    clicked => { root.open_input_panel(); }
+
+                                    details_lbl := MaterialText {
+                                        width: 100%;
+                                        height: 100%;
+                                        text: "Structure →";
+                                        style: MaterialTypography.label_small;
+                                        color: details_touch.has-hover ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
+                                        vertical-alignment: center;
+                                        horizontal-alignment: center;
+                                    }
+                                }
+                            }
+                        }
+
+                        MaterialText {
+                            text: "Frames: " + root.file_metadata.num_frames +
+                                "  ·  Atoms: " + root.file_metadata.total_atoms +
+                                (root.file_metadata.box_density != "" ? "  ·  " + root.file_metadata.box_density : "");
+                            style: MaterialTypography.label_small;
+                            color: MaterialPalette.on_surface_variant;
+                        }
+
+                        if root.file_metadata.box_dimensions != "": MaterialText {
+                            text: root.file_metadata.box_dimensions;
+                            style: MaterialTypography.label_small;
+                            color: MaterialPalette.on_surface_variant;
+                        }
+                    }
                 }
 
-                // 2. Material Type & Domain Templates Card
+                // 2. Trajectory Slicing & Time Step Card
+                TrajectoryOptionsCard {
+                    file_loaded: root.file_loaded;
+                    num_frames: root.file_metadata.num_frames;
+                    time_step <=> root.analysis_options.time_step;
+                    time_step_error: root.app_errors.time_step_error;
+                    min_frame <=> root.analysis_options.min_frame;
+                    max_frame <=> root.analysis_options.max_frame;
+                    min_frame_error: root.app_errors.min_frame_error;
+                    max_frame_error: root.app_errors.max_frame_error;
+                    frame_stride <=> root.analysis_options.frame_stride;
+                    frame_stride_error: root.app_errors.frame_stride_error;
+                    reset => { root.reset_trajectory_options(); }
+                }
+
+                // 3. Material Type & Domain Templates Card
                 MaterialTypeCard {
                     file_loaded: root.file_loaded;
                     material_type <=> root.material_type;
@@ -154,12 +216,16 @@ export component CalculatorsPanel inherits Rectangle {
             }
         }
 
-        // 6. Pinned Bottom Run / Cancel Analysis Action Trigger
+        // Pinned Bottom Run / Cancel Analysis Action Trigger
         exec_bar := PinnedExecutionBar {
             width: 100%;
             file_loaded: root.file_loaded;
             analysis_running: root.workflow_state.analysis_running;
             has_validation_errors: root.workflow_state.has_validation_errors;
+            show_advanced_hint: true;
+            enabled_calculator_count: root.enabled_calculator_count;
+            total_calculator_count: root.total_calculator_count;
+            open_advanced_options => { root.open_advanced_options(); }
             run_analysis => { root.run_analysis(); }
             cancel_analysis => { root.cancel_analysis(); }
         }

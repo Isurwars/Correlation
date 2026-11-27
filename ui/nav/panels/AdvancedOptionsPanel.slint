@@ -11,9 +11,13 @@ import {
 import {
     AnalysisOptions,
     AppErrors,
+    CalculatorGroup,
     PhysicsDiagnostics,
     WorkflowState,
 } from "../../Types.slint";
+import {
+    AnalysesSelectionCard,
+} from "../../cards/analyses/AnalysesSelectionCard.slint";
 import { SQOptionsCard } from "../../cards/advanced/SQOptionsCard.slint";
 import { XRDOptionsCard } from "../../cards/advanced/XRDOptionsCard.slint";
 import { RingsOptionsCard } from "../../cards/advanced/RingsOptionsCard.slint";
@@ -46,6 +50,17 @@ export component AdvancedOptionsPanel inherits Rectangle {
     in-out property <AnalysisOptions> analysis_options;
     in property <AppErrors> app_errors;
 
+    // Calculator Selection state
+    in-out property <[CalculatorGroup]> calculator_groups: [];
+    in property <int> total_calculator_count: 0;
+    in property <int> enabled_calculator_count: 0;
+    callback toggle_calculator(string, bool);
+    callback toggle_calculator_group(string, bool);
+    callback toggle_all_calculators(bool);
+    callback set_calculator_group_expanded(string, bool);
+    callback set_all_calculator_groups_expanded(bool);
+    callback reset_analyses_selection();
+
     callback reset_sq_options();
     callback reset_xrd_options();
     callback xrd_radiation_preset_changed(int);
@@ -65,6 +80,19 @@ export component AdvancedOptionsPanel inherits Rectangle {
             adv_content := Vertical {
                 padding: 0;
                 spacing: MaterialStyleMetrics.spacing_8;
+
+                analyses_card := AnalysesSelectionCard {
+                    file_loaded: root.file_loaded;
+                    calculator_groups: root.calculator_groups;
+                    total_calculator_count: root.total_calculator_count;
+                    enabled_calculator_count: root.enabled_calculator_count;
+                    toggle_calculator(id, val) => { root.toggle_calculator(id, val); }
+                    toggle_calculator_group(grp, val) => { root.toggle_calculator_group(grp, val); }
+                    toggle_all_calculators(val) => { root.toggle_all_calculators(val); }
+                    set_calculator_group_expanded(grp, exp) => { root.set_calculator_group_expanded(grp, exp); }
+                    set_all_calculator_groups_expanded(exp) => { root.set_all_calculator_groups_expanded(exp); }
+                    reset => { root.reset_analyses_selection(); }
+                }
 
                 sq_card := SQOptionsCard {
                     file_loaded: root.file_loaded;

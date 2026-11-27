@@ -17,16 +17,11 @@ import {
 import {
     FileMetadata,
     WorkflowState,
-    AnalysisOptions,
-    AppErrors,
 } from "../../Types.slint";
 import { PinnedExecutionBar } from "../components/PinnedExecutionBar.slint";
 import {
     OperationsDiagnosticsCard,
 } from "../../cards/operations/OperationsDiagnosticsCard.slint";
-import {
-    TrajectoryOptionsCard,
-} from "../../cards/operations/TrajectoryOptionsCard.slint";
 
 /// Modular Host Component for Panel 0: Operations & Trajectory Setup
 export component OperationsPanel inherits Rectangle {
@@ -37,10 +32,6 @@ export component OperationsPanel inherits Rectangle {
     callback reload_file();
     callback export_structure();
     callback rename_element(string, string);
-
-    in-out property <AnalysisOptions> analysis_options;
-    in property <AppErrors> app_errors;
-    callback reset_trajectory_options();
 
     in property <WorkflowState> workflow_state;
     callback run_analysis();
@@ -122,20 +113,6 @@ export component OperationsPanel inherits Rectangle {
                     box_dimensions: root.file_metadata.box_dimensions;
                     atoms_expanded <=> root.atoms_expanded;
                     rename_element(old_sym, new_sym) => { root.rename_element(old_sym, new_sym); }
-                }
-
-                TrajectoryOptionsCard {
-                    file_loaded: root.file_metadata.loaded;
-                    num_frames: root.file_metadata.num_frames;
-                    time_step <=> root.analysis_options.time_step;
-                    time_step_error: root.app_errors.time_step_error;
-                    min_frame <=> root.analysis_options.min_frame;
-                    max_frame <=> root.analysis_options.max_frame;
-                    min_frame_error: root.app_errors.min_frame_error;
-                    max_frame_error: root.app_errors.max_frame_error;
-                    frame_stride <=> root.analysis_options.frame_stride;
-                    frame_stride_error: root.app_errors.frame_stride_error;
-                    reset => { root.reset_trajectory_options(); }
                 }
             }
         }

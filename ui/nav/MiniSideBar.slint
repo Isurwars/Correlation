@@ -48,17 +48,17 @@ export component MiniSideBar inherits Rectangle {
         btn_input := NavRailItem {
             icon: Icons.folder_open;
             active: root.active_panel == 0;
-            tooltip: "Input & Structure (Ctrl+O)\n\n📁 Load structures, configure trajectory slicing, and view system diagnostics.";
+            tooltip: "Input & Structure (Ctrl+O)\n\n📁 Load structures, inspect species & box diagnostics, or convert formats.";
             clicked => {
                 root.select_panel(root.active_panel == 0 ? -1 : 0);
             }
         }
 
-        // Stage 1: Calculators & Parameters
+        // Stage 1: Main Parameters
         btn_calculators := NavRailItem {
             icon: Icons.tune;
             active: root.active_panel == 1;
-            tooltip: "Calculators & Parameters\n\n⚙️ Select analyses and calibrate pair cutoffs, scattering, and angular parameters.";
+            tooltip: "Main Parameters\n\n⚙️ Configure trajectory frame slicing, material templates, pair cutoffs, RDF, and angular bins.";
             clicked => {
                 root.select_panel(root.active_panel == 1 ? -1 : 1);
             }
@@ -68,7 +68,7 @@ export component MiniSideBar inherits Rectangle {
         btn_advanced := NavRailItem {
             icon: Icons.science;
             active: root.active_panel == 2;
-            tooltip: "Advanced Options\n\n🔬 Fine-tune static structure factor S(Q), powder XRD, ring topology, and smoothing.";
+            tooltip: "Advanced Options\n\n🔬 Customize selected analyses and fine-tune S(Q), powder XRD, ring topology, dynamics, and smoothing.";
             clicked => {
                 root.select_panel(root.active_panel == 2 ? -1 : 2);
             }
