@@ -25,6 +25,7 @@
         "CMAKE_BUILD_TYPE": "Release",
         "USE_SINGLE_PRECISION": "ON",
         "BUILD_GUI": "ON",
+        "BUILD_PYTHON_BINDINGS": "ON",
         "BUILD_TESTING": "ON"
       }
     },
@@ -44,6 +45,7 @@
         "CMAKE_BUILD_TYPE": "Release",
         "USE_SINGLE_PRECISION": "ON",
         "BUILD_GUI": "ON",
+        "BUILD_PYTHON_BINDINGS": "ON",
         "BUILD_TESTING": "OFF",
         "BUILD_BENCHMARKS": "OFF"
       }

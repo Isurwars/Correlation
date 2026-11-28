@@ -3,10 +3,16 @@ CompileFlags:
   Add:
     - "-std=c++23"
     - "-Iinclude"
+    - "-I../include"
     - "-isystembuild/src"
+    - "-isystemsrc"
     - "-isystem/usr/include/slint"
     - "-isystem./build/"
+    - "-isystem_deps/pybind11-src/include"
+    - "-isystem../build/_deps/pybind11-src/include"
+    - "-isystem../build-release/_deps/pybind11-src/include"
     - "-isystem./.venv/lib/python3.14/site-packages/pybind11/include"
+    - "-isystem../.venv/lib/python3.14/site-packages/pybind11/include"
     - "-isystem/usr/include/python3.14"
   Remove:
     - "-fmodules-ts"
